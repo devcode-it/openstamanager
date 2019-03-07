@@ -28,8 +28,7 @@ class Backup
         $result = App::getConfig()['backup_dir'];
 
         $result = rtrim($result, '/');
-
-        if (!is_writable($result) || !directory($result)) {
+        if (!directory($result) || !is_writable($result)) {
             throw new UnexpectedValueException();
         }
 
@@ -57,7 +56,8 @@ class Backup
         $backups = Symfony\Component\Finder\Finder::create()
             ->name('/^'.$pattern.'/')
             ->sortByName()
-            ->in(self::getDirectory());
+            ->in(self::getDirectory())
+            ->depth('== 0');
 
         $results = [];
         foreach ($backups as $backup) {
@@ -80,7 +80,7 @@ class Backup
     /**
      * Effettua il backup giornaliero.
      *
-     * @return null|bool
+     * @return bool|null
      */
     public static function daily()
     {
@@ -173,6 +173,7 @@ class Backup
 
         $dump = new Mysqldump('mysql:host='.$config['db_host'].';dbname='.$config['db_name'], $config['db_username'], $config['db_password'], [
             'add-drop-table' => true,
+            'add-locks' => false,
         ]);
 
         $dump->start($file);

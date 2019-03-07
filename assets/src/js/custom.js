@@ -56,4 +56,11 @@ $(document).ready(function () {
         }, 350);
     });
     
+    // Forza l'evento "blur" nei campi di testo per formattare i numeri con
+    // jquery inputmask prima del submit
+    setTimeout( function(){
+        $('form').on('submit', function(){
+            $('input').trigger('blur');
+        });
+    }, 1000 );
 });

@@ -5,7 +5,7 @@ include_once __DIR__.'/../../core.php';
 use Modules\Ordini\Ordine;
 
 /**
- * Funzione per generare un nuovo numero per la fattura.
+ * Funzione per generare un nuovo numero per l'ordine.
  *
  * @deprecated 2.4.5
  */
@@ -181,11 +181,11 @@ function ricalcola_costiagg_ordine($idordine, $idrivalsainps = '', $idritenutaac
         // Leggo la rivalsa inps se c'è (per i ordine di vendita lo leggo dalle impostazioni)
         if ($dir == 'entrata') {
             if (!empty($idrivalsainps)) {
-                $idrivalsainps = setting('Percentuale rivalsa INPS');
+                $idrivalsainps = setting('Percentuale rivalsa');
             }
         }
 
-        $query = 'SELECT percentuale FROM co_rivalsainps WHERE id='.prepare($idrivalsainps);
+        $query = 'SELECT percentuale FROM co_rivalse WHERE id='.prepare($idrivalsainps);
         $rs = $dbo->fetchArray($query);
         $rivalsainps = $totale_imponibile / 100 * $rs[0]['percentuale'];
 

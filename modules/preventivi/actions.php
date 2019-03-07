@@ -3,12 +3,10 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Anagrafiche\Anagrafica;
-use Modules\Articoli\Articolo as ArticoloOriginale;
+use Modules\Interventi\TipoSessione;
 use Modules\Preventivi\Components\Articolo;
-use Modules\Preventivi\Components\Descrizione;
 use Modules\Preventivi\Components\Riga;
 use Modules\Preventivi\Preventivo;
-use Modules\Interventi\TipoSessione;
 
 switch (post('op')) {
     case 'add':
@@ -23,7 +21,7 @@ switch (post('op')) {
         $id_record = $preventivo->id;
 
         flash()->info(tr('Aggiunto preventivo numero _NUM_!', [
-            '_NUM_' => $numero,
+            '_NUM_' => $preventivo['numero'],
         ]));
 
         break;
@@ -62,6 +60,11 @@ switch (post('op')) {
 
             $idiva = post('idiva');
 
+            $id_documento_fe = post('id_documento_fe');
+            $num_item = post('num_item');
+            $codice_cig = post('codice_cig');
+            $codice_cup = post('codice_cup');
+
             $query = 'UPDATE co_preventivi SET idstato='.prepare($idstato).','.
                 ' nome='.prepare($nome).','.
                 ' idanagrafica='.prepare($idanagrafica).','.
@@ -79,6 +82,10 @@ switch (post('op')) {
                 ' descrizione='.prepare($descrizione).','.
                 ' tipo_sconto_globale='.prepare($tipo_sconto).','.
                 ' sconto_globale='.prepare($sconto).','.
+                ' id_documento_fe='.prepare($id_documento_fe).','.
+                ' num_item='.prepare($num_item).','.
+                ' codice_cig='.prepare($codice_cig).','.
+                ' codice_cup='.prepare($codice_cup).','.
                 ' validita='.prepare($validita).','.
                 ' idtipointervento='.prepare($idtipointervento).','.
                 ' idiva='.prepare($idiva).' WHERE id='.prepare($id_record);
@@ -111,7 +118,7 @@ switch (post('op')) {
         $rs = $dbo->fetchArray('SELECT numero FROM co_preventivi WHERE numero LIKE('.prepare(Util\Generator::complete($numeropreventivo_template)).') ORDER BY numero DESC LIMIT 0,1');
         $numero = Util\Generator::generate(setting('Formato codice preventivi'), $rs[0]['numero']);
 
-        $dbo->query('UPDATE co_preventivi SET idstato=1, numero = '.$numero.', master_revision = id WHERE id='.prepare($id_record));
+        $dbo->query('UPDATE co_preventivi SET idstato=1, numero = '.prepare($numero).', master_revision = id WHERE id='.prepare($id_record));
 
         //copio anche le righe del preventivo
         $dbo->query('CREATE TEMPORARY TABLE tmp SELECT * FROM co_righe_preventivi WHERE idpreventivo = '.filter('id_record'));

@@ -46,19 +46,26 @@ echo '
                 count = data.length;
                 buttonRestore(btn, restore);
 
-                swal({
-                    title: "'.tr('Ricevute da importare: _COUNT_', [
-                        '_COUNT_' => '" + count + "',
-                    ]).'",
-                    html: "'.tr('Sono state individuate _COUNT_ ricevute da importare', [
-                        '_COUNT_' => '" + count + "',
-                    ]).'.",
-                    showCancelButton: true,
-                    confirmButtonText: "'.tr('Procedi').'",
-                    type: "info",
-                }).then(function (result) {
-                    importAll(btn);
-                });
+                if(count == 0){
+                    swal({
+                        title: "'.tr('Non ci sono ricevute da importare').'",
+                        showCancelButton: false,
+                        confirmButtonText: "'.tr('OK').'",
+                        type: "info",
+                    });
+                } else {
+                    swal({
+                        title: "'.tr('Ricevute da importare: _COUNT_', [
+                            '_COUNT_' => '" + count + "',
+                        ]).'",
+                        html: "'.tr('Importando le ricevute, verranno aggiornati gli stati di invio fatture elettroniche. Continuare?').'",
+                        showCancelButton: true,
+                        confirmButtonText: "'.tr('Procedi').'",
+                        type: "info",
+                    }).then(function (result) {
+                        importAll(btn);
+                    });
+                }
             },
             error: function(data) {
                 alert("'.tr('Errore').': " + data);
@@ -84,7 +91,6 @@ echo '
 
                 var html = "'.tr('Sono state elaborate le seguenti ricevute:').'";
 
-                console.log(data);
                 data.forEach(function(element) {
                     var text = "";
                     if(element.fattura) {

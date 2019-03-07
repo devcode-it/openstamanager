@@ -88,26 +88,4 @@ class Articolo extends Article
     {
         return 'entrata';
     }
-
-    /**
-     * Effettua i conti per l'IVA indetraibile.
-     */
-    public function fixIvaIndetraibile()
-    {
-    }
-
-    public function getSubtotaleAttribute()
-    {
-        return $this->prezzo_vendita * $this->qta;
-    }
-
-    /**
-     * Effettua i conti per il subtotale della riga.
-     */
-    protected function fixSubtotale()
-    {
-        $this->prezzo_vendita = $this->prezzo_unitario_vendita;
-
-        $this->fixIva();
-    }
 }

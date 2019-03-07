@@ -11,6 +11,14 @@ class Articolo extends Model
 
     /**
      * Funzione per inserire i movimenti di magazzino.
+     *
+     * @param $qta
+     * @param null  $descrizone
+     * @param null  $data
+     * @param bool  $manuale
+     * @param array $array
+     *
+     * @return bool
      */
     public function movimenta($qta, $descrizone = null, $data = null, $manuale = false, $array = [])
     {
@@ -27,6 +35,14 @@ class Articolo extends Model
 
     /**
      * Funzione per registrare i movimenti di magazzino.
+     *
+     * @param $qta
+     * @param null  $descrizone
+     * @param null  $data
+     * @param bool  $manuale
+     * @param array $array
+     *
+     * @return bool
      */
     public function registra($qta, $descrizone = null, $data = null, $manuale = false, $array = [])
     {

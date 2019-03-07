@@ -6,9 +6,9 @@ use Common\Model;
 
 class TipoSessione extends Model
 {
+    public $incrementing = false;
     protected $table = 'in_tipiintervento';
     protected $primaryKey = 'idtipointervento';
-    public $incrementing = false;
 
     /**
      * Restituisce l'identificativo.
@@ -23,5 +23,10 @@ class TipoSessione extends Model
     public function preventivi()
     {
         return $this->hasMany(Preventivo::class, 'idtipointervento');
+    }
+
+    public function interventi()
+    {
+        return $this->hasMany(Intervento::class, 'idtipointervento');
     }
 }

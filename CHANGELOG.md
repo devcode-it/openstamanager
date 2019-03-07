@@ -4,52 +4,111 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.8 (2019-03-01)](#248-2019-03-01)
+- [2.4.7 (2019-02-21)](#247-2019-02-21)
+- [2.4.6 (2019-02-12)](#246-2019-02-12)
+- [2.4.5 (2019-01-10)](#245-2019-01-10)
 - [2.4.4 (2018-12-12)](#244-2018-12-12)
-  - [Aggiunto (Added)](#aggiunto-added)
-  - [Fixed](#fixed)
 - [2.4.3 (2018-12-07)](#243-2018-12-07)
-  - [Aggiunto (Added)](#aggiunto-added-1)
-  - [Fixed](#fixed-1)
 - [2.4.2 (2018-11-14)](#242-2018-11-14)
-  - [Aggiunto (Added)](#aggiunto-added-2)
-  - [Modificato (Changed)](#modificato-changed)
-  - [Deprecato (Deprecated)](#deprecato-deprecated)
-  - [Rimosso (Removed)](#rimosso-removed)
-  - [Sicurezza (Security)](#sicurezza-security)
 - [2.4.1 (2018-08-01)](#241-2018-08-01)
-  - [Aggiunto (Added)](#aggiunto-added-3)
-  - [Modificato (Changed)](#modificato-changed-1)
-  - [Fixed](#fixed-2)
 - [2.4 (2018-03-30)](#24-2018-03-30)
-  - [Aggiunto (Added)](#aggiunto-added-4)
-  - [Modificato (Changed)](#modificato-changed-2)
-  - [Fixed](#fixed-3)
 - [2.3.1 (2018-02-19)](#231-2018-02-19)
-  - [Aggiunto (Added)](#aggiunto-added-5)
-  - [Modificato (Changed)](#modificato-changed-3)
-  - [Fixed](#fixed-4)
 - [2.3 (2018-02-16)](#23-2018-02-16)
-  - [Aggiunto (Added)](#aggiunto-added-6)
-  - [Modificato (Changed)](#modificato-changed-4)
-  - [Deprecato (Deprecated)](#deprecato-deprecated-1)
-  - [Rimosso (Removed)](#rimosso-removed-1)
-  - [Fixed](#fixed-5)
-  - [Sicurezza (Security)](#sicurezza-security-1)
 - [2.2 (2016-11-10)](#22-2016-11-10)
-  - [Aggiunto (Added)](#aggiunto-added-7)
-  - [Fixed](#fixed-6)
 - [2.1 (2015-04-02)](#21-2015-04-02)
-  - [Aggiunto (Added)](#aggiunto-added-8)
-  - [Modificato (Changed)](#modificato-changed-5)
-  - [Fixed](#fixed-7)
 
+
+## 2.4.8 (2019-03-01)
+
+### Aggiunto (Added)
+
+ - Possibilità di scorporare l'IVA dal prezzo di vendita nel modulo **Articoli**
+ - Ritenuta contributi nella stampa di **Fatture di vendita**
+ - Supporto al campo *NumItem* nella Fatture Elettronica
+ - Aggiunta la data di scadenza per le **Attività**
+
+### Modificato (Changed)
+
+ - Miglioramento del caricamento delle opzioni Ajax per i select
+ - Miglioramento della procedura di importazione: i contenuti vengono importati un po' alla volta, evitando così problemi di *timeout* del server
+
+### Fixed
+
+ - Fix della procedura di passaggio tra documenti (con supporto agli *sconti incondizionati*)
+ - Fix di un bug nella movimentazione articoli nel passaggio tra documenti
+ - Fix della creazione delle categorie articoli e impianti
+ - Risolti altri bug generali
+
+## 2.4.7 (2019-02-21)
+
+### Aggiunto (Added)
+
+ - Aggiunto possibilità per evitare i movimenti causati da Fatture Elettroniche importate
+ - Supporto delle fatture alle ritenute contributi
+ - Solleciti di pagamento nel modulo **Scadenzario**
+
+### Modificato (Changed)
+
+ - Miglioramento del sistema di importazione dei diversi documenti in fattura
+
+### Fixed
+
+ - Fix di diversi bug nella procedura di importazione XML
+ - Fix degli sconti nelle note di credito
+ - Risolti alcuni bug distribuiti
+
+## 2.4.6 (2019-02-12)
+
+### Aggiunto (Added)
+
+ - Introduzione della seconda ritenuta (ad esempio, *Contributo Enasarco*)
+ - Introduzione della fatturazione per conto terzi
+ - Aggiunto stato elaborazione fattura elettronica per **Fatture di vendita**
+ - Aggiunto codice cig, cup e identificativo documento per **Preventivi**
+
+### Modificato (Changed)
+
+ - Miglioramento della generazione xml per le Fatture Elettroniche
+ - Miglioramento procedura importazione xml per le Fatture Elettroniche
+ - Gestito split payment nella fattura elettronica
+
+### Fixed
+
+ - Fix del calcolo dei codice preventivo, ordine, ddt e fattura
+ - Fix valori non riportati in fase di inserimento di una nuova attività
+ - Fix aggiunta del contratto in fattura
+ - Fix aggiunta articolo in attività
+ - Fix calcolo sconto per nota di credito fa fattura di vendita
+ - Risolti altri bug minori
+
+## 2.4.5 (2019-01-10)
+
+### Aggiunto (Added)
+
+ - Introduzione dello split payment
+ - Introduzione dei campi Nome e Cognome per le anagrafiche
+ - Introduzione della possibilità di non verificare il certificato SSL per gli account email
+ - Introduzione calcolo del guadagno in fase di aggiunta righe nei documenti
+
+### Modificato (Changed)
+
+ - Miglioramento della generazione xml per le Fatture Elettroniche
+ - Miglioramento procedura importazione xml per le Fatture Elettroniche
+ - Gestite righe di tipo descrizione nelle Fatture Elettroniche
+
+### Fixed
+
+ - Fix calcolo codice intervento
+ - Fix dei filtri per la stampa del riepilogo interventi
+ - Risolti altri bug minori
 
 ## 2.4.4 (2018-12-12)
 
 ### Aggiunto (Added)
 
  - Controllo sulla presenza di personalizzazioni nel modulo **Aggiornamenti**
- - Stati multipli per la Fatture Elettroniche (per ampliamenti futuri)
+ - Stati multipli per le Fatture Elettroniche (per ampliamenti futuri)
 
 ### Fixed
 

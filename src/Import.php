@@ -104,11 +104,10 @@ class Import
      *
      * @param string|int $module
      * @param int        $file_id
-     * @param array      $options
      *
      * @return array
      */
-    public static function getFile($module, $file_id, $options = [])
+    public static function getCSV($module, $file_id)
     {
         $import = self::get($module);
 
@@ -119,7 +118,7 @@ class Import
             return [];
         }
 
-        $file = DOCROOT.'/files/'.Modules::get('Import')['directory'].'/'.$import['files'][$find]['filename'];
+        $file = Modules::get('Import')->upload_directory.'/'.$import['files'][$find]['filename'];
 
         // Impostazione automatica per i caratteri di fine riga
         if (!ini_get('auto_detect_line_endings')) {
@@ -130,21 +129,6 @@ class Import
         $csv = League\Csv\Reader::createFromPath($file, 'r');
         $csv->setDelimiter(';');
 
-        // Ignora la prima riga
-        $offset = 0;
-        if (!empty($options['headers'])) {
-            ++$offset;
-        }
-        $rows = $csv->setOffset($offset);
-
-        // Limite di righe
-        if (!empty($options['limit'])) {
-            $rows = $rows->setLimit($options['limit']);
-        }
-
-        // Lettura
-        $rows = $rows->fetchAll();
-
-        return $rows;
+        return $csv;
     }
 }

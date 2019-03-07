@@ -219,7 +219,11 @@ class Update
 
                     if ($start < $end) {
                         for ($i = $start; $i < $end; ++$i) {
-                            $database->query($queries[$i], [], tr('Aggiornamento fallito').': '.$queries[$i]);
+                            try {
+                                $database->query($queries[$i]);
+                            } catch (\Exception $e) {
+                                throw new PDOException(tr('Aggiornamento fallito').': '.$queries[$i]);
+                            }
 
                             $database->query('UPDATE `updates` SET `done` = :done WHERE id = :id', [
                                 ':done' => $i + 3,

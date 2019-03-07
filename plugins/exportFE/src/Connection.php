@@ -27,18 +27,8 @@ class Connection
             'resource' => $resource,
         ]);
 
-        if (!empty($options['multipart'])) {
-            foreach ($json as $key => $value) {
-                $options['multipart'][] = [
-                    'name' => $key,
-                    'contents' => $value,
-                ];
-            }
-        } else {
-            $options['form_params'] = $json;
-        }
-
         $options = array_merge($options, [
+            'json' => $json,
             'http_errors' => false,
         ]);
 
@@ -61,7 +51,7 @@ class Connection
     {
         if (!isset(self::$client)) {
             self::$client = new Client([
-                'base_uri' => 'https://services.osmcloud.it/v1/',
+                'base_uri' => 'https://services.osmcloud.it/api/',
                 'verify' => false,
             ]);
         }

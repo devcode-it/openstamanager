@@ -2,8 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\Fatture\Components\Articolo;
-use Modules\Fatture\Components\Descrizione;
 use Modules\Fatture\Components\Riga;
 
 // Righe fattura
@@ -24,43 +22,61 @@ echo '
     </thead>
     <tbody class="sortable">';
 
-foreach ($righe as $riga) {
+foreach ($righe as $row) {
+    $riga = $row->toArray();
+
     // Valori assoluti
     $riga['qta'] = abs($riga['qta']);
     $riga['prezzo_unitario_acquisto'] = abs($riga['prezzo_unitario_acquisto']);
-    $riga['subtotale'] = abs($riga['subtotale']);
+    $riga['imponibile_scontato'] = abs($row->imponibile_scontato);
     $riga['sconto_unitario'] = abs($riga['sconto_unitario']);
     $riga['sconto'] = abs($riga['sconto']);
     $riga['iva'] = abs($riga['iva']);
 
+    if (empty($riga['is_descrizione'])) {
+        $riga['descrizione_conto'] = $dbo->fetchOne('SELECT descrizione FROM co_pianodeiconti3 WHERE id = '.prepare($riga['idconto']))['descrizione'];
+    }
+
     $extra = '';
 
-    $ref_modulo = null;
-    $ref_id = null;
-
-    // Preventivi
-    if (!empty($riga['idpreventivo'])) {
-        $delete = 'unlink_preventivo';
-    }
-    // Contratti
-    elseif (!empty($riga['idcontratto'])) {
-        $delete = 'unlink_contratto';
-    }
-    // Intervento
-    elseif (!empty($riga['idintervento'])) {
-        $delete = 'unlink_intervento';
-    }
     // Articoli
-    elseif ($riga instanceof Articolo) {
-        $ref_modulo = Modules::get('Articoli')['id'];
-        $ref_id = $riga['idarticolo'];
-
-        $riga['descrizione'] = (!empty($riga->articolo) ? $riga->articolo->codice.' - ' : '').$riga['descrizione'];
+    if ($row->isArticolo()) {
+        $riga['descrizione'] = (!empty($row->articolo) ? $row->articolo->codice.' - ' : '').$riga['descrizione'];
 
         $delete = 'unlink_articolo';
 
         $extra = '';
         $mancanti = 0;
+    }
+    // Intervento
+    elseif (!empty($riga['idintervento'])) {
+        $intervento = $dbo->fetchOne('SELECT num_item,codice_cig,codice_cup,id_documento_fe FROM in_interventi WHERE id = '.prepare($riga['idintervento']));
+        $riga['num_item'] = $intervento['num_item'];
+        $riga['codice_cig'] = $intervento['codice_cig'];
+        $riga['codice_cup'] = $intervento['codice_cup'];
+        $riga['id_documento_fe'] = $intervento['id_documento_fe'];
+
+        $delete = 'unlink_intervento';
+    }
+    // Preventivi
+    elseif (!empty($riga['idpreventivo'])) {
+        $preventivo = $dbo->fetchOne('SELECT num_item,codice_cig,codice_cup,id_documento_fe FROM co_preventivi WHERE id = '.prepare($riga['idpreventivo']));
+        $riga['num_item'] = $preventivo['num_item'];
+        $riga['codice_cig'] = $preventivo['codice_cig'];
+        $riga['codice_cup'] = $preventivo['codice_cup'];
+        $riga['id_documento_fe'] = $preventivo['id_documento_fe'];
+
+        $delete = 'unlink_preventivo';
+    }
+    // Contratti
+    elseif (!empty($riga['idcontratto'])) {
+        $contratto = $dbo->fetchOne('SELECT num_item,codice_cig,codice_cup,id_documento_fe FROM co_contratti WHERE id = '.prepare($riga['idcontratto']));
+        $riga['num_item'] = $contratto['num_item'];
+        $riga['codice_cig'] = $contratto['codice_cig'];
+        $riga['codice_cup'] = $contratto['codice_cup'];
+        $riga['id_documento_fe'] = $contratto['id_documento_fe'];
+
+        $delete = 'unlink_contratto';
     }
     // Righe generiche
     else {
@@ -69,7 +85,7 @@ foreach ($righe as $riga) {
 
     // Individuazione dei seriali
     if (!empty($riga['abilita_serial'])) {
-        $serials = $riga->serials;
+        $serials = $row->serials;
         $mancanti = $riga['qta'] - count($serials);
 
         if ($mancanti > 0) {
@@ -79,11 +95,22 @@ foreach ($righe as $riga) {
         }
     }
 
+    $extra_riga = '';
+    if (!$riga['is_descrizione']) {
+        $extra_riga = tr('_DESCRIZIONE_CONTO__ID_DOCUMENTO__NUMERO_RIGA__CODICE_CIG__CODICE_CUP_', [
+            '_DESCRIZIONE_CONTO_' => $riga['descrizione_conto'] ?: null,
+            '_ID_DOCUMENTO_' => $riga['id_documento_fe'] ? ' - DOC: '.$riga['id_documento_fe'] : null,
+            '_NUMERO_RIGA_' => $riga['num_item'] ? ', NRI: '.$riga['num_item'] : null,
+            '_CODICE_CIG_' => $riga['codice_cig'] ? ', CIG: '.$riga['codice_cig'] : null,
+            '_CODICE_CUP_' => $riga['codice_cup'] ? ', CUP: '.$riga['codice_cup'] : null,
+        ]);
+    }
+
     echo '
     <tr data-id="'.$riga['id'].'" '.$extra.'>
         <td>
-            '.Modules::link($ref_modulo, $ref_id, $riga['descrizione']).'
-            <small class="pull-right text-muted">'.$riga['descrizione_conto'].'</small>';
+            '.Modules::link($row->isArticolo() ? Modules::get('Articoli')['id'] : null, $row->isArticolo() ? $riga['idarticolo'] : null, $riga['descrizione']).'
+            <small class="pull-right text-muted">'.$extra_riga.'</small>';
 
     if (!empty($riga['abilita_serial'])) {
         if (!empty($mancanti)) {
@@ -111,7 +138,7 @@ foreach ($righe as $riga) {
             <br>'.Modules::link('Fatture di vendita', $record['ref_documento'], $text, $text);
     }
 
-    $ref = doc_references($r, $dir, ['iddocumento']);
+    $ref = doc_references($riga, $dir, ['iddocumento']);
     if (!empty($ref)) {
         echo '
             <br>'.Modules::link($ref['module'], $ref['id'], $ref['description'], $ref['description']);
@@ -123,9 +150,9 @@ foreach ($righe as $riga) {
     echo '
         <td class="text-center">';
 
-    if (!$riga instanceof Descrizione) {
+    if (!$row->isDescrizione()) {
         echo '
-            '.Translator::numberToLocale($riga->qta, 'qta');
+            '.Translator::numberToLocale($riga['qta'], 'qta');
     }
 
     echo '
@@ -135,7 +162,7 @@ foreach ($righe as $riga) {
     echo '
         <td class="text-center">';
 
-    if (!$riga instanceof Descrizione) {
+    if (!$row->isDescrizione()) {
         echo '
             '.$riga['um'];
     }
@@ -147,22 +174,22 @@ foreach ($righe as $riga) {
     echo '
         <td class="text-right">';
 
-    if (!$riga instanceof Descrizione) {
+    if (!$row->isDescrizione()) {
         echo '
-            '.Translator::numberToLocale($riga->prezzo_unitario_vendita).' &euro;';
+            '.Translator::numberToLocale($row->prezzo_unitario_vendita).' &euro;';
 
         if ($dir == 'entrata') {
             echo '
             <br><small>
-                '.tr('Acquisto').': '.Translator::numberToLocale($riga->prezzo_unitario_acquisto).' &euro;
+                '.tr('Acquisto').': '.Translator::numberToLocale($row->prezzo_unitario_acquisto).' &euro;
             </small>';
         }
 
-        if ($riga->sconto_unitario > 0) {
+        if ($row->sconto_unitario > 0) {
             echo '
             <br><small class="label label-danger">'.tr('sconto _TOT_ _TYPE_', [
-                '_TOT_' => Translator::numberToLocale($riga->sconto_unitario),
-                '_TYPE_' => ($riga->tipo_sconto == 'PRC' ? '%' : '&euro;'),
+                '_TOT_' => Translator::numberToLocale($row->sconto_unitario),
+                '_TYPE_' => ($row->tipo_sconto == 'PRC' ? '%' : '&euro;'),
             ]).'</small>';
         }
     }
@@ -174,10 +201,10 @@ foreach ($righe as $riga) {
     echo '
         <td class="text-right">';
 
-    if (!$riga instanceof Descrizione) {
+    if (!$row->isDescrizione()) {
         echo '
-            '.Translator::numberToLocale($riga->iva).' &euro;
-            <br><small class="help-block">'.$riga->desc_iva.'</small>';
+            '.Translator::numberToLocale($riga['iva']).' &euro;
+            <br><small class="'.(($row->aliquota->deleted_at) ? 'text-red' : '').' help-block">'.$row->desc_iva.(($row->aliquota->esente) ? ' ('.$row->aliquota->codice_natura_fe.')' : null).'</small>';
     }
 
     echo '
@@ -186,12 +213,12 @@ foreach ($righe as $riga) {
     // Importo
     echo '
         <td class="text-right">';
-    if (!$riga instanceof Descrizione) {
+    if (!$row->isDescrizione()) {
         echo '
-            '.Translator::numberToLocale($riga->imponibile_scontato).' &euro;';
+            '.Translator::numberToLocale($riga['imponibile_scontato']).' &euro;';
         /*
-        <br><small class="text-'.($riga->guadagno > 0 ? 'success' : 'danger').'">
-            '.tr('Guadagno').': '.Translator::numberToLocale($riga->guadagno).' &euro;
+        <br><small class="text-'.($row->guadagno > 0 ? 'success' : 'danger').'">
+            '.tr('Guadagno').': '.Translator::numberToLocale($row->guadagno).' &euro;
         </small>';
         */
     }
@@ -209,7 +236,7 @@ foreach ($righe as $riga) {
                 <input type='hidden' name='idriga' value='".$riga['id']."'>
                 <input type='hidden' name='op' value='".$delete."'>";
 
-        if ($riga instanceof Articolo) {
+        if ($row->isArticolo()) {
             echo "
                 <input type='hidden' name='idarticolo' value='".$riga['idarticolo']."'>";
         }
@@ -217,7 +244,7 @@ foreach ($righe as $riga) {
         echo "
                 <div class='input-group-btn'>";
 
-        if (!$fattura->isNotaDiAccredito() && $riga instanceof Articolo && $riga['abilita_serial'] && (empty($riga['idddt']) || empty($riga['idintervento']))) {
+        if (!$fattura->isNotaDiAccredito() && $row->isArticolo() && $riga['abilita_serial'] && (empty($riga['idddt']) || empty($riga['idintervento']))) {
             echo "
                     <a class='btn btn-primary btn-xs'data-toggle='tooltip' title='Aggiorna SN...' onclick=\"launch_modal( 'Aggiorna SN', '".$rootdir.'/modules/fatture/add_serial.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga['id'].'&idarticolo='.$riga['idarticolo']."', 1 );\"><i class='fa fa-barcode' aria-hidden='true'></i></a>";
         }
@@ -307,8 +334,15 @@ if (!empty($sconto)) {
 if (!empty($fattura->rivalsa_inps)) {
     echo '
     <tr>
-        <td colspan="5" class="text-right">
-            <b>'.tr('Rivalsa INPS', [], ['upper' => true]).':</b>
+        <td colspan="5" class="text-right">';
+
+    if ($dir == 'entrata') {
+        echo '
+				<span class="tip" title="'.$database->fetchOne('SELECT CONCAT_WS(\' - \', codice, descrizione) AS descrizione FROM fe_tipo_cassa WHERE codice = '.prepare(setting('Tipo Cassa')))['descrizione'].'"  > <i class="fa fa-question-circle-o"></i></span> ';
+    }
+
+    echo '
+			<b>'.tr('Rivalsa', [], ['upper' => true]).' :</b>
         </td>
         <td align="right">
             '.Translator::numberToLocale($fattura->rivalsa_inps).' &euro;
@@ -372,6 +406,20 @@ if (!empty($fattura->ritenuta_acconto)) {
         </td>
         <td align="right">
             '.Translator::numberToLocale($fattura->ritenuta_acconto).' &euro;
+        </td>
+        <td></td>
+    </tr>';
+}
+
+// RITENUTA CONTRIBUTI
+if (!empty($fattura->totale_ritenuta_contributi)) {
+    echo '
+    <tr>
+        <td colspan="5" class="text-right">
+            <b>'.tr('Ritenuta contributi', [], ['upper' => true]).':</b>
+        </td>
+        <td align="right">
+            '.Translator::numberToLocale($fattura->totale_ritenuta_contributi).' &euro;
         </td>
         <td></td>
     </tr>';

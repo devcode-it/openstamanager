@@ -5,7 +5,7 @@ include_once __DIR__.'/../../core.php';
 $module = Modules::get('Interventi');
 $id_module = $module['id'];
 
-$total = App::readQuery($module);
+$total = Util\Query::readQuery($module);
 
 // Lettura parametri modulo
 $module_query = $total['query'];
@@ -18,7 +18,7 @@ if (is_array($_SESSION['module_'.$id_module])) {
             $field_name = str_replace('search_', '', $field);
             $field_name = str_replace('__', ' ', $field_name);
             $field_name = str_replace('-', ' ', $field_name);
-            array_push($search_filters, '`'.$field_name.'` LIKE "%'.$field_value.'%"');
+            array_push($search_filters, '`'.$field_name.'` LIKE "%'.$value.'%"');
         }
     }
 }
@@ -370,7 +370,7 @@ if (sizeof($rs2) > 0) {
 
         // Prezzo unitario
         $body .= "<td class='table_cell' align='center'>\n";
-        $netto = $rs2[$i]['prezzo'];
+        $netto = $rs2[$i]['prezzo_vendita'];
         $body .= '<span>'.Translator::numberToLocale($netto)." &euro;</span>\n";
         $body .= "</td>\n";
 

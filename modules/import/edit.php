@@ -35,16 +35,15 @@ if (empty($id_record)) {
 
     <div class="row">
         <div class="col-md-8">
-            {[ "type": "checkbox", "label": "'.tr('Importa prima riga').'", "name": "first_row", "extra":"", "value": "1"  ]}
+            {[ "type": "checkbox", "label": "'.tr('Importa prima riga').'", "name": "include_first_row", "extra":"", "value": "1"  ]}
         </div>
         <div class="col-md-4">
             {[ "type": "select", "label": "'.tr('Chiave primaria').'", "name": "primary_key", "values": '.json_encode($select2).', "value": "'.$primary_key.'" ]}
         </div>
     </div>';
 
-    $rows = Import::getFile($id_record, $record['id'], [
-        'limit' => 10,
-    ]);
+    $csv = Import::getCSV($id_record, $record['id']);
+    $rows = $csv->setLimit(10)->fetchAll();
 
     $count = count($rows[0]);
 
@@ -67,7 +66,7 @@ if (empty($id_record)) {
         $selected = null;
         foreach ($fields as $key => $value) {
             if (in_array(str_to_lower($rows[0][$column]), $value['names'])) {
-                $first_row = 1;
+                $exclude_first_row = 1;
                 $selected = $key;
                 break;
             }
@@ -111,13 +110,59 @@ if (empty($id_record)) {
 <script>
 $(document).ready(function(){';
 
-    if ($first_row) {
+    if ($exclude_first_row) {
         echo '
-    $("#first_row").prop("checked", false).trigger("change");';
+    $("#include_first_row").prop("checked", false).trigger("change");';
     }
 
     echo '
     $("#save").html("<i class=\"fa fa-flag-checkered\"></i> '.tr('Avvia importazione').'");
+    
+    $("#save").unbind("click");
+    $("#save").on("click", function() {
+        importPage(0);
+    });
 });
+
+var count = 0;
+function importPage(page){
+    $("#main_loading").show();
+
+    data = {
+        id_module: "'.$id_module.'",
+        id_plugin: "'.$id_plugin.'",
+        id_record: "'.$id_record.'",
+        page: page,
+    };
+    
+    $("#edit-form").ajaxSubmit({
+        url: globals.rootdir + "/actions.php",
+        data: data,
+        type: "post",
+        success: function(data) {
+            data = JSON.parse(data);
+            
+            count += data.count;
+            
+            if(data.more) {
+                importPage(page + 1);
+            } else {
+                $("#main_loading").fadeOut();
+
+                swal({
+                    title: "'.tr('Importazione completata: _COUNT_  righe processate', [
+                        '_COUNT_' => '" + count + "',
+                    ]).'",
+                    type: "success",
+                });
+            }
+        },
+        error: function(data) {
+            $("#main_loading").fadeOut();
+
+            alert("'.tr('Errore').': " + data);
+        }
+    });
+};
 </script>';
 }

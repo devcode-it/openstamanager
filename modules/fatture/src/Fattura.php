@@ -4,6 +4,8 @@ namespace Modules\Fatture;
 
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\RitenuteContributi\RitenutaContributi;
+use Plugins\ExportFE\FatturaElettronica;
 use Traits\RecordTrait;
 use Util\Generator;
 
@@ -86,6 +88,9 @@ class Fattura extends Document
         $model->idconto = $id_conto;
         $model->idsede = $id_sede;
 
+        $id_ritenuta_contributi = ($tipo_documento->dir == 'entrata') ? setting('Ritenuta contributi') : null;
+        $model->id_ritenuta_contributi = $id_ritenuta_contributi ?: null;
+
         if (!empty($id_pagamento)) {
             $model->idpagamento = $id_pagamento;
         }
@@ -134,6 +139,8 @@ class Fattura extends Document
         return $this->tipo->dir == 'entrata' ? 'Fatture di vendita' : 'Fatture di acquisto';
     }
 
+    // Calcoli
+
     /**
      * Calcola il netto a pagare della fattura.
      *
@@ -141,7 +148,148 @@ class Fattura extends Document
      */
     public function getNettoAttribute()
     {
-        return parent::getNettoAttribute() + $this->bollo;
+        return $this->calcola('netto') + $this->bollo;
+    }
+
+    /**
+     * Calcola la rivalsa INPS totale della fattura.
+     *
+     * @return float
+     */
+    public function getRivalsaINPSAttribute()
+    {
+        return $this->calcola('rivalsa_inps');
+    }
+
+    /**
+     * Calcola l'IVA totale della fattura.
+     *
+     * @return float
+     */
+    public function getIvaAttribute()
+    {
+        return $this->calcola('iva', 'iva_rivalsa_inps');
+    }
+
+    /**
+     * Calcola l'iva della rivalsa INPS totale della fattura.
+     *
+     * @return float
+     */
+    public function getIvaRivalsaINPSAttribute()
+    {
+        return $this->calcola('iva_rivalsa_inps');
+    }
+
+    /**
+     * Calcola la ritenuta d'acconto totale della fattura.
+     *
+     * @return float
+     */
+    public function getRitenutaAccontoAttribute()
+    {
+        return $this->calcola('ritenuta_acconto');
+    }
+
+    public function getTotaleRitenutaContributiAttribute()
+    {
+        return $this->calcola('ritenuta_contributi');
+    }
+
+    // Relazioni Eloquent
+
+    public function anagrafica()
+    {
+        return $this->belongsTo(Anagrafica::class, 'idanagrafica');
+    }
+
+    public function tipo()
+    {
+        return $this->belongsTo(Tipo::class, 'idtipodocumento');
+    }
+
+    public function stato()
+    {
+        return $this->belongsTo(Stato::class, 'idstatodocumento');
+    }
+
+    public function statoFE()
+    {
+        return $this->belongsTo(StatoFE::class, 'codice_stato_fe');
+    }
+
+    public function articoli()
+    {
+        return $this->hasMany(Components\Articolo::class, 'iddocumento');
+    }
+
+    public function righe()
+    {
+        return $this->hasMany(Components\Riga::class, 'iddocumento');
+    }
+
+    public function descrizioni()
+    {
+        return $this->hasMany(Components\Descrizione::class, 'iddocumento');
+    }
+
+    public function scontoGlobale()
+    {
+        return $this->hasOne(Components\Sconto::class, 'iddocumento');
+    }
+
+    public function ritenutaContributi()
+    {
+        return $this->belongsTo(RitenutaContributi::class, 'id_ritenuta_contributi');
+    }
+
+    // Metodi generali
+
+    public function getXML()
+    {
+        if (empty($this->progressivo_invio)) {
+            $fe = new FatturaElettronica($this->id);
+
+            return $fe->toXML();
+        }
+
+        $file = $this->uploads()->where('name', 'Fattura Elettronica')->first();
+
+        return file_get_contents($file->filepath);
+    }
+
+    public function isFE()
+    {
+        return !empty($this->progressivo_invio) && $this->module == 'Fatture di acquisto';
+    }
+
+    public function registraScadenzeFE($is_pagato = false)
+    {
+        $database = $dbo = database();
+
+        $xml = \Util\XML::read($this->getXML());
+
+        $pagamenti = $xml['FatturaElettronicaBody']['DatiPagamento']['DettaglioPagamento'];
+        if (!empty($pagamenti)) {
+            $scadenze = isset($pagamenti[0]) ? $pagamenti : [$pagamenti];
+
+            foreach ($scadenze as $scadenza) {
+                $data = $scadenza['DataScadenzaPagamento'] ?: $this->data;
+                $importo = $scadenza['ImportoPagamento'];
+
+                $dbo->insert('co_scadenziario', [
+                    'iddocumento' => $this->id,
+                    'data_emissione' => $this->data,
+                    'scadenza' => $data,
+                    'da_pagare' => -$importo,
+                    'tipo' => 'fattura',
+                    'pagato' => $is_pagato ? $importo : 0,
+                    'data_pagamento' => $is_pagato ? $data : '',
+                ], ['id' => $id_scadenza]);
+            }
+        }
+
+        return !empty($pagamenti);
     }
 
     /**
@@ -186,41 +334,6 @@ class Fattura extends Document
         ], $this->id);
     }
 
-    public function anagrafica()
-    {
-        return $this->belongsTo(Anagrafica::class, 'idanagrafica');
-    }
-
-    public function tipo()
-    {
-        return $this->belongsTo(Tipo::class, 'idtipodocumento');
-    }
-
-    public function stato()
-    {
-        return $this->belongsTo(Stato::class, 'idstatodocumento');
-    }
-
-    public function articoli()
-    {
-        return $this->hasMany(Components\Articolo::class, 'iddocumento');
-    }
-
-    public function righe()
-    {
-        return $this->hasMany(Components\Riga::class, 'iddocumento');
-    }
-
-    public function descrizioni()
-    {
-        return $this->hasMany(Components\Descrizione::class, 'iddocumento');
-    }
-
-    public function scontoGlobale()
-    {
-        return $this->hasOne(Components\Sconto::class, 'iddocumento');
-    }
-
     // Metodi statici
 
     /**
@@ -238,17 +351,14 @@ class Fattura extends Document
             return '';
         }
 
-        $database = database();
-
         // Recupero maschera per questo segmento
         $maschera = Generator::getMaschera($id_segment);
 
-        $ultima_fattura = $database->fetchOne('SELECT numero FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.Generator::getMascheraOrder($maschera, 'numero'), [
-            ':year' => date('Y', strtotime($data)),
-            ':id_segment' => $id_segment,
+        $ultimo = Generator::getPreviousFrom($maschera, 'co_documenti', 'numero', [
+            'YEAR(data) = '.prepare(date('Y', strtotime($data))),
+            'id_segment = '.prepare($id_segment),
         ]);
-
-        $numero = Generator::generate($maschera, $ultima_fattura['numero'], 1, Generator::dateToPattern($data));
+        $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data));
 
         return $numero;
     }
@@ -268,18 +378,15 @@ class Fattura extends Document
             return '';
         }
 
-        $database = database();
-
         // Recupero maschera per questo segmento
         $maschera = Generator::getMaschera($id_segment);
 
-        $ultima_fattura = $database->fetchOne('SELECT numero_esterno FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.Generator::getMascheraOrder($maschera, 'numero_esterno'), [
-            ':year' => date('Y', strtotime($data)),
-            ':id_segment' => $id_segment,
+        $ultimo = Generator::getPreviousFrom($maschera, 'co_documenti', 'numero_esterno', [
+            'YEAR(data) = '.prepare(date('Y', strtotime($data))),
+            'id_segment = '.prepare($id_segment),
         ]);
+        $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data));
 
-        $numero_esterno = Generator::generate($maschera, $ultima_fattura['numero_esterno'], 1, Generator::dateToPattern($data));
-
-        return $numero_esterno;
+        return $numero;
     }
 }

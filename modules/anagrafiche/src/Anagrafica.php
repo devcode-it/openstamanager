@@ -46,6 +46,7 @@ class Anagrafica extends Model
         $codice = Generator::generate(setting('Formato codice anagrafica'), $ultimo['codice']);
 
         $model->codice = $codice;
+        $model->id_ritenuta_acconto_vendite = setting("Percentuale ritenuta d'acconto");
         $model->save();
 
         $model->tipologie = $tipologie;
@@ -70,7 +71,7 @@ class Anagrafica extends Model
             $new_numero = $rs[0]['max_numero'] + 1;
             $new_numero = str_pad($new_numero, 6, '0', STR_PAD_LEFT);
 
-            $database->query('INSERT INTO co_pianodeiconti3(numero, descrizione, idpianodeiconti2, can_delete, can_edit) VALUES('.prepare($new_numero).', '.prepare(post('ragione_sociale')).", (SELECT id FROM co_pianodeiconti2 WHERE descrizione='Crediti clienti e crediti diversi'), 1, 1)");
+            $database->query('INSERT INTO co_pianodeiconti3(numero, descrizione, idpianodeiconti2, can_delete, can_edit) VALUES('.prepare($new_numero).', '.prepare($anagrafica->ragione_sociale).", (SELECT id FROM co_pianodeiconti2 WHERE descrizione='Crediti clienti e crediti diversi'), 1, 1)");
             $idconto = $database->lastInsertedID();
 
             // Collegamento conto
@@ -90,7 +91,7 @@ class Anagrafica extends Model
             $new_numero = $rs[0]['max_numero'] + 1;
             $new_numero = str_pad($new_numero, 6, '0', STR_PAD_LEFT);
 
-            $database->query('INSERT INTO co_pianodeiconti3(numero, descrizione, idpianodeiconti2, can_delete, can_edit) VALUES('.prepare($new_numero).', '.prepare(post('ragione_sociale')).", (SELECT id FROM co_pianodeiconti2 WHERE descrizione='Debiti fornitori e debiti diversi'), 1, 1)");
+            $database->query('INSERT INTO co_pianodeiconti3(numero, descrizione, idpianodeiconti2, can_delete, can_edit) VALUES('.prepare($new_numero).', '.prepare($anagrafica->ragione_sociale).", (SELECT id FROM co_pianodeiconti2 WHERE descrizione='Debiti fornitori e debiti diversi'), 1, 1)");
             $idconto = $database->lastInsertedID();
 
             // Collegamento conto

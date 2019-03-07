@@ -15,8 +15,8 @@ class Articolo extends Article
     /**
      * Crea un nuovo articolo collegato ad una preventivo.
      *
-     * @param Preventivo  $preventivo
-     * @param Original $articolo
+     * @param Preventivo $preventivo
+     * @param Original   $articolo
      *
      * @return self
      */
@@ -29,26 +29,7 @@ class Articolo extends Article
 
     public function movimenta($qta)
     {
-        $preventivo = $this->preventivo;
-        $tipo = $preventivo->tipo;
-
-        $numero = $preventivo->numero_esterno ?: $preventivo->numero;
-        $data = $preventivo->data;
-
-        $carico = ($tipo->dir == 'entrata') ? tr('Ripristino articolo da _TYPE_ _NUM_') : tr('Carico magazzino da _TYPE_ numero _NUM_');
-        $scarico = ($tipo->dir == 'entrata') ? tr('Scarico magazzino per _TYPE_ numero _NUM_') : tr('Rimozione articolo da _TYPE_ _NUM_');
-
-        $qta = ($tipo->dir == 'uscita') ? -$qta : $qta;
-        $movimento = ($qta < 0) ? $carico : $scarico;
-
-        $movimento = replace($movimento, [
-            '_TYPE_' => $tipo->descrizione,
-            '_NUM_' => $numero,
-        ]);
-
-        $this->articolo->movimenta(-$qta, $movimento, $data, false, [
-            'iddocumento' => $preventivo->id,
-        ]);
+        return;
     }
 
     public function getDirection()

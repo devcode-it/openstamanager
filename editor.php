@@ -12,19 +12,44 @@ if (empty($id_record) && !empty($id_module)) {
 
 include_once App::filepath('include|custom|', 'top.php');
 
-// Inclusione gli elementi fondamentali
-include_once $docroot.'/actions.php';
+Util\Query::setSegments(false);
+$query = Util\Query::getQuery($module, [
+    'id' => $id_record,
+]);
+Util\Query::setSegments(true);
 
-// Widget in alto
-echo '{( "name": "widgets", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "position": "top", "place": "editor" )}';
+$has_access = !empty($query) ? $dbo->fetchNum($query) !== 0 : true;
 
-$advanced_sessions = setting('Attiva notifica di presenza utenti sul record');
-if (!empty($advanced_sessions)) {
-    $dbo->query('DELETE FROM zz_semaphores WHERE id_utente='.prepare(Auth::user()['id']).' AND posizione='.prepare($id_module.', '.$id_record));
+if ($has_access) {
+    // Inclusione gli elementi fondamentali
+    include_once $docroot.'/actions.php';
+}
 
-    $dbo->query('INSERT INTO zz_semaphores (id_utente, posizione, updated) VALUES ('.prepare(Auth::user()['id']).', '.prepare($id_module.', '.$id_record).', NOW())');
-
+if (empty($record) || !$has_access) {
     echo '
+        <div class="text-center">
+    		<h3 class="text-muted">'.
+                '<i class="fa fa-question-circle"></i> '.tr('Record non trovato').'
+                <br><br>
+                <small class="help-block">'.tr('Stai cercando di accedere ad un record eliminato o non presente').'</small>
+            </h3>
+            <br>
+
+            <a class="btn btn-default" href="'.ROOTDIR.'/controller.php?id_module='.$id_module.'">
+                <i class="fa fa-chevron-left"></i> '.tr('Indietro').'
+            </a>
+        </div>';
+} else {
+    // Widget in alto
+    echo '{( "name": "widgets", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "position": "top", "place": "editor" )}';
+
+    $advanced_sessions = setting('Attiva notifica di presenza utenti sul record');
+    if (!empty($advanced_sessions)) {
+        $dbo->query('DELETE FROM zz_semaphores WHERE id_utente='.prepare(Auth::user()['id']).' AND posizione='.prepare($id_module.', '.$id_record));
+
+        $dbo->query('INSERT INTO zz_semaphores (id_utente, posizione, updated) VALUES ('.prepare(Auth::user()['id']).', '.prepare($id_module.', '.$id_record).', NOW())');
+
+        echo '
 		<div class="box box-warning box-solid text-center info-active hide">
 			<div class="box-header with-border">
 				<h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Attenzione!').'</h3>
@@ -36,12 +61,8 @@ if (!empty($advanced_sessions)) {
 				<p>'.tr('Prestare attenzione prima di effettuare modifiche, poichè queste potrebbero essere perse a causa di multipli salvataggi contemporanei').'.</p>
 			</div>
 		</div>';
-}
+    }
 
-if (empty($record)) {
-    echo '
-		<p>'.tr('Record non trovato').'.</p>';
-} else {
     echo '
 		<div class="nav-tabs-custom">
 			<ul class="nav nav-tabs pull-right" id="tabs" role="tablist">
@@ -310,11 +331,13 @@ redirectOperation($id_module, isset($id_parent) ? $id_parent : $id_record);
 // Widget in basso
 echo '{( "name": "widgets", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "position": "right", "place": "editor" )}';
 
-echo '
-		<hr>
-        <a href="'.ROOTDIR.'/controller.php?id_module='.$id_module.'">
-            <i class="fa fa-chevron-left"></i> '.tr('Indietro').'
-        </a>';
+if (!empty($record)) {
+    echo '
+    		<hr>
+            <a class="btn btn-default" href="'.ROOTDIR.'/controller.php?id_module='.$id_module.'">
+                <i class="fa fa-chevron-left"></i> '.tr('Indietro').'
+            </a>';
+}
 
 echo '
         <script>';
@@ -369,7 +392,6 @@ if ($read_only || !empty($block_edit)) {
             };
 
 			 window.addEventListener("unload", function(e) {
-				 //console.log(e);
 				$("#main_loading").show();
 			});
 

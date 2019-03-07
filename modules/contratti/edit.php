@@ -133,8 +133,8 @@ if ($record['stato'] == 'Emessa') {
 		</div>
 	</div>
 
-    <!-- Fatturazione Elettronica PA -->
-    <div class="panel panel-primary <?php echo (($record['tipo_anagrafica']) == 'Ente pubblico') ? 'show' : 'hide'; ?>" >
+    <!-- Fatturazione Elettronica -->
+    <div class="panel panel-primary <?php echo ($record['tipo_anagrafica'] == 'Ente pubblico' || $record['tipo_anagrafica'] == 'Azienda') ? 'show' : 'hide'; ?>" >
         <div class="panel-heading">
             <h3 class="panel-title"><?php echo tr('Dati appalto'); ?></h3>
         </div>
@@ -142,7 +142,11 @@ if ($record['stato'] == 'Emessa') {
         <div class="panel-body">
             <div class="row">
                 <div class="col-md-4">
-					{[ "type": "text", "label": "<?php echo tr('Identificatore Documento'); ?>", "name": "id_documento_fe", "required": 0, "value": "$id_documento_fe$", "maxlength": 20 ]}
+					{[ "type": "text", "label": "<?php echo tr('Identificatore Documento'); ?>", "help": "<?php echo tr('<span>Obbligatorio per valorizzare CIG/CUP. &Egrave; possible inserire: </span><ul><li>N. determina</li><li>RDO</li><li>Ordine MEPA</li></ul>'); ?>","name": "id_documento_fe", "required": 0, "value": "$id_documento_fe$", "maxlength": 20 ]}
+				</div>
+
+                <div class="col-md-4">
+					{[ "type": "text", "label": "<?php echo tr('Numero Riga'); ?>", "name": "num_item", "required": 0, "value": "$num_item$", "maxlength": 15 ]}
 				</div>
 
                 <div class="col-md-4">
@@ -378,12 +382,6 @@ if (!empty($record['idcontratto_prev'])) {
 
 {( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
-<form action='<?php echo $rootdir; ?>/editor.php?id_module=<?php echo Modules::get('Fatture di vendita')['id']; ?>' method='post' id='form_creafattura'>
-	<input type="hidden" name="backto" value="record-edit">
-	<input type='hidden' name='op' value='fattura_da_contratto'>
-	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
-</form>
-
 <script type="text/javascript">
     $(document).ready(function(){
         $('#data_accettazione').on("dp.change", function(){
@@ -405,10 +403,6 @@ if (!empty($record['idcontratto_prev'])) {
         $("#data_accettazione").trigger("dp.change");
         $("#data_rifiuto").trigger("dp.change");
     });
-
-	function fattura_da_contratto(){
-		$('#form_creafattura').submit();
-	}
 
 	$('#idanagrafica_c').change( function(){
         session_set('superselect,idanagrafica', $(this).val(), 0);

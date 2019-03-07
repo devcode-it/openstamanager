@@ -24,6 +24,7 @@ switch (post('op')) {
                 flash()->error(tr('Il numero scelto è già esistente!'));
             }
         }
+
         break;
 
     // Modifica conto nel partitario

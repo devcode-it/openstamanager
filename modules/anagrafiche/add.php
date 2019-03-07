@@ -21,17 +21,19 @@ echo '
 			{[ "type": "select", "label": "'.tr('Tipo di anagrafica').'", "name": "idtipoanagrafica[]", "multiple": "1", "required": 1, "values": "query=SELECT idtipoanagrafica AS id, descrizione FROM an_tipianagrafiche WHERE idtipoanagrafica NOT IN (SELECT DISTINCT(x.idtipoanagrafica) FROM an_tipianagrafiche_anagrafiche x INNER JOIN an_tipianagrafiche t ON x.idtipoanagrafica = t.idtipoanagrafica INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = x.idanagrafica WHERE t.descrizione = \'Azienda\' AND deleted_at IS NULL) ORDER BY descrizione", "value": "'.(isset($idtipoanagrafica) ? $idtipoanagrafica : null).'", "readonly": '.(!empty($readonly_tipo) ? 1 : 0).' ]}
 		</div>
 	</div>
-	
+
 	<div class="row">
+	
+		<div class="col-md-6">
+			{[ "type": "text", "label": "'.tr('Cognome').'", "name": "cognome", "required": 0 ]}
+		</div>
+		
 		<div class="col-md-6">
 			{[ "type": "text", "label": "'.tr('Nome').'", "name": "nome", "required": 0 ]}
 		</div>
 
-		<div class="col-md-6">
-			{[ "type": "text", "label": "'.tr('Cognome').'", "name": "cognome", "required": 0 ]}
-		</div>
+		
 	</div>';
-	
 
 echo '
     <div class="box box-info collapsed-box">
@@ -100,3 +102,27 @@ echo
 		</div>
 	</div>
 </form>';
+?>
+
+<script>
+    // Abilito solo ragione sociale oppure solo nome-cognome in base a cosa compilo
+    $('#nome, #cognome', '#bs-popup, #bs-popup2').keyup(function(){
+        if ($('#nome', '#bs-popup, #bs-popup2').val() == '' && $('#cognome', '#bs-popup, #bs-popup2').val() == '' ){
+            $('#nome, #cognome', '#bs-popup, #bs-popup2').prop('disabled', true).prop('required', false);
+            $('#ragione_sociale', '#bs-popup, #bs-popup2').prop('disabled', false).prop('required', true);
+        }else{
+            $('#nome, #cognome', '#bs-popup, #bs-popup2').prop('disabled', false).prop('required', true);
+            $('#ragione_sociale', '#bs-popup, #bs-popup2').prop('disabled', true).prop('required', false);
+        }
+    });
+
+    $('#ragione_sociale', '#bs-popup, #bs-popup2').keyup(function(){
+        if ($('#ragione_sociale', '#bs-popup, #bs-popup2').val() == '' ){
+            $('#nome, #cognome', '#bs-popup, #bs-popup2').prop('disabled', false).prop('required', true);
+            $('#ragione_sociale', '#bs-popup, #bs-popup2').prop('disabled', true).prop('required', false);
+        }else{
+            $('#nome, #cognome', '#bs-popup, #bs-popup2').prop('disabled', true).prop('required', false);
+            $('#ragione_sociale', '#bs-popup, #bs-popup2').prop('disabled', false).prop('required', true);
+        }
+    });
+</script>

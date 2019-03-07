@@ -358,7 +358,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
 {
     $dbo = database();
 
-    $id_rivalsa_inps = $id_rivalsa_inps !== false ? $id_rivalsa_inps : setting('Percentuale rivalsa INPS');
+    $id_rivalsa_inps = $id_rivalsa_inps !== false ? $id_rivalsa_inps : setting('Percentuale rivalsa');
     $id_ritenuta_acconto = $id_ritenuta_acconto !== false ? $id_ritenuta_acconto : setting("Percentuale ritenuta d'acconto");
     $calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto !== false ? $calcolo_ritenuta_acconto : setting("Metodologia calcolo ritenuta d'acconto predefinito");
 
@@ -391,7 +391,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
             $desc_iva = $rs[0]['descrizione'];
 
             // Calcolo rivalsa inps
-            $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare($id_rivalsa_inps);
+            $query = 'SELECT * FROM co_rivalse WHERE id='.prepare($id_rivalsa_inps);
             $rs = $dbo->fetchArray($query);
             $rivalsainps = ($subtot - $sconto) / 100 * $rs[0]['percentuale'];
 
@@ -425,7 +425,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
         $desc_iva = $rs[0]['descrizione'];
 
         // Calcolo rivalsa inps
-        $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare($id_rivalsa_inps);
+        $query = 'SELECT * FROM co_rivalse WHERE id='.prepare($id_rivalsa_inps);
         $rs = $dbo->fetchArray($query);
         $rivalsainps = $rst[$i]['tot_prezzo_dirittochiamata'] / 100 * $rs[0]['percentuale'];
 
@@ -482,7 +482,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
             $iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];
 
             // Calcolo rivalsa inps
-            $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare($id_rivalsa_inps);
+            $query = 'SELECT * FROM co_rivalse WHERE id='.prepare($id_rivalsa_inps);
             $rs = $dbo->fetchArray($query);
             $rivalsainps = ($subtot - $sconto) / 100 * $rs[0]['percentuale'];
 
@@ -513,7 +513,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
         $iva_indetraibile = $iva / 100 * $dati[0]['indetraibile'];
 
         // Calcolo rivalsa inps
-        $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare($id_rivalsa_inps);
+        $query = 'SELECT * FROM co_rivalse WHERE id='.prepare($id_rivalsa_inps);
         $dati = $dbo->fetchArray($query);
         $rivalsainps = ($subtot - $sconto) / 100 * $dati[0]['percentuale'];
 
@@ -543,7 +543,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
         $iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];
 
         // Calcolo rivalsa inps
-        $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare($id_rivalsa_inps);
+        $query = 'SELECT * FROM co_rivalse WHERE id='.prepare($id_rivalsa_inps);
         $rs = $dbo->fetchArray($query);
         $rivalsainps = ($subtot) / 100 * $rs[0]['percentuale'];
 

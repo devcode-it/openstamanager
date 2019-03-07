@@ -162,7 +162,7 @@ $totale = sum($totale, $record['bollo']);
 
 // Rivalsa INPS (+ bollo)
 if (!empty($record['rivalsainps'])) {
-    $rs2 = $dbo->fetchArray('SELECT percentuale FROM co_rivalsainps WHERE id=(SELECT idrivalsainps FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idrivalsainps!=0 LIMIT 0,1)');
+    $rs2 = $dbo->fetchArray('SELECT percentuale FROM co_rivalse WHERE id=(SELECT idrivalsainps FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idrivalsainps!=0 LIMIT 0,1)');
 
     $first_colspan = 3;
     $second_colspan = 2;
@@ -177,7 +177,7 @@ if (!empty($record['rivalsainps'])) {
     echo '
     <tr>
         <th class="text-center small" colspan="'.$first_colspan.'">
-            '.tr('Rivalsa INPS _PRC_%', [
+            '.tr('Rivalsa _PRC_%', [
                 '_PRC_' => Translator::numberToLocale($rs2[0]['percentuale'], 0),
             ], ['upper' => true]).'
         </th>';
@@ -218,8 +218,10 @@ if (!empty($record['rivalsainps'])) {
     </tr>';
 }
 
+$fattura = \Modules\Fatture\Fattura::find($id_record);
+
 // Ritenuta d'acconto ( + bollo, se no rivalsa inps)
-if (!empty($record['ritenutaacconto']) or (!empty($record['spit_payment']))) {
+if (!empty($record['ritenutaacconto']) || !empty($fattura->totale_ritenuta_contributi) || !empty($record['spit_payment'])) {
     $rs2 = $dbo->fetchArray('SELECT percentuale FROM co_ritenutaacconto WHERE id=(SELECT idritenutaacconto FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idritenutaacconto!=0 LIMIT 0,1)');
 
     $first_colspan = 3;
@@ -232,11 +234,19 @@ if (!empty($record['ritenutaacconto']) or (!empty($record['spit_payment']))) {
         --$second_colspan;
     }
 
+    $contributi = (!empty($record['ritenutaacconto']) ? ' - ' : '').tr('contributi: _PRC_%', [
+        '_PRC_' => Translator::numberToLocale($fattura->ritenutaContributi->percentuale, 0),
+    ]);
+    $acconto = tr('acconto: _PRC_%', [
+        '_PRC_' => Translator::numberToLocale($rs2[0]['percentuale'], 0),
+    ]);
+
     echo '
     <tr>
         <th class="text-center small" colspan="'.$first_colspan.'">
-            '.tr("Ritenuta d'acconto _PRC_%", [
-                '_PRC_' => Translator::numberToLocale($rs2[0]['percentuale'], 0),
+            '.tr('Ritenuta (_ACCONTO__CONTRIBUTI_)', [
+            '_ACCONTO_' => $acconto,
+            '_CONTRIBUTI_' => empty($fattura->ritenutaContributi) ? null : $contributi,
             ], ['upper' => true]).'
         </th>';
 
@@ -263,7 +273,7 @@ if (!empty($record['ritenutaacconto']) or (!empty($record['spit_payment']))) {
 
     <tr>
         <td class="cell-padded text-center" colspan="'.$first_colspan.'">
-            '.Translator::numberToLocale($record['ritenutaacconto']).' &euro;
+            '.Translator::numberToLocale($record['ritenutaacconto'] + $fattura->totale_ritenuta_contributi).' &euro;
         </td>';
 
     if (empty($record['rivalsainps']) && abs($record['bollo']) > 0) {
@@ -277,7 +287,7 @@ if (!empty($record['ritenutaacconto']) or (!empty($record['spit_payment']))) {
     echo '
 
         <td class="cell-padded text-center" colspan="'.$second_colspan.'">
-            '.Translator::numberToLocale($totale - $record['ritenutaacconto']).' &euro;
+            '.Translator::numberToLocale($totale - $record['ritenutaacconto'] - $fattura->totale_ritenuta_contributi).' &euro;
         </td>
     </tr>';
 }
@@ -305,7 +315,7 @@ if (!empty($record['split_payment'])) {
         </td>
 
         <td class="cell-padded text-center" colspan="'.$second_colspan.'">
-            '.Translator::numberToLocale($totale - $totale_iva - $record['ritenutaacconto']).' &euro;
+            '.Translator::numberToLocale($totale - $totale_iva - $record['ritenutaacconto'] - $fattura->totale_ritenuta_contributi).' &euro;
         </td>
     </tr>';
 }

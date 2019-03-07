@@ -22,6 +22,6 @@ trait UploadTrait
 
     public function uploads($id_record)
     {
-        return $this->hasMany(Upload::class, $this->upload_identifier)->where('id_record', $id_record)->get()->groupBy('category');
+        return $this->hasMany(Upload::class, $this->upload_identifier)->where('id_record', $id_record)->get();
     }
 }

@@ -11,11 +11,12 @@ class Articolo extends Article
     use RelationTrait;
 
     protected $table = 'or_righe_ordini';
+    protected $serialRowID = 'ordine';
 
     /**
      * Crea un nuovo articolo collegato ad una ordine.
      *
-     * @param Ordine  $ordine
+     * @param Ordine   $ordine
      * @param Original $articolo
      *
      * @return self
@@ -47,7 +48,7 @@ class Articolo extends Article
         ]);
 
         $this->articolo->movimenta(-$qta, $movimento, $data, false, [
-            'iddocumento' => $ordine->id,
+            'idordine' => $ordine->id,
         ]);
     }
 

@@ -44,16 +44,16 @@ switch ($periodo[0]) {
         break;
 }*/
 
-$query = 'SELECT *, SUM(subtotale-co_righe_documenti.sconto) AS subtotale, SUM(iva) AS iva, (SELECT ragione_sociale FROM an_anagrafiche WHERE an_anagrafiche.idanagrafica=co_documenti.idanagrafica) AS ragione_sociale FROM co_documenti INNER JOIN co_righe_documenti ON co_documenti.id=co_righe_documenti.iddocumento INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE dir = '.prepare($dir).' AND idstatodocumento NOT IN (SELECT id FROM co_statidocumento WHERE descrizione="Bozza" OR descrizione="Annullata") AND is_descrizione = 0 AND co_documenti.data >= '.prepare($date_start).' AND co_documenti.data <= '.prepare($date_end).' GROUP BY co_documenti.id, co_righe_documenti.idiva ORDER BY co_documenti.data';
+$query = 'SELECT *, IF(numero = "", numero_esterno, numero) AS numero, SUM(subtotale-co_righe_documenti.sconto) AS subtotale, SUM(iva) AS iva, (SELECT ragione_sociale FROM an_anagrafiche WHERE an_anagrafiche.idanagrafica=co_documenti.idanagrafica) AS ragione_sociale FROM co_documenti INNER JOIN co_righe_documenti ON co_documenti.id=co_righe_documenti.iddocumento INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE dir = '.prepare($dir).' AND idstatodocumento NOT IN (SELECT id FROM co_statidocumento WHERE descrizione="Bozza" OR descrizione="Annullata") AND is_descrizione = 0 AND co_documenti.data >= '.prepare($date_start).' AND co_documenti.data <= '.prepare($date_end).' GROUP BY co_documenti.id, co_righe_documenti.idiva ORDER BY co_documenti.'.(($dir == 'entrata') ? 'data' : 'numero');
 $rs = $dbo->fetchArray($query);
 
 if ('entrata' == $dir) {
-    $body .= "<span style='font-size:15pt; margin-left:6px;'><b>".tr('Registro iva vendita dal _START_ al _END_', [
+    $body .= "<span style='font-size:15pt;'><b>".tr('Registro iva vendita dal _START_ al _END_', [
         '_START_' => Translator::dateToLocale($date_start),
         '_END_' => Translator::dateToLocale($date_end),
     ], ['upper' => true]).'</b></span><br><br>';
 } elseif ('uscita' == $dir) {
-    $body .= "<span style='font-size:15pt; margin-left:6px;'><b>".tr('Registro iva acquisto dal _START_ al _END_', [
+    $body .= "<span style='font-size:15pt;'><b>".tr('Registro iva acquisto dal _START_ al _END_', [
         '_START_' => Translator::dateToLocale($date_start),
         '_END_' => Translator::dateToLocale($date_end),
     ], ['upper' => true]).'</b></span><br><br>';
@@ -64,7 +64,7 @@ $body .= "
             <col width='90'><col width='90'><col width='90'><col width='275'><col width='120'><col width='90'><col width='90'><col width='90'>
             <thead>
             <tr>
-				 <th bgcolor='#dddddd' class='full_cell1 cell-padded'>N<sup>o</sup> prot.</th>
+				<th bgcolor='#dddddd' class='full_cell1 cell-padded'>N<sup>o</sup> prot.</th>
                 <th bgcolor='#dddddd' class='full_cell1 cell-padded'>N<sup>o</sup> doc.</th>
                 <th bgcolor='#dddddd' class='full_cell cell-padded'>Data</th>
                 <th bgcolor='#dddddd' class='full_cell cell-padded'>".(($dir == 'entrata') ? 'Cliente' : 'Fornitore')."</th>
@@ -80,9 +80,9 @@ for ($i = 0; $i < sizeof($rs); ++$i) {
     $body .= '<tr>';
 
     if ($rs[$i]['numero'] == $rs[$i - 1]['numero']) {
-        $body .= "	<td class='first_cell cell-padded text-center'></td>";
-        $body .= "	<td class='table_cell cell-padded text-center'></td>";
-        $body .= "	<td class='table_cell cell-padded text-center'></td>";
+        $body .= "	<td class='first_cell cell-padded text-center'> - </td>";
+        $body .= "	<td class='table_cell cell-padded text-center'> - </td>";
+        $body .= "	<td class='table_cell cell-padded text-center'> - </td>";
     } else {
         $body .= "	<td class='first_cell cell-padded text-center'>".$rs[$i]['numero'].'</td>';
         $body .= "	<td class='table_cell cell-padded text-center'>".$rs[$i]['numero_esterno'].'</td>';
@@ -108,7 +108,7 @@ $body .= '
         </table>
             ';
 
-$body .= "<br><br><span style='font-size:12pt; margin-left:6px;'><b>RIEPILOGO IVA</b></span><br><br>";
+$body .= "<br><br><span style='font-size:12pt;'><b>RIEPILOGO IVA</b></span><br><br>";
 
 $body .= "
         <table cellspacing='0' style='table-layout:fixed;'>

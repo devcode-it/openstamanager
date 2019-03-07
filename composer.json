@@ -60,8 +60,9 @@
         "symfony/var-dumper": "^3.3"
     },
     "require-dev": {
-        "codeception/codeception": "2.4.*",
-        "friendsofphp/php-cs-fixer": "^2.10"
+        "codeception/codeception": "^2.4",
+        "friendsofphp/php-cs-fixer": "^2.10",
+        "phpmd/phpmd": "2.6.0"
     },
     "autoload": {
         "psr-4": {

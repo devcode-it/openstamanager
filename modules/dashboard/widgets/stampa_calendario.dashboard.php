@@ -10,7 +10,7 @@ echo '
 
 	<div class="row">
 
-		<div class="col-md-6">
+		<div class="col-md-4">
 			{[ "type": "text", "label": "'.tr('Anno Mese').'", "name": "anno-mese", "required": "1", "extra":"readonly", "value": "'.$_SESSION['period']['month'].'" ]}
 		</div>
 
@@ -18,14 +18,14 @@ echo '
 			{[ "type": "select", "label": "'.tr('Formato').'", "name": "format", "required": "1", "values": "list=\"A4\": \"'.tr('A4').'\", \"A3\": \"'.tr('A3').'\"", "value": "'.$_SESSION['settings']['format'].'" ]}
 		</div>
 
-		<div class="col-md-2">
+		<div class="col-md-4">
 			{[ "type": "select", "label": "'.tr('Orientamento').'", "name": "orientation", "required": "1", "values": "list=\"L\": \"'.tr('Orizzontale').'\", \"P\": \"'.tr('Verticale').'\"", "value": "'.$_SESSION['settings']['orientation'].'" ]}
 		</div>
 
 
 		<div class="col-md-2">
 			<p style="line-height:14px;">&nbsp;</p>
-			<button type="submit" class="btn btn-primary"><i class="fa fa-print"></i> '.tr('Stampa').'</button>
+			<button type="submit" class="btn btn-primary btn-block"><i class="fa fa-print"></i> '.tr('Stampa').'</button>
 		</div>
 
 	</div>

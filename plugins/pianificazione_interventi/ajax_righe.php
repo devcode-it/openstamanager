@@ -7,7 +7,7 @@ $is_add = filter('add') ? true : false;
 
 $pricing = Auth::admin() || Auth::user()['gruppo'] != 'Tecnici';
 
-$rs2 = $dbo->fetchArray('SELECT * FROM co_promemoria_righe WHERE id_promemoria='.prepare($id_record).' '.Modules::getAdditionalsQuery('Magazzino').' ORDER BY id ASC');
+$rs2 = $dbo->fetchArray('SELECT * FROM co_promemoria_righe WHERE id_promemoria='.prepare($id_record).' ORDER BY id ASC');
 
 if (!empty($rs2)) {
     echo '

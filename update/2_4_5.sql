@@ -7,7 +7,6 @@ UPDATE `fe_stati_documento` SET `icon` = 'fa fa-check text-success' WHERE `codic
 ALTER TABLE `an_anagrafiche` ADD `split_payment` BOOLEAN NOT NULL DEFAULT FALSE AFTER `codice_destinatario`;
 
 -- Prezzo di acquisto in Fatture di vendita e Preventivi
-
 ALTER TABLE `co_righe_documenti` ADD `prezzo_unitario_acquisto` DECIMAL(12,4) NOT NULL AFTER `descrizione`;
 ALTER TABLE `co_righe_preventivi` ADD `prezzo_unitario_acquisto` DECIMAL(12,4) NOT NULL AFTER `descrizione`;
 
@@ -36,10 +35,8 @@ UPDATE `zz_settings` SET `tipo` = 'query=SELECT ''IMP'' AS id, ''Imponibile'' AS
 UPDATE `an_anagrafiche` SET `provincia` = UPPER(provincia);
 UPDATE `an_sedi` SET `provincia` = UPPER(provincia);
 
-
 -- Colonna Codice Modalità (Pagamenti)
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default` ) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Pagamenti'), 'Codice Modalità', 'codice_modalita_pagamento_fe', 2, 1, 0, 0, NULL, NULL, 1, 0, 0);
-
 
 -- Impostazione "Anagrafica del terzo intermediario"
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES (NULL, 'Terzo intermediario', '', 'query=SELECT `an_anagrafiche`.`idanagrafica` AS ''id'', `ragione_sociale` AS ''descrizione'' FROM `an_anagrafiche` INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `an_tipianagrafiche_anagrafiche`.`idanagrafica` WHERE `idtipoanagrafica` = (SELECT `idtipoanagrafica` FROM `an_tipianagrafiche` WHERE `descrizione` = ''Fornitore'') AND `deleted_at` IS NULL', '1', 'Fatturazione Elettronica');
@@ -48,7 +45,36 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 ALTER TABLE `an_anagrafiche` CHANGE `nome_cognome` `nome` VARCHAR(255) NOT NULL;
 ALTER TABLE `an_anagrafiche` ADD `cognome` VARCHAR(255) NOT NULL AFTER `nome`;
 
-
 -- Colonna Rif. fattura (Prima nota)
-INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default` ) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima nota'), 'Rif. fattura', 'IF((iddocumento != ''),(SELECT numero_esterno FROM co_documenti WHERE id = iddocumento), ''-'')', 2, 1, 0, 0, NULL, NULL, 1, 0, 0);
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default` ) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima nota'), 'Rif. fattura', '(SELECT numero_esterno FROM co_documenti WHERE id = iddocumento)', 2, 1, 0, 0, NULL, NULL, 1, 0, 0);
 
+-- Aumento decimali percentuali delle rate pagamenti a 2
+ALTER TABLE `co_pagamenti` CHANGE `prc` `prc` DECIMAL(5,2) NOT NULL; 
+
+-- Ordino gestione documentale per data, nome
+UPDATE `zz_modules` SET `options` = '{ "main_query": [ { "type": "table", "fields": "Categoria, Nome, Data", "query": "SELECT id,(SELECT descrizione FROM zz_documenti_categorie WHERE zz_documenti_categorie.id = idcategoria) AS Categoria, zz_documenti.nome AS Nome, DATE_FORMAT( zz_documenti.`data`, ''%d/%m/%Y'' ) AS `Data` FROM zz_documenti WHERE `data` >= ''|period_start|'' AND `data` <= ''|period_end|'' HAVING 1=1 ORDER BY data, nome"} ]}' WHERE `zz_modules`.`name` = 'Gestione documentale';
+
+-- Ordino Ddt anche per created_at (nel caso di stessa data e che il cast del numero esterno non sia efficace)
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `dt_ddt` INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id` WHERE 1=1 AND `dir` = ''entrata'' AND `data` >= ''|period_start|'' AND `data` <= ''|period_end|'' HAVING 2=2 ORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC,`dt_ddt`.created_at DESC' WHERE `zz_modules`.`name` = 'Ddt di vendita';
+
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `dt_ddt` INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id` WHERE 1=1 AND `dir` = ''uscita'' AND `data` >= ''|period_start|'' AND `data` <= ''|period_end|'' HAVING 2=2 ORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC, `dt_ddt`.created_at DESC' WHERE `zz_modules`.`id` = 'Ddt di acquisto';
+
+-- Aggiunti pagamenti mancanti Assegno circolare,Contanti presso Tesoreria, Vaglia cambiario, Bollettino bancario,  RID, RID utenze, RID veloce, MAV, Quietanza erario, Giroconto su conti di contabilità speciale, Domiciliazione bancaria, Domiciliazione postale, Bollettino di c/c postale, SEPA Direct Debit, SEPA Direct Debit CORE, SEPA Direct Debit B2B, Trattenuta su somme già riscosse
+INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, `codice_modalita_pagamento_fe`) VALUES
+(NULL, 'Assegno circolare', '0', '1', '100', 'MP03'),
+(NULL, 'Contanti presso Tesoreria', '0', '1', '100', 'MP04'),
+(NULL, 'Vaglia cambiario', '0', '1', '100', 'MP06'),
+(NULL, 'Bollettino bancario', '0', '1', '100', 'MP07'),
+(NULL, 'RID', '0', '1', '100', 'MP09'),
+(NULL, 'RID utenze', '0', '1', '100', 'MP10'),
+(NULL, 'RID veloce', '0', '1', '100', 'MP11'),
+(NULL, 'MAV', '0', '1', '100', 'MP13'),
+(NULL, 'Quietanza erario', '0', '1', '100', 'MP14'),
+(NULL, 'Giroconto su conti di contabilità speciale', '0', '1', '100', 'MP15'),
+(NULL, 'Domiciliazione bancaria', '0', '1', '100', 'MP16'),
+(NULL, 'Domiciliazione postale', '0', '1', '100', 'MP17'),
+(NULL, 'Bollettino di c/c postale', '0', '1', '100', 'MP18'),
+(NULL, 'SEPA Direct Debit', '0', '1', '100', 'MP19'),
+(NULL, 'SEPA Direct Debit CORE', '0', '1', '100', 'MP20'),
+(NULL, 'SEPA Direct Debit B2B', '0', '1', '100', 'MP21'),
+(NULL, 'Trattenuta su somme già riscosse', '0', '1', '100', 'MP22');

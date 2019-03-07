@@ -23,6 +23,11 @@ abstract class Description extends Model
         return $model;
     }
 
+    /**
+     * Imposta il proprietario dell'oggetto e l'ordine relativo all'interno delle righe.
+     *
+     * @param Document $document
+     */
     public function setParent(Document $document)
     {
         $this->parent()->associate($document);
@@ -35,8 +40,17 @@ abstract class Description extends Model
         $this->save();
     }
 
-    public function copiaIn(Document $document)
+    /**
+     * Copia l'oggetto (articolo, riga, descrizione) nel corrispettivo per il documento indicato.
+     *
+     * @param Document   $document
+     * @param float|null $qta
+     *
+     * @return self
+     */
+    public function copiaIn(Document $document, $qta = null)
     {
+        // Individuazione classe di destinazione
         $class = get_class($document);
         $namespace = implode('\\', explode('\\', $class, -1));
 
@@ -46,17 +60,43 @@ abstract class Description extends Model
 
         $object = $namespace.'\\Components\\'.$type;
 
+        // Attributi dell'oggetto da copiare
         $attributes = $this->getAttributes();
         unset($attributes['id']);
 
-        $model = $object::build($document);
+        if ($qta !== null) {
+            $attributes['qta'] = $qta;
+        }
+
+        // Creazione del nuovo oggetto
+        $model = new $object();
+
+        // Azioni specifiche di inizalizzazione
+        $model->customInitCopiaIn($this);
+
         $model->save();
 
+        // Impostazione degli attributi
         $model = $object::find($model->id);
         $accepted = $model->getAttributes();
 
+        // Azioni specifiche precedenti
+        $model->customBeforeDataCopiaIn($this);
+
         $attributes = array_intersect_key($attributes, $accepted);
         $model->fill($attributes);
+
+        // Impostazione del genitore
+        $model->setParent($document);
+
+        // Azioni specifiche successive
+        $model->customAfterDataCopiaIn($this);
+
+        $model->save();
+
+        // Rimozione quantità evasa
+        $this->qta_evasa = $this->qta_evasa + abs($attributes['qta']);
+        $this->save();
 
         return $model;
     }
@@ -64,6 +104,49 @@ abstract class Description extends Model
     abstract public function parent();
 
     abstract public function getParentID();
+
+    public function isDescrizione()
+    {
+        return $this->is_descrizione == 1;
+    }
+
+    public function isRiga()
+    {
+        return !$this->isDescrizione() && !$this->isArticolo();
+    }
+
+    public function isArticolo()
+    {
+        return !empty($this->idarticolo);
+    }
+
+    /**
+     * Azione personalizzata per la copia dell'oggetto (inizializzazione della copia).
+     *
+     * @param $original
+     */
+    protected function customInitCopiaIn($original)
+    {
+        $this->is_descrizione = $original->is_descrizione;
+    }
+
+    /**
+     * Azione personalizzata per la copia dell'oggetto (dopo la copia).
+     *
+     * @param $original
+     */
+    protected function customBeforeDataCopiaIn($original)
+    {
+    }
+
+    /**
+     * Azione personalizzata per la copia dell'oggetto (dopo la copia).
+     *
+     * @param $original
+     */
+    protected function customAfterDataCopiaIn($original)
+    {
+    }
 
     protected static function boot($bypass = false)
     {

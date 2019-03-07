@@ -133,23 +133,19 @@ echo '
 				</div>
 				<div class="box-body">';
 // Fatture di vendita
-$rsi = $dbo->fetchArray("SELECT data, ragione_sociale, (SELECT SUM(subtotale+iva) FROM co_righe_documenti WHERE iddocumento=co_documenti.id) AS totale FROM co_documenti INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica WHERE idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir='entrata') AND co_documenti.idanagrafica=".prepare($id_record));
-
 $totale_fatture_vendita = 0;
+$fatture = database()->fetchArray('SELECT id FROM co_documenti WHERE idanagrafica='.prepare($id_record));
+
+foreach ($fatture as $fattura) {
+    $totale_fatture_vendita = sum($totale_fatture_vendita, Modules\Fatture\Fattura::find($fattura['id'])->netto);
+}
+
 $data_start = strtotime('now');
 
-for ($i = 0; $i < count($rsi); ++$i) {
-    $totale_fatture_vendita += $rsi[$i]['totale'];
-
-    // Calcolo data più bassa per la ricerca
-    if (strtotime($rsi[$i]['data']) < $data_start) {
-        $data_start = strtotime($rsi[$i]['data']);
-    }
-}
-if (count($rsi) > 0) {
+if (count($fatture) > 0) {
     echo '
 					<p>'.tr('Sono state emesse <strong>_NUMBER_ fatture di vendita</strong> per un totale di _EUR_ &euro;', [
-                        '_NUMBER_' => count($rsi),
+                        '_NUMBER_' => count($fatture),
                         '_EUR_' => Translator::numberToLocale($totale_fatture_vendita),
                     ]).'</p>
 					<p><a href="'.$rootdir.'/controller.php?id_module='.Modules::get('Fatture di vendita')['id'].'&search_Ragione-sociale='.$rsi[0]['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-right"></i></a></p>';

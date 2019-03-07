@@ -7,6 +7,8 @@ $r = $dbo->fetchOne('SELECT co_documenti.*,
 	(SELECT pec FROM zz_smtps WHERE zz_smtps.id='.prepare($template['id_smtp']).') AS is_pec
 FROM co_documenti INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica WHERE co_documenti.id='.prepare($id_record));
 
+$logo_azienda = str_replace(DOCROOT, ROOTDIR, App::filepath('templates/base|custom|/logo_azienda.jpg'));
+
 // Variabili da sostituire
 return [
     'email' => $r['is_pec'] ? $r['pec'] : $r['email'],
@@ -15,4 +17,5 @@ return [
     'numero' => empty($r['numero_esterno']) ? $r['numero'] : $r['numero_esterno'],
     'note' => $r['note'],
     'data' => Translator::dateToLocale($r['data']),
+    'logo_azienda' => !empty($logo_azienda) ? '<img src="'.$logo_azienda.'" />' : '',
 ];

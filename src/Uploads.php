@@ -190,16 +190,15 @@ class Uploads
     /**
      * Effettua l'upload di un file nella cartella indicata.
      *
-     * @param array  $source
-     * @param string $directory
-     * @param array  $data
-     * @param array  $options
+     * @param array $source
+     * @param array $data
+     * @param array $options
      *
      * @return string
      */
     public static function upload($source, $data, $options = [])
     {
-        $original = isset($source['name']) ? $source['name'] : $source;
+        $original = isset($source['name']) ? $source['name'] : basename($source);
 
         $filename = self::getName($original, $data);
         $directory = DOCROOT.'/'.self::getDirectory($data['id_module'], $data['id_plugin']);

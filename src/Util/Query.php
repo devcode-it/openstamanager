@@ -147,7 +147,24 @@ class Query
                         $search_query = '`color_title_'.$m[1].'`';
                     }
 
-                    $search_filters[] = $search_query.' LIKE '.prepare('%'.$value.'%');
+                    // Gestione confronti
+                    $real_value = trim(str_replace(['&lt;', '&gt;'], ['<', '>'], $value));
+                    $more = starts_with($real_value, '>=') || starts_with($real_value, '> =') || starts_with($real_value, '>');
+                    $minus = starts_with($real_value, '<=') || starts_with($real_value, '< =') || starts_with($real_value, '<');
+
+                    if ($minus || $more) {
+                        $sign = str_contains($real_value, '=') ? '=' : '';
+                        if ($more) {
+                            $sign = '>'.$sign;
+                        } else {
+                            $sign = '<'.$sign;
+                        }
+
+                        $value = trim(str_replace(['&lt;', '=', '&gt;'], '', $value));
+                        $search_filters[] = 'CAST('.$search_query.' AS UNSIGNED) '.$sign.' '.prepare($value);
+                    } else {
+                        $search_filters[] = $search_query.' LIKE '.prepare('%'.$value.'%');
+                    }
                 }
             }
 

@@ -30,9 +30,6 @@ class FileManager implements ManagerInterface
         // ID del form
         $attachment_id = 'attachments_'.$options['id_module'].'_'.$options['id_plugin'];
 
-        // Cartella delle anteprime
-        $directory = \Uploads::getDirectory($options['id_module'], $options['id_plugin']);
-
         $dbo = database();
 
         // Codice HTML
@@ -84,7 +81,7 @@ class FileManager implements ManagerInterface
                     $result .= '
         <tr>
             <td align="left">
-                <a href="'.ROOTDIR.'/'.$directory.'/'.$r['filename'].'" target="_blank">
+                <a href="'.ROOTDIR.'/view.php?file_id='.$r['id'].'" target="_blank">
                     <i class="fa fa-external-link"></i> '.$r['name'].'
                 </a> ('.$file->extension.')'.'
             </td>

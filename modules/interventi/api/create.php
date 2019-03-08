@@ -1,7 +1,7 @@
 <?php
 
 use Modules\Articoli\Articolo as ArticoloOriginale;
-use Modules\Interventi\Articolo;
+use Modules\Interventi\Components\Articolo;
 use Modules\Interventi\Intervento;
 
 switch ($resource) {

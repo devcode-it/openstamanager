@@ -144,6 +144,12 @@ switch (post('op')) {
 
         break;
 
+    // Ricalcolo scadenze
+    case 'ricalcola_scadenze':
+        $fattura->registraScadenze(false, true);
+
+        break;
+
     // eliminazione documento
     case 'delete':
         $rs = $dbo->fetchArray('SELECT id FROM co_righe_documenti WHERE iddocumento='.prepare($id_record));

@@ -14,6 +14,7 @@ return [
     'modules/preventivi' => 'Modules\Preventivi',
     'modules/contratti' => 'Modules\Contratti',
     'modules/interventi' => 'Modules\Interventi',
+    'modules/pagamenti' => 'Modules\Pagamenti',
     'plugins/exportFE' => 'Plugins\ExportFE',
     'plugins/importFE' => 'Plugins\ImportFE',
     'plugins/receiptFE' => 'Plugins\ReceiptFE',

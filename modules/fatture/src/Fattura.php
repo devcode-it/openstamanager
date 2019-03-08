@@ -4,6 +4,7 @@ namespace Modules\Fatture;
 
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Pagamenti\Pagamento;
 use Modules\RitenuteContributi\RitenutaContributi;
 use Plugins\ExportFE\FatturaElettronica;
 use Traits\RecordTrait;
@@ -15,11 +16,6 @@ class Fattura extends Document
 
     protected $table = 'co_documenti';
 
-    /**
-     * The attributes that should be casted to native types.
-     *
-     * @var array
-     */
     protected $casts = [
         'bollo' => 'float',
     ];
@@ -208,6 +204,11 @@ class Fattura extends Document
         return $this->belongsTo(Tipo::class, 'idtipodocumento');
     }
 
+    public function pagamento()
+    {
+        return $this->belongsTo(Pagamento::class, 'idpagamento');
+    }
+
     public function stato()
     {
         return $this->belongsTo(Stato::class, 'idstatodocumento');
@@ -263,33 +264,108 @@ class Fattura extends Document
         return !empty($this->progressivo_invio) && $this->module == 'Fatture di acquisto';
     }
 
+    /**
+     * Registra le scadenze della fattura elettronica collegata al documento.
+     *
+     * @param bool $is_pagato
+     *
+     * @return bool
+     */
     public function registraScadenzeFE($is_pagato = false)
     {
-        $database = $dbo = database();
-
         $xml = \Util\XML::read($this->getXML());
 
         $pagamenti = $xml['FatturaElettronicaBody']['DatiPagamento']['DettaglioPagamento'];
         if (!empty($pagamenti)) {
-            $scadenze = isset($pagamenti[0]) ? $pagamenti : [$pagamenti];
+            $rate = isset($pagamenti[0]) ? $pagamenti : [$pagamenti];
 
-            foreach ($scadenze as $scadenza) {
-                $data = $scadenza['DataScadenzaPagamento'] ?: $this->data;
-                $importo = $scadenza['ImportoPagamento'];
+            foreach ($rate as $rata) {
+                $scadenza = $rata['DataScadenzaPagamento'] ?: $this->data;
+                $importo = -$rata['ImportoPagamento'];
 
-                $dbo->insert('co_scadenziario', [
-                    'iddocumento' => $this->id,
-                    'data_emissione' => $this->data,
-                    'scadenza' => $data,
-                    'da_pagare' => -$importo,
-                    'tipo' => 'fattura',
-                    'pagato' => $is_pagato ? $importo : 0,
-                    'data_pagamento' => $is_pagato ? $data : '',
-                ], ['id' => $id_scadenza]);
+                self::registraScadenza($this, $importo, $scadenza, $is_pagato);
             }
         }
 
         return !empty($pagamenti);
+    }
+
+    /**
+     * Registra le scadenze tradizionali del gestionale.
+     *
+     * @param bool $is_pagato
+     */
+    public function registraScadenzeTradizionali($is_pagato = false)
+    {
+        $rate = $this->pagamento->calcola($this->netto, $this->data);
+        $direzione = $this->tipo->dir;
+
+        foreach ($rate as $rata) {
+            $importo = $direzione == 'uscita' ? -$rata['importo'] : $rata['importo'];
+            $scadenza = $rata['scadenza'];
+
+            self::registraScadenza($this, $importo, $scadenza, $is_pagato);
+        }
+    }
+
+    /**
+     * Registra una specifica scadenza nel database.
+     *
+     * @param Fattura $fattura
+     * @param float   $importo
+     * @param string  $scadenza
+     * @param bool    $is_pagato
+     * @param string  $type
+     */
+    public static function registraScadenza(Fattura $fattura, $importo, $scadenza, $is_pagato, $type = 'fattura')
+    {
+        database()->insert('co_scadenziario', [
+            'iddocumento' => $fattura->id,
+            'data_emissione' => $fattura->data,
+            'scadenza' => $scadenza,
+            'da_pagare' => $importo,
+            'tipo' => $type,
+            'pagato' => $is_pagato ? $importo : 0,
+            'data_pagamento' => $is_pagato ? $scadenza : null,
+        ]);
+    }
+
+    /**
+     * Registra le scadenze della fattura.
+     *
+     * @param bool $is_pagato
+     * @param bool $ignora_fe
+     */
+    public function registraScadenze($is_pagato = false, $ignora_fe = false)
+    {
+        $this->rimuoviScadenze();
+
+        if (!$ignora_fe && $this->isFE()) {
+            $scadenze_fe = $this->registraScadenzeFE($is_pagato);
+        }
+
+        if (empty($scadenze_fe)) {
+            $this->registraScadenzeTradizionali($is_pagato);
+        }
+
+        $direzione = $this->tipo->dir;
+        $ritenuta_acconto = $this->ritenuta_acconto;
+
+        // Se c'è una ritenuta d'acconto, la aggiungo allo scadenzario
+        if ($direzione == 'uscita' && $ritenuta_acconto > 0) {
+            $scadenza = date('Y-m', strtotime($data.' +1 month')).'-15';
+            $importo = -$ritenuta_acconto;
+
+            self::registraScadenza($this, $importo, $scadenza, $is_pagato, 'ritenutaacconto');
+        }
+    }
+
+    /**
+     * Elimina le scadenze della fattura.
+     */
+    public function rimuoviScadenze()
+    {
+        database()->delete('co_scadenziario', ['iddocumento' => $this->id]);
     }
 
     /**

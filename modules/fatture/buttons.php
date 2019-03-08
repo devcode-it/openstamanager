@@ -42,7 +42,6 @@ if (empty($record['is_fiscale'])) {
     </button>';
 }
 
-
 ?>
 
 <?php
@@ -56,13 +55,13 @@ if (!empty($record['is_fiscale'])) {
     $da_pagare = isset($rs3[0]) ? $rs3[0]['da_pagare'] : null;
 
     if (($n2 <= 0 && $record['stato'] == 'Emessa') || $differenza != 0) {
-?>
+        ?>
 					<button type="button" class="btn btn-primary <?php echo (!empty(Modules::get('Prima nota'))) ? '' : 'disabled'; ?>" onclick="launch_modal( '<?php echo tr('Aggiungi prima nota'); ?>', '<?php echo $rootdir; ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>&iddocumento=<?php echo $id_record; ?>&dir=<?php echo $dir; ?>', 1 );"><small><i class="fa fa-euro"></i> <?php echo tr('Registrazione contabile pagamento'); ?>...</small></button>
 <?php
     }
 
     if ($record['stato'] == 'Pagato') {
-?>
+        ?>
 					<button type="button" class="btn btn-primary tip" onclick="if( confirm('<?php echo tr('Se riapri questa fattura verrà azzerato lo scadenzario e la prima nota. Continuare?'); ?>') ){ $.post( '<?php echo $rootdir; ?>/editor.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>', { id_module: '<?php echo $id_module; ?>', id_record: '<?php echo $id_record; ?>', op: 'reopen' }, function(){ location.href='<?php echo $rootdir; ?>/editor.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>'; } ); }" title="<?php echo tr('Riporta la fattura in stato bozza e ne elimina i movimenti contabili.'); ?>" ><i class="fa fa-folder-open"></i> <?php echo tr('Riapri fattura'); ?>...</button>
 <?php
     }

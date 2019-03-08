@@ -3,9 +3,9 @@
 include_once __DIR__.'/../../core.php';
 
 $dir = $_GET['dir'];
-if($dir=='entrata'){
+if ($dir == 'entrata') {
     $tipo = 'vendite';
-}else{
+} else {
     $tipo = 'acquisti';
 }
 
@@ -29,13 +29,13 @@ if ('entrata' == $dir) {
     echo "<span style='font-size:12pt;'><b>".tr('Registro iva vendita dal _START_ al _END_ _ESERCIZIO_', [
         '_START_' => Translator::dateToLocale($date_start),
         '_END_' => Translator::dateToLocale($date_end),
-        '_ESERCIZIO_' => (date('Y', strtotime($date_start))==date('Y', strtotime($date_end))? '- Esercizio '.date('Y', strtotime($date_end)): ''),
+        '_ESERCIZIO_' => (date('Y', strtotime($date_start)) == date('Y', strtotime($date_end)) ? '- Esercizio '.date('Y', strtotime($date_end)) : ''),
     ], ['upper' => true]).'</b></span><br><br>';
 } elseif ('uscita' == $dir) {
     echo "<span style='font-size:12pt;'><b>".tr('Registro iva acquisto dal _START_ al _END_ _ESERCIZIO_', [
         '_START_' => Translator::dateToLocale($date_start),
         '_END_' => Translator::dateToLocale($date_end),
-        '_ESERCIZIO_' => (date('Y', strtotime($date_start))==date('Y', strtotime($date_end))? '- Esercizio '.date('Y', strtotime($date_end)): ''),
+        '_ESERCIZIO_' => (date('Y', strtotime($date_start)) == date('Y', strtotime($date_end)) ? '- Esercizio '.date('Y', strtotime($date_end)) : ''),
     ], ['upper' => true]).'</b></span><br><br>';
 }
 
@@ -62,18 +62,18 @@ for ($i = 0; $i < sizeof($rs); ++$i) {
     echo '  <tr>';
 
     if ($rs[$i]['numero'] == $rs[$i - 1]['numero']) {
-        echo "	<td></td>";
-        echo "	<td></td>";
-        echo "	<td></td>";
-        echo "	<td></td>";
-        echo "	<td></td>";
-        echo "	<td></td>";
+        echo '	<td></td>';
+        echo '	<td></td>';
+        echo '	<td></td>';
+        echo '	<td></td>';
+        echo '	<td></td>';
+        echo '	<td></td>';
     } else {
-        echo "	<td>".$rs[$i]['numero'].'</td>';
-        echo "	<td>".$rs[$i]['numero_esterno'].'</td>';
-        echo "	<td>".date('d/m/Y', strtotime($rs[$i]['data'])).'</td>';
-        echo "	<td>".$rs[$i]['codice_tipo_documento_fe'].'</td>';
-        echo "  <td>".$rs[$i]['codice_anagrafica']." / ".tr($rs[$i]['ragione_sociale'], [], ['upper' => true]).'</td>';
+        echo '	<td>'.$rs[$i]['numero'].'</td>';
+        echo '	<td>'.$rs[$i]['numero_esterno'].'</td>';
+        echo '	<td>'.date('d/m/Y', strtotime($rs[$i]['data'])).'</td>';
+        echo '	<td>'.$rs[$i]['codice_tipo_documento_fe'].'</td>';
+        echo '  <td>'.$rs[$i]['codice_anagrafica'].' / '.tr($rs[$i]['ragione_sociale'], [], ['upper' => true]).'</td>';
         echo "	<td class='text-right'>".Translator::numberToLocale(get_totale_fattura($rs[$i]['iddocumento'])).' &euro;</td>';
     }
 

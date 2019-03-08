@@ -1,4 +1,4 @@
-<?php 
+<?php
 include_once __DIR__.'/../../../core.php';
 
 echo "<form action='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record."' method='post'>";

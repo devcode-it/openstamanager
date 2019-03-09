@@ -4,7 +4,7 @@
 
 {% block box_class %}box-warning text-center{% endblock %}
 {% block box_header %}
-    <h3 class="box-title">{{ installing ? 'Installazione di OpenSTAManager'|trans : 'Aggiornamento di OpenSTAManager'|trans }}</h3>
+<h3 class="box-title">{{ installing ? 'Installazione di OpenSTAManager'|trans : 'Aggiornamento di OpenSTAManager'|trans }}</h3>
 {% endblock %}
 
 {% block content %}
@@ -33,7 +33,7 @@
                 confirmButtonText: "{{ 'Procedi'|trans }}",
             }).then(function(){
                 $("#progress").show();
-                $("#result").load("{{ path_for('update-progress', {'installing': installing}) }}");
+                $("#result").load("{{ path_for('update-progress') }}");
                 $("#contine_button").remove();
             }, function(){});
         }
@@ -57,7 +57,20 @@
         </div>
     </div>
     <div id="result"></div>
-    
+
+    <div style="display: none;" id="completed">
+        <p><strong>{{ 'Aggiornamento completato'|trans }}</strong> <i class="fa fa-smile-o"></i></p>
+
+        {% if installing %}
+            <!-- Istruzioni per la prima installazione -->
+            <p class="text-danger">{{ "E' fortemente consigliato rimuovere i permessi di scrittura dal file _FILE_"|trans({'_FILE_': '<b>config.inc.php</b>'})|raw }}.</p>
+        {% endif %}
+
+        <a class="btn btn-success btn-block" href="{{ path_for('login') }}">
+            <i class="fa fa-check"></i> {{ 'Continua'|trans }}
+        </a>
+    </div>
+
     <script>
         let count, current, progress, percent, total, versions;
 
@@ -84,6 +97,11 @@
         function setPercent(percent){
             $("#progress .progress-bar").width(percent + "%");
             $("#progress .progress-bar span").text(percent + "%");
+
+            console.log(percent);
+            if (percent >= 100){
+                $("#completed").show();
+            }
         }
 
         function addVersion(version){

@@ -21,7 +21,7 @@
 </script>
 
 <script>
-    $("#result").load("{{ path_for('update-progress', {'installing': installing}) }}");
+    $("#result").load("{{ path_for('update-progress') }}");
 </script>
 {% else %}
 <!-- Fallimento -->

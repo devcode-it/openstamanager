@@ -18,15 +18,18 @@ $app->get('/logout[/]', 'Controllers\BaseController:logout')->setName('logout')
 
 // Configurazione iniziale
 $app->group('', function () use ($app) {
-    $app->get('/requirements[/]', 'Controllers\RequirementsController:requirements')->setName('requirements');
+    $app->get('/requirements[/]', 'Controllers\Config\RequirementsController:requirements')->setName('requirements');
 
-    $app->get('/configuration[/]', 'Controllers\ConfigController:configuration')->setName('configuration');
-    $app->post('/configuration[/]', 'Controllers\ConfigController:configurationSave');
+    $app->get('/configuration[/]', 'Controllers\Config\ConfigurationController:configuration')->setName('configuration');
+    $app->post('/configuration[/]', 'Controllers\Config\ConfigurationController:configurationSave');
 
-    $app->post('/configuration/test[/]', 'Controllers\ConfigController:configurationTest')->setName('configurationTest');
+    $app->post('/configuration/test[/]', 'Controllers\Config\ConfigurationController:configurationTest')->setName('configurationTest');
 
-    $app->get('/update[/]', 'Controllers\ConfigController:update')->setName('update');
-    $app->get('/update/progress/{installing}[/]', 'Controllers\ConfigController:updateProgress')->setName('update-progress');
+    $app->get('/init[/]', 'Controllers\Config\InitController:init')->setName('init');
+    $app->post('/init[/]', 'Controllers\Config\InitController:initSave');
+
+    $app->get('/update[/]', 'Controllers\Config\UpdateController:update')->setName('update');
+    $app->get('/update/progress[/]', 'Controllers\Config\UpdateController:updateProgress')->setName('update-progress');
 })->add('Middlewares\Authorization\GuestMiddleware');
 
 // Informazioni su OpenSTAManager

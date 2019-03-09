@@ -193,20 +193,6 @@ class App
         return $assets;
     }
 
-    public static function isConfigured()
-    {
-        $config = self::$container['config'];
-
-        $valid_config = isset($config['db_host']) && isset($config['db_name']) && isset($config['db_username']) && isset($config['db_password']);
-
-        // Gestione del file di configurazione
-        if (file_exists(DOCROOT.'/config.inc.php') && $valid_config && database()->isConnected()) {
-            return true;
-        }
-
-        return false;
-    }
-
     /**
      * Restituisce il codice HTML per il form contenente il file indicato.
      *

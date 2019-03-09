@@ -1,7 +1,8 @@
 <?php
 
-namespace Controllers;
+namespace Controllers\Config;
 
+use Controllers\Controller;
 use Util\FileSystem;
 
 class RequirementsController extends Controller

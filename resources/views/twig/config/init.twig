@@ -1,0 +1,131 @@
+{% extends "layouts/guest.twig" %}
+{% block title %}{{ 'Inizializzazione'|trans }}{% endblock %}
+
+{% block box_class %}box-warning {% endblock %}
+{% block box_header %}
+    <h3 class="box-title">{{ 'Inizializzazione di OpenSTAManager'|trans }}</h3>
+{% endblock %}
+
+{% block content %}
+<!-- Visualizzazione dell'interfaccia di impostazione iniziale, nel caso il file di configurazione sia mancante oppure i paramentri non siano sufficienti -->
+<form action="" method="post" id="init-form" enctype="multipart/form-data">
+    <input type="hidden" name="action" value="init">
+
+    {% if not has_user %}
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">{{ 'Amministrazione'|trans }}</h3>
+        </div>
+
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-6">
+                    {[ "type": "text", "label": "{{ 'Username'|trans }}", "name": "admin_username", "placeholder": "{{ "Digita l'username dell'amministratore"|trans }}", "required": 1 ]}
+                </div>
+
+                <div class="col-md-6">
+                    {[ "type": "password", "label": "{{ 'Password'|trans }}", "id": "password", "name": "admin_password", "placeholder": "{{ "Digita la password dell'amministratore"|trans }}", "required": 1, "icon-after": "<i onclick=\"togglePassword(this)\" title=\"{{ 'Visualizza password'|trans }}\" class=\"fa fa-eye clickable\" ></i>" ]}
+                </div>
+
+                <div class="col-md-6">
+                    {[ "type": "email", "label": "{{ 'Email'|trans }}", "name": "admin_email", "placeholder": "{{ "Digita l'indirizzo email dell'amministratore"|trans }}" ]}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword() {
+            var button = $(this);
+
+            if (button.hasClass("fa-eye")) {
+                $("#password").attr("type", "text");
+                button.removeClass("fa-eye").addClass("fa-eye-slash");
+                button.attr("title", "Nascondi password");
+            }
+            else {
+                $("#password").attr("type", "password");
+                button.removeClass("fa-eye-slash").addClass("fa-eye");
+                button.attr("title", "Visualizza password");
+            }
+        }
+
+    </script>
+    {% endif %}
+
+    {% if not has_azienda %}
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">{{ 'Azienda predefinita'|trans }}</h3>
+        </div>
+
+        <div class="panel-body">
+
+            {{ azienda_form|raw }}
+
+            <div class="box box-success collapsed-box">
+                <div class="box-header with-border">
+                    <h3 class="box-title">{{ 'Logo stampe'|trans }}</h3>
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="box-body collapse">
+
+                    <div class="col-md-12">
+                        {[ "type": "file", "placeholder": "{{ 'File'|trans }}", "name": "blob" ]}
+                    </div>
+
+                    <p>&nbsp;</p><div class="col-md-12 alert alert-info text-center">{{ 'Per impostare il logo delle stampe, caricare un file ".jpg". Risoluzione consigliata 302x111 pixel'|trans }}.</div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {% endif %}
+
+    {% if not has_settings %}
+
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">{{ 'Impostazioni di base'|trans }}</h3>
+        </div>
+
+        <div class="panel-body">
+
+        {% for setting in settings %}
+            <div class="col-md-6">
+                {{ setting|raw }}
+            </div>
+        {% endfor %}
+
+        </div>
+    </div>
+    {% endif %}
+
+
+    <!-- PULSANTI -->
+    <div class="row">
+        <div class="col-md-4">
+            <span>*<small><small>{{ 'Campi obbligatori'|trans }}</small></small></span>
+        </div>
+        <div class="col-md-4 text-right">
+            <button type="submit" id="config" class="btn btn-success btn-block">
+                <i class="fa fa-cog"></i> {{ 'Configura'|trans }}
+            </button>
+        </div>
+    </div>
+
+</form>
+
+<script>
+    $(document).ready(function(){
+        $("button[type=submit]").not("#config").remove();
+    });
+</script>
+<script src="{{ base_url() }}/assets/js/functions.js"></script>
+<script src="{{ base_url() }}/assets/js/init.js"></script>
+{% endblock %}

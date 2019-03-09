@@ -2,8 +2,10 @@
 
 namespace Controllers;
 
-use App;
 use Auth;
+use Controllers\Config\ConfigurationController;
+use Controllers\Config\InitController;
+use Controllers\Config\RequirementsController;
 use Update;
 
 class BaseController extends Controller
@@ -12,12 +14,12 @@ class BaseController extends Controller
     {
         // Requisiti di OpenSTAManager
         if (!RequirementsController::requirementsSatisfied()) {
-            $controller = new ConfigController($this->container);
+            $controller = new ConfigurationController($this->container);
             $response = $controller->requirements($request, $response, $args);
         }
 
         // Inizializzazione
-        elseif (!App::isConfigured()) {
+        elseif (!ConfigurationController::isConfigured()) {
             $response = $response->withRedirect($this->router->pathFor('configuration'));
         }
 
@@ -27,7 +29,7 @@ class BaseController extends Controller
         }
 
         // Configurazione informazioni di base
-        elseif (Update::isUpdateAvailable() || !$this->database->isInstalled()) {
+        elseif (!InitController::isInitialized()) {
             $response = $response->withRedirect($this->router->pathFor('init'));
         }
 

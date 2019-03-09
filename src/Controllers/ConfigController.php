@@ -2,197 +2,201 @@
 
 namespace Controllers;
 
-use Util\FileSystem;
+use Database;
+use Update;
 
 class ConfigController extends Controller
 {
-    protected static $php = [
-        'zip' => [
-            'type' => 'ext',
-            'required' => 1,
-        ],
-        'mbstring' => [
-            'type' => 'ext',
-            'required' => 1,
-        ],
-        'pdo_mysql' => [
-            'type' => 'ext',
-            'required' => 1,
-        ],
-        'dom' => [
-            'type' => 'ext',
-            'required' => 1,
-        ],
-        'xsl' => [
-            'type' => 'ext',
-            'required' => 1,
-        ],
-        'openssl' => [
-            'type' => 'ext',
-            'required' => 1,
-        ],
-        'intl' => [
-            'type' => 'ext',
-            'required' => 1,
-        ],
-        'curl' => [
-            'type' => 'ext',
-            'required' => 1,
-        ],
-        'soap' => [
-            'type' => 'ext',
-            'required' => 1,
-        ],
-
-        'upload_max_filesize' => [
-            'type' => 'value',
-            'suggested' => '>16M',
-        ],
-        'post_max_size' => [
-            'type' => 'value',
-            'suggested' => '>16M',
-        ],
-    ];
-
-    protected static $apache = [
-        'mod_rewrite' => [
-            'server' => 'HTTP_MOD_REWRITE',
-        ],
-    ];
-
-    protected static $directories = [
-        'backup',
-        'files',
-        'logs',
-    ];
-
-    protected static $requirements;
+    protected static $updateRate = 20;
 
     public function update($request, $response, $args)
     {
-        $response = $this->twig->render($response, 'index.php', $args);
+        $total = 0;
+        $updates = Update::getTodoUpdates();
+
+        $updateRate = self::$updateRate;
+        $scriptValue = $updateRate * 5;
+
+        foreach ($updates as $update) {
+            if ($update['sql'] && (!empty($update['done']) || is_null($update['done']))) {
+                $queries = readSQLFile(DOCROOT.$update['directory'].$update['filename'].'.sql', ';');
+                $total += count($queries);
+
+                if (intval($update['done']) > 1) {
+                    $total -= intval($update['done']) - 2;
+                }
+            }
+
+            if ($update['script']) {
+                $total += $scriptValue;
+            }
+        }
+
+        // Inizializzazione
+        if (Update::isUpdateLocked() && filter('force') === null) {
+            $response = $this->twig->render($response, 'config\messages\blocked.twig', $args);
+        } else {
+            $args = array_merge($args, [
+                'is_installed' => $this->database->isInstalled(),
+                'total_updates' => count($updates),
+                'total_count' => $total,
+            ]);
+
+            $response = $this->twig->render($response, 'config\update.twig', $args);
+        }
 
         return $response;
     }
 
-    public function requirements($request, $response, $args)
+    public function updateProgress($request, $response, $args)
     {
-        $requirements = self::getRequirements();
+        // Aggiornamento in progresso
+        if (Update::isUpdateAvailable()) {
+            $update = Update::getCurrentUpdate();
 
-        $list = [
-            tr('Apache') => $requirements['apache'],
-            tr('PHP (_VERSION_)', [
-                '_VERSION_' => phpversion(),
-            ]) => $requirements['php'],
-            tr('Percorsi di servizio') => $requirements['paths'],
+            $result = Update::doUpdate($updateRate);
+
+            if (!empty($result)) {
+                if (is_array($result)) {
+                    $rate = $result[1] - $result[0];
+                } elseif (!empty($update['script'])) {
+                    $rate = $scriptValue;
+                }
+
+                $response = $this->twig->render($response, 'config\messages\piece.twig', $args);
+            }
+        }
+
+        // Aggiornamento completato
+        elseif (Update::isUpdateCompleted()) {
+            Update::updateCleanup();
+
+            $response = $this->twig->render($response, 'config\messages\done.twig', $args);
+        }
+    }
+
+    public function configuration($request, $response, $args)
+    {
+        $args['license'] = file_get_contents(DOCROOT.'/LICENSE');
+        $response = $this->twig->render($response, 'config\configuration.twig', $args);
+
+        return $response;
+    }
+
+    public function configurationSave($request, $response, $args)
+    {
+        // Controllo sull'esistenza di nuovi parametri di configurazione
+        $host = post('host');
+        $database_name = post('database_name');
+        $username = post('username');
+        $password = post('password');
+
+        // Impostazioni di configurazione strettamente necessarie al funzionamento del progetto
+        $backup_config = '<?php
+
+$backup_dir = __DIR__.\'/backup/\';
+
+$db_host = \'|host|\';
+$db_username = \'|username|\';
+$db_password = \'|password|\';
+$db_name = \'|database|\';
+
+';
+
+        $new_config = (file_exists(DOCROOT.'/config.example.php')) ? file_get_contents(DOCROOT.'/config.example.php') : $backup_config;
+
+        $values = [
+            '|host|' => $host,
+            '|username|' => $username,
+            '|password|' => $password,
+            '|database|' => $database_name,
         ];
+        $new_config = str_replace(array_keys($values), $values, $new_config);
 
-        $args['requirements'] = $list;
-        $response = $this->twig->render($response, 'config\requirements.twig', $args);
+        // Controlla che la scrittura del file di configurazione sia andata a buon fine
+        $creation = file_put_contents('config.inc.php', $new_config);
+
+        if (!$creation) {
+            $response = $this->twig->render($response, 'config\messages\error.twig', $args);
+        } else {
+            $response = $response->withRedirect($this->router->pathFor('login'));
+        }
 
         return $response;
     }
 
-    public static function getRequirements()
+    public function configurationTest($request, $response, $args)
     {
-        if (!isset(self::$requirements)) {
-            // Apache
-            if (function_exists('apache_get_modules')) {
-                $available_modules = apache_get_modules();
-            }
+        // Controllo sull'esistenza di nuovi parametri di configurazione
+        $host = post('host');
+        $database_name = post('database_name');
+        $username = post('username');
+        $password = post('password');
 
-            $apache = self::$apache;
-            foreach ($apache as $name => $values) {
-                $status = isset($available_modules) ? in_array($name, $available_modules) : false;
-                $status = isset($values['server']) ? $_SERVER[$values['server']] == 'On' : $status;
+        // Generazione di una nuova connessione al database
+        try {
+            $database = new \Database($host, $username, $password, $database_name);
+        } catch (Exception $e) {
+        }
 
-                $apache[$name]['description'] = tr('Il modulo Apache _MODULE_ deve essere abilitato', [
-                    '_MODULE_' => '<i>'.$name.'</i>',
-                ]);
-                $apache[$name]['status'] = $status;
-            }
-
-            // PHP
-            $php = self::$php;
-            foreach ($php as $name => $values) {
-                if ($values['type'] == 'ext') {
-                    $description = !empty($values['required']) ? tr("L'estensione PHP _EXT_ deve essere abilitata", [
-                        '_EXT_' => '<i>'.$name.'</i>',
-                    ]) : tr("E' consigliata l'abilitazione dell'estensione PHP _EXT_", [
-                        '_EXT_' => '<i>'.$name.'</i>',
-                    ]);
-                } else {
-                }
-
-                if ($values['type'] == 'ext') {
-                    $status = extension_loaded($name);
-                } else {
-                    $suggested = str_replace(['>', '<'], '', $values['suggested']);
-                    $value = ini_get($name);
-
-                    $description = tr("Valore consigliato per l'impostazione PHP: _VALUE_ (Valore attuale: _INI_)", [
-                        '_VALUE_' => $suggested,
-                        '_INI_' => ini_get($name),
-                    ]);
-
-                    $suggested = strpos($suggested, 'B') !== false ? $suggested : $suggested.'B';
-                    $value = strpos($value, 'B') !== false ? $value : $value.'B';
-
-                    $ini = FileSystem::convertBytes($value);
-                    $real = FileSystem::convertBytes($suggested);
-
-                    if (starts_with($values['suggested'], '>')) {
-                        $status = $ini >= substr($real, 1);
-                    } elseif (starts_with($values['suggested'], '<')) {
-                        $status = $ini <= substr($real, 1);
-                    } else {
-                        $status = ($real == $ini);
-                    }
-
-                    $php[$name]['value'] = $value;
-
-                    if (is_bool($suggested)) {
-                        $suggested = !empty($suggested) ? 'On' : 'Off';
-                    }
-                }
-
-                $php[$name]['description'] = $description;
-                $php[$name]['status'] = $status;
-            }
-
-            // Percorsi di servizio
-            $paths = [];
-            foreach (self::$directories as $name) {
-                $status = is_writable(DOCROOT.DIRECTORY_SEPARATOR.$name);
-                $description = tr('Il percorso _PATH_ deve risultare accessibile da parte del gestionale (permessi di lettura e scrittura)', [
-                    '_PATH_' => '<i>'.$name.'</i>',
-                ]);
-
-                $paths[$name]['description'] = $description;
-                $paths[$name]['status'] = $status;
-            }
-
-            self::$requirements = [
-                'apache' => $apache,
-                'php' => $php,
-                'paths' => $paths,
+        // Test della configurazione
+        if (!empty($database) && $database->isConnected()) {
+            $requirements = [
+                'SELECT',
+                'INSERT',
+                'UPDATE',
+                'CREATE',
+                'ALTER',
+                'DROP',
             ];
-        }
 
-        return self::$requirements;
-    }
+            $host = str_replace('_', '\_', $database_name);
+            $database_name = str_replace('_', '\_', $database_name);
+            $username = str_replace('_', '\_', $database_name);
 
-    public static function requirementsSatisfied()
-    {
-        $general_status = true;
+            $results = $database->fetchArray('SHOW GRANTS FOR CURRENT_USER');
+            foreach ($results as $result) {
+                $privileges = current($result);
 
-        $requirements = self::getRequirements();
-        foreach ($requirements as $key => $values) {
-            foreach ($values as $value) {
-                $general_status &= !empty($value['required']) ? $value['status'] : true;
+                if (
+                    str_contains($privileges, ' ON `'.$database_name.'`.*') ||
+                    str_contains($privileges, ' ON *.*')
+                ) {
+                    $pieces = explode(', ', explode(' ON ', str_replace('GRANT ', '', $privileges))[0]);
+
+                    // Permessi generici sul database
+                    if (in_array('ALL', $pieces) || in_array('ALL PRIVILEGES', $pieces)) {
+                        $requirements = [];
+                        break;
+                    }
+
+                    // Permessi specifici sul database
+                    foreach ($requirements as $key => $value) {
+                        if (in_array($value, $pieces)) {
+                            unset($requirements[$key]);
+                        }
+                    }
+                }
+            }
+
+            // Permessi insufficienti
+            if (!empty($requirements)) {
+                $state = 1;
+            }
+
+            // Permessi completi
+            else {
+                $state = 2;
             }
         }
 
-        return $general_status;
+        // Connessione fallita
+        else {
+            $state = 0;
+        }
+
+        $response = $response->write($state);
+
+        return $response;
     }
 }

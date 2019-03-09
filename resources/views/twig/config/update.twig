@@ -1,0 +1,100 @@
+{% extends "layouts/guest.twig" %}
+
+{% block title %}{{ "Aggiornamento"|trans }}{% endblock %}
+
+{% block box_class %}box-warning text-center{% endblock %}
+{% block box_header %}
+    <h3 class="box-title">{{ is_installed ? 'Aggiornamento di OpenSTAManager'|trans : 'Installazione di OpenSTAManager'|trans }}</h3>
+{% endblock %}
+
+{% block content %}
+    {% if is_installed %}
+    <p>{{ "E' necessario aggiornare il database a una nuova versione"|trans }}.</p>
+    {% else %}
+    <p><strong>{{ "E' la prima volta che avvii OpenSTAManager e non hai ancora installato il database"|trans }}.</strong></p>
+    {% endif %}
+
+    {% set button = is_installed ? 'Aggiorna!'|trans : 'Installa!'|trans %}
+
+    <p>{{ "Premi il tasto _BUTTON_ per procedere con l'_OP_!"|trans({
+        '_BUTTON_': '<b>' ~ button ~ '</b>',
+        '_OP_': is_installed ? 'aggiornamento'|trans : 'installazione'|trans,
+        })|raw }}</p>
+    <input type="button" class="btn btn-primary" value="{{ button }}" onclick="continue_update()" id="contine_button">
+
+    <script>
+        function continue_update(){
+            swal({
+                title: "{{ 'Sei sicuro di voler procedere?'|trans }}",
+                text: "",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn btn-lg btn-success",
+                confirmButtonText: "{{ 'Procedi'|trans }}",
+            }).then(function(){
+                $("#progress").show();
+                $("#result").load("{{ path_for('update-progress') }}");
+                $("#contine_button").remove();
+            }, function(){});
+        }
+    </script>
+
+    <div id="progress">
+        <div class="progress">
+            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">
+                <span>0%</span>
+            </div>
+        </div>
+        <hr>
+        <div class="box box-info text-center collapsed-box">
+            <div class="box-header with-border">
+                <h3 class="box-title"><a class="clickable" data-widget="collapse">{{ 'Log'|trans }}</a></h3>
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+                </div>
+            </div>
+            <div class="box-body info text-left"></div>
+        </div>
+    </div>
+    <div id="result"></div>
+    
+    <script>
+        $(document).ready(function(){
+            $(".login-box").fadeOut();
+
+            count = {{ total_updates }};
+            current = 0;
+            versions = [];
+
+            progress = 0;
+            total = {{ total_count }};
+        });
+
+        function addProgress(rate){
+            progress += rate;
+            percent = progress / total * 100;
+            percent = Math.round(percent);
+            percent = percent > 100 ? 100 : percent;
+
+            setPercent(percent);
+        }
+
+        function setPercent(percent){
+            $("#progress .progress-bar").width(percent + "%");
+            $("#progress .progress-bar span").text(percent + "%");
+        }
+
+        function addVersion(version){
+            if(versions.indexOf(version) === -1){
+                versions.push(version);
+                current += 1;
+
+                $("#progress .info").html($("#progress .info").html() + "<p><strong>{{ 'Aggiornamento _DONE_ di _TODO_ (_VERSION_)'|trans({
+                    '_DONE_': '" + current + "',
+                    '_TODO_': '" + count + "',
+                    '_VERSION_': '" + version.trim() + "',
+                }) }}'</strong></p>");
+            }
+        }
+    </script>
+{% endblock %}

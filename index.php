@@ -48,6 +48,7 @@ session_start();
 $container = new \Slim\Container([
     'settings' => [
         'displayErrorDetails' => App::debug(),
+        'addContentLengthHeader' => false,
     ],
 ]);
 App::setContainer($container);

@@ -1,0 +1,181 @@
+{% extends "layouts/guest.twig" %}
+
+{% block title %}{{ "Configurazione"|trans }}{% endblock %}
+
+{% block box_class %}box-warning{% endblock %}
+{% block box_header %}
+<img src="{{ base_url() }}/assets/img/logo.png" alt="{{ 'OSM Logo'|trans }}">
+<h3 class="box-title">{{ "Configurazione per l'installazione"|trans }}</h3>
+{% endblock %}
+
+{% block content %}
+    <!-- Controlli per essere sicuro che l'utente abbia letto la licenza -->
+    <script>
+    $(document).ready(function(){
+        let wizard = $(".box-body");
+
+        wizard.smartWizard({
+            useURLhash: false,
+            showStepURLhash: false,
+            theme: "default",
+            transitionEffect: "slideLeft",
+            lang : {
+                next: "{{ 'Successivo'|trans }}",
+                previous: "{{ 'Precedente'|trans }}",
+            }
+        });
+
+        wizard.on("leaveStep", function(e, anchorObject, stepNumber, stepDirection) {
+            result = true;
+            if(stepDirection == "forward" && $("#step-" + (stepNumber + 1) + " form").length){
+                result = $("#step-" + (stepNumber + 1) + " form").parsley().validate();
+            }
+
+            if(!result){
+                swal("{{ 'Impossibile procedere'|trans }}", "{{ 'Prima di proseguire devi completare i campi obbligatori!'|trans }}", "error");
+            }
+
+            $("html, body").animate({ scrollTop: $("#steps").offset().top }, 500);
+
+            return result;
+        });
+
+        $("#install").on("click", function(){
+
+            if($(this).closest("form").parsley().validate()){
+                prev_html = $("#install").html();
+                $("#install").html("<i class='fa fa-spinner fa-pulse fa-fw'></i> {{ 'Attendere'|trans }}...");
+                $("#install").prop('disabled', true);
+                $("#test").prop('disabled', true);
+
+                $("#config-form").submit();
+            }
+
+        });
+
+        $("#test").on("click", function(){
+            if($(this).closest("form").parsley().validate()){
+                prev_html = $("#test").html();
+                $("#test").html("<i class='fa fa-spinner fa-pulse  fa-fw'></i> {{ 'Attendere'|trans }}...");
+                $("#test").prop('disabled', true);
+                $("#install").prop('disabled', true);
+                $(this).closest("form").ajaxSubmit({
+                    url: '{{ path_for('configurationTest') }}',
+                    data: {
+                        test: 1,
+                    },
+                    type: "post",
+                    success: function(data){
+                        data = parseFloat(data.trim());
+
+                        $("#test").html(prev_html);
+                        $("#test").prop('disabled', false);
+                        $("#install").prop('disabled', false);
+
+                        if(data == 0){
+                            swal("{{ 'Errore della configurazione'|trans }}", "{{ 'La configurazione non è corretta'|trans }}.", "error");
+                        } else if(data == 1){
+                            swal("{{ 'Permessi insufficienti'|trans }}", "{{ "L'utente non possiede permessi sufficienti per il testing della connessione. Potresti rilevare problemi in fase di installazione."|trans }}.", "error");
+                        } else {
+                            swal("{{ 'Configurazione corretta'|trans }}", "{{ 'Ti sei connesso con successo al database'|trans }}. {{ "Clicca su 'Installa' per proseguire"|trans }}.", "success");
+                        }
+                    },
+                    error: function(xhr, error, thrown) {
+                        ajaxError(xhr, error, thrown);
+                    }
+                });
+            }
+        });
+    });
+    </script>
+
+    <ul>
+        <li><a href="#step-1">
+            <h3>{{ 'Licenza'|trans }}</h3>
+        </a></li>
+
+        <li><a href="#step-2">
+            <h3>{{ 'Configurazione'|trans }}</h3>
+        </a></li>
+    </ul>
+
+    <div id="steps">
+
+        <!-- LICENZA -->
+        <div id="step-1">
+            <p>{{ 'OpenSTAManager è tutelato dalla licenza _LICENSE_!'|trans({'_LICENSE_': 'GPL 3.0'}) }}</p>
+
+            <div class="row">
+                <div class="col-md-8">
+                    <span class="pull-left" title={{ 'Visiona e accetta la licenza per proseguire'|trans }} >{{ 'Accetti la licenza GPLv3 di OpenSTAManager?'|trans }}*</span>
+                </div>
+
+                <form class="col-md-4">
+                    <input type="checkbox" id="agree" name="agree" data-parsley-required="true">
+                    <label for="agree">{{ 'Ho visionato e accetto'|trans }}.</label>
+                </form>
+            </div>
+            <hr>
+
+            <textarea class="form-control autosize" rows="15" readonly>{{ license }}</textarea><br>
+            <a class="pull-left" href="https://www.gnu.org/licenses/translations.en.html#GPL" target="_blank">[ {{ 'Versioni tradotte'|trans }} ]</a><br><br>
+        </div>
+
+        <!-- PARAMETRI -->
+        <div id="step-2">
+            <a href="https://www.openstamanager.com/contattaci/?subject=Assistenza%20installazione%20OSM" target="_blank" ><img class="pull-right" width="32" src="{{ base_url() }}/assets/img/help.png" alt="{{ 'Aiuto'|trans }}" title="{{ 'Contatta il nostro help-desk'|trans }}"/></a>
+
+            <p>{{ 'Non hai ancora configurato OpenSTAManager'|trans }}.</p>
+            <p><small class="help-block">{{ 'Configura correttamente il software con i seguenti parametri (modificabili successivamente dal file _FILE_)'|trans({'_FILE_': '<b>config.inc.php</b>'})|raw }}</small></p>
+
+            <!-- Form dei parametri -->
+            <form action="" method="post" id="config-form">
+                <div class="row">
+
+                    <!-- db_host -->
+                    <div class="col-md-12">
+                        {[ "type": "text", "label": "{{ 'Host del database'|trans }}", "name": "host", "placeholder": "{{ "Indirizzo dell'host del database"|trans }}", "value": "{{ host }}", "help": "{{ 'Esempio'|trans }}: localhost", "show-help": 0, "required": 1 ]}
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <!-- db_username -->
+                    <div class="col-md-4">
+                        {[ "type": "text", "label": "{{ "Username dell'utente MySQL"|trans }}", "name": "username", "placeholder": "{{ "Username dell'utente MySQL"|trans }}", "value": "{{ username }}", "help": "{{ 'Esempio'|trans }}: root", "show-help": 0, "required": 1 ]}
+                    </div>
+
+                    <!-- db_password -->
+                    <div class="col-md-4">
+                        {[ "type": "password", "label": "{{ "Password dell'utente MySQL"|trans }}", "name": "password", "placeholder": "{{ "Password dell'utente MySQL"|trans }}", "value": "{{ password }}", "help": "{{ 'Esempio'|trans }}: mysql", "show-help": 0 ]}
+                    </div>
+
+                    <!-- db_name -->
+                    <div class="col-md-4">
+                        {[ "type": "text", "label": "{{ 'Nome del database'|trans }}", "name": "database_name", "placeholder": "{{ 'Nome del database'|trans }}", "value": "{{ database_name }}", "help": "{{ 'Esempio'|trans }}: openstamanager", "show-help": 0, "required": 1 ]}
+                    </div>
+                </div>
+
+                <!-- PULSANTI -->
+                <div class="row">
+                    <div class="col-md-4">
+                        <span>*<small><small>{{ 'Campi obbligatori'|trans }}</small></small></span>
+                    </div>
+                    <div class="col-md-4 text-right">
+                        <button type="button" id="test" class="btn btn-warning btn-block">
+                            <i class="fa fa-file-text"></i> {{ 'Testa il database'|trans }}
+                        </button>
+                    </div>
+                    <div class="col-md-4 text-right">
+                        <button type="submit" id="install" class="btn btn-success btn-block">
+                            <i class="fa fa-check"></i> {{ 'Installa'|trans }}
+                        </button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+
+    </div>
+
+{% endblock %}

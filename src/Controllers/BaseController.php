@@ -11,7 +11,7 @@ class BaseController extends Controller
     public function index($request, $response, $args)
     {
         // Requisiti di OpenSTAManager
-        if (!ConfigController::requirementsSatisfied()) {
+        if (!RequirementsController::requirementsSatisfied()) {
             $controller = new ConfigController($this->container);
             $response = $controller->requirements($request, $response, $args);
         }

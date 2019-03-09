@@ -1,0 +1,14 @@
+{% extends "layouts/guest.twig" %}
+
+{% block title %}{{ "Errore di configurazione"|trans }}{% endblock %}
+
+{% block box_class %}box-danger{% endblock %}
+{% block box_header %}
+    <h3 class="box-title">{{ 'Impossibile connettersi al database'|trans }}</h3>
+{% endblock %}
+
+{% block content %}
+    <p>{{ "Si è verificato un'errore durante la connessione al database"|trans }}.</p>
+    <p>{{ 'Controllare di aver inserito correttamente i dati di accesso, e che il database atto ad ospitare i dati del gestionale sia esistente'|trans }}.</p>
+    <a class="btn btn-info" href="{{ path_for('login') }}"><i class="fa fa-repeat"></i> {{ 'Riprova'|trans }}</a>
+{% endblock %}

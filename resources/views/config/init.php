@@ -126,7 +126,7 @@ if (!$has_user) {
                         </div>
 
                         <div class="col-md-6">
-                            {[ "type": "password", "label": "'.tr('Password').'", "id": "password", "name": "admin_password", "value": "'.$osm_password.'", "placeholder": "'.tr("Digita la password dell'amministratore").'", "required": 1, "icon-after": "<i  onclick=\" if ($(this).parent().find(\'i\').hasClass(\'fa-eye\')) {  $(\'#password\').attr(\'type\', \'text\'); $(this).parent().find(\'i\').removeClass(\'fa-eye\').addClass(\'fa-eye-slash\');  $(this).parent().find(\'i\').attr(\'title\', \'Nascondi password\'); }  else { $(\'#password\').attr(\'type\', \'password\'); $(this).parent().find(\'i\').removeClass(\'fa-eye-slash\').addClass(\'fa-eye\');  $(this).parent().find(\'i\').attr(\'title\', \'Visualizza password\'); } \" title=\"'.tr('Visualizza password').'\" class=\"fa fa-eye clickable\" ></i>" ]}
+                            {[ "type": "password", "label": "'.tr('Password').'", "id": "password", "name": "admin_password", "value": "'.$osm_password.'", "placeholder": "'.tr("Digita la password dell'amministratore").'", "required": 1, "icon-after": "<i onclick=\"togglePassword(this)\" title=\"'.tr('Visualizza password').'\" class=\"fa fa-eye clickable\" ></i>" ]}
                         </div>
 
                         <div class="col-md-6">
@@ -135,6 +135,25 @@ if (!$has_user) {
                     </div>
                 </div>
             </div>';
+
+    echo '
+    <script>
+    function togglePassword() {
+        var button = $(this);
+        
+        if (button.hasClass("fa-eye")) {
+            $("#password").attr("type", "text");
+            button.removeClass("fa-eye").addClass("fa-eye-slash");
+            button.attr("title", "Nascondi password");
+        }
+        else {
+            $("#password").attr("type", "password");
+            button.removeClass("fa-eye-slash").addClass("fa-eye");
+            button.attr("title", "Visualizza password");
+        }
+    }
+     
+    </script>';
 }
 
 if (!$has_azienda) {

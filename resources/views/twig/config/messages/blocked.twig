@@ -1,0 +1,14 @@
+{% extends "layouts/guest.twig" %}
+
+{% block title %}{{ "Aggiornamento in corso!"|trans }}{% endblock %}
+
+{% block box_class %}box-danger text-center{% endblock %}
+{% block box_header %}
+    <h3 class="box-title">{{ 'Aggiornamento in corso!'|trans }}</h3>
+{% endblock %}
+
+{% block content %}
+    <p>{{ "E' attualmente in corso la procedura di aggiornamento del software, e pertanto siete pregati di attendere fino alla sua conclusione"|trans }}.</p>
+    <p>{{ "Nel caso il problema persista, rivolgersi all'amministratore o all'assistenza ufficiale"|trans }}.</p>
+    <a class="btn btn-info" href="{{ path_for('login') }}"><i class="fa fa-repeat"></i> {{ 'Riprova'|trans }}</a>
+{% endblock %}

@@ -1,0 +1,48 @@
+<script>
+    addVersion("'.$update['name'].'");
+</script>';
+
+if (is_array($result)) {
+// Aggiunta del messaggio riguardante la conclusione dell'aggiornamento del database
+if (!empty($update['sql']) && $result[1] == $result[2]) {
+echo '
+<script>
+    $("#progress .info").html($("#progress .info").html() + "<p>&nbsp;&nbsp;&nbsp;&nbsp;<i class=\"fa fa-check\"></i> '.tr('Aggiornamento del database (_FILENAME_)', [
+    '_FILENAME_' => '<i>'.$update['filename'].'.sql</i>',
+    ]).'</p>");
+</script>';
+}
+
+$rate = $result[1] - $result[0];
+} elseif (!empty($update['script'])) {
+// Aggiunta del messaggio riguardante la conclusione dello script
+echo '
+<script>
+    $("#progress .info").html($("#progress .info").html() + "<p>&nbsp;&nbsp;&nbsp;&nbsp;<i class=\"fa fa-check\"></i> '.tr('Esecuzione dello script di aggiornamento (_FILENAME_)', [
+    '_FILENAME_' => '<i>'.$update['filename'].'.php</i>',
+    ]).'</p>");
+</script>';
+
+$rate = $scriptValue;
+}
+
+// Aumento della percentuale di completamento totale
+if (!empty($rate)) {
+echo '
+<script>
+    addProgress('.$rate.');
+</script>';
+}
+
+echo '
+<script>
+    $("#result").load("index.php?action=do_update&firstuse='.$_GET['firstuse'].'");
+</script>';
+} else {
+// Fallimento
+echo '
+<div class="alert alert-danger">
+    <i class="fa fa-times"></i> '.tr("Errore durante l'esecuzione dell'aggiornamento alla versione _VERSION_", [
+    '_VERSION_' => $update['version'],
+    ]).'
+</div>';

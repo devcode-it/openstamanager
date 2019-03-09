@@ -18,11 +18,15 @@ $app->get('/logout[/]', 'Controllers\BaseController:logout')->setName('logout')
 
 // Configurazione iniziale
 $app->group('', function () use ($app) {
-    $app->get('/update[/]', 'Controllers\ConfigController:update')->setName('update');
+    $app->get('/requirements[/]', 'Controllers\RequirementsController:requirements')->setName('requirements');
 
     $app->get('/configuration[/]', 'Controllers\ConfigController:configuration')->setName('configuration');
+    $app->post('/configuration[/]', 'Controllers\ConfigController:configurationSave');
 
-    $app->get('/requirements[/]', 'Controllers\ConfigController:requirements')->setName('requirements');
+    $app->post('/configuration/test[/]', 'Controllers\ConfigController:configurationTest')->setName('configurationTest');
+
+    $app->get('/update[/]', 'Controllers\ConfigController:update')->setName('update');
+    $app->get('/update/progress[/]', 'Controllers\ConfigController:updateProgress')->setName('update-progress');
 })->add('Middlewares\Authorization\GuestMiddleware');
 
 // Informazioni su OpenSTAManager

@@ -31,6 +31,11 @@ $container['flash'] = function ($container) {
     return new \Util\Messages();
 };
 
+// Sanitizing methods
+$container['filter'] = function ($container) {
+    return new \Middlewares\FilterMiddleware($container);
+};
+
 use Slim\Views\PhpRenderer;
 
 // Templating PHP

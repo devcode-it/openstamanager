@@ -118,14 +118,10 @@ class SelectHandler implements HandlerInterface
     protected function select2($op, $elements)
     {
         // Richiamo del file dedicato alle richieste AJAX per ottenere il valore iniziale del select
-        ob_start();
-        $dbo = database();
-        include DOCROOT.'/ajax_select.php';
-        $text = ob_get_clean();
+        $response = \AJAX::select($op, $elements);
 
         $html = '';
 
-        $response = (array) json_decode($text, true);
         $results = $response['results'];
         foreach ($results as $element) {
             $element = (array) $element;

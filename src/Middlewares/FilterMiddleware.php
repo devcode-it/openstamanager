@@ -1,19 +1,45 @@
 <?php
 
+namespace Middlewares;
+
 /**
  * Classe per gestire la sanitarizzazione degli input, basata sul framework open-source HTMLPurifier.
  *
  * @since 2.3
  */
-class Filter
+class FilterMiddleware extends Middleware
 {
     /** @var HTMLPurifier */
     protected static $purifier;
 
     /** @var array Elenco dei contenuti inviati via POST */
-    protected static $post = [];
+    protected $post = [];
     /** @var array Elenco dei contenuti inviati via GET */
-    protected static $get = [];
+    protected $get = [];
+
+    public function __construct($container)
+    {
+        parent::__construct($container);
+    }
+
+    public function __invoke($request, $response, $next)
+    {
+        $post = $request->getParsedBody();
+        if (!empty($post)) {
+            $this->post['raw'] = self::sanitize($post);
+            $this->post['parsed'] = [];
+        }
+
+        $get = $request->getQueryParams();
+        if (!empty($get)) {
+            $this->get['raw'] = self::sanitize($get);
+            $this->get['parsed'] = [];
+        }
+
+        $response = $next($request, $response);
+
+        return $response;
+    }
 
     /**
      * Restituisce il valore presente nei dati ottenuti dall'input dell'utente.
@@ -23,7 +49,7 @@ class Filter
      *
      * @return string
      */
-    public static function getValue($property, $method = null, $parse = false)
+    public function getValue($property, $method = null, $parse = false)
     {
         $value = null;
 
@@ -39,55 +65,23 @@ class Filter
     }
 
     /**
-     * Restituisce i contenuti dalla sezione POST.
-     *
-     * @return array
-     */
-    public static function getPOST()
-    {
-        if (empty(self::$post)) {
-            self::$post['raw'] = self::sanitize($_POST);
-            self::$post['parsed'] = [];
-        }
-
-        return self::$post['raw'];
-    }
-
-    /**
      * Restituisce il valore presente nei dati ottenuti dalla sezione POST.
      *
      * @param string $property
      *
      * @return string
      */
-    public static function post($property, $parse = false)
+    public function post($property, $parse = false)
     {
-        self::getPOST();
-
-        if (!empty($parse) && !isset(self::$post['parsed'][$property])) {
-            self::$post['parsed'][$property] = self::parse(post($property));
+        if (!empty($parse) && !isset($this->post['parsed'][$property])) {
+            $this->post['parsed'][$property] = self::parse(post($property));
         }
 
         $category = !empty($parse) ? 'parsed' : 'raw';
 
-        if (isset(self::$post[$category][$property])) {
-            return self::$post[$category][$property];
+        if (isset($this->post[$category][$property])) {
+            return $this->post[$category][$property];
         }
-    }
-
-    /**
-     * Restituisce i contenuti dalla sezione GET.
-     *
-     * @return array
-     */
-    public static function getGET()
-    {
-        if (empty(self::$get)) {
-            self::$get['raw'] = self::sanitize($_GET);
-            self::$get['parsed'] = [];
-        }
-
-        return self::$get['raw'];
     }
 
     /**
@@ -97,18 +91,32 @@ class Filter
      *
      * @return string
      */
-    public static function get($property, $parse = false)
+    public function get($property, $parse = false)
     {
-        self::getGET();
-
-        if (!empty($parse) && !isset(self::$get['parsed'][$property])) {
-            self::$get['parsed'][$property] = self::parse(get($property));
+        if (!empty($parse) && !isset($this->get['parsed'][$property])) {
+            $this->get['parsed'][$property] = self::parse(get($property));
         }
 
         $category = !empty($parse) ? 'parsed' : 'raw';
 
-        if (isset(self::$get[$category][$property])) {
-            return self::$get[$category][$property];
+        if (isset($this->get[$category][$property])) {
+            return $this->get[$category][$property];
+        }
+    }
+
+    /**
+     * Imposta una proprietà specifica a un valore personalizzato.
+     *
+     * @param string $method
+     * @param string $property
+     * @param mixed  $value
+     */
+    public function set($method, $property, $value)
+    {
+        if (strtolower($method) == 'post') {
+            $this->post['parsed'][$property] = $value;
+        } elseif (strtolower($method) == 'get') {
+            $this->get['parsed'][$property] = $value;
         }
     }
 
@@ -173,21 +181,5 @@ class Filter
         }
 
         return self::$purifier;
-    }
-
-    /**
-     * Imposta una proprietà specifica a un valore personalizzato.
-     *
-     * @param string $method
-     * @param string $property
-     * @param mixed  $value
-     */
-    public static function set($method, $property, $value)
-    {
-        if (strtolower($method) == 'post') {
-            self::$post['parsed'][$property] = $value;
-        } elseif (strtolower($method) == 'get') {
-            self::$get['parsed'][$property] = $value;
-        }
     }
 }

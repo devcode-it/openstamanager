@@ -966,7 +966,7 @@ function start_superselect() {
                 return data.text;
             },
             ajax: {
-                url: globals.rootdir + "/ajax_select.php?op=" + $this.data('source'),
+                url: globals.rootdir + "/ajax/select/?op=" + $this.data('source'),
                 dataType: 'json',
                 delay: 250,
                 data: function (params) {

@@ -44,7 +44,7 @@ function prepare($parameter)
  */
 function filter($param, $method = null, $parse = false)
 {
-    return \Filter::getValue($param, $method, $parse);
+    return container()->filter->getValue($param, $method, $parse);
 }
 
 /**
@@ -59,7 +59,7 @@ function filter($param, $method = null, $parse = false)
  */
 function post($param, $parse = false)
 {
-    return \Filter::getValue($param, 'post', $parse);
+    return container()->filter->getValue($param, 'post', $parse);
 }
 
 /**
@@ -74,7 +74,7 @@ function post($param, $parse = false)
  */
 function get($param, $parse = false)
 {
-    return \Filter::getValue($param, 'get', $parse);
+    return container()->filter->getValue($param, 'get', $parse);
 }
 
 /**
@@ -231,4 +231,33 @@ function dateFormat($date)
 function timeFormat($time)
 {
     return Translator::timeToLocale($time);
+}
+
+/**
+ * Restituisce il percorso per la risorsa $name.
+ *
+ * @param string $name
+ * @param array  $parameters
+ *
+ * @return string
+ *
+ * @since 2.5
+ */
+function pathFor($name, $parameters = [])
+{
+    $router = container()->router;
+
+    return $router->pathFor($name, $parameters);
+}
+
+/**
+ * Restituisce il contenitore Slim per DI.
+ *
+ * @return \Slim\Container
+ *
+ * @since 2.5
+ */
+function container()
+{
+    return App::getContainer();
 }

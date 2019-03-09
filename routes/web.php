@@ -57,6 +57,7 @@ $app->group('/module/{module_id}', function () use ($app) {
 
     $app->get('/add[/]', 'Controllers\ModuleController:add')->setName('module-add');
     $app->post('/add[/]', 'Controllers\ModuleController:addRecord');
+    $app->post('[/]', 'Controllers\ModuleController:addRecord');
 })->add('Middlewares\Authorization\UserMiddleware');
 
 // Stampe

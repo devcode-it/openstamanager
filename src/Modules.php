@@ -268,15 +268,14 @@ class Modules
         $extra .= !empty($blank) ? ' target="_blank"' : '';
 
         if (!empty($module) && in_array($module->permission, ['r', 'rw'])) {
-            $router = App::getContainer()->router;
-            $link = !empty($id_record) ? $router->pathFor('module-record', [
+            $link = !empty($id_record) ? pathFor('module-record', [
                 'module_id' => $module['id'],
                 'record_id' => $id_record,
-            ]) : $router->pathFor('module', [
+            ]) : pathFor('module', [
                 'module_id' => $module['id'],
             ]);
 
-            return '<a href="'.ROOTDIR.'/'.$link.'" '.$extra.'>'.$testo.'</a>';
+            return '<a href="'.$link.'" '.$extra.'>'.$testo.'</a>';
         } else {
             return $alternativo;
         }
@@ -313,8 +312,7 @@ class Modules
             return '';
         }
 
-        $router = App::getContainer()->router;
-        $link = (!empty($element['option']) && $element['option'] != 'menu') ? $router->pathFor('module', [
+        $link = (!empty($element['option']) && $element['option'] != 'menu') ? pathFor('module', [
             'module_id' => $element['id'],
         ]) : 'javascript:;';
         $title = $element['title'];

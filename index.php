@@ -90,9 +90,6 @@ require __DIR__.'/routes/web.php';
 // Aggiunta dei middleware
 require __DIR__.'/config/middlewares.php';
 
-Filter::getPOST();
-Filter::getGET();
-
 // Run application
 $response = $app->run(true);
 $html = $response->getBody()->__toString();

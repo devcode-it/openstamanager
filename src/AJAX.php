@@ -37,9 +37,6 @@ class AJAX
 
         $files = self::find('ajax/select.php', false);
 
-        // File di gestione predefinita
-        array_unshift($files, DOCROOT.'/ajax_select.php');
-
         foreach ($files as $file) {
             $results = self::getSelectResults($file, $resource, $elements, [
                 'offset' => $page * $length,
@@ -121,9 +118,6 @@ class AJAX
 
         $files = self::find('ajax/search.php');
 
-        // File di gestione predefinita
-        array_unshift($files, DOCROOT.'/ajax_search.php');
-
         $results = [];
         foreach ($files as $file) {
             $module_results = self::getSearchResults($file, $term);
@@ -144,9 +138,6 @@ class AJAX
     public static function complete($resource)
     {
         $files = self::find('ajax/complete.php');
-
-        // File di gestione predefinita
-        array_unshift($files, DOCROOT.'/ajax_complete.php');
 
         foreach ($files as $file) {
             $result = self::getCompleteResults($file, $resource);

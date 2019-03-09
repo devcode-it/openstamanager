@@ -103,7 +103,7 @@ class HTMLWrapper implements WrapperInterface
         $module_id = $pieces[1];
         $module = Modules::get($module_id);
 
-        $get = !empty($pieces[2]) ? '&'.$pieces[2] : null;
+        $get = !empty($pieces[2]) ? $pieces[2] : null;
         $classes = !empty($pieces[3]) ? ' '.$pieces[3] : null;
         $btn_extras = !empty($pieces[4]) ? ' '.$pieces[4] : null;
 
@@ -114,7 +114,9 @@ class HTMLWrapper implements WrapperInterface
 
         if (in_array($module->permission, ['r', 'rw'])) {
             $result = '
-<button '.$btn_extras.' data-href="'.ROOTDIR.'/add.php?id_module='.$module->id.$get.'&select='.$values['id'].'&ajax=yes" data-target="#bs-popup2" data-toggle="modal" data-title="'.tr('Aggiungi').'" type="button" class="btn'.$classes.'">
+<button '.$btn_extras.' data-href="'.pathFor('module-add', [
+                'module_id' => $module->id,
+            ]).'?'.$get.'&select='.$values['id'].'&ajax=yes" data-target="#bs-popup2" data-toggle="modal" data-title="'.tr('Aggiungi').'" type="button" class="btn'.$classes.'">
     <i class="fa fa-plus"></i>
 </button>';
         }

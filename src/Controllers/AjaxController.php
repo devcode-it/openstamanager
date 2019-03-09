@@ -2,7 +2,7 @@
 
 namespace Controllers;
 
-use App;
+use AJAX;
 use Modules;
 use Util\Query;
 
@@ -205,7 +205,6 @@ class AjaxController extends Controller
                 }
             }
 
-            $router = App::getContainer()->router;
             // Creazione della tabella
             foreach ($rows as $i => $r) {
                 $result = [
@@ -279,7 +278,7 @@ class AjaxController extends Controller
 
                         // Link per i moduli
                         if (empty($id_plugin)) {
-                            $column['data-link'] = $router->pathFor('module-record', [
+                            $column['data-link'] = pathFor('module-record', [
                                 'module_id' => $id_module,
                                 'record_id' => $id_record,
                             ]).$hash;

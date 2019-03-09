@@ -95,11 +95,12 @@ WHERE `an_tipianagrafiche`.`descrizione` = 'Azienda' AND `an_anagrafiche`.`delet
         ]);
 
         $response = $this->twig->render($response, 'config\init.twig', $args);
+
+        return $response;
     }
 
     public function initSave($request, $response, $args)
     {
-        //dd($request->getParsedBodyParam('id_anagrafica'));
         $this->permission($request, $response);
 
         $values = self::getInitValues();

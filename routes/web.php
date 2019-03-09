@@ -26,7 +26,7 @@ $app->group('', function () use ($app) {
     $app->post('/configuration/test[/]', 'Controllers\ConfigController:configurationTest')->setName('configurationTest');
 
     $app->get('/update[/]', 'Controllers\ConfigController:update')->setName('update');
-    $app->get('/update/progress[/]', 'Controllers\ConfigController:updateProgress')->setName('update-progress');
+    $app->get('/update/progress/{installing}[/]', 'Controllers\ConfigController:updateProgress')->setName('update-progress');
 })->add('Middlewares\Authorization\GuestMiddleware');
 
 // Informazioni su OpenSTAManager

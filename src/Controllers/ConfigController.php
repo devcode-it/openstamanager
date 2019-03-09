@@ -8,14 +8,16 @@ use Update;
 class ConfigController extends Controller
 {
     protected static $updateRate = 20;
+    protected static $scriptValue = 100;
 
     public function update($request, $response, $args)
     {
         $total = 0;
         $updates = Update::getTodoUpdates();
 
-        $updateRate = self::$updateRate;
-        $scriptValue = $updateRate * 5;
+        if (!Update::isUpdateAvailable()) {
+            throw new \Slim\Exception\NotFoundException($request, $response);
+        }
 
         foreach ($updates as $update) {
             if ($update['sql'] && (!empty($update['done']) || is_null($update['done']))) {
@@ -28,7 +30,7 @@ class ConfigController extends Controller
             }
 
             if ($update['script']) {
-                $total += $scriptValue;
+                $total += self::$scriptValue;
             }
         }
 
@@ -37,7 +39,7 @@ class ConfigController extends Controller
             $response = $this->twig->render($response, 'config\messages\blocked.twig', $args);
         } else {
             $args = array_merge($args, [
-                'is_installed' => $this->database->isInstalled(),
+                'installing' => intval(!$this->database->isInstalled()),
                 'total_updates' => count($updates),
                 'total_count' => $total,
             ]);
@@ -54,17 +56,30 @@ class ConfigController extends Controller
         if (Update::isUpdateAvailable()) {
             $update = Update::getCurrentUpdate();
 
-            $result = Update::doUpdate($updateRate);
+            $result = Update::doUpdate(self::$updateRate);
+
+            $args = array_merge($args, [
+                'update_name' => $update['name'],
+                'update_version' => $update['version'],
+                'update_filename' => $update['filename'],
+            ]);
 
             if (!empty($result)) {
+                $rate = 0;
                 if (is_array($result)) {
                     $rate = $result[1] - $result[0];
                 } elseif (!empty($update['script'])) {
-                    $rate = $scriptValue;
+                    $rate = self::$scriptValue;
                 }
 
-                $response = $this->twig->render($response, 'config\messages\piece.twig', $args);
+                $args = array_merge($args, [
+                    'show_sql' => is_array($result) && $result[1] == $result[2],
+                    'show_script' => is_bool($result),
+                    'rate' => $rate,
+                ]);
             }
+
+            $response = $this->twig->render($response, 'config\messages\piece.twig', $args);
         }
 
         // Aggiornamento completato
@@ -73,6 +88,8 @@ class ConfigController extends Controller
 
             $response = $this->twig->render($response, 'config\messages\done.twig', $args);
         }
+
+        return $response;
     }
 
     public function configuration($request, $response, $args)

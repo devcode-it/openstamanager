@@ -1,24 +1,24 @@
 {% extends "layouts/guest.twig" %}
 
-{% block title %}{{ "Aggiornamento"|trans }}{% endblock %}
+{% block title %}{{ installing ? 'Installazione'|trans : 'Aggiornamento'|trans }}{% endblock %}
 
 {% block box_class %}box-warning text-center{% endblock %}
 {% block box_header %}
-    <h3 class="box-title">{{ is_installed ? 'Aggiornamento di OpenSTAManager'|trans : 'Installazione di OpenSTAManager'|trans }}</h3>
+    <h3 class="box-title">{{ installing ? 'Installazione di OpenSTAManager'|trans : 'Aggiornamento di OpenSTAManager'|trans }}</h3>
 {% endblock %}
 
 {% block content %}
-    {% if is_installed %}
-    <p>{{ "E' necessario aggiornare il database a una nuova versione"|trans }}.</p>
-    {% else %}
+    {% if installing %}
     <p><strong>{{ "E' la prima volta che avvii OpenSTAManager e non hai ancora installato il database"|trans }}.</strong></p>
+    {% else %}
+    <p>{{ "E' necessario aggiornare il database a una nuova versione"|trans }}.</p>
     {% endif %}
 
-    {% set button = is_installed ? 'Aggiorna!'|trans : 'Installa!'|trans %}
+    {% set button = installing ? 'Installa!'|trans : 'Aggiorna!'|trans %}
 
     <p>{{ "Premi il tasto _BUTTON_ per procedere con l'_OP_!"|trans({
         '_BUTTON_': '<b>' ~ button ~ '</b>',
-        '_OP_': is_installed ? 'aggiornamento'|trans : 'installazione'|trans,
+        '_OP_': installing ? 'installazione'|trans : 'aggiornamento'|trans,
         })|raw }}</p>
     <input type="button" class="btn btn-primary" value="{{ button }}" onclick="continue_update()" id="contine_button">
 
@@ -33,7 +33,7 @@
                 confirmButtonText: "{{ 'Procedi'|trans }}",
             }).then(function(){
                 $("#progress").show();
-                $("#result").load("{{ path_for('update-progress') }}");
+                $("#result").load("{{ path_for('update-progress', {'installing': installing}) }}");
                 $("#contine_button").remove();
             }, function(){});
         }
@@ -48,9 +48,9 @@
         <hr>
         <div class="box box-info text-center collapsed-box">
             <div class="box-header with-border">
-                <h3 class="box-title"><a class="clickable" data-widget="collapse">{{ 'Log'|trans }}</a></h3>
+                <h3 class="box-title"><a class="clickable" onclick="$(this).closest('.box').boxWidget('toggle')">{{ 'Log'|trans }}</a></h3>
                 <div class="box-tools pull-right">
-                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+                    <button type="button" class="btn btn-box-tool" onclick="$(this).closest('.box').boxWidget('toggle')"><i class="fa fa-plus"></i></button>
                 </div>
             </div>
             <div class="box-body info text-left"></div>
@@ -59,6 +59,8 @@
     <div id="result"></div>
     
     <script>
+        let count, current, progress, percent, total, versions;
+
         $(document).ready(function(){
             $(".login-box").fadeOut();
 
@@ -93,7 +95,7 @@
                     '_DONE_': '" + current + "',
                     '_TODO_': '" + count + "',
                     '_VERSION_': '" + version.trim() + "',
-                }) }}'</strong></p>");
+                })|raw }}</strong></p>");
             }
         }
     </script>

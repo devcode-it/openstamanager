@@ -113,7 +113,7 @@ if (empty($record['is_fiscale'])) {
 					<?php
                     if ($dir == 'entrata') {
                         ?>
-					{[ "type": "select", "label": "<?php echo tr('Stato FE'); ?>", "name": "codice_stato_fe", "required": 0, "values": "query=SELECT codice as id, descrizione as text FROM fe_stati_documento", "value": "$codice_stato_fe$", "disabled": <?php echo intval(Plugins\ExportFE\Connection::isEnabled()); ?>, "class": "unblockable" ]}
+					{[ "type": "select", "label": "<?php echo tr('Stato FE'); ?>", "name": "codice_stato_fe", "required": 0, "values": "query=SELECT codice as id, CONCAT_WS(' - ',codice,descrizione) as text FROM fe_stati_documento", "value": "$codice_stato_fe$", "disabled": <?php echo intval(Plugins\ExportFE\Connection::isEnabled()); ?>, "class": "unblockable", "help": "<?php echo ((!empty($record['data_stato_fe'])) ? Translator::timestampToLocale($record['data_stato_fe']) : '' ); ?>" ]}
 					<?php
                     }
                     ?>
@@ -141,6 +141,14 @@ if (empty($record['is_fiscale'])) {
 				<div class="col-md-3">
 					{[ "type": "select", "label": "<?php echo tr('Riferimento sede'); ?>", "name": "idsede", "ajax-source": "sedi", "placeholder": "Sede legale", "value": "$idsede$" ]}
 				</div>
+				
+				<?php if ($dir == 'uscita') { ?>
+					
+				<div class="col-md-3">
+					{[ "type": "date", "label": "<?php echo tr('Data ricezione'); ?>", "name": "data_ricezione", "required": 0, "value": "$data_ricezione$" ]}
+				</div>
+				
+				<?php } ?>
 
 				<?php if ($dir == 'entrata') {
                         ?>

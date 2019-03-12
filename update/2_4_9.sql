@@ -10,3 +10,6 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `
 
 -- Stato FE (Notifica esito)
 INSERT INTO `fe_stati_documento` (`codice`, `descrizione`, `icon`) VALUES ('NE', 'Notifica esito', 'fa fa-check text-success');
+
+-- Aggiunta data ricezione, utile per le fatture di acquisto
+ALTER TABLE `co_documenti` ADD `data_ricezione` DATE NULL AFTER `data`;

@@ -63,6 +63,7 @@ switch (post('op')) {
             // Query di aggiornamento
             $dbo->update('co_documenti', array_merge([
                 'data' => post('data'),
+				'data_ricezione' => post('data_ricezione'),
                 'numero_esterno' => post('numero_esterno'),
                 'note' => post('note'),
                 'note_aggiuntive' => post('note_aggiuntive'),

@@ -13,3 +13,12 @@ INSERT INTO `fe_stati_documento` (`codice`, `descrizione`, `icon`) VALUES ('NE',
 
 -- Aggiunta data ricezione, utile per le fatture di acquisto
 ALTER TABLE `co_documenti` ADD `data_ricezione` DATE NULL AFTER `data`;
+
+
+-- Importo marca da bollo a 2 (https://www.fiscoetasse.com/approfondimenti/12090-applicazione-della-marca-da-bollo-sulle-fatture.html)
+UPDATE `zz_settings` SET `valore` = '2' WHERE `zz_settings`.`nome` = 'Importo marca da bollo';
+
+
+-- Stampa preventivo (senza totali)
+INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `default`, `enabled`) VALUES
+(NULL, (SELECT id FROM zz_modules WHERE name='Preventivi'), 1, 'Preventivo (senza totali)', 'Preventivo (senza totali)', 'preventivi', 'idpreventivo', '{"pricing":true, "hide_total":true}', 'fa fa-print', '', '', 0, 0, 1, 1);

@@ -454,25 +454,21 @@ function ricalcola_costiagg_fattura($iddocumento, $idrivalsainps = '', $idritenu
         }
 
         // Leggo la ritenuta d'acconto se c'è
-        $totale_fattura = get_totale_fattura($iddocumento);
+        $fattura = Fattura::find($iddocumento);
 
-        $query = 'SELECT percentuale FROM co_ritenutaacconto WHERE id='.prepare($idritenutaacconto);
-        $rs = $dbo->fetchArray($query);
-        $netto_a_pagare = $totale_fattura - $ritenutaacconto;
+        $righe_bollo = $fattura->getRighe()->filter(function ($item, $key) {
+            return $item->aliquota != null && in_array($item->aliquota->codice_natura_fe, ['N1', 'N2', 'N3', 'N4']);
+        });
+
+        $importo_righe_bollo = $righe_bollo->sum('netto');
 
         // Leggo la marca da bollo se c'è e se il netto a pagare supera la soglia
         $bolli = ($dir == 'uscita') ? $bolli : setting('Importo marca da bollo');
         $bolli = formatter()->parse($bolli);
 
         $marca_da_bollo = 0;
-        if (abs($bolli) > 0 && abs($netto_a_pagare > setting("Soglia minima per l'applicazione della marca da bollo"))) {
-            //Controllo che tra le iva ce ne sia almeno una con natura N1, N2, N3 o N4
-            $check_natura = $dbo->fetchArray('SELECT codice_natura_fe FROM co_righe_documenti INNER JOIN co_iva ON co_righe_documenti.idiva=co_iva.id WHERE iddocumento='.prepare($iddocumento)." AND codice_natura_fe IN('N1','N2','N3','N4') GROUP BY codice_natura_fe");
-            if (($dir == 'entrata' && sizeof($check_natura) > 0) || $dir == 'uscita') {
-                $marca_da_bollo = $bolli;
-            } else {
-                $marca_da_bollo = 0.00;
-            }
+        if (abs($bolli) > 0 && abs($importo_righe_bollo) > setting("Soglia minima per l'applicazione della marca da bollo")) {
+            $marca_da_bollo = $bolli;
         }
 
         // Se l'importo è negativo può essere una nota di credito, quindi cambio segno alla marca da bollo

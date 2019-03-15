@@ -248,7 +248,7 @@ class Fattura extends Document
 
     public function getXML()
     {
-        if (empty($this->progressivo_invio)) {
+        if (empty($this->progressivo_invio) && $this->module == 'Fatture di acquisto') {
             $fe = new FatturaElettronica($this->id);
 
             return $fe->toXML();
@@ -261,7 +261,7 @@ class Fattura extends Document
 
     public function isFE()
     {
-        return !empty($this->progressivo_invio) && $this->module == 'Fatture di acquisto';
+        return !empty($this->progressivo_invio);
     }
 
     /**
@@ -340,7 +340,7 @@ class Fattura extends Document
     {
         $this->rimuoviScadenze();
 
-        if (!$ignora_fe && $this->isFE()) {
+        if (!$ignora_fe && $this->module == 'Fatture di acquisto' && $this->isFE()) {
             $scadenze_fe = $this->registraScadenzeFE($is_pagato);
         }
 

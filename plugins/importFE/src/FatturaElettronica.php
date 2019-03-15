@@ -279,7 +279,7 @@ class FatturaElettronica
         $totale_righe = sum($totali_righe);
 
         $dati_generali = $this->getBody()['DatiGenerali']['DatiGeneraliDocumento'];
-        $totale_documento = isset($dati_generali['ImportoTotaleDocumento']) ? $dati_generali['ImportoTotaleDocumento'] : sum($totali);
+        $totale_documento = $dati_generali['ImportoTotaleDocumento'];
 
         $diff = $totale_documento ? $totale_documento - $fattura->totale : $totale_righe - $fattura->imponibile_scontato;
         if (!empty($diff)) {

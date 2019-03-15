@@ -151,6 +151,24 @@ switch (post('op')) {
 
         break;
 
+    // Ricalcolo scadenze
+    case 'controlla_totali':
+        try {
+            $xml = \Util\XML::read($fattura->getXML());
+
+            $dati_generali = $xml['FatturaElettronicaBody']['DatiGenerali']['DatiGeneraliDocumento'];
+            $totale_documento = $dati_generali['ImportoTotaleDocumento'] ?: null;
+        } catch (Exception $e) {
+            $totale_documento = null;
+        }
+
+        echo json_encode([
+            'stored' => $totale_documento,
+            'calculated' => $fattura->totale,
+        ]);
+
+        break;
+
     // eliminazione documento
     case 'delete':
         $rs = $dbo->fetchArray('SELECT id FROM co_righe_documenti WHERE iddocumento='.prepare($id_record));

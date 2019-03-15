@@ -39,14 +39,8 @@ foreach ($righe as $row) {
 
     $extra = '';
 
-    $ref_modulo = null;
-    $ref_id = null;
-
     // Articoli
     if ($row->isArticolo()) {
-        $ref_modulo = Modules::get('Articoli')['id'];
-        $ref_id = $riga['idarticolo'];
-
         $riga['descrizione'] = (!empty($row->articolo) ? $row->articolo->codice.' - ' : '').$riga['descrizione'];
 
         $delete = 'unlink_articolo';
@@ -56,10 +50,8 @@ foreach ($righe as $row) {
     }
     // Intervento
     elseif (!empty($riga['idintervento'])) {
-        //$ref_modulo = Modules::get('Interventi')['id'];
-        //$ref_id = $riga['idintervento'];
-
-        $intervento = $dbo->fetchOne('SELECT codice_cig,codice_cup,id_documento_fe FROM in_interventi WHERE id = '.prepare($riga['idintervento']));
+        $intervento = $dbo->fetchOne('SELECT num_item,codice_cig,codice_cup,id_documento_fe FROM in_interventi WHERE id = '.prepare($riga['idintervento']));
+        $riga['num_item'] = $intervento['num_item'];
         $riga['codice_cig'] = $intervento['codice_cig'];
         $riga['codice_cup'] = $intervento['codice_cup'];
         $riga['id_documento_fe'] = $intervento['id_documento_fe'];
@@ -68,10 +60,8 @@ foreach ($righe as $row) {
     }
     // Preventivi
     elseif (!empty($riga['idpreventivo'])) {
-        //$ref_modulo = Modules::get('Preventivi')['id'];
-        //$ref_id = $riga['idpreventivo'];
-
-        $preventivo = $dbo->fetchOne('SELECT codice_cig,codice_cup,id_documento_fe FROM co_preventivi WHERE id = '.prepare($riga['idpreventivo']));
+        $preventivo = $dbo->fetchOne('SELECT num_item,codice_cig,codice_cup,id_documento_fe FROM co_preventivi WHERE id = '.prepare($riga['idpreventivo']));
+        $riga['num_item'] = $preventivo['num_item'];
         $riga['codice_cig'] = $preventivo['codice_cig'];
         $riga['codice_cup'] = $preventivo['codice_cup'];
         $riga['id_documento_fe'] = $preventivo['id_documento_fe'];
@@ -80,15 +70,23 @@ foreach ($righe as $row) {
     }
     // Contratti
     elseif (!empty($riga['idcontratto'])) {
-        //$ref_modulo = Modules::get('Contratti')['id'];
-        //$ref_id = $riga['idcontratto'];
-
-        $contratto = $dbo->fetchOne('SELECT codice_cig,codice_cup,id_documento_fe FROM co_contratti WHERE id = '.prepare($riga['idcontratto']));
+        $contratto = $dbo->fetchOne('SELECT num_item,codice_cig,codice_cup,id_documento_fe FROM co_contratti WHERE id = '.prepare($riga['idcontratto']));
+        $riga['num_item'] = $contratto['num_item'];
         $riga['codice_cig'] = $contratto['codice_cig'];
         $riga['codice_cup'] = $contratto['codice_cup'];
         $riga['id_documento_fe'] = $contratto['id_documento_fe'];
 
         $delete = 'unlink_contratto';
+    }
+	// Ordini (IDDOCUMENTO,CIG,CUP)
+    elseif (!empty($riga['idordine'])) {
+        $ordine = $dbo->fetchOne('SELECT num_item,codice_cig,codice_cup,id_documento_fe FROM or_ordini WHERE id = '.prepare($riga['idordine']));
+        $riga['num_item'] = $ordine['num_item'];
+        $riga['codice_cig'] = $ordine['codice_cig'];
+        $riga['codice_cup'] = $ordine['codice_cup'];
+        $riga['id_documento_fe'] = $ordine['id_documento_fe'];
+
+        $delete = 'unlink_riga';
     }
     // Righe generiche
     else {
@@ -109,18 +107,19 @@ foreach ($righe as $row) {
 
     $extra_riga = '';
     if (!$riga['is_descrizione']) {
-        $extra_riga = tr('_DESCRIZIONE_CONTO_ _ID_DOCUMENTO_ _CODICE_CIG_ _CODICE_CUP_ ', [
+        $extra_riga = tr('_DESCRIZIONE_CONTO__ID_DOCUMENTO__NUMERO_RIGA__CODICE_CIG__CODICE_CUP_', [
             '_DESCRIZIONE_CONTO_' => $riga['descrizione_conto'] ?: null,
-            '_CODICE_CIG_' => $riga['codice_cig'] ? ',CIG: '.$riga['codice_cig'] : null,
-            '_CODICE_CUP_' => $riga['codice_cup'] ? ',CUP: '.$riga['codice_cup'] : null,
             '_ID_DOCUMENTO_' => $riga['id_documento_fe'] ? ' - DOC: '.$riga['id_documento_fe'] : null,
+            '_NUMERO_RIGA_' => $riga['num_item'] ? ', NRI: '.$riga['num_item'] : null,
+            '_CODICE_CIG_' => $riga['codice_cig'] ? ', CIG: '.$riga['codice_cig'] : null,
+            '_CODICE_CUP_' => $riga['codice_cup'] ? ', CUP: '.$riga['codice_cup'] : null,
         ]);
     }
 
     echo '
     <tr data-id="'.$riga['id'].'" '.$extra.'>
         <td>
-            '.Modules::link($ref_modulo, $ref_id, $riga['descrizione']).'
+            '.Modules::link($row->isArticolo() ? Modules::get('Articoli')['id'] : null, $row->isArticolo() ? $riga['idarticolo'] : null, $riga['descrizione']).'
             <small class="pull-right text-muted">'.$extra_riga.'</small>';
 
     if (!empty($riga['abilita_serial'])) {
@@ -417,6 +416,20 @@ if (!empty($fattura->ritenuta_acconto)) {
         </td>
         <td align="right">
             '.Translator::numberToLocale($fattura->ritenuta_acconto).' &euro;
+        </td>
+        <td></td>
+    </tr>';
+}
+
+// RITENUTA CONTRIBUTI
+if (!empty($fattura->totale_ritenuta_contributi)) {
+    echo '
+    <tr>
+        <td colspan="5" class="text-right">
+            <b>'.tr('Ritenuta contributi', [], ['upper' => true]).':</b>
+        </td>
+        <td align="right">
+            '.Translator::numberToLocale($fattura->totale_ritenuta_contributi).' &euro;
         </td>
         <td></td>
     </tr>';

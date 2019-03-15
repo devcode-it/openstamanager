@@ -134,22 +134,27 @@ if ($record['stato'] == 'Emessa') {
 	</div>
 
     <!-- Fatturazione Elettronica -->
-    <div class="panel panel-primary <?php echo (($record['tipo_anagrafica']) == 'Ente pubblico' or ($record['tipo_anagrafica']) == 'Azienda') ? 'show' : 'hide'; ?>" >
+    <div class="panel panel-primary <?php echo ($record['tipo_anagrafica'] == 'Ente pubblico' || $record['tipo_anagrafica'] == 'Azienda') ? 'show' : 'hide'; ?>" >
         <div class="panel-heading">
             <h3 class="panel-title"><?php echo tr('Dati appalto'); ?></h3>
         </div>
 
         <div class="panel-body">
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-6">
 					{[ "type": "text", "label": "<?php echo tr('Identificatore Documento'); ?>", "help": "<?php echo tr('<span>Obbligatorio per valorizzare CIG/CUP. &Egrave; possible inserire: </span><ul><li>N. determina</li><li>RDO</li><li>Ordine MEPA</li></ul>'); ?>","name": "id_documento_fe", "required": 0, "value": "$id_documento_fe$", "maxlength": 20 ]}
 				</div>
 
-                <div class="col-md-4">
+                <div class="col-md-6">
+					{[ "type": "text", "label": "<?php echo tr('Numero Riga'); ?>", "name": "num_item", "required": 0, "value": "$num_item$", "maxlength": 15 ]}
+				</div>
+			</div>
+			<div class="row">
+                <div class="col-md-6">
 					{[ "type": "text", "label": "<?php echo tr('Codice CIG'); ?>", "name": "codice_cig", "required": 0, "value": "$codice_cig$", "maxlength": 15 ]}
 				</div>
 
-				<div class="col-md-4">
+				<div class="col-md-6">
 					{[ "type": "text", "label": "<?php echo tr('Codice CUP'); ?>", "name": "codice_cup", "required": 0, "value": "$codice_cup$", "maxlength": 15 ]}
 				</div>
             </div>
@@ -378,12 +383,6 @@ if (!empty($record['idcontratto_prev'])) {
 
 {( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
-<form action='<?php echo $rootdir; ?>/editor.php?id_module=<?php echo Modules::get('Fatture di vendita')['id']; ?>' method='post' id='form_creafattura'>
-	<input type="hidden" name="backto" value="record-edit">
-	<input type='hidden' name='op' value='fattura_da_contratto'>
-	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
-</form>
-
 <script type="text/javascript">
     $(document).ready(function(){
         $('#data_accettazione').on("dp.change", function(){
@@ -406,14 +405,20 @@ if (!empty($record['idcontratto_prev'])) {
         $("#data_rifiuto").trigger("dp.change");
     });
 
-	function fattura_da_contratto(){
-		$('#form_creafattura').submit();
-	}
-
 	$('#idanagrafica_c').change( function(){
         session_set('superselect,idanagrafica', $(this).val(), 0);
 
 		$("#idsede").selectReset();
+	});
+	
+	$('#codice_cig, #codice_cup').bind("keyup change", function(e) {
+		
+		if ($('#codice_cig').val() == '' && $('#codice_cup').val() == '' ){
+			$('#id_documento_fe').prop('required', false);
+		}else{
+			$('#id_documento_fe').prop('required', true);
+		}
+	
 	});
 </script>
 

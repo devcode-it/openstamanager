@@ -87,6 +87,8 @@ if (!empty($pagamenti)) {
     $metodi = $pagamenti['DettaglioPagamento'];
     $metodi = isset($metodi[0]) ? $metodi : [$metodi];
 
+    $codice_modalita_pagamento = $metodi[0]['ModalitaPagamento'];
+
     echo '
 		<h4>'.tr('Pagamento').'</h4>
 
@@ -124,8 +126,19 @@ if (!empty($codice_modalita_pagamento)) {
 }
 $query .= ' GROUP BY descrizione ORDER BY descrizione ASC';
 
+// Pagamento
 echo '
-    {[ "type": "select", "label": "'.tr('Pagamento').'", "name": "pagamento", "required": 1, "values": "query='.$query.'" ]}';
+    <div class="row" >
+		<div class="col-md-6">
+            {[ "type": "select", "label": "'.tr('Pagamento').'", "name": "pagamento", "required": 1, "values": "query='.$query.'" ]}
+        </div>';
+
+// Movimentazioni
+echo '
+        <div class="col-md-6">
+            {[ "type": "checkbox", "label": "'.tr('Movimenta gli articoli').'", "name": "movimentazione", "value": 1 ]}
+        </div>
+    </div>';
 
 // Righe
 $righe = $fattura_pa->getRighe();
@@ -142,9 +155,7 @@ if (!empty($righe)) {
         <table class="table table-hover table-striped table-condensed">
             <tr>
                 <th>'.tr('Descrizione').'</th>
-                <th width="10%">'.tr('Q.tà').'</th>
-                <th width="10%">'.tr('Prezzo unitario').'</th>
-                <th width="15%">'.tr('Dati contabili').'*</th>
+                <th width="25%">'.tr('Dati contabili').'*</th>
                 <th width="25%">'.tr('Articolo').'</th>
             </tr>';
 
@@ -159,9 +170,19 @@ if (!empty($righe)) {
 
         echo '
         <tr>
-            <td>'.$riga['Descrizione'].'</td>
-            <td>'.Translator::numberToLocale($riga['Quantita']).' '.$riga['UnitaMisura'].'</td>
-            <td>'.Translator::numberToLocale($riga['PrezzoUnitario']).'&nbsp;&euro;<small class="help-block">Aliquota iva: '.$riga['AliquotaIVA'].'%</small></td>
+            <td>
+                '.$riga['Descrizione'].'<br>
+                
+                <small>'.tr('Q.tà: _QTA_ _UM_', [
+                    '_QTA_' => Translator::numberToLocale($riga['Quantita']),
+                    '_UM_' => $riga['UnitaMisura'],
+                ]).'</small><br>
+                
+                <small>'.tr('Aliquota iva _PRC_% _DESC_', [
+                    '_PRC_' => Translator::numberToLocale($riga['AliquotaIVA']),
+                    '_DESC_' => $riga['RiferimentoNormativo'] ? ' - '.$riga['RiferimentoNormativo'] : '',
+                ]).'</small>
+            </td>
             <td>
                 {[ "type": "select", "name": "iva['.$key.']", "values": "query='.str_replace('"', '\"', $query).'", "required": 1, "placeholder": "Aliquota iva" ]}
                 <br>

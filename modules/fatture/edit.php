@@ -85,7 +85,7 @@ if ($dir == 'entrata') {
 				{[ "type": "hidden", "label": "Segmento", "name": "id_segment", "class": "text-center", "value": "$id_segment$" ]}
 
 				<div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo $label; ?>", "name": "numero_esterno", "class": "alphanumeric-mask text-center", "value": "$numero_esterno$" ]}
+					{[ "type": "text", "label": "<?php echo $label; ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -113,7 +113,7 @@ if (empty($record['is_fiscale'])) {
 					<?php
                     if ($dir == 'entrata') {
                         ?>
-					{[ "type": "select", "label": "<?php echo tr('Stato FE'); ?>", "name": "codice_stato_fe", "required": 0, "values": "query=SELECT codice as id, descrizione as text FROM fe_stati_documento", "value": "$codice_stato_fe$", "disabled": <?php echo intval(Plugins\ExportFE\Connection::isEnabled()); ?>, "class": "unblockable" ]}
+					{[ "type": "select", "label": "<?php echo tr('Stato FE'); ?>", "name": "codice_stato_fe", "required": 0, "values": "query=SELECT codice as id, CONCAT_WS(' - ',codice,descrizione) as text FROM fe_stati_documento", "value": "$codice_stato_fe$", "disabled": <?php echo intval(Plugins\ExportFE\Connection::isEnabled()); ?>, "class": "unblockable", "help": "<?php echo ((!empty($record['data_stato_fe'])) ? Translator::timestampToLocale($record['data_stato_fe']) : '' ); ?>" ]}
 					<?php
                     }
                     ?>
@@ -128,7 +128,7 @@ if (empty($record['is_fiscale'])) {
 
                     if ($dir == 'entrata') {
                         ?>
-						{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "clienti", "help": "<?php echo tr("In caso di autofattura indicare l'azienda: ").$database->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = '.prepare(setting('Azienda predefinita')))['ragione_sociale']; ?>", "value": "$idanagrafica$" ]}
+						{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "clienti", "help": "<?php echo tr("In caso di autofattura indicare l'azienda: ").stripslashes($database->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = '.prepare(setting('Azienda predefinita')))['ragione_sociale']); ?>", "value": "$idanagrafica$" ]}
 					<?php
                     } else {
                         ?>
@@ -141,6 +141,14 @@ if (empty($record['is_fiscale'])) {
 				<div class="col-md-3">
 					{[ "type": "select", "label": "<?php echo tr('Riferimento sede'); ?>", "name": "idsede", "ajax-source": "sedi", "placeholder": "Sede legale", "value": "$idsede$" ]}
 				</div>
+				
+				<?php if ($dir == 'uscita') { ?>
+					
+				<div class="col-md-3">
+					{[ "type": "date", "label": "<?php echo tr('Data ricezione'); ?>", "name": "data_ricezione", "required": 0, "value": "$data_ricezione$" ]}
+				</div>
+				
+				<?php } ?>
 
 				<?php if ($dir == 'entrata') {
                         ?>
@@ -152,14 +160,41 @@ if (empty($record['is_fiscale'])) {
 
                 <?php
                 if ($record['stato'] != 'Bozza' && $record['stato'] != 'Annullata') {
+                    $ricalcola = true;
+
                     $scadenze = $dbo->fetchArray('SELECT * FROM co_scadenziario WHERE iddocumento = '.prepare($id_record));
                     echo '
                 <div class="col-md-3">
                     <p><strong>'.tr('Scadenze').'</strong></p>';
                     foreach ($scadenze as $scadenza) {
                         echo '
-                    <p>'.Translator::dateToLocale($scadenza['scadenza']).': '.Translator::numberToLocale($scadenza['da_pagare']).'&euro;</p>';
+                    <p>'.Translator::dateToLocale($scadenza['scadenza']).': ';
+
+                        if ($scadenza['pagato'] == $scadenza['da_pagare']) {
+                            echo '
+                        <strike>';
+                        }
+
+                        echo Translator::numberToLocale($scadenza['da_pagare']).'&euro;';
+
+                        if ($scadenza['pagato'] == $scadenza['da_pagare']) {
+                            echo '
+                        </strike>';
+                        }
+
+                        echo '
+                    </p>';
+
+                        $ricalcola = empty(floatval($scadenza['pagato'])) && $ricalcola;
                     }
+
+                    if ($fattura->isFE() && $ricalcola && $module['name'] == 'Fatture di acquisto') {
+                        echo '
+                    <button type="button" class="btn btn-info btn-xs pull-right tip" title="'.tr('Ricalcola le scadenze').'. '.tr('Per ricalcolare correttamente le scadenze, imposta la fattura in stato \'\'Bozza\'\' e correggi il metodo di  come desiderato, poi re-imposta lo stato \'\'Emessa\'\' e utilizza questa funzione').'." id="ricalcola_scadenze">
+                        <i class="fa fa-calculator" aria-hidden="true"></i>
+                    </button>';
+                    }
+
                     echo '
                 </div>';
                 }
@@ -171,7 +206,7 @@ if (empty($record['is_fiscale'])) {
 			<div class="row">
 				<div class="col-md-3">
 					<!-- Nella realtà la fattura accompagnatoria non può esistere per la fatturazione elettronica, in quanto la risposta dal SDI potrebbe non essere immediata e le merci in viaggio. Dunque si può emettere una documento di viaggio valido per le merci ed eventualmente una fattura pro-forma per l'incasso della stessa, emettendo infine la fattura elettronica differita. -->
-					
+
 					{[ "type": "select", "label": "<?php echo tr('Tipo fattura'); ?>", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, descrizione FROM co_tipidocumento WHERE dir='<?php echo $dir; ?>' AND (reversed = 0 OR id = <?php echo $record['idtipodocumento']; ?>)", "value": "$idtipodocumento$", "readonly": <?php echo intval($record['stato'] != 'Bozza' && $record['stato'] != 'Annullata'); ?>, "help": "<?php echo ($database->fetchOne('SELECT tipo FROM an_anagrafiche WHERE idanagrafica = '.prepare($record['idanagrafica']))['tipo'] == 'Ente pubblico') ? 'FPA12 - fattura verso PA' : 'FPR12 - fattura verso privati'; ?>" ]}
 				</div>
 
@@ -181,35 +216,6 @@ if (empty($record['is_fiscale'])) {
 
 				<div class="col-md-3">
 					{[ "type": "select", "label": "<?php echo tr('Banca'); ?>", "name": "idbanca", "values": "query=SELECT id, CONCAT (nome, ' - ' , iban) AS descrizione FROM co_banche WHERE deleted_at IS NULL ORDER BY nome ASC", "value": "$idbanca$", "icon-after": "add|<?php echo Modules::get('Banche')['id']; ?>||", "extra": " <?php echo ($record['stato'] == 'Bozza') ? '' : 'disabled'; ?> " ]}
-				</div>
-
-
-				<div class="col-md-3">
-					<label>&nbsp;</label><br>
-<?php
-
-if (!empty($record['is_fiscale'])) {
-    // Aggiunta prima nota solo se non c'è già, se non si è in bozza o se il pagamento non è completo
-    $n2 = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE iddocumento='.prepare($id_record).' AND primanota=1');
-
-    $rs3 = $dbo->fetchArray('SELECT SUM(da_pagare-pagato) AS differenza, SUM(da_pagare) FROM co_scadenziario GROUP BY iddocumento HAVING iddocumento='.prepare($id_record));
-    $differenza = isset($rs3[0]) ? $rs3[0]['differenza'] : null;
-    $da_pagare = isset($rs3[0]) ? $rs3[0]['da_pagare'] : null;
-
-    if (($n2 <= 0 && $record['stato'] == 'Emessa') || $differenza != 0) {
-        ?>
-					<a class="btn btn-primary btn-block  <?php echo (!empty(Modules::get('Prima nota'))) ? '' : 'disabled'; ?>" href="javascript:;" onclick="launch_modal( 'Aggiungi prima nota', '<?php echo $rootdir; ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>&iddocumento=<?php echo $id_record; ?>&dir=<?php echo $dir; ?>', 1 );"><i class="fa fa-euro"></i> <?php echo tr('Registrazione contabile pagamento'); ?>...</a><br><br>
-<?php
-    }
-
-    if ($record['stato'] == 'Pagato') {
-        ?>
-					<a class="btn btn-primary btn-block" href="javascript:;" onclick="if( confirm('Se riapri questa fattura verrà azzerato lo scadenzario e la prima nota. Continuare?') ){ $.post( '<?php echo $rootdir; ?>/editor.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>', { id_module: '<?php echo $id_module; ?>', id_record: '<?php echo $id_record; ?>', op: 'reopen' }, function(){ location.href='<?php echo $rootdir; ?>/editor.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>'; } ); }" title="Registrazione contabile pagamento"><i class="fa fa-folder-open"></i> <?php echo tr('Riapri fattura'); ?>...</a>
-<?php
-    }
-}
-?>
-
 				</div>
 			</div>
 
@@ -227,36 +233,39 @@ if ($dir == 'uscita') {
 <?php
 }
 ?>
-		
+
 
             <div class="row">
-			
+
                 <div class="col-md-3">
-                    {[ "type": "number", "label": "<?php echo tr('Sconto incondizionato'); ?>", "name": "sconto_generico", "value": "$sconto_globale$", "help": "<?php echo tr('Sconto complessivo della fattura.'); ?>", "icon-after": "choice|untprc|$tipo_sconto_globale$"<?php echo ($record['stato'] == 'Emessa') ? ', "disabled" : 1' : ''; ?> ]}
+                    {[ "type": "number", "label": "<?php echo tr('Sconto incondizionato'); ?>", "name": "sconto_generico", "value": "$sconto_globale$", "help": "<?php echo tr('Sconto complessivo della fattura. Il valore positivo indica uno sconto. Per applicare un rincaro inserire un valore negativo.'); ?>", "icon-after": "choice|untprc|$tipo_sconto_globale$"<?php echo ($record['stato'] == 'Emessa') ? ', "disabled" : 1' : ''; ?> ]}
                 </div>
-				
+
 				<div class="col-md-3">
 					{[ "type": "checkbox", "label": "<?php echo tr('Split payment'); ?>", "name": "split_payment", "value": "$split_payment$", "help": "<?php echo tr('Abilita lo split payment per questo documento.'); ?>", "placeholder": "<?php echo tr('Split payment'); ?>" ]}
 				</div>
-				
+
 				<?php
                 //TODO: Fattura per conto del fornitore (es. cooperative agricole che emettono la fattura per conto dei propri soci produttori agricoli conferenti)
                 if ($dir == 'entrata') {
                     ?>
 					<div class="col-md-3">
-						{[ "type": "checkbox", "label": "<?php echo tr('Fattura per conto terzi'); ?>", "name": "is_fattura_conto_terzi", "value": "$is_fattura_conto_terzi$", "help": "<?php echo tr('Nell\'xml della FE imposta il fornitore ('.$database->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = '.prepare(setting('Azienda predefinita')))['ragione_sociale'].') come cessionario e il cliente come cedente/prestatore.'); ?>", "placeholder": "<?php echo tr('Fattura per conto terzi'); ?>" ]}
+						{[ "type": "checkbox", "label": "<?php echo tr('Fattura per conto terzi'); ?>", "name": "is_fattura_conto_terzi", "value": "$is_fattura_conto_terzi$", "help": "<?php echo tr('Nell\'xml della FE imposta il fornitore ('.stripslashes($database->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = '.prepare(setting('Azienda predefinita')))['ragione_sociale']).') come cessionario e il cliente come cedente/prestatore.'); ?>", "placeholder": "<?php echo tr('Fattura per conto terzi'); ?>" ]}
 					</div>
-					
+
 				<?php
                 }
                 ?>
-				
-				
+
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "<?php echo tr('Ritenuta contributi'); ?>", "name": "id_ritenuta_contributi", "value": "$id_ritenuta_contributi$", "values": "query=SELECT * FROM co_ritenuta_contributi" ]}
+                </div>
+
             </div>
 
 			<div class="row">
 				<div class="col-md-12">
-					{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "help": "<?php echo tr('Note visibili anche in stampa.'); ?>", "value": "$note$" ]}
+					{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "help": "<?php echo tr('Note visibili anche in fattura.'); ?>", "value": "$note$" ]}
 				</div>
 			</div>
 
@@ -432,7 +441,7 @@ if ($record['stato'] != 'Pagato' && $record['stato'] != 'Emessa') {
                     </div>';
 
             // Lettura preventivi accettati, in attesa di conferma o in lavorazione
-            $prev_query = 'SELECT COUNT(*) AS tot FROM co_preventivi WHERE idanagrafica='.prepare($record['idanagrafica'])." AND id NOT IN (SELECT idpreventivo FROM co_righe_documenti WHERE idpreventivo IS NOT NULL) AND id NOT IN (SELECT idpreventivo FROM or_righe_ordini WHERE NOT idpreventivo IS NOT NULL)  AND idstato IN(SELECT id FROM co_statipreventivi WHERE descrizione='Accettato' OR descrizione='In lavorazione' OR descrizione='In attesa di conferma') AND default_revision=1";
+            $prev_query = 'SELECT COUNT(*) AS tot FROM co_preventivi WHERE idanagrafica='.prepare($record['idanagrafica'])." AND idstato IN(SELECT id FROM co_statipreventivi WHERE descrizione='Accettato' OR descrizione='In lavorazione' OR descrizione='In attesa di conferma') AND default_revision=1 AND co_preventivi.id IN (SELECT idpreventivo FROM co_righe_preventivi WHERE co_righe_preventivi.idpreventivo = co_preventivi.id AND (qta - qta_evasa) > 0)";
             $preventivi = $dbo->fetchArray($prev_query)[0]['tot'];
             echo '
                     <div class="tip" data-toggle="tooltip" title="'.tr('Preventivi accettati, in attesa di conferma o in lavorazione.').'" style="display:inline;">
@@ -442,7 +451,7 @@ if ($record['stato'] != 'Pagato' && $record['stato'] != 'Emessa') {
                     </div>';
 
             // Lettura contratti accettati, in attesa di conferma o in lavorazione
-            $contr_query = 'SELECT COUNT(*) AS tot FROM co_contratti WHERE idanagrafica='.prepare($record['idanagrafica']).' AND id NOT IN (SELECT idcontratto FROM co_righe_documenti WHERE idcontratto IS NOT NULL) AND idstato IN( SELECT id FROM co_staticontratti WHERE fatturabile = 1) AND NOT EXISTS (SELECT id FROM co_righe_documenti WHERE co_righe_documenti.idcontratto = co_contratti.id)';
+            $contr_query = 'SELECT COUNT(*) AS tot FROM co_contratti WHERE idanagrafica='.prepare($record['idanagrafica']).' AND idstato IN( SELECT id FROM co_staticontratti WHERE fatturabile = 1) AND co_contratti.id IN (SELECT idcontratto FROM co_righe_contratti WHERE co_righe_contratti.idcontratto = co_contratti.id AND (qta - qta_evasa) > 0)';
             $contratti = $dbo->fetchArray($contr_query)[0]['tot'];
             echo '
                     <div class="tip" data-toggle="tooltip" title="'.tr('Contratti accettati, in attesa di conferma o in lavorazione.').'" style="display:inline;">
@@ -525,21 +534,35 @@ include $docroot.'/modules/fatture/row-list.php';
 {( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
 <?php
- if ($dir == 'entrata') {
-     echo '
-	<div class="alert alert-info text-center">'.tr('Per allegare un documento alla fattura elettronica caricare il file specificando come categoria "Fattura Elettronica"').'.</div>';
- }
-?>
+if ($dir == 'entrata') {
+    echo '
+	<div class="alert alert-info text-center">'.tr('Per allegare un documento alla fattura elettronica caricare il file PDF specificando come categoria "Fattura Elettronica"').'.</div>';
+}
 
+echo '
 <script type="text/javascript">
-	$('#idanagrafica').change( function(){
-        session_set('superselect,idanagrafica', $(this).val(), 0);
+	$("#idanagrafica").change(function(){
+        session_set("superselect,idanagrafica", $(this).val(), 0);
 
 		$("#idsede").selectReset();
 	});
-</script>
 
-<?php
+    $("#ricalcola_scadenze").click(function(){
+        swal({
+            title: "'.tr('Desideri ricalcolare le scadenze?').'",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "'.tr('Sì').'"
+        }).then(function (result) {
+            redirect(globals.rootdir + "/editor.php", {
+                id_module: globals.id_module,
+                id_record: globals.id_record,
+                op: "ricalcola_scadenze",
+                backto: "record-edit",
+            }, "post")
+        })
+    });
+</script>';
 
 if (!empty($note_accredito)) {
     echo '
@@ -572,10 +595,6 @@ if (!empty($note_accredito)) {
 $(".btn-sm[data-toggle=\"tooltip\"]").each(function() {
 
    $(this).on("click", function() {
-        /*if(!content_was_modified) {
-            return;
-        }*/
-
         form = $("#edit-form");
         btn = $(this);
 

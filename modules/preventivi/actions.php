@@ -3,8 +3,6 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Anagrafiche\Anagrafica;
-use Modules\Fatture\Fattura;
-use Modules\Fatture\Tipo as TipoFattura;
 use Modules\Interventi\TipoSessione;
 use Modules\Preventivi\Components\Articolo;
 use Modules\Preventivi\Components\Riga;
@@ -63,6 +61,7 @@ switch (post('op')) {
             $idiva = post('idiva');
 
             $id_documento_fe = post('id_documento_fe');
+            $num_item = post('num_item');
             $codice_cig = post('codice_cig');
             $codice_cup = post('codice_cup');
 
@@ -84,6 +83,7 @@ switch (post('op')) {
                 ' tipo_sconto_globale='.prepare($tipo_sconto).','.
                 ' sconto_globale='.prepare($sconto).','.
                 ' id_documento_fe='.prepare($id_documento_fe).','.
+                ' num_item='.prepare($num_item).','.
                 ' codice_cig='.prepare($codice_cig).','.
                 ' codice_cup='.prepare($codice_cup).','.
                 ' validita='.prepare($validita).','.
@@ -367,36 +367,6 @@ switch (post('op')) {
         $id_record = $id_record_new;
 
         flash()->info(tr('Aggiunta nuova revisione!'));
-        break;
-
-    // Creazione fattura da preventivo
-    case 'fattura_da_preventivo':
-       $preventivo = Preventivo::find($id_record);
-
-        $tipo = TipoFattura::where('descrizione', 'Fattura immediata di vendita')->first();
-        $id_segment = $dbo->fetchOne('SELECT * FROM zz_segments WHERE id_module='.prepare($id_module)." AND predefined='1'")['id'];
-        $data = date('Y-m-d');
-
-        $fattura = Fattura::build($preventivo->anagrafica, $tipo, $data, $id_segment);
-        $fattura->idpagamento = $preventivo->idpagamento;
-
-        $id_conto = setting('Conto predefinito fatture di vendita');
-
-        $righe = $preventivo->getRighe();
-        foreach ($righe as $riga) {
-            $copia = $riga->copiaIn($fattura);
-            $copia->idconto = $id_conto;
-
-            if ($riga->isArticolo()) {
-                $copia->movimenta($copia->qta);
-            }
-        }
-
-        flash()->info(tr('Creata una nuova fattura!'));
-
-        $id_record = $fattura->id;
-        $id_module = Modules::get('Fatture di vendita')['id'];
-
         break;
 }
 

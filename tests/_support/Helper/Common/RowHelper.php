@@ -97,7 +97,7 @@ class RowHelper extends \Codeception\Module
         $t->see('588,45', $this->getFinalValue('Totale'));
 
         // Sconto globale in euro
-        $t->fillField('Sconto incondizionato', 100);
+        $t->fillField('#sconto_generico', 100);
         $t->select2ajax('#tipo_sconto_generico', 'UNT');
         $t->clickAndWait('Salva');
 
@@ -108,7 +108,7 @@ class RowHelper extends \Codeception\Module
         $t->see('466,45', $this->getFinalValue('Totale'));
 
         // Sconto globale in percentuale
-        $t->fillField('Sconto incondizionato', 10);
+        $t->fillField('#sconto_generico', 10);
         $t->select2ajax('#tipo_sconto_generico', 'PRC');
         $t->clickAndWait('Salva');
 
@@ -135,13 +135,12 @@ class RowHelper extends \Codeception\Module
     protected function fill(AcceptanceTester $t, $descrizione, $qta, $prezzo, $sconto = 0, $tipo_sconto = 'UNT', $id_iva = null, $id_rivalsa_inps = null, $id_ritenuta_acconto = null)
     {
         $t->fillField('#descrizione_riga', $descrizione);
-        $t->fillField('Q.tà', $qta);
+        $t->fillField('#qta', $qta);
 
-        $label = ($this->dir == 'uscita') ? 'Prezzo unitario' : 'Prezzo unitario di vendita';
-        $t->fillField($label, $prezzo);
+        $t->fillField('#prezzo', $prezzo);
 
         if (!empty($sconto)) {
-            $t->fillField('Sconto unitario', $sconto);
+            $t->fillField('#sconto', $sconto);
 
             if (in_array($tipo_sconto, ['PRC', 'UNT'])) {
                 $t->select2ajax('#tipo_sconto', $tipo_sconto);

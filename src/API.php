@@ -28,6 +28,10 @@ class API extends \Util\Singleton
             'code' => 404,
             'message' => 'Non trovato',
         ],
+        'externalError' => [
+            'code' => 409,
+            'message' => 'Errore in un servizio esterno',
+        ],
         'serverError' => [
             'code' => 500,
             'message' => 'Errore del server',
@@ -226,25 +230,7 @@ class API extends \Util\Singleton
         if (!is_array(self::$resources)) {
             $resources = [];
 
-            // Ignore dei warning
-            $resource = '';
-
-            // File nativi
-            $files = glob(DOCROOT.'/modules/*/api/{retrieve,create,update,delete}.php', GLOB_BRACE);
-
-            // File personalizzati
-            $custom_files = glob(DOCROOT.'/modules/*/custom/api/{retrieve,create,update,delete}.php', GLOB_BRACE);
-
-            // Pulizia dei file nativi che sono stati personalizzati
-            foreach ($custom_files as $key => $value) {
-                $index = array_search(str_replace('custom/api/', 'api/', $value), $files);
-                if ($index !== false) {
-                    unset($files[$index]);
-                }
-            }
-
-            $operations = array_merge($files, $custom_files);
-            asort($operations);
+            $operations = AJAX::find('api/{retrieve,create,update,delete}.php', false);
 
             foreach ($operations as $operation) {
                 // Individua la tipologia e il modulo delle operazioni

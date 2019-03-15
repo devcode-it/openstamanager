@@ -335,9 +335,9 @@ if (!empty($google)) {
 						{[ "type": "select", "label": "<?php echo tr('Listino articoli'); ?>", "name": "idlistino_vendite", "values": "query=SELECT id, nome AS descrizione FROM mg_listini ORDER BY nome ASC", "value": "$idlistino_vendite$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
 					</div>
 
-					<div class="col-md-6">
-						{[ "type": "select", "label": "<?php echo tr('Indirizzo di fatturazione'); ?>", "name": "idsede_fatturazione", "values": "query=SELECT id, IF(citta = '', nomesede, CONCAT_WS(', ', nomesede, citta)) AS descrizione FROM an_sedi WHERE idanagrafica='<?php echo $id_record; ?>' UNION SELECT '0' AS id, 'Sede legale' AS descrizione ORDER BY descrizione", "value": "$idsede_fatturazione$" , "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
-					</div>
+                    <div class="col-md-6">
+                        {[ "type": "select", "label": "<?php echo tr('Indirizzo di fatturazione'); ?>", "name": "idsede_fatturazione", "values": "query=SELECT id, IF(citta = '', nomesede, CONCAT_WS(', ', nomesede, citta)) AS descrizione FROM an_sedi WHERE idanagrafica='<?php echo $id_record; ?>' UNION SELECT '0' AS id, 'Sede legale' AS descrizione ORDER BY descrizione", "value": "$idsede_fatturazione$" , "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
+                    </div>
                 </div>
 
 				<div class="row">
@@ -349,31 +349,27 @@ if (!empty($google)) {
 					  {[ "type": "select", "label": "<?php echo tr('Agente principale'); ?>", "name": "idagente", "values": "query=SELECT an_anagrafiche.idanagrafica AS id, IF(deleted_at IS NOT NULL, CONCAT(ragione_sociale, ' (Eliminato)'), ragione_sociale ) AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE (descrizione='Agente' AND deleted_at IS NULL)<?php echo isset($record['idagente']) ? 'OR (an_anagrafiche.idanagrafica = '.prepare($record['idagente']).' AND deleted_at IS NOT NULL) ' : ''; ?>ORDER BY ragione_sociale", "value": "$idagente$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
 					</div>
                 </div>
+
+
                 <div class="row">
                     <div class="col-md-6">
-<?php
+                <?php
 
-// Collegamento con il conto
-    $conto = $dbo->fetchOne('SELECT co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione as descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_cliente']));
+                // Collegamento con il conto
+                $conto = $dbo->fetchOne('SELECT co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione as descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_cliente']));
 
-        /*echo '
-                    <p>'.tr('Piano dei conti collegato: _NAME_', [
-                        '_NAME_' => $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'],
-                    ]).Modules::link('Piano dei conti', null, '').'</p>';*/
         if (!empty($conto['numero_conto'])) {
             $piano_dei_conti_cliente = tr('_NAME_', [
-                    '_NAME_' => $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'],
-                ]);
+                        '_NAME_' => $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'],
+                    ]);
             echo Modules::link('Piano dei conti', null, null, null, 'class="pull-right"');
         } else {
             $piano_dei_conti_cliente = tr('Nessuno');
         } ?>
 
-        {[ "type": "select", "label": "<?php echo tr('Piano dei conti cliente'); ?>", "name": "piano_dei_conti_cliente", "values": "list=\"\": \"<?php echo $piano_dei_conti_cliente; ?>\"", "readonly": 1, "value": "", "extra": "" ]}
-
-                    </div>
-
-              </div>
+                    {[ "type": "select", "label": "<?php echo tr('Piano dei conti cliente'); ?>", "name": "piano_dei_conti_cliente", "values": "list=\"\": \"<?php echo $piano_dei_conti_cliente; ?>\"", "readonly": 1, "value": "", "extra": "" ]}
+                </div>
+            </div>
 
 
 			</div>
@@ -545,7 +541,7 @@ if (!empty($google)) {
 
 if (setting('Azienda predefinita') == $id_record) {
     echo '
-<div class="alert alert-info text-center">'.tr('Per impostare il logo delle stampe, caricare un file ".jpg" specificando come nome dell\'allegato "Logo stampe" (Risoluzione consigliata 302x111 pixel)').'.</div>';
+<div class="alert alert-info text-center">'.tr('Per impostare il logo delle stampe, caricare un\'immagine specificando come nome "Logo stampe" (Risoluzione consigliata 302x111 pixel)').'.</div>';
 }
 
 // Collegamenti diretti

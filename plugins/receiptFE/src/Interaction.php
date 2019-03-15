@@ -13,19 +13,41 @@ class Interaction extends Connection
 {
     public static function getReceiptList()
     {
-        $response = static::request('POST', 'get_receipt_list');
-        $body = static::responseBody($response)['results'];
+        $response = static::request('POST', 'notifiche_da_importare');
+        $body = static::responseBody($response);
 
-        return $body;
+        return $body['results'];
     }
 
     public static function getReceipt($name)
     {
-        $response = static::request('POST', 'get_receipt', [
-            'name' => $name,
+        $directory = Ricevuta::getImportDirectory();
+        $file = $directory.'/'.$name;
+
+        if (!file_exists($file)) {
+            $response = static::request('POST', 'notifica_da_importare', [
+                'name' => $name,
+            ]);
+            $body = static::responseBody($response);
+
+            Ricevuta::store($name, $body['content']);
+        }
+
+        return $name;
+    }
+
+    public static function processReceipt($filename)
+    {
+        $response = static::request('POST', 'notifica_xml_salvata', [
+            'filename' => $filename,
         ]);
         $body = static::responseBody($response);
 
-        return $body;
+        $result = true;
+        if ($body['status'] != '200') {
+            $result = $body['status'].' - '.$body['message'];
+        }
+
+        return $result;
     }
 }

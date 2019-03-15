@@ -11,46 +11,11 @@ use Modules\Interventi\TipoSessione;
 
 switch (post('op')) {
     case 'update':
-        $idpreventivo = post('idpreventivo');
         $idcontratto = post('idcontratto');
         $idcontratto_riga = post('idcontratto_riga');
 
-        $idtipointervento = post('idtipointervento');
-
-        $data_richiesta = post('data_richiesta');
-        $richiesta = post('richiesta');
-        $idsede = post('idsede');
-
-        // Collegamento intervento a contratto (se impostato)
-        // Oltre al collegamento al contratto, l'intervento è collegato ad una riga di pianificazione, perciò è importante considerarla se è impostata
-        $array = [
-            'idintervento' => $id_record,
-            'idtipointervento' => $idtipointervento,
-            'data_richiesta' => $data_richiesta,
-            'richiesta' => $richiesta,
-            'idsede' => $idsede ?: 0,
-        ];
-        // Creazione nuova pianificazione se non era impostata
-        if (!empty($idcontratto) && empty($idcontratto_riga)) {
-            // Se questo intervento era collegato ad un altro contratto aggiorno le informazioni...
-            $rs = $dbo->fetchArray('SELECT id FROM co_promemoria WHERE idintervento='.prepare($id_record));
-            if (empty($rs)) {
-                $dbo->insert('co_promemoria', array_merge(['idcontratto' => $idcontratto], $array));
-            }
-
-            // ...altrimenti se sto cambiando contratto aggiorno solo l'id del nuovo contratto
-            else {
-                $dbo->update('co_promemoria', ['idcontratto' => $idcontratto], ['idintervento' => $id_record]);
-            }
-        }
-
-        // Pianificazione già impostata, aggiorno solo il codice intervento
-        elseif (!empty($idcontratto) && !empty($idcontratto_riga)) {
-            $dbo->update('co_promemoria', $array, ['idcontratto' => $idriga, 'id' => $idcontratto_riga]);
-        }
-
-        // Se non è impostato nessun contratto o riga, tolgo il collegamento dell'intervento al contratto
-        elseif (empty($idcontratto)) {
+        // Rimozione del collegamento al promemoria
+        if (!empty($idcontratto_riga) && $intervento->id_contratto != $idcontratto) {
             $dbo->update('co_promemoria', ['idintervento' => null], ['idintervento' => $id_record]);
         }
 
@@ -58,32 +23,34 @@ switch (post('op')) {
         $sconto = post('sconto_globale');
 
         // Salvataggio modifiche intervento
-        $dbo->update('in_interventi', [
-            'data_richiesta' => $data_richiesta,
-            'richiesta' => $richiesta,
-            'descrizione' => post('descrizione'),
-            'informazioniaggiuntive' => post('informazioniaggiuntive'),
+        $intervento->data_richiesta = post('data_richiesta');
+        $intervento->data_scadenza = post('data_scadenza');
+        $intervento->richiesta = post('richiesta');
+        $intervento->descrizione = post('descrizione');
+        $intervento->informazioniaggiuntive = post('informazioniaggiuntive');
 
-            'idanagrafica' => post('idanagrafica'),
-            'idclientefinale' => post('idclientefinale'),
-            'idreferente' => post('idreferente'),
-            'idtipointervento' => $idtipointervento,
+        $intervento->idanagrafica = post('idanagrafica');
+        $intervento->idclientefinale = post('idclientefinale');
+        $intervento->idreferente = post('idreferente');
+        $intervento->idtipointervento = post('idtipointervento');
 
-            'idstatointervento' => post('idstatointervento'),
-            'idsede' => $idsede,
-            'idautomezzo' => post('idautomezzo'),
-            'id_preventivo' => $idpreventivo,
+        $intervento->idstatointervento = post('idstatointervento');
+        $intervento->idsede = post('idsede');
+        $intervento->idautomezzo = post('idautomezzo');
+        $intervento->id_preventivo = post('idpreventivo');
+        $intervento->id_contratto = $idcontratto;
 
-            'sconto_globale' => $sconto,
-            'tipo_sconto_globale' => $tipo_sconto,
+        $intervento->sconto_globale = $sconto;
+        $intervento->tipo_sconto_globale = $tipo_sconto;
 
-            'id_documento_fe' => post('id_documento_fe'),
-            'codice_cup' => post('codice_cup'),
-            'codice_cig' => post('codice_cig'),
-        ], ['id' => $id_record]);
+        $intervento->id_documento_fe = post('id_documento_fe');
+        $intervento->num_item = post('num_item');
+        $intervento->codice_cup = post('codice_cup');
+        $intervento->codice_cig = post('codice_cig');
+        $intervento->save();
 
-        $stato = $dbo->selectOne('in_statiintervento', '*', ['idstatointervento' => post('idstatointervento')]);
         // Notifica chiusura intervento
+        $stato = $dbo->selectOne('in_statiintervento', '*', ['idstatointervento' => post('idstatointervento')]);
         if (!empty($stato['notifica']) && !empty($stato['destinatari']) && $stato['idstatointervento'] != $record['idstatointervento']) {
             $n = new Notifications\EmailNotification();
 
@@ -107,6 +74,7 @@ switch (post('op')) {
             $idtipointervento = post('idtipointervento');
             $idstatointervento = post('idstatointervento');
             $data_richiesta = post('data_richiesta');
+            $data_scadenza = post('data_scadenza');
 
             $anagrafica = Anagrafica::find($idanagrafica);
             $tipo = TipoSessione::find($idtipointervento);
@@ -134,59 +102,47 @@ switch (post('op')) {
                 $intervento->idsede = post('idsede');
             }
 
-            $intervento->id_preventivo = post('$idpreventivo');
+            $intervento->id_preventivo = post('idpreventivo');
+            $intervento->id_contratto = post('idcontratto');
             $intervento->richiesta = $richiesta;
+            $intervento->data_scadenza = $data_scadenza;
 
             $intervento->save();
 
-            // Collego l'intervento al contratto
-            if (!empty($idcontratto)) {
-                $array = [
+            // Se è specificato che l'intervento fa parte di una pianificazione aggiorno il codice dell'intervento sulla riga della pianificazione
+            if (!empty($idcontratto_riga)) {
+                $dbo->update('co_promemoria', [
                     'idintervento' => $id_record,
                     'idtipointervento' => $idtipointervento,
                     'data_richiesta' => $data_richiesta,
                     'richiesta' => $richiesta,
                     'idsede' => $idsede ?: 0,
-                ];
+                ], ['idcontratto' => $idcontratto, 'id' => $idcontratto_riga]);
 
-                // Se è specificato che l'intervento fa parte di una pianificazione aggiorno il codice dell'intervento sulla riga della pianificazione
-                if (!empty($idcontratto_riga)) {
-                    $dbo->update('co_promemoria', $array, ['idcontratto' => $idcontratto, 'id' => $idcontratto_riga]);
+                //copio le righe dal promemoria all'intervento
+                $dbo->query('INSERT INTO in_righe_interventi (descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,idintervento,sconto,sconto_unitario,tipo_sconto) SELECT descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,'.$id_record.',sconto,sconto_unitario,tipo_sconto FROM co_promemoria_righe WHERE id_promemoria = '.$idcontratto_riga);
 
-                    //copio le righe dal promemoria all'intervento
-                    $dbo->query('INSERT INTO in_righe_interventi (descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,idintervento,sconto,sconto_unitario,tipo_sconto) SELECT descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,'.$id_record.',sconto,sconto_unitario,tipo_sconto FROM co_promemoria_righe WHERE id_promemoria = '.$idcontratto_riga.'  ');
+                //copio  gli articoli dal promemoria all'intervento
+                $dbo->query('INSERT INTO mg_articoli_interventi (idarticolo, idintervento,descrizione,prezzo_acquisto,prezzo_vendita,sconto,	sconto_unitario,	tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto) SELECT idarticolo, '.$id_record.',descrizione,prezzo_acquisto,prezzo_vendita,sconto,sconto_unitario,tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto FROM co_promemoria_articoli WHERE id_promemoria = '.$idcontratto_riga);
 
-                    //copio  gli articoli dal promemoria all'intervento
-                    $dbo->query('INSERT INTO mg_articoli_interventi (idarticolo, idintervento,descrizione,prezzo_acquisto,prezzo_vendita,sconto,	sconto_unitario,	tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto) SELECT idarticolo, '.$id_record.',descrizione,prezzo_acquisto,prezzo_vendita,sconto,sconto_unitario,tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto FROM co_promemoria_articoli WHERE id_promemoria = '.$idcontratto_riga.'  ');
+                // Copia degli allegati
+                $alleagti = Uploads::copy([
+                    'id_plugin' => Plugins::get('Pianificazione interventi')['id'],
+                    'id_record' => $idcontratto_riga,
+                ], [
+                    'id_module' => $id_module,
+                    'id_record' => $id_record,
+                ]);
 
-                    // Copia degli allegati
-                    $alleagti = Uploads::copy([
-                        'id_plugin' => Plugins::get('Pianificazione interventi')['id'],
-                        'id_record' => $idcontratto_riga,
-                    ], [
-                        'id_module' => $id_module,
-                        'id_record' => $id_record,
-                    ]);
+                if (!$alleagti) {
+                    $errors = error_get_last();
+                    flash()->warning(tr('Errore durante la copia degli allegati'));
+                }
 
-                    if (!$alleagti) {
-                        $errors = error_get_last();
-                        flash()->warning(tr('Errore durante la copia degli allegati'));
-                    }
-
-                    // Decremento la quantità per ogni articolo copiato
-                    $rs_articoli = $dbo->fetchArray('SELECT * FROM mg_articoli_interventi WHERE idintervento = '.$id_record.' ');
-                    foreach ($rs_articoli as $rs_articolo) {
-                        add_movimento_magazzino($rs_articolo['idarticolo'], -$rs_articolo['qta'], ['idautomezzo' => $rs_articolo['idautomezzo'], 'idintervento' => $id_record]);
-                    }
-                } else {
-                    $dbo->insert('co_promemoria', [
-                        'idcontratto' => $idcontratto,
-                        'idintervento' => $id_record,
-                        'idtipointervento' => $idtipointervento,
-                        'data_richiesta' => $data_richiesta,
-                        'richiesta' => $richiesta,
-                        'idsede' => $idsede ?: 0,
-                    ]);
+                // Decremento la quantità per ogni articolo copiato
+                $rs_articoli = $dbo->fetchArray('SELECT * FROM mg_articoli_interventi WHERE idintervento = '.$id_record.' ');
+                foreach ($rs_articoli as $rs_articolo) {
+                    add_movimento_magazzino($rs_articolo['idarticolo'], -$rs_articolo['qta'], ['idautomezzo' => $rs_articolo['idautomezzo'], 'idintervento' => $id_record]);
                 }
             }
 
@@ -535,7 +491,7 @@ switch (post('op')) {
         $id_tecnico = post('id_tecnico');
 
         // Verifico se l'intervento è collegato ad un contratto
-		// TODO: utilizzare campo id_contratto in in_interventi come avviene già per i preventivi (id_preventivo) dalla 2.4.2
+        // TODO: utilizzare campo id_contratto in in_interventi come avviene già per i preventivi (id_preventivo) dalla 2.4.2
         $rs = $dbo->fetchArray('SELECT idcontratto FROM co_promemoria WHERE idintervento='.prepare($id_record));
         $idcontratto = $rs[0]['idcontratto'];
 

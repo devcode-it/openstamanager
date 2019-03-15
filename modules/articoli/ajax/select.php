@@ -4,7 +4,64 @@ include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
     case 'articoli':
-        $query = 'SELECT mg_articoli.*, (SELECT CONCAT(co_pianodeiconti2.numero, ".", co_pianodeiconti3.numero, " ", co_pianodeiconti3.descrizione) FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = idconto_vendita) AS idconto_vendita_title, (SELECT CONCAT(co_pianodeiconti2.numero, ".", co_pianodeiconti3.numero, " ", co_pianodeiconti3.descrizione) FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = idconto_acquisto) AS idconto_acquisto_title, co_iva.descrizione AS iva_vendita FROM mg_articoli LEFT OUTER JOIN co_iva ON mg_articoli.idiva_vendita=co_iva.id |where| ORDER BY mg_articoli.id_categoria ASC, mg_articoli.id_sottocategoria ASC';
+        $query = 'SELECT 
+            mg_articoli.id, 
+            mg_articoli.codice, 
+            mg_articoli.descrizione, 
+            mg_articoli.um, 
+            mg_articoli.idiva_vendita, 
+            mg_articoli.idconto_vendita, 
+            mg_articoli.idconto_acquisto, 
+            mg_articoli.prezzo_vendita, 
+            mg_articoli.prezzo_acquisto, 
+            categoria.`nome` AS categoria,
+            sottocategoria.`nome` AS sottocategoria,
+            co_iva.descrizione AS iva_vendita,
+            CONCAT(conto_vendita_categoria .numero, ".", conto_vendita_sottocategoria.numero, " ", conto_vendita_sottocategoria.descrizione) AS idconto_vendita_title, 
+            CONCAT(conto_acquisto_categoria .numero, ".", conto_acquisto_sottocategoria.numero, " ", conto_acquisto_sottocategoria.descrizione) AS idconto_acquisto_title
+        FROM mg_articoli
+            LEFT JOIN co_iva ON mg_articoli.idiva_vendita = co_iva.id
+            LEFT JOIN `mg_categorie` AS categoria ON `categoria`.`id` = `mg_articoli`.`id_categoria`
+            LEFT JOIN `mg_categorie` AS sottocategoria ON `sottocategoria`.`id` = `mg_articoli`.`id_sottocategoria` 
+            LEFT JOIN co_pianodeiconti3 AS conto_vendita_sottocategoria ON conto_vendita_sottocategoria.id=mg_articoli.idconto_vendita
+                LEFT JOIN co_pianodeiconti2 AS conto_vendita_categoria ON conto_vendita_sottocategoria.idpianodeiconti2=conto_vendita_categoria.id
+            LEFT JOIN co_pianodeiconti3 AS conto_acquisto_sottocategoria ON conto_acquisto_sottocategoria.id=mg_articoli.idconto_acquisto
+                LEFT JOIN co_pianodeiconti2 AS conto_acquisto_categoria ON conto_acquisto_sottocategoria.idpianodeiconti2=conto_acquisto_categoria.id
+        |where| ORDER BY mg_articoli.id_categoria ASC, mg_articoli.id_sottocategoria ASC';
+
+        foreach ($elements as $element) {
+            $filter[] = 'mg_articoli.id='.prepare($element);
+        }
+
+        $where[] = 'attivo = 1';
+        if (!empty($superselect['dir']) && $superselect['dir'] == 'entrata') {
+            //$where[] = '(qta > 0 OR servizio = 1)';
+        }
+
+        if (!empty($search)) {
+            $search_fields[] = 'mg_articoli.descrizione LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = 'mg_articoli.codice LIKE '.prepare('%'.$search.'%');
+        }
+
+        $custom = [
+            'id' => 'id',
+            'codice' => 'codice',
+            'descrizione' => 'descrizione',
+            'um' => 'um',
+            'categoria' => 'categoria',
+            'sottocategoria' => 'sottocategoria',
+            'idiva_vendita' => 'idiva_vendita',
+            'iva_vendita' => 'iva_vendita',
+            'idconto_vendita' => 'idconto_vendita',
+            'idconto_vendita_title' => 'idconto_vendita_title',
+            'idconto_acquisto' => 'idconto_acquisto',
+            'idconto_acquisto_title' => 'idconto_acquisto_title',
+            'prezzo_acquisto' => 'prezzo_acquisto',
+            'prezzo_vendita' => 'prezzo_vendita',
+        ];
+
+        $data = AJAX::selectResults($query, $where, $filter, $search_fields, $limit, $custom);
+        $rs = $data['results'];
 
         // Individuazione di eventuali listini
         if (!empty($superselect['dir']) && !empty($superselect['idanagrafica'])) {
@@ -21,45 +78,22 @@ switch ($resource) {
         $idiva_predefinita = get_var('Iva predefinita');
         $iva_predefinita = $dbo->fetchOne('SELECT descrizione FROM co_iva WHERE id='.prepare($idiva_predefinita))['descrizione'];
 
-        foreach ($elements as $element) {
-            $filter[] = 'mg_articoli.id='.prepare($element);
-        }
-
-        $where[] = 'attivo = 1';
-        if (!empty($superselect['dir']) && $superselect['dir'] == 'entrata') {
-            //$where[] = '(qta > 0 OR servizio = 1)';
-        }
-
-        if (!empty($search)) {
-            $search_fields[] = 'mg_articoli.descrizione LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'mg_articoli.codice LIKE '.prepare('%'.$search.'%');
-        }
-
-        if (!empty($search_fields)) {
-            $where[] = '('.implode(' OR ', $search_fields).')';
-        }
-
-        if (!empty($filter)) {
-            $where[] = '('.implode(' OR ', $filter).')';
-        }
-
-        $wh = '';
-        if (count($where) != 0) {
-            $wh = 'WHERE '.implode(' AND ', $where);
-        }
-        $query = str_replace('|where|', $wh, $query);
-
-        $prev = -1;
-        $rs = $dbo->fetchArray($query);
+        $previous_category = -1;
+        $previous_subcategory = -1;
         foreach ($rs as $r) {
-            if ($prev != $r['id_sottocategoria']) {
-                $categoria = $dbo->fetchOne('SELECT `nome` FROM `mg_categorie` WHERE `id`='.prepare($r['id_categoria']))['nome'];
+            if ($previous_category != $r['categoria'] || $previous_subcategory != $r['sottocategoria']) {
+                $previous_category = $r['categoria'];
+                $previous_subcategory = $r['sottocategoria'];
 
-                $sottocategoria = $dbo->fetchOne('SELECT `nome` FROM `mg_categorie` WHERE `id`='.prepare($r['id_sottocategoria']));
-                $sottocategoria = isset($sottocategoria['nome']) ? $sottocategoria['nome'] : null;
+                $text = '<i>'.tr('Nessuna categoria').'</i>';
+                if (!empty($r['categoria'])) {
+                    $text = $r['categoria'].' ('.(!empty($r['sottocategoria']) ? $r['sottocategoria'] : '-').')';
+                }
 
-                $prev = $r['id_sottocategoria'];
-                $results[] = ['text' => $categoria.' ('.(!empty($r['id_sottocategoria']) ? $sottocategoria : '-').')', 'children' => []];
+                $results[] = [
+                    'text' => $text,
+                    'children' => [],
+                ];
             }
 
             // Iva dell'articolo
@@ -100,6 +134,11 @@ switch ($resource) {
                 'prezzo_vendita' => $prezzo_vendita,
             ];
         }
+
+        $results = [
+            'results' => $results,
+            'recordsFiltered' => $data['recordsFiltered'],
+        ];
 
         break;
 

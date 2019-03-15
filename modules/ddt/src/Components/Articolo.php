@@ -11,6 +11,7 @@ class Articolo extends Article
     use RelationTrait;
 
     protected $table = 'dt_righe_ddt';
+    protected $serialRowID = 'ddt';
 
     /**
      * Crea un nuovo articolo collegato ad una ddt.
@@ -47,7 +48,7 @@ class Articolo extends Article
         ]);
 
         $this->articolo->movimenta(-$qta, $movimento, $data, false, [
-            'iddocumento' => $ddt->id,
+            'idddt' => $ddt->id,
         ]);
     }
 

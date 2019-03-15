@@ -31,7 +31,7 @@ echo '
                             launch_modal("'.tr('Righe fattura').'", globals.rootdir + "/actions.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&op=list&filename=" + data.filename);
                         } else {
                             swal({
-                                title: "'.tr('Fattura già importata.').'",
+                                title: "'.tr('Fattura già importata').'.",
                                 type: "info",
                             });
 							
@@ -100,7 +100,14 @@ echo '
     </div>
     <div class="box-body" id="list">';
 
+if (Interaction::isEnabled()) {
+    echo '
+        <p>'.tr('Per vedere le fatture da importare utilizza il pulsante _BUTTON_', [
+            '_BUTTON_' => '<b>"'.tr('Ricerca fatture di acquisto').'"</b>',
+        ]).'.</p>';
+} else {
     include $structure->filepath('list.php');
+}
 
     echo '
 

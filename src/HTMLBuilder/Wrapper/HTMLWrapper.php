@@ -133,12 +133,12 @@ class HTMLWrapper implements WrapperInterface
         if ($type == 'untprc') {
             $choices = [
                 [
-                    'id' => 'UNT',
-                    'descrizione' => tr('&euro;'),
-                ],
-                [
                     'id' => 'PRC',
                     'descrizione' => '%',
+                ],
+                [
+                    'id' => 'UNT',
+                    'descrizione' => tr('&euro;'),
                 ],
             ];
         } elseif ($type == 'email') {

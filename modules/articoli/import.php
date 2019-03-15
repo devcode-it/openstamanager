@@ -75,6 +75,17 @@ switch (post('op')) {
                     }
                 }
 
+                // Codice --> ID IVA vendita
+                if (!empty($data[$key]['idiva_vendita'])) {
+                    $rs_iva = $dbo->select('co_iva', 'id', [
+                        'codice' => $data[$key]['idiva_vendita'],
+                    ]);
+
+                    if (!empty($rs_iva[0]['id'])) {
+                        $data[$key]['idiva_vendita'] = $rs_iva[0]['id'];
+                    }
+                }
+
                 // Insert o update
                 $insert = true;
                 if (!empty($primary_key)) {
@@ -164,6 +175,14 @@ return [
             'Categoria',
             'id_categoria',
             'idcategoria',
+        ],
+    ],
+    [
+        'field' => 'idiva_vendita',
+        'label' => 'Codice IVA vendita',
+        'names' => [
+            'Codice IVA vendita',
+            'idiva_vendita',
         ],
     ],
     [

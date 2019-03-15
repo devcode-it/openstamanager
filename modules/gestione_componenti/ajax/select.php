@@ -24,7 +24,7 @@ switch ($resource) {
 
             $custom['contenuto'] = 'contenuto';
 
-            $results = AJAX::completeResults($query, $where, $filter, $search, $custom);
+            $results = AJAX::selectResults($query, $where, $filter, $search, $limit, $custom);
             foreach ($results as $key => $value) {
                 $matricola = \Util\Ini::getValue($r['contenuto'], 'Matricola');
 

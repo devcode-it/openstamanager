@@ -9,7 +9,7 @@ $directory = Plugins\ImportFE\FatturaElettronica::getImportDirectory();
 
 if (!empty($list)) {
     echo '
-<table class="table table-striped table-hover table-condensed table-bordered">
+<table class="table table-striped table-hover table-condensed table-bordered datatables">
     <thead>
         <tr>
             <th>'.tr('Nome').'</th>
@@ -104,4 +104,6 @@ function delete_fe(button, file) {
         }
     });
 }
+
+start_local_datatables();
 </script>';

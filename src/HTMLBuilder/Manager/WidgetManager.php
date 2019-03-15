@@ -153,29 +153,45 @@ class WidgetManager implements ManagerInterface
     protected function custom($widget)
     {
         $result = '
-
-        <li class="'.$widget['class'].'" id="'.$widget['id'].'">
-            <!-- small box -->
-            <div class="small-box bg-'.$widget['bgcolor'].'">
-                <div class="inner">';
-
-        // Codice specifico
-        include_once $widget['php_include'];
+        <button type="button" class="close" onclick="if(confirm(\'Disabilitare questo widget?\')) { $.post( \''.ROOTDIR.'/modules/aggiornamenti/actions.php?id_module='.$widget['id_module'].'\', { op: \'disable_widget\', id: \''.$widget['id'].'\' }, function(response){ location.reload(); }); };" >
+            <span aria-hidden="true">&times;</span><span class="sr-only">'.tr('Chiudi').'</span>
+        </button>';
 
         $result .= '
-                </div>';
 
-        // Icona
+        <div class="info-box">
+            <span class="info-box-icon" style="background-color:'.$widget['bgcolor'].'">';
+
         if (!empty($widget['icon'])) {
             $result .= '
-                <div class="icon">
-                    <i class="'.$widget['icon'].'"></i>
-                </div>';
+                            <i class="'.$widget['icon'].'"></i>';
         }
 
         $result .= '
-            </div>
-        </li>';
+            </span>
+
+            <div class="info-box-content">
+                <span class="info-box-text">';
+
+        if (!empty($widget['php_include'])) {
+            $result_ob = '';
+
+            ob_start();
+
+            include DOCROOT.'/'.$widget['php_include'];
+            $result_ob = ob_get_contents();
+
+            ob_end_clean();
+
+            $result .= $result_ob;
+        }
+
+        $result .= '
+                </span>
+            </div>';
+
+        $result .= '
+        </div>';
 
         return $result;
     }

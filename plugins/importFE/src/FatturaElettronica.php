@@ -34,9 +34,9 @@ class FatturaElettronica
     /** @var Fattura Fattura collegata */
     protected $fattura = null;
 
-    public function __construct($file)
+    public function __construct($name)
     {
-        $this->file = static::getImportDirectory().'/'.$file;
+        $this->file = static::getImportDirectory().'/'.$name;
 
         if (ends_with($file, '.p7m')) {
             $file = XML::decodeP7M($this->file);
@@ -95,10 +95,10 @@ class FatturaElettronica
         return $filename;
     }
 
-    public static function isValid($file)
+    public static function isValid($name)
     {
         try {
-            new static($file);
+            new static($name);
 
             return true;
         } catch (UnexpectedValueException $e) {
@@ -208,17 +208,23 @@ class FatturaElettronica
         return $result;
     }
 
-    public function saveRighe($articoli, $iva, $conto)
+    public function saveRighe($articoli, $iva, $conto, $movimentazione = true)
     {
         $righe = $this->getRighe();
+        $fattura = $this->getFattura();
 
         foreach ($righe as $key => $riga) {
             $articolo = ArticoloOriginale::find($articoli[$key]);
 
+            $riga['PrezzoUnitario'] = floatval($riga['PrezzoUnitario']);
+            $riga['Quantita'] = floatval($riga['Quantita']);
+
             if (!empty($articolo)) {
-                $obj = Articolo::build($this->getFattura(), $articolo);
+                $obj = Articolo::build($fattura, $articolo);
+
+                $obj->movimentazione($movimentazione);
             } else {
-                $obj = Riga::build($this->getFattura());
+                $obj = Riga::build($fattura);
             }
 
             $obj->descrizione = $riga['Descrizione'];
@@ -232,66 +238,54 @@ class FatturaElettronica
             }
 
             $sconti = $riga['ScontoMaggiorazione'];
-
             if (!empty($sconti)) {
-                if ($sconti['Percentuale'] || $sconti['Importo']) {
-                    $tipo = !empty($sconti['Percentuale']) ? 'PRC' : 'EUR';
-                    $unitario = $sconti['Percentuale'] ?: $sconti['Importo'];
+                $sconti = $sconti[0] ? $sconti : [$sconti];
+                $tipo = !empty($sconti[0]['Percentuale']) ? 'PRC' : 'UNT';
 
-                    //SConto o MaGgiorazione
-                    $unitario = ($sconti['Tipo'] == 'SC') ? $unitario : -$unitario;
+                $lista = [];
+                foreach ($sconti as $sconto) {
+                    $unitario = $sconto['Percentuale'] ?: $sconto['Importo'];
 
-                    if (!empty($unitario)) {
-                        $obj->sconto_unitario = $unitario;
-                        $obj->tipo_sconto = $tipo;
-                    }
+                    // Sconto o Maggiorazione
+                    $lista[] = ($sconto['Tipo'] == 'SC') ? $unitario : -$unitario;
                 }
 
-                // Sconti multipli
-                else {
-                    $sconto = $sconti[0]['Percentuale'] ? $sconti[0]['Percentuale'] : $sconti['Percentuale'];
-                    $tipo = !empty($sconto) ? 'PRC' : 'EUR';
+                if ($tipo == 'PRC') {
+                    $elenco = implode('+', $lista);
+                    $sconto = calcola_sconto([
+                        'sconto' => $elenco,
+                        'prezzo' => $obj->prezzo_unitario_vendita,
+                        'tipo' => 'PRC',
+                        'qta' => $obj->qta,
+                    ]);
 
-                    $sconto_totale = 0;
-                    if ($tipo == 'PRC') {
-                        /**
-                         * Trasformo un eventuale sconto percentuale combinato in più
-                         * sconti:
-                         * Esempio:
-                         * 40% + 30% è uno sconto del 42%.
-                         */
-                        $prezzo_intero = $riga['PrezzoUnitario'] * $riga['Quantita'];
-                        $prezzo_scontato = $prezzo_intero;
-
-                        foreach ($sconti as $scontor) {
-                            $prezzo_scontato -= $prezzo_scontato / 100 * $scontor['Percentuale'];
-                        }
-
-                        // Ricavo la percentuale finale di sconto con una proporzione
-                        $percentuale_totale = (1 - ($prezzo_scontato / $prezzo_intero)) * 100;
-
-                        if (!empty($percentuale_totale)) {
-                            $obj->sconto_unitario = $percentuale_totale;
-                            $obj->tipo_sconto = $tipo;
-                        }
-                    } else {
-                        // Combino gli sconti tra loro
-                        foreach ($sconti as $sconto) {
-                            $unitario = $sconto['Percentuale'] ?: $sconto['Importo'];
-
-                            //Sconto o Maggiorazione
-                            $unitario = ($sconto['Tipo'] == 'SC') ? $unitario : -$unitario;
-
-                            $sconto_totale += $unitario;
-                        }
-
-                        if (!empty($unitario)) {
-                            $obj->sconto_unitario = $sconto_totale;
-                            $obj->tipo_sconto = $tipo;
-                        }
-                    }
+                    /*
+                     * Trasformazione di sconti multipli in sconto percentuale combinato.
+                     * Esempio: 40% + 30% è uno sconto del 42%.
+                     */
+                    $sconto_unitario = $sconto * 100 / $obj->imponibile;
+                } else {
+                    $sconto_unitario = sum($lista);
                 }
+
+                $obj->sconto_unitario = $sconto_unitario;
+                $obj->tipo_sconto = $tipo;
             }
+
+            $obj->save();
+        }
+
+        // Arrotondamenti differenti nella fattura XML
+        $totali = array_column($righe, 'PrezzoTotale');
+        $diff = sum($totali) - $fattura->imponibile_scontato;
+        if (!empty($diff)) {
+            $obj = Riga::build($fattura);
+
+            $obj->descrizione = tr('Arrotondamento calcolato in automatico');
+            $obj->id_iva = $iva[0];
+            $obj->idconto = $conto[0];
+            $obj->prezzo_unitario_vendita = $diff;
+            $obj->qta = 1;
 
             $obj->save();
         }
@@ -381,7 +375,7 @@ class FatturaElettronica
         // Sconto globale
         $sconto = $dati_generali['ScontoMaggiorazione'];
         if (!empty($sconto)) {
-            $tipo = !empty($sconto['Percentuale']) ? 'PRC' : 'EUR';
+            $tipo = !empty($sconto['Percentuale']) ? 'PRC' : 'UNT';
             $unitario = $sconto['Percentuale'] ?: $sconto['Importo'];
 
             $unitario = ($sconto['Tipo'] == 'SC') ? $unitario : -$unitario;

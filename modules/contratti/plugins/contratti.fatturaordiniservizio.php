@@ -130,7 +130,7 @@ elseif (get('op') == 'addfattura') {
     $iva_indetraibile = $importo / 100 * $rs2[0]['indetraibile'];
 
     // Inserimento riga in fattura
-    $dbo->query('INSERT INTO co_righe_documenti(iddocumento, descrizione, desc_iva, iva, iva_indetraibile, subtotale, um, qta, `order`) VALUES('.prepare($iddocumento).', '.prepare($descrizione).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($importo).", '-', 1, (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento=".prepare($iddocumento).'))');
+    $dbo->query('INSERT INTO co_righe_documenti(iddocumento, idcontratto, descrizione, desc_iva, iva, iva_indetraibile, subtotale, um, qta, `order`) VALUES('.prepare($iddocumento).', '.prepare($id_record).', '.prepare($descrizione).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($importo).", '-', 1, (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento=".prepare($iddocumento).'))');
 
     redirect($rootdir.'/editor.php?id_module='.Modules::get('Fatture di vendita')['id'].'&id_record='.$iddocumento.'&dir=entrata');
     exit();

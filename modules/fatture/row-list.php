@@ -398,6 +398,9 @@ if (!empty($fattura->bollo)) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
+		
+			<span class="tip" title="'.tr('Rivalsa per spese bollo fattura. Esclusa IVA articolo 15 d.p.r. 633/1972').'."  > <i class="fa fa-question-circle-o"></i></span>
+				
             <b>'.tr('Marca da bollo', [], ['upper' => true]).':</b>
         </td>
         <td align="right">

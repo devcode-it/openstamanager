@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.9 (2019-03-15)](#249-2019-03-15)
 - [2.4.8 (2019-03-01)](#248-2019-03-01)
 - [2.4.7 (2019-02-21)](#247-2019-02-21)
 - [2.4.6 (2019-02-12)](#246-2019-02-12)
@@ -19,6 +20,27 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
 
+## 2.4.9 (2019-03-15)
+
+### Aggiunto (Added)
+
+ - Possibilità di ricalcolare le scadenze delle **Fatture di acquisto** importate da fatture elettroniche
+ - Aggiunto campo data ricezione per le **Fatture di acquisto**
+ - Aggiunta stampa **Preventivo** senza costi totali
+ - Aggiunto export massivo XML fatture
+
+### Modificato (Changed)
+
+ - Corretto calcolo marca da bollo contemplando solo le righe con esenzione iva da natura N1 a N4
+ - Aggiornati stylesheet per le notifiche fattura elettronica
+ - Possibilità di ricercare per valori maggiori/uguali o minori/uguali sui campi delle tabelle (importi)
+
+### Fixed
+
+ - Fix selezione righe multiple sulle tabelle
+ - Fix API per APP OSM
+ - Risolti altri bug generali
+ 
 ## 2.4.8 (2019-03-01)
 
 ### Aggiunto (Added)

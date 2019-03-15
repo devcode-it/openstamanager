@@ -63,7 +63,7 @@ switch (post('op')) {
             // Query di aggiornamento
             $dbo->update('co_documenti', array_merge([
                 'data' => post('data'),
-				'data_ricezione' => post('data_ricezione'),
+                'data_ricezione' => post('data_ricezione'),
                 'numero_esterno' => post('numero_esterno'),
                 'note' => post('note'),
                 'note_aggiuntive' => post('note_aggiuntive'),
@@ -182,15 +182,15 @@ switch (post('op')) {
             $dbo->query("UPDATE in_interventi SET idstatointervento='OK' WHERE id=".prepare($rs[$i]['idintervento']));
         }
 
+        elimina_scadenza($id_record);
+        elimina_movimento($id_record);
+
         $dbo->query('DELETE FROM co_documenti WHERE id='.prepare($id_record));
         $dbo->query('DELETE FROM co_scadenziario WHERE iddocumento='.prepare($id_record));
         $dbo->query('DELETE FROM co_movimenti WHERE iddocumento='.prepare($id_record));
 
         // Azzeramento collegamento della rata contrattuale alla pianificazione
         $dbo->query('UPDATE co_ordiniservizio_pianificazionefatture SET iddocumento=0 WHERE iddocumento='.prepare($id_record));
-
-        elimina_scadenza($id_record);
-        elimina_movimento($id_record);
 
         flash()->info(tr('Fattura eliminata!'));
 

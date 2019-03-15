@@ -219,13 +219,23 @@ class FatturaElettronica
             $obj->descrizione = $riga['Descrizione'];
             $obj->id_iva = $iva[$key];
             $obj->idconto = $conto[$key];
-            $obj->prezzo_unitario_vendita = $riga['PrezzoUnitario'];
-            $obj->qta = $riga['Quantita'] ?: 1;
+
+            // Nel caso il prezzo sia negativo viene gestito attraverso l'inversione della quantità (come per le note di credito)
+            // TODO: per migliorare la visualizzazione, sarebbe da lasciare negativo il prezzo e invertire gli sconti.
+            $prezzo = $riga['PrezzoUnitario'];
+            $prezzo = $riga['PrezzoUnitario'] < 0 ? -$prezzo : $prezzo;
+            $qta = $riga['Quantita'] ?: 1;
+            $qta = $riga['PrezzoUnitario'] < 0 ? -$qta : $qta;
+
+            // Prezzo e quantità
+            $obj->prezzo_unitario_vendita = $prezzo;
+            $obj->qta = $qta;
 
             if (!empty($riga['UnitaMisura'])) {
                 $obj->um = $riga['UnitaMisura'];
             }
 
+            // Sconti e maggiorazioni
             $sconti = $riga['ScontoMaggiorazione'];
             if (!empty($sconti)) {
                 $sconti = $sconti[0] ? $sconti : [$sconti];
@@ -265,8 +275,13 @@ class FatturaElettronica
         }
 
         // Arrotondamenti differenti nella fattura XML
-        $totali = array_column($righe, 'PrezzoTotale');
-        $diff = sum($totali) - $fattura->imponibile_scontato;
+        $totali_righe = array_column($righe, 'PrezzoTotale');
+        $totale_righe = sum($totali_righe);
+
+        $dati_generali = $this->getBody()['DatiGenerali']['DatiGeneraliDocumento'];
+        $totale_documento = isset($dati_generali['ImportoTotaleDocumento']) ? $dati_generali['ImportoTotaleDocumento'] : sum($totali);
+
+        $diff = $totale_documento ? $totale_documento - $fattura->totale : $totale_righe - $fattura->imponibile_scontato;
         if (!empty($diff)) {
             $obj = Riga::build($fattura);
 

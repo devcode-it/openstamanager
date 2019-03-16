@@ -93,7 +93,7 @@ class BaseController extends Controller
 
     public function info($request, $response, $args)
     {
-        $response = $this->view->render($response, 'resources\views\info.php', $args);
+        $response = $this->twig->render($response, 'info.twig', $args);
 
         return $response;
     }

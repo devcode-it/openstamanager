@@ -4,7 +4,6 @@ namespace Controllers\Config;
 
 use Auth;
 use Controllers\Controller;
-use Filter;
 use Modules;
 use Settings;
 use Update;
@@ -157,7 +156,7 @@ WHERE `an_tipianagrafiche`.`descrizione` = 'Azienda' AND `an_anagrafiche`.`delet
     {
         $dbo = $database = $this->database;
 
-        Filter::set('post', 'op', 'add');
+        $this->filter->set('post', 'op', 'add');
         $id_module = Modules::get('Anagrafiche')['id'];
         include DOCROOT.'/modules/anagrafiche/actions.php';
 

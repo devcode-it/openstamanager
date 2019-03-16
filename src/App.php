@@ -186,8 +186,8 @@ class App
 
         // JS aggiuntivi per gli utenti connessi
         if (Auth::check()) {
-            $assets['js'][] = ROOTDIR.'/assets/js/functions.js';
-            $assets['js'][] = ROOTDIR.'/assets/js/init.js';
+            $assets['js'][] = ROOTDIR.'/assets/js/functions.min.js';
+            $assets['js'][] = ROOTDIR.'/assets/js/init.min.js';
         }
 
         return $assets;

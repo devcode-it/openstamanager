@@ -9,6 +9,6 @@ class GuestMiddleware extends UserMiddleware
 {
     protected function hasAuthorization($request)
     {
-        return !$this->hasAuthorization();
+        return !parent::hasAuthorization($request);
     }
 }

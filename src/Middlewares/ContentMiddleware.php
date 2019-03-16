@@ -4,14 +4,13 @@ namespace Middlewares;
 
 use Modules;
 use Plugins;
-use Util\Query;
 
 /**
  * Classe per l'impostazione automatica delle variabili rilevanti per il funzionamento del progetto.
  *
  * @since 2.5
  */
-class ModuleMiddleware extends Middleware
+class ContentMiddleware extends Middleware
 {
     public function __invoke($request, $response, $next)
     {
@@ -43,39 +42,49 @@ class ModuleMiddleware extends Middleware
         $user = auth()->getUser();
         $args['user'] = $user;
 
+        $args['formatter'] = formatter()->getNumberSeparators();
+
+        $args['version'] = \Update::getVersion();
+        $args['revision'] = \Update::getRevision();
+
+        // Periodo di visualizzazione
+        if (!empty($_GET['period_start'])) {
+            $_SESSION['period_start'] = $_GET['period_start'];
+            $_SESSION['period_end'] = $_GET['period_end'];
+        }
+        // Dal 01-01-yyy al 31-12-yyyy
+        elseif (!isset($_SESSION['period_start'])) {
+            $_SESSION['period_start'] = date('Y').'-01-01';
+            $_SESSION['period_end'] = date('Y').'-12-31';
+        }
+
+        $args['calendar'] = [
+            'start' => $_SESSION['period_start'],
+            'end' => $_SESSION['period_end'],
+            'color' => ($_SESSION['period_start'] != date('Y').'-01-01' || $_SESSION['period_end'] != date('Y').'-12-31') ? 'red' : 'white',
+        ];
+
+        // Argomenti di ricerca dalla sessione
+        $search = [];
+        $array = $_SESSION['module_'.$id_module];
+        if (!empty($array)) {
+            foreach ($array as $field => $value) {
+                if (!empty($value) && starts_with($field, 'search_')) {
+                    $field_name = str_replace('search_', '', $field);
+
+                    $search[$field_name] = $value;
+                }
+            }
+        }
+        $args['search'] = $search;
+
+        // Menu principale
+        $args['main_menu'] = Modules::getMainMenu();
+
+        // Impostazione degli argomenti
         $request = $this->setArgs($request, $args);
 
-        // Controllo sui permessi di accesso alla struttura
-        $enabled = ['r', 'rw'];
-        $permission = in_array($structure->permission, $enabled);
-
-        // Controllo sui permessi di accesso al record
-        if (!empty($args['id_record'])) {
-            $permission &= $this->recordAccess($args);
-        }
-
-        if (!$permission) {
-            $response = $this->twig->render($response, 'errors\403.twig', $args);
-
-            return $response->withStatus(403);
-        } else {
-            $response = $next($request, $response);
-        }
-
-        return $response;
-    }
-
-    protected function recordAccess($args)
-    {
-        Query::setSegments(false);
-        $query = Query::getQuery($args['structure'], [
-            'id' => $args['id_record'],
-        ]);
-        Query::setSegments(true);
-
-        $has_access = !empty($query) ? $this->database->fetchNum($query) !== 0 : true;
-
-        return $has_access;
+        return $next($request, $response);
     }
 
     protected function setArgs($request, $args)

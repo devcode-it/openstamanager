@@ -10,8 +10,8 @@
 */
 
 use Middlewares\Authorization\GuestMiddleware;
+use Middlewares\Authorization\PermissionMiddleware;
 use Middlewares\Authorization\UserMiddleware;
-use Middlewares\ModuleMiddleware;
 
 // Pagina principale
 $app->get('/', 'Controllers\BaseController:index')
@@ -45,8 +45,23 @@ $app->group('', function () use ($app) {
 })->add(GuestMiddleware::class);
 
 // Informazioni su OpenSTAManager
-$app->get('/info[/]', 'Controllers\ConfigController:info')
-        ->setName('info')
+$app->get('/info[/]', 'Controllers\BaseController:info')
+    ->setName('info')
+    ->add(UserMiddleware::class);
+
+// Segnalazione bug
+$app->get('/bug[/]', 'Controllers\BaseController:bug')
+    ->setName('bug')
+    ->add(UserMiddleware::class);
+
+// Log di accesso
+$app->get('/logs[/]', 'Controllers\BaseController:logs')
+    ->setName('logs')
+    ->add(UserMiddleware::class);
+
+// Informazioni sull'utente
+$app->get('/user[/]', 'Controllers\BaseController:user')
+    ->setName('user')
     ->add(UserMiddleware::class);
 
 // Operazioni Ajax
@@ -69,7 +84,7 @@ $app->group('/ajax', function () use ($app) {
 
         $app->get('/{plugin_id:[0-9]+}/{module_record_id:[0-9]+}[/]', 'Controllers\AjaxController:dataLoad')
             ->setName('ajax-dataload-plugin');
-    })->add(ModuleMiddleware::class);
+    })->add(PermissionMiddleware::class);
 })->add(UserMiddleware::class);
 
 // Moduli
@@ -85,7 +100,7 @@ $app->group('/module/{module_id:[0-9]+}', function () use ($app) {
         ->setName('module-add');
     $app->post('/add[/]', 'Controllers\ModuleController:addRecord');
     $app->post('[/]', 'Controllers\ModuleController:addRecord');
-})->add(UserMiddleware::class)->add(ModuleMiddleware::class);
+})->add(UserMiddleware::class)->add(PermissionMiddleware::class);
 
 // Plugin
 $app->group('/plugin/{plugin_id:[0-9]+}/{module_record_id}', function () use ($app) {

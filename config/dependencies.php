@@ -99,6 +99,20 @@ $container['twig'] = function ($container) {
     $twig->offsetSet('lang', $container['translator']->getCurrentLocale());
     $twig->offsetSet('router', $container['router']);
 
+    $filter = new \Twig\TwigFilter('timestamp', 'timeFormat');
+    $twig->getEnvironment()->addFilter($filter);
+
+    $filter = new \Twig\TwigFilter('date', 'dateFormat');
+    $twig->getEnvironment()->addFilter($filter);
+
+    $filter = new \Twig\TwigFilter('time', 'timeFormat');
+    $twig->getEnvironment()->addFilter($filter);
+
+    $function = new \Twig\TwigFunction('setting', function ($name) {
+        return setting($name);
+    });
+    $twig->getEnvironment()->addFunction($function);
+
     if (!empty($container['debugbar'])) {
         $twig->offsetSet('debugbar', $container['debugbar']);
     }

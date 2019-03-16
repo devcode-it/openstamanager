@@ -1,0 +1,197 @@
+{% extends "layouts/base.twig" %}
+
+{% block body_class %}hold-transition login-page{% endblock %}
+
+{% block js %}
+<script>
+    search = [];
+
+    {% for key, value in search %}
+    search.push("search_{{ key }}");
+    search["search_{{ key }}"] = "{{ value }}";
+    {% endfor %}
+
+    globals = {
+        rootdir: '{{ rootdir }}',
+        js: '{{ paths['js'] }}',
+        css: '{{ paths['css'] }}',
+        img: '{{ paths['img'] }}',
+
+        id_module: '{{ id_module }}',
+        id_record: '{{ id_record }}',
+
+        aggiornamenti_id: '{{ id_aggiornamenti }}',
+
+        cifre_decimali: {{ setting('Cifre decimali per importi') }},
+
+        decimals: "{{ formatter.decimals }}",
+        thousands: "{{ formatter.thousands }}",
+
+        search: search,
+        translations: {
+            "day": "{{ 'Giorno'|trans }}",
+            "week": "{{ 'Settimana'|trans }}",
+            "month": "{{ 'Mese'|trans }}",
+            "today": "{{ 'Oggi'|trans }}",
+            "firstThreemester": "{{ 'I trimestre'|trans }}",
+            "secondThreemester": "{{ 'II trimestre'|trans }}",
+            "thirdThreemester": "{{ 'III trimestre'|trans }}",
+            "fourthThreemester": "{{ 'IV trimestre'|trans }}",
+            "firstSemester": "{{ 'I semestre'|trans }}",
+            "secondSemester": "{{ 'II semestre'|trans }}",
+            "thisMonth": "{{ 'Questo mese'|trans }}",
+            "lastMonth": "{{ 'Mese scorso'|trans }}",
+            "thisYear": "{{ "Quest'anno"|trans }}",
+            "lastYear": "{{ 'Anno scorso'|trans }}",
+            "apply": "{{ 'Applica'|trans }}",
+            "cancel": "{{ 'Annulla'|trans }}",
+            "from": "{{ 'Da'|trans }}",
+            "to": "{{ 'A'|trans }}",
+            "custom": "{{ 'Personalizzato'|trans }}",
+            "delete": "{{ 'Elimina'|trans }}",
+            "deleteTitle": "{{ 'Sei sicuro?'|trans }}",
+            "deleteMessage": "{{ 'Eliminare questo elemento?'|trans }}",
+            "errorTitle": "{{ 'Errore'|trans }}",
+            "errorMessage": "{{ "Si è verificato un errore nell'esecuzione dell'operazione richiesta"|trans }}",
+            "close": "{{ 'Chiudi'|trans }}",
+            "filter": "{{ 'Filtra'|trans }}",
+            "long": "{{ 'La ricerca potrebbe richiedere del tempo'|trans }}",
+            "details": "{{ 'Dettagli'|trans }}",
+            "waiting": "{{ 'Impossibile procedere'|trans }}",
+            "waiting_msg": "{{ 'Prima di proseguire devi selezionare alcuni elementi!'|trans }}"
+        },
+        locale: '{{ lang }}',
+        full_locale: '{{ lang }}_{{ lang|upper }}',
+
+        start_date: '{{ calendar.start|date }}',
+        end_date: '{{ calendar.end|date }}',
+
+        ckeditorToolbar: [
+            ["Undo","Redo","-","Cut","Copy","Paste","PasteText","PasteFromWord","-","Scayt", "-","Link","Unlink","-","Bold","Italic","Underline","Superscript","SpecialChar","HorizontalRule","-","JustifyLeft","JustifyCenter","JustifyRight","JustifyBlock","-","NumberedList","BulletedList","Outdent","Indent","Blockquote","-","Styles","Format","Image","Table", "TextColor", "BGColor" ],
+        ],
+
+        tempo_attesa_ricerche: {{ setting('Tempo di attesa ricerche in secondi') }},
+        dataload_module: "{{ path_for('ajax-dataload-module', {'module_id': '|id_module|'}) }}",
+        dataload_plugin: "{{path_for('ajax-dataload-plugin', {'plugin_id': '|id_plugin|', 'module_record_id': '|id_parent|'}) }}",
+    };
+</script>
+
+    {% if setting('Abilita esportazione Excel e PDF') %}
+    <script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>';
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+<div class="wrapper">
+    <header class="main-header">
+        <a href="https://www.openstamanager.com" class="logo" title="{{ "Il gestionale open source per l'assistenza tecnica e la fatturazione"|trans }}" target="_blank">
+            <!-- mini logo for sidebar mini 50x50 pixels -->
+            <span class="logo-mini">{{ 'OSM'|trans }}</span>
+            <!-- logo for regular state and mobile devices -->
+            <span class="logo-lg">{{ 'OpenSTAManager'|trans }}</span>
+        </a>
+
+        <!-- Header Navbar: style can be found in header.less -->
+        <nav class="navbar navbar-static-top" role="navigation">
+            <!-- Sidebar toggle button-->
+            <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+                <span class="sr-only">{{ 'Mostra/nascondi menu'|trans }}</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+
+            <div class="input-group btn-calendar pull-left">
+                <button id="daterange" class="btn"><i class="fa fa-calendar" style="color:{{ calendar.color }}"></i> <i class="fa fa-caret-down"></i></button>
+                <span class="hidden-xs" style="vertical-align:middle">
+                    {{ calendar.start|date }} - {{ calendar.end|date }}
+                </span>
+            </div>
+
+            <div id="right-menu" class="pull-right">
+                <button onclick="window.print()" class="btn btn-sm btn-info tip" title="{{ 'Stampa'|trans }}">
+                    <i class="fa fa-print"></i>
+                </button>
+
+                <a href="{{ path_for('bug') }}" class="btn btn-sm btn-github tip" title="{{ 'Segnalazione bug'|trans }}">
+                    <i class="fa fa-bug"></i>
+                </a>
+
+                <a href="{{ path_for('logs') }}" class="btn btn-sm btn-github tip" title="{{ 'Log accessi'|trans }}">
+                    <i class="fa fa-book"></i>
+                </a>
+
+                <a href="{{ path_for('info') }}" class="btn btn-sm btn-github tip" title="{{ 'Informazioni'|trans }}">
+                    <i class="fa fa-info"></i>
+                </a>
+
+                <a href="{{ path_for('logout') }}" class="btn btn-sm btn-danger tip" title="{{ 'Esci'|trans }}">
+                    <i class="fa fa-power-off"></i>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <aside class="main-sidebar">
+        <section class="sidebar">
+
+            <!-- Sidebar user panel -->
+            <div class="user-panel text-center info">
+                <div class="info">
+                    <p><a href="{{ path_for('user') }}">
+                            <i class="fa fa-user"></i>
+                            {{ user.username }}
+                        </a></p>
+                    <p id="datetime"></p>
+                </div>
+
+                <div class="image">
+                    <img src="{{ base_url() }}/assets/img/logo.png" class="img-circle img-responsive" alt="{{ 'OpenSTAManager'|trans }}" />
+                </div>
+            </div>
+
+            <!-- search form -->
+            <div class="sidebar-form">
+                <div class="input-group">
+                    <input type="text" name="q" class="form-control" id="supersearch" placeholder="{{ 'Cerca'|trans }}..."/>
+                    <span class="input-group-btn">
+                        <button class="btn btn-flat" id="search-btn" name="search" type="submit" ><i class="fa fa-search"></i>
+                        </button>
+                    </span>
+
+                </div>
+            </div>
+            <!-- /.search form -->
+
+            <ul class="sidebar-menu">
+                {{ main_menu|raw }}
+            </ul>
+        </section>
+        <!-- /.sidebar -->
+    </aside>
+
+    <!-- Right side column. Contains the navbar and content of the page -->
+    <aside class="content-wrapper">
+        <!-- Main content -->
+        <section class="content">
+
+            {% block content %}{% endblock %}
+            
+        </section>
+    </aside>
+
+    <footer class="main-footer">
+        <a class="hidden-xs" href="https://www.openstamanager.com" title="{{ "Il gestionale open source per l'assistenza tecnica e la fatturazione"|trans }}" target="_blank"><strong>{{ 'OpenSTAManager'|trans }}</strong></a>
+        <span class="pull-right hidden-xs">
+            <strong>{{ 'Versione'|trans }}:</strong> {{ version }}
+            <small class="text-muted">({{ revision ? revision : 'In sviluppo'|trans }})</small>
+        </span>
+    </footer>
+
+    <!-- Modal di default -->
+    <div class="modal fade" id="bs-popup" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="true"></div>
+    <div class="modal fade" id="bs-popup2" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="true"></div>
+</div>
+{% endblock %}

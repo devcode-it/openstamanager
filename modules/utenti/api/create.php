@@ -14,6 +14,7 @@ switch ($resource) {
 
             $response['token'] = $token;
             $response['group'] = $user['gruppo'];
+            $response['google_maps_token'] = setting('Google Maps API key');
 
             $response['version'] = Update::getVersion();
         } else {

@@ -63,6 +63,7 @@ switch (post('op')) {
             // Query di aggiornamento
             $dbo->update('co_documenti', array_merge([
                 'data' => post('data', true),
+                'data_ricezione' => post('data_ricezione', true),
                 'numero_esterno' => post('numero_esterno'),
                 'note' => post('note'),
                 'note_aggiuntive' => post('note_aggiuntive'),
@@ -144,6 +145,30 @@ switch (post('op')) {
 
         break;
 
+    // Ricalcolo scadenze
+    case 'ricalcola_scadenze':
+        $fattura->registraScadenze(false, true);
+
+        break;
+
+    // Ricalcolo scadenze
+    case 'controlla_totali':
+        try {
+            $xml = \Util\XML::read($fattura->getXML());
+
+            $dati_generali = $xml['FatturaElettronicaBody']['DatiGenerali']['DatiGeneraliDocumento'];
+            $totale_documento = $dati_generali['ImportoTotaleDocumento'] ?: null;
+        } catch (Exception $e) {
+            $totale_documento = null;
+        }
+
+        echo json_encode([
+            'stored' => $totale_documento,
+            'calculated' => $fattura->totale,
+        ]);
+
+        break;
+
     // eliminazione documento
     case 'delete':
         $rs = $dbo->fetchArray('SELECT id FROM co_righe_documenti WHERE iddocumento='.prepare($id_record));
@@ -175,15 +200,15 @@ switch (post('op')) {
             $dbo->query("UPDATE in_interventi SET id_stato='OK' WHERE id=".prepare($rs[$i]['idintervento']));
         }
 
+        elimina_scadenza($id_record);
+        elimina_movimento($id_record);
+
         $dbo->query('DELETE FROM co_documenti WHERE id='.prepare($id_record));
         $dbo->query('DELETE FROM co_scadenziario WHERE iddocumento='.prepare($id_record));
         $dbo->query('DELETE FROM co_movimenti WHERE iddocumento='.prepare($id_record));
 
         // Azzeramento collegamento della rata contrattuale alla pianificazione
         $dbo->query('UPDATE co_ordiniservizio_pianificazionefatture SET iddocumento=0 WHERE iddocumento='.prepare($id_record));
-
-        elimina_scadenza($id_record);
-        elimina_movimento($id_record);
 
         flash()->info(tr('Fattura eliminata!'));
 

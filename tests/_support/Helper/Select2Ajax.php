@@ -1,4 +1,6 @@
-<?php // @codingStandardsIgnoreFile
+<?php
+
+// @codingStandardsIgnoreFile
 
 namespace Helper;
 
@@ -17,10 +19,9 @@ namespace Helper;
  * - Run ./vendor/bin/codecept build
  *
  * @see http://select2.github.io/select2
+ *
  * @author Thomas Zilio
- *
  * @license MIT
- *
  */
 class Select2Ajax extends Select2
 {

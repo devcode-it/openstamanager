@@ -10,7 +10,7 @@ unset($_SESSION['superselect']['id_categoria']);
 
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "text", "label": "<?php echo tr('Inserisci il codice:'); ?>", "name": "codice", "class":"alphanumeric-mask", "required": 1 ]}
+			{[ "type": "text", "label": "<?php echo tr('Inserisci il codice:'); ?>", "name": "codice", "required": 1 ]}
 		</div>
 
 		<div class="col-md-6">

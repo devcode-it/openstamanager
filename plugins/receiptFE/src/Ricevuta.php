@@ -91,16 +91,19 @@ class Ricevuta
         $fattura = $this->getFattura();
 
         // Modifica lo stato solo se la fattura non è già stata consegnata (per evitare problemi da doppi invii)
-        if ($fattura->codice_stato_fe == 'RC') {
-            return;
-        }
+        // In realtà per le PA potrebbe esserci lo stato NE (che può essere positiva o negativa) successivo alla RC 
+		//if ($fattura->codice_stato_fe == 'RC') {
+            //return;
+        //}
 
-        // Processo la ricevuta e salvo il codice e messaggio di errore
+        // Processo la ricevuta e salvo data ricezione, codice e messaggio
         $descrizione = $this->xml['Destinatario']['Descrizione'];
         $data = $this->xml['DataOraRicezione'];
-
+		
+		$fattura->data_stato_fe = date('Y-m-d H:i:s', strtotime($data));
         $fattura->codice_stato_fe = $codice;
-        $fattura->data_stato_fe = date('Y-m-d H:i:s', strtotime($data));
+		$fattura->descrizione_ricevuta_fe = $descrizione;
+        
         $fattura->save();
     }
 

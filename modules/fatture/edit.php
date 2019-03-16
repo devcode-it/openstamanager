@@ -84,7 +84,7 @@ if ($dir == 'entrata') {
 				{[ "type": "hidden", "label": "Segmento", "name": "id_segment", "class": "text-center", "value": "$id_segment$" ]}
 
 				<div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo $label; ?>", "name": "numero_esterno", "class": "alphanumeric-mask text-center", "value": "$numero_esterno$" ]}
+					{[ "type": "text", "label": "<?php echo $label; ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -112,7 +112,7 @@ if (empty($record['is_fiscale'])) {
 					<?php
                     if ($dir == 'entrata') {
                         ?>
-					{[ "type": "select", "label": "<?php echo tr('Stato FE'); ?>", "name": "codice_stato_fe", "required": 0, "values": "query=SELECT codice as id, descrizione as text FROM fe_stati_documento", "value": "$codice_stato_fe$", "disabled": <?php echo intval(Plugins\ExportFE\Connection::isEnabled()); ?>, "class": "unblockable" ]}
+					{[ "type": "select", "label": "<?php echo tr('Stato FE'); ?>", "name": "codice_stato_fe", "required": 0, "values": "query=SELECT codice as id, CONCAT_WS(' - ',codice,descrizione) as text FROM fe_stati_documento", "value": "$codice_stato_fe$", "disabled": <?php echo intval(Plugins\ExportFE\Connection::isEnabled()); ?>, "class": "unblockable", "help": "<?php echo (!empty($record['data_stato_fe'])) ? Translator::timestampToLocale($record['data_stato_fe']) : ''; ?>" ]}
 					<?php
                     }
                     ?>
@@ -141,6 +141,16 @@ if (empty($record['is_fiscale'])) {
 					{[ "type": "select", "label": "<?php echo tr('Riferimento sede'); ?>", "name": "idsede", "ajax-source": "sedi", "placeholder": "Sede legale", "value": "$idsede$" ]}
 				</div>
 
+				<?php if ($dir == 'uscita') {
+                        ?>
+
+				<div class="col-md-3">
+					{[ "type": "date", "label": "<?php echo tr('Data ricezione'); ?>", "name": "data_ricezione", "required": 0, "value": "$data_ricezione$" ]}
+				</div>
+
+				<?php
+                    } ?>
+
 				<?php if ($dir == 'entrata') {
                         ?>
 				<div class="col-md-3">
@@ -151,14 +161,41 @@ if (empty($record['is_fiscale'])) {
 
                 <?php
                 if ($record['stato'] != 'Bozza' && $record['stato'] != 'Annullata') {
+                    $ricalcola = true;
+
                     $scadenze = $dbo->fetchArray('SELECT * FROM co_scadenziario WHERE iddocumento = '.prepare($id_record));
                     echo '
                 <div class="col-md-3">
                     <p><strong>'.tr('Scadenze').'</strong></p>';
                     foreach ($scadenze as $scadenza) {
                         echo '
-                    <p>'.Translator::dateToLocale($scadenza['scadenza']).': '.Translator::numberToLocale($scadenza['da_pagare']).'&euro;</p>';
+                    <p>'.Translator::dateToLocale($scadenza['scadenza']).': ';
+
+                        if ($scadenza['pagato'] == $scadenza['da_pagare']) {
+                            echo '
+                        <strike>';
+                        }
+
+                        echo Translator::numberToLocale($scadenza['da_pagare']).'&euro;';
+
+                        if ($scadenza['pagato'] == $scadenza['da_pagare']) {
+                            echo '
+                        </strike>';
+                        }
+
+                        echo '
+                    </p>';
+
+                        $ricalcola = empty(floatval($scadenza['pagato'])) && $ricalcola;
                     }
+
+                    if ($fattura->isFE() && $ricalcola && $module['name'] == 'Fatture di acquisto') {
+                        echo '
+                    <button type="button" class="btn btn-info btn-xs pull-right tip" title="'.tr('Ricalcola le scadenze').'. '.tr('Per ricalcolare correttamente le scadenze, imposta la fattura in stato \'\'Bozza\'\' e correggi il metodo di  come desiderato, poi re-imposta lo stato \'\'Emessa\'\' e utilizza questa funzione').'." id="ricalcola_scadenze">
+                        <i class="fa fa-calculator" aria-hidden="true"></i>
+                    </button>';
+                    }
+
                     echo '
                 </div>';
                 }
@@ -495,24 +532,77 @@ include $docroot.'/modules/fatture/row-list.php';
 	</div>
 </div>
 
+<?php
+if ($dir == 'uscita' && $fattura->isFE()) {
+    echo '
+<div class="alert alert-info text-center" id="controlla_totali"><i class="fa fa-spinner fa-spin"></i> '.tr('Controllo sui totali del documento e della fattura elettronica in corso').'...</div>
+
+<script>
+    $(document).ready(function() {
+        $.ajax({
+            url: globals.rootdir + "/actions.php",
+            type: "post",
+            data: {
+                id_module: globals.id_module,
+                id_record: globals.id_record,
+                op: "controlla_totali",
+            },
+            success: function(data){
+                data = JSON.parse(data);
+
+                var div = $("#controlla_totali");
+                div.removeClass("alert-info");
+                console.log(data);
+                if (data.stored == null) {
+                    div.addClass("alert-info").html("'.tr("Il file XML non contiene il nodo ''ImportoTotaleDocumento'': impossibile controllare corrispondenza dei totali").'.")
+                } else if (data.stored == data.calculated){
+                    div.addClass("alert-success").html("'.tr('Il totale del file XML corrisponde a quello calcolato dal gestionale').'.")
+                } else {
+                    div.addClass("alert-warning").html("'.tr('Il totale del file XML non corrisponde a quello calcolato dal gestionale: previsto _XML_, calcolato _CALC_', [
+                        '_XML_' => '" + data.stored + "&euro;',
+                        '_CALC_' => '" + data.calculated + "&euro;',
+                    ]).'.")
+                }
+
+            }
+        });
+    })
+</script>';
+}
+?>
+
 {( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
 <?php
- if ($dir == 'entrata') {
-     echo '
-	<div class="alert alert-info text-center">'.tr('Per allegare un documento alla fattura elettronica caricare il file PDF specificando come categoria "Fattura Elettronica"').'.</div>';
- }
-?>
+if ($dir == 'entrata') {
+    echo '
+<div class="alert alert-info text-center">'.tr('Per allegare un documento alla fattura elettronica caricare il file PDF specificando come categoria "Fattura Elettronica"').'.</div>';
+}
 
+echo '
 <script type="text/javascript">
-	$('#idanagrafica').change( function(){
-        session_set('superselect,idanagrafica', $(this).val(), 0);
+	$("#idanagrafica").change(function(){
+        session_set("superselect,idanagrafica", $(this).val(), 0);
 
 		$("#idsede").selectReset();
 	});
-</script>
 
-<?php
+    $("#ricalcola_scadenze").click(function(){
+        swal({
+            title: "'.tr('Desideri ricalcolare le scadenze?').'",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "'.tr('Sì').'"
+        }).then(function (result) {
+            redirect(globals.rootdir + "/editor.php", {
+                id_module: globals.id_module,
+                id_record: globals.id_record,
+                op: "ricalcola_scadenze",
+                backto: "record-edit",
+            }, "post")
+        })
+    });
+</script>';
 
 if (!empty($note_accredito)) {
     echo '
@@ -545,10 +635,6 @@ if (!empty($note_accredito)) {
 $(".btn-sm[data-toggle=\"tooltip\"]").each(function() {
 
    $(this).on("click", function() {
-        /*if(!content_was_modified) {
-            return;
-        }*/
-
         form = $("#edit-form");
         btn = $(this);
 

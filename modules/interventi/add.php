@@ -40,8 +40,8 @@ if (null !== filter('orario_inizio') && '00:00:00' != filter('orario_inizio')) {
     $orario_inizio = filter('orario_inizio');
     $orario_fine = filter('orario_fine');
 } else {
-    $orario_inizio = date('H').':00';
-    $orario_fine = date('H', time() + 60 * 60).':00';
+    $orario_inizio = date('H').':00:00';
+    $orario_fine = date('H', time() + 60 * 60).':00:00';
 }
 
 // Se sto pianificando un contratto, leggo tutti i dati del contratto per predisporre l'aggiunta intervento

@@ -138,19 +138,20 @@ if ($record['stato'] == 'Emessa') {
 
         <div class="panel-body">
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-6">
 					{[ "type": "text", "label": "<?php echo tr('Identificatore Documento'); ?>", "help": "<?php echo tr('<span>Obbligatorio per valorizzare CIG/CUP. &Egrave; possible inserire: </span><ul><li>N. determina</li><li>RDO</li><li>Ordine MEPA</li></ul>'); ?>","name": "id_documento_fe", "required": 0, "value": "$id_documento_fe$", "maxlength": 20 ]}
 				</div>
 
-                <div class="col-md-4">
+                <div class="col-md-6">
 					{[ "type": "text", "label": "<?php echo tr('Numero Riga'); ?>", "name": "num_item", "required": 0, "value": "$num_item$", "maxlength": 15 ]}
 				</div>
-
-                <div class="col-md-4">
+			</div>
+			<div class="row">
+                <div class="col-md-6">
 					{[ "type": "text", "label": "<?php echo tr('Codice CIG'); ?>", "name": "codice_cig", "required": 0, "value": "$codice_cig$", "maxlength": 15 ]}
 				</div>
 
-				<div class="col-md-4">
+				<div class="col-md-6">
 					{[ "type": "text", "label": "<?php echo tr('Codice CUP'); ?>", "name": "codice_cup", "required": 0, "value": "$codice_cup$", "maxlength": 15 ]}
 				</div>
             </div>
@@ -407,6 +408,16 @@ if (!empty($record['idcontratto_prev'])) {
 
         $("#idsede").selectReset();
         $("#idreferente").selectReset();
+	});
+	
+	$('#codice_cig, #codice_cup').bind("keyup change", function(e) {
+		
+		if ($('#codice_cig').val() == '' && $('#codice_cup').val() == '' ){
+			$('#id_documento_fe').prop('required', false);
+		}else{
+			$('#id_documento_fe').prop('required', true);
+		}
+	
 	});
 </script>
 

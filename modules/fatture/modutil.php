@@ -93,10 +93,9 @@ function get_ivaindetraibile_fattura($iddocumento)
  */
 function elimina_scadenza($iddocumento)
 {
-    $dbo = database();
+    $fattura = Fattura::find($iddocumento);
 
-    $query2 = 'DELETE FROM co_scadenziario WHERE iddocumento='.prepare($iddocumento);
-    $dbo->query($query2);
+    $fattura->rimuoviScadenze();
 }
 
 /**
@@ -105,126 +104,19 @@ function elimina_scadenza($iddocumento)
  * $pagamento		string		Nome del tipo di pagamento. Se è vuoto lo leggo da co_pagamenti_documenti, perché significa che devo solo aggiornare gli importi.
  * $pagato boolean Indica se devo segnare l'importo come pagato.
  */
-function aggiungi_scadenza($iddocumento, $pagamento = '', $pagato = 0)
+function aggiungi_scadenza($iddocumento, $pagamento = '', $pagato = false)
 {
-    $dbo = database();
-
     $fattura = Fattura::find($iddocumento);
 
-    if ($fattura->isFE()) {
-        $scadenze_fe = $fattura->registraScadenzeFE($pagato);
-    }
-
-    // Lettura data di emissione fattura
-    $query3 = 'SELECT ritenutaacconto, data FROM co_documenti WHERE id='.prepare($iddocumento);
-    $rs = $dbo->fetchArray($query3);
-    $data = $rs[0]['data'];
-    $ritenutaacconto = $rs[0]['ritenutaacconto'];
-
-    if (empty($scadenze_fe)) {
-        $totale_da_pagare = 0.00;
-
-        $totale_fattura = get_totale_fattura($iddocumento);
-        $netto_fattura = get_netto_fattura($iddocumento);
-        $imponibile_fattura = get_imponibile_fattura($iddocumento);
-        $totale_iva = sum(abs($totale_fattura), -abs($imponibile_fattura));
-
-        // Verifico se la fattura è di acquisto o di vendita per scegliere che segno mettere nel totale
-        $query2 = 'SELECT dir FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.id_tipo_documento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
-        $rs2 = $dbo->fetchArray($query2);
-        $dir = $rs2[0]['dir'];
-
-        /*
-            Inserisco la nuova scadenza (anche più di una riga per pagamenti multipli
-        */
-        // Se il pagamento non è specificato lo leggo dal documento
-        if ($pagamento == '') {
-            $query = 'SELECT descrizione FROM co_pagamenti WHERE id=(SELECT idpagamento FROM co_documenti WHERE id='.prepare($iddocumento).')';
-            $rs = $dbo->fetchArray($query);
-            $pagamento = $rs[0]['descrizione'];
-        }
-
-        $query4 = 'SELECT * FROM co_pagamenti WHERE descrizione='.prepare($pagamento);
-        $rs = $dbo->fetchArray($query4);
-        for ($i = 0; $i < sizeof($rs); ++$i) {
-            // X giorni esatti
-            if ($rs[$i]['giorno'] == 0) {
-                $scadenza = date('Y-m-d', strtotime($data.' +'.$rs[$i]['num_giorni'].' day'));
-            }
-
-            // Ultimo del mese
-            elseif ($rs[$i]['giorno'] < 0) {
-                $date = new DateTime($data);
-
-                $add = floor($rs[$i]['num_giorni'] / 30);
-                for ($c = 0; $c < $add; ++$c) {
-                    $date->modify('last day of next month');
-                }
-
-                // Ultimo del mese più X giorni
-                $giorni = -$rs[$i]['giorno'] - 1;
-                if ($giorni > 0) {
-                    $date->modify('+'.($giorni).' day');
-                } else {
-                    $date->modify('last day of this month');
-                }
-
-                $scadenza = $date->format('Y-m-d');
-            }
-
-            // Giorno preciso del mese
-            else {
-                $scadenza = date('Y-m-'.$rs[$i]['giorno'], strtotime($data.' +'.$rs[$i]['num_giorni'].' day'));
-            }
-
-            // All'ultimo ciclo imposto come cifra da pagare il totale della fattura meno gli importi già inseriti in scadenziario per evitare di inserire cifre arrotondate "male"
-            if ($i == (sizeof($rs) - 1)) {
-                $da_pagare = sum($netto_fattura, -$totale_da_pagare, 2);
-            }
-
-            // Totale da pagare (totale x percentuale di pagamento nei casi pagamenti multipli)
-            else {
-                $da_pagare = sum($netto_fattura / 100 * $rs[$i]['prc'], 0, 2);
-            }
-            $totale_da_pagare = sum($da_pagare, $totale_da_pagare, 2);
-
-            if ($dir == 'uscita') {
-                $da_pagare = -$da_pagare;
-            }
-
-            $dbo->query('INSERT INTO co_scadenziario(iddocumento, data_emissione, scadenza, da_pagare, pagato, tipo) VALUES('.prepare($iddocumento).', '.prepare($data).', '.prepare($scadenza).', '.prepare($da_pagare).", 0, 'fattura')");
-
-            if ($pagato) {
-                $id_scadenza = $dbo->lastInsertedID();
-                $dbo->update('co_scadenziario', [
-                    'pagato' => $da_pagare,
-                    'data_pagamento' => $data,
-                ], ['id' => $id_scadenza]);
-            }
-        }
-    }
-
-    // Se c'è una ritenuta d'acconto, la aggiungo allo scadenzario
-    if ($dir == 'uscita' && $ritenutaacconto > 0) {
-        $dbo->query('INSERT INTO co_scadenziario(iddocumento, data_emissione, scadenza, da_pagare, pagato, tipo) VALUES('.prepare($iddocumento).', '.prepare($data).', '.prepare(date('Y-m', strtotime($data.' +1 month')).'-15').', '.prepare(-$ritenutaacconto).", 0, 'ritenutaacconto')");
-
-        if ($pagato) {
-            $id_scadenza = $dbo->lastInsertedID();
-            $dbo->update('co_scadenziario', [
-                'pagato' => -$ritenutaacconto,
-                'data_pagamento' => $data,
-            ], ['id' => $id_scadenza]);
-        }
-    }
-
-    return true;
+    $fattura->registraScadenze($pagato);
 }
 
 /**
- * Funzione per aggiornare lo stato dei pagamenti nello scadenziario
- * $iddocumento			int			ID della fattura
- * $totale_pagato			float		Totale importo pagato
- * $data_pagamento			datetime	Data in cui avviene il pagamento (yyyy-mm-dd).
+ * Funzione per aggiornare lo stato dei pagamenti nello scadenziario.
+ *
+ * @param $iddocumento int			ID della fattura
+ * @param $totale_pagato float		Totale importo pagato
+ * @param $data_pagamento datetime	Data in cui avviene il pagamento (yyyy-mm-dd)
  */
 function aggiorna_scadenziario($iddocumento, $totale_pagato, $data_pagamento)
 {
@@ -562,25 +454,21 @@ function ricalcola_costiagg_fattura($iddocumento, $idrivalsainps = '', $idritenu
         }
 
         // Leggo la ritenuta d'acconto se c'è
-        $totale_fattura = get_totale_fattura($iddocumento);
+        $fattura = Fattura::find($iddocumento);
 
-        $query = 'SELECT percentuale FROM co_ritenutaacconto WHERE id='.prepare($idritenutaacconto);
-        $rs = $dbo->fetchArray($query);
-        $netto_a_pagare = $totale_fattura - $ritenutaacconto;
+        $righe_bollo = $fattura->getRighe()->filter(function ($item, $key) {
+            return $item->aliquota != null && in_array($item->aliquota->codice_natura_fe, ['N1', 'N2', 'N3', 'N4']);
+        });
+
+        $importo_righe_bollo = $righe_bollo->sum('netto');
 
         // Leggo la marca da bollo se c'è e se il netto a pagare supera la soglia
         $bolli = ($dir == 'uscita') ? $bolli : setting('Importo marca da bollo');
         $bolli = formatter()->parse($bolli);
 
         $marca_da_bollo = 0;
-        if (abs($bolli) > 0 && abs($netto_a_pagare > setting("Soglia minima per l'applicazione della marca da bollo"))) {
-            //Controllo che tra le iva ce ne sia almeno una con natura N1, N2, N3 o N4
-            $check_natura = $dbo->fetchArray('SELECT codice_natura_fe FROM co_righe_documenti INNER JOIN co_iva ON co_righe_documenti.idiva=co_iva.id WHERE iddocumento='.prepare($iddocumento)." AND codice_natura_fe IN('N1','N2','N3','N4') GROUP BY codice_natura_fe");
-            if (($dir == 'entrata' && sizeof($check_natura) > 0) || $dir == 'uscita') {
-                $marca_da_bollo = $bolli;
-            } else {
-                $marca_da_bollo = 0.00;
-            }
+        if (abs($bolli) > 0 && abs($importo_righe_bollo) > setting("Soglia minima per l'applicazione della marca da bollo")) {
+            $marca_da_bollo = $bolli;
         }
 
         // Se l'importo è negativo può essere una nota di credito, quindi cambio segno alla marca da bollo

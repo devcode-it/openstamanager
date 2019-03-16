@@ -82,8 +82,11 @@ class UpdateController extends Controller
             ]);
         }
 
-        if (Update::isUpdateCompleted()) {
+        $args['is_completed'] = false;
+        if (is_bool($result)) {
             Update::updateCleanup();
+
+            $args['is_completed'] = count(Update::getTodoUpdates()) == 1;
         }
 
         $response = $this->twig->render($response, 'config\messages\piece.twig', $args);

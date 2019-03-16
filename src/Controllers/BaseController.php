@@ -14,22 +14,30 @@ class BaseController extends Controller
     {
         // Requisiti di OpenSTAManager
         if (!RequirementsController::requirementsSatisfied()) {
+            Auth::logout();
+
             $controller = new ConfigurationController($this->container);
             $response = $controller->requirements($request, $response, $args);
         }
 
         // Inizializzazione
         elseif (!ConfigurationController::isConfigured()) {
+            Auth::logout();
+
             $response = $response->withRedirect($this->router->pathFor('configuration'));
         }
 
         // Installazione e/o aggiornamento
         elseif (Update::isUpdateAvailable()) {
+            Auth::logout();
+
             $response = $response->withRedirect($this->router->pathFor('update'));
         }
 
         // Configurazione informazioni di base
         elseif (!InitController::isInitialized()) {
+            Auth::logout();
+
             $response = $response->withRedirect($this->router->pathFor('init'));
         }
 

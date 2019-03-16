@@ -130,11 +130,6 @@ class Query
                     }
                 }
 
-                // Campo id: ricerca tramite comparazione
-                elseif ($field == 'id') {
-                    $search_filters[] = $search_query.' = '.prepare($value);
-                }
-
                 // Campi tradizionali: ricerca tramite like
                 else {
                     // Ricerca nei titoli icon_title_* per le icone icon_*
@@ -166,6 +161,11 @@ class Query
                         $search_filters[] = $search_query.' LIKE '.prepare('%'.$value.'%');
                     }
                 }
+            }
+
+            // Campo id: ricerca tramite comparazione
+            elseif ($field == 'id') {
+                $search_filters[] = $field.' = '.prepare($value);
             }
 
             // Ricerca

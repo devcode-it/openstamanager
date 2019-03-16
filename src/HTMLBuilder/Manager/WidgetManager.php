@@ -162,10 +162,10 @@ class WidgetManager implements ManagerInterface
         <div class="info-box">
             <span class="info-box-icon" style="background-color:'.$widget['bgcolor'].'">';
 
-                if (!empty($widget['icon'])) {
-                    $result .= '
+        if (!empty($widget['icon'])) {
+            $result .= '
                             <i class="'.$widget['icon'].'"></i>';
-                }
+        }
 
         $result .= '
             </span>
@@ -173,12 +173,12 @@ class WidgetManager implements ManagerInterface
             <div class="info-box-content">
                 <span class="info-box-text">';
 
-        if(!empty($widget['php_include'])){
+        if (!empty($widget['php_include'])) {
             $result_ob = '';
 
             ob_start();
 
-            include(DOCROOT."/".$widget['php_include']);
+            include DOCROOT.'/'.$widget['php_include'];
             $result_ob = ob_get_contents();
 
             ob_end_clean();

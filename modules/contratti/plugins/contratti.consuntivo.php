@@ -22,6 +22,7 @@ $totale_stato = [];
 
 // Tabella con riepilogo interventi
 $rsi = $dbo->fetchArray('SELECT in_interventi.id, in_interventi.codice, 
+       (SELECT completato FROM in_statiintervento WHERE in_statiintervento.idstatointervento = in_interventi.idstatointervento) AS completato,
        (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS inizio,
        (SELECT SUM(ore) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS ore,
        (SELECT MIN(km) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS km
@@ -30,6 +31,7 @@ $rsi = $dbo->fetchArray('SELECT in_interventi.id, in_interventi.codice,
     WHERE co_promemoria.idcontratto='.prepare($id_record).'
 UNION
     SELECT in_interventi.id, in_interventi.codice,  
+        (SELECT completato FROM in_statiintervento WHERE in_statiintervento.idstatointervento = in_interventi.idstatointervento) AS completato,
         (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS inizio,
         (SELECT SUM(ore) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS ore,
         (SELECT MIN(km) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS km
@@ -210,7 +212,8 @@ if (!empty($rsi)) {
         </td>
     </tr>';
 
-        $totale_ore += $int['ore'];
+        $totale_ore_interventi += $int['ore'];
+        $totale_ore_completate += !empty($int['completato']) ? $int['ore'] : 0;
         $totale_km += $int['km'];
         $totale_costo += $int['totale_costo'];
         $totale_addebito += $int['totale_addebito'];
@@ -226,7 +229,7 @@ if (!empty($rsi)) {
 
     echo '
         <td align="right">
-            <big><b>'.Translator::numberToLocale($totale_ore).'</b></big>
+            <big><b>'.Translator::numberToLocale($totale_ore_interventi).'</b></big>
         </td>';
 
     echo '
@@ -284,7 +287,7 @@ $rs = $dbo->fetchArray('SELECT SUM(subtotale - sconto) AS budget FROM co_righe_c
 $budget = $rs[0]['budget'];
 
 $rs = $dbo->fetchArray("SELECT SUM(qta) AS totale_ore FROM `co_righe_contratti` WHERE um='ore' AND idcontratto=".prepare($id_record));
-$contratto_tot_ore = $rs[0]['totale_ore'];
+$totale_ore_contratto = $rs[0]['totale_ore'];
 
 $diff = sum($budget, -$totale);
 
@@ -304,24 +307,30 @@ echo '
     </big>
     <br><br>';
 
-if (!empty($contratto_tot_ore)) {
+if (!empty($totale_ore_contratto)) {
     echo '
     <div class="row">
-        <big class="col-md-2 col-md-offset-5 text-center">
+        <big class="col-md-4 col-md-offset-4 text-center">
             <table class="table text-left">
                 <tr>
+                    <td colspan="2">'.tr('Ore in contratto').':</td>
+                    <td  colspan="2" class="text-right">'.Translator::numberToLocale($totale_ore_contratto).'</td>
+                </tr>
+                
+                <tr>
+                    <td>'.tr('Ore erogate totali').':</td>
+                    <td class="text-right">'.Translator::numberToLocale($totale_ore_interventi).'</td>
+                    
+                    <td>'.tr('Ore residue totali').':</td>
+                    <td class="text-right">'.Translator::numberToLocale(floatval($totale_ore_contratto) - floatval($totale_ore_interventi)).'</td>
+                </tr>
+
+                <tr>
+                    <td>'.tr('Ore erogate concluse').':</td>
+                    <td class="text-right">'.Translator::numberToLocale($totale_ore_completate).'</td>
+                    
                     <td>'.tr('Ore residue').':</td>
-                    <td class="text-right">'.Translator::numberToLocale(floatval($contratto_tot_ore) - floatval($totale_ore)).'</td>
-                </tr>
-
-                <tr>
-                    <td>'.tr('Ore erogate').':</td>
-                    <td class="text-right">'.Translator::numberToLocale($totale_ore).'</td>
-                </tr>
-
-                <tr>
-                    <td>'.tr('Ore in contratto').':</td>
-                    <td class="text-right">'.Translator::numberToLocale($contratto_tot_ore).'</td>
+                    <td class="text-right">'.Translator::numberToLocale(floatval($totale_ore_contratto) - floatval($totale_ore_completate)).'</td>
                 </tr>
             </table>
         </big>

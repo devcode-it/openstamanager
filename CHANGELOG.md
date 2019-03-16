@@ -5,58 +5,20 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
 - [2.5](#25)
-  - [Aggiunto (Added)](#aggiunto-added)
-  - [Modificato (Changed)](#modificato-changed)
+- [2.4.9 (2019-03-15)](#249-2019-03-15)
+- [2.4.8 (2019-03-01)](#248-2019-03-01)
 - [2.4.7 (2019-02-21)](#247-2019-02-21)
-  - [Aggiunto (Added)](#aggiunto-added-1)
-  - [Modificato (Changed)](#modificato-changed-1)
-  - [Fixed](#fixed)
 - [2.4.6 (2019-02-12)](#246-2019-02-12)
-  - [Aggiunto (Added)](#aggiunto-added-2)
-  - [Modificato (Changed)](#modificato-changed-2)
-  - [Fixed](#fixed-1)
 - [2.4.5 (2019-01-10)](#245-2019-01-10)
-  - [Aggiunto (Added)](#aggiunto-added-3)
-  - [Modificato (Changed)](#modificato-changed-3)
-  - [Fixed](#fixed-2)
 - [2.4.4 (2018-12-12)](#244-2018-12-12)
-  - [Aggiunto (Added)](#aggiunto-added-4)
-  - [Fixed](#fixed-3)
 - [2.4.3 (2018-12-07)](#243-2018-12-07)
-  - [Aggiunto (Added)](#aggiunto-added-5)
-  - [Fixed](#fixed-4)
 - [2.4.2 (2018-11-14)](#242-2018-11-14)
-  - [Aggiunto (Added)](#aggiunto-added-6)
-  - [Modificato (Changed)](#modificato-changed-4)
-  - [Deprecato (Deprecated)](#deprecato-deprecated)
-  - [Rimosso (Removed)](#rimosso-removed)
-  - [Sicurezza (Security)](#sicurezza-security)
 - [2.4.1 (2018-08-01)](#241-2018-08-01)
-  - [Aggiunto (Added)](#aggiunto-added-7)
-  - [Modificato (Changed)](#modificato-changed-5)
-  - [Fixed](#fixed-5)
 - [2.4 (2018-03-30)](#24-2018-03-30)
-  - [Aggiunto (Added)](#aggiunto-added-8)
-  - [Modificato (Changed)](#modificato-changed-6)
-  - [Fixed](#fixed-6)
 - [2.3.1 (2018-02-19)](#231-2018-02-19)
-  - [Aggiunto (Added)](#aggiunto-added-9)
-  - [Modificato (Changed)](#modificato-changed-7)
-  - [Fixed](#fixed-7)
 - [2.3 (2018-02-16)](#23-2018-02-16)
-  - [Aggiunto (Added)](#aggiunto-added-10)
-  - [Modificato (Changed)](#modificato-changed-8)
-  - [Deprecato (Deprecated)](#deprecato-deprecated-1)
-  - [Rimosso (Removed)](#rimosso-removed-1)
-  - [Fixed](#fixed-8)
-  - [Sicurezza (Security)](#sicurezza-security-1)
 - [2.2 (2016-11-10)](#22-2016-11-10)
-  - [Aggiunto (Added)](#aggiunto-added-11)
-  - [Fixed](#fixed-9)
 - [2.1 (2015-04-02)](#21-2015-04-02)
-  - [Aggiunto (Added)](#aggiunto-added-12)
-  - [Modificato (Changed)](#modificato-changed-9)
-  - [Fixed](#fixed-10)
 
 
 ## 2.5
@@ -71,7 +33,49 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Miglioramenti della struttura del database
  - Miglioramento della procedura semplificata di aggiornamento
  - Inversione del comportamento della classe **Filter** e degli helper *post*, *get* e *filter* (il secondo parametro restituisce il valore formattato)
- -
+
+## 2.4.9 (2019-03-15)
+
+### Aggiunto (Added)
+
+ - Possibilità di ricalcolare le scadenze delle **Fatture di acquisto** importate da fatture elettroniche
+ - Aggiunto campo data ricezione per le **Fatture di acquisto**
+ - Aggiunta stampa **Preventivo** senza costi totali
+ - Aggiunto export massivo XML fatture
+
+### Modificato (Changed)
+
+ - Corretto calcolo marca da bollo contemplando solo le righe con esenzione iva da natura N1 a N4
+ - Aggiornati stylesheet per le notifiche fattura elettronica
+ - Possibilità di ricercare per valori maggiori/uguali o minori/uguali sui campi delle tabelle (importi)
+
+### Fixed
+
+ - Fix selezione righe multiple sulle tabelle
+ - Fix API per APP OSM
+ - Risolti altri bug generali
+
+## 2.4.8 (2019-03-01)
+
+### Aggiunto (Added)
+
+ - Possibilità di scorporare l'IVA dal prezzo di vendita nel modulo **Articoli**
+ - Ritenuta contributi nella stampa di **Fatture di vendita**
+ - Supporto al campo *NumItem* nella Fatture Elettronica
+ - Aggiunta la data di scadenza per le **Attività**
+
+### Modificato (Changed)
+
+ - Miglioramento del caricamento delle opzioni Ajax per i select
+ - Miglioramento della procedura di importazione: i contenuti vengono importati un po' alla volta, evitando così problemi di *timeout* del server
+
+### Fixed
+
+ - Fix della procedura di passaggio tra documenti (con supporto agli *sconti incondizionati*)
+ - Fix di un bug nella movimentazione articoli nel passaggio tra documenti
+ - Fix della creazione delle categorie articoli e impianti
+ - Risolti altri bug generali
+
 ## 2.4.7 (2019-02-21)
 
 ### Aggiunto (Added)

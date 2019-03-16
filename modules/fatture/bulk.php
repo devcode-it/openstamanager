@@ -1,11 +1,15 @@
 <?php
 
+use Modules\Fatture\Fattura;
 use Util\Zip;
 
 switch (post('op')) {
     case 'export-bulk':
         $dir = DOCROOT.'/files/export_fatture/';
         directory($dir.'tmp/');
+
+        $dir = slashes($dir);
+        $zip = slashes($dir.'fatture_'.time().'.zip');
 
         // Rimozione dei contenuti precedenti
         $files = glob($dir.'/*.zip');
@@ -30,15 +34,12 @@ switch (post('op')) {
                 Prints::render($print['id'], $r['id'], $filename);
             }
 
-            $dir = slashes($dir);
-            $file = slashes($dir.'fatture_'.time().'.zip');
-
             // Creazione zip
             if (extension_loaded('zip')) {
-                Zip::create($dir.'tmp/', $file);
+                Zip::create($dir.'tmp/', $zip);
 
                 // Invio al browser dello zip
-                download($file);
+                download($zip);
 
                 // Rimozione dei contenuti
                 delete($dir.'tmp/');
@@ -47,28 +48,94 @@ switch (post('op')) {
 
         break;
 
-        case 'delete-bulk':
-
-            if (App::debug()) {
-                foreach ($id_records as $id) {
-                    $dbo->query('DELETE  FROM co_documenti  WHERE id = '.prepare($id).Modules::getAdditionalsQuery($id_module));
-                    $dbo->query('DELETE FROM co_righe_documenti WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
-                    $dbo->query('DELETE FROM co_scadenziario WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
-                    $dbo->query('DELETE FROM mg_movimenti WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
-                }
-
-                flash()->info(tr('Fatture eliminate!'));
-            } else {
-                flash()->warning(tr('Procedura in fase di sviluppo. Nessuna modifica apportata.'));
+    case 'delete-bulk':
+        if (App::debug()) {
+            foreach ($id_records as $id) {
+                $dbo->query('DELETE  FROM co_documenti  WHERE id = '.prepare($id).Modules::getAdditionalsQuery($id_module));
+                $dbo->query('DELETE FROM co_righe_documenti WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
+                $dbo->query('DELETE FROM co_scadenziario WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
+                $dbo->query('DELETE FROM mg_movimenti WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
             }
 
+            flash()->info(tr('Fatture eliminate!'));
+        } else {
+            flash()->warning(tr('Procedura in fase di sviluppo. Nessuna modifica apportata.'));
+        }
+        break;
+
+    case 'export-xml-bulk':
+        $dir = DOCROOT.'/files/export_fatture/';
+        directory($dir.'tmp/');
+
+        $dir = slashes($dir);
+        $zip = slashes($dir.'fatture_'.time().'.zip');
+
+        // Rimozione dei contenuti precedenti
+        $files = glob($dir.'/*.zip');
+        foreach ($files as $file) {
+            delete($file);
+        }
+
+        // Selezione delle fatture da stampare
+        $fatture = $dbo->fetchArray('SELECT co_documenti.id, numero_esterno, data, ragione_sociale, co_tipidocumento.descrizione FROM co_documenti INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id IN('.implode(',', $id_records).')');
+
+        $failed = [];
+        if (!empty($fatture)) {
+            foreach ($fatture as $r) {
+                $fattura = Fattura::find($r['id']);
+                $include = true;
+
+                try {
+                    $fe = new \Plugins\ExportFE\FatturaElettronica($fattura->id);
+
+                    $include = $fe->isGenerated();
+                } catch (UnexpectedValueException $e) {
+                    $include = false;
+                }
+
+                if (!$include) {
+                    $failed[] = $fattura->numero_esterno;
+                } else {
+                    $filename = $fe->getFilename();
+
+                    $file = slashes($module->upload_directory.'/'.$filename);
+                    $dest = slashes($dir.'/tmp/'.$filename);
+
+                    $result = copy($file, $dest);
+                    if ($result) {
+                        operationLog('export-xml-bulk', ['id_record' => $r['id']]);
+                    } else {
+                        $failed[] = $fattura->numero_esterno;
+                    }
+                }
+            }
+
+            // Creazione zip
+            if (extension_loaded('zip')) {
+                Zip::create($dir.'tmp/', $zip);
+
+                // Invio al browser il file zip
+                download($zip);
+
+                // Rimozione dei contenuti
+                delete($dir.'tmp/');
+            }
+
+            if (!empty($failed)) {
+                flash()->warning(tr('Le fatture elettroniche _LIST_ non sono state incluse poichè non ancora generate', [
+                    '_LIST_' => implode(', ', $failed),
+                ]));
+            }
+        }
         break;
 }
 
-return [
+$bulk = [
     'delete-bulk' => tr('Elimina selezionati'),
+];
 
-    'export-bulk' => [
+if ($module->name == 'Fatture di vendita') {
+    $bulk['export-bulk'] = [
         'text' => tr('Esporta stampe'),
         'data' => [
             'msg' => tr('Vuoi davvero esportare tutte le stampe in un archivio?'),
@@ -76,5 +143,17 @@ return [
             'class' => 'btn btn-lg btn-warning',
             'blank' => true,
         ],
-    ],
-];
+    ];
+
+    $bulk['export-xml-bulk'] = [
+        'text' => tr('Esporta XML'),
+        'data' => [
+            'msg' => tr('Vuoi davvero esportare tutte le fatture elettroniche in un archivio?'),
+            'button' => tr('Procedi'),
+            'class' => 'btn btn-lg btn-warning',
+            'blank' => true,
+        ],
+    ];
+}
+
+return $bulk;

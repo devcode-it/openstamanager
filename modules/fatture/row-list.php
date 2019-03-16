@@ -76,6 +76,16 @@ foreach ($righe as $row) {
 
         $delete = 'unlink_contratto';
     }
+	// Ordini (IDDOCUMENTO,CIG,CUP)
+    elseif (!empty($riga['idordine'])) {
+        $ordine = $dbo->fetchOne('SELECT num_item,codice_cig,codice_cup,id_documento_fe FROM or_ordini WHERE id = '.prepare($riga['idordine']));
+        $riga['num_item'] = $ordine['num_item'];
+        $riga['codice_cig'] = $ordine['codice_cig'];
+        $riga['codice_cup'] = $ordine['codice_cup'];
+        $riga['id_documento_fe'] = $ordine['id_documento_fe'];
+
+        $delete = 'unlink_riga';
+    }
     // Righe generiche
     else {
         $delete = 'unlink_riga';
@@ -386,6 +396,9 @@ if (!empty($fattura->bollo)) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
+		
+			<span class="tip" title="'.tr('Rivalsa per spese bollo fattura. Esclusa IVA articolo 15 d.p.r. 633/1972').'."  > <i class="fa fa-question-circle-o"></i></span>
+				
             <b>'.tr('Marca da bollo', [], ['upper' => true]).':</b>
         </td>
         <td align="right">

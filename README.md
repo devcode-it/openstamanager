@@ -9,7 +9,7 @@
     <br>
     <a href="http://openstamanager.com">Sito web</a>
     &middot;
-    <a href="https://devcode-it.github.io/openstamanager">Documentazione</a>
+    <a href="https://docs.openstamanager.com/">Documentazione</a>
     &middot;
     <a href="http://openstamanager.com/forum">Forum</a>
   </p>
@@ -36,7 +36,7 @@ Un software gestionale, identificato nell'insieme degli applicativi che automati
 
 Secondo questa definizione, OpenSTAManager riesce a generalizzare al proprio interno le funzionalità caratteristiche della contabilità e della gestione del magazzino, presentando inoltre moduli piuttosto avanzati e destinati a complementare l'attività aziendale in relazione agli interventi di assistenza della realtà lavorativa in oggetto.
 
-La documentazione ufficiale è disponibile all'indirizzo <https://devcode-it.github.io/openstamanager>.
+La documentazione ufficiale è disponibile all'indirizzo <https://docs.openstamanager.com/>.
 
 <!-- TOC depthFrom:2 depthTo:6 orderedList:false updateOnSave:true withLinks:true -->
 
@@ -59,7 +59,7 @@ L'installazione del gestionale richiede la presenza di un server web con abilita
 - PHP >= 5.6
 - MySQL >= 5.6.5
 
-Per ulteriori informazioni sui pacchetti che forniscono questi elementi di default, visitare la sezione [Installazione](https://devcode-it.github.io/openstamanager/2.4.2/docs/installazione/) della documentazione.
+Per ulteriori informazioni sui pacchetti che forniscono questi elementi di default, visitare la sezione [Installazione](https://docs.openstamanager.com/guide/configurazione/installazione) della documentazione.
 
 ## Installazione
 
@@ -105,7 +105,7 @@ In alternativa alla sequenza di comandi precedente, è possibile utilizzare il s
 yarn run develop-OSM
 ```
 
-Per ulteriori informazioni, visitare le sezioni [Assets](https://devcode-it.github.io/openstamanager/2.4.2/docs/base/assets/) e [Framework](https://devcode-it.github.io/openstamanager/2.4.2/docs/base/framework/) della documentazione.
+Per ulteriori informazioni, visitare le sezioni [Assets](https://docs.openstamanager.com/docs/base/assets) e [Framework](https://docs.openstamanager.com/docs/base/framework) della documentazione.
 
 ## Perché software open-source
 

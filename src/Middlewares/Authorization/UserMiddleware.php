@@ -2,6 +2,9 @@
 
 namespace Middlewares\Authorization;
 
+/**
+ * @since 2.5
+ */
 class UserMiddleware extends \Middlewares\AuthorizationMiddleware
 {
     protected function operation($request, $response)
@@ -11,13 +14,6 @@ class UserMiddleware extends \Middlewares\AuthorizationMiddleware
 
     protected function hasAuthorization($request)
     {
-        $auth = $this->auth->check();
-
-        $permission = true;
-        if ($request == null) {
-            $permission = false;
-        }
-
-        return $auth && $permission;
+        return $this->auth->check();
     }
 }

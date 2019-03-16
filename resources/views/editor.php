@@ -4,34 +4,6 @@ use Carbon\Carbon;
 
 include_once App::filepath('resources\views|custom|\layout', 'top.php');
 
-Util\Query::setSegments(false);
-$query = Util\Query::getQuery($module, [
-    'id' => $id_record,
-]);
-Util\Query::setSegments(true);
-
-$has_access = !empty($query) ? $dbo->fetchNum($query) !== 0 : true;
-
-if ($has_access) {
-    // Inclusione gli elementi fondamentali
-    include_once $docroot.'/actions.php';
-}
-
-if (empty($record) || !$has_access) {
-    echo '
-        <div class="text-center">
-    		<h3 class="text-muted">'.
-                '<i class="fa fa-question-circle"></i> '.tr('Record non trovato').'
-                <br><br>
-                <small class="help-block">'.tr('Stai cercando di accedere ad un record eliminato o non presente').'</small>
-            </h3>
-            <br>
-
-            <a class="btn btn-default" href="'.ROOTDIR.'/controller.php?id_module='.$id_module.'">
-                <i class="fa fa-chevron-left"></i> '.tr('Indietro').'
-            </a>
-        </div>';
-} else {
     // Widget in alto
     echo '{( "name": "widgets", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "position": "top", "place": "editor" )}';
 
@@ -101,7 +73,7 @@ if (empty($record) || !$has_access) {
     // Pulsanti di default
     echo '
                     <div id="pulsanti">
-                        <a class="btn btn-warning" href="'.ROOTDIR.'/controller.php?id_module='.$id_module.'">
+                        <a class="btn btn-warning" href="'.pathFor('module', ['module_id' => $id_module]).'">
                             <i class="fa fa-chevron-left"></i> '.tr("Torna all'elenco").'
                         </a>
 
@@ -318,9 +290,8 @@ if (empty($record) || !$has_access) {
     echo '
 			</div>
 		</div>';
-}
 
-redirectOperation($id_module, isset($id_parent) ? $id_parent : $id_record);
+//redirectOperation($id_module, isset($id_parent) ? $id_parent : $id_record);
 
 // Widget in basso
 echo '{( "name": "widgets", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "position": "right", "place": "editor" )}';
@@ -328,7 +299,7 @@ echo '{( "name": "widgets", "id_module": "'.$id_module.'", "id_record": "'.$id_r
 if (!empty($record)) {
     echo '
     		<hr>
-            <a class="btn btn-default" href="'.ROOTDIR.'/controller.php?id_module='.$id_module.'">
+            <a class="btn btn-default" href="'.pathFor('module', ['module_id' => $id_module]).'">
                 <i class="fa fa-chevron-left"></i> '.tr('Indietro').'
             </a>';
 }

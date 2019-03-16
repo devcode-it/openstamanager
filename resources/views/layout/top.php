@@ -93,6 +93,8 @@ if (Auth::check()) {
 				],
 
                 tempo_attesa_ricerche: '.setting('Tempo di attesa ricerche in secondi').',
+                dataload_module: "'.pathFor('ajax-dataload-module', ['module_id' => '|id_module|']).'",
+                dataload_plugin: "'.pathFor('ajax-dataload-plugin', ['plugin_id' => '|id_plugin|', 'module_record_id' => '|id_parent|']).'",
             };
 		</script>';
 

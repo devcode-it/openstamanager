@@ -49,6 +49,7 @@ $container = new \Slim\Container([
     'settings' => [
         'displayErrorDetails' => App::debug(),
         'addContentLengthHeader' => false,
+        'determineRouteBeforeAppMiddleware' => true,
     ],
 ]);
 App::setContainer($container);

@@ -133,7 +133,7 @@ echo '
 
         <hr>
 
-        <form action="'.ROOTDIR.'/controller.php?id_module='.$id_module.'" method="post" style="display:inline-block">
+        <form action="'.pathFor('module', ['module_id' => $id_module]).'" method="post" style="display:inline-block">
             <input type="hidden" name="op" value="cancel">
             <input type="hidden" name="backto" value="record-list">
 
@@ -142,7 +142,7 @@ echo '
             </button>
         </form>
 
-        <form action="'.ROOTDIR.'/controller.php?id_module='.$id_module.'" method="post" class="pull-right" style="display:inline-block">
+        <form action="'.pathFor('module', ['module_id' => $id_module]).'" method="post" class="pull-right" style="display:inline-block">
             <input type="hidden" name="op" value="execute">
             <input type="hidden" name="backto" value="record-list">
 

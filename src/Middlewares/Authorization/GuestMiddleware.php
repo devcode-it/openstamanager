@@ -2,15 +2,13 @@
 
 namespace Middlewares\Authorization;
 
+/**
+ * @since 2.5
+ */
 class GuestMiddleware extends UserMiddleware
 {
-    protected function operation($request, $response)
-    {
-        throw new \Slim\Exception\NotFoundException($request, $response);
-    }
-
     protected function hasAuthorization($request)
     {
-        return !$this->auth->check();
+        return !$this->hasAuthorization();
     }
 }

@@ -105,3 +105,10 @@ $container['twig'] = function ($container) {
 
     return $twig;
 };
+
+// Exception handlers
+$container['notFoundHandler'] = function ($container) {
+    return function ($request, $response) use ($container) {
+        return $container['twig']->render($response, 'errors/404.twig');
+    };
+};

@@ -2,6 +2,9 @@
 
 namespace Middlewares;
 
+/**
+ * @since 2.5
+ */
 abstract class AuthorizationMiddleware extends Middleware
 {
     public function __invoke($request, $response, $next)

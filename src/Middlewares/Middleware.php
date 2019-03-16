@@ -2,6 +2,9 @@
 
 namespace Middlewares;
 
+/**
+ * @since 2.5
+ */
 abstract class Middleware
 {
     protected $container;

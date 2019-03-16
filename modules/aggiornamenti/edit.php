@@ -174,7 +174,7 @@ function download(button) {
                 </h3>
             </div>
             <div class="box-body">
-                <form action="'.ROOTDIR.'/controller.php?id_module='.$id_module.'" method="post" enctype="multipart/form-data" class="form-inline" id="update">
+                <form action="'.pathFor('module', ['module_id' => $id_module]).'" method="post" enctype="multipart/form-data" class="form-inline" id="update">
                     <input type="hidden" name="op" value="upload">
                     <input type="hidden" name="backto" value="record-list">
 

@@ -1,0 +1,24 @@
+{% extends "layouts/guest.twig" %}
+
+{% block title %}{{ "Accesso negato!"|trans }}{% endblock %}
+
+{% block box_class %}box-warning text-center{% endblock %}
+{% block box_header %}
+    <h3 class="box-title">{{ 'Accesso negato!'|trans }}</h3>
+{% endblock %}
+
+{% block content %}
+    <div class="text-center">
+        <h3 class="text-muted">
+            <i class="fa fa-question-circle"></i> {{ 'Accesso negato'|trans }}
+            <br><br>
+            <small class="help-block">{{ 'Stai cercando di accedere ad una sezione verso cui non possiedi permessi sufficienti'|trans }}.</small>
+        </h3>
+        <br>
+
+        <a class="btn btn-default" href="{{ path_for('login') }}">
+            <i class="fa fa-chevron-left"></i> {{ 'Indietro'|trans }}
+        </a>
+    </div>
+{% endblock %}
+

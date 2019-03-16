@@ -45,7 +45,9 @@
                 rootdir: '{{ base_url() }}',
                 locale: '{{ lang }}',
                 full_locale: '{{ lang }}_{{ lang|upper }}',
-                translations: {}
+                translations: {},
+                dataload_module: "{{ path_for('ajax-dataload-module', {'module_id': '|id_module|'}) }}",
+                dataload_plugin: "{{path_for('ajax-dataload-plugin', {'plugin_id': '|id_plugin|', 'module_record_id': '|id_parent|'}) }}",
             };
 
             // Aggiunta dell'ingranaggio all\'unload della pagina

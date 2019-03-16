@@ -134,7 +134,6 @@ class AjaxController extends Controller
         $args['module_id'] = filter('id_module');
         $args['plugin_id'] = filter('id_plugin');
 
-        $args = ModuleController::argsPrepare($args);
         extract($args);
 
         // Informazioni fondamentali

@@ -530,6 +530,9 @@ function start_datatables() {
             var id_plugin = $this.data('idplugin');
             var id_parent = $this.data('idparent');
 
+            var dataload_url = id_plugin ? globals.dataload_plugin : globals.dataload_module;
+            dataload_url = dataload_url.replace('|id_module|', id_module).replace('|id_plugin|', id_plugin).replace('|id_parent|', id_parent);
+
             // Parametri di ricerca da url o sessione
             var search = getUrlVars();
 
@@ -654,7 +657,7 @@ function start_datatables() {
                     loadingIndicator: true
                 },
                 ajax: {
-                    url: globals.rootdir + "/ajax/dataload?id_module=" + id_module + "&id_plugin=" + id_plugin + "&id_parent=" + id_parent,
+                    url: dataload_url,
                     type: 'GET',
                     dataSrc: function (data) {
                         sum = data;

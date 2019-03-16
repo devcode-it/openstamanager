@@ -1,13 +1,5 @@
 <?php
 
-// Inclusione elementi fondamentali del modulo
-include $docroot.'/actions.php';
-
-// Controllo dei permessi
-if (empty($id_plugin)) {
-    Permissions::check('rw');
-}
-
 // Caricamento template
 echo '
 <div id="form_'.$id_module.'-'.$id_plugin.'">

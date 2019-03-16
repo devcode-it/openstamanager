@@ -1,0 +1,24 @@
+{% extends "layouts/guest.twig" %}
+
+{% block title %}{{ "Pagina non trovata!"|trans }}{% endblock %}
+
+{% block box_class %}box-info text-center{% endblock %}
+{% block box_header %}
+    <h3 class="box-title">{{ 'Pagina non trovata!'|trans }}</h3>
+{% endblock %}
+
+{% block content %}
+    <div class="text-center">
+        <h3 class="text-muted">
+            <i class="fa fa-question-circle"></i> {{ 'Pagina non trovata'|trans }}
+            <br><br>
+            <small class="help-block">{{ 'Stai cercando di accedere a una pagina non disponibile del gestionale'|trans }}.</small>
+        </h3>
+        <br>
+
+        <a class="btn btn-default" href="{{ path_for('login') }}">
+            <i class="fa fa-chevron-left"></i> {{ 'Indietro'|trans }}
+        </a>
+    </div>
+{% endblock %}
+

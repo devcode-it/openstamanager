@@ -99,7 +99,7 @@ $container['twig'] = function ($container) {
     $twig->offsetSet('lang', $container['translator']->getCurrentLocale());
     $twig->offsetSet('router', $container['router']);
 
-    $filter = new \Twig\TwigFilter('timestamp', 'timeFormat');
+    $filter = new \Twig\TwigFilter('timestamp', 'timestampFormat');
     $twig->getEnvironment()->addFilter($filter);
 
     $filter = new \Twig\TwigFilter('date', 'dateFormat');
@@ -110,6 +110,11 @@ $container['twig'] = function ($container) {
 
     $function = new \Twig\TwigFunction('setting', function ($name) {
         return setting($name);
+    });
+    $twig->getEnvironment()->addFunction($function);
+
+    $function = new \Twig\TwigFunction('module_link', function ($modulo, $id_record = null, $testo = null, $alternativo = true, $extra = null, $blank = true) {
+        return \Modules::link($modulo, $id_record, $testo, $alternativo, $extra, $blank);
     });
     $twig->getEnvironment()->addFunction($function);
 

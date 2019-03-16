@@ -218,7 +218,7 @@ if (!empty($righe)) {
 }
 
 echo '
-<script src="'.ROOTDIR.'/assets/js/init.js"></script>';
+<script src="'.ROOTDIR.'/assets/js/init.min.js"></script>';
 
 ?>
 

@@ -47,6 +47,8 @@ class ContentMiddleware extends Middleware
         $args['version'] = \Update::getVersion();
         $args['revision'] = \Update::getRevision();
 
+        $args['is_ajax'] = $request->isXhr();
+
         // Periodo di visualizzazione
         if (!empty($_GET['period_start'])) {
             $_SESSION['period_start'] = $_GET['period_start'];

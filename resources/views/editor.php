@@ -4,6 +4,12 @@ use Carbon\Carbon;
 
 include_once App::filepath('resources\views|custom|\layout', 'top.php');
 
+// Lettura risultato query del modulo
+$init = $structure->filepath('init.php');
+if (!empty($init)) {
+    include_once $init;
+}
+
     // Widget in alto
     echo '{( "name": "widgets", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "position": "top", "place": "editor" )}';
 

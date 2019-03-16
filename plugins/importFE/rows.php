@@ -43,12 +43,11 @@ echo '
 		
 		<div class="col-md-6">
 			<h4>'.$dati_generali['Numero'];
-		
-		echo '
-				<a href="'.$structure->fileurl('view.php').'?filename='.get('filename').'" class="btn btn-info btn-xs'.((!ends_with(get('filename'), '.p7m')) ? '':' disabled').'" target="_blank" >
+
+        echo '
+				<a href="'.$structure->fileurl('view.php').'?filename='.get('filename').'" class="btn btn-info btn-xs'.((!ends_with(get('filename'), '.p7m')) ? '' : ' disabled').'" target="_blank" >
 					<i class="fa fa-eye"></i> '.tr('Visualizza').'
 				</a>';
-
 
         echo '
 				<br><small>
@@ -230,4 +229,4 @@ echo '
 </form>';
 
 echo '
-<script src="'.$rootdir.'/assets/js/init.js"></script>';
+<script src="'.$rootdir.'/assets/js/init.min.js"></script>';

@@ -57,7 +57,7 @@ echo '
 
 $file = basename(__FILE__);
 echo '
-<script src="'.$rootdir.'/assets/js/init.js"></script>
+<script src="'.$rootdir.'/assets/js/init.min.js"></script>
 
 <script>
     var box = $("#info-box");

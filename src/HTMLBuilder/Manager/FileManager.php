@@ -171,7 +171,7 @@ class FileManager implements ManagerInterface
         $source = array_clean(array_column($categories, 'category'));
 
         $result .= '
-<script src="'.ROOTDIR.'/assets/js/init.js"></script>
+<script src="'.ROOTDIR.'/assets/js/init.min.js"></script>
 
 <script>
 $(document).ready(function(){

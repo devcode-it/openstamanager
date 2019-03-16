@@ -19,7 +19,7 @@
 <script>
     addProgress({{ rate }});
 </script>
-{{ temp }}
+
     {% if not is_completed %}
 <script>
     $("#result").load("{{ path_for('update-progress') }}");

@@ -1,0 +1,7 @@
+{% extends "uploads/base.twig" %}
+
+{% block content %}
+<iframe src="{{ link }}">
+    <a src="{{ link }}">'.tr('Il browser non supporta i contenuti iframe: clicca qui per scaricare il file originale').'</a>
+</iframe>
+{% endblock %}

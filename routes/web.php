@@ -44,25 +44,28 @@ $app->group('', function () use ($app) {
         ->setName('update-progress');
 })->add(GuestMiddleware::class);
 
-// Informazioni su OpenSTAManager
-$app->get('/info[/]', 'Controllers\BaseController:info')
-    ->setName('info')
-    ->add(UserMiddleware::class);
+$app->group('', function () use ($app) {
+    // Informazioni su OpenSTAManager
+    $app->get('/info[/]', 'Controllers\InfoController:info')
+        ->setName('info');
 
-// Segnalazione bug
-$app->get('/bug[/]', 'Controllers\BaseController:bug')
-    ->setName('bug')
-    ->add(UserMiddleware::class);
+    // Segnalazione bug
+    $app->get('/bug[/]', 'Controllers\InfoController:bug')
+        ->setName('bug');
+    $app->post('/bug[/]', 'Controllers\InfoController:bugSend');
 
-// Log di accesso
-$app->get('/logs[/]', 'Controllers\BaseController:logs')
-    ->setName('logs')
-    ->add(UserMiddleware::class);
+    // Log di accesso
+    $app->get('/logs[/]', 'Controllers\InfoController:logs')
+        ->setName('logs');
 
-// Informazioni sull'utente
-$app->get('/user[/]', 'Controllers\BaseController:user')
-    ->setName('user')
-    ->add(UserMiddleware::class);
+    // Informazioni sull'utente
+    $app->get('/user[/]', 'Controllers\InfoController:user')
+        ->setName('user');
+
+    $app->get('/password[/]', 'Controllers\InfoController:password')
+        ->setName('user-password');
+    $app->post('/password[/]', 'Controllers\InfoController:passwordPost');
+})->add(UserMiddleware::class);
 
 // Operazioni Ajax
 $app->group('/ajax', function () use ($app) {
@@ -89,12 +92,20 @@ $app->group('/ajax', function () use ($app) {
 
 // Moduli
 $app->group('/module/{module_id:[0-9]+}', function () use ($app) {
-    $app->get('[/]', 'Controllers\ModuleController:index')
+    $app->get('[/]', 'Controllers\ModuleController:module')
         ->setName('module');
 
-    $app->get('/edit/{record_id:[0-9]+}[/]', 'Controllers\ModuleController:edit')
-        ->setName('module-record');
-    $app->post('/edit/{record_id:[0-9]+}[/]', 'Controllers\ModuleController:saveRecord');
+    $app->get('/action/{action_name}/[/]', 'Controllers\ModuleController:moduleAction')
+        ->setName('module-action');
+
+    $app->group('/edit/{record_id:[0-9]+}', function () use ($app) {
+        $app->get('[/]', 'Controllers\ModuleController:edit')
+            ->setName('module-record');
+        $app->post('[/]', 'Controllers\ModuleController:editRecord');
+
+        $app->get('/action/{action_name}/[/]', 'Controllers\ModuleController:recordAction')
+            ->setName('module-record-action');
+    });
 
     $app->get('/add[/]', 'Controllers\ModuleController:add')
         ->setName('module-add');
@@ -124,6 +135,9 @@ $app->group('/upload', function () use ($app) {
     $app->get('/{upload_id:[0-9]+}[/]', 'Controllers\UploadController:view')
         ->setName('upload-view');
 
+    $app->get('/download/{upload_id:[0-9]+}[/]', 'Controllers\UploadController:download')
+        ->setName('upload-download');
+
     $app->get('/add/{module_id:[0-9]+}/{plugin_id:[0-9]+}/{record_id:[0-9]+}[/]', 'Controllers\UploadController:index')
         ->setName('upload');
 
@@ -133,7 +147,7 @@ $app->group('/upload', function () use ($app) {
 
 // E-mail
 $app->get('/mail/{mail_id:[0-9]+}[/]', 'MailController:index')
-        ->setName('mail')
+    ->setName('mail')
     ->add(UserMiddleware::class);
 
 /*

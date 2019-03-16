@@ -4,7 +4,7 @@ namespace Controllers;
 
 class ModuleController extends Controller
 {
-    public function index($request, $response, $args)
+    public function module($request, $response, $args)
     {
         $response = $this->view->render($response, 'resources\views\controller.php', $args);
 
@@ -18,7 +18,7 @@ class ModuleController extends Controller
         return $response;
     }
 
-    public function saveRecord($request, $response, $args)
+    public function editRecord($request, $response, $args)
     {
         $response = $this->view->render($response, 'resources\views\actions.php', $args);
 
@@ -27,6 +27,7 @@ class ModuleController extends Controller
 
     public function add($request, $response, $args)
     {
+        $args['query_params'] = $request->getQueryParams();
         $response = $this->view->render($response, 'resources\views\add.php', $args);
 
         return $response;

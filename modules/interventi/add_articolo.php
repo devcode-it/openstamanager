@@ -203,7 +203,7 @@ echo '
 </form>';
 
 echo '
-	<script src="'.$rootdir.'/assets/js/init.js"></script>';
+	<script src="'.$rootdir.'/assets/js/init.min.js"></script>';
 
 ?>
 

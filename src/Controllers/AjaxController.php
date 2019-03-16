@@ -4,6 +4,7 @@ namespace Controllers;
 
 use AJAX;
 use Modules;
+use Translator;
 use Util\Query;
 
 class AjaxController extends Controller

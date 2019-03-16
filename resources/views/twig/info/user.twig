@@ -1,0 +1,81 @@
+{% extends "layouts/app.twig" %}
+
+{% block title %}{{ "Utenza corrente"|trans }}{% endblock %}
+
+{% block content %}
+<div class="box">
+    <div class="box-header">
+        <h3 class="box-title">{{ 'Account'|trans }}</h3>
+    </div>
+
+    <div class="box-body">
+        <!-- Cambio password e nome utente -->
+        <div>
+            <p>{{ 'Utente'|trans }}: <b>{{ user['username'] }}</b></p>
+            <p>{{ 'Gruppo'|trans }}: <b>{{ user['gruppo'] }}</b></p>
+
+            {% if user.anagrafica is not empty %}
+                <p>{{ 'Anagrafica associata'|trans }}: <b>{{ anagrafica['ragione_sociale'] }}</b></p>
+            {% endif %}
+
+            <a class="btn btn-info col-md-4 tip" data-href="{{ path_for('user-password') }}" data-toggle="modal" data-title="Cambia password">
+                <i class="fa fa-unlock-alt"></i> {{ 'Cambia password'|trans }}
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+
+        <div class="box box-success">
+            <div class="box-header">
+                <h3 class="box-title">{{ 'API'|trans }}</h3>
+            </div>
+
+            <div class="box-body">
+                <p>{{ "Puoi utilizzare il token per accedere all'API del gestionale e per visualizzare il calendario su applicazioni esterne"|trans }}.</p>
+
+                <p>{{ 'Token personale'|trans }}: <b>{{ token }}</b></p>
+                <p>{{ "URL dell'API"|trans }}: <a href="{{ api }}" target="_blank">{{ api }}</a></p>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="box box-info">
+            <div class="box-header">
+                <h3 class="box-title">{{ 'Calendario interventi'|trans }}</h3>
+            </div>
+
+            <div class="box-body">
+                <p>{{ "Per accedere al calendario eventi attraverso l'API, accedi al seguente link"|trans }}:</p>
+                <a href="{{ sync_link }}" target="_blank">{{ sync_link }}</a>
+            </div>
+
+            <div class="box-header">
+                <h3 class="box-title">{{ 'Configurazione'|trans }}</h3>
+            </div>
+            <div class="box-body">
+                <div>
+                    <p>{{ "Per _ANDROID_, scarica un'applicazione dedicata dal _LINK_"|trans({
+                        '_ANDROID_': '<b>' ~ 'Android'|trans ~ '</b>',
+                        '_LINK_': '<a href="https://play.google.com/store/search?q=iCalSync&c=apps" target="_blank">' ~  'Play Store'|trans ~ '</a>',
+                        })|raw }}.</p>
+
+                    <p>{{ "Per _APPLE_, puoi configurare un nuovo calendario dall'app standard del calendario"|trans({
+                        '_APPLE_': '<b>' ~ 'Apple'|trans ~ '</b>',
+                        })|raw }}.</p>
+
+                    <p>{{ 'Per _PC_ e altri client di posta, considerare le relative funzionalità o eventuali plugin'|trans({
+                        '_PC_': '<b>' ~ 'PC'|trans ~ '</b>',
+                        })|raw }}.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

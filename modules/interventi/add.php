@@ -286,7 +286,7 @@ if (!empty($id_intervento)) {
 	</div>
 </form>
 
-<script src="<?php echo $rootdir; ?>/assets/js/init.js"></script>
+<script src="<?php echo $rootdir; ?>/assets/js/init.min.js"></script>
 
 <script type="text/javascript">
 	$(document).ready(function(){

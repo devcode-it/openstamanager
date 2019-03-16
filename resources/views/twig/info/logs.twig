@@ -1,0 +1,35 @@
+{% extends "layouts/app.twig" %}
+
+{% block title %}{{ "Accessi"|trans }}{% endblock %}
+
+{% block content %}
+<div class="box">
+    <div class="box-header">
+        <h3 class="box-title"><i class="fa fa-book"></i> {{ 'Ultimi 100 accessi'|trans }}</h3>
+    </div>
+
+    <div class="box-body table-responsive">
+        <table class="datatables table table-hover">
+            <thead>
+            <tr>
+                <th>{{ 'Username'|trans }}</th>
+                <th>{{ 'Data'|trans }}</th>
+                <th>{{ 'Stato'|trans }}</th>
+                <th>{{ 'Indirizzo IP'|trans }}</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for result in results %}
+            <tr class="{{ status[result.stato].color }}">
+                <td>{{ result.username }}</td>
+                <td>{{ result.created_at|timestamp }}</td>
+                <td><span class="label label-{{ status[result.stato].color }}">{{ status[result.stato].message }}</span></td>
+                <td>{{ result.ip }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

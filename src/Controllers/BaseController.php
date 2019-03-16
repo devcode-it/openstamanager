@@ -99,20 +99,6 @@ class BaseController extends Controller
         return $response;
     }
 
-    public function info($request, $response, $args)
-    {
-        $response = $this->twig->render($response, 'info.twig', $args);
-
-        return $response;
-    }
-
-    public function bug($request, $response, $args)
-    {
-        $response = $this->view->render($response, 'resources\views\bug.php', $args);
-
-        return $response;
-    }
-
     protected function redirectFirstModule($request, $response)
     {
         $module = $this->auth->getFirstModule();

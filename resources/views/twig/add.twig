@@ -1,0 +1,73 @@
+<div id="form_{{ module_id }}-{{ plugin_id }}">
+    {% block content %}{% endblock %}
+</div>
+
+<!-- Campi personalizzati -->
+<div class="hide" id="custom_fields_top-add">
+    <input type="hidden" name="id_module" value="{{ module_id }}">
+    <input type="hidden" name="id_plugin" value="{{ plugin_id }}">
+
+    {( "name": "custom_fields", "id_module": "{{ module_id }}", "id_plugin": "{{ plugin_id }}", "position": "top", "place": "add" )}
+</div>
+
+<div class="hide" id="custom_fields_bottom-add">
+    {( "name": "custom_fields", "id_module": "{{ module_id }}", "id_plugin": "{{ plugin_id }}", "position": "bottom", "place": "add" )}
+</div>
+
+<script>
+    $(document).ready(function(){
+        var form = $("#custom_fields_top-add").parent().find("form").first();
+
+        // Campi a inizio form
+        form.prepend($("#custom_fields_top-add").html());
+
+        // Campi a fine form
+        var last = form.find(".panel").last();
+
+        if (!last.length) {
+            last = form.find(".box").last();
+        }
+
+        if (!last.length) {
+            last = form.find(".row").eq(-2);
+        }
+
+        last.after($("#custom_fields_bottom-add").html());
+    });
+</script>
+
+{% if is_ajax %}
+<script>
+    $(document).ready(function(){
+        data = {
+        {% for key, value in query_params %}
+            "{{ key }}": "{{ get(value) }}",
+        {% endfor %}
+        };
+
+        $("#form_{{ module_id }}-{{ plugin_id }}").find("form").ajaxForm({
+            url: globals.rootdir + "/actions.php",
+            beforeSubmit: function(arr, $form, options) {
+                return $form.parsley().validate();
+            },
+            data: data,
+            type: "post",
+            success: function(response){
+                response = response.trim();
+
+                if(response && $("#{{ get('select') }}").val() !== undefined) {
+                    result = JSON.parse(response);
+                    $("#{{ get('select') }}").selectSetNew(result.id, result.text);
+                }
+
+                $("#bs-popup2").modal("hide");
+            },
+            error: function(xhr, error, thrown) {
+                ajaxError(xhr, error, thrown);
+            }
+        });
+    });
+</script>
+{% endif %}
+
+<script src="{{ base_url() }}/assets/js/init.min.js"></script>

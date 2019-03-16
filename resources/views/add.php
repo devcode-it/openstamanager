@@ -52,9 +52,9 @@ if (isAjaxRequest()) {
 $(document).ready(function(){
     data = {};';
 
-    foreach (Filter::getGET() as $key => $value) {
+    foreach ($_GET as $key => $value) {
         echo '
-    data.'.$key.' = "'.$value.'";';
+    data.'.$key.' = "'.get($key).'";';
     }
 
     echo '
@@ -85,4 +85,4 @@ $(document).ready(function(){
 }
 
 echo '
-	<script src="'.$rootdir.'/assets/js/init.js"></script>';
+	<script src="'.$rootdir.'/assets/js/init.min.js"></script>';

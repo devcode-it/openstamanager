@@ -108,9 +108,13 @@ $container['twig'] = function ($container) {
     $filter = new \Twig\TwigFilter('time', 'timeFormat');
     $twig->getEnvironment()->addFilter($filter);
 
-    $function = new \Twig\TwigFunction('setting', function ($name) {
-        return setting($name);
-    });
+    $filter = new \Twig\TwigFilter('diffForHumans', 'diffForHumans');
+    $twig->getEnvironment()->addFilter($filter);
+
+    $function = new \Twig\TwigFunction('setting', 'setting');
+    $twig->getEnvironment()->addFunction($function);
+
+    $function = new \Twig\TwigFunction('searchFieldName', 'searchFieldName');
     $twig->getEnvironment()->addFunction($function);
 
     $function = new \Twig\TwigFunction('module_link', function ($modulo, $id_record = null, $testo = null, $alternativo = true, $extra = null, $blank = true) {

@@ -132,9 +132,6 @@ class AjaxController extends Controller
 
     public function dataLoad($request, $response, $args)
     {
-        $args['module_id'] = filter('id_module');
-        $args['plugin_id'] = filter('id_plugin');
-
         extract($args);
 
         // Informazioni fondamentali
@@ -283,9 +280,14 @@ class AjaxController extends Controller
                                 'record_id' => $id_record,
                             ]).$hash;
                         }
+
                         // Link per i plugin
                         else {
-                            $column['data-link'] = $rootdir.'/add.php?id_module='.$id_module.'&id_record='.$id_record.'&id_plugin='.$id_plugin.'&id_parent='.$id_parent.'&edit=1'.$hash;
+                            $column['data-link'] = pathFor('plugin-record', [
+                                'plugin_id' => $id_plugin,
+                                'module_record_id' => $module_record_id,
+                                'record_id' => $id_record,
+                            ]).$hash;
 
                             $column['data-type'] = 'dialog';
                         }

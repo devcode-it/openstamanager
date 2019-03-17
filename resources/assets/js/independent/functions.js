@@ -501,7 +501,7 @@ function start_local_datatables(){
         if (!$.fn.DataTable.isDataTable($(this))) {
             $(this).DataTable({
                 language: {
-                    url: globals.js + "/i18n/datatables/" + globals.locale + ".min.json"
+                    url: globals.rootdir + "/assets/js/i18n/datatables/" + globals.locale + ".min.json"
                 },
                 retrieve: true,
                 ordering: true,
@@ -565,7 +565,7 @@ function start_datatables() {
 
             var table = $this.DataTable({
                 language: {
-                    url: globals.js + '/i18n/datatables/' + globals.locale + '.min.json'
+                    url: globals.rootdir + "/assets/js/i18n/datatables/' + globals.locale + '.min.json'
                 },
                 autoWidth: true,
                 dom: "ti",

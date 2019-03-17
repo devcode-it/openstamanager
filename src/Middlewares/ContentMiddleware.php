@@ -4,6 +4,7 @@ namespace Middlewares;
 
 use Modules;
 use Plugins;
+use Util\Query;
 
 /**
  * Classe per l'impostazione automatica delle variabili rilevanti per il funzionamento del progetto.
@@ -22,6 +23,8 @@ class ContentMiddleware extends Middleware
         $args = $route->getArguments();
         Modules::setCurrent($args['module_id']);
         Plugins::setCurrent($args['plugin_id']);
+
+        Query::setModuleRecord($args['module_record_id']);
 
         // Variabili fondamentali
         $module = Modules::getCurrent();

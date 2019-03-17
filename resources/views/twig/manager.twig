@@ -1,0 +1,154 @@
+{% if include_header %}
+    <h4>
+        {% if structure.help %}
+        <span class="tip" title="{{ structure.help }}" data-position="bottom">
+        {% endif %}
+
+            <i class="{{ structure.icon }}"></i> {{ structure.title }}
+
+        {% if structure.help %}
+            <i class="fa fa-question-circle-o" style="font-size:0.75em"></i>
+        </span>
+        {% endif %}
+
+        {% if structure.hasAddFile() and structure.permission == 'rw' %}
+        <!-- Pulsante "Aggiungi" solo se la struttura lo supporta -->
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-title="{{ 'Aggiungi'|trans }}..." data-href="{{ path_for('plugin-add', {'plugin_id': plugin_id, 'module_record_id': record_id}) }}"><i class="fa fa-plus"></i></button>
+        {% endif %}
+    </h4>
+{% endif %}
+
+{% block content_before %}{% endblock %}
+
+<!-- Datatables con record -->
+{% if structure.option is not empty and structure.option != 'menu' and structure.option != 'custom' %}
+    {% set table = structure.readQuery() %}
+    {% set table_id = 'main_' ~ random(99) %}
+
+    {% if structure.segments|length > 1 %}
+<div class="row">
+    <div class="col-md-4 pull-right">
+        {[ "type": "select", "name": "id_segment_", "required": 0, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module = {{ module_id }}", "value": "{{ _SESSION['module_' ~ module_id]['id_segment'] }}" ]}
+    </div>
+</div>
+<br>
+
+<script>
+    $(document).ready(function () {
+        $("#id_segment_").on("change", function(){
+            if ($(this).val() < 1){
+                session_set("module_{{ module_id }},id_segment", "", 1, 1);
+            } else {
+                session_set("module_{{ module_id }},id_segment", $(this).val(), 0, 1);
+            }
+        });
+    });
+</script>
+    {% endif %}
+
+<table data-idmodule="{{ module_id }}" data-idplugin="{{ plugin_id }}" data-idparent="{{ record_id }}" id="{{ table_id }}" width="100%" class="main-records table table-condensed table-bordered">
+    <thead>
+    <tr>
+        <th id="th_selector"></th>
+
+        {% for key, field in table.fields %}
+            {% set tags = '' %}
+            {% set name = field|trim %}
+
+            {% if name matches '/^color_/' %}
+                {% set tags = " width='140'" %}
+                {% set name = name|replace('color_', '') %}
+            {% elseif name matches '/^Data/' %}
+                {% set tags = " width='100'" %}
+            {% elseif name == '_print_' %}
+                {% set tags = " width='30'" %}
+                {% set field = name|replace('_print_', '') %}
+            {% elseif name matches '/^icon_/' %}
+                {% set tags = " width='30'" %}
+                {% set name = name|replace('icon_', 'icon_title_') %}
+                {% set field = name|replace('icon_', '') %}
+            {% endif %}
+
+            <th {{ tags }} id="th_{{ searchFieldName(name) }}" {{ table['search'][key] == 1 ? ' class="search"' : ' class="no-search"' }} {{ table['slow'][key] == 1 ? ' data-slow="1"' : '' }}>{{ field }}</th>
+        {% endfor %}
+
+    </tr>
+    </thead>
+
+    <tbody>
+    </tbody>
+
+    <tfoot>
+    <tr>
+        <td></td>
+
+        {% for key, field in table.fields %}
+        <td></td>
+        {% endfor %}
+
+    </tr>
+    </tfoot>
+</table>
+
+<div class="row" data-target="{{ table_id }}">
+    <div class="col-md-5">
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-primary btn-select-all">{{ 'Seleziona tutto'|trans }}</button>
+            <button type="button" class="btn btn-default btn-select-none">{{ 'Deseleziona tutto'|trans }}</button>
+        </div>
+    </div>
+
+    <div class="col-md-2 dropdown">
+
+        {% if bulk in not empty %}
+        <button class="btn btn-primary btn-block dropdown-toggle bulk-container disabled" type="button" data-toggle="dropdown" disabled>{{ 'Azioni di gruppo'|trans }} <span class="caret"></span></button>
+        <ul class="dropdown-menu" data-target="{{ table_id }}" role="menu">
+
+            {% for key, value in bulk %}
+                {% set text = value is iterable ? value.text : value %}
+
+                <li role="presentation"><a class="bulk-action clickable" data-op="{{ key }}" data-backto="record-list"
+                {% for k, v in value.data %}
+                   data-{{ k }}="{{ v }}"
+                {% endfor %}
+                >{{ text }}</a></li>
+            {% endfor %}
+
+        </ul>
+        {% endif %}
+
+    </div>
+
+    <div class="col-md-5 text-right">
+        <div class="btn-group" role="group">
+
+            {% if setting('Abilita esportazione Excel e PDF') %}
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary table-btn btn-csv disabled" disabled>{{ 'Esporta'|trans }}</button>
+
+                <button type="button" class="btn btn-primary  table-btn disabled dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="caret"></span>
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+
+                <ul class="dropdown-menu">
+                    <li><a class="table-btn btn-pdf disabled" disabled>{{ 'PDF'|trans }}</a></li>
+
+                    <li><a class="table-btn btn-excel disabled" disabled>{{ 'Excel'|trans }}</a></li>
+                </ul>
+            </div>
+            {% else %}
+            <button type="button" class="btn btn-primary table-btn btn-csv disabled" disabled>{{ 'Esporta'|trans }}</button>
+            {% endif %}
+
+            <button type="button" class="btn btn-default table-btn btn-copy disabled" disabled>{{ 'Copia'|trans }}</button>
+
+            <button type="button" class="btn btn-default table-btn btn-print disabled" disabled>{{ 'Stampa'|trans }}</button>
+        </div>
+    </div>
+</div>
+{% elseif structure.option == 'custom' %}
+    {{ custom_content }}
+{% endif %}
+
+{% block content_after %}{% endblock %}

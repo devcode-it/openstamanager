@@ -550,7 +550,7 @@ if ($dir == 'uscita' && $fattura->isFE()) {
 
                 var div = $("#controlla_totali");
                 div.removeClass("alert-info");
-                console.log(data);
+
                 if (data.stored == null) {
                     div.addClass("alert-info").html("'.tr("Il file XML non contiene il nodo ''ImportoTotaleDocumento'': impossibile controllare corrispondenza dei totali").'.")
                 } else if (data.stored == data.calculated){

@@ -57,4 +57,14 @@ trait ManagerTrait
 
         return !empty($php) ? $php : $html;
     }
+
+    /**
+     * Restituisce le informazioni relative alla query della struttura.
+     *
+     * @return array
+     */
+    public function readQuery()
+    {
+        return \Util\Query::readQuery($this);
+    }
 }

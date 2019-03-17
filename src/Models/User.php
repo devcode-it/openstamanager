@@ -57,6 +57,11 @@ class User extends Model
         $this->attributes['password'] = \Auth::hashPassword($value);
     }
 
+    public function isAdmin()
+    {
+        return $this->is_admin;
+    }
+
     /* Relazioni Eloquent */
 
     public function group()

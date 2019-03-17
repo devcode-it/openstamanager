@@ -87,6 +87,11 @@ class Module extends Model
         return $this->hasMany(Clause::class, 'idmodule');
     }
 
+    public function segments()
+    {
+        return $this->morphToMany(Segment::class, 'permission', 'zz_permissions', 'external_id', 'group_id')->where('permission_level', '!=', '-')->withPivot('permission_level');
+    }
+
     /* Gerarchia */
 
     public function children()

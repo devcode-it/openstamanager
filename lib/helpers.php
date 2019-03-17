@@ -234,6 +234,20 @@ function timeFormat($time)
 }
 
 /**
+ * Restituisce la distanza in tempo formattata per l'utente.
+ *
+ * @param string $timestamp
+ *
+ * @return string
+ *
+ * @since 2.5
+ */
+function diffForHumans($timestamp)
+{
+    return \Carbon\Carbon::parse($timestamp)->diffForHumans();
+}
+
+/**
  * Restituisce il percorso per la risorsa $name.
  *
  * @param string $name

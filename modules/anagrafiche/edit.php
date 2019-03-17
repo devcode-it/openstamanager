@@ -340,7 +340,7 @@ if (!empty($google)) {
 
 				<div class="row">
 					<div class="col-md-6">
-						{[ "type": "select", "label": "<?php echo tr('Tipo attività predefinita'); ?>", "name": "id_tipo_intervento_default", "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "$id_tipo_intervento_default$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
+						{[ "type": "select", "label": "<?php echo tr('Tipo attività predefinita'); ?>", "name": "id_tipo_intervento_default", "values": "query=SELECT id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "$id_tipo_intervento_default$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
 					</div>
 
 					<div class="col-md-6">

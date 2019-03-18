@@ -220,17 +220,7 @@ function ricalcola_costiagg_ordine($idordine, $idrivalsainps = '', $idritenutaac
                 }
             }
         } else {
-            $bolli = str_replace(',', '.', setting('Importo marca da bollo'));
-            if (abs($bolli) > 0 && abs($netto_a_pagare) > abs(setting("Soglia minima per l'applicazione della marca da bollo"))) {
-                $marca_da_bollo = str_replace(',', '.', $bolli);
-            } else {
-                $marca_da_bollo = 0.00;
-            }
-
-            // Se l'importo è negativo può essere una nota di credito, quindi cambio segno alla marca da bollo
-            if ($netto_a_pagare < 0) {
-                $marca_da_bollo *= -1;
-            }
+            $marca_da_bollo = 0.00;
         }
 
         // Leggo l'iva predefinita per calcolare l'iva aggiuntiva sulla rivalsa inps

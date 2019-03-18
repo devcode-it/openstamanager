@@ -43,7 +43,7 @@ abstract class Row extends Description
 
         $result -= $this->sconto;
 
-        return $this->prezzo_unitario_vendita > 0 ? $result : -$result;
+        return $result;
     }
 
     /**

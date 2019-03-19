@@ -18,3 +18,6 @@ UPDATE `zz_settings` SET `valore` = '2' WHERE `zz_settings`.`nome` = 'Importo ma
 -- Stampa preventivo (senza totali)
 INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `default`, `enabled`) VALUES
 (NULL, (SELECT id FROM zz_modules WHERE name='Preventivi'), 1, 'Preventivo (senza totali)', 'Preventivo (senza totali)', 'preventivi', 'idpreventivo', '{"pricing":true, "hide_total":true}', 'fa fa-print', '', '', 0, 0, 1, 1);
+
+-- Dimensione dei file caricati
+ALTER TABLE `zz_files` ADD `size` INT(11) NULL AFTER `category`;

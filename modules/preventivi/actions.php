@@ -113,10 +113,7 @@ switch (post('op')) {
         $dbo->query('DROP TEMPORARY TABLE tmp');
 
         // Codice preventivo: calcolo il successivo in base al formato specificato
-        $numeropreventivo_template = setting('Formato codice preventivi');
-        $numeropreventivo_template = str_replace('#', '%', $numeropreventivo_template);
-        $rs = $dbo->fetchArray('SELECT numero FROM co_preventivi WHERE numero LIKE('.prepare(Util\Generator::complete($numeropreventivo_template)).') ORDER BY numero DESC LIMIT 0,1');
-        $numero = Util\Generator::generate(setting('Formato codice preventivi'), $rs[0]['numero']);
+        $numero = Preventivo::getNextNumero();
 
         $dbo->query('UPDATE co_preventivi SET idstato=1, numero = '.prepare($numero).', master_revision = id WHERE id='.prepare($id_record));
 

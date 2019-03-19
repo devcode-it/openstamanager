@@ -11,6 +11,8 @@ $files = [
     'plugins/xml/NS_v1.0.xml',
     'plugins/xml/RC_v1.0.xml',
     'plugins/xml/SE_v1.0.xml',
+	'plugins/exportFE/view.php',
+	'plugins/exportFE/src/stylesheet-1.2.1.xsl',
 ];
 
 foreach ($files as $key => $value) {

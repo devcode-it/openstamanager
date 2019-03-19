@@ -50,7 +50,7 @@ class FileManager implements ManagerInterface
         $where = '`id_module` '.(!empty($options['id_module']) && empty($options['id_plugin']) ? '= '.prepare($options['id_module']) : 'IS NULL').' AND `id_plugin` '.(!empty($options['id_plugin']) ? '= '.prepare($options['id_plugin']) : 'IS NULL').'';
 
         // Categorie
-        $categories = $dbo->fetchArray('SELECT DISTINCT `category` FROM `zz_files` WHERE '.$where.' ORDER BY `category`');
+        $categories = $dbo->fetchArray('SELECT DISTINCT(BINARY `category`) AS `category` FROM `zz_files` WHERE '.$where.' ORDER BY `category`');
         foreach ($categories as $category) {
             $category = $category['category'];
 

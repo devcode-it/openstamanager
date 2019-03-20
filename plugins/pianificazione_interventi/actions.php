@@ -2,8 +2,10 @@
 
 include_once __DIR__.'/../../core.php';
 
+$operazione = filter('op');
+
 // Pianificazione intervento
-switch (filter('op')) {
+switch ($operazione) {
     case 'add-promemoria':
         $dbo->insert('co_promemoria', [
             'idcontratto' => $id_parent,
@@ -24,7 +26,7 @@ switch (filter('op')) {
         ], ['id' => $id_record]);
 
         flash()->info(tr('Promemoria inserito!'));
-
+		
         break;
 
     // Eliminazione pianificazione

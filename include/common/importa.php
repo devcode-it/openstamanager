@@ -140,7 +140,7 @@ if (!empty($righe)) {
         // Q.tà da evadere
         echo '
             <td>
-                {[ "type": "number", "name": "qta_da_evadere['.$r['id'].']", "id": "qta_'.$i.'", "required": 1, "value": "'.$r['qta_rimanente'].'", "extra" : "onkeyup=\"ricalcola_subtotale_riga('.$i.');\"", "decimals": "qta", "min-value": "0", "extra": "'.(($r['is_descrizione']) ? 'readonly' : '').'" ]}
+                {[ "type": "number", "name": "qta_da_evadere['.$r['id'].']", "id": "qta_'.$i.'", "required": 1, "value": "'.$r['qta_rimanente'].'", "decimals": "qta", "min-value": "0", "extra": "'.(($r['is_descrizione']) ? 'readonly' : '').' onkeyup=\"ricalcola_subtotale_riga('.$i.');\"" ]}
             </td>';
 
         // Subtotale

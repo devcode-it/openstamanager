@@ -21,3 +21,19 @@ INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `direc
 
 -- Dimensione dei file caricati
 ALTER TABLE `zz_files` ADD `size` INT(11) NULL AFTER `category`;
+
+-- Preventivi e contratti nello stato 'Pagato' non sono più fatturabili 
+UPDATE `co_staticontratti` SET `fatturabile` = '0' WHERE `descrizione` = 'Pagato';
+UPDATE `co_statipreventivi` SET `fatturabile` = '0' WHERE `descrizione` = 'Pagato';
+
+-- Definisco anche per i contratti lo stato completato (blocco la modifica della scheda)
+ALTER TABLE `co_staticontratti` ADD `completato` BOOLEAN NOT NULL DEFAULT FALSE AFTER `pianificabile`;
+
+-- Elimino data_evasione da co_righe_preventivi
+ALTER TABLE `co_righe_preventivi` DROP `data_evasione`;
+
+-- Allineo qta evase per le righe dei preventivi inseriti in una fattura
+UPDATE `co_righe_preventivi` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idpreventivo` = `co_righe_preventivi`.`idpreventivo` SET  `co_righe_preventivi`.`qta_evasa` = `co_righe_documenti`.`qta`;
+
+-- Allineo qta evase per le righe dei contratti inseriti in una fattura
+UPDATE `co_righe_contratti` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idcontratto` = `co_righe_contratti`.`idcontratto` SET `co_righe_contratti`.`qta_evasa` = `co_righe_documenti`.`qta`;

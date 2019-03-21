@@ -165,7 +165,11 @@ switch (post('op')) {
         $anagrafica->email = post('email');
         $anagrafica->idrelazione = post('idrelazione');
         $anagrafica->idagente = $idagente;
-
+		$anagrafica->pec = post('pec');
+		$anagrafica->tipo = post('tipo');
+		$anagrafica->codice_destinatario = post('codice_destinatario');
+		$anagrafica->id_nazione = post('id_nazione') ?: null;
+		
         $anagrafica->save();
 
         if ($anagrafica->isAzienda()) {

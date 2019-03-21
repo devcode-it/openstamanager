@@ -122,8 +122,8 @@ switch (post('op')) {
             // Elimino la scadenza e tutti i movimenti, poi se la fattura è emessa le ricalcolo
             if ($rs[0]['descrizione'] == 'Bozza' or $rs[0]['descrizione'] == 'Annullata') {
                 elimina_scadenza($id_record);
-                elimina_movimento($id_record, 0);
-                // elimino movimento anche prima nota (se pagata o parzialmente pagata)
+                //elimina_movimento($id_record, 0);
+                //elimino movimento anche prima nota (se pagata o parzialmente pagata)
                 elimina_movimento($id_record, 1);
             } elseif ($rs[0]['descrizione'] == 'Emessa') {
                 elimina_scadenza($id_record);

@@ -95,18 +95,17 @@ switch (post('op')) {
 
         $check_vat_number = Validate::isValidVatNumber($partita_iva);
         if (empty($check_vat_number)) {
-            flash()->warning(tr('Attenzione: la partita IVA _IVA_ sembra non essere valida', [
+            flash()->warning(tr('Attenzione: la partita IVA _IVA_ potrebbe non essere valida', [
                 '_IVA_' => $partita_iva,
             ]));
         }
-
+		
         // Validazione del Codice Fiscale, solo per anagrafiche Private e Aziende, ignoro controllo se codice fiscale e settato uguale alla p.iva
-        $codice_fiscale = $anagrafica->codice_fiscale;
-        if ($anagrafica->tipo != 'Ente pubblico' and $codice_fiscale != $partita_iva) {
-            $check_codice_fiscale = Validate::isValidTaxCode($codice_fiscale);
+        if ($anagrafica->tipo != 'Ente pubblico' and $anagrafica->codice_fiscale != $anagrafica->partita_iva) {
+            $check_codice_fiscale = Validate::isValidTaxCode($anagrafica->codice_fiscale);
             if (empty($check_codice_fiscale)) {
-                flash()->warning(tr('Attenzione: il codice fiscale _COD_ sembra non essere valido', [
-                    '_COD_' => $codice_fiscale,
+                flash()->warning(tr('Attenzione: il codice fiscale _COD_ potrebbe non essere valido', [
+                    '_COD_' => $anagrafica->codice_fiscale,
                 ]));
             }
         }

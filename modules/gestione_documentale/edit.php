@@ -28,7 +28,7 @@ include_once __DIR__.'/../../core.php';
 
 
 				<div class="col-md-3">
-					{[ "type": "text", "label": "Data", "name": "data", "required": 1, "class": "datepicker text-center", "value": "<?php $record['data']; ?>", "extra": "" ]}
+					{[ "type": "date", "label": "Data", "name": "data", "required": 1, "class": "datepicker text-center", "value": "$data$", "extra": "" ]}
 				</div>
 
 			</div>

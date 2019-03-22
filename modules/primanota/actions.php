@@ -37,7 +37,7 @@ switch (post('op')) {
                     $all_ok = false;
                 } else {
                     $all_ok = true;
-                    $id_record = $dbo->lastInsertedID();
+                    $id_record = $idmastrino;
                 }
             }
         }
@@ -152,7 +152,7 @@ switch (post('op')) {
                 if (!$dbo->query($query)) {
                     $all_ok = false;
                 } else {
-                    $id_record = $dbo->lastInsertedID();
+                    $id_record = $idmastrino;
                     /*
                         Devo azzerare il totale pagato nello scadenziario perché verrà ricalcolato.
                         Se c'erano delle rate già pagate ne devo tener conto per rigenerare il totale pagato

@@ -12,14 +12,14 @@ $contratto = $dbo->fetchOne('SELECT * FROM co_contratti WHERE id = :id', [
 $records = $dbo->fetchArray('SELECT *, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_promemoria.idtipointervento) AS tipointervento FROM co_promemoria WHERE idcontratto='.prepare($id_record).' ORDER BY data_richiesta ASC');
 
 // Intervento/promemoria pianificabile
-$pianificabile = $dbo->fetchOne('SELECT pianificabile FROM co_staticontratti WHERE id = :id', [
+$pianificabile = $dbo->fetchOne('SELECT is_pianificabile FROM co_staticontratti WHERE id = :id', [
     ':id' => $contratto['idstato'],
-])['pianificabile'];
+])['is_pianificabile'];
 if ($pianificabile) {
     $pianificabile = (date('Y', strtotime($contratto['data_accettazione'])) > 1970 and date('Y', strtotime($contratto['data_conclusione'])) > 1970) ? true : false;
 }
 
-$stati_pianificabili = $dbo->fetchOne('SELECT GROUP_CONCAT(`descrizione` SEPARATOR ", ") AS stati_pianificabili FROM `co_staticontratti` WHERE `pianificabile` = 1')['stati_pianificabili'];
+$stati_pianificabili = $dbo->fetchOne('SELECT GROUP_CONCAT(`descrizione` SEPARATOR ", ") AS stati_pianificabili FROM `co_staticontratti` WHERE `is_pianificabile` = 1')['stati_pianificabili'];
 
 echo '
 

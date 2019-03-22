@@ -19,7 +19,7 @@ $mesi = [
 ];
 
 // Righe inserite
-$qp = "SELECT *, DATE_FORMAT( data_scadenza, '%m-%Y') AS mese, (SELECT idanagrafica FROM co_contratti WHERE id=idcontratto) AS idcliente, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=(SELECT idanagrafica FROM co_contratti WHERE id=idcontratto)) AS ragione_sociale, (SELECT matricola FROM my_impianti WHERE id=co_ordiniservizio.idimpianto) AS impianto, (SELECT nome FROM my_impianti WHERE id=co_ordiniservizio.idimpianto) AS impianto, (SELECT idsede FROM my_impianti WHERE id=co_ordiniservizio.idimpianto) AS idsede FROM co_ordiniservizio WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND idintervento IS NULL ORDER BY DATE_FORMAT( data_scadenza, '%m-%Y') ASC, idcliente ASC";
+$qp = "SELECT *, DATE_FORMAT( data_scadenza, '%m-%Y') AS mese, (SELECT idanagrafica FROM co_contratti WHERE id=idcontratto) AS idcliente, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=(SELECT idanagrafica FROM co_contratti WHERE id=idcontratto)) AS ragione_sociale, (SELECT matricola FROM my_impianti WHERE id=co_ordiniservizio.idimpianto) AS impianto, (SELECT nome FROM my_impianti WHERE id=co_ordiniservizio.idimpianto) AS impianto, (SELECT idsede FROM my_impianti WHERE id=co_ordiniservizio.idimpianto) AS idsede FROM co_ordiniservizio WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE is_pianificabile = 1) ) AND idintervento IS NULL ORDER BY DATE_FORMAT( data_scadenza, '%m-%Y') ASC, idcliente ASC";
 $rsp = $dbo->fetchArray($qp);
 
 if (!empty($rsp)) {

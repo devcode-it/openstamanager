@@ -19,7 +19,7 @@ $mesi = [
 ];
 
 // Righe inserite
-//idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND
+//idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE is_pianificabile = 1) ) AND
 $qp = "SELECT *,
     (SELECT SUM(subtotale) FROM co_righe_contratti WHERE idcontratto=co_ordiniservizio_pianificazionefatture.idcontratto) AS budget_contratto,
     DATE_FORMAT(data_scadenza, '%m-%Y') AS mese,

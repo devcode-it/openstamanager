@@ -2,12 +2,11 @@
 
 include_once DOCROOT.'/modules/fatture/modutil.php';
 
-// Fatture di vendita (direzione "entrata")
+// Fatture di vendita e acquisto
 $results = $dbo->fetchArray("SELECT co_documenti.id, co_statidocumento.descrizione AS stato_fattura
-FROM co_documenti
+FROM co_documenti 
     INNER JOIN co_statidocumento ON co_documenti.idstatodocumento=co_statidocumento.id 
-    INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento = co_tipidocumento.id 
-WHERE co_statidocumento.dir = 'entrata' AND co_statidocumento.descrizione IN ('Emessa', 'Parzialmente pagato', 'Pagato', 'Bozza', 'Annullata')");
+WHERE co_statidocumento.descrizione IN ('Emessa', 'Parzialmente pagato', 'Pagato', 'Bozza', 'Annullata')");
 
 foreach ($results as $result) {
     $scadenze = $dbo->fetchArray('SELECT id, da_pagare, pagato, scadenza FROM co_scadenziario WHERE iddocumento = '.prepare($result['id']));

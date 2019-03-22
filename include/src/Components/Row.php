@@ -39,11 +39,11 @@ abstract class Row extends Description
      */
     public function getImponibileScontatoAttribute()
     {
-        $result = $this->prezzo_unitario_vendita > 0 ? $this->imponibile : -$this->imponibile;
+        $result = $this->prezzo_unitario_vendita >= 0 ? $this->imponibile : -$this->imponibile;
 
         $result -= $this->sconto;
 
-        return $result;
+        return $this->prezzo_unitario_vendita >= 0 ? $result : -$result;
     }
 
     /**

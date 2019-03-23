@@ -38,7 +38,7 @@ class FatturaElettronica
     {
         $this->file = static::getImportDirectory().'/'.$name;
 
-        if (ends_with($file, '.p7m')) {
+        if (ends_with($name, '.p7m')) {
             $file = XML::decodeP7M($this->file);
 
             if (!empty($file)) {

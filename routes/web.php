@@ -135,6 +135,9 @@ $app->group('/upload', function () use ($app) {
     $app->get('/{upload_id:[0-9]+}[/]', 'Controllers\UploadController:view')
         ->setName('upload-view');
 
+    $app->get('/open/{upload_id:[0-9]+}[/]', 'Controllers\UploadController:open')
+        ->setName('upload-open');
+
     $app->get('/download/{upload_id:[0-9]+}[/]', 'Controllers\UploadController:download')
         ->setName('upload-download');
 

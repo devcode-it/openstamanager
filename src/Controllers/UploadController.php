@@ -16,7 +16,9 @@ class UploadController extends Controller
             return $response;
         }
 
-        $link = ROOTDIR.'/'.$file->filepath;
+        $link = pathFor('upload-open', [
+            'upload_id' => $args['upload_id'],
+        ]);
 
         $args['file'] = $file;
         $args['link'] = $link;
@@ -53,12 +55,32 @@ class UploadController extends Controller
         } elseif ($file->isImage()) {
             $response = $this->twig->render($response, 'uploads\img.twig', $args);
         } elseif ($file->isPDF()) {
-            $args['link'] = \Prints::getPDFLink($file->filepath);
+            $args['link'] = ROOTDIR.'/assets/pdfjs/web/viewer.html?file='.$link;
 
             $response = $this->twig->render($response, 'uploads\frame.twig', $args);
         } else {
             $response = $this->download($request, $response, $args);
         }
+
+        return $response;
+    }
+
+    public function open($request, $response, $args)
+    {
+        $file = Upload::find($args['upload_id']);
+
+        if (empty($file)) {
+            return $response;
+        }
+
+        $path = DOCROOT.'/'.$file->filepath;
+
+        $fh = fopen($path, 'rb');
+        $stream = new \Slim\Http\Stream($fh);
+
+        $response = $response
+            ->withHeader('Content-Type', mime_content_type($path))
+            ->withBody($stream);
 
         return $response;
     }

@@ -1,0 +1,17 @@
+{% extends "edit.twig" %}
+
+{% block editor_content %}
+    {{ editor_content|raw }}
+{% endblock %}
+
+{% block buttons %}
+    {{ buttons|raw }}
+{% endblock %}
+
+{% block plugins_content %}
+    {% for plugin in plugins %}
+        <div id="tab_{{ plugin.id }}" class="tab-pane">
+            {% include 'content.twig' with {structure: plugin, bulk: plugins_content[plugin.id].bulk, plugin: plugin, plugin_id: plugin.id, include_header: true, custom_content: plugins_content[plugin.id].content} %}
+        </div>
+    {% endfor %}
+{% endblock %}

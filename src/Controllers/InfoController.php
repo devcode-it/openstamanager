@@ -62,7 +62,7 @@ class InfoController extends Controller
         $args['api'] = $api;
         $args['sync_link'] = $api.'&resource=sync';
 
-        $response = $this->twig->render($response, 'info\user.twig', $args);
+        $response = $this->twig->render($response, 'user\user.twig', $args);
 
         return $response;
     }
@@ -71,7 +71,7 @@ class InfoController extends Controller
     {
         $args['min_length_password'] = self::$min_length_password;
 
-        $response = $this->twig->render($response, 'info\password.twig', $args);
+        $response = $this->twig->render($response, 'user\password.twig', $args);
 
         return $response;
     }

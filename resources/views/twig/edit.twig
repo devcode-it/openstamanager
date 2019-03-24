@@ -1,301 +1,204 @@
-{% extends "layouts/app.twig" %}
+{% extends "module.twig" %}
 
-{% block content %}
-<!-- Widget in alto -->
-{( "name": "widgets", "id_module": "{{ module_id }}", "id_record": "{{ record_id }}", "position": "top", "place": "editor" )}
+{% block top_content %}
+    <!-- Widget in alto -->
+    {( "name": "widgets", "id_module": "{{ module_id }}", "id_record": "{{ record_id }}", "position": "top", "editor": "controller" )}
 
-{% set advanced_sessions = setting('Attiva notifica di presenza utenti sul record') %}
-{% if advanced_sessions %}
-<div class="box box-warning box-solid text-center info-active hide">
-    <div class="box-header with-border">
-        <h3 class="box-title"><i class="fa fa-warning"></i> {{ 'Attenzione!'|trans }}</h3>
-    </div>
-    <div class="box-body">
-        <p>{{ 'I seguenti utenti stanno visualizzando questa pagina'|trans }}:</p>
-        <ul class="list">
-        </ul>
-        <p>{{ 'Prestare attenzione prima di effettuare modifiche, poichè queste potrebbero essere perse a causa di multipli salvataggi contemporanei'|trans }}.</p>
-    </div>
-</div>
-{% endif %}
+    {% if setting('Attiva notifica di presenza utenti sul record') %}
+        <div class="box box-warning box-solid text-center info-active hide">
+            <div class="box-header with-border">
+                <h3 class="box-title"><i class="fa fa-warning"></i> {{ 'Attenzione!'|trans }}</h3>
+            </div>
+            <div class="box-body">
+                <p>{{ 'I seguenti utenti stanno visualizzando questa pagina'|trans }}:</p>
+                <ul class="list">
+                </ul>
+                <p>{{ 'Prestare attenzione prima di effettuare modifiche, poichè queste potrebbero essere perse a causa di multipli salvataggi contemporanei'|trans }}.</p>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
 
-<div class="nav-tabs-custom">
-    <ul class="nav nav-tabs pull-right" id="tabs" role="tablist">
-        <li class="pull-left active header">
-            <a data-toggle="tab" href="#tab_0">
-                {% if structure.help %}
-                <span class="tip" title="{{ structure.help }}" data-position="bottom">
-                {% endif %}
+{% block module_content %}
 
-                    <i class="{{ structure.icon }}"></i> {{ structure.title }}
+    <!--  Pulsanti di default -->
+    <div id="pulsanti">
+        <a class="btn btn-warning" href="{{ path_for('module', {'module_id': module_id}) }}">
+            <i class="fa fa-chevron-left"></i> {{ "Torna all'elenco"|trans }}
+        </a>
 
-                {% if structure.help %}
-                    <i class="fa fa-question-circle-o" style="font-size:0.75em"></i>
-                </span>
-                {% endif %}
+        <div class="pull-right">
+            {( "name": "button", "type": "print", "id_module": "{{ module_id }}", "id_record": "{{ record_id }}" )}
 
-                {% if structure.hasAddFile() and structure.permission == 'rw' %}
-                <!-- Pulsante "Aggiungi" solo se la struttura lo supporta -->
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-title="{{ 'Aggiungi'|trans }}..." data-href="{{ path_for('module-add', {'module_id': module_id}) }}"><i class="fa fa-plus"></i></button>
-                {% endif %}
+            {( "name": "button", "type": "email", "id_module": "{{ module_id }}", "id_record": "{{ record_id }}" )}
 
+            <a class="btn btn-success" id="save">
+                <i class="fa fa-check"></i> {{ 'Salva'|trans }}
             </a>
-        </li>
-
-        {% if user.isAdmin() %}
-        <li class="bg-warning">
-            <a data-toggle="tab" href="#tab_info" id="link-tab_info">{{ 'Info'|trans }}</a>
-        </li>
-        {% endif %}
-
-        {% for plugin in plugins %}
-        <li>
-            <a data-toggle="tab" href="#tab_{{ plugin.id }}" id="link-tab_{{ plugin.id }}">{{ plugin.title }}</a>
-        </li>
-        {% endfor %}
-    </ul>
-
-    <div class="tab-content">
-        <div id="tab_0" class="tab-pane active">
-
-            <!--  Pulsanti di default -->
-            <div id="pulsanti">
-                <a class="btn btn-warning" href="{{ path_for('module', {'module_id': module_id}) }}">
-                    <i class="fa fa-chevron-left"></i> {{ "Torna all'elenco"|trans }}
-                </a>
-
-                <div class="pull-right">
-                    {( "name": "button", "type": "print", "id_module": "{{ module_id }}", "id_record": "{{ record_id }}" )}
-
-                    {( "name": "button", "type": "email", "id_module": "{{ module_id }}", "id_record": "{{ record_id }}" )}
-
-                    <a class="btn btn-success" id="save">
-                        <i class="fa fa-check"></i> {{ 'Salva'|trans }}
-                    </a>
-                </div>
-            </div>
-
-            <script>
-                $(document).ready(function(){
-                    var form = $("#module-edit").find("form").first();
-
-                    // Aggiunta del submit
-                    form.prepend('<button type="submit" id="submit" class="hide"></button>');
-
-                    $("#save").click(function(){
-                        $("#submit").trigger("click");
-                    });
-
-                    // Pulsanti dinamici
-                    if (!isMobile.any()) {
-                        $("#pulsanti").affix({
-                            offset: {
-                                top: 200
-                            }
-                        });
-
-                        if ($("#pulsanti").hasClass("affix")) {
-                            $("#pulsanti").css("width", $("#tab_0").css("width"));
-                        }
-
-                        $("#pulsanti").on("affix.bs.affix", function(){
-                            $("#pulsanti").css("width", $("#tab_0").css("width"));
-                        });
-
-                        $("#pulsanti").on("affix-top.bs.affix", function(){
-                            $("#pulsanti").css("width", "100%");
-                        });
-                    }
-
-                });
-            </script>
-
-            <div class="clearfix"></div>
-            <br>
-
-            <div class="pull-right" id="pulsanti-modulo">
-                {% if block("buttons") is not empty %}
-                    {% block buttons %}{% endblock %}
-                {% else %}
-                    {{ buttons|raw }}
-                {% endif %}
-            </div>
-
-            <div class="clearfix"></div>
-            <br>
-
-            <div id="module-edit">
-                {% if block("editor_content") is not empty %}
-                    {% block editor_content %}{% endblock %}
-                {% else %}
-                    {{ editor_content|raw }}
-                {% endif %}
-            </div>
         </div>
-
-        <!-- Campi personalizzati -->
-        <div class="hide" id="custom_fields_top-edit">
-            {( "name": "custom_fields", "id_module": "{{ module_id }}", "id_record": "{{ record_id }}", "position": "top" )}
-        </div>
-
-        <div class="hide" id="custom_fields_bottom-edit">
-            {( "name": "custom_fields", "id_module": "{{ module_id }}", "id_record": "{{ record_id }}" )}
-        </div>
-
-        <script>
-            $(document).ready(function(){
-                var form = $("#custom_fields_top-edit").parent().find("form").first();
-
-                // Campi a inizio form
-                form.prepend($("#custom_fields_top-edit").html());
-
-                // Campi a fine form
-                var last = form.find(".panel").last();
-
-                if (!last.length) {
-                    last = form.find(".box").last();
-                }
-
-                if (!last.length) {
-                    last = form.find(".row").eq(-2);
-                }
-
-                last.after($("#custom_fields_bottom-edit").html());
-            });
-        </script>
-
-        {% if user.isAdmin() %}
-        <!-- Informazioni sulle operazioni -->
-        <div id="tab_info" class="tab-pane">
-
-            {% for operation in operations %}
-            <ul class="timeline">
-                <li {{ operation.tags }}>
-                <div class="timeline-badge {{ operation.color }}"><i class="fa fa-{{ operation.icon }}"></i></div>
-                <div class="timeline-panel">
-                    <div class="timeline-heading">
-                        <div class="row">
-                            <div class="col-md-8">
-                                <h4 class="timeline-title">{{ operation.description }}</h4>
-                            </div>
-                            <div class="col-md-4 text-right">
-                                <p><small class="label label-default tip" title="{{ operation.created_at|timestamp }}"><i class="fa fa-clock-o"></i> {{ operation.created_at|diffForHumans }}</small></p>
-                                <p><small class="label label-default"><i class="fa fa-user"></i> {{ operation.username }}</small></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="timeline-body">
-
-                    </div>
-                    <div class="timeline-footer">
-
-                    </div>
-                </div>
-                </li>
-            </ul>
-            {% else %}
-            <div class="alert alert-info">
-                <i class="fa fa-info-circle"></i>
-                {{ 'Nessun log disponibile per questa scheda'|trans }}.
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-
-        {% if block("plugins_content") is not empty %}
-            {% block plugins_content %}{% endblock %}
-        {% else %}
-            {% for plugin in plugins %}
-                <div id="tab_{{ plugin.id }}" class="tab-pane">
-                    {% if plugins_content[plugin.id] is not iterable %}
-                        {{ plugins_content[plugin.id]|raw }}
-                    {% else %}
-                        {% include 'manager.twig' with {structure: plugin, bulk: plugins_content[plugin.id].bulk, plugin: plugin, plugin_id: plugin.id, include_header: true} %}
-                    {% endif %}
-                </div>
-            {% endfor %}
-        {% endif %}
     </div>
-</div>
 
-<!-- Widget in basso -->
-{( "name": "widgets", "id_module": "{{ module_id }}", "id_record": "{{ record_id }}", "position": "right", "place": "editor" )}
+    <script>
+        $(document).ready(function(){
+            var form = $("#module-edit").find("form").first();
 
-<hr>
-<a class="btn btn-default" href="{{ path_for('module', {'module_id': module_id}) }}">
-    <i class="fa fa-chevron-left"></i> {{ 'Indietro'|trans }}
-</a>
+            // Aggiunta del submit
+            form.prepend('<button type="submit" id="submit" class="hide"></button>');
 
-<script>
-    // Se l'utente ha i permessi in sola lettura per il modulo, converto tutti i campi di testo in span
-    {% set read_only = structure.permission == 'r' %}
-    {% set not_class = read_only ? '' : '.not(".unblockable")' %}
-    {% if read_only or block_edit is empty %}
+            $("#save").click(function(){
+                $("#submit").trigger("click");
+            });
+
+            // Pulsanti dinamici
+            if (!isMobile.any()) {
+                $("#pulsanti").affix({
+                    offset: {
+                        top: 200
+                    }
+                });
+
+                if ($("#pulsanti").hasClass("affix")) {
+                    $("#pulsanti").css("width", $("#tab_0").css("width"));
+                }
+
+                $("#pulsanti").on("affix.bs.affix", function(){
+                    $("#pulsanti").css("width", $("#tab_0").css("width"));
+                });
+
+                $("#pulsanti").on("affix-top.bs.affix", function(){
+                    $("#pulsanti").css("width", "100%");
+                });
+            }
+
+        });
+    </script>
+
+    <div class="clearfix"></div>
+    <br>
+
+    <div class="pull-right" id="pulsanti-modulo">
+        {% block buttons %}{% endblock %}
+    </div>
+
+    <div class="clearfix"></div>
+    <br>
+
+    <div id="module-edit">
+        {% block editor_content %}{% endblock %}
+    </div>
+
+    <!-- Campi personalizzati -->
+    <div class="hide" id="custom_fields_top-edit">
+        {( "name": "custom_fields", "id_module": "{{ module_id }}", "id_record": "{{ record_id }}", "position": "top" )}
+    </div>
+
+    <div class="hide" id="custom_fields_bottom-edit">
+        {( "name": "custom_fields", "id_module": "{{ module_id }}", "id_record": "{{ record_id }}" )}
+    </div>
+
+    <script>
+        $(document).ready(function(){
+            var form = $("#custom_fields_top-edit").parent().find("form").first();
+
+            // Campi a inizio form
+            form.prepend($("#custom_fields_top-edit").html());
+
+            // Campi a fine form
+            var last = form.find(".panel").last();
+
+            if (!last.length) {
+                last = form.find(".box").last();
+            }
+
+            if (!last.length) {
+                last = form.find(".row").eq(-2);
+            }
+
+            last.after($("#custom_fields_bottom-edit").html());
+        });
+    </script>
+{% endblock %}
+
+
+{% block bottom_content %}
+    <!-- Widget in alto -->
+    {( "name": "widgets", "id_module": "{{ module_id }}", "id_record": "{{ record_id }}", "position": "right", "place": "editor" )}
+
+    <hr>
+    <a class="btn btn-default" href="{{ path_for('module', {'module_id': module_id}) }}">
+        <i class="fa fa-chevron-left"></i> {{ 'Indietro'|trans }}
+    </a>
+
+    <script>
+        // Se l'utente ha i permessi in sola lettura per il modulo, converto tutti i campi di testo in span
+        {% set read_only = structure.permission == 'r' %}
+        {% set not_class = read_only ? '' : '.not(".unblockable")' %}
+        {% if read_only or block_edit is empty %}
         $(document).ready(function(){
             $("input, textarea, select", "section.content"){{ not_class|raw }}.attr("readonly", "true");
             $("select, input[type=checkbox]", "section.content"){{ not_class|raw }}.prop("disabled", true);
 
-        {% if read_only %}
+            {% if read_only %}
             $("a.btn, button, input[type=button], input[type=submit]", "section.content").hide();
             $("a.btn-info, a.btn-warning, button.btn-info, button.btn-warning, input[type=button].btn-info", "section.content").show();
+            {% endif %}
+
+        });
         {% endif %}
 
-        });
-    {% endif %}
+        var content_was_modified = false;
 
-    var content_was_modified = false;
-
-    //controllo se digito qualche valore o cambio qualche select
-    $("input, textarea, select").bind("change paste keyup", function(event) {
-        if( event.keyCode >= 32 ){
-            content_was_modified = true;
-        }
-    });
-
-    //tolgo il controllo se sto salvando
-    $(".btn-success, button[type=submit]").bind("click", function() {
-        content_was_modified = false;
-    });
-
-    $( "form" ).bind( "submit", function() {
-        content_was_modified = false;
-    });
-
-    // questo controllo blocca il modulo vendita al banco, dopo la lettura con barcode, appare il messaggio di conferma
-    window.onbeforeunload = function(e){
-        if(content_was_modified) {
-            var dialogText = "{{ "Uscire senza salvare?"|trans }}";
-            e.returnValue = dialogText;
-            $("#main_loading").fadeOut();
-            return dialogText;
-        }
-    };
-
-    window.addEventListener("unload", function(e) {
-        $("#main_loading").show();
-    });
-
-    function getActiveUsers(){
-        $.getJSON('<?php echo ROOTDIR; ?>/ajax.php?op=active_users', {
-            id_module: {{ module_id }},
-            id_record: {{ record_id }},
-        },
-        function(data) {
-            if (data.length != 0) {
-                $(".info-active").removeClass("hide");
-                $(".info-active .list").html("");
-                $.each( data, function( key, val ) {
-                    $(".info-active .list").append("<li>"+val.username+"</li>");
-                });
+        //controllo se digito qualche valore o cambio qualche select
+        $("input, textarea, select").bind("change paste keyup", function(event) {
+            if( event.keyCode >= 32 ){
+                content_was_modified = true;
             }
-            else $(".info-active").addClass("hide");
         });
-    }
 
-    {% if advanced_sessions %}
+        //tolgo il controllo se sto salvando
+        $(".btn-success, button[type=submit]").bind("click", function() {
+            content_was_modified = false;
+        });
+
+        $( "form" ).bind( "submit", function() {
+            content_was_modified = false;
+        });
+
+        // questo controllo blocca il modulo vendita al banco, dopo la lettura con barcode, appare il messaggio di conferma
+        window.onbeforeunload = function(e){
+            if(content_was_modified) {
+                var dialogText = "{{ "Uscire senza salvare?"|trans }}";
+                e.returnValue = dialogText;
+                $("#main_loading").fadeOut();
+                return dialogText;
+            }
+        };
+
+        window.addEventListener("unload", function(e) {
+            $("#main_loading").show();
+        });
+
+        function getActiveUsers(){
+            $.getJSON('<?php echo ROOTDIR; ?>/ajax.php?op=active_users', {
+                    id_module: {{ module_id }},
+                    id_record: {{ record_id }},
+                },
+                function(data) {
+                    if (data.length != 0) {
+                        $(".info-active").removeClass("hide");
+                        $(".info-active .list").html("");
+                        $.each( data, function( key, val ) {
+                            $(".info-active .list").append("<li>"+val.username+"</li>");
+                        });
+                    }
+                    else $(".info-active").addClass("hide");
+                });
+        }
+
+        {% if setting('Attiva notifica di presenza utenti sul record') %}
         getActiveUsers();
 
         setInterval(getActiveUsers, {{ setting('Timeout notifica di presenza (minuti)') }} * 60 * 1000);
-    {% endif %}
-</script>
+        {% endif %}
+    </script>
 {% endblock %}

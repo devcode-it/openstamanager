@@ -1,0 +1,95 @@
+{% extends "layouts/guest.twig" %}
+
+{% block title %}{{ "Login"|trans }}{% endblock %}
+
+{% block box_class %}box-warning text-center login-box{% endblock %}
+{% block box_header %}
+    <img src="{{ base_url() }}/assets/img/logo.png" alt="{{ 'OSM Logo'|trans }}">
+    <h3 class="box-title">{{ "OpenSTAManager"|trans }}</h3>
+{% endblock %}
+
+{% block before_content %}
+    {% if is_beta %}
+    <div class="clearfix">&nbsp;</div>
+    <div class="alert alert-warning alert-dismissable col-md-6 col-md-push-3 text-center fade in">
+        <i class="fa fa-warning"></i> <b>{{ 'Attenzione!'|trans }}</b> {{ 'Stai utilizzando una versione <b>non stabile</b> di OSM.'|trans }}
+
+        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+    </div>
+    {% endif %}
+
+    {% if brute.actual %}
+    <div class="box box-danger box-center" id="brute">
+        <div class="box-header with-border text-center">
+            <h3 class="box-title">{{ 'Attenzione'|trans }}</h3>
+        </div>
+
+        <div class="box-body text-center">
+            <p>{{ 'Sono stati effettuati troppi tentativi di accesso consecutivi!'|trans }}</p>
+            <p>{{ 'Tempo rimanente (in secondi)'|trans }}: <span id="brute-timeout">{{ brute.timeout + 1 }}</span></p>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function(){
+            $(".login-box").fadeOut();
+            brute();
+        });
+
+        function brute() {
+            var value = parseFloat($("#brute-timeout").html()) - 1;
+            $("#brute-timeout").html(value);
+
+            if(value > 0){
+                setTimeout("brute()", 1000);
+            } else{
+                $("#brute").fadeOut();
+                $(".login-box").fadeIn();
+            }
+        }
+    </script>
+    {% endif %}
+
+    {% if flash.getMessage('error') is not empty %}
+    <script>
+        $(document).ready(function(){
+            $(".login-box").effect("shake");
+        });
+    </script>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<form action="" method="post">
+    <div class="form-group input-group">
+        <span class="input-group-addon before"><i class="fa fa-user"></i></span>
+        <input type="text" name="username" autocomplete="off" class="form-control" placeholder="{{ 'Nome utente'|trans }}" value="{{ username }}">
+    </div>
+    <div class="form-group input-group">
+        <span class="input-group-addon before"><i class="fa fa-lock"></i></span>
+        <input type="password" name="password" autocomplete="off" class="form-control" placeholder="{{ 'Password'|trans }}">
+    </div>
+    <div class="form-group">
+        <input type="checkbox" name="keep_alive" {{ keep_alive ? 'checked' : '' }}/> {{ 'Mantieni attiva la sessione'|trans }}
+    </div>
+
+    <div class="box-footer">
+        <button type="submit" id="login" class="btn btn-danger btn-block">{{ 'Accedi'|trans }}</button>
+    </div>
+</form>
+
+<script>
+    $(document).ready( function(){
+        $("#login").click(function(){
+            $("#login").text("{{ has_backup ? 'Backup automatico in corso'|trans : 'Autenticazione'|trans }}...");
+        });
+
+        if( $("input[name=username]").val() == ""){
+            $("input[name=username]").focus();
+        }
+        else{
+            $("input[name=password]").focus();
+        }
+    });
+</script>
+{% endblock %}
+

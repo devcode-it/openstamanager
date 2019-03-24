@@ -1,0 +1,32 @@
+<!-- Informazioni sulle operazioni -->
+{% for operation in operations %}
+    <ul class="timeline">
+        <li {{ operation.tags }}>
+            <div class="timeline-badge {{ operation.color }}"><i class="fa fa-{{ operation.icon }}"></i></div>
+            <div class="timeline-panel">
+                <div class="timeline-heading">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h4 class="timeline-title">{{ operation.description }}</h4>
+                        </div>
+                        <div class="col-md-4 text-right">
+                            <p><small class="label label-default tip" title="{{ operation.created_at|timestamp }}"><i class="fa fa-clock-o"></i> {{ operation.created_at|diffForHumans }}</small></p>
+                            <p><small class="label label-default"><i class="fa fa-user"></i> {{ operation.username }}</small></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-body">
+
+                </div>
+                <div class="timeline-footer">
+
+                </div>
+            </div>
+        </li>
+    </ul>
+{% else %}
+    <div class="alert alert-info">
+        <i class="fa fa-info-circle"></i>
+        {{ 'Nessun log disponibile per questa scheda'|trans }}.
+    </div>
+{% endfor %}

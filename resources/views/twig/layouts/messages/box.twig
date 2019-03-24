@@ -1,0 +1,13 @@
+{% set messages = flash.getMessages() %}
+
+{% if messages.info is not empty or messages.warning is not empty or messages.error is not empty %}
+<div class="box box-warning box-center">
+    <div class="box-header with-border text-center">
+        <h3 class="box-title">{{ 'Informazioni'|trans }}</h3>
+    </div>
+
+    <div class="box-body">
+        {% include 'layouts/messages/messages.twig' %}
+    </div>
+</div>
+{% endif %}

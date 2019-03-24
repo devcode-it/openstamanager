@@ -3,6 +3,10 @@
 {% block body_class %}hold-transition login-page{% endblock %}
 
 {% block body %}
+    {% include 'layouts/messages/box.twig' %}
+
+    {% block before_content %}{% endblock %}
+
 <div class="box box-center-large {% block box_class %}{% endblock %}">
     <div class="box-header with-border text-center">
         {% block box_header %}{% endblock %}
@@ -12,4 +16,6 @@
         {% block content %}{% endblock %}
     </div>
 </div>
+
+    {% block after_content %}{% endblock %}
 {% endblock %}

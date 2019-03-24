@@ -43,7 +43,17 @@ class BaseController extends Controller
 
         // Login
         elseif (!$this->auth->isAuthenticated()) {
-            $response = $this->view->render($response, 'resources\views\login.php', $args);
+            $args['has_backup'] = $this->database->isInstalled() && !Update::isUpdateAvailable() && setting('Backup automatico');
+            $args['is_beta'] = Update::isBeta();
+            $args['brute'] = [
+                'actual' => Auth::isBrute(),
+                'timeout' => Auth::getBruteTimeout(),
+            ];
+
+            $args['username'] = $this->flash->getFirstMessage('username');
+            $args['keep_alive'] = $this->flash->getFirstMessage('keep_alive');
+
+            $response = $this->twig->render($response, 'user\login.twig', $args);
         }
 
         // Redirect automatico al primo modulo disponibile
@@ -58,9 +68,10 @@ class BaseController extends Controller
     {
         $username = post('username');
         $password = post('password');
+        $keep_alive = (filter('keep_alive') != null);
 
         if ($this->database->isConnected() && $this->database->isInstalled() && $this->auth->attempt($username, $password)) {
-            $_SESSION['keep_alive'] = (filter('keep_alive') != null);
+            $_SESSION['keep_alive'] = $keep_alive;
 
             // Rimozione log vecchi
             $this->database->query('DELETE FROM `zz_operations` WHERE DATE_ADD(`created_at`, INTERVAL 30*24*60*60 SECOND) <= NOW()');
@@ -83,6 +94,9 @@ class BaseController extends Controller
             $status = $this->auth->getCurrentStatus();
 
             flash()->error(Auth::getStatus()[$status]['message']);
+
+            $this->flash->addMessage('username', $username);
+            $this->flash->addMessage('keep_alive', $keep_alive);
 
             $response = $response->withRedirect($this->router->pathFor('login'));
         }

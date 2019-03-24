@@ -1,0 +1,70 @@
+{% extends "layouts/app.twig" %}
+
+{% block top_content %}
+    <!-- Widget in alto -->
+    {( "name": "widgets", "id_module": "{{ module_id }}", "id_record": "{{ record_id }}", "position": "top", "place": "controller" )}
+{% endblock %}
+
+{% block bottom_content %}
+    <!-- Widget in alto -->
+    {( "name": "widgets", "id_module": "{{ module_id }}", "id_record": "{{ record_id }}", "position": "right", "place": "controller" )}
+{% endblock %}
+
+{% block content %}
+    {{ block('top_content') }}
+
+    <div class="nav-tabs-custom">
+    <ul class="nav nav-tabs pull-right" id="tabs" role="tablist">
+        <li class="pull-left active header">
+            <a data-toggle="tab" href="#tab_0">
+                {% if structure.help %}
+                <span class="tip" title="{{ structure.help }}" data-position="bottom">
+            {% endif %}
+
+                <i class="{{ structure.icon }}"></i> {{ structure.title }}
+
+                    {% if structure.help %}
+                <i class="fa fa-question-circle-o" style="font-size:0.75em"></i>
+            </span>
+                {% endif %}
+
+                {% if structure.hasAddFile() and structure.permission == 'rw' %}
+                    <!-- Pulsante "Aggiungi" solo se la struttura lo supporta -->
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-title="{{ 'Aggiungi'|trans }}..." data-href="{{ path_for('module-add', {'module_id': module_id}) }}"><i class="fa fa-plus"></i></button>
+                {% endif %}
+
+            </a>
+        </li>
+
+        {% if include_operations and user.isAdmin() %}
+            <li class="bg-warning">
+                <a data-toggle="tab" href="#tab_info" id="link-tab_info">{{ 'Info'|trans }}</a>
+            </li>
+        {% endif %}
+
+        {% for plugin in plugins %}
+            <li>
+                <a data-toggle="tab" href="#tab_{{ plugin.id }}" id="link-tab_{{ plugin.id }}">{{ plugin.title }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <div class="tab-content">
+        <div id="tab_0" class="tab-pane active">
+
+            {% block module_content %}{% endblock %}
+
+        </div>
+
+        {% if include_operations and user.isAdmin() %}
+            <div id="tab_info" class="tab-pane">
+                {% include 'operations.twig' with {operations: operations} %}
+            </div>
+        {% endif %}
+
+        {% block plugins_content %}{% endblock %}
+    </div>
+</div>
+
+    {{ block('bottom_content') }}
+{% endblock %}

@@ -126,9 +126,13 @@ $app->group('/plugin/{plugin_id:[0-9]+}/{module_record_id}', function () use ($a
 })->add(UserMiddleware::class);
 
 // Stampe
-$app->get('/print/{print_id:[0-9]+}[/]', 'PrintController:index')
-    ->setName('print')
-    ->add(UserMiddleware::class);
+$app->group('/print', function () use ($app) {
+    $app->get('/{print_id:[0-9]+}/{record_id:[0-9]+}[/]', 'Controllers\PrintController:view')
+        ->setName('print');
+
+    $app->get('/open/{print_id:[0-9]+}/{record_id:[0-9]+}[/]', 'Controllers\PrintController:open')
+        ->setName('print-open');
+})->add(UserMiddleware::class);
 
 // Moduli
 $app->group('/upload', function () use ($app) {

@@ -124,9 +124,7 @@ class Prints
 
         $infos = self::get($print);
 
-        Permissions::addModule($infos['id_module']);
-
-        if (empty($infos) || empty($infos['enabled']) || !Permissions::check([], false)) {
+        if (empty($infos) || empty($infos['enabled'])) {
             return false;
         }
 

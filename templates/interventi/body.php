@@ -59,7 +59,7 @@ echo '
 echo '
     <tr>
         <td colspan="4">
-            '.tr('Telefono').': <b>'.$c_telefono.'</b>';
+            '.tr('Referente').': <b>'.$records[0]['nomeref'].'</b>';
     if (!empty($c_cellulare)) {
         echo' - '.tr('Cellulare').': <b>'.$c_cellulare.'</b>';
     }
@@ -315,7 +315,7 @@ echo '
         </tr>
         <tr>
             <th class="text-center" style="font-size:8pt;">
-                <b>'.tr('Tecnico').'</b>
+                <b>'.tr('Dettaglio/Tecnico').'</b>
             </th>
 
             <th class="text-center" style="font-size:8pt;width:14%">
@@ -339,7 +339,7 @@ echo '
     <tbody>';
 
 // Sessioni di lavoro dei tecnici
-$rst = $dbo->fetchArray('SELECT an_anagrafiche.*, in_interventi_tecnici.* FROM in_interventi_tecnici JOIN an_anagrafiche ON in_interventi_tecnici.idtecnico=an_anagrafiche.idanagrafica WHERE in_interventi_tecnici.idintervento='.prepare($id_record).' ORDER BY in_interventi_tecnici.orario_inizio');
+$rst = $dbo->fetchArray('SELECT an_anagrafiche.*, in_interventi_tecnici.*,  in_tipiintervento.descrizione FROM in_interventi_tecnici JOIN an_anagrafiche ON in_interventi_tecnici.idtecnico=an_anagrafiche.idanagrafica JOIN in_tipiintervento ON in_interventi_tecnici.idtipointervento=in_tipiintervento.idtipointervento WHERE in_interventi_tecnici.idintervento='.prepare($id_record).' ORDER BY in_interventi_tecnici.orario_inizio');
 
 foreach ($rst as $i => $r) {
     echo '
@@ -348,9 +348,9 @@ foreach ($rst as $i => $r) {
     // nome tecnico
     echo '
     	<td>
-    	    '.$r['ragione_sociale'].'
+    	    '.$r['descrizione'].'<small style="color:#777;"><p>'.$r['ragione_sociale'].'</p></small>
     	</td>';
-
+//$impianti[] = '<b>'.$rs2[$j]['nome']."</b> <small style='color:#777;'>(".$rs2[$j]['matricola'].')</small>';
     // data
     echo '
     	<td class="text-center">

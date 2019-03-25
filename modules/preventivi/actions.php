@@ -340,7 +340,6 @@ switch (post('op')) {
 
         for ($i = 0; $i < sizeof($rs_righe_preventivo); ++$i) {
             $righe_preventivo = [
-                'data_evasione' => $rs_righe_preventivo[$i]['data_evasione'],
                 'idpreventivo' => $id_record_new,
                 'idarticolo' => $rs_righe_preventivo[$i]['idarticolo'],
                 'is_descrizione' => $rs_righe_preventivo[$i]['is_descrizione'],

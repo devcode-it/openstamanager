@@ -61,12 +61,26 @@ class Query
 
         $user = Auth::user();
 
+        // Sostituzione periodi temporali
+        preg_match('|date_period\((.+?)\)|', $query, $matches);
+        $dates = explode(',', $matches[1]);
+        $date_filter = $matches[0];
+
+        $filters = [];
+        foreach ($dates as $date) {
+            $filters[] = $date." BETWEEN '|period_start|' AND '|period_end|'";
+        }
+        $date_query = !empty($filters) && !empty(self::$segments) ? ' AND ('.implode(' OR ', $filters).')' : '';
+
         // Elenco delle sostituzioni
         $replace = [
             // Identificatori
             '|id_anagrafica|' => prepare($user['idanagrafica']),
             '|id_utente|' => prepare($user['id']),
             '|id_parent|' => prepare($id_parent),
+
+            // Filtro temporale
+            '|'.$date_filter.'|' => $date_query,
 
             // Date
             '|period_start|' => $_SESSION['period_start'],

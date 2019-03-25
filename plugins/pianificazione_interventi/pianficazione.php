@@ -60,7 +60,12 @@ $orario_inizio = '09:00';
 $orario_fine = !empty($tempo_standard) ? date('H:i', strtotime($orario_inizio) + ((60 * 60) * $tempo_standard)) : '17:00';
 
 echo '
-<form id="add_form" action="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_parent='.$id_parent.'&id_record='.$id_record.'" method="post">
+<form id="add_form" action="'.$rootdir.'/controller.php" method="post" role="form">
+
+	<input type="hidden" name="id_plugin" value="'.$id_plugin.'">
+    <input type="hidden" name="id_parent" value="'.$id_parent.'">
+    <input type="hidden" name="id_record" value="'.$id_record.'">
+	
 	<input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="op" value="'.(!empty($is_add) ? 'edit-promemoria' : 'pianificazione').'">';
 

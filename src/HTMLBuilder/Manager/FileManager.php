@@ -50,11 +50,11 @@ class FileManager implements ManagerInterface
         $where = '`id_module` '.(!empty($options['id_module']) && empty($options['id_plugin']) ? '= '.prepare($options['id_module']) : 'IS NULL').' AND `id_plugin` '.(!empty($options['id_plugin']) ? '= '.prepare($options['id_plugin']) : 'IS NULL').'';
 
         // Categorie
-        $categories = $dbo->fetchArray('SELECT DISTINCT `category` FROM `zz_files` WHERE '.$where.' ORDER BY `category`');
+        $categories = $dbo->fetchArray('SELECT DISTINCT(BINARY `category`) AS `category` FROM `zz_files` WHERE '.$where.' ORDER BY `category`');
         foreach ($categories as $category) {
             $category = $category['category'];
 
-            $rs = $dbo->fetchArray('SELECT * FROM `zz_files` WHERE `category`'.(!empty($category) ? '= '.prepare($category) : 'IS NULL').' AND `id_record` = '.prepare($options['id_record']).' AND '.$where);
+            $rs = $dbo->fetchArray('SELECT * FROM `zz_files` WHERE BINARY `category`'.(!empty($category) ? '= '.prepare($category) : 'IS NULL').' AND `id_record` = '.prepare($options['id_record']).' AND '.$where);
 
             if (!empty($rs)) {
                 $result .= '
@@ -67,13 +67,16 @@ class FileManager implements ManagerInterface
             </button>
         </div>
     </div>
-    <div class="box-body no-padding">
-    <table class="table">
+    <div class="box-body no-padding table-responsive">
+    <table class="table table-striped table-condensed ">
+	  <thead>
         <tr>
-            <th>'.tr('Nome').'</th>
-            <th>'.tr('Data').'</th>
-            <th width="15%" class="text-center">'.tr('Opzioni').'</th>
-        </tr>';
+            <th scope="col" >'.tr('Nome').'</th>
+            <th scope="col" width="15%" >'.tr('Data').'</th>
+            <th scope="col" width="15%" class="text-right"></th>
+        </tr>
+	  </thead>
+	  <tbody>';
 
                 foreach ($rs as $r) {
                     $file = Upload::find($r['id']);
@@ -83,10 +86,10 @@ class FileManager implements ManagerInterface
             <td align="left">
                 <a href="'.ROOTDIR.'/view.php?file_id='.$r['id'].'" target="_blank">
                     <i class="fa fa-external-link"></i> '.$r['name'].'
-                </a> ('.$file->extension.')'.'
+                </a><small> ('.$file->extension.')'.((!empty($file->size)) ? ' ('.\Util\FileSystem::formatBytes($file->size).')':'').'</small>'.'
             </td>
             <td>'.\Translator::timestampToLocale($r['created_at']).'</td>
-            <td class="text-center">
+            <td class="text-right">
                 <a class="btn btn-xs btn-primary" href="'.ROOTDIR.'/actions.php?id_module='.$options['id_module'].'&op=download_file&id='.$r['id'].'&filename='.$r['filename'].'" target="_blank">
                     <i class="fa fa-download"></i>
                 </a>';
@@ -119,7 +122,8 @@ class FileManager implements ManagerInterface
                 }
 
                 $result .= '
-    </table>
+      </tbody>
+	</table>
     </div>
 </div>
 

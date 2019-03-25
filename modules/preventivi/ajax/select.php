@@ -15,8 +15,8 @@ switch ($resource) {
                 $where[] = 'an_anagrafiche.idanagrafica='.prepare($superselect['idanagrafica']);
                 $where[] = 'co_preventivi.default_revision=1';
 
-                $stato = !empty($superselect['stato']) ? $superselect['stato'] : 'fatturabile';
-                $where[] = 'idstato IN (SELECT `id` FROM co_staticontratti WHERE '.$stato.' = 1)';
+                $stato = !empty($superselect['stato']) ? $superselect['stato'] : 'is_fatturabile';
+                $where[] = 'idstato IN (SELECT `id` FROM `co_statipreventivi` WHERE '.$stato.' = 1)';
             }
 
             if (!empty($search)) {

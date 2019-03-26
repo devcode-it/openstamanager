@@ -699,6 +699,12 @@ function rimuovi_riga_fattura($id_documento, $id_riga, $dir)
         }
 
         // TODO: possibile ambiguità tra righe molto simili tra loro
+        // Se l'articolo è stato inserito in fattura tramite un preventivo devo sanare la qta_evasa
+        if (!empty($riga['idpreventivo'])) {
+            $dbo->query('UPDATE co_righe_preventivi SET qta_evasa=qta_evasa-'.$riga['qta'].' WHERE qta='.prepare($riga['qta']).' AND idarticolo='.prepare($riga['idarticolo']).' AND idpreventivo='.prepare($riga['idpreventivo']));
+        }
+
+        // TODO: possibile ambiguità tra righe molto simili tra loro
         // Se l'articolo è stato inserito in fattura tramite un ddt devo sanare la qta_evasa
         if (!empty($riga['idddt'])) {
             $dbo->query('UPDATE dt_righe_ddt SET qta_evasa=qta_evasa-'.$riga['qta'].' WHERE qta='.prepare($riga['qta']).' AND idarticolo='.prepare($riga['idarticolo']).' AND idddt='.prepare($riga['idddt']));

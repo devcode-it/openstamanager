@@ -192,6 +192,7 @@ switch (post('op')) {
         $rs = $dbo->fetchArray('SELECT idpreventivo FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idpreventivo IS NOT NULL');
         for ($i = 0; $i < sizeof($rs); ++$i) {
             $dbo->query("UPDATE co_preventivi SET idstato=(SELECT id FROM co_statipreventivi WHERE descrizione='In lavorazione') WHERE id=".prepare($rs[$i]['idpreventivo']));
+            $dbo->query("UPDATE co_righe_preventivi SET qta_evasa=0 WHERE idpreventivo=".prepare($rs[$i]['idpreventivo']));
         }
 
         // Se ci sono degli interventi collegati li rimetto nello stato "Completato"
@@ -481,12 +482,13 @@ switch (post('op')) {
             $idriga = post('idriga');
 
             // Lettura preventivi collegati
-            $query = 'SELECT iddocumento, idpreventivo, is_preventivo, idarticolo FROM co_righe_documenti WHERE id='.prepare($idriga);
+            $query = 'SELECT iddocumento, idpreventivo, is_preventivo, idarticolo, qta FROM co_righe_documenti WHERE id='.prepare($idriga);
             $rsp = $dbo->fetchArray($query);
             $id_record = $rsp[0]['iddocumento'];
             $idpreventivo = $rsp[0]['idpreventivo'];
             $is_preventivo = $rsp[0]['is_preventivo'];
             $idarticolo = $rsp[0]['idarticolo'];
+            $qta = $rsp[0]['qta'];
 
             // preventivo su unica riga, perdo il riferimento dell'articolo quindi lo vado a leggere da co_righe_preventivi
             if (empty($idarticolo) && $is_preventivo) {
@@ -496,12 +498,35 @@ switch (post('op')) {
                     if (!empty($rsa[$i]['idarticolo'])) {
                         add_movimento_magazzino($rsa[$i]['idarticolo'], $rsa[$i]['qta'], ['iddocumento' => $id_record]);
                     }
+
+                    // Ripristino le quantità da evadere nel preventivo
+                    $dbo->update( 'co_righe_preventivi',
+                        [
+                            'qta_evasa' => 0,
+                        ],
+                        [
+                            'idpreventivo' => $idpreventivo,
+                        ]
+                    );
                 }
             } else {
+                $rs5 = $dbo->fetchArray('SELECT idarticolo, id, qta, descrizione FROM co_righe_documenti WHERE  id = '.prepare($idriga));
+
                 if (!empty($idarticolo)) {
-                    $rs5 = $dbo->fetchArray('SELECT idarticolo, id, qta FROM co_righe_documenti WHERE  id = '.prepare($idriga).'  AND idintervento IS NULL');
                     rimuovi_articolo_dafattura($rs5[0]['idarticolo'], $id_record, $idriga);
                 }
+
+                // Ripristino le quantità da evadere nel preventivo
+                $dbo->update( 'co_righe_preventivi',
+                    [
+                        'qta_evasa' => 0,
+                    ],
+                    [
+                        'idarticolo' => $rs5[0]['idarticolo'],
+                        'descrizione' => $rs5[0]['descrizione'],
+                        'idpreventivo' => $idpreventivo,
+                    ]
+                );
             }
 
             $query = 'DELETE FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND id='.prepare($idriga);

@@ -368,11 +368,6 @@ switch (post('op')) {
 
                 $copia = $riga->copiaIn($ordine, $qta);
 
-                // Aggiornamento seriali dalla riga dell'ordine
-                if ($copia->isArticolo()) {
-                    $copia->movimenta($copia->qta);
-                }
-
                 $copia->save();
             }
 

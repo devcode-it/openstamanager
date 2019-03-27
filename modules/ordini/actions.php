@@ -367,6 +367,11 @@ switch (post('op')) {
                 $qta = post('qta_da_evadere')[$riga->id];
 
                 $copia = $riga->copiaIn($ordine, $qta);
+                
+                // Aggiornamento seriali dalla riga dell'ordine
+                if ($copia->isArticolo()) {
+                    $copia->movimenta($copia->qta);
+                }
 
                 $copia->save();
             }

@@ -235,7 +235,7 @@ if (!empty($record['ritenutaacconto']) || !empty($fattura->totale_ritenuta_contr
     }
 
     $contributi = (!empty($record['ritenutaacconto']) ? ' - ' : '').tr('contributi: _PRC_%', [
-        '_PRC_' => Translator::numberToLocale($fattura->ritenutaContributi->percentuale, 0),
+        '_PRC_' => Translator::numberToLocale($fattura->ritenutaContributi->percentuale, 2),
     ]);
     $acconto = tr('acconto: _PRC_%', [
         '_PRC_' => Translator::numberToLocale($rs2[0]['percentuale'], 0),

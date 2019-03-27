@@ -291,7 +291,7 @@ class FatturaElettronica
             $anagrafica = static::getAzienda();
         }
 
-        $prefix = 'IT'.(!empty($anagrafica['codice_fiscale']) ? $anagrafica['codice_fiscale'] : str_replace($anagrafica->nazione->iso2, '', $anagrafica['piva']));
+        $prefix = 'IT'.(!empty($anagrafica['codice_fiscale'] and ($anagrafica['codice_fiscale']!=$anagrafica['piva'])) ? $anagrafica['codice_fiscale'] : str_replace($anagrafica->nazione->iso2, '', $anagrafica['piva']));
 
         if (empty($this->documento['progressivo_invio']) || !empty($new)) {
             $database = database();
@@ -386,7 +386,7 @@ class FatturaElettronica
         $result = [
             'IdTrasmittente' => [
                 'IdPaese' => $anagrafica->nazione->iso2,
-                'IdCodice' => (!empty($anagrafica['codice_fiscale'])) ? $anagrafica['codice_fiscale'] : str_replace($anagrafica->nazione->iso2, '', $anagrafica['piva']),
+                'IdCodice' => (!empty($anagrafica['codice_fiscale']) and ($anagrafica['codice_fiscale']!=$anagrafica['piva'])) ? $anagrafica['codice_fiscale'] : str_replace($anagrafica->nazione->iso2, '', $anagrafica['piva']),
             ],
         ];
 
@@ -644,7 +644,7 @@ class FatturaElettronica
             $percentuale = database()->fetchOne('SELECT percentuale FROM co_ritenutaacconto WHERE id = '.prepare($id_ritenuta))['percentuale'];
 
             $result['DatiRitenuta'] = [
-                'TipoRitenuta' => ($azienda['tipo'] == 'Privato') ? 'RT01' : 'RT02',
+                'TipoRitenuta' => (!empty($azienda['codice_fiscale']) and ($azienda['codice_fiscale']!=$azienda['piva'])) ? 'RT01' : 'RT02',
                 'ImportoRitenuta' => $totale_ritenutaacconto,
                 'AliquotaRitenuta' => $percentuale,
                 'CausalePagamento' => setting("Causale ritenuta d'acconto"),

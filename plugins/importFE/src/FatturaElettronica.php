@@ -163,11 +163,11 @@ class FatturaElettronica
         $sede->indirizzo = $info['Indirizzo'];
         $sede->cap = $info['CAP'];
         $sede->citta = $info['Comune'];
-        $sede->indirizzo = $info['Indirizzo'];
-        $sede->nazione()->associate(Nazione::where('iso2', $info['Nazione'])->first());
-        if (!empty($info['Provincia'])) {
+		if (!empty($info['Provincia'])) {
             $sede->provincia = $info['Provincia'];
         }
+        $sede->nazione()->associate(Nazione::where('iso2', $info['Nazione'])->first());
+        
 
         $contatti = $xml['Contatti'];
         if (!empty($contatti)) {

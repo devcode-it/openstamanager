@@ -33,7 +33,7 @@ if ($record['can_delete']) {
 
     <div class="row">
 		<div class="col-md-2">
-			{[ "type": "checkbox", "label": "<?php echo tr('Abilita notifiche'); ?>", "name": "notifica", "value": "$notifica$" ]}
+			{[ "type": "checkbox", "label": "<?php echo tr('Abilita notifiche'); ?>", "name": "notifica", "help": "<?php echo tr('Quando l\'intervento passa in questo stato viene inoltrata una notifica ai destinatari designati'); ?>.", "value": "$notifica$" ]}
 		</div>
 
 		<div class="col-md-4">

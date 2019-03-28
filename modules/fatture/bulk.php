@@ -79,7 +79,7 @@ switch (post('op')) {
         }
 
         // Selezione delle fatture da stampare
-        $fatture = $dbo->fetchArray('SELECT co_documenti.id, numero_esterno, data, ragione_sociale, co_tipidocumento.descrizione FROM co_documenti INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id IN('.implode(',', $id_records).')');
+        $fatture = $dbo->fetchArray('SELECT co_documenti.id, numero_esterno, data, ragione_sociale, co_tipidocumento.descrizione, co_tipidocumento.dir FROM co_documenti INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id IN('.implode(',', $id_records).')');
 
         $failed = [];
         if (!empty($fatture)) {
@@ -88,9 +88,13 @@ switch (post('op')) {
                 $include = true;
 
                 try {
-                    $fe = new \Plugins\ExportFE\FatturaElettronica($fattura->id);
+                    if ($r['dir'] == 'entrata') {
+                        $fe = new \Plugins\ExportFE\FatturaElettronica($fattura->id);
+                        $include = $fe->isGenerated();
+                    } else {
+                        $include = $fattura->isFE();
+                    }
 
-                    $include = $fe->isGenerated();
                 } catch (UnexpectedValueException $e) {
                     $include = false;
                 }
@@ -98,10 +102,16 @@ switch (post('op')) {
                 if (!$include) {
                     $failed[] = $fattura->numero_esterno;
                 } else {
-                    $filename = $fe->getFilename();
+                    if ($r['dir'] == 'entrata') {
+                        $src = $fe->getFilename();
+                        $dst = $src;
+                    } else {
+                        $src = basename( $fattura->uploads()->where('name', 'Fattura Elettronica')->first()->filepath );
+                        $dst = basename( $fattura->uploads()->where('name', 'Fattura Elettronica')->first()->original );
+                    }
 
-                    $file = slashes($module->upload_directory.'/'.$filename);
-                    $dest = slashes($dir.'/tmp/'.$filename);
+                    $file = slashes($module->upload_directory.'/'.$src);
+                    $dest = slashes($dir.'/tmp/'.$dst);
 
                     $result = copy($file, $dest);
                     if ($result) {
@@ -146,16 +156,17 @@ if ($module->name == 'Fatture di vendita') {
             'blank' => true,
         ],
     ];
-
-    $bulk['export-xml-bulk'] = [
-        'text' => tr('Esporta XML'),
-        'data' => [
-            'msg' => tr('Vuoi davvero esportare tutte le fatture elettroniche in un archivio?'),
-            'button' => tr('Procedi'),
-            'class' => 'btn btn-lg btn-warning',
-            'blank' => true,
-        ],
-    ];
 }
+
+
+$bulk['export-xml-bulk'] = [
+    'text' => tr('Esporta XML'),
+    'data' => [
+        'msg' => tr('Vuoi davvero esportare tutte le fatture elettroniche in un archivio?'),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => true,
+    ],
+];
 
 return $bulk;

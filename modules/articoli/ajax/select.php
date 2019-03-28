@@ -111,14 +111,6 @@ switch ($resource) {
             }
 
             $prezzo_vendita = $r['prezzo_vendita'];
-            if (!empty($listino)) {
-                $prezzo_vendita = sum($prezzo_vendita, -calcola_sconto([
-                    'sconto' => $listino['percentuale'],
-                    'prezzo' => $prezzo_vendita,
-                    'tipo' => 'PRC',
-                    'qta' => 1,
-                ]));
-            }
 
             $results[count($results) - 1]['children'][] = [
                 'id' => $r['id'],

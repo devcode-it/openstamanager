@@ -80,13 +80,9 @@ if (!empty($rs)) {
         echo '
         <td class="text-center">';
         if (empty($r['is_descrizione'])) {
-            if (empty($r['sconto_globale'])) {
-                echo '
-                <big>'.Translator::numberToLocale($r['qta'] - $r['qta_evasa'], 'qta').'</big>
-                <br><small>('.tr('Q.tà iniziale').': '.Translator::numberToLocale($r['qta'], 'qta').')</small>';
-            } else {
-                echo '1';
-            }
+            echo '
+            <big>'.Translator::numberToLocale($r['qta'] - $r['qta_evasa'], 'qta').'</big>
+            <br><small>('.tr('Q.tà iniziale').': '.Translator::numberToLocale($r['qta'], 'qta').')</small>';
         }
         echo '
         </td>';
@@ -144,7 +140,7 @@ if (!empty($rs)) {
         echo '
         <td class="text-center">';
 
-        if ($record['flag_completato'] == 0 && empty($r['sconto_globale'])) {
+        if ($record['flag_completato'] == 0) {
             echo "
             <form action='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record."' method='post' id='delete-form-".$r['id']."' role='form'>
                 <input type='hidden' name='backto' value='record-edit'>
@@ -173,13 +169,6 @@ if (!empty($rs)) {
                     <a class='btn btn-xs btn-danger' title='Rimuovi questa riga...' onclick=\"if( confirm('Rimuovere questa riga dall\\'ordine?') ){ $('#delete-form-".$r['id']."').submit(); }\"><i class='fa fa-trash'></i></a>
                 </div>
             </form>";
-        }
-
-        if (empty($r['sconto_globale'])) {
-            echo '
-            <div class="handle clickable" style="padding:10px">
-                <i class="fa fa-sort"></i>
-            </div>';
         }
 
         echo '

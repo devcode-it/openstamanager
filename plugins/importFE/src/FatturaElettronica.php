@@ -163,11 +163,10 @@ class FatturaElettronica
         $sede->indirizzo = $info['Indirizzo'];
         $sede->cap = $info['CAP'];
         $sede->citta = $info['Comune'];
-		if (!empty($info['Provincia'])) {
+        if (!empty($info['Provincia'])) {
             $sede->provincia = $info['Provincia'];
         }
         $sede->nazione()->associate(Nazione::where('iso2', $info['Nazione'])->first());
-        
 
         $contatti = $xml['Contatti'];
         if (!empty($contatti)) {
@@ -376,6 +375,8 @@ class FatturaElettronica
         $stato_documento = StatoFattura::where('descrizione', 'Emessa')->first();
         $fattura->stato()->associate($stato_documento);
 
+        // Nodo ScontoMaggiorazione generale per il documento ignorato (issue #542)
+        /*
         // Sconto globale
         $sconto = $dati_generali['ScontoMaggiorazione'];
         if (!empty($sconto)) {
@@ -386,7 +387,7 @@ class FatturaElettronica
 
             $fattura->sconto_globale = $unitario;
             $fattura->tipo_sconto_globale = $tipo;
-        }
+        }*/
 
         // Ritenuta d'Acconto
         $ritenuta = $dati_generali['DatiRitenuta'];

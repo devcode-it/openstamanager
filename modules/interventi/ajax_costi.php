@@ -100,19 +100,5 @@ if ($show_prezzi) {
 </table>';
 }
 
-// Lettura dello sconto incondizionato
-$rss = $dbo->fetchArray('SELECT sconto_globale, tipo_sconto_globale FROM in_interventi WHERE id='.prepare($id_record));
-$sconto = $rss[0]['sconto_globale'];
-$tipo_sconto = $rss[0]['tipo_sconto_globale'];
-
-echo '
-
-<!-- SCONTO -->
-<div class="row">
-    <div class="col-md-4 pull-right">
-        {[ "type": "number", "label": "'.tr('Sconto incondizionato').'", "name": "sconto_globale", "value": "'.$sconto.'", "icon-after": "choice|untprc|'.$tipo_sconto.'|'.$readonly.'", "extra": "'.$readonly.'" ]}
-    </div>
-</div>';
-
 echo '
 <script src="'.$rootdir.'/lib/init.js"></script>';

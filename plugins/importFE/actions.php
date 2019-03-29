@@ -52,7 +52,6 @@ switch (filter('op')) {
 
         $id_record = $fattura_pa->saveFattura(post('pagamento'), post('id_segment'), post('id_tipo'));
         $fattura_pa->saveRighe(post('articoli'), post('iva'), post('conto'), post('movimentazione'));
-        $fattura_pa->getFattura()->updateSconto();
 
         $fattura_pa->saveAllegati();
 

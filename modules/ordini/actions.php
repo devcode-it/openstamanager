@@ -77,9 +77,6 @@ switch (post('op')) {
             'idrivalsainps' => $idrivalsainps,
             'idritenutaacconto' => $idritenutaacconto,
 
-            'sconto_globale' => $sconto,
-            'tipo_sconto_globale' => $tipo_sconto,
-
             'bollo' => 0,
             'rivalsainps' => 0,
             'ritenutaacconto' => 0,
@@ -91,14 +88,6 @@ switch (post('op')) {
         ], ['id' => $id_record]);
 
         if ($dbo->query($query)) {
-            aggiorna_sconto([
-                'parent' => 'or_ordini',
-                'row' => 'or_righe_ordini',
-            ], [
-                'parent' => 'id',
-                'row' => 'idordine',
-            ], $id_record);
-
             $query = 'SELECT descrizione FROM or_statiordine WHERE id='.prepare($idstatoordine);
             $rs = $dbo->fetchArray($query);
 
@@ -140,7 +129,9 @@ switch (post('op')) {
 
             flash()->info(tr('Articolo aggiunto!'));
         }
+
         ricalcola_costiagg_ordine($id_record);
+
         break;
 
     case 'addriga':
@@ -181,11 +172,7 @@ switch (post('op')) {
         }
 
         // Ricalcolo inps, ritenuta e bollo
-        if ($dir == 'entrata') {
-            ricalcola_costiagg_ordine($id_record);
-        } else {
-            ricalcola_costiagg_ordine($id_record);
-        }
+        ricalcola_costiagg_ordine($id_record);
 
         break;
 
@@ -232,6 +219,34 @@ switch (post('op')) {
 
             flash()->info(tr('Riga rimossa!'));
         }
+        break;
+
+    case 'manage_sconto':
+        if (post('idriga') != null) {
+            $sconto = Riga::find(post('idriga'));
+        } else {
+            $sconto = Riga::build($ordine);
+        }
+
+        $sconto->qta = 1;
+
+        $sconto->descrizione = post('descrizione');
+        $sconto->id_iva = post('idiva');
+
+        $sconto->sconto_unitario = post('sconto_unitario');
+        $sconto->tipo_sconto = 'UNT';
+
+        $sconto->save();
+
+        if (post('idriga') != null) {
+            flash()->info(tr('Sconto/maggiorazione modificato!'));
+        } else {
+            flash()->info(tr('Sconto/maggiorazione aggiunta!'));
+        }
+
+        // Ricalcolo inps, ritenuta e bollo
+        ricalcola_costiagg_ordine($id_record);
+
         break;
 
     // Modifica riga
@@ -289,11 +304,7 @@ switch (post('op')) {
                 flash()->info(tr('Riga modificata!'));
 
                 // Ricalcolo inps, ritenuta e bollo
-                if ($dir == 'entrata') {
-                    ricalcola_costiagg_ordine($id_record);
-                } else {
-                    ricalcola_costiagg_ordine($id_record);
-                }
+                ricalcola_costiagg_ordine($id_record);
             }
         }
         break;
@@ -367,7 +378,7 @@ switch (post('op')) {
                 $qta = post('qta_da_evadere')[$riga->id];
 
                 $copia = $riga->copiaIn($ordine, $qta);
-                
+
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
                     $copia->movimenta($copia->qta);
@@ -381,15 +392,6 @@ switch (post('op')) {
             }
         }
 
-        // Aggiornamento sconto
-        if (post('evadere')[$preventivo->scontoGlobale->id] == 'on') {
-            $ordine->tipo_sconto_globale = $preventivo->tipo_sconto_globale;
-            $ordine->sconto_globale = $preventivo->tipo_sconto_globale == 'PRC' ? $preventivo->sconto_globale : $preventivo->sconto_globale;
-            $ordine->save();
-
-            $ordine->updateSconto();
-        }
-
         ricalcola_costiagg_ordine($id_record);
 
         flash()->info(tr('Preventivo _NUM_ aggiunto!', [
@@ -397,14 +399,4 @@ switch (post('op')) {
         ]));
 
         break;
-}
-
-if (post('op') !== null && post('op') != 'update') {
-    aggiorna_sconto([
-        'parent' => 'or_ordini',
-        'row' => 'or_righe_ordini',
-    ], [
-        'parent' => 'id',
-        'row' => 'idordine',
-    ], $id_record);
 }

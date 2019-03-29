@@ -110,9 +110,14 @@ abstract class Description extends Model
         return $this->is_descrizione == 1;
     }
 
+    public function isSconto()
+    {
+        return $this->subtotale == 0;
+    }
+
     public function isRiga()
     {
-        return !$this->isDescrizione() && !$this->isArticolo();
+        return !$this->isDescrizione() && !$this->isSconto() && !$this->isArticolo();
     }
 
     public function isArticolo()
@@ -161,9 +166,5 @@ abstract class Description extends Model
                 $builder->where('is_descrizione', '=', 0);
             });
         }
-
-        static::addGlobalScope('not_discount', function (Builder $builder) {
-            $builder->where('sconto_globale', '=', 0);
-        });
     }
 }

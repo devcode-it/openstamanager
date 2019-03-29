@@ -1,19 +1,17 @@
 <?php
 
-use Modules\Fatture\Fattura;
+use Modules\Interventi\Intervento;
 
 include_once __DIR__.'/../../core.php';
 
-$documento = Fattura::find($id_record);
+$documento = Intervento::find($id_record);
 
 // Impostazioni per la gestione
 $options = [
     'op' => 'manage_riga',
     'action' => 'edit',
     'dir' => $documento->direzione,
-    'conti' => $documento->direzione == 'entrata' ? 'conti-vendite' : 'conti-acquisti',
     'idanagrafica' => $documento['idanagrafica'],
-    'show-ritenuta-contributi' => !empty($documento['id_ritenuta_contributi']),
     'totale' => $documento->totale,
 ];
 

@@ -108,14 +108,6 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 				<div class="col-md-3">
 					{[ "type": "select", "multiple": "1", "label": "<?php echo tr('Impianti'); ?>", "name": "matricolaimpianto[]", "values": "query=SELECT idanagrafica, id AS id, IF(nome = '', matricola, CONCAT(matricola, ' - ', nome)) AS descrizione FROM my_impianti WHERE idanagrafica='$idanagrafica$' ORDER BY descrizione", "value": "$idimpianti$" ]}
 				</div>
-
-                <div class="col-md-3">
-                    {[ "type": "number", "label": "<?php echo tr('Sconto incondizionato'); ?>", "name": "sconto_generico", "value": "$sconto_globale$", "help": "<?php echo tr('Sconto complessivo del contratto'); ?>", "icon-after": "choice|untprc|$tipo_sconto_globale$"<?php
-if ($record['stato'] == 'Emessa') {
-                        echo ', "disabled" : 1';
-                    }
-?> ]}
-                </div>
             </div>
 
 
@@ -302,13 +294,25 @@ if (sizeof($rs) > 0) {
     <div class="panel-body">
 <?php
 if ($record['stato'] != 'Pagato') {
-    ?>
-        <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/contratti/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_articolo" data-toggle="modal" data-title="Aggiungi articolo"><i class="fa fa-plus"></i> <?php echo tr('Articolo'); ?></a>
+    echo '
+            <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_articolo" data-toggle="tooltip" data-title="'.tr('Aggiungi articolo').'">
+                <i class="fa fa-plus"></i> '.tr('Articolo').'
+            </a>';
 
-        <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/contratti/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_riga" data-toggle="modal" data-title="Aggiungi riga"><i class="fa fa-plus"></i> <?php echo tr('Riga'); ?></a>
+    echo '
+            <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_riga" data-toggle="tooltip" data-title="'.tr('Aggiungi riga').'">
+                <i class="fa fa-plus"></i> '.tr('Riga').'
+            </a>';
 
-        <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/contratti/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_descrizione" data-toggle="modal" data-title="Aggiungi descrizione"><i class="fa fa-plus"></i> <?php echo tr('Descrizione'); ?></a>
-    <?php
+    echo '
+            <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_descrizione" data-toggle="tooltip" data-title="'.tr('Aggiungi descrizione').'">
+                <i class="fa fa-plus"></i> '.tr('Descrizione').'
+            </a>';
+
+    echo '
+            <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_sconto" data-toggle="tooltip" data-title="'.tr('Aggiungi sconto/maggiorazione').'">
+                <i class="fa fa-plus"></i> '.tr('Sconto/maggiorazione').'
+            </a>';
 }
 ?>
         <div class="clearfix"></div>

@@ -90,23 +90,6 @@ switch (post('op')) {
 
             $dbo->query($query);
 
-            // Aggiornamento sconto
-            $tipo_sconto = post('tipo_sconto_generico');
-            $sconto = post('sconto_generico');
-
-            $dbo->update('co_contratti', [
-                'tipo_sconto_globale' => $tipo_sconto,
-                'sconto_globale' => $sconto,
-            ], ['id' => $id_record]);
-
-            aggiorna_sconto([
-                'parent' => 'co_contratti',
-                'row' => 'co_righe_contratti',
-            ], [
-                'parent' => 'id',
-                'row' => 'idcontratto',
-            ], $id_record);
-
             $dbo->query('DELETE FROM my_impianti_contratti WHERE idcontratto='.prepare($id_record));
             foreach ((array) post('matricolaimpianto') as $matricolaimpianto) {
                 $dbo->query('INSERT INTO my_impianti_contratti(idcontratto,idimpianto) VALUES('.prepare($id_record).', '.prepare($matricolaimpianto).')');
@@ -139,6 +122,31 @@ switch (post('op')) {
             }
 
             flash()->info(tr('Contratto modificato correttamente!'));
+        }
+
+        break;
+
+    case 'manage_sconto':
+        if (post('idriga') != null) {
+            $sconto = Riga::find(post('idriga'));
+        } else {
+            $sconto = Riga::build($contratto);
+        }
+
+        $sconto->qta = 1;
+
+        $sconto->descrizione = post('descrizione');
+        $sconto->id_iva = post('idiva');
+
+        $sconto->sconto_unitario = post('sconto_unitario');
+        $sconto->tipo_sconto = 'UNT';
+
+        $sconto->save();
+
+        if (post('idriga') != null) {
+            flash()->info(tr('Sconto/maggiorazione modificato!'));
+        } else {
+            flash()->info(tr('Sconto/maggiorazione aggiunta!'));
         }
 
         break;
@@ -363,14 +371,4 @@ switch (post('op')) {
         }
 
         break;
-}
-
-if (post('op') !== null && post('op') != 'update') {
-    aggiorna_sconto([
-        'parent' => 'co_contratti',
-        'row' => 'co_righe_contratti',
-    ], [
-        'parent' => 'id',
-        'row' => 'idcontratto',
-    ], $id_record);
 }

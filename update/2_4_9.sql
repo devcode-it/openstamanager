@@ -110,3 +110,20 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati dei contratti'), 'Icona', 'icona', 3, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati dei contratti'), 'Descrizione', 'descrizione', 2, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati dei contratti'), 'id', 'id', 1, 0, 0, 1, 0);
+
+-- Aggiornamento sconti incodizionati
+ALTER TABLE `co_documenti` DROP `sconto_globale`, DROP `tipo_sconto_globale`;
+ALTER TABLE `co_preventivi` DROP `sconto_globale`, DROP `tipo_sconto_globale`;
+ALTER TABLE `co_contratti` DROP `sconto_globale`, DROP `tipo_sconto_globale`;
+ALTER TABLE `or_ordini` DROP `sconto_globale`, DROP `tipo_sconto_globale`;
+ALTER TABLE `dt_ddt` DROP `sconto_globale`, DROP `tipo_sconto_globale`;
+
+ALTER TABLE `co_righe_documenti` DROP `sconto_globale`;
+ALTER TABLE `co_righe_preventivi` DROP `sconto_globale`;
+ALTER TABLE `co_righe_contratti` DROP `sconto_globale`;
+ALTER TABLE `or_righe_ordini` DROP `sconto_globale`;
+ALTER TABLE `dt_righe_ddt` DROP `sconto_globale`;
+
+-- Fix per la tabella in_righe_interventi
+ALTER TABLE `in_righe_interventi` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idintervento`, ADD `idarticolo` INT(11) AFTER `idintervento`, ADD FOREIGN KEY (`idarticolo`) REFERENCES `mg_articoli`(`id`);
+ALTER TABLE `mg_articoli_interventi` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idintervento`;

@@ -77,19 +77,12 @@ class DDT extends Document
      */
     public function getModuleAttribute()
     {
-        return $this->tipo->dir == 'entrata' ? 'Ddt di vendita' : 'DDT di acquisto';
+        return $this->direzione == 'entrata' ? 'Ddt di vendita' : 'DDT di acquisto';
     }
 
-    public function updateSconto()
+    public function getDirezioneAttribute()
     {
-        // Aggiornamento sconto
-        aggiorna_sconto([
-            'parent' => 'dt_ddt',
-            'row' => 'dt_righe_ddt',
-        ], [
-            'parent' => 'id',
-            'row' => 'idddt',
-        ], $this->id);
+        return $this->tipo->dir;
     }
 
     public function anagrafica()
@@ -120,11 +113,6 @@ class DDT extends Document
     public function descrizioni()
     {
         return $this->hasMany(Components\Descrizione::class, 'idddt');
-    }
-
-    public function scontoGlobale()
-    {
-        return $this->hasOne(Components\Sconto::class, 'idddt');
     }
 
     // Metodi statici

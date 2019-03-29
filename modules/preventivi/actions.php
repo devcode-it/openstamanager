@@ -80,8 +80,6 @@ switch (post('op')) {
                 ' data_conclusione='.prepare($data_conclusione).','.
                 ' esclusioni='.prepare($esclusioni).','.
                 ' descrizione='.prepare($descrizione).','.
-                ' tipo_sconto_globale='.prepare($tipo_sconto).','.
-                ' sconto_globale='.prepare($sconto).','.
                 ' id_documento_fe='.prepare($id_documento_fe).','.
                 ' num_item='.prepare($num_item).','.
                 ' codice_cig='.prepare($codice_cig).','.
@@ -90,14 +88,6 @@ switch (post('op')) {
                 ' idtipointervento='.prepare($idtipointervento).','.
                 ' idiva='.prepare($idiva).' WHERE id='.prepare($id_record);
             $dbo->query($query);
-
-            aggiorna_sconto([
-                'parent' => 'co_preventivi',
-                'row' => 'co_righe_preventivi',
-            ], [
-                'parent' => 'id',
-                'row' => 'idpreventivo',
-            ], $id_record);
 
             // update_budget_preventivo( $id_record );
             flash()->info(tr('Preventivo modificato correttamente!'));
@@ -240,6 +230,31 @@ switch (post('op')) {
 
         break;
 
+    case 'manage_sconto':
+        if (post('idriga') != null) {
+            $sconto = Riga::find(post('idriga'));
+        } else {
+            $sconto = Riga::build($preventivo);
+        }
+
+        $sconto->qta = 1;
+
+        $sconto->descrizione = post('descrizione');
+        $sconto->id_iva = post('idiva');
+
+        $sconto->sconto_unitario = post('sconto_unitario');
+        $sconto->tipo_sconto = 'UNT';
+
+        $sconto->save();
+
+        if (post('idriga') != null) {
+            flash()->info(tr('Sconto/maggiorazione modificato!'));
+        } else {
+            flash()->info(tr('Sconto/maggiorazione aggiunta!'));
+        }
+
+        break;
+
     case 'editriga':
         $idriga = post('idriga');
         $descrizione = post('descrizione');
@@ -327,8 +342,6 @@ switch (post('op')) {
             'ore_lavoro' => $rs_preventivo[0]['ore_lavoro'],
             'costo_orario' => $rs_preventivo[0]['costo_orario'],
             'costo_km' => $rs_preventivo[0]['costo_km'],
-            'sconto_globale' => $rs_preventivo[0]['sconto_globale'],
-            'tipo_sconto_globale' => $rs_preventivo[0]['tipo_sconto_globale'],
             'master_revision' => $rs_preventivo[0]['master_revision'],
             'default_revision' => '1',
         ];
@@ -364,14 +377,4 @@ switch (post('op')) {
 
         flash()->info(tr('Aggiunta nuova revisione!'));
         break;
-}
-
-if (post('op') !== null && post('op') != 'update') {
-    aggiorna_sconto([
-        'parent' => 'co_preventivi',
-        'row' => 'co_righe_preventivi',
-    ], [
-        'parent' => 'id',
-        'row' => 'idpreventivo',
-    ], $id_record);
 }

@@ -12,7 +12,6 @@ class Articolo extends Article
 
     protected $table = 'mg_articoli_interventi';
     protected $serialRowID = 'intervento';
-    protected $disableOrder = true;
 
     /**
      * Crea una nuova riga collegata ad un intervento.

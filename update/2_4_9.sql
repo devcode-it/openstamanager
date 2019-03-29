@@ -99,7 +99,6 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati dei preventivi'), 'Descrizione', 'descrizione', 2, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati dei preventivi'), 'id', 'id', 1, 0, 0, 1, 0);
 
-
 -- Aggiunto modulo per gestire gli stati dei contratti
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Stati dei contratti', 'Stati dei contratti','stati_contratto', 'SELECT |select| FROM `co_staticontratti` WHERE 1=1 AND deleted_at IS NULL HAVING 2=2', '', 'fa fa-angle-right', '2.4.9', '2.4.9', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Contratti'), '1', '1');
 

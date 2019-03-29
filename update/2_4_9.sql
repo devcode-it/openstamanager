@@ -126,3 +126,7 @@ ALTER TABLE `dt_righe_ddt` DROP `sconto_globale`;
 -- Fix per la tabella in_righe_interventi
 ALTER TABLE `in_righe_interventi` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idintervento`, ADD `idarticolo` INT(11) AFTER `idintervento`, ADD FOREIGN KEY (`idarticolo`) REFERENCES `mg_articoli`(`id`);
 ALTER TABLE `mg_articoli_interventi` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idintervento`;
+
+-- Rimozione campi inutilizzati co_ritenutaacconto
+ALTER TABLE `co_ritenutaacconto` DROP `esente`, DROP `indetraibile`;
+UPDATE `co_ritenutaacconto` SET `percentuale_imponibile` = 100;

@@ -62,7 +62,10 @@ trait RelationTrait
             $result += $this->rivalsainps;
         }
 
-        return $result / 100 * $this->ritenuta->percentuale;
+        $ritenuta = $this->ritenuta;
+        $result = $result * $ritenuta->percentuale_imponibile / 100;
+
+        return $result / 100 * $ritenuta->percentuale;
     }
 
     public function getRitenutaContributiAttribute()

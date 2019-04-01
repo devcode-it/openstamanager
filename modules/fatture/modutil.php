@@ -698,22 +698,19 @@ function rimuovi_riga_fattura($id_documento, $id_riga, $dir)
             add_movimento_magazzino($riga['idarticolo'], ($dir == 'entrata') ? $riga['qta'] : -$riga['qta'], ['iddocumento' => $id_documento]);
         }
 
-        // TODO: possibile ambiguità tra righe molto simili tra loro
         // Se l'articolo è stato inserito in fattura tramite un preventivo devo sanare la qta_evasa
         if (!empty($riga['idpreventivo'])) {
-            $dbo->query('UPDATE co_righe_preventivi SET qta_evasa=qta_evasa-'.$riga['qta'].' WHERE qta='.prepare($riga['qta']).' AND idarticolo='.prepare($riga['idarticolo']).' AND idpreventivo='.prepare($riga['idpreventivo']));
+            $dbo->query('UPDATE co_righe_preventivi SET qta_evasa=qta_evasa-'.$riga['qta'].' WHERE qta='.prepare($riga['qta']).' AND idarticolo='.prepare($riga['idarticolo']).' AND idpreventivo='.prepare($riga['idpreventivo']).' AND qta_evasa > 0 LIMIT 1');
         }
 
-        // TODO: possibile ambiguità tra righe molto simili tra loro
         // Se l'articolo è stato inserito in fattura tramite un ddt devo sanare la qta_evasa
         if (!empty($riga['idddt'])) {
-            $dbo->query('UPDATE dt_righe_ddt SET qta_evasa=qta_evasa-'.$riga['qta'].' WHERE qta='.prepare($riga['qta']).' AND idarticolo='.prepare($riga['idarticolo']).' AND idddt='.prepare($riga['idddt']));
+            $dbo->query('UPDATE dt_righe_ddt SET qta_evasa=qta_evasa-'.$riga['qta'].' WHERE qta='.prepare($riga['qta']).' AND idarticolo='.prepare($riga['idarticolo']).' AND idddt='.prepare($riga['idddt']).' AND qta_evasa > 0 LIMIT 1');
         }
 
-        // TODO: possibile ambiguità tra righe molto simili tra loro
         // Se l'articolo è stato inserito in fattura tramite un ordine devo sanare la qta_evasa
-        if (!empty($riga['idordine'])) {
-            $dbo->query('UPDATE or_righe_ordini SET qta_evasa=qta_evasa-'.$riga['qta'].' WHERE qta='.prepare($riga['qta']).' AND idarticolo='.prepare($riga['idarticolo']).' AND idordine='.prepare($riga['idordine']));
+        elseif (!empty($riga['idordine'])) {
+            $dbo->query('UPDATE or_righe_ordini SET qta_evasa=qta_evasa-'.$riga['qta'].' WHERE qta='.prepare($riga['qta']).' AND idarticolo='.prepare($riga['idarticolo']).' AND idordine='.prepare($riga['idordine']).' AND qta_evasa > 0 LIMIT 1');
         }
     }
 

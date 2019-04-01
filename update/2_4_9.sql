@@ -83,3 +83,50 @@ UPDATE `zz_views` SET `query` = 'co_movimenti.idmastrino' WHERE `name` = 'id' AN
 
 -- Stato FE (Attestazione di avvenuta trasmissione della fattura con impossibilità di recapito, estensione ricevuta .zip)
 INSERT INTO `fe_stati_documento` (`codice`, `descrizione`, `icon`) VALUES ('AT', 'Attestazione trasmissione', 'fa fa-check text-warning');
+
+-- Aggiungo deleted_at per co_statipreventivi e co_staticontratti
+ALTER TABLE `co_statipreventivi` ADD `deleted_at` DATETIME NULL AFTER `updated_at`;
+ALTER TABLE `co_staticontratti` ADD `deleted_at` DATETIME NULL AFTER `updated_at`;
+
+-- Aggiunto modulo per gestire gli stati dei preventivi
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Stati dei preventivi', 'Stati dei preventivi','stati_preventivo', 'SELECT |select| FROM `co_statipreventivi` WHERE 1=1 AND deleted_at IS NULL HAVING 2=2', '', 'fa fa-angle-right', '2.4.9', '2.4.9', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Preventivi'), '1', '1');
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `default`, `visible`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati dei preventivi'), 'Fatturabile', 'IF(is_fatturabile, ''S&igrave;'', ''No'')', 6, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati dei preventivi'), 'Completato', 'IF(is_completato, ''S&igrave;'', ''No'')', 5, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati dei preventivi'), 'Pianificabile', 'IF(is_pianificabile, ''S&igrave;'', ''No'')', 4, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati dei preventivi'), 'Icona', 'icona', 3, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati dei preventivi'), 'Descrizione', 'descrizione', 2, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati dei preventivi'), 'id', 'id', 1, 0, 0, 1, 0);
+
+-- Aggiunto modulo per gestire gli stati dei contratti
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Stati dei contratti', 'Stati dei contratti','stati_contratto', 'SELECT |select| FROM `co_staticontratti` WHERE 1=1 AND deleted_at IS NULL HAVING 2=2', '', 'fa fa-angle-right', '2.4.9', '2.4.9', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Contratti'), '1', '1');
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `default`, `visible`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati dei contratti'), 'Fatturabile', 'IF(is_fatturabile, ''S&igrave;'', ''No'')', 6, 1, 0, 0 ,1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati dei contratti'), 'Completato', 'IF(is_completato, ''S&igrave;'', ''No'')', 5, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati dei contratti'), 'Pianificabile', 'IF(is_pianificabile, ''S&igrave;'', ''No'')', 4, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati dei contratti'), 'Icona', 'icona', 3, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati dei contratti'), 'Descrizione', 'descrizione', 2, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati dei contratti'), 'id', 'id', 1, 0, 0, 1, 0);
+
+-- Aggiornamento sconti incodizionati
+ALTER TABLE `co_documenti` DROP `sconto_globale`, DROP `tipo_sconto_globale`;
+ALTER TABLE `co_preventivi` DROP `sconto_globale`, DROP `tipo_sconto_globale`;
+ALTER TABLE `co_contratti` DROP `sconto_globale`, DROP `tipo_sconto_globale`;
+ALTER TABLE `or_ordini` DROP `sconto_globale`, DROP `tipo_sconto_globale`;
+ALTER TABLE `dt_ddt` DROP `sconto_globale`, DROP `tipo_sconto_globale`;
+
+ALTER TABLE `co_righe_documenti` DROP `sconto_globale`;
+ALTER TABLE `co_righe_preventivi` DROP `sconto_globale`;
+ALTER TABLE `co_righe_contratti` DROP `sconto_globale`;
+ALTER TABLE `or_righe_ordini` DROP `sconto_globale`;
+ALTER TABLE `dt_righe_ddt` DROP `sconto_globale`;
+
+-- Fix per la tabella in_righe_interventi
+ALTER TABLE `in_righe_interventi` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idintervento`, ADD `idarticolo` INT(11) AFTER `idintervento`, ADD FOREIGN KEY (`idarticolo`) REFERENCES `mg_articoli`(`id`);
+ALTER TABLE `mg_articoli_interventi` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idintervento`;
+
+-- Rimozione campi inutilizzati co_ritenutaacconto
+ALTER TABLE `co_ritenutaacconto` DROP `esente`, DROP `indetraibile`;
+UPDATE `co_ritenutaacconto` SET `percentuale_imponibile` = 100;

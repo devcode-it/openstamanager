@@ -291,7 +291,7 @@ class FatturaElettronica
             $anagrafica = static::getAzienda();
         }
 
-        $prefix = 'IT'.(!empty($anagrafica['codice_fiscale'] and ($anagrafica['codice_fiscale']!=$anagrafica['piva'])) ? $anagrafica['codice_fiscale'] : str_replace($anagrafica->nazione->iso2, '', $anagrafica['piva']));
+        $prefix = 'IT'.(!empty($anagrafica['codice_fiscale'] and ($anagrafica['codice_fiscale'] != $anagrafica['piva'])) ? $anagrafica['codice_fiscale'] : str_replace($anagrafica->nazione->iso2, '', $anagrafica['piva']));
 
         if (empty($this->documento['progressivo_invio']) || !empty($new)) {
             $database = database();
@@ -386,7 +386,7 @@ class FatturaElettronica
         $result = [
             'IdTrasmittente' => [
                 'IdPaese' => $anagrafica->nazione->iso2,
-                'IdCodice' => (!empty($anagrafica['codice_fiscale']) and ($anagrafica['codice_fiscale']!=$anagrafica['piva'])) ? $anagrafica['codice_fiscale'] : str_replace($anagrafica->nazione->iso2, '', $anagrafica['piva']),
+                'IdCodice' => (!empty($anagrafica['codice_fiscale']) and ($anagrafica['codice_fiscale'] != $anagrafica['piva'])) ? $anagrafica['codice_fiscale'] : str_replace($anagrafica->nazione->iso2, '', $anagrafica['piva']),
             ],
         ];
 
@@ -644,7 +644,7 @@ class FatturaElettronica
             $percentuale = database()->fetchOne('SELECT percentuale FROM co_ritenutaacconto WHERE id = '.prepare($id_ritenuta))['percentuale'];
 
             $result['DatiRitenuta'] = [
-                'TipoRitenuta' => (!empty($azienda['codice_fiscale']) and ($azienda['codice_fiscale']!=$azienda['piva'])) ? 'RT01' : 'RT02',
+                'TipoRitenuta' => (!empty($azienda['codice_fiscale']) and ($azienda['codice_fiscale'] != $azienda['piva'])) ? 'RT01' : 'RT02',
                 'ImportoRitenuta' => $totale_ritenutaacconto,
                 'AliquotaRitenuta' => $percentuale,
                 'CausalePagamento' => setting("Causale ritenuta d'acconto"),
@@ -688,6 +688,8 @@ class FatturaElettronica
         }
 
         // Sconto globale (2.1.1.8)
+        // Disabilitazione per aggiornamento sconti
+        /*
         $documento['sconto_globale'] = floatval($documento['sconto_globale']);
         if (!empty($documento['sconto_globale'])) {
             $sconto = [
@@ -702,6 +704,7 @@ class FatturaElettronica
 
             $result['ScontoMaggiorazione'] = $sconto;
         }
+        */
 
         // Importo Totale Documento (2.1.1.9)
         // Valorizzare l’importo complessivo lordo della fattura (onnicomprensivo di Iva, bollo, contributi previdenziali, ecc…)
@@ -1005,8 +1008,9 @@ class FatturaElettronica
             $dettaglio['AliquotaIVA'] = $percentuale;
 
             if (!empty($riga['idritenutaacconto']) && empty($riga['is_descrizione'])) {
-				if ($riga['calcolo_ritenuta_acconto'] == 'IMP+RIV')
-					$dettaglio['Ritenuta'] = 'SI';
+                if ($riga['calcolo_ritenuta_acconto'] == 'IMP+RIV') {
+                    $dettaglio['Ritenuta'] = 'SI';
+                }
             }
 
             // Controllo aggiuntivo codice_natura_fe per evitare che venga riportato il tag vuoto

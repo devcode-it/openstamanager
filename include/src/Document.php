@@ -24,8 +24,6 @@ abstract class Document extends Model
 
     abstract public function descrizioni();
 
-    abstract public function scontoGlobale();
-
     /**
      * Calcola l'imponibile del documento.
      *

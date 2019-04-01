@@ -78,7 +78,7 @@ foreach ($righe as $row) {
 
         $delete = 'unlink_contratto';
     }
-	// Ordini (IDDOCUMENTO,CIG,CUP)
+    // Ordini (IDDOCUMENTO,CIG,CUP)
     elseif (!empty($riga['idordine'])) {
         $ordine = $dbo->fetchOne('SELECT num_item,codice_cig,codice_cup,id_documento_fe FROM or_ordini WHERE id = '.prepare($riga['idordine']));
         $riga['num_item'] = $ordine['num_item'];
@@ -256,11 +256,11 @@ foreach ($righe as $row) {
 
         if (!$fattura->isNotaDiAccredito() && $row->isArticolo() && $riga['abilita_serial'] && (empty($riga['idddt']) || empty($riga['idintervento']))) {
             echo "
-                    <a class='btn btn-primary btn-xs'data-toggle='tooltip' title='Aggiorna SN...' onclick=\"launch_modal( 'Aggiorna SN', '".$rootdir.'/modules/fatture/add_serial.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga['id'].'&idarticolo='.$riga['idarticolo']."', 1 );\"><i class='fa fa-barcode' aria-hidden='true'></i></a>";
+                    <a class='btn btn-primary btn-xs'data-toggle='tooltip' title='Aggiorna SN...' onclick=\"launch_modal( 'Aggiorna SN', '".$structure->fileurl('add_serial.php').'?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga['id'].'&idarticolo='.$riga['idarticolo']."', 1 );\"><i class='fa fa-barcode' aria-hidden='true'></i></a>";
         }
 
         echo "
-                    <a class='btn btn-xs btn-warning' title='Modifica questa riga...' onclick=\"launch_modal( 'Modifica riga', '".$rootdir.'/modules/fatture/row-edit.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga['id']."', 1 );\"><i class='fa fa-edit'></i></a>
+                    <a class='btn btn-xs btn-warning' title='Modifica questa riga...' onclick=\"launch_modal( 'Modifica riga', '".$structure->fileurl('row-edit.php').'?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga['id']."', 1 );\"><i class='fa fa-edit'></i></a>
 
                     <a class='btn btn-xs btn-danger' title='Rimuovi questa riga...' onclick=\"if( confirm('Rimuovere questa riga dalla fattura?') ){ $('#delete-form-".$riga['id']."').submit(); }\"><i class='fa fa-trash'></i></a>
                 </div>
@@ -275,19 +275,6 @@ foreach ($righe as $row) {
     echo '
         </td>
 
-    </tr>';
-}
-
-$sconto_globale = $fattura->scontoGlobale;
-if (!empty($sconto_globale)) {
-    echo '
-    <tr>
-        <td>'.$sconto_globale->descrizione.'</td>
-        <td class="text-center">'.Translator::numberToLocale(1, 'qta').'</td>
-        <td></td>
-        <td class="text-right">'.Translator::numberToLocale($sconto_globale->totale).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($sconto_globale->iva).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($sconto_globale->totale).' &euro;</td>
     </tr>';
 }
 

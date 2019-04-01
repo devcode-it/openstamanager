@@ -77,12 +77,7 @@ class Intervento extends Document
 
     public function descrizioni()
     {
-        return null;
-    }
-
-    public function scontoGlobale()
-    {
-        return null;
+        return $this->righe()->where('prezzo_vendita', 0);
     }
 
     // Metodi statici

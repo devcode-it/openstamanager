@@ -77,19 +77,12 @@ class Ordine extends Document
      */
     public function getModuleAttribute()
     {
-        return $this->tipo->dir == 'entrata' ? 'Ordini cliente' : 'Ordini fornitore';
+        return $this->direzione == 'entrata' ? 'Ordini cliente' : 'Ordini fornitore';
     }
 
-    public function updateSconto()
+    public function getDirezioneAttribute()
     {
-        // Aggiornamento sconto
-        aggiorna_sconto([
-            'parent' => 'or_ordini',
-            'row' => 'or_righe_ordini',
-        ], [
-            'parent' => 'id',
-            'row' => 'idordine',
-        ], $this->id);
+        return $this->tipo->dir;
     }
 
     public function anagrafica()
@@ -120,11 +113,6 @@ class Ordine extends Document
     public function descrizioni()
     {
         return $this->hasMany(Components\Descrizione::class, 'idordine');
-    }
-
-    public function scontoGlobale()
-    {
-        return $this->hasOne(Components\Sconto::class, 'idordine');
     }
 
     // Metodi statici

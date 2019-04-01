@@ -1,13 +1,13 @@
 <?php
 
 switch ($resource) {
-    // Elenco stati intervento per l'applicazione
-    case 'stati_intervento':
-        $table = 'in_statiintervento';
+    // Elenco stati preventivi
+    case 'stati_preventivo':
+        $table = 'co_statipreventivi';
 
         $select = [
             '*',
-            'id' => 'idstatointervento',
+            'id' => 'id',
         ];
 
         if (empty($where['deleted_at'])) {
@@ -18,5 +18,5 @@ switch ($resource) {
 }
 
 return [
-    'stati_intervento',
+    'stati_preventivo',
 ];

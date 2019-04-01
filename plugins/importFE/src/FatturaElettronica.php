@@ -163,11 +163,10 @@ class FatturaElettronica
         $sede->indirizzo = $info['Indirizzo'];
         $sede->cap = $info['CAP'];
         $sede->citta = $info['Comune'];
-        $sede->indirizzo = $info['Indirizzo'];
-        $sede->nazione()->associate(Nazione::where('iso2', $info['Nazione'])->first());
         if (!empty($info['Provincia'])) {
             $sede->provincia = $info['Provincia'];
         }
+        $sede->nazione()->associate(Nazione::where('iso2', $info['Nazione'])->first());
 
         $contatti = $xml['Contatti'];
         if (!empty($contatti)) {
@@ -283,12 +282,16 @@ class FatturaElettronica
 
         $diff = $totale_documento ? $totale_documento - $fattura->totale : $totale_righe - $fattura->imponibile_scontato;
         if (!empty($diff)) {
+            // Rimozione dell?IVA calcolata automaticamente dal gestionale
+            $iva_arrotondamento = database()->fetchOne('SELECT * FROM co_iva WHERE id='.prepare($iva[0]));
+            $diff = $diff * 100 / (100 + $iva_arrotondamento['percentuale']);
+
             $obj = Riga::build($fattura);
 
             $obj->descrizione = tr('Arrotondamento calcolato in automatico');
             $obj->id_iva = $iva[0];
             $obj->idconto = $conto[0];
-            $obj->prezzo_unitario_vendita = $diff;
+            $obj->prezzo_unitario_vendita = round($diff, 4);
             $obj->qta = 1;
 
             $obj->save();
@@ -376,6 +379,8 @@ class FatturaElettronica
         $stato_documento = StatoFattura::where('descrizione', 'Emessa')->first();
         $fattura->stato()->associate($stato_documento);
 
+        // Nodo ScontoMaggiorazione generale per il documento ignorato (issue #542)
+        /*
         // Sconto globale
         $sconto = $dati_generali['ScontoMaggiorazione'];
         if (!empty($sconto)) {
@@ -386,7 +391,7 @@ class FatturaElettronica
 
             $fattura->sconto_globale = $unitario;
             $fattura->tipo_sconto_globale = $tipo;
-        }
+        }*/
 
         // Ritenuta d'Acconto
         $ritenuta = $dati_generali['DatiRitenuta'];

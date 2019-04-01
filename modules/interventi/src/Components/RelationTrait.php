@@ -6,6 +6,8 @@ use Modules\Interventi\Intervento;
 
 trait RelationTrait
 {
+    protected $disableOrder = true;
+
     public function getParentID()
     {
         return 'idintervento';

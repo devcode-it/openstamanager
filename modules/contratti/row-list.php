@@ -101,7 +101,7 @@ foreach ($rs as $r) {
     echo '
             <td class="text-center">';
 
-    if ($record['stato'] != 'Pagato' && empty($r['sconto_globale'])) {
+    if ($record['stato'] != 'Pagato') {
         echo '
                 <form action="'.$rootdir.'/editor.php?id_module='.Modules::get('Contratti')['id'].'&id_record='.$id_record.'" method="post" id="delete-form-'.$r['id'].'" role="form">
                     <input type="hidden" name="backto" value="record-edit">
@@ -119,13 +119,6 @@ foreach ($rs as $r) {
         echo '
                     </div>
                 </form>';
-    }
-
-    if (empty($r['sconto_globale'])) {
-        echo '
-                <div class="handle clickable" style="padding:10px">
-                    <i class="fa fa-sort"></i>
-                </div>';
     }
 
     echo '

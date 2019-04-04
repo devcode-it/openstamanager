@@ -42,10 +42,6 @@ abstract class Description extends Model
         return $diff;
     }
 
-    public function evasione($diff)
-    {
-    }
-
     public function delete()
     {
         $this->evasione(-$this->qta);
@@ -153,6 +149,10 @@ abstract class Description extends Model
     public function isArticolo()
     {
         return $this instanceof Article;
+    }
+
+    protected function evasione($diff)
+    {
     }
 
     /**

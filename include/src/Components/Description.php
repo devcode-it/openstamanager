@@ -24,6 +24,36 @@ abstract class Description extends Model
     }
 
     /**
+     * Modifica la quantità dell'elemento.
+     *
+     * @param float $value
+     *
+     * @return float
+     */
+    public function setQtaAttribute($value)
+    {
+        $previous = $this->qta;
+        $diff = $value - $previous;
+
+        $this->attributes['qta'] = $value;
+
+        $this->evasione($diff);
+
+        return $diff;
+    }
+
+    public function evasione($diff)
+    {
+    }
+
+    public function delete()
+    {
+        $this->evasione(-$this->qta);
+
+        return parent::delete();
+    }
+
+    /**
      * Imposta il proprietario dell'oggetto e l'ordine relativo all'interno delle righe.
      *
      * @param Document $document

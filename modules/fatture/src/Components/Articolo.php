@@ -57,9 +57,9 @@ class Articolo extends Article
         ]);
     }
 
-    public function evasioneAltriArticoli($diff)
+    public function evasione($diff)
     {
-        parent::evasioneAltriArticoli($diff);
+        parent::evasione($diff);
 
         $database = database();
 

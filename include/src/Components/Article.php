@@ -91,20 +91,11 @@ abstract class Article extends Row
             throw new UnexpectedValueException();
         }
 
-        $previous = $this->qta;
-        $diff = $value - $previous;
-
-        $this->attributes['qta'] = $value;
+        $diff = parent::setQtaAttribute($value);
 
         if ($this->abilita_movimentazione) {
             $this->qta_movimentazione += $diff;
         }
-
-        $this->evasioneAltriArticoli();
-    }
-
-    public function evasioneAltriArticoli($diff)
-    {
     }
 
     public function articolo()
@@ -131,13 +122,6 @@ abstract class Article extends Row
         }
 
         return parent::save($options);
-    }
-
-    public function delete()
-    {
-        $this->evasioneAltriArticoli(-$this->qta);
-
-        return parent::delete();
     }
 
     protected static function boot()

@@ -195,7 +195,7 @@ echo '
     </tbody>';
 
 // TOTALE COSTI FINALI
-if ($options['pricing'] and !isset($options['hide_total']) ) {
+if ($options['pricing'] and !isset($options['hide_total'])) {
     // Totale imponibile
     echo '
     <tr>

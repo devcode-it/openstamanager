@@ -4,7 +4,6 @@ namespace Modules\Fatture;
 
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
-use Modules\Fatture\Components\Riga;
 use Modules\Pagamenti\Pagamento;
 use Modules\RitenuteContributi\RitenutaContributi;
 use Plugins\ExportFE\FatturaElettronica;

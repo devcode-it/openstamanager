@@ -17,12 +17,12 @@ switch (post('op')) {
         break;
 
     case 'add':
-       
+
         $descrizione = post('descrizione');
         $icona = post('icona');
-		$is_completato = post('is_completato') ?: null;
-		$is_fatturabile = post('is_fatturabile') ?: null;
-		$is_pianificabile = post('is_pianificabile') ?: null;
+        $is_completato = post('is_completato') ?: null;
+        $is_fatturabile = post('is_fatturabile') ?: null;
+        $is_pianificabile = post('is_pianificabile') ?: null;
 
         //controlla descrizione che non sia duplicata
         if (count($dbo->fetchArray('SELECT descrizione FROM co_statipreventivi WHERE descrizione='.prepare($descrizione))) > 0) {

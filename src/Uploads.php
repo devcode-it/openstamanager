@@ -215,7 +215,7 @@ class Uploads
         // Registrazione del file
         $data['filename'] = $filename;
         $data['original'] = $original;
-		$data['size'] = $source['size'];
+        $data['size'] = $source['size'];
         self::register($data);
 
         // Operazioni finali
@@ -241,7 +241,7 @@ class Uploads
             'id_module' => !empty($data['id_module']) && empty($data['id_plugin']) ? $data['id_module'] : null,
             'id_plugin' => !empty($data['id_plugin']) ? $data['id_plugin'] : null,
             'id_record' => $data['id_record'],
-			'size' => $data['size'],
+            'size' => $data['size'],
         ]);
     }
 

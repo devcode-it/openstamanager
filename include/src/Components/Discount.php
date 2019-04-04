@@ -2,13 +2,10 @@
 
 namespace Common\Components;
 
-use Common\Document;
 use Illuminate\Database\Eloquent\Builder;
-use Modules\Iva\Aliquota;
 
 abstract class Discount extends Row
 {
-
     public function getIvaAttribute()
     {
         return $this->attributes['iva'];

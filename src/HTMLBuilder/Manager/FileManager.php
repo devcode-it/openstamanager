@@ -86,7 +86,7 @@ class FileManager implements ManagerInterface
             <td align="left">
                 <a href="'.ROOTDIR.'/view.php?file_id='.$r['id'].'" target="_blank">
                     <i class="fa fa-external-link"></i> '.$r['name'].'
-                </a><small> ('.$file->extension.')'.((!empty($file->size)) ? ' ('.\Util\FileSystem::formatBytes($file->size).')':'').'</small>'.'
+                </a><small> ('.$file->extension.')'.((!empty($file->size)) ? ' ('.\Util\FileSystem::formatBytes($file->size).')' : '').'</small>'.'
             </td>
             <td>'.\Translator::timestampToLocale($r['created_at']).'</td>
             <td class="text-right">

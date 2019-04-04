@@ -111,9 +111,9 @@ class Ordine extends Document
     }
 
     public function sconti()
-{
-    return $this->hasMany(Components\Sconto::class, 'idordine');
-}
+    {
+        return $this->hasMany(Components\Sconto::class, 'idordine');
+    }
 
     public function descrizioni()
     {

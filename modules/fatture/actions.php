@@ -6,8 +6,8 @@ use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Fatture\Components\Articolo;
 use Modules\Fatture\Components\Descrizione;
-use Modules\Fatture\Components\Sconto;
 use Modules\Fatture\Components\Riga;
+use Modules\Fatture\Components\Sconto;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Tipo;
 

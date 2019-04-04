@@ -4,14 +4,10 @@ include_once __DIR__.'/../../core.php';
 $preventivi = count($dbo->fetchArray('SELECT id FROM co_preventivi WHERE idstato='.prepare($id_record)));
 
 if ($preventivi == 0) {
-	
     $attr = '';
-	
 } else {
-	
     $attr = 'readonly';
     echo '<div class="alert alert-warning">'.tr('Alcune impostazioni non possono essere modificate per questo stato perché già utilizzato in alcuni preventivi.').'</div>';
-	
 }
 ?>
 <form action="" method="post" id="edit-form">
@@ -52,7 +48,6 @@ if ($preventivi == 0) {
 
 
 <?php
-
 
 if (!empty($preventivi)) {
     echo '

@@ -94,7 +94,6 @@ switch (post('op')) {
                     } else {
                         $include = $fattura->isFE();
                     }
-
                 } catch (UnexpectedValueException $e) {
                     $include = false;
                 }
@@ -106,8 +105,8 @@ switch (post('op')) {
                         $src = $fe->getFilename();
                         $dst = $src;
                     } else {
-                        $src = basename( $fattura->uploads()->where('name', 'Fattura Elettronica')->first()->filepath );
-                        $dst = basename( $fattura->uploads()->where('name', 'Fattura Elettronica')->first()->original );
+                        $src = basename($fattura->uploads()->where('name', 'Fattura Elettronica')->first()->filepath);
+                        $dst = basename($fattura->uploads()->where('name', 'Fattura Elettronica')->first()->original);
                     }
 
                     $file = slashes($module->upload_directory.'/'.$src);
@@ -157,7 +156,6 @@ if ($module->name == 'Fatture di vendita') {
         ],
     ];
 }
-
 
 $bulk['export-xml-bulk'] = [
     'text' => tr('Esporta XML'),

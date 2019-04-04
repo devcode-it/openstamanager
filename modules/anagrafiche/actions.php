@@ -99,7 +99,7 @@ switch (post('op')) {
                 '_IVA_' => $partita_iva,
             ]));
         }
-		
+
         // Validazione del Codice Fiscale, solo per anagrafiche Private e Aziende, ignoro controllo se codice fiscale e settato uguale alla p.iva
         if ($anagrafica->tipo != 'Ente pubblico' and $anagrafica->codice_fiscale != $anagrafica->partita_iva) {
             $check_codice_fiscale = Validate::isValidTaxCode($anagrafica->codice_fiscale);
@@ -165,11 +165,11 @@ switch (post('op')) {
         $anagrafica->email = post('email');
         $anagrafica->idrelazione = post('idrelazione');
         $anagrafica->idagente = $idagente;
-		$anagrafica->pec = post('pec');
-		$anagrafica->tipo = post('tipo');
-		$anagrafica->codice_destinatario = post('codice_destinatario');
-		$anagrafica->id_nazione = post('id_nazione') ?: null;
-		
+        $anagrafica->pec = post('pec');
+        $anagrafica->tipo = post('tipo');
+        $anagrafica->codice_destinatario = post('codice_destinatario');
+        $anagrafica->id_nazione = post('id_nazione') ?: null;
+
         $anagrafica->save();
 
         if ($anagrafica->isAzienda()) {

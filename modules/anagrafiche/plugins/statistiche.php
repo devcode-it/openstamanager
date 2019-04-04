@@ -132,8 +132,7 @@ echo '
 					<h3 class="box-title">'.tr('Fatture').'</h3>
 				</div>
 				<div class="box-body">';
-				
-				
+
 // Fatture di vendita
 $rsi = $dbo->fetchArray("SELECT id, data, ragione_sociale, (SELECT SUM(subtotale+iva) FROM co_righe_documenti WHERE iddocumento=co_documenti.id) AS totale FROM co_documenti INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica WHERE idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir='entrata') AND co_documenti.idanagrafica=".prepare($id_record));
 
@@ -142,8 +141,8 @@ $date_start = date('Y-01-01');
 
 foreach ($rsi as $fattura) {
     $totale_fatture_vendita = sum($totale_fatture_vendita, Modules\Fatture\Fattura::find($fattura['id'])->netto);
-	
-	// Calcolo data più bassa per la ricerca
+
+    // Calcolo data più bassa per la ricerca
     if (strtotime($fattura['data']) < strtotime($date_start)) {
         $date_start = $fattura['data'];
     }
@@ -169,7 +168,6 @@ $rsi = $dbo->fetchArray("SELECT data, ragione_sociale, (SELECT SUM(subtotale+iva
 
 $totale_fatture_acquisto = 0;
 $date_start = date('Y-01-01');
-
 
 for ($i = 0; $i < count($rsi); ++$i) {
     $totale_fatture_acquisto += $rsi[$i]['totale'];

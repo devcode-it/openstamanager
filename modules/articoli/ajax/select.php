@@ -49,7 +49,7 @@ switch ($resource) {
             'codice' => 'codice',
             'descrizione' => 'descrizione',
             'qta' => 'qta',
-			'um' => 'um',
+            'um' => 'um',
             'categoria' => 'categoria',
             'sottocategoria' => 'sottocategoria',
             'idiva_vendita' => 'idiva_vendita',
@@ -114,10 +114,10 @@ switch ($resource) {
 
             $results[count($results) - 1]['children'][] = [
                 'id' => $r['id'],
-                'text' => $r['codice'].' - '.$r['descrizione'].' ('.Translator::numberToLocale($r['qta']).(!empty($r['um']) ? ' '.$r['um']: '').')',
+                'text' => $r['codice'].' - '.$r['descrizione'].' ('.Translator::numberToLocale($r['qta']).(!empty($r['um']) ? ' '.$r['um'] : '').')',
                 'codice' => $r['codice'],
                 'descrizione' => $r['descrizione'],
-				'qta' => $r['qta'],
+                'qta' => $r['qta'],
                 'um' => $r['um'],
                 'idiva_vendita' => $idiva,
                 'iva_vendita' => $iva,

@@ -26,7 +26,7 @@ switch ($operazione) {
         ], ['id' => $id_record]);
 
         flash()->info(tr('Promemoria inserito!'));
-		
+
         break;
 
     // Eliminazione pianificazione

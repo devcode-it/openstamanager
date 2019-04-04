@@ -4,14 +4,10 @@ include_once __DIR__.'/../../core.php';
 $contratti = count($dbo->fetchArray('SELECT id FROM co_contratti WHERE idstato='.prepare($id_record)));
 
 if ($contratti == 0) {
-	
     $attr = '';
-	
 } else {
-	
     $attr = 'readonly';
     echo '<div class="alert alert-warning">'.tr('Alcune impostazioni non possono essere modificate per questo stato perché già utilizzato in alcuni contratti.').'</div>';
-	
 }
 ?>
 <form action="" method="post" id="edit-form">
@@ -52,7 +48,6 @@ if ($contratti == 0) {
 
 
 <?php
-
 
 if (!empty($contratti)) {
     echo '

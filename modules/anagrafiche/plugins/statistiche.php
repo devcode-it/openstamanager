@@ -132,23 +132,30 @@ echo '
 					<h3 class="box-title">'.tr('Fatture').'</h3>
 				</div>
 				<div class="box-body">';
+				
+				
 // Fatture di vendita
-$totale_fatture_vendita = 0;
-$fatture = database()->fetchArray('SELECT id FROM co_documenti WHERE idanagrafica='.prepare($id_record));
+$rsi = $dbo->fetchArray("SELECT id, data, ragione_sociale, (SELECT SUM(subtotale+iva) FROM co_righe_documenti WHERE iddocumento=co_documenti.id) AS totale FROM co_documenti INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica WHERE idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir='entrata') AND co_documenti.idanagrafica=".prepare($id_record));
 
-foreach ($fatture as $fattura) {
+$totale_fatture_vendita = 0;
+$date_start = date('Y-01-01');
+
+foreach ($rsi as $fattura) {
     $totale_fatture_vendita = sum($totale_fatture_vendita, Modules\Fatture\Fattura::find($fattura['id'])->netto);
+	
+	// Calcolo data più bassa per la ricerca
+    if (strtotime($fattura['data']) < strtotime($date_start)) {
+        $date_start = $fattura['data'];
+    }
 }
 
-$data_start = strtotime('now');
-
-if (count($fatture) > 0) {
+if (count($rsi) > 0) {
     echo '
 					<p>'.tr('Sono state emesse <strong>_NUMBER_ fatture di vendita</strong> per un totale di _EUR_ &euro;', [
-                        '_NUMBER_' => count($fatture),
+                        '_NUMBER_' => count($rsi),
                         '_EUR_' => Translator::numberToLocale($totale_fatture_vendita),
                     ]).'</p>
-					<p><a href="'.$rootdir.'/controller.php?id_module='.Modules::get('Fatture di vendita')['id'].'&search_Ragione-sociale='.$rsi[0]['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-right"></i></a></p>';
+					<p><a href="'.$rootdir.'/controller.php?id_module='.Modules::get('Fatture di vendita')['id'].'&period_start='.$date_start.'&period_end='.date('Y-12-31').'&search_Ragione-sociale='.$fattura['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-right"></i></a></p>';
 } else {
     echo '
 					<p>'.tr('Nessuna fattura di vendita').'.</p>';
@@ -161,14 +168,15 @@ echo '
 $rsi = $dbo->fetchArray("SELECT data, ragione_sociale, (SELECT SUM(subtotale+iva) FROM co_righe_documenti WHERE iddocumento=co_documenti.id) AS totale FROM co_documenti INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica WHERE idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir='uscita') AND co_documenti.idanagrafica=".prepare($id_record));
 
 $totale_fatture_acquisto = 0;
-$data_start = strtotime('now');
+$date_start = date('Y-01-01');
+
 
 for ($i = 0; $i < count($rsi); ++$i) {
     $totale_fatture_acquisto += $rsi[$i]['totale'];
 
     // Calcolo data più bassa per la ricerca
-    if (strtotime($rsi[$i]['data']) < $data_start) {
-        $data_start = strtotime($rsi[$i]['data']);
+    if (strtotime($rsi[$i]['data']) < strtotime($date_start)) {
+        $date_start = $rsi[$i]['data'];
     }
 }
 if (count($rsi) > 0) {
@@ -177,7 +185,7 @@ if (count($rsi) > 0) {
                         '_NUMBER_' => count($rsi),
                         '_EUR_' => Translator::numberToLocale($totale_fatture_acquisto),
                     ]).'</p>
-					<p><a href="'.$rootdir.'/controller.php?id_module='.Modules::get('Fatture di acquisto')['id'].'&dir=uscita&search_Ragione-sociale='.$rsi[0]['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-right"></i></a></p>';
+					<p><a href="'.$rootdir.'/controller.php?id_module='.Modules::get('Fatture di acquisto')['id'].'&period_start='.$date_start.'&period_end='.date('Y-12-31').'&search_Ragione-sociale='.$rsi[0]['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-right"></i></a></p>';
 } else {
     echo '
 					<p>'.tr('Nessuna fattura di acquisto').'.</p>';

@@ -73,8 +73,12 @@ if ($_GET['lev'] == '3') {
     $body .= "		<tr><td class='br bb padded'></td><td class='br bb padded'><b>SALDO INIZIALE</b></td><td class='br bb padded text-right'><b>".Translator::numberToLocale(abs($dare))."</b></td><td class='bb padded text-right'><b>".Translator::numberToLocale(abs($avere))."</b></td></tr>\n";
 
     $rs = $dbo->fetchArray('SELECT * FROM co_movimenti WHERE idconto="'.$idconto.'" AND data >= "'.$date_start.'" AND data <= "'.$date_end.'" ORDER BY data ASC');
-
+	// Inizializzo saldo finale
+	$saldo_finale2 = [];
     for ($i = 0; $i < sizeof($rs); ++$i) {
+		
+	
+	
         if ($rs[$i]['totale'] >= 0) {
             $dare = Translator::numberToLocale(abs($rs[$i]['totale']));
             $avere = '';
@@ -85,14 +89,14 @@ if ($_GET['lev'] == '3') {
 
         $body .= "		<tr><td class='br bb padded text-center'>".Translator::dateToLocale($rs[$i]['data'])."</td><td class='br bb padded'>".$rs[$i]['descrizione']."</td><td class='br bb padded text-right'>".$dare."</td><td class='bb padded text-right'>".$avere."</td></tr>\n";
 
-        $saldo_finale[] = $rs[$i]['totale'];
+        $saldo_finale2[] = $rs[$i]['totale'];
     }
 
     if (sum($saldo_finale) < 0) {
         $dare = '';
-        $avere = abs(sum($saldo_finale));
+        $avere = abs(sum($saldo_finale) + sum($saldo_finale2) );
     } else {
-        $dare = abs(sum($saldo_finale));
+        $dare = abs(sum($saldo_finale) + sum($saldo_finale2) );
         $avere = '';
     }
 

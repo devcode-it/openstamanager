@@ -75,6 +75,11 @@ class Intervento extends Document
         return $this->hasMany(Riga::class, 'idintervento');
     }
 
+    public function sconti()
+    {
+        return $this->hasMany(Components\Sconto::class, 'idintervento');
+    }
+
     public function descrizioni()
     {
         return $this->righe()->where('prezzo_vendita', 0);

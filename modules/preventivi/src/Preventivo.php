@@ -116,6 +116,11 @@ class Preventivo extends Document
         return $this->hasMany(Components\Riga::class, 'idpreventivo');
     }
 
+    public function sconti()
+    {
+        return $this->hasMany(Components\Sconto::class, 'idpreventivo');
+    }
+
     public function descrizioni()
     {
         return $this->hasMany(Components\Descrizione::class, 'idpreventivo');

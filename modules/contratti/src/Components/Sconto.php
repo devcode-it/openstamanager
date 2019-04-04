@@ -2,17 +2,17 @@
 
 namespace Modules\Contratti\Components;
 
-use Common\Components\Row;
+use Common\Components\Discount;
 use Modules\Contratti\Contratto;
 
-class Riga extends Row
+class Sconto extends Discount
 {
     use RelationTrait;
 
     protected $table = 'co_righe_contratti';
 
     /**
-     * Crea una nuova riga collegata ad un contratto.
+     * Crea un nuovo sconto collegato ad un contratto.
      *
      * @param Contratto $contratto
      *

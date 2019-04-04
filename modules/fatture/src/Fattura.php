@@ -4,6 +4,7 @@ namespace Modules\Fatture;
 
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Fatture\Components\Riga;
 use Modules\Pagamenti\Pagamento;
 use Modules\RitenuteContributi\RitenutaContributi;
 use Plugins\ExportFE\FatturaElettronica;
@@ -232,6 +233,11 @@ class Fattura extends Document
     public function righe()
     {
         return $this->hasMany(Components\Riga::class, 'iddocumento');
+    }
+
+    public function sconti()
+    {
+        return $this->hasMany(Components\Sconto::class, 'iddocumento');
     }
 
     public function descrizioni()

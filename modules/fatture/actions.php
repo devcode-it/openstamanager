@@ -6,6 +6,7 @@ use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Fatture\Components\Articolo;
 use Modules\Fatture\Components\Descrizione;
+use Modules\Fatture\Components\Sconto;
 use Modules\Fatture\Components\Riga;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Tipo;
@@ -333,9 +334,9 @@ switch (post('op')) {
 
     case 'manage_sconto':
         if (post('idriga') != null) {
-            $sconto = Riga::find(post('idriga'));
+            $sconto = Sconto::find(post('idriga'));
         } else {
-            $sconto = Riga::build($fattura);
+            $sconto = Sconto::build($fattura);
         }
 
         $sconto->qta = 1;

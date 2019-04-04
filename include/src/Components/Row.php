@@ -177,6 +177,10 @@ abstract class Row extends Description
             static::addGlobalScope('rows', function (Builder $builder) {
                 $builder->whereNull('idarticolo')->orWhere('idarticolo', '=', 0);
             });
+
+            static::addGlobalScope('not_discounts', function (Builder $builder) {
+                $builder->where('subtotale', '!=', 0);
+            });
         }
     }
 

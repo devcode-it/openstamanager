@@ -13,7 +13,7 @@ class Articolo extends Article
     protected $table = 'co_righe_contratti';
 
     /**
-     * Crea un nuovo articolo collegato ad una contratto.
+     * Crea un nuovo articolo collegato ad un contratto.
      *
      * @param Contratto $contratto
      * @param Original  $articolo

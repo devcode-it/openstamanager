@@ -5,6 +5,7 @@ include_once __DIR__.'/../../core.php';
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Contratti\Components\Articolo;
 use Modules\Contratti\Components\Riga;
+use Modules\Contratti\Components\Sconto;
 use Modules\Contratti\Contratto;
 
 switch (post('op')) {
@@ -128,9 +129,9 @@ switch (post('op')) {
 
     case 'manage_sconto':
         if (post('idriga') != null) {
-            $sconto = Riga::find(post('idriga'));
+            $sconto = Sconto::find(post('idriga'));
         } else {
-            $sconto = Riga::build($contratto);
+            $sconto = Sconto::build($contratto);
         }
 
         $sconto->qta = 1;

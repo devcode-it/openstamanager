@@ -6,6 +6,7 @@ use Modules\Anagrafiche\Anagrafica;
 use Modules\Ordini\Components\Articolo;
 use Modules\Ordini\Components\Descrizione;
 use Modules\Ordini\Components\Riga;
+use Modules\Ordini\Components\Sconto;
 use Modules\Ordini\Ordine;
 use Modules\Ordini\Tipo;
 
@@ -223,9 +224,9 @@ switch (post('op')) {
 
     case 'manage_sconto':
         if (post('idriga') != null) {
-            $sconto = Riga::find(post('idriga'));
+            $sconto = Sconto::find(post('idriga'));
         } else {
-            $sconto = Riga::build($ordine);
+            $sconto = Sconto::build($ordine);
         }
 
         $sconto->qta = 1;

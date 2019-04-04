@@ -122,6 +122,11 @@ class Contratto extends Document
         return $this->hasMany(Components\Riga::class, 'idcontratto');
     }
 
+    public function sconti()
+    {
+        return $this->hasMany(Components\Sconto::class, 'idcontratto');
+    }
+
     public function descrizioni()
     {
         return $this->hasMany(Components\Descrizione::class, 'idcontratto');

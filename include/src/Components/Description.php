@@ -107,22 +107,22 @@ abstract class Description extends Model
 
     public function isDescrizione()
     {
-        return $this->is_descrizione == 1;
+        return !$this->isArticolo() && !$this->isSconto() && !$this->isRiga() && $this instanceof Description;
     }
 
     public function isSconto()
     {
-        return $this->subtotale == 0;
+        return $this instanceof Discount;
     }
 
     public function isRiga()
     {
-        return !$this->isDescrizione() && !$this->isSconto() && !$this->isArticolo();
+        return !$this->isArticolo() && !$this->isSconto() && $this instanceof Row;
     }
 
     public function isArticolo()
     {
-        return !empty($this->idarticolo);
+        return $this instanceof Article;
     }
 
     /**

@@ -6,6 +6,7 @@ use Modules\Anagrafiche\Anagrafica;
 use Modules\DDT\Components\Articolo;
 use Modules\DDT\Components\Descrizione;
 use Modules\DDT\Components\Riga;
+use Modules\DDT\Components\Sconto;
 use Modules\DDT\DDT;
 use Modules\DDT\Tipo;
 
@@ -182,9 +183,9 @@ switch (post('op')) {
 
     case 'manage_sconto':
         if (post('idriga') != null) {
-            $sconto = Riga::find(post('idriga'));
+            $sconto = Sconto::find(post('idriga'));
         } else {
-            $sconto = Riga::build($ddt);
+            $sconto = Sconto::build($ddt);
         }
 
         $sconto->qta = 1;

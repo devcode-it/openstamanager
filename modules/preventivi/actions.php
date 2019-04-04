@@ -6,6 +6,7 @@ use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\TipoSessione;
 use Modules\Preventivi\Components\Articolo;
 use Modules\Preventivi\Components\Riga;
+use Modules\Preventivi\Components\Sconto;
 use Modules\Preventivi\Preventivo;
 
 switch (post('op')) {
@@ -232,9 +233,9 @@ switch (post('op')) {
 
     case 'manage_sconto':
         if (post('idriga') != null) {
-            $sconto = Riga::find(post('idriga'));
+            $sconto = Sconto::find(post('idriga'));
         } else {
-            $sconto = Riga::build($preventivo);
+            $sconto = Sconto::build($preventivo);
         }
 
         $sconto->qta = 1;

@@ -82,12 +82,6 @@ $files = [
     'plugins/xml/SE_v1.0.xml',
     'plugins/exportFE/view.php',
     'plugins/exportFE/src/stylesheet-1.2.1.xsl',
-    'modules/contratti/src/Components/Sconto.php',
-    'modules/fatture/src/Components/Sconto.php',
-    'modules/ordini/src/Components/Sconto.php',
-    'modules/ddt/src/Components/Sconto.php',
-    'modules/preventivi/src/Components/Sconto.php',
-    'include/src/Components/Discount.php',
 ];
 
 foreach ($files as $key => $value) {

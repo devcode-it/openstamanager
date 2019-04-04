@@ -9,14 +9,14 @@ echo '
     <input type="hidden" name="op" value="copy">
 </form>
 
-<button type="button" class="btn btn-primary" onclick="if( confirm(\'Duplicare questa fattura?\') ){ $(\'#form-copy\').submit(); }">
+<button type="button" class="btn btn-primary" '.((empty($record['ref_documento']) and empty($record['reversed'])) ? '' : 'disabled').' onclick="if( confirm(\'Duplicare questa fattura?\') ){ $(\'#form-copy\').submit(); }">
     <i class="fa fa-copy"></i> '.tr('Duplica fattura').'
 </button>';
 
 if ($dir == 'entrata') {
     echo '
 <div class="btn-group">
-    <button type="button" class="btn btn-primary unblockable dropdown-toggle '.(!empty($record['ref_documento']) || $record['stato'] != 'Bozza' ? '' : 'disabled').'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <button type="button" class="btn btn-primary unblockable dropdown-toggle '.(((!empty($record['ref_documento']) || $record['stato'] != 'Bozza') and empty($record['reversed']) ) ? '' : 'disabled').'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <i class="fa fa-magic"></i> '.tr('Crea').' <span class="caret"></span>
         <span class="sr-only">Toggle Dropdown</span>
     </button>

@@ -214,7 +214,7 @@ foreach ($righe as $row) {
     if (!$row->isDescrizione()) {
         echo '
             '.Translator::numberToLocale($riga['iva']).' &euro;
-            <br><small class="'.(($row->aliquota->deleted_at) ? 'text-red' : '').' help-block">'.$row->desc_iva.(($row->aliquota->esente) ? ' ('.$row->aliquota->codice_natura_fe.')' : null).'</small>';
+            <br><small class="'.(($row->aliquota->deleted_at) ? 'text-red' : '').' help-block">'.$row->aliquota->descrizione.(($row->aliquota->esente) ? ' ('.$row->aliquota->codice_natura_fe.')' : null).'</small>';
     }
 
     echo '

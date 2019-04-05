@@ -16,7 +16,7 @@ abstract class Discount extends Row
      */
     protected function fixIva()
     {
-        $this->attributes['iva'] = parent::$iva;
+        $this->attributes['iva'] = parent::getIvaAttribute();
 
         $descrizione = $this->aliquota->descrizione;
         if (!empty($descrizione)) {

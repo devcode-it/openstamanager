@@ -117,10 +117,19 @@ ALTER TABLE `co_contratti` DROP `sconto_globale`, DROP `tipo_sconto_globale`;
 ALTER TABLE `or_ordini` DROP `sconto_globale`, DROP `tipo_sconto_globale`;
 ALTER TABLE `dt_ddt` DROP `sconto_globale`, DROP `tipo_sconto_globale`;
 
+UPDATE `co_righe_documenti` SET `sconto` = `sconto_globale`, `sconto_unitario` = `sconto_globale`, `tipo_sconto` = 'UNT' WHERE `sconto_globale` != 0;
 ALTER TABLE `co_righe_documenti` DROP `sconto_globale`;
+
+UPDATE `co_righe_preventivi` SET `sconto` = `sconto_globale`, `sconto_unitario` = `sconto_globale`, `tipo_sconto` = 'UNT' WHERE `sconto_globale` != 0;
 ALTER TABLE `co_righe_preventivi` DROP `sconto_globale`;
+
+UPDATE `co_righe_contratti` SET `sconto` = `sconto_globale`, `sconto_unitario` = `sconto_globale`, `tipo_sconto` = 'UNT' WHERE `sconto_globale` != 0;
 ALTER TABLE `co_righe_contratti` DROP `sconto_globale`;
+
+UPDATE `or_righe_ordini` SET `sconto` = `sconto_globale`, `sconto_unitario` = `sconto_globale`, `tipo_sconto` = 'UNT' WHERE `sconto_globale` != 0;
 ALTER TABLE `or_righe_ordini` DROP `sconto_globale`;
+
+UPDATE `dt_righe_ddt` SET `sconto` = `sconto_globale`, `sconto_unitario` = `sconto_globale`, `tipo_sconto` = 'UNT' WHERE `sconto_globale` != 0;
 ALTER TABLE `dt_righe_ddt` DROP `sconto_globale`;
 
 -- Fix per la tabella in_righe_interventi

@@ -30,7 +30,7 @@ foreach ($results as $result) {
     }
 
     if (!empty($scadenze) && $result['stato_fattura'] == 'Parzialmente pagato') {
-        foreach ($scadenza as $scadenze) {
+        foreach ($scadenze as $scadenza) {
             $dbo->query('UPDATE co_scadenziario SET pagato = '.prepare($scadenza['pagato']).' WHERE scadenza = '.prepare($scadenza['scadenza']).' AND iddocumento = '.prepare($result['id']));
         }
     }

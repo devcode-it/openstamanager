@@ -352,7 +352,6 @@ $("#categoria").change( function(){
 	$("#subcategoria").val(null).trigger("change");
 });
 
-
 function scorpora_iva() {
 	if ($("#idiva_vendita").val()!=''){
 		var percentuale = parseFloat($("#idiva_vendita").selectData().percentuale);

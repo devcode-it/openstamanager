@@ -2,6 +2,9 @@
 
 include_once __DIR__.'/../../core.php';
 
+echo'
+<button type="button" class="btn btn-primary" onclick="if( confirm(\'Duplicare questo contratto?\') ){ $(\'#copia-contratto\').submit(); }"> <i class="fa fa-copy"></i> '.tr('Duplica contratto').'</button>';
+
 $rs_documento = $dbo->fetchArray('SELECT * FROM co_righe_contratti WHERE idcontratto='.prepare($id_record));
 
 /* permetto di fatturare il contratto solo se contiene righe e si trova in uno stato fatturabile */
@@ -22,3 +25,11 @@ if ($record['rinnovabile']) {
     </button>
 </div>';
 }
+
+
+// Duplica contratto
+echo '
+<form action="" method="post" id="copia-contratto">
+    <input type="hidden" name="backto" value="record-edit">
+    <input type="hidden" name="op" value="copy">
+</form>';

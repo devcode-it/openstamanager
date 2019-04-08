@@ -126,6 +126,34 @@ switch (post('op')) {
         }
 
         break;
+	
+	 // Duplica contratto
+    case 'copy':
+        $dbo->query('CREATE TEMPORARY TABLE tmp SELECT * FROM co_contratti WHERE id = '.prepare($id_record));
+        $dbo->query('ALTER TABLE tmp DROP id');
+        $dbo->query('INSERT INTO co_contratti SELECT NULL,tmp.* FROM tmp');
+        $id_record = $dbo->lastInsertedID();
+        $dbo->query('DROP TEMPORARY TABLE tmp');
+
+        // Codice contratto: calcolo il successivo in base al formato specificato
+        $numero = Contratto::getNextNumero();
+
+        $dbo->query('UPDATE co_contratti SET idstato=1, numero = '.prepare($numero).' WHERE id='.prepare($id_record));
+
+        //copio anche le righe del preventivo
+        $dbo->query('CREATE TEMPORARY TABLE tmp SELECT * FROM co_righe_contratti WHERE idcontratto = '.filter('id_record'));
+        $dbo->query('ALTER TABLE tmp DROP id');
+        $dbo->query('UPDATE tmp SET idcontratto = '.prepare($id_record));
+        $dbo->query('INSERT INTO co_righe_contratti SELECT NULL,tmp.* FROM tmp');
+        $dbo->query('DROP TEMPORARY TABLE tmp');
+		
+		//Azzero eventuale quantità evasa
+		$dbo->query('UPDATE co_righe_contratti SET qta_evasa=0 WHERE id='.prepare($id_record));
+
+        flash()->info(tr('Contratto duplicato correttamente!'));
+
+    break;
+
 
     case 'manage_sconto':
         if (post('idriga') != null) {

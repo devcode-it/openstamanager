@@ -142,3 +142,6 @@ UPDATE `co_ritenutaacconto` SET `percentuale_imponibile` = 100;
 
 -- Aggiornamento widget "Debiti verso fornitori"
 UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS('' '', REPLACE(REPLACE(REPLACE(FORMAT((SELECT ABS(SUM(da_pagare-pagato))), 2), '','', ''#''), ''.'', '',''),''#'', ''.''), ''&euro;'') AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=''uscita'' AND co_documenti.idstatodocumento!=1 |segment| AND 1=1' WHERE `zz_widgets`.`name` = 'Debiti verso fornitori';
+
+-- Aggiunta idsede anche preventivi (completamento 2.4.1)
+ALTER TABLE `co_preventivi` ADD `idsede` INT NOT NULL AFTER `idanagrafica`;

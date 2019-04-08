@@ -65,15 +65,15 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 
 			<div class="row">
 
-				<div class="col-md-4">
+				<div class="col-md-3">
 					{[ "type": "number", "label": "<?php echo tr('Validità'); ?>", "name": "validita", "decimals": "0", "value": "$validita$", "icon-after": "giorni" ]}
 				</div>
 
-				<div class="col-md-4">
+				<div class="col-md-3">
 					{[ "type": "checkbox", "label": "<?php echo tr('Rinnovabile'); ?>", "name": "rinnovabile", "help": "<?php echo tr('Il contratto è rinnovabile?'); ?>", "value": "$rinnovabile$" ]}
 				</div>
 
-				<div class="col-md-4">
+				<div class="col-md-3">
 					{[ "type": "number", "label": "<?php echo tr('Preavviso per rinnovo'); ?>", "name": "giorni_preavviso_rinnovo", "decimals": "0", "value": "$giorni_preavviso_rinnovo$", "icon-after": "giorni", "disabled": <?php echo $record['rinnovabile'] ? 0 : 1; ?> ]}
 				</div>
 			</div>

@@ -116,17 +116,7 @@ echo '
 				<div class="col-md-4">
 					{[ "type": "text", "label": "'.tr('Codice destinatario').'", "name": "codice_destinatario", "required": 0, "class": "text-center text-uppercase alphanumeric-mask", "maxlength": "7", "extra": "", "help": "'.tr($help_codice_destinatario).'" ]}
 				</div>
-				
-			
 			</div>
-			
-			
-			<div class="row">
-				<div class="col-md-4">
-						{[ "type": "select", "label": "'.tr('Relazione').'", "name": "idrelazione", "values": "query=SELECT id, descrizione, colore AS _bgcolor_ FROM an_relazioni ORDER BY descrizione" ]}
-				</div>
-			</div>
-
 		</div>
 	</div>';
 

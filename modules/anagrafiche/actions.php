@@ -163,7 +163,6 @@ switch (post('op')) {
         $anagrafica->telefono = post('telefono');
         $anagrafica->cellulare = post('cellulare');
         $anagrafica->email = post('email');
-        $anagrafica->idrelazione = post('idrelazione');
         $anagrafica->idagente = $idagente;
         $anagrafica->pec = post('pec');
         $anagrafica->tipo = post('tipo');

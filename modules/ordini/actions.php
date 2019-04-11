@@ -370,7 +370,7 @@ switch (post('op')) {
 
             $id_record = $ordine->id;
         }
-
+        
         $parziale = false;
         $righe = $preventivo->getRighe();
         foreach ($righe as $riga) {

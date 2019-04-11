@@ -172,6 +172,7 @@ abstract class Description extends Model
     protected function customInitCopiaIn($original)
     {
         $this->is_descrizione = $original->is_descrizione;
+        $this->is_sconto = $original->is_sconto;
     }
 
     /**

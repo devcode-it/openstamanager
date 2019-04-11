@@ -5,7 +5,7 @@ include_once __DIR__.'/../../core.php';
 ?><form action="<?php echo ROOTDIR; ?>/controller.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-edit">
-	<input type="hidden" name="iddocumento" value="<?php echo get('iddocumento'); ?>">
+	<input type="hidden" name="iddocumento" id="iddocumento" value="<?php echo get('iddocumento'); ?>">
 	<input type="hidden" name="crea_modello" id="crea_modello" value="0">
 	<input type="hidden" name="idmastrino" id="idmastrino" value="0">
 
@@ -13,6 +13,15 @@ include_once __DIR__.'/../../core.php';
     $idconto = get('idconto');
     $iddocumento = get('iddocumento');
     $dir = get('dir');
+    $insoluto = get('insoluto');
+
+    if (!empty($insoluto)) {
+        echo '<input type="hidden" name="insoluto" value="1">';
+    }
+
+    // Lettura delle variabili nei singoli moduli
+    $id_record = $iddocumento;
+    $variables = include Modules::filepath(Modules::get('Fatture di vendita')['id'], 'variables.php');
 
     if (!empty($iddocumento)) {
         // Lettura numero e tipo di documento
@@ -33,7 +42,14 @@ include_once __DIR__.'/../../core.php';
             $tipo_doc = 'fattura';
         }
 
-        $descrizione = tr('Pag. _DOC_ num. _NUM_ del _DATE_ (_NAME_)', [
+        if (!empty($insoluto)) {
+            $operation = 'Registrazione insoluto';
+        } else {
+            $operation = 'Pag.';
+        }
+
+        $descrizione = tr('_OP_ _DOC_ num. _NUM_ del _DATE_ (_NAME_)', [
+            '_OP_' => $operation,
             '_DOC_' => $tipo_doc,
             '_NUM_' => $numero_doc,
             '_DATE_' => Translator::dateToLocale($rs[0]['data']),
@@ -74,7 +90,11 @@ include_once __DIR__.'/../../core.php';
             $query = 'SELECT SUM(pagato) AS tot_pagato, SUM(da_pagare) AS tot_da_pagare FROM co_scadenziario GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
             $rs = $dbo->fetchArray($query);
 
-            $importo_conto_aziendale = abs($rs[0]['tot_da_pagare']) - abs($rs[0]['tot_pagato']);
+            if (!empty($insoluto)) {
+                $importo_conto_aziendale = abs($rs[0]['tot_da_pagare']);
+            } else {
+                $importo_conto_aziendale = abs($rs[0]['tot_da_pagare']) - abs($rs[0]['tot_pagato']);
+            }
             $totale_dare = $importo_conto_aziendale;
         }
 
@@ -124,7 +144,7 @@ include_once __DIR__.'/../../core.php';
 
 	<div class="row">
 		<div class="col-md-12">
-			{[ "type": "select", "label": "<?php echo tr('Modello primanota'); ?>", "id": "modello_primanota", "values": "query=SELECT idmastrino AS id, descrizione FROM co_movimenti_modelli GROUP BY idmastrino" ]}
+			{[ "type": "select", "label": "<?php echo tr('Modello primanota'); ?>", "id": "modello_primanota", "values": "query=SELECT idmastrino AS id, nome AS descrizione, descrizione as causale FROM co_movimenti_modelli GROUP BY idmastrino" ]}
 		</div>
 	</div>
 
@@ -195,7 +215,7 @@ include_once __DIR__.'/../../core.php';
         }
 
         // Se è una nota di credito, inverto i valori
-        if ($nota_credito) {
+        if ($nota_credito || $insoluto) {
             $tmp = $value_dare;
             $value_dare = $value_avere;
             $value_avere = $tmp;
@@ -350,26 +370,53 @@ include_once __DIR__.'/../../core.php';
 					$('#bs-popup #idmastrino').val(0);
 				}
 
-				var idmastrino = $(this).val();
+                var idmastrino = $(this).val();
+                var variables = <?php echo json_encode($variables); ?>;
+
+                var replaced = 0;
 
 				if(idmastrino!=''){
-					var causale = $(this).find('option:selected').text();
+                    var causale = $(this).find('option:selected').data('causale');
+                    
+                    if($('#iddocumento').val()!=''){
+                        for (i in variables){
+                            if(causale.includes('{'+i+'}')){
+                                replaced++;
+                                causale = causale.replace('{'+i+'}', variables[i]);
+                            }
+                        }
+                    }else{
+                        for (i in variables){
+                                causale = causale.replace('{'+i+'}', '_');
+                        }
+                    }
 
-					//aggiornava erroneamente anche la causale ed eventuale numero di fattura e data
-					<?php if (empty($iddocumento)) {
-        ?>
-						$('#bs-popup #desc').val(causale);
-					<?php
-    } ?>
+                    //aggiornava erroneamente anche la causale ed eventuale numero di fattura e data
+                    if(replaced>0 || $('#iddocumento').val()==''){
+                        $('#bs-popup #desc').val(causale);
+                    }
 
 					$.get('<?php echo $rootdir; ?>/ajax_complete.php?op=get_conti&idmastrino='+idmastrino, function(data){
 						var conti = data.split(',');
 						for(i=0;i<conti.length;i++){
-							var conto = conti[i].split(';');
-							var option = $("<option selected></option>").val(conto[0]).text(conto[1]);
-							$('#bs-popup #conto'+i).selectReset();
-							$('#bs-popup #conto'+i).append(option).trigger('change');
-						}
+                            var conto = conti[i].split(';');
+                            //Sostituzione conto cliente/fornitore
+                            if(conto[0]==-1){
+                                if($('#iddocumento').val()!=''){
+						            var option = $("<option selected></option>").val(variables['conto']).text(variables['conto_descrizione']);
+							        $('#bs-popup #conto'+i).selectReset();
+							        $('#bs-popup #conto'+i).append(option).trigger('change');  
+                                }
+                            }else{
+                                var option = $("<option selected></option>").val(conto[0]).text(conto[1]);
+							    $('#bs-popup #conto'+i).selectReset();
+							    $('#bs-popup #conto'+i).append(option).trigger('change');
+                            }
+                        }
+                        for(i=9;i>=conti.length;i--){
+                            $('#bs-popup #conto'+i).selectReset();
+                            console.log('#bs-popup #conto'+i);
+                        }
 					});
 				}
 			});

@@ -299,7 +299,7 @@ switch (post('op')) {
 
         $articolo->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto') ?: null;
         $articolo->id_ritenuta_acconto = post('id_ritenuta_acconto') ?: null;
-        $articolo->ritenuta_contributi = post('ritenuta_contributi');
+        $articolo->ritenuta_contributi = boolval(post('ritenuta_contributi'));
         $articolo->id_rivalsa_inps = post('id_rivalsa_inps') ?: null;
 
         $articolo->prezzo_unitario_acquisto = post('prezzo_acquisto') ?: 0;
@@ -339,8 +339,6 @@ switch (post('op')) {
             $sconto = Sconto::build($fattura);
         }
 
-        $sconto->qta = 1;
-
         $sconto->descrizione = post('descrizione');
 
         $sconto->id_iva = post('idiva');
@@ -348,7 +346,7 @@ switch (post('op')) {
 
         $sconto->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto') ?: null;
         $sconto->id_ritenuta_acconto = post('id_ritenuta_acconto') ?: null;
-        $sconto->ritenuta_contributi = post('ritenuta_contributi');
+        $sconto->ritenuta_contributi = boolval(post('ritenuta_contributi'));
         $sconto->id_rivalsa_inps = post('id_rivalsa_inps') ?: null;
 
         $sconto->sconto_unitario = post('sconto_unitario');
@@ -387,7 +385,7 @@ switch (post('op')) {
 
         $riga->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto') ?: null;
         $riga->id_ritenuta_acconto = post('id_ritenuta_acconto') ?: null;
-        $riga->ritenuta_contributi = post('ritenuta_contributi');
+        $riga->ritenuta_contributi = boolval(post('ritenuta_contributi'));
         $riga->id_rivalsa_inps = post('id_rivalsa_inps') ?: null;
 
         $riga->prezzo_unitario_acquisto = post('prezzo_acquisto') ?: 0;

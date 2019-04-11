@@ -16,6 +16,7 @@ abstract class Description extends Model
 
         if (!$bypass) {
             $model->is_descrizione = 1;
+            $model->qta = 1;
         }
 
         $model->setParent($document);
@@ -42,6 +43,16 @@ abstract class Description extends Model
         return $diff;
     }
 
+    /**
+     * Restituisce la quantità rimanente dell'elemento.
+     *
+     * @return float
+     */
+    public function getQtaRimanenteAttribute()
+    {
+        return $this->qta - $this->qta_evasa;
+    }
+
     public function delete()
     {
         $this->evasione(-$this->qta);
@@ -62,8 +73,6 @@ abstract class Description extends Model
         if (empty($this->disableOrder)) {
             $this->order = orderValue($this->table, $this->getParentID(), $document->id);
         }
-
-        $this->save();
     }
 
     /**
@@ -163,6 +172,7 @@ abstract class Description extends Model
     protected function customInitCopiaIn($original)
     {
         $this->is_descrizione = $original->is_descrizione;
+        $this->is_sconto = $original->is_sconto;
     }
 
     /**

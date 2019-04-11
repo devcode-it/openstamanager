@@ -2,7 +2,11 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Contratti\Contratto;
+
 if (isset($id_record)) {
+    $contratto = Contratto::find($id_record);
+
     $record = $dbo->fetchOne('SELECT *,
        (SELECT tipo FROM an_anagrafiche WHERE idanagrafica = co_contratti.idanagrafica) AS tipo_anagrafica,
        (SELECT is_fatturabile FROM co_staticontratti WHERE id=idstato) AS is_fatturabile,

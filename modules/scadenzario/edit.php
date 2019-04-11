@@ -127,8 +127,10 @@ echo '
 ?>
 
 					</table>
-				
-					<a onclick="launch_modal( 'Aggiungi prima nota', '<?php echo $rootdir; ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>&iddocumento=<?php echo $record['iddocumento']; ?>&dir=<?php echo $dir; ?>', 1 );" class="btn btn-sm btn-primary pull-right"><i class="fa fa-euro"></i> <?php echo tr('Aggiungi prima nota...'); ?></a>
+
+                    <div class='pull-right'>
+                        <a onclick="launch_modal( 'Aggiungi prima nota', '<?php echo $rootdir; ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>&iddocumento=<?php echo $record['iddocumento']; ?>&dir=<?php echo $dir; ?>', 1 );" class="btn btn-sm btn-primary"><i class="fa fa-euro"></i> <?php echo tr('Aggiungi prima nota...'); ?></a>
+                    </div>
 					
 					<div class="clearfix"></div>
 

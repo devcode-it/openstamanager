@@ -61,6 +61,7 @@ foreach ($interventi as $intervento) {
         'sconto' => $sconto_globale,
         'sconto_unitario' => $sconto_globale,
         'tipo_sconto' => 'UNT',
+        'is_sconto' => 1,
         'idiva' => $id_iva['id'],
         'desc_iva' => $iva['descrizione'],
         'iva' => $valore_iva,

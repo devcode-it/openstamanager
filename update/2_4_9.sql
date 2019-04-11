@@ -117,24 +117,29 @@ ALTER TABLE `co_contratti` DROP `sconto_globale`, DROP `tipo_sconto_globale`;
 ALTER TABLE `or_ordini` DROP `sconto_globale`, DROP `tipo_sconto_globale`;
 ALTER TABLE `dt_ddt` DROP `sconto_globale`, DROP `tipo_sconto_globale`;
 
-UPDATE `co_righe_documenti` SET `sconto` = `sconto_globale`, `sconto_unitario` = `sconto_globale`, `tipo_sconto` = 'UNT' WHERE `sconto_globale` != 0;
+ALTER TABLE `co_righe_documenti` ADD `is_sconto` BOOLEAN DEFAULT FALSE NOT NULL AFTER `is_descrizione`;
+UPDATE `co_righe_documenti` SET `sconto` = `sconto_globale`, `sconto_unitario` = `sconto_globale`, `tipo_sconto` = 'UNT', `is_sconto` = 1 WHERE `sconto_globale` != 0;
 ALTER TABLE `co_righe_documenti` DROP `sconto_globale`;
 
-UPDATE `co_righe_preventivi` SET `sconto` = `sconto_globale`, `sconto_unitario` = `sconto_globale`, `tipo_sconto` = 'UNT' WHERE `sconto_globale` != 0;
+ALTER TABLE `co_righe_preventivi` ADD `is_sconto` BOOLEAN DEFAULT FALSE NOT NULL AFTER `is_descrizione`;
+UPDATE `co_righe_preventivi` SET `sconto` = `sconto_globale`, `sconto_unitario` = `sconto_globale`, `tipo_sconto` = 'UNT', `is_sconto` = 1 WHERE `sconto_globale` != 0;
 ALTER TABLE `co_righe_preventivi` DROP `sconto_globale`;
 
-UPDATE `co_righe_contratti` SET `sconto` = `sconto_globale`, `sconto_unitario` = `sconto_globale`, `tipo_sconto` = 'UNT' WHERE `sconto_globale` != 0;
+ALTER TABLE `co_righe_contratti` ADD `is_sconto` BOOLEAN DEFAULT FALSE NOT NULL AFTER `is_descrizione`;
+UPDATE `co_righe_contratti` SET `sconto` = `sconto_globale`, `sconto_unitario` = `sconto_globale`, `tipo_sconto` = 'UNT', `is_sconto` = 1 WHERE `sconto_globale` != 0;
 ALTER TABLE `co_righe_contratti` DROP `sconto_globale`;
 
-UPDATE `or_righe_ordini` SET `sconto` = `sconto_globale`, `sconto_unitario` = `sconto_globale`, `tipo_sconto` = 'UNT' WHERE `sconto_globale` != 0;
+ALTER TABLE `or_righe_ordini` ADD `is_sconto` BOOLEAN DEFAULT FALSE NOT NULL AFTER `is_descrizione`;
+UPDATE `or_righe_ordini` SET `sconto` = `sconto_globale`, `sconto_unitario` = `sconto_globale`, `tipo_sconto` = 'UNT', `is_sconto` = 1 WHERE `sconto_globale` != 0;
 ALTER TABLE `or_righe_ordini` DROP `sconto_globale`;
 
-UPDATE `dt_righe_ddt` SET `sconto` = `sconto_globale`, `sconto_unitario` = `sconto_globale`, `tipo_sconto` = 'UNT' WHERE `sconto_globale` != 0;
+ALTER TABLE `dt_righe_ddt` ADD `is_sconto` BOOLEAN DEFAULT FALSE NOT NULL AFTER `is_descrizione`;
+UPDATE `dt_righe_ddt` SET `sconto` = `sconto_globale`, `sconto_unitario` = `sconto_globale`, `tipo_sconto` = 'UNT', `is_sconto` = 1 WHERE `sconto_globale` != 0;
 ALTER TABLE `dt_righe_ddt` DROP `sconto_globale`;
 
 -- Fix per la tabella in_righe_interventi
-ALTER TABLE `in_righe_interventi` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idintervento`, ADD `idarticolo` INT(11) AFTER `idintervento`, ADD FOREIGN KEY (`idarticolo`) REFERENCES `mg_articoli`(`id`);
-ALTER TABLE `mg_articoli_interventi` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idintervento`;
+ALTER TABLE `in_righe_interventi` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idintervento`, ADD `idarticolo` INT(11) AFTER `idintervento`, ADD FOREIGN KEY (`idarticolo`) REFERENCES `mg_articoli`(`id`), ADD `is_sconto` BOOLEAN DEFAULT FALSE NOT NULL AFTER `is_descrizione`;
+ALTER TABLE `mg_articoli_interventi` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idintervento`, ADD `is_sconto` BOOLEAN DEFAULT FALSE NOT NULL AFTER `is_descrizione`;
 
 -- Rimozione campi inutilizzati co_ritenutaacconto
 ALTER TABLE `co_ritenutaacconto` DROP `esente`, DROP `indetraibile`;
@@ -145,3 +150,57 @@ UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS('' '', REPLACE(REPLACE(REPLA
 
 -- Aggiunta idsede anche preventivi (completamento 2.4.1)
 ALTER TABLE `co_preventivi` ADD `idsede` INT NOT NULL AFTER `idanagrafica`;
+
+-- Aggiunta flag riba per tipi di pagamento Ri.Ba.
+ALTER TABLE `co_pagamenti` ADD `riba` TINYINT(1) NOT NULL DEFAULT '0' AFTER `codice_modalita_pagamento_fe`;
+UPDATE `co_pagamenti` SET `riba` = 1 WHERE `descrizione`  LIKE 'Ri.Ba.%';
+
+-- Creazione nuovo conto per anticipi Ri.Ba.
+INSERT INTO `co_pianodeiconti3` (`id`, `numero`, `descrizione`, `idpianodeiconti2`, `dir`, `can_delete`, `can_edit`) VALUES (NULL, '000021', 'Banca C/C (conto anticipi)', '1', '', '0', '0');
+
+-- Aggiunta colonna nome per i modelli primanota
+ALTER TABLE `co_movimenti_modelli` ADD `nome` VARCHAR(255) NOT NULL AFTER `idmastrino`;
+
+UPDATE `zz_views` SET `name` = 'Nome', `query` = 'co_movimenti_modelli.nome' WHERE `zz_views`.`id_module` = (SELECT id FROM zz_modules WHERE name='Modelli prima nota') AND `zz_views`.`name`='Causale predefinita';
+UPDATE `zz_views` SET `query` = 'co_movimenti_modelli.idmastrino' WHERE `zz_views`.`id_module` = (SELECT id FROM zz_modules WHERE name='Modelli prima nota') AND `zz_views`.`name`='id';
+
+-- Modelli primanota default
+INSERT INTO `co_movimenti_modelli` (`id`, `idmastrino`, `nome`, `descrizione`, `idconto`) VALUES
+(NULL, 1, 'Anticipo fattura', 'Anticipo fattura num. {numero} del {data}', -1),
+(NULL, 1, 'Anticipo fattura', 'Anticipo fattura num. {numero} del {data}', (SELECT id FROM co_pianodeiconti3 WHERE descrizione = 'Banca C/C (conto anticipi)')),
+(NULL, 1, 'Anticipo fattura', 'Anticipo fattura num. {numero} del {data}', (SELECT id FROM co_pianodeiconti3 WHERE descrizione = 'Spese bancarie')),
+(NULL, 2, 'Accredito anticipo', 'Accredito anticipo fattura num. {numero} del {data}', (SELECT id FROM co_pianodeiconti3 WHERE descrizione = 'Banca C/C (conto anticipi)')),
+(NULL, 2, 'Accredito anticipo', 'Accredito anticipo fattura num. {numero} del {data}', (SELECT id FROM co_pianodeiconti3 WHERE descrizione = 'Banca C/C'));
+
+-- Segmenti per modulo scadenzario
+INSERT INTO `zz_segments` (`id`, `id_module`, `name`, `clause`, `position`, `pattern`, `note`, `predefined`, `predefined_accredito`, `predefined_addebito`, `is_fiscale`) VALUES
+(NULL, (SELECT id FROM zz_modules WHERE name='Scadenzario'), 'Scadenzario totale', '1=1', 'WHR', '####', '', 1, 0, 0, 1),
+(NULL, (SELECT id FROM zz_modules WHERE name='Scadenzario'), 'Scadenzario clienti', '((SELECT dir FROM co_tipidocumento WHERE co_tipidocumento.id=co_documenti.idtipodocumento)=\'entrata\')', 'WHR', '####', '', 0, 0, 0, 0),
+(NULL, (SELECT id FROM zz_modules WHERE name='Scadenzario'), 'Scadenzario fornitori', '((SELECT dir FROM co_tipidocumento WHERE co_tipidocumento.id=co_documenti.idtipodocumento)=\'uscita\')', 'WHR', '####', '', 0, 0, 0, 0),
+(NULL, (SELECT id FROM zz_modules WHERE name='Scadenzario'), 'Scadenzario Ri.Ba.', 'co_pagamenti.riba=1', 'WHR', '####', '', 0, 0, 0, 0);
+
+-- Fix vari
+ALTER TABLE `co_righe_documenti` CHANGE `um` `um` VARCHAR(20) NULL;
+UPDATE `co_righe_documenti` SET `um` = NULL WHERE `um` = '';
+ALTER TABLE `co_righe_documenti` CHANGE `idritenutaacconto` `idritenutaacconto` INT(11) NULL, CHANGE `idrivalsainps` `idrivalsainps` INT(11) NULL;
+UPDATE `co_righe_documenti` SET `idritenutaacconto` = NULL WHERE `idritenutaacconto` = 0;
+UPDATE `co_righe_documenti` SET `idrivalsainps` = NULL WHERE `idrivalsainps` = 0;
+
+ALTER TABLE `co_righe_preventivi` CHANGE `um` `um` VARCHAR(20) NULL;
+UPDATE `co_righe_preventivi` SET `um` = NULL WHERE `um` = '';
+
+ALTER TABLE `co_righe_contratti` CHANGE `um` `um` VARCHAR(20) NULL;
+UPDATE `co_righe_contratti` SET `um` = NULL WHERE `um` = '';
+
+ALTER TABLE `or_righe_ordini` CHANGE `um` `um` VARCHAR(20) NULL;
+UPDATE `or_righe_ordini` SET `um` = NULL WHERE `um` = '';
+
+ALTER TABLE `dt_righe_ddt` CHANGE `um` `um` VARCHAR(20) NULL;
+UPDATE `dt_righe_ddt` SET `um` = NULL WHERE `um` = '';
+
+ALTER TABLE `in_righe_interventi` CHANGE `um` `um` VARCHAR(20) NULL;
+UPDATE `in_righe_interventi` SET `um` = NULL WHERE `um` = '';
+
+ALTER TABLE `mg_articoli_interventi` CHANGE `um` `um` VARCHAR(20) NULL;
+UPDATE `mg_articoli_interventi` SET `um` = NULL WHERE `um` = '';
+

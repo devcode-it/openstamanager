@@ -106,17 +106,11 @@ if (!empty($righe)) {
     echo '
         </tr>';
 
-    $totale = 0.00;
-
     foreach ($righe as $i => $r) {
         // Descrizione
         echo '
         <tr>
-            <td>
-
-                <input type="hidden" name="abilita_serial['.$r['id'].']" value="'.$r['abilita_serial'].'" />
-                <input type="hidden" id="idarticolo_'.$i.'" name="idarticolo['.$r['id'].']" value="'.$r['idarticolo'].'" />
-                <input type="hidden" id="descrizione_'.$i.'" name="descrizione['.$r['id'].']" value="'.$r['descrizione'].'" />';
+            <td>';
 
         // Checkbox - da evadere?
         echo '
@@ -133,7 +127,6 @@ if (!empty($righe)) {
         echo '
             <td>
                 <input type="hidden" id="qtamax_'.$i.'" value="'.($r['qta'] - $r['qta_evasa']).'" />
-                <input type="hidden" id="um_'.$i.'" name="um['.$r['id'].']" value="'.$r['um'].'" />
                 <p class="text-center">'.Translator::numberToLocale($r['qta_rimanente']).'</p>
             </td>';
 
@@ -152,7 +145,6 @@ if (!empty($righe)) {
             <td>
                 <input type="hidden" id="subtot_'.$i.'" name="subtot['.$r['id'].']" value="'.str_replace('.', ',', ($r['subtotale'] / $r['qta'])).'" />
                 <input type="hidden" id="sconto_'.$i.'" name="sconto['.$r['id'].']" value="'.str_replace('.', ',', ($r['sconto'] / $r['qta'])).'" />
-                <input type="hidden" id="idiva_'.$i.'" name="idiva['.$r['id'].']" value="'.$r['idiva'].'" />
                 <input type="hidden" id="iva_'.$i.'" name="iva['.$r['id'].']" value="'.str_replace('.', ',', ($r['iva'] / $r['qta'])).'" />
 
                 <big id="subtotale_'.$i.'">'.Translator::numberToLocale($subtotale - $sconto + $iva).' &euro;</big><br/>
@@ -185,8 +177,6 @@ if (!empty($righe)) {
 
         echo '
         </tr>';
-
-        $totale += $subtotale - $sconto + $iva;
     }
 
     // Totale
@@ -196,7 +186,7 @@ if (!empty($righe)) {
                 <b>'.tr('Totale').':</b>
             </td>
             <td class="text-right" colspan="2">
-                <big id="totale">'.Translator::numberToLocale($totale).' &euro;</big>
+                <big id="totale"></big>
             </td>
         </tr>
     </table>';
@@ -285,7 +275,9 @@ echo '
 
             subtot = subtot - sconto;
 
-            totale += subtot * qta + iva * qta;
+            if(subtot) {
+                totale += subtot * qta + iva * qta;
+            }
 
             r++;
 
@@ -306,4 +298,6 @@ echo '
 
         ?>
     }
+
+    ricalcola_totale();
 </script>

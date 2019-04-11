@@ -332,8 +332,6 @@ switch (post('op')) {
             $sconto = Riga::build($intervento);
         }
 
-        $sconto->qta = 1;
-
         $sconto->descrizione = post('descrizione');
         $sconto->id_iva = post('idiva');
 

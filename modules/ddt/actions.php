@@ -188,8 +188,6 @@ switch (post('op')) {
             $sconto = Sconto::build($ddt);
         }
 
-        $sconto->qta = 1;
-
         $sconto->descrizione = post('descrizione');
         $sconto->id_iva = post('idiva');
 

@@ -117,24 +117,29 @@ ALTER TABLE `co_contratti` DROP `sconto_globale`, DROP `tipo_sconto_globale`;
 ALTER TABLE `or_ordini` DROP `sconto_globale`, DROP `tipo_sconto_globale`;
 ALTER TABLE `dt_ddt` DROP `sconto_globale`, DROP `tipo_sconto_globale`;
 
-UPDATE `co_righe_documenti` SET `sconto` = `sconto_globale`, `sconto_unitario` = `sconto_globale`, `tipo_sconto` = 'UNT' WHERE `sconto_globale` != 0;
+ALTER TABLE `co_righe_documenti` ADD `is_sconto` BOOLEAN DEFAULT FALSE NOT NULL AFTER `is_descrizione`;
+UPDATE `co_righe_documenti` SET `sconto` = `sconto_globale`, `sconto_unitario` = `sconto_globale`, `tipo_sconto` = 'UNT', `is_sconto` = 1 WHERE `sconto_globale` != 0;
 ALTER TABLE `co_righe_documenti` DROP `sconto_globale`;
 
-UPDATE `co_righe_preventivi` SET `sconto` = `sconto_globale`, `sconto_unitario` = `sconto_globale`, `tipo_sconto` = 'UNT' WHERE `sconto_globale` != 0;
+ALTER TABLE `co_righe_preventivi` ADD `is_sconto` BOOLEAN DEFAULT FALSE NOT NULL AFTER `is_descrizione`;
+UPDATE `co_righe_preventivi` SET `sconto` = `sconto_globale`, `sconto_unitario` = `sconto_globale`, `tipo_sconto` = 'UNT', `is_sconto` = 1 WHERE `sconto_globale` != 0;
 ALTER TABLE `co_righe_preventivi` DROP `sconto_globale`;
 
-UPDATE `co_righe_contratti` SET `sconto` = `sconto_globale`, `sconto_unitario` = `sconto_globale`, `tipo_sconto` = 'UNT' WHERE `sconto_globale` != 0;
+ALTER TABLE `co_righe_contratti` ADD `is_sconto` BOOLEAN DEFAULT FALSE NOT NULL AFTER `is_descrizione`;
+UPDATE `co_righe_contratti` SET `sconto` = `sconto_globale`, `sconto_unitario` = `sconto_globale`, `tipo_sconto` = 'UNT', `is_sconto` = 1 WHERE `sconto_globale` != 0;
 ALTER TABLE `co_righe_contratti` DROP `sconto_globale`;
 
-UPDATE `or_righe_ordini` SET `sconto` = `sconto_globale`, `sconto_unitario` = `sconto_globale`, `tipo_sconto` = 'UNT' WHERE `sconto_globale` != 0;
+ALTER TABLE `or_righe_ordini` ADD `is_sconto` BOOLEAN DEFAULT FALSE NOT NULL AFTER `is_descrizione`;
+UPDATE `or_righe_ordini` SET `sconto` = `sconto_globale`, `sconto_unitario` = `sconto_globale`, `tipo_sconto` = 'UNT', `is_sconto` = 1 WHERE `sconto_globale` != 0;
 ALTER TABLE `or_righe_ordini` DROP `sconto_globale`;
 
-UPDATE `dt_righe_ddt` SET `sconto` = `sconto_globale`, `sconto_unitario` = `sconto_globale`, `tipo_sconto` = 'UNT' WHERE `sconto_globale` != 0;
+ALTER TABLE `dt_righe_ddt` ADD `is_sconto` BOOLEAN DEFAULT FALSE NOT NULL AFTER `is_descrizione`;
+UPDATE `dt_righe_ddt` SET `sconto` = `sconto_globale`, `sconto_unitario` = `sconto_globale`, `tipo_sconto` = 'UNT', `is_sconto` = 1 WHERE `sconto_globale` != 0;
 ALTER TABLE `dt_righe_ddt` DROP `sconto_globale`;
 
 -- Fix per la tabella in_righe_interventi
 ALTER TABLE `in_righe_interventi` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idintervento`, ADD `idarticolo` INT(11) AFTER `idintervento`, ADD FOREIGN KEY (`idarticolo`) REFERENCES `mg_articoli`(`id`);
-ALTER TABLE `mg_articoli_interventi` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idintervento`;
+ALTER TABLE `mg_articoli_interventi` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idintervento`, ADD `is_sconto` BOOLEAN DEFAULT FALSE NOT NULL AFTER `is_descrizione`;
 
 -- Rimozione campi inutilizzati co_ritenutaacconto
 ALTER TABLE `co_ritenutaacconto` DROP `esente`, DROP `indetraibile`;

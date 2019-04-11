@@ -2,10 +2,22 @@
 
 namespace Common\Components;
 
+use Common\Document;
 use Illuminate\Database\Eloquent\Builder;
 
 abstract class Discount extends Row
 {
+    protected $guarded = [];
+
+    public static function build(Document $document, $bypass = false)
+    {
+        $model = parent::build($document, true);
+
+        $model->is_sconto = 1;
+
+        return $model;
+    }
+
     public function getIvaAttribute()
     {
         return $this->attributes['iva'];
@@ -31,7 +43,7 @@ abstract class Discount extends Row
         parent::boot(true);
 
         static::addGlobalScope('discounts', function (Builder $builder) {
-            $builder->where('subtotale', '=', 0);
+            $builder->where('is_sconto', '=', 1);
         });
     }
 }

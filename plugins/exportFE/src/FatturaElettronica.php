@@ -689,22 +689,6 @@ class FatturaElettronica
 
         // Sconto globale (2.1.1.8)
         // Disabilitazione per aggiornamento sconti
-        /*
-        $documento['sconto_globale'] = floatval($documento['sconto_globale']);
-        if (!empty($documento['sconto_globale'])) {
-            $sconto = [
-                'Tipo' => $documento['sconto_globale'] > 0 ? 'SC' : 'MG',
-            ];
-
-            if ($documento['tipo_sconto_globale'] == 'PRC') {
-                $sconto['Percentuale'] = $documento['sconto_globale'];
-            } else {
-                $sconto['Importo'] = $documento['sconto_globale'];
-            }
-
-            $result['ScontoMaggiorazione'] = $sconto;
-        }
-        */
 
         // Importo Totale Documento (2.1.1.9)
         // Valorizzare l’importo complessivo lordo della fattura (onnicomprensivo di Iva, bollo, contributi previdenziali, ecc…)

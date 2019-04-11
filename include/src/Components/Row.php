@@ -179,7 +179,7 @@ abstract class Row extends Description
             });
 
             static::addGlobalScope('not_discounts', function (Builder $builder) {
-                $builder->where('subtotale', '!=', 0);
+                $builder->where('is_sconto', '=', 0);
             });
         }
     }

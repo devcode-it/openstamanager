@@ -371,7 +371,6 @@ switch (post('op')) {
                 'sconto' => $rs_righe_preventivo[$i]['sconto'],
                 'sconto_unitario' => $rs_righe_preventivo[$i]['sconto_unitario'],
                 'tipo_sconto' => $rs_righe_preventivo[$i]['tipo_sconto'],
-                'sconto_globale' => $rs_righe_preventivo[$i]['sconto_globale'],
                 'um' => $rs_righe_preventivo[$i]['um'],
                 'qta' => $rs_righe_preventivo[$i]['qta'],
                 'order' => $rs_righe_preventivo[$i]['order'],

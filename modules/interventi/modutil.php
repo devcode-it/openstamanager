@@ -324,15 +324,6 @@ function get_costi_intervento($id_intervento)
         $result['altro_scontato'] + ($result['altro_scontato'] * $result['altro_iva'] / 100),
     ]);
 
-    // Calcolo dello sconto incondizionato
-    $sconto = $dbo->fetchArray('SELECT sconto_globale, tipo_sconto_globale FROM in_interventi WHERE id='.prepare($id_intervento))[0];
-    $result['sconto_globale'] = ($sconto['tipo_sconto_globale'] == 'PRC') ? $result['totale_scontato'] * $sconto['sconto_globale'] / 100 : $sconto['sconto_globale'];
-    $result['sconto_globale'] = round($result['sconto_globale'], $decimals);
-
-    $result['totale_scontato'] = sum($result['totale_scontato'], -$result['sconto_globale']);
-    $result['iva_totale'] = sum($result['iva_totale'], -($result['sconto_globale'] * $rs_iva[0]['percentuale'] / 100));
-    $result['totale'] = sum($result['totale'], -($result['sconto_globale'] + ($result['sconto_globale'] * $rs_iva[0]['percentuale'] / 100)));
-
     return $result;
 }
 

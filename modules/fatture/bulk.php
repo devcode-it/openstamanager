@@ -139,10 +139,24 @@ switch (post('op')) {
             }
         }
         break;
+
+    case 'registra-contabile':
+        
+        break;
 }
 
 $bulk = [
     'delete-bulk' => tr('Elimina selezionati'),
+];
+
+$bulk['registra-contabile'] = [
+    'text' => tr('Registra contabile pagamento'),
+    'data' => [
+        'msg' => tr('Vuoi aggiungere un movimento contabile per le fatture selezionate?'),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => true,
+    ],
 ];
 
 if ($module->name == 'Fatture di vendita') {

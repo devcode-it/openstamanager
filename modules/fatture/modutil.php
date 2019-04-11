@@ -122,51 +122,99 @@ function aggiorna_scadenziario($iddocumento, $totale_pagato, $data_pagamento)
 {
     $dbo = database();
 
-    // Lettura righe scadenziario
-    $query = "SELECT * FROM co_scadenziario WHERE iddocumento='$iddocumento' AND ABS(pagato) < ABS(da_pagare) ORDER BY scadenza ASC";
-    $rs = $dbo->fetchArray($query);
-    $netto_fattura = get_netto_fattura($iddocumento);
-    $rimanente = $netto_fattura;
-    $rimanente_da_pagare = abs($rs[0]['pagato']) + $totale_pagato;
+    if($totale_pagato>0){
+        // Lettura righe scadenziario
+        $query = "SELECT * FROM co_scadenziario WHERE iddocumento='$iddocumento' AND ABS(pagato) < ABS(da_pagare) ORDER BY scadenza ASC";
+        $rs = $dbo->fetchArray($query);
+        $rimanente_da_pagare = abs($rs[0]['pagato']) + $totale_pagato;
 
-    // Verifico se la fattura è di acquisto o di vendita per scegliere che segno mettere nel totale
-    $query2 = 'SELECT dir FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
-    $rs2 = $dbo->fetchArray($query2);
-    $dir = $rs2[0]['dir'];
+        // Verifico se la fattura è di acquisto o di vendita per scegliere che segno mettere nel totale
+        $query2 = 'SELECT dir FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
+        $rs2 = $dbo->fetchArray($query2);
+        $dir = $rs2[0]['dir'];
 
-    // Ciclo tra le rate dei pagamenti per inserire su `pagato` l'importo effettivamente pagato.
-    // Nel caso il pagamento superi la rata, devo distribuirlo sulle rate successive
-    for ($i = 0; $i < sizeof($rs); ++$i) {
-        if ($rimanente_da_pagare != 0) {
-            // ...riempio il pagato della rata con il totale della rata stessa se ho ricevuto un pagamento superiore alla rata stessa
-            if (abs($rimanente_da_pagare) >= abs($rs[$i]['da_pagare'])) {
-                $pagato = abs($rs[$i]['da_pagare']);
-                $rimanente_da_pagare -= abs($rs[$i]['da_pagare']);
-            } else {
-                // Se si inserisce una somma maggiore al dovuto, tengo valido il rimanente per saldare il tutto...
-                if (abs($rimanente_da_pagare) > abs($rs[$i]['da_pagare'])) {
+        // Ciclo tra le rate dei pagamenti per inserire su `pagato` l'importo effettivamente pagato.
+        // Nel caso il pagamento superi la rata, devo distribuirlo sulle rate successive
+        for ($i = 0; $i < sizeof($rs); ++$i) {
+            if ($rimanente_da_pagare > 0) {
+                // ...riempio il pagato della rata con il totale della rata stessa se ho ricevuto un pagamento superiore alla rata stessa
+                if (abs($rimanente_da_pagare) >= abs($rs[$i]['da_pagare'])) {
                     $pagato = abs($rs[$i]['da_pagare']);
                     $rimanente_da_pagare -= abs($rs[$i]['da_pagare']);
-                }
-
-                // ...altrimenti aggiungo l'importo pagato
-                else {
-                    $pagato = abs($rimanente_da_pagare);
-                    $rimanente_da_pagare -= abs($rimanente_da_pagare);
-                }
-            }
-
-            if ($dir == 'uscita') {
-                $rimanente_da_pagare = -$rimanente_da_pagare;
-            }
-
-            if ($pagato > 0) {
-                if ($dir == 'uscita') {
-                    $dbo->query('UPDATE co_scadenziario SET pagato='.prepare(-$pagato).', data_pagamento='.prepare($data_pagamento).' WHERE id='.prepare($rs[$i]['id']));
                 } else {
-                    $dbo->query('UPDATE co_scadenziario SET pagato='.prepare($pagato).', data_pagamento='.prepare($data_pagamento).' WHERE id='.prepare($rs[$i]['id']));
+                    // Se si inserisce una somma maggiore al dovuto, tengo valido il rimanente per saldare il tutto...
+                    if (abs($rimanente_da_pagare) > abs($rs[$i]['da_pagare'])) {
+                        $pagato = abs($rs[$i]['da_pagare']);
+                        $rimanente_da_pagare -= abs($rs[$i]['da_pagare']);
+                    }
+
+                    // ...altrimenti aggiungo l'importo pagato
+                    else {
+                        $pagato = abs($rimanente_da_pagare);
+                        $rimanente_da_pagare -= abs($rimanente_da_pagare);
+                    }
+                }
+
+                if ($dir == 'uscita') {
+                    $rimanente_da_pagare = -$rimanente_da_pagare;
+                }
+
+                if ($pagato > 0) {
+                    if ($dir == 'uscita') {
+                        $dbo->query('UPDATE co_scadenziario SET pagato='.prepare(-$pagato).', data_pagamento='.prepare($data_pagamento).' WHERE id='.prepare($rs[$i]['id']));
+                    } else {
+                        $dbo->query('UPDATE co_scadenziario SET pagato='.prepare($pagato).', data_pagamento='.prepare($data_pagamento).' WHERE id='.prepare($rs[$i]['id']));
+                    }
                 }
             }
+        }
+    }else{
+
+        // Lettura righe scadenziario
+        $query = "SELECT * FROM co_scadenziario WHERE iddocumento='$iddocumento' AND ABS(pagato)>0  ORDER BY scadenza DESC";
+        $rs = $dbo->fetchArray($query);
+        $residuo_pagato = abs($rs[0]['pagato']) + $totale_pagato;
+
+        // Verifico se la fattura è di acquisto o di vendita per scegliere che segno mettere nel totale
+        $query2 = 'SELECT dir FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
+        $rs2 = $dbo->fetchArray($query2);
+        $dir = $rs2[0]['dir'];
+
+        // Ciclo tra le rate dei pagamenti per inserire su `pagato` l'importo effettivamente pagato.
+        // Nel caso il pagamento superi la rata, devo distribuirlo sulle rate successive
+        for ($i = 0; $i < sizeof($rs); ++$i) {
+            if ($residuo_pagato >= 0) {
+                // ...riempio il pagato della rata con il totale della rata stessa se ho ricevuto un pagamento superiore alla rata stessa
+                if (abs($residuo_pagato) <= abs($rs[$i]['pagato'])) {
+                    $pagato = 0;
+                    $residuo_pagato -= abs($rs[$i]['pagato']);
+                } else {
+                    // Se si inserisce una somma maggiore al dovuto, tengo valido il rimanente per saldare il tutto...
+                    if (abs($residuo_pagato) < abs($rs[$i]['pagato'])) {
+                        $pagato = 0;
+                        $residuo_pagato -= abs($rs[$i]['pagato']);
+                    }
+
+                    // ...altrimenti aggiungo l'importo pagato
+                    else {
+                        $pagato = abs($residuo_pagato);
+                        $residuo_pagato -= abs($residuo_pagato);
+                    }
+                }
+
+                if ($dir == 'uscita') {
+                    $residuo_pagato = -$residuo_pagato;
+                }
+
+                if ($pagato >= 0) {
+                    if ($dir == 'uscita') {
+                        $dbo->query('UPDATE co_scadenziario SET pagato='.prepare(-$pagato).', data_pagamento='.prepare($data_pagamento).' WHERE id='.prepare($rs[$i]['id']));
+                    } else {
+                        $dbo->query('UPDATE co_scadenziario SET pagato='.prepare($pagato).', data_pagamento='.prepare($data_pagamento).' WHERE id='.prepare($rs[$i]['id']));
+                    }
+                }
+            }
+            
         }
     }
 }

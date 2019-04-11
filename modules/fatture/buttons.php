@@ -47,6 +47,14 @@ if (empty($record['is_fiscale'])) {
 <?php
 
 if (!empty($record['is_fiscale'])) {
+
+    //Aggiunta insoluto
+    if (!empty($record['riba']) && ($record['stato'] == 'Emessa' || $record['stato'] == 'Parzialmente pagato' || $record['stato'] == 'Pagato') && $dir == 'entrata') {
+    ?>
+                    <button type="button" class="btn btn-primary" onclick="launch_modal( '<?php echo tr('Registra insoluto'); ?>', '<?php echo $rootdir; ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>&iddocumento=<?php echo $id_record; ?>&dir=<?php echo $dir; ?>&insoluto=1', 1 );"><i class="fa fa-euro"></i> <?php echo tr('Registra insoluto'); ?>...</button>
+    <?php
+    }
+
     // Aggiunta prima nota solo se non c'è già, se non si è in bozza o se il pagamento non è completo
     $n2 = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE iddocumento='.prepare($id_record).' AND primanota=1');
 

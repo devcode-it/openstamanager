@@ -9,6 +9,7 @@ switch (post('op')) {
         $data = post('data');
         $idmastrino = get_new_idmastrino();
         $descrizione = post('descrizione');
+        $insoluto = post('insoluto');
 
         // Lettura info fattura
         $query = 'SELECT *, co_documenti.note, co_documenti.idpagamento, co_documenti.id AS iddocumento, co_statidocumento.descrizione AS `stato`, co_tipidocumento.descrizione AS `descrizione_tipodoc` FROM ((co_documenti LEFT OUTER JOIN co_statidocumento ON co_documenti.idstatodocumento=co_statidocumento.id) INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
@@ -42,9 +43,12 @@ switch (post('op')) {
             }
         }
 
-        // Inserisco nello scadenziario il totale pagato
-        if ($totale_pagato != 0) {
+        if ($totale_pagato != 0 && empty($insoluto)) {
+            // Inserisco nello scadenziario il totale pagato
             aggiorna_scadenziario($iddocumento, abs($totale_pagato), $data);
+        }else if(!empty($insoluto)){
+            //Rimuovo dallo scadenzario l'insoluto
+            aggiorna_scadenziario($iddocumento, -abs($totale_pagato), $data);
         }
 
         // Se non va a buon fine qualcosa elimino il mastrino per non lasciare incongruenze nel db
@@ -61,8 +65,10 @@ switch (post('op')) {
             // Aggiorno lo stato della fattura
             if (abs($rs[0]['tot_pagato']) == abs($rs[0]['tot_da_pagare'])) {
                 $dbo->query("UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione='Pagato') WHERE id=".prepare($iddocumento));
-            } else {
+            } else if(abs($rs[0]['tot_pagato']) != abs($rs[0]['tot_da_pagare']) && abs($rs[0]['tot_pagato'])!='0'){
                 $dbo->query("UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione='Parzialmente pagato') WHERE id=".prepare($iddocumento));
+            }else{
+                $dbo->query("UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione='Emessa') WHERE id=".prepare($iddocumento));
             }
 
             // Aggiorno lo stato dei preventivi collegati alla fattura se ce ne sono
@@ -101,7 +107,7 @@ switch (post('op')) {
 
             for ($i = 0; $i < sizeof(post('idconto')); ++$i) {
                 $idconto = post('idconto')[$i];
-                $query = 'INSERT INTO co_movimenti_modelli(idmastrino, descrizione, idconto) VALUES('.prepare($idmastrino).', '.prepare($descrizione).', '.prepare($idconto).')';
+                $query = 'INSERT INTO co_movimenti_modelli(idmastrino, nome, descrizione, idconto) VALUES('.prepare($idmastrino).', '.prepare($descrizione).', '.prepare($descrizione).', '.prepare($idconto).')';
                 $dbo->query($query);
             }
         }

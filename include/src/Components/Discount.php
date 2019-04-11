@@ -14,6 +14,7 @@ abstract class Discount extends Row
         $model = parent::build($document, true);
 
         $model->is_sconto = 1;
+        $model->qta = 1;
 
         return $model;
     }

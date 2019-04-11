@@ -26,7 +26,6 @@ if ($record['rinnovabile']) {
 </div>';
 }
 
-
 // Duplica contratto
 echo '
 <form action="" method="post" id="copia-contratto">

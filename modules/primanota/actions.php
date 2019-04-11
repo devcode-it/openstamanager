@@ -46,7 +46,7 @@ switch (post('op')) {
         if ($totale_pagato != 0 && empty($insoluto)) {
             // Inserisco nello scadenziario il totale pagato
             aggiorna_scadenziario($iddocumento, abs($totale_pagato), $data);
-        }else if(!empty($insoluto)){
+        } elseif (!empty($insoluto)) {
             //Rimuovo dallo scadenzario l'insoluto
             aggiorna_scadenziario($iddocumento, -abs($totale_pagato), $data);
         }
@@ -65,9 +65,9 @@ switch (post('op')) {
             // Aggiorno lo stato della fattura
             if (abs($rs[0]['tot_pagato']) == abs($rs[0]['tot_da_pagare'])) {
                 $dbo->query("UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione='Pagato') WHERE id=".prepare($iddocumento));
-            } else if(abs($rs[0]['tot_pagato']) != abs($rs[0]['tot_da_pagare']) && abs($rs[0]['tot_pagato'])!='0'){
+            } elseif (abs($rs[0]['tot_pagato']) != abs($rs[0]['tot_da_pagare']) && abs($rs[0]['tot_pagato']) != '0') {
                 $dbo->query("UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione='Parzialmente pagato') WHERE id=".prepare($iddocumento));
-            }else{
+            } else {
                 $dbo->query("UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione='Emessa') WHERE id=".prepare($iddocumento));
             }
 

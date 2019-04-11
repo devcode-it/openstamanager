@@ -72,7 +72,7 @@ switch (post('op')) {
     case 'test':
         $mail = new Mail($id_record);
 
-        echo json_encode( [
+        echo json_encode([
             'test' => $mail->testSMTP(),
         ]);
 

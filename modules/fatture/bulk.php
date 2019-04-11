@@ -141,7 +141,7 @@ switch (post('op')) {
         break;
 
     case 'registra-contabile':
-        
+
         break;
 }
 

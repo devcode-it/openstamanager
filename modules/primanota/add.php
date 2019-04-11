@@ -15,7 +15,7 @@ include_once __DIR__.'/../../core.php';
     $dir = get('dir');
     $insoluto = get('insoluto');
 
-    if(!empty($insoluto)){
+    if (!empty($insoluto)) {
         echo '<input type="hidden" name="insoluto" value="1">';
     }
 
@@ -42,9 +42,9 @@ include_once __DIR__.'/../../core.php';
             $tipo_doc = 'fattura';
         }
 
-        if(!empty($insoluto)){
+        if (!empty($insoluto)) {
             $operation = 'Registrazione insoluto';
-        }else{
+        } else {
             $operation = 'Pag.';
         }
 
@@ -90,9 +90,9 @@ include_once __DIR__.'/../../core.php';
             $query = 'SELECT SUM(pagato) AS tot_pagato, SUM(da_pagare) AS tot_da_pagare FROM co_scadenziario GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
             $rs = $dbo->fetchArray($query);
 
-            if(!empty($insoluto)){
+            if (!empty($insoluto)) {
                 $importo_conto_aziendale = abs($rs[0]['tot_da_pagare']);
-            }else{
+            } else {
                 $importo_conto_aziendale = abs($rs[0]['tot_da_pagare']) - abs($rs[0]['tot_pagato']);
             }
             $totale_dare = $importo_conto_aziendale;

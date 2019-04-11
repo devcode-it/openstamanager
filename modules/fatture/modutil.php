@@ -122,7 +122,7 @@ function aggiorna_scadenziario($iddocumento, $totale_pagato, $data_pagamento)
 {
     $dbo = database();
 
-    if($totale_pagato>0){
+    if ($totale_pagato > 0) {
         // Lettura righe scadenziario
         $query = "SELECT * FROM co_scadenziario WHERE iddocumento='$iddocumento' AND ABS(pagato) < ABS(da_pagare) ORDER BY scadenza ASC";
         $rs = $dbo->fetchArray($query);
@@ -168,8 +168,7 @@ function aggiorna_scadenziario($iddocumento, $totale_pagato, $data_pagamento)
                 }
             }
         }
-    }else{
-
+    } else {
         // Lettura righe scadenziario
         $query = "SELECT * FROM co_scadenziario WHERE iddocumento='$iddocumento' AND ABS(pagato)>0  ORDER BY scadenza DESC";
         $rs = $dbo->fetchArray($query);
@@ -214,7 +213,6 @@ function aggiorna_scadenziario($iddocumento, $totale_pagato, $data_pagamento)
                     }
                 }
             }
-            
         }
     }
 }

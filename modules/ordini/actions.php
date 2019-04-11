@@ -220,6 +220,7 @@ switch (post('op')) {
 
             flash()->info(tr('Riga rimossa!'));
         }
+
         break;
 
     case 'manage_sconto':
@@ -228,8 +229,6 @@ switch (post('op')) {
         } else {
             $sconto = Sconto::build($ordine);
         }
-
-        $sconto->qta = 1;
 
         $sconto->descrizione = post('descrizione');
         $sconto->id_iva = post('idiva');

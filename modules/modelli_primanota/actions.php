@@ -10,7 +10,7 @@ switch (post('op')) {
 
         for ($i = 0; $i < sizeof(post('idconto')); ++$i) {
             $idconto = post('idconto')[$i];
-            if(!empty($idconto)){
+            if (!empty($idconto)) {
                 $query = 'INSERT INTO co_movimenti_modelli(idmastrino, nome, descrizione, idconto) VALUES('.prepare($idmastrino).', '.prepare($nome).', '.prepare($descrizione).', '.prepare($idconto).')';
                 if ($dbo->query($query)) {
                     $id_record = $idmastrino;
@@ -30,8 +30,8 @@ switch (post('op')) {
 
         for ($i = 0; $i < sizeof(post('idconto')); ++$i) {
             $idconto = post('idconto')[$i];
-            if(!empty($idconto)){
-            $query = 'INSERT INTO co_movimenti_modelli(idmastrino, nome, descrizione, idconto) VALUES('.prepare($idmastrino).', '.prepare($nome).', '.prepare($descrizione).', '.prepare($idconto).')';
+            if (!empty($idconto)) {
+                $query = 'INSERT INTO co_movimenti_modelli(idmastrino, nome, descrizione, idconto) VALUES('.prepare($idmastrino).', '.prepare($nome).', '.prepare($descrizione).', '.prepare($idconto).')';
                 if ($dbo->query($query)) {
                     $id_record = $idmastrino;
                 }

@@ -138,7 +138,7 @@ UPDATE `dt_righe_ddt` SET `sconto` = `sconto_globale`, `sconto_unitario` = `scon
 ALTER TABLE `dt_righe_ddt` DROP `sconto_globale`;
 
 -- Fix per la tabella in_righe_interventi
-ALTER TABLE `in_righe_interventi` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idintervento`, ADD `idarticolo` INT(11) AFTER `idintervento`, ADD FOREIGN KEY (`idarticolo`) REFERENCES `mg_articoli`(`id`);
+ALTER TABLE `in_righe_interventi` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idintervento`, ADD `idarticolo` INT(11) AFTER `idintervento`, ADD FOREIGN KEY (`idarticolo`) REFERENCES `mg_articoli`(`id`), ADD `is_sconto` BOOLEAN DEFAULT FALSE NOT NULL AFTER `is_descrizione`;
 ALTER TABLE `mg_articoli_interventi` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idintervento`, ADD `is_sconto` BOOLEAN DEFAULT FALSE NOT NULL AFTER `is_descrizione`;
 
 -- Rimozione campi inutilizzati co_ritenutaacconto
@@ -178,3 +178,29 @@ INSERT INTO `zz_segments` (`id`, `id_module`, `name`, `clause`, `position`, `pat
 (NULL, (SELECT id FROM zz_modules WHERE name='Scadenzario'), 'Scadenzario clienti', '((SELECT dir FROM co_tipidocumento WHERE co_tipidocumento.id=co_documenti.idtipodocumento)=\'entrata\')', 'WHR', '####', '', 0, 0, 0, 0),
 (NULL, (SELECT id FROM zz_modules WHERE name='Scadenzario'), 'Scadenzario fornitori', '((SELECT dir FROM co_tipidocumento WHERE co_tipidocumento.id=co_documenti.idtipodocumento)=\'uscita\')', 'WHR', '####', '', 0, 0, 0, 0),
 (NULL, (SELECT id FROM zz_modules WHERE name='Scadenzario'), 'Scadenzario Ri.Ba.', 'co_pagamenti.riba=1', 'WHR', '####', '', 0, 0, 0, 0);
+
+-- Fix vari
+ALTER TABLE `co_righe_documenti` CHANGE `um` `um` VARCHAR(20) NULL;
+UPDATE `co_righe_documenti` SET `um` = NULL WHERE `um` = '';
+ALTER TABLE `co_righe_documenti` CHANGE `idritenutaacconto` `idritenutaacconto` INT(11) NULL, CHANGE `idrivalsainps` `idrivalsainps` INT(11) NULL;
+UPDATE `co_righe_documenti` SET `idritenutaacconto` = NULL WHERE `idritenutaacconto` = 0;
+UPDATE `co_righe_documenti` SET `idrivalsainps` = NULL WHERE `idrivalsainps` = 0;
+
+ALTER TABLE `co_righe_preventivi` CHANGE `um` `um` VARCHAR(20) NULL;
+UPDATE `co_righe_preventivi` SET `um` = NULL WHERE `um` = '';
+
+ALTER TABLE `co_righe_contratti` CHANGE `um` `um` VARCHAR(20) NULL;
+UPDATE `co_righe_contratti` SET `um` = NULL WHERE `um` = '';
+
+ALTER TABLE `or_righe_ordini` CHANGE `um` `um` VARCHAR(20) NULL;
+UPDATE `or_righe_ordini` SET `um` = NULL WHERE `um` = '';
+
+ALTER TABLE `dt_righe_ddt` CHANGE `um` `um` VARCHAR(20) NULL;
+UPDATE `dt_righe_ddt` SET `um` = NULL WHERE `um` = '';
+
+ALTER TABLE `in_righe_interventi` CHANGE `um` `um` VARCHAR(20) NULL;
+UPDATE `in_righe_interventi` SET `um` = NULL WHERE `um` = '';
+
+ALTER TABLE `mg_articoli_interventi` CHANGE `um` `um` VARCHAR(20) NULL;
+UPDATE `mg_articoli_interventi` SET `um` = NULL WHERE `um` = '';
+

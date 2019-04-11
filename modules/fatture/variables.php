@@ -12,12 +12,12 @@ FROM co_documenti INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anag
 $logo_azienda = str_replace(DOCROOT, ROOTDIR, App::filepath('templates/base|custom|/logo_azienda.jpg'));
 
 //cliente
-if($r['idconto_cliente']!=''){
+if ($r['idconto_cliente'] != '') {
     $conto = $r['idconto_cliente'];
     $conto_descrizione = $dbo->fetchOne('SELECT CONCAT ((SELECT numero FROM co_pianodeiconti2 WHERE id=co_pianodeiconti3.idpianodeiconti2), ".", numero, " ", descrizione) AS descrizione FROM co_pianodeiconti3 WHERE id='.prepare($conto))['descrizione'];
 }
 //Fornitore
-else if($r['idconto_fornitore']!=''){
+elseif ($r['idconto_fornitore'] != '') {
     $conto = $r['idconto_fornitore'];
     $conto_descrizione = $dbo->fetchOne('SELECT CONCAT ((SELECT numero FROM co_pianodeiconti2 WHERE id=co_pianodeiconti3.idpianodeiconti2), ".", numero, " ", descrizione) AS descrizione FROM co_pianodeiconti3 WHERE id='.prepare($conto))['descrizione'];
 }

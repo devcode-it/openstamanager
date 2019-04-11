@@ -44,32 +44,32 @@ include_once __DIR__.'/../../core.php';
     echo '
         </table>';
 
-	// Variabili utilizzabili
-	$variables = include Modules::filepath(Modules::get("Fatture di vendita")['id'], 'variables.php');
+    // Variabili utilizzabili
+    $variables = include Modules::filepath(Modules::get('Fatture di vendita')['id'], 'variables.php');
 
-	echo '
+    echo '
 		<!-- Istruzioni per il contenuto -->
 		<div class="box box-info">
 			<div class="box-body">';
 
-	if (!empty($variables)) {
-		echo '
+    if (!empty($variables)) {
+        echo '
 				<p>'.tr("Puoi utilizzare le seguenti sequenze di testo all'interno del campo causale, verranno sostituite in fase generazione prima nota dalla fattura.").':</p>
 				<ul>';
 
-		foreach ($variables as $variable => $value) {
-			echo '
+        foreach ($variables as $variable => $value) {
+            echo '
 					<li><code>{'.$variable.'}</code></li>';
-		}
+        }
 
-		echo '
+        echo '
 				</ul>';
-	} else {
-		echo '
+    } else {
+        echo '
 				<p><i class="fa fa-warning"></i> '.tr('Non sono state definite variabili da utilizzare nel template').'.</p>';
-	}
+    }
 
-	echo '
+    echo '
 			</div>
 		</div>';
 ?>

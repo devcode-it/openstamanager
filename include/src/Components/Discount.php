@@ -9,11 +9,12 @@ abstract class Discount extends Row
 {
     protected $guarded = [];
 
-    public static function build(Document $document, $bypass = false)
+    public static function build(Document $document)
     {
         $model = parent::build($document, true);
 
         $model->is_sconto = 1;
+        $model->qta = 1;
 
         return $model;
     }

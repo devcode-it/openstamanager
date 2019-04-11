@@ -32,7 +32,7 @@ switch (post('op')) {
             $idstato = post('idstato');
             $nome = post('nome');
             $idanagrafica = post('idanagrafica');
-			$idsede = post('idsede');
+            $idsede = post('idsede');
             $idagente = post('idagente');
             $idreferente = post('idreferente');
             $idpagamento = post('idpagamento');
@@ -70,7 +70,7 @@ switch (post('op')) {
             $query = 'UPDATE co_preventivi SET idstato='.prepare($idstato).','.
                 ' nome='.prepare($nome).','.
                 ' idanagrafica='.prepare($idanagrafica).','.
-				' idsede='.prepare($idsede).','.
+                ' idsede='.prepare($idsede).','.
                 ' idagente='.prepare($idagente).','.
                 ' idreferente='.prepare($idreferente).','.
                 ' idpagamento='.prepare($idpagamento).','.
@@ -116,9 +116,9 @@ switch (post('op')) {
         $dbo->query('UPDATE tmp SET idpreventivo = '.prepare($id_record));
         $dbo->query('INSERT INTO co_righe_preventivi SELECT NULL,tmp.* FROM tmp');
         $dbo->query('DROP TEMPORARY TABLE tmp');
-		
-		//Azzero eventuale quantità evasa
-		$dbo->query('UPDATE co_righe_preventivi SET qta_evasa=0 WHERE id='.prepare($id_record));
+
+        //Azzero eventuale quantità evasa
+        $dbo->query('UPDATE co_righe_preventivi SET qta_evasa=0 WHERE id='.prepare($id_record));
 
         flash()->info(tr('Preventivo duplicato correttamente!'));
 
@@ -242,8 +242,6 @@ switch (post('op')) {
         } else {
             $sconto = Sconto::build($preventivo);
         }
-
-        $sconto->qta = 1;
 
         $sconto->descrizione = post('descrizione');
         $sconto->id_iva = post('idiva');

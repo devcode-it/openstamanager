@@ -48,20 +48,20 @@ UPDATE `co_staticontratti` SET `is_completato` = 0, `is_pianificabile` = 0, `is_
 UPDATE `co_staticontratti` SET `is_completato` = 1, `is_pianificabile` = 0, `is_fatturabile` = 1 WHERE `descrizione` = 'Accettato';
 UPDATE `co_staticontratti` SET `is_completato` = 1, `is_pianificabile` = 0, `is_fatturabile` = 0 WHERE `descrizione` = 'Rifiutato';
 UPDATE `co_staticontratti` SET `is_completato` = 1, `is_pianificabile` = 1, `is_fatturabile` = 1 WHERE `descrizione` = 'In lavorazione';
-UPDATE `co_staticontratti` SET `is_completato` = 1, `is_pianificabile` = 0, `is_fatturabile` = 0 WHERE `descrizione` = 'Fatturato';
-UPDATE `co_staticontratti` SET `is_completato` = 1, `is_pianificabile` = 0, `is_fatturabile` = 0 WHERE `descrizione` = 'Pagato';
+UPDATE `co_staticontratti` SET `is_completato` = 1, `is_pianificabile` = 1, `is_fatturabile` = 0 WHERE `descrizione` = 'Fatturato';
+UPDATE `co_staticontratti` SET `is_completato` = 1, `is_pianificabile` = 1, `is_fatturabile` = 0 WHERE `descrizione` = 'Pagato';
 UPDATE `co_staticontratti` SET `is_completato` = 1, `is_pianificabile` = 0, `is_fatturabile` = 1 WHERE `descrizione` = 'Concluso';
-UPDATE `co_staticontratti` SET `is_completato` = 1, `is_pianificabile` = 0, `is_fatturabile` = 1 WHERE `descrizione` = 'Parzialmente fatturato';
+UPDATE `co_staticontratti` SET `is_completato` = 1, `is_pianificabile` = 1, `is_fatturabile` = 1 WHERE `descrizione` = 'Parzialmente fatturato';
 
 UPDATE `co_statipreventivi` SET `is_completato` = 0, `is_pianificabile` = 0, `is_fatturabile` = 0 WHERE `descrizione` = 'Bozza';
 UPDATE `co_statipreventivi` SET `is_completato` = 0, `is_pianificabile` = 0, `is_fatturabile` = 0 WHERE `descrizione` = 'In attesa di conferma';
 UPDATE `co_statipreventivi` SET `is_completato` = 1, `is_pianificabile` = 0, `is_fatturabile` = 1 WHERE `descrizione` = 'Accettato';
 UPDATE `co_statipreventivi` SET `is_completato` = 1, `is_pianificabile` = 0, `is_fatturabile` = 0 WHERE `descrizione` = 'Rifiutato';
 UPDATE `co_statipreventivi` SET `is_completato` = 1, `is_pianificabile` = 1, `is_fatturabile` = 1 WHERE `descrizione` = 'In lavorazione';
-UPDATE `co_statipreventivi` SET `is_completato` = 1, `is_pianificabile` = 0, `is_fatturabile` = 0 WHERE `descrizione` = 'Fatturato';
-UPDATE `co_statipreventivi` SET `is_completato` = 1, `is_pianificabile` = 0, `is_fatturabile` = 0 WHERE `descrizione` = 'Pagato';
+UPDATE `co_statipreventivi` SET `is_completato` = 1, `is_pianificabile` = 1, `is_fatturabile` = 0 WHERE `descrizione` = 'Fatturato';
+UPDATE `co_statipreventivi` SET `is_completato` = 1, `is_pianificabile` = 1, `is_fatturabile` = 0 WHERE `descrizione` = 'Pagato';
 UPDATE `co_statipreventivi` SET `is_completato` = 1, `is_pianificabile` = 0, `is_fatturabile` = 1 WHERE `descrizione` = 'Concluso';
-UPDATE `co_statipreventivi` SET `is_completato` = 1, `is_pianificabile` = 0, `is_fatturabile` = 1 WHERE `descrizione` = 'Parzialmente fatturato';
+UPDATE `co_statipreventivi` SET `is_completato` = 1, `is_pianificabile` = 1, `is_fatturabile` = 1 WHERE `descrizione` = 'Parzialmente fatturato';
 
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato, co_contratti.id, DATEDIFF( data_conclusione, NOW() ) AS giorni_rimanenti FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE is_fatturabile = 1) AND rinnovabile=1 AND NOW() > DATE_ADD( data_conclusione, INTERVAL - ABS(giorni_preavviso_rinnovo) DAY) AND YEAR(data_conclusione) > 1970 HAVING ISNULL((SELECT id FROM co_contratti contratti WHERE contratti.idcontratto_prev=co_contratti.id )) ORDER BY giorni_rimanenti ASC' WHERE `zz_widgets`.`name` = 'Contratti in scadenza';
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM co_ordiniservizio WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE ispianificabile = 1)) AND idintervento IS NULL' WHERE `zz_widgets`.`name` = 'Ordini di servizio da impostare';

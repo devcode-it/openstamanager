@@ -30,6 +30,8 @@ if (get('op')) {
     return;
 }
 
+$_SESSION['superselect']['stato'] = 'is_fatturabile';
+
 echo '
 <div class="row">
     <div class="col-md-12">

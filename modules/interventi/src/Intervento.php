@@ -5,8 +5,6 @@ namespace Modules\Interventi;
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Contratti\Contratto;
-use Modules\Interventi\Components\Articolo;
-use Modules\Interventi\Components\Riga;
 use Modules\Preventivi\Preventivo;
 use Util\Generator;
 
@@ -67,12 +65,12 @@ class Intervento extends Document
 
     public function articoli()
     {
-        return $this->hasMany(Articolo::class, 'idintervento');
+        return $this->hasMany(Components\Articolo::class, 'idintervento');
     }
 
     public function righe()
     {
-        return $this->hasMany(Riga::class, 'idintervento');
+        return $this->hasMany(Components\Riga::class, 'idintervento');
     }
 
     public function sconti()
@@ -83,6 +81,11 @@ class Intervento extends Document
     public function descrizioni()
     {
         return $this->righe()->where('prezzo_vendita', 0);
+    }
+
+    public function sessioni()
+    {
+        return $this->hasMany(Components\Sessione::class, 'idintervento');
     }
 
     // Metodi statici

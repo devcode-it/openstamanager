@@ -988,7 +988,7 @@ class FatturaElettronica
             $aliquota = $riga->aliquota ?: $iva_descrizioni;
             $percentuale = floatval($aliquota->percentuale);
 
-            $dettaglio['PrezzoTotale'] = $riga->imponibile_scontato > 0 ? $riga->imponibile_scontato : 0;
+            $dettaglio['PrezzoTotale'] = $riga->imponibile_scontato;
             $dettaglio['AliquotaIVA'] = $percentuale;
 
             if (!empty($riga['idritenutaacconto']) && empty($riga['is_descrizione'])) {

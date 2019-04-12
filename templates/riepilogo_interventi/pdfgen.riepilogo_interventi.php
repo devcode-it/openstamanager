@@ -229,7 +229,7 @@ if (sizeof($info_intervento) > 0) {
     $body .= "</td>\n";
 
     $body .= "<td align=\"center\" bgcolor=\"#dddddd\">\n";
-    $body .= '<b>'.Translator::numberToLocale($totale_calcolato)." &euro;</b>\n";
+    $body .= '<b>'.Translator::numberToLocale($totale_calcolato).' '.currency()."</b>\n";
     $body .= "</td></tr>\n";
 
     // Riga dello sconto
@@ -239,14 +239,14 @@ if (sizeof($info_intervento) > 0) {
         $body .= "<tr><td style=\"border:0px;\" align=\"right\" colspan=\"6\">\n";
         $body .= "<b>Arrotondamenti:</b>\n";
         $body .= "</td><td align=\"center\">\n";
-        $body .= "<b>".Translator::numberToLocale( -$sconto)." &euro;</b>\n";
+        $body .= "<b>".Translator::numberToLocale( -$sconto)." ".currency()."</b>\n";
         $body .= "</td></tr>\n\n";
         */
 
         $body .= "<tr><td style=\"border:0px;\" align=\"right\" colspan=\"6\">\n";
         $body .= "<b>Totale scontato:</b>\n";
         $body .= "</td><td align=\"center\">\n";
-        $body .= '<b>'.Translator::numberToLocale($totale_calcolato - $sconto)." &euro;</b>\n";
+        $body .= '<b>'.Translator::numberToLocale($totale_calcolato - $sconto).' '.currency()."</b>\n";
         $body .= "</td></tr>\n";
     }
 
@@ -304,12 +304,12 @@ if (sizeof($rs2) > 0) {
         $netto = $rs2[$i]['prezzo_vendita'];
         $netto = $netto + $netto / 100 * $rs2[$i]['prc_guadagno'];
         $iva = $netto / 100 * $rs2[$i]['prciva_vendita'];
-        $body .= '<span>'.Translator::numberToLocale($netto)." &euro;</span>\n";
+        $body .= '<span>'.Translator::numberToLocale($netto).' '.currency()."</span>\n";
         $body .= "</td>\n";
 
         // Prezzo di vendita
         $body .= "<td class='table_cell' align='center'>\n";
-        $body .= '<span><span>'.Translator::numberToLocale($netto * $qta)."</span> &euro;</span>\n";
+        $body .= '<span><span>'.Translator::numberToLocale($netto * $qta).'</span> '.currency()."</span>\n";
         $body .= "</td></tr>\n";
         $totale_articoli += $netto * $qta;
     }
@@ -320,7 +320,7 @@ if (sizeof($rs2) > 0) {
     $body .= "</td>\n";
 
     $body .= "<td align=\"center\" bgcolor=\"#dddddd\">\n";
-    $body .= '<b>'.Translator::numberToLocale($totale_articoli)." &euro;</b>\n";
+    $body .= '<b>'.Translator::numberToLocale($totale_articoli).' '.currency()."</b>\n";
     $body .= "</td></tr>\n";
     $body .= "</table><br/>\n";
 }
@@ -371,12 +371,12 @@ if (sizeof($rs2) > 0) {
         // Prezzo unitario
         $body .= "<td class='table_cell' align='center'>\n";
         $netto = $rs2[$i]['prezzo_vendita'];
-        $body .= '<span>'.Translator::numberToLocale($netto)." &euro;</span>\n";
+        $body .= '<span>'.Translator::numberToLocale($netto).' '.currency()."</span>\n";
         $body .= "</td>\n";
 
         // Prezzo di vendita
         $body .= "<td class='table_cell' align='center'>\n";
-        $body .= '<span>'.Translator::numberToLocale($netto * $qta)." &euro;</span>\n";
+        $body .= '<span>'.Translator::numberToLocale($netto * $qta).' '.currency()."</span>\n";
         $body .= "</td></tr>\n";
         $totale_spese += $netto * $qta;
     }
@@ -387,14 +387,14 @@ if (sizeof($rs2) > 0) {
     $body .= "</td>\n";
 
     $body .= "<td align=\"center\" bgcolor=\"#dddddd\">\n";
-    $body .= '<b>'.Translator::numberToLocale($totale_spese)." &euro;</b>\n";
+    $body .= '<b>'.Translator::numberToLocale($totale_spese).' '.currency()."</b>\n";
     $body .= "</td></tr>\n";
     $body .= "</table><br/>\n";
 }
 
 // Totale complessivo intervento
 $body .= "<p align=\"right\">\n";
-$body .= '<big><b>TOTALE INTERVENTI: '.Translator::numberToLocale($totale_intervento_scontato + $totale_articoli + $totale_spese)." &euro;</b></big>\n";
+$body .= '<big><b>TOTALE INTERVENTI: '.Translator::numberToLocale($totale_intervento_scontato + $totale_articoli + $totale_spese).' '.currency()."</b></big>\n";
 $body .= "</p>\n";
 
 $report_name = 'riepilogo_interventi.pdf';

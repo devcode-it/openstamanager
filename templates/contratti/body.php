@@ -136,7 +136,7 @@ foreach ($righe as $r) {
             <td class='text-right'>";
         if (empty($r['is_descrizione'])) {
             echo '
-                '.(empty($r['qta']) || empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'] / $r['qta'])).' &euro;';
+                '.(empty($r['qta']) || empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'] / $r['qta'])).' '.currency();
         }
         echo '
             </td>';
@@ -146,13 +146,13 @@ foreach ($righe as $r) {
             <td class='text-right'>";
         if (empty($r['is_descrizione'])) {
             echo '
-                '.(empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'])).' &euro;';
+                '.(empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'])).' '.currency();
 
             if ($r['sconto'] > 0) {
                 echo '
                     <br><small class="help-block">- '.tr('sconto _TOT_ _TYPE_', [
                         '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
-                        '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
+                        '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : currency()),
                     ]).'</small>';
 
                 if ($count <= 1) {
@@ -198,7 +198,7 @@ if ($options['pricing']) {
         </td>
 
         <th class="text-center">
-            <b>'.Translator::numberToLocale($imponibile).' &euro;</b>
+            <b>'.Translator::numberToLocale($imponibile).' '.currency().'</b>
         </th>
     </tr>';
 
@@ -209,7 +209,7 @@ if ($options['pricing']) {
         </td>
 
         <th class="text-center">
-            <b>-'.Translator::numberToLocale($sconto).' &euro;</b>
+            <b>-'.Translator::numberToLocale($sconto).' '.currency().'</b>
         </th>
     </tr>';
     }
@@ -221,7 +221,7 @@ if ($options['pricing']) {
             <b>'.tr('Quotazione totale', [], ['upper' => true]).':</b>
     	</td>
     	<th class="text-center">
-    		<b>'.Translator::numberToLocale($totale).' &euro;</b>
+    		<b>'.Translator::numberToLocale($totale).' '.currency().'</b>
     	</th>
     </tr>';
 }

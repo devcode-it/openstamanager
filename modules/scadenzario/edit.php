@@ -134,9 +134,13 @@ echo '
 					
 					<div class="clearfix"></div>
 
-					<div class="alert alert-error hide" id="totale"><?php echo tr('Il totale da pagare deve essere pari a _NUM_', [
-                        '_NUM_' => '<b>'.Translator::numberToLocale($totale_da_pagare).'&euro;</b>',
-                    ]); ?>.<br><?php echo tr('Differenza di'); ?> <span id="diff"></span> &euro;.
+					<div class="alert alert-error hide" id="totale"><?php echo tr('Il totale da pagare deve essere pari a _TOT_ _CURRENCY_', [
+                        '_TOT_' => '<b>'.Translator::numberToLocale($totale_da_pagare).'</b>',
+                        '_CURRENCY_' => currency(),
+                    ]); ?>.<br><?php echo tr('Differenza di _TOT_ _CURRENCY_', [
+                            '_TOT_' => '<span id="diff"></span>',
+                            '_CURRENCY_' => currency(),
+                        ]); ?>.
 					</div>
 
 					<input type="hidden" id="totale_da_pagare" value="<?php echo Translator::numberToLocale($totale_da_pagare); ?>">

@@ -74,10 +74,10 @@ for ($r = 0; $r < sizeof($rs); ++$r) {
     $body .= "<tr>\n";
     $body .= "	<td class='first_cell cell-padded'>".$rs[$r]['codice']."</td>\n";
     $body .= "	<td class='table_cell cell-padded'>".$rs[$r]['descrizione']."</td>\n";
-    $body .= "	<td class='table_cell text-right cell-padded'>".Translator::numberToLocale($rs[$r]['prezzo_vendita'])." &euro;</td>\n";
+    $body .= "	<td class='table_cell text-right cell-padded'>".Translator::numberToLocale($rs[$r]['prezzo_vendita']).' '.currency()."</td>\n";
     $body .= "	<td class='table_cell text-right cell-padded'>".$rs[$r]['um'].' '.Translator::numberToLocale($rs[$r]['qta'])."</td>\n";
-    $body .= "	<td class='table_cell text-right cell-padded'>".Translator::numberToLocale($rs[$r]['prezzo_acquisto'])." &euro;</td>\n";
-    $body .= "	<td class='table_cell text-right cell-padded'>".Translator::numberToLocale(($rs[$r]['prezzo_acquisto'] * $rs[$r]['qta']))." &euro;</td>\n";
+    $body .= "	<td class='table_cell text-right cell-padded'>".Translator::numberToLocale($rs[$r]['prezzo_acquisto']).' '.currency()."</td>\n";
+    $body .= "	<td class='table_cell text-right cell-padded'>".Translator::numberToLocale(($rs[$r]['prezzo_acquisto'] * $rs[$r]['qta'])).' '.currency()."</td>\n";
     $body .= "</tr>\n";
 
     $totale_qta += $rs[$r]['qta'];
@@ -90,7 +90,7 @@ $body .= "<td colspan='2' bgcolor='#dddddd' class='first_cell text-right cell-pa
 $body .= "<td bgcolor='#dddddd' class='first_cell text-right cell-padded'></td>\n";
 $body .= "<td bgcolor='#dddddd' class='table_cell text-right cell-padded'><b>".Translator::numberToLocale($totale_qta)."</b></td>\n";
 $body .= "<td bgcolor='#dddddd' class='first_cell text-right cell-padded'></td>\n";
-$body .= "<td bgcolor='#dddddd' class='table_cell text-right cell-padded'><b>".Translator::numberToLocale($totale_acquisto)." &euro;</b></td>\n";
+$body .= "<td bgcolor='#dddddd' class='table_cell text-right cell-padded'><b>".Translator::numberToLocale($totale_acquisto).' '.currency()."</b></td>\n";
 $body .= "</tr>\n";
 $body .= "</table>\n";
 

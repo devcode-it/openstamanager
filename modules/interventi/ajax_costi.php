@@ -35,67 +35,67 @@ if ($show_prezzi) {
 
     <tr>
         <th>'.tr('Totale manodopera', [], ['upper' => true]).'</th>
-        <td class="text-right">'.Translator::numberToLocale($costi['manodopera_costo']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['manodopera_addebito']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['manodopera_scontato']).' &euro;</td>
+        <td class="text-right">'.Translator::numberToLocale($costi['manodopera_costo']).' '.currency().'</td>
+        <td class="text-right">'.Translator::numberToLocale($costi['manodopera_addebito']).' '.currency().'</td>
+        <td class="text-right">'.Translator::numberToLocale($costi['manodopera_scontato']).' '.currency().'</td>
     </tr>
 
     <tr>
         <th>'.tr('Totale diritto di chiamata', [], ['upper' => true]).'</th>
-        <td class="text-right">'.Translator::numberToLocale($costi['dirittochiamata_costo']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['dirittochiamata_addebito']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['dirittochiamata_scontato']).' &euro;</td>
+        <td class="text-right">'.Translator::numberToLocale($costi['dirittochiamata_costo']).' '.currency().'</td>
+        <td class="text-right">'.Translator::numberToLocale($costi['dirittochiamata_addebito']).' '.currency().'</td>
+        <td class="text-right">'.Translator::numberToLocale($costi['dirittochiamata_scontato']).' '.currency().'</td>
     </tr>
 
     <tr>
         <th>'.tr('Totale viaggio', [], ['upper' => true]).'</th>
-        <td class="text-right">'.Translator::numberToLocale($costi['viaggio_costo']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['viaggio_addebito']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['viaggio_scontato']).' &euro;</td>
+        <td class="text-right">'.Translator::numberToLocale($costi['viaggio_costo']).' '.currency().'</td>
+        <td class="text-right">'.Translator::numberToLocale($costi['viaggio_addebito']).' '.currency().'</td>
+        <td class="text-right">'.Translator::numberToLocale($costi['viaggio_scontato']).' '.currency().'</td>
     </tr>
 
     <tr>
         <th>'.tr('Totale articoli', [], ['upper' => true]).'</th>
-        <td class="text-right">'.Translator::numberToLocale($costi['ricambi_costo']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['ricambi_addebito']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['ricambi_scontato']).' &euro;</td>
+        <td class="text-right">'.Translator::numberToLocale($costi['ricambi_costo']).' '.currency().'</td>
+        <td class="text-right">'.Translator::numberToLocale($costi['ricambi_addebito']).' '.currency().'</td>
+        <td class="text-right">'.Translator::numberToLocale($costi['ricambi_scontato']).' '.currency().'</td>
     </tr>
 
     <tr>
         <th>'.tr('Totale altre spese', [], ['upper' => true]).'</th>
-        <td class="text-right">'.Translator::numberToLocale($costi['altro_costo']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['altro_addebito']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['altro_scontato']).' &euro;</td>
+        <td class="text-right">'.Translator::numberToLocale($costi['altro_costo']).' '.currency().'</td>
+        <td class="text-right">'.Translator::numberToLocale($costi['altro_addebito']).' '.currency().'</td>
+        <td class="text-right">'.Translator::numberToLocale($costi['altro_scontato']).' '.currency().'</td>
     </tr>
 
     <tr>
         <th>'.tr('Sconto incondizionato', [], ['upper' => true]).'</th>
         <td class="text-right">-</td>
         <td class="text-right">-</td>
-        <td class="text-right">'.Translator::numberToLocale(-$costi['sconto_globale']).' &euro;</td>
+        <td class="text-right">'.Translator::numberToLocale(-$costi['sconto_globale']).' '.currency().'</td>
     </tr>
 
 
 	<tr class='.$hide.' >
         <th>'.tr('Imponibile', [], ['upper' => true]).'</th>
-        <td class="text-right">'.Translator::numberToLocale($costi['totale_costo']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['totale_addebito']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['totale_scontato']).' &euro;</td>
+        <td class="text-right">'.Translator::numberToLocale($costi['totale_costo']).' '.currency().'</td>
+        <td class="text-right">'.Translator::numberToLocale($costi['totale_addebito']).' '.currency().'</td>
+        <td class="text-right">'.Translator::numberToLocale($costi['totale_scontato']).' '.currency().'</td>
     </tr>
 
 
 	<tr class='.$hide.' >
         <th>'.tr('IVA', [], ['upper' => true]).'</th>
-        <td class="text-right">'.Translator::numberToLocale($costi['iva_costo']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['iva_addebito']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['iva_totale']).' &euro;</td>
+        <td class="text-right">'.Translator::numberToLocale($costi['iva_costo']).' '.currency().'</td>
+        <td class="text-right">'.Translator::numberToLocale($costi['iva_addebito']).' '.currency().'</td>
+        <td class="text-right">'.Translator::numberToLocale($costi['iva_totale']).' '.currency().'</td>
     </tr>
 
     <tr>
         <th>'.tr('Totale', [], ['upper' => true]).'</th>
-        <th class="text-right">'.Translator::numberToLocale($costi['totaleivato_costo']).' &euro;</th>
-        <th class="text-right">'.Translator::numberToLocale($costi['totaleivato_addebito']).' &euro;</th>
-        <th class="text-right">'.Translator::numberToLocale($costi['totale']).' &euro;</th>
+        <th class="text-right">'.Translator::numberToLocale($costi['totaleivato_costo']).' '.currency().'</th>
+        <th class="text-right">'.Translator::numberToLocale($costi['totaleivato_addebito']).' '.currency().'</th>
+        <th class="text-right">'.Translator::numberToLocale($costi['totale']).' '.currency().'</th>
     </tr>
 </table>';
 }

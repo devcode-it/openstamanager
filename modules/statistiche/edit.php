@@ -153,7 +153,7 @@ if (!empty($clienti)) {
                     <tr>
                         <td>'.Modules::link('Anagrafiche', $cliente['idanagrafica'], $cliente['ragione_sociale']).'</td>
                         <td class="text-center">'.intval($cliente['qta']).'</td>
-                        <td class="text-right">'.Translator::numberToLocale($cliente['totale']).' &euro;</td>
+                        <td class="text-right">'.Translator::numberToLocale($cliente['totale']).' '.currency().'</td>
                         <td class="text-right">'.Translator::numberToLocale($cliente['totale'] * 100 / $totale[0]['totale']).' %</td>
                     </tr>';
     }

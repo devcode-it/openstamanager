@@ -204,3 +204,17 @@ UPDATE `in_righe_interventi` SET `um` = NULL WHERE `um` = '';
 ALTER TABLE `mg_articoli_interventi` CHANGE `um` `um` VARCHAR(20) NULL;
 UPDATE `mg_articoli_interventi` SET `um` = NULL WHERE `um` = '';
 
+-- Supporto a valute differenti
+CREATE TABLE IF NOT EXISTS `zz_currencies` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `symbol` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+INSERT INTO `zz_currencies` (`id`, `name`, `title`, `symbol`) VALUES
+(NULL, 'Euro', 'Euro', '&euro;'),
+(NULL, 'Sterlina', 'Sterlina', '&pound;');
+
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Valuta', '1', 'query=SELECT id AS id, CONCAT(title, '' - '', symbol) AS text FROM zz_currencies', 1, 'Generali', 12);

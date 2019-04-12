@@ -100,13 +100,13 @@ if (!empty($rs)) {
         <td class="text-right">';
         if (empty($r['is_descrizione'])) {
             echo '
-            '.Translator::numberToLocale($r['subtotale'] / $r['qta']).' &euro;';
+            '.Translator::numberToLocale($r['subtotale'] / $r['qta']).' '.currency();
 
             if ($r['sconto_unitario'] > 0) {
                 echo '
             <br><small class="label label-danger">'.tr('sconto _TOT_ _TYPE_', [
                 '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
-                '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
+                '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : currency()),
             ]).'</small>';
             }
         }
@@ -118,7 +118,7 @@ if (!empty($rs)) {
         <td class="text-right">';
         if (empty($r['is_descrizione'])) {
             echo '
-            '.Translator::numberToLocale($r['iva']).' &euro;
+            '.Translator::numberToLocale($r['iva']).' '.currency().'
             <br><small class="help-block">'.$r['desc_iva'].'</small>';
         }
         echo '
@@ -129,7 +129,7 @@ if (!empty($rs)) {
         <td class="text-right">';
         if (empty($r['is_descrizione'])) {
             echo '
-            '.Translator::numberToLocale($r['subtotale'] - $r['sconto']).' &euro;';
+            '.Translator::numberToLocale($r['subtotale'] - $r['sconto']).' '.currency();
         }
         echo '
         </td>';
@@ -214,7 +214,7 @@ echo '
         </td>
 
         <td align="right">
-            '.Translator::numberToLocale($imponibile).' &euro;
+            '.Translator::numberToLocale($imponibile).' '.currency().'
         </td>
 
         <td></td>
@@ -229,7 +229,7 @@ if (abs($sconto) > 0) {
         </td>
 
         <td align="right">
-            '.Translator::numberToLocale($sconto).' &euro;
+            '.Translator::numberToLocale($sconto).' '.currency().'
         </td>
 
         <td></td>
@@ -243,7 +243,7 @@ if (abs($sconto) > 0) {
         </td>
 
         <td align="right">
-            '.Translator::numberToLocale($imponibile_scontato).' &euro;
+            '.Translator::numberToLocale($imponibile_scontato).' '.currency().'
         </td>
 
         <td></td>
@@ -259,7 +259,7 @@ if (abs($record['rivalsainps']) > 0) {
         </td>
 
         <td align="right">
-            '.Translator::numberToLocale($record['rivalsainps']).' &euro;
+            '.Translator::numberToLocale($record['rivalsainps']).' '.currency().'
         </td>
 
         <td></td>
@@ -274,7 +274,7 @@ if (abs($totale_iva) > 0) {
         </td>
 
         <td align="right">
-            '.Translator::numberToLocale($totale_iva).' &euro;
+            '.Translator::numberToLocale($totale_iva).' '.currency().'
         </td>
 
         <td></td>
@@ -289,7 +289,7 @@ echo '
         </td>
 
         <td align="right">
-            '.Translator::numberToLocale($totale).' &euro;
+            '.Translator::numberToLocale($totale).' '.currency().'
         </td>
 
         <td></td>
@@ -304,7 +304,7 @@ if (abs($record['bollo']) > 0) {
         </td>
 
         <td align="right">
-            '.Translator::numberToLocale($record['bollo']).' &euro;
+            '.Translator::numberToLocale($record['bollo']).' '.currency().'
         </td>
 
         <td></td>
@@ -320,7 +320,7 @@ if (abs($record['ritenutaacconto']) > 0) {
         </td>
 
         <td align="right">
-            '.Translator::numberToLocale($record['ritenutaacconto']).' &euro;
+            '.Translator::numberToLocale($record['ritenutaacconto']).' '.currency().'
         </td>
 
         <td></td>
@@ -336,7 +336,7 @@ if ($totale != $netto_a_pagare) {
         </td>
 
         <td align="right">
-            '.Translator::numberToLocale($netto_a_pagare).' &euro;
+            '.Translator::numberToLocale($netto_a_pagare).' '.currency().'
         </td>
 
         <td></td>

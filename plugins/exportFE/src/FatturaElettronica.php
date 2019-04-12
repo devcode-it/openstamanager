@@ -966,11 +966,11 @@ class FatturaElettronica
                 $dettaglio['DataFinePeriodo'] = $riga['data_fine_periodo'];
             }
 
-            $dettaglio['PrezzoUnitario'] = abs($riga->prezzo_unitario_vendita);
+            $dettaglio['PrezzoUnitario'] = $riga->prezzo_unitario_vendita;
 
             // Sconto (2.2.1.10)
-            $sconto = abs($riga->sconto);
-            $sconto_unitario = abs($riga->sconto_unitario);
+            $sconto = $riga->sconto;
+            $sconto_unitario = $riga->sconto_unitario;
             if (!empty($sconto_unitario)) {
                 $sconto = [
                     'Tipo' => $riga->sconto_unitario > 0 ? 'SC' : 'MG',

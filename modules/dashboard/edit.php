@@ -611,14 +611,14 @@ if (Modules::getPermission('Interventi') == 'rw') {
 
                 ref = $(this).data('ref');
                 if (ref == 'ordine') {
-                    name = 'idordineservizio';
+                    nome = 'idordineservizio';
                 } else if (ref == 'promemoria') {
-                    name = 'idcontratto_riga';
+                    nome = 'idcontratto_riga';
                 } else {
-                    name = 'id_intervento';
+                    nome = 'id_intervento';
                 }
 
-                launch_modal('<?php echo tr('Pianifica intervento'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::get('Interventi')['id']; ?>&data='+data+'&orario_inizio='+ora_dal+'&orario_fine='+ora_al+'&ref=dashboard&idcontratto=' + $(this).data('idcontratto') + '&' + name + '=' + $(this).data('id'), 1);
+                launch_modal('<?php echo tr('Pianifica intervento'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::get('Interventi')['id']; ?>&data='+data+'&orario_inizio='+ora_dal+'&orario_fine='+ora_al+'&ref=dashboard&idcontratto=' + $(this).data('idcontratto') + '&' + nome + '=' + $(this).data('id'), 1);
 
                 $(this).remove();
 
@@ -628,12 +628,13 @@ if (Modules::getPermission('Interventi') == 'rw') {
             },
 
             selectable: true,
-			select: function(start, end, allDay) {
-				data = moment(start).format("YYYY-MM-DD");
+            select: function(start, end, allDay) {
+                data = moment(start).format("YYYY-MM-DD");
+                data_fine = moment(end).format("YYYY-MM-DD");
 				ora_dal = moment(start).format("HH:mm");
 				ora_al = moment(end).format("HH:mm");
 
-                launch_modal('<?php echo tr('Aggiungi intervento'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::get('Interventi')['id']; ?>&ref=dashboard&data='+data+'&orario_inizio='+ora_dal+'&orario_fine='+ora_al, 1 );
+                launch_modal('<?php echo tr('Aggiungi intervento'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::get('Interventi')['id']; ?>&ref=dashboard&data='+data+'&orario_inizio='+ora_dal+'&data_fine='+data_fine+'&orario_fine='+ora_al, 1 );
 
 				$('#calendar').fullCalendar('unselect');
 			},

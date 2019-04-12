@@ -131,6 +131,14 @@ elseif (!empty($id_intervento)) {
     $idimpianto = implode(',', array_column($rs, 'idimpianto'));
 }
 
+if (empty($data_fine)) {
+    if (null !== filter('data_fine')) {
+        $data_fine = filter('data_fine');
+    } else {
+        $data_fine = date(formatter()->getDatePattern());
+    }
+}
+
 if (empty($data)) {
     if (null !== filter('data')) {
         $data = filter('data');
@@ -139,10 +147,12 @@ if (empty($data)) {
     }
 }
 
+$data_fine = $data_fine ?: $data;
+
 $_SESSION['superselect']['idanagrafica'] = $idanagrafica;
 
 $orario_inizio = $data.' '.$orario_inizio;
-$orario_fine = $data.' '.$orario_fine;
+$orario_fine = $data_fine.' '.$orario_fine;
 
 ?>
 

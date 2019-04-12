@@ -13,10 +13,9 @@ include_once __DIR__.'/../../core.php';
     <div class="row">
 	<?php
 
-    $rs_doc = $dbo->fetchArray("SELECT DISTINCT iddocumento, (SELECT IFNULL(numero_esterno, numero) FROM co_documenti WHERE id=co_movimenti.iddocumento) AS numero FROM co_movimenti WHERE idmastrino=".prepare($record['idmastrino']));
+    $rs_doc = $dbo->fetchArray('SELECT DISTINCT iddocumento, (SELECT IFNULL(numero_esterno, numero) FROM co_documenti WHERE id=co_movimenti.iddocumento) AS numero FROM co_movimenti WHERE idmastrino='.prepare($record['idmastrino']));
 
-    if(sizeof($rs_doc)==1){
-
+    if (sizeof($rs_doc) == 1) {
         if (!empty($record['iddocumento'])) {
             $rs = $dbo->fetchArray('SELECT dir FROM co_tipidocumento INNER JOIN co_documenti ON co_tipidocumento.id=co_documenti.idtipodocumento WHERE co_documenti.id='.prepare($record['iddocumento']));
             $modulo = ($rs[0]['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto'; ?>
@@ -26,8 +25,8 @@ include_once __DIR__.'/../../core.php';
         </div>
 	<?php
         }
-    }else{
-    ?>
+    } else {
+        ?>
         <div class=" col-md-2">
             <br>
             <div class="dropdown">
@@ -35,14 +34,12 @@ include_once __DIR__.'/../../core.php';
                 <span class="caret"></span></button>
                 <ul class="dropdown-menu">
     <?php
-        for($i=0;$i<sizeof($rs_doc);$i++){
+        for ($i = 0; $i < sizeof($rs_doc); ++$i) {
             $rs = $dbo->fetchArray('SELECT dir FROM co_tipidocumento INNER JOIN co_documenti ON co_tipidocumento.id=co_documenti.idtipodocumento WHERE co_documenti.id='.prepare($rs_doc[$i]['iddocumento']));
-            $modulo = ($rs[0]['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
-    ?>
+            $modulo = ($rs[0]['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto'; ?>
                     <li><a href="<?php echo $rootdir; ?>/editor.php?id_module=<?php echo Modules::get($modulo)['id']; ?>&id_record=<?php echo $rs_doc[$i]['iddocumento']; ?>" class="dropdown-item"><?php echo tr('Vai alla fattura n. '.$rs_doc[$i]['numero']); ?></a></li>
     <?php
-        }
-    ?>
+        } ?>
                 </ul>
             </div>
         </div>
@@ -95,10 +92,10 @@ include_once __DIR__.'/../../core.php';
             <th width="20%">'.tr('Dare').'</th>
             <th width="20%">'.tr('Avere').'</th>
         </tr>';
-    
-    if(sizeof($rs)>=10){
-        $rows = sizeof($rs)+2;
-    }else{
+
+    if (sizeof($rs) >= 10) {
+        $rows = sizeof($rs) + 2;
+    } else {
         $rows = 10;
     }
 
@@ -146,7 +143,7 @@ include_once __DIR__.'/../../core.php';
 
     if ($totale_dare != $totale_avere) {
         $class = 'text-danger';
-        $txt = 'sbilancio di '.Translator::numberToLocale($totale_dare - $totale_avere).' &euro;';
+        $txt = 'sbilancio di '.Translator::numberToLocale($totale_dare - $totale_avere).' '.currency();
     } else {
         $class = '';
         $txt = '';
@@ -155,13 +152,13 @@ include_once __DIR__.'/../../core.php';
     //  Totale dare
     echo '
                 <td align="right">
-                    <span><span class="'.$class.'" id="totale_dare">'.Translator::numberToLocale($totale_dare).'</span> &euro;</span>
+                    <span><span class="'.$class.'" id="totale_dare">'.Translator::numberToLocale($totale_dare).'</span> '.currency().'</span>
                 </td>';
 
     //  Totale avere
     echo '
                 <td align="right">
-                    <span><span class="'.$class.'" id="totale_avere">'.Translator::numberToLocale($totale_avere).'</span> &euro;</span>
+                    <span><span class="'.$class.'" id="totale_avere">'.Translator::numberToLocale($totale_avere).'</span> '.currency().'</span>
                 </td>
             </tr>';
 
@@ -252,7 +249,7 @@ include_once __DIR__.'/../../core.php';
 
 				}
 				else{
-					$("#testo_aggiuntivo").addClass('text-danger').html("sbilancio di " + bilancio.toLocale() + " &euro;" );
+					$("#testo_aggiuntivo").addClass('text-danger').html("sbilancio di " + bilancio.toLocale() + " " + globals.currency );
 
 					//$("button[type=submit]").addClass('hide');
                     $("#save").addClass('hide');

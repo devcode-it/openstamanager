@@ -25,7 +25,7 @@ for ($i = 0; $i < sizeof($rs); ++$i) {
         </td>
 
         <td class="text-right">
-            <span>'.Translator::numberToLocale($rs[$i]['imponibile']).' &euro; </span>
+            <span>'.Translator::numberToLocale($rs[$i]['imponibile']).' '.currency().' </span>
         </td>
     </tr>';
 
@@ -36,7 +36,7 @@ for ($i = 0; $i < sizeof($rs); ++$i) {
 echo '
     <tr>
         <th class="text-right">'.tr('Totali').': </th>
-        <th width="100" class="text-right"><span>'.Translator::numberToLocale($totale_imponibile).' &euro;</span></th>
+        <th width="100" class="text-right"><span>'.Translator::numberToLocale($totale_imponibile).' '.currency().'</span></th>
     </tr>
 </table>
 

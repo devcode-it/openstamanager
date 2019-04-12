@@ -74,13 +74,13 @@ for ($i = 0; $i < sizeof($rs); ++$i) {
         echo '	<td>'.date('d/m/Y', strtotime($rs[$i]['data'])).'</td>';
         echo '	<td>'.$rs[$i]['codice_tipo_documento_fe'].'</td>';
         echo '  <td>'.$rs[$i]['codice_anagrafica'].' / '.tr($rs[$i]['ragione_sociale'], [], ['upper' => true]).'</td>';
-        echo "	<td class='text-right'>".Translator::numberToLocale(get_totale_fattura($rs[$i]['iddocumento'])).' &euro;</td>';
+        echo "	<td class='text-right'>".Translator::numberToLocale(get_totale_fattura($rs[$i]['iddocumento'])).' '.currency().'</td>';
     }
 
-    echo "	    <td class='text-right'>".Translator::numberToLocale($rs[$i]['subtotale']).' &euro;</td>';
+    echo "	    <td class='text-right'>".Translator::numberToLocale($rs[$i]['subtotale']).' '.currency().'</td>';
     echo "	    <td class='text-center'>".Translator::numberToLocale($rs[$i]['percentuale'], 0).'</td>';
     echo "	    <td class='text-center'>".$rs[$i]['desc_iva'].'</td>';
-    echo "	    <td class='text-right'>".Translator::numberToLocale($rs[$i]['iva']).' &euro;</td>';
+    echo "	    <td class='text-right'>".Translator::numberToLocale($rs[$i]['iva']).' '.currency().'</td>';
     echo '  </tr>';
 
     $v_iva[$rs[$i]['desc_iva']] += $rs[$i]['iva'];
@@ -113,11 +113,11 @@ foreach ($v_iva as $desc_iva => $tot_iva) {
         echo "  </td>\n";
 
         echo "  <td valign='top' align='right'>\n";
-        echo        Translator::numberToLocale($v_totale[$desc_iva])." &euro;\n";
+        echo        Translator::numberToLocale($v_totale[$desc_iva]).' '.currency()."\n";
         echo "  </td>\n";
 
         echo "  <td valign='top' align='right'>\n";
-        echo        Translator::numberToLocale($v_iva[$desc_iva])." &euro;\n";
+        echo        Translator::numberToLocale($v_iva[$desc_iva]).' '.currency()."\n";
         echo "  </td>
             </tr>\n";
     }
@@ -125,8 +125,8 @@ foreach ($v_iva as $desc_iva => $tot_iva) {
 
 echo "	    <tr bgcolor='#dddddd'>
                 <td><b>TOTALE</b></td>
-                <td class='text-right'>".Translator::numberToLocale($totale_subtotale)." &euro;</td>
-                <td class='text-right'>".Translator::numberToLocale($totale_iva).' &euro;</td>
+                <td class='text-right'>".Translator::numberToLocale($totale_subtotale).' '.currency()."</td>
+                <td class='text-right'>".Translator::numberToLocale($totale_iva).' '.currency().'</td>
             </tr>';
 
 echo '

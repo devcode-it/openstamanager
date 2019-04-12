@@ -138,7 +138,7 @@ class HTMLWrapper implements WrapperInterface
                 ],
                 [
                     'id' => 'UNT',
-                    'descrizione' => tr('&euro;'),
+                    'descrizione' => currency(),
                 ],
             ];
         } elseif ($type == 'email') {

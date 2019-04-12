@@ -35,7 +35,7 @@ if ($options['dir'] == 'entrata') {
     // Prezzo di acquisto unitario
     echo '
         <div class="col-md-'.$width.'">
-            {[ "type": "number", "label": "'.tr('Prezzo unitario di acquisto').'", "name": "prezzo_acquisto", "value": "'.$result['prezzo_unitario_acquisto'].'", "icon-after": "&euro;" ]}
+            {[ "type": "number", "label": "'.tr('Prezzo unitario di acquisto').'", "name": "prezzo_acquisto", "value": "'.$result['prezzo_unitario_acquisto'].'", "icon-after": "'.currency().'" ]}
         </div>';
 
     // Funzione per l'aggiornamento in tempo reale del guadagno
@@ -53,7 +53,7 @@ if ($options['dir'] == 'entrata') {
             var parent = $("#prezzo_acquisto").closest("div").parent();
             var div = parent.find("div[id*=\"errors\"]");
 
-            div.html("<small>'.tr('Guadagno').': " + guadagno.toLocale() + " &euro;</small>");
+            div.html("<small>'.tr('Guadagno').': " + guadagno.toLocale() + " " + globals.currency + "</small>");
             if (guadagno < 0) {
                 parent.addClass("has-error");
                 div.addClass("text-danger").removeClass("text-success");
@@ -75,7 +75,7 @@ if ($options['dir'] == 'entrata') {
 // Prezzo di vendita unitario
 echo '
         <div class="col-md-'.$width.'">
-            {[ "type": "number", "label": "'.$label.'", "name": "prezzo", "value": "'.$result['prezzo'].'", "required": 1, "icon-after": "&euro;" ]}
+            {[ "type": "number", "label": "'.$label.'", "name": "prezzo", "value": "'.$result['prezzo'].'", "required": 1, "icon-after": "'.currency().'" ]}
         </div>';
 
 // Sconto unitario

@@ -147,7 +147,7 @@ if (!empty($righe)) {
                 <input type="hidden" id="sconto_'.$i.'" name="sconto['.$r['id'].']" value="'.str_replace('.', ',', ($r['sconto'] / $r['qta'])).'" />
                 <input type="hidden" id="iva_'.$i.'" name="iva['.$r['id'].']" value="'.str_replace('.', ',', ($r['iva'] / $r['qta'])).'" />
 
-                <big id="subtotale_'.$i.'">'.Translator::numberToLocale($subtotale - $sconto + $iva).' &euro;</big><br/>
+                <big id="subtotale_'.$i.'">'.Translator::numberToLocale($subtotale - $sconto + $iva).' '.currency().'</big><br/>
 
                 <small style="color:#777;" id="subtotaledettagli_'.$i.'">'.Translator::numberToLocale($subtotale - $sconto).' + '.Translator::numberToLocale($iva).'</small>
             </td>';
@@ -248,7 +248,7 @@ echo '
 
         subtotale = (subtot * qta + iva * qta).toLocale();
 
-        $("#subtotale_" + r).html(subtotale + " &euro;");
+        $("#subtotale_" + r).html(subtotale + " " + globals.currency);
         $("#subtotaledettagli_" + r).html((subtot * qta).toLocale() + " + " + (iva * qta).toLocale());
 
         ricalcola_totale();
@@ -284,7 +284,7 @@ echo '
             tot_qta += qta;
         });
 
-        $('#totale').html((totale.toLocale()) + " &euro;");
+        $('#totale').html((totale.toLocale()) + " " + globals.currency);
 
         <?php
 

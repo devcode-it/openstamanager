@@ -92,19 +92,19 @@ foreach ($anagrafiche as $i => $anagrafica) {
                 // Imponible
                 echo '
             <td class="text-center">
-                '.Translator::numberToLocale($riga['imponibile']).' &euro;
+                '.Translator::numberToLocale($riga['imponibile']).' '.currency().'
             </td>';
 
                 // IVA
                 echo '
             <td class="text-center">
-                '.Translator::numberToLocale($riga['iva']).' &euro;
+                '.Translator::numberToLocale($riga['iva']).' '.currency().'
             </td>';
 
                 // Totale
                 echo '
             <td class="text-center">
-                '.Translator::numberToLocale($riga['totale']).' &euro;
+                '.Translator::numberToLocale($riga['totale']).' '.currency().'
             </td>
         </tr>';
 
@@ -131,7 +131,7 @@ echo '
         </td>
 
         <th colspan="3" class="text-center">
-            <b>'.Translator::numberToLocale(sum($imponibile)).' &euro;</b>
+            <b>'.Translator::numberToLocale(sum($imponibile)).' '.currency().'</b>
         </th>
     </tr>';
 
@@ -147,7 +147,7 @@ foreach ($iva as $desc => $values) {
     </td>
 
     <th colspan="3" class="text-center">
-        <b>'.Translator::numberToLocale($sum).' &euro;</b>
+        <b>'.Translator::numberToLocale($sum).' '.currency().'</b>
     </th>
 </tr>';
 
@@ -162,7 +162,7 @@ echo '
         </td>
 
         <th colspan="3" class="text-center">
-            <b>'.Translator::numberToLocale($totale_iva).' &euro;</b>
+            <b>'.Translator::numberToLocale($totale_iva).' '.currency().'</b>
         </th>
     </tr>';
 
@@ -173,7 +173,7 @@ echo '
             <b>'.tr('Totale', [], ['upper' => true]).':</b>
     	</td>
     	<th colspan="3" class="text-center">
-    		<b>'.Translator::numberToLocale(sum($totale)).' &euro;</b>
+    		<b>'.Translator::numberToLocale(sum($totale)).' '.currency().'</b>
     	</th>
     </tr>';
 

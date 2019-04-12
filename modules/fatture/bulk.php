@@ -142,37 +142,37 @@ switch (post('op')) {
 
     case 'registra-contabile':
         //Generazione della descrizione del movimento
-        $rs_fatture = $dbo->fetchArray("SELECT *, co_documenti.id AS id, co_documenti.data AS data_doc FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id IN(".implode(',', $id_records).")");
+        $rs_fatture = $dbo->fetchArray('SELECT *, co_documenti.id AS id, co_documenti.data AS data_doc FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id IN('.implode(',', $id_records).')');
 
         //calcolo della descrizione
         $descrizione_movimento = 'Pag. fatture num. ';
 
-        for($i=0;$i<sizeof($rs_fatture);$i++){
-            if($rs_fatture[$i]['numero_esterno']!=''){
-                $descrizione_movimento .= $rs_fatture[$i]['numero_esterno']." ";
-            }else{
-                $descrizione_movimento .= $rs_fatture[$i]['numero']." ";
+        for ($i = 0; $i < sizeof($rs_fatture); ++$i) {
+            if ($rs_fatture[$i]['numero_esterno'] != '') {
+                $descrizione_movimento .= $rs_fatture[$i]['numero_esterno'].' ';
+            } else {
+                $descrizione_movimento .= $rs_fatture[$i]['numero'].' ';
             }
         }
 
         $idmastrino = get_new_idmastrino();
 
-        for($i=0;$i<sizeof($rs_fatture);$i++){
+        for ($i = 0; $i < sizeof($rs_fatture); ++$i) {
             //Inserimento righe cliente
 
-            if($rs_fatture[$i]['dir']=='entrata'){
-                $dir='entrata';
-            }else{
-                $dir='uscita';
+            if ($rs_fatture[$i]['dir'] == 'entrata') {
+                $dir = 'entrata';
+            } else {
+                $dir = 'uscita';
             }
 
             $field = 'idconto_'.($dir == 'entrata' ? 'vendite' : 'acquisti');
             $idconto_aziendale = $dbo->fetchArray('SELECT '.$field.' FROM co_pagamenti WHERE id = (SELECT idpagamento FROM co_documenti WHERE id='.prepare($rs_fatture[$i]['id']).') GROUP BY descrizione')[0][$field];
-    
+
             // Lettura conto di default
             $idconto_aziendale = !empty($idconto_aziendale) ? $idconto_aziendale : setting('Conto aziendale predefinito');
 
-            $query = 'SELECT SUM(ABS(da_pagare-pagato)) AS rata FROM co_scadenziario WHERE iddocumento='.prepare($rs_fatture[$i]['id'])." GROUP BY iddocumento";
+            $query = 'SELECT SUM(ABS(da_pagare-pagato)) AS rata FROM co_scadenziario WHERE iddocumento='.prepare($rs_fatture[$i]['id']).' GROUP BY iddocumento';
             $rs = $dbo->fetchArray($query);
             $totale_pagato = $rs[0]['rata'];
 
@@ -206,15 +206,14 @@ switch (post('op')) {
             }
 
             // Lettura causale movimento (documento e ragione sociale)
-            $importo_conto_controparte = $importo_conto_aziendale;            
+            $importo_conto_controparte = $importo_conto_aziendale;
 
             if ($dir == 'entrata') {
-                $dbo->query("INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES(".prepare($idmastrino).", NOW(), ".prepare($rs_fatture[$i]['data_doc']).", ".prepare($rs_fatture[$i]['id']).", ".prepare($rs_fatture[$i]['idanagrafica']).", ".prepare($descrizione_movimento).", ".prepare($idconto_controparte).", ".prepare(-$importo_conto_controparte).", 1)");
-                $dbo->query("INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES(".prepare($idmastrino).", NOW(), ".prepare($rs_fatture[$i]['data_doc']).", ".prepare($rs_fatture[$i]['id']).", ".prepare($rs_fatture[$i]['idanagrafica']).", ".prepare($descrizione_movimento).", ".prepare($idconto_aziendale).", ".prepare($importo_conto_aziendale).", 1)");
-                
+                $dbo->query('INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', NOW(), '.prepare($rs_fatture[$i]['data_doc']).', '.prepare($rs_fatture[$i]['id']).', '.prepare($rs_fatture[$i]['idanagrafica']).', '.prepare($descrizione_movimento).', '.prepare($idconto_controparte).', '.prepare(-$importo_conto_controparte).', 1)');
+                $dbo->query('INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', NOW(), '.prepare($rs_fatture[$i]['data_doc']).', '.prepare($rs_fatture[$i]['id']).', '.prepare($rs_fatture[$i]['idanagrafica']).', '.prepare($descrizione_movimento).', '.prepare($idconto_aziendale).', '.prepare($importo_conto_aziendale).', 1)');
             } else {
-                $dbo->query("INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES(".prepare($idmastrino).", NOW(), ".prepare($rs_fatture[$i]['data_doc']).", ".prepare($rs_fatture[$i]['id']).", ".prepare($rs_fatture[$i]['idanagrafica']).", ".prepare($descrizione_movimento).", ".prepare($idconto_controparte).", ".prepare($importo_conto_controparte).", 1)");
-                $dbo->query("INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES(".prepare($idmastrino).", NOW(), ".prepare($rs_fatture[$i]['data_doc']).", ".prepare($rs_fatture[$i]['id']).", ".prepare($rs_fatture[$i]['idanagrafica']).", ".prepare($descrizione_movimento).", ".prepare($idconto_aziendale).", ".prepare(-$importo_conto_aziendale).", 1)");
+                $dbo->query('INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', NOW(), '.prepare($rs_fatture[$i]['data_doc']).', '.prepare($rs_fatture[$i]['id']).', '.prepare($rs_fatture[$i]['idanagrafica']).', '.prepare($descrizione_movimento).', '.prepare($idconto_controparte).', '.prepare($importo_conto_controparte).', 1)');
+                $dbo->query('INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', NOW(), '.prepare($rs_fatture[$i]['data_doc']).', '.prepare($rs_fatture[$i]['id']).', '.prepare($rs_fatture[$i]['idanagrafica']).', '.prepare($descrizione_movimento).', '.prepare($idconto_aziendale).', '.prepare(-$importo_conto_aziendale).', 1)');
             }
 
             aggiorna_scadenziario($rs_fatture[$i]['id'], abs($totale_pagato), date('d/m/Y'));

@@ -32,9 +32,10 @@ echo '
 				<div class="box-body">';
 if (count($rsi) > 0) {
     echo '
-                    <p>'.tr('Sono stati svolti <strong>_NUMBER_ interventi</strong> per un totale di _EUR_ &euro;', [
+                    <p>'.tr('Sono stati svolti <strong>_NUMBER_ interventi</strong> per un totale di _TOT_ _CURRENCY_', [
                         '_NUMBER_' => count($rsi),
-                        '_EUR_' => Translator::numberToLocale($totale_interventi),
+                        '_TOT_' => Translator::numberToLocale($totale_interventi),
+                        '_CURRENCY_' => currency(),
                     ]).'</p>
 					<p><a href="'.$rootdir.'/controller.php?id_module='.Modules::get('Interventi')['id'].'&search_Ragione-sociale='.$rsi[0]['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-right"></i></a></p>';
 } else {
@@ -70,9 +71,10 @@ echo '
 				<div class="box-body">';
 if (count($rsi) > 0) {
     echo '
-					<p>'.tr('Sono stati fatti <strong>_NUMBER_ preventivi</strong> per un totale di _EUR_ &euro;', [
+					<p>'.tr('Sono stati fatti <strong>_NUMBER_ preventivi</strong> per un totale di _TOT_ _CURRENCY_', [
                         '_NUMBER_' => count($rsi),
-                        '_EUR_' => Translator::numberToLocale($totale_preventivi),
+                        '_TOT_' => Translator::numberToLocale($totale_preventivi),
+                        '_CURRENCY_' => currency(),
                     ]).'</p>
 					<p><a href="'.$rootdir.'/controller.php?id_module='.Modules::get('Preventivi')['id'].'&search_Cliente='.$rsi[0]['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-right"></i></a></p>';
 } else {
@@ -110,9 +112,10 @@ echo '
 				<div class="box-body">';
 if (count($rsi) > 0) {
     echo '
-					<p>'.tr('Sono stati stipulati <strong>_NUMBER_ contratti</strong> per un totale di _EUR_ &euro;', [
+					<p>'.tr('Sono stati stipulati <strong>_NUMBER_ contratti</strong> per un totale di _TOT_ _CURRENCY_', [
                         '_NUMBER_' => count($rsi),
-                        '_EUR_' => Translator::numberToLocale($totale_contratti),
+                        '_TOT_' => Translator::numberToLocale($totale_contratti),
+                        '_CURRENCY_' => currency(),
                     ]).'</p>
 					<p><a href="'.$rootdir.'/controller.php?id_module='.Modules::get('Contratti')['id'].'&search_Cliente='.$rsi[0]['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-right"></i></a></p>';
 } else {
@@ -150,9 +153,10 @@ foreach ($rsi as $fattura) {
 
 if (count($rsi) > 0) {
     echo '
-					<p>'.tr('Sono state emesse <strong>_NUMBER_ fatture di vendita</strong> per un totale di _EUR_ &euro;', [
+					<p>'.tr('Sono state emesse <strong>_NUMBER_ fatture di vendita</strong> per un totale di _TOT_ _CURRENCY_', [
                         '_NUMBER_' => count($rsi),
-                        '_EUR_' => Translator::numberToLocale($totale_fatture_vendita),
+                        '_TOT_' => Translator::numberToLocale($totale_fatture_vendita),
+                        '_CURRENCY_' => currency(),
                     ]).'</p>
 					<p><a href="'.$rootdir.'/controller.php?id_module='.Modules::get('Fatture di vendita')['id'].'&period_start='.$date_start.'&period_end='.date('Y-12-31').'&search_Ragione-sociale='.$fattura['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-right"></i></a></p>';
 } else {
@@ -179,9 +183,10 @@ for ($i = 0; $i < count($rsi); ++$i) {
 }
 if (count($rsi) > 0) {
     echo '
-					<p>'.tr('Sono state registrate <strong>_NUMBER_ fatture di acquisto</strong> per un totale di _EUR_ &euro;', [
+					<p>'.tr('Sono state registrate <strong>_NUMBER_ fatture di acquisto</strong> per un totale di _TOT_ _CURRENCY_', [
                         '_NUMBER_' => count($rsi),
-                        '_EUR_' => Translator::numberToLocale($totale_fatture_acquisto),
+                        '_TOT_' => Translator::numberToLocale($totale_fatture_acquisto),
+                        '_CURRENCY_' => currency(),
                     ]).'</p>
 					<p><a href="'.$rootdir.'/controller.php?id_module='.Modules::get('Fatture di acquisto')['id'].'&period_start='.$date_start.'&period_end='.date('Y-12-31').'&search_Ragione-sociale='.$rsi[0]['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-right"></i></a></p>';
 } else {

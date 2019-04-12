@@ -141,6 +141,18 @@ function formatter()
 }
 
 /**
+ * Restituisce il simbolo della valuta del gestione.
+ *
+ * @since 2.4.9
+ *
+ * @return string
+ */
+function currency()
+{
+    return \Translator::getCurrency();
+}
+
+/**
  * Restituisce la traduzione del messaggio inserito.
  *
  * @param string $string

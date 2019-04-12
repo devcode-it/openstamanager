@@ -212,7 +212,7 @@ switch (post('op')) {
         } else {
             flash()->info(tr('Movimento modificato in prima nota!'));
 
-            foreach(post('iddocumento') as $iddocumento){
+            foreach (post('iddocumento') as $iddocumento) {
                 // Verifico se la fattura è stata pagata, così imposto lo stato a "Pagato"
                 $query = 'SELECT SUM(pagato) AS tot_pagato, SUM(da_pagare) AS tot_da_pagare FROM co_scadenziario GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
                 $rs = $dbo->fetchArray($query);

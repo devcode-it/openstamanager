@@ -48,7 +48,7 @@ if (!empty($rs2)) {
         //Costo unitario
         echo '
         <td class="text-right">
-            '.Translator::numberToLocale($r['prezzo_acquisto']).' &euro;
+            '.Translator::numberToLocale($r['prezzo_acquisto']).' '.currency().'
         </td>';
 
         if ($pricing) {
@@ -57,14 +57,14 @@ if (!empty($rs2)) {
 
             echo '
         <td class="text-right">
-            '.Translator::numberToLocale($r['prezzo_vendita']).' &euro;';
+            '.Translator::numberToLocale($r['prezzo_vendita']).' '.currency().'';
 
             if ($r['sconto_unitario'] > 0) {
                 echo '
             <br><span class="label label-danger">
                 - '.tr('sconto _TOT_ _TYPE_', [
                     '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
-                    '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
+                    '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : currency()),
                 ]).'
             </span>';
             }
@@ -74,14 +74,13 @@ if (!empty($rs2)) {
 
             echo '
         <td class="text-right">
-            <span>'.Translator::numberToLocale($r['iva']).'</span> &euro;';
-            echo '
+            <span>'.Translator::numberToLocale($r['iva']).'</span> '.currency().'
         </td>';
 
             // Prezzo di vendita
             echo '
         <td class="text-right">
-            <span class="prezzo_articolo">'.Translator::numberToLocale(sum($r['prezzo_vendita'] * $r['qta'], -$r['sconto'])).'</span> &euro;
+            <span class="prezzo_articolo">'.Translator::numberToLocale(sum($r['prezzo_vendita'] * $r['qta'], -$r['sconto'])).'</span> '.currency().'
         </td>';
         }
 

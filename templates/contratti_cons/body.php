@@ -132,11 +132,11 @@ if (!empty($interventi)) {
             echo '
 
             <td class="text-center">
-                '.Translator::numberToLocale($int['sconto']).' &euro;
+                '.Translator::numberToLocale($int['sconto']).' '.currency().'
             </td>
 
             <td class="text-center">
-                '.Translator::numberToLocale($int['subtotale']).' &euro;
+                '.Translator::numberToLocale($int['subtotale']).' '.currency().'
             </td>';
         } else {
             echo '
@@ -192,11 +192,11 @@ if (!empty($interventi)) {
         echo '
 
         <td class="text-center">
-            <b>'.Translator::numberToLocale($sconto_int).' &euro;</b>
+            <b>'.Translator::numberToLocale($sconto_int).' '.currency().'</b>
         </td>
 
         <th class="text-center">
-            <b>'.Translator::numberToLocale($totale_int).' &euro;</b>
+            <b>'.Translator::numberToLocale($totale_int).' '.currency().'</b>
         </th>';
     } else {
         echo '
@@ -285,13 +285,13 @@ if (!empty($interventi)) {
                     // Prezzo unitario
                     echo "
             <td class='text-center'>
-                ".Translator::numberToLocale($r['prezzo_vendita']).' &euro;';
+                ".Translator::numberToLocale($r['prezzo_vendita']).' '.currency();
 
                     if ($r['sconto'] > 0) {
                         echo "
                 <br><small class='text-muted'>- ".tr('sconto _TOT_ _TYPE_', [
                         '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
-                        '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
+                        '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : currency()),
                     ]).'</small>';
 
                         if ($count <= 1) {
@@ -306,13 +306,13 @@ if (!empty($interventi)) {
                     $netto = $r['prezzo_vendita'] * $r['qta'];
                     echo '
             <td class="text-center">
-        '.Translator::numberToLocale($netto).' &euro;';
+        '.Translator::numberToLocale($netto).' '.currency();
 
                     if ($r['sconto'] > 0) {
                         echo "
                 <br><small class='text-muted'>- ".tr('sconto _TOT_ _TYPE_', [
                             '_TOT_' => Translator::numberToLocale($r['sconto']),
-                            '_TYPE_' => '&euro;',
+                            '_TYPE_' => currency(),
                         ]).'</small>';
 
                         if ($count <= 1) {
@@ -356,7 +356,7 @@ if (!empty($interventi)) {
         </td>
 
         <th colspan="2" class="text-center">
-            <b>'.Translator::numberToLocale($totale_art).' &euro;</b>
+            <b>'.Translator::numberToLocale($totale_art).' '.currency().'</b>
         </th>
     </tr>';
         }
@@ -433,13 +433,13 @@ if (!empty($interventi)) {
                     // Prezzo unitario
                     echo "
             <td class='text-center'>
-                ".Translator::numberToLocale($r['prezzo_vendita']).' &euro;';
+                ".Translator::numberToLocale($r['prezzo_vendita']).' '.currency();
 
                     if ($r['sconto'] > 0) {
                         echo "
                     <br><small class='text-muted'>- ".tr('sconto _TOT_ _TYPE_', [
                         '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
-                        '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
+                        '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : currency()),
                     ]).'</small>';
 
                         if ($count <= 1) {
@@ -454,13 +454,13 @@ if (!empty($interventi)) {
                     $netto = $r['prezzo_vendita'] * $r['qta'];
                     echo '
             <td class="text-center">
-                '.Translator::numberToLocale($netto).' &euro;';
+                '.Translator::numberToLocale($netto).' '.currency();
 
                     if ($r['sconto'] > 0) {
                         echo "
                     <br><small class='text-muted'>- ".tr('sconto _TOT_ _TYPE_', [
                         '_TOT_' => Translator::numberToLocale($r['sconto']),
-                        '_TYPE_' => '&euro;',
+                        '_TYPE_' => currency(),
                     ]).'</small>';
 
                         if ($count <= 1) {
@@ -502,7 +502,7 @@ if (!empty($interventi)) {
         </td>
 
         <th colspan="2" class="text-center">
-            <b>'.Translator::numberToLocale($totale_spese).' &euro;</b>
+            <b>'.Translator::numberToLocale($totale_spese).' '.currency().'</b>
         </th>
     </tr>';
 
@@ -541,7 +541,7 @@ if ($options['pricing']) {
         </td>
 
         <th colspan="2" class="text-center">
-            <b>'.Translator::numberToLocale($imponibile).' &euro;</b>
+            <b>'.Translator::numberToLocale($imponibile).' '.currency().'</b>
         </th>
     </tr>';
 
@@ -554,7 +554,7 @@ if ($options['pricing']) {
         </td>
 
         <th colspan="2" class="text-center">
-            <b>-'.Translator::numberToLocale($sconto).' &euro;</b>
+            <b>-'.Translator::numberToLocale($sconto).' '.currency().'</b>
         </th>
     </tr>';
 
@@ -566,7 +566,7 @@ if ($options['pricing']) {
         </td>
 
         <th colspan="2" class="text-center">
-            <b>'.Translator::numberToLocale($totale).' &euro;</b>
+            <b>'.Translator::numberToLocale($totale).' '.currency().'</b>
         </th>
     </tr>';
         }
@@ -585,7 +585,7 @@ if ($options['pricing']) {
         </td>
 
         <th colspan="2" class="text-center">
-            <b>'.Translator::numberToLocale($iva).' &euro;</b>
+            <b>'.Translator::numberToLocale($iva).' '.currency().'</b>
         </th>
     </tr>';
 
@@ -599,7 +599,7 @@ if ($options['pricing']) {
             <b>'.tr('Totale consuntivo (no IVA)', [], ['upper' => true]).':</b>
     	</td>
     	<th colspan="2" class="text-center">
-    		<b>'.Translator::numberToLocale($totale).' &euro;</b>
+    		<b>'.Translator::numberToLocale($totale).' '.currency().'</b>
     	</th>
     </tr>';
 
@@ -610,7 +610,7 @@ if ($options['pricing']) {
             <b>'.tr('Budget (no IVA)', [], ['upper' => true]).':</b>
         </td>
         <th colspan="2" class="text-center">
-            <b>'.Translator::numberToLocale($budget).' &euro;</b>
+            <b>'.Translator::numberToLocale($budget).' '.currency().'</b>
         </th>
     </tr>';
 
@@ -621,7 +621,7 @@ if ($options['pricing']) {
             <b>'.tr('Rapporto budget/spesa (no IVA)', [], ['upper' => true]).':</b>
         </td>
         <th colspan="2" class="text-center">
-            <b>'.Translator::numberToLocale($rapporto).' &euro;</b>
+            <b>'.Translator::numberToLocale($rapporto).' '.currency().'</b>
         </th>
     </tr>';
 }

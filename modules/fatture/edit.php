@@ -177,7 +177,7 @@ if (empty($record['is_fiscale'])) {
                         <strike>';
                         }
 
-                        echo Translator::numberToLocale($scadenza['da_pagare']).'&euro;';
+                        echo Translator::numberToLocale($scadenza['da_pagare']).currency();
 
                         if ($scadenza['pagato'] == $scadenza['da_pagare']) {
                             echo '
@@ -227,8 +227,9 @@ if ($dir == 'uscita') {
     ?>
 				<div class="row">
 					<div class="col-md-3">
-						{[ "type": "number", "label": "<?php echo tr('Marca da bollo'); ?>", "name": "bollo", "value": "$bollo$", "help": "<?php echo tr('Applicato solo se il totale della fattura è maggiore di _TOT_ €', [
+						{[ "type": "number", "label": "<?php echo tr('Marca da bollo'); ?>", "name": "bollo", "value": "$bollo$", "help": "<?php echo tr('Applicato solo se il totale della fattura è maggiore di _TOT_ _CURRENCY_', [
                             '_TOT_' => Translator::numberToLocale(setting("Soglia minima per l'applicazione della marca da bollo")),
+                            '_CURRENCY_' => currency(),
                         ]),'.'; ?>" ]}
 					</div>
 				</div>
@@ -560,8 +561,8 @@ if ($dir == 'uscita' && $fattura->isFE()) {
                     div.addClass("alert-success").html("'.tr('Il totale del file XML corrisponde a quello calcolato dal gestionale').'.")
                 } else {
                     div.addClass("alert-warning").html("'.tr('Il totale del file XML non corrisponde a quello calcolato dal gestionale: previsto _XML_, calcolato _CALC_', [
-                        '_XML_' => '" + data.stored + "&euro;',
-                        '_CALC_' => '" + data.calculated + "&euro;',
+                        '_XML_' => '" + data.stored + " " + globals.currency + "',
+                        '_CALC_' => '" + data.calculated + " " + globals.currency + "',
                     ]).'.")
                 }
                 

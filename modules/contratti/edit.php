@@ -365,7 +365,7 @@ if (!empty($record['idcontratto_prev'])) {
                                 '_NUM_' => $rs[0]['numero'],
                             ]).'<br><small class="text-muted">'.$rs[0]['nome'].'</small>').'
                         </td>
-                        <td align="right">'.Translator::numberToLocale($rs[0]['budget']).' &euro;</td>
+                        <td align="right">'.Translator::numberToLocale($rs[0]['budget']).' '.currency().'</td>
                         <td align="center">'.Translator::dateToLocale($rs[0]['data_accettazione']).'</td>
                         <td align="center">'.Translator::dateToLocale($rs[0]['data_conclusione']).'</td>
                     </tr>';

@@ -243,13 +243,13 @@ include_once __DIR__.'/../../core.php';
     // Totale dare
     echo '
                 <td align="right">
-                    <span><span id="totale_dare"></span> &euro;</span>
+                    <span><span id="totale_dare"></span> '.currency().'</span>
                 </td>';
 
     // Totale avere
     echo '
                 <td align="right">
-                    <span><span id="totale_avere"></span> &euro;</span>
+                    <span><span id="totale_avere"></span> '.currency().'</span>
                 </td>
             </tr>';
 
@@ -346,7 +346,7 @@ include_once __DIR__.'/../../core.php';
 					$('#bs-popup #btn_crea_modello').removeClass('hide');
 				}
 				else{
-					$('#bs-popup #testo_aggiuntivo').addClass('text-danger').html("sbilancio di " + bilancio.toLocale() + " &euro;" );
+					$('#bs-popup #testo_aggiuntivo').addClass('text-danger').html("sbilancio di " + bilancio.toLocale() + " " + globals.currency );
 					$('#bs-popup #btn_submit').addClass('hide');
 					$('#bs-popup #btn_crea_modello').addClass('hide');
 				}

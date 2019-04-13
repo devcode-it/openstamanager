@@ -76,13 +76,13 @@ if (count($rs2) > 0) {
 
             echo '
         <td class="text-right">
-            <span>'.Translator::numberToLocale($r['iva']).'</span> '.currency().'
+            '.moneyFormat($r['iva']).'
         </td>';
 
             // Prezzo di vendita
             echo '
         <td class="text-right">
-            <span class="prezzo_articolo">'.Translator::numberToLocale(sum($r['prezzo_vendita'] * $r['qta'], -$r['sconto'])).'</span> '.currency().'
+            '.moneyFormat(sum($r['prezzo_vendita'] * $r['qta'], -$r['sconto'])).'
         </td>';
         }
 

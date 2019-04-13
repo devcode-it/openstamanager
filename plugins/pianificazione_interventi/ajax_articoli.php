@@ -108,8 +108,7 @@ if (!empty($rs)) {
 
             echo '
         <td class="text-right">
-            <span>'.Translator::numberToLocale($r['iva']).'</span> '.currency();
-            echo '
+            '.moneyFormat($r['iva']).'
         </td>';
 
             // Prezzo di vendita

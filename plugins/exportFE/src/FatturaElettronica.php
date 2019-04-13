@@ -666,7 +666,7 @@ class FatturaElettronica
             $percentuale = database()->fetchOne('SELECT percentuale FROM co_rivalse WHERE id = '.prepare($id_rivalsainps))['percentuale'];
 
             $dati_cassa = [
-                'TipoCassa' => setting('Tipo Cassa'),
+                'TipoCassa' => setting('Tipo Cassa Previdenziale'),
                 'AlCassa' => $percentuale,
                 'ImportoContributoCassa' => $totale_rivalsainps,
                 'ImponibileCassa' => $documento->imponibile,
@@ -1011,7 +1011,7 @@ class FatturaElettronica
             if (!empty($riga['ritenuta_contributi'])) {
                 $dettaglio['AltriDatiGestionali'] = [
                     'TipoDato' => 'CASSA-PREV',
-                    'RiferimentoTesto' => setting('Tipo Cassa').' - '.$ritenuta_contributi->descrizione.' ('.Translator::numberToLocale($ritenuta_contributi->percentuale).'%)',
+                    'RiferimentoTesto' => setting('Tipo Cassa Previdenziale').' - '.$ritenuta_contributi->descrizione.' ('.Translator::numberToLocale($ritenuta_contributi->percentuale).'%)',
                     'RiferimentoNumero' => $riga->ritenuta_contributi,
                 ];
             }

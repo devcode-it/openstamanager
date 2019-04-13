@@ -335,7 +335,7 @@ if (!empty($fattura->rivalsa_inps)) {
 
     if ($dir == 'entrata') {
         echo '
-				<span class="tip" title="'.$database->fetchOne('SELECT CONCAT_WS(\' - \', codice, descrizione) AS descrizione FROM fe_tipo_cassa WHERE codice = '.prepare(setting('Tipo Cassa')))['descrizione'].'"  > <i class="fa fa-question-circle-o"></i></span> ';
+				<span class="tip" title="'.$database->fetchOne('SELECT CONCAT_WS(\' - \', codice, descrizione) AS descrizione FROM fe_tipo_cassa WHERE codice = '.prepare(setting('Tipo Cassa Previdenziale')))['descrizione'].'"  > <i class="fa fa-question-circle-o"></i></span> ';
     }
 
     echo '

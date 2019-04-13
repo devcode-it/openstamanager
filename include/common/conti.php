@@ -47,7 +47,7 @@ if ($show_rivalsa == 1 || $show_ritenuta_acconto == 1) {
     if ($show_rivalsa == 1) {
         echo '
     <div class="col-md-4">
-        {[ "type": "select", "label": "'.tr('Rivalsa').'", "name": "id_rivalsa_inps", "value": "'.$id_rivalsa_inps.'", "values": "query=SELECT * FROM co_rivalse", "help": "'.(($options['dir'] == 'entrata') ? setting('Tipo Cassa') : null).'" ]}
+        {[ "type": "select", "label": "'.tr('Rivalsa').'", "name": "id_rivalsa_inps", "value": "'.$id_rivalsa_inps.'", "values": "query=SELECT * FROM co_rivalse", "help": "'.(($options['dir'] == 'entrata') ? setting('Tipo Cassa Previdenziale') : null).'" ]}
     </div>';
     }
 

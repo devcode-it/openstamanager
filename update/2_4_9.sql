@@ -218,3 +218,6 @@ INSERT INTO `zz_currencies` (`id`, `name`, `title`, `symbol`) VALUES
 (NULL, 'Sterlina', 'Sterlina', '&pound;');
 
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Valuta', '1', 'query=SELECT id AS id, CONCAT(title, '' - '', symbol) AS text FROM zz_currencies', 1, 'Generali', 12);
+
+-- Aggiornamento dicitura Tipo Cassa
+UPDATE `zz_settings` SET `nome` = 'Tipo Cassa Previdenziale' WHERE `zz_settings`.`nome` = 'Tipo Cassa';

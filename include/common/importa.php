@@ -147,7 +147,7 @@ if (!empty($righe)) {
                 <input type="hidden" id="sconto_'.$i.'" name="sconto['.$r['id'].']" value="'.str_replace('.', ',', ($r['sconto'] / $r['qta'])).'" />
                 <input type="hidden" id="iva_'.$i.'" name="iva['.$r['id'].']" value="'.str_replace('.', ',', ($r['iva'] / $r['qta'])).'" />
 
-                <big id="subtotale_'.$i.'">'.Translator::numberToLocale($subtotale - $sconto + $iva).' '.currency().'</big><br/>
+                <big id="subtotale_'.$i.'">'.moneyFormat($subtotale - $sconto + $iva).'</big><br/>
 
                 <small style="color:#777;" id="subtotaledettagli_'.$i.'">'.Translator::numberToLocale($subtotale - $sconto).' + '.Translator::numberToLocale($iva).'</small>
             </td>';

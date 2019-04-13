@@ -274,14 +274,14 @@ echo '
             echo '
                         <tr>
                             <td>'.tr('Base').'</td>
-                            <td>'.Translator::numberToLocale($rsart[0]['prezzo_vendita']).' '.currency().'</td>
+                            <td>'.moneyFormat($rsart[0]['prezzo_vendita']).'</td>
                         </tr>';
 
             for ($i = 0; $i < count($rsl); ++$i) {
                 echo '
                         <tr>
                             <td>'.$rsl[$i]['nome'].'</td>
-                            <td>'.Translator::numberToLocale($rsart[0]['prezzo_vendita'] - $rsart[0]['prezzo_vendita'] / 100 * $rsl[$i]['prc_guadagno']).' '.currency().'</td>
+                            <td>'.moneyFormat($rsart[0]['prezzo_vendita'] - $rsart[0]['prezzo_vendita'] / 100 * $rsl[$i]['prc_guadagno']).'</td>
                         </tr>';
             }
 

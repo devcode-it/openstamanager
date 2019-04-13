@@ -143,7 +143,7 @@ include_once __DIR__.'/../../core.php';
 
     if ($totale_dare != $totale_avere) {
         $class = 'text-danger';
-        $txt = 'sbilancio di '.Translator::numberToLocale($totale_dare - $totale_avere).' '.currency();
+        $txt = 'sbilancio di '.moneyFormat($totale_dare - $totale_avere);
     } else {
         $class = '';
         $txt = '';

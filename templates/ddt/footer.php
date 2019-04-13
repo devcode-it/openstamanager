@@ -21,7 +21,7 @@ if ($options['pricing']) {
     echo "
     <tr>
         <td class='cell-padded text-right'>
-            ".Translator::numberToLocale($imponibile).' '.currency().'
+            ".moneyFormat($imponibile).'
         </td>
     </tr>';
 
@@ -35,7 +35,7 @@ if ($options['pricing']) {
 
     <tr>
         <td class='cell-padded text-right'>
-            ".Translator::numberToLocale($iva).' '.currency().'
+            ".moneyFormat($iva).'
         </td>
     </tr>';
 
@@ -49,7 +49,7 @@ if ($options['pricing']) {
 
     <tr>
         <td class='cell-padded text-right'>
-            ".Translator::numberToLocale($totale).' '.currency().'
+            ".moneyFormat($totale).'
         </td>
     </tr>';
 } else {

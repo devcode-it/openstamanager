@@ -186,12 +186,12 @@ foreach ($righe as $row) {
 
     if (!$row->isDescrizione()) {
         echo '
-            '.Translator::numberToLocale($row->prezzo_unitario_vendita).' '.currency();
+            '.moneyFormat($row->prezzo_unitario_vendita);
 
         if ($dir == 'entrata') {
             echo '
             <br><small>
-                '.tr('Acquisto').': '.Translator::numberToLocale($row->prezzo_unitario_acquisto).' '.currency().'
+                '.tr('Acquisto').': '.moneyFormat($row->prezzo_unitario_acquisto).'
             </small>';
         }
 
@@ -213,7 +213,7 @@ foreach ($righe as $row) {
 
     if (!$row->isDescrizione()) {
         echo '
-            '.Translator::numberToLocale($riga['iva']).' '.currency().'
+            '.moneyFormat($riga['iva']).'
             <br><small class="'.(($row->aliquota->deleted_at) ? 'text-red' : '').' help-block">'.$row->aliquota->descrizione.(($row->aliquota->esente) ? ' ('.$row->aliquota->codice_natura_fe.')' : null).'</small>';
     }
 
@@ -225,10 +225,10 @@ foreach ($righe as $row) {
         <td class="text-right">';
     if (!$row->isDescrizione()) {
         echo '
-            '.Translator::numberToLocale($riga['imponibile_scontato']).' '.currency();
+            '.moneyFormat($riga['imponibile_scontato']);
         /*
         <br><small class="text-'.($row->guadagno > 0 ? 'success' : 'danger').'">
-            '.tr('Guadagno').': '.Translator::numberToLocale($row->guadagno).' '.currency().'
+            '.tr('Guadagno').': '.moneyFormat($row->guadagno).'
         </small>';
         */
     }
@@ -296,7 +296,7 @@ echo '
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.Translator::numberToLocale($imponibile).' '.currency().'
+            '.moneyFormat($imponibile).'
         </td>
         <td></td>
     </tr>';
@@ -309,7 +309,7 @@ if (!empty($sconto)) {
             <b>'.tr('Sconto', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.Translator::numberToLocale($sconto).' '.currency().'
+            '.moneyFormat($sconto).'
         </td>
         <td></td>
     </tr>';
@@ -321,7 +321,7 @@ if (!empty($sconto)) {
             <b>'.tr('Imponibile scontato', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.Translator::numberToLocale($imponibile_scontato).' '.currency().'
+            '.moneyFormat($imponibile_scontato).'
         </td>
         <td></td>
     </tr>';
@@ -342,7 +342,7 @@ if (!empty($fattura->rivalsa_inps)) {
 			<b>'.tr('Rivalsa', [], ['upper' => true]).' :</b>
         </td>
         <td align="right">
-            '.Translator::numberToLocale($fattura->rivalsa_inps).' '.currency().'
+            '.moneyFormat($fattura->rivalsa_inps).'
         </td>
         <td></td>
     </tr>';
@@ -362,7 +362,7 @@ if (!empty($iva)) {
     echo '
         </td>
         <td align="right">
-            '.Translator::numberToLocale($iva).' '.currency().'
+            '.moneyFormat($iva).'
         </td>
         <td></td>
     </tr>';
@@ -375,7 +375,7 @@ echo '
             <b>'.tr('Totale', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.Translator::numberToLocale($totale).' '.currency().'
+            '.moneyFormat($totale).'
         </td>
         <td></td>
     </tr>';
@@ -391,7 +391,7 @@ if (!empty($fattura->bollo)) {
             <b>'.tr('Marca da bollo', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.Translator::numberToLocale($fattura->bollo).' '.currency().'
+            '.moneyFormat($fattura->bollo).'
         </td>
         <td></td>
     </tr>';
@@ -405,7 +405,7 @@ if (!empty($fattura->ritenuta_acconto)) {
             <b>'.tr("Ritenuta d'acconto", [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.Translator::numberToLocale($fattura->ritenuta_acconto).' '.currency().'
+            '.moneyFormat($fattura->ritenuta_acconto).'
         </td>
         <td></td>
     </tr>';
@@ -419,7 +419,7 @@ if (!empty($fattura->totale_ritenuta_contributi)) {
             <b>'.tr('Ritenuta contributi', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.Translator::numberToLocale($fattura->totale_ritenuta_contributi).' '.currency().'
+            '.moneyFormat($fattura->totale_ritenuta_contributi).'
         </td>
         <td></td>
     </tr>';
@@ -433,7 +433,7 @@ if ($totale != $netto_a_pagare) {
             <b>'.tr('Netto a pagare', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.Translator::numberToLocale($netto_a_pagare).' '.currency().'
+            '.moneyFormat($netto_a_pagare).'
         </td>
         <td></td>
     </tr>';
@@ -450,7 +450,7 @@ if ($dir == 'entrata') {
             <b>'.tr('Guadagno', [], ['upper' => true]).':</b>
         </td>
         <td align="right" style="'.$guadagno_style.'">
-            '.Translator::numberToLocale($guadagno).' '.currency().'
+            '.moneyFormat($guadagno).'
         </td>
         <td></td>
     </tr>';

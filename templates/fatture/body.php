@@ -147,7 +147,7 @@ foreach ($righe as $r) {
             <td class='text-right'>";
     if (empty($r['is_descrizione'])) {
         echo '
-				'.(empty($r['qta']) ? '' : Translator::numberToLocale($r['subtotale'] / $r['qta'])).' '.currency();
+				'.(empty($r['qta']) ? '' : moneyFormat($r['subtotale'] / $r['qta']));
 
         if ($r['sconto'] > 0) {
             echo "
@@ -170,7 +170,7 @@ foreach ($righe as $r) {
             <td class='text-right'>";
     if (empty($r['is_descrizione'])) {
         echo '
-				'.Translator::numberToLocale($r['subtotale'] - $r['sconto']).' '.currency();
+				'.moneyFormat($r['subtotale'] - $r['sconto']);
 
         if ($r['sconto'] > 0) {
             /*echo "

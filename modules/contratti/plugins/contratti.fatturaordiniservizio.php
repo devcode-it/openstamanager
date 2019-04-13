@@ -238,8 +238,8 @@ if (empty($rs)) {
 
         echo '
         <td class="center">
-            '.Translator::numberToLocale($importo).' '.currency().'<br>
-            <small>'.Translator::numberToLocale($rs[$i]['budget_contratto']).' '.currency().' x '.$n_sedi_pianificate.' sedi / '.$n_rate[$rs[$i]['idzona']].' rate'.$extra.'</small>
+            '.moneyFormat($importo).'<br>
+            <small>'.moneyFormat($rs[$i]['budget_contratto']).' x '.$n_sedi_pianificate.' sedi / '.$n_rate[$rs[$i]['idzona']].' rate'.$extra.'</small>
         </td>';
 
         // Documento collegato (fattura)

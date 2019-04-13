@@ -64,7 +64,7 @@ foreach ($rs as $r) {
             <td class="text-right">';
     if (empty($r['is_descrizione'])) {
         echo '
-                '.Translator::numberToLocale($r['subtotale'] / $r['qta']).' '.currency();
+                '.moneyFormat($r['subtotale'] / $r['qta']);
 
         if ($r['sconto_unitario'] > 0) {
             echo '
@@ -83,7 +83,7 @@ foreach ($rs as $r) {
             <td class="text-right">';
     if (empty($r['is_descrizione'])) {
         echo '
-                '.Translator::numberToLocale($r['iva']).' '.currency().'
+                '.moneyFormat($r['iva']).'
                 <br><small class="help-block">'.$r['desc_iva'].'</small>';
     }
     echo'
@@ -94,7 +94,7 @@ foreach ($rs as $r) {
             <td class="text-right">';
     if (empty($r['is_descrizione'])) {
         echo '
-                '.Translator::numberToLocale($r['subtotale'] - $r['sconto']).' '.currency();
+                '.moneyFormat($r['subtotale'] - $r['sconto']);
     }
 
     // Possibilità di rimuovere una riga solo se il preventivo non è stato pagato
@@ -153,7 +153,7 @@ if (abs($sconto) > 0) {
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.Translator::numberToLocale($imponibile).' '.currency().'
+            '.moneyFormat($imponibile).'
         </td>
         <td></td>
     </tr>';
@@ -164,7 +164,7 @@ if (abs($sconto) > 0) {
             <b>'.tr('Sconto', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.Translator::numberToLocale($sconto).' '.currency().'
+            '.moneyFormat($sconto).'
         </td>
         <td></td>
     </tr>';
@@ -176,7 +176,7 @@ if (abs($sconto) > 0) {
             <b>'.tr('Imponibile scontato', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.Translator::numberToLocale($imponibile_scontato).' '.currency().'
+            '.moneyFormat($imponibile_scontato).'
         </td>
         <td></td>
     </tr>';
@@ -188,7 +188,7 @@ if (abs($sconto) > 0) {
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.Translator::numberToLocale($imponibile).' '.currency().'
+            '.moneyFormat($imponibile).'
         </td>
         <td></td>
     </tr>';
@@ -201,7 +201,7 @@ echo '
             <b>'.tr('IVA', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.Translator::numberToLocale($iva).' '.currency().'
+            '.moneyFormat($iva).'
         </td>
         <td></td>
     </tr>';
@@ -213,7 +213,7 @@ echo '
             <b>'.tr('Totale', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.Translator::numberToLocale($totale).' '.currency().'
+            '.moneyFormat($totale).'
         </td>
         <td></td>
     </tr>';

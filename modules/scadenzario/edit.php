@@ -134,9 +134,8 @@ echo '
 					
 					<div class="clearfix"></div>
 
-					<div class="alert alert-error hide" id="totale"><?php echo tr('Il totale da pagare deve essere pari a _TOT_ _CURRENCY_', [
-                        '_TOT_' => '<b>'.Translator::numberToLocale($totale_da_pagare).'</b>',
-                        '_CURRENCY_' => currency(),
+					<div class="alert alert-error hide" id="totale"><?php echo tr('Il totale da pagare deve essere pari a _MONEY_', [
+                        '_MONEY_' => '<b>'.moneyFormat($totale_da_pagare).'</b>',
                     ]); ?>.<br><?php echo tr('Differenza di _TOT_ _CURRENCY_', [
                             '_TOT_' => '<span id="diff"></span>',
                             '_CURRENCY_' => currency(),

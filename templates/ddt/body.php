@@ -106,7 +106,7 @@ foreach ($rs_gen as $r) {
         <td class='text-right'>";
         if (empty($r['is_descrizione'])) {
             echo '
-            '.Translator::numberToLocale($r['subtotale'] / $r['qta']).' '.currency();
+            '.moneyFormat($r['subtotale'] / $r['qta']);
         }
         echo '
         </td>';
@@ -116,7 +116,7 @@ foreach ($rs_gen as $r) {
         <td class='text-right'>";
         if (empty($r['is_descrizione'])) {
             echo '
-            '.Translator::numberToLocale($r['subtotale']).' '.currency();
+            '.moneyFormat($r['subtotale']);
 
             if ($r['sconto'] > 0) {
                 if ($count <= 1) {

@@ -28,7 +28,7 @@ switch ($resource) {
                     echo "<tr><td class='first_cell text-left'><a href='".ROOTDIR.'/editor.php?id_module='.$link_id.'&id_record='.$fatture[$i]['iddocumento']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">Fatt. n. ".$n_fattura."</a></td>\n";
 
                     echo "<td class='table_cell text-left'>".Translator::dateToLocale($fatture[$i]['data_fattura'])."</td>\n";
-                    echo "<td class='table_cell text-right'>".Translator::numberToLocale($fatture[$i]['costo_unitario']).' '.currency()."</td></tr>\n";
+                    echo "<td class='table_cell text-right'>".moneyFormat($fatture[$i]['costo_unitario'])."</td></tr>\n";
                     array_push($ids, '"'.$fatture[$i]['iddocumento'].'"');
                 }
                 echo "</table>\n";
@@ -58,7 +58,7 @@ switch ($resource) {
                 echo "<tr><td class='first_cell text-left'><a href='".ROOTDIR.'/editor.php?id_module='.$link_id.'&id_record='.$fatture[$i]['iddocumento']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">Fatt. n. ".$n_fattura."</a></td>\n";
 
                 echo "<td class='table_cell text-left'>".Translator::dateToLocale($fatture[$i]['data_fattura'])."</td>\n";
-                echo "<td class='table_cell text-right'>".Translator::numberToLocale($fatture[$i]['costo_unitario']).' '.currency()."</td></tr>\n";
+                echo "<td class='table_cell text-right'>".moneyFormat($fatture[$i]['costo_unitario'])."</td></tr>\n";
             }
             echo "</table>\n";
         } else {
@@ -88,7 +88,7 @@ switch ($resource) {
                 echo "<tr><td class='first_cell text-left'><a href='".ROOTDIR.'/editor.php?id_module='.$link_id.'&id_record='.$fatture[$i]['iddocumento']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">Fatt. n. ".$n_fattura."</a></td>\n";
 
                 echo "<td class='table_cell text-left'>".Translator::dateToLocale($fatture[$i]['data_fattura'])."</td>\n";
-                echo "<td class='table_cell text-right'>".Translator::numberToLocale($fatture[$i]['costo_unitario']).' '.currency()."</td></tr>\n";
+                echo "<td class='table_cell text-right'>".moneyFormat($fatture[$i]['costo_unitario'])."</td></tr>\n";
             }
             echo "</table>\n";
         } else {

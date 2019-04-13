@@ -112,11 +112,11 @@ if (!empty($interventi)) {
             </td>
 
             <td class="text-center">
-                '.Translator::numberToLocale($int['sconto']).' '.currency().'
+                '.moneyFormat($int['sconto']).'
             </td>
 
             <td class="text-center">
-                '.Translator::numberToLocale($int['subtotale']).' '.currency().'
+                '.moneyFormat($int['subtotale']).'
             </td>
         </tr>';
 
@@ -156,11 +156,11 @@ if (!empty($interventi)) {
         </td>
 
         <td class="text-center">
-            <b>'.Translator::numberToLocale($sconto_int).' '.currency().'</b>
+            <b>'.moneyFormat($sconto_int).'</b>
         </td>
 
         <th class="text-center">
-            <b>'.Translator::numberToLocale($totale_int).' '.currency().'</b>
+            <b>'.moneyFormat($totale_int).'</b>
         </th>
     </tr>';
 
@@ -241,7 +241,7 @@ if (!empty($interventi)) {
                 // Prezzo unitario
                 echo "
             <td class='text-center'>
-                ".Translator::numberToLocale($r['prezzo_vendita']).' '.currency();
+                ".moneyFormat($r['prezzo_vendita']);
 
                 if ($r['sconto'] > 0) {
                     echo "
@@ -262,7 +262,7 @@ if (!empty($interventi)) {
                 $netto = $r['prezzo_vendita'] * $r['qta'];
                 echo '
             <td class="text-center">
-                '.Translator::numberToLocale($netto).' '.currency();
+                '.moneyFormat($netto);
 
                 if ($r['sconto'] > 0) {
                     echo "
@@ -303,7 +303,7 @@ if (!empty($interventi)) {
         </td>
 
         <th colspan="2" class="text-center">
-            <b>'.Translator::numberToLocale($totale_art).' '.currency().'</b>
+            <b>'.moneyFormat($totale_art).'</b>
         </th>
     </tr>';
 
@@ -378,7 +378,7 @@ if (!empty($interventi)) {
                 // Prezzo unitario
                 echo "
             <td class='text-center'>
-                ".Translator::numberToLocale($r['prezzo_vendita']).' '.currency();
+                ".moneyFormat($r['prezzo_vendita']);
 
                 if ($r['sconto'] > 0) {
                     echo "
@@ -399,7 +399,7 @@ if (!empty($interventi)) {
                 $netto = $r['prezzo_vendita'] * $r['qta'];
                 echo '
             <td class="text-center">
-                '.Translator::numberToLocale($netto).' '.currency();
+                '.moneyFormat($netto);
 
                 if ($r['sconto'] > 0) {
                     echo "
@@ -440,7 +440,7 @@ if (!empty($interventi)) {
         </td>
 
         <th colspan="2" class="text-center">
-            <b>'.Translator::numberToLocale($totale_spese).' '.currency().'</b>
+            <b>'.moneyFormat($totale_spese).'</b>
         </th>
     </tr>';
 
@@ -475,7 +475,7 @@ if ($show) {
         </td>
 
         <th colspan="2" class="text-center">
-            <b>'.Translator::numberToLocale($imponibile).' '.currency().'</b>
+            <b>'.moneyFormat($imponibile).'</b>
         </th>
     </tr>';
 
@@ -488,7 +488,7 @@ if ($show) {
         </td>
 
         <th colspan="2" class="text-center">
-            <b>-'.Translator::numberToLocale($sconto).' '.currency().'</b>
+            <b>-'.moneyFormat($sconto).'</b>
         </th>
     </tr>';
 
@@ -500,7 +500,7 @@ if ($show) {
         </td>
 
         <th colspan="2" class="text-center">
-            <b>'.Translator::numberToLocale($totale).' '.currency().'</b>
+            <b>'.moneyFormat($totale).'</b>
         </th>
     </tr>';
     }
@@ -519,7 +519,7 @@ if ($show) {
         </td>
 
         <th colspan="2" class="text-center">
-            <b>'.Translator::numberToLocale($iva).' '.currency().'</b>
+            <b>'.moneyFormat($iva).'</b>
         </th>
     </tr>';
 
@@ -533,7 +533,7 @@ echo '
             <b>'.tr('Totale consuntivo (no iva)', [], ['upper' => true]).':</b>
     	</td>
     	<th colspan="2" class="text-center">
-    		<b>'.Translator::numberToLocale($totale).' '.currency().'</b>
+    		<b>'.moneyFormat($totale).'</b>
     	</th>
     </tr>';
 
@@ -544,7 +544,7 @@ echo '
             <b>'.tr('Budget (no IVA)', [], ['upper' => true]).':</b>
         </td>
         <th colspan="2" class="text-center">
-            <b>'.Translator::numberToLocale($budget).' '.currency().'</b>
+            <b>'.moneyFormat($budget).'</b>
         </th>
     </tr>';
 
@@ -555,7 +555,7 @@ echo '
             <b>'.tr('Rapporto budget/spesa (no IVA)', [], ['upper' => true]).':</b>
         </td>
         <th colspan="2" class="text-center">
-            <b>'.Translator::numberToLocale($rapporto).' '.currency().'</b>
+            <b>'.moneyFormat($rapporto).'</b>
         </th>
     </tr>';
 

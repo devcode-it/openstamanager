@@ -177,7 +177,7 @@ if (empty($record['is_fiscale'])) {
                         <strike>';
                         }
 
-                        echo Translator::numberToLocale($scadenza['da_pagare']).currency();
+                        echo moneyFormat($scadenza['da_pagare']);
 
                         if ($scadenza['pagato'] == $scadenza['da_pagare']) {
                             echo '
@@ -227,9 +227,8 @@ if ($dir == 'uscita') {
     ?>
 				<div class="row">
 					<div class="col-md-3">
-						{[ "type": "number", "label": "<?php echo tr('Marca da bollo'); ?>", "name": "bollo", "value": "$bollo$", "help": "<?php echo tr('Applicato solo se il totale della fattura è maggiore di _TOT_ _CURRENCY_', [
-                            '_TOT_' => Translator::numberToLocale(setting("Soglia minima per l'applicazione della marca da bollo")),
-                            '_CURRENCY_' => currency(),
+						{[ "type": "number", "label": "<?php echo tr('Marca da bollo'); ?>", "name": "bollo", "value": "$bollo$", "help": "<?php echo tr('Applicato solo se il totale della fattura è maggiore di _MONEY_', [
+                            '_TOT_' => moneyFormat(setting("Soglia minima per l'applicazione della marca da bollo")),
                         ]),'.'; ?>" ]}
 					</div>
 				</div>

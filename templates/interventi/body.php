@@ -199,7 +199,7 @@ if (!empty($rs2)) {
         </td>
 
         <th colspan="2" class="text-center">
-            <b>'.Translator::numberToLocale($costi_intervento['ricambi_scontato']).' '.currency().'</b>
+            <b>'.moneyFormat($costi_intervento['ricambi_scontato']).'</b>
         </th>
     </tr>';
     }
@@ -260,7 +260,7 @@ if (!empty($rs2)) {
         // Prezzo unitario
         echo '
         <td class="text-center">
-            '.($options['pricing'] ? Translator::numberToLocale($r['prezzo_vendita']).' '.currency() : '-');
+            '.($options['pricing'] ? moneyFormat($r['prezzo_vendita']) : '-');
 
         if ($options['pricing'] && $r['sconto'] > 0) {
             echo "
@@ -293,7 +293,7 @@ if (!empty($rs2)) {
         </td>
 
         <th class="text-center">
-            <b>'.Translator::numberToLocale($costi_intervento['altro_scontato']).' '.currency().'</b>
+            <b>'.moneyFormat($costi_intervento['altro_scontato']).'</b>
         </th>
     </tr>';
     }
@@ -397,7 +397,7 @@ echo '
 if ($options['pricing']) {
     echo '
         <td colspan="3" class="text-center">
-            <small>'.tr('Totale manodopera').':</small><br/><b>'.Translator::numberToLocale($costi_intervento['manodopera_addebito']).' '.currency().'</b>
+            <small>'.tr('Totale manodopera').':</small><br/><b>'.moneyFormat($costi_intervento['manodopera_addebito']).'</b>
         </td>';
 } else {
     echo '
@@ -424,7 +424,7 @@ echo '
 if ($options['pricing']) {
     echo '
         <td class="text-center">
-            <small>'.tr('Costi di trasferta').':</small><br/><b>'.Translator::numberToLocale($records[0]['tot_km_consuntivo']).' '.currency().'</b>
+            <small>'.tr('Costi di trasferta').':</small><br/><b>'.moneyFormat($records[0]['tot_km_consuntivo']).'</b>
         </td>';
 } else {
     echo '
@@ -435,7 +435,7 @@ if ($options['pricing']) {
 if ($options['pricing']) {
     echo '
         <td class="text-center" colspan="2">
-            <small>'.tr('Diritto di chiamata').':</small><br/><b>'.Translator::numberToLocale($records[0]['tot_dirittochiamata']).' '.currency().'</b>
+            <small>'.tr('Diritto di chiamata').':</small><br/><b>'.moneyFormat($records[0]['tot_dirittochiamata']).'</b>
         </td>';
 } else {
     echo '
@@ -453,7 +453,7 @@ if ($options['pricing']) {
         </td>
 
         <th class="text-center">
-            <b>'.Translator::numberToLocale($costi_intervento['totale_addebito']).' '.currency().'</b>
+            <b>'.moneyFormat($costi_intervento['totale_addebito']).'</b>
         </th>
     </tr>';
 
@@ -468,7 +468,7 @@ if ($options['pricing']) {
             </td>
 
             <th class="text-center">
-                <b>-'.Translator::numberToLocale($totale_sconto).' '.currency().'</b>
+                <b>-'.moneyFormat($totale_sconto).'</b>
             </th>
         </tr>';
 
@@ -480,7 +480,7 @@ if ($options['pricing']) {
             </td>
 
             <th class="text-center">
-                <b>'.Translator::numberToLocale($costi_intervento['totale_scontato']).' '.currency().'</b>
+                <b>'.moneyFormat($costi_intervento['totale_scontato']).'</b>
             </th>
         </tr>';
     }
@@ -494,7 +494,7 @@ if ($options['pricing']) {
         </td>
 
         <th class="text-center">
-            <b>'.Translator::numberToLocale($costi_intervento['iva_totale']).' '.currency().'</b>
+            <b>'.moneyFormat($costi_intervento['iva_totale']).'</b>
         </th>
     </tr>';
 
@@ -505,7 +505,7 @@ if ($options['pricing']) {
             <b>'.tr('Totale intervento', [], ['upper' => true]).':</b>
     	</td>
     	<th class="text-center">
-    		<b>'.Translator::numberToLocale($costi_intervento['totale']).' '.currency().'</b>
+    		<b>'.moneyFormat($costi_intervento['totale']).'</b>
     	</th>
     </tr>';
 }

@@ -31,7 +31,7 @@ if (!empty($rs2)) {
                                     <small>".Translator::dateToLocale($rs2[$i]['scadenza'])."</small>
                                 </td>
                                 <td style='width:50%;' class='text-right'>
-                                    <small>".Translator::numberToLocale($rs2[$i]['da_pagare']).' '.currency().'</small>
+                                    <small>".moneyFormat($rs2[$i]['da_pagare']).'</small>
                                 </td>
                             </tr>';
     }
@@ -75,11 +75,11 @@ if (!empty($v_iva)) {
                                 </td>
 
                                 <td class='text-right'>
-                                    <small>".Translator::numberToLocale($v_totale[$desc_iva]).' '.currency()."</small>
+                                    <small>".moneyFormat($v_totale[$desc_iva])."</small>
                                 </td>
 
                                 <td class='text-right'>
-                                    <small>".Translator::numberToLocale($v_iva[$desc_iva]).' '.currency().'</small>
+                                    <small>".moneyFormat($v_iva[$desc_iva]).'</small>
                                 </td>
                             </tr>';
         }
@@ -132,28 +132,28 @@ echo "
 
     <tr>
         <td class='cell-padded text-center'>
-            ".Translator::numberToLocale($imponibile).' '.currency().'
+            ".moneyFormat($imponibile).'
         </td>';
 
 if (!empty($sconto)) {
     echo "
 
         <td class='cell-padded text-center'>
-            ".Translator::numberToLocale($sconto).' '.currency()."
+            ".moneyFormat($sconto)."
         </td>
 
         <td class='cell-padded text-center'>
-            ".Translator::numberToLocale($imponibile - $sconto).' '.currency().'
+            ".moneyFormat($imponibile - $sconto).'
         </td>';
 }
 
 echo "
         <td class='cell-padded text-center'>
-            ".Translator::numberToLocale($totale_iva).' '.currency()."
+            ".moneyFormat($totale_iva)."
         </td>
 
         <td class='cell-padded text-center'>
-            ".Translator::numberToLocale($totale).' '.currency().'
+            ".moneyFormat($totale).'
         </td>
     </tr>';
 
@@ -199,21 +199,21 @@ if (!empty($record['rivalsainps'])) {
 
     <tr>
         <td class="cell-padded text-center" colspan="'.$first_colspan.'">
-            '.Translator::numberToLocale($record['rivalsainps']).' '.currency().'
+            '.moneyFormat($record['rivalsainps']).'
         </td>';
 
     if (abs($record['bollo']) > 0) {
         echo '
 
         <td class="cell-padded text-center" colspan="1">
-            '.Translator::numberToLocale($record['bollo']).' '.currency().'
+            '.moneyFormat($record['bollo']).'
         </td>';
     }
 
     echo '
 
         <td class="cell-padded text-center" colspan="'.$second_colspan.'">
-            '.Translator::numberToLocale($totale).' '.currency().'
+            '.moneyFormat($totale).'
         </td>
     </tr>';
 }
@@ -273,21 +273,21 @@ if (!empty($record['ritenutaacconto']) || !empty($fattura->totale_ritenuta_contr
 
     <tr>
         <td class="cell-padded text-center" colspan="'.$first_colspan.'">
-            '.Translator::numberToLocale($record['ritenutaacconto'] + $fattura->totale_ritenuta_contributi).' '.currency().'
+            '.moneyFormat($record['ritenutaacconto'] + $fattura->totale_ritenuta_contributi).'
         </td>';
 
     if (empty($record['rivalsainps']) && abs($record['bollo']) > 0) {
         echo '
 
         <td class="cell-padded text-center" colspan="1">
-            '.Translator::numberToLocale($record['bollo']).' '.currency().'
+            '.moneyFormat($record['bollo']).'
         </td>';
     }
 
     echo '
 
         <td class="cell-padded text-center" colspan="'.$second_colspan.'">
-            '.Translator::numberToLocale($totale - $record['ritenutaacconto'] - $fattura->totale_ritenuta_contributi).' '.currency().'
+            '.moneyFormat($totale - $record['ritenutaacconto'] - $fattura->totale_ritenuta_contributi).'
         </td>
     </tr>';
 }
@@ -311,11 +311,11 @@ if (!empty($record['split_payment'])) {
     echo '
 	 <tr>
         <td class="cell-padded text-center" colspan="'.$first_colspan.'">
-        '.Translator::numberToLocale($totale_iva).' '.currency().'
+        '.moneyFormat($totale_iva).'
         </td>
 
         <td class="cell-padded text-center" colspan="'.$second_colspan.'">
-            '.Translator::numberToLocale($totale - $totale_iva - $record['ritenutaacconto'] - $fattura->totale_ritenuta_contributi).' '.currency().'
+            '.moneyFormat($totale - $totale_iva - $record['ritenutaacconto'] - $fattura->totale_ritenuta_contributi).'
         </td>
     </tr>';
 }
@@ -341,11 +341,11 @@ if (empty($record['ritenutaacconto']) && empty($record['rivalsainps']) && empty(
 
     <tr>
         <td class="cell-padded text-center" colspan="'.$first_colspan.'">
-        '.Translator::numberToLocale($record['bollo']).' '.currency().'
+        '.moneyFormat($record['bollo']).'
         </td>
 
         <td class="cell-padded text-center" colspan="'.$second_colspan.'">
-            '.Translator::numberToLocale($totale - $record['ritenutaacconto']).' '.currency().'
+            '.moneyFormat($totale - $record['ritenutaacconto']).'
         </td>
     </tr>';
 }

@@ -48,7 +48,7 @@ if (!empty($rs2)) {
         //Costo unitario
         echo '
         <td class="text-right">
-            '.Translator::numberToLocale($r['prezzo_acquisto']).' '.currency().'
+            '.moneyFormat($r['prezzo_acquisto']).'
         </td>';
 
         if ($pricing) {
@@ -57,7 +57,7 @@ if (!empty($rs2)) {
 
             echo '
         <td class="text-right">
-            '.Translator::numberToLocale($r['prezzo_vendita']).' '.currency().'';
+            '.moneyFormat($r['prezzo_vendita']).'';
 
             if ($r['sconto_unitario'] > 0) {
                 echo '

@@ -122,7 +122,7 @@ foreach ($righe as $r) {
             <td class='text-right'>";
         if (empty($r['is_descrizione'])) {
             echo '
-                '.(empty($r['qta']) || empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'] / $r['qta'])).' '.currency();
+                '.(empty($r['qta']) || empty($r['subtotale']) ? '' : moneyFormat($r['subtotale'] / $r['qta']));
 
             if ($r['sconto'] > 0) {
                 echo "
@@ -144,7 +144,7 @@ foreach ($righe as $r) {
             <td class='text-right'>";
         if (empty($r['is_descrizione'])) {
             echo '
-                '.(empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'])).' '.currency();
+                '.(empty($r['subtotale']) ? '' : moneyFormat($r['subtotale']));
 
             if ($r['sconto'] > 0) {
                 echo "
@@ -204,7 +204,7 @@ if ($options['pricing'] and !isset($options['hide_total'])) {
         </td>
 
         <th colspan="2" class="text-center">
-            <b>'.Translator::numberToLocale($imponibile).' '.currency().'</b>
+            <b>'.moneyFormat($imponibile).'</b>
         </th>
     </tr>';
 
@@ -217,7 +217,7 @@ if ($options['pricing'] and !isset($options['hide_total'])) {
         </td>
 
         <th colspan="2" class="text-center">
-            <b>-'.Translator::numberToLocale($sconto).' '.currency().'</b>
+            <b>-'.moneyFormat($sconto).'</b>
         </th>
     </tr>';
 
@@ -229,7 +229,7 @@ if ($options['pricing'] and !isset($options['hide_total'])) {
         </td>
 
         <th colspan="2" class="text-center">
-            <b>'.Translator::numberToLocale($totale).' '.currency().'</b>
+            <b>'.moneyFormat($totale).'</b>
         </th>
     </tr>';
     }
@@ -242,7 +242,7 @@ if ($options['pricing'] and !isset($options['hide_total'])) {
         </td>
 
         <th colspan="2" class="text-center">
-            <b>'.Translator::numberToLocale($iva).' '.currency().'</b>
+            <b>'.moneyFormat($iva).'</b>
         </th>
     </tr>';
 
@@ -255,7 +255,7 @@ if ($options['pricing'] and !isset($options['hide_total'])) {
             <b>'.tr('Quotazione totale', [], ['upper' => true]).':</b>
     	</td>
     	<th colspan="2" class="text-center">
-    		<b>'.Translator::numberToLocale($totale).' '.currency().'</b>
+    		<b>'.moneyFormat($totale).'</b>
     	</th>
     </tr>';
 }

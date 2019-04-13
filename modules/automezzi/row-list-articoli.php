@@ -37,9 +37,9 @@ if (!empty($rs2)) {
         $iva = $r['prezzo_vendita'] / 100 * $r['prciva_vendita'];
         echo '
         <td class="table_cell center">
-            <span>'.Translator::numberToLocale($netto + $iva).' '.currency().'</span><br/>
-            <small>'.tr('Netto').': '.Translator::numberToLocale($netto).' '.currency().'</small><br/>
-            <small>'.tr('Iva').': '.Translator::numberToLocale($iva).' '.currency().'</small><br/>
+            <span>'.moneyFormat($netto + $iva).'</span><br/>
+            <small>'.tr('Netto').': '.moneyFormat($netto).'</small><br/>
+            <small>'.tr('Iva').': '.moneyFormat($iva).'</small><br/>
         </td>';
 
         // Pulsanti

@@ -223,7 +223,7 @@ for ($i = 0; $i < count($rs2); ++$i) {
             $iva = $value[1];
 
             echo '
-                <span>'.Translator::numberToLocale($subtotale + $iva).' '.currency().'</span>';
+                <span>'.moneyFormat($subtotale + $iva).'</span>';
             if (!empty($subtotale) && !empty($iva)) {
                 echo '
                 <small style="color:#555;">('.Translator::numberToLocale($subtotale).' + '.Translator::numberToLocale($iva).')</small>';

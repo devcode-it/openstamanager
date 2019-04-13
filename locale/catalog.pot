@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenSTAManager\n"
-"POT-Creation-Date: 2019-04-12 15:09-0700\n"
+"POT-Creation-Date: 2019-04-12 17:56-0700\n"
 "PO-Revision-Date: 2017-09-06 09:35+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -74,7 +74,7 @@ msgid "Errore durante l'invio dell'email"
 msgstr ""
 
 #: add.php:90 include/init/configuration.php:278 include/top.php:79
-#: modules/fatture/edit.php:666 modules/fatture/edit.php:675
+#: modules/fatture/edit.php:665 modules/fatture/edit.php:674
 #: modules/import/edit.php:163 modules/smtp/buttons.php:32
 #: modules/utenti/edit.php:181 modules/viste/edit.php:466
 #: plugins/exportFE/edit.php:246 plugins/importFE/edit.php:43
@@ -306,7 +306,7 @@ msgstr ""
 #: modules/automezzi/add_articolo.php:19
 #: modules/automezzi/row-list-articoli.php:13 modules/contratti/edit.php:299
 #: modules/ddt/edit.php:204 modules/fatture/add_serial.php:59
-#: modules/fatture/edit.php:488 modules/interventi/add_articolo.php:83
+#: modules/fatture/edit.php:487 modules/interventi/add_articolo.php:83
 #: modules/interventi/ajax_articoli.php:14 modules/ordini/edit.php:144
 #: modules/preventivi/edit.php:169 plugins/importFE/rows.php:157
 #: plugins/pianificazione_interventi/add_articolo.php:86
@@ -340,7 +340,7 @@ msgstr ""
 msgid "Calcola ritenuta d'acconto su"
 msgstr ""
 
-#: include/common/conti.php:84 modules/fatture/edit.php:259
+#: include/common/conti.php:84 modules/fatture/edit.php:258
 #: modules/fatture/row-list.php:419
 msgid "Ritenuta contributi"
 msgstr ""
@@ -364,7 +364,7 @@ msgstr ""
 #: modules/contratti/widgets/contratti.pianificazionedashboard.interventi.php:54
 #: modules/dashboard/actions.php:123 modules/ddt/edit.php:214
 #: modules/ddt/row-list.php:8 modules/fatture/add_intervento.php:70
-#: modules/fatture/edit.php:498 modules/fatture/row-list.php:14
+#: modules/fatture/edit.php:497 modules/fatture/row-list.php:14
 #: modules/interventi/add_articolo.php:91 modules/interventi/add_righe.php:56
 #: modules/interventi/ajax_righe.php:18 modules/interventi/edit.php:126
 #: modules/interventi/plugins/my_impianti.interventi.php:21
@@ -1195,7 +1195,7 @@ msgstr ""
 #: modules/categorie_impianti/edit.php:58 modules/causali/edit.php:45
 #: modules/contratti/edit.php:478 modules/custom_fields/edit.php:57
 #: modules/ddt/edit.php:299 modules/emails/edit.php:129
-#: modules/fatture/edit.php:630 modules/gestione_componenti/edit.php:58
+#: modules/fatture/edit.php:629 modules/gestione_componenti/edit.php:58
 #: modules/gestione_documentale/edit.php:43 modules/interventi/edit.php:432
 #: modules/iva/edit.php:87 modules/listini/edit.php:38
 #: modules/misure/edit.php:45 modules/modelli_primanota/edit.php:119
@@ -1489,7 +1489,7 @@ msgstr ""
 #: lib/common.php:190
 #: modules/contratti/widgets/contratti.pianificazionedashboard.interventi.php:51
 #: modules/contratti/widgets/contratti_scadenza.dashboard.php:11
-#: modules/fatture/add_contratto.php:36 modules/interventi/add.php:201
+#: modules/fatture/add_contratto.php:38 modules/interventi/add.php:201
 #: modules/interventi/edit.php:68
 msgid "Contratto"
 msgstr ""
@@ -1636,6 +1636,10 @@ msgstr ""
 #: lib/functions.php:156
 #: modules/contratti/widgets/contratti.ratecontrattuali.php:105
 msgid "Altro"
+msgstr ""
+
+#: lib/helpers.php:259
+msgid "_TOTAL_ _CURRENCY_"
 msgstr ""
 
 #: log.php:12
@@ -1822,7 +1826,7 @@ msgstr ""
 #: modules/aggiornamenti/edit.php:105 modules/backups/edit.php:49
 #: modules/contratti/plugins/contratti.ordiniservizio.interventi.php:104
 #: modules/contratti/plugins/contratti.ordiniservizio.interventi.php:130
-#: modules/fatture/edit.php:597 modules/utenti/edit.php:53
+#: modules/fatture/edit.php:596 modules/utenti/edit.php:53
 #: modules/utenti/edit.php:56 modules/utenti/edit.php:72
 #: modules/utenti/edit.php:75 modules/utenti/edit.php:85
 #: plugins/importFE/edit.php:15
@@ -2459,7 +2463,7 @@ msgid ""
 "costituiti.</li></ul>"
 msgstr ""
 
-#: modules/anagrafiche/edit.php:462 modules/fatture/edit.php:243
+#: modules/anagrafiche/edit.php:462 modules/fatture/edit.php:242
 msgid "Split payment"
 msgstr ""
 
@@ -2503,7 +2507,7 @@ msgstr ""
 #: modules/banche/edit.php:40
 #: modules/contratti/plugins/contratti.ordiniservizio.interventi.php:66
 #: modules/dashboard/actions.php:109 modules/ddt/edit.php:169
-#: modules/fatture/edit.php:266 modules/listini/edit.php:28
+#: modules/fatture/edit.php:265 modules/listini/edit.php:28
 #: modules/ordini/edit.php:90 modules/segmenti/edit.php:65
 #: modules/smtp/edit.php:73 templates/ddt/footer.php:12
 #: templates/ddt/footer.php:60 templates/fatture/body.php:247
@@ -2552,72 +2556,72 @@ msgstr ""
 #: modules/anagrafiche/plugins/statistiche.php:35
 msgid ""
 "Sono stati svolti <strong>_NUMBER_ interventi</strong> per un totale di "
-"_TOT_ _CURRENCY_"
+"_MONEY_"
 msgstr ""
 
-#: modules/anagrafiche/plugins/statistiche.php:40
-#: modules/anagrafiche/plugins/statistiche.php:79
-#: modules/anagrafiche/plugins/statistiche.php:120
-#: modules/anagrafiche/plugins/statistiche.php:161
-#: modules/anagrafiche/plugins/statistiche.php:191
+#: modules/anagrafiche/plugins/statistiche.php:39
+#: modules/anagrafiche/plugins/statistiche.php:77
+#: modules/anagrafiche/plugins/statistiche.php:117
+#: modules/anagrafiche/plugins/statistiche.php:157
+#: modules/anagrafiche/plugins/statistiche.php:186
 #: modules/contratti/plugins/contratti.ordiniservizio.php:145
 #: plugins/exportFE/edit.php:169 plugins/importFE/rows.php:51
 msgid "Visualizza"
 msgstr ""
 
-#: modules/anagrafiche/plugins/statistiche.php:43
+#: modules/anagrafiche/plugins/statistiche.php:42
 msgid "Nessun intervento"
 msgstr ""
 
-#: modules/anagrafiche/plugins/statistiche.php:69
+#: modules/anagrafiche/plugins/statistiche.php:68
 msgid "Preventivi"
 msgstr ""
 
-#: modules/anagrafiche/plugins/statistiche.php:74
+#: modules/anagrafiche/plugins/statistiche.php:73
 msgid ""
-"Sono stati fatti <strong>_NUMBER_ preventivi</strong> per un totale di _TOT_ "
-"_CURRENCY_"
+"Sono stati fatti <strong>_NUMBER_ preventivi</strong> per un totale di "
+"_MONEY_"
 msgstr ""
 
-#: modules/anagrafiche/plugins/statistiche.php:82
+#: modules/anagrafiche/plugins/statistiche.php:80
 msgid "Nessun preventivo"
 msgstr ""
 
-#: modules/anagrafiche/plugins/statistiche.php:110
+#: modules/anagrafiche/plugins/statistiche.php:108
 msgid "Contratti"
 msgstr ""
 
-#: modules/anagrafiche/plugins/statistiche.php:115
+#: modules/anagrafiche/plugins/statistiche.php:113
 msgid ""
 "Sono stati stipulati <strong>_NUMBER_ contratti</strong> per un totale di "
-"_TOT_ _CURRENCY_"
+"_MONEY_"
 msgstr ""
 
-#: modules/anagrafiche/plugins/statistiche.php:123
+#: modules/anagrafiche/plugins/statistiche.php:120
 msgid "Nessun contratto"
 msgstr ""
 
-#: modules/anagrafiche/plugins/statistiche.php:135
+#: modules/anagrafiche/plugins/statistiche.php:132
 msgid "Fatture"
 msgstr ""
 
-#: modules/anagrafiche/plugins/statistiche.php:156
+#: modules/anagrafiche/plugins/statistiche.php:153
 msgid ""
 "Sono state emesse <strong>_NUMBER_ fatture di vendita</strong> per un totale "
-"di _TOT_ _CURRENCY_"
+"di _MONEY_"
 msgstr ""
 
-#: modules/anagrafiche/plugins/statistiche.php:164
+#: modules/anagrafiche/plugins/statistiche.php:160
 msgid "Nessuna fattura di vendita"
 msgstr ""
 
-#: modules/anagrafiche/plugins/statistiche.php:186
+#: modules/anagrafiche/plugins/statistiche.php:182
 msgid ""
 "Sono state registrate <strong>_NUMBER_ fatture di acquisto</strong> per un "
-"totale di _TOT_ _CURRENCY_"
+"totale di _MONEY_"
 msgstr ""
 
-#: modules/anagrafiche/plugins/statistiche.php:194
+#: modules/anagrafiche/plugins/statistiche.php:189
 msgid "Nessuna fattura di acquisto"
 msgstr ""
 
@@ -3503,7 +3507,7 @@ msgid "Sottocategorie"
 msgstr ""
 
 #: modules/categorie_articoli/edit.php:43 modules/contratti/edit.php:303
-#: modules/ddt/edit.php:208 modules/fatture/edit.php:492
+#: modules/ddt/edit.php:208 modules/fatture/edit.php:491
 #: modules/ordini/edit.php:148 modules/preventivi/edit.php:173
 msgid "Aggiungi riga"
 msgstr ""
@@ -3834,32 +3838,32 @@ msgid "Righe"
 msgstr ""
 
 #: modules/contratti/edit.php:298 modules/ddt/edit.php:203
-#: modules/fatture/edit.php:487 modules/interventi/edit.php:234
+#: modules/fatture/edit.php:486 modules/interventi/edit.php:234
 #: modules/ordini/edit.php:143 modules/preventivi/edit.php:168
 #: plugins/pianificazione_interventi/pianficazione.php:126
 msgid "Aggiungi articolo"
 msgstr ""
 
 #: modules/contratti/edit.php:304 modules/ddt/edit.php:209
-#: modules/fatture/edit.php:493 modules/ordini/edit.php:149
+#: modules/fatture/edit.php:492 modules/ordini/edit.php:149
 #: modules/preventivi/edit.php:174
 msgid "Riga"
 msgstr ""
 
 #: modules/contratti/edit.php:308 modules/ddt/edit.php:213
-#: modules/fatture/edit.php:497 modules/ordini/edit.php:153
+#: modules/fatture/edit.php:496 modules/ordini/edit.php:153
 #: modules/preventivi/edit.php:178
 msgid "Aggiungi descrizione"
 msgstr ""
 
 #: modules/contratti/edit.php:313 modules/ddt/edit.php:218
-#: modules/fatture/edit.php:502 modules/interventi/edit.php:256
+#: modules/fatture/edit.php:501 modules/interventi/edit.php:256
 #: modules/ordini/edit.php:158 modules/preventivi/edit.php:183
 msgid "Aggiungi sconto/maggiorazione"
 msgstr ""
 
 #: modules/contratti/edit.php:314 modules/ddt/edit.php:219
-#: modules/fatture/edit.php:503 modules/interventi/edit.php:257
+#: modules/fatture/edit.php:502 modules/interventi/edit.php:257
 #: modules/ordini/edit.php:159 modules/preventivi/edit.php:184
 msgid "Sconto/maggiorazione"
 msgstr ""
@@ -4554,14 +4558,14 @@ msgstr ""
 msgid "Tipo ddt"
 msgstr ""
 
-#: modules/ddt/add_ordine.php:50 modules/fatture/add_contratto.php:42
+#: modules/ddt/add_ordine.php:50 modules/fatture/add_contratto.php:44
 #: modules/fatture/add_ddt.php:50 modules/fatture/add_ordine.php:50
 #: modules/fatture/add_preventivo.php:42
 msgid "Informazioni di importazione"
 msgstr ""
 
 #: modules/ddt/add_ordine.php:57 modules/ddt/add_ordine.php:80
-#: modules/fatture/add_contratto.php:49 modules/fatture/add_contratto.php:72
+#: modules/fatture/add_contratto.php:51 modules/fatture/add_contratto.php:74
 #: modules/fatture/add_ddt.php:57 modules/fatture/add_ddt.php:80
 #: modules/fatture/add_ordine.php:57 modules/fatture/add_ordine.php:80
 #: modules/fatture/add_preventivo.php:49 modules/fatture/add_preventivo.php:72
@@ -4617,17 +4621,17 @@ msgstr ""
 msgid "Destinazione merce"
 msgstr ""
 
-#: modules/ddt/edit.php:111 modules/fatture/edit.php:290
+#: modules/ddt/edit.php:111 modules/fatture/edit.php:289
 #: templates/ddt/footer.php:74 templates/fatture/footer.php:362
 msgid "Aspetto beni"
 msgstr ""
 
-#: modules/ddt/edit.php:115 modules/fatture/edit.php:294
+#: modules/ddt/edit.php:115 modules/fatture/edit.php:293
 #: templates/ddt/footer.php:82 templates/fatture/footer.php:370
 msgid "Causale trasporto"
 msgstr ""
 
-#: modules/ddt/edit.php:119 modules/fatture/edit.php:298
+#: modules/ddt/edit.php:119 modules/fatture/edit.php:297
 #: templates/ddt/footer.php:86 templates/fatture/footer.php:374
 msgid "Porto"
 msgstr ""
@@ -4638,7 +4642,7 @@ msgid ""
 "<li>Assegnato pagamento del trasporto a carico del destinatario</li> </ul>"
 msgstr ""
 
-#: modules/ddt/edit.php:123 modules/fatture/edit.php:302
+#: modules/ddt/edit.php:123 modules/fatture/edit.php:301
 #: templates/ddt/footer.php:78 templates/fatture/footer.php:366
 msgid "Num. colli"
 msgstr ""
@@ -4651,23 +4655,23 @@ msgstr ""
 msgid "Pagamento"
 msgstr ""
 
-#: modules/ddt/edit.php:133 modules/fatture/edit.php:308
+#: modules/ddt/edit.php:133 modules/fatture/edit.php:307
 #: templates/ddt/footer.php:122 templates/fatture/footer.php:402
 msgid "Tipo di spedizione"
 msgstr ""
 
 #: modules/ddt/edit.php:137 modules/ddt/edit.php:146 modules/ddt/edit.php:152
-#: modules/fatture/edit.php:312 modules/fatture/edit.php:320
-#: modules/fatture/edit.php:326 templates/ddt/footer.php:118
+#: modules/fatture/edit.php:311 modules/fatture/edit.php:319
+#: modules/fatture/edit.php:325 templates/ddt/footer.php:118
 msgid "Vettore"
 msgstr ""
 
-#: modules/ddt/edit.php:175 modules/fatture/edit.php:272
+#: modules/ddt/edit.php:175 modules/fatture/edit.php:271
 #: modules/ordini/edit.php:96
 msgid "Note aggiuntive"
 msgstr ""
 
-#: modules/ddt/edit.php:175 modules/fatture/edit.php:272
+#: modules/ddt/edit.php:175 modules/fatture/edit.php:271
 msgid "Note interne."
 msgstr ""
 
@@ -4985,94 +4989,93 @@ msgid "Banca"
 msgstr ""
 
 #: modules/fatture/edit.php:230
-msgid ""
-"Applicato solo se il totale della fattura è maggiore di _TOT_ _CURRENCY_"
+msgid "Applicato solo se il totale della fattura è maggiore di _MONEY_"
 msgstr ""
 
-#: modules/fatture/edit.php:243
+#: modules/fatture/edit.php:242
 msgid ""
 "Abilita lo split payment per questo documento. Le aliquote iva con natura N6 "
 "(reverse charge) non saranno disponibili."
 msgstr ""
 
-#: modules/fatture/edit.php:251
+#: modules/fatture/edit.php:250
 msgid "Fattura per conto terzi"
 msgstr ""
 
-#: modules/fatture/edit.php:251
+#: modules/fatture/edit.php:250
 msgid "Nell'xml della FE imposta il fornitore ("
 msgstr ""
 
-#: modules/fatture/edit.php:266
+#: modules/fatture/edit.php:265
 msgid "Note visibili anche in fattura."
 msgstr ""
 
-#: modules/fatture/edit.php:284
+#: modules/fatture/edit.php:283
 msgid "Dati Fattura accompagnatoria"
 msgstr ""
 
-#: modules/fatture/edit.php:397
+#: modules/fatture/edit.php:396
 msgid "Tipo Resa"
 msgstr ""
 
-#: modules/fatture/edit.php:435
+#: modules/fatture/edit.php:434
 msgid ""
 "Interventi completati non collegati a preventivi o contratti e che non siano "
 "già stati fatturati."
 msgstr ""
 
-#: modules/fatture/edit.php:445
+#: modules/fatture/edit.php:444
 msgid "Preventivi accettati, in attesa di conferma o in lavorazione."
 msgstr ""
 
-#: modules/fatture/edit.php:455
+#: modules/fatture/edit.php:454
 msgid "Contratti accettati, in attesa di conferma o in lavorazione."
 msgstr ""
 
-#: modules/fatture/edit.php:540
+#: modules/fatture/edit.php:539
 msgid "Controllo sui totali del documento e della fattura elettronica in corso"
 msgstr ""
 
-#: modules/fatture/edit.php:559
+#: modules/fatture/edit.php:558
 msgid ""
 "Il file XML non contiene il nodo ''ImportoTotaleDocumento'': impossibile "
 "controllare corrispondenza dei totali"
 msgstr ""
 
-#: modules/fatture/edit.php:561
+#: modules/fatture/edit.php:560
 msgid "Il totale del file XML corrisponde a quello calcolato dal gestionale"
 msgstr ""
 
-#: modules/fatture/edit.php:563
+#: modules/fatture/edit.php:562
 msgid ""
 "Il totale del file XML non corrisponde a quello calcolato dal gestionale: "
 "previsto _XML_, calcolato _CALC_"
 msgstr ""
 
-#: modules/fatture/edit.php:581
+#: modules/fatture/edit.php:580
 msgid ""
 "Per allegare un documento alla fattura elettronica caricare il file PDF "
 "specificando come categoria \"Fattura Elettronica\""
 msgstr ""
 
-#: modules/fatture/edit.php:594
+#: modules/fatture/edit.php:593
 msgid "Desideri ricalcolare le scadenze?"
 msgstr ""
 
-#: modules/fatture/edit.php:611
+#: modules/fatture/edit.php:610
 msgid "Note di credito collegate"
 msgstr ""
 
-#: modules/fatture/edit.php:613 modules/fatture/row-list.php:142
+#: modules/fatture/edit.php:612 modules/fatture/row-list.php:142
 #: templates/fatture/body.php:109
 msgid "Rif. fattura _NUM_ del _DATE_"
 msgstr ""
 
-#: modules/fatture/edit.php:666 plugins/exportFE/edit.php:246
+#: modules/fatture/edit.php:665 plugins/exportFE/edit.php:246
 msgid "Errore durante il salvataggio"
 msgstr ""
 
-#: modules/fatture/edit.php:676
+#: modules/fatture/edit.php:675
 msgid "Alcuni campi obbligatori non sono stati compilati correttamente"
 msgstr ""
 
@@ -6084,10 +6087,10 @@ msgid "Aggiungi prima nota..."
 msgstr ""
 
 #: modules/scadenzario/edit.php:137
-msgid "Il totale da pagare deve essere pari a _TOT_ _CURRENCY_"
+msgid "Il totale da pagare deve essere pari a _MONEY_"
 msgstr ""
 
-#: modules/scadenzario/edit.php:140
+#: modules/scadenzario/edit.php:139
 msgid "Differenza di _TOT_ _CURRENCY_"
 msgstr ""
 

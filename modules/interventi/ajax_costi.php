@@ -35,67 +35,67 @@ if ($show_prezzi) {
 
     <tr>
         <th>'.tr('Totale manodopera', [], ['upper' => true]).'</th>
-        <td class="text-right">'.Translator::numberToLocale($costi['manodopera_costo']).' '.currency().'</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['manodopera_addebito']).' '.currency().'</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['manodopera_scontato']).' '.currency().'</td>
+        <td class="text-right">'.moneyFormat($costi['manodopera_costo']).'</td>
+        <td class="text-right">'.moneyFormat($costi['manodopera_addebito']).'</td>
+        <td class="text-right">'.moneyFormat($costi['manodopera_scontato']).'</td>
     </tr>
 
     <tr>
         <th>'.tr('Totale diritto di chiamata', [], ['upper' => true]).'</th>
-        <td class="text-right">'.Translator::numberToLocale($costi['dirittochiamata_costo']).' '.currency().'</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['dirittochiamata_addebito']).' '.currency().'</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['dirittochiamata_scontato']).' '.currency().'</td>
+        <td class="text-right">'.moneyFormat($costi['dirittochiamata_costo']).'</td>
+        <td class="text-right">'.moneyFormat($costi['dirittochiamata_addebito']).'</td>
+        <td class="text-right">'.moneyFormat($costi['dirittochiamata_scontato']).'</td>
     </tr>
 
     <tr>
         <th>'.tr('Totale viaggio', [], ['upper' => true]).'</th>
-        <td class="text-right">'.Translator::numberToLocale($costi['viaggio_costo']).' '.currency().'</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['viaggio_addebito']).' '.currency().'</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['viaggio_scontato']).' '.currency().'</td>
+        <td class="text-right">'.moneyFormat($costi['viaggio_costo']).'</td>
+        <td class="text-right">'.moneyFormat($costi['viaggio_addebito']).'</td>
+        <td class="text-right">'.moneyFormat($costi['viaggio_scontato']).'</td>
     </tr>
 
     <tr>
         <th>'.tr('Totale articoli', [], ['upper' => true]).'</th>
-        <td class="text-right">'.Translator::numberToLocale($costi['ricambi_costo']).' '.currency().'</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['ricambi_addebito']).' '.currency().'</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['ricambi_scontato']).' '.currency().'</td>
+        <td class="text-right">'.moneyFormat($costi['ricambi_costo']).'</td>
+        <td class="text-right">'.moneyFormat($costi['ricambi_addebito']).'</td>
+        <td class="text-right">'.moneyFormat($costi['ricambi_scontato']).'</td>
     </tr>
 
     <tr>
         <th>'.tr('Totale altre spese', [], ['upper' => true]).'</th>
-        <td class="text-right">'.Translator::numberToLocale($costi['altro_costo']).' '.currency().'</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['altro_addebito']).' '.currency().'</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['altro_scontato']).' '.currency().'</td>
+        <td class="text-right">'.moneyFormat($costi['altro_costo']).'</td>
+        <td class="text-right">'.moneyFormat($costi['altro_addebito']).'</td>
+        <td class="text-right">'.moneyFormat($costi['altro_scontato']).'</td>
     </tr>
 
     <tr>
         <th>'.tr('Sconto incondizionato', [], ['upper' => true]).'</th>
         <td class="text-right">-</td>
         <td class="text-right">-</td>
-        <td class="text-right">'.Translator::numberToLocale(-$costi['sconto_globale']).' '.currency().'</td>
+        <td class="text-right">'.moneyFormat(-$costi['sconto_globale']).'</td>
     </tr>
 
 
 	<tr class='.$hide.' >
         <th>'.tr('Imponibile', [], ['upper' => true]).'</th>
-        <td class="text-right">'.Translator::numberToLocale($costi['totale_costo']).' '.currency().'</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['totale_addebito']).' '.currency().'</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['totale_scontato']).' '.currency().'</td>
+        <td class="text-right">'.moneyFormat($costi['totale_costo']).'</td>
+        <td class="text-right">'.moneyFormat($costi['totale_addebito']).'</td>
+        <td class="text-right">'.moneyFormat($costi['totale_scontato']).'</td>
     </tr>
 
 
 	<tr class='.$hide.' >
         <th>'.tr('IVA', [], ['upper' => true]).'</th>
-        <td class="text-right">'.Translator::numberToLocale($costi['iva_costo']).' '.currency().'</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['iva_addebito']).' '.currency().'</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['iva_totale']).' '.currency().'</td>
+        <td class="text-right">'.moneyFormat($costi['iva_costo']).'</td>
+        <td class="text-right">'.moneyFormat($costi['iva_addebito']).'</td>
+        <td class="text-right">'.moneyFormat($costi['iva_totale']).'</td>
     </tr>
 
     <tr>
         <th>'.tr('Totale', [], ['upper' => true]).'</th>
-        <th class="text-right">'.Translator::numberToLocale($costi['totaleivato_costo']).' '.currency().'</th>
-        <th class="text-right">'.Translator::numberToLocale($costi['totaleivato_addebito']).' '.currency().'</th>
-        <th class="text-right">'.Translator::numberToLocale($costi['totale']).' '.currency().'</th>
+        <th class="text-right">'.moneyFormat($costi['totaleivato_costo']).'</th>
+        <th class="text-right">'.moneyFormat($costi['totaleivato_addebito']).'</th>
+        <th class="text-right">'.moneyFormat($costi['totale']).'</th>
     </tr>
 </table>';
 }

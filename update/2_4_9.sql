@@ -221,3 +221,14 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 
 -- Aggiornamento dicitura Tipo Cassa
 UPDATE `zz_settings` SET `nome` = 'Tipo Cassa Previdenziale' WHERE `zz_settings`.`nome` = 'Tipo Cassa';
+
+-- Aggiunta campo "Rif. fattura" nello scadenzario
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT id FROM zz_modules WHERE name='Scadenzario'), 'Rif. Fattura', 'IF( numero_esterno!="", numero_esterno, numero )', '2', '1', '0', '0', NULL, NULL, '1', '0', '1');
+
+INSERT INTO `zz_group_view`(`id_gruppo`, `id_vista`) VALUES
+  ( (SELECT `id` FROM `zz_groups` WHERE `nome`='Amministratori'), (SELECT `id` FROM `zz_views` WHERE `id_module`=(SELECT `id` FROM `zz_modules` WHERE `name`='Scadenzario') AND `name`='Rif. Fattura') ),
+  ( (SELECT `id` FROM `zz_groups` WHERE `nome`='Clienti'), (SELECT `id` FROM `zz_views` WHERE `id_module`=(SELECT `id` FROM `zz_modules` WHERE `name`='Scadenzario') AND `name`='Rif. Fattura') ),
+  ( (SELECT `id` FROM `zz_groups` WHERE `nome`='Tecnici'), (SELECT `id` FROM `zz_views` WHERE `id_module`=(SELECT `id` FROM `zz_modules` WHERE `name`='Scadenzario') AND `name`='Rif. Fattura') ),
+  ( (SELECT `id` FROM `zz_groups` WHERE `nome`='Agenti'), (SELECT `id` FROM `zz_views` WHERE `id_module`=(SELECT `id` FROM `zz_modules` WHERE `name`='Scadenzario') AND `name`='Rif. Fattura') );
+
+UPDATE `zz_views` SET `order`=`order`+1 WHERE `id_module`=(SELECT `id` FROM `zz_modules` WHERE `name`='Scadenzario') AND `order` > 1 AND `name` != 'Rif. Fattura';

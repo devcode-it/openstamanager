@@ -190,10 +190,25 @@ switch (post('op')) {
     case 'delete':
         // Se l'anagrafica non è l'azienda principale, la disattivo
         if (!in_array($id_azienda, $tipi_anagrafica)) {
-            $dbo->query('UPDATE an_anagrafiche SET deleted_at = NOW() WHERE idanagrafica = '.prepare($id_record));
+            $interventi = $dbo->fetchOne('SELECT id FROM in_interventi WHERE idanagrafica='.prepare($id_record));
+            $preventivi = $dbo->fetchOne('SELECT id FROM co_preventivi WHERE idanagrafica='.prepare($id_record));
+            $contratti = $dbo->fetchOne('SELECT id FROM co_contratti WHERE idanagrafica='.prepare($id_record));
+            $ordini = $dbo->fetchOne('SELECT id FROM or_ordini WHERE idanagrafica='.prepare($id_record));
+            $ddt = $dbo->fetchOne('SELECT id FROM dt_ddt WHERE idanagrafica='.prepare($id_record));
+            $fatture = $dbo->fetchOne('SELECT id FROM co_documenti WHERE idanagrafica='.prepare($id_record));
 
-            // Se l'anagrafica è collegata ad un utente lo disabilito
-            $dbo->query('UPDATE zz_users SET enabled = 0 WHERE idanagrafica = '.prepare($id_record));
+            // Se non ci sono documenti collegati, elimino l'anagrafica
+            if (count($interventi) == 0 && count($preventivi) == 0 && count($contratti) == 0 && count($ordini) == 0 && count($ddt) == 0 && count($fatture) == 0) {
+                $dbo->query('DELETE FROM an_anagrafiche WHERE idanagrafica = '.prepare($id_record));
+            }
+
+            // altrimenti la disabilito solo
+            else {
+                $dbo->query('UPDATE an_anagrafiche SET deleted_at = NOW() WHERE idanagrafica = '.prepare($id_record));
+
+                // Se l'anagrafica è collegata ad un utente lo disabilito
+                $dbo->query('UPDATE zz_users SET enabled = 0 WHERE idanagrafica = '.prepare($id_record));
+            }
 
             flash()->info(tr('Anagrafica eliminata!'));
         }

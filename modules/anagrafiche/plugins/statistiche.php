@@ -4,7 +4,7 @@ include_once __DIR__.'/../../../core.php';
 
 
 // Preventivi
-$rsi = $dbo->fetchArray('SELECT co_preventivi.id, data_accettazione AS data, ragione_sociale FROM co_preventivi INNER JOIN an_anagrafiche ON co_preventivi.idanagrafica=an_anagrafiche.idanagrafica WHERE co_preventivi.idanagrafica='.prepare($id_record).' AND default_revision = 1');
+$rsi = $dbo->fetchArray('SELECT co_preventivi.id, data_accettazione AS data, ragione_sociale FROM co_preventivi INNER JOIN an_anagrafiche ON co_preventivi.idanagrafica=an_anagrafiche.idanagrafica WHERE co_preventivi.idanagrafica='.prepare($id_record).' AND default_revision = 1 AND data_accettazione BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']));
 $totale_preventivi = 0;
 
 for ($i = 0; $i < count($rsi); ++$i) {
@@ -29,7 +29,7 @@ echo '
         </div>';
 
 // Contratti
-$rsi = $dbo->fetchArray('SELECT co_contratti.id, data_accettazione AS data, ragione_sociale FROM co_contratti INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE co_contratti.idanagrafica='.prepare($id_record));
+$rsi = $dbo->fetchArray('SELECT co_contratti.id, data_accettazione AS data, ragione_sociale FROM co_contratti INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE co_contratti.idanagrafica='.prepare($id_record).' AND data_accettazione BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']));
 
 $totale_contratti = 0;
 
@@ -55,7 +55,7 @@ echo '
 
 
 // Ordini cliente
-$rsi = $dbo->fetchArray('SELECT or_ordini.id, data, ragione_sociale FROM or_ordini INNER JOIN an_anagrafiche ON or_ordini.idanagrafica=an_anagrafiche.idanagrafica WHERE or_ordini.idanagrafica='.prepare($id_record));
+$rsi = $dbo->fetchArray('SELECT or_ordini.id, data, ragione_sociale FROM or_ordini INNER JOIN an_anagrafiche ON or_ordini.idanagrafica=an_anagrafiche.idanagrafica WHERE or_ordini.idanagrafica='.prepare($id_record).' AND data BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']));
 
 $totale_ordini_cliente = 0;
 
@@ -86,10 +86,10 @@ echo '
 $rsi = [];
 if (in_array('Cliente', explode(',', $record['tipianagrafica']))) {
     //Clienti
-    $rsi = $dbo->fetchArray('SELECT ragione_sociale, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS data, (SELECT SUM(prezzo_ore_consuntivo+prezzo_km_consuntivo+prezzo_dirittochiamata) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS totale FROM in_interventi INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE in_interventi.idanagrafica='.prepare($id_record));
+    $rsi = $dbo->fetchArray('SELECT ragione_sociale, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS data, (SELECT SUM(prezzo_ore_consuntivo+prezzo_km_consuntivo+prezzo_dirittochiamata) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS totale FROM in_interventi INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE in_interventi.idanagrafica='.prepare($id_record).' AND data_richiesta BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']));
 } elseif (in_array('Tecnico', explode(',', $record['tipianagrafica']))) {
     //Tecnici
-    $rsi = $dbo->fetchArray('SELECT ragione_sociale, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS data, (SELECT SUM(prezzo_ore_consuntivo+prezzo_km_consuntivo+prezzo_dirittochiamata) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id AND in_interventi_tecnici.idtecnico = '.prepare($id_record).' ) AS totale FROM in_interventi INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica INNER JOIN in_interventi_tecnici ON in_interventi.id = in_interventi_tecnici.idintervento  WHERE in_interventi_tecnici.idtecnico='.prepare($id_record));
+    $rsi = $dbo->fetchArray('SELECT ragione_sociale, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS data, (SELECT SUM(prezzo_ore_consuntivo+prezzo_km_consuntivo+prezzo_dirittochiamata) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id AND in_interventi_tecnici.idtecnico = '.prepare($id_record).' ) AS totale FROM in_interventi INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica INNER JOIN in_interventi_tecnici ON in_interventi.id = in_interventi_tecnici.idintervento  WHERE in_interventi_tecnici.idtecnico='.prepare($id_record).' AND data_richiesta BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']));
 }
 $totale_interventi = 0;
 
@@ -115,7 +115,7 @@ echo '
         </div>';
 
 // Ddt in uscita
-$rsi = $dbo->fetchArray("SELECT id, data, ragione_sociale FROM dt_ddt INNER JOIN an_anagrafiche ON dt_ddt.idanagrafica=an_anagrafiche.idanagrafica WHERE idtipoddt IN(SELECT id FROM dt_tipiddt WHERE dir='entrata') AND dt_ddt.idanagrafica=".prepare($id_record));
+$rsi = $dbo->fetchArray("SELECT id, data, ragione_sociale FROM dt_ddt INNER JOIN an_anagrafiche ON dt_ddt.idanagrafica=an_anagrafiche.idanagrafica WHERE idtipoddt IN(SELECT id FROM dt_tipiddt WHERE dir='entrata') AND dt_ddt.idanagrafica=".prepare($id_record).' AND data BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']));
 
 $totale_ddt_uscita = 0;
 
@@ -140,7 +140,7 @@ echo '
         </div>';
 
 // Fatture di vendita
-$rsi = $dbo->fetchArray("SELECT id, data, ragione_sociale FROM co_documenti INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica WHERE idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir='entrata') AND co_documenti.idanagrafica=".prepare($id_record));
+$rsi = $dbo->fetchArray("SELECT id, data, ragione_sociale FROM co_documenti INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica WHERE idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir='entrata') AND co_documenti.idanagrafica=".prepare($id_record).' AND data BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']));
 
 $totale_fatture_vendita = 0;
 

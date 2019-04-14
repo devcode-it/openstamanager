@@ -226,3 +226,6 @@ UPDATE `zz_settings` SET `nome` = 'Tipo Cassa Previdenziale' WHERE `zz_settings`
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT id FROM zz_modules WHERE name='Scadenzario'), 'Rif. Fattura', 'IF( numero_esterno!="", numero_esterno, numero )', '2', '1', '0', '0', NULL, NULL, '1', '0', '1');
 
 UPDATE `zz_views` SET `order`=`order`+1 WHERE `id_module`=(SELECT `id` FROM `zz_modules` WHERE `name`='Scadenzario') AND `order` > 1 AND `name` != 'Rif. Fattura';
+
+-- Aggiornamento widget "Crediti da clienti"
+UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS('' '', REPLACE(REPLACE(REPLACE(FORMAT((SELECT ABS(SUM(da_pagare-pagato))), 2), '','', ''#''), ''.'', '',''),''#'', ''.''), ''&euro;'') AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=''entrata'' AND co_documenti.idstatodocumento!=1 |segment| AND 1=1' WHERE `zz_widgets`.`name` = 'Crediti da clienti';

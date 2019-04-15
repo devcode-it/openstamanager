@@ -172,35 +172,26 @@ function aggiorna_scadenziario($iddocumento, $totale_pagato, $data_pagamento)
         // Lettura righe scadenziario
         $query = "SELECT * FROM co_scadenziario WHERE iddocumento='$iddocumento' AND ABS(pagato)>0  ORDER BY scadenza DESC";
         $rs = $dbo->fetchArray($query);
-        $residuo_pagato = abs($rs[0]['pagato']) + $totale_pagato;
-
+        $residuo_pagato = abs($totale_pagato);
         // Verifico se la fattura è di acquisto o di vendita per scegliere che segno mettere nel totale
         $query2 = 'SELECT dir FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
         $rs2 = $dbo->fetchArray($query2);
         $dir = $rs2[0]['dir'];
-
         // Ciclo tra le rate dei pagamenti per inserire su `pagato` l'importo effettivamente pagato.
         // Nel caso il pagamento superi la rata, devo distribuirlo sulle rate successive
         for ($i = 0; $i < sizeof($rs); ++$i) {
-            if ($residuo_pagato >= 0) {
-                // ...riempio il pagato della rata con il totale della rata stessa se ho ricevuto un pagamento superiore alla rata stessa
-                if (abs($residuo_pagato) <= abs($rs[$i]['pagato'])) {
+            if( $residuo_pagato>0){
+                // Se si inserisce una somma maggiore al dovuto, tengo valido il rimanente per saldare il tutto...
+                if ($residuo_pagato <= abs($rs[$i]['pagato'])) {
                     $pagato = 0;
                     $residuo_pagato -= abs($rs[$i]['pagato']);
-                } else {
-                    // Se si inserisce una somma maggiore al dovuto, tengo valido il rimanente per saldare il tutto...
-                    if (abs($residuo_pagato) < abs($rs[$i]['pagato'])) {
-                        $pagato = 0;
-                        $residuo_pagato -= abs($rs[$i]['pagato']);
-                    }
-
-                    // ...altrimenti aggiungo l'importo pagato
-                    else {
-                        $pagato = abs($residuo_pagato);
-                        $residuo_pagato -= abs($residuo_pagato);
-                    }
                 }
-
+                // ...altrimenti aggiungo l'importo pagato
+                else {
+                    $pagato = abs($residuo_pagato);
+                    $residuo_pagato -= abs($residuo_pagato);
+                }
+                
                 if ($dir == 'uscita') {
                     $residuo_pagato = -$residuo_pagato;
                 }

@@ -36,6 +36,7 @@ if (empty($idriga)) {
     $sconto_unitario = 0;
 
     $idimpianto = 0;
+	$idiva = setting('Iva predefinita');
 } else {
     $op = 'editarticolo';
     $button = '<i class="fa fa-edit"></i> '.tr('Modifica');

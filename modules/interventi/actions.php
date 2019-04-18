@@ -606,7 +606,7 @@ switch (post('op')) {
         $sconto_unitario = post('sconto');
         $tipo_sconto = post('tipo_sconto');
 
-        if ($tipo_sconto == 'UNT'){
+        if ($tipo_sconto == 'UNT') {
             $sconto = $sconto_unitario * $ore;
         } else {
             $sconto = calcola_sconto([
@@ -616,12 +616,11 @@ switch (post('op')) {
             ]);
         }
 
-
         // Sconti km
         $scontokm_unitario = post('sconto_km');
         $tipo_scontokm = post('tipo_sconto_km');
-        
-        if ($tipo_scontokm == 'UNT'){
+
+        if ($tipo_scontokm == 'UNT') {
             $scontokm = $scontokm_unitario * $km;
         } else {
             $scontokm = calcola_sconto([

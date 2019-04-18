@@ -945,9 +945,12 @@ class FatturaElettronica
             $descrizione = str_replace('…', '...', $descrizione);
             $descrizione = str_replace('’', ' ', $descrizione);
 
-            $ref = doc_references($riga->toArray(), 'entrata', ['iddocumento']);
-            if (!empty($ref)) {
-                $descrizione .= "\n".$ref['description'];
+            if (setting('Riferimento dei documenti in Fattura Elettronica')) {
+                $ref = doc_references($riga->toArray(), 'entrata', ['iddocumento']);
+
+                if (!empty($ref)) {
+                    $descrizione .= "\n".$ref['description'];
+                }
             }
 
             $dettaglio['Descrizione'] = $descrizione;
@@ -971,7 +974,7 @@ class FatturaElettronica
             // Sconto (2.2.1.10)
             $sconto = $riga->sconto;
             $sconto_unitario = $riga->sconto_unitario;
-			
+
             if (!empty((float) $sconto_unitario)) {
                 $sconto = [
                     'Tipo' => $riga->sconto_unitario > 0 ? 'SC' : 'MG',

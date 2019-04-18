@@ -119,14 +119,17 @@ foreach ($righe as $r) {
         }
     }
 
-    $ref = doc_references($r, $record['dir'], ['iddocumento']);
+    // Aggiunta dei riferimenti ai documenti
+    if (setting('Riferimento dei documenti nelle stampe')) {
+        $ref = doc_references($r, $record['dir'], ['iddocumento']);
 
-    if (!empty($ref)) {
-        echo '
+        if (!empty($ref)) {
+            echo '
                 <br><small>'.$ref['description'].'</small>';
 
-        if ($count <= 1) {
-            $count += 0.4;
+            if ($count <= 1) {
+                $count += 0.4;
+            }
         }
     }
 

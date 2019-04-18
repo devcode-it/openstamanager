@@ -22,7 +22,7 @@ if (empty($idriga)) {
     $um = '';
     $prezzo_vendita = '0';
     $prezzo_acquisto = '0';
-	$idiva = setting('Iva predefinita');
+    $idiva = setting('Iva predefinita');
 } else {
     $op = 'editriga';
     $button = '<i class="fa fa-edit"></i> '.tr('Modifica');

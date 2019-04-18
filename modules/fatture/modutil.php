@@ -180,7 +180,7 @@ function aggiorna_scadenziario($iddocumento, $totale_pagato, $data_pagamento)
         // Ciclo tra le rate dei pagamenti per inserire su `pagato` l'importo effettivamente pagato.
         // Nel caso il pagamento superi la rata, devo distribuirlo sulle rate successive
         for ($i = 0; $i < sizeof($rs); ++$i) {
-            if( $residuo_pagato>0){
+            if ($residuo_pagato > 0) {
                 // Se si inserisce una somma maggiore al dovuto, tengo valido il rimanente per saldare il tutto...
                 if ($residuo_pagato <= abs($rs[$i]['pagato'])) {
                     $pagato = 0;
@@ -191,7 +191,7 @@ function aggiorna_scadenziario($iddocumento, $totale_pagato, $data_pagamento)
                     $pagato = abs($residuo_pagato);
                     $residuo_pagato -= abs($residuo_pagato);
                 }
-                
+
                 if ($dir == 'uscita') {
                     $residuo_pagato = -$residuo_pagato;
                 }

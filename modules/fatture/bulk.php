@@ -179,7 +179,6 @@ switch (post('op')) {
             $totale_pagato = $rs[0]['rata'];
 
             $importo_conto_aziendale += $totale_pagato;
-
         }
 
         //Inserimento riga unica per conto aziendale

@@ -145,7 +145,7 @@ if (!empty($righe)) {
     echo '
     <h4>
         '.tr('Righe').'
-        <button type="button" class="btn btn-info btn-sm pull-right" onclick="copy()"><i class="fa fa-copy"></i> '.tr('Copia dati contabili dalla prima riga').'</button>
+        <button type="button" class="btn btn-info btn-sm pull-right" onclick="copy()"><i class="fa fa-copy"></i> '.tr('Copia dati contabili dalla prima riga valorizzata').'</button>
         <div class="clearfix"></div>
     </h4>
 
@@ -199,16 +199,33 @@ if (!empty($righe)) {
     echo '
     <script>
     function copy(){
-        $iva = $("select[name^=iva").first().selectData();
-        $conto = $("select[name^=conto").first().selectData();
+        var first_iva = null;
+        var first_conto = null;
 
-        if($iva) {
+        $("select[name^=iva").each( function(){
+            if( $(this).val() != "" && first_iva == null ){
+                first_iva = $(this);
+            }
+        });
+
+        $("select[name^=conto").each( function(){
+            if( $(this).val() != "" && first_conto == null ){
+                first_conto = $(this);
+            }
+        });
+
+
+        if(first_iva) {
+            $iva = first_iva.selectData();
+
             $("select[name^=iva").each(function(){
                 $(this).selectSet($iva.id);
             });
         }
 
-        if($conto) {
+        if(first_conto) {
+            $conto = first_conto.selectData();
+
             $("select[name^=conto").each(function(){
                 $(this).selectSetNew($conto.id, $conto.text);
             });

@@ -63,7 +63,7 @@ if (!empty($record['is_fiscale'])) {
 
     if (($n2 <= 0 && $record['stato'] == 'Emessa') || $differenza != 0) {
         ?>
-					<button type="button" class="btn btn-primary <?php echo (!empty(Modules::get('Prima nota'))) ? '' : 'disabled'; ?>" onclick="launch_modal( '<?php echo tr('Aggiungi prima nota'); ?>', '<?php echo $rootdir; ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>&iddocumento=<?php echo $id_record; ?>&dir=<?php echo $dir; ?>', 1 );"><small><i class="fa fa-euro"></i> <?php echo tr('Registrazione contabile pagamento'); ?>...</small></button>
+					<button type="button" class="btn btn-primary <?php echo (!empty(Modules::get('Prima nota'))) ? '' : 'disabled'; ?>" onclick="launch_modal( '<?php echo tr('Aggiungi prima nota'); ?>', '<?php echo $rootdir; ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>&iddocumento=<?php echo $id_record; ?>&dir=<?php echo $dir; ?>', 1 );"><small><i class="fa fa-euro"></i> <?php echo tr('Registra contabile pagamento'); ?>...</small></button>
 <?php
     }
 

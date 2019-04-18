@@ -674,37 +674,43 @@ if (Modules::getPermission('Interventi') == 'rw') {
 ?>
 			eventAfterRender: function(event, element) {
 				element.find('.fc-title').html(event.title);
+                element.data('idintervento', event.idintervento);
 <?php
 
 if (setting('Utilizzare i tooltip sul calendario') == '1') {
     ?>
-				$.get(globals.rootdir + "/modules/dashboard/actions.php?op=get_more_info&id="+event.idintervento+"&timeStart="+moment(event.start).format("YYYY-MM-DD HH:mm")+"&timeEnd="+moment(event.end).format("YYYY-MM-DD HH:mm"), function(data,response){
-					if( response=="success" ){
-						data = $.trim(data);
-						if( data!="ok" ){
-							element.tooltipster({
-								content: data,
-								animation: 'grow',
-								contentAsHTML: true,
-								hideOnClick: true,
-								onlyOne: true,
-								speed: 200,
-								delay: 100,
-								maxWidth: 400,
-								theme: 'tooltipster-shadow',
-								touchDevices: true,
-								trigger: 'hover',
-								position: 'left'
-							});
+				element.mouseover( function(){
+				    if( !element.hasClass('tooltipstered') ){
+				        $(this).data('idintervento', event.idintervento );
+				        
+				        $.get(globals.rootdir + "/modules/dashboard/actions.php?op=get_more_info&id="+$(this).data('idintervento'), function(data,response){
+							if( response=="success" ){
+								data = $.trim(data);
+								if( data!="ok" ){
+									element.tooltipster({
+										content: data,
+										animation: 'grow',
+										contentAsHTML: true,
+										hideOnClick: true,
+										onlyOne: true,
+										speed: 200,
+										delay: 100,
+										maxWidth: 400,
+										theme: 'tooltipster-shadow',
+										touchDevices: true,
+										trigger: 'hover',
+										position: 'left'
+									});
+								}
+								else{
+									return false;
+								}
 
-						}
-						else{
-							return false;
-						}
-
-                        $('#calendar').fullCalendar('option', 'contentHeight', 'auto');
+				                $('#calendar').fullCalendar('option', 'contentHeight', 'auto');
+				            }
+				        });
 					}
-                });
+				});
 <?php
 }
 ?>

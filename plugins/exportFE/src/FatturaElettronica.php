@@ -971,7 +971,8 @@ class FatturaElettronica
             // Sconto (2.2.1.10)
             $sconto = $riga->sconto;
             $sconto_unitario = $riga->sconto_unitario;
-            if (!empty($sconto_unitario) and $sconto_unitario != 0 ) {
+			
+            if (!empty((float) $sconto_unitario)) {
                 $sconto = [
                     'Tipo' => $riga->sconto_unitario > 0 ? 'SC' : 'MG',
                 ];

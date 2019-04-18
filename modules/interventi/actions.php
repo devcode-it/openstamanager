@@ -602,18 +602,34 @@ switch (post('op')) {
         $prezzo_ore_consuntivo_tecnico = $prezzo_ore_unitario_tecnico * $ore;
         $prezzo_km_consuntivo_tecnico = $prezzo_km_unitario_tecnico * $km;
 
-        // Sconti
+        // Sconti ore
         $sconto_unitario = post('sconto');
         $tipo_sconto = post('tipo_sconto');
-        $sconto = calcola_sconto([
-            'sconto' => $sconto_unitario,
-            'prezzo' => $prezzo_ore_consuntivo,
-            'tipo' => $tipo_sconto,
-        ]);
 
+        if ($tipo_sconto == 'UNT'){
+            $sconto = $sconto_unitario * $ore;
+        } else {
+            $sconto = calcola_sconto([
+                'sconto' => $sconto_unitario,
+                'prezzo' => $prezzo_ore_consuntivo,
+                'tipo' => $tipo_sconto,
+            ]);
+        }
+
+
+        // Sconti km
         $scontokm_unitario = post('sconto_km');
         $tipo_scontokm = post('tipo_sconto_km');
-        $scontokm = ($tipo_scontokm == 'PRC') ? ($prezzo_km_consuntivo * $scontokm_unitario) / 100 : $scontokm_unitario;
+        
+        if ($tipo_scontokm == 'UNT'){
+            $scontokm = $scontokm_unitario * $km;
+        } else {
+            $scontokm = calcola_sconto([
+                'sconto' => $scontokm_unitario,
+                'prezzo' => $prezzo_km_consuntivo,
+                'tipo' => $tipo_scontokm,
+            ]);
+        }
 
         $dbo->update('in_interventi_tecnici', [
             'idtipointervento' => $idtipointervento_tecnico,

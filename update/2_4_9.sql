@@ -241,3 +241,17 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 -- Supporto alla personalizzazione dell'API remota OSMCloud
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES
 (NULL, 'OSMCloud Services API URL', 'https://services.osmcloud.it/api/', 'string', 0, 'Fatturazione Elettronica', 11);
+
+-- Miglioramento gestione marca da bollo
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES
+(NULL, 'Addebita marca da bollo al cliente', 1, 'boolean', 1, 'Fatturazione', 13),
+(NULL, 'Iva da applicare su marca da bollo', (SELECT id FROM `co_iva` WHERE `deleted_at` IS NULL AND `descrizione` = 'Escluso art. 15' ORDER BY descrizione ASC), 'query=SELECT id, id, IF(codice_natura_fe IS NULL, IF(codice IS NULL, descrizione, CONCAT(codice, " - ", descrizione)), CONCAT( IF(codice IS NULL, descrizione, CONCAT(codice, " - ", descrizione)), " (", codice_natura_fe, ")" )) AS descrizione FROM `co_iva` WHERE `deleted_at` IS NULL ORDER BY descrizione ASC', 1, 'Fatturazione', 14),
+(NULL, 'Descrizione addebito bollo', 'Marca da bollo', 'string', 1, 'Fatturazione', 15),
+(NULL, 'Conto predefinito per la marca da bollo', (SELECT id FROM `co_iva` WHERE `deleted_at` IS NULL AND `descrizione` = 'Escluso art. 15' ORDER BY descrizione ASC), 'query=SELECT id,descrizione FROM co_pianodeiconti3 WHERE idpianodeiconti2=(SELECT id FROM co_pianodeiconti2 WHERE descrizione=''Cassa e banche'')', 1, 'Fatturazione', 16);
+
+ALTER TABLE `zz_settings` CHANGE `help` `help` varchar(255);
+UPDATE `zz_settings` SET `help` = NULL WHERE `help` = '';
+
+ALTER TABLE `co_documenti` CHANGE `data_stato_fe` `data_stato_fe` TIMESTAMP NULL, ADD `addebita_bollo` BOOLEAN NOT NULL DEFAULT TRUE, ADD `id_riga_bollo` int(11), ADD FOREIGN KEY (`id_riga_bollo`) REFERENCES `co_righe_documenti`(`id`) ON DELETE SET NULL;
+UPDATE `co_documenti` SET `data_ricezione` = NULL WHERE `data_ricezione` = '0000-00-00';
+UPDATE `co_documenti` SET `data_stato_fe` = NULL WHERE `data_stato_fe` = '0000-00-00 00:00:00';

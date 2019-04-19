@@ -257,6 +257,10 @@ if ($dir == 'uscita') {
                     {[ "type": "select", "label": "<?php echo tr('Ritenuta contributi'); ?>", "name": "id_ritenuta_contributi", "value": "$id_ritenuta_contributi$", "values": "query=SELECT * FROM co_ritenuta_contributi" ]}
                 </div>
 
+                <div class="col-md-3">
+                    {[ "type": "checkbox", "label": "<?php echo tr('Addebita marca da bollo'); ?>", "name": "addebita_bollo", "value": "$addebita_bollo$" ]}
+                </div>
+
             </div>
 
 			<div class="row">

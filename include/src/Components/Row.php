@@ -143,11 +143,11 @@ abstract class Row extends Description
             $this->prezzo_unitario_vendita_riga = $this->attributes['subtotale'] / $this->qta;
         }
 
-        return $this->prezzo_unitario_vendita_riga;
+        return !is_nan($this->prezzo_unitario_vendita_riga) ?  $this->prezzo_unitario_vendita_riga : 0;
     }
 
     /**
-     * Salva la riga, impostando i campi dipendenti dai parametri singoli.
+     * Salva la riga, impostando i campi dipendenti dai singoli parametri.
      *
      * @param array $options
      *

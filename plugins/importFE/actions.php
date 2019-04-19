@@ -61,11 +61,7 @@ switch (filter('op')) {
         $fattura_pa = FatturaElettronica::manage($filename);
         $id_record = $fattura_pa->save($info);
 
-        $idrivalsainps = 0;
-        $idritenutaacconto = 0;
-        $bollo = 0;
-
-        ricalcola_costiagg_fattura($id_record, $idrivalsainps, $idritenutaacconto, $bollo);
+        ricalcola_costiagg_fattura($id_record);
         elimina_scadenza($id_record);
         elimina_movimento($id_record, 0);
         aggiungi_scadenza($id_record);

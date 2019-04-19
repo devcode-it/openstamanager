@@ -451,70 +451,13 @@ function get_new_idmastrino($table = 'co_movimenti')
  * Ricalcola i costi aggiuntivi in fattura (rivalsa inps, ritenuta d'acconto, marca da bollo)
  * Deve essere eseguito ogni volta che si aggiunge o toglie una riga
  * $iddocumento		int		ID della fattura
- * $idrivalsainps		int		ID della rivalsa inps da applicare. Se omesso non viene calcolata
- * $idritenutaacconto	int		ID della ritenuta d'acconto da applicare. Se omesso non viene calcolata
- * $bolli				float	Costi aggiuntivi delle marche da bollo. Se omesso verrà usata la cifra predefinita.
  */
-function ricalcola_costiagg_fattura($iddocumento, $idrivalsainps = '', $idritenutaacconto = '', $bolli = '')
+function ricalcola_costiagg_fattura($iddocumento)
 {
     global $dir;
 
-    $dbo = database();
-
-    // Se ci sono righe in fattura faccio i conteggi, altrimenti azzero gli sconti e le spese aggiuntive (inps, ritenuta, marche da bollo)
-    $query = 'SELECT COUNT(id) AS righe FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento);
-    $rs = $dbo->fetchArray($query);
-    if ($rs[0]['righe'] > 0) {
-        $totale_imponibile = get_imponibile_fattura($iddocumento);
-        $totale_fattura = get_totale_fattura($iddocumento);
-
-        // Leggo gli id dei costi aggiuntivi
-        if ($dir == 'uscita') {
-            $query2 = 'SELECT bollo FROM co_documenti WHERE id='.prepare($iddocumento);
-            $rs2 = $dbo->fetchArray($query2);
-            $bollo = $rs2[0]['bollo'];
-        }
-
-        $query = 'SELECT SUM(rivalsainps) AS rivalsainps, SUM(ritenutaacconto) AS ritenutaacconto FROM co_righe_documenti GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
-        $rs = $dbo->fetchArray($query);
-        $rivalsainps = $rs[0]['rivalsainps'];
-        $ritenutaacconto = $rs[0]['ritenutaacconto'];
-
-        $iva_rivalsainps = 0;
-
-        $rsr = $dbo->fetchArray('SELECT idiva, rivalsainps FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento));
-
-        for ($r = 0; $r < sizeof($rsr); ++$r) {
-            $qi = 'SELECT percentuale FROM co_iva WHERE id='.prepare($rsr[$r]['idiva']);
-            $rsi = $dbo->fetchArray($qi);
-            $iva_rivalsainps += $rsr[$r]['rivalsainps'] / 100 * $rsi[0]['percentuale'];
-        }
-
-        // Leggo la ritenuta d'acconto se c'è
-        $fattura = Fattura::find($iddocumento);
-
-        $righe_bollo = $fattura->getRighe()->filter(function ($item, $key) {
-            return $item->aliquota != null && in_array($item->aliquota->codice_natura_fe, ['N1', 'N2', 'N3', 'N4']);
-        });
-
-        $importo_righe_bollo = $righe_bollo->sum('netto');
-
-        // Leggo la marca da bollo se c'è e se il netto a pagare supera la soglia
-        $bolli = ($dir == 'uscita') ? $bolli : setting('Importo marca da bollo');
-        $bolli = formatter()->parse($bolli);
-
-        $marca_da_bollo = 0;
-        if (abs($bolli) > 0 && abs($importo_righe_bollo) > setting("Soglia minima per l'applicazione della marca da bollo")) {
-            $marca_da_bollo = $bolli;
-        }
-
-        // Se l'importo è negativo può essere una nota di credito, quindi cambio segno alla marca da bollo
-        $marca_da_bollo = abs($marca_da_bollo);
-
-        $dbo->query('UPDATE co_documenti SET ritenutaacconto='.prepare($ritenutaacconto).', rivalsainps='.prepare($rivalsainps).', iva_rivalsainps='.prepare($iva_rivalsainps).', bollo='.prepare($marca_da_bollo).' WHERE id='.prepare($iddocumento));
-    } else {
-        $dbo->query("UPDATE co_documenti SET ritenutaacconto='0', bollo='0', rivalsainps='0', iva_rivalsainps='0' WHERE id=".prepare($iddocumento));
-    }
+    $fattura = Fattura::find($iddocumento);
+    $fattura->save();
 }
 
 /**

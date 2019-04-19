@@ -4,6 +4,7 @@ namespace Modules\Fatture;
 
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Fatture\Components\Riga;
 use Modules\Pagamenti\Pagamento;
 use Modules\RitenuteContributi\RitenutaContributi;
 use Plugins\ExportFE\FatturaElettronica;
@@ -84,6 +85,8 @@ class Fattura extends Document
         $model->idconto = $id_conto;
         $model->idsede = $id_sede;
 
+        $model->addebita_bollo = setting('Addebita marca da bollo al cliente');
+
         $id_ritenuta_contributi = ($tipo_documento->dir == 'entrata') ? setting('Ritenuta contributi') : null;
         $model->id_ritenuta_contributi = $id_ritenuta_contributi ?: null;
 
@@ -149,7 +152,7 @@ class Fattura extends Document
      */
     public function getNettoAttribute()
     {
-        return $this->calcola('netto') + $this->bollo;
+        return $this->calcola('netto');
     }
 
     /**
@@ -247,6 +250,11 @@ class Fattura extends Document
     public function ritenutaContributi()
     {
         return $this->belongsTo(RitenutaContributi::class, 'id_ritenuta_contributi');
+    }
+
+    public function rigaBollo()
+    {
+        return $this->hasOne(Components\Riga::class, 'iddocumento')->where('id', $this->id_riga_bollo);
     }
 
     // Metodi generali
@@ -358,6 +366,7 @@ class Fattura extends Document
 
         // Se c'è una ritenuta d'acconto, la aggiungo allo scadenzario
         if ($direzione == 'uscita' && $ritenuta_acconto > 0) {
+            $data = $this->data;
             $scadenza = date('Y-m', strtotime($data.' +1 month')).'-15';
             $importo = -$ritenuta_acconto;
 
@@ -372,6 +381,76 @@ class Fattura extends Document
     {
         database()->delete('co_scadenziario', ['iddocumento' => $this->id]);
     }
+    
+    protected function calcolaMarcaDaBollo(){
+        $righe_bollo = $this->getRighe()->filter(function ($item, $key) {
+            return $item->aliquota != null && in_array($item->aliquota->codice_natura_fe, ['N1', 'N2', 'N3', 'N4']);
+        });
+        $importo_righe_bollo = $righe_bollo->sum('netto');
+
+        // Leggo la marca da bollo se c'è e se il netto a pagare supera la soglia
+        $bollo = ($this->direzione == 'uscita') ? $this->bollo : setting('Importo marca da bollo');
+
+        $marca_da_bollo = 0;
+        if (abs($bollo) > 0 && abs($importo_righe_bollo) > setting("Soglia minima per l'applicazione della marca da bollo")) {
+            $marca_da_bollo = $bollo;
+        }
+
+        // Se l'importo è negativo può essere una nota di credito, quindi cambio segno alla marca da bollo
+        $marca_da_bollo = abs($marca_da_bollo);
+
+        $this->bollo = $marca_da_bollo;
+
+        $riga = $this->rigaBollo;
+
+        // Rimozione riga bollo se nullo
+        if (empty($this->addebita_bollo) || empty($marca_da_bollo) ){
+            if (!empty($riga)){
+                $this->id_riga_bollo = null;
+
+                $riga->delete();
+            }
+
+            return;
+        }
+
+        // Creazione riga bollo se non presente
+        if(empty($riga)){
+            $riga = Components\Riga::build($this);
+            $riga->save();
+
+            $this->id_riga_bollo = $riga->id;
+        }
+
+        $riga->prezzo_unitario_vendita = $marca_da_bollo;
+        $riga->qta = 1;
+        $riga->descrizione = setting('Descrizione addebito bollo');
+        $riga->id_iva = setting('Iva da applicare su marca da bollo');
+        $riga->idconto = setting('Conto predefinito per la marca da bollo');
+
+        $riga->save();
+    }
+
+    /**
+     * Salva la fattura, impostando i campi dipendenti dai singoli parametri.
+     *
+     * @param array $options
+     *
+     * @return bool
+     */
+    public function save(array $options = [])
+    {
+        // Fix dei campi statici
+        $this->calcolaMarcaDaBollo();
+
+        $this->attributes['ritenutaacconto'] = $this->ritenuta_acconto;
+        $this->attributes['iva_rivalsainps'] = $this->iva_rivalsa_inps;
+        $this->attributes['rivalsainps'] = $this->rivalsa_inps;
+        $this->attributes['ritenutaacconto'] = $this->ritenuta_acconto;
+
+        return parent::save($options);
+    }
+
 
     /**
      * Restituisce l'elenco delle note di credito collegate.

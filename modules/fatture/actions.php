@@ -86,6 +86,7 @@ switch (post('op')) {
                 'is_fattura_conto_terzi' => post('is_fattura_conto_terzi') ?: 0,
                 'n_colli' => post('n_colli'),
                 'tipo_resa' => post('tipo_resa'),
+                'addebita_bollo' => post('addebita_bollo'),
                 'bollo' => 0,
                 'rivalsainps' => 0,
                 'ritenutaacconto' => 0,
@@ -98,11 +99,7 @@ switch (post('op')) {
             $rs = $dbo->fetchArray($query);
 
             // Ricalcolo inps, ritenuta e bollo (se la fattura non è stata pagata)
-            if ($dir == 'entrata') {
-                ricalcola_costiagg_fattura($id_record);
-            } else {
-                ricalcola_costiagg_fattura($id_record, $idrivalsainps, $idritenutaacconto, post('bollo'));
-            }
+            ricalcola_costiagg_fattura($id_record);
 
             // Elimino la scadenza e tutti i movimenti, poi se la fattura è emessa le ricalcolo
             if ($rs[0]['descrizione'] == 'Bozza' or $rs[0]['descrizione'] == 'Annullata') {
@@ -235,11 +232,7 @@ switch (post('op')) {
             }
 
             // Ricalcolo inps, ritenuta e bollo (se la fattura non è stata pagata)
-            if ($dir == 'entrata') {
-                ricalcola_costiagg_fattura($id_record);
-            } else {
-                ricalcola_costiagg_fattura($id_record, $rs[0]['idrivalsainps'], $rs[0]['idritenutaacconto'], $rs[0]['bollo']);
-            }
+            ricalcola_costiagg_fattura($id_record);
 
             flash()->info(tr('Fattura duplicata correttamente!'));
         }

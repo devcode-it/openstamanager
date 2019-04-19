@@ -90,4 +90,18 @@ switch (filter('op')) {
         include __DIR__.'/rows.php';
 
         break;
+
+    case 'process':
+        $name = get('name');
+
+        // Processo il file ricevuto
+        if (Interaction::isEnabled()) {
+            $process_result = Interaction::processXML($name);
+            if (!empty($process_resul)) {
+                flash()->error($process_result);
+            }
+        }
+
+        break;
+
 }

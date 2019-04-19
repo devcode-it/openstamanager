@@ -28,6 +28,8 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Aggiunto campo data ricezione per le **Fatture di acquisto**
  - Aggiunta stampa **Preventivo** senza costi totali
  - Aggiunto export massivo XML fatture
+ - Aggiunte le impostazioni "Riferimento dei documenti nelle stampe" e "Riferimento dei documenti in Fattura Elettronica" per permettere l'inclusione o meno delle relative diciture in stampe e Fattura Elettronica
+ - Aggiunto supporto all'importazione delle Fatture Elettroniche Semplificate
 
 ### Modificato (Changed)
 

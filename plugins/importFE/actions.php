@@ -39,7 +39,7 @@ switch (filter('op')) {
         break;
 
     case 'delete':
-        $directory = Plugins\ImportFE\FatturaElettronica::getImportDirectory();
+        $directory = FatturaElettronica::getImportDirectory();
 
         delete($directory.'/'.get('name'));
 
@@ -48,12 +48,18 @@ switch (filter('op')) {
     case 'generate':
         $filename = post('filename');
 
-        $fattura_pa = new FatturaElettronica($filename);
+        $info = [
+            'id_pagamento' => post('pagamento'),
+            'id_segment' => post('id_segment'),
+            'id_tipo' => post('id_tipo'),
+            'articoli' => post('articoli'),
+            'iva' => post('iva'),
+            'conto' => post('conto'),
+            'movimentazione' => post('movimentazione'),
+        ];
 
-        $id_record = $fattura_pa->saveFattura(post('pagamento'), post('id_segment'), post('id_tipo'));
-        $fattura_pa->saveRighe(post('articoli'), post('iva'), post('conto'), post('movimentazione'));
-
-        $fattura_pa->saveAllegati();
+        $fattura_pa = FatturaElettronica::manage($filename);
+        $id_record = $fattura_pa->save($info);
 
         $idrivalsainps = 0;
         $idritenutaacconto = 0;

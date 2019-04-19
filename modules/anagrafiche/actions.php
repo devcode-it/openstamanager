@@ -26,17 +26,11 @@ switch (post('op')) {
 
         $sede->save();
 
-        if (empty(post('ragione_sociale'))) {
-            $ragione_sociale = post('cognome').' '.post('nome');
-        } else {
-            $ragione_sociale = post('ragione_sociale');
-        }
-
         // Informazioni sull'anagrafica
         $anagrafica->codice = post('codice');
         $anagrafica->tipo = post('tipo');
         $anagrafica->codice_destinatario = post('codice_destinatario');
-        $anagrafica->ragione_sociale = $ragione_sociale;
+        $anagrafica->ragione_sociale = post('ragione_sociale');
         $anagrafica->nome = post('nome');
         $anagrafica->cognome = post('cognome');
 
@@ -127,14 +121,9 @@ switch (post('op')) {
 
     case 'add':
         $idtipoanagrafica = post('idtipoanagrafica');
+        $ragione_sociale = post('ragione_sociale');
 
-        if (empty(post('ragione_sociale'))) {
-            $ragione_sociale = post('cognome').' '.post('nome');
-        } else {
-            $ragione_sociale = post('ragione_sociale');
-        }
-
-        $anagrafica = Anagrafica::build($ragione_sociale, $idtipoanagrafica);
+        $anagrafica = Anagrafica::build($ragione_sociale, post('nome'), post('cognome'), $idtipoanagrafica);
         $id_record = $anagrafica->id;
 
         // Se ad aggiungere un cliente è un agente, lo imposto come agente di quel cliente
@@ -152,8 +141,6 @@ switch (post('op')) {
 
         $idagente = ($agente_is_logged && in_array($id_cliente, $idtipoanagrafica)) ? $user['idanagrafica'] : 0;
 
-        $anagrafica->nome = post('nome');
-        $anagrafica->cognome = post('cognome');
         $anagrafica->partita_iva = post('piva');
         $anagrafica->codice_fiscale = post('codice_fiscale');
         $anagrafica->indirizzo = post('indirizzo');
@@ -178,7 +165,7 @@ switch (post('op')) {
         // Lettura tipologia della nuova anagrafica
         $descrizioni_tipi = $anagrafica->tipi()->get()->pluck('descrizione')->toArray();
         if (isAjaxRequest() && in_array(post('tipoanagrafica'), $descrizioni_tipi)) {
-            echo json_encode(['id' => $id_record, 'text' => $ragione_sociale]);
+            echo json_encode(['id' => $id_record, 'text' => $anagrafica->ragione_sociale]);
         }
 
         flash()->info(tr('Aggiunta nuova anagrafica di tipo _TYPE_', [

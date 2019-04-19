@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-$fattura_pa = new Plugins\ImportFE\FatturaElettronica(get('filename'));
+$fattura_pa = \Plugins\ImportFE\FatturaElettronica::manage(get('filename'));
 
 echo '
 <form action="'.$rootdir.'/actions.php" method="post">
@@ -15,16 +15,16 @@ echo '
     <input type="hidden" name="op" value="generate">';
 
 // Fornitore
-$fornitore = $fattura_pa->getHeader()['CedentePrestatore']['DatiAnagrafici'];
-$ragione_sociale = $fornitore['Anagrafica']['Denominazione'] ?: $fornitore['Anagrafica']['Nome'].' '.$fornitore['Anagrafica']['Cognome'];
-$codice_fiscale = $fornitore['CodiceFiscale'];
-$partita_iva = $fornitore['IdFiscaleIVA']['IdCodice'];
+$fornitore = $fattura_pa->getAnagrafe();
+$ragione_sociale = $fornitore['ragione_sociale'] ?: $fornitore['cognome'].' '.$fornitore['nome'];
+$codice_fiscale = $fornitore['codice_fiscale'];
+$partita_iva = $fornitore['partita_iva'];
 
-$sede = $fattura_pa->getHeader()['CedentePrestatore']['Sede'];
+$sede = $fornitore['sede'];
 
-$cap = $sede['CAP'];
-$citta = $sede['Comune'];
-$provincia = $sede['Provincia'];
+$cap = $sede['cap'];
+$citta = $sede['comune'];
+$provincia = $sede['provincia'];
 
 // Dati generali
 $dati_generali = $fattura_pa->getBody()['DatiGenerali']['DatiGeneraliDocumento'];

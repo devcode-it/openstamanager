@@ -72,12 +72,21 @@ if ($options['dir'] == 'entrata') {
     </script>';
 }
 
+if ($module['name'] == 'Interventi') {
+// Prezzo di vendita unitario
+echo '
+        <div class="col-md-'.$width.'">
+            {[ "type": "number", "label": "'.$label.'", "name": "prezzo_vendita", "value": "'.$result['prezzo_vendita'].'", "required": 1, "icon-after": "'.currency().'" ]}
+        </div>';
+	
+}else{
 // Prezzo di vendita unitario
 echo '
         <div class="col-md-'.$width.'">
             {[ "type": "number", "label": "'.$label.'", "name": "prezzo", "value": "'.$result['prezzo'].'", "required": 1, "icon-after": "'.currency().'" ]}
         </div>';
 
+}
 // Sconto unitario
 echo '
         <div class="col-md-'.$width.'">

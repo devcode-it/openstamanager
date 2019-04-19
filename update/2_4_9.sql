@@ -255,3 +255,6 @@ UPDATE `zz_settings` SET `help` = NULL WHERE `help` = '';
 ALTER TABLE `co_documenti` CHANGE `data_stato_fe` `data_stato_fe` TIMESTAMP NULL, ADD `addebita_bollo` BOOLEAN NOT NULL DEFAULT TRUE, ADD `id_riga_bollo` int(11), ADD FOREIGN KEY (`id_riga_bollo`) REFERENCES `co_righe_documenti`(`id`) ON DELETE SET NULL;
 UPDATE `co_documenti` SET `data_ricezione` = NULL WHERE `data_ricezione` = '0000-00-00';
 UPDATE `co_documenti` SET `data_stato_fe` = NULL WHERE `data_stato_fe` = '0000-00-00 00:00:00';
+
+-- Rimozione tasto di stampa scadenzario totale da dentro la scadenza
+UPDATE `zz_prints` SET `is_record` = 0 WHERE `name` = 'Scadenzario';

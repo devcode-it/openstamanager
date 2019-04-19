@@ -3,6 +3,19 @@
 include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
+
+    case 'add':
+        $data = post("data");
+        $tipo = post("tipo");
+        $da_pagare = post("da_pagare");
+        $descrizione = post("descrizione");
+
+        $dbo->query("INSERT INTO co_scadenziario(descrizione, tipo, data_emissione, scadenza, da_pagare, pagato, data_pagamento) VALUES(".prepare($descrizione).", ".prepare($tipo).", CURDATE(), ".prepare($data).", ".prepare($da_pagare).", '0', '0000-00-00')");
+        $id_record = $dbo->lastInsertedID();
+        
+        flash()->info(tr('Scadenza inserita!'));
+        break;
+
     case 'update':
         // Calcolo il totale da pagare
         $rs = $dbo->fetchArray('SELECT SUM(da_pagare) AS totale_da_pagare FROM co_scadenziario GROUP BY iddocumento HAVING iddocumento=(SELECT iddocumento FROM co_scadenziario s WHERE id='.prepare($id_record).')');
@@ -25,5 +38,10 @@ switch (post('op')) {
             flash()->error(tr('Il totale degli importi inseriti non corrisponde al totale da pagare!'));
         }
 
+        break;
+
+    case "delete":
+        $dbo->query("DELETE FROM co_scadenziario WHERE id='".$id_record."'");
+        flash()->info(tr('Scadenza eliminata!'));
         break;
 }

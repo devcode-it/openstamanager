@@ -12,7 +12,7 @@ echo '
     <div class="box-body">';
 
 // Calcolo la quantità dai movimenti in magazzino
-$rst = $dbo->fetchArray('SELECT COUNT(mg_movimenti.id) AS row, SUM(qta) AS qta_totale, ( SELECT SUM(qta) FROM mg_movimenti  WHERE idarticolo='.prepare($id_record).' AND (idintervento IS NULL OR idautomezzo = 0) AND data <= CURDATE() ) AS qta_totale_attuale  FROM mg_movimenti WHERE idarticolo='.prepare($id_record).' AND (idintervento IS NULL OR idautomezzo = 0)');
+$rst = $dbo->fetchArray('SELECT COUNT(mg_movimenti.id) AS `row`, SUM(qta) AS qta_totale, (SELECT SUM(qta) FROM mg_movimenti  WHERE idarticolo='.prepare($id_record).' AND (idintervento IS NULL OR idautomezzo = 0) AND data <= CURDATE()) AS qta_totale_attuale FROM mg_movimenti WHERE idarticolo='.prepare($id_record).' AND (idintervento IS NULL OR idautomezzo = 0)');
 $qta_totale = $rst[0]['qta_totale'];
 $qta_totale_attuale = $rst[0]['qta_totale_attuale'];
 

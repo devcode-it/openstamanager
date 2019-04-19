@@ -360,7 +360,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
     $codice = $rs[0]['codice'];
 
     // Fatturo le ore di lavoro raggruppate per costo orario
-    $rst = $dbo->fetchArray('SELECT SUM( ROUND( ore, '.setting('Cifre decimali per quantità').' ) ) AS tot_ore, SUM(prezzo_ore_unitario*ore) AS tot_prezzo_ore_consuntivo, SUM(sconto) AS tot_sconto, sconto_unitario, scontokm_unitario, prezzo_ore_unitario FROM in_interventi_tecnici WHERE idintervento='.prepare($id_intervento).' GROUP BY prezzo_ore_unitario, sconto_unitario, scontokm_unitario');
+    $rst = $dbo->fetchArray('SELECT SUM( ROUND( ore, '.setting('Cifre decimali per quantità').' ) ) AS tot_ore, SUM(prezzo_ore_unitario*ore) AS tot_prezzo_ore_consuntivo, SUM(sconto) AS tot_sconto, sconto_unitario, scontokm_unitario, prezzo_ore_unitario FROM in_interventi_tecnici WHERE idintervento='.prepare($id_intervento).' GROUP BY prezzo_ore_unitario, sconto_unitario, tipo_sconto');
 
     // Aggiunta riga intervento sul documento
     if (sizeof($rst) == 0) {
@@ -376,7 +376,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
             $rs = $dbo->fetchArray($query);
 
             $sconto = $rst[$i]['tot_sconto'];
-            $sconto_unitario = $rst[$i]['sconto_unitario'];
+            $sconto_unitario = $sconto/$ore;
             $subtot = $rst[$i]['tot_prezzo_ore_consuntivo'];
             $iva = ($subtot - $sconto) / 100 * $rs[0]['percentuale'];
             $iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];

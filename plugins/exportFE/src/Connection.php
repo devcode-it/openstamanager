@@ -50,8 +50,10 @@ class Connection
     protected static function getClient()
     {
         if (!isset(self::$client)) {
+            $url = setting('OSMCloud Services API URL');
+
             self::$client = new Client([
-                'base_uri' => 'https://services.osmcloud.it/api/',
+                'base_uri' => $url,
                 'verify' => false,
             ]);
         }

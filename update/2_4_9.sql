@@ -237,3 +237,7 @@ UPDATE `fe_stati_documento` SET `icon`='fa fa-file-code-o text-info' WHERE `codi
 -- Impostazioni per i riferimenti ai documenti
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Riferimento dei documenti nelle stampe', '1', 'boolean', 1, 'Generali', 13);
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Riferimento dei documenti in Fattura Elettronica', '1', 'boolean', 1, 'Generali', 14);
+
+-- Supporto alla personalizzazione dell'API remota OSMCloud
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES
+(NULL, 'OSMCloud Services API URL', 'https://services.osmcloud.it/api/', 'string', 0, 'Fatturazione Elettronica', 11);

@@ -125,7 +125,7 @@ class FatturaElettronica
 
             $interventi = $database->fetchArray('SELECT `id_documento_fe`, `num_item`, `codice_cig`, `codice_cup` FROM `in_interventi` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idintervento` = `in_interventi`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
 
-            $this->contratti = array_merge($contratti, $preventivi, $interventi);
+            $this->contratti = array_unique(array_merge($contratti, $preventivi, $interventi));
         }
 
         return $this->contratti;

@@ -259,10 +259,22 @@ UPDATE `co_documenti` SET `data_stato_fe` = NULL WHERE `data_stato_fe` = '0000-0
 -- Rimozione tasto di stampa scadenzario totale da dentro la scadenza
 UPDATE `zz_prints` SET `is_record` = 0 WHERE `name` = 'Scadenzario';
 
+-- Aggiunta descrizione nello scadenzario, per scadenze generiche
 ALTER TABLE co_scadenziario ADD `descrizione` TEXT NOT NULL AFTER `tipo`;
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT id FROM zz_modules WHERE `name`='Scadenzario'), 'Descrizione scadenza', 'co_scadenziario.descrizione', 1, 1, 0, 0, '', '', 1, 0, 1);
 
+-- Aggiunta segmento per scadenze generiche e F24
 INSERT INTO `zz_segments` (`id`, `id_module`, `name`, `clause`, `position`, `pattern`, `note`, `predefined`, `predefined_accredito`, `predefined_addebito`, `is_fiscale`) VALUES (NULL, (SELECT id FROM zz_modules WHERE `name`='Scadenzario'), 'Scadenzario generico', 'co_scadenziario.tipo="generico"', 'WHR', '####', '', 0, 0, 0, 0), (NULL, (SELECT id FROM zz_modules WHERE `name`='Scadenzario'), 'Scadenzario F24', 'co_scadenziario.tipo="f24"', 'WHR', '####', '', 0, 0, 0, 0);
 
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM (`co_scadenziario` LEFT JOIN (((`co_documenti` LEFT JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`) LEFT JOIN `co_pagamenti` ON `co_documenti`.`idpagamento` = `co_pagamenti`.`id`) LEFT JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`) ON `co_scadenziario`.`iddocumento` = `co_documenti`.`id`) LEFT JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id` WHERE 1=1 HAVING 2=2 AND (ABS(`pagato_reale`) < ABS(`da_pagare`) AND IF(`co_statidocumento`.`descrizione` IS NOT NULL, `co_statidocumento`.`descrizione` IN(\'Emessa\',\'Parzialmente pagato\'), 3=3)) ORDER BY `scadenza` ASC' WHERE `zz_modules`.`name` = 'Scadenzario';
+-- Aggiornamento modulo Scadenzario per adattamento a scadenze multiple
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM (`co_scadenziario` LEFT JOIN (((`co_documenti` LEFT JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`) LEFT JOIN `co_pagamenti` ON `co_documenti`.`idpagamento` = `co_pagamenti`.`id`) LEFT JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`) ON `co_scadenziario`.`iddocumento` = `co_documenti`.`id`) LEFT JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id` WHERE 1=1 HAVING 2=2 AND IF(`co_statidocumento`.`descrizione` IS NOT NULL, `co_statidocumento`.`descrizione` IN(\'Emessa\',\'Parzialmente pagato\'), 3=3) ORDER BY `scadenza` ASC' WHERE `zz_modules`.`name` = 'Scadenzario';
 
-INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT id FROM zz_modules WHERE `name`='Scadenzario'), 'Descrizione scadenza', 'co_scadenziario.descrizione', 1, 1, 0, 0, '', '', 1, 0, 0);
+UPDATE `zz_segments` SET `clause` = '((SELECT dir FROM co_tipidocumento WHERE co_tipidocumento.id=co_documenti.idtipodocumento)=\'entrata\') AND ABS(`co_scadenziario`.`pagato`) < ABS(`co_scadenziario`.`da_pagare`)' WHERE `zz_segments`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND `zz_segments`.`name` = 'Scadenzario clienti';
+UPDATE `zz_segments` SET `clause` = '((SELECT dir FROM co_tipidocumento WHERE co_tipidocumento.id=co_documenti.idtipodocumento)=\'uscita\') AND ABS(`co_scadenziario`.`pagato`) < ABS(`co_scadenziario`.`da_pagare`)' WHERE `zz_segments`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND `zz_segments`.`name` = 'Scadenzario fornitori';
+UPDATE `zz_segments` SET `clause` = 'ABS(`co_scadenziario`.`pagato`) < ABS(`co_scadenziario`.`da_pagare`)' WHERE `zz_segments`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND `zz_segments`.`name` = 'Scadenzario totale';
+
+-- Aggiornamento cambio colore scadenze
+UPDATE `zz_views` SET `query` = 'IF( pagato=da_pagare, ''#38CD4E'', IF(scadenza < NOW(), ''#cc4d37'', '''') )' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND `name` = '_bg_';
+
+-- Aggiunta campo con totale da pagare
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT id FROM zz_modules WHERE `name`='Scadenzario'), 'Saldo', 'da_pagare-pagato', 13, 1, 1, 1, '', '', 1, 1, 1);

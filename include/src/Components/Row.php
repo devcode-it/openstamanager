@@ -143,7 +143,7 @@ abstract class Row extends Description
             $this->prezzo_unitario_vendita_riga = $this->attributes['subtotale'] / $this->qta;
         }
 
-        return !is_nan($this->prezzo_unitario_vendita_riga) ?  $this->prezzo_unitario_vendita_riga : 0;
+        return !is_nan($this->prezzo_unitario_vendita_riga) ? $this->prezzo_unitario_vendita_riga : 0;
     }
 
     /**

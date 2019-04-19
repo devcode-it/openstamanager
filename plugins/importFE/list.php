@@ -29,7 +29,7 @@ if (!empty($list)) {
                 <button type="button" class="btn btn-danger" onclick="delete_fe(this, \''.$element.'\')">
                     <i class="fa fa-trash"></i>
                 </button>';
-        }else{
+        } else {
             echo '
                 <button type="button" class="btn btn-info" onclick="process_fe(this, \''.$element.'\')">
                     <i class="fa fa-upload"></i>
@@ -87,8 +87,8 @@ function download(button, file) {
 
 function delete_fe(button, file) {
     swal({
-        title: "'.tr("Rimuovere la fattura salvata localmente?").'",
-        html: "'.tr("Sarà possibile inserirla nuovamente nel gestionale attraverso il caricamento").'",
+        title: "'.tr('Rimuovere la fattura salvata localmente?').'",
+        html: "'.tr('Sarà possibile inserirla nuovamente nel gestionale attraverso il caricamento').'",
         type: "error",
         showCancelButton: true,
         confirmButtonText: "'.tr('Sì').'"
@@ -100,12 +100,12 @@ function delete_fe(button, file) {
             type: "get",
             data: {
                 id_module: globals.id_module,
-                id_plugin: ' . $id_plugin . ',
+                id_plugin: '.$id_plugin.',
                 op: "delete",
                 name: file,
             },
             success: function(data) {
-                $("#list").load("' . $structure->fileurl('list.php') . '?id_module=' . $id_module . '&id_plugin=' . $id_plugin . '", function() {
+                $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
                     buttonRestore(button, restore);
                 });
             }
@@ -115,7 +115,7 @@ function delete_fe(button, file) {
 
 function process_fe(button, file) {
     swal({
-        title: "'.tr("Segnare la fattura come processata?").'",
+        title: "'.tr('Segnare la fattura come processata?').'",
         html: "'.tr("Non sarà possibile individuarla nuovamente in modo automatico: l'unico modo per recuperarla sarà contattare l'assistenza").'",
         type: "info",
         showCancelButton: true,

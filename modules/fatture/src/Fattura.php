@@ -381,55 +381,6 @@ class Fattura extends Document
     {
         database()->delete('co_scadenziario', ['iddocumento' => $this->id]);
     }
-    
-    protected function calcolaMarcaDaBollo(){
-        $righe_bollo = $this->getRighe()->filter(function ($item, $key) {
-            return $item->aliquota != null && in_array($item->aliquota->codice_natura_fe, ['N1', 'N2', 'N3', 'N4']);
-        });
-        $importo_righe_bollo = $righe_bollo->sum('netto');
-
-        // Leggo la marca da bollo se c'è e se il netto a pagare supera la soglia
-        $bollo = ($this->direzione == 'uscita') ? $this->bollo : setting('Importo marca da bollo');
-
-        $marca_da_bollo = 0;
-        if (abs($bollo) > 0 && abs($importo_righe_bollo) > setting("Soglia minima per l'applicazione della marca da bollo")) {
-            $marca_da_bollo = $bollo;
-        }
-
-        // Se l'importo è negativo può essere una nota di credito, quindi cambio segno alla marca da bollo
-        $marca_da_bollo = abs($marca_da_bollo);
-
-        $this->bollo = $marca_da_bollo;
-
-        $riga = $this->rigaBollo;
-
-        // Rimozione riga bollo se nullo
-        if (empty($this->addebita_bollo) || empty($marca_da_bollo) ){
-            if (!empty($riga)){
-                $this->id_riga_bollo = null;
-
-                $riga->delete();
-            }
-
-            return;
-        }
-
-        // Creazione riga bollo se non presente
-        if(empty($riga)){
-            $riga = Components\Riga::build($this);
-            $riga->save();
-
-            $this->id_riga_bollo = $riga->id;
-        }
-
-        $riga->prezzo_unitario_vendita = $marca_da_bollo;
-        $riga->qta = 1;
-        $riga->descrizione = setting('Descrizione addebito bollo');
-        $riga->id_iva = setting('Iva da applicare su marca da bollo');
-        $riga->idconto = setting('Conto predefinito per la marca da bollo');
-
-        $riga->save();
-    }
 
     /**
      * Salva la fattura, impostando i campi dipendenti dai singoli parametri.
@@ -450,7 +401,6 @@ class Fattura extends Document
 
         return parent::save($options);
     }
-
 
     /**
      * Restituisce l'elenco delle note di credito collegate.
@@ -536,5 +486,55 @@ class Fattura extends Document
         $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data));
 
         return $numero;
+    }
+
+    protected function calcolaMarcaDaBollo()
+    {
+        $righe_bollo = $this->getRighe()->filter(function ($item, $key) {
+            return $item->aliquota != null && in_array($item->aliquota->codice_natura_fe, ['N1', 'N2', 'N3', 'N4']);
+        });
+        $importo_righe_bollo = $righe_bollo->sum('netto');
+
+        // Leggo la marca da bollo se c'è e se il netto a pagare supera la soglia
+        $bollo = ($this->direzione == 'uscita') ? $this->bollo : setting('Importo marca da bollo');
+
+        $marca_da_bollo = 0;
+        if (abs($bollo) > 0 && abs($importo_righe_bollo) > setting("Soglia minima per l'applicazione della marca da bollo")) {
+            $marca_da_bollo = $bollo;
+        }
+
+        // Se l'importo è negativo può essere una nota di credito, quindi cambio segno alla marca da bollo
+        $marca_da_bollo = abs($marca_da_bollo);
+
+        $this->bollo = $marca_da_bollo;
+
+        $riga = $this->rigaBollo;
+
+        // Rimozione riga bollo se nullo
+        if (empty($this->addebita_bollo) || empty($marca_da_bollo)) {
+            if (!empty($riga)) {
+                $this->id_riga_bollo = null;
+
+                $riga->delete();
+            }
+
+            return;
+        }
+
+        // Creazione riga bollo se non presente
+        if (empty($riga)) {
+            $riga = Components\Riga::build($this);
+            $riga->save();
+
+            $this->id_riga_bollo = $riga->id;
+        }
+
+        $riga->prezzo_unitario_vendita = $marca_da_bollo;
+        $riga->qta = 1;
+        $riga->descrizione = setting('Descrizione addebito bollo');
+        $riga->id_iva = setting('Iva da applicare su marca da bollo');
+        $riga->idconto = setting('Conto predefinito per la marca da bollo');
+
+        $riga->save();
     }
 }

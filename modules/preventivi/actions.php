@@ -99,26 +99,21 @@ switch (post('op')) {
 
     // Duplica preventivo
     case 'copy':
-        $dbo->query('CREATE TEMPORARY TABLE tmp SELECT * FROM co_preventivi WHERE id = '.prepare($id_record));
-        $dbo->query('ALTER TABLE tmp DROP id');
-        $dbo->query('INSERT INTO co_preventivi SELECT NULL,tmp.* FROM tmp');
-        $id_record = $dbo->lastInsertedID();
-        $dbo->query('DROP TEMPORARY TABLE tmp');
+        $new = $preventivo->replicate();
+        $new->idstato = 1;
+        $new->master_revision = $preventivo->id;
+        $new->save();
 
-        // Codice preventivo: calcolo il successivo in base al formato specificato
-        $numero = Preventivo::getNextNumero();
+        $id_record = $new->id;
 
-        $dbo->query('UPDATE co_preventivi SET idstato=1, numero = '.prepare($numero).', master_revision = id WHERE id='.prepare($id_record));
+        $righe = $preventivo->getRighe();
+        foreach ($righe as $riga) {
+            $new_riga = $riga->replicate();
+            $new_riga->setParent($new);
 
-        //copio anche le righe del preventivo
-        $dbo->query('CREATE TEMPORARY TABLE tmp SELECT * FROM co_righe_preventivi WHERE idpreventivo = '.filter('id_record'));
-        $dbo->query('ALTER TABLE tmp DROP id');
-        $dbo->query('UPDATE tmp SET idpreventivo = '.prepare($id_record));
-        $dbo->query('INSERT INTO co_righe_preventivi SELECT NULL,tmp.* FROM tmp');
-        $dbo->query('DROP TEMPORARY TABLE tmp');
-
-        //Azzero eventuale quantità evasa
-        $dbo->query('UPDATE co_righe_preventivi SET qta_evasa=0 WHERE id='.prepare($id_record));
+            $new_riga->qta_evasa = 0;
+            $new_riga->save();
+        }
 
         flash()->info(tr('Preventivo duplicato correttamente!'));
 

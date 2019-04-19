@@ -450,7 +450,7 @@ function get_new_idmastrino($table = 'co_movimenti')
 /**
  * Ricalcola i costi aggiuntivi in fattura (rivalsa inps, ritenuta d'acconto, marca da bollo)
  * Deve essere eseguito ogni volta che si aggiunge o toglie una riga
- * $iddocumento		int		ID della fattura
+ * $iddocumento		int		ID della fattura.
  */
 function ricalcola_costiagg_fattura($iddocumento)
 {

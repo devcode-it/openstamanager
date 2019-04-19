@@ -99,5 +99,4 @@ switch (filter('op')) {
         }
 
         break;
-
 }

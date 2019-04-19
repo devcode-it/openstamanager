@@ -129,26 +129,20 @@ switch (post('op')) {
 
      // Duplica contratto
     case 'copy':
-        $dbo->query('CREATE TEMPORARY TABLE tmp SELECT * FROM co_contratti WHERE id = '.prepare($id_record));
-        $dbo->query('ALTER TABLE tmp DROP id');
-        $dbo->query('INSERT INTO co_contratti SELECT NULL,tmp.* FROM tmp');
-        $id_record = $dbo->lastInsertedID();
-        $dbo->query('DROP TEMPORARY TABLE tmp');
+        $new = $contratto->replicate();
+        $new->idstato = 1;
+        $new->save();
 
-        // Codice contratto: calcolo il successivo in base al formato specificato
-        $numero = Contratto::getNextNumero();
+        $id_record = $new->id;
 
-        $dbo->query('UPDATE co_contratti SET idstato=1, numero = '.prepare($numero).' WHERE id='.prepare($id_record));
+        $righe = $preventivo->getRighe();
+        foreach ($righe as $riga) {
+            $new_riga = $riga->replicate();
+            $new_riga->setParent($new);
 
-        //copio anche le righe del preventivo
-        $dbo->query('CREATE TEMPORARY TABLE tmp SELECT * FROM co_righe_contratti WHERE idcontratto = '.filter('id_record'));
-        $dbo->query('ALTER TABLE tmp DROP id');
-        $dbo->query('UPDATE tmp SET idcontratto = '.prepare($id_record));
-        $dbo->query('INSERT INTO co_righe_contratti SELECT NULL,tmp.* FROM tmp');
-        $dbo->query('DROP TEMPORARY TABLE tmp');
-
-        //Azzero eventuale quantità evasa
-        $dbo->query('UPDATE co_righe_contratti SET qta_evasa=0 WHERE id='.prepare($id_record));
+            $new_riga->qta_evasa = 0;
+            $new_riga->save();
+        }
 
         flash()->info(tr('Contratto duplicato correttamente!'));
 

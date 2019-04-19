@@ -29,8 +29,17 @@ echo '
 echo '
     <div class="row">';
 
+//Fix per Altre spese intervento 
+if ($module['name'] == 'Interventi') {
+	$options['dir'] = 'entrata';
+	$result['prezzo_unitario_acquisto'] = $result['prezzo_acquisto'];
+	$result['prezzo'] = $result['prezzo_vendita'];
+}
+
 $width = $options['dir'] == 'entrata' ? 4 : 6;
 $label = $options['dir'] == 'entrata' ? tr('Prezzo unitario di vendita') : tr('Prezzo unitario');
+
+
 if ($options['dir'] == 'entrata') {
     // Prezzo di acquisto unitario
     echo '

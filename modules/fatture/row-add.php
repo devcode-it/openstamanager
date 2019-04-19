@@ -13,6 +13,7 @@ $options = [
     'dir' => $documento->direzione,
     'conti' => $documento->direzione == 'entrata' ? 'conti-vendite' : 'conti-acquisti',    'idanagrafica' => $documento['idanagrafica'],
     'show-ritenuta-contributi' => !empty($documento['id_ritenuta_contributi']),
+    'imponibile_scontato' => $documento->imponibile_scontato,
     'totale' => $documento->totale,
 ];
 

@@ -10,6 +10,7 @@ include_once __DIR__.'/../../core.php';
 	<input type="hidden" name="idmastrino" id="idmastrino" value="0">
 
 	<?php
+    $idscadenza = get('idscadenza');
     $idconto = get('idconto');
     $iddocumento = get('iddocumento');
     $dir = get('dir');
@@ -139,6 +140,13 @@ include_once __DIR__.'/../../core.php';
         } else {
             $totale_avere = $importo_conto_controparte;
         }
+    } else {
+        $scadenza = $dbo->fetchOne('SELECT descrizione, scadenza FROM co_scadenziario WHERE id='.prepare($idscadenza));
+
+        $descrizione = tr('Pag. _OP_ del _DATE_', [
+            '_OP_' => $scadenza['descrizione'],
+            '_DATE_' => Translator::dateToLocale($scadenza['scadenza']),
+        ]);
     }
     ?>
 

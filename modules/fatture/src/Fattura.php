@@ -332,6 +332,10 @@ class Fattura extends Document
      */
     public static function registraScadenza(Fattura $fattura, $importo, $scadenza, $is_pagato, $type = 'fattura')
     {
+
+        //Calcolo la descrizione
+        $descrizione = database()->fetchOne("SELECT CONCAT(co_tipidocumento.descrizione, CONCAT(' numero ', IF(numero_esterno!='', numero_esterno, numero))) AS descrizione FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='".$fattura->id."'")['descrizione'];
+
         database()->insert('co_scadenziario', [
             'iddocumento' => $fattura->id,
             'data_emissione' => $fattura->data,
@@ -340,6 +344,7 @@ class Fattura extends Document
             'tipo' => $type,
             'pagato' => $is_pagato ? $importo : 0,
             'data_pagamento' => $is_pagato ? $scadenza : null,
+            'descrizione' => $descrizione,
         ]);
     }
 

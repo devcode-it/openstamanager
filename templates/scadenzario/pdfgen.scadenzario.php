@@ -13,19 +13,11 @@ $body = file_get_contents($docroot.'/templates/scadenzario/scadenzario_body.html
 
 include_once $docroot.'/templates/pdfgen_variables.php';
 
-/*
-    Dati scadenzario
-*/
-if ($_GET['type'] == 'clienti') {
-    $titolo = 'Scadenzario clienti';
-    $add_where = "AND co_tipidocumento.dir='entrata'";
-} elseif ($_GET['type'] == 'fornitori') {
-    $titolo = 'Scadenzario fornitori';
-    $add_where = "AND co_tipidocumento.dir='uscita'";
-} else {
-    $titolo = 'Scadenzario';
-    $add_where = '';
-}
+//Filtro in base al segmento
+$id_segment = $_SESSION['module_18']['id_segment'];
+$rs_segment = $dbo->fetchArray("SELECT * FROM zz_segments WHERE id=".prepare($id_segment));
+
+$add_where = "AND ".$rs_segment[0]['clause'];
 
 $body .= '<h3>'.$titolo.' dal '.Translator::dateToLocale($date_start).' al '.Translator::dateToLocale($date_end)."</h3>\n";
 $body .= "<table class=\"table_values\" cellspacing=\"0\" border=\"0\" cellpadding=\"0\" style=\"table-layout:fixed; border-color:#aaa;\">\n";

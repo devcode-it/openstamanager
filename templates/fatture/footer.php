@@ -157,18 +157,13 @@ echo "
         </td>
     </tr>';
 
-// Aggiunta della marca da bollo al totale
-$totale = sum($totale, $record['bollo']);
-
-// Rivalsa INPS (+ bollo)
+// Rivalsa INPS
 if (!empty($record['rivalsainps'])) {
     $rs2 = $dbo->fetchArray('SELECT percentuale FROM co_rivalse WHERE id=(SELECT idrivalsainps FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idrivalsainps!=0 LIMIT 0,1)');
 
     $first_colspan = 3;
     $second_colspan = 2;
-    if (abs($record['bollo']) > 0) {
-        --$first_colspan;
-    }
+    
     if (empty($sconto)) {
         --$first_colspan;
         --$second_colspan;
@@ -182,14 +177,6 @@ if (!empty($record['rivalsainps'])) {
             ], ['upper' => true]).'
         </th>';
 
-    if (abs($record['bollo']) > 0) {
-        echo '
-
-        <th class="text-center small" colspan="1">
-            '.tr('Marca da bollo', [], ['upper' => true]).'
-        </th>';
-    }
-
     echo '
 
         <th class="text-center small" colspan="'.$second_colspan.'">
@@ -202,14 +189,6 @@ if (!empty($record['rivalsainps'])) {
             '.moneyFormat($record['rivalsainps']).'
         </td>';
 
-    if (abs($record['bollo']) > 0) {
-        echo '
-
-        <td class="cell-padded text-center" colspan="1">
-            '.moneyFormat($record['bollo']).'
-        </td>';
-    }
-
     echo '
 
         <td class="cell-padded text-center" colspan="'.$second_colspan.'">
@@ -220,15 +199,13 @@ if (!empty($record['rivalsainps'])) {
 
 $fattura = \Modules\Fatture\Fattura::find($id_record);
 
-// Ritenuta d'acconto ( + bollo, se no rivalsa inps)
+// Ritenuta d'acconto ( + se no rivalsa inps)
 if (!empty($record['ritenutaacconto']) || !empty($fattura->totale_ritenuta_contributi) || !empty($record['spit_payment'])) {
     $rs2 = $dbo->fetchArray('SELECT percentuale FROM co_ritenutaacconto WHERE id=(SELECT idritenutaacconto FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idritenutaacconto!=0 LIMIT 0,1)');
 
     $first_colspan = 3;
     $second_colspan = 2;
-    if (empty($record['rivalsainps']) && abs($record['bollo']) > 0) {
-        --$first_colspan;
-    }
+
     if (empty($sconto)) {
         --$first_colspan;
         --$second_colspan;
@@ -250,14 +227,6 @@ if (!empty($record['ritenutaacconto']) || !empty($fattura->totale_ritenuta_contr
             ], ['upper' => true]).'
         </th>';
 
-    if (empty($record['rivalsainps']) && abs($record['bollo']) > 0) {
-        echo '
-
-        <th class="text-center small" colspan="1">
-            '.tr('Marca da bollo', [], ['upper' => true]).'
-        </th>';
-    }
-
     echo '
         <th class="text-center small" colspan="'.$second_colspan.'">';
     if (empty($record['split_payment'])) {
@@ -275,14 +244,6 @@ if (!empty($record['ritenutaacconto']) || !empty($fattura->totale_ritenuta_contr
         <td class="cell-padded text-center" colspan="'.$first_colspan.'">
             '.moneyFormat($record['ritenutaacconto'] + $fattura->totale_ritenuta_contributi).'
         </td>';
-
-    if (empty($record['rivalsainps']) && abs($record['bollo']) > 0) {
-        echo '
-
-        <td class="cell-padded text-center" colspan="1">
-            '.moneyFormat($record['bollo']).'
-        </td>';
-    }
 
     echo '
 
@@ -316,36 +277,6 @@ if (!empty($record['split_payment'])) {
 
         <td class="cell-padded text-center" colspan="'.$second_colspan.'">
             '.moneyFormat($totale - $totale_iva - $record['ritenutaacconto'] - $fattura->totale_ritenuta_contributi).'
-        </td>
-    </tr>';
-}
-
-// Solo bollo
-if (empty($record['ritenutaacconto']) && empty($record['rivalsainps']) && empty($record['split_payment']) && abs($record['bollo']) > 0) {
-    $first_colspan = 3;
-    $second_colspan = 2;
-    if (empty($sconto)) {
-        $first_colspan = 1;
-    }
-
-    echo '
-    <tr>
-        <th class="text-center small" colspan="'.$first_colspan.'">
-            '.tr('Marca da bollo', [], ['upper' => true]).'
-        </th>
-
-        <th class="text-center small" colspan="'.$second_colspan.'">
-            '.tr('Netto a pagare', [], ['upper' => true]).'
-        </th>
-    </tr>
-
-    <tr>
-        <td class="cell-padded text-center" colspan="'.$first_colspan.'">
-        '.moneyFormat($record['bollo']).'
-        </td>
-
-        <td class="cell-padded text-center" colspan="'.$second_colspan.'">
-            '.moneyFormat($totale - $record['ritenutaacconto']).'
         </td>
     </tr>';
 }

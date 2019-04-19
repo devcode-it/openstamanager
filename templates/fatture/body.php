@@ -237,14 +237,9 @@ foreach ($v_iva as $key => $value) {
 echo '
 <table class="table">';
 echo '
-    <tr>';
-if (abs($record['bollo']) > 0) {
-    echo '
-        <td width="85%">';
-} else {
-    echo '
+    <tr>
         <td width="100%">';
-}
+
     if (!empty($record['note'])) {
         echo '
             <p class="small-bold">'.tr('Note', [], ['upper' => true]).':</p>
@@ -252,25 +247,6 @@ if (abs($record['bollo']) > 0) {
     }
     echo '
         </td>';
-if (abs($record['bollo']) > 0) {
-    echo '
-        <td width="15%" align="right">';
-}
-if (abs($record['bollo']) > 0) {
-    echo '
-            <table style="width: 20mm; font-size: 50%; text-align: center" class="table-bordered">
-                <tr>
-                    <td style="height: 20mm;">
-                        <br><br>
-                        '.tr('Spazio per applicazione marca da bollo', [], ['upper' => true]).'
-                    </td>
-                </tr>
-            </table>';
-}
-if (abs($record['bollo']) > 0) {
-    echo '
-        </td>';
-}
 
 echo '
     </tr>';
@@ -294,7 +270,6 @@ $totale = sum([
 
 $netto_a_pagare = sum([
     $totale,
-    $record['bollo'],
     -$record['ritenutaacconto'],
 ]);
 

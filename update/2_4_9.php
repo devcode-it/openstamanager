@@ -57,3 +57,11 @@ foreach ($files as $key => $value) {
 }
 
 delete($files);
+
+
+//Calcolo la descrizione per il nuovo campo descrizione in scadenzario
+$rs = $dbo->fetchArray("SELECT * FROM co_scadenziario");
+
+for($i=0;$i<sizeof($rs);$i++){
+  $dbo->query("UPDATE co_scadenziario SET descrizione=(SELECT CONCAT(co_tipidocumento.descrizione, CONCAT(' numero ', IF(numero_esterno!='', numero_esterno, numero))) FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='".$rs[$i]['iddocumento']."') WHERE co_scadenziario.id='".$rs[$i]['id']."'");
+}

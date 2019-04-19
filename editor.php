@@ -202,7 +202,7 @@ if (empty($record) || !$has_access) {
 
                 <script>
                 $(document).ready(function(){
-                    var form = $("#custom_fields_top-edit").parent().find("form").first();
+                    var form = $("#module-edit").find("form").first();
 
                     // Campi a inizio form
                     form.prepend($("#custom_fields_top-edit").html());

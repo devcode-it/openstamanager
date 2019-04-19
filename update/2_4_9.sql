@@ -247,7 +247,7 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 (NULL, 'Addebita marca da bollo al cliente', 1, 'boolean', 1, 'Fatturazione', 13),
 (NULL, 'Iva da applicare su marca da bollo', (SELECT id FROM `co_iva` WHERE `deleted_at` IS NULL AND `descrizione` = 'Escluso art. 15' ORDER BY descrizione ASC), 'query=SELECT id, id, IF(codice_natura_fe IS NULL, IF(codice IS NULL, descrizione, CONCAT(codice, " - ", descrizione)), CONCAT( IF(codice IS NULL, descrizione, CONCAT(codice, " - ", descrizione)), " (", codice_natura_fe, ")" )) AS descrizione FROM `co_iva` WHERE `deleted_at` IS NULL ORDER BY descrizione ASC', 1, 'Fatturazione', 14),
 (NULL, 'Descrizione addebito bollo', 'Marca da bollo', 'string', 1, 'Fatturazione', 15),
-(NULL, 'Conto predefinito per la marca da bollo', (SELECT id FROM `co_iva` WHERE `deleted_at` IS NULL AND `descrizione` = 'Escluso art. 15' ORDER BY descrizione ASC), 'query=SELECT id,descrizione FROM co_pianodeiconti3 WHERE idpianodeiconti2=(SELECT id FROM co_pianodeiconti2 WHERE descrizione=''Cassa e banche'')', 1, 'Fatturazione', 16);
+(NULL, 'Conto predefinito per la marca da bollo', (SELECT id FROM co_pianodeiconti3 WHERE idpianodeiconti2=(SELECT id FROM co_pianodeiconti2 WHERE descrizione='Ricavi') AND descrizione = 'Rimborso spese marche da bollo'), 'query=SELECT id, descrizione FROM co_pianodeiconti3 WHERE idpianodeiconti2=(SELECT id FROM co_pianodeiconti2 WHERE descrizione=''Ricavi'')', 1, 'Fatturazione', 16);
 
 ALTER TABLE `zz_settings` CHANGE `help` `help` varchar(255);
 UPDATE `zz_settings` SET `help` = NULL WHERE `help` = '';

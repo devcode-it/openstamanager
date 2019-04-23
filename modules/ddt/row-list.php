@@ -6,7 +6,7 @@ echo '
 <table class="table table-striped table-hover table-condensed table-bordered">
     <tr>
         <th>'.tr('Descrizione').'</th>
-        <th width="120">'.tr('Q.tà').'</th>
+        <th width="120">'.tr('Q.tà').' <i title="'.tr('da evadere').' / '.tr('totale').'" class="tip fa fa-question-circle-o"></i></th>
         <th width="80">'.tr('U.m.').'</th>
         <th width="120">'.tr('Costo unitario').'</th>
         <th width="120">'.tr('Iva').'</th>
@@ -79,7 +79,7 @@ if (!empty($rs)) {
         <td class="text-center">';
         if (empty($r['is_descrizione'])) {
             echo '
-                <span >'.Translator::numberToLocale($r['qta'] - $r['qta_evasa'], 'qta').' / '.Translator::numberToLocale($r['qta'], 'qta').' <i title="'.tr('Q.tà evasa').' / '.tr('Q.tà da evadere').'" class="tip fa fa-question-circle-o"></i></span>';
+                <span >'.Translator::numberToLocale($r['qta'] - $r['qta_evasa'], 'qta').' / '.Translator::numberToLocale($r['qta'], 'qta').'</span>';
         }
         echo '
         </td>';

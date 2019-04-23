@@ -969,7 +969,7 @@ class FatturaElettronica
                 $dettaglio['DataFinePeriodo'] = $riga['data_fine_periodo'];
             }
 
-            $dettaglio['PrezzoUnitario'] = $riga->prezzo_unitario_vendita;
+            $dettaglio['PrezzoUnitario'] = ($riga->prezzo_unitario_vendita) ? :0;
 
             // Sconto (2.2.1.10)
             $sconto = $riga->sconto;
@@ -992,7 +992,7 @@ class FatturaElettronica
             $aliquota = $riga->aliquota ?: $iva_descrizioni;
             $percentuale = floatval($aliquota->percentuale);
 
-            $dettaglio['PrezzoTotale'] = ($riga->imponibile_scontato) ?: 0;
+            $dettaglio['PrezzoTotale'] = ($riga->imponibile_scontato) ? :0;
             $dettaglio['AliquotaIVA'] = $percentuale;
 
             if (!empty($riga['idritenutaacconto']) && empty($riga['is_descrizione'])) {

@@ -674,8 +674,7 @@ class FatturaElettronica
                 'AliquotaIVA' => $iva['percentuale'],
             ];
 
-            $ritenuta_predefinita = setting("Percentuale ritenuta d'acconto");
-            if (!empty($ritenuta_predefinita)) {
+            if ($riga->calcolo_ritenuta_acconto == 'IMP+RIV') {
                 $dati_cassa['Ritenuta'] = 'SI';
             }
 

@@ -103,6 +103,8 @@ abstract class Description extends Model
             $attributes['qta'] = $qta;
         }
 
+        $attributes['qta_evasa'] = 0;
+
         // Creazione del nuovo oggetto
         $model = new $object();
 

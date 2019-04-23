@@ -79,8 +79,7 @@ if (!empty($rs)) {
         <td class="text-center">';
         if (empty($r['is_descrizione'])) {
             echo '
-                <big>'.Translator::numberToLocale($r['qta'] - $r['qta_evasa'], 'qta').'</big>
-                <br><small>('.tr('Q.tà iniziale').': '.Translator::numberToLocale($r['qta'], 'qta').')</small>';
+                <span >'.Translator::numberToLocale($r['qta'] - $r['qta_evasa'], 'qta').' / '.Translator::numberToLocale($r['qta'], 'qta').' <i title="'.tr('Q.tà evasa').' / '.tr('Q.tà da evadere').'" class="tip fa fa-question-circle-o"></i></span>';
         }
         echo '
         </td>';

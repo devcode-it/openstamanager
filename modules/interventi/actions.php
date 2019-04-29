@@ -279,13 +279,13 @@ switch (post('op')) {
 
         break;
 
-    case 'editriga':
+    case 'manage_riga':
         $idriga = post('idriga');
         $descrizione = post('descrizione');
         $qta = post('qta');
         $um = post('um');
         $idiva = post('idiva');
-        $prezzo_vendita = post('prezzo_vendita');
+        $prezzo_vendita = post('prezzo');
         $prezzo_acquisto = post('prezzo_acquisto');
 
         $sconto_unitario = post('sconto');

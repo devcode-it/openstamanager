@@ -33,9 +33,6 @@ switch (post('op')) {
         $anagrafica->ragione_sociale = post('ragione_sociale');
         $anagrafica->nome = post('nome');
         $anagrafica->cognome = post('cognome');
-
-        $anagrafica->partita_iva = post('piva');
-        $anagrafica->codice_fiscale = post('codice_fiscale');
         $anagrafica->tipo = post('tipo');
         $anagrafica->data_nascita = post('data_nascita');
         $anagrafica->luogo_nascita = post('luogo_nascita');
@@ -78,6 +75,38 @@ switch (post('op')) {
         $anagrafica->split_payment = post('split_payment');
 
         $anagrafica->tipologie = (array) post('idtipoanagrafica');
+
+        // Blocco il salvataggio del codice fiscale se già presente
+        if (!empty(post('codice_fiscale'))){
+            $count_cf = $dbo->fetchNum('SELECT codice_fiscale FROM an_anagrafiche WHERE codice_fiscale = '.prepare(post('codice_fiscale')).' AND idanagrafica != '.prepare($id_record));
+
+            if ($count_cf > 0) {
+                flash()->error(tr('Attenzione: il codice fiscale _COD_ è già stato utilizzato', [
+                    '_COD_' => post('codice_fiscale'),
+                ]));
+            } 
+            else {
+                $anagrafica->codice_fiscale = post('codice_fiscale');
+            }
+        } else {
+            $anagrafica->codice_fiscale = post('codice_fiscale');
+        }
+
+        // Blocco il salvataggio della partita iva se già presente
+        if (!empty(post('piva'))){
+            $count_piva = $dbo->fetchNum('SELECT piva FROM an_anagrafiche WHERE piva = '.prepare(post('piva')).' AND idanagrafica != '.prepare($id_record));
+
+            if ($count_piva > 0) {
+                flash()->error(tr('Attenzione: la partita IVA _IVA_ è già stata utilizzata', [
+                    '_IVA_' => post('piva'),
+                ]));
+            } 
+            else {
+                $anagrafica->partita_iva = post('piva');
+            }
+        } else {
+            $anagrafica->partita_iva = post('piva');
+        }
 
         $anagrafica->save();
 
@@ -122,9 +151,41 @@ switch (post('op')) {
     case 'add':
         $idtipoanagrafica = post('idtipoanagrafica');
         $ragione_sociale = post('ragione_sociale');
-
+        
         $anagrafica = Anagrafica::build($ragione_sociale, post('nome'), post('cognome'), $idtipoanagrafica);
         $id_record = $anagrafica->id;
+
+        // Blocco il salvataggio del codice fiscale se già presente
+        if (!empty(post('codice_fiscale'))){
+            $count_cf = $dbo->fetchNum('SELECT codice_fiscale FROM an_anagrafiche WHERE codice_fiscale = '.prepare(post('codice_fiscale')).' AND idanagrafica != '.prepare($id_record));
+
+            if ($count_cf > 0) {
+                flash()->error(tr('Attenzione: il codice fiscale _COD_ è già stato utilizzato', [
+                    '_COD_' => post('codice_fiscale'),
+                ]));
+            } 
+            else {
+                $anagrafica->codice_fiscale = post('codice_fiscale');
+            }
+        } else {
+            $anagrafica->codice_fiscale = post('codice_fiscale');
+        }
+
+        // Blocco il salvataggio della partita iva se già presente
+        if (!empty(post('piva'))){
+            $count_piva = $dbo->fetchNum('SELECT piva FROM an_anagrafiche WHERE piva = '.prepare(post('piva')).' AND idanagrafica != '.prepare($id_record));
+
+            if ($count_piva > 0) {
+                flash()->error(tr('Attenzione: la partita IVA _IVA_ è già stata utilizzata', [
+                '_IVA_' => post('piva'),
+            ]));
+            } 
+            else {
+                $anagrafica->partita_iva = post('piva');
+            }
+        } else {
+            $anagrafica->partita_iva = post('piva');
+        }
 
         // Se ad aggiungere un cliente è un agente, lo imposto come agente di quel cliente
         // Lettura tipologia dell'utente loggato
@@ -141,8 +202,6 @@ switch (post('op')) {
 
         $idagente = ($agente_is_logged && in_array($id_cliente, $idtipoanagrafica)) ? $user['idanagrafica'] : 0;
 
-        $anagrafica->partita_iva = post('piva');
-        $anagrafica->codice_fiscale = post('codice_fiscale');
         $anagrafica->indirizzo = post('indirizzo');
         $anagrafica->citta = post('citta');
         $anagrafica->cap = post('cap');

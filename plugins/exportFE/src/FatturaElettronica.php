@@ -394,7 +394,7 @@ class FatturaElettronica
         $result[] = [
             'ProgressivoInvio' => $documento['progressivo_invio'],
             'FormatoTrasmissione' => ($cliente['tipo'] == 'Ente pubblico') ? 'FPA12' : 'FPR12',
-            'CodiceDestinatario' => !empty($cliente['codice_destinatario']) ? $cliente['codice_destinatario'] : $default_code,
+            'CodiceDestinatario' => !empty( $codice_destinatario ) ? $codice_destinatario : $default_code,
         ];
 
         // Telefono di contatto

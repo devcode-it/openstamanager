@@ -38,7 +38,7 @@ echo '
 
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "select", "label": "'.tr('Nazione').'", "name": "id_nazione", "values": "query=SELECT `id`, `nome` AS `descrizione` FROM `an_nazioni` ORDER BY `descrizione` ASC", "value": "" ]}
+			{[ "type": "select", "label": "'.tr('Nazione').'", "name": "id_nazione", "ajax-source": "nazioni" ]}
 		</div>
         <div class="col-md-6">
 			{[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "values": "query=SELECT `id`, CONCAT(`nome`, \' - \', `descrizione`) AS `descrizione` FROM `an_zone` ORDER BY `descrizione` ASC" ]}

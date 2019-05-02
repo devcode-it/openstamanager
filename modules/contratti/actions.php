@@ -50,6 +50,7 @@ switch (post('op')) {
             $rinnovabile = post('rinnovabile');
 
             $giorni_preavviso_rinnovo = post('giorni_preavviso_rinnovo');
+            $ore_preavviso_rinnovo = post('ore_preavviso_rinnovo');
             $validita = post('validita');
             $idreferente = post('idreferente');
             $esclusioni = post('esclusioni');
@@ -80,7 +81,8 @@ switch (post('op')) {
 				data_rifiuto='.prepare($data_rifiuto).',
 				data_conclusione='.prepare($data_conclusione).',
 				rinnovabile='.prepare($rinnovabile).',
-				giorni_preavviso_rinnovo='.prepare($giorni_preavviso_rinnovo).',
+                giorni_preavviso_rinnovo='.prepare($giorni_preavviso_rinnovo).',
+                ore_preavviso_rinnovo='.prepare($ore_preavviso_rinnovo).',
 				esclusioni='.prepare($esclusioni).', descrizione='.prepare($descrizione).',
 				id_documento_fe='.prepare($id_documento_fe).',
 				num_item='.prepare($num_item).',

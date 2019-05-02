@@ -76,6 +76,10 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 				<div class="col-md-3">
 					{[ "type": "number", "label": "<?php echo tr('Preavviso per rinnovo'); ?>", "name": "giorni_preavviso_rinnovo", "decimals": "0", "value": "$giorni_preavviso_rinnovo$", "icon-after": "giorni", "disabled": <?php echo $record['rinnovabile'] ? 0 : 1; ?> ]}
 				</div>
+
+                <div class="col-md-3">
+					{[ "type": "number", "label": "<?php echo tr('Ore rimanenti rinnovo'); ?>", "name": "ore_preavviso_rinnovo", "decimals": "0", "value": "$ore_preavviso_rinnovo$", "icon-after": "ore", "disabled": <?php echo $record['rinnovabile'] ? 0 : 1; ?>, "help": "Numero ore restanti nel contratto per avviso rinnovo anticipato." ]}
+				</div>
 			</div>
 
 			<div class="row">

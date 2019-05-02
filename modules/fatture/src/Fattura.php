@@ -542,4 +542,22 @@ class Fattura extends Document
 
         $riga->save();
     }
+
+    /**
+     * Restituisce i dati bancari in base al pagamento 
+     * 
+     * @return array
+     */
+    public function getBanca(){
+        $result = [];
+        $riba = database()->fetchOne('SELECT riba FROM co_pagamenti WHERE id =' .prepare($this->idpagamento));
+        
+        if ($riba['riba'] == 1){
+            $result = database()->fetchOne('SELECT codiceiban, appoggiobancario, bic FROM an_anagrafiche WHERE idanagrafica =' .prepare($this->idanagrafica));
+        }else{
+            $result = database()->fetchOne('SELECT iban AS codiceiban, nome AS appoggiobancario, bic FROM co_banche WHERE id=' .prepare($this->idbanca));
+        }
+
+        return $result;
+    }
 }

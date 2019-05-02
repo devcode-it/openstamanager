@@ -1105,7 +1105,11 @@ class FatturaElettronica
      */
     protected static function getDatiPagamento($fattura)
     {
+
         $documento = $fattura->getDocumento();
+
+        $fattura = Fattura::find($documento['id']);
+        $banca = $fattura->getBanca();
 
         $database = database();
 
@@ -1123,18 +1127,16 @@ class FatturaElettronica
                 'ImportoPagamento' => abs($scadenza['da_pagare']),
             ];
 
-            if (!empty($documento['idbanca'])) {
-                $co_banche = $database->fetchOne('SELECT * FROM co_banche WHERE id = '.prepare($documento['idbanca']));
-                if (!empty($co_banche['nome'])) {
-                    $pagamento['IstitutoFinanziario'] = $co_banche['nome'];
-                }
-                if (!empty($co_banche['iban'])) {
-                    $pagamento['IBAN'] = clean($co_banche['iban']);
-                }
-                if (!empty($co_banche['bic'])) {
-                    $pagamento['BIC'] = $co_banche['bic'];
-                }
+            if (!empty($banca['appoggiobancario'])) {
+                $pagamento['IstitutoFinanziario'] = $banca['appoggiobancario'];
             }
+            if (!empty($banca['codiceiban'])) {
+                $pagamento['IBAN'] = clean($banca['codiceiban']);
+            }
+            if (!empty($banca['bic'])) {
+                $pagamento['BIC'] = $banca['bic'];
+            }
+
 
             $result[]['DettaglioPagamento'] = $pagamento;
         }

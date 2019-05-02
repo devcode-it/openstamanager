@@ -2,6 +2,11 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Fatture\Fattura;
+
+$fattura = Fattura::find($id_record);
+$banca = $fattura->getBanca();
+
 // Lettura info fattura
 $record = $dbo->fetchOne('SELECT *,
     (SELECT descrizione FROM co_statidocumento WHERE id=idstatodocumento) AS stato_doc,
@@ -14,9 +19,6 @@ $record = $dbo->fetchOne('SELECT *,
     (SELECT descrizione FROM dt_spedizione WHERE id=idspedizione) AS spedizione,
     (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idvettore) AS vettore,
     (SELECT id FROM co_banche WHERE id=idbanca) AS id_banca,
-    (SELECT nome FROM co_banche WHERE id=idbanca) AS nome_banca,
-    (SELECT iban FROM co_banche WHERE id=idbanca) AS iban_banca,
-    (SELECT bic FROM co_banche WHERE id=idbanca) AS bic_banca,
     (SELECT is_fiscale FROM zz_segments WHERE id = id_segment) AS is_fiscale
 FROM co_documenti WHERE id='.prepare($id_record));
 
@@ -24,9 +26,9 @@ $record['rivalsainps'] = floatval($record['rivalsainps']);
 $record['ritenutaacconto'] = floatval($record['ritenutaacconto']);
 $record['bollo'] = floatval($record['bollo']);
 
-$nome_banca = $record['nome_banca'];
-$iban_banca = $record['iban_banca'];
-$bic_banca = $record['bic_banca'];
+$nome_banca = $banca['appoggiobancario'];
+$iban_banca = $banca['codiceiban'];
+$bic_banca = $banca['bic'];
 
 $module_name = ($record['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
 

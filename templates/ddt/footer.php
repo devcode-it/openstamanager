@@ -21,7 +21,7 @@ if ($options['pricing']) {
     echo "
     <tr>
         <td class='cell-padded text-right'>
-            ".moneyFormat($imponibile).'
+            ".moneyFormat($imponibile, 2).'
         </td>
     </tr>';
 
@@ -35,7 +35,7 @@ if ($options['pricing']) {
 
     <tr>
         <td class='cell-padded text-right'>
-            ".moneyFormat($iva).'
+            ".moneyFormat($iva, 2).'
         </td>
     </tr>';
 
@@ -49,7 +49,7 @@ if ($options['pricing']) {
 
     <tr>
         <td class='cell-padded text-right'>
-            ".moneyFormat($totale).'
+            ".moneyFormat($totale, 2).'
         </td>
     </tr>';
 } else {

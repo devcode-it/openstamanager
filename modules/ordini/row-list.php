@@ -213,7 +213,7 @@ echo '
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.moneyFormat($imponibile).'
+            '.moneyFormat($imponibile, 2).'
         </td>
         <td></td>
     </tr>';
@@ -226,7 +226,7 @@ if (abs($sconto) > 0) {
             <b>'.tr('Sconto', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.moneyFormat($sconto).'
+            '.moneyFormat($sconto, 2).'
         </td>
         <td></td>
     </tr>';
@@ -238,7 +238,7 @@ if (abs($sconto) > 0) {
             <b>'.tr('Imponibile scontato', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.moneyFormat($imponibile_scontato).'
+            '.moneyFormat($imponibile_scontato, 2).'
         </td>
         <td></td>
     </tr>';
@@ -254,7 +254,7 @@ if (abs($record['rivalsainps']) > 0) {
             <b>'.tr('Rivalsa', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.moneyFormat($record['rivalsainps']).'
+            '.moneyFormat($record['rivalsainps'], 2).'
         </td>
         <td></td>
     </tr>';
@@ -268,7 +268,7 @@ if (abs($totale_iva) > 0) {
             <b>'.tr('Iva', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.moneyFormat($totale_iva).'
+            '.moneyFormat($totale_iva, 2).'
         </td>
         <td></td>
     </tr>';
@@ -281,7 +281,7 @@ echo '
             <b>'.tr('Totale', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.moneyFormat($totale).'
+            '.moneyFormat($totale, 2).'
         </td>
         <td></td>
     </tr>';
@@ -294,7 +294,7 @@ if (abs($record['bollo']) > 0) {
             <b>'.tr('Marca da bollo', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.moneyFormat($record['bollo']).'
+            '.moneyFormat($record['bollo'], 2).'
         </td>
         <td></td>
     </tr>';
@@ -308,7 +308,7 @@ if (abs($record['ritenutaacconto']) > 0) {
             <b>'.tr("Ritenuta d'acconto", [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.moneyFormat($record['ritenutaacconto']).'
+            '.moneyFormat($record['ritenutaacconto'], 2).'
         </td>
         <td></td>
     </tr>';
@@ -322,7 +322,7 @@ if ($totale != $netto_a_pagare) {
             <b>'.tr('Netto a pagare', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.moneyFormat($netto_a_pagare).'
+            '.moneyFormat($netto_a_pagare, 2).'
         </td>
         <td></td>
     </tr>';

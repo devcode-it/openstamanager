@@ -219,7 +219,7 @@ echo '
         </td>
 
         <td align="right">
-            '.moneyFormat($imponibile).'
+            '.moneyFormat($imponibile, 2).'
         </td>
 
         <td></td>
@@ -234,7 +234,7 @@ if (abs($sconto) > 0) {
         </td>
 
         <td align="right">
-            '.moneyFormat($sconto).'
+            '.moneyFormat($sconto, 2).'
         </td>
 
         <td></td>
@@ -248,7 +248,7 @@ if (abs($sconto) > 0) {
         </td>
 
         <td align="right">
-            '.moneyFormat($imponibile_scontato).'
+            '.moneyFormat($imponibile_scontato, 2).'
         </td>
 
         <td></td>
@@ -264,7 +264,7 @@ if (abs($record['rivalsainps']) > 0) {
         </td>
 
         <td align="right">
-            '.moneyFormat($record['rivalsainps']).'
+            '.moneyFormat($record['rivalsainps'], 2).'
         </td>
 
         <td></td>
@@ -279,7 +279,7 @@ if (abs($totale_iva) > 0) {
         </td>
 
         <td align="right">
-            '.moneyFormat($totale_iva).'
+            '.moneyFormat($totale_iva, 2).'
         </td>
 
         <td></td>
@@ -294,7 +294,7 @@ echo '
         </td>
 
         <td align="right">
-            '.moneyFormat($totale).'
+            '.moneyFormat($totale, 2).'
         </td>
 
         <td></td>
@@ -309,7 +309,7 @@ if (abs($record['bollo']) > 0) {
         </td>
 
         <td align="right">
-            '.moneyFormat($record['bollo']).'
+            '.moneyFormat($record['bollo'], 2).'
         </td>
 
         <td></td>
@@ -325,7 +325,7 @@ if (abs($record['ritenutaacconto']) > 0) {
         </td>
 
         <td align="right">
-            '.moneyFormat($record['ritenutaacconto']).'
+            '.moneyFormat($record['ritenutaacconto'], 2).'
         </td>
 
         <td></td>
@@ -341,7 +341,7 @@ if ($totale != $netto_a_pagare) {
         </td>
 
         <td align="right">
-            '.moneyFormat($netto_a_pagare).'
+            '.moneyFormat($netto_a_pagare, 2).'
         </td>
 
         <td></td>

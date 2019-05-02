@@ -139,7 +139,7 @@ foreach ($rs_gen as $r) {
         <td class='text-center'>";
         if (empty($r['is_descrizione'])) {
             echo '
-            '.Translator::numberToLocale($r['perc_iva']);
+            '.Translator::numberToLocale($r['perc_iva'], 0);
         }
         echo '
         </td>';

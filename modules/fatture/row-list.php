@@ -296,7 +296,7 @@ echo '
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.moneyFormat($imponibile).'
+            '.moneyFormat($imponibile, 2).'
         </td>
         <td></td>
     </tr>';
@@ -309,7 +309,7 @@ if (!empty($sconto)) {
             <b>'.tr('Sconto', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.moneyFormat($sconto).'
+            '.moneyFormat($sconto, 2).'
         </td>
         <td></td>
     </tr>';
@@ -321,7 +321,7 @@ if (!empty($sconto)) {
             <b>'.tr('Imponibile scontato', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.moneyFormat($imponibile_scontato).'
+            '.moneyFormat($imponibile_scontato, 2).'
         </td>
         <td></td>
     </tr>';
@@ -342,7 +342,7 @@ if (!empty($fattura->rivalsa_inps)) {
 			<b>'.tr('Rivalsa', [], ['upper' => true]).' :</b>
         </td>
         <td align="right">
-            '.moneyFormat($fattura->rivalsa_inps).'
+            '.moneyFormat($fattura->rivalsa_inps, 2).'
         </td>
         <td></td>
     </tr>';
@@ -362,7 +362,7 @@ if (!empty($iva)) {
     echo '
         </td>
         <td align="right">
-            '.moneyFormat($iva).'
+            '.moneyFormat($iva, 2).'
         </td>
         <td></td>
     </tr>';
@@ -375,7 +375,7 @@ echo '
             <b>'.tr('Totale', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.moneyFormat($totale).'
+            '.moneyFormat($totale, 2).'
         </td>
         <td></td>
     </tr>';
@@ -388,7 +388,7 @@ if (!empty($fattura->ritenuta_acconto)) {
             <b>'.tr("Ritenuta d'acconto", [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.moneyFormat($fattura->ritenuta_acconto).'
+            '.moneyFormat($fattura->ritenuta_acconto, 2).'
         </td>
         <td></td>
     </tr>';
@@ -416,7 +416,7 @@ if ($totale != $netto_a_pagare) {
             <b>'.tr('Netto a pagare', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.moneyFormat($netto_a_pagare).'
+            '.moneyFormat($netto_a_pagare, 2).'
         </td>
         <td></td>
     </tr>';

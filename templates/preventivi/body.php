@@ -171,7 +171,7 @@ foreach ($righe as $r) {
             <td class="text-center">';
     if (empty($r['is_descrizione'])) {
         echo '
-                '.Translator::numberToLocale($r['perc_iva']);
+                '.Translator::numberToLocale($r['perc_iva'], 0);
     }
     echo '
             </td>
@@ -203,8 +203,8 @@ if ($options['pricing'] and !isset($options['hide_total'])) {
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
 
-        <th colspan="2" class="text-center">
-            <b>'.moneyFormat($imponibile).'</b>
+        <th colspan="2" class="text-right">
+            <b>'.moneyFormat($imponibile, 2).'</b>
         </th>
     </tr>';
 
@@ -216,8 +216,8 @@ if ($options['pricing'] and !isset($options['hide_total'])) {
             <b>'.tr('Sconto', [], ['upper' => true]).':</b>
         </td>
 
-        <th colspan="2" class="text-center">
-            <b>-'.moneyFormat($sconto).'</b>
+        <th colspan="2" class="text-right">
+            <b>-'.moneyFormat($sconto, 2).'</b>
         </th>
     </tr>';
 
@@ -228,8 +228,8 @@ if ($options['pricing'] and !isset($options['hide_total'])) {
             <b>'.tr('Imponibile scontato', [], ['upper' => true]).':</b>
         </td>
 
-        <th colspan="2" class="text-center">
-            <b>'.moneyFormat($totale).'</b>
+        <th colspan="2" class="text-right">
+            <b>'.moneyFormat($totale, 2).'</b>
         </th>
     </tr>';
     }
@@ -241,8 +241,8 @@ if ($options['pricing'] and !isset($options['hide_total'])) {
             <b>'.tr('Totale IVA', [], ['upper' => true]).':</b>
         </td>
 
-        <th colspan="2" class="text-center">
-            <b>'.moneyFormat($iva).'</b>
+        <th colspan="2" class="text-right">
+            <b>'.moneyFormat($iva, 2).'</b>
         </th>
     </tr>';
 
@@ -254,8 +254,8 @@ if ($options['pricing'] and !isset($options['hide_total'])) {
     	<td colspan="3" class="text-right border-top">
             <b>'.tr('Quotazione totale', [], ['upper' => true]).':</b>
     	</td>
-    	<th colspan="2" class="text-center">
-    		<b>'.moneyFormat($totale).'</b>
+    	<th colspan="2" class="text-right">
+    		<b>'.moneyFormat($totale, 2).'</b>
     	</th>
     </tr>';
 }

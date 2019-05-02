@@ -124,11 +124,11 @@ for ($i = 0; $i < count($rs); ++$i) {
                             </td>
 
                             <td align="right">
-                                {[ "type": "number", "name": "scadenza['.$rs[$i]['id'].']", "value": "'.Translator::numberToLocale($rs[$i]['da_pagare']).'" ]}
+                                {[ "type": "number", "name": "scadenza['.$rs[$i]['id'].']", "decimals": 2, "value": "'.Translator::numberToLocale($rs[$i]['da_pagare'],2).'" ]}
                             </td>
 
                             <td align="right">
-                                {[ "type": "number", "name": "pagato['.$rs[$i]['id'].']", "value": "'.Translator::numberToLocale($rs[$i]['pagato']).'"  ]}
+                                {[ "type": "number", "name": "pagato['.$rs[$i]['id'].']", "decimals": 2, "value": "'.Translator::numberToLocale($rs[$i]['pagato']).'"  ]}
                             </td>
                         </tr>';
 }
@@ -169,7 +169,7 @@ echo '
                         ]); ?>.
 					</div>
 
-					<input type="hidden" id="totale_da_pagare" value="<?php echo Translator::numberToLocale($totale_da_pagare); ?>">
+					<input type="hidden" id="totale_da_pagare" value="<?php echo Translator::numberToLocale($totale_da_pagare, 2); ?>">
 				</div>
 			</div>
 		</div>
@@ -191,6 +191,8 @@ if($records[0]['iddocumento']==0){
 ?>
 
 <script>
+    globals.cifre_decimali = 2;
+    
 	$(document).ready( function(){
         totale_ok();
         

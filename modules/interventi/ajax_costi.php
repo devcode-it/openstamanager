@@ -35,67 +35,67 @@ if ($show_prezzi) {
 
     <tr>
         <th>'.tr('Totale manodopera', [], ['upper' => true]).'</th>
-        <td class="text-right">'.moneyFormat($costi['manodopera_costo']).'</td>
-        <td class="text-right">'.moneyFormat($costi['manodopera_addebito']).'</td>
-        <td class="text-right">'.moneyFormat($costi['manodopera_scontato']).'</td>
+        <td class="text-right">'.moneyFormat($costi['manodopera_costo'], 2).'</td>
+        <td class="text-right">'.moneyFormat($costi['manodopera_addebito'], 2).'</td>
+        <td class="text-right">'.moneyFormat($costi['manodopera_scontato'], 2).'</td>
     </tr>
 
     <tr>
         <th>'.tr('Totale diritto di chiamata', [], ['upper' => true]).'</th>
-        <td class="text-right">'.moneyFormat($costi['dirittochiamata_costo']).'</td>
-        <td class="text-right">'.moneyFormat($costi['dirittochiamata_addebito']).'</td>
-        <td class="text-right">'.moneyFormat($costi['dirittochiamata_scontato']).'</td>
+        <td class="text-right">'.moneyFormat($costi['dirittochiamata_costo'], 2).'</td>
+        <td class="text-right">'.moneyFormat($costi['dirittochiamata_addebito'], 2).'</td>
+        <td class="text-right">'.moneyFormat($costi['dirittochiamata_scontato'],2 ).'</td>
     </tr>
 
     <tr>
         <th>'.tr('Totale viaggio', [], ['upper' => true]).'</th>
-        <td class="text-right">'.moneyFormat($costi['viaggio_costo']).'</td>
-        <td class="text-right">'.moneyFormat($costi['viaggio_addebito']).'</td>
-        <td class="text-right">'.moneyFormat($costi['viaggio_scontato']).'</td>
+        <td class="text-right">'.moneyFormat($costi['viaggio_costo'], 2).'</td>
+        <td class="text-right">'.moneyFormat($costi['viaggio_addebito'], 2).'</td>
+        <td class="text-right">'.moneyFormat($costi['viaggio_scontato'], 2).'</td>
     </tr>
 
     <tr>
         <th>'.tr('Totale articoli', [], ['upper' => true]).'</th>
-        <td class="text-right">'.moneyFormat($costi['ricambi_costo']).'</td>
-        <td class="text-right">'.moneyFormat($costi['ricambi_addebito']).'</td>
-        <td class="text-right">'.moneyFormat($costi['ricambi_scontato']).'</td>
+        <td class="text-right">'.moneyFormat($costi['ricambi_costo'], 2).'</td>
+        <td class="text-right">'.moneyFormat($costi['ricambi_addebito'], 2).'</td>
+        <td class="text-right">'.moneyFormat($costi['ricambi_scontato'], 2).'</td>
     </tr>
 
     <tr>
         <th>'.tr('Totale altre spese', [], ['upper' => true]).'</th>
-        <td class="text-right">'.moneyFormat($costi['altro_costo']).'</td>
-        <td class="text-right">'.moneyFormat($costi['altro_addebito']).'</td>
-        <td class="text-right">'.moneyFormat($costi['altro_scontato']).'</td>
+        <td class="text-right">'.moneyFormat($costi['altro_costo'], 2).'</td>
+        <td class="text-right">'.moneyFormat($costi['altro_addebito'], 2).'</td>
+        <td class="text-right">'.moneyFormat($costi['altro_scontato'], 2).'</td>
     </tr>
 
     <tr>
         <th>'.tr('Sconto incondizionato', [], ['upper' => true]).'</th>
         <td class="text-right">-</td>
         <td class="text-right">-</td>
-        <td class="text-right">'.moneyFormat(-$costi['sconto_globale']).'</td>
+        <td class="text-right">'.moneyFormat(-$costi['sconto_globale'], 2).'</td>
     </tr>
 
 
 	<tr class='.$hide.' >
         <th>'.tr('Imponibile', [], ['upper' => true]).'</th>
-        <td class="text-right">'.moneyFormat($costi['totale_costo']).'</td>
-        <td class="text-right">'.moneyFormat($costi['totale_addebito']).'</td>
-        <td class="text-right">'.moneyFormat($costi['totale_scontato']).'</td>
+        <td class="text-right">'.moneyFormat($costi['totale_costo'], 2).'</td>
+        <td class="text-right">'.moneyFormat($costi['totale_addebito'] ,2).'</td>
+        <td class="text-right">'.moneyFormat($costi['totale_scontato'] ,2).'</td>
     </tr>
 
 
 	<tr class='.$hide.' >
         <th>'.tr('IVA', [], ['upper' => true]).'</th>
-        <td class="text-right">'.moneyFormat($costi['iva_costo']).'</td>
-        <td class="text-right">'.moneyFormat($costi['iva_addebito']).'</td>
-        <td class="text-right">'.moneyFormat($costi['iva_totale']).'</td>
+        <td class="text-right">'.moneyFormat($costi['iva_costo'], 2).'</td>
+        <td class="text-right">'.moneyFormat($costi['iva_addebito'], 2).'</td>
+        <td class="text-right">'.moneyFormat($costi['iva_totale'], 2).'</td>
     </tr>
 
     <tr>
         <th>'.tr('Totale', [], ['upper' => true]).'</th>
-        <th class="text-right">'.moneyFormat($costi['totaleivato_costo']).'</th>
-        <th class="text-right">'.moneyFormat($costi['totaleivato_addebito']).'</th>
-        <th class="text-right">'.moneyFormat($costi['totale']).'</th>
+        <th class="text-right">'.moneyFormat($costi['totaleivato_costo'], 2).'</th>
+        <th class="text-right">'.moneyFormat($costi['totaleivato_addebito'], 2).'</th>
+        <th class="text-right">'.moneyFormat($costi['totale'], 2).'</th>
     </tr>
 </table>';
 }

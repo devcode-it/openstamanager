@@ -155,7 +155,7 @@ if (abs($sconto) > 0) {
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">
-            <span id="budget">'.moneyFormat($imponibile).'</span>
+            <span id="budget">'.moneyFormat($imponibile, 2).'</span>
         </td>
         <td></td>
     </tr>';
@@ -166,7 +166,7 @@ if (abs($sconto) > 0) {
             <b>'.tr('Sconto', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">
-            '.moneyFormat($sconto).'
+            '.moneyFormat($sconto, 2).'
         </td>
         <td></td>
     </tr>';
@@ -178,7 +178,7 @@ if (abs($sconto) > 0) {
             <b>'.tr('Imponibile scontato', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">
-            '.moneyFormat($imponibile_scontato).'
+            '.moneyFormat($imponibile_scontato, 2).'
         </td>
         <td></td>
     </tr>';
@@ -190,7 +190,7 @@ if (abs($sconto) > 0) {
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">
-            <span id="budget">'.moneyFormat($imponibile).'</span>
+            <span id="budget">'.moneyFormat($imponibile, 2).'</span>
         </td>
         <td></td>
     </tr>';
@@ -203,7 +203,7 @@ echo '
             <b>'.tr('Iva', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">
-            '.moneyFormat($iva).'
+            '.moneyFormat($iva, 2).'
         </td>
         <td></td>
     </tr>';
@@ -215,7 +215,7 @@ echo '
             <b>'.tr('Totale', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">
-            '.moneyFormat($totale).'
+            '.moneyFormat($totale, 2).'
         </td>
         <td></td>
     </tr>';

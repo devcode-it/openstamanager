@@ -130,9 +130,6 @@ class Prints
             return false;
         }
 
-        // Impostazione automatica della precisione a 2 numeri decimali
-        formatter()->setPrecision(2);
-
         // Individuazione della configurazione
         $directory = dirname($filename);
         if (!empty($filename) && !directory($directory)) {

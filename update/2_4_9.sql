@@ -292,5 +292,5 @@ INSERT INTO `zz_widgets` (`id`, `name`, `type`, `id_module`, `location`, `class`
 -- Widget attività ancora da programmare
 INSERT INTO `zz_widgets` (`id`, `name`, `type`, `id_module`, `location`, `class`, `query`, `bgcolor`, `icon`, `print_link`, `more_link`, `more_link_type`, `php_include`, `text`, `enabled`, `order`, `help`) VALUES (NULL, 'Attività confermate', 'stats', '1', 'controller_top', 'col-md-12', 'SELECT COUNT(id) AS dato FROM in_interventi WHERE in_interventi.idstatointervento = (SELECT in_statiintervento.idstatointervento FROM in_statiintervento WHERE in_statiintervento.descrizione=\'In programmazione\') ORDER BY in_interventi.data_richiesta ASC', '#f2bd00', 'fa fa-hourglass-half', '', './modules/interventi/widgets/interventi_confermati.php', 'popup', '', 'Attività confermate', '1', '8', NULL); 
 
---Aggiunta ore rimanenti nel contratto per preavviso rinnovo
+-- Aggiunta ore rimanenti nel contratto per preavviso rinnovo
 ALTER TABLE `co_contratti` ADD `ore_preavviso_rinnovo` INT(11) NULL AFTER `giorni_preavviso_rinnovo`; 

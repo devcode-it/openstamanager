@@ -22,7 +22,7 @@ $totale_subtotale = 0;
 $date_start = $_SESSION['period_start'];
 $date_end = $_SESSION['period_end'];
 
-$query = 'SELECT *, IF(numero = "", numero_esterno, numero) AS numero, SUM(subtotale-co_righe_documenti.sconto) AS subtotale, SUM(iva) AS iva, (SELECT ragione_sociale FROM an_anagrafiche WHERE an_anagrafiche.idanagrafica=co_documenti.idanagrafica) AS ragione_sociale, (SELECT codice FROM an_anagrafiche WHERE an_anagrafiche.idanagrafica=co_documenti.idanagrafica) AS codice_anagrafica FROM co_documenti INNER JOIN co_righe_documenti ON co_documenti.id=co_righe_documenti.iddocumento INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_iva ON co_righe_documenti.idiva=co_iva.id WHERE dir = '.prepare($dir).' AND idstatodocumento NOT IN (SELECT id FROM co_statidocumento WHERE descrizione="Bozza" OR descrizione="Annullata") AND is_descrizione = 0 AND co_documenti.data >= '.prepare($date_start).' AND co_documenti.data <= '.prepare($date_end).' GROUP BY co_documenti.id, co_righe_documenti.idiva ORDER BY co_documenti.'.(($dir == 'entrata') ? 'data' : 'numero');
+$query = 'SELECT *, co_documenti.id AS id, IF(numero = "", numero_esterno, numero) AS numero, SUM(subtotale-co_righe_documenti.sconto) AS subtotale, SUM(iva) AS iva, (SELECT ragione_sociale FROM an_anagrafiche WHERE an_anagrafiche.idanagrafica=co_documenti.idanagrafica) AS ragione_sociale, (SELECT codice FROM an_anagrafiche WHERE an_anagrafiche.idanagrafica=co_documenti.idanagrafica) AS codice_anagrafica FROM co_documenti INNER JOIN co_righe_documenti ON co_documenti.id=co_righe_documenti.iddocumento INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_iva ON co_righe_documenti.idiva=co_iva.id WHERE dir = '.prepare($dir).' AND idstatodocumento NOT IN (SELECT id FROM co_statidocumento WHERE descrizione="Bozza" OR descrizione="Annullata") AND is_descrizione = 0 AND co_documenti.data >= '.prepare($date_start).' AND co_documenti.data <= '.prepare($date_end).' GROUP BY co_documenti.id, co_righe_documenti.idiva ORDER BY co_documenti.id, co_documenti.'.(($dir == 'entrata') ? 'data' : 'numero');
 $rs = $dbo->fetchArray($query);
 
 if ('entrata' == $dir) {
@@ -69,7 +69,7 @@ for ($i = 0; $i < sizeof($rs); ++$i) {
         echo '	<td></td>';
         echo '	<td></td>';
     } else {
-        echo '	<td>'.$rs[$i]['numero'].'</td>';
+        echo '	<td>'.(($dir == 'uscita') ? $rs[$i]['numero'] : '-' ).'</td>';
         echo '	<td>'.$rs[$i]['numero_esterno'].'</td>';
         echo '	<td>'.date('d/m/Y', strtotime($rs[$i]['data'])).'</td>';
         echo '	<td>'.$rs[$i]['codice_tipo_documento_fe'].'</td>';

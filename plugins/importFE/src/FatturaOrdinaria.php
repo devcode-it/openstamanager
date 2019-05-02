@@ -154,7 +154,7 @@ class FatturaOrdinaria extends FatturaElettronica
 
         $diff = $totale_documento ? $totale_documento - $fattura->totale : $totale_righe - $fattura->imponibile_scontato;
         if (!empty($diff)) {
-            // Rimozione dell?IVA calcolata automaticamente dal gestionale
+            // Rimozione dell'IVA calcolata automaticamente dal gestionale
             $iva_arrotondamento = database()->fetchOne('SELECT * FROM co_iva WHERE id='.prepare($iva[0]));
             $diff = $diff * 100 / (100 + $iva_arrotondamento['percentuale']);
 

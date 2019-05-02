@@ -28,7 +28,7 @@ foreach ($righe as $row) {
     // Valori assoluti
     $riga['qta'] = abs($riga['qta']);
     $riga['prezzo_unitario_acquisto'] = abs($riga['prezzo_unitario_acquisto']);
-    $riga['imponibile_scontato'] = ($fattura->isNotaDiAccredito() ? abs($row->imponibile_scontato) : $row->imponibile_scontato);
+    $riga['imponibile_scontato'] = ($fattura->isNotaDiAccredito() ? -$row->imponibile_scontato : $row->imponibile_scontato);
     $riga['sconto_unitario'] = abs($riga['sconto_unitario']);
     $riga['sconto'] = abs($riga['sconto']);
     $riga['iva'] = abs($riga['iva']);

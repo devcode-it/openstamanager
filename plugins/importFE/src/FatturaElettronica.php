@@ -28,7 +28,7 @@ class FatturaElettronica
     /** @var array XML della fattura */
     protected $xml = null;
 
-    /** @var FatturaElettronica Fattura collegata */
+    /** @var Fattura Fattura collegata */
     protected $fattura = null;
 
     public function __construct($name)

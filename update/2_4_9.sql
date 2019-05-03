@@ -301,3 +301,6 @@ UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Stato d
 
 -- Widget spazio utilizzato
 INSERT INTO `zz_widgets` (`id`, `name`, `type`, `id_module`, `location`, `class`, `query`, `bgcolor`, `icon`, `print_link`, `more_link`, `more_link_type`, `php_include`, `text`, `enabled`, `order`, `help`) VALUES (NULL, 'Spazio utilizzato', 'chart', (SELECT id FROM zz_modules WHERE name = 'Stato dei servizi'), 'controller_right', 'col-md-12', NULL, '#4ccc4c', 'fa fa-hdd-o', '', '', NULL, './modules/stato_servizi/widgets/spazio_utilizzato.php', 'Spazio utilizzato', '1', '1', NULL);
+
+-- Aggiunta vista con data conclusione e flag rinnovabile nei contratti
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), 'Rinnovabile', 'IF(`co_contratti`.`rinnovabile`=1, \'SI\', \'NO\')', '6', '1', '0', '1', '', '', '0', '0', '0'), (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), 'Data conclusione', 'IF(data_conclusione=0, \'\', data_conclusione)', '7', '1', '0', '1', '', '', '0', '0', '0');

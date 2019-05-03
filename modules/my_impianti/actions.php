@@ -115,6 +115,21 @@ switch ($op) {
 
         break;
 
+    // Duplica impianto
+    case 'copy':
+
+        $dbo->query('CREATE TEMPORARY TABLE tmp SELECT * FROM my_impianti WHERE id= '.prepare($id_record));
+        $dbo->query('ALTER TABLE tmp DROP id');
+        $dbo->query('INSERT INTO my_impianti SELECT NULL,tmp. * FROM tmp');
+        $id_record = $dbo->lastInsertedID();
+        $dbo->query ('DROP TEMPORARY TABLE tmp');
+
+        $dbo->query ('UPDATE my_impianti SET matricola = CONCAT (matricola, " (copia)") WHERE id = '.prepare($id_record));
+
+        flash()->info(tr('Impianto duplicato correttamente!'));
+    
+        break;
+
     // Rimuovo impianto e scollego tutti i suoi componenti
     case 'delete':
         $dbo->query('DELETE FROM my_impianti WHERE id='.prepare($id_record));

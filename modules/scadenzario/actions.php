@@ -3,16 +3,15 @@
 include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
-
     case 'add':
-        $data = post("data");
-        $tipo = post("tipo");
-        $da_pagare = post("da_pagare");
-        $descrizione = post("descrizione");
+        $data = post('data');
+        $tipo = post('tipo');
+        $da_pagare = post('da_pagare');
+        $descrizione = post('descrizione');
 
-        $dbo->query("INSERT INTO co_scadenziario(descrizione, tipo, data_emissione, scadenza, da_pagare, pagato, data_pagamento) VALUES(".prepare($descrizione).", ".prepare($tipo).", CURDATE(), ".prepare($data).", ".prepare($da_pagare).", '0', '0000-00-00')");
+        $dbo->query('INSERT INTO co_scadenziario(descrizione, tipo, data_emissione, scadenza, da_pagare, pagato, data_pagamento) VALUES('.prepare($descrizione).', '.prepare($tipo).', CURDATE(), '.prepare($data).', '.prepare($da_pagare).", '0', '0000-00-00')");
         $id_record = $dbo->lastInsertedID();
-        
+
         flash()->info(tr('Scadenza inserita!'));
         break;
 
@@ -40,7 +39,7 @@ switch (post('op')) {
 
         break;
 
-    case "delete":
+    case 'delete':
         $dbo->query("DELETE FROM co_scadenziario WHERE id='".$id_record."'");
         flash()->info(tr('Scadenza eliminata!'));
         break;

@@ -67,16 +67,18 @@ class Query
         $date_filter = $matches[0];
 
         $filters = [];
-		if ($dates[0] != 'custom'){
-			foreach ($dates as $date) {
-				$filters[] = $date." BETWEEN '|period_start|' AND '|period_end|'";
-			}
-		}else{
-			foreach ($dates as $k => $v) {
-				if ($k < 1) continue;
-				$filters[] = $v;
-			}
-		}
+        if ($dates[0] != 'custom') {
+            foreach ($dates as $date) {
+                $filters[] = $date." BETWEEN '|period_start|' AND '|period_end|'";
+            }
+        } else {
+            foreach ($dates as $k => $v) {
+                if ($k < 1) {
+                    continue;
+                }
+                $filters[] = $v;
+            }
+        }
         $date_query = !empty($filters) && !empty(self::$segments) ? ' AND ('.implode(' OR ', $filters).')' : '';
 
         // Elenco delle sostituzioni

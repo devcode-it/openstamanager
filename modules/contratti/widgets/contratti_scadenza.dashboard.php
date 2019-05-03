@@ -22,7 +22,7 @@ if (!empty($rs)) {
         // Se scaduto, segna la riga in rosso
         $class = (strtotime($r['data_conclusione']) < strtotime(date('Y-m-d')) && !empty($data_conclusione)) ? 'danger' : '';
 
-        if( $class!='danger' ){
+        if ($class != 'danger') {
             // Se ore finite, segna la riga in rosso
             $class = ($r['ore'] < 1 && !empty($r['ore'])) ? 'danger' : '';
         }

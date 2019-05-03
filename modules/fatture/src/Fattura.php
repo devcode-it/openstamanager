@@ -332,7 +332,6 @@ class Fattura extends Document
      */
     public static function registraScadenza(Fattura $fattura, $importo, $scadenza, $is_pagato, $type = 'fattura')
     {
-
         //Calcolo la descrizione
         $descrizione = database()->fetchOne("SELECT CONCAT(co_tipidocumento.descrizione, CONCAT(' numero ', IF(numero_esterno!='', numero_esterno, numero))) AS descrizione FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='".$fattura->id."'")['descrizione'];
 
@@ -493,6 +492,25 @@ class Fattura extends Document
         return $numero;
     }
 
+    /**
+     * Restituisce i dati bancari in base al pagamento.
+     *
+     * @return array
+     */
+    public function getBanca()
+    {
+        $result = [];
+        $riba = database()->fetchOne('SELECT riba FROM co_pagamenti WHERE id ='.prepare($this->idpagamento));
+
+        if ($riba['riba'] == 1) {
+            $result = database()->fetchOne('SELECT codiceiban, appoggiobancario, bic FROM an_anagrafiche WHERE idanagrafica ='.prepare($this->idanagrafica));
+        } else {
+            $result = database()->fetchOne('SELECT iban AS codiceiban, nome AS appoggiobancario, bic FROM co_banche WHERE id='.prepare($this->idbanca));
+        }
+
+        return $result;
+    }
+
     protected function calcolaMarcaDaBollo()
     {
         $righe_bollo = $this->getRighe()->filter(function ($item, $key) {
@@ -541,23 +559,5 @@ class Fattura extends Document
         $riga->idconto = setting('Conto predefinito per la marca da bollo');
 
         $riga->save();
-    }
-
-    /**
-     * Restituisce i dati bancari in base al pagamento 
-     * 
-     * @return array
-     */
-    public function getBanca(){
-        $result = [];
-        $riba = database()->fetchOne('SELECT riba FROM co_pagamenti WHERE id =' .prepare($this->idpagamento));
-        
-        if ($riba['riba'] == 1){
-            $result = database()->fetchOne('SELECT codiceiban, appoggiobancario, bic FROM an_anagrafiche WHERE idanagrafica =' .prepare($this->idanagrafica));
-        }else{
-            $result = database()->fetchOne('SELECT iban AS codiceiban, nome AS appoggiobancario, bic FROM co_banche WHERE id=' .prepare($this->idbanca));
-        }
-
-        return $result;
     }
 }

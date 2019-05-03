@@ -65,6 +65,23 @@ class FatturaOrdinaria extends FatturaElettronica
     {
         $result = $this->getBody()['DatiBeniServizi']['DettaglioLinee'];
 
+        $riepolighi = $this->getBody()['DatiBeniServizi']['DatiRiepilogo'];
+        foreach ($riepolighi as $riepilogo) {
+            if (!empty($riepilogo['Arrotondamento'])) {
+                $descrizione = tr('Arrotondamento IVA _VALUE_', [
+                    '_VALUE_' => empty($riepilogo['Natura']) ? numberFormat($riepilogo['AliquotaIVA']).'%' : $riepilogo['Natura'],
+                ]);
+
+                $result[] = [
+                    'Descrizione' => $descrizione,
+                    'PrezzoUnitario' => $riepilogo['Arrotondamento'],
+                    'Quantita' => 1,
+                    'AliquotaIVA' => $riepilogo['AliquotaIVA'],
+                    'Natura' => $riepilogo['Natura'],
+                ];
+            }
+        }
+
         return $this->forceArray($result);
     }
 
@@ -145,6 +162,9 @@ class FatturaOrdinaria extends FatturaElettronica
             $obj->save();
         }
 
+        // Ricaricamento della fattura
+        $fattura->refresh();
+
         // Arrotondamenti differenti nella fattura XML
         $totali_righe = array_column($righe, 'PrezzoTotale');
         $totale_righe = sum($totali_righe);
@@ -152,7 +172,7 @@ class FatturaOrdinaria extends FatturaElettronica
         $dati_generali = $this->getBody()['DatiGenerali']['DatiGeneraliDocumento'];
         $totale_documento = $dati_generali['ImportoTotaleDocumento'];
 
-        $diff = $totale_documento ? $totale_documento - $fattura->totale : $totale_righe - $fattura->imponibile_scontato;
+        $diff = $totale_documento ? floatval($totale_documento) - $fattura->totale : $totale_righe - $fattura->imponibile_scontato;
         if (!empty($diff)) {
             // Rimozione dell'IVA calcolata automaticamente dal gestionale
             $iva_arrotondamento = database()->fetchOne('SELECT * FROM co_iva WHERE id='.prepare($iva[0]));

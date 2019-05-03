@@ -69,7 +69,7 @@ for ($i = 0; $i < sizeof($rs); ++$i) {
         echo '	<td></td>';
         echo '	<td></td>';
     } else {
-        echo '	<td>'.(($dir == 'uscita') ? $rs[$i]['numero'] : '-' ).'</td>';
+        echo '	<td>'.(($dir == 'uscita') ? $rs[$i]['numero'] : '-').'</td>';
         echo '	<td>'.$rs[$i]['numero_esterno'].'</td>';
         echo '	<td>'.date('d/m/Y', strtotime($rs[$i]['data'])).'</td>';
         echo '	<td>'.$rs[$i]['codice_tipo_documento_fe'].'</td>';

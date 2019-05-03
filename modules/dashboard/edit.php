@@ -585,7 +585,7 @@ if (empty($domenica)) {
 
 echo "
             minTime: '".setting('Inizio orario lavorativo')."',
-            maxTime: '".((setting('Fine orario lavorativo')=='00:00') ? :'23:59:59')."',
+            maxTime: '".((setting('Fine orario lavorativo') == '00:00') ?: '23:59:59')."',
 ";
 
 ?>

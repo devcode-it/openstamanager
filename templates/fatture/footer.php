@@ -163,7 +163,7 @@ if (!empty($record['rivalsainps'])) {
 
     $first_colspan = 3;
     $second_colspan = 2;
-    
+
     if (empty($sconto)) {
         --$first_colspan;
         --$second_colspan;

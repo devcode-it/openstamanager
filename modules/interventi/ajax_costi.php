@@ -44,7 +44,7 @@ if ($show_prezzi) {
         <th>'.tr('Totale diritto di chiamata', [], ['upper' => true]).'</th>
         <td class="text-right">'.moneyFormat($costi['dirittochiamata_costo'], 2).'</td>
         <td class="text-right">'.moneyFormat($costi['dirittochiamata_addebito'], 2).'</td>
-        <td class="text-right">'.moneyFormat($costi['dirittochiamata_scontato'],2 ).'</td>
+        <td class="text-right">'.moneyFormat($costi['dirittochiamata_scontato'], 2).'</td>
     </tr>
 
     <tr>
@@ -79,8 +79,8 @@ if ($show_prezzi) {
 	<tr class='.$hide.' >
         <th>'.tr('Imponibile', [], ['upper' => true]).'</th>
         <td class="text-right">'.moneyFormat($costi['totale_costo'], 2).'</td>
-        <td class="text-right">'.moneyFormat($costi['totale_addebito'] ,2).'</td>
-        <td class="text-right">'.moneyFormat($costi['totale_scontato'] ,2).'</td>
+        <td class="text-right">'.moneyFormat($costi['totale_addebito'], 2).'</td>
+        <td class="text-right">'.moneyFormat($costi['totale_scontato'], 2).'</td>
     </tr>
 
 

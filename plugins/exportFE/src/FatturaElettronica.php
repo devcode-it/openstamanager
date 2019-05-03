@@ -394,7 +394,7 @@ class FatturaElettronica
         $result[] = [
             'ProgressivoInvio' => $documento['progressivo_invio'],
             'FormatoTrasmissione' => ($cliente['tipo'] == 'Ente pubblico') ? 'FPA12' : 'FPR12',
-            'CodiceDestinatario' => !empty( $codice_destinatario ) ? $codice_destinatario : $default_code,
+            'CodiceDestinatario' => !empty($codice_destinatario) ? $codice_destinatario : $default_code,
         ];
 
         // Telefono di contatto
@@ -969,7 +969,7 @@ class FatturaElettronica
                 $dettaglio['DataFinePeriodo'] = $riga['data_fine_periodo'];
             }
 
-            $dettaglio['PrezzoUnitario'] = $riga->prezzo_unitario_vendita ? :0;
+            $dettaglio['PrezzoUnitario'] = $riga->prezzo_unitario_vendita ?: 0;
 
             // Sconto (2.2.1.10)
             $sconto = $riga->sconto;
@@ -992,10 +992,10 @@ class FatturaElettronica
             $aliquota = $riga->aliquota ?: $iva_descrizioni;
             $percentuale = floatval($aliquota->percentuale);
 
-            if($documento->isNotaDiAccredito()){
-                $dettaglio['PrezzoTotale'] = -$riga->imponibile_scontato ? :0;
-            }else{
-                $dettaglio['PrezzoTotale'] = $riga->imponibile_scontato ? :0;
+            if ($documento->isNotaDiAccredito()) {
+                $dettaglio['PrezzoTotale'] = -$riga->imponibile_scontato ?: 0;
+            } else {
+                $dettaglio['PrezzoTotale'] = $riga->imponibile_scontato ?: 0;
             }
             $dettaglio['AliquotaIVA'] = $percentuale;
 
@@ -1109,7 +1109,6 @@ class FatturaElettronica
      */
     protected static function getDatiPagamento($fattura)
     {
-
         $documento = $fattura->getDocumento();
 
         $fattura = Fattura::find($documento['id']);
@@ -1140,7 +1139,6 @@ class FatturaElettronica
             if (!empty($banca['bic'])) {
                 $pagamento['BIC'] = $banca['bic'];
             }
-
 
             $result[]['DettaglioPagamento'] = $pagamento;
         }

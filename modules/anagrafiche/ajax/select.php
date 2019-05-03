@@ -230,17 +230,17 @@ switch ($resource) {
             }
         }
         break;
-		
-	case 'nazioni':
-		$query = 'SELECT id AS id, CONCAT_WS(\' - \', iso2, nome) AS descrizione FROM an_nazioni |where| ORDER BY CASE WHEN iso2=\'IT\' THEN -1 ELSE iso2 END';
 
-		foreach ($elements as $element) {
-			$filter[] = 'id='.prepare($element);
-		}
+    case 'nazioni':
+        $query = 'SELECT id AS id, CONCAT_WS(\' - \', iso2, nome) AS descrizione FROM an_nazioni |where| ORDER BY CASE WHEN iso2=\'IT\' THEN -1 ELSE iso2 END';
 
-		if (!empty($search)) {
-			$search_fields[] = 'nome LIKE '.prepare('%'.$search.'%');
-		}
-       
+        foreach ($elements as $element) {
+            $filter[] = 'id='.prepare($element);
+        }
+
+        if (!empty($search)) {
+            $search_fields[] = 'nome LIKE '.prepare('%'.$search.'%');
+        }
+
         break;
 }

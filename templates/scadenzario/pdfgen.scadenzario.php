@@ -15,9 +15,9 @@ include_once $docroot.'/templates/pdfgen_variables.php';
 
 //Filtro in base al segmento
 $id_segment = $_SESSION['module_18']['id_segment'];
-$rs_segment = $dbo->fetchArray("SELECT * FROM zz_segments WHERE id=".prepare($id_segment));
+$rs_segment = $dbo->fetchArray('SELECT * FROM zz_segments WHERE id='.prepare($id_segment));
 
-$add_where = "AND ".$rs_segment[0]['clause'];
+$add_where = 'AND '.$rs_segment[0]['clause'];
 
 $body .= '<h3>'.$titolo.' dal '.Translator::dateToLocale($date_start).' al '.Translator::dateToLocale($date_end)."</h3>\n";
 $body .= "<table class=\"table_values\" cellspacing=\"0\" border=\"0\" cellpadding=\"0\" style=\"table-layout:fixed; border-color:#aaa;\">\n";

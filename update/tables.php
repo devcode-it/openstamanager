@@ -81,7 +81,7 @@ return [
     'or_righe_ordini',
     'or_statiordine',
     'or_tipiordine',
-	'zz_currencies',
+    'zz_currencies',
     'zz_documenti',
     'zz_documenti_categorie',
     'zz_email_print',

@@ -49,7 +49,7 @@ if ($rs[0]['dir'] == 'entrata') {
                             <th>'.tr('Data').':</th>
                             <td>'.Translator::dateToLocale($rs[0]['data']).'</td>
                         </tr>';
-} else if ($rs[0]['dir'] == 'uscita') {
+} elseif ($rs[0]['dir'] == 'uscita') {
     $dir = 'uscita';
     $modulo = 'Fatture di acquisto';
     echo "
@@ -72,9 +72,9 @@ if ($rs[0]['dir'] == 'entrata') {
                             <th>'.tr('Data').':</th>
                             <td>'.Translator::dateToLocale($rs[0]['data']).'</td>
                         </tr>';
-}else{
+} else {
     $rs = $dbo->fetchArray("SELECT * FROM co_scadenziario WHERE id='".$id_record."'");
-	echo "
+    echo "
                         <tr>
                                 <th width='120'>".tr('Descrizione').':</th>
                                 <td><input type="text" class="form-control" name="descrizione" value="'.$rs[0]['descrizione'].'"></td>
@@ -100,10 +100,10 @@ $totale_da_pagare = 0;
 $totale_pagato = 0;
 
 //Scelgo la query in base al segmento
-if($record['iddocumento']!=0){
-	$rs = $dbo->fetchArray('SELECT * FROM co_scadenziario WHERE iddocumento = (SELECT iddocumento FROM co_scadenziario s WHERE id='.prepare($id_record).') ORDER BY scadenza ASC');
-}else{
-	$rs = $dbo->fetchArray('SELECT * FROM co_scadenziario WHERE id='.prepare($id_record).' ORDER BY scadenza ASC');
+if ($record['iddocumento'] != 0) {
+    $rs = $dbo->fetchArray('SELECT * FROM co_scadenziario WHERE iddocumento = (SELECT iddocumento FROM co_scadenziario s WHERE id='.prepare($id_record).') ORDER BY scadenza ASC');
+} else {
+    $rs = $dbo->fetchArray('SELECT * FROM co_scadenziario WHERE id='.prepare($id_record).' ORDER BY scadenza ASC');
 }
 
 for ($i = 0; $i < count($rs); ++$i) {
@@ -124,7 +124,7 @@ for ($i = 0; $i < count($rs); ++$i) {
                             </td>
 
                             <td align="right">
-                                {[ "type": "number", "name": "scadenza['.$rs[$i]['id'].']", "decimals": 2, "value": "'.Translator::numberToLocale($rs[$i]['da_pagare'],2).'" ]}
+                                {[ "type": "number", "name": "scadenza['.$rs[$i]['id'].']", "decimals": 2, "value": "'.Translator::numberToLocale($rs[$i]['da_pagare'], 2).'" ]}
                             </td>
 
                             <td align="right">
@@ -181,13 +181,13 @@ echo '
 {( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
 <?php
-if($records[0]['iddocumento']==0){
-?>
+if ($records[0]['iddocumento'] == 0) {
+                            ?>
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>
 <?php
-}
+                        }
 ?>
 
 <script>
@@ -197,8 +197,8 @@ if($records[0]['iddocumento']==0){
         totale_ok();
         
         <?php
-        if($record['iddocumento']!=0){
-        ?>
+        if ($record['iddocumento'] != 0) {
+            ?>
         $('input[name*=scadenza]').keyup( function(){ totale_ok(); } );
         <?php
         }

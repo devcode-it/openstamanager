@@ -212,7 +212,7 @@ elseif (get('lev') == '1') {
                 }
 
                 // Mostro il saldo finale del conto di livello 3
-                $body .= "		<tr><td class='br bb padded'></td><td class='br bb padded'>".$rs3[$z]['numero'].' '.$rs3[$z]['descrizione']."</td><td class='br bb padded text-right'>".moneyFormat(abs($dare),2)."</td><td class='bb padded text-right'>".moneyFormat(abs($avere), 2)."</td></tr>\n";
+                $body .= "		<tr><td class='br bb padded'></td><td class='br bb padded'>".$rs3[$z]['numero'].' '.$rs3[$z]['descrizione']."</td><td class='br bb padded text-right'>".moneyFormat(abs($dare), 2)."</td><td class='bb padded text-right'>".moneyFormat(abs($avere), 2)."</td></tr>\n";
             }
         }
     }
@@ -220,8 +220,8 @@ elseif (get('lev') == '1') {
     // Stampa "Costi/Ricavi" se conto economico
     if ($rs1[0]['descrizione'] == 'Economico') {
         $body .= "		<tr><th colspan='3' class='br bb padded'>RICAVI</th><th align='right' class='bb padded'>".moneyFormat(sum($ricavi), 2)."</th></tr>\n";
-        $body .= "		<tr><th colspan='3' class='br bb padded'>COSTI</th><th align='right' class='bb padded'>".moneyFormat(sum($costi),2)."</th></tr>\n";
-        $body .= "		<tr><th colspan='3' class='br padded'>UTILE</th><th class='padded' align='right'>".moneyFormat(sum($ricavi) - sum($costi),2)."</th></tr>\n";
+        $body .= "		<tr><th colspan='3' class='br bb padded'>COSTI</th><th align='right' class='bb padded'>".moneyFormat(sum($costi), 2)."</th></tr>\n";
+        $body .= "		<tr><th colspan='3' class='br padded'>UTILE</th><th class='padded' align='right'>".moneyFormat(sum($ricavi) - sum($costi), 2)."</th></tr>\n";
     }
 
     // Stampa "Attività/Passività" se stato patrimoniale
@@ -307,7 +307,7 @@ elseif (get('lev') == '1') {
             $body .= "		<tr><th class='br bb padded'>&nbsp;</th><th align='right' class='bb br padded'>&nbsp;</th>\n";
 
             // Utile
-            $body .= "		<th class='br bb padded'>UTILE</th><th align='right' class='bb padded'>" .moneyFormat(abs($utile_perdita), 2)."</th></tr>\n";
+            $body .= "		<th class='br bb padded'>UTILE</th><th align='right' class='bb padded'>".moneyFormat(abs($utile_perdita), 2)."</th></tr>\n";
         }
 
         // PAREGGIO 1

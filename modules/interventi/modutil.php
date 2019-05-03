@@ -376,7 +376,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
             $rs = $dbo->fetchArray($query);
 
             $sconto = $rst[$i]['tot_sconto'];
-            $sconto_unitario = $sconto/$ore;
+            $sconto_unitario = $sconto / $ore;
             $subtot = $rst[$i]['tot_prezzo_ore_consuntivo'];
             $iva = ($subtot - $sconto) / 100 * $rs[0]['percentuale'];
             $iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];

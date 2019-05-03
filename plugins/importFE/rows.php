@@ -176,8 +176,8 @@ if (!empty($righe)) {
                     '_UM_' => $riga['UnitaMisura'],
                 ]).'</small><br>
                 
-                <small>'.tr('Aliquota iva _PRC_% _DESC_', [
-                    '_PRC_' => Translator::numberToLocale($riga['AliquotaIVA']),
+                <small>'.tr('Aliquota IVA _VALUE_ _DESC_', [
+                    '_VALUE_' => empty($riga['Natura']) ? numberFormat($riga['AliquotaIVA']).'%' : $riga['Natura'],
                     '_DESC_' => $riga['RiferimentoNormativo'] ? ' - '.$riga['RiferimentoNormativo'] : '',
                 ]).'</small>
             </td>
@@ -213,7 +213,6 @@ if (!empty($righe)) {
                 first_conto = $(this);
             }
         });
-
 
         if(first_iva) {
             $iva = first_iva.selectData();

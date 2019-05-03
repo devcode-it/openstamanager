@@ -2,13 +2,16 @@
 
 include_once __DIR__.'/../../core.php';
 
-$fattura_pa = \Plugins\ImportFE\FatturaElettronica::manage(get('filename'));
+$filename = get('filename');
+$fattura_pa = \Plugins\ImportFE\FatturaElettronica::manage($filename);
+
+$filename = basename($filename, '.p7m');
 
 echo '
 <form action="'.$rootdir.'/actions.php" method="post">
     <input type="hidden" name="id_module" value="'.$id_module.'">
     <input type="hidden" name="id_plugin" value="'.$id_plugin.'">
-    <input type="hidden" name="filename" value="'.get('filename').'">
+    <input type="hidden" name="filename" value="'.$filename.'">
     <input type="hidden" name="id_segment" value="'.get('id_segment').'">
     <input type="hidden" name="id" value="'.get('id').'">
     <input type="hidden" name="backto" value="record-edit">
@@ -47,7 +50,7 @@ echo '
 			<h4>'.$dati_generali['Numero'];
 
         echo '
-				<a href="'.$structure->fileurl('view.php').'?filename='.get('filename').'" class="btn btn-info btn-xs'.((!ends_with(get('filename'), '.p7m')) ? '' : ' disabled').'" target="_blank" >
+				<a href="'.$structure->fileurl('view.php').'?filename='.$filename.'" class="btn btn-info btn-xs" target="_blank" >
 					<i class="fa fa-eye"></i> '.tr('Visualizza').'
 				</a>';
 

@@ -4,7 +4,7 @@ include_once __DIR__.'/../../core.php';
 
 $id = post('id');
 
-switch (post('op')) {
+switch (filter('op')) {
     case 'check':
         $api = json_decode(get_remote_data('https://api.github.com/repos/devcode-it/openstamanager/releases'), true);
 
@@ -162,6 +162,25 @@ switch (post('op')) {
         if (!empty($class)) {
             $dbo->query('UPDATE zz_widgets SET class='.prepare($class).' WHERE id='.prepare($id[1]));
         }
+
+        break;
+		
+	case 'size':
+	
+        $folder = filter('folder');
+		
+		if (!empty($folder)){
+			if ($folder=='backup')
+				$folder = App::getConfig()['backup_dir'];
+			else if ($folder=='files')
+				$folder = DOCROOT.'/files/';
+			else if ($folder=='logs')
+				$folder = DOCROOT.'/logs/';
+		}else{
+			$folder = DOCROOT.'/';
+		}
+		
+		echo Util\FileSystem::size($folder);
 
         break;
 }

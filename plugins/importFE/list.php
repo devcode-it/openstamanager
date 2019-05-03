@@ -81,6 +81,11 @@ function download(button, file) {
 				buttonRestore(button, restore);
 				$(button).prop("disabled", true);
             }
+        },
+        error: function(xhr) {
+            alert("'.tr('Errore').': " + xhr.responseJSON.error.message);
+
+            buttonRestore(button, restore);
         }
     });
 }

@@ -34,6 +34,17 @@ class FatturaElettronica
     public function __construct($name)
     {
         $this->file = static::getImportDirectory().'/'.$name;
+
+        if (ends_with($name, '.p7m')) {
+            $file = XML::decodeP7M($this->file);
+
+            if (!empty($file)) {
+                delete($this->file);
+
+                $this->file = $file;
+            }
+        }
+
         $this->xml = XML::readFile($this->file);
 
         // Individuazione fattura pre-esistente

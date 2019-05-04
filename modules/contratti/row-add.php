@@ -9,7 +9,7 @@ $documento = Contratto::find($id_record);
 
 // Impostazioni per la gestione
 $options = [
-    'op' => 'addriga',
+    'op' => 'manage_riga',
     'action' => 'add',
     'dir' => $documento->direzione,
     'idanagrafica' => $documento['idanagrafica'],
@@ -43,12 +43,15 @@ if ($listino[0]['prc_guadagno'] > 0) {
 $file = 'riga';
 if (get('is_descrizione') !== null) {
     $file = 'descrizione';
+
+    $options['op'] = 'manage_descrizione';
 } elseif (get('is_articolo') !== null) {
     $file = 'articolo';
+
+    $options['op'] = 'manage_articolo';
 } elseif (get('is_sconto') !== null) {
     $file = 'sconto';
 
     $options['op'] = 'manage_sconto';
 }
-
 echo App::load($file.'.php', $result, $options);

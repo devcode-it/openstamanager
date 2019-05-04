@@ -19,6 +19,29 @@ abstract class Document extends Model
         return $descrizioni->merge($righe)->merge($articoli)->merge($sconti)->sortBy('order');
     }
 
+    /**
+     * Restituisce la collezione di righe e articoli con valori rilevanti per i conti, raggruppate sulla base dei documenti di provenienza.
+     * La chiave è la serializzazione del documento di origine, oppure null in caso non esista.
+     *
+     * @return iterable
+     */
+    public function getRigheRaggruppate()
+    {
+        $righe = $this->getRighe();
+
+        $groups = $righe->groupBy(function ($item, $key) {
+            if (!$item->hasOriginal()) {
+                return null;
+            }
+
+            $parent = $item->getOriginal()->parent;
+
+            return serialize($parent);
+        });
+
+        return $groups;
+    }
+
     abstract public function righe();
 
     abstract public function articoli();
@@ -95,6 +118,16 @@ abstract class Document extends Model
     public function getGuadagnoAttribute()
     {
         return $this->calcola('guadagno');
+    }
+
+    public function delete()
+    {
+        $righe = $this->getRighe();
+        foreach ($righe as $riga) {
+            $riga->delete();
+        }
+
+        return parent::delete();
     }
 
     /**

@@ -14,7 +14,8 @@ trait MorphTrait
         return $this->morphedByMany($this->original_type, 'original', $this->table, 'id');
     }
 
-    public function getOriginal(){
+    public function getOriginal()
+    {
         return $this->original()->first();
     }
 }

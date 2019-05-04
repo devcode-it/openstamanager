@@ -100,7 +100,7 @@ if (Auth::check()) {
                 id_module: \''.$id_module.'\',
                 id_record: \''.$id_record.'\',
 
-                aggiornamenti_id: \''.($dbo->isInstalled() ? Modules::get('Aggiornamenti')['id'] : '').'\',
+                order_manager_id: \''.($dbo->isInstalled() ? Modules::get('Stato dei serivizi')['id'] : '').'\',
 
                 cifre_decimali: '.setting('Cifre decimali per importi').',
 

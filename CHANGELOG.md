@@ -30,12 +30,14 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Aggiunto export massivo XML fatture
  - Aggiunte le impostazioni "Riferimento dei documenti nelle stampe" e "Riferimento dei documenti in Fattura Elettronica" per permettere l'inclusione o meno delle relative diciture in stampe e Fattura Elettronica
  - Aggiunto supporto all'importazione delle Fatture Elettroniche Semplificate
+ - Aggiunto modulo **Stato dei servizi** per la gestione di widget e moduli, e la visualizzazione dello spazione occupato
 
 ### Modificato (Changed)
 
  - Corretto calcolo marca da bollo contemplando solo le righe con esenzione iva da natura N1 a N4
  - Aggiornati stylesheet per le notifiche fattura elettronica
  - Possibilità di ricercare per valori maggiori/uguali o minori/uguali sui campi delle tabelle (importi)
+ - Spostamento della gestione di widget e moduli da **Aggiornamenti** al modulo **Stato dei servizi**
 
 ### Fixed
 

@@ -295,6 +295,9 @@ INSERT INTO `zz_widgets` (`id`, `name`, `type`, `id_module`, `location`, `class`
 -- Aggiunta ore rimanenti nel contratto per preavviso rinnovo
 ALTER TABLE `co_contratti` ADD `ore_preavviso_rinnovo` INT(11) NULL AFTER `giorni_preavviso_rinnovo`;
 
+-- Moduli Stato dei servizi
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Stato dei servizi', 'Stato dei servizi', 'stato_servizi', 'custom', '', 'fa fa-clock-o', '2.4.9', '2.4.9', '1', NULL, '1', '1');
+UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Stato dei servizi' AND `t2`.`name` = 'Strumenti') SET `t1`.`parent` = `t2`.`id`;
 
 -- Widget spazio utilizzato
-INSERT INTO `zz_widgets` (`id`, `name`, `type`, `id_module`, `location`, `class`, `query`, `bgcolor`, `icon`, `print_link`, `more_link`, `more_link_type`, `php_include`, `text`, `enabled`, `order`, `help`) VALUES (NULL, 'Spazio utilizzato', 'chart', (SELECT id FROM zz_modules WHERE name = 'Aggiornamenti'), 'controller_right', 'col-md-12', NULL, '#4ccc4c', 'fa fa-hdd-o', '', '', NULL, './modules/aggiornamenti/widgets/spazio_utilizzato.php', 'Spazio utilizzato', '1', '1', NULL); 
+INSERT INTO `zz_widgets` (`id`, `name`, `type`, `id_module`, `location`, `class`, `query`, `bgcolor`, `icon`, `print_link`, `more_link`, `more_link_type`, `php_include`, `text`, `enabled`, `order`, `help`) VALUES (NULL, 'Spazio utilizzato', 'chart', (SELECT id FROM zz_modules WHERE name = 'Stato dei servizi'), 'controller_right', 'col-md-12', NULL, '#4ccc4c', 'fa fa-hdd-o', '', '', NULL, './modules/stato_servizi/widgets/spazio_utilizzato.php', 'Spazio utilizzato', '1', '1', NULL);

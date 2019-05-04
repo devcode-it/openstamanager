@@ -148,7 +148,7 @@ class Preventivo extends Document
         $this->interventi()->update(['id_preventivo' => null]);
         $revision = $this->master_revision;
 
-        $result =  parent::delete();
+        $result = parent::delete();
 
         self::where('master_revision', $revision)->delete();
 

@@ -4,9 +4,9 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
-use Modules\Preventivi\Components\Descrizione;
 use Modules\Interventi\TipoSessione;
 use Modules\Preventivi\Components\Articolo;
+use Modules\Preventivi\Components\Descrizione;
 use Modules\Preventivi\Components\Riga;
 use Modules\Preventivi\Components\Sconto;
 use Modules\Preventivi\Preventivo;
@@ -31,29 +31,29 @@ switch (post('op')) {
 
     case 'update':
         if (isset($id_record)) {
-            $preventivo->idstato= post('idstato');
-            $preventivo->nome= post('nome');
-            $preventivo->idanagrafica= post('idanagrafica');
-            $preventivo->idsede= post('idsede');
-            $preventivo->idagente= post('idagente');
-            $preventivo->idreferente= post('idreferente');
-            $preventivo->idpagamento= post('idpagamento');
-            $preventivo->idporto= post('idporto');
-            $preventivo->tempi_consegna= post('tempi_consegna');
-            $preventivo->numero= post('numero');
-            $preventivo->data_bozza= post('data_bozza');
-            $preventivo->data_accettazione= post('data_accettazione');
-            $preventivo->data_rifiuto= post('data_rifiuto');
-            $preventivo->data_conclusione= post('data_conclusione');
-            $preventivo->esclusioni= post('esclusioni');
-            $preventivo->descrizione= post('descrizione');
-            $preventivo->id_documento_fe= post('id_documento_fe');
-            $preventivo->num_item= post('num_item');
-            $preventivo->codice_cig= post('codice_cig');
-            $preventivo->codice_cup= post('codice_cup');
-            $preventivo->validita= post('validita');
-            $preventivo->idtipointervento= post('idtipointervento');
-            $preventivo->idiva= post('idiva');
+            $preventivo->idstato = post('idstato');
+            $preventivo->nome = post('nome');
+            $preventivo->idanagrafica = post('idanagrafica');
+            $preventivo->idsede = post('idsede');
+            $preventivo->idagente = post('idagente');
+            $preventivo->idreferente = post('idreferente');
+            $preventivo->idpagamento = post('idpagamento');
+            $preventivo->idporto = post('idporto');
+            $preventivo->tempi_consegna = post('tempi_consegna');
+            $preventivo->numero = post('numero');
+            $preventivo->data_bozza = post('data_bozza');
+            $preventivo->data_accettazione = post('data_accettazione');
+            $preventivo->data_rifiuto = post('data_rifiuto');
+            $preventivo->data_conclusione = post('data_conclusione');
+            $preventivo->esclusioni = post('esclusioni');
+            $preventivo->descrizione = post('descrizione');
+            $preventivo->id_documento_fe = post('id_documento_fe');
+            $preventivo->num_item = post('num_item');
+            $preventivo->codice_cig = post('codice_cig');
+            $preventivo->codice_cup = post('codice_cup');
+            $preventivo->validita = post('validita');
+            $preventivo->idtipointervento = post('idtipointervento');
+            $preventivo->idiva = post('idiva');
 
             $preventivo->save();
 

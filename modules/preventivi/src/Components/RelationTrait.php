@@ -28,5 +28,4 @@ trait RelationTrait
 
         return parent::delete();
     }
-
 }

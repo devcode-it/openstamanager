@@ -170,16 +170,15 @@ trait RelationTrait
         elseif (!empty($this->idordine)) {
             $database->query('UPDATE or_righe_ordini SET qta_evasa = qta_evasa + '.$diff.' WHERE descrizione = '.prepare($this->descrizione).' AND idarticolo = '.prepare($this->idarticolo).' AND idordine = '.prepare($this->idordine).' AND idiva = '.prepare($this->idiva).' AND qta_evasa < qta LIMIT 1');
         }
-		
+
         // Se c'è un collegamento ad un preventivo, aggiorno la quantità evasa
         elseif (!empty($this->idpreventivo)) {
             $database->query('UPDATE co_righe_preventivi SET qta_evasa = qta_evasa + '.$diff.' WHERE descrizione = '.prepare($this->descrizione).' AND idarticolo = '.prepare($this->idarticolo).' AND idpreventivo = '.prepare($this->idpreventivo).' AND idiva = '.prepare($this->idiva).' AND qta_evasa < qta LIMIT 1');
         }
-		
+
         // Se c'è un collegamento ad un contratto, aggiorno la quantità evasa
         elseif (!empty($this->idcontratto)) {
             $database->query('UPDATE co_righe_contratti SET qta_evasa = qta_evasa + '.$diff.' WHERE descrizione = '.prepare($this->descrizione).' AND idarticolo = '.prepare($this->idarticolo).' AND idcontratto = '.prepare($this->idcontratto).' AND idiva = '.prepare($this->idiva).' AND qta_evasa < qta LIMIT 1');
         }
-		
     }
 }

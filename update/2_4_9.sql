@@ -301,3 +301,8 @@ UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Stato d
 
 -- Widget spazio utilizzato
 INSERT INTO `zz_widgets` (`id`, `name`, `type`, `id_module`, `location`, `class`, `query`, `bgcolor`, `icon`, `print_link`, `more_link`, `more_link_type`, `php_include`, `text`, `enabled`, `order`, `help`) VALUES (NULL, 'Spazio utilizzato', 'chart', (SELECT id FROM zz_modules WHERE name = 'Stato dei servizi'), 'controller_right', 'col-md-12', NULL, '#4ccc4c', 'fa fa-hdd-o', '', '', NULL, './modules/stato_servizi/widgets/spazio_utilizzato.php', 'Spazio utilizzato', '1', '1', NULL);
+
+-- Relazione tra le righe dei documenti
+ALTER TABLE `co_righe_documenti` ADD `original_id` int(11), ADD `original_type` varchar(255);
+ALTER TABLE `or_righe_ordini` ADD `original_id` int(11), ADD `original_type` varchar(255);
+ALTER TABLE `dt_righe_ddt` ADD `original_id` int(11), ADD `original_type` varchar(255);

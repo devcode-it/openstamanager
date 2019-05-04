@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 abstract class Description extends Model
 {
+    use MorphTrait;
+
     protected $guarded = [];
 
     public static function build(Document $document, $bypass = false)
@@ -38,7 +40,7 @@ abstract class Description extends Model
 
         $this->attributes['qta'] = $value;
 
-        $this->evasione($diff);
+        $this->evasione(-$diff);
 
         return $diff;
     }
@@ -129,11 +131,10 @@ abstract class Description extends Model
         // Azioni specifiche successive
         $model->customAfterDataCopiaIn($this);
 
-        $model->save();
+        $model->original_id = $this->id;
+        $model->original_type = $current;
 
-        // Rimozione quantità evasa
-        $this->qta_evasa = $this->qta_evasa + abs($attributes['qta']);
-        $this->save();
+        $model->save();
 
         return $model;
     }
@@ -164,6 +165,12 @@ abstract class Description extends Model
 
     protected function evasione($diff)
     {
+        if ($this->hasOriginal()) {
+            $original = $this->getOriginal();
+
+            $original->qta_evasa -= $diff;
+            $original->save();
+        }
     }
 
     /**
@@ -199,13 +206,15 @@ abstract class Description extends Model
     {
         parent::boot();
 
+        $table = parent::getTableName();
+
         if (!$bypass) {
-            static::addGlobalScope('descriptions', function (Builder $builder) {
-                $builder->where('is_descrizione', '=', 1);
+            static::addGlobalScope('descriptions', function (Builder $builder) use ($table) {
+                $builder->where($table.'.is_descrizione', '=', 1);
             });
         } else {
-            static::addGlobalScope('not_descriptions', function (Builder $builder) {
-                $builder->where('is_descrizione', '=', 0);
+            static::addGlobalScope('not_descriptions', function (Builder $builder) use ($table) {
+                $builder->where($table.'.is_descrizione', '=', 0);
             });
         }
     }

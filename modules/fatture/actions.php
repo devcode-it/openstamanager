@@ -607,8 +607,8 @@ switch (post('op')) {
                     if (!empty($rsa[$i]['idarticolo'])) {
                         add_movimento_magazzino($rsa[$i]['idarticolo'], $rsa[$i]['qta'], ['iddocumento' => $id_record]);
                     }
-					
-					// Ripristino le quantità da evadere nel contratto
+
+                    // Ripristino le quantità da evadere nel contratto
                     $dbo->update('co_righe_contratti',
                         [
                             'qta_evasa' => 0,
@@ -617,16 +617,14 @@ switch (post('op')) {
                             'idcontratto' => $idcontratto,
                         ]
                     );
-					
                 }
             } else {
-				
-				$rs5 = $dbo->fetchArray('SELECT idarticolo, id, qta, descrizione FROM co_righe_documenti WHERE  id = '.prepare($idriga).'  AND idintervento IS NULL');
+                $rs5 = $dbo->fetchArray('SELECT idarticolo, id, qta, descrizione FROM co_righe_documenti WHERE  id = '.prepare($idriga).'  AND idintervento IS NULL');
                 if (!empty($idarticolo)) {
                     rimuovi_articolo_dafattura($rs5[0]['idarticolo'], $id_record, $idriga);
                 }
-				
-				// Ripristino le quantità da evadere nel contratto
+
+                // Ripristino le quantità da evadere nel contratto
                 $dbo->update('co_righe_contratti',
                     [
                         'qta_evasa' => 0,

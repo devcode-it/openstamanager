@@ -18,4 +18,9 @@ abstract class Model extends Original
     {
         return new static();
     }
+
+    public static function getTableName()
+    {
+        return with(new static())->getTable();
+    }
 }

@@ -128,8 +128,10 @@ abstract class Article extends Row
     {
         parent::boot(true);
 
-        static::addGlobalScope('articles', function (Builder $builder) {
-            $builder->whereNotNull('idarticolo')->where('idarticolo', '<>', 0);
+        $table = parent::getTableName();
+
+        static::addGlobalScope('articles', function (Builder $builder) use ($table) {
+            $builder->whereNotNull($table.'.idarticolo')->where($table.'.idarticolo', '<>', 0);
         });
     }
 

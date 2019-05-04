@@ -198,9 +198,6 @@ switch (post('op')) {
             flash()->info(tr('Riga aggiunta!'));
         }
 
-        // Ricalcolo inps, ritenuta e bollo
-        ricalcola_costiagg_fattura($id_record);
-
         break;
 
     case 'manage_descrizione':
@@ -265,9 +262,9 @@ switch (post('op')) {
 
     // eliminazione contratto
     case 'delete':
-        $dbo->query('DELETE FROM co_contratti WHERE id='.prepare($id_record));
         $dbo->query('DELETE FROM co_promemoria WHERE idcontratto='.prepare($id_record));
-        $dbo->query('DELETE FROM co_righe_contratti WHERE idcontratto='.prepare($id_record));
+
+        $contratto->delete();
 
         flash()->info(tr('Contratto eliminato!'));
 

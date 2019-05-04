@@ -24,8 +24,6 @@ $result = $riga->toArray();
 $result['prezzo'] = $riga->prezzo_unitario_vendita;
 
 // Importazione della gestione dedicata
-
-// Importazione della gestione dedicata
 $file = 'riga';
 if ($riga->isDescrizione()) {
     $file = 'descrizione';

@@ -54,4 +54,5 @@ if (get('is_descrizione') !== null) {
 
     $options['op'] = 'manage_sconto';
 }
+
 echo App::load($file.'.php', $result, $options);

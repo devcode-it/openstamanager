@@ -119,7 +119,7 @@ function editRow(id){
 }
 
 function deleteRow(id){
-    if(confirm("'.tr('Rimuovere questa riga dal contratto?').'")){ 
+    if(confirm("'.tr('Rimuovere questa riga dal documento?').'")){ 
         $("#delete-form-" + id).submit();
     }
 }

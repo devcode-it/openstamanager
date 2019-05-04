@@ -131,6 +131,30 @@ class Preventivo extends Document
         return $this->hasMany(Intervento::class, 'id_preventivo');
     }
 
+    public function fixBudget()
+    {
+        $this->budget = $this->imponibile_scontato;
+    }
+
+    public function save(array $options = [])
+    {
+        $this->fixBudget();
+
+        return parent::save($options);
+    }
+
+    public function delete()
+    {
+        $this->interventi()->update(['id_preventivo' => null]);
+        $revision = $this->master_revision;
+
+        $result =  parent::delete();
+
+        self::where('master_revision', $revision)->delete();
+
+        return $result;
+    }
+
     // Metodi statici
 
     /**

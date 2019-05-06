@@ -7,7 +7,7 @@ include_once DOCROOT.'/modules/interventi/modutil.php';
 $id_iva = setting('Iva predefinita');
 $iva = $dbo->fetchOne('SELECT * FROM co_iva WHERE id='.prepare($id_iva));
 
-$interventi = $dbo->fetchArray('SELECT * FROM in_interventi WHERE sconto_globale != 0 OR sconto_globale != NULL');
+$interventi = $dbo->fetchArray('SELECT * FROM in_interventi WHERE sconto_globale != 0 AND sconto_globale != NULL');
 foreach ($interventi as $intervento) {
     $costi = get_costi_intervento($intervento['id']);
     $sconto_globale = $costi['sconto_globale'];

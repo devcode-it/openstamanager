@@ -346,3 +346,7 @@ UPDATE `zz_views` SET `order` = 12 WHERE `id_module` IN (SELECT `id` FROM `zz_mo
 
 -- Aggiornamento widget "Fatturato" (iva esclusa)
 UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS('' '', REPLACE(REPLACE(REPLACE(FORMAT((SELECT SUM(subtotale-sconto-co_righe_documenti.ritenutaacconto)), 2), '','', ''#''), ''.'', '',''), ''#'', ''.''), ''&euro;'') AS dato FROM (co_righe_documenti INNER JOIN co_documenti ON co_righe_documenti.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=''entrata'' |segment| AND data >= ''|period_start|'' AND data <= ''|period_end|'' AND 1=1', `help` = 'Fatturato IVA esclusa.' WHERE `zz_widgets`.`name` = 'Fatturato';
+
+
+-- Aggiornamento widget "Acquisti" (iva esclusa)
+UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS('' '', REPLACE(REPLACE(REPLACE(FORMAT((SELECT SUM(subtotale-sconto-co_righe_documenti.ritenutaacconto)), 2), '','', ''#''), ''.'', '',''), ''#'', ''.''), ''&euro;'') AS dato FROM (co_righe_documenti INNER JOIN co_documenti ON co_righe_documenti.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=''uscita'' |segment| AND data >= ''|period_start|'' AND data <= ''|period_end|'' AND 1=1', `help` = 'Fatturato IVA esclusa.' WHERE `zz_widgets`.`name` = 'Acquisti';

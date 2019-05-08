@@ -77,7 +77,8 @@ echo '
                 <td colspan=2 class="border-full"'.(!$fattura_accompagnatoria ? ' style="height:20mm;"' : '').'>
                     <p class="small-bold">'.tr('Spett.le', [], ['upper' => true]).'</p>
                     <p>$c_ragionesociale$</p>
-                    <p>$c_indirizzo$<br>$c_citta_full$</p>
+					<p>'.(!empty($c_indirizzo) ? $c_indirizzo : '').(!empty($c_citta_full) ? '<br>'.$c_citta_full : '').'</p>
+					<small>'.(!empty($c_codice_destinatario) ? tr('Cod.Fatturazione').': '.$c_codice_destinatario : '').'</small>
                 </td>
             </tr>
 

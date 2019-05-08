@@ -83,4 +83,17 @@ switch ($resource) {
         echo json_encode($results);
 
         break;
+		
+	case 'get_mansioni':
+        $q = "SELECT DISTINCT mansione FROM an_referenti";
+        $rs = $dbo->fetchArray($q);
+        $n = sizeof($rs);
+
+        for ($i = 0; $i < $n; ++$i) {
+            echo html_entity_decode($rs[$i]['mansione']);
+            if (($i + 1) < $n) {
+                echo '|';
+            }
+        }
+        break;
 }

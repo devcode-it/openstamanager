@@ -111,7 +111,7 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati dei contratti'), 'Descrizione', 'descrizione', 2, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati dei contratti'), 'id', 'id', 1, 0, 0, 1, 0);
 
--- Aggiornamento sconti incodizionati
+-- Aggiornamento sconti incondizionati
 ALTER TABLE `co_documenti` DROP `sconto_globale`, DROP `tipo_sconto_globale`;
 ALTER TABLE `co_preventivi` DROP `sconto_globale`, DROP `tipo_sconto_globale`;
 ALTER TABLE `co_contratti` DROP `sconto_globale`, DROP `tipo_sconto_globale`;
@@ -283,7 +283,7 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `
 -- Aggiunta vista ore rimanenti nei contratti
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name`="Contratti"), 'Ore rimanenti', '( (SELECT SUM(co_righe_contratti.qta) FROM co_righe_contratti WHERE co_righe_contratti.um=''ore'' AND co_righe_contratti.idcontratto=co_contratti.id) - IFNULL( (SELECT SUM(in_interventi_tecnici.ore) FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id WHERE in_interventi.id_contratto=co_contratti.id ), 0) )', '5', '1', '0', '1', '', '', '0', '0', '0');
 
--- inserimento stato intervento da programmare
+-- Inserimento stato intervento da programmare
 INSERT INTO `in_statiintervento` (`idstatointervento`, `descrizione`, `colore`, `can_delete`, `completato`, `created_at`, `notifica`, `id_email`, `destinatari`) VALUES ('DAP', 'Da programmare', '#2deded', '1', '0', NULL, '0', NULL, NULL);
 
 -- Widget attività in programmazione
@@ -342,3 +342,7 @@ UPDATE `zz_views` SET `query` = '`destinatari`.`ragione_sociale`' WHERE `id_modu
 UPDATE `zz_views` SET `order` = 10 WHERE `id_module` IN (SELECT `id` FROM `zz_modules` WHERE `name` IN('Ddt di vendita', 'Ddt di acquisto')) AND `name` = 'icon_Stato';
 UPDATE `zz_views` SET `order` = 11 WHERE `id_module` IN (SELECT `id` FROM `zz_modules` WHERE `name` IN('Ddt di vendita', 'Ddt di acquisto')) AND `name` = 'icon_title_Stato';
 UPDATE `zz_views` SET `order` = 12 WHERE `id_module` IN (SELECT `id` FROM `zz_modules` WHERE `name` IN('Ddt di vendita', 'Ddt di acquisto')) AND `name` = 'dir';
+
+
+-- Aggiornamento widget "Fatturato" (iva esclusa)
+UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS('' '', REPLACE(REPLACE(REPLACE(FORMAT((SELECT SUM(subtotale-sconto-co_righe_documenti.ritenutaacconto)), 2), '','', ''#''), ''.'', '',''), ''#'', ''.''), ''&euro;'') AS dato FROM (co_righe_documenti INNER JOIN co_documenti ON co_righe_documenti.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=''entrata'' |segment| AND data >= ''|period_start|'' AND data <= ''|period_end|'' AND 1=1', `help` = 'Fatturato IVA esclusa.' WHERE `zz_widgets`.`name` = 'Fatturato';

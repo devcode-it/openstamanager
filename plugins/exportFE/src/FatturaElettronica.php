@@ -802,13 +802,13 @@ class FatturaElettronica
             if (!empty($element['num_item'])) {
                 $dati['NumItem'] = $element['num_item'];
             }
-
+			
+			if (!empty($element['codice_cup'])) {
+                $dati['CodiceCUP'] = $element['codice_cup'];
+            }
+			
             if (!empty($element['codice_cig'])) {
                 $dati['CodiceCIG'] = $element['codice_cig'];
-            }
-
-            if (!empty($element['codice_cup'])) {
-                $dati['CodiceCUP'] = $element['codice_cup'];
             }
 
             $result[] = $dati;

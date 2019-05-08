@@ -18,8 +18,12 @@ include_once __DIR__.'/../../core.php';
 					{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "value": "$descrizione$", "required": 1 ]}
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-4">
 					{[ "type": "select", "label": "<?php echo tr('Codice Modalità (Fatturazione Elettronica)'); ?>", "name": "codice_modalita_pagamento_fe", "value": "$codice_modalita_pagamento_fe$", "values": "query=SELECT codice as id, CONCAT(codice, ' - ', descrizione) AS descrizione FROM fe_modalita_pagamento", "required": 1 ]}
+				</div>
+
+				<div class="col-md-2">
+					{[ "type": "checkbox", "label": "<?php echo tr('Pagamento di tipo Ri.Ba.'); ?>", "name": "riba", "value": "$riba$", "help": "<?php echo tr('Abilitando questa impostazione, nelle fatture verrà visualizzata la banca del cliente'); ?>" ]}
 				</div>
             </div>
 

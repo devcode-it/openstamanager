@@ -37,7 +37,7 @@ echo '
     <div class="row" >
 		<div class="col-md-6">
 			<h4>'.
-    $ragione_sociale.' '.( (empty($idanagrafica = $dbo->fetchOne('SELECT idanagrafica FROM an_anagrafiche WHERE codice_fiscale = '.prepare($codice_fiscale).' OR piva='.prepare($partita_iva))['idanagrafica'])) ? '<span class="badge badge-success" >'.tr('Nuova').'</span>' : '<small>'.Modules::link('Anagrafiche', $idanagrafica, '', null, '')).'</small>'.'<br>
+    $ragione_sociale.' '.( (empty($idanagrafica = $dbo->fetchOne('SELECT idanagrafica FROM an_anagrafiche WHERE ( codice_fiscale = '.prepare($codice_fiscale).' AND codice_fiscale != \'\' ) OR ( piva = '.prepare($partita_iva).' AND piva != \'\' ) ')['idanagrafica'])) ? '<span class="badge badge-success" >'.tr('Nuova').'</span>' : '<small>'.Modules::link('Anagrafiche', $idanagrafica, '', null, '')).'</small>'.'<br>
 				<small>
 					'.(!empty($codice_fiscale) ? (tr('Codice Fiscale').': '.$codice_fiscale.'<br>') : '').'
 					'.(!empty($partita_iva) ? (tr('Partita IVA').': '.$partita_iva.'<br>') : '').'

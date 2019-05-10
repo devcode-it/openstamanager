@@ -46,12 +46,20 @@ class Hook extends Model
         if ($this->is_cached) {
             $results = $this->cache['results'];
 
+            // Interpretazione della cache
             $results = json_decode($results, true);
         } else {
             $results = $hook->manage();
 
+            // Rimozione cache precedente
+            $database = database();
+            $database->delete('zz_hook_cache', [
+                'hook_id' => $this->id,
+            ]);
+
+            // Aggiunta del risultato come cache
             $cache = json_encode($results);
-            database()->insert('zz_hook_cache', [
+            $database->insert('zz_hook_cache', [
                 'hook_id' => $this->id,
                 'results' => $cache,
             ]);

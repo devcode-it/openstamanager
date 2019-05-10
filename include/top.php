@@ -225,10 +225,12 @@ if (Auth::check()) {
                             <li class="dropdown notifications-menu">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                     <i class="fa fa-bell-o"></i>
-                                    <span class="label label-warning" id="hook-count"></span>
+                                    <span class="label label-warning">
+                                        <span id="hooks-loading"><i class="fa fa-spinner fa-spin"></i></span>
+                                        <span id="hooks-count"></span>
+                                    </span>
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li class="header" id="hook-header">'.tr('Caricamento in corso').'</li>
                                     <li><ul class="menu" id="hooks">
                                                                     
                                     </ul></li>

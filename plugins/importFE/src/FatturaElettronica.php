@@ -70,7 +70,7 @@ class FatturaElettronica
             $module = Modules::get('Fatture di acquisto');
 
             $plugin = $module->plugins->first(function ($value, $key) {
-                return $value->name = 'Fatturazione Elettronica';
+                return $value->name == 'Fatturazione Elettronica';
             });
 
             self::$directory = DOCROOT.'/'.$plugin->upload_directory;

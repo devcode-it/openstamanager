@@ -37,7 +37,7 @@ echo '
     <div class="row" >
 		<div class="col-md-6">
 			<h4>'.
-    $ragione_sociale.' '.( (empty($idanagrafica = $dbo->fetchOne('SELECT idanagrafica FROM an_anagrafiche WHERE ( codice_fiscale = '.prepare($codice_fiscale).' AND codice_fiscale != \'\' ) OR ( piva = '.prepare($partita_iva).' AND piva != \'\' ) ')['idanagrafica'])) ? '<span class="badge badge-success" >'.tr('Nuova').'</span>' : '<small>'.Modules::link('Anagrafiche', $idanagrafica, '', null, '')).'</small>'.'<br>
+    $ragione_sociale.' '.((empty($idanagrafica = $dbo->fetchOne('SELECT idanagrafica FROM an_anagrafiche WHERE ( codice_fiscale = '.prepare($codice_fiscale).' AND codice_fiscale != \'\' ) OR ( piva = '.prepare($partita_iva).' AND piva != \'\' ) ')['idanagrafica'])) ? '<span class="badge badge-success" >'.tr('Nuova').'</span>' : '<small>'.Modules::link('Anagrafiche', $idanagrafica, '', null, '')).'</small>'.'<br>
 				<small>
 					'.(!empty($codice_fiscale) ? (tr('Codice Fiscale').': '.$codice_fiscale.'<br>') : '').'
 					'.(!empty($partita_iva) ? (tr('Partita IVA').': '.$partita_iva.'<br>') : '').'
@@ -168,41 +168,37 @@ if (!empty($righe)) {
         }
 
         $query .= ' ORDER BY descrizione ASC';
-		
-		/*Visualizzo codici articoli*/
-		$codici_articoli = '';
-		
-		//caso di un solo codice articolo
-		if (isset($riga['CodiceArticolo']) and empty($riga['CodiceArticolo'][0]['CodiceValore'])){
-		
-			$riga['CodiceArticolo'][0]['CodiceValore'] = $riga['CodiceArticolo']['CodiceValore'];
-			$riga['CodiceArticolo'][0]['CodiceTipo'] = $riga['CodiceArticolo']['CodiceTipo'];
-			
-			
-		}
-		
-		foreach ($riga['CodiceArticolo'] as $key => $item) {
-		  foreach($item as $key => $name){
-			if($key == 'CodiceValore'){
-				if (!empty($item['CodiceValore'])){
-					$codici_articoli .= '<small>'.$item['CodiceValore'].' ('.$item['CodiceTipo'].')</small>';
-				
-					if ( ($item['CodiceValore'] != end($riga['CodiceArticolo'][(count($riga['CodiceArticolo'])-1)])) AND (is_array($riga['CodiceArticolo'][1]))){
-						$codici_articoli .= ', ';
-					}
-				}
-			}
-		  }
-		}
-		/*###*/
-		
-		
+
+        /*Visualizzo codici articoli*/
+        $codici_articoli = '';
+
+        //caso di un solo codice articolo
+        if (isset($riga['CodiceArticolo']) and empty($riga['CodiceArticolo'][0]['CodiceValore'])) {
+            $riga['CodiceArticolo'][0]['CodiceValore'] = $riga['CodiceArticolo']['CodiceValore'];
+            $riga['CodiceArticolo'][0]['CodiceTipo'] = $riga['CodiceArticolo']['CodiceTipo'];
+        }
+
+        foreach ($riga['CodiceArticolo'] as $key => $item) {
+            foreach ($item as $key => $name) {
+                if ($key == 'CodiceValore') {
+                    if (!empty($item['CodiceValore'])) {
+                        $codici_articoli .= '<small>'.$item['CodiceValore'].' ('.$item['CodiceTipo'].')</small>';
+
+                        if (($item['CodiceValore'] != end($riga['CodiceArticolo'][(count($riga['CodiceArticolo']) - 1)])) and (is_array($riga['CodiceArticolo'][1]))) {
+                            $codici_articoli .= ', ';
+                        }
+                    }
+                }
+            }
+        }
+        /*###*/
+
         echo '
         <tr>
             <td>
                 '.$riga['Descrizione'].'<br>
 				
-				'.(($codici_articoli!='') ? $codici_articoli.'<br>' : '').'
+				'.(($codici_articoli != '') ? $codici_articoli.'<br>' : '').'
                 
                 <small>'.tr('Q.tà: _QTA_ _UM_', [
                     '_QTA_' => Translator::numberToLocale($riga['Quantita']),

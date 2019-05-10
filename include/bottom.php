@@ -65,16 +65,16 @@ if (Auth::check()) {
                 hooks = JSON.parse(data);
                                
                 hooks.forEach(function(item, index){
-                    executeHook(item);
+                    executeHook(item, hooks.length);
                 });
             },
         });
     });
     
-    function executeHook(hook){        
-        $("#hooks").append("<li id=\"hook-loader-" + hook.id + "\"><a href=\"#\">'.tr('Hook _NAME_ in esecuzione', [
-            '_NAME_' => '\"" + hook.name + "\"',
-        ]).'</a></li>");
+    function executeHook(hook, length){        
+        $("#hooks").append(\'<li id="hook-loader-\' + hook.id + \'"><a href="#">'.tr('Hook "_NAME_" in esecuzione', [
+            '_NAME_' => '\' + hook.name + \'',
+        ]).'</a></li>\');
         
         $.ajax({
             url: globals.rootdir + "/ajax.php",
@@ -87,14 +87,24 @@ if (Auth::check()) {
                 result = JSON.parse(data);
                 
                 $("#hook-loader-" + hook.id).remove();
-                $("#hooks").append("<li><a href=\"#\"><i class=\"" + result.icon + "\"></i> " + result.message + "</a></li>");
-                $("#hook-header").hide();
+                message = \'<li class="hook-element"><a href="\' + (result.link ? result.link : "#") + \'"><i class="\' + result.icon + \'"></i> \' + result.message + \'</a></li>\';
                 
+                // Inserimento della notifica
                 if(result.notify) {
-                    number = parseInt($("#hook-count").text());
+                    hooks_count = $("#hooks-count");
+                    number = parseInt(hooks_count.text());
                     number = isNaN(number) ? 0 : number;
                     
-                    $("#hook-count").text(parseInt(number) + 1);
+                    hooks_count.text(parseInt(number) + 1);
+                    
+                    $("#hooks").prepend(message);
+                } else {
+                    $("#hooks").append(message);
+                }
+                
+                // Rimozione eventuale della rotella di caricamento
+                if($(".hook-element").length == hooks.length) {
+                    $("#hooks-loading").hide();
                 }
             },
         });

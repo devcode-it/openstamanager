@@ -3,6 +3,7 @@
 namespace Plugins\ImportFE;
 
 use Common\HookManager;
+use Modules;
 
 class InvoiceHook extends HookManager
 {
@@ -17,8 +18,16 @@ class InvoiceHook extends HookManager
     {
         $count = count($results);
 
+        $module = Modules::get('Fatture di acquisto');
+        $plugin = $module->plugins->first(function ($value, $key) {
+            return $value->name == 'Fatturazione Elettronica';
+        });
+
+        $link = ROOTDIR.'/controller.php?id_module='.$module->id.'#tab_'.$plugin->id;
+
         return [
-            'icon' => 'fa fa-file-text-o ',
+            'icon' => 'fa fa-file-text-o',
+            'link' => $link,
             'message' => tr('Ci sono _NUM_ fatture remote da importare', [
                 '_NUM_' => $count,
             ]),

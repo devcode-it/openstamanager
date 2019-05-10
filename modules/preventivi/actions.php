@@ -100,6 +100,7 @@ switch (post('op')) {
     // Duplica preventivo
     case 'copy':
         $new = $preventivo->replicate();
+        $new->numero = Preventivo::getNextNumero();
         $new->idstato = 1;
         $new->master_revision = $preventivo->id;
         $new->save();

@@ -696,25 +696,22 @@ function rimuovi_riga_fattura($id_documento, $id_riga, $dir)
         //rimetto a magazzino gli articoli collegati al preventivo
         $rsa = $dbo->fetchArray('SELECT id, idarticolo, qta FROM co_righe_preventivi WHERE idpreventivo = '.prepare($riga['idpreventivo']));
         for ($i = 0; $i < sizeof($rsa); ++$i) {
-			
-			if ($riga['is_preventivo']){
-				if (!empty($rsa[$i]['idarticolo'])) {
-					add_movimento_magazzino($rsa[$i]['idarticolo'], $rsa[$i]['qta'], ['iddocumento' => $id_documento]);
-				}
-			}else{
-				
-				$qta_evasa = $rsa[$i]['qta_evasa'] + $riga['qta'];
-				// Ripristino le quantità da evadere nel preventivo
-				$dbo->update('co_righe_preventivi',
-					[
-						'qta_evasa' => $qta_evasa,
-					],
-					[
-						'id' => $rsa[$i]['id'],
-					]
-				);
-				
-			}
+            if ($riga['is_preventivo']) {
+                if (!empty($rsa[$i]['idarticolo'])) {
+                    add_movimento_magazzino($rsa[$i]['idarticolo'], $rsa[$i]['qta'], ['iddocumento' => $id_documento]);
+                }
+            } else {
+                $qta_evasa = $rsa[$i]['qta_evasa'] + $riga['qta'];
+                // Ripristino le quantità da evadere nel preventivo
+                $dbo->update('co_righe_preventivi',
+                    [
+                        'qta_evasa' => $qta_evasa,
+                    ],
+                    [
+                        'id' => $rsa[$i]['id'],
+                    ]
+                );
+            }
         }
     }
 
@@ -723,33 +720,24 @@ function rimuovi_riga_fattura($id_documento, $id_riga, $dir)
         //rimetto a magazzino gli articoli collegati al contratto
         $rsa = $dbo->fetchArray('SELECT id, idarticolo, qta FROM co_righe_contratti WHERE idcontratto = '.prepare($riga['idcontratto']));
         for ($i = 0; $i < sizeof($rsa); ++$i) {
-            
-			if ($riga['is_contratto']){
-				if (!empty($rsa[$i]['idarticolo'])) {
-					add_movimento_magazzino($rsa[$i]['idarticolo'], $rsa[$i]['qta'], ['iddocumento' => $id_documento]);
-				}
-			}else{
-				
-				$qta_evasa = $rsa[$i]['qta_evasa'] + $riga['qta'];
-				// Ripristino le quantità da evadere nel contratto
-				$dbo->update('co_righe_contratti',
-					[
-						'qta_evasa' => $qta_evasa,
-					],
-					[
-						'id' => $rsa[$i]['id'],
-					]
-				);
-				
-				
-			
-			}
+            if ($riga['is_contratto']) {
+                if (!empty($rsa[$i]['idarticolo'])) {
+                    add_movimento_magazzino($rsa[$i]['idarticolo'], $rsa[$i]['qta'], ['iddocumento' => $id_documento]);
+                }
+            } else {
+                $qta_evasa = $rsa[$i]['qta_evasa'] + $riga['qta'];
+                // Ripristino le quantità da evadere nel contratto
+                $dbo->update('co_righe_contratti',
+                    [
+                        'qta_evasa' => $qta_evasa,
+                    ],
+                    [
+                        'id' => $rsa[$i]['id'],
+                    ]
+                );
+            }
         }
     }
-	
-	
-	
-	
 
     //Rimozione righe generiche
     if (empty($riga['idarticolo'])) {

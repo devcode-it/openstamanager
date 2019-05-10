@@ -61,14 +61,6 @@ a.disabled {
     margin: 8px 0 0 0;
 }
 
-#right-menu {
-    padding: 10px;
-}
-
-#right-menu .fa-info {
-    padding: 0 5px
-}
-
 .ui-menu {
     position: fixed;
 }
@@ -335,6 +327,11 @@ span.form-control {
     font-size: 12px;
     color: #3C8DBC;
 }
+
+.navbar-nav > .notifications-menu > .dropdown-menu > li .menu > li > a, .navbar-nav > .messages-menu > .dropdown-menu > li .menu > li > a, .navbar-nav > .tasks-menu > .dropdown-menu > li .menu > li > a
+ {
+     white-space: normal;
+ }
 
 .nav-tabs-custom>.nav-tabs.pull-right>li>a.back-btn:hover {
     cursor: pointer;

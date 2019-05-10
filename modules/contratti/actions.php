@@ -132,6 +132,7 @@ switch (post('op')) {
      // Duplica contratto
     case 'copy':
         $new = $contratto->replicate();
+        $new->numero = Contratto::getNextNumero();
         $new->idstato = 1;
         $new->save();
 

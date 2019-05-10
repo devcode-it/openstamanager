@@ -83,9 +83,9 @@ switch ($resource) {
         echo json_encode($results);
 
         break;
-		
-	case 'get_mansioni':
-        $q = "SELECT DISTINCT mansione FROM an_referenti";
+
+    case 'get_mansioni':
+        $q = 'SELECT DISTINCT mansione FROM an_referenti';
         $rs = $dbo->fetchArray($q);
         $n = sizeof($rs);
 

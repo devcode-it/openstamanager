@@ -50,6 +50,56 @@ if (Auth::check()) {
         echo '
 		<style>'.$custom_css.'</style>';
     }
+
+    // Hooks
+    echo '
+    <script>
+    $(document).ready(function() {
+        $.ajax({
+            url: globals.rootdir + "/ajax.php",
+            type: "get",
+            data: {
+                op: "hooks",
+            },
+            success: function(data) {
+                hooks = JSON.parse(data);
+                               
+                hooks.forEach(function(item, index){
+                    executeHook(item);
+                });
+            },
+        });
+    });
+    
+    function executeHook(hook){        
+        $("#hooks").append("<li id=\"hook-loader-" + hook.id + "\"><a href=\"#\">'.tr('Hook _NAME_ in esecuzione', [
+            '_NAME_' => '\"" + hook.name + "\"',
+        ]).'</a></li>");
+        
+        $.ajax({
+            url: globals.rootdir + "/ajax.php",
+            type: "get",
+            data: {
+                op: "hook",
+                id: hook.id,
+            },
+            success: function(data) {
+                result = JSON.parse(data);
+                
+                $("#hook-loader-" + hook.id).remove();
+                $("#hooks").append("<li><a href=\"#\"><i class=\"" + result.icon + "\"></i> " + result.message + "</a></li>");
+                $("#hook-header").hide();
+                
+                if(result.notify) {
+                    number = parseInt($("#hook-count").text());
+                    number = isNaN(number) ? 0 : number;
+                    
+                    $("#hook-count").text(parseInt(number) + 1);
+                }
+            },
+        });
+    }
+    </script>';
 }
 
 echo '

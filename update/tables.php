@@ -92,6 +92,8 @@ return [
     'zz_groups',
     'zz_group_module',
     'zz_group_view',
+    'zz_hooks',
+    'zz_hook_cache',
     'zz_logs',
     'zz_modules',
     'zz_operations',

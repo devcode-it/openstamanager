@@ -396,9 +396,10 @@ class Fattura extends Document
     public function save(array $options = [])
     {
         // Fix dei campi statici
-        $bollo =$this->bollo;
-        if( $bollo == null)
-        $bollo = $this->calcolaMarcaDaBollo();
+        $bollo = $this->bollo;
+        if ($bollo == null) {
+            $bollo = $this->calcolaMarcaDaBollo();
+        }
 
         $this->manageRigaMarcaDaBollo($bollo, $this->addebita_bollo);
 
@@ -536,8 +537,8 @@ class Fattura extends Document
         return $marca_da_bollo;
     }
 
-    protected function manageRigaMarcaDaBollo($marca_da_bollo, $addebita_bollo){
-
+    protected function manageRigaMarcaDaBollo($marca_da_bollo, $addebita_bollo)
+    {
         $riga = $this->rigaBollo;
 
         // Rimozione riga bollo se nullo

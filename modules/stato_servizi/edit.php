@@ -82,7 +82,7 @@ foreach ($widgets as $widget) {
 
     echo '
             <tr class="'.$class.'">
-                <td>'.$widget['widget_name'].((!empty($widget['help'])) ? ' <i class="tip fa fa-question-circle-o" class="tip" title="'.$widget['help'].'"</i>'  : '').'</td>
+                <td>'.$widget['widget_name'].((!empty($widget['help'])) ? ' <i class="tip fa fa-question-circle-o" class="tip" title="'.$widget['help'].'"</i>' : '').'</td>
                 <td align="right"><small>'.$location.'</small></td>
                 <td align="center">'.$stato.'</td>
                 <td align="center">'.$posizione.'</td>

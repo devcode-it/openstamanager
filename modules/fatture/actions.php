@@ -40,49 +40,49 @@ switch (post('op')) {
 
     case 'update':
         if (post('id_record') !== null) {
-            $fattura->data=post('data');
-            $fattura->data_ricezione=post('data_ricezione');
-            $fattura->numero_esterno=post('numero_esterno');
-            $fattura->note=post('note');
-            $fattura->note_aggiuntive=post('note_aggiuntive');
+            $fattura->data = post('data');
+            $fattura->data_ricezione = post('data_ricezione');
+            $fattura->numero_esterno = post('numero_esterno');
+            $fattura->note = post('note');
+            $fattura->note_aggiuntive = post('note_aggiuntive');
 
-            $fattura->idstatodocumento=post('idstatodocumento');
-            $fattura->idtipodocumento=post('idtipodocumento');
-            $fattura->idanagrafica=post('idanagrafica');
-            $fattura->idagente=post('idagente');
-            $fattura->idpagamento=post('idpagamento');
-            $fattura->idbanca=post('idbanca');
-            $fattura->idcausalet=post('idcausalet');
-            $fattura->idspedizione=post('idspedizione');
-            $fattura->idporto=post('idporto');
-            $fattura->idaspettobeni=post('idaspettobeni');
-            $fattura->idvettore=post('idvettore');
-            $fattura->idsede=post('idsede');
-            $fattura->idconto=post('idconto');
-            $fattura->split_payment=post('split_payment') ?: 0;
-            $fattura->is_fattura_conto_terzi=post('is_fattura_conto_terzi') ?: 0;
-            $fattura->n_colli=post('n_colli');
-            $fattura->tipo_resa=post('tipo_resa');
-            
-            $fattura->rivalsainps=0;
-            $fattura->ritenutaacconto=0;
-            $fattura->iva_rivalsainps=0;
-            
-            $fattura->codice_stato_fe=post('codice_stato_fe') ?: null;
-            $fattura->id_ritenuta_contributi=post('id_ritenuta_contributi') ?: null;
+            $fattura->idstatodocumento = post('idstatodocumento');
+            $fattura->idtipodocumento = post('idtipodocumento');
+            $fattura->idanagrafica = post('idanagrafica');
+            $fattura->idagente = post('idagente');
+            $fattura->idpagamento = post('idpagamento');
+            $fattura->idbanca = post('idbanca');
+            $fattura->idcausalet = post('idcausalet');
+            $fattura->idspedizione = post('idspedizione');
+            $fattura->idporto = post('idporto');
+            $fattura->idaspettobeni = post('idaspettobeni');
+            $fattura->idvettore = post('idvettore');
+            $fattura->idsede = post('idsede');
+            $fattura->idconto = post('idconto');
+            $fattura->split_payment = post('split_payment') ?: 0;
+            $fattura->is_fattura_conto_terzi = post('is_fattura_conto_terzi') ?: 0;
+            $fattura->n_colli = post('n_colli');
+            $fattura->tipo_resa = post('tipo_resa');
+
+            $fattura->rivalsainps = 0;
+            $fattura->ritenutaacconto = 0;
+            $fattura->iva_rivalsainps = 0;
+
+            $fattura->codice_stato_fe = post('codice_stato_fe') ?: null;
+            $fattura->id_ritenuta_contributi = post('id_ritenuta_contributi') ?: null;
 
             if ($dir == 'uscita') {
                 $fattura->numero = post('numero');
                 $fattura->numero_esterno = post('numero_esterno');
-                $fattura->idrivalsainps =  post('id_rivalsa_inps');
-                $fattura->idritenutaacconto =  post('id_ritenuta_acconto');
+                $fattura->idrivalsainps = post('id_rivalsa_inps');
+                $fattura->idritenutaacconto = post('id_ritenuta_acconto');
             }
 
-            $fattura->addebita_bollo=post('addebita_bollo');
+            $fattura->addebita_bollo = post('addebita_bollo');
             $bollo_automatico = post('bollo_automatico');
-            if (empty($bollo_automatico)){
+            if (empty($bollo_automatico)) {
                 $fattura->bollo = post('bollo');
-            }else{
+            } else {
                 $fattura->bollo = null;
             }
 

@@ -221,21 +221,6 @@ if (empty($record['is_fiscale'])) {
 				</div>
 			</div>
 
-<?php
-
-if ($dir == 'uscita') {
-    ?>
-				<div class="row">
-					<div class="col-md-3">
-						{[ "type": "number", "label": "<?php echo tr('Marca da bollo'); ?>", "name": "bollo", "value": "$bollo$", "help": "<?php echo tr('Applicato solo se il totale della fattura è maggiore di _MONEY_', [
-                            '_MONEY_' => moneyFormat(setting("Soglia minima per l'applicazione della marca da bollo")),
-                        ]),'.'; ?>" ]}
-					</div>
-				</div>
-<?php
-}
-?>
-
             <div class="row">
 				<div class="col-md-3">
 					{[ "type": "checkbox", "label": "<?php echo tr('Split payment'); ?>", "name": "split_payment", "value": "$split_payment$", "help": "<?php echo tr('Abilita lo split payment per questo documento. Le aliquote iva con natura N6 (reverse charge) non saranno disponibili.'); ?>", "placeholder": "<?php echo tr('Split payment'); ?>" ]}
@@ -276,7 +261,7 @@ if ($dir == 'uscita') {
 echo '
     <div class="box box-info">
         <div class="box-header with-border">
-            <h3 class="box-title"><i class="fa fa-file"></i> '.tr('Bollo').'</h3>
+            <h3 class="box-title"><i class="fa fa-certificate "></i> '.tr('Marca da bollo').'</h3>
         </div>
 
         <div class="box-body">
@@ -286,11 +271,13 @@ echo '
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "checkbox", "label": "'.tr('Bollo automatico').'", "name": "bollo_automatico", "value": "'.intval(!isset($record['bollo'])).'", "help": "'.tr("Seleziona per impostare automaticamente l'importo del bollo").'", "placeholder": "'.tr('Bollo automatico').'" ]}
+                    {[ "type": "checkbox", "label": "'.tr('Marca da bollo automatica').'", "name": "bollo_automatico", "value": "'.intval(!isset($record['bollo'])).'", "help": "'.tr("Seleziona per impostare automaticamente l'importo della marca da bollo").'. '.tr('Applicata solo se il totale della fattura è maggiore di _MONEY_', [
+                            '_MONEY_' => moneyFormat(setting("Soglia minima per l'applicazione della marca da bollo")),
+                        ]).'.", "placeholder": "'.tr('Bollo automatico').'" ]}
                 </div>
                 
                 <div class="col-md-4">
-                    {[ "type": "number", "label": "'.tr('Importo bollo').'", "name": "bollo", "value": "$bollo$", "disabled": '.intval(!isset($record['bollo'])).' ]}
+                    {[ "type": "number", "label": "'.tr('Importo marca da bollo').'", "name": "bollo", "value": "$bollo$", "disabled": '.intval(!isset($record['bollo'])).' ]}
                 </div>
   
                 <script type="text/javascript">

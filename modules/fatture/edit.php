@@ -256,11 +256,6 @@ if ($dir == 'uscita') {
                 <div class="col-md-3">
                     {[ "type": "select", "label": "<?php echo tr('Ritenuta contributi'); ?>", "name": "id_ritenuta_contributi", "value": "$id_ritenuta_contributi$", "values": "query=SELECT * FROM co_ritenuta_contributi" ]}
                 </div>
-
-                <div class="col-md-3">
-                    {[ "type": "checkbox", "label": "<?php echo tr('Addebita marca da bollo'); ?>", "name": "addebita_bollo", "value": "$addebita_bollo$" ]}
-                </div>
-
             </div>
 
 			<div class="row">
@@ -278,6 +273,36 @@ if ($dir == 'uscita') {
 	</div>
 
 <?php
+echo '
+    <div class="box box-info">
+        <div class="box-header with-border">
+            <h3 class="box-title"><i class="fa fa-file"></i> '.tr('Bollo').'</h3>
+        </div>
+
+        <div class="box-body">
+            <div class="row">
+                <div class="col-md-4">
+                    {[ "type": "checkbox", "label": "'.tr('Addebita marca da bollo').'", "name": "addebita_bollo", "value": "$addebita_bollo$" ]}
+                </div>
+
+                <div class="col-md-4">
+                    {[ "type": "checkbox", "label": "'.tr('Bollo automatico').'", "name": "bollo_automatico", "value": "'.intval(!isset($record['bollo'])).'", "help": "'.tr("Seleziona per impostare automaticamente l'importo del bollo").'", "placeholder": "'.tr('Bollo automatico').'" ]}
+                </div>
+                
+                <div class="col-md-4">
+                    {[ "type": "number", "label": "'.tr('Importo bollo').'", "name": "bollo", "value": "$bollo$", "disabled": '.intval(!isset($record['bollo'])).' ]}
+                </div>
+  
+                <script type="text/javascript">
+                    $(document).ready(function() {
+                        $("#bollo_automatico").click(function(){
+                            $("#bollo").attr("disabled", $(this).is(":checked"));
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+    </div>';
 
 if ($tipodoc == 'Fattura accompagnatoria di vendita') {
     echo '

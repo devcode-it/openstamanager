@@ -396,7 +396,11 @@ class Fattura extends Document
     public function save(array $options = [])
     {
         // Fix dei campi statici
-        $this->calcolaMarcaDaBollo();
+        $bollo =$this->bollo;
+        if( $bollo == null)
+        $bollo = $this->calcolaMarcaDaBollo();
+
+        $this->manageRigaMarcaDaBollo($bollo, $this->addebita_bollo);
 
         $this->attributes['ritenutaacconto'] = $this->ritenuta_acconto;
         $this->attributes['iva_rivalsainps'] = $this->iva_rivalsa_inps;
@@ -529,12 +533,15 @@ class Fattura extends Document
         // Se l'importo è negativo può essere una nota di credito, quindi cambio segno alla marca da bollo
         $marca_da_bollo = abs($marca_da_bollo);
 
-        $this->bollo = $marca_da_bollo;
+        return $marca_da_bollo;
+    }
+
+    protected function manageRigaMarcaDaBollo($marca_da_bollo, $addebita_bollo){
 
         $riga = $this->rigaBollo;
 
         // Rimozione riga bollo se nullo
-        if (empty($this->addebita_bollo) || empty($marca_da_bollo)) {
+        if (empty($addebita_bollo) || empty($marca_da_bollo)) {
             if (!empty($riga)) {
                 $this->id_riga_bollo = null;
 

@@ -212,18 +212,24 @@ if (Auth::check()) {
 						<span class="icon-bar"></span>
 					</a>
 
-					<div class="input-group btn-calendar pull-left">
-                        <button id="daterange" class="btn"><i class="fa fa-calendar" style="color:'.$calendar.'"></i> <i class="fa fa-caret-down" style="color:'.$calendar.';" ></i></button>
-                        <span class="hidden-xs" style="vertical-align:middle; color:'.$calendar.';">
-                            '.Translator::dateToLocale($_SESSION['period_start']).' - '.Translator::dateToLocale($_SESSION['period_end']).'
-                        </span>
-                    </div>
+                    <!-- Navbar Left Menu -->
+                     <div class="navbar-left" class="hidden-xs">
+                        <ul class="nav navbar-nav" class="hidden-xs">
+                            <li><a href="#" id="daterange" style="color:'.$calendar.';background:inherit">
+                                <i class="fa fa-calendar" style="color:inherit"></i> <i class="fa fa-caret-down" style="color:inherit"></i>
+                            </a></li>
+                            
+                            <li><a href="#" style="color:'.$calendar.';background:inherit">
+                                '.Translator::dateToLocale($_SESSION['period_start']).' - '.Translator::dateToLocale($_SESSION['period_end']).'
+                            </a></li>
+                        </ul>
+                     </div>
                 
-                    <!-- Navbar Right Menu -->
-                     <div class="navbar-custom-menu" id="right-menu">
+                     <!-- Navbar Right Menu -->
+                     <div class="navbar-custom-menu">
                         <ul class="nav navbar-nav">
                             <li class="dropdown notifications-menu">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <a href="#" class="dropdown-toggle btn-github" data-toggle="dropdown">
                                     <i class="fa fa-bell-o"></i>
                                     <span class="label label-warning">
                                         <span id="hooks-loading"><i class="fa fa-spinner fa-spin"></i></span>
@@ -237,7 +243,7 @@ if (Auth::check()) {
                                 </ul>
                             </li>
                             
-                            <li><a href="#" onclick="window.print()" class="btn-info tip" title="'.tr('Stampa').'">
+                            <li><a href="#" onclick="window.print()" class="btn-github tip" style="background-color:#5bc0de!important" title="'.tr('Stampa').'">
                                 <i class="fa fa-print"></i>
                             </a></li>
                             
@@ -253,7 +259,7 @@ if (Auth::check()) {
                                 <i class="fa fa-info"></i>
                             </a></li>
                             
-                            <li><a href="'.$rootdir.'/index.php?op=logout" class="btn-danger tip" title="'.tr('Esci').'">
+                            <li><a href="'.$rootdir.'/index.php?op=logout" class="btn-github tip"  style="background-color:#dd4b39!important" title="'.tr('Esci').'">
                                 <i class="fa fa-power-off"></i>
                             </a></li>
                         </ul>

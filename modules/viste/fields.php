@@ -38,13 +38,13 @@ foreach ($fields as $key => $field) {
                             <input type="hidden" value="'.$field['id'].'" name="id['.$key.']">
     
                             <div class="col-md-12">
-                                {[ "type": "text", "label": "'.tr('Nome').'", "name": "name['.$key.']", "value": "'.$field['name'].'", "readonly": '.(!$editable).', "help": "'.tr('Nome con cui il campo viene identificato e visualizzato nella tabella').'" ]}
+                                {[ "type": "text", "label": "'.tr('Nome').'", "name": "name['.$key.']", "value": "'.$field['name'].'", "readonly": "'.(!$editable).'", "help": "'.tr('Nome con cui il campo viene identificato e visualizzato nella tabella').'" ]}
                             </div>
                         </div>
                         
                         <div class="row">
                             <div class="col-md-12">
-                                {[ "type": "textarea", "label": "'.tr('Query prevista').'", "name": "query['.$key.']", "value": "'.prepareToField($field['query']).'", "readonly": '.(!$editable).', "required": "1", "help": "'.tr('Nome effettivo del campo sulla tabella oppure subquery che permette di ottenere il valore del campo').'.<br>'.tr('ATTENZIONE: utilizza sempre i caratteri < o > seguiti da spazio!').'" ]}
+                                {[ "type": "textarea", "label": "'.tr('Query prevista').'", "name": "query['.$key.']", "value": "'.prepareToField($field['query']).'", "readonly": "'.(!$editable).'", "required": "1", "help": "'.tr('Nome effettivo del campo sulla tabella oppure subquery che permette di ottenere il valore del campo').'.<br>'.tr('ATTENZIONE: utilizza sempre i caratteri < o > seguiti da spazio!').'" ]}
                             </div>
                         </div>
     
@@ -83,11 +83,11 @@ foreach ($fields as $key => $field) {
     
                         <div class="row">
                             <div class="col-md-6">
-                                {[ "type": "text", "label": "'.tr('Ricerca tramite').'", "name": "search_inside['.$key.']", "value": "'.$field['search_inside'].'", "readonly": '.(!$editable).', "help": "'.tr('Query personalizzata per la ricerca (consigliata per colori e icone)').'.<br>'.tr('ATTENZIONE: utilizza sempre i caratteri < o > seguiti da spazio!').'" ]}
+                                {[ "type": "text", "label": "'.tr('Ricerca tramite').'", "name": "search_inside['.$key.']", "value": "'.$field['search_inside'].'", "readonly": "'.(!$editable).'", "help": "'.tr('Query personalizzata per la ricerca (consigliata per colori e icone)').'.<br>'.tr('ATTENZIONE: utilizza sempre i caratteri < o > seguiti da spazio!').'" ]}
                             </div>
     
                             <div class="col-md-6">
-                                {[ "type": "text", "label": "'.tr('Ordina tramite').'", "name": "order_by['.$key.']", "value": "'.$field['order_by'].'", "readonly": '.(!$editable).', "help": "'.tr("Query personalizzata per l'ordinamento (date e numeri formattati tramite query)").'.<br>'.tr('ATTENZIONE: utilizza sempre i caratteri < o > seguiti da spazio!').'" ]}
+                                {[ "type": "text", "label": "'.tr('Ordina tramite').'", "name": "order_by['.$key.']", "value": "'.$field['order_by'].'", "readonly": "'.(!$editable).'", "help": "'.tr("Query personalizzata per l'ordinamento (date e numeri formattati tramite query)").'.<br>'.tr('ATTENZIONE: utilizza sempre i caratteri < o > seguiti da spazio!').'" ]}
                             </div>
                         </div>
                     </div>

@@ -370,3 +370,8 @@ CREATE TABLE IF NOT EXISTS `zz_hook_cache` (
 INSERT INTO `zz_hooks` (`id`, `name`, `class`, `frequency`) VALUES
 (NULL, 'Ricevute', 'Plugins\\ReceiptFE\\ReceiptHook', '1 day'),
 (NULL, 'Fatture', 'Plugins\\ImportFE\\InvoiceHook', '1 day');
+
+-- Aggiunte variabili di sistema per stampa riepilogo interventi
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), 'richiesta', 'richiesta', '14', '1', '0', '0', '', '', '0', '0', '1');
+
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), 'descrizione', 'descrizione', '15', '1', '0', '0', '', '', '0', '0', '1');

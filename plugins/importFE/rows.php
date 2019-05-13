@@ -82,6 +82,14 @@ echo '
         </div>
     </div>';
 
+// Data ricezione
+echo '
+    <div class="row" >
+		<div class="col-md-6">
+            {[ "type": "date", "label": "'.tr('Data ricezione').'", "name": "data_ricezione", "required": 0, "value": "" ]}
+        </div>
+    </div>';
+
 // Blocco DatiPagamento è valorizzato (opzionale)
 $pagamenti = $fattura_pa->getBody()['DatiPagamento'];
 if (!empty($pagamenti)) {

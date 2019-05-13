@@ -87,7 +87,7 @@ if (Auth::check()) {
                 result = JSON.parse(data);
                 
                 $("#hook-loader-" + hook.id).remove();
-                message = \'<li class="hook-element"><a href="\' + (result.link ? result.link : "#") + \'"><i class="\' + result.icon + \'"></i> \' + result.message + \'</a></li>\';
+                message = \'<li class="hook-element"><a href="\' + (result.link ? result.link : "#") + \'"><i class="\' + result.icon + \'"></i><span class="small" > \' + result.message + \'</span></a></li>\';
                 
                 // Inserimento della notifica
                 if(result.notify) {

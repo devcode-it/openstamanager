@@ -367,43 +367,48 @@ if ($vista == 'mese') {
 ?>
 
 <script type="text/javascript">
+	
+	function load_interventi_da_pianificare(mese){
+		
+		if (mese == undefined){
+			// Seleziono il mese corrente per gli interventi da pianificare
+			var date = new Date();
+			var mese;
+			date.setDate(date.getDate());
 
-    $('#select-intreventi-pianificare').change(function(){
-        var mese = $(this).val();
-        $.get( '<?php echo $rootdir; ?>/modules/dashboard/actions.php', { op: 'load_intreventi', mese: mese }, function(data){
-            $('#interventi-pianificare').html(data);
-            $('#external-events .fc-event').each(function() {
+			//Note: January is 0, February is 1, and so on.
+			mese = ('0' + (date.getMonth()+1)).slice(-2) + date.getFullYear();
+
+			$('#select-intreventi-pianificare option[value='+mese+']').attr('selected','selected').trigger('change');
+		}
+		
+		$('#interventi-pianificare').html('<center><br><br><i class=\'fa fa-refresh fa-spin fa-2x fa-fw\'></i></center>');
+		$.get( '<?php echo $rootdir; ?>/modules/dashboard/actions.php', { op: 'load_intreventi', mese: mese }, function(data){
+			
+        })
+		.done(function( data ) {
+			$('#interventi-pianificare').html(data);
+			$('#external-events .fc-event').each(function() {
                 $(this).draggable({
                     zIndex: 999,
                     revert: true,
                     revertDuration: 0
                 });
             });
-        });
+			
+		});
+		
+	}
+    $('#select-intreventi-pianificare').change(function(){
+        var mese = $(this).val();
+        load_interventi_da_pianificare(mese);
+
     });
 
 	$(document).ready(function() {
-        // Seleziono il mese corrente per gli interventi da pianificare
-        var date = new Date();
-        var mese;
-        date.setDate(date.getDate());
-
-        //Note: January is 0, February is 1, and so on.
-        mese = ('0' + (date.getMonth()+1)).slice(-2) + date.getFullYear();
-
-        $('#select-intreventi-pianificare option[value='+mese+']').attr('selected','selected').trigger('change');
-
-        $.get( '<?php echo $rootdir; ?>/modules/dashboard/actions.php', { op: 'load_intreventi', mese: mese }, function(data){
-            $('#interventi-pianificare').html(data);
-            $('#external-events .fc-event').each(function() {
-                $(this).draggable({
-                    zIndex: 999,
-                    revert: true,
-                    revertDuration: 0
-                });
-            });
-        });
-
+       
+		
+		load_interventi_da_pianificare();
 
         // Comandi seleziona tutti
         $('#selectallstati').click(function(event) {

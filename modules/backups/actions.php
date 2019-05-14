@@ -33,8 +33,15 @@ switch (filter('op')) {
         if (Backup::create()) {
             flash()->info(tr('Nuovo backup creato correttamente!'));
         } else {
-            flash()->error(tr('Errore durante la creazione del backup!').' '.tr_replace('_DIR_', '"'.$backup_dir.'"', tr('Verifica che la cartella _DIR_ abbia i permessi di scrittura!')));
+            flash()->error(tr('Errore durante la creazione del backup!').' '.str_replace('_DIR_', '"'.$backup_dir.'"', tr('Verifica che la cartella _DIR_ abbia i permessi di scrittura!')));
         }
+
+        break;
+
+    case 'size':
+        $file = filter('file');
+
+        echo Util\FileSystem::size($backup_dir.'/'.$file);
 
         break;
 }

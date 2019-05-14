@@ -30,7 +30,7 @@ include_once __DIR__.'/../../core.php';
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "checkbox", "label": "<?php echo tr('Notifica di lettura'); ?>", "name": "read_notify", "value": "$read_notify$", "placeholder": "<?php echo tr('Abilita la notifica di lettura'); ?>" ]}
+                    {[ "type": "checkbox", "label": "<?php echo tr('Richiedi notifica di lettura'); ?>", "name": "read_notify", "value": "$read_notify$", "placeholder": "<?php echo tr('Richiedi la notifica di lettura al destinatario.'); ?>" ]}
                 </div>
             </div>
 
@@ -47,15 +47,15 @@ include_once __DIR__.'/../../core.php';
 
             <div class="row">
                 <div class="col-md-4">
-                    {[ "type": "text", "label": "<?php echo tr('CC'); ?>", "name": "cc", "value": "$cc$" ]}
+                    {[ "type": "text", "label": "<?php echo tr('CC'); ?>", "name": "cc", "value": "$cc$", "help": "<?php echo 'Copia carbone.'; ?>" ]}
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "text", "label": "<?php echo tr('BCC'); ?>", "name": "bcc", "value": "$bcc$" ]}
+                    {[ "type": "text", "label": "<?php echo tr('CCN'); ?>", "name": "bcc", "value": "$bcc$", "help": "<?php echo 'Copia carbone nascosta.'; ?>" ]}
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "email", "label": "<?php echo tr('Reply to'); ?>", "name": "reply_to", "value": "$reply_to$" ]}
+                    {[ "type": "email", "label": "<?php echo tr('Rispondi a'); ?>", "name": "reply_to", "value": "$reply_to$", "help": "<?php echo 'Rispondi a questo indirizzo e-mail.'; ?>" ]}
                 </div>
             </div>
 

@@ -9,15 +9,43 @@ class FattureCest
      */
     protected $rowHelper;
 
-    protected function _inject(RowHelper $rowHelper)
-    {
-        $this->rowHelper = $rowHelper;
-    }
-
     public function _before(\AcceptanceTester $t)
     {
         // Effettua l'accesso con le credenziali fornite
         $t->login('admin', 'admin');
+    }
+
+    /**
+     * Crea una nuova fattura di vendita.
+     *
+     * @param AcceptanceTester $t
+     */
+    public function testFatturaDiVendita(AcceptanceTester $t)
+    {
+        $this->addFattura($t, true, 2, 2);
+
+        $this->rowHelper->testImporti($t);
+    }
+
+    /**
+     * Crea una nuova fattura di acquisto.
+     *
+     * @param AcceptanceTester $t
+     */
+    public function testFatturaDiAcquisto(AcceptanceTester $t)
+    {
+        $this->addFattura($t, false, 1, 4);
+
+        // Fix pagamento vuoto
+        $t->select2('#idpagamento', 109);
+        $t->clickAndWait('Salva');
+
+        $this->rowHelper->testImporti($t, 'uscita');
+    }
+
+    protected function _inject(RowHelper $rowHelper)
+    {
+        $this->rowHelper = $rowHelper;
     }
 
     /**
@@ -50,7 +78,7 @@ class FattureCest
      *
      * @param AcceptanceTester $t
      */
-    protected function addAndDeleteFattura(AcceptanceTester $t, $cliente = 2, $tipo)
+    protected function addAndDeleteFattura(AcceptanceTester $t, $cliente, $tipo)
     {
         $this->addAnag($t, $cliente, $tipo);
 
@@ -62,35 +90,5 @@ class FattureCest
 
         // Controlla eliminazione
         $t->see('Fattura eliminata!', '.alert-success');
-    }
-
-    /**
-     * Crea una nuova fattura di vendita.
-     *
-     * @param AcceptanceTester $t
-     */
-    public function testFatturaDiVendita(AcceptanceTester $t)
-    {
-        $this->addFattura($t, true, 2, 2);
-
-        $this->rowHelper->testImporti($t);
-
-        //$t->click('Stampa');
-    }
-
-    /**
-     * Crea una nuova fattura di acquisto.
-     *
-     * @param AcceptanceTester $t
-     */
-    public function testFatturaDiAcquisto(AcceptanceTester $t)
-    {
-        $this->addFattura($t, false, 1, 4);
-
-        // Fix pagamento vuoto
-        $t->select2('#idpagamento', 109);
-        $t->clickAndWait('Salva');
-
-        $this->rowHelper->testImporti($t);
     }
 }

@@ -2,8 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-include_once Modules::filepath('Articoli', 'modutil.php');
-
 switch (post('op')) {
     case 'example':
 
@@ -76,6 +74,19 @@ switch (post('op')) {
                         ]);
                     }
                 }
+				
+				
+				// Codice --> ID IVA vendita
+                if (!empty($data[$key]['idiva_vendita'])) {
+                    $rs_iva = $dbo->select('co_iva', 'id', [
+                        'codice' => $data[$key]['idiva_vendita'],
+                    ]);
+					
+					if (!empty($rs_iva[0]['id'])) {
+						 $data[$key]['idiva_vendita'] = $rs_iva[0]['id'];
+					};
+                }
+
 
                 // Insert o update
                 $insert = true;
@@ -166,6 +177,14 @@ return [
             'Categoria',
             'id_categoria',
             'idcategoria',
+        ],
+    ],
+	[
+        'field' => 'idiva_vendita',
+        'label' => 'Codice IVA vendita',
+        'names' => [
+            'Codice IVA vendita',
+            'idiva_vendita',
         ],
     ],
     [

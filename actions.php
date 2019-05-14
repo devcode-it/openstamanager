@@ -118,12 +118,6 @@ if (!empty($structure['script'])) {
     return;
 }
 
-// Caricamento funzioni del modulo
-$modutil = $structure->filepath('modutil.php');
-if (!empty($modutil)) {
-    include_once $modutil;
-}
-
 // Lettura risultato query del modulo
 $init = $structure->filepath('init.php');
 if (!empty($init)) {
@@ -162,12 +156,9 @@ if ($structure->permission == 'rw') {
 
         // Operazioni generiche per i campi personalizzati
         if (post('op') != null) {
-            $query = 'SELECT `id`, `name` FROM `zz_fields` WHERE ';
-            if (!empty($id_plugin)) {
-                $query .= '`id_plugin` = '.prepare($id_plugin);
-            } else {
-                $query .= '`id_module` = '.prepare($id_module);
-            }
+            $custom_where = !empty($id_plugin) ? '`id_plugin` = '.prepare($id_plugin) : '`id_module` = '.prepare($id_module);
+
+            $query = 'SELECT `id`, `html_name` AS `name` FROM `zz_fields` WHERE '.$custom_where;
             $customs = $dbo->fetchArray($query);
 
             if (!starts_with(post('op'), 'delete')) {
@@ -194,13 +185,25 @@ if ($structure->permission == 'rw') {
 
                 // Aggiornamento
                 elseif (starts_with(post('op'), 'update')) {
+                    $query = 'SELECT `zz_field_record`.`id_field` FROM `zz_field_record` JOIN `zz_fields` ON `zz_fields`.`id` = `zz_field_record`.`id_field` WHERE id_record = '.prepare($id_record).' AND '.$custom_where;
+                    $customs_present = $dbo->fetchArray($query);
+                    $customs_present = array_column($customs_present, 'id_field');
+
                     foreach ($values as $key => $value) {
-                        $dbo->update('zz_field_record', [
-                            'value' => $value,
-                        ], [
-                            'id_record' => $id_record,
-                            'id_field' => $key,
-                        ]);
+                        if (in_array($key, $customs_present)) {
+                            $dbo->update('zz_field_record', [
+                                'value' => $value,
+                            ], [
+                                'id_record' => $id_record,
+                                'id_field' => $key,
+                            ]);
+                        } else {
+                            $dbo->insert('zz_field_record', [
+                                'id_record' => $id_record,
+                                'id_field' => $key,
+                                'value' => $value,
+                            ]);
+                        }
                     }
                 }
             }

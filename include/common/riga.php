@@ -26,145 +26,72 @@ echo '
         </div>
     </div>';
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-echo '<div class="row">';
+echo '
+    <div class="row">';
 
-if (in_array($module["name"], ["Fatture di vendita", "Preventivi"])) {
-    $col_md = 3;
-} else {
-    $col_md = 6;
+//Fix per Altre spese intervento
+if ($module['name'] == 'Interventi') {
+    $options['dir'] = 'entrata';
+    $result['prezzo_unitario_acquisto'] = $result['prezzo_acquisto'];
+    $result['prezzo'] = $result['prezzo_vendita'];
 }
 
-// Prezzo di acquisto unitario
-if (in_array($module["name"], ["Fatture di vendita", "Preventivi"])) {
+$width = $options['dir'] == 'entrata' ? 4 : 6;
+$label = $options['dir'] == 'entrata' ? tr('Prezzo unitario di vendita') : tr('Prezzo unitario');
+
+if ($options['dir'] == 'entrata') {
+    // Prezzo di acquisto unitario
     echo '
-        <div class="col-md-' . $col_md . '">
-            {[ "type": "number", "label": "' . tr('Prezzo di acquisto unitario') . '", "name": "prezzo_acquisto", "value": "' . $result['subtotale_acquisto'] . '", "required": 0, "icon-after": "&euro;", "onkeyup": "aggiorna_guadagno()" ]}
+        <div class="col-md-'.$width.'">
+            {[ "type": "number", "label": "'.tr('Prezzo unitario di acquisto').'", "name": "prezzo_acquisto", "value": "'.$result['prezzo_unitario_acquisto'].'", "icon-after": "'.currency().'" ]}
         </div>';
+
+    // Funzione per l'aggiornamento in tempo reale del guadagno
+    echo '
+    <script>
+        function aggiorna_guadagno() {
+            var prezzo_acquisto = $("#prezzo_acquisto").val().toEnglish();
+            var prezzo = $("#prezzo").val().toEnglish();
+            var sconto = $("#sconto").val().toEnglish();
+            if ($("#tipo_sconto").val() === "PRC") {
+                sconto = sconto / 100 * prezzo;
+            }
+
+            var guadagno = prezzo - sconto - prezzo_acquisto;
+            var parent = $("#prezzo_acquisto").closest("div").parent();
+            var div = parent.find("div[id*=\"errors\"]");
+
+            div.html("<small>'.tr('Guadagno').': " + guadagno.toLocale() + " " + globals.currency + "</small>");
+            if (guadagno < 0) {
+                parent.addClass("has-error");
+                div.addClass("text-danger").removeClass("text-success");
+            } else {
+                parent.removeClass("has-error");
+                div.removeClass("text-danger").addClass("text-success");
+            }
+        }
+
+        aggiorna_guadagno();
+
+        $("#prezzo").keyup(aggiorna_guadagno);
+        $("#prezzo_acquisto").keyup(aggiorna_guadagno);
+        $("#sconto").keyup(aggiorna_guadagno);
+        $("#tipo_sconto").change(aggiorna_guadagno);
+    </script>';
 }
-=======
->>>>>>> 2ae57384089d87555550bf51f8419fa60ad26f2b
-// Costo unitario
-echo '
-        <div class="col-md-' . $col_md . '">
-            {[ "type": "number", "label": "'.tr('Costo unitario').'", "name": "prezzo", "value": "'.$result['prezzo'].'", "required": 1, "icon-after": "&euro;", "onkeyup": "aggiorna_guadagno()" ]}
-=======
-// Prezzo di acquisto unitario
-echo '
-    <div class="row">
-        <div class="col-md-3">
-            {[ "type": "number", "label": "'.tr('Prezzo di acquisto unitario').'", "name": "prezzo_acquisto", "value": "'.$result['prezzo_unitario_acquisto'].'", "required": 0, "icon-after": "&euro;", "onkeyup": "aggiorna_guadagno()" ]}
-        </div>';
 
 // Prezzo di vendita unitario
 echo '
-        <div class="col-md-3">
-            {[ "type": "number", "label": "'.tr('Prezzo di vendita unitario').'", "name": "prezzo", "value": "'.$result['prezzo'].'", "required": 1, "icon-after": "&euro;", "onkeyup": "aggiorna_guadagno()" ]}
->>>>>>> 5987bd43fd89765b2b890a82b0f7d3d81bfe7ab7
+        <div class="col-md-'.$width.'">
+            {[ "type": "number", "label": "'.$label.'", "name": "prezzo", "value": "'.$result['prezzo'].'", "required": 1, "icon-after": "'.currency().'" ]}
         </div>';
 
 // Sconto unitario
 echo '
-<<<<<<< HEAD
-        <div class="col-md-' . $col_md . '">
-            {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.$result['sconto_unitario'].'", "icon-after": "choice|untprc|'.$result['tipo_sconto'].'" ]}
-        </div>';
-
-// Guadagno (calcolato automaticamente con funzione JavaScript)
-if (in_array($module["name"], ["Fatture di vendita", "Preventivi"])) {
-    echo '
-    <!-- Script per il calcolo e la verifica del guadagno in tempo reale -->
-    <script>
-    // Converti il numero (es. 2.654,52) in formato internazionale (es. 2564.52)
-    function converti_numero(text) {
-        return text.replace(".", "").replace(",", ".")
-    }
-    
-    // Verifica se il guadagno è negativo.
-    function verifica_guadagno () {
-        var guadagno = $("#guadagno");
-        var div = guadagno.closest(".form-group");
-        if (parseFloat(converti_numero(guadagno.val())) < 0) {
-            if (!div.hasClass("has-error")) {
-                div.addClass("has-error");
-            }
-        } else {
-            if (div.hasClass("has-error")) {
-                div.removeClass("has-error");
-            }
-        }
-    }
-    
-    // Aggiorna il campo Guadagno, in tempo reale. Richiama poi la funzione verifica_guadagno
-    function aggiorna_guadagno() {
-        var prezzo_acquisto = $("#prezzo_acquisto");
-        var prezzo_vendita = $("#prezzo");
-        var guadagno = $("#guadagno");
-        if (prezzo_acquisto.val() !== "" && prezzo_vendita.val() !== "") {
-              guadagno.val(parseFloat(converti_numero(prezzo_vendita.val())) - parseFloat(converti_numero(prezzo_acquisto.val())));
-              verifica_guadagno()
-        }
-        
-    }
-    </script>
-        <div class="col-md-' . $col_md . '">
-            {[ "type": "number", "label": "' . tr('Guadagno') . '", "name": "guadagno", "value": "' . $result['guadagno'] . '", "required": 0, "icon-after": "&euro;", "extra":"readonly" ]}
-=======
-        <div class="col-md-3">
-            {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.$result['sconto_unitario'].'", "icon-after": "choice|untprc|'.$result['tipo_sconto'].'", "onkeyup": "aggiorna_guadagno()"]}
-        </div>';
-
-// Guadagno unitario
-echo '
-        <div class="col-md-3">
-            {[ "type": "number", "label": "'.tr('Guadagno unitario').'", "name": "guadagno", "value": "'.$result['sconto_unitario'].'", "icon-after": "&euro;", "disabled": 1 ]}
->>>>>>> 5987bd43fd89765b2b890a82b0f7d3d81bfe7ab7
+        <div class="col-md-'.$width.'">
+            {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.$result['sconto_unitario'].'", "icon-after": "choice|untprc|'.$result['tipo_sconto'].'", "help": "'.tr('Il valore positivo indica uno sconto. Per applicare un rincaro inserire un valore negativo.').'" ]}
         </div>
-<<<<<<< HEAD
-        <script>
-        verifica_guadagno()
-</script>
-    ';
-}
-
-echo '</div>';
-=======
     </div>';
-
-// Funzione per l'aggiornamento in tempo reale del guadagno
-
-echo '
-<script>
-function aggiorna_guadagno() {
-    var prezzo_acquisto = parseFloat($("#prezzo_acquisto").val().replace(/\./g, ""));
-    var prezzo = parseFloat($("#prezzo").val().replace(/\./g, ""));
-    var sconto = parseFloat($("#sconto").val().replace(/\./g, ""));
-    if ($("#tipo_sconto").val() === "PRC") {
-        sconto = sconto / 100 * prezzo
-    }
-    var guadagno = $("#guadagno");
-    var parentdiv = guadagno.parent();
-    var errorsdiv = parentdiv.parent().find("div[id*=\'errors\']");
-    guadagno.val(prezzo - sconto - prezzo_acquisto);
-    if (parseFloat(guadagno.val().replace(/\./g, "")) < 0) {
-        guadagno.css("color", "red");
-        parentdiv.addClass("has-error");
-        errorsdiv.addClass("has-error");
-        if (errorsdiv.find(".help-block").length === 0) {
-            errorsdiv.append("<span class=\'help-block\'>Il guadagno è negativo!</span>");
-        }
-    } else {
-        guadagno.css("color", "black");
-        parentdiv.removeClass("has-error");
-        errorsdiv.removeClass("has-error");
-        errorsdiv.find(".help-block").remove()
-    }
-}
-aggiorna_guadagno();
-$("#tipo_sconto").change(aggiorna_guadagno)
-</script>
-';
 
 if ($module['name'] == 'Fatture di vendita') {
     $collapsed = empty($result['data_inizio_periodo']) && empty($result['data_fine_periodo']) && empty($result['riferimento_amministrazione']);
@@ -232,4 +159,3 @@ if ($module['name'] == 'Fatture di vendita') {
         </div>
     </div>';
 }
->>>>>>> 2ae57384089d87555550bf51f8419fa60ad26f2b

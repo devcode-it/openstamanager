@@ -2,8 +2,8 @@
 
 namespace Models;
 
-use Traits\StoreTrait;
 use Common\Model;
+use Traits\StoreTrait;
 
 class Setting extends Model
 {
@@ -29,31 +29,5 @@ class Setting extends Model
         }
 
         return $value;
-    }
-
-    /**
-     * Restituisce il valore corrente dell'impostazione ricercata.
-     * Se l'impostazione viene cercata più volte, il primo valore individuato viene salvato; per costringere a aggiornare i contenuto, usare l'opzione $again.
-     *
-     * @param string $nome
-     * @param string $section
-     * @param string $descrizione
-     * @param bool   $again
-     *
-     * @return string
-     */
-    public static function get($name, $section = null)
-    {
-        $find = [
-            'nome' => $name,
-        ];
-
-        if (!empty($section)) {
-            $find['section'] = $section;
-        }
-
-        $setting = self::where($find)->first();
-
-        return $setting->valore;
     }
 }

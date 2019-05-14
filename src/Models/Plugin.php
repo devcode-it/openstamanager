@@ -3,11 +3,11 @@
 namespace Models;
 
 use App;
-use Traits\ManagerTrait;
-use Traits\UploadTrait;
-use Traits\StoreTrait;
 use Common\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Traits\ManagerTrait;
+use Traits\StoreTrait;
+use Traits\UploadTrait;
 
 class Plugin extends Model
 {
@@ -29,15 +29,6 @@ class Plugin extends Model
         'options',
         'options2',
     ];
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::addGlobalScope('enabled', function (Builder $builder) {
-            $builder->where('enabled', true);
-        });
-    }
 
     /**
      * Restituisce i permessi relativi all'account in utilizzo.
@@ -110,5 +101,14 @@ class Plugin extends Model
     public function module()
     {
         return $this->belongsTo(Module::class, 'idmodule_to');
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::addGlobalScope('enabled', function (Builder $builder) {
+            $builder->where('enabled', true);
+        });
     }
 }

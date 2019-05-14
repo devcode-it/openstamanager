@@ -28,7 +28,13 @@ include_once __DIR__.'/../../core.php';
 		</div>
 	</div>
 
-	<!-- PULSANTI -->
+<?php
+
+include $module->filepath('content-info.php');
+
+?>
+
+    <!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
 			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></button>

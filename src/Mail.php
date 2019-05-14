@@ -20,6 +20,60 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
 
     protected $infos = [];
 
+    public function __construct($account = null, $exceptions = null)
+    {
+        parent::__construct($exceptions);
+
+        $this->CharSet = 'UTF-8';
+
+        // Configurazione di base
+        $config = self::get($account);
+
+        // Preparazione email
+        $this->IsHTML(true);
+
+        if (!empty($config['server'])) {
+            $this->IsSMTP(true);
+
+            // Impostazioni di debug
+            $this->SMTPDebug = App::debug() ? 2 : 0;
+            $this->Debugoutput = function ($str, $level) {
+                $this->infos[] = $str;
+            };
+
+            // Impostazioni dell'host
+            $this->Host = $config['server'];
+            $this->Port = $config['port'];
+
+            // Impostazioni di autenticazione
+            if (!empty($config['username'])) {
+                $this->SMTPAuth = true;
+                $this->Username = $config['username'];
+                $this->Password = $config['password'];
+            }
+
+            // Impostazioni di sicurezza
+            if (in_array(strtolower($config['encryption']), ['ssl', 'tls'])) {
+                $this->SMTPSecure = strtolower($config['encryption']);
+            }
+
+            if (!empty($config['ssl_no_verify'])) {
+                $this->SMTPOptions = [
+                    'ssl' => [
+                        'verify_peer' => false,
+                        'verify_peer_name' => false,
+                        'allow_self_signed' => true,
+                        ],
+                ];
+            }
+        }
+
+        $this->From = $config['from_address'];
+        $this->FromName = $config['from_name'];
+
+        $this->WordWrap = 78;
+    }
+
     /**
      * Restituisce tutte le informazioni di tutti gli account email presenti.
      *
@@ -145,50 +199,6 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
         return $result;
     }
 
-    public function __construct($account = null, $exceptions = null)
-    {
-        parent::__construct($exceptions);
-
-        $this->CharSet = 'UTF-8';
-
-        // Configurazione di base
-        $config = self::get($account);
-
-        // Preparazione email
-        $this->IsHTML(true);
-
-        if (!empty($config['server'])) {
-            $this->IsSMTP(true);
-
-            // Impostazioni di debug
-            $this->SMTPDebug = App::debug() ? 2 : 0;
-            $this->Debugoutput = function ($str, $level) {
-                $this->infos[] = $str;
-            };
-
-            // Impostazioni dell'host
-            $this->Host = $config['server'];
-            $this->Port = $config['port'];
-
-            // Impostazioni di autenticazione
-            if (!empty($config['username'])) {
-                $this->SMTPAuth = true;
-                $this->Username = $config['username'];
-                $this->Password = $config['password'];
-            }
-
-            // Impostazioni di sicurezza
-            if (in_array(strtolower($config['encryption']), ['ssl', 'tls'])) {
-                $this->SMTPSecure = strtolower($config['encryption']);
-            }
-        }
-
-        $this->From = $config['from_address'];
-        $this->FromName = $config['from_name'];
-
-        $this->WordWrap = 78;
-    }
-
     /**
      * Testa la connessione al server SMTP.
      *
@@ -207,6 +217,8 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
 
     /**
      * Invia l'email impostata.
+     *
+     * @throws Exception
      *
      * @return bool
      */

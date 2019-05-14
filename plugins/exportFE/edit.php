@@ -2,6 +2,7 @@
 
 include_once __DIR__.'/init.php';
 
+use Modules\Anagrafiche\Anagrafica;
 use Plugins\ExportFE\FatturaElettronica;
 use Plugins\ExportFE\Interaction;
 
@@ -12,17 +13,42 @@ if (!empty($fattura_pa)) {
     echo '
 <div class="alert alert-warning">
     <i class="fa fa-warning"></i>
-    <b>'.tr('Attenzione!').'</b> '.tr('Per generare la fattura elettronica è necessario che sia in stato "Emessa"').'.
+    <b>'.tr('Attenzione').':</b> '.tr('Per generare la fattura elettronica è necessario che sia in stato "Emessa"').'.
 </div>';
 
     $disabled = true;
     $generated = false;
 }
 
+// Natura obbligatoria per iva con esenzione
+$iva = $database->fetchOne('SELECT * FROM `co_iva` WHERE `id` IN (SELECT idiva FROM co_righe_documenti WHERE iddocumento = '.prepare($id_record).') AND esente = 1');
+$fields = [
+    'codice_natura_fe' => 'Natura IVA',
+];
+if (!empty($iva)) {
+    $missing = [];
+    foreach ($fields as $key => $name) {
+        if (empty($iva[$key])) {
+            $missing[] = $name;
+        }
+    }
+}
+
+if (!empty($missing) && !$generated) {
+    echo '
+<div class="alert alert-warning">
+    <p><i class="fa fa-warning"></i> '.tr('Prima di procedere alla generazione della fattura elettronica completa i seguenti campi per IVA: _FIELDS_', [
+        '_FIELDS_' => '<b>'.implode(', ', $missing).'</b>',
+    ]).'</p>
+</div>';
+
+    //$disabled = true;
+}
+
 // Campi obbligatori per il pagamento
 $pagamento = $database->fetchOne('SELECT * FROM `co_pagamenti` WHERE `id` = '.prepare($record['idpagamento']));
 $fields = [
-    'codice_modalita_pagamento_fe' => 'Codice di pagamento FE',
+    'codice_modalita_pagamento_fe' => 'Codice modalità pagamento FE',
 ];
 
 $missing = [];
@@ -35,7 +61,7 @@ foreach ($fields as $key => $name) {
 if (!empty($missing) && !$generated) {
     echo '
 <div class="alert alert-warning">
-    <p><i class="fa fa-warning"></i> '.tr('Prima di procedere alla generazione della fattura elettronica completa i seguenti campi del tipo di pagamento: _FIELDS_', [
+    <p><i class="fa fa-warning"></i> '.tr('Prima di procedere alla generazione della fattura elettronica completa i seguenti campi per il Pagamento: _FIELDS_', [
         '_FIELDS_' => '<b>'.implode(', ', $missing).'</b>',
     ]).'</p>
 </div>';
@@ -72,7 +98,7 @@ if (!empty($missing)) {
 }
 
 // Campi obbligatori per l'anagrafica Cliente
-$cliente = FatturaElettronica::getAnagrafica($record['idanagrafica']);
+$cliente = Anagrafica::find($record['idanagrafica']);
 $fields = [
     // 'piva' => 'Partita IVA',
     // 'codice_fiscale' => 'Codice Fiscale',
@@ -117,7 +143,7 @@ echo '
     '_BTN_' => '<b>Genera</b>',
 ]).'. '.tr('Successivamente sarà possibile procedere alla visualizzazione e al download della fattura generata attraverso i pulsanti dedicati').'.</p>
 
-<p>'.tr("Tutti gli allegati inseriti all'interno della categoria \"Fattura Elettronica\" saranno inclusi come allegati dell'XML").'.</p>
+<p>'.tr("Tutti gli allegati PDF inseriti all'interno della categoria \"Fattura Elettronica\" saranno inclusi come allegati dell'XML").'.</p>
 <br>';
 
 echo '
@@ -132,32 +158,66 @@ echo '
             <i class="fa fa-file"></i> '.tr('Genera').'
         </button>
     </form>';
-
-echo '
-    <i class="fa fa-arrow-right fa-fw text-muted"></i>
-
-    <a href="'.ROOTDIR.'/plugins/exportFE/download.php?id_record='.$id_record.'" class="btn btn-success btn-lg '.($generated ? '' : 'disabled').'" target="_blank" '.($generated ? '' : 'disabled').'>
-        <i class="fa fa-download"></i> '.tr('Scarica').'
-    </a>';
+	
+	$file = $generated ? Models\Upload::where('filename', $fattura_pa->getFilename())->where('id_record', $id_record)->first() : null;
 
 echo '
 
     <i class="fa fa-arrow-right fa-fw text-muted"></i>
 
-    <a href="'.ROOTDIR.'/plugins/exportFE/view.php?id_record='.$id_record.'" class="btn btn-info btn-lg '.($generated ? '' : 'disabled').'" target="_blank" '.($generated ? '' : 'disabled').'>
+    <a href="'.ROOTDIR.'/view.php?file_id='.($file ? $file->id : null).'" class="btn btn-info btn-lg '.($generated ? '' : 'disabled').'" target="_blank" '.($generated ? '' : 'disabled').'>
         <i class="fa fa-eye"></i> '.tr('Visualizza').'
     </a>';
+	
+	// Scelgo quando posso inviarla
+	$send = Interaction::isEnabled() && $generated && in_array($record['codice_stato_fe'], ['GEN', 'ERVAL']);
 
-    $send = Interaction::isEnabled() && $generated && $record['codice_stato_fe'] == 'GEN';
+	
+echo '
+    <i class="fa fa-arrow-right fa-fw text-muted"></i>
 
-    echo '
+    <a href="'.$structure->fileurl('download.php').'?id_record='.$id_record.'" class="btn btn-primary btn-lg '.($generated ? '' : 'disabled').'" target="_blank" '.($generated ? '' : 'disabled').'>
+        <i class="fa fa-download"></i> '.tr('Scarica').'
+    </a>';
+	
+echo '
 
     <i class="fa fa-arrow-right fa-fw text-muted"></i>
 
-    <button onclick="send(this)" class="btn btn-success btn-lg '.($send ? '' : 'disabled').'" target="_blank" '.($send ? '' : 'disabled').'>
+    <button onclick="if( confirm(\''.tr('Inviare la fattura al SDI?').'\') ){ send(this); }" class="btn btn-success btn-lg '.($send ? '' : 'disabled').'" target="_blank" '.($send ? '' : 'disabled').'>
         <i class="fa fa-paper-plane"></i> '.tr('Invia').'
-    </button>
+    </button><br><br>';
 
+// Messaggio esito invio
+if (!empty($record['codice_stato_fe'])) {
+    if ($record['codice_stato_fe'] == 'GEN') {
+        echo '
+		<div class="alert alert-info text-left"><i class="fa fa-info-circle"></i> '.tr("La fattura è stata generata ed è pronta per l'invio").'.</div>
+		';
+    } else {
+        $stato_fe = database()->fetchOne('SELECT codice, descrizione, icon FROM fe_stati_documento WHERE codice='.prepare($record['codice_stato_fe']));
+
+        if (in_array($stato_fe['codice'], ['EC01', 'RC'])) {
+            $class = 'success';
+        } elseif (in_array($stato_fe['codice'], ['ERVAL', 'GEN', 'MC', 'WAIT'])) {
+            $class = 'warning';
+        } else {
+            $class = 'danger';
+        }
+
+        echo '
+		<div class="alert text-left alert-'.$class.'">
+		    <big><i class="'.$stato_fe['icon'].'" style="color:#fff;"></i> 
+		    <b>'.$stato_fe['codice'].'</b> - '.$stato_fe['descrizione'].'</big> '.(!empty($record['descrizione_ricevuta_fe']) ? '<br><b>NOTE:</b><br>'.$record['descrizione_ricevuta_fe'] : '').'
+		    <div class="pull-right">
+		        <i class="fa fa-clock-o"></i> '.Translator::timestampToLocale($record['data_stato_fe']).'
+            </div>
+        </small>
+		';
+    }
+}
+
+echo '
     <script>
         function send(btn) {
             var restore = buttonLoading(btn);
@@ -175,12 +235,12 @@ echo '
                     data = JSON.parse(data);
                     buttonRestore(btn, restore);
 
-                    if (data.sent) {
-                        swal("'.tr('Fattura inviata!').'", "'.tr('Fattura inoltrata con successo').'", "success");
+                    if (data.code == "200") {
+                        swal("'.tr('Fattura inviata!').'", data.message, "success");
 
                         $(btn).attr("disabled", true).addClass("disabled");
                     } else {
-                        swal("'.tr('Invio fallito').'", "'.tr("L'invio della fattura è fallito").'", "error");
+                        swal("'.tr('Invio fallito').'", data.code + " - " + data.message, "error");
                     }
                 },
                 error: function(data) {

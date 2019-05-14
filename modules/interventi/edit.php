@@ -42,13 +42,11 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 				</div>
 			</div>
 
-
-
 			<!-- RIGA 2 -->
 			<div class="row">
 				<div class="col-md-6">
 					<?php
-                    if (($record['idpreventivo'] != '')) {
+                    if (!empty($record['idpreventivo'])) {
                         echo '
                         '.Modules::link('Preventivi', $record['idpreventivo'], null, null, 'class="pull-right"');
                     }
@@ -59,22 +57,16 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 
 				<div class="col-md-6">
 					<?php
-                        /*$rs = $dbo->fetchArray('SELECT id, idcontratto FROM co_promemoria WHERE idintervento='.prepare($id_record));
-                        if (count($rs) == 1) {
-                            $idcontratto = $rs[0]['idcontratto'];
-                            $idcontratto_riga = $rs[0]['id'];
-                        } else {
-                            $idcontratto = '';
-                            $idcontratto_riga = '';
-                        }*/
+                        $idcontratto_riga = $dbo->fetchOne('SELECT id FROM co_promemoria WHERE idintervento='.prepare($id_record))['id'];
 
-                        if (($record['idcontratto'] != '')) {
+                        if (!empty($record['idcontratto'])) {
                             echo '
                             '.Modules::link('Contratti', $record['idcontratto'], null, null, 'class="pull-right"');
                         }
                     ?>
 
-					{[ "type": "select", "label": "<?php echo tr('Contratto'); ?>", "name": "idcontratto", "value": "<?php echo $record['idcontratto']; ?>", "ajax-source": "contratti", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Contratto'); ?>", "name": "idcontratto", "value": "<?php echo $record['id_contratto']; ?>", "ajax-source": "contratti", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+
 					<input type='hidden' name='idcontratto_riga' value='<?php echo $idcontratto_riga; ?>'>
 				</div>
 			</div>
@@ -95,7 +87,11 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "timestamp", "label": "<?php echo tr('Data e ora richiesta'); ?>", "name": "data_richiesta", "required": 1, "value": "$data_richiesta$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+					{[ "type": "timestamp", "label": "<?php echo tr('Data/ora richiesta'); ?>", "name": "data_richiesta", "required": 1, "value": "$data_richiesta$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+				</div>
+				
+				<div class="col-md-3">
+					{[ "type": "timestamp", "label": "<?php echo tr('Data/ora scadenza'); ?>", "name": "data_scadenza", "required": 0, "value": "$data_scadenza$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -141,34 +137,49 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 	</div>
 
 <?php
-// Visualizzo solo se l'attività non è già collegata ad un contratto
-if (empty($record['idcontratto'])) {
+    // Visualizzo solo se l'anagrafica cliente è un ente pubblico
+    if (!empty($record['idcontratto'])) {
+        $contratto = $dbo->fetchOne('SELECT num_item,codice_cig,codice_cup,id_documento_fe FROM co_contratti WHERE id = '.prepare($record['idcontratto']));
+        $record['id_documento_fe'] = $contratto['id_documento_fe'];
+        $record['codice_cup'] = $contratto['codice_cup'];
+        $record['codice_cig'] = $contratto['codice_cig'];
+        $record['num_item'] = $contratto['num_item'];
+    }
+
     ?>
     <!-- Fatturazione Elettronica PA-->
-    <div class="panel panel-primary <?php echo (($record['tipo_anagrafica']) == 'Ente pubblico') ? 'show' : 'hide'; ?>" >
+    <div class="panel panel-primary <?php echo ($record['tipo_anagrafica'] == 'Ente pubblico' || $record['tipo_anagrafica'] == 'Azienda') ? 'show' : 'hide'; ?>" >
         <div class="panel-heading">
-            <h3 class="panel-title"><?php echo tr('Dati appalto'); ?></h3>
+            <h3 class="panel-title"><?php echo tr('Dati appalto'); ?>
+			<?php if (!empty($record['idcontratto'])) {
+        ?>
+			<span class="tip" title="<?php echo tr('E\' possibile specificare i dati dell\'appalto solo se il cliente è di tipo \'Ente pubblico\' o \'Azienda\' e l\'attività non risulta già collegata ad un contratto.'); ?>" > <i class="fa fa-question-circle-o"></i></span>
+			</h3>
+			<?php
+    } ?>
         </div>
 
         <div class="panel-body">
             <div class="row">
                 <div class="col-md-4">
-					{[ "type": "text", "label": "<?php echo tr('Identificatore Documento'); ?>", "name": "id_documento_fe", "required": 0, "value": "$id_documento_fe$", "maxlength": 20, "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+					{[ "type": "<?php echo !empty($record['idcontratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Identificatore Documento'); ?>", "name": "id_documento_fe", "required": 0, "value": "<?php echo $record['id_documento_fe']; ?>", "maxlength": 20, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
 				</div>
 
                 <div class="col-md-4">
-					{[ "type": "text", "label": "<?php echo tr('Codice CIG'); ?>", "name": "codice_cig", "required": 0, "value": "$codice_cig$", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+					{[ "type": "<?php echo !empty($record['idcontratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Numero Riga'); ?>", "name": "num_item", "required": 0, "value": "<?php echo $record['num_item']; ?>", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
+				</div>
+
+                <div class="col-md-4">
+					{[ "type": "<?php echo !empty($record['idcontratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Codice CIG'); ?>", "name": "codice_cig", "required": 0, "value": "<?php echo $record['codice_cig']; ?>", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "text", "label": "<?php echo tr('Codice CUP'); ?>", "name": "codice_cup", "required": 0, "value": "$codice_cup$", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+					{[ "type": "<?php echo !empty($record['idcontratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Codice CUP'); ?>", "name": "codice_cup", "required": 0, "value": "<?php echo $record['codice_cup']; ?>", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
 				</div>
             </div>
         </div>
     </div>
-    <?php
-}
-?>
+
 
 	<!-- ORE LAVORO -->
 	<div class="panel panel-primary">

@@ -24,6 +24,7 @@ $qp = "SELECT *,
     (SELECT SUM(subtotale) FROM co_righe_contratti WHERE idcontratto=co_ordiniservizio_pianificazionefatture.idcontratto) AS budget_contratto,
     DATE_FORMAT(data_scadenza, '%m-%Y') AS mese,
     (SELECT idanagrafica FROM co_contratti WHERE id=idcontratto) AS idcliente,
+	(SELECT nome FROM co_contratti WHERE id=idcontratto) AS nome,
     (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=(SELECT idanagrafica FROM co_contratti WHERE id=idcontratto)) AS ragione_sociale,
     (SELECT descrizione FROM an_zone WHERE id=co_ordiniservizio_pianificazionefatture.idzona) AS zona
 FROM co_ordiniservizio_pianificazionefatture WHERE  co_ordiniservizio_pianificazionefatture.iddocumento=0 ORDER BY data_scadenza ASC, idcliente ASC";
@@ -72,9 +73,9 @@ if (!empty($rsp)) {
     <table class="table table-hover table-striped">
         <thead>
             <tr>
-                <th width="10%">'.tr('Entro il').'</th>
-                <th width="40%">'.tr('Ragione sociale').'</th>
-                <th width="20%">'.tr('Zona').'</th>
+                <th width="25%">'.tr('Entro il').'</th>
+                <th width="35%">'.tr('Ragione sociale').'</th>
+                <th width="10%">'.tr('Zona').'</th>
                 <th width="20%">'.tr('Impianto').'</th>
                 <th width="10%"></th>
             </tr>
@@ -118,7 +119,7 @@ if (!empty($rsp)) {
         if ($r['iddocumento'] == 0) {
             echo "
             <tr id='fat_".$r['id']."'>
-                <td>".Translator::dateToLocale($r['data_scadenza'])."</td>
+                <td>".Translator::dateToLocale($r['data_scadenza'])."<br><a href='".$rootdir.'/editor.php?id_module='.Modules::get('Contratti')['id'].'&id_record='.$r['idcontratto']."'><small>rif. ".$r['nome']." </small></a></td>
                 <td>
                     <a href='".$rootdir.'/editor.php?id_module='.Modules::get('Anagrafiche')['id'].'&id_record='.$r['idcliente']."'>".nl2br($r['ragione_sociale']).'</a>
                 </td>

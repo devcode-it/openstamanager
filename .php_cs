@@ -16,6 +16,10 @@ $config = PhpCsFixer\Config::create()
         'array_syntax' => ['syntax' => 'short'],
         'yoda_style' => false,
         'no_short_echo_tag' => true,
+        'ordered_imports' => true,
+        'no_alternative_syntax' => true,
+        'ordered_class_elements' => true,
+        'phpdoc_order' => true,
     ])
     ->setFinder($finder);
 

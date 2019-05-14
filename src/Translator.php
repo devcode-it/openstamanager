@@ -47,46 +47,6 @@ class Translator extends Util\Singleton
     }
 
     /**
-     * Aggiunge i contenuti della cartella specificata alle traduzioni disponibili.
-     *
-     * @param string $path
-     */
-    protected function addLocales($path)
-    {
-        // Individua i linguaggi disponibili
-        $dirs = glob($path.DIRECTORY_SEPARATOR.'*', GLOB_ONLYDIR);
-        foreach ($dirs as $dir) {
-            $this->addLocale(basename($dir));
-        }
-
-        // Aggiunge le singole traduzioni
-        foreach ($this->locales as $lang) {
-            $done = [];
-
-            $files = glob($path.DIRECTORY_SEPARATOR.$lang.DIRECTORY_SEPARATOR.'*.*');
-            foreach ($files as $file) {
-                if (!in_array(basename($file), $done)) {
-                    $this->translator->addResource('default', $file, $lang);
-
-                    $done[] = basename($file);
-                }
-            }
-        }
-    }
-
-    /**
-     * Aggiunge il linguaggio indicato all'elenco di quelli disponibili.
-     *
-     * @param string $language
-     */
-    protected function addLocale($language)
-    {
-        if (!$this->isLocaleAvailable($language)) {
-            $this->locales[] = $language;
-        }
-    }
-
-    /**
      * Restituisce l'elenco dei linguaggi disponibili.
      *
      * @return array
@@ -172,25 +132,6 @@ class Translator extends Util\Singleton
         }
 
         return (string) $result;
-    }
-
-    /**
-     * Imposta l'oggetto responsabile della localizzazione di date e numeri.
-     */
-    protected static function setFormatter($locale, $options)
-    {
-        self::$formatter = new Intl\Formatter(
-            $locale,
-            empty($options['timestamp']) ? 'd/m/Y H:i' : $options['timestamp'],
-            empty($options['date']) ? 'd/m/Y' : $options['date'],
-            empty($options['time']) ? 'H:i' : $options['time'],
-            empty($options['number']) ? [
-                'decimals' => ',',
-                'thousands' => '.',
-            ] : $options['number']
-        );
-
-        self::$formatter->setPrecision(auth()->check() ? setting('Cifre decimali per importi') : 2);
     }
 
     /**
@@ -307,5 +248,64 @@ class Translator extends Util\Singleton
     public static function timestampToLocale($string)
     {
         return self::getFormatter()->formatTimestamp($string);
+    }
+
+    /**
+     * Aggiunge i contenuti della cartella specificata alle traduzioni disponibili.
+     *
+     * @param string $path
+     */
+    protected function addLocales($path)
+    {
+        // Individua i linguaggi disponibili
+        $dirs = glob($path.DIRECTORY_SEPARATOR.'*', GLOB_ONLYDIR);
+        foreach ($dirs as $dir) {
+            $this->addLocale(basename($dir));
+        }
+
+        // Aggiunge le singole traduzioni
+        foreach ($this->locales as $lang) {
+            $done = [];
+
+            $files = glob($path.DIRECTORY_SEPARATOR.$lang.DIRECTORY_SEPARATOR.'*.*');
+            foreach ($files as $file) {
+                if (!in_array(basename($file), $done)) {
+                    $this->translator->addResource('default', $file, $lang);
+
+                    $done[] = basename($file);
+                }
+            }
+        }
+    }
+
+    /**
+     * Aggiunge il linguaggio indicato all'elenco di quelli disponibili.
+     *
+     * @param string $language
+     */
+    protected function addLocale($language)
+    {
+        if (!$this->isLocaleAvailable($language)) {
+            $this->locales[] = $language;
+        }
+    }
+
+    /**
+     * Imposta l'oggetto responsabile della localizzazione di date e numeri.
+     */
+    protected static function setFormatter($locale, $options)
+    {
+        self::$formatter = new Intl\Formatter(
+            $locale,
+            empty($options['timestamp']) ? 'd/m/Y H:i' : $options['timestamp'],
+            empty($options['date']) ? 'd/m/Y' : $options['date'],
+            empty($options['time']) ? 'H:i' : $options['time'],
+            empty($options['number']) ? [
+                'decimals' => ',',
+                'thousands' => '.',
+            ] : $options['number']
+        );
+
+        self::$formatter->setPrecision(auth()->check() ? setting('Cifre decimali per importi') : 2);
     }
 }

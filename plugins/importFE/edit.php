@@ -31,15 +31,16 @@ echo '
                             launch_modal("'.tr('Righe fattura').'", globals.rootdir + "/actions.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&op=list&filename=" + data.filename);
                         } else {
                             swal({
-                                title: "'.tr('Fattura già importata!').'",
+                                title: "'.tr('Fattura già importata').'.",
                                 type: "info",
-                            })
+                            });
+							
+							$("#blob").val("");
                         }
-
-                        buttonRestore(btn, restore);
+						buttonRestore(btn, restore);
                     },
-                    error: function(data) {
-                        alert("'.tr('Errore').': " + data);
+                    error: function(xhr) {
+                        alert("'.tr('Errore').': " + xhr.responseJSON.error.message);
 
                         buttonRestore(btn, restore);
                     }
@@ -73,27 +74,40 @@ echo '
 
             <div class="col-md-3">
                 <button type="button" class="btn btn-primary pull-right" onclick="upload(this)">
-                    <i class="fa fa-upload"></i> '.tr('Carica fattura di acquisto').'
+                    <i class="fa fa-upload"></i> '.tr('Carica documento fornitore').'
                 </button>
             </div>
         </div>
     </div>
 </div>';
 
-if (Interaction::isEnabled()) {
-    echo '
+echo '
 <div class="box box-info">
     <div class="box-header with-border">
         <h3 class="box-title">
-            '.tr('Importazione automatica').'</span>
-        </h3>
+            '.tr('Fatture da importare').'</span>
+        </h3>';
+
+// Ricerca automatica
+if (Interaction::isEnabled()) {
+    echo '
         <button type="button" class="btn btn-primary pull-right" onclick="search(this)">
             <i class="fa fa-refresh"></i> '.tr('Ricerca fatture di acquisto').'
-        </button>
+        </button>';
+}
+
+echo '
     </div>
     <div class="box-body" id="list">';
 
+if (Interaction::isEnabled()) {
+    echo '
+        <p>'.tr('Per vedere le fatture da importare utilizza il pulsante _BUTTON_', [
+            '_BUTTON_' => '<b>"'.tr('Ricerca fatture di acquisto').'"</b>',
+        ]).'.</p>';
+} else {
     include $structure->filepath('list.php');
+}
 
     echo '
 
@@ -109,4 +123,3 @@ function search(button) {
     });
 }
 </script>';
-}

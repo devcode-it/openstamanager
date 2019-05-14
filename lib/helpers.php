@@ -87,9 +87,9 @@ function get($param, $raw = false)
  *
  * @return string
  */
-function setting($nome, $again = false)
+function setting($name, $again = false)
 {
-    return \Settings::getValue($nome, $again);
+    return \Settings::getValue($name);
 }
 
 /**
@@ -174,4 +174,61 @@ if (!function_exists('_')) {
 function logger()
 {
     return Monolog\Registry::getInstance('logs');
+}
+
+/**
+ * Restituisce il numero indicato formattato secondo la configurazione del sistema.
+ *
+ * @param float $number
+ * @param int   $decimals
+ *
+ * @return string
+ *
+ * @since 2.4.8
+ */
+function numberFormat($number, $decimals)
+{
+    return Translator::numberToLocale($number, $decimals);
+}
+
+/**
+ * Restituisce il timestamp indicato formattato secondo la configurazione del sistema.
+ *
+ * @param string $timestamp
++ *
+ * @return string
+ *
+ * @since 2.4.8
+ */
+function timestampFormat($timestamp)
+{
+    return Translator::timestampToLocale($timestamp);
+}
+
+/**
+ * Restituisce la data indicata formattato secondo la configurazione del sistema.
+ *
+ * @param string $date
+ *
+ * @return string
+ *
+ * @since 2.4.8
+ */
+function dateFormat($date)
+{
+    return Translator::dateToLocale($date);
+}
+
+/**
+ * Restituisce l'orario indicato formattato secondo la configurazione del sistema.
+ *
+ * @param string $time
+ *
+ * @return string
+ *
+ * @since 2.4.8
+ */
+function timeFormat($time)
+{
+    return Translator::timeToLocale($time);
 }

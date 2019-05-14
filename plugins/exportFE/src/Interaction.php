@@ -15,24 +15,22 @@ class Interaction extends Connection
             $fattura = new FatturaElettronica($id_record);
             $file = DOCROOT.'/'.FatturaElettronica::getDirectory().'/'.$fattura->getFilename();
 
-            $response = static::request('POST', 'send_xml', [], [
-                'multipart' => [
-                    [
-                        'name' => 'xml',
-                        'filename' => $fattura->getFilename(),
-                        'contents' => file_get_contents($file),
-                    ],
-                ],
+            $response = static::request('POST', 'invio_fattura_xml', [
+                'xml' => file_get_contents($file),
+                'filename' => $fattura->getFilename(),
             ]);
-
             $body = static::responseBody($response);
 
-            if (!empty($body['sent'])) {
-                return true;
-            }
+            return [
+                'code' => $body['status'],
+                'message' => $body['message'],
+            ];
         } catch (UnexpectedValueException $e) {
         }
 
-        return false;
+        return [
+            'code' => 400,
+            'message' => tr('Fattura non generata correttamente'),
+        ];
     }
 }

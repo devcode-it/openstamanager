@@ -14,7 +14,7 @@ class Acceptance extends \Codeception\Module
      * @param $option
      * @param int $timeout seconds. Default to 1
      */
-    public function select2($selector, $option)
+    public function select2($selector, $option, $timeout = null)
     {
         $select2 = $this->getModule('\Helper\Select2');
 
@@ -30,20 +30,15 @@ class Acceptance extends \Codeception\Module
      * @param $option
      * @param int $timeout seconds. Default to 1
      */
-    public function select2ajax($selector, $option)
+    public function select2ajax($selector, $option, $timeout = null)
     {
         $select2 = $this->getModule('\Helper\Select2Ajax');
+        $t = $this->getAcceptanceModule();
 
-        $select2->selectOptionForSelect2($selector, $option, $timeout);
-    }
-
-    protected function getAcceptanceModule()
-    {
-        if (!$this->hasModule('WebDriver')) {
-            throw new \Exception('You must enable the WebDriver module', 1);
-        }
-
-        return $this->getModule('WebDriver');
+        $select2->openSelect2($selector);
+        $t->wait(1);
+        $select2->selectByPosition($selector, $option, $timeout);
+        $select2->closeSelect2($selector);
     }
 
     public function seePageHasElement($element)
@@ -65,5 +60,14 @@ class Acceptance extends \Codeception\Module
             $t->click($link, '.sidebar');
             $t->wait(1);
         }
+    }
+
+    protected function getAcceptanceModule()
+    {
+        if (!$this->hasModule('WebDriver')) {
+            throw new \Exception('You must enable the WebDriver module', 1);
+        }
+
+        return $this->getModule('WebDriver');
     }
 }

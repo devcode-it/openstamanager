@@ -2,8 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-include_once Modules::filepath('Interventi', 'modutil.php');
-
 $report_name = 'contratto_'.$records[0]['numero'].'_cons.pdf';
 
 echo '
@@ -61,7 +59,23 @@ $totale_ore_impiegate = 0;
 $sconto = [];
 $imponibile = [];
 
-$interventi = $dbo->fetchArray('SELECT *, in_interventi.id, in_interventi.codice, (SELECT GROUP_CONCAT(DISTINCT ragione_sociale) FROM in_interventi_tecnici JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = in_interventi_tecnici.idtecnico WHERE idintervento=in_interventi.id) AS tecnici, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS inizio, (SELECT SUM(ore) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS ore, (SELECT SUM(km) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS km FROM co_promemoria JOIN in_interventi ON co_promemoria.idintervento=in_interventi.id WHERE co_promemoria.idcontratto='.prepare($id_record).' ORDER BY inizio DESC');
+$interventi = $dbo->fetchArray('SELECT in_interventi.id, in_interventi.codice, 
+       (SELECT GROUP_CONCAT(DISTINCT ragione_sociale) FROM in_interventi_tecnici JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = in_interventi_tecnici.idtecnico WHERE idintervento=in_interventi.id) AS tecnici,
+       (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS inizio,
+       (SELECT SUM(ore) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS ore,
+       (SELECT MIN(km) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS km
+    FROM co_promemoria
+    INNER JOIN in_interventi ON co_promemoria.idintervento=in_interventi.id
+    WHERE co_promemoria.idcontratto='.prepare($id_record).'
+UNION
+    SELECT in_interventi.id, in_interventi.codice,  
+        (SELECT GROUP_CONCAT(DISTINCT ragione_sociale) FROM in_interventi_tecnici JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = in_interventi_tecnici.idtecnico WHERE idintervento=in_interventi.id) AS tecnici,
+        (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS inizio,
+        (SELECT SUM(ore) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS ore,
+        (SELECT MIN(km) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS km
+    FROM in_interventi
+    WHERE id_contratto = '.prepare($id_record).'
+ORDER BY id DESC');
 
 if (!empty($interventi)) {
     // Interventi

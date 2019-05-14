@@ -63,11 +63,14 @@ switch (post('op')) {
 
                 // Ricerca di eventuale anagrafica corrispondente
                 if (!empty($primary_key)) {
-                    $anagrafica = Anagrafica::where($primary_key, '=', $dati_anagrafica[$primary_key])->first();
+                    //impedisco di aggiornare la mia anagrafica azienda
+                    if ($dati_anagrafica[$primary_key] != setting('Azienda predefinita')) {
+                        $anagrafica = Anagrafica::where($primary_key, '=', $dati_anagrafica[$primary_key])->first();
+                    }
                 }
 
                 if (empty($anagrafica)) {
-                    $anagrafica = Anagrafica::make($dati_anagrafica['ragione_sociale']);
+                    $anagrafica = Anagrafica::build($dati_anagrafica['ragione_sociale']);
                 }
 
                 $anagrafica->fill($dati_anagrafica);

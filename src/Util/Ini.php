@@ -45,7 +45,7 @@ class Ini
     }
 
     /**
-     * Interpreta i contentuti di una stringa in formato INI.
+     * Interpreta i contenuti di una stringa in formato INI.
      *
      * @param string $string
      *

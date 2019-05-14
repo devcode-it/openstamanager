@@ -22,6 +22,7 @@ $options = [
     'conti' => $conti,
     'idanagrafica' => $idanagrafica,
     'edit_articolo' => false,
+    'show-ritenuta-contributi' => !empty($rs[0]['id_ritenuta_contributi']),
 ];
 
 // Dati della riga

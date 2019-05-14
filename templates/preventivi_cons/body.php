@@ -2,9 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-include_once Modules::filepath('Interventi', 'modutil.php');
-include_once Modules::filepath('Preventivi', 'modutil.php');
-
 $report_name = 'preventivo_'.$records[0]['numero'].'_cons.pdf';
 
 echo '

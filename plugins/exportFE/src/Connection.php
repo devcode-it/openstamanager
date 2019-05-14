@@ -13,23 +13,6 @@ class Connection
 {
     protected static $client = null;
 
-    /**
-     * Restituisce l'oggetto per la connessione all'API del progetto.
-     *
-     * @return Client
-     */
-    protected static function getClient()
-    {
-        if (!isset(self::$client)) {
-            self::$client = new Client([
-                'base_uri' => 'https://services.osmcloud.it/v1/',
-                'verify' => false,
-            ]);
-        }
-
-        return self::$client;
-    }
-
     public static function isEnabled()
     {
         return !empty(setting('OSMCloud Services API Token'));
@@ -44,18 +27,8 @@ class Connection
             'resource' => $resource,
         ]);
 
-        if (!empty($options['multipart'])) {
-            foreach ($json as $key => $value) {
-                $options['multipart'][] = [
-                    'name' => $key,
-                    'contents' => $value,
-                ];
-            }
-        } else {
-            $options['form_params'] = $json;
-        }
-
         $options = array_merge($options, [
+            'json' => $json,
             'http_errors' => false,
         ]);
 
@@ -67,5 +40,22 @@ class Connection
         $body = $response->getBody();
 
         return json_decode($body, true) ?: [];
+    }
+
+    /**
+     * Restituisce l'oggetto per la connessione all'API del progetto.
+     *
+     * @return Client
+     */
+    protected static function getClient()
+    {
+        if (!isset(self::$client)) {
+            self::$client = new Client([
+                'base_uri' => 'https://services.osmcloud.it/api/',
+                'verify' => false,
+            ]);
+        }
+
+        return self::$client;
     }
 }

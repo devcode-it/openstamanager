@@ -3,9 +3,9 @@
 namespace Notifications;
 
 use Mail;
+use PHPMailer\PHPMailer\Exception as PHPMailerException;
 use Prints;
 use Uploads;
-use PHPMailer\PHPMailer\Exception as PHPMailerException;
 
 class EmailNotification extends Notification
 {
@@ -88,7 +88,7 @@ class EmailNotification extends Notification
     {
         $template = $this->getTemplate();
 
-        $prints = $dbo->fetchArray('SELECT id_print FROM zz_email_print WHERE id_email = '.prepare($template['id']));
+        $prints = database()->fetchArray('SELECT id_print FROM zz_email_print WHERE id_email = '.prepare($template['id']));
         foreach ($prints as $print) {
             $this->addPrint($print['id_print'], $id_record);
         }

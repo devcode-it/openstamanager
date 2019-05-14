@@ -9,15 +9,41 @@ class DDTCest
      */
     protected $rowHelper;
 
-    protected function _inject(RowHelper $rowHelper)
-    {
-        $this->rowHelper = $rowHelper;
-    }
-
     public function _before(\AcceptanceTester $t)
     {
         // Effettua l'accesso con le credenziali fornite
         $t->login('admin', 'admin');
+    }
+
+    /**
+     * Crea un nuovo ddt.
+     *
+     * @param AcceptanceTester $t
+     */
+    public function testDdtDiVendita(AcceptanceTester $t)
+    {
+        $this->addDdt($t, true, 2, 2);
+
+        $this->rowHelper->testImporti($t);
+
+        //$t->click('Stampa');
+    }
+
+    /**
+     * Crea un nuovo ddt.
+     *
+     * @param AcceptanceTester $t
+     */
+    public function testDdtDiAcquisto(AcceptanceTester $t)
+    {
+        $this->addDdt($t, false, 3, 1);
+
+        $this->rowHelper->testImporti($t, 'uscita');
+    }
+
+    protected function _inject(RowHelper $rowHelper)
+    {
+        $this->rowHelper = $rowHelper;
     }
 
     /**
@@ -62,31 +88,5 @@ class DDTCest
 
         // Controlla eliminazione
         $t->see('Ddt eliminato!', '.alert-success');
-    }
-
-    /**
-     * Crea un nuovo ddt.
-     *
-     * @param AcceptanceTester $t
-     */
-    public function testDdtDiVendita(AcceptanceTester $t)
-    {
-        $this->addDdt($t, true, 2, 2);
-
-        $this->rowHelper->testImporti($t);
-
-        //$t->click('Stampa');
-    }
-
-    /**
-     * Crea un nuovo ddt.
-     *
-     * @param AcceptanceTester $t
-     */
-    public function testDdtDiAcquisto(AcceptanceTester $t)
-    {
-        $this->addDdt($t, false, 3, 1);
-
-        $this->rowHelper->testImporti($t);
     }
 }

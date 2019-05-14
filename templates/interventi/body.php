@@ -2,8 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-include_once Modules::filepath('Interventi', 'modutil.php');
-
 $report_name = 'intervento_'.$records[0]['codice'].'.pdf';
 
 /*
@@ -262,7 +260,17 @@ if (!empty($rs2)) {
         // Prezzo unitario
         echo '
         <td class="text-center">
-            '.($options['pricing'] ? Translator::numberToLocale($r['prezzo_vendita'] - $r['sconto_unitario']).' &euro;' : '-').'
+            '.($options['pricing'] ? Translator::numberToLocale($r['prezzo_vendita']).' &euro;' : '-');
+
+        if ($options['pricing'] && $r['sconto'] > 0) {
+            echo "
+            <br><small class='text-muted'>".tr('sconto _TOT_ _TYPE_', [
+                '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
+                '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
+            ]).'</small>';
+        }
+
+        echo '
         </td>';
 
         // Prezzo totale
@@ -323,7 +331,7 @@ echo '
             </th>
 
             <td class="text-center" style="font-size:6pt;width:35%">
-                '.tr('I dati del ricevente verranno trattati in base al D.lgs n. 196/2003').'
+                '.tr('I dati del ricevente verrano trattati in base alla normativa europea UE 2016/679 del 27 aprile 2016 (GDPR)').'
             </td>
         </tr>
     </thead>

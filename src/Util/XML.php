@@ -2,6 +2,8 @@
 
 namespace Util;
 
+use Exception;
+
 /**
  * Classe dedicata all'interpretazione dei file XML.
  *
@@ -10,7 +12,7 @@ namespace Util;
 class XML
 {
     /**
-     * Interpreta i contentuti di una stringa in formato XML.
+     * Interpreta i contenuti di una stringa in formato XML.
      *
      * @param string $string
      *
@@ -19,9 +21,16 @@ class XML
     public static function read($string)
     {
         $content = static::stripP7MData($string);
-        $content = static::sanitizeXML($content);
+
+        libxml_use_internal_errors(true);
 
         $xml = simplexml_load_string($content, 'SimpleXMLElement', LIBXML_NOCDATA);
+        if ($xml === false) {
+            $message = libxml_get_last_error()->message;
+
+            throw new Exception($message);
+        }
+
         $result = json_decode(json_encode($xml), true);
 
         return $result;
@@ -93,7 +102,6 @@ class XML
             $string = preg_replace($regex, '', $string);
 
             $result = '';
-            $current;
             $length = strlen($string);
             for ($i = 0; $i < $length; ++$i) {
                 $current = ord($string[$i]);
@@ -104,9 +112,6 @@ class XML
                 (($current >= 0xE000) && ($current <= 0xFFFD)) ||
                 (($current >= 0x10000) && ($current <= 0x10FFFF))) {
                     $result .= chr($current);
-                } else {
-                    $ret;    // use this to strip invalid character(s)
-                // $ret .= " ";    // use this to replace them with spaces
                 }
             }
             $string = $result;

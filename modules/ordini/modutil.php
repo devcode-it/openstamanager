@@ -2,120 +2,90 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Ordini\Ordine;
+
 /**
- * Funzione per generare un nuovo numero per la fattura.
+ * Funzione per generare un nuovo numero per l'ordine.
+ *
+ * @deprecated 2.4.5
  */
 function get_new_numeroordine($data)
 {
     global $dir;
 
-    $dbo = database();
-
-    $query = "SELECT numero AS max_numeroordine FROM or_ordini WHERE DATE_FORMAT( data, '%Y' ) = ".prepare(date('Y', strtotime($data))).' AND idtipoordine IN(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).') ORDER BY CAST(numero AS UNSIGNED) DESC LIMIT 0,1';
-    $rs = $dbo->fetchArray($query);
-    $numero = $rs[0]['max_numeroordine'] + 1;
-
-    return $numero;
+    return Ordine::getNextNumero($data, $dir);
 }
 
 /**
  * Funzione per calcolare il numero secondario successivo utilizzando la maschera dalle impostazioni.
+ *
+ * @deprecated 2.4.5
  */
 function get_new_numerosecondarioordine($data)
 {
     global $dir;
 
-    $dbo = database();
-
-    // Calcolo il numero secondario se stabilito dalle impostazioni e se documento di vendita
-    $formato_numero_secondario = setting('Formato numero secondario ordine');
-    $formato_numero_secondario = str_replace('#', '%', $formato_numero_secondario);
-
-    $query = 'SELECT numero_esterno FROM or_ordini WHERE DATE_FORMAT( data, "%Y" ) = '.prepare(date('Y', strtotime($data))).' AND idtipoordine IN(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).') AND numero_esterno LIKE('.prepare(Util\Generator::complete($formato_numero_secondario)).') ORDER BY CAST(numero AS UNSIGNED) DESC LIMIT 0,1';
-    $rs = $dbo->fetchArray($query);
-    $numero_secondario = $rs[0]['numero_esterno'];
-
-    if ($numero_secondario == '') {
-        $numero_secondario = setting('Formato numero secondario ordine');
-    }
-
-    if ($formato_numero_secondario != '' && $dir == 'entrata') {
-        $numero_esterno = Util\Generator::generate(setting('Formato numero secondario ordine'), $numero_secondario);
-    } else {
-        $numero_esterno = '';
-    }
-
-    return $numero_esterno;
+    return Ordine::getNextNumeroSecondario($data, $dir);
 }
 
 /**
  * Calcolo imponibile ordine (totale_righe - sconto).
+ *
+ * @deprecated 2.4.5
  */
 function get_imponibile_ordine($idordine)
 {
-    $dbo = database();
+    $ordine = Ordine::find($idordine);
 
-    $query = 'SELECT SUM(subtotale-sconto) AS imponibile FROM or_righe_ordini GROUP BY idordine HAVING idordine='.prepare($idordine);
-    $rs = $dbo->fetchArray($query);
-
-    return $rs[0]['imponibile'];
+    return $ordine->imponibile;
 }
 
 /**
  * Calcolo totale ordine (imponibile + iva).
+ *
+ * @deprecated 2.4.5
  */
 function get_totale_ordine($idordine)
 {
-    $dbo = database();
+    $ordine = Ordine::find($idordine);
 
-    // Sommo l'iva di ogni riga al totale
-    $query = 'SELECT SUM(iva) AS iva FROM or_righe_ordini GROUP BY idordine HAVING idordine='.prepare($idordine);
-    $rs = $dbo->fetchArray($query);
-
-    // Aggiungo la rivalsa inps se c'è
-    $query2 = 'SELECT rivalsainps FROM or_ordini WHERE id='.prepare($idordine);
-    $rs2 = $dbo->fetchArray($query2);
-
-    return get_imponibile_ordine($idordine) + $rs[0]['iva'] + $rs2[0]['rivalsainps'];
+    return $ordine->totale;
 }
 
 /**
- * Calcolo netto a pagare ordine (totale - iva).
+ * Calcolo netto a pagare ordine (totale - ritenute - bolli).
+ *
+ * @deprecated 2.4.5
  */
 function get_netto_ordine($idordine)
 {
-    $dbo = database();
+    $ordine = Ordine::find($idordine);
 
-    $query = 'SELECT ritenutaacconto,bollo FROM or_ordini WHERE id='.prepare($idordine);
-    $rs = $dbo->fetchArray($query);
-
-    return get_totale_ordine($idordine) - $rs[0]['ritenutaacconto'] + $rs[0]['bollo'];
+    return $ordine->netto;
 }
 
 /**
  * Calcolo iva detraibile ordine.
+ *
+ * @deprecated 2.4.5
  */
 function get_ivadetraibile_ordine($idordine)
 {
-    $dbo = database();
+    $ordine = Ordine::find($idordine);
 
-    $query = 'SELECT SUM(iva)-SUM(iva_indetraibile) AS iva_detraibile FROM or_righe_ordini GROUP BY idordine HAVING idordine='.prepare($idordine);
-    $rs = $dbo->fetchArray($query);
-
-    return $rs[0]['iva_detraibile'];
+    return $ordine->iva_detraibile;
 }
 
 /**
  * Calcolo iva indetraibile ordine.
+ *
+ * @deprecated 2.4.5
  */
 function get_ivaindetraibile_ordine($idordine)
 {
-    $dbo = database();
+    $ordine = Ordine::find($idordine);
 
-    $query = 'SELECT SUM(iva_indetraibile) AS iva_indetraibile FROM or_righe_ordini GROUP BY idordine HAVING idordine='.prepare($idordine);
-    $rs = $dbo->fetchArray($query);
-
-    return $rs[0]['iva_indetraibile'];
+    return $ordine->iva_indetraibile;
 }
 
 /**
@@ -211,11 +181,11 @@ function ricalcola_costiagg_ordine($idordine, $idrivalsainps = '', $idritenutaac
         // Leggo la rivalsa inps se c'è (per i ordine di vendita lo leggo dalle impostazioni)
         if ($dir == 'entrata') {
             if (!empty($idrivalsainps)) {
-                $idrivalsainps = setting('Percentuale rivalsa INPS');
+                $idrivalsainps = setting('Percentuale rivalsa');
             }
         }
 
-        $query = 'SELECT percentuale FROM co_rivalsainps WHERE id='.prepare($idrivalsainps);
+        $query = 'SELECT percentuale FROM co_rivalse WHERE id='.prepare($idrivalsainps);
         $rs = $dbo->fetchArray($query);
         $rivalsainps = $totale_imponibile / 100 * $rs[0]['percentuale'];
 

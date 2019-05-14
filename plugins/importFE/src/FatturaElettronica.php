@@ -2,19 +2,19 @@
 
 namespace Plugins\ImportFE;
 
-use Modules\Fatture\Fattura;
-use Modules\Fatture\Riga;
-use Modules\Fatture\Articolo;
+use Modules;
+use Modules\Anagrafiche\Anagrafica;
+use Modules\Anagrafiche\Nazione;
+use Modules\Anagrafiche\Tipo as TipoAnagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
+use Modules\Fatture\Components\Articolo;
+use Modules\Fatture\Components\Riga;
+use Modules\Fatture\Fattura;
 use Modules\Fatture\Stato as StatoFattura;
 use Modules\Fatture\Tipo as TipoFattura;
-use Modules\Anagrafiche\Anagrafica;
-use Modules\Anagrafiche\Tipo as TipoAnagrafica;
-use Modules\Anagrafiche\Nazione;
-use Util\XML;
-use Uploads;
-use Modules;
 use UnexpectedValueException;
+use Uploads;
+use Util\XML;
 
 /**
  * Classe per la gestione della fatturazione elettronica in XML.
@@ -34,9 +34,9 @@ class FatturaElettronica
     /** @var Fattura Fattura collegata */
     protected $fattura = null;
 
-    public function __construct($file)
+    public function __construct($name)
     {
-        $this->file = static::getImportDirectory().'/'.$file;
+        $this->file = static::getImportDirectory().'/'.$name;
         $this->xml = XML::readFile($this->file);
 
         // Individuazione fattura pre-esistente
@@ -84,10 +84,10 @@ class FatturaElettronica
         return $filename;
     }
 
-    public static function isValid($file)
+    public static function isValid($name)
     {
         try {
-            new static($file);
+            new static($name);
 
             return true;
         } catch (UnexpectedValueException $e) {
@@ -130,14 +130,16 @@ class FatturaElettronica
         }
 
         $ragione_sociale = $xml['DatiAnagrafici']['Anagrafica']['Denominazione'] ?: $xml['DatiAnagrafici']['Anagrafica']['Nome'].' '.$xml['DatiAnagrafici']['Anagrafica']['Cognome'];
-        $anagrafica = Anagrafica::make($ragione_sociale, [
+        $anagrafica = Anagrafica::build($ragione_sociale, [
             TipoAnagrafica::where('descrizione', 'Fornitore')->first()->id,
         ]);
 
         // Informazioni sull'anagrafica
         $REA = $xml['IscrizioneREA'];
         if (!empty($REA)) {
-            $anagrafica->codicerea = $REA['Ufficio'].'-'.$REA['NumeroREA'];
+            if (!empty($REA['Ufficio']) and !empty($REA['NumeroREA'])) {
+                $anagrafica->codicerea = $REA['Ufficio'].'-'.$REA['NumeroREA'];
+            }
 
             if (!empty($REA['CapitaleSociale'])) {
                 $anagrafica->capitale_sociale = $REA['CapitaleSociale'];
@@ -195,17 +197,23 @@ class FatturaElettronica
         return $result;
     }
 
-    public function saveRighe($articoli, $iva, $conto)
+    public function saveRighe($articoli, $iva, $conto, $movimentazione = true)
     {
         $righe = $this->getRighe();
+        $fattura = $this->getFattura();
 
         foreach ($righe as $key => $riga) {
             $articolo = ArticoloOriginale::find($articoli[$key]);
 
+            $riga['PrezzoUnitario'] = floatval($riga['PrezzoUnitario']);
+            $riga['Quantita'] = floatval($riga['Quantita']);
+
             if (!empty($articolo)) {
-                $obj = Articolo::make($this->getFattura(), $articolo);
+                $obj = Articolo::build($fattura, $articolo);
+
+                $obj->movimentazione($movimentazione);
             } else {
-                $obj = Riga::make($this->getFattura());
+                $obj = Riga::build($fattura);
             }
 
             $obj->descrizione = $riga['Descrizione'];
@@ -218,16 +226,55 @@ class FatturaElettronica
                 $obj->um = $riga['UnitaMisura'];
             }
 
-            $sconto = $riga['ScontoMaggiorazione'];
-            if (!empty($sconto)) {
-                $tipo = !empty($sconto['Percentuale']) ? 'PRC' : 'EUR';
-                $unitario = $sconto['Percentuale'] ?: $sconto['Importo'];
+            $sconti = $riga['ScontoMaggiorazione'];
+            if (!empty($sconti)) {
+                $sconti = $sconti[0] ? $sconti : [$sconti];
+                $tipo = !empty($sconti[0]['Percentuale']) ? 'PRC' : 'UNT';
 
-                $unitario = ($sconto['Tipo'] == 'SC') ? $unitario : -$unitario;
+                $lista = [];
+                foreach ($sconti as $sconto) {
+                    $unitario = $sconto['Percentuale'] ?: $sconto['Importo'];
 
-                $obj->sconto_unitario = $unitario;
+                    // Sconto o Maggiorazione
+                    $lista[] = ($sconto['Tipo'] == 'SC') ? $unitario : -$unitario;
+                }
+
+                if ($tipo == 'PRC') {
+                    $elenco = implode('+', $lista);
+                    $sconto = calcola_sconto([
+                        'sconto' => $elenco,
+                        'prezzo' => $obj->prezzo_unitario_vendita,
+                        'tipo' => 'PRC',
+                        'qta' => $obj->qta,
+                    ]);
+
+                    /*
+                     * Trasformazione di sconti multipli in sconto percentuale combinato.
+                     * Esempio: 40% + 30% è uno sconto del 42%.
+                     */
+                    $sconto_unitario = $sconto * 100 / $obj->imponibile;
+                } else {
+                    $sconto_unitario = sum($lista);
+                }
+
+                $obj->sconto_unitario = $sconto_unitario;
                 $obj->tipo_sconto = $tipo;
             }
+
+            $obj->save();
+        }
+
+        // Arrotondamenti differenti nella fattura XML
+        $totali = array_column($righe, 'PrezzoTotale');
+        $diff = sum($totali) - $fattura->imponibile_scontato;
+        if (!empty($diff)) {
+            $obj = Riga::build($fattura);
+
+            $obj->descrizione = tr('Arrotondamento calcolato in automatico');
+            $obj->id_iva = $iva[0];
+            $obj->idconto = $conto[0];
+            $obj->prezzo_unitario_vendita = $diff;
+            $obj->qta = 1;
 
             $obj->save();
         }
@@ -292,19 +339,19 @@ class FatturaElettronica
      *
      * @return int
      */
-    public function saveFattura($id_pagamento, $id_sezionale)
+    public function saveFattura($id_pagamento, $id_sezionale, $id_tipo)
     {
         $anagrafica = static::createAnagrafica($this->getHeader()['CedentePrestatore']);
 
         $dati_generali = $this->getBody()['DatiGenerali']['DatiGeneraliDocumento'];
         $data = $dati_generali['Data'];
+
         $numero_esterno = $dati_generali['Numero'];
         $progressivo_invio = $this->getHeader()['DatiTrasmissione']['ProgressivoInvio'];
 
-        $descrizione_tipo = empty($this->getBody()['DatiGenerali']['DatiTrasporto']) ? 'Fattura immediata di acquisto' : 'Fattura accompagnatoria di acquisto';
-        $tipo = TipoFattura::where('descrizione', $descrizione_tipo)->first();
+        $tipo = TipoFattura::where('id', $id_tipo)->first();
 
-        $fattura = Fattura::make($anagrafica, $tipo, $data, $id_sezionale);
+        $fattura = Fattura::build($anagrafica, $tipo, $data, $id_sezionale);
         $this->fattura = $fattura;
 
         $fattura->progressivo_invio = $progressivo_invio;
@@ -317,7 +364,7 @@ class FatturaElettronica
         // Sconto globale
         $sconto = $dati_generali['ScontoMaggiorazione'];
         if (!empty($sconto)) {
-            $tipo = !empty($sconto['Percentuale']) ? 'PRC' : 'EUR';
+            $tipo = !empty($sconto['Percentuale']) ? 'PRC' : 'UNT';
             $unitario = $sconto['Percentuale'] ?: $sconto['Importo'];
 
             $unitario = ($sconto['Tipo'] == 'SC') ? $unitario : -$unitario;
@@ -333,6 +380,14 @@ class FatturaElettronica
             $importo = $ritenuta['ImportoRitenuta'];
 
             // TODO: salvare in fattura
+        }
+
+        $causali = $dati_generali['Causale'];
+        if (count($causali) > 0) {
+            foreach ($causali as $causale) {
+                $note .= $causale;
+            }
+            $fattura->note = $note;
         }
 
         // Bollo

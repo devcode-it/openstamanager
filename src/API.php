@@ -28,6 +28,10 @@ class API extends \Util\Singleton
             'code' => 404,
             'message' => 'Non trovato',
         ],
+        'externalError' => [
+            'code' => 409,
+            'message' => 'Errore in un servizio esterno',
+        ],
         'serverError' => [
             'code' => 500,
             'message' => 'Errore del server',
@@ -72,6 +76,7 @@ class API extends \Util\Singleton
         $select = '*';
         $where = [];
         $order = [];
+        $parameters = [];
 
         // Selezione personalizzata
         $select = !empty($request['display']) ? explode(',', substr($request['display'], 1, -1)) : $select;
@@ -105,9 +110,6 @@ class API extends \Util\Singleton
 
         try {
             if (in_array($resource, array_keys($resources))) {
-                // Inclusione funzioni del modulo
-                include_once App::filepath('modules/'.$resources[$resource].'|custom|', 'modutil.php');
-
                 // Esecuzione delle operazioni personalizzate
                 $filename = DOCROOT.'/modules/'.$resources[$resource].'/api/'.$kind.'.php';
                 include $filename;
@@ -198,49 +200,6 @@ class API extends \Util\Singleton
     }
 
     /**
-     * Gestisce le richieste in modo generalizzato, con il relativo richiamo ai file specifici responsabili dell'operazione.
-     *
-     * @param array $request
-     *
-     * @return string
-     */
-    protected function fileRequest($request, $kind)
-    {
-        $user = Auth::user();
-        $response = [];
-
-        // Controllo sulla compatibilità dell'API
-        if (!self::isCompatible()) {
-            return self::response([
-                'status' => self::$status['incompatible']['code'],
-            ]);
-        }
-
-        $resources = self::getResources()[$kind];
-        $resource = $request['resource'];
-
-        if (!in_array($resource, array_keys($resources))) {
-            return self::error('notFound');
-        }
-
-        // Inclusione funzioni del modulo
-        include_once App::filepath('modules/'.$resources[$resource].'|custom|', 'modutil.php');
-
-        // Database
-        $dbo = $database = database();
-
-        $database->beginTransaction();
-
-        // Esecuzione delle operazioni
-        $filename = DOCROOT.'/modules/'.$resources[$resource].'/api/'.$kind.'.php';
-        include $filename;
-
-        $database->commitTransaction();
-
-        return self::response($response);
-    }
-
-    /**
      * Genera i contenuti di risposta nel caso si verifichi un errore.
      *
      * @param string|int $error
@@ -271,25 +230,7 @@ class API extends \Util\Singleton
         if (!is_array(self::$resources)) {
             $resources = [];
 
-            // Ignore dei warning
-            $resource = '';
-
-            // File nativi
-            $files = glob(DOCROOT.'/modules/*/api/{retrieve,create,update,delete}.php', GLOB_BRACE);
-
-            // File personalizzati
-            $custom_files = glob(DOCROOT.'/modules/*/custom/api/{retrieve,create,update,delete}.php', GLOB_BRACE);
-
-            // Pulizia dei file nativi che sono stati personalizzati
-            foreach ($custom_files as $key => $value) {
-                $index = array_search(str_replace('custom/api/', 'api/', $value), $files);
-                if ($index !== false) {
-                    unset($files[$index]);
-                }
-            }
-
-            $operations = array_merge($files, $custom_files);
-            asort($operations);
+            $operations = AJAX::find('api/{retrieve,create,update,delete}.php', false);
 
             foreach ($operations as $operation) {
                 // Individua la tipologia e il modulo delle operazioni
@@ -323,7 +264,7 @@ class API extends \Util\Singleton
     }
 
     /**
-     * Formatta i contentuti della risposta secondo il formato JSON.
+     * Formatta i contenuti della risposta secondo il formato JSON.
      *
      * @param array $array
      *
@@ -332,7 +273,7 @@ class API extends \Util\Singleton
     public static function response($array)
     {
         if (empty($array['custom'])) {
-            // Agiunta dello status di default
+            // Aggiunta dello status di default
             if (empty($array['status'])) {
                 $array['status'] = self::$status['ok']['code'];
             }
@@ -421,5 +362,45 @@ class API extends \Util\Singleton
         $database = database();
 
         return version_compare($database->getMySQLVersion(), '5.6.5') >= 0;
+    }
+
+    /**
+     * Gestisce le richieste in modo generalizzato, con il relativo richiamo ai file specifici responsabili dell'operazione.
+     *
+     * @param array $request
+     *
+     * @return string
+     */
+    protected function fileRequest($request, $kind)
+    {
+        $user = Auth::user();
+        $response = [];
+
+        // Controllo sulla compatibilità dell'API
+        if (!self::isCompatible()) {
+            return self::response([
+                'status' => self::$status['incompatible']['code'],
+            ]);
+        }
+
+        $resources = self::getResources()[$kind];
+        $resource = $request['resource'];
+
+        if (!in_array($resource, array_keys($resources))) {
+            return self::error('notFound');
+        }
+
+        // Database
+        $dbo = $database = database();
+
+        $database->beginTransaction();
+
+        // Esecuzione delle operazioni
+        $filename = DOCROOT.'/modules/'.$resources[$resource].'/api/'.$kind.'.php';
+        include $filename;
+
+        $database->commitTransaction();
+
+        return self::response($response);
     }
 }

@@ -2,8 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-include_once Modules::filepath('Fatture di vendita', 'modutil.php');
-
 // Mostro le righe dell'ordine
 echo '
 <table class="table table-striped table-hover table-condensed table-bordered">
@@ -259,7 +257,7 @@ if (abs($record['rivalsainps']) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.tr('Rivalsa INPS', [], ['upper' => true]).':</b>
+            <b>'.tr('Rivalsa', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
             '.Translator::numberToLocale($record['rivalsainps']).' &euro;
@@ -355,7 +353,7 @@ $(document).ready(function(){
                     order += ","+$(this).data("id");
                 });
                 order = order.replace(/^,/, "");
-                
+
 				$.post("'.$rootdir.'/actions.php", {
 					id: ui.item.data("id"),
 					id_module: '.$id_module.',

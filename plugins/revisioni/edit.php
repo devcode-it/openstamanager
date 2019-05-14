@@ -54,7 +54,7 @@ echo '      </div>';
 echo '  </div>';
 echo "  <div class='row'>";
 echo "      <div class='col-md-12 text-center'>";
-echo "           <button type='submit' class='btn btn-primary'><i class='fa fa-refresh'></i> Cambia revisione...</button>";
+echo '           <button '.((sizeof($rs_revisioni) < 2) ? 'disabled' : '')." type='submit' class='btn btn-primary' ><i class='fa fa-refresh'></i> ".tr('Cambia revisione').'</button>';
 echo '      </div>';
 echo '  </div>';
 echo '</form>';

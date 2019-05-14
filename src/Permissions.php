@@ -69,8 +69,8 @@ class Permissions
         if (!self::getSkip()) {
             if (!Auth::check() && getURLPath() == slashes(ROOTDIR.'/index.php')) {
                 redirect(ROOTDIR.'/index.php');
-                exit();
                 $result = false;
+                exit();
             } else {
                 if (!empty(self::$permissions)) {
                     foreach (self::$permissions as $module) {

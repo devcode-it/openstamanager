@@ -9,13 +9,125 @@ abstract class Document extends Model
      *
      * @return iterable
      */
-    protected function getRighe()
+    public function getRighe()
     {
-        return $this->righe->merge($this->articoli);
+        $descrizioni = $this->descrizioni;
+        $righe = $this->righe;
+        $articoli = $this->articoli;
+
+        return $descrizioni->merge($righe)->merge($articoli)->sortBy('order');
+    }
+
+    abstract public function righe();
+
+    abstract public function articoli();
+
+    abstract public function descrizioni();
+
+    abstract public function scontoGlobale();
+
+    /**
+     * Calcola l'imponibile del documento.
+     *
+     * @return float
+     */
+    public function getImponibileAttribute()
+    {
+        return $this->calcola('imponibile');
     }
 
     /**
-     * Funzione per l'arrotondamento degli importi;.
+     * Calcola lo sconto totale del documento.
+     *
+     * @return float
+     */
+    public function getScontoAttribute()
+    {
+        return $this->calcola('sconto');
+    }
+
+    /**
+     * Calcola l'imponibile scontato del documento.
+     *
+     * @return float
+     */
+    public function getImponibileScontatoAttribute()
+    {
+        return $this->calcola('imponibile_scontato');
+    }
+
+    /**
+     * Calcola l'IVA totale del documento.
+     *
+     * @return float
+     */
+    public function getIvaAttribute()
+    {
+        return $this->calcola('iva');
+    }
+
+    /**
+     * Calcola il totale del documento.
+     *
+     * @return float
+     */
+    public function getTotaleAttribute()
+    {
+        return $this->calcola('totale');
+    }
+
+    /**
+     * Calcola la spesa totale relativa alla fattura.
+     *
+     * @return float
+     */
+    public function getSpesaAttribute()
+    {
+        return $this->calcola('spesa');
+    }
+
+    /**
+     * Calcola il guadagno del documento.
+     *
+     * @return float
+     */
+    public function getGuadagnoAttribute()
+    {
+        return $this->calcola('guadagno');
+    }
+
+    /**
+     * Calcola la somma degli attributi indicati come parametri.
+     * Il metodo **non** deve essere adattato per ulteriori funzionalità: deve esclusivamente calcolare la somma richiesta in modo esplicito dagli argomenti.
+     *
+     * @param mixed ...$args
+     *
+     * @return float
+     */
+    protected function calcola(...$args)
+    {
+        $result = 0;
+        foreach ($args as $arg) {
+            $result += $this->getRigheContabili()->sum($arg);
+        }
+
+        return $this->round($result);
+    }
+
+    /**
+     * Restituisce la collezione di righe e articoli con valori rilevanti per i conti.
+     *
+     * @return iterable
+     */
+    protected function getRigheContabili()
+    {
+        $sconto = $this->scontoGlobale ? [$this->scontoGlobale] : [];
+
+        return $this->getRighe()->merge(collect($sconto));
+    }
+
+    /**
+     * Funzione per l'arrotondamento degli importi.
      *
      * @param float $value
      *
@@ -26,85 +138,5 @@ abstract class Document extends Model
         $decimals = 2;
 
         return round($value, $decimals);
-    }
-
-    /**
-     * Calcola l'imponibile della fattura.
-     *
-     * @return float
-     */
-    public function getImponibileAttribute()
-    {
-        return $this->round($this->getRighe()->sum('imponibile'));
-    }
-
-    /**
-     * Calcola lo sconto totale della fattura.
-     *
-     * @return float
-     */
-    public function getScontoAttribute()
-    {
-        return $this->round($this->getRighe()->sum('sconto'));
-    }
-
-    /**
-     * Calcola l'imponibile scontato della fattura.
-     *
-     * @return float
-     */
-    public function getImponibileScontatoAttribute()
-    {
-        return $this->round($this->getRighe()->sum('imponibile_scontato'));
-    }
-
-    /**
-     * Calcola l'IVA totale della fattura.
-     *
-     * @return float
-     */
-    public function getIvaAttribute()
-    {
-        return $this->round($this->getRighe()->sum('iva'));
-    }
-
-    /**
-     * Calcola la rivalsa INPS totale della fattura.
-     *
-     * @return float
-     */
-    public function getRivalsaINPSAttribute()
-    {
-        return $this->round($this->getRighe()->sum('rivalsa_inps'));
-    }
-
-    /**
-     * Calcola la ritenuta d'acconto totale della fattura.
-     *
-     * @return float
-     */
-    public function getRitenutaAccontoAttribute()
-    {
-        return $this->round($this->getRighe()->sum('ritenuta_acconto'));
-    }
-
-    /**
-     * Calcola il totale della fattura.
-     *
-     * @return float
-     */
-    public function getTotaleAttribute()
-    {
-        return $this->round($this->getRighe()->sum('totale'));
-    }
-
-    /**
-     * Calcola il netto a pagare della fattura.
-     *
-     * @return float
-     */
-    public function getNettoAttribute()
-    {
-        return $this->round($this->getRighe()->sum('netto'));
     }
 }

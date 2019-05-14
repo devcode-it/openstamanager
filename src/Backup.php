@@ -1,7 +1,7 @@
 <?php
 
-use Util\Zip;
 use Ifsnop\Mysqldump\Mysqldump;
+use Util\Zip;
 
 /**
  * Classe per la gestione dei backup.
@@ -13,7 +13,7 @@ class Backup
     /** @var string Pattern per i nomi dei backup */
     const PATTERN = 'OSM backup YYYY-m-d H_i_s';
 
-    /** @var array Elenco delle varabili che identificano i backup giornalieri */
+    /** @var array Elenco delle variabili che identificano i backup giornalieri */
     protected static $daily_replaces = [
         'YYYY', 'm', 'd',
     ];
@@ -28,24 +28,7 @@ class Backup
         $result = App::getConfig()['backup_dir'];
 
         $result = rtrim($result, '/');
-
-        if (!is_writable($result) || !directory($result)) {
-            throw new UnexpectedValueException();
-        }
-
-        return slashes($result);
-    }
-
-    /**
-     * Restituisce il percorso su cui salvare temporeneamente il dump del database.
-     *
-     * @return string
-     */
-    protected static function getDatabaseDirectory()
-    {
-        $result = self::getDirectory().'/database';
-
-        if (!directory($result)) {
+        if (!directory($result) || !is_writable($result)) {
             throw new UnexpectedValueException();
         }
 
@@ -73,7 +56,8 @@ class Backup
         $backups = Symfony\Component\Finder\Finder::create()
             ->name('/^'.$pattern.'/')
             ->sortByName()
-            ->in(self::getDirectory());
+            ->in(self::getDirectory())
+            ->depth('== 0');
 
         $results = [];
         foreach ($backups as $backup) {
@@ -81,24 +65,6 @@ class Backup
         }
 
         return $results;
-    }
-
-    /**
-     * Restituisce l'elenco delle variabili da sostituire normalizzato per l'utilizzo.
-     */
-    protected static function getReplaces()
-    {
-        return Util\Generator::getReplaces();
-    }
-
-    /**
-     * Restituisce il nome previsto per il backup successivo.
-     *
-     * @return string
-     */
-    protected static function getNextName()
-    {
-        return Util\Generator::generate(self::PATTERN);
     }
 
     /**
@@ -245,8 +211,8 @@ class Backup
         $database_file = $extraction_dir.'/database.sql';
         if (file_exists($database_file)) {
             $database->query('SET foreign_key_checks = 0');
-            foreach ($tables as $tables) {
-                $database->query('DROP TABLE IF EXISTS `'.$tables.'`');
+            foreach ($tables as $table) {
+                $database->query('DROP TABLE IF EXISTS `'.$table.'`');
             }
             $database->query('DROP TABLE IF EXISTS `updates`');
 
@@ -269,5 +235,39 @@ class Backup
             delete($extraction_dir);
         }
         delete(DOCROOT.'/database.sql');
+    }
+
+    /**
+     * Restituisce il percorso su cui salvare temporaneamente il dump del database.
+     *
+     * @return string
+     */
+    protected static function getDatabaseDirectory()
+    {
+        $result = self::getDirectory().'/database';
+
+        if (!directory($result)) {
+            throw new UnexpectedValueException();
+        }
+
+        return slashes($result);
+    }
+
+    /**
+     * Restituisce l'elenco delle variabili da sostituire normalizzato per l'utilizzo.
+     */
+    protected static function getReplaces()
+    {
+        return Util\Generator::getReplaces();
+    }
+
+    /**
+     * Restituisce il nome previsto per il backup successivo.
+     *
+     * @return string
+     */
+    protected static function getNextName()
+    {
+        return Util\Generator::generate(self::PATTERN);
     }
 }

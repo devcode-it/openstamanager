@@ -2,8 +2,8 @@
 
 namespace Util;
 
-use ZipArchive;
 use Symfony\Component\Finder\Finder;
+use ZipArchive;
 
 /**
  * Classe dedicata alla gestione dei contenuti ZIP.

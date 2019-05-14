@@ -17,7 +17,7 @@ if (!function_exists('array_column')) {
      *
      * @since 2.3
      *
-     * @return plucked array only with key data
+     * @return array plucked array only with key data
      */
     function array_column($array, $key)
     {
@@ -74,30 +74,6 @@ if (!function_exists('ends_with')) {
     {
         //return substr($string, -strlen($ends_with)) === $ends_with;
         return S::create($string)->endsWith($ends_with);
-    }
-}
-
-if (!function_exists('str_replace_once')) {
-    /**
-     * Sostituisce la prima occorenza di una determinata stringa.
-     *
-     * @param string $str_pattern
-     * @param string $str_replacement
-     * @param string $string
-     *
-     * @since 2.3
-     *
-     * @return string
-     */
-    function str_replace_once($str_pattern, $str_replacement, $string)
-    {
-        if (strpos($string, $str_pattern) !== false) {
-            $occurrence = strpos($string, $str_pattern);
-
-            return substr_replace($string, $str_replacement, strpos($string, $str_pattern), strlen($str_pattern));
-        }
-
-        return $string;
     }
 }
 
@@ -164,9 +140,6 @@ if (!function_exists('random_string')) {
     /**
      * Generates a string of random characters.
      *
-     * @throws LengthException If $length is bigger than the available
-     *                         character pool and $no_duplicate_chars is
-     *                         enabled
      *
      * @param int  $length             The length of the string to
      *                                 generate
@@ -181,6 +154,10 @@ if (!function_exists('random_string')) {
      *                                 true
      * @param bool $no_duplicate_chars whether or not to only use
      *                                 characters once in the string
+     *
+     * @throws LengthException If $length is bigger than the available
+     *                         character pool and $no_duplicate_chars is
+     *                         enabled
      *
      * @return string
      */

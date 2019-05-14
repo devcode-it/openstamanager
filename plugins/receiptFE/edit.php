@@ -46,19 +46,26 @@ echo '
                 count = data.length;
                 buttonRestore(btn, restore);
 
-                swal({
-                    title: "'.tr('Ricevute da importare: _COUNT_', [
-                        '_COUNT_' => '" + count + "',
-                    ]).'",
-                    html: "'.tr('Sono state individuate _COUNT_ ricevute da importare', [
-                        '_COUNT_' => '" + count + "',
-                    ]).'.",
-                    showCancelButton: true,
-                    confirmButtonText: "'.tr('Procedi').'",
-                    type: "info",
-                }).then(function (result) {
-                    importAll(btn);
-                });
+                if(count == 0){
+                    swal({
+                        title: "'.tr('Non ci sono ricevute da importare').'",
+                        showCancelButton: false,
+                        confirmButtonText: "'.tr('OK').'",
+                        type: "info",
+                    });
+                } else {
+                    swal({
+                        title: "'.tr('Ricevute da importare: _COUNT_', [
+                            '_COUNT_' => '" + count + "',
+                        ]).'",
+                        html: "'.tr('Importando le ricevute, verranno aggiornati gli stati di invio fatture elettroniche. Continuare?').'",
+                        showCancelButton: true,
+                        confirmButtonText: "'.tr('Procedi').'",
+                        type: "info",
+                    }).then(function (result) {
+                        importAll(btn);
+                    });
+                }
             },
             error: function(data) {
                 alert("'.tr('Errore').': " + data);
@@ -82,20 +89,19 @@ echo '
             success: function(data){
                 data = JSON.parse(data);
 
-                var html = "'.tr('Le seguenti ricevute sono state considerate:').'";
+                var html = "'.tr('Sono state elaborate le seguenti ricevute:').'";
 
-                console.log(data);
                 data.forEach(function(element) {
                     var text = "";
                     if(element.fattura) {
                         text += element.fattura;
                     } else {
-                        text += "<i>'.tr('Ricevuta non ottenuta correttamente').'</i>";
+                        text += "<i>'.tr('Ricevuta non ottenuta correttamente. Controlla che esista una fattura di vendita corrispondente caricata a gestionale.').'</i>";
                     }
 
                     text += " (" + element.file + ")";
 
-                    html += "<li>" + text + "</li>";
+                    html += "<small><li>" + text + "</li></small>";
                 });
 
                 html += "<br><small>'.tr("Se si sono verificati degli errori durante la procedura e il problema continua a verificarsi, contatta l'assistenza ufficiale").'</small>";

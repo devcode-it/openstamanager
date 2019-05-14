@@ -2,11 +2,9 @@
 
 include_once __DIR__.'/../../core.php';
 
-include_once Modules::filepath('Fatture di vendita', 'modutil.php');
-
+use Modules\Anagrafiche\Anagrafica;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Tipo;
-use Modules\Anagrafiche\Anagrafica;
 
 if ($module['name'] == 'Ddt di vendita') {
     $dir = 'entrata';
@@ -56,7 +54,7 @@ switch (post('op')) {
                 // Se non c'è già una fattura appena creata per questo cliente, creo una fattura nuova
                 if (empty($id_documento)) {
                     $anagrafica = Anagrafica::find($id_anagrafica);
-                    $fattura = Fattura::make($anagrafica, $tipo_documento, $data, $id_segment);
+                    $fattura = Fattura::build($anagrafica, $tipo_documento, $data, $id_segment);
 
                     $id_documento = $fattura->id;
                     $id_documento_cliente[$id_anagrafica] = $id_documento;

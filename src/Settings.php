@@ -1,7 +1,7 @@
 <?php
 
-use Respect\Validation\Validator as v;
 use Models\Setting;
+use Respect\Validation\Validator as v;
 
 /**
  * Classe per la gestione dell impostazioni del progetto.
@@ -147,25 +147,25 @@ class Settings
             }
 
             $result = '
-    {[ "type": "select", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "values": '.json_encode($list).', "value": "'.$setting->valore.'", "required": "'.intval($required).'" ]}';
+    {[ "type": "select", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "values": '.json_encode($list).', "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'" ]}';
         }
 
         // Lista da query
         elseif (preg_match('/^query=(.+?)$/', $setting->tipo, $m)) {
             $result = '
-    {[ "type": "select", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "values": "'.$setting->tipo.'", "value": "'.$setting->valore.'", "required": "'.intval($required).'"  ]}';
+    {[ "type": "select", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "values": "'.$setting->tipo.'", "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'"   ]}';
         }
 
         // Boolean (checkbox)
         elseif ($setting->tipo == 'boolean') {
             $result = '
-    {[ "type": "checkbox", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "placeholder": "'.tr('Attivo').'", "value": "'.$setting->valore.'", "required": "'.intval($required).'"  ]}';
+    {[ "type": "checkbox", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "placeholder": "'.tr('Attivo').'", "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'"  ]}';
         }
 
         // Campi di default
         elseif (in_array($setting->tipo, ['textarea', 'ckeditor', 'timestamp', 'date', 'time'])) {
             $result = '
-    {[ "type": "'.$setting->tipo.'", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "value": '.json_encode($setting->valore).', "required": "'.intval($required).'"  ]}';
+    {[ "type": "'.$setting->tipo.'", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "value": '.json_encode($setting->valore).', "required": "'.intval($required).'", "help": "'.$setting->help.'"  ]}';
         }
 
         // Campo di testo
@@ -176,7 +176,7 @@ class Settings
             $tipo = $numerico ? 'number' : 'text';
 
             $result = '
-    {[ "type": "'.$tipo.'", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "value": "'.$setting->valore.'"'.($numerico && $setting->tipo == 'integer' ? ', "decimals": 0' : '').', "required": "'.intval($required).'"  ]}';
+    {[ "type": "'.$tipo.'", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "value": "'.$setting->valore.'"'.($numerico && $setting->tipo == 'integer' ? ', "decimals": 0' : '').', "required": "'.intval($required).'", "help": "'.$setting->help.'"  ]}';
         }
 
         return $result;

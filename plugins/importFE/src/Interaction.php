@@ -15,14 +15,25 @@ class Interaction extends Connection
     {
         $directory = FatturaElettronica::getImportDirectory();
 
-        $response = static::request('POST', 'get_fatture_da_importare');
-        $body = static::responseBody($response);
+        $list = [];
 
-        $list = $body['results'];
-
-        $files = glob($directory.'/*.xml');
+        $files = glob($directory.'/*.xml*');
         foreach ($files as $file) {
             $list[] = basename($file);
+        }
+
+        // Ricerca da remoto
+        if (self::isEnabled()) {
+            $response = static::request('POST', 'fatture_da_importare');
+            $body = static::responseBody($response);
+
+            if ($body['status'] == '200') {
+                $files = $body['results'];
+
+                foreach ($files as $file) {
+                    $list[] = basename($file);
+                }
+            }
         }
 
         return array_clean($list);
@@ -34,7 +45,7 @@ class Interaction extends Connection
         $file = $directory.'/'.$name;
 
         if (!file_exists($file)) {
-            $response = static::request('POST', 'get_fattura_da_importare', [
+            $response = static::request('POST', 'fattura_da_importare', [
                 'name' => $name,
             ]);
             $body = static::responseBody($response);
@@ -43,5 +54,21 @@ class Interaction extends Connection
         }
 
         return $name;
+    }
+
+    public static function processXML($filename)
+    {
+        $response = static::request('POST', 'fattura_xml_salvata', [
+                'filename' => $filename,
+            ]);
+
+        $body = static::responseBody($response);
+
+        $message = '';
+        if ($body['status'] != '200') {
+            $message = $body['status'].' - '.$body['message'];
+        }
+
+        return $message;
     }
 }

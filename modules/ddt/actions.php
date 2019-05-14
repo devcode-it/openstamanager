@@ -2,10 +2,12 @@
 
 include_once __DIR__.'/../../core.php';
 
-// Necessaria per la funzione add_movimento_magazzino
-include_once Modules::filepath('Articoli', 'modutil.php');
-include_once Modules::filepath('Fatture di vendita', 'modutil.php');
-include_once Modules::filepath('Ordini cliente', 'modutil.php');
+use Modules\Anagrafiche\Anagrafica;
+use Modules\DDT\Components\Articolo;
+use Modules\DDT\Components\Descrizione;
+use Modules\DDT\Components\Riga;
+use Modules\DDT\DDT;
+use Modules\DDT\Tipo;
 
 $module = Modules::get($id_module);
 
@@ -19,35 +21,19 @@ switch (post('op')) {
     case 'add':
         $idanagrafica = post('idanagrafica');
         $data = post('data');
-        $dir = post('dir');
-        $idtipoddt = post('idtipoddt');
+        $id_tipo = post('idtipoddt');
 
-        if (post('idanagrafica') !== null) {
-            $numero = get_new_numeroddt($data);
-            $numero_esterno = ($dir == 'entrata') ? get_new_numerosecondarioddt($data) : '';
+        $anagrafica = Anagrafica::find($idanagrafica);
+        $tipo = Tipo::find($id_tipo);
 
-            $campo = ($dir == 'entrata') ? 'idpagamento_vendite' : 'idpagamento_acquisti';
+        $ddt = DDT::build($anagrafica, $tipo, $data);
+        $id_record = $ddt->id;
 
-            // Tipo di pagamento predefinito dall'anagrafica
-            $query = 'SELECT id FROM co_pagamenti WHERE id=(SELECT '.$campo.' AS pagamento FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).')';
-            $rs = $dbo->fetchArray($query);
-            $idpagamento = isset($rs[0]) ? $rs[0]['id'] : null;
+        flash()->info(tr('Aggiunto ddt in _TYPE_ numero _NUM_!', [
+            '_TYPE_' => $dir,
+            '_NUM_' => $ddt->numero,
+        ]));
 
-            // Se il ddt è un ddt cliente e non è stato associato un pagamento predefinito al cliente leggo il pagamento dalle impostazioni
-            if ($dir == 'entrata' && empty($idpagamento)) {
-                $idpagamento = setting('Tipo di pagamento predefinito');
-            }
-
-            $query = 'INSERT INTO dt_ddt(numero, numero_esterno, idanagrafica, idtipoddt, idpagamento, data, idstatoddt) VALUES ('.prepare($numero).', '.prepare($numero_esterno).', '.prepare($idanagrafica).', '.prepare($idtipoddt).', '.prepare($idpagamento).', '.prepare($data).", (SELECT `id` FROM `dt_statiddt` WHERE `descrizione`='Bozza'))";
-            $dbo->query($query);
-
-            $id_record = $dbo->lastInsertedID();
-
-            flash()->info(tr('Aggiunto ddt in _TYPE_ numero _NUM_!', [
-                '_TYPE_' => $dir,
-                '_NUM_' => $numero,
-            ]));
-        }
         break;
 
     case 'update':
@@ -212,85 +198,67 @@ switch (post('op')) {
 
         break;
 
-    // Creazione ddt da ordine
-    case 'ddt_da_ordine':
-        $totale_ordine = 0.00;
-        $data = post('data');
-        $idanagrafica = post('idanagrafica');
-        $idpagamento = post('idpagamento');
-        $idconto = post('idconto');
-        $idordine = post('idordine');
-        $numero = get_new_numeroddt($data);
+    // Aggiunta di un ordine in ddt
+    case 'add_ordine':
+        $ordine = \Modules\Ordini\Ordine::find(post('id_ordine'));
 
-        if ($dir == 'entrata') {
-            $numero_esterno = get_new_numerosecondarioddt($data);
-        } else {
-            $numero_esterno = '';
+        // Creazione della fattura al volo
+        if (post('create_document') == 'on') {
+            $tipo = Tipo::where('dir', $dir)->first();
+
+            $ddt = DDT::build($ordine->anagrafica, $tipo, post('data'));
+            $ddt->idpagamento = $ordine->idpagamento;
+            $ddt->save();
+
+            $id_record = $ddt->id;
         }
 
-        // Creazione nuovo ddt
-        $dbo->query('INSERT INTO dt_ddt( numero, numero_esterno, data, idanagrafica, idtipoddt, idstatoddt, idpagamento, idconto) VALUES('.prepare($numero).', '.prepare($numero_esterno).', '.prepare($data).', '.prepare($idanagrafica).', (SELECT id FROM dt_tipiddt WHERE dir='.prepare($dir)."), (SELECT id FROM dt_statiddt WHERE descrizione='Bozza'), ".prepare($idpagamento).', '.prepare($idconto).')');
-        $id_record = $dbo->lastInsertedID();
+        $parziale = false;
+        $righe = $ordine->getRighe();
+        foreach ($righe as $riga) {
+            if (post('evadere')[$riga->id] == 'on') {
+                $qta = post('qta_da_evadere')[$riga->id];
 
-        // Lettura di tutte le righe della tabella in arrivo
-        foreach (post('qta_da_evadere') as $idriga => $value) {
-            // Processo solo le righe da evadere
-            if (post('evadere')[$idriga] == 'on') {
-                $idarticolo = post('idarticolo')[$idriga];
-                $descrizione = post('descrizione')[$idriga];
-
-                $qta = post('qta_da_evadere')[$idriga];
-                $um = post('um')[$idriga];
-                $abilita_serial = post('abilita_serial')[$idriga];
-
-                $subtot = post('subtot')[$idriga] * $qta;
-                $sconto = post('sconto')[$idriga];
-                $sconto = $sconto * $qta;
-
-                $idiva = post('idiva')[$idriga];
-                $iva = post('iva')[$idriga] * $qta;
-
-                $qprc = 'SELECT tipo_sconto, sconto_unitario FROM or_righe_ordini WHERE id='.prepare($idriga);
-                $rsprc = $dbo->fetchArray($qprc);
-
-                $sconto_unitario = $rsprc[0]['sconto_unitario'];
-                $tipo_sconto = $rsprc[0]['tipo_sconto'];
-
-                // Calcolo l'iva indetraibile
-                $q = 'SELECT descrizione, indetraibile FROM co_iva WHERE id='.prepare($idiva);
-                $rs = $dbo->fetchArray($q);
-                $iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];
-
-                // Inserisco la riga in ddt
-                $dbo->query('INSERT INTO dt_righe_ddt(idddt, idordine, idarticolo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, abilita_serial, `order`) VALUES('.prepare($id_record).', '.prepare($idordine).', '.prepare($idarticolo).', '.prepare($idiva).', '.prepare($rs[0]['descrizione']).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($um).', '.prepare($qta).', '.prepare($abilita_serial).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM dt_righe_ddt AS t WHERE idddt='.prepare($id_record).'))');
-                $riga = $dbo->lastInsertedID();
+                $copia = $riga->copiaIn($ddt, $qta);
 
                 // Aggiornamento seriali dalla riga dell'ordine
-                $serials = is_array(post('serial')[$idriga]) ? post('serial')[$idriga] : [];
-                $serials = array_clean($serials);
+                if ($copia->isArticolo()) {
+                    $copia->movimenta($copia->qta);
 
-                $dbo->sync('mg_prodotti', ['id_riga_ddt' => $riga, 'dir' => $dir, 'id_articolo' => $idarticolo], ['serial' => $serials]);
+                    $serials = is_array(post('serial')[$riga->id]) ? post('serial')[$riga->id] : [];
 
-                // Scalo la quantità dall'ordine
-                $dbo->query('UPDATE or_righe_ordini SET qta_evasa = qta_evasa+'.$qta.' WHERE id='.prepare($idriga));
-
-                // Movimento il magazzino
-                if (!empty($idarticolo)) {
-                    // vendita
-                    if ($dir == 'entrata') {
-                        add_movimento_magazzino($idarticolo, -$qta, ['idddt' => $id_record]);
-                    }
-
-                    // acquisto
-                    else {
-                        add_movimento_magazzino($idarticolo, $qta, ['idddt' => $id_record]);
-                    }
+                    $copia->serials = $serials;
                 }
+
+                $copia->save();
+            }
+
+            if ($riga->qta != $riga->qta_evasa) {
+                $parziale = true;
             }
         }
 
+        // Aggiornamento sconto
+        if (post('evadere')[$ordine->scontoGlobale->id] == 'on') {
+            $ddt->tipo_sconto_globale = $ordine->tipo_sconto_globale;
+            $ddt->sconto_globale = $ordine->tipo_sconto_globale == 'PRC' ? $ordine->sconto_globale : $ordine->sconto_globale;
+            $ddt->save();
+
+            $ddt->updateSconto();
+        }
+
+        // Impostazione del nuovo stato
+        $descrizione = $parziale ? 'Parzialmente evaso' : 'Evaso';
+        $stato = \Modules\Ordini\Stato::where('descrizione', $descrizione)->first();
+        $ordine->stato()->associate($stato);
+        $ordine->save();
+
         ricalcola_costiagg_ddt($id_record);
-            flash()->info(tr('Creato un nuovo ddt!'));
+
+        flash()->info(tr('Ordine _NUM_ aggiunto!', [
+            '_NUM_' => $ordine->numero,
+        ]));
+
         break;
 
     // Scollegamento articolo da ddt
@@ -506,71 +474,6 @@ switch (post('op')) {
             }
 
             break;
-
-    // aggiungi righe da ordine
-    case 'add_ordine':
-        $idordine = post('iddocumento');
-
-        // Lettura di tutte le righe della tabella in arrivo
-        foreach (post('qta_da_evadere') as $i => $value) {
-            // Processo solo le righe da evadere
-            if (post('evadere')[$i] == 'on') {
-                $idrigaordine = $i;
-                $idarticolo = post('idarticolo')[$i];
-                $descrizione = post('descrizione')[$i];
-
-                $qta = post('qta_da_evadere')[$i];
-                $um = post('um')[$i];
-
-                $subtot = post('subtot')[$i] * $qta;
-                $sconto = post('sconto')[$i];
-                $sconto = $sconto * $qta;
-
-                $qprc = 'SELECT tipo_sconto, sconto_unitario FROM or_righe_ordini WHERE id='.prepare($idrigaordine);
-                $rsprc = $dbo->fetchArray($qprc);
-
-                $sconto_unitario = $rsprc[0]['sconto_unitario'];
-                $tipo_sconto = $rsprc[0]['tipo_sconto'];
-
-                $idiva = post('idiva')[$i];
-
-                // Calcolo l'iva indetraibile
-                $q = 'SELECT percentuale, indetraibile FROM co_iva WHERE id='.prepare($idiva);
-                $rs = $dbo->fetchArray($q);
-                $iva = ($subtot - $sconto) / 100 * $rs[0]['percentuale'];
-                $iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];
-
-                // Leggo la descrizione iva
-                $query = 'SELECT * FROM co_iva WHERE id='.prepare($idiva);
-                $rs = $dbo->fetchArray($query);
-                $desc_iva = $rs[0]['descrizione'];
-
-                // Se sto aggiungendo un articolo uso la funzione per inserirlo e incrementare la giacenza
-                if (!empty($idarticolo)) {
-                    $idiva_acquisto = $idiva;
-                    $prezzo_acquisto = $subtot;
-                    $riga = add_articolo_inddt($id_record, $idarticolo, $descrizione, $idiva, $qta, $um, $prezzo_acquisto, $sconto, $sconto_unitario, $tipo_sconto);
-
-                    // Lettura lotto, serial, altro dalla riga dell'ordine
-                    $dbo->query('INSERT INTO mg_prodotti (id_riga_documento, id_articolo, dir, serial, lotto, altro) SELECT '.prepare($riga).', '.prepare($idarticolo).', '.prepare($dir).', serial, lotto, altro FROM mg_prodotti AS t WHERE id_riga_ordine='.prepare($idrigaordine));
-                }
-
-                // Inserimento riga normale
-                elseif ($qta != 0) {
-                    $query = 'INSERT INTO dt_righe_ddt(idddt, idarticolo, descrizione, idordine, idiva, desc_iva, iva, iva_indetraibile, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, `order`) VALUES('.prepare($id_record).', '.prepare($idarticolo).', '.prepare($descrizione).', '.prepare($idordine).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($um).', '.prepare($qta).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
-                    $dbo->query($query);
-                }
-
-                // Scalo la quantità dall ordine
-                $dbo->query('UPDATE or_righe_ordini SET qta_evasa = qta_evasa+'.$qta.' WHERE id='.prepare($idrigaordine));
-            }
-        }
-
-        ricalcola_costiagg_ddt($id_record);
-
-        flash()->info(tr('Aggiunti nuovi articoli in ddt!'));
-
-        break;
 }
 
 // Aggiornamento stato degli ordini presenti in questa fattura in base alle quantità totali evase

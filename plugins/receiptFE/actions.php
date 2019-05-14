@@ -2,8 +2,8 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Plugins\ReceiptFE\Ricevuta;
 use Plugins\ReceiptFE\Interaction;
+use Plugins\ReceiptFE\Ricevuta;
 
 switch (filter('op')) {
     case 'save':
@@ -27,23 +27,25 @@ switch (filter('op')) {
 
         $results = [];
         foreach ($list as $name) {
-            $file = Interaction::getReceipt($name);
+            Interaction::getReceipt($name);
 
-            $result = [];
-            if (!empty($file)) {
-                try {
-                    $receipt = new Ricevuta($file['content']);
+            $fattura = null;
+            try {
+                $receipt = new Ricevuta($name, $content);
+                $receipt->save();
 
-                    $result = [
-                        'fattura' => $receipt->getFattura()->numero_esterno,
-                    ];
-                } catch (UnexpectedValueException $e) {
-                }
+                $fattura = $receipt->getFattura()->numero_esterno;
+
+                $receipt->delete();
+
+                Interaction::processReceipt($name);
+            } catch (UnexpectedValueException $e) {
             }
 
-            $results[] = array_merge([
+            $results[] = [
                 'file' => $name,
-            ], $result);
+                'fattura' => $fattura,
+            ];
         }
 
         echo json_encode($results);

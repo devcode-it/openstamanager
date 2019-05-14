@@ -46,9 +46,7 @@ if (!empty($config['redirectHTTPS']) && !isHTTPS(true)) {
     exit();
 }
 
-// Forza l'abilitazione del debug
-// $debug = App::debug(true);
-
+/* GESTIONE DEGLI ERRORI */
 // Logger per la segnalazione degli errori
 $logger = new Monolog\Logger('Logs');
 $logger->pushProcessor(new Monolog\Processor\UidProcessor());
@@ -57,73 +55,75 @@ $logger->pushProcessor(new Monolog\Processor\WebProcessor());
 // Registrazione globale del logger
 Monolog\Registry::addLogger($logger, 'logs');
 
-use Monolog\Handler\StreamHandler;
 use Monolog\Handler\FilterHandler;
 use Monolog\Handler\RotatingFileHandler;
+use Monolog\Handler\StreamHandler;
 
 $handlers = [];
 if (!API::isAPIRequest()) {
-    // File di log di base (logs/error.log)
+    // File di log di base (logs/error.log, logs/setup.log)
     $handlers[] = new StreamHandler($docroot.'/logs/error.log', Monolog\Logger::ERROR);
     $handlers[] = new StreamHandler($docroot.'/logs/setup.log', Monolog\Logger::EMERGENCY);
 
-    // Impostazioni di debug
-    if (App::debug()) {
-        // Ignora gli avvertimenti e le informazioni relative alla deprecazione di componenti
-        error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE & ~E_USER_DEPRECATED & ~E_STRICT);
+    // Messaggi grafici per l'utente
+    $handlers[] = new Extensions\MessageHandler(Monolog\Logger::ERROR);
 
-        // File di log ordinato in base alla data
+    // File di log ordinati in base alla data
+    if (App::debug()) {
         $handlers[] = new RotatingFileHandler($docroot.'/logs/error.log', 0, Monolog\Logger::ERROR);
         $handlers[] = new RotatingFileHandler($docroot.'/logs/setup.log', 0, Monolog\Logger::EMERGENCY);
-
-        $prettyPageHandler = new Whoops\Handler\PrettyPageHandler();
-
-        // Imposta Whoops come gestore delle eccezioni di default
-        $whoops = new Whoops\Run();
-        $whoops->pushHandler($prettyPageHandler);
-
-        // Abilita la gestione degli errori nel caso la richiesta sia di tipo AJAX
-        if (Whoops\Util\Misc::isAjaxRequest()) {
-            $whoops->pushHandler(new Whoops\Handler\JsonResponseHandler());
-        }
-
-        $whoops->register();
     }
+
+    // Inizializzazione Whoops
+    $whoops = new Whoops\Run();
+
+    if (App::debug()) {
+        $whoops->pushHandler(new Whoops\Handler\PrettyPageHandler());
+    }
+
+    // Abilita la gestione degli errori nel caso la richiesta sia di tipo AJAX
+    if (Whoops\Util\Misc::isAjaxRequest()) {
+        $whoops->pushHandler(new Whoops\Handler\JsonResponseHandler());
+    }
+
+    $whoops->register();
+
+    // Aggiunta di Monolog a Whoops
+    $whoops->pushHandler(function ($exception, $inspector, $run) use ($logger) {
+        $logger->addError($exception->getMessage(), [
+            'code' => $exception->getCode(),
+            'message' => $exception->getMessage(),
+            'file' => $exception->getFile(),
+            'line' => $exception->getLine(),
+            'trace' => $exception->getTraceAsString(),
+        ]);
+    });
 } else {
     $handlers[] = new StreamHandler($docroot.'/logs/api.log', Monolog\Logger::ERROR);
 }
 
-// Disabilita la segnalazione degli errori (se il debug è disabilitato)
-if (!App::debug()) {
-    error_reporting(0);
-    ini_set('display_errors', 0);
-}
+// Disabilita i messaggi nativi di PHP
+ini_set('display_errors', 0);
+// Ignora gli avvertimenti e le informazioni relative alla deprecazione di componenti
+error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE & ~E_USER_DEPRECATED & ~E_STRICT);
 
-// Imposta il formato di salvataggio dei log
-$pattern = '[%datetime%] %channel%.%level_name%: %message%';
-if (App::debug()) {
-    $pattern .= ' %context%';
-}
-$pattern .= PHP_EOL.'%extra% '.PHP_EOL;
-
+$pattern = '[%datetime%] %channel%.%level_name%: %message% %context%'.PHP_EOL.'%extra% '.PHP_EOL;
 $monologFormatter = new Monolog\Formatter\LineFormatter($pattern);
+$monologFormatter->includeStacktraces(App::debug());
 
-if (App::debug()) {
-    $monologFormatter->includeStacktraces(true);
-}
-
+// Filtra gli errori per livello preciso del gestore dedicato
 foreach ($handlers as $handler) {
     $handler->setFormatter($monologFormatter);
     $logger->pushHandler(new FilterHandler($handler, [$handler->getLevel()]));
 }
 
 // Imposta Monolog come gestore degli errori
-Monolog\ErrorHandler::register($logger);
+Monolog\ErrorHandler::register($logger, [], Monolog\Logger::ERROR, Monolog\Logger::ERROR);
 
 // Database
 $dbo = $database = database();
 
-// Inizializzazione della sessione
+/* SESSIONE */
 if (!API::isAPIRequest()) {
     // Sicurezza della sessioni
     ini_set('session.use_trans_sid', '0');
@@ -147,6 +147,7 @@ if (!API::isAPIRequest()) {
     }
 }
 
+/* INTERNAZIONALIZZAZIONE */
 // Istanziamento del gestore delle traduzioni del progetto
 $lang = !empty($config['lang']) ? $config['lang'] : 'it';
 $formatter = !empty($config['formatter']) ? $config['formatter'] : [];
@@ -159,6 +160,7 @@ $translator->setLocale($lang, $formatter);
 $version = Update::getVersion();
 $revision = Update::getRevision();
 
+/* ACCESSO E INSTALLAZIONE */
 // Controllo sulla presenza dei permessi di accesso basilari
 $continue = $dbo->isInstalled() && !Update::isUpdateAvailable() && (Auth::check() || API::isAPIRequest());
 
@@ -175,6 +177,7 @@ if (!$continue && getURLPath() != slashes(ROOTDIR.'/index.php') && !Permissions:
     exit();
 }
 
+/* INIZIALIZZAZIONE GENERALE */
 // Operazione aggiuntive (richieste non API)
 if (!API::isAPIRequest()) {
     // Impostazioni di Content-Type e Charset Header
@@ -257,4 +260,21 @@ if (!API::isAPIRequest()) {
     // Retrocompatibilità
     $post = Filter::getPOST();
     $get = Filter::getGET();
+}
+
+// Inclusione dei file modutil.php
+// TODO: sostituire * con lista module dir {aggiornamenti,anagrafiche,articoli}
+// TODO: sostituire tutte le funzioni dei moduli con classi Eloquent relative
+$files = glob(__DIR__.'/{modules,plugins}/*/modutil.php', GLOB_BRACE);
+$custom_files = glob(__DIR__.'/{modules,plugins}/*/custom/modutil.php', GLOB_BRACE);
+foreach ($custom_files as $key => $value) {
+    $index = array_search(str_replace('custom/', '', $value), $files);
+    if ($index !== false) {
+        unset($files[$index]);
+    }
+}
+
+$list = array_merge($files, $custom_files);
+foreach ($list as $file) {
+    include_once $file;
 }

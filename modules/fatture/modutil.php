@@ -4,6 +4,8 @@ use Modules\Fatture\Fattura;
 
 /**
  * Funzione per generare un nuovo numero per la fattura.
+ *
+ * @deprecated 2.4.5
  */
 function get_new_numerofattura($data)
 {
@@ -15,6 +17,8 @@ function get_new_numerofattura($data)
 
 /**
  * Funzione per calcolare il numero secondario successivo utilizzando la maschera dalle impostazioni.
+ *
+ * @deprecated 2.4.5
  */
 function get_new_numerosecondariofattura($data)
 {
@@ -22,6 +26,66 @@ function get_new_numerosecondariofattura($data)
     global $id_segment;
 
     return Fattura::getNextNumeroSecondario($data, $dir, $id_segment);
+}
+
+/**
+ * Calcolo imponibile fattura (totale_righe - sconto).
+ *
+ * @deprecated 2.4.5
+ */
+function get_imponibile_fattura($iddocumento)
+{
+    $fattura = Fattura::find($iddocumento);
+
+    return $fattura->imponibile;
+}
+
+/**
+ * Calcolo totale fattura (imponibile + iva).
+ *
+ * @deprecated 2.4.5
+ */
+function get_totale_fattura($iddocumento)
+{
+    $fattura = Fattura::find($iddocumento);
+
+    return $fattura->totale;
+}
+
+/**
+ * Calcolo netto a pagare fattura (totale - ritenute - bolli).
+ *
+ * @deprecated 2.4.5
+ */
+function get_netto_fattura($iddocumento)
+{
+    $fattura = Fattura::find($iddocumento);
+
+    return $fattura->netto;
+}
+
+/**
+ * Calcolo iva detraibile fattura.
+ *
+ * @deprecated 2.4.5
+ */
+function get_ivadetraibile_fattura($iddocumento)
+{
+    $fattura = Fattura::find($iddocumento);
+
+    return $fattura->iva_detraibile;
+}
+
+/**
+ * Calcolo iva indetraibile fattura.
+ *
+ * @deprecated 2.4.5
+ */
+function get_ivaindetraibile_fattura($iddocumento)
+{
+    $fattura = Fattura::find($iddocumento);
+
+    return $fattura->iva_indetraibile;
 }
 
 /**
@@ -45,11 +109,11 @@ function aggiungi_scadenza($iddocumento, $pagamento = '', $pagato = 0)
 {
     $dbo = database();
 
-    $totale_da_pagare = 0.00;
-    $totale_fattura = get_totale_fattura($iddocumento);
-    $netto_fattura = get_netto_fattura($iddocumento);
-    $imponibile_fattura = get_imponibile_fattura($iddocumento);
-    $totale_iva = sum(abs($totale_fattura), -abs($imponibile_fattura));
+    $fattura = Fattura::find($iddocumento);
+
+    if ($fattura->isFE()) {
+        $scadenze_fe = $fattura->registraScadenzeFE($pagato);
+    }
 
     // Lettura data di emissione fattura
     $query3 = 'SELECT ritenutaacconto, data FROM co_documenti WHERE id='.prepare($iddocumento);
@@ -57,77 +121,86 @@ function aggiungi_scadenza($iddocumento, $pagamento = '', $pagato = 0)
     $data = $rs[0]['data'];
     $ritenutaacconto = $rs[0]['ritenutaacconto'];
 
-    // Verifico se la fattura è di acquisto o di vendita per scegliere che segno mettere nel totale
-    $query2 = 'SELECT dir FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
-    $rs2 = $dbo->fetchArray($query2);
-    $dir = $rs2[0]['dir'];
+    if (empty($scadenze_fe)) {
+        $totale_da_pagare = 0.00;
 
-    /*
-        Inserisco la nuova scadenza (anche più di una riga per pagamenti multipli
-    */
-    // Se il pagamento non è specificato lo leggo dal documento
-    if ($pagamento == '') {
-        $query = 'SELECT descrizione FROM co_pagamenti WHERE id=(SELECT idpagamento FROM co_documenti WHERE id='.prepare($iddocumento).')';
-        $rs = $dbo->fetchArray($query);
-        $pagamento = $rs[0]['descrizione'];
-    }
+        $totale_fattura = get_totale_fattura($iddocumento);
+        $netto_fattura = get_netto_fattura($iddocumento);
+        $imponibile_fattura = get_imponibile_fattura($iddocumento);
+        $totale_iva = sum(abs($totale_fattura), -abs($imponibile_fattura));
 
-    $query4 = 'SELECT * FROM co_pagamenti WHERE descrizione='.prepare($pagamento);
-    $rs = $dbo->fetchArray($query4);
-    for ($i = 0; $i < sizeof($rs); ++$i) {
-        // X giorni esatti
-        if ($rs[$i]['giorno'] == 0) {
-            $scadenza = date('Y-m-d', strtotime($data.' +'.$rs[$i]['num_giorni'].' day'));
+        // Verifico se la fattura è di acquisto o di vendita per scegliere che segno mettere nel totale
+        $query2 = 'SELECT dir FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
+        $rs2 = $dbo->fetchArray($query2);
+        $dir = $rs2[0]['dir'];
+
+        /*
+            Inserisco la nuova scadenza (anche più di una riga per pagamenti multipli
+        */
+        // Se il pagamento non è specificato lo leggo dal documento
+        if ($pagamento == '') {
+            $query = 'SELECT descrizione FROM co_pagamenti WHERE id=(SELECT idpagamento FROM co_documenti WHERE id='.prepare($iddocumento).')';
+            $rs = $dbo->fetchArray($query);
+            $pagamento = $rs[0]['descrizione'];
         }
 
-        // Ultimo del mese
-        elseif ($rs[$i]['giorno'] < 0) {
-            $date = new DateTime($data);
-
-            $add = floor($rs[$i]['num_giorni'] / 30);
-            for ($c = 0; $c < $add; ++$c) {
-                $date->modify('last day of next month');
+        $query4 = 'SELECT * FROM co_pagamenti WHERE descrizione='.prepare($pagamento);
+        $rs = $dbo->fetchArray($query4);
+        for ($i = 0; $i < sizeof($rs); ++$i) {
+            // X giorni esatti
+            if ($rs[$i]['giorno'] == 0) {
+                $scadenza = date('Y-m-d', strtotime($data.' +'.$rs[$i]['num_giorni'].' day'));
             }
 
-            // Ultimo del mese più X giorni
-            $giorni = -$rs[$i]['giorno'] - 1;
-            if ($giorni > 0) {
-                $date->modify('+'.($giorni).' day');
-            } else {
-                $date->modify('last day of this month');
+            // Ultimo del mese
+            elseif ($rs[$i]['giorno'] < 0) {
+                $date = new DateTime($data);
+
+                $add = floor($rs[$i]['num_giorni'] / 30);
+                for ($c = 0; $c < $add; ++$c) {
+                    $date->modify('last day of next month');
+                }
+
+                // Ultimo del mese più X giorni
+                $giorni = -$rs[$i]['giorno'] - 1;
+                if ($giorni > 0) {
+                    $date->modify('+'.($giorni).' day');
+                } else {
+                    $date->modify('last day of this month');
+                }
+
+                $scadenza = $date->format('Y-m-d');
             }
 
-            $scadenza = $date->format('Y-m-d');
-        }
+            // Giorno preciso del mese
+            else {
+                $scadenza = date('Y-m-'.$rs[$i]['giorno'], strtotime($data.' +'.$rs[$i]['num_giorni'].' day'));
+            }
 
-        // Giorno preciso del mese
-        else {
-            $scadenza = date('Y-m-'.$rs[$i]['giorno'], strtotime($data.' +'.$rs[$i]['num_giorni'].' day'));
-        }
+            // All'ultimo ciclo imposto come cifra da pagare il totale della fattura meno gli importi già inseriti in scadenziario per evitare di inserire cifre arrotondate "male"
+            if ($i == (sizeof($rs) - 1)) {
+                $da_pagare = sum($netto_fattura, -$totale_da_pagare, 2);
+            }
 
-        // All'ultimo ciclo imposto come cifra da pagare il totale della fattura meno gli importi già inseriti in scadenziario per evitare di inserire cifre arrotondate "male"
-        if ($i == (sizeof($rs) - 1)) {
-            $da_pagare = sum($netto_fattura, -$totale_da_pagare, 2);
-        }
+            // Totale da pagare (totale x percentuale di pagamento nei casi pagamenti multipli)
+            else {
+                $da_pagare = sum($netto_fattura / 100 * $rs[$i]['prc'], 0, 2);
+            }
+            $totale_da_pagare = sum($da_pagare, $totale_da_pagare, 2);
 
-        // Totale da pagare (totale x percentuale di pagamento nei casi pagamenti multipli)
-        else {
-            $da_pagare = sum($netto_fattura / 100 * $rs[$i]['prc'], 0, 2);
-        }
-        $totale_da_pagare = sum($da_pagare, $totale_da_pagare, 2);
+            if ($dir == 'uscita') {
+                $da_pagare = -$da_pagare;
+            }
 
-        if ($dir == 'uscita') {
-            $da_pagare = -$da_pagare;
-        }
+            $dbo->query('INSERT INTO co_scadenziario(iddocumento, data_emissione, scadenza, da_pagare, pagato, tipo) VALUES('.prepare($iddocumento).', '.prepare($data).', '.prepare($scadenza).', '.prepare($da_pagare).", 0, 'fattura')");
 
-        $dbo->query('INSERT INTO co_scadenziario(iddocumento, data_emissione, scadenza, da_pagare, pagato, tipo) VALUES('.prepare($iddocumento).', '.prepare($data).', '.prepare($scadenza).', '.prepare($da_pagare).", 0, 'fattura')");
-
-        if ($pagato) {
-            $id_scadenza = $dbo->lastInsertedID();
-            $dbo->update('co_scadenziario', [
-                'pagato' => $da_pagare,
-                'data_pagamento' => $data,
-            ], ['id' => $id_scadenza]);
+            if ($pagato) {
+                $id_scadenza = $dbo->lastInsertedID();
+                $dbo->update('co_scadenziario', [
+                    'pagato' => $da_pagare,
+                    'data_pagamento' => $data,
+                ], ['id' => $id_scadenza]);
+            }
         }
     }
 
@@ -228,12 +301,13 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
     $dbo = database();
 
     // Totale marca da bollo, inps, ritenuta, idagente
-    $query = 'SELECT data, bollo, ritenutaacconto, rivalsainps FROM co_documenti WHERE id='.prepare($iddocumento);
+    $query = 'SELECT data, bollo, ritenutaacconto, rivalsainps, split_payment FROM co_documenti WHERE id='.prepare($iddocumento);
     $rs = $dbo->fetchArray($query);
     $totale_bolli = $rs[0]['bollo'];
     $totale_ritenutaacconto = $rs[0]['ritenutaacconto'];
     $totale_rivalsainps = $rs[0]['rivalsainps'];
     $data_documento = $rs[0]['data'];
+    $split_payment = $rs[0]['split_payment'];
 
     $netto_fattura = get_netto_fattura($iddocumento);
     $totale_fattura = get_totale_fattura($iddocumento);
@@ -319,7 +393,17 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
         $numero = $rs[0]['numero'];
     }
 
-    $descrizione = $rs[0]['descrizione_tipodoc']." numero $numero";
+    // Abbreviazioni contabili dei movimenti
+    $tipodoc = '';
+    if ($rs[0]['descrizione_tipodoc'] == 'Nota di credito') {
+        $tipodoc = 'Nota di credito';
+    } elseif ($rs[0]['descrizione_tipodoc'] == 'Nota di debito') {
+        $tipodoc = 'Nota di debito';
+    } else {
+        $tipodoc = 'Fattura';
+    }
+
+    $descrizione = $tipodoc.' num. '.$numero;
 
     /*
         Il mastrino si apre con almeno 3 righe di solito (esempio fattura di vendita):
@@ -333,7 +417,13 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
         6) eventuale marca da bollo
     */
     // 1) Aggiungo la riga del conto cliente
-    $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_controparte).', '.prepare(($totale_fattura + $totale_bolli) * $segno_mov1_cliente).', '.prepare($primanota).' )';
+    $importo_cliente = $totale_fattura;
+
+    if ($split_payment) {
+        $importo_cliente = sum($importo_cliente, -$iva_fattura, 2);
+    }
+
+    $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_controparte).', '.prepare(($importo_cliente + $totale_bolli) * $segno_mov1_cliente).', '.prepare($primanota).' )';
     $dbo->query($query2);
 
     // 2) Aggiungo il totale sul conto dei ricavi/spese scelto
@@ -350,7 +440,7 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
 
     // 3) Aggiungo il totale sul conto dell'iva
     // Lettura id conto iva
-    if ($iva_fattura != 0) {
+    if ($iva_fattura != 0 && !$split_payment) {
         $descrizione_conto_iva = ($dir == 'entrata') ? 'Iva su vendite' : 'Iva su acquisti';
         $query = 'SELECT id, descrizione FROM co_pianodeiconti3 WHERE descrizione='.prepare($descrizione_conto_iva);
         $rs = $dbo->fetchArray($query);
@@ -362,7 +452,7 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
     }
 
     // Lettura id conto iva indetraibile
-    if ($iva_indetraibile_fattura != 0) {
+    if ($iva_indetraibile_fattura != 0 && !$split_payment) {
         $descrizione_conto_iva2 = 'Iva indetraibile';
         $query = 'SELECT id, descrizione FROM co_pianodeiconti3 WHERE descrizione='.prepare($descrizione_conto_iva2);
         $rs = $dbo->fetchArray($query);
@@ -429,101 +519,6 @@ function get_new_idmastrino($table = 'co_movimenti')
 }
 
 /**
- * Calcolo imponibile fattura (totale_righe - sconto).
- */
-function get_imponibile_fattura($iddocumento)
-{
-    $dbo = database();
-
-    $query = 'SELECT SUM(co_righe_documenti.subtotale - co_righe_documenti.sconto) AS imponibile FROM co_righe_documenti GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
-    $rs = $dbo->fetchArray($query);
-
-    return sum($rs[0]['imponibile'], null, 2);
-}
-
-/**
- * Calcolo totale fattura (imponibile + iva).
- */
-function get_totale_fattura($iddocumento)
-{
-    $dbo = database();
-
-    // Sommo l'iva di ogni riga al totale
-    $query = 'SELECT SUM(iva) AS iva FROM co_righe_documenti GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
-    $rs = $dbo->fetchArray($query);
-
-    // Aggiungo la rivalsa inps se c'è
-    $query2 = 'SELECT rivalsainps FROM co_documenti WHERE id='.prepare($iddocumento);
-    $rs2 = $dbo->fetchArray($query2);
-
-    $iva_rivalsainps = 0;
-
-    $rsr = $dbo->fetchArray('SELECT idiva, rivalsainps FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento));
-
-    for ($r = 0; $r < sizeof($rsr); ++$r) {
-        $qi = 'SELECT percentuale FROM co_iva WHERE id='.prepare($rsr[$r]['idiva']);
-        $rsi = $dbo->fetchArray($qi);
-        $iva_rivalsainps += $rsr[$r]['rivalsainps'] / 100 * $rsi[0]['percentuale'];
-    }
-
-    $iva = $rs[0]['iva'];
-    $totale_iva = sum($iva, $iva_rivalsainps);
-
-    $totale = sum([
-        get_imponibile_fattura($iddocumento),
-        $rs2[0]['rivalsainps'],
-        $totale_iva,
-    ], null, 2);
-
-    return $totale;
-}
-
-/**
- * Calcolo netto a pagare fattura (totale - ritenute - bolli).
- */
-function get_netto_fattura($iddocumento)
-{
-    $dbo = database();
-
-    $query = 'SELECT ritenutaacconto, bollo FROM co_documenti WHERE id='.prepare($iddocumento);
-    $rs = $dbo->fetchArray($query);
-
-    $netto_a_pagare = sum([
-        get_totale_fattura($iddocumento),
-        $rs[0]['bollo'],
-        -$rs[0]['ritenutaacconto'],
-    ], null, 2);
-
-    return $netto_a_pagare;
-}
-
-/**
- * Calcolo iva detraibile fattura.
- */
-function get_ivadetraibile_fattura($iddocumento)
-{
-    $dbo = database();
-
-    $query = 'SELECT SUM(iva)-SUM(iva_indetraibile) AS iva_detraibile FROM co_righe_documenti GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
-    $rs = $dbo->fetchArray($query);
-
-    return $rs[0]['iva_detraibile'];
-}
-
-/**
- * Calcolo iva indetraibile fattura.
- */
-function get_ivaindetraibile_fattura($iddocumento)
-{
-    $dbo = database();
-
-    $query = 'SELECT SUM(iva_indetraibile) AS iva_indetraibile FROM co_righe_documenti GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
-    $rs = $dbo->fetchArray($query);
-
-    return $rs[0]['iva_indetraibile'];
-}
-
-/**
  * Ricalcola i costi aggiuntivi in fattura (rivalsa inps, ritenuta d'acconto, marca da bollo)
  * Deve essere eseguito ogni volta che si aggiunge o toglie una riga
  * $iddocumento		int		ID della fattura
@@ -579,7 +574,13 @@ function ricalcola_costiagg_fattura($iddocumento, $idrivalsainps = '', $idritenu
 
         $marca_da_bollo = 0;
         if (abs($bolli) > 0 && abs($netto_a_pagare > setting("Soglia minima per l'applicazione della marca da bollo"))) {
-            $marca_da_bollo = $bolli;
+            //Controllo che tra le iva ce ne sia almeno una con natura N1, N2, N3 o N4
+            $check_natura = $dbo->fetchArray('SELECT codice_natura_fe FROM co_righe_documenti INNER JOIN co_iva ON co_righe_documenti.idiva=co_iva.id WHERE iddocumento='.prepare($iddocumento)." AND codice_natura_fe IN('N1','N2','N3','N4') GROUP BY codice_natura_fe");
+            if (($dir == 'entrata' && sizeof($check_natura) > 0) || $dir == 'uscita') {
+                $marca_da_bollo = $bolli;
+            } else {
+                $marca_da_bollo = 0.00;
+            }
         }
 
         // Se l'importo è negativo può essere una nota di credito, quindi cambio segno alla marca da bollo
@@ -601,7 +602,7 @@ function ricalcola_costiagg_fattura($iddocumento, $idrivalsainps = '', $idritenu
  * $prezzo			float		prezzo totale dell'articolo (prezzounitario*qtà)
  * $idintervento	integer		id dell'intervento da cui arriva l'articolo (per non creare casini quando si rimuoverà un articolo dalla fattura).
  */
-function add_articolo_infattura($iddocumento, $idarticolo, $descrizione, $idiva, $qta, $prezzo, $sconto = 0, $sconto_unitario = 0, $tipo_sconto = 'UNT', $idintervento = 0, $idconto = 0, $idum = 0, $idrivalsainps = '', $idritenutaacconto = '', $calcolo_ritenutaacconto = '')
+function add_articolo_infattura($iddocumento, $idarticolo, $descrizione, $idiva, $qta, $prezzo, $sconto = 0, $sconto_unitario = 0, $tipo_sconto = 'UNT', $idintervento = 0, $idconto = 0, $idum = 0, $idrivalsainps = '', $idritenutaacconto = '', $calcolo_ritenuta_acconto = '')
 {
     global $dir;
     global $idddt;
@@ -638,7 +639,7 @@ function add_articolo_infattura($iddocumento, $idarticolo, $descrizione, $idiva,
 
     if (!empty($idrivalsainps)) {
         // Calcolo rivalsa inps
-        $rs = $dbo->fetchArray('SELECT * FROM co_rivalsainps WHERE id='.prepare($idrivalsainps));
+        $rs = $dbo->fetchArray('SELECT * FROM co_rivalse WHERE id='.prepare($idrivalsainps));
         $rivalsainps = ($prezzo - $sconto) / 100 * $rs[0]['percentuale'];
     }
 
@@ -646,9 +647,9 @@ function add_articolo_infattura($iddocumento, $idarticolo, $descrizione, $idiva,
         // Calcolo ritenuta d'acconto
         $query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare($idritenutaacconto);
         $rs = $dbo->fetchArray($query);
-        if ($calcolo_ritenutaacconto == 'Imponibile') {
+        if ($calcolo_ritenuta_acconto == 'IMP') {
             $ritenutaacconto = ($prezzo - $sconto) / 100 * $rs[0]['percentuale'];
-        } elseif ($calcolo_ritenutaacconto == 'Imponibile + rivalsa inps') {
+        } elseif ($calcolo_ritenuta_acconto == 'IMP+RIV') {
             $ritenutaacconto = ($prezzo - $sconto + $rivalsainps) / 100 * $rs[0]['percentuale'];
         }
     }
@@ -662,7 +663,7 @@ function add_articolo_infattura($iddocumento, $idarticolo, $descrizione, $idiva,
         }
         $idconto = empty($idconto) ? $default_idconto : $idconto;
 
-        $dbo->query('INSERT INTO co_righe_documenti(iddocumento, idarticolo, idintervento, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, qta, abilita_serial, idconto, um, `order`, idritenutaacconto, ritenutaacconto, idrivalsainps, rivalsainps,	calcolo_ritenutaacconto) VALUES ('.prepare($iddocumento).', '.prepare($idarticolo).', '.(!empty($idintervento) ? prepare($idintervento) : 'NULL').', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($prezzo).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($qta).', '.prepare($rsart[0]['abilita_serial']).', '.prepare($idconto).', '.prepare($um).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($iddocumento).'), '.prepare($idritenutaacconto).', '.prepare($ritenutaacconto).', '.prepare($idrivalsainps).', '.prepare($rivalsainps).', '.prepare($calcolo_ritenutaacconto).')');
+        $dbo->query('INSERT INTO co_righe_documenti(iddocumento, idarticolo, idintervento, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, qta, abilita_serial, idconto, um, `order`, idritenutaacconto, ritenutaacconto, idrivalsainps, rivalsainps,	calcolo_ritenuta_acconto) VALUES ('.prepare($iddocumento).', '.prepare($idarticolo).', '.(!empty($idintervento) ? prepare($idintervento) : 'NULL').', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($prezzo).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($qta).', '.prepare($rsart[0]['abilita_serial']).', '.prepare($idconto).', '.prepare($um).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($iddocumento).'), '.prepare($idritenutaacconto).', '.prepare($ritenutaacconto).', '.prepare($idrivalsainps).', '.prepare($rivalsainps).', '.prepare($calcolo_ritenuta_acconto).')');
         $idriga = $dbo->lastInsertedID();
 
         /*

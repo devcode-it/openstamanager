@@ -2,11 +2,7 @@
 
 include_once __DIR__.'/../../../core.php';
 
-include_once Modules::filepath('Interventi', 'modutil.php');
-
-/*
-CONSUNTIVO
-*/
+/* CONSUNTIVO */
 
 // Salvo i colori e gli stati degli stati intervento su un array
 $colori = [];
@@ -25,7 +21,22 @@ $totale = 0;
 $totale_stato = [];
 
 // Tabella con riepilogo interventi
-$rsi = $dbo->fetchArray('SELECT *, in_interventi.id, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS inizio, (SELECT SUM(ore) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS ore, (SELECT MIN(km) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS km FROM co_promemoria INNER JOIN in_interventi ON co_promemoria.idintervento=in_interventi.id WHERE co_promemoria.idcontratto='.prepare($id_record).' ORDER BY co_promemoria.idintervento DESC');
+$rsi = $dbo->fetchArray('SELECT in_interventi.id, in_interventi.codice, 
+       (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS inizio,
+       (SELECT SUM(ore) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS ore,
+       (SELECT MIN(km) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS km
+    FROM co_promemoria
+    INNER JOIN in_interventi ON co_promemoria.idintervento=in_interventi.id
+    WHERE co_promemoria.idcontratto='.prepare($id_record).'
+UNION
+    SELECT in_interventi.id, in_interventi.codice,  
+        (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS inizio,
+        (SELECT SUM(ore) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS ore,
+        (SELECT MIN(km) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS km
+    FROM in_interventi
+    WHERE id_contratto = '.prepare($id_record).'
+ORDER BY id DESC');
+
 if (!empty($rsi)) {
     echo '
 <table class="table table-bordered table-condensed">
@@ -49,7 +60,7 @@ if (!empty($rsi)) {
         <td>
             <a href="javascript:;" class="btn btn-primary btn-xs" onclick="$(\'#dettagli_'.$int['id'].'\').toggleClass(\'hide\'); $(this).find(\'i\').toggleClass(\'fa-plus\').toggleClass(\'fa-minus\');"><i class="fa fa-plus"></i></a>
             '.Modules::link('Interventi', $int['id'], tr('Intervento _NUM_ del _DATE_', [
-                '_NUM_' => $int['id'],
+                '_NUM_' => $int['codice'],
                 '_DATE_' => Translator::dateToLocale($int['inizio']),
             ])).'
         </td>

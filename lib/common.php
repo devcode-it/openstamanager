@@ -191,8 +191,11 @@ function calcola_sconto($data)
 /**
  * Restistuisce le informazioni sull'eventuale riferimento ai documenti.
  *
- * @param array  $data
- * @param string $dir
+ * @param $info
+ * @param $dir
+ * @param array $ignore
+ *
+ * @throws Exception
  *
  * @return array
  */
@@ -210,24 +213,24 @@ function doc_references($info, $dir, $ignore = [])
     $module = null;
     $id = null;
 
-    // Ordine
-    if (!empty($info['idordine'])) {
-        $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM or_ordini WHERE id=".prepare($info['idordine']));
-
-        $module = ($dir == 'entrata') ? 'Ordini cliente' : 'Ordini fornitore';
-        $id = $info['idordine'];
-
-        $document = tr('Ordine');
-    }
-
     // DDT
-    elseif (!empty($info['idddt'])) {
+    if (!empty($info['idddt'])) {
         $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM dt_ddt WHERE id=".prepare($info['idddt']));
 
         $module = ($dir == 'entrata') ? 'Ddt di vendita' : 'Ddt di acquisto';
         $id = $info['idddt'];
 
         $document = tr('Ddt');
+    }
+
+    // Ordine
+    elseif (!empty($info['idordine'])) {
+        $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM or_ordini WHERE id=".prepare($info['idordine']));
+
+        $module = ($dir == 'entrata') ? 'Ordini cliente' : 'Ordini fornitore';
+        $id = $info['idordine'];
+
+        $document = tr('Ordine');
     }
 
     // Preventivo

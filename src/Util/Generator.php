@@ -2,6 +2,8 @@
 
 namespace Util;
 
+use Illuminate\Database\Capsule\Manager;
+
 /**
  * Classe dedicata alla gestione e all'interpretazione delle stringhe personalizzate.
  *
@@ -98,7 +100,7 @@ class Generator
         $values = array_column($replaces, 'regex');
 
         $pattern = preg_replace('/#{1,}/', '#', $pattern);
-        $pattern = preg_quote($pattern, '/');
+        $pattern = str_replace('\\#', '#', preg_quote($pattern, '/'));
         $pattern = str_replace(array_keys($replaces), array_values($values), $pattern);
 
         // Individuazione dei valori
@@ -172,6 +174,24 @@ class Generator
         return $maschera['pattern'];
     }
 
+    public static function getPreviousFrom($maschera, $table, $field, $where = [])
+    {
+        $order = static::getMascheraOrder($maschera, $field);
+
+        $maschera = Generator::complete($maschera);
+        $maschera = str_replace('#', '%', $maschera);
+
+        $query = Manager::table($table)->select($field)->where($field, 'like', $maschera)->orderByRaw($order);
+
+        foreach ($where as $and) {
+            $query->whereRaw($and);
+        }
+
+        $result = $query->first();
+
+        return $result->{$field};
+    }
+
     /**
      * Metodo per l'individuazione del tipo di ordine da impostare per la corretta interpretazione della maschera.
      * Esempi:
@@ -179,19 +199,21 @@ class Generator
      * - maschere di soli numeri (####-YYYY) è necessario l'ordinamento numerico forzato.
      *
      * @param string $maschera
+     * @param string $field
      *
      * @return string
      */
-    public static function getMascheraOrder($maschera, $filed)
+    protected static function getMascheraOrder($maschera, $field)
     {
+        // Query di default
+        $query = $field.' DESC';
+
         // Estraggo blocchi di caratteri standard
         preg_match('/[#]+/', $maschera, $m1);
 
         $pos1 = strpos($maschera, $m1[0]);
         if ($pos1 == 0) {
-            $query = 'ORDER BY CAST('.$filed.' AS UNSIGNED) DESC';
-        } else {
-            $query = 'ORDER BY '.$filed.' DESC';
+            $query = 'CAST('.$field.' AS UNSIGNED) DESC';
         }
 
         return $query;

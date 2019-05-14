@@ -14,7 +14,7 @@ abstract class Model extends Original
      *
      * @return static
      */
-    public static function make()
+    public static function build()
     {
         return new static();
     }

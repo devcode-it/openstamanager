@@ -26,11 +26,20 @@ switch (post('op')) {
 
         $sede->save();
 
+        if (empty(post('ragione_sociale'))) {
+            $ragione_sociale = post('cognome').' '.post('nome');
+        } else {
+            $ragione_sociale = post('ragione_sociale');
+        }
+
         // Informazioni sull'anagrafica
         $anagrafica->codice = post('codice');
         $anagrafica->tipo = post('tipo');
         $anagrafica->codice_destinatario = post('codice_destinatario');
-        $anagrafica->ragione_sociale = post('ragione_sociale');
+        $anagrafica->ragione_sociale = $ragione_sociale;
+        $anagrafica->nome = post('nome');
+        $anagrafica->cognome = post('cognome');
+
         $anagrafica->partita_iva = post('piva');
         $anagrafica->codice_fiscale = post('codice_fiscale');
         $anagrafica->tipo = post('tipo');
@@ -63,7 +72,6 @@ switch (post('op')) {
         $anagrafica->idagente = post('idagente');
         $anagrafica->idrelazione = post('idrelazione');
         $anagrafica->sitoweb = post('sitoweb');
-        $anagrafica->nome_cognome = post('nome_cognome');
         $anagrafica->iscrizione_tribunale = post('iscrizione_tribunale');
         $anagrafica->cciaa = post('cciaa');
         $anagrafica->cciaa_citta = post('cciaa_citta');
@@ -83,7 +91,7 @@ switch (post('op')) {
 
         // Validazione della Partita IVA
         $partita_iva = $anagrafica->partita_iva;
-        $partita_iva = strlen($partita_iva) == 11 ? $anagrafica->nazione->iso2.$partita_iva : $partita_iva;
+        $partita_iva = is_numeric($partita_iva) ? $anagrafica->nazione->iso2.$partita_iva : $partita_iva;
 
         $check_vat_number = Validate::isValidVatNumber($partita_iva);
         if (empty($check_vat_number)) {
@@ -120,9 +128,14 @@ switch (post('op')) {
 
     case 'add':
         $idtipoanagrafica = post('idtipoanagrafica');
-        $ragione_sociale = post('ragione_sociale');
 
-        $anagrafica = Anagrafica::make($ragione_sociale, $idtipoanagrafica);
+        if (empty(post('ragione_sociale'))) {
+            $ragione_sociale = post('cognome').' '.post('nome');
+        } else {
+            $ragione_sociale = post('ragione_sociale');
+        }
+
+        $anagrafica = Anagrafica::build($ragione_sociale, $idtipoanagrafica);
         $id_record = $anagrafica->id;
 
         // Se ad aggiungere un cliente è un agente, lo imposto come agente di quel cliente
@@ -140,6 +153,8 @@ switch (post('op')) {
 
         $idagente = ($agente_is_logged && in_array($id_cliente, $idtipoanagrafica)) ? $user['idanagrafica'] : 0;
 
+        $anagrafica->nome = post('nome');
+        $anagrafica->cognome = post('cognome');
         $anagrafica->partita_iva = post('piva');
         $anagrafica->codice_fiscale = post('codice_fiscale');
         $anagrafica->indirizzo = post('indirizzo');
@@ -173,10 +188,10 @@ switch (post('op')) {
     case 'delete':
         // Se l'anagrafica non è l'azienda principale, la disattivo
         if (!in_array($id_azienda, $tipi_anagrafica)) {
-            $dbo->query('UPDATE an_anagrafiche SET deleted_at = NOW() WHERE idanagrafica = '.prepare($id_record).Modules::getAdditionalsQuery($id_module));
+            $dbo->query('UPDATE an_anagrafiche SET deleted_at = NOW() WHERE idanagrafica = '.prepare($id_record));
 
             // Se l'anagrafica è collegata ad un utente lo disabilito
-            $dbo->query('UPDATE zz_users SET enabled = 0 WHERE idanagrafica = '.prepare($id_record).Modules::getAdditionalsQuery($id_module));
+            $dbo->query('UPDATE zz_users SET enabled = 0 WHERE idanagrafica = '.prepare($id_record));
 
             flash()->info(tr('Anagrafica eliminata!'));
         }

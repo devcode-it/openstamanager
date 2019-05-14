@@ -81,7 +81,7 @@ echo '
         </div>
 
         <div class="col-md-4">
-            {[ "type": "checkbox", "label": "'.tr('Notifica di lettura').'", "name": "read_notify", "value": "'.$template['read_notify'].'" ]}
+            {[ "type": "checkbox", "label": "'.tr('Richiedi notifica di lettura').'", "name": "read_notify", "value": "'.$template['read_notify'].'" ]}
         </div>
     </div>';
 
@@ -98,7 +98,7 @@ echo '
 
 $attachments = [];
 if ($template['name'] == 'Fattura Elettronica') {
-    $attachments = $dbo->fetchArray('SELECT id FROM zz_files WHERE id_module = '.prepare($module['id']).' AND id_record = '.prepare($id_record).' AND category = \'Fattura elettronica\'');
+    $attachments = $dbo->fetchArray('SELECT id FROM zz_files WHERE id_module = '.prepare($module['id']).' AND id_record = '.prepare($id_record).' AND category = \'Fattura Elettronica\'');
     $attachments = array_column($attachments, 'id');
 }
 

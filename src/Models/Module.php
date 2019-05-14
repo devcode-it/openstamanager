@@ -3,11 +3,11 @@
 namespace Models;
 
 use Auth;
-use Traits\ManagerTrait;
-use Traits\UploadTrait;
-use Traits\StoreTrait;
 use Common\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Traits\ManagerTrait;
+use Traits\StoreTrait;
+use Traits\UploadTrait;
 
 class Module extends Model
 {
@@ -26,19 +26,6 @@ class Module extends Model
         'options',
         'options2',
     ];
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::addGlobalScope('enabled', function (Builder $builder) {
-            $builder->where('enabled', true);
-        });
-
-        static::addGlobalScope('permission', function (Builder $builder) {
-            $builder->with('groups');
-        });
-    }
 
     /**
      * Restituisce i permessi relativi all'account in utilizzo.
@@ -149,5 +136,18 @@ class Module extends Model
             ->whereNull('parent')
             ->orderBy('order')
             ->get();
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::addGlobalScope('enabled', function (Builder $builder) {
+            $builder->where('enabled', true);
+        });
+
+        static::addGlobalScope('permission', function (Builder $builder) {
+            $builder->with('groups');
+        });
     }
 }

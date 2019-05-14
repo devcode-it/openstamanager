@@ -2,49 +2,90 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\DDT\DDT;
+
 /**
  * Funzione per generare un nuovo numero per il ddt.
+ *
+ * @deprecated 2.4.5
  */
 function get_new_numeroddt($data)
 {
     global $dir;
 
-    $dbo = database();
-
-    $query = "SELECT IFNULL(MAX(numero),'0') AS max_numeroddt FROM dt_ddt WHERE DATE_FORMAT( data, '%Y' ) = '".date('Y', strtotime($data))."' AND idtipoddt IN(SELECT id FROM dt_tipiddt WHERE dir='".$dir."') ORDER BY CAST(numero AS UNSIGNED) DESC LIMIT 0,1";
-    $rs = $dbo->fetchArray($query);
-
-    return intval($rs[0]['max_numeroddt']) + 1;
+    return DDT::getNextNumero($data, $dir);
 }
 
 /**
  * Funzione per calcolare il numero secondario successivo utilizzando la maschera dalle impostazioni.
+ *
+ * @deprecated 2.4.5
  */
 function get_new_numerosecondarioddt($data)
 {
     global $dir;
 
-    $dbo = database();
+    return DDT::getNextNumeroSecondario($data, $dir);
+}
 
-    // Calcolo il numero secondario se stabilito dalle impostazioni e se documento di vendita
-    $formato_numero_secondario = setting('Formato numero secondario ddt');
+/**
+ * Calcolo imponibile ddt (totale_righe - sconto).
+ *
+ * @deprecated 2.4.5
+ */
+function get_imponibile_ddt($id_ddt)
+{
+    $ddt = DDT::find($id_ddt);
 
-    $query = "SELECT numero_esterno FROM dt_ddt WHERE DATE_FORMAT( data, '%Y' ) = '".date('Y', strtotime($data))."' AND idtipoddt IN(SELECT id FROM dt_tipiddt WHERE dir='".$dir."') ORDER BY CAST(numero_esterno AS UNSIGNED) DESC LIMIT 0,1";
+    return $ddt->imponibile;
+}
 
-    $rs = $dbo->fetchArray($query);
-    $numero_secondario = $rs[0]['numero_esterno'];
+/**
+ * Calcolo totale ddt (imponibile + iva).
+ *
+ * @deprecated 2.4.5
+ */
+function get_totale_ddt($id_ddt)
+{
+    $ddt = DDT::find($id_ddt);
 
-    if ($numero_secondario == '') {
-        $numero_secondario = $formato_numero_secondario;
-    }
+    return $ddt->totale;
+}
 
-    if ($formato_numero_secondario != '' && $dir == 'entrata') {
-        $numero_esterno = Util\Generator::generate($formato_numero_secondario, $numero_secondario);
-    } else {
-        $numero_esterno = '';
-    }
+/**
+ * Calcolo netto a pagare ddt (totale - ritenute - bolli).
+ *
+ * @deprecated 2.4.5
+ */
+function get_netto_ddt($id_ddt)
+{
+    $ddt = DDT::find($id_ddt);
 
-    return $numero_esterno;
+    return $ddt->netto;
+}
+
+/**
+ * Calcolo iva detraibile ddt.
+ *
+ * @deprecated 2.4.5
+ */
+function get_ivadetraibile_ddt($id_ddt)
+{
+    $ddt = DDT::find($id_ddt);
+
+    return $ddt->iva_detraibile;
+}
+
+/**
+ * Calcolo iva indetraibile ddt.
+ *
+ * @deprecated 2.4.5
+ */
+function get_ivaindetraibile_ddt($id_ddt)
+{
+    $ddt = DDT::find($id_ddt);
+
+    return $ddt->iva_indetraibile;
 }
 
 /**
@@ -111,76 +152,6 @@ function rimuovi_articolo_daddt($idarticolo, $idddt, $idrigaddt)
 }
 
 /**
- * Calcolo imponibile ddt (totale_righe - sconto).
- */
-function get_imponibile_ddt($idddt)
-{
-    $dbo = database();
-
-    $query = 'SELECT SUM(subtotale-sconto) AS imponibile FROM dt_righe_ddt GROUP BY idddt HAVING idddt='.prepare($idddt);
-    $rs = $dbo->fetchArray($query);
-
-    return $rs[0]['imponibile'];
-}
-
-/**
- * Calcolo totale ddt (imponibile + iva).
- */
-function get_totale_ddt($idddt)
-{
-    $dbo = database();
-
-    // Sommo l'iva di ogni riga al totale
-    $query = 'SELECT SUM(iva) AS iva FROM dt_righe_ddt GROUP BY idddt HAVING idddt='.prepare($idddt);
-    $rs = $dbo->fetchArray($query);
-
-    // Aggiungo la rivalsa inps se c'è
-    $query2 = 'SELECT rivalsainps FROM dt_ddt WHERE id='.prepare($idddt);
-    $rs2 = $dbo->fetchArray($query2);
-
-    return get_imponibile_ddt($idddt) + $rs[0]['iva'] + $rs2[0]['rivalsainps'];
-}
-
-/**
- * Calcolo netto a pagare ddt (totale - ritenute - bolli).
- */
-function get_netto_ddt($idddt)
-{
-    $dbo = database();
-
-    $query = 'SELECT ritenutaacconto,bollo FROM dt_ddt WHERE id='.prepare($idddt);
-    $rs = $dbo->fetchArray($query);
-
-    return get_totale_ddt($idddt) - $rs[0]['ritenutaacconto'] + $rs[0]['bollo'];
-}
-
-/**
- * Calcolo iva detraibile ddt.
- */
-function get_ivadetraibile_ddt($idddt)
-{
-    $dbo = database();
-
-    $query = 'SELECT SUM(iva)-SUM(iva_indetraibile) AS iva_detraibile FROM dt_righe_ddt GROUP BY idddt HAVING idddt='.prepare($idddt);
-    $rs = $dbo->fetchArray($query);
-
-    return $rs[0]['iva_detraibile'];
-}
-
-/**
- * Calcolo iva indetraibile ddt.
- */
-function get_ivaindetraibile_ddt($idddt)
-{
-    $dbo = database();
-
-    $query = 'SELECT SUM(iva_indetraibile) AS iva_indetraibile FROM dt_righe_ddt GROUP BY idddt HAVING idddt='.prepare($idddt);
-    $rs = $dbo->fetchArray($query);
-
-    return $rs[0]['iva_indetraibile'];
-}
-
-/**
  * Ricalcola i costi aggiuntivi in ddt (rivalsa inps, ritenuta d'acconto, marca da bollo)
  * Deve essere eseguito ogni volta che si aggiunge o toglie una riga
  * $idddt				int		ID del ddt
@@ -213,11 +184,11 @@ function ricalcola_costiagg_ddt($idddt, $idrivalsainps = '', $idritenutaacconto 
         // Leggo la rivalsa inps se c'è (per i ddt di vendita lo leggo dalle impostazioni)
         if ($dir == 'entrata') {
             if (!empty($idrivalsainps)) {
-                $idrivalsainps = setting('Percentuale rivalsa INPS');
+                $idrivalsainps = setting('Percentuale rivalsa');
             }
         }
 
-        $query = "SELECT percentuale FROM co_rivalsainps WHERE id='".$idrivalsainps."'";
+        $query = "SELECT percentuale FROM co_rivalse WHERE id='".$idrivalsainps."'";
         $rs = $dbo->fetchArray($query);
         $rivalsainps = $totale_imponibile / 100 * $rs[0]['percentuale'];
 

@@ -3,7 +3,6 @@
 namespace Models;
 
 use Common\Model;
-use App;
 
 class View extends Model
 {
@@ -11,7 +10,7 @@ class View extends Model
 
     public function getQueryAttribute($value)
     {
-        return App::replacePlaceholder($value);
+        return Util\Query::replacePlaceholder($value);
     }
 
     /* Relazioni Eloquent */

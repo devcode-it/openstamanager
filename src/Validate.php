@@ -1,7 +1,7 @@
 <?php
 
-use Mpociot\VatCalculator\VatCalculator;
 use Mpociot\VatCalculator\Exceptions\VATCheckUnavailableException;
+use Mpociot\VatCalculator\VatCalculator;
 use Respect\Validation\Validator as v;
 
 /**
@@ -11,7 +11,7 @@ use Respect\Validation\Validator as v;
  */
 class Validate
 {
-    public static function vatCheck($partita_iva)
+    public static function vatCheckIT($partita_iva)
     {
         if ($partita_iva === '') {
             return true;
@@ -58,7 +58,7 @@ class Validate
         }
 
         // Controllo sulla sintassi
-        if (!static::vatCheck($vat_number)) {
+        if (starts_with($vat_number, 'IT') && !static::vatCheckIT($vat_number)) {
             return false;
         }
 
@@ -154,7 +154,7 @@ class Validate
 
             $data = json_decode($output, false);
 
-            /*se la riposta è null verficando il formato, il record mx o il server smtp imposto la relativa proprietà dell'oggetto a 0*/
+            /*se la riposta è null verificando il formato, il record mx o il server smtp imposto la relativa proprietà dell'oggetto a 0*/
             if ($data->format_valid == null) {
                 $data->format_valid = 0;
             }

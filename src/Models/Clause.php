@@ -3,7 +3,6 @@
 namespace Models;
 
 use Common\Model;
-use App;
 
 class Clause extends Model
 {
@@ -23,6 +22,6 @@ class Clause extends Model
 
     public function getClauseAttribute($value)
     {
-        return App::replacePlaceholder($value);
+        return Util\Query::replacePlaceholder($value);
     }
 }

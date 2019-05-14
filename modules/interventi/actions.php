@@ -9,6 +9,7 @@ use Modules\Interventi\Components\Riga;
 use Modules\Interventi\Intervento;
 use Modules\Interventi\Stato;
 use Modules\Interventi\TipoSessione;
+use Modules\Interventi\Components\Sconto;
 
 switch (post('op')) {
     case 'update':
@@ -353,9 +354,9 @@ switch (post('op')) {
 
     case 'manage_sconto':
         if (post('idriga') != null) {
-            $sconto = Riga::find(post('idriga'));
+            $sconto = Sconto::find(post('idriga'));
         } else {
-            $sconto = Riga::build($intervento);
+            $sconto = Sconto::build($intervento);
         }
 
         $sconto->descrizione = post('descrizione');

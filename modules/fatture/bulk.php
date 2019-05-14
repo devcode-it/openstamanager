@@ -51,18 +51,16 @@ switch (post('op')) {
         break;
 
     case 'delete-bulk':
-        if (App::debug()) {
-            foreach ($id_records as $id) {
-                $dbo->query('DELETE  FROM co_documenti  WHERE id = '.prepare($id).Modules::getAdditionalsQuery($id_module));
-                $dbo->query('DELETE FROM co_righe_documenti WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
-                $dbo->query('DELETE FROM co_scadenziario WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
-                $dbo->query('DELETE FROM mg_movimenti WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
-            }
+      
+		foreach ($id_records as $id) {
+			$dbo->query('DELETE FROM co_documenti  WHERE id = '.prepare($id).Modules::getAdditionalsQuery($id_module));
+			$dbo->query('DELETE FROM co_righe_documenti WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
+			$dbo->query('DELETE FROM co_scadenziario WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
+			$dbo->query('DELETE FROM mg_movimenti WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
+		}
 
-            flash()->info(tr('Fatture eliminate!'));
-        } else {
-            flash()->warning(tr('Procedura in fase di sviluppo. Nessuna modifica apportata.'));
-        }
+		flash()->info(tr('Fatture eliminate!'));
+        
         break;
 
     case 'export-xml-bulk':
@@ -79,7 +77,7 @@ switch (post('op')) {
         }
 
         // Selezione delle fatture da stampare
-        $fatture = $dbo->fetchArray('SELECT co_documenti.id, numero_esterno, data, ragione_sociale, co_tipidocumento.descrizione, co_tipidocumento.dir FROM co_documenti INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_statidocumento ON co_documenti.idstatodocumento=co_statidocumento.id WHERE co_documenti.id IN('.implode(',', $id_records).') AND co_statidocumento.descrizione="Emessa"');
+        $fatture = $dbo->fetchArray('SELECT co_documenti.id, numero_esterno, data, ragione_sociale, co_tipidocumento.descrizione, co_tipidocumento.dir FROM co_documenti INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_statidocumento ON co_documenti.idstatodocumento=co_statidocumento.id WHERE co_documenti.id IN('.implode(',', $id_records).')');
 
         $failed = [];
         if (!empty($fatture)) {
@@ -283,11 +281,15 @@ switch (post('op')) {
         break;
 }
 
-$bulk = [
-    'delete-bulk' => tr('Elimina selezionati'),
-];
+if (App::debug()) {
+	
+	$operations = [
+		'delete-bulk' => tr('Elimina selezionati'),
+	];
 
-$bulk['registra-contabile'] = [
+}
+
+$operations['registra-contabile'] = [
     'text' => tr('Registra contabile pagamento'),
     'data' => [
         'msg' => tr('Vuoi aggiungere un movimento contabile per le fatture selezionate? (le fatture dovranno essere in stato emessa altrimenti non verranno elaborate)'),
@@ -298,7 +300,7 @@ $bulk['registra-contabile'] = [
 ];
 
 if ($module->name == 'Fatture di vendita') {
-    $bulk['export-bulk'] = [
+    $operations['export-bulk'] = [
         'text' => tr('Esporta stampe'),
         'data' => [
             'msg' => tr('Vuoi davvero esportare tutte le stampe in un archivio?'),
@@ -309,7 +311,7 @@ if ($module->name == 'Fatture di vendita') {
     ];
 }
 
-$bulk['export-xml-bulk'] = [
+$operations['export-xml-bulk'] = [
     'text' => tr('Esporta XML'),
     'data' => [
         'msg' => tr('Vuoi davvero esportare tutte le fatture elettroniche in un archivio?'),
@@ -319,4 +321,4 @@ $bulk['export-xml-bulk'] = [
     ],
 ];
 
-return $bulk;
+return $operations;

@@ -113,6 +113,7 @@ elseif (!empty($id_intervento)) {
     $idtipointervento = $rs[0]['idtipointervento'];
     $data = (null !== filter('data')) ? filter('data') : $rs[0]['data_richiesta'];
     $data_richiesta = $rs[0]['data_richiesta'];
+	$data_scadenza = $rs[0]['data_scadenza'];
     $richiesta = $rs[0]['richiesta'];
     $idsede = $rs[0]['idsede'];
     $idanagrafica = $rs[0]['idanagrafica'];
@@ -228,7 +229,7 @@ if (!empty($id_intervento)) {
                 </div>
                 
                 <div class="col-md-3">
-                    {[ "type": "timestamp", "label": "<?php echo tr('Data/ora scadenza'); ?>", "name": "data_scadenza", "required": 0, "value": "" ]}
+                    {[ "type": "timestamp", "label": "<?php echo tr('Data/ora scadenza'); ?>", "name": "data_scadenza", "required": 0, "value": "<?php echo $data_scadenza; ?>" ]}
                 </div>
 
 				<div class="col-md-3">

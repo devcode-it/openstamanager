@@ -36,7 +36,7 @@ echo '
                 <th width="30">'.tr('Posizione').'</th>
             </tr>';
 
-$widgets = $dbo->fetchArray('SELECT zz_widgets.id, zz_widgets.name AS widget_name, zz_modules.name AS module_name, zz_widgets.enabled AS enabled, location FROM zz_widgets INNER JOIN zz_modules ON zz_widgets.id_module=zz_modules.id ORDER BY `id_module` ASC, `zz_widgets`.`order` ASC');
+$widgets = $dbo->fetchArray('SELECT zz_widgets.id, zz_widgets.name AS widget_name, zz_modules.name AS module_name, zz_widgets.enabled AS enabled, location, help FROM zz_widgets INNER JOIN zz_modules ON zz_widgets.id_module=zz_modules.id ORDER BY `id_module` ASC, `zz_widgets`.`order` ASC');
 
 $previous = '';
 
@@ -82,7 +82,7 @@ foreach ($widgets as $widget) {
 
     echo '
             <tr class="'.$class.'">
-                <td>'.$widget['widget_name'].'</td>
+                <td>'.$widget['widget_name'].((!empty($widget['help'])) ? ' <i class="tip fa fa-question-circle-o" class="tip" title="'.$widget['help'].'"</i>' : '').'</td>
                 <td align="right"><small>'.$location.'</small></td>
                 <td align="center">'.$stato.'</td>
                 <td align="center">'.$posizione.'</td>

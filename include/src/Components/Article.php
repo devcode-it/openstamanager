@@ -11,6 +11,7 @@ abstract class Article extends Row
 {
     protected $serialRowID = null;
     protected $abilita_movimentazione = true;
+    protected $serialsList = null;
 
     protected $qta_movimentazione = 0;
 
@@ -38,13 +39,17 @@ abstract class Article extends Row
      */
     public function setSerialsAttribute($serials)
     {
+        $serials = array_clean($serials);
+
         database()->sync('mg_prodotti', [
             'id_riga_'.$this->serialRowID => $this->id,
             'dir' => $this->getDirection(),
             'id_articolo' => $this->idarticolo,
         ], [
-            'serial' => array_clean($serials),
+            'serial' => $serials,
         ]);
+
+        $this->serialsList = $serials;
     }
 
     /**
@@ -61,6 +66,8 @@ abstract class Article extends Row
         ], [
             'serial' => array_clean($serials),
         ]);
+
+        $this->serialsList = null;
     }
 
     /**
@@ -74,10 +81,24 @@ abstract class Article extends Row
             return [];
         }
 
-        // Individuazione dei seriali
-        $results = database()->fetchArray('SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND id_riga_'.$this->serialRowID.' = '.prepare($this->id));
+        if (!isset($this->serialsList)) {
+            // Individuazione dei seriali
+            $results = database()->fetchArray('SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND id_riga_'.$this->serialRowID.' = '.prepare($this->id));
 
-        return array_column($results, 'serial');
+            $this->serialsList = array_column($results, 'serial');
+        }
+
+        return $this->serialsList;
+    }
+
+    /**
+     * Restituisce il numero di seriali mancanti per il completamento dell'articolo.
+     *
+     * @return float
+     */
+    public function getMissingSerialsAttribute()
+    {
+        return $this->qta - count($this->serials);
     }
 
     /**

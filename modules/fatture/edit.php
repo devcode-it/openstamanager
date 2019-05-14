@@ -221,21 +221,6 @@ if (empty($record['is_fiscale'])) {
 				</div>
 			</div>
 
-<?php
-
-if ($dir == 'uscita') {
-    ?>
-				<div class="row">
-					<div class="col-md-3">
-						{[ "type": "number", "label": "<?php echo tr('Marca da bollo'); ?>", "name": "bollo", "value": "$bollo$", "help": "<?php echo tr('Applicato solo se il totale della fattura è maggiore di _MONEY_', [
-                            '_MONEY_' => moneyFormat(setting("Soglia minima per l'applicazione della marca da bollo")),
-                        ]),'.'; ?>" ]}
-					</div>
-				</div>
-<?php
-}
-?>
-
             <div class="row">
 				<div class="col-md-3">
 					{[ "type": "checkbox", "label": "<?php echo tr('Split payment'); ?>", "name": "split_payment", "value": "$split_payment$", "help": "<?php echo tr('Abilita lo split payment per questo documento. Le aliquote iva con natura N6 (reverse charge) non saranno disponibili.'); ?>", "placeholder": "<?php echo tr('Split payment'); ?>" ]}
@@ -256,11 +241,6 @@ if ($dir == 'uscita') {
                 <div class="col-md-3">
                     {[ "type": "select", "label": "<?php echo tr('Ritenuta contributi'); ?>", "name": "id_ritenuta_contributi", "value": "$id_ritenuta_contributi$", "values": "query=SELECT * FROM co_ritenuta_contributi" ]}
                 </div>
-
-                <div class="col-md-3">
-                    {[ "type": "checkbox", "label": "<?php echo tr('Addebita marca da bollo'); ?>", "name": "addebita_bollo", "value": "$addebita_bollo$" ]}
-                </div>
-
             </div>
 
 			<div class="row">
@@ -278,6 +258,38 @@ if ($dir == 'uscita') {
 	</div>
 
 <?php
+echo '
+    <div class="box box-info">
+        <div class="box-header with-border">
+            <h3 class="box-title"><i class="fa fa-certificate "></i> '.tr('Marca da bollo').'</h3>
+        </div>
+
+        <div class="box-body">
+            <div class="row">
+                <div class="col-md-4">
+                    {[ "type": "checkbox", "label": "'.tr('Addebita marca da bollo').'", "name": "addebita_bollo", "value": "$addebita_bollo$" ]}
+                </div>
+
+                <div class="col-md-4">
+                    {[ "type": "checkbox", "label": "'.tr('Marca da bollo automatica').'", "name": "bollo_automatico", "value": "'.intval(!isset($record['bollo'])).'", "help": "'.tr("Seleziona per impostare automaticamente l'importo della marca da bollo").'. '.tr('Applicata solo se il totale della fattura è maggiore di _MONEY_', [
+                            '_MONEY_' => moneyFormat(setting("Soglia minima per l'applicazione della marca da bollo")),
+                        ]).'.", "placeholder": "'.tr('Bollo automatico').'" ]}
+                </div>
+                
+                <div class="col-md-4">
+                    {[ "type": "number", "label": "'.tr('Importo marca da bollo').'", "name": "bollo", "value": "$bollo$", "disabled": '.intval(!isset($record['bollo'])).' ]}
+                </div>
+  
+                <script type="text/javascript">
+                    $(document).ready(function() {
+                        $("#bollo_automatico").click(function(){
+                            $("#bollo").attr("disabled", $(this).is(":checked"));
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+    </div>';
 
 if ($tipodoc == 'Fattura accompagnatoria di vendita') {
     echo '

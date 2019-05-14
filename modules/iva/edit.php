@@ -2,13 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-if (!$record['default']) {
-    $attr = '';
-} else {
-    $attr = 'readonly';
-    echo '<div class="alert alert-warning">'.tr('Alcune impostazioni non possono essere modificate.').'</div>';
-}
-
 $esigibilita = [
     [
         'id' => 'I',
@@ -79,16 +72,6 @@ $esigibilita = [
 
 </form>
 
-<?php
-// Record eliminabile solo se permesso
-if (!$record['default']) {
-    ?>
-        <a class="btn btn-danger ask" data-backto="record-list">
-            <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
-        </a>
-<?php
-}
-?>
 
 <script>
 $(document).ready(function(){
@@ -108,3 +91,26 @@ $(document).ready(function(){
     });
 });
 </script>
+
+
+<?php
+
+$res = $dbo->fetchNum('SELECT `co_righe_documenti`.`id` FROM `co_righe_documenti` WHERE `co_righe_documenti`.`idiva`='.prepare($id_record).
+' UNION SELECT `co_righe_preventivi`.`id` FROM `co_righe_preventivi` WHERE `co_righe_preventivi`.`idiva` = '.prepare($id_record).
+' UNION SELECT `co_righe_contratti`.`id` FROM `co_righe_contratti` WHERE `co_righe_contratti`.`idiva` = '.prepare($id_record).
+' UNION SELECT `dt_righe_ddt`.`id` FROM `dt_righe_ddt` WHERE `dt_righe_ddt`.`idiva` = '.prepare($id_record).
+' UNION SELECT `or_righe_ordini`.`id` FROM `or_righe_ordini` WHERE `or_righe_ordini`.`idiva` = '.prepare($id_record).
+' UNION SELECT `mg_articoli`.`id` FROM `mg_articoli` WHERE `mg_articoli`.`idiva_vendita` = '.prepare($id_record).
+' UNION SELECT `an_anagrafiche`.`idanagrafica` AS `id` FROM `an_anagrafiche` WHERE `an_anagrafiche`.`idiva_vendite` = '.prepare($id_record).' OR `an_anagrafiche`.`idiva_acquisti` = '.prepare($id_record));
+
+if ($res) {
+    echo '
+    <div class="alert alert-danger">
+        <p>'.tr('Ci sono '.count($res).' documenti collegati a questa aliquota IVA. Non è possibile eliminarla.').'</p>
+    </div>';
+} else {
+    echo '
+    <a class="btn btn-danger ask" data-backto="record-list">
+        <i class="fa fa-trash"></i> '.tr('Elimina').'
+    </a>';
+}

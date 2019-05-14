@@ -24,10 +24,10 @@ class Pagamento extends Model
         $rate = $this->rate->sortBy('num_giorni');
         $number = count($rate);
 
-        //dd($rate, $this);
         $totale = 0.0;
 
         $results = [];
+        $count = 0;
         foreach ($rate as $key => $rata) {
             // X giorni esatti
             if ($rata['giorno'] == 0) {
@@ -60,7 +60,7 @@ class Pagamento extends Model
             }
 
             // All'ultimo ciclo imposto come cifra da pagare il totale della fattura meno gli importi già inseriti in scadenziario per evitare di inserire cifre arrotondate "male"
-            if ($key + 1 == $number) {
+            if ($count + 1 == $number) {
                 $da_pagare = sum($importo, -$totale, 2);
             }
 
@@ -75,6 +75,8 @@ class Pagamento extends Model
                 'scadenza' => $scadenza,
                 'importo' => $da_pagare,
             ];
+
+            $count++;
         }
 
         return $results;

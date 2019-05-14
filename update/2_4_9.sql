@@ -111,7 +111,7 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati dei contratti'), 'Descrizione', 'descrizione', 2, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati dei contratti'), 'id', 'id', 1, 0, 0, 1, 0);
 
--- Aggiornamento sconti incodizionati
+-- Aggiornamento sconti incondizionati
 ALTER TABLE `co_documenti` DROP `sconto_globale`, DROP `tipo_sconto_globale`;
 ALTER TABLE `co_preventivi` DROP `sconto_globale`, DROP `tipo_sconto_globale`;
 ALTER TABLE `co_contratti` DROP `sconto_globale`, DROP `tipo_sconto_globale`;
@@ -253,8 +253,10 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 ALTER TABLE `zz_settings` CHANGE `help` `help` varchar(255);
 UPDATE `zz_settings` SET `help` = NULL WHERE `help` = '';
 
-ALTER TABLE `co_documenti` CHANGE `data_stato_fe` `data_stato_fe` TIMESTAMP NULL, ADD `addebita_bollo` BOOLEAN NOT NULL DEFAULT TRUE, ADD `id_riga_bollo` int(11), ADD FOREIGN KEY (`id_riga_bollo`) REFERENCES `co_righe_documenti`(`id`) ON DELETE SET NULL;
-UPDATE `co_documenti` SET `data_ricezione` = NULL WHERE `data_ricezione` = '0000-00-00';
+ALTER TABLE `co_documenti` CHANGE `bollo` `bollo` decimal(12,4), CHANGE `data_stato_fe` `data_stato_fe` TIMESTAMP NULL, ADD `addebita_bollo` BOOLEAN NOT NULL DEFAULT TRUE, ADD `id_riga_bollo` int(11), ADD FOREIGN KEY (`id_riga_bollo`) REFERENCES `co_righe_documenti`(`id`) ON DELETE SET NULL;
+UPDATE `co_documenti` SET `bollo` = NULL;
+UPDATE `co_documenti` SET `data_ricezione` = NULL WHERE `data_ricezione` = 0000-00-00;
+UPDATE `co_documenti` SET `data_ricezione` = `data` WHERE `data_ricezione` IS NULL AND idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE dir = 'uscita');
 UPDATE `co_documenti` SET `data_stato_fe` = NULL WHERE `data_stato_fe` = '0000-00-00 00:00:00';
 
 -- Rimozione tasto di stampa scadenzario totale da dentro la scadenza
@@ -283,7 +285,7 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `
 -- Aggiunta vista ore rimanenti nei contratti
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name`="Contratti"), 'Ore rimanenti', '( (SELECT SUM(co_righe_contratti.qta) FROM co_righe_contratti WHERE co_righe_contratti.um=''ore'' AND co_righe_contratti.idcontratto=co_contratti.id) - IFNULL( (SELECT SUM(in_interventi_tecnici.ore) FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id WHERE in_interventi.id_contratto=co_contratti.id ), 0) )', '5', '1', '0', '1', '', '', '0', '0', '0');
 
--- inserimento stato intervento da programmare
+-- Inserimento stato intervento da programmare
 INSERT INTO `in_statiintervento` (`idstatointervento`, `descrizione`, `colore`, `can_delete`, `completato`, `created_at`, `notifica`, `id_email`, `destinatari`) VALUES ('DAP', 'Da programmare', '#2deded', '1', '0', NULL, '0', NULL, NULL);
 
 -- Widget attività in programmazione
@@ -304,3 +306,73 @@ INSERT INTO `zz_widgets` (`id`, `name`, `type`, `id_module`, `location`, `class`
 
 -- Aggiunta vista con data conclusione e flag rinnovabile nei contratti
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), 'Rinnovabile', 'IF(`co_contratti`.`rinnovabile`=1, \'SI\', \'NO\')', '6', '1', '0', '1', '', '', '0', '0', '0'), (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), 'Data conclusione', 'IF(data_conclusione=0, \'\', data_conclusione)', '7', '1', '0', '1', '', '', '0', '0', '0');
+
+-- Aggiunta visualizzazione importo totale negli ordini
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM ((`or_ordini` INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`) INNER JOIN `an_anagrafiche` ON `or_ordini`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`) LEFT OUTER JOIN `or_righe_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`idordine` WHERE 1=1 AND `dir` = \'entrata\' |date_period(`data`)| GROUP BY or_ordini.id HAVING 2=2 ORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC' WHERE `zz_modules`.`name` = 'Ordini cliente'; 
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM ((`or_ordini` INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`) INNER JOIN `an_anagrafiche` ON `or_ordini`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`) LEFT OUTER JOIN `or_righe_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`idordine` WHERE 1=1 AND `dir` = \'uscita\' |date_period(`data`)| GROUP BY or_ordini.id HAVING 2=2 ORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC' WHERE `zz_modules`.`name` = 'Ordini fornitore'; 
+
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente'), 'Totale', 'SUM(`subtotale` - `sconto`)', '5', '1', '0', '1', '', '', '1', '1', '0');
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore'), 'Totale', 'SUM(`subtotale` - `sconto`)', '5', '1', '0', '1', '', '', '1', '1', '0');
+
+UPDATE `zz_views` SET `query` = '`an_anagrafiche`.`ragione_sociale`' WHERE `id_module` IN (SELECT `id` FROM `zz_modules` WHERE `name` IN('Ordini cliente', 'Ordini fornitore')) AND `name` = 'Ragione sociale';
+
+-- Riordinamento campi degli ordini cliente e fornitore
+UPDATE `zz_views` SET `order` = 3 WHERE `id_module` IN (SELECT `id` FROM `zz_modules` WHERE `name` IN('Ordini cliente', 'Ordini fornitore')) AND `name` = 'Data';
+UPDATE `zz_views` SET `order` = 4 WHERE `id_module` IN (SELECT `id` FROM `zz_modules` WHERE `name` IN('Ordini cliente', 'Ordini fornitore')) AND `name` = 'Ragione sociale';
+UPDATE `zz_views` SET `order` = 6 WHERE `id_module` IN (SELECT `id` FROM `zz_modules` WHERE `name` IN('Ordini cliente', 'Ordini fornitore')) AND `name` = 'icon_Stato';
+UPDATE `zz_views` SET `order` = 7 WHERE `id_module` IN (SELECT `id` FROM `zz_modules` WHERE `name` IN('Ordini cliente', 'Ordini fornitore')) AND `name` = 'icon_title_Stato';
+
+-- Aggiunta visualizzazione nuovi campi utili nei ddt
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM ((((((`dt_ddt` INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`) LEFT OUTER JOIN `dt_righe_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`) LEFT OUTER JOIN `dt_causalet` ON `dt_ddt`.`idcausalet` = `dt_causalet`.`id`) LEFT OUTER JOIN `dt_spedizione` ON `dt_ddt`.`idspedizione` = `dt_spedizione`.`id`) LEFT OUTER JOIN `an_anagrafiche` `vettori` ON `dt_ddt`.`idvettore` = `vettori`.`idanagrafica`) LEFT OUTER JOIN `an_anagrafiche` AS `destinatari` ON `dt_ddt`.`idanagrafica` = `destinatari`.`idanagrafica`) LEFT OUTER JOIN `an_sedi` ON `dt_ddt`.`idsede` = `an_sedi`.`id` WHERE 1=1 AND `dir` = \'entrata\' |date_period(`data`)| GROUP BY dt_ddt.id HAVING 2=2 ORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC,`dt_ddt`.created_at DESC' WHERE `zz_modules`.`name` = 'Ddt di vendita';
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM ((((((`dt_ddt` INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`) LEFT OUTER JOIN `dt_righe_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`) LEFT OUTER JOIN `dt_causalet` ON `dt_ddt`.`idcausalet` = `dt_causalet`.`id`) LEFT OUTER JOIN `dt_spedizione` ON `dt_ddt`.`idspedizione` = `dt_spedizione`.`id`) LEFT OUTER JOIN `an_anagrafiche` `vettori` ON `dt_ddt`.`idvettore` = `vettori`.`idanagrafica`) LEFT OUTER JOIN `an_anagrafiche` AS `destinatari` ON `dt_ddt`.`idanagrafica` = `destinatari`.`idanagrafica`) LEFT OUTER JOIN `an_sedi` ON `dt_ddt`.`idsede` = `an_sedi`.`id` WHERE 1=1 AND `dir` = \'uscita\' |date_period(`data`)| GROUP BY dt_ddt.id HAVING 2=2 ORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC,`dt_ddt`.created_at DESC' WHERE `zz_modules`.`name` = 'Ddt di acquisto';
+
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita'), 'Sede', 'IF(`dt_ddt`.`idsede`=0, \'Sede legale\', `an_sedi`.`nomesede`)', '5', '1', '0', '1', '', '', '1', '0', '0');
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita'), 'Causale', '`dt_causalet`.`descrizione`', '6', '1', '0', '1', '', '', '1', '0', '0');
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita'), 'Tipo spedizione', '`dt_spedizione`.`descrizione`', '7', '1', '0', '1', '', '', '1', '0', '0');
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita'), 'Vettore', '`vettori`.`ragione_sociale`', '8', '1', '0', '1', '', '', '1', '0', '0');
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita'), 'Totale', 'SUM(`subtotale` - `sconto`)', '9', '1', '0', '1', '', '', '1', '1', '0');
+
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di acquisto'), 'Sede', 'IF(`dt_ddt`.`idsede`=0, \'Sede legale\', `an_sedi`.`nomesede`)', '5', '1', '0', '1', '', '', '1', '0', '0');
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di acquisto'), 'Causale', '`dt_causalet`.`descrizione`', '6', '1', '0', '1', '', '', '1', '0', '0');
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di acquisto'), 'Tipo spedizione', '`dt_spedizione`.`descrizione`', '7', '1', '0', '1', '', '', '1', '0', '0');
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di acquisto'), 'Vettore', '`vettori`.`ragione_sociale`', '8', '1', '0', '1', '', '', '1', '0', '0');
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di acquisto'), 'Totale', 'SUM(`subtotale` - `sconto`)', '9', '1', '0', '1', '', '', '1', '1', '0');
+
+UPDATE `zz_views` SET `query` = '`destinatari`.`ragione_sociale`' WHERE `id_module` IN (SELECT `id` FROM `zz_modules` WHERE `name` IN('Ddt di vendita', 'Ddt di acquisto')) AND `name` = 'Ragione sociale';
+
+-- Riordinamento campi dei ddt in ingresso e uscita
+UPDATE `zz_views` SET `order` = 10 WHERE `id_module` IN (SELECT `id` FROM `zz_modules` WHERE `name` IN('Ddt di vendita', 'Ddt di acquisto')) AND `name` = 'icon_Stato';
+UPDATE `zz_views` SET `order` = 11 WHERE `id_module` IN (SELECT `id` FROM `zz_modules` WHERE `name` IN('Ddt di vendita', 'Ddt di acquisto')) AND `name` = 'icon_title_Stato';
+UPDATE `zz_views` SET `order` = 12 WHERE `id_module` IN (SELECT `id` FROM `zz_modules` WHERE `name` IN('Ddt di vendita', 'Ddt di acquisto')) AND `name` = 'dir';
+
+-- Aggiornamento widget "Fatturato" (iva esclusa)
+UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS('' '', REPLACE(REPLACE(REPLACE(FORMAT((SELECT SUM(subtotale-sconto-co_righe_documenti.ritenutaacconto)), 2), '','', ''#''), ''.'', '',''), ''#'', ''.''), ''&euro;'') AS dato FROM (co_righe_documenti INNER JOIN co_documenti ON co_righe_documenti.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=''entrata'' |segment| AND data >= ''|period_start|'' AND data <= ''|period_end|'' AND 1=1', `help` = 'Fatturato IVA esclusa.' WHERE `zz_widgets`.`name` = 'Fatturato';
+
+-- Aggiornamento widget "Acquisti" (iva esclusa)
+UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS('' '', REPLACE(REPLACE(REPLACE(FORMAT((SELECT SUM(subtotale-sconto-co_righe_documenti.ritenutaacconto)), 2), '','', ''#''), ''.'', '',''), ''#'', ''.''), ''&euro;'') AS dato FROM (co_righe_documenti INNER JOIN co_documenti ON co_righe_documenti.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=''uscita'' |segment| AND data >= ''|period_start|'' AND data <= ''|period_end|'' AND 1=1', `help` = 'Fatturato IVA esclusa.' WHERE `zz_widgets`.`name` = 'Acquisti';
+
+-- Sistema Hook
+CREATE TABLE IF NOT EXISTS `zz_hooks` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `class` varchar(255) NOT NULL,
+  `frequency` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `zz_hook_cache` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `hook_id` int(11) NOT NULL,
+  `results` TEXT NOT NULL,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`hook_id`) REFERENCES `zz_hooks`(`id`)
+) ENGINE=InnoDB;
+
+INSERT INTO `zz_hooks` (`id`, `name`, `class`, `frequency`) VALUES
+(NULL, 'Ricevute', 'Plugins\\ReceiptFE\\ReceiptHook', '1 day'),
+(NULL, 'Fatture', 'Plugins\\ImportFE\\InvoiceHook', '1 day');
+
+-- Aggiunte variabili di sistema per stampa riepilogo interventi
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), 'richiesta', 'richiesta', '14', '1', '0', '0', '', '', '0', '0', '1');
+
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), 'descrizione', 'descrizione', '15', '1', '0', '0', '', '', '0', '0', '1');

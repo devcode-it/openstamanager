@@ -271,7 +271,6 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
 
         $segno_mov4_inps = 1;
         $segno_mov5_ritenutaacconto = -1;
-        $segno_mov6_bollo = 1;
 
         // Lettura conto fornitore
         $query = 'SELECT idconto_fornitore FROM an_anagrafiche INNER JOIN co_documenti ON an_anagrafiche.idanagrafica=co_documenti.idanagrafica WHERE co_documenti.id='.prepare($iddocumento);
@@ -290,7 +289,6 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
 
         $segno_mov4_inps = -1;
         $segno_mov5_ritenutaacconto = 1;
-        $segno_mov6_bollo = -1;
 
         // Lettura conto cliente
         $query = 'SELECT idconto_cliente FROM an_anagrafiche INNER JOIN co_documenti ON an_anagrafiche.idanagrafica=co_documenti.idanagrafica WHERE co_documenti.id='.prepare($iddocumento);
@@ -343,7 +341,6 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
         aggiuntivo:
         4) eventuale rivalsa inps
         5) eventuale ritenuta d'acconto
-        6) eventuale marca da bollo
     */
     // 1) Aggiungo la riga del conto cliente
     $importo_cliente = $totale_fattura;
@@ -418,18 +415,6 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
 
         // AVERE nel riepilogativo clienti
         $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_controparte).', '.prepare(($totale_ritenutaacconto * $segno_mov5_ritenutaacconto) * -1).', '.prepare($primanota).')';
-        $dbo->query($query2);
-    }
-
-    // 6) Aggiungo la marca da bollo se c'è
-    // Lettura id conto marca da bollo
-    if ($totale_bolli != 0) {
-        $query = "SELECT id, descrizione FROM co_pianodeiconti3 WHERE descrizione='Rimborso spese marche da bollo'";
-        $rs = $dbo->fetchArray($query);
-        $idconto_bolli = $rs[0]['id'];
-        $descrizione_conto_bolli = $rs[0]['descrizione'];
-
-        $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_bolli).', '.prepare($totale_bolli * $segno_mov6_bollo).', '.prepare($primanota).')';
         $dbo->query($query2);
     }
 }
@@ -707,23 +692,49 @@ function rimuovi_riga_fattura($id_documento, $id_riga, $dir)
     }
 
     // Rimozione articoli collegati ad un preventivo importato con riga unica
-    if (empty($riga['idarticolo']) && $riga['is_preventivo']) {
+    if (empty($riga['idarticolo']) && $riga['idpreventivo']) {
         //rimetto a magazzino gli articoli collegati al preventivo
-        $rsa = $dbo->fetchArray('SELECT idarticolo, qta FROM co_righe_preventivi WHERE idpreventivo = '.prepare($riga['idpreventivo']));
+        $rsa = $dbo->fetchArray('SELECT id, idarticolo, qta FROM co_righe_preventivi WHERE idpreventivo = '.prepare($riga['idpreventivo']));
         for ($i = 0; $i < sizeof($rsa); ++$i) {
-            if (!empty($rsa[$i]['idarticolo'])) {
-                add_movimento_magazzino($rsa[$i]['idarticolo'], $rsa[$i]['qta'], ['iddocumento' => $id_documento]);
+            if ($riga['is_preventivo']) {
+                if (!empty($rsa[$i]['idarticolo'])) {
+                    add_movimento_magazzino($rsa[$i]['idarticolo'], $rsa[$i]['qta'], ['iddocumento' => $id_documento]);
+                }
+            } else {
+                $qta_evasa = $rsa[$i]['qta_evasa'] + $riga['qta'];
+                // Ripristino le quantità da evadere nel preventivo
+                $dbo->update('co_righe_preventivi',
+                    [
+                        'qta_evasa' => $qta_evasa,
+                    ],
+                    [
+                        'id' => $rsa[$i]['id'],
+                    ]
+                );
             }
         }
     }
 
     // Rimozione articoli collegati ad un contratto importato con riga unica
-    if (empty($riga['idarticolo']) && $riga['is_contratto']) {
+    if (empty($riga['idarticolo']) && $riga['idcontratto']) {
         //rimetto a magazzino gli articoli collegati al contratto
-        $rsa = $dbo->fetchArray('SELECT idarticolo, qta FROM co_righe_contratti WHERE idcontratto = '.prepare($riga['idcontratto']));
+        $rsa = $dbo->fetchArray('SELECT id, idarticolo, qta FROM co_righe_contratti WHERE idcontratto = '.prepare($riga['idcontratto']));
         for ($i = 0; $i < sizeof($rsa); ++$i) {
-            if (!empty($rsa[$i]['idarticolo'])) {
-                add_movimento_magazzino($rsa[$i]['idarticolo'], $rsa[$i]['qta'], ['iddocumento' => $id_documento]);
+            if ($riga['is_contratto']) {
+                if (!empty($rsa[$i]['idarticolo'])) {
+                    add_movimento_magazzino($rsa[$i]['idarticolo'], $rsa[$i]['qta'], ['iddocumento' => $id_documento]);
+                }
+            } else {
+                $qta_evasa = $rsa[$i]['qta_evasa'] + $riga['qta'];
+                // Ripristino le quantità da evadere nel contratto
+                $dbo->update('co_righe_contratti',
+                    [
+                        'qta_evasa' => $qta_evasa,
+                    ],
+                    [
+                        'id' => $rsa[$i]['id'],
+                    ]
+                );
             }
         }
     }

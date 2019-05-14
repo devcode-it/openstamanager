@@ -165,7 +165,7 @@ function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto = n
     if (!empty($tecnico['email'])) {
         $n = new Notifications\EmailNotification();
 
-        $n->setTemplate('Notifica intervento', $id_record);
+        $n->setTemplate('Notifica intervento', $idintervento);
         $n->setReceivers($tecnico['email']);
 
         $n->send();

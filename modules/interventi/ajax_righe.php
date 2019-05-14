@@ -89,7 +89,7 @@ if (count($rs2) > 0) {
         // Pulsante per riportare nel magazzino centrale.
         // Visibile solo se l'intervento non è stato nè fatturato nè completato.
         if (!$record['flag_completato']) {
-            $link = $record['prezzo_vendita'] == 0 ? $structure->fileurl('row-edit.php') : $structure->fileurl('add_righe.php');
+            $link = $r['is_sconto'] == 1 ? $structure->fileurl('row-edit.php') : $structure->fileurl('add_righe.php');
 
             echo '
         <td class="text-center">

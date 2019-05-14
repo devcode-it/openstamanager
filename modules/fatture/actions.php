@@ -40,85 +40,76 @@ switch (post('op')) {
 
     case 'update':
         if (post('id_record') !== null) {
-            $idstatodocumento = post('idstatodocumento');
-            $idpagamento = post('idpagamento');
+            $fattura->data = post('data');
+            $fattura->data_ricezione = post('data_ricezione');
+            $fattura->numero_esterno = post('numero_esterno');
+            $fattura->note = post('note');
+            $fattura->note_aggiuntive = post('note_aggiuntive');
 
-            $totale_imponibile = get_imponibile_fattura($id_record);
-            $totale_fattura = get_totale_fattura($id_record);
+            $fattura->idstatodocumento = post('idstatodocumento');
+            $fattura->idtipodocumento = post('idtipodocumento');
+            $fattura->idanagrafica = post('idanagrafica');
+            $fattura->idagente = post('idagente');
+            $fattura->idpagamento = post('idpagamento');
+            $fattura->idbanca = post('idbanca');
+            $fattura->idcausalet = post('idcausalet');
+            $fattura->idspedizione = post('idspedizione');
+            $fattura->idporto = post('idporto');
+            $fattura->idaspettobeni = post('idaspettobeni');
+            $fattura->idvettore = post('idvettore');
+            $fattura->idsede = post('idsede');
+            $fattura->idconto = post('idconto');
+            $fattura->split_payment = post('split_payment') ?: 0;
+            $fattura->is_fattura_conto_terzi = post('is_fattura_conto_terzi') ?: 0;
+            $fattura->n_colli = post('n_colli');
+            $fattura->tipo_resa = post('tipo_resa');
 
-            $data = [];
+            $fattura->rivalsainps = 0;
+            $fattura->ritenutaacconto = 0;
+            $fattura->iva_rivalsainps = 0;
+
+            $fattura->codice_stato_fe = post('codice_stato_fe') ?: null;
+            $fattura->id_ritenuta_contributi = post('id_ritenuta_contributi') ?: null;
+
             if ($dir == 'uscita') {
-                $data = [
-                    'numero' => post('numero'),
-                    'numero_esterno' => post('numero_esterno'),
-                    'idrivalsainps' => post('id_rivalsa_inps'),
-                    'idritenutaacconto' => post('id_ritenuta_acconto'),
-                ];
+                $fattura->numero = post('numero');
+                $fattura->numero_esterno = post('numero_esterno');
+                $fattura->idrivalsainps = post('id_rivalsa_inps');
+                $fattura->idritenutaacconto = post('id_ritenuta_acconto');
             }
 
-            // Leggo la descrizione del pagamento
-            $query = 'SELECT descrizione FROM co_pagamenti WHERE id='.prepare($idpagamento);
-            $rs = $dbo->fetchArray($query);
-            $pagamento = $rs[0]['descrizione'];
+            $fattura->addebita_bollo = post('addebita_bollo');
+            $bollo_automatico = post('bollo_automatico');
+            if (empty($bollo_automatico)) {
+                $fattura->bollo = post('bollo');
+            } else {
+                $fattura->bollo = null;
+            }
 
-            // Query di aggiornamento
-            $dbo->update('co_documenti', array_merge([
-                'data' => post('data'),
-                'data_ricezione' => post('data_ricezione'),
-                'numero_esterno' => post('numero_esterno'),
-                'note' => post('note'),
-                'note_aggiuntive' => post('note_aggiuntive'),
-
-                'idstatodocumento' => $idstatodocumento,
-                'idtipodocumento' => post('idtipodocumento'),
-                'idanagrafica' => post('idanagrafica'),
-                'idagente' => post('idagente'),
-                'idpagamento' => $idpagamento,
-                'idbanca' => post('idbanca'),
-                'idcausalet' => post('idcausalet'),
-                'idspedizione' => post('idspedizione'),
-                'idporto' => post('idporto'),
-                'idaspettobeni' => post('idaspettobeni'),
-                'idvettore' => post('idvettore'),
-                'idsede' => post('idsede'),
-                'idconto' => post('idconto'),
-                'split_payment' => post('split_payment') ?: 0,
-                'is_fattura_conto_terzi' => post('is_fattura_conto_terzi') ?: 0,
-                'n_colli' => post('n_colli'),
-                'tipo_resa' => post('tipo_resa'),
-                'addebita_bollo' => post('addebita_bollo'),
-                'bollo' => 0,
-                'rivalsainps' => 0,
-                'ritenutaacconto' => 0,
-                'iva_rivalsainps' => 0,
-                'codice_stato_fe' => post('codice_stato_fe') ?: null,
-                'id_ritenuta_contributi' => post('id_ritenuta_contributi') ?: null,
-            ], $data), ['id' => $id_record]);
-
-            $query = 'SELECT descrizione FROM co_statidocumento WHERE id='.prepare($idstatodocumento);
-            $rs = $dbo->fetchArray($query);
+            $fattura->save();
 
             // Ricalcolo inps, ritenuta e bollo (se la fattura non è stata pagata)
             ricalcola_costiagg_fattura($id_record);
 
+            $stato = $fattura->stato;
             // Elimino la scadenza e tutti i movimenti, poi se la fattura è emessa le ricalcolo
-            if ($rs[0]['descrizione'] == 'Bozza' or $rs[0]['descrizione'] == 'Annullata') {
+            if ($stato['descrizione'] == 'Bozza' or $stato['descrizione'] == 'Annullata') {
                 elimina_scadenza($id_record);
                 //elimina_movimento($id_record, 0);
                 //elimino movimento anche prima nota (se pagata o parzialmente pagata)
                 elimina_movimento($id_record, 1);
-            } elseif ($rs[0]['descrizione'] == 'Emessa') {
+            } elseif ($stato['descrizione'] == 'Emessa') {
                 elimina_scadenza($id_record);
                 elimina_movimento($id_record, 0);
-            } elseif (($rs[0]['descrizione'] == 'Pagato' or $rs[0]['descrizione'] == 'Parzialmente pagato') and ($dbo->fetchNum('SELECT id  FROM co_scadenziario WHERE iddocumento = '.prepare($id_record)) == 0)) {
+            } elseif (($stato['descrizione'] == 'Pagato' or $stato['descrizione'] == 'Parzialmente pagato') and ($dbo->fetchNum('SELECT id  FROM co_scadenziario WHERE iddocumento = '.prepare($id_record)) == 0)) {
                 // aggiungo la scadenza come già pagata
-                aggiungi_scadenza($id_record, $pagamento, 1);
+                aggiungi_scadenza($id_record, null, 1);
                 aggiungi_movimento($id_record, $dir);
             }
 
             // Se la fattura è in stato "Emessa" posso inserirla in scadenzario e aprire il mastrino cliente
-            if ($rs[0]['descrizione'] == 'Emessa') {
-                aggiungi_scadenza($id_record, $pagamento);
+            if ($stato['descrizione'] == 'Emessa') {
+                aggiungi_scadenza($id_record);
                 aggiungi_movimento($id_record, $dir);
             }
 

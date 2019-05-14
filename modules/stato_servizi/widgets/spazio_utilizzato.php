@@ -81,6 +81,6 @@ function crea_grafico(values){
 }
 </script>
 
-<div class="chart-container" style="width:20vw">
+<div class="chart-container" style="width:25em;">
     <canvas id="chart"></canvas>
 </div>';

@@ -196,7 +196,7 @@ if (Auth::check()) {
 			<div id="tiny-loader" style="display:none;"></div>
 
 			<header class="main-header">
-				<a href="https://www.openstamanager.com" class="logo" title="'.tr('Il gestionale open source per l\'assistenza tecnica e la fatturazione').'" target="_blank">
+				<a href="https://www.openstamanager.com" class="logo" title="'.tr("Il gestionale open source per l'assistenza tecnica e la fatturazione").'" target="_blank">
 					<!-- mini logo for sidebar mini 50x50 pixels -->
 					<span class="logo-mini">'.tr('OSM').'</span>
 					<!-- logo for regular state and mobile devices -->
@@ -212,32 +212,61 @@ if (Auth::check()) {
 						<span class="icon-bar"></span>
 					</a>
 
-					<div class="input-group btn-calendar pull-left">
-                        <button id="daterange" class="btn"><i class="fa fa-calendar" style="color:'.$calendar.'"></i> <i class="fa fa-caret-down" style="color:'.$calendar.';" ></i></button>
-                        <span class="hidden-xs" style="vertical-align:middle; color:'.$calendar.';">
-                            '.Translator::dateToLocale($_SESSION['period_start']).' - '.Translator::dateToLocale($_SESSION['period_end']).'
-                        </span>
-                    </div>
-
-
-					<div id="right-menu" class="pull-right">
-                        <button onclick="window.print()" class="btn btn-sm btn-info tip" title="'.tr('Stampa').'">
-                            <i class="fa fa-print"></i>
-                        </button>
-						<a href="'.$rootdir.'/bug.php" class="btn btn-sm btn-github tip" title="'.tr('Segnalazione bug').'">
-                            <i class="fa fa-bug"></i>
-                        </a>
-						<a href="'.$rootdir.'/log.php" class="btn btn-sm btn-github tip" title="'.tr('Log accessi').'">
-                            <i class="fa fa-book"></i>
-                        </a>
-						<a href="'.$rootdir.'/info.php" class="btn btn-sm btn-github tip" title="'.tr('Informazioni').'">
-                            <i class="fa fa-info"></i>
-                        </a>
-						<a href="'.$rootdir.'/index.php?op=logout" class="btn btn-sm btn-danger tip" title="'.tr('Esci').'">
-                            <i class="fa fa-power-off"></i>
-                        </a>
-					</div>
+                    <!-- Navbar Left Menu -->
+                     <div class="navbar-left" class="hidden-xs">
+                        <ul class="nav navbar-nav" class="hidden-xs">
+                            <li><a href="#" id="daterange" style="color:'.$calendar.';background:inherit">
+                                <i class="fa fa-calendar" style="color:inherit"></i> <i class="fa fa-caret-down" style="color:inherit"></i>
+                            </a></li>
+                            
+                            <li><a href="#" style="color:'.$calendar.';background:inherit">
+                                '.Translator::dateToLocale($_SESSION['period_start']).' - '.Translator::dateToLocale($_SESSION['period_end']).'
+                            </a></li>
+                        </ul>
+                     </div>
+                
+                     <!-- Navbar Right Menu -->
+                     <div class="navbar-custom-menu">
+                        <ul class="nav navbar-nav">
+                            <li class="dropdown notifications-menu">
+                                <a href="#" class="dropdown-toggle btn-github" data-toggle="dropdown">
+                                    <i class="fa fa-bell-o"></i>
+                                    <span class="label label-warning">
+                                        <span id="hooks-loading"><i class="fa fa-spinner fa-spin"></i></span>
+                                        <span id="hooks-count"></span>
+                                    </span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><ul class="menu" id="hooks">
+                                                                    
+                                    </ul></li>
+                                </ul>
+                            </li>
+                            
+                            <li><a href="#" onclick="window.print()" class="btn-github tip" style="background-color:#5bc0de!important" title="'.tr('Stampa').'">
+                                <i class="fa fa-print"></i>
+                            </a></li>
+                            
+                            <li><a href="'.$rootdir.'/bug.php" class="btn-github tip" title="'.tr('Segnalazione bug').'">
+                                <i class="fa fa-bug"></i>
+                            </a></li>
+                            
+                            <li><a href="'.$rootdir.'/log.php" class="btn-github tip" title="'.tr('Log accessi').'">
+                                <i class="fa fa-book"></i>
+                            </a></li>
+                            
+                            <li><a href="'.$rootdir.'/info.php" class="btn-github tip" title="'.tr('Informazioni').'">
+                                <i class="fa fa-info"></i>
+                            </a></li>
+                            
+                            <li><a href="'.$rootdir.'/index.php?op=logout" class="btn-github tip"  style="background-color:#dd4b39!important" title="'.tr('Esci').'">
+                                <i class="fa fa-power-off"></i>
+                            </a></li>
+                        </ul>
+                     </div>
+				
 				</nav>
+				
 			</header>
 
             <aside class="main-sidebar">

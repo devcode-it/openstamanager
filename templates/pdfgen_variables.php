@@ -22,6 +22,7 @@ foreach ($prefixes as $prefix) {
         $replaces[$prefix.'codicefiscale'] = '';
     }
 
+    $replaces[$prefix.'codice_destinatario'] = !empty($replaces[$prefix.'codice_destinatario']) ? 'Cod.Fatturazione: '.$replaces[$prefix.'codice_destinatario'] : '';
     $replaces[$prefix.'capsoc'] = !empty($replaces[$prefix.'capsoc']) ? 'Cap.Soc.: '.$replaces[$prefix.'capsoc'] : '';
     $replaces[$prefix.'sitoweb'] = !empty($replaces[$prefix.'sitoweb']) ? 'Web: '.$replaces[$prefix.'sitoweb'] : '';
     $replaces[$prefix.'telefono'] = !empty($replaces[$prefix.'telefono']) ? 'Tel: '.$replaces[$prefix.'telefono'] : '';

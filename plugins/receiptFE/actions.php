@@ -6,22 +6,6 @@ use Plugins\ReceiptFE\Interaction;
 use Plugins\ReceiptFE\Ricevuta;
 
 switch (filter('op')) {
-    case 'save':
-        $content = file_get_contents($_FILES['blob']['tmp_name']);
-        $file = FatturaElettronica::store($_FILES['blob']['name'], $content);
-
-        if (FatturaElettronica::isValid($file)) {
-            echo json_encode([
-                'filename' => $file,
-            ]);
-        } else {
-            echo json_encode([
-                'already' => 1,
-            ]);
-        }
-
-        break;
-
     case 'import':
         $list = Interaction::getReceiptList();
 

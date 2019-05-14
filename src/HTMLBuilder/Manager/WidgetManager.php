@@ -59,6 +59,11 @@ class WidgetManager implements ManagerInterface
         return $result;
     }
 
+    protected static function getModule()
+    {
+        return \Modules::get('Stato dei servizi');
+    }
+
     protected function prints($widget)
     {
         return $this->stats($widget);
@@ -88,7 +93,7 @@ class WidgetManager implements ManagerInterface
 
         // Generazione del codice HTML
         $result = '
-<button type="button" class="close" onclick="if(confirm(\'Disabilitare questo widget?\')) { $.post( \''.ROOTDIR.'/modules/aggiornamenti/actions.php?id_module='.$widget['id_module'].'\', { op: \'disable_widget\', id: \''.$widget['id'].'\' }, function(response){ location.reload(); }); };" >
+<button type="button" class="close" onclick="if(confirm(\'Disabilitare questo widget?\')) { $.post( \''.ROOTDIR.'/actions.php?id_module='.self::getModule()->id.'\', { op: \'disable_widget\', id: \''.$widget['id'].'\' }, function(response){ location.reload(); }); };" >
     <span aria-hidden="true">&times;</span><span class="sr-only">'.tr('Chiudi').'</span>
 </button>';
 
@@ -153,7 +158,7 @@ class WidgetManager implements ManagerInterface
     protected function custom($widget)
     {
         $result = '
-        <button type="button" class="close" onclick="if(confirm(\'Disabilitare questo widget?\')) { $.post( \''.ROOTDIR.'/modules/aggiornamenti/actions.php?id_module='.$widget['id_module'].'\', { op: \'disable_widget\', id: \''.$widget['id'].'\' }, function(response){ location.reload(); }); };" >
+        <button type="button" class="close" onclick="if(confirm(\'Disabilitare questo widget?\')) { $.post( \''.ROOTDIR.'/actions.php?id_module='.self::getModule()->id.'\', { op: \'disable_widget\', id: \''.$widget['id'].'\' }, function(response){ location.reload(); }); };" >
             <span aria-hidden="true">&times;</span><span class="sr-only">'.tr('Chiudi').'</span>
         </button>';
 
@@ -162,10 +167,10 @@ class WidgetManager implements ManagerInterface
         <div class="info-box">
             <span class="info-box-icon" style="background-color:'.$widget['bgcolor'].'">';
 
-                if (!empty($widget['icon'])) {
-                    $result .= '
+        if (!empty($widget['icon'])) {
+            $result .= '
                             <i class="'.$widget['icon'].'"></i>';
-                }
+        }
 
         $result .= '
             </span>
@@ -173,12 +178,12 @@ class WidgetManager implements ManagerInterface
             <div class="info-box-content">
                 <span class="info-box-text">';
 
-        if(!empty($widget['php_include'])){
+        if (!empty($widget['php_include'])) {
             $result_ob = '';
 
             ob_start();
 
-            include(DOCROOT."/".$widget['php_include']);
+            include DOCROOT.'/'.$widget['php_include'];
             $result_ob = ob_get_contents();
 
             ob_end_clean();

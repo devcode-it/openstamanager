@@ -10,7 +10,7 @@ if (isset($id_record)) {
 
 ?><form action="<?php
 if (isset($id_original)) {
-    echo ROOTDIR.'/editor.php?id_module='.$id_module;
+    echo ROOTDIR.'/controller.php?id_module='.$id_module;
 
     if (isset($id_record)) {
         echo '&id_record='.$id_record;

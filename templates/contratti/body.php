@@ -136,7 +136,7 @@ foreach ($righe as $r) {
             <td class='text-right'>";
         if (empty($r['is_descrizione'])) {
             echo '
-                '.(empty($r['qta']) || empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'] / $r['qta'])).' &euro;';
+                '.(empty($r['qta']) || empty($r['subtotale']) ? '' : moneyFormat($r['subtotale'] / $r['qta']));
         }
         echo '
             </td>';
@@ -146,13 +146,13 @@ foreach ($righe as $r) {
             <td class='text-right'>";
         if (empty($r['is_descrizione'])) {
             echo '
-                '.(empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'])).' &euro;';
+                '.(empty($r['subtotale']) ? '' : moneyFormat($r['subtotale']));
 
             if ($r['sconto'] > 0) {
                 echo '
                     <br><small class="help-block">- '.tr('sconto _TOT_ _TYPE_', [
                         '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
-                        '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
+                        '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : currency()),
                     ]).'</small>';
 
                 if ($count <= 1) {
@@ -197,8 +197,8 @@ if ($options['pricing']) {
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
 
-        <th class="text-center">
-            <b>'.Translator::numberToLocale($imponibile).' &euro;</b>
+        <th class="text-right">
+            <b>'.moneyFormat($imponibile, 2).'</b>
         </th>
     </tr>';
 
@@ -208,8 +208,8 @@ if ($options['pricing']) {
             <b>'.tr('Sconto', [], ['upper' => true]).':</b>
         </td>
 
-        <th class="text-center">
-            <b>-'.Translator::numberToLocale($sconto).' &euro;</b>
+        <th class="text-right">
+            <b>-'.moneyFormat($sconto, 2).'</b>
         </th>
     </tr>';
     }
@@ -220,8 +220,8 @@ if ($options['pricing']) {
     	<td colspan="3" class="text-right border-top">
             <b>'.tr('Quotazione totale', [], ['upper' => true]).':</b>
     	</td>
-    	<th class="text-center">
-    		<b>'.Translator::numberToLocale($totale).' &euro;</b>
+    	<th class="text-right">
+    		<b>'.moneyFormat($totale, 2).'</b>
     	</th>
     </tr>';
 }

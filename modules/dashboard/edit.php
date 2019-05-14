@@ -285,9 +285,9 @@ if ($total == 0) {
 </div>
 <br>
 <?php
-$qp = 'SELECT MONTH(data_richiesta) AS mese, YEAR(data_richiesta) AS anno FROM (co_promemoria INNER JOIN co_contratti ON co_promemoria.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND idintervento IS NULL
+$qp = 'SELECT MONTH(data_richiesta) AS mese, YEAR(data_richiesta) AS anno FROM (co_promemoria INNER JOIN co_contratti ON co_promemoria.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE is_pianificabile = 1) ) AND idintervento IS NULL
 
-UNION SELECT MONTH(data_scadenza) AS mese, YEAR(data_scadenza) AS anno FROM (co_ordiniservizio INNER JOIN co_contratti ON co_ordiniservizio.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND idintervento IS NULL
+UNION SELECT MONTH(data_scadenza) AS mese, YEAR(data_scadenza) AS anno FROM (co_ordiniservizio INNER JOIN co_contratti ON co_ordiniservizio.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE is_pianificabile = 1) ) AND idintervento IS NULL
 
 UNION SELECT MONTH(data_richiesta) AS mese, YEAR(data_richiesta) AS anno FROM in_interventi INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE (SELECT COUNT(*) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento = in_interventi.id) = 0 ORDER BY anno,mese';
 $rsp = $dbo->fetchArray($qp);
@@ -309,9 +309,9 @@ if (!empty($rsp)) {
         <h4>'.tr('Promemoria da pianificare').'</h4>';
 
     // Controllo pianificazioni mesi precedenti
-    $qp_old = 'SELECT co_promemoria.id FROM co_promemoria INNER JOIN co_contratti ON co_promemoria.idcontratto=co_contratti.id WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) AND idintervento IS NULL AND DATE_ADD(co_promemoria.data_richiesta, INTERVAL 1 DAY) <= NOW()
+    $qp_old = 'SELECT co_promemoria.id FROM co_promemoria INNER JOIN co_contratti ON co_promemoria.idcontratto=co_contratti.id WHERE idstato IN(SELECT id FROM co_staticontratti WHERE is_pianificabile = 1) AND idintervento IS NULL AND DATE_ADD(co_promemoria.data_richiesta, INTERVAL 1 DAY) <= NOW()
 
-    UNION SELECT co_ordiniservizio.id FROM co_ordiniservizio INNER JOIN co_contratti ON co_ordiniservizio.idcontratto=co_contratti.id WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) AND idintervento IS NULL AND DATE_ADD(co_ordiniservizio.data_scadenza, INTERVAL 1 DAY) <= NOW()
+    UNION SELECT co_ordiniservizio.id FROM co_ordiniservizio INNER JOIN co_contratti ON co_ordiniservizio.idcontratto=co_contratti.id WHERE idstato IN(SELECT id FROM co_staticontratti WHERE is_pianificabile = 1) AND idintervento IS NULL AND DATE_ADD(co_ordiniservizio.data_scadenza, INTERVAL 1 DAY) <= NOW()
 
     UNION SELECT in_interventi.id FROM in_interventi INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE (SELECT COUNT(*) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento = in_interventi.id) = 0 AND DATE_ADD(in_interventi.data_richiesta, INTERVAL 1 DAY) <= NOW()';
     $rsp_old = $dbo->fetchNum($qp_old);
@@ -367,43 +367,48 @@ if ($vista == 'mese') {
 ?>
 
 <script type="text/javascript">
+	
+	function load_interventi_da_pianificare(mese){
+		
+		if (mese == undefined){
+			// Seleziono il mese corrente per gli interventi da pianificare
+			var date = new Date();
+			var mese;
+			date.setDate(date.getDate());
 
-    $('#select-intreventi-pianificare').change(function(){
-        var mese = $(this).val();
-        $.get( '<?php echo $rootdir; ?>/modules/dashboard/actions.php', { op: 'load_intreventi', mese: mese }, function(data){
-            $('#interventi-pianificare').html(data);
-            $('#external-events .fc-event').each(function() {
+			//Note: January is 0, February is 1, and so on.
+			mese = ('0' + (date.getMonth()+1)).slice(-2) + date.getFullYear();
+
+			$('#select-intreventi-pianificare option[value='+mese+']').attr('selected','selected').trigger('change');
+		}
+		
+		$('#interventi-pianificare').html('<center><br><br><i class=\'fa fa-refresh fa-spin fa-2x fa-fw\'></i></center>');
+		$.get( '<?php echo $rootdir; ?>/modules/dashboard/actions.php', { op: 'load_intreventi', mese: mese }, function(data){
+			
+        })
+		.done(function( data ) {
+			$('#interventi-pianificare').html(data);
+			$('#external-events .fc-event').each(function() {
                 $(this).draggable({
                     zIndex: 999,
                     revert: true,
                     revertDuration: 0
                 });
             });
-        });
+			
+		});
+		
+	}
+    $('#select-intreventi-pianificare').change(function(){
+        var mese = $(this).val();
+        load_interventi_da_pianificare(mese);
+
     });
 
 	$(document).ready(function() {
-        // Seleziono il mese corrente per gli interventi da pianificare
-        var date = new Date();
-        var mese;
-        date.setDate(date.getDate());
-
-        //Note: January is 0, February is 1, and so on.
-        mese = ('0' + (date.getMonth()+1)).slice(-2) + date.getFullYear();
-
-        $('#select-intreventi-pianificare option[value='+mese+']').attr('selected','selected').trigger('change');
-
-        $.get( '<?php echo $rootdir; ?>/modules/dashboard/actions.php', { op: 'load_intreventi', mese: mese }, function(data){
-            $('#interventi-pianificare').html(data);
-            $('#external-events .fc-event').each(function() {
-                $(this).draggable({
-                    zIndex: 999,
-                    revert: true,
-                    revertDuration: 0
-                });
-            });
-        });
-
+       
+		
+		load_interventi_da_pianificare();
 
         // Comandi seleziona tutti
         $('#selectallstati').click(function(event) {
@@ -585,7 +590,7 @@ if (empty($domenica)) {
 
 echo "
             minTime: '".setting('Inizio orario lavorativo')."',
-            maxTime: '".setting('Fine orario lavorativo')."',
+            maxTime: '".((setting('Fine orario lavorativo') == '00:00') ?: '23:59:59')."',
 ";
 
 ?>
@@ -674,37 +679,43 @@ if (Modules::getPermission('Interventi') == 'rw') {
 ?>
 			eventAfterRender: function(event, element) {
 				element.find('.fc-title').html(event.title);
+                element.data('idintervento', event.idintervento);
 <?php
 
 if (setting('Utilizzare i tooltip sul calendario') == '1') {
     ?>
-				$.get(globals.rootdir + "/modules/dashboard/actions.php?op=get_more_info&id="+event.idintervento+"&timeStart="+moment(event.start).format("YYYY-MM-DD HH:mm")+"&timeEnd="+moment(event.end).format("YYYY-MM-DD HH:mm"), function(data,response){
-					if( response=="success" ){
-						data = $.trim(data);
-						if( data!="ok" ){
-							element.tooltipster({
-								content: data,
-								animation: 'grow',
-								contentAsHTML: true,
-								hideOnClick: true,
-								onlyOne: true,
-								speed: 200,
-								delay: 100,
-								maxWidth: 400,
-								theme: 'tooltipster-shadow',
-								touchDevices: true,
-								trigger: 'hover',
-								position: 'left'
-							});
+				element.mouseover( function(){
+				    if( !element.hasClass('tooltipstered') ){
+				        $(this).data('idintervento', event.idintervento );
+				        
+				        $.get(globals.rootdir + "/modules/dashboard/actions.php?op=get_more_info&id="+$(this).data('idintervento'), function(data,response){
+							if( response=="success" ){
+								data = $.trim(data);
+								if( data!="ok" ){
+									element.tooltipster({
+										content: data,
+										animation: 'grow',
+										contentAsHTML: true,
+										hideOnClick: true,
+										onlyOne: true,
+										speed: 200,
+										delay: 100,
+										maxWidth: 400,
+										theme: 'tooltipster-shadow',
+										touchDevices: true,
+										trigger: 'hover',
+										position: 'left'
+									});
+								}
+								else{
+									return false;
+								}
 
-						}
-						else{
-							return false;
-						}
-
-                        $('#calendar').fullCalendar('option', 'contentHeight', 'auto');
+				                $('#calendar').fullCalendar('option', 'contentHeight', 'auto');
+				            }
+				        });
 					}
-                });
+				});
 <?php
 }
 ?>

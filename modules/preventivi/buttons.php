@@ -5,7 +5,7 @@ include_once __DIR__.'/../../core.php';
 echo'
 <button type="button" class="btn btn-primary" onclick="if( confirm(\'Duplicare questo preventivo?\') ){ $(\'#copia-preventivo\').submit(); }"> <i class="fa fa-copy"></i> '.tr('Duplica preventivo').'</button>';
 
-$disabled = $record['fatturabile'] || $record['annullato'];
+$disabled = $record['is_fatturabile'] || $record['is_completato'];
 if (!$disabled) {
     echo '
 	<button type="button" class="btn btn-warning" onclick="if(confirm(\'Vuoi creare un nuova revisione?\')){$(\'#crea-revisione\').submit();}"><i class="fa fa-edit"></i> '.tr('Crea nuova revisione...').'</button>';

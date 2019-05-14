@@ -119,14 +119,17 @@ foreach ($righe as $r) {
         }
     }
 
-    $ref = doc_references($r, $record['dir'], ['iddocumento']);
+    // Aggiunta dei riferimenti ai documenti
+    if (setting('Riferimento dei documenti nelle stampe')) {
+        $ref = doc_references($r, $record['dir'], ['iddocumento']);
 
-    if (!empty($ref)) {
-        echo '
+        if (!empty($ref)) {
+            echo '
                 <br><small>'.$ref['description'].'</small>';
 
-        if ($count <= 1) {
-            $count += 0.4;
+            if ($count <= 1) {
+                $count += 0.4;
+            }
         }
     }
 
@@ -147,13 +150,13 @@ foreach ($righe as $r) {
             <td class='text-right'>";
     if (empty($r['is_descrizione'])) {
         echo '
-				'.(empty($r['qta']) ? '' : Translator::numberToLocale($r['subtotale'] / $r['qta'])).' &euro;';
+				'.(empty($r['qta']) ? '' : moneyFormat($r['subtotale'] / $r['qta']));
 
         if ($r['sconto'] > 0) {
             echo "
                 <br><small class='text-muted'>".tr('sconto _TOT_ _TYPE_', [
                     '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
-                    '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
+                    '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : currency()),
                 ]).'</small>';
 
             if ($count <= 1) {
@@ -170,13 +173,13 @@ foreach ($righe as $r) {
             <td class='text-right'>";
     if (empty($r['is_descrizione'])) {
         echo '
-				'.Translator::numberToLocale($r['subtotale'] - $r['sconto']).' &euro;';
+				'.moneyFormat($r['subtotale'] - $r['sconto']);
 
         if ($r['sconto'] > 0) {
             /*echo "
                 <br><small class='text-muted'>".tr('sconto _TOT_ _TYPE_', [
                     '_TOT_' => Translator::numberToLocale($r['sconto']),
-                    '_TYPE_' => '&euro;',
+                    '_TYPE_' => currency(),
                 ]).'</small>';*/
 
             if ($count <= 1) {
@@ -192,7 +195,7 @@ foreach ($righe as $r) {
             <td class="text-center">';
     if (empty($r['is_descrizione']) && empty($r['sconto_globale'])) {
         echo '
-                '.Translator::numberToLocale($r['perc_iva']);
+                '.Translator::numberToLocale($r['perc_iva'], 0);
     }
     echo '
             </td>
@@ -234,14 +237,9 @@ foreach ($v_iva as $key => $value) {
 echo '
 <table class="table">';
 echo '
-    <tr>';
-if (abs($record['bollo']) > 0) {
-    echo '
-        <td width="85%">';
-} else {
-    echo '
+    <tr>
         <td width="100%">';
-}
+
     if (!empty($record['note'])) {
         echo '
             <p class="small-bold">'.tr('Note', [], ['upper' => true]).':</p>
@@ -249,25 +247,6 @@ if (abs($record['bollo']) > 0) {
     }
     echo '
         </td>';
-if (abs($record['bollo']) > 0) {
-    echo '
-        <td width="15%" align="right">';
-}
-if (abs($record['bollo']) > 0) {
-    echo '
-            <table style="width: 20mm; font-size: 50%; text-align: center" class="table-bordered">
-                <tr>
-                    <td style="height: 20mm;">
-                        <br><br>
-                        '.tr('Spazio per applicazione marca da bollo', [], ['upper' => true]).'
-                    </td>
-                </tr>
-            </table>';
-}
-if (abs($record['bollo']) > 0) {
-    echo '
-        </td>';
-}
 
 echo '
     </tr>';
@@ -291,7 +270,6 @@ $totale = sum([
 
 $netto_a_pagare = sum([
     $totale,
-    $record['bollo'],
     -$record['ritenutaacconto'],
 ]);
 

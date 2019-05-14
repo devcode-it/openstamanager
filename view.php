@@ -21,16 +21,10 @@ if ($file->isFatturaElettronica()) {
     $name = basename($file->original);
     $filename = explode('.', $name)[0];
     $pieces = explode('_', $filename);
-    $codice = $pieces[2];
-    if (!empty($codice)) {
-        $stylesheet = $codice.'_v1.0';
-    }
+    $stylesheet = $pieces[2];
 
     $stylesheet = DOCROOT.'/plugins/xml/'.$stylesheet.'.xsl';
     $stylesheet = file_exists($stylesheet) ? $stylesheet : DOCROOT.'/plugins/xml/'.$default_stylesheet.'.xsl';
-
-    // Fix per ricevute con namespace errato
-    $content = str_replace('http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fattura/messaggi/v1.0', 'http://www.fatturapa.gov.it/sdi/messaggi/v1.0', $content);
 
     // XML
     $xml = new DOMDocument();

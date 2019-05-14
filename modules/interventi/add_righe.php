@@ -22,6 +22,7 @@ if (empty($idriga)) {
     $um = '';
     $prezzo_vendita = '0';
     $prezzo_acquisto = '0';
+    $idiva = setting('Iva predefinita');
 } else {
     $op = 'editriga';
     $button = '<i class="fa fa-edit"></i> '.tr('Modifica');
@@ -82,13 +83,13 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "number", "label": "'.tr('Prezzo di acquisto (un.)').'", "name": "prezzo_acquisto", "required": 1, "value": "'.$prezzo_acquisto.'", "icon-after": "&euro;" ]}
+            {[ "type": "number", "label": "'.tr('Prezzo di acquisto (un.)').'", "name": "prezzo_acquisto", "required": 1, "value": "'.$prezzo_acquisto.'", "icon-after": "'.currency().'" ]}
         </div>';
 
 // Prezzo di vendita
 echo '
         <div class="col-md-4">
-            {[ "type": "number", "label": "'.tr('Prezzo di vendita (un.)').'", "name": "prezzo_vendita", "required": 1, "value": "'.$prezzo_vendita.'", "icon-after": "&euro;" ]}
+            {[ "type": "number", "label": "'.tr('Prezzo di vendita (un.)').'", "name": "prezzo_vendita", "required": 1, "value": "'.$prezzo_vendita.'", "icon-after": "'.currency().'" ]}
         </div>';
 
 // Sconto unitario

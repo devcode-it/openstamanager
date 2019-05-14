@@ -12,7 +12,7 @@ if (!Interaction::isEnabled()) {
 }
 
 echo '
-<p>'.tr("Le ricevute delle Fatture Elettroniche permettono di individuare se una determinata fattura rilasciata è $requesta accettata dal Sistema Di Interscambio e dal cliente relativo").'.</p>
+<p>'.tr('Le ricevute delle Fatture Elettroniche permettono di individuare se una determinata fattura rilasciata è stata accettata dal Sistema Di Interscambio e dal cliente relativo').'.</p>
 
 <p>'.tr("Tramite il pulsante _BTN_ è possibile procedere all controllo automatico di queste ricevute, che aggiorneranno di conseguenza lo $requesto dei documenti relativi e verranno allegate ad essi", [
     '_BTN_' => '<b>Ricerca</b>',

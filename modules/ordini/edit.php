@@ -85,12 +85,6 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 				</div>
 			</div>
 
-            <div class="row">
-                <div class="col-md-3">
-                    {[ "type": "number", "label": "<?php echo tr('Sconto incondizionato'); ?>", "name": "sconto_generico", "value": "$sconto_globale$", "icon-after": "choice|untprc|$tipo_sconto_globale$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
-                </div>
-            </div>
-
 			<div class="row">
 				<div class="col-md-12">
 					{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
@@ -113,19 +107,20 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 
         <div class="panel-body">
             <div class="row">
-                <div class="col-md-4">
-                    {[ "type": "text", "label": "<?php echo tr('Identificatore Documento'); ?>", "name": "id_documento_fe", "required": 0, "value": "$id_documento_fe$", "maxlength": 20, "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+                <div class="col-md-6">
+                    {[ "type": "text", "label": "<?php echo tr('Identificatore Documento'); ?>", "name": "id_documento_fe", "required": 0, "help": "<?php echo tr('<span>Obbligatorio per valorizzare CIG/CUP. &Egrave; possible inserire: </span><ul><li>N. determina</li><li>RDO</li><li>Ordine MEPA</li></ul>'); ?>", "value": "$id_documento_fe$", "maxlength": 20, "readonly": "<?php echo $record['flag_completato']; ?>" ]}
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-6">
                     {[ "type": "text", "label": "<?php echo tr('Numero Riga'); ?>", "name": "num_item", "required": 0, "value": "$num_item$", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>" ]}
                 </div>
-
-                <div class="col-md-4">
+			</div>
+			<div class="row">
+                <div class="col-md-6">
                     {[ "type": "text", "label": "<?php echo tr('Codice CIG'); ?>", "name": "codice_cig", "required": 0, "value": "$codice_cig$", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>" ]}
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-6">
                     {[ "type": "text", "label": "<?php echo tr('Codice CUP'); ?>", "name": "codice_cup", "required": 0, "value": "$codice_cup$", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>" ]}
                 </div>
             </div>
@@ -141,19 +136,31 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 
 	<div class="panel-body">
 		<div class="pull-left">
-			<?php
+<?php
 
-                if ($record['flag_completato'] == 0) {
-                    ?>
-            <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/ordini/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_articolo" data-toggle="modal" data-title="Aggiungi articolo"><i class="fa fa-plus"></i> <?php echo tr('Articolo'); ?></a>
+if ($record['flag_completato'] == 0) {
+    echo '
+            <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_articolo" data-toggle="tooltip" data-title="'.tr('Aggiungi articolo').'">
+                <i class="fa fa-plus"></i> '.tr('Articolo').'
+            </a>';
 
-            <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/ordini/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_riga" data-toggle="modal" data-title="Aggiungi riga"><i class="fa fa-plus"></i> <?php echo tr('Riga'); ?></a>
+    echo '
+            <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_riga" data-toggle="tooltip" data-title="'.tr('Aggiungi riga').'">
+                <i class="fa fa-plus"></i> '.tr('Riga').'
+            </a>';
 
-            <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/ordini/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_descrizione" data-toggle="modal" data-title="Aggiungi descrizione"><i class="fa fa-plus"></i> <?php echo tr('Descrizione'); ?></a>
-			<?php
-                }
+    echo '
+            <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_descrizione" data-toggle="tooltip" data-title="'.tr('Aggiungi descrizione').'">
+                <i class="fa fa-plus"></i> '.tr('Descrizione').'
+            </a>';
 
-            ?>
+    echo '
+            <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_sconto" data-toggle="tooltip" data-title="'.tr('Aggiungi sconto/maggiorazione').'">
+                <i class="fa fa-plus"></i> '.tr('Sconto/maggiorazione').'
+            </a>';
+}
+
+?>
 		</div>
 		<div class="clearfix"></div>
 		<br>
@@ -243,5 +250,19 @@ $('#idanagrafica').change( function(){
 	session_set('superselect,idanagrafica', $(this).val(), 0);
 
 	$("#idsede").selectReset();
+});
+
+$(document).ready( function(){
+	
+	$('#codice_cig, #codice_cup').bind("keyup change", function(e) {
+		
+		if ($('#codice_cig').val() == '' && $('#codice_cup').val() == '' ){
+			$('#id_documento_fe').prop('required', false);
+		}else{
+			$('#id_documento_fe').prop('required', true);
+		}
+		
+	});
+		
 });
 </script>

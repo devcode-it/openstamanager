@@ -98,10 +98,7 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 					{[ "type": "select", "label": "<?php echo tr('Zona'); ?>", "name": "idzona", "values": "query=SELECT id, CONCAT_WS( ' - ', nome, descrizione) AS descrizione FROM an_zone ORDER BY nome", "value": "$idzona$" , "placeholder": "<?php echo tr('Nessuna zona'); ?>", "extra": "readonly", "help":"<?php echo 'La zona viene definita automaticamente in base al cliente selezionato'; ?>." ]}
 				</div>
 
-
-
 			</div>
-
 
 			<!-- RIGA 4 -->
 			<div class="row">
@@ -161,19 +158,20 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 
         <div class="panel-body">
             <div class="row">
-                <div class="col-md-4">
-					{[ "type": "<?php echo !empty($record['idcontratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Identificatore Documento'); ?>", "name": "id_documento_fe", "required": 0, "value": "<?php echo $record['id_documento_fe']; ?>", "maxlength": 20, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
+                <div class="col-md-6">
+					{[ "type": "<?php echo !empty($record['idcontratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Identificatore Documento'); ?>", "name": "id_documento_fe", "required": 0, "help": "<?php echo tr('<span>Obbligatorio per valorizzare CIG/CUP. &Egrave; possible inserire: </span><ul><li>N. determina</li><li>RDO</li><li>Ordine MEPA</li></ul>'); ?>", "value": "<?php echo $record['id_documento_fe']; ?>", "maxlength": 20, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
 				</div>
 
-                <div class="col-md-4">
+                <div class="col-md-6">
 					{[ "type": "<?php echo !empty($record['idcontratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Numero Riga'); ?>", "name": "num_item", "required": 0, "value": "<?php echo $record['num_item']; ?>", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
 				</div>
-
-                <div class="col-md-4">
+			</div>
+			<div class="row">
+                <div class="col-md-6">
 					{[ "type": "<?php echo !empty($record['idcontratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Codice CIG'); ?>", "name": "codice_cig", "required": 0, "value": "<?php echo $record['codice_cig']; ?>", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
 				</div>
 
-				<div class="col-md-4">
+				<div class="col-md-6">
 					{[ "type": "<?php echo !empty($record['idcontratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Codice CUP'); ?>", "name": "codice_cup", "required": 0, "value": "<?php echo $record['codice_cup']; ?>", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
 				</div>
             </div>
@@ -246,21 +244,29 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
         </div>
 
         <div class="panel-body">
-            <div id="righe">
-                <?php
-                    if (file_exists($docroot.'/modules/interventi/custom/ajax_righe.php')) {
-                        include $docroot.'/modules/interventi/custom/ajax_righe.php';
-                    } else {
-                        include $docroot.'/modules/interventi/ajax_righe.php';
-                    }
-                ?>
-            </div>
+<?php
 
-            <?php if (!$record['flag_completato']) {
-                    ?>
-                <button type="button" class="btn btn-primary" onclick="launch_modal( '<?php echo tr('Aggiungi altre spese'); ?>', '<?php echo $rootdir; ?>/modules/interventi/add_righe.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>', 1 );"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi altre spese'); ?>...</button>
-            <?php
-                } ?>
+if (!$record['flag_completato']) {
+    echo '
+                <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('add_righe.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_sconto" data-toggle="tooltip" data-title="'.tr('Aggiungi altre spese').'">
+                    <i class="fa fa-plus"></i> '.tr('Altre spese').'...
+                </a>';
+
+    echo '
+                <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_sconto" data-toggle="tooltip" data-title="'.tr('Aggiungi sconto/maggiorazione').'">
+                    <i class="fa fa-plus"></i> '.tr('Sconto/maggiorazione').'
+                </a>';
+}
+
+?>
+            <div class="clearfix"></div>
+            <br>
+
+            <div id="righe">
+<?php
+include $structure->filepath('ajax_righe.php');
+?>
+            </div>
         </div>
     </div>
 
@@ -358,6 +364,16 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 			}
 			//session_set('superselect,idzona', $(this).selectData().idzona, 0);
 		}
+	});
+	
+	$('#codice_cig, #codice_cup').bind("keyup change", function(e) {
+		
+		if ($('#codice_cig').val() == '' && $('#codice_cup').val() == '' ){
+			$('#id_documento_fe').prop('required', false);
+		}else{
+			$('#id_documento_fe').prop('required', true);
+		}
+	
 	});
 
 </script>

@@ -61,12 +61,35 @@ class Query
 
         $user = Auth::user();
 
+        // Sostituzione periodi temporali
+        preg_match('|date_period\((.+?)\)|', $query, $matches);
+        $dates = explode(',', $matches[1]);
+        $date_filter = $matches[0];
+
+        $filters = [];
+        if ($dates[0] != 'custom') {
+            foreach ($dates as $date) {
+                $filters[] = $date." BETWEEN '|period_start|' AND '|period_end|'";
+            }
+        } else {
+            foreach ($dates as $k => $v) {
+                if ($k < 1) {
+                    continue;
+                }
+                $filters[] = $v;
+            }
+        }
+        $date_query = !empty($filters) && !empty(self::$segments) ? ' AND ('.implode(' OR ', $filters).')' : '';
+
         // Elenco delle sostituzioni
         $replace = [
             // Identificatori
             '|id_anagrafica|' => prepare($user['idanagrafica']),
             '|id_utente|' => prepare($user['id']),
             '|id_parent|' => prepare($id_parent),
+
+            // Filtro temporale
+            '|'.$date_filter.'|' => $date_query,
 
             // Date
             '|period_start|' => $_SESSION['period_start'],
@@ -130,11 +153,6 @@ class Query
                     }
                 }
 
-                // Campo id: ricerca tramite comparazione
-                elseif ($field == 'id') {
-                    $search_filters[] = $search_query.' = '.prepare($value);
-                }
-
                 // Campi tradizionali: ricerca tramite like
                 else {
                     // Ricerca nei titoli icon_title_* per le icone icon_*
@@ -147,8 +165,30 @@ class Query
                         $search_query = '`color_title_'.$m[1].'`';
                     }
 
-                    $search_filters[] = $search_query.' LIKE '.prepare('%'.$value.'%');
+                    // Gestione confronti
+                    $real_value = trim(str_replace(['&lt;', '&gt;'], ['<', '>'], $value));
+                    $more = starts_with($real_value, '>=') || starts_with($real_value, '> =') || starts_with($real_value, '>');
+                    $minus = starts_with($real_value, '<=') || starts_with($real_value, '< =') || starts_with($real_value, '<');
+
+                    if ($minus || $more) {
+                        $sign = str_contains($real_value, '=') ? '=' : '';
+                        if ($more) {
+                            $sign = '>'.$sign;
+                        } else {
+                            $sign = '<'.$sign;
+                        }
+
+                        $value = trim(str_replace(['&lt;', '=', '&gt;'], '', $value));
+                        $search_filters[] = 'CAST('.$search_query.' AS UNSIGNED) '.$sign.' '.prepare($value);
+                    } else {
+                        $search_filters[] = $search_query.' LIKE '.prepare('%'.$value.'%');
+                    }
                 }
+            }
+
+            // Campo id: ricerca tramite comparazione
+            elseif ($field == 'id') {
+                $search_filters[] = $field.' = '.prepare($value);
             }
 
             // Ricerca
@@ -174,7 +214,7 @@ class Query
         }
 
         // Paginazione
-        if (!empty($limit)) {
+        if (!empty($limit) && intval($limit['length']) > 0) {
             $query .= ' LIMIT '.$limit['start'].', '.$limit['length'];
         }
 

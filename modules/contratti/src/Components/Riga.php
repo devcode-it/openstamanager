@@ -12,7 +12,7 @@ class Riga extends Row
     protected $table = 'co_righe_contratti';
 
     /**
-     * Crea una nuova riga collegata ad una contratto.
+     * Crea una nuova riga collegata ad un contratto.
      *
      * @param Contratto $contratto
      *

@@ -2,29 +2,32 @@
 
 include_once __DIR__.'/../../core.php';
 
-$fattura_pa = new Plugins\ImportFE\FatturaElettronica(get('filename'));
+$filename = get('filename');
+$fattura_pa = \Plugins\ImportFE\FatturaElettronica::manage($filename);
+
+$filename = basename($filename, '.p7m');
 
 echo '
 <form action="'.$rootdir.'/actions.php" method="post">
     <input type="hidden" name="id_module" value="'.$id_module.'">
     <input type="hidden" name="id_plugin" value="'.$id_plugin.'">
-    <input type="hidden" name="filename" value="'.get('filename').'">
+    <input type="hidden" name="filename" value="'.$filename.'">
     <input type="hidden" name="id_segment" value="'.get('id_segment').'">
     <input type="hidden" name="id" value="'.get('id').'">
     <input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="op" value="generate">';
 
 // Fornitore
-$fornitore = $fattura_pa->getHeader()['CedentePrestatore']['DatiAnagrafici'];
-$ragione_sociale = $fornitore['Anagrafica']['Denominazione'] ?: $fornitore['Anagrafica']['Nome'].' '.$fornitore['Anagrafica']['Cognome'];
-$codice_fiscale = $fornitore['CodiceFiscale'];
-$partita_iva = $fornitore['IdFiscaleIVA']['IdCodice'];
+$fornitore = $fattura_pa->getAnagrafe();
+$ragione_sociale = $fornitore['ragione_sociale'] ?: $fornitore['cognome'].' '.$fornitore['nome'];
+$codice_fiscale = $fornitore['codice_fiscale'];
+$partita_iva = $fornitore['partita_iva'];
 
-$sede = $fattura_pa->getHeader()['CedentePrestatore']['Sede'];
+$sede = $fornitore['sede'];
 
-$cap = $sede['CAP'];
-$citta = $sede['Comune'];
-$provincia = $sede['Provincia'];
+$cap = $sede['cap'];
+$citta = $sede['comune'];
+$provincia = $sede['provincia'];
 
 // Dati generali
 $dati_generali = $fattura_pa->getBody()['DatiGenerali']['DatiGeneraliDocumento'];
@@ -34,7 +37,7 @@ echo '
     <div class="row" >
 		<div class="col-md-6">
 			<h4>'.
-    $ragione_sociale.'<br>
+    $ragione_sociale.' '.((empty($idanagrafica = $dbo->fetchOne('SELECT idanagrafica FROM an_anagrafiche WHERE ( codice_fiscale = '.prepare($codice_fiscale).' AND codice_fiscale != \'\' ) OR ( piva = '.prepare($partita_iva).' AND piva != \'\' ) ')['idanagrafica'])) ? '<span class="badge badge-success" >'.tr('Nuova').'</span>' : '<small>'.Modules::link('Anagrafiche', $idanagrafica, '', null, '')).'</small>'.'<br>
 				<small>
 					'.(!empty($codice_fiscale) ? (tr('Codice Fiscale').': '.$codice_fiscale.'<br>') : '').'
 					'.(!empty($partita_iva) ? (tr('Partita IVA').': '.$partita_iva.'<br>') : '').'
@@ -46,12 +49,10 @@ echo '
 		<div class="col-md-6">
 			<h4>'.$dati_generali['Numero'];
 
-if (!ends_with(get('filename'), '.p7m')) {
-    echo '
-				<a href="'.$structure->fileurl('view.php').'?filename='.get('filename').'" class="btn btn-info btn-xs" target="_blank" >
+        echo '
+				<a href="'.$structure->fileurl('view.php').'?filename='.$filename.'" class="btn btn-info btn-xs" target="_blank" >
 					<i class="fa fa-eye"></i> '.tr('Visualizza').'
 				</a>';
-}
 
         echo '
 				<br><small>
@@ -78,6 +79,14 @@ echo '
 echo '
         <div class="col-md-6">
             {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.$id_module.' ORDER BY name", "value": "'.$_SESSION['module_'.$id_module]['id_segment'].'" ]}
+        </div>
+    </div>';
+
+// Data ricezione
+echo '
+    <div class="row" >
+		<div class="col-md-6">
+            {[ "type": "date", "label": "'.tr('Data ricezione').'", "name": "data_ricezione", "required": 0, "value": "" ]}
         </div>
     </div>';
 
@@ -147,7 +156,7 @@ if (!empty($righe)) {
     echo '
     <h4>
         '.tr('Righe').'
-        <button type="button" class="btn btn-info btn-sm pull-right" onclick="copy()"><i class="fa fa-copy"></i> '.tr('Copia dati contabili dalla prima riga').'</button>
+        <button type="button" class="btn btn-info btn-sm pull-right" onclick="copy()"><i class="fa fa-copy"></i> '.tr('Copia dati contabili dalla prima riga valorizzata').'</button>
         <div class="clearfix"></div>
     </h4>
 
@@ -168,18 +177,44 @@ if (!empty($righe)) {
 
         $query .= ' ORDER BY descrizione ASC';
 
+        /*Visualizzo codici articoli*/
+        $codici_articoli = '';
+
+        //caso di un solo codice articolo
+        if (isset($riga['CodiceArticolo']) and empty($riga['CodiceArticolo'][0]['CodiceValore'])) {
+            $riga['CodiceArticolo'][0]['CodiceValore'] = $riga['CodiceArticolo']['CodiceValore'];
+            $riga['CodiceArticolo'][0]['CodiceTipo'] = $riga['CodiceArticolo']['CodiceTipo'];
+        }
+
+        foreach ($riga['CodiceArticolo'] as $key => $item) {
+            foreach ($item as $key => $name) {
+                if ($key == 'CodiceValore') {
+                    if (!empty($item['CodiceValore'])) {
+                        $codici_articoli .= '<small>'.$item['CodiceValore'].' ('.$item['CodiceTipo'].')</small>';
+
+                        if (($item['CodiceValore'] != end($riga['CodiceArticolo'][(count($riga['CodiceArticolo']) - 1)])) and (is_array($riga['CodiceArticolo'][1]))) {
+                            $codici_articoli .= ', ';
+                        }
+                    }
+                }
+            }
+        }
+        /*###*/
+
         echo '
         <tr>
             <td>
                 '.$riga['Descrizione'].'<br>
+				
+				'.(($codici_articoli != '') ? $codici_articoli.'<br>' : '').'
                 
                 <small>'.tr('Q.tà: _QTA_ _UM_', [
                     '_QTA_' => Translator::numberToLocale($riga['Quantita']),
                     '_UM_' => $riga['UnitaMisura'],
                 ]).'</small><br>
                 
-                <small>'.tr('Aliquota iva _PRC_% _DESC_', [
-                    '_PRC_' => Translator::numberToLocale($riga['AliquotaIVA']),
+                <small>'.tr('Aliquota IVA: _VALUE_ _DESC_', [
+                    '_VALUE_' => empty($riga['Natura']) ? numberFormat($riga['AliquotaIVA']).'%' : $riga['Natura'],
                     '_DESC_' => $riga['RiferimentoNormativo'] ? ' - '.$riga['RiferimentoNormativo'] : '',
                 ]).'</small>
             </td>
@@ -201,16 +236,32 @@ if (!empty($righe)) {
     echo '
     <script>
     function copy(){
-        $iva = $("select[name^=iva").first().selectData();
-        $conto = $("select[name^=conto").first().selectData();
+        var first_iva = null;
+        var first_conto = null;
 
-        if($iva) {
+        $("select[name^=iva").each( function(){
+            if( $(this).val() != "" && first_iva == null ){
+                first_iva = $(this);
+            }
+        });
+
+        $("select[name^=conto").each( function(){
+            if( $(this).val() != "" && first_conto == null ){
+                first_conto = $(this);
+            }
+        });
+
+        if(first_iva) {
+            $iva = first_iva.selectData();
+
             $("select[name^=iva").each(function(){
                 $(this).selectSet($iva.id);
             });
         }
 
-        if($conto) {
+        if(first_conto) {
+            $conto = first_conto.selectData();
+
             $("select[name^=conto").each(function(){
                 $(this).selectSetNew($conto.id, $conto.text);
             });

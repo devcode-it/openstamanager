@@ -93,10 +93,9 @@ function get_ivaindetraibile_fattura($iddocumento)
  */
 function elimina_scadenza($iddocumento)
 {
-    $dbo = database();
+    $fattura = Fattura::find($iddocumento);
 
-    $query2 = 'DELETE FROM co_scadenziario WHERE iddocumento='.prepare($iddocumento);
-    $dbo->query($query2);
+    $fattura->rimuoviScadenze();
 }
 
 /**
@@ -105,174 +104,104 @@ function elimina_scadenza($iddocumento)
  * $pagamento		string		Nome del tipo di pagamento. Se è vuoto lo leggo da co_pagamenti_documenti, perché significa che devo solo aggiornare gli importi.
  * $pagato boolean Indica se devo segnare l'importo come pagato.
  */
-function aggiungi_scadenza($iddocumento, $pagamento = '', $pagato = 0)
+function aggiungi_scadenza($iddocumento, $pagamento = '', $pagato = false)
+{
+    $fattura = Fattura::find($iddocumento);
+
+    $fattura->registraScadenze($pagato);
+}
+
+/**
+ * Funzione per aggiornare lo stato dei pagamenti nello scadenziario.
+ *
+ * @param $iddocumento int			ID della fattura
+ * @param $totale_pagato float		Totale importo pagato
+ * @param $data_pagamento datetime	Data in cui avviene il pagamento (yyyy-mm-dd)
+ */
+function aggiorna_scadenziario($iddocumento, $totale_pagato, $data_pagamento)
 {
     $dbo = database();
 
-    $fattura = Fattura::find($iddocumento);
-
-    if ($fattura->isFE()) {
-        $scadenze_fe = $fattura->registraScadenzeFE($pagato);
-    }
-
-    // Lettura data di emissione fattura
-    $query3 = 'SELECT ritenutaacconto, data FROM co_documenti WHERE id='.prepare($iddocumento);
-    $rs = $dbo->fetchArray($query3);
-    $data = $rs[0]['data'];
-    $ritenutaacconto = $rs[0]['ritenutaacconto'];
-
-    if (empty($scadenze_fe)) {
-        $totale_da_pagare = 0.00;
-
-        $totale_fattura = get_totale_fattura($iddocumento);
-        $netto_fattura = get_netto_fattura($iddocumento);
-        $imponibile_fattura = get_imponibile_fattura($iddocumento);
-        $totale_iva = sum(abs($totale_fattura), -abs($imponibile_fattura));
+    if ($totale_pagato > 0) {
+        // Lettura righe scadenziario
+        $query = "SELECT * FROM co_scadenziario WHERE iddocumento='$iddocumento' AND ABS(pagato) < ABS(da_pagare) ORDER BY scadenza ASC";
+        $rs = $dbo->fetchArray($query);
+        $rimanente_da_pagare = abs($rs[0]['pagato']) + $totale_pagato;
 
         // Verifico se la fattura è di acquisto o di vendita per scegliere che segno mettere nel totale
         $query2 = 'SELECT dir FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
         $rs2 = $dbo->fetchArray($query2);
         $dir = $rs2[0]['dir'];
 
-        /*
-            Inserisco la nuova scadenza (anche più di una riga per pagamenti multipli
-        */
-        // Se il pagamento non è specificato lo leggo dal documento
-        if ($pagamento == '') {
-            $query = 'SELECT descrizione FROM co_pagamenti WHERE id=(SELECT idpagamento FROM co_documenti WHERE id='.prepare($iddocumento).')';
-            $rs = $dbo->fetchArray($query);
-            $pagamento = $rs[0]['descrizione'];
-        }
-
-        $query4 = 'SELECT * FROM co_pagamenti WHERE descrizione='.prepare($pagamento);
-        $rs = $dbo->fetchArray($query4);
+        // Ciclo tra le rate dei pagamenti per inserire su `pagato` l'importo effettivamente pagato.
+        // Nel caso il pagamento superi la rata, devo distribuirlo sulle rate successive
         for ($i = 0; $i < sizeof($rs); ++$i) {
-            // X giorni esatti
-            if ($rs[$i]['giorno'] == 0) {
-                $scadenza = date('Y-m-d', strtotime($data.' +'.$rs[$i]['num_giorni'].' day'));
-            }
-
-            // Ultimo del mese
-            elseif ($rs[$i]['giorno'] < 0) {
-                $date = new DateTime($data);
-
-                $add = floor($rs[$i]['num_giorni'] / 30);
-                for ($c = 0; $c < $add; ++$c) {
-                    $date->modify('last day of next month');
-                }
-
-                // Ultimo del mese più X giorni
-                $giorni = -$rs[$i]['giorno'] - 1;
-                if ($giorni > 0) {
-                    $date->modify('+'.($giorni).' day');
-                } else {
-                    $date->modify('last day of this month');
-                }
-
-                $scadenza = $date->format('Y-m-d');
-            }
-
-            // Giorno preciso del mese
-            else {
-                $scadenza = date('Y-m-'.$rs[$i]['giorno'], strtotime($data.' +'.$rs[$i]['num_giorni'].' day'));
-            }
-
-            // All'ultimo ciclo imposto come cifra da pagare il totale della fattura meno gli importi già inseriti in scadenziario per evitare di inserire cifre arrotondate "male"
-            if ($i == (sizeof($rs) - 1)) {
-                $da_pagare = sum($netto_fattura, -$totale_da_pagare, 2);
-            }
-
-            // Totale da pagare (totale x percentuale di pagamento nei casi pagamenti multipli)
-            else {
-                $da_pagare = sum($netto_fattura / 100 * $rs[$i]['prc'], 0, 2);
-            }
-            $totale_da_pagare = sum($da_pagare, $totale_da_pagare, 2);
-
-            if ($dir == 'uscita') {
-                $da_pagare = -$da_pagare;
-            }
-
-            $dbo->query('INSERT INTO co_scadenziario(iddocumento, data_emissione, scadenza, da_pagare, pagato, tipo) VALUES('.prepare($iddocumento).', '.prepare($data).', '.prepare($scadenza).', '.prepare($da_pagare).", 0, 'fattura')");
-
-            if ($pagato) {
-                $id_scadenza = $dbo->lastInsertedID();
-                $dbo->update('co_scadenziario', [
-                    'pagato' => $da_pagare,
-                    'data_pagamento' => $data,
-                ], ['id' => $id_scadenza]);
-            }
-        }
-    }
-
-    // Se c'è una ritenuta d'acconto, la aggiungo allo scadenzario
-    if ($dir == 'uscita' && $ritenutaacconto > 0) {
-        $dbo->query('INSERT INTO co_scadenziario(iddocumento, data_emissione, scadenza, da_pagare, pagato, tipo) VALUES('.prepare($iddocumento).', '.prepare($data).', '.prepare(date('Y-m', strtotime($data.' +1 month')).'-15').', '.prepare(-$ritenutaacconto).", 0, 'ritenutaacconto')");
-
-        if ($pagato) {
-            $id_scadenza = $dbo->lastInsertedID();
-            $dbo->update('co_scadenziario', [
-                'pagato' => -$ritenutaacconto,
-                'data_pagamento' => $data,
-            ], ['id' => $id_scadenza]);
-        }
-    }
-
-    return true;
-}
-
-/**
- * Funzione per aggiornare lo stato dei pagamenti nello scadenziario
- * $iddocumento			int			ID della fattura
- * $totale_pagato			float		Totale importo pagato
- * $data_pagamento			datetime	Data in cui avviene il pagamento (yyyy-mm-dd).
- */
-function aggiorna_scadenziario($iddocumento, $totale_pagato, $data_pagamento)
-{
-    $dbo = database();
-
-    // Lettura righe scadenziario
-    $query = "SELECT * FROM co_scadenziario WHERE iddocumento='$iddocumento' AND ABS(pagato) < ABS(da_pagare) ORDER BY scadenza ASC";
-    $rs = $dbo->fetchArray($query);
-    $netto_fattura = get_netto_fattura($iddocumento);
-    $rimanente = $netto_fattura;
-    $rimanente_da_pagare = abs($rs[0]['pagato']) + $totale_pagato;
-
-    // Verifico se la fattura è di acquisto o di vendita per scegliere che segno mettere nel totale
-    $query2 = 'SELECT dir FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
-    $rs2 = $dbo->fetchArray($query2);
-    $dir = $rs2[0]['dir'];
-
-    // Ciclo tra le rate dei pagamenti per inserire su `pagato` l'importo effettivamente pagato.
-    // Nel caso il pagamento superi la rata, devo distribuirlo sulle rate successive
-    for ($i = 0; $i < sizeof($rs); ++$i) {
-        if ($rimanente_da_pagare != 0) {
-            // ...riempio il pagato della rata con il totale della rata stessa se ho ricevuto un pagamento superiore alla rata stessa
-            if (abs($rimanente_da_pagare) >= abs($rs[$i]['da_pagare'])) {
-                $pagato = abs($rs[$i]['da_pagare']);
-                $rimanente_da_pagare -= abs($rs[$i]['da_pagare']);
-            } else {
-                // Se si inserisce una somma maggiore al dovuto, tengo valido il rimanente per saldare il tutto...
-                if (abs($rimanente_da_pagare) > abs($rs[$i]['da_pagare'])) {
+            if ($rimanente_da_pagare > 0) {
+                // ...riempio il pagato della rata con il totale della rata stessa se ho ricevuto un pagamento superiore alla rata stessa
+                if (abs($rimanente_da_pagare) >= abs($rs[$i]['da_pagare'])) {
                     $pagato = abs($rs[$i]['da_pagare']);
                     $rimanente_da_pagare -= abs($rs[$i]['da_pagare']);
+                } else {
+                    // Se si inserisce una somma maggiore al dovuto, tengo valido il rimanente per saldare il tutto...
+                    if (abs($rimanente_da_pagare) > abs($rs[$i]['da_pagare'])) {
+                        $pagato = abs($rs[$i]['da_pagare']);
+                        $rimanente_da_pagare -= abs($rs[$i]['da_pagare']);
+                    }
+
+                    // ...altrimenti aggiungo l'importo pagato
+                    else {
+                        $pagato = abs($rimanente_da_pagare);
+                        $rimanente_da_pagare -= abs($rimanente_da_pagare);
+                    }
                 }
 
+                if ($dir == 'uscita') {
+                    $rimanente_da_pagare = -$rimanente_da_pagare;
+                }
+
+                if ($pagato > 0) {
+                    if ($dir == 'uscita') {
+                        $dbo->query('UPDATE co_scadenziario SET pagato='.prepare(-$pagato).', data_pagamento='.prepare($data_pagamento).' WHERE id='.prepare($rs[$i]['id']));
+                    } else {
+                        $dbo->query('UPDATE co_scadenziario SET pagato='.prepare($pagato).', data_pagamento='.prepare($data_pagamento).' WHERE id='.prepare($rs[$i]['id']));
+                    }
+                }
+            }
+        }
+    } else {
+        // Lettura righe scadenziario
+        $query = "SELECT * FROM co_scadenziario WHERE iddocumento='$iddocumento' AND ABS(pagato)>0  ORDER BY scadenza DESC";
+        $rs = $dbo->fetchArray($query);
+        $residuo_pagato = abs($totale_pagato);
+        // Verifico se la fattura è di acquisto o di vendita per scegliere che segno mettere nel totale
+        $query2 = 'SELECT dir FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
+        $rs2 = $dbo->fetchArray($query2);
+        $dir = $rs2[0]['dir'];
+        // Ciclo tra le rate dei pagamenti per inserire su `pagato` l'importo effettivamente pagato.
+        // Nel caso il pagamento superi la rata, devo distribuirlo sulle rate successive
+        for ($i = 0; $i < sizeof($rs); ++$i) {
+            if ($residuo_pagato > 0) {
+                // Se si inserisce una somma maggiore al dovuto, tengo valido il rimanente per saldare il tutto...
+                if ($residuo_pagato <= abs($rs[$i]['pagato'])) {
+                    $pagato = 0;
+                    $residuo_pagato -= abs($rs[$i]['pagato']);
+                }
                 // ...altrimenti aggiungo l'importo pagato
                 else {
-                    $pagato = abs($rimanente_da_pagare);
-                    $rimanente_da_pagare -= abs($rimanente_da_pagare);
+                    $pagato = abs($residuo_pagato);
+                    $residuo_pagato -= abs($residuo_pagato);
                 }
-            }
 
-            if ($dir == 'uscita') {
-                $rimanente_da_pagare = -$rimanente_da_pagare;
-            }
-
-            if ($pagato > 0) {
                 if ($dir == 'uscita') {
-                    $dbo->query('UPDATE co_scadenziario SET pagato='.prepare(-$pagato).', data_pagamento='.prepare($data_pagamento).' WHERE id='.prepare($rs[$i]['id']));
-                } else {
-                    $dbo->query('UPDATE co_scadenziario SET pagato='.prepare($pagato).', data_pagamento='.prepare($data_pagamento).' WHERE id='.prepare($rs[$i]['id']));
+                    $residuo_pagato = -$residuo_pagato;
+                }
+
+                if ($pagato >= 0) {
+                    if ($dir == 'uscita') {
+                        $dbo->query('UPDATE co_scadenziario SET pagato='.prepare(-$pagato).', data_pagamento='.prepare($data_pagamento).' WHERE id='.prepare($rs[$i]['id']));
+                    } else {
+                        $dbo->query('UPDATE co_scadenziario SET pagato='.prepare($pagato).', data_pagamento='.prepare($data_pagamento).' WHERE id='.prepare($rs[$i]['id']));
+                    }
                 }
             }
         }
@@ -342,7 +271,6 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
 
         $segno_mov4_inps = 1;
         $segno_mov5_ritenutaacconto = -1;
-        $segno_mov6_bollo = 1;
 
         // Lettura conto fornitore
         $query = 'SELECT idconto_fornitore FROM an_anagrafiche INNER JOIN co_documenti ON an_anagrafiche.idanagrafica=co_documenti.idanagrafica WHERE co_documenti.id='.prepare($iddocumento);
@@ -361,7 +289,6 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
 
         $segno_mov4_inps = -1;
         $segno_mov5_ritenutaacconto = 1;
-        $segno_mov6_bollo = -1;
 
         // Lettura conto cliente
         $query = 'SELECT idconto_cliente FROM an_anagrafiche INNER JOIN co_documenti ON an_anagrafiche.idanagrafica=co_documenti.idanagrafica WHERE co_documenti.id='.prepare($iddocumento);
@@ -414,7 +341,6 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
         aggiuntivo:
         4) eventuale rivalsa inps
         5) eventuale ritenuta d'acconto
-        6) eventuale marca da bollo
     */
     // 1) Aggiungo la riga del conto cliente
     $importo_cliente = $totale_fattura;
@@ -491,18 +417,6 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
         $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_controparte).', '.prepare(($totale_ritenutaacconto * $segno_mov5_ritenutaacconto) * -1).', '.prepare($primanota).')';
         $dbo->query($query2);
     }
-
-    // 6) Aggiungo la marca da bollo se c'è
-    // Lettura id conto marca da bollo
-    if ($totale_bolli != 0) {
-        $query = "SELECT id, descrizione FROM co_pianodeiconti3 WHERE descrizione='Rimborso spese marche da bollo'";
-        $rs = $dbo->fetchArray($query);
-        $idconto_bolli = $rs[0]['id'];
-        $descrizione_conto_bolli = $rs[0]['descrizione'];
-
-        $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_bolli).', '.prepare($totale_bolli * $segno_mov6_bollo).', '.prepare($primanota).')';
-        $dbo->query($query2);
-    }
 }
 
 /**
@@ -521,75 +435,14 @@ function get_new_idmastrino($table = 'co_movimenti')
 /**
  * Ricalcola i costi aggiuntivi in fattura (rivalsa inps, ritenuta d'acconto, marca da bollo)
  * Deve essere eseguito ogni volta che si aggiunge o toglie una riga
- * $iddocumento		int		ID della fattura
- * $idrivalsainps		int		ID della rivalsa inps da applicare. Se omesso non viene calcolata
- * $idritenutaacconto	int		ID della ritenuta d'acconto da applicare. Se omesso non viene calcolata
- * $bolli				float	Costi aggiuntivi delle marche da bollo. Se omesso verrà usata la cifra predefinita.
+ * $iddocumento		int		ID della fattura.
  */
-function ricalcola_costiagg_fattura($iddocumento, $idrivalsainps = '', $idritenutaacconto = '', $bolli = '')
+function ricalcola_costiagg_fattura($iddocumento)
 {
     global $dir;
 
-    $dbo = database();
-
-    // Se ci sono righe in fattura faccio i conteggi, altrimenti azzero gli sconti e le spese aggiuntive (inps, ritenuta, marche da bollo)
-    $query = 'SELECT COUNT(id) AS righe FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento);
-    $rs = $dbo->fetchArray($query);
-    if ($rs[0]['righe'] > 0) {
-        $totale_imponibile = get_imponibile_fattura($iddocumento);
-        $totale_fattura = get_totale_fattura($iddocumento);
-
-        // Leggo gli id dei costi aggiuntivi
-        if ($dir == 'uscita') {
-            $query2 = 'SELECT bollo FROM co_documenti WHERE id='.prepare($iddocumento);
-            $rs2 = $dbo->fetchArray($query2);
-            $bollo = $rs2[0]['bollo'];
-        }
-
-        $query = 'SELECT SUM(rivalsainps) AS rivalsainps, SUM(ritenutaacconto) AS ritenutaacconto FROM co_righe_documenti GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
-        $rs = $dbo->fetchArray($query);
-        $rivalsainps = $rs[0]['rivalsainps'];
-        $ritenutaacconto = $rs[0]['ritenutaacconto'];
-
-        $iva_rivalsainps = 0;
-
-        $rsr = $dbo->fetchArray('SELECT idiva, rivalsainps FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento));
-
-        for ($r = 0; $r < sizeof($rsr); ++$r) {
-            $qi = 'SELECT percentuale FROM co_iva WHERE id='.prepare($rsr[$r]['idiva']);
-            $rsi = $dbo->fetchArray($qi);
-            $iva_rivalsainps += $rsr[$r]['rivalsainps'] / 100 * $rsi[0]['percentuale'];
-        }
-
-        // Leggo la ritenuta d'acconto se c'è
-        $totale_fattura = get_totale_fattura($iddocumento);
-
-        $query = 'SELECT percentuale FROM co_ritenutaacconto WHERE id='.prepare($idritenutaacconto);
-        $rs = $dbo->fetchArray($query);
-        $netto_a_pagare = $totale_fattura - $ritenutaacconto;
-
-        // Leggo la marca da bollo se c'è e se il netto a pagare supera la soglia
-        $bolli = ($dir == 'uscita') ? $bolli : setting('Importo marca da bollo');
-        $bolli = formatter()->parse($bolli);
-
-        $marca_da_bollo = 0;
-        if (abs($bolli) > 0 && abs($netto_a_pagare > setting("Soglia minima per l'applicazione della marca da bollo"))) {
-            //Controllo che tra le iva ce ne sia almeno una con natura N1, N2, N3 o N4
-            $check_natura = $dbo->fetchArray('SELECT codice_natura_fe FROM co_righe_documenti INNER JOIN co_iva ON co_righe_documenti.idiva=co_iva.id WHERE iddocumento='.prepare($iddocumento)." AND codice_natura_fe IN('N1','N2','N3','N4') GROUP BY codice_natura_fe");
-            if (($dir == 'entrata' && sizeof($check_natura) > 0) || $dir == 'uscita') {
-                $marca_da_bollo = $bolli;
-            } else {
-                $marca_da_bollo = 0.00;
-            }
-        }
-
-        // Se l'importo è negativo può essere una nota di credito, quindi cambio segno alla marca da bollo
-        $marca_da_bollo = abs($marca_da_bollo);
-
-        $dbo->query('UPDATE co_documenti SET ritenutaacconto='.prepare($ritenutaacconto).', rivalsainps='.prepare($rivalsainps).', iva_rivalsainps='.prepare($iva_rivalsainps).', bollo='.prepare($marca_da_bollo).' WHERE id='.prepare($iddocumento));
-    } else {
-        $dbo->query("UPDATE co_documenti SET ritenutaacconto='0', bollo='0', rivalsainps='0', iva_rivalsainps='0' WHERE id=".prepare($iddocumento));
-    }
+    $fattura = Fattura::find($iddocumento);
+    $fattura->save();
 }
 
 /**
@@ -810,16 +663,19 @@ function rimuovi_riga_fattura($id_documento, $id_riga, $dir)
             add_movimento_magazzino($riga['idarticolo'], ($dir == 'entrata') ? $riga['qta'] : -$riga['qta'], ['iddocumento' => $id_documento]);
         }
 
-        // TODO: possibile ambiguità tra righe molto simili tra loro
-        // Se l'articolo è stato inserito in fattura tramite un ddt devo sanare la qta_evasa
-        if (!empty($riga['idddt'])) {
-            $dbo->query('UPDATE dt_righe_ddt SET qta_evasa=qta_evasa-'.$riga['qta'].' WHERE qta='.prepare($riga['qta']).' AND idarticolo='.prepare($riga['idarticolo']).' AND idddt='.prepare($riga['idddt']));
+        // Se l'articolo è stato inserito in fattura tramite un preventivo devo sanare la qta_evasa
+        if (!empty($riga['idpreventivo'])) {
+            $dbo->query('UPDATE co_righe_preventivi SET qta_evasa=qta_evasa-'.$riga['qta'].' WHERE qta='.prepare($riga['qta']).' AND idarticolo='.prepare($riga['idarticolo']).' AND idpreventivo='.prepare($riga['idpreventivo']).' AND qta_evasa > 0 LIMIT 1');
         }
 
-        // TODO: possibile ambiguità tra righe molto simili tra loro
+        // Se l'articolo è stato inserito in fattura tramite un ddt devo sanare la qta_evasa
+        if (!empty($riga['idddt'])) {
+            $dbo->query('UPDATE dt_righe_ddt SET qta_evasa=qta_evasa-'.$riga['qta'].' WHERE qta='.prepare($riga['qta']).' AND idarticolo='.prepare($riga['idarticolo']).' AND idddt='.prepare($riga['idddt']).' AND qta_evasa > 0 LIMIT 1');
+        }
+
         // Se l'articolo è stato inserito in fattura tramite un ordine devo sanare la qta_evasa
-        if (!empty($riga['idordine'])) {
-            $dbo->query('UPDATE or_righe_ordini SET qta_evasa=qta_evasa-'.$riga['qta'].' WHERE qta='.prepare($riga['qta']).' AND idarticolo='.prepare($riga['idarticolo']).' AND idordine='.prepare($riga['idordine']));
+        elseif (!empty($riga['idordine'])) {
+            $dbo->query('UPDATE or_righe_ordini SET qta_evasa=qta_evasa-'.$riga['qta'].' WHERE qta='.prepare($riga['qta']).' AND idarticolo='.prepare($riga['idarticolo']).' AND idordine='.prepare($riga['idordine']).' AND qta_evasa > 0 LIMIT 1');
         }
     }
 
@@ -836,23 +692,49 @@ function rimuovi_riga_fattura($id_documento, $id_riga, $dir)
     }
 
     // Rimozione articoli collegati ad un preventivo importato con riga unica
-    if (empty($riga['idarticolo']) && $riga['is_preventivo']) {
+    if (empty($riga['idarticolo']) && $riga['idpreventivo']) {
         //rimetto a magazzino gli articoli collegati al preventivo
-        $rsa = $dbo->fetchArray('SELECT idarticolo, qta FROM co_righe_preventivi WHERE idpreventivo = '.prepare($riga['idpreventivo']));
+        $rsa = $dbo->fetchArray('SELECT id, idarticolo, qta FROM co_righe_preventivi WHERE idpreventivo = '.prepare($riga['idpreventivo']));
         for ($i = 0; $i < sizeof($rsa); ++$i) {
-            if (!empty($rsa[$i]['idarticolo'])) {
-                add_movimento_magazzino($rsa[$i]['idarticolo'], $rsa[$i]['qta'], ['iddocumento' => $id_documento]);
+            if ($riga['is_preventivo']) {
+                if (!empty($rsa[$i]['idarticolo'])) {
+                    add_movimento_magazzino($rsa[$i]['idarticolo'], $rsa[$i]['qta'], ['iddocumento' => $id_documento]);
+                }
+            } else {
+                $qta_evasa = $rsa[$i]['qta_evasa'] + $riga['qta'];
+                // Ripristino le quantità da evadere nel preventivo
+                $dbo->update('co_righe_preventivi',
+                    [
+                        'qta_evasa' => $qta_evasa,
+                    ],
+                    [
+                        'id' => $rsa[$i]['id'],
+                    ]
+                );
             }
         }
     }
 
     // Rimozione articoli collegati ad un contratto importato con riga unica
-    if (empty($riga['idarticolo']) && $riga['is_contratto']) {
+    if (empty($riga['idarticolo']) && $riga['idcontratto']) {
         //rimetto a magazzino gli articoli collegati al contratto
-        $rsa = $dbo->fetchArray('SELECT idarticolo, qta FROM co_righe_contratti WHERE idcontratto = '.prepare($riga['idcontratto']));
+        $rsa = $dbo->fetchArray('SELECT id, idarticolo, qta FROM co_righe_contratti WHERE idcontratto = '.prepare($riga['idcontratto']));
         for ($i = 0; $i < sizeof($rsa); ++$i) {
-            if (!empty($rsa[$i]['idarticolo'])) {
-                add_movimento_magazzino($rsa[$i]['idarticolo'], $rsa[$i]['qta'], ['iddocumento' => $id_documento]);
+            if ($riga['is_contratto']) {
+                if (!empty($rsa[$i]['idarticolo'])) {
+                    add_movimento_magazzino($rsa[$i]['idarticolo'], $rsa[$i]['qta'], ['iddocumento' => $id_documento]);
+                }
+            } else {
+                $qta_evasa = $rsa[$i]['qta_evasa'] + $riga['qta'];
+                // Ripristino le quantità da evadere nel contratto
+                $dbo->update('co_righe_contratti',
+                    [
+                        'qta_evasa' => $qta_evasa,
+                    ],
+                    [
+                        'id' => $rsa[$i]['id'],
+                    ]
+                );
             }
         }
     }

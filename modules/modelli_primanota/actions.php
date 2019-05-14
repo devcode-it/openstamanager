@@ -6,12 +6,15 @@ switch (post('op')) {
     case 'add':
         $idmastrino = get_new_idmastrino('co_movimenti_modelli');
         $descrizione = post('descrizione');
+        $nome = post('nome');
 
         for ($i = 0; $i < sizeof(post('idconto')); ++$i) {
             $idconto = post('idconto')[$i];
-            $query = 'INSERT INTO co_movimenti_modelli(idmastrino, descrizione, idconto) VALUES('.prepare($idmastrino).', '.prepare($descrizione).', '.prepare($idconto).')';
-            if ($dbo->query($query)) {
-                $id_record = $dbo->lastInsertedID();
+            if (!empty($idconto)) {
+                $query = 'INSERT INTO co_movimenti_modelli(idmastrino, nome, descrizione, idconto) VALUES('.prepare($idmastrino).', '.prepare($nome).', '.prepare($descrizione).', '.prepare($idconto).')';
+                if ($dbo->query($query)) {
+                    $id_record = $idmastrino;
+                }
             }
         }
 
@@ -20,15 +23,18 @@ switch (post('op')) {
     case 'editriga':
         $idmastrino = post('idmastrino');
         $descrizione = post('descrizione');
+        $nome = post('nome');
 
         // Eliminazione prima nota
         $dbo->query('DELETE FROM co_movimenti_modelli WHERE idmastrino='.prepare($idmastrino));
 
         for ($i = 0; $i < sizeof(post('idconto')); ++$i) {
             $idconto = post('idconto')[$i];
-            $query = 'INSERT INTO co_movimenti_modelli(idmastrino, descrizione, idconto) VALUES('.prepare($idmastrino).', '.prepare($descrizione).', '.prepare($idconto).')';
-            if ($dbo->query($query)) {
-                $id_record = $dbo->lastInsertedID();
+            if (!empty($idconto)) {
+                $query = 'INSERT INTO co_movimenti_modelli(idmastrino, nome, descrizione, idconto) VALUES('.prepare($idmastrino).', '.prepare($nome).', '.prepare($descrizione).', '.prepare($idconto).')';
+                if ($dbo->query($query)) {
+                    $id_record = $idmastrino;
+                }
             }
         }
 

@@ -97,16 +97,9 @@ class Contratto extends Document
         return 'Contratti';
     }
 
-    public function updateSconto()
+    public function getDirezioneAttribute()
     {
-        // Aggiornamento sconto
-        aggiorna_sconto([
-            'parent' => 'co_preventivi',
-            'row' => 'co_righe_preventivi',
-        ], [
-            'parent' => 'id',
-            'row' => 'idcontratto',
-        ], $this->id);
+        return 'entrata';
     }
 
     public function anagrafica()
@@ -129,14 +122,14 @@ class Contratto extends Document
         return $this->hasMany(Components\Riga::class, 'idcontratto');
     }
 
+    public function sconti()
+    {
+        return $this->hasMany(Components\Sconto::class, 'idcontratto');
+    }
+
     public function descrizioni()
     {
         return $this->hasMany(Components\Descrizione::class, 'idcontratto');
-    }
-
-    public function scontoGlobale()
-    {
-        return $this->hasOne(Components\Sconto::class, 'idcontratto');
     }
 
     public function interventi()

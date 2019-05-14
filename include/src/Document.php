@@ -14,8 +14,9 @@ abstract class Document extends Model
         $descrizioni = $this->descrizioni;
         $righe = $this->righe;
         $articoli = $this->articoli;
+        $sconti = $this->sconti;
 
-        return $descrizioni->merge($righe)->merge($articoli)->sortBy('order');
+        return $descrizioni->merge($righe)->merge($articoli)->merge($sconti)->sortBy('order');
     }
 
     abstract public function righe();
@@ -24,7 +25,7 @@ abstract class Document extends Model
 
     abstract public function descrizioni();
 
-    abstract public function scontoGlobale();
+    abstract public function sconti();
 
     /**
      * Calcola l'imponibile del documento.

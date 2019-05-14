@@ -11,6 +11,7 @@ abstract class Article extends Row
 {
     protected $serialRowID = null;
     protected $abilita_movimentazione = true;
+    protected $serialsList = null;
 
     protected $qta_movimentazione = 0;
 
@@ -38,13 +39,17 @@ abstract class Article extends Row
      */
     public function setSerialsAttribute($serials)
     {
+        $serials = array_clean($serials);
+
         database()->sync('mg_prodotti', [
             'id_riga_'.$this->serialRowID => $this->id,
             'dir' => $this->getDirection(),
             'id_articolo' => $this->idarticolo,
         ], [
-            'serial' => array_clean($serials),
+            'serial' => $serials,
         ]);
+
+        $this->serialsList = $serials;
     }
 
     /**
@@ -61,6 +66,8 @@ abstract class Article extends Row
         ], [
             'serial' => array_clean($serials),
         ]);
+
+        $this->serialsList = null;
     }
 
     /**
@@ -74,10 +81,24 @@ abstract class Article extends Row
             return [];
         }
 
-        // Individuazione dei seriali
-        $results = database()->fetchArray('SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND id_riga_'.$this->serialRowID.' = '.prepare($this->id));
+        if (!isset($this->serialsList)) {
+            // Individuazione dei seriali
+            $results = database()->fetchArray('SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND id_riga_'.$this->serialRowID.' = '.prepare($this->id));
 
-        return array_column($results, 'serial');
+            $this->serialsList = array_column($results, 'serial');
+        }
+
+        return $this->serialsList;
+    }
+
+    /**
+     * Restituisce il numero di seriali mancanti per il completamento dell'articolo.
+     *
+     * @return float
+     */
+    public function getMissingSerialsAttribute()
+    {
+        return $this->qta - count($this->serials);
     }
 
     /**
@@ -91,25 +112,10 @@ abstract class Article extends Row
             throw new UnexpectedValueException();
         }
 
-        $previous = $this->qta;
-        $diff = $value - $previous;
-
-        $this->attributes['qta'] = $value;
+        $diff = parent::setQtaAttribute($value);
 
         if ($this->abilita_movimentazione) {
             $this->qta_movimentazione += $diff;
-        }
-
-        $database = database();
-
-        // Se c'è un collegamento ad un ddt, aggiorno la quantità evasa
-        if (!empty($this->idddt)) {
-            $database->query('UPDATE dt_righe_ddt SET qta_evasa = qta_evasa + '.$diff.' WHERE descrizione = '.prepare($this->descrizione).' AND idarticolo = '.prepare($this->idarticolo).' AND idddt = '.prepare($this->idddt).' AND idiva = '.prepare($this->idiva));
-        }
-
-        // Se c'è un collegamento ad un ordine, aggiorno la quantità evasa
-        if (!empty($this->idordine)) {
-            $database->query('UPDATE or_righe_ordini SET qta_evasa = qta_evasa + '.$diff.' WHERE descrizione = '.prepare($this->descrizione).' AND idarticolo = '.prepare($this->idarticolo).' AND idordine = '.prepare($this->idordine).' AND idiva = '.prepare($this->idiva));
         }
     }
 

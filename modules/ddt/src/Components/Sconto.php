@@ -12,7 +12,7 @@ class Sconto extends Discount
     protected $table = 'dt_righe_ddt';
 
     /**
-     * Crea una nuovo sconto globale collegato alla ddt, oppure restituisce quello esistente.
+     * Crea un nuovo sconto collegato ad un ddt.
      *
      * @param DDT $ddt
      *
@@ -20,13 +20,7 @@ class Sconto extends Discount
      */
     public static function build(DDT $ddt)
     {
-        $model = $ddt->scontoGlobale;
-
-        if ($model == null) {
-            $model = parent::build();
-
-            $model->setDDT($ddt);
-        }
+        $model = parent::build($ddt);
 
         return $model;
     }

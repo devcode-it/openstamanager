@@ -12,7 +12,7 @@ class Sconto extends Discount
     protected $table = 'co_righe_contratti';
 
     /**
-     * Crea una nuovo sconto globale collegato alla contratto, oppure restituisce quello esistente.
+     * Crea un nuovo sconto collegato ad un contratto.
      *
      * @param Contratto $contratto
      *
@@ -20,13 +20,7 @@ class Sconto extends Discount
      */
     public static function build(Contratto $contratto)
     {
-        $model = $contratto->scontoGlobale;
-
-        if ($model == null) {
-            $model = parent::build();
-
-            $model->setContratto($contratto);
-        }
+        $model = parent::build($contratto);
 
         return $model;
     }

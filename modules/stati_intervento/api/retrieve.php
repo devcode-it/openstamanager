@@ -1,7 +1,7 @@
 <?php
 
 switch ($resource) {
-    // Elenco sedi per l'applicazione
+    // Elenco stati intervento per l'applicazione
     case 'stati_intervento':
         $table = 'in_statiintervento';
 

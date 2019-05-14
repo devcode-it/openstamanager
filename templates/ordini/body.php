@@ -131,13 +131,13 @@ foreach ($righe as $r) {
             <td class='text-right'>";
         if (empty($r['is_descrizione'])) {
             echo '
-                '.(empty($r['qta']) || empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'] / $r['qta'])).' &euro;';
+                '.(empty($r['qta']) || empty($r['subtotale']) ? '' : moneyFormat($r['subtotale'] / $r['qta']));
 
             if ($r['sconto'] > 0) {
                 echo "
                 <br><small class='text-muted'>- ".tr('sconto _TOT_ _TYPE_', [
                     '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
-                    '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
+                    '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : currency()),
                 ]).'</small>';
 
                 if ($count <= 1) {
@@ -153,13 +153,13 @@ foreach ($righe as $r) {
             <td class='text-right'>";
         if (empty($r['is_descrizione'])) {
             echo '
-                '.(empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'])).' &euro;';
+                '.(empty($r['subtotale']) ? '' : moneyFormat($r['subtotale']));
 
             if ($r['sconto'] > 0) {
                 echo "
                 <br><small class='text-muted'>- ".tr('sconto _TOT_ _TYPE_', [
                     '_TOT_' => Translator::numberToLocale($r['sconto']),
-                    '_TYPE_' => '&euro;',
+                    '_TYPE_' => currency(),
                 ]).'</small>';
 
                 if ($count <= 1) {
@@ -180,7 +180,7 @@ foreach ($righe as $r) {
             <td class="text-center">';
     if (empty($r['is_descrizione'])) {
         echo '
-                '.Translator::numberToLocale($r['perc_iva']);
+                '.Translator::numberToLocale($r['perc_iva'], 0);
     }
     echo '
             </td>
@@ -212,8 +212,8 @@ if ($options['pricing']) {
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
 
-        <th colspan="2" class="text-center">
-            <b>'.Translator::numberToLocale($imponibile).' &euro;</b>
+        <th colspan="2" class="text-right">
+            <b>'.moneyFormat($imponibile, 2).'</b>
         </th>
     </tr>';
 
@@ -225,8 +225,8 @@ if ($options['pricing']) {
             <b>'.tr('Sconto', [], ['upper' => true]).':</b>
         </td>
 
-        <th colspan="2" class="text-center">
-            <b>-'.Translator::numberToLocale($sconto).' &euro;</b>
+        <th colspan="2" class="text-right">
+            <b>-'.moneyFormat($sconto, 2).'</b>
         </th>
     </tr>';
 
@@ -237,8 +237,8 @@ if ($options['pricing']) {
             <b>'.tr('Imponibile scontato', [], ['upper' => true]).':</b>
         </td>
 
-        <th colspan="2" class="text-center">
-            <b>'.Translator::numberToLocale($totale).' &euro;</b>
+        <th colspan="2" class="text-right">
+            <b>'.moneyFormat($totale, 2).'</b>
         </th>
     </tr>';
     }
@@ -250,8 +250,8 @@ if ($options['pricing']) {
             <b>'.tr('Totale IVA', [], ['upper' => true]).':</b>
         </td>
 
-        <th colspan="2" class="text-center">
-            <b>'.Translator::numberToLocale($iva).' &euro;</b>
+        <th colspan="2" class="text-right">
+            <b>'.moneyFormat($iva, 2).'</b>
         </th>
     </tr>';
 
@@ -263,8 +263,8 @@ if ($options['pricing']) {
     	<td colspan="'.(($has_image) ? 4 : 3).'" class="text-right border-top">
             <b>'.tr('Quotazione totale', [], ['upper' => true]).':</b>
     	</td>
-    	<th colspan="2" class="text-center">
-    		<b>'.Translator::numberToLocale($totale).' &euro;</b>
+    	<th colspan="2" class="text-right">
+    		<b>'.moneyFormat($totale, 2).'</b>
     	</th>
     </tr>';
 }

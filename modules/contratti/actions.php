@@ -5,6 +5,7 @@ include_once __DIR__.'/../../core.php';
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Contratti\Components\Articolo;
 use Modules\Contratti\Components\Riga;
+use Modules\Contratti\Components\Sconto;
 use Modules\Contratti\Contratto;
 
 switch (post('op')) {
@@ -49,6 +50,7 @@ switch (post('op')) {
             $rinnovabile = post('rinnovabile');
 
             $giorni_preavviso_rinnovo = post('giorni_preavviso_rinnovo');
+            $ore_preavviso_rinnovo = post('ore_preavviso_rinnovo');
             $validita = post('validita');
             $idreferente = post('idreferente');
             $esclusioni = post('esclusioni');
@@ -79,7 +81,8 @@ switch (post('op')) {
 				data_rifiuto='.prepare($data_rifiuto).',
 				data_conclusione='.prepare($data_conclusione).',
 				rinnovabile='.prepare($rinnovabile).',
-				giorni_preavviso_rinnovo='.prepare($giorni_preavviso_rinnovo).',
+                giorni_preavviso_rinnovo='.prepare($giorni_preavviso_rinnovo).',
+                ore_preavviso_rinnovo='.prepare($ore_preavviso_rinnovo).',
 				esclusioni='.prepare($esclusioni).', descrizione='.prepare($descrizione).',
 				id_documento_fe='.prepare($id_documento_fe).',
 				num_item='.prepare($num_item).',
@@ -89,23 +92,6 @@ switch (post('op')) {
             // costo_diritto_chiamata='.prepare($costo_diritto_chiamata).', ore_lavoro='.prepare($ore_lavoro).', costo_orario='.prepare($costo_orario).', costo_km='.prepare($costo_km).'
 
             $dbo->query($query);
-
-            // Aggiornamento sconto
-            $tipo_sconto = post('tipo_sconto_generico');
-            $sconto = post('sconto_generico');
-
-            $dbo->update('co_contratti', [
-                'tipo_sconto_globale' => $tipo_sconto,
-                'sconto_globale' => $sconto,
-            ], ['id' => $id_record]);
-
-            aggiorna_sconto([
-                'parent' => 'co_contratti',
-                'row' => 'co_righe_contratti',
-            ], [
-                'parent' => 'id',
-                'row' => 'idcontratto',
-            ], $id_record);
 
             $dbo->query('DELETE FROM my_impianti_contratti WHERE idcontratto='.prepare($id_record));
             foreach ((array) post('matricolaimpianto') as $matricolaimpianto) {
@@ -139,6 +125,51 @@ switch (post('op')) {
             }
 
             flash()->info(tr('Contratto modificato correttamente!'));
+        }
+
+        break;
+
+     // Duplica contratto
+    case 'copy':
+        $new = $contratto->replicate();
+        $new->numero = Contratto::getNextNumero();
+        $new->idstato = 1;
+        $new->save();
+
+        $id_record = $new->id;
+
+        $righe = $preventivo->getRighe();
+        foreach ($righe as $riga) {
+            $new_riga = $riga->replicate();
+            $new_riga->setParent($new);
+
+            $new_riga->qta_evasa = 0;
+            $new_riga->save();
+        }
+
+        flash()->info(tr('Contratto duplicato correttamente!'));
+
+        break;
+
+    case 'manage_sconto':
+        if (post('idriga') != null) {
+            $sconto = Sconto::find(post('idriga'));
+        } else {
+            $sconto = Sconto::build($contratto);
+        }
+
+        $sconto->descrizione = post('descrizione');
+        $sconto->id_iva = post('idiva');
+
+        $sconto->sconto_unitario = post('sconto_unitario');
+        $sconto->tipo_sconto = 'UNT';
+
+        $sconto->save();
+
+        if (post('idriga') != null) {
+            flash()->info(tr('Sconto/maggiorazione modificato!'));
+        } else {
+            flash()->info(tr('Sconto/maggiorazione aggiunta!'));
         }
 
         break;
@@ -352,7 +383,7 @@ switch (post('op')) {
                 }
 
                 // Cambio stato precedente contratto in concluso (non più pianificabile)
-                $dbo->query('UPDATE `co_contratti` SET `rinnovabile`= 0, `idstato`= (SELECT id FROM co_staticontratti WHERE pianificabile = 0 AND fatturabile = 1 AND descrizione = \'Concluso\')  WHERE `id` = '.prepare($id_record));
+                $dbo->query('UPDATE `co_contratti` SET `rinnovabile`= 0, `idstato`= (SELECT id FROM co_staticontratti WHERE is_pianificabile = 0 AND is_fatturabile = 1 AND descrizione = \'Concluso\')  WHERE `id` = '.prepare($id_record));
 
                 flash()->info(tr('Contratto rinnovato!'));
 
@@ -363,14 +394,4 @@ switch (post('op')) {
         }
 
         break;
-}
-
-if (post('op') !== null && post('op') != 'update') {
-    aggiorna_sconto([
-        'parent' => 'co_contratti',
-        'row' => 'co_righe_contratti',
-    ], [
-        'parent' => 'id',
-        'row' => 'idcontratto',
-    ], $id_record);
 }

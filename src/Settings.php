@@ -153,7 +153,7 @@ class Settings
         // Lista da query
         elseif (preg_match('/^query=(.+?)$/', $setting->tipo, $m)) {
             $result = '
-    {[ "type": "select", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "values": "'.$setting->tipo.'", "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'"   ]}';
+    {[ "type": "select", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "values": "'.str_replace('"', '\"', $setting->tipo).'", "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'"   ]}';
         }
 
         // Boolean (checkbox)

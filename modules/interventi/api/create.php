@@ -1,7 +1,7 @@
 <?php
 
 use Modules\Articoli\Articolo as ArticoloOriginale;
-use Modules\Interventi\Articolo;
+use Modules\Interventi\Components\Articolo;
 use Modules\Interventi\Intervento;
 
 switch ($resource) {
@@ -41,10 +41,12 @@ switch ($resource) {
             $response['id'] = $dbo->lastInsertedID();
             $response['codice'] = $codice;
 
+            /*
             $start = date('Y-m-d H:i:s');
             $end = date('Y-m-d H:i:s', strtotime('+1 hour', strtotime($start)));
 
             add_tecnico($response['id'], $user['idanagrafica'], $start, $end);
+            */
         }
 
         break;

@@ -12,7 +12,7 @@ class Sconto extends Discount
     protected $table = 'co_righe_documenti';
 
     /**
-     * Crea una nuovo sconto globale collegato alla fattura, oppure restituisce quello esistente.
+     * Crea un nuovo sconto collegato ad una fattura.
      *
      * @param Fattura $fattura
      *
@@ -20,13 +20,7 @@ class Sconto extends Discount
      */
     public static function build(Fattura $fattura)
     {
-        $model = $fattura->scontoGlobale;
-
-        if ($model == null) {
-            $model = parent::build();
-
-            $model->setFattura($fattura);
-        }
+        $model = parent::build($fattura);
 
         return $model;
     }

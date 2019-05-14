@@ -65,16 +65,20 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 
 			<div class="row">
 
-				<div class="col-md-4">
+				<div class="col-md-3">
 					{[ "type": "number", "label": "<?php echo tr('Validità'); ?>", "name": "validita", "decimals": "0", "value": "$validita$", "icon-after": "giorni" ]}
 				</div>
 
-				<div class="col-md-4">
+				<div class="col-md-3">
 					{[ "type": "checkbox", "label": "<?php echo tr('Rinnovabile'); ?>", "name": "rinnovabile", "help": "<?php echo tr('Il contratto è rinnovabile?'); ?>", "value": "$rinnovabile$" ]}
 				</div>
 
-				<div class="col-md-4">
+				<div class="col-md-3">
 					{[ "type": "number", "label": "<?php echo tr('Preavviso per rinnovo'); ?>", "name": "giorni_preavviso_rinnovo", "decimals": "0", "value": "$giorni_preavviso_rinnovo$", "icon-after": "giorni", "disabled": <?php echo $record['rinnovabile'] ? 0 : 1; ?> ]}
+				</div>
+
+                <div class="col-md-3">
+					{[ "type": "number", "label": "<?php echo tr('Ore rimanenti rinnovo'); ?>", "name": "ore_preavviso_rinnovo", "decimals": "0", "value": "$ore_preavviso_rinnovo$", "icon-after": "ore", "disabled": <?php echo $record['rinnovabile'] ? 0 : 1; ?>, "help": "Numero ore restanti nel contratto per avviso rinnovo anticipato." ]}
 				</div>
 			</div>
 
@@ -108,14 +112,6 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 				<div class="col-md-3">
 					{[ "type": "select", "multiple": "1", "label": "<?php echo tr('Impianti'); ?>", "name": "matricolaimpianto[]", "values": "query=SELECT idanagrafica, id AS id, IF(nome = '', matricola, CONCAT(matricola, ' - ', nome)) AS descrizione FROM my_impianti WHERE idanagrafica='$idanagrafica$' ORDER BY descrizione", "value": "$idimpianti$" ]}
 				</div>
-
-                <div class="col-md-3">
-                    {[ "type": "number", "label": "<?php echo tr('Sconto incondizionato'); ?>", "name": "sconto_generico", "value": "$sconto_globale$", "help": "<?php echo tr('Sconto complessivo del contratto'); ?>", "icon-after": "choice|untprc|$tipo_sconto_globale$"<?php
-if ($record['stato'] == 'Emessa') {
-                        echo ', "disabled" : 1';
-                    }
-?> ]}
-                </div>
             </div>
 
 
@@ -141,19 +137,20 @@ if ($record['stato'] == 'Emessa') {
 
         <div class="panel-body">
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-6">
 					{[ "type": "text", "label": "<?php echo tr('Identificatore Documento'); ?>", "help": "<?php echo tr('<span>Obbligatorio per valorizzare CIG/CUP. &Egrave; possible inserire: </span><ul><li>N. determina</li><li>RDO</li><li>Ordine MEPA</li></ul>'); ?>","name": "id_documento_fe", "required": 0, "value": "$id_documento_fe$", "maxlength": 20 ]}
 				</div>
 
-                <div class="col-md-4">
+                <div class="col-md-6">
 					{[ "type": "text", "label": "<?php echo tr('Numero Riga'); ?>", "name": "num_item", "required": 0, "value": "$num_item$", "maxlength": 15 ]}
 				</div>
-
-                <div class="col-md-4">
+			</div>
+			<div class="row">
+                <div class="col-md-6">
 					{[ "type": "text", "label": "<?php echo tr('Codice CIG'); ?>", "name": "codice_cig", "required": 0, "value": "$codice_cig$", "maxlength": 15 ]}
 				</div>
 
-				<div class="col-md-4">
+				<div class="col-md-6">
 					{[ "type": "text", "label": "<?php echo tr('Codice CUP'); ?>", "name": "codice_cup", "required": 0, "value": "$codice_cup$", "maxlength": 15 ]}
 				</div>
             </div>
@@ -301,13 +298,25 @@ if (sizeof($rs) > 0) {
     <div class="panel-body">
 <?php
 if ($record['stato'] != 'Pagato') {
-    ?>
-        <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/contratti/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_articolo" data-toggle="modal" data-title="Aggiungi articolo"><i class="fa fa-plus"></i> <?php echo tr('Articolo'); ?></a>
+    echo '
+            <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_articolo" data-toggle="tooltip" data-title="'.tr('Aggiungi articolo').'">
+                <i class="fa fa-plus"></i> '.tr('Articolo').'
+            </a>';
 
-        <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/contratti/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_riga" data-toggle="modal" data-title="Aggiungi riga"><i class="fa fa-plus"></i> <?php echo tr('Riga'); ?></a>
+    echo '
+            <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_riga" data-toggle="tooltip" data-title="'.tr('Aggiungi riga').'">
+                <i class="fa fa-plus"></i> '.tr('Riga').'
+            </a>';
 
-        <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/contratti/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_descrizione" data-toggle="modal" data-title="Aggiungi descrizione"><i class="fa fa-plus"></i> <?php echo tr('Descrizione'); ?></a>
-    <?php
+    echo '
+            <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_descrizione" data-toggle="tooltip" data-title="'.tr('Aggiungi descrizione').'">
+                <i class="fa fa-plus"></i> '.tr('Descrizione').'
+            </a>';
+
+    echo '
+            <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_sconto" data-toggle="tooltip" data-title="'.tr('Aggiungi sconto/maggiorazione').'">
+                <i class="fa fa-plus"></i> '.tr('Sconto/maggiorazione').'
+            </a>';
 }
 ?>
         <div class="clearfix"></div>
@@ -360,7 +369,7 @@ if (!empty($record['idcontratto_prev'])) {
                                 '_NUM_' => $rs[0]['numero'],
                             ]).'<br><small class="text-muted">'.$rs[0]['nome'].'</small>').'
                         </td>
-                        <td align="right">'.Translator::numberToLocale($rs[0]['budget']).' &euro;</td>
+                        <td align="right">'.moneyFormat($rs[0]['budget']).'</td>
                         <td align="center">'.Translator::dateToLocale($rs[0]['data_accettazione']).'</td>
                         <td align="center">'.Translator::dateToLocale($rs[0]['data_conclusione']).'</td>
                     </tr>';
@@ -408,6 +417,16 @@ if (!empty($record['idcontratto_prev'])) {
         session_set('superselect,idanagrafica', $(this).val(), 0);
 
 		$("#idsede").selectReset();
+	});
+	
+	$('#codice_cig, #codice_cup').bind("keyup change", function(e) {
+		
+		if ($('#codice_cig').val() == '' && $('#codice_cup').val() == '' ){
+			$('#id_documento_fe').prop('required', false);
+		}else{
+			$('#id_documento_fe').prop('required', true);
+		}
+	
 	});
 </script>
 

@@ -39,7 +39,7 @@ switch (filter('op')) {
         break;
 
     case 'delete':
-        $directory = Plugins\ImportFE\FatturaElettronica::getImportDirectory();
+        $directory = FatturaElettronica::getImportDirectory();
 
         delete($directory.'/'.get('name'));
 
@@ -48,19 +48,21 @@ switch (filter('op')) {
     case 'generate':
         $filename = post('filename');
 
-        $fattura_pa = new FatturaElettronica($filename);
+        $info = [
+            'id_pagamento' => post('pagamento'),
+            'id_segment' => post('id_segment'),
+            'id_tipo' => post('id_tipo'),
+			'data_ricezione' => post('data_ricezione'),
+            'articoli' => post('articoli'),
+            'iva' => post('iva'),
+            'conto' => post('conto'),
+            'movimentazione' => post('movimentazione'),
+        ];
 
-        $id_record = $fattura_pa->saveFattura(post('pagamento'), post('id_segment'), post('id_tipo'));
-        $fattura_pa->saveRighe(post('articoli'), post('iva'), post('conto'), post('movimentazione'));
-        $fattura_pa->getFattura()->updateSconto();
+        $fattura_pa = FatturaElettronica::manage($filename);
+        $id_record = $fattura_pa->save($info);
 
-        $fattura_pa->saveAllegati();
-
-        $idrivalsainps = 0;
-        $idritenutaacconto = 0;
-        $bollo = 0;
-
-        ricalcola_costiagg_fattura($id_record, $idrivalsainps, $idritenutaacconto, $bollo);
+        ricalcola_costiagg_fattura($id_record);
         elimina_scadenza($id_record);
         elimina_movimento($id_record, 0);
         aggiungi_scadenza($id_record);
@@ -83,6 +85,19 @@ switch (filter('op')) {
 
     case 'list':
         include __DIR__.'/rows.php';
+
+        break;
+
+    case 'process':
+        $name = get('name');
+
+        // Processo il file ricevuto
+        if (Interaction::isEnabled()) {
+            $process_result = Interaction::processXML($name);
+            if (!empty($process_resul)) {
+                flash()->error($process_result);
+            }
+        }
 
         break;
 }

@@ -135,7 +135,7 @@ for ($x = 0; $x < $n1; ++$x) {
                     // Dare
                     if ($rs[$i]['totale'] > 0) {
                         echo "				<td align='right'>\n";
-                        echo Translator::numberToLocale(abs($rs[$i]['totale']))." &euro;\n";
+                        echo moneyFormat(abs($rs[$i]['totale']), 2)."\n";
                         echo "				</td>\n";
                         echo "				<td></td></tr>\n";
 
@@ -149,7 +149,7 @@ for ($x = 0; $x < $n1; ++$x) {
                     // Avere
                     else {
                         echo "				<td></td><td  align='right'>\n";
-                        echo Translator::numberToLocale(abs($rs[$i]['totale']))." &euro;\n";
+                        echo moneyFormat(abs($rs[$i]['totale']), 2)."\n";
                         echo "				</td>\n";
 
                         if ($rs1[$x]['descrizione'] == 'Patrimoniale') {
@@ -181,7 +181,7 @@ for ($x = 0; $x < $n1; ++$x) {
             echo "		</td>\n";
 
             echo "		<td width='100' align='right' valign='top'>\n";
-            echo Translator::numberToLocale(sum($totale_conto_liv3))." &euro;\n";
+            echo moneyFormat(sum($totale_conto_liv3), 2)."\n";
             echo "		</td></tr>\n";
         } // Fine livello3
 
@@ -215,7 +215,7 @@ for ($x = 0; $x < $n1; ++$x) {
         echo "</th>\n";
 
         echo "<td width='150' align='right'>\n";
-        echo "	<p align='right'><big>".Translator::numberToLocale($attivita)." &euro;</big></p>\n";
+        echo "	<p align='right'><big>".moneyFormat($attivita, 2)."</big></p>\n";
         echo "</td>\n";
         echo "<td width='50'></td>\n";
 
@@ -224,7 +224,7 @@ for ($x = 0; $x < $n1; ++$x) {
         echo "	<p align='right'><big>Passività:</big></p>\n";
         echo "</th>\n";
         echo "<td width='150' align='right'>\n";
-        echo "	<p align='right'><big>".Translator::numberToLocale($passivita)." &euro;</big></p>\n";
+        echo "	<p align='right'><big>".moneyFormat($passivita, 2)."</big></p>\n";
         echo "</td></tr>\n";
 
         // Perdita d'esercizio
@@ -233,7 +233,7 @@ for ($x = 0; $x < $n1; ++$x) {
             echo "	<p align='right'><big>Perdita d'esercizio:</big></p>\n";
             echo "</th>\n";
             echo "<td align='right'>\n";
-            echo "	<p align='right'><big>".Translator::numberToLocale(sum($utile_perdita))." &euro;</big></p>\n";
+            echo "	<p align='right'><big>".moneyFormat(sum($utile_perdita), 2)."</big></p>\n";
             echo "</td>\n";
             echo "<td></td>\n";
             echo "<td></td><td></td></tr>\n";
@@ -242,7 +242,7 @@ for ($x = 0; $x < $n1; ++$x) {
             echo "	<p align='right'><big>Utile:</big></p>\n";
             echo "</th>\n";
             echo "<td align='right'>\n";
-            echo "	<p align='right'><big>".Translator::numberToLocale(sum($utile_perdita))." &euro;</big></p>\n";
+            echo "	<p align='right'><big>".moneyFormat(sum($utile_perdita), 2)."</big></p>\n";
             echo "</td></tr>\n";
         }
 
@@ -251,7 +251,7 @@ for ($x = 0; $x < $n1; ++$x) {
         echo "	<p align='right'><big>Totale a pareggio:</big></p>\n";
         echo "</th>\n";
         echo "<td align='right'>\n";
-        echo "	<p align='right'><big>".Translator::numberToLocale(sum($pareggio1))." &euro;</big></p>\n";
+        echo "	<p align='right'><big>".moneyFormat(sum($pareggio1), 2)."</big></p>\n";
         echo "</td>\n";
         echo "<td></td>\n";
 
@@ -260,13 +260,13 @@ for ($x = 0; $x < $n1; ++$x) {
         echo "	<p align='right'><big>Totale a pareggio:</big></p>\n";
         echo "</th>\n";
         echo "<td align='right'>\n";
-        echo "	<p align='right'><big>".Translator::numberToLocale(sum($pareggio2))." &euro;</big></p>\n";
+        echo "	<p align='right'><big>".moneyFormat(sum($pareggio2), 2)."</big></p>\n";
         echo "</td></tr>\n";
 
         echo '</table>';
     } else {
-        echo "<p align='right'><big><b>RICAVI:</b> ".Translator::numberToLocale(sum($totale_ricavi))." &euro;</big></p>\n";
-        echo "<p align='right'><big><b>COSTI:</b> ".Translator::numberToLocale(abs(sum($totale_costi)))." &euro;</big></p>\n";
-        echo "<p align='right'><big><b>UTILE/PERDITA:</b> ".Translator::numberToLocale(sum($totale_ricavi) - abs(sum($totale_costi)))." &euro;</big></p>\n";
+        echo "<p align='right'><big><b>RICAVI:</b> ".moneyFormat(sum($totale_ricavi), 2)."</big></p>\n";
+        echo "<p align='right'><big><b>COSTI:</b> ".moneyFormat(abs(sum($totale_costi)), 2)."</big></p>\n";
+        echo "<p align='right'><big><b>UTILE/PERDITA:</b> ".moneyFormat(sum($totale_ricavi) - abs(sum($totale_costi)), 2)."</big></p>\n";
     }
 }

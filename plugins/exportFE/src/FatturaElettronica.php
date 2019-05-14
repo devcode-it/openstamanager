@@ -11,6 +11,7 @@ use Prints;
 use Translator;
 use UnexpectedValueException;
 use Uploads;
+use Validate;
 
 /**
  * Classe per la gestione della fatturazione elettronica in XML.
@@ -125,7 +126,7 @@ class FatturaElettronica
 
             $interventi = $database->fetchArray('SELECT `id_documento_fe`, `num_item`, `codice_cig`, `codice_cup` FROM `in_interventi` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idintervento` = `in_interventi`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
 
-            $this->contratti = array_merge($contratti, $preventivi, $interventi);
+            $this->contratti = array_unique(array_merge($contratti, $preventivi, $interventi));
         }
 
         return $this->contratti;
@@ -291,7 +292,7 @@ class FatturaElettronica
             $anagrafica = static::getAzienda();
         }
 
-        $prefix = 'IT'.(!empty($anagrafica['codice_fiscale']) ? $anagrafica['codice_fiscale'] : str_replace($anagrafica->nazione->iso2, '', $anagrafica['piva']));
+        $prefix = 'IT'.(!empty($anagrafica['codice_fiscale'] and ($anagrafica['codice_fiscale'] != $anagrafica['piva'])) ? $anagrafica['codice_fiscale'] : str_replace($anagrafica->nazione->iso2, '', $anagrafica['piva']));
 
         if (empty($this->documento['progressivo_invio']) || !empty($new)) {
             $database = database();
@@ -386,14 +387,14 @@ class FatturaElettronica
         $result = [
             'IdTrasmittente' => [
                 'IdPaese' => $anagrafica->nazione->iso2,
-                'IdCodice' => (!empty($anagrafica['codice_fiscale'])) ? $anagrafica['codice_fiscale'] : str_replace($anagrafica->nazione->iso2, '', $anagrafica['piva']),
+                'IdCodice' => (!empty($anagrafica['codice_fiscale']) and ($anagrafica['codice_fiscale'] != $anagrafica['piva'])) ? $anagrafica['codice_fiscale'] : str_replace($anagrafica->nazione->iso2, '', $anagrafica['piva']),
             ],
         ];
 
         $result[] = [
             'ProgressivoInvio' => $documento['progressivo_invio'],
             'FormatoTrasmissione' => ($cliente['tipo'] == 'Ente pubblico') ? 'FPA12' : 'FPR12',
-            'CodiceDestinatario' => !empty($cliente['codice_destinatario']) ? $cliente['codice_destinatario'] : $default_code,
+            'CodiceDestinatario' => !empty($codice_destinatario) ? $codice_destinatario : $default_code,
         ];
 
         // Telefono di contatto
@@ -644,7 +645,7 @@ class FatturaElettronica
             $percentuale = database()->fetchOne('SELECT percentuale FROM co_ritenutaacconto WHERE id = '.prepare($id_ritenuta))['percentuale'];
 
             $result['DatiRitenuta'] = [
-                'TipoRitenuta' => ($azienda['tipo'] == 'Privato') ? 'RT01' : 'RT02',
+                'TipoRitenuta' => Validate::isValidTaxCode($azienda['codice_fiscale']) ? 'RT01' : 'RT02',
                 'ImportoRitenuta' => $totale_ritenutaacconto,
                 'AliquotaRitenuta' => $percentuale,
                 'CausalePagamento' => setting("Causale ritenuta d'acconto"),
@@ -666,15 +667,14 @@ class FatturaElettronica
             $percentuale = database()->fetchOne('SELECT percentuale FROM co_rivalse WHERE id = '.prepare($id_rivalsainps))['percentuale'];
 
             $dati_cassa = [
-                'TipoCassa' => setting('Tipo Cassa'),
+                'TipoCassa' => setting('Tipo Cassa Previdenziale'),
                 'AlCassa' => $percentuale,
                 'ImportoContributoCassa' => $totale_rivalsainps,
                 'ImponibileCassa' => $documento->imponibile,
                 'AliquotaIVA' => $iva['percentuale'],
             ];
 
-            $ritenuta_predefinita = setting("Percentuale ritenuta d'acconto");
-            if (!empty($ritenuta_predefinita)) {
+            if ($riga->calcolo_ritenuta_acconto == 'IMP+RIV') {
                 $dati_cassa['Ritenuta'] = 'SI';
             }
 
@@ -688,20 +688,7 @@ class FatturaElettronica
         }
 
         // Sconto globale (2.1.1.8)
-        $documento['sconto_globale'] = floatval($documento['sconto_globale']);
-        if (!empty($documento['sconto_globale'])) {
-            $sconto = [
-                'Tipo' => $documento['sconto_globale'] > 0 ? 'SC' : 'MG',
-            ];
-
-            if ($documento['tipo_sconto_globale'] == 'PRC') {
-                $sconto['Percentuale'] = $documento['sconto_globale'];
-            } else {
-                $sconto['Importo'] = $documento['sconto_globale'];
-            }
-
-            $result['ScontoMaggiorazione'] = $sconto;
-        }
+        // Disabilitazione per aggiornamento sconti
 
         // Importo Totale Documento (2.1.1.9)
         // Valorizzare l’importo complessivo lordo della fattura (onnicomprensivo di Iva, bollo, contributi previdenziali, ecc…)
@@ -816,12 +803,12 @@ class FatturaElettronica
                 $dati['NumItem'] = $element['num_item'];
             }
 
-            if (!empty($element['codice_cig'])) {
-                $dati['CodiceCIG'] = $element['codice_cig'];
-            }
-
             if (!empty($element['codice_cup'])) {
                 $dati['CodiceCUP'] = $element['codice_cup'];
+            }
+
+            if (!empty($element['codice_cig'])) {
+                $dati['CodiceCIG'] = $element['codice_cig'];
             }
 
             $result[] = $dati;
@@ -942,10 +929,10 @@ class FatturaElettronica
 
             // 2.2.1.3
             if ($riga->isArticolo()) {
-                $tipo_codice = $database->fetchOne('SELECT `mg_categorie`.`nome` FROM `mg_categorie` INNER JOIN `mg_articoli` ON `mg_categorie`.`id` = `mg_articoli`.`id_categoria` WHERE `mg_articoli`.`id` = '.prepare($riga['idarticolo']))['nome'];
+                //$tipo_codice = $database->fetchOne('SELECT `mg_categorie`.`nome` FROM `mg_categorie` INNER JOIN `mg_articoli` ON `mg_categorie`.`id` = `mg_articoli`.`id_categoria` WHERE `mg_articoli`.`id` = '.prepare($riga['idarticolo']))['nome'];
 
                 $codice_articolo = [
-                    'CodiceTipo' => ($tipo_codice) ?: 'COD',
+                    'CodiceTipo' => 'COD',
                     'CodiceValore' => $riga->articolo->codice,
                 ];
 
@@ -958,9 +945,12 @@ class FatturaElettronica
             $descrizione = str_replace('…', '...', $descrizione);
             $descrizione = str_replace('’', ' ', $descrizione);
 
-            $ref = doc_references($riga->toArray(), 'entrata', ['iddocumento']);
-            if (!empty($ref)) {
-                $descrizione .= "\n".$ref['description'];
+            if (setting('Riferimento dei documenti in Fattura Elettronica')) {
+                $ref = doc_references($riga->toArray(), 'entrata', ['iddocumento']);
+
+                if (!empty($ref)) {
+                    $descrizione .= "\n".$ref['description'];
+                }
             }
 
             $dettaglio['Descrizione'] = $descrizione;
@@ -979,12 +969,13 @@ class FatturaElettronica
                 $dettaglio['DataFinePeriodo'] = $riga['data_fine_periodo'];
             }
 
-            $dettaglio['PrezzoUnitario'] = abs($riga->prezzo_unitario_vendita);
+            $dettaglio['PrezzoUnitario'] = $riga->prezzo_unitario_vendita ?: 0;
 
             // Sconto (2.2.1.10)
-            $sconto = abs($riga->sconto);
-            $sconto_unitario = abs($riga->sconto_unitario);
-            if (!empty($sconto_unitario)) {
+            $sconto = $riga->sconto;
+            $sconto_unitario = $riga->sconto_unitario;
+
+            if (!empty((float) $sconto_unitario)) {
                 $sconto = [
                     'Tipo' => $riga->sconto_unitario > 0 ? 'SC' : 'MG',
                 ];
@@ -1001,11 +992,17 @@ class FatturaElettronica
             $aliquota = $riga->aliquota ?: $iva_descrizioni;
             $percentuale = floatval($aliquota->percentuale);
 
-            $dettaglio['PrezzoTotale'] = abs($riga->imponibile_scontato);
+            if ($documento->isNotaDiAccredito()) {
+                $dettaglio['PrezzoTotale'] = -$riga->imponibile_scontato ?: 0;
+            } else {
+                $dettaglio['PrezzoTotale'] = $riga->imponibile_scontato ?: 0;
+            }
             $dettaglio['AliquotaIVA'] = $percentuale;
 
             if (!empty($riga['idritenutaacconto']) && empty($riga['is_descrizione'])) {
-                $dettaglio['Ritenuta'] = 'SI';
+                if ($riga['calcolo_ritenuta_acconto'] == 'IMP+RIV') {
+                    $dettaglio['Ritenuta'] = 'SI';
+                }
             }
 
             // Controllo aggiuntivo codice_natura_fe per evitare che venga riportato il tag vuoto
@@ -1022,7 +1019,7 @@ class FatturaElettronica
             if (!empty($riga['ritenuta_contributi'])) {
                 $dettaglio['AltriDatiGestionali'] = [
                     'TipoDato' => 'CASSA-PREV',
-                    'RiferimentoTesto' => setting('Tipo Cassa').' - '.$ritenuta_contributi->descrizione.' ('.Translator::numberToLocale($ritenuta_contributi->percentuale).'%)',
+                    'RiferimentoTesto' => setting('Tipo Cassa Previdenziale').' - '.$ritenuta_contributi->descrizione.' ('.Translator::numberToLocale($ritenuta_contributi->percentuale).'%)',
                     'RiferimentoNumero' => $riga->ritenuta_contributi,
                 ];
             }
@@ -1114,6 +1111,9 @@ class FatturaElettronica
     {
         $documento = $fattura->getDocumento();
 
+        $fattura = Fattura::find($documento['id']);
+        $banca = $fattura->getBanca();
+
         $database = database();
 
         $co_pagamenti = $database->fetchOne('SELECT * FROM `co_pagamenti` WHERE `id` = '.prepare($documento['idpagamento']));
@@ -1130,17 +1130,14 @@ class FatturaElettronica
                 'ImportoPagamento' => abs($scadenza['da_pagare']),
             ];
 
-            if (!empty($documento['idbanca'])) {
-                $co_banche = $database->fetchOne('SELECT * FROM co_banche WHERE id = '.prepare($documento['idbanca']));
-                if (!empty($co_banche['nome'])) {
-                    $pagamento['IstitutoFinanziario'] = $co_banche['nome'];
-                }
-                if (!empty($co_banche['iban'])) {
-                    $pagamento['IBAN'] = clean($co_banche['iban']);
-                }
-                if (!empty($co_banche['bic'])) {
-                    $pagamento['BIC'] = $co_banche['bic'];
-                }
+            if (!empty($banca['appoggiobancario'])) {
+                $pagamento['IstitutoFinanziario'] = $banca['appoggiobancario'];
+            }
+            if (!empty($banca['codiceiban'])) {
+                $pagamento['IBAN'] = clean($banca['codiceiban']);
+            }
+            if (!empty($banca['bic'])) {
+                $pagamento['BIC'] = $banca['bic'];
             }
 
             $result[]['DettaglioPagamento'] = $pagamento;

@@ -12,7 +12,7 @@ class Sconto extends Discount
     protected $table = 'or_righe_ordini';
 
     /**
-     * Crea una nuovo sconto globale collegato alla ordine, oppure restituisce quello esistente.
+     * Crea un nuovo sconto collegato ad un ordine.
      *
      * @param Ordine $ordine
      *
@@ -20,13 +20,7 @@ class Sconto extends Discount
      */
     public static function build(Ordine $ordine)
     {
-        $model = $ordine->scontoGlobale;
-
-        if ($model == null) {
-            $model = parent::build();
-
-            $model->setOrdine($ordine);
-        }
+        $model = parent::build($ordine);
 
         return $model;
     }

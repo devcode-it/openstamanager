@@ -2,74 +2,49 @@
 
 namespace Common\Components;
 
-use Common\Model;
+use Common\Document;
 use Illuminate\Database\Eloquent\Builder;
 
-abstract class Discount extends Model
+abstract class Discount extends Row
 {
-    public static function build()
-    {
-        $model = parent::build();
+    protected $guarded = [];
 
-        $model->sconto_globale = 1;
+    public static function build(Document $document)
+    {
+        $model = parent::build($document, true);
+
+        $model->is_sconto = 1;
+        $model->qta = 1;
 
         return $model;
     }
 
-    /**
-     * Restituisce il totale dello sconto.
-     */
-    public function getTotaleAttribute()
-    {
-        return $this->imponibile + $this->iva;
-    }
-
-    /**
-     * Restituisce il netto dello sconto.
-     */
-    public function getNettoAttribute()
-    {
-        return $this->totale;
-    }
-
-    /**
-     * Restituisce l'imponibile scontato dello sconto.
-     */
-    public function getImponibileScontatoAttribute()
-    {
-        return $this->imponibile;
-    }
-
-    /**
-     * Restituisce l'imponibile dello sconto.
-     */
-    public function getImponibileAttribute()
-    {
-        return $this->subtotale;
-    }
-
-    /**
-     * Restituisce il "guadagno" dello sconto.
-     */
-    public function getGuadagnoAttribute()
-    {
-        return $this->imponibile;
-    }
-
-    /**
-     * Restituisce il totale dello sconto.
-     */
     public function getIvaAttribute()
     {
         return $this->attributes['iva'];
     }
 
-    protected static function boot()
+    /**
+     * Effettua i conti per l'IVA.
+     */
+    protected function fixIva()
     {
-        parent::boot();
+        $this->attributes['iva'] = parent::getIvaAttribute();
 
-        static::addGlobalScope('is_discount', function (Builder $builder) {
-            $builder->where('sconto_globale', '=', 1);
+        $descrizione = $this->aliquota->descrizione;
+        if (!empty($descrizione)) {
+            $this->attributes['desc_iva'] = $descrizione;
+        }
+
+        $this->fixIvaIndetraibile();
+    }
+
+    protected static function boot($bypass = false)
+    {
+        parent::boot(true);
+
+        static::addGlobalScope('discounts', function (Builder $builder) {
+            $builder->where('is_sconto', '=', 1);
         });
     }
 }

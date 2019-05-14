@@ -8,6 +8,7 @@ use Plugins;
 use UnexpectedValueException;
 use Uploads;
 use Util\XML;
+use Util\Zip;
 
 /**
  * Classe per la gestione della fatturazione elettronica in XML.
@@ -28,7 +29,23 @@ class Ricevuta
 
     public function __construct($name)
     {
-        $this->file = static::getImportDirectory().'/'.$name;
+        $file = static::getImportDirectory().'/'.$name;
+
+        if (ends_with($name, '.zip')) {
+            $original_file = $file;
+
+            $extraction_dir = static::getImportDirectory().'/tmp';
+            Zip::extract($file, $extraction_dir);
+
+            $name = basename($name, '.zip').'.xml';
+            $file = static::getImportDirectory().'/'.$name;
+            copy($extraction_dir.'/'.$name, $file);
+
+            delete($original_file);
+            delete($extraction_dir);
+        }
+
+        $this->file = $file;
         $this->xml = XML::readFile($this->file);
 
         $filename = explode('.', $name)[0];
@@ -91,16 +108,19 @@ class Ricevuta
         $fattura = $this->getFattura();
 
         // Modifica lo stato solo se la fattura non è già stata consegnata (per evitare problemi da doppi invii)
-        if ($fattura->codice_stato_fe == 'RC') {
-            return;
-        }
+        // In realtà per le PA potrebbe esserci lo stato NE (che può essere positiva o negativa) successivo alla RC
+        //if ($fattura->codice_stato_fe == 'RC') {
+        //return;
+        //}
 
-        // Processo la ricevuta e salvo il codice e messaggio di errore
+        // Processo la ricevuta e salvo data ricezione, codice e messaggio
         $descrizione = $this->xml['Destinatario']['Descrizione'];
         $data = $this->xml['DataOraRicezione'];
 
-        $fattura->codice_stato_fe = $codice;
         $fattura->data_stato_fe = date('Y-m-d H:i:s', strtotime($data));
+        $fattura->codice_stato_fe = $codice;
+        $fattura->descrizione_ricevuta_fe = $descrizione;
+
         $fattura->save();
     }
 

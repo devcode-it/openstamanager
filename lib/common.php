@@ -43,69 +43,6 @@ function sum($first, $second = null, $decimals = 4)
     return floatval($result);
 }
 
-/**
- * Calcola lo sconto globale per i documenti e lo aggiorna di conseguenza.
- * Attenzione: eseguire la funzione dopo l'inserimento e la modifica di tutte le righe del documento.
- *
- * @param array $tables
- * @param array $fields
- * @param int   $id_record
- * @param array $options
- */
-function aggiorna_sconto(array $tables, array $fields, $id_record, array $options = [])
-{
-    $dbo = database();
-
-    $descrizione = tr('Sconto', [], ['upper' => true]);
-
-    // Rimozione dello sconto precedente
-    $dbo->query('DELETE FROM '.$tables['row'].' WHERE sconto_globale = 1 AND '.$fields['row'].'='.prepare($id_record));
-
-    // Individuazione del nuovo sconto
-    $sconto = $dbo->select($tables['parent'], ['sconto_globale', 'tipo_sconto_globale'], [$fields['parent'] => $id_record]);
-    $sconto[0]['sconto_globale'] = floatval($sconto[0]['sconto_globale']);
-
-    // Aggiorno l'eventuale sconto gestendolo con le righe in fattura
-    $iva = 0;
-
-    if (!empty($sconto[0]['sconto_globale'])) {
-        // Commit: 2c7f69867accb4f12a0c7cfd320714bb98e31a67
-        // L'aliquota IVA viene calcolata in percentuale sull'imponibile e l'iva effettiva delle righe del documento.
-        if ($sconto[0]['tipo_sconto_globale'] == 'PRC') {
-            $rs = $dbo->fetchArray('SELECT SUM(subtotale - sconto) AS imponibile, SUM(iva) AS iva FROM (SELECT '.$tables['row'].'.subtotale, '.$tables['row'].'.sconto, '.$tables['row'].'.iva FROM '.$tables['row'].' WHERE '.$fields['row'].'='.prepare($id_record).') AS t');
-            $subtotale = $rs[0]['imponibile'];
-            $iva += $rs[0]['iva'] / 100 * $sconto[0]['sconto_globale'];
-            $subtotale = -$subtotale / 100 * $sconto[0]['sconto_globale'];
-
-            $descrizione = $descrizione.' '.Translator::numberToLocale($sconto[0]['sconto_globale']).'%';
-        } else {
-            $rs = $dbo->fetchArray('SELECT SUM(subtotale - sconto) AS imponibile, SUM(iva) AS iva FROM (SELECT '.$tables['row'].'.subtotale, '.$tables['row'].'.sconto, '.$tables['row'].'.iva FROM '.$tables['row'].' WHERE '.$fields['row'].'='.prepare($id_record).') AS t');
-            $subtotale = $rs[0]['imponibile'];
-            $iva += $sconto[0]['sconto_globale'] * $rs[0]['iva'] / $subtotale;
-
-            $subtotale = -$sconto[0]['sconto_globale'];
-        }
-
-        // Calcolo dell'IVA da scontare
-        $idiva = setting('Iva predefinita');
-        $rsi = $dbo->select('co_iva', ['descrizione', 'percentuale'], ['id' => $idiva]);
-
-        $values = [
-            $fields['row'] => $id_record,
-            'descrizione' => $descrizione,
-            'subtotale' => $subtotale,
-            'qta' => 1,
-            'idiva' => $idiva,
-            //'desc_iva' => $rsi[0]['descrizione'],
-            'iva' => -$iva,
-            'sconto_globale' => 1,
-            'order' => orderValue($tables['row'], $fields['row'], $id_record),
-        ];
-
-        $dbo->insert($tables['row'], $values);
-    }
-}
-
 function controlla_seriali($field, $id_riga, $old_qta, $new_qta, $dir)
 {
     $dbo = database();

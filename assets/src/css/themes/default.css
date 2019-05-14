@@ -41,19 +41,19 @@
     color: #72AFD2;
 }
 
-.skin-default .main-header .navbar {
+.skin-default .main-header .navbar > span {
     color: #eee;
     background: #222;
     border: none;
 }
 
-.skin-default .main-header .navbar .nav li a
-.skin-default .main-header .navbar .nav li a:hover,
-.skin-default .main-header .navbar .nav li a:active,
-.skin-default .main-header .navbar .nav li a:focus,
-.skin-default .main-header .navbar .nav .open a,
-.skin-default .main-header .navbar .nav .open a:hover,
-.skin-default .main-header .navbar .nav .open a:focus,
+.skin-default .main-header .navbar .nav > li > a
+.skin-default .main-header .navbar .nav > li > a:hover,
+.skin-default .main-header .navbar .nav > li > a:active,
+.skin-default .main-header .navbar .nav > li > a:focus,
+.skin-default .main-header .navbar .nav .open > a,
+.skin-default .main-header .navbar .nav .open > a:hover,
+.skin-default .main-header .navbar .nav .open > a:focus,
 .skin-default .main-header .navbar .nav .active a,
 .skin-default .main-header .navbar .nav .actual a,
 .skin-default .main-header .navbar .nav .menu-open a {

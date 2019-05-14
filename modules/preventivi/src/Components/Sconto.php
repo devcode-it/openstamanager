@@ -12,7 +12,7 @@ class Sconto extends Discount
     protected $table = 'co_righe_preventivi';
 
     /**
-     * Crea una nuovo sconto globale collegato alla preventivo, oppure restituisce quello esistente.
+     * Crea un nuovo sconto collegato ad un preventivo.
      *
      * @param Preventivo $preventivo
      *
@@ -20,13 +20,7 @@ class Sconto extends Discount
      */
     public static function build(Preventivo $preventivo)
     {
-        $model = $preventivo->scontoGlobale;
-
-        if ($model == null) {
-            $model = parent::build();
-
-            $model->setPreventivo($preventivo);
-        }
+        $model = parent::build($preventivo);
 
         return $model;
     }

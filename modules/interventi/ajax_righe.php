@@ -50,7 +50,7 @@ if (count($rs2) > 0) {
         //Costo unitario
         echo '
         <td class="text-right">
-            '.Translator::numberToLocale($r['prezzo_acquisto']).' &euro;
+            '.moneyFormat($r['prezzo_acquisto']).'
         </td>';
 
         if ($show_prezzi) {
@@ -59,14 +59,14 @@ if (count($rs2) > 0) {
 
             echo '
         <td class="text-right">
-            '.Translator::numberToLocale($r['prezzo_vendita']).' &euro;';
+            '.moneyFormat($r['prezzo_vendita']);
 
             if ($r['sconto_unitario'] > 0) {
                 echo '
             <br><span class="label label-danger">
                 - '.tr('sconto _TOT_ _TYPE_', [
                     '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
-                    '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
+                    '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : currency()),
                 ]).'
             </span>';
             }
@@ -76,23 +76,24 @@ if (count($rs2) > 0) {
 
             echo '
         <td class="text-right">
-            <span>'.Translator::numberToLocale($r['iva']).'</span> &euro;';
-            echo '
+            '.moneyFormat($r['iva']).'
         </td>';
 
             // Prezzo di vendita
             echo '
         <td class="text-right">
-            <span class="prezzo_articolo">'.Translator::numberToLocale(sum($r['prezzo_vendita'] * $r['qta'], -$r['sconto'])).'</span> &euro;
+            '.moneyFormat(sum($r['prezzo_vendita'] * $r['qta'], -$r['sconto'])).'
         </td>';
         }
 
         // Pulsante per riportare nel magazzino centrale.
         // Visibile solo se l'intervento non è stato nè fatturato nè completato.
         if (!$record['flag_completato']) {
+            $link = $r['is_sconto'] == 1 ? $structure->fileurl('row-edit.php') : $structure->fileurl('add_righe.php');
+
             echo '
         <td class="text-center">
-            <button type="button" class="btn btn-warning btn-xs" data-toggle="tooltip" onclick="launch_modal(\''.tr('Modifica spesa').'\', \''.$rootdir.'/modules/interventi/add_righe.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'\', 1);"><i class="fa fa-edit"></i></button>
+            <button type="button" class="btn btn-warning btn-xs" data-toggle="tooltip" onclick="launch_modal(\''.tr('Modifica spesa').'\', \''.$link.'?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'\', 1);"><i class="fa fa-edit"></i></button>
             <button type="button" class="btn btn-danger btn-xs" data-toggle="tooltip" onclick="if(confirm(\''.tr('Eliminare questa spesa?').'\')){ elimina_riga( \''.$r['id'].'\' ); }"><i class="fa fa-trash"></i></button>
         </td>';
         }

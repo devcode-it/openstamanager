@@ -1,33 +1,26 @@
 <?php
 
+use Modules\Fatture\Fattura;
+
 include_once __DIR__.'/../../core.php';
 
-// Info documento
-$rs = $dbo->fetchArray('SELECT * FROM co_documenti WHERE id='.prepare($id_record));
-$idanagrafica = $rs[0]['idanagrafica'];
-
-if ($module['name'] == 'Fatture di vendita') {
-    $dir = 'entrata';
-    $conti = 'conti-vendite';
-} else {
-    $dir = 'uscita';
-    $conti = 'conti-acquisti';
-}
-
-// Conto dalle impostazioni
-if (empty($idconto)) {
-    $idconto = ($dir == 'entrata') ? setting('Conto predefinito fatture di vendita') : setting('Conto predefinito fatture di acquisto');
-}
+$documento = Fattura::find($id_record);
 
 // Impostazioni per la gestione
 $options = [
     'op' => 'manage_riga',
     'action' => 'add',
-    'dir' => $dir,
-    'conti' => $conti,
-    'idanagrafica' => $idanagrafica,
-    'show-ritenuta-contributi' => !empty($rs[0]['id_ritenuta_contributi']),
+    'dir' => $documento->direzione,
+    'conti' => $documento->direzione == 'entrata' ? 'conti-vendite' : 'conti-acquisti',    'idanagrafica' => $documento['idanagrafica'],
+    'show-ritenuta-contributi' => !empty($documento['id_ritenuta_contributi']),
+    'imponibile_scontato' => $documento->imponibile_scontato,
+    'totale' => $documento->totale,
 ];
+
+// Conto dalle impostazioni
+if (empty($idconto)) {
+    $idconto = ($dir == 'entrata') ? setting('Conto predefinito fatture di vendita') : setting('Conto predefinito fatture di acquisto');
+}
 
 // Dati di default
 $result = [
@@ -48,7 +41,7 @@ $iva = $dbo->fetchArray('SELECT idiva_'.($dir == 'uscita' ? 'acquisti' : 'vendit
 $result['idiva'] = $iva[0]['idiva'] ?: setting('Iva predefinita');
 
 // Aggiunta sconto di default da listino per le vendite
-$listino = $dbo->fetchArray('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_listini ON an_anagrafiche.idlistino_'.($dir == 'uscita' ? 'acquisti' : 'vendite').'=mg_listini.id WHERE idanagrafica='.prepare($idanagrafica));
+$listino = $dbo->fetchArray('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_listini ON an_anagrafiche.idlistino_'.($dir == 'uscita' ? 'acquisti' : 'vendite').'=mg_listini.id WHERE idanagrafica='.prepare($documento['idanagrafica']));
 
 if ($listino[0]['prc_guadagno'] > 0) {
     $result['sconto_unitario'] = $listino[0]['prc_guadagno'];
@@ -74,6 +67,10 @@ if (get('is_descrizione') !== null) {
     $file = 'articolo';
 
     $options['op'] = 'manage_articolo';
+} elseif (get('is_sconto') !== null) {
+    $file = 'sconto';
+
+    $options['op'] = 'manage_sconto';
 }
 
 echo App::load($file.'.php', $result, $options);

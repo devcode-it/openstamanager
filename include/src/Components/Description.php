@@ -16,11 +16,48 @@ abstract class Description extends Model
 
         if (!$bypass) {
             $model->is_descrizione = 1;
+            $model->qta = 1;
         }
 
         $model->setParent($document);
 
         return $model;
+    }
+
+    /**
+     * Modifica la quantità dell'elemento.
+     *
+     * @param float $value
+     *
+     * @return float
+     */
+    public function setQtaAttribute($value)
+    {
+        $previous = $this->qta;
+        $diff = $value - $previous;
+
+        $this->attributes['qta'] = $value;
+
+        $this->evasione($diff);
+
+        return $diff;
+    }
+
+    /**
+     * Restituisce la quantità rimanente dell'elemento.
+     *
+     * @return float
+     */
+    public function getQtaRimanenteAttribute()
+    {
+        return $this->qta - $this->qta_evasa;
+    }
+
+    public function delete()
+    {
+        $this->evasione(-$this->qta);
+
+        return parent::delete();
     }
 
     /**
@@ -36,8 +73,6 @@ abstract class Description extends Model
         if (empty($this->disableOrder)) {
             $this->order = orderValue($this->table, $this->getParentID(), $document->id);
         }
-
-        $this->save();
     }
 
     /**
@@ -67,6 +102,8 @@ abstract class Description extends Model
         if ($qta !== null) {
             $attributes['qta'] = $qta;
         }
+
+        $attributes['qta_evasa'] = 0;
 
         // Creazione del nuovo oggetto
         $model = new $object();
@@ -107,17 +144,26 @@ abstract class Description extends Model
 
     public function isDescrizione()
     {
-        return $this->is_descrizione == 1;
+        return !$this->isArticolo() && !$this->isSconto() && !$this->isRiga() && $this instanceof Description;
+    }
+
+    public function isSconto()
+    {
+        return $this instanceof Discount;
     }
 
     public function isRiga()
     {
-        return !$this->isDescrizione() && !$this->isArticolo();
+        return !$this->isArticolo() && !$this->isSconto() && $this instanceof Row;
     }
 
     public function isArticolo()
     {
-        return !empty($this->idarticolo);
+        return $this instanceof Article;
+    }
+
+    protected function evasione($diff)
+    {
     }
 
     /**
@@ -128,6 +174,7 @@ abstract class Description extends Model
     protected function customInitCopiaIn($original)
     {
         $this->is_descrizione = $original->is_descrizione;
+        $this->is_sconto = $original->is_sconto;
     }
 
     /**
@@ -161,9 +208,5 @@ abstract class Description extends Model
                 $builder->where('is_descrizione', '=', 0);
             });
         }
-
-        static::addGlobalScope('not_discount', function (Builder $builder) {
-            $builder->where('sconto_globale', '=', 0);
-        });
     }
 }

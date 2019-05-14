@@ -5,9 +5,11 @@ include_once __DIR__.'/../../core.php';
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Interventi\Components\Articolo;
+use Modules\Interventi\Components\Riga;
 use Modules\Interventi\Intervento;
 use Modules\Interventi\Stato;
 use Modules\Interventi\TipoSessione;
+use Modules\Interventi\Components\Sconto;
 
 switch (post('op')) {
     case 'update':
@@ -18,9 +20,6 @@ switch (post('op')) {
         if (!empty($idcontratto_riga) && $intervento->id_contratto != $idcontratto) {
             $dbo->update('co_promemoria', ['idintervento' => null], ['idintervento' => $id_record]);
         }
-
-        $tipo_sconto = post('tipo_sconto_globale');
-        $sconto = post('sconto_globale');
 
         // Salvataggio modifiche intervento
         $intervento->data_richiesta = post('data_richiesta');
@@ -39,9 +38,6 @@ switch (post('op')) {
         $intervento->idautomezzo = post('idautomezzo');
         $intervento->id_preventivo = post('idpreventivo');
         $intervento->id_contratto = $idcontratto;
-
-        $intervento->sconto_globale = $sconto;
-        $intervento->tipo_sconto_globale = $tipo_sconto;
 
         $intervento->id_documento_fe = post('id_documento_fe');
         $intervento->num_item = post('num_item');
@@ -190,6 +186,32 @@ switch (post('op')) {
 
         break;
 
+     // Aggiungo impianto
+     case 'add_impianto':
+     $matricola = post('matricola');
+     $idanagrafica = post('idanagrafica');
+     $nome = post('nome');
+     $idtecnico = post('idtecnico');
+
+     if (!empty($matricola)) {
+         $dbo->query('INSERT INTO my_impianti(matricola, idanagrafica, nome, data, idtecnico) VALUES ('.prepare($matricola).', '.prepare($idanagrafica).', '.prepare($nome).', NOW(), '.prepare($idtecnico).')');
+
+         $id_impianto = $dbo->lastInsertedID();
+
+         $dbo->insert('my_impianti_interventi', [
+             'idintervento' => $id_record,
+             'idimpianto' => $id_impianto,
+         ]);
+
+         flash()->info(tr('Aggiunto nuovo impianto!'));
+
+         $database->commitTransaction(); 
+         header("location: ".$rootdir."/editor.php?id_module=3&id_record=".$id_record."#tab_2");
+         exit;
+     }
+
+     break;
+
     // Eliminazione intervento
     case 'delete':
         // Elimino anche eventuali file caricati
@@ -284,13 +306,13 @@ switch (post('op')) {
 
         break;
 
-    case 'editriga':
+    case 'manage_riga':
         $idriga = post('idriga');
         $descrizione = post('descrizione');
         $qta = post('qta');
         $um = post('um');
         $idiva = post('idiva');
-        $prezzo_vendita = post('prezzo_vendita');
+        $prezzo_vendita = post('prezzo');
         $prezzo_acquisto = post('prezzo_acquisto');
 
         $sconto_unitario = post('sconto');
@@ -327,6 +349,29 @@ switch (post('op')) {
     case 'delriga':
         $idriga = post('idriga');
         $dbo->query('DELETE FROM in_righe_interventi WHERE id='.prepare($idriga));
+
+        break;
+
+    case 'manage_sconto':
+        if (post('idriga') != null) {
+            $sconto = Sconto::find(post('idriga'));
+        } else {
+            $sconto = Sconto::build($intervento);
+        }
+
+        $sconto->descrizione = post('descrizione');
+        $sconto->id_iva = post('idiva');
+
+        $sconto->sconto_unitario = post('sconto_unitario');
+        $sconto->tipo_sconto = 'UNT';
+
+        $sconto->save();
+
+        if (post('idriga') != null) {
+            flash()->info(tr('Sconto/maggiorazione modificato!'));
+        } else {
+            flash()->info(tr('Sconto/maggiorazione aggiunta!'));
+        }
 
         break;
 
@@ -584,18 +629,33 @@ switch (post('op')) {
         $prezzo_ore_consuntivo_tecnico = $prezzo_ore_unitario_tecnico * $ore;
         $prezzo_km_consuntivo_tecnico = $prezzo_km_unitario_tecnico * $km;
 
-        // Sconti
+        // Sconti ore
         $sconto_unitario = post('sconto');
         $tipo_sconto = post('tipo_sconto');
-        $sconto = calcola_sconto([
-            'sconto' => $sconto_unitario,
-            'prezzo' => $prezzo_ore_consuntivo,
-            'tipo' => $tipo_sconto,
-        ]);
 
+        if ($tipo_sconto == 'UNT') {
+            $sconto = $sconto_unitario * $ore;
+        } else {
+            $sconto = calcola_sconto([
+                'sconto' => $sconto_unitario,
+                'prezzo' => $prezzo_ore_consuntivo,
+                'tipo' => $tipo_sconto,
+            ]);
+        }
+
+        // Sconti km
         $scontokm_unitario = post('sconto_km');
         $tipo_scontokm = post('tipo_sconto_km');
-        $scontokm = ($tipo_scontokm == 'PRC') ? ($prezzo_km_consuntivo * $scontokm_unitario) / 100 : $scontokm_unitario;
+
+        if ($tipo_scontokm == 'UNT') {
+            $scontokm = $scontokm_unitario * $km;
+        } else {
+            $scontokm = calcola_sconto([
+                'sconto' => $scontokm_unitario,
+                'prezzo' => $prezzo_km_consuntivo,
+                'tipo' => $tipo_scontokm,
+            ]);
+        }
 
         $dbo->update('in_interventi_tecnici', [
             'idtipointervento' => $idtipointervento_tecnico,

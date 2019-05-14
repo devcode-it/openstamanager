@@ -1,38 +1,38 @@
 <?php
 
+use Modules\Ordini\Ordine;
+
 include_once __DIR__.'/../../core.php';
 
 // Info contratto
-$rs = $dbo->fetchArray('SELECT * FROM or_ordini WHERE id='.prepare($id_record));
-$idanagrafica = $rs[0]['idanagrafica'];
-
-if ($module['name'] == 'Ordini cliente') {
-    $dir = 'entrata';
-} else {
-    $dir = 'uscita';
-}
+$documento = Ordine::find($id_record);
 
 // Impostazioni per la gestione
 $options = [
     'op' => 'editriga',
     'action' => 'edit',
-    'dir' => $dir,
-    'idanagrafica' => $idanagrafica,
-    'edit_articolo' => false,
+    'dir' => $documento->direzione,
+    'idanagrafica' => $documento['idanagrafica'],
+    'totale' => $documento->totale,
 ];
 
 // Dati della riga
-$rsr = $dbo->fetchArray('SELECT * FROM or_righe_ordini WHERE idordine='.prepare($id_record).' AND id='.prepare(get('idriga')));
+$id_riga = get('idriga');
+$riga = $documento->getRighe()->find($id_riga);
 
-$result = $rsr[0];
-$result['prezzo'] = $rsr[0]['subtotale'] / $rsr[0]['qta'];
+$result = $riga->toArray();
+$result['prezzo'] = $riga->prezzo_unitario_vendita;
 
 // Importazione della gestione dedicata
 $file = 'riga';
-if (!empty($result['is_descrizione'])) {
+if ($riga->isDescrizione()) {
     $file = 'descrizione';
-} elseif (!empty($result['idarticolo'])) {
+} elseif ($riga->isArticolo()) {
     $file = 'articolo';
+} elseif ($riga->isSconto()) {
+    $file = 'sconto';
+
+    $options['op'] = 'manage_sconto';
 }
 
 echo App::load($file.'.php', $result, $options);

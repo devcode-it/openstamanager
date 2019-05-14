@@ -182,6 +182,7 @@ echo '
             <br><br>
 
             <button type="submit" class="btn btn-success" '.$disabled.'><i class="fa fa-check"></i> '.tr('Salva impianti').'</button></a>
+            <button type="button" class="btn btn-primary" onclick="launch_modal(\''.tr('Aggiungi impianto').'\', \''.$rootdir.'/modules/my_impianti/add.php?id_module=30&source=Attività&plugin=1\',1);"><i class="fa fa-plus"></i> '.tr('Aggiungi impianti').'</button></a>
         </form>';
 
 echo '

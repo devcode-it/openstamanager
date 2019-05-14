@@ -110,18 +110,39 @@ ALTER TABLE `mg_articoli` ADD `peso_lordo` decimal(12, 4) NOT NULL AFTER `gg_gar
 
 -- 2016-02-15
 -- Aggiunta sconto percentuale e unitario su fatture e righe, ddt e righe, ordini e righe, preventivi e righe, contratti e righe
-ALTER TABLE `co_documenti` ADD `sconto_globale` decimal(12, 4) NOT NULL, ADD `tipo_sconto_globale` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT';
-ALTER TABLE `co_preventivi` ADD `sconto_globale` decimal(12, 4) NOT NULL, ADD `tipo_sconto_globale` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT';
-ALTER TABLE `co_contratti` ADD `sconto_globale` decimal(12, 4) NOT NULL, ADD `tipo_sconto_globale` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT';
-ALTER TABLE `or_ordini` ADD `sconto_globale` decimal(12, 4) NOT NULL, ADD `tipo_sconto_globale` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT';
-ALTER TABLE `dt_ddt` ADD `sconto_globale` decimal(12, 4) NOT NULL, ADD `tipo_sconto_globale` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT';
-ALTER TABLE `in_interventi` ADD `sconto_globale` decimal(12, 4) NOT NULL, ADD `tipo_sconto_globale` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT';
+ALTER TABLE `co_documenti` ADD `sconto_globale` decimal(12, 4) NOT NULL;
+ALTER TABLE `co_documenti` ADD `tipo_sconto_globale` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT';
+ALTER TABLE `co_preventivi` ADD `sconto_globale` decimal(12, 4) NOT NULL;
+ALTER TABLE `co_preventivi` ADD `tipo_sconto_globale` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT';
+ALTER TABLE `co_contratti` ADD `sconto_globale` decimal(12, 4) NOT NULL;
+ALTER TABLE `co_contratti` ADD `tipo_sconto_globale` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT';
+ALTER TABLE `or_ordini` ADD `sconto_globale` decimal(12, 4) NOT NULL;
+ALTER TABLE `or_ordini` ADD `tipo_sconto_globale` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT';
+ALTER TABLE `dt_ddt` ADD `sconto_globale` decimal(12, 4) NOT NULL;
+ALTER TABLE `dt_ddt` ADD `tipo_sconto_globale` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT';
+ALTER TABLE `in_interventi` ADD `sconto_globale` decimal(12, 4) NOT NULL;
+ALTER TABLE `in_interventi` ADD `tipo_sconto_globale` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT';
 
-ALTER TABLE `co_righe_documenti` ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`, ADD `tipo_sconto` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT' AFTER `sconto_unitario`, ADD `sconto_globale` boolean NOT NULL DEFAULT 0 AFTER `tipo_sconto`;
-ALTER TABLE `co_righe_preventivi` ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`, ADD `tipo_sconto` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT' AFTER `sconto_unitario`, ADD `sconto_globale` boolean NOT NULL DEFAULT 0 AFTER `tipo_sconto`;
-ALTER TABLE `co_righe2_contratti` ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`, ADD `tipo_sconto` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT' AFTER `sconto_unitario`, ADD `sconto_globale` boolean NOT NULL DEFAULT 0 AFTER `tipo_sconto`;
-ALTER TABLE `or_righe_ordini` ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`, ADD `tipo_sconto` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT' AFTER `sconto_unitario`, ADD `sconto_globale` boolean NOT NULL DEFAULT 0 AFTER `tipo_sconto`;
-ALTER TABLE `dt_righe_ddt` ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`, ADD `tipo_sconto` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT' AFTER `sconto_unitario`, ADD `sconto_globale` boolean NOT NULL DEFAULT 0 AFTER `tipo_sconto`;
+ALTER TABLE `co_righe_documenti` ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`;
+ALTER TABLE `co_righe_documenti`ADD `tipo_sconto` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT' AFTER `sconto_unitario`;
+ALTER TABLE `co_righe_documenti` ADD `sconto_globale` boolean NOT NULL DEFAULT 0 AFTER `tipo_sconto`;
+
+ALTER TABLE `co_righe_preventivi` ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`;
+ALTER TABLE `co_righe_preventivi` ADD `tipo_sconto` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT' AFTER `sconto_unitario`;
+ALTER TABLE `co_righe_preventivi` ADD `sconto_globale` boolean NOT NULL DEFAULT 0 AFTER `tipo_sconto`;
+
+ALTER TABLE `co_righe2_contratti` ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`;
+ALTER TABLE `co_righe2_contratti` ADD `tipo_sconto` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT' AFTER `sconto_unitario`;
+ALTER TABLE `co_righe2_contratti` ADD `sconto_globale` boolean NOT NULL DEFAULT 0 AFTER `tipo_sconto`;
+
+ALTER TABLE `or_righe_ordini` ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`;
+ALTER TABLE `or_righe_ordini` ADD `tipo_sconto` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT' AFTER `sconto_unitario`;
+ALTER TABLE `or_righe_ordini` ADD `sconto_globale` boolean NOT NULL DEFAULT 0 AFTER `tipo_sconto`;
+
+ALTER TABLE `dt_righe_ddt` ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`;
+ALTER TABLE `dt_righe_ddt` ADD `tipo_sconto` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT' AFTER `sconto_unitario`;
+ALTER TABLE `dt_righe_ddt` ADD `sconto_globale` boolean NOT NULL DEFAULT 0 AFTER `tipo_sconto`;
+
 
 ALTER TABLE `in_righe_interventi` ADD `sconto` decimal(12, 4) NOT NULL, ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`, ADD `tipo_sconto` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT' AFTER `sconto_unitario`;
 ALTER TABLE `mg_articoli_interventi` ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`, ADD `tipo_sconto` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT' AFTER `sconto_unitario`;

@@ -86,16 +86,9 @@ class Preventivo extends Document
         return 'Preventivi';
     }
 
-    public function updateSconto()
+    public function getDirezioneAttribute()
     {
-        // Aggiornamento sconto
-        aggiorna_sconto([
-            'parent' => 'co_preventivi',
-            'row' => 'co_righe_preventivi',
-        ], [
-            'parent' => 'id',
-            'row' => 'idpreventivo',
-        ], $this->id);
+        return 'entrata';
     }
 
     public function anagrafica()
@@ -123,14 +116,14 @@ class Preventivo extends Document
         return $this->hasMany(Components\Riga::class, 'idpreventivo');
     }
 
+    public function sconti()
+    {
+        return $this->hasMany(Components\Sconto::class, 'idpreventivo');
+    }
+
     public function descrizioni()
     {
         return $this->hasMany(Components\Descrizione::class, 'idpreventivo');
-    }
-
-    public function scontoGlobale()
-    {
-        return $this->hasOne(Components\Sconto::class, 'idpreventivo');
     }
 
     public function interventi()

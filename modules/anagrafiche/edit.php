@@ -150,8 +150,8 @@ if (!$cliente) {
                     {[ "type": "text", "label": "<?php echo tr('Provincia'); ?>", "name": "provincia", "maxlength": 2, "class": "text-center text-uppercase", "value": "$provincia$", "extra": "onkeyup=\"this.value = this.value.toUpperCase();\"" ]}
                 </div>
 
-				 <div class="col-md-3">
-                    {[ "type": "select", "label": "<?php echo tr('Nazione'); ?>", "name": "id_nazione", "values": "query=SELECT id AS id, CONCAT_WS(' - ', iso2, nome) AS descrizione FROM an_nazioni ORDER BY nome ASC", "value": "$id_nazione$" ]}
+				<div class="col-md-3">
+                    {[ "type": "select", "label": "<?php echo tr('Nazione'); ?>", "name": "id_nazione", "value": "$id_nazione$", "ajax-source": "nazioni" ]}
                 </div>
 
                 <div class="col-md-3">
@@ -541,7 +541,7 @@ if (!empty($google)) {
 
 if (setting('Azienda predefinita') == $id_record) {
     echo '
-<div class="alert alert-info text-center">'.tr('Per impostare il logo delle stampe, caricare un file ".jpg" specificando come nome dell\'allegato "Logo stampe" (Risoluzione consigliata 302x111 pixel)').'.</div>';
+<div class="alert alert-info text-center">'.tr('Per impostare il logo delle stampe, caricare un\'immagine specificando come nome "Logo stampe" (Risoluzione consigliata 302x111 pixel)').'.</div>';
 }
 
 // Collegamenti diretti

@@ -27,7 +27,7 @@ echo '
 
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "text", "label": "'.tr('Indirizzo').'", "name": "indirizzo", "id": "indirizzo_", "required": 1, "value": "$indirizzo$" ]}
+			{[ "type": "text", "label": "'.tr('Indirizzo').'", "name": "indirizzo", "id": "indirizzo_", "required": 0, "value": "$indirizzo$" ]}
 		</div>
 
 		<div class="col-md-6">
@@ -55,7 +55,7 @@ echo '
 
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "select", "label": "'.tr('Nazione').'", "name": "id_nazione", "values": "query=SELECT `id`, CONCAT_WS(\' - \', `iso2`, `nome`) AS `descrizione` FROM `an_nazioni` ORDER BY `descrizione` ASC", "value": "$id_nazione$" ]}
+			{[ "type": "select", "label": "'.tr('Nazione').'", "name": "id_nazione", "value": "$id_nazione$", "ajax-source": "nazioni" ]}
 		</div>
 
 		<div class="col-md-6">

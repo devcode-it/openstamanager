@@ -162,7 +162,7 @@ if (!empty($sessioni)) {
             <td style="border-right:1px solid #aaa;">
                 '.tr('_TOT_ _TYPE_', [
                     '_TOT_' => Translator::numberToLocale($sessione['sconto_unitario']),
-                    '_TYPE_' => ($sessione['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
+                    '_TYPE_' => ($sessione['tipo_sconto'] == 'PRC' ? '%' : currency()),
                 ]).'
             </td>';
         }
@@ -173,7 +173,7 @@ if (!empty($sessioni)) {
             <td style="border-right:1px solid #aaa;">
                 '.tr('_TOT_ _TYPE_', [
                     '_TOT_' => Translator::numberToLocale($sessione['scontokm_unitario']),
-                    '_TYPE_' => ($sessione['tipo_sconto_km'] == 'PRC' ? '%' : '&euro;'),
+                    '_TYPE_' => ($sessione['tipo_sconto_km'] == 'PRC' ? '%' : currency()),
                 ]).'
             </td>';
         }

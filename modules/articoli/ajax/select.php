@@ -7,13 +7,14 @@ switch ($resource) {
         $query = 'SELECT 
             mg_articoli.id, 
             mg_articoli.codice, 
-            mg_articoli.descrizione, 
+            mg_articoli.descrizione,
+			round(mg_articoli.qta,'.setting('Cifre decimali per quantità').') AS qta, 
             mg_articoli.um, 
             mg_articoli.idiva_vendita, 
             mg_articoli.idconto_vendita, 
             mg_articoli.idconto_acquisto, 
             mg_articoli.prezzo_vendita, 
-            mg_articoli.prezzo_acquisto, 
+            mg_articoli.prezzo_acquisto,
             categoria.`nome` AS categoria,
             sottocategoria.`nome` AS sottocategoria,
             co_iva.descrizione AS iva_vendita,
@@ -47,7 +48,10 @@ switch ($resource) {
             'id' => 'id',
             'codice' => 'codice',
             'descrizione' => 'descrizione',
+            'qta' => 'qta',
             'um' => 'um',
+            'categoria' => 'categoria',
+            'sottocategoria' => 'sottocategoria',
             'idiva_vendita' => 'idiva_vendita',
             'iva_vendita' => 'iva_vendita',
             'idconto_vendita' => 'idconto_vendita',
@@ -107,20 +111,13 @@ switch ($resource) {
             }
 
             $prezzo_vendita = $r['prezzo_vendita'];
-            if (!empty($listino)) {
-                $prezzo_vendita = sum($prezzo_vendita, -calcola_sconto([
-                    'sconto' => $listino['percentuale'],
-                    'prezzo' => $prezzo_vendita,
-                    'tipo' => 'PRC',
-                    'qta' => 1,
-                ]));
-            }
 
             $results[count($results) - 1]['children'][] = [
                 'id' => $r['id'],
-                'text' => $r['codice'].' - '.$r['descrizione'],
+                'text' => $r['codice'].' - '.$r['descrizione'].' ('.Translator::numberToLocale($r['qta']).(!empty($r['um']) ? ' '.$r['um'] : '').')',
                 'codice' => $r['codice'],
                 'descrizione' => $r['descrizione'],
+                'qta' => $r['qta'],
                 'um' => $r['um'],
                 'idiva_vendita' => $idiva,
                 'iva_vendita' => $iva,

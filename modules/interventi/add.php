@@ -40,8 +40,8 @@ if (null !== filter('orario_inizio') && '00:00:00' != filter('orario_inizio')) {
     $orario_inizio = filter('orario_inizio');
     $orario_fine = filter('orario_fine');
 } else {
-    $orario_inizio = date('H').':00';
-    $orario_fine = date('H', time() + 60 * 60).':00';
+    $orario_inizio = date('H').':00:00';
+    $orario_fine = date('H', time() + 60 * 60).':00:00';
 }
 
 // Se sto pianificando un contratto, leggo tutti i dati del contratto per predisporre l'aggiunta intervento
@@ -113,6 +113,7 @@ elseif (!empty($id_intervento)) {
     $idtipointervento = $rs[0]['idtipointervento'];
     $data = (null !== filter('data')) ? filter('data') : $rs[0]['data_richiesta'];
     $data_richiesta = $rs[0]['data_richiesta'];
+	$data_scadenza = $rs[0]['data_scadenza'];
     $richiesta = $rs[0]['richiesta'];
     $idsede = $rs[0]['idsede'];
     $idanagrafica = $rs[0]['idanagrafica'];
@@ -228,7 +229,7 @@ if (!empty($id_intervento)) {
                 </div>
                 
                 <div class="col-md-3">
-                    {[ "type": "timestamp", "label": "<?php echo tr('Data/ora scadenza'); ?>", "name": "data_scadenza", "required": 0, "value": "" ]}
+                    {[ "type": "timestamp", "label": "<?php echo tr('Data/ora scadenza'); ?>", "name": "data_scadenza", "required": 0, "value": "<?php echo $data_scadenza; ?>" ]}
                 </div>
 
 				<div class="col-md-3">
@@ -273,7 +274,7 @@ if (!empty($id_intervento)) {
 
 			<div class="row">
 				<div class="col-md-12">
-					{[ "type": "select", "label": "<?php echo tr('Tecnici'); ?>", "multiple": "1", "name": "idtecnico[]", "required": <?php echo get('ref') ? 1 : 0; ?>, "ajax-source": "tecnici", "value": "<?php echo $idtecnico; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Tecnici'); ?>", "multiple": "1", "name": "idtecnico[]", "required": <?php echo get('ref') ? 1 : 0; ?>, "ajax-source": "tecnici", "value": "<?php echo $idtecnico; ?>", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Tecnico||<?php echo (empty($idtecnico)) ? '' : 'disabled'; ?>" ]}
 				</div>
 			</div>
 		</div>

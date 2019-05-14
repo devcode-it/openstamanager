@@ -26,22 +26,13 @@ switch (post('op')) {
 
         $sede->save();
 
-        if (empty(post('ragione_sociale'))) {
-            $ragione_sociale = post('cognome').' '.post('nome');
-        } else {
-            $ragione_sociale = post('ragione_sociale');
-        }
-
         // Informazioni sull'anagrafica
         $anagrafica->codice = post('codice');
         $anagrafica->tipo = post('tipo');
         $anagrafica->codice_destinatario = post('codice_destinatario');
-        $anagrafica->ragione_sociale = $ragione_sociale;
+        $anagrafica->ragione_sociale = post('ragione_sociale');
         $anagrafica->nome = post('nome');
         $anagrafica->cognome = post('cognome');
-
-        $anagrafica->partita_iva = post('piva');
-        $anagrafica->codice_fiscale = post('codice_fiscale');
         $anagrafica->tipo = post('tipo');
         $anagrafica->data_nascita = post('data_nascita');
         $anagrafica->luogo_nascita = post('luogo_nascita');
@@ -85,6 +76,36 @@ switch (post('op')) {
 
         $anagrafica->tipologie = (array) post('idtipoanagrafica');
 
+        // Blocco il salvataggio del codice fiscale se già presente
+        if (!empty(post('codice_fiscale'))) {
+            $count_cf = $dbo->fetchNum('SELECT codice_fiscale FROM an_anagrafiche WHERE codice_fiscale = '.prepare(post('codice_fiscale')).' AND idanagrafica != '.prepare($id_record));
+
+            if ($count_cf > 0) {
+                flash()->error(tr('Attenzione: il codice fiscale _COD_ è già stato utilizzato', [
+                    '_COD_' => post('codice_fiscale'),
+                ]));
+            } else {
+                $anagrafica->codice_fiscale = post('codice_fiscale');
+            }
+        } else {
+            $anagrafica->codice_fiscale = post('codice_fiscale');
+        }
+
+        // Blocco il salvataggio della partita iva se già presente
+        if (!empty(post('piva'))) {
+            $count_piva = $dbo->fetchNum('SELECT piva FROM an_anagrafiche WHERE piva = '.prepare(post('piva')).' AND idanagrafica != '.prepare($id_record));
+
+            if ($count_piva > 0) {
+                flash()->error(tr('Attenzione: la partita IVA _IVA_ è già stata utilizzata', [
+                    '_IVA_' => post('piva'),
+                ]));
+            } else {
+                $anagrafica->partita_iva = post('piva');
+            }
+        } else {
+            $anagrafica->partita_iva = post('piva');
+        }
+
         $anagrafica->save();
 
         flash()->info(str_replace('_NAME_', '"'.post('ragione_sociale').'"', "Informazioni per l'anagrafica _NAME_ salvate correttamente!"));
@@ -95,18 +116,17 @@ switch (post('op')) {
 
         $check_vat_number = Validate::isValidVatNumber($partita_iva);
         if (empty($check_vat_number)) {
-            flash()->warning(tr('Attenzione: la partita IVA _IVA_ sembra non essere valida', [
+            flash()->warning(tr('Attenzione: la partita IVA _IVA_ potrebbe non essere valida', [
                 '_IVA_' => $partita_iva,
             ]));
         }
 
         // Validazione del Codice Fiscale, solo per anagrafiche Private e Aziende, ignoro controllo se codice fiscale e settato uguale alla p.iva
-        $codice_fiscale = $anagrafica->codice_fiscale;
-        if ($anagrafica->tipo != 'Ente pubblico' and $codice_fiscale != $partita_iva) {
-            $check_codice_fiscale = Validate::isValidTaxCode($codice_fiscale);
+        if ($anagrafica->tipo != 'Ente pubblico' and $anagrafica->codice_fiscale != $anagrafica->partita_iva) {
+            $check_codice_fiscale = Validate::isValidTaxCode($anagrafica->codice_fiscale);
             if (empty($check_codice_fiscale)) {
-                flash()->warning(tr('Attenzione: il codice fiscale _COD_ sembra non essere valido', [
-                    '_COD_' => $codice_fiscale,
+                flash()->warning(tr('Attenzione: il codice fiscale _COD_ potrebbe non essere valido', [
+                    '_COD_' => $anagrafica->codice_fiscale,
                 ]));
             }
         }
@@ -128,15 +148,40 @@ switch (post('op')) {
 
     case 'add':
         $idtipoanagrafica = post('idtipoanagrafica');
+        $ragione_sociale = post('ragione_sociale');
 
-        if (empty(post('ragione_sociale'))) {
-            $ragione_sociale = post('cognome').' '.post('nome');
+        $anagrafica = Anagrafica::build($ragione_sociale, post('nome'), post('cognome'), $idtipoanagrafica);
+        $id_record = $anagrafica->id;
+
+        // Blocco il salvataggio del codice fiscale se già presente
+        if (!empty(post('codice_fiscale'))) {
+            $count_cf = $dbo->fetchNum('SELECT codice_fiscale FROM an_anagrafiche WHERE codice_fiscale = '.prepare(post('codice_fiscale')).' AND idanagrafica != '.prepare($id_record));
+
+            if ($count_cf > 0) {
+                flash()->error(tr('Attenzione: il codice fiscale _COD_ è già stato utilizzato', [
+                    '_COD_' => post('codice_fiscale'),
+                ]));
+            } else {
+                $anagrafica->codice_fiscale = post('codice_fiscale');
+            }
         } else {
-            $ragione_sociale = post('ragione_sociale');
+            $anagrafica->codice_fiscale = post('codice_fiscale');
         }
 
-        $anagrafica = Anagrafica::build($ragione_sociale, $idtipoanagrafica);
-        $id_record = $anagrafica->id;
+        // Blocco il salvataggio della partita iva se già presente
+        if (!empty(post('piva'))) {
+            $count_piva = $dbo->fetchNum('SELECT piva FROM an_anagrafiche WHERE piva = '.prepare(post('piva')).' AND idanagrafica != '.prepare($id_record));
+
+            if ($count_piva > 0) {
+                flash()->error(tr('Attenzione: la partita IVA _IVA_ è già stata utilizzata', [
+                '_IVA_' => post('piva'),
+            ]));
+            } else {
+                $anagrafica->partita_iva = post('piva');
+            }
+        } else {
+            $anagrafica->partita_iva = post('piva');
+        }
 
         // Se ad aggiungere un cliente è un agente, lo imposto come agente di quel cliente
         // Lettura tipologia dell'utente loggato
@@ -153,10 +198,6 @@ switch (post('op')) {
 
         $idagente = ($agente_is_logged && in_array($id_cliente, $idtipoanagrafica)) ? $user['idanagrafica'] : 0;
 
-        $anagrafica->nome = post('nome');
-        $anagrafica->cognome = post('cognome');
-        $anagrafica->partita_iva = post('piva');
-        $anagrafica->codice_fiscale = post('codice_fiscale');
         $anagrafica->indirizzo = post('indirizzo');
         $anagrafica->citta = post('citta');
         $anagrafica->cap = post('cap');
@@ -164,8 +205,11 @@ switch (post('op')) {
         $anagrafica->telefono = post('telefono');
         $anagrafica->cellulare = post('cellulare');
         $anagrafica->email = post('email');
-        $anagrafica->idrelazione = post('idrelazione');
         $anagrafica->idagente = $idagente;
+        $anagrafica->pec = post('pec');
+        $anagrafica->tipo = post('tipo');
+        $anagrafica->codice_destinatario = post('codice_destinatario');
+        $anagrafica->id_nazione = post('id_nazione') ?: null;
 
         $anagrafica->save();
 
@@ -176,7 +220,7 @@ switch (post('op')) {
         // Lettura tipologia della nuova anagrafica
         $descrizioni_tipi = $anagrafica->tipi()->get()->pluck('descrizione')->toArray();
         if (isAjaxRequest() && in_array(post('tipoanagrafica'), $descrizioni_tipi)) {
-            echo json_encode(['id' => $id_record, 'text' => $ragione_sociale]);
+            echo json_encode(['id' => $id_record, 'text' => $anagrafica->ragione_sociale]);
         }
 
         flash()->info(tr('Aggiunta nuova anagrafica di tipo _TYPE_', [
@@ -188,10 +232,25 @@ switch (post('op')) {
     case 'delete':
         // Se l'anagrafica non è l'azienda principale, la disattivo
         if (!in_array($id_azienda, $tipi_anagrafica)) {
-            $dbo->query('UPDATE an_anagrafiche SET deleted_at = NOW() WHERE idanagrafica = '.prepare($id_record));
+            $interventi = $dbo->fetchOne('SELECT id FROM in_interventi WHERE idanagrafica='.prepare($id_record));
+            $preventivi = $dbo->fetchOne('SELECT id FROM co_preventivi WHERE idanagrafica='.prepare($id_record));
+            $contratti = $dbo->fetchOne('SELECT id FROM co_contratti WHERE idanagrafica='.prepare($id_record));
+            $ordini = $dbo->fetchOne('SELECT id FROM or_ordini WHERE idanagrafica='.prepare($id_record));
+            $ddt = $dbo->fetchOne('SELECT id FROM dt_ddt WHERE idanagrafica='.prepare($id_record));
+            $fatture = $dbo->fetchOne('SELECT id FROM co_documenti WHERE idanagrafica='.prepare($id_record));
 
-            // Se l'anagrafica è collegata ad un utente lo disabilito
-            $dbo->query('UPDATE zz_users SET enabled = 0 WHERE idanagrafica = '.prepare($id_record));
+            // Se non ci sono documenti collegati, elimino l'anagrafica
+            if (count($interventi) == 0 && count($preventivi) == 0 && count($contratti) == 0 && count($ordini) == 0 && count($ddt) == 0 && count($fatture) == 0) {
+                $dbo->query('DELETE FROM an_anagrafiche WHERE idanagrafica = '.prepare($id_record));
+            }
+
+            // altrimenti la disabilito solo
+            else {
+                $dbo->query('UPDATE an_anagrafiche SET deleted_at = NOW() WHERE idanagrafica = '.prepare($id_record));
+
+                // Se l'anagrafica è collegata ad un utente lo disabilito
+                $dbo->query('UPDATE zz_users SET enabled = 0 WHERE idanagrafica = '.prepare($id_record));
+            }
 
             flash()->info(tr('Anagrafica eliminata!'));
         }

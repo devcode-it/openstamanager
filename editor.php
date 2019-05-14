@@ -31,7 +31,7 @@ if (empty($record) || !$has_access) {
     		<h3 class="text-muted">'.
                 '<i class="fa fa-question-circle"></i> '.tr('Record non trovato').'
                 <br><br>
-                <small class="help-block">'.tr('Stai cercando di accedere ad un record eliminato o non presente').'</small>
+                <small class="help-block">'.tr('Stai cercando di accedere ad un record eliminato o non presente').'.</small>
             </h3>
             <br>
 
@@ -202,7 +202,7 @@ if (empty($record) || !$has_access) {
 
                 <script>
                 $(document).ready(function(){
-                    var form = $("#custom_fields_top-edit").parent().find("form").first();
+                    var form = $("#module-edit").find("form").first();
 
                     // Campi a inizio form
                     form.prepend($("#custom_fields_top-edit").html());

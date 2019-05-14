@@ -39,11 +39,11 @@ abstract class Row extends Description
      */
     public function getImponibileScontatoAttribute()
     {
-        $result = $this->prezzo_unitario_vendita > 0 ? $this->imponibile : -$this->imponibile;
+        $result = $this->prezzo_unitario_vendita >= 0 ? $this->imponibile : -$this->imponibile;
 
         $result -= $this->sconto;
 
-        return $this->prezzo_unitario_vendita > 0 ? $result : -$result;
+        return $this->prezzo_unitario_vendita >= 0 ? $result : -$result;
     }
 
     /**
@@ -143,11 +143,11 @@ abstract class Row extends Description
             $this->prezzo_unitario_vendita_riga = $this->attributes['subtotale'] / $this->qta;
         }
 
-        return $this->prezzo_unitario_vendita_riga;
+        return !is_nan($this->prezzo_unitario_vendita_riga) ? $this->prezzo_unitario_vendita_riga : 0;
     }
 
     /**
-     * Salva la riga, impostando i campi dipendenti dai parametri singoli.
+     * Salva la riga, impostando i campi dipendenti dai singoli parametri.
      *
      * @param array $options
      *
@@ -176,6 +176,10 @@ abstract class Row extends Description
         if (!$bypass) {
             static::addGlobalScope('rows', function (Builder $builder) {
                 $builder->whereNull('idarticolo')->orWhere('idarticolo', '=', 0);
+            });
+
+            static::addGlobalScope('not_discounts', function (Builder $builder) {
+                $builder->where('is_sconto', '=', 0);
             });
         }
     }

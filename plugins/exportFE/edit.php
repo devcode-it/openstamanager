@@ -158,8 +158,8 @@ echo '
             <i class="fa fa-file"></i> '.tr('Genera').'
         </button>
     </form>';
-	
-	$file = $generated ? Models\Upload::where('filename', $fattura_pa->getFilename())->where('id_record', $id_record)->first() : null;
+
+    $file = $generated ? Models\Upload::where('filename', $fattura_pa->getFilename())->where('id_record', $id_record)->first() : null;
 
 echo '
 
@@ -168,18 +168,17 @@ echo '
     <a href="'.ROOTDIR.'/view.php?file_id='.($file ? $file->id : null).'" class="btn btn-info btn-lg '.($generated ? '' : 'disabled').'" target="_blank" '.($generated ? '' : 'disabled').'>
         <i class="fa fa-eye"></i> '.tr('Visualizza').'
     </a>';
-	
-	// Scelgo quando posso inviarla
-	$send = Interaction::isEnabled() && $generated && in_array($record['codice_stato_fe'], ['GEN', 'ERVAL']);
 
-	
+    // Scelgo quando posso inviarla
+    $send = Interaction::isEnabled() && $generated && in_array($record['codice_stato_fe'], ['GEN', 'ERVAL']);
+
 echo '
     <i class="fa fa-arrow-right fa-fw text-muted"></i>
 
     <a href="'.$structure->fileurl('download.php').'?id_record='.$id_record.'" class="btn btn-primary btn-lg '.($generated ? '' : 'disabled').'" target="_blank" '.($generated ? '' : 'disabled').'>
         <i class="fa fa-download"></i> '.tr('Scarica').'
     </a>';
-	
+
 echo '
 
     <i class="fa fa-arrow-right fa-fw text-muted"></i>

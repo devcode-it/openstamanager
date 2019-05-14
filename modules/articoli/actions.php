@@ -117,12 +117,9 @@ switch (post('op')) {
 
     // Duplica articolo
     case 'copy':
-        $dbo->query('CREATE TEMPORARY TABLE tmp SELECT * FROM mg_articoli WHERE id = '.prepare($id_record));
-        $dbo->query('ALTER TABLE tmp DROP id');
-        $dbo->query('INSERT INTO mg_articoli SELECT NULL,tmp.* FROM tmp');
-        $id_record = $dbo->lastInsertedID();
-        $dbo->query('DROP TEMPORARY TABLE tmp');
-        $dbo->query('UPDATE mg_articoli SET qta=0 WHERE id='.prepare($id_record));
+        $new = $articolo->replicate();
+        $new->qta = 0;
+        $new->save();
 
         flash()->info(tr('Articolo duplicato correttamente!'));
 
@@ -151,7 +148,7 @@ switch (post('op')) {
         preg_match("/(.*?)([\d]*$)/", $serial__end, $m);
         $serial_end = intval($m[2]);
         $n_serial = abs($serial_end - $serial_start) + 1;
-        $serial_prefix = rtrim($serial__end,$serial_end);
+        $serial_prefix = rtrim($serial__end, $serial_end);
         $serial_pad_length = strlen($serial__end) - strlen($serial_prefix);
 
         // Altro

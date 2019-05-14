@@ -13,19 +13,11 @@ $body = file_get_contents($docroot.'/templates/scadenzario/scadenzario_body.html
 
 include_once $docroot.'/templates/pdfgen_variables.php';
 
-/*
-    Dati scadenzario
-*/
-if ($_GET['type'] == 'clienti') {
-    $titolo = 'Scadenzario clienti';
-    $add_where = "AND co_tipidocumento.dir='entrata'";
-} elseif ($_GET['type'] == 'fornitori') {
-    $titolo = 'Scadenzario fornitori';
-    $add_where = "AND co_tipidocumento.dir='uscita'";
-} else {
-    $titolo = 'Scadenzario';
-    $add_where = '';
-}
+//Filtro in base al segmento
+$id_segment = $_SESSION['module_18']['id_segment'];
+$rs_segment = $dbo->fetchArray('SELECT * FROM zz_segments WHERE id='.prepare($id_segment));
+
+$add_where = 'AND '.$rs_segment[0]['clause'];
 
 $body .= '<h3>'.$titolo.' dal '.Translator::dateToLocale($date_start).' al '.Translator::dateToLocale($date_end)."</h3>\n";
 $body .= "<table class=\"table_values\" cellspacing=\"0\" border=\"0\" cellpadding=\"0\" style=\"table-layout:fixed; border-color:#aaa;\">\n";
@@ -57,8 +49,8 @@ for ($i = 0; $i < sizeof($rs); ++$i) {
     $body .= '		<td>'.$rs[$i]['Anagrafica']."</td>\n";
     $body .= '		<td>'.$rs[$i]['Tipo di pagamento']."</td>\n";
     $body .= "		<td align='center'>".$rs[$i]['Data scadenza']."</td>\n";
-    $body .= "		<td align='right'>".Translator::numberToLocale($rs[$i]['Importo'])."</td>\n";
-    $body .= "		<td align='right'>".Translator::numberToLocale($rs[$i]['Pagato'])."</td>\n";
+    $body .= "		<td align='right'>".moneyFormat($rs[$i]['Importo'], 2)."</td>\n";
+    $body .= "		<td align='right'>".moneyFormat($rs[$i]['Pagato'], 2)."</td>\n";
     $body .= "	</tr>\n";
 
     $totale_da_pagare += $rs[$i]['Importo'];
@@ -66,7 +58,7 @@ for ($i = 0; $i < sizeof($rs); ++$i) {
 }
 
 $body .= "	<tr>\n";
-$body .= "		<td colspan='4' align='right'><b>TOTALE:</b></td><td align='right'>".Translator::numberToLocale($totale_da_pagare)."</td><td align='right'>".Translator::numberToLocale($totale_pagato)."</td>\n";
+$body .= "		<td colspan='4' align='right'><b>TOTALE:</b></td><td align='right'>".moneyFormat($totale_da_pagare, 2)."</td><td align='right'>".moneyFormat($totale_pagato, 2)."</td>\n";
 $body .= "	</tr>\n";
 
 $body .= "</tbody>\n";

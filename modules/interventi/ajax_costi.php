@@ -35,84 +35,70 @@ if ($show_prezzi) {
 
     <tr>
         <th>'.tr('Totale manodopera', [], ['upper' => true]).'</th>
-        <td class="text-right">'.Translator::numberToLocale($costi['manodopera_costo']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['manodopera_addebito']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['manodopera_scontato']).' &euro;</td>
+        <td class="text-right">'.moneyFormat($costi['manodopera_costo'], 2).'</td>
+        <td class="text-right">'.moneyFormat($costi['manodopera_addebito'], 2).'</td>
+        <td class="text-right">'.moneyFormat($costi['manodopera_scontato'], 2).'</td>
     </tr>
 
     <tr>
         <th>'.tr('Totale diritto di chiamata', [], ['upper' => true]).'</th>
-        <td class="text-right">'.Translator::numberToLocale($costi['dirittochiamata_costo']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['dirittochiamata_addebito']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['dirittochiamata_scontato']).' &euro;</td>
+        <td class="text-right">'.moneyFormat($costi['dirittochiamata_costo'], 2).'</td>
+        <td class="text-right">'.moneyFormat($costi['dirittochiamata_addebito'], 2).'</td>
+        <td class="text-right">'.moneyFormat($costi['dirittochiamata_scontato'], 2).'</td>
     </tr>
 
     <tr>
         <th>'.tr('Totale viaggio', [], ['upper' => true]).'</th>
-        <td class="text-right">'.Translator::numberToLocale($costi['viaggio_costo']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['viaggio_addebito']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['viaggio_scontato']).' &euro;</td>
+        <td class="text-right">'.moneyFormat($costi['viaggio_costo'], 2).'</td>
+        <td class="text-right">'.moneyFormat($costi['viaggio_addebito'], 2).'</td>
+        <td class="text-right">'.moneyFormat($costi['viaggio_scontato'], 2).'</td>
     </tr>
 
     <tr>
         <th>'.tr('Totale articoli', [], ['upper' => true]).'</th>
-        <td class="text-right">'.Translator::numberToLocale($costi['ricambi_costo']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['ricambi_addebito']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['ricambi_scontato']).' &euro;</td>
+        <td class="text-right">'.moneyFormat($costi['ricambi_costo'], 2).'</td>
+        <td class="text-right">'.moneyFormat($costi['ricambi_addebito'], 2).'</td>
+        <td class="text-right">'.moneyFormat($costi['ricambi_scontato'], 2).'</td>
     </tr>
 
     <tr>
         <th>'.tr('Totale altre spese', [], ['upper' => true]).'</th>
-        <td class="text-right">'.Translator::numberToLocale($costi['altro_costo']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['altro_addebito']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['altro_scontato']).' &euro;</td>
+        <td class="text-right">'.moneyFormat($costi['altro_costo'], 2).'</td>
+        <td class="text-right">'.moneyFormat($costi['altro_addebito'], 2).'</td>
+        <td class="text-right">'.moneyFormat($costi['altro_scontato'], 2).'</td>
     </tr>
 
     <tr>
         <th>'.tr('Sconto incondizionato', [], ['upper' => true]).'</th>
         <td class="text-right">-</td>
         <td class="text-right">-</td>
-        <td class="text-right">'.Translator::numberToLocale(-$costi['sconto_globale']).' &euro;</td>
+        <td class="text-right">'.moneyFormat(-$costi['sconto_globale'], 2).'</td>
     </tr>
 
 
 	<tr class='.$hide.' >
         <th>'.tr('Imponibile', [], ['upper' => true]).'</th>
-        <td class="text-right">'.Translator::numberToLocale($costi['totale_costo']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['totale_addebito']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['totale_scontato']).' &euro;</td>
+        <td class="text-right">'.moneyFormat($costi['totale_costo'], 2).'</td>
+        <td class="text-right">'.moneyFormat($costi['totale_addebito'], 2).'</td>
+        <td class="text-right">'.moneyFormat($costi['totale_scontato'], 2).'</td>
     </tr>
 
 
 	<tr class='.$hide.' >
         <th>'.tr('IVA', [], ['upper' => true]).'</th>
-        <td class="text-right">'.Translator::numberToLocale($costi['iva_costo']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['iva_addebito']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['iva_totale']).' &euro;</td>
+        <td class="text-right">'.moneyFormat($costi['iva_costo'], 2).'</td>
+        <td class="text-right">'.moneyFormat($costi['iva_addebito'], 2).'</td>
+        <td class="text-right">'.moneyFormat($costi['iva_totale'], 2).'</td>
     </tr>
 
     <tr>
         <th>'.tr('Totale', [], ['upper' => true]).'</th>
-        <th class="text-right">'.Translator::numberToLocale($costi['totaleivato_costo']).' &euro;</th>
-        <th class="text-right">'.Translator::numberToLocale($costi['totaleivato_addebito']).' &euro;</th>
-        <th class="text-right">'.Translator::numberToLocale($costi['totale']).' &euro;</th>
+        <th class="text-right">'.moneyFormat($costi['totaleivato_costo'], 2).'</th>
+        <th class="text-right">'.moneyFormat($costi['totaleivato_addebito'], 2).'</th>
+        <th class="text-right">'.moneyFormat($costi['totale'], 2).'</th>
     </tr>
 </table>';
 }
-
-// Lettura dello sconto incondizionato
-$rss = $dbo->fetchArray('SELECT sconto_globale, tipo_sconto_globale FROM in_interventi WHERE id='.prepare($id_record));
-$sconto = $rss[0]['sconto_globale'];
-$tipo_sconto = $rss[0]['tipo_sconto_globale'];
-
-echo '
-
-<!-- SCONTO -->
-<div class="row">
-    <div class="col-md-4 pull-right">
-        {[ "type": "number", "label": "'.tr('Sconto incondizionato').'", "name": "sconto_globale", "value": "'.$sconto.'", "icon-after": "choice|untprc|'.$tipo_sconto.'|'.$readonly.'", "extra": "'.$readonly.'" ]}
-    </div>
-</div>';
 
 echo '
 <script src="'.$rootdir.'/lib/init.js"></script>';

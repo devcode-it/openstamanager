@@ -67,16 +67,14 @@ switch (post('op')) {
             }
         }
 
+        break;
+
+    case 'test':
         $mail = new Mail($id_record);
-        if (!empty($mail)) {
-            if ($mail->testSMTP()) {
-                flash()->info(tr('Connessione SMTP riuscita'));
-            } else {
-                flash()->error(tr('Connessione SMTP non riuscita'));
-            }
-        } else {
-            flash()->error(tr('Errore'));
-        }
+
+        echo json_encode([
+            'test' => $mail->testSMTP(),
+        ]);
 
         break;
 

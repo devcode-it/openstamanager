@@ -76,7 +76,7 @@ class Database extends Util\Singleton
                 }
 
                 // Fix per problemi di compatibilità delle password MySQL 4.1+ (da versione precedente)
-                $this->getPDO()->exec('SET SESSION old_passwords = 0');
+                //$this->getPDO()->exec('SET SESSION old_passwords = 0');
                 //$this->getPDO()->exec('SET PASSWORD = PASSWORD('.$this->prepare($this->password).')');
 
                 // Reset della modalità di esecuzione MySQL per la sessione corrente
@@ -452,7 +452,7 @@ class Database extends Util\Singleton
         if (!empty($order)) {
             foreach ((array) $order as $key => $value) {
                 $order = is_numeric($key) ? 'ASC' : strtoupper($value);
-                $field = is_numeric($key) ? $value : key;
+                $field = is_numeric($key) ? $value : $key;
 
                 if ($order == 'ASC') {
                     $statement = $statement->orderBy($field);

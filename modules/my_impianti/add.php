@@ -10,7 +10,7 @@ if ($source == 'Attività') {
 }
 
 ?><form action="" method="post" id="add-form">
-	<input type="hidden" name="op" value="add">
+	<input type="hidden" name="op" value="<?php echo (get('plugin')==1 ? 'add_impianto' : 'add');?>">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="source" value="<?php echo $source; ?>">
 

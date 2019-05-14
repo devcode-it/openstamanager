@@ -185,6 +185,32 @@ switch (post('op')) {
 
         break;
 
+     // Aggiungo impianto
+     case 'add_impianto':
+     $matricola = post('matricola');
+     $idanagrafica = post('idanagrafica');
+     $nome = post('nome');
+     $idtecnico = post('idtecnico');
+
+     if (!empty($matricola)) {
+         $dbo->query('INSERT INTO my_impianti(matricola, idanagrafica, nome, data, idtecnico) VALUES ('.prepare($matricola).', '.prepare($idanagrafica).', '.prepare($nome).', NOW(), '.prepare($idtecnico).')');
+
+         $id_impianto = $dbo->lastInsertedID();
+
+         $dbo->insert('my_impianti_interventi', [
+             'idintervento' => $id_record,
+             'idimpianto' => $id_impianto,
+         ]);
+
+         flash()->info(tr('Aggiunto nuovo impianto!'));
+
+         $database->commitTransaction(); 
+         header("location: ".$rootdir."/editor.php?id_module=3&id_record=".$id_record."#tab_2");
+         exit;
+     }
+
+     break;
+
     // Eliminazione intervento
     case 'delete':
         // Elimino anche eventuali file caricati

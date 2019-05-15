@@ -7,10 +7,14 @@ $operazione = filter('op');
 // Pianificazione intervento
 switch ($operazione) {
     case 'add-promemoria':
+        // Lettura sede contratto
+        $idsede = $dbo->fetchOne('SELECT idsede FROM co_contratti WHERE id='.prepare($id_parent))['idsede'];
+
         $dbo->insert('co_promemoria', [
             'idcontratto' => $id_parent,
             'data_richiesta' => filter('data_richiesta'),
             'idtipointervento' => filter('idtipointervento'),
+            'idsede' => $idsede,
         ]);
         $id_record = $dbo->lastInsertedID();
 

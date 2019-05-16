@@ -6,10 +6,10 @@ use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Interventi\Components\Articolo;
 use Modules\Interventi\Components\Riga;
+use Modules\Interventi\Components\Sconto;
 use Modules\Interventi\Intervento;
 use Modules\Interventi\Stato;
 use Modules\Interventi\TipoSessione;
-use Modules\Interventi\Components\Sconto;
 
 switch (post('op')) {
     case 'update':
@@ -205,8 +205,8 @@ switch (post('op')) {
 
          flash()->info(tr('Aggiunto nuovo impianto!'));
 
-         $database->commitTransaction(); 
-         header("location: ".$rootdir."/editor.php?id_module=3&id_record=".$id_record."#tab_2");
+         $database->commitTransaction();
+         header('location: '.$rootdir.'/editor.php?id_module=3&id_record='.$id_record.'#tab_2');
          exit;
      }
 

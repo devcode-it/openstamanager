@@ -282,11 +282,9 @@ switch (post('op')) {
 }
 
 if (App::debug()) {
-
     $operations = [
         'delete-bulk' => tr('Elimina selezionati'),
     ];
-
 }
 
 $operations['registra-contabile'] = [

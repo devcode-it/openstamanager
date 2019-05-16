@@ -16,6 +16,7 @@ if (empty($idriga)) {
     $um = '';
     $prezzo_vendita = '0';
     $prezzo_acquisto = '0';
+    $idiva = setting('Iva predefinita');
 
     if (!empty($rs[0]['prc_guadagno'])) {
         $sconto_unitario = $rs[0]['prc_guadagno'];

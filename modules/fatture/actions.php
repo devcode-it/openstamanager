@@ -91,7 +91,7 @@ switch (post('op')) {
             // Ricalcolo inps, ritenuta e bollo (se la fattura non è stata pagata)
             ricalcola_costiagg_fattura($id_record);
 
-            $stato = $dbo->select('co_statidocumento', 'descrizione', ['id' => post('idstatodocumento')]);
+            $stato = $dbo->select('co_statidocumento', 'descrizione', ['id' => post('idstatodocumento')])[0];
 
             // Elimino la scadenza e tutti i movimenti, poi se la fattura è emessa le ricalcolo
             if ($stato['descrizione'] == 'Bozza' or $stato['descrizione'] == 'Annullata') {

@@ -29,12 +29,15 @@ class InvoiceHook extends HookManager
             $message = tr('Ci sono _NUM_ fatture passive da importare', [
                 '_NUM_' => $count,
             ]);
+			$icon = 'fa fa-file-text-o text-yellow';
         } else {
             $message = tr('Nessuna fattura passiva da importare');
+			$icon = 'fa fa-file-text-o text-green';
+			$link = '#';
         }
 
         return [
-            'icon' => 'fa fa-file-text-o',
+            'icon' => $icon,
             'link' => $link,
             'message' => $message,
             'notify' => !empty($count),

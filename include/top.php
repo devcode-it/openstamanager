@@ -228,8 +228,8 @@ if (Auth::check()) {
                      <!-- Navbar Right Menu -->
                      <div class="navbar-custom-menu">
                         <ul class="nav navbar-nav">
-                            <li class="dropdown notifications-menu">
-                                <a href="#" class="dropdown-toggle btn-github" data-toggle="dropdown">
+                            <li class="dropdown notifications-menu" >
+                                <a href="#" class="dropdown-toggle btn-github disabled">
                                     <i class="fa fa-bell-o"></i>
                                     <span class="label label-warning">
                                         <span id="hooks-loading"><i class="fa fa-spinner fa-spin"></i></span>
@@ -237,6 +237,7 @@ if (Auth::check()) {
                                     </span>
                                 </a>
                                 <ul class="dropdown-menu">
+									<li class="header" id="hooks-header" ></li>
                                     <li><ul class="menu" id="hooks">
                                                                     
                                     </ul></li>

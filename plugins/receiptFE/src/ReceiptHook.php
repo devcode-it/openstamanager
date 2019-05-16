@@ -29,12 +29,15 @@ class ReceiptHook extends HookManager
             $message = tr('Ci sono _NUM_ ricevute da importare', [
                 '_NUM_' => $count,
             ]);
+			$icon = 'fa fa-ticket text-yellow';
         } else {
             $message = tr('Nessuna ricevuta da importare');
+			$icon = 'fa fa-ticket text-green';
+			$link = '#';
         }
 
         return [
-            'icon' => 'fa fa-ticket',
+            'icon' => $icon,
             'link' => $link,
             'message' => $message,
             'notify' => !empty($count),

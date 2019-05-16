@@ -116,28 +116,23 @@ switch (post('op')) {
 
     case 'delete-bulk':
 
+        foreach ($id_records as $id) {
+            $dbo->query('DELETE  FROM dt_ddt  WHERE id = '.prepare($id).Modules::getAdditionalsQuery($id_module));
+            $dbo->query('DELETE FROM dt_righe_ddt WHERE idddt='.prepare($id).Modules::getAdditionalsQuery($id_module));
+            $dbo->query('DELETE FROM mg_movimenti WHERE idddt='.prepare($id).Modules::getAdditionalsQuery($id_module));
+        }
 
-		foreach ($id_records as $id) {
-			$dbo->query('DELETE  FROM dt_ddt  WHERE id = '.prepare($id).Modules::getAdditionalsQuery($id_module));
-			$dbo->query('DELETE FROM dt_righe_ddt WHERE idddt='.prepare($id).Modules::getAdditionalsQuery($id_module));
-			$dbo->query('DELETE FROM mg_movimenti WHERE idddt='.prepare($id).Modules::getAdditionalsQuery($id_module));
-		}
-
-		flash()->info(tr('Ddt eliminati!'));
-      
+        flash()->info(tr('Ddt eliminati!'));
 
     break;
 }
 
-
 if (App::debug()) {
-	
-	$operations = [
-		'delete-bulk' => tr('Elimina selezionati'),
-	];
-
+    $operations = [
+        'delete-bulk' => tr('Elimina selezionati'),
+    ];
 }
-	
+
 $operations['crea_fattura'] = [
         'text' => tr('Crea fattura'),
         'data' => [
@@ -148,6 +143,5 @@ $operations['crea_fattura'] = [
             'blank' => false,
         ],
     ];
-
 
 return $operations;

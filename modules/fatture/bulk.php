@@ -51,16 +51,16 @@ switch (post('op')) {
         break;
 
     case 'delete-bulk':
-      
-		foreach ($id_records as $id) {
-			$dbo->query('DELETE FROM co_documenti  WHERE id = '.prepare($id).Modules::getAdditionalsQuery($id_module));
-			$dbo->query('DELETE FROM co_righe_documenti WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
-			$dbo->query('DELETE FROM co_scadenziario WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
-			$dbo->query('DELETE FROM mg_movimenti WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
-		}
 
-		flash()->info(tr('Fatture eliminate!'));
-        
+        foreach ($id_records as $id) {
+            $dbo->query('DELETE FROM co_documenti  WHERE id = '.prepare($id).Modules::getAdditionalsQuery($id_module));
+            $dbo->query('DELETE FROM co_righe_documenti WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
+            $dbo->query('DELETE FROM co_scadenziario WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
+            $dbo->query('DELETE FROM mg_movimenti WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
+        }
+
+        flash()->info(tr('Fatture eliminate!'));
+
         break;
 
     case 'export-xml-bulk':
@@ -282,11 +282,9 @@ switch (post('op')) {
 }
 
 if (App::debug()) {
-	
-	$operations = [
-		'delete-bulk' => tr('Elimina selezionati'),
-	];
-
+    $operations = [
+        'delete-bulk' => tr('Elimina selezionati'),
+    ];
 }
 
 $operations['registra-contabile'] = [

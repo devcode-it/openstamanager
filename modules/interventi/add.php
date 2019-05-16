@@ -113,7 +113,7 @@ elseif (!empty($id_intervento)) {
     $idtipointervento = $rs[0]['idtipointervento'];
     $data = (null !== filter('data')) ? filter('data') : $rs[0]['data_richiesta'];
     $data_richiesta = $rs[0]['data_richiesta'];
-	$data_scadenza = $rs[0]['data_scadenza'];
+    $data_scadenza = $rs[0]['data_scadenza'];
     $richiesta = $rs[0]['richiesta'];
     $idsede = $rs[0]['idsede'];
     $idanagrafica = $rs[0]['idanagrafica'];

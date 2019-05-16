@@ -76,7 +76,7 @@ class Pagamento extends Model
                 'importo' => $da_pagare,
             ];
 
-            $count++;
+            ++$count;
         }
 
         return $results;

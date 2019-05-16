@@ -24,15 +24,15 @@ class InvoiceHook extends HookManager
         });
 
         $link = ROOTDIR.'/controller.php?id_module='.$module->id.'#tab_'.$plugin->id;
-		
-		if ($count>0){
-			$message = tr('Ci sono _NUM_ fatture passive da importare', [
-				'_NUM_' => $count,
-			]);
-		}else{
-			$message = tr('Nessuna fattura passiva da importare');
-		}
-		
+
+        if ($count > 0) {
+            $message = tr('Ci sono _NUM_ fatture passive da importare', [
+                '_NUM_' => $count,
+            ]);
+        } else {
+            $message = tr('Nessuna fattura passiva da importare');
+        }
+
         return [
             'icon' => 'fa fa-file-text-o',
             'link' => $link,

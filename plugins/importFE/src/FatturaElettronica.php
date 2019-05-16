@@ -287,10 +287,11 @@ class FatturaElettronica
 
         // Per il destinatario, la data di ricezione della fattura assume grande rilievo ai fini IVA, poiché determina la decorrenza dei termini per poter esercitare il diritto alla detrazione.
         // La data di ricezione della fattura è contenuta all’interno della “ricevuta di consegna” visibile al trasmittente della stessa.
-        if (empty($data_ricezione))
-			$fattura->data_ricezione = $dati_generali['Data'];
-		else
-			$fattura->data_ricezione = $data_ricezione;
+        if (empty($data_ricezione)) {
+            $fattura->data_ricezione = $dati_generali['Data'];
+        } else {
+            $fattura->data_ricezione = $data_ricezione;
+        }
 
         $stato_documento = StatoFattura::where('descrizione', 'Emessa')->first();
         $fattura->stato()->associate($stato_documento);

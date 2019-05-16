@@ -4,17 +4,18 @@ include_once __DIR__.'/../../core.php';
 
 unset($_SESSION['superselect']['id_categoria']);
 
+
 ?><form action="" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-edit">
 
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "text", "label": "<?php echo tr('Inserisci il codice:'); ?>", "name": "codice", "required": 1 ]}
+			{[ "type": "text", "label": "<?php echo tr('Inserisci il codice:'); ?>", "name": "codice", "required": 1, "value": "<?php echo (htmlentities(filter('codice')) ? : ''); ?>" ]}
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "text", "label": "<?php echo tr('Inserisci la descrizione:'); ?>", "name": "descrizione", "required": 1 ]}
+			{[ "type": "text", "label": "<?php echo tr('Inserisci la descrizione:'); ?>", "name": "descrizione", "required": 1, "value": "<?php echo (htmlentities(filter('descrizione')) ? : ''); ?>" ]}
 		</div>
 
 		<div class="col-md-6">

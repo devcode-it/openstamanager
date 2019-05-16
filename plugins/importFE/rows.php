@@ -37,7 +37,7 @@ echo '
     <div class="row" >
 		<div class="col-md-6">
 			<h4>'.
-    $ragione_sociale.' '.((empty($idanagrafica = $dbo->fetchOne('SELECT idanagrafica FROM an_anagrafiche WHERE ( codice_fiscale = '.prepare($codice_fiscale).' AND codice_fiscale != \'\' ) OR ( piva = '.prepare($partita_iva).' AND piva != \'\' ) ')['idanagrafica'])) ? '<span class="badge badge-success" >'.tr('Nuova').'</span>' : '<small>'.Modules::link('Anagrafiche', $idanagrafica, '', null, '')).'</small>'.'<br>
+    $ragione_sociale.' '.((empty($idanagrafica = $dbo->fetchOne('SELECT idanagrafica FROM an_anagrafiche WHERE ( codice_fiscale = '.prepare($codice_fiscale).' AND codice_fiscale != \'\' ) OR ( piva = '.prepare($partita_iva).' AND piva != \'\' ) ')['idanagrafica'])) ? '<span class="badge badge-success" >'.tr('Nuova anagrafica').'</span>' : '<small>'.Modules::link('Anagrafiche', $idanagrafica, '', null, '')).'</small>'.'<br>
 				<small>
 					'.(!empty($codice_fiscale) ? (tr('Codice Fiscale').': '.$codice_fiscale.'<br>') : '').'
 					'.(!empty($partita_iva) ? (tr('Partita IVA').': '.$partita_iva.'<br>') : '').'
@@ -224,7 +224,7 @@ if (!empty($righe)) {
                 {[ "type": "select", "name": "conto['.$key.']", "ajax-source": "conti-acquisti", "required": 1, "placeholder": "Conto acquisti" ]}
             </td>
             <td>
-                {[ "type": "select", "name": "articoli['.$key.']", "ajax-source": "articoli", "class": "", "icon-after": "add|'.Modules::get('Articoli')['id'].'" ]}
+                {[ "type": "select", "name": "articoli['.$key.']", "ajax-source": "articoli", "class": "", "icon-after": "add|'.Modules::get('Articoli')['id'].'|codice='.htmlentities($riga['CodiceArticolo'][0]['CodiceValore']).'&descrizione='.htmlentities($riga['Descrizione']).'" ]}
             </td>
         </tr>';
     }

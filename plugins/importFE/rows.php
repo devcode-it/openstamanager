@@ -186,9 +186,9 @@ if (!empty($righe)) {
             $riga['CodiceArticolo'][0]['CodiceTipo'] = $riga['CodiceArticolo']['CodiceTipo'];
         }
 
-        foreach ($riga['CodiceArticolo'] as $key => $item) {
-            foreach ($item as $key => $name) {
-                if ($key == 'CodiceValore') {
+        foreach ($riga['CodiceArticolo'] as $key2 => $item) {
+            foreach ($item as $key2 => $name) {
+                if ($key2 == 'CodiceValore') {
                     if (!empty($item['CodiceValore'])) {
                         $codici_articoli .= '<small>'.$item['CodiceValore'].' ('.$item['CodiceTipo'].')</small>';
 

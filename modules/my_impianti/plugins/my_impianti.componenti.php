@@ -95,7 +95,7 @@ $cmp = \Util\Ini::getList($docroot.'/files/my_impianti/', $id_list);
 
 echo '
         <div class="row">
-            <div class="col-md-4 col-md-push-6">
+            <div class="col-md-9">
                 <select class="superselect" id="filename" name="filename">';
 
 if (count($cmp) > 0) {
@@ -114,7 +114,7 @@ echo '
                 </select>
             </div>
 
-            <div class="col-md-2 col-md-push-6">';
+            <div class="col-md-3">';
 echo "
                 <a class=\"btn btn-primary btn-block\" id=\"addta\" href=\"javascript:;\" onclick=\"if ( $('#filename').val()!='0' ){ redirect('".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record."&op=linkcomponente&backto=record-edit&filename='+$('#filename').val() + '&hash=tab_".$id_plugin."');}else{ alert('".tr('Seleziona prima un componente')."'); $('#filename').focus(); }\"><i class='fa fa-plus'></i> ".tr('Aggiungi').'</a>';
 echo '
@@ -253,23 +253,21 @@ if (!empty($rs2)) {
 
         // Pulsante Salva/Elimina
         echo '
-                            <div class="col-md-12">
-                                
-								<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva modifiche').'</button>';
-
-        // Sostituisci componente con un altro dello stesso tipo, posso sostituire solo i componenti installati
+                            <div class="col-md-12">		
+								<a class="btn btn-danger ask" data-backto="record-edit" data-op="unlinkcomponente" data-id="'.$rs2[$j]['id'].'"><i class="fa fa-trash"></i> '.tr('Elimina').'</a>';
+								
+								
+	   // Sostituisci componente con un altro dello stesso tipo, posso sostituire solo i componenti installati
         if (empty($rs2[$j]['data_sostituzione'])) {
             echo "
-														<button  class=\"btn btn-warning\" onclick=\"if( confirm('".tr('Vuoi sostituire questo componente con un altro dello stesso tipo?')."') ){ location.href='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=sostituiscicomponente&backto=record-edit&filename='.$filename.'&id='.$rs2[$j]['id']."'; }\"><i class='fa fa-refresh'></i> ".tr('Sostituisci questo componente').'</button>';
+								<button  class=\"btn btn-warning\" onclick=\"if(confirm('".tr('Vuoi sostituire questo componente con un altro dello stesso tipo?')."')){ location.href='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=sostituiscicomponente&backto=record-edit&filename='.$filename.'&id='.$rs2[$j]['id']."'; }else{ return false} \"><i class='fa fa-refresh'></i> ".tr('Sostituisci questo componente').'</button>';
         } else {
             echo '
-														<button class="btn btn-warning disabled" disabled>'.tr('Componente già sostituito').'</button>';
+								<button class="btn btn-warning disabled" disabled>'.tr('Componente già sostituito').'</button>';
         }
-
-        echo '					
-								    <a class="btn btn-danger ask" data-backto="record-edit" data-op="unlinkcomponente" data-id="'.$rs2[$j]['id'].'">
-                                    <i class="fa fa-trash"></i> '.tr('Elimina').'
-                                </a>';
+		
+		echo '
+								<button type="submit" class="btn btn-success pull-right"><i class="fa fa-check"></i> '.tr('Salva modifiche').'</button>';
 
         echo '
                             </div>

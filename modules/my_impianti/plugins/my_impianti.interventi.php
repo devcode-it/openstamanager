@@ -180,9 +180,9 @@ echo '
                 </div>
             </div>
             <br><br>
-
-            <button type="submit" class="btn btn-success" '.$disabled.'><i class="fa fa-check"></i> '.tr('Salva impianti').'</button></a>
-            <button type="button" class="btn btn-primary" onclick="launch_modal(\''.tr('Aggiungi impianto').'\', \''.$rootdir.'/modules/my_impianti/add.php?id_module=30&source=Attività&plugin=1\',1);"><i class="fa fa-plus"></i> '.tr('Aggiungi impianti').'</button></a>
+            <button type="submit" class="btn btn-success" '.$disabled.'><i class="fa fa-check"></i> '.tr('Salva impianti').'</button>
+			
+			<button type="button" class="btn btn-primary" data-toggle="modal" data-title="'.tr('Aggiungi impianto').'" data-href="'.$rootdir.'/modules/my_impianti/add.php?id_module='.Modules::get('MyImpianti')['id'].'&id_record='.$id_record.'&source=Attività&plugin=1"><i class="fa fa-plus"></i> '.tr('Aggiungi impianto').'</button>
         </form>';
 
 echo '

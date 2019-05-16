@@ -90,7 +90,7 @@ class Ini
         $files = glob(realpath($dir).'/*.ini');
         foreach ($files as $file) {
             if (!in_array(basename($file), $exclude)) {
-                $results[] = [basename($file), self::getValue(self::readFile($file), 'Nome')];
+                $results[] = [basename($file), self::getValue(self::readFile($file), 'Nome').' ('.basename($file).')'];
             }
         }
 

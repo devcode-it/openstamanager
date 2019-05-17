@@ -12,7 +12,7 @@ echo '
     <thead>
 		<tr>
 			<th>'.tr('Descrizione').'</th>
-			<th width="120">'.tr('Q.tà').'</th><th width="120">'.tr('Q.tà').' <i title="'.tr('da evadere').' / '.tr('totale').'" class="tip fa fa-question-circle-o"></i></th>
+			<th width="120">'.tr('Q.tà').' <i title="'.tr('da evadere').' / '.tr('totale').'" class="tip fa fa-question-circle-o"></i></th>
 			<th width="80">'.tr('U.m.').'</th>
 			<th width="120">'.tr('Costo unitario').'</th>
 			<th width="120">'.tr('Iva').'</th>

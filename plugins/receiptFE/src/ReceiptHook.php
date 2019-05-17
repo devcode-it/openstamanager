@@ -24,17 +24,21 @@ class ReceiptHook extends HookManager
         });
 
         $link = ROOTDIR.'/controller.php?id_module='.$module->id.'#tab_'.$plugin->id;
+        $icon = 'fa fa-ticket';
 
         if ($count > 0) {
             $message = tr('Ci sono _NUM_ ricevute da importare', [
                 '_NUM_' => $count,
             ]);
+            $icon_color = 'fa fa-ticket text-yellow';
         } else {
             $message = tr('Nessuna ricevuta da importare');
+            $icon_color = 'fa fa-ticket text-green';
+            $link = '#';
         }
 
         return [
-            'icon' => 'fa fa-ticket',
+            'icon' => $icon.' '.$icon_color,
             'link' => $link,
             'message' => $message,
             'notify' => !empty($count),

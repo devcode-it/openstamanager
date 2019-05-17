@@ -186,31 +186,6 @@ switch (post('op')) {
 
         break;
 
-     // Aggiungo impianto
-     case 'add_impianto':
-     $matricola = post('matricola');
-     $idanagrafica = post('idanagrafica');
-     $nome = post('nome');
-     $idtecnico = post('idtecnico');
-
-     if (!empty($matricola)) {
-         $dbo->query('INSERT INTO my_impianti(matricola, idanagrafica, nome, data, idtecnico) VALUES ('.prepare($matricola).', '.prepare($idanagrafica).', '.prepare($nome).', NOW(), '.prepare($idtecnico).')');
-
-         $id_impianto = $dbo->lastInsertedID();
-
-         $dbo->insert('my_impianti_interventi', [
-             'idintervento' => $id_record,
-             'idimpianto' => $id_impianto,
-         ]);
-
-         flash()->info(tr('Aggiunto nuovo impianto!'));
-
-         $database->commitTransaction();
-         header('location: '.$rootdir.'/editor.php?id_module=3&id_record='.$id_record.'#tab_2');
-         exit;
-     }
-
-     break;
 
     // Eliminazione intervento
     case 'delete':
@@ -306,13 +281,13 @@ switch (post('op')) {
 
         break;
 
-    case 'manage_riga':
+    case 'editriga':
         $idriga = post('idriga');
         $descrizione = post('descrizione');
         $qta = post('qta');
         $um = post('um');
         $idiva = post('idiva');
-        $prezzo_vendita = post('prezzo');
+        $prezzo_vendita = post('prezzo_vendita');
         $prezzo_acquisto = post('prezzo_acquisto');
 
         $sconto_unitario = post('sconto');
@@ -535,10 +510,7 @@ switch (post('op')) {
     case 'add_sessione':
         $id_tecnico = post('id_tecnico');
 
-        // Verifico se l'intervento è collegato ad un contratto
-        // TODO: utilizzare campo id_contratto in in_interventi come avviene già per i preventivi (id_preventivo) dalla 2.4.2
-        $rs = $dbo->fetchArray('SELECT idcontratto FROM co_promemoria WHERE idintervento='.prepare($id_record));
-        $idcontratto = $rs[0]['idcontratto'];
+        $idcontratto = $intervento['id_contratto'];
 
         $ore = 1;
 

@@ -653,11 +653,11 @@ class FatturaElettronica
         }
 
         // Bollo (2.1.1.6)
-        $documento['bollo'] = floatval($documento['bollo']);
-        if (!empty($documento['bollo'])) {
+        $bollo = $documento->getBollo();
+        if (!empty($bollo)) {
             $result['DatiBollo'] = [
                 'BolloVirtuale' => 'SI',
-                'ImportoBollo' => $documento['bollo'],
+                'ImportoBollo' => $bollo,
             ];
         }
 

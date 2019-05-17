@@ -266,7 +266,7 @@ class FatturaElettronica
      *
      * @return Fattura
      */
-    public function saveFattura($id_pagamento, $id_sezionale, $id_tipo, $data_ricezione)
+    public function saveFattura($id_pagamento, $id_sezionale, $id_tipo, $data_registrazione)
     {
         $anagrafica = $this->saveAnagrafica();
 
@@ -287,11 +287,12 @@ class FatturaElettronica
 
         // Per il destinatario, la data di ricezione della fattura assume grande rilievo ai fini IVA, poiché determina la decorrenza dei termini per poter esercitare il diritto alla detrazione.
         // La data di ricezione della fattura è contenuta all’interno della “ricevuta di consegna” visibile al trasmittente della stessa.
-        if (empty($data_ricezione)) {
-            $fattura->data_ricezione = $dati_generali['Data'];
+        if (empty($data_registrazione)) {
+            $fattura->data_registrazione = $dati_generali['Data'];
         } else {
-            $fattura->data_ricezione = $data_ricezione;
+            $fattura->data_registrazione = $data_registrazione;
         }
+        $fattura->data_competenza = $fattura->data_registrazione;
 
         $stato_documento = StatoFattura::where('descrizione', 'Emessa')->first();
         $fattura->stato()->associate($stato_documento);
@@ -332,7 +333,7 @@ class FatturaElettronica
 
     public function save($info = [])
     {
-        $this->saveFattura($info['id_pagamento'], $info['id_segment'], $info['id_tipo'], $info['data_ricezione']);
+        $this->saveFattura($info['id_pagamento'], $info['id_segment'], $info['id_tipo'], $info['data_registrazione']);
 
         $this->saveRighe($info['articoli'], $info['iva'], $info['conto'], $info['movimentazione']);
 

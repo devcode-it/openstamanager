@@ -4,7 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
-- [2.4.9 (2019-03-15)](#249-2019-05-17)
+- [2.4.9 (2019-05-17)](#249-2019-05-17)
 - [2.4.8 (2019-03-01)](#248-2019-03-01)
 - [2.4.7 (2019-02-21)](#247-2019-02-21)
 - [2.4.6 (2019-02-12)](#246-2019-02-12)
@@ -25,7 +25,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 ### Aggiunto (Added)
 
  - Possibilità di ricalcolare le scadenze delle **Fatture di acquisto** importate da fatture elettroniche
- - Campo *Data ricezione* per le **Fatture di acquisto**
+ - Campo *Data registrazione* e *Data competenza*  per le **Fatture di acquisto**
  - Stampa **Preventivo** senza costi totali
  - Impostazione di esportazione massiva degli XML delle **Fatture di vendita**
  - Impostazioni "Riferimento dei documenti nelle stampe" e "Riferimento dei documenti in Fattura Elettronica" per permettere l'inclusione o meno delle relative diciture in stampe e Fattura Elettronica

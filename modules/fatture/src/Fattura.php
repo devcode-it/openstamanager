@@ -396,12 +396,7 @@ class Fattura extends Document
     public function save(array $options = [])
     {
         // Fix dei campi statici
-        $bollo = $this->bollo;
-        if ($bollo == null) {
-            $bollo = $this->calcolaMarcaDaBollo();
-        }
-
-        $this->manageRigaMarcaDaBollo($bollo, $this->addebita_bollo);
+        $this->manageRigaMarcaDaBollo();
 
         $this->attributes['ritenutaacconto'] = $this->ritenuta_acconto;
         $this->attributes['iva_rivalsainps'] = $this->iva_rivalsa_inps;
@@ -516,8 +511,12 @@ class Fattura extends Document
         return $result;
     }
 
-    protected function calcolaMarcaDaBollo()
+    public function getBollo()
     {
+        if (isset($this->bollo)) {
+            return        $this->bollo;
+        }
+
         $righe_bollo = $this->getRighe()->filter(function ($item, $key) {
             return $item->aliquota != null && in_array($item->aliquota->codice_natura_fe, ['N1', 'N2', 'N3', 'N4']);
         });
@@ -537,9 +536,12 @@ class Fattura extends Document
         return $marca_da_bollo;
     }
 
-    protected function manageRigaMarcaDaBollo($marca_da_bollo, $addebita_bollo)
+    protected function manageRigaMarcaDaBollo()
     {
         $riga = $this->rigaBollo;
+
+        $addebita_bollo = $this->addebita_bollo;
+        $marca_da_bollo = $this->getBollo();
 
         // Rimozione riga bollo se nullo
         if (empty($addebita_bollo) || empty($marca_da_bollo)) {

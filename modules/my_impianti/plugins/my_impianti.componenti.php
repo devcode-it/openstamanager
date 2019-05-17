@@ -255,9 +255,8 @@ if (!empty($rs2)) {
         echo '
                             <div class="col-md-12">		
 								<a class="btn btn-danger ask" data-backto="record-edit" data-op="unlinkcomponente" data-id="'.$rs2[$j]['id'].'"><i class="fa fa-trash"></i> '.tr('Elimina').'</a>';
-								
-								
-	   // Sostituisci componente con un altro dello stesso tipo, posso sostituire solo i componenti installati
+
+        // Sostituisci componente con un altro dello stesso tipo, posso sostituire solo i componenti installati
         if (empty($rs2[$j]['data_sostituzione'])) {
             echo "
 								<button  class=\"btn btn-warning\" onclick=\"if(confirm('".tr('Vuoi sostituire questo componente con un altro dello stesso tipo?')."')){ location.href='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=sostituiscicomponente&backto=record-edit&filename='.$filename.'&id='.$rs2[$j]['id']."'; }else{ return false} \"><i class='fa fa-refresh'></i> ".tr('Sostituisci questo componente').'</button>';
@@ -265,8 +264,8 @@ if (!empty($rs2)) {
             echo '
 								<button class="btn btn-warning disabled" disabled>'.tr('Componente già sostituito').'</button>';
         }
-		
-		echo '
+
+        echo '
 								<button type="submit" class="btn btn-success pull-right"><i class="fa fa-check"></i> '.tr('Salva modifiche').'</button>';
 
         echo '

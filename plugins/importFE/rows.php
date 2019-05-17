@@ -86,7 +86,7 @@ echo '
 echo '
     <div class="row" >
 		<div class="col-md-6">
-            {[ "type": "date", "label": "'.tr('Data ricezione').'", "name": "data_ricezione", "required": 0, "value": "" ]}
+            {[ "type": "date", "label": "'.tr('Data ricezione').'", "name": "data_registrazione", "required": 0, "value": "" ]}
         </div>
     </div>';
 

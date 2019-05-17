@@ -41,7 +41,9 @@ switch (post('op')) {
     case 'update':
         if (post('id_record') !== null) {
             $fattura->data = post('data');
-            $fattura->data_ricezione = post('data_ricezione');
+            $fattura->data_registrazione = post('data_registrazione');
+            $fattura->data_competenza = post('data_competenza');
+
             $fattura->numero_esterno = post('numero_esterno');
             $fattura->note = post('note');
             $fattura->note_aggiuntive = post('note_aggiuntive');

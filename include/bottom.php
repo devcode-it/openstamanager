@@ -71,63 +71,6 @@ if (Auth::check()) {
         });
     });
     
-    function executeHook(hook, length){        
-        $("#hooks").append(\'<li id="hook-loader-\' + hook.id + \'"><a href="#">'.tr('Hook "_NAME_" in esecuzione', [
-            '_NAME_' => '\' + hook.name + \'',
-        ]).'</a></li>\');
-        
-        $.ajax({
-            url: globals.rootdir + "/ajax.php",
-            type: "get",
-            data: {
-                op: "hook",
-                id: hook.id,
-            },
-            success: function(data) {
-                result = JSON.parse(data);
-                
-                $("#hook-loader-" + hook.id).remove();
-				
-				
-				
-				notification = \'<li class="hook-element"><a href="\' + (result.link ? result.link : "#") + \'"><i class="\' + result.icon + \'"></i><span class="small" > \' + result.message + \'</span></a></li>\';
-		   
-				// Inserimento della notifica
-				if(result.notify) {
-					hooks_count = $("#hooks-count");
-					number = parseInt(hooks_count.text());
-					number = isNaN(number) ? 0 : number;
-					
-					hooks_count.text(parseInt(number) + 1);
-					
-					$("#hooks").prepend(notification);
-				} else {
-					$("#hooks").append(notification);
-				}
-				
-				
-                
-                // Rimozione eventuale della rotella di caricamento
-                if($(".hook-element").length == hooks.length) {
-					
-					$(".notifications-menu .dropdown-toggle").attr(\'data-toggle\',\'dropdown\');
-					$(".notifications-menu .dropdown-toggle").removeClass(\'disabled\');
-					
-					$("#hooks-loading").hide();
-					
-					if (hooks.length>0){
-						$("#hooks-header").append(\'<span class="small" >'.tr('Hai _NUM_ notific_END_', [
-							'_NUM_' => '\' + (parseInt(number) + 1) + \'',
-							'_END_' => '\' + ((parseInt(number) === 0) ? \''.tr('a').'\' : \''.tr('he').'\') + \'',
-						]).'</small>\');
-					}else{
-						$("#hooks-header").append(\'<span class="small" >'.tr('Nessuna notifica').'</small>\');
-					}
-		
-                }
-            },
-        });
-    }
     </script>';
 }
 

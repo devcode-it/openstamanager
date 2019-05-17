@@ -146,7 +146,7 @@ if (empty($record['is_fiscale'])) {
                         ?>
 					
 				<div class="col-md-3">
-					{[ "type": "date", "label": "<?php echo tr('Data ricezione'); ?>", "name": "data_ricezione", "required": 0, "value": "$data_ricezione$" ]}
+					{[ "type": "date", "label": "<?php echo tr('Data ricezione'); ?>", "name": "data_registrazione", "required": 0, "value": "$data_registrazione$" ]}
 				</div>
 				
 				<?php

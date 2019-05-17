@@ -9,8 +9,8 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `
 -- Stato FE (Notifica esito)
 INSERT INTO `fe_stati_documento` (`codice`, `descrizione`, `icon`) VALUES ('NE', 'Notifica esito', 'fa fa-check text-warning');
 
--- Aggiunta data ricezione, utile per le fatture di acquisto
-ALTER TABLE `co_documenti` ADD `data_ricezione` DATE NULL AFTER `data`;
+-- Aggiunta data di registrazione, utile per le fatture di acquisto
+ALTER TABLE `co_documenti` ADD `data_registrazione` DATE NULL AFTER `data`, ADD `data_competenza` DATE NULL AFTER `data`;
 
 -- Importo marca da bollo a 2 (https://www.fiscoetasse.com/approfondimenti/12090-applicazione-della-marca-da-bollo-sulle-fatture.html)
 UPDATE `zz_settings` SET `valore` = '2' WHERE `zz_settings`.`nome` = 'Importo marca da bollo';
@@ -255,8 +255,9 @@ UPDATE `zz_settings` SET `help` = NULL WHERE `help` = '';
 
 ALTER TABLE `co_documenti` CHANGE `bollo` `bollo` decimal(12,4), CHANGE `data_stato_fe` `data_stato_fe` TIMESTAMP NULL, ADD `addebita_bollo` BOOLEAN NOT NULL DEFAULT TRUE, ADD `id_riga_bollo` int(11), ADD FOREIGN KEY (`id_riga_bollo`) REFERENCES `co_righe_documenti`(`id`) ON DELETE SET NULL;
 UPDATE `co_documenti` SET `bollo` = NULL;
-UPDATE `co_documenti` SET `data_ricezione` = NULL WHERE `data_ricezione` = 0000-00-00;
-UPDATE `co_documenti` SET `data_ricezione` = `data` WHERE `data_ricezione` IS NULL AND idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE dir = 'uscita');
+UPDATE `co_documenti` SET `data_registrazione` = NULL WHERE `data_registrazione` = 0000-00-00;
+UPDATE `co_documenti` SET `data_registrazione` = `data` WHERE `data_registrazione` IS NULL AND idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE dir = 'uscita');
+UPDATE `co_documenti` SET `data_competenza` = `data_registrazione`;
 UPDATE `co_documenti` SET `data_stato_fe` = NULL WHERE `data_stato_fe` = '0000-00-00 00:00:00';
 
 -- Rimozione tasto di stampa scadenzario totale da dentro la scadenza

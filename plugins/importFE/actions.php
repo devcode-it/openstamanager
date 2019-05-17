@@ -52,7 +52,7 @@ switch (filter('op')) {
             'id_pagamento' => post('pagamento'),
             'id_segment' => post('id_segment'),
             'id_tipo' => post('id_tipo'),
-            'data_ricezione' => post('data_ricezione'),
+            'data_registrazione' => post('data_registrazione'),
             'articoli' => post('articoli'),
             'iva' => post('iva'),
             'conto' => post('conto'),

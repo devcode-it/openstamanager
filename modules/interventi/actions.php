@@ -510,10 +510,7 @@ switch (post('op')) {
     case 'add_sessione':
         $id_tecnico = post('id_tecnico');
 
-        // Verifico se l'intervento è collegato ad un contratto
-        // TODO: utilizzare campo id_contratto in in_interventi come avviene già per i preventivi (id_preventivo) dalla 2.4.2
-        $rs = $dbo->fetchArray('SELECT idcontratto FROM co_promemoria WHERE idintervento='.prepare($id_record));
-        $idcontratto = $rs[0]['idcontratto'];
+        $idcontratto = $intervento['id_contratto'];
 
         $ore = 1;
 

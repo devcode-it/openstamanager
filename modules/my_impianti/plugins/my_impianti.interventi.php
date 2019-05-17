@@ -176,13 +176,14 @@ echo '
             <input type="hidden" name="backto" value="record-edit">
             <div class="row">
                 <div class="col-xs-12 col-md-6">
-                    {[ "type": "select", "name": "matricole[]", "multiple": 1, "value": "'.implode(',', $impianti).'", "values": "query=SELECT my_impianti.id, CONCAT(matricola, \' - \', nome) AS descrizione, CONCAT(nomesede, IF(citta IS NULL OR citta = \'\', \'\', CONCAT(\' (\', citta, \')\'))) AS optgroup FROM my_impianti JOIN (SELECT id, nomesede, citta FROM an_sedi UNION SELECT 0 AS id, \'Sede legale\' AS nomesede, \'\' AS citta) AS t ON t.id = my_impianti.idsede WHERE idanagrafica='.prepare($record['idanagrafica']).' ORDER BY idsede ASC, matricola ASC", "extra": "'.$readonly.'" ]}
+                    {[ "type": "select", "name": "matricole[]", "multiple": 1, "value": "'.implode(',', $impianti).'", "ajax-source": "impianti-cliente", "extra": "'.$readonly.'" ]}
                 </div>
             </div>
             <br><br>
             <button type="submit" class="btn btn-success" '.$disabled.'><i class="fa fa-check"></i> '.tr('Salva impianti').'</button>
 			
-			<button type="button" class="btn btn-primary" data-toggle="modal" data-title="'.tr('Aggiungi impianto').'" data-href="'.$rootdir.'/modules/my_impianti/add.php?id_module='.Modules::get('MyImpianti')['id'].'&id_record='.$id_record.'&source=Attività&plugin=1"><i class="fa fa-plus"></i> '.tr('Aggiungi impianto').'</button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-title="'.tr('Aggiungi impianto').'" data-href="'.$rootdir.'/add.php?id_module='.Modules::get('MyImpianti')['id'].'&source=Attività&select=idimpianti&ajax=yes" data-target="#bs-popup2"><i class="fa fa-plus"></i> '.tr('Aggiungi impianto').'</button>
+            
         </form>';
 
 echo '

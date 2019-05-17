@@ -9,6 +9,7 @@ use UnexpectedValueException;
 
 abstract class Article extends Row
 {
+    public $movimenta_magazzino = true;
     protected $serialRowID = null;
     protected $abilita_movimentazione = true;
 
@@ -27,7 +28,24 @@ abstract class Article extends Row
         return $model;
     }
 
-    abstract public function movimenta($qta);
+    public function movimenta($qta)
+    {
+        if (!$this->movimenta_magazzino) {
+            return;
+        }
+
+        $movimenta = true;
+
+        // Movimenta il magazzino solo se l'articolo non è già stato movimentato da un documento precedente
+        if ($this->hasOriginal()) {
+            $original = $this->getOriginal();
+            $movimenta = !$original->movimenta_magazzino;
+        }
+
+        if ($movimenta) {
+            $this->movimentaMagazzino($qta);
+        }
+    }
 
     abstract public function getDirection();
 
@@ -123,6 +141,8 @@ abstract class Article extends Row
 
         return parent::save($options);
     }
+
+    abstract protected function movimentaMagazzino($qta);
 
     protected static function boot()
     {

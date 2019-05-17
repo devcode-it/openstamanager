@@ -28,7 +28,7 @@ class Articolo extends Article
         return $model;
     }
 
-    public function movimenta($qta)
+    public function movimentaMagazzino($qta)
     {
         $ddt = $this->ddt;
         $tipo = $ddt->tipo;

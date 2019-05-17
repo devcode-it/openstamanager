@@ -35,7 +35,7 @@ class Articolo extends Article
         return $model;
     }
 
-    public function movimenta($qta)
+    public function movimentaMagazzino($qta)
     {
         $articolo = $this->articolo;
         $id_automezzo = $this->intervento->idautomezzo;

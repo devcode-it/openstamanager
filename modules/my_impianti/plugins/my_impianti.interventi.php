@@ -32,18 +32,12 @@ if (filter('op') == 'link_myimpianti') {
     flash()->info(tr('Informazioni impianti salvate!'));
 } elseif (filter('op') == 'link_componenti') {
     $components = (array) post('componenti');
+    $id_impianto = post('id_impianto');
 
-    $list = (!empty(post('list'))) ? explode(',', post('list')) : [];
-    foreach ($list as $delete) {
-        if (!in_array($delete, $components)) {
-            $dbo->query('DELETE FROM my_componenti_interventi WHERE id_componente = '.prepare($delete).' AND id_intervento = '.prepare($id_record));
-        }
-    }
+    $dbo->query('DELETE FROM my_componenti_interventi WHERE id_componente IN (SELECT id FROM my_impianto_componenti WHERE idimpianto = '.prepare($id_impianto).') AND id_intervento = '.prepare($id_record));
 
     foreach ($components as $component) {
-        if (!in_array($component, $list)) {
-            $dbo->query('INSERT INTO my_componenti_interventi(id_componente, id_intervento) VALUES('.prepare($component).', '.prepare($id_record).')');
-        }
+        $dbo->query('INSERT INTO my_componenti_interventi(id_componente, id_intervento) VALUES ('.prepare($component).', '.prepare($id_record).')');
     }
 
     flash()->info(tr('Informazioni componenti salvate!'));
@@ -117,37 +111,14 @@ foreach ($rs as $r) {
                         <td valign="top">
                             <form action="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=link_componenti&matricola='.$r['id'].'" method="post">
                                 <input type="hidden" name="backto" value="record-edit">
+                                <input type="hidden" name="id_impianto" value="'.$r['id'].'">';
 
-				                <select class="superselect" name="componenti[]" multiple '.$readonly.' '.$disabled.'>';
     $inseriti = $dbo->fetchArray('SELECT * FROM my_componenti_interventi WHERE id_intervento='.prepare($id_record));
-    $inseriti = !empty($inseriti) ? array_column($inseriti, 'id_componente') : [];
-    $list = [];
+    $ids = array_column($inseriti, 'id_componente');
 
-    $componenti = $dbo->fetchArray('SELECT * FROM my_impianto_componenti WHERE idimpianto='.prepare($r['id']).' ORDER BY id');
-    if (!empty($componenti)) {
-        foreach ($componenti as $componente) {
-            $nome = '';
-            echo '
-                                    <option value="'.$componente['id'].'"';
-            if (in_array($componente['id'], $inseriti)) {
-                echo ' selected="selected"';
-                $list[] = $componente['id'];
-            }
-            if (str_contains($componente['contenuto'], '[Matricola]')) {
-                $ini_array = parse_ini_string($componente['contenuto'], true);
-                foreach ($ini_array as $sezione => $array_impostazioni) {
-                    if ($sezione == 'Matricola') {
-                        $nome .= $ini_array[$sezione]['valore'].' - ';
-                    }
-                }
-            }
-            $nome .= $componente['nome'];
-            echo ' title="'.addslashes($componente['nome']).'">'.$nome.'</option>';
-        }
-    }
     echo '
-                                </select><br><br>
-                                <input type="hidden" name="list" value="'.implode(',', $list).'">
+
+                                {[ "type": "select", "label": "'.tr('Componenti').'", "multiple": 1, "name": "componenti[]", "ajax-source": "componenti", "value": "'.implode(',', $ids).'", "readonly": "'.!empty($readonly).'", "disabled": "'.!empty($disabled).'" ]}
 
                                 <button type="submit" class="btn btn-success" '.$disabled.'><i class="fa fa-check"></i> '.tr('Salva componenti').'</button>
                             </form>
@@ -181,9 +152,9 @@ echo '
             </div>
             <br><br>
             <button type="submit" class="btn btn-success" '.$disabled.'><i class="fa fa-check"></i> '.tr('Salva impianti').'</button>
-			
+
             <button type="button" class="btn btn-primary" data-toggle="modal" data-title="'.tr('Aggiungi impianto').'" data-href="'.$rootdir.'/add.php?id_module='.Modules::get('MyImpianti')['id'].'&source=Attività&select=idimpianti&ajax=yes" data-target="#bs-popup2"><i class="fa fa-plus"></i> '.tr('Aggiungi impianto').'</button>
-            
+
         </form>';
 
 echo '

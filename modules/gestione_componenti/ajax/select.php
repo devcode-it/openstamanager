@@ -8,7 +8,7 @@ switch ($resource) {
             $query = 'SELECT id, nome AS descrizione, contenuto FROM my_impianto_componenti |where| ORDER BY id';
 
             foreach ($elements as $element) {
-                $filter[] = 'idimpianto='.prepare($element);
+                $filter[] = 'id='.prepare($element);
             }
 
             $temp = [];

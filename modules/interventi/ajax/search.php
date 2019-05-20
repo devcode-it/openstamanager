@@ -20,13 +20,16 @@ foreach ($fields as $name => $value) {
     $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
 }
 
-$query .= ' FROM in_interventi WHERE idanagrafica IN('.implode(',', $idanagrafiche).') ';
+$query .= ' FROM in_interventi ';
 
+$where = [];
 foreach ($fields as $name => $value) {
-    $query .= ' OR '.$value.' LIKE "%'.$term.'%"';
+    $where[] = $value.' LIKE "%'.$term.'%"';
 }
 
-$query .= Modules::getAdditionalsQuery('Interventi');
+$query .= ' WHERE ('.implode(' OR ', $where).') ';
+
+$query .= ' '.Modules::getAdditionalsQuery('Interventi');
 
 $rs = $dbo->fetchArray($query);
 

@@ -207,7 +207,8 @@ if (Auth::check()) {
 					<span class="logo-lg">'.tr('OpenSTAManager').'</span>
 				</a>
 				<!-- Header Navbar: style can be found in header.less -->
-				<nav class="navbar navbar-static-top" role="navigation">
+                <nav class="navbar navbar-static-top" role="navigation">
+                
 					<!-- Sidebar toggle button-->
 					<a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
 						<span class="sr-only">'.tr('Mostra/nascondi menu').'</span>
@@ -219,7 +220,7 @@ if (Auth::check()) {
                     <!-- Navbar Left Menu -->
                      <div class="navbar-left" class="hidden-xs">
                         <ul class="nav navbar-nav" class="hidden-xs">
-                            <li><a href="#" id="daterange" style="color:'.$calendar.';background:inherit;" >
+                            <li><a  href="#" id="daterange" style="color:'.$calendar.';" role="button" >
                                 <i class="fa fa-calendar" style="color:inherit"></i> <i class="fa fa-caret-down" style="color:inherit"></i>
                             </a></li>
                             
@@ -233,7 +234,7 @@ if (Auth::check()) {
                      <div class="navbar-custom-menu">
                         <ul class="nav navbar-nav">
                             <li class="dropdown notifications-menu" >
-                                <a href="#" class="dropdown-toggle btn-github" data-toggle="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                     <i class="fa fa-bell-o"></i>
                                     <span class="label label-warning">
                                         <span id="hooks-loading"><i class="fa fa-spinner fa-spin"></i></span>
@@ -248,23 +249,23 @@ if (Auth::check()) {
                                 </ul>
                             </li>
                             
-                            <li><a href="#" onclick="window.print()" class="btn-github tip" style="background-color:#5bc0de!important" title="'.tr('Stampa').'">
+                            <li><a href="#" onclick="window.print()" class="tip"  title="'.tr('Stampa').'">
                                 <i class="fa fa-print"></i>
                             </a></li>
                             
-                            <li><a href="'.$rootdir.'/bug.php" class="btn-github tip" title="'.tr('Segnalazione bug').'">
+                            <li><a href="'.$rootdir.'/bug.php" class="tip"title="'.tr('Segnalazione bug').'">
                                 <i class="fa fa-bug"></i>
                             </a></li>
                             
-                            <li><a href="'.$rootdir.'/log.php" class="btn-github tip" title="'.tr('Log accessi').'">
+                            <li><a href="'.$rootdir.'/log.php" class="tip"title="'.tr('Log accessi').'">
                                 <i class="fa fa-book"></i>
                             </a></li>
                             
-                            <li><a href="'.$rootdir.'/info.php" class="btn-github tip" title="'.tr('Informazioni').'">
+                            <li><a href="'.$rootdir.'/info.php" class="tip"title="'.tr('Informazioni').'">
                                 <i class="fa fa-info"></i>
                             </a></li>
                             
-                            <li><a href="'.$rootdir.'/index.php?op=logout" class="btn-github tip"  style="background-color:#dd4b39!important" title="'.tr('Esci').'">
+                            <li><a href="'.$rootdir.'/index.php?op=logout" class="bg-red tip" title="'.tr('Esci').'">
                                 <i class="fa fa-power-off"></i>
                             </a></li>
                         </ul>

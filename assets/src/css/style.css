@@ -314,7 +314,7 @@ span.form-control {
 
 .nav-tabs-custom > .nav-tabs.pull-right > li > a.back-btn {
     font-size: 12px;
-    color: #3C8DBC;
+    color: #FFFFFF;
 }
 
 .navbar-nav > .notifications-menu > .dropdown-menu > li .menu > li > a, .navbar-nav > .messages-menu > .dropdown-menu > li .menu > li > a, .navbar-nav > .tasks-menu > .dropdown-menu > li .menu > li > a {
@@ -819,4 +819,11 @@ input.small-width {
 
 .box-info ul > li > :last-child {
     margin-bottom: 5px;
+}
+
+.skin-default .navbar-custom-menu li a{ 
+    color: #FFFFFF;
+}
+.skin-default .navbar-custom-menu li a:hover, .skin-default .nav li a:hover{
+    background: #222222;
 }

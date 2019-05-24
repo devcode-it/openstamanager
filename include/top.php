@@ -238,7 +238,8 @@ if (Auth::check()) {
                                     <i class="fa fa-bell-o"></i>
                                     <span class="label label-warning">
                                         <span id="hooks-loading"><i class="fa fa-spinner fa-spin"></i></span>
-                                        <span id="hooks-count"></span>
+                                        <span id="hooks-number"></span>
+                                        <span id="hooks-counter" class="hide">0</span>
                                     </span>
                                 </a>
                                 <ul class="dropdown-menu">

@@ -186,7 +186,6 @@ switch (post('op')) {
 
         break;
 
-
     // Eliminazione intervento
     case 'delete':
         // Elimino anche eventuali file caricati

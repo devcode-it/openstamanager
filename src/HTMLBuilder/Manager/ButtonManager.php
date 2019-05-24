@@ -11,6 +11,11 @@ class ButtonManager implements ManagerInterface
     {
         $options['parameters'] = isset($options['parameters']) ? $options['parameters'] : null;
 
+        // Impostazione id HTML automatico
+        if (empty($options['html_id'])) {
+            $options['html_id'] = ($options['type'] == 'print') ? 'print-button' : 'email-button';
+        }
+
         if (isset($options['id'])) {
             $result = $this->link($options);
         } else {
@@ -59,13 +64,13 @@ class ButtonManager implements ManagerInterface
         // Modal
         if (isset($info['type']) && $info['type'] == 'modal') {
             $result = '
-<a '.$class.' data-href="'.$info['link'].'" data-toggle="modal" data-title="'.$title.'">';
+<a '.$class.' data-href="'.$info['link'].'" data-toggle="modal" data-title="'.$title.'" id="'.$options['html_id'].'">';
         }
 
         // Link normale
         else {
             $result = '
-<a '.$class.' href="'.$info['link'].'" target="_blank">';
+<a '.$class.' href="'.$info['link'].'" target="_blank" id="'.$options['html_id'].'">';
         }
 
         $result .= '
@@ -95,7 +100,7 @@ class ButtonManager implements ManagerInterface
 
         if ($count > 1) {
             $result = '
-<div class="btn-group">';
+<div class="btn-group" id="'.$options['html_id'].'">';
 
             $predefined = array_search(1, array_column($list, 'predefined'));
             if ($predefined !== false) {
@@ -143,6 +148,7 @@ class ButtonManager implements ManagerInterface
                 'id_record' => $options['id_record'],
                 'class' => $options['class'],
                 'parameters' => $options['parameters'],
+                'html_id' => $options['html_id'],
             ]);
         } else {
             $result = ' ';

@@ -57,15 +57,15 @@ for ($x = 0; $x < $n1; ++$x) {
         for ($z = 0; $z < $n3; ++$z) {
             $totale_conto_liv3 = [];
 
-            echo "		<tr><td>\n";
-
             // Se il conto non ha documenti collegati posso eliminarlo
             $query = "SELECT id FROM co_movimenti WHERE idconto='".$rs3[$z]['id']."'";
             $nr = $dbo->fetchNum($query);
 
             // Calcolo totale conto da elenco movimenti di questo conto
-            $query = "SELECT co_movimenti.*, dir FROM (co_movimenti LEFT OUTER JOIN co_documenti ON co_movimenti.iddocumento=co_documenti.id) LEFT OUTER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_movimenti.idconto='".$rs3[$z]['id']."' AND co_movimenti.data >= '".$_SESSION['period_start']."' AND co_movimenti.data <= '".$_SESSION['period_end']."' ORDER BY co_movimenti.data ASC";
+            $query = "SELECT co_movimenti.*, dir FROM (co_movimenti LEFT OUTER JOIN co_documenti ON co_movimenti.iddocumento=co_documenti.id) LEFT OUTER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_movimenti.idconto='".$rs3[$z]['id']."' AND co_movimenti.data >= '".$_SESSION['period_start']."' AND co_movimenti.data <= '".$_SESSION['period_end']."' ORDER BY co_movimenti.data DESC";
             $rs = $dbo->fetchArray($query);
+
+            echo "		<tr style='".((!empty($rs)) ? '':'opacity: 0.5;' )."' ><td>\n";
 
             $tools = "			<span class='hide tools'>\n";
 

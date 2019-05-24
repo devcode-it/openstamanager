@@ -821,10 +821,10 @@ input.small-width {
     margin-bottom: 5px;
 }
 
-.skin-default .navbar-custom-menu li a{ 
+.skin-default .nav.navbar-nav li a{ 
     color: #FFFFFF;
 }
-.skin-default .navbar-custom-menu li a:hover, .skin-default .nav li a:hover{
+.skin-default .nav.navbar-nav li a:hover{
     background: #222222;
 }
 

@@ -317,7 +317,7 @@ if (!empty($rsp)) {
     $rsp_old = $dbo->fetchNum($qp_old);
 
     if ($rsp_old > 0) {
-        echo '<div class="alert alert-warning alert-dismissible" role="alert"><i class="fa fa-exclamation-triangle"></i><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> '.tr('Ci sono '.$rsp_old.' interventi scaduti da pianificare.').'</div>';
+        echo '<div class="alert alert-warning alert-dismissible text-sm" role="alert"><i class="fa fa-exclamation-triangle"></i><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button> '.tr('Ci sono '.$rsp_old.' attività scadute.').'</div>';
     }
 
     $mesi = months();
@@ -457,7 +457,7 @@ if ($vista == 'mese') {
 
             $(this).parent().parent().find('li input[type=checkbox]').each(function(i) { // loop through each checkbox
 				this.checked = true;
-				 $.when (session_set_array( 'dashboard,idzone', this.value, 0 )).promise().then(function() {
+				$.when (session_set_array( 'dashboard,idzone', this.value, 0 )).promise().then(function() {
 						$('#calendar').fullCalendar('refetchEvents');
 				});
 
@@ -473,7 +473,7 @@ if ($vista == 'mese') {
 
 			$(this).parent().parent().find('li input[type=checkbox]').each(function() { // loop through each checkbox
 				this.checked = false;
-				 $.when (session_set_array( 'dashboard,idstatiintervento', this.value, 1 )).promise().then(function() {
+				$.when (session_set_array( 'dashboard,idstatiintervento', this.value, 1 )).promise().then(function() {
 						$('#calendar').fullCalendar('refetchEvents');
 				});
 
@@ -487,7 +487,7 @@ if ($vista == 'mese') {
 
 			$(this).parent().parent().find('li input[type=checkbox]').each(function() { // loop through each checkbox
 				this.checked = false;
-				 $.when (session_set_array( 'dashboard,idtipiintervento', this.value, 1 )).promise().then(function() {
+				$.when (session_set_array( 'dashboard,idtipiintervento', this.value, 1 )).promise().then(function() {
 						$('#calendar').fullCalendar('refetchEvents');
 				});
 
@@ -502,7 +502,7 @@ if ($vista == 'mese') {
 
 			$(this).parent().parent().find('li input[type=checkbox]').each(function() { // loop through each checkbox
 				this.checked = false;
-				 $.when (session_set_array( 'dashboard,idtecnici', this.value, 1 )).promise().then(function() {
+				$.when (session_set_array( 'dashboard,idtecnici', this.value, 1 )).promise().then(function() {
 						$('#calendar').fullCalendar('refetchEvents');
 				});
 

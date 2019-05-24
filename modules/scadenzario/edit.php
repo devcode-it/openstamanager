@@ -193,10 +193,15 @@ if ($records[0]['iddocumento'] == 0) {
 <script>
     globals.cifre_decimali = 2;
     
-	$(document).ready( function(){
+	$(document).ready(function(){
         totale_ok();
         
         <?php
+        if ($dir == 'uscita') {
+            echo '
+        $("#email-button").remove();';
+        }
+
         if ($record['iddocumento'] != 0) {
             ?>
         $('input[name*=scadenza]').keyup( function(){ totale_ok(); } );

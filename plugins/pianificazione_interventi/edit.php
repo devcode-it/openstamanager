@@ -60,9 +60,7 @@ if (!empty($records)) {
         } elseif (empty($record['idsede'])) {
             $info_sede = tr('Sede legale');
         } else {
-            $sede = $dbo->fetchOne("SELECT id, CONCAT( CONCAT_WS( ' (', CONCAT_WS(', ', nomesede, citta), indirizzo ), ')') AS descrizione FROM an_sedi WHERE id=".prepare($record['idsede']));
-
-            $info_sede = $sede[0]['descrizione'];
+            $info_sede = $dbo->fetchOne("SELECT id, CONCAT( CONCAT_WS( ' (', CONCAT_WS(', ', nomesede, citta), indirizzo ), ')') AS descrizione FROM an_sedi WHERE id=".prepare($record['idsede']))['descrizione'];
         }
 
         // Intervento svolto

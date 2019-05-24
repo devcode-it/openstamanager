@@ -67,16 +67,16 @@ if (setting('Attiva aggiornamenti')) {
 
     $upload_max_filesize = ini_get('upload_max_filesize');
     $upload_max_filesize = str_replace(['k', 'M'], ['000', '000000'], $upload_max_filesize);
-    // Dimensione minima: 16MB
-    if ($upload_max_filesize < 16000000) {
-        $alerts['upload_max_filesize'] = '16MB';
+    // Dimensione minima: 32MB
+    if ($upload_max_filesize < 32000000) {
+        $alerts['upload_max_filesize'] = '32MB';
     }
 
     $post_max_size = ini_get('post_max_size');
     $post_max_size = str_replace(['k', 'M'], ['000', '000000'], $post_max_size);
-    // Dimensione minima: 16MB
-    if ($post_max_size < 16000000) {
-        $alerts['post_max_size'] = '16MB';
+    // Dimensione minima: 32MB
+    if ($post_max_size < 32000000) {
+        $alerts['post_max_size'] = '32MB';
     }
 
     if (!empty($alerts)) {

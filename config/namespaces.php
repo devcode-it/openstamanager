@@ -2,6 +2,7 @@
 
 return [
     'include' => 'Common',
+    'modules/aggiornamenti' => 'Modules\Aggiornamenti',
     'modules/anagrafiche' => 'Modules\Anagrafiche',
     'modules/articoli' => 'Modules\Articoli',
     'modules/ritenute' => 'Modules\Ritenute',

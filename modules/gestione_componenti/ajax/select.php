@@ -35,7 +35,6 @@ switch ($resource) {
             }
 
             $results['results'] = $data;
-
         }
 
         break;

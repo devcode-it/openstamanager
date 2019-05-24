@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-$block_edit = !empty($note_accredito) || $record['stato'] == 'Emessa';
+$block_edit = !empty($note_accredito) || $record['stato'] == 'Emessa' || $record['stato'] == 'Pagato' || $record['stato'] == 'Parzialmente pagato';
 
 $rs = $dbo->fetchArray('SELECT co_tipidocumento.descrizione, dir FROM co_tipidocumento INNER JOIN co_documenti ON co_tipidocumento.id=co_documenti.idtipodocumento WHERE co_documenti.id='.prepare($id_record));
 $dir = $rs[0]['dir'];
@@ -436,7 +436,7 @@ if ($tipodoc == 'Fattura accompagnatoria di vendita') {
 			<div class="col-md-12">
 				<div class="pull-left">
 <?php
-if ($record['stato'] != 'Pagato' && $record['stato'] != 'Emessa') {
+if (!$block_edit) {
     if (empty($record['ref_documento'])) {
         if ($dir == 'entrata') {
             // Lettura interventi non rifiutati, non fatturati e non collegati a preventivi o contratti

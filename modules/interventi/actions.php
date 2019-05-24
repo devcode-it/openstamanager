@@ -186,7 +186,6 @@ switch (post('op')) {
 
         break;
 
-
     // Eliminazione intervento
     case 'delete':
         // Elimino anche eventuali file caricati
@@ -379,10 +378,10 @@ switch (post('op')) {
         // Elimino il collegamento al componente
         $dbo->query('DELETE FROM my_impianto_componenti WHERE idimpianto='.prepare($idimpianto).' AND idintervento='.prepare($id_record));
 
-        /* Ricollego l'articolo modificato all'intervento */
-        /* ci può essere il caso in cui cambio idarticolo e anche qta */
+    /* Ricollego l'articolo modificato all'intervento */
+    /* ci può essere il caso in cui cambio idarticolo e anche qta */
 
-        // no break
+    // no break
     case 'addarticolo':
         $originale = ArticoloOriginale::find(post('idarticolo'));
         $intervento = Intervento::find($id_record);

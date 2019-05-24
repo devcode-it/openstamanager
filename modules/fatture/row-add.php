@@ -11,7 +11,8 @@ $options = [
     'op' => 'manage_riga',
     'action' => 'add',
     'dir' => $documento->direzione,
-    'conti' => $documento->direzione == 'entrata' ? 'conti-vendite' : 'conti-acquisti',    'idanagrafica' => $documento['idanagrafica'],
+    'conti' => $documento->direzione == 'entrata' ? 'conti-vendite' : 'conti-acquisti',
+    'idanagrafica' => $documento['idanagrafica'],
     'show-ritenuta-contributi' => !empty($documento['id_ritenuta_contributi']),
     'imponibile_scontato' => $documento->imponibile_scontato,
     'totale' => $documento->totale,
@@ -36,7 +37,7 @@ $result = [
 ];
 
 // Leggo l'iva predefinita per l'anagrafica e se non c'è leggo quella predefinita generica
-$iva = $dbo->fetchArray('SELECT idiva_'.($dir == 'uscita' ? 'acquisti' : 'vendite').' AS idiva FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
+$iva = $dbo->fetchArray('SELECT idiva_'.($dir == 'uscita' ? 'acquisti' : 'vendite').' AS idiva FROM an_anagrafiche WHERE idanagrafica='.prepare($documento['idanagrafica']));
 $result['idiva'] = $iva[0]['idiva'] ?: setting('Iva predefinita');
 
 // Aggiunta sconto di default da listino per le vendite
@@ -49,7 +50,7 @@ if ($listino[0]['prc_guadagno'] > 0) {
 
 // Leggo la ritenuta d'acconto predefinita per l'anagrafica e se non c'è leggo quella predefinita generica
 // id_ritenuta_acconto_vendite oppure id_ritenuta_acconto_acquisti
-$ritenuta_acconto = $dbo->fetchOne('SELECT id_ritenuta_acconto_'.($dir == 'uscita' ? 'acquisti' : 'vendite').' AS id_ritenuta_acconto FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
+$ritenuta_acconto = $dbo->fetchOne('SELECT id_ritenuta_acconto_'.($dir == 'uscita' ? 'acquisti' : 'vendite').' AS id_ritenuta_acconto FROM an_anagrafiche WHERE idanagrafica='.prepare($documento['idanagrafica']));
 $id_ritenuta_acconto = $ritenuta_acconto['id_ritenuta_acconto'];
 if ($dir == 'entrata' && empty($id_ritenuta_acconto)) {
     $id_ritenuta_acconto = setting("Percentuale ritenuta d'acconto");

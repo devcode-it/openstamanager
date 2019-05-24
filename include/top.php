@@ -84,6 +84,7 @@ if (Auth::check()) {
         'details' => tr('Dettagli'),
         'waiting' => tr('Impossibile procedere'),
         'waiting_msg' => tr('Prima di proseguire devi selezionare alcuni elementi!'),
+        'hooksExecuting' => tr('Hooks in esecuzione'),
         'hookExecuting' => tr('Hook "_NAME_" in esecuzione'),
         'hookMultiple' => tr('Hai _NUM_ notifiche'),
         'hookSingle' => tr('Hai 1 notifica'),
@@ -243,7 +244,7 @@ if (Auth::check()) {
                                     </span>
                                 </a>
                                 <ul class="dropdown-menu">
-									<li class="header" id="hooks-header" ></li>
+									<li class="header"><span class="small" id="hooks-header"></span></li>
                                     <li><ul class="menu" id="hooks">
                                                                     
                                     </ul></li>

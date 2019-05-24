@@ -23,3 +23,6 @@ ALTER TABLE `zz_hooks` ADD `enabled` boolean NOT NULL DEFAULT 1, ADD `id_module`
 UPDATE `zz_hooks` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') WHERE `name` = 'Ricevute';
 UPDATE `zz_hooks` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto') WHERE `name` = 'Fatture';
 ALTER TABLE `zz_hooks` ADD FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE;
+
+INSERT INTO `zz_hooks` (`id`, `name`, `class`, `frequency`, `id_module`) VALUES
+(NULL, 'Ricevute', 'Modules\\Aggiornamenti\\UpdateHook', '7 day', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Aggiornamenti'));

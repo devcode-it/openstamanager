@@ -87,10 +87,12 @@ switch (get('op')) {
 
         $results = [];
         foreach ($hooks as $hook) {
-            $results[] = [
-                'id' => $hook->id,
-                'name' => $hook->name,
-            ];
+            if ($hook->permission != '-') {
+                $results[] = [
+                    'id' => $hook->id,
+                    'name' => $hook->name,
+                ];
+            }
         }
 
         echo json_encode($results);

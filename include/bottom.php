@@ -63,7 +63,13 @@ if (Auth::check()) {
             },
             success: function(data) {
                 hooks = JSON.parse(data);
-                               
+                
+                if (hooks.length == 0) {
+                    $("#hooks-loading").hide();
+                    $("#hooks-number").text(0);
+                    $("#hooks-header").append(\'<span class="small">\' + globals.translations.hookNone + \'</small>\');
+                }
+                
                 hooks.forEach(function(item, index){
                     executeHook(item, hooks.length);
                 });

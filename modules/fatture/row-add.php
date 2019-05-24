@@ -5,6 +5,7 @@ use Modules\Fatture\Fattura;
 include_once __DIR__.'/../../core.php';
 
 $documento = Fattura::find($id_record);
+$dir = $documento->direzione;
 
 // Impostazioni per la gestione
 $options = [

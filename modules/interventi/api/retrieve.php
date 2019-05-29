@@ -57,7 +57,6 @@ switch ($resource) {
             `in_interventi`.`descrizione`,
             `in_interventi`.`idtipointervento`,
             `in_interventi`.`idanagrafica`,
-            `in_interventi`.`idautomezzo`,
             `in_interventi`.`idsede`,
             `in_interventi`.`idstatointervento`,
             `in_interventi`.`informazioniaggiuntive`,
@@ -114,7 +113,7 @@ switch ($resource) {
 
     // Elenco articoli dell'intervento per l'applicazione
     case 'articoli_intervento':
-        $query = 'SELECT id, idarticolo AS id_articolo, idintervento AS id_intervento, IF(idautomezzo != 0, idautomezzo, NULL) AS id_automezzo, qta, created_at as data FROM mg_articoli_interventi WHERE `idintervento` = :id_intervento';
+        $query = 'SELECT id, idarticolo AS id_articolo, idintervento AS id_intervento, qta, created_at as data FROM mg_articoli_interventi WHERE `idintervento` = :id_intervento';
 
         $parameters = [
             ':id_intervento' => $request['id_intervento'],

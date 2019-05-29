@@ -297,51 +297,8 @@ echo '
         }
 echo '
 		</div>
-	</div>
-
-
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h3 class="panel-title">'.tr('Questo articolo è presente nei seguenti automezzi').':</h3>
-		</div>
-		<div class="panel-body">';
-
-        // Quantità nell'automezzo
-        $rsa = $dbo->fetchArray('SELECT qta, (SELECT nome FROM dt_automezzi WHERE id=idautomezzo) AS nome, (SELECT targa FROM dt_automezzi WHERE id=idautomezzo) AS targa FROM mg_articoli_automezzi WHERE idarticolo='.prepare($id_record));
-
-        if (count($rsa) > 0) {
-            echo '
-            <div class="row">
-                <div class="col-md-12 col-lg-6">
-                    <table class="table table-striped table-condensed table-bordered">
-                        <tr>
-                            <th>'.tr('Nome automezzo').'</th>
-                            <th>'.tr('Targa').'</th>
-                            <th>'.tr('Q.tà').'</th>
-                        </tr>';
-
-            for ($i = 0; $i < count($rsa); ++$i) {
-                echo '
-                        <tr>
-                            <td>'.$rsa[$i]['nome'].'</td>
-                            <td>'.$rsa[$i]['targa'].'</td>
-                            <td>'.Translator::numberToLocale($rsa[$i]['qta']).' '.$rs[0]['unita_misura'].'</td>
-                        </tr>';
-            }
-
-            echo '
-                    </table>
-                </div>
-            </div>';
-        } else {
-            echo '
-            <div class="alert alert-info">
-                '.tr('Non ci sono automezzi collegati').'... '.Modules::link('Automezzi', null, tr('Collega il primo automezzo!')).'.
-            </div>';
-        }
+	</div>';
 ?>
-		</div>
-	</div>
 </form>
 
 {( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$" )}

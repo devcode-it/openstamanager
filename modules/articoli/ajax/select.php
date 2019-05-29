@@ -2,41 +2,89 @@
 
 include_once __DIR__.'/../../../core.php';
 
-switch ($resource) {
+switch ($resource) {     
     case 'articoli':
-        $query = 'SELECT 
-            mg_articoli.id, 
-            mg_articoli.codice, 
-            mg_articoli.descrizione,
-			round(mg_articoli.qta,'.setting('Cifre decimali per quantità').') AS qta, 
-            mg_articoli.um, 
-            mg_articoli.idiva_vendita, 
-            mg_articoli.idconto_vendita, 
-            mg_articoli.idconto_acquisto, 
-            mg_articoli.prezzo_vendita, 
-            mg_articoli.prezzo_acquisto,
-            categoria.`nome` AS categoria,
-            sottocategoria.`nome` AS sottocategoria,
-            co_iva.descrizione AS iva_vendita,
-            CONCAT(conto_vendita_categoria .numero, ".", conto_vendita_sottocategoria.numero, " ", conto_vendita_sottocategoria.descrizione) AS idconto_vendita_title, 
-            CONCAT(conto_acquisto_categoria .numero, ".", conto_acquisto_sottocategoria.numero, " ", conto_acquisto_sottocategoria.descrizione) AS idconto_acquisto_title
-        FROM mg_articoli
-            LEFT JOIN co_iva ON mg_articoli.idiva_vendita = co_iva.id
-            LEFT JOIN `mg_categorie` AS categoria ON `categoria`.`id` = `mg_articoli`.`id_categoria`
-            LEFT JOIN `mg_categorie` AS sottocategoria ON `sottocategoria`.`id` = `mg_articoli`.`id_sottocategoria` 
-            LEFT JOIN co_pianodeiconti3 AS conto_vendita_sottocategoria ON conto_vendita_sottocategoria.id=mg_articoli.idconto_vendita
-                LEFT JOIN co_pianodeiconti2 AS conto_vendita_categoria ON conto_vendita_sottocategoria.idpianodeiconti2=conto_vendita_categoria.id
-            LEFT JOIN co_pianodeiconti3 AS conto_acquisto_sottocategoria ON conto_acquisto_sottocategoria.id=mg_articoli.idconto_acquisto
-                LEFT JOIN co_pianodeiconti2 AS conto_acquisto_categoria ON conto_acquisto_sottocategoria.idpianodeiconti2=conto_acquisto_categoria.id
-        |where| ORDER BY mg_articoli.id_categoria ASC, mg_articoli.id_sottocategoria ASC';
+        // Se non ci sono sedi settate, carico tutti gli articoli
+        if(!isset($superselect['idsede_partenza']) && (!isset($superselect['idsede_destinazione']))){
+            $query = 'SELECT 
+                mg_articoli.id, 
+                mg_articoli.codice, 
+                mg_articoli.descrizione,
+                round(mg_articoli.qta,'.setting('Cifre decimali per quantità').') AS qta, 
+                mg_articoli.um, 
+                mg_articoli.idiva_vendita, 
+                mg_articoli.idconto_vendita, 
+                mg_articoli.idconto_acquisto, 
+                mg_articoli.prezzo_vendita, 
+                mg_articoli.prezzo_acquisto,
+                categoria.`nome` AS categoria,
+                sottocategoria.`nome` AS sottocategoria,
+                co_iva.descrizione AS iva_vendita,
+                CONCAT(conto_vendita_categoria .numero, ".", conto_vendita_sottocategoria.numero, " ", conto_vendita_sottocategoria.descrizione) AS idconto_vendita_title, 
+                CONCAT(conto_acquisto_categoria .numero, ".", conto_acquisto_sottocategoria.numero, " ", conto_acquisto_sottocategoria.descrizione) AS idconto_acquisto_title
+            FROM mg_articoli
+                LEFT JOIN co_iva ON mg_articoli.idiva_vendita = co_iva.id
+                LEFT JOIN `mg_categorie` AS categoria ON `categoria`.`id` = `mg_articoli`.`id_categoria`
+                LEFT JOIN `mg_categorie` AS sottocategoria ON `sottocategoria`.`id` = `mg_articoli`.`id_sottocategoria` 
+                LEFT JOIN co_pianodeiconti3 AS conto_vendita_sottocategoria ON conto_vendita_sottocategoria.id=mg_articoli.idconto_vendita
+                    LEFT JOIN co_pianodeiconti2 AS conto_vendita_categoria ON conto_vendita_sottocategoria.idpianodeiconti2=conto_vendita_categoria.id
+                LEFT JOIN co_pianodeiconti3 AS conto_acquisto_sottocategoria ON conto_acquisto_sottocategoria.id=mg_articoli.idconto_acquisto
+                    LEFT JOIN co_pianodeiconti2 AS conto_acquisto_categoria ON conto_acquisto_sottocategoria.idpianodeiconti2=conto_acquisto_categoria.id
+            |where|
+            ORDER BY
+                mg_articoli.id_categoria ASC,
+                mg_articoli.id_sottocategoria ASC,
+                mg_articoli.codice ASC,
+                mg_articoli.descrizione ASC';
+        }
+        
+        // Se c'è una sede settata, carico tutti gli articoli presenti in quella sede
+        else{
+            $query = 'SELECT 
+                mg_articoli.id, 
+                mg_articoli.codice, 
+                mg_articoli.descrizione,	
+                mg_articoli.um, 
+                mg_articoli.idiva_vendita, 
+                mg_articoli.idconto_vendita, 
+                mg_articoli.idconto_acquisto, 
+                mg_articoli.prezzo_vendita, 
+                mg_articoli.prezzo_acquisto,
+                SUM(mg_movimenti.qta)AS qta,
+                categoria.`nome` AS categoria,
+                sottocategoria.`nome` AS sottocategoria,
+                co_iva.descrizione AS iva_vendita,
+                CONCAT(conto_vendita_categoria .numero, ".", conto_vendita_sottocategoria.numero, " ", conto_vendita_sottocategoria.descrizione) AS idconto_vendita_title, 
+                CONCAT(conto_acquisto_categoria .numero, ".", conto_acquisto_sottocategoria.numero, " ", conto_acquisto_sottocategoria.descrizione) AS idconto_acquisto_title
+            FROM mg_articoli
+                LEFT JOIN co_iva ON mg_articoli.idiva_vendita = co_iva.id
+                LEFT JOIN `mg_categorie` AS categoria ON `categoria`.`id` = `mg_articoli`.`id_categoria`
+                LEFT JOIN `mg_categorie` AS sottocategoria ON `sottocategoria`.`id` = `mg_articoli`.`id_sottocategoria` 
+                LEFT JOIN co_pianodeiconti3 AS conto_vendita_sottocategoria ON conto_vendita_sottocategoria.id=mg_articoli.idconto_vendita
+                    LEFT JOIN co_pianodeiconti2 AS conto_vendita_categoria ON conto_vendita_sottocategoria.idpianodeiconti2=conto_vendita_categoria.id
+                LEFT JOIN co_pianodeiconti3 AS conto_acquisto_sottocategoria ON conto_acquisto_sottocategoria.id=mg_articoli.idconto_acquisto
+                    LEFT JOIN co_pianodeiconti2 AS conto_acquisto_categoria ON conto_acquisto_sottocategoria.idpianodeiconti2=conto_acquisto_categoria.id
+                LEFT JOIN mg_movimenti ON mg_movimenti.idarticolo=mg_articoli.id
+                LEFT JOIN an_sedi ON an_sedi.id = mg_movimenti.idsede_azienda           
+            |where|
+            GROUP BY
+                mg_articoli.id
+            ORDER BY
+                mg_articoli.id_categoria ASC,
+                mg_articoli.id_sottocategoria ASC,
+                mg_articoli.codice ASC,
+                mg_articoli.descrizione ASC';
+        }
 
         foreach ($elements as $element) {
             $filter[] = 'mg_articoli.id='.prepare($element);
         }
 
         $where[] = 'attivo = 1';
-        if (!empty($superselect['dir']) && $superselect['dir'] == 'entrata') {
-            //$where[] = '(qta > 0 OR servizio = 1)';
+
+        // Filtro articolo solo per documenti di vendita
+        if ($superselect['dir'] == 'entrata' && isset($superselect['idsede_partenza']) ) {
+            $where[] = 'idsede_azienda='.prepare($superselect['idsede_partenza']);
         }
 
         if (!empty($search)) {

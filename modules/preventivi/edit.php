@@ -1,8 +1,11 @@
 <?php
 include_once __DIR__.'/../../core.php';
 
+unset($_SESSION['superselect']['idsede_partenza']);
+unset($_SESSION['superselect']['idsede_destinazione']);
 unset($_SESSION['superselect']['idanagrafica']);
 $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
+
 
 ?><form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">

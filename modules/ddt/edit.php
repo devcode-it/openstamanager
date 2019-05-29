@@ -9,8 +9,12 @@ if ($module['name'] == 'Ddt di vendita') {
 } else {
     $dir = 'uscita';
 }
-
+unset($_SESSION['superselect']['idanagrafica']);
+unset($_SESSION['superselect']['idsede_partenza']);
+unset($_SESSION['superselect']['idsede_destinazione']);
 $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
+$_SESSION['superselect']['idsede_partenza'] = $record['idsede_partenza'];
+$_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione'];
 
 ?>
 <form action="" method="post" id="edit-form">
@@ -93,18 +97,40 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
                     ?>
 				</div>
 			</div>
+            
+                <?php
+                // Conteggio numero articoli ddt in uscita
+                $articolo=$dbo->fetchArray('SELECT mg_articoli.id FROM ((mg_articoli INNER JOIN dt_righe_ddt ON mg_articoli.id=dt_righe_ddt.idarticolo) INNER JOIN dt_ddt ON dt_ddt.id=dt_righe_ddt.idddt) WHERE dt_ddt.id='.prepare($id_record));
+                ?>
+                <div class="row">
+                    <div class="col-md-3">
+                        {[ "type": "select", "label": "<?php echo ($dir == 'uscita') ? tr('Fornitore') : tr('Destinatario'); ?>", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti_fornitori", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+                    </div>
+                        
+                    <?php
+                        if ($dir == 'entrata'){
+                    ?>
+                    <div class="col-md-3">
+                        {[ "type": "select", "label": "<?php echo tr('Partenza merce') ?>", "name": "idsede_partenza", "ajax-source": "sedi_azienda",  "value": "$idsede_partenza$", "readonly": "<?php echo ($record['flag_completato'] || sizeof($articolo)) ? 1 : 0 ; ?>" ]}
+                    </div>
+                    <div class="col-md-3">
+                        {[ "type": "select", "label": "<?php echo tr('Destinazione merce') ?>", "name": "idsede_destinazione", "ajax-source": "sedi",  "value": "$idsede_destinazione$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+                    </div>
+                    <?php
+                    }else{
+                    ?>
+                    <div class="col-md-3">
+                        {[ "type": "select", "label": "<?php echo tr('Partenza merce') ?>", "name": "idsede_partenza", "ajax-source": "sedi",  "value": "$idsede_partenza$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+                    </div>
+                    <div class="col-md-3">
+                        {[ "type": "select", "label": "<?php echo tr('Destinazione merce') ?>", "name": "idsede_destinazione", "ajax-source": "sedi_azienda",  "value": "$idsede_destinazione$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+                    </div>                
 
-			<div class="row">
-				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo ($dir == 'uscita') ? tr('Fornitore') : tr('Destinatario'); ?>", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti_fornitori", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
-				</div>
-				
-				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo ($dir == 'uscita') ? tr('Partenza merce') : tr('Destinazione merce'); ?>", "name": "idsede", "ajax-source": "sedi",  "value": "$idsede$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
-				</div>
-			</div>
-
-			<hr>
+                    <?php
+                    }
+                    ?>
+                </div>
+            <hr>
 
 			<div class="row">
 				<div class="col-md-3">
@@ -242,8 +268,11 @@ include $docroot.'/modules/ddt/row-list.php';
 <script>
 	$('#idanagrafica').change( function(){
 		session_set('superselect,idanagrafica', $(this).val(), 0);
-
-		$("#idsede").selectReset();
+        if('<?php echo $dir; ?>' == 'uscita'){
+		    $("#idsede_partenza").selectReset();
+        }else{
+            $("#idsede_destinazione").selectReset();
+        }
 	});
 </script>
 

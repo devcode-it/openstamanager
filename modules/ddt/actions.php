@@ -76,7 +76,8 @@ switch (post('op')) {
                 'idanagrafica' => post('idanagrafica'),
                 'idspedizione' => post('idspedizione'),
                 'idcausalet' => post('idcausalet'),
-                'idsede' => post('idsede'),
+                'idsede_partenza' => post('idsede_partenza'),
+                'idsede_destinazione' => post('idsede_destinazione'),
                 'idvettore' => post('idvettore'),
                 'idporto' => post('idporto'),
                 'idaspettobeni' => post('idaspettobeni'),
@@ -102,6 +103,8 @@ switch (post('op')) {
                     ricalcola_costiagg_ddt($id_record, $idrivalsainps, $idritenutaacconto, $bollo);
                 }
             }
+
+            aggiorna_sedi_movimenti('ddt', $id_record);
 
             flash()->info(tr('Ddt modificato correttamente!'));
         }
@@ -132,6 +135,8 @@ switch (post('op')) {
 
             // Ricalcolo inps, ritenuta e bollo
             ricalcola_costiagg_ddt($id_record);
+
+            aggiorna_sedi_movimenti('ddt', $id_record);
 
             flash()->info(tr('Articolo aggiunto!'));
         }
@@ -255,6 +260,8 @@ switch (post('op')) {
 
         ricalcola_costiagg_ddt($id_record);
 
+        aggiorna_sedi_movimenti('ddt', $id_record);
+
         flash()->info(tr('Ordine _NUM_ aggiunto!', [
             '_NUM_' => $ordine->numero,
         ]));
@@ -278,6 +285,8 @@ switch (post('op')) {
         } else {
             ricalcola_costiagg_ddt($id_record, 0, 0, 0);
         }
+
+        aggiorna_sedi_movimenti('ddt', $id_record);
 
         flash()->info(tr('Articolo rimosso!'));
         break;
@@ -351,7 +360,7 @@ switch (post('op')) {
             if (!empty($idarticolo)) {
                 if (!controlla_seriali('id_riga_ddt', $idriga, $old_qta, $qta, $dir)) {
                     flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
-
+                    
                     return;
                 }
             }
@@ -403,6 +412,7 @@ switch (post('op')) {
                 }
             }
         }
+        aggiorna_sedi_movimenti('ddt', $id_record);
         break;
 
     // eliminazione ddt

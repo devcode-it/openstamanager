@@ -8,6 +8,11 @@ $rs = $dbo->fetchArray('SELECT co_tipidocumento.descrizione, dir FROM co_tipidoc
 $dir = $rs[0]['dir'];
 $tipodoc = $rs[0]['descrizione'];
 
+unset($_SESSION['superselect']['idanagrafica']);
+unset($_SESSION['superselect']['idsede_partenza']);
+unset($_SESSION['superselect']['idsede_destinazione']);
+$_SESSION['superselect']['idsede_partenza'] = $record['idsede_partenza'];
+$_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione'];
 $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 $_SESSION['superselect']['ddt'] = $dir;
 $_SESSION['superselect']['split_payment'] = $record['split_payment'];
@@ -88,7 +93,7 @@ if ($dir == 'entrata') {
 					{[ "type": "text", "label": "<?php echo $label; ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$" ]}
 				</div>
 
-				<div class="col-md-3">
+				<div class="col-md-2">
 					{[ "type": "date", "label": "<?php echo tr('Data emissione'); ?>", "name": "data", "required": 1, "value": "$data$" ]}
 				</div>
 
@@ -103,11 +108,19 @@ if (empty($record['is_fiscale'])) {
 }
 
 ?>
-
-				<div class="col-md-3">
-					<!-- TODO: Rimuovere possibilità di selezionare lo stato pagato obbligando l'utente ad aggiungere il movimento in prima nota -->
-					{[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatodocumento", "required": 1, "values": "query=<?php echo $query; ?>", "value": "$idstatodocumento$", "class": "unblockable", "extra": " onchange = \"if ($('#idstatodocumento option:selected').text()=='Pagato' || $('#idstatodocumento option:selected').text()=='Parzialmente pagato' ){if( confirm('<?php echo tr('Sicuro di voler impostare manualmente la fattura come pagata senza aggiungere il movimento in prima nota?'); ?>') ){ return true; }else{ $('#idstatodocumento').selectSet(<?php echo $record['idstatodocumento']; ?>); }}\" " ]}
+				<?php if ($dir == 'uscita') {
+                        ?>
+					
+				<div class="col-md-2">
+					{[ "type": "date", "label": "<?php echo tr('Data registrazione'); ?>", "name": "data_registrazione", "required": 0, "value": "$data_registrazione$" ]}
 				</div>
+
+                <div class="col-md-2">
+                    {[ "type": "date", "label": "<?php echo tr('Data competenza'); ?>", "name": "data_competenza", "required": 0, "value": "$data_competenza$" ]}
+                </div>
+				
+				<?php
+                    } ?>
 
                 <div class="col-md-3">
 					<?php
@@ -137,24 +150,36 @@ if (empty($record['is_fiscale'])) {
                     }
                     ?>
 				</div>
-
+                
+                    <?php
+                    // Conteggio numero articoli fatture
+                    $articolo=$dbo->fetchArray('SELECT mg_articoli.id FROM ((mg_articoli INNER JOIN co_righe_documenti ON mg_articoli.id=co_righe_documenti.idarticolo) INNER JOIN co_documenti ON co_documenti.id=co_righe_documenti.iddocumento) WHERE co_documenti.id='.prepare($id_record));
+                    if ($dir == 'uscita'){
+                    ?>
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Riferimento sede'); ?>", "name": "idsede", "ajax-source": "sedi", "placeholder": "Sede legale", "value": "$idsede$" ]}
+					{[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza", "ajax-source": "sedi", "placeholder": "Sede legale", "value": "$idsede_partenza$"]}
 				</div>
 				
-				<?php if ($dir == 'uscita') {
-                        ?>
-					
-				<div class="col-md-3">
-					{[ "type": "date", "label": "<?php echo tr('Data registrazione'); ?>", "name": "data_registrazione", "required": 0, "value": "$data_registrazione$" ]}
-				</div>
-
                 <div class="col-md-3">
-                    {[ "type": "date", "label": "<?php echo tr('Data competenza'); ?>", "name": "data_competenza", "required": 0, "value": "$data_competenza$" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Destinazione merce') ?>", "name": "idsede_destinazione", "ajax-source": "sedi_azienda",  "value": "$idsede_destinazione$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
                 </div>
+                    <?php
+                    }else{
+                    ?>
+				<div class="col-md-3">
+					{[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "placeholder": "Sede legale", "value": "$idsede_partenza$", "readonly": "<?php echo (sizeof($articolo)) ? 1 : 0 ; ?>"  ]}
+				</div>
 				
-				<?php
-                    } ?>
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "<?php echo tr('Destinazione merce') ?>", "name": "idsede_destinazione", "ajax-source": "sedi",  "value": "$idsede_destinazione$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+                </div>
+                    <?php
+                    }
+                    ?>
+				<div class="col-md-3">
+					<!-- TODO: Rimuovere possibilità di selezionare lo stato pagato obbligando l'utente ad aggiungere il movimento in prima nota -->
+					{[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatodocumento", "required": 1, "values": "query=<?php echo $query; ?>", "value": "$idstatodocumento$", "class": "unblockable", "extra": " onchange = \"if ($('#idstatodocumento option:selected').text()=='Pagato' || $('#idstatodocumento option:selected').text()=='Parzialmente pagato' ){if( confirm('<?php echo tr('Sicuro di voler impostare manualmente la fattura come pagata senza aggiungere il movimento in prima nota?'); ?>') ){ return true; }else{ $('#idstatodocumento').selectSet(<?php echo $record['idstatodocumento']; ?>); }}\" " ]}
+				</div>
 
 				<?php if ($dir == 'entrata') {
                         ?>
@@ -604,8 +629,8 @@ echo '
 <script type="text/javascript">
 	$("#idanagrafica").change(function(){
         session_set("superselect,idanagrafica", $(this).val(), 0);
-
-		$("#idsede").selectReset();
+            
+		$("#idsede_destinazione").selectReset();
 	});
 
     $("#ricalcola_scadenze").click(function(){

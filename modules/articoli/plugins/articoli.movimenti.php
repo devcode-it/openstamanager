@@ -12,7 +12,7 @@ echo '
     <div class="box-body">';
 
 // Calcolo la quantità dai movimenti in magazzino
-$rst = $dbo->fetchArray('SELECT COUNT(mg_movimenti.id) AS `row`, SUM(qta) AS qta_totale, (SELECT SUM(qta) FROM mg_movimenti  WHERE idarticolo='.prepare($id_record).' AND (idintervento IS NULL OR idautomezzo = 0) AND data <= CURDATE()) AS qta_totale_attuale FROM mg_movimenti WHERE idarticolo='.prepare($id_record).' AND (idintervento IS NULL OR idautomezzo = 0)');
+$rst = $dbo->fetchArray('SELECT COUNT(mg_movimenti.id) AS `row`, SUM(qta) AS qta_totale, (SELECT SUM(qta) FROM mg_movimenti  WHERE idarticolo='.prepare($id_record).' AND (idintervento IS NULL) AND data <= CURDATE()) AS qta_totale_attuale FROM mg_movimenti WHERE idarticolo='.prepare($id_record).' AND (idintervento IS NULL)');
 $qta_totale = $rst[0]['qta_totale'];
 $qta_totale_attuale = $rst[0]['qta_totale_attuale'];
 
@@ -65,7 +65,6 @@ if (!empty($rs2)) {
         echo '
                 <td>'.$r['movimento'].'
 				'.((!empty($r['idintervento'])) ? Modules::link('Interventi', $r['idintervento']) : '').'
-				'.((!empty($r['idautomezzo'])) ? Modules::link('Automezzi', $r['idautomezzo']) : '').'
 				'.((!empty($r['idddt'])) ? (Modules::link('DDt di '.$dir, $r['idddt'], null, null, (intval($database->fetchOne('SELECT * FROM `dt_ddt` WHERE `id` ='.prepare($r['idddt'])))) ? '' : 'class="disabled"')) : '').'
 				'.((!empty($r['iddocumento'])) ? (Modules::link('Fatture di '.$dir, $r['iddocumento'], null, null, (intval($database->fetchOne('SELECT * FROM `co_documenti` WHERE `id` ='.prepare($r['iddocumento'])))) ? '' : 'class="disabled"')) : '').'
 				</td>';

@@ -83,8 +83,12 @@ class Fattura extends Document
         $model->id_segment = $id_segment;
 
         $model->idconto = $id_conto;
-        $model->idsede = $id_sede;
 
+        if($dir == 'entrata'){
+            $model->idsede_destinazione = $id_sede;
+        }else{
+            $model->idsede_partenza = $id_sede;
+        }
         $model->addebita_bollo = setting('Addebita marca da bollo al cliente');
 
         $id_ritenuta_contributi = ($tipo_documento->dir == 'entrata') ? setting('Ritenuta contributi') : null;
@@ -102,7 +106,7 @@ class Fattura extends Document
         }
 
         $model->save();
-
+        
         return $model;
     }
 

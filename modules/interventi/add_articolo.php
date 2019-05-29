@@ -11,7 +11,6 @@ $gruppi = Auth::user()['gruppo'];
 $can_edit_prezzi = (in_array('Amministratori', $gruppi)) || (setting('Mostra i prezzi al tecnico') == 1 && (in_array('Tecnici', $gruppi)));
 
 $idriga = get('idriga');
-$idautomezzo = (get('idautomezzo') == 'undefined') ? '' : get('idautomezzo');
 
 // Lettura idanagrafica cliente e percentuale di sconto/rincaro in base al listino
 $rs = $dbo->fetchArray('SELECT idanagrafica FROM in_interventi WHERE id='.prepare($id_record));
@@ -58,8 +57,6 @@ if (empty($idriga)) {
     $sconto_unitario = $rsr[0]['sconto_unitario'];
     $tipo_sconto = $rsr[0]['tipo_sconto'];
 
-    $idautomezzo = $rsr[0]['idautomezzo'];
-
     $idimpianto = $rsr[0]['idimpianto'];
 }
 
@@ -69,7 +66,6 @@ if (empty($idriga)) {
 echo '
 <form id="add_form" action="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'" method="post">
     <input type="hidden" name="op" value="'.$op.'">
-    <input type="hidden" id="idautomezzo" name="idautomezzo" value="'.$idautomezzo.'">
     <input type="hidden" name="idriga" value="'.$idriga.'">';
 
 if (!empty($idarticolo)) {

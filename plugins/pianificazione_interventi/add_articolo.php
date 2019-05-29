@@ -8,7 +8,6 @@ $plugin = Plugins::get($id_plugin);
 $show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
 
 $idriga = get('idriga');
-//$idautomezzo = (get('idautomezzo') == 'undefined') ? '' : get('idautomezzo');
 
 // Lettura idanagrafica cliente e percentuale di sconto/rincaro in base al listino
 $rs = $dbo->fetchArray('SELECT idanagrafica FROM co_contratti WHERE id='.prepare($id_record));
@@ -56,8 +55,6 @@ if (empty($idriga)) {
 
     $sconto_unitario = $rsr[0]['sconto_unitario'];
     $tipo_sconto = $rsr[0]['tipo_sconto'];
-
-    $idautomezzo = $rsr[0]['idautomezzo'];
 
     $idimpianto = $rsr[0]['idimpianto'];
     $idcontratto_riga = $rsr[0]['id_promemoria'];

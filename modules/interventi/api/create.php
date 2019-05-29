@@ -29,7 +29,6 @@ switch ($resource) {
                 'idstatointervento' => $data['id_stato_intervento'],
                 'idtipointervento' => $data['id_tipo_intervento'],
                 'idsede' => 0,
-                'idautomezzo' => 0,
 
                 'codice' => $codice,
                 'data_richiesta' => $data['data_richiesta'],
@@ -63,7 +62,7 @@ switch ($resource) {
 
         $originale = ArticoloOriginale::find($data['id_articolo']);
         $intervento = Intervento::find($data['id_intervento']);
-        $articolo = Articolo::build($intervento, $originale, $data['id_automezzo']);
+        $articolo = Articolo::build($intervento, $originale);
 
         $articolo->qta = $data['qta'];
         $articolo->um = $data['um'];

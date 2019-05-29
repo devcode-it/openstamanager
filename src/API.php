@@ -47,7 +47,7 @@ class API extends \Util\Singleton
      */
     public function __construct()
     {
-        if (!self::isAPIRequest() || (!Auth::check() && self::getRequest()['resource'] != 'login')) {
+        if (!Auth::check() && self::getRequest()['resource'] != 'login') {
             throw new InvalidArgumentException();
         }
     }

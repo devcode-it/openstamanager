@@ -188,7 +188,6 @@ switch (post('op')) {
         aggiorna_sedi_movimenti('interventi', $id_record);
         break;
 
-
     // Eliminazione intervento
     case 'delete':
         // Elimino anche eventuali file caricati

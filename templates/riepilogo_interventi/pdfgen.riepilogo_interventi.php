@@ -99,7 +99,7 @@ foreach ($interventi as $intervento) {
 
     $riga_tecnici .= "</table>\n";
 
-    $line = '<span>Intervento <b>'.$intervento['Numero'].'</b> del <b>'.Translator::timestampToLocale($intervento['Data inizio'])."</b><br/><small style='color:#444;'>".nl2br($intervento['richiesta'])."</small></span><br/>\n";
+    $line = '<span>Intervento <b>'.$intervento['Numero'].'</b> del <b>'.Translator::timestampToLocale($intervento['Data inizio'])."</b><br/><small style='color:#444;'>".nl2br($intervento['descrizione'])."</small></span><br/>\n";
 
     // Se l'elenco non è di un singolo cliente stampo anche la sua ragione sociale
     if (!$singolo_cliente) {
@@ -256,7 +256,7 @@ if (sizeof($info_intervento) > 0) {
 }
 
 // Conteggio articoli utilizzati
-$query = "SELECT *, (SELECT percentuale FROM co_iva WHERE id=(SELECT idiva_vendita FROM mg_articoli WHERE id=idarticolo)) AS prciva_vendita, (SELECT orario_inizio FROM in_interventi_tecnici WHERE idintervento=mg_articoli_interventi.idintervento GROUP BY idintervento HAVING idintervento=mg_articoli_interventi.idintervento) AS data_intervento, (SELECT prc_guadagno FROM mg_listini WHERE id=(SELECT idlistino_vendite FROM an_anagrafiche WHERE idanagrafica=(SELECT idanagrafica FROM in_interventi WHERE id=mg_articoli_interventi.idintervento) ) ) AS prc_guadagno, (SELECT codice FROM mg_articoli WHERE id=idarticolo) AS codice_art, CONCAT_WS(serial, 'SN: ', ', ') AS codice, SUM(qta) AS sumqta FROM `mg_articoli_interventi` JOIN mg_prodotti ON mg_articoli_interventi.idarticolo = mg_prodotti.id_articolo GROUP BY idarticolo, idintervento, lotto HAVING idintervento IN(".implode(',', $idinterventi).") AND NOT idarticolo='0' ORDER BY idarticolo ASC";
+$query = "SELECT *, (SELECT codice FROM in_interventi WHERE  in_interventi.id = mg_articoli_interventi.idintervento ) AS codice, (SELECT percentuale FROM co_iva WHERE id=(SELECT idiva_vendita FROM mg_articoli WHERE id=idarticolo)) AS prciva_vendita, (SELECT orario_inizio FROM in_interventi_tecnici WHERE idintervento=mg_articoli_interventi.idintervento GROUP BY idintervento HAVING idintervento=mg_articoli_interventi.idintervento) AS data_intervento, (SELECT prc_guadagno FROM mg_listini WHERE id=(SELECT idlistino_vendite FROM an_anagrafiche WHERE idanagrafica=(SELECT idanagrafica FROM in_interventi WHERE id=mg_articoli_interventi.idintervento) ) ) AS prc_guadagno, (SELECT codice FROM mg_articoli WHERE id=idarticolo) AS codice_art, CONCAT_WS(serial, 'SN: ', ', ') AS codice, SUM(qta) AS sumqta FROM `mg_articoli_interventi` JOIN mg_prodotti ON mg_articoli_interventi.idarticolo = mg_prodotti.id_articolo GROUP BY idarticolo, idintervento, lotto HAVING idintervento IN(".implode(',', $idinterventi).") AND NOT idarticolo='0' ORDER BY idarticolo ASC";
 $rs2 = $dbo->fetchArray($query);
 if (sizeof($rs2) > 0) {
     $body .= "<table style=\"width:100%;\" class=\"table_values\" cellspacing=\"2\" cellpadding=\"5\" style=\"border-color:#aaa;\">\n";
@@ -290,7 +290,7 @@ if (sizeof($rs2) > 0) {
             $body .= '<br/><small>'.$rs2[$i]['codice']."</small>\n";
         }
 
-        $body .= '<br/><span><small style="color:#777;">Intervento '.$rs2[$i]['idintervento'].' del '.Translator::dateToLocale($rs2[$i]['data_intervento'])."</small></span>\n";
+        $body .= '<br/><span><small style="color:#777;">Intervento '.$rs2[$i]['codice'].' del '.Translator::dateToLocale($rs2[$i]['data_intervento'])."</small></span>\n";
         $body .= "</td>\n";
 
         // Quantità
@@ -326,7 +326,7 @@ if (sizeof($rs2) > 0) {
 }
 
 // Conteggio spese aggiuntive
-$query = 'SELECT *, (SELECT orario_inizio FROM in_interventi_tecnici WHERE idintervento=in_righe_interventi.idintervento GROUP BY idintervento HAVING idintervento=in_righe_interventi.idintervento ORDER BY orario_inizio) AS data_intervento FROM in_righe_interventi WHERE idintervento IN('.implode(',', $idinterventi).') ORDER BY id ASC';
+$query = 'SELECT *, (SELECT codice FROM in_interventi WHERE in_interventi.id = in_righe_interventi.idintervento ) AS codice, (SELECT orario_inizio FROM in_interventi_tecnici WHERE idintervento=in_righe_interventi.idintervento GROUP BY idintervento HAVING idintervento=in_righe_interventi.idintervento ORDER BY orario_inizio) AS data_intervento FROM in_righe_interventi WHERE idintervento IN('.implode(',', $idinterventi).') ORDER BY id ASC';
 $rs2 = $dbo->fetchArray($query);
 
 if (sizeof($rs2) > 0) {
@@ -359,7 +359,7 @@ if (sizeof($rs2) > 0) {
         // Articolo
         $body .= "<tr><td class='first_cell'>\n";
         $body .= '<span>'.$rs2[$i]['descrizione']."</span><br/>\n";
-        $body .= '<span><small style="color:#777;">Intervento '.$rs2[$i]['idintervento'].' del '.Translator::dateToLocale($rs2[$i]['data_intervento'])."</small></span>\n";
+        $body .= '<span><small style="color:#777;">Intervento '.$rs2[$i]['codice'].' del '.Translator::dateToLocale($rs2[$i]['data_intervento'])."</small></span>\n";
         $body .= "</td>\n";
 
         // Quantità

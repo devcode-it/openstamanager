@@ -1,5 +1,9 @@
 <?php
-include("../core.php");
+// Fix del calcolo del bollo
+$fatture = \Modules\Fatture\Fattura::all();
+foreach ($fatture as $fattura) {
+    $fattura->save();
+}
 
 // Spostamento automezzi su sedi
 $automezzi = $dbo->fetchArray('SELECT * FROM dt_automezzi');

@@ -18,7 +18,7 @@ switch ($resource) {
         }
 
         if (!empty($search)) {
-            $search_fields[] = 'nome LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = 'co_contratti.nome LIKE '.prepare('%'.$search.'%');
         }
 
         $custom['totale'] = 'totale';

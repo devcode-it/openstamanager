@@ -67,16 +67,16 @@ if (setting('Attiva aggiornamenti')) {
 
     $upload_max_filesize = ini_get('upload_max_filesize');
     $upload_max_filesize = str_replace(['k', 'M'], ['000', '000000'], $upload_max_filesize);
-    // Dimensione minima: 16MB
-    if ($upload_max_filesize < 16000000) {
-        $alerts['upload_max_filesize'] = '16MB';
+    // Dimensione minima: 32MB
+    if ($upload_max_filesize < 32000000) {
+        $alerts['upload_max_filesize'] = '32MB';
     }
 
     $post_max_size = ini_get('post_max_size');
     $post_max_size = str_replace(['k', 'M'], ['000', '000000'], $post_max_size);
-    // Dimensione minima: 16MB
-    if ($post_max_size < 16000000) {
-        $alerts['post_max_size'] = '16MB';
+    // Dimensione minima: 32MB
+    if ($post_max_size < 32000000) {
+        $alerts['post_max_size'] = '32MB';
     }
 
     if (!empty($alerts)) {
@@ -147,10 +147,10 @@ function search(button) {
                 </h3>
             </div>
             <div class="box-body">
-                <form action="'.ROOTDIR.'/controller.php?id_module='.$id_module.'" method="post" enctype="multipart/form-data" class="form-inline" id="update">
+                <form action="'.ROOTDIR.'/controller.php?id_module='.$id_module.'" method="post" enctype="multipart/form-data" id="update">
                     <input type="hidden" name="op" value="upload">
 
-                    <label><input type="file" name="blob" id="blob"></label>
+			        {[ "type": "file", "name": "blob", "required": 1, "accept": ".zip" ]}
 
                     <button type="button" class="btn btn-primary pull-right" onclick="update()">
                         <i class="fa fa-upload"></i> '.tr('Carica').'

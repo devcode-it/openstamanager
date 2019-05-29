@@ -47,6 +47,11 @@ a.disabled {
     font-weight: bold;
 }
 
+input[type=file]{
+    height: initial;
+    margin-bottom: 5px;
+}
+
 #datetime {
     font-size: 11px;
     font-weight: normal;
@@ -314,7 +319,7 @@ span.form-control {
 
 .nav-tabs-custom > .nav-tabs.pull-right > li > a.back-btn {
     font-size: 12px;
-    color: #3C8DBC;
+    color: #FFFFFF;
 }
 
 .navbar-nav > .notifications-menu > .dropdown-menu > li .menu > li > a, .navbar-nav > .messages-menu > .dropdown-menu > li .menu > li > a, .navbar-nav > .tasks-menu > .dropdown-menu > li .menu > li > a {
@@ -819,4 +824,23 @@ input.small-width {
 
 .box-info ul > li > :last-child {
     margin-bottom: 5px;
+}
+
+.skin-default .nav.navbar-nav li a{ 
+    color: #FFFFFF;
+}
+.skin-default .nav.navbar-nav li a:hover{
+    background: #222222;
+}
+
+.row{
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    -ms-word-break: break-all;
+    word-break: break-all;
+    word-break: break-word;
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
 }

@@ -29,7 +29,7 @@ echo '
 		</div>
 		
 		<div class="col-md-6">
-			{[ "type": "text", "label": "'.tr('Nome').'", "name": "nome", "required": 0 ]}
+			{[ "type": "text", "label": "'.tr('Nome').'", "name": "nome", "id": "nome_", "required": 0 ]}
 		</div>
 
 		
@@ -131,22 +131,22 @@ echo
 
 <script>
     // Abilito solo ragione sociale oppure solo nome-cognome in base a cosa compilo
-    $('#nome, #cognome', '#bs-popup, #bs-popup2').blur(function(){
-        if ($('#nome', '#bs-popup, #bs-popup2').val() == '' && $('#cognome', '#bs-popup, #bs-popup2').val() == '' ){
-            $('#nome, #cognome', '#bs-popup, #bs-popup2').prop('disabled', true).prop('required', false);
+    $('#nome_, #cognome', '#bs-popup, #bs-popup2').blur(function(){
+        if ($('#nome_', '#bs-popup, #bs-popup2').val() == '' && $('#cognome', '#bs-popup, #bs-popup2').val() == '' ){
+            $('#nome_, #cognome', '#bs-popup, #bs-popup2').prop('disabled', true).prop('required', false);
             $('#ragione_sociale', '#bs-popup, #bs-popup2').prop('disabled', false).prop('required', true);
         }else{
-            $('#nome, #cognome', '#bs-popup, #bs-popup2').prop('disabled', false).prop('required', true);
+            $('#nome_, #cognome', '#bs-popup, #bs-popup2').prop('disabled', false).prop('required', true);
             $('#ragione_sociale', '#bs-popup, #bs-popup2').prop('disabled', true).prop('required', false);
         }
     });
 
     $('#ragione_sociale', '#bs-popup, #bs-popup2').blur(function(){
         if ($('#ragione_sociale', '#bs-popup, #bs-popup2').val() == '' ){
-            $('#nome, #cognome', '#bs-popup, #bs-popup2').prop('disabled', false).prop('required', true);
+            $('#nome_, #cognome', '#bs-popup, #bs-popup2').prop('disabled', false).prop('required', true);
             $('#ragione_sociale', '#bs-popup, #bs-popup2').prop('disabled', true).prop('required', false);
         }else{
-            $('#nome, #cognome', '#bs-popup, #bs-popup2').prop('disabled', true).prop('required', false);
+            $('#nome_, #cognome', '#bs-popup, #bs-popup2').prop('disabled', true).prop('required', false);
             $('#ragione_sociale', '#bs-popup, #bs-popup2').prop('disabled', false).prop('required', true);
         }
     });

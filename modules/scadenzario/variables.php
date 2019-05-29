@@ -24,6 +24,6 @@ return [
     'pagamento' => $r['pagamento'],
     'totale' => Translator::numberToLocale(abs($r['totale'])),
     'data_scadenza' => Translator::dateToLocale($r['scadenza']),
-    'data' => Translator::dateToLocale($r['scadenza']),
+    'data' => Translator::dateToLocale($r['data']),
     'logo_azienda' => !empty($logo_azienda) ? '<img src="'.$logo_azienda.'" />' : '',
 ];

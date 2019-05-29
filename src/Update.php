@@ -377,6 +377,7 @@ class Update
         $previous = [];
 
         $files = glob($directory.'/*.{php,sql}', GLOB_BRACE);
+        natsort($files);
         foreach ($files as $file) {
             $infos = pathinfo($file);
             $version = str_replace('_', '.', $infos['filename']);

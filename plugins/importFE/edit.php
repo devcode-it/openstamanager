@@ -69,7 +69,7 @@ echo '
     <div class="box-body" id="upload">
         <div class="row">
             <div class="col-md-9">
-                <label><input type="file" name="blob" id="blob"></label>
+                {[ "type": "file", "name": "blob", "required": 1 ]}
             </div>
 
             <div class="col-md-3">

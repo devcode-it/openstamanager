@@ -6,24 +6,34 @@ $backup_dir = Backup::getDirectory();
 
 switch (filter('op')) {
     case 'getfile':
-        $file = filter('file');
+        $number = filter('number');
+        $number = intval($number);
 
-        download($backup_dir.'/'.$file, $file);
+        $backups = Backup::getList();
+        $backup = $backups[$number];
+        $filename = basename($backup);
+
+        download($backup, $filename);
 
         break;
 
     case 'del':
-        $file = filter('file');
+        $number = filter('number');
+        $number = intval($number);
 
-        delete($backup_dir.'/'.$file);
+        $backups = Backup::getList();
+        $backup = $backups[$number];
+        $filename = basename($backup);
 
-        if (!file_exists($backup_dir.'/'.$file)) {
+        delete($backup);
+
+        if (!file_exists($backup)) {
             flash()->info(tr('Backup _FILE_ eliminato!', [
-                '_FILE_' => '"'.$file.'"',
+                '_FILE_' => '"'.$filename.'"',
             ]));
         } else {
             flash()->error(tr("Errore durante l'eliminazione del backup _FILE_!", [
-                '_FILE_' => '"'.$file.'"',
+                '_FILE_' => '"'.$filename.'"',
             ]));
         }
 
@@ -39,9 +49,14 @@ switch (filter('op')) {
         break;
 
     case 'size':
-        $file = filter('file');
+        $number = filter('number');
+        $number = intval($number);
 
-        echo Util\FileSystem::size($backup_dir.'/'.$file);
+        $backups = Backup::getList();
+        $backup = $backups[$number];
+        $filename = basename($backup);
+
+        echo Util\FileSystem::size($backup);
 
         break;
 }
@@ -55,13 +70,17 @@ if (filter('op') == 'restore') {
         return;
     }
 
-    if (post('folder') == null) {
-        $path = $_FILES['blob']['tmp_name'] ?: $backup_dir.'/'.post('zip');
+    if (filter('number') == null) {
+        $path = $_FILES['blob']['tmp_name'];
     } else {
-        $path = $backup_dir.'/'.post('folder');
+        $number = filter('number');
+        $number = intval($number);
+
+        $backups = Backup::getList();
+        $path = $backups[$number];
     }
 
-    Backup::restore($path, post('folder') == null);
+    Backup::restore($path, is_file($path));
 
     flash()->info(tr('Backup ripristinato correttamente!'));
 }

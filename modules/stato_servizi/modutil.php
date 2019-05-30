@@ -48,12 +48,12 @@ function submodules($list, $depth = 0)
         $result .= '
         <tr class="'.$class.'">
             <td><small>'.str_repeat('&nbsp;', $depth * 4).'- '.$sub['title'].'</small></td>
-            <td align="right">'.$sub['version'].'</td>
+            <td align="left">'.$sub['version'].'</td>
             <td align="center">'.$stato.'</td>
             <td align="center">'.$compatible.'</td>';
 
         $result .= '
-            <td>';
+            <td  align="center">';
 
         // Possibilità di disinstallare solo se il modulo non è tra quelli predefiniti
         if (empty($sub['default'])) {

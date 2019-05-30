@@ -15,7 +15,7 @@ include_once __DIR__.'/../../core.php';
 
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Modulo del template'); ?>", "name": "module", "values": "query=SELECT id, title AS descrizione FROM zz_modules WHERE enabled = 1" ]}
+			{[ "type": "select", "label": "<?php echo tr('Modulo del template'); ?>", "name": "module", "required": 1 , "values": "query=SELECT id, title AS descrizione FROM zz_modules WHERE enabled = 1" ]}
 		</div>
 
 		<div class="col-md-6">

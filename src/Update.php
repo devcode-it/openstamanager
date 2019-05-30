@@ -394,7 +394,7 @@ class Update
             }
         }
 
-        asort($results);
+        $results;
 
         return $results;
     }

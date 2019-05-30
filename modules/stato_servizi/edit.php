@@ -8,10 +8,10 @@ echo '
         <table class="table table-hover table-bordered table-condensed">
             <tr>
                 <th>'.tr('Nome').'</th>
-                <th width="50">'.tr('Versione').'</th>
-                <th width="30">'.tr('Stato').'</th>
-                <th width="30">'.tr('Compatibilità').'</th>
-                <th width="20">'.tr('Opzioni').'</th>
+                <th>'.tr('Versione').'</th>
+                <th>'.tr('Stato').'</th>
+                <th>'.tr('Compatibilità').'</th>
+                <th>'.tr('Opzioni').'</th>
             </tr>';
 
 $modules = Modules::getHierarchy();
@@ -31,9 +31,9 @@ echo '
         <table class="table table-hover table-bordered table-condensed">
             <tr>
                 <th>'.tr('Nome').'</th>
-                <th width="200">'.tr('Posizione').'</th>
-                <th width="30">'.tr('Stato').'</th>
-                <th width="30">'.tr('Posizione').'</th>
+                <th>'.tr('Posizione').'</th>
+                <th>'.tr('Stato').'</th>
+                <th>'.tr('Posizione').'</th>
             </tr>';
 
 $widgets = $dbo->fetchArray('SELECT zz_widgets.id, zz_widgets.name AS widget_name, zz_modules.name AS module_name, zz_widgets.enabled AS enabled, location, help FROM zz_widgets INNER JOIN zz_modules ON zz_widgets.id_module=zz_modules.id ORDER BY `id_module` ASC, `zz_widgets`.`order` ASC');
@@ -83,7 +83,7 @@ foreach ($widgets as $widget) {
     echo '
             <tr class="'.$class.'">
                 <td>'.$widget['widget_name'].((!empty($widget['help'])) ? ' <i class="tip fa fa-question-circle-o" class="tip" title="'.$widget['help'].'"</i>' : '').'</td>
-                <td align="right"><small>'.$location.'</small></td>
+                <td align="left"><small>'.$location.'</small></td>
                 <td align="center">'.$stato.'</td>
                 <td align="center">'.$posizione.'</td>
             </tr>';

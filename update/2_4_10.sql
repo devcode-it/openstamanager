@@ -82,9 +82,9 @@ UPDATE zz_views SET query='IF(`dt_ddt`.`idsede_partenza`=0, "Sede legale",CONCAT
 UPDATE `mg_movimenti` SET `idsede_controparte` = (SELECT `idsede_destinazione` FROM `in_interventi` WHERE `in_interventi`.`id` = `mg_movimenti`.`idintervento`) WHERE `idintervento` IS NOT NULL;
 
 -- Aggiorno idsede_azienda e controparte per ddt
-UPDATE `mg_movimenti` SET `idsede_controparte` (SELECT `idsede_destinazione` FROM `dt_ddt` WHERE `dt_ddt`.`id` = `mg_movimenti`.`idddt`) WHERE `idddt`!=0;
-UPDATE `mg_movimenti` SET `idsede_azienda` (SELECT `idsede_partenza` FROM `dt_ddt` WHERE `dt_ddt`.`id` = `mg_movimenti`.`idddt`) WHERE `idddt`!=0;
+UPDATE `mg_movimenti` SET `idsede_controparte` = (SELECT `idsede_destinazione` FROM `dt_ddt` WHERE `dt_ddt`.`id` = `mg_movimenti`.`idddt`) WHERE `idddt`!=0;
+UPDATE `mg_movimenti` SET `idsede_azienda` = (SELECT `idsede_partenza` FROM `dt_ddt` WHERE `dt_ddt`.`id` = `mg_movimenti`.`idddt`) WHERE `idddt`!=0;
 
 -- Aggiorno idsede_azienda e controparte per documenti
-UPDATE `mg_movimenti` SET `idsede_controparte` (SELECT `idsede_destinazione` FROM `co_documenti` WHERE `co_documenti`.`id` = `mg_movimenti`.`iddocumento`) WHERE `iddocumento`!=0;
-UPDATE `mg_movimenti` SET `idsede_azienda` (SELECT `idsede_destinazione` FROM `co_documenti` WHERE `co_documenti`.`id` = `mg_movimenti`.`iddocumento`) WHERE `iddocumento`!=0;
+UPDATE `mg_movimenti` SET `idsede_controparte` = (SELECT `idsede_destinazione` FROM `co_documenti` WHERE `co_documenti`.`id` = `mg_movimenti`.`iddocumento`) WHERE `iddocumento`!=0;
+UPDATE `mg_movimenti` SET `idsede_azienda` = (SELECT `idsede_destinazione` FROM `co_documenti` WHERE `co_documenti`.`id` = `mg_movimenti`.`iddocumento`) WHERE `iddocumento`!=0;

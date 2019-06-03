@@ -48,10 +48,10 @@ if (!empty($rsp)) {
         <thead>
             <tr>
                 <th width="120">'.tr('Cliente').'</th>
-				 <th width="200">'.tr('Contratto').'</th>
-                <th width="70">'.tr('Entro il').'</th>
-                <th width="200">'.tr('Tipo intervento').'</th>
-                <th>'.tr('Descrizione').'</th>
+				 <th width="250">'.tr('Contratto').'</th>
+                <th width="90">'.tr('Entro').'</th>
+                <th width="150">'.tr('Tipo attività').'</th>
+                <th width="300">'.tr('Descrizione').'</th>
                 <th width="100">'.tr('Sede').'</th>
                 <th width="18"></th>
             </tr>

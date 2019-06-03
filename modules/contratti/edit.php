@@ -67,7 +67,7 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 			<div class="row">
 
 				<div class="col-md-3">
-					{[ "type": "number", "label": "<?php echo tr('Validità'); ?>", "name": "validita", "decimals": "0", "value": "$validita$", "icon-after": "giorni" ]}
+					{[ "type": "number", "label": "<?php echo tr('Validità offerta'); ?>", "name": "validita", "decimals": "0", "value": "$validita$", "icon-after": "giorni" ]}
 				</div>
 
 				<div class="col-md-3">

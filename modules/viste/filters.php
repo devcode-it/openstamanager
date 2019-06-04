@@ -40,8 +40,8 @@ foreach ($additionals as $num => $additional) {
                     <div class="col-md-12">
                         {[ "type": "textarea", "label": "'.tr('Query').'", "name": "query['.$num.']", "value": "'.prepareToField($additional['clause']).'"';
     if (!$editable) {
-        echo ', "readonly": '.(!$editable).'';
-    }
+        echo ', "readonly": '.intval(!$editable).'';
+    }  
     echo ' ]}
                     </div>
                 </div>
@@ -54,11 +54,11 @@ foreach ($additionals as $num => $additional) {
                     </div>
 
                     <div class="col-md-3">
-                        {[ "type": "select", "label": "'.tr('Gruppo').'", "name": "gruppo['.$num.']", "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC", "value": "'.$additional['idgruppo'].'", "readonly": '.(!$editable).' ]}
+                        {[ "type": "select", "label": "'.tr('Gruppo').'", "name": "gruppo['.$num.']", "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC", "value": "'.$additional['idgruppo'].'", "readonly": '.intval(!$editable).' ]}
                     </div>
 
                     <div class="col-md-3">
-                        {[ "type": "select", "label": "'.tr('Posizione').'", "name": "position['.$num.']", "values": "list=\"0\":\"'.tr('WHERE').'\",\"1\": \"'.tr('HAVING').'\"", "value": "'.$additional['position'].'", "readonly": '.(!$editable).' ]}
+                        {[ "type": "select", "label": "'.tr('Posizione').'", "name": "position['.$num.']", "values": "list=\"0\":\"'.tr('WHERE').'\",\"1\": \"'.tr('HAVING').'\"", "value": "'.$additional['position'].'", "readonly": '.intval(!$editable).' ]}
                     </div>
                 </div>
 

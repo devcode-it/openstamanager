@@ -100,7 +100,7 @@ $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione']
             
                 <?php
                 // Conteggio numero articoli ddt in uscita
-                $articolo=$dbo->fetchArray('SELECT mg_articoli.id FROM ((mg_articoli INNER JOIN dt_righe_ddt ON mg_articoli.id=dt_righe_ddt.idarticolo) INNER JOIN dt_ddt ON dt_ddt.id=dt_righe_ddt.idddt) WHERE dt_ddt.id='.prepare($id_record));
+                $articolo = $dbo->fetchArray('SELECT mg_articoli.id FROM ((mg_articoli INNER JOIN dt_righe_ddt ON mg_articoli.id=dt_righe_ddt.idarticolo) INNER JOIN dt_ddt ON dt_ddt.id=dt_righe_ddt.idddt) WHERE dt_ddt.id='.prepare($id_record));
                 ?>
                 <div class="row">
                     <div class="col-md-3">
@@ -108,26 +108,26 @@ $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione']
                     </div>
                         
                     <?php
-                        if ($dir == 'entrata'){
-                    ?>
+                        if ($dir == 'entrata') {
+                            ?>
                     <div class="col-md-3">
-                        {[ "type": "select", "label": "<?php echo tr('Partenza merce') ?>", "name": "idsede_partenza", "ajax-source": "sedi_azienda",  "value": "$idsede_partenza$", "readonly": "<?php echo ($record['flag_completato'] || sizeof($articolo)) ? 1 : 0 ; ?>" ]}
+                        {[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza", "ajax-source": "sedi_azienda",  "value": "$idsede_partenza$", "readonly": "<?php echo ($record['flag_completato'] || sizeof($articolo)) ? 1 : 0; ?>" ]}
                     </div>
                     <div class="col-md-3">
-                        {[ "type": "select", "label": "<?php echo tr('Destinazione merce') ?>", "name": "idsede_destinazione", "ajax-source": "sedi",  "value": "$idsede_destinazione$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+                        {[ "type": "select", "label": "<?php echo tr('Destinazione merce'); ?>", "name": "idsede_destinazione", "ajax-source": "sedi",  "value": "$idsede_destinazione$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
                     </div>
                     <?php
-                    }else{
-                    ?>
+                        } else {
+                            ?>
                     <div class="col-md-3">
-                        {[ "type": "select", "label": "<?php echo tr('Partenza merce') ?>", "name": "idsede_partenza", "ajax-source": "sedi",  "value": "$idsede_partenza$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+                        {[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza", "ajax-source": "sedi",  "value": "$idsede_partenza$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
                     </div>
                     <div class="col-md-3">
-                        {[ "type": "select", "label": "<?php echo tr('Destinazione merce') ?>", "name": "idsede_destinazione", "ajax-source": "sedi_azienda",  "value": "$idsede_destinazione$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+                        {[ "type": "select", "label": "<?php echo tr('Destinazione merce'); ?>", "name": "idsede_destinazione", "ajax-source": "sedi_azienda",  "value": "$idsede_destinazione$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
                     </div>                
 
                     <?php
-                    }
+                        }
                     ?>
                 </div>
             <hr>

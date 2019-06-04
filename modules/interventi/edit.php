@@ -214,7 +214,7 @@ $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione']
 
 <?php
 // Conteggio numero articoli intervento per eventuale blocco della sede di partenza
-$articoli = $dbo->fetchArray('SELECT mg_articoli_interventi.id FROM mg_articoli_interventi INNER JOIN in_interventi ON in_interventi.id=mg_articoli_interventi.idintervento WHERE in_interventi.id='.prepare($id_record))
+$articoli = $dbo->fetchArray('SELECT mg_articoli_interventi.id FROM mg_articoli_interventi INNER JOIN in_interventi ON in_interventi.id=mg_articoli_interventi.idintervento WHERE in_interventi.id='.prepare($id_record));
 ?>
     <!-- ARTICOLI -->
     <div class="panel panel-primary">
@@ -224,7 +224,7 @@ $articoli = $dbo->fetchArray('SELECT mg_articoli_interventi.id FROM mg_articoli_
         <div class="panel-body">
 			<div class="row">
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Partenza merce') ?>", "name": "idsede_partenza",  "ajax-source": "sedi_azienda",  "value": "$idsede_partenza$", "readonly": "<?php echo ($record['flag_completato'] || sizeof($articoli)) ? 1  : 0 ; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza",  "ajax-source": "sedi_azienda",  "value": "$idsede_partenza$", "readonly": "<?php echo ($record['flag_completato'] || sizeof($articoli)) ? 1 : 0; ?>" ]}
 				</div>
 			</div>
 			

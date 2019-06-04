@@ -65,7 +65,7 @@ for ($x = 0; $x < $n1; ++$x) {
             $query = "SELECT co_movimenti.*, dir FROM (co_movimenti LEFT OUTER JOIN co_documenti ON co_movimenti.iddocumento=co_documenti.id) LEFT OUTER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_movimenti.idconto='".$rs3[$z]['id']."' AND co_movimenti.data >= '".$_SESSION['period_start']."' AND co_movimenti.data <= '".$_SESSION['period_end']."' ORDER BY co_movimenti.data DESC";
             $rs = $dbo->fetchArray($query);
 
-            echo "		<tr style='".((!empty($rs)) ? '':'opacity: 0.5;' )."' ><td>\n";
+            echo "		<tr style='".((!empty($rs)) ? '' : 'opacity: 0.5;')."' ><td>\n";
 
             $tools = "			<span class='hide tools'>\n";
 

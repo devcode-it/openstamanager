@@ -360,7 +360,7 @@ switch (post('op')) {
             if (!empty($idarticolo)) {
                 if (!controlla_seriali('id_riga_ddt', $idriga, $old_qta, $qta, $dir)) {
                     flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
-                    
+
                     return;
                 }
             }

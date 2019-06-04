@@ -41,7 +41,7 @@ foreach ($additionals as $num => $additional) {
                         {[ "type": "textarea", "label": "'.tr('Query').'", "name": "query['.$num.']", "value": "'.prepareToField($additional['clause']).'"';
     if (!$editable) {
         echo ', "readonly": '.intval(!$editable).'';
-    }  
+    }
     echo ' ]}
                     </div>
                 </div>

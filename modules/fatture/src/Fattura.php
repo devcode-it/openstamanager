@@ -84,9 +84,9 @@ class Fattura extends Document
 
         $model->idconto = $id_conto;
 
-        if($dir == 'entrata'){
+        if ($dir == 'entrata') {
             $model->idsede_destinazione = $id_sede;
-        }else{
+        } else {
             $model->idsede_partenza = $id_sede;
         }
         $model->addebita_bollo = setting('Addebita marca da bollo al cliente');
@@ -106,7 +106,7 @@ class Fattura extends Document
         }
 
         $model->save();
-        
+
         return $model;
     }
 

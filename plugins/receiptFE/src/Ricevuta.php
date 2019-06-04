@@ -110,7 +110,7 @@ class Ricevuta
         // Modifica lo stato solo se la fattura non è già stata consegnata (per evitare problemi da doppi invii)
         // In realtà per le PA potrebbe esserci lo stato NE (che può essere positiva o negativa) successivo alla RC,
         // quindi aggiungo eccezzione nel caso il nuovo codice della ricevuta sia NE
-        if ($fattura->codice_stato_fe == 'RC' AND $codice != 'NE' ) {
+        if ($fattura->codice_stato_fe == 'RC' and $codice != 'NE') {
             return;
         }
 

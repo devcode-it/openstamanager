@@ -76,6 +76,9 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
     $mail = new Notifications\EmailNotification();
     $mail->setTemplate($id_template, $id_record);
 
+    // Rimozione allegati predefiniti
+    $mail->setAttachments([]);
+
     // Destinatari
     $receivers = array_clean(post('destinatari'));
     $types = post('tipo_destinatari');

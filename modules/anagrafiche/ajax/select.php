@@ -208,7 +208,6 @@ switch ($resource) {
 
             $where[] = 'idanagrafica='.prepare($superselect['idanagrafica']);
 
-            
             if (!empty($search)) {
                 $search_fields[] = 'nomesede LIKE '.prepare('%'.$search.'%');
                 $search_fields[] = 'citta LIKE '.prepare('%'.$search.'%');
@@ -222,13 +221,10 @@ switch ($resource) {
 
             foreach ($elements as $element) {
                 $filter[] = 'id='.prepare($element);
-                
             }
 
             $where[] = 'idanagrafica='.prepare(setting('Azienda predefinita'));
 
-            
-         
             if (!empty($search)) {
                 $search_fields[] = 'nomesede LIKE '.prepare('%'.$search.'%');
                 $search_fields[] = 'citta LIKE '.prepare('%'.$search.'%');

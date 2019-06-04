@@ -109,7 +109,7 @@ if (empty($record['is_fiscale'])) {
 
 ?>
 				<?php if ($dir == 'uscita') {
-                        ?>
+    ?>
 					
 				<div class="col-md-2">
 					{[ "type": "date", "label": "<?php echo tr('Data registrazione'); ?>", "name": "data_registrazione", "required": 0, "value": "$data_registrazione$" ]}
@@ -120,7 +120,7 @@ if (empty($record['is_fiscale'])) {
                 </div>
 				
 				<?php
-                    } ?>
+} ?>
 
                 <div class="col-md-3">
 					<?php
@@ -153,25 +153,25 @@ if (empty($record['is_fiscale'])) {
                 
                     <?php
                     // Conteggio numero articoli fatture
-                    $articolo=$dbo->fetchArray('SELECT mg_articoli.id FROM ((mg_articoli INNER JOIN co_righe_documenti ON mg_articoli.id=co_righe_documenti.idarticolo) INNER JOIN co_documenti ON co_documenti.id=co_righe_documenti.iddocumento) WHERE co_documenti.id='.prepare($id_record));
-                    if ($dir == 'uscita'){
-                    ?>
+                    $articolo = $dbo->fetchArray('SELECT mg_articoli.id FROM ((mg_articoli INNER JOIN co_righe_documenti ON mg_articoli.id=co_righe_documenti.idarticolo) INNER JOIN co_documenti ON co_documenti.id=co_righe_documenti.iddocumento) WHERE co_documenti.id='.prepare($id_record));
+                    if ($dir == 'uscita') {
+                        ?>
 				<div class="col-md-3">
 					{[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza", "ajax-source": "sedi", "placeholder": "Sede legale", "value": "$idsede_partenza$"]}
 				</div>
 				
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "<?php echo tr('Destinazione merce') ?>", "name": "idsede_destinazione", "ajax-source": "sedi_azienda",  "value": "$idsede_destinazione$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Destinazione merce'); ?>", "name": "idsede_destinazione", "ajax-source": "sedi_azienda",  "value": "$idsede_destinazione$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
                 </div>
                     <?php
-                    }else{
-                    ?>
+                    } else {
+                        ?>
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "placeholder": "Sede legale", "value": "$idsede_partenza$", "readonly": "<?php echo (sizeof($articolo)) ? 1 : 0 ; ?>"  ]}
+					{[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "placeholder": "Sede legale", "value": "$idsede_partenza$", "readonly": "<?php echo (sizeof($articolo)) ? 1 : 0; ?>"  ]}
 				</div>
 				
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "<?php echo tr('Destinazione merce') ?>", "name": "idsede_destinazione", "ajax-source": "sedi",  "value": "$idsede_destinazione$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Destinazione merce'); ?>", "name": "idsede_destinazione", "ajax-source": "sedi",  "value": "$idsede_destinazione$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
                 </div>
                     <?php
                     }

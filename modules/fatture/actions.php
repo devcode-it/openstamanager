@@ -119,7 +119,7 @@ switch (post('op')) {
             }
 
             aggiorna_sedi_movimenti('documenti', $id_record);
-            
+
             flash()->info(tr('Fattura modificata correttamente!'));
         }
 
@@ -232,7 +232,7 @@ switch (post('op')) {
             // Ricalcolo inps, ritenuta e bollo (se la fattura non è stata pagata)
             ricalcola_costiagg_fattura($id_record);
             aggiorna_sedi_movimenti('documenti', $id_record);
-        
+
             flash()->info(tr('Fattura duplicata correttamente!'));
         }
 
@@ -486,7 +486,7 @@ switch (post('op')) {
             } else {
                 ricalcola_costiagg_fattura($id_record);
             }
-            
+
             aggiorna_sedi_movimenti('documenti', $id_record);
             flash()->info(tr('Articolo rimosso!'));
         }
@@ -921,7 +921,6 @@ switch (post('op')) {
         ricalcola_costiagg_fattura($id_record);
         aggiorna_sedi_movimenti('documenti', $id_record);
 
-
         flash()->info(tr('Preventivo _NUM_ aggiunto!', [
             '_NUM_' => $preventivo->numero,
         ]));
@@ -994,7 +993,6 @@ switch (post('op')) {
 
         ricalcola_costiagg_fattura($id_record);
         aggiorna_sedi_movimenti('documenti', $id_record);
-
 
         flash()->info(tr('Contratto _NUM_ aggiunto!', [
             '_NUM_' => $contratto->numero,

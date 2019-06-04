@@ -278,7 +278,7 @@ switch (post('op')) {
         $iva = (($prezzo_vendita * $qta) - $sconto) * $rs_iva[0]['percentuale'] / 100;
 
         $dbo->query('INSERT INTO in_righe_interventi(descrizione, qta, um, prezzo_vendita, prezzo_acquisto, idiva, desc_iva, iva, sconto, sconto_unitario, tipo_sconto, idintervento) VALUES ('.prepare($descrizione).', '.prepare($qta).', '.prepare($um).', '.prepare($prezzo_vendita).', '.prepare($prezzo_acquisto).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($id_record).')');
-        
+
         aggiorna_sedi_movimenti('interventi', $id_record);
         break;
 
@@ -319,7 +319,7 @@ switch (post('op')) {
             ' sconto_unitario='.prepare($sconto_unitario).','.
             ' tipo_sconto='.prepare($tipo_sconto).
             ' WHERE id='.prepare($idriga));
-        
+
         aggiorna_sedi_movimenti('interventi', $id_record);
         break;
 
@@ -381,7 +381,7 @@ switch (post('op')) {
 
         /* Ricollego l'articolo modificato all'intervento */
         /* ci può essere il caso in cui cambio idarticolo e anche qta */
-        
+
         // no break
     case 'addarticolo':
         $originale = ArticoloOriginale::find(post('idarticolo'));
@@ -397,11 +397,11 @@ switch (post('op')) {
         $articolo->sconto_unitario = post('sconto');
         $articolo->tipo_sconto = post('tipo_sconto');
         $articolo->id_iva = post('idiva');
-        
+
         $articolo->save();
 
         aggiorna_sedi_movimenti('interventi', $id_record);
-        
+
         if (!empty($serials)) {
             if ($old_qta > $qta) {
                 $serials = array_slice($serials, 0, $qta);

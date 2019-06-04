@@ -76,6 +76,8 @@ class EmailNotification extends Notification
 
             $this->setContent($body);
             $this->setSubject($subject);
+
+            $this->includeTemplatePrints($id_record);
         }
     }
 
@@ -247,12 +249,6 @@ class EmailNotification extends Notification
         $receivers = $this->getReceivers();
         foreach ($receivers as $receiver) {
             $mail->addReceiver($receiver['email'], $receiver['type']);
-        }
-
-        $prints = database()->fetchArray('SELECT id_print FROM zz_email_print WHERE id_email = '.prepare($template['id']));
-
-        foreach ($prints as $print) {
-            $this->addPrint($print['id_print'], post('id_record'));
         }
 
         // Allegati

@@ -1,4 +1,5 @@
 <?php
+
 // Fix del calcolo del bollo
 $fatture = \Modules\Fatture\Fattura::all();
 foreach ($fatture as $fattura) {
@@ -7,37 +8,34 @@ foreach ($fatture as $fattura) {
 
 // Spostamento automezzi su sedi
 $automezzi = $dbo->fetchArray('SELECT * FROM dt_automezzi');
-foreach($automezzi as $automezzo){
+foreach ($automezzi as $automezzo) {
     $nomesede = [];
 
-    ( !empty($automezzo['nome']) ) ? $nomesede[] = $automezzo['nome'] : null;
-    ( !empty($automezzo['descrizione']) ) ? $nomesede[] = $automezzo['descrizione'] : null;
-    ( !empty($automezzo['targa']) ) ? $nomesede[] = $automezzo['targa'] : null;
-
-
+    (!empty($automezzo['nome'])) ? $nomesede[] = $automezzo['nome'] : null;
+    (!empty($automezzo['descrizione'])) ? $nomesede[] = $automezzo['descrizione'] : null;
+    (!empty($automezzo['targa'])) ? $nomesede[] = $automezzo['targa'] : null;
 
     $dbo->insert(
         'an_sedi',
         [
-            'nomesede' => implode( ' - ', $nomesede ),
-            'idanagrafica' => setting('Azienda predefinita')
-            
+            'nomesede' => implode(' - ', $nomesede),
+            'idanagrafica' => setting('Azienda predefinita'),
         ]
     );
 
     $idsede = $dbo->lastInsertedId();
-    
-    // Aggiornamento sede di partenza su 
+
+    // Aggiornamento sede di partenza su
     $dbo->update(
         'in_interventi',
         [
             'idsede_partenza' => $idsede,
-        ],[
-            'idautomezzo' => $automezzo['id']
+        ], [
+            'idautomezzo' => $automezzo['id'],
         ]
     );
-}  
-      
+}
+
 // Aggiornamento della sede azienda nei movimenti degli interventi
 $dbo->query('UPDATE mg_movimenti SET idsede_azienda=(SELECT idsede_partenza FROM in_interventi WHERE in_interventi.id=mg_movimenti.idintervento) WHERE idintervento IS NOT NULL');
 
@@ -53,7 +51,6 @@ $dbo->query('DROP TABLE mg_articoli_automezzi');
 $dbo->query('DROP TABLE dt_automezzi');
 $dbo->query('DROP TABLE dt_automezzi_tecnici');
 $dbo->query('DELETE FROM zz_modules WHERE name="Automezzi"');
-
 
 // File e cartelle deprecate
 $files = [

@@ -26,7 +26,7 @@ $res = $dbo->fetchNum('SELECT `co_righe_documenti`.`id` FROM `co_righe_documenti
 ' UNION SELECT `an_anagrafiche`.`idanagrafica` AS `id` FROM `an_anagrafiche` WHERE `an_anagrafiche`.`idiva_vendite` = '.prepare($id_record).' OR `an_anagrafiche`.`idiva_acquisti` = '.prepare($id_record));
 $is_readonly = 0;
 if ($res) {
-	$is_readonly = "1";
+    $is_readonly = '1';
 }
 
 ?><form action="" method="post" id="edit-form">

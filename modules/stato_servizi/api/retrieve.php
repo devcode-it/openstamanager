@@ -1,5 +1,7 @@
 <?php
+
 use Util\FileSystem;
+
 switch ($resource) {
     case 'folder_size':
 
@@ -12,20 +14,19 @@ switch ($resource) {
                 'files' => tr('Allegati'),
                 'logs' => tr('Logs'),
             ];
-        }else{
-            $array = explode(",", $dirs);
+        } else {
+            $array = explode(',', $dirs);
             foreach ($array as $key => $value) {
                 $dirs = [
-                    $value => $key
+                    $value => $key,
                 ];
             }
         }
 
         $tot_byte_size = 0;
         foreach ($dirs as $dir => $description) {
-          
             $size = FileSystem::folderSize($dir);
-           
+
             $results[] = [
                 'description' => $description,
                 'size' => $size,
@@ -33,11 +34,10 @@ switch ($resource) {
             ];
 
             $tot_byte_size += $size;
-
         }
 
-        $results[count($dirs)]['totalbyte'] =  $tot_byte_size;
-        
+        $results[count($dirs)]['totalbyte'] = $tot_byte_size;
+
         $response = $results;
 
         break;

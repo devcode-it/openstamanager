@@ -2,10 +2,10 @@
 
 include_once __DIR__.'/../../../core.php';
 
-switch ($resource) {     
+switch ($resource) {
     case 'articoli':
         // Se non ci sono sedi settate, carico tutti gli articoli
-        if(!isset($superselect['idsede_partenza']) && (!isset($superselect['idsede_destinazione']))){
+        if (!isset($superselect['idsede_partenza']) && (!isset($superselect['idsede_destinazione']))) {
             $query = 'SELECT 
                 mg_articoli.id, 
                 mg_articoli.codice, 
@@ -37,9 +37,9 @@ switch ($resource) {
                 mg_articoli.codice ASC,
                 mg_articoli.descrizione ASC';
         }
-        
+
         // Se c'è una sede settata, carico tutti gli articoli presenti in quella sede
-        else{
+        else {
             $query = 'SELECT 
                 mg_articoli.id, 
                 mg_articoli.codice, 
@@ -83,7 +83,7 @@ switch ($resource) {
         $where[] = 'attivo = 1';
 
         // Filtro articolo solo per documenti di vendita
-        if ($superselect['dir'] == 'entrata' && isset($superselect['idsede_partenza']) ) {
+        if ($superselect['dir'] == 'entrata' && isset($superselect['idsede_partenza'])) {
             $where[] = 'idsede_azienda='.prepare($superselect['idsede_partenza']);
         }
 

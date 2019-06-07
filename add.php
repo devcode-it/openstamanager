@@ -37,7 +37,16 @@ echo '
 <script>
 $(document).ready(function(){
     var form = $("#custom_fields_top-add").parent().find("form").first();
-
+    
+    // Rimozione select inizializzati
+    $("#custom_fields_bottom-add").find("select").each(function () {
+        $(this).select2().select2("destroy");
+    });
+    
+    $("#custom_fields_bottom-add").find("select").each(function () {
+        $(this).select2().select2("destroy");
+    });
+                    
     // Campi a inizio form
     form.prepend($("#custom_fields_top-add").html());
 
@@ -53,6 +62,8 @@ $(document).ready(function(){
     }
 
     last.after($("#custom_fields_bottom-add").html());
+    
+    start_superselect();
 });
 </script>';
 

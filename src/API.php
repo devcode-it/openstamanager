@@ -143,6 +143,10 @@ class API extends \Util\Singleton
 
                 // Query per ottenere le informazioni
                 $query = $database->select($table, $select, $where, $order, [], true);
+
+                foreach ($where as $key => $value) {
+                    $parameters[] = $value;
+                }
             }
 
             if (!empty($query)) {

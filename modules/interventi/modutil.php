@@ -60,26 +60,26 @@ function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto = n
         return false;
     }
 
-    $rs = $dbo->fetchArray('SELECT idanagrafica, idsede, idtipointervento FROM in_interventi WHERE id='.prepare($idintervento));
+    $rs = $dbo->fetchArray('SELECT idanagrafica, idsede_destinazione, idtipointervento FROM in_interventi WHERE id='.prepare($idintervento));
     $idanagrafica = $rs[0]['idanagrafica'];
-    $idsede = $rs[0]['idsede'];
+    $idsede_destinazione = $rs[0]['idsede_destinazione'];
     $idtipointervento = $rs[0]['idtipointervento'];
 
     // Calcolo km in base a quelli impostati nell'anagrafica
     // Nessuna sede
-    if ($idsede == '-1') {
+    if ($idsede_destinazione == '-1') {
         $km = 0;
     }
 
     // Sede legale
-    elseif (empty($idsede)) {
+    elseif (empty($idsede_destinazione)) {
         $rs2 = $dbo->fetchArray('SELECT km FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
         $km = $rs2[0]['km'];
     }
 
     // Sede secondaria
     else {
-        $rs2 = $dbo->fetchArray('SELECT km FROM an_sedi WHERE id='.prepare($idsede));
+        $rs2 = $dbo->fetchArray('SELECT km FROM an_sedi WHERE id='.prepare($idsede_destinazione));
         $km = $rs2[0]['km'];
     }
 

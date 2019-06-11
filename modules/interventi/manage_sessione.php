@@ -23,7 +23,11 @@ echo '
 
 // Tecnico
 echo '
-<p>'.tr('Tecnico').': '.$sessione['ragione_sociale'].' '.(!empty($sessione['deleted_at']) ? '<small class="text-danger"><em>('.tr('Eliminato').')</em></small>' : '').'</p>';
+    <div class="row">
+        <div class="col-md-4">
+            {[ "type": "span", "label": "'.tr('Tecnico').'", "name": "tecnico", "required": 0, "value": "'.$sessione['ragione_sociale'].' '.(!empty($sessione['deleted_at']) ? '<small class="text-danger"><em>('.tr('Eliminato').')</em></small>' : '').'" ]}
+        </div>
+    </div>';
 
 // Orari
 echo '

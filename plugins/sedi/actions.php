@@ -27,6 +27,7 @@ switch ($operazione) {
         break;
 
     case 'updatesede':
+        $id = filter('id');
         $array = [
             'nomesede' => post('nomesede'),
             'indirizzo' => post('indirizzo'),
@@ -48,14 +49,15 @@ switch ($operazione) {
             'lng' => post('lng'),
         ];
 
-        $dbo->update('an_sedi', $array, ['id' => $id_record]);
+        $dbo->update('an_sedi', $array, ['id' => $id]);
 
         flash()->info(tr('Salvataggio completato!'));
 
         break;
 
     case 'deletesede':
-        $dbo->query('DELETE FROM `an_sedi` WHERE `id`='.prepare($id_record));
+        $id = filter('id');
+        $dbo->query('DELETE FROM `an_sedi` WHERE `id` = '.prepare($id).'');
 
         flash()->info(tr('Sede eliminata!'));
 

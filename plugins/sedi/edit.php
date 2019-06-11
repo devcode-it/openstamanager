@@ -15,7 +15,7 @@ echo '
 <form action="" method="post" role="form" id="form_sedi">
     <input type="hidden" name="id_plugin" value="'.$id_plugin.'">
     <input type="hidden" name="id_parent" value="'.$id_parent.'">
-    <input type="hidden" name="id_record" value="'.$id_record.'">
+    <input type="hidden" name="id" value="'.$record['id'].'">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="updatesede">
 
@@ -129,7 +129,7 @@ echo '
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12">
-            <a class="btn btn-danger ask" data-backto="record-edit" data-op="deletesede" data-id_record="'.$record['id'].'" data-id_plugin="'.$id_plugin.'" data-id_module="'.$id_module.'" data-id_parent="'.$id_parent.'">
+            <a class="btn btn-danger ask" data-backto="record-edit" data-op="deletesede" data-id="'.$record['id'].'" data-id_plugin="'.$id_plugin.'" data-id_module="'.$id_module.'" data-id_parent="'.$id_parent.'">
                 <i class="fa fa-trash"></i> '.tr('Elimina').'
             </a>
 

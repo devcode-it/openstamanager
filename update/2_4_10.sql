@@ -88,3 +88,13 @@ UPDATE `mg_movimenti` SET `idsede_azienda` = (SELECT `idsede_partenza` FROM `dt_
 -- Aggiorno idsede_azienda e controparte per documenti
 UPDATE `mg_movimenti` SET `idsede_controparte` = (SELECT `idsede_destinazione` FROM `co_documenti` WHERE `co_documenti`.`id` = `mg_movimenti`.`iddocumento`) WHERE `iddocumento`!=0;
 UPDATE `mg_movimenti` SET `idsede_azienda` = (SELECT `idsede_destinazione` FROM `co_documenti` WHERE `co_documenti`.`id` = `mg_movimenti`.`iddocumento`) WHERE `iddocumento`!=0;
+
+-- Aggiungo LEFT e INNER JOIN per ottimizzare la query del modulo Fatture di vendita
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id` LEFT OUTER JOIN ( SELECT `zz_emails`.`name`,  `zz_operations`.`id_record` FROM `zz_operations` INNER JOIN `zz_emails` ON `zz_operations`.`id_email` = `zz_emails`.`id` INNER JOIN `zz_modules` ON `zz_operations`.`id_module` = `zz_modules`.`id` AND `zz_modules`.`name` = \'Fatture di vendita\' AND `zz_operations`.`op` = \'send-email\' LIMIT 1) AS `email` ON `email`.`id_record` = `co_documenti`.`id` WHERE 1=1 AND `dir` = \'entrata\' |segment| AND `data` >= \'|period_start|\' AND `data` <= \'|period_end|\' HAVING 2=2 ORDER BY `data` DESC, CAST(numero_esterno AS UNSIGNED) DESC' WHERE `zz_modules`.`name` = 'Fatture di vendita';
+
+-- Sistemo vista per icon_Inviata modulo Fatture di vendita
+UPDATE `zz_views` SET `query` = 'IF(`email`.`name` IS NOT NULL, \'fa fa-envelope text-success\', \'\')' WHERE `zz_views`.`name` = 'icon_Inviata' AND `id_module` =  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') ;
+
+-- Sistemo vista per icon_title_Inviata modulo Fatture di vendita
+UPDATE `zz_views` SET `query` = '`email`.`name`' WHERE `zz_views`.`name` = 'icon_title_Inviata' AND `id_module` =  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') ;
+

@@ -239,13 +239,13 @@ if (sizeof($rs) > 0) {
 							<tr>
 								<th width="300">'.tr('Tipo attività').'</th>
 
-								<th>'.tr('Costo orario').'</th>
-								<th>'.tr('Costo al km').'</th>
-								<th>'.tr('Diritto di chiamata').'</th>
+								<th>'.tr('Addebito orario').' <span class="tip" title="'.tr('Addebito al cliente').'"><i class="fa fa-question-circle-o"></i></span></th>
+								<th>'.tr('Addebito km').' <span class="tip" title="'.tr('Addebito al cliente').'"><i class="fa fa-question-circle-o"></i></span></th>
+								<th>'.tr('Addebito diritto ch.').' <span class="tip" title="'.tr('Addebito al cliente').'"><i class="fa fa-question-circle-o"></i></span></th>
 
-								<th>'.tr('Costo orario (tecnico)').'</th>
-								<th>'.tr('Costo al km (tecnico)').'</th>
-								<th>'.tr('Diritto di chiamata (tecnico)').'</th>
+								<th>'.tr('Costo orario').' <span class="tip" title="'.tr('Costo interno').'"><i class="fa fa-question-circle-o"></i></span></th>
+								<th>'.tr('Costo al km').' <span class="tip" title="'.tr('Costo interno').'"><i class="fa fa-question-circle-o"></i></span></th>
+								<th>'.tr('Diritto di chiamata').' <span class="tip" title="'.tr('Costo interno').'"><i class="fa fa-question-circle-o"></i></span></th>
 							</tr>';
 
     for ($i = 0; $i < sizeof($rs); ++$i) {

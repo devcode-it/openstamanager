@@ -28,9 +28,9 @@ if ($show_prezzi) {
 <table class="table table condensed table-striped table-hover table-bordered">
     <tr>
         <th width="40%"></th>
-        <th width="20%" class="text-center">'.tr('Costo', [], ['upper' => true]).'</th>
-        <th width="20%" class="text-center">'.tr('Addebito', [], ['upper' => true]).'</th>
-        <th width="20%" class="text-center">'.tr('Tot. Scontato', [], ['upper' => true]).'</th>
+        <th width="20%" class="text-center">'.tr('Costo', [], ['upper' => true]).' <span class="tip" title="'.tr('Costo interno').'"><i class="fa fa-question-circle-o"></i></span></th>
+        <th width="20%" class="text-center">'.tr('Addebito', [], ['upper' => true]).' <span class="tip" title="'.tr('Addebito al cliente').'"><i class="fa fa-question-circle-o"></i></span></th>
+        <th width="20%" class="text-center">'.tr('Tot. Scontato', [], ['upper' => true]).' <span class="tip" title="'.tr('Addebito scontato al cliente').'"><i class="fa fa-question-circle-o"></i></span></th>
     </tr>
 
     <tr>

@@ -63,7 +63,6 @@ switch (post('op')) {
         flash()->info(tr('Fatture eliminate!'));
 
         break;
-    
 
     case 'genera-xml':
         
@@ -101,6 +100,7 @@ switch (post('op')) {
         }
 
         break;
+
     case 'export-xml-bulk':
         $dir = DOCROOT.'/files/export_fatture/';
         directory($dir.'tmp/');

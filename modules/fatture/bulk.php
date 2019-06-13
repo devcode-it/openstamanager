@@ -76,10 +76,11 @@ switch (post('op')) {
             delete($file);
         }
 
-        // Selezione delle fatture da stampare
+        // Selezione delle fatture da esportare
         $fatture = $dbo->fetchArray('SELECT co_documenti.id, numero_esterno, data, ragione_sociale, co_tipidocumento.descrizione, co_tipidocumento.dir FROM co_documenti INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_statidocumento ON co_documenti.idstatodocumento=co_statidocumento.id WHERE co_documenti.id IN('.implode(',', $id_records).')');
 
         $failed = [];
+        $added = 0;
         if (!empty($fatture)) {
             foreach ($fatture as $r) {
                 $fattura = Fattura::find($r['id']);
@@ -111,7 +112,9 @@ switch (post('op')) {
                     $dest = slashes($dir.'/tmp/'.$dst);
 
                     $result = copy($file, $dest);
+
                     if ($result) {
+                        $added++;
                         operationLog('export-xml-bulk', ['id_record' => $r['id']]);
                     } else {
                         $failed[] = $fattura->numero_esterno;
@@ -120,7 +123,7 @@ switch (post('op')) {
             }
 
             // Creazione zip
-            if (extension_loaded('zip')) {
+            if (extension_loaded('zip') and !empty($added) ) {
                 Zip::create($dir.'tmp/', $zip);
 
                 // Invio al browser il file zip
@@ -131,7 +134,7 @@ switch (post('op')) {
             }
 
             if (!empty($failed)) {
-                flash()->warning(tr('Le fatture elettroniche _LIST_ non sono state incluse poichè non ancora generate', [
+                flash()->warning(tr('Le fatture elettroniche _LIST_ non sono state incluse poichè non ancora generate o non presenti sul server', [
                     '_LIST_' => implode(', ', $failed),
                 ]));
             }
@@ -283,25 +286,29 @@ switch (post('op')) {
 
 if (App::debug()) {
     $operations = [
-        'delete-bulk' => tr('Elimina selezionati'),
+        'delete-bulk' => '<span><i class="fa fa-trash" ></i> '.tr('Elimina selezionati').'</span>',
     ];
 }
 
 $operations['registra-contabile'] = [
-    'text' => tr('Registra contabile pagamento'),
+    'text' => '<span><i class="fa fa-calculator" ></i> '.tr('Registra contabile pagamento').'</span>',
     'data' => [
-        'msg' => tr('Vuoi aggiungere un movimento contabile per le fatture selezionate? (le fatture dovranno essere in stato emessa altrimenti non verranno elaborate)'),
+        'title' => '',
+        'msg' => tr('Vuoi aggiungere un movimento contabile per le fatture selezionate?<br><small>(le fatture dovranno essere nello stato <i class="fa fa-clock-o text-info" title="Emessa"></i> <small>Emessa</small> altrimenti non saranno processate)</small>'),
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => true,
     ],
 ];
 
+
+
 if ($module->name == 'Fatture di vendita') {
     $operations['export-bulk'] = [
-        'text' => tr('Esporta stampe'),
+        'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' :'').'"><i class="fa fa-file-archive-o" ></i> '.tr('Esporta stampe').'</span>',
         'data' => [
-            'msg' => tr('Vuoi davvero esportare tutte le stampe in un archivio?'),
+            'title' => '',
+            'msg' => tr('Vuoi davvero esportare i PDF delle fatture selezionate in un archivio ZIP?'),
             'button' => tr('Procedi'),
             'class' => 'btn btn-lg btn-warning',
             'blank' => true,
@@ -310,9 +317,10 @@ if ($module->name == 'Fatture di vendita') {
 }
 
 $operations['export-xml-bulk'] = [
-    'text' => tr('Esporta XML'),
+    'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' :'').'"><i class="fa fa-file-archive-o" ></i> '.tr('Esporta XML').'</span>',
     'data' => [
-        'msg' => tr('Vuoi davvero esportare tutte le fatture elettroniche in un archivio?'),
+        'title' => '',
+        'msg' => tr('Vuoi davvero esportare le fatture elettroniche selezionate in un archivio ZIP?'),
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => true,

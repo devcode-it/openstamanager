@@ -78,7 +78,7 @@ WHERE ABS(pagato) < ABS(da_pagare) ".$add_where." AND scadenza >= '".$date_start
 
 for ($i = 0; $i < sizeof($scadenze); ++$i) {
     $body .= '	<tr>';
-    $body .= '		<td>'.$scadenze[$i]['Documento'].'<br><small>'.$scadenze[$i]['Data emissione']."</small></td>\n";
+    $body .= '		<td>'.$scadenze[$i]['Rif. Fattura'].'<br><small>'.Translator::dateToLocale($scadenze[$i]['Data emissione'])."</small></td>\n";
     $body .= '		<td>'.$scadenze[$i]['Anagrafica']."</td>\n";
     $body .= '		<td>'.$scadenze[$i]['Tipo di pagamento']."</td>\n";
     $body .= "		<td align='center'>".Translator::dateToLocale($scadenze[$i]['Data scadenza'])."</td>\n";

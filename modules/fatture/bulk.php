@@ -4,6 +4,7 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\Fatture\Fattura;
 use Util\Zip;
+use Plugins\ExportFE\FatturaElettronica;
 
 switch (post('op')) {
     case 'export-bulk':
@@ -62,7 +63,44 @@ switch (post('op')) {
         flash()->info(tr('Fatture eliminate!'));
 
         break;
+    
 
+    case 'genera-xml':
+        
+        $failed = [];
+        $added = []; 
+        
+        foreach ($id_records as $id) {
+
+            $fattura = Fattura::find($id);
+            $fe = new \Plugins\ExportFE\FatturaElettronica($fattura->id);
+           
+            //se la fattura è emessa e non è stata generata la fattura elettronica
+            if ($fattura->idstatodocumento==3 and !($fe->isGenerated())){
+                $fattura_pa = new FatturaElettronica($id);
+                if (!empty($fattura_pa)) {
+                    $file = $fattura_pa->save($upload_dir);
+                    $added[] = $fattura->numero_esterno;
+                }
+            }else{
+                $failed[] = $fattura->numero_esterno;
+            }
+           
+        }
+
+        if (!empty($failed)) {
+            flash()->warning(tr('Le fatture elettroniche _LIST_ non sono state generate.', [
+                '_LIST_' => implode(', ', $failed),
+            ]));
+        }
+
+        if (!empty($added)) {
+            flash()->info(tr('Le fatture elettroniche _LIST_ sono state generate.', [
+                '_LIST_' => implode(', ', $added),
+            ]));
+        }
+
+        break;
     case 'export-xml-bulk':
         $dir = DOCROOT.'/files/export_fatture/';
         directory($dir.'tmp/');
@@ -301,9 +339,20 @@ $operations['registra-contabile'] = [
     ],
 ];
 
-
-
 if ($module->name == 'Fatture di vendita') {
+
+    $operations['genera-xml'] = [
+        'text' => '<span><i class="fa fa-file-code-o" ></i> '.tr('Genera fatture elettroniche').'</span>',
+        'data' => [
+            'title' => '',
+            'msg' => tr('Generare le fatture elettroniche per i documenti selezionati?<br><small>(le fatture dovranno essere nello stato <i class="fa fa-clock-o text-info" title="Emessa"></i> <small>Emessa</small> e non essere mai state generate)</small>'),
+            'button' => tr('Procedi'),
+            'class' => 'btn btn-lg btn-warning',
+            'blank' => true,
+        ],
+    ];
+
+    
     $operations['export-bulk'] = [
         'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' :'').'"><i class="fa fa-file-archive-o" ></i> '.tr('Esporta stampe').'</span>',
         'data' => [

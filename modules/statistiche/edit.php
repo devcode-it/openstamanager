@@ -170,7 +170,7 @@ echo '
     </div>';
 
 // Articoli più venduti
-$articoli = $dbo->fetchArray("SELECT SUM(co_righe_documenti.qta) AS qta, mg_articoli.id, mg_articoli.codice, mg_articoli.descrizione, mg_articoli.um FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id INNER JOIN mg_articoli ON mg_articoli.id=co_righe_documenti.idarticolo WHERE co_tipidocumento.dir='entrata' AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end).' GROUP BY co_righe_documenti.idarticolo ORDER BY SUM(co_righe_documenti.qta) DESC LIMIT 15');
+$articoli = $dbo->fetchArray("SELECT SUM(co_righe_documenti.qta) AS qta, SUM(subtotale) as subtotale ,SUM(sconto) AS sconto, mg_articoli.id, mg_articoli.codice, mg_articoli.descrizione, mg_articoli.um FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id INNER JOIN mg_articoli ON mg_articoli.id=co_righe_documenti.idarticolo WHERE co_tipidocumento.dir='entrata' AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end).' GROUP BY co_righe_documenti.idarticolo ORDER BY SUM(co_righe_documenti.qta) DESC LIMIT 15');
 
 echo '
     <div class="col-md-6">
@@ -192,6 +192,7 @@ if (!empty($articoli)) {
                         <th>'.tr('Codice').'</th>
                         <th>'.tr('Descrizione').'</th>
                         <th class="text-right">'.tr('Q.tà').'</th>
+                        <th class="text-right">'.tr('Valore').'<small><br>(iva escl.)</small></th>
                     </tr>';
     foreach ($articoli as $articolo) {
         echo '
@@ -199,6 +200,7 @@ if (!empty($articoli)) {
                         <td>'.Modules::link('Articoli', $articolo['id'], $articolo['codice']).'</td>
                         <td>'.$articolo['descrizione'].'</td>
                         <td class="text-right">'.Translator::numberToLocale($articolo['qta']).' '.$articolo['um'].'</td>
+                        <td class="text-right">'.Translator::moneyFormat( $articolo['subtotale']-$articolo['sconto']).' '.currency().'</td>
                     </tr>';
     }
     echo '

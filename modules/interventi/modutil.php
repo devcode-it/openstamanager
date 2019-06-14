@@ -115,7 +115,7 @@ function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto = n
         $costo_dirittochiamata_tecnico = $rsc[0]['costo_diritto_chiamata_tecnico'];
     }
 
-    // Leggo i costi unitari da contratto se l'intervento è legato ad un contratto e c'è almeno un record...
+    // Sovrascrivo i costi unitari da contratto se l'intervento è legato ad un contratto e c'è almeno un record...
     if (!empty($idcontratto)) {
         $rsc = $dbo->fetchArray('SELECT * FROM co_contratti_tipiintervento WHERE idcontratto='.prepare($idcontratto).' AND idtipointervento='.prepare($idtipointervento));
 
@@ -124,9 +124,10 @@ function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto = n
             $costo_km = $rsc[0]['costo_km'];
             $costo_dirittochiamata = $rsc[0]['costo_dirittochiamata'];
 
-            $costo_ore_tecnico = $rsc[0]['costo_ore_tecnico'];
-            $costo_km_tecnico = $rsc[0]['costo_km_tecnico'];
-            $costo_dirittochiamata_tecnico = $rsc[0]['costo_dirittochiamata_tecnico'];
+            //per le attività collegate a contratti, i costi interni del tecnico vengono sempre presi da quelli globali o da quelli specificati per il singolo tecnico
+            //$costo_ore_tecnico = $rsc[0]['costo_ore_tecnico'];
+            //$costo_km_tecnico = $rsc[0]['costo_km_tecnico'];
+            //$costo_dirittochiamata_tecnico = $rsc[0]['costo_dirittochiamata_tecnico'];
         }
     }
 

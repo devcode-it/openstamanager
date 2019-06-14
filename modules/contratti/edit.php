@@ -180,13 +180,14 @@ if (sizeof($rs) > 0) {
                         <tr>
                             <th width="300">'.tr('Tipo attività').'</th>
 
-                            <th>'.tr('Costo orario').'</th>
-                            <th>'.tr('Costo al km').'</th>
-                            <th>'.tr('Diritto di chiamata').'</th>
+                            <th>'.tr('Addebito orario').' <span class="tip" title="'.tr('Addebito al cliente').'"><i class="fa fa-question-circle-o"></i></span></th>
+                            <th>'.tr('Addebito km').' <span class="tip" title="'.tr('Addebito al cliente').'"><i class="fa fa-question-circle-o"></i></span></th>
+                            <th>'.tr('Addebito diritto ch.').' <span class="tip" title="'.tr('Addebito al cliente').'"><i class="fa fa-question-circle-o"></i></span></th>
 
-                            <th>'.tr('Costo orario (tecnico)').'</th>
-                            <th>'.tr('Costo al km (tecnico)').'</th>
-                            <th>'.tr('Diritto di chiamata (tecnico)').'</th>
+                            <th>'.tr('Costo orario').' <span class="tip" title="'.tr('Costo interno').'"><i class="fa fa-question-circle-o"></i></span></th>
+                            <th>'.tr('Costo al km').' <span class="tip" title="'.tr('Costo interno').'"><i class="fa fa-question-circle-o"></i></span></th>
+                            <th>'.tr('Diritto di chiamata').' <span class="tip" title="'.tr('Costo interno').'"><i class="fa fa-question-circle-o"></i></span></th>
+                            <th width="40"></th>
                         </tr>';
 
     for ($i = 0; $i < sizeof($rs); ++$i) {
@@ -217,6 +218,13 @@ if (sizeof($rs) > 0) {
                                 <td>
                                     {[ "type": "number", "name": "costo_dirittochiamata_tecnico['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_dirittochiamata_tecnico'].'" ]}
                                 </td>
+
+                                <td>
+                                <button type="button" class="btn btn-primary" data-toggle="tooltip" title="Importa valori da tariffe standard" onclick="if( confirm(\'Importare i valori dalle tariffe standard?\') ){ $.post( \''.$rootdir.'/modules/contratti/actions.php\', { op: \'import\', idcontratto: \''.$id_record.'\', idtipointervento: \''.$rs[$i]['idtipointervento'].'\' }, function(data){ location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'\'; } ); }">
+                                <i class="fa fa-download"></i>
+                                </button>
+                                </td>
+
                             </tr>';
 
         $idtipiintervento[] = prepare($rs[$i]['idtipointervento']);
@@ -245,7 +253,8 @@ if (sizeof($rs) > 0) {
 
 								<th>'.tr('Costo orario').' <span class="tip" title="'.tr('Costo interno').'"><i class="fa fa-question-circle-o"></i></span></th>
 								<th>'.tr('Costo al km').' <span class="tip" title="'.tr('Costo interno').'"><i class="fa fa-question-circle-o"></i></span></th>
-								<th>'.tr('Diritto di chiamata').' <span class="tip" title="'.tr('Costo interno').'"><i class="fa fa-question-circle-o"></i></span></th>
+                                <th>'.tr('Diritto di chiamata').' <span class="tip" title="'.tr('Costo interno').'"><i class="fa fa-question-circle-o"></i></span></th>
+                                <th width="40"></th>
 							</tr>';
 
     for ($i = 0; $i < sizeof($rs); ++$i) {
@@ -275,7 +284,14 @@ if (sizeof($rs) > 0) {
 
                                 <td>
                                     {[ "type": "number", "name": "costo_dirittochiamata_tecnico['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_diritto_chiamata_tecnico'].'" ]}
-                                </TD>
+                                </td>
+
+                                <td>
+                                <button type="button" class="btn btn-primary" data-toggle="tooltip" title="Importa valori da tariffe standard" onclick="if( confirm(\'Importare i valori dalle tariffe standard?\') ){ $.post( \''.$rootdir.'/modules/contratti/actions.php\', { op: \'import\', idcontratto: \''.$id_record.'\', idtipointervento: \''.$rs[$i]['idtipointervento'].'\' }, function(data){ location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'\'; } ); }">
+                                    <i class="fa fa-download"></i>
+                                </button>
+                                </td>
+
                             </tr>';
     }
     echo '

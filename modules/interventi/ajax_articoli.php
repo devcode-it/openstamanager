@@ -4,7 +4,7 @@ include_once __DIR__.'/../../core.php';
 
 $show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
 
-$query = 'SELECT *, (SELECT codice FROM mg_articoli WHERE id=mg_articoli_interventi.idarticolo) AS codice, mg_articoli_interventi.id AS idriga, (SELECT prc_guadagno FROM mg_listini WHERE id=(SELECT idlistino_vendite FROM an_anagrafiche WHERE idanagrafica=(SELECT idanagrafica FROM in_interventi WHERE id=mg_articoli_interventi.idintervento) ) ) AS prc_guadagno FROM mg_articoli_interventi WHERE idintervento='.prepare($id_record);
+$query = 'SELECT *, (SELECT id FROM mg_articoli WHERE mg_articoli_interventi.idarticolo = mg_articoli.id) ref_articolo, (SELECT codice FROM mg_articoli WHERE id=mg_articoli_interventi.idarticolo) AS codice, mg_articoli_interventi.id AS idriga, (SELECT prc_guadagno FROM mg_listini WHERE id=(SELECT idlistino_vendite FROM an_anagrafiche WHERE idanagrafica=(SELECT idanagrafica FROM in_interventi WHERE id=mg_articoli_interventi.idintervento) ) ) AS prc_guadagno FROM mg_articoli_interventi WHERE idintervento='.prepare($id_record);
 $rs = $dbo->fetchArray($query);
 
 if (!empty($rs)) {
@@ -53,7 +53,7 @@ if (!empty($rs)) {
     <tr '.$extra.'>
         <td>
             <input type="hidden" name="id" value="'.$r['id'].'">
-            '.Modules::link('Articoli', $r['idarticolo'], (!empty($r['codice']) ? $r['codice'].' - ' : '').$r['descrizione']);
+            '.((!empty($r['ref_articolo'])) ? Modules::link('Articoli', $r['idarticolo'], (!empty($r['codice']) ? $r['codice'].' - ' : '').$r['descrizione']) : $r['descrizione'].' '.tr('[ELIMINATO]'));
 
         // Info extra (lotto, serial, altro)
         if (!empty($r['abilita_serial'])) {

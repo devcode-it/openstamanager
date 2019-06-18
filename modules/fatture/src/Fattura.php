@@ -278,7 +278,8 @@ class Fattura extends Document
 
     public function isFE()
     {
-        return !empty($this->progressivo_invio);
+        $file = $this->uploads()->where('name', 'Fattura Elettronica')->first();
+        return (!empty($this->progressivo_invio) and file_exists($file->filepath) );
     }
 
     /**

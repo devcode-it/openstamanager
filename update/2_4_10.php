@@ -52,6 +52,9 @@ $dbo->query('DROP TABLE dt_automezzi');
 $dbo->query('DROP TABLE dt_automezzi_tecnici');
 $dbo->query('DELETE FROM zz_modules WHERE name="Automezzi"');
 
+//Rimuovo il codice come indice per in_interventi
+$dbo->query('ALTER TABLE `in_interventi` DROP INDEX `codice`');
+
 // File e cartelle deprecate
 $files = [
     'modules/automezzi',

@@ -30,7 +30,7 @@ class Intervento extends Document
         $model->stato()->associate($stato);
         $model->tipoSessione()->associate($tipo_sessione);
 
-        $model->codice = static::getNextCodice();
+        $model->codice = static::getNextCodice($data_richiesta);
         $model->data_richiesta = $data_richiesta;
 
         $model->save();
@@ -92,14 +92,21 @@ class Intervento extends Document
 
     /**
      * Calcola il nuovo codice di intervento.
-     *
+     * 
+     * @param string $data
+     * 
      * @return string
      */
-    public static function getNextCodice()
+    public static function getNextCodice($data)
     {
         $maschera = setting('Formato codice intervento');
 
-        $ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice');
+        //$ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice');
+
+        $ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice', [
+            'YEAR(data_richiesta) = '.prepare(date('Y', strtotime($data))),
+        ]);
+
         $numero = Generator::generate($maschera, $ultimo);
 
         return $numero;

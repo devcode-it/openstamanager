@@ -14,8 +14,13 @@ switch (post('op')) {
         }
 
         // Inserisco l'articolo e avviso se esiste un altro articolo con stesso codice.
-        if ($dbo->fetchNum('SELECT * FROM mg_articoli WHERE codice='.prepare($codice)) > 0) {
-            flash()->warning(tr('Esiste già un articolo con questo codice'));
+        if ($n = $dbo->fetchNum('SELECT * FROM mg_articoli WHERE codice='.prepare($codice)) > 0) {
+           
+            flash()->warning(tr('Attenzione: il codice _CODICE_ è già stato utilizzato _N_ volta', [
+                '_CODICE_' => $codice,
+                '_N_' => $n,
+            ]));
+
         }
 
         $dbo->insert('mg_articoli', [
@@ -39,6 +44,16 @@ switch (post('op')) {
     case 'update':
         $componente = post('componente_filename');
         $qta = post('qta');
+
+        // Inserisco l'articolo e avviso se esiste un altro articolo con stesso codice.
+        if ($n = $dbo->fetchNum('SELECT * FROM mg_articoli WHERE codice='.prepare(post('codice')).' AND id != '.$id_record.'') > 0) {
+            
+            flash()->warning(tr('Attenzione: il codice _CODICE_ è già stato utilizzato _N_ volta', [
+                '_CODICE_' => post('codice'),
+                '_N_' => $n,
+            ]));
+
+        }
 
         $dbo->update('mg_articoli', [
             'codice' => post('codice'),

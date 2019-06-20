@@ -5,10 +5,16 @@ include_once __DIR__.'/../../core.php';
 switch (post('op')) {
     // Aggiunta articolo
     case 'add':
-        $codice = post('codice');
+    
+        //Se non specifico il codice articolo lo imposto uguale all'id della riga
+        if (empty(post('codice'))){
+            $codice = $dbo->fetchOne('SELECT (MAX(id)+1) as codice FROM mg_articoli')['codice'];
+        }else{
+            $codice = post('codice');
+        }
 
         // Inserisco l'articolo e avviso se esiste un altro articolo con stesso codice.
-        if ($dbo->fetchNum('SELECT * FROM mg_articoli WHERE codice='.prepare($codice)) == 1) {
+        if ($dbo->fetchNum('SELECT * FROM mg_articoli WHERE codice='.prepare($codice)) > 0) {
             flash()->warning(tr('Esiste già un articolo con questo codice'));
         }
 

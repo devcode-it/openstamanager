@@ -108,3 +108,6 @@ CREATE TABLE `zz_user_sedi` (
 UPDATE `zz_views` SET `query` = 'CONCAT_WS(co_movimenti_modelli.nome, co_movimenti_modelli.descrizione)' WHERE `zz_views`.`name` = 'Nome' AND `id_module` =  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Modelli prima nota');
 
 UPDATE `co_movimenti_modelli` SET `nome` = `descrizione` WHERE `nome` = '';
+
+-- Rimuovo le interruzioni di riga per descrizioni vuote 
+UPDATE `in_interventi` SET `descrizione` = REPLACE(`descrizione`, '\n', '') where `descrizione` LIKE '%\n';

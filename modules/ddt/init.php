@@ -4,6 +4,12 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\DDT\DDT;
 
+if ($module['name'] == 'Ddt di vendita') {
+    $dir = 'entrata';
+} else {
+    $dir = 'uscita';
+}
+
 if (isset($id_record)) {
     $ddt = DDT::with('tipo', 'stato')->find($id_record);
 
@@ -26,4 +32,5 @@ if (isset($id_record)) {
     if (!in_array($record[$field_name], $user->idsedi)){
         $record['flag_completato'] = 1;
     }
+   
 }

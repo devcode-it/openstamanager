@@ -470,7 +470,8 @@ class Auth extends \Util\Singleton
 
                 // Se l'utente non ha sedi, è come se ce le avesse tutte disponibili per retrocompatibilità
                 if (empty($idsedi)){
-                    $idsedi = $database->fetchArray('SELECT id AS idsede FROM an_sedi WHERE idanagrafica='.prepare($results[0]['idanagrafica']));
+                
+                    $idsedi = $database->fetchArray('SELECT "0" AS idsede UNION SELECT id AS idsede FROM an_sedi WHERE idanagrafica='.prepare($results[0]['idanagrafica']));
                 }
 
                 $this->user['idsedi'] = array_column( $idsedi, 'idsede' );

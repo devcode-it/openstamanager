@@ -98,3 +98,8 @@ UPDATE `zz_views` SET `query` = 'IF(`email`.`name` IS NOT NULL, \'fa fa-envelope
 -- Sistemo vista per icon_title_Inviata modulo Fatture di vendita
 UPDATE `zz_views` SET `query` = '`email`.`name`' WHERE `zz_views`.`name` = 'icon_title_Inviata' AND `id_module` =  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') ;
 
+-- Relazione fra utente e una o più sedi
+CREATE TABLE `zz_user_sedi` (
+  `id_user` int(11) NOT NULL,
+  `idsede` int(11) NOT NULL
+)

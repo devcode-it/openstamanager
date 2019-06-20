@@ -217,19 +217,23 @@ switch ($resource) {
 
     case 'sedi_azienda':
         if (isset($superselect['idanagrafica'])) {
-            $query = "SELECT * FROM (SELECT '0' AS id, 'Sede legale' AS descrizione UNION SELECT id, CONCAT_WS(' - ', nomesede, citta) FROM an_sedi |where|) AS tab |filter| GROUP BY descrizione";
+            $user = Auth::user();
 
+            $query = "SELECT * FROM (SELECT '0' AS id, 'Sede legale' AS descrizione UNION SELECT id, CONCAT_WS(' - ', nomesede, citta) FROM an_sedi |where|) AS tab |filter| ORDER BY descrizione";
+            
             foreach ($elements as $element) {
                 $filter[] = 'id='.prepare($element);
             }
 
-            $where[] = 'idanagrafica='.prepare(setting('Azienda predefinita'));
+            $where[] = 'idanagrafica='.prepare($user->idanagrafica);
+            $where[] = 'id IN('.implode(',', $user->idsedi).')';
 
             if (!empty($search)) {
                 $search_fields[] = 'nomesede LIKE '.prepare('%'.$search.'%');
                 $search_fields[] = 'citta LIKE '.prepare('%'.$search.'%');
             }
         }
+            
         break;
 
     case 'referenti':

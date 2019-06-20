@@ -20,4 +20,10 @@ if (isset($id_record)) {
         $record['idcausalet'] = $record['idcausalet'] ?: $dbo->fetchOne('SELECT id FROM dt_causalet WHERE predefined = 1')['id'];
         $record['idspedizione'] = $record['idspedizione'] ?: $dbo->fetchOne('SELECT id FROM dt_spedizione WHERE predefined = 1')['id'];
     }
+
+    // Se la sede del ddt non è di mia competenza, blocco il ddt in modifica
+    $field_name = ( $dir == 'entrata' ) ? 'idsede_partenza' : 'idsede_destinazione';
+    if (!in_array($record[$field_name], $user->idsedi)){
+        $record['flag_completato'] = 1;
+    }
 }

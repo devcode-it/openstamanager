@@ -14,7 +14,7 @@ if (!isset($resource)) {
     $elements = (!is_array($elements)) ? explode(',', $elements) : $elements;
 
     $results = AJAX::select($op, $elements, $search, $page, $length);
-
+    
     echo json_encode($results);
 }
 

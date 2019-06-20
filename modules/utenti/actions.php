@@ -19,7 +19,7 @@ switch (filter('op')) {
         }
         break;
 
-    // Cambio di password e usernome dell'utente
+    // Cambio di password e username dell'utente
     case 'change_pwd':
         $id_utente = filter('id_utente');
         $min_length = filter('min_length');
@@ -40,6 +40,11 @@ switch (filter('op')) {
             $idanagrafica = filter('idanag');
 
             $dbo->query('UPDATE zz_users SET password='.prepare(Auth::hashPassword($password)).', idanagrafica='.prepare($idanagrafica).', email='.prepare($email).' WHERE id='.prepare($id_utente));
+            
+            $dbo->query('DELETE FROM zz_user_sedi WHERE id_user='.prepare($id_utente));
+            foreach(post('idsede') as $i=>$idsede ){
+                $dbo->query('INSERT INTO `zz_user_sedi` (`id_user`,`idsede`) VALUES ('.prepare($id_utente).', '.prepare($idsede).')');
+            }
 
             flash()->info(tr('Password aggiornata!'));
         }
@@ -93,8 +98,13 @@ switch (filter('op')) {
             } else {
                 if ($dbo->query('INSERT INTO zz_users(idgruppo, username, password, idanagrafica, enabled, email) VALUES('.prepare($id_record).', '.prepare($username).', '.prepare(Auth::hashPassword($password)).', '.prepare($idanagrafica).', 1, '.prepare($email).')')) {
                     $dbo->query('INSERT INTO `zz_tokens` (`id_utente`, `token`) VALUES ('.prepare($dbo->lastInsertedID()).', '.prepare(secure_random_string()).')');
-
                     flash()->info(tr('Utente aggiunto!'));
+
+                    $id_utente = $dbo->lastInsertedID();
+                    
+                    foreach(post('idsede') as $i=>$idsede ){
+                        $dbo->query('INSERT INTO `zz_user_sedi` (`id_user`,`idsede`) VALUES ('.prepare($id_utente).', '.prepare($idsede).')');
+                    }
                 }
             }
         } else {

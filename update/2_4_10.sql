@@ -102,4 +102,9 @@ UPDATE `zz_views` SET `query` = '`email`.`name`' WHERE `zz_views`.`name` = 'icon
 CREATE TABLE `zz_user_sedi` (
   `id_user` int(11) NOT NULL,
   `idsede` int(11) NOT NULL
-)
+);
+
+-- Sistemo colonna Nome, Descrizione - Modelli prima nota
+UPDATE `zz_views` SET `query` = 'CONCAT_WS(co_movimenti_modelli.nome, co_movimenti_modelli.descrizione)' WHERE `zz_views`.`name` = 'Nome' AND `id_module` =  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Modelli prima nota');
+
+UPDATE `co_movimenti_modelli` SET `nome` = `descrizione` WHERE `nome` = '';

@@ -102,7 +102,7 @@ UPDATE `zz_views` SET `query` = '`email`.`name`' WHERE `zz_views`.`name` = 'icon
 CREATE TABLE `zz_user_sedi` (
   `id_user` int(11) NOT NULL,
   `idsede` int(11) NOT NULL
-);
+) ENGINE=InnoDB;
 
 -- Sistemo colonna Nome, Descrizione - Modelli prima nota
 UPDATE `zz_views` SET `query` = 'CONCAT_WS(co_movimenti_modelli.nome, co_movimenti_modelli.descrizione)' WHERE `zz_views`.`name` = 'Nome' AND `id_module` =  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Modelli prima nota');
@@ -110,4 +110,26 @@ UPDATE `zz_views` SET `query` = 'CONCAT_WS(co_movimenti_modelli.nome, co_movimen
 UPDATE `co_movimenti_modelli` SET `nome` = `descrizione` WHERE `nome` = '';
 
 -- Rimuovo le interruzioni di riga per descrizioni vuote 
-UPDATE `in_interventi` SET `descrizione` = REPLACE(`descrizione`, '\n', '') where `descrizione` LIKE '%\n';
+--UPDATE `in_interventi` SET `descrizione` = REPLACE(`descrizione`, '\n', '') where `descrizione` LIKE '%\n';
+
+-- Aggiunto tabella co_tipiscadenze
+CREATE TABLE `co_tipiscadenze` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nome` varchar(255) NOT NULL,
+  `descrizione` varchar(255) NOT NULL,
+  `predefined` tinyint(1) NOT NULL DEFAULT '0',
+   PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+INSERT INTO `co_tipiscadenze` (`id`, `nome`, `descrizione`, `predefined`) VALUES
+(1, 'f24', 'F24', 1),
+(2, 'generico', 'Scadenze generiche', 1);
+
+-- Aggiunto modulo per gestire i tipi di scadenze
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Tipi scadenze', 'Tipi scadenze', 'tipi_scadenze', 'SELECT |select| FROM `co_tipiscadenze` WHERE 1=1 HAVING 2=2', '', 'fa fa-calendar', '2.4.10', '2.4.10', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Tabelle'), '1', '1';
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi scadenze'), 'Predefinita', 'predefined', 4, 1, 0, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi scadenze'), 'Descrizione', 'descrizione', 3, 1, 0, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi scadenze'), 'Nome', 'nome', 2, 1, 0, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi scadenze'), 'id', 'id', 1, 1, 0, 0);

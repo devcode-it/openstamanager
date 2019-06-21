@@ -76,14 +76,20 @@ switch (post('op')) {
 
         $anagrafica->tipologie = (array) post('idtipoanagrafica');
 
-        // Blocco il salvataggio del codice fiscale se già presente
+        // Avviso durante il salvataggio del codice fiscale se già presente e informo l'utente delle schede presenti
         if (!empty(post('codice_fiscale'))) {
-            $count_cf = $dbo->fetchNum('SELECT codice_fiscale FROM an_anagrafiche WHERE codice_fiscale = '.prepare(post('codice_fiscale')).' AND idanagrafica != '.prepare($id_record));
+            $idanagrafica = $dbo->fetchOne('SELECT GROUP_CONCAT(idanagrafica) AS idanagrafica FROM an_anagrafiche WHERE codice_fiscale = '.prepare(post('codice_fiscale')).' AND idanagrafica != '.prepare($id_record))['idanagrafica'];
 
-            if ($count_cf > 0) {
-                flash()->warning(tr('Attenzione: il codice fiscale _COD_ è già stato censito', [
-                    '_COD_' => post('codice_fiscale'),
-                ]));
+            if (!empty($idanagrafica)) {
+
+                $array = explode(',', $idanagrafica);
+                foreach($array as &$value) {
+                    flash()->warning(tr('Attenzione: il codice fiscale _COD_ è già stato censito _LINK_', [
+                        '_COD_' => post('codice_fiscale'),
+                        '_LINK_' =>  Modules::link('Anagrafiche', $value, null, null, ''),
+                    ]));
+                }
+
             } else {
                 $anagrafica->codice_fiscale = post('codice_fiscale');
             }
@@ -91,14 +97,19 @@ switch (post('op')) {
             $anagrafica->codice_fiscale = post('codice_fiscale');
         }
 
-        // Blocco il salvataggio della partita iva se già presente
+        // Avviso durante il salvataggio della partita iva se già presente e informo l'utente delle schede presenti
         if (!empty(post('piva'))) {
-            $count_piva = $dbo->fetchNum('SELECT piva FROM an_anagrafiche WHERE piva = '.prepare(post('piva')).' AND idanagrafica != '.prepare($id_record));
+            $idanagrafica = $dbo->fetchOne('SELECT GROUP_CONCAT(idanagrafica) AS idanagrafica FROM an_anagrafiche WHERE piva = '.prepare(post('piva')).' AND idanagrafica != '.prepare($id_record))['idanagrafica'];
 
-            if ($count_piva > 0) {
-                flash()->warning(tr('Attenzione: la partita IVA _IVA_ è già stata censita', [
-                    '_IVA_' => post('piva'),
-                ]));
+            if (!empty($idanagrafica)) {
+                $array = explode(',', $idanagrafica);
+                foreach($array as &$value) {
+                    flash()->warning(tr('Attenzione: la partita IVA _IVA_ è già stata censita _LINK_', [
+                        '_IVA_' => post('piva'),
+                        '_LINK_' =>  Modules::link('Anagrafiche', $value, null, null, ''),
+                    ]));
+                }
+
             } else {
                 $anagrafica->partita_iva = post('piva');
             }

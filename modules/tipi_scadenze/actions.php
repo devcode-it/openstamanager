@@ -37,7 +37,7 @@ switch (filter('op')) {
         $nome = filter('nome');
 
         if (isset($descrizione)) {
-            if ($dbo->fetchNum('SELECT * FROM `co_tipiscadenze` WHERE `descrizione`='.prepare($descrizione)) == 0) {
+            if ($dbo->fetchNum('SELECT * FROM `co_tipiscadenze` WHERE `nome`='.prepare($nome)) == 0) {
                 $dbo->insert('co_tipiscadenze', [
                     'nome' => $nome,
                     'descrizione' => $descrizione,
@@ -64,7 +64,7 @@ switch (filter('op')) {
 
     case 'delete':
 
-        $documenti = $dbo->fetchNum('SELECT id FROM co_scadenzario WHERE tipo='.prepare($id_record));
+        $documenti = $dbo->fetchNum('SELECT id FROM co_scadenziario WHERE tipo = (SELECT nome FROM co_tipiscadenze WHERE id = '.prepare($id_record).')');
 
         if (isset($id_record) && empty($documenti)) {
             $dbo->query('DELETE FROM `co_tipiscadenze` WHERE `id`='.prepare($id_record));

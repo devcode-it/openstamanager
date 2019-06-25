@@ -6,17 +6,29 @@ $operazione = filter('op');
 
 switch ($operazione) {
     case 'addreferente':
-        $dbo->insert('an_referenti', [
-            'idanagrafica' => $id_parent,
-            'nome' => post('nome'),
-            'mansione' => post('mansione'),
-            'telefono' => post('telefono'),
-            'email' => post('email'),
-            'idsede' => post('idsede'),
-        ]);
-        $id_record = $dbo->lastInsertedID();
+        if (!empty(post('nome'))){
 
-        flash()->info(tr('Aggiunto nuovo referente!'));
+            $dbo->insert('an_referenti', [
+                'idanagrafica' => $id_parent,
+                'nome' => post('nome'),
+                'mansione' => post('mansione'),
+                'telefono' => post('telefono'),
+                'email' => post('email'),
+                'idsede' => post('idsede'),
+            ]);
+            $id_record = $dbo->lastInsertedID();
+
+            if (isAjaxRequest() && !empty($id_record)) {
+                echo json_encode(['id' => $id_record, 'text' => post('nome')]);
+            }
+
+            flash()->info(tr('Aggiunto nuovo referente!'));
+            
+        }else{
+
+            flash()->warning(tr('Errore durante aggiunta del referente'));
+
+        }
 
         break;
 

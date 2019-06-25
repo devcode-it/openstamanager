@@ -38,8 +38,8 @@ ALTER TABLE `mg_movimenti` ADD `idsede_azienda` INT NOT NULL AFTER `idautomezzo`
 INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`, `position`, `script`, `enabled`, `default`, `order`, `compatibility`, `version`, `options2`, `options`, `directory`, `help`) VALUES (NULL, 'Giacenze', 'Giacenze', (SELECT id FROM zz_modules WHERE name='Articoli'), (SELECT id FROM zz_modules WHERE name='Articoli'), 'tab', 'articoli.giacenze.php', '1', '0', '0', '', '', NULL, NULL, '', '');
 
 -- Aggiornamento nomi dei campi sede per ddt
-ALTER TABLE `dt_ddt` CHANGE `idsede` `idsede_partenza` INT(11) NOT NULL;
-ALTER TABLE `dt_ddt` ADD `idsede_destinazione` INT NULL AFTER `idsede_partenza`;
+ALTER TABLE `dt_ddt` CHANGE `idsede` `idsede_partenza` INT NOT NULL;
+ALTER TABLE `dt_ddt` ADD `idsede_destinazione` INT NOT NULL AFTER `idsede_partenza`;
 
 -- Aggiornamento idsede_destinazione per i ddt di vendita
 UPDATE `dt_ddt` SET `idsede_destinazione`=`idsede_partenza` WHERE `idtipoddt` IN (SELECT id FROM dt_tipiddt WHERE dir="entrata");

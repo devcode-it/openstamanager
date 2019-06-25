@@ -126,7 +126,7 @@ INSERT INTO `co_tipi_scadenze` (`id`, `nome`, `descrizione`, `can_delete`) VALUE
 (2, 'generico', 'Scadenze generiche', 0);
 
 -- Aggiunto modulo per gestire i tipi di scadenze
-INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Tipi scadenze', 'Tipi scadenze', 'tipi_scadenze', 'SELECT |select| FROM `co_tipi_scadenze` WHERE 1=1 HAVING 2=2', '', 'fa fa-calendar', '2.4.10', '2.4.10', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Tabelle'), '1', '1';
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Tipi scadenze', 'Tipi scadenze', 'tipi_scadenze', 'SELECT |select| FROM `co_tipi_scadenze` WHERE 1=1 HAVING 2=2', '', 'fa fa-calendar', '2.4.10', '2.4.10', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Tabelle'), '1', '1');
 
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi scadenze'), 'Descrizione', 'descrizione', 3, 1, 0, 0),

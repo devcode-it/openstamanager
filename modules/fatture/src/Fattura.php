@@ -10,6 +10,7 @@ use Modules\RitenuteContributi\RitenutaContributi;
 use Plugins\ExportFE\FatturaElettronica;
 use Traits\RecordTrait;
 use Util\Generator;
+use Auth;
 
 class Fattura extends Document
 {
@@ -34,6 +35,8 @@ class Fattura extends Document
     public static function build(Anagrafica $anagrafica, Tipo $tipo_documento, $data, $id_segment)
     {
         $model = parent::build();
+
+        $user = Auth::user();
 
         $stato_documento = Stato::where('descrizione', 'Bozza')->first();
 
@@ -84,10 +87,11 @@ class Fattura extends Document
 
         $model->idconto = $id_conto;
 
+        // Imposto, come sede aziendale, la prima sede disponibile come utente
         if ($dir == 'entrata') {
-            $model->idsede_destinazione = $id_sede;
+            $model->idsede_destinazione = $user->idsedi[0];
         } else {
-            $model->idsede_partenza = $id_sede;
+            $model->idsede_partenza = $user->idsedi[0];
         }
         $model->addebita_bollo = setting('Addebita marca da bollo al cliente');
 

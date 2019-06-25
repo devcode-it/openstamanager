@@ -629,9 +629,13 @@ if ($dir == 'entrata') {
 echo '
 <script type="text/javascript">
 	$("#idanagrafica").change(function(){
-        session_set("superselect,idanagrafica", $(this).val(), 0);
-            
-		$("#idsede_destinazione").selectReset();
+        session_set("superselect,idanagrafica", $(this).val(), 0);';
+        if ($dir == 'entrata') {
+            echo '$("#idsede_destinazione").selectReset();';
+        }else{
+            echo '$("#idsede_partenza").selectReset();';
+        }
+echo '
 	});
 
     $("#ricalcola_scadenze").click(function(){

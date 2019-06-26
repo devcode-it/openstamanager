@@ -132,3 +132,6 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi scadenze'), 'Descrizione', 'descrizione', 3, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi scadenze'), 'Nome', 'nome', 2, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi scadenze'), 'id', 'id', 1, 1, 0, 0, 0);
+
+-- Aggiungo possibilità di vedere la descrizione per le scadenze generiche
+UPDATE `zz_views` SET `query` = 'IF(an_anagrafiche.ragione_sociale IS NULL, co_scadenziario.descrizione, an_anagrafiche.ragione_sociale)' WHERE `zz_views`.`name` = 'Anagrafica' AND `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario')   ;

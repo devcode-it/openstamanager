@@ -161,7 +161,7 @@ if (!empty($clienti)) {
                 </table>';
 } else {
     echo '
-                <p>'.tr('Nessun articolo è stato venduto').'...</p>';
+                <p>'.tr('Nessuna vendita').'...</p>';
 }
 echo '
 

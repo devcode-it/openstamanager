@@ -138,7 +138,7 @@ switch (post('op')) {
 
         $id_record = $new->id;
 
-        $righe = $preventivo->getRighe();
+        $righe = $contratto->getRighe();
         foreach ($righe as $riga) {
             $new_riga = $riga->replicate();
             $new_riga->setParent($new);

@@ -242,13 +242,13 @@ if (!empty($record['ritenutaacconto']) || !empty($fattura->totale_ritenuta_contr
 
     <tr>
         <td class="cell-padded text-center" colspan="'.$first_colspan.'">
-            '.moneyFormat($record['ritenutaacconto'] + $fattura->totale_ritenuta_contributi, 2).'
+            '.moneyFormat(abs($fattura->ritenuta_acconto) + $fattura->totale_ritenuta_contributi, 2).'
         </td>';
 
     echo '
 
         <td class="cell-padded text-center" colspan="'.$second_colspan.'">
-            '.moneyFormat($totale - $record['ritenutaacconto'] - $fattura->totale_ritenuta_contributi, 2).'
+            '.moneyFormat($totale - abs($fattura->ritenuta_acconto) - $fattura->totale_ritenuta_contributi, 2).'
         </td>
     </tr>';
 }
@@ -276,7 +276,7 @@ if (!empty($record['split_payment'])) {
         </td>
 
         <td class="cell-padded text-center" colspan="'.$second_colspan.'">
-            '.moneyFormat($totale - $totale_iva - $record['ritenutaacconto'] - $fattura->totale_ritenuta_contributi, 2).'
+            '.moneyFormat($totale - $totale_iva - abs($fattura->ritenuta_acconto) - $fattura->totale_ritenuta_contributi, 2).'
         </td>
     </tr>';
 }

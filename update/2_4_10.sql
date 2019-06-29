@@ -110,7 +110,7 @@ UPDATE `zz_views` SET `query` = 'CONCAT_WS(co_movimenti_modelli.nome, co_movimen
 UPDATE `co_movimenti_modelli` SET `nome` = `descrizione` WHERE `nome` = '';
 
 -- Rimuovo le interruzioni di riga per descrizioni vuote 
---UPDATE `in_interventi` SET `descrizione` = REPLACE(`descrizione`, '\n', '') where `descrizione` LIKE '%\n';
+-- UPDATE `in_interventi` SET `descrizione` = REPLACE(`descrizione`, '\n', '') where `descrizione` LIKE '%\n';
 
 -- Aggiunto tabella co_tipi_scadenze
 CREATE TABLE `co_tipi_scadenze` (
@@ -134,4 +134,4 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi scadenze'), 'id', 'id', 1, 1, 0, 0, 0);
 
 -- Aggiungo possibilità di vedere la descrizione per le scadenze generiche
-UPDATE `zz_views` SET `query` = 'IF(an_anagrafiche.ragione_sociale IS NULL, co_scadenziario.descrizione, an_anagrafiche.ragione_sociale)' WHERE `zz_views`.`name` = 'Anagrafica' AND `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario')   ;
+UPDATE `zz_views` SET `query` = 'IF(an_anagrafiche.ragione_sociale IS NULL, co_scadenziario.descrizione, an_anagrafiche.ragione_sociale)' WHERE `zz_views`.`name` = 'Anagrafica' AND `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario');

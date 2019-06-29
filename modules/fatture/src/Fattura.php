@@ -2,6 +2,7 @@
 
 namespace Modules\Fatture;
 
+use Auth;
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Fatture\Components\Riga;
@@ -10,7 +11,6 @@ use Modules\RitenuteContributi\RitenutaContributi;
 use Plugins\ExportFE\FatturaElettronica;
 use Traits\RecordTrait;
 use Util\Generator;
-use Auth;
 
 class Fattura extends Document
 {
@@ -89,9 +89,9 @@ class Fattura extends Document
 
         // Imposto, come sede aziendale, la prima sede disponibile come utente
         if ($dir == 'entrata') {
-            $model->idsede_destinazione = $user->idsedi[0];
+            $model->idsede_destinazione = $user->sedi[0];
         } else {
-            $model->idsede_partenza = $user->idsedi[0];
+            $model->idsede_partenza = $user->sedi[0];
         }
         $model->addebita_bollo = setting('Addebita marca da bollo al cliente');
 
@@ -283,7 +283,8 @@ class Fattura extends Document
     public function isFE()
     {
         $file = $this->uploads()->where('name', 'Fattura Elettronica')->first();
-        return (!empty($this->progressivo_invio) and file_exists($file->filepath) );
+
+        return !empty($this->progressivo_invio) and file_exists($file->filepath);
     }
 
     /**

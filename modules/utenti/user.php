@@ -34,19 +34,17 @@ if (!empty($id_utente)) {
     $rs = $dbo->fetchArray('SELECT idanagrafica, username, email FROM zz_users WHERE id='.prepare($id_utente));
     $username = $rs[0]['username'];
     $email = $rs[0]['email'];
-	$id_anagrafica = $rs[0]['idanagrafica'];
+    $id_anagrafica = $rs[0]['idanagrafica'];
 
-	// Lettura sedi dell'utente già impostate
-	$idsedi = $dbo->fetchOne('SELECT GROUP_CONCAT(idsede) as idsedi FROM zz_user_sedi WHERE id_user='.prepare($id_utente).' GROUP BY id_user')['idsedi'];
-	
+    // Lettura sedi dell'utente già impostate
+    $sedi = $dbo->fetchOne('SELECT GROUP_CONCAT(idsede) as sedi FROM zz_user_sedi WHERE id_user='.prepare($id_utente).' GROUP BY id_user')['sedi'];
 } else {
     $op = 'adduser';
     $message = tr('Aggiungi');
 
     $username = '';
     $email = '';
-	$id_anagrafica = '';
-	
+    $id_anagrafica = '';
 }
 
 $_SESSION['superselect']['idanagrafica'] = $id_anagrafica;
@@ -107,20 +105,19 @@ if (!$self_edit) {
 		{[ "type": "select", "label": "'.tr('Collega ad una anagrafica').'", "name": "idanag", "required": 1, "ajax-source": "anagrafiche_utenti", "value": "'.$id_anagrafica.'", "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|tipoanagrafica='.$nome_gruppo.'" ]}
 		</div>
 	</div>';
-	
 } else {
     echo '
     <input type="hidden" id="idanag" name="idanag" value="'.$id_anagrafica.'">';
-	}
+}
 
-	echo '
+    echo '
 	<div class="row">
 		<div class="col-md-12">
-		{[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede[]",  "ajax-source": "sedi", "multiple":"1", "value":"'.$idsedi.'" ]}
+		{[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede[]",  "ajax-source": "sedi", "multiple":"1", "value":"'.$sedi.'" ]}
 		</div>
 	</div>';
 
-	echo '
+    echo '
 	<button type="button" onclick="do_submit()" class="btn btn-primary pull-right"><i class="fa fa-plus"></i> '.$message.'</button>
 	<div class="clearfix">&nbsp;</div>
 </form>

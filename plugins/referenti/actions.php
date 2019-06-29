@@ -6,8 +6,7 @@ $operazione = filter('op');
 
 switch ($operazione) {
     case 'addreferente':
-        if (!empty(post('nome'))){
-
+        if (!empty(post('nome'))) {
             $dbo->insert('an_referenti', [
                 'idanagrafica' => $id_parent,
                 'nome' => post('nome'),
@@ -23,11 +22,8 @@ switch ($operazione) {
             }
 
             flash()->info(tr('Aggiunto nuovo referente!'));
-            
-        }else{
-
+        } else {
             flash()->warning(tr('Errore durante aggiunta del referente'));
-
         }
 
         break;

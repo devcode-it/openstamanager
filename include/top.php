@@ -201,7 +201,7 @@ if (Auth::check()) {
 			<div id="tiny-loader" style="display:none;"></div>
 
 			<header class="main-header">
-				<a href="'.tr("https://www.openstamanager.com").'" class="logo" title="'.tr("Il gestionale open source per l'assistenza tecnica e la fatturazione").'" target="_blank">
+				<a href="https://www.openstamanager.com" class="logo" title="'.tr("Il gestionale open source per l'assistenza tecnica e la fatturazione").'" target="_blank">
 					<!-- mini logo for sidebar mini 50x50 pixels -->
 					<span class="logo-mini">'.tr('OSM').'</span>
 					<!-- logo for regular state and mobile devices -->

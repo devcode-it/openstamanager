@@ -40,18 +40,15 @@ if ($record['can_delete'] and empty($scadenze)) {
 
 <?php
 
-if ($record['can_delete']){
-
-
-	if (!empty($scadenze)) {
-		echo '
+if ($record['can_delete']) {
+    if (!empty($scadenze)) {
+        echo '
 	<div class="alert alert-danger">
 		'.tr('Ci sono _NUM_ scadenze collegate', [
-			'_NUM_' => count($scadenze),
-		]).'.
+            '_NUM_' => count($scadenze),
+        ]).'.
 	</div>';
-	}
-	?>
+    } ?>
 
 	<a class="btn btn-danger ask" data-backto="record-list">
 		<i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>

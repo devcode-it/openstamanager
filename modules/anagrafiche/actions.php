@@ -81,18 +81,20 @@ switch (post('op')) {
             $idanagrafica = $dbo->fetchOne('SELECT GROUP_CONCAT(idanagrafica) AS idanagrafica FROM an_anagrafiche WHERE codice_fiscale = '.prepare(post('codice_fiscale')).' AND idanagrafica != '.prepare($id_record))['idanagrafica'];
 
             if (!empty($idanagrafica)) {
+
                 $array = explode(',', $idanagrafica);
                 foreach ($array as $value) {
                     flash()->warning(tr('Attenzione: il codice fiscale _COD_ è già stato censito _LINK_', [
                         '_COD_' => post('codice_fiscale'),
-                        '_LINK_' => Modules::link('Anagrafiche', $value, null, null, ''),
+                        '_LINK_' =>  Modules::link('Anagrafiche', $value, null, null, ''),
                     ]));
                 }
+
             } else {
-                $anagrafica->codice_fiscale = post('codice_fiscale');
+                $anagrafica->codice_fiscale = strtoupper(post('codice_fiscale'));
             }
         } else {
-            $anagrafica->codice_fiscale = post('codice_fiscale');
+            $anagrafica->codice_fiscale = strtoupper(post('codice_fiscale'));
         }
 
         // Avviso durante il salvataggio della partita iva se già presente e informo l'utente delle schede presenti
@@ -104,9 +106,10 @@ switch (post('op')) {
                 foreach ($array as $value) {
                     flash()->warning(tr('Attenzione: la partita IVA _IVA_ è già stata censita _LINK_', [
                         '_IVA_' => post('piva'),
-                        '_LINK_' => Modules::link('Anagrafiche', $value, null, null, ''),
+                        '_LINK_' =>  Modules::link('Anagrafiche', $value, null, null, ''),
                     ]));
                 }
+
             } else {
                 $anagrafica->partita_iva = post('piva');
             }
@@ -172,10 +175,10 @@ switch (post('op')) {
                     '_COD_' => post('codice_fiscale'),
                 ]));
             } else {
-                $anagrafica->codice_fiscale = post('codice_fiscale');
+                $anagrafica->codice_fiscale = strtoupper(post('codice_fiscale'));
             }
         } else {
-            $anagrafica->codice_fiscale = post('codice_fiscale');
+            $anagrafica->codice_fiscale = strtoupper(post('codice_fiscale'));
         }
 
         // Blocco il salvataggio della partita iva se già presente

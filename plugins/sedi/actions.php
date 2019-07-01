@@ -7,8 +7,8 @@ $operazione = filter('op');
 switch ($operazione) {
     case 'addsede':
 
-         if (!empty(post('nomesede'))){
-            $dbo->insert('an_sedi', [
+         if (!empty(post('nomesede'))) {
+             $dbo->insert('an_sedi', [
                 'idanagrafica' => $id_parent,
                 'nomesede' => post('nomesede'),
                 'indirizzo' => post('indirizzo'),
@@ -22,19 +22,16 @@ switch ($operazione) {
                 'id_nazione' => !empty(post('id_nazione')) ? post('id_nazione') : null,
                 'idzona' => post('idzona'),
             ]);
-            $id_record = $dbo->lastInsertedID();
-            
-            if (isAjaxRequest() && !empty($id_record)) {
-                echo json_encode(['id' => $id_record, 'text' => post('nomesede').' - '.post('citta')]);
-            }
+             $id_record = $dbo->lastInsertedID();
 
-            flash()->info(tr('Aggiunta una nuova sede!'));
-         
-        }else{
+             if (isAjaxRequest() && !empty($id_record)) {
+                 echo json_encode(['id' => $id_record, 'text' => post('nomesede').' - '.post('citta')]);
+             }
 
-            flash()->warning(tr('Errore durante aggiunta della sede'));
-
-        }
+             flash()->info(tr('Aggiunta una nuova sede!'));
+         } else {
+             flash()->warning(tr('Errore durante aggiunta della sede'));
+         }
 
         break;
 

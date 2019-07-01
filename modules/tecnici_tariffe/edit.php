@@ -16,11 +16,8 @@ if (!empty($tecnici)) {
 	<input type="hidden" name="op" value="update">
 	<input type="hidden" name="backto" value="record-list">';
 
-	
-
     foreach ($tecnici as $tecnico) {
-
-        echo '<div class="box box-info collapsable" style="'.((strtolower($tecnico['colore'])=='#ffffff' or empty($tecnico['colore'])) ? '' : 'border-color: '.$tecnico['colore']).'">
+        echo '<div class="box box-info collapsable" style="'.((strtolower($tecnico['colore']) == '#ffffff' or empty($tecnico['colore'])) ? '' : 'border-color: '.$tecnico['colore']).'">
 
         <div class="box-header with-border">
             <h3 class="box-title"><i class="fa fa-user"></i> '.$tecnico['ragione_sociale'].'</h3>
@@ -85,8 +82,6 @@ if (!empty($tecnici)) {
                 </button>
             </td>
         </tr>';
-
-     
         }
         echo '
         </table>
@@ -94,7 +89,6 @@ if (!empty($tecnici)) {
         </div>';
     }
 
-  
     echo '
     <div class="pull-right">
         <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva modifiche').'</button>

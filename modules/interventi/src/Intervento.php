@@ -92,9 +92,9 @@ class Intervento extends Document
 
     /**
      * Calcola il nuovo codice di intervento.
-     * 
+     *
      * @param string $data
-     * 
+     *
      * @return string
      */
     public static function getNextCodice($data)

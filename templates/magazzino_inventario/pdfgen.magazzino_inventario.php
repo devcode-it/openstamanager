@@ -75,7 +75,7 @@ for ($r = 0; $r < sizeof($rs); ++$r) {
     $body .= "	<td class='first_cell cell-padded'>".$rs[$r]['codice']."</td>\n";
     $body .= "	<td class='table_cell cell-padded'>".$rs[$r]['descrizione']."</td>\n";
     $body .= "	<td class='table_cell text-right cell-padded'>".moneyFormat($rs[$r]['prezzo_vendita'])."</td>\n";
-    $body .= "	<td class='table_cell text-right cell-padded'>".Translator::numberToLocale($rs[$r]['qta'])." ".$rs[$r]['um']."</td>\n";
+    $body .= "	<td class='table_cell text-right cell-padded'>".Translator::numberToLocale($rs[$r]['qta']).' '.$rs[$r]['um']."</td>\n";
     $body .= "	<td class='table_cell text-right cell-padded'>".moneyFormat($rs[$r]['prezzo_acquisto'])."</td>\n";
     $body .= "	<td class='table_cell text-right cell-padded'>".moneyFormat(($rs[$r]['prezzo_acquisto'] * $rs[$r]['qta']))."</td>\n";
     $body .= "</tr>\n";

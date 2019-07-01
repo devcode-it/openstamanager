@@ -44,15 +44,15 @@ if (!empty($utenti)) {
         }
 
         $sedi = $dbo->fetchOne('SELECT GROUP_CONCAT(nomesede SEPARATOR ", "  ) as nomesede FROM zz_user_sedi INNER JOIN ((SELECT "0" AS id, "Sede legale" AS nomesede) UNION (SELECT id, nomesede FROM an_sedi)) sedi ON zz_user_sedi.idsede=sedi.id WHERE id_user='.prepare($utente['id']).' GROUP BY id_user ')['nomesede'];
-        
+
         echo '
             <td>'.$sedi.'</td>';
-        
+
         /*
          * Funzioni per gli utenti
          */
         echo '
-            <td>';   
+            <td>';
         // Disabilitazione utente, se diverso da id_utente #1 (admin)
         if ($utente['id'] != '1') {
             if ($utente['enabled'] == 1) {

@@ -183,12 +183,12 @@ if (empty($record['is_fiscale'])) {
 				</div>
 
 				<?php if ($dir == 'entrata') {
-                        ?>
+                    ?>
 				<div class="col-md-3">
 					{[ "type": "select", "label": "<?php echo tr('Agente di riferimento'); ?>", "name": "idagente", "ajax-source": "agenti", "value": "$idagente_fattura$" ]}
 				</div>
 				<?php
-                    } ?>
+                } ?>
 			</div>
 			<hr>
 
@@ -632,7 +632,7 @@ echo '
         session_set("superselect,idanagrafica", $(this).val(), 0);';
         if ($dir == 'entrata') {
             echo '$("#idsede_destinazione").selectReset();';
-        }else{
+        } else {
             echo '$("#idsede_partenza").selectReset();';
         }
 echo '
@@ -677,9 +677,9 @@ if (!empty($note_accredito)) {
 
 <?php
 // Eliminazione ddt solo se ho accesso alla sede aziendale
-$field_name = ( $dir == 'entrata' ) ? 'idsede_partenza' : 'idsede_uscita';
-if (in_array($record[$field_name], $user->idsedi)){
-?>
+$field_name = ($dir == 'entrata') ? 'idsede_partenza' : 'idsede_uscita';
+if (in_array($record[$field_name], $user->sedi)) {
+    ?>
     <a class="btn btn-danger ask" data-backto="record-list">
         <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
     </a>

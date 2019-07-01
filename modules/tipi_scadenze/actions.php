@@ -8,10 +8,8 @@ switch (filter('op')) {
         $nome = filter('nome');
 
         if (isset($nome)) {
-
             //Se non esiste già una tipo di scadenza con lo stesso nome
             if ($dbo->fetchNum('SELECT * FROM `co_tipi_scadenze` WHERE `nome`='.prepare($nome).' AND `id`!='.prepare($id_record)) == 0) {
-                
                 //nome_prev
                 $nome_prev = $dbo->fetchOne('SELECT nome AS nome_prev FROM `co_tipi_scadenze` WHERE `id`='.prepare($id_record))['nome_prev'];
 
@@ -34,7 +32,7 @@ switch (filter('op')) {
             } else {
                 flash()->error(tr("E' già presente una tipologia di _TYPE_ con nome: _NOME_", [
                     '_TYPE_' => 'scadenza',
-                    '_NOME_' =>  $nome,
+                    '_NOME_' => $nome,
                 ]));
             }
         } else {
@@ -55,15 +53,14 @@ switch (filter('op')) {
                     'descrizione' => $descrizione,
                 ]);
                 $id_record = $dbo->lastInsertedID();
-                
+
                 //Aggiungo anche il segmento
                 $dbo->insert('zz_segments', [
-                    'id_module' =>  Modules::get('Scadenzario')['id'],
+                    'id_module' => Modules::get('Scadenzario')['id'],
                     'name' => 'Scadenzario '.$nome,
                     'clause' => 'co_scadenziario.tipo="'.$nome.'"',
-                    'position' => 'WHR'
+                    'position' => 'WHR',
                 ]);
-
 
                 if (isAjaxRequest()) {
                     echo json_encode(['id' => $nome, 'text' => $descrizione]);
@@ -75,7 +72,7 @@ switch (filter('op')) {
             } else {
                 flash()->error(tr("E' già presente una tipologia di _TYPE_ con nome: _NOME_", [
                     '_TYPE_' => 'scadenza',
-                    '_NOME_' =>  $nome,
+                    '_NOME_' => $nome,
                 ]));
             }
         } else {

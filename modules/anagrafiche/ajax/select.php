@@ -220,20 +220,20 @@ switch ($resource) {
             $user = Auth::user();
 
             $query = "SELECT * FROM (SELECT '0' AS id, CONCAT_WS(' - ', 'Sede legale' , (SELECT CONCAT (citta, ' (', ragione_sociale,')') FROM an_anagrafiche |where|)) AS descrizione UNION SELECT id, CONCAT_WS(' - ', nomesede, citta) FROM an_sedi |where|) AS tab |filter| ORDER BY descrizione";
-            
+
             foreach ($elements as $element) {
                 $filter[] = 'id='.prepare($element);
             }
 
             $where[] = 'idanagrafica='.prepare($user->idanagrafica);
-            $where[] = 'id IN('.implode(',', $user->idsedi).')';
+            $where[] = 'id IN('.implode(',', $user->sedi).')';
 
             if (!empty($search)) {
                 $search_fields[] = 'nomesede LIKE '.prepare('%'.$search.'%');
                 $search_fields[] = 'citta LIKE '.prepare('%'.$search.'%');
             }
         }
-            
+
         break;
 
     case 'referenti':

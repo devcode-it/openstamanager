@@ -2,11 +2,11 @@
 
 namespace Modules\DDT;
 
+use Auth;
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
 use Traits\RecordTrait;
 use Util\Generator;
-use Auth;
 
 class DDT extends Document
 {
@@ -70,9 +70,9 @@ class DDT extends Document
 
         // Imposto, come sede aziendale, la prima sede disponibile come utente
         if ($direzione == 'entrata') {
-            $model->idsede_partenza = $user->idsedi[0];
+            $model->idsede_partenza = $user->sedi[0];
         } else {
-            $model->idsede_destinazione = $user->idsedi[0];
+            $model->idsede_destinazione = $user->sedi[0];
         }
 
         $model->save();

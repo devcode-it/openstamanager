@@ -121,7 +121,7 @@ $(document).ready(function() {
 </script>';
 
 // Clienti top
-$clienti = $dbo->fetchArray('SELECT SUM(co_righe_documenti.subtotale - co_righe_documenti.sconto) AS totale, (SELECT COUNT(*) FROM co_documenti WHERE co_documenti.idanagrafica =an_anagrafiche.idanagrafica AND co_documenti.data BETWEEN '.prepare($start).' AND '.prepare($end).") AS qta, an_anagrafiche.idanagrafica, an_anagrafiche.ragione_sociale FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica=co_documenti.idanagrafica WHERE co_tipidocumento.dir='entrata' AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end).' GROUP BY an_anagrafiche.idanagrafica ORDER BY SUM(subtotale - sconto) DESC LIMIT 15');
+$clienti = $dbo->fetchArray('SELECT SUM(co_righe_documenti.subtotale - co_righe_documenti.sconto) AS totale, (SELECT COUNT(*) FROM co_documenti WHERE co_documenti.idanagrafica =an_anagrafiche.idanagrafica AND co_documenti.data BETWEEN '.prepare($start).' AND '.prepare($end).") AS qta, an_anagrafiche.idanagrafica, an_anagrafiche.ragione_sociale FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica=co_documenti.idanagrafica WHERE co_tipidocumento.dir='entrata' AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end).' GROUP BY an_anagrafiche.idanagrafica ORDER BY SUM(subtotale - sconto) DESC LIMIT 20');
 
 $totale = $dbo->fetchArray("SELECT SUM(co_righe_documenti.subtotale - co_righe_documenti.sconto) AS totale FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id WHERE co_tipidocumento.dir='entrata' AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end));
 
@@ -130,7 +130,7 @@ echo '
     <div class="col-md-6">
         <div class="box box-warning">
             <div class="box-header with-border">
-                <h3 class="box-title">'.tr('Clienti TOP').'</h3><span class="tip" title="'.tr('Valori iva esclusa').'"> <i class="fa fa-question-circle-o" aria-hidden="true"></i></span>
+                <h3 class="box-title">'.tr('I 20 clienti TOP').'</h3><span class="tip" title="'.tr('Valori iva esclusa').'"> <i class="fa fa-question-circle-o" aria-hidden="true"></i></span>
 
                 <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse">
@@ -143,10 +143,10 @@ if (!empty($clienti)) {
     echo '
                 <table class="table table-striped">
                     <tr>
-                        <th>'.tr('Ragione sociale').'</th>
+                        <th class="col-md-6" >'.tr('Ragione sociale').'</th>
                         <th class="text-center">'.tr('Num. fatture').'</th>
                         <th class="text-right">'.tr('Totale').'</th>
-                        <th class="text-right">'.tr('Percentuale').'</th>
+                        <th class="text-right">'.tr('Percentuale').'<span class="tip" title="'.tr('Incidenza sul fatturato').'">&nbsp;<i class="fa fa-question-circle-o" aria-hidden="true"></i></span></th>
                     </tr>';
     foreach ($clienti as $cliente) {
         echo '
@@ -170,15 +170,15 @@ echo '
     </div>';
 
 // Articoli più venduti
-$articoli = $dbo->fetchArray("SELECT SUM(co_righe_documenti.qta) AS qta,  SUM(co_righe_documenti.subtotale - co_righe_documenti.sconto) AS totale, mg_articoli.id, mg_articoli.codice, mg_articoli.descrizione, mg_articoli.um FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id INNER JOIN mg_articoli ON mg_articoli.id=co_righe_documenti.idarticolo WHERE co_tipidocumento.dir='entrata' AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end).' GROUP BY co_righe_documenti.idarticolo ORDER BY SUM(co_righe_documenti.qta) DESC LIMIT 15');
+$articoli = $dbo->fetchArray("SELECT SUM(co_righe_documenti.qta) AS qta,  SUM(co_righe_documenti.subtotale - co_righe_documenti.sconto) AS totale, mg_articoli.id, mg_articoli.codice, mg_articoli.descrizione, mg_articoli.um FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id INNER JOIN mg_articoli ON mg_articoli.id=co_righe_documenti.idarticolo WHERE co_tipidocumento.dir='entrata' AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end).' GROUP BY co_righe_documenti.idarticolo ORDER BY SUM(co_righe_documenti.qta) DESC LIMIT 20');
 
-$totale = $dbo->fetchArray("SELECT SUM(co_righe_documenti.subtotale - co_righe_documenti.sconto) AS totale FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id INNER JOIN mg_articoli ON mg_articoli.id=co_righe_documenti.idarticolo WHERE co_tipidocumento.dir='entrata' AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end));
+$totale = $dbo->fetchArray("SELECT SUM(co_righe_documenti.qta) AS totale_qta, SUM(co_righe_documenti.subtotale - co_righe_documenti.sconto) AS totale FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id INNER JOIN mg_articoli ON mg_articoli.id=co_righe_documenti.idarticolo WHERE co_tipidocumento.dir='entrata' AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end));
 
 echo '
     <div class="col-md-6">
         <div class="box box-danger">
             <div class="box-header with-border">
-                <h3 class="box-title">'.tr('Articoli più venduti').'</h3><span class="tip" title="'.tr('Valori iva esclusa').'"> <i class="fa fa-question-circle-o" aria-hidden="true"></i></span>
+                <h3 class="box-title">'.tr('I 20 articoli più venduti').'</h3><span class="tip" title="'.tr('Valori iva esclusa').'"> <i class="fa fa-question-circle-o" aria-hidden="true"></i></span>
 
                 <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse">
@@ -192,10 +192,10 @@ if (!empty($articoli)) {
                 <table class="table table-striped">
                     <tr>
                         <th>'.tr('Codice').'</th>
-                        <th>'.tr('Descrizione').'</th>
+                        <th class="col-md-6" >'.tr('Descrizione').'</th>
                         <th class="text-right">'.tr('Q.tà').'</th>
+                        <th class="text-right">'.tr('Percentuale').'<span class="tip" title="'.tr('Incidenza sul numero di articoli venduti').'"> <i class="fa fa-question-circle-o" aria-hidden="true"></i></span></th>
                         <th class="text-right">'.tr('Totale').'</th>
-                        <th class="text-right">'.tr('Percentuale').'</th>
                     </tr>';
     foreach ($articoli as $articolo) {
         echo '
@@ -203,8 +203,8 @@ if (!empty($articoli)) {
                         <td>'.Modules::link('Articoli', $articolo['id'], $articolo['codice']).'</td>
                         <td>'.$articolo['descrizione'].'</td>
                         <td class="text-right">'.Translator::numberToLocale($articolo['qta']).' '.$articolo['um'].'</td>
-                        <td class="text-right">'.moneyFormat($articolo['totale']).' '.currency().'</td>
-                        <td class="text-right">'.Translator::numberToLocale($articolo['totale'] * 100 / $totale[0]['totale']).' %</td>
+                        <td class="text-right">'.Translator::numberToLocale($articolo['qta'] * 100 / $totale[0]['totale_qta']).' %</td>
+                        <td class="text-right">'.moneyFormat($articolo['totale']).'</td>
                     </tr>';
     }
     echo '

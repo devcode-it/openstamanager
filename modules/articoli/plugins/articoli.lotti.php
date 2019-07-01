@@ -73,10 +73,10 @@ echo '
 // Visualizzo, in base alle impostazioni scelte, se il magazzino verrà movimentato
 if (setting("Movimenta il magazzino durante l'inserimento o eliminazione dei lotti/serial number")) {
     echo '
-                        <small>'.tr("L'inserimento incrementerà la quantità dell'articolo!").'</small>';
+                        '.tr("L'inserimento incrementerà la quantità dell'articolo!");
 } else {
     echo '
-                        <small>'.tr("L'inserimento non movimenterà la quantità dell'articolo!").'</small>';
+                        '.tr("L'inserimento non movimenterà la quantità dell'articolo!");
 }
 
 echo '

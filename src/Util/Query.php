@@ -318,7 +318,7 @@ class Query
         $query = $element['option'];
 
         // Aggiunta eventuali filtri dai segmenti per eseguire la query filtrata
-        $query = str_replace( '1=1', '1=1 '.Modules::getAdditionalsQuery($element['attributes']['name']), $query );
+        $query = str_replace('1=1', '1=1 '.Modules::getAdditionalsQuery($element['attributes']['name']), $query);
         $views = self::getViews($element);
 
         $select = [];

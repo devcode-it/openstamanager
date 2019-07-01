@@ -235,10 +235,9 @@ if (!empty($google)) {
     if ($cliente || $fornitore) {
         ?>
 
-
-		<!-- ACQUISTI -->
 		<div class = "row">
 		<div class="col-md-6">
+        <!-- ACQUISTI -->
 		<div  class="panel panel-primary">
 			<div class="panel-heading">
 				<h3 class="panel-title"><?php echo tr('Acquisti'); ?></h3>

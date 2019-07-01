@@ -466,15 +466,14 @@ class Auth extends \Util\Singleton
                 $this->user = User::with('group')->find($user_id);
 
                 // Estraggo le sedi dell'utente loggato
-                $idsedi = $database->fetchArray('SELECT idsede FROM zz_user_sedi WHERE id_user='.prepare($user_id));
+                $sedi = $database->fetchArray('SELECT idsede FROM zz_user_sedi WHERE id_user='.prepare($user_id));
 
                 // Se l'utente non ha sedi, è come se ce le avesse tutte disponibili per retrocompatibilità
-                if (empty($idsedi)){
-                
-                    $idsedi = $database->fetchArray('SELECT "0" AS idsede UNION SELECT id AS idsede FROM an_sedi WHERE idanagrafica='.prepare($results[0]['idanagrafica']));
+                if (empty($sedi)) {
+                    $sedi = $database->fetchArray('SELECT "0" AS idsede UNION SELECT id AS idsede FROM an_sedi WHERE idanagrafica='.prepare($results[0]['idanagrafica']));
                 }
 
-                $this->user['idsedi'] = array_column( $idsedi, 'idsede' );
+                $this->user['sedi'] = array_column($sedi, 'idsede');
             }
         } catch (PDOException $e) {
             $this->destory();

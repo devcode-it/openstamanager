@@ -157,7 +157,7 @@ if (empty($record['is_fiscale'])) {
                 if ($dir == 'uscita') {
                     ?>
                     <div class="col-md-3">
-                        {[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza", "ajax-source": "sedi", "placeholder": "Sede legale", "value": "$idsede_partenza$"]}
+                        {[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza", "ajax-source": "sedi", "placeholder": "Sede legale", "value": "$idsede_partenza$", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|id_plugin=<?php echo Plugins::get('Sedi')['id']; ?>&id_parent=<?php echo $record['idanagrafica']; ?>||<?php echo (intval($block_edit)) ? 'disabled' : ''; ?>" ]}
                     </div>
                     
                     <div class="col-md-3">
@@ -171,7 +171,7 @@ if (empty($record['is_fiscale'])) {
                     </div>
                     
                     <div class="col-md-3">
-                        {[ "type": "select", "label": "<?php echo tr('Destinazione merce'); ?>", "name": "idsede_destinazione", "ajax-source": "sedi",  "value": "$idsede_destinazione$", "readonly": "" ]}
+                        {[ "type": "select", "label": "<?php echo tr('Destinazione merce'); ?>", "name": "idsede_destinazione", "ajax-source": "sedi",  "value": "$idsede_destinazione$", "readonly": "", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|id_plugin=<?php echo Plugins::get('Sedi')['id']; ?>&id_parent=<?php echo $record['idanagrafica']; ?>||<?php echo (intval($block_edit)) ? 'disabled' : ''; ?>" ]}
                     </div>
                 <?php
                 }
@@ -183,12 +183,12 @@ if (empty($record['is_fiscale'])) {
 				</div>
 
 				<?php if ($dir == 'entrata') {
-                        ?>
+                    ?>
 				<div class="col-md-3">
 					{[ "type": "select", "label": "<?php echo tr('Agente di riferimento'); ?>", "name": "idagente", "ajax-source": "agenti", "value": "$idagente_fattura$" ]}
 				</div>
 				<?php
-                    } ?>
+                } ?>
 			</div>
 			<hr>
 
@@ -205,7 +205,7 @@ if (empty($record['is_fiscale'])) {
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Banca'); ?>", "name": "idbanca", "values": "query=SELECT id, CONCAT (nome, ' - ' , iban) AS descrizione FROM co_banche WHERE deleted_at IS NULL ORDER BY nome ASC", "value": "$idbanca$", "icon-after": "add|<?php echo Modules::get('Banche')['id']; ?>||", "extra": " <?php echo ($record['stato'] == 'Bozza') ? '' : 'disabled'; ?> " ]}
+					{[ "type": "select", "label": "<?php echo tr('Banca'); ?>", "name": "idbanca", "values": "query=SELECT id, CONCAT (nome, ' - ' , iban) AS descrizione FROM co_banche WHERE deleted_at IS NULL ORDER BY nome ASC", "value": "$idbanca$", "icon-after": "add|<?php echo Modules::get('Banche')['id']; ?>||", "extra": " <?php echo (intval($block_edit)) ? 'disabled' : ''; ?> " ]}
 				</div>
 
 
@@ -629,9 +629,13 @@ if ($dir == 'entrata') {
 echo '
 <script type="text/javascript">
 	$("#idanagrafica").change(function(){
-        session_set("superselect,idanagrafica", $(this).val(), 0);
-            
-		$("#idsede_destinazione").selectReset();
+        session_set("superselect,idanagrafica", $(this).val(), 0);';
+        if ($dir == 'entrata') {
+            echo '$("#idsede_destinazione").selectReset();';
+        } else {
+            echo '$("#idsede_partenza").selectReset();';
+        }
+echo '
 	});
 
     $("#ricalcola_scadenze").click(function(){
@@ -673,9 +677,9 @@ if (!empty($note_accredito)) {
 
 <?php
 // Eliminazione ddt solo se ho accesso alla sede aziendale
-$field_name = ( $dir == 'entrata' ) ? 'idsede_partenza' : 'idsede_uscita';
-if (in_array($record[$field_name], $user->idsedi)){
-?>
+$field_name = ($dir == 'entrata') ? 'idsede_partenza' : 'idsede_uscita';
+if (in_array($record[$field_name], $user->sedi)) {
+    ?>
     <a class="btn btn-danger ask" data-backto="record-list">
         <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
     </a>

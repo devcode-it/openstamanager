@@ -3,8 +3,8 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Fatture\Fattura;
-use Util\Zip;
 use Plugins\ExportFE\FatturaElettronica;
+use Util\Zip;
 
 switch (post('op')) {
     case 'export-bulk':
@@ -65,26 +65,24 @@ switch (post('op')) {
         break;
 
     case 'genera-xml':
-        
-        $failed = [];
-        $added = []; 
-        
-        foreach ($id_records as $id) {
 
+        $failed = [];
+        $added = [];
+
+        foreach ($id_records as $id) {
             $fattura = Fattura::find($id);
             $fe = new \Plugins\ExportFE\FatturaElettronica($fattura->id);
-           
+
             //se la fattura è emessa e non è stata generata la fattura elettronica
-            if ($fattura->idstatodocumento==3 and !($fe->isGenerated())){
+            if ($fattura->stato->descrizione == 'Emessa' and !($fe->isGenerated())) {
                 $fattura_pa = new FatturaElettronica($id);
                 if (!empty($fattura_pa)) {
                     $file = $fattura_pa->save($upload_dir);
                     $added[] = $fattura->numero_esterno;
                 }
-            }else{
+            } else {
                 $failed[] = $fattura->numero_esterno;
             }
-           
         }
 
         if (!empty($failed)) {
@@ -152,7 +150,7 @@ switch (post('op')) {
                     $result = copy($file, $dest);
 
                     if ($result) {
-                        $added++;
+                        ++$added;
                         operationLog('export-xml-bulk', ['id_record' => $r['id']]);
                     } else {
                         $failed[] = $fattura->numero_esterno;
@@ -161,7 +159,7 @@ switch (post('op')) {
             }
 
             // Creazione zip
-            if (extension_loaded('zip') and !empty($added) ) {
+            if (extension_loaded('zip') and !empty($added)) {
                 Zip::create($dir.'tmp/', $zip);
 
                 // Invio al browser il file zip
@@ -340,7 +338,6 @@ $operations['registra-contabile'] = [
 ];
 
 if ($module->name == 'Fatture di vendita') {
-
     $operations['genera-xml'] = [
         'text' => '<span><i class="fa fa-file-code-o" ></i> '.tr('Genera fatture elettroniche').'</span>',
         'data' => [
@@ -352,9 +349,8 @@ if ($module->name == 'Fatture di vendita') {
         ],
     ];
 
-    
     $operations['export-bulk'] = [
-        'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' :'').'"><i class="fa fa-file-archive-o" ></i> '.tr('Esporta stampe').'</span>',
+        'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o" ></i> '.tr('Esporta stampe').'</span>',
         'data' => [
             'title' => '',
             'msg' => tr('Vuoi davvero esportare i PDF delle fatture selezionate in un archivio ZIP?'),
@@ -366,7 +362,7 @@ if ($module->name == 'Fatture di vendita') {
 }
 
 $operations['export-xml-bulk'] = [
-    'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' :'').'"><i class="fa fa-file-archive-o" ></i> '.tr('Esporta XML').'</span>',
+    'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o" ></i> '.tr('Esporta XML').'</span>',
     'data' => [
         'title' => '',
         'msg' => tr('Vuoi davvero esportare le fatture elettroniche selezionate in un archivio ZIP?'),

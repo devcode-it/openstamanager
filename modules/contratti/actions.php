@@ -138,7 +138,7 @@ switch (post('op')) {
 
         $id_record = $new->id;
 
-        $righe = $preventivo->getRighe();
+        $righe = $contratto->getRighe();
         foreach ($righe as $riga) {
             $new_riga = $riga->replicate();
             $new_riga->setParent($new);
@@ -398,7 +398,7 @@ switch (post('op')) {
         case 'import':
 
         $rs = $dbo->fetchArray('SELECT * FROM co_contratti_tipiintervento WHERE idcontratto = '.prepare(post('idcontratto')).' AND idtipointervento='.prepare(post('idtipointervento')));
-       
+
         // Se la riga in_tipiintervento esiste, la aggiorno...
         if (!empty($rs)) {
             $result = $dbo->query('UPDATE co_contratti_tipiintervento SET '
@@ -425,8 +425,6 @@ switch (post('op')) {
                 flash()->error(tr("Errore durante l'importazione tariffe!"));
             }
         }
-
-     
 
         break;
 }

@@ -28,9 +28,8 @@ if (isset($id_record)) {
     }
 
     // Se la sede del ddt non è di mia competenza, blocco il ddt in modifica
-    $field_name = ( $dir == 'entrata' ) ? 'idsede_partenza' : 'idsede_destinazione';
-    if (!in_array($record[$field_name], $user->idsedi)){
+    $field_name = ($dir == 'entrata') ? 'idsede_partenza' : 'idsede_destinazione';
+    if (!in_array($record[$field_name], $user->sedi)) {
         $record['flag_completato'] = 1;
     }
-   
 }

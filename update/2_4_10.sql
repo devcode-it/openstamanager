@@ -38,8 +38,8 @@ ALTER TABLE `mg_movimenti` ADD `idsede_azienda` INT NOT NULL AFTER `idautomezzo`
 INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`, `position`, `script`, `enabled`, `default`, `order`, `compatibility`, `version`, `options2`, `options`, `directory`, `help`) VALUES (NULL, 'Giacenze', 'Giacenze', (SELECT id FROM zz_modules WHERE name='Articoli'), (SELECT id FROM zz_modules WHERE name='Articoli'), 'tab', 'articoli.giacenze.php', '1', '0', '0', '', '', NULL, NULL, '', '');
 
 -- Aggiornamento nomi dei campi sede per ddt
-ALTER TABLE `dt_ddt` CHANGE `idsede` `idsede_partenza` INT(11) NOT NULL;
-ALTER TABLE `dt_ddt` ADD `idsede_destinazione` INT NULL AFTER `idsede_partenza`;
+ALTER TABLE `dt_ddt` CHANGE `idsede` `idsede_partenza` INT NOT NULL;
+ALTER TABLE `dt_ddt` ADD `idsede_destinazione` INT NOT NULL AFTER `idsede_partenza`;
 
 -- Aggiornamento idsede_destinazione per i ddt di vendita
 UPDATE `dt_ddt` SET `idsede_destinazione`=`idsede_partenza` WHERE `idtipoddt` IN (SELECT id FROM dt_tipiddt WHERE dir="entrata");
@@ -110,7 +110,7 @@ UPDATE `zz_views` SET `query` = 'CONCAT_WS(co_movimenti_modelli.nome, co_movimen
 UPDATE `co_movimenti_modelli` SET `nome` = `descrizione` WHERE `nome` = '';
 
 -- Rimuovo le interruzioni di riga per descrizioni vuote 
---UPDATE `in_interventi` SET `descrizione` = REPLACE(`descrizione`, '\n', '') where `descrizione` LIKE '%\n';
+-- UPDATE `in_interventi` SET `descrizione` = REPLACE(`descrizione`, '\n', '') where `descrizione` LIKE '%\n';
 
 -- Aggiunto tabella co_tipi_scadenze
 CREATE TABLE `co_tipi_scadenze` (
@@ -126,9 +126,12 @@ INSERT INTO `co_tipi_scadenze` (`id`, `nome`, `descrizione`, `can_delete`) VALUE
 (2, 'generico', 'Scadenze generiche', 0);
 
 -- Aggiunto modulo per gestire i tipi di scadenze
-INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Tipi scadenze', 'Tipi scadenze', 'tipi_scadenze', 'SELECT |select| FROM `co_tipi_scadenze` WHERE 1=1 HAVING 2=2', '', 'fa fa-calendar', '2.4.10', '2.4.10', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Tabelle'), '1', '1';
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Tipi scadenze', 'Tipi scadenze', 'tipi_scadenze', 'SELECT |select| FROM `co_tipi_scadenze` WHERE 1=1 HAVING 2=2', '', 'fa fa-calendar', '2.4.10', '2.4.10', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Tabelle'), '1', '1');
 
-INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `default`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi scadenze'), 'Descrizione', 'descrizione', 3, 1, 0, 0),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi scadenze'), 'Nome', 'nome', 2, 1, 0, 0),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi scadenze'), 'id', 'id', 1, 1, 0, 0);
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `default`, `visible`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi scadenze'), 'Descrizione', 'descrizione', 3, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi scadenze'), 'Nome', 'nome', 2, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi scadenze'), 'id', 'id', 1, 1, 0, 0, 0);
+
+-- Aggiungo possibilità di vedere la descrizione per le scadenze generiche
+UPDATE `zz_views` SET `query` = 'IF(an_anagrafiche.ragione_sociale IS NULL, co_scadenziario.descrizione, an_anagrafiche.ragione_sociale)' WHERE `zz_views`.`name` = 'Anagrafica' AND `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario');

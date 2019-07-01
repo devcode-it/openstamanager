@@ -6,13 +6,10 @@ $module_name = 'Scadenzario';
 $date_start = $_SESSION['period_start'];
 $date_end = $_SESSION['period_end'];
 
-
-
 $module = Modules::get('Scadenzario');
 $id_module = $module['id'];
 
 $total = Util\Query::readQuery($module);
-
 
 // Lettura parametri modulo
 $module_query = $total['query'];
@@ -38,7 +35,6 @@ if (!empty($search_filters)) {
 $module_query = Modules::replaceAdditionals($id_module, $module_query);
 
 $scadenze = $dbo->fetchArray($module_query);
-
 
 // carica report html
 $report = file_get_contents($docroot.'/templates/scadenzario/scadenzario.html');

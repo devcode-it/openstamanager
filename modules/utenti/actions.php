@@ -40,9 +40,9 @@ switch (filter('op')) {
             $idanagrafica = filter('idanag');
 
             $dbo->query('UPDATE zz_users SET password='.prepare(Auth::hashPassword($password)).', idanagrafica='.prepare($idanagrafica).', email='.prepare($email).' WHERE id='.prepare($id_utente));
-            
+
             $dbo->query('DELETE FROM zz_user_sedi WHERE id_user='.prepare($id_utente));
-            foreach(post('idsede') as $i=>$idsede ){
+            foreach (post('idsede') as $i => $idsede) {
                 $dbo->query('INSERT INTO `zz_user_sedi` (`id_user`,`idsede`) VALUES ('.prepare($id_utente).', '.prepare($idsede).')');
             }
 
@@ -101,8 +101,8 @@ switch (filter('op')) {
                     flash()->info(tr('Utente aggiunto!'));
 
                     $id_utente = $dbo->lastInsertedID();
-                    
-                    foreach(post('idsede') as $i=>$idsede ){
+
+                    foreach (post('idsede') as $i => $idsede) {
                         $dbo->query('INSERT INTO `zz_user_sedi` (`id_user`,`idsede`) VALUES ('.prepare($id_utente).', '.prepare($idsede).')');
                     }
                 }

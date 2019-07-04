@@ -45,7 +45,8 @@ class Anagrafica extends Model
         $model->nome = $nome;
         $model->cognome = $cognome;
 
-        $ultimo = database()->fetchOne('SELECT codice FROM an_anagrafiche ORDER BY CAST(codice AS SIGNED) DESC LIMIT 1');
+        $ultimo = database()->fetchOne('SELECT codice FROM an_anagrafiche WHERE codice != \'\' AND codice LIKE '.prepare(str_replace('#', '_', setting('Formato codice anagrafica'))).' AND deleted_at IS NULL ORDER BY codice DESC LIMIT 1');
+
         $codice = Generator::generate(setting('Formato codice anagrafica'), $ultimo['codice']);
 
         $model->codice = $codice;

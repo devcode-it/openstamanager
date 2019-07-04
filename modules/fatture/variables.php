@@ -33,7 +33,7 @@ return [
     'numero' => empty($r['numero_esterno']) ? $r['numero'] : $r['numero_esterno'],
     'note' => $r['note'],
     'data' => Translator::dateToLocale($r['data']),
-    'logo_azienda' => !empty($logo_azienda) ? '<img src="'.$logo_azienda.'" />' : '',
+    'logo_azienda' => !empty($logo_azienda) ? '<img src="https://'.$_SERVER['HTTP_HOST'].$logo_azienda.'" />' : '',
     'conto' => $conto,
     'conto_descrizione' => $conto_descrizione,
     'nome_utente' => $r_user['ragione_sociale'],

@@ -7,7 +7,7 @@ unset($_SESSION['superselect']['idanagrafica']);
 unset($_SESSION['superselect']['idsede']);
 
 // Calcolo del nuovo codice
-$new_codice = \Modules\Interventi\Intervento::getNextCodice();
+$new_codice = \Modules\Interventi\Intervento::getNextCodice($data);
 
 // Se ho passato l'idanagrafica, carico il tipo di intervento di default
 $idanagrafica = filter('idanagrafica');

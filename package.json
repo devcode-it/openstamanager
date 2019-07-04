@@ -33,7 +33,8 @@
         "signature_pad": "^2.1.1",
         "smartwizard": "^4.2.2",
         "sweetalert2": "^6.11.4",
-        "tooltipster": "^4.2.5"
+        "tooltipster": "^4.2.5",
+        "jquery.shorten": "^1.0.0"
     },
     "devDependencies": {
         "archiver": "^2.0.0",
@@ -166,6 +167,11 @@
             "main": [
                 "dist/sweetalert2.js",
                 "dist/sweetalert2.css"
+            ]
+        },
+        "jquery.shorten": {
+            "main": [
+                "src/jquery.shorten.js"
             ]
         }
     }

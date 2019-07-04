@@ -9,7 +9,7 @@ $r = $dbo->fetchOne('SELECT co_documenti.*,
 	(SELECT pec FROM zz_smtps WHERE zz_smtps.id='.prepare($template['id_smtp']).') AS is_pec
 FROM co_documenti INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica WHERE co_documenti.id='.prepare($id_record));
 
-$logo_azienda = str_replace(DOCROOT, ROOTDIR, App::filepath('templates/base|custom|/logo_azienda.jpg'));
+$logo_azienda = str_replace(DOCROOT, BASEURL, App::filepath('templates/base|custom|/logo_azienda.jpg'));
 
 //cliente
 if ($r['idconto_cliente'] != '') {
@@ -33,7 +33,7 @@ return [
     'numero' => empty($r['numero_esterno']) ? $r['numero'] : $r['numero_esterno'],
     'note' => $r['note'],
     'data' => Translator::dateToLocale($r['data']),
-    'logo_azienda' => !empty($logo_azienda) ? '<img src="https://'.$_SERVER['HTTP_HOST'].$logo_azienda.'" />' : '',
+    'logo_azienda' => !empty($logo_azienda) ? '<img src="'.$logo_azienda.'" />' : '',
     'conto' => $conto,
     'conto_descrizione' => $conto_descrizione,
     'nome_utente' => $r_user['ragione_sociale'],

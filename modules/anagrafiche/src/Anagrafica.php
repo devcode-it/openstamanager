@@ -45,11 +45,7 @@ class Anagrafica extends Model
         $model->nome = $nome;
         $model->cognome = $cognome;
 
-        $ultimo = database()->fetchOne('SELECT codice FROM an_anagrafiche WHERE codice != \'\' AND codice LIKE '.prepare(str_replace('#', '_', setting('Formato codice anagrafica'))).' AND deleted_at IS NULL ORDER BY codice DESC LIMIT 1');
-
-        $codice = Generator::generate(setting('Formato codice anagrafica'), $ultimo['codice']);
-
-        $model->codice = $codice;
+        $model->codice = static::getNextCodice();
         $model->id_ritenuta_acconto_vendite = setting("Percentuale ritenuta d'acconto");
         $model->save();
 
@@ -107,7 +103,7 @@ class Anagrafica extends Model
     public static function fixTecnico(Anagrafica $anagrafica)
     {
         // Copio già le tariffe per le varie attività
-        $result = database()->query('INSERT INTO in_tariffe(idtecnico, idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico) SELECT '.prepare($model->id).', idtipointervento, costo_orario, costo_km, costo_diritto_chiamata, costo_orario_tecnico, costo_km_tecnico, costo_diritto_chiamata_tecnico FROM in_tipiintervento');
+        $result = database()->query('INSERT INTO in_tariffe(idtecnico, idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico) SELECT '.prepare($anagrafica->id).', idtipointervento, costo_orario, costo_km, costo_diritto_chiamata, costo_orario_tecnico, costo_km_tecnico, costo_diritto_chiamata_tecnico FROM in_tipiintervento');
 
         if (!$result) {
             flash()->error(tr("Errore durante l'importazione tariffe!"));
@@ -244,4 +240,27 @@ class Anagrafica extends Model
             $this->ragione_sociale = $this->cognome.' '.$this->nome;
         }
     }
+
+    // Metodi statici
+
+    /**
+     * Calcola il nuovo codice di anagrafica.
+     *
+     * @return string
+     */
+    public static function getNextCodice()
+    {
+        // Recupero maschera per le anagrafiche
+        $maschera = setting('Formato codice anagrafica');
+
+        $ultimo = Generator::getPreviousFrom($maschera, 'an_anagrafiche', 'codice', [
+            "codice != ''",
+            //'deleted_at IS NULL', // Rimozione per unicità del codice
+        ]);
+        $codice = Generator::generate($maschera, $ultimo);
+
+        return $codice;
+    }
+
+
 }

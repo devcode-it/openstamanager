@@ -231,7 +231,7 @@ function translateTemplate()
 
     // Annullo le notifiche (AJAX)
     if (isAjaxRequest()) {
-        flash()->clearMessage('info');
+        //flash()->clearMessage('info');
     }
 
     echo $template;

@@ -697,34 +697,15 @@ $(".btn-sm[data-toggle=\"tooltip\"]").each(function() {
 
         var restore = buttonLoading(btn);
 
+        valid = submitAjax(form, {}, function() {
+            buttonRestore(btn, restore);
+        }, function() {
+            buttonRestore(btn, restore);
+        });
 		// Procedo al salvataggio solo se tutti i campi obbligatori sono compilati, altrimenti mostro avviso
-	    if (form.parsley().isValid()) {
-            content_was_modified = false;
+            //form.find("input:disabled, select:disabled").removeAttr("disabled");
 
-            form.find("input:disabled, select:disabled").removeAttr("disabled");
-
-            $.ajax({
-                url: globals.rootdir + "/actions.php?id_module=" + globals.id_module ,
-                cache: false,
-                type: "POST",
-                processData: false,
-                dataType : "html",
-                data:  form.serialize(),
-                success: function(data) {
-                    $("#main_loading").fadeOut();
-
-                    buttonRestore(btn, restore);
-                },
-                error: function(data) {
-                    $("#main_loading").fadeOut();
-
-                    swal("'.tr('Errore').'", "'.tr('Errore durante il salvataggio').'", "error");
-
-                    buttonRestore(btn, restore);
-                }
-            });
-
-	    } else {
+	    if(!valid) {
 			swal({
                 type: "error",
                 title: "'.tr('Errore').'",

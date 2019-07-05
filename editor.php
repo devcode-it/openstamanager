@@ -130,6 +130,8 @@ if (empty($record) || !$has_access) {
                         form.prepend(\'<button type="submit" id="submit" class="hide"></button>\');
 
                         $("#save").click(function(){
+                            //submitAjax(form);
+                        
                             $("#submit").trigger("click");
                         });';
 

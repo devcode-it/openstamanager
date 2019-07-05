@@ -24,7 +24,7 @@ class HTMLWrapper implements WrapperInterface
     <label for="'.prepareToField($values['id']).'">'.(empty($values['help']) ? $values['label'] : '<span class="tip" title="'.prepareToField($values['help']).'">'.$values['label'].' <i class="fa fa-question-circle-o"></i></span>').'</label>';
         }
 
-        if (!empty($values['icon-before']) || !empty($values['icon-after'])) {
+        if (!empty($values['icon-before']) || !empty($values['icon-after']) || !empty($values['validation'])) {
             $result .= '
     <div class="input-group">';
 
@@ -39,12 +39,22 @@ class HTMLWrapper implements WrapperInterface
 
     public function after(&$values, &$extras)
     {
+        $rand = rand(0, 99);
+        $pseudo_id = $values['id'].$rand;
+
         $result = '';
 
-        if (!empty($values['icon-before']) || !empty($values['icon-after'])) {
+        if (!empty($values['icon-before']) || !empty($values['icon-after']) || !empty($values['validation'])) {
             if (!empty($values['icon-after'])) {
                 $result .= '
                 <span class="input-group-addon after'.(!empty($values['icon-custom']) ? ' '.$values['icon-custom'] : '').'">'.$values['icon-after'].'</span>';
+            }
+
+            if (!empty($values['validation'])) {
+                $result .= '
+                <span class="input-group-addon" id="'.$pseudo_id.'_validation">
+                    <span class="tip" title="'.tr('Validazione').'"><i class="fa fa-question-circle "></i></span>
+                </span>';
             }
 
             $result .= '
@@ -63,9 +73,7 @@ class HTMLWrapper implements WrapperInterface
             unset($values['show-help']);
         }
 
-        $rand = rand(0, 99);
-
-        $values['data-parsley-errors-container'] = '#'.$values['id'].$rand.'-errors';
+        $values['data-parsley-errors-container'] = '#'.$pseudo_id.'-errors';
 
         $result .= '
         <div id="'.$values['id'].$rand.'-errors"></div>';
@@ -74,6 +82,57 @@ class HTMLWrapper implements WrapperInterface
             $result .= '
         </div>';
             unset($values['label']);
+        }
+
+        if (!empty($values['validation'])) {
+            $result .= '
+    <script>
+        var container = $("#'.$pseudo_id.'_validation");
+        
+        container.closest(".input-group").find("input").on("change", function(){
+            value = $(this).val();
+ 
+            container = $("#'.$pseudo_id.'_validation");
+            parent = container.closest(".input-group");
+            message = container.find("span");
+            icon = container.find("i");
+        
+            icon.attr("class", "fa fa-spinner fa-spin");
+            
+            $.ajax({
+                url: globals.rootdir + "/actions.php",
+                type: "get",
+                data: {
+                    id_module: "$id_module$",
+                    id_record: "$id_record$",
+                    name: "'.$values['validation'].'",
+                    value: value,
+                    op: "validate",
+                },
+                success: function(data) {
+                    data = JSON.parse(data);
+            
+                    if(data.result) {
+                        icon.attr("class", "fa fa-check");
+                        parent.addClass("has-success").removeClass("has-error");
+                    } else {
+                        icon.attr("class", "fa fa-close");
+                        parent.addClass("has-error").removeClass("has-success");
+                    }
+                    
+                    message.tooltipster("content", data.message);
+                    
+                    if (data.fields) {
+                        fields = data.fields;
+            
+                        Object.keys(fields).forEach(function(element) {
+                            $("[name=" + element + "]").val(fields[element]);
+                        });
+                    }
+                }
+            });
+        });
+    </script>';
         }
 
         return $result;

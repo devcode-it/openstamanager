@@ -48,11 +48,11 @@ echo '
 	    <div class="box-body">
 			<div class="row">
 				<div class="col-md-4">
-					{[ "type": "text", "label": "'.tr('Partita IVA').'", "maxlength": 13, "name": "piva", "class": "text-center alphanumeric-mask" ]}
+					{[ "type": "text", "label": "'.tr('Partita IVA').'", "maxlength": 13, "name": "piva", "class": "text-center alphanumeric-mask", "validation": "partita_iva"]}
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "text", "label": "'.tr('Codice fiscale').'", "maxlength": 16, "name": "codice_fiscale", "class": "text-center alphanumeric-mask" ]}
+					{[ "type": "text", "label": "'.tr('Codice fiscale').'", "maxlength": 16, "name": "codice_fiscale", "class": "text-center alphanumeric-mask", "validation": "codice_fiscale" ]}
 				</div>
 				
 				<div class="col-md-4">

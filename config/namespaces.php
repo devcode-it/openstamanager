@@ -16,6 +16,7 @@ return [
     'modules/contratti' => 'Modules\Contratti',
     'modules/interventi' => 'Modules\Interventi',
     'modules/pagamenti' => 'Modules\Pagamenti',
+    'modules/statistiche' => 'Modules\Statistiche',
     'plugins/exportFE' => 'Plugins\ExportFE',
     'plugins/importFE' => 'Plugins\ImportFE',
     'plugins/receiptFE' => 'Plugins\ReceiptFE',

@@ -2,6 +2,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Statistiche\Stats;
+
 echo '
 <script src="'.$rootdir.'/assets/dist/js/chartjs/Chart.min.js"></script>';
 
@@ -33,32 +35,11 @@ $(document).ready(function() {
 });
 </script>';
 
-// Differenza delle date in mesi
-$d1 = new DateTime($start);
-$d2 = new DateTime($end);
-$count = $d1->diff($d2)->m + ($d1->diff($d2)->y * 12) + 1;
-
 $fatturato = $dbo->fetchArray("SELECT ROUND(SUM(co_righe_documenti.subtotale - co_righe_documenti.sconto), 2) AS totale, YEAR(co_documenti.data) AS year, MONTH(co_documenti.data) AS month FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id WHERE co_tipidocumento.dir='entrata' AND co_tipidocumento.descrizione!='Bozza' AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end).' GROUP BY YEAR(co_documenti.data), MONTH(co_documenti.data) ORDER BY YEAR(co_documenti.data) ASC, MONTH(co_documenti.data) ASC');
 $acquisti = $dbo->fetchArray("SELECT ROUND(SUM(co_righe_documenti.subtotale - co_righe_documenti.sconto), 2) AS totale, YEAR(co_documenti.data) AS year, MONTH(co_documenti.data) AS month FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id WHERE co_tipidocumento.dir='uscita' AND co_tipidocumento.descrizione!='Bozza' AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end).' GROUP BY YEAR(co_documenti.data), MONTH(co_documenti.data) ORDER BY YEAR(co_documenti.data) ASC, MONTH(co_documenti.data) ASC');
 
-$month = intval($d1->format('m')) - 1;
-for ($i = 0; $i < $count; ++$i) {
-    $month = $month % 12;
-
-    if (!isset($fatturato[$i]) || intval($fatturato[$i]['month']) != $month + 1) {
-        array_splice($fatturato, $i, 0, [[
-            'totale' => 0,
-        ]]);
-    }
-
-    if (!isset($acquisti[$i]) || intval($acquisti[$i]['month']) != $month + 1) {
-        array_splice($acquisti, $i, 0, [[
-            'totale' => 0,
-        ]]);
-    }
-
-    ++$month;
-}
+$fatturato = Stats::monthly($fatturato, $start, $end);
+$acquisti = Stats::monthly($acquisti, $start, $end);
 
 // Fatturato
 echo '
@@ -227,18 +208,7 @@ $dataset = '';
 foreach ($tipi as $tipo) {
     $interventi = $dbo->fetchArray('SELECT COUNT(*) AS totale, YEAR(in_interventi.data_richiesta) AS year, MONTH(in_interventi.data_richiesta) AS month FROM in_interventi WHERE in_interventi.idtipointervento = '.prepare($tipo['idtipointervento']).' AND in_interventi.data_richiesta BETWEEN '.prepare($start).' AND '.prepare($end).' GROUP BY YEAR(in_interventi.data_richiesta), MONTH(in_interventi.data_richiesta) ORDER BY YEAR(in_interventi.data_richiesta) ASC, MONTH(in_interventi.data_richiesta) ASC');
 
-    $month = intval($d1->format('m')) - 1;
-    for ($i = 0; $i < $count; ++$i) {
-        $month = $month % 12;
-
-        if (!isset($interventi[$i]) || intval($interventi[$i]['month']) != $month + 1) {
-            array_splice($interventi, $i, 0, [[
-                'totale' => 0,
-            ]]);
-        }
-
-        ++$month;
-    }
+    $interventi = Stats::monthly($interventi, $start, $end);
 
     //Random color
     $background = '#'.dechex(rand(256, 16777215));

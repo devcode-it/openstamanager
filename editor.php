@@ -18,11 +18,13 @@ $query = Util\Query::getQuery($module, [
 ]);
 Util\Query::setSegments(true);
 
+$query = str_replace(['AND `deleted_at` IS NULL', '`deleted_at` IS NULL', 'AND deleted_at IS NULL', 'deleted_at IS NULL'], '', $query);
+
 $has_access = !empty($query) ? $dbo->fetchNum($query) !== 0 : true;
 
 if ($has_access) {
     // Inclusione gli elementi fondamentali
-    include_once $docroot.'/actions.php';
+    include_once DOCROOT.'/actions.php';
 }
 
 if (empty($record) || !$has_access) {
@@ -103,6 +105,26 @@ if (empty($record) || !$has_access) {
 
 			<div class="tab-content">
                 <div id="tab_0" class="tab-pane active">';
+
+    if(!empty($record['deleted_at'])){
+        echo '
+		<div class="alert alert-danger text-center">
+            <h3>'.tr('Ripristinare il record?').'</h3>
+            
+            <a class="btn btn-warning" id="restore">
+                <i class="fa fa-undo"></i> '.tr('Ripristina').'
+            </a>
+		</div>
+		
+		<script>
+            $(document).ready(function(){        
+                $("#restore").click(function(){
+                    $("input[name=op]").attr("value", "restore");
+                    $("#submit").trigger("click");
+                })
+            });
+        </script>';
+    }
 
     // Pulsanti di default
     echo '
@@ -326,7 +348,7 @@ if (empty($record) || !$has_access) {
 
         $id_plugin = $plugin['id'];
 
-        include $docroot.'/include/manager.php';
+        include DOCROOT.'/include/manager.php';
 
         echo '
 				</div>';

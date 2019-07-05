@@ -7,10 +7,11 @@ use Modules\Fatture\Fattura;
 use Settings;
 use Traits\RecordTrait;
 use Util\Generator;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Anagrafica extends Model
 {
-    use RecordTrait;
+    use RecordTrait, SoftDeletes;
 
     protected $table = 'an_anagrafiche';
     protected $primaryKey = 'idanagrafica';
@@ -159,16 +160,6 @@ class Anagrafica extends Model
         return $this->idanagrafica;
     }
 
-    public function setCodiceAttribute($value)
-    {
-        if (self::where([
-            ['codice', $value],
-            [$this->primaryKey, '<>', $this->id],
-        ])->count() == 0) {
-            $this->attributes['codice'] = $value;
-        }
-    }
-
     public function getPartitaIvaAttribute()
     {
         return $this->piva;
@@ -248,7 +239,7 @@ class Anagrafica extends Model
 
         $ultimo = Generator::getPreviousFrom($maschera, 'an_anagrafiche', 'codice', [
             "codice != ''",
-            //'deleted_at IS NULL', // Rimozione per unicità del codice
+            'deleted_at IS NULL',
         ]);
         $codice = Generator::generate($maschera, $ultimo);
 

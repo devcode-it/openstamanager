@@ -26,7 +26,7 @@ if (!$cliente) {
 ?>
 
 <form action="" method="post" id="edit-form" >
-	<fieldset  <?php echo (empty($record['deleted_at'])) ? '' : 'disabled'; ?> >
+	<fieldset>
 		<input type="hidden" name="backto" value="record-edit">
 		<input type="hidden" name="op" value="update">
 

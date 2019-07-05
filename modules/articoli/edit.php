@@ -308,10 +308,8 @@ echo '<div class="panel panel-primary">
 
 <div class="panel-body">';
 $rs_prezzo_medio = $dbo->fetchOne('SELECT ((SUM(subtotale)-SUM(sconto))/SUM(qta)) AS prezzo FROM co_righe_documenti INNER JOIN co_documenti ON co_righe_documenti.iddocumento = co_documenti.id WHERE co_documenti.idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE dir = \'uscita\')  AND idarticolo='.prepare($id_record));
-$rs_prezzo_min = $dbo->fetchOne('SELECT ((subtotale-sconto)/qta) AS prezzo, co_documenti.data FROM co_righe_documenti INNER JOIN co_documenti ON co_righe_documenti.iddocumento = co_documenti.id WHERE co_documenti.idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE dir = \'uscita\')  AND idarticolo='.prepare($id_record).' ORDER BY ((subtotale-sconto)/qta) ASC' );
-$rs_prezzo_max = $dbo->fetchOne('SELECT ((subtotale-sconto)/qta) AS prezzo, co_documenti.data  FROM co_righe_documenti INNER JOIN co_documenti ON co_righe_documenti.iddocumento = co_documenti.id WHERE co_documenti.idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE dir = \'uscita\')  AND idarticolo='.prepare($id_record).' ORDER BY ((subtotale-sconto)/qta) DESC' );
-
-
+$rs_prezzo_min = $dbo->fetchOne('SELECT ((subtotale-sconto)/qta) AS prezzo, co_documenti.data FROM co_righe_documenti INNER JOIN co_documenti ON co_righe_documenti.iddocumento = co_documenti.id WHERE co_documenti.idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE dir = \'uscita\')  AND idarticolo='.prepare($id_record).' ORDER BY ((subtotale-sconto)/qta) ASC');
+$rs_prezzo_max = $dbo->fetchOne('SELECT ((subtotale-sconto)/qta) AS prezzo, co_documenti.data  FROM co_righe_documenti INNER JOIN co_documenti ON co_righe_documenti.iddocumento = co_documenti.id WHERE co_documenti.idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE dir = \'uscita\')  AND idarticolo='.prepare($id_record).' ORDER BY ((subtotale-sconto)/qta) DESC');
 
 if (count($rs_prezzo_min) > 0) {
     echo '
@@ -327,27 +325,26 @@ if (count($rs_prezzo_min) > 0) {
                     <th>'.tr('Andamento prezzo').'</th>
                 </tr>';
 
-                echo '
+    echo '
                 <tr>
                     <td>'.moneyFormat($rs_prezzo_min['prezzo']).'</td>
                     <td>'.moneyFormat($rs_prezzo_medio['prezzo']).'</td>
                     <td>'.moneyFormat($rs_prezzo_max['prezzo']).'</td>
-                    <td>'.moneyFormat($rs_prezzo_max['prezzo']-$rs_prezzo_min['prezzo']).'</td>
-                    <td>'.Translator::numberToLocale(((($rs_prezzo_max['prezzo']-$rs_prezzo_min['prezzo'])*100)/$rs_prezzo_medio['prezzo']), '2').' %</td>
-                    <td>'.((strtotime($rs_prezzo_min['data'])==strtotime($rs_prezzo_max['data'])) ?  'N.D.' : ((strtotime($rs_prezzo_min['data'])<strtotime($rs_prezzo_max['data'])) ? 'in aumento': 'in diminuzione')).'</td>
+                    <td>'.moneyFormat($rs_prezzo_max['prezzo'] - $rs_prezzo_min['prezzo']).'</td>
+                    <td>'.Translator::numberToLocale(((($rs_prezzo_max['prezzo'] - $rs_prezzo_min['prezzo']) * 100) / $rs_prezzo_medio['prezzo']), '2').' %</td>
+                    <td>'.((strtotime($rs_prezzo_min['data']) == strtotime($rs_prezzo_max['data'])) ? 'N.D.' : ((strtotime($rs_prezzo_min['data']) < strtotime($rs_prezzo_max['data'])) ? 'in aumento' : 'in diminuzione')).'</td>
                 </tr>';
 
-
-                echo '
+    echo '
                 </table>
             </div>
         </div>';
-    } else {
-        echo '
+} else {
+    echo '
         <div class="alert alert-info">
             '.tr('Questo articolo non è mai stato acquistato').'
         </div>';
-    }
+}
 
     echo '
 		</div>
@@ -445,9 +442,8 @@ if (!empty($elementi)) {
 <div class="alert alert-error">
     '.tr('Eliminando questo documento si potrebbero verificare problemi nelle altre sezioni del gestionale').'.
 </div>';
-}else{
-
-?>
+} else {
+    ?>
 
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>

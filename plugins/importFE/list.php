@@ -3,8 +3,13 @@
 include_once __DIR__.'/../../core.php';
 
 use Plugins\ImportFE\Interaction;
+use Plugins\ImportFE\InvoiceHook;
 
 $list = Interaction::listToImport();
+
+// Aggiornamento cache hook
+InvoiceHook::update($list);
+
 $directory = Plugins\ImportFE\FatturaElettronica::getImportDirectory();
 
 if (!empty($list)) {

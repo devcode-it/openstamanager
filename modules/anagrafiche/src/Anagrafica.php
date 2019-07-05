@@ -234,13 +234,6 @@ class Anagrafica extends Model
         return $this;
     }
 
-    protected function fixRagioneSociale()
-    {
-        if (!empty($this->cognome) || !empty($this->nome)) {
-            $this->ragione_sociale = $this->cognome.' '.$this->nome;
-        }
-    }
-
     // Metodi statici
 
     /**
@@ -262,5 +255,10 @@ class Anagrafica extends Model
         return $codice;
     }
 
-
+    protected function fixRagioneSociale()
+    {
+        if (!empty($this->cognome) || !empty($this->nome)) {
+            $this->ragione_sociale = $this->cognome.' '.$this->nome;
+        }
+    }
 }

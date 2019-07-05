@@ -118,17 +118,17 @@ function aggiungi_scadenza($iddocumento, $pagamento = '', $pagato = false)
  * @param $totale_pagato float		Totale importo pagato
  * @param $data_pagamento datetime	Data in cui avviene il pagamento (yyyy-mm-dd)
  */
-function aggiorna_scadenziario($iddocumento, $totale_pagato, $data_pagamento, $idscadenza='')
+function aggiorna_scadenziario($iddocumento, $totale_pagato, $data_pagamento, $idscadenza = '')
 {
     $dbo = database();
 
     if ($totale_pagato > 0) {
         // Lettura righe scadenziario
-        if($idscadenza!=''){
+        if ($idscadenza != '') {
             $add_query = 'AND id='.prepare($idscadenza);
         }
 
-        $query = "SELECT * FROM co_scadenziario WHERE iddocumento='$iddocumento' AND ABS(pagato) < ABS(da_pagare) ".$add_query." ORDER BY scadenza ASC";
+        $query = "SELECT * FROM co_scadenziario WHERE iddocumento='$iddocumento' AND ABS(pagato) < ABS(da_pagare) ".$add_query.' ORDER BY scadenza ASC';
         $rs = $dbo->fetchArray($query);
         $rimanente_da_pagare = abs($rs[0]['pagato']) + $totale_pagato;
 

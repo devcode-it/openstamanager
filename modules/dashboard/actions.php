@@ -167,8 +167,7 @@ switch (get('op')) {
                         (!empty($r['data_scadenza'] and $r['data_scadenza'] != '0000-00-00 00:00:00') ? '<br><small>'.tr('entro il: ').''.Translator::dateToLocale($r['data_scadenza']).'</small>' : '').'
                     </div>';
                 }
-            }
-            ?>
+            } ?>
             <script type="text/javascript">
                 $(".request").shorten({
                     moreText: '<?php echo tr('Mostra tutto'); ?>',

@@ -49,6 +49,10 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 
 
 				<div class="col-md-3">
+                    <?php
+                    echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
+                    ?>
+
 					{[ "type": "select", "label": "<?php echo tr('Referente'); ?>", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti" ]}
 				</div>
 

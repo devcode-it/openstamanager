@@ -3,11 +3,11 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Anagrafiche\Anagrafica;
-use Modules\TipiIntervento\Tipo as TipoSessione;
 use Modules\Preventivi\Components\Articolo;
 use Modules\Preventivi\Components\Riga;
 use Modules\Preventivi\Components\Sconto;
 use Modules\Preventivi\Preventivo;
+use Modules\TipiIntervento\Tipo as TipoSessione;
 
 switch (post('op')) {
     case 'add':

@@ -57,7 +57,7 @@ switch (post('op')) {
             $contratto->id_documento_fe = post('id_documento_fe');
             $contratto->num_item = post('num_item');
             $contratto->codice_cig = post('codice_cig');
-            $contratto->codice_cup = post('codice_cup');;
+            $contratto->codice_cup = post('codice_cup');
 
             $contratto->save();
 

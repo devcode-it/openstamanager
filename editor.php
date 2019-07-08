@@ -106,7 +106,7 @@ if (empty($record) || !$has_access) {
 			<div class="tab-content">
                 <div id="tab_0" class="tab-pane active">';
 
-    if(!empty($record['deleted_at'])){
+    if (!empty($record['deleted_at'])) {
         echo '
 		<div class="alert alert-danger text-center">
             <h3>'.tr('Ripristinare il record?').'</h3>

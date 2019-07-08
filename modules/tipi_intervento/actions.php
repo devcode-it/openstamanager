@@ -1,6 +1,7 @@
 <?php
 
 use Modules\TipiIntervento\Tipo;
+
 include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
@@ -13,7 +14,7 @@ switch (post('op')) {
         $tipo->costo_km_tecnico = post('costo_km_tecnico');
         $tipo->costo_diritto_chiamata_tecnico = post('costo_diritto_chiamata_tecnico');
         $tipo->tempo_standard = post('tempo_standard');
-    
+
         $tipo->save();
 
         flash()->info(tr('Informazioni tipo intervento salvate correttamente!'));
@@ -47,7 +48,7 @@ switch (post('op')) {
     case 'import':
         $values = [
             'costo_ore' => $record['costo_orario'],
-            'costo_km' =>  $record['costo_km'],
+            'costo_km' => $record['costo_km'],
             'costo_dirittochiamata' => $record['costo_diritto_chiamata'],
             'costo_ore_tecnico' => $record['costo_orario_tecnico'],
             'costo_km_tecnico' => $record['costo_km_tecnico'],

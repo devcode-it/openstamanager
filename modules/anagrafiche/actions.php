@@ -8,6 +8,7 @@ switch (post('op')) {
     case 'restore':
         $anagrafica->restore();
 
+        // no break
     case 'update':
         // Informazioni sulla sede
         $sede = $anagrafica->sedeLegale;

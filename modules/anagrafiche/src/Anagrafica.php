@@ -3,11 +3,11 @@
 namespace Modules\Anagrafiche;
 
 use Common\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Fatture\Fattura;
 use Settings;
 use Traits\RecordTrait;
 use Util\Generator;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Anagrafica extends Model
 {
@@ -56,7 +56,8 @@ class Anagrafica extends Model
         return $model;
     }
 
-    public static function fromTipo($type){
+    public static function fromTipo($type)
+    {
         $tipologia = Tipo::where('descrizione', 'Tecnico')->first();
 
         $anagrafiche = self::whereHas('tipi', function ($query) use ($tipologia) {
@@ -119,9 +120,9 @@ class Anagrafica extends Model
         $query = 'INSERT INTO in_tariffe(idtecnico, idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico) SELECT '.prepare($anagrafica->id).', idtipointervento, costo_orario, costo_km, costo_diritto_chiamata, costo_orario_tecnico, costo_km_tecnico, costo_diritto_chiamata_tecnico FROM in_tipiintervento';
 
         $presenti = $database->fetchArray('SELECT idtipointervento AS id FROM in_tariffe WHERE idtecnico = '.prepare($anagrafica->id));
-        if(!empty($presenti)){
+        if (!empty($presenti)) {
             $list = [];
-            foreach ($presenti as $presente){
+            foreach ($presenti as $presente) {
                 $list[] = prepare($presente['id']);
             }
 

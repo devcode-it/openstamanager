@@ -4,7 +4,6 @@ namespace Modules\TipiIntervento;
 
 use Common\Model;
 use Modules\Anagrafiche\Anagrafica;
-use Modules\Contratti\Contratto;
 
 class Tipo extends Model
 {
@@ -15,9 +14,9 @@ class Tipo extends Model
     /**
      * Crea un nuovo tipo di intervento.
      *
-     * @param string     $codice
-     * @param string     $descrizione
-     * @param string     $tempo_standard
+     * @param string $codice
+     * @param string $descrizione
+     * @param string $tempo_standard
      *
      * @return self
      */
@@ -37,10 +36,11 @@ class Tipo extends Model
         return $model;
     }
 
-    public function fixTecnici(){
+    public function fixTecnici()
+    {
         // Fix per le relazioni con i tecnici
         $tecnici = Anagrafica::fromTipo('Tecnico')->get();
-        foreach ($tecnici as $tecnico){
+        foreach ($tecnici as $tecnico) {
             Anagrafica::fixTecnico($tecnico);
         }
     }
@@ -67,7 +67,6 @@ class Tipo extends Model
         $this->attributes['tempo_standard'] = $result;
     }
 
-
     public function preventivi()
     {
         return $this->hasMany(Preventivo::class, 'idtipointervento');
@@ -77,6 +76,4 @@ class Tipo extends Model
     {
         return $this->hasMany(Intervento::class, 'idtipointervento');
     }
-
-
 }

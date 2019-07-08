@@ -4,7 +4,7 @@ include_once __DIR__.'/../../../core.php';
 
 $id_contratto_precedente = $record['idcontratto_prev'];
 
-if(empty($id_contratto_precedente)){
+if (empty($id_contratto_precedente)) {
     echo '
     <script>$("#link-tab_'.$plugin['id'].'").addClass("disabled");</script>';
 }
@@ -21,7 +21,7 @@ echo '
 while (!empty($id_contratto_precedente)) {
     $rs = $dbo->fetchArray('SELECT nome, numero, data_accettazione, data_conclusione, budget, idcontratto_prev FROM co_contratti WHERE id='.prepare($id_contratto_precedente));
 
-echo '
+    echo '
         <tr>
             <td>
                 '.Modules::link($id_module, $id_contratto_precedente, tr('Contratto num. _NUM_', [

@@ -91,7 +91,7 @@ function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto = n
 
     // Leggo i costi unitari dalle tariffe se almeno un valore è stato impostato
     $rsc = $dbo->fetchArray('SELECT * FROM in_tariffe WHERE idtecnico='.prepare($idtecnico).' AND idtipointervento='.prepare($idtipointervento));
-    
+
     $costo_ore = $rsc[0]['costo_ore'];
     $costo_km = $rsc[0]['costo_km'];
     $costo_dirittochiamata = $rsc[0]['costo_dirittochiamata'];

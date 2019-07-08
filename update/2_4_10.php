@@ -10,7 +10,7 @@ foreach ($fatture as $fattura) {
 
 // Fix per le relazioni tariffe-tecnici
 $tecnici = Anagrafica::fromTipo('Tecnico')->get();
-foreach ($tecnici as $tecnico){
+foreach ($tecnici as $tecnico) {
     Anagrafica::fixTecnico($tecnico);
 }
 

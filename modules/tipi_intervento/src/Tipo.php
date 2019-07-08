@@ -7,7 +7,6 @@ use Modules\Anagrafiche\Anagrafica;
 
 class Tipo extends Model
 {
-    public $incrementing = false;
     protected $table = 'in_tipiintervento';
     protected $primaryKey = 'idtipointervento';
 
@@ -20,18 +19,15 @@ class Tipo extends Model
      *
      * @return self
      */
-    public static function build($codice, $descrizione, $tempo_standard = null)
+    public static function build($codice, $descrizione)
     {
         $model = parent::build();
 
-        $model->idtipointervento = $codice;
+        $model->codice = $codice;
         $model->descrizione = $descrizione;
-        $model->tempo_standard = $tempo_standard;
 
         // Salvataggio delle informazioni
         $model->save();
-
-        $model->fixTecnici();
 
         return $model;
     }

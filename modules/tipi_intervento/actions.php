@@ -7,13 +7,14 @@ include_once __DIR__.'/../../core.php';
 switch (post('op')) {
     case 'update':
         $tipo->descrizione = post('descrizione');
+        $tipo->tempo_standard = post('tempo_standard');
+
         $tipo->costo_orario = post('costo_orario');
         $tipo->costo_km = post('costo_km');
         $tipo->costo_diritto_chiamata = post('costo_diritto_chiamata');
         $tipo->costo_orario_tecnico = post('costo_orario_tecnico');
         $tipo->costo_km_tecnico = post('costo_km_tecnico');
         $tipo->costo_diritto_chiamata_tecnico = post('costo_diritto_chiamata_tecnico');
-        $tipo->tempo_standard = post('tempo_standard');
 
         $tipo->save();
 
@@ -22,11 +23,24 @@ switch (post('op')) {
         break;
 
     case 'add':
-        $idtipointervento = post('idtipointervento');
+        $codice = post('codice');
         $descrizione = post('descrizione');
-        $tempo_standard = post('tempo_standard');
 
-        $tipo = Tipo::build($idtipointervento, $descrizione, $tempo_standard);
+        $tipo = Tipo::build($codice, $descrizione);
+
+        $tipo->tempo_standard = post('tempo_standard');
+
+        $tipo->costo_orario = post('costo_orario');
+        $tipo->costo_km = post('costo_km');
+        $tipo->costo_diritto_chiamata = post('costo_diritto_chiamata');
+        $tipo->costo_orario_tecnico = post('costo_orario_tecnico');
+        $tipo->costo_km_tecnico = post('costo_km_tecnico');
+        $tipo->costo_diritto_chiamata_tecnico = post('costo_diritto_chiamata_tecnico');
+
+        $tipo->save();
+
+        // Fix per impostare i valori inziali a tutti i tecnici
+        $tipo->fixTecnici();
 
         $id_record = $tipo->id;
 

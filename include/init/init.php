@@ -147,7 +147,7 @@ if (!$has_azienda) {
                     <h3 class="panel-title">'.tr('Azienda predefinita').'</h3>
                 </div>
 
-                <div class="panel-body">';
+                <div class="panel-body" id="bs-popup">';
 
     $idtipoanagrafica = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Azienda'")[0]['idtipoanagrafica'];
     $readonly_tipo = true;

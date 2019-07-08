@@ -32,7 +32,6 @@ echo '
 			{[ "type": "text", "label": "'.tr('Nome').'", "name": "nome", "id": "nome_", "required": 0 ]}
 		</div>
 
-		
 	</div>';
 
 echo '

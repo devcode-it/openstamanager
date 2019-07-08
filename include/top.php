@@ -134,6 +134,9 @@ if (Auth::check()) {
             globals = {
                 rootdir: \''.$rootdir.'\',
                 
+                search: {},
+                translations: {},
+                
                 locale: \''.$lang.'\',
                 full_locale: \''.$lang.'_'.strtoupper($lang).'\',
             };

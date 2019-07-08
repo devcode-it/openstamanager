@@ -259,6 +259,11 @@ class Query
 
         $result_query = self::getQuery($structure, $search);
 
+        // Filtri derivanti dai permessi (eventuali)
+        if (empty($structure->originalModule)) {
+            $result_query = Modules::replaceAdditionals($structure->id, $result_query);
+        }
+
         $query = self::str_replace_once('SELECT', 'SELECT '.implode(', ', $total['summable']).' FROM(SELECT ', $result_query).') AS `z`';
         $sums = database()->fetchOne($query);
 

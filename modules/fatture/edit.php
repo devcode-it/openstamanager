@@ -363,7 +363,7 @@ if ($tipodoc == 'Fattura accompagnatoria di vendita') {
                             $("#idvettore").attr("required", false);
                             $("#idvettore").attr("disabled", true);
                             $("label[for=idvettore]").text("'.tr('Vettore').'");
-							$("#idvettore").selectReset("- Seleziona un\'opzione -");
+							$("#idvettore").selectReset(" '.tr("Seleziona un'opzione").'");
 							$("#idvettore").next().next().find("button.bound:nth-child(1)").prop("disabled", true);
                         }else{
                             $("#idvettore").attr("required", true);

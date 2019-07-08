@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.10 (2019-07-)](#2410-2019-07-)
 - [2.4.9 (2019-05-17)](#249-2019-05-17)
 - [2.4.8 (2019-03-01)](#248-2019-03-01)
 - [2.4.7 (2019-02-21)](#247-2019-02-21)
@@ -19,7 +20,38 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
+## 2.4.10 (2019-07-)
 
+### Aggiunto (Added)
+
+ - Possibilità di gestire più magazzini attraverso la sezione delle sedi nelle **Anagrafiche** (gli **Automezzi** sono stati trasformati in **Sedi**, con possibilità di tracciamento di partenza e destinazione tra le sedi)
+ - Modulo **Tipi scadenze** (in **Strumenti** -> **Tabelle**) per gestire i tipi di scadenze
+ - Prima versione della traduzione parziale in inglese del gestionale
+ - Validazione AJAX dei campi (*partita iva*, *codice fiscale* e *codice* in **Anagrafiche**, *codice* in **Articoli**)
+ - Possibilità di ripristinare gli elementi eliminati dove l'eliminazione avviene a livello virtuale (**Anagrafiche**)
+ - Plugin **Rinnovi** in **Contratti**
+ - Caricamento del **Piano dei conti** attraverso AJAX
+ - Pannello *Prezzo medio acquisto* in **Articoli**
+ - Supporto ai select come **Campi personalizzati**
+ - Possibilità di generazione massiva delle fatture elettroniche
+
+### Modificato (Changed)
+
+ - Miglioramento grafica degli hook, con gestione automatica degli aggiornamenti delle informazioni causati da altre componente del gestionale
+ - Le tariffe dei tecnici sono state standardizzate nel seguente modo:
+    - Il modulo **Tipi di attività** permette di definire le tariffe standard per i nuovi tecnici
+    - Il modulo **Tecnici e tariffe** permette di definire le tariffe personalizzate per i diversi tecnici in relazione ai tipi di attività
+    - Il modulo **Contratti** permette di definire le tariffe personalizzate per le *nuove sessioni* delle attività collegate
+    - La sezione di modifica delle sessioni permette la modifica manuale delle tariffe interessate; il cambiamento del tipo di sessione provoca l'utilizzo delle tariffe definite da **Tecnici e tariffe**
+ 
+### Fixed
+
+ - Fix export delle tabelle principali in Excel
+ - Fix bug della configurazione iniziale nella selezione della nazione 
+ - Fix delle somme filtrate sulle tabelle principali
+ - Fix per includere le stampe previste nelle notifiche
+ - Risolti alcuni bug generali
+ 
 ## 2.4.9 (2019-05-17)
 
 ### Aggiunto (Added)

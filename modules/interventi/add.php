@@ -355,7 +355,7 @@ if (!empty($id_intervento)) {
 		session_set('superselect,idanagrafica', $(this).val(), 0);
 
         var value = !$(this).val() ? true : false;
-        var placeholder = !$(this).val() ? '<?php echo tr('Seleziona prima un cliente...'); ?>' : '<?php echo tr("-Seleziona un\'opzione-"); ?>';
+        var placeholder = !$(this).val() ? "<?php echo tr('Seleziona prima un cliente...'); ?>" : "<?php echo tr("Seleziona un'opzione"); ?>";
 
 		$("#bs-popup #idsede").prop("disabled", value);
 		$("#bs-popup #idsede").selectReset(placeholder);

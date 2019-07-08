@@ -63,7 +63,7 @@ class SelectHandler implements HandlerInterface
         }
 
         // Impostazione del placeholder
-        $values['placeholder'] = !empty($values['placeholder']) ? $values['placeholder'] : '- '.tr("Seleziona un'opzione").' -';
+        $values['placeholder'] = !empty($values['placeholder']) ? $values['placeholder'] : tr("Seleziona un'opzione");
         $values['data-placeholder'] = $values['placeholder'];
 
         unset($values['values']);

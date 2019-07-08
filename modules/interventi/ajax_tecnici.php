@@ -208,7 +208,7 @@ if (!$is_completato) {
 <!-- AGGIUNTA TECNICO -->
 <div class="row">
     <div class="col-md-offset-6 col-md-4">
-        {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "nuovotecnico", "placeholder": "'.tr('- Seleziona un tecnico -').'", "ajax-source": "tecnici", "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|tipoanagrafica=Tecnico" ]}
+        {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "nuovotecnico", "placeholder": "'.tr('Seleziona un tecnico').'", "ajax-source": "tecnici", "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|tipoanagrafica=Tecnico" ]}
     </div>
 
     <div class="col-md-2">

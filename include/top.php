@@ -132,6 +132,8 @@ if (Auth::check()) {
     echo '
         <script>
             globals = {
+                rootdir: \''.$rootdir.'\',
+                
                 locale: \''.$lang.'\',
                 full_locale: \''.$lang.'_'.strtoupper($lang).'\',
             };

@@ -6,14 +6,14 @@ include_once __DIR__.'/../../core.php';
 $query1 = 'SELECT * FROM `co_pianodeiconti1` ORDER BY id DESC';
 $primo_livello = $dbo->fetchArray($query1);
 
-foreach ($primo_livello as $conto_primo){
+foreach ($primo_livello as $conto_primo) {
     $totale_attivita = [];
     $totale_passivita = [];
 
     $costi = [];
     $ricavi = [];
-    
-    $titolo =  $conto_primo['descrizione'] == 'Economico' ? tr('Conto economico') :tr('Stato patrimoniale');
+
+    $titolo = $conto_primo['descrizione'] == 'Economico' ? tr('Conto economico') : tr('Stato patrimoniale');
 
     echo '
 <hr>
@@ -29,7 +29,7 @@ foreach ($primo_livello as $conto_primo){
     $query2 = "SELECT * FROM `co_pianodeiconti2` WHERE idpianodeiconti1='".$conto_primo['id']."' ORDER BY numero ASC";
     $secondo_livello = $dbo->fetchArray($query2);
 
-    foreach ($secondo_livello as $conto_secondo){
+    foreach ($secondo_livello as $conto_secondo) {
         // Livello 2
         echo '
         <div>
@@ -39,20 +39,20 @@ foreach ($primo_livello as $conto_primo){
         
         <div style="padding-left:10px;">
             <table class="table table-striped table-hover table-condensed" style="margin-bottom:0;">';
-        
+
         // Livello 3
         $query3 = 'SELECT `co_pianodeiconti3`.*, `clienti`.`idanagrafica` AS id_cliente, `fornitori`.`idanagrafica` AS id_fornitore FROM `co_pianodeiconti3` LEFT OUTER JOIN `an_anagrafiche` `clienti` ON `clienti`.`idconto_cliente` = `co_pianodeiconti3`.`id` LEFT OUTER JOIN `an_anagrafiche` `fornitori` ON `fornitori`.`idconto_fornitore` = `co_pianodeiconti3`.`id` WHERE `idpianodeiconti2` = '.prepare($conto_secondo['id']).' ORDER BY numero ASC';
         $terzo_livello = $dbo->fetchArray($query3);
 
-        foreach ($terzo_livello as $conto_terzo){
+        foreach ($terzo_livello as $conto_terzo) {
             // Se il conto non ha documenti collegati posso eliminarlo
-            $numero_movimenti = $dbo->fetchNum("SELECT id FROM co_movimenti WHERE idconto = ".prepare($conto_terzo['id']));
+            $numero_movimenti = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE idconto = '.prepare($conto_terzo['id']));
 
             // Calcolo totale conto da elenco movimenti di questo conto
-            $query = "SELECT co_movimenti.*, dir FROM co_movimenti
+            $query = 'SELECT co_movimenti.*, dir FROM co_movimenti
                 LEFT OUTER JOIN co_documenti ON co_movimenti.iddocumento = co_documenti.id
                 LEFT OUTER JOIN co_tipidocumento ON co_documenti.idtipodocumento = co_tipidocumento.id
-            WHERE co_movimenti.idconto=".prepare($conto_terzo['id'])." AND co_movimenti.data >= ".prepare($_SESSION['period_start'])." AND co_movimenti.data <= ".prepare($_SESSION['period_end'])." ORDER BY co_movimenti.data DESC";
+            WHERE co_movimenti.idconto='.prepare($conto_terzo['id']).' AND co_movimenti.data >= '.prepare($_SESSION['period_start']).' AND co_movimenti.data <= '.prepare($_SESSION['period_end']).' ORDER BY co_movimenti.data DESC';
             $movimenti = $dbo->fetchArray($query);
 
             $totale_conto = sum(array_column($movimenti, 'totale'));
@@ -75,7 +75,7 @@ foreach ($primo_livello as $conto_primo){
 
             echo '
                 <tr style="'.(!empty($movimenti) ? '' : 'opacity: 0.5;').'">
-                    <td><span class="clickable" id="movimenti-'.$conto_terzo["id"].'">';
+                    <td><span class="clickable" id="movimenti-'.$conto_terzo['id'].'">';
 
             if (!empty($movimenti)) {
                 echo '
@@ -127,7 +127,7 @@ foreach ($primo_livello as $conto_primo){
 
         // Possibilità di inserire un nuovo conto
         echo '
-            <button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" title="'.tr("Aggiungi un nuovo conto...").'" onclick="add_conto('.$conto_secondo["id"].')">
+            <button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" title="'.tr('Aggiungi un nuovo conto...').'" onclick="add_conto('.$conto_secondo['id'].')">
                 <i class="fa fa-plus-circle"></i>
             </button>
     
@@ -251,7 +251,7 @@ foreach ($primo_livello as $conto_primo){
         </tr>';
     }
 
-echo '
+    echo '
     </table>';
 }
 
@@ -284,7 +284,7 @@ $(document).ready(function(){
 });
 
 function add_conto(id) {
-    launch_modal("'.tr("Nuovo conto").'",  "'.$structure->fileurl('add_conto.php').'?id=" + id, 1 );
+    launch_modal("'.tr('Nuovo conto').'",  "'.$structure->fileurl('add_conto.php').'?id=" + id, 1 );
 }
 
 function load_movimenti(selector, id_conto) {

@@ -569,9 +569,9 @@ switch (post('op')) {
             $prezzo_km_unitario_tecnico = $rsc[0]['costo_km_tecnico'];
             $prezzo_dirittochiamata_tecnico = $rsc[0]['costo_dirittochiamata_tecnico'];
         } else {
-            $prezzo_ore_unitario = $rs[0]['prezzo_ore_unitario'];
-            $prezzo_km_unitario = $rs[0]['prezzo_km_unitario'];
-            $prezzo_dirittochiamata = $rs[0]['prezzo_dirittochiamata'];
+            $prezzo_ore_unitario = post('prezzo_ore_unitario');
+            $prezzo_km_unitario = post('prezzo_km_unitario');
+            $prezzo_dirittochiamata = post('prezzo_dirittochiamata');
             $prezzo_ore_unitario_tecnico = $rs[0]['prezzo_ore_unitario_tecnico'];
             $prezzo_km_unitario_tecnico = $rs[0]['prezzo_km_unitario_tecnico'];
             $prezzo_dirittochiamata_tecnico = $rs[0]['prezzo_dirittochiamata_tecnico'];

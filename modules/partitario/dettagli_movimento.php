@@ -10,19 +10,19 @@ $righe = $dbo->fetchArray($query);
 echo '
 <table class="table table-striped table-hover table-condensed table-bordered">
     <tr>
-        <th>' . tr('Descrizione riga') . '</th>
-        <th width="100">' . tr('Imponibile') . '</th>
+        <th>'.tr('Descrizione riga').'</th>
+        <th width="100">'.tr('Imponibile').'</th>
     </tr>';
 
     foreach ($righe as $riga) {
         echo '
     <tr>
         <td>
-            <span>' . $riga['desc_riga'] . '</span>
+            <span>'.$riga['desc_riga'].'</span>
         </td>
 
         <td class="text-right">
-            <span>' . moneyFormat($riga['imponibile']) . ' </span>
+            <span>'.moneyFormat($riga['imponibile']).' </span>
         </td>
     </tr>';
     }
@@ -31,8 +31,8 @@ echo '
 
     echo '
     <tr>
-        <th class="text-right">' . tr('Totali') . ': </th>
-        <th width="100" class="text-right"><span>' . moneyFormat($totale_imponibile) . '</span></th>
+        <th class="text-right">'.tr('Totali').': </th>
+        <th width="100" class="text-right"><span>'.moneyFormat($totale_imponibile).'</span></th>
     </tr>
 </table>
 

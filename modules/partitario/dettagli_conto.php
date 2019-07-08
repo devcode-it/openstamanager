@@ -5,10 +5,10 @@ include_once __DIR__.'/../../core.php';
 $id_conto = get('id_conto');
 
 // Calcolo totale conto da elenco movimenti di questo conto
-$query = "SELECT co_movimenti.*, dir FROM co_movimenti
+$query = 'SELECT co_movimenti.*, dir FROM co_movimenti
                 LEFT OUTER JOIN co_documenti ON co_movimenti.iddocumento = co_documenti.id
                 LEFT OUTER JOIN co_tipidocumento ON co_documenti.idtipodocumento = co_tipidocumento.id
-            WHERE co_movimenti.idconto=".prepare($id_conto)." AND co_movimenti.data >= ".prepare($_SESSION['period_start'])." AND co_movimenti.data <= ".prepare($_SESSION['period_end'])." ORDER BY co_movimenti.data DESC";
+            WHERE co_movimenti.idconto='.prepare($id_conto).' AND co_movimenti.data >= '.prepare($_SESSION['period_start']).' AND co_movimenti.data <= '.prepare($_SESSION['period_end']).' ORDER BY co_movimenti.data DESC';
 $movimenti = $dbo->fetchArray($query);
 
 if (!empty($movimenti)) {
@@ -37,8 +37,8 @@ if (!empty($movimenti)) {
             <span>'.$movimento['descrizione'].'</span>';
         }
 
-        echo "
-        </td>";
+        echo '
+        </td>';
 
         // Data
         echo '

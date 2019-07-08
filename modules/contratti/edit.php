@@ -355,59 +355,6 @@ include $docroot.'/modules/contratti/row-list.php';
     </div>
 </div>
 
-
-<?php
-if (!empty($record['idcontratto_prev'])) {
-    echo '
-<!-- RIGHE -->
-<div class="panel panel-primary">
-    <div class="panel-heading">
-        <h3 class="panel-title">'.tr('Rinnovi precedenti').'</h3>
-    </div>
-
-    <div class="panel-body">
-        <div class="row">
-            <div class="col-md-12">';
-
-    $idcontratto_prev = $record['idcontratto_prev'];
-
-    echo '
-                <table class="table table-hover table-condensed table-bordered table-striped">
-                    <tr>
-                        <th>'.tr('Descrizione').'</th>
-                        <th width="100">'.tr('Totale').'</th>
-                        <th width="150">'.tr('Data inizio').'</th>
-                        <th width="150">'.tr('Data conclusione').'</th>
-                    </tr>';
-
-    while (!empty($idcontratto_prev)) {
-        $rs = $dbo->fetchArray('SELECT nome, numero, data_accettazione, data_conclusione, budget, idcontratto_prev FROM co_contratti WHERE id='.prepare($idcontratto_prev));
-
-        echo '
-                    <tr>
-                        <td>
-                            '.Modules::link($id_module, $idcontratto_prev, tr('Contratto num. _NUM_', [
-                                '_NUM_' => $rs[0]['numero'],
-                            ]).'<br><small class="text-muted">'.$rs[0]['nome'].'</small>').'
-                        </td>
-                        <td align="right">'.moneyFormat($rs[0]['budget']).'</td>
-                        <td align="center">'.Translator::dateToLocale($rs[0]['data_accettazione']).'</td>
-                        <td align="center">'.Translator::dateToLocale($rs[0]['data_conclusione']).'</td>
-                    </tr>';
-
-        $idcontratto_prev = $rs[0]['idcontratto_prev'];
-    }
-
-    echo '
-                </table>
-            </div>
-        </div>
-    </div>
-</div>';
-}
-?>
-
-
 {( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
 {( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}

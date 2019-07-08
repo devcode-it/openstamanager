@@ -88,15 +88,8 @@ if (!empty($record['immagine'])) {
 					{[ "type": "select", "label": "<?php echo tr('Unità di misura'); ?>", "name": "um", "value": "$um$", "ajax-source": "misure", "icon-after": "add|<?php echo Modules::get('Unità di misura')['id']; ?>" ]}
 				</div>
 
-				<?php
-                $record['abilita_serial'] = ($record['serial'] > 0) ? 1 : $record['abilita_serial'];
-                if (empty($record['abilita_serial'])) {
-                    $plugin = $dbo->fetchArray("SELECT id FROM zz_plugins WHERE name='Serial'");
-                    echo '<script>$("#link-tab_'.$plugin[0]['id'].'").addClass("disabled");</script>';
-                }
-                ?>
 
-				  <div class="col-md-4">
+                <div class="col-md-4">
 					{[ "type": "checkbox", "label": "<?php echo tr('Abilita serial number'); ?>", "name": "abilita_serial", "value": "$abilita_serial$", "help": "<?php echo tr('Abilita serial number in fase di aggiunta articolo in fattura o ddt'); ?>", "placeholder": "<?php echo tr('Serial number'); ?>", "extra": "<?php echo ($record['serial'] > 0) ? 'readonly' : ''; ?>" ]}
                 </div>
 

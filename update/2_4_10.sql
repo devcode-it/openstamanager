@@ -135,3 +135,6 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 
 -- Aggiungo possibilità di vedere la descrizione per le scadenze generiche
 UPDATE `zz_views` SET `query` = 'IF(an_anagrafiche.ragione_sociale IS NULL, co_scadenziario.descrizione, an_anagrafiche.ragione_sociale)' WHERE `zz_views`.`name` = 'Anagrafica' AND `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario');
+
+-- Plugin rinnovi per Contratti
+INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`, `position`, `script`, `enabled`, `default`, `order`, `compatibility`, `version`, `options2`, `options`, `directory`, `help`) VALUES (NULL, 'Rinnovi', 'Rinnovi', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), 'tab', '', 1, 0, 0, '', '', NULL, 'custom', 'rinnovi_contratti', '');

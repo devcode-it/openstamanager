@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\Intervento;
-use Modules\Interventi\TipoSessione;
+use Modules\TipiIntervento\Tipo as TipoSessione;
 use Traits\RecordTrait;
 use Util\Generator;
 

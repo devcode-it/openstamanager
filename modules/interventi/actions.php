@@ -9,7 +9,7 @@ use Modules\Interventi\Components\Riga;
 use Modules\Interventi\Components\Sconto;
 use Modules\Interventi\Intervento;
 use Modules\Interventi\Stato;
-use Modules\Interventi\TipoSessione;
+use Modules\TipiIntervento\Tipo as TipoSessione;
 
 switch (post('op')) {
     case 'update':
@@ -561,28 +561,13 @@ switch (post('op')) {
         if ($idtipointervento_tecnico != $rs[0]['idtipointervento']) {
             $rsc = $dbo->fetchArray('SELECT * FROM in_tariffe WHERE idtecnico='.prepare(post('idtecnico')).' AND idtipointervento='.prepare($idtipointervento_tecnico));
 
-            if ($rsc[0]['costo_ore'] != 0 || $rsc[0]['costo_km'] != 0 || $rsc[0]['costo_dirittochiamata'] != 0 || $rsc[0]['costo_ore_tecnico'] != 0 || $rsc[0]['costo_km_tecnico'] != 0 || $rsc[0]['costo_dirittochiamata_tecnico'] != 0) {
-                $prezzo_ore_unitario = $rsc[0]['costo_ore'];
-                $prezzo_km_unitario = $rsc[0]['costo_km'];
-                $prezzo_dirittochiamata = $rsc[0]['costo_dirittochiamata'];
+            $prezzo_ore_unitario = $rsc[0]['costo_ore'];
+            $prezzo_km_unitario = $rsc[0]['costo_km'];
+            $prezzo_dirittochiamata = $rsc[0]['costo_dirittochiamata'];
 
-                $prezzo_ore_unitario_tecnico = $rsc[0]['costo_ore_tecnico'];
-                $prezzo_km_unitario_tecnico = $rsc[0]['costo_km_tecnico'];
-                $prezzo_dirittochiamata_tecnico = $rsc[0]['costo_dirittochiamata_tecnico'];
-            }
-
-            // ...altrimenti se non c'è una tariffa per il tecnico leggo i costi globali
-            else {
-                $rsc = $dbo->fetchArray('SELECT * FROM in_tipiintervento WHERE idtipointervento='.prepare($idtipointervento_tecnico));
-
-                $prezzo_ore_unitario = $rsc[0]['costo_orario'];
-                $prezzo_km_unitario = $rsc[0]['costo_km'];
-                $prezzo_dirittochiamata = $rsc[0]['costo_diritto_chiamata'];
-
-                $prezzo_ore_unitario_tecnico = $rsc[0]['costo_orario_tecnico'];
-                $prezzo_km_unitario_tecnico = $rsc[0]['costo_km_tecnico'];
-                $prezzo_dirittochiamata_tecnico = $rsc[0]['costo_diritto_chiamata_tecnico'];
-            }
+            $prezzo_ore_unitario_tecnico = $rsc[0]['costo_ore_tecnico'];
+            $prezzo_km_unitario_tecnico = $rsc[0]['costo_km_tecnico'];
+            $prezzo_dirittochiamata_tecnico = $rsc[0]['costo_dirittochiamata_tecnico'];
         } else {
             $prezzo_ore_unitario = $rs[0]['prezzo_ore_unitario'];
             $prezzo_km_unitario = $rs[0]['prezzo_km_unitario'];

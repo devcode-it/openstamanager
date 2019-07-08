@@ -1,9 +1,17 @@
 <?php
 
 // Fix del calcolo del bollo
+use Modules\Anagrafiche\Anagrafica;
+
 $fatture = \Modules\Fatture\Fattura::all();
 foreach ($fatture as $fattura) {
     $fattura->save();
+}
+
+// Fix per le relazioni tariffe-tecnici
+$tecnici = Anagrafica::fromTipo('Tecnico')->get();
+foreach ($tecnici as $tecnico){
+    Anagrafica::fixTecnico($tecnico);
 }
 
 // Spostamento automezzi su sedi

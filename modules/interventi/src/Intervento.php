@@ -7,6 +7,7 @@ use Modules\Anagrafiche\Anagrafica;
 use Modules\Contratti\Contratto;
 use Modules\Preventivi\Preventivo;
 use Util\Generator;
+use Modules\TipiIntervento\Tipo as TipoSessione;
 
 class Intervento extends Document
 {

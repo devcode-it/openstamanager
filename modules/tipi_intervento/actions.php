@@ -1,32 +1,21 @@
 <?php
 
+use Modules\TipiIntervento\Tipo;
 include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
     case 'update':
-        $descrizione = post('descrizione');
-        $costo_orario = post('costo_orario');
-        $costo_km = post('costo_km');
-        $costo_diritto_chiamata = post('costo_diritto_chiamata');
+        $tipo->descrizione = post('descrizione');
+        $tipo->costo_orario = post('costo_orario');
+        $tipo->costo_km = post('costo_km');
+        $tipo->costo_diritto_chiamata = post('costo_diritto_chiamata');
+        $tipo->costo_orario_tecnico = post('costo_orario_tecnico');
+        $tipo->costo_km_tecnico = post('costo_km_tecnico');
+        $tipo->costo_diritto_chiamata_tecnico = post('costo_diritto_chiamata_tecnico');
+        $tipo->tempo_standard = post('tempo_standard');
+    
+        $tipo->save();
 
-        $costo_orario_tecnico = post('costo_orario_tecnico');
-        $costo_km_tecnico = post('costo_km_tecnico');
-        $costo_diritto_chiamata_tecnico = post('costo_diritto_chiamata_tecnico');
-
-        $tempo_standard = empty(post('tempo_standard')) ? 'NULL' : prepare(round((post('tempo_standard') / 2.5), 1) * 2.5);
-
-        $query = 'UPDATE in_tipiintervento SET'.
-            ' descrizione='.prepare($descrizione).','.
-            ' costo_orario='.prepare($costo_orario).','.
-            ' costo_km='.prepare($costo_km).','.
-            ' costo_diritto_chiamata='.prepare($costo_diritto_chiamata).','.
-            ' costo_orario_tecnico='.prepare($costo_orario_tecnico).','.
-            ' costo_km_tecnico='.prepare($costo_km_tecnico).','.
-            ' costo_diritto_chiamata_tecnico='.prepare($costo_diritto_chiamata_tecnico).','.
-            ' tempo_standard='.$tempo_standard.
-            ' WHERE idtipointervento='.prepare($id_record);
-
-        $dbo->query($query);
         flash()->info(tr('Informazioni tipo intervento salvate correttamente!'));
 
         break;
@@ -34,13 +23,11 @@ switch (post('op')) {
     case 'add':
         $idtipointervento = post('idtipointervento');
         $descrizione = post('descrizione');
+        $tempo_standard = post('tempo_standard');
 
-        $tempo_standard = (empty(post('tempo_standard'))) ? 'NULL' : prepare(round((post('tempo_standard') / 2.5), 1) * 2.5);
+        $tipo = Tipo::build($idtipointervento, $descrizione, $tempo_standard);
 
-        $query = 'INSERT INTO in_tipiintervento(idtipointervento, descrizione, costo_orario, costo_km, tempo_standard) VALUES ('.prepare($idtipointervento).', '.prepare($descrizione).', 0.00, 0.00, '.$tempo_standard.')';
-        $dbo->query($query);
-
-        $id_record = $idtipointervento;
+        $id_record = $tipo->id;
 
         flash()->info(tr('Nuovo tipo di intervento aggiunto!'));
 
@@ -55,5 +42,21 @@ switch (post('op')) {
         $dbo->query($query);
 
         flash()->info(tr('Tipo di intervento eliminato!'));
+        break;
+
+    case 'import':
+        $values = [
+            'costo_ore' => $record['costo_orario'],
+            'costo_km' =>  $record['costo_km'],
+            'costo_dirittochiamata' => $record['costo_diritto_chiamata'],
+            'costo_ore_tecnico' => $record['costo_orario_tecnico'],
+            'costo_km_tecnico' => $record['costo_km_tecnico'],
+            'costo_dirittochiamata_tecnico' => $record['costo_diritto_chiamata_tecnico'],
+        ];
+
+        $dbo->update('in_tariffe', $values, [
+            'idtipointervento' => $id_record,
+        ]);
+
         break;
 }

@@ -91,35 +91,20 @@ function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto = n
 
     // Leggo i costi unitari dalle tariffe se almeno un valore è stato impostato
     $rsc = $dbo->fetchArray('SELECT * FROM in_tariffe WHERE idtecnico='.prepare($idtecnico).' AND idtipointervento='.prepare($idtipointervento));
+    
+    $costo_ore = $rsc[0]['costo_ore'];
+    $costo_km = $rsc[0]['costo_km'];
+    $costo_dirittochiamata = $rsc[0]['costo_dirittochiamata'];
 
-    if ($rsc[0]['costo_ore'] != 0 || $rsc[0]['costo_km'] != 0 || $rsc[0]['costo_dirittochiamata'] != 0 || $rsc[0]['costo_ore_tecnico'] != 0 || $rsc[0]['costo_km_tecnico'] != 0 || $rsc[0]['costo_dirittochiamata_tecnico'] != 0) {
-        $costo_ore = $rsc[0]['costo_ore'];
-        $costo_km = $rsc[0]['costo_km'];
-        $costo_dirittochiamata = $rsc[0]['costo_dirittochiamata'];
-
-        $costo_ore_tecnico = $rsc[0]['costo_ore_tecnico'];
-        $costo_km_tecnico = $rsc[0]['costo_km_tecnico'];
-        $costo_dirittochiamata_tecnico = $rsc[0]['costo_dirittochiamata_tecnico'];
-    }
-
-    // ...altrimenti se non c'è una tariffa per il tecnico leggo i costi globali
-    else {
-        $rsc = $dbo->fetchArray('SELECT * FROM in_tipiintervento WHERE idtipointervento='.prepare($idtipointervento));
-
-        $costo_ore = $rsc[0]['costo_orario'];
-        $costo_km = $rsc[0]['costo_km'];
-        $costo_dirittochiamata = $rsc[0]['costo_diritto_chiamata'];
-
-        $costo_ore_tecnico = $rsc[0]['costo_orario_tecnico'];
-        $costo_km_tecnico = $rsc[0]['costo_km_tecnico'];
-        $costo_dirittochiamata_tecnico = $rsc[0]['costo_diritto_chiamata_tecnico'];
-    }
+    $costo_ore_tecnico = $rsc[0]['costo_ore_tecnico'];
+    $costo_km_tecnico = $rsc[0]['costo_km_tecnico'];
+    $costo_dirittochiamata_tecnico = $rsc[0]['costo_dirittochiamata_tecnico'];
 
     // Sovrascrivo i costi unitari da contratto se l'intervento è legato ad un contratto e c'è almeno un record...
     if (!empty($idcontratto)) {
         $rsc = $dbo->fetchArray('SELECT * FROM co_contratti_tipiintervento WHERE idcontratto='.prepare($idcontratto).' AND idtipointervento='.prepare($idtipointervento));
 
-        if (count($rsc) == 1) {
+        if (!empty($rsc)) {
             $costo_ore = $rsc[0]['costo_ore'];
             $costo_km = $rsc[0]['costo_km'];
             $costo_dirittochiamata = $rsc[0]['costo_dirittochiamata'];

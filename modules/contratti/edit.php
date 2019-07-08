@@ -175,10 +175,10 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 
 $idtipiintervento = ['-1'];
 
-//Loop fra i tipi di attività e i relativi costi del tipo intervento
-$rs = $dbo->fetchArray('SELECT co_contratti_tipiintervento.*, in_tipiintervento.descrizione, in_tipiintervento.costo_orario_tecnico AS costo_ore_tecnico, in_tipiintervento.costo_km_tecnico AS costo_km_tecnico, in_tipiintervento.costo_diritto_chiamata_tecnico AS costo_dirittochiamata_tecnico  FROM in_tipiintervento INNER JOIN co_contratti_tipiintervento ON in_tipiintervento.idtipointervento=co_contratti_tipiintervento.idtipointervento WHERE idcontratto='.prepare($id_record).' AND (co_contratti_tipiintervento.costo_ore!=0 OR co_contratti_tipiintervento.costo_km!=0 OR co_contratti_tipiintervento.costo_dirittochiamata!=0) ORDER BY in_tipiintervento.descrizione');
+// Loop fra i tipi di attività e i relativi costi del tipo intervento
+$rs = $dbo->fetchArray('SELECT co_contratti_tipiintervento.*, in_tipiintervento.descrizione FROM co_contratti_tipiintervento INNER JOIN in_tipiintervento ON in_tipiintervento.idtipointervento = co_contratti_tipiintervento.idtipointervento WHERE idcontratto='.prepare($id_record).' AND (co_contratti_tipiintervento.costo_ore != in_tipiintervento.costo_orario OR co_contratti_tipiintervento.costo_km != in_tipiintervento.costo_km OR co_contratti_tipiintervento.costo_dirittochiamata != in_tipiintervento.costo_diritto_chiamata) ORDER BY in_tipiintervento.descrizione');
 
-if (sizeof($rs) > 0) {
+if (!empty($rs)) {
     echo '
                     <table class="table table-striped table-condensed table-bordered">
                         <tr>
@@ -187,10 +187,7 @@ if (sizeof($rs) > 0) {
                             <th>'.tr('Addebito orario').' <span class="tip" title="'.tr('Addebito al cliente').'"><i class="fa fa-question-circle-o"></i></span></th>
                             <th>'.tr('Addebito km').' <span class="tip" title="'.tr('Addebito al cliente').'"><i class="fa fa-question-circle-o"></i></span></th>
                             <th>'.tr('Addebito diritto ch.').' <span class="tip" title="'.tr('Addebito al cliente').'"><i class="fa fa-question-circle-o"></i></span></th>
-
-                            <th class="hide" >'.tr('Costo orario').' <span class="tip" title="'.tr('Costo interno').'"><i class="fa fa-question-circle-o"></i></span></th>
-                            <th class="hide" >'.tr('Costo al km').' <span class="tip" title="'.tr('Costo interno').'"><i class="fa fa-question-circle-o"></i></span></th>
-                            <th class="hide" >'.tr('Diritto di chiamata').' <span class="tip" title="'.tr('Costo interno').'"><i class="fa fa-question-circle-o"></i></span></th>
+                            
                             <th width="40"></th>
                         </tr>';
 
@@ -211,22 +208,10 @@ if (sizeof($rs) > 0) {
                                     {[ "type": "number", "name": "costo_dirittochiamata['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_dirittochiamata'].'" ]}
                                 </td>
 
-                                <td class="hide" >
-                                    {[ "type": "number", "name": "costo_ore_tecnico['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_ore_tecnico'].'", "readonly":"1" ]}
-                                </td>
-
-                                <td class="hide" >
-                                    {[ "type": "number", "name": "costo_km_tecnico['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_km_tecnico'].'", "readonly":"1" ]}
-                                </td>
-
-                                <td class="hide" >
-                                    {[ "type": "number", "name": "costo_dirittochiamata_tecnico['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_dirittochiamata_tecnico'].'", "readonly":"1" ]}
-                                </td>
-
                                 <td>
-                                <button type="button" class="btn btn-primary" data-toggle="tooltip" title="Importa valori da tariffe standard" onclick="if( confirm(\'Importare i valori dalle tariffe standard?\') ){ $.post( \''.$rootdir.'/modules/contratti/actions.php\', { op: \'import\', idcontratto: \''.$id_record.'\', idtipointervento: \''.$rs[$i]['idtipointervento'].'\' }, function(data){ location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'\'; } ); }">
-                                <i class="fa fa-download"></i>
-                                </button>
+                                    <button type="button" class="btn btn-warning" data-toggle="tooltip" title="Importa valori da tariffe standard" onclick="if( confirm(\'Importare i valori dalle tariffe standard?\') ){ $.post( \''.$rootdir.'/modules/contratti/actions.php\', { op: \'import\', idcontratto: \''.$id_record.'\', idtipointervento: \''.$rs[$i]['idtipointervento'].'\' }, function(data){ location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'\'; } ); }">
+                                    <i class="fa fa-download"></i>
+                                    </button>
                                 </td>
 
                             </tr>';
@@ -238,13 +223,13 @@ if (sizeof($rs) > 0) {
 }
 
 echo '
-                    <button type="button" onclick="$(this).next().toggleClass(\'hide\');" class="btn btn-info btn-sm"><i class="fa fa-th-list"></i> '.tr('Mostra tipi di attività non utilizzate').'</button>
+                    <button type="button" onclick="$(this).next().toggleClass(\'hide\');" class="btn btn-info btn-sm"><i class="fa fa-th-list"></i> '.tr('Mostra tipi di attività non modificati').'</button>
 					<div class="hide">';
 
 //Loop fra i tipi di attività e i relativi costi del tipo intervento (quelli a 0)
-$rs = $dbo->fetchArray('SELECT * FROM in_tipiintervento WHERE idtipointervento NOT IN('.implode(',', $idtipiintervento).') ORDER BY descrizione');
+$rs = $dbo->fetchArray('SELECT * FROM co_contratti_tipiintervento INNER JOIN in_tipiintervento ON in_tipiintervento.idtipointervento = co_contratti_tipiintervento.idtipointervento WHERE co_contratti_tipiintervento.idtipointervento NOT IN('.implode(',', $idtipiintervento).') AND idcontratto='.prepare($id_record).' ORDER BY descrizione');
 
-if (sizeof($rs) > 0) {
+if (!empty($rs)) {
     echo '
                         <div class="clearfix">&nbsp;</div>
 						<table class="table table-striped table-condensed table-bordered">
@@ -255,9 +240,6 @@ if (sizeof($rs) > 0) {
 								<th>'.tr('Addebito km').' <span class="tip" title="'.tr('Addebito al cliente').'"><i class="fa fa-question-circle-o"></i></span></th>
 								<th>'.tr('Addebito diritto ch.').' <span class="tip" title="'.tr('Addebito al cliente').'"><i class="fa fa-question-circle-o"></i></span></th>
 
-								<th class="hide" >'.tr('Costo orario').' <span class="tip" title="'.tr('Costo interno').'"><i class="fa fa-question-circle-o"></i></span></th>
-								<th class="hide" >'.tr('Costo al km').' <span class="tip" title="'.tr('Costo interno').'"><i class="fa fa-question-circle-o"></i></span></th>
-                                <th class="hide" >'.tr('Diritto di chiamata').' <span class="tip" title="'.tr('Costo interno').'"><i class="fa fa-question-circle-o"></i></span></th>
                                 <th width="40"></th>
 							</tr>';
 
@@ -278,20 +260,8 @@ if (sizeof($rs) > 0) {
                                     {[ "type": "number", "name": "costo_dirittochiamata['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_diritto_chiamata'].'" ]}
                                 </td>
 
-                                <td class="hide" >
-                                    {[ "type": "number", "name": "costo_ore_tecnico['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_orario_tecnico'].'" , "readonly":"1" ]}
-                                </td>
-
-                                <td class="hide" >
-                                    {[ "type": "number", "name": "costo_km_tecnico['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_km_tecnico'].'" , "readonly":"1" ]}
-                                </td>
-
-                                <td class="hide" >
-                                    {[ "type": "number", "name": "costo_dirittochiamata_tecnico['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_diritto_chiamata_tecnico'].'", "readonly":"1" ]}
-                                </td>
-
                                 <td>
-                                <button type="button" class="btn btn-primary" data-toggle="tooltip" title="Importa valori da tariffe standard" onclick="if( confirm(\'Importare i valori dalle tariffe standard?\') ){ $.post( \''.$rootdir.'/modules/contratti/actions.php\', { op: \'import\', idcontratto: \''.$id_record.'\', idtipointervento: \''.$rs[$i]['idtipointervento'].'\' }, function(data){ location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'\'; } ); }">
+                                <button type="button" class="btn btn-warning" data-toggle="tooltip" title="Importa valori da tariffe standard" onclick="if( confirm(\'Importare i valori dalle tariffe standard?\') ){ $.post( \''.$rootdir.'/modules/contratti/actions.php\', { op: \'import\', idcontratto: \''.$id_record.'\', idtipointervento: \''.$rs[$i]['idtipointervento'].'\' }, function(data){ location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'\'; } ); }">
                                     <i class="fa fa-download"></i>
                                 </button>
                                 </td>

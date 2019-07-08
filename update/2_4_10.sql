@@ -138,3 +138,16 @@ UPDATE `zz_views` SET `query` = 'IF(an_anagrafiche.ragione_sociale IS NULL, co_s
 
 -- Plugin rinnovi per Contratti
 INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`, `position`, `script`, `enabled`, `default`, `order`, `compatibility`, `version`, `options2`, `options`, `directory`, `help`) VALUES (NULL, 'Rinnovi', 'Rinnovi', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), 'tab', '', 1, 0, 0, '', '', NULL, 'custom', 'rinnovi_contratti', '');
+
+-- Aggiornamento Tecnici e tariffe
+UPDATE `zz_modules` SET `options` = '
+SELECT |select| FROM an_anagrafiche WHERE idanagrafica IN (
+    SELECT idanagrafica FROM an_tipianagrafiche_anagrafiche WHERE idtipoanagrafica IN (
+        SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione = ''Tecnico''
+    )
+) AND deleted_at IS NULL AND 1=1 HAVING 2=2 ORDER BY ragione_sociale' WHERE `name` = 'Tecnici e tariffe';
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `default`, `visible`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tecnici e tariffe'), '_bg_', 'colore', 3, 1, 0, 0, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tecnici e tariffe'), 'Nome', 'ragione_sociale', 2, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tecnici e tariffe'), 'id', 'idanagrafica', 1, 1, 0, 0, 0);

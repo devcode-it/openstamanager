@@ -3,7 +3,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Anagrafiche\Anagrafica;
-use Modules\Interventi\TipoSessione;
+use Modules\TipiIntervento\Tipo as TipoSessione;
 use Modules\Preventivi\Components\Articolo;
 use Modules\Preventivi\Components\Riga;
 use Modules\Preventivi\Components\Sconto;

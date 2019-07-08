@@ -26,14 +26,6 @@ switch (post('op')) {
 
     case 'update':
         if (post('id_record') !== null) {
-            $idstato = post('idstato');
-            $idanagrafica = post('idanagrafica');
-            $idsede = post('idsede');
-            $nome = post('nome');
-            $idagente = post('idagente');
-            $idpagamento = post('idpagamento');
-            $numero = post('numero');
-
             // Se non specifico un budget me lo vado a ricalcolare
             if ($budget != '') {
                 $budget = post('budget');
@@ -43,55 +35,31 @@ switch (post('op')) {
                 $budget = $rs[0]['budget'];
             }
 
-            $data_bozza = post('data_bozza');
-            $data_accettazione = post('data_accettazione');
-            $data_rifiuto = post('data_rifiuto');
-            $data_conclusione = post('data_conclusione');
-            $rinnovabile = post('rinnovabile');
+            $contratto->idanagrafica = post('idanagrafica');
+            $contratto->idsede = post('idsede');
+            $contratto->idstato = post('idstato');
+            $contratto->nome = post('nome');
+            $contratto->idagente = post('idagente');
+            $contratto->idpagamento = post('idpagamento');
+            $contratto->numero = post('numero');
+            $contratto->budget = $budget;
+            $contratto->idreferente = post('idreferente');
+            $contratto->validita = post('validita');
+            $contratto->data_bozza = post('data_bozza');
+            $contratto->data_accettazione = post('data_accettazione');
+            $contratto->data_rifiuto = post('data_rifiuto');
+            $contratto->data_conclusione = post('data_conclusione');
+            $contratto->rinnovabile = post('rinnovabile');
+            $contratto->giorni_preavviso_rinnovo = post('giorni_preavviso_rinnovo');
+            $contratto->ore_preavviso_rinnovo = post('ore_preavviso_rinnovo');
+            $contratto->esclusioni = post('esclusioni');
+            $contratto->descrizione = post('descrizione');
+            $contratto->id_documento_fe = post('id_documento_fe');
+            $contratto->num_item = post('num_item');
+            $contratto->codice_cig = post('codice_cig');
+            $contratto->codice_cup = post('codice_cup');;
 
-            $giorni_preavviso_rinnovo = post('giorni_preavviso_rinnovo');
-            $ore_preavviso_rinnovo = post('ore_preavviso_rinnovo');
-            $validita = post('validita');
-            $idreferente = post('idreferente');
-            $esclusioni = post('esclusioni');
-            $descrizione = post('descrizione');
-            // $ore_lavoro = post('ore_lavoro');
-
-            $costo_orario = post('costo_orario');
-            $costo_km = post('costo_km');
-            $costo_diritto_chiamata = post('costo_diritto_chiamata');
-
-            $id_documento_fe = post('id_documento_fe');
-            $num_item = post('num_item');
-            $codice_cig = post('codice_cig');
-            $codice_cup = post('codice_cup');
-
-            $query = 'UPDATE co_contratti SET idanagrafica='.prepare($idanagrafica).', 
-				idsede='.prepare($idsede).',
-				idstato='.prepare($idstato).',
-				nome='.prepare($nome).',
-				idagente='.prepare($idagente).',
-				idpagamento='.prepare($idpagamento).',
-				numero='.prepare($numero).',
-				budget='.prepare($budget).',
-				idreferente='.prepare($idreferente).',
-				validita='.prepare($validita).',
-				data_bozza='.prepare($data_bozza).',
-				data_accettazione='.prepare($data_accettazione).',
-				data_rifiuto='.prepare($data_rifiuto).',
-				data_conclusione='.prepare($data_conclusione).',
-				rinnovabile='.prepare($rinnovabile).',
-                giorni_preavviso_rinnovo='.prepare($giorni_preavviso_rinnovo).',
-                ore_preavviso_rinnovo='.prepare($ore_preavviso_rinnovo).',
-				esclusioni='.prepare($esclusioni).', descrizione='.prepare($descrizione).',
-				id_documento_fe='.prepare($id_documento_fe).',
-				num_item='.prepare($num_item).',
-				codice_cig='.prepare($codice_cig).',
-				codice_cup='.prepare($codice_cup).' WHERE id='.prepare($id_record);
-
-            // costo_diritto_chiamata='.prepare($costo_diritto_chiamata).', ore_lavoro='.prepare($ore_lavoro).', costo_orario='.prepare($costo_orario).', costo_km='.prepare($costo_km).'
-
-            $dbo->query($query);
+            $contratto->save();
 
             $dbo->query('DELETE FROM my_impianti_contratti WHERE idcontratto='.prepare($id_record));
             foreach ((array) post('matricolaimpianto') as $matricolaimpianto) {

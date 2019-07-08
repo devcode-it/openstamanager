@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\Intervento;
-use Modules\Interventi\TipoSessione;
+use Modules\TipiIntervento\Tipo as TipoSessione;
 use Traits\RecordTrait;
 use Util\Generator;
 
@@ -43,7 +43,6 @@ class Contratto extends Document
 
         $model->numero = static::getNextNumero();
 
-        // Salvataggio delle informazioni
         $model->nome = $nome;
         $model->data_bozza = Carbon::now();
 
@@ -55,23 +54,29 @@ class Contratto extends Document
             $model->idpagamento = $id_pagamento;
         }
 
+        // Salvataggio delle informazioni
         $model->save();
 
-        $model->fixTipiSessioni();
-
         return $model;
+    }
+
+    public function save(array $options = [])
+    {
+        $result = parent::save($options);
+
+        $this->fixTipiSessioni();
+
+        return $result;
     }
 
     public function fixTipiSessioni()
     {
         $database = database();
-        $database->query('DELETE FROM co_contratti_tipiintervento WHERE idcontratto = '.prepare($this->id));
+
+        $presenti = $database->fetchArray('SELECT idtipointervento AS id FROM co_contratti_tipiintervento WHERE idcontratto = '.prepare($this->id));
 
         // Aggiunta associazioni costi unitari al contratto
-        $tipi = TipoSessione::where('costo_orario', '<>', 0)
-            ->where('costo_km', '<>', 0)
-            ->where('costo_diritto_chiamata', '<>', 0)
-            ->get();
+        $tipi = TipoSessione::whereNotIn('idtipointervento', array_column($presenti, 'id'))->get();
 
         foreach ($tipi as $tipo) {
             $database->insert('co_contratti_tipiintervento', [

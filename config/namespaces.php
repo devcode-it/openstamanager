@@ -17,6 +17,7 @@ return [
     'modules/interventi' => 'Modules\Interventi',
     'modules/pagamenti' => 'Modules\Pagamenti',
     'modules/statistiche' => 'Modules\Statistiche',
+    'modules/tipi_intervento' => 'Modules\TipiIntervento',
     'plugins/exportFE' => 'Plugins\ExportFE',
     'plugins/importFE' => 'Plugins\ImportFE',
     'plugins/receiptFE' => 'Plugins\ReceiptFE',

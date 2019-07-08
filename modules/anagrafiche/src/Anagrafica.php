@@ -5,6 +5,7 @@ namespace Modules\Anagrafiche;
 use Common\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Fatture\Fattura;
+use Modules\TipiIntervento\Tipo as TipoSessione;
 use Settings;
 use Traits\RecordTrait;
 use Util\Generator;
@@ -116,23 +117,22 @@ class Anagrafica extends Model
     {
         $database = database();
 
-        // Copio le tariffe per le varie attività
-        $query = 'INSERT INTO in_tariffe(idtecnico, idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico) SELECT '.prepare($anagrafica->id).', idtipointervento, costo_orario, costo_km, costo_diritto_chiamata, costo_orario_tecnico, costo_km_tecnico, costo_diritto_chiamata_tecnico FROM in_tipiintervento';
-
         $presenti = $database->fetchArray('SELECT idtipointervento AS id FROM in_tariffe WHERE idtecnico = '.prepare($anagrafica->id));
-        if (!empty($presenti)) {
-            $list = [];
-            foreach ($presenti as $presente) {
-                $list[] = prepare($presente['id']);
-            }
 
-            $query .= ' WHERE idtipointervento NOT IN ('.implode($list, ',').')';
-        }
+        // Aggiunta associazioni costi unitari al contratto
+        $tipi = TipoSessione::whereNotIn('idtipointervento', array_column($presenti, 'id'))->get();
 
-        $result = database()->query($query);
-
-        if (!$result) {
-            flash()->error(tr("Errore durante l'importazione tariffe!"));
+        foreach ($tipi as $tipo) {
+            $database->insert('in_tariffe', [
+                'idtecnico' => $anagrafica->id,
+                'idtipointervento' => $tipo->id,
+                'costo_ore' => $tipo->costo_orario,
+                'costo_km' => $tipo->costo_km,
+                'costo_dirittochiamata' => $tipo->costo_diritto_chiamata,
+                'costo_ore_tecnico' => $tipo->costo_orario_tecnico,
+                'costo_km_tecnico' => $tipo->costo_km_tecnico,
+                'costo_dirittochiamata_tecnico' => $tipo->costo_diritto_chiamata_tecnico,
+            ]);
         }
     }
 

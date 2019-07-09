@@ -13,9 +13,9 @@ function submodules($list, $depth = 0)
         if (!empty($sub['enabled'])) {
             $text = tr('Abilitato');
             $text .= ($sub['id'] != $id_module) ? '. '.tr('Clicca per disabilitarlo').'...' : '';
-            $stato = '<i class="fa fa-cog fa-spin text-success" data-toggle="tooltip" title="'.$text.'"></i>';
+            $stato = '<i class="fa fa-cog fa-spin text-success tip" title="'.$text.'"></i>';
         } else {
-            $stato = '<i class="fa fa-cog text-warning" data-toggle="tooltip" title="'.tr('Non abilitato').'"></i>';
+            $stato = '<i class="fa fa-cog text-warning tip" title="'.tr('Non abilitato').'"></i>';
             $class = 'warning';
         }
 
@@ -38,10 +38,10 @@ function submodules($list, $depth = 0)
         }
 
         if ($comp) {
-            $compatible = '<i class="fa fa-check-circle text-success" data-toggle="tooltip" title="'.tr('Compatibile').'"></i>';
+            $compatible = '<i class="fa fa-check-circle text-success tip" title="'.tr('Compatibile').'"></i>';
             ($sub['enabled']) ? $class = 'success' : $class = 'warning';
         } else {
-            $compatible = '<i class="fa fa-warning text-danger" data-toggle="tooltip" title="'.tr('Non compatibile!').tr('Questo modulo è compatibile solo con le versioni').': '.$sub['compatibility'].'"></i>';
+            $compatible = '<i class="fa fa-warning text-danger tip"  title="'.tr('Non compatibile!').' '.tr('Questo modulo è compatibile solo con le versioni').': '.$sub['compatibility'].'"></i>';
             $class = 'danger';
         }
 
@@ -58,7 +58,7 @@ function submodules($list, $depth = 0)
         // Possibilità di disinstallare solo se il modulo non è tra quelli predefiniti
         if (empty($sub['default'])) {
             $result .= "
-                <a href=\"javascript:;\" data-toggle='tooltip' title=\"".tr('Disinstalla')."...\" onclick=\"if( confirm('".tr('Vuoi disinstallare questo modulo?').' '.tr('Tutti i dati salvati andranno persi!')."') ){ if( confirm('".tr('Sei veramente sicuro?')."') ){ $.post( '".ROOTDIR.'/actions.php?id_module='.$id_module."', { op: 'uninstall', id: '".$sub['id']."' }, function(response){ location.href='".ROOTDIR.'/controller.php?id_module='.$id_module."'; }); } }\">
+                <a href=\"javascript:;\" class=\"tip\"  title=\"".tr('Disinstalla')."...\" onclick=\"if( confirm('".tr('Vuoi disinstallare questo modulo?').' '.tr('Tutti i dati salvati andranno persi!')."') ){ if( confirm('".tr('Sei veramente sicuro?')."') ){ $.post( '".ROOTDIR.'/actions.php?id_module='.$id_module."', { op: 'uninstall', id: '".$sub['id']."' }, function(response){ location.href='".ROOTDIR.'/controller.php?id_module='.$id_module."'; }); } }\">
                     <i class='fa fa-trash'></i>
                 </a>";
         } else {

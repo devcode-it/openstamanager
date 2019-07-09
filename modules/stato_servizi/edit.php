@@ -51,10 +51,10 @@ foreach ($widgets as $widget) {
 
     // STATO
     if ($widget['enabled']) {
-        $stato = '<i class="fa fa-cog fa-spin text-success" data-toggle="tooltip" title="'.tr('Abilitato').'. '.tr('Clicca per disabilitarlo').'..."></i>';
+        $stato = '<i class="fa fa-cog fa-spin text-success tip" title="'.tr('Abilitato').'. '.tr('Clicca per disabilitarlo').'..."></i>';
         $class = 'success';
     } else {
-        $stato = '<i class="fa fa-cog text-warning" data-toggle="tooltip" title="'.tr('Non abilitato').'"></i>';
+        $stato = '<i class="fa fa-cog text-warning tip" title="'.tr('Non abilitato').'"></i>';
         $class = 'warning';
     }
 
@@ -73,16 +73,16 @@ foreach ($widgets as $widget) {
     }
 
     if ($widget['location'] == 'controller_right') {
-        $posizione = "<i class='fa fa-arrow-up text-warning' data-toggle='tooltip' title=\"".tr('Clicca per cambiare la posizione...')."\"></i>&nbsp;<i class='fa fa-arrow-right text-success' data-toggle='tooltip' title=\"\"></i>";
+        $posizione = "<i class='fa fa-arrow-up text-warning tip' title=\"".tr('Clicca per cambiare la posizione...')."\"></i>&nbsp;<i class='fa fa-arrow-right text-success' ></i>";
         $posizione = "<a href='javascript:;' onclick=\"if( confirm('".tr('Cambiare la posizione di questo widget?')."') ){ $.post( '".ROOTDIR.'/actions.php?id_module='.$id_module."', { op: 'change_position_widget_top', id: '".$widget['id']."' }, function(response){ location.href='".ROOTDIR.'/controller.php?id_module='.$id_module."'; }); }\"\">".$posizione."</a>\n";
     } elseif ($widget['location'] == 'controller_top') {
-        $posizione = "<i class='fa fa-arrow-up text-success' data-toggle='tooltip' title=\"\"></i>&nbsp;<i class='fa fa-arrow-right text-warning' data-toggle='tooltip' title=\"".tr('Clicca per cambiare la posizione...').'"></i></i>';
+        $posizione = "<i class='fa fa-arrow-up text-success'></i>&nbsp;<i class='fa fa-arrow-right text-warning tip' title=\"".tr('Clicca per cambiare la posizione...').'"></i>';
         $posizione = "<a href='javascript:;' onclick=\"if( confirm('".tr('Cambiare la posizione di questo widget?')."') ){ $.post( '".ROOTDIR.'/actions.php?id_module='.$id_module."', { op: 'change_position_widget_right', id: '".$widget['id']."' }, function(response){ location.href='".ROOTDIR.'/controller.php?id_module='.$id_module."'; }); }\"\">".$posizione."</a>\n";
     }
 
     echo '
             <tr class="'.$class.'">
-                <td>'.$widget['widget_name'].((!empty($widget['help'])) ? ' <i class="tip fa fa-question-circle-o" class="tip" title="'.$widget['help'].'"</i>' : '').'</td>
+                <td>'.$widget['widget_name'].((!empty($widget['help'])) ? ' <i class="tip fa fa-question-circle-o" title="'.$widget['help'].'"</i>' : '').'</td>
                 <td align="left"><small>'.$location.'</small></td>
                 <td align="center">'.$stato.'</td>
                 <td align="center">'.$posizione.'</td>

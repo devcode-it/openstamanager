@@ -5,7 +5,7 @@ include_once __DIR__.'/../../core.php';
 $year_start = date('Y', strtotime($date_start));
 $year_end = date('Y', strtotime($date_end));
 
-$esercizio = $year_start == $year_end ? ' - '.tr('Esercizio _YEAR_',[
+$esercizio = $year_start == $year_end ? ' - '.tr('Esercizio _YEAR_', [
     '_YEAR_' => $year_end,
 ]) : '';
 
@@ -21,7 +21,7 @@ if ('entrata' == $dir) {
     ], ['upper' => true]);
 }
 
-$tipo = $dir == "entrata" ? tr("Cliente") : tr("Fornitore");
+$tipo = $dir == 'entrata' ? tr('Cliente') : tr('Fornitore');
 
 echo '<h4><b>'.$titolo.'</b></h4>
 

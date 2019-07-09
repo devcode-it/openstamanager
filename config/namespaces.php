@@ -21,4 +21,5 @@ return [
     'plugins/exportFE' => 'Plugins\ExportFE',
     'plugins/importFE' => 'Plugins\ImportFE',
     'plugins/receiptFE' => 'Plugins\ReceiptFE',
+    'plugins/statistiche_articoli' => 'Plugins\StatisticheArticoli',
 ];

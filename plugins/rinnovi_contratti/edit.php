@@ -1,6 +1,6 @@
 <?php
 
-include_once __DIR__.'/../../../core.php';
+include_once __DIR__.'/../../core.php';
 
 $id_contratto_precedente = $record['idcontratto_prev'];
 

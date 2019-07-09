@@ -7,7 +7,7 @@ $dir = $_GET['dir'];
 $date_start = $_SESSION['period_start'];
 $date_end = $_SESSION['period_end'];
 
-$tipo = $dir == 'entrata' ? 'vendite': 'acquisti';
+$tipo = $dir == 'entrata' ? 'vendite' : 'acquisti';
 $report_name = 'registro_iva_'.$tipo.'.pdf';
 
 $v_iva = [];

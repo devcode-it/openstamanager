@@ -219,3 +219,6 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_scadenziario`
 WHERE 1=1 AND ABS(`co_scadenziario`.`pagato`) < ABS(`co_scadenziario`.`da_pagare`) AND `co_statidocumento`.`descrizione` IN(''Emessa'',''Parzialmente pagato'')
 HAVING 2=2
 ORDER BY `scadenza` ASC' WHERE `name` = 'Scadenzario';
+
+-- Plugin Statistiche per Articoli
+INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`, `position`, `script`, `enabled`, `default`, `order`, `compatibility`, `version`, `options2`, `options`, `directory`, `help`) VALUES (NULL, 'Statistiche', 'Statistiche', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), 'tab', '', 1, 0, 0, '', '', NULL, 'custom', 'statistiche_articoli', '');

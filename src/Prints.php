@@ -510,6 +510,5 @@ class Prints
 
         // Creazione effettiva del PDF
         $mpdf->Output($filename, $mode);
-
     }
 }

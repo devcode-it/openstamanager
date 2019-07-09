@@ -56,4 +56,3 @@ echo '
         </tr>
     </tbody>
 </table>';
-

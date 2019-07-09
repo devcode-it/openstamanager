@@ -382,34 +382,50 @@ class Prints
         // Individuazione delle impostazioni finali
         $settings = array_merge($default, (array) $custom);
 
+        // Instanziamento dell'oggetto mPDF
+        $mpdf = new \Mpdf\Mpdf([
+            'mode' => 'utf-8',
+            'format' => $settings['format'],
+            'orientation' => strtoupper($settings['orientation']) == 'L' ? 'L' : 'P',
+            'font-size' => $settings['font-size'],
+            'margin_left' => $settings['margins']['left'],
+            'margin_right' => $settings['margins']['right'],
+            'margin_top' => $settings['margins']['top'] + $settings['header-height'],
+            'margin_bottom' => $settings['margins']['bottom'] + $settings['footer-height'],
+            'margin_header' => $settings['margins']['top'],
+            'margin_footer' => $settings['margins']['bottom'],
+
+            // Abilitazione per lo standard PDF/A
+            //'PDFA' => true,
+            //'PDFAauto' => true,
+        ]);
+
+        $mode = !empty($filename) ? 'F' : 'I';
+
+        $filename = !empty($filename) ? $filename : sanitizeFilename($report_name);
+        $title = basename($filename);
+
+        // Impostazione del titolo del PDF
+        $mpdf->SetTitle($title);
+
+        // Inclusione dei fogli di stile CSS
+        $styles = [
+            'templates/base/bootstrap.css',
+            'templates/base/style.css',
+        ];
+
+        foreach ($styles as $value) {
+            $mpdf->WriteHTML(file_get_contents(DOCROOT.'/'.$value), 1);
+        }
+
+        // Impostazione del font-size
+        $mpdf->WriteHTML('body {font-size: '.$settings['font-size'].'pt;}', 1);
+
         // Individuazione delle variabili fondamentali per la sostituzione dei contenuti
         include self::filepath($id_print, 'init.php');
 
         // Individuazione delle variabili per la sostituzione
         include DOCROOT.'/templates/info.php';
-
-        // Generazione dei contenuti della stampa
-        ob_start();
-        include self::filepath($id_print, 'body.php');
-        $report = ob_get_clean();
-
-        if (!empty($autofill)) {
-            $result = '';
-
-            // max($autofill['additional']) = $autofill['rows'] - 1
-            for ($i = (floor($autofill['count']) % $autofill['rows']); $i < $autofill['additional']; ++$i) {
-                $result .= '
-                <tr>';
-                for ($c = 0; $c < $autofill['columns']; ++$c) {
-                    $result .= '
-                    <td>&nbsp;</td>';
-                }
-                $result .= '
-                </tr>';
-            }
-
-            $report = str_replace('|autofill|', $result, $report);
-        }
 
         // Generazione dei contenuti dell'header
         ob_start();
@@ -430,53 +446,70 @@ class Prints
         // Operazioni di sostituzione
         include DOCROOT.'/templates/replace.php';
 
-        $mode = !empty($filename) ? 'F' : 'I';
-
-        $filename = !empty($filename) ? $filename : sanitizeFilename($report_name);
-        $title = basename($filename);
-
-        $styles = [
-            'templates/base/bootstrap.css',
-            'templates/base/style.css',
-        ];
-
-        // Instanziamento dell'oggetto mPDF
-        $mpdf = new \Mpdf\Mpdf([
-            'mode' => 'utf-8',
-            'format' => $settings['format'],
-            'orientation' => strtoupper($settings['orientation']) == 'L' ? 'L' : 'P',
-            'font-size' => $settings['font-size'],
-            'margin_left' => $settings['margins']['left'],
-            'margin_right' => $settings['margins']['right'],
-            'margin_top' => $settings['margins']['top'] + $settings['header-height'],
-            'margin_bottom' => $settings['margins']['bottom'] + $settings['footer-height'],
-            'margin_header' => $settings['margins']['top'],
-            'margin_footer' => $settings['margins']['bottom'],
-
-            // Abilitazione per lo standard PDF/A
-            //'PDFA' => true,
-            //'PDFAauto' => true,
-        ]);
-
         // Impostazione di header e footer
         $mpdf->SetHTMLFooter($foot);
         $mpdf->SetHTMLHeader($head);
 
-        // Impostazione del titolo del PDF
-        $mpdf->SetTitle($title);
+        // Generazione dei contenuti della stampa
+        // Generazione a singoli pezzi
+        $single_pieces = self::filepath($id_print, 'piece.php');
+        if (!empty($single_pieces)) {
+            ob_start();
+            include self::filepath($id_print, 'top.php');
+            $top = ob_get_clean();
 
-        // Inclusione dei fogli di stile CSS
-        foreach ($styles as $value) {
-            $mpdf->WriteHTML(file_get_contents(DOCROOT.'/'.$value), 1);
+            $mpdf->WriteHTML($top);
+
+            foreach ($records as $record) {
+                ob_start();
+                include self::filepath($id_print, 'piece.php');
+                $piece = ob_get_clean();
+
+                $mpdf->WriteHTML($piece);
+            }
+
+            ob_start();
+            include self::filepath($id_print, 'bottom.php');
+            $bottom = ob_get_clean();
+
+            $mpdf->WriteHTML($bottom);
+
+            $report = '';
         }
 
-        // Impostazione del font-size
-        $mpdf->WriteHTML('body {font-size: '.$settings['font-size'].'pt;}', 1);
+        // Generazione totale
+        else {
+            ob_start();
+            include self::filepath($id_print, 'body.php');
+            $report = ob_get_clean();
+
+            if (!empty($autofill)) {
+                $result = '';
+
+                // max($autofill['additional']) = $autofill['rows'] - 1
+                for ($i = (floor($autofill['count']) % $autofill['rows']); $i < $autofill['additional']; ++$i) {
+                    $result .= '
+                <tr>';
+                    for ($c = 0; $c < $autofill['columns']; ++$c) {
+                        $result .= '
+                    <td>&nbsp;</td>';
+                    }
+                    $result .= '
+                </tr>';
+                }
+
+                $report = str_replace('|autofill|', $result, $report);
+            }
+        }
+
+        // Operazioni di sostituzione
+        include DOCROOT.'/templates/replace.php';
 
         // Aggiunta dei contenuti
         $mpdf->WriteHTML($report);
 
         // Creazione effettiva del PDF
         $mpdf->Output($filename, $mode);
+
     }
 }

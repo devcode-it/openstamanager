@@ -208,3 +208,14 @@ UPDATE `zz_views` SET `query` = '`fe_stati_documento`.`descrizione`' WHERE `name
 
 -- Impostazione per la lunghezza delle pagine Datatables
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Lunghezza in pagine del buffer Datatables', '10', 'decimal', 0, 'Generali', 1);
+
+-- Miglioramento query Scadenzario
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_scadenziario`
+    LEFT JOIN `co_documenti`  ON `co_scadenziario`.`iddocumento` = `co_documenti`.`id`
+    LEFT JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+    LEFT JOIN `co_pagamenti` ON `co_documenti`.`idpagamento` = `co_pagamenti`.`id`
+    LEFT JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`
+    LEFT JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`
+WHERE 1=1 AND ABS(`co_scadenziario`.`pagato`) < ABS(`co_scadenziario`.`da_pagare`) AND `co_statidocumento`.`descrizione` IN(''Emessa'',''Parzialmente pagato'')
+HAVING 2=2
+ORDER BY `scadenza` ASC' WHERE `name` = 'Scadenzario';

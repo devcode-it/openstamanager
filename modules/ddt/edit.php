@@ -170,7 +170,7 @@ $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione']
                             $("#idvettore").attr("required", false);
                             $("#idvettore").attr("disabled", true);
                             $("label[for=idvettore]").text("<?php echo tr('Vettore'); ?>");
-                            $("#idvettore").selectReset("<?php echo tr("Seleziona un'opzione") ?>");
+                            $("#idvettore").selectReset("<?php echo tr("Seleziona un'opzione"); ?>");
                             $("#idvettore").next().next().find("button.bound:nth-child(1)").prop("disabled", true);
                         }else{
                             $("#idvettore").attr("required", true);

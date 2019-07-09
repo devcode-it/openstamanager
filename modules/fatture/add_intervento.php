@@ -50,8 +50,8 @@ foreach ($rs as $key => $value) {
     $rs[$key]['prezzo'] = Translator::numberToLocale($prezzo);
     $rs[$key]['descrizione_intervento'] = strip_tags($rs[$key]['descrizione_intervento']);
 
-    if($prezzo <= 0){
-unset($rs[$key]);
+    if ($prezzo <= 0) {
+        unset($rs[$key]);
     }
 }
 

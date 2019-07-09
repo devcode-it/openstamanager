@@ -81,6 +81,11 @@ class Query
         }
         $date_query = !empty($filters) && !empty(self::$segments) ? ' AND ('.implode(' OR ', $filters).')' : '';
 
+        // Sostituzione periodi temporali
+        preg_match('|segment\((.+?)\)|', $query, $matches);
+        $segment_name = !empty($matches[1]) ? $matches[1] : 'id_segment';
+        $segment_filter = !empty($matches[0]) ? $matches[0] : 'segment';
+
         // Elenco delle sostituzioni
         $replace = [
             // Identificatori
@@ -96,7 +101,7 @@ class Query
             '|period_end|' => $_SESSION['period_end'],
 
             // Segmenti
-            '|segment|' => !empty($segment) ? ' AND id_segment = '.prepare($segment) : '',
+            '|'.$segment_filter.'|' => !empty($segment) ? ' AND '.$segment_name.' = '.prepare($segment) : '',
         ];
 
         // Sostituzione dei formati

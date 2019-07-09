@@ -105,8 +105,6 @@ if (Auth::check()) {
                 id_module: \''.$id_module.'\',
                 id_record: \''.$id_record.'\',
 
-                order_manager_id: \''.($dbo->isInstalled() ? Modules::get('Stato dei serivizi')['id'] : '').'\',
-
                 cifre_decimali: '.setting('Cifre decimali per importi').',
 
                 decimals: "'.formatter()->getNumberSeparators()['decimals'].'",
@@ -124,7 +122,9 @@ if (Auth::check()) {
                 ckeditorToolbar: [
 					["Undo","Redo","-","Cut","Copy","Paste","PasteText","PasteFromWord","-","Scayt", "-","Link","Unlink","-","Bold","Italic","Underline","Superscript","SpecialChar","HorizontalRule","-","JustifyLeft","JustifyCenter","JustifyRight","JustifyBlock","-","NumberedList","BulletedList","Outdent","Indent","Blockquote","-","Styles","Format","Image","Table", "TextColor", "BGColor" ],
 				],
-
+				
+                order_manager_id: \''.($dbo->isInstalled() ? Modules::get('Stato dei serivizi')['id'] : '').'\',
+                dataload_page_buffer: '.setting('Lunghezza in pagine del buffer Datatables').',
                 tempo_attesa_ricerche: '.setting('Tempo di attesa ricerche in secondi').',
             };
 		</script>';

@@ -207,4 +207,4 @@ UPDATE `zz_views` SET `query` = '`fe_stati_documento`.`icon`' WHERE `name` = 'ic
 UPDATE `zz_views` SET `query` = '`fe_stati_documento`.`descrizione`' WHERE `name` = 'icon_title_FE' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
 
 -- Impostazione per la lunghezza delle pagine Datatables
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Lunghezza in pagine del buffer Datatables', '200', 'decimal', 0, 'Generali', 1);
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Lunghezza in pagine del buffer Datatables', '10', 'decimal', 0, 'Generali', 1);

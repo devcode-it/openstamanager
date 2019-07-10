@@ -29,7 +29,8 @@ class Module extends Model
         'options2',
     ];
 
-    public function replacePlaceholders($id_record, $value){
+    public function replacePlaceholders($id_record, $value)
+    {
         $replaces = $this->getPlaceholders($id_record);
 
         $value = str_replace(array_keys($replaces), array_values($replaces), $value);
@@ -37,8 +38,9 @@ class Module extends Model
         return $value;
     }
 
-    public function getPlaceholders($id_record) {
-        if(!isset($variables[$id_record])) {
+    public function getPlaceholders($id_record)
+    {
+        if (!isset($variables[$id_record])) {
             $dbo = $database = database();
 
             // Lettura delle variabili nei singoli moduli
@@ -47,7 +49,7 @@ class Module extends Model
             // Sostituzione delle variabili di base
             $replaces = [];
             foreach ($variables as $key => $value) {
-                $replaces['{' . $key . '}'] = $value;
+                $replaces['{'.$key.'}'] = $value;
             }
 
             $this->variables[$id_record] = $replaces;

@@ -223,7 +223,7 @@ class Prints
     /**
      * Restituisce il link per la visualizzazione del PDF.
      *
-     * @param string     $path
+     * @param string $path
      *
      * @return string
      */
@@ -357,14 +357,15 @@ class Prints
         return $file;
     }
 
-    protected static function getFile($record, $id_record, $directory, $original_replaces) {
+    protected static function getFile($record, $id_record, $directory, $original_replaces)
+    {
         $module = Modules::get($record['id_module']);
 
         $name = $record['filename'].'.pdf';
         $name = $module->replacePlaceholders($id_record, $name);
 
         $replaces = [];
-        foreach ($original_replaces as $key=>$value){
+        foreach ($original_replaces as $key => $value) {
             $key = substr($key, 1, -1);
 
             $replaces['{'.$key.'}'] = $value;

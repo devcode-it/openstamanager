@@ -3,10 +3,10 @@
 namespace Notifications;
 
 use Mail;
+use Modules;
 use PHPMailer\PHPMailer\Exception as PHPMailerException;
 use Prints;
 use Uploads;
-use Modules;
 
 class EmailNotification extends Notification
 {
@@ -161,7 +161,7 @@ class EmailNotification extends Notification
         }
 
         // Utilizzo di una cartella particolare per il salvataggio temporaneo degli allegati
-        $path = DOCROOT.'/files/notifications/';;
+        $path = DOCROOT.'/files/notifications/';
 
         $info = Prints::render($print['id'], $id_record, $path);
         $name = $name ?: $info['name'];

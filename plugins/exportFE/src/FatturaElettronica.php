@@ -1202,7 +1202,7 @@ class FatturaElettronica
 
         $name = 'Stampa allegata';
         $is_presente = database()->fetchNum('SELECT id FROM zz_files WHERE id_module = '.prepare($id_module).' AND id_record = '.prepare($documento['id']).' AND name = '.prepare($name));
-        if(empty($is_presente)) {
+        if (empty($is_presente)) {
             Uploads::register(array_merge([
                 'name' => $name,
                 'original' => basename($info['path']),

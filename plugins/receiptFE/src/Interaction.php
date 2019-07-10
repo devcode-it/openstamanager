@@ -13,10 +13,30 @@ class Interaction extends Connection
 {
     public static function getReceiptList()
     {
-        $response = static::request('POST', 'notifiche_da_importare');
-        $body = static::responseBody($response);
+        $directory = Ricevuta::getImportDirectory();
 
-        return $body['results'];
+        $list = [];
+
+        $files = glob($directory.'/*.xml*');
+        foreach ($files as $file) {
+            $list[] = basename($file);
+        }
+
+        // Ricerca da remoto
+        if (self::isEnabled()) {
+            $response = static::request('POST', 'notifiche_da_importare');
+            $body = static::responseBody($response);
+
+            if ($body['status'] == '200') {
+                $files = $body['results'];
+
+                foreach ($files as $file) {
+                    $list[] = basename($file);
+                }
+            }
+        }
+
+        return array_clean($list);
     }
 
     public static function getReceipt($name)

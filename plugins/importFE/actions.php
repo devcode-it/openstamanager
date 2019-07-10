@@ -10,20 +10,11 @@ switch (filter('op')) {
         $content = file_get_contents($_FILES['blob']['tmp_name']);
         $file = FatturaElettronica::store($_FILES['blob']['name'], $content);
 
-        if (FatturaElettronica::isValid($file)) {
-            echo json_encode([
-                'filename' => $file,
-            ]);
-        } else {
-            echo json_encode([
-                'already' => 1,
-            ]);
-        }
+        $name = $file;
 
-        break;
-
+        // no break
     case 'prepare':
-        $name = get('name');
+        $name = $name ?: get('name');
         $file = Interaction::getImportXML($name);
 
         if (FatturaElettronica::isValid($file)) {
@@ -94,7 +85,7 @@ switch (filter('op')) {
         // Processo il file ricevuto
         if (Interaction::isEnabled()) {
             $process_result = Interaction::processXML($name);
-            if (!empty($process_resul)) {
+            if (!empty($process_result)) {
                 flash()->error($process_result);
             }
         }

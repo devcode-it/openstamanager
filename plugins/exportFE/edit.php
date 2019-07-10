@@ -262,8 +262,8 @@ if ($generated) {
         event.preventDefault();
 
         swal({
-            title: "Sei sicuro di rigenerare la fattura?",
-            text: "Attenzione: sarà generato un nuovo progressivo invio.",
+            title: "'.tr('Sei sicuro di rigenerare la fattura?').'",
+            html: "<p>'.tr('Attenzione: sarà generato un nuovo progressivo invio').'.</p><p class=\"text-danger\">'.tr('Se stai attendendo una ricevuta dal sistema SdI, rigenerando la fattura elettronica non sarà possibile corrispondere la ricevuta una volta emessa').'.</p>",
             type: "warning",
             showCancelButton: true,
             confirmButtonColor: "#30d64b",

@@ -49,6 +49,31 @@ echo '
     </div>
 </div>
 
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">'.tr('Prezzo medio vendita').'</h3>
+    </div>
+    
+    <div class="panel-body">
+        <table class="table table-striped table-condensed table-bordered">
+            <thead>
+                <tr>
+                    <th>'.tr('Perido').'</th>
+                    <th>'.tr('Prezzo minimo').'</th>
+                    <th>'.tr('Prezzio medio').'</th>
+                    <th>'.tr('Prezzo massimo').'</th>
+                    <th>'.tr('Oscillazione').'</th>
+                    <th>'.tr('Oscillazione in %').'</th>
+                    <th>'.tr('Andamento prezzo').'</th>
+                </tr>
+            </thead>
+            <tbody id="prezzi_vendita">
+                
+            </tbody>
+        </table>
+    </div>
+</div>
+
 <script>
 $(document).ready(function() {
     add_period();
@@ -56,6 +81,7 @@ $(document).ready(function() {
 
 function change_period(calendar, start, end) {
     add_prezzo("#prezzi_acquisto", calendar, "uscita", start, end);
+    add_prezzo("#prezzi_vendita", calendar, "entrata", start, end);
 }
 
 function add_prezzo(id, calendar, direzione, start, end) {

@@ -22,9 +22,9 @@ $data_max = strtotime($prezzo_max['data']);
 if ($data_min == $data_max) {
     $andamento = tr('N.D.');
 } elseif ($data_min < $data_max) {
-    $andamento = tr('in aumento');
+    $andamento = tr('In aumento');
 } else {
-    $andamento = tr('in diminuzione');
+    $andamento = tr('In diminuzione');
 }
 
 echo '

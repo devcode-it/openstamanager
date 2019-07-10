@@ -24,61 +24,13 @@ echo '
     </div>
 </div>
 
-<div class="panel panel-primary">
-    <div class="panel-heading">
-        <h3 class="panel-title">'.tr('Prezzo medio acquisto').'</h3>
-    </div>
-    
-    <div class="panel-body">
-        <table class="table table-striped table-condensed table-bordered">
-            <thead>
-                <tr>
-                    <th class="text-center">#</th>
-                    <th>'.tr('Perido').'</th>
-                    <th>'.tr('Prezzo minimo').'</th>
-                    <th>'.tr('Prezzio medio').'</th>
-                    <th>'.tr('Prezzo massimo').'</th>
-                    <th>'.tr('Oscillazione').'</th>
-                    <th>'.tr('Oscillazione in %').'</th>
-                    <th>'.tr('Andamento prezzo').'</th>
-                </tr>
-            </thead>
-            <tbody id="prezzi_acquisto">
-                
-            </tbody>
-        </table>
-    </div>
+<div id="widgets">
+        
 </div>
-
-<div class="panel panel-primary">
-    <div class="panel-heading">
-        <h3 class="panel-title">'.tr('Prezzo medio vendita').'</h3>
-    </div>
     
-    <div class="panel-body">
-        <table class="table table-striped table-condensed table-bordered">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>'.tr('Perido').'</th>
-                    <th>'.tr('Prezzo minimo').'</th>
-                    <th>'.tr('Prezzio medio').'</th>
-                    <th>'.tr('Prezzo massimo').'</th>
-                    <th>'.tr('Oscillazione').'</th>
-                    <th>'.tr('Oscillazione in %').'</th>
-                    <th>'.tr('Andamento prezzo').'</th>
-                </tr>
-            </thead>
-            <tbody id="prezzi_vendita">
-                
-            </tbody>
-        </table>
-    </div>
-</div>
-
 <script src="'.$structure->fileurl('js/stat.js').'"></script>
 <script src="'.$structure->fileurl('js/calendar.js').'"></script>
-<script src="'.$structure->fileurl('js/prezzo.js').'"></script>
+<script src="'.$structure->fileurl('js/widget.js').'"></script>
 
 <script>
 var calendars = {};
@@ -147,15 +99,17 @@ function add_calendar() {
         calendars[name].update(start, end);
     });
     
+    $("#" + name).on("apply.daterangepicker", function(ev, picker) {
+        
+    });
+    
     // Inizializzazone calendario
     var calendar = new Calendar(info, last_id);
     calendars[name] = calendar;
 
-    var prezzo_acquisto = new Prezzo(calendar, "#prezzi_acquisto", "uscita");
-    var prezzo_vendita = new Prezzo(calendar, "#prezzi_vendita", "entrata");
+    var widgets = new Widget(calendar, "#widgets");
     
-    calendar.addElement(prezzo_acquisto);
-    calendar.addElement(prezzo_vendita);
+    calendar.addElement(widgets);
     
     calendar.update(globals.start_date, globals.end_date);
 }

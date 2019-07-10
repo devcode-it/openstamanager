@@ -251,3 +251,6 @@ UPDATE `zz_prints` SET `filename` = 'Consuntivo contratto num. {numero} del {dat
 UPDATE `zz_prints` SET `filename` = 'Consuntivo preventivo num. {numero} del {data}' WHERE `name` = 'Consuntivo preventivo (senza costi)';
 UPDATE `zz_prints` SET `filename` = 'Consuntivo preventivo num. {numero} del {data}' WHERE `name` = 'Consuntivo preventivo';
 UPDATE `zz_prints` SET `filename` = 'Stampa calendario {periodo}' WHERE `name` = 'Stampa calendario';
+
+-- Aggiornamento Statistiche delle Anagrafiche
+UPDATE `zz_plugins` SET `options` = 'custom', `directory` = 'statistiche_anagrafiche', `script` = '' WHERE `name` = 'Statistiche' AND `idmodule_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche');

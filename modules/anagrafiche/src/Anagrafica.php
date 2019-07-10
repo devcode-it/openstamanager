@@ -170,8 +170,18 @@ class Anagrafica extends Model
      */
     public function isAzienda()
     {
-        return $this->tipi()->get()->search(function ($item, $key) {
-            return $item->descrizione == 'Azienda';
+        return $this->isTipo('Azienda');
+    }
+
+    /**
+     * Controlla se l'anagrafica è di tipo 'Azienda'.
+     *
+     * @return bool
+     */
+    public function isTipo($type)
+    {
+        return $this->tipi()->get()->search(function ($item, $key) use ($type) {
+            return $item->descrizione == $type;
         }) !== false;
     }
 

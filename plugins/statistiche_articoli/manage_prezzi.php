@@ -4,7 +4,7 @@ include_once __DIR__.'/../../core.php';
 
 use Plugins\StatisticheArticoli\Stats;
 
-$calendar = filter('calendar');
+$calendar_id = filter('calendar_id');
 $direzione = filter('dir');
 $start = filter('start');
 $end = filter('end');
@@ -28,12 +28,13 @@ if ($data_min == $data_max) {
 }
 
 echo '
-<tr id="row-'.$calendar.'">
+<tr id="row-'.$calendar_id.'">
+    <td class="text-center">'.$calendar_id.'</td>
     <td>'.dateFormat($start).' - '.dateFormat($end).'</td>
-    <td>'.moneyFormat($prezzo_min['prezzo']).'</td>
-    <td>'.moneyFormat($prezzo_medio).'</td>
-    <td>'.moneyFormat($prezzo_max['prezzo']).'</td>
-    <td>'.moneyFormat($oscillazione).'</td>
-    <td>'.Translator::numberToLocale($oscillazione_percentuale, '2').' %</td>
+    <td class="text-right">'.moneyFormat($prezzo_min['prezzo']).'</td>
+    <td class="text-right">'.moneyFormat($prezzo_medio).'</td>
+    <td class="text-right">'.moneyFormat($prezzo_max['prezzo']).'</td>
+    <td class="text-right">'.moneyFormat($oscillazione).'</td>
+    <td class="text-right">'.Translator::numberToLocale($oscillazione_percentuale, '2').' %</td>
     <td>'.$andamento.'</td>
 </tr>';

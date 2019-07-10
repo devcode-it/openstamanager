@@ -2,8 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-$report_name = 'contratto_'.$records[0]['numero'].'.pdf';
-
 $autofill = [
     'count' => 0, // Conteggio delle righe
     'words' => 70, // Numero di parolo dopo cui contare una riga nuova

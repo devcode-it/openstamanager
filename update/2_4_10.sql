@@ -222,3 +222,32 @@ ORDER BY `scadenza` ASC' WHERE `name` = 'Scadenzario';
 
 -- Plugin Statistiche per Articoli
 INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`, `position`, `script`, `enabled`, `default`, `order`, `compatibility`, `version`, `options2`, `options`, `directory`, `help`) VALUES (NULL, 'Statistiche', 'Statistiche', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), 'tab', '', 1, 0, 0, '', '', NULL, 'custom', 'statistiche_articoli', '');
+
+-- Aggiunta nome file per le stampe
+ALTER TABLE `zz_prints` ADD `filename` VARCHAR(255) NOT NULL AFTER `title`;
+UPDATE `zz_prints` SET `filename` = 'Fattura num. {numero} del {data}' WHERE `name` = 'Fattura di vendita';
+UPDATE `zz_prints` SET `filename` = 'Fatturato'  WHERE `name` = 'Fatturato';
+UPDATE `zz_prints` SET `filename` = 'DDT num. {numero} del {data}' WHERE `name` = 'Ddt di vendita (senza costi)';
+UPDATE `zz_prints` SET `filename` = 'DDT num. {numero} del {data}' WHERE `name` = 'Ddt di vendita';
+UPDATE `zz_prints` SET `filename` = 'Ordine fornitore num. {numero} del {data}' WHERE `name` = 'Ordine fornitore (senza costi)';
+UPDATE `zz_prints` SET `filename` = 'Ordine cliente num. {numero} del {data}' WHERE `name` = 'Ordine cliente (senza costi)';
+UPDATE `zz_prints` SET `filename` = 'Ordine fornitore num. {numero} del {data}' WHERE `name` = 'Ordine fornitore';
+UPDATE `zz_prints` SET `filename` = 'Ordine cliente num. {numero} del {data}' WHERE `name` = 'Ordine cliente';
+UPDATE `zz_prints` SET `filename` = 'Ordine cliente num. {numero} del {data}' WHERE `name` = 'Ordine cliente';
+UPDATE `zz_prints` SET `filename` = 'Contratto num. {numero} del {data}' WHERE `name` = 'Contratto (senza costi)';
+UPDATE `zz_prints` SET `filename` = 'Contratto num. {numero} del {data}' WHERE `name` = 'Contratto';
+UPDATE `zz_prints` SET `filename` = 'Intervento num. {numero} del {data}' WHERE `name` = 'Intervento (senza costi)';
+UPDATE `zz_prints` SET `filename` = 'Intervento num. {numero} del {data}' WHERE `name` = 'Intervento';
+UPDATE `zz_prints` SET `filename` = 'Preventivo num. {numero} del {data}' WHERE `name` = 'Preventivo (senza costi)';
+UPDATE `zz_prints` SET `filename` = 'Preventivo num. {numero} del {data}' WHERE `name` = 'Preventivo';
+UPDATE `zz_prints` SET `filename` = 'Registro IVA {tipo}' WHERE `name` = 'Registro IVA';
+UPDATE `zz_prints` SET `filename` = 'Scadenzario' WHERE `name` = 'Scadenzario';
+UPDATE `zz_prints` SET `filename` = 'Spesometro' WHERE `name` = 'Spesometro';
+UPDATE `zz_prints` SET `filename` = 'Mastrino' WHERE `name` = 'Mastrino';
+UPDATE `zz_prints` SET `filename` = 'Inventario' WHERE `name` = 'Inventario magazzino';
+UPDATE `zz_prints` SET `filename` = 'Riepilogo interventi' WHERE `name` = 'Riepilogo interventi';
+UPDATE `zz_prints` SET `filename` = 'Consuntivo contratto num. {numero} del {data}' WHERE `name` = 'Consuntivo contratto (senza costi)';
+UPDATE `zz_prints` SET `filename` = 'Consuntivo contratto num. {numero} del {data}' WHERE `name` = 'Consuntivo contratto';
+UPDATE `zz_prints` SET `filename` = 'Consuntivo preventivo num. {numero} del {data}' WHERE `name` = 'Consuntivo preventivo (senza costi)';
+UPDATE `zz_prints` SET `filename` = 'Consuntivo preventivo num. {numero} del {data}' WHERE `name` = 'Consuntivo preventivo';
+UPDATE `zz_prints` SET `filename` = 'Stampa calendario {periodo}' WHERE `name` = 'Stampa calendario';

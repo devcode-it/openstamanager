@@ -2,8 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-$report_name = 'preventivo_'.$records[0]['numero'].'_cons.pdf';
-
 echo '
 <div class="row">
     <div class="col-xs-6">

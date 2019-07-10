@@ -16,7 +16,7 @@ $default_header$
             <tr>
                 <td valign="top" class="border-full text-center">
                     <p class="small-bold">'.tr('Nr. documento', [], ['upper' => true]).'</p>
-                    <p>$numero_doc$</p>
+                    <p>$numero$</p>
                 </td>
 
                 <td class="border-right border-bottom border-top text-center">

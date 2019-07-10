@@ -93,5 +93,3 @@ $body .= "<td bgcolor='#dddddd' class='first_cell text-right cell-padded'></td>\
 $body .= "<td bgcolor='#dddddd' class='table_cell text-right cell-padded'><b>".moneyFormat($totale_acquisto)."</b></td>\n";
 $body .= "</tr>\n";
 $body .= "</table>\n";
-
-$report_name = 'inventario.pdf';

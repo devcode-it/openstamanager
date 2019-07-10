@@ -1197,23 +1197,22 @@ class FatturaElettronica
         $data = $fattura->getUploadData();
         $dir = static::getDirectory();
 
-        $rapportino_nome = sanitizeFilename($documento['numero_esterno'].'.pdf');
-        $filename = slashes(DOCROOT.'/'.$dir.'/'.$rapportino_nome);
-
-        Uploads::delete($rapportino_nome, $data);
-
         $print = Prints::getModulePredefinedPrint($id_module);
-        Prints::render($print['id'], $documento['id'], $filename);
+        $info = Prints::render($print['id'], $documento['id'], DOCROOT.'/'.$dir);
 
-        Uploads::register(array_merge([
-            'name' => 'Stampa allegata',
-            'original' => $rapportino_nome,
-        ], $data));
+        $name = 'Stampa allegata';
+        $is_presente = database()->fetchNum('SELECT id FROM zz_files WHERE id_module = '.prepare($id_module).' AND id_record = '.prepare($documento['id']).' AND name = '.prepare($name));
+        if(empty($is_presente)) {
+            Uploads::register(array_merge([
+                'name' => $name,
+                'original' => basename($info['path']),
+            ], $data));
+        }
 
         $attachments[] = [
             'NomeAttachment' => 'Fattura',
             'FormatoAttachment' => 'PDF',
-            'Attachment' => base64_encode(file_get_contents($filename)),
+            'Attachment' => base64_encode(file_get_contents($info['path'])),
         ];
 
         return $attachments;

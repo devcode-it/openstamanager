@@ -2,8 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-$report_name = 'ddt_'.$numero.'.pdf';
-
 $autofill = [
     'count' => 0,
     'words' => 70,

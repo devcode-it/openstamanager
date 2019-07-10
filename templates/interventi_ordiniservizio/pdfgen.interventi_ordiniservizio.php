@@ -195,5 +195,3 @@ $body .= '	<br/>In data '.Translator::dateToLocale($data_intervento)." l'impiant
 $body .= "</td></tr>\n";
 
 $body .= "</table>\n\n\n";
-
-$report_name = 'ordine_servizio_intervento_'.$idintervento.'.pdf';

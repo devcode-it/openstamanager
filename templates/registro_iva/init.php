@@ -8,7 +8,6 @@ $date_start = $_SESSION['period_start'];
 $date_end = $_SESSION['period_end'];
 
 $tipo = $dir == 'entrata' ? 'vendite' : 'acquisti';
-$report_name = 'registro_iva_'.$tipo.'.pdf';
 
 $v_iva = [];
 $v_totale = [];
@@ -29,3 +28,8 @@ WHERE dir = '.prepare($dir).' AND idstatodocumento NOT IN (SELECT id FROM co_sta
 GROUP BY co_documenti.id, co_righe_documenti.idiva
 ORDER BY co_documenti.id, co_documenti.'.(($dir == 'entrata') ? 'data' : 'numero');
 $records = $dbo->fetchArray($query);
+
+// Sostituzioni specifiche
+$custom = [
+    'tipo' => $tipo,
+];

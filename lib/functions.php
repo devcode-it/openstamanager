@@ -201,6 +201,10 @@ function translateTemplate()
 
     $template = ob_get_clean();
 
+    $template = str_replace('$id_module$', $id_module, $template);
+    $template = str_replace('$id_plugin$', $id_plugin, $template);
+    $template = str_replace('$id_record$', $id_record, $template);
+
     $template = \HTMLBuilder\HTMLBuilder::replace($template);
 
     $template = str_replace('$id_module$', $id_module, $template);

@@ -76,4 +76,7 @@ function open_movimento(id_movimento, id_module){
     launch_modal("'.tr('Dettagli movimento').'", "'.$structure->fileurl('dettagli_movimento.php').'?id_movimento=" + id_movimento + "&id_module=" + id_module);
 }
 </script>';
+} else {
+    echo '
+<p>'.tr('Nessun movimento presente').'</p>';
 }

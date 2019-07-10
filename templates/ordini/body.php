@@ -17,7 +17,6 @@ function findKey($array, $keySearch)
     return false;
 }
 
-$report_name = 'ordine_'.$numero_ord.'.pdf';
 $has_image = false;
 
 // RIGHE ORDINE

@@ -36,16 +36,9 @@ switch (post('op')) {
 
         if (!empty($interventi)) {
             foreach ($interventi as $r) {
-                $numero = $r['codice'];
-                $numero = str_replace(['/', '\\'], '-', $numero);
-
-                // Gestione della stampa
-                $rapportino_nome = sanitizeFilename($numero.' '.date('Y_m_d', strtotime($r['data_richiesta'])).' '.$r['ragione_sociale'].'.pdf');
-                $filename = slashes($dir.'tmp/'.$rapportino_nome);
-
                 $print = Prints::getModulePredefinedPrint($id_module);
 
-                Prints::render($print['id'], $r['id'], $filename);
+                Prints::render($print['id'], $r['id'], $dir.'tmp/');
             }
 
             $dir = slashes($dir);

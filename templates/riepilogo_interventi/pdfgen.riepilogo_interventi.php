@@ -396,5 +396,3 @@ if (sizeof($rs2) > 0) {
 $body .= "<p align=\"right\">\n";
 $body .= '<big><b>TOTALE INTERVENTI: '.moneyFormat($totale_intervento_scontato + $totale_articoli + $totale_spese)."</b></big>\n";
 $body .= "</p>\n";
-
-$report_name = 'riepilogo_interventi.pdf';

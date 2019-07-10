@@ -2,8 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-$report_name = 'fattura_'.$numero.'.pdf';
-
 $autofill = [
     'count' => 0, // Conteggio delle righe
     'words' => 70, // Numero di parole dopo cui contare una riga nuova

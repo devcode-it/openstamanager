@@ -55,7 +55,7 @@ if (!empty($records[0]['idsede_destinazione'])) {
 // Sostituzioni specifiche
 $custom = [
     'tipo_doc' => $tipo_doc,
-    'numero_doc' => $numero,
+    'numero' => $numero,
     'data' => Translator::dateToLocale($records[0]['data']),
     'pagamento' => $records[0]['tipo_pagamento'],
     'c_destinazione' => $destinazione,

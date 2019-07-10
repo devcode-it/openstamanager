@@ -12,11 +12,3 @@ $costi_intervento = get_costi_intervento($id_record);
 
 $id_cliente = $records[0]['idanagrafica'];
 $id_sede = $records[0]['idsede'];
-
-// Sostituzioni specifiche
-// Imposta numerointervento-data-numerocommessa su intestazione
-$custom = [
-    'intervento_numero' => $records[0]['codice'],
-    'intervento_data' => Translator::dateToLocale($records[0]['data_richiesta']),
-    'commessa_numero' => !empty($records[0]['numero_preventivo']) ? $records[0]['codice'] : '&nbsp;',
-];

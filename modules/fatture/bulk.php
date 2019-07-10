@@ -25,16 +25,9 @@ switch (post('op')) {
 
         if (!empty($fatture)) {
             foreach ($fatture as $r) {
-                $numero = !empty($r['numero_esterno']) ? $r['numero_esterno'] : $r['numero'];
-                $numero = str_replace(['/', '\\'], '-', $numero);
-
-                // Gestione della stampa
-                $rapportino_nome = sanitizeFilename($numero.' '.$r['data'].' '.$r['ragione_sociale'].'.pdf');
-                $filename = slashes($dir.'tmp/'.$rapportino_nome);
-
                 $print = Prints::getModulePredefinedPrint($id_module);
 
-                Prints::render($print['id'], $r['id'], $filename);
+                Prints::render($print['id'], $r['id'], $dir.'tmp/');
             }
 
             // Creazione zip

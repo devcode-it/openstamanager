@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/core.php';
 
-$filename = !empty($filename) ? $filename : null;
+$directory = !empty($directory) ? $directory : null;
 $id_print = get('id_print');
 
 // Retrocompatibilitaà
@@ -14,4 +14,4 @@ if (!empty($ptype)) {
     $id_record = !empty($id_record) ? $id_record : get($print[0]['previous']);
 }
 
-Prints::render($id_print, $id_record, $filename);
+Prints::render($id_print, $id_record, $directory);

@@ -2,8 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-$report_name = 'spesometro.pdf';
-
 $date_start = $_SESSION['period_start'];
 $date_end = $_SESSION['period_end'];
 

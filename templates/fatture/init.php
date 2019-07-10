@@ -71,10 +71,11 @@ if (!empty($record['idsede_destinazione'])) {
         $destinazione .= ' ('.$rsd[0]['provincia'].')';
     }
 }
+
 // Sostituzioni specifiche
 $custom = [
     'tipo_doc' => Stringy\Stringy::create($tipo_doc)->toUpperCase(),
-    'numero_doc' => $numero,
+    'numero' => $numero,
     'data' => Translator::dateToLocale($record['data']),
     'pagamento' => $record['tipo_pagamento'],
     'c_destinazione' => $destinazione,

@@ -83,6 +83,8 @@ class Fattura extends Document
 
         // Salvataggio delle informazioni
         $model->data = $data;
+        $model->data_registrazione = $data;
+        $model->data_competenza = $data;
         $model->id_segment = $id_segment;
 
         $model->idconto = $id_conto;

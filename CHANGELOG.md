@@ -31,7 +31,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Possibilità di ripristinare gli elementi eliminati dove l'eliminazione avviene a livello virtuale (**Anagrafiche**)
  - Plugin **Rinnovi** in **Contratti**
  - Caricamento del **Piano dei conti** attraverso AJAX
- - Plugin *Statistiche* in **Articoli**, con visualizzazione del *Prezzo medio acquisto* in periodo personalizzabili
+ - Plugin *Statistiche* in **Articoli**, con visualizzazione del *Prezzo medio acquisto* in periodi personalizzabili
  - Supporto ai select come **Campi personalizzati**
  - Possibilità di generazione massiva delle fatture elettroniche
 
@@ -44,6 +44,9 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
     - Il modulo **Contratti** permette di definire le tariffe personalizzate per le *nuove sessioni* delle attività collegate
     - La sezione di modifica delle sessioni permette la modifica manuale delle tariffe interessate; il cambiamento del tipo di sessione provoca l'utilizzo delle tariffe definite da **Tecnici e tariffe**
  - Ottimizzazione delle stampe **Scadenzario** e **Registro IVA**, e della tabella principale del modulp **Fatture di vendita**
+ - Miglioramento della plugin *Statistiche* in **Anagrafiche**,con visualizzazione dei dati in periodi personalizzabili
+ - Miglioramento del sistema di importazione delle ricevute delle Fatture Elettroniche, per permetterne il caricamento manuale
+ - Standardizzazione dei nomi predefiniti delle stampa e dei relativi file generati 
  
 ### Fixed
 

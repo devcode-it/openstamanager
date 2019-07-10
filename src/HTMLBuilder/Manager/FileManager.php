@@ -179,6 +179,19 @@ class FileManager implements ManagerInterface
 
 <script>
 $(document).ready(function(){
+    $("#'.$attachment_id.' #blob").change(function(){
+        var nome = $("#'.$attachment_id.' #nome_allegato");
+        
+        if (!nome.val()) {
+            var fullPath = $(this).val();
+            
+            var startIndex = Math.max(fullPath.lastIndexOf("\\\\"), fullPath.lastIndexOf("/")) + 1;
+            var filename = fullPath.substring(startIndex);
+            
+            nome.val(filename);
+        }
+    })
+    
     $("#'.$attachment_id.' #categoria").autocomplete({
         source: '.json_encode($source).',
         minLength: 0

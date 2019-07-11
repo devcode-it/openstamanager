@@ -102,7 +102,9 @@ switch (post('op')) {
         $new = $preventivo->replicate();
         $new->numero = Preventivo::getNextNumero();
         $new->idstato = 1;
-        $new->master_revision = $preventivo->id;
+        $new->save();
+
+        $new->master_revision = $new->id;
         $new->save();
 
         $id_record = $new->id;

@@ -34,6 +34,14 @@ if (empty($idriga)) {
     $prezzo_vendita = '0';
     $sconto_unitario = 0;
 
+    // Aggiunta sconto di default da listino per le vendite
+    $listino = $dbo->fetchArray('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_listini ON an_anagrafiche.idlistino_vendite=mg_listini.id WHERE idanagrafica='.prepare($idanagrafica));
+
+    if (!empty($listino[0]['prc_guadagno'])) {
+        $sconto_unitario = $listino[0]['prc_guadagno'];
+        $tipo_sconto = 'PRC';
+    }
+
     $idimpianto = 0;
     $idiva = setting('Iva predefinita');
 } else {

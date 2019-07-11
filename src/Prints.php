@@ -366,7 +366,7 @@ class Prints
 
         $replaces = [];
         foreach ($original_replaces as $key => $value) {
-            $key = substr($key, 1, -1);
+            $key = str_replace("$", "", $key);
 
             $replaces['{'.$key.'}'] = $value;
         }
@@ -398,6 +398,9 @@ class Prints
 
         $user = Auth::user();
 
+        // Generazione a singoli pezzi
+        $single_pieces = self::filepath($id_print, 'piece.php');
+
         // Impostazioni di default
         $default = include App::filepath('templates/base|custom|', 'settings.php');
 
@@ -406,6 +409,12 @@ class Prints
 
         // Individuazione delle impostazioni finali
         $settings = array_merge($default, (array) $custom);
+
+        // Individuazione delle variabili fondamentali per la sostituzione dei contenuti
+        include self::filepath($id_print, 'init.php');
+
+        // Individuazione delle variabili per la sostituzione
+        include DOCROOT.'/templates/info.php';
 
         // Instanziamento dell'oggetto mPDF
         $mpdf = new \Mpdf\Mpdf([
@@ -438,11 +447,30 @@ class Prints
         // Impostazione del font-size
         $mpdf->WriteHTML('body {font-size: '.$settings['font-size'].'pt;}', 1);
 
-        // Individuazione delle variabili fondamentali per la sostituzione dei contenuti
-        include self::filepath($id_print, 'init.php');
+        // Generazione totale
+        if(empty($single_pieces)) {
+            ob_start();
+            include self::filepath($id_print, 'body.php');
+            $report = ob_get_clean();
 
-        // Individuazione delle variabili per la sostituzione
-        include DOCROOT.'/templates/info.php';
+            if (!empty($autofill)) {
+                $result = '';
+
+                // max($autofill['additional']) = $autofill['rows'] - 1
+                for ($i = (floor($autofill['count']) % $autofill['rows']); $i < $autofill['additional']; ++$i) {
+                    $result .= '
+                    <tr>';
+                    for ($c = 0; $c < $autofill['columns']; ++$c) {
+                        $result .= '
+                        <td>&nbsp;</td>';
+                    }
+                    $result .= '
+                    </tr>';
+                }
+
+                $report = str_replace('|autofill|', $result, $report);
+            }
+        }
 
         // Generazione dei contenuti dell'header
         ob_start();
@@ -468,8 +496,7 @@ class Prints
         $mpdf->SetHTMLHeader($head);
 
         // Generazione dei contenuti della stampa
-        // Generazione a singoli pezzi
-        $single_pieces = self::filepath($id_print, 'piece.php');
+
         if (!empty($single_pieces)) {
             ob_start();
             include self::filepath($id_print, 'top.php');
@@ -492,31 +519,6 @@ class Prints
             $mpdf->WriteHTML($bottom);
 
             $report = '';
-        }
-
-        // Generazione totale
-        else {
-            ob_start();
-            include self::filepath($id_print, 'body.php');
-            $report = ob_get_clean();
-
-            if (!empty($autofill)) {
-                $result = '';
-
-                // max($autofill['additional']) = $autofill['rows'] - 1
-                for ($i = (floor($autofill['count']) % $autofill['rows']); $i < $autofill['additional']; ++$i) {
-                    $result .= '
-                <tr>';
-                    for ($c = 0; $c < $autofill['columns']; ++$c) {
-                        $result .= '
-                    <td>&nbsp;</td>';
-                    }
-                    $result .= '
-                </tr>';
-                }
-
-                $report = str_replace('|autofill|', $result, $report);
-            }
         }
 
         // Operazioni di sostituzione

@@ -100,16 +100,14 @@ echo '
                 </td>
             </tr>';
 
-if ($fattura_accompagnatoria) {
+if (!empty($destinazione)) {
     echo '
             <tr>
                 <td colspan=2 class="border-full">
                     <p class="small-bold">'.tr('Destinazione diversa', [], ['upper' => true]).'</p>
-                    <p>$c_destinazione$</p>
+                    <small>$c_destinazione$</small>
                 </td>
             </tr>';
-
-    $settings['header-height'] += 13;
 }
 
 echo '

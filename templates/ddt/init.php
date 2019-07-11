@@ -18,6 +18,7 @@ $records = $dbo->fetchArray($q);
 $module_name = ($records[0]['dir'] == 'entrata') ? 'Ddt di vendita' : 'Ddt di acquisto';
 
 $id_cliente = $records[0]['idanagrafica'];
+$id_sede = $record['idsede_partenza'];
 
 $tipo_doc = $records[0]['tipo_doc'];
 if (empty($records[0]['numero_esterno'])) {

@@ -62,6 +62,7 @@ switch ($resource) {
                     $idriga = $rs_copie[0]['id'];
                 } else {
                     $idintervento = get_new_idintervento();
+                    $stato = $dbo->fetchArray("SELECT * FROM in_statiintervento WHERE descrizione = 'Chiamata'");
 
                     $dbo->insert('in_interventi', [
                         'idintervento' => $idintervento,
@@ -69,7 +70,7 @@ switch ($resource) {
                         'data_richiesta' => Carbon::now(),
                         'richiesta' => $richiesta,
                         'idtipointervento' => 0,
-                        'idstatointervento' => 'CALL',
+                        'idstatointervento' => $stato['idstatointerventoWIP'],
                         'oggetto' => $summary,
                     ]);
 

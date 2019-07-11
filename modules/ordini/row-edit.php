@@ -13,7 +13,7 @@ $options = [
     'action' => 'edit',
     'dir' => $documento->direzione,
     'idanagrafica' => $documento['idanagrafica'],
-    'totale' => $documento->totale,
+    'imponibile_scontato' => $documento->imponibile_scontato,
 ];
 
 // Dati della riga

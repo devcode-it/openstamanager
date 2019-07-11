@@ -63,14 +63,19 @@ $default_header$
                     <p>$c_ragionesociale$</p>
                     <p>$c_indirizzo$<br>$c_citta_full$</p>
                 </td>
-            </tr>
+            </tr>';
 
+if (!empty($destinazione)) {
+    echo '
             <tr>
                 <td class="border-full" style="height:16mm;">
-                    <p class="small-bold">'.tr('Destinazione diversa', [], ['upper' => true]).'</p>
+                    <p class="small-bold">' . tr('Destinazione diversa', [], ['upper' => true]) . '</p>
                     <small>$c_destinazione$</small>
                 </td>
-            </tr>
+            </tr>';
+}
+
+echo '
         </table>
     </div>
 </div>';

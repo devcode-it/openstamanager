@@ -31,7 +31,10 @@ if (!empty($idanagrafica)) {
     $rs = $dbo->fetchArray('SELECT idtipointervento_default, idzona FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
     $idtipointervento = $rs[0]['idtipointervento_default'];
     $idzona = $rs[0]['idzona'];
-    $idstatointervento = 'WIP';
+
+    $stato = $dbo->fetchArray("SELECT * FROM in_statiintervento WHERE descrizione = 'In programmazione'");
+    $idstatointervento = $stato['idstatointervento'];
+
     $richiesta = filter('richiesta');
 }
 
@@ -102,7 +105,7 @@ elseif (!empty($idcontratto) && !empty($idcontratto_riga)) {
     }
 
     // Seleziono "In programmazione" come stato
-    $rs = $dbo->fetchArray("SELECT * FROM in_statiintervento WHERE idstatointervento='WIP'");
+    $rs = $dbo->fetchArray("SELECT * FROM in_statiintervento WHERE descrizione = 'In programmazione'");
     $idstatointervento = $rs[0]['idstatointervento'];
 }
 

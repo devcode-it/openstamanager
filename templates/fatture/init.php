@@ -33,7 +33,7 @@ $bic_banca = $banca['bic'];
 $module_name = ($record['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
 
 $id_cliente = $record['idanagrafica'];
-$id_sede = $record['idsede'];
+$id_sede = $record['idsede_partenza'];
 
 $tipo_doc = $record['tipo_doc'];
 $numero = !empty($record['numero_esterno']) ? $record['numero_esterno'] : $record['numero'];
@@ -70,6 +70,8 @@ if (!empty($record['idsede_destinazione'])) {
     if (!empty($rsd[0]['provincia'])) {
         $destinazione .= ' ('.$rsd[0]['provincia'].')';
     }
+
+    $settings['header-height'] += 7;
 }
 
 // Sostituzioni specifiche

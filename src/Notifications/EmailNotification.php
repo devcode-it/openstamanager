@@ -65,7 +65,7 @@ class EmailNotification extends Notification
         $this->setAccount($template['id_smtp']);
 
         if (!empty($id_record)) {
-            $module = Modules::get($template['id']);
+            $module = Modules::get($template['id_module']);
 
             $body = $module->replacePlaceholders($id_record, $template['body']);
             $subject = $module->replacePlaceholders($id_record, $template['subject']);

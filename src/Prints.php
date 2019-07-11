@@ -366,7 +366,7 @@ class Prints
 
         $replaces = [];
         foreach ($original_replaces as $key => $value) {
-            $key = str_replace("$", "", $key);
+            $key = str_replace('$', '', $key);
 
             $replaces['{'.$key.'}'] = $value;
         }
@@ -448,7 +448,7 @@ class Prints
         $mpdf->WriteHTML('body {font-size: '.$settings['font-size'].'pt;}', 1);
 
         // Generazione totale
-        if(empty($single_pieces)) {
+        if (empty($single_pieces)) {
             ob_start();
             include self::filepath($id_print, 'body.php');
             $report = ob_get_clean();

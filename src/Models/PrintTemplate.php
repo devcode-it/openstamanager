@@ -8,7 +8,8 @@ use Traits\StoreTrait;
 
 class PrintTemplate extends Model
 {
-    use PathTrait, StoreTrait;
+    use PathTrait;
+    use StoreTrait;
 
     protected $table = 'zz_prints';
     protected $main_folder = 'templates';

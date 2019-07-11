@@ -69,7 +69,7 @@ if (!empty($destinazione)) {
     echo '
             <tr>
                 <td class="border-full" style="height:16mm;">
-                    <p class="small-bold">' . tr('Destinazione diversa', [], ['upper' => true]) . '</p>
+                    <p class="small-bold">'.tr('Destinazione diversa', [], ['upper' => true]).'</p>
                     <small>$c_destinazione$</small>
                 </td>
             </tr>';

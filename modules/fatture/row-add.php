@@ -40,14 +40,6 @@ $result = [
 $iva = $dbo->fetchArray('SELECT idiva_'.($dir == 'uscita' ? 'acquisti' : 'vendite').' AS idiva FROM an_anagrafiche WHERE idanagrafica='.prepare($documento['idanagrafica']));
 $result['idiva'] = $iva[0]['idiva'] ?: setting('Iva predefinita');
 
-// Aggiunta sconto di default da listino per le vendite
-$listino = $dbo->fetchArray('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_listini ON an_anagrafiche.idlistino_'.($dir == 'uscita' ? 'acquisti' : 'vendite').'=mg_listini.id WHERE idanagrafica='.prepare($documento['idanagrafica']));
-
-if (!empty($listino[0]['prc_guadagno'])) {
-    $result['sconto_unitario'] = $listino[0]['prc_guadagno'];
-    $result['tipo_sconto'] = 'PRC';
-}
-
 // Leggo la ritenuta d'acconto predefinita per l'anagrafica e se non c'è leggo quella predefinita generica
 // id_ritenuta_acconto_vendite oppure id_ritenuta_acconto_acquisti
 $ritenuta_acconto = $dbo->fetchOne('SELECT id_ritenuta_acconto_'.($dir == 'uscita' ? 'acquisti' : 'vendite').' AS id_ritenuta_acconto FROM an_anagrafiche WHERE idanagrafica='.prepare($documento['idanagrafica']));
@@ -65,6 +57,14 @@ if (get('is_descrizione') !== null) {
     $options['op'] = 'manage_descrizione';
 } elseif (get('is_articolo') !== null) {
     $file = 'articolo';
+
+    // Aggiunta sconto di default da listino per le vendite
+    $listino = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_listini ON an_anagrafiche.idlistino_vendite=mg_listini.id WHERE idanagrafica='.prepare($documento['idanagrafica']));
+
+    if (!empty($listino['prc_guadagno'])) {
+        $result['sconto_unitario'] = $listino['prc_guadagno'];
+        $result['tipo_sconto'] = 'PRC';
+    }
 
     $options['op'] = 'manage_articolo';
 } elseif (get('is_sconto') !== null) {

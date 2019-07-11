@@ -16,9 +16,9 @@ switch (filter('op')) {
 
         echo json_encode([
             'label' => tr('Fatturato').' - '.tr('Periodo _NUM_', [
-                '_NUM_' => $calendar_id
+                '_NUM_' => $calendar_id,
             ]),
-            'results' => $results
+            'results' => $results,
         ]);
 
         break;
@@ -29,9 +29,9 @@ switch (filter('op')) {
 
         echo json_encode([
             'label' => tr('Acquisti').' - '.tr('Periodo _NUM_', [
-                '_NUM_' => $calendar_id
+                '_NUM_' => $calendar_id,
             ]),
-            'results' => $results
+            'results' => $results,
         ]);
 
         break;

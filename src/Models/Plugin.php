@@ -11,7 +11,8 @@ use Traits\UploadTrait;
 
 class Plugin extends Model
 {
-    use ManagerTrait, StoreTrait;
+    use ManagerTrait;
+    use StoreTrait;
     use UploadTrait {
         getUploadDirectoryAttribute as protected defaultUploadDirectory;
     }

@@ -252,7 +252,7 @@ switch (post('op')) {
         if (post('idriga') != null) {
             flash()->info(tr('Sconto/maggiorazione modificato!'));
         } else {
-            flash()->info(tr('Sconto/maggiorazione aggiunta!'));
+            flash()->info(tr('Sconto/maggiorazione aggiunto!'));
         }
 
         break;

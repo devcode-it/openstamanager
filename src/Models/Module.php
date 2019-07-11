@@ -11,7 +11,9 @@ use Traits\UploadTrait;
 
 class Module extends Model
 {
-    use ManagerTrait, UploadTrait, StoreTrait;
+    use ManagerTrait;
+    use UploadTrait;
+    use StoreTrait;
 
     protected $table = 'zz_modules';
     protected $main_folder = 'modules';

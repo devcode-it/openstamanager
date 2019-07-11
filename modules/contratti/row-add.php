@@ -31,20 +31,20 @@ $result = [
 $iva = $dbo->fetchArray('SELECT idiva_vendite AS idiva FROM an_anagrafiche WHERE idanagrafica='.prepare($documento['idanagrafica']));
 $result['idiva'] = $iva[0]['idiva'] ?: setting('Iva predefinita');
 
-// Aggiunta sconto di default da listino per le vendite
-$listino = $dbo->fetchArray('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_listini ON an_anagrafiche.idlistino_vendite=mg_listini.id WHERE idanagrafica='.prepare($documento['idanagrafica']));
-
-if (!empty($listino[0]['prc_guadagno'])) {
-    $result['sconto_unitario'] = $listino[0]['prc_guadagno'];
-    $result['tipo_sconto'] = 'PRC';
-}
-
 // Importazione della gestione dedicata
 $file = 'riga';
 if (get('is_descrizione') !== null) {
     $file = 'descrizione';
 } elseif (get('is_articolo') !== null) {
     $file = 'articolo';
+
+    // Aggiunta sconto di default da listino per le vendite
+    $listino = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_listini ON an_anagrafiche.idlistino_vendite=mg_listini.id WHERE idanagrafica='.prepare($documento['idanagrafica']));
+
+    if (!empty($listino['prc_guadagno'])) {
+        $result['sconto_unitario'] = $listino['prc_guadagno'];
+        $result['tipo_sconto'] = 'PRC';
+    }
 } elseif (get('is_sconto') !== null) {
     $file = 'sconto';
 

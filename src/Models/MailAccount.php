@@ -8,7 +8,8 @@ use Traits\StoreTrait;
 
 class MailAccount extends Model
 {
-    use StoreTrait, SoftDeletes;
+    use StoreTrait;
+    use SoftDeletes;
 
     protected $table = 'zz_smtps';
 

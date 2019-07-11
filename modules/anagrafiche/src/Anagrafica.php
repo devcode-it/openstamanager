@@ -12,7 +12,8 @@ use Util\Generator;
 
 class Anagrafica extends Model
 {
-    use RecordTrait, SoftDeletes;
+    use RecordTrait;
+    use SoftDeletes;
 
     protected $table = 'an_anagrafiche';
     protected $primaryKey = 'idanagrafica';

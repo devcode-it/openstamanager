@@ -224,7 +224,7 @@ class EmailNotification extends Notification
         }
 
         $list = explode($value, ';');
-        foreach ($list as $element){
+        foreach ($list as $element) {
             $this->receivers[] = [
                 'email' => $element,
                 'type' => $type,

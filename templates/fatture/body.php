@@ -13,10 +13,6 @@ $autofill = [
 $v_iva = [];
 $v_totale = [];
 
-$sconto = [];
-$imponibile = [];
-$iva = [];
-
 // Intestazione tabella per righe
 echo "
 <table class='table table-striped table-bordered' id='contents'>
@@ -43,35 +39,20 @@ echo "
     <tbody>';
 
 // RIGHE FATTURA CON ORDINAMENTO UNICO
-$righe = $dbo->fetchArray("SELECT *,
-	IFNULL((SELECT `codice` FROM `mg_articoli` WHERE `id` = `co_righe_documenti`.`idarticolo`), '') AS codice_articolo,
-    (SELECT GROUP_CONCAT(`serial` SEPARATOR ', ') FROM `mg_prodotti` WHERE `id_riga_documento` = `co_righe_documenti`.`id`) AS seriali,
-    (SELECT `percentuale` FROM `co_iva` WHERE `id` = `co_righe_documenti`.`idiva`) AS perc_iva
-FROM `co_righe_documenti` WHERE `iddocumento` = ".prepare($id_record).' ORDER BY `order`');
-foreach ($righe as $r) {
+$righe = $fattura->getRighe();
+foreach ($righe as $riga) {
+    $r = $riga->toArray();
     $count = 0;
     $count += ceil(strlen($r['descrizione']) / $autofill['words']);
     $count += substr_count($r['descrizione'], PHP_EOL);
 
     $v_iva[$r['desc_iva']] = sum($v_iva[$r['desc_iva']], $r['iva']);
-    $v_totale[$r['desc_iva']] = sum($v_totale[$r['desc_iva']], [
-        $r['subtotale'], -$r['sconto'],
-    ]);
+    $v_totale[$r['desc_iva']] = sum($v_totale[$r['desc_iva']], $riga->totale_imponibile);
 
     // Valori assoluti
     $r['qta'] = abs($r['qta']);
-    if (empty($r['sconto_globale'])) {
-        $r['subtotale'] = abs($r['subtotale']);
-    } else {
-        $r['subtotale'] = ($r['subtotale']);
-    }
     $r['sconto_unitario'] = abs($r['sconto_unitario']);
     $r['sconto'] = abs($r['sconto']);
-    if (empty($r['sconto_globale'])) {
-        $r['iva'] = abs($r['iva']);
-    } else {
-        $r['iva'] = ($r['iva']);
-    }
 
     echo '
         <tr>
@@ -148,13 +129,13 @@ foreach ($righe as $r) {
             <td class='text-right'>";
     if (empty($r['is_descrizione'])) {
         echo '
-				'.(empty($r['qta']) ? '' : moneyFormat($r['subtotale'] / $r['qta']));
+				'.(empty($r['qta']) ? '' : moneyFormat($riga->prezzo_unitario_vendita));
 
-        if ($r['sconto'] > 0) {
+        if ($riga->sconto > 0) {
             echo "
                 <br><small class='text-muted'>".tr('sconto _TOT_ _TYPE_', [
-                    '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
-                    '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : currency()),
+                    '_TOT_' => Translator::numberToLocale($riga->sconto_unitario),
+                    '_TYPE_' => ($riga->tipo_sconto == 'PRC' ? '%' : currency()),
                 ]).'</small>';
 
             if ($count <= 1) {
@@ -171,19 +152,7 @@ foreach ($righe as $r) {
             <td class='text-right'>";
     if (empty($r['is_descrizione'])) {
         echo '
-				'.moneyFormat($r['subtotale'] - $r['sconto']);
-
-        if ($r['sconto'] > 0) {
-            /*echo "
-                <br><small class='text-muted'>".tr('sconto _TOT_ _TYPE_', [
-                    '_TOT_' => Translator::numberToLocale($r['sconto']),
-                    '_TYPE_' => currency(),
-                ]).'</small>';*/
-
-            if ($count <= 1) {
-                $count += 0.4;
-            }
-        }
+				'.moneyFormat($riga->totale_imponibile);
     }
     echo '
             </td>';
@@ -191,9 +160,9 @@ foreach ($righe as $r) {
     // Iva
     echo '
             <td class="text-center">';
-    if (empty($r['is_descrizione']) && empty($r['sconto_globale'])) {
+    if (empty($r['is_descrizione'])) {
         echo '
-                '.Translator::numberToLocale($r['perc_iva'], 0);
+                '.Translator::numberToLocale($riga->aliquota->percentuale, 0);
     }
     echo '
             </td>
@@ -250,31 +219,3 @@ echo '
     </tr>';
 echo '
 </table>';
-
-// Calcoli
-$imponibile = sum(array_column($righe, 'subtotale'));
-$sconto = sum(array_column($righe, 'sconto'));
-$iva = sum(array_column($righe, 'iva'));
-
-$totale_imponibile = sum($imponibile, -$sconto);
-
-$totale_iva = sum($iva, $record['iva_rivalsainps']);
-
-$totale = sum([
-    $totale_imponibile,
-    $record['rivalsainps'],
-    $totale_iva,
-]);
-
-$netto_a_pagare = sum([
-    $totale,
-    -$record['ritenutaacconto'],
-]);
-
-$imponibile = abs($imponibile);
-$sconto = abs($sconto);
-$iva = abs($iva);
-$totale_imponibile = abs($totale_imponibile);
-$totale_iva = abs($totale_iva);
-$totale = abs($totale);
-$netto_a_pagare = abs($netto_a_pagare);

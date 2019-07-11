@@ -24,6 +24,16 @@ abstract class Discount extends Row
         return $this->attributes['iva'];
     }
 
+    public function isSconto()
+    {
+        return $this->totale_imponibile > 0;
+    }
+
+    public function isMaggiorazione()
+    {
+        return !$this->isSconto();
+    }
+
     /**
      * Effettua i conti per l'IVA.
      */

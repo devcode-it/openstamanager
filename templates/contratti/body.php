@@ -187,7 +187,7 @@ echo '
 // TOTALE COSTI FINALI
 if ($options['pricing']) {
     // Eventuale sconto incondizionato
-    if (!empty($sconto)) {
+    if ($sconto > 0) {
         // Totale imponibile
         echo '
     <tr>
@@ -207,7 +207,7 @@ if ($options['pricing']) {
         </td>
 
         <th class="text-right">
-            <b>-'.moneyFormat($sconto, 2).'</b>
+            <b>'.moneyFormat($sconto, 2).'</b>
         </th>
     </tr>';
     }

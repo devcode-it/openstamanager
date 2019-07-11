@@ -231,7 +231,7 @@ if (abs($sconto) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.tr('Sconto', [], ['upper' => true]).':</b>
+            <b>'.tr('Sconto/maggiorazione', [], ['upper' => true]).':</b>
         </td>
 
         <td align="right">

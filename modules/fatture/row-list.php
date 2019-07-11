@@ -188,7 +188,7 @@ foreach ($righe as $row) {
         echo '
             '.moneyFormat($row->prezzo_unitario_vendita);
 
-        if ($dir == 'entrata') {
+        if ($dir == 'entrata' && $row->prezzo_unitario_acquisto != 0) {
             echo '
             <br><small>
                 '.tr('Acquisto').': '.moneyFormat($row->prezzo_unitario_acquisto).'
@@ -308,7 +308,7 @@ if (!empty($sconto)) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.tr('Sconto', [], ['upper' => true]).':</b>
+            <b>'.tr('Sconto/maggiorazione', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
             '.moneyFormat($sconto, 2).'

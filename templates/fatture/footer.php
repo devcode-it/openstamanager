@@ -1,11 +1,22 @@
 <?php
 
+// Calcoli
+$imponibile = $fattura->imponibile;
+$sconto = $fattura->sconto;
+$totale_imponibile = $fattura->totale_imponibile;
+$totale_iva = $fattura->iva;
+$totale = $fattura->totale;
+$netto_a_pagare = $fattura->netto;
+
+$show_sconto = $sconto > 0;
+$width = round(100 / ($show_sconto ? 5 : 3), 2);
+
 // SCADENZE  |  TOTALI
 // TABELLA PRINCIPALE
 echo "
 <table class='table-bordered'>
     <tr>
-        <td colspan=".(!empty($sconto) ? 5 : 3)." class='cell-padded' style='height:".($record['ritenutaacconto'] != 0 ? 20 : 30)."mm'>";
+        <td colspan=".($show_sconto ? 5 : 3)." class='cell-padded' style='height:".($record['ritenutaacconto'] != 0 ? 20 : 30)."mm'>";
 
 // Tabella (scadenze + iva)
 echo "
@@ -92,7 +103,7 @@ if (!empty($v_iva)) {
 echo '
                     </td>
 
-                    <td style="width:10mm;">&nbsp;</td>";
+                    <td style="width:10mm;">&nbsp;</td>
                 </tr>';
 // Fine tabelle iva
 echo '
@@ -102,14 +113,13 @@ echo '
         </td>';
 
 // TOTALI
-$width = round(100 / (!empty($sconto) ? 5 : 3), 2);
 echo "
     <tr>
         <th class='text-center small' style='width:".$width."'>
             ".tr('Imponibile', [], ['upper' => true]).'
         </th>';
 
-if (!empty($sconto)) {
+if ($show_sconto) {
     echo "
         <th class='text-center small' style='width:".$width."'>
             ".tr('Sconto', [], ['upper' => true])."
@@ -132,18 +142,18 @@ echo "
 
     <tr>
         <td class='cell-padded text-center'>
-            ".moneyFormat($imponibile, 2).'
+            ".moneyFormat($show_sconto ? $imponibile : $totale_imponibile, 2).'
         </td>';
 
-if (!empty($sconto)) {
+if ($show_sconto) {
     echo "
 
         <td class='cell-padded text-center'>
-            ".moneyFormat($sconto, 2)."
+            ".moneyFormat(abs($sconto), 2)."
         </td>
 
         <td class='cell-padded text-center'>
-            ".moneyFormat($imponibile - $sconto, 2).'
+            ".moneyFormat($totale_imponibile, 2).'
         </td>';
 }
 

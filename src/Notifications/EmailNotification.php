@@ -223,10 +223,13 @@ class EmailNotification extends Notification
             return;
         }
 
-        $this->receivers[] = [
-            'email' => $value,
-            'type' => $type,
-        ];
+        $list = explode($value, ';');
+        foreach ($list as $element){
+            $this->receivers[] = [
+                'email' => $element,
+                'type' => $type,
+            ];
+        }
 
         $this->logs['receivers'][] = $value;
     }

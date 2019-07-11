@@ -61,7 +61,7 @@ if (count($rs2) > 0) {
         <td class="text-right">
             '.moneyFormat($r['prezzo_vendita']);
 
-            if ($r['sconto_unitario'] > 0) {
+            if (abs($r['sconto_unitario']) > 0) {
                 echo '
             <br><span class="label label-danger">
                 - '.tr('sconto _TOT_ _TYPE_', [

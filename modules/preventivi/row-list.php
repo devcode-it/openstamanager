@@ -65,7 +65,7 @@ foreach ($rs as $r) {
         echo '
                 '.moneyFormat($r['subtotale'] / $r['qta']);
 
-        if ($r['sconto_unitario'] > 0) {
+        if (abs($r['sconto_unitario']) > 0) {
             echo '
                 <br><small class="label label-danger">'.tr('sconto _TOT_ _TYPE_', [
                     '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),

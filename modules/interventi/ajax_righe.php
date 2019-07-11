@@ -62,13 +62,13 @@ if (count($rs2) > 0) {
             '.moneyFormat($r['prezzo_vendita']);
 
             if (abs($r['sconto_unitario']) > 0) {
+                $text = $r['sconto_unitario'] > 0 ? tr('sconto _TOT_ _TYPE_') : tr('maggiorazione _TOT_ _TYPE_');
+
                 echo '
-            <br><span class="label label-danger">
-                - '.tr('sconto _TOT_ _TYPE_', [
-                    '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
+            <br><small class="label label-danger">'.replace($text, [
+                    '_TOT_' => Translator::numberToLocale(abs($r['sconto_unitario'])),
                     '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : currency()),
-                ]).'
-            </span>';
+                ]).'</small>';
             }
 
             echo '

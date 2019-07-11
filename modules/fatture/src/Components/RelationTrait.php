@@ -41,12 +41,12 @@ trait RelationTrait
      */
     public function getTotaleAttribute()
     {
-        return $this->imponibile_scontato + $this->iva + $this->rivalsa_inps + $this->iva_rivalsa_inps;
+        return $this->totale_imponibile + $this->iva + $this->rivalsa_inps + $this->iva_rivalsa_inps;
     }
 
     public function getRivalsaINPSAttribute()
     {
-        return $this->imponibile_scontato / 100 * $this->rivalsa->percentuale;
+        return $this->totale_imponibile / 100 * $this->rivalsa->percentuale;
     }
 
     public function getIvaRivalsaINPSAttribute()
@@ -56,7 +56,7 @@ trait RelationTrait
 
     public function getRitenutaAccontoAttribute()
     {
-        $result = $this->imponibile_scontato;
+        $result = $this->totale_imponibile;
 
         if ($this->calcolo_ritenuta_acconto == 'IMP+RIV') {
             $result += $this->rivalsainps;
@@ -71,7 +71,7 @@ trait RelationTrait
     public function getRitenutaContributiAttribute()
     {
         if ($this->attributes['ritenuta_contributi']) {
-            $result = $this->imponibile_scontato;
+            $result = $this->totale_imponibile;
             $ritenuta = $this->parent->ritenutaContributi;
 
             $result = $result * $ritenuta->percentuale_imponibile / 100;

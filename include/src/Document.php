@@ -48,13 +48,13 @@ abstract class Document extends Model
     }
 
     /**
-     * Calcola l'imponibile scontato del documento.
+     * Calcola il totale imponibile del documento.
      *
      * @return float
      */
-    public function getImponibileScontatoAttribute()
+    public function getTotaleImponibileAttribute()
     {
-        return $this->calcola('imponibile_scontato');
+        return $this->calcola('totale_imponibile');
     }
 
     /**

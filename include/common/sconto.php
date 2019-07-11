@@ -39,7 +39,7 @@ echo '
         var sconto_percentuale = form.find("#sconto_percentuale");
         var sconto_unitario = form.find("#sconto_unitario");
 
-        var totale = '.($options['imponibile_scontato'] ?: 0).';
+        var totale = '.($options['totale_imponibile'] ?: 0).';
         
         function aggiorna_sconto_percentuale() {
             var sconto = sconto_percentuale.val().toEnglish();

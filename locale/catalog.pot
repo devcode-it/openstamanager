@@ -4101,7 +4101,7 @@ msgstr ""
 #: templates/fatture/footer.php:119 templates/interventi/body.php:477
 #: templates/ordini/body.php:236 templates/preventivi/body.php:226
 #: templates/preventivi_cons/body.php:497
-msgid "Imponibile scontato"
+msgid "Totale imponibile"
 msgstr ""
 
 #: modules/contratti/widgets/contratti.pianificazionedashboard.interventi.php:91

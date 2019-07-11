@@ -116,7 +116,7 @@ if (!empty($sconto)) {
         </th>
 
         <th class='text-center small' style='width:".$width."'>
-            ".tr('Imponibile scontato', [], ['upper' => true]).'
+            ".tr('Totale imponibile', [], ['upper' => true]).'
         </th>';
 }
 

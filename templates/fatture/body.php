@@ -256,12 +256,12 @@ $imponibile = sum(array_column($righe, 'subtotale'));
 $sconto = sum(array_column($righe, 'sconto'));
 $iva = sum(array_column($righe, 'iva'));
 
-$imponibile_scontato = sum($imponibile, -$sconto);
+$totale_imponibile = sum($imponibile, -$sconto);
 
 $totale_iva = sum($iva, $record['iva_rivalsainps']);
 
 $totale = sum([
-    $imponibile_scontato,
+    $totale_imponibile,
     $record['rivalsainps'],
     $totale_iva,
 ]);
@@ -274,7 +274,7 @@ $netto_a_pagare = sum([
 $imponibile = abs($imponibile);
 $sconto = abs($sconto);
 $iva = abs($iva);
-$imponibile_scontato = abs($imponibile_scontato);
+$totale_imponibile = abs($totale_imponibile);
 $totale_iva = abs($totale_iva);
 $totale = abs($totale);
 $netto_a_pagare = abs($netto_a_pagare);

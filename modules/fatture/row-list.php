@@ -28,7 +28,7 @@ foreach ($righe as $row) {
     // Valori assoluti
     $riga['qta'] = abs($riga['qta']);
     $riga['prezzo_unitario_acquisto'] = abs($riga['prezzo_unitario_acquisto']);
-    $riga['imponibile_scontato'] = ($fattura->isNotaDiAccredito() ? -$row->imponibile_scontato : $row->imponibile_scontato);
+    $riga['totale_imponibile'] = ($fattura->isNotaDiAccredito() ? -$row->totale_imponibile : $row->totale_imponibile);
     $riga['sconto_unitario'] = abs($riga['sconto_unitario']);
     $riga['sconto'] = abs($riga['sconto']);
     $riga['iva'] = abs($riga['iva']);
@@ -196,9 +196,11 @@ foreach ($righe as $row) {
         }
 
         if (abs($row->sconto_unitario) > 0) {
+            $text = $row->sconto_unitario > 0 ? tr('sconto _TOT_ _TYPE_') : tr('maggiorazione _TOT_ _TYPE_');
+
             echo '
-            <br><small class="label label-danger">'.tr('sconto _TOT_ _TYPE_', [
-                '_TOT_' => Translator::numberToLocale($row->sconto_unitario),
+            <br><small class="label label-danger">'.replace($text, [
+                '_TOT_' => Translator::numberToLocale(abs($row->sconto_unitario)),
                 '_TYPE_' => ($row->tipo_sconto == 'PRC' ? '%' : currency()),
             ]).'</small>';
         }
@@ -225,7 +227,7 @@ foreach ($righe as $row) {
         <td class="text-right">';
     if (!$row->isDescrizione()) {
         echo '
-            '.moneyFormat($riga['imponibile_scontato']);
+            '.moneyFormat($riga['totale_imponibile']);
         /*
         <br><small class="text-'.($row->guadagno > 0 ? 'success' : 'danger').'">
             '.tr('Guadagno').': '.moneyFormat($row->guadagno).'
@@ -283,7 +285,7 @@ echo '
 
 $imponibile = abs($fattura->imponibile);
 $sconto = abs($fattura->sconto);
-$imponibile_scontato = abs($fattura->imponibile_scontato);
+$totale_imponibile = abs($fattura->totale_imponibile);
 $iva = abs($fattura->iva);
 $totale = abs($fattura->totale);
 $netto_a_pagare = abs($fattura->netto);
@@ -314,14 +316,14 @@ if (!empty($sconto)) {
         <td></td>
     </tr>';
 
-    // IMPONIBILE SCONTATO
+    // TOTALE IMPONIBILE
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.tr('Imponibile scontato', [], ['upper' => true]).':</b>
+            <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.moneyFormat($imponibile_scontato, 2).'
+            '.moneyFormat($totale_imponibile, 2).'
         </td>
         <td></td>
     </tr>';

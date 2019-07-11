@@ -219,11 +219,11 @@ if ($options['pricing'] and !isset($options['hide_total'])) {
         </th>
     </tr>';
 
-        // Imponibile scontato
+        // Totale imponibile
         echo '
     <tr>
         <td colspan="3" class="text-right border-top">
-            <b>'.tr('Imponibile scontato', [], ['upper' => true]).':</b>
+            <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
         </td>
 
         <th colspan="2" class="text-right">

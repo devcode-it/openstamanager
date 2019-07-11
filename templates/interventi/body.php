@@ -470,11 +470,11 @@ if ($options['pricing']) {
             </th>
         </tr>';
 
-        // Imponibile scontato
+        // Totale imponibile
         echo '
         <tr>
             <td colspan="4" class="text-right">
-                <b>'.tr('Imponibile scontato', [], ['upper' => true]).':</b>
+                <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
             </td>
 
             <th class="text-center">

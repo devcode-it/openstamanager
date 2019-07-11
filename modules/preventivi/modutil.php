@@ -29,7 +29,7 @@ function get_imponibile_preventivo($idpreventivo)
 {
     $preventivo = Preventivo::find($idpreventivo);
 
-    return $preventivo->imponibile_scontato;
+    return $preventivo->totale_imponibile;
 }
 
 /**

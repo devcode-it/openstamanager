@@ -20,19 +20,19 @@ $preventivi = Preventivo::whereBetween('data_accettazione', [$start, $end])
     ->where('idanagrafica', $id_record)
     ->where('default_revision', 1)
     ->get();
-$totale_preventivi = $preventivi->sum('imponibile_scontato');
+$totale_preventivi = $preventivi->sum('totale_imponibile');
 
 // Contratti
 $contratti = Contratto::whereBetween('data_accettazione', [$start, $end])
     ->where('idanagrafica', $id_record)
     ->get();
-$totale_contratti = $contratti->sum('imponibile_scontato');
+$totale_contratti = $contratti->sum('totale_imponibile');
 
 // Ordini cliente
 $ordini_cliente = Ordine::whereBetween('data', [$start, $end])
     ->where('idanagrafica', $id_record)
     ->get();
-$totale_ordini_cliente = $ordini_cliente->sum('imponibile_scontato');
+$totale_ordini_cliente = $ordini_cliente->sum('totale_imponibile');
 
 // Interventi
 
@@ -58,7 +58,7 @@ $ddt_uscita = DDT::whereBetween('data', [$start, $end])
         $query->where('dt_tipiddt.dir', '=', 'entrata');
     })
     ->get();
-$totale_ddt_uscita = $ddt_uscita->sum('imponibile_scontato');
+$totale_ddt_uscita = $ddt_uscita->sum('totale_imponibile');
 
 // Fatture di vendita
 $fatture_vendita = Fattura::whereBetween('data', [$start, $end])
@@ -67,7 +67,7 @@ $fatture_vendita = Fattura::whereBetween('data', [$start, $end])
         $query->where('co_tipidocumento.dir', '=', 'entrata');
     })
     ->get();
-$totale_fatture_vendita = $fatture_vendita->sum('imponibile_scontato');
+$totale_fatture_vendita = $fatture_vendita->sum('totale_imponibile');
 
 echo '
 <div class="box box-info" id="row-'.$calendar_id.'">

@@ -66,9 +66,11 @@ foreach ($rs as $r) {
                 '.moneyFormat($r['subtotale'] / $r['qta']);
 
         if (abs($r['sconto_unitario']) > 0) {
+            $text = $r['sconto_unitario'] > 0 ? tr('sconto _TOT_ _TYPE_') : tr('maggiorazione _TOT_ _TYPE_');
+
             echo '
-                <br><small class="label label-danger">'.tr('sconto _TOT_ _TYPE_', [
-                    '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
+                <br><small class="label label-danger">'.replace($text, [
+                    '_TOT_' => Translator::numberToLocale(abs($r['sconto_unitario'])),
                     '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : currency()),
                 ]).'</small>';
         }
@@ -135,14 +137,14 @@ $imponibile = sum(array_column($rs, 'subtotale'));
 $sconto = sum(array_column($rs, 'sconto'));
 $iva = sum(array_column($rs, 'iva'));
 
-$imponibile_scontato = sum($imponibile, -$sconto);
+$totale_imponibile = sum($imponibile, -$sconto);
 
 $totale = sum([
-    $imponibile_scontato,
+    $totale_imponibile,
     $iva,
 ]);
 $totale_guadagno = sum([
-    $imponibile_scontato
+    $totale_imponibile
     - $totale_acquisto,
 ]);
 
@@ -177,10 +179,10 @@ if (abs($sconto) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.tr('Imponibile scontato', [], ['upper' => true]).':</b>
+            <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.moneyFormat($imponibile_scontato, 2).'
+            '.moneyFormat($totale_imponibile, 2).'
         </td>
         <td></td>
     </tr>';

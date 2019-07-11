@@ -34,9 +34,9 @@ echo '
             <thead>
                 <tr>
                     <th class="text-center">#</th>
-                    <th>'.tr('Perido').'</th>
+                    <th>'.tr('Periodo').'</th>
                     <th>'.tr('Prezzo minimo').'</th>
-                    <th>'.tr('Prezzio medio').'</th>
+                    <th>'.tr('Prezzo medio').'</th>
                     <th>'.tr('Prezzo massimo').'</th>
                     <th>'.tr('Oscillazione').'</th>
                     <th>'.tr('Oscillazione in %').'</th>
@@ -60,9 +60,9 @@ echo '
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>'.tr('Perido').'</th>
+                    <th>'.tr('Periodo').'</th>
                     <th>'.tr('Prezzo minimo').'</th>
-                    <th>'.tr('Prezzio medio').'</th>
+                    <th>'.tr('Prezzo medio').'</th>
                     <th>'.tr('Prezzo massimo').'</th>
                     <th>'.tr('Oscillazione').'</th>
                     <th>'.tr('Oscillazione in %').'</th>
@@ -74,89 +74,29 @@ echo '
             </tbody>
         </table>
     </div>
-</div>
+</div>';
 
-<script src="'.$structure->fileurl('js/stat.js').'"></script>
-<script src="'.$structure->fileurl('js/calendar.js').'"></script>
+$statistiche = Modules::get('Statistiche');
+
+echo '
+<script src="'.$statistiche->fileurl('js/functions.js').'"></script>
+<script src="'.$statistiche->fileurl('js/manager.js').'"></script>
+<script src="'.$statistiche->fileurl('js/calendar.js').'"></script>
+<script src="'.$statistiche->fileurl('js/stat.js').'"></script>
+<script src="'.$statistiche->fileurl('js/stats/table.js').'"></script>
+
 <script src="'.$structure->fileurl('js/prezzo.js').'"></script>
 
 <script>
-var calendars = {};
-var info = {
-    url: "'.str_replace('edit.php', '', $structure->fileurl('edit.php')).'",
-    id_module: globals.id_module,
-    id_record: globals.id_record,
-};
+var local_url = "'.str_replace('edit.php', '', $structure->fileurl('edit.php')).'";
 
-$(document).ready(function() {
-    add_calendar();
-});
-
-function remove_calendar(button) {
-    if (Object.keys(calendars).length > 1){
-        var name = $(button).parent().find("input").attr("id");
-    
-        calendars[name].remove();
-        delete calendars[name];
-        
-        $("#group-" + name).remove();
-    } else {
-        swal({
-            title: "'.tr("E' presente un solo calendario!").'",
-            type: "info",
-        });
-    }
-}
-
-function add_calendar() {
-    var last = $("#calendars").find("input").last().attr("id");
-    var last_id = last ? last.split("-")[1] : 0;
-    last_id = parseInt(last_id) + 1;
-
-    var name = "calendar-" + last_id;
-    
-    $("#calendars").append(`<div class="col-md-4" id="group-` + name + `">
-    <div class="input-group">
-        <span class="input-group-addon before">` + last_id + `</span>
-        <input class="form-control calendar-input text-center" type="text" name="` + name + `" id="` + name + `"/>
-        <span class="input-group-addon after clickable btn btn-danger" onclick="remove_calendar(this)">
-            <i class="fa fa-trash-o"></i>
-        </span>
-    </div>
-    <br>
-</div>`);
-    
-    $("#" + name).daterangepicker({
-        locale: {
-            customRangeLabel: globals.translations.custom,
-            applyLabel: globals.translations.apply,
-            cancelLabel: globals.translations.cancel,
-            fromLabel: globals.translations.from,
-            toLabel: globals.translations.to,
-        },
-        startDate: globals.start_date,
-        endDate: globals.end_date,
-        applyClass: "btn btn-success btn-sm",
-        cancelClass: "btn btn-danger btn-sm",
-        linkedCalendars: false
-    }, function (start, end) {
-        var name = $(this.element).attr("id");
-        var start = start.format("YYYY-MM-DD");
-        var end = end.format("YYYY-MM-DD");
-
-        calendars[name].update(start, end);
-    });
-    
-    // Inizializzazone calendario
-    var calendar = new Calendar(info, last_id);
-    calendars[name] = calendar;
-
+function init_calendar(calendar) {
     var prezzo_acquisto = new Prezzo(calendar, "#prezzi_acquisto", "uscita");
     var prezzo_vendita = new Prezzo(calendar, "#prezzi_vendita", "entrata");
     
     calendar.addElement(prezzo_acquisto);
     calendar.addElement(prezzo_vendita);
-    
-    calendar.update(globals.start_date, globals.end_date);
 }
-</script>';
+</script>
+
+<script src="'.$statistiche->fileurl('js/init.js').'"></script>';

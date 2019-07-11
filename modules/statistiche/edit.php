@@ -11,35 +11,25 @@ $start = $_SESSION['period_start'];
 $end = $_SESSION['period_end'];
 
 echo '
-<h3 class="text-center">
-    <span class="label label-primary">'.tr('Periodo dal _START_ al _END_', [
-        '_START_' => Translator::dateToLocale($start),
-        '_END_' => Translator::dateToLocale($end),
-    ]).'</span>
-</h3>
-<hr>
-
-<script>
-$(document).ready(function() {
-    start = moment("'.$start.'");
-    end = moment("'.$end.'");
-
-    months = [];
-    while(start.isSameOrBefore(end, "month")){
-        string = start.format("MMMM YYYY");
-
-        months.push(string.charAt(0).toUpperCase() + string.slice(1));
-
-        start.add(1, "months");
-    }
-});
-</script>';
-
-$fatturato = $dbo->fetchArray("SELECT ROUND(SUM(co_righe_documenti.subtotale - co_righe_documenti.sconto), 2) AS totale, YEAR(co_documenti.data) AS year, MONTH(co_documenti.data) AS month FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id WHERE co_tipidocumento.dir='entrata' AND co_tipidocumento.descrizione!='Bozza' AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end).' GROUP BY YEAR(co_documenti.data), MONTH(co_documenti.data) ORDER BY YEAR(co_documenti.data) ASC, MONTH(co_documenti.data) ASC');
-$acquisti = $dbo->fetchArray("SELECT ROUND(SUM(co_righe_documenti.subtotale - co_righe_documenti.sconto), 2) AS totale, YEAR(co_documenti.data) AS year, MONTH(co_documenti.data) AS month FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id WHERE co_tipidocumento.dir='uscita' AND co_tipidocumento.descrizione!='Bozza' AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end).' GROUP BY YEAR(co_documenti.data), MONTH(co_documenti.data) ORDER BY YEAR(co_documenti.data) ASC, MONTH(co_documenti.data) ASC');
-
-$fatturato = Stats::monthly($fatturato, $start, $end);
-$acquisti = Stats::monthly($acquisti, $start, $end);
+<div class="box box-warning">
+    <div class="box-header">
+        <h4 class="box-title">
+            '.tr('Periodi temporali').'
+        </h4>
+        <div class="box-tools pull-right">
+            <button class="btn btn-warning btn-xs" onclick="add_calendar()">
+                <i class="fa fa-plus"></i> '.tr('Aggiungi periodo').'
+            </button>
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    
+    <div class="box-body collapse in" id="calendars">
+        
+    </div>
+</div>';
 
 // Fatturato
 echo '
@@ -56,49 +46,86 @@ echo '
     <canvas class="box-body collapse in" id="fatturato" height="100"></canvas>
 </div>';
 
+echo '
+<script src="'.$structure->fileurl('js/functions.js').'"></script>
+<script src="'.$structure->fileurl('js/calendar.js').'"></script>
+<script src="'.$structure->fileurl('js/manager.js').'"></script>
+<script src="'.$structure->fileurl('js/stat.js').'"></script>
+<script src="'.$structure->fileurl('js/stats/line_chart.js').'"></script>';
+
 // Script per il grafico del fatturato
 echo '
 <script>
-$(document).ready(function() {
-    new Chart(document.getElementById("fatturato").getContext("2d"), {
-        type: "bar",
-        data: {
-            labels: months,
-            datasets: [
-                {
-                    label: "'.tr('Fatturato (iva esclusa)').'",
-                    backgroundColor: "#63E360",
-                    data: [
-                        '.implode(',', array_column($fatturato, 'totale')).'
-                    ]
-                },
-                {
-                    label: "'.tr('Acquisti (iva esclusa)').'",
-                    backgroundColor: "#EE4B4B",
-                    data: [
-                        '.implode(',', array_column($acquisti, 'totale')).'
-                    ]
+start = moment("'.$start.'");
+end = moment("'.$end.'");
+
+months = get_months(start, end);
+
+var chart_options = {
+    type: "line",
+    data: {
+        labels: [],
+        datasets: [],
+    },
+    options: {
+        responsive: true,
+        tooltips: {
+            callbacks: {
+                label: function(tooltipItem, data) {
+                    var dataset = data.datasets[tooltipItem.datasetIndex];
+                    var label = dataset.labels ? dataset.labels[tooltipItem.index] : "";
+
+                    if (label) {
+                        label += ": ";
+                    }
+                    
+                    label += tooltipItem.yLabel;
+                    
+                    return label;
                 }
-            ]
+            }
         },
-        options: {
-            responsive: true,
-            legend: {
-                position: "bottom",
-            },
-			scales: {
-				yAxes: [{
-					ticks: {
-						// Include a dollar sign in the ticks
-						callback: function(value, index, values) {
-							return \'€ \' + value;
-						}
-					}
-				}]
-			},
-        }
-    });
+        scales: {
+            yAxes: [{
+                ticks: {
+                    // Include a dollar sign in the ticks
+                    callback: function(value, index, values) {
+                        return \'€ \' + value;
+                    }
+                }
+            }]
+        },
+    }
+};
+
+// Inzializzazione manager
+var info = {
+    url: "'.str_replace('edit.php', '', $structure->fileurl('edit.php')).'",
+    id_module: globals.id_module,
+    id_record: globals.id_record,
+    start_date: globals.start_date,
+    end_date: globals.end_date,
+}
+var manager = new Manager(info);
+
+var chart_fatturato, chart_acquisti;
+$(document).ready(function(){
+    var fatturato_canvas = document.getElementById("fatturato").getContext("2d");
+    //var acquisti_canvas = document.getElementById("acquisti").getContext("2d");
+    
+    chart_fatturato = new Chart(fatturato_canvas, chart_options);
+    //chart_acquisti = new Chart(fatturato_canvas, chart_options);
+    
+    add_calendar();
 });
+
+function init_calendar(calendar) {
+    var fatturato = new LineChart(calendar, "actions.php", {op: "fatturato"}, chart_fatturato);
+    var acquisti = new LineChart(calendar, "actions.php", {op: "acquisti"}, chart_fatturato);
+
+    calendar.addElement(fatturato);
+    calendar.addElement(acquisti);
+}
 </script>';
 
 // Clienti top
@@ -206,7 +233,7 @@ $tipi = $dbo->fetchArray('SELECT * FROM `in_tipiintervento`');
 
 $dataset = '';
 foreach ($tipi as $tipo) {
-    $interventi = $dbo->fetchArray('SELECT COUNT(*) AS totale, YEAR(in_interventi.data_richiesta) AS year, MONTH(in_interventi.data_richiesta) AS month FROM in_interventi WHERE in_interventi.idtipointervento = '.prepare($tipo['idtipointervento']).' AND in_interventi.data_richiesta BETWEEN '.prepare($start).' AND '.prepare($end).' GROUP BY YEAR(in_interventi.data_richiesta), MONTH(in_interventi.data_richiesta) ORDER BY YEAR(in_interventi.data_richiesta) ASC, MONTH(in_interventi.data_richiesta) ASC');
+    $interventi = $dbo->fetchArray('SELECT COUNT(*) AS result, YEAR(in_interventi.data_richiesta) AS year, MONTH(in_interventi.data_richiesta) AS month FROM in_interventi WHERE in_interventi.idtipointervento = '.prepare($tipo['idtipointervento']).' AND in_interventi.data_richiesta BETWEEN '.prepare($start).' AND '.prepare($end).' GROUP BY YEAR(in_interventi.data_richiesta), MONTH(in_interventi.data_richiesta) ORDER BY YEAR(in_interventi.data_richiesta) ASC, MONTH(in_interventi.data_richiesta) ASC');
 
     $interventi = Stats::monthly($interventi, $start, $end);
 
@@ -217,7 +244,7 @@ foreach ($tipi as $tipo) {
         label: "'.$tipo['descrizione'].'",
         backgroundColor: "'.$background.'",
         data: [
-            '.implode(',', array_column($interventi, 'totale')).'
+            '.implode(',', array_column($interventi, 'result')).'
         ]
     },';
 }

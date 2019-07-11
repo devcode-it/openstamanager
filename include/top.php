@@ -89,21 +89,22 @@ if (Auth::check()) {
         'hookMultiple' => tr('Hai _NUM_ notifiche'),
         'hookSingle' => tr('Hai 1 notifica'),
         'hookNone' => tr('Nessuna notifica'),
+        'singleCalendar' => tr("E' presente un solo calendario!"),
     ];
     foreach ($translations as $key => $value) {
         echo '
-                '.$key.': \''.addslashes($value).'\',';
+                '.$key.': "'.addslashes($value).'",';
     }
     echo '
             };
 			globals = {
-                rootdir: \''.$rootdir.'\',
-                js: \''.$paths['js'].'\',
-                css: \''.$paths['css'].'\',
-                img: \''.$paths['img'].'\',
+                rootdir: "'.$rootdir.'",
+                js: "'.$paths['js'].'",
+                css: "'.$paths['css'].'",
+                img: "'.$paths['img'].'",
 
-                id_module: \''.$id_module.'\',
-                id_record: \''.$id_record.'\',
+                id_module: "'.$id_module.'",
+                id_record: "'.$id_record.'",
 
                 cifre_decimali: '.setting('Cifre decimali per importi').',
 
@@ -113,17 +114,19 @@ if (Auth::check()) {
 
                 search: search,
                 translations: translations,
-                locale: \''.$lang.'\',
-				full_locale: \''.$lang.'_'.strtoupper($lang).'\',
+                locale: "'.$lang.'",
+				full_locale: "'.$lang.'_'.strtoupper($lang).'",
 
-                start_date: \''.Translator::dateToLocale($_SESSION['period_start']).'\',
-                end_date: \''.Translator::dateToLocale($_SESSION['period_end']).'\',
+                start_date: "'.$_SESSION['period_start'].'",
+                start_date_formatted: "'.Translator::dateToLocale($_SESSION['period_start']).'",
+                end_date: "'.$_SESSION['period_end'].'",
+                end_date_formatted: "'.Translator::dateToLocale($_SESSION['period_end']).'",
 
                 ckeditorToolbar: [
 					["Undo","Redo","-","Cut","Copy","Paste","PasteText","PasteFromWord","-","Scayt", "-","Link","Unlink","-","Bold","Italic","Underline","Superscript","SpecialChar","HorizontalRule","-","JustifyLeft","JustifyCenter","JustifyRight","JustifyBlock","-","NumberedList","BulletedList","Outdent","Indent","Blockquote","-","Styles","Format","Image","Table", "TextColor", "BGColor" ],
 				],
 				
-                order_manager_id: \''.($dbo->isInstalled() ? Modules::get('Stato dei servizi')['id'] : '').'\',
+                order_manager_id: "'.($dbo->isInstalled() ? Modules::get('Stato dei servizi')['id'] : '').'",
                 dataload_page_buffer: '.setting('Lunghezza in pagine del buffer Datatables').',
                 tempo_attesa_ricerche: '.setting('Tempo di attesa ricerche in secondi').',
             };
@@ -132,13 +135,13 @@ if (Auth::check()) {
     echo '
         <script>
             globals = {
-                rootdir: \''.$rootdir.'\',
+                rootdir: "'.$rootdir.'",
                 
                 search: {},
                 translations: {},
                 
-                locale: \''.$lang.'\',
-                full_locale: \''.$lang.'_'.strtoupper($lang).'\',
+                locale: "'.$lang.'",
+                full_locale: "'.$lang.'_'.strtoupper($lang).'",
             };
         </script>';
 }

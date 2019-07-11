@@ -72,7 +72,7 @@ $totale_fatture_vendita = $fatture_vendita->sum('imponibile_scontato');
 echo '
 <div class="box box-info" id="row-'.$calendar_id.'">
     <div class="box-header">
-        <h3 class="box-title">'.tr('Periodo dal _START_ al _END_', [
+        <h3 class="box-title">'.tr('Dal _START_ al _END_', [
             '_START_' => dateFormat($start),
             '_END_' => dateFormat($end),
         ]).' - '.tr('Periodo _NUM_', [

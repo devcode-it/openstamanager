@@ -1,0 +1,3 @@
+class Widget extends Table {
+
+}

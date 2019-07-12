@@ -5,7 +5,7 @@ include_once __DIR__.'/../../core.php';
 $date_start = $_SESSION['period_start'];
 $date_end = $_SESSION['period_end'];
 
-$module = Modules::get('Scadenzario');
+$module = Modules::get('Interventi');
 $id_module = $module['id'];
 
 $total = Util\Query::readQuery($module);

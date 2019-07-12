@@ -122,9 +122,7 @@ abstract class Document extends Model
      */
     protected function getRigheContabili()
     {
-        $sconto = $this->scontoGlobale ? [$this->scontoGlobale] : [];
-
-        return $this->getRighe()->merge(collect($sconto));
+        return $this->getRighe();
     }
 
     /**

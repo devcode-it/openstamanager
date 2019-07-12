@@ -133,26 +133,19 @@ foreach ($rs as $r) {
 }
 
 // Calcoli
-$imponibile = sum(array_column($rs, 'subtotale'));
-$sconto = sum(array_column($rs, 'sconto'));
-$iva = sum(array_column($rs, 'iva'));
-
-$totale_imponibile = sum($imponibile, -$sconto);
-
-$totale = sum([
-    $totale_imponibile,
-    $iva,
-]);
+$imponibile = abs($contratto->imponibile);
+$sconto = $contratto->sconto;
+$totale_imponibile = abs($contratto->totale_imponibile);
+$iva = abs($contratto->iva);
+$totale = abs($contratto->totale);
 
 echo '
     </tbody>';
 
-// SCONTO
-if (abs($sconto) > 0) {
-    // Totale totale imponibile
-    echo '
+// Totale totale imponibile
+echo '
     <tr>
-        <td colspan="5"" class="text-right">
+        <td colspan="5" class="text-right">
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">
@@ -161,9 +154,11 @@ if (abs($sconto) > 0) {
         <td></td>
     </tr>';
 
+// SCONTO
+if (!empty($sconto)) {
     echo '
     <tr>
-        <td colspan="5"" class="text-right">
+        <td colspan="5" class="text-right">
             <b><span class="tip" title="'.tr('Un importo positivo indica uno sconto, mentre uno negativo indica una maggiorazione').'"> <i class="fa fa-question-circle-o"></i> '.tr('Sconto/maggiorazione', [], ['upper' => true]).':</span></b>
         </td>
         <td class="text-right">
@@ -175,23 +170,11 @@ if (abs($sconto) > 0) {
     // Totale totale imponibile
     echo '
     <tr>
-        <td colspan="5"" class="text-right">
+        <td colspan="5" class="text-right">
             <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">
             '.moneyFormat($totale_imponibile, 2).'
-        </td>
-        <td></td>
-    </tr>';
-} else {
-    // Totale imponibile
-    echo '
-    <tr>
-        <td colspan="5"" class="text-right">
-            <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
-        </td>
-        <td class="text-right">
-            <span id="budget">'.moneyFormat($imponibile, 2).'</span>
         </td>
         <td></td>
     </tr>';
@@ -200,7 +183,7 @@ if (abs($sconto) > 0) {
 // Totale iva
 echo '
     <tr>
-        <td colspan="5"" class="text-right">
+        <td colspan="5" class="text-right">
             <b>'.tr('Iva', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">
@@ -212,7 +195,7 @@ echo '
 // Totale contratto
 echo '
     <tr>
-        <td colspan="5"" class="text-right">
+        <td colspan="5" class="text-right">
             <b>'.tr('Totale', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">
@@ -240,7 +223,7 @@ $(document).ready(function(){
                     order += ","+$(this).data("id");
                 });
                 order = order.replace(/^,/, "");
-                
+
 				$.post("'.$rootdir.'/actions.php", {
 					id: ui.item.data("id"),
 					id_module: '.$id_module.',

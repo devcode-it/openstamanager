@@ -212,64 +212,45 @@ $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione']
 		</div>
 	</div>
 
-<?php
-// Conteggio numero articoli intervento per eventuale blocco della sede di partenza
-$articoli = $dbo->fetchArray('SELECT mg_articoli_interventi.id FROM mg_articoli_interventi INNER JOIN in_interventi ON in_interventi.id=mg_articoli_interventi.idintervento WHERE in_interventi.id='.prepare($id_record));
-?>
-    <!-- ARTICOLI -->
+    <!-- RIGHE -->
     <div class="panel panel-primary">
         <div class="panel-heading">
-            <h3 class="panel-title"><?php echo tr('Materiale utilizzato'); ?></h3>
-        </div>
-        <div class="panel-body">
-			<div class="row">
-				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza",  "ajax-source": "sedi_azienda",  "value": "$idsede_partenza$", "readonly": "<?php echo ($record['flag_completato'] || sizeof($articoli)) ? 1 : 0; ?>" ]}
-				</div>
-			</div>
-			
-            <div id="articoli">
-				<?php
-                    if (file_exists($docroot.'/modules/interventi/custom/ajax_articoli.php')) {
-                        include $docroot.'/modules/interventi/custom/ajax_articoli.php';
-                    } else {
-                        include $docroot.'/modules/interventi/ajax_articoli.php';
-                    }
-                ?>
-            </div>
-
-            <?php if (!$record['flag_completato']) {
-                    ?>
-                <button type="button" class="btn btn-primary" onclick="launch_modal( '<?php echo tr('Aggiungi articolo'); ?>', '<?php echo $rootdir; ?>/modules/interventi/add_articolo.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&idriga=0', 1);"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi articolo'); ?>...</button>
-            <?php
-                } ?>
-        </div>
-    </div>
-
-    <!-- SPESE AGGIUNTIVE -->
-    <div class="panel panel-primary">
-        <div class="panel-heading">
-            <h3 class="panel-title"><?php echo tr('Altre spese'); ?></h3>
+            <h3 class="panel-title"><?php echo tr('Righe'); ?></h3>
         </div>
 
         <div class="panel-body">
+            <div class="row">
+                <div class="col-md-9">
+
 <?php
 
 if (!$record['flag_completato']) {
     echo '
-                <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('add_righe.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_sconto" data-toggle="tooltip" data-title="'.tr('Aggiungi altre spese').'">
-                    <i class="fa fa-plus"></i> '.tr('Altre spese').'...
-                </a>';
+                    <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('add_articolo.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_articolo&idriga=0" data-toggle="tooltip" data-title="'.tr('Aggiungi articolo').'">
+                        <i class="fa fa-plus"></i> '.tr('Articolo').'
+                    </a>';
 
     echo '
-                <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_sconto" data-toggle="tooltip" data-title="'.tr('Aggiungi sconto/maggiorazione').'">
-                    <i class="fa fa-plus"></i> '.tr('Sconto/maggiorazione').'
-                </a>';
+                    <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('add_righe.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_riga" data-toggle="tooltip" data-title="'.tr('Aggiungi altre spese').'">
+                        <i class="fa fa-plus"></i> '.tr('Riga').'
+                    </a>';
+
+    echo '
+                    <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_sconto" data-toggle="tooltip" data-title="'.tr('Aggiungi sconto/maggiorazione').'">
+                        <i class="fa fa-plus"></i> '.tr('Sconto/maggiorazione').'
+                    </a>';
 }
 
+// Conteggio numero articoli intervento per eventuale blocco della sede di partenza
+$articoli = $dbo->fetchArray('SELECT mg_articoli_interventi.id FROM mg_articoli_interventi INNER JOIN in_interventi ON in_interventi.id=mg_articoli_interventi.idintervento WHERE in_interventi.id='.prepare($id_record));
+
 ?>
-            <div class="clearfix"></div>
-            <br>
+                </div>
+
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza",  "ajax-source": "sedi_azienda",  "value": "$idsede_partenza$", "readonly": "<?php echo ($record['flag_completato'] || !empty($articoli)) ? 1 : 0; ?>" ]}
+                </div>
+            </div>
 
             <div id="righe">
 <?php

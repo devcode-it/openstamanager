@@ -125,7 +125,7 @@ abstract class Row extends Description
     }
 
     /**
-     * Imposta il costo unitario della riga.
+     * Imposta il prezzo unitario della riga.
      *
      * @param float $value
      */
@@ -135,7 +135,7 @@ abstract class Row extends Description
     }
 
     /**
-     * Restituisce il costo unitario della riga.
+     * Restituisce il prezzo unitario della riga.
      */
     public function getPrezzoUnitarioVenditaAttribute()
     {

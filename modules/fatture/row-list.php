@@ -284,7 +284,7 @@ echo '
     </tbody>';
 
 $imponibile = abs($fattura->imponibile);
-$sconto = abs($fattura->sconto);
+$sconto = $fattura->sconto;
 $totale_imponibile = abs($fattura->totale_imponibile);
 $iva = abs($fattura->iva);
 $totale = abs($fattura->totale);

@@ -1,14 +1,15 @@
 <?php
 
 // Calcoli
-$imponibile = $documento->imponibile;
+$imponibile = abs($documento->imponibile);
 $sconto = $documento->sconto;
-$totale_imponibile = $documento->totale_imponibile;
-$totale_iva = $documento->iva;
-$totale = $documento->totale;
-$netto_a_pagare = $documento->netto;
+$totale_imponibile = abs($documento->totale_imponibile);
+$totale_iva = abs($documento->iva);
+$totale = abs($documento->totale);
+$netto_a_pagare = abs($documento->netto);
 
 $show_sconto = $sconto > 0;
+
 $width = round(100 / ($show_sconto ? 5 : 3), 2);
 
 // SCADENZE  |  TOTALI

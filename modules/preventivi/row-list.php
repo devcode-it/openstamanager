@@ -128,32 +128,17 @@ foreach ($rs as $r) {
         </tr>';
 }
 
-// Calcoli
-$totale_acquisto = 0;
-foreach ($rs as $r) {
-    $totale_acquisto += ($r['prezzo_unitario_acquisto'] * $r['qta']);
-}
-$imponibile = sum(array_column($rs, 'subtotale'));
-$sconto = sum(array_column($rs, 'sconto'));
-$iva = sum(array_column($rs, 'iva'));
-
-$totale_imponibile = sum($imponibile, -$sconto);
-
-$totale = sum([
-    $totale_imponibile,
-    $iva,
-]);
-$totale_guadagno = sum([
-    $totale_imponibile
-    - $totale_acquisto,
-]);
-
 echo '
     </tbody>';
 
-// SCONTO
-if (abs($sconto) > 0) {
-    echo '
+// Calcoli
+$imponibile = abs($preventivo->imponibile);
+$sconto = $preventivo->sconto;
+$totale_imponibile = abs($preventivo->totale_imponibile);
+$iva = abs($preventivo->iva);
+$totale = abs($preventivo->totale);
+
+echo '
     <tr>
         <td colspan="5" class="text-right">
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
@@ -164,6 +149,8 @@ if (abs($sconto) > 0) {
         <td></td>
     </tr>';
 
+// SCONTO
+if (!empty($sconto)) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
@@ -183,18 +170,6 @@ if (abs($sconto) > 0) {
         </td>
         <td align="right">
             '.moneyFormat($totale_imponibile, 2).'
-        </td>
-        <td></td>
-    </tr>';
-} else {
-    // Totale imponibile
-    echo '
-    <tr>
-        <td colspan="5" class="text-right">
-            <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
-        </td>
-        <td align="right">
-            '.moneyFormat($imponibile, 2).'
         </td>
         <td></td>
     </tr>';

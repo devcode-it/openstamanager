@@ -3,7 +3,9 @@
 namespace Modules\Interventi\Components;
 
 use Common\Model;
+use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\Intervento;
+use Modules\Iva\Aliquota;
 
 /**
  * Notazione: i costi sono rivolti all'azienda, i prezzi al cliente.
@@ -16,9 +18,18 @@ class Sessione extends Model
 
     protected $table = 'in_interventi_tecnici';
 
+    protected $aliquota_iva = null;
+
     public function getParentID()
     {
         return 'idintervento';
+    }
+
+    // Relazioni Eloquent
+
+    public function anagrafica()
+    {
+        return $this->belongsTo(Anagrafica::class, 'idtecnico');
     }
 
     public function parent()
@@ -159,7 +170,7 @@ class Sessione extends Model
      *
      * @return float
      */
-    public function getScontoTotaleKmAttribute()
+    public function getScontoTotaleViaggioAttribute()
     {
         return calcola_sconto([
             'sconto' => $this->scontokm_unitario,
@@ -175,7 +186,85 @@ class Sessione extends Model
      */
     public function getPrezzoViaggioScontatoAttribute()
     {
-        return $this->prezzo_viaggio - $this->sconto_totale_km;
+        return $this->prezzo_viaggio - $this->sconto_totale_viaggio;
+    }
+
+    // Attributi di contabilità
+
+    /**
+     * Restituisce l'imponibile dell'elemento.
+     *
+     * @return float
+     */
+    public function getImponibileAttribute()
+    {
+        return $this->prezzo_manodopera + $this->prezzo_viaggio + $this->prezzo_diritto_chiamata;
+    }
+
+    /**
+     * Restituisce il totale imponibile dell'elemento.
+     *
+     * @return float
+     */
+    public function getTotaleImponibileAttribute()
+    {
+        return $this->prezzo_manodopera_scontato + $this->prezzo_viaggio_scontato + $this->prezzo_diritto_chiamata;
+    }
+
+    /**
+     * Restituisce il totale (imponibile + iva) dell'elemento.
+     *
+     * @return float
+     */
+    public function getTotaleAttribute()
+    {
+        return $this->totale_imponibile + $this->iva;
+    }
+
+    /**
+     * Restituisce la spesa (prezzo_unitario_acquisto * qta) relativa all'elemento.
+     *
+     * @return float
+     */
+    public function getSpesaAttribute()
+    {
+        return $this->costo_manodopera;
+    }
+
+    /**
+     * Restituisce il gaudagno totale (totale_imponibile - spesa) relativo all'elemento.
+     *
+     * @return float
+     */
+    public function getGuadagnoAttribute()
+    {
+        return $this->totale_imponibile - $this->spesa;
+    }
+
+    public function getIvaIndetraibileAttribute()
+    {
+        return $this->iva / 100 * $this->aliquota->indetraibile;
+    }
+
+    public function getIvaAttribute()
+    {
+        return ($this->totale_imponibile) * $this->aliquota->percentuale / 100;
+    }
+
+    public function getIvaDetraibileAttribute()
+    {
+        return $this->iva - $this->iva_indetraibile;
+    }
+
+    public function getAliquotaAttribute()
+    {
+        if (!isset($this->aliquota_iva)) {
+            $id_iva = setting('Iva predefinita');
+
+            $this->aliquota_iva = Aliquota::find($id_iva);
+        }
+
+        return $this->aliquota_iva;
     }
 
     /**

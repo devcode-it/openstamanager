@@ -96,9 +96,15 @@ abstract class Article extends Row
      *
      * @return float
      */
-    public function getMissingSerialsAttribute()
+    public function getMissingSerialsNumberAttribute()
     {
-        return $this->qta - count($this->serials);
+        if (!$this->abilita_serial) {
+            return 0;
+        }
+
+        $missing = $this->qta - count($this->serials);
+
+        return $missing;
     }
 
     /**

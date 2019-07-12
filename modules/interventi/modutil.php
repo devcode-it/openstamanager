@@ -387,7 +387,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
         }
     }
 
-    $costi_intervento = get_costi_intervento($id_intervento);
+    $intervento = \Modules\Interventi\Intervento::find($id_intervento);
 
     // Fatturo i diritti di chiamata raggruppati per costo
     $rst = $dbo->fetchArray('SELECT COUNT(id) AS qta, SUM(prezzo_dirittochiamata) AS tot_prezzo_dirittochiamata FROM in_interventi_tecnici WHERE idintervento='.prepare($id_intervento).' AND prezzo_dirittochiamata > 0 GROUP BY prezzo_dirittochiamata');
@@ -479,14 +479,14 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
     }
 
     // Aggiunta km come "Trasferta" (se c'è)
-    if ($costi_intervento['viaggio_addebito'] > 0) {
+    if ($intervento->prezzo_viaggio > 0) {
         // Calcolo iva
         $query = 'SELECT * FROM co_iva WHERE id='.prepare($id_iva);
         $dati = $dbo->fetchArray($query);
         $desc_iva = $dati[0]['descrizione'];
 
-        $subtot = $costi_intervento['viaggio_addebito'];
-        $sconto = $costi_intervento['viaggio_addebito'] - $costi_intervento['viaggio_scontato'];
+        $subtot = $intervento->prezzo_viaggio;
+        $sconto = $intervento->sconto_totale_viaggio;
         $iva = ($subtot - $sconto) / 100 * $dati[0]['percentuale'];
         $iva_indetraibile = $iva / 100 * $dati[0]['indetraibile'];
 
@@ -505,37 +505,6 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
         }
 
         $query = 'INSERT INTO co_righe_documenti(iddocumento, idintervento, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto, calcolo_ritenuta_acconto, `order`) VALUES('.prepare($id_fattura).', '.prepare($id_intervento).', '.prepare($id_conto).', '.prepare($id_iva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare('Trasferta intervento '.$codice.' del '.Translator::dateToLocale($data)).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto).", 'UNT', '', 1, ".prepare($id_rivalsa_inps).', '.prepare($rivalsainps).', '.prepare($id_ritenuta_acconto).', '.prepare($ritenutaacconto).', '.prepare($calcolo_ritenuta_acconto).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_fattura).'))';
-        $dbo->query($query);
-    }
-
-    // Aggiunta sconto
-    if (!empty($costi_intervento['sconto_globale'])) {
-        $subtot = 0;
-        $sconto = $costi_intervento['sconto_globale'];
-
-        // Calcolo iva
-        $query = 'SELECT * FROM co_iva WHERE id='.prepare($id_iva);
-        $rs = $dbo->fetchArray($query);
-        $desc_iva = $rs[0]['descrizione'];
-
-        $iva = ($subtot) / 100 * $rs[0]['percentuale'];
-        $iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];
-
-        // Calcolo rivalsa inps
-        $query = 'SELECT * FROM co_rivalse WHERE id='.prepare($id_rivalsa_inps);
-        $rs = $dbo->fetchArray($query);
-        $rivalsainps = ($subtot) / 100 * $rs[0]['percentuale'];
-
-        // Calcolo ritenuta d'acconto
-        $query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare($id_ritenuta_acconto);
-        $rs = $dbo->fetchArray($query);
-        if ($calcolo_ritenuta_acconto == 'Imponibile') {
-            $ritenutaacconto = $subtot / 100 * $rs[0]['percentuale'];
-        } else {
-            $ritenutaacconto = ($subtot + $rivalsainps) / 100 * $rs[0]['percentuale'];
-        }
-
-        $query = 'INSERT INTO co_righe_documenti(iddocumento, idintervento, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto_unitario, tipo_sconto, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto, calcolo_ritenuta_acconto, `order`) VALUES('.prepare($id_fattura).', NULL, '.prepare($id_conto).', '.prepare($id_iva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare('Sconto '.$descrizione).', '.prepare($subtot).', '.$sconto.', "UNT", 1, '.prepare($id_rivalsa_inps).', '.prepare($rivalsainps).', '.prepare($id_ritenuta_acconto).', '.prepare($ritenutaacconto).', '.prepare($calcolo_ritenuta_acconto).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_fattura).'))';
         $dbo->query($query);
     }
 

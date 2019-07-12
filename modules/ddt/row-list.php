@@ -192,25 +192,11 @@ echo '
     </tbody>';
 
 // Calcoli
-$imponibile = sum(array_column($rs, 'subtotale'));
-$sconto = sum(array_column($rs, 'sconto'));
-$iva = sum(array_column($rs, 'iva'));
-
-$totale_imponibile = sum($imponibile, -$sconto);
-
-$totale_iva = sum($iva, $record['iva_rivalsainps']);
-
-$totale = sum([
-    $totale_imponibile,
-    $record['rivalsainps'],
-    $totale_iva,
-]);
-
-$netto_a_pagare = sum([
-    $totale,
-    //$marca_da_bollo, // Variabile non inizializzata!
-    -$record['ritenutaacconto'],
-]);
+$imponibile = abs($ddt->imponibile);
+$sconto = $ddt->sconto;
+$totale_imponibile = abs($ddt->totale_imponibile);
+$iva = abs($ddt->iva);
+$totale = abs($ddt->totale);
 
 // IMPONIBILE
 echo '
@@ -226,8 +212,8 @@ echo '
         <td></td>
     </tr>';
 
-if (abs($sconto) > 0) {
-    // SCONTO
+// SCONTO
+if (!empty($sconto)) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
@@ -256,36 +242,19 @@ if (abs($sconto) > 0) {
     </tr>';
 }
 
-// RIVALSA INPS
-if (abs($record['rivalsainps']) > 0) {
-    echo '
-    <tr>
-        <td colspan="5" class="text-right">
-            <b>'.tr('Rivalsa', [], ['upper' => true]).':</b>
-        </td>
-
-        <td align="right">
-            '.moneyFormat($record['rivalsainps'], 2).'
-        </td>
-
-        <td></td>
-    </tr>';
-}
-
-if (abs($totale_iva) > 0) {
-    echo '
+// IVA
+echo '
     <tr>
         <td colspan="5" class="text-right">
             <b>'.tr('IVA', [], ['upper' => true]).':</b>
         </td>
 
         <td align="right">
-            '.moneyFormat($totale_iva, 2).'
+            '.moneyFormat($iva, 2).'
         </td>
 
         <td></td>
     </tr>';
-}
 
 // TOTALE
 echo '
@@ -300,54 +269,6 @@ echo '
 
         <td></td>
     </tr>';
-
-// Mostra marca da bollo se c'è
-if (abs($record['bollo']) > 0) {
-    echo '
-    <tr>
-        <td colspan="5" class="text-right">
-            <b>'.tr('Marca da bollo', [], ['upper' => true]).':</b>
-        </td>
-
-        <td align="right">
-            '.moneyFormat($record['bollo'], 2).'
-        </td>
-
-        <td></td>
-    </tr>';
-}
-
-// RITENUTA D'ACCONTO
-if (abs($record['ritenutaacconto']) > 0) {
-    echo '
-    <tr>
-        <td colspan="5" class="text-right">
-            <b>'.tr("Ritenuta d'acconto", [], ['upper' => true]).':</b>
-        </td>
-
-        <td align="right">
-            '.moneyFormat($record['ritenutaacconto'], 2).'
-        </td>
-
-        <td></td>
-    </tr>';
-}
-
-// NETTO A PAGARE
-if ($totale != $netto_a_pagare) {
-    echo '
-    <tr>
-        <td colspan="5" class="text-right">
-            <b>'.tr('Netto a pagare', [], ['upper' => true]).':</b>
-        </td>
-
-        <td align="right">
-            '.moneyFormat($netto_a_pagare, 2).'
-        </td>
-
-        <td></td>
-    </tr>';
-}
 
 echo '
 </table>';

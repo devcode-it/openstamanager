@@ -39,6 +39,29 @@ class Intervento extends Document
         return $model;
     }
 
+    public function getOreTotaliAttribute()
+    {
+        $sessioni = $this->sessioni;
+
+        $ore = $sessioni->sum('ore');
+
+        return $ore;
+    }
+
+    /**
+     * Restituisce la collezione di righe e articoli con valori rilevanti per i conti.
+     *
+     * @return iterable
+     */
+    public function getRigheContabili()
+    {
+        $results = parent::getRigheContabili();
+
+        return $results->merge($this->sessioni);
+    }
+
+    // Relazioni Eloquent
+
     public function anagrafica()
     {
         return $this->belongsTo(Anagrafica::class, 'idanagrafica');

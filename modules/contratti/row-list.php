@@ -164,7 +164,7 @@ if (abs($sconto) > 0) {
     echo '
     <tr>
         <td colspan="5"" class="text-right">
-            <b>'.tr('Sconto/maggiorazione', [], ['upper' => true]).':</b>
+            <b><span class="tip" title="'.tr('Un importo positivo indica uno sconto, mentre uno negativo indica una maggiorazione').'"> <i class="fa fa-question-circle-o"></i> '.tr('Sconto/maggiorazione', [], ['upper' => true]).':<
         </td>
         <td class="text-right">
             '.moneyFormat($sconto, 2).'

@@ -16,15 +16,15 @@ if ($options['hide_header']) {
 }
 
 echo '
-<br>
+
 <div class="row">
     <!-- Dati Fattura -->
     <div class="col-xs-6">
-        <div class="text-center" style="height:5mm;">
+        <div class="text-left" style="height:5mm;">
             <b>$tipo_doc$</b>
         </div>
 
-        <table class="table" style="overflow: visible">
+        <table class="table" style="overflow: visible;">
             <tr>
                 <td valign="top" class="border-full text-center">
                     <p class="small-bold">'.tr('Nr. documento', [], ['upper' => true]).'</p>
@@ -71,7 +71,7 @@ echo '
         </table>
     </div>
 
-    <div class="col-xs-5 col-xs-offset-1">
+    <div class="col-xs-6">
         <table class="table" style="width:100%;margin-top:5mm;">
             <tr>
                 <td colspan=2 class="border-full"'.(!$fattura_accompagnatoria ? ' style="height:20mm;"' : '').'>

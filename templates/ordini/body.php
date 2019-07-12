@@ -89,7 +89,7 @@ foreach ($righe as $riga) {
         // Seriali
         $seriali = $riga->serials;
         if (!empty($seriali)) {
-            $text = tr('SN').': '.implode($seriali, ', ');
+            $text = tr('SN').': '.implode(', ', $seriali);
             echo '
                     <br><small>'.$text.'</small>';
 

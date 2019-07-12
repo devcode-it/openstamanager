@@ -1169,7 +1169,7 @@ class FatturaElettronica
 
         // Inclusione
         foreach ($allegati as $allegato) {
-            if ($allegato['category'] == 'Fattura Elettronica' && $allegato['name'] != 'Stampa allegata') {
+            if ($allegato['category'] == 'Allegati Fattura Elettronica') {
                 $file = DOCROOT.'/'.$directory.'/'.$allegato['filename'];
 
                 $attachments[] = [

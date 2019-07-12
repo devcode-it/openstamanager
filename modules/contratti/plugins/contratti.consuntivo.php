@@ -21,7 +21,7 @@ $totale = 0;
 $totale_stato = [];
 
 // Tabella con riepilogo interventi
-$rsi = $dbo->fetchArray('SELECT in_interventi.id, in_interventi.codice, 
+$rsi = $dbo->fetchArray('SELECT in_interventi.id, in_interventi.idstatointervento, 
        (SELECT completato FROM in_statiintervento WHERE in_statiintervento.idstatointervento = in_interventi.idstatointervento) AS completato,
        (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS inizio,
        (SELECT SUM(ore) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS ore,
@@ -30,7 +30,7 @@ $rsi = $dbo->fetchArray('SELECT in_interventi.id, in_interventi.codice,
     INNER JOIN in_interventi ON co_promemoria.idintervento=in_interventi.id
     WHERE co_promemoria.idcontratto='.prepare($id_record).'
 UNION
-    SELECT in_interventi.id, in_interventi.codice,  
+    SELECT in_interventi.id, in_interventi.idstatointervento,  
         (SELECT completato FROM in_statiintervento WHERE in_statiintervento.idstatointervento = in_interventi.idstatointervento) AS completato,
         (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS inizio,
         (SELECT SUM(ore) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS ore,

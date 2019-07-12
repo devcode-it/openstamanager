@@ -223,7 +223,7 @@ class EmailNotification extends Notification
             return;
         }
 
-        $list = explode($value, ';');
+        $list = explode(';', $value);
         foreach ($list as $element) {
             $this->receivers[] = [
                 'email' => $element,

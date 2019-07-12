@@ -20,11 +20,11 @@ echo '
 <div class="row">
     <!-- Dati Fattura -->
     <div class="col-xs-6">
-        <div class="text-left" style="height:5mm;">
+        <div class="text-center" style="height:5mm;">
             <b>$tipo_doc$</b>
         </div>
 
-        <table class="table" style="overflow: visible;">
+        <table class="table" style="overflow: visible; width: 100%">
             <tr>
                 <td valign="top" class="border-full text-center">
                     <p class="small-bold">'.tr('Nr. documento', [], ['upper' => true]).'</p>

@@ -2,10 +2,9 @@
 
 include_once __DIR__.'/../../core.php';
 
-$module_name = 'Preventivi';
+use Modules\Preventivi\Preventivo;
 
-// Lettura info fattura
-$records = $dbo->fetchArray('SELECT *, data_bozza AS data FROM co_preventivi WHERE co_preventivi.id='.prepare($id_record));
+$documento = Preventivo::find($id_record);
 
-$id_cliente = $records[0]['idanagrafica'];
-$id_sede = $records[0]['idsede'];
+$id_cliente = $documento['idanagrafica'];
+$id_sede = $documento['idsede'];

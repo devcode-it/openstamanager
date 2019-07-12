@@ -454,19 +454,7 @@ class Prints
             $report = ob_get_clean();
 
             if (!empty($autofill)) {
-                $result = '';
-
-                // max($autofill['additional']) = $autofill['rows'] - 1
-                for ($i = (floor($autofill['count']) % $autofill['rows']); $i < $autofill['additional']; ++$i) {
-                    $result .= '
-                    <tr>';
-                    for ($c = 0; $c < $autofill['columns']; ++$c) {
-                        $result .= '
-                        <td>&nbsp;</td>';
-                    }
-                    $result .= '
-                    </tr>';
-                }
+                $result = $autofill->generate();
 
                 $report = str_replace('|autofill|', $result, $report);
             }

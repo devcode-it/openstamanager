@@ -2,21 +2,17 @@
 
 include_once __DIR__.'/../../core.php';
 
-$autofill = [
-    'count' => 0, // Conteggio delle righe
-    'words' => 70, // Numero di parolo dopo cui contare una riga nuova
-    'rows' => 20, // Numero di righe massimo presente nella pagina
-    'additional' => 10, // Numero di righe massimo da aggiungere
-    'columns' => 5, // Numero di colonne della tabella
-];
+// Creazione righe fantasma
+$autofill = new \Util\Autofill($options['pricing'] ? 5 : 2);
+$autofill->setRows(20, 10);
 
 echo '
 <div class="row">
     <div class="col-xs-6">
         <div class="text-center" style="height:5mm;">
             <b>'.tr('Preventivo num. _NUM_ del _DATE_', [
-                '_NUM_' => $records[0]['numero'],
-                '_DATE_' => Translator::dateToLocale($records[0]['data']),
+                '_NUM_' => $documento['numero'],
+                '_DATE_' => Translator::dateToLocale($documento['data_bozza']),
             ], ['upper' => true]).'</b>
         </div>
     </div>
@@ -54,15 +50,11 @@ echo '
 </div>';
 
 // Descrizione
-if (!empty($records[0]['descrizione'])) {
+if (!empty($documento['descrizione'])) {
     echo '
-<p>'.nl2br($records[0]['descrizione']).'</p>
+<p>'.nl2br($documento['descrizione']).'</p>
 <br>';
 }
-
-$sconto = [];
-$imponibile = [];
-$iva = [];
 
 // Intestazione tabella per righe
 echo "
@@ -70,127 +62,116 @@ echo "
     <thead>
         <tr>
             <th class='text-center' style='width:50%'>".tr('Descrizione', [], ['upper' => true])."</th>
-            <th class='text-center' style='width:10%'>".tr('Q.tà', [], ['upper' => true])."</th>
+            <th class='text-center' style='width:10%'>".tr('Q.tà', [], ['upper' => true]).'</th>';
+
+if ($options['pricing']) {
+    echo "
             <th class='text-center' style='width:15%'>".tr('Prezzo unitario', [], ['upper' => true])."</th>
-            <th class='text-center' style='width:15%'>".tr('Imponibile', [], ['upper' => true])."</th>
-            <th class='text-center' style='width:10%'>".tr('IVA', [], ['upper' => true]).' (%)</th>
+            <th class='text-center' style='width:15%'>".tr('Importo', [], ['upper' => true])."</th>
+            <th class='text-center' style='width:10%'>".tr('IVA', [], ['upper' => true]).' (%)</th>';
+}
+
+echo '
         </tr>
     </thead>
 
     <tbody>';
 
-// RIGHE PREVENTIVO CON ORDINAMENTO UNICO
-$righe = $dbo->fetchArray("SELECT *, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo),'') AS codice_articolo, (SELECT percentuale FROM co_iva WHERE id=idiva) AS perc_iva FROM `co_righe_preventivi` WHERE idpreventivo=".prepare($id_record).' ORDER BY `order`');
-foreach ($righe as $r) {
-    $count = 0;
-    $count += ceil(strlen($r['descrizione']) / $autofill['words']);
-    $count += substr_count($r['descrizione'], PHP_EOL);
+// Righe documento
+$righe = $documento->getRighe();
+foreach ($righe as $riga) {
+    $r = $riga->toArray();
+
+    $autofill->count($r['descrizione']);
 
     echo '
         <tr>
             <td>
                 '.nl2br($r['descrizione']);
 
-    if (!empty($r['codice_articolo'])) {
+    if ($riga->isArticolo()) {
+        // Codice articolo
+        $text = tr('COD. _COD_', [
+            '_COD_' => $riga->articolo->codice,
+        ]);
         echo '
-                <br><small>'.tr('COD. _COD_', [
-                    '_COD_' => $r['codice_articolo'],
-                ]).'</small>';
+                <br><small>'.$text.'</small>';
 
-        if ($count <= 1) {
-            $count += 0.4;
-        }
+        $autofill->count($text, true);
     }
 
     echo '
             </td>';
 
-    echo "
-            <td class='text-center'>";
-    if (empty($r['is_descrizione'])) {
+    if (!$riga->isDescrizione()) {
         echo '
-                '.(empty($r['qta']) ? '' : Translator::numberToLocale($r['qta'], 'qta')).' '.$r['um'];
-    }
-    echo '
+            <td class="text-center">
+                '.Translator::numberToLocale(abs($riga->qta), 'qta').' '.$r['um'].'
             </td>';
 
-    if ($options['pricing']) {
-        // Prezzo unitario
-        echo "
-            <td class='text-right'>";
-        if (empty($r['is_descrizione'])) {
+        if ($options['pricing']) {
+            // Prezzo unitario
             echo '
-                '.(empty($r['qta']) || empty($r['subtotale']) ? '' : moneyFormat($r['subtotale'] / $r['qta']));
+            <td class="text-right">
+				'.moneyFormat($riga->prezzo_unitario_vendita);
 
-            if ($r['sconto'] > 0) {
-                echo "
-                <br><small class='text-muted'>- ".tr('sconto _TOT_ _TYPE_', [
-                    '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
-                    '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : currency()),
-                ]).'</small>';
+            if ($riga->sconto > 0) {
+                $text = tr('sconto _TOT_ _TYPE_', [
+                    '_TOT_' => Translator::numberToLocale($riga->sconto_unitario),
+                    '_TYPE_' => ($riga->tipo_sconto == 'PRC' ? '%' : currency()),
+                ]);
 
-                if ($count <= 1) {
-                    $count += 0.4;
-                }
+                echo '
+                <br><small class="text-muted">'.$text.'</small>';
+
+                $autofill->count($text, true);
             }
-        }
-        echo '
-            </td>';
 
-        // Imponibile
-        echo "
-            <td class='text-right'>";
-        if (empty($r['is_descrizione'])) {
             echo '
-                '.(empty($r['subtotale']) ? '' : moneyFormat($r['subtotale']));
-
-            if ($r['sconto'] > 0) {
-                echo "
-                <br><small class='text-muted'>- ".tr('sconto _TOT_ _TYPE_', [
-                    '_TOT_' => Translator::numberToLocale($r['sconto']),
-                    '_TYPE_' => currency(),
-                ]).'</small>';
-
-                if ($count <= 1) {
-                    $count += 0.4;
-                }
-            }
-        }
-        echo '
             </td>';
+
+            // Imponibile
+            echo '
+            <td class="text-right">
+				'.moneyFormat($riga->totale_imponibile).'
+            </td>';
+
+            // Iva
+            echo '
+            <td class="text-center">
+                '.Translator::numberToLocale($riga->aliquota->percentuale, 0).'
+            </td>';
+        }
     } else {
         echo '
-            <td class="text-center">-</td>
-            <td class="text-center">-</td>';
+            <td></td>';
+
+        if ($options['pricing']) {
+            echo '
+            <td></td>
+            <td></td>
+            <td></td>';
+        }
     }
 
-    // Iva
     echo '
-            <td class="text-center">';
-    if (empty($r['is_descrizione'])) {
-        echo '
-                '.Translator::numberToLocale($r['perc_iva'], 0);
-    }
-    echo '
-            </td>
         </tr>';
 
-    $autofill['count'] += $count;
-
-    $sconto[] = $r['sconto'];
-    $imponibile[] = $r['subtotale'];
-    $iva[] = $r['iva'];
+    $autofill->next();
 }
-
-$sconto = sum($sconto);
-$imponibile = sum($imponibile);
-$iva = sum($iva);
-
-$totale = $imponibile - $sconto;
 
 echo '
         |autofill|
     </tbody>';
+
+// Calcoli
+$imponibile = $documento->imponibile;
+$sconto = $documento->sconto;
+$totale_imponibile = $documento->totale_imponibile;
+$totale_iva = $documento->iva;
+$totale = $documento->totale;
+
+$show_sconto = $sconto > 0;
 
 // TOTALE COSTI FINALI
 if ($options['pricing'] and !isset($options['hide_total'])) {
@@ -202,12 +183,12 @@ if ($options['pricing'] and !isset($options['hide_total'])) {
         </td>
 
         <th colspan="2" class="text-right">
-            <b>'.moneyFormat($imponibile, 2).'</b>
+            <b>'.moneyFormat($show_sconto ? $imponibile : $totale_imponibile, 2).'</b>
         </th>
     </tr>';
 
     // Eventuale sconto incondizionato
-    if (!empty($sconto)) {
+    if ($show_sconto) {
         echo '
     <tr>
         <td colspan="3" class="text-right border-top">
@@ -215,7 +196,7 @@ if ($options['pricing'] and !isset($options['hide_total'])) {
         </td>
 
         <th colspan="2" class="text-right">
-            <b>-'.moneyFormat($sconto, 2).'</b>
+            <b>'.moneyFormat($sconto, 2).'</b>
         </th>
     </tr>';
 
@@ -227,7 +208,7 @@ if ($options['pricing'] and !isset($options['hide_total'])) {
         </td>
 
         <th colspan="2" class="text-right">
-            <b>'.moneyFormat($totale, 2).'</b>
+            <b>'.moneyFormat($totale_imponibile, 2).'</b>
         </th>
     </tr>';
     }
@@ -240,17 +221,15 @@ if ($options['pricing'] and !isset($options['hide_total'])) {
         </td>
 
         <th colspan="2" class="text-right">
-            <b>'.moneyFormat($iva, 2).'</b>
+            <b>'.moneyFormat($totale_iva, 2).'</b>
         </th>
     </tr>';
-
-    $totale = sum($totale, $iva);
 
     // TOTALE
     echo '
     <tr>
     	<td colspan="3" class="text-right border-top">
-            <b>'.tr('Quotazione totale', [], ['upper' => true]).':</b>
+            <b>'.tr('Totale documento', [], ['upper' => true]).':</b>
     	</td>
     	<th colspan="2" class="text-right">
     		<b>'.moneyFormat($totale, 2).'</b>
@@ -262,15 +241,7 @@ echo'
 </table>';
 
 // CONDIZIONI GENERALI DI FORNITURA
-
-// Lettura pagamenti
-$rs = $dbo->fetchArray('SELECT * FROM co_pagamenti WHERE id = '.$records[0]['idpagamento']);
-$pagamento = $rs[0]['descrizione'];
-
-// Lettura resa
-
-//$rs = $dbo->fetchArray('SELECT * FROM dt_porto WHERE id = '.$records[0]['idporto']);
-//$resa_materiale = $rs[0]['descrizione'];
+$pagamento = $dbo->fetchOne('SELECT * FROM co_pagamenti WHERE id = '.$documento['idpagamento']);
 
 echo '
 <table class="table table-bordered">
@@ -286,19 +257,9 @@ echo '
         </th>
 
         <td>
-            '.$pagamento.'
+            '.$pagamento['descrizione'].'
         </td>
     </tr>
-
-    <!--tr>
-        <th>
-            '.tr('Resa materiale', [], ['upper' => true]).'
-        </th>
-
-        <td>
-            '.$resa_materiale.'
-        </td>
-    </tr-->
 
     <tr>
         <th>
@@ -307,10 +268,10 @@ echo '
 
         <td>';
 
-        if (!empty($records[0]['validita'])) {
+        if (!empty($documento['validita'])) {
             echo'
             '.tr('_TOT_ giorni', [
-                '_TOT_' => $records[0]['validita'],
+                '_TOT_' => $documento['validita'],
             ]);
         } else {
             echo '-';
@@ -326,7 +287,7 @@ echo '
         </th>
 
         <td>
-            '.$records[0]['tempi_consegna'].'
+            '.$documento['tempi_consegna'].'
         </td>
     </tr>
 
@@ -336,7 +297,7 @@ echo '
         </th>
 
         <td>
-            '.nl2br($records[0]['esclusioni']).'
+            '.nl2br($documento['esclusioni']).'
         </td>
     </tr>
 </table>';
@@ -345,17 +306,19 @@ echo '
 echo '
 <p class="text-center">'.tr("In attesa di un Vostro Cortese riscontro, colgo l'occasione per porgere Cordiali Saluti").'</p>';
 
-//Firma
-echo '<div style=\'position:absolute; bottom:'.($settings['margins']['bottom'] + $settings['footer-height']).'px\' > <table >
-    <tr>
-        <td style="vertical-align:bottom;" width="50%">
-            lì, ___________________________
-        </td>
-
-        <td align="center" style="vertical-align:bottom;" width="50%">
-            FIRMA PER ACCETTAZIONE<br><br>
-            _____________________________________________
-        </td>
-    </tr>
-</table>
+// Firma
+echo '
+<div style="position:absolute; bottom:'.($settings['margins']['bottom'] + $settings['footer-height']).'px">
+    <table>
+        <tr>
+            <td style="vertical-align:bottom;" width="50%">
+                '.tr('lì').', ___________________________
+            </td>
+    
+            <td align="center" style="vertical-align:bottom;" width="50%">
+                '.tr('Firma per accettazione', [], ['upper' => true]).'<br><br>
+                _____________________________________________
+            </td>
+        </tr>
+    </table>
 <br></div>';

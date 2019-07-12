@@ -1,12 +1,12 @@
 <?php
 
 // Calcoli
-$imponibile = $fattura->imponibile;
-$sconto = $fattura->sconto;
-$totale_imponibile = $fattura->totale_imponibile;
-$totale_iva = $fattura->iva;
-$totale = $fattura->totale;
-$netto_a_pagare = $fattura->netto;
+$imponibile = $documento->imponibile;
+$sconto = $documento->sconto;
+$totale_imponibile = $documento->totale_imponibile;
+$totale_iva = $documento->iva;
+$totale = $documento->totale;
+$netto_a_pagare = $documento->netto;
 
 $show_sconto = $sconto > 0;
 $width = round(100 / ($show_sconto ? 5 : 3), 2);
@@ -207,10 +207,8 @@ if (!empty($record['rivalsainps'])) {
     </tr>';
 }
 
-$fattura = \Modules\Fatture\Fattura::find($id_record);
-
 // Ritenuta d'acconto ( + se no rivalsa inps)
-if (!empty($record['ritenutaacconto']) || !empty($fattura->totale_ritenuta_contributi) || !empty($record['spit_payment'])) {
+if (!empty($record['ritenutaacconto']) || !empty($documento->totale_ritenuta_contributi) || !empty($record['spit_payment'])) {
     $rs2 = $dbo->fetchArray('SELECT percentuale FROM co_ritenutaacconto WHERE id=(SELECT idritenutaacconto FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idritenutaacconto!=0 LIMIT 0,1)');
 
     $first_colspan = 3;
@@ -222,7 +220,7 @@ if (!empty($record['ritenutaacconto']) || !empty($fattura->totale_ritenuta_contr
     }
 
     $contributi = (!empty($record['ritenutaacconto']) ? ' - ' : '').tr('contributi: _PRC_%', [
-        '_PRC_' => Translator::numberToLocale($fattura->ritenutaContributi->percentuale, 2),
+        '_PRC_' => Translator::numberToLocale($documento->ritenutaContributi->percentuale, 2),
     ]);
     $acconto = tr('acconto: _PRC_%', [
         '_PRC_' => Translator::numberToLocale($rs2[0]['percentuale'], 0),
@@ -233,7 +231,7 @@ if (!empty($record['ritenutaacconto']) || !empty($fattura->totale_ritenuta_contr
         <th class="text-center small" colspan="'.$first_colspan.'">
             '.tr('Ritenuta (_ACCONTO__CONTRIBUTI_)', [
             '_ACCONTO_' => $acconto,
-            '_CONTRIBUTI_' => empty($fattura->ritenutaContributi) ? null : $contributi,
+            '_CONTRIBUTI_' => empty($documento->ritenutaContributi) ? null : $contributi,
             ], ['upper' => true]).'
         </th>';
 
@@ -252,13 +250,13 @@ if (!empty($record['ritenutaacconto']) || !empty($fattura->totale_ritenuta_contr
 
     <tr>
         <td class="cell-padded text-center" colspan="'.$first_colspan.'">
-            '.moneyFormat(abs($fattura->ritenuta_acconto) + $fattura->totale_ritenuta_contributi, 2).'
+            '.moneyFormat(abs($documento->ritenuta_acconto) + $documento->totale_ritenuta_contributi, 2).'
         </td>';
 
     echo '
 
         <td class="cell-padded text-center" colspan="'.$second_colspan.'">
-            '.moneyFormat($totale - abs($fattura->ritenuta_acconto) - $fattura->totale_ritenuta_contributi, 2).'
+            '.moneyFormat($totale - abs($documento->ritenuta_acconto) - $documento->totale_ritenuta_contributi, 2).'
         </td>
     </tr>';
 }
@@ -286,7 +284,7 @@ if (!empty($record['split_payment'])) {
         </td>
 
         <td class="cell-padded text-center" colspan="'.$second_colspan.'">
-            '.moneyFormat($totale - $totale_iva - abs($fattura->ritenuta_acconto) - $fattura->totale_ritenuta_contributi, 2).'
+            '.moneyFormat($totale - $totale_iva - abs($documento->ritenuta_acconto) - $documento->totale_ritenuta_contributi, 2).'
         </td>
     </tr>';
 }

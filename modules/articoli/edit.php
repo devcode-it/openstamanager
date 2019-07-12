@@ -4,15 +4,6 @@ include_once __DIR__.'/../../core.php';
 
 $_SESSION['superselect']['id_categoria'] = $record['id_categoria'];
 
-$img = null;
-if (!empty($record['immagine'])) {
-    $fileinfo = Uploads::fileInfo($record['immagine']);
-
-    $default_img = '/'.Uploads::getDirectory($id_module).'/'.$fileinfo['filename'].'_thumb600.'.$fileinfo['extension'];
-
-    $img = file_exists(DOCROOT.$default_img) ? ROOTDIR.$default_img : ROOTDIR.'/'.Uploads::getDirectory($id_module).'/'.$record['immagine'];
-}
-
 ?><form action="" method="post" id="edit-form" enctype="multipart/form-data">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
@@ -26,7 +17,7 @@ if (!empty($record['immagine'])) {
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-md-3">
-					{[ "type": "image", "label": "<?php echo tr('Immagine'); ?>", "name": "immagine", "class": "img-thumbnail", "value": "<?php echo $img; ?>" ]}
+					{[ "type": "image", "label": "<?php echo tr('Immagine'); ?>", "name": "immagine", "class": "img-thumbnail", "value": "<?php echo $articolo->image; ?>" ]}
 				</div>
 
 				<div class="col-md-4">

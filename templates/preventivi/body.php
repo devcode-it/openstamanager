@@ -17,7 +17,7 @@ echo '
         </div>
     </div>
 
-    <div class="col-xs-5 col-xs-offset-1">
+	<div class="col-xs-6" style="margin-left: 10px">
         <table class="table" style="width:100%;margin-top:5mm;">
             <tr>
                 <td colspan=2 class="border-full" style="height:16mm;">

@@ -20,11 +20,11 @@ echo '
 <div class="row">
     <!-- Dati Fattura -->
     <div class="col-xs-6">
-        <div class="text-center" style="height:5mm;">
-            <b>$tipo_doc$</b>
-        </div>
+		<div class="text-center" style="height:5mm;">
+			<b>$tipo_doc$</b>
+		</div>
 
-        <table class="table" style="overflow: visible; width: 100%">
+		<table class="table">
             <tr>
                 <td valign="top" class="border-full text-center">
                     <p class="small-bold">'.tr('Nr. documento', [], ['upper' => true]).'</p>
@@ -67,11 +67,10 @@ echo '
                     <p>$bic$</p>
                 </td>
             </tr>
-
         </table>
     </div>
 
-    <div class="col-xs-6">
+	<div class="col-xs-6" style="margin-left: 10px">
         <table class="table" style="width:100%;margin-top:5mm;">
             <tr>
                 <td colspan=2 class="border-full"'.(!$fattura_accompagnatoria ? ' style="height:20mm;"' : '').'>
@@ -103,7 +102,7 @@ echo '
 if (!empty($destinazione)) {
     echo '
             <tr>
-                <td colspan=2 class="border-full">
+                <td colspan=2 class="border-full" style="height:16mm;">
                     <p class="small-bold">'.tr('Destinazione diversa', [], ['upper' => true]).'</p>
                     <small>$c_destinazione$</small>
                 </td>

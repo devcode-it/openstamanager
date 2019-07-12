@@ -48,18 +48,13 @@ echo '
             msg = sconto >= 0 ? "'.tr('Sconto percentuale').'" : "'.tr('Maggiorazione percentuale').'";
             
             sconto_unitario.val(unitario.toLocale());
-            
-            if (!descrizione.val()) {
-                descrizione.val(msg + " " + Math.abs(sconto).toLocale() + "%");
-            }
+            descrizione.val(msg + " " + Math.abs(sconto).toLocale() + "%");
         }
         
         function aggiorna_sconto_unitario(){
             msg = sconto_unitario.val().toEnglish() >= 0 ? "'.tr('Sconto unitario').'" : "'.tr('Maggiorazione unitaria').'";
 
-            if (!descrizione.val()) {
-                descrizione.val(msg);
-            }
+            descrizione.val(msg);
         }
 
         sconto_percentuale.keyup(aggiorna_sconto_percentuale);

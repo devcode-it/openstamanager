@@ -918,13 +918,15 @@ class FatturaElettronica
             return $item->aliquota != null;
         })->aliquota;
         foreach ($righe as $numero => $riga) {
+            $dati_aggiuntivi = $riga->dati_aggiuntivi_fe;
+
             $dettaglio = [
                 'NumeroLinea' => $numero + 1,
             ];
 
             // 2.2.1.2
-            if (!empty($riga['tipo_cessione_prestazione'])) {
-                $dettaglio['TipoCessionePrestazione'] = $riga['tipo_cessione_prestazione'];
+            if (!empty($dati_aggiuntivi['tipo_cessione_prestazione'])) {
+                $dettaglio['TipoCessionePrestazione'] = $dati_aggiuntivi['tipo_cessione_prestazione'];
             }
 
             // 2.2.1.3
@@ -962,11 +964,11 @@ class FatturaElettronica
                 $dettaglio['UnitaMisura'] = $riga['um'];
             }
 
-            if (!empty($riga['data_inizio_periodo'])) {
-                $dettaglio['DataInizioPeriodo'] = $riga['data_inizio_periodo'];
+            if (!empty($dati_aggiuntivi['data_inizio_periodo'])) {
+                $dettaglio['DataInizioPeriodo'] = $dati_aggiuntivi['data_inizio_periodo'];
             }
-            if (!empty($riga['data_fine_periodo'])) {
-                $dettaglio['DataFinePeriodo'] = $riga['data_fine_periodo'];
+            if (!empty($dati_aggiuntivi['data_fine_periodo'])) {
+                $dettaglio['DataFinePeriodo'] = $dati_aggiuntivi['data_fine_periodo'];
             }
 
             $dettaglio['PrezzoUnitario'] = $riga->prezzo_unitario_vendita ?: 0;
@@ -1010,18 +1012,42 @@ class FatturaElettronica
                 $dettaglio['Natura'] = $aliquota['codice_natura_fe'];
             }
 
-            if (!empty($riga['riferimento_amministrazione'])) {
-                $dettaglio['RiferimentoAmministrazione'] = $riga['riferimento_amministrazione'];
+            if (!empty($dati_aggiuntivi['riferimento_amministrazione'])) {
+                $dettaglio['RiferimentoAmministrazione'] = $dati_aggiuntivi['riferimento_amministrazione'];
             }
 
             // AltriDatiGestionali (2.2.1.16) - Ritenuta ENASARCO
             // https://forum.italia.it/uploads/default/original/2X/d/d35d721c3a3a601d2300378724a270154e23af52.jpeg
             if (!empty($riga['ritenuta_contributi'])) {
-                $dettaglio['AltriDatiGestionali'] = [
+                $dettaglio[]['AltriDatiGestionali'] = [
                     'TipoDato' => 'CASSA-PREV',
                     'RiferimentoTesto' => setting('Tipo Cassa Previdenziale').' - '.$ritenuta_contributi->descrizione.' ('.Translator::numberToLocale($ritenuta_contributi->percentuale).'%)',
                     'RiferimentoNumero' => $riga->ritenuta_contributi,
                 ];
+            }
+
+            if (!empty($dati_aggiuntivi['altri_dati'])) {
+                foreach ($dati_aggiuntivi['altri_dati'] as $dato) {
+                    $altri_dati = [];
+
+                    if (!empty($dato['tipo_dato'])) {
+                        $altri_dati['TipoDato'] = $dato['tipo_dato'];
+                    }
+
+                    if (!empty($dato['riferimento_testo'])) {
+                        $altri_dati['RiferimentoTesto'] = $dato['riferimento_testo'];
+                    }
+
+                    if (!empty($dato['riferimento_numero'])) {
+                        $altri_dati['RiferimentoNumero'] = $dato['riferimento_numero'];
+                    }
+
+                    if (!empty($dato['riferimento_data'])) {
+                        $altri_dati['RiferimentoData'] = $dato['riferimento_data'];
+                    }
+
+                    $dettaglio[]['AltriDatiGestionali'] = $altri_dati;
+                }
             }
 
             $result[] = [

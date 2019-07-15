@@ -16,7 +16,7 @@ if (!empty($ptype)) {
 
 $result = Prints::render($id_print, $id_record, $directory);
 
-if(empty($result)){
+if (empty($result)) {
     echo '
         <div class="text-center">
     		<h3 class="text-muted">

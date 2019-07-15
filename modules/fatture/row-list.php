@@ -262,7 +262,7 @@ foreach ($righe as $row) {
         }
 
         echo "
-                    <a class='btn btn-xs btn-info' data-toggle='modal' data-title='".tr('Dati Fattura Elettronica')."' data-href='".$structure->fileurl('row-fe.php').'?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga['id']."'>
+                    <a class='btn btn-xs btn-info' data-toggle='modal' data-title='".tr('Dati Fattura Elettronica')."' data-href='".$structure->fileurl('fe/row-fe.php').'?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga['id']."'>
                         <i class='fa fa-file-code-o '></i>
                     </a>
                     

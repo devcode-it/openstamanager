@@ -210,6 +210,29 @@ class Fattura extends Document
         return $this->calcola('ritenuta_contributi');
     }
 
+    /**
+     * Restituisce i dati aggiuntivi per la fattura elettronica dell'elemento.
+     *
+     * @return array
+     */
+    public function getDatiAggiuntiviFEAttribute()
+    {
+        $result = json_decode($this->attributes['dati_aggiuntivi_fe'], true);
+
+        return (array) $result;
+    }
+
+    /**
+     * Imposta i dati aggiuntivi per la fattura elettronica dell'elemento.
+     */
+    public function setDatiAggiuntiviFEAttribute($values)
+    {
+        $values = (array) $values;
+        $dati = array_deep_clean($values);
+
+        $this->attributes['dati_aggiuntivi_fe'] = json_encode($dati);
+    }
+
     // Relazioni Eloquent
 
     public function anagrafica()

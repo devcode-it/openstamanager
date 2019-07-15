@@ -270,6 +270,61 @@ switch (post('op')) {
         }
         break;
 
+    case 'manage_documento_fe':
+        $data = Filter::getPOST();
+
+        $ignore = [
+            'id_plugin',
+            'id_module',
+            'id_record',
+            'backto',
+            'hash',
+            'op',
+            'idriga',
+            'dir',
+        ];
+        foreach ($ignore as $name) {
+            unset($data[$name]);
+        }
+
+        $fattura->dati_aggiuntivi_fe = $data;
+        $fattura->save();
+
+        flash()->info(tr('Dati FE aggiornati correttamente!'));
+
+        break;
+
+    case 'manage_riga_fe':
+        $id_riga = post('idriga');
+        if ($id_riga != null) {
+            $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
+            $riga = $riga ?: Descrizione::find($id_riga);
+            $riga = $riga ?: Sconto::find($id_riga);
+
+            $data = Filter::getPOST();
+
+            $ignore = [
+                'id_plugin',
+                'id_module',
+                'id_record',
+                'backto',
+                'hash',
+                'op',
+                'idriga',
+                'dir',
+            ];
+            foreach ($ignore as $name) {
+                unset($data[$name]);
+            }
+
+            $riga->dati_aggiuntivi_fe = $data;
+            $riga->save();
+
+            flash()->info(tr('Dati FE aggiornati correttamente!'));
+        }
+
+        break;
+
     case 'manage_articolo':
         if (post('idriga') != null) {
             $articolo = Articolo::find(post('idriga'));
@@ -322,36 +377,6 @@ switch (post('op')) {
 
         // Ricalcolo inps, ritenuta e bollo
         ricalcola_costiagg_fattura($id_record);
-
-        break;
-    case 'manage_dati_fe':
-        $id_riga = post('idriga');
-        if ($id_riga != null) {
-            $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
-            $riga = $riga ?: Descrizione::find($id_riga);
-            $riga = $riga ?: Sconto::find($id_riga);
-
-            $data = Filter::getPOST();
-
-            $ignore = [
-                'id_plugin',
-                'id_module',
-                'id_record',
-                'backto',
-                'hash',
-                'op',
-                'idriga',
-                'dir',
-            ];
-            foreach ($ignore as $name) {
-                unset($data[$name]);
-            }
-
-            $riga->dati_aggiuntivi_fe = $data;
-            $riga->save();
-
-            flash()->info(tr('Dati FE aggiornati correttamente!'));
-        }
 
         break;
 

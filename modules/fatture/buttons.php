@@ -13,6 +13,13 @@ echo '
     <i class="fa fa-copy"></i> '.tr('Duplica fattura').'
 </button>';
 
+if ($record['stato'] != 'Emessa' && $record['stato'] != 'Parzialmente pagato' && $record['stato'] != 'Pagato') {
+    echo '
+<a class="btn btn-info" data-toggle="modal" data-title="'.tr('Dati Fattura Elettronica').'" data-href="'.$structure->fileurl('fe/document-fe.php').'?id_module='.$id_module.'&id_record='.$id_record.'">
+    <i class="fa fa-file-code-o"></i> '.tr('Attributi avanzati').'
+</a>';
+}
+
 if ($dir == 'entrata') {
     echo '
 <div class="btn-group">

@@ -1,5 +1,9 @@
 <?php
 
+include_once __DIR__.'/../../../core.php';
+
+use Modules\Fatture\Fattura;
+
 $tipi_cessione_prestazione = [
     [
         'id' => 'SC',
@@ -21,11 +25,32 @@ $tipi_cessione_prestazione = [
 
 $space = str_repeat('&nbsp;', 6);
 
+$documento = Fattura::find($id_record);
+
+// Dati della riga
+$id_riga = get('idriga');
+$riga = $documento->getRighe()->find($id_riga);
+
+$result = $riga->toArray();
+$result = array_merge($result, $riga->dati_aggiuntivi_fe);
+
+echo '
+<form action="" method="post">
+	<input type="hidden" name="op" value="manage_riga_fe">
+	<input type="hidden" name="backto" value="record-edit">
+    <input type="hidden" name="id_module" value="'.$id_module.'">
+	<input type="hidden" name="id_record" value="'.$id_record.'">';
+
 echo '
 <table class="table">
     <tbody>
         <tr>
-            <th colspan="2">2 FatturaElettronicaBody</th>
+            <th colspan="2">
+                2 FatturaElettronicaBody
+                <button type="submit" class="btn btn-primary pull-right">
+                    <i class="fa fa-edit"></i> '.tr('Salva').'
+                </button>
+			</th>
         </tr>
         <tr>
             <th colspan="2">'.str_repeat($space, 1).'2.2 DatiBeniServizi</th>
@@ -76,7 +101,7 @@ if (empty($result['altri_dati'])) {
 
 $key = 1;
 foreach ($result['altri_dati'] as $dato) {
-    include __DIR__.'/fe_components/altri_dati.php';
+    include __DIR__.'/components/altri_dati.php';
 
     ++$key;
 }
@@ -111,8 +136,24 @@ function add_altri_dati(btn){
 $dato = [];
 $key = '-id-';
 
-include __DIR__.'/fe_components/altri_dati.php';
+include __DIR__.'/components/altri_dati.php';
 
 echo '
     </tbody>
 </table>';
+
+echo '
+    <!-- PULSANTI -->
+	<div class="row">
+		<div class="col-md-12 text-right">
+			<button type="submit" class="btn btn-primary">
+			    <i class="fa fa-edit"></i> '.tr('Salva').'
+			</button>
+		</div>
+	</div>';
+
+echo '
+</form>';
+
+echo '
+<script src="'.ROOTDIR.'/lib/init.js"></script>';

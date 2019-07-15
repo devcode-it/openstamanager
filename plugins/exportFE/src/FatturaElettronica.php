@@ -703,6 +703,10 @@ class FatturaElettronica
         }
 
         // Art73 - Ciò consente al cedente/prestatore l'emissione nello stesso anno di più documenti aventi stesso numero (2.1.1.12)
+        $dati_aggiuntivi = $documento->dati_aggiuntivi_fe;
+        if (!empty($dati_aggiuntivi['art73'])) {
+            $result['Art73'] = 'SI';
+        }
 
         return $result;
     }

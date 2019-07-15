@@ -126,7 +126,20 @@ class Prints
 
         Permissions::addModule($infos['id_module']);
 
-        if (empty($infos) || empty($infos['enabled']) || !Permissions::check([], false)) {
+        $has_access = true;
+        if (!empty($infos['is_record'])) {
+            $module = Modules::get($infos['id_module']);
+
+            Util\Query::setSegments(false);
+            $query = Util\Query::getQuery($module, [
+                'id' => $id_record,
+            ]);
+            Util\Query::setSegments(true);
+
+            $has_access = database()->fetchNum($query) !== 0;
+        }
+
+        if (empty($infos) || empty($infos['enabled']) || !Permissions::check([], false) || !$has_access) {
             return false;
         }
 

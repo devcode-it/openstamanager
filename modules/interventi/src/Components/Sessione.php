@@ -74,31 +74,35 @@ class Sessione extends Model
 
     public function setTipo($id_tipo, $reset = false)
     {
+        $previous = $this->idtipointervento;
+
         $tipo_sessione = TipoSessione::find($id_tipo);
         $this->tipo()->associate($tipo_sessione);
 
-        $tariffa = $this->getTariffa($id_tipo);
+        if ($previous != $id_tipo || $reset) {
+            $tariffa = $this->getTariffa($id_tipo);
 
-        // Azzeramento forzato del diritto di chiamata nel caso la sessione non sia la prima dell'intervento nel giorno di inizio o fine
-        $sessioni = database()->fetchArray('SELECT id FROM in_interventi_tecnici WHERE (DATE(orario_inizio) = DATE('.prepare($this->orario_inizio).') OR DATE(orario_fine) = DATE('.prepare($this->orario_fine).')) AND (prezzo_dirittochiamata != 0 OR prezzo_dirittochiamata_tecnico != 0) AND id != '.prepare($this->id).' AND idintervento = '.prepare($this->intervento->id));
-        if (!empty($sessioni)) {
-            $tariffa['costo_dirittochiamata_tecnico'] = 0;
-            $tariffa['costo_dirittochiamata'] = 0;
+            // Azzeramento forzato del diritto di chiamata nel caso la sessione non sia la prima dell'intervento nel giorno di inizio o fine
+            $sessioni = database()->fetchArray('SELECT id FROM in_interventi_tecnici WHERE (DATE(orario_inizio) = DATE('.prepare($this->orario_inizio).') OR DATE(orario_fine) = DATE('.prepare($this->orario_fine).')) AND (prezzo_dirittochiamata != 0 OR prezzo_dirittochiamata_tecnico != 0) AND id != '.prepare($this->id).' AND idintervento = '.prepare($this->intervento->id));
+            if (!empty($sessioni)) {
+                $tariffa['costo_dirittochiamata_tecnico'] = 0;
+                $tariffa['costo_dirittochiamata'] = 0;
 
-            // Fix se reset non attivo
-            $this->prezzo_dirittochiamata = $tariffa['costo_dirittochiamata'];
-        }
+                // Fix se reset non attivo
+                $this->prezzo_dirittochiamata = $tariffa['costo_dirittochiamata'];
+            }
 
-        // Modifica dei costi
-        $this->prezzo_ore_unitario_tecnico = $tariffa['costo_ore_tecnico'];
-        $this->prezzo_km_unitario_tecnico = $tariffa['costo_km_tecnico'];
-        $this->prezzo_dirittochiamata_tecnico = $tariffa['costo_dirittochiamata_tecnico'];
+            // Modifica dei costi
+            $this->prezzo_ore_unitario_tecnico = $tariffa['costo_ore_tecnico'];
+            $this->prezzo_km_unitario_tecnico = $tariffa['costo_km_tecnico'];
+            $this->prezzo_dirittochiamata_tecnico = $tariffa['costo_dirittochiamata_tecnico'];
 
-        // Modifica dei prezzi
-        if ($reset) {
-            $this->prezzo_ore_unitario = $tariffa['costo_ore'];
-            $this->prezzo_km_unitario = $tariffa['costo_km'];
-            $this->prezzo_dirittochiamata = $tariffa['costo_dirittochiamata'];
+            // Modifica dei prezzi
+            if ($reset) {
+                $this->prezzo_ore_unitario = $tariffa['costo_ore'];
+                $this->prezzo_km_unitario = $tariffa['costo_km'];
+                $this->prezzo_dirittochiamata = $tariffa['costo_dirittochiamata'];
+            }
         }
     }
 

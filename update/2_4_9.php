@@ -2,7 +2,7 @@
 
 include_once DOCROOT.'/modules/fatture/modutil.php';
 
-function get_costi_intervento($id_intervento)
+function get_costi_intervento_fix($id_intervento)
 {
     $dbo = database();
 
@@ -170,7 +170,7 @@ $iva = $dbo->fetchOne('SELECT * FROM co_iva WHERE id='.prepare($id_iva));
 
 $interventi = $dbo->fetchArray('SELECT * FROM in_interventi WHERE sconto_globale != 0 AND sconto_globale != NULL');
 foreach ($interventi as $intervento) {
-    $costi = get_costi_intervento($intervento['id']);
+    $costi = get_costi_intervento_fix($intervento['id']);
     $sconto_globale = $costi['sconto_globale'];
 
     if ($intervento['tipo_sconto_globale'] == 'PRC') {

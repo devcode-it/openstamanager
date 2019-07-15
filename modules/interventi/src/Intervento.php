@@ -16,7 +16,7 @@ class Intervento extends Document
     protected $info = [];
 
     /**
-     * Crea un nuovo preventivo.
+     * Crea un nuovo intrevento.
      *
      * @param Anagrafica   $anagrafica
      * @param TipoSessione $tipo_sessione

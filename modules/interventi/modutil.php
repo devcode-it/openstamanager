@@ -2,6 +2,10 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Anagrafiche\Anagrafica;
+use Modules\Interventi\Components\Sessione;
+use Modules\Interventi\Intervento;
+
 /**
  * Recupera il totale delle ore spese per un intervento.
  *
@@ -54,105 +58,17 @@ function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto = n
 {
     $dbo = database();
 
-    // Controllo sull'identità del tecnico
-    $tecnico = $dbo->fetchOne('SELECT an_anagrafiche.idanagrafica, an_anagrafiche.email FROM an_anagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica INNER JOIN an_tipianagrafiche ON an_tipianagrafiche.idtipoanagrafica=an_tipianagrafiche_anagrafiche.idtipoanagrafica WHERE an_anagrafiche.idanagrafica = '.prepare($idtecnico)." AND an_tipianagrafiche.descrizione = 'Tecnico'");
-    if (empty($tecnico)) {
-        return false;
-    }
+    $intervento = Intervento::find($idintervento);
+    $anagrafica = Anagrafica::find($idtecnico);
 
-    $rs = $dbo->fetchArray('SELECT idanagrafica, idsede_destinazione, idtipointervento FROM in_interventi WHERE id='.prepare($idintervento));
-    $idanagrafica = $rs[0]['idanagrafica'];
-    $idsede_destinazione = $rs[0]['idsede_destinazione'];
-    $idtipointervento = $rs[0]['idtipointervento'];
-
-    // Calcolo km in base a quelli impostati nell'anagrafica
-    // Nessuna sede
-    if ($idsede_destinazione == '-1') {
-        $km = 0;
-    }
-
-    // Sede legale
-    elseif (empty($idsede_destinazione)) {
-        $rs2 = $dbo->fetchArray('SELECT km FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
-        $km = $rs2[0]['km'];
-    }
-
-    // Sede secondaria
-    else {
-        $rs2 = $dbo->fetchArray('SELECT km FROM an_sedi WHERE id='.prepare($idsede_destinazione));
-        $km = $rs2[0]['km'];
-    }
-
-    $km = empty($km) ? 0 : $km;
-
-    // Calcolo il totale delle ore lavorate
-    $diff = date_diff(date_create($inizio), date_create($fine));
-    $ore = calcola_ore_intervento($inizio, $fine);
-
-    // Leggo i costi unitari dalle tariffe se almeno un valore è stato impostato
-    $rsc = $dbo->fetchArray('SELECT * FROM in_tariffe WHERE idtecnico='.prepare($idtecnico).' AND idtipointervento='.prepare($idtipointervento));
-
-    $costo_ore = $rsc[0]['costo_ore'];
-    $costo_km = $rsc[0]['costo_km'];
-    $costo_dirittochiamata = $rsc[0]['costo_dirittochiamata'];
-
-    $costo_ore_tecnico = $rsc[0]['costo_ore_tecnico'];
-    $costo_km_tecnico = $rsc[0]['costo_km_tecnico'];
-    $costo_dirittochiamata_tecnico = $rsc[0]['costo_dirittochiamata_tecnico'];
-
-    // Sovrascrivo i costi unitari da contratto se l'intervento è legato ad un contratto e c'è almeno un record...
-    if (!empty($idcontratto)) {
-        $rsc = $dbo->fetchArray('SELECT * FROM co_contratti_tipiintervento WHERE idcontratto='.prepare($idcontratto).' AND idtipointervento='.prepare($idtipointervento));
-
-        if (!empty($rsc)) {
-            $costo_ore = $rsc[0]['costo_ore'];
-            $costo_km = $rsc[0]['costo_km'];
-            $costo_dirittochiamata = $rsc[0]['costo_dirittochiamata'];
-
-            //per le attività collegate a contratti, i costi interni del tecnico vengono sempre presi da quelli globali o da quelli specificati per il singolo tecnico
-            //$costo_ore_tecnico = $rsc[0]['costo_ore_tecnico'];
-            //$costo_km_tecnico = $rsc[0]['costo_km_tecnico'];
-            //$costo_dirittochiamata_tecnico = $rsc[0]['costo_dirittochiamata_tecnico'];
-        }
-    }
-
-    // Azzeramento forzato del diritto di chiamata nel caso questa non sia la prima sessione dell'intervento per il giorno di inizio [Luca]
-    $rs = $dbo->fetchArray('SELECT id FROM in_interventi_tecnici WHERE (DATE(orario_inizio)=DATE('.prepare($inizio).') OR DATE(orario_fine)=DATE('.prepare($inizio).')) AND idintervento='.prepare($idintervento));
-    if (!empty($rs)) {
-        $costo_dirittochiamata_tecnico = 0;
-        $costo_dirittochiamata = 0;
-    }
-
-    // Inserisco le ore dei tecnici nella tabella "in_interventi_tecnici"
-    $dbo->insert('in_interventi_tecnici', [
-        'idintervento' => $idintervento,
-        'idtipointervento' => $idtipointervento,
-        'idtecnico' => $idtecnico,
-        'km' => $km,
-        'orario_inizio' => $inizio,
-        'orario_fine' => $fine,
-        'ore' => $ore,
-        'prezzo_ore_unitario' => $costo_ore,
-        'prezzo_km_unitario' => $costo_km,
-
-        'prezzo_ore_consuntivo' => $costo_ore * $ore + $costo_dirittochiamata,
-        'prezzo_km_consuntivo' => 0,
-        'prezzo_dirittochiamata' => $costo_dirittochiamata,
-
-        'prezzo_ore_unitario_tecnico' => $costo_ore_tecnico,
-        'prezzo_km_unitario_tecnico' => $costo_km_tecnico,
-
-        'prezzo_ore_consuntivo_tecnico' => $costo_ore_tecnico * $ore + $costo_dirittochiamata_tecnico,
-        'prezzo_km_consuntivo_tecnico' => 0,
-        'prezzo_dirittochiamata_tecnico' => $costo_dirittochiamata_tecnico,
-    ]);
+    $sessione = Sessione::build($intervento, $anagrafica, $inizio, $fine);
 
     // Notifica nuovo intervento al tecnico
     if (!empty($tecnico['email'])) {
         $n = new Notifications\EmailNotification();
 
         $n->setTemplate('Notifica intervento', $idintervento);
-        $n->setReceivers($tecnico['email']);
+        $n->setReceivers($anagrafica['email']);
 
         $n->send();
     }

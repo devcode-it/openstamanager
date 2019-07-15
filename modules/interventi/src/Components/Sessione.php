@@ -3,6 +3,8 @@
 namespace Modules\Interventi\Components;
 
 use Common\Model;
+use DateTime;
+use http\Exception\InvalidArgumentException;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\Intervento;
 use Modules\Iva\Aliquota;
@@ -20,6 +22,118 @@ class Sessione extends Model
     protected $table = 'in_interventi_tecnici';
 
     protected $aliquota_iva = null;
+
+    /**
+     * Crea un nuova sessione collegata ad un intervento.
+     *
+     * @param Intervento $intervento
+     * @param Anagrafica $anagrafica
+     * @param string     $inizio
+     * @param string     $fine
+     *
+     * @return self
+     */
+    public static function build(Intervento $intervento, Anagrafica $anagrafica, $inizio, $fine)
+    {
+        if (!$anagrafica->isTipo('Tecnico')) {
+            throw new InvalidArgumentException();
+        }
+
+        $model = parent::build();
+
+        $model->parent()->associate($intervento);
+        $model->anagrafica()->associate($anagrafica);
+
+        $id_tipo = $intervento['idtipointervento'];
+        $tipo_sessione = TipoSessione::find($id_tipo);
+        $model->tipo()->associate($tipo_sessione);
+
+        $model->orario_inizio = $inizio;
+        $model->orario_fine = $fine;
+
+        // Sede secondaria
+        if (!empty($intervento['idsede_destinazione'])) {
+            $sede = database()->fetchOne('SELECT km FROM an_sedi WHERE id = '.prepare($intervento['idsede_destinazione']));
+            $km = $sede['km'];
+        }
+
+        // Sede legale dell'anagrafica
+        else {
+            $km = $intervento->anagrafica->sedeLegale->km;
+        }
+
+        $model->km = empty($km) ? 0 : $km;
+
+        $model->save();
+
+        $model->setTipo($id_tipo, true);
+        $model->save();
+
+        return $model;
+    }
+
+    public function setTipo($id_tipo, $reset = false)
+    {
+        $tipo_sessione = TipoSessione::find($id_tipo);
+        $this->tipo()->associate($tipo_sessione);
+
+        $tariffa = $this->getTariffa($id_tipo);
+
+        // Azzeramento forzato del diritto di chiamata nel caso la sessione non sia la prima dell'intervento nel giorno di inizio o fine
+        $sessioni = database()->fetchArray('SELECT id FROM in_interventi_tecnici WHERE (DATE(orario_inizio) = DATE('.prepare($this->orario_inizio).') OR DATE(orario_fine) = DATE('.prepare($this->orario_fine).')) AND (prezzo_dirittochiamata != 0 OR prezzo_dirittochiamata_tecnico != 0) AND id != '.prepare($this->id).' AND idintervento = '.prepare($this->intervento->id));
+        if (!empty($sessioni)) {
+            $tariffa['costo_dirittochiamata_tecnico'] = 0;
+            $tariffa['costo_dirittochiamata'] = 0;
+
+            // Fix se reset non attivo
+            $this->prezzo_dirittochiamata = $tariffa['costo_dirittochiamata'];
+        }
+
+        // Modifica dei costi
+        $this->prezzo_ore_unitario_tecnico = $tariffa['costo_ore_tecnico'];
+        $this->prezzo_km_unitario_tecnico = $tariffa['costo_km_tecnico'];
+        $this->prezzo_dirittochiamata_tecnico = $tariffa['costo_dirittochiamata_tecnico'];
+
+        // Modifica dei prezzi
+        if ($reset) {
+            $this->prezzo_ore_unitario = $tariffa['costo_ore'];
+            $this->prezzo_km_unitario = $tariffa['costo_km'];
+            $this->prezzo_dirittochiamata = $tariffa['costo_dirittochiamata'];
+        }
+    }
+
+    public function getOreAttribute()
+    {
+        $inizio = new DateTime($this->orario_inizio);
+        $diff = $inizio->diff(new DateTime($this->orario_fine));
+
+        $ore = $diff->i / 60 + $diff->h + ($diff->days * 24);
+
+        return $ore;
+    }
+
+    /**
+     * Salva la sessione, impostando i campi dipendenti dai singoli parametri.
+     *
+     * @param array $options
+     *
+     * @return bool
+     */
+    public function save(array $options = [])
+    {
+        $this->attributes['ore'] = $this->ore;
+
+        $this->attributes['prezzo_ore_consuntivo'] = $this->prezzo_manodopera + $this->prezzo_diritto_chiamata;
+        $this->attributes['prezzo_km_consuntivo'] = $this->prezzo_viaggio;
+
+        $this->attributes['prezzo_ore_consuntivo_tecnico'] = $this->costo_manodopera + $this->costo_diritto_chiamata;
+        $this->attributes['prezzo_km_consuntivo_tecnico'] = $this->costo_viaggio;
+
+        $this->attributes['sconto'] = $this->sconto_totale_manodopera;
+        $this->attributes['scontokm'] = $this->sconto_totale_viaggio;
+
+        return parent::save($options);
+    }
 
     public function getParentID()
     {
@@ -273,19 +387,23 @@ class Sessione extends Model
         return $this->aliquota_iva;
     }
 
-    /**
-     * Crea un nuova sessione collegata ad un intervento.
-     *
-     * @param Intervento $intervento
-     *
-     * @return self
-     */
-    public static function build(Intervento $intervento)
+    protected function getTariffa($id_tipo)
     {
-        $model = parent::build($intervento);
+        $database = database();
 
-        $model->parent()->associate($intervento);
+        // Costi unitari dalla tariffa del tecnico
+        $result = $database->fetchOne('SELECT * FROM in_tariffe WHERE idtecnico='.prepare($this->anagrafica->id).' AND idtipointervento = '.prepare($id_tipo));
 
-        return $model;
+        // Costi unitari del contratto
+        $id_contratto = $this->intervento->idcontratto;
+        if (!empty($id_contratto)) {
+            $tariffa_contratto = $database->fetchOne('SELECT costo_ore, costo_km, costo_dirittochiamata FROM co_contratti_tipiintervento WHERE idcontratto = '.prepare($id_contratto).' AND idtipointervento = '.prepare($id_tipo));
+
+            if (!empty($tariffa_contratto)) {
+                $result = array_merge($result, $tariffa_contratto);
+            }
+        }
+
+        return $result;
     }
 }

@@ -526,7 +526,7 @@ class Fattura extends Document
     public function getBollo()
     {
         if (isset($this->bollo)) {
-            return        $this->bollo;
+            return $this->bollo;
         }
 
         $righe_bollo = $this->getRighe()->filter(function ($item, $key) {
@@ -548,7 +548,7 @@ class Fattura extends Document
         return $marca_da_bollo;
     }
 
-    protected function manageRigaMarcaDaBollo()
+    public function manageRigaMarcaDaBollo()
     {
         $riga = $this->rigaBollo;
 

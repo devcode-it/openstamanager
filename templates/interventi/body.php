@@ -302,12 +302,10 @@ foreach ($sessioni as $i => $sessione) {
 }
 
 // Ore lavorate
-$ore = $documento->ore_totali;
-
 echo '
     <tr>
         <td class="text-center">
-            <small>'.tr('Ore lavorate').':</small><br/><b>'.Translator::numberToLocale($ore, 2).'</b>
+            <small>'.tr('Ore lavorate').':</small><br/><b>'.Translator::numberToLocale($documento->ore_totali, 2).'</b>
         </td>';
 
 // Costo totale manodopera
@@ -334,7 +332,7 @@ echo '
 echo '
     <tr>
         <td class="text-center">
-            <small>'.tr('Km percorsi').':</small><br/><b>'.Translator::numberToLocale($sessioni->sum('km'), 2).'</b>
+            <small>'.tr('Km percorsi').':</small><br/><b>'.Translator::numberToLocale($documento->km_totali, 2).'</b>
         </td>';
 
 // Costo trasferta

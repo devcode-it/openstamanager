@@ -490,6 +490,8 @@ class Prints
             include self::filepath($id_print, 'top.php');
             $top = ob_get_clean();
 
+            $top = str_replace(array_keys($replaces), array_values($replaces), $top);
+
             $mpdf->WriteHTML($top);
 
             foreach ($records as $record) {
@@ -503,6 +505,8 @@ class Prints
             ob_start();
             include self::filepath($id_print, 'bottom.php');
             $bottom = ob_get_clean();
+
+            $bottom = str_replace(array_keys($replaces), array_values($replaces), $bottom);
 
             $mpdf->WriteHTML($bottom);
 

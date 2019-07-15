@@ -13,6 +13,8 @@ class Intervento extends Document
 {
     protected $table = 'in_interventi';
 
+    protected $info = [];
+
     /**
      * Crea un nuovo preventivo.
      *
@@ -41,11 +43,46 @@ class Intervento extends Document
 
     public function getOreTotaliAttribute()
     {
-        $sessioni = $this->sessioni;
+        if (!isset($this->info['ore_totali'])) {
+            $sessioni = $this->sessioni;
 
-        $ore = $sessioni->sum('ore');
+            $this->info['ore_totali'] = $sessioni->sum('ore');
+        }
 
-        return $ore;
+        return $this->info['ore_totali'];
+    }
+
+    public function getKmTotaliAttribute()
+    {
+        if (!isset($this->info['km_totali'])) {
+            $sessioni = $this->sessioni;
+
+            $this->info['km_totali'] = $sessioni->sum('km');
+        }
+
+        return $this->info['km_totali'];
+    }
+
+    public function getInizioAttribute()
+    {
+        if (!isset($this->info['inizio'])) {
+            $sessioni = $this->sessioni;
+
+            $this->info['inizio'] = $sessioni->min('orario_inizio');
+        }
+
+        return $this->info['inizio'];
+    }
+
+    public function getFineAttribute()
+    {
+        if (!isset($this->info['fine'])) {
+            $sessioni = $this->sessioni;
+
+            $this->info['fine'] = $sessioni->max('orario_fine');
+        }
+
+        return $this->info['fine'];
     }
 
     /**

@@ -4,6 +4,7 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\Interventi\Intervento;
 
+print_r($record['id']);
 $intervento = Intervento::find($record['id']);
 
 $imponibile = $intervento->imponibile;
@@ -14,19 +15,22 @@ $somma_imponibile[] = $imponibile;
 $somma_sconto[] = $sconto;
 $somma_totale_imponibile[] = $totale_imponibile;
 
+$pricing = isset($pricing) ? $pricing : true;
+
 // Informazioni intervento
 echo '
 <tr>
     <td colspan="2">
         <p>'.tr('Intervento _NUM_ del _DATE_', [
-            '_NUM_' => $intervento['codice'],
-            '_DATE_' => dateFormat($record['Data inizio']),
+            '_NUM_' => $intervento->codice,
+            '_DATE_' => dateFormat($intervento->inizio),
         ]).'</p>
-        <small><b>'.tr('Cliente').':</b> '.$intervento->anagrafica->ragione_sociale.'</small>
+        <p><small><b>'.tr('Cliente').':</b> '.$intervento->anagrafica->ragione_sociale.'</small></p>
+        <p><small><b>'.tr('Stato').':</b> '.$intervento->stato->descrizione.'</small></p>
     </td>
-    <td class="text-right">'.moneyFormat($imponibile, 2).'</td>
-    <td class="text-right">'.moneyFormat($sconto, 2).'</td>
-    <td class="text-right">'.moneyFormat($totale_imponibile, 2).'</td>
+    <td class="text-center">'.($pricing ? moneyFormat($imponibile, 2) : '-').'</td>
+    <td class="text-center">'.($pricing ? moneyFormat($sconto, 2) : '-').'</td>
+    <td class="text-center">'.($pricing ? moneyFormat($totale_imponibile, 2) : '-').'</td>
 </tr>';
 
 // Sessioni
@@ -45,7 +49,7 @@ if (!empty($sessioni)) {
         echo '
 <tr>
     <td style="border-top: 0; border-bottom: 0;"></td>
-    <td><small>'.$sessione->anagrafica->ragione_sociale.'</small></td>
+    <td><small>'.$sessione->anagrafica->ragione_sociale.' <small>('.$sessione->tipo->descrizione.')</small></td>
     <td class="text-center"><small>'.dateFormat($sessione->orario_inizio).'</small></td>
     <td class="text-center"><small>'.timeFormat($sessione->orario_inizio).'</small></td>
     <td class="text-center"><small>'.timeFormat($sessione->orario_fine).'</small></td>
@@ -71,8 +75,8 @@ if (!$righe->isEmpty()) {
     <td style="border-top: 0; border-bottom: 0;"></td>
     <td><small>'.$riga->descrizione.'</small></td>
     <td class="text-center"><small>'.$riga->qta.' '.$riga->um.'</small></td>
-    <td class="text-right"><small>'.moneyFormat($riga->prezzo_unitario_vendita).'</small></td>
-    <td class="text-right"><small>'.moneyFormat($riga->totale_imponibile).'</small></td>
+    <td class="text-center"><small>'.($pricing ? moneyFormat($riga->prezzo_unitario_vendita) : '-').'</small></td>
+    <td class="text-center"><small>'.($pricing ? moneyFormat($riga->totale_imponibile) : '-').'</small></td>
 </tr>';
     }
 }

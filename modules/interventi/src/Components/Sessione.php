@@ -6,6 +6,7 @@ use Common\Model;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\Intervento;
 use Modules\Iva\Aliquota;
+use Modules\TipiIntervento\Tipo as TipoSessione;
 
 /**
  * Notazione: i costi sono rivolti all'azienda, i prezzi al cliente.
@@ -30,6 +31,11 @@ class Sessione extends Model
     public function anagrafica()
     {
         return $this->belongsTo(Anagrafica::class, 'idtecnico');
+    }
+
+    public function tipo()
+    {
+        return $this->belongsTo(TipoSessione::class, 'idtipointervento');
     }
 
     public function parent()

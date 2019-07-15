@@ -20,7 +20,7 @@ if ($options['action'] == 'add') {
 // Sconto unitario
 echo '
         <div class="col-md-'.($options['action'] == 'add' ? 4 : 6).'">
-            {[ "type": "number", "label": "'.tr('Sconto/maggiorazione unitario').'", "name": "sconto_unitario", "value": "'.$result['sconto_unitario'].'", "icon-after": "'.currency().'", "help": "'.tr('Il valore positivo indica uno sconto: per applicare una maggiorazione inserire un valore negativo').'" ]}
+            {[ "type": "number", "label": "'.tr('Sconto/maggiorazione percentuale').'", "name": "sconto_percentuale", "icon-after": "%", "help": "'.tr('Il valore positivo indica uno sconto: per applicare una maggiorazione inserire un valore negativo').'. <b>'.tr("L'importo dello sconto viene calcolato sul totale imponibile del documento al momento dell'aggiunta dello sconto").'</b>." ]}
         </div>';
 
 // Iva

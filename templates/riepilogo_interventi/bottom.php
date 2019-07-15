@@ -12,9 +12,9 @@ echo '
             <th class="text-right" style="border-left: 0;">
                 <b>'.tr('Totale', [], ['upper' => true]).':</b>
             </th>
-            <th class="text-right">'.moneyFormat($somma_imponibile, 2).'</th>
-            <th class="text-right">'.moneyFormat($somma_sconto, 2).'</th>
-            <th class="text-right">'.moneyFormat($somma_totale_imponibile, 2).'</th>
+            <th class="text-center">'.($pricing ? moneyFormat($somma_imponibile, 2) : '-').'</th>
+            <th class="text-center">'.($pricing ? moneyFormat($somma_sconto, 2) : '-').'</th>
+            <th class="text-center">'.($pricing ? moneyFormat($somma_totale_imponibile, 2) : '-').'</th>
         </tr>
     </tbody>
 </table>';

@@ -254,3 +254,16 @@ UPDATE `zz_prints` SET `filename` = 'Stampa calendario {periodo}' WHERE `name` =
 
 -- Aggiornamento Statistiche delle Anagrafiche
 UPDATE `zz_plugins` SET `options` = 'custom', `directory` = 'statistiche_anagrafiche', `script` = '' WHERE `name` = 'Statistiche' AND `idmodule_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche');
+
+-- Fix sconti globali
+UPDATE `co_righe_documenti` SET `sconto` = -`subtotale`, `sconto_unitario` = -`subtotale` WHERE `is_sconto` = 1 AND `subtotale` != 0;
+UPDATE `co_righe_preventivi` SET `sconto` = -`subtotale`, `sconto_unitario` = -`subtotale` WHERE `is_sconto` = 1 AND `subtotale` != 0;
+UPDATE `co_righe_contratti` SET `sconto` = -`subtotale`, `sconto_unitario` = -`subtotale` WHERE `is_sconto` = 1 AND `subtotale` != 0;
+UPDATE `or_righe_ordini` SET `sconto` = -`subtotale`, `sconto_unitario` = -`subtotale` WHERE `is_sconto` = 1 AND `subtotale` != 0;
+UPDATE `dt_righe_ddt` SET `sconto` = -`subtotale`, `sconto_unitario` = -`subtotale` WHERE `is_sconto` = 1 AND `subtotale` != 0;
+
+UPDATE `co_righe_documenti` SET `subtotale` = 0 WHERE `is_sconto` = 1 AND `subtotale` != 0;
+UPDATE `co_righe_preventivi` SET `subtotale` = 0 WHERE `is_sconto` = 1 AND `subtotale` != 0;
+UPDATE `co_righe_contratti` SET `subtotale` = 0 WHERE `is_sconto` = 1 AND `subtotale` != 0;
+UPDATE `or_righe_ordini` SET `subtotale` = 0 WHERE `is_sconto` = 1 AND `subtotale` != 0;
+UPDATE `dt_righe_ddt` SET `subtotale` = 0 WHERE `is_sconto` = 1 AND `subtotale` != 0;

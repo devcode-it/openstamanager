@@ -623,7 +623,7 @@ if ($dir == 'uscita' && $fattura->isFE()) {
 <?php
 if ($dir == 'entrata') {
     echo '
-<div class="alert alert-info text-center">'.tr('Per allegare un documento alla fattura elettronica caricare il file PDF specificando come categoria "Fattura Elettronica"').'.</div>';
+<div class="alert alert-info text-center">'.tr('Per allegare un documento alla fattura elettronica caricare il file PDF specificando come categoria "Allegati Fattura Elettronica"').'.</div>';
 }
 
 echo '

@@ -288,6 +288,8 @@ function add_conto(id) {
 }
 
 function load_movimenti(selector, id_conto) {
+	$("#main_loading").show();
+    
     $.ajax({
         url: "'.$structure->fileurl('dettagli_conto.php').'",
         type: "get",
@@ -297,8 +299,9 @@ function load_movimenti(selector, id_conto) {
         },
         success: function(data){
            $("#" + selector).html(data);
-           
            $("#" + selector).slideToggle();
+           
+           $("#main_loading").fadeOut();
         }
 	});
 }

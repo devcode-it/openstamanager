@@ -1042,6 +1042,7 @@ class FatturaElettronica
             $percentuale = floatval($aliquota->percentuale);
 
             $prezzo_totale = $documento->isNota() ? -$riga->totale_imponibile : $riga->totale_imponibile;
+            $prezzo_totale = $prezzo_totale ?: 0;
             $dettaglio['PrezzoTotale'] = $prezzo_totale;
 
             $dettaglio['AliquotaIVA'] = $percentuale;

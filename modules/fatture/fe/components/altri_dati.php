@@ -43,7 +43,7 @@ echo '
         <tr class="fifth-level">
             <td style="vertical-align: middle;">'.str_repeat($space, 4).'2.2.1.16.3 RiferimentoNumero</td>
             <td>
-                {[ "type": "number", "name": "altri_dati['.$key.'][riferimento_numero]", "value": "'.$dato['tipo_dato'].'" ]}
+                {[ "type": "number", "name": "altri_dati['.$key.'][riferimento_numero]", "value": "'.$dato['riferimento_numero'].'" ]}
             </td>
         </tr>';
 
@@ -52,7 +52,7 @@ echo '
         <tr class="fifth-level" id="last-altri_dati-'.$key.'">
             <td style="vertical-align: middle;">'.str_repeat($space, 4).'2.2.1.16.4 RiferimentoData</td>
             <td>
-                {[ "type": "date", "name": "altri_dati['.$key.'][riferimento_data]", "value": "'.$dato['tipo_dato'].'"]}
+                {[ "type": "date", "name": "altri_dati['.$key.'][riferimento_data]", "value": "'.$dato['riferimento_data'].'"]}
             </td>
         </tr>
     </tbody>';

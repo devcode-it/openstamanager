@@ -42,7 +42,8 @@ echo '
 	<input type="hidden" name="op" value="manage_riga_fe">
 	<input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="id_module" value="'.$id_module.'">
-	<input type="hidden" name="id_record" value="'.$id_record.'">';
+	<input type="hidden" name="id_record" value="'.$id_record.'">
+	<input type="hidden" name="id_riga" value="'.$id_riga.'">';
 
 echo '
 <table class="table">

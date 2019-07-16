@@ -295,7 +295,7 @@ switch (post('op')) {
         break;
 
     case 'manage_riga_fe':
-        $id_riga = post('idriga');
+        $id_riga = post('id_riga');
         if ($id_riga != null) {
             $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
             $riga = $riga ?: Descrizione::find($id_riga);

@@ -90,7 +90,7 @@ foreach ($documenti as $nome => $info) {
     <script>
         ref_keys["'.$nome.$key.'"] = '.($index - 1).';
     </script>';
-        
+
         ++$key;
     }
 

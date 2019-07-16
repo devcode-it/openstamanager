@@ -128,11 +128,11 @@ if (!$has_user) {
                         </div>
 
                         <div class="col-md-6">
-                            {[ "type": "password", "label": "'.tr('Password').'", "id": "password", "name": "admin_password", "value": "'.$osm_password.'", "placeholder": "'.tr("Digita la password dell'amministratore").'", "required": 1, "icon-after": "<i  onclick=\" if ($(this).parent().find(\'i\').hasClass(\'fa-eye\')) {  $(\'#password\').attr(\'type\', \'text\'); $(this).parent().find(\'i\').removeClass(\'fa-eye\').addClass(\'fa-eye-slash\');  $(this).parent().find(\'i\').attr(\'title\', \'Nascondi password\'); }  else { $(\'#password\').attr(\'type\', \'password\'); $(this).parent().find(\'i\').removeClass(\'fa-eye-slash\').addClass(\'fa-eye\');  $(this).parent().find(\'i\').attr(\'title\', \'Visualizza password\'); } \" title=\"'.tr('Visualizza password').'\" class=\"fa fa-eye clickable\" ></i>" ]}
+                            {[ "type": "password", "label": "'.tr('Password').'", "id": "password", "name": "admin_password", "value": "'.$osm_password.'", "placeholder": "'.tr("Digita la password dell'amministratore").'", "required": 1 ]}
                         </div>
 
                         <div class="col-md-6">
-                            {[ "type": "email", "label": "'.tr('Email').'", "name": "admin_email", "value": "'.$osm_email.'", "placeholder": "'.tr("Digita l'indirizzo email dell'amministratore").'" ]}
+                            {[ "type": "email", "label": "'.tr('Email').'", "name": "admin_email", "value": "'.$osm_email.'", "placeholder": "'.tr("Digita l'indirizzo email dell'amministratore").'", "required": 1 ]}
                         </div>
                     </div>
                 </div>

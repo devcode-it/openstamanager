@@ -82,8 +82,34 @@ class DefaultHandler implements HandlerInterface
      */
     protected function password(&$values, &$extras)
     {
+        $values['icon-after'] = '<i onclick="togglePassword_'.$values['id'].'()" class="fa clickable" id="'.$values['id'].'_toggle"></i>';
+
+        $result = '
+    <script>
+        function togglePassword_'.$values['id'].'() {
+            var button = $("#'.$values['id'].'_toggle");
+
+            if (button.hasClass("fa-eye")) {
+                $("#'.$values['id'].'").attr("type", "text");
+                button.removeClass("fa-eye").addClass("fa-eye-slash");
+                button.attr("title", "'.tr('Nascondi password').'");
+            }
+            else {
+                $("#'.$values['id'].'").attr("type", "password");
+                button.removeClass("fa-eye-slash").addClass("fa-eye");
+                button.attr("title", "'.tr('Visualizza password').'");
+            }
+        }
+        
+        $(document).ready(function(){
+            togglePassword_'.$values['id'].'();
+        });
+    </script>';
+
         // Delega al metodo "text", per la generazione del codice HTML
-        return $this->text($values, $extras);
+        $result .= $this->text($values, $extras);
+
+        return $result;
     }
 
     /**

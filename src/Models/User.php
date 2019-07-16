@@ -52,6 +52,11 @@ class User extends Model
         return $this->gruppo;
     }
 
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password'] = \Auth::hashPassword($value);
+    }
+
     /* Relazioni Eloquent */
 
     public function group()

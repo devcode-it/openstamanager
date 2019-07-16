@@ -1,5 +1,8 @@
 <?php
 
+$volume = sum(array_column($righe, 'volume'));
+$peso_lordo = sum(array_column($righe, 'peso_lordo'));
+
 // SCADENZE  |  TOTALI
 // TABELLA PRINCIPALE
 echo "
@@ -289,24 +292,40 @@ if ($fattura_accompagnatoria) {
     echo '
 <table class="table-bordered">
     <tr>
-        <th class="small" class style="width:25%">
+         <th class="small" class style="width:15%">
+            '.tr('Peso lordo', [], ['upper' => true]).'
+        </th>
+        
+         <th class="small" class style="width:15%">
+            '.tr('Volume', [], ['upper' => true]).'
+        </th>
+        
+        <th class="small" class style="width:15%">
             '.tr('Aspetto beni', [], ['upper' => true]).'
         </th>
 
-        <th class="small" class style="width:20%">
-            '.tr('Num. colli', [], ['upper' => true]).'
+        <th class="small" class style="width:10%">
+            '.tr('Colli', [], ['upper' => true]).'
         </th>
 
         <th class="small" style="width:30%">
             '.tr('Causale trasporto', [], ['upper' => true]).'
         </th>
 
-        <th class="small" style="width:25%">
+        <th class="small" style="width:15%">
             '.tr('Porto', [], ['upper' => true]).'
         </th>
     </tr>
 
     <tr>
+        <td class="cell-padded">
+        '.(!empty($peso_lordo) ? Translator::numberToLocale($peso_lordo).'&nbsp;KG' : '').'
+        </td>
+
+        <td class="cell-padded">
+            '.(!empty($volume) ? Translator::numberToLocale($volume).'&nbsp;M<sup>3</sup>' : '').'
+        </td>
+        
         <td class="cell-padded">
             $aspettobeni$ &nbsp;
         </td>

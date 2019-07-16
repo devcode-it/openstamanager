@@ -46,7 +46,9 @@ echo "
 $righe = $dbo->fetchArray("SELECT *,
 	IFNULL((SELECT `codice` FROM `mg_articoli` WHERE `id` = `co_righe_documenti`.`idarticolo`), '') AS codice_articolo,
     (SELECT GROUP_CONCAT(`serial` SEPARATOR ', ') FROM `mg_prodotti` WHERE `id_riga_documento` = `co_righe_documenti`.`id`) AS seriali,
-    (SELECT `percentuale` FROM `co_iva` WHERE `id` = `co_righe_documenti`.`idiva`) AS perc_iva
+    (SELECT `percentuale` FROM `co_iva` WHERE `id` = `co_righe_documenti`.`idiva`) AS perc_iva,
+    IFNULL((SELECT peso_lordo FROM mg_articoli WHERE id=idarticolo),0) * qta AS peso_lordo,
+    IFNULL((SELECT volume FROM mg_articoli WHERE id=idarticolo),0) * qta AS volume
 FROM `co_righe_documenti` WHERE `iddocumento` = ".prepare($id_record).' ORDER BY `order`');
 foreach ($righe as $r) {
     $count = 0;

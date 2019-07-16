@@ -2,19 +2,21 @@
 
 include_once __DIR__.'/../../core.php';
 
-function findKey($array, $keySearch)
-{
-    foreach ($array as $key => $item) {
-        if ($key == $keySearch) {
-            return true;
-        } elseif (is_array($item) && findKey($item, $keySearch)) {
-            echo $key;
+if (!function_exists('findKey')) {
+    function findKey($array, $keySearch)
+    {
+        foreach ($array as $key => $item) {
+            if ($key == $keySearch) {
+                return true;
+            } elseif (is_array($item) && findKey($item, $keySearch)) {
+                echo $key;
 
-            return true;
+                return true;
+            }
         }
-    }
 
-    return false;
+        return false;
+    }
 }
 
 $has_image = false;

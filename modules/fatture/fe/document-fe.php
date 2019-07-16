@@ -12,6 +12,9 @@ $result = $documento->toArray();
 $result = array_merge($result, $documento->dati_aggiuntivi_fe);
 
 echo '
+    <link rel="stylesheet" type="text/css" media="all" href="'.$structure->fileurl('fe/style.css').'"/>';
+
+echo '
 <form action="" method="post">
 	<input type="hidden" name="op" value="manage_documento_fe">
 	<input type="hidden" name="backto" value="record-edit">
@@ -21,7 +24,7 @@ echo '
 echo '
 <table class="table">
     <tbody>
-        <tr>
+        <tr class="first-level">
             <th colspan="2">
                 2 FatturaElettronicaBody
                 <button type="submit" class="btn btn-primary pull-right">
@@ -29,21 +32,28 @@ echo '
                 </button>
 			</th>
         </tr>
-        <tr>
+        <tr class="second-level">
             <th colspan="2">'.str_repeat($space, 1).'2.1 DatiGenerali</th>
         </tr>
-        <tr>
+        <tr class="third-level">
             <th colspan="2">'.str_repeat($space, 2).'2.1.1 DatiGeneraliDocumento</th>
         </tr>';
 
 // Art73
 echo '
-        <tr>
+        <tr class="fourth-level">
             <td style="vertical-align: middle;">'.str_repeat($space, 3).'2.1.1.12 Art73</td>
             <td>
                 {[ "type": "checkbox", "name": "art73", "value": "'.$result['art73'].'", "placeholder": "'.tr("Emesso ai sensi dell'articolo 73 del DPR 633/72").'" ]}
             </td>
-        </tr>';
+        </tr>
+    </tbody>';
+
+echo '
+<script>
+var keys = {};
+var ref_keys = {};
+</script>';
 
 $documenti = [
     'dati_ordine' => [
@@ -76,57 +86,41 @@ foreach ($documenti as $nome => $info) {
     foreach ($result[$nome] as $dato) {
         include __DIR__.'/components/dati_documento.php';
 
+        echo '
+    <script>
+        ref_keys["'.$nome.$key.'"] = '.($index - 1).';
+    </script>';
+        
         ++$key;
     }
 
-    $documenti[$nome]['key'] = $key;
-    $documenti[$nome]['index'] = $index;
+    echo '
+    <script>
+        keys["'.$nome.'"] = '.($key - 1).';
+    </script>';
 }
 
 echo '
-    </tbody>
 </table>';
 
-echo '
-<script>
-var keys = {';
-
 foreach ($documenti as $nome => $info) {
     echo '
-    '.$nome.': '.($info['key'] - 1).',';
-}
-
-echo '
-};
-var ref = {';
-
-foreach ($documenti as $nome => $info) {
-    echo '
-    '.$nome.($info['key'] - 1).': '.($info['index'] - 1).',';
-}
-
-echo '
-};
-</script>';
-
-foreach ($documenti as $nome => $info) {
-    echo '
-<table class="hide">
-    <tbody id="'.$nome.'-templace">';
+<table class="hide" id="'.$nome.'-templace">';
     $dato = [];
     $key = '-id-';
 
     include __DIR__.'/components/dati_documento.php';
 
     echo '
-    </tbody>
-    
+</table>
+
+<table class="hide">
     <tbody id="riferimento_'.$nome.'-templace">
-        <tr title="RiferimentoNumeroLinea-'.$nome.'--id-">
+        <tr class="fifth-level" title="RiferimentoNumeroLinea-'.$nome.'--id-">
             <td style="vertical-align: middle;">
                 '.str_repeat($space, 4).$info['code'].'.1 RiferimentoNumeroLinea - '.tr('Riga _NUM_', [
-                    '_NUM_' => '-num-',
-                ]).'
+            '_NUM_' => '-num-',
+        ]).'
             </td>
             <td>
                 {[ "type": "number", "name": "'.$nome.'[-id-][riferimento_linea][]", "value": "", "maxlength": 4, "decimals": 0 ]}
@@ -157,12 +151,12 @@ function replaceAll(str, find, replace) {
 
 function add_blocco(btn, nome){
     $("#template .superselect, #template .superselectajax").select2().select2("destroy");
-    var last = $(btn).closest("table").find("tr[id^=last-" + nome + "]").last();
+    var last = $(btn).closest("table").find("tr[id^=last-" + nome + "]").parent().last();
 
     keys[nome]++;
     var text = replaceAll($("#" + nome + "-templace").html(), "-id-", "" + keys[nome]);
     
-    ref[nome + keys[nome]] = 1;
+    ref_keys[nome + keys[nome]] = 1;
     
     last.after(text);
     
@@ -174,9 +168,9 @@ function add_riferimento(btn, nome, key) {
     $("#template .superselect, #template .superselectajax").select2().select2("destroy");
     var last = $(btn).closest("table").find("tr[title=RiferimentoNumeroLinea-" + nome + "-" + key + "]").last();
 
-    ref[nome + key]++;
+    ref_keys[nome + key]++;
     var text = replaceAll($("#riferimento_" + nome + "-templace").html(), "-id-", "" + key);
-    text = replaceAll(text, "-num-", "" + ref[nome + key]);
+    text = replaceAll(text, "-num-", "" + ref_keys[nome + key]);
     
     last.after(text);
     

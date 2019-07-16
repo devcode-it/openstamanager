@@ -35,6 +35,9 @@ $result = $riga->toArray();
 $result = array_merge($result, $riga->dati_aggiuntivi_fe);
 
 echo '
+    <link rel="stylesheet" type="text/css" media="all" href="'.$structure->fileurl('fe/style.css').'"/>';
+
+echo '
 <form action="" method="post">
 	<input type="hidden" name="op" value="manage_riga_fe">
 	<input type="hidden" name="backto" value="record-edit">
@@ -44,7 +47,7 @@ echo '
 echo '
 <table class="table">
     <tbody>
-        <tr>
+        <tr class="first-level">
             <th colspan="2">
                 2 FatturaElettronicaBody
                 <button type="submit" class="btn btn-primary pull-right">
@@ -52,16 +55,16 @@ echo '
                 </button>
 			</th>
         </tr>
-        <tr>
+        <tr class="second-level">
             <th colspan="2">'.str_repeat($space, 1).'2.2 DatiBeniServizi</th>
         </tr>
-        <tr>
+        <tr class="third-level">
             <th colspan="2">'.str_repeat($space, 2).'2.2.1 DettaglioLinee</th>
         </tr>';
 
 // Tipo Cessione Prestazione
  echo '
-        <tr>
+        <tr class="fourth-level">
             <td style="vertical-align: middle;">'.str_repeat($space, 3).'2.2.1.2 TipoCessionePrestazione</td>
             <td>
                 {[ "type": "select", "name": "tipo_cessione_prestazione", "value": "'.$result['tipo_cessione_prestazione'].'", "values": '.json_encode($tipi_cessione_prestazione).' ]}
@@ -70,7 +73,7 @@ echo '
 
 // Data inizio periodo
 echo '
-        <tr>
+        <tr class="fourth-level">
             <td style="vertical-align: middle;">'.str_repeat($space, 3).'2.2.1.7 DataInizioPeriodo</td>
             <td>
                 {[ "type": "date", "name": "data_inizio_periodo", "value": "'.$result['data_inizio_periodo'].'" ]}
@@ -79,7 +82,7 @@ echo '
 
 // Data fine periodo
 echo '
-        <tr>
+        <tr class="fourth-level">
             <td style="vertical-align: middle;">'.str_repeat($space, 3).'2.2.1.8 DataFinePeriodo</td>
             <td>
                 {[ "type": "date", "name": "data_fine_periodo", "value": "'.$result['data_fine_periodo'].'" ]}
@@ -88,12 +91,13 @@ echo '
 
 // Riferimento amministrazione
 echo '
-        <tr>
+        <tr class="fourth-level">
             <td style="vertical-align: middle;">'.str_repeat($space, 3).'2.2.1.15 RiferimentoAmministrazione</td>
             <td>
                 {[ "type": "text", "name": "riferimento_amministrazione", "value": "'.$result['riferimento_amministrazione'].'", "maxlength": 20 ]}
             </td>
-        </tr>';
+        </tr>
+    </tbody>';
 
 if (empty($result['altri_dati'])) {
     $result['altri_dati'][] = [];
@@ -107,7 +111,7 @@ foreach ($result['altri_dati'] as $dato) {
 }
 
  echo '
-    </tbody>
+
 </table>';
 
 echo '
@@ -119,27 +123,24 @@ function replaceAll(str, find, replace) {
 var n = '.($key - 1).';
 function add_altri_dati(btn){
     $("#template .superselect, #template .superselectajax").select2().select2("destroy");
-    var last = $(btn).closest("table").find("tr[id^=last-altri_dati]").last();
+    var last = $(btn).closest("table").find("tr[id^=last-altri_dati]").parent().last();
 
     n++;
     var text = replaceAll($("#altri_dati-templace").html(), "-id-", "" + n);
     
     last.after(text);
-    console.log(text);
     
     start_superselect();
 };
 </script>
 
-<table class="hide">
-    <tbody id="altri_dati-templace">';
+<table class="hide" id="altri_dati-templace">';
 $dato = [];
 $key = '-id-';
 
 include __DIR__.'/components/altri_dati.php';
 
 echo '
-    </tbody>
 </table>';
 
 echo '

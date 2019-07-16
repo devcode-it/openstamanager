@@ -120,13 +120,17 @@ class FatturaElettronica
             $documento = $this->getDocumento();
             $database = database();
 
-            $contratti = $database->fetchArray('SELECT `id_documento_fe`, `num_item`, `codice_cig`, `codice_cup` FROM `co_contratti` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idcontratto` = `co_contratti`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
+            $contratti = $database->fetchArray('SELECT `id_documento_fe` AS id_documento, `num_item`, `codice_cig`, `codice_cup` FROM `co_contratti` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idcontratto` = `co_contratti`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
 
-            $preventivi = $database->fetchArray('SELECT `id_documento_fe`, `num_item`, `codice_cig`, `codice_cup` FROM `co_preventivi` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idpreventivo` = `co_preventivi`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
+            $preventivi = $database->fetchArray('SELECT `id_documento_fe` AS id_documento, `num_item`, `codice_cig`, `codice_cup` FROM `co_preventivi` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idpreventivo` = `co_preventivi`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
 
-            $interventi = $database->fetchArray('SELECT `id_documento_fe`, `num_item`, `codice_cig`, `codice_cup` FROM `in_interventi` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idintervento` = `in_interventi`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
+            $interventi = $database->fetchArray('SELECT `id_documento_fe` AS id_documento, `num_item`, `codice_cig`, `codice_cup` FROM `in_interventi` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idintervento` = `in_interventi`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
 
-            $this->contratti = array_unique(array_merge($contratti, $preventivi, $interventi));
+
+            $dati_aggiuntivi = $documento->dati_aggiuntivi_fe;
+            $dati = $dati_aggiuntivi['dati_contratto'] ?: [];
+
+            $this->contratti = array_unique(array_merge($contratti, $preventivi, $interventi, $dati));
         }
 
         return $this->contratti;
@@ -143,9 +147,12 @@ class FatturaElettronica
             $documento = $this->getDocumento();
             $database = database();
 
-            $ordini = $database->fetchArray('SELECT `id_documento_fe`, `num_item`, `codice_cig`, `codice_cup` FROM `or_ordini` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idordine` = `or_ordini`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
+            $ordini = $database->fetchArray('SELECT `id_documento_fe` AS id_documento, `num_item`, `codice_cig`, `codice_cup` FROM `or_ordini` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idordine` = `or_ordini`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
 
-            $this->ordini = $ordini;
+            $dati_aggiuntivi = $documento->dati_aggiuntivi_fe;
+            $dati = $dati_aggiuntivi['dati_ordine'] ?: [];
+
+            $this->ordini = array_merge($ordini, $dati);
         }
 
         return $this->ordini;
@@ -162,9 +169,12 @@ class FatturaElettronica
             $documento = $this->getDocumento();
             $database = database();
 
-            $note_accredito = $database->fetchArray('SELECT numero_esterno, data FROM co_documenti WHERE id='.prepare($documento['ref_documento']));
+            $note_accredito = $database->fetchArray('SELECT numero_esterno AS id_documento, data FROM co_documenti WHERE id='.prepare($documento['ref_documento']));
 
-            $this->fatture_collegate = $note_accredito;
+            $dati_aggiuntivi = $documento->dati_aggiuntivi_fe;
+            $dati = $dati_aggiuntivi['dati_fatture'] ?: [];
+
+            $this->fatture_collegate = array_merge($note_accredito, $dati);
         }
 
         return $this->fatture_collegate;
@@ -756,20 +766,32 @@ class FatturaElettronica
      *
      * @return array
      */
-    protected static function getDatiOrdineAcquisto($fattura)
+    protected static function getDatiOrdineAcquisto($fattura, $lista = null)
     {
-        $ordini = $fattura->getOrdiniAcquisto();
+        $lista = isset($lista) ? $lista : $fattura->getOrdiniAcquisto();
 
         $result = [];
-        foreach ($ordini as $element) {
-            if (!empty($element['id_documento_fe'])) {
-                $dati = [
-                    'IdDocumento' => $element['id_documento_fe'],
+        foreach ($lista as $element) {
+            $dati = [];
+
+            foreach ($element['riferimento_linea'] as $linea){
+                $dati[] = [
+                    'RiferimentoNumeroLinea' => $linea,
                 ];
+            }
+
+            $dati['IdDocumento'] = $element['id_documento'];
+
+            if (!empty($element['data'])) {
+                $dati['Data'] = $element['data'];
             }
 
             if (!empty($element['num_item'])) {
                 $dati['NumItem'] = $element['num_item'];
+            }
+
+            if (!empty($element['codice_commessa'])) {
+                $dati['CodiceCommessaConvenzione'] = $element['codice_commessa'];
             }
 
             if (!empty($element['codice_cig'])) {
@@ -795,30 +817,37 @@ class FatturaElettronica
     {
         $contratti = $fattura->getContratti();
 
-        $result = [];
-        foreach ($contratti as $element) {
-            if (!empty($element['id_documento_fe'])) {
-                $dati = [
-                    'IdDocumento' => $element['id_documento_fe'],
-                ];
-            }
+        return self::getDatiOrdineAcquisto($fattura, $contratti);
+    }
 
-            if (!empty($element['num_item'])) {
-                $dati['NumItem'] = $element['num_item'];
-            }
+    /**
+     * Restituisce l'array responsabile per la generazione del tag DatiConvenzione.
+     *
+     * @return array
+     */
+    protected static function getDatiConvenzione($fattura)
+    {
+        $documento = $fattura->getDocumento();
 
-            if (!empty($element['codice_cup'])) {
-                $dati['CodiceCUP'] = $element['codice_cup'];
-            }
+        $dati_aggiuntivi = $documento->dati_aggiuntivi_fe;
+        $dati = $dati_aggiuntivi['dati_convenzione'] ?: [];
 
-            if (!empty($element['codice_cig'])) {
-                $dati['CodiceCIG'] = $element['codice_cig'];
-            }
+        return self::getDatiOrdineAcquisto($fattura, $dati);
+    }
 
-            $result[] = $dati;
-        }
+    /**
+     * Restituisce l'array responsabile per la generazione del tag DatiRicezione.
+     *
+     * @return array
+     */
+    protected static function getDatiRicezione($fattura)
+    {
+        $documento = $fattura->getDocumento();
 
-        return $result;
+        $dati_aggiuntivi = $documento->dati_aggiuntivi_fe;
+        $dati = $dati_aggiuntivi['dati_ricezione'] ?: [];
+
+        return self::getDatiOrdineAcquisto($fattura, $dati);
     }
 
     /**
@@ -830,15 +859,7 @@ class FatturaElettronica
     {
         $fatture = $fattura->getFattureCollegate();
 
-        $result = [];
-        foreach ($fatture as $element) {
-            $result[] = [
-                'IdDocumento' => $element['numero_esterno'],
-                'Data' => $element['data'],
-            ];
-        }
-
-        return $result;
+        return self::getDatiOrdineAcquisto($fattura, $fatture);
     }
 
     /**
@@ -874,6 +895,30 @@ class FatturaElettronica
                 if (!empty($dato)) {
                     $result[] = [
                         'DatiContratto' => $dato,
+                    ];
+                }
+            }
+        }
+
+        // Controllo le le righe per la fatturazione di contratti
+        $dati_convenzioni = static::getDatiConvenzione($fattura);
+        if (!empty($dati_convenzioni)) {
+            foreach ($dati_convenzioni as $dato) {
+                if (!empty($dato)) {
+                    $result[] = [
+                        'DatiConvenzione' => $dato,
+                    ];
+                }
+            }
+        }
+
+        // Controllo le le righe per la fatturazione di contratti
+        $dati_ricezioni = static::getDatiRicezione($fattura);
+        if (!empty($dati_ricezioni)) {
+            foreach ($dati_ricezioni as $dato) {
+                if (!empty($dato)) {
+                    $result[] = [
+                        'DatiRicezione' => $dato,
                     ];
                 }
             }

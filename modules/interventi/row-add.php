@@ -5,6 +5,7 @@ use Modules\Interventi\Intervento;
 include_once __DIR__.'/../../core.php';
 
 $documento = Intervento::find($id_record);
+$costi = get_costi_intervento($id_record);
 
 // Impostazioni per la gestione
 $options = [

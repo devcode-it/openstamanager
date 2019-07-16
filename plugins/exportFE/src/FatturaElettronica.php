@@ -793,14 +793,13 @@ class FatturaElettronica
                 $dati['CodiceCommessaConvenzione'] = $element['codice_commessa'];
             }
 
-            if (!empty($element['codice_cig'])) {
-                $dati['CodiceCIG'] = $element['codice_cig'];
-            }
-
             if (!empty($element['codice_cup'])) {
                 $dati['CodiceCUP'] = $element['codice_cup'];
             }
 
+            if (!empty($element['codice_cig'])) {
+                $dati['CodiceCIG'] = $element['codice_cig'];
+            }
             $result[] = $dati;
         }
 

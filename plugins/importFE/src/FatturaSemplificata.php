@@ -111,6 +111,10 @@ class FatturaSemplificata extends FatturaElettronica
             $qta = 1;
             $qta = $riga['Importo'] < 0 ? -$qta : $qta;
 
+            if ($fattura->isNota()) {
+                $qta = -$qta;
+            }
+
             // Prezzo e quantità
             $obj->prezzo_unitario_vendita = $prezzo;
             $obj->qta = $qta;

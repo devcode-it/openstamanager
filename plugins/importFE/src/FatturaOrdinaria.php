@@ -115,6 +115,10 @@ class FatturaOrdinaria extends FatturaElettronica
             $qta = $riga['Quantita'] ?: 1;
             $qta = $riga['PrezzoUnitario'] < 0 ? -$qta : $qta;
 
+            if ($fattura->isNota()) {
+                $qta = -$qta;
+            }
+
             // Prezzo e quantità
             $obj->prezzo_unitario_vendita = $prezzo;
             $obj->qta = $qta;
@@ -172,7 +176,7 @@ class FatturaOrdinaria extends FatturaElettronica
         $dati_generali = $this->getBody()['DatiGenerali']['DatiGeneraliDocumento'];
         $totale_documento = $dati_generali['ImportoTotaleDocumento'];
 
-        $diff = $totale_documento ? floatval($totale_documento) - $fattura->totale : $totale_righe - $fattura->imponibile_scontato;
+        $diff = $totale_documento ? floatval($totale_documento) - abs($fattura->totale) : $totale_righe - abs($fattura->imponibile_scontato);
         if (!empty($diff)) {
             // Rimozione dell'IVA calcolata automaticamente dal gestionale
             $iva_arrotondamento = database()->fetchOne('SELECT * FROM co_iva WHERE id='.prepare($iva[0]));

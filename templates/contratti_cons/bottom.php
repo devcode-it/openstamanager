@@ -14,7 +14,7 @@ if ($pricing || !empty($totale_ore)) {
     // Totale imponibile
     echo '
 <table class="table table-bordered">';
-    if ($pricing) {
+    if ($pricing && empty($options['dir'])) {
         // TOTALE
         echo '
     <tr>

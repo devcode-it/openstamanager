@@ -4,12 +4,11 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\Interventi\Intervento;
 
-print_r($record['id']);
 $intervento = Intervento::find($record['id']);
 
-$imponibile = $intervento->imponibile;
-$sconto = $intervento->sconto;
-$totale_imponibile = $intervento->totale_imponibile;
+$imponibile = empty($options['dir']) ? $intervento->imponibile : $intervento->spesa;
+$sconto = empty($options['dir']) ? $intervento->sconto : 0;
+$totale_imponibile = empty($options['dir']) ? $intervento->totale_imponibile : $intervento->spesa;
 
 $somma_imponibile[] = $imponibile;
 $somma_sconto[] = $sconto;
@@ -29,7 +28,7 @@ echo '
         <p><small><b>'.tr('Stato').':</b> '.$intervento->stato->descrizione.'</small></p>
     </td>
     <td class="text-center">'.($pricing ? moneyFormat($imponibile, 2) : '-').'</td>
-    <td class="text-center">'.($pricing ? moneyFormat($sconto, 2) : '-').'</td>
+    <td class="text-center">'.($pricing && empty($options['dir']) ? moneyFormat($sconto, 2) : '-').'</td>
     <td class="text-center">'.($pricing ? moneyFormat($totale_imponibile, 2) : '-').'</td>
 </tr>';
 
@@ -70,13 +69,16 @@ if (!$righe->isEmpty()) {
 </tr>';
 
     foreach ($righe as $riga) {
+        $prezzo = empty($options['dir']) ? $riga->prezzo_unitario_vendita : $riga->prezzo_unitario_acquisto;
+        $totale = empty($options['dir']) ? $riga->totale_imponibile : $riga->spesa;
+
         echo '
 <tr>
     <td style="border-top: 0; border-bottom: 0;"></td>
     <td><small>'.$riga->descrizione.'</small></td>
     <td class="text-center"><small>'.$riga->qta.' '.$riga->um.'</small></td>
-    <td class="text-center"><small>'.($pricing ? moneyFormat($riga->prezzo_unitario_vendita) : '-').'</small></td>
-    <td class="text-center"><small>'.($pricing ? moneyFormat($riga->totale_imponibile) : '-').'</small></td>
+    <td class="text-center"><small>'.($pricing ? moneyFormat($prezzo) : '-').'</small></td>
+    <td class="text-center"><small>'.($pricing ? moneyFormat($totale) : '-').'</small></td>
 </tr>';
     }
 }

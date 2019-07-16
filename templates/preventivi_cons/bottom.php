@@ -6,7 +6,7 @@ $budget = get_imponibile_preventivo($id_record);
 
 $rapporto = floatval($budget) - floatval($somma_totale_imponibile);
 
-if ($pricing) {
+if ($pricing && empty($options['dir'])) {
     // Totale imponibile
     echo '
 <table class="table table-bordered">';

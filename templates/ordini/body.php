@@ -61,7 +61,7 @@ echo "
 			<th class='text-center' style='width:50%'>".tr('Descrizione', [], ['upper' => true])."</th>
             <th class='text-center' style='width:10%'>".tr('Q.tà', [], ['upper' => true])."</th>
             <th class='text-center' style='width:15%'>".tr('Prezzo unitario', [], ['upper' => true])."</th>
-            <th class='text-center' style='width:15%'>".tr('Importo', [], ['upper' => true])."</th>
+            <th class='text-center' style='width:15%'>".tr('Imponibile', [], ['upper' => true])."</th>
             <th class='text-center' style='width:10%'>".tr('IVA', [], ['upper' => true]).' (%)</th>
         </tr>
     </thead>

@@ -28,7 +28,7 @@ foreach ($righe as $row) {
     // Valori assoluti
     $riga['qta'] = abs($riga['qta']);
     $riga['prezzo_unitario_acquisto'] = abs($riga['prezzo_unitario_acquisto']);
-    $riga['totale_imponibile'] = ($fattura->isNotaDiAccredito() ? -$row->totale_imponibile : $row->totale_imponibile);
+    $riga['totale_imponibile'] = ($fattura->isNota() ? -$row->totale_imponibile : $row->totale_imponibile);
     $riga['sconto_unitario'] = abs($riga['sconto_unitario']);
     $riga['sconto'] = abs($riga['sconto']);
     $riga['iva'] = abs($riga['iva']);
@@ -136,7 +136,7 @@ foreach ($righe as $row) {
     }
 
     // Aggiunta dei riferimenti ai documenti
-    if ($fattura->isNotaDiAccredito()) {
+    if ($fattura->isNota() && !empty($record['ref_documento'])) {
         $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM co_documenti WHERE id = ".prepare($record['ref_documento']));
 
         $text = tr('Rif. fattura _NUM_ del _DATE_', [
@@ -256,7 +256,7 @@ foreach ($righe as $row) {
         echo "
                 <div class='input-group-btn'>";
 
-        if (!$fattura->isNotaDiAccredito() && $row->isArticolo() && $riga['abilita_serial'] && (empty($riga['idddt']) || empty($riga['idintervento']))) {
+        if (!$fattura->isNota() && $row->isArticolo() && $riga['abilita_serial'] && (empty($riga['idddt']) || empty($riga['idintervento']))) {
             echo "
                     <a class='btn btn-primary btn-xs'data-toggle='tooltip' title='Aggiorna SN...' onclick=\"launch_modal( 'Aggiorna SN', '".$structure->fileurl('add_serial.php').'?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga['id'].'&idarticolo='.$riga['idarticolo']."', 1 );\"><i class='fa fa-barcode' aria-hidden='true'></i></a>";
         }
@@ -265,7 +265,7 @@ foreach ($righe as $row) {
                     <a class='btn btn-xs btn-info' data-toggle='modal' data-title='".tr('Dati Fattura Elettronica')."' data-href='".$structure->fileurl('fe/row-fe.php').'?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga['id']."'>
                         <i class='fa fa-file-code-o '></i>
                     </a>
-                    
+
                     <a class='btn btn-xs btn-warning' title='Modifica questa riga...' onclick=\"launch_modal( 'Modifica riga', '".$structure->fileurl('row-edit.php').'?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga['id']."', 1 );\">
                         <i class='fa fa-edit'></i>
                     </a>

@@ -1042,11 +1042,9 @@ class FatturaElettronica
             $aliquota = $riga->aliquota ?: $iva_descrizioni;
             $percentuale = floatval($aliquota->percentuale);
 
-            if ($documento->isNotaDiAccredito()) {
-                $dettaglio['PrezzoTotale'] = -$riga->totale_imponibile ?: 0;
-            } else {
-                $dettaglio['PrezzoTotale'] = $riga->totale_imponibile ?: 0;
-            }
+            $prezzo_totale = $documento->isNota() ? -$riga->totale_imponibile : $riga->totale_imponibile;
+            $dettaglio['PrezzoTotale'] = $prezzo_totale;
+
             $dettaglio['AliquotaIVA'] = $percentuale;
 
             if (!empty($riga['idritenutaacconto']) && empty($riga['is_descrizione'])) {
@@ -1110,16 +1108,18 @@ class FatturaElettronica
             return $item->aliquota->percentuale;
         });
         foreach ($riepiloghi_percentuale as $riepilogo) {
-            //(imponibile-sconto) + rivalsa inps
-            $totale = round(($riepilogo->sum('imponibile') - $riepilogo->sum('sconto')) + $riepilogo->sum('rivalsa_inps'), 2);
+            $totale = round($riepilogo->sum('totale_imponibile') + $riepilogo->sum('rivalsa_inps'), 2);
             $imposta = round($riepilogo->sum('iva') + $riepilogo->sum('iva_rivalsa_inps'), 2);
+
+            $totale = $documento->isNota() ? -$totale : $totale;
+            $imposta = $documento->isNota() ? -$imposta : $imposta;
 
             $dati = $riepilogo->first()->aliquota;
 
             $iva = [
                 'AliquotaIVA' => $dati['percentuale'],
-                'ImponibileImporto' => abs($totale),
-                'Imposta' => abs($imposta),
+                'ImponibileImporto' => $totale,
+                'Imposta' => $imposta,
                 'EsigibilitaIVA' => $dati['esigibilita'],
             ];
 
@@ -1147,17 +1147,19 @@ class FatturaElettronica
             return $item->aliquota->codice_natura_fe;
         });
         foreach ($riepiloghi_natura as $riepilogo) {
-            //(imponibile-sconto) + rivalsa inps
-            $totale = round(($riepilogo->sum('imponibile') - $riepilogo->sum('sconto')) + $riepilogo->sum('rivalsa_inps'), 2);
+            $totale = round($riepilogo->sum('totale_imponibile') + $riepilogo->sum('rivalsa_inps'), 2);
             $imposta = round($riepilogo->sum('iva') + $riepilogo->sum('iva_rivalsa_inps'), 2);
+
+            $totale = $documento->isNota() ? -$totale : $totale;
+            $imposta = $documento->isNota() ? -$imposta : $imposta;
 
             $dati = $riepilogo->first()->aliquota;
 
             $iva = [
                 'AliquotaIVA' => 0,
                 'Natura' => $dati->codice_natura_fe,
-                'ImponibileImporto' => abs($totale),
-                'Imposta' => abs($imposta),
+                'ImponibileImporto' => $totale,
+                'Imposta' => $imposta,
                 'EsigibilitaIVA' => $dati->esigibilita,
                 'RiferimentoNormativo' => $dati->descrizione,
             ];

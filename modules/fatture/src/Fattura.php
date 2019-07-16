@@ -349,8 +349,8 @@ class Fattura extends Document
         $direzione = $this->tipo->dir;
 
         foreach ($rate as $rata) {
-            $importo = $direzione == 'uscita' ? -$rata['importo'] : $rata['importo'];
             $scadenza = $rata['scadenza'];
+            $importo = $direzione == 'uscita' ? -$rata['importo'] : $rata['importo'];
 
             self::registraScadenza($this, $importo, $scadenza, $is_pagato);
         }
@@ -466,7 +466,7 @@ class Fattura extends Document
      *
      * @return bool
      */
-    public function isNotaDiAccredito()
+    public function isNota()
     {
         return $this->tipo->reversed == 1;
     }

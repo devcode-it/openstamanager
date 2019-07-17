@@ -553,82 +553,32 @@ switch (post('op')) {
             $idriga = post('idriga');
 
             // Lettura preventivi collegati
-            $query = 'SELECT iddocumento, idpreventivo, is_preventivo, idarticolo, qta FROM co_righe_documenti WHERE id='.prepare($idriga);
+            $query = 'SELECT iddocumento, idpreventivo, idarticolo, id, qta, descrizione FROM co_righe_documenti WHERE id='.prepare($idriga);
             $rsp = $dbo->fetchArray($query);
             $id_record = $rsp[0]['iddocumento'];
             $idpreventivo = $rsp[0]['idpreventivo'];
-            $is_preventivo = $rsp[0]['is_preventivo'];
             $idarticolo = $rsp[0]['idarticolo'];
             $qta = $rsp[0]['qta'];
 
-            // preventivo su unica riga, perdo il riferimento dell'articolo quindi lo vado a leggere da co_righe_preventivi
-            if (empty($idarticolo) && $is_preventivo) {
-                // rimetto a magazzino gli articoli collegati al preventivo
-                $rsa = $dbo->fetchArray('SELECT idarticolo, qta FROM co_righe_preventivi WHERE idpreventivo = '.prepare($idpreventivo));
-                for ($i = 0; $i < sizeof($rsa); ++$i) {
-                    if (!empty($rsa[$i]['idarticolo'])) {
-                        add_movimento_magazzino($rsa[$i]['idarticolo'], $rsa[$i]['qta'], ['iddocumento' => $id_record]);
-                    }
-
-                    // Ripristino le quantità da evadere nel preventivo
-                    $dbo->update('co_righe_preventivi',
-                        [
-                            'qta_evasa' => 0,
-                        ],
-                        [
-                            'idpreventivo' => $idpreventivo,
-                        ]
-                    );
-                }
-            } else {
-                $rs5 = $dbo->fetchArray('SELECT idarticolo, id, qta, descrizione FROM co_righe_documenti WHERE  id = '.prepare($idriga));
-
-                if (!empty($idarticolo)) {
-                    rimuovi_articolo_dafattura($rs5[0]['idarticolo'], $id_record, $idriga);
-                }
-
-                // Ripristino le quantità da evadere nel preventivo
-                $dbo->update('co_righe_preventivi',
-                    [
-                        'qta_evasa' => 0,
-                    ],
-                    [
-                        'idarticolo' => $rs5[0]['idarticolo'],
-                        'descrizione' => $rs5[0]['descrizione'],
-                        'idpreventivo' => $idpreventivo,
-                    ]
-                );
+            if (!empty($idarticolo)) {
+                rimuovi_articolo_dafattura($rsp[0]['idarticolo'], $id_record, $idriga);
             }
+
+            // Ripristino le quantità da evadere nel preventivo
+            $query = 'UPDATE co_righe_preventivi SET qta_evasa = qta_evasa - '.$rsp[0]['qta'].' WHERE idarticolo='.prepare($rsp[0]['idarticolo']).' AND descrizione='.prepare($rsp[0]['descrizione']).' AND idpreventivo = '.prepare($idpreventivo);
+            $dbo->query($query);
 
             $query = 'DELETE FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND id='.prepare($idriga);
             $dbo->query($query);
 
             $rs_righe = $dbo->fetchArray('SELECT * FROM co_righe_documenti WHERE idpreventivo='.prepare($idpreventivo));
 
-            if (sizeof($rs_righe) == 0) {
+            if (empty($rs_righe)) {
                 // Se ci sono dei preventivi collegati li rimetto nello stato "In attesa di pagamento"
-                for ($i = 0; $i < sizeof($rsp); ++$i) {
-                    $dbo->query("UPDATE co_preventivi SET idstato=(SELECT id FROM co_statipreventivi WHERE descrizione='In lavorazione') WHERE id=".prepare($rsp[$i]['idpreventivo']));
+                $dbo->query("UPDATE co_preventivi SET idstato=(SELECT id FROM co_statipreventivi WHERE descrizione='In lavorazione') WHERE id=".prepare($idpreventivo));
 
-                    // Aggiorno anche lo stato degli interventi collegati ai preventivi
-                    $dbo->query("UPDATE in_interventi SET idstatointervento = (SELECT idstatointervento FROM in_statiintervento WHERE descrizione = 'Completato') WHERE id_preventivo=".prepare($rsp[$i]['idpreventivo']));
-                }
-
-                /*
-                    Rimuovo tutti gli articoli dalla fattura collegati agli interventi di questo preventivo
-                */
-                $rs2 = $dbo->fetchArray('SELECT id FROM in_interventi WHERE id_preventivo = '.prepare($idpreventivo));
-                for ($i = 0; $i < sizeof($rs2); ++$i) {
-                    // Leggo gli articoli usati in questo intervento
-                    $rs3 = $dbo->fetchArray('SELECT idarticolo FROM mg_articoli_interventi WHERE idintervento='.prepare($rs2[$i]['id']));
-                    for ($j = 0; $j < sizeof($rs3); ++$j) {
-                        // Leggo l'id della riga in fattura di questo articolo
-                        $rs4 = $dbo->fetchArray('SELECT id FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idarticolo='.prepare($rs3[$j]['idarticolo']));
-                        for ($x = 0; $x < sizeof($rs4); ++$x) {
-                            rimuovi_articolo_dafattura($rs3[$j]['idarticolo'], $id_record, $rs4[$x]['id']);
-                        }
-                    }
-                }
+                // Aggiorno anche lo stato degli interventi collegati ai preventivi
+                $dbo->query("UPDATE in_interventi SET idstatointervento = (SELECT idstatointervento FROM in_statiintervento WHERE descrizione = 'Completato') WHERE id_preventivo=".prepare($idpreventivo));
             }
 
             // Ricalcolo inps, ritenuta e bollo
@@ -648,77 +598,30 @@ switch (post('op')) {
             $idriga = post('idriga');
 
             // Lettura contratti collegati
-            $query = 'SELECT iddocumento, idcontratto, is_contratto, idarticolo FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idcontratto IS NOT NULL AND NOT idcontratto=0';
+            $query = 'SELECT iddocumento, idcontratto, idarticolo, id, qta, descrizione FROM co_righe_documenti WHERE id='.prepare($idriga);
             $rsp = $dbo->fetchArray($query);
             $id_record = $rsp[0]['iddocumento'];
             $idcontratto = $rsp[0]['idcontratto'];
-            $is_contratto = $rsp[0]['is_contratto'];
             $idarticolo = $rsp[0]['idarticolo'];
 
-            // contratto su unica riga, perdo il riferimento dell'articolo quindi lo vado a leggere da co_righe_contratti
-            if (empty($idarticolo) && $is_contratto) {
-                // rimetto a magazzino gli articoli collegati al contratto
-                $rsa = $dbo->fetchArray('SELECT idarticolo, qta FROM co_righe_contratti WHERE idcontratto = '.prepare($idcontratto));
-                for ($i = 0; $i < sizeof($rsa); ++$i) {
-                    if (!empty($rsa[$i]['idarticolo'])) {
-                        add_movimento_magazzino($rsa[$i]['idarticolo'], $rsa[$i]['qta'], ['iddocumento' => $id_record]);
-                    }
-
-                    // Ripristino le quantità da evadere nel contratto
-                    $dbo->update('co_righe_contratti',
-                        [
-                            'qta_evasa' => 0,
-                        ],
-                        [
-                            'idcontratto' => $idcontratto,
-                        ]
-                    );
-                }
-            } else {
-                $rs5 = $dbo->fetchArray('SELECT idarticolo, id, qta, descrizione FROM co_righe_documenti WHERE  id = '.prepare($idriga).'  AND idintervento IS NULL');
-                if (!empty($idarticolo)) {
-                    rimuovi_articolo_dafattura($rs5[0]['idarticolo'], $id_record, $idriga);
-                }
-
-                // Ripristino le quantità da evadere nel contratto
-                $dbo->update('co_righe_contratti',
-                    [
-                        'qta_evasa' => 0,
-                    ],
-                    [
-                        'idarticolo' => $rs5[0]['idarticolo'],
-                        'descrizione' => $rs5[0]['descrizione'],
-                        'idcontratto' => $idcontratto,
-                    ]
-                );
+            if (!empty($idarticolo)) {
+                rimuovi_articolo_dafattura($rsp[0]['idarticolo'], $id_record, $idriga);
             }
 
-            $query = 'DELETE FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idcontratto='.prepare($idcontratto);
+            // Ripristino le quantità da evadere nel contratto
+            $query = 'UPDATE co_righe_contratti SET qta_evasa = qta_evasa - '.$rsp[0]['qta'].' WHERE idarticolo='.prepare($rsp[0]['idarticolo']).' AND descrizione='.prepare($rsp[0]['descrizione']).' AND idcontratto = '.prepare($idcontratto);
+            $dbo->query($query);
 
-            if ($dbo->query($query)) {
-                // Se ci sono dei preventivi collegati li rimetto nello stato "In attesa di pagamento"
-                for ($i = 0; $i < sizeof($rsp); ++$i) {
-                    $dbo->query("UPDATE co_contratti SET idstato=(SELECT id FROM co_staticontratti WHERE descrizione='In lavorazione') WHERE id=".prepare($rsp[$i]['idcontratto']));
+            $query = 'DELETE FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND id='.prepare($idriga);
+            $dbo->query($query);
 
-                    // Aggiorno anche lo stato degli interventi collegati ai contratti
-                    $dbo->query("UPDATE in_interventi SET idstatointervento = (SELECT idstatointervento FROM in_statiintervento WHERE descrizione = 'Completato') WHERE id IN (SELECT idintervento FROM co_promemoria WHERE idcontratto=".prepare($rsp[$i]['idcontratto']).')');
-                }
+            $rs_righe = $dbo->fetchArray('SELECT * FROM co_righe_documenti WHERE idcontratto='.prepare($idcontratto));
 
-                /*
-                    Rimuovo tutti gli articoli dalla fattura collegati agli interventi che sono collegati a questo contratto
-                */
-                $rs2 = $dbo->fetchArray('SELECT idintervento FROM co_promemoria WHERE idcontratto='.prepare($idcontratto)." AND NOT idcontratto=''");
-                for ($i = 0; $i < sizeof($rs2); ++$i) {
-                    // Leggo gli articoli usati in questo intervento
-                    $rs3 = $dbo->fetchArray('SELECT idarticolo FROM mg_articoli_interventi WHERE idintervento='.prepare($rs2[$i]['idintervento']));
-                    for ($j = 0; $j < sizeof($rs3); ++$j) {
-                        // Leggo l'id della riga in fattura di questo articolo
-                        $rs4 = $dbo->fetchArray('SELECT id FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idarticolo='.prepare($rs3[$j]['idarticolo']));
-                        for ($x = 0; $x < sizeof($rs4); ++$x) {
-                            rimuovi_articolo_dafattura($rs3[$j]['idarticolo'], $id_record, $rs4[$x]['id']);
-                        }
-                    }
-                }
+            if (empty($rs_righe)) {                // Se ci sono dei preventivi collegati li rimetto nello stato "In attesa di pagamento"
+                $dbo->query("UPDATE co_contratti SET idstato=(SELECT id FROM co_staticontratti WHERE descrizione='In lavorazione') WHERE id=".prepare($idcontratto));
+
+                // Aggiorno anche lo stato degli interventi collegati ai contratti
+                $dbo->query("UPDATE in_interventi SET idstatointervento = (SELECT idstatointervento FROM in_statiintervento WHERE descrizione = 'Completato') WHERE id IN (SELECT idintervento FROM co_promemoria WHERE idcontratto=".prepare($idcontratto).')');
 
                 // Ricalcolo inps, ritenuta e bollo
                 if ($dir == 'entrata') {

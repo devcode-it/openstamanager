@@ -42,10 +42,19 @@ foreach ($righe as $row) {
         $riga['descrizione'] = (!empty($row->articolo) ? $row->articolo->codice.' - ' : '').$riga['descrizione'];
 
         $delete = 'unlink_articolo';
+        // Preventivi
+        if (!empty($riga['idpreventivo'])) {
+            $delete = 'unlink_preventivo';
+        }
+        // Contratti
+        elseif (!empty($riga['idcontratto'])) {
+            $delete = 'unlink_contratto';
+        }
 
         $extra = '';
         $mancanti = 0;
     }
+
     // Intervento
     elseif (!empty($riga['idintervento'])) {
         $intervento = $dbo->fetchOne('SELECT num_item,codice_cig,codice_cup,id_documento_fe FROM in_interventi WHERE id = '.prepare($riga['idintervento']));

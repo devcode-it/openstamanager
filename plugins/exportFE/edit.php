@@ -6,6 +6,8 @@ use Modules\Anagrafiche\Anagrafica;
 use Plugins\ExportFE\FatturaElettronica;
 use Plugins\ExportFE\Interaction;
 
+$abilita_genera = empty($fattura->codice_stato_fe) || in_array($fattura->codice_stato_fe, ['GEN', 'NS', 'EC02']);
+
 if (!empty($fattura_pa)) {
     $disabled = false;
     $generated = $fattura_pa->isGenerated();
@@ -154,7 +156,7 @@ echo '
         <input type="hidden" name="backto" value="record-edit">
         <input type="hidden" name="op" value="generate">
 
-        <button id="genera" type="submit" class="btn btn-primary btn-lg '.($disabled ? 'disabled' : '').'" '.($disabled ? ' disabled' : null).'>
+        <button id="genera" type="submit" class="btn btn-primary btn-lg '.($disabled || !$abilita_genera ? 'disabled' : '').'" '.($disabled || !$abilita_genera ? ' disabled' : null).'>
             <i class="fa fa-file"></i> '.tr('Genera').'
         </button>
     </form>';

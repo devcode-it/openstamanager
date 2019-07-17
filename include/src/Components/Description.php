@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 abstract class Description extends Model
 {
+    use MorphTrait;
+
     protected $guarded = [];
 
     public static function build(Document $document, $bypass = false)
@@ -36,9 +38,23 @@ abstract class Description extends Model
         $previous = $this->qta;
         $diff = $value - $previous;
 
+        if ($this->hasOriginal()) {
+            $original = $this->getOriginal();
+
+            if ($original->qta_rimanente < $diff) {
+                $diff = $original->qta_rimanente;
+                $value = $previous + $diff;
+            }
+        }
+
         $this->attributes['qta'] = $value;
 
-        $this->evasione($diff);
+        if ($this->hasOriginal()) {
+            $original = $this->getOriginal();
+
+            $original->qta_evasa += $diff;
+            $original->save();
+        }
 
         return $diff;
     }
@@ -55,7 +71,7 @@ abstract class Description extends Model
 
     public function delete()
     {
-        $this->evasione(-$this->qta);
+        $this->qta = 0;
 
         return parent::delete();
     }
@@ -108,6 +124,9 @@ abstract class Description extends Model
         // Creazione del nuovo oggetto
         $model = new $object();
 
+        $model->original_id = $this->id;
+        $model->original_type = $current;
+
         // Azioni specifiche di inizalizzazione
         $model->customInitCopiaIn($this);
 
@@ -130,10 +149,6 @@ abstract class Description extends Model
         $model->customAfterDataCopiaIn($this);
 
         $model->save();
-
-        // Rimozione quantità evasa
-        $this->qta_evasa = $this->qta_evasa + abs($attributes['qta']);
-        $this->save();
 
         return $model;
     }
@@ -160,10 +175,6 @@ abstract class Description extends Model
     public function isArticolo()
     {
         return $this instanceof Article;
-    }
-
-    protected function evasione($diff)
-    {
     }
 
     /**
@@ -199,13 +210,15 @@ abstract class Description extends Model
     {
         parent::boot();
 
+        $table = parent::getTableName();
+
         if (!$bypass) {
-            static::addGlobalScope('descriptions', function (Builder $builder) {
-                $builder->where('is_descrizione', '=', 1);
+            static::addGlobalScope('descriptions', function (Builder $builder) use ($table) {
+                $builder->where($table.'.is_descrizione', '=', 1);
             });
         } else {
-            static::addGlobalScope('not_descriptions', function (Builder $builder) {
-                $builder->where('is_descrizione', '=', 0);
+            static::addGlobalScope('not_descriptions', function (Builder $builder) use ($table) {
+                $builder->where($table.'.is_descrizione', '=', 0);
             });
         }
     }

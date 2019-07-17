@@ -2,9 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\Fatture\Components\Riga;
-
-// Righe fattura
+// Righe documento
 $righe = $fattura->getRighe();
 
 echo '

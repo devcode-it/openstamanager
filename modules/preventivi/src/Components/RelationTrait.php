@@ -20,4 +20,12 @@ trait RelationTrait
     {
         return $this->parent();
     }
+
+    public function delete()
+    {
+        $parent = $this->parent;
+        $parent->save();
+
+        return parent::delete();
+    }
 }

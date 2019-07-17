@@ -142,6 +142,18 @@ class Contratto extends Document
         return $this->hasMany(Intervento::class, 'id_contratto');
     }
 
+    public function fixBudget()
+    {
+        $this->budget = $this->imponibile_scontato;
+    }
+
+    public function save(array $options = [])
+    {
+        $this->fixBudget();
+
+        return parent::save($options);
+    }
+
     // Metodi statici
 
     /**

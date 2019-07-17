@@ -173,13 +173,15 @@ abstract class Row extends Description
     {
         parent::boot(true);
 
+        $table = parent::getTableName();
+
         if (!$bypass) {
-            static::addGlobalScope('rows', function (Builder $builder) {
-                $builder->whereNull('idarticolo')->orWhere('idarticolo', '=', 0);
+            static::addGlobalScope('rows', function (Builder $builder) use ($table) {
+                $builder->whereNull($table.'.idarticolo')->orWhere($table.'.idarticolo', '=', 0);
             });
 
-            static::addGlobalScope('not_discounts', function (Builder $builder) {
-                $builder->where('is_sconto', '=', 0);
+            static::addGlobalScope('not_discounts', function (Builder $builder) use ($table) {
+                $builder->where($table.'.is_sconto', '=', 0);
             });
         }
     }

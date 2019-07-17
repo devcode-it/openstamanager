@@ -9,7 +9,7 @@ $documento = Preventivo::find($id_record);
 
 // Impostazioni per la gestione
 $options = [
-    'op' => 'addriga',
+    'op' => 'manage_riga',
     'action' => 'add',
     'dir' => $documento->direzione,
     'idanagrafica' => $documento['idanagrafica'],
@@ -35,6 +35,8 @@ $result['idiva'] = $iva[0]['idiva'] ?: setting('Iva predefinita');
 $file = 'riga';
 if (get('is_descrizione') !== null) {
     $file = 'descrizione';
+
+    $options['op'] = 'manage_descrizione';
 } elseif (get('is_articolo') !== null) {
     $file = 'articolo';
 
@@ -45,6 +47,8 @@ if (get('is_descrizione') !== null) {
         $result['sconto_unitario'] = $listino['prc_guadagno'];
         $result['tipo_sconto'] = 'PRC';
     }
+
+    $options['op'] = 'manage_articolo';
 } elseif (get('is_sconto') !== null) {
     $file = 'sconto';
 

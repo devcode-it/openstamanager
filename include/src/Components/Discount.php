@@ -48,8 +48,10 @@ abstract class Discount extends Row
     {
         parent::boot(true);
 
-        static::addGlobalScope('discounts', function (Builder $builder) {
-            $builder->where('is_sconto', '=', 1);
+        $table = parent::getTableName();
+
+        static::addGlobalScope('discounts', function (Builder $builder) use ($table) {
+            $builder->where($table.'.is_sconto', '=', 1);
         });
     }
 }

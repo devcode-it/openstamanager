@@ -198,6 +198,15 @@ gulp.task('colorpicker', function () {
         .pipe(gulp.dest(config.production + '/' + config.paths.images + '/bootstrap-colorpicker'));
 });
 
+gulp.task('password-strength', function () {
+    gulp.src([
+        config.main.bowerDirectory + '/pwstrength-bootstrap/dist/*.js',
+    ])
+        .pipe(concat('password.min.js'))
+        .pipe(minifyJS())
+        .pipe(gulp.dest(config.production + '/password-strength'));
+});
+
 gulp.task('chartjs', function () {
     gulp.src([
             config.main.bowerDirectory + '/chart.js/dist/Chart.min.js',
@@ -368,6 +377,7 @@ gulp.task('bower', ['clean'], function () {
 gulp.task('other', ['clean'], function () {
     gulp.start('ckeditor');
     gulp.start('colorpicker');
+    gulp.start('password-strength');
     gulp.start('i18n');
 
     gulp.start('pdfjs');

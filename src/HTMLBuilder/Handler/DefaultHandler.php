@@ -106,6 +106,43 @@ class DefaultHandler implements HandlerInterface
         });
     </script>';
 
+        if (!empty($values['strength'])) {
+            $result .= '
+    <div id="'.$values['id'].'_viewport_progress"></div>
+    
+    <script src="'.ROOTDIR.'/assets/dist/password-strength/password.min.js"></script>
+       <script>
+        $(document).ready(function(){
+            $("#'.$values['id'].'").pwstrength({
+                ui: {
+                    bootstrap3: true,
+                    showVerdictsInsideProgressBar: true,
+                    viewports: {
+                        progress: "#'.$values['id'].'_viewport_progress",
+                    },
+                    progressBarExtraCssClasses: "progress-bar-striped active",
+                    showPopover: true,
+                    showErrors: true,
+                },
+                common: {
+                    minChar: 6,
+                    onKeyUp: function(event, data) {
+                        var len = $("#'.$values['id'].'").val().length;
+                        
+                        if(len < 6) {
+                            $("'.$values['strength'].'").attr("disabled", true).addClass("disabled");
+                        } else {
+                            $("'.$values['strength'].'").attr("disabled", false).removeClass("disabled");
+                        }
+                    }
+                },
+            });
+            
+            $("#'.$values['id'].'_viewport_progress").insertAfter($("#'.$values['id'].'").closest(".form-group").find("div[id$=-errors]")).css("margin-top", "5px");
+        });
+    </script>';
+        }
+
         // Delega al metodo "text", per la generazione del codice HTML
         $result .= $this->text($values, $extras);
 

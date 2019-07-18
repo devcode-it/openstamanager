@@ -85,27 +85,35 @@ class HTMLWrapper implements WrapperInterface
         }
 
         if (!empty($values['validation'])) {
+            $values['valid'] = '1';
+
+            $value = explode('|', $values['validation']);
+            $name = $value[0];
+            $id_module = $value[1] ?: '$id_module$';
+            $id_record = $value[2] ?: '$id_record$';
+
             $result .= '
     <script>
         var container = $("#'.$pseudo_id.'_validation");
         
         container.closest(".input-group").find("input").on("change", function(){
-            value = $(this).val();
+            var input = $(this);
+            var value = input.val();
  
-            container = $("#'.$pseudo_id.'_validation");
-            parent = container.closest(".input-group");
-            message = container.find("span");
-            icon = container.find("i");
+            var container = $("#'.$pseudo_id.'_validation");
+            var parent = container.closest(".input-group");
+            var message = container.find("span");
+            var icon = container.find("i");
         
             icon.attr("class", "fa fa-spinner fa-spin");
             
             $.ajax({
                 url: globals.rootdir + "/actions.php",
-                type: "get",
+                type: "post",
                 data: {
-                    id_module: "$id_module$",
-                    id_record: "$id_record$",
-                    name: "'.$values['validation'].'",
+                    id_module: "'.$id_module.'",
+                    id_record: "'.$id_record.'",
+                    name: "'.$name.'",
                     value: value,
                     op: "validate",
                 },
@@ -121,6 +129,7 @@ class HTMLWrapper implements WrapperInterface
                     }
                     
                     message.tooltipster("content", data.message);
+                    input.attr("valid", +(data.result));
                     
                     if (data.fields) {
                         fields = data.fields;

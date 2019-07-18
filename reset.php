@@ -116,14 +116,14 @@ if (empty($token)) {
 
             <p>'.tr('Inserisci la nuova password per il tuo account').':</p>
             
-            {[ "type": "password", "label": "'.tr('Password').'", "name": "password", "icon-before": "<i class=\"fa fa-lock\"></i>" ]}';
+            {[ "type": "password", "label": "'.tr('Password').'", "name": "password", "required": 1, "strength": "#submit-button", "icon-before": "<i class=\"fa fa-lock\"></i>" ]}';
 }
 
 echo '
             </div>
             
             <div class="box-footer">
-                    <button type="submit" id="login" class="btn btn-success btn-block">
+                    <button type="submit" id="submit-button" class="btn btn-success btn-block">
                         <i class="fa fa-arrow-right"></i> '.tr('Procedi').'
             </button>
         </div>

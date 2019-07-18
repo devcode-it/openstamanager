@@ -3,8 +3,8 @@
 include_once __DIR__.'/../../core.php';
 use Modules\Anagrafiche\Anagrafica;
 
-$name = get('name');
-$value = get('value');
+$name = filter('name');
+$value = filter('value');
 
 switch ($name) {
     case 'codice':

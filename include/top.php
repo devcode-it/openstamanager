@@ -275,7 +275,7 @@ if (Auth::check()) {
                                 <i class="fa fa-info"></i>
                             </a></li>
                             
-                            <li><a href="'.$rootdir.'/index.php?op=logout" class="bg-red tip" title="'.tr('Esci').'">
+                            <li><a href="'.$rootdir.'/index.php?op=logout" onclick="sessionStorage.clear()" class="bg-red tip" title="'.tr('Esci').'">
                                 <i class="fa fa-power-off"></i>
                             </a></li>
                         </ul>
@@ -289,18 +289,27 @@ if (Auth::check()) {
                 <section class="sidebar">
 
                     <!-- Sidebar user panel -->
-                    <div class="user-panel text-center info">
+                    <div class="user-panel text-center info" style="height: 60px">
                         <div class="info">
                             <p><a href="'.$rootdir.'/modules/utenti/info.php">
-                                <i class="fa fa-user"></i>
                                 '.$user['username'].'
                             </a></p>
                             <p id="datetime"></p>
                         </div>
 
-                        <div class="image">
-                            <img src="'.$paths['img'].'/logo.png" class="img-circle img-responsive" alt="'.tr('OpenSTAManager').'" />
-                        </div>
+                        <a class="image" href="'.$rootdir.'/modules/utenti/info.php">';
+
+    $user_photo = $user->photo;
+    if ($user_photo) {
+        echo '
+                            <img src="'.$user_photo.'" class="img-responsive" alt="'.$user['username'].'" />';
+    } else {
+        echo '
+                            <i class="fa fa-user fa-3x pull-left" alt="'.tr('OpenSTAManager').'"></i>';
+    }
+
+    echo '
+                        </a>
                     </div>
 
                     <!-- search form -->

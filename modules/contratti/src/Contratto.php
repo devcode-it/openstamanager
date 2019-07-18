@@ -60,15 +60,6 @@ class Contratto extends Document
         return $model;
     }
 
-    public function save(array $options = [])
-    {
-        $result = parent::save($options);
-
-        $this->fixTipiSessioni();
-
-        return $result;
-    }
-
     public function fixTipiSessioni()
     {
         $database = database();
@@ -144,14 +135,18 @@ class Contratto extends Document
 
     public function fixBudget()
     {
-        $this->budget = $this->imponibile_scontato;
+        $this->budget = $this->imponibile_scontato ?: 0;
     }
 
     public function save(array $options = [])
     {
         $this->fixBudget();
 
-        return parent::save($options);
+        $result = parent::save($options);
+
+        $this->fixTipiSessioni();
+
+        return $result;
     }
 
     // Metodi statici

@@ -133,7 +133,7 @@ class Preventivo extends Document
 
     public function fixBudget()
     {
-        $this->budget = $this->imponibile_scontato;
+        $this->budget = $this->imponibile_scontato ?: 0;
     }
 
     public function save(array $options = [])

@@ -137,10 +137,8 @@ $totale_imponibile = abs($preventivo->totale_imponibile);
 $iva = abs($preventivo->iva);
 $totale = abs($preventivo->totale);
 
-// SCONTO
-if (!empty($preventivo->sconto)) {
-    // Totale imponibile scontato
-    echo '
+// Totale imponibile scontato
+echo '
     <tr>
         <td colspan="5" class="text-right">
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>

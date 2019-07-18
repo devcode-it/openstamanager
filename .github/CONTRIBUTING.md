@@ -31,7 +31,7 @@ Per il momento non abbiamo adottato un vero e proprio codice di condotta, ma ti 
 
 Utilizziamo principalmente due strumenti per mantenere consistente nel tempo lo stile del codice:
 - [PHP CS Fixer](https://github.com/FriendsOfPHP/PHP-CS-Fixer)
-- [EditorConfig](http://editorconfig.org>)
+- [EditorConfig](https://editorconfig.org)
 
 PHP CS Fixer viene utilizzato per formattare automaticamente il codice PHP e aumentare la sua comprensibilità.
 La configurazione può essere trovata nel file [.php_cs](https://github.com/devcode-it/openstamanager/blob/master/.php_cs).

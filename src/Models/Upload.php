@@ -31,7 +31,7 @@ class Upload extends Model
         $model = parent::build();
 
         // Informazioni di base
-        $model->attributes['original'] = $original_name; // Fix per original di Eloquent
+        $model->original_name = $original_name; // Fix per original di Eloquent
         $model->size = $source['size'];
 
         $model->name = !empty($name) ? $name : $original_name;
@@ -101,6 +101,19 @@ class Upload extends Model
     public function getFilepathAttribute()
     {
         return $this->directory.'/'.$this->filename;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOriginalNameAttribute()
+    {
+        return $this->attributes['original'];
+    }
+
+    public function setOriginalNameAttribute($value)
+    {
+        $this->attributes['original'] = $value;
     }
 
     /**

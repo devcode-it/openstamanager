@@ -134,7 +134,7 @@ switch (post('op')) {
                         $dst = $src;
                     } else {
                         $src = basename($fattura->uploads()->where('name', 'Fattura Elettronica')->first()->filepath);
-                        $dst = basename($fattura->uploads()->where('name', 'Fattura Elettronica')->first()->original);
+                        $dst = basename($fattura->uploads()->where('name', 'Fattura Elettronica')->first()->original_name);
                     }
 
                     $file = slashes($module->upload_directory.'/'.$src);

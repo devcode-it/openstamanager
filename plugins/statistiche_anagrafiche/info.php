@@ -8,6 +8,7 @@ use Modules\DDT\DDT;
 use Modules\Fatture\Fattura;
 use Modules\Ordini\Ordine;
 use Modules\Preventivi\Preventivo;
+use Modules\Interventi\Intervento;
 
 $calendar_id = filter('calendar_id');
 $start = filter('start');
@@ -46,12 +47,8 @@ elseif ($anagrafica->isTipo('Tecnico')) {
     $interventi = $dbo->fetchArray('SELECT id FROM in_interventi INNER JOIN in_interventi_tecnici ON in_interventi.id = in_interventi_tecnici.idintervento WHERE in_interventi_tecnici.idtecnico='.prepare($id_record).' AND data_richiesta BETWEEN '.prepare($start).' AND '.prepare($end));
 }
 
-$totale_interventi = 0;
-foreach ($interventi as $intervento){
-    $costi = get_costi_intervento($intervento['id']);
-
-    $totale_interventi += $costi['totale_scontato'];
-}
+$interventi = Intervento::whereIn('id', array_column($interventi, 'id'))->get();
+$totale_interventi = $interventi->sum('totale_imponibile');
 
 // Ddt in uscita
 $ddt_uscita = DDT::whereBetween('data', [$start, $end])
@@ -93,7 +90,7 @@ echo '
                         '.($preventivi->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.$rootdir.'/controller.php?id_module='.Modules::get('Preventivi')['id'].'&search_Cliente='.$anagrafica['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'
                         <br class="clearfix">
                         <span class="info-box-number">
-                            <big>'.count($preventivi).'</big><br>
+                            <big>'.$preventivi->count().'</big><br>
                             <small class="help-block">'.moneyFormat($totale_preventivi).'</small>
                         </span>
                     </div>
@@ -108,7 +105,7 @@ echo '
                         '.($contratti->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.$rootdir.'/controller.php?id_module='.Modules::get('Contratti')['id'].'&search_Cliente='.$anagrafica['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'
                         <br class="clearfix">
                         <span class="info-box-number">
-                            <big>'.count($contratti).'</big><br>
+                            <big>'.$contratti->count().'</big><br>
                             <small class="help-block">'.moneyFormat($totale_contratti).'</small>
                         </span>
                     </div>
@@ -123,7 +120,7 @@ echo '
                         '.($ordini_cliente->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.$rootdir.'/controller.php?id_module='.Modules::get('Ordini cliente')['id'].'&search_Ragione-sociale='.$anagrafica['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'
                         <br class="clearfix">
                         <span class="info-box-number">
-                            <big>'.count($ordini_cliente).'</big><br>
+                            <big>'.$ordini_cliente->count().'</big><br>
                             <small class="help-block">'.moneyFormat($totale_ordini_cliente).'</small>
                         </span>
                     </div>
@@ -134,13 +131,13 @@ echo '
         <div class="row">
             <div class="col-md-4">
                 <div class="info-box">
-                    <span class="info-box-icon bg-'.(count($interventi) == 0 ? 'gray' : 'red').'"><i class="fa fa-cog"></i></span>
+                    <span class="info-box-icon bg-'.($interventi->count() == 0 ? 'gray' : 'red').'"><i class="fa fa-cog"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text pull-left">'.tr('Attività').'</span>
-                        '.(count($interventi) > 0 ? '<span class="info-box-text pull-right"><a href="'.$rootdir.'/controller.php?id_module='.Modules::get('Interventi')['id'].'&search_Ragione-sociale='.$anagrafica['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'
+                        '.($interventi->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.$rootdir.'/controller.php?id_module='.Modules::get('Interventi')['id'].'&search_Ragione-sociale='.$anagrafica['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'
                         <br class="clearfix">
                         <span class="info-box-number">
-                            <big>'.count($interventi).'</big><br>
+                            <big>'.$interventi->count().'</big><br>
                             <small class="help-block">'.moneyFormat($totale_interventi).'</small>
                         </span>
                     </div>
@@ -155,7 +152,7 @@ echo '
                         '.($ddt_uscita->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.$rootdir.'/controller.php?id_module='.Modules::get('Ddt di vendita')['id'].'&search_Ragione-sociale='.$anagrafica['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'
                         <br class="clearfix">
                         <span class="info-box-number">
-                            <big>'.count($ddt_uscita).'</big><br>
+                            <big>'.$ddt_uscita->count().'</big><br>
                             <small class="help-block">'.moneyFormat($totale_ddt_uscita).'</small>
                         </span>
                     </div>
@@ -170,7 +167,7 @@ echo '
                         '.($fatture_vendita->count() > 0 ? '<span class="info-box-text pull-right"><a href="'.$rootdir.'/controller.php?id_module='.Modules::get('Fatture di vendita')['id'].'&search_Ragione-sociale='.$anagrafica['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '').'
                         <br class="clearfix">
                         <span class="info-box-number">
-                            <big>'.count($fatture_vendita).'</big><br>
+                            <big>'.$fatture_vendita->count().'</big><br>
                             <small class="help-block">'.moneyFormat($totale_fatture_vendita).'</small>
                         </span>
                     </div>

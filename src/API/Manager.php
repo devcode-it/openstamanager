@@ -186,8 +186,18 @@ class Manager
         $object = new $class();
         $method = $this->type;
 
-        $object->open($request);
+        // Operazioni di inizializzazione
+        $block = $object->open($request);
+        if (!empty($block)) {
+            return [
+               'status' => 404,
+           ];
+        }
+
+        // Operazioni della risorsa
         $response = $object->{$method}($request);
+
+        // Operazioni di completamento
         $object->close($request, $response);
 
         return $response;

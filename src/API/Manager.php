@@ -35,12 +35,7 @@ class Manager
     {
         $type = $this->type;
 
-        $database = database();
-        $database->beginTransaction();
-
         $response = $this->{$type}($request);
-
-        $database->commitTransaction();
 
         return $response;
     }
@@ -189,13 +184,16 @@ class Manager
         // Operazioni di inizializzazione
         $block = $object->open($request);
         if (!empty($block)) {
-            return [
-               'status' => 404,
-           ];
+            throw new ResourceNotFound();
         }
+
+        $database = database();
+        $database->beginTransaction();
 
         // Operazioni della risorsa
         $response = $object->{$method}($request);
+
+        $database->commitTransaction();
 
         // Operazioni di completamento
         $object->close($request, $response);

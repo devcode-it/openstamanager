@@ -261,6 +261,13 @@ class Anagrafica extends Model
         return $this;
     }
 
+    public function delete()
+    {
+        if (!$this->isAzienda()) {
+            return parent::delete();
+        }
+    }
+
     // Metodi statici
 
     /**

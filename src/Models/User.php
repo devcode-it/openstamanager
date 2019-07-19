@@ -4,6 +4,7 @@ namespace Models;
 
 use Common\Model;
 use Intervention\Image\ImageManagerStatic;
+use Modules\Anagrafiche\Anagrafica;
 
 class User extends Model
 {
@@ -169,6 +170,16 @@ class User extends Model
     public function logs()
     {
         return $this->hasMany(Log::class, 'id_utente');
+    }
+
+    public function anagrafica()
+    {
+        return $this->belongsTo(Anagrafica::class, 'idanagrafica');
+    }
+
+    public function image()
+    {
+        return $this->belongsTo(Upload::class, 'image_file_id');
     }
 
     public function modules()

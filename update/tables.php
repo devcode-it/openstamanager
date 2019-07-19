@@ -78,6 +78,7 @@ return [
     'or_righe_ordini',
     'or_statiordine',
     'or_tipiordine',
+    'zz_api_resources',
     'zz_currencies',
     'zz_documenti',
     'zz_documenti_categorie',

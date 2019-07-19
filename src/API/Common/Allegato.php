@@ -1,7 +1,15 @@
 <?php
 
-switch ($resource) {
-    case 'allegato':
+namespace Api\Common;
+
+use API\Interfaces\CreateInterface;
+use Modules;
+use Uploads;
+
+class Allegato implements CreateInterface
+{
+    public function create($request)
+    {
         $module = Modules::get($request['module']);
 
         $upload = Uploads::upload($_FILES['upload'], [
@@ -10,11 +18,8 @@ switch ($resource) {
             'id_record' => $request['id'],
         ]);
 
-        $response['filename'] = $upload;
-
-        break;
+        return[
+            'filename' => $upload,
+        ];
+    }
 }
-
-return [
-    'allegato',
-];

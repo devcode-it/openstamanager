@@ -1,6 +1,6 @@
 <?php
 
-namespace Plugins\ExportFE;
+namespace API;
 
 use GuzzleHttp\Client;
 
@@ -9,7 +9,7 @@ use GuzzleHttp\Client;
  *
  * @since 2.4.3
  */
-class Connection
+class Services
 {
     protected static $client = null;
 

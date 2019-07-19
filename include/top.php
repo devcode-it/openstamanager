@@ -96,6 +96,23 @@ if (Auth::check()) {
                 '.$key.': "'.addslashes($value).'",';
     }
     echo '
+            password: {
+                    "wordMinLength": "'.tr('La tua password è troppo corta').'",
+                    "wordMaxLength": "'.tr('La tua password è troppo lunga').'",
+                    "wordInvalidChar": "'.tr('La tua password contiene un carattere non valido').'",
+                    "wordNotEmail": "'.tr('Non usare la tua e-mail come password').'",
+                    "wordSimilarToUsername": "'.tr('La tua password non può contenere il tuo nome').'",
+                    "wordTwoCharacterClasses": "'.tr('Usa classi di caratteri diversi').'",
+                    "wordRepetitions": "'.tr('Troppe ripetizioni').'",
+                    "wordSequences": "'.tr('La tua password contiene sequenze').'",
+                    "errorList": "'.tr('Errori').':",
+                    "veryWeak": "'.tr('Molto debole').'",
+                    "weak": "'.tr('Debole').'",
+                    "normal": "'.tr('Normale').'",
+                    "medium": "'.tr('Media').'",
+                    "strong": "'.tr('Forte').'",
+                    "veryStrong": "'.tr('Molto forte').'",
+                },
             };
 			globals = {
                 rootdir: "'.$rootdir.'",
@@ -138,7 +155,25 @@ if (Auth::check()) {
                 rootdir: "'.$rootdir.'",
                 
                 search: {},
-                translations: {},
+                translations: {
+                    password: {
+                        "wordMinLength": "'.tr('La tua password è troppo corta').'",
+                        "wordMaxLength": "'.tr('La tua password è troppo lunga').'",
+                        "wordInvalidChar": "'.tr('La tua password contiene un carattere non valido').'",
+                        "wordNotEmail": "'.tr('Non usare la tua e-mail come password').'",
+                        "wordSimilarToUsername": "'.tr('La tua password non può contenere il tuo nome').'",
+                        "wordTwoCharacterClasses": "'.tr('Usa classi di caratteri diversi').'",
+                        "wordRepetitions": "'.tr('Troppe ripetizioni').'",
+                        "wordSequences": "'.tr('La tua password contiene sequenze').'",
+                        "errorList": "'.tr('Errori').':",
+                        "veryWeak": "'.tr('Molto debole').'",
+                        "weak": "'.tr('Debole').'",
+                        "normal": "'.tr('Normale').'",
+                        "medium": "'.tr('Media').'",
+                        "strong": "'.tr('Forte').'",
+                        "veryStrong": "'.tr('Molto forte').'",
+                    },
+                },
                 
                 locale: "'.$lang.'",
                 full_locale: "'.$lang.'_'.strtoupper($lang).'",

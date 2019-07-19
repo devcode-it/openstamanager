@@ -124,6 +124,13 @@ class DefaultHandler implements HandlerInterface
                     showPopover: true,
                     showErrors: true,
                 },
+                i18n: {
+                    t: function (key) {
+                        var result = globals.translations.password[key];
+            
+                        return result === key ? \'\' : result;
+                    }
+                },
                 common: {
                     minChar: 6,
                     onKeyUp: function(event, data) {

@@ -128,7 +128,7 @@ if (!$has_user) {
                         </div>
 
                         <div class="col-md-6">
-                            {[ "type": "password", "label": "'.tr('Password').'", "id": "password", "name": "admin_password", "value": "'.$osm_password.'", "placeholder": "'.tr("Digita la password dell'amministratore").'", "required": 1 ]}
+                            {[ "type": "password", "label": "'.tr('Password').'", "id": "password", "name": "admin_password", "value": "'.$osm_password.'", "placeholder": "'.tr("Digita la password dell'amministratore").'", "required": 1, "strength": "#config" ]}
                         </div>
 
                         <div class="col-md-6">

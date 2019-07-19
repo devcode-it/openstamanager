@@ -3,8 +3,9 @@
 namespace Modules\Interventi\API\v1;
 
 use API\Interfaces\UpdateInterface;
+use API\Resource;
 
-class Firma implements UpdateInterface
+class Firma extends Resource implements UpdateInterface
 {
     public function update($request)
     {

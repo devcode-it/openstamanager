@@ -3,10 +3,11 @@
 namespace Modules\Utenti\API\v1;
 
 use API\Interfaces\CreateInterface;
+use API\Resource;
 use Auth;
 use Update;
 
-class Login implements CreateInterface
+class Login extends Resource implements CreateInterface
 {
     public function create($request)
     {
@@ -14,7 +15,7 @@ class Login implements CreateInterface
 
         // Controllo sulle credenziali
         if (auth()->attempt($request['username'], $request['password'])) {
-            $user = auth()->getUser();
+            $user = $this->getUser();
             $token = auth()->getToken();
 
             // Informazioni da restituire tramite l'API

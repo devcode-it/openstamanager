@@ -5,12 +5,13 @@ namespace Modules\Interventi\API\v1;
 use API\Interfaces\CreateInterface;
 use API\Interfaces\DeleteInterface;
 use API\Interfaces\RetrieveInterface;
+use API\Resource;
 
-class Sessioni implements RetrieveInterface, CreateInterface, DeleteInterface
+class Sessioni extends Resource implements RetrieveInterface, CreateInterface, DeleteInterface
 {
     public function retrieve($request)
     {
-        $user = auth()->getUser();
+        $user = $this->getUser();
 
         $query = 'SELECT id, idtecnico AS id_tecnico, idintervento AS id_intervento, orario_inizio, orario_fine FROM in_interventi_tecnici WHERE `idintervento` = :id_intervento';
 
@@ -31,7 +32,7 @@ class Sessioni implements RetrieveInterface, CreateInterface, DeleteInterface
 
     public function create($request)
     {
-        $user = auth()->getUser();
+        $user = $this->getUser();
         $data = $request['data'];
 
         add_tecnico($data['id_intervento'], $user['idanagrafica'], $data['orario_inizio'], $data['orario_fine']);
@@ -40,7 +41,7 @@ class Sessioni implements RetrieveInterface, CreateInterface, DeleteInterface
     public function delete($request)
     {
         $database = database();
-        $user = auth()->getUser();
+        $user = $this->getUser();
 
         $database->query('DELETE FROM `in_interventi_tecnici` WHERE `idintervento` = :id_intervento AND `idtecnico` = :id_tecnico', [
             ':id_intervento' => $request['id_intervento'],

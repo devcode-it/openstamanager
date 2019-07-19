@@ -3,13 +3,14 @@
 namespace Modules\Utenti\API\v1;
 
 use API\Interfaces\CreateInterface;
+use API\Resource;
 
-class Logout implements CreateInterface
+class Logout extends Resource implements CreateInterface
 {
     public function create($request)
     {
         $database = database();
-        $user = auth()->getUser();
+        $user = $this->getUser();
 
         if (!empty($request['token']) && !empty($user)) {
             // Cancellazione della chiave

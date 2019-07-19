@@ -5,12 +5,13 @@ namespace Modules\Interventi\API\v1;
 use API\Interfaces\CreateInterface;
 use API\Interfaces\RetrieveInterface;
 use API\Interfaces\UpdateInterface;
+use API\Resource;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\Intervento;
 use Modules\Interventi\Stato;
 use Modules\TipiIntervento\Tipo as TipoSessione;
 
-class Interventi implements RetrieveInterface, CreateInterface, UpdateInterface
+class Interventi extends Resource implements RetrieveInterface, CreateInterface, UpdateInterface
 {
     public function retrieve($request)
     {

@@ -4,17 +4,18 @@ namespace Modules\Interventi\API\v1;
 
 use API\Interfaces\RetrieveInterface;
 use API\Interfaces\UpdateInterface;
+use API\Resource;
 use Carbon\Carbon;
 use DateTime;
 use iCalEasyReader;
 use Update;
 
-class Sync implements RetrieveInterface, UpdateInterface
+class Sync extends Resource implements RetrieveInterface, UpdateInterface
 {
     public function retrieve($request)
     {
         $database = database();
-        $user = auth()->getUser();
+        $user = $this->getUser();
 
         // Normalizzazione degli interventi a database
         $database->query('UPDATE in_interventi_tecnici SET summary = (SELECT ragione_sociale FROM an_anagrafiche INNER JOIN in_interventi ON an_anagrafiche.idanagrafica=in_interventi.idanagrafica WHERE in_interventi.id=in_interventi_tecnici.idintervento) WHERE summary IS NULL');
@@ -63,7 +64,7 @@ class Sync implements RetrieveInterface, UpdateInterface
     public function update($request)
     {
         $database = database();
-        $user = auth()->getUser();
+        $user = $this->getUser();
 
         // Normalizzazione degli interventi a database
         $database->query('UPDATE in_interventi_tecnici SET summary = (SELECT ragione_sociale FROM an_anagrafiche INNER JOIN in_interventi ON an_anagrafiche.idanagrafica=in_interventi.idanagrafica WHERE in_interventi.id=in_interventi_tecnici.idintervento) WHERE summary IS NULL');

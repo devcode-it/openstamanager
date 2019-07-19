@@ -6,10 +6,11 @@ use API\Interfaces\CreateInterface;
 use API\Interfaces\DeleteInterface;
 use API\Interfaces\RetrieveInterface;
 use API\Interfaces\UpdateInterface;
+use API\Resource;
 use Modules;
 use Modules\Anagrafiche\Anagrafica;
 
-class Anagrafiche implements RetrieveInterface, CreateInterface, UpdateInterface, DeleteInterface
+class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface, UpdateInterface, DeleteInterface
 {
     public function retrieve($request)
     {

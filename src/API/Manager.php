@@ -186,7 +186,9 @@ class Manager
         $object = new $class();
         $method = $this->type;
 
+        $object->open($request);
         $response = $object->{$method}($request);
+        $object->close($request, $response);
 
         return $response;
     }

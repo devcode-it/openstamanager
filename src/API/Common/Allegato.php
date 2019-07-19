@@ -3,10 +3,11 @@
 namespace Api\Common;
 
 use API\Interfaces\CreateInterface;
+use API\Resource;
 use Modules;
 use Uploads;
 
-class Allegato implements CreateInterface
+class Allegato extends Resource implements CreateInterface
 {
     public function create($request)
     {

@@ -43,7 +43,7 @@ if ($anagrafica->isTipo('Cliente')) {
 
 // Tecnici
 elseif ($anagrafica->isTipo('Tecnico')) {
-    $interventi = $dbo->fetchArray('SELECT id FROM in_interventi WHERE in_interventi_tecnici.idtecnico='.prepare($id_record).' AND data_richiesta BETWEEN '.prepare($start).' AND '.prepare($end));
+    $interventi = $dbo->fetchArray('SELECT id FROM in_interventi INNER JOIN in_interventi_tecnici ON in_interventi.id = in_interventi_tecnici.idintervento WHERE in_interventi_tecnici.idtecnico='.prepare($id_record).' AND data_richiesta BETWEEN '.prepare($start).' AND '.prepare($end));
 }
 
 $totale_interventi = 0;

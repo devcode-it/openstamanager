@@ -111,3 +111,9 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 (NULL, 'v1', 'update', 'sessione_intervento', 'Modules\\Interventi\\API\\v1\\Sessioni', '1'),
 (NULL, 'v1', 'retrieve', 'articoli_intervento', 'Modules\\Interventi\\API\\v1\\Articoli', '1'),
 (NULL, 'v1', 'create', 'articolo_intervento', 'Modules\\Interventi\\API\\v1\\Articoli', '1');
+
+-- Supporto alla personalizzazione dell'API remota OSMCloud
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES
+(NULL, 'OSMCloud Services API Version', 'v2', 'string', 0, 'Fatturazione Elettronica', 11);
+DELETE FROM `zz_settings` WHERE `nome` = 'apilayer API key for Email';
+DELETE FROM `zz_settings` WHERE `nome` = 'apilayer API key for VAT number';

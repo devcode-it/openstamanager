@@ -24,6 +24,7 @@ class Services
 
         $json = array_merge($data, [
             'token' => setting('OSMCloud Services API Token'),
+            'version' => setting('OSMCloud Services API Version'),
             'resource' => $resource,
         ]);
 

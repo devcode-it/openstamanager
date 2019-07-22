@@ -29,6 +29,18 @@ class Interaction extends Services
         }
 
         // Ricerca fisica
+        $files = self::fileToImport($names);
+
+        $list = array_merge($list, $files);
+
+        return $list;
+    }
+
+    public static function fileToImport($names = [])
+    {
+        $list = [];
+
+        // Ricerca fisica
         $directory = FatturaElettronica::getImportDirectory();
 
         $files = glob($directory.'/*.xml*');

@@ -19,8 +19,18 @@ switch (filter('op')) {
         }
 
         if (FatturaElettronica::isValid($file)) {
+            // Individuazione ID fisico
+            $files = Interaction::fileToImport();
+            foreach ($files as $key => $value) {
+                if ($value['name'] == $file) {
+                    $index = $key;
+
+                    break;
+                }
+            }
+
             echo json_encode([
-                'filename' => $file,
+                'id' => $index + 1,
             ]);
         } else {
             echo json_encode([

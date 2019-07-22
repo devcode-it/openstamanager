@@ -124,17 +124,17 @@ function download(button, file, data_registrazione) {
             data = JSON.parse(data);
 
             if (!data.already) {
-                launch_modal("'.tr('Righe fattura').'", globals.rootdir + "/actions.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&op=list&filename=" + data.filename +"&data_registrazione=" + data_registrazione);
-				 buttonRestore(button, restore);
+                redirect(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=" + data.id);
             } else {
                 swal({
                     title: "'.tr('Fattura già importata.').'",
                     type: "info",
                 });
                 
-				buttonRestore(button, restore);
 				$(button).prop("disabled", true);
             }
+            
+            buttonRestore(button, restore);
         },
         error: function(xhr) {
             alert("'.tr('Errore').': " + xhr.responseJSON.error.message);

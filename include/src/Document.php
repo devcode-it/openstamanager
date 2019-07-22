@@ -2,6 +2,8 @@
 
 namespace Common;
 
+use Common\Components\Description;
+
 abstract class Document extends Model
 {
     /**
@@ -128,6 +130,20 @@ abstract class Document extends Model
         }
 
         return parent::delete();
+    }
+
+    /**
+     * Effettua un controllo sui campi del documento.
+     * Viene richiamatp dalle modifiche alle righe del documento.
+     *
+     * @param Description $trigger
+     */
+    public function controllo(Description $trigger)
+    {
+        $this->load('righe');
+        $this->load('articoli');
+        $this->load('descrizioni');
+        $this->load('sconti');
     }
 
     /**

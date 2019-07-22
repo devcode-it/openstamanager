@@ -72,8 +72,11 @@ abstract class Description extends Model
     public function delete()
     {
         $this->qta = 0;
+        $result = parent::delete();
 
-        return parent::delete();
+        $this->parent->controllo($this);
+
+        return $result;
     }
 
     /**
@@ -114,6 +117,9 @@ abstract class Description extends Model
         // Attributi dell'oggetto da copiare
         $attributes = $this->getAttributes();
         unset($attributes['id']);
+        unset($attributes['original_id']);
+        unset($attributes['original_type']);
+        unset($attributes['order']);
 
         if ($qta !== null) {
             $attributes['qta'] = $qta;
@@ -124,8 +130,14 @@ abstract class Description extends Model
         // Creazione del nuovo oggetto
         $model = new $object();
 
+        // Rimozione attributo in conflitto
+        unset($attributes[$model->getParentID()]);
+
         $model->original_id = $this->id;
         $model->original_type = $current;
+
+        // Impostazione del genitore
+        $model->setParent($document);
 
         // Azioni specifiche di inizalizzazione
         $model->customInitCopiaIn($this);
@@ -141,9 +153,6 @@ abstract class Description extends Model
 
         $attributes = array_intersect_key($attributes, $accepted);
         $model->fill($attributes);
-
-        // Impostazione del genitore
-        $model->setParent($document);
 
         // Azioni specifiche successive
         $model->customAfterDataCopiaIn($this);
@@ -175,6 +184,15 @@ abstract class Description extends Model
     public function isArticolo()
     {
         return $this instanceof Article;
+    }
+
+    public function save(array $options = [])
+    {
+        $result = parent::save($options);
+
+        $this->parent->controllo($this);
+
+        return $result;
     }
 
     /**

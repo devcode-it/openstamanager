@@ -187,14 +187,7 @@ class FatturaElettronica
         ]));
     }
 
-    /**
-     * Restituisce l'anagrafica collegata alla fattura, eventualmente generandola con i dati forniti.
-     *
-     * @param string $type
-     *
-     * @return Anagrafica
-     */
-    public function saveAnagrafica($type = 'Fornitore')
+    public function findAnagrafica()
     {
         $info = $this->getAnagrafe();
 
@@ -212,11 +205,25 @@ class FatturaElettronica
             $anagrafica->where('codice_fiscale', $info['codice_fiscale']);
         }
 
-        $anagrafica = $anagrafica->first();
+        return $anagrafica->first();
+    }
+
+    /**
+     * Restituisce l'anagrafica collegata alla fattura, eventualmente generandola con i dati forniti.
+     *
+     * @param string $type
+     *
+     * @return Anagrafica
+     */
+    public function saveAnagrafica($type = 'Fornitore')
+    {
+        $anagrafica = $this->findAnagrafica();
 
         if (!empty($anagrafica)) {
             return $anagrafica;
         }
+
+        $info = $this->getAnagrafe();
 
         $anagrafica = Anagrafica::build($info['ragione_sociale'], $info['nome'], $info['cognome'], [
             TipoAnagrafica::where('descrizione', $type)->first()->id,

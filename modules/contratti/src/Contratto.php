@@ -3,9 +3,11 @@
 namespace Modules\Contratti;
 
 use Carbon\Carbon;
+use Common\Components\Description;
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\Intervento;
+use Modules\Ordini\Ordine;
 use Modules\TipiIntervento\Tipo as TipoSessione;
 use Traits\RecordTrait;
 use Util\Generator;
@@ -147,6 +149,47 @@ class Contratto extends Document
         $this->fixTipiSessioni();
 
         return $result;
+    }
+
+    /**
+     * Effettua un controllo sui campi del documento.
+     * Viene richiamatp dalle modifiche alle righe del documento.
+     *
+     * @param Description $trigger
+     */
+    public function controllo(Description $trigger)
+    {
+        parent::controllo($trigger);
+
+        $righe = $this->getRighe();
+
+        $qta_evasa = $righe->sum('qta_evasa');
+        $qta = $righe->sum('qta');
+        $parziale = $qta != $qta_evasa;
+
+        // Impostazione del nuovo stato
+        if ($qta_evasa == 0) {
+            $descrizione = 'In lavorazione';
+            $descrizione_intervento = 'Completato';
+        } elseif ($trigger->parent instanceof Ordine) {
+            $descrizione = $this->stato->descrizione;
+            $descrizione_intervento = 'Completato';
+        } else {
+            $descrizione = $parziale ? 'Parzialmente fatturato' : 'Fatturato';
+            $descrizione_intervento = 'Fatturato';
+        }
+
+        $stato = Stato::where('descrizione', $descrizione)->first();
+        $this->stato()->associate($stato);
+        $this->save();
+
+        // Trasferimento degli interventi collegati
+        $interventi = $this->interventi;
+        $stato_intervento = \Modules\Interventi\Stato::where('descrizione', $descrizione_intervento)->first();
+        foreach ($interventi as $intervento) {
+            $intervento->stato()->associate($stato_intervento);
+            $intervento->save();
+        }
     }
 
     // Metodi statici

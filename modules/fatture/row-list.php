@@ -253,7 +253,7 @@ foreach ($righe as $row) {
             <form action='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record."' method='post' id='delete-form-".$riga['id']."' role='form'>
                 <input type='hidden' name='backto' value='record-edit'>
                 <input type='hidden' name='idriga' value='".$riga['id']."'>
-                <input type='hidden' name='op' value='".$delete."'>";
+                <input type='hidden' name='op' value='unlink_riga'>";
 
         if ($row->isArticolo()) {
             echo "

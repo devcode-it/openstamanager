@@ -39,6 +39,7 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 
 				<div class="col-md-3">
                     <?php
+
                     if (setting('Cambia automaticamente stato ordini fatturati')) {
                         if ($record['stato'] == 'Evaso' || $record['stato'] == 'Parzialmente evaso' || $record['stato'] == 'Fatturato' || $record['stato'] == 'Parzialmente fatturato') {
                             ?>

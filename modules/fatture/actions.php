@@ -637,17 +637,16 @@ switch (post('op')) {
 
     // Scollegamento riga generica da documento
     case 'unlink_riga':
-        if (post('idriga') !== null) {
-            $idriga = post('idriga');
+        $id_riga = post('idriga');
 
-            rimuovi_riga_fattura($id_record, $idriga, $dir);
+        if (!empty($id_riga)) {
+            $riga = $fattura->getRighe()->find($id_riga);
+            $riga->delete();
+
+            //rimuovi_riga_fattura($id_record, $idriga, $dir);
 
             // Ricalcolo inps, ritenuta e bollo
-            if ($dir == 'entrata') {
-                ricalcola_costiagg_fattura($id_record);
-            } else {
-                ricalcola_costiagg_fattura($id_record);
-            }
+            ricalcola_costiagg_fattura($id_record);
 
             flash()->info(tr('Riga rimossa!'));
         }
@@ -699,7 +698,6 @@ switch (post('op')) {
         $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
         $id_conto = post('id_conto');
 
-        $parziale = false;
         $righe = $ordine->getRighe();
         foreach ($righe as $riga) {
             if (post('evadere')[$riga->id] == 'on') {
@@ -723,17 +721,7 @@ switch (post('op')) {
 
                 $copia->save();
             }
-
-            if ($riga->qta != $riga->qta_evasa) {
-                $parziale = true;
-            }
         }
-
-        // Impostazione del nuovo stato
-        $descrizione = $parziale ? 'Parzialmente fatturato' : 'Fatturato';
-        $stato = \Modules\Ordini\Stato::where('descrizione', $descrizione)->first();
-        $ordine->stato()->associate($stato);
-        $ordine->save();
 
         ricalcola_costiagg_fattura($id_record);
         aggiorna_sedi_movimenti('documenti', $id_record);
@@ -769,7 +757,6 @@ switch (post('op')) {
         $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
         $id_conto = post('id_conto');
 
-        $parziale = false;
         $righe = $ddt->getRighe();
         foreach ($righe as $riga) {
             if (post('evadere')[$riga->id] == 'on') {
@@ -791,17 +778,7 @@ switch (post('op')) {
 
                 $copia->save();
             }
-
-            if ($riga->qta != $riga->qta_evasa) {
-                $parziale = true;
-            }
         }
-
-        // Impostazione del nuovo stato
-        $descrizione = $parziale ? 'Parzialmente fatturato' : 'Fatturato';
-        $stato = \Modules\DDT\Stato::where('descrizione', $descrizione)->first();
-        $ddt->stato()->associate($stato);
-        $ddt->save();
 
         ricalcola_costiagg_fattura($id_record);
         aggiorna_sedi_movimenti('documenti', $id_record);
@@ -836,7 +813,6 @@ switch (post('op')) {
         $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
         $id_conto = post('id_conto');
 
-        $parziale = false;
         $righe = $preventivo->getRighe();
         foreach ($righe as $riga) {
             if (post('evadere')[$riga->id] == 'on') {
@@ -856,24 +832,6 @@ switch (post('op')) {
 
                 $copia->save();
             }
-
-            if ($riga->qta != $riga->qta_evasa) {
-                $parziale = true;
-            }
-        }
-
-        // Impostazione del nuovo stato
-        $descrizione = $parziale ? 'Parzialmente fatturato' : 'Fatturato';
-        $stato = \Modules\Preventivi\Stato::where('descrizione', $descrizione)->first();
-        $preventivo->stato()->associate($stato);
-        $preventivo->save();
-
-        // Trasferimento degli interventi collegati
-        $interventi = $preventivo->interventi;
-        $stato_intervento = \Modules\Interventi\Stato::where('descrizione', 'Fatturato')->first();
-        foreach ($interventi as $intervento) {
-            $intervento->stato()->associate($stato_intervento);
-            $intervento->save();
         }
 
         ricalcola_costiagg_fattura($id_record);
@@ -909,7 +867,6 @@ switch (post('op')) {
         $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
         $id_conto = post('id_conto');
 
-        $parziale = false;
         $righe = $contratto->getRighe();
         foreach ($righe as $riga) {
             if (post('evadere')[$riga->id] == 'on') {
@@ -929,24 +886,6 @@ switch (post('op')) {
 
                 $copia->save();
             }
-
-            if ($riga->qta != $riga->qta_evasa) {
-                $parziale = true;
-            }
-        }
-
-        // Impostazione del nuovo stato
-        $descrizione = $parziale ? 'Parzialmente fatturato' : 'Fatturato';
-        $stato = \Modules\Contratti\Stato::where('descrizione', $descrizione)->first();
-        $contratto->stato()->associate($stato);
-        $contratto->save();
-
-        // Trasferimento degli interventi collegati
-        $interventi = $contratto->interventi;
-        $stato_intervento = \Modules\Interventi\Stato::where('descrizione', 'Fatturato')->first();
-        foreach ($interventi as $intervento) {
-            $intervento->stato()->associate($stato_intervento);
-            $intervento->save();
         }
 
         ricalcola_costiagg_fattura($id_record);

@@ -169,6 +169,18 @@ abstract class Article extends Row
         return parent::save($options);
     }
 
+    public function delete()
+    {
+        $this->serials = [];
+
+        $this->qta = 0; // Fix movimentazione automatica
+        if (!empty($this->qta_movimentazione)) {
+            $this->movimenta($this->qta_movimentazione);
+        }
+
+        return parent::delete();
+    }
+
     abstract protected function movimentaMagazzino($qta);
 
     protected static function boot()

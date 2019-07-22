@@ -2,23 +2,9 @@
 
 include_once __DIR__.'/../../core.php';
 
-$filename = get('filename');
-$fattura_pa = \Plugins\ImportFE\FatturaElettronica::manage($filename);
-
-$filename = basename($filename, '.p7m');
-
-echo '
-<form action="'.$rootdir.'/actions.php" method="post">
-    <input type="hidden" name="id_module" value="'.$id_module.'">
-    <input type="hidden" name="id_plugin" value="'.$id_plugin.'">
-    <input type="hidden" name="filename" value="'.$filename.'">
-    <input type="hidden" name="id_segment" value="'.get('id_segment').'">
-    <input type="hidden" name="id" value="'.get('id').'">
-    <input type="hidden" name="backto" value="record-edit">
-    <input type="hidden" name="op" value="generate">';
-
 // Fornitore
 $fornitore = $fattura_pa->getAnagrafe();
+
 $ragione_sociale = $fornitore['ragione_sociale'] ?: $fornitore['cognome'].' '.$fornitore['nome'];
 $codice_fiscale = $fornitore['codice_fiscale'];
 $partita_iva = $fornitore['partita_iva'];
@@ -31,13 +17,32 @@ $provincia = $sede['provincia'];
 
 // Dati generali
 $dati_generali = $fattura_pa->getBody()['DatiGenerali']['DatiGeneraliDocumento'];
-$descrizione_documento = database()->fetchOne('SELECT CONCAT("(", codice, ") ", descrizione) AS descrizione FROM fe_tipi_documento WHERE codice = '.prepare($dati_generali['TipoDocumento']));
+
+$tipo_documento = $database->fetchOne('SELECT CONCAT("(", codice, ") ", descrizione) AS descrizione FROM fe_tipi_documento WHERE codice = '.prepare($dati_generali['TipoDocumento']))['descrizione'];
+
+$pagamenti = $fattura_pa->getBody()['DatiPagamento'];
+$metodi = $pagamenti['DettaglioPagamento'];
+$metodi = isset($metodi[0]) ? $metodi : [$metodi];
+
+$codice_modalita_pagamento = $metodi[0]['ModalitaPagamento'];
 
 echo '
-    <div class="row" >
-		<div class="col-md-6">
-			<h4>'.
-    $ragione_sociale.' '.((empty($idanagrafica = $dbo->fetchOne('SELECT idanagrafica FROM an_anagrafiche WHERE ( codice_fiscale = '.prepare($codice_fiscale).' AND codice_fiscale != \'\' ) OR ( piva = '.prepare($partita_iva).' AND piva != \'\' ) ')['idanagrafica'])) ? '<span class="badge badge-success" >'.tr('Nuova anagrafica').'</span>' : '<small>'.Modules::link('Anagrafiche', $idanagrafica, '', null, '')).'</small>'.'<br>
+<form action="'.$rootdir.'/actions.php" method="post">
+    <input type="hidden" name="id_module" value="'.$id_module.'">
+    <input type="hidden" name="id_plugin" value="'.$id_plugin.'">
+    <input type="hidden" name="filename" value="'.$filename.'">
+    <input type="hidden" name="id_segment" value="'.get('id_segment').'">
+    <input type="hidden" name="id" value="'.get('id').'">
+    <input type="hidden" name="backto" value="record-edit">
+    <input type="hidden" name="op" value="generate">
+    
+    <div class="row">
+		<div class="col-md-3">
+			<h4>
+			    '.$ragione_sociale.'
+			    
+			    '.(empty($anagrafica) ? '<span class="badge badge-success">'.tr('Nuova anagrafica').'</span>' : '<small>'.Modules::link('Anagrafiche', $idanagrafica)).'</small><br>
+			    
 				<small>
 					'.(!empty($codice_fiscale) ? (tr('Codice Fiscale').': '.$codice_fiscale.'<br>') : '').'
 					'.(!empty($partita_iva) ? (tr('Partita IVA').': '.$partita_iva.'<br>') : '').'
@@ -46,127 +51,110 @@ echo '
 			</h4>
 		</div>
 		
-		<div class="col-md-6">
-			<h4>'.$dati_generali['Numero'];
-
-        echo '
+		<div class="col-md-3">
+			<h4>
+			    '.$dati_generali['Numero'].'
+			
 				<a href="'.$structure->fileurl('view.php').'?filename='.$filename.'" class="btn btn-info btn-xs" target="_blank" >
 					<i class="fa fa-eye"></i> '.tr('Visualizza').'
-				</a>';
-
-        echo '
+				</a>
+				
 				<br><small>
-					'.database()->fetchOne('SELECT CONCAT("(", codice, ") ", descrizione) AS descrizione FROM fe_tipi_documento WHERE codice = '.prepare($dati_generali['TipoDocumento']))['descrizione'].'
+					'.$tipo_documento.'
 					<br>'.Translator::dateToLocale($dati_generali['Data']).'
 					<br>'.$dati_generali['Divisa'].'
 				</small>
 			</h4>
-		</div>
+		</div>';
+
+// Blocco DatiPagamento è valorizzato (opzionale)
+if (!empty($pagamenti)) {
+    echo '
+		<div class="col-md-6">
+            <h4>'.tr('Pagamento').'</h4>
+    
+            <p>'.tr('La fattura importata presenta _NUM_ rat_E_ di pagamento con le seguenti scadenze', [
+                '_NUM_' => count($metodi),
+                '_E_' => ((count($metodi) > 1) ? 'e' : 'a'),
+            ]).':</p>
+            <ol>';
+
+    // Scadenze di pagamento
+    foreach ($metodi as $metodo) {
+        $descrizione = !empty($metodo['ModalitaPagamento']) ? $database->fetchOne('SELECT descrizione FROM fe_modalita_pagamento WHERE codice = '.prepare($metodo['ModalitaPagamento']))['descrizione'] : '';
+        $data = !empty($metodo['DataScadenzaPagamento']) ? Translator::dateToLocale($metodo['DataScadenzaPagamento']).' ' : '';
+
+        echo '
+				<li>
+				    '.$data.'
+				    '.moneyFormat($metodo['ImportoPagamento']).'
+                    ('.$descrizione.')
+                </li>';
+    }
+
+    echo '
+            </ol>
+        </div>';
+}
+
+echo '
 	</div>';
 
 // Tipo del documento
-$query = 'SELECT id, CONCAT (descrizione, IF((codice_tipo_documento_fe IS NULL), \'\', CONCAT( \' (\', codice_tipo_documento_fe, \')\' ) )) AS descrizione FROM co_tipidocumento WHERE dir = \'uscita\'';
-if (database()->fetchNum('SELECT id FROM co_tipidocumento WHERE codice_tipo_documento_fe = '.prepare($dati_generali['TipoDocumento']))) {
-    $query .= ' AND codice_tipo_documento_fe = '.prepare($dati_generali['TipoDocumento']);
+$query = "SELECT id, CONCAT (descrizione, IF((codice_tipo_documento_fe IS NULL), '', CONCAT(' (', codice_tipo_documento_fe, ')' ) )) AS descrizione FROM co_tipidocumento WHERE dir = 'uscita'";
+$query_tipo = $query.' AND codice_tipo_documento_fe = '.prepare($dati_generali['TipoDocumento']);
+if ($database->fetchNum($query_tipo)) {
+    $query = $query_tipo;
 }
+
 echo '
     <div class="row">
-		<div class="col-md-6">
+        <div class="col-md-3">
             {[ "type": "select", "label": "'.tr('Tipo fattura').'", "name": "id_tipo", "required": 1, "values": "query='.$query.'" ]}
         </div>';
 
 // Sezionale
 echo '
-        <div class="col-md-6">
+        <div class="col-md-3">
             {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.$id_module.' ORDER BY name", "value": "'.$_SESSION['module_'.$id_module]['id_segment'].'" ]}
-        </div>
-    </div>';
+        </div>';
 
-// Data ricezione
+// Data di registrazione
 echo '
-    <div class="row" >
-		<div class="col-md-6">
+        <div class="col-md-3">
             {[ "type": "date", "label": "'.tr('Data di registrazione').'", "name": "data_registrazione", "required": 1, "value": "'.get('data_registrazione').'", "max-date": "-now-", "min-date": "'.$dati_generali['Data'].'", "readonly": "'.(intval(get('data_registrazione') != null)).'" ]}
         </div>';
 
-// Riferimenti ad altre fatture
-if (in_array($dati_generali['TipoDocumento'], ['TD04', 'TD05'])) {
-    $anagrafica = $fattura_pa->saveAnagrafica();
+if (!empty($anagrafica)) {
     $query = "SELECT
-        co_documenti.id,
-        CONCAT('Fattura num. ', co_documenti.numero_esterno, ' del ', DATE_FORMAT(co_documenti.data, '%d/%m/%Y')) AS descrizione
-    FROM co_documenti
-        INNER JOIN co_tipidocumento ON co_tipidocumento.id = co_documenti.idtipodocumento
-    WHERE
-        co_tipidocumento.dir = 'uscita' AND
-        (co_documenti.data BETWEEN NOW() - INTERVAL 1 YEAR AND NOW()) AND
-        co_documenti.idstatodocumento IN (SELECT id FROM co_statidocumento WHERE descrizione != 'Bozza') AND
-        co_documenti.idanagrafica = ".prepare($anagrafica->id);
+            co_documenti.id,
+            CONCAT('Fattura num. ', co_documenti.numero_esterno, ' del ', DATE_FORMAT(co_documenti.data, '%d/%m/%Y')) AS descrizione
+        FROM co_documenti
+            INNER JOIN co_tipidocumento ON co_tipidocumento.id = co_documenti.idtipodocumento
+        WHERE
+            co_tipidocumento.dir = 'uscita' AND
+            (co_documenti.data BETWEEN NOW() - INTERVAL 1 YEAR AND NOW()) AND
+            co_documenti.idstatodocumento IN (SELECT id FROM co_statidocumento WHERE descrizione != 'Bozza') AND
+            co_documenti.idanagrafica = ".prepare($anagrafica->id);
 
-    echo '
-        <div class="col-md-6">
+    // Riferimenti ad altre fatture
+    if (in_array($dati_generali['TipoDocumento'], ['TD04', 'TD05'])) {
+        echo '
+        <div class="col-md-3">
             {[ "type": "select", "label": "'.tr('Fattura collegata').'", "name": "ref_fattura", "required": 1, "values": "query='.$query.'" ]}
         </div>';
-} elseif ($dati_generali['TipoDocumento'] == 'TD06') {
-    $anagrafica = $fattura_pa->saveAnagrafica();
-    $query = "SELECT
-        co_documenti.id,
-        CONCAT('Fattura num. ', co_documenti.numero_esterno, ' del ', DATE_FORMAT(co_documenti.data, '%d/%m/%Y')) AS descrizione
-    FROM co_documenti
-        INNER JOIN co_tipidocumento ON co_tipidocumento.id = co_documenti.idtipodocumento
-    WHERE
-        co_tipidocumento.dir = 'uscita' AND
-        (co_documenti.data BETWEEN NOW() - INTERVAL 1 YEAR AND NOW()) AND
-        co_documenti.idstatodocumento IN (SELECT id FROM co_statidocumento WHERE descrizione != 'Bozza') AND
-        co_documenti.id_segment = (SELECT id FROM zz_segments WHERE name = 'Fatture pro-forma' AND id_module = ".prepare($id_module).') AND
-        co_documenti.idanagrafica = '.prepare($anagrafica->id);
+    } elseif ($dati_generali['TipoDocumento'] == 'TD06') {
+        $query .= "AND co_documenti.id_segment = (SELECT id FROM zz_segments WHERE name = 'Fatture pro-forma' AND id_module = ".prepare($id_module).')';
 
-    echo '
-        <div class="col-md-6">
+        echo '
+        <div class="col-md-3">
             {[ "type": "select", "label": "'.tr('Fattura pro-forma').'", "name": "ref_fattura", "values": "query='.$query.'" ]}
         </div>';
+    }
 }
 
 echo '
     </div>';
-
-// Blocco DatiPagamento è valorizzato (opzionale)
-$pagamenti = $fattura_pa->getBody()['DatiPagamento'];
-if (!empty($pagamenti)) {
-    $metodi = $pagamenti['DettaglioPagamento'];
-    $metodi = isset($metodi[0]) ? $metodi : [$metodi];
-
-    $codice_modalita_pagamento = $metodi[0]['ModalitaPagamento'];
-
-    echo '
-		<h4>'.tr('Pagamento').'</h4>
-
-        <p>'.tr('La fattura importata presenta _NUM_ rat_E_ di pagamento con le seguenti scadenze', [
-            '_NUM_' => count($metodi),
-            '_E_' => ((count($metodi) > 1) ? 'e' : 'a'),
-        ]).':</p>
-		<ol>';
-
-    // Scadenze di pagamento
-    foreach ($metodi as $metodo) {
-        echo '
-				<li>';
-
-        //DataScadenzaPagamento è un nodo opzionale per il blocco DatiPagamento
-        if (!empty($metodo['DataScadenzaPagamento'])) {
-            echo Translator::dateToLocale($metodo['DataScadenzaPagamento']).' ';
-        }
-
-        $descrizione = !empty($metodo['ModalitaPagamento']) ? database()->fetchOne('SELECT descrizione FROM fe_modalita_pagamento WHERE codice = '.prepare($metodo['ModalitaPagamento']))['descrizione'] : '';
-
-        echo Translator::numberToLocale($metodo['ImportoPagamento']).' &euro; 
-            ('.$descrizione.')
-            </li>';
-    }
-
-    echo '
-		</ol>';
-}
 
 if (!empty($codice_modalita_pagamento)) {
     $_SESSION['superselect']['codice_modalita_pagamento_fe'] = $codice_modalita_pagamento;
@@ -240,7 +228,6 @@ if (!empty($righe)) {
                 }
             }
         }
-        /*###*/
 
         echo '
         <tr>
@@ -325,4 +312,10 @@ echo '
 </form>';
 
 echo '
+<script>
+$(document).ready(function() {
+    $("#save").hide();
+});
+</script>
+
 <script src="'.$rootdir.'/lib/init.js"></script>';

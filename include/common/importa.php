@@ -29,7 +29,7 @@ if (empty($id_conto)) {
 }
 
 // Selezione articoli dell'ordine da portare nel ddt
-$righe = $dbo->fetchArray('SELECT *, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo),"") AS codice, (qta - qta_evasa) AS qta_rimanente FROM '.$table.' INNER JOIN '.$rows.' ON '.$table.'.id='.$rows.'.'.$id_rows.' WHERE '.$table.'.id='.prepare($id_record).' HAVING qta_rimanente > 0 OR is_descrizione = 1 ORDER BY `order`');
+$righe = $dbo->fetchArray('SELECT *, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo),"") AS codice, (qta - qta_evasa) AS qta_rimanente FROM '.$table.' INNER JOIN '.$rows.' ON '.$table.'.id='.$rows.'.'.$id_rows.' WHERE '.$table.'.id='.prepare($id_record).' HAVING qta_rimanente > 0 ORDER BY `order`');
 
 if (!empty($righe)) {
     echo '

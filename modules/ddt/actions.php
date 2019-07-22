@@ -88,6 +88,11 @@ switch (post('op')) {
                 'bollo' => 0,
                 'rivalsainps' => 0,
                 'ritenutaacconto' => 0,
+
+                'id_documento_fe' => post('id_documento_fe'),
+                'codice_cup' => post('codice_cup'),
+                'codice_cig' => post('codice_cig'),
+                'num_item' => post('num_item'),
             ], ['id' => $id_record]);
 
             $query = 'SELECT descrizione FROM dt_statiddt WHERE id='.prepare($idstatoddt);
@@ -222,6 +227,12 @@ switch (post('op')) {
 
             $ddt = DDT::build($ordine->anagrafica, $tipo, post('data'));
             $ddt->idpagamento = $ordine->idpagamento;
+
+            $ddt->id_documento_fe = $ordine->id_documento_fe;
+            $ddt->codice_cup = $ordine->codice_cup;
+            $ddt->codice_cig = $ordine->codice_cig;
+            $ddt->num_item = $ordine->num_item;
+
             $ddt->save();
 
             $id_record = $ddt->id;

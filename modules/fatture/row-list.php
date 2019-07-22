@@ -152,7 +152,7 @@ foreach ($righe as $row) {
             ]);
 
         echo '
-            <br>'.Modules::link('Fatture di vendita', $record['ref_documento'], $text, $text);
+            <br>'.Modules::link($id_module, $record['ref_documento'], $text, $text);
     }
 
     $ref = doc_references($riga, $dir, ['iddocumento']);

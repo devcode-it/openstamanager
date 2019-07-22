@@ -13,8 +13,6 @@ class Interaction extends Services
 {
     public static function listToImport()
     {
-        $directory = FatturaElettronica::getImportDirectory();
-
         $list = [];
         $names = [];
 
@@ -31,6 +29,8 @@ class Interaction extends Services
         }
 
         // Ricerca fisica
+        $directory = FatturaElettronica::getImportDirectory();
+
         $files = glob($directory.'/*.xml*');
         foreach ($files as $file) {
             $name = basename($file);

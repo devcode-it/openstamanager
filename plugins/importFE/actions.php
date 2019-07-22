@@ -10,12 +10,12 @@ switch (filter('op')) {
         $content = file_get_contents($_FILES['blob']['tmp_name']);
         $file = FatturaElettronica::store($_FILES['blob']['name'], $content);
 
-        $name = $file;
-
         // no break
     case 'prepare':
-        $name = $name ?: get('name');
-        $file = Interaction::getImportXML($name);
+        if (!isset($file)){
+            $name = get('name');
+            $file = Interaction::getImportXML($name);
+        }
 
         if (FatturaElettronica::isValid($file)) {
             echo json_encode([
@@ -43,6 +43,7 @@ switch (filter('op')) {
             'id_pagamento' => post('pagamento'),
             'id_segment' => post('id_segment'),
             'id_tipo' => post('id_tipo'),
+            'ref_fattura' => post('ref_fattura'),
             'data_registrazione' => post('data_registrazione'),
             'articoli' => post('articoli'),
             'iva' => post('iva'),
@@ -67,7 +68,8 @@ switch (filter('op')) {
             if ($process_result != '') {
                 flash()->error($process_result);
                 redirect(ROOTDIR.'/controller.php?id_module='.$id_module);
-                exit;
+
+                return;
             }
         }
 

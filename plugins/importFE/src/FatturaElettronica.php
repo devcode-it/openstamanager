@@ -178,12 +178,18 @@ class FatturaElettronica
         }
 
         // Registrazione XML come allegato
-        $filename = Uploads::upload($this->file, array_merge($info, [
+        Uploads::upload($this->file, array_merge($info, [
             'name' => tr('Fattura Elettronica'),
             'original' => basename($this->file),
         ]));
     }
 
+    /**
+     * Restituisce l'anagrafica collegata alla fattura, eventualmente generandola con i dati forniti.
+     *
+     * @param string $type
+     * @return Anagrafica
+     */
     public function saveAnagrafica($type = 'Fornitore')
     {
         $info = $this->getAnagrafe();
@@ -267,9 +273,15 @@ class FatturaElettronica
     /**
      * Registra la fattura elettronica come fattura del gestionale.
      *
+     * @param int $id_pagamento
+     * @param int $id_sezionale
+     * @param int $id_tipo
+     * @param string $data_registrazione
+     * @param int $ref_fattura
+     *
      * @return Fattura
      */
-    public function saveFattura($id_pagamento, $id_sezionale, $id_tipo, $data_registrazione)
+    public function saveFattura($id_pagamento, $id_sezionale, $id_tipo, $data_registrazione, $ref_fattura = null)
     {
         $anagrafica = $this->saveAnagrafica();
 
@@ -287,6 +299,9 @@ class FatturaElettronica
         $fattura->progressivo_invio = $progressivo_invio;
         $fattura->numero_esterno = $numero_esterno;
         $fattura->idpagamento = $id_pagamento;
+
+        // Riferimento per nota di credito e debito
+        $fattura->ref_documento = $ref_fattura ?: null;
 
         // Per il destinatario, la data di ricezione della fattura assume grande rilievo ai fini IVA, poiché determina la decorrenza dei termini per poter esercitare il diritto alla detrazione.
         // La data di ricezione della fattura è contenuta all’interno della “ricevuta di consegna” visibile al trasmittente della stessa.
@@ -336,7 +351,7 @@ class FatturaElettronica
 
     public function save($info = [])
     {
-        $this->saveFattura($info['id_pagamento'], $info['id_segment'], $info['id_tipo'], $info['data_registrazione']);
+        $this->saveFattura($info['id_pagamento'], $info['id_segment'], $info['id_tipo'], $info['data_registrazione'], $info['ref_fattura']);
 
         $this->saveRighe($info['articoli'], $info['iva'], $info['conto'], $info['movimentazione']);
 

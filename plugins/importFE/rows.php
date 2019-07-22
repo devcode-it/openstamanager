@@ -65,12 +65,12 @@ echo '
 	</div>';
 
 // Tipo del documento
-$query = 'SELECT id, CONCAT (descrizione, IF((codice_tipo_documento_fe IS NULL), \'\', CONCAT( \' (\', codice_tipo_documento_fe, \')\' ) )) as descrizione FROM co_tipidocumento WHERE dir = \'uscita\'';
+$query = 'SELECT id, CONCAT (descrizione, IF((codice_tipo_documento_fe IS NULL), \'\', CONCAT( \' (\', codice_tipo_documento_fe, \')\' ) )) AS descrizione FROM co_tipidocumento WHERE dir = \'uscita\'';
 if (database()->fetchNum('SELECT id FROM co_tipidocumento WHERE codice_tipo_documento_fe = '.prepare($dati_generali['TipoDocumento']))) {
     $query .= ' AND codice_tipo_documento_fe = '.prepare($dati_generali['TipoDocumento']);
 }
 echo '
-    <div class="row" >
+    <div class="row">
 		<div class="col-md-6">
             {[ "type": "select", "label": "'.tr('Tipo fattura').'", "name": "id_tipo", "required": 1, "values": "query='.$query.'" ]}
         </div>';
@@ -87,7 +87,34 @@ echo '
     <div class="row" >
 		<div class="col-md-6">
             {[ "type": "date", "label": "'.tr('Data ricezione').'", "name": "data_registrazione", "required": 0, "value": "" ]}
-        </div>
+        </div>';
+
+// Riferimenti ad altre fatture
+if (in_array($dati_generali['TipoDocumento'], ['TD04', 'TD05'])){
+    $anagrafica = $fattura_pa->saveAnagrafica();
+    $query = "SELECT
+        co_documenti.id,
+        CONCAT('Fattura num. ', co_documenti.numero_esterno, ' del ', DATE_FORMAT(co_documenti.data, '%d/%m/%Y')) AS descrizione
+    FROM
+        co_documenti INNER JOIN co_tipidocumento ON co_tipidocumento.id = co_documenti.idtipodocumento
+    WHERE
+        co_tipidocumento.dir = 'uscita' AND
+        co_documenti.idanagrafica = ".prepare($anagrafica->id);
+
+    echo '
+        <div class="col-md-6">
+            {[ "type": "select", "label": "'.tr('Fattura collegata').'", "name": "ref_fattura", "required": 1, "values": "query='.$query.'" ]}
+        </div>';
+}elseif ($dati_generali['TipoDocumento'] == 'TD06'){
+    $anagrafica = $fattura_pa->saveAnagrafica();
+
+    echo '
+        <div class="col-md-6">
+            {[ "type": "select", "label": "'.tr('Fattura collegata').'", "name": "ref_fattura", "values": "query='.$query.'" ]}
+        </div>';
+}
+
+echo '
     </div>';
 
 // Blocco DatiPagamento è valorizzato (opzionale)

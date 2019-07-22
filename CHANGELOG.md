@@ -48,6 +48,9 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Miglioramento del sistema di importazione delle ricevute delle Fatture Elettroniche, per permetterne il caricamento manuale
  - Standardizzazione dei nomi predefiniti delle stampa e dei relativi file generati 
  
+### Rimosso (Removed)
+ - Supporto ai raggruppamenti di **Contratti** e **Preventivi** nelle **Fatture**
+ 
 ### Fixed
 
  - Fix export delle tabelle principali in Excel

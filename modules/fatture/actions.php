@@ -151,10 +151,10 @@ switch (post('op')) {
 
     // eliminazione documento
     case 'delete':
-        $rs = $dbo->fetchArray('SELECT id FROM co_righe_documenti WHERE iddocumento='.prepare($id_record));
+        $righe = $dbo->fetchArray('SELECT id FROM co_righe_documenti WHERE iddocumento='.prepare($id_record));
 
         // Controllo sui seriali
-        foreach ($rs as $r) {
+        foreach ($righe as $r) {
             $non_rimovibili = seriali_non_rimuovibili('id_riga_documento', $r['id'], $dir);
             if (!empty($non_rimovibili)) {
                 flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
@@ -163,22 +163,21 @@ switch (post('op')) {
             }
         }
 
-        // Rimozione righe
-        foreach ($rs as $r) {
-            rimuovi_riga_fattura($id_record, $r['id'], $dir);
-        }
-
         // Se ci sono dei preventivi collegati li rimetto nello stato "In attesa di pagamento"
         $rs = $dbo->fetchArray('SELECT idpreventivo FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idpreventivo IS NOT NULL');
         for ($i = 0; $i < sizeof($rs); ++$i) {
             $dbo->query("UPDATE co_preventivi SET idstato=(SELECT id FROM co_statipreventivi WHERE descrizione='In lavorazione') WHERE id=".prepare($rs[$i]['idpreventivo']));
-            $dbo->query('UPDATE co_righe_preventivi SET qta_evasa=0 WHERE idpreventivo='.prepare($rs[$i]['idpreventivo']));
         }
 
         // Se ci sono degli interventi collegati li rimetto nello stato "Completato"
         $rs = $dbo->fetchArray('SELECT idintervento FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idintervento IS NOT NULL');
         for ($i = 0; $i < sizeof($rs); ++$i) {
             $dbo->query("UPDATE in_interventi SET idstatointervento = (SELECT idstatointervento FROM in_statiintervento WHERE descrizione = 'Completato') WHERE id=".prepare($rs[$i]['idintervento']));
+        }
+
+        // Rimozione righe
+        foreach ($righe as $r) {
+            rimuovi_riga_fattura($id_record, $r['id'], $dir);
         }
 
         elimina_scadenza($id_record);

@@ -9,7 +9,7 @@ $rs_documento = $dbo->fetchArray('SELECT * FROM co_righe_contratti WHERE idcontr
 
 /* permetto di fatturare il contratto solo se contiene righe e si trova in uno stato fatturabile */
 echo '
-<button type="button" class="btn btn-info '.(($record['is_fatturabile'] && !empty($rs_documento)) ? '' : 'disabled').'" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=fattura" data-toggle="modal" data-title="'.tr('Crea fattura').'">
+<button type="button" '.(($record['is_fatturabile'] && !empty($rs_documento)) ? '' : 'disabled').' class="btn btn-info '.(($record['is_fatturabile'] && !empty($rs_documento)) ? '' : 'disabled').'" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=fattura" data-toggle="modal" data-title="'.tr('Crea fattura').'">
     <i class="fa fa-magic"></i> '.tr('Crea fattura').'
 </button>';
 

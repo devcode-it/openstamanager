@@ -193,18 +193,20 @@ if (!$has_settings) {
                     <h3 class="panel-title">'.tr('Impostazioni di base').'</h3>
                 </div>
 
-                <div class="panel-body">';
+                <div class="panel-body">
+                    <div class="row">';
+                
 
-    foreach ($settings as $setting => $required) {
-        if (empty(setting($setting))) {
-            echo '
-                    <div class="col-md-6">
-                        '.Settings::input($setting, $required).'
-                    </div>';
+        foreach ($settings as $setting => $required) {
+            if (empty(setting($setting))) {
+                echo '
+                        <div class="col-md-6">
+                            '.Settings::input($setting, $required).'
+                        </div>';
+            }
         }
-    }
 
-    echo '
+    echo '          </div>
                 </div>
             </div>';
 }

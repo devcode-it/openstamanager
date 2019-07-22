@@ -86,7 +86,7 @@ echo '
 echo '
     <div class="row" >
 		<div class="col-md-6">
-            {[ "type": "date", "label": "'.tr('Data ricezione').'", "name": "data_registrazione", "required": 0, "value": "" ]}
+            {[ "type": "date", "label": "'.tr('Data di registrazione').'", "name": "data_registrazione", "required": 1, "value": "'.get('data_registrazione').'", "max-date": "-now-", "min-date": "'.$dati_generali['Data'].'", "readonly": "'.(intval(get('data_registrazione') != null)).'" ]}
         </div>';
 
 // Riferimenti ad altre fatture
@@ -100,7 +100,7 @@ if (in_array($dati_generali['TipoDocumento'], ['TD04', 'TD05'])) {
     WHERE
         co_tipidocumento.dir = 'uscita' AND
         (co_documenti.data BETWEEN NOW() - INTERVAL 1 YEAR AND NOW()) AND
-        co_documenti.idstatodocumento IN (SELECT id FROM co_statidocumento WHERE co_tipidocumento.descrizione != 'Bozza') AND
+        co_documenti.idstatodocumento IN (SELECT id FROM co_statidocumento WHERE descrizione != 'Bozza') AND
         co_documenti.idanagrafica = ".prepare($anagrafica->id);
 
     echo '
@@ -117,7 +117,7 @@ if (in_array($dati_generali['TipoDocumento'], ['TD04', 'TD05'])) {
     WHERE
         co_tipidocumento.dir = 'uscita' AND
         (co_documenti.data BETWEEN NOW() - INTERVAL 1 YEAR AND NOW()) AND
-        co_documenti.idstatodocumento IN (SELECT id FROM co_statidocumento WHERE co_tipidocumento.descrizione != 'Bozza') AND
+        co_documenti.idstatodocumento IN (SELECT id FROM co_statidocumento WHERE descrizione != 'Bozza') AND
         co_documenti.id_segment = (SELECT id FROM zz_segments WHERE name = 'Fatture pro-forma' AND id_module = ".prepare($id_module).') AND
         co_documenti.idanagrafica = '.prepare($anagrafica->id);
 

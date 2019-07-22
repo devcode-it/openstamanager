@@ -117,8 +117,21 @@ if (empty($record['is_fiscale'])) {
 				</div>
 
                 <div class="col-md-2">
-                    {[ "type": "date", "label": "<?php echo tr('Data competenza'); ?>", "name": "data_competenza", "required": 0, "value": "$data_competenza$" ]}
+                    {[ "type": "date", "label": "<?php echo tr('Data competenza'); ?>", "name": "data_competenza", "required": 0, "value": "$data_competenza$", "min-date": "$data_registrazione$" ]}
                 </div>
+
+                <script type="text/javascript">
+                    $(document).ready(function () {
+                        $("#data_registrazione").on("dp.change", function (e) {
+                            var data = $("#data_competenza");
+                            data.data("DateTimePicker").minDate(e.date);
+
+                            if(data.data("DateTimePicker").date() < e.date){
+                                data.data("DateTimePicker").date(e.date);
+                            }
+                        })
+                    });
+                </script>
 				
 				<?php
 } ?>

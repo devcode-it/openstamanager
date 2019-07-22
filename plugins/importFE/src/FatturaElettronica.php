@@ -303,13 +303,9 @@ class FatturaElettronica
         // Riferimento per nota di credito e debito
         $fattura->ref_documento = $ref_fattura ?: null;
 
-        // Per il destinatario, la data di ricezione della fattura assume grande rilievo ai fini IVA, poiché determina la decorrenza dei termini per poter esercitare il diritto alla detrazione.
+        // Per il destinatario, la data di registrazione della fattura assume grande rilievo ai fini IVA, poiché determina la decorrenza dei termini per poter esercitare il diritto alla detrazione.
         // La data di ricezione della fattura è contenuta all’interno della “ricevuta di consegna” visibile al trasmittente della stessa.
-        if (empty($data_registrazione)) {
-            $fattura->data_registrazione = $dati_generali['Data'];
-        } else {
-            $fattura->data_registrazione = $data_registrazione;
-        }
+        $fattura->data_registrazione = $data_registrazione;
         $fattura->data_competenza = $fattura->data_registrazione;
 
         $stato_documento = StatoFattura::where('descrizione', 'Emessa')->first();

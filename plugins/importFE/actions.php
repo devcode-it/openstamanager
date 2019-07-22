@@ -5,6 +5,7 @@ include_once __DIR__.'/../../core.php';
 use Plugins\ImportFE\FatturaElettronica;
 use Plugins\ImportFE\Interaction;
 
+$file = null;
 switch (filter('op')) {
     case 'save':
         $content = file_get_contents($_FILES['blob']['tmp_name']);
@@ -13,7 +14,7 @@ switch (filter('op')) {
         // no break
     case 'prepare':
         if (!isset($file)) {
-            $name = get('name');
+            $name = filter('name');
             $file = Interaction::getImportXML($name);
         }
 

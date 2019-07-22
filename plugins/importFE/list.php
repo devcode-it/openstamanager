@@ -19,6 +19,7 @@ if (!empty($list)) {
         <tr>
             <th>'.tr('Descrizione').'</th>
             <th class="text-center">'.tr('Fornitore').'</th>
+            <th class="text-center">'.tr('Data di registrazione').'</th>
             <th class="text-center">'.tr('Totale imponibile').'</th>
             <th width="20%" class="text-center">#</th>
         </tr>
@@ -27,15 +28,18 @@ if (!empty($list)) {
 
     foreach ($list as $element) {
         $name = $element['name'];
+        $data = $element['date_sent'] ?: '';
 
         echo '
         <tr>';
+
         if (file_exists($directory.'/'.$name)) {
             echo '
             <td>
                 <p>'.$name.'</p>
             </td>
             
+            <td class="text-center">-</td>
             <td class="text-center">-</td>
             <td class="text-center">-</td>
             
@@ -76,6 +80,7 @@ if (!empty($list)) {
             </td>
             
             <td>'.$element['sender'].'</td>
+            <td>'.dateFormat($element['date_sent']).'</td>
             <td class="text-right">'.moneyFormat($element['amount']).'</td>
 
             <td class="text-center">                
@@ -86,7 +91,7 @@ if (!empty($list)) {
 
         echo '
         
-                <button type="button" class="btn btn-warning" '.((!extension_loaded('openssl') && substr(strtolower($name), -4) == '.p7m') ? 'disabled' : '').' onclick="download(this, \''.$name.'\')">
+                <button type="button" class="btn btn-warning" '.((!extension_loaded('openssl') && substr(strtolower($name), -4) == '.p7m') ? 'disabled' : '').' onclick="download(this, \''.$name.'\', \''.$data.'\')">
                     <i class="fa fa-download"></i> '.tr('Importa').'
                 </button>
             </td>
@@ -103,7 +108,7 @@ if (!empty($list)) {
 
 echo '
 <script>
-function download(button, file) {
+function download(button, file, data_registrazione) {
     var restore = buttonLoading(button);
 
     $.ajax({
@@ -119,7 +124,7 @@ function download(button, file) {
             data = JSON.parse(data);
 
             if (!data.already) {
-                launch_modal("'.tr('Righe fattura').'", globals.rootdir + "/actions.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&op=list&filename=" + data.filename);
+                launch_modal("'.tr('Righe fattura').'", globals.rootdir + "/actions.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&op=list&filename=" + data.filename +"&data_registrazione=" + data_registrazione);
 				 buttonRestore(button, restore);
             } else {
                 swal({

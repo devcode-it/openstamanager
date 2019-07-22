@@ -90,7 +90,7 @@ class Fattura extends Document
         $model->idconto = $id_conto;
 
         // Imposto, come sede aziendale, la prima sede disponibile come utente
-        if ($dir == 'entrata') {
+        if ($direzione == 'entrata') {
             $model->idsede_destinazione = $user->sedi[0];
         } else {
             $model->idsede_partenza = $user->sedi[0];

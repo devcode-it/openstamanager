@@ -76,7 +76,7 @@ class Response
         }
 
         $request = self::getRequest();
-        $version = $request['version'] ?: 'v1';
+        $version = $request['version'];
 
         // Controllo sull'accesso
         if (!Auth::check() && $request['resource'] != 'login') {
@@ -219,6 +219,10 @@ class Response
 
                 if (empty($request['token'])) {
                     $request['token'] = '';
+                }
+
+                if (empty($request['version'])) {
+                    $request['version'] = 'v1';
                 }
             }
         }

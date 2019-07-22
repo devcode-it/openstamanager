@@ -16,11 +16,7 @@ class Interaction extends Services
         $directory = FatturaElettronica::getImportDirectory();
 
         $list = [];
-
-        $files = glob($directory.'/*.xml*');
-        foreach ($files as $file) {
-            $list[] = basename($file);
-        }
+        $names = [];
 
         // Ricerca da remoto
         if (self::isEnabled()) {
@@ -28,15 +24,25 @@ class Interaction extends Services
             $body = static::responseBody($response);
 
             if ($body['status'] == '200') {
-                $files = $body['results'];
+                $list = $body['results'];
 
-                foreach ($files as $file) {
-                    $list[] = basename($file);
-                }
+                $names = array_column($list);
             }
         }
 
-        return array_clean($list);
+        // Ricerca fisica
+        $files = glob($directory.'/*.xml*');
+        foreach ($files as $file) {
+            $name = basename($file);
+
+            if (!in_array($name, $names)) {
+                $list[] = [
+                    'name' => $name,
+                ];
+            }
+        }
+
+        return $list;
     }
 
     public static function getImportXML($name)

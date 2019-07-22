@@ -22,12 +22,16 @@ class Manager
      */
     public function __construct($resource, $type, $version)
     {
-        $resource = Resource::where('version', $version)
+        $object = Resource::where('version', $version)
             ->where('type', $type)
             ->where('resource', $resource)
             ->first();
 
-        $this->resource = $resource;
+        if (empty($object)) {
+            throw  new ResourceNotFound();
+        }
+
+        $this->resource = $object;
         $this->type = $type;
     }
 

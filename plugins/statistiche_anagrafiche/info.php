@@ -6,9 +6,9 @@ use Modules\Anagrafiche\Anagrafica;
 use Modules\Contratti\Contratto;
 use Modules\DDT\DDT;
 use Modules\Fatture\Fattura;
+use Modules\Interventi\Intervento;
 use Modules\Ordini\Ordine;
 use Modules\Preventivi\Preventivo;
-use Modules\Interventi\Intervento;
 
 $calendar_id = filter('calendar_id');
 $start = filter('start');

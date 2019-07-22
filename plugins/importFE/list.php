@@ -18,8 +18,8 @@ if (!empty($list)) {
     <thead>
         <tr>
             <th>'.tr('Descrizione').'</th>
-            <th>'.tr('Fornitore').'</th>
-            <th>'.tr('Totale imponibile').'</th>
+            <th class="text-center">'.tr('Fornitore').'</th>
+            <th class="text-center">'.tr('Totale imponibile').'</th>
             <th width="20%" class="text-center">#</th>
         </tr>
     </thead>
@@ -36,8 +36,8 @@ if (!empty($list)) {
                 <p>'.$name.'</p>
             </td>
             
-            <td>-</td>
-            <td>-</td>
+            <td class="text-center">-</td>
+            <td class="text-center">-</td>
             
             <td class="text-center">
                 <button type="button" class="btn btn-danger" onclick="delete_fe(this, \''.$name.'\')">
@@ -76,7 +76,7 @@ if (!empty($list)) {
             </td>
             
             <td>'.$element['sender'].'</td>
-            <td>'.$element['amount'].'</td>
+            <td class="text-right">'.moneyFormat($element['amount']).'</td>
 
             <td class="text-center">                
                 <button type="button" class="btn btn-info" onclick="process_fe(this, \''.$name.'\')">

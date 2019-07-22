@@ -12,6 +12,7 @@ if ($module['name'] == 'Ddt di vendita') {
 unset($_SESSION['superselect']['idanagrafica']);
 unset($_SESSION['superselect']['idsede_partenza']);
 unset($_SESSION['superselect']['idsede_destinazione']);
+unset($_SESSION['superselect']['codice_modalita_pagamento_fe']);
 $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 $_SESSION['superselect']['idsede_partenza'] = $record['idsede_partenza'];
 $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione'];
@@ -152,7 +153,7 @@ $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione']
 
 			<div class="row">
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "values": "query=SELECT id, descrizione FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione ASC", "value": "$idpagamento$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "ajax-source": "pagamenti", "value": "$idpagamento$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
 				</div>
 
 				<div class="col-md-3">

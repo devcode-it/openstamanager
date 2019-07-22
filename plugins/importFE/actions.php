@@ -12,7 +12,7 @@ switch (filter('op')) {
 
         // no break
     case 'prepare':
-        if (!isset($file)){
+        if (!isset($file)) {
             $name = get('name');
             $file = Interaction::getImportXML($name);
         }

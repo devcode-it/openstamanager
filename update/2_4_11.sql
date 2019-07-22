@@ -116,3 +116,6 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES
 (NULL, 'OSMCloud Services API Version', 'v2', 'string', 0, 'Fatturazione Elettronica', 11);
 DELETE FROM `zz_settings` WHERE `nome` = 'apilayer API key for Email';
+
+-- Fatture pro-forma di acquisto
+INSERT INTO `zz_segments` (`id`, `id_module`, `name`, `clause`, `position`, `pattern`, `is_fiscale`) VALUES (NULL, '15', 'Fatture pro-forma', '1=1', 'WHR', 'PRO-###', '1');

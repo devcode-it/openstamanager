@@ -9,6 +9,7 @@ if ($module['name'] == 'Ordini cliente') {
     $dir = 'uscita';
 }
 
+unset($_SESSION['superselect']['codice_modalita_pagamento_fe']);
 $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 
 ?><form action="" method="post" id="edit-form">
@@ -81,7 +82,7 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 1, "values": "query=SELECT id, descrizione FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione ASC", "value": "$idpagamento$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 1, "ajax-source": "pagamenti", "value": "$idpagamento$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
 				</div>
 			</div>
 

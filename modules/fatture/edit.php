@@ -11,6 +11,7 @@ $tipodoc = $rs[0]['descrizione'];
 unset($_SESSION['superselect']['idanagrafica']);
 unset($_SESSION['superselect']['idsede_partenza']);
 unset($_SESSION['superselect']['idsede_destinazione']);
+unset($_SESSION['superselect']['codice_modalita_pagamento_fe']);
 $_SESSION['superselect']['idsede_partenza'] = $record['idsede_partenza'];
 $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione'];
 $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
@@ -201,7 +202,7 @@ if (empty($record['is_fiscale'])) {
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 1, "values": "query=SELECT id, CONCAT_WS(' - ', codice_modalita_pagamento_fe, descrizione) AS descrizione, (SELECT id FROM co_banche WHERE id_pianodeiconti3 = co_pagamenti.idconto_<?php echo $conto; ?> LIMIT 0,1) AS idbanca FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione ASC", "value": "$idpagamento$", "extra": "onchange=\"$('#idbanca').val( $(this).find('option:selected').data('idbanca') ).change(); \" " ]}
+					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 1, "ajax-source": "pagamenti", "value": "$idpagamento$", "extra": "onchange=\"$('#idbanca').val($(this).selectData().id_banca_<?php echo $conto; ?>).change(); \" " ]}
 				</div>
 
 				<div class="col-md-3">

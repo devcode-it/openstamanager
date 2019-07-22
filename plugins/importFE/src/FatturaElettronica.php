@@ -110,14 +110,17 @@ class FatturaElettronica
     public static function manage($name)
     {
         try {
-            $fattura = new FatturaOrdinaria($name);
+            $manager = new FatturaOrdinaria($name);
 
-            return $fattura;
+            $tipo = $manager->getBody()['DatiGenerali']['DatiGeneraliDocumento']['TipoDocumento'];
+            if ($tipo == 'TD06') {
+                $manager = new Parcella($name);
+            }
         } catch (UnexpectedValueException $e) {
-            $fattura = new FatturaSemplificata($name);
-
-            return $fattura;
+            $manager = new FatturaSemplificata($name);
         }
+
+        return $manager;
     }
 
     public function getHeader()
@@ -188,6 +191,7 @@ class FatturaElettronica
      * Restituisce l'anagrafica collegata alla fattura, eventualmente generandola con i dati forniti.
      *
      * @param string $type
+     *
      * @return Anagrafica
      */
     public function saveAnagrafica($type = 'Fornitore')
@@ -273,28 +277,24 @@ class FatturaElettronica
     /**
      * Registra la fattura elettronica come fattura del gestionale.
      *
-     * @param int $id_pagamento
-     * @param int $id_sezionale
-     * @param int $id_tipo
+     * @param int    $id_pagamento
+     * @param int    $id_sezionale
+     * @param int    $id_tipo
      * @param string $data_registrazione
-     * @param int $ref_fattura
+     * @param int    $ref_fattura
      *
      * @return Fattura
      */
-    public function saveFattura($id_pagamento, $id_sezionale, $id_tipo, $data_registrazione, $ref_fattura = null)
+    public function saveFattura($id_pagamento, $id_sezionale, $id_tipo, $data_registrazione, $ref_fattura)
     {
-        $anagrafica = $this->saveAnagrafica();
-
         $dati_generali = $this->getBody()['DatiGenerali']['DatiGeneraliDocumento'];
         $data = $dati_generali['Data'];
 
+        $fattura = $this->prepareFattura($id_tipo, $data, $id_sezionale, $ref_fattura);
+        $this->fattura = $fattura;
+
         $numero_esterno = $dati_generali['Numero'];
         $progressivo_invio = $this->getHeader()['DatiTrasmissione']['ProgressivoInvio'];
-
-        $tipo = TipoFattura::where('id', $id_tipo)->first();
-
-        $fattura = Fattura::build($anagrafica, $tipo, $data, $id_sezionale);
-        $this->fattura = $fattura;
 
         $fattura->progressivo_invio = $progressivo_invio;
         $fattura->numero_esterno = $numero_esterno;
@@ -358,6 +358,21 @@ class FatturaElettronica
         $this->saveAllegati();
 
         return $this->getFattura()->id;
+    }
+
+    protected function prepareFattura($id_tipo, $data, $id_sezionale, $ref_fattura)
+    {
+        $anagrafica = $this->saveAnagrafica();
+
+        $tipo = TipoFattura::where('id', $id_tipo)->first();
+
+        $fattura = Fattura::build($anagrafica, $tipo, $data, $id_sezionale);
+        $this->fattura = $fattura;
+
+        // Riferimento per nota di credito e debito
+        $fattura->ref_documento = $ref_fattura ?: null;
+
+        return $fattura;
     }
 
     protected function forceArray($result)

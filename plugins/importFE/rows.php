@@ -90,27 +90,40 @@ echo '
         </div>';
 
 // Riferimenti ad altre fatture
-if (in_array($dati_generali['TipoDocumento'], ['TD04', 'TD05'])){
+if (in_array($dati_generali['TipoDocumento'], ['TD04', 'TD05'])) {
     $anagrafica = $fattura_pa->saveAnagrafica();
     $query = "SELECT
         co_documenti.id,
         CONCAT('Fattura num. ', co_documenti.numero_esterno, ' del ', DATE_FORMAT(co_documenti.data, '%d/%m/%Y')) AS descrizione
-    FROM
-        co_documenti INNER JOIN co_tipidocumento ON co_tipidocumento.id = co_documenti.idtipodocumento
+    FROM co_documenti
+        INNER JOIN co_tipidocumento ON co_tipidocumento.id = co_documenti.idtipodocumento
     WHERE
         co_tipidocumento.dir = 'uscita' AND
+        (co_documenti.data BETWEEN NOW() - INTERVAL 1 YEAR AND NOW()) AND
+        co_documenti.idstatodocumento IN (SELECT id FROM co_statidocumento WHERE co_tipidocumento.descrizione != 'Bozza') AND
         co_documenti.idanagrafica = ".prepare($anagrafica->id);
 
     echo '
         <div class="col-md-6">
             {[ "type": "select", "label": "'.tr('Fattura collegata').'", "name": "ref_fattura", "required": 1, "values": "query='.$query.'" ]}
         </div>';
-}elseif ($dati_generali['TipoDocumento'] == 'TD06'){
+} elseif ($dati_generali['TipoDocumento'] == 'TD06') {
     $anagrafica = $fattura_pa->saveAnagrafica();
+    $query = "SELECT
+        co_documenti.id,
+        CONCAT('Fattura num. ', co_documenti.numero_esterno, ' del ', DATE_FORMAT(co_documenti.data, '%d/%m/%Y')) AS descrizione
+    FROM co_documenti
+        INNER JOIN co_tipidocumento ON co_tipidocumento.id = co_documenti.idtipodocumento
+    WHERE
+        co_tipidocumento.dir = 'uscita' AND
+        (co_documenti.data BETWEEN NOW() - INTERVAL 1 YEAR AND NOW()) AND
+        co_documenti.idstatodocumento IN (SELECT id FROM co_statidocumento WHERE co_tipidocumento.descrizione != 'Bozza') AND
+        co_documenti.id_segment = (SELECT id FROM zz_segments WHERE name = 'Fatture pro-forma' AND id_module = ".prepare($id_module).') AND
+        co_documenti.idanagrafica = '.prepare($anagrafica->id);
 
     echo '
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Fattura collegata').'", "name": "ref_fattura", "values": "query='.$query.'" ]}
+            {[ "type": "select", "label": "'.tr('Fattura pro-forma').'", "name": "ref_fattura", "values": "query='.$query.'" ]}
         </div>';
 }
 
@@ -155,18 +168,19 @@ if (!empty($pagamenti)) {
 		</ol>';
 }
 
-// prc '.($pagamenti['CondizioniPagamento'] == 'TP01' ? '!' : '').'= 100 AND
-$query = 'SELECT id, CONCAT (descrizione, IF((codice_modalita_pagamento_fe IS NULL), \"\", CONCAT( \" (\", codice_modalita_pagamento_fe, \")\" ) )) as descrizione FROM co_pagamenti';
 if (!empty($codice_modalita_pagamento)) {
-    $query .= ' WHERE codice_modalita_pagamento_fe = '.prepare($codice_modalita_pagamento);
+    $_SESSION['superselect']['codice_modalita_pagamento_fe'] = $codice_modalita_pagamento;
 }
-$query .= ' GROUP BY descrizione ORDER BY descrizione ASC';
 
 // Pagamento
 echo '
     <div class="row" >
 		<div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Pagamento').'", "name": "pagamento", "required": 1, "values": "query='.$query.'" ]}
+		    <button type="button" class="btn btn-info btn-xs pull-right" onclick="session_set(\'superselect,codice_modalita_pagamento_fe\', \'\', 0)">
+		        <i class="fa fa-refresh"></i> '.tr('Reset modalità').'
+            </button>
+		    
+            {[ "type": "select", "label": "'.tr('Pagamento').'", "name": "pagamento", "required": 1, "ajax-source": "pagamenti" ]}
         </div>';
 
 // Movimentazioni

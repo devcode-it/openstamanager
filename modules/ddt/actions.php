@@ -2,8 +2,8 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\DDT\Components\Articolo;
 use Modules\DDT\Components\Descrizione;
 use Modules\DDT\Components\Riga;
@@ -115,7 +115,6 @@ switch (post('op')) {
             flash()->info(tr('Ddt modificato correttamente!'));
         }
         break;
-
 
     case 'manage_articolo':
         if (post('idriga') != null) {

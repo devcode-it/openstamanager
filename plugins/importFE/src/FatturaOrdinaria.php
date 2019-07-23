@@ -87,6 +87,8 @@ class FatturaOrdinaria extends FatturaElettronica
 
     public function saveRighe($articoli, $iva, $conto, $movimentazione = true)
     {
+        $id_ritenuta_acconto = $this->getRitenutaAcconto();
+
         $righe = $this->getRighe();
         $fattura = $this->getFattura();
 
@@ -107,6 +109,10 @@ class FatturaOrdinaria extends FatturaElettronica
             $obj->descrizione = $riga['Descrizione'];
             $obj->id_iva = $iva[$key];
             $obj->idconto = $conto[$key];
+
+            if (!empty($riga['Ritenuta'])) {
+                $obj->id_ritenuta_acconto = $id_ritenuta_acconto;
+            }
 
             // Nel caso il prezzo sia negativo viene gestito attraverso l'inversione della quantità (come per le note di credito)
             // TODO: per migliorare la visualizzazione, sarebbe da lasciare negativo il prezzo e invertire gli sconti.
@@ -192,5 +198,48 @@ class FatturaOrdinaria extends FatturaElettronica
 
             $obj->save();
         }
+    }
+
+    protected function getRitenutaAcconto()
+    {
+        $database = database();
+        $dati_generali = $this->getBody()['DatiGenerali']['DatiGeneraliDocumento'];
+
+        // Ritenuta d'Acconto
+        $ritenuta = $dati_generali['DatiRitenuta'];
+        if (empty($ritenuta)) {
+            return null;
+        }
+
+        $percentuale = floatval($ritenuta['AliquotaRitenuta']);
+        $importo = floatval($ritenuta['ImportoRitenuta']);
+
+        $righe = $this->getRighe();
+        $totali = [];
+        foreach ($righe as $riga) {
+            if (!empty($riga['Ritenuta'])) {
+                $totali[] = $riga['PrezzoTotale'];
+            }
+        }
+        $totale = sum($totali);
+
+        $totale_previsto = $importo / $percentuale * 100;
+        $percentuale_importo = $totale_previsto / $totale * 100;
+
+        $ritenuta_acconto = $database->fetchOne('SELECT * FROM`co_ritenutaacconto` WHERE `percentuale` = '.prepare($percentuale).' AND `percentuale_imponibile` = '.prepare($percentuale_importo));
+        if (empty($ritenuta_acconto)) {
+            $descrizione = tr('Ritenuta _PRC_% sul _TOT_%', [
+                '_PRC_' => numberFormat($percentuale),
+                '_TOT_' => numberFormat($percentuale_importo),
+            ]);
+
+            $database->query('INSERT INTO `co_ritenutaacconto` (`descrizione`, `percentuale`, `percentuale_imponibile`) VALUES ('.prepare($descrizione).', '.prepare($percentuale).', '.prepare($percentuale_importo).')');
+        }
+
+        $ritenuta_acconto = $database->fetchOne('SELECT * FROM`co_ritenutaacconto` WHERE `percentuale` = '.prepare($percentuale).' AND `percentuale_imponibile` = '.prepare($percentuale_importo));
+
+        $id_ritenuta_acconto = $ritenuta_acconto['id'];
+
+        return $id_ritenuta_acconto;
     }
 }

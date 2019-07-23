@@ -318,21 +318,13 @@ class FatturaElettronica
         $stato_documento = StatoFattura::where('descrizione', 'Emessa')->first();
         $fattura->stato()->associate($stato_documento);
 
-        // Ritenuta d'Acconto
-        $ritenuta = $dati_generali['DatiRitenuta'];
-        if (!empty($ritenuta)) {
-            $percentuale = $ritenuta['AliquotaRitenuta'];
-            $importo = $ritenuta['ImportoRitenuta'];
-
-            // TODO: salvare in fattura
-        }
-
         $causali = $dati_generali['Causale'];
         if (!empty($causali)) {
             $note = '';
             foreach ($causali as $causale) {
                 $note .= $causale;
             }
+
             $fattura->note = $note;
         }
 

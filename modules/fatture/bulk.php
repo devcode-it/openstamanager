@@ -171,6 +171,17 @@ switch (post('op')) {
         //Generazione della descrizione del movimento
         $rs_fatture = $dbo->fetchArray('SELECT *, co_documenti.id AS id, co_documenti.data AS data_doc FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id IN('.implode(',', $id_records).") AND idstatodocumento IN (SELECT id FROM co_statidocumento WHERE descrizione = 'Emessa' OR descrizione = 'Parzialmente pagato')");
 
+        $diff = count($id_records) - count($rs_fatture);
+        if ($diff != 0) {
+            flash()->warning(tr('_NUM_ fatture non sono state incluse poichè non corrispondenti con i requisiti', [
+                '_NUM_' => $diff,
+            ]));
+        }
+
+        if (empty($rs_fatture)) {
+            return;
+        }
+
         //calcolo della descrizione
         $descrizione_movimento = 'Pag. fatture num. ';
 
@@ -304,7 +315,7 @@ switch (post('op')) {
         }
 
         $database->commitTransaction();
-        header('location:'.$rootdir.'/editor.php?id_module='.Modules::get('Prima nota')['id'].'&id_record='.$idmastrino);
+        redirect($rootdir.'/editor.php?id_module='.Modules::get('Prima nota')['id'].'&id_record='.$idmastrino);
         exit;
 
         break;

@@ -7,7 +7,6 @@ use Common\Components\Description;
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\Intervento;
-use Modules\Ordini\Ordine;
 use Modules\TipiIntervento\Tipo as TipoSessione;
 use Traits\RecordTrait;
 use Util\Generator;
@@ -157,9 +156,9 @@ class Contratto extends Document
      *
      * @param Description $trigger
      */
-    public function controllo(Description $trigger)
+    public function fixStato(Description $trigger)
     {
-        parent::controllo($trigger);
+        parent::fixStato($trigger);
 
         $righe = $this->getRighe();
 
@@ -170,9 +169,6 @@ class Contratto extends Document
         // Impostazione del nuovo stato
         if ($qta_evasa == 0) {
             $descrizione = 'In lavorazione';
-            $descrizione_intervento = 'Completato';
-        } elseif ($trigger->parent instanceof Ordine) {
-            $descrizione = $this->stato->descrizione;
             $descrizione_intervento = 'Completato';
         } else {
             $descrizione = $parziale ? 'Parzialmente fatturato' : 'Fatturato';

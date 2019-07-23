@@ -137,9 +137,9 @@ class DDT extends Document
      *
      * @param Description $trigger
      */
-    public function controllo(Description $trigger)
+    public function fixStato(Description $trigger)
     {
-        parent::controllo($trigger);
+        parent::fixStato($trigger);
 
         if (setting('Cambia automaticamente stato ddt fatturati')) {
             $righe = $this->getRighe();

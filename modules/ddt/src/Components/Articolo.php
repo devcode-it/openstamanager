@@ -47,8 +47,13 @@ class Articolo extends Article
             '_NUM_' => $numero,
         ]);
 
+        $partenza = $ddt->direzione == 'uscita' ? $ddt->idsede_destinazione : $ddt->idsede_partenza;
+        $arrivo = $ddt->direzione == 'uscita' ? $ddt->idsede_partenza : $ddt->idsede_destinazione;
+
         $this->articolo->movimenta(-$qta, $movimento, $data, false, [
             'idddt' => $ddt->id,
+            'idsede_azienda' => $partenza,
+            'idsede_controparte' => $arrivo,
         ]);
     }
 

@@ -16,7 +16,7 @@ echo '
 // Quantità
 echo '
         <div class="col-md-4">
-            {[ "type": "number", "label": "'.tr('Q.tà').'", "name": "qta", "required": 1, "value": "'.$result['qta'].'", "decimals": "qta" ]}
+            {[ "type": "number", "label": "'.tr('Q.tà').'", "name": "qta", "required": 1, "value": "'.$result['qta'].'", "decimals": "qta"'.(isset($result['max_qta']) ? ', "icon-after": "/ '.numberFormat($result['max_qta'], 'qta').'", "help": "'.tr("Quantità dell'elemento / quantità totale massima").'"' : '').' ]}
         </div>';
 
 // Unità di misura

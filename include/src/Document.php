@@ -125,6 +125,16 @@ abstract class Document extends Model
     public function delete()
     {
         $righe = $this->getRighe();
+
+        $can_delete = true;
+        foreach ($righe as $riga) {
+            $can_delete &= $riga->canDelete();
+        }
+
+        if (!$can_delete) {
+            throw new \InvalidArgumentException();
+        }
+
         foreach ($righe as $riga) {
             $riga->delete();
         }
@@ -138,7 +148,7 @@ abstract class Document extends Model
      *
      * @param Description $trigger
      */
-    public function controllo(Description $trigger)
+    public function fixStato(Description $trigger)
     {
         $this->load('righe');
         $this->load('articoli');

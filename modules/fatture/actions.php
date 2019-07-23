@@ -32,7 +32,6 @@ switch (post('op')) {
         $fattura = Fattura::build($anagrafica, $tipo, $data, $id_segment);
         $id_record = $fattura->id;
 
-        aggiorna_sedi_movimenti('documenti', $id_record);
         flash()->info(tr('Aggiunta fattura numero _NUM_!', [
             '_NUM_' => $fattura->numero,
         ]));
@@ -151,47 +150,19 @@ switch (post('op')) {
 
     // eliminazione documento
     case 'delete':
-        $rs = $dbo->fetchArray('SELECT id FROM co_righe_documenti WHERE iddocumento='.prepare($id_record));
+        try {
+            $fattura->delete();
 
-        // Controllo sui seriali
-        foreach ($rs as $r) {
-            $non_rimovibili = seriali_non_rimuovibili('id_riga_documento', $r['id'], $dir);
-            if (!empty($non_rimovibili)) {
-                flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
+            $dbo->query('DELETE FROM co_scadenziario WHERE iddocumento='.prepare($id_record));
+            $dbo->query('DELETE FROM co_movimenti WHERE iddocumento='.prepare($id_record));
 
-                return;
-            }
+            // Azzeramento collegamento della rata contrattuale alla pianificazione
+            $dbo->query('UPDATE co_ordiniservizio_pianificazionefatture SET iddocumento=0 WHERE iddocumento='.prepare($id_record));
+
+            flash()->info(tr('Fattura eliminata!'));
+        } catch (InvalidArgumentException $e) {
+            flash()->error(tr('Sono stati utilizzati alcuni serial number nel documento: impossibile procedere!'));
         }
-
-        // Rimozione righe
-        foreach ($rs as $r) {
-            rimuovi_riga_fattura($id_record, $r['id'], $dir);
-        }
-
-        // Se ci sono dei preventivi collegati li rimetto nello stato "In attesa di pagamento"
-        $rs = $dbo->fetchArray('SELECT idpreventivo FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idpreventivo IS NOT NULL');
-        for ($i = 0; $i < sizeof($rs); ++$i) {
-            $dbo->query("UPDATE co_preventivi SET idstato=(SELECT id FROM co_statipreventivi WHERE descrizione='In lavorazione') WHERE id=".prepare($rs[$i]['idpreventivo']));
-            $dbo->query('UPDATE co_righe_preventivi SET qta_evasa=0 WHERE idpreventivo='.prepare($rs[$i]['idpreventivo']));
-        }
-
-        // Se ci sono degli interventi collegati li rimetto nello stato "Completato"
-        $rs = $dbo->fetchArray('SELECT idintervento FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idintervento IS NOT NULL');
-        for ($i = 0; $i < sizeof($rs); ++$i) {
-            $dbo->query("UPDATE in_interventi SET idstatointervento = (SELECT idstatointervento FROM in_statiintervento WHERE descrizione = 'Completato') WHERE id=".prepare($rs[$i]['idintervento']));
-        }
-
-        elimina_scadenza($id_record);
-        elimina_movimento($id_record);
-
-        $dbo->query('DELETE FROM co_documenti WHERE id='.prepare($id_record));
-        $dbo->query('DELETE FROM co_scadenziario WHERE iddocumento='.prepare($id_record));
-        $dbo->query('DELETE FROM co_movimenti WHERE iddocumento='.prepare($id_record));
-
-        // Azzeramento collegamento della rata contrattuale alla pianificazione
-        $dbo->query('UPDATE co_ordiniservizio_pianificazionefatture SET iddocumento=0 WHERE iddocumento='.prepare($id_record));
-
-        flash()->info(tr('Fattura eliminata!'));
 
         break;
 
@@ -360,15 +331,8 @@ switch (post('op')) {
             flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
         }
 
-        // Informazioni aggiuntive FE
-        $articolo->data_inizio_periodo = post('data_inizio_periodo') ?: null;
-        $articolo->data_fine_periodo = post('data_fine_periodo') ?: null;
-        $articolo->riferimento_amministrazione = post('riferimento_amministrazione');
-        $articolo->tipo_cessione_prestazione = post('tipo_cessione_prestazione');
-
         $articolo->save();
 
-        aggiorna_sedi_movimenti('documenti', $id_record);
         if (post('idriga') != null) {
             flash()->info(tr('Articolo modificato!'));
         } else {
@@ -443,12 +407,6 @@ switch (post('op')) {
 
         $riga->qta = $qta;
 
-        // Informazioni aggiuntive FE
-        $riga->data_inizio_periodo = post('data_inizio_periodo') ?: null;
-        $riga->data_fine_periodo = post('data_fine_periodo') ?: null;
-        $riga->riferimento_amministrazione = post('riferimento_amministrazione');
-        $riga->tipo_cessione_prestazione = post('tipo_cessione_prestazione');
-
         $riga->save();
 
         if (post('idriga') != null) {
@@ -486,152 +444,19 @@ switch (post('op')) {
         if (!empty($id_record) && post('idriga') !== null) {
             $idriga = post('idriga');
 
-            // Lettura preventivi collegati
-            $query = 'SELECT iddocumento, idintervento FROM co_righe_documenti WHERE id='.prepare($idriga);
-            $rsp = $dbo->fetchArray($query);
-            $id_record = $rsp[0]['iddocumento'];
-            $idintervento = $rsp[0]['idintervento'];
+            $righe = $fattura->getRighe();
+            $riga = $righe->find($id_riga);
 
-            // Ricalcolo inps, ritenuta e bollo
-            if ($dir == 'entrata') {
-                ricalcola_costiagg_fattura($id_record);
-            } else {
-                ricalcola_costiagg_fattura($id_record);
+            $righe_intervento = $righe->where('idintervento', $riga->idintervento);
+            foreach ($righe_intervento as $r) {
+                $r->delete();
             }
 
-            // Lettura interventi collegati
-            // $query = 'SELECT id, idintervento FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idintervento IS NOT NULL';
-            // $rs = $dbo->fetchArray($query);
-
-            // Se ci sono degli interventi collegati li rimetto nello stato "Completato"
-            // for ($i = 0; $i < sizeof($rs); ++$i) {
-            $dbo->query("UPDATE in_interventi SET idstatointervento = (SELECT idstatointervento FROM in_statiintervento WHERE descrizione = 'Completato') WHERE id=".prepare($idintervento));
-
-            // Rimuovo dalla fattura gli articoli collegati all'intervento
-            $rs2 = $dbo->fetchArray('SELECT idarticolo FROM mg_articoli_interventi WHERE idintervento='.prepare($idintervento));
-            for ($j = 0; $j < sizeof($rs2); ++$j) {
-                rimuovi_articolo_dafattura($rs[0]['idarticolo'], $id_record, $rs[0]['idrigadocumento']);
-            }
-            // }
-
-            // rimuovo riga da co_righe_documenti
-            $query = 'DELETE FROM `co_righe_documenti` WHERE iddocumento='.prepare($id_record).' AND id='.prepare($idriga);
-            $dbo->query($query);
+            //$dbo->query("UPDATE in_interventi SET idstatointervento = (SELECT idstatointervento FROM in_statiintervento WHERE descrizione = 'Completato') WHERE id=".prepare($idintervento));
 
             flash()->info(tr('Intervento _NUM_ rimosso!', [
                 '_NUM_' => $idintervento,
             ]));
-        }
-        break;
-
-    // Scollegamento articolo da documento
-    case 'unlink_articolo':
-        if (!empty($id_record)) {
-            $idriga = post('idriga');
-
-            if (!rimuovi_riga_fattura($id_record, $idriga, $dir)) {
-                flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
-
-                return;
-            }
-
-            // Ricalcolo inps, ritenuta e bollo
-            if ($dir == 'entrata') {
-                ricalcola_costiagg_fattura($id_record);
-            } else {
-                ricalcola_costiagg_fattura($id_record);
-            }
-
-            aggiorna_sedi_movimenti('documenti', $id_record);
-            flash()->info(tr('Articolo rimosso!'));
-        }
-        break;
-
-    // Scollegamento preventivo da documento
-    case 'unlink_preventivo':
-        if (post('idriga') !== null) {
-            $idriga = post('idriga');
-
-            // Lettura preventivi collegati
-            $query = 'SELECT iddocumento, idpreventivo, idarticolo, id, qta, descrizione FROM co_righe_documenti WHERE id='.prepare($idriga);
-            $rsp = $dbo->fetchArray($query);
-            $id_record = $rsp[0]['iddocumento'];
-            $idpreventivo = $rsp[0]['idpreventivo'];
-            $idarticolo = $rsp[0]['idarticolo'];
-            $qta = $rsp[0]['qta'];
-
-            if (!empty($idarticolo)) {
-                rimuovi_articolo_dafattura($rsp[0]['idarticolo'], $id_record, $idriga);
-            }
-
-            // Ripristino le quantità da evadere nel preventivo
-            $query = 'UPDATE co_righe_preventivi SET qta_evasa = qta_evasa - '.$rsp[0]['qta'].' WHERE idarticolo='.prepare($rsp[0]['idarticolo']).' AND descrizione='.prepare($rsp[0]['descrizione']).' AND idpreventivo = '.prepare($idpreventivo);
-            $dbo->query($query);
-
-            $query = 'DELETE FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND id='.prepare($idriga);
-            $dbo->query($query);
-
-            $rs_righe = $dbo->fetchArray('SELECT * FROM co_righe_documenti WHERE idpreventivo='.prepare($idpreventivo));
-
-            if (empty($rs_righe)) {
-                // Se ci sono dei preventivi collegati li rimetto nello stato "In attesa di pagamento"
-                $dbo->query("UPDATE co_preventivi SET idstato=(SELECT id FROM co_statipreventivi WHERE descrizione='In lavorazione') WHERE id=".prepare($idpreventivo));
-
-                // Aggiorno anche lo stato degli interventi collegati ai preventivi
-                $dbo->query("UPDATE in_interventi SET idstatointervento = (SELECT idstatointervento FROM in_statiintervento WHERE descrizione = 'Completato') WHERE id_preventivo=".prepare($idpreventivo));
-            }
-
-            // Ricalcolo inps, ritenuta e bollo
-            if ($dir == 'entrata') {
-                ricalcola_costiagg_fattura($id_record);
-            } else {
-                ricalcola_costiagg_fattura($id_record);
-            }
-
-            flash()->info(tr('Preventivo rimosso!'));
-        }
-        break;
-
-    // Scollegamento contratto da documento
-    case 'unlink_contratto':
-        if (post('idriga') !== null) {
-            $idriga = post('idriga');
-
-            // Lettura contratti collegati
-            $query = 'SELECT iddocumento, idcontratto, idarticolo, id, qta, descrizione FROM co_righe_documenti WHERE id='.prepare($idriga);
-            $rsp = $dbo->fetchArray($query);
-            $id_record = $rsp[0]['iddocumento'];
-            $idcontratto = $rsp[0]['idcontratto'];
-            $idarticolo = $rsp[0]['idarticolo'];
-
-            if (!empty($idarticolo)) {
-                rimuovi_articolo_dafattura($rsp[0]['idarticolo'], $id_record, $idriga);
-            }
-
-            // Ripristino le quantità da evadere nel contratto
-            $query = 'UPDATE co_righe_contratti SET qta_evasa = qta_evasa - '.$rsp[0]['qta'].' WHERE idarticolo='.prepare($rsp[0]['idarticolo']).' AND descrizione='.prepare($rsp[0]['descrizione']).' AND idcontratto = '.prepare($idcontratto);
-            $dbo->query($query);
-
-            $query = 'DELETE FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND id='.prepare($idriga);
-            $dbo->query($query);
-
-            $rs_righe = $dbo->fetchArray('SELECT * FROM co_righe_documenti WHERE idcontratto='.prepare($idcontratto));
-
-            if (empty($rs_righe)) {                // Se ci sono dei preventivi collegati li rimetto nello stato "In attesa di pagamento"
-                $dbo->query("UPDATE co_contratti SET idstato=(SELECT id FROM co_staticontratti WHERE descrizione='In lavorazione') WHERE id=".prepare($idcontratto));
-
-                // Aggiorno anche lo stato degli interventi collegati ai contratti
-                $dbo->query("UPDATE in_interventi SET idstatointervento = (SELECT idstatointervento FROM in_statiintervento WHERE descrizione = 'Completato') WHERE id IN (SELECT idintervento FROM co_promemoria WHERE idcontratto=".prepare($idcontratto).')');
-
-                // Ricalcolo inps, ritenuta e bollo
-                if ($dir == 'entrata') {
-                    ricalcola_costiagg_fattura($id_record);
-                } else {
-                    ricalcola_costiagg_fattura($id_record);
-                }
-
-                flash()->info(tr('Contratto rimosso!'));
-            }
         }
         break;
 
@@ -641,14 +466,17 @@ switch (post('op')) {
 
         if (!empty($id_riga)) {
             $riga = $fattura->getRighe()->find($id_riga);
-            $riga->delete();
 
-            //rimuovi_riga_fattura($id_record, $idriga, $dir);
+            try {
+                $riga->delete();
 
-            // Ricalcolo inps, ritenuta e bollo
-            ricalcola_costiagg_fattura($id_record);
+                // Ricalcolo inps, ritenuta e bollo
+                ricalcola_costiagg_fattura($id_record);
 
-            flash()->info(tr('Riga rimossa!'));
+                flash()->info(tr('Riga rimossa!'));
+            } catch (InvalidArgumentException $e) {
+                flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
+            }
         }
         break;
 
@@ -673,32 +501,43 @@ switch (post('op')) {
 
         break;
 
-    // Aggiunta di un ordine in fattura
-    case 'add_ordine':
-        $ordine = \Modules\Ordini\Ordine::find(post('id_ordine'));
+    // Aggiunta di un documento in fattura
+    case 'add_documento':
+        $id_documento = post('id_documento');
+        $type = post('type');
+
+        $movimenta = true;
+        if ($type == 'ordine') {
+            $documento = \Modules\Ordini\Ordine::find($id_documento);
+        } elseif ($type == 'ddt') {
+            $documento = \Modules\DDT\DDT::find($id_documento);
+            $movimenta = false;
+        } elseif ($type == 'preventivo') {
+            $documento = \Modules\Preventivi\Preventivo::find($id_documento);
+        } elseif ($type == 'contratto') {
+            $documento = \Modules\Contratti\Contratto::find($id_documento);
+        }
 
         // Creazione della fattura al volo
         if (post('create_document') == 'on') {
             $descrizione = ($dir == 'entrata') ? 'Fattura immediata di vendita' : 'Fattura immediata di acquisto';
             $tipo = Tipo::where('descrizione', $descrizione)->first();
 
-            $fattura = Fattura::build($ordine->anagrafica, $tipo, post('data'), post('id_segment'));
-            $fattura->idpagamento = $ordine->idpagamento;
+            $fattura = Fattura::build($documento->anagrafica, $tipo, post('data'), post('id_segment'));
+            $fattura->idpagamento = $documento->idpagamento;
+            $fattura->id_ritenuta_contributi = post('id_ritenuta_contributi') ?: null;
             $fattura->save();
 
             $id_record = $fattura->id;
         }
 
-        $id_rivalsa_inps = setting('Percentuale rivalsa');
-        if ($dir == 'uscita') {
-            $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_acquisti;
-        } else {
-            $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_vendite ?: setting("Percentuale ritenuta d'acconto");
-        }
-        $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
+        $calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto') ?: null;
+        $id_ritenuta_acconto = post('id_ritenuta_acconto') ?: null;
+        $ritenuta_contributi = boolval(post('ritenuta_contributi'));
+        $id_rivalsa_inps = post('id_rivalsa_inps') ?: null;
         $id_conto = post('id_conto');
 
-        $righe = $ordine->getRighe();
+        $righe = $documento->getRighe();
         foreach ($righe as $riga) {
             if (post('evadere')[$riga->id] == 'on') {
                 $qta = post('qta_da_evadere')[$riga->id];
@@ -709,10 +548,13 @@ switch (post('op')) {
                 $copia->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
                 $copia->id_ritenuta_acconto = $id_ritenuta_acconto;
                 $copia->id_rivalsa_inps = $id_rivalsa_inps;
+                $copia->ritenuta_contributi = $ritenuta_contributi;
 
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
-                    $copia->movimenta($copia->qta);
+                    if ($movimenta) {
+                        $copia->movimenta($copia->qta);
+                    }
 
                     $serials = is_array(post('serial')[$riga->id]) ? post('serial')[$riga->id] : [];
 
@@ -724,176 +566,27 @@ switch (post('op')) {
         }
 
         ricalcola_costiagg_fattura($id_record);
-        aggiorna_sedi_movimenti('documenti', $id_record);
 
-        flash()->info(tr('Ordine _NUM_ aggiunto!', [
-            '_NUM_' => $ordine->numero,
-        ]));
-
-        break;
-
-    // Aggiunta di un ddt in fattura
-    case 'add_ddt':
-        $ddt = \Modules\DDT\DDT::find(post('id_ddt'));
-
-        // Creazione della fattura al volo
-        if (post('create_document') == 'on') {
-            $descrizione = ($dir == 'entrata') ? 'Fattura differita di vendita' : 'Fattura differita di acquisto';
-            $tipo = Tipo::where('descrizione', $descrizione)->first();
-
-            $fattura = Fattura::build($ddt->anagrafica, $tipo, post('data'), post('id_segment'));
-            $fattura->idpagamento = $ddt->idpagamento;
-            $fattura->save();
-
-            $id_record = $fattura->id;
+        $message = '';
+        if ($type == 'ordine') {
+            $message = tr('Ordine _NUM_ aggiunto!', [
+                '_NUM_' => $ordine->numero,
+            ]);
+        } elseif ($type == 'ddt') {
+            $message = tr('DDT _NUM_ aggiunto!', [
+                '_NUM_' => $ordine->numero,
+            ]);
+        } elseif ($type == 'preventivo') {
+            $message = tr('Preventivo _NUM_ aggiunto!', [
+                '_NUM_' => $ordine->numero,
+            ]);
+        } elseif ($type == 'contratto') {
+            $message = tr('Contratto _NUM_ aggiunto!', [
+                '_NUM_' => $ordine->numero,
+            ]);
         }
 
-        $id_rivalsa_inps = setting('Percentuale rivalsa');
-        if ($dir == 'uscita') {
-            $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_acquisti;
-        } else {
-            $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_vendite ?: setting("Percentuale ritenuta d'acconto");
-        }
-        $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
-        $id_conto = post('id_conto');
-
-        $righe = $ddt->getRighe();
-        foreach ($righe as $riga) {
-            if (post('evadere')[$riga->id] == 'on') {
-                $qta = post('qta_da_evadere')[$riga->id];
-
-                $copia = $riga->copiaIn($fattura, $qta);
-                $copia->id_conto = $id_conto;
-
-                $copia->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
-                $copia->id_ritenuta_acconto = $id_ritenuta_acconto;
-                $copia->id_rivalsa_inps = $id_rivalsa_inps;
-
-                // Aggiornamento seriali dalla riga dell'ordine
-                if ($copia->isArticolo()) {
-                    $serials = is_array(post('serial')[$riga->id]) ? post('serial')[$riga->id] : [];
-
-                    $copia->serials = $serials;
-                }
-
-                $copia->save();
-            }
-        }
-
-        ricalcola_costiagg_fattura($id_record);
-        aggiorna_sedi_movimenti('documenti', $id_record);
-
-        flash()->info(tr('DDT _NUM_ aggiunto!', [
-            '_NUM_' => $ddt->numero,
-        ]));
-
-        break;
-
-    // Aggiunta di un preventivo in fattura
-    case 'add_preventivo':
-        $preventivo = \Modules\Preventivi\Preventivo::find(post('id_preventivo'));
-
-        // Creazione della fattura al volo
-        if (post('create_document') == 'on') {
-            $tipo = Tipo::where('descrizione', 'Fattura immediata di vendita')->first();
-
-            $fattura = Fattura::build($preventivo->anagrafica, $tipo, post('data'), post('id_segment'));
-            $fattura->idpagamento = $preventivo->idpagamento;
-            $fattura->save();
-
-            $id_record = $fattura->id;
-        }
-
-        $id_rivalsa_inps = setting('Percentuale rivalsa');
-        if ($dir == 'uscita') {
-            $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_acquisti;
-        } else {
-            $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_vendite ?: setting("Percentuale ritenuta d'acconto");
-        }
-        $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
-        $id_conto = post('id_conto');
-
-        $righe = $preventivo->getRighe();
-        foreach ($righe as $riga) {
-            if (post('evadere')[$riga->id] == 'on') {
-                $qta = post('qta_da_evadere')[$riga->id];
-
-                $copia = $riga->copiaIn($fattura, $qta);
-                $copia->id_conto = $id_conto;
-
-                $copia->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
-                $copia->id_ritenuta_acconto = $id_ritenuta_acconto;
-                $copia->id_rivalsa_inps = $id_rivalsa_inps;
-
-                // Aggiornamento seriali dalla riga dell'ordine
-                if ($copia->isArticolo()) {
-                    $copia->movimenta($copia->qta);
-                }
-
-                $copia->save();
-            }
-        }
-
-        ricalcola_costiagg_fattura($id_record);
-        aggiorna_sedi_movimenti('documenti', $id_record);
-
-        flash()->info(tr('Preventivo _NUM_ aggiunto!', [
-            '_NUM_' => $preventivo->numero,
-        ]));
-
-        break;
-
-    // Aggiunta di un contratto in fattura
-    case 'add_contratto':
-        $contratto = \Modules\Contratti\Contratto::find(post('id_contratto'));
-
-        // Creazione della fattura al volo
-        if (post('create_document') == 'on') {
-            $tipo = Tipo::where('descrizione', 'Fattura immediata di vendita')->first();
-
-            $fattura = Fattura::build($contratto->anagrafica, $tipo, post('data'), post('id_segment'));
-            $fattura->idpagamento = $contratto->idpagamento;
-            $fattura->save();
-
-            $id_record = $fattura->id;
-        }
-
-        $id_rivalsa_inps = setting('Percentuale rivalsa');
-        if ($dir == 'uscita') {
-            $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_acquisti;
-        } else {
-            $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_vendite ?: setting("Percentuale ritenuta d'acconto");
-        }
-        $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
-        $id_conto = post('id_conto');
-
-        $righe = $contratto->getRighe();
-        foreach ($righe as $riga) {
-            if (post('evadere')[$riga->id] == 'on') {
-                $qta = post('qta_da_evadere')[$riga->id];
-
-                $copia = $riga->copiaIn($fattura, $qta);
-                $copia->id_conto = $id_conto;
-
-                $copia->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
-                $copia->id_ritenuta_acconto = $id_ritenuta_acconto;
-                $copia->id_rivalsa_inps = $id_rivalsa_inps;
-
-                // Aggiornamento seriali dalla riga dell'ordine
-                if ($copia->isArticolo()) {
-                    $copia->movimenta($copia->qta);
-                }
-
-                $copia->save();
-            }
-        }
-
-        ricalcola_costiagg_fattura($id_record);
-        aggiorna_sedi_movimenti('documenti', $id_record);
-
-        flash()->info(tr('Contratto _NUM_ aggiunto!', [
-            '_NUM_' => $contratto->numero,
-        ]));
+        flash()->info($message);
 
         break;
 

@@ -162,6 +162,17 @@ trait RelationTrait
         return parent::save($options);
     }
 
+    public function delete()
+    {
+        $result = parent::delete();
+
+        if (!empty($this->idintervento)) {
+            database()->query("UPDATE in_interventi SET idstatointervento = (SELECT idstatointervento FROM in_statiintervento WHERE descrizione = 'Completato') WHERE id=".prepare($this->idintervento));
+        }
+
+        return $result;
+    }
+
     /**
      * Effettua i conti per la Rivalsa INPS.
      */

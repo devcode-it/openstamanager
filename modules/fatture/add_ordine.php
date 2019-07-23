@@ -2,55 +2,41 @@
 
 include_once __DIR__.'/../../core.php';
 
-$module = Modules::get($id_module);
+use Modules\Fatture\Fattura;
+use Modules\Ordini\Ordine;
 
-$dir = ($module['name'] == 'Fatture di vendita') ? 'entrata' : 'uscita';
+$documento_finale = Fattura::find($id_record);
+$dir = $documento_finale->direzione;
 
-if (get('op')) {
+$id_documento = get('id_documento');
+if (!empty($id_documento)) {
+    $documento = Ordine::find($id_documento);
+
     $options = [
-        'op' => 'add_ordine',
-        'id_importazione' => 'id_ordine',
-        'final_module' => $module['name'],
-        'original_module' => $module['name'] == 'Fatture di vendita' ? 'Ordini cliente' : 'Ordini fornitore',
-        'sql' => [
-            'table' => 'or_ordini',
-            'rows' => 'or_righe_ordini',
-            'id_rows' => 'idordine',
-        ],
-        'serials' => [
-            'id_riga' => 'id_riga_ddt',
-            'condition' => '(id_riga_documento IS NOT NULL)',
-        ],
+        'op' => 'add_documento',
+        'type' => 'ordine',
+        'serials' => true,
         'button' => tr('Aggiungi'),
-        'dir' => $dir,
+        'documento' => $documento,
+        'documento_finale' => $documento_finale,
     ];
 
-    $result = [
-        'id_record' => $id_record,
-        'id_documento' => get('iddocumento'),
-    ];
-
-    echo App::load('importa.php', $result, $options, true);
+    echo App::load('importa.php', [], $options, true);
 
     return;
 }
 
-$info = $dbo->fetchOne('SELECT * FROM co_documenti WHERE id='.prepare($id_record));
-$idanagrafica = $info['idanagrafica'];
+$id_anagrafica = $documento_finale->idanagrafica;
 
 echo '
 <div class="row">
     <div class="col-md-12">
-        {[ "type": "select", "label": "'.tr('Ordine').'", "name": "id_documento", "values": "query=SELECT or_ordini.id, CONCAT(IF(numero_esterno != \'\', numero_esterno, numero), \' del \', DATE_FORMAT(data, \'%d-%m-%Y\')) AS descrizione FROM or_ordini WHERE idanagrafica='.prepare($idanagrafica).' AND idstatoordine IN (SELECT id FROM or_statiordine WHERE descrizione IN(\'Bozza\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoordine=(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).' LIMIT 0,1) AND or_ordini.id IN (SELECT idordine FROM or_righe_ordini WHERE or_righe_ordini.idordine = or_ordini.id AND (qta - qta_evasa) > 0) ORDER BY data DESC, numero DESC" ]}
+        {[ "type": "select", "label": "'.tr('Ordine').'", "name": "id_documento", "values": "query=SELECT or_ordini.id, CONCAT(IF(numero_esterno != \'\', numero_esterno, numero), \' del \', DATE_FORMAT(data, \'%d-%m-%Y\')) AS descrizione FROM or_ordini WHERE idanagrafica='.prepare($id_anagrafica).' AND idstatoordine IN (SELECT id FROM or_statiordine WHERE descrizione IN(\'Bozza\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoordine=(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).' LIMIT 0,1) AND or_ordini.id IN (SELECT idordine FROM or_righe_ordini WHERE or_righe_ordini.idordine = or_ordini.id AND (qta - qta_evasa) > 0) ORDER BY data DESC, numero DESC" ]}
     </div>
 </div>
 
-<div class="box" id="info-box">
-    <div class="box-header with-border">
-        <h3 class="box-title">'.tr('Informazioni di importazione').'</h3>
-    </div>
-    <div class="box-body" id="righe_documento">
-    </div>
+<div id="righe_documento">
+    
 </div>
 
 <div class="alert alert-info" id="box-loading">
@@ -62,30 +48,21 @@ echo '
 <script src="'.$rootdir.'/lib/init.js"></script>
     
 <script>
-    var box = $("#info-box");
     var content = $("#righe_documento");
     var loader = $("#box-loading");
     
     $(document).ready(function(){
-        box.hide();
         loader.hide();
-    })
+    });
     
     $("#id_documento").on("change", function(){
         loader.show();
-        box.hide();
 
         var id = $(this).selectData() ? $(this).selectData().id  : "";
     
-        content.html("<i>'.tr('Caricamento in corso').'...</i>");
-        content.load("'.$structure->fileurl($file).'?id_module='.$id_module.'&id_record=" + id + "&documento=fattura&op=add_ordine&iddocumento='.$id_record.'", function() {
-            if(content.html() != ""){
-                box.show();
-            }
-            
+        content.html("");
+        content.load("'.$structure->fileurl($file).'?id_module='.$id_module.'&id_record='.$id_record.'&id_documento=" + id, function() {
             loader.hide();
         });
-        
-        
     });
 </script>';

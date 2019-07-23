@@ -2,26 +2,17 @@
 
 include_once __DIR__.'/../../core.php';
 
-$module = Modules::get($id_module);
+use Modules\Contratti\Contratto;
+
+$documento = Contratto::find($id_record);
 
 $options = [
-    'op' => 'add_contratto',
-    'id_importazione' => 'id_contratto',
-    'final_module' => 'Fatture di vendita',
-    'original_module' => $module['name'],
-    'sql' => [
-        'table' => 'co_contratti',
-        'rows' => 'co_righe_contratti',
-        'id_rows' => 'idcontratto',
-    ],
+    'op' => 'add_documento',
+    'type' => 'contratto',
+    'module' => 'Fatture di vendita',
     'button' => tr('Aggiungi'),
-    'dir' => 'entrata',
     'create_document' => true,
+    'documento' => $documento,
 ];
 
-$result = [
-    'id_record' => $id_record,
-    'id_documento' => get('iddocumento'),
-];
-
-echo App::load('importa.php', $result, $options, true);
+echo App::load('importa.php', [], $options, true);

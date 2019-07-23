@@ -169,8 +169,19 @@ abstract class Article extends Row
         return parent::save($options);
     }
 
+    public function canDelete()
+    {
+        $serials = $this->usedSerials();
+
+        return empty($serials);
+    }
+
     public function delete()
     {
+        if (!$this->canDelete()) {
+            throw new \InvalidArgumentException();
+        }
+
         $this->serials = [];
 
         $this->qta = 0; // Fix movimentazione automatica

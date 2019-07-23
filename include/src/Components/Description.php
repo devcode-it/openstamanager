@@ -12,6 +12,10 @@ abstract class Description extends Model
 
     protected $guarded = [];
 
+    protected $appends = [
+        'max_qta',
+    ];
+
     public static function build(Document $document, $bypass = false)
     {
         $model = parent::build();
@@ -24,6 +28,17 @@ abstract class Description extends Model
         $model->setParent($document);
 
         return $model;
+    }
+
+    public function getMaxQtaAttribute()
+    {
+        if (!$this->hasOriginal()) {
+            return null;
+        }
+
+        $original = $this->getOriginal();
+
+        return $original->qta_rimanente + $this->qta;
     }
 
     /**
@@ -69,12 +84,21 @@ abstract class Description extends Model
         return $this->qta - $this->qta_evasa;
     }
 
+    public function canDelete()
+    {
+        return true;
+    }
+
     public function delete()
     {
+        if (!$this->canDelete()) {
+            throw new \InvalidArgumentException();
+        }
+
         $this->qta = 0;
         $result = parent::delete();
 
-        $this->parent->controllo($this);
+        $this->parent->fixStato($this);
 
         return $result;
     }
@@ -190,7 +214,7 @@ abstract class Description extends Model
     {
         $result = parent::save($options);
 
-        $this->parent->controllo($this);
+        $this->parent->fixStato($this);
 
         return $result;
     }

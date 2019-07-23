@@ -163,9 +163,9 @@ class Preventivo extends Document
      *
      * @param Description $trigger
      */
-    public function controllo(Description $trigger)
+    public function fixStato(Description $trigger)
     {
-        parent::controllo($trigger);
+        parent::fixStato($trigger);
 
         $righe = $this->getRighe();
 
@@ -173,11 +173,13 @@ class Preventivo extends Document
         $qta = $righe->sum('qta');
         $parziale = $qta != $qta_evasa;
 
+        $stato_attuale = $this->stato;
+
         // Impostazione del nuovo stato
         if ($qta_evasa == 0) {
             $descrizione = 'In lavorazione';
             $descrizione_intervento = 'Completato';
-        } elseif ($trigger->parent instanceof Ordine) {
+        } elseif (!in_array($stato_attuale->descrizione, ['Parzialmente fatturato', 'Fatturato']) && $trigger->parent instanceof Ordine) {
             $descrizione = $this->stato->descrizione;
             $descrizione_intervento = 'Completato';
         } else {

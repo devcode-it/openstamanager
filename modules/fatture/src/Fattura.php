@@ -441,6 +441,16 @@ class Fattura extends Document
         return parent::save($options);
     }
 
+    public function delete()
+    {
+        $result = parent::delete();
+
+        $this->rimuoviScadenze();
+        elimina_movimento($this->id);
+
+        return $result;
+    }
+
     /**
      * Restituisce l'elenco delle note di credito collegate.
      *

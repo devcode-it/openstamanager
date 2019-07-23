@@ -52,8 +52,13 @@ class Articolo extends Article
             '_NUM_' => $numero,
         ]);
 
+        $partenza = $fattura->direzione == 'uscita' ? $fattura->idsede_destinazione : $fattura->idsede_partenza;
+        $arrivo = $fattura->direzione == 'uscita' ? $fattura->idsede_partenza : $fattura->idsede_destinazione;
+
         $this->articolo->movimenta(-$qta, $movimento, $data, false, [
             'iddocumento' => $fattura->id,
+            'idsede_azienda' => $partenza,
+            'idsede_controparte' => $arrivo,
         ]);
     }
 

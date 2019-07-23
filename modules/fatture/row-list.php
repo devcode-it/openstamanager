@@ -37,26 +37,18 @@ foreach ($righe as $row) {
 
     $extra = '';
 
+    $delete = 'unlink_riga';
+
     // Articoli
     if ($row->isArticolo()) {
         $riga['descrizione'] = (!empty($row->articolo) ? $row->articolo->codice.' - ' : '').$riga['descrizione'];
-
-        $delete = 'unlink_articolo';
-        // Preventivi
-        if (!empty($riga['idpreventivo'])) {
-            $delete = 'unlink_preventivo';
-        }
-        // Contratti
-        elseif (!empty($riga['idcontratto'])) {
-            $delete = 'unlink_contratto';
-        }
 
         $extra = '';
         $mancanti = 0;
     }
 
     // Intervento
-    elseif (!empty($riga['idintervento'])) {
+    if (!empty($riga['idintervento'])) {
         $intervento = $dbo->fetchOne('SELECT num_item,codice_cig,codice_cup,id_documento_fe FROM in_interventi WHERE id = '.prepare($riga['idintervento']));
         $riga['num_item'] = $intervento['num_item'];
         $riga['codice_cig'] = $intervento['codice_cig'];
@@ -72,8 +64,6 @@ foreach ($righe as $row) {
         $riga['codice_cig'] = $preventivo['codice_cig'];
         $riga['codice_cup'] = $preventivo['codice_cup'];
         $riga['id_documento_fe'] = $preventivo['id_documento_fe'];
-
-        $delete = 'unlink_preventivo';
     }
     // Contratti
     elseif (!empty($riga['idcontratto'])) {
@@ -82,8 +72,6 @@ foreach ($righe as $row) {
         $riga['codice_cig'] = $contratto['codice_cig'];
         $riga['codice_cup'] = $contratto['codice_cup'];
         $riga['id_documento_fe'] = $contratto['id_documento_fe'];
-
-        $delete = 'unlink_contratto';
     }
     // Ordini (IDDOCUMENTO,CIG,CUP)
     elseif (!empty($riga['idordine'])) {
@@ -92,12 +80,6 @@ foreach ($righe as $row) {
         $riga['codice_cig'] = $ordine['codice_cig'];
         $riga['codice_cup'] = $ordine['codice_cup'];
         $riga['id_documento_fe'] = $ordine['id_documento_fe'];
-
-        $delete = 'unlink_riga';
-    }
-    // Righe generiche
-    else {
-        $delete = 'unlink_riga';
     }
 
     // Individuazione dei seriali
@@ -253,7 +235,7 @@ foreach ($righe as $row) {
             <form action='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record."' method='post' id='delete-form-".$riga['id']."' role='form'>
                 <input type='hidden' name='backto' value='record-edit'>
                 <input type='hidden' name='idriga' value='".$riga['id']."'>
-                <input type='hidden' name='op' value='unlink_riga'>";
+                <input type='hidden' name='op' value='".$delete."'>";
 
         if ($row->isArticolo()) {
             echo "

@@ -128,9 +128,9 @@ class Ordine extends Document
      *
      * @param Description $trigger
      */
-    public function controllo(Description $trigger)
+    public function fixStato(Description $trigger)
     {
-        parent::controllo($trigger);
+        parent::fixStato($trigger);
 
         if (setting('Cambia automaticamente stato ordini fatturati')) {
             $righe = $this->getRighe();
@@ -139,10 +139,12 @@ class Ordine extends Document
             $qta = $righe->sum('qta');
             $parziale = $qta != $qta_evasa;
 
+            $stato_attuale = $this->stato;
+
             // Impostazione del nuovo stato
             if ($qta_evasa == 0) {
                 $descrizione = 'Bozza';
-            } elseif ($trigger->parent instanceof DDT) {
+            } elseif (!in_array($stato_attuale->descrizione, ['Parzialmente fatturato', 'Fatturato']) && $trigger->parent instanceof DDT) {
                 $descrizione = $parziale ? 'Parzialmente evaso' : 'Evaso';
             } else {
                 $descrizione = $parziale ? 'Parzialmente fatturato' : 'Fatturato';

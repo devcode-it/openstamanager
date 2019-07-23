@@ -115,6 +115,11 @@ if (Interaction::isEnabled()) {
 </div>
 
 <script>
+$(document).ready(function() {
+    $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
+    $($.fn.dataTable.tables(true)).DataTable().scroller.measure();
+});
+
 function search(button) {
     var restore = buttonLoading(button);
 

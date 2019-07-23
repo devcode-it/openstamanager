@@ -63,16 +63,15 @@ switch (post('op')) {
 
         foreach ($id_records as $id) {
             $fattura = Fattura::find($id);
-            try{
+            try {
                 $fattura_pa = new FatturaElettronica($id);
 
                 if (!empty($fattura_pa) && !$fattura_pa->isGenerated()) {
                     $file = $fattura_pa->save($upload_dir);
                     $added[] = $fattura->numero_esterno;
                 }
-            }catch (UnexpectedValueException $e){
+            } catch (UnexpectedValueException $e) {
                 $failed[] = $fattura->numero_esterno;
-
             }
         }
 
@@ -170,7 +169,7 @@ switch (post('op')) {
 
     case 'registra-contabile':
         //Generazione della descrizione del movimento
-        $rs_fatture = $dbo->fetchArray('SELECT *, co_documenti.id AS id, co_documenti.data AS data_doc FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id IN('.implode(',', $id_records).')');
+        $rs_fatture = $dbo->fetchArray('SELECT *, co_documenti.id AS id, co_documenti.data AS data_doc FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id IN('.implode(',', $id_records).") AND idstatodocumento IN (SELECT id FROM co_statidocumento WHERE descrizione = 'Emessa' OR descrizione = 'Parzialmente pagato')");
 
         //calcolo della descrizione
         $descrizione_movimento = 'Pag. fatture num. ';

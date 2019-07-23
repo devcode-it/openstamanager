@@ -18,7 +18,7 @@ $query = Util\Query::getQuery($module, [
 ]);
 Util\Query::setSegments(true);
 
-$query = str_replace(['AND `deleted_at` IS NULL', '`deleted_at` IS NULL', 'AND deleted_at IS NULL', 'deleted_at IS NULL'], '', $query);
+$query = str_replace(['AND `deleted_at` IS NULL', '`deleted_at` IS NULL AND', '`deleted_at` IS NULL', 'AND deleted_at IS NULL', 'deleted_at IS NULL AND', 'deleted_at IS NULL'], '', $query);
 
 $has_access = !empty($query) ? $dbo->fetchNum($query) !== 0 : true;
 

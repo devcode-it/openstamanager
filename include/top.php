@@ -89,7 +89,7 @@ if (Auth::check()) {
         'hookMultiple' => tr('Hai _NUM_ notifiche'),
         'hookSingle' => tr('Hai 1 notifica'),
         'hookNone' => tr('Nessuna notifica'),
-        'singleCalendar' => tr("E' presente un solo calendario!"),
+        'singleCalendar' => tr("E' presente un solo periodo!"),
     ];
     foreach ($translations as $key => $value) {
         echo '

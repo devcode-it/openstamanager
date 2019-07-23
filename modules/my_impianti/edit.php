@@ -32,22 +32,22 @@ if (!empty($record['immagine'])) {
 
 				<div class="col-md-9">
 					<div class="row">
-						<div class="col-md-4">
+						<div class="col-md-6">
 							{[ "type": "text", "label": "<?php echo tr('Matricola'); ?>", "name": "matricola", "required": 1, "class": "text-center", "maxlength": 25, "value": "$matricola$" ]}
 						</div>
 
-						<div class="col-md-8">
+						<div class="col-md-6">
 							{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$nome$" ]}
 						</div>
 						<div class="clearfix"></div>
 
-						<div class="col-md-8">
+						<div class="col-md-6">
 							<?php
                                 echo Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"');
                             ?>
 							{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "extra": "", "ajax-source": "clienti" ]}
 						</div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             {[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "id_categoria", "required": 0, "class": "", "value": "$id_categoria$", "values": "query=SELECT id, nome AS descrizione FROM my_impianti_categorie" ]}
                         </div>
 					</div>

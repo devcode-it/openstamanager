@@ -11,7 +11,7 @@ if ($module['name'] == 'Fatture di vendita') {
 if (isset($id_record)) {
     $fattura = Modules\Fatture\Fattura::with('tipo', 'stato')->find($id_record);
 
-    $record = $dbo->fetchOne('SELECT *,
+    $record = $dbo->fetchOne('SELECT co_documenti.*,
         co_tipidocumento.reversed AS is_reversed,
         co_documenti.idagente AS idagente_fattura,
         co_documenti.note,

@@ -501,8 +501,8 @@ if (!$block_edit) {
             $prev_query = 'SELECT COUNT(*) AS tot FROM co_preventivi WHERE idanagrafica='.prepare($record['idanagrafica'])." AND idstato IN(SELECT id FROM co_statipreventivi WHERE descrizione='Accettato' OR descrizione='In lavorazione' OR descrizione='In attesa di conferma') AND default_revision=1 AND co_preventivi.id IN (SELECT idpreventivo FROM co_righe_preventivi WHERE co_righe_preventivi.idpreventivo = co_preventivi.id AND (qta - qta_evasa) > 0)";
             $preventivi = $dbo->fetchArray($prev_query)[0]['tot'];
             echo '
-                    <div class="tip" data-toggle="tooltip" title="'.tr('Preventivi accettati, in attesa di conferma o in lavorazione.').'" style="display:inline;">
-                        <a class="btn btn-sm btn-primary '.(!empty($preventivi) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/add_preventivo.php?id_module='.$id_module.'&id_record='.$id_record.'" data-title="Aggiungi preventivo">
+                    <div class="tip"  title="'.tr('Preventivi accettati, in attesa di conferma o in lavorazione.').'" style="display:inline;">
+                        <a class="btn btn-sm btn-primary '.(!empty($preventivi) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/add_preventivo.php?id_module='.$id_module.'&id_record='.$id_record.'" data-title="Aggiungi preventivo" data-toggle="tooltip">
                             <i class="fa fa-plus"></i> Preventivo
                         </a>
                     </div>';
@@ -511,8 +511,8 @@ if (!$block_edit) {
             $contr_query = 'SELECT COUNT(*) AS tot FROM co_contratti WHERE idanagrafica='.prepare($record['idanagrafica']).' AND idstato IN( SELECT id FROM co_staticontratti WHERE is_fatturabile = 1) AND co_contratti.id IN (SELECT idcontratto FROM co_righe_contratti WHERE co_righe_contratti.idcontratto = co_contratti.id AND (qta - qta_evasa) > 0)';
             $contratti = $dbo->fetchArray($contr_query)[0]['tot'];
             echo '
-                    <div class="tip" data-toggle="tooltip" title="'.tr('Contratti accettati, in attesa di conferma o in lavorazione.').'" style="display:inline;">
-                        <a class="btn btn-sm btn-primary '.(!empty($contratti) ? '' : ' disabled').'"  data-href="'.$rootdir.'/modules/fatture/add_contratto.php?id_module='.$id_module.'&id_record='.$id_record.'" data-title="Aggiungi contratto">
+                    <div class="tip"  title="'.tr('Contratti accettati, in attesa di conferma o in lavorazione.').'" style="display:inline;">
+                        <a class="btn btn-sm btn-primary '.(!empty($contratti) ? '' : ' disabled').'"  data-href="'.$rootdir.'/modules/fatture/add_contratto.php?id_module='.$id_module.'&id_record='.$id_record.'" data-title="Aggiungi contratto" data-toggle="tooltip">
                             <i class="fa fa-plus"></i> Contratto
                         </a>
                     </div>';
@@ -530,7 +530,7 @@ if (!$block_edit) {
         $ordini_query = 'SELECT COUNT(*) AS tot FROM or_ordini WHERE idanagrafica='.prepare($record['idanagrafica']).' AND idstatoordine IN (SELECT id FROM or_statiordine WHERE descrizione IN(\'Bozza\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoordine=(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).') AND or_ordini.id IN (SELECT idordine FROM or_righe_ordini WHERE or_righe_ordini.idordine = or_ordini.id AND (qta - qta_evasa) > 0)';
         $ordini = $dbo->fetchArray($ordini_query)[0]['tot'];
         echo '
-						<a class="btn btn-sm btn-primary'.(!empty($ordini) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/add_ordine.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="Aggiungi ordine">
+						<a class="btn btn-sm btn-primary'.(!empty($ordini) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/add_ordine.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="Aggiungi ordine">
 							<i class="fa fa-plus"></i> Ordine
                         </a>';
     }
@@ -704,20 +704,20 @@ if (in_array($record[$field_name], $user->sedi)) {
 <script>
 
 $(".btn-sm[data-toggle=\"tooltip\"]").each(function() {
-
    $(this).on("click", function() {
-        form = $("#edit-form");
-        btn = $(this);
+        var form = $("#edit-form");
+        var btn = $(this);
 
         var restore = buttonLoading(btn);
 
-        valid = submitAjax(form, {}, function() {
+        var valid = submitAjax(form, {}, function() {
             buttonRestore(btn, restore);
         }, function() {
             buttonRestore(btn, restore);
         });
+        
 		// Procedo al salvataggio solo se tutti i campi obbligatori sono compilati, altrimenti mostro avviso
-            //form.find("input:disabled, select:disabled").removeAttr("disabled");
+        //form.find("input:disabled, select:disabled").removeAttr("disabled");
 
 	    if(!valid) {
 			swal({
@@ -725,15 +725,15 @@ $(".btn-sm[data-toggle=\"tooltip\"]").each(function() {
                 title: "'.tr('Errore').'",
                 text:  "'.tr('Alcuni campi obbligatori non sono stati compilati correttamente').'.",
             });
-
-            $("#bs-popup").one("show.bs.modal", function (e) {
+			 
+            $("#bs-popup").one("show.bs.modal", function (e) {                
                 return e.preventDefault();
             });
-
-            buttonRestore(btn, restore);
 		}
-
+	   
+	    $("#bs-popup").one("show.bs.modal", function (e) {
+            buttonRestore(btn, restore);            
+        });
 	});
 });
 </script>';
-?>

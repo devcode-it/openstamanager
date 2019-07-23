@@ -80,7 +80,7 @@ echo '
     </div>
 
     <div class="box-body">
-    
+
         <div class="row">
             <div class="col-md-4">
                 <div class="info-box">
@@ -96,7 +96,7 @@ echo '
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-md-4">
                 <div class="info-box">
                     <span class="info-box-icon bg-'.($contratti->count() == 0 ? 'gray' : 'purple').'"><i class="fa fa-refresh"></i></span>
@@ -111,7 +111,7 @@ echo '
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-md-4">
                 <div class="info-box">
                     <span class="info-box-icon bg-'.($ordini_cliente->count() == 0 ? 'gray' : 'blue').'"><i class="fa fa-file-text"></i></span>
@@ -127,7 +127,7 @@ echo '
                 </div>
             </div>
         </div>
-        
+
         <div class="row">
             <div class="col-md-4">
                 <div class="info-box">
@@ -143,7 +143,7 @@ echo '
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-md-4">
                 <div class="info-box">
                     <span class="info-box-icon bg-'.($ddt_uscita->count() == 0 ? 'gray' : 'maroon').'"><i class="fa fa-truck"></i></span>
@@ -158,7 +158,7 @@ echo '
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-md-4">
                 <div class="info-box">
                     <span class="info-box-icon bg-'.($fatture_vendita->count() == 0 ? 'gray' : 'green').'"><i class="fa fa-money"></i></span>
@@ -174,6 +174,6 @@ echo '
                 </div>
             </div>
         </div>
-        
+
     </div>
 </div>';

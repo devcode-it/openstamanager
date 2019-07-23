@@ -44,6 +44,7 @@ switch ($operazione) {
 
     case 'deletereferente':
         $dbo->query('DELETE FROM `an_referenti` WHERE `id`='.prepare($id_record));
+        $dbo->query('UPDATE co_preventivi SET idreferente = 0 WHERE `idreferente` = '.prepare($id_record));
 
         flash()->info(tr('Referente eliminato!'));
 

@@ -25,6 +25,7 @@ switch ($name) {
     case 'codice_fiscale':
         $disponibile = Anagrafica::where([
             ['codice_fiscale', $value],
+            ['codice_fiscale', '<>', ''],
             ['idanagrafica', '<>', $id_record],
         ])->count() == 0;
 
@@ -50,6 +51,7 @@ switch ($name) {
     case 'partita_iva':
         $disponibile = Anagrafica::where([
             ['piva', $value],
+            ['piva', '<>', ''],
             ['idanagrafica', '<>', $id_record],
         ])->count() == 0;
 

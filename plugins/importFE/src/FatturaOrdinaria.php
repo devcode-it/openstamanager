@@ -87,7 +87,11 @@ class FatturaOrdinaria extends FatturaElettronica
 
     public function saveRighe($articoli, $iva, $conto, $movimentazione = true)
     {
-        $id_ritenuta_acconto = $this->getRitenutaAcconto();
+        $info = $this->getRitenutaRivalsa();
+
+        $id_ritenuta_acconto = $info['id_ritenuta_acconto'];
+        $id_rivalsa = $info['id_rivalsa'];
+        $calcolo_ritenuta_acconto = $info['rivalsa_in_ritenuta'] ? 'IMP+RIV' : 'IMP';
 
         $righe = $this->getRighe();
         $fattura = $this->getFattura();
@@ -110,8 +114,11 @@ class FatturaOrdinaria extends FatturaElettronica
             $obj->id_iva = $iva[$key];
             $obj->idconto = $conto[$key];
 
+            $obj->id_rivalsa_inps = $id_rivalsa;
+
             if (!empty($riga['Ritenuta'])) {
                 $obj->id_ritenuta_acconto = $id_ritenuta_acconto;
+                $obj->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
             }
 
             // Nel caso il prezzo sia negativo viene gestito attraverso l'inversione della quantità (come per le note di credito)
@@ -200,20 +207,12 @@ class FatturaOrdinaria extends FatturaElettronica
         }
     }
 
-    protected function getRitenutaAcconto()
+    protected function getRitenutaRivalsa()
     {
         $database = database();
         $dati_generali = $this->getBody()['DatiGenerali']['DatiGeneraliDocumento'];
 
-        // Ritenuta d'Acconto
-        $ritenuta = $dati_generali['DatiRitenuta'];
-        if (empty($ritenuta)) {
-            return null;
-        }
-
-        $percentuale = floatval($ritenuta['AliquotaRitenuta']);
-        $importo = floatval($ritenuta['ImportoRitenuta']);
-
+        // Totale righe
         $righe = $this->getRighe();
         $totali = [];
         foreach ($righe as $riga) {
@@ -223,23 +222,65 @@ class FatturaOrdinaria extends FatturaElettronica
         }
         $totale = sum($totali);
 
-        $totale_previsto = $importo / $percentuale * 100;
-        $percentuale_importo = $totale_previsto / $totale * 100;
+        $rivalsa_in_ritenuta = false;
 
-        $ritenuta_acconto = $database->fetchOne('SELECT * FROM`co_ritenutaacconto` WHERE `percentuale` = '.prepare($percentuale).' AND `percentuale_imponibile` = '.prepare($percentuale_importo));
-        if (empty($ritenuta_acconto)) {
-            $descrizione = tr('Ritenuta _PRC_% sul _TOT_%', [
-                '_PRC_' => numberFormat($percentuale),
-                '_TOT_' => numberFormat($percentuale_importo),
-            ]);
+        // Rivalsa
+        $casse = $dati_generali['DatiCassaPrevidenziale'];
+        if (!empty($casse)) {
+            $casse = isset($casse[0]) ? $casse : [$casse];
 
-            $database->query('INSERT INTO `co_ritenutaacconto` (`descrizione`, `percentuale`, `percentuale_imponibile`) VALUES ('.prepare($descrizione).', '.prepare($percentuale).', '.prepare($percentuale_importo).')');
+            $importi = [];
+            foreach ($casse as $cassa) {
+                $importi[] = floatval($cassa['ImportoContributoCassa']);
+                if ($cassa['Ritenuta']) {
+                    $rivalsa_in_ritenuta = true;
+                }
+            }
+            $importo = sum($importi);
+
+            $percentuale = round($importo / $totale * 100, 2);
+
+            $rivalsa = $database->fetchOne('SELECT * FROM`co_rivalse` WHERE `percentuale` = '.prepare($percentuale));
+            if (empty($rivalsa)) {
+                $descrizione = tr('Rivalsa _PRC_%', [
+                    '_PRC_' => numberFormat($percentuale),
+                ]);
+
+                $database->query('INSERT INTO `co_rivalse` (`descrizione`, `percentuale`) VALUES ('.prepare($descrizione).', '.prepare($percentuale).')');
+            }
+
+            $rivalsa = $database->fetchOne('SELECT * FROM`co_rivalse` WHERE `percentuale` = '.prepare($percentuale));
+            $id_rivalsa = $rivalsa['id'];
         }
 
-        $ritenuta_acconto = $database->fetchOne('SELECT * FROM`co_ritenutaacconto` WHERE `percentuale` = '.prepare($percentuale).' AND `percentuale_imponibile` = '.prepare($percentuale_importo));
+        // Ritenuta d'Acconto
+        $ritenuta = $dati_generali['DatiRitenuta'];
+        if (!empty($ritenuta)) {
+            $percentuale = floatval($ritenuta['AliquotaRitenuta']);
+            $importo = floatval($ritenuta['ImportoRitenuta']);
 
-        $id_ritenuta_acconto = $ritenuta_acconto['id'];
+            $totale_previsto = round($importo / $percentuale * 100, 2);
+            $percentuale_importo = round($totale_previsto / $totale * 100, 2);
 
-        return $id_ritenuta_acconto;
+            $ritenuta_acconto = $database->fetchOne('SELECT * FROM`co_ritenutaacconto` WHERE `percentuale` = '.prepare($percentuale).' AND `percentuale_imponibile` = '.prepare($percentuale_importo));
+            if (empty($ritenuta_acconto)) {
+                $descrizione = tr('Ritenuta _PRC_% sul _TOT_%', [
+                    '_PRC_' => numberFormat($percentuale),
+                    '_TOT_' => numberFormat($percentuale_importo),
+                ]);
+
+                $database->query('INSERT INTO `co_ritenutaacconto` (`descrizione`, `percentuale`, `percentuale_imponibile`) VALUES ('.prepare($descrizione).', '.prepare($percentuale).', '.prepare($percentuale_importo).')');
+            }
+
+            $ritenuta_acconto = $database->fetchOne('SELECT * FROM`co_ritenutaacconto` WHERE `percentuale` = '.prepare($percentuale).' AND `percentuale_imponibile` = '.prepare($percentuale_importo));
+
+            $id_ritenuta_acconto = $ritenuta_acconto['id'];
+        }
+
+        return [
+            'id_ritenuta_acconto' => $id_ritenuta_acconto,
+            'id_rivalsa' => $id_rivalsa,
+            'rivalsa_in_ritenuta' => $rivalsa_in_ritenuta,
+        ];
     }
 }

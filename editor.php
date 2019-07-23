@@ -107,13 +107,27 @@ if (empty($record) || !$has_access) {
                 <div id="tab_0" class="tab-pane active">';
 
     if (!empty($record['deleted_at'])) {
+        
+        $operation = $dbo->fetchOne("SELECT zz_operations.created_at, username FROM zz_operations INNER JOIN zz_users ON zz_operations.id_utente =  zz_users.id  WHERE op='delete' AND id_module=".prepare($id_module)." AND id_record=".prepare($id_module)." ORDER BY zz_operations.created_at DESC");
+        
+        $info =  tr('Il record è stato eliminato il <b>_DATE_</b> da <b>_USER_</b> ,', [
+            '_DATE_' => Translator::dateToLocale($operation['created_at']),
+            '_USER_' => $operation['username'],
+        ]);  
+
         echo '
-		<div class="alert alert-danger text-center">
-            <h3>'.tr('Ripristinare il record?').'</h3>
-            
-            <a class="btn btn-warning" id="restore">
-                <i class="fa fa-undo"></i> '.tr('Ripristina').'
-            </a>
+        <div class="alert alert-danger">
+            <div class=\'row\' >
+
+                <div class=\'col-md-8\' ><i class="fa fa-warning"></i> '.$info.' <strong>'.tr('Ripristinare il record?').'</strong></div>
+                
+                <div class=\'col-md-4\' >
+                <a class="btn btn-warning pull-right" id="restore">
+                    <i class="fa fa-undo"></i> '.tr('Salva e ripristina').'
+                </a>
+                </div>
+
+            </div>
 		</div>
 		
 		<script>

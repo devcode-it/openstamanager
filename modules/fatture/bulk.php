@@ -58,23 +58,21 @@ switch (post('op')) {
         break;
 
     case 'genera-xml':
-
         $failed = [];
         $added = [];
 
         foreach ($id_records as $id) {
             $fattura = Fattura::find($id);
-            $fe = new \Plugins\ExportFE\FatturaElettronica($fattura->id);
-
-            //se la fattura è emessa e non è stata generata la fattura elettronica
-            if ($fattura->stato->descrizione == 'Emessa' and !($fe->isGenerated())) {
+            try{
                 $fattura_pa = new FatturaElettronica($id);
-                if (!empty($fattura_pa)) {
+
+                if (!empty($fattura_pa) && !$fattura_pa->isGenerated()) {
                     $file = $fattura_pa->save($upload_dir);
                     $added[] = $fattura->numero_esterno;
                 }
-            } else {
+            }catch (UnexpectedValueException $e){
                 $failed[] = $fattura->numero_esterno;
+
             }
         }
 

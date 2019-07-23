@@ -195,16 +195,15 @@ if (!$has_settings) {
 
                 <div class="panel-body">
                     <div class="row">';
-                
 
-        foreach ($settings as $setting => $required) {
-            if (empty(setting($setting))) {
-                echo '
+    foreach ($settings as $setting => $required) {
+        if (empty(setting($setting))) {
+            echo '
                         <div class="col-md-6">
                             '.Settings::input($setting, $required).'
                         </div>';
-            }
         }
+    }
 
     echo '          </div>
                 </div>

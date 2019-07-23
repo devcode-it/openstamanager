@@ -47,7 +47,7 @@ elseif ($anagrafica->isTipo('Tecnico')) {
 }
 
 $totale_interventi = 0;
-foreach ($interventi as $intervento){
+foreach ($interventi as $intervento) {
     $costi = get_costi_intervento($intervento['id']);
 
     $totale_interventi += $costi['totale_scontato'];

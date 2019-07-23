@@ -690,20 +690,20 @@ if (in_array($record[$field_name], $user->sedi)) {
 <script>
 
 $(".btn-sm[data-toggle=\"tooltip\"]").each(function() {
-
    $(this).on("click", function() {
-        form = $("#edit-form");
-        btn = $(this);
+        var form = $("#edit-form");
+        var btn = $(this);
 
         var restore = buttonLoading(btn);
 
-        valid = submitAjax(form, {}, function() {
+        var valid = submitAjax(form, {}, function() {
             buttonRestore(btn, restore);
         }, function() {
             buttonRestore(btn, restore);
         });
+        
 		// Procedo al salvataggio solo se tutti i campi obbligatori sono compilati, altrimenti mostro avviso
-            //form.find("input:disabled, select:disabled").removeAttr("disabled");
+        //form.find("input:disabled, select:disabled").removeAttr("disabled");
 
 	    if(!valid) {
 			swal({
@@ -711,15 +711,15 @@ $(".btn-sm[data-toggle=\"tooltip\"]").each(function() {
                 title: "'.tr('Errore').'",
                 text:  "'.tr('Alcuni campi obbligatori non sono stati compilati correttamente').'.",
             });
-
-            $("#bs-popup").one("show.bs.modal", function (e) {
+			 
+            $("#bs-popup").one("show.bs.modal", function (e) {                
                 return e.preventDefault();
             });
-
-            buttonRestore(btn, restore);
 		}
-
+	   
+	    $("#bs-popup").one("show.bs.modal", function (e) {
+            buttonRestore(btn, restore);            
+        });
 	});
 });
 </script>';
-?>

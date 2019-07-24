@@ -6,6 +6,8 @@ use Modules\Anagrafiche\Anagrafica;
 use Plugins\ExportFE\FatturaElettronica;
 use Plugins\ExportFE\Interaction;
 
+$abilita_genera = empty($fattura->codice_stato_fe) || in_array($fattura->codice_stato_fe, ['GEN', 'NS', 'EC02']);
+
 if (!empty($fattura_pa)) {
     $disabled = false;
     $generated = $fattura_pa->isGenerated();
@@ -143,7 +145,7 @@ echo '
     '_BTN_' => '<b>Genera</b>',
 ]).'. '.tr('Successivamente sarà possibile procedere alla visualizzazione e al download della fattura generata attraverso i pulsanti dedicati').'.</p>
 
-<p>'.tr("Tutti gli allegati PDF inseriti all'interno della categoria \"Fattura Elettronica\" saranno inclusi come allegati dell'XML").'.</p>
+<p>'.tr("Tutti gli allegati inseriti all'interno della categoria \"Allegati Fattura Elettronica\" saranno inclusi nell'XML").'.</p>
 <br>';
 
 echo '
@@ -154,7 +156,7 @@ echo '
         <input type="hidden" name="backto" value="record-edit">
         <input type="hidden" name="op" value="generate">
 
-        <button id="genera" type="submit" class="btn btn-primary btn-lg '.($disabled ? 'disabled' : '').'" '.($disabled ? ' disabled' : null).'>
+        <button id="genera" type="submit" class="btn btn-primary btn-lg '.($disabled || !$abilita_genera ? 'disabled' : '').'" '.($disabled || !$abilita_genera ? ' disabled' : null).'>
             <i class="fa fa-file"></i> '.tr('Genera').'
         </button>
     </form>';
@@ -255,25 +257,43 @@ echo '
 
 </div>';
 
-if ($generated) {
-    echo '
+echo '
 <script>
     $("#genera").click(function(event){
         event.preventDefault();
 
-        swal({
-            title: "Sei sicuro di rigenerare la fattura?",
-            text: "Attenzione: sarà generato un nuovo progressivo invio.",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#30d64b",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Genera"
-        }).then((result) => {
-            if (result) {
-                $("#form-xml").submit();
-            }
-        });
+        var form = $("#edit-form");
+        valid = submitAjax(form);
+        
+        if (valid) {';
+
+if ($generated) {
+    echo '
+            swal({
+                title: "'.tr('Sei sicuro di rigenerare la fattura?').'",
+                html: "<p>'.tr('Attenzione: sarà generato un nuovo progressivo invio').'.</p><p class=\"text-danger\">'.tr('Se stai attendendo una ricevuta dal sistema SdI, rigenerando la fattura elettronica non sarà possibile corrispondere la ricevuta una volta emessa').'.</p>",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#30d64b",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Genera"
+            }).then((result) => {
+                if (result) {
+                    $("#form-xml").submit();
+                }
+            });';
+} else {
+    echo '
+    
+            $("#form-xml").submit();';
+}
+echo '
+        } else {
+            swal({
+                type: "error",
+                title: "'.tr('Errore').'",
+                text:  "'.tr('Alcuni campi obbligatori non sono stati compilati correttamente').'.",
+            });
+        }
     });
 </script>';
-}

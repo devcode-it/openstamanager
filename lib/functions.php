@@ -207,6 +207,10 @@ function translateTemplate()
 
     $template = \HTMLBuilder\HTMLBuilder::replace($template);
 
+    $template = str_replace('$id_module$', $id_module, $template);
+    $template = str_replace('$id_plugin$', $id_plugin, $template);
+    $template = str_replace('$id_record$', $id_record, $template);
+
     // Informazioni estese sulle azioni dell'utente
     if (!empty(post('op')) && post('op') != 'send-email') {
         operationLog(post('op'));
@@ -231,7 +235,7 @@ function translateTemplate()
 
     // Annullo le notifiche (AJAX)
     if (isAjaxRequest()) {
-        flash()->clearMessage('info');
+        //flash()->clearMessage('info');
     }
 
     echo $template;

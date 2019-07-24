@@ -9,7 +9,7 @@ if ($user['gruppo'] == 'Tecnici') {
     $show_costi = !empty($user['idanagrafica']) && setting('Mostra i prezzi al tecnico');
 }
 
-$sessione = $dbo->fetchOne('SELECT in_interventi_tecnici.*, an_anagrafiche.ragione_sociale, an_anagrafiche.deleted_at, in_interventi_tecnici.tipo_scontokm AS tipo_sconto_km  FROM in_interventi_tecnici INNER JOIN an_anagrafiche ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica WHERE in_interventi_tecnici.id = '.prepare(get('id_sessione')));
+$sessione = $dbo->fetchOne('SELECT in_interventi_tecnici.*, an_anagrafiche.ragione_sociale, an_anagrafiche.deleted_at, in_interventi_tecnici.tipo_scontokm AS tipo_sconto_km, in_interventi_tecnici.prezzo_ore_unitario, in_interventi_tecnici.prezzo_km_unitario, in_interventi_tecnici.prezzo_dirittochiamata FROM in_interventi_tecnici INNER JOIN an_anagrafiche ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica WHERE in_interventi_tecnici.id = '.prepare(get('id_sessione')));
 
 $op = 'edit_sessione';
 $button = '<i class="fa fa-edit"></i> '.tr('Modifica');
@@ -23,13 +23,17 @@ echo '
 
 // Tecnico
 echo '
-<p>'.tr('Tecnico').': '.$sessione['ragione_sociale'].' '.(!empty($sessione['deleted_at']) ? '<small class="text-danger"><em>('.tr('Eliminato').')</em></small>' : '').'</p>';
+    <div class="row">
+        <div class="col-md-4">
+            {[ "type": "span", "label": "'.tr('Tecnico').'", "name": "tecnico", "required": 0, "value": "'.$sessione['ragione_sociale'].' '.(!empty($sessione['deleted_at']) ? '<small class="text-danger"><em>('.tr('Eliminato').')</em></small>' : '').'" ]}
+        </div>
+    </div>';
 
 // Orari
 echo '
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Tipo attività').'", "name": "idtipointerventot", "value": "'.$sessione['idtipointervento'].'", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione, IFNULL((SELECT costo_ore FROM in_tariffe WHERE idtipointervento=in_tipiintervento.idtipointervento AND idtecnico='.prepare($sessione['idtecnico']).'), 0) AS costo_orario FROM in_tipiintervento ORDER BY descrizione" ]}
+            {[ "type": "select", "label": "'.tr('Tipo attività').'", "name": "idtipointerventot", "value": "'.$sessione['idtipointervento'].'", "required": 1, "values": "query=SELECT in_tipiintervento.idtipointervento AS id, descrizione, in_tariffe.costo_ore AS prezzo_ore_unitario, in_tariffe.costo_km AS prezzo_km_unitario, in_tariffe.costo_dirittochiamata AS prezzo_dirittochiamata FROM in_tipiintervento JOIN in_tariffe ON in_tipiintervento.idtipointervento = in_tariffe.idtipointervento WHERE in_tariffe.idtecnico = '.prepare($sessione['idtecnico']).' ORDER BY descrizione" ]}
         </div>
     
         <div class="col-md-4">
@@ -64,6 +68,20 @@ if ($show_costi) {
         </div>';
 
     echo'
+    </div>
+    
+    <div class="row">
+        <div class="col-md-4">
+            {[ "type": "number", "label": "'.tr('Addebito orario').'", "name": "prezzo_ore_unitario", "value": "'.$sessione['prezzo_ore_unitario'].'" ]}
+        </div>
+
+        <div class="col-md-4">
+            {[ "type": "number", "label": "'.tr('Addebito km').'", "name": "prezzo_km_unitario", "value": "'.$sessione['prezzo_km_unitario'].'" ]}
+        </div>
+
+        <div class="col-md-4">
+            {[ "type": "number", "label": "'.tr('Addebito diritto ch.').'", "name": "prezzo_dirittochiamata", "value": "'.$sessione['prezzo_dirittochiamata'].'" ]}
+        </div>
     </div>';
 }
 
@@ -86,6 +104,14 @@ $(document).ready(function () {
     // Quando modifico orario inizio, allineo anche l\'orario fine
     $("#orario_inizio").on("dp.change", function (e) {
         $("#orario_fine").data("DateTimePicker").minDate(e.date).format(globals.timestampFormat);
+    });
+
+    $("#idtipointerventot").change(function() {
+        data = $(this).selectData();
+        
+        $("#prezzo_ore_unitario").val(data.prezzo_ore_unitario);
+        $("#prezzo_km_unitario").val(data.prezzo_km_unitario);
+        $("#prezzo_dirittochiamata").val(data.prezzo_dirittochiamata);
     });
 });
 </script>';

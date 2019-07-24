@@ -2,25 +2,19 @@
 
 namespace Plugins\ImportFE;
 
-use Plugins\ExportFE\Connection;
+use API\Services;
 
 /**
  * Classe per l'interazione con API esterne.
  *
  * @since 2.4.3
  */
-class Interaction extends Connection
+class Interaction extends Services
 {
     public static function listToImport()
     {
-        $directory = FatturaElettronica::getImportDirectory();
-
         $list = [];
-
-        $files = glob($directory.'/*.xml*');
-        foreach ($files as $file) {
-            $list[] = basename($file);
-        }
+        $names = [];
 
         // Ricerca da remoto
         if (self::isEnabled()) {
@@ -28,15 +22,39 @@ class Interaction extends Connection
             $body = static::responseBody($response);
 
             if ($body['status'] == '200') {
-                $files = $body['results'];
+                $list = $body['results'];
 
-                foreach ($files as $file) {
-                    $list[] = basename($file);
-                }
+                $names = array_column($list);
             }
         }
 
-        return array_clean($list);
+        // Ricerca fisica
+        $files = self::fileToImport($names);
+
+        $list = array_merge($list, $files);
+
+        return $list;
+    }
+
+    public static function fileToImport($names = [])
+    {
+        $list = [];
+
+        // Ricerca fisica
+        $directory = FatturaElettronica::getImportDirectory();
+
+        $files = glob($directory.'/*.xml*');
+        foreach ($files as $file) {
+            $name = basename($file);
+
+            if (!in_array($name, $names)) {
+                $list[] = [
+                    'name' => $name,
+                ];
+            }
+        }
+
+        return $list;
     }
 
     public static function getImportXML($name)

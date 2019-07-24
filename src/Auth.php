@@ -56,8 +56,8 @@ class Auth extends \Util\Singleton
 
         if ($database->isInstalled()) {
             // Controllo dell'accesso da API
-            if (API::isAPIRequest()) {
-                $token = API::getRequest()['token'];
+            if (API\Response::isAPIRequest()) {
+                $token = API\Response::getRequest()['token'];
 
                 $user = $database->fetchArray('SELECT `id_utente` FROM `zz_tokens` WHERE `enabled` = 1 AND `token` = :token', [
                     ':token' => $token,
@@ -232,7 +232,7 @@ class Auth extends \Util\Singleton
             session_unset();
             session_regenerate_id();
 
-            if (!API::isAPIRequest()) {
+            if (!API\Response::isAPIRequest()) {
                 flash()->clearMessages();
             }
         }

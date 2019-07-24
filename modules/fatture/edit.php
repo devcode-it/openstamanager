@@ -8,6 +8,12 @@ $rs = $dbo->fetchArray('SELECT co_tipidocumento.descrizione, dir FROM co_tipidoc
 $dir = $rs[0]['dir'];
 $tipodoc = $rs[0]['descrizione'];
 
+unset($_SESSION['superselect']['idanagrafica']);
+unset($_SESSION['superselect']['idsede_partenza']);
+unset($_SESSION['superselect']['idsede_destinazione']);
+unset($_SESSION['superselect']['codice_modalita_pagamento_fe']);
+$_SESSION['superselect']['idsede_partenza'] = $record['idsede_partenza'];
+$_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione'];
 $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 $_SESSION['superselect']['ddt'] = $dir;
 $_SESSION['superselect']['split_payment'] = $record['split_payment'];
@@ -88,7 +94,7 @@ if ($dir == 'entrata') {
 					{[ "type": "text", "label": "<?php echo $label; ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$" ]}
 				</div>
 
-				<div class="col-md-3">
+				<div class="col-md-<?php echo ($dir == 'entrata') ? '3' : '2'; ?>">
 					{[ "type": "date", "label": "<?php echo tr('Data emissione'); ?>", "name": "data", "required": 1, "value": "$data$" ]}
 				</div>
 
@@ -103,17 +109,38 @@ if (empty($record['is_fiscale'])) {
 }
 
 ?>
-
-				<div class="col-md-3">
-					<!-- TODO: Rimuovere possibilità di selezionare lo stato pagato obbligando l'utente ad aggiungere il movimento in prima nota -->
-					{[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatodocumento", "required": 1, "values": "query=<?php echo $query; ?>", "value": "$idstatodocumento$", "class": "unblockable", "extra": " onchange = \"if ($('#idstatodocumento option:selected').text()=='Pagato' || $('#idstatodocumento option:selected').text()=='Parzialmente pagato' ){if( confirm('<?php echo tr('Sicuro di voler impostare manualmente la fattura come pagata senza aggiungere il movimento in prima nota?'); ?>') ){ return true; }else{ $('#idstatodocumento').selectSet(<?php echo $record['idstatodocumento']; ?>); }}\" " ]}
+				<?php if ($dir == 'uscita') {
+    ?>
+					
+				<div class="col-md-2">
+					{[ "type": "date", "label": "<?php echo tr('Data registrazione'); ?>", "name": "data_registrazione", "required": 0, "value": "$data_registrazione$" ]}
 				</div>
+
+                <div class="col-md-2">
+                    {[ "type": "date", "label": "<?php echo tr('Data competenza'); ?>", "name": "data_competenza", "required": 0, "value": "$data_competenza$", "min-date": "$data_registrazione$" ]}
+                </div>
+
+                <script type="text/javascript">
+                    $(document).ready(function () {
+                        $("#data_registrazione").on("dp.change", function (e) {
+                            var data = $("#data_competenza");
+                            data.data("DateTimePicker").minDate(e.date);
+
+                            if(data.data("DateTimePicker").date() < e.date){
+                                data.data("DateTimePicker").date(e.date);
+                            }
+                        })
+                    });
+                </script>
+				
+				<?php
+} ?>
 
                 <div class="col-md-3">
 					<?php
                     if ($dir == 'entrata') {
                         ?>
-					{[ "type": "select", "label": "<?php echo tr('Stato FE'); ?>", "name": "codice_stato_fe", "required": 0, "values": "query=SELECT codice as id, CONCAT_WS(' - ',codice,descrizione) as text FROM fe_stati_documento", "value": "$codice_stato_fe$", "disabled": <?php echo intval(Plugins\ExportFE\Connection::isEnabled()); ?>, "class": "unblockable", "help": "<?php echo (!empty($record['data_stato_fe'])) ? Translator::timestampToLocale($record['data_stato_fe']) : ''; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Stato FE'); ?>", "name": "codice_stato_fe", "required": 0, "values": "query=SELECT codice as id, CONCAT_WS(' - ',codice,descrizione) as text FROM fe_stati_documento", "value": "$codice_stato_fe$", "disabled": <?php echo intval(API\Services::isEnabled()); ?>, "class": "unblockable", "help": "<?php echo (!empty($record['data_stato_fe'])) ? Translator::timestampToLocale($record['data_stato_fe']) : ''; ?>" ]}
 					<?php
                     }
                     ?>
@@ -137,32 +164,45 @@ if (empty($record['is_fiscale'])) {
                     }
                     ?>
 				</div>
+                
+                <?php
+                // Conteggio numero articoli fatture
+                $articolo = $dbo->fetchArray('SELECT mg_articoli.id FROM ((mg_articoli INNER JOIN co_righe_documenti ON mg_articoli.id=co_righe_documenti.idarticolo) INNER JOIN co_documenti ON co_documenti.id=co_righe_documenti.iddocumento) WHERE co_documenti.id='.prepare($id_record));
+                if ($dir == 'uscita') {
+                    ?>
+                    <div class="col-md-3">
+                        {[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza", "ajax-source": "sedi", "placeholder": "Sede legale", "value": "$idsede_partenza$", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|id_plugin=<?php echo Plugins::get('Sedi')['id']; ?>&id_parent=<?php echo $record['idanagrafica']; ?>||<?php echo (intval($block_edit)) ? 'disabled' : ''; ?>" ]}
+                    </div>
+                    
+                    <div class="col-md-3">
+                        {[ "type": "select", "label": "<?php echo tr('Destinazione merce'); ?>", "name": "idsede_destinazione", "ajax-source": "sedi_azienda",  "value": "$idsede_destinazione$", "readonly": "<?php echo (sizeof($articolo)) ? 1 : 0; ?>" ]}
+                    </div>
+                <?php
+                } else {
+                    ?>
+                    <div class="col-md-3">
+                        {[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "placeholder": "Sede legale", "value": "$idsede_partenza$", "readonly": "<?php echo (sizeof($articolo)) ? 1 : 0; ?>"  ]}
+                    </div>
+                    
+                    <div class="col-md-3">
+                        {[ "type": "select", "label": "<?php echo tr('Destinazione merce'); ?>", "name": "idsede_destinazione", "ajax-source": "sedi",  "value": "$idsede_destinazione$", "readonly": "", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|id_plugin=<?php echo Plugins::get('Sedi')['id']; ?>&id_parent=<?php echo $record['idanagrafica']; ?>||<?php echo (intval($block_edit)) ? 'disabled' : ''; ?>" ]}
+                    </div>
+                <?php
+                }
+                ?>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Riferimento sede'); ?>", "name": "idsede", "ajax-source": "sedi", "placeholder": "Sede legale", "value": "$idsede$" ]}
+					<!-- TODO: Rimuovere possibilità di selezionare lo stato pagato obbligando l'utente ad aggiungere il movimento in prima nota -->
+					{[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatodocumento", "required": 1, "values": "query=<?php echo $query; ?>", "value": "$idstatodocumento$", "class": "unblockable", "extra": " onchange = \"if ($('#idstatodocumento option:selected').text()=='Pagato' || $('#idstatodocumento option:selected').text()=='Parzialmente pagato' ){if( confirm('<?php echo tr('Sicuro di voler impostare manualmente la fattura come pagata senza aggiungere il movimento in prima nota?'); ?>') ){ return true; }else{ $('#idstatodocumento').selectSet(<?php echo $record['idstatodocumento']; ?>); }}\" " ]}
 				</div>
-				
-				<?php if ($dir == 'uscita') {
-                        ?>
-					
-				<div class="col-md-3">
-					{[ "type": "date", "label": "<?php echo tr('Data registrazione'); ?>", "name": "data_registrazione", "required": 0, "value": "$data_registrazione$" ]}
-				</div>
-
-                <div class="col-md-3">
-                    {[ "type": "date", "label": "<?php echo tr('Data competenza'); ?>", "name": "data_competenza", "required": 0, "value": "$data_competenza$" ]}
-                </div>
-				
-				<?php
-                    } ?>
 
 				<?php if ($dir == 'entrata') {
-                        ?>
+                    ?>
 				<div class="col-md-3">
 					{[ "type": "select", "label": "<?php echo tr('Agente di riferimento'); ?>", "name": "idagente", "ajax-source": "agenti", "value": "$idagente_fattura$" ]}
 				</div>
 				<?php
-                    } ?>
+                } ?>
 			</div>
 			<hr>
 
@@ -175,11 +215,11 @@ if (empty($record['is_fiscale'])) {
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 1, "values": "query=SELECT id, CONCAT_WS(' - ', codice_modalita_pagamento_fe, descrizione) AS descrizione, (SELECT id FROM co_banche WHERE id_pianodeiconti3 = co_pagamenti.idconto_<?php echo $conto; ?> LIMIT 0,1) AS idbanca FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione ASC", "value": "$idpagamento$", "extra": "onchange=\"$('#idbanca').val( $(this).find('option:selected').data('idbanca') ).change(); \" " ]}
+					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 1, "ajax-source": "pagamenti", "value": "$idpagamento$", "extra": "onchange=\"$('#idbanca').val($(this).selectData().id_banca_<?php echo $conto; ?>).change(); \" " ]}
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Banca'); ?>", "name": "idbanca", "values": "query=SELECT id, CONCAT (nome, ' - ' , iban) AS descrizione FROM co_banche WHERE deleted_at IS NULL ORDER BY nome ASC", "value": "$idbanca$", "icon-after": "add|<?php echo Modules::get('Banche')['id']; ?>||", "extra": " <?php echo ($record['stato'] == 'Bozza') ? '' : 'disabled'; ?> " ]}
+					{[ "type": "select", "label": "<?php echo tr('Banca'); ?>", "name": "idbanca", "values": "query=SELECT id, CONCAT (nome, ' - ' , iban) AS descrizione FROM co_banche WHERE deleted_at IS NULL ORDER BY nome ASC", "value": "$idbanca$", "icon-after": "add|<?php echo Modules::get('Banche')['id']; ?>||", "extra": " <?php echo (intval($block_edit)) ? 'disabled' : ''; ?> " ]}
 				</div>
 
 
@@ -337,7 +377,7 @@ if ($tipodoc == 'Fattura accompagnatoria di vendita') {
                             $("#idvettore").attr("required", false);
                             $("#idvettore").attr("disabled", true);
                             $("label[for=idvettore]").text("'.tr('Vettore').'");
-							$("#idvettore").selectReset("- Seleziona un\'opzione -");
+							$("#idvettore").selectReset(" '.tr("Seleziona un'opzione").'");
 							$("#idvettore").next().next().find("button.bound:nth-child(1)").prop("disabled", true);
                         }else{
                             $("#idvettore").attr("required", true);
@@ -461,8 +501,8 @@ if (!$block_edit) {
             $prev_query = 'SELECT COUNT(*) AS tot FROM co_preventivi WHERE idanagrafica='.prepare($record['idanagrafica'])." AND idstato IN(SELECT id FROM co_statipreventivi WHERE descrizione='Accettato' OR descrizione='In lavorazione' OR descrizione='In attesa di conferma') AND default_revision=1 AND co_preventivi.id IN (SELECT idpreventivo FROM co_righe_preventivi WHERE co_righe_preventivi.idpreventivo = co_preventivi.id AND (qta - qta_evasa) > 0)";
             $preventivi = $dbo->fetchArray($prev_query)[0]['tot'];
             echo '
-                    <div class="tip" data-toggle="tooltip" title="'.tr('Preventivi accettati, in attesa di conferma o in lavorazione.').'" style="display:inline;">
-                        <a class="btn btn-sm btn-primary '.(!empty($preventivi) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/add_preventivo.php?id_module='.$id_module.'&id_record='.$id_record.'" data-title="Aggiungi preventivo">
+                    <div class="tip"  title="'.tr('Preventivi accettati, in attesa di conferma o in lavorazione.').'" style="display:inline;">
+                        <a class="btn btn-sm btn-primary '.(!empty($preventivi) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/add_preventivo.php?id_module='.$id_module.'&id_record='.$id_record.'" data-title="Aggiungi preventivo" data-toggle="tooltip">
                             <i class="fa fa-plus"></i> Preventivo
                         </a>
                     </div>';
@@ -471,8 +511,8 @@ if (!$block_edit) {
             $contr_query = 'SELECT COUNT(*) AS tot FROM co_contratti WHERE idanagrafica='.prepare($record['idanagrafica']).' AND idstato IN( SELECT id FROM co_staticontratti WHERE is_fatturabile = 1) AND co_contratti.id IN (SELECT idcontratto FROM co_righe_contratti WHERE co_righe_contratti.idcontratto = co_contratti.id AND (qta - qta_evasa) > 0)';
             $contratti = $dbo->fetchArray($contr_query)[0]['tot'];
             echo '
-                    <div class="tip" data-toggle="tooltip" title="'.tr('Contratti accettati, in attesa di conferma o in lavorazione.').'" style="display:inline;">
-                        <a class="btn btn-sm btn-primary '.(!empty($contratti) ? '' : ' disabled').'"  data-href="'.$rootdir.'/modules/fatture/add_contratto.php?id_module='.$id_module.'&id_record='.$id_record.'" data-title="Aggiungi contratto">
+                    <div class="tip"  title="'.tr('Contratti accettati, in attesa di conferma o in lavorazione.').'" style="display:inline;">
+                        <a class="btn btn-sm btn-primary '.(!empty($contratti) ? '' : ' disabled').'"  data-href="'.$rootdir.'/modules/fatture/add_contratto.php?id_module='.$id_module.'&id_record='.$id_record.'" data-title="Aggiungi contratto" data-toggle="tooltip">
                             <i class="fa fa-plus"></i> Contratto
                         </a>
                     </div>';
@@ -490,7 +530,7 @@ if (!$block_edit) {
         $ordini_query = 'SELECT COUNT(*) AS tot FROM or_ordini WHERE idanagrafica='.prepare($record['idanagrafica']).' AND idstatoordine IN (SELECT id FROM or_statiordine WHERE descrizione IN(\'Bozza\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoordine=(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).') AND or_ordini.id IN (SELECT idordine FROM or_righe_ordini WHERE or_righe_ordini.idordine = or_ordini.id AND (qta - qta_evasa) > 0)';
         $ordini = $dbo->fetchArray($ordini_query)[0]['tot'];
         echo '
-						<a class="btn btn-sm btn-primary'.(!empty($ordini) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/add_ordine.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="Aggiungi ordine">
+						<a class="btn btn-sm btn-primary'.(!empty($ordini) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/add_ordine.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="Aggiungi ordine">
 							<i class="fa fa-plus"></i> Ordine
                         </a>';
     }
@@ -597,15 +637,19 @@ if ($dir == 'uscita' && $fattura->isFE()) {
 <?php
 if ($dir == 'entrata') {
     echo '
-<div class="alert alert-info text-center">'.tr('Per allegare un documento alla fattura elettronica caricare il file PDF specificando come categoria "Fattura Elettronica"').'.</div>';
+<div class="alert alert-info text-center">'.tr('Per allegare un documento alla fattura elettronica caricare il file PDF specificando come categoria "Allegati Fattura Elettronica"').'.</div>';
 }
 
 echo '
 <script type="text/javascript">
 	$("#idanagrafica").change(function(){
-        session_set("superselect,idanagrafica", $(this).val(), 0);
-
-		$("#idsede").selectReset();
+        session_set("superselect,idanagrafica", $(this).val(), 0);';
+        if ($dir == 'entrata') {
+            echo '$("#idsede_destinazione").selectReset();';
+        } else {
+            echo '$("#idsede_partenza").selectReset();';
+        }
+echo '
 	});
 
     $("#ricalcola_scadenze").click(function(){
@@ -645,64 +689,51 @@ if (!empty($note_accredito)) {
 
 {( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
-<a class="btn btn-danger ask" data-backto="record-list">
-    <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
-</a>
-
 <?php
+// Eliminazione ddt solo se ho accesso alla sede aziendale
+$field_name = ($dir == 'entrata') ? 'idsede_partenza' : 'idsede_uscita';
+if (in_array($record[$field_name], $user->sedi)) {
+    ?>
+    <a class="btn btn-danger ask" data-backto="record-list">
+        <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
+    </a>
+<?php
+}
+
     echo '
 <script>
 
 $(".btn-sm[data-toggle=\"tooltip\"]").each(function() {
-
    $(this).on("click", function() {
-        form = $("#edit-form");
-        btn = $(this);
+        var form = $("#edit-form");
+        var btn = $(this);
 
         var restore = buttonLoading(btn);
 
+        var valid = submitAjax(form, {}, function() {
+            buttonRestore(btn, restore);
+        }, function() {
+            buttonRestore(btn, restore);
+        });
+        
 		// Procedo al salvataggio solo se tutti i campi obbligatori sono compilati, altrimenti mostro avviso
-	    if (form.parsley().isValid()) {
-            content_was_modified = false;
+        //form.find("input:disabled, select:disabled").removeAttr("disabled");
 
-            form.find("input:disabled, select:disabled").removeAttr("disabled");
-
-            $.ajax({
-                url: globals.rootdir + "/actions.php?id_module=" + globals.id_module ,
-                cache: false,
-                type: "POST",
-                processData: false,
-                dataType : "html",
-                data:  form.serialize(),
-                success: function(data) {
-                    $("#main_loading").fadeOut();
-
-                    buttonRestore(btn, restore);
-                },
-                error: function(data) {
-                    $("#main_loading").fadeOut();
-
-                    swal("'.tr('Errore').'", "'.tr('Errore durante il salvataggio').'", "error");
-
-                    buttonRestore(btn, restore);
-                }
-            });
-
-	    } else {
+	    if(!valid) {
 			swal({
                 type: "error",
                 title: "'.tr('Errore').'",
                 text:  "'.tr('Alcuni campi obbligatori non sono stati compilati correttamente').'.",
             });
-
-            $("#bs-popup").one("show.bs.modal", function (e) {
+			 
+            $("#bs-popup").one("show.bs.modal", function (e) {                
                 return e.preventDefault();
             });
-
-            buttonRestore(btn, restore);
 		}
-
+	   
+	    $("#bs-popup").one("show.bs.modal", function (e) {
+            buttonRestore(btn, restore);            
+        });
 	});
 });
 </script>';
-?>

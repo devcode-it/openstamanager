@@ -108,4 +108,11 @@ switch (get('op')) {
         echo json_encode($response);
 
         break;
+
+    case 'flash':
+        $response = flash()->getMessages();
+
+        echo json_encode($response);
+
+        break;
 }

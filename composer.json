@@ -1,11 +1,12 @@
   {
     "name": "devcode-it/openstamanager",
-    "description": "Gestionale open-source per assistenza tecnica e fatturazione",
+    "description": "Gestionale open-source per assistenza tecnica e fatturazione elettronica",
     "license": "GPL-3.0",
     "keywords": [
         "gestionale",
         "assistenza tecnica",
-        "fatturazione"
+        "fatturazione elettronica",
+        "open-source"
     ],
     "homepage": "https://www.openstamanager.com/",
     "authors": [{
@@ -60,9 +61,8 @@
         "symfony/var-dumper": "^3.3"
     },
     "require-dev": {
-        "codeception/codeception": "^2.4",
-        "friendsofphp/php-cs-fixer": "^2.10",
-        "phpmd/phpmd": "2.6.0"
+        "codeception/codeception": "^3.0",
+        "friendsofphp/php-cs-fixer": "^2.10"
     },
     "autoload": {
         "psr-4": {

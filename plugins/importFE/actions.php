@@ -5,30 +5,32 @@ include_once __DIR__.'/../../core.php';
 use Plugins\ImportFE\FatturaElettronica;
 use Plugins\ImportFE\Interaction;
 
+$file = null;
 switch (filter('op')) {
     case 'save':
         $content = file_get_contents($_FILES['blob']['tmp_name']);
         $file = FatturaElettronica::store($_FILES['blob']['name'], $content);
 
-        if (FatturaElettronica::isValid($file)) {
-            echo json_encode([
-                'filename' => $file,
-            ]);
-        } else {
-            echo json_encode([
-                'already' => 1,
-            ]);
+        // no break
+    case 'prepare':
+        if (!isset($file)) {
+            $name = filter('name');
+            $file = Interaction::getImportXML($name);
         }
 
-        break;
-
-    case 'prepare':
-        $name = get('name');
-        $file = Interaction::getImportXML($name);
-
         if (FatturaElettronica::isValid($file)) {
+            // Individuazione ID fisico
+            $files = Interaction::fileToImport();
+            foreach ($files as $key => $value) {
+                if ($value['name'] == $file) {
+                    $index = $key;
+
+                    break;
+                }
+            }
+
             echo json_encode([
-                'filename' => $file,
+                'id' => $index + 1,
             ]);
         } else {
             echo json_encode([
@@ -52,6 +54,7 @@ switch (filter('op')) {
             'id_pagamento' => post('pagamento'),
             'id_segment' => post('id_segment'),
             'id_tipo' => post('id_tipo'),
+            'ref_fattura' => post('ref_fattura'),
             'data_registrazione' => post('data_registrazione'),
             'articoli' => post('articoli'),
             'iva' => post('iva'),
@@ -76,7 +79,8 @@ switch (filter('op')) {
             if ($process_result != '') {
                 flash()->error($process_result);
                 redirect(ROOTDIR.'/controller.php?id_module='.$id_module);
-                exit;
+
+                return;
             }
         }
 
@@ -94,7 +98,7 @@ switch (filter('op')) {
         // Processo il file ricevuto
         if (Interaction::isEnabled()) {
             $process_result = Interaction::processXML($name);
-            if (!empty($process_resul)) {
+            if (!empty($process_result)) {
                 flash()->error($process_result);
             }
         }

@@ -74,7 +74,7 @@ function backup(){
 }
 
 // Caricamento
-function loadSize(name, id){
+function loadSize(number, id){
     $("#" + id).html("'.tr('Calcolo in corso').'...");
 
     $.ajax({
@@ -83,7 +83,7 @@ function loadSize(name, id){
         data: {
             id_module: globals.id_module,
             op: "size",
-            file: name,
+            number: number,
         },
         success: function(data) {
             $("#" + id).html(data);
@@ -127,7 +127,7 @@ echo '
                 <form action="" method="post" enctype="multipart/form-data" id="restore">
                     <input type="hidden" name="op" value="restore">
 
-                    <label><input type="file" name="blob" id="blob"></label>
+			        {[ "type": "file", "name": "blob", "required": 1, "accept": ".zip" ]}
 
                     <button type="button" class="btn btn-primary pull-right" onclick="restore()">
                         <i class="fa fa-upload"></i> '.tr('Ripristina').'...
@@ -143,11 +143,11 @@ if (file_exists($backup_dir)) {
     $backups_zip = [];
     $backups_file = [];
 
-    foreach ($backups as $backup) {
+    foreach ($backups as $key => $backup) {
         if (ends_with($backup, '.zip')) {
-            $backups_zip[] = $backup;
+            $backups_zip[$key] = $backup;
         } else {
-            $backups_file[] = $backup;
+            $backups_file[$key] = $backup;
         }
     }
 
@@ -183,17 +183,17 @@ if (file_exists($backup_dir)) {
             </small></p>
             
             <script>
-                loadSize("'.$name.'", "c-'.$id.'");
+                loadSize("'.$id.'", "c-'.$id.'");
             </script>
             
-            <a class="btn btn-primary" href="'.$rootdir.'/modules/backups/actions.php?op=getfile&file='.$name.'" target="_blank"><i class="fa fa-download"></i> '.tr('Scarica').'</a>
+            <a class="btn btn-primary" href="'.$rootdir.'/modules/backups/actions.php?op=getfile&number='.$id.'" target="_blank"><i class="fa fa-download"></i> '.tr('Scarica').'</a>
 
             <div class="pull-right">
-                <a class="btn btn-warning ask" data-backto="record-edit" data-method="post" data-op="restore" data-zip="'.$name.'" data-msg="'.tr('Vuoi ripristinare questo backup?').'" data-button="Ripristina" data-class="btn btn-lg btn-warning">
+                <a class="btn btn-warning ask" data-backto="record-edit" data-method="post" data-op="restore" data-number="'.$id.'" data-msg="'.tr('Vuoi ripristinare questo backup?').'" data-button="Ripristina" data-class="btn btn-lg btn-warning">
                     <i class="fa fa-upload"></i>
                 </a>
 
-                <a class="btn btn-danger ask" title="'.tr('Elimina backup').'" data-backto="record-list" data-op="del" data-file="'.$name.'">
+                <a class="btn btn-danger ask" title="'.tr('Elimina backup').'" data-backto="record-list" data-op="del" data-number="'.$id.'">
                     <i class="fa fa-trash"></i>
                 </a>
             </div>
@@ -233,17 +233,17 @@ if (file_exists($backup_dir)) {
             </small></p>
             
             <script>
-                loadSize("'.$name.'", "n-'.$id.'");
+                loadSize("'.$id.'", "n-'.$id.'");
             </script>
 
             <a class="btn btn-sm btn-warning disabled" href="javascript:;"><i class="fa fa-times"></i> '.tr('Non scaricabile').'</a>
 
             <div class="pull-right">
-                <a class="btn btn-warning ask" data-backto="record-edit" data-method="post" data-op="restore" data-folder="'.$name.'" data-msg="'.tr('Vuoi ripristinare questo backup?').'" data-button="Ripristina" data-class="btn btn-lg btn-warning">
+                <a class="btn btn-warning ask" data-backto="record-edit" data-method="post" data-op="restore" data-number="'.$id.'" data-msg="'.tr('Vuoi ripristinare questo backup?').'" data-button="Ripristina" data-class="btn btn-lg btn-warning">
                     <i class="fa fa-upload"></i>
                 </a>
 
-                <a class="btn btn-danger ask" title="'.tr('Elimina backup').'" data-backto="record-list" data-op="del" data-file="'.$name.'">
+                <a class="btn btn-danger ask" title="'.tr('Elimina backup').'" data-backto="record-list" data-op="del" data-number="'.$id.'">
                     <i class="fa fa-trash"></i>
                 </a>
             </div>

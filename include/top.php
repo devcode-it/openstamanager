@@ -89,23 +89,39 @@ if (Auth::check()) {
         'hookMultiple' => tr('Hai _NUM_ notifiche'),
         'hookSingle' => tr('Hai 1 notifica'),
         'hookNone' => tr('Nessuna notifica'),
+        'singleCalendar' => tr("E' presente un solo periodo!"),
     ];
     foreach ($translations as $key => $value) {
         echo '
-                '.$key.': \''.addslashes($value).'\',';
+                '.$key.': "'.addslashes($value).'",';
     }
     echo '
+            password: {
+                    "wordMinLength": "'.tr('La tua password è troppo corta').'",
+                    "wordMaxLength": "'.tr('La tua password è troppo lunga').'",
+                    "wordInvalidChar": "'.tr('La tua password contiene un carattere non valido').'",
+                    "wordNotEmail": "'.tr('Non usare la tua e-mail come password').'",
+                    "wordSimilarToUsername": "'.tr('La tua password non può contenere il tuo nome').'",
+                    "wordTwoCharacterClasses": "'.tr('Usa classi di caratteri diversi').'",
+                    "wordRepetitions": "'.tr('Troppe ripetizioni').'",
+                    "wordSequences": "'.tr('La tua password contiene sequenze').'",
+                    "errorList": "'.tr('Errori').':",
+                    "veryWeak": "'.tr('Molto debole').'",
+                    "weak": "'.tr('Debole').'",
+                    "normal": "'.tr('Normale').'",
+                    "medium": "'.tr('Media').'",
+                    "strong": "'.tr('Forte').'",
+                    "veryStrong": "'.tr('Molto forte').'",
+                },
             };
 			globals = {
-                rootdir: \''.$rootdir.'\',
-                js: \''.$paths['js'].'\',
-                css: \''.$paths['css'].'\',
-                img: \''.$paths['img'].'\',
+                rootdir: "'.$rootdir.'",
+                js: "'.$paths['js'].'",
+                css: "'.$paths['css'].'",
+                img: "'.$paths['img'].'",
 
-                id_module: \''.$id_module.'\',
-                id_record: \''.$id_record.'\',
-
-                order_manager_id: \''.($dbo->isInstalled() ? Modules::get('Stato dei serivizi')['id'] : '').'\',
+                id_module: "'.$id_module.'",
+                id_record: "'.$id_record.'",
 
                 cifre_decimali: '.setting('Cifre decimali per importi').',
 
@@ -115,16 +131,20 @@ if (Auth::check()) {
 
                 search: search,
                 translations: translations,
-                locale: \''.$lang.'\',
-				full_locale: \''.$lang.'_'.strtoupper($lang).'\',
+                locale: "'.$lang.'",
+				full_locale: "'.$lang.'_'.strtoupper($lang).'",
 
-                start_date: \''.Translator::dateToLocale($_SESSION['period_start']).'\',
-                end_date: \''.Translator::dateToLocale($_SESSION['period_end']).'\',
+                start_date: "'.$_SESSION['period_start'].'",
+                start_date_formatted: "'.Translator::dateToLocale($_SESSION['period_start']).'",
+                end_date: "'.$_SESSION['period_end'].'",
+                end_date_formatted: "'.Translator::dateToLocale($_SESSION['period_end']).'",
 
                 ckeditorToolbar: [
 					["Undo","Redo","-","Cut","Copy","Paste","PasteText","PasteFromWord","-","Scayt", "-","Link","Unlink","-","Bold","Italic","Underline","Superscript","SpecialChar","HorizontalRule","-","JustifyLeft","JustifyCenter","JustifyRight","JustifyBlock","-","NumberedList","BulletedList","Outdent","Indent","Blockquote","-","Styles","Format","Image","Table", "TextColor", "BGColor" ],
 				],
-
+				
+                order_manager_id: "'.($dbo->isInstalled() ? Modules::get('Stato dei servizi')['id'] : '').'",
+                dataload_page_buffer: '.setting('Lunghezza in pagine del buffer Datatables').',
                 tempo_attesa_ricerche: '.setting('Tempo di attesa ricerche in secondi').',
             };
 		</script>';
@@ -132,8 +152,31 @@ if (Auth::check()) {
     echo '
         <script>
             globals = {
-                locale: \''.$lang.'\',
-                full_locale: \''.$lang.'_'.strtoupper($lang).'\',
+                rootdir: "'.$rootdir.'",
+                
+                search: {},
+                translations: {
+                    password: {
+                        "wordMinLength": "'.tr('La tua password è troppo corta').'",
+                        "wordMaxLength": "'.tr('La tua password è troppo lunga').'",
+                        "wordInvalidChar": "'.tr('La tua password contiene un carattere non valido').'",
+                        "wordNotEmail": "'.tr('Non usare la tua e-mail come password').'",
+                        "wordSimilarToUsername": "'.tr('La tua password non può contenere il tuo nome').'",
+                        "wordTwoCharacterClasses": "'.tr('Usa classi di caratteri diversi').'",
+                        "wordRepetitions": "'.tr('Troppe ripetizioni').'",
+                        "wordSequences": "'.tr('La tua password contiene sequenze').'",
+                        "errorList": "'.tr('Errori').':",
+                        "veryWeak": "'.tr('Molto debole').'",
+                        "weak": "'.tr('Debole').'",
+                        "normal": "'.tr('Normale').'",
+                        "medium": "'.tr('Media').'",
+                        "strong": "'.tr('Forte').'",
+                        "veryStrong": "'.tr('Molto forte').'",
+                    },
+                },
+                
+                locale: "'.$lang.'",
+                full_locale: "'.$lang.'_'.strtoupper($lang).'",
             };
         </script>';
 }
@@ -267,7 +310,7 @@ if (Auth::check()) {
                                 <i class="fa fa-info"></i>
                             </a></li>
                             
-                            <li><a href="'.$rootdir.'/index.php?op=logout" class="bg-red tip" title="'.tr('Esci').'">
+                            <li><a href="'.$rootdir.'/index.php?op=logout" onclick="sessionStorage.clear()" class="bg-red tip" title="'.tr('Esci').'">
                                 <i class="fa fa-power-off"></i>
                             </a></li>
                         </ul>
@@ -281,18 +324,27 @@ if (Auth::check()) {
                 <section class="sidebar">
 
                     <!-- Sidebar user panel -->
-                    <div class="user-panel text-center info">
+                    <div class="user-panel text-center info" style="height: 60px">
                         <div class="info">
                             <p><a href="'.$rootdir.'/modules/utenti/info.php">
-                                <i class="fa fa-user"></i>
                                 '.$user['username'].'
                             </a></p>
                             <p id="datetime"></p>
                         </div>
 
-                        <div class="image">
-                            <img src="'.$paths['img'].'/logo.png" class="img-circle img-responsive" alt="'.tr('OpenSTAManager').'" />
-                        </div>
+                        <a class="image" href="'.$rootdir.'/modules/utenti/info.php">';
+
+    $user_photo = $user->photo;
+    if ($user_photo) {
+        echo '
+                            <img src="'.$user_photo.'" class="img-responsive" alt="'.$user['username'].'" />';
+    } else {
+        echo '
+                            <i class="fa fa-user fa-3x pull-left" alt="'.tr('OpenSTAManager').'"></i>';
+    }
+
+    echo '
+                        </a>
                     </div>
 
                     <!-- search form -->

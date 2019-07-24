@@ -17,14 +17,21 @@ class InvoiceHook extends HookManager
     public function response($results)
     {
         $count = count($results);
+        $notify = false;
 
         $module = Modules::get('Fatture di acquisto');
-        $plugin = $module->plugins->first(function ($value, $key) {
-            return $value->name == 'Fatturazione Elettronica';
-        });
+        $plugins = $module->plugins;
 
-        $link = ROOTDIR.'/controller.php?id_module='.$module->id.'#tab_'.$plugin->id;
-        $icon = 'fa fa-file-text-o';
+        if (!empty($plugins)) {
+            $notify = !empty($count);
+
+            $plugin = $plugins->first(function ($value, $key) {
+                return $value->name == 'Fatturazione Elettronica';
+            });
+
+            $link = ROOTDIR.'/controller.php?id_module='.$module->id.'#tab_'.$plugin->id;
+        }
+
         $message = tr('Ci sono _NUM_ fatture passive da importare', [
             '_NUM_' => $count,
         ]);
@@ -33,7 +40,7 @@ class InvoiceHook extends HookManager
             'icon' => 'fa fa-file-text-o text-yellow',
             'link' => $link,
             'message' => $message,
-            'notify' => !empty($count),
+            'notify' => $notify,
         ];
     }
 }

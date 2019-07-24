@@ -21,7 +21,7 @@ echo '
     <ul class="dropdown-menu dropdown-menu-right">
 		<li>
 		    <a class="'.($disabled ? '' : 'disabled').'" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=ordine" data-toggle="modal" data-title="'.tr('Crea ordine').'">
-                <i class="fa fa-file"></i>&nbsp;'.tr('Ordine').'
+                <i class="fa fa-file-o"></i>&nbsp;'.tr('Ordine').'
             </a>
 		</li>
 		

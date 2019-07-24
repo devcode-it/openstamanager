@@ -9,11 +9,11 @@ $documento = Preventivo::find($id_record);
 
 // Impostazioni per la gestione
 $options = [
-    'op' => 'editriga',
+    'op' => 'manage_riga',
     'action' => 'edit',
     'dir' => $documento->direzione,
     'idanagrafica' => $documento['idanagrafica'],
-    'totale' => $documento->totale,
+    'totale_imponibile' => $documento->totale_imponibile,
 ];
 
 // Dati della riga
@@ -24,17 +24,18 @@ $result = $riga->toArray();
 $result['prezzo'] = $riga->prezzo_unitario_vendita;
 
 // Importazione della gestione dedicata
-
-// Importazione della gestione dedicata
 $file = 'riga';
 if ($riga->isDescrizione()) {
     $file = 'descrizione';
+
+    $options['op'] = 'manage_descrizione';
 } elseif ($riga->isArticolo()) {
     $file = 'articolo';
+
+    $options['op'] = 'manage_articolo';
 } elseif ($riga->isSconto()) {
     $file = 'sconto';
 
     $options['op'] = 'manage_sconto';
 }
-
 echo App::load($file.'.php', $result, $options);

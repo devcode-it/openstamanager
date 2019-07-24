@@ -62,7 +62,9 @@ if (isset($_SESSION['period']['week'])) {
     $where = '  (in_interventi_tecnici.orario_inizio) <= '.prepare($maxdate).' AND  (in_interventi_tecnici.orario_inizio) >= '.prepare($mindate).' AND ';
 }
 
-$report_name = sanitizeFilename('dashboard_'.$year.'_'.$month.'.pdf');
+$custom = [
+    'periodo' => $month.'-'.$year,
+];
 
 //$date_start = $_SESSION['period_start'];
 //$date_end = $_SESSION['period_end'];

@@ -10,7 +10,7 @@ $upload_dir = DOCROOT.'/'.Uploads::getDirectory($id_module, $id_plugin);
 
 $database->beginTransaction();
 
-// GESTIONE UPLOAD
+// Upload allegati e rimozione
 if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
     // Controllo sui permessi di scrittura per il modulo
     if (Modules::getPermission($id_module) != 'rw') {
@@ -65,16 +65,44 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
 
         redirect(ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.((!empty($options['id_plugin'])) ? '#tab_'.$options['id_plugin'] : ''));
     }
-} elseif (filter('op') == 'download_file') {
+}
+
+// Download allegati
+elseif (filter('op') == 'download_file') {
     $rs = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module='.prepare($id_module).' AND id='.prepare(filter('id')).' AND filename='.prepare(filter('filename')));
 
     download($upload_dir.'/'.$rs[0]['filename'], $rs[0]['original']);
-} elseif (post('op') == 'send-email') {
+}
+
+// Validazione dati
+elseif (filter('op') == 'validate') {
+    // Lettura informazioni di base
+    $init = $structure->filepath('init.php');
+    if (!empty($init)) {
+        include_once $init;
+    }
+
+    // Validazione del campo
+    $validation = $structure->filepath('validation.php');
+    if (!empty($validation)) {
+        include_once $validation;
+    }
+
+    echo json_encode($response);
+
+    return;
+}
+
+// Invio email
+elseif (post('op') == 'send-email') {
     $id_template = post('template');
 
     // Inizializzazione
     $mail = new Notifications\EmailNotification();
     $mail->setTemplate($id_template, $id_record);
+
+    // Rimozione allegati predefiniti
+    $mail->setAttachments([]);
 
     // Destinatari
     $receivers = array_clean(post('destinatari'));

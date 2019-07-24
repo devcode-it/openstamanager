@@ -205,7 +205,7 @@ echo '
             inputValidator: function(value) {
                 return new Promise((resolve) => {
                     if (value === "") {
-                        alert ("Seleziona un tipo intervento");
+                        alert ("'.tr('Seleziona un tipo intervento').'");
                         $(".swal2-select").attr("disabled", false);
                         $(".swal2-confirm").attr("disabled", false);
                         $(".swal2-cancel").attr("disabled", false);

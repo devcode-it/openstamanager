@@ -4,7 +4,7 @@ include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
     case 'clienti':
-            $query = 'SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale) AS descrizione, idtipointervento_default FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY ragione_sociale';
+            $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')'))) AS descrizione, idtipointervento_default FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY ragione_sociale";
 
             foreach ($elements as $element) {
                 $filter[] = 'an_anagrafiche.idanagrafica='.prepare($element);
@@ -200,7 +200,7 @@ switch ($resource) {
 
     case 'sedi':
         if (isset($superselect['idanagrafica'])) {
-            $query = "SELECT * FROM (SELECT 0 AS id, 'Sede legale' AS descrizione UNION SELECT id, CONCAT_WS(' - ', nomesede, citta) FROM an_sedi |where|) AS tab |filter| ORDER BY descrizione";
+            $query = "SELECT * FROM (SELECT '0' AS id, CONCAT_WS(' - ', 'Sede legale' , (SELECT CONCAT (citta, ' (', ragione_sociale,')') FROM an_anagrafiche |where|)) AS descrizione UNION SELECT id, CONCAT_WS(' - ', nomesede, citta) FROM an_sedi |where|) AS tab |filter| ORDER BY descrizione";
 
             foreach ($elements as $element) {
                 $filter[] = 'id='.prepare($element);
@@ -213,6 +213,27 @@ switch ($resource) {
                 $search_fields[] = 'citta LIKE '.prepare('%'.$search.'%');
             }
         }
+        break;
+
+    case 'sedi_azienda':
+        if (isset($superselect['idanagrafica'])) {
+            $user = Auth::user();
+
+            $query = "SELECT * FROM (SELECT '0' AS id, CONCAT_WS(' - ', 'Sede legale' , (SELECT CONCAT (citta, ' (', ragione_sociale,')') FROM an_anagrafiche |where|)) AS descrizione UNION SELECT id, CONCAT_WS(' - ', nomesede, citta) FROM an_sedi |where|) AS tab |filter| ORDER BY descrizione";
+
+            foreach ($elements as $element) {
+                $filter[] = 'id='.prepare($element);
+            }
+
+            $where[] = 'idanagrafica='.prepare($user->idanagrafica);
+            $where[] = 'id IN('.implode(',', $user->sedi).')';
+
+            if (!empty($search)) {
+                $search_fields[] = 'nomesede LIKE '.prepare('%'.$search.'%');
+                $search_fields[] = 'citta LIKE '.prepare('%'.$search.'%');
+            }
+        }
+
         break;
 
     case 'referenti':

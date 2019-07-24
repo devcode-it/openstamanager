@@ -9,17 +9,8 @@ $smtp = Mail::get($template['id_smtp']);
 $body = $template['body'];
 $subject = $template['subject'];
 
-$variables = Mail::getTemplateVariables($template['id'], $id_record);
-$email = $variables['email'];
-
-// Sostituzione delle variabili di base
-$replaces = [];
-foreach ($variables as $key => $value) {
-    $replaces['{'.$key.'}'] = $value;
-}
-
-$body = str_replace(array_keys($replaces), array_values($replaces), $body);
-$subject = str_replace(array_keys($replaces), array_values($replaces), $subject);
+$body = $module->replacePlaceholders($id_record, $template['body']);
+$subject = $module->replacePlaceholders($id_record, $template['subject']);
 
 // Campi mancanti
 $campi_mancanti = [];

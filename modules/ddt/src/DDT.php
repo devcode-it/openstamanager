@@ -2,6 +2,8 @@
 
 namespace Modules\DDT;
 
+use Auth;
+use Common\Components\Description;
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
 use Traits\RecordTrait;
@@ -25,6 +27,8 @@ class DDT extends Document
     public static function build(Anagrafica $anagrafica, Tipo $tipo_documento, $data)
     {
         $model = parent::build();
+
+        $user = Auth::user();
 
         $stato_documento = Stato::where('descrizione', 'Bozza')->first();
 
@@ -64,6 +68,13 @@ class DDT extends Document
 
         $model->numero = static::getNextNumero($data, $direzione);
         $model->numero_esterno = static::getNextNumeroSecondario($data, $direzione);
+
+        // Imposto, come sede aziendale, la prima sede disponibile come utente
+        if ($direzione == 'entrata') {
+            $model->idsede_partenza = $user->sedi[0];
+        } else {
+            $model->idsede_destinazione = $user->sedi[0];
+        }
 
         $model->save();
 
@@ -118,6 +129,36 @@ class DDT extends Document
     public function descrizioni()
     {
         return $this->hasMany(Components\Descrizione::class, 'idddt');
+    }
+
+    /**
+     * Effettua un controllo sui campi del documento.
+     * Viene richiamatp dalle modifiche alle righe del documento.
+     *
+     * @param Description $trigger
+     */
+    public function fixStato(Description $trigger)
+    {
+        parent::fixStato($trigger);
+
+        if (setting('Cambia automaticamente stato ddt fatturati')) {
+            $righe = $this->getRighe();
+
+            $qta_evasa = $righe->sum('qta_evasa');
+            $qta = $righe->sum('qta');
+            $parziale = $qta != $qta_evasa;
+
+            // Impostazione del nuovo stato
+            if ($qta_evasa == 0) {
+                $descrizione = 'Bozza';
+            } else {
+                $descrizione = $parziale ? 'Parzialmente fatturato' : 'Fatturato';
+            }
+
+            $stato = Stato::where('descrizione', $descrizione)->first();
+            $this->stato()->associate($stato);
+            $this->save();
+        }
     }
 
     // Metodi statici

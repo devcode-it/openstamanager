@@ -7,7 +7,7 @@ unset($_SESSION['superselect']['idanagrafica']);
 unset($_SESSION['superselect']['idsede']);
 
 // Calcolo del nuovo codice
-$new_codice = \Modules\Interventi\Intervento::getNextCodice();
+$new_codice = \Modules\Interventi\Intervento::getNextCodice($data);
 
 // Se ho passato l'idanagrafica, carico il tipo di intervento di default
 $idanagrafica = filter('idanagrafica');
@@ -31,7 +31,10 @@ if (!empty($idanagrafica)) {
     $rs = $dbo->fetchArray('SELECT idtipointervento_default, idzona FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
     $idtipointervento = $rs[0]['idtipointervento_default'];
     $idzona = $rs[0]['idzona'];
-    $idstatointervento = 'WIP';
+
+    $stato = $dbo->fetchArray("SELECT * FROM in_statiintervento WHERE descrizione = 'In programmazione'");
+    $idstatointervento = $stato['idstatointervento'];
+
     $richiesta = filter('richiesta');
 }
 
@@ -102,7 +105,7 @@ elseif (!empty($idcontratto) && !empty($idcontratto_riga)) {
     }
 
     // Seleziono "In programmazione" come stato
-    $rs = $dbo->fetchArray("SELECT * FROM in_statiintervento WHERE idstatointervento='WIP'");
+    $rs = $dbo->fetchArray("SELECT * FROM in_statiintervento WHERE descrizione = 'In programmazione'");
     $idstatointervento = $rs[0]['idstatointervento'];
 }
 
@@ -355,7 +358,7 @@ if (!empty($id_intervento)) {
 		session_set('superselect,idanagrafica', $(this).val(), 0);
 
         var value = !$(this).val() ? true : false;
-        var placeholder = !$(this).val() ? '<?php echo tr('Seleziona prima un cliente...'); ?>' : '<?php echo tr("-Seleziona un\'opzione-"); ?>';
+        var placeholder = !$(this).val() ? "<?php echo tr('Seleziona prima un cliente...'); ?>" : "<?php echo tr("Seleziona un'opzione"); ?>";
 
 		$("#bs-popup #idsede").prop("disabled", value);
 		$("#bs-popup #idsede").selectReset(placeholder);

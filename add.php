@@ -37,7 +37,16 @@ echo '
 <script>
 $(document).ready(function(){
     var form = $("#custom_fields_top-add").parent().find("form").first();
-
+    
+    // Rimozione select inizializzati
+    $("#custom_fields_bottom-add").find("select").each(function () {
+        $(this).select2().select2("destroy");
+    });
+    
+    $("#custom_fields_bottom-add").find("select").each(function () {
+        $(this).select2().select2("destroy");
+    });
+                    
     // Campi a inizio form
     form.prepend($("#custom_fields_top-add").html());
 
@@ -53,6 +62,8 @@ $(document).ready(function(){
     }
 
     last.after($("#custom_fields_bottom-add").html());
+    
+    start_superselect();
 });
 </script>';
 
@@ -69,27 +80,19 @@ $(document).ready(function(){
 
     echo '
 
-    $("#form_'.$id_module.'-'.$id_plugin.'").find("form").ajaxForm({
-        url: globals.rootdir + "/actions.php",
-        beforeSubmit: function(arr, $form, options) {
-            return $form.parsley().validate();
-        },
-        data: data,
-        type: "post",
-        success: function(data){
-            data = data.trim();
-
-            if(data && $("#'.get('select').'").val() !== undefined ) {
-                result = JSON.parse(data);
-                $("#'.get('select').'").selectSetNew(result.id, result.text);
+    $("#form_'.$id_module.'-'.$id_plugin.'").find("form").submit(function () {
+        submitAjax(this, data, function(response) {
+            // Selezione automatica nuovo valore per il select
+            select = "#'.get('select').'";
+            if ($(select).val() !== undefined) {
+                $(select).selectSetNew(response.id, response.text);
             }
 
             $("#bs-popup2").modal("hide");
-        },
-        error: function(data) {
-            alert("'.tr('Errore').': " + data);
-        }
-    });
+        });
+        
+        return false;
+    })
 });
 </script>';
 }

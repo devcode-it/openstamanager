@@ -560,7 +560,7 @@ UPDATE `zz_views` SET `query` = 'IF((SELECT COUNT(t.numero_esterno) FROM co_docu
 ALTER TABLE `co_preventivi`  ADD `master_revision` INT NOT NULL  AFTER `tipo_sconto_globale`,  ADD `default_revision` TINYINT(1) NOT NULL  AFTER `master_revision`;
 
 -- Plugin revisioni
-INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`, `position`, `script`, `enabled`, `default`, `order`, `compatibility`, `version`, `options2`, `options`, `directory`, `help`) VALUES (NULL, 'Revisioni', 'Revisioni', 13, 13, 'tab', '', 1, 0, 0, '', '', NULL, 'custom', 'revisioni', '');
+INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`, `position`, `script`, `enabled`, `default`, `order`, `compatibility`, `version`, `options2`, `options`, `directory`, `help`) VALUES (NULL, 'Revisioni', 'Revisioni', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi'), (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi'), 'tab', '', 1, 0, 0, '', '', NULL, 'custom', 'revisioni', '');
 
 -- Modifica modulo preventivi per revisioni
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_preventivi` WHERE 1=1 AND default_revision=1 HAVING 2=2 AND ((\'|period_start|\' >= `data_bozza` AND \'|period_start|\' <= `data_conclusione`) OR (\'|period_end|\' >= `data_bozza` AND \'|period_end|\' <= `data_conclusione`) OR (`data_bozza` >= \'|period_start|\' AND `data_bozza` <= \'|period_end|\') OR (`data_conclusione` >= \'|period_start|\' AND `data_conclusione` <= \'|period_end|\') OR (`data_bozza` >= \'|period_start|\' AND `data_conclusione` = \'0000-00-00\')) ORDER BY `id` DESC' WHERE `zz_modules`.`name` = 'Preventivi';

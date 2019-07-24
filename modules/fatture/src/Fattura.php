@@ -2,6 +2,7 @@
 
 namespace Modules\Fatture;
 
+use Auth;
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Fatture\Components\Riga;
@@ -34,6 +35,8 @@ class Fattura extends Document
     public static function build(Anagrafica $anagrafica, Tipo $tipo_documento, $data, $id_segment)
     {
         $model = parent::build();
+
+        $user = Auth::user();
 
         $stato_documento = Stato::where('descrizione', 'Bozza')->first();
 
@@ -80,11 +83,18 @@ class Fattura extends Document
 
         // Salvataggio delle informazioni
         $model->data = $data;
+        $model->data_registrazione = $data;
+        $model->data_competenza = $data;
         $model->id_segment = $id_segment;
 
         $model->idconto = $id_conto;
-        $model->idsede = $id_sede;
 
+        // Imposto, come sede aziendale, la prima sede disponibile come utente
+        if ($direzione == 'entrata') {
+            $model->idsede_destinazione = $user->sedi[0];
+        } else {
+            $model->idsede_partenza = $user->sedi[0];
+        }
         $model->addebita_bollo = setting('Addebita marca da bollo al cliente');
 
         $id_ritenuta_contributi = ($tipo_documento->dir == 'entrata') ? setting('Ritenuta contributi') : null;
@@ -200,6 +210,29 @@ class Fattura extends Document
         return $this->calcola('ritenuta_contributi');
     }
 
+    /**
+     * Restituisce i dati aggiuntivi per la fattura elettronica dell'elemento.
+     *
+     * @return array
+     */
+    public function getDatiAggiuntiviFEAttribute()
+    {
+        $result = json_decode($this->attributes['dati_aggiuntivi_fe'], true);
+
+        return (array) $result;
+    }
+
+    /**
+     * Imposta i dati aggiuntivi per la fattura elettronica dell'elemento.
+     */
+    public function setDatiAggiuntiviFEAttribute($values)
+    {
+        $values = (array) $values;
+        $dati = array_deep_clean($values);
+
+        $this->attributes['dati_aggiuntivi_fe'] = json_encode($dati);
+    }
+
     // Relazioni Eloquent
 
     public function anagrafica()
@@ -274,7 +307,9 @@ class Fattura extends Document
 
     public function isFE()
     {
-        return !empty($this->progressivo_invio);
+        $file = $this->uploads()->where('name', 'Fattura Elettronica')->first();
+
+        return !empty($this->progressivo_invio) and file_exists($file->filepath);
     }
 
     /**
@@ -314,8 +349,8 @@ class Fattura extends Document
         $direzione = $this->tipo->dir;
 
         foreach ($rate as $rata) {
-            $importo = $direzione == 'uscita' ? -$rata['importo'] : $rata['importo'];
             $scadenza = $rata['scadenza'];
+            $importo = $direzione == 'uscita' ? -$rata['importo'] : $rata['importo'];
 
             self::registraScadenza($this, $importo, $scadenza, $is_pagato);
         }
@@ -332,7 +367,7 @@ class Fattura extends Document
      */
     public static function registraScadenza(Fattura $fattura, $importo, $scadenza, $is_pagato, $type = 'fattura')
     {
-        //Calcolo la descrizione
+        // Individuazione della descrizione
         $descrizione = database()->fetchOne("SELECT CONCAT(co_tipidocumento.descrizione, CONCAT(' numero ', IF(numero_esterno!='', numero_esterno, numero))) AS descrizione FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='".$fattura->id."'")['descrizione'];
 
         database()->insert('co_scadenziario', [
@@ -406,6 +441,16 @@ class Fattura extends Document
         return parent::save($options);
     }
 
+    public function delete()
+    {
+        $result = parent::delete();
+
+        $this->rimuoviScadenze();
+        elimina_movimento($this->id);
+
+        return $result;
+    }
+
     /**
      * Restituisce l'elenco delle note di credito collegate.
      *
@@ -431,7 +476,7 @@ class Fattura extends Document
      *
      * @return bool
      */
-    public function isNotaDiAccredito()
+    public function isNota()
     {
         return $this->tipo->reversed == 1;
     }
@@ -514,7 +559,7 @@ class Fattura extends Document
     public function getBollo()
     {
         if (isset($this->bollo)) {
-            return        $this->bollo;
+            return $this->bollo;
         }
 
         $righe_bollo = $this->getRighe()->filter(function ($item, $key) {
@@ -536,7 +581,7 @@ class Fattura extends Document
         return $marca_da_bollo;
     }
 
-    protected function manageRigaMarcaDaBollo()
+    public function manageRigaMarcaDaBollo()
     {
         $riga = $this->rigaBollo;
 

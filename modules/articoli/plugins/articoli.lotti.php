@@ -4,6 +4,12 @@ include_once __DIR__.'/../../../core.php';
 
 // Gestione dei lotti degli articoli
 
+$record['abilita_serial'] = ($record['serial'] > 0) ? 1 : $record['abilita_serial'];
+if (empty($record['abilita_serial'])) {
+    echo '
+<script>$("#link-tab_'.$plugin['id'].'").addClass("disabled");</script>';
+}
+
 echo '
 <div class="panel panel-primary">
     <div class="panel-heading">
@@ -73,10 +79,10 @@ echo '
 // Visualizzo, in base alle impostazioni scelte, se il magazzino verrà movimentato
 if (setting("Movimenta il magazzino durante l'inserimento o eliminazione dei lotti/serial number")) {
     echo '
-                        <small>'.tr("L'inserimento incrementerà la quantità dell'articolo!").'</small>';
+                        '.tr("L'inserimento incrementerà la quantità dell'articolo!");
 } else {
     echo '
-                        <small>'.tr("L'inserimento non movimenterà la quantità dell'articolo!").'</small>';
+                        '.tr("L'inserimento non movimenterà la quantità dell'articolo!");
 }
 
 echo '

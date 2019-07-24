@@ -116,9 +116,9 @@ class Prints
      *
      * @param string|int $print
      * @param int        $id_record
-     * @param string     $filename
+     * @param string     $directory
      */
-    public static function render($print, $id_record, $filename = null)
+    public static function render($print, $id_record, $directory = null)
     {
         //ob_end_clean(); // Compatibilità con versioni vecchie delle stampe
 
@@ -126,13 +126,25 @@ class Prints
 
         Permissions::addModule($infos['id_module']);
 
-        if (empty($infos) || empty($infos['enabled']) || !Permissions::check([], false)) {
+        $has_access = true;
+        if (!empty($infos['is_record'])) {
+            $module = Modules::get($infos['id_module']);
+
+            Util\Query::setSegments(false);
+            $query = Util\Query::getQuery($module, [
+                'id' => $id_record,
+            ]);
+            Util\Query::setSegments(true);
+
+            $has_access = database()->fetchNum($query) !== 0;
+        }
+
+        if (empty($infos) || empty($infos['enabled']) || !Permissions::check([], false) || !$has_access) {
             return false;
         }
 
         // Individuazione della configurazione
-        $directory = dirname($filename);
-        if (!empty($filename) && !directory($directory)) {
+        if (!empty($directory) && !directory($directory)) {
             $error = tr('Non hai i permessi per creare directory e files in _DIRECTORY_', [
                 '_DIRECTORY_' => $directory,
             ]);
@@ -146,9 +158,9 @@ class Prints
         }
 
         if (self::isOldStandard($print)) {
-            self::oldLoader($infos['id'], $id_record, $filename);
+            return self::oldLoader($infos['id'], $id_record, $directory);
         } else {
-            self::loader($infos['id'], $id_record, $filename);
+            return self::loader($infos['id'], $id_record, $directory);
         }
     }
 
@@ -210,29 +222,27 @@ class Prints
      *
      * @param string|int $print
      * @param int        $id_record
-     * @param string     $filename
+     * @param string     $directory
      *
      * @return string
      */
-    public static function getPreviewLink($print, $id_record, $filename)
+    public static function getPreviewLink($print, $id_record, $directory)
     {
-        self::render($print, $id_record, $filename);
+        $info = self::render($print, $id_record, $directory);
 
-        return self::getPDFLink($filename);
+        return self::getPDFLink($info['path']);
     }
 
     /**
      * Restituisce il link per la visualizzazione del PDF.
      *
-     * @param string|int $print
-     * @param int        $id_record
-     * @param string     $filename
+     * @param string $path
      *
      * @return string
      */
-    public static function getPDFLink($filename)
+    public static function getPDFLink($path)
     {
-        return ROOTDIR.'/assets/dist/pdfjs/web/viewer.html?file=../../../../'.ltrim(str_replace(DOCROOT, '', $filename), '/');
+        return ROOTDIR.'/assets/dist/pdfjs/web/viewer.html?file=../../../../'.ltrim(str_replace(DOCROOT, '', $path), '/');
     }
 
     /**
@@ -299,10 +309,10 @@ class Prints
      *
      * @param string|int $id_print
      * @param int        $id_record
-     * @param string     $filename
+     * @param string     $directory
      * @param string     $format
      */
-    protected static function oldLoader($id_print, $id_record, $filename = null, $format = 'A4')
+    protected static function oldLoader($id_print, $id_record, $directory = null, $format = 'A4')
     {
         $infos = self::get($id_print);
         $options = self::readOptions($infos['options']);
@@ -344,17 +354,45 @@ class Prints
         // Operazioni di sostituzione
         include DOCROOT.'/templates/replace.php';
 
-        $mode = !empty($filename) ? 'F' : 'I';
+        $mode = !empty($directory) ? 'F' : 'I';
 
-        $filename = !empty($filename) ? $filename : sanitizeFilename($report_name);
-        $title = basename($filename);
+        $file = self::getFile($infos, $id_record, $directory, $replaces);
+        $title = $file['name'];
+        $path = $file['path'];
 
         $html2pdf = new Spipu\Html2Pdf\Html2Pdf($orientation, $format, 'it', true, 'UTF-8');
 
         $html2pdf->writeHTML($report);
         $html2pdf->pdf->setTitle($title);
 
-        $html2pdf->output($filename, $mode);
+        $html2pdf->output($path, $mode);
+
+        return $file;
+    }
+
+    protected static function getFile($record, $id_record, $directory, $original_replaces)
+    {
+        $module = Modules::get($record['id_module']);
+
+        $name = $record['filename'].'.pdf';
+        $name = $module->replacePlaceholders($id_record, $name);
+
+        $replaces = [];
+        foreach ($original_replaces as $key => $value) {
+            $key = str_replace('$', '', $key);
+
+            $replaces['{'.$key.'}'] = $value;
+        }
+
+        $name = replace($name, $replaces);
+
+        $filename = sanitizeFilename($name);
+        $file = rtrim($directory, '/').'/'.$filename;
+
+        return [
+            'name' => $name,
+            'path' => $file,
+        ];
     }
 
     /**
@@ -362,9 +400,9 @@ class Prints
      *
      * @param string|int $id_print
      * @param int        $id_record
-     * @param string     $filename
+     * @param string     $directory
      */
-    protected static function loader($id_print, $id_record, $filename = null)
+    protected static function loader($id_print, $id_record, $directory = null)
     {
         $infos = self::get($id_print);
         $options = self::readOptions($infos['options']);
@@ -372,6 +410,9 @@ class Prints
         $dbo = $database = database();
 
         $user = Auth::user();
+
+        // Generazione a singoli pezzi
+        $single_pieces = self::filepath($id_print, 'piece.php');
 
         // Impostazioni di default
         $default = include App::filepath('templates/base|custom|', 'settings.php');
@@ -388,27 +429,48 @@ class Prints
         // Individuazione delle variabili per la sostituzione
         include DOCROOT.'/templates/info.php';
 
-        // Generazione dei contenuti della stampa
-        ob_start();
-        include self::filepath($id_print, 'body.php');
-        $report = ob_get_clean();
+        // Instanziamento dell'oggetto mPDF
+        $mpdf = new \Mpdf\Mpdf([
+            'mode' => 'utf-8',
+            'format' => $settings['format'],
+            'orientation' => strtoupper($settings['orientation']) == 'L' ? 'L' : 'P',
+            'font-size' => $settings['font-size'],
+            'margin_left' => $settings['margins']['left'],
+            'margin_right' => $settings['margins']['right'],
+            'margin_top' => $settings['margins']['top'] + $settings['header-height'],
+            'margin_bottom' => $settings['margins']['bottom'] + $settings['footer-height'],
+            'margin_header' => $settings['margins']['top'],
+            'margin_footer' => $settings['margins']['bottom'],
 
-        if (!empty($autofill)) {
-            $result = '';
+            // Abilitazione per lo standard PDF/A
+            //'PDFA' => true,
+            //'PDFAauto' => true,
+        ]);
 
-            // max($autofill['additional']) = $autofill['rows'] - 1
-            for ($i = (floor($autofill['count']) % $autofill['rows']); $i < $autofill['additional']; ++$i) {
-                $result .= '
-                <tr>';
-                for ($c = 0; $c < $autofill['columns']; ++$c) {
-                    $result .= '
-                    <td>&nbsp;</td>';
-                }
-                $result .= '
-                </tr>';
+        // Inclusione dei fogli di stile CSS
+        $styles = [
+            'templates/base/bootstrap.css',
+            'templates/base/style.css',
+        ];
+
+        foreach ($styles as $value) {
+            $mpdf->WriteHTML(file_get_contents(DOCROOT.'/'.$value), 1);
+        }
+
+        // Impostazione del font-size
+        $mpdf->WriteHTML('body {font-size: '.$settings['font-size'].'pt;}', 1);
+
+        // Generazione totale
+        if (empty($single_pieces)) {
+            ob_start();
+            include self::filepath($id_print, 'body.php');
+            $report = ob_get_clean();
+
+            if (!empty($autofill)) {
+                $result = $autofill->generate();
+
+                $report = str_replace('|autofill|', $result, $report);
             }
-
-            $report = str_replace('|autofill|', $result, $report);
         }
 
         // Generazione dei contenuti dell'header
@@ -430,53 +492,58 @@ class Prints
         // Operazioni di sostituzione
         include DOCROOT.'/templates/replace.php';
 
-        $mode = !empty($filename) ? 'F' : 'I';
-
-        $filename = !empty($filename) ? $filename : sanitizeFilename($report_name);
-        $title = basename($filename);
-
-        $styles = [
-            'templates/base/bootstrap.css',
-            'templates/base/style.css',
-        ];
-
-        // Instanziamento dell'oggetto mPDF
-        $mpdf = new \Mpdf\Mpdf([
-            'mode' => 'utf-8',
-            'format' => $settings['format'],
-            'orientation' => strtoupper($settings['orientation']) == 'L' ? 'L' : 'P',
-            'font-size' => $settings['font-size'],
-            'margin_left' => $settings['margins']['left'],
-            'margin_right' => $settings['margins']['right'],
-            'margin_top' => $settings['margins']['top'] + $settings['header-height'],
-            'margin_bottom' => $settings['margins']['bottom'] + $settings['footer-height'],
-            'margin_header' => $settings['margins']['top'],
-            'margin_footer' => $settings['margins']['bottom'],
-
-            // Abilitazione per lo standard PDF/A
-            //'PDFA' => true,
-            //'PDFAauto' => true,
-        ]);
-
         // Impostazione di header e footer
         $mpdf->SetHTMLFooter($foot);
         $mpdf->SetHTMLHeader($head);
 
-        // Impostazione del titolo del PDF
-        $mpdf->SetTitle($title);
+        // Generazione dei contenuti della stampa
 
-        // Inclusione dei fogli di stile CSS
-        foreach ($styles as $value) {
-            $mpdf->WriteHTML(file_get_contents(DOCROOT.'/'.$value), 1);
+        if (!empty($single_pieces)) {
+            ob_start();
+            include self::filepath($id_print, 'top.php');
+            $top = ob_get_clean();
+
+            $top = str_replace(array_keys($replaces), array_values($replaces), $top);
+
+            $mpdf->WriteHTML($top);
+
+            foreach ($records as $record) {
+                ob_start();
+                include self::filepath($id_print, 'piece.php');
+                $piece = ob_get_clean();
+
+                $mpdf->WriteHTML($piece);
+            }
+
+            ob_start();
+            include self::filepath($id_print, 'bottom.php');
+            $bottom = ob_get_clean();
+
+            $bottom = str_replace(array_keys($replaces), array_values($replaces), $bottom);
+
+            $mpdf->WriteHTML($bottom);
+
+            $report = '';
         }
 
-        // Impostazione del font-size
-        $mpdf->WriteHTML('body {font-size: '.$settings['font-size'].'pt;}', 1);
+        // Operazioni di sostituzione
+        include DOCROOT.'/templates/replace.php';
+
+        $mode = !empty($directory) ? 'F' : 'I';
+
+        $file = self::getFile($infos, $id_record, $directory, $replaces);
+        $title = $file['name'];
+        $path = $file['path'];
+
+        // Impostazione del titolo del PDF
+        $mpdf->SetTitle($title);
 
         // Aggiunta dei contenuti
         $mpdf->WriteHTML($report);
 
         // Creazione effettiva del PDF
-        $mpdf->Output($filename, $mode);
+        $mpdf->Output($path, $mode);
+
+        return $file;
     }
 }

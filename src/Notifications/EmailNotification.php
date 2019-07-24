@@ -3,6 +3,7 @@
 namespace Notifications;
 
 use Mail;
+use Modules;
 use PHPMailer\PHPMailer\Exception as PHPMailerException;
 use Prints;
 use Uploads;
@@ -64,18 +65,15 @@ class EmailNotification extends Notification
         $this->setAccount($template['id_smtp']);
 
         if (!empty($id_record)) {
-            $variables = Mail::getTemplateVariables($template['id'], $id_record);
+            $module = Modules::get($template['id_module']);
 
-            // Sostituzione delle variabili di base
-            $replaces = [];
-            foreach ($variables as $key => $value) {
-                $replaces['{'.$key.'}'] = $value;
-            }
-            $body = replace($template['body'], $replaces);
-            $subject = replace($template['subject'], $replaces);
+            $body = $module->replacePlaceholders($id_record, $template['body']);
+            $subject = $module->replacePlaceholders($id_record, $template['subject']);
 
             $this->setContent($body);
             $this->setSubject($subject);
+
+            $this->includeTemplatePrints($id_record);
         }
     }
 
@@ -163,11 +161,12 @@ class EmailNotification extends Notification
         }
 
         // Utilizzo di una cartella particolare per il salvataggio temporaneo degli allegati
-        $path = DOCROOT.'/files/notifications/'.$print['title'].' - '.$id_record.'.pdf';
+        $path = DOCROOT.'/files/notifications/';
 
-        Prints::render($print['id'], $id_record, $path);
+        $info = Prints::render($print['id'], $id_record, $path);
+        $name = $name ?: $info['name'];
 
-        $this->addAttachment($path, $name);
+        $this->addAttachment($info['path'], $name);
 
         $this->logs['prints'][] = $print['id'];
     }
@@ -224,10 +223,13 @@ class EmailNotification extends Notification
             return;
         }
 
-        $this->receivers[] = [
-            'email' => $value,
-            'type' => $type,
-        ];
+        $list = explode(';', $value);
+        foreach ($list as $element) {
+            $this->receivers[] = [
+                'email' => $element,
+                'type' => $type,
+            ];
+        }
 
         $this->logs['receivers'][] = $value;
     }

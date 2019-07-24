@@ -1,5 +1,19 @@
 <?php
 
+// Calcoli
+$imponibile = $documento->imponibile;
+$sconto = $documento->sconto;
+$totale_imponibile = $documento->totale_imponibile;
+$totale_iva = $documento->iva;
+$totale = $documento->totale;
+
+$volume = $righe->sum(function ($item) {
+    return $item->isArticolo() ? $item->articolo->volume : 0;
+});
+$peso_lordo = $righe->sum(function ($item) {
+    return $item->isArticolo() ? $item->articolo->peso_lordo : 0;
+});
+
 // TABELLA PRINCIPALE
 echo '
 <table class="table-bordered">';
@@ -10,7 +24,7 @@ if ($options['pricing']) {
     <tr>
         <td rowspan='7'>
             <p class='small-bold'>".tr('Note', [], ['upper' => true]).'</p>
-            <p>'.nl2br($records[0]['note'])."</p>
+            <p>'.nl2br($documento['note'])."</p>
         </td>
         <td style='width:33mm;'>
             <p class='small-bold'>".tr('Totale imponibile', [], ['upper' => true]).'</p>
@@ -29,13 +43,13 @@ if ($options['pricing']) {
     echo "
     <tr>
         <td style='width:33mm;'>
-            <p class='small-bold'>".tr('Totale imposte', [], ['upper' => true])."</p>
+            <p class='small-bold'>".tr('Totale IVA', [], ['upper' => true])."</p>
         </td>
     </tr>
 
     <tr>
         <td class='cell-padded text-right'>
-            ".moneyFormat($iva, 2).'
+            ".moneyFormat($totale_iva, 2).'
         </td>
     </tr>';
 
@@ -58,7 +72,7 @@ if ($options['pricing']) {
     <tr>
         <td style='height:40mm;'>
             <p class='small-bold'>".tr('Note', [], ['upper' => true]).'</p>
-            '.nl2br($records[0]['note']).'
+            '.nl2br($documento['note']).'
         </td>
     </tr>';
 }
@@ -125,11 +139,11 @@ echo '
 
     <tr>
         <td class="cell-padded">
-        '.(!empty($peso_lordo) ? Translator::numberToLocale($peso_lordo) : '').'&nbsp;KG
+        '.(!empty($peso_lordo) ? Translator::numberToLocale($peso_lordo).'&nbsp;KG' : '').'
         </td>
 
         <td class="cell-padded">
-            '.(!empty($volume) ? Translator::numberToLocale($volume) : '').'&nbsp;M<sup>3</sup>
+            '.(!empty($volume) ? Translator::numberToLocale($volume).'&nbsp;M<sup>3</sup>' : '').'
         </td>
 
         <td class="cell-padded">

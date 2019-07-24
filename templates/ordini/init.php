@@ -2,21 +2,20 @@
 
 include_once __DIR__.'/../../core.php';
 
-$module_name = 'Ordini';
+use Modules\Ordini\Ordine;
 
-// Lettura info fattura
-$records = $dbo->fetchArray('SELECT *, (SELECT descrizione FROM or_tipiordine WHERE or_tipiordine.id=idtipoordine) AS tipo_doc, (SELECT descrizione FROM co_pagamenti WHERE id=idpagamento) AS tipo_pagamento FROM or_ordini WHERE id='.prepare($id_record));
+$documento = Ordine::find($id_record);
 
-$id_cliente = $records[0]['idanagrafica'];
-$id_sede = $records[0]['idsede'];
+$id_cliente = $documento['idanagrafica'];
+$id_sede = $documento['idsede'];
 
-$numero_ord = $records[0]['numero'];
-$numero = !empty($records[0]['numero_esterno']) ? $records[0]['numero_esterno'] : $records[0]['numero'];
+$numero = !empty($documento['numero_esterno']) ? $documento['numero_esterno'] : $documento['numero'];
+$pagamento = $dbo->fetchOne('SELECT * FROM co_pagamenti WHERE id = '.prepare($documento->idpagamento));
 
 // Sostituzioni specifiche
 $custom = [
-    'tipo_doc' => Stringy\Stringy::create($records[0]['tipo_doc'])->toUpperCase(),
-    'numero_doc' => $numero,
-    'data' => Translator::dateToLocale($records[0]['data']),
-    'pagamento' => $records[0]['tipo_pagamento'],
+    'tipo_doc' => Stringy\Stringy::create($documento->tipo->descrizione)->toUpperCase(),
+    'numero' => $numero,
+    'data' => Translator::dateToLocale($documento['data']),
+    'pagamento' => $pagamento['descrizione'],
 ];

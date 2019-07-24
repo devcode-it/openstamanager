@@ -3,6 +3,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Ordini\Components\Articolo;
 use Modules\Ordini\Components\Descrizione;
 use Modules\Ordini\Components\Riga;
@@ -108,72 +109,115 @@ switch (post('op')) {
 
         break;
 
-    case 'addarticolo':
-        if (post('idarticolo') !== null) {
-            $idarticolo = post('idarticolo');
-            $idiva = post('idiva');
-            $descrizione = post('descrizione');
-            $qta = post('qta');
-            $prezzo = post('prezzo');
-
-            // Calcolo dello sconto
-            $sconto_unitario = post('sconto');
-            $tipo_sconto = post('tipo_sconto');
-            $sconto = calcola_sconto([
-                'sconto' => $sconto_unitario,
-                'prezzo' => $prezzo,
-                'tipo' => $tipo_sconto,
-                'qta' => $qta,
-            ]);
-
-            add_articolo_inordine($id_record, $idarticolo, $descrizione, $idiva, $qta, post('um'), $prezzo * $qta, $sconto, $sconto_unitario, $tipo_sconto);
-
-            flash()->info(tr('Articolo aggiunto!'));
+    case 'manage_articolo':
+        if (post('idriga') != null) {
+            $articolo = Articolo::find(post('idriga'));
+        } else {
+            $originale = ArticoloOriginale::find(post('idarticolo'));
+            $articolo = Articolo::build($ordine, $originale);
         }
 
-        ricalcola_costiagg_ordine($id_record);
+        $articolo->descrizione = post('descrizione');
+        $articolo->um = post('um') ?: null;
+        $articolo->id_iva = post('idiva');
 
-        break;
+        $articolo->prezzo_unitario_acquisto = post('prezzo_acquisto') ?: 0;
+        $articolo->prezzo_unitario_vendita = post('prezzo');
+        $articolo->sconto_unitario = post('sconto');
+        $articolo->tipo_sconto = post('tipo_sconto');
 
-    case 'addriga':
-        // Selezione costi da intervento
-        $descrizione = post('descrizione');
-        $prezzo = post('prezzo');
-        $qta = post('qta');
-        $idiva = post('idiva');
-        $um = post('um');
-        $subtot = $prezzo * $qta;
+        try {
+            $articolo->qta = post('qta');
+        } catch (UnexpectedValueException $e) {
+            flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
+        }
 
-        // Calcolo dello sconto
-        $sconto_unitario = post('sconto');
-        $tipo_sconto = post('tipo_sconto');
-        $sconto = calcola_sconto([
-            'sconto' => $sconto_unitario,
-            'prezzo' => $prezzo,
-            'tipo' => $tipo_sconto,
-            'qta' => $qta,
-        ]);
+        $articolo->save();
 
-        // Calcolo iva
-        $query = 'SELECT descrizione, percentuale, indetraibile FROM co_iva WHERE id='.prepare($idiva);
-        $rs = $dbo->fetchArray($query);
-        $iva = ($subtot - $sconto) / 100 * $rs[0]['percentuale'];
-        $iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];
-
-        $query = 'INSERT INTO or_righe_ordini(idordine, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, is_descrizione, `order`) VALUES('.prepare($id_record).', '.prepare($idiva).', '.prepare($rs[0]['descrizione']).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($um).', '.prepare($qta).', '.prepare(empty($qta)).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM or_righe_ordini AS t WHERE idordine='.prepare($id_record).'))';
-        $dbo->query($query);
-
-        // Messaggi informativi
-        if (!empty($idarticolo)) {
-            flash()->info(tr('Articolo aggiunto!'));
-        } elseif (!empty($qta)) {
-            flash()->info(tr('Riga aggiunta!'));
+        if (post('idriga') != null) {
+            flash()->info(tr('Articolo modificato!'));
         } else {
-            flash()->info(tr('Riga descrittiva aggiunta!'));
+            flash()->info(tr('Articolo aggiunto!'));
         }
 
         // Ricalcolo inps, ritenuta e bollo
         ricalcola_costiagg_ordine($id_record);
+
+        break;
+
+    case 'manage_sconto':
+        if (post('idriga') != null) {
+            $sconto = Sconto::find(post('idriga'));
+        } else {
+            $sconto = Sconto::build($ordine);
+        }
+
+        $sconto->descrizione = post('descrizione');
+        $sconto->id_iva = post('idiva');
+
+        $sconto->sconto_unitario = post('sconto_unitario');
+        $sconto->tipo_sconto = 'UNT';
+
+        $sconto->save();
+
+        if (post('idriga') != null) {
+            flash()->info(tr('Sconto/maggiorazione modificato!'));
+        } else {
+            flash()->info(tr('Sconto/maggiorazione aggiunto!'));
+        }
+
+        // Ricalcolo inps, ritenuta e bollo
+        ricalcola_costiagg_ordine($id_record);
+
+        break;
+
+    case 'manage_riga':
+        if (post('idriga') != null) {
+            $riga = Riga::find(post('idriga'));
+        } else {
+            $riga = Riga::build($ordine);
+        }
+
+        $riga->descrizione = post('descrizione');
+        $riga->um = post('um') ?: null;
+        $riga->id_iva = post('idiva');
+
+        $riga->prezzo_unitario_acquisto = post('prezzo_acquisto') ?: 0;
+        $riga->prezzo_unitario_vendita = post('prezzo');
+        $riga->sconto_unitario = post('sconto');
+        $riga->tipo_sconto = post('tipo_sconto');
+
+        $riga->qta = post('qta');
+
+        $riga->save();
+
+        if (post('idriga') != null) {
+            flash()->info(tr('Riga modificata!'));
+        } else {
+            flash()->info(tr('Riga aggiunta!'));
+        }
+
+        // Ricalcolo inps, ritenuta e bollo
+        ricalcola_costiagg_ordine($id_record);
+
+        break;
+
+    case 'manage_descrizione':
+        if (post('idriga') != null) {
+            $riga = Descrizione::find(post('idriga'));
+        } else {
+            $riga = Descrizione::build($ordine);
+        }
+
+        $riga->descrizione = post('descrizione');
+
+        $riga->save();
+
+        if (post('idriga') != null) {
+            flash()->info(tr('Riga descrittiva modificata!'));
+        } else {
+            flash()->info(tr('Riga descrittiva aggiunta!'));
+        }
 
         break;
 
@@ -221,92 +265,6 @@ switch (post('op')) {
             flash()->info(tr('Riga rimossa!'));
         }
 
-        break;
-
-    case 'manage_sconto':
-        if (post('idriga') != null) {
-            $sconto = Sconto::find(post('idriga'));
-        } else {
-            $sconto = Sconto::build($ordine);
-        }
-
-        $sconto->descrizione = post('descrizione');
-        $sconto->id_iva = post('idiva');
-
-        $sconto->sconto_unitario = post('sconto_unitario');
-        $sconto->tipo_sconto = 'UNT';
-
-        $sconto->save();
-
-        if (post('idriga') != null) {
-            flash()->info(tr('Sconto/maggiorazione modificato!'));
-        } else {
-            flash()->info(tr('Sconto/maggiorazione aggiunta!'));
-        }
-
-        // Ricalcolo inps, ritenuta e bollo
-        ricalcola_costiagg_ordine($id_record);
-
-        break;
-
-    // Modifica riga
-    case 'editriga':
-        if (post('idriga') !== null) {
-            $idriga = post('idriga');
-            $descrizione = post('descrizione');
-            $prezzo = post('prezzo');
-            $qta = post('qta');
-            $idiva = post('idiva');
-            $um = post('um');
-            $subtot = $prezzo * $qta;
-
-            // Calcolo dello sconto
-            $sconto_unitario = post('sconto');
-            $tipo_sconto = post('tipo_sconto');
-            $sconto = calcola_sconto([
-                'sconto' => $sconto_unitario,
-                'prezzo' => $prezzo,
-                'tipo' => $tipo_sconto,
-                'qta' => $qta,
-            ]);
-
-            // Lettura idarticolo dalla riga documento
-            $rs = $dbo->fetchArray('SELECT idordine, idarticolo, qta, abilita_serial, is_descrizione FROM or_righe_ordini WHERE id='.prepare($idriga));
-            $idarticolo = $rs[0]['idarticolo'];
-            $old_qta = $rs[0]['qta'];
-            $idordine = $rs[0]['idordine'];
-            $abilita_serial = $rs[0]['abilita_serial'];
-            $is_descrizione = $rs[0]['is_descrizione'];
-
-            // Controllo per gestire i serial
-            if (!empty($idarticolo)) {
-                if (!controlla_seriali('id_riga_ordine', $idriga, $old_qta, $qta, $dir)) {
-                    flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
-
-                    return;
-                }
-            }
-
-            // Calcolo iva
-            $query = 'SELECT * FROM co_iva WHERE id='.prepare($idiva);
-            $rs = $dbo->fetchArray($query);
-            $iva = ($subtot - $sconto) / 100 * $rs[0]['percentuale'];
-            $iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];
-            $desc_iva = $rs[0]['descrizione'];
-
-            if ($is_descrizione == 0) {
-                // Modifica riga generica sul documento
-                $query = 'UPDATE or_righe_ordini SET idiva='.prepare($idiva).', desc_iva='.prepare($rs[0]['descrizione']).', iva='.prepare($iva).', iva_indetraibile='.prepare($iva_indetraibile).', descrizione='.prepare($descrizione).', subtotale='.prepare($subtot).', sconto='.prepare($sconto).', sconto_unitario='.prepare($sconto_unitario).', tipo_sconto='.prepare($tipo_sconto).', um='.prepare($um).', qta='.prepare($qta).' WHERE id='.prepare($idriga);
-            } else {
-                $query = 'UPDATE or_righe_ordini SET descrizione='.prepare($descrizione).' WHERE id='.prepare($idriga);
-            }
-            if ($dbo->query($query)) {
-                flash()->info(tr('Riga modificata!'));
-
-                // Ricalcolo inps, ritenuta e bollo
-                ricalcola_costiagg_ordine($id_record);
-            }
-        }
         break;
 
     // eliminazione ordine
@@ -358,7 +316,7 @@ switch (post('op')) {
 
     // Aggiunta di un preventivo in ordine
     case 'add_preventivo':
-        $preventivo = \Modules\Preventivi\Preventivo::find(post('id_preventivo'));
+        $preventivo = \Modules\Preventivi\Preventivo::find(post('id_documento'));
 
         // Creazione della fattura al volo
         if (post('create_document') == 'on') {
@@ -366,6 +324,12 @@ switch (post('op')) {
 
             $ordine = Ordine::build($preventivo->anagrafica, $tipo, post('data'));
             $ordine->idpagamento = $preventivo->idpagamento;
+
+            $ordine->id_documento_fe = $preventivo->id_documento_fe;
+            $ordine->codice_cup = $preventivo->codice_cup;
+            $ordine->codice_cig = $preventivo->codice_cig;
+            $ordine->num_item = $preventivo->num_item;
+
             $ordine->save();
 
             $id_record = $ordine->id;

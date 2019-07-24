@@ -2,35 +2,33 @@
 
 include_once __DIR__.'/../../core.php';
 
-// Lettura info ddt
-$q = 'SELECT *,
-    (SELECT dir FROM dt_tipiddt WHERE id=idtipoddt) AS dir,
-    (SELECT descrizione FROM dt_tipiddt WHERE id=idtipoddt) AS tipo_doc,
-    (SELECT descrizione FROM dt_causalet WHERE id=idcausalet) AS causalet,
-    (SELECT descrizione FROM co_pagamenti WHERE id=idpagamento) AS tipo_pagamento,
-    (SELECT descrizione FROM dt_porto WHERE id=idporto) AS porto,
-    (SELECT descrizione FROM dt_aspettobeni WHERE id=idaspettobeni) AS aspettobeni,
-    (SELECT descrizione FROM dt_spedizione WHERE id=idspedizione) AS spedizione,
-    (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idvettore) AS vettore
-FROM dt_ddt WHERE id='.prepare($id_record);
-$records = $dbo->fetchArray($q);
+use Modules\DDT\DDT;
 
-$module_name = ($records[0]['dir'] == 'entrata') ? 'Ddt di vendita' : 'Ddt di acquisto';
+$documento = DDT::find($id_record);
 
-$id_cliente = $records[0]['idanagrafica'];
+$id_cliente = $documento['idanagrafica'];
+$id_sede = $record['idsede_partenza'];
 
-$tipo_doc = $records[0]['tipo_doc'];
-if (empty($records[0]['numero_esterno'])) {
+$pagamento = $dbo->fetchOne('SELECT * FROM co_pagamenti WHERE id = '.prepare($documento['idpagamento']));
+$causale = $dbo->fetchOne('SELECT * FROM dt_causalet WHERE id = '.prepare($documento['idcausalet']));
+$porto = $dbo->fetchOne('SELECT * FROM dt_porto WHERE id = '.prepare($documento['idporto']));
+$aspetto_beni = $dbo->fetchOne('SELECT * FROM dt_aspettobeni WHERE id = '.prepare($documento['idaspettobeni']));
+$spedizione = $dbo->fetchOne('SELECT * FROM dt_spedizione WHERE id = '.prepare($documento['idspedizione']));
+
+$vettore = $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = '.prepare($documento['idvettore']));
+
+$tipo_doc = $documento->tipo->descrizione;
+if (empty($documento['numero_esterno'])) {
     $numero = 'pro-forma '.$numero;
-    $tipo_doc = tr('Ddt pro-forma', [], ['upper' => true]);
+    $tipo_doc = tr('DDT pro-forma', [], ['upper' => true]);
 } else {
-    $numero = !empty($records[0]['numero_esterno']) ? $records[0]['numero_esterno'] : $records[0]['numero'];
+    $numero = !empty($documento['numero_esterno']) ? $documento['numero_esterno'] : $documento['numero'];
 }
 
 // Leggo i dati della destinazione (se 0=sede legale, se!=altra sede da leggere da tabella an_sedi)
 $destinazione = '';
-if (!empty($records[0]['idsede'])) {
-    $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS ragione_sociale, nomesede, indirizzo, indirizzo2, cap, citta, provincia, piva, codice_fiscale FROM an_sedi WHERE idanagrafica='.prepare($id_cliente).' AND id='.prepare($records[0]['idsede']));
+if (!empty($documento['idsede_destinazione'])) {
+    $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS ragione_sociale, nomesede, indirizzo, indirizzo2, cap, citta, provincia, piva, codice_fiscale FROM an_sedi WHERE idanagrafica='.prepare($id_cliente).' AND id='.prepare($documento['idsede_destinazione']));
 
     if (!empty($rsd[0]['nomesede'])) {
         $destinazione .= $rsd[0]['nomesede'].'<br/>';
@@ -50,27 +48,29 @@ if (!empty($records[0]['idsede'])) {
     if (!empty($rsd[0]['provincia'])) {
         $destinazione .= ' ('.$rsd[0]['provincia'].')';
     }
+
+    $settings['header-height'] += 8;
 }
 
 // Sostituzioni specifiche
 $custom = [
     'tipo_doc' => $tipo_doc,
-    'numero_doc' => $numero,
-    'data' => Translator::dateToLocale($records[0]['data']),
-    'pagamento' => $records[0]['tipo_pagamento'],
+    'numero' => $numero,
+    'data' => Translator::dateToLocale($documento['data']),
+    'pagamento' => $pagamento['descrizione'],
     'c_destinazione' => $destinazione,
-    'aspettobeni' => $records[0]['aspettobeni'],
-    'causalet' => $records[0]['causalet'],
-    'porto' => $records[0]['porto'],
-    'n_colli' => !empty($records[0]['n_colli']) ? $records[0]['n_colli'] : '',
-    'spedizione' => $records[0]['spedizione'],
-    'vettore' => $records[0]['vettore'],
+    'aspettobeni' => $aspetto_beni['descrizione'],
+    'causalet' => $causale['descrizione'],
+    'porto' => $porto['descrizione'],
+    'n_colli' => !empty($documento['n_colli']) ? $documento['n_colli'] : '',
+    'spedizione' => $spedizione['descrizione'],
+    'vettore' => $vettore['ragione_sociale'],
 ];
 
 // Accesso solo a:
 // - cliente se è impostato l'idanagrafica di un Cliente
 // - utente qualsiasi con permessi almeno in lettura sul modulo
 // - admin
-if ((Auth::user()['gruppo'] == 'Clienti' && $id_cliente != Auth::user()['idanagrafica'] && !Auth::admin()) || Modules::getPermission($module_name) == '-') {
+if ((Auth::user()['gruppo'] == 'Clienti' && $id_cliente != Auth::user()['idanagrafica'] && !Auth::admin()) || Modules::getPermission($documento->module) == '-') {
     die(tr('Non hai i permessi per questa stampa!'));
 }

@@ -1,0 +1,22 @@
+.first-level{
+    background-color: #ffffff;
+}
+.second-level{
+    background-color: rgba(192,192,192, 0.1);
+}
+.third-level{
+    background-color: rgba(192,192,192, 0.15);
+}
+.fourth-level{
+    background-color: rgba(192,192,192, 0.25);
+}
+.fifth-level{
+    background-color: rgba(192,192,192, 0.4);
+}
+
+.first-level td,
+.second-level td,
+.third-level td,
+.fourth-level td{
+    vertical-align: middle;
+}

@@ -97,4 +97,30 @@ class Plugins
 
         return $element ? $element->filepath($file) : null;
     }
+
+    /**
+     * Costruisce un link HTML per il modulo e il record indicati.
+     *
+     * @param string|int $plugin
+     * @param int        $id_record
+     * @param string     $testo
+     * @param string     $alternativo
+     * @param string     $extra
+     * @param bool       $blank
+     *
+     * @return string
+     */
+    public static function link($plugin, $id_record = null, $testo = null, $alternativo = true, $extra = null, $blank = true)
+    {
+        $plugin = self::get($plugin);
+        $alternativo = is_bool($alternativo) && $alternativo ? $testo : $alternativo;
+
+        if (!empty($plugin) && in_array($plugin->permission, ['r', 'rw'])) {
+            $anchor = 'tab_'.$plugin->id;
+
+            return Modules::link($plugin->originalModule->id, $id_record, $testo, $alternativo, $extra, $blank, $anchor);
+        }
+
+        return $alternativo;
+    }
 }

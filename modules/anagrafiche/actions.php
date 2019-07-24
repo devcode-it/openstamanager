@@ -5,6 +5,10 @@ include_once __DIR__.'/../../core.php';
 use Modules\Anagrafiche\Anagrafica;
 
 switch (post('op')) {
+    case 'restore':
+        $anagrafica->restore();
+
+        // no break
     case 'update':
         // Informazioni sulla sede
         $sede = $anagrafica->sedeLegale;
@@ -69,36 +73,44 @@ switch (post('op')) {
         $anagrafica->n_alboartigiani = post('n_alboartigiani');
         $anagrafica->foro_competenza = post('foro_competenza');
         $anagrafica->colore = post('colore');
-        $anagrafica->idtipointervento_default = post('idtipointervento_default');
+        $anagrafica->idtipointervento_default = post('idtipointervento_default') ?: null;
         $anagrafica->id_ritenuta_acconto_acquisti = post('id_ritenuta_acconto_acquisti');
         $anagrafica->id_ritenuta_acconto_vendite = post('id_ritenuta_acconto_vendite');
         $anagrafica->split_payment = post('split_payment');
 
         $anagrafica->tipologie = (array) post('idtipoanagrafica');
 
-        // Blocco il salvataggio del codice fiscale se già presente
+        // Avviso durante il salvataggio del codice fiscale se già presente e informo l'utente delle schede presenti
         if (!empty(post('codice_fiscale'))) {
-            $count_cf = $dbo->fetchNum('SELECT codice_fiscale FROM an_anagrafiche WHERE codice_fiscale = '.prepare(post('codice_fiscale')).' AND idanagrafica != '.prepare($id_record));
+            $idanagrafica = $dbo->fetchOne('SELECT GROUP_CONCAT(idanagrafica) AS idanagrafica FROM an_anagrafiche WHERE codice_fiscale = '.prepare(post('codice_fiscale')).' AND idanagrafica != '.prepare($id_record))['idanagrafica'];
 
-            if ($count_cf > 0) {
-                flash()->error(tr('Attenzione: il codice fiscale _COD_ è già stato utilizzato', [
-                    '_COD_' => post('codice_fiscale'),
-                ]));
+            if (!empty($idanagrafica)) {
+                $array = explode(',', $idanagrafica);
+                foreach ($array as $value) {
+                    flash()->warning(tr('Attenzione: il codice fiscale _COD_ è già stato censito _LINK_', [
+                        '_COD_' => post('codice_fiscale'),
+                        '_LINK_' => Modules::link('Anagrafiche', $value, null, null, ''),
+                    ]));
+                }
             } else {
-                $anagrafica->codice_fiscale = post('codice_fiscale');
+                $anagrafica->codice_fiscale = strtoupper(post('codice_fiscale'));
             }
         } else {
-            $anagrafica->codice_fiscale = post('codice_fiscale');
+            $anagrafica->codice_fiscale = strtoupper(post('codice_fiscale'));
         }
 
-        // Blocco il salvataggio della partita iva se già presente
+        // Avviso durante il salvataggio della partita iva se già presente e informo l'utente delle schede presenti
         if (!empty(post('piva'))) {
-            $count_piva = $dbo->fetchNum('SELECT piva FROM an_anagrafiche WHERE piva = '.prepare(post('piva')).' AND idanagrafica != '.prepare($id_record));
+            $idanagrafica = $dbo->fetchOne('SELECT GROUP_CONCAT(idanagrafica) AS idanagrafica FROM an_anagrafiche WHERE piva = '.prepare(post('piva')).' AND idanagrafica != '.prepare($id_record))['idanagrafica'];
 
-            if ($count_piva > 0) {
-                flash()->error(tr('Attenzione: la partita IVA _IVA_ è già stata utilizzata', [
-                    '_IVA_' => post('piva'),
-                ]));
+            if (!empty($idanagrafica)) {
+                $array = explode(',', $idanagrafica);
+                foreach ($array as $value) {
+                    flash()->warning(tr('Attenzione: la partita IVA _IVA_ è già stata censita _LINK_', [
+                        '_IVA_' => post('piva'),
+                        '_LINK_' => Modules::link('Anagrafiche', $value, null, null, ''),
+                    ]));
+                }
             } else {
                 $anagrafica->partita_iva = post('piva');
             }
@@ -133,7 +145,9 @@ switch (post('op')) {
 
         // Aggiorno il codice anagrafica se non è già presente, altrimenti lo ignoro
         if ($anagrafica->codice != post('codice')) {
-            flash()->error(tr("Il codice anagrafica inserito esiste già! Inserirne un'altro..."));
+            flash()->warning(tr('Attenzione: il codice anagrafica _COD_ esiste già', [
+                '_COD_' => $anagrafica->codice,
+            ]));
         }
 
         // Aggiorno gli agenti collegati
@@ -158,14 +172,14 @@ switch (post('op')) {
             $count_cf = $dbo->fetchNum('SELECT codice_fiscale FROM an_anagrafiche WHERE codice_fiscale = '.prepare(post('codice_fiscale')).' AND idanagrafica != '.prepare($id_record));
 
             if ($count_cf > 0) {
-                flash()->error(tr('Attenzione: il codice fiscale _COD_ è già stato utilizzato', [
+                flash()->warning(tr('Attenzione: il codice fiscale _COD_ è già stato censito', [
                     '_COD_' => post('codice_fiscale'),
                 ]));
             } else {
-                $anagrafica->codice_fiscale = post('codice_fiscale');
+                $anagrafica->codice_fiscale = strtoupper(post('codice_fiscale'));
             }
         } else {
-            $anagrafica->codice_fiscale = post('codice_fiscale');
+            $anagrafica->codice_fiscale = strtoupper(post('codice_fiscale'));
         }
 
         // Blocco il salvataggio della partita iva se già presente
@@ -173,7 +187,7 @@ switch (post('op')) {
             $count_piva = $dbo->fetchNum('SELECT piva FROM an_anagrafiche WHERE piva = '.prepare(post('piva')).' AND idanagrafica != '.prepare($id_record));
 
             if ($count_piva > 0) {
-                flash()->error(tr('Attenzione: la partita IVA _IVA_ è già stata utilizzata', [
+                flash()->warning(tr('Attenzione: la partita IVA _IVA_ è già stata censita', [
                 '_IVA_' => post('piva'),
             ]));
             } else {
@@ -231,26 +245,12 @@ switch (post('op')) {
 
     case 'delete':
         // Se l'anagrafica non è l'azienda principale, la disattivo
-        if (!in_array($id_azienda, $tipi_anagrafica)) {
-            $interventi = $dbo->fetchOne('SELECT id FROM in_interventi WHERE idanagrafica='.prepare($id_record));
-            $preventivi = $dbo->fetchOne('SELECT id FROM co_preventivi WHERE idanagrafica='.prepare($id_record));
-            $contratti = $dbo->fetchOne('SELECT id FROM co_contratti WHERE idanagrafica='.prepare($id_record));
-            $ordini = $dbo->fetchOne('SELECT id FROM or_ordini WHERE idanagrafica='.prepare($id_record));
-            $ddt = $dbo->fetchOne('SELECT id FROM dt_ddt WHERE idanagrafica='.prepare($id_record));
-            $fatture = $dbo->fetchOne('SELECT id FROM co_documenti WHERE idanagrafica='.prepare($id_record));
+        if (!$anagrafica->isAzienda()) {
+            //$anagrafica->delete();
+            $dbo->query('UPDATE an_anagrafiche SET deleted_at = NOW() WHERE idanagrafica = '.prepare($id_record));
 
-            // Se non ci sono documenti collegati, elimino l'anagrafica
-            if (count($interventi) == 0 && count($preventivi) == 0 && count($contratti) == 0 && count($ordini) == 0 && count($ddt) == 0 && count($fatture) == 0) {
-                $dbo->query('DELETE FROM an_anagrafiche WHERE idanagrafica = '.prepare($id_record));
-            }
-
-            // altrimenti la disabilito solo
-            else {
-                $dbo->query('UPDATE an_anagrafiche SET deleted_at = NOW() WHERE idanagrafica = '.prepare($id_record));
-
-                // Se l'anagrafica è collegata ad un utente lo disabilito
-                $dbo->query('UPDATE zz_users SET enabled = 0 WHERE idanagrafica = '.prepare($id_record));
-            }
+            // Se l'anagrafica è collegata ad un utente lo disabilito
+            $dbo->query('UPDATE zz_users SET enabled = 0 WHERE idanagrafica = '.prepare($id_record));
 
             flash()->info(tr('Anagrafica eliminata!'));
         }

@@ -23,8 +23,9 @@ if (!empty($results)) {
             </tr>';
 
     foreach ($results as $result) {
-        $costi_intervento = get_costi_intervento($result['id']);
-        $totale_interventi += $costi_intervento['totale'];
+        $intervento = \Modules\Interventi\Intervento::find($result['id']);
+        $totale_interventi += $intervento->totale;
+
         echo '
             <tr>
                 <td>

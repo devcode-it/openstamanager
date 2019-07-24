@@ -120,13 +120,16 @@ class FatturaElettronica
             $documento = $this->getDocumento();
             $database = database();
 
-            $contratti = $database->fetchArray('SELECT `id_documento_fe`, `num_item`, `codice_cig`, `codice_cup` FROM `co_contratti` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idcontratto` = `co_contratti`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
+            $contratti = $database->fetchArray('SELECT `id_documento_fe` AS id_documento, `num_item`, `codice_cig`, `codice_cup` FROM `co_contratti` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idcontratto` = `co_contratti`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL AND `co_righe_documenti`.`idordine` = 0');
 
-            $preventivi = $database->fetchArray('SELECT `id_documento_fe`, `num_item`, `codice_cig`, `codice_cup` FROM `co_preventivi` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idpreventivo` = `co_preventivi`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
+            $preventivi = $database->fetchArray('SELECT `id_documento_fe` AS id_documento, `num_item`, `codice_cig`, `codice_cup` FROM `co_preventivi` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idpreventivo` = `co_preventivi`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL AND `co_righe_documenti`.`idordine` = 0');
 
-            $interventi = $database->fetchArray('SELECT `id_documento_fe`, `num_item`, `codice_cig`, `codice_cup` FROM `in_interventi` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idintervento` = `in_interventi`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
+            $interventi = $database->fetchArray('SELECT `id_documento_fe` AS id_documento, `num_item`, `codice_cig`, `codice_cup` FROM `in_interventi` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idintervento` = `in_interventi`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL AND `co_righe_documenti`.`idcontratto` = 0 AND `co_righe_documenti`.`idpreventivo` = 0');
 
-            $this->contratti = array_unique(array_merge($contratti, $preventivi, $interventi));
+            $dati_aggiuntivi = $documento->dati_aggiuntivi_fe;
+            $dati = $dati_aggiuntivi['dati_contratto'] ?: [];
+
+            $this->contratti = array_unique(array_merge($contratti, $preventivi, $interventi, $dati));
         }
 
         return $this->contratti;
@@ -143,9 +146,14 @@ class FatturaElettronica
             $documento = $this->getDocumento();
             $database = database();
 
-            $ordini = $database->fetchArray('SELECT `id_documento_fe`, `num_item`, `codice_cig`, `codice_cup` FROM `or_ordini` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idordine` = `or_ordini`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
+            $ordini = $database->fetchArray('SELECT `id_documento_fe` AS id_documento, `num_item`, `codice_cig`, `codice_cup` FROM `or_ordini` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idordine` = `or_ordini`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL AND `co_righe_documenti`.`idddt` = 0');
 
-            $this->ordini = $ordini;
+            $ddt = $database->fetchArray('SELECT `id_documento_fe` AS id_documento, `num_item`, `codice_cig`, `codice_cup` FROM `dt_ddt` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idddt` = `dt_ddt`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
+
+            $dati_aggiuntivi = $documento->dati_aggiuntivi_fe;
+            $dati = $dati_aggiuntivi['dati_ordine'] ?: [];
+
+            $this->ordini = array_merge($ordini, $ddt, $dati);
         }
 
         return $this->ordini;
@@ -162,9 +170,12 @@ class FatturaElettronica
             $documento = $this->getDocumento();
             $database = database();
 
-            $note_accredito = $database->fetchArray('SELECT numero_esterno, data FROM co_documenti WHERE id='.prepare($documento['ref_documento']));
+            $note_accredito = $database->fetchArray('SELECT numero_esterno AS id_documento, data FROM co_documenti WHERE id='.prepare($documento['ref_documento']));
 
-            $this->fatture_collegate = $note_accredito;
+            $dati_aggiuntivi = $documento->dati_aggiuntivi_fe;
+            $dati = $dati_aggiuntivi['dati_fatture'] ?: [];
+
+            $this->fatture_collegate = array_merge($note_accredito, $dati);
         }
 
         return $this->fatture_collegate;
@@ -370,7 +381,7 @@ class FatturaElettronica
         $documento = $fattura->getDocumento();
         $cliente = $fattura->getCliente();
 
-        $sede = database()->fetchOne('SELECT `codice_destinatario` FROM `an_sedi` WHERE `id` = '.prepare($documento['idsede']));
+        $sede = database()->fetchOne('SELECT `codice_destinatario` FROM `an_sedi` WHERE `id` = '.prepare($documento['idsede_destinazione']));
         if (!empty($sede)) {
             $codice_destinatario = $sede['codice_destinatario'];
         } else {
@@ -703,6 +714,10 @@ class FatturaElettronica
         }
 
         // Art73 - Ciò consente al cedente/prestatore l'emissione nello stesso anno di più documenti aventi stesso numero (2.1.1.12)
+        $dati_aggiuntivi = $documento->dati_aggiuntivi_fe;
+        if (!empty($dati_aggiuntivi['art73'])) {
+            $result['Art73'] = 'SI';
+        }
 
         return $result;
     }
@@ -752,30 +767,41 @@ class FatturaElettronica
      *
      * @return array
      */
-    protected static function getDatiOrdineAcquisto($fattura)
+    protected static function getDatiOrdineAcquisto($fattura, $lista = null)
     {
-        $ordini = $fattura->getOrdiniAcquisto();
+        $lista = isset($lista) ? $lista : $fattura->getOrdiniAcquisto();
 
         $result = [];
-        foreach ($ordini as $element) {
-            if (!empty($element['id_documento_fe'])) {
-                $dati = [
-                    'IdDocumento' => $element['id_documento_fe'],
+        foreach ($lista as $element) {
+            $dati = [];
+
+            foreach ($element['riferimento_linea'] as $linea) {
+                $dati[] = [
+                    'RiferimentoNumeroLinea' => $linea,
                 ];
+            }
+
+            $dati['IdDocumento'] = $element['id_documento'];
+
+            if (!empty($element['data'])) {
+                $dati['Data'] = $element['data'];
             }
 
             if (!empty($element['num_item'])) {
                 $dati['NumItem'] = $element['num_item'];
             }
 
-            if (!empty($element['codice_cig'])) {
-                $dati['CodiceCIG'] = $element['codice_cig'];
+            if (!empty($element['codice_commessa'])) {
+                $dati['CodiceCommessaConvenzione'] = $element['codice_commessa'];
             }
 
             if (!empty($element['codice_cup'])) {
                 $dati['CodiceCUP'] = $element['codice_cup'];
             }
 
+            if (!empty($element['codice_cig'])) {
+                $dati['CodiceCIG'] = $element['codice_cig'];
+            }
             $result[] = $dati;
         }
 
@@ -791,30 +817,37 @@ class FatturaElettronica
     {
         $contratti = $fattura->getContratti();
 
-        $result = [];
-        foreach ($contratti as $element) {
-            if (!empty($element['id_documento_fe'])) {
-                $dati = [
-                    'IdDocumento' => $element['id_documento_fe'],
-                ];
-            }
+        return self::getDatiOrdineAcquisto($fattura, $contratti);
+    }
 
-            if (!empty($element['num_item'])) {
-                $dati['NumItem'] = $element['num_item'];
-            }
+    /**
+     * Restituisce l'array responsabile per la generazione del tag DatiConvenzione.
+     *
+     * @return array
+     */
+    protected static function getDatiConvenzione($fattura)
+    {
+        $documento = $fattura->getDocumento();
 
-            if (!empty($element['codice_cup'])) {
-                $dati['CodiceCUP'] = $element['codice_cup'];
-            }
+        $dati_aggiuntivi = $documento->dati_aggiuntivi_fe;
+        $dati = $dati_aggiuntivi['dati_convenzione'] ?: [];
 
-            if (!empty($element['codice_cig'])) {
-                $dati['CodiceCIG'] = $element['codice_cig'];
-            }
+        return self::getDatiOrdineAcquisto($fattura, $dati);
+    }
 
-            $result[] = $dati;
-        }
+    /**
+     * Restituisce l'array responsabile per la generazione del tag DatiRicezione.
+     *
+     * @return array
+     */
+    protected static function getDatiRicezione($fattura)
+    {
+        $documento = $fattura->getDocumento();
 
-        return $result;
+        $dati_aggiuntivi = $documento->dati_aggiuntivi_fe;
+        $dati = $dati_aggiuntivi['dati_ricezione'] ?: [];
+
+        return self::getDatiOrdineAcquisto($fattura, $dati);
     }
 
     /**
@@ -826,15 +859,7 @@ class FatturaElettronica
     {
         $fatture = $fattura->getFattureCollegate();
 
-        $result = [];
-        foreach ($fatture as $element) {
-            $result[] = [
-                'IdDocumento' => $element['numero_esterno'],
-                'Data' => $element['data'],
-            ];
-        }
-
-        return $result;
+        return self::getDatiOrdineAcquisto($fattura, $fatture);
     }
 
     /**
@@ -870,6 +895,30 @@ class FatturaElettronica
                 if (!empty($dato)) {
                     $result[] = [
                         'DatiContratto' => $dato,
+                    ];
+                }
+            }
+        }
+
+        // Controllo le le righe per la fatturazione di contratti
+        $dati_convenzioni = static::getDatiConvenzione($fattura);
+        if (!empty($dati_convenzioni)) {
+            foreach ($dati_convenzioni as $dato) {
+                if (!empty($dato)) {
+                    $result[] = [
+                        'DatiConvenzione' => $dato,
+                    ];
+                }
+            }
+        }
+
+        // Controllo le le righe per la fatturazione di contratti
+        $dati_ricezioni = static::getDatiRicezione($fattura);
+        if (!empty($dati_ricezioni)) {
+            foreach ($dati_ricezioni as $dato) {
+                if (!empty($dato)) {
+                    $result[] = [
+                        'DatiRicezione' => $dato,
                     ];
                 }
             }
@@ -918,13 +967,15 @@ class FatturaElettronica
             return $item->aliquota != null;
         })->aliquota;
         foreach ($righe as $numero => $riga) {
+            $dati_aggiuntivi = $riga->dati_aggiuntivi_fe;
+
             $dettaglio = [
                 'NumeroLinea' => $numero + 1,
             ];
 
             // 2.2.1.2
-            if (!empty($riga['tipo_cessione_prestazione'])) {
-                $dettaglio['TipoCessionePrestazione'] = $riga['tipo_cessione_prestazione'];
+            if (!empty($dati_aggiuntivi['tipo_cessione_prestazione'])) {
+                $dettaglio['TipoCessionePrestazione'] = $dati_aggiuntivi['tipo_cessione_prestazione'];
             }
 
             // 2.2.1.3
@@ -962,11 +1013,11 @@ class FatturaElettronica
                 $dettaglio['UnitaMisura'] = $riga['um'];
             }
 
-            if (!empty($riga['data_inizio_periodo'])) {
-                $dettaglio['DataInizioPeriodo'] = $riga['data_inizio_periodo'];
+            if (!empty($dati_aggiuntivi['data_inizio_periodo'])) {
+                $dettaglio['DataInizioPeriodo'] = $dati_aggiuntivi['data_inizio_periodo'];
             }
-            if (!empty($riga['data_fine_periodo'])) {
-                $dettaglio['DataFinePeriodo'] = $riga['data_fine_periodo'];
+            if (!empty($dati_aggiuntivi['data_fine_periodo'])) {
+                $dettaglio['DataFinePeriodo'] = $dati_aggiuntivi['data_fine_periodo'];
             }
 
             $dettaglio['PrezzoUnitario'] = $riga->prezzo_unitario_vendita ?: 0;
@@ -992,11 +1043,10 @@ class FatturaElettronica
             $aliquota = $riga->aliquota ?: $iva_descrizioni;
             $percentuale = floatval($aliquota->percentuale);
 
-            if ($documento->isNotaDiAccredito()) {
-                $dettaglio['PrezzoTotale'] = -$riga->imponibile_scontato ?: 0;
-            } else {
-                $dettaglio['PrezzoTotale'] = $riga->imponibile_scontato ?: 0;
-            }
+            $prezzo_totale = $documento->isNota() ? -$riga->totale_imponibile : $riga->totale_imponibile;
+            $prezzo_totale = $prezzo_totale ?: 0;
+            $dettaglio['PrezzoTotale'] = $prezzo_totale;
+
             $dettaglio['AliquotaIVA'] = $percentuale;
 
             if (!empty($riga['idritenutaacconto']) && empty($riga['is_descrizione'])) {
@@ -1010,18 +1060,42 @@ class FatturaElettronica
                 $dettaglio['Natura'] = $aliquota['codice_natura_fe'];
             }
 
-            if (!empty($riga['riferimento_amministrazione'])) {
-                $dettaglio['RiferimentoAmministrazione'] = $riga['riferimento_amministrazione'];
+            if (!empty($dati_aggiuntivi['riferimento_amministrazione'])) {
+                $dettaglio['RiferimentoAmministrazione'] = $dati_aggiuntivi['riferimento_amministrazione'];
             }
 
             // AltriDatiGestionali (2.2.1.16) - Ritenuta ENASARCO
             // https://forum.italia.it/uploads/default/original/2X/d/d35d721c3a3a601d2300378724a270154e23af52.jpeg
             if (!empty($riga['ritenuta_contributi'])) {
-                $dettaglio['AltriDatiGestionali'] = [
+                $dettaglio[]['AltriDatiGestionali'] = [
                     'TipoDato' => 'CASSA-PREV',
                     'RiferimentoTesto' => setting('Tipo Cassa Previdenziale').' - '.$ritenuta_contributi->descrizione.' ('.Translator::numberToLocale($ritenuta_contributi->percentuale).'%)',
                     'RiferimentoNumero' => $riga->ritenuta_contributi,
                 ];
+            }
+
+            if (!empty($dati_aggiuntivi['altri_dati'])) {
+                foreach ($dati_aggiuntivi['altri_dati'] as $dato) {
+                    $altri_dati = [];
+
+                    if (!empty($dato['tipo_dato'])) {
+                        $altri_dati['TipoDato'] = $dato['tipo_dato'];
+                    }
+
+                    if (!empty($dato['riferimento_testo'])) {
+                        $altri_dati['RiferimentoTesto'] = $dato['riferimento_testo'];
+                    }
+
+                    if (!empty($dato['riferimento_numero'])) {
+                        $altri_dati['RiferimentoNumero'] = $dato['riferimento_numero'];
+                    }
+
+                    if (!empty($dato['riferimento_data'])) {
+                        $altri_dati['RiferimentoData'] = $dato['riferimento_data'];
+                    }
+
+                    $dettaglio[]['AltriDatiGestionali'] = $altri_dati;
+                }
             }
 
             $result[] = [
@@ -1036,16 +1110,18 @@ class FatturaElettronica
             return $item->aliquota->percentuale;
         });
         foreach ($riepiloghi_percentuale as $riepilogo) {
-            //(imponibile-sconto) + rivalsa inps
-            $totale = round(($riepilogo->sum('imponibile') - $riepilogo->sum('sconto')) + $riepilogo->sum('rivalsa_inps'), 2);
+            $totale = round($riepilogo->sum('totale_imponibile') + $riepilogo->sum('rivalsa_inps'), 2);
             $imposta = round($riepilogo->sum('iva') + $riepilogo->sum('iva_rivalsa_inps'), 2);
+
+            $totale = $documento->isNota() ? -$totale : $totale;
+            $imposta = $documento->isNota() ? -$imposta : $imposta;
 
             $dati = $riepilogo->first()->aliquota;
 
             $iva = [
                 'AliquotaIVA' => $dati['percentuale'],
-                'ImponibileImporto' => abs($totale),
-                'Imposta' => abs($imposta),
+                'ImponibileImporto' => $totale,
+                'Imposta' => $imposta,
                 'EsigibilitaIVA' => $dati['esigibilita'],
             ];
 
@@ -1073,17 +1149,19 @@ class FatturaElettronica
             return $item->aliquota->codice_natura_fe;
         });
         foreach ($riepiloghi_natura as $riepilogo) {
-            //(imponibile-sconto) + rivalsa inps
-            $totale = round(($riepilogo->sum('imponibile') - $riepilogo->sum('sconto')) + $riepilogo->sum('rivalsa_inps'), 2);
+            $totale = round($riepilogo->sum('totale_imponibile') + $riepilogo->sum('rivalsa_inps'), 2);
             $imposta = round($riepilogo->sum('iva') + $riepilogo->sum('iva_rivalsa_inps'), 2);
+
+            $totale = $documento->isNota() ? -$totale : $totale;
+            $imposta = $documento->isNota() ? -$imposta : $imposta;
 
             $dati = $riepilogo->first()->aliquota;
 
             $iva = [
                 'AliquotaIVA' => 0,
                 'Natura' => $dati->codice_natura_fe,
-                'ImponibileImporto' => abs($totale),
-                'Imposta' => abs($imposta),
+                'ImponibileImporto' => $totale,
+                'Imposta' => $imposta,
                 'EsigibilitaIVA' => $dati->esigibilita,
                 'RiferimentoNormativo' => $dati->descrizione,
             ];
@@ -1169,7 +1247,7 @@ class FatturaElettronica
 
         // Inclusione
         foreach ($allegati as $allegato) {
-            if ($allegato['category'] == 'Fattura Elettronica' && $allegato['name'] != 'Stampa allegata') {
+            if ($allegato['category'] == 'Allegati Fattura Elettronica') {
                 $file = DOCROOT.'/'.$directory.'/'.$allegato['filename'];
 
                 $attachments[] = [
@@ -1197,23 +1275,22 @@ class FatturaElettronica
         $data = $fattura->getUploadData();
         $dir = static::getDirectory();
 
-        $rapportino_nome = sanitizeFilename($documento['numero_esterno'].'.pdf');
-        $filename = slashes(DOCROOT.'/'.$dir.'/'.$rapportino_nome);
-
-        Uploads::delete($rapportino_nome, $data);
-
         $print = Prints::getModulePredefinedPrint($id_module);
-        Prints::render($print['id'], $documento['id'], $filename);
+        $info = Prints::render($print['id'], $documento['id'], DOCROOT.'/'.$dir);
 
-        Uploads::register(array_merge([
-            'name' => 'Stampa allegata',
-            'original' => $rapportino_nome,
-        ], $data));
+        $name = 'Stampa allegata';
+        $is_presente = database()->fetchNum('SELECT id FROM zz_files WHERE id_module = '.prepare($id_module).' AND id_record = '.prepare($documento['id']).' AND name = '.prepare($name));
+        if (empty($is_presente)) {
+            Uploads::register(array_merge([
+                'name' => $name,
+                'original' => basename($info['path']),
+            ], $data));
+        }
 
         $attachments[] = [
             'NomeAttachment' => 'Fattura',
             'FormatoAttachment' => 'PDF',
-            'Attachment' => base64_encode(file_get_contents($filename)),
+            'Attachment' => base64_encode(file_get_contents($info['path'])),
         ];
 
         return $attachments;

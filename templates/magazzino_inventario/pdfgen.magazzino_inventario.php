@@ -52,7 +52,7 @@ include_once $docroot.'/templates/pdfgen_variables.php';
 // LEFT OUTER JOIN mg_categorie ON (mg_categorie.id=mg_articoli.id_categoria AND mg_categorie.parent = 0) OR (mg_categorie.id=mg_articoli.id_sottocategoria AND  mg_categorie.parent = 1)
 $period_end = $_SESSION['period_end'];
 
-$query = 'SELECT *, mg_articoli.id AS id_articolo, (SELECT nome FROM mg_categorie WHERE  mg_categorie.parent = 0 AND mg_categorie.id = mg_articoli.id_categoria) AS categoria, (SELECT nome FROM mg_categorie WHERE  mg_categorie.parent = 1 AND mg_categorie.id = mg_articoli.id_sottocategoria) AS subcategoria, (SELECT SUM(qta) FROM mg_movimenti WHERE mg_movimenti.idarticolo=mg_articoli.id AND (mg_movimenti.idintervento IS NULL OR mg_movimenti.idautomezzo = 0) AND data <= '.prepare($period_end).' ) AS qta FROM mg_articoli WHERE 1=1 '.$add_where.' HAVING  2=2 AND qta > 0 '.$add_having.' ORDER BY codice ASC';
+$query = 'SELECT *, mg_articoli.id AS id_articolo, (SELECT nome FROM mg_categorie WHERE  mg_categorie.parent = 0 AND mg_categorie.id = mg_articoli.id_categoria) AS categoria, (SELECT nome FROM mg_categorie WHERE  mg_categorie.parent = 1 AND mg_categorie.id = mg_articoli.id_sottocategoria) AS subcategoria, (SELECT SUM(qta) FROM mg_movimenti WHERE mg_movimenti.idarticolo=mg_articoli.id AND (mg_movimenti.idintervento IS NULL) AND data <= '.prepare($period_end).' ) AS qta FROM mg_articoli WHERE 1=1 '.$add_where.' HAVING  2=2 AND servizio = 0  AND attivo = 1'.$add_having.' ORDER BY codice ASC';
 $rs = $dbo->fetchArray($query);
 $totrows = sizeof($rs);
 
@@ -75,7 +75,7 @@ for ($r = 0; $r < sizeof($rs); ++$r) {
     $body .= "	<td class='first_cell cell-padded'>".$rs[$r]['codice']."</td>\n";
     $body .= "	<td class='table_cell cell-padded'>".$rs[$r]['descrizione']."</td>\n";
     $body .= "	<td class='table_cell text-right cell-padded'>".moneyFormat($rs[$r]['prezzo_vendita'])."</td>\n";
-    $body .= "	<td class='table_cell text-right cell-padded'>".$rs[$r]['um'].' '.Translator::numberToLocale($rs[$r]['qta'])."</td>\n";
+    $body .= "	<td class='table_cell text-right cell-padded'>".Translator::numberToLocale($rs[$r]['qta']).' '.$rs[$r]['um']."</td>\n";
     $body .= "	<td class='table_cell text-right cell-padded'>".moneyFormat($rs[$r]['prezzo_acquisto'])."</td>\n";
     $body .= "	<td class='table_cell text-right cell-padded'>".moneyFormat(($rs[$r]['prezzo_acquisto'] * $rs[$r]['qta']))."</td>\n";
     $body .= "</tr>\n";
@@ -93,5 +93,3 @@ $body .= "<td bgcolor='#dddddd' class='first_cell text-right cell-padded'></td>\
 $body .= "<td bgcolor='#dddddd' class='table_cell text-right cell-padded'><b>".moneyFormat($totale_acquisto)."</b></td>\n";
 $body .= "</tr>\n";
 $body .= "</table>\n";
-
-$report_name = 'inventario.pdf';

@@ -33,11 +33,11 @@ abstract class Row extends Description
     }
 
     /**
-     * Restituisce l'imponibile scontato dell'elemento.
+     * Restituisce il totale imponibile dell'elemento.
      *
      * @return float
      */
-    public function getImponibileScontatoAttribute()
+    public function getTotaleImponibileAttribute()
     {
         $result = $this->prezzo_unitario_vendita >= 0 ? $this->imponibile : -$this->imponibile;
 
@@ -53,7 +53,7 @@ abstract class Row extends Description
      */
     public function getTotaleAttribute()
     {
-        return $this->imponibile_scontato + $this->iva;
+        return $this->totale_imponibile + $this->iva;
     }
 
     /**
@@ -67,13 +67,13 @@ abstract class Row extends Description
     }
 
     /**
-     * Restituisce il gaudagno totale (imponibile_scontato - spesa) relativo all'elemento.
+     * Restituisce il gaudagno totale (totale_imponibile - spesa) relativo all'elemento.
      *
      * @return float
      */
     public function getGuadagnoAttribute()
     {
-        return $this->imponibile_scontato - $this->spesa;
+        return $this->totale_imponibile - $this->spesa;
     }
 
     // Attributi della componente
@@ -85,7 +85,7 @@ abstract class Row extends Description
 
     public function getIvaAttribute()
     {
-        return ($this->imponibile_scontato) * $this->aliquota->percentuale / 100;
+        return ($this->totale_imponibile) * $this->aliquota->percentuale / 100;
     }
 
     public function getIvaDetraibileAttribute()
@@ -125,7 +125,7 @@ abstract class Row extends Description
     }
 
     /**
-     * Imposta il costo unitario della riga.
+     * Imposta il prezzo unitario della riga.
      *
      * @param float $value
      */
@@ -135,7 +135,7 @@ abstract class Row extends Description
     }
 
     /**
-     * Restituisce il costo unitario della riga.
+     * Restituisce il prezzo unitario della riga.
      */
     public function getPrezzoUnitarioVenditaAttribute()
     {
@@ -173,13 +173,15 @@ abstract class Row extends Description
     {
         parent::boot(true);
 
+        $table = parent::getTableName();
+
         if (!$bypass) {
-            static::addGlobalScope('rows', function (Builder $builder) {
-                $builder->whereNull('idarticolo')->orWhere('idarticolo', '=', 0);
+            static::addGlobalScope('rows', function (Builder $builder) use ($table) {
+                $builder->whereNull($table.'.idarticolo')->orWhere($table.'.idarticolo', '=', 0);
             });
 
-            static::addGlobalScope('not_discounts', function (Builder $builder) {
-                $builder->where('is_sconto', '=', 0);
+            static::addGlobalScope('not_discounts', function (Builder $builder) use ($table) {
+                $builder->where($table.'.is_sconto', '=', 0);
             });
         }
     }

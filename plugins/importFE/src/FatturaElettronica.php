@@ -69,11 +69,14 @@ class FatturaElettronica
         if (!isset(self::$directory)) {
             $module = Modules::get('Fatture di acquisto');
 
-            $plugin = $module->plugins->first(function ($value, $key) {
-                return $value->name == 'Fatturazione Elettronica';
-            });
+            $plugins = $module->plugins;
+            if (!empty($plugins)) {
+                $plugin = $plugins->first(function ($value, $key) {
+                    return $value->name == 'Fatturazione Elettronica';
+                });
 
-            self::$directory = DOCROOT.'/'.$plugin->upload_directory;
+                self::$directory = DOCROOT.'/'.$plugin->upload_directory;
+            }
         }
 
         return self::$directory;
@@ -107,14 +110,17 @@ class FatturaElettronica
     public static function manage($name)
     {
         try {
-            $fattura = new FatturaOrdinaria($name);
+            $manager = new FatturaOrdinaria($name);
 
-            return $fattura;
+            $tipo = $manager->getBody()['DatiGenerali']['DatiGeneraliDocumento']['TipoDocumento'];
+            if ($tipo == 'TD06') {
+                $manager = new Parcella($name);
+            }
         } catch (UnexpectedValueException $e) {
-            $fattura = new FatturaSemplificata($name);
-
-            return $fattura;
+            $manager = new FatturaSemplificata($name);
         }
+
+        return $manager;
     }
 
     public function getHeader()
@@ -175,13 +181,13 @@ class FatturaElettronica
         }
 
         // Registrazione XML come allegato
-        $filename = Uploads::upload($this->file, array_merge($info, [
+        Uploads::upload($this->file, array_merge($info, [
             'name' => tr('Fattura Elettronica'),
             'original' => basename($this->file),
         ]));
     }
 
-    public function saveAnagrafica($type = 'Fornitore')
+    public function findAnagrafica()
     {
         $info = $this->getAnagrafe();
 
@@ -199,11 +205,25 @@ class FatturaElettronica
             $anagrafica->where('codice_fiscale', $info['codice_fiscale']);
         }
 
-        $anagrafica = $anagrafica->first();
+        return $anagrafica->first();
+    }
+
+    /**
+     * Restituisce l'anagrafica collegata alla fattura, eventualmente generandola con i dati forniti.
+     *
+     * @param string $type
+     *
+     * @return Anagrafica
+     */
+    public function saveAnagrafica($type = 'Fornitore')
+    {
+        $anagrafica = $this->findAnagrafica();
 
         if (!empty($anagrafica)) {
             return $anagrafica;
         }
+
+        $info = $this->getAnagrafe();
 
         $anagrafica = Anagrafica::build($info['ragione_sociale'], $info['nome'], $info['cognome'], [
             TipoAnagrafica::where('descrizione', $type)->first()->id,
@@ -264,47 +284,39 @@ class FatturaElettronica
     /**
      * Registra la fattura elettronica come fattura del gestionale.
      *
+     * @param int    $id_pagamento
+     * @param int    $id_sezionale
+     * @param int    $id_tipo
+     * @param string $data_registrazione
+     * @param int    $ref_fattura
+     *
      * @return Fattura
      */
-    public function saveFattura($id_pagamento, $id_sezionale, $id_tipo, $data_registrazione)
+    public function saveFattura($id_pagamento, $id_sezionale, $id_tipo, $data_registrazione, $ref_fattura)
     {
-        $anagrafica = $this->saveAnagrafica();
-
         $dati_generali = $this->getBody()['DatiGenerali']['DatiGeneraliDocumento'];
         $data = $dati_generali['Data'];
 
+        $fattura = $this->prepareFattura($id_tipo, $data, $id_sezionale, $ref_fattura);
+        $this->fattura = $fattura;
+
         $numero_esterno = $dati_generali['Numero'];
         $progressivo_invio = $this->getHeader()['DatiTrasmissione']['ProgressivoInvio'];
-
-        $tipo = TipoFattura::where('id', $id_tipo)->first();
-
-        $fattura = Fattura::build($anagrafica, $tipo, $data, $id_sezionale);
-        $this->fattura = $fattura;
 
         $fattura->progressivo_invio = $progressivo_invio;
         $fattura->numero_esterno = $numero_esterno;
         $fattura->idpagamento = $id_pagamento;
 
-        // Per il destinatario, la data di ricezione della fattura assume grande rilievo ai fini IVA, poiché determina la decorrenza dei termini per poter esercitare il diritto alla detrazione.
+        // Riferimento per nota di credito e debito
+        $fattura->ref_documento = $ref_fattura ?: null;
+
+        // Per il destinatario, la data di registrazione della fattura assume grande rilievo ai fini IVA, poiché determina la decorrenza dei termini per poter esercitare il diritto alla detrazione.
         // La data di ricezione della fattura è contenuta all’interno della “ricevuta di consegna” visibile al trasmittente della stessa.
-        if (empty($data_registrazione)) {
-            $fattura->data_registrazione = $dati_generali['Data'];
-        } else {
-            $fattura->data_registrazione = $data_registrazione;
-        }
+        $fattura->data_registrazione = $data_registrazione;
         $fattura->data_competenza = $fattura->data_registrazione;
 
         $stato_documento = StatoFattura::where('descrizione', 'Emessa')->first();
         $fattura->stato()->associate($stato_documento);
-
-        // Ritenuta d'Acconto
-        $ritenuta = $dati_generali['DatiRitenuta'];
-        if (!empty($ritenuta)) {
-            $percentuale = $ritenuta['AliquotaRitenuta'];
-            $importo = $ritenuta['ImportoRitenuta'];
-
-            // TODO: salvare in fattura
-        }
 
         $causali = $dati_generali['Causale'];
         if (!empty($causali)) {
@@ -312,6 +324,7 @@ class FatturaElettronica
             foreach ($causali as $causale) {
                 $note .= $causale;
             }
+
             $fattura->note = $note;
         }
 
@@ -333,13 +346,28 @@ class FatturaElettronica
 
     public function save($info = [])
     {
-        $this->saveFattura($info['id_pagamento'], $info['id_segment'], $info['id_tipo'], $info['data_registrazione']);
+        $this->saveFattura($info['id_pagamento'], $info['id_segment'], $info['id_tipo'], $info['data_registrazione'], $info['ref_fattura']);
 
         $this->saveRighe($info['articoli'], $info['iva'], $info['conto'], $info['movimentazione']);
 
         $this->saveAllegati();
 
         return $this->getFattura()->id;
+    }
+
+    protected function prepareFattura($id_tipo, $data, $id_sezionale, $ref_fattura)
+    {
+        $anagrafica = $this->saveAnagrafica();
+
+        $tipo = TipoFattura::where('id', $id_tipo)->first();
+
+        $fattura = Fattura::build($anagrafica, $tipo, $data, $id_sezionale);
+        $this->fattura = $fattura;
+
+        // Riferimento per nota di credito e debito
+        $fattura->ref_documento = $ref_fattura ?: null;
+
+        return $fattura;
     }
 
     protected function forceArray($result)

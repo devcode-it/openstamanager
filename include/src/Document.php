@@ -2,6 +2,8 @@
 
 namespace Common;
 
+use Common\Components\Description;
+
 abstract class Document extends Model
 {
     /**
@@ -17,6 +19,29 @@ abstract class Document extends Model
         $sconti = $this->sconti;
 
         return $descrizioni->merge($righe)->merge($articoli)->merge($sconti)->sortBy('order');
+    }
+
+    /**
+     * Restituisce la collezione di righe e articoli con valori rilevanti per i conti, raggruppate sulla base dei documenti di provenienza.
+     * La chiave è la serializzazione del documento di origine, oppure null in caso non esista.
+     *
+     * @return iterable
+     */
+    public function getRigheRaggruppate()
+    {
+        $righe = $this->getRighe();
+
+        $groups = $righe->groupBy(function ($item, $key) {
+            if (!$item->hasOriginal()) {
+                return null;
+            }
+
+            $parent = $item->getOriginal()->parent;
+
+            return serialize($parent);
+        });
+
+        return $groups;
     }
 
     abstract public function righe();
@@ -48,13 +73,13 @@ abstract class Document extends Model
     }
 
     /**
-     * Calcola l'imponibile scontato del documento.
+     * Calcola il totale imponibile del documento.
      *
      * @return float
      */
-    public function getImponibileScontatoAttribute()
+    public function getTotaleImponibileAttribute()
     {
-        return $this->calcola('imponibile_scontato');
+        return $this->calcola('totale_imponibile');
     }
 
     /**
@@ -97,6 +122,40 @@ abstract class Document extends Model
         return $this->calcola('guadagno');
     }
 
+    public function delete()
+    {
+        $righe = $this->getRighe();
+
+        $can_delete = true;
+        foreach ($righe as $riga) {
+            $can_delete &= $riga->canDelete();
+        }
+
+        if (!$can_delete) {
+            throw new \InvalidArgumentException();
+        }
+
+        foreach ($righe as $riga) {
+            $riga->delete();
+        }
+
+        return parent::delete();
+    }
+
+    /**
+     * Effettua un controllo sui campi del documento.
+     * Viene richiamatp dalle modifiche alle righe del documento.
+     *
+     * @param Description $trigger
+     */
+    public function fixStato(Description $trigger)
+    {
+        $this->load('righe');
+        $this->load('articoli');
+        $this->load('descrizioni');
+        $this->load('sconti');
+    }
+
     /**
      * Calcola la somma degli attributi indicati come parametri.
      * Il metodo **non** deve essere adattato per ulteriori funzionalità: deve esclusivamente calcolare la somma richiesta in modo esplicito dagli argomenti.
@@ -122,9 +181,7 @@ abstract class Document extends Model
      */
     protected function getRigheContabili()
     {
-        $sconto = $this->scontoGlobale ? [$this->scontoGlobale] : [];
-
-        return $this->getRighe()->merge(collect($sconto));
+        return $this->getRighe();
     }
 
     /**

@@ -64,7 +64,7 @@ include_once __DIR__.'/../../core.php';
                 </div>
 
                 <div class="col-md-6">
-                    {[ "type": "password", "label": "<?php echo tr('Password SMTP'); ?>", "class": "", "name": "password", "value": "$password$", "icon-after": "<i title=\"<?php echo tr('Visualizza password'); ?>\" class=\"fa fa-eye clickable\" ></i>" ]}
+                    {[ "type": "password", "label": "<?php echo tr('Password SMTP'); ?>", "class": "", "name": "password", "value": "$password$" ]}
                 </div>
             </div>
 

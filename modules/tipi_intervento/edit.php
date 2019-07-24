@@ -9,7 +9,7 @@ include_once __DIR__.'/../../core.php';
 
 	<div class="row">
 		<div class="col-md-4">
-			{[ "type": "span", "label": "<?php echo tr('Codice'); ?>", "name": "idtipointervento", "value": "$idtipointervento$" ]}
+			{[ "type": "span", "label": "<?php echo tr('Codice'); ?>", "name": "codice", "value": "$codice$" ]}
 		</div>
 
 		<div class="col-md-6">
@@ -24,21 +24,21 @@ include_once __DIR__.'/../../core.php';
 
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo tr('Costi unitari'); ?></h3>
+			<h3 class="panel-title"><?php echo tr('Addebiti unitari al cliente'); ?></h3>
 		</div>
 
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-md-4">
-					{[ "type": "number", "label": "<?php echo tr('Costo orario'); ?>", "name": "costo_orario", "required": 1, "value": "$costo_orario$", "icon-after": "<i class='fa fa-euro'></i>" ]}
+					{[ "type": "number", "label": "<?php echo tr('Addebito orario'); ?>", "name": "costo_orario", "required": 1, "value": "$costo_orario$", "icon-after": "<i class='fa fa-euro'></i>" ]}
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "number", "label": "<?php echo tr('Costo km'); ?>", "name": "costo_km", "required": 1, "value": "$costo_km$", "icon-after": "<i class='fa fa-euro'></i>" ]}
+					{[ "type": "number", "label": "<?php echo tr('Addebito km'); ?>", "name": "costo_km", "required": 1, "value": "$costo_km$", "icon-after": "<i class='fa fa-euro'></i>" ]}
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "number", "label": "<?php echo tr('Diritto chiamata'); ?>", "name": "costo_diritto_chiamata", "required": 1, "value": "$costo_diritto_chiamata$", "icon-after": "<i class='fa fa-euro'></i>" ]}
+					{[ "type": "number", "label": "<?php echo tr('Addebito diritto ch.'); ?>", "name": "costo_diritto_chiamata", "required": 1, "value": "$costo_diritto_chiamata$", "icon-after": "<i class='fa fa-euro'></i>" ]}
 				</div>
 			</div>
 		</div>
@@ -47,7 +47,7 @@ include_once __DIR__.'/../../core.php';
 
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo tr('Costi unitari riconosciuti al tecnico'); ?></h3>
+			<h3 class="panel-title"><?php echo tr('Costi unitari del tecnico'); ?></h3>
 		</div>
 
 		<div class="panel-body">
@@ -61,16 +61,12 @@ include_once __DIR__.'/../../core.php';
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "number", "label": "<?php echo tr('Diritto chiamata'); ?>", "name": "costo_diritto_chiamata_tecnico", "required": 1, "value": "$costo_diritto_chiamata_tecnico$", "icon-after": "<i class='fa fa-euro'></i>" ]}
+					{[ "type": "number", "label": "<?php echo tr('Costo diritto ch.'); ?>", "name": "costo_diritto_chiamata_tecnico", "required": 1, "value": "$costo_diritto_chiamata_tecnico$", "icon-after": "<i class='fa fa-euro'></i>" ]}
 				</div>
 			</div>
 		</div>
 	</div>
 </form>
-
-<a class="btn btn-danger ask" data-backto="record-list">
-    <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
-</a>
 
 <?php
 
@@ -83,6 +79,10 @@ if ($tot_interventi > 0) {
         '.tr('Ci sono _NUM_ interventi collegati', [
             '_NUM_' => $tot_interventi,
         ]).'.
-        '.tr('Eliminando questo tipo di attività, vengono rimossi anche gli interventi collegati!').'
     </div>';
+} else {
+    echo '
+<a class="btn btn-danger ask" data-backto="record-list">
+    <i class="fa fa-trash"></i> '.tr('Elimina').'
+</a>';
 }

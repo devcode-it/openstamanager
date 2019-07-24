@@ -66,24 +66,29 @@ class Hook extends Model
         } else {
             $results = $hook->manage();
 
-            // Rimozione cache precedente
-            $database = database();
-            $database->delete('zz_hook_cache', [
-                'hook_id' => $this->id,
-            ]);
-
-            // Aggiunta del risultato come cache
-            $cache = json_encode($results);
-            $database->insert('zz_hook_cache', [
-                'hook_id' => $this->id,
-                'results' => $cache,
-            ]);
-
-            $this->cached = null;
-            $this->getCacheAttribute();
+            $this->updateCache($results);
         }
 
         return $hook->response($results);
+    }
+
+    public function updateCache($results)
+    {
+        // Rimozione cache precedente
+        $database = database();
+        $database->delete('zz_hook_cache', [
+            'hook_id' => $this->id,
+        ]);
+
+        // Aggiunta del risultato come cache
+        $cache = json_encode($results);
+        $database->insert('zz_hook_cache', [
+            'hook_id' => $this->id,
+            'results' => $cache,
+        ]);
+
+        $this->cached = null;
+        $this->getCacheAttribute();
     }
 
     public function getCacheAttribute()

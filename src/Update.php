@@ -182,6 +182,10 @@ class Update
             // Normalizzazione di charset e collation
             self::normalizeDatabase($database->getDatabaseName());
 
+            if (class_exists('\Modules\Aggiornamenti\UpdateHook')) {
+                \Modules\Aggiornamenti\UpdateHook::update(null);
+            }
+
             return true;
         }
 
@@ -377,6 +381,7 @@ class Update
         $previous = [];
 
         $files = glob($directory.'/*.{php,sql}', GLOB_BRACE);
+        natsort($files);
         foreach ($files as $file) {
             $infos = pathinfo($file);
             $version = str_replace('_', '.', $infos['filename']);
@@ -393,7 +398,7 @@ class Update
             }
         }
 
-        asort($results);
+        $results;
 
         return $results;
     }

@@ -147,10 +147,10 @@ function search(button) {
                 </h3>
             </div>
             <div class="box-body">
-                <form action="'.ROOTDIR.'/controller.php?id_module='.$id_module.'" method="post" enctype="multipart/form-data" class="form-inline" id="update">
+                <form action="'.ROOTDIR.'/controller.php?id_module='.$id_module.'" method="post" enctype="multipart/form-data" id="update">
                     <input type="hidden" name="op" value="upload">
 
-                    <label><input type="file" name="blob" id="blob"></label>
+			        {[ "type": "file", "name": "blob", "required": 1, "accept": ".zip" ]}
 
                     <button type="button" class="btn btn-primary pull-right" onclick="update()">
                         <i class="fa fa-upload"></i> '.tr('Carica').'

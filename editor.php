@@ -13,16 +13,18 @@ if (empty($id_record) && !empty($id_module)) {
 include_once App::filepath('include|custom|', 'top.php');
 
 Util\Query::setSegments(false);
-$query = Util\Query::getQuery($module, [
+$query = Util\Query::getQuery($structure, [
     'id' => $id_record,
 ]);
 Util\Query::setSegments(true);
+
+$query = str_replace(['AND `deleted_at` IS NULL', '`deleted_at` IS NULL AND', '`deleted_at` IS NULL', 'AND deleted_at IS NULL', 'deleted_at IS NULL AND', 'deleted_at IS NULL'], '', $query);
 
 $has_access = !empty($query) ? $dbo->fetchNum($query) !== 0 : true;
 
 if ($has_access) {
     // Inclusione gli elementi fondamentali
-    include_once $docroot.'/actions.php';
+    include_once DOCROOT.'/actions.php';
 }
 
 if (empty($record) || !$has_access) {
@@ -104,6 +106,40 @@ if (empty($record) || !$has_access) {
 			<div class="tab-content">
                 <div id="tab_0" class="tab-pane active">';
 
+    if (!empty($record['deleted_at'])) {
+        $operation = $dbo->fetchOne("SELECT zz_operations.created_at, username FROM zz_operations INNER JOIN zz_users ON zz_operations.id_utente =  zz_users.id  WHERE op='delete' AND id_module=".prepare($id_module).' AND id_record='.prepare($id_record).' ORDER BY zz_operations.created_at DESC');
+
+        if (!empty($operation['username'])) {
+            $info = tr('Il record è stato eliminato il <b>_DATE_</b> da <b>_USER_</b>', [
+                '_DATE_' => Translator::timestampToLocale($operation['created_at']),
+                '_USER_' => $operation['username'],
+            ]).'. ';
+        }
+
+        echo '
+        <div class="alert alert-danger">
+            <div class="row" >
+                <div class="col-md-8">
+                    <i class="fa fa-warning"></i> '.$info.'<strong>'.tr('Ripristinare il record?').'</strong>
+                </div>
+                <div class="col-md-4">
+                    <button type="button" class="btn btn-warning pull-right" id="restore">
+                        <i class="fa fa-undo"></i> '.tr('Salva e ripristina').'
+                    </button>
+                </div>
+            </div>
+		</div>
+		
+		<script>
+            $(document).ready(function(){        
+                $("#restore").click(function(){
+                    $("input[name=op]").attr("value", "restore");
+                    $("#submit").trigger("click");
+                })
+            });
+        </script>';
+    }
+
     // Pulsanti di default
     echo '
                     <div id="pulsanti">
@@ -130,6 +166,8 @@ if (empty($record) || !$has_access) {
                         form.prepend(\'<button type="submit" id="submit" class="hide"></button>\');
 
                         $("#save").click(function(){
+                            //submitAjax(form);
+                        
                             $("#submit").trigger("click");
                         });';
 
@@ -203,6 +241,15 @@ if (empty($record) || !$has_access) {
                 <script>
                 $(document).ready(function(){
                     var form = $("#module-edit").find("form").first();
+                    
+                    // Rimozione select inizializzati
+                    $("#custom_fields_bottom-edit").find("select").each(function () {
+                        $(this).select2().select2("destroy");
+                    });
+                    
+                    $("#custom_fields_bottom-edit").find("select").each(function () {
+                        $(this).select2().select2("destroy");
+                    });
 
                     // Campi a inizio form
                     form.prepend($("#custom_fields_top-edit").html());
@@ -219,6 +266,8 @@ if (empty($record) || !$has_access) {
                     }
 
                     last.after($("#custom_fields_bottom-edit").html());
+                    
+                    start_superselect();
                 });
                 </script>';
 
@@ -313,7 +362,7 @@ if (empty($record) || !$has_access) {
 
         $id_plugin = $plugin['id'];
 
-        include $docroot.'/include/manager.php';
+        include DOCROOT.'/include/manager.php';
 
         echo '
 				</div>';

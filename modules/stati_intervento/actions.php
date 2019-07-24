@@ -18,7 +18,7 @@ switch (post('op')) {
         break;
 
     case 'add':
-        $idstatointervento = post('idstatointervento');
+        $idstatointervento = post('codice');
         $descrizione = post('descrizione');
         $colore = post('colore');
 
@@ -26,9 +26,9 @@ switch (post('op')) {
         if (count($dbo->fetchArray('SELECT idstatointervento FROM in_statiintervento WHERE idstatointervento='.prepare($idstatointervento))) > 0) {
             flash()->error(tr('Stato di intervento già esistente.'));
         } else {
-            $query = 'INSERT INTO in_statiintervento(idstatointervento, descrizione, colore) VALUES ('.prepare($idstatointervento).', '.prepare($descrizione).', '.prepare($colore).')';
+            $query = 'INSERT INTO in_statiintervento(codice, descrizione, colore) VALUES ('.prepare($idstatointervento).', '.prepare($descrizione).', '.prepare($colore).')';
             $dbo->query($query);
-            $id_record = $idstatointervento;
+            $id_record = $database->lastInsertedID();
             flash()->info(tr('Nuovo stato di intervento aggiunto.'));
         }
 

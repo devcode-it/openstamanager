@@ -159,25 +159,6 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
     }
 
     /**
-     * Restituisce le variabili relative a un singolo template specificato.
-     *
-     * @param string|int $template
-     *
-     * @return array
-     */
-    public static function getTemplateVariables($template, $id_record)
-    {
-        $template = self::getTemplate($template);
-
-        $dbo = $database = database();
-
-        // Lettura delle variabili nei singoli moduli
-        $variables = include Modules::filepath($template['id_module'], 'variables.php');
-
-        return (array) $variables;
-    }
-
-    /**
      * Restituisce le informazioni relative ai template di un singolo modulo specificato.
      *
      * @param string|int $module

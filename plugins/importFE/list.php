@@ -3,8 +3,13 @@
 include_once __DIR__.'/../../core.php';
 
 use Plugins\ImportFE\Interaction;
+use Plugins\ImportFE\InvoiceHook;
 
 $list = Interaction::listToImport();
+
+// Aggiornamento cache hook
+InvoiceHook::update($list);
+
 $directory = Plugins\ImportFE\FatturaElettronica::getImportDirectory();
 
 if (!empty($list)) {
@@ -12,32 +17,81 @@ if (!empty($list)) {
 <table class="table table-striped table-hover table-condensed table-bordered datatables">
     <thead>
         <tr>
-            <th>'.tr('Nome').'</th>
+            <th>'.tr('Descrizione').'</th>
+            <th class="text-center">'.tr('Fornitore').'</th>
+            <th class="text-center">'.tr('Data di registrazione').'</th>
+            <th class="text-center">'.tr('Totale imponibile').'</th>
             <th width="20%" class="text-center">#</th>
         </tr>
     </thead>
     <tbody>';
 
     foreach ($list as $element) {
-        echo '
-        <tr>
-            <td>'.$element.'</td>
-            <td class="text-center">';
+        $name = $element['name'];
+        $data = $element['date_sent'] ?: '';
 
-        if (file_exists($directory.'/'.$element)) {
+        echo '
+        <tr>';
+
+        if (file_exists($directory.'/'.$name)) {
             echo '
-                <button type="button" class="btn btn-danger" onclick="delete_fe(this, \''.$element.'\')">
+            <td>
+                <p>'.$name.'</p>
+            </td>
+            
+            <td class="text-center">-</td>
+            <td class="text-center">-</td>
+            <td class="text-center">-</td>
+            
+            <td class="text-center">
+                <button type="button" class="btn btn-danger" onclick="delete_fe(this, \''.$name.'\')">
                     <i class="fa fa-trash"></i>
                 </button>';
         } else {
+            $date = new DateTime($element['date']);
+            $date = $date->format('Y-m-d');
+
+            $descrizione = '';
+            if ($element['type'] == 'TD01') {
+                $descrizione = tr('Fattura num. _NUM_ del _DATE_', [
+                    '_NUM_' => $element['number'],
+                    '_DATE_' => dateFormat($date),
+                ]);
+            } elseif ($element['type'] == 'TD04') {
+                $descrizione = tr('Nota di credito num. _NUM_ del _DATE_', [
+                    '_NUM_' => $element['number'],
+                    '_DATE_' => dateFormat($date),
+                ]);
+            } elseif ($element['type'] == 'TD05') {
+                $descrizione = tr('Nota di debito num. _NUM_ del _DATE_', [
+                    '_NUM_' => $element['number'],
+                    '_DATE_' => dateFormat($date),
+                ]);
+            } elseif ($element['type'] == 'TD06') {
+                $descrizione = tr('Parcella num. _NUM_ del _DATE_', [
+                    '_NUM_' => $element['number'],
+                    '_DATE_' => dateFormat($date),
+                ]);
+            }
+
             echo '
-                <button type="button" class="btn btn-info" onclick="process_fe(this, \''.$element.'\')">
+            <td>
+                '.$descrizione.' <small>['.$name.']</small>
+            </td>
+            
+            <td>'.$element['sender'].'</td>
+            <td>'.dateFormat($element['date_sent']).'</td>
+            <td class="text-right">'.moneyFormat($element['amount']).'</td>
+
+            <td class="text-center">                
+                <button type="button" class="btn btn-info" onclick="process_fe(this, \''.$name.'\')">
                     <i class="fa fa-upload"></i>
                 </button>';
         }
 
         echo '
-                <button type="button" class="btn btn-warning" '.((!extension_loaded('openssl') and substr(strtolower($element), -4) == '.p7m') ? 'disabled' : '').' onclick="download(this, \''.$element.'\')">
+        
+                <button type="button" class="btn btn-warning" '.((!extension_loaded('openssl') && substr(strtolower($name), -4) == '.p7m') ? 'disabled' : '').' onclick="download(this, \''.$name.'\', \''.$data.'\')">
                     <i class="fa fa-download"></i> '.tr('Importa').'
                 </button>
             </td>
@@ -54,7 +108,7 @@ if (!empty($list)) {
 
 echo '
 <script>
-function download(button, file) {
+function download(button, file, data_registrazione) {
     var restore = buttonLoading(button);
 
     $.ajax({
@@ -70,17 +124,17 @@ function download(button, file) {
             data = JSON.parse(data);
 
             if (!data.already) {
-                launch_modal("'.tr('Righe fattura').'", globals.rootdir + "/actions.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&op=list&filename=" + data.filename);
-				 buttonRestore(button, restore);
+                redirect(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=" + data.id);
             } else {
                 swal({
                     title: "'.tr('Fattura già importata.').'",
                     type: "info",
                 });
                 
-				buttonRestore(button, restore);
 				$(button).prop("disabled", true);
             }
+            
+            buttonRestore(button, restore);
         },
         error: function(xhr) {
             alert("'.tr('Errore').': " + xhr.responseJSON.error.message);

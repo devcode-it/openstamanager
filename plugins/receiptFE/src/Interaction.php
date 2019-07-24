@@ -2,21 +2,41 @@
 
 namespace Plugins\ReceiptFE;
 
-use Plugins\ExportFE\Connection;
+use API\Services;
 
 /**
  * Classe per l'interazione con API esterne.
  *
  * @since 2.4.3
  */
-class Interaction extends Connection
+class Interaction extends Services
 {
     public static function getReceiptList()
     {
-        $response = static::request('POST', 'notifiche_da_importare');
-        $body = static::responseBody($response);
+        $directory = Ricevuta::getImportDirectory();
 
-        return $body['results'];
+        $list = [];
+
+        $files = glob($directory.'/*.xml*');
+        foreach ($files as $file) {
+            $list[] = basename($file);
+        }
+
+        // Ricerca da remoto
+        if (self::isEnabled()) {
+            $response = static::request('POST', 'notifiche_da_importare');
+            $body = static::responseBody($response);
+
+            if ($body['status'] == '200') {
+                $files = $body['results'];
+
+                foreach ($files as $file) {
+                    $list[] = basename($file);
+                }
+            }
+        }
+
+        return array_clean($list);
     }
 
     public static function getReceipt($name)

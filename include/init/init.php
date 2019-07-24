@@ -128,11 +128,11 @@ if (!$has_user) {
                         </div>
 
                         <div class="col-md-6">
-                            {[ "type": "password", "label": "'.tr('Password').'", "id": "password", "name": "admin_password", "value": "'.$osm_password.'", "placeholder": "'.tr("Digita la password dell'amministratore").'", "required": 1, "icon-after": "<i  onclick=\" if ($(this).parent().find(\'i\').hasClass(\'fa-eye\')) {  $(\'#password\').attr(\'type\', \'text\'); $(this).parent().find(\'i\').removeClass(\'fa-eye\').addClass(\'fa-eye-slash\');  $(this).parent().find(\'i\').attr(\'title\', \'Nascondi password\'); }  else { $(\'#password\').attr(\'type\', \'password\'); $(this).parent().find(\'i\').removeClass(\'fa-eye-slash\').addClass(\'fa-eye\');  $(this).parent().find(\'i\').attr(\'title\', \'Visualizza password\'); } \" title=\"'.tr('Visualizza password').'\" class=\"fa fa-eye clickable\" ></i>" ]}
+                            {[ "type": "password", "label": "'.tr('Password').'", "id": "password", "name": "admin_password", "value": "'.$osm_password.'", "placeholder": "'.tr("Digita la password dell'amministratore").'", "required": 1, "strength": "#config" ]}
                         </div>
 
                         <div class="col-md-6">
-                            {[ "type": "email", "label": "'.tr('Email').'", "name": "admin_email", "value": "'.$osm_email.'", "placeholder": "'.tr("Digita l'indirizzo email dell'amministratore").'" ]}
+                            {[ "type": "email", "label": "'.tr('Email').'", "name": "admin_email", "value": "'.$osm_email.'", "placeholder": "'.tr("Digita l'indirizzo email dell'amministratore").'", "required": 1 ]}
                         </div>
                     </div>
                 </div>
@@ -147,7 +147,7 @@ if (!$has_azienda) {
                     <h3 class="panel-title">'.tr('Azienda predefinita').'</h3>
                 </div>
 
-                <div class="panel-body">';
+                <div class="panel-body" id="bs-popup">';
 
     $idtipoanagrafica = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Azienda'")[0]['idtipoanagrafica'];
     $readonly_tipo = true;
@@ -193,18 +193,19 @@ if (!$has_settings) {
                     <h3 class="panel-title">'.tr('Impostazioni di base').'</h3>
                 </div>
 
-                <div class="panel-body">';
+                <div class="panel-body">
+                    <div class="row">';
 
     foreach ($settings as $setting => $required) {
         if (empty(setting($setting))) {
             echo '
-                    <div class="col-md-6">
-                        '.Settings::input($setting, $required).'
-                    </div>';
+                        <div class="col-md-6">
+                            '.Settings::input($setting, $required).'
+                        </div>';
         }
     }
 
-    echo '
+    echo '          </div>
                 </div>
             </div>';
 }

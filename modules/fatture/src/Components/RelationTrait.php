@@ -35,18 +35,41 @@ trait RelationTrait
     }
 
     /**
+     * Restituisce i dati aggiuntivi per la fattura elettronica dell'elemento.
+     *
+     * @return array
+     */
+    public function getDatiAggiuntiviFEAttribute()
+    {
+        $result = json_decode($this->attributes['dati_aggiuntivi_fe'], true);
+
+        return (array) $result;
+    }
+
+    /**
+     * Imposta i dati aggiuntivi per la fattura elettronica dell'elemento.
+     */
+    public function setDatiAggiuntiviFEAttribute($values)
+    {
+        $values = (array) $values;
+        $dati = array_deep_clean($values);
+
+        $this->attributes['dati_aggiuntivi_fe'] = json_encode($dati);
+    }
+
+    /**
      * Restituisce il totale (imponibile + iva + rivalsa_inps + iva_rivalsainps) dell'elemento.
      *
      * @return float
      */
     public function getTotaleAttribute()
     {
-        return $this->imponibile_scontato + $this->iva + $this->rivalsa_inps + $this->iva_rivalsa_inps;
+        return $this->totale_imponibile + $this->iva + $this->rivalsa_inps + $this->iva_rivalsa_inps;
     }
 
     public function getRivalsaINPSAttribute()
     {
-        return $this->imponibile_scontato / 100 * $this->rivalsa->percentuale;
+        return $this->totale_imponibile / 100 * $this->rivalsa->percentuale;
     }
 
     public function getIvaRivalsaINPSAttribute()
@@ -56,7 +79,7 @@ trait RelationTrait
 
     public function getRitenutaAccontoAttribute()
     {
-        $result = $this->imponibile_scontato;
+        $result = $this->totale_imponibile;
 
         if ($this->calcolo_ritenuta_acconto == 'IMP+RIV') {
             $result += $this->rivalsainps;
@@ -71,7 +94,7 @@ trait RelationTrait
     public function getRitenutaContributiAttribute()
     {
         if ($this->attributes['ritenuta_contributi']) {
-            $result = $this->imponibile_scontato;
+            $result = $this->totale_imponibile;
             $ritenuta = $this->parent->ritenutaContributi;
 
             $result = $result * $ritenuta->percentuale_imponibile / 100;
@@ -137,6 +160,17 @@ trait RelationTrait
         $this->fixRivalsaINPS();
 
         return parent::save($options);
+    }
+
+    public function delete()
+    {
+        $result = parent::delete();
+
+        if (!empty($this->idintervento)) {
+            database()->query("UPDATE in_interventi SET idstatointervento = (SELECT idstatointervento FROM in_statiintervento WHERE descrizione = 'Completato') WHERE id=".prepare($this->idintervento));
+        }
+
+        return $result;
     }
 
     /**

@@ -11,15 +11,15 @@ if (empty($id_sede) || $id_sede == '-1') {
 } else {
     $queryc = 'SELECT an_anagrafiche.*, an_sedi.*, if(an_sedi.codice_fiscale != "", an_sedi.codice_fiscale, an_anagrafiche.codice_fiscale) AS codice_fiscale, if(an_sedi.piva != "", an_sedi.piva, an_anagrafiche.piva) AS piva FROM an_sedi JOIN an_anagrafiche ON an_anagrafiche.idanagrafica=an_sedi.idanagrafica WHERE an_sedi.idanagrafica='.prepare($id_cliente).' AND an_sedi.id='.prepare($id_sede);
 }
-$rsc = $dbo->fetchArray($queryc);
+$cliente = $dbo->fetchOne($queryc);
 
 // Lettura dati aziendali
-$rsf = $dbo->fetchArray('SELECT *, (SELECT iban FROM co_banche WHERE id IN (SELECT idbanca FROM co_documenti WHERE id = '.prepare($id_record).' ) ) AS codiceiban, (SELECT nome FROM co_banche WHERE id IN (SELECT idbanca FROM co_documenti WHERE id = '.prepare($id_record).' ) ) AS appoggiobancario, (SELECT bic FROM co_banche WHERE id IN (SELECT idbanca FROM co_documenti WHERE id = '.prepare($id_record)." ) ) AS bic FROM an_anagrafiche WHERE idanagrafica = (SELECT valore FROM zz_settings WHERE nome='Azienda predefinita')");
+$azienda = $dbo->fetchOne('SELECT *, (SELECT iban FROM co_banche WHERE id IN (SELECT idbanca FROM co_documenti WHERE id = '.prepare($id_record).' ) ) AS codiceiban, (SELECT nome FROM co_banche WHERE id IN (SELECT idbanca FROM co_documenti WHERE id = '.prepare($id_record).' ) ) AS appoggiobancario, (SELECT bic FROM co_banche WHERE id IN (SELECT idbanca FROM co_documenti WHERE id = '.prepare($id_record)." ) ) AS bic FROM an_anagrafiche WHERE idanagrafica = (SELECT valore FROM zz_settings WHERE nome='Azienda predefinita')");
 
 // Prefissi e contenuti del replace
 $replace = [
-    'c_' => isset($rsc[0]) ? $rsc[0] : [],
-    'f_' => isset($rsf[0]) ? $rsf[0] : [],
+    'c_' => isset($cliente) ? $cliente : [],
+    'f_' => isset($azienda) ? $azienda : [],
 ];
 
 // Rinominazione di particolari campi all'interno delle informazioni su anagrafica e azienda

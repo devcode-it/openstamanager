@@ -42,7 +42,7 @@ class FileManager implements ManagerInterface
         <div class="panel-heading">
             <h3 class="panel-title">'.tr('Allegati').'</h3>
         </div>
-        <div class="panel-body">';
+        <div class="panel-body"><div id="loading_'.$attachment_id.'" class="text-center hide" style="position:relative;top:100px;z-index:2;opacity:0.5;"><i class="fa fa-refresh fa-spin fa-3x fa-fw"></i><span class="sr-only">'.tr('Caricamento...').'</span></div>';
         }
 
         $count = 0;
@@ -109,7 +109,7 @@ class FileManager implements ManagerInterface
 
                     if (!$options['readonly']) {
                         $result .= '
-                <a class="btn btn-xs btn-danger ask" data-backto="record-edit" data-msg="'.tr('Vuoi eliminare questo file?').'" data-op="unlink_file" data-filename="'.$r['filename'].'" data-id_record="'.$r['id_record'].'" data-id_plugin="'.$options['id_plugin'].'" data-callback="reload_'.$attachment_id.'">
+                <a class="btn btn-xs btn-danger ask" data-backto="record-edit" data-msg="'.tr('Vuoi eliminare questo file?').'" data-op="unlink_file" data-filename="'.$r['filename'].'" data-id_record="'.$r['id_record'].'" data-id_plugin="'.$options['id_plugin'].'" data-before="show_'.$attachment_id.'" data-callback="reload_'.$attachment_id.'">
                     <i class="fa fa-trash"></i>
                 </a>';
                     }
@@ -179,6 +179,19 @@ class FileManager implements ManagerInterface
 
 <script>
 $(document).ready(function(){
+    $("#'.$attachment_id.' #blob").change(function(){
+        var nome = $("#'.$attachment_id.' #nome_allegato");
+        
+        if (!nome.val()) {
+            var fullPath = $(this).val();
+            
+            var startIndex = Math.max(fullPath.lastIndexOf("\\\\"), fullPath.lastIndexOf("/")) + 1;
+            var filename = fullPath.substring(startIndex);
+            
+            nome.val(filename);
+        }
+    })
+    
     $("#'.$attachment_id.' #categoria").autocomplete({
         source: '.json_encode($source).',
         minLength: 0
@@ -223,8 +236,15 @@ $(document).ready(function(){
     });
 });
 
+function show_'.$attachment_id.'() {
+    $("#loading_'.$attachment_id.'").removeClass("hide");
+}
+
 function reload_'.$attachment_id.'() {
-    $("#'.$attachment_id.'").load(globals.rootdir + "/ajax.php?op=list_attachments&id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id_plugin='.$options['id_plugin'].'");
+    
+    $("#'.$attachment_id.'").load(globals.rootdir + "/ajax.php?op=list_attachments&id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id_plugin='.$options['id_plugin'].'", function() {
+        $("#loading_'.$attachment_id.'").addClass("hide");
+    });
 }
 </script>';
 

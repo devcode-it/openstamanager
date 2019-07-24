@@ -2,6 +2,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Statistiche\Stats;
+
 echo '
 <script src="'.$rootdir.'/assets/dist/js/chartjs/Chart.min.js"></script>';
 
@@ -9,56 +11,25 @@ $start = $_SESSION['period_start'];
 $end = $_SESSION['period_end'];
 
 echo '
-<h3 class="text-center">
-    <span class="label label-primary">'.tr('Periodo dal _START_ al _END_', [
-        '_START_' => Translator::dateToLocale($start),
-        '_END_' => Translator::dateToLocale($end),
-    ]).'</span>
-</h3>
-<hr>
-
-<script>
-$(document).ready(function() {
-    start = moment("'.$start.'");
-    end = moment("'.$end.'");
-
-    months = [];
-    while(start.isSameOrBefore(end, "month")){
-        string = start.format("MMMM YYYY");
-
-        months.push(string.charAt(0).toUpperCase() + string.slice(1));
-
-        start.add(1, "months");
-    }
-});
-</script>';
-
-// Differenza delle date in mesi
-$d1 = new DateTime($start);
-$d2 = new DateTime($end);
-$count = $d1->diff($d2)->m + ($d1->diff($d2)->y * 12) + 1;
-
-$fatturato = $dbo->fetchArray("SELECT ROUND(SUM(co_righe_documenti.subtotale - co_righe_documenti.sconto), 2) AS totale, YEAR(co_documenti.data) AS year, MONTH(co_documenti.data) AS month FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id WHERE co_tipidocumento.dir='entrata' AND co_tipidocumento.descrizione!='Bozza' AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end).' GROUP BY YEAR(co_documenti.data), MONTH(co_documenti.data) ORDER BY YEAR(co_documenti.data) ASC, MONTH(co_documenti.data) ASC');
-$acquisti = $dbo->fetchArray("SELECT ROUND(SUM(co_righe_documenti.subtotale - co_righe_documenti.sconto), 2) AS totale, YEAR(co_documenti.data) AS year, MONTH(co_documenti.data) AS month FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id WHERE co_tipidocumento.dir='uscita' AND co_tipidocumento.descrizione!='Bozza' AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end).' GROUP BY YEAR(co_documenti.data), MONTH(co_documenti.data) ORDER BY YEAR(co_documenti.data) ASC, MONTH(co_documenti.data) ASC');
-
-$month = intval($d1->format('m')) - 1;
-for ($i = 0; $i < $count; ++$i) {
-    $month = $month % 12;
-
-    if (!isset($fatturato[$i]) || intval($fatturato[$i]['month']) != $month + 1) {
-        array_splice($fatturato, $i, 0, [[
-            'totale' => 0,
-        ]]);
-    }
-
-    if (!isset($acquisti[$i]) || intval($acquisti[$i]['month']) != $month + 1) {
-        array_splice($acquisti, $i, 0, [[
-            'totale' => 0,
-        ]]);
-    }
-
-    ++$month;
-}
+<div class="box box-warning">
+    <div class="box-header">
+        <h4 class="box-title">
+            '.tr('Periodi temporali').'
+        </h4>
+        <div class="box-tools pull-right">
+            <button class="btn btn-warning btn-xs" onclick="add_calendar()">
+                <i class="fa fa-plus"></i> '.tr('Aggiungi periodo').'
+            </button>
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    
+    <div class="box-body collapse in" id="calendars">
+        
+    </div>
+</div>';
 
 // Fatturato
 echo '
@@ -75,53 +46,90 @@ echo '
     <canvas class="box-body collapse in" id="fatturato" height="100"></canvas>
 </div>';
 
+echo '
+<script src="'.$structure->fileurl('js/functions.js').'"></script>
+<script src="'.$structure->fileurl('js/calendar.js').'"></script>
+<script src="'.$structure->fileurl('js/manager.js').'"></script>
+<script src="'.$structure->fileurl('js/stat.js').'"></script>
+<script src="'.$structure->fileurl('js/stats/line_chart.js').'"></script>';
+
 // Script per il grafico del fatturato
 echo '
 <script>
-$(document).ready(function() {
-    new Chart(document.getElementById("fatturato").getContext("2d"), {
-        type: "bar",
-        data: {
-            labels: months,
-            datasets: [
-                {
-                    label: "'.tr('Fatturato (iva esclusa)').'",
-                    backgroundColor: "#63E360",
-                    data: [
-                        '.implode(',', array_column($fatturato, 'totale')).'
-                    ]
-                },
-                {
-                    label: "'.tr('Acquisti (iva esclusa)').'",
-                    backgroundColor: "#EE4B4B",
-                    data: [
-                        '.implode(',', array_column($acquisti, 'totale')).'
-                    ]
+start = moment("'.$start.'");
+end = moment("'.$end.'");
+
+months = get_months(start, end);
+
+var chart_options = {
+    type: "line",
+    data: {
+        labels: [],
+        datasets: [],
+    },
+    options: {
+        responsive: true,
+        tooltips: {
+            callbacks: {
+                label: function(tooltipItem, data) {
+                    var dataset = data.datasets[tooltipItem.datasetIndex];
+                    var label = dataset.labels ? dataset.labels[tooltipItem.index] : "";
+
+                    if (label) {
+                        label += ": ";
+                    }
+                    
+                    label += tooltipItem.yLabel;
+                    
+                    return label;
                 }
-            ]
+            }
         },
-        options: {
-            responsive: true,
-            legend: {
-                position: "bottom",
-            },
-			scales: {
-				yAxes: [{
-					ticks: {
-						// Include a dollar sign in the ticks
-						callback: function(value, index, values) {
-							return \'€ \' + value;
-						}
-					}
-				}]
-			},
-        }
-    });
+        scales: {
+            yAxes: [{
+                ticks: {
+                    // Include a dollar sign in the ticks
+                    callback: function(value, index, values) {
+                        return \'€ \' + value;
+                    }
+                }
+            }]
+        },
+    }
+};
+
+// Inzializzazione manager
+var info = {
+    url: "'.str_replace('edit.php', '', $structure->fileurl('edit.php')).'",
+    id_module: globals.id_module,
+    id_record: globals.id_record,
+    start_date: globals.start_date,
+    end_date: globals.end_date,
+}
+var manager = new Manager(info);
+
+var chart_fatturato, chart_acquisti;
+$(document).ready(function(){
+    var fatturato_canvas = document.getElementById("fatturato").getContext("2d");
+    //var acquisti_canvas = document.getElementById("acquisti").getContext("2d");
+    
+    chart_fatturato = new Chart(fatturato_canvas, chart_options);
+    //chart_acquisti = new Chart(fatturato_canvas, chart_options);
+    
+    add_calendar();
 });
+
+function init_calendar(calendar) {
+    var fatturato = new LineChart(calendar, "actions.php", {op: "fatturato"}, chart_fatturato);
+    var acquisti = new LineChart(calendar, "actions.php", {op: "acquisti"}, chart_fatturato);
+
+    calendar.addElement(fatturato);
+    calendar.addElement(acquisti);
+}
 </script>';
 
 // Clienti top
-$clienti = $dbo->fetchArray('SELECT SUM(co_righe_documenti.subtotale - co_righe_documenti.sconto) AS totale, (SELECT COUNT(*) FROM co_documenti WHERE co_documenti.idanagrafica =an_anagrafiche.idanagrafica AND co_documenti.data BETWEEN '.prepare($start).' AND '.prepare($end).") AS qta, an_anagrafiche.idanagrafica, an_anagrafiche.ragione_sociale FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica=co_documenti.idanagrafica WHERE co_tipidocumento.dir='entrata' AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end).' GROUP BY an_anagrafiche.idanagrafica ORDER BY SUM(subtotale - sconto) DESC LIMIT 15');
+$clienti = $dbo->fetchArray('SELECT SUM(co_righe_documenti.subtotale - co_righe_documenti.sconto) AS totale, (SELECT COUNT(*) FROM co_documenti WHERE co_documenti.idanagrafica =an_anagrafiche.idanagrafica AND co_documenti.data BETWEEN '.prepare($start).' AND '.prepare($end).") AS qta, an_anagrafiche.idanagrafica, an_anagrafiche.ragione_sociale FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica=co_documenti.idanagrafica WHERE co_tipidocumento.dir='entrata' AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end).' GROUP BY an_anagrafiche.idanagrafica ORDER BY SUM(subtotale - sconto) DESC LIMIT 20');
 
 $totale = $dbo->fetchArray("SELECT SUM(co_righe_documenti.subtotale - co_righe_documenti.sconto) AS totale FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id WHERE co_tipidocumento.dir='entrata' AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end));
 
@@ -130,7 +138,7 @@ echo '
     <div class="col-md-6">
         <div class="box box-warning">
             <div class="box-header with-border">
-                <h3 class="box-title">'.tr('Clienti TOP').'</h3>
+                <h3 class="box-title">'.tr('I 20 clienti TOP').'</h3><span class="tip" title="'.tr('Valori iva esclusa').'"> <i class="fa fa-question-circle-o" aria-hidden="true"></i></span>
 
                 <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse">
@@ -143,10 +151,10 @@ if (!empty($clienti)) {
     echo '
                 <table class="table table-striped">
                     <tr>
-                        <th>'.tr('Ragione sociale').'</th>
+                        <th class="col-md-6" >'.tr('Ragione sociale').'</th>
                         <th class="text-center">'.tr('Num. fatture').'</th>
                         <th class="text-right">'.tr('Totale').'</th>
-                        <th class="text-right">'.tr('Percentuale').'</th>
+                        <th class="text-right">'.tr('Percentuale').'<span class="tip" title="'.tr('Incidenza sul fatturato').'">&nbsp;<i class="fa fa-question-circle-o" aria-hidden="true"></i></span></th>
                     </tr>';
     foreach ($clienti as $cliente) {
         echo '
@@ -161,7 +169,7 @@ if (!empty($clienti)) {
                 </table>';
 } else {
     echo '
-                <p>'.tr('Nessun articolo è stato venduto').'...</p>';
+                <p>'.tr('Nessuna vendita').'...</p>';
 }
 echo '
 
@@ -170,13 +178,15 @@ echo '
     </div>';
 
 // Articoli più venduti
-$articoli = $dbo->fetchArray("SELECT SUM(co_righe_documenti.qta) AS qta, mg_articoli.id, mg_articoli.codice, mg_articoli.descrizione, mg_articoli.um FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id INNER JOIN mg_articoli ON mg_articoli.id=co_righe_documenti.idarticolo WHERE co_tipidocumento.dir='entrata' AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end).' GROUP BY co_righe_documenti.idarticolo ORDER BY SUM(co_righe_documenti.qta) DESC LIMIT 15');
+$articoli = $dbo->fetchArray("SELECT SUM(co_righe_documenti.qta) AS qta,  SUM(co_righe_documenti.subtotale - co_righe_documenti.sconto) AS totale, mg_articoli.id, mg_articoli.codice, mg_articoli.descrizione, mg_articoli.um FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id INNER JOIN mg_articoli ON mg_articoli.id=co_righe_documenti.idarticolo WHERE co_tipidocumento.dir='entrata' AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end).' GROUP BY co_righe_documenti.idarticolo ORDER BY SUM(co_righe_documenti.qta) DESC LIMIT 20');
+
+$totale = $dbo->fetchArray("SELECT SUM(co_righe_documenti.qta) AS totale_qta, SUM(co_righe_documenti.subtotale - co_righe_documenti.sconto) AS totale FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id INNER JOIN mg_articoli ON mg_articoli.id=co_righe_documenti.idarticolo WHERE co_tipidocumento.dir='entrata' AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end));
 
 echo '
     <div class="col-md-6">
         <div class="box box-danger">
             <div class="box-header with-border">
-                <h3 class="box-title">'.tr('Articoli più venduti').'</h3>
+                <h3 class="box-title">'.tr('I 20 articoli più venduti').'</h3><span class="tip" title="'.tr('Valori iva esclusa').'"> <i class="fa fa-question-circle-o" aria-hidden="true"></i></span>
 
                 <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse">
@@ -190,8 +200,10 @@ if (!empty($articoli)) {
                 <table class="table table-striped">
                     <tr>
                         <th>'.tr('Codice').'</th>
-                        <th>'.tr('Descrizione').'</th>
+                        <th class="col-md-6" >'.tr('Descrizione').'</th>
                         <th class="text-right">'.tr('Q.tà').'</th>
+                        <th class="text-right">'.tr('Percentuale').'<span class="tip" title="'.tr('Incidenza sul numero di articoli venduti').'"> <i class="fa fa-question-circle-o" aria-hidden="true"></i></span></th>
+                        <th class="text-right">'.tr('Totale').'</th>
                     </tr>';
     foreach ($articoli as $articolo) {
         echo '
@@ -199,6 +211,8 @@ if (!empty($articoli)) {
                         <td>'.Modules::link('Articoli', $articolo['id'], $articolo['codice']).'</td>
                         <td>'.$articolo['descrizione'].'</td>
                         <td class="text-right">'.Translator::numberToLocale($articolo['qta']).' '.$articolo['um'].'</td>
+                        <td class="text-right">'.Translator::numberToLocale($articolo['qta'] * 100 / $totale[0]['totale_qta']).' %</td>
+                        <td class="text-right">'.moneyFormat($articolo['totale']).'</td>
                     </tr>';
     }
     echo '
@@ -219,20 +233,9 @@ $tipi = $dbo->fetchArray('SELECT * FROM `in_tipiintervento`');
 
 $dataset = '';
 foreach ($tipi as $tipo) {
-    $interventi = $dbo->fetchArray('SELECT COUNT(*) AS totale, YEAR(in_interventi.data_richiesta) AS year, MONTH(in_interventi.data_richiesta) AS month FROM in_interventi WHERE in_interventi.idtipointervento = '.prepare($tipo['idtipointervento']).' AND in_interventi.data_richiesta BETWEEN '.prepare($start).' AND '.prepare($end).' GROUP BY YEAR(in_interventi.data_richiesta), MONTH(in_interventi.data_richiesta) ORDER BY YEAR(in_interventi.data_richiesta) ASC, MONTH(in_interventi.data_richiesta) ASC');
+    $interventi = $dbo->fetchArray('SELECT COUNT(*) AS result, YEAR(in_interventi.data_richiesta) AS year, MONTH(in_interventi.data_richiesta) AS month FROM in_interventi WHERE in_interventi.idtipointervento = '.prepare($tipo['idtipointervento']).' AND in_interventi.data_richiesta BETWEEN '.prepare($start).' AND '.prepare($end).' GROUP BY YEAR(in_interventi.data_richiesta), MONTH(in_interventi.data_richiesta) ORDER BY YEAR(in_interventi.data_richiesta) ASC, MONTH(in_interventi.data_richiesta) ASC');
 
-    $month = intval($d1->format('m')) - 1;
-    for ($i = 0; $i < $count; ++$i) {
-        $month = $month % 12;
-
-        if (!isset($interventi[$i]) || intval($interventi[$i]['month']) != $month + 1) {
-            array_splice($interventi, $i, 0, [[
-                'totale' => 0,
-            ]]);
-        }
-
-        ++$month;
-    }
+    $interventi = Stats::monthly($interventi, $start, $end);
 
     //Random color
     $background = '#'.dechex(rand(256, 16777215));
@@ -241,7 +244,7 @@ foreach ($tipi as $tipo) {
         label: "'.$tipo['descrizione'].'",
         backgroundColor: "'.$background.'",
         data: [
-            '.implode(',', array_column($interventi, 'totale')).'
+            '.implode(',', array_column($interventi, 'result')).'
         ]
     },';
 }

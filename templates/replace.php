@@ -6,8 +6,10 @@
 $replaces = array_merge($replaces, (array) $custom);
 
 foreach ($replaces as $key => $value) {
-    $replaces['$'.$key.'$'] = $value;
+    $new_key = '$'.str_replace('$', '', $key).'$';
     unset($replaces[$key]);
+
+    $replaces[$new_key] = $value;
 }
 
 // Sostituisce alle variabili del template i valori

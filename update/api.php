@@ -16,7 +16,7 @@ foreach ($tables as $table) {
             $database->query('ALTER TABLE `'.$table.'` ADD `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP');
         }
 
-        if (API::isCompatible()) {
+        if (API\Response::isCompatible()) {
             $updated_at = $database->fetchArray(str_replace('|field|', 'updated_at', $query));
             if (empty($updated_at)) {
                 $database->query('ALTER TABLE `'.$table.'` ADD `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP');

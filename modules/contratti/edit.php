@@ -2,6 +2,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+$block_edit = $record['is_completato'];
+
 unset($_SESSION['superselect']['idsede_destinazione']);
 unset($_SESSION['superselect']['idanagrafica']);
 $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
@@ -21,32 +23,39 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 
 		<div class="panel-body">
 			<div class="row">
-				<div class="col-md-2">
+				<div class="col-md-3">
 					{[ "type": "text", "label": "<?php echo tr('Numero'); ?>", "name": "numero", "required": 1, "class": "text-center", "value": "$numero$" ]}
 				</div>
 
-				<div class="col-md-6">
-                    <?php
-                        echo Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"');
-                    ?>
+                <div class="col-md-3">
+                    {[ "type": "date", "label": "<?php echo tr('Data bozza'); ?>", "name": "data_bozza", "value": "$data_bozza$" ]}
+                </div>
 
-					{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "id": "idanagrafica_c", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti" ]}
-				</div>
+                <div class="col-md-2">
+                    {[ "type": "date", "label": "<?php echo tr('Data accettazione'); ?>", "name": "data_accettazione", "value": "$data_accettazione$" ]}
+                </div>
 
-				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "value": "$idsede$", "ajax-source": "sedi", "placeholder": "Sede legale" ]}
-				</div>
+                <div class="col-md-2">
+                    {[ "type": "date", "label": "<?php echo tr('Data conclusione'); ?>", "name": "data_conclusione", "value": "$data_conclusione$" ]}
+                </div>
 
-
-			</div>
-
+                <div class="col-md-2">
+                    {[ "type": "date", "label": "<?php echo tr('Data rifiuto'); ?>", "name": "data_rifiuto", "value": "$data_rifiuto$" ]}
+                </div>
+            </div>
 
 			<div class="row">
+                <div class="col-md-3">
+                    <?php
+                    echo Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"');
+                    ?>
 
-				<div class="col-md-6">
-					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$nome$" ]}
-				</div>
+                    {[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "id": "idanagrafica_c", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti" ]}
+                </div>
 
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "value": "$idsede$", "ajax-source": "sedi", "placeholder": "Sede legale" ]}
+                </div>
 
 				<div class="col-md-3">
                     <?php
@@ -55,7 +64,6 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 
 					{[ "type": "select", "label": "<?php echo tr('Referente'); ?>", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti" ]}
 				</div>
-
 
 				<div class="col-md-3">
                     <?php
@@ -67,6 +75,20 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 				</div>
 
 			</div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    {[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$nome$" ]}
+                </div>
+
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "values": "query=SELECT id, descrizione FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione", "value": "$idpagamento$" ]}
+                </div>
+
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstato", "required": 1, "values": "query=SELECT id, descrizione FROM co_staticontratti", "value": "$idstato$", "class": "unblockable" ]}
+                </div>
+            </div>
 
 			<div class="row">
 
@@ -88,31 +110,10 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 			</div>
 
 			<div class="row">
-				<div class="col-md-3">
-					{[ "type": "date", "label": "<?php echo tr('Data bozza'); ?>", "name": "data_bozza", "value": "$data_bozza$" ]}
-				</div>
 
-				<div class="col-md-3">
-					{[ "type": "date", "label": "<?php echo tr('Data accettazione'); ?>", "name": "data_accettazione", "value": "$data_accettazione$" ]}
-				</div>
-
-				<div class="col-md-3">
-					{[ "type": "date", "label": "<?php echo tr('Data conclusione'); ?>", "name": "data_conclusione", "value": "$data_conclusione$" ]}
-				</div>
-
-				<div class="col-md-3">
-					{[ "type": "date", "label": "<?php echo tr('Data rifiuto'); ?>", "name": "data_rifiuto", "value": "$data_rifiuto$" ]}
-				</div>
 			</div>
 
 			<div class="row">
-				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Metodo di pagamento'); ?>", "name": "idpagamento", "values": "query=SELECT id, descrizione FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione", "value": "$idpagamento$" ]}
-				</div>
-
-				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstato", "required": 1, "values": "query=SELECT id, descrizione FROM co_staticontratti", "value": "$idstato$" ]}
-				</div>
 
 				<div class="col-md-3">
 					{[ "type": "select", "multiple": "1", "label": "<?php echo tr('Impianti'); ?>", "name": "matricolaimpianto[]", "values": "query=SELECT idanagrafica, id AS id, IF(nome = '', matricola, CONCAT(matricola, ' - ', nome)) AS descrizione FROM my_impianti WHERE idanagrafica='$idanagrafica$' ORDER BY descrizione", "value": "$idimpianti$" ]}
@@ -288,7 +289,7 @@ if (!empty($rs)) {
 
     <div class="panel-body">
 <?php
-if ($record['stato'] != 'Pagato') {
+if (!$block_edit) {
     echo '
             <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_articolo" data-toggle="tooltip" data-title="'.tr('Aggiungi articolo').'">
                 <i class="fa fa-plus"></i> '.tr('Articolo').'

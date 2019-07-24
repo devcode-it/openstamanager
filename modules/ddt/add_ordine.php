@@ -5,7 +5,7 @@ include_once __DIR__.'/../../core.php';
 use Modules\DDT\DDT;
 use Modules\Ordini\Ordine;
 
-$documento_finale =DDT::find($id_record);
+$documento_finale = DDT::find($id_record);
 $dir = $documento_finale->direzione;
 
 $id_documento = get('id_documento');

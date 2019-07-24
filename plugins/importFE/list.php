@@ -3,12 +3,8 @@
 include_once __DIR__.'/../../core.php';
 
 use Plugins\ImportFE\Interaction;
-use Plugins\ImportFE\InvoiceHook;
 
-$list = Interaction::listToImport();
-
-// Aggiornamento cache hook
-InvoiceHook::update($list);
+$list = Interaction::getInvoiceList();
 
 $directory = Plugins\ImportFE\FatturaElettronica::getImportDirectory();
 
@@ -124,7 +120,7 @@ function download(button, file, data_registrazione) {
             data = JSON.parse(data);
 
             if (!data.already) {
-                redirect(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=" + data.id);
+                redirect(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=" + data.id + "&data_registrazione=" + data_registrazione);
             } else {
                 swal({
                     title: "'.tr('Fattura già importata.').'",

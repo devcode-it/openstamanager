@@ -36,7 +36,12 @@ class Interaction extends Services
             }
         }
 
-        return array_clean($list);
+        $list = array_clean($list);
+
+        // Aggiornamento cache hook
+        ReceiptHook::update($list);
+
+        return $list;
     }
 
     public static function getReceipt($name)

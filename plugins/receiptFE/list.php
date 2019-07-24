@@ -3,13 +3,9 @@
 include_once __DIR__.'/../../core.php';
 
 use Plugins\ReceiptFE\Interaction;
-use Plugins\ReceiptFE\ReceiptHook;
 use Plugins\ReceiptFE\Ricevuta;
 
 $list = Interaction::getReceiptList();
-
-// Aggiornamento cache hook
-ReceiptHook::update($list);
 
 $directory = Ricevuta::getImportDirectory();
 

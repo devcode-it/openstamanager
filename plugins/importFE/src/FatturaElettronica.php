@@ -187,7 +187,7 @@ class FatturaElettronica
         ]));
     }
 
-    public function findAnagrafica()
+    public function findAnagrafica($type = 'Fornitore')
     {
         $info = $this->getAnagrafe();
 
@@ -217,7 +217,7 @@ class FatturaElettronica
      */
     public function saveAnagrafica($type = 'Fornitore')
     {
-        $anagrafica = $this->findAnagrafica();
+        $anagrafica = $this->findAnagrafica($type);
 
         if (!empty($anagrafica)) {
             return $anagrafica;

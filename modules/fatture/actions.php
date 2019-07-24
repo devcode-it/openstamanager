@@ -221,8 +221,9 @@ switch (post('op')) {
 
         break;
 
-    case 'addintervento':
+    case 'add_intervento':
         $id_intervento = post('idintervento');
+
         if (!empty($id_record) && $id_intervento !== null) {
             $copia_descrizione = post('copia_descrizione');
             $intervento = $dbo->fetchOne('SELECT descrizione FROM in_interventi WHERE id = '.prepare($id_intervento));
@@ -442,7 +443,7 @@ switch (post('op')) {
     // Scollegamento intervento da documento
     case 'unlink_intervento':
         if (!empty($id_record) && post('idriga') !== null) {
-            $idriga = post('idriga');
+            $id_riga = post('idriga');
 
             $righe = $fattura->getRighe();
             $riga = $righe->find($id_riga);

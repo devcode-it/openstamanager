@@ -330,8 +330,6 @@ echo '
             // Collegamento con il conto
             $conto = $dbo->fetchOne('SELECT co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione as descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_cliente']));
 
-               
-
                 echo '
                         <div class="row">
                             <div class="col-md-6">
@@ -389,7 +387,7 @@ echo '
 
                             // Collegamento con il conto
                             $conto = $dbo->fetchOne('SELECT co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione as descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_fornitore']));
-                            
+
                             if (!empty($conto['numero_conto'])) {
                                 $piano_dei_conti_fornitore = tr('_NAME_', [
                                     '_NAME_' => $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'],
@@ -399,8 +397,6 @@ echo '
                                 $piano_dei_conti_fornitore = tr('Nessuno');
                             }
 
-
-                
                 echo '
                                 {[ "type": "select", "label": "'.tr('Piano dei conti fornitore').'", "name": "piano_dei_conti_fornitore", "values": "list=\"\": \"'.$piano_dei_conti_fornitore.'\"", "readonly": 1 ]}
                             </div>

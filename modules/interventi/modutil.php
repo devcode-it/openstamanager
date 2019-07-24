@@ -5,9 +5,9 @@ include_once __DIR__.'/../../core.php';
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Fatture\Components\Descrizione;
 use Modules\Fatture\Components\Riga;
+use Modules\Fatture\Fattura;
 use Modules\Interventi\Components\Sessione;
 use Modules\Interventi\Intervento;
-use Modules\Fatture\Fattura;
 
 /**
  * Recupera il totale delle ore spese per un intervento.
@@ -15,9 +15,10 @@ use Modules\Fatture\Fattura;
  * @param int $id_intervento
  */
 function get_ore_intervento($id_intervento)
-{    $intervento = Intervento::find($id_intervento);
+{
+    $intervento = Intervento::find($id_intervento);
 
-return $intervento->ore_totali;
+    return $intervento->ore_totali;
 }
 
 /**
@@ -120,7 +121,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
         $ore_di_lavoro = $sessioni->groupBy(function ($item, $key) {
             return $item['prezzo_orario'].'|'.$item['sconto_unitario'].'|'.$item['tipo_sconto'];
         });
-        foreach ($ore_di_lavoro as $gruppo){
+        foreach ($ore_di_lavoro as $gruppo) {
             $sessione = $gruppo->first();
             $riga = Riga::build($fattura);
 
@@ -140,7 +141,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
 
             $riga->prezzo_unitario_vendita = $sessione->prezzo_orario;
             $riga->sconto_unitario = $sessione->sconto_unitario;
-            $riga->tipo_sconto =$sessione->tipo_sconto;
+            $riga->tipo_sconto = $sessione->tipo_sconto;
 
             $riga->qta = $gruppo->sum('ore');
 
@@ -148,10 +149,10 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
         }
 
         // Diritti di chiamata raggruppati per costo
-        $diritti_chiamata = $sessioni->where('prezzo_diritto_chiamata',  '>', 0)->groupBy(function ($item, $key) {
+        $diritti_chiamata = $sessioni->where('prezzo_diritto_chiamata', '>', 0)->groupBy(function ($item, $key) {
             return $item['prezzo_diritto_chiamata'];
         });
-        foreach ($diritti_chiamata as $gruppo){
+        foreach ($diritti_chiamata as $gruppo) {
             $diritto_chiamata = $gruppo->first();
             $riga = Riga::build($fattura);
 
@@ -216,7 +217,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
 
         $riga->prezzo_unitario_vendita = $intervento->prezzo_viaggio;
         $riga->sconto_unitario = $intervento->sconto_totale_viaggio;
-        $riga->tipo_sconto ='UNT';
+        $riga->tipo_sconto = 'UNT';
 
         $riga->qta = 1;
 

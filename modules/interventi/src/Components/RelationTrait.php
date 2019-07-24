@@ -27,11 +27,13 @@ trait RelationTrait
     {
     }
 
-    public function getQtaEvasaAttribute(){
+    public function getQtaEvasaAttribute()
+    {
         return 0;
     }
 
-    public function setQtaEvasaAttribute($value){
+    public function setQtaEvasaAttribute($value)
+    {
     }
 
     /**

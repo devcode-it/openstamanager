@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'header-height' => 80,
+    'header-height' => 70,
     'footer-height' => 55,
 ];

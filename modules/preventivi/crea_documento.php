@@ -2,26 +2,26 @@
 
 include_once __DIR__.'/../../core.php';
 
-$module = Modules::get($id_module);
+use Modules\Preventivi\Preventivo;
+
+$documento = Preventivo::find($id_record);
+
+if (get('documento') == 'fattura') {
+    $final_module = 'Fatture di vendita';
+    $op = 'add_documento';
+} else {
+    $final_module = 'Ordini cliente';
+    $op = 'add_preventivo';
+}
 
 $options = [
-    'op' => 'add_preventivo',
-    'id_importazione' => 'id_preventivo',
-    'final_module' => get('documento') == 'fattura' ? 'Fatture di vendita' : 'Ordini cliente',
-    'original_module' => $module['name'],
-    'sql' => [
-        'table' => 'co_preventivi',
-        'rows' => 'co_righe_preventivi',
-        'id_rows' => 'idpreventivo',
-    ],
+    'op' => $op,
+    'type' => 'preventivo',
+    'module' => $final_module,
     'button' => tr('Aggiungi'),
     'dir' => 'entrata',
     'create_document' => true,
+    'documento' => $documento,
 ];
 
-$result = [
-    'id_record' => $id_record,
-    'id_documento' => get('iddocumento'),
-];
-
-echo App::load('importa.php', $result, $options, true);
+echo App::load('importa.php', [], $options, true);

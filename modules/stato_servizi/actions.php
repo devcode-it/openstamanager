@@ -155,12 +155,13 @@ switch (filter('op')) {
 
         $dirs = [
             $backup_dir => tr('Backup'),
-            'files' => tr('Allegati'),
-            'logs' => tr('Logs'),
+            DOCROOT.'/files' => tr('Allegati'),
+            DOCROOT.'/logs' => tr('Logs'),
         ];
 
         foreach ($dirs as $dir => $description) {
             $size = FileSystem::folderSize($dir);
+
             $results[] = [
                 'description' => $description,
                 'size' => $size,

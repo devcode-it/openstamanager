@@ -10,11 +10,11 @@ $dir = $documento->direzione;
 
 // Impostazioni per la gestione
 $options = [
-    'op' => 'addriga',
+    'op' => 'manage_riga',
     'action' => 'add',
     'dir' => $documento->direzione,
     'idanagrafica' => $documento['idanagrafica'],
-    'imponibile_scontato' => $documento->imponibile_scontato,
+    'totale_imponibile' => $documento->totale_imponibile,
 ];
 
 // Dati di default
@@ -36,6 +36,8 @@ $result['idiva'] = $iva[0]['idiva'] ?: setting('Iva predefinita');
 $file = 'riga';
 if (get('is_descrizione') !== null) {
     $file = 'descrizione';
+
+    $options['op'] = 'manage_descrizione';
 } elseif (get('is_articolo') !== null) {
     $file = 'articolo';
 
@@ -47,7 +49,7 @@ if (get('is_descrizione') !== null) {
         $result['tipo_sconto'] = 'PRC';
     }
 
-    $options['op'] = 'addarticolo';
+    $options['op'] = 'manage_articolo';
 } elseif (get('is_sconto') !== null) {
     $file = 'sconto';
 

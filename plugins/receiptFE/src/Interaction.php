@@ -2,14 +2,14 @@
 
 namespace Plugins\ReceiptFE;
 
-use Plugins\ExportFE\Connection;
+use API\Services;
 
 /**
  * Classe per l'interazione con API esterne.
  *
  * @since 2.4.3
  */
-class Interaction extends Connection
+class Interaction extends Services
 {
     public static function getReceiptList()
     {

@@ -28,6 +28,9 @@ $namespaces = require_once __DIR__.'/config/namespaces.php';
 foreach ($namespaces as $path => $namespace) {
     $loader->addPsr4($namespace.'\\', __DIR__.'/'.$path.'/custom/src');
     $loader->addPsr4($namespace.'\\', __DIR__.'/'.$path.'/src');
+
+    $loader->addPsr4($namespace.'\\API\\', __DIR__.'/'.$path.'/custom/api');
+    $loader->addPsr4($namespace.'\\API\\', __DIR__.'/'.$path.'/api');
 }
 
 // Individuazione dei percorsi di base
@@ -60,7 +63,7 @@ use Monolog\Handler\RotatingFileHandler;
 use Monolog\Handler\StreamHandler;
 
 $handlers = [];
-if (!API::isAPIRequest()) {
+if (!API\Response::isAPIRequest()) {
     // File di log di base (logs/error.log, logs/setup.log)
     $handlers[] = new StreamHandler($docroot.'/logs/error.log', Monolog\Logger::ERROR);
     $handlers[] = new StreamHandler($docroot.'/logs/setup.log', Monolog\Logger::EMERGENCY);
@@ -124,7 +127,7 @@ Monolog\ErrorHandler::register($logger, [], Monolog\Logger::ERROR, Monolog\Logge
 $dbo = $database = database();
 
 /* SESSIONE */
-if (!API::isAPIRequest()) {
+if (!API\Response::isAPIRequest()) {
     // Sicurezza della sessioni
     ini_set('session.use_trans_sid', '0');
     ini_set('session.use_only_cookies', '1');
@@ -162,7 +165,7 @@ $revision = Update::getRevision();
 
 /* ACCESSO E INSTALLAZIONE */
 // Controllo sulla presenza dei permessi di accesso basilari
-$continue = $dbo->isInstalled() && !Update::isUpdateAvailable() && (Auth::check() || API::isAPIRequest());
+$continue = $dbo->isInstalled() && !Update::isUpdateAvailable() && (Auth::check() || API\Response::isAPIRequest());
 
 if (!empty($skip_permissions)) {
     Permissions::skip();
@@ -179,7 +182,7 @@ if (!$continue && getURLPath() != slashes(ROOTDIR.'/index.php') && !Permissions:
 
 /* INIZIALIZZAZIONE GENERALE */
 // Operazione aggiuntive (richieste non API)
-if (!API::isAPIRequest()) {
+if (!API\Response::isAPIRequest()) {
     // Impostazioni di Content-Type e Charset Header
     header('Content-Type: text/html; charset=UTF-8');
 
@@ -267,6 +270,21 @@ if (!API::isAPIRequest()) {
 // TODO: sostituire tutte le funzioni dei moduli con classi Eloquent relative
 $files = glob(__DIR__.'/{modules,plugins}/*/modutil.php', GLOB_BRACE);
 $custom_files = glob(__DIR__.'/{modules,plugins}/*/custom/modutil.php', GLOB_BRACE);
+foreach ($custom_files as $key => $value) {
+    $index = array_search(str_replace('custom/', '', $value), $files);
+    if ($index !== false) {
+        unset($files[$index]);
+    }
+}
+
+$list = array_merge($files, $custom_files);
+foreach ($list as $file) {
+    include_once $file;
+}
+
+// Inclusione dei file vendor/autoload.php di Composer
+$files = glob(__DIR__.'/{modules,plugins}/*/vendor/autoload.php', GLOB_BRACE);
+$custom_files = glob(__DIR__.'/{modules,plugins}/*/custom/vendor/autoload.php', GLOB_BRACE);
 foreach ($custom_files as $key => $value) {
     $index = array_search(str_replace('custom/', '', $value), $files);
     if ($index !== false) {

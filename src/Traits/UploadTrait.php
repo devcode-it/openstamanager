@@ -17,7 +17,10 @@ trait UploadTrait
     {
         $directory = $this->directory ?: 'common';
 
-        return $this->uploads_directory.'/'.$directory;
+        $result = $this->uploads_directory.'/'.$directory;
+        directory($result);
+
+        return $result;
     }
 
     public function uploads($id_record)

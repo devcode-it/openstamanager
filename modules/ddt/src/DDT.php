@@ -3,6 +3,7 @@
 namespace Modules\DDT;
 
 use Auth;
+use Common\Components\Description;
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
 use Traits\RecordTrait;
@@ -128,6 +129,36 @@ class DDT extends Document
     public function descrizioni()
     {
         return $this->hasMany(Components\Descrizione::class, 'idddt');
+    }
+
+    /**
+     * Effettua un controllo sui campi del documento.
+     * Viene richiamatp dalle modifiche alle righe del documento.
+     *
+     * @param Description $trigger
+     */
+    public function fixStato(Description $trigger)
+    {
+        parent::fixStato($trigger);
+
+        if (setting('Cambia automaticamente stato ddt fatturati')) {
+            $righe = $this->getRighe();
+
+            $qta_evasa = $righe->sum('qta_evasa');
+            $qta = $righe->sum('qta');
+            $parziale = $qta != $qta_evasa;
+
+            // Impostazione del nuovo stato
+            if ($qta_evasa == 0) {
+                $descrizione = 'Bozza';
+            } else {
+                $descrizione = $parziale ? 'Parzialmente fatturato' : 'Fatturato';
+            }
+
+            $stato = Stato::where('descrizione', $descrizione)->first();
+            $this->stato()->associate($stato);
+            $this->save();
+        }
     }
 
     // Metodi statici

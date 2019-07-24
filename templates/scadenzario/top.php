@@ -21,3 +21,7 @@ echo '
     </thead>
 
     <tbody>';
+
+$somma_imponibile = [];
+$somma_sconto = [];
+$somma_totale_imponibile = [];

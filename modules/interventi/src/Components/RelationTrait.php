@@ -27,9 +27,24 @@ trait RelationTrait
     {
     }
 
-    public function getSubtotaleAttribute()
+    /**
+     * Restituisce il prezzo unitario della riga.
+     */
+    public function getPrezzoUnitarioVenditaAttribute()
     {
-        return $this->prezzo_vendita * $this->qta;
+        if (!isset($this->prezzo_unitario_vendita_riga)) {
+            $this->prezzo_unitario_vendita_riga = $this->prezzo_vendita;
+        }
+
+        return !is_nan($this->prezzo_unitario_vendita_riga) ? $this->prezzo_unitario_vendita_riga : 0;
+    }
+
+    /**
+     * Restituisce il costo unitario della riga.
+     */
+    public function getPrezzoUnitarioAcquistoAttribute()
+    {
+        return $this->prezzo_acquisto;
     }
 
     /**

@@ -3,7 +3,9 @@
 namespace Modules\Articoli;
 
 use Common\Model;
+use Modules;
 use Modules\Interventi\Components\Articolo as ArticoloIntervento;
+use Uploads;
 
 class Articolo extends Model
 {
@@ -65,8 +67,36 @@ class Articolo extends Model
         return true;
     }
 
-    public function articolo()
+    public function articoli()
     {
         return $this->hasMany(ArticoloIntervento::class, 'idarticolo');
+    }
+
+    public function getImageAttribute()
+    {
+        if (empty($this->immagine)) {
+            return null;
+        }
+
+        $module = Modules::get($this->module);
+        $fileinfo = Uploads::fileInfo($this->immagine);
+
+        $directory = '/'.$module->upload_directory.'/';
+        $image = $directory.$this->immagine;
+        $image_thumbnail = $directory.$fileinfo['filename'].'_thumb600.'.$fileinfo['extension'];
+
+        $url = file_exists(DOCROOT.$image_thumbnail) ? ROOTDIR.$image_thumbnail : ROOTDIR.$image;
+
+        return $url;
+    }
+
+    /**
+     * Restituisce il nome del modulo a cui l'oggetto è collegato.
+     *
+     * @return string
+     */
+    public function getModuleAttribute()
+    {
+        return 'Articoli';
     }
 }

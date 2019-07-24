@@ -3,13 +3,12 @@
 echo '
 <!-- Intestazione fornitore -->
 $default_header$
-<br>
 
 <div class="row">
     <!-- Dati Ddt -->
     <div class="col-xs-6">
         <div class="text-center" style="height:5mm;">
-            <b>DDT</b>
+            <b>'.tr('DDT').'</b>
         </div>
 
         <table class="table">
@@ -34,28 +33,28 @@ $default_header$
                     <p>{PAGENO}/{nb}</p>
                 </td>
             </tr>
-
+            
             <tr>
-                <td colspan=2 class="border-bottom border-left" style="height:11mm;">
+                <td colspan="4" style="height:11mm;">
+                    <p class="small-bold">'.tr('Pagamento', [], ['upper' => true]).'</p>
+                    <p>$pagamento$</p>
+                </td>
+            </tr>
+            
+            <tr>
+                <td colspan="2">
                     <p class="small-bold">'.tr('Partita IVA', [], ['upper' => true]).'</p>
                     <small>$c_piva$</small>
                 </td>
-                <td colspan=2 class="border-bottom border-right">
+                <td colspan="2">
                     <p class="small-bold">'.tr('Codice fiscale', [], ['upper' => true]).'</p>
                     <small>$c_codicefiscale$</small>
-                </td>
-            </tr>
-
-            <tr>
-                <td colspan="4" class="border-full" style="height:11mm;">
-                    <p class="small-bold">'.tr('Pagamento', [], ['upper' => true]).'</p>
-                    <p>$pagamento$</p>
                 </td>
             </tr>
         </table>
     </div>
 
-    <div class="col-xs-5 col-xs-offset-1">
+	<div class="col-xs-6" style="margin-left: 10px">
         <table class="table" style="width:100%;margin-top:5mm;">
             <tr>
                 <td class="border-full" style="height:20mm;">

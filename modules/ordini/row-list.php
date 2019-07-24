@@ -104,9 +104,11 @@ if (!empty($rs)) {
             '.moneyFormat($r['subtotale'] / $r['qta']);
 
             if (abs($r['sconto_unitario']) > 0) {
+                $text = $r['sconto_unitario'] > 0 ? tr('sconto _TOT_ _TYPE_') : tr('maggiorazione _TOT_ _TYPE_');
+
                 echo '
-            <br><small class="label label-danger">'.tr('sconto _TOT_ _TYPE_', [
-                '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
+            <br><small class="label label-danger">'.replace($text, [
+                '_TOT_' => Translator::numberToLocale(abs($r['sconto_unitario'])),
                 '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : currency()),
             ]).'</small>';
             }
@@ -185,25 +187,11 @@ echo '
     </tbody>';
 
 // Calcoli
-$imponibile = sum(array_column($rs, 'subtotale'));
-$sconto = sum(array_column($rs, 'sconto'));
-$iva = sum(array_column($rs, 'iva'));
-
-$imponibile_scontato = sum($imponibile, -$sconto);
-
-$totale_iva = sum($iva, $record['iva_rivalsainps']);
-
-$totale = sum([
-    $imponibile_scontato,
-    $record['rivalsainps'],
-    $totale_iva,
-]);
-
-$netto_a_pagare = sum([
-    $totale,
-    //$marca_da_bollo, // Variabile non inizializzata!
-    -$record['ritenutaacconto'],
-]);
+$imponibile = abs($ordine->imponibile);
+$sconto = $ordine->sconto;
+$totale_imponibile = abs($ordine->totale_imponibile);
+$iva = abs($ordine->iva);
+$totale = abs($ordine->totale);
 
 // IMPONIBILE
 echo '
@@ -218,11 +206,11 @@ echo '
     </tr>';
 
 // SCONTO
-if (abs($sconto) > 0) {
+if (!empty($sconto)) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.tr('Sconto', [], ['upper' => true]).':</b>
+            <b><span class="tip" title="'.tr('Un importo positivo indica uno sconto, mentre uno negativo indica una maggiorazione').'"> <i class="fa fa-question-circle-o"></i> '.tr('Sconto/maggiorazione', [], ['upper' => true]).':</span></b>
         </td>
         <td align="right">
             '.moneyFormat($sconto, 2).'
@@ -230,48 +218,30 @@ if (abs($sconto) > 0) {
         <td></td>
     </tr>';
 
-    // IMPONIBILE SCONTATO
+    // TOTALE IMPONIBILE
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.tr('Imponibile scontato', [], ['upper' => true]).':</b>
+            <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.moneyFormat($imponibile_scontato, 2).'
-        </td>
-        <td></td>
-    </tr>';
-
-    //$totale -= $sconto;
-}
-
-// RIVALSA INPS
-if (abs($record['rivalsainps']) > 0) {
-    echo '
-    <tr>
-        <td colspan="5" class="text-right">
-            <b>'.tr('Rivalsa', [], ['upper' => true]).':</b>
-        </td>
-        <td align="right">
-            '.moneyFormat($record['rivalsainps'], 2).'
+            '.moneyFormat($totale_imponibile, 2).'
         </td>
         <td></td>
     </tr>';
 }
 
 // IVA
-if (abs($totale_iva) > 0) {
-    echo '
+echo '
     <tr>
         <td colspan="5" class="text-right">
             <b>'.tr('Iva', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.moneyFormat($totale_iva, 2).'
+            '.moneyFormat($iva, 2).'
         </td>
         <td></td>
     </tr>';
-}
 
 // TOTALE
 echo '
@@ -284,48 +254,6 @@ echo '
         </td>
         <td></td>
     </tr>';
-
-// Mostra marca da bollo se c'è
-if (abs($record['bollo']) > 0) {
-    echo '
-    <tr>
-        <td colspan="5" class="text-right">
-            <b>'.tr('Marca da bollo', [], ['upper' => true]).':</b>
-        </td>
-        <td align="right">
-            '.moneyFormat($record['bollo'], 2).'
-        </td>
-        <td></td>
-    </tr>';
-}
-
-// RITENUTA D'ACCONTO
-if (abs($record['ritenutaacconto']) > 0) {
-    echo '
-    <tr>
-        <td colspan="5" class="text-right">
-            <b>'.tr("Ritenuta d'acconto", [], ['upper' => true]).':</b>
-        </td>
-        <td align="right">
-            '.moneyFormat($record['ritenutaacconto'], 2).'
-        </td>
-        <td></td>
-    </tr>';
-}
-
-// NETTO A PAGARE
-if ($totale != $netto_a_pagare) {
-    echo '
-    <tr>
-        <td colspan="5" class="text-right">
-            <b>'.tr('Netto a pagare', [], ['upper' => true]).':</b>
-        </td>
-        <td align="right">
-            '.moneyFormat($netto_a_pagare, 2).'
-        </td>
-        <td></td>
-    </tr>';
-}
 
 echo '
 </table>';

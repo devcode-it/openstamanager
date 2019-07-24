@@ -61,7 +61,7 @@ class DateHandler implements HandlerInterface
 
                 if (empty($values['icon-before']) || empty($values['icon-after'])) {
                     $result .= '
-    <div class="input-group">';
+    <div class="input-group" style="width: 100%;">';
                 }
             }
 

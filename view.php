@@ -18,7 +18,7 @@ if ($file->isFatturaElettronica()) {
     // Individuazione stylesheet
     $default_stylesheet = 'asso-invoice';
 
-    $name = basename($file->original);
+    $name = basename($file->original_name);
     $filename = explode('.', $name)[0];
     $pieces = explode('_', $filename);
     $stylesheet = $pieces[2];

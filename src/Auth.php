@@ -56,8 +56,8 @@ class Auth extends \Util\Singleton
 
         if ($database->isInstalled()) {
             // Controllo dell'accesso da API
-            if (API::isAPIRequest()) {
-                $token = API::getRequest()['token'];
+            if (API\Response::isAPIRequest()) {
+                $token = API\Response::getRequest()['token'];
 
                 $user = $database->fetchArray('SELECT `id_utente` FROM `zz_tokens` WHERE `enabled` = 1 AND `token` = :token', [
                     ':token' => $token,
@@ -232,7 +232,7 @@ class Auth extends \Util\Singleton
             session_unset();
             session_regenerate_id();
 
-            if (!API::isAPIRequest()) {
+            if (!API\Response::isAPIRequest()) {
                 flash()->clearMessages();
             }
         }
@@ -464,16 +464,6 @@ class Auth extends \Util\Singleton
 
             if (!empty($results)) {
                 $this->user = User::with('group')->find($user_id);
-
-                // Estraggo le sedi dell'utente loggato
-                $sedi = $database->fetchArray('SELECT idsede FROM zz_user_sedi WHERE id_user='.prepare($user_id));
-
-                // Se l'utente non ha sedi, è come se ce le avesse tutte disponibili per retrocompatibilità
-                if (empty($sedi)) {
-                    $sedi = $database->fetchArray('SELECT "0" AS idsede UNION SELECT id AS idsede FROM an_sedi WHERE idanagrafica='.prepare($results[0]['idanagrafica']));
-                }
-
-                $this->user['sedi'] = array_column($sedi, 'idsede');
             }
         } catch (PDOException $e) {
             $this->destory();

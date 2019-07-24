@@ -9,10 +9,12 @@ function submodules($list, $depth = 0)
     $result = '';
 
     foreach ($list as $sub) {
+        $locked = in_array($sub['name'], ['Utenti e permessi', 'Stato dei servizi']);
+
         // STATO
         if (!empty($sub['enabled'])) {
             $text = tr('Abilitato');
-            $text .= ($sub['id'] != $id_module) ? '. '.tr('Clicca per disabilitarlo').'...' : '';
+            $text .= !$locked ? '. '.tr('Clicca per disabilitarlo').'...' : '';
             $stato = '<i class="fa fa-cog fa-spin text-success tip" title="'.$text.'"></i>';
         } else {
             $stato = '<i class="fa fa-cog text-warning tip" title="'.tr('Non abilitato').'"></i>';
@@ -20,7 +22,7 @@ function submodules($list, $depth = 0)
         }
 
         // Possibilità di disabilitare o abilitare i moduli tranne quello degli aggiornamenti
-        if ($sub['id'] != $id_module) {
+        if (!$locked) {
             if ($sub['enabled']) {
                 $stato = "<a href='javascript:;' onclick=\"if( confirm('".tr('Disabilitare questo modulo?')."') ){ $.post( '".ROOTDIR.'/actions.php?id_module='.$id_module."', { op: 'disable', id: '".$sub['id']."' }, function(response){ location.href='".ROOTDIR.'/controller.php?id_module='.$id_module."'; }); }\">".$stato."</a>\n";
             } else {

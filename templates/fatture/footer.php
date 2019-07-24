@@ -1,14 +1,30 @@
 <?php
 
-$volume = sum(array_column($righe, 'volume'));
-$peso_lordo = sum(array_column($righe, 'peso_lordo'));
+// Calcoli
+$imponibile = abs($documento->imponibile);
+$sconto = $documento->sconto;
+$totale_imponibile = abs($documento->totale_imponibile);
+$totale_iva = abs($documento->iva);
+$totale = abs($documento->totale);
+$netto_a_pagare = abs($documento->netto);
+
+$show_sconto = $sconto > 0;
+
+$volume = $righe->sum(function ($item) {
+    return $item->isArticolo() ? $item->articolo->volume : 0;
+});
+$peso_lordo = $righe->sum(function ($item) {
+    return $item->isArticolo() ? $item->articolo->peso_lordo : 0;
+});
+
+$width = round(100 / ($show_sconto ? 5 : 3), 2);
 
 // SCADENZE  |  TOTALI
 // TABELLA PRINCIPALE
 echo "
 <table class='table-bordered'>
     <tr>
-        <td colspan=".(!empty($sconto) ? 5 : 3)." class='cell-padded' style='height:".($record['ritenutaacconto'] != 0 ? 20 : 30)."mm'>";
+        <td colspan=".($show_sconto ? 5 : 3)." class='cell-padded' style='height:".($record['ritenutaacconto'] != 0 ? 20 : 30)."mm'>";
 
 // Tabella (scadenze + iva)
 echo "
@@ -95,7 +111,7 @@ if (!empty($v_iva)) {
 echo '
                     </td>
 
-                    <td style="width:10mm;">&nbsp;</td>";
+                    <td style="width:10mm;">&nbsp;</td>
                 </tr>';
 // Fine tabelle iva
 echo '
@@ -105,21 +121,20 @@ echo '
         </td>';
 
 // TOTALI
-$width = round(100 / (!empty($sconto) ? 5 : 3), 2);
 echo "
     <tr>
         <th class='text-center small' style='width:".$width."'>
             ".tr('Imponibile', [], ['upper' => true]).'
         </th>';
 
-if (!empty($sconto)) {
+if ($show_sconto) {
     echo "
         <th class='text-center small' style='width:".$width."'>
             ".tr('Sconto', [], ['upper' => true])."
         </th>
 
         <th class='text-center small' style='width:".$width."'>
-            ".tr('Imponibile scontato', [], ['upper' => true]).'
+            ".tr('Totale imponibile', [], ['upper' => true]).'
         </th>';
 }
 
@@ -135,18 +150,18 @@ echo "
 
     <tr>
         <td class='cell-padded text-center'>
-            ".moneyFormat($imponibile, 2).'
+            ".moneyFormat($show_sconto ? $imponibile : $totale_imponibile, 2).'
         </td>';
 
-if (!empty($sconto)) {
+if ($show_sconto) {
     echo "
 
         <td class='cell-padded text-center'>
-            ".moneyFormat($sconto, 2)."
+            ".moneyFormat(abs($sconto), 2)."
         </td>
 
         <td class='cell-padded text-center'>
-            ".moneyFormat($imponibile - $sconto, 2).'
+            ".moneyFormat($totale_imponibile, 2).'
         </td>';
 }
 
@@ -200,10 +215,8 @@ if (!empty($record['rivalsainps'])) {
     </tr>';
 }
 
-$fattura = \Modules\Fatture\Fattura::find($id_record);
-
 // Ritenuta d'acconto ( + se no rivalsa inps)
-if (!empty($record['ritenutaacconto']) || !empty($fattura->totale_ritenuta_contributi) || !empty($record['spit_payment'])) {
+if (!empty($record['ritenutaacconto']) || !empty($documento->totale_ritenuta_contributi) || !empty($record['spit_payment'])) {
     $rs2 = $dbo->fetchArray('SELECT percentuale FROM co_ritenutaacconto WHERE id=(SELECT idritenutaacconto FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idritenutaacconto!=0 LIMIT 0,1)');
 
     $first_colspan = 3;
@@ -215,7 +228,7 @@ if (!empty($record['ritenutaacconto']) || !empty($fattura->totale_ritenuta_contr
     }
 
     $contributi = (!empty($record['ritenutaacconto']) ? ' - ' : '').tr('contributi: _PRC_%', [
-        '_PRC_' => Translator::numberToLocale($fattura->ritenutaContributi->percentuale, 2),
+        '_PRC_' => Translator::numberToLocale($documento->ritenutaContributi->percentuale, 2),
     ]);
     $acconto = tr('acconto: _PRC_%', [
         '_PRC_' => Translator::numberToLocale($rs2[0]['percentuale'], 0),
@@ -226,7 +239,7 @@ if (!empty($record['ritenutaacconto']) || !empty($fattura->totale_ritenuta_contr
         <th class="text-center small" colspan="'.$first_colspan.'">
             '.tr('Ritenuta (_ACCONTO__CONTRIBUTI_)', [
             '_ACCONTO_' => $acconto,
-            '_CONTRIBUTI_' => empty($fattura->ritenutaContributi) ? null : $contributi,
+            '_CONTRIBUTI_' => empty($documento->ritenutaContributi) ? null : $contributi,
             ], ['upper' => true]).'
         </th>';
 
@@ -245,13 +258,13 @@ if (!empty($record['ritenutaacconto']) || !empty($fattura->totale_ritenuta_contr
 
     <tr>
         <td class="cell-padded text-center" colspan="'.$first_colspan.'">
-            '.moneyFormat(abs($fattura->ritenuta_acconto) + $fattura->totale_ritenuta_contributi, 2).'
+            '.moneyFormat(abs($documento->ritenuta_acconto) + $documento->totale_ritenuta_contributi, 2).'
         </td>';
 
     echo '
 
         <td class="cell-padded text-center" colspan="'.$second_colspan.'">
-            '.moneyFormat($totale - abs($fattura->ritenuta_acconto) - $fattura->totale_ritenuta_contributi, 2).'
+            '.moneyFormat($totale - abs($documento->ritenuta_acconto) - $documento->totale_ritenuta_contributi, 2).'
         </td>
     </tr>';
 }
@@ -279,7 +292,7 @@ if (!empty($record['split_payment'])) {
         </td>
 
         <td class="cell-padded text-center" colspan="'.$second_colspan.'">
-            '.moneyFormat($totale - $totale_iva - abs($fattura->ritenuta_acconto) - $fattura->totale_ritenuta_contributi, 2).'
+            '.moneyFormat($totale - $totale_iva - abs($documento->ritenuta_acconto) - $documento->totale_ritenuta_contributi, 2).'
         </td>
     </tr>';
 }
@@ -295,11 +308,11 @@ if ($fattura_accompagnatoria) {
          <th class="small" class style="width:15%">
             '.tr('Peso lordo', [], ['upper' => true]).'
         </th>
-        
+
          <th class="small" class style="width:15%">
             '.tr('Volume', [], ['upper' => true]).'
         </th>
-        
+
         <th class="small" class style="width:15%">
             '.tr('Aspetto beni', [], ['upper' => true]).'
         </th>
@@ -325,7 +338,7 @@ if ($fattura_accompagnatoria) {
         <td class="cell-padded">
             '.(!empty($volume) ? Translator::numberToLocale($volume).'&nbsp;M<sup>3</sup>' : '').'
         </td>
-        
+
         <td class="cell-padded">
             $aspettobeni$ &nbsp;
         </td>

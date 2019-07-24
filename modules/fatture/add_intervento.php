@@ -46,7 +46,9 @@ $rs = $dbo->fetchArray('SELECT
         AND in_interventi.id_preventivo IS NULL
         AND NOT in_interventi.id IN (SELECT idintervento FROM co_promemoria WHERE idintervento IS NOT NULL)');
 foreach ($rs as $key => $value) {
-    $prezzo = get_costi_intervento($value['id'])['totale'];
+    $intervento = \Modules\Interventi\Intervento::find($value['id']);
+    $prezzo = $intervento->totale;
+
     $rs[$key]['prezzo'] = Translator::numberToLocale($prezzo);
     $rs[$key]['descrizione_intervento'] = strip_tags($rs[$key]['descrizione_intervento']);
 

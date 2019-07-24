@@ -126,7 +126,7 @@ class RowHelper extends \Codeception\Module
 
         $t->see('542,34', $this->getFinalValue('Imponibile'));
         $t->see('60,00', $this->getFinalValue('Sconto'));
-        $t->see('482,34', $this->getFinalValue('Imponibile scontato'));
+        $t->see('482,34', $this->getFinalValue('Totale imponibile'));
         $t->see('106,11', $this->getFinalValue('IVA'));
         $t->see('588,45', $this->getFinalValue('Totale'));
 
@@ -135,7 +135,7 @@ class RowHelper extends \Codeception\Module
 
         $t->see('542,34', $this->getFinalValue('Imponibile'));
         $t->see('160,00', $this->getFinalValue('Sconto'));
-        $t->see('382,34', $this->getFinalValue('Imponibile scontato'));
+        $t->see('382,34', $this->getFinalValue('Totale imponibile'));
         $t->see('84,11', $this->getFinalValue('IVA'));
         $t->see('466,45', $this->getFinalValue('Totale'));
 
@@ -146,7 +146,7 @@ class RowHelper extends \Codeception\Module
 
         $t->see('542,34', $this->getFinalValue('Imponibile'));
         $t->see('98,23', $this->getFinalValue('Sconto'));
-        $t->see('444,11', $this->getFinalValue('Imponibile scontato'));
+        $t->see('444,11', $this->getFinalValue('Totale imponibile'));
         $t->see('97,70', $this->getFinalValue('IVA'));
         $t->see('541,81', $this->getFinalValue('Totale'));
     }

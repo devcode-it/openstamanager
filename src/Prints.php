@@ -126,7 +126,20 @@ class Prints
 
         Permissions::addModule($infos['id_module']);
 
-        if (empty($infos) || empty($infos['enabled']) || !Permissions::check([], false)) {
+        $has_access = true;
+        if (!empty($infos['is_record'])) {
+            $module = Modules::get($infos['id_module']);
+
+            Util\Query::setSegments(false);
+            $query = Util\Query::getQuery($module, [
+                'id' => $id_record,
+            ]);
+            Util\Query::setSegments(true);
+
+            $has_access = database()->fetchNum($query) !== 0;
+        }
+
+        if (empty($infos) || empty($infos['enabled']) || !Permissions::check([], false) || !$has_access) {
             return false;
         }
 
@@ -454,19 +467,7 @@ class Prints
             $report = ob_get_clean();
 
             if (!empty($autofill)) {
-                $result = '';
-
-                // max($autofill['additional']) = $autofill['rows'] - 1
-                for ($i = (floor($autofill['count']) % $autofill['rows']); $i < $autofill['additional']; ++$i) {
-                    $result .= '
-                    <tr>';
-                    for ($c = 0; $c < $autofill['columns']; ++$c) {
-                        $result .= '
-                        <td>&nbsp;</td>';
-                    }
-                    $result .= '
-                    </tr>';
-                }
+                $result = $autofill->generate();
 
                 $report = str_replace('|autofill|', $result, $report);
             }
@@ -502,6 +503,8 @@ class Prints
             include self::filepath($id_print, 'top.php');
             $top = ob_get_clean();
 
+            $top = str_replace(array_keys($replaces), array_values($replaces), $top);
+
             $mpdf->WriteHTML($top);
 
             foreach ($records as $record) {
@@ -515,6 +518,8 @@ class Prints
             ob_start();
             include self::filepath($id_print, 'bottom.php');
             $bottom = ob_get_clean();
+
+            $bottom = str_replace(array_keys($replaces), array_values($replaces), $bottom);
 
             $mpdf->WriteHTML($bottom);
 

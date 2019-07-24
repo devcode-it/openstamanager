@@ -11,6 +11,7 @@ $tipodoc = $rs[0]['descrizione'];
 unset($_SESSION['superselect']['idanagrafica']);
 unset($_SESSION['superselect']['idsede_partenza']);
 unset($_SESSION['superselect']['idsede_destinazione']);
+unset($_SESSION['superselect']['codice_modalita_pagamento_fe']);
 $_SESSION['superselect']['idsede_partenza'] = $record['idsede_partenza'];
 $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione'];
 $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
@@ -116,8 +117,21 @@ if (empty($record['is_fiscale'])) {
 				</div>
 
                 <div class="col-md-2">
-                    {[ "type": "date", "label": "<?php echo tr('Data competenza'); ?>", "name": "data_competenza", "required": 0, "value": "$data_competenza$" ]}
+                    {[ "type": "date", "label": "<?php echo tr('Data competenza'); ?>", "name": "data_competenza", "required": 0, "value": "$data_competenza$", "min-date": "$data_registrazione$" ]}
                 </div>
+
+                <script type="text/javascript">
+                    $(document).ready(function () {
+                        $("#data_registrazione").on("dp.change", function (e) {
+                            var data = $("#data_competenza");
+                            data.data("DateTimePicker").minDate(e.date);
+
+                            if(data.data("DateTimePicker").date() < e.date){
+                                data.data("DateTimePicker").date(e.date);
+                            }
+                        })
+                    });
+                </script>
 				
 				<?php
 } ?>
@@ -126,7 +140,7 @@ if (empty($record['is_fiscale'])) {
 					<?php
                     if ($dir == 'entrata') {
                         ?>
-					{[ "type": "select", "label": "<?php echo tr('Stato FE'); ?>", "name": "codice_stato_fe", "required": 0, "values": "query=SELECT codice as id, CONCAT_WS(' - ',codice,descrizione) as text FROM fe_stati_documento", "value": "$codice_stato_fe$", "disabled": <?php echo intval(Plugins\ExportFE\Connection::isEnabled()); ?>, "class": "unblockable", "help": "<?php echo (!empty($record['data_stato_fe'])) ? Translator::timestampToLocale($record['data_stato_fe']) : ''; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Stato FE'); ?>", "name": "codice_stato_fe", "required": 0, "values": "query=SELECT codice as id, CONCAT_WS(' - ',codice,descrizione) as text FROM fe_stati_documento", "value": "$codice_stato_fe$", "disabled": <?php echo intval(API\Services::isEnabled()); ?>, "class": "unblockable", "help": "<?php echo (!empty($record['data_stato_fe'])) ? Translator::timestampToLocale($record['data_stato_fe']) : ''; ?>" ]}
 					<?php
                     }
                     ?>
@@ -201,7 +215,7 @@ if (empty($record['is_fiscale'])) {
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 1, "values": "query=SELECT id, CONCAT_WS(' - ', codice_modalita_pagamento_fe, descrizione) AS descrizione, (SELECT id FROM co_banche WHERE id_pianodeiconti3 = co_pagamenti.idconto_<?php echo $conto; ?> LIMIT 0,1) AS idbanca FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione ASC", "value": "$idpagamento$", "extra": "onchange=\"$('#idbanca').val( $(this).find('option:selected').data('idbanca') ).change(); \" " ]}
+					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 1, "ajax-source": "pagamenti", "value": "$idpagamento$", "extra": "onchange=\"$('#idbanca').val($(this).selectData().id_banca_<?php echo $conto; ?>).change(); \" " ]}
 				</div>
 
 				<div class="col-md-3">

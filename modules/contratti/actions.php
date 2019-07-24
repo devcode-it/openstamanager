@@ -3,7 +3,9 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Contratti\Components\Articolo;
+use Modules\Contratti\Components\Descrizione;
 use Modules\Contratti\Components\Riga;
 use Modules\Contratti\Components\Sconto;
 use Modules\Contratti\Contratto;
@@ -67,27 +69,27 @@ switch (post('op')) {
             }
 
             // Salvataggio costi attività unitari del contratto
-            foreach (post('costo_ore') as $idtipointervento => $valore) {
-                $rs = $dbo->fetchArray('SELECT * FROM co_contratti_tipiintervento WHERE idcontratto='.prepare($id_record).' AND idtipointervento='.prepare($idtipointervento));
+            foreach (post('costo_ore') as $id_tipo => $valore) {
+                $rs = $dbo->fetchArray('SELECT * FROM co_contratti_tipiintervento WHERE idcontratto='.prepare($id_record).' AND idtipointervento='.prepare($id_tipo));
 
                 // Se non esiste il record lo inserisco...
                 if (sizeof($rs) == 0) {
                     // Se almeno un valore è diverso da 0 inserisco l'importo...
-                    if (post('costo_ore')[$idtipointervento] != 0 || post('costo_km')[$idtipointervento] != 0 || post('costo_dirittochiamata')[$idtipointervento] != 0) {
-                        $dbo->query('INSERT INTO co_contratti_tipiintervento(idcontratto, idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico) VALUES('.prepare($id_record).', '.prepare($idtipointervento).', '.prepare(post('costo_ore')[$idtipointervento]).', '.prepare(post('costo_km')[$idtipointervento]).', '.prepare(post('costo_dirittochiamata')[$idtipointervento]).', '.prepare(post('costo_ore_tecnico')[$idtipointervento]).', '.prepare(post('costo_km_tecnico')[$idtipointervento]).', '.prepare(post('costo_dirittochiamata_tecnico')[$idtipointervento]).')');
+                    if (post('costo_ore')[$id_tipo] != 0 || post('costo_km')[$id_tipo] != 0 || post('costo_dirittochiamata')[$id_tipo] != 0) {
+                        $dbo->query('INSERT INTO co_contratti_tipiintervento(idcontratto, idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico) VALUES('.prepare($id_record).', '.prepare($id_tipo).', '.prepare(post('costo_ore')[$id_tipo]).', '.prepare(post('costo_km')[$id_tipo]).', '.prepare(post('costo_dirittochiamata')[$id_tipo]).', '.prepare(post('costo_ore_tecnico')[$id_tipo]).', '.prepare(post('costo_km_tecnico')[$id_tipo]).', '.prepare(post('costo_dirittochiamata_tecnico')[$id_tipo]).')');
                     }
                 }
 
                 // ...altrimenti...
                 else {
                     // Aggiorno il nuovo valore se è diverso da 0...
-                    if (post('costo_ore')[$idtipointervento] != 0 || post('costo_km')[$idtipointervento] != 0 || post('costo_dirittochiamata')[$idtipointervento] != 0) {
-                        $dbo->query('UPDATE co_contratti_tipiintervento SET costo_ore='.prepare(post('costo_ore')[$idtipointervento]).', costo_km='.prepare(post('costo_km')[$idtipointervento]).', costo_dirittochiamata='.prepare(post('costo_dirittochiamata')[$idtipointervento]).', costo_ore_tecnico='.prepare(post('costo_ore_tecnico')[$idtipointervento]).', costo_km_tecnico='.prepare(post('costo_km_tecnico')[$idtipointervento]).', costo_dirittochiamata_tecnico='.prepare(post('costo_dirittochiamata_tecnico')[$idtipointervento]).' WHERE idcontratto='.prepare($id_record).' AND idtipointervento='.prepare($idtipointervento));
+                    if (post('costo_ore')[$id_tipo] != 0 || post('costo_km')[$id_tipo] != 0 || post('costo_dirittochiamata')[$id_tipo] != 0) {
+                        $dbo->query('UPDATE co_contratti_tipiintervento SET costo_ore='.prepare(post('costo_ore')[$id_tipo]).', costo_km='.prepare(post('costo_km')[$id_tipo]).', costo_dirittochiamata='.prepare(post('costo_dirittochiamata')[$id_tipo]).', costo_ore_tecnico='.prepare(post('costo_ore_tecnico')[$id_tipo]).', costo_km_tecnico='.prepare(post('costo_km_tecnico')[$id_tipo]).', costo_dirittochiamata_tecnico='.prepare(post('costo_dirittochiamata_tecnico')[$id_tipo]).' WHERE idcontratto='.prepare($id_record).' AND idtipointervento='.prepare($id_tipo));
                     }
 
                     // ...altrimenti cancello l'eventuale riga
                     else {
-                        $dbo->query('DELETE FROM co_contratti_tipiintervento WHERE idcontratto='.prepare($id_record).' AND idtipointervento='.prepare($idtipointervento));
+                        $dbo->query('DELETE FROM co_contratti_tipiintervento WHERE idcontratto='.prepare($id_record).' AND idtipointervento='.prepare($id_tipo));
                     }
                 }
             }
@@ -119,6 +121,42 @@ switch (post('op')) {
 
         break;
 
+    case 'manage_articolo':
+        if (post('idriga') != null) {
+            $articolo = Articolo::find(post('idriga'));
+        } else {
+            $originale = ArticoloOriginale::find(post('idarticolo'));
+            $articolo = Articolo::build($contratto, $originale);
+        }
+
+        $qta = post('qta');
+
+        $articolo->descrizione = post('descrizione');
+        $articolo->um = post('um') ?: null;
+
+        $articolo->id_iva = post('idiva');
+
+        //$articolo->prezzo_unitario_acquisto = post('prezzo_acquisto') ?: 0;
+        $articolo->prezzo_unitario_vendita = post('prezzo');
+        $articolo->sconto_unitario = post('sconto');
+        $articolo->tipo_sconto = post('tipo_sconto');
+
+        try {
+            $articolo->qta = $qta;
+        } catch (UnexpectedValueException $e) {
+            flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
+        }
+
+        $articolo->save();
+
+        if (post('idriga') != null) {
+            flash()->info(tr('Articolo modificato!'));
+        } else {
+            flash()->info(tr('Articolo aggiunto!'));
+        }
+
+        break;
+
     case 'manage_sconto':
         if (post('idriga') != null) {
             $sconto = Sconto::find(post('idriga'));
@@ -142,107 +180,68 @@ switch (post('op')) {
 
         break;
 
-    // Aggiungo una riga al contratto
-    case 'addriga':
-        $idiva = post('idiva');
-        $idarticolo = post('idarticolo');
-        $descrizione = post('descrizione');
+    case 'manage_riga':
+        if (post('idriga') != null) {
+            $riga = Riga::find(post('idriga'));
+        } else {
+            $riga = Riga::build($contratto);
+        }
 
         $qta = post('qta');
-        $prezzo = post('prezzo');
 
-        // Calcolo dello sconto
-        $sconto_unitario = post('sconto');
-        $tipo_sconto = post('tipo_sconto');
-        $sconto = calcola_sconto([
-            'sconto' => $sconto_unitario,
-            'prezzo' => $prezzo,
-            'tipo' => $tipo_sconto,
-            'qta' => $qta,
-        ]);
+        $riga->descrizione = post('descrizione');
+        $riga->um = post('um') ?: null;
 
-        $subtot = $prezzo * $qta;
+        $riga->id_iva = post('idiva');
 
-        $um = post('um');
+        //$riga->prezzo_unitario_acquisto = post('prezzo_acquisto') ?: 0;
+        $riga->prezzo_unitario_vendita = post('prezzo');
+        $riga->sconto_unitario = post('sconto');
+        $riga->tipo_sconto = post('tipo_sconto');
 
-        // Lettura iva dell'articolo
-        $rs2 = $dbo->fetchArray('SELECT percentuale, descrizione, indetraibile FROM co_iva WHERE id='.prepare($idiva));
-        $iva = ($prezzo * $qta - $sconto) / 100 * $rs2[0]['percentuale'];
-        $iva_indetraibile = $iva / 100 * $rs2[0]['indetraibile'];
-        $desc_iva = $rs2[0]['descrizione'];
+        $riga->qta = $qta;
 
-        $dbo->query('INSERT INTO co_righe_contratti(idcontratto, idarticolo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, um, qta, sconto, sconto_unitario, tipo_sconto, is_descrizione, `order`) VALUES ('.prepare($id_record).', '.prepare($idarticolo).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($um).', '.prepare($qta).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare(empty($qta)).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_contratti AS t WHERE idcontratto='.prepare($id_record).'))');
+        $riga->save();
 
-        // Messaggi informativi
-        if (!empty($idarticolo)) {
-            flash()->info(tr('Articolo aggiunto!'));
-        } elseif (!empty($qta)) {
+        if (post('idriga') != null) {
+            flash()->info(tr('Riga modificata!'));
+        } else {
             flash()->info(tr('Riga aggiunta!'));
+        }
+
+        break;
+
+    case 'manage_descrizione':
+        if (post('idriga') != null) {
+            $riga = Descrizione::find(post('idriga'));
+        } else {
+            $riga = Descrizione::build($contratto);
+        }
+
+        $riga->descrizione = post('descrizione');
+
+        $riga->save();
+
+        if (post('idriga') != null) {
+            flash()->info(tr('Riga descrittiva modificata!'));
         } else {
             flash()->info(tr('Riga descrittiva aggiunta!'));
         }
 
         break;
 
-    case 'editriga':
-        $idriga = post('idriga');
-
-        $rs = $dbo->fetchArray("SELECT * FROM co_righe_contratti WHERE id='".$idriga."'");
-        $is_descrizione = $rs[0]['is_descrizione'];
-
-        $idarticolo = post('idarticolo');
-        $descrizione = post('descrizione');
-
-        $qta = post('qta');
-        $prezzo = post('prezzo');
-        $subtot = $prezzo * $qta;
-
-        // Calcolo dello sconto
-        $sconto_unitario = post('sconto');
-        $tipo_sconto = post('tipo_sconto');
-        $sconto = calcola_sconto([
-            'sconto' => $sconto_unitario,
-            'prezzo' => $prezzo,
-            'tipo' => $tipo_sconto,
-            'qta' => $qta,
-        ]);
-
-        $idiva = post('idiva');
-        $um = post('um');
-
-        // Calcolo iva
-        $query = 'SELECT percentuale, descrizione, indetraibile FROM co_iva WHERE id='.prepare($idiva);
-        $rs = $dbo->fetchArray($query);
-        $iva = ($subtot - $sconto) / 100 * $rs[0]['percentuale'];
-        $iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];
-        $desc_iva = $rs[0]['descrizione'];
-
-        // Modifica riga generica sul documento
-        if ($is_descrizione == 0) {
-            $query = 'UPDATE co_righe_contratti SET idarticolo='.prepare($idarticolo).', idiva='.prepare($idiva).', desc_iva='.prepare($desc_iva).', iva='.prepare($iva).', iva_indetraibile='.prepare($iva_indetraibile).', descrizione='.prepare($descrizione).', subtotale='.prepare($subtot).', sconto='.prepare($sconto).', sconto_unitario='.prepare($sconto_unitario).', tipo_sconto='.prepare($tipo_sconto).', um='.prepare($um).', qta='.prepare($qta).' WHERE id='.prepare($idriga);
-        } else {
-            $query = 'UPDATE co_righe_contratti SET descrizione='.prepare($descrizione).' WHERE id='.prepare($idriga);
-        }
-        $dbo->query($query);
-
-        flash()->info(tr('Riga modificata!'));
-
-        break;
-
     // Eliminazione riga
-    case 'delriga':
-        if (post('idriga') !== null) {
-            $idriga = post('idriga');
+    case 'delete_riga':
+        $id_riga = post('idriga');
+        if ($id_riga !== null) {
+            $riga = Descrizione::find($id_riga) ?: Riga::find($id_riga);
+            $riga = $riga ? $riga : Articolo::find($id_riga);
+            $riga = $riga ? $riga : Sconto::find($id_riga);
 
-            $query = 'DELETE FROM `co_righe_contratti` WHERE idcontratto='.prepare($id_record).' AND id='.prepare($idriga);
+            $riga->delete();
 
-            if ($dbo->query($query)) {
-                flash()->info(tr('Riga eliminata!'));
-            }
+            flash()->info(tr('Riga eliminata!'));
         }
-
-        // Ricalcolo il budget
-        $dbo->query('UPDATE co_contratti SET budget=( SELECT SUM(subtotale) FROM co_righe_contratti GROUP BY idcontratto HAVING idcontratto=co_contratti.id ) WHERE id='.prepare($id_record));
 
         break;
 
@@ -261,22 +260,22 @@ switch (post('op')) {
         }
         break;
 
-        case 'update_position':
-            $orders = explode(',', $_POST['order']);
-            $order = 0;
+    case 'update_position':
+        $orders = explode(',', $_POST['order']);
+        $order = 0;
 
-            foreach ($orders as $idriga) {
-                $dbo->query('UPDATE `co_righe_contratti` SET `order`='.prepare($order).' WHERE id='.prepare($idriga));
-                ++$order;
-            }
+        foreach ($orders as $idriga) {
+            $dbo->query('UPDATE `co_righe_contratti` SET `order`='.prepare($order).' WHERE id='.prepare($idriga));
+            ++$order;
+        }
 
-            break;
+        break;
 
     // eliminazione contratto
     case 'delete':
-        $dbo->query('DELETE FROM co_contratti WHERE id='.prepare($id_record));
         $dbo->query('DELETE FROM co_promemoria WHERE idcontratto='.prepare($id_record));
-        $dbo->query('DELETE FROM co_righe_contratti WHERE idcontratto='.prepare($id_record));
+
+        $contratto->delete();
 
         flash()->info(tr('Contratto eliminato!'));
 

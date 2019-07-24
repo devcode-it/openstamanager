@@ -2,9 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\Fatture\Components\Riga;
-
-// Righe fattura
+// Righe documento
 $righe = $fattura->getRighe();
 
 echo '
@@ -28,7 +26,7 @@ foreach ($righe as $row) {
     // Valori assoluti
     $riga['qta'] = abs($riga['qta']);
     $riga['prezzo_unitario_acquisto'] = abs($riga['prezzo_unitario_acquisto']);
-    $riga['imponibile_scontato'] = ($fattura->isNota() ? -$row->imponibile_scontato : $row->imponibile_scontato);
+    $riga['totale_imponibile'] = ($fattura->isNota() ? -$row->totale_imponibile : $row->totale_imponibile);
     $riga['sconto_unitario'] = abs($riga['sconto_unitario']);
     $riga['sconto'] = abs($riga['sconto']);
     $riga['iva'] = abs($riga['iva']);
@@ -39,26 +37,18 @@ foreach ($righe as $row) {
 
     $extra = '';
 
+    $delete = 'unlink_riga';
+
     // Articoli
     if ($row->isArticolo()) {
         $riga['descrizione'] = (!empty($row->articolo) ? $row->articolo->codice.' - ' : '').$riga['descrizione'];
-
-        $delete = 'unlink_articolo';
-        // Preventivi
-        if (!empty($riga['idpreventivo'])) {
-            $delete = 'unlink_preventivo';
-        }
-        // Contratti
-        elseif (!empty($riga['idcontratto'])) {
-            $delete = 'unlink_contratto';
-        }
 
         $extra = '';
         $mancanti = 0;
     }
 
     // Intervento
-    elseif (!empty($riga['idintervento'])) {
+    if (!empty($riga['idintervento'])) {
         $intervento = $dbo->fetchOne('SELECT num_item,codice_cig,codice_cup,id_documento_fe FROM in_interventi WHERE id = '.prepare($riga['idintervento']));
         $riga['num_item'] = $intervento['num_item'];
         $riga['codice_cig'] = $intervento['codice_cig'];
@@ -74,8 +64,6 @@ foreach ($righe as $row) {
         $riga['codice_cig'] = $preventivo['codice_cig'];
         $riga['codice_cup'] = $preventivo['codice_cup'];
         $riga['id_documento_fe'] = $preventivo['id_documento_fe'];
-
-        $delete = 'unlink_preventivo';
     }
     // Contratti
     elseif (!empty($riga['idcontratto'])) {
@@ -84,8 +72,6 @@ foreach ($righe as $row) {
         $riga['codice_cig'] = $contratto['codice_cig'];
         $riga['codice_cup'] = $contratto['codice_cup'];
         $riga['id_documento_fe'] = $contratto['id_documento_fe'];
-
-        $delete = 'unlink_contratto';
     }
     // Ordini (IDDOCUMENTO,CIG,CUP)
     elseif (!empty($riga['idordine'])) {
@@ -94,12 +80,6 @@ foreach ($righe as $row) {
         $riga['codice_cig'] = $ordine['codice_cig'];
         $riga['codice_cup'] = $ordine['codice_cup'];
         $riga['id_documento_fe'] = $ordine['id_documento_fe'];
-
-        $delete = 'unlink_riga';
-    }
-    // Righe generiche
-    else {
-        $delete = 'unlink_riga';
     }
 
     // Individuazione dei seriali
@@ -154,7 +134,7 @@ foreach ($righe as $row) {
             ]);
 
         echo '
-            <br>'.Modules::link('Fatture di vendita', $record['ref_documento'], $text, $text);
+            <br>'.Modules::link($id_module, $record['ref_documento'], $text, $text);
     }
 
     $ref = doc_references($riga, $dir, ['iddocumento']);
@@ -197,7 +177,7 @@ foreach ($righe as $row) {
         echo '
             '.moneyFormat($row->prezzo_unitario_vendita);
 
-        if ($dir == 'entrata') {
+        if ($dir == 'entrata' && $row->prezzo_unitario_acquisto != 0) {
             echo '
             <br><small>
                 '.tr('Acquisto').': '.moneyFormat($row->prezzo_unitario_acquisto).'
@@ -205,9 +185,11 @@ foreach ($righe as $row) {
         }
 
         if (abs($row->sconto_unitario) > 0) {
+            $text = $row->sconto_unitario > 0 ? tr('sconto _TOT_ _TYPE_') : tr('maggiorazione _TOT_ _TYPE_');
+
             echo '
-            <br><small class="label label-danger">'.tr('sconto _TOT_ _TYPE_', [
-                '_TOT_' => Translator::numberToLocale($row->sconto_unitario),
+            <br><small class="label label-danger">'.replace($text, [
+                '_TOT_' => Translator::numberToLocale(abs($row->sconto_unitario)),
                 '_TYPE_' => ($row->tipo_sconto == 'PRC' ? '%' : currency()),
             ]).'</small>';
         }
@@ -234,7 +216,7 @@ foreach ($righe as $row) {
         <td class="text-right">';
     if (!$row->isDescrizione()) {
         echo '
-            '.moneyFormat($riga['imponibile_scontato']);
+            '.moneyFormat($riga['totale_imponibile']);
         /*
         <br><small class="text-'.($row->guadagno > 0 ? 'success' : 'danger').'">
             '.tr('Guadagno').': '.moneyFormat($row->guadagno).'
@@ -269,9 +251,17 @@ foreach ($righe as $row) {
         }
 
         echo "
-                    <a class='btn btn-xs btn-warning' title='Modifica questa riga...' onclick=\"launch_modal( 'Modifica riga', '".$structure->fileurl('row-edit.php').'?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga['id']."', 1 );\"><i class='fa fa-edit'></i></a>
+                    <a class='btn btn-xs btn-info' data-toggle='modal' data-title='".tr('Dati Fattura Elettronica')."' data-href='".$structure->fileurl('fe/row-fe.php').'?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga['id']."'>
+                        <i class='fa fa-file-code-o '></i>
+                    </a>
 
-                    <a class='btn btn-xs btn-danger' title='Rimuovi questa riga...' onclick=\"if( confirm('Rimuovere questa riga dalla fattura?') ){ $('#delete-form-".$riga['id']."').submit(); }\"><i class='fa fa-trash'></i></a>
+                    <a class='btn btn-xs btn-warning' title='Modifica questa riga...' onclick=\"launch_modal( 'Modifica riga', '".$structure->fileurl('row-edit.php').'?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga['id']."', 1 );\">
+                        <i class='fa fa-edit'></i>
+                    </a>
+
+                    <a class='btn btn-xs btn-danger' title='Rimuovi questa riga...' onclick=\"if( confirm('Rimuovere questa riga dalla fattura?') ){ $('#delete-form-".$riga['id']."').submit(); }\">
+                        <i class='fa fa-trash'></i>
+                    </a>
                 </div>
             </form>";
     }
@@ -291,8 +281,8 @@ echo '
     </tbody>';
 
 $imponibile = abs($fattura->imponibile);
-$sconto = abs($fattura->sconto);
-$imponibile_scontato = abs($fattura->imponibile_scontato);
+$sconto = $fattura->sconto;
+$totale_imponibile = abs($fattura->totale_imponibile);
 $iva = abs($fattura->iva);
 $totale = abs($fattura->totale);
 $netto_a_pagare = abs($fattura->netto);
@@ -315,7 +305,7 @@ if (!empty($sconto)) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.tr('Sconto', [], ['upper' => true]).':</b>
+            <b><span class="tip" title="'.tr('Un importo positivo indica uno sconto, mentre uno negativo indica una maggiorazione').'"><i class="fa fa-question-circle-o"></i> '.tr('Sconto/maggiorazione', [], ['upper' => true]).':</span></b>
         </td>
         <td align="right">
             '.moneyFormat($sconto, 2).'
@@ -323,14 +313,14 @@ if (!empty($sconto)) {
         <td></td>
     </tr>';
 
-    // IMPONIBILE SCONTATO
+    // TOTALE IMPONIBILE
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.tr('Imponibile scontato', [], ['upper' => true]).':</b>
+            <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.moneyFormat($imponibile_scontato, 2).'
+            '.moneyFormat($totale_imponibile, 2).'
         </td>
         <td></td>
     </tr>';

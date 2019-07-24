@@ -9,11 +9,11 @@ $documento = DDT::find($id_record);
 
 // Impostazioni per la gestione
 $options = [
-    'op' => 'editriga',
+    'op' => 'manage_riga',
     'action' => 'edit',
     'dir' => $documento->direzione,
     'idanagrafica' => $documento['idanagrafica'],
-    'imponibile_scontato' => $documento->imponibile_scontato,
+    'totale_imponibile' => $documento->totale_imponibile,
 ];
 
 // Dati della riga
@@ -27,8 +27,12 @@ $result['prezzo'] = $riga->prezzo_unitario_vendita;
 $file = 'riga';
 if ($riga->isDescrizione()) {
     $file = 'descrizione';
+
+    $options['op'] = 'manage_descrizione';
 } elseif ($riga->isArticolo()) {
     $file = 'articolo';
+
+    $options['op'] = 'manage_articolo';
 } elseif ($riga->isSconto()) {
     $file = 'sconto';
 

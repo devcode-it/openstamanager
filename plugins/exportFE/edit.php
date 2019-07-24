@@ -145,7 +145,7 @@ echo '
     '_BTN_' => '<b>Genera</b>',
 ]).'. '.tr('Successivamente sarà possibile procedere alla visualizzazione e al download della fattura generata attraverso i pulsanti dedicati').'.</p>
 
-<p>'.tr("Tutti gli allegati PDF inseriti all'interno della categoria \"Fattura Elettronica\" saranno inclusi come allegati dell'XML").'.</p>
+<p>'.tr("Tutti gli allegati inseriti all'interno della categoria \"Allegati Fattura Elettronica\" saranno inclusi nell'XML").'.</p>
 <br>';
 
 echo '

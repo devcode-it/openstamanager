@@ -5,7 +5,6 @@ use Modules\Interventi\Intervento;
 include_once __DIR__.'/../../core.php';
 
 $documento = Intervento::find($id_record);
-$costi = get_costi_intervento($id_record);
 
 // Impostazioni per la gestione
 $options = [
@@ -13,7 +12,7 @@ $options = [
     'action' => 'edit',
     'dir' => $documento->direzione,
     'idanagrafica' => $documento['idanagrafica'],
-    'imponibile_scontato' => $costi['totale'],
+    'totale_imponibile' => $documento->totale_imponibile,
 ];
 
 // Dati della riga

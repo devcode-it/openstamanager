@@ -95,7 +95,7 @@ class Ricevuta
         ];
 
         // Registrazione XML come allegato
-        $filename = Uploads::upload($this->file, array_merge($info, [
+        Uploads::upload($this->file, array_merge($info, [
             'name' => tr('Ricevuta _TYPE_', [
                 '_TYPE_' => $codice,
             ]),

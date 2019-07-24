@@ -210,6 +210,29 @@ class Fattura extends Document
         return $this->calcola('ritenuta_contributi');
     }
 
+    /**
+     * Restituisce i dati aggiuntivi per la fattura elettronica dell'elemento.
+     *
+     * @return array
+     */
+    public function getDatiAggiuntiviFEAttribute()
+    {
+        $result = json_decode($this->attributes['dati_aggiuntivi_fe'], true);
+
+        return (array) $result;
+    }
+
+    /**
+     * Imposta i dati aggiuntivi per la fattura elettronica dell'elemento.
+     */
+    public function setDatiAggiuntiviFEAttribute($values)
+    {
+        $values = (array) $values;
+        $dati = array_deep_clean($values);
+
+        $this->attributes['dati_aggiuntivi_fe'] = json_encode($dati);
+    }
+
     // Relazioni Eloquent
 
     public function anagrafica()
@@ -344,7 +367,7 @@ class Fattura extends Document
      */
     public static function registraScadenza(Fattura $fattura, $importo, $scadenza, $is_pagato, $type = 'fattura')
     {
-        //Calcolo la descrizione
+        // Individuazione della descrizione
         $descrizione = database()->fetchOne("SELECT CONCAT(co_tipidocumento.descrizione, CONCAT(' numero ', IF(numero_esterno!='', numero_esterno, numero))) AS descrizione FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='".$fattura->id."'")['descrizione'];
 
         database()->insert('co_scadenziario', [
@@ -416,6 +439,16 @@ class Fattura extends Document
         $this->attributes['ritenutaacconto'] = $this->ritenuta_acconto;
 
         return parent::save($options);
+    }
+
+    public function delete()
+    {
+        $result = parent::delete();
+
+        $this->rimuoviScadenze();
+        elimina_movimento($this->id);
+
+        return $result;
     }
 
     /**

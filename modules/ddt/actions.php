@@ -3,6 +3,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\DDT\Components\Articolo;
 use Modules\DDT\Components\Descrizione;
 use Modules\DDT\Components\Riga;
@@ -88,6 +89,11 @@ switch (post('op')) {
                 'bollo' => 0,
                 'rivalsainps' => 0,
                 'ritenutaacconto' => 0,
+
+                'id_documento_fe' => post('id_documento_fe'),
+                'codice_cup' => post('codice_cup'),
+                'codice_cig' => post('codice_cig'),
+                'num_item' => post('num_item'),
             ], ['id' => $id_record]);
 
             $query = 'SELECT descrizione FROM dt_statiddt WHERE id='.prepare($idstatoddt);
@@ -110,75 +116,35 @@ switch (post('op')) {
         }
         break;
 
-    case 'addarticolo':
-        if (post('idarticolo') !== null) {
-            $dir = post('dir');
-
-            $idarticolo = post('idarticolo');
-            $descrizione = post('descrizione');
-            $idiva = post('idiva');
-
-            $qta = post('qta');
-            $prezzo = post('prezzo');
-
-            // Calcolo dello sconto
-            $sconto_unitario = post('sconto');
-            $tipo_sconto = post('tipo_sconto');
-            $sconto = calcola_sconto([
-                'sconto' => $sconto_unitario,
-                'prezzo' => $prezzo,
-                'tipo' => $tipo_sconto,
-                'qta' => $qta,
-            ]);
-
-            add_articolo_inddt($id_record, $idarticolo, $descrizione, $idiva, $qta, post('um'), $prezzo * $qta, $sconto, $sconto_unitario, $tipo_sconto);
-
-            // Ricalcolo inps, ritenuta e bollo
-            ricalcola_costiagg_ddt($id_record);
-
-            aggiorna_sedi_movimenti('ddt', $id_record);
-
-            flash()->info(tr('Articolo aggiunto!'));
-        }
-        break;
-
-    case 'addriga':
-        // Selezione costi da intervento
-        $descrizione = post('descrizione');
-        $idiva = post('idiva');
-        $um = post('um');
-
-        $prezzo = post('prezzo');
-        $qta = post('qta');
-
-        // Calcolo dello sconto
-        $sconto_unitario = post('sconto');
-        $tipo_sconto = post('tipo_sconto');
-        $sconto = calcola_sconto([
-            'sconto' => $sconto_unitario,
-            'prezzo' => $prezzo,
-            'tipo' => $tipo_sconto,
-            'qta' => $qta,
-        ]);
-
-        $subtot = $prezzo * $qta;
-
-        // Calcolo iva
-        $query = 'SELECT descrizione, percentuale, indetraibile FROM co_iva WHERE id='.prepare($idiva);
-        $rs = $dbo->fetchArray($query);
-        $iva = ($subtot - $sconto) / 100 * $rs[0]['percentuale'];
-        $iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];
-
-        $query = 'INSERT INTO dt_righe_ddt(idddt, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, is_descrizione, `order`) VALUES('.prepare($id_record).', '.prepare($idiva).', '.prepare($rs[0]['descrizione']).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($um).', '.prepare($qta).', '.prepare(empty($qta)).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM dt_righe_ddt AS t WHERE idddt='.prepare($id_record).'))';
-        $dbo->query($query);
-
-        // Messaggi informativi
-        if (!empty($idarticolo)) {
-            flash()->info(tr('Articolo aggiunto!'));
-        } elseif (!empty($qta)) {
-            flash()->info(tr('Riga aggiunta!'));
+    case 'manage_articolo':
+        if (post('idriga') != null) {
+            $articolo = Articolo::find(post('idriga'));
         } else {
-            flash()->info(tr('Riga descrittiva aggiunta!'));
+            $originale = ArticoloOriginale::find(post('idarticolo'));
+            $articolo = Articolo::build($ddt, $originale);
+        }
+
+        $articolo->descrizione = post('descrizione');
+        $articolo->um = post('um') ?: null;
+        $articolo->id_iva = post('idiva');
+
+        $articolo->prezzo_unitario_acquisto = post('prezzo_acquisto') ?: 0;
+        $articolo->prezzo_unitario_vendita = post('prezzo');
+        $articolo->sconto_unitario = post('sconto');
+        $articolo->tipo_sconto = post('tipo_sconto');
+
+        try {
+            $articolo->qta = post('qta');
+        } catch (UnexpectedValueException $e) {
+            flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
+        }
+
+        $articolo->save();
+
+        if (post('idriga') != null) {
+            flash()->info(tr('Articolo modificato!'));
+        } else {
+            flash()->info(tr('Articolo aggiunto!'));
         }
 
         // Ricalcolo inps, ritenuta e bollo
@@ -212,9 +178,59 @@ switch (post('op')) {
 
         break;
 
+    case 'manage_riga':
+        if (post('idriga') != null) {
+            $riga = Riga::find(post('idriga'));
+        } else {
+            $riga = Riga::build($ddt);
+        }
+
+        $riga->descrizione = post('descrizione');
+        $riga->um = post('um') ?: null;
+        $riga->id_iva = post('idiva');
+
+        $riga->prezzo_unitario_acquisto = post('prezzo_acquisto') ?: 0;
+        $riga->prezzo_unitario_vendita = post('prezzo');
+        $riga->sconto_unitario = post('sconto');
+        $riga->tipo_sconto = post('tipo_sconto');
+
+        $riga->qta = post('qta');
+
+        $riga->save();
+
+        if (post('idriga') != null) {
+            flash()->info(tr('Riga modificata!'));
+        } else {
+            flash()->info(tr('Riga aggiunta!'));
+        }
+
+        // Ricalcolo inps, ritenuta e bollo
+        ricalcola_costiagg_ddt($id_record);
+
+        break;
+
+    case 'manage_descrizione':
+        if (post('idriga') != null) {
+            $riga = Descrizione::find(post('idriga'));
+        } else {
+            $riga = Descrizione::build($ddt);
+        }
+
+        $riga->descrizione = post('descrizione');
+
+        $riga->save();
+
+        if (post('idriga') != null) {
+            flash()->info(tr('Riga descrittiva modificata!'));
+        } else {
+            flash()->info(tr('Riga descrittiva aggiunta!'));
+        }
+
+        break;
+
     // Aggiunta di un ordine in ddt
     case 'add_ordine':
-        $ordine = \Modules\Ordini\Ordine::find(post('id_ordine'));
+        $ordine = \Modules\Ordini\Ordine::find(post('id_documento'));
 
         // Creazione della fattura al volo
         if (post('create_document') == 'on') {
@@ -222,12 +238,17 @@ switch (post('op')) {
 
             $ddt = DDT::build($ordine->anagrafica, $tipo, post('data'));
             $ddt->idpagamento = $ordine->idpagamento;
+
+            $ddt->id_documento_fe = $ordine->id_documento_fe;
+            $ddt->codice_cup = $ordine->codice_cup;
+            $ddt->codice_cig = $ordine->codice_cig;
+            $ddt->num_item = $ordine->num_item;
+
             $ddt->save();
 
             $id_record = $ddt->id;
         }
 
-        $parziale = false;
         $righe = $ordine->getRighe();
         foreach ($righe as $riga) {
             if (post('evadere')[$riga->id] == 'on') {
@@ -246,21 +267,9 @@ switch (post('op')) {
 
                 $copia->save();
             }
-
-            if ($riga->qta != $riga->qta_evasa) {
-                $parziale = true;
-            }
         }
 
-        // Impostazione del nuovo stato
-        $descrizione = $parziale ? 'Parzialmente evaso' : 'Evaso';
-        $stato = \Modules\Ordini\Stato::where('descrizione', $descrizione)->first();
-        $ordine->stato()->associate($stato);
-        $ordine->save();
-
         ricalcola_costiagg_ddt($id_record);
-
-        aggiorna_sedi_movimenti('ddt', $id_record);
 
         flash()->info(tr('Ordine _NUM_ aggiunto!', [
             '_NUM_' => $ordine->numero,
@@ -285,8 +294,6 @@ switch (post('op')) {
         } else {
             ricalcola_costiagg_ddt($id_record, 0, 0, 0);
         }
-
-        aggiorna_sedi_movimenti('ddt', $id_record);
 
         flash()->info(tr('Articolo rimosso!'));
         break;
@@ -324,138 +331,17 @@ switch (post('op')) {
         }
         break;
 
-    // Modifica riga
-    case 'editriga':
-        if (post('idriga') !== null) {
-            // Selezione costi da intervento
-            $idriga = post('idriga');
-            $descrizione = post('descrizione');
-
-            $prezzo = post('prezzo');
-            $qta = post('qta');
-
-            // Calcolo dello sconto
-            $sconto_unitario = post('sconto');
-            $tipo_sconto = post('tipo_sconto');
-            $sconto = calcola_sconto([
-                'sconto' => $sconto_unitario,
-                'prezzo' => $prezzo,
-                'tipo' => $tipo_sconto,
-                'qta' => $qta,
-            ]);
-
-            $idiva = post('idiva');
-            $um = post('um');
-
-            $subtot = $prezzo * $qta;
-
-            // Lettura idarticolo dalla riga ddt
-            $rs = $dbo->fetchArray('SELECT * FROM dt_righe_ddt WHERE id='.prepare($idriga));
-            $idarticolo = $rs[0]['idarticolo'];
-            $idordine = $rs[0]['idordine'];
-            $old_qta = $rs[0]['qta'];
-            $is_descrizione = $rs[0]['is_descrizione'];
-
-            // Controllo per gestire i serial
-            if (!empty($idarticolo)) {
-                if (!controlla_seriali('id_riga_ddt', $idriga, $old_qta, $qta, $dir)) {
-                    flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
-
-                    return;
-                }
-            }
-
-            // Se c'è un collegamento ad un ordine, aggiorno la quantità evasa
-            if (!empty($idordine)) {
-                $dbo->query('UPDATE or_righe_ordini SET qta_evasa=qta_evasa-'.$old_qta.' + '.$qta.' WHERE descrizione='.prepare($rs[0]['descrizione']).' AND idarticolo='.prepare($rs[0]['idarticolo']).' AND idordine='.prepare($idordine).' AND idiva='.prepare($rs[0]['idiva']));
-            }
-
-            // Calcolo iva
-            $query = 'SELECT * FROM co_iva WHERE id='.prepare($idiva);
-            $rs = $dbo->fetchArray($query);
-            $iva = ($subtot - $sconto) / 100 * $rs[0]['percentuale'];
-            $iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];
-            $desc_iva = $rs[0]['descrizione'];
-
-            // Modifica riga generica sul ddt
-            if ($is_descrizione == 0) {
-                $query = 'UPDATE dt_righe_ddt SET idiva='.prepare($idiva).', desc_iva='.prepare($desc_iva).', iva='.prepare($iva).', iva_indetraibile='.prepare($iva_indetraibile).', descrizione='.prepare($descrizione).', subtotale='.prepare($subtot).', sconto='.prepare($sconto).', sconto_unitario='.prepare($sconto_unitario).', tipo_sconto='.prepare($tipo_sconto).', um='.prepare($um).', qta='.prepare($qta).' WHERE id='.prepare($idriga);
-            } else {
-                $query = 'UPDATE dt_righe_ddt SET descrizione='.prepare($descrizione).' WHERE id='.prepare($idriga);
-            }
-            if ($dbo->query($query)) {
-                if (!empty($idarticolo)) {
-                    // Controlli aggiuntivi sulle quantità evase degli ordini
-                    if (!empty($idordine) && $qta > 0) {
-                        $rs = $dbo->fetchArray('SELECT qta_evasa, qta FROM or_righe_ordini WHERE idordine='.prepare($idordine).' AND idarticolo='.prepare($idarticolo));
-
-                        $qta_ordine = $qta;
-                        if ($qta > $rs[0]['qta_evasa']) {
-                            $qta_ordine = ($qta > $rs[0]['qta']) ? $rs[0]['qta'] : $qta;
-                        }
-
-                        $dbo->query('UPDATE or_righe_ordini SET qta_evasa = '.prepare($qta_ordine).' WHERE idordine='.prepare($idordine).' AND idarticolo='.prepare($idarticolo));
-                    }
-
-                    $new_qta = $qta - $old_qta;
-                    $new_qta = ($dir == 'entrata') ? -$new_qta : $new_qta;
-                    add_movimento_magazzino($idarticolo, $new_qta, ['idddt' => $id_record]);
-                }
-
-                flash()->info(tr('Riga modificata!'));
-
-                // Ricalcolo inps, ritenuta e bollo
-                if ($dir == 'entrata') {
-                    ricalcola_costiagg_ddt($id_record);
-                } else {
-                    ricalcola_costiagg_ddt($id_record);
-                }
-            }
-        }
-        aggiorna_sedi_movimenti('ddt', $id_record);
-        break;
-
     // eliminazione ddt
     case 'delete':
-        // Se ci sono degli articoli collegati
-        $rs = $dbo->fetchArray('SELECT id, idarticolo FROM dt_righe_ddt WHERE idddt='.prepare($id_record));
+        try {
+            $ddt->delete();
 
-        foreach ($rs as $value) {
-            $non_rimovibili = seriali_non_rimuovibili('id_riga_ddt', $value['id'], $dir);
-            if (!empty($non_rimovibili)) {
-                flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
+            $dbo->query('DELETE FROM mg_movimenti WHERE idddt='.prepare($id_record));
 
-                return;
-            }
+            flash()->info(tr('Ddt eliminato!'));
+        } catch (InvalidArgumentException $e) {
+            flash()->error(tr('Sono stati utilizzati alcuni serial number nel documento: impossibile procedere!'));
         }
-
-        for ($i = 0; $i < sizeof($rs); ++$i) {
-            if ($rs[$i]['idarticolo']) {
-                rimuovi_articolo_daddt($rs[$i]['idarticolo'], $id_record, $rs[$i]['id']);
-            }
-        }
-
-        // Se delle righe sono state create da un ordine, devo riportare la quantità evasa nella tabella degli ordini
-        // al valore di prima, riaggiungendo la quantità che sto togliendo
-        $rs = $dbo->fetchArray('SELECT qta, descrizione, idarticolo, idordine, idiva FROM dt_righe_ddt WHERE idddt='.prepare($id_record).' AND idarticolo="0"');
-
-        // Rimpiazzo la quantità negli ordini
-        for ($i = 0; $i < sizeof($rs); ++$i) {
-            $dbo->query('UPDATE or_righe_ordini SET qta_evasa=qta_evasa-'.$rs[$i]['qta'].' WHERE descrizione='.prepare($rs[$i]['descrizione']).' AND idarticolo='.prepare($rs[$i]['idarticolo']).' AND idordine='.prepare($rs[$i]['idordine']).' AND idiva='.prepare($rs[$i]['idiva']));
-        }
-
-        $dbo->query('DELETE FROM dt_ddt WHERE id='.prepare($id_record));
-        $dbo->query('DELETE FROM dt_righe_ddt WHERE idddt='.prepare($id_record));
-        $dbo->query('DELETE FROM mg_movimenti WHERE idddt='.prepare($id_record));
-
-        //Aggiorno gli stati degli ordini
-        if (setting('Cambia automaticamente stato ordini fatturati')) {
-            for ($i = 0; $i < sizeof($rs); ++$i) {
-                $dbo->query('UPDATE or_ordini SET idstatoordine=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($rs[$i]['idordine']).'") WHERE id = '.prepare($rs[$i]['idordine']));
-            }
-        }
-
-        flash()->info(tr('Ddt eliminato!'));
 
         break;
 

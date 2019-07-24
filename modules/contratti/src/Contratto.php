@@ -3,6 +3,7 @@
 namespace Modules\Contratti;
 
 use Carbon\Carbon;
+use Common\Components\Description;
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\Intervento;
@@ -58,15 +59,6 @@ class Contratto extends Document
         $model->save();
 
         return $model;
-    }
-
-    public function save(array $options = [])
-    {
-        $result = parent::save($options);
-
-        $this->fixTipiSessioni();
-
-        return $result;
     }
 
     public function fixTipiSessioni()
@@ -140,6 +132,60 @@ class Contratto extends Document
     public function interventi()
     {
         return $this->hasMany(Intervento::class, 'id_contratto');
+    }
+
+    public function fixBudget()
+    {
+        $this->budget = $this->imponibile_scontato ?: 0;
+    }
+
+    public function save(array $options = [])
+    {
+        $this->fixBudget();
+
+        $result = parent::save($options);
+
+        $this->fixTipiSessioni();
+
+        return $result;
+    }
+
+    /**
+     * Effettua un controllo sui campi del documento.
+     * Viene richiamatp dalle modifiche alle righe del documento.
+     *
+     * @param Description $trigger
+     */
+    public function fixStato(Description $trigger)
+    {
+        parent::fixStato($trigger);
+
+        $righe = $this->getRighe();
+
+        $qta_evasa = $righe->sum('qta_evasa');
+        $qta = $righe->sum('qta');
+        $parziale = $qta != $qta_evasa;
+
+        // Impostazione del nuovo stato
+        if ($qta_evasa == 0) {
+            $descrizione = 'In lavorazione';
+            $descrizione_intervento = 'Completato';
+        } else {
+            $descrizione = $parziale ? 'Parzialmente fatturato' : 'Fatturato';
+            $descrizione_intervento = 'Fatturato';
+        }
+
+        $stato = Stato::where('descrizione', $descrizione)->first();
+        $this->stato()->associate($stato);
+        $this->save();
+
+        // Trasferimento degli interventi collegati
+        $interventi = $this->interventi;
+        $stato_intervento = \Modules\Interventi\Stato::where('descrizione', $descrizione_intervento)->first();
+        foreach ($interventi as $intervento) {
+            $intervento->stato()->associate($stato_intervento);
+            $intervento->save();
+        }
     }
 
     // Metodi statici

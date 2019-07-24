@@ -9,6 +9,7 @@ use UnexpectedValueException;
 
 abstract class Article extends Row
 {
+    public $movimenta_magazzino = true;
     protected $serialRowID = null;
     protected $abilita_movimentazione = true;
     protected $serialsList = null;
@@ -28,7 +29,24 @@ abstract class Article extends Row
         return $model;
     }
 
-    abstract public function movimenta($qta);
+    public function movimenta($qta)
+    {
+        if (!$this->movimenta_magazzino) {
+            return;
+        }
+
+        $movimenta = true;
+
+        // Movimenta il magazzino solo se l'articolo non è già stato movimentato da un documento precedente
+        if ($this->hasOriginal()) {
+            $original = $this->getOriginal();
+            $movimenta = !$original->movimenta_magazzino;
+        }
+
+        if ($movimenta) {
+            $this->movimentaMagazzino($qta);
+        }
+    }
 
     abstract public function getDirection();
 
@@ -96,9 +114,15 @@ abstract class Article extends Row
      *
      * @return float
      */
-    public function getMissingSerialsAttribute()
+    public function getMissingSerialsNumberAttribute()
     {
-        return $this->qta - count($this->serials);
+        if (!$this->abilita_serial) {
+            return 0;
+        }
+
+        $missing = $this->qta - count($this->serials);
+
+        return $missing;
     }
 
     /**
@@ -145,12 +169,39 @@ abstract class Article extends Row
         return parent::save($options);
     }
 
+    public function canDelete()
+    {
+        $serials = $this->usedSerials();
+
+        return empty($serials);
+    }
+
+    public function delete()
+    {
+        if (!$this->canDelete()) {
+            throw new \InvalidArgumentException();
+        }
+
+        $this->serials = [];
+
+        $this->qta = 0; // Fix movimentazione automatica
+        if (!empty($this->qta_movimentazione)) {
+            $this->movimenta($this->qta_movimentazione);
+        }
+
+        return parent::delete();
+    }
+
+    abstract protected function movimentaMagazzino($qta);
+
     protected static function boot()
     {
         parent::boot(true);
 
-        static::addGlobalScope('articles', function (Builder $builder) {
-            $builder->whereNotNull('idarticolo')->where('idarticolo', '<>', 0);
+        $table = parent::getTableName();
+
+        static::addGlobalScope('articles', function (Builder $builder) use ($table) {
+            $builder->whereNotNull($table.'.idarticolo')->where($table.'.idarticolo', '<>', 0);
         });
     }
 

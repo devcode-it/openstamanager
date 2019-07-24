@@ -12,6 +12,7 @@ if ($module['name'] == 'Ddt di vendita') {
 unset($_SESSION['superselect']['idanagrafica']);
 unset($_SESSION['superselect']['idsede_partenza']);
 unset($_SESSION['superselect']['idsede_destinazione']);
+unset($_SESSION['superselect']['codice_modalita_pagamento_fe']);
 $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 $_SESSION['superselect']['idsede_partenza'] = $record['idsede_partenza'];
 $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione'];
@@ -152,7 +153,7 @@ $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione']
 
 			<div class="row">
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "values": "query=SELECT id, descrizione FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione ASC", "value": "$idpagamento$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "ajax-source": "pagamenti", "value": "$idpagamento$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -203,8 +204,35 @@ $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione']
             </div>
 		</div>
 	</div>
-</form>
 
+    <!-- Fatturazione Elettronica PA-->
+    <div class="panel panel-primary <?php echo ($record['tipo_anagrafica'] == 'Ente pubblico' || $record['tipo_anagrafica'] == 'Azienda') ? 'show' : 'hide'; ?>" >
+        <div class="panel-heading">
+            <h3 class="panel-title"><?php echo tr('Dati appalto'); ?></h3>
+        </div>
+
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-6">
+                    {[ "type": "text", "label": "<?php echo tr('Identificatore Documento'); ?>", "name": "id_documento_fe", "required": 0, "help": "<?php echo tr('<span>Obbligatorio per valorizzare CIG/CUP. &Egrave; possible inserire: </span><ul><li>N. determina</li><li>RDO</li><li>Ordine MEPA</li></ul>'); ?>", "value": "$id_documento_fe$", "maxlength": 20, "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+                </div>
+
+                <div class="col-md-6">
+                    {[ "type": "text", "label": "<?php echo tr('Numero Riga'); ?>", "name": "num_item", "required": 0, "value": "$num_item$", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    {[ "type": "text", "label": "<?php echo tr('Codice CIG'); ?>", "name": "codice_cig", "required": 0, "value": "$codice_cig$", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+                </div>
+
+                <div class="col-md-6">
+                    {[ "type": "text", "label": "<?php echo tr('Codice CUP'); ?>", "name": "codice_cup", "required": 0, "value": "$codice_cup$", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
 
 <!-- RIGHE -->
 <div class="panel panel-primary">

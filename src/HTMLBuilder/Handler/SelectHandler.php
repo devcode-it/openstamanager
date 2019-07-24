@@ -52,13 +52,17 @@ class SelectHandler implements HandlerInterface
             }
 
             // Gestione del select da query specifica (se il campo "values" è impostato a "query=SQL")
-            elseif (preg_match_all('/^query=(.+?)$/', $values['values'], $matches)) {
-                $result .= $this->selectQuery($matches[1][0], $values['value']);
+            elseif (starts_with($values['values'], 'query=')) {
+                $query = substr($values['values'], strlen('query='));
+
+                $result .= $this->selectQuery($query, $values['value']);
             }
 
             // Gestione del select dal formato JSON parziale (valori singoli)
-            elseif (preg_match_all('/^list=(.+?)$/', $values['values'], $matches)) {
-                $result .= $this->selectList(json_decode('{'.$matches[1][0].'}', true), $values);
+            elseif (starts_with($values['values'], 'list=')) {
+                $list = substr($values['values'], strlen('list='));
+
+                $result .= $this->selectList(json_decode('{'.$list.'}', true), $values);
             }
         }
 

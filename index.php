@@ -142,18 +142,25 @@ if (isset($username)) {
 }
 echo'>
 					</div>
-					<div class="form-group input-group">
-						<span class="input-group-addon before"><i class="fa fa-lock"></i> </span>
-						<input type="password" name="password" autocomplete="current-password" class="form-control" placeholder="'.tr('Password').'">
-					</div>
-					<div class="form-group">
+					
+					{[ "type": "password", "name": "password", "autocomplete": "current-password", "placeholder": "'.tr('Password').'", "icon-before": "<i class=\"fa fa-lock\"></i>" ]}
+										
+                    <div class="text-right">
+                        <a href="'.ROOTDIR.'/reset.php">'.tr('Dimenticata la password?').'</a>
+                    </div>
+                    
+					<hr>
+					
+					<div class="text-center">
 						<input type="checkbox" name="keep_alive"';
 if (filter('keep_alive') != null) {
     echo ' checked';
 }
 echo '/> '.tr('Mantieni attiva la sessione').'
+
 					</div>
 				</div>
+				
 				<!-- /.box-body -->
 				<div class="box-footer">
 					<button type="submit" id="login" class="btn btn-danger btn-block">'.tr('Accedi').'</button>

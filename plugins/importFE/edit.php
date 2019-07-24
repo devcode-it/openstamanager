@@ -4,6 +4,12 @@ include_once __DIR__.'/../../core.php';
 
 use Plugins\ImportFE\Interaction;
 
+if (!empty($fattura_pa)) {
+    include $structure->filepath('generate.php');
+
+    return;
+}
+
 echo '
 <script>
     function upload(btn) {
@@ -28,7 +34,7 @@ echo '
                         data = JSON.parse(data);
 
                         if (!data.already) {
-                            launch_modal("'.tr('Righe fattura').'", globals.rootdir + "/actions.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&op=list&filename=" + data.filename);
+                            redirect(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=" + data.id);
                         } else {
                             swal({
                                 title: "'.tr('Fattura già importata').'.",
@@ -37,6 +43,7 @@ echo '
 							
 							$("#blob").val("");
                         }
+                        
 						buttonRestore(btn, restore);
                     },
                     error: function(xhr) {

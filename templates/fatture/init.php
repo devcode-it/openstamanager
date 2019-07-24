@@ -4,8 +4,8 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\Fatture\Fattura;
 
-$fattura = Fattura::find($id_record);
-$banca = $fattura->getBanca();
+$documento = Fattura::find($id_record);
+$banca = $documento->getBanca();
 
 // Lettura info fattura
 $record = $dbo->fetchOne('SELECT *,
@@ -71,7 +71,7 @@ if (!empty($record['idsede_destinazione'])) {
         $destinazione .= ' ('.$rsd[0]['provincia'].')';
     }
 
-    $settings['header-height'] += 7;
+    $settings['header-height'] += 15;
 }
 
 // Sostituzioni specifiche

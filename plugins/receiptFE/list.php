@@ -21,25 +21,27 @@ if (!empty($list)) {
     <tbody>';
 
     foreach ($list as $element) {
+        $name = $element['name'];
+
         echo '
         <tr>
-            <td>'.$element.'</td>
+            <td>'.$name.'</td>
             <td class="text-center">';
 
-        if (file_exists($directory.'/'.$element)) {
+        if (file_exists($directory.'/'.$name)) {
             echo '
-                <button type="button" class="btn btn-danger" onclick="delete_fe(this, \''.$element.'\')">
+                <button type="button" class="btn btn-danger" onclick="delete_fe(this, \''.$element['id'].'\')">
                     <i class="fa fa-trash"></i>
                 </button>';
         } else {
             echo '
-                <button type="button" class="btn btn-info" onclick="process_fe(this, \''.$element.'\')">
+                <button type="button" class="btn btn-info" onclick="process_fe(this, \''.$name.'\')">
                     <i class="fa fa-upload"></i>
                 </button>';
         }
 
         echo '
-                <button type="button" class="btn btn-warning" '.((!extension_loaded('openssl') and substr(strtolower($element), -4) == '.p7m') ? 'disabled' : '').' onclick="download(this, \''.$element.'\')">
+                <button type="button" class="btn btn-warning" '.((!extension_loaded('openssl') and substr(strtolower($element), -4) == '.p7m') ? 'disabled' : '').' onclick="import_fe(this, \''.$element.'\')">
                     <i class="fa fa-cloud-download"></i> '.tr('Importa').'
                 </button>
             </td>
@@ -56,7 +58,7 @@ if (!empty($list)) {
 
 echo '
 <script>
-function download(button, file) {
+function import_fe(button, file) {
     var restore = buttonLoading(button);
 
     $.ajax({
@@ -81,7 +83,7 @@ function download(button, file) {
     });
 }
 
-function delete_fe(button, file) {
+function delete_fe(button, file_id) {
     swal({
         title: "'.tr('Rimuovere la ricevuta salvata localmente?').'",
         html: "'.tr('Sarà possibile inserirla nuovamente nel gestionale attraverso il caricamento').'",
@@ -98,7 +100,7 @@ function delete_fe(button, file) {
                 id_module: globals.id_module,
                 id_plugin: '.$id_plugin.',
                 op: "delete",
-                name: file,
+                file_id: file_id,
             },
             success: function(data) {
                 $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {

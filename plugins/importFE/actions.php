@@ -55,22 +55,26 @@ switch (filter('op')) {
     case 'delete':
         $file_id = get('file_id');
 
+        $directory = FatturaElettronica::getImportDirectory();
         $files = Interaction::getFileList();
         $file = $files[$file_id];
 
-        $directory = FatturaElettronica::getImportDirectory();
-        delete($directory.'/'.$file['name']);
+        if (!empty($file)) {
+            delete($directory.'/'.$file['name']);
+        }
 
         break;
+
     case 'download':
         $file_id = get('file_id');
 
+        $directory = FatturaElettronica::getImportDirectory();
         $files = Interaction::getFileList();
         $file = $files[$file_id];
 
-        $directory = FatturaElettronica::getImportDirectory();
-
-        download($directory.'/'.$file['name']);
+        if (!empty($file)) {
+            download($directory.'/'.$file['name']);
+        }
 
         break;
 

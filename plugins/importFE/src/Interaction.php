@@ -50,12 +50,14 @@ class Interaction extends Services
         $directory = FatturaElettronica::getImportDirectory();
 
         $files = glob($directory.'/*.xml*');
-        foreach ($files as $file) {
+        foreach ($files as $id => $file) {
             $name = basename($file);
 
             if (!in_array($name, $names)) {
                 $list[] = [
+                    'id' => $id,
                     'name' => $name,
+                    'file' => true,
                 ];
             }
         }

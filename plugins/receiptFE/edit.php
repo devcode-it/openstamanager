@@ -50,7 +50,7 @@ if (Interaction::isEnabled()) {
     echo '
         <div class="pull-right">
             <button type="button" class="btn btn-warning" onclick="importAll(this)">
-                <i class="fa fa-download"></i> '.tr('Importa tutte le ricevute').'
+                <i class="fa fa-cloud-download"></i> '.tr('Importa tutte le ricevute').'
             </button>
             
             <button type="button" class="btn btn-primary" onclick="search(this)">

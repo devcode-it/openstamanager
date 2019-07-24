@@ -25,32 +25,52 @@ switch (filter('op')) {
             $file = Interaction::getInvoiceFile($name);
         }
 
-        if (FatturaElettronica::isValid($file)) {
-            // Individuazione ID fisico
-            $files = Interaction::getFileList();
-            foreach ($files as $key => $value) {
-                if ($value['name'] == $file) {
-                    $index = $key;
+        try {
+            if (!FatturaElettronica::isValid($file)) {
+                echo json_encode([
+                    'already' => 1,
+                ]);
 
-                    break;
-                }
+                return;
             }
-
-            echo json_encode([
-                'id' => $index + 1,
-            ]);
-        } else {
-            echo json_encode([
-                'already' => 1,
-            ]);
+        } catch (Exception $e) {
         }
+
+        // Individuazione ID fisico
+        $files = Interaction::getFileList();
+        foreach ($files as $key => $value) {
+            if ($value['name'] == $file) {
+                $index = $key;
+
+                break;
+            }
+        }
+
+        echo json_encode([
+            'id' => $index + 1,
+        ]);
 
         break;
 
     case 'delete':
+        $file_id = get('file_id');
+
+        $files = Interaction::getFileList();
+        $file = $files[$file_id];
+
+        $directory = FatturaElettronica::getImportDirectory();
+        delete($directory.'/'.$file['name']);
+
+        break;
+    case 'download':
+        $file_id = get('file_id');
+
+        $files = Interaction::getFileList();
+        $file = $files[$file_id];
+
         $directory = FatturaElettronica::getImportDirectory();
 
-        delete($directory.'/'.get('name'));
+        download($directory.'/'.$file['name']);
 
         break;
 

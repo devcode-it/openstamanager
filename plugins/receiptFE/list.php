@@ -40,7 +40,7 @@ if (!empty($list)) {
 
         echo '
                 <button type="button" class="btn btn-warning" '.((!extension_loaded('openssl') and substr(strtolower($element), -4) == '.p7m') ? 'disabled' : '').' onclick="download(this, \''.$element.'\')">
-                    <i class="fa fa-download"></i> '.tr('Importa').'
+                    <i class="fa fa-cloud-download"></i> '.tr('Importa').'
                 </button>
             </td>
         </tr>';

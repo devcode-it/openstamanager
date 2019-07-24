@@ -97,7 +97,7 @@ echo '
         
         <div class="pull-right">
             <button type="button" class="btn btn-warning" onclick="importAll(this)">
-                <i class="fa fa-download"></i> '.tr('Importa in sequenza').'
+                <i class="fa fa-cloud-download"></i> '.tr('Importa in sequenza').'
             </button>';
 
 // Ricerca automatica

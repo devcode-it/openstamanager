@@ -29,7 +29,7 @@ if (!empty($list)) {
         echo '
         <tr>';
 
-        if (file_exists($directory.'/'.$name)) {
+        if (!empty($element['file'])) {
             echo '
             <td>
                 <p>'.$name.'</p>
@@ -40,7 +40,7 @@ if (!empty($list)) {
             <td class="text-center">-</td>
             
             <td class="text-center">
-                <button type="button" class="btn btn-danger" onclick="delete_fe(this, \''.$name.'\')">
+                <button type="button" class="btn btn-danger" onclick="delete_fe(this, \''.$element['id'].'\')">
                     <i class="fa fa-trash"></i>
                 </button>';
         } else {
@@ -85,10 +85,17 @@ if (!empty($list)) {
                 </button>';
         }
 
+        if (file_exists($directory.'/'.$name)) {
+            echo '
+                <button type="button" class="btn btn-primary" onclick="download_fe(this, \''.$element['id'].'\')">
+                    <i class="fa fa-download"></i>
+                </button>';
+        }
+
         echo '
         
-                <button type="button" class="btn btn-warning" '.((!extension_loaded('openssl') && substr(strtolower($name), -4) == '.p7m') ? 'disabled' : '').' onclick="download(this, \''.$name.'\', \''.$data.'\')">
-                    <i class="fa fa-download"></i> '.tr('Importa').'
+                <button type="button" class="btn btn-warning" '.((!extension_loaded('openssl') && substr(strtolower($name), -4) == '.p7m') ? 'disabled' : '').' onclick="import_fe(this, \''.$name.'\', \''.$data.'\')">
+                    <i class="fa fa-cloud-download"></i> '.tr('Importa').'
                 </button>
             </td>
         </tr>';
@@ -104,7 +111,7 @@ if (!empty($list)) {
 
 echo '
 <script>
-function download(button, file, data_registrazione) {
+function import_fe(button, file, data_registrazione) {
     var restore = buttonLoading(button);
 
     $.ajax({
@@ -140,34 +147,6 @@ function download(button, file, data_registrazione) {
     });
 }
 
-function delete_fe(button, file) {
-    swal({
-        title: "'.tr('Rimuovere la fattura salvata localmente?').'",
-        html: "'.tr('Sarà possibile inserirla nuovamente nel gestionale attraverso il caricamento').'",
-        type: "error",
-        showCancelButton: true,
-        confirmButtonText: "'.tr('Sì').'"
-    }).then(function (result) {
-        var restore = buttonLoading(button);
-    
-        $.ajax({
-            url: globals.rootdir + "/actions.php",
-            type: "get",
-            data: {
-                id_module: globals.id_module,
-                id_plugin: '.$id_plugin.',
-                op: "delete",
-                name: file,
-            },
-            success: function(data) {
-                $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
-                    buttonRestore(button, restore);
-                });
-            }
-        });
-    });
-}
-
 function process_fe(button, file) {
     swal({
         title: "'.tr('Segnare la fattura come processata?').'",
@@ -194,6 +173,43 @@ function process_fe(button, file) {
             }
         });
     });
+}
+
+function delete_fe(button, file_id) {
+    swal({
+        title: "'.tr('Rimuovere la fattura salvata localmente?').'",
+        html: "'.tr('Sarà possibile inserirla nuovamente nel gestionale attraverso il caricamento').'",
+        type: "error",
+        showCancelButton: true,
+        confirmButtonText: "'.tr('Sì').'"
+    }).then(function (result) {
+        var restore = buttonLoading(button);
+    
+        $.ajax({
+            url: globals.rootdir + "/actions.php",
+            type: "get",
+            data: {
+                id_module: globals.id_module,
+                id_plugin: '.$id_plugin.',
+                op: "delete",
+                file_id: file_id,
+            },
+            success: function(data) {
+                $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
+                    buttonRestore(button, restore);
+                });
+            }
+        });
+    });
+}
+
+function download_fe(button, file_id) {
+    redirect(globals.rootdir + "/actions.php", {
+        id_module: globals.id_module,
+        id_plugin: '.$id_plugin.',
+        op: "download",
+        file_id: file_id,
+    }, "get", true);
 }
 
 start_local_datatables();

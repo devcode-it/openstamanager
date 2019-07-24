@@ -7,6 +7,7 @@ use Modules\Anagrafiche\Anagrafica;
 switch (post('op')) {
     case 'restore':
         $anagrafica->restore();
+        flash()->info(str_replace('_NAME_', '"'.post('ragione_sociale').'"', "Anagrafica _NAME_ ripristinata correttamente!"));
 
         // no break
     case 'update':

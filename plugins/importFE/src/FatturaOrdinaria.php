@@ -89,12 +89,13 @@ class FatturaOrdinaria extends FatturaElettronica
     {
         $info = $this->getRitenutaRivalsa();
 
+        $righe = $this->getRighe();
+        $fattura = $this->getFattura();
+
         $id_ritenuta_acconto = $info['id_ritenuta_acconto'];
         $id_rivalsa = $info['id_rivalsa'];
         $calcolo_ritenuta_acconto = $info['rivalsa_in_ritenuta'] ? 'IMP+RIV' : 'IMP';
-
-        $righe = $this->getRighe();
-        $fattura = $this->getFattura();
+        $ritenuta_contributi = !empty($fattura->id_ritenuta_contributi);
 
         foreach ($righe as $key => $riga) {
             $articolo = ArticoloOriginale::find($articoli[$key]);
@@ -115,6 +116,7 @@ class FatturaOrdinaria extends FatturaElettronica
             $obj->idconto = $conto[$key];
 
             $obj->id_rivalsa_inps = $id_rivalsa;
+            $obj->ritenuta_contributi = $ritenuta_contributi;
 
             if (!empty($riga['Ritenuta'])) {
                 $obj->id_ritenuta_acconto = $id_ritenuta_acconto;
@@ -207,26 +209,66 @@ class FatturaOrdinaria extends FatturaElettronica
         }
     }
 
+    protected function prepareFattura($id_tipo, $data, $id_sezionale, $ref_fattura)
+    {
+        $fattura = parent::prepareFattura($id_tipo, $data, $id_sezionale, $ref_fattura);
+        $database = database();
+
+        $righe = $this->getRighe();
+
+        $totali = array_column($righe, 'PrezzoTotale');
+        $totale = sum($totali);
+
+        foreach ($righe as $riga) {
+            $dati = $riga['AltriDatiGestionali'];
+            if (!empty($dati)) {
+                $dati = isset($dati[0]) ? $dati : [$dati];
+
+                foreach ($dati as $dato) {
+                    if ($dato['TipoDato'] == 'CASSA-PREV') {
+                        $descrizione = $dato['RiferimentoTesto'];
+                        $importo = floatval($dato['RiferimentoNumero']);
+
+                        preg_match('/^(.+?) - (.+?) \((.+?)%\)$/', trim($descrizione), $m);
+
+                        $nome = ucwords(strtolower($m[2]));
+                        $percentuale = $m[3];
+
+                        $totale_previsto = round($importo / $percentuale * 100, 2);
+                        $percentuale_importo = round($totale_previsto / $totale * 100, 2);
+
+                        $ritenuta_contributi = $database->fetchOne('SELECT * FROM`co_ritenuta_contributi` WHERE `percentuale` = '.prepare($percentuale).' AND `percentuale_imponibile` = '.prepare($percentuale_importo));
+                        if (empty($ritenuta_contributi)) {
+                            $database->query('INSERT INTO `co_ritenuta_contributi` (`descrizione`, `percentuale`, `percentuale_imponibile`) VALUES ('.prepare($nome).', '.prepare($percentuale).', '.prepare($percentuale_importo).')');
+                        }
+
+                        $ritenuta_contributi = $database->fetchOne('SELECT * FROM`co_ritenuta_contributi` WHERE `percentuale` = '.prepare($percentuale).' AND `percentuale_imponibile` = '.prepare($percentuale_importo));
+
+                        $fattura->id_ritenuta_contributi = $ritenuta_contributi['id'];
+                    }
+                }
+            }
+        }
+
+        return $fattura;
+    }
+
     protected function getRitenutaRivalsa()
     {
         $database = database();
         $dati_generali = $this->getBody()['DatiGenerali']['DatiGeneraliDocumento'];
 
-        // Totale righe
+        // Righe
         $righe = $this->getRighe();
-        $totali = [];
-        foreach ($righe as $riga) {
-            if (!empty($riga['Ritenuta'])) {
-                $totali[] = $riga['PrezzoTotale'];
-            }
-        }
-        $totale = sum($totali);
 
         $rivalsa_in_ritenuta = false;
 
         // Rivalsa
         $casse = $dati_generali['DatiCassaPrevidenziale'];
         if (!empty($casse)) {
+            $totali = array_column($righe, 'PrezzoTotale');
+            $totale = sum($totali);
+
             $casse = isset($casse[0]) ? $casse : [$casse];
 
             $importi = [];
@@ -256,6 +298,14 @@ class FatturaOrdinaria extends FatturaElettronica
         // Ritenuta d'Acconto
         $ritenuta = $dati_generali['DatiRitenuta'];
         if (!empty($ritenuta)) {
+            $totali = [];
+            foreach ($righe as $riga) {
+                if (!empty($riga['Ritenuta'])) {
+                    $totali[] = $riga['PrezzoTotale'];
+                }
+            }
+            $totale = sum($totali);
+
             $percentuale = floatval($ritenuta['AliquotaRitenuta']);
             $importo = floatval($ritenuta['ImportoRitenuta']);
 

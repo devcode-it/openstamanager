@@ -182,6 +182,10 @@ class Update
             // Normalizzazione di charset e collation
             self::normalizeDatabase($database->getDatabaseName());
 
+            if (class_exists('\Modules\Aggiornamenti\UpdateHook')) {
+                \Modules\Aggiornamenti\UpdateHook::update(null);
+            }
+
             return true;
         }
 

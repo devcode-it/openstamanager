@@ -39,6 +39,7 @@ return [
     'co_statidocumento',
     'co_statipreventivi',
     'co_tipidocumento',
+    'co_tipi_scadenze',
     'dt_aspettobeni',
     'dt_causalet',
     'dt_ddt',
@@ -104,6 +105,7 @@ return [
     'zz_smtps',
     'zz_tokens',
     'zz_users',
+    'zz_user_sedi',
     'zz_views',
     'zz_widgets',
 ];

@@ -9,7 +9,7 @@ class InvoiceHook extends HookManager
 {
     public function manage()
     {
-        $list = Interaction::listToImport();
+        $list = Interaction::getInvoiceList();
 
         return $list;
     }

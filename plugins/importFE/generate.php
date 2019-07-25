@@ -2,6 +2,80 @@
 
 include_once __DIR__.'/../../core.php';
 
+echo '
+<script>
+$(document).ready(function() {
+    $("#save").hide();
+});
+</script>';
+
+$skip_link = $has_next ? ROOTDIR.'/editor.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.($id_record + 1).'&sequence='.get('sequence') : ROOTDIR.'/editor.php?id_module='.$id_module;
+
+if (empty($fattura_pa)) {
+    if (!empty($error)) {
+        echo '
+<p>'.tr("Errore durante l'apertura della fattura elettronica _NAME_", [
+    '_NAME_' => $record['name'],
+]).'.</p>';
+    } elseif (!empty($imported)) {
+        echo '
+<p>'.tr('La fattura elettrnica _NAME_ è già stata importata in passato', [
+    '_NAME_' => $record['name'],
+]).'.</p>';
+    }
+
+    echo '
+<div class="row">
+    <div class="col-md-12 text-right">';
+
+    if (!empty($imported)) {
+        echo '
+        <button type="button" class="btn btn-danger" onclick="cleanup()">
+            <i class="fa fa-trash-o"></i> '.tr('Processa e rimuovi').'
+        </button>';
+    }
+
+    echo '
+        <button type="button" class="btn btn-warning" onclick="skip()">
+            <i class="fa fa-ban "></i> '.tr('Salta fattura').'
+        </button>
+    </div>
+</div>
+    
+<script>
+function skip() {
+    redirect("'.$skip_link.'");
+}
+
+function cleanup(){
+    $.ajax({
+        url: globals.rootdir + "/actions.php",
+        type: "get",
+        data: {
+            id_module: "'.$id_module.'",
+            id_plugin: "'.$id_plugin.'",
+            op: "delete",
+            name: "'.$record['name'].'",
+        }
+    }); 
+    
+    $.ajax({
+        url: globals.rootdir + "/actions.php",
+        type: "get",
+        data: {
+            id_module: "'.$id_module.'",
+            id_plugin: "'.$id_plugin.'",
+            op: "process",
+            name: "'.$record['name'].'",
+        }
+    });
+    
+    skip();
+}
+</script>';
+
+    return;
+}
 // Fornitore
 $fornitore = $fattura_pa->getAnagrafe();
 
@@ -27,13 +101,8 @@ $metodi = isset($metodi[0]) ? $metodi : [$metodi];
 $codice_modalita_pagamento = $metodi[0]['ModalitaPagamento'];
 
 echo '
-<form action="'.$rootdir.'/actions.php" method="post">
-    <input type="hidden" name="id_module" value="'.$id_module.'">
-    <input type="hidden" name="id_plugin" value="'.$id_plugin.'">
-    <input type="hidden" name="filename" value="'.$filename.'">
-    <input type="hidden" name="id_segment" value="'.get('id_segment').'">
-    <input type="hidden" name="id" value="'.get('id').'">
-    <input type="hidden" name="backto" value="record-edit">
+<form action="" method="post">
+    <input type="hidden" name="filename" value="'.$record['name'].'">
     <input type="hidden" name="op" value="generate">
     
     <div class="row">
@@ -41,7 +110,7 @@ echo '
 			<h4>
 			    '.$ragione_sociale.'
 			    
-			    '.(empty($anagrafica) ? '<span class="badge badge-success">'.tr('Nuova anagrafica').'</span>' : '<small>'.Modules::link('Anagrafiche', $idanagrafica)).'</small><br>
+			    '.(empty($anagrafica) ? '<span class="badge badge-success">'.tr('Nuova anagrafica').'</span>' : '<small>'.Modules::link('Anagrafiche', $anagrafica->id, '', null, '')).'</small><br>
 			    
 				<small>
 					'.(!empty($codice_fiscale) ? (tr('Codice Fiscale').': '.$codice_fiscale.'<br>') : '').'
@@ -55,7 +124,7 @@ echo '
 			<h4>
 			    '.$dati_generali['Numero'].'
 			
-				<a href="'.$structure->fileurl('view.php').'?filename='.$filename.'" class="btn btn-info btn-xs" target="_blank" >
+				<a href="'.$structure->fileurl('view.php').'?filename='.$record['name'].'" class="btn btn-info btn-xs" target="_blank" >
 					<i class="fa fa-eye"></i> '.tr('Visualizza').'
 				</a>
 				
@@ -116,13 +185,13 @@ echo '
 // Sezionale
 echo '
         <div class="col-md-3">
-            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.$id_module.' ORDER BY name", "value": "'.$_SESSION['module_'.$id_module]['id_segment'].'" ]}
+            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE is_fiscale = 1 AND id_module='.$id_module.' ORDER BY name", "value": "'.$_SESSION['module_'.$id_module]['id_segment'].'" ]}
         </div>';
 
 // Data di registrazione
 echo '
         <div class="col-md-3">
-            {[ "type": "date", "label": "'.tr('Data di registrazione').'", "name": "data_registrazione", "required": 1, "value": "'.get('data_registrazione').'", "max-date": "-now-", "min-date": "'.$dati_generali['Data'].'", "readonly": "'.(intval(get('data_registrazione') != null)).'" ]}
+            {[ "type": "date", "label": "'.tr('Data di registrazione').'", "name": "data_registrazione", "required": 1, "value": "'.(get('data_registrazione') ?: $dati_generali['Data']).'", "max-date": "-now-", "min-date": "'.$dati_generali['Data'].'", "readonly": "'.(intval(get('data_registrazione') != null)).'" ]}
         </div>';
 
 if (!empty($anagrafica)) {
@@ -304,18 +373,13 @@ if (!empty($righe)) {
 echo '
     <div class="row">
         <div class="col-md-12 text-right">
+            <a href="'.$skip_link.'" class="btn btn-warning">
+                <i class="fa fa-ban "></i> '.tr('Salta fattura').'
+            </a>
+            
             <button type="submit" class="btn btn-primary">
                 <i class="fa fa-arrow-right"></i> '.tr('Continua').'...
             </button>
         </div>
     </div>
 </form>';
-
-echo '
-<script>
-$(document).ready(function() {
-    $("#save").hide();
-});
-</script>
-
-<script src="'.$rootdir.'/lib/init.js"></script>';

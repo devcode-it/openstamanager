@@ -7,6 +7,9 @@ use Modules\Anagrafiche\Anagrafica;
 switch (post('op')) {
     case 'restore':
         $anagrafica->restore();
+        flash()->info(tr('Anagrafica _NAME_ ripristinata correttamente!', [
+            '_NAME_' => post('ragione_sociale'),
+        ]));
 
         // no break
     case 'update':
@@ -120,7 +123,9 @@ switch (post('op')) {
 
         $anagrafica->save();
 
-        flash()->info(str_replace('_NAME_', '"'.post('ragione_sociale').'"', "Informazioni per l'anagrafica _NAME_ salvate correttamente!"));
+        flash()->info(tr("Informazioni per l'anagrafica _NAME_ salvate correttamente!", [
+            '_NAME_' => $anagrafica->ragione_sociale,
+        ]));
 
         // Validazione della Partita IVA
         $partita_iva = $anagrafica->partita_iva;

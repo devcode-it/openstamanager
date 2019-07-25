@@ -264,7 +264,8 @@ class Sessione extends Model
     {
         return calcola_sconto([
             'sconto' => $this->sconto_unitario,
-            'prezzo' => $this->prezzo_manodopera,
+            'prezzo' => $this->prezzo_orario,
+            'qta' => $this->ore,
             'tipo' => $this->tipo_sconto,
         ]);
     }
@@ -298,7 +299,8 @@ class Sessione extends Model
     {
         return calcola_sconto([
             'sconto' => $this->scontokm_unitario,
-            'prezzo' => $this->prezzo_viaggio,
+            'prezzo' => $this->prezzo_chilometrico,
+            'qta' => $this->km,
             'tipo' => $this->tipo_scontokm,
         ]);
     }

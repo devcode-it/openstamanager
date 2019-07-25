@@ -33,7 +33,7 @@ $id_scadenze = $id_scadenze ? explode(',', $id_scadenze) : [];
 // Scadenze
 foreach ($id_scadenze as $id_scadenza) {
     $scadenza = $dbo->fetchOne('SELECT descrizione, scadenza, iddocumento, SUM(da_pagare - pagato) AS rata FROM co_scadenziario WHERE id='.prepare($id_scadenza));
-    if (!empty($scadenza['iddocumento'])){
+    if (!empty($scadenza['iddocumento'])) {
         $id_documenti[] = $scadenza['iddocumento'];
         continue;
     }

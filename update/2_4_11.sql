@@ -180,3 +180,6 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_scadenziario`
 WHERE 1=1 AND ABS(`co_scadenziario`.`pagato`) < ABS(`co_scadenziario`.`da_pagare`) AND (`co_statidocumento`.`descrizione` IS NULL OR `co_statidocumento`.`descrizione` IN(''Emessa'',''Parzialmente pagato''))
 HAVING 2=2
 ORDER BY `scadenza` ASC' WHERE `name` = 'Scadenzario';
+
+-- Aggiunte impostazione Autocomple web form
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Autocomple web form', 'on', 'list[on,off]', '1', 'Generali', '', NULL);

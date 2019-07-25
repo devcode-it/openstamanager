@@ -26,7 +26,7 @@ if (!$is_cliente) {
 
 ?>
 
-<form action="" method="post" id="edit-form" >
+<form action="" method="post" id="edit-form"  autocomplete="<?php echo setting('Autocomple web form')?>" >
 	<fieldset>
 		<input type="hidden" name="backto" value="record-edit">
 		<input type="hidden" name="op" value="update">
@@ -40,7 +40,7 @@ if (!$is_cliente) {
 			<div class="panel-body">
 				<div class="row">
 					<div class="col-md-6">
-						{[ "type": "text", "label": "<?php echo tr('Denominazione'); ?>", "name": "ragione_sociale", "required": 1, "value": "$ragione_sociale$", "extra": "autocomplete=\"off\"" ]}
+						{[ "type": "text", "label": "<?php echo tr('Denominazione'); ?>", "name": "ragione_sociale", "required": 1, "value": "$ragione_sociale$", "extra": "" ]}
 					</div>
 
 					<div class="col-md-3">
@@ -55,11 +55,11 @@ if (!$is_cliente) {
 				<div class="row">
 				
 					<div class="col-md-4">
-							{[ "type": "text", "label": "<?php echo tr('Cognome'); ?>", "name": "cognome", "required": 0, "value": "$cognome$", "extra": "autocomplete=\"off\"" ]}
+							{[ "type": "text", "label": "<?php echo tr('Cognome'); ?>", "name": "cognome", "required": 0, "value": "$cognome$", "extra": "" ]}
 					</div>
 
 					<div class="col-md-4">
-							{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 0, "value": "$nome$", "extra": "autocomplete=\"off\"" ]}
+							{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 0, "value": "$nome$", "extra": "" ]}
 					</div>
 
 					<div class="col-md-4">

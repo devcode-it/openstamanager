@@ -21,6 +21,7 @@ if (!empty($rs)) {
 }
 
 $api = BASEURL.'/api/?token='.$token;
+$module = Modules::get('Utenti e permessi');
 
 echo '
 <div class="box">
@@ -33,8 +34,7 @@ echo '
 // Cambio password e nome utente
 echo '
         <div class="row">
-            <div class="col-md-12">
-                <img src="'.$user->photo.'" class="img-responsive img-thumbnail pull-right">
+            <div class="col-md-8">
                 
                 <p>'.tr('Utente').': <b>'.$user['username'].'</b></p>
                 <p>'.tr('Gruppo').': <b>'.$user['gruppo'].'</b></p>';
@@ -46,9 +46,12 @@ if (!empty($anagrafica)) {
 
 echo '
             </div>
-        </div>';
 
-$module = Modules::get('Utenti e permessi');
+            <div class="col-md-4">
+                <a data-href="'.$module->fileurl('self.php').'?id_module='.$module->id.'&resource=photo" data-toggle="modal" ><img src="'.$user->photo.'" class="img-responsive img-thumbnail pull-right"></a>
+            </div>
+            
+        </div><div class="clearfix">&nbsp;</div>';
 
 if (!empty($module)) {
     echo '
@@ -62,8 +65,8 @@ if (!empty($module)) {
             </div>
             
             <div class="col-md-6">
-                <a class="btn btn-info btn-block tip" data-href="'.$module->fileurl('self.php').'?id_module='.$module->id.'&resource=photo" data-toggle="modal" data-title="'.tr('Cambia foto').'">
-                    <i class="fa fa-picture-o"></i> '.tr('Cambia foto').'
+                <a class="btn btn-info btn-block tip" data-href="'.$module->fileurl('self.php').'?id_module='.$module->id.'&resource=photo" data-toggle="modal" data-title="'.tr('Cambia foto utente').'">
+                    <i class="fa fa-picture-o"></i> '.tr('Cambia foto utente').'
                 </a>
             </div>
         </div>';

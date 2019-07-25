@@ -289,29 +289,6 @@ switch (post('op')) {
             } else {
                 $dbo->query("UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione='Emessa') WHERE id=".prepare($rs_fatture[$i]['id']));
             }
-
-            // Aggiorno lo stato dei preventivi collegati alla fattura se ce ne sono
-            $query2 = 'SELECT idpreventivo FROM co_righe_documenti WHERE iddocumento='.prepare($rs_fatture[$i]['id']).' AND NOT idpreventivo=0 AND idpreventivo IS NOT NULL';
-            $rs2 = $dbo->fetchArray($query2);
-
-            for ($j = 0; $j < sizeof($rs2); ++$j) {
-                $dbo->query("UPDATE co_preventivi SET idstato=(SELECT id FROM co_statipreventivi WHERE descrizione='Pagato') WHERE id=".prepare($rs2[$j]['idpreventivo']));
-            }
-
-            // Aggiorno lo stato dei contratti collegati alla fattura se ce ne sono
-            $query2 = 'SELECT idcontratto FROM co_righe_documenti WHERE iddocumento='.prepare($rs_fatture[$i]['id']).' AND NOT idcontratto=0 AND idcontratto IS NOT NULL';
-            $rs2 = $dbo->fetchArray($query2);
-            for ($j = 0; $j < sizeof($rs2); ++$j) {
-                $dbo->query("UPDATE co_contratti SET idstato=(SELECT id FROM co_staticontratti WHERE descrizione='Pagato') WHERE id=".prepare($rs2[$j]['idcontratto']));
-            }
-
-            // Aggiorno lo stato degli interventi collegati alla fattura se ce ne sono
-            $query2 = 'SELECT idintervento FROM co_righe_documenti WHERE iddocumento='.prepare($rs_fatture[$i]['id']).' AND idintervento IS NOT NULL';
-            $rs2 = $dbo->fetchArray($query2);
-
-            for ($j = 0; $j < sizeof($rs2); ++$j) {
-                $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Fatturato') WHERE id_preventivo=".prepare($rs2[$j]['idpreventivo']));
-            }
         }
 
         $database->commitTransaction();
@@ -323,12 +300,12 @@ switch (post('op')) {
 
 if (App::debug()) {
     $operations = [
-        'delete-bulk' => '<span><i class="fa fa-trash" ></i> '.tr('Elimina selezionati').'</span>',
+        'delete-bulk' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span>',
     ];
 }
 
 $operations['registra-contabile'] = [
-    'text' => '<span><i class="fa fa-calculator" ></i> '.tr('Registra contabile pagamento').'</span>',
+    'text' => '<span><i class="fa fa-calculator"></i> '.tr('Registra contabile pagamento').'</span>',
     'data' => [
         'title' => '',
         'msg' => tr('Vuoi aggiungere un movimento contabile per le fatture selezionate?<br><small>(le fatture dovranno essere nello stato <i class="fa fa-clock-o text-info" title="Emessa"></i> <small>Emessa</small> altrimenti non saranno processate)</small>'),
@@ -338,9 +315,19 @@ $operations['registra-contabile'] = [
     ],
 ];
 
+$operations['registra-contabile-2'] = [
+    'text' => '<span><i class="fa fa-calculator"></i> '.tr('Registrazione contabile').'</span>',
+    'data' => [
+        'title' => tr('Registrazione contabile'),
+        'type' => 'modal',
+        'origine' => 'fatture',
+        'url' => $rootdir.'/add.php?id_module='.Modules::get('Prima nota')['id'],
+    ],
+];
+
 if ($module->name == 'Fatture di vendita') {
     $operations['genera-xml'] = [
-        'text' => '<span><i class="fa fa-file-code-o" ></i> '.tr('Genera fatture elettroniche').'</span>',
+        'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Genera fatture elettroniche').'</span>',
         'data' => [
             'title' => '',
             'msg' => tr('Generare le fatture elettroniche per i documenti selezionati?<br><small>(le fatture dovranno essere nello stato <i class="fa fa-clock-o text-info" title="Emessa"></i> <small>Emessa</small> e non essere mai state generate)</small>'),
@@ -351,7 +338,7 @@ if ($module->name == 'Fatture di vendita') {
     ];
 
     $operations['export-bulk'] = [
-        'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o" ></i> '.tr('Esporta stampe').'</span>',
+        'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o"></i> '.tr('Esporta stampe').'</span>',
         'data' => [
             'title' => '',
             'msg' => tr('Vuoi davvero esportare i PDF delle fatture selezionate in un archivio ZIP?'),
@@ -363,7 +350,7 @@ if ($module->name == 'Fatture di vendita') {
 }
 
 $operations['export-xml-bulk'] = [
-    'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o" ></i> '.tr('Esporta XML').'</span>',
+    'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o"></i> '.tr('Esporta XML').'</span>',
     'data' => [
         'title' => '',
         'msg' => tr('Vuoi davvero esportare le fatture elettroniche selezionate in un archivio ZIP?'),

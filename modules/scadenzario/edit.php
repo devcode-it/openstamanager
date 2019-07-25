@@ -21,41 +21,17 @@ echo '
 					<table class="table table-striped table-hover table-condensed table-bordered">';
 
 $rs = $dbo->fetchArray('SELECT * FROM (co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id) INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica WHERE co_documenti.id='.prepare($record['iddocumento']));
-
+$dir = $rs[0]['dir'];
 $numero = (!empty($rs[0]['numero_esterno'])) ? $rs[0]['numero_esterno'] : $rs[0]['numero'];
+$modulo_fattura = $dir == 'entrata' ? 'Fatture di vendita' : 'Fatture di acquisto';
 
-if ($rs[0]['dir'] == 'entrata') {
-    $dir = 'entrata';
-    $modulo = 'Fatture di vendita';
+if (!empty($rs)) {
     echo "
                         <tr>
-                            <th width='120'>".tr('Cliente').':</th>
+                            <th width='120'>".($dir == 'entrata' ? tr('Cliente') : tr('Fornitore')).':</th>
                             <td>
                                 '.Modules::link('Anagrafiche', $rs[0]['idanagrafica'], $rs[0]['ragione_sociale']).'
                             </td>
-                        </tr>';
-    echo '
-                        <tr>
-                            <th>'.tr('Documento').':</th>
-                            <td>'.$rs[0]['descrizione'].'</td>
-                        </tr>';
-    echo '
-                        <tr>
-                            <th>'.tr('Numero').':</th>
-                            <td>'.$numero.'</td>
-                        </tr>';
-    echo '
-                        <tr>
-                            <th>'.tr('Data').':</th>
-                            <td>'.Translator::dateToLocale($rs[0]['data']).'</td>
-                        </tr>';
-} elseif ($rs[0]['dir'] == 'uscita') {
-    $dir = 'uscita';
-    $modulo = 'Fatture di acquisto';
-    echo "
-                        <tr>
-                            <th width='120'>".tr('Fornitore').':</th>
-                            <td>'.$rs[0]['ragione_sociale'].'</td>
                         </tr>';
     echo '
                         <tr>
@@ -84,7 +60,7 @@ if ($rs[0]['dir'] == 'entrata') {
 echo '
                     </table>
 
-                    '.Modules::link($modulo, $record['iddocumento'], '<i class="fa fa-folder-open"></i> '.tr('Apri documento'), null, 'class="btn btn-primary"').'
+                    '.Modules::link($modulo_fattura, $record['iddocumento'], '<i class="fa fa-folder-open"></i> '.tr('Apri documento'), null, 'class="btn btn-primary"').'
 				</div>
 
 				<!-- Elenco scadenze -->
@@ -156,7 +132,7 @@ echo '
 					</table>
 
                     <div class='pull-right'>
-                        <a onclick="launch_modal( 'Registra contabile pagamento', '<?php echo $rootdir; ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>&iddocumento=<?php echo $record['iddocumento']; ?>&dir=<?php echo $dir; ?>&idscadenza=<?php echo $id_record; ?>', 1 );" class="btn btn-sm btn-primary"><i class="fa fa-euro"></i> <?php echo tr('Registra contabile pagamento...'); ?></a>
+                        <a onclick="launch_modal( 'Registra contabile pagamento', '<?php echo $rootdir; ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>&dir=<?php echo $dir; ?>&id_scadenze=<?php echo $id_record; ?>', 1 );" class="btn btn-sm btn-primary"><i class="fa fa-euro"></i> <?php echo tr('Registra contabile pagamento...'); ?></a>
                     </div>
 					
 					<div class="clearfix"></div>

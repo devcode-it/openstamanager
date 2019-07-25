@@ -7,10 +7,19 @@ echo '
 	<input type="hidden" name="op" value="update">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="id_record" value="'.$id_record.'">
+	
+	<input type="hidden" name="tipo" value="'.$record['tipo'].'">
+	<input type="hidden" name="descrizione" value="'.$record['descrizione'].'">
+	<input type="hidden" name="iddocumento" value="'.$record['iddocumento'].'">
 
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title">'.tr('Dettagli scadenza').'</h3>
+			<h3 class="panel-title">
+			    '.tr('Dettagli scadenza').'
+                <button type="button" class="btn btn-xs btn-info pull-right" id="add-scadenza">
+                    <i class="fa fa-plus"></i> '.tr('Aggiungi scadenza').'
+                </button>
+            </h3>
 		</div>
 
 		<div class="panel-body">
@@ -66,11 +75,16 @@ echo '
 				<!-- Elenco scadenze -->
 				<div class="col-md-5">
 					<table class="table table-hover table-condensed table-bordered">
-					    <tr>
-                            <th width="150">'.tr('Data').'</th>
-                            <th width="150">'.tr('Importo').'</th>
-                            <th width="150">'.tr('Pagato').'</th>
-                        </tr>';
+                        <thead>
+                            <tr>
+                                <th width="150">'.tr('Data').'</th>
+                                <th width="150">'.tr('Importo').'</th>
+                                <th width="150">'.tr('Pagato').'</th>
+                                <th width="150">'.tr('Data concordata').'</th>
+                            </tr>
+                        </thead>
+                        
+                        <tbody id="scadenze">';
 
 $totale_da_pagare = 0;
 $totale_pagato = 0;
@@ -96,18 +110,23 @@ for ($i = 0; $i < count($rs); ++$i) {
     echo '
                         <tr class="'.$class.'">
                             <td align="center">
-                                {[ "type": "date", "name": "data['.$rs[$i]['id'].']", "value": "'.$rs[$i]['scadenza'].'" ]}
+                                {[ "type": "date", "name": "scadenza['.$rs[$i]['id'].']", "value": "'.$rs[$i]['scadenza'].'" ]}
                             </td>
 
                             <td align="right">
-                                {[ "type": "number", "name": "scadenza['.$rs[$i]['id'].']", "decimals": 2, "value": "'.Translator::numberToLocale($rs[$i]['da_pagare'], 2).'" ]}
+                                {[ "type": "number", "name": "da_pagare['.$rs[$i]['id'].']", "decimals": 2, "value": "'.Translator::numberToLocale($rs[$i]['da_pagare'], 2).'", "onchange": "controlloTotale()" ]}
                             </td>
 
                             <td align="right">
                                 {[ "type": "number", "name": "pagato['.$rs[$i]['id'].']", "decimals": 2, "value": "'.Translator::numberToLocale($rs[$i]['pagato']).'"  ]}
                             </td>
+                            
+                            <td align="center">
+                                {[ "type": "date", "name": "data_concordata['.$rs[$i]['id'].']", "value": "'.$rs[$i]['data_concordata'].'" ]}
+                            </td>
                         </tr>';
 }
+
 $totale_da_pagare = sum(array_column($rs, 'da_pagare'));
 $totale_pagato = sum(array_column($rs, 'pagato'));
 
@@ -121,11 +140,14 @@ $(document).ready(function(){
 }
 
 echo '
-                        <tr>
-                            <td align="right"><b>'.tr('Totale').'</b></td>
-                            <td align="right" id="totale_utente">'.Translator::numberToLocale($totale_da_pagare).'</td>
-                            <td align="right"></td>
-                        </tr>';
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td align="right"><b>'.tr('Totale').'</b></td>
+                                <td align="right" id="totale_utente">'.Translator::numberToLocale($totale_da_pagare).'</td>
+                                <td align="right"></td>
+                            </tr>
+                        </tfoot>';
 
 ?>
 
@@ -150,8 +172,6 @@ echo '
 			</div>
 		</div>
 	</div>
-
-	<div class="clearfix"></div>
 </form>
 
 {( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}
@@ -164,59 +184,88 @@ if ($records[0]['iddocumento'] == 0) {
 </a>
 <?php
                         }
+
+echo '
+<table class="hide">
+    <tbody id="scadenza-template">
+        <tr class="danger">
+            <input type="hidden" name="nuova[-id-]" value="1">
+            
+            <td align="center">
+                {[ "type": "date", "name": "scadenza[-id-]" ]}
+            </td>
+    
+            <td align="right">
+                {[ "type": "number", "name": "da_pagare[-id-]", "decimals": 2, "onchange": "controlloTotale()" ]}
+            </td>
+    
+            <td align="right">
+                {[ "type": "number", "name": "pagato[-id-]", "decimals": 2 ]}
+            </td>
+            
+            <td align="center">
+                {[ "type": "date", "name": "data_concordata[-id-]" ]}
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<script>
+    var i = '.$i.';
+	$(document).on("click", "#add-scadenza", function(){
+		i++;
+		var text = replaceAll($("#scadenza-template").html(), "-id-", "" + i);
+		
+		$("#scadenze").append(text);
+		start_datepickers();
+	});
+</script>';
+
 ?>
 
 <script>
     globals.cifre_decimali = 2;
     
 	$(document).ready(function(){
-        totale_ok();
+        controlloTotale();
         
         <?php
         if ($dir == 'uscita') {
             echo '
         $("#email-button").remove();';
         }
-
-        if ($record['iddocumento'] != 0) {
-            ?>
-        $('input[name*=scadenza]').keyup( function(){ totale_ok(); } );
-        <?php
-        }
         ?>
 	});
 
-	function totale_ok(){
-		totale_da_pagare	= $('#totale_da_pagare').val().toEnglish();
-		totale_utente		= 0;
+    function controlloTotale() {
+        totale_da_pagare = $('#totale_da_pagare').val().toEnglish();
+        totale_utente = 0;
 
-		$('input[name*=scadenza]').each( function(){
-			
-			totale_utente += $(this).val().toEnglish();
-		
-		});
+        $('input[name*=da_pagare]').each(function() {
 
-		if( isNaN(totale_utente) ){
-			totale_utente = 0;
-		}
+            totale_utente += $(this).val().toEnglish();
 
-		totale_utente = Math.round(totale_utente*100)/100;
-		totale_da_pagare = Math.round(totale_da_pagare*100)/100;
+        });
+
+        if (isNaN(totale_utente)) {
+            totale_utente = 0;
+        }
+
+        totale_utente = Math.round(totale_utente * 100) / 100;
+        totale_da_pagare = Math.round(totale_da_pagare * 100) / 100;
 
 
-		diff = Math.abs(totale_da_pagare) - Math.abs(totale_utente);
+        diff = Math.abs(totale_da_pagare) - Math.abs(totale_utente);
 
-		if( diff == 0 ){
-			$('#btn-saves').removeClass('hide');
-			$('#totale').addClass('hide');
-		}
+        if (diff == 0) {
+            $('#btn-saves').removeClass('hide');
+            $('#totale').addClass('hide');
+        } else {
+            $('#btn-saves').addClass('hide');
+            $('#totale').removeClass('hide');
+        }
 
-		else{
-			$('#btn-saves').addClass('hide');
-			$('#totale').removeClass('hide');
-		}
-
-		$('#diff').html(diff.toLocale());
-		$('#totale_utente').html(totale_utente.toLocale());
-	}
+        $('#diff').html(diff.toLocale());
+        $('#totale_utente').html(totale_utente.toLocale());
+    }
 </script>

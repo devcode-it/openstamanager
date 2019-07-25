@@ -466,7 +466,7 @@ class Auth extends \Util\Singleton
             if (!empty($results)) {
                 $this->user = User::with('group')->find($user_id);
 
-                if(!API::isAPIRequest() && !empty($this->user->reset_token)) {
+                if (!API::isAPIRequest() && !empty($this->user->reset_token)) {
                     $this->user->reset_token = null;
                     $this->user->save();
                 }

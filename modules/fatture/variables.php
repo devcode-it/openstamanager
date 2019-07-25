@@ -15,7 +15,7 @@ WHERE co_documenti.id='.prepare($id_record));
 
 if (!empty(setting('Logo stampe'))) {
     $logo_azienda = BASEURL.'/'.Models\Upload::where('filename', setting('Logo stampe'))->first()->fileurl;
-}else{
+} else {
     $logo_azienda = str_replace(DOCROOT, BASEURL, App::filepath('templates/base|custom|/logo_azienda.jpg'));
     $logo_azienda = str_replace('\\', '/', $logo_azienda);
 }

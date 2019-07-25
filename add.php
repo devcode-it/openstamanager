@@ -64,6 +64,7 @@ $(document).ready(function(){
     last.after($("#custom_fields_bottom-add").html());
     
     start_superselect();
+    start_datepickers();
 });
 </script>';
 

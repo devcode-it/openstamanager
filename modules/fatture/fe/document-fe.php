@@ -145,10 +145,6 @@ echo '
 
 echo '
 <script>
-function replaceAll(str, find, replace) {
-  return str.replace(new RegExp(find, "g"), replace);
-}
-
 function add_blocco(btn, nome){
     $("#template .superselect, #template .superselectajax").select2().select2("destroy");
     var last = $(btn).closest("table").find("tr[id^=last-" + nome + "]").parent().last();

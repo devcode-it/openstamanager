@@ -77,10 +77,9 @@ if (!empty($record['is_fiscale'])) {
     }
 
     if ($record['stato'] == 'Pagato') {
-echo '
+        echo '
         <button type="button" class="btn btn-primary ask tip" data-msg="'.tr('Se riapri questa fattura verrà azzerato lo scadenzario e la prima nota. Continuare?').'" data-method="post" data-op="reopen" data-backto="record-edit" data-title="'.tr('Riaprire la fattura?').'" title="'.tr('Riporta la fattura in stato bozza e ne elimina i movimenti contabili').'">
             <i class="fa fa-folder-open"></i> '.tr('Riapri fattura').'...
         </button>';
-
     }
 }

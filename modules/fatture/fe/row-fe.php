@@ -117,10 +117,6 @@ foreach ($result['altri_dati'] as $dato) {
 
 echo '
 <script>
-function replaceAll(str, find, replace) {
-  return str.replace(new RegExp(find, "g"), replace);
-}
-
 var n = '.($key - 1).';
 function add_altri_dati(btn){
     $("#template .superselect, #template .superselectajax").select2().select2("destroy");

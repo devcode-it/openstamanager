@@ -42,7 +42,7 @@ if (!empty($user)) {
     echo '
 	<div class="row">
 		<div class="col-md-12">
-		    {[ "type": "checkbox", "label": "' . tr('Cambia password') . '", "name": "change_password", "value": "1" ]}
+		    {[ "type": "checkbox", "label": "'.tr('Cambia password').'", "name": "change_password", "value": "1" ]}
 		</div>
     </div>
     

@@ -268,6 +268,7 @@ if (empty($record) || !$has_access) {
                     last.after($("#custom_fields_bottom-edit").html());
                     
                     start_superselect();
+                    start_datepickers();
                 });
                 </script>';
 

@@ -183,3 +183,8 @@ ORDER BY `scadenza` ASC' WHERE `name` = 'Scadenzario';
 
 -- Aggiunte impostazione Autocomple web form
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Autocompletamento form', 'on', 'list[on,off]', '1', 'Generali', '', NULL);
+
+-- Data concordata per le scadenza
+ALTER TABLE `co_scadenziario` ADD `data_concordata` DATE;
+
+UPDATE `zz_views` SET `query` = 'IF(pagato = da_pagare, ''#38CD4E'', IF(data_concordata IS NOT NULL AND data_concordata > NOW(), '' #CC9837'', IF(scadenza < NOW(), ''#CC4D37'', '''')))' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND `name` = '_bg_';

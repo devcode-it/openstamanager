@@ -47,6 +47,9 @@ switch (filter('op')) {
 
             $utente->username = $username;
             $utente->email = $email;
+
+            $cambia_password = filter('change_password');
+            if (!empty($cambia_password))
             $utente->password = $password;
         } else {
             $utente = User::build($username, $email, $password);

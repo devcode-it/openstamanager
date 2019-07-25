@@ -37,16 +37,16 @@ switch (post('op')) {
                     'primanota' => 1,
                 ]);
 
-                if (!empty($id_documento)) {
-                    // Inserisco nello scadenziario il totale pagato
-                    if (empty($insoluto)) {
-                        aggiorna_scadenziario($id_documento, abs($totale), $data, $id_scadenza);
-                    }
-                    // Rimuovo dallo scadenzario l'insoluto
-                    else {
-                        aggiorna_scadenziario($id_documento, -abs($totale), $data, $id_scadenza);
-                    }
+                // Inserisco nello scadenziario il totale pagato
+                if (empty($insoluto)) {
+                    aggiorna_scadenziario($id_documento, abs($totale), $data, $id_scadenza);
+                }
+                // Rimuovo dallo scadenzario l'insoluto
+                else {
+                    aggiorna_scadenziario($id_documento, -abs($totale), $data, $id_scadenza);
+                }
 
+                if (!empty($id_documento)) {
                     // Verifico se la fattura è stata pagata tutta, così imposto lo stato a "Pagato"
                     $rs = $dbo->fetchArray('SELECT SUM(pagato) AS tot_pagato, SUM(da_pagare) AS tot_da_pagare FROM co_scadenziario WHERE iddocumento='.prepare($id_documento));
 

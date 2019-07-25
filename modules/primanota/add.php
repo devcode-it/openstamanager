@@ -9,8 +9,6 @@ $module = Modules::get('Prima nota');
 $variables = Modules::get('Fatture di vendita')->getPlaceholders($id_documento);
 $righe = [];
 
-$singola_scadenza = get('single') != null;
-
 // Registrazione da remoto
 $id_records = get('id_records');
 if (!empty($id_records)) {
@@ -22,19 +20,65 @@ if (!empty($id_records)) {
     }
 }
 
-// Fatture
+// ID predefiniti
+$dir = get('dir');
+$singola_scadenza = get('single') != null;
+
 $id_documenti = $id_documenti ?: get('id_documenti');
 $id_documenti = $id_documenti ? explode(',', $id_documenti) : [];
+
+$id_scadenze = $id_scadenze ?: get('id_scadenze');
+$id_scadenze = $id_scadenze ? explode(',', $id_scadenze) : [];
+
+// Scadenze
+foreach ($id_scadenze as $id_scadenza) {
+    $scadenza = $dbo->fetchOne('SELECT descrizione, scadenza, iddocumento, SUM(da_pagare - pagato) AS rata FROM co_scadenziario WHERE id='.prepare($id_scadenza));
+    if (!empty($scadenza['iddocumento'])){
+        $id_documenti[] = $scadenza['iddocumento'];
+        continue;
+    }
+
+    $descrizione_conto = ($dir == 'entrata') ? 'Riepilogativo clienti' : 'Riepilogativo fornitori';
+    $conto = $dbo->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE descrizione = '.prepare($descrizione_conto));
+    $id_conto_controparte = $conto['id'];
+
+    $righe_documento = [];
+    $righe_documento[] = [
+        'id_scadenza' => $scadenza['id'],
+        'conto' => null,
+        'dare' => ($dir == 'entrata') ? 0 : $scadenza['rata'],
+        'avere' => ($dir == 'entrata') ? $scadenza['rata'] : 0,
+    ];
+
+    $righe_documento[] = [
+        'id_scadenza' => $scadenza['id'],
+        'conto' => $id_conto_controparte,
+        'dare' => ($dir == 'entrata') ? $scadenza['rata'] : 0,
+        'avere' => ($dir == 'entrata') ? 0 : $scadenza['rata'],
+    ];
+
+    $righe = array_merge($righe, $righe_documento);
+}
+
+// Fatture
 $numeri = [];
+$counter = 0;
+
 foreach ($id_documenti as $id_documento) {
     $fattura = Fattura::find($id_documento);
-    $tipo = $fattura->tipo;
+    $tipo = $fattura->stato;
     $dir = $fattura->direzione;
+
+    // Inclusione delle sole fatture in stato Emessa, Parzialmente pagato o Pagato
+    if (!in_array($fattura->stato->descrizione, ['Emessa', 'Parzialmente pagato', 'Pagato'])) {
+        ++$counter;
+        continue;
+    }
 
     $numeri[] = !empty($fattura['numero_esterno']) ? $fattura['numero_esterno'] : $fattura['numero'];
 
     $nota_credito = $tipo->descrizione == 'Nota di credito';
-    $is_insoluto = (!empty($fattura['riba']) && in_array($tipo->descrizione, ['Emessa', 'Parzialmente pagato', 'Pagato']) && $dir == 'entrata');
+    $is_insoluto = (!empty($fattura['riba']) && $dir == 'entrata');
 
     // Predisposizione prima riga
     $conto_field = 'idconto_'.($dir == 'entrata' ? 'vendite' : 'acquisti');
@@ -43,7 +87,6 @@ foreach ($id_documenti as $id_documento) {
     // Predisposizione conto crediti clienti
     $conto_field = 'idconto_'.($dir == 'entrata' ? 'cliente' : 'fornitore');
     $id_conto_controparte = $fattura->anagrafica[$conto_field];
-    //$_SESSION['superselect']['idconto_controparte'] = $id_conto_controparte;
 
     // Lettura delle scadenza della fattura
     $scadenze = $dbo->fetchArray('SELECT id, ABS(da_pagare - pagato) AS rata FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) > ABS(pagato) ORDER BY YEAR(scadenza) ASC, MONTH(scadenza) ASC');
@@ -57,10 +100,9 @@ foreach ($id_documenti as $id_documento) {
 
     // Riga aziendale
     $totale = sum(array_column($scadenze, 'rata'));
-    $ids = implode(',', array_column($scadenze, 'id'));
     if ($totale != 0) {
         $righe_documento[] = [
-            'id_scadenza' => $ids,
+            'id_scadenza' => $scadenze[0]['id'],
             'insoluto' => $is_insoluto,
             'conto' => $id_conto_aziendale,
             'dare' => ($dir == 'entrata') ? 0 : $totale,
@@ -87,30 +129,6 @@ foreach ($id_documenti as $id_documento) {
             $righe_documento[$key]['dare'] = $tmp;
         }
     }
-
-    $righe = array_merge($righe, $righe_documento);
-}
-
-$dir = get('dir');
-
-// Scadenze
-$id_scadenze = $id_scadenze ?: get('id_scadenze');
-$id_scadenze = $id_scadenze ? explode(',', $id_scadenze) : [];
-foreach ($id_scadenze as $id_scadenza) {
-    $scadenza = $dbo->fetchOne('SELECT descrizione, scadenza, SUM(da_pagare - pagato) AS rata FROM co_scadenziario WHERE id='.prepare($id_scadenza));
-
-    $descrizione_conto = ($dir == 'entrata') ? 'Riepilogativo clienti' : 'Riepilogativo fornitori';
-    $conto = $dbo->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE descrizione = '.prepare($descrizione_conto));
-    $id_conto_controparte = $conto['id'];
-
-    $righe_documento = [];
-
-    $righe_documento[] = [
-        'id_scadenza' => $scadenza['id'],
-        'conto' => $id_conto_controparte,
-        'dare' => ($dir == 'entrata') ? $scadenza['rata'] : 0,
-        'avere' => ($dir == 'entrata') ? 0 : $scadenza['rata'],
-    ];
 
     $righe = array_merge($righe, $righe_documento);
 }
@@ -143,6 +161,24 @@ if ($numero_documenti + $numero_scadenze > 1) {
         '_OP_' => $scadenza['descrizione'],
         '_DATE_' => Translator::dateToLocale($scadenza['scadenza']),
     ]);
+}
+
+if (!empty($id_records) && get('origine') == 'fatture' && !empty($counter)) {
+    $descrizione_stati = [];
+    $stati = $database->fetchArray("SELECT * FROM `co_statidocumento` WHERE descrizione IN ('Emessa', 'Parzialmente pagato', 'Pagato') ORDER BY descrizione");
+    foreach ($stati as $stato) {
+        $descrizione_stati[] = '<i class="'.$stato['icona'].'"></i> <small>'.$stato['descrizione'].'</small>';
+    }
+
+    echo '
+<div class="alert alert-info">
+<p>'.tr('Solo le fatture in stato _STATE_ possono essere registrate contabilmente ignorate', [
+        '_STATE_' => implode(', ', $descrizione_stati),
+]).'.</p>
+<p><b>'.tr('Sono state ignorate _NUM_ fatture', [
+    '_NUM_' => $counter,
+]).'.</b></p>
+</div>';
 }
 
 echo '

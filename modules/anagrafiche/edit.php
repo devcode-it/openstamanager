@@ -26,7 +26,7 @@ if (!$is_cliente) {
 
 ?>
 
-<form action="" method="post" id="edit-form"  autocomplete="<?php echo setting('Autocomple web form'); ?>" >
+<form action="" method="post" id="edit-form"  autocomplete="<?php echo setting('Autocompletamento form'); ?>" >
 	<fieldset>
 		<input type="hidden" name="backto" value="record-edit">
 		<input type="hidden" name="op" value="update">

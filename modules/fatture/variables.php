@@ -13,7 +13,12 @@ FROM co_documenti
     INNER JOIN co_tipidocumento ON co_tipidocumento.id=co_documenti.idtipodocumento
 WHERE co_documenti.id='.prepare($id_record));
 
-$logo_azienda = str_replace(DOCROOT, BASEURL, App::filepath('templates/base|custom|/logo_azienda.jpg'));
+if (!empty(setting('Logo stampe'))) {
+    $logo_azienda = BASEURL.'/'.Models\Upload::where('filename', setting('Logo stampe'))->first()->fileurl;
+}else{
+    $logo_azienda = str_replace(DOCROOT, BASEURL, App::filepath('templates/base|custom|/logo_azienda.jpg'));
+    $logo_azienda = str_replace('\\', '/', $logo_azienda);
+}
 
 //cliente
 if ($r['idconto_cliente'] != '') {

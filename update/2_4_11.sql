@@ -203,3 +203,35 @@ CREATE TABLE IF NOT EXISTS `zz_notes` (
   FOREIGN KEY (`id_plugin`) REFERENCES `zz_plugins`(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`id_utente`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+-- Sistema di checklists
+CREATE TABLE IF NOT EXISTS `zz_checklists` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_module` int(11),
+  `id_plugin` int(11),
+  `id_record` int(11) NOT NULL,
+  `id_utente` int(11) NOT NULL,
+  `id_utente_assegnato` int(11) NOT NULL,
+  `checked_at` TIMESTAMP,
+  `content` TEXT,
+  `id_parent` int(11),
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`id_plugin`) REFERENCES `zz_plugins`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`id_utente`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`id_utente_assegnato`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`id_parent`) REFERENCES `zz_checklists`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `zz_checklist_templates` (
+   `id` int(11) NOT NULL AUTO_INCREMENT,
+   `id_module` int(11),
+   `id_plugin` int(11),
+   `id_record` int(11) NOT NULL,
+   `content` TEXT,
+   `id_parent` int(11),
+   PRIMARY KEY (`id`),
+   FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE,
+   FOREIGN KEY (`id_plugin`) REFERENCES `zz_plugins`(`id`) ON DELETE CASCADE,
+   FOREIGN KEY (`id_parent`) REFERENCES `zz_checklist_templates`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB;

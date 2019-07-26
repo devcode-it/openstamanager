@@ -241,7 +241,6 @@ function show_'.$attachment_id.'() {
 }
 
 function reload_'.$attachment_id.'() {
-    
     $("#'.$attachment_id.'").load(globals.rootdir + "/ajax.php?op=list_attachments&id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id_plugin='.$options['id_plugin'].'", function() {
         $("#loading_'.$attachment_id.'").addClass("hide");
     });

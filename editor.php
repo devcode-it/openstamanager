@@ -333,7 +333,7 @@ if (empty($record) || !$has_access) {
 
                 if ($user->is_admin || $utente->id == $user->id) {
                     echo '
-                                <button type="button" class="btn btn-danger btn-xs ask" data-op="remove_nota" data-id_nota="'.$nota->id.'" data-msg="'.tr('Rimuovere questa nota?').'" data-backto="record-edit">
+                                <button type="button" class="btn btn-danger btn-xs ask" data-op="delete_nota" data-id_nota="'.$nota->id.'" data-msg="'.tr('Rimuovere questa nota?').'" data-backto="record-edit">
                                     <i class="fa fa-trash-o"></i>
                                 </button>';
                 }

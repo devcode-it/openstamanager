@@ -1,24 +1,27 @@
 <?php
 
-namespace Models;
+namespace Models\Checklist;
 
 use Common\Model;
+use Traits\Components\ChecklistTrait;
 use Traits\HierarchyTrait;
-use Traits\NoteTrait;
+use Models\User;
+use Models\Module;
+use Models\Plugin;
 
-class Checklist extends Model
+class Check extends Model
 {
     use HierarchyTrait;
 
     protected static $parent_identifier = 'id_parent';
-    protected $table = 'zz_checklists';
+    protected $table = 'zz_checks';
 
     /**
      * Crea un nuovo elemento della checklist.
      *
      * @param User      $user
      * @param User      $assigned_user
-     * @param NoteTrait $structure
+     * @param ChecklistTrait $structure
      * @param int       $id_record
      * @param string    $contenuto
      * @param int       $id_parent

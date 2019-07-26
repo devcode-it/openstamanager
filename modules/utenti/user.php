@@ -91,4 +91,4 @@ function submitCheck() {
 }
 </script>
 
-<<script>$(document).ready(init)</script>';
+<script>$(document).ready(init)</script>';

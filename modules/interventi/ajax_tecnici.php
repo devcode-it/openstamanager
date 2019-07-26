@@ -221,7 +221,7 @@ if (!$is_completato) {
 }
 
 echo '
-<<script>$(document).ready(init)</script>
+<script>$(document).ready(init)</script>
 
 <script type="text/javascript">
     $(document).ready(function(){';

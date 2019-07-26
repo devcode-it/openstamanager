@@ -109,7 +109,7 @@ echo '
 </form>';
 
 echo '
-<<script>$(document).ready(init)</script>';
+<script>$(document).ready(init)</script>';
 
 ?>
 

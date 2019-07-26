@@ -2,7 +2,7 @@
 
 namespace HTMLBuilder\Manager;
 
-use Models\Checklist;
+use Models\Checklist\Check;
 use Modules;
 use Plugins;
 
@@ -29,10 +29,10 @@ class ChecklistManager implements ManagerInterface
 
         // ID del form
         $manager_id = 'checklist_'.$options['id_module'].'_'.$options['id_plugin'];
-        $checklists = $structure->checklists($options['id_record']);
+        $checks = $structure->checks($options['id_record']);
 
         $list = [];
-        foreach ($checklists as $checklist) {
+        foreach ($checks as $checklist) {
             $list[] = [
                 'id' => $checklist->id,
                 'text' => $checklist->content,
@@ -77,7 +77,7 @@ class ChecklistManager implements ManagerInterface
         $result .= '
             <ul class="checklist">';
 
-        foreach ($checklists as $checklist) {
+        foreach ($checks as $checklist) {
             $result .= $this->renderChecklist($checklist);
         }
 
@@ -234,7 +234,7 @@ function reload_'.$manager_id.'() {
         return $result;
     }
 
-    protected function renderChecklist(Checklist $checklist, $level = 0)
+    protected function renderChecklist(Check $checklist, $level = 0)
     {
         $result = '
             <li id="check_'.$checklist->id.'" class="check-item'.(!empty($checklist->checked_at) ? ' checked' : '').'">

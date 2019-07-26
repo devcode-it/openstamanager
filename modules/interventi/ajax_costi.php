@@ -133,4 +133,4 @@ if ($show_prezzi) {
 }
 
 echo '
-<<script>$(document).ready(init)</script>';
+<script>$(document).ready(init)</script>';

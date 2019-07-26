@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/core.php';
 
-use Models\Checklist;
+use Models\Checklist\Check;
 use Models\Note;
 use Models\User;
 
@@ -124,13 +124,13 @@ elseif (filter('op') == 'add_check') {
 
     $assigned_user = User::find(post('assigned_user'));
 
-    $check = Checklist::build($user, $assigned_user, $structure, $id_record, $content, $parent_id);
+    $check = Check::build($user, $assigned_user, $structure, $id_record, $content, $parent_id);
 }
 
 // Rimozione checklist
 elseif (filter('op') == 'delete_check') {
     $check_id = post('check_id');
-    $check = Checklist::find($check_id);
+    $check = Check::find($check_id);
 
     $check->delete();
 }
@@ -138,7 +138,7 @@ elseif (filter('op') == 'delete_check') {
 // Gestione check per le checklist
 elseif (filter('op') == 'toggle_check') {
     $check_id = post('check_id');
-    $check = Checklist::find($check_id);
+    $check = Check::find($check_id);
 
     if (!empty($check)) {
         $check->checked_at = $check->checked_at ? null : date('Y-m-d H:i:s');

@@ -44,7 +44,7 @@ echo '
 
 $file = basename(__FILE__);
 echo '
-<<script>$(document).ready(init)</script>
+<script>$(document).ready(init)</script>
     
 <script>
     var content = $("#righe_documento");

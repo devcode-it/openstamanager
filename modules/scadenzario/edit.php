@@ -156,7 +156,7 @@ echo '
                     <div class='pull-right'>
                         <a onclick="launch_modal( 'Registra contabile pagamento', '<?php echo $rootdir; ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>&dir=<?php echo $dir; ?>&id_scadenze=<?php echo $id_record; ?>', 1 );" class="btn btn-sm btn-primary"><i class="fa fa-euro"></i> <?php echo tr('Registra contabile pagamento...'); ?></a>
                     </div>
-					
+
 					<div class="clearfix"></div>
 
 					<div class="alert alert-error hide" id="totale"><?php echo tr('Il totale da pagare deve essere pari a _MONEY_', [
@@ -213,11 +213,13 @@ echo '
 <script>
     var i = '.$i.';
 	$(document).on("click", "#add-scadenza", function(){
-		i++;
+        cleanup_inputs();
+        
+        i++;
 		var text = replaceAll($("#scadenza-template").html(), "-id-", "" + i);
 		
 		$("#scadenze").append(text);
-		start_datepickers();
+		restart_inputs();
 	});
 </script>';
 
@@ -225,10 +227,10 @@ echo '
 
 <script>
     globals.cifre_decimali = 2;
-    
+
 	$(document).ready(function(){
         controlloTotale();
-        
+
         <?php
         if ($dir == 'uscita') {
             echo '

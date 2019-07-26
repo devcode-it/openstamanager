@@ -1,4 +1,4 @@
-$(document).ready(function () {
+function init() {
     // Inizializzazzione dei box AdminLTE
     $('.box').boxWidget();
 
@@ -60,5 +60,5 @@ $(document).ready(function () {
         return false;
     });
 
-   restart_input();
-});
+    restart_inputs();
+}

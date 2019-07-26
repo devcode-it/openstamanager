@@ -119,15 +119,15 @@ echo '
 <script>
 var n = '.($key - 1).';
 function add_altri_dati(btn){
-    $("#template .superselect, #template .superselectajax").select2().select2("destroy");
+    cleanup_inputs();
+    
     var last = $(btn).closest("table").find("tr[id^=last-altri_dati]").parent().last();
 
     n++;
     var text = replaceAll($("#altri_dati-templace").html(), "-id-", "" + n);
     
     last.after(text);
-    
-    start_superselect();
+    restart_inputs();
 };
 </script>
 
@@ -154,4 +154,4 @@ echo '
 </form>';
 
 echo '
-<script src="'.ROOTDIR.'/lib/init.js"></script>';
+<script>$(document).ready(init)</script>';

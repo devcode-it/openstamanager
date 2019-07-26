@@ -33,7 +33,7 @@ class ChecklistManager implements ManagerInterface
 
         $list = [];
         foreach ($checklists as $checklist) {
-            $list [] = [
+            $list[] = [
                 'id' => $checklist->id,
                 'text' => $checklist->content,
             ];
@@ -87,7 +87,7 @@ class ChecklistManager implements ManagerInterface
     </div>';
 
         $result .= '
-<script src="'.ROOTDIR.'/lib/init.js"></script>
+<script>$(document).ready(init)</script>
 
 <script>
 $(document).ready(function() {

@@ -2,8 +2,8 @@
 
 include_once __DIR__.'/core.php';
 
-use Models\Note;
 use Models\Checklist;
+use Models\Note;
 use Models\User;
 
 if (empty($structure) || empty($structure['enabled'])) {

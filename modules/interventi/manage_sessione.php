@@ -96,7 +96,7 @@ echo '
 </form>';
 
 echo '
-<script src="'.$rootdir.'/lib/init.js"></script>';
+<<script>$(document).ready(init)</script>';
 
 echo '
 <script>

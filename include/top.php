@@ -122,6 +122,8 @@ if (Auth::check()) {
 
                 id_module: "'.$id_module.'",
                 id_record: "'.$id_record.'",
+                
+                is_mobile: '.isMobile().',
 
                 cifre_decimali: '.setting('Cifre decimali per importi').',
 
@@ -317,7 +319,6 @@ if (Auth::check()) {
                      </div>
 				
 				</nav>
-				
 			</header>
 
             <aside class="main-sidebar">

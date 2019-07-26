@@ -91,4 +91,4 @@ function submitCheck() {
 }
 </script>
 
-<script src="'.$rootdir.'/lib/init.js"></script>';
+<<script>$(document).ready(init)</script>';

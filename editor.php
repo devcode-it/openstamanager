@@ -250,17 +250,10 @@ if (empty($record) || !$has_access) {
 
                 <script>
                 $(document).ready(function(){
+                    cleanup_inputs();
+                    
                     var form = $("#module-edit").find("form").first();
-                    
-                    // Rimozione select inizializzati
-                    $("#custom_fields_bottom-edit").find("select").each(function () {
-                        $(this).select2().select2("destroy");
-                    });
-                    
-                    $("#custom_fields_bottom-edit").find("select").each(function () {
-                        $(this).select2().select2("destroy");
-                    });
-
+                  
                     // Campi a inizio form
                     form.prepend($("#custom_fields_top-edit").html());
 
@@ -274,11 +267,9 @@ if (empty($record) || !$has_access) {
                     if (!last.length) {
                         last = form.find(".row").eq(-2);
                     }
-
-                    last.after($("#custom_fields_bottom-edit").html());
                     
-                    start_superselect();
-                    start_datepickers();
+                    last.after($("#custom_fields_bottom-edit").html());
+                    restart_inputs();
                 });
                 </script>';
 

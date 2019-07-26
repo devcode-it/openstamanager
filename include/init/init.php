@@ -234,7 +234,7 @@ echo '
     });
 </script>
 <script src="'.$rootdir.'/lib/functions.js"></script>
-<script src="'.$rootdir.'/lib/init.js"></script>';
+<<script>$(document).ready(init)</script>';
 
 include_once App::filepath('include|custom|', 'bottom.php');
 

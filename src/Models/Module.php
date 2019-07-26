@@ -6,6 +6,7 @@ use Auth;
 use Common\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Traits\ManagerTrait;
+use Traits\NoteTrait;
 use Traits\StoreTrait;
 use Traits\UploadTrait;
 
@@ -14,10 +15,12 @@ class Module extends Model
     use ManagerTrait;
     use UploadTrait;
     use StoreTrait;
+    use NoteTrait;
 
     protected $table = 'zz_modules';
     protected $main_folder = 'modules';
     protected $upload_identifier = 'id_module';
+    protected $note_identifier = 'id_module';
 
     protected $variables = [];
 

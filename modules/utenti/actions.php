@@ -53,7 +53,8 @@ switch (filter('op')) {
                 $utente->password = $password;
             }
         } else {
-            $utente = User::build($username, $email, $password);
+            $gruppo = \Models\Group::find($id_record);
+            $utente = User::build($gruppo, $username, $email, $password);
         }
 
         // Foto

@@ -188,3 +188,18 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 ALTER TABLE `co_scadenziario` ADD `data_concordata` DATE;
 
 UPDATE `zz_views` SET `query` = 'IF(pagato = da_pagare, ''#38CD4E'', IF(data_concordata IS NOT NULL AND data_concordata > NOW(), '' #CC9837'', IF(scadenza < NOW(), ''#CC4D37'', '''')))' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND `name` = '_bg_';
+
+-- Sistema di note interne
+CREATE TABLE IF NOT EXISTS `zz_notes` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_module` int(11),
+  `id_plugin` int(11),
+  `id_record` int(11) NOT NULL,
+  `id_utente` int(11) NOT NULL,
+  `notification_date` DATE,
+  `content` TEXT,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`id_plugin`) REFERENCES `zz_plugins`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`id_utente`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB;

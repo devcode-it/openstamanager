@@ -6,6 +6,7 @@ use App;
 use Common\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Traits\ManagerTrait;
+use Traits\NoteTrait;
 use Traits\StoreTrait;
 use Traits\UploadTrait;
 
@@ -16,10 +17,12 @@ class Plugin extends Model
     use UploadTrait {
         getUploadDirectoryAttribute as protected defaultUploadDirectory;
     }
+    use NoteTrait;
 
     protected $table = 'zz_plugins';
     protected $main_folder = 'plugins';
     protected $upload_identifier = 'id_plugin';
+    protected $note_identifier = 'id_plugin';
 
     protected $appends = [
         'permission',

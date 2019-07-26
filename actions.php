@@ -2,6 +2,8 @@
 
 include_once __DIR__.'/core.php';
 
+use Models\Note;
+
 if (empty($structure) || empty($structure['enabled'])) {
     die(tr('Accesso negato'));
 }
@@ -91,6 +93,26 @@ elseif (filter('op') == 'validate') {
     echo json_encode($response);
 
     return;
+}
+
+// Aggiunta nota interna
+elseif (filter('op') == 'add_nota') {
+    $contenuto = post('contenuto');
+    $data_notifica = post('data_notifica') ?: null;
+
+    $nota = Note::build($user, $structure, $id_record, $contenuto, $data_notifica);
+
+    flash()->info(tr('Nota interna aggiunta correttamente!'));
+}
+
+// Aggiunta nota interna
+elseif (filter('op') == 'remove_nota') {
+    $id_nota = post('id_nota');
+    $nota = Note::find($id_nota);
+
+    $nota->delete();
+
+    flash()->info(tr('Nota interna aggiunta correttamente!'));
 }
 
 // Invio email

@@ -14,8 +14,7 @@ switch (filter('op')) {
         ReceiptHook::update($list);
 
         $results = [];
-        foreach ($list as $element) {
-            $name = $element['name'];
+        foreach ($list as $name) {
             Interaction::getReceipt($name);
 
             $fattura = null;
@@ -78,15 +77,9 @@ switch (filter('op')) {
         break;
 
     case 'delete':
-        $file_id = get('file_id');
-
         $directory = Ricevuta::getImportDirectory();
-        $files = Interaction::getFileList();
-        $file = $files[$file_id];
 
-        if (!empty($file)) {
-            delete($directory.'/'.$file['name']);
-        }
+        delete($directory.'/'.get('name'));
 
         break;
 

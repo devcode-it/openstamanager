@@ -12,8 +12,6 @@ $subject = $template['subject'];
 $body = $module->replacePlaceholders($id_record, $template['body']);
 $subject = $module->replacePlaceholders($id_record, $template['subject']);
 
-$email = $module->replacePlaceholders($id_record, '{email}');
-
 // Campi mancanti
 $campi_mancanti = [];
 

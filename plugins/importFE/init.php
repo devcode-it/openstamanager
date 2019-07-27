@@ -6,17 +6,16 @@ use Plugins\ImportFE\FatturaElettronica;
 use Plugins\ImportFE\Interaction;
 
 if (isset($id_record)) {
-    $files = Interaction::getFileList();
-    $record = $files[$id_record - 1];
+    $files = Interaction::fileToImport();
+    $file = $files[$id_record - 1];
 
-    $has_next = isset($files[$id_record]);
+    $filename = $file['name'];
 
     try {
-        $fattura_pa = FatturaElettronica::manage($record['name']);
+        $fattura_pa = FatturaElettronica::manage($filename);
         $anagrafica = $fattura_pa->findAnagrafica();
-    } catch (UnexpectedValueException $e) {
-        $imported = true;
+
+        $record = $file;
     } catch (Exception $e) {
-        $error = true;
     }
 }

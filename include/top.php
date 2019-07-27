@@ -340,7 +340,7 @@ if (Auth::check()) {
                             <img src="'.$user_photo.'" class="img-responsive" alt="'.$user['username'].'" />';
     } else {
         echo '
-                            <i class="fa fa-user-circle-o fa-3x pull-left" alt="'.tr('OpenSTAManager').'"></i>';
+                            <i class="fa fa-user fa-3x pull-left" alt="'.tr('OpenSTAManager').'"></i>';
     }
 
     echo '

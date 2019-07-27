@@ -11,7 +11,7 @@ use API\Services;
  */
 class Interaction extends Services
 {
-    public static function sendInvoice($id_record)
+    public static function sendXML($id_record)
     {
         try {
             $fattura = new FatturaElettronica($id_record);

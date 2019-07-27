@@ -3,9 +3,13 @@
 include_once __DIR__.'/../../core.php';
 
 use Plugins\ReceiptFE\Interaction;
+use Plugins\ReceiptFE\ReceiptHook;
 use Plugins\ReceiptFE\Ricevuta;
 
 $list = Interaction::getReceiptList();
+
+// Aggiornamento cache hook
+ReceiptHook::update($list);
 
 $directory = Ricevuta::getImportDirectory();
 
@@ -21,28 +25,26 @@ if (!empty($list)) {
     <tbody>';
 
     foreach ($list as $element) {
-        $name = $element['name'];
-
         echo '
         <tr>
-            <td>'.$name.'</td>
+            <td>'.$element.'</td>
             <td class="text-center">';
 
-        if (file_exists($directory.'/'.$name)) {
+        if (file_exists($directory.'/'.$element)) {
             echo '
-                <button type="button" class="btn btn-danger" onclick="delete_fe(this, \''.$element['id'].'\')">
+                <button type="button" class="btn btn-danger" onclick="delete_fe(this, \''.$element.'\')">
                     <i class="fa fa-trash"></i>
                 </button>';
         } else {
             echo '
-                <button type="button" class="btn btn-info" onclick="process_fe(this, \''.$name.'\')">
+                <button type="button" class="btn btn-info" onclick="process_fe(this, \''.$element.'\')">
                     <i class="fa fa-upload"></i>
                 </button>';
         }
 
         echo '
-                <button type="button" class="btn btn-warning" '.((!extension_loaded('openssl') and substr(strtolower($element), -4) == '.p7m') ? 'disabled' : '').' onclick="import_fe(this, \''.$element.'\')">
-                    <i class="fa fa-cloud-download"></i> '.tr('Importa').'
+                <button type="button" class="btn btn-warning" '.((!extension_loaded('openssl') and substr(strtolower($element), -4) == '.p7m') ? 'disabled' : '').' onclick="download(this, \''.$element.'\')">
+                    <i class="fa fa-download"></i> '.tr('Importa').'
                 </button>
             </td>
         </tr>';
@@ -58,7 +60,7 @@ if (!empty($list)) {
 
 echo '
 <script>
-function import_fe(button, file) {
+function download(button, file) {
     var restore = buttonLoading(button);
 
     $.ajax({
@@ -83,7 +85,7 @@ function import_fe(button, file) {
     });
 }
 
-function delete_fe(button, file_id) {
+function delete_fe(button, file) {
     swal({
         title: "'.tr('Rimuovere la ricevuta salvata localmente?').'",
         html: "'.tr('Sarà possibile inserirla nuovamente nel gestionale attraverso il caricamento').'",
@@ -100,7 +102,7 @@ function delete_fe(button, file_id) {
                 id_module: globals.id_module,
                 id_plugin: '.$id_plugin.',
                 op: "delete",
-                file_id: file_id,
+                name: file,
             },
             success: function(data) {
                 $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {

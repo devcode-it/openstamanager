@@ -13,7 +13,7 @@ if ($module['name'] == 'Ddt di vendita') {
 if (isset($id_record)) {
     $ddt = DDT::with('tipo', 'stato')->find($id_record);
 
-    $record = $dbo->fetchOne('SELECT dt_ddt.*, dt_ddt.note, dt_ddt.idpagamento, dt_ddt.id AS idddt, dt_statiddt.descrizione AS `stato`, dt_tipiddt.descrizione AS `descrizione_tipodoc`,
+    $record = $dbo->fetchOne('SELECT *, dt_ddt.note, dt_ddt.idpagamento, dt_ddt.id AS idddt, dt_statiddt.descrizione AS `stato`, dt_tipiddt.descrizione AS `descrizione_tipodoc`,
     (SELECT tipo FROM an_anagrafiche WHERE idanagrafica = dt_ddt.idanagrafica) AS tipo_anagrafica,
     (SELECT completato FROM dt_statiddt WHERE dt_statiddt.id=dt_ddt.idstatoddt) AS flag_completato
     FROM dt_ddt

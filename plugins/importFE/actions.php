@@ -7,6 +7,13 @@ use Plugins\ImportFE\Interaction;
 
 $file = null;
 switch (filter('op')) {
+    case 'list':
+        $list = Interaction::getRemoteList();
+
+        echo json_encode($list);
+
+        break;
+
     case 'save':
         $content = file_get_contents($_FILES['blob']['tmp_name']);
         $file = FatturaElettronica::store($_FILES['blob']['name'], $content);
@@ -15,35 +22,59 @@ switch (filter('op')) {
     case 'prepare':
         if (!isset($file)) {
             $name = filter('name');
-            $file = Interaction::getImportXML($name);
+            $file = Interaction::getInvoiceFile($name);
         }
 
-        if (FatturaElettronica::isValid($file)) {
-            // Individuazione ID fisico
-            $files = Interaction::fileToImport();
-            foreach ($files as $key => $value) {
-                if ($value['name'] == $file) {
-                    $index = $key;
+        try {
+            if (!FatturaElettronica::isValid($file)) {
+                echo json_encode([
+                    'already' => 1,
+                ]);
 
-                    break;
-                }
+                return;
             }
-
-            echo json_encode([
-                'id' => $index + 1,
-            ]);
-        } else {
-            echo json_encode([
-                'already' => 1,
-            ]);
+        } catch (Exception $e) {
         }
+
+        // Individuazione ID fisico
+        $files = Interaction::getFileList();
+        foreach ($files as $key => $value) {
+            if ($value['name'] == $file) {
+                $index = $key;
+
+                break;
+            }
+        }
+
+        echo json_encode([
+            'id' => $index + 1,
+        ]);
 
         break;
 
     case 'delete':
-        $directory = FatturaElettronica::getImportDirectory();
+        $file_id = get('file_id');
 
-        delete($directory.'/'.get('name'));
+        $directory = FatturaElettronica::getImportDirectory();
+        $files = Interaction::getFileList();
+        $file = $files[$file_id];
+
+        if (!empty($file)) {
+            delete($directory.'/'.$file['name']);
+        }
+
+        break;
+
+    case 'download':
+        $file_id = get('file_id');
+
+        $directory = FatturaElettronica::getImportDirectory();
+        $files = Interaction::getFileList();
+        $file = $files[$file_id];
+
+        if (!empty($file)) {
+            download($directory.'/'.$file['name']);
+        }
 
         break;
 
@@ -63,19 +94,19 @@ switch (filter('op')) {
         ];
 
         $fattura_pa = FatturaElettronica::manage($filename);
-        $id_record = $fattura_pa->save($info);
+        $id_fattura = $fattura_pa->save($info);
 
-        ricalcola_costiagg_fattura($id_record);
-        elimina_scadenza($id_record);
-        elimina_movimento($id_record, 0);
-        aggiungi_scadenza($id_record);
-        aggiungi_movimento($id_record, 'uscita');
+        ricalcola_costiagg_fattura($id_fattura);
+        elimina_scadenza($id_fattura);
+        elimina_movimento($id_fattura, 0);
+        aggiungi_scadenza($id_fattura);
+        aggiungi_movimento($id_fattura, 'uscita');
 
         $fattura_pa->delete();
 
         // Processo il file ricevuto
         if (Interaction::isEnabled()) {
-            $process_result = Interaction::processXML($filename);
+            $process_result = Interaction::processInvoice($filename);
             if ($process_result != '') {
                 flash()->error($process_result);
                 redirect(ROOTDIR.'/controller.php?id_module='.$id_module);
@@ -84,12 +115,17 @@ switch (filter('op')) {
             }
         }
 
-        redirect(ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$id_record);
-        break;
+        $files = Interaction::getFileList();
+        $file = $files[$id_record - 1];
 
-    case 'list':
-        include __DIR__.'/rows.php';
-
+        if (get('sequence') == null) {
+            redirect(ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$id_fattura);
+        } elseif (!empty($file)) {
+            redirect(ROOTDIR.'/editor.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'&sequence=1');
+        } else {
+            flash()->info(tr('Tutte le fatture salvate sono state importate!'));
+            redirect(ROOTDIR.'/controller.php?id_module='.$id_module);
+        }
         break;
 
     case 'process':
@@ -97,7 +133,7 @@ switch (filter('op')) {
 
         // Processo il file ricevuto
         if (Interaction::isEnabled()) {
-            $process_result = Interaction::processXML($name);
+            $process_result = Interaction::processInvoice($name);
             if (!empty($process_result)) {
                 flash()->error($process_result);
             }

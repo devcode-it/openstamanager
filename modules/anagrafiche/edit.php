@@ -330,18 +330,21 @@ echo '
             // Collegamento con il conto
             $conto = $dbo->fetchOne('SELECT co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione as descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_cliente']));
 
-                if (!empty($conto['numero_conto'])) {
-                    $piano_dei_conti_cliente = tr('_NAME_', [
-                        '_NAME_' => $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'],
-                    ]);
-                    echo Modules::link('Piano dei conti', null, null, null, 'class="pull-right"');
-                } else {
-                    $piano_dei_conti_cliente = tr('Nessuno');
-                }
-
                 echo '
                         <div class="row">
                             <div class="col-md-6">
+                ';
+
+                            if (!empty($conto['numero_conto'])) {
+                                $piano_dei_conti_cliente = tr('_NAME_', [
+                                    '_NAME_' => $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'],
+                                ]);
+                                echo Modules::link('Piano dei conti', null, null, null, 'class="pull-right"');
+                            } else {
+                                $piano_dei_conti_cliente = tr('Nessuno');
+                            }
+
+                echo '
                                 {[ "type": "select", "label": "'.tr('Piano dei conti cliente').'", "name": "piano_dei_conti_cliente", "values": "list=\"\": \"'.$piano_dei_conti_cliente.'\"", "readonly": 1 ]}
                             </div>
                         </div>
@@ -374,24 +377,27 @@ echo '
                                 {[ "type": "select", "label": "'.tr('Listino articoli').'", "name": "idlistino_acquisti", "values": "query=SELECT id, nome AS descrizione FROM mg_listini ORDER BY nome ASC", "value": "$idlistino_acquisti$" ]}
                             </div>';
 
-            // Collegamento con il conto
-            $conto = $dbo->fetchOne('SELECT co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione as descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_fornitore']));
+                echo '
+                            <div class="col-md-6">';
 
-                /*echo '
-                 <p>'.tr('Piano dei conti collegato: _NAME_', [
-                     '_NAME_' => $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'],
-                 ]).Modules::link('Piano dei conti', null, '').'</p>';*/
-                if (!empty($conto['numero_conto'])) {
-                    $piano_dei_conti_fornitore = tr('_NAME_', [
-                        '_NAME_' => $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'],
-                    ]);
-                    echo Modules::link('Piano dei conti', null, null, null, 'class="pull-right"');
-                } else {
-                    $piano_dei_conti_fornitore = tr('Nessuno');
-                }
+                            /*echo '
+                            <p>'.tr('Piano dei conti collegato: _NAME_', [
+                                '_NAME_' => $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'],
+                            ]).Modules::link('Piano dei conti', null, '').'</p>';*/
+
+                            // Collegamento con il conto
+                            $conto = $dbo->fetchOne('SELECT co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione as descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_fornitore']));
+
+                            if (!empty($conto['numero_conto'])) {
+                                $piano_dei_conti_fornitore = tr('_NAME_', [
+                                    '_NAME_' => $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'],
+                                ]);
+                                echo Modules::link('Piano dei conti', null, null, null, 'class="pull-right"');
+                            } else {
+                                $piano_dei_conti_fornitore = tr('Nessuno');
+                            }
 
                 echo '
-                            <div class="col-md-6">
                                 {[ "type": "select", "label": "'.tr('Piano dei conti fornitore').'", "name": "piano_dei_conti_fornitore", "values": "list=\"\": \"'.$piano_dei_conti_fornitore.'\"", "readonly": 1 ]}
                             </div>
                         </div>

@@ -50,7 +50,7 @@ if (Interaction::isEnabled()) {
     echo '
         <div class="pull-right">
             <button type="button" class="btn btn-warning" onclick="importAll(this)">
-                <i class="fa fa-download"></i> '.tr('Importa tutte le ricevute').'
+                <i class="fa fa-cloud-download"></i> '.tr('Importa tutte le ricevute').'
             </button>
             
             <button type="button" class="btn btn-primary" onclick="search(this)">
@@ -158,22 +158,26 @@ function importAll(btn) {
             success: function(data){
                 data = JSON.parse(data);
     
-                var html = "'.tr('Sono state elaborate le seguenti ricevute:').'";
-    
-                data.forEach(function(element) {
-                    var text = "";
-                    if(element.fattura) {
-                        text += element.fattura;
-                    } else {
-                        text += "<i>'.tr('Fattura relativa alla ricevuta non rilevata. Controlla che esista una fattura di vendita corrispondente caricata a gestionale.').'</i>";
-                    }
-    
-                    text += " (" + element.file + ")";
-    
-                    html += "<small><li>" + text + "</li></small>";
-                });
-    
-                html += "<br><small>'.tr("Se si sono verificati degli errori durante la procedura e il problema continua a verificarsi, contatta l'assistenza ufficiale").'</small>";
+                if(data.length == 0){
+                    var html = "'.tr('Non sono state trovate ricevute da importare').'.";
+                } else {
+                    var html = "'.tr('Sono state elaborate le seguenti ricevute:').'";
+        
+                    data.forEach(function(element) {
+                        var text = "";
+                        if(element.fattura) {
+                            text += element.fattura;
+                        } else {
+                            text += "<i>'.tr('Fattura relativa alla ricevuta non rilevata. Controlla che esista una fattura di vendita corrispondente caricata a gestionale.').'</i>";
+                        }
+        
+                        text += " (" + element.file + ")";
+        
+                        html += "<small><li>" + text + "</li></small>";
+                    });
+        
+                    html += "<br><small>'.tr("Se si sono verificati degli errori durante la procedura e il problema continua a verificarsi, contatta l'assistenza ufficiale").'</small>";
+                }
     
                 swal({
                     title: "'.tr('Operazione completata!').'",

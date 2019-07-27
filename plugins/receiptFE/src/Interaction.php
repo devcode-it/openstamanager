@@ -15,12 +15,23 @@ class Interaction extends Services
     {
         $directory = Ricevuta::getImportDirectory();
 
-        $list = [];
+        $list = self::getRemoteList();
 
-        $files = glob($directory.'/*.xml*');
-        foreach ($files as $file) {
-            $list[] = basename($file);
-        }
+        // Ricerca fisica
+        $names = array_column($list, 'name');
+        $files = self::getFileList($names);
+
+        $list = array_merge($list, $files);
+
+        // Aggiornamento cache hook
+        ReceiptHook::update($list);
+
+        return $list;
+    }
+
+    public static function getRemoteList()
+    {
+        $list = [];
 
         // Ricerca da remoto
         if (self::isEnabled()) {
@@ -28,15 +39,40 @@ class Interaction extends Services
             $body = static::responseBody($response);
 
             if ($body['status'] == '200') {
-                $files = $body['results'];
+                $results = $body['results'];
 
-                foreach ($files as $file) {
-                    $list[] = basename($file);
+                foreach ($results as $result) {
+                    $list[] = [
+                        'name' => $result,
+                    ];
                 }
             }
         }
 
-        return array_clean($list);
+        return $list ?: [];
+    }
+
+    public static function getFileList($names = [])
+    {
+        $list = [];
+
+        // Ricerca fisica
+        $directory = Ricevuta::getImportDirectory();
+
+        $files = glob($directory.'/*.xml*');
+        foreach ($files as $id => $file) {
+            $name = basename($file);
+
+            if (!in_array($name, $names)) {
+                $list[] = [
+                    'id' => $id,
+                    'name' => $name,
+                    'file' => true,
+                ];
+            }
+        }
+
+        return $list;
     }
 
     public static function getReceipt($name)

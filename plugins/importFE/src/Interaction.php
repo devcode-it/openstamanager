@@ -11,24 +11,11 @@ use API\Services;
  */
 class Interaction extends Services
 {
-    public static function getInvoiceList()
+    public static function listToImport()
     {
-        $list = self::getRemoteList();
+        $list = [];
+        $names = [];
 
-        // Ricerca fisica
-        $names = array_column($list, 'name');
-        $files = self::getFileList($names);
-
-        $list = array_merge($list, $files);
-
-        // Aggiornamento cache hook
-        InvoiceHook::update($list);
-
-        return $list;
-    }
-
-    public static function getRemoteList()
-    {
         // Ricerca da remoto
         if (self::isEnabled()) {
             $response = static::request('POST', 'fatture_da_importare');
@@ -36,13 +23,20 @@ class Interaction extends Services
 
             if ($body['status'] == '200') {
                 $list = $body['results'];
+
+                $names = array_column($list);
             }
         }
 
-        return $list ?: [];
+        // Ricerca fisica
+        $files = self::fileToImport($names);
+
+        $list = array_merge($list, $files);
+
+        return $list;
     }
 
-    public static function getFileList($names = [])
+    public static function fileToImport($names = [])
     {
         $list = [];
 
@@ -50,14 +44,12 @@ class Interaction extends Services
         $directory = FatturaElettronica::getImportDirectory();
 
         $files = glob($directory.'/*.xml*');
-        foreach ($files as $id => $file) {
+        foreach ($files as $file) {
             $name = basename($file);
 
             if (!in_array($name, $names)) {
                 $list[] = [
-                    'id' => $id,
                     'name' => $name,
-                    'file' => true,
                 ];
             }
         }
@@ -65,7 +57,7 @@ class Interaction extends Services
         return $list;
     }
 
-    public static function getInvoiceFile($name)
+    public static function getImportXML($name)
     {
         $directory = FatturaElettronica::getImportDirectory();
         $file = $directory.'/'.$name;
@@ -82,7 +74,7 @@ class Interaction extends Services
         return $name;
     }
 
-    public static function processInvoice($filename)
+    public static function processXML($filename)
     {
         $response = static::request('POST', 'fattura_xml_salvata', [
                 'filename' => $filename,

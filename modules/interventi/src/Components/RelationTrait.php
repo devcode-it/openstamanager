@@ -27,15 +27,6 @@ trait RelationTrait
     {
     }
 
-    public function getQtaEvasaAttribute()
-    {
-        return 0;
-    }
-
-    public function setQtaEvasaAttribute($value)
-    {
-    }
-
     /**
      * Restituisce il prezzo unitario della riga.
      */

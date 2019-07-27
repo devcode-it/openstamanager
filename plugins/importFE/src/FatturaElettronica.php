@@ -187,7 +187,7 @@ class FatturaElettronica
         ]));
     }
 
-    public function findAnagrafica()
+    public function findAnagrafica($type = 'Fornitore')
     {
         $info = $this->getAnagrafe();
 
@@ -197,12 +197,13 @@ class FatturaElettronica
             $query->where('an_tipianagrafiche.idtipoanagrafica', '=', $tipologia->id);
         });
 
-        if (!empty($info['partita_iva'])) {
-            $anagrafica->where('piva', $info['partita_iva']);
-        }
-
-        if (!empty($info['codice_fiscale'])) {
+        if (!empty($info['partita_iva']) && !empty($info['codice_fiscale'])) {
+            $anagrafica->where('piva', $info['partita_iva'])
+                ->orWhere('codice_fiscale', $info['codice_fiscale']);
+        } elseif (!empty($info['codice_fiscale'])) {
             $anagrafica->where('codice_fiscale', $info['codice_fiscale']);
+        } elseif (!empty($info['partita_iva'])) {
+            $anagrafica->where('piva', $info['partita_iva']);
         }
 
         return $anagrafica->first();
@@ -217,7 +218,7 @@ class FatturaElettronica
      */
     public function saveAnagrafica($type = 'Fornitore')
     {
-        $anagrafica = $this->findAnagrafica();
+        $anagrafica = $this->findAnagrafica($type);
 
         if (!empty($anagrafica)) {
             return $anagrafica;

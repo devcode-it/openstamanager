@@ -25,7 +25,7 @@ switch (filter('op')) {
         break;
 
     case 'send':
-        $result = Interaction::sendXML($id_record);
+        $result = Interaction::sendInvoice($id_record);
 
         // Aggiornamento dello stato
         if ($result['code'] == 200) {

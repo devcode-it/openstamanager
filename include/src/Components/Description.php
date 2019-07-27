@@ -95,10 +95,17 @@ abstract class Description extends Model
             throw new \InvalidArgumentException();
         }
 
+        if ($this->hasOriginal()) {
+            $original = $this->getOriginal();
+        }
+
         $this->qta = 0;
         $result = parent::delete();
 
-        $this->parent->fixStato($this);
+        // Fix stato automatico
+        if ($this->hasOriginal()) {
+            $original->parent->fixStato($this);
+        }
 
         return $result;
     }
@@ -214,7 +221,12 @@ abstract class Description extends Model
     {
         $result = parent::save($options);
 
-        $this->parent->fixStato($this);
+        // Fix stato automatico
+        if ($this->hasOriginal()) {
+            $original = $this->getOriginal();
+
+            $original->parent->fixStato($this);
+        }
 
         return $result;
     }

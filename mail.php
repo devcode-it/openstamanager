@@ -166,8 +166,8 @@ echo '
     function aggiungi_destinatario(){
         var last = $("#lista-destinatari input").last();
 
-        if(last.val()){
-            $("#destinatari_input").find(".select2").remove()
+        if (last.val()) {
+            cleanup_inputs();
 
             $("#lista-destinatari").append($("#destinatari_input").html());
 
@@ -175,10 +175,10 @@ echo '
                 $(this).autocomplete({source: emails});
             });
 
-            start_superselect();
+            restart_inputs();
         }
     }
 </script>';
 
 echo '
-	<script src="'.$rootdir.'/lib/init.js"></script>';
+<script>$(document).ready(init)</script>';

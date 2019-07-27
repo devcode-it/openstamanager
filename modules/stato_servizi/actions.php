@@ -101,7 +101,7 @@ switch (filter('op')) {
         break;
 
     // Ordinamento moduli di primo livello
-    case 'sortmodules':
+    case 'sort_modules':
         $rs = $dbo->fetchArray('SELECT id FROM zz_modules WHERE enabled = 1 AND parent IS NULL ORDER BY `order` ASC');
 
         if ($_POST['ids'] != implode(',', array_column($rs, 'id'))) {
@@ -116,12 +116,13 @@ switch (filter('op')) {
 
         break;
 
-    case 'sortwidget':
+    case 'sort_widgets':
         $location = post('location');
+        $id_module_widget = post('id_module_widget');
 
         $location = empty($id_record) ? 'controller_'.$location : 'editor_'.$location;
 
-        $rs = $dbo->fetchArray("SELECT CONCAT('widget_', id) AS id FROM zz_widgets WHERE enabled = 1 AND location = ".prepare($location).' AND id_module = '.prepare($id_module).' ORDER BY `order` ASC');
+        $rs = $dbo->fetchArray("SELECT CONCAT('widget_', id) AS id FROM zz_widgets WHERE enabled = 1 AND location = ".prepare($location).' AND id_module = '.prepare($id_module_widget).' ORDER BY `order` ASC');
 
         if ($_POST['ids'] != implode(',', array_column($rs, 'id'))) {
             $ids = explode(',', $_POST['ids']);
@@ -133,19 +134,6 @@ switch (filter('op')) {
 
             flash()->info(tr('Posizioni widgets aggiornate!'));
         }
-        break;
-
-    case 'updatewidget':
-        $location = post('location');
-        $class = post('class');
-        $id = explode('_', post('id'));
-
-        $location = empty($id_record) ? 'controller_'.$location : 'editor_'.$location;
-
-        if (!empty($class)) {
-            $dbo->query('UPDATE zz_widgets SET class='.prepare($class).' WHERE id='.prepare($id[1]));
-        }
-
         break;
 
     case 'sizes':

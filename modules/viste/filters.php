@@ -119,10 +119,12 @@ echo '
 <script>
     var i = '.$num.';
 	$(document).on("click", "#add_filter", function(){
-		$("#template_filter .superselect, #template_filter .superselectajax").select2().select2("destroy");
+	    cleanup_inputs();
+	    
 		i++;
 		var text = replaceAll($("#template_filter").html(), "-id-", "" + i);
 		$(this).parent().parent().parent().find(".data").append(text);
-		start_superselect();
+		
+		restart_inputs();
 	});
 </script>';

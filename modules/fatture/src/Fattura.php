@@ -446,7 +446,7 @@ class Fattura extends Document
         $result = parent::delete();
 
         $this->rimuoviScadenze();
-        elimina_movimento($this->id);
+        elimina_movimenti($this->id);
 
         return $result;
     }

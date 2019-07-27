@@ -37,7 +37,7 @@ trait PathTrait
      */
     public function fileurl($file)
     {
-        $filepath = App::filepath($this->path.'|custom|', $file);
+        $filepath = $this->filepath($file);
 
         $result = str_replace(DOCROOT, ROOTDIR, $filepath);
         $result = str_replace('\\', '/', $result);

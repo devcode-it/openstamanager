@@ -145,12 +145,9 @@ echo '
 
 echo '
 <script>
-function replaceAll(str, find, replace) {
-  return str.replace(new RegExp(find, "g"), replace);
-}
-
 function add_blocco(btn, nome){
-    $("#template .superselect, #template .superselectajax").select2().select2("destroy");
+    cleanup_inputs();
+    
     var last = $(btn).closest("table").find("tr[id^=last-" + nome + "]").parent().last();
 
     keys[nome]++;
@@ -159,13 +156,12 @@ function add_blocco(btn, nome){
     ref_keys[nome + keys[nome]] = 1;
     
     last.after(text);
-    
-    start_superselect();
-    start_datepickers();
+    restart_inputs();
 }
 
 function add_riferimento(btn, nome, key) {
-    $("#template .superselect, #template .superselectajax").select2().select2("destroy");
+    cleanup_inputs();
+    
     var last = $(btn).closest("table").find("tr[title=RiferimentoNumeroLinea-" + nome + "-" + key + "]").last();
 
     ref_keys[nome + key]++;
@@ -173,10 +169,8 @@ function add_riferimento(btn, nome, key) {
     text = replaceAll(text, "-num-", "" + ref_keys[nome + key]);
     
     last.after(text);
-    
-    start_superselect();
-    start_datepickers();
+    restart_inputs();
 }
 </script>
 
-<script src="'.ROOTDIR.'/lib/init.js"></script>';
+<script>$(document).ready(init)</script>';

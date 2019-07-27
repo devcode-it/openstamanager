@@ -67,6 +67,10 @@ switch (post('op')) {
             }
         }
 
+        if (isAjaxRequest()) {
+            echo json_encode(['id' => $id_record]);
+        }
+
         break;
 
     case 'test':

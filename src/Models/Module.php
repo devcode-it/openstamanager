@@ -5,19 +5,23 @@ namespace Models;
 use Auth;
 use Common\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Traits\Components\ChecklistTrait;
+use Traits\Components\NoteTrait;
+use Traits\Components\UploadTrait;
 use Traits\ManagerTrait;
 use Traits\StoreTrait;
-use Traits\UploadTrait;
 
 class Module extends Model
 {
     use ManagerTrait;
     use UploadTrait;
     use StoreTrait;
+    use NoteTrait;
+    use ChecklistTrait;
 
     protected $table = 'zz_modules';
     protected $main_folder = 'modules';
-    protected $upload_identifier = 'id_module';
+    protected $component_identifier = 'id_module';
 
     protected $variables = [];
 

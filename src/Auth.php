@@ -1,5 +1,6 @@
 <?php
 
+use API\Response as API;
 use Models\User;
 
 /**
@@ -56,8 +57,8 @@ class Auth extends \Util\Singleton
 
         if ($database->isInstalled()) {
             // Controllo dell'accesso da API
-            if (API\Response::isAPIRequest()) {
-                $token = API\Response::getRequest()['token'];
+            if (API::isAPIRequest()) {
+                $token = API::getRequest()['token'];
 
                 $user = $database->fetchArray('SELECT `id_utente` FROM `zz_tokens` WHERE `enabled` = 1 AND `token` = :token', [
                     ':token' => $token,
@@ -232,7 +233,7 @@ class Auth extends \Util\Singleton
             session_unset();
             session_regenerate_id();
 
-            if (!API\Response::isAPIRequest()) {
+            if (!API::isAPIRequest()) {
                 flash()->clearMessages();
             }
         }
@@ -464,6 +465,11 @@ class Auth extends \Util\Singleton
 
             if (!empty($results)) {
                 $this->user = User::with('group')->find($user_id);
+
+                if (!API::isAPIRequest() && !empty($this->user->reset_token)) {
+                    $this->user->reset_token = null;
+                    $this->user->save();
+                }
             }
         } catch (PDOException $e) {
             $this->destory();

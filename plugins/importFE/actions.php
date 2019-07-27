@@ -97,8 +97,8 @@ switch (filter('op')) {
         $id_fattura = $fattura_pa->save($info);
 
         ricalcola_costiagg_fattura($id_fattura);
-        elimina_scadenza($id_fattura);
-        elimina_movimento($id_fattura, 0);
+        elimina_scadenze($id_fattura);
+        elimina_movimenti($id_fattura, 0);
         aggiungi_scadenza($id_fattura);
         aggiungi_movimento($id_fattura, 'uscita');
 

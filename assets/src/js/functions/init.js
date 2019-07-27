@@ -1,4 +1,4 @@
-$(document).ready(function () {
+function init() {
     // Inizializzazzione dei box AdminLTE
     $('.box').boxWidget();
 
@@ -23,9 +23,6 @@ $(document).ready(function () {
         });
     });
 
-    // Autosize per le textarea
-    autosize($('.autosize'));
-
     if ($('form').length) {
         $('form').not('.no-check').parsley();
     }
@@ -33,8 +30,6 @@ $(document).ready(function () {
     window.Parsley.on('field:success', function () {
         this.$element.removeClass('parsley-success');
     });
-
-    start_datepickers();
 
     // Aggiunta nell'URL del nome tab su cui tornare dopo il submit
     // Blocco del pulsante di submit dopo il primo submit
@@ -65,6 +60,5 @@ $(document).ready(function () {
         return false;
     });
 
-    start_superselect();
-    start_inputmask();
-});
+    restart_inputs();
+}

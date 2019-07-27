@@ -172,11 +172,73 @@ ALTER TABLE `co_righe_contratti` ADD `prezzo_unitario_acquisto` DECIMAL(12,4) NO
 
 -- Fix query Scadenzario
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_scadenziario`
-    LEFT JOIN `co_documenti`  ON `co_scadenziario`.`iddocumento` = `co_documenti`.`id`
-    LEFT JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-    LEFT JOIN `co_pagamenti` ON `co_documenti`.`idpagamento` = `co_pagamenti`.`id`
-    LEFT JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`
-    LEFT JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`
+   LEFT JOIN `co_documenti`  ON `co_scadenziario`.`iddocumento` = `co_documenti`.`id`
+   LEFT JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+   LEFT JOIN `co_pagamenti` ON `co_documenti`.`idpagamento` = `co_pagamenti`.`id`
+   LEFT JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`
+   LEFT JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`
 WHERE 1=1 AND ABS(`co_scadenziario`.`pagato`) < ABS(`co_scadenziario`.`da_pagare`) AND (`co_statidocumento`.`descrizione` IS NULL OR `co_statidocumento`.`descrizione` IN(''Emessa'',''Parzialmente pagato''))
 HAVING 2=2
 ORDER BY `scadenza` ASC' WHERE `name` = 'Scadenzario';
+
+-- Aggiunte impostazione Autocomple web form
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Autocompletamento form', 'on', 'list[on,off]', '1', 'Generali', '', NULL);
+
+-- Data concordata per le scadenza
+ALTER TABLE `co_scadenziario` ADD `data_concordata` DATE;
+
+UPDATE `zz_views` SET `query` = 'IF(pagato = da_pagare, ''#38CD4E'', IF(data_concordata IS NOT NULL AND data_concordata > NOW(), '' #CC9837'', IF(scadenza < NOW(), ''#CC4D37'', '''')))' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND `name` = '_bg_';
+
+-- Sistema di note interne
+CREATE TABLE IF NOT EXISTS `zz_notes` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_module` int(11),
+  `id_plugin` int(11),
+  `id_record` int(11) NOT NULL,
+  `id_utente` int(11) NOT NULL,
+  `notification_date` DATE,
+  `content` TEXT,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`id_plugin`) REFERENCES `zz_plugins`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`id_utente`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- Sistema di checklists
+CREATE TABLE IF NOT EXISTS `zz_checks` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_module` int(11),
+  `id_plugin` int(11),
+  `id_record` int(11) NOT NULL,
+  `id_utente` int(11) NOT NULL,
+  `id_utente_assegnato` int(11) NOT NULL,
+  `checked_at` TIMESTAMP NULL,
+  `content` TEXT,
+  `id_parent` int(11),
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`id_plugin`) REFERENCES `zz_plugins`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`id_utente`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`id_utente_assegnato`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`id_parent`) REFERENCES `zz_checks`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `zz_checklists` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255),
+  `id_module` int(11),
+  `id_plugin` int(11),
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`id_plugin`) REFERENCES `zz_plugins`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `zz_checklist_items` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_checklist` int(11),
+  `content` TEXT,
+  `id_parent` int(11),
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`id_checklist`) REFERENCES `zz_checklists`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`id_parent`) REFERENCES `zz_checklist_items`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB;

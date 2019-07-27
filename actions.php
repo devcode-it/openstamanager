@@ -2,6 +2,10 @@
 
 include_once __DIR__.'/core.php';
 
+use Models\Checklist\Check;
+use Models\Note;
+use Models\User;
+
 if (empty($structure) || empty($structure['enabled'])) {
     die(tr('Accesso negato'));
 }
@@ -91,6 +95,59 @@ elseif (filter('op') == 'validate') {
     echo json_encode($response);
 
     return;
+}
+
+// Aggiunta nota interna
+elseif (filter('op') == 'add_nota') {
+    $contenuto = post('contenuto');
+    $data_notifica = post('data_notifica') ?: null;
+
+    $nota = Note::build($user, $structure, $id_record, $contenuto, $data_notifica);
+
+    flash()->info(tr('Nota interna aggiunta correttamente!'));
+}
+
+// Rimozione nota interna
+elseif (filter('op') == 'delete_nota') {
+    $id_nota = post('id_nota');
+    $nota = Note::find($id_nota);
+
+    $nota->delete();
+
+    flash()->info(tr('Nota interna aggiunta correttamente!'));
+}
+
+// Rimozione checklist
+elseif (filter('op') == 'add_check') {
+    $content = post('content');
+    $parent_id = post('parent') ?: null;
+
+    $assigned_user = User::find(post('assigned_user'));
+
+    $check = Check::build($user, $assigned_user, $structure, $id_record, $content, $parent_id);
+}
+
+// Rimozione checklist
+elseif (filter('op') == 'delete_check') {
+    $check_id = post('check_id');
+    $check = Check::find($check_id);
+
+    $check->delete();
+}
+
+// Gestione check per le checklist
+elseif (filter('op') == 'toggle_check') {
+    $check_id = post('check_id');
+    $check = Check::find($check_id);
+
+    if (!empty($check)) {
+        $check->checked_at = $check->checked_at ? null : date('Y-m-d H:i:s');
+        $check->save();
+
+        echo json_encode([
+            'checked_at' => timestampFormat($check->checked_at) ?: null,
+        ]);
+    }
 }
 
 // Invio email

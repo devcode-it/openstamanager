@@ -98,13 +98,13 @@ switch (post('op')) {
 
             // Elimino la scadenza e tutti i movimenti, poi se la fattura è emessa le ricalcolo
             if ($stato['descrizione'] == 'Bozza' or $stato['descrizione'] == 'Annullata') {
-                elimina_scadenza($id_record);
-                //elimina_movimento($id_record, 0);
+                elimina_scadenze($id_record);
+                //elimina_movimenti($id_record, 0);
                 //elimino movimento anche prima nota (se pagata o parzialmente pagata)
-                elimina_movimento($id_record, 1);
+                elimina_movimenti($id_record, 1);
             } elseif ($stato['descrizione'] == 'Emessa') {
-                elimina_scadenza($id_record);
-                elimina_movimento($id_record, 0);
+                elimina_scadenze($id_record);
+                elimina_movimenti($id_record, 0);
             } elseif (($stato['descrizione'] == 'Pagato' or $stato['descrizione'] == 'Parzialmente pagato') and ($dbo->fetchNum('SELECT id  FROM co_scadenziario WHERE iddocumento = '.prepare($id_record)) == 0)) {
                 // aggiungo la scadenza come già pagata
                 aggiungi_scadenza($id_record, null, 1);
@@ -211,12 +211,11 @@ switch (post('op')) {
 
     case 'reopen':
         if (!empty($id_record)) {
-            if ($dbo->query("UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione='Bozza') WHERE id=".prepare($id_record))) {
-                elimina_scadenza($id_record);
-                elimina_movimento($id_record, 1);
-                ricalcola_costiagg_fattura($id_record);
-                flash()->info(tr('Fattura riaperta!'));
-            }
+            $dbo->query("UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione='Bozza') WHERE id=".prepare($id_record));
+            elimina_scadenze($id_record);
+            elimina_movimenti($id_record, 1);
+            ricalcola_costiagg_fattura($id_record);
+            flash()->info(tr('Fattura riaperta!'));
         }
 
         break;

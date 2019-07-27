@@ -233,6 +233,7 @@ if (!API\Response::isAPIRequest()) {
 
         $id_record = filter('id_record');
         $id_parent = filter('id_parent');
+        $id_record = $id_record == $id_parent ? '' : $id_record;
 
         Modules::setCurrent(filter('id_module'));
         Plugins::setCurrent(filter('id_plugin'));

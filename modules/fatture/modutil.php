@@ -91,7 +91,7 @@ function get_ivaindetraibile_fattura($iddocumento)
 /**
  * Elimina una scadenza in base al codice documento.
  */
-function elimina_scadenza($iddocumento)
+function elimina_scadenze($iddocumento)
 {
     $fattura = Fattura::find($iddocumento);
 
@@ -215,7 +215,7 @@ function aggiorna_scadenziario($iddocumento, $totale_pagato, $data_pagamento, $i
 /**
  * Elimina i movimenti collegati ad una fattura.
  */
-function elimina_movimento($iddocumento, $anche_prima_nota = 0)
+function elimina_movimenti($iddocumento, $anche_prima_nota = 0)
 {
     $dbo = database();
 

@@ -208,19 +208,17 @@ echo '
 <script>
     var n = '.$key.';
     $(document).on("click", "#add", function(){
-        cleanup_inputs();
-        
+        $("#template .superselect, #template .superselectajax").select2().select2("destroy");
         n++;
         var text = replaceAll($("#template").html(), "-id-", "" + n);
-        
         $(this).parent().parent().parent().find(".data").append(text);
-        restart_inputs();
+        start_superselect();
     });
     
     $(document).ready(function(){
         $("#save").addClass("hide");
         
-        $(".sortable" ).disableSelection();
+        $( ".sortable" ).disableSelection();
         $(".sortable").each(function() {
             $(this).sortable({
                 axis: "y",

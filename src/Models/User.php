@@ -40,7 +40,6 @@ class User extends Model
     /**
      * Crea un nuovo utente.
      *
-     * @param Group  $gruppo
      * @param string $username
      * @param string $email
      * @param string $password
@@ -56,8 +55,6 @@ class User extends Model
         $model->username = $username;
         $model->email = $email;
         $model->password = $password;
-
-        $model->enabled = 1;
 
         $model->save();
 
@@ -173,11 +170,6 @@ class User extends Model
     public function logs()
     {
         return $this->hasMany(Log::class, 'id_utente');
-    }
-
-    public function notes()
-    {
-        return $this->hasMany(Note::class, 'id_utente');
     }
 
     public function anagrafica()

@@ -277,7 +277,7 @@ echo '
 </form>';
 
 echo '
-<script>$(document).ready(init)</script>';
+<script src="'.ROOTDIR.'/lib/init.js"></script>';
 
 ?>
 
@@ -325,7 +325,6 @@ echo '
 
     function ricalcola_totale() {
         totale = 0.00;
-        totale_qta = 0;
 
         $('input[id*=qta_]').each(function() {
             qta = $(this).val().toEnglish();
@@ -348,8 +347,6 @@ echo '
             if(subtot) {
                 totale += subtot * qta + iva * qta;
             }
-
-            totale_qta += qta;
         });
 
         $('#totale').html((totale.toLocale()) + " " + globals.currency);
@@ -358,7 +355,7 @@ echo '
 
         if (empty($options['allow-empty'])) {
             echo '
-        if (totale_qta > 0)
+        if (tot_qta > 0)
             $("#submit_btn").show();
         else
             $("#submit_btn").hide();';

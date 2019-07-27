@@ -7,7 +7,7 @@ $_SESSION['superselect']['idanagrafica'] = $utente['id_anagrafica'];
 echo '
 	<div class="row">
 		<div class="col-md-12">
-		{[ "type": "text", "label": "'.tr('Username').'", "name": "username", "required": 1, "value": "'.$utente['username'].'", "validation": "username||'.($utente['id'] ?: 0).'" ]}
+		{[ "type": "text", "label": "'.tr('Username').'", "name": "username", "required": 1, "value": "'.$utente['username'].'", "validation": "username" ]}
 		</div>
     </div>';
 

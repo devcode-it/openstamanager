@@ -221,7 +221,7 @@ if (!$is_completato) {
 }
 
 echo '
-<script>$(document).ready(init)</script>
+<script src="'.$rootdir.'/lib/init.js"></script>
 
 <script type="text/javascript">
     $(document).ready(function(){';

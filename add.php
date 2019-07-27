@@ -36,10 +36,17 @@ echo '
 
 <script>
 $(document).ready(function(){
-    cleanup_inputs();
-
     var form = $("#custom_fields_top-add").parent().find("form").first();
-                        
+    
+    // Rimozione select inizializzati
+    $("#custom_fields_bottom-add").find("select").each(function () {
+        $(this).select2().select2("destroy");
+    });
+    
+    $("#custom_fields_bottom-add").find("select").each(function () {
+        $(this).select2().select2("destroy");
+    });
+                    
     // Campi a inizio form
     form.prepend($("#custom_fields_top-add").html());
 
@@ -53,9 +60,10 @@ $(document).ready(function(){
     if (!last.length) {
         last = form.find(".row").eq(-2);
     }
-    
+
     last.after($("#custom_fields_bottom-add").html());
-    restart_inputs();
+    
+    start_superselect();
 });
 </script>';
 
@@ -90,4 +98,4 @@ $(document).ready(function(){
 }
 
 echo '
-<script>$(document).ready(init)</script>';
+	<script src="'.$rootdir.'/lib/init.js"></script>';

@@ -11,7 +11,7 @@ switch ($name) {
     case 'username':
         $disponibile = User::where([
             ['username', $value],
-            ['id', '<>', $id_record],
+            ['idanagrafica', '<>', $id_record],
         ])->count() == 0;
 
         $message = $disponibile ? tr("L'username è disponbile") : tr("L'username è  già utilizzato");

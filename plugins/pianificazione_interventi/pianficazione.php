@@ -233,7 +233,7 @@ echo '
 </form>';
 
 echo '
-<script>$(document).ready(init)</script>';
+<script src="'.$rootdir.'/lib/init.js"></script>';
 
 echo '
 <script>

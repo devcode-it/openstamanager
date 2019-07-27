@@ -230,7 +230,7 @@ if (!empty($id_intervento)) {
                 <div class="col-md-3">
                     {[ "type": "timestamp", "label": "<?php echo tr('Data/ora richiesta'); ?>", "name": "data_richiesta", "required": 1, "value": "<?php echo $data_richiesta ?: '-now-'; ?>" ]}
                 </div>
-
+                
                 <div class="col-md-3">
                     {[ "type": "timestamp", "label": "<?php echo tr('Data/ora scadenza'); ?>", "name": "data_scadenza", "required": 0, "value": "<?php echo $data_scadenza; ?>" ]}
                 </div>
@@ -292,7 +292,7 @@ if (!empty($id_intervento)) {
 	</div>
 </form>
 
-<script>$(document).ready(init)</script>
+<script src="<?php echo $rootdir; ?>/lib/init.js"></script>
 
 <script type="text/javascript">
 	$(document).ready(function(){

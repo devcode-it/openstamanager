@@ -94,7 +94,7 @@ $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione']
 				<div class="col-md-3">
 					{[ "type": "timestamp", "label": "<?php echo tr('Data/ora richiesta'); ?>", "name": "data_richiesta", "required": 1, "value": "$data_richiesta$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
 				</div>
-
+				
 				<div class="col-md-3">
 					{[ "type": "timestamp", "label": "<?php echo tr('Data/ora scadenza'); ?>", "name": "data_scadenza", "required": 0, "value": "$data_scadenza$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
 				</div>
@@ -286,8 +286,6 @@ include $structure->filepath('ajax_righe.php');
 	</div>
 </form>
 
-{( "name": "checklists", "id_module": "$id_module$", "id_record": "$id_record$" )}
-
 {( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$", <?php echo ($record['flag_completato']) ? '"readonly": 1' : '"readonly": 0'; ?> )}
 
 <!-- EVENTUALE FIRMA GIA' EFFETTUATA -->
@@ -357,15 +355,15 @@ include $structure->filepath('ajax_righe.php');
 			//session_set('superselect,idzona', $(this).selectData().idzona, 0);
 		}
 	});
-
+	
 	$('#codice_cig, #codice_cup').bind("keyup change", function(e) {
-
+		
 		if ($('#codice_cig').val() == '' && $('#codice_cup').val() == '' ){
 			$('#id_documento_fe').prop('required', false);
 		}else{
 			$('#id_documento_fe').prop('required', true);
 		}
-
+	
 	});
 
 </script>

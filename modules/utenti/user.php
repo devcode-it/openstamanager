@@ -37,28 +37,6 @@ echo '
 
 include $structure->filepath('components/photo.php');
 include $structure->filepath('components/base.php');
-
-if (!empty($user)) {
-    echo '
-	<div class="row">
-		<div class="col-md-12">
-		    {[ "type": "checkbox", "label": "'.tr('Cambia password').'", "name": "change_password", "value": "1" ]}
-		</div>
-    </div>
-    
-    <script>
-        $("#change_password").change(function() {
-            if (this.checked) {
-                $("#password").attr("disabled", false);
-                $("#password").change();
-            } else {
-                $("#password").attr("disabled", true);
-                $("#submit-button").attr("disabled", false).removeClass("disabled");
-            }
-        })
-    </script>';
-}
-
 include $structure->filepath('components/password.php');
 
 echo '
@@ -91,4 +69,4 @@ function submitCheck() {
 }
 </script>
 
-<script>$(document).ready(init)</script>';
+<script src="'.$rootdir.'/lib/init.js"></script>';

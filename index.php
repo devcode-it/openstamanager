@@ -127,7 +127,7 @@ if (!empty(flash()->getMessage('error'))) {
 }
 
 echo '
-			<form action="?op=login" method="post" class="login-box box" autocomplete="off" >
+			<form action="?op=login" method="post" class="login-box box">
 				<div class="box-header with-border text-center">
 					<img src="'.App::getPaths()['img'].'/logo.png" alt="'.tr('OSM Logo').'">
 					<h3 class="box-title">'.tr('OpenSTAManager').'</h3>

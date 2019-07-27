@@ -117,17 +117,21 @@ foreach ($result['altri_dati'] as $dato) {
 
 echo '
 <script>
+function replaceAll(str, find, replace) {
+  return str.replace(new RegExp(find, "g"), replace);
+}
+
 var n = '.($key - 1).';
 function add_altri_dati(btn){
-    cleanup_inputs();
-    
+    $("#template .superselect, #template .superselectajax").select2().select2("destroy");
     var last = $(btn).closest("table").find("tr[id^=last-altri_dati]").parent().last();
 
     n++;
     var text = replaceAll($("#altri_dati-templace").html(), "-id-", "" + n);
     
     last.after(text);
-    restart_inputs();
+    
+    start_superselect();
 };
 </script>
 
@@ -154,4 +158,4 @@ echo '
 </form>';
 
 echo '
-<script>$(document).ready(init)</script>';
+<script src="'.ROOTDIR.'/lib/init.js"></script>';

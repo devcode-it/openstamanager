@@ -106,14 +106,6 @@ class Upload extends Model
     /**
      * @return string
      */
-    public function getFileurlAttribute()
-    {
-        return str_replace('\\', '/', $this->filepath);
-    }
-
-    /**
-     * @return string
-     */
     public function getOriginalNameAttribute()
     {
         return $this->attributes['original'];

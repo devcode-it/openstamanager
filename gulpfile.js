@@ -65,13 +65,6 @@ gulp.task('srcJS', function () {
         .pipe(concat('custom.min.js'))
         .pipe(minifyJS())
         .pipe(gulp.dest(config.production + '/' + config.paths.js));
-
-    gulp.src([
-        config.development + '/' + config.paths.js + '/functions/*.js',
-    ])
-        .pipe(concat('functions.min.js'))
-        .pipe(minifyJS())
-        .pipe(gulp.dest(config.production + '/' + config.paths.js));
 });
 
 

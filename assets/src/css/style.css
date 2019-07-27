@@ -826,7 +826,7 @@ input.small-width {
     margin-bottom: 5px;
 }
 
-.skin-default .nav.navbar-nav li a{
+.skin-default .nav.navbar-nav li a{ 
     color: #FFFFFF;
 }
 .skin-default .nav.navbar-nav li a:hover{
@@ -845,48 +845,8 @@ input.small-width {
     hyphens: auto;
 }
 
+
 .request .morelink{
     color: #fff;
     font-weight: bold;
-}
-
-/* Checklist */
-ul.checklist {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-}
-
-ul.checklist li {
-    cursor: pointer;
-    position: relative;
-    padding: 12px 8px 12px 10px;
-    font-size: 18px;
-    transition: 0.2s;
-
-    /* make the list items unselectable */
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
-ul.checklist li:hover {
-    background: #ddd;
-}
-
-ul.checklist li.checked  {
-    background: #eee;
-}
-
-ul.checklist li.checked > .check-text {
-    text-decoration: line-through;
-}
-
-ul.checklist li > .check-icon {
-    display: none;
-}
-
-ul.checklist li.checked > .check-icon {
-    display: inline-block;
 }

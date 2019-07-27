@@ -7,19 +7,10 @@ echo '
 	<input type="hidden" name="op" value="update">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="id_record" value="'.$id_record.'">
-	
-	<input type="hidden" name="tipo" value="'.$record['tipo'].'">
-	<input type="hidden" name="descrizione" value="'.$record['descrizione'].'">
-	<input type="hidden" name="iddocumento" value="'.$record['iddocumento'].'">
 
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title">
-			    '.tr('Dettagli scadenza').'
-                <button type="button" class="btn btn-xs btn-info pull-right" id="add-scadenza">
-                    <i class="fa fa-plus"></i> '.tr('Aggiungi scadenza').'
-                </button>
-            </h3>
+			<h3 class="panel-title">'.tr('Dettagli scadenza').'</h3>
 		</div>
 
 		<div class="panel-body">
@@ -30,17 +21,41 @@ echo '
 					<table class="table table-striped table-hover table-condensed table-bordered">';
 
 $rs = $dbo->fetchArray('SELECT * FROM (co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id) INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica WHERE co_documenti.id='.prepare($record['iddocumento']));
-$dir = $rs[0]['dir'];
-$numero = (!empty($rs[0]['numero_esterno'])) ? $rs[0]['numero_esterno'] : $rs[0]['numero'];
-$modulo_fattura = $dir == 'entrata' ? 'Fatture di vendita' : 'Fatture di acquisto';
 
-if (!empty($rs)) {
+$numero = (!empty($rs[0]['numero_esterno'])) ? $rs[0]['numero_esterno'] : $rs[0]['numero'];
+
+if ($rs[0]['dir'] == 'entrata') {
+    $dir = 'entrata';
+    $modulo = 'Fatture di vendita';
     echo "
                         <tr>
-                            <th width='120'>".($dir == 'entrata' ? tr('Cliente') : tr('Fornitore')).':</th>
+                            <th width='120'>".tr('Cliente').':</th>
                             <td>
                                 '.Modules::link('Anagrafiche', $rs[0]['idanagrafica'], $rs[0]['ragione_sociale']).'
                             </td>
+                        </tr>';
+    echo '
+                        <tr>
+                            <th>'.tr('Documento').':</th>
+                            <td>'.$rs[0]['descrizione'].'</td>
+                        </tr>';
+    echo '
+                        <tr>
+                            <th>'.tr('Numero').':</th>
+                            <td>'.$numero.'</td>
+                        </tr>';
+    echo '
+                        <tr>
+                            <th>'.tr('Data').':</th>
+                            <td>'.Translator::dateToLocale($rs[0]['data']).'</td>
+                        </tr>';
+} elseif ($rs[0]['dir'] == 'uscita') {
+    $dir = 'uscita';
+    $modulo = 'Fatture di acquisto';
+    echo "
+                        <tr>
+                            <th width='120'>".tr('Fornitore').':</th>
+                            <td>'.$rs[0]['ragione_sociale'].'</td>
                         </tr>';
     echo '
                         <tr>
@@ -69,22 +84,17 @@ if (!empty($rs)) {
 echo '
                     </table>
 
-                    '.Modules::link($modulo_fattura, $record['iddocumento'], '<i class="fa fa-folder-open"></i> '.tr('Apri documento'), null, 'class="btn btn-primary"').'
+                    '.Modules::link($modulo, $record['iddocumento'], '<i class="fa fa-folder-open"></i> '.tr('Apri documento'), null, 'class="btn btn-primary"').'
 				</div>
 
 				<!-- Elenco scadenze -->
 				<div class="col-md-5">
 					<table class="table table-hover table-condensed table-bordered">
-                        <thead>
-                            <tr>
-                                <th width="150">'.tr('Data').'</th>
-                                <th width="150">'.tr('Importo').'</th>
-                                <th width="150">'.tr('Pagato').'</th>
-                                <th width="150">'.tr('Data concordata').'</th>
-                            </tr>
-                        </thead>
-                        
-                        <tbody id="scadenze">';
+					    <tr>
+                            <th width="150">'.tr('Data').'</th>
+                            <th width="150">'.tr('Importo').'</th>
+                            <th width="150">'.tr('Pagato').'</th>
+                        </tr>';
 
 $totale_da_pagare = 0;
 $totale_pagato = 0;
@@ -110,23 +120,18 @@ for ($i = 0; $i < count($rs); ++$i) {
     echo '
                         <tr class="'.$class.'">
                             <td align="center">
-                                {[ "type": "date", "name": "scadenza['.$rs[$i]['id'].']", "value": "'.$rs[$i]['scadenza'].'" ]}
+                                {[ "type": "date", "name": "data['.$rs[$i]['id'].']", "value": "'.$rs[$i]['scadenza'].'" ]}
                             </td>
 
                             <td align="right">
-                                {[ "type": "number", "name": "da_pagare['.$rs[$i]['id'].']", "decimals": 2, "value": "'.Translator::numberToLocale($rs[$i]['da_pagare'], 2).'", "onchange": "controlloTotale()" ]}
+                                {[ "type": "number", "name": "scadenza['.$rs[$i]['id'].']", "decimals": 2, "value": "'.Translator::numberToLocale($rs[$i]['da_pagare'], 2).'" ]}
                             </td>
 
                             <td align="right">
                                 {[ "type": "number", "name": "pagato['.$rs[$i]['id'].']", "decimals": 2, "value": "'.Translator::numberToLocale($rs[$i]['pagato']).'"  ]}
                             </td>
-                            
-                            <td align="center">
-                                {[ "type": "date", "name": "data_concordata['.$rs[$i]['id'].']", "value": "'.$rs[$i]['data_concordata'].'" ]}
-                            </td>
                         </tr>';
 }
-
 $totale_da_pagare = sum(array_column($rs, 'da_pagare'));
 $totale_pagato = sum(array_column($rs, 'pagato'));
 
@@ -140,23 +145,20 @@ $(document).ready(function(){
 }
 
 echo '
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td align="right"><b>'.tr('Totale').'</b></td>
-                                <td align="right" id="totale_utente">'.Translator::numberToLocale($totale_da_pagare).'</td>
-                                <td align="right"></td>
-                            </tr>
-                        </tfoot>';
+                        <tr>
+                            <td align="right"><b>'.tr('Totale').'</b></td>
+                            <td align="right" id="totale_utente">'.Translator::numberToLocale($totale_da_pagare).'</td>
+                            <td align="right"></td>
+                        </tr>';
 
 ?>
 
 					</table>
 
                     <div class='pull-right'>
-                        <a onclick="launch_modal( 'Registra contabile pagamento', '<?php echo $rootdir; ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>&dir=<?php echo $dir; ?>&id_scadenze=<?php echo $id_record; ?>', 1 );" class="btn btn-sm btn-primary"><i class="fa fa-euro"></i> <?php echo tr('Registra contabile pagamento...'); ?></a>
+                        <a onclick="launch_modal( 'Registra contabile pagamento', '<?php echo $rootdir; ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>&iddocumento=<?php echo $record['iddocumento']; ?>&dir=<?php echo $dir; ?>&idscadenza=<?php echo $id_record; ?>', 1 );" class="btn btn-sm btn-primary"><i class="fa fa-euro"></i> <?php echo tr('Registra contabile pagamento...'); ?></a>
                     </div>
-
+					
 					<div class="clearfix"></div>
 
 					<div class="alert alert-error hide" id="totale"><?php echo tr('Il totale da pagare deve essere pari a _MONEY_', [
@@ -172,6 +174,8 @@ echo '
 			</div>
 		</div>
 	</div>
+
+	<div class="clearfix"></div>
 </form>
 
 {( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}
@@ -184,90 +188,59 @@ if ($records[0]['iddocumento'] == 0) {
 </a>
 <?php
                         }
-
-echo '
-<table class="hide">
-    <tbody id="scadenza-template">
-        <tr class="danger">
-            <input type="hidden" name="nuova[-id-]" value="1">
-            
-            <td align="center">
-                {[ "type": "date", "name": "scadenza[-id-]" ]}
-            </td>
-    
-            <td align="right">
-                {[ "type": "number", "name": "da_pagare[-id-]", "decimals": 2, "onchange": "controlloTotale()" ]}
-            </td>
-    
-            <td align="right">
-                {[ "type": "number", "name": "pagato[-id-]", "decimals": 2 ]}
-            </td>
-            
-            <td align="center">
-                {[ "type": "date", "name": "data_concordata[-id-]" ]}
-            </td>
-        </tr>
-    </tbody>
-</table>
-
-<script>
-    var i = '.$i.';
-	$(document).on("click", "#add-scadenza", function(){
-        cleanup_inputs();
-        
-        i++;
-		var text = replaceAll($("#scadenza-template").html(), "-id-", "" + i);
-		
-		$("#scadenze").append(text);
-		restart_inputs();
-	});
-</script>';
-
 ?>
 
 <script>
     globals.cifre_decimali = 2;
-
+    
 	$(document).ready(function(){
-        controlloTotale();
-
+        totale_ok();
+        
         <?php
         if ($dir == 'uscita') {
             echo '
         $("#email-button").remove();';
         }
+
+        if ($record['iddocumento'] != 0) {
+            ?>
+        $('input[name*=scadenza]').keyup( function(){ totale_ok(); } );
+        <?php
+        }
         ?>
 	});
 
-    function controlloTotale() {
-        totale_da_pagare = $('#totale_da_pagare').val().toEnglish();
-        totale_utente = 0;
+	function totale_ok(){
+		totale_da_pagare	= $('#totale_da_pagare').val().toEnglish();
+		totale_utente		= 0;
 
-        $('input[name*=da_pagare]').each(function() {
+		$('input[name*=scadenza]').each( function(){
+			
+			totale_utente += $(this).val().toEnglish();
+		
+		});
 
-            totale_utente += $(this).val().toEnglish();
+		if( isNaN(totale_utente) ){
+			totale_utente = 0;
+		}
 
-        });
-
-        if (isNaN(totale_utente)) {
-            totale_utente = 0;
-        }
-
-        totale_utente = Math.round(totale_utente * 100) / 100;
-        totale_da_pagare = Math.round(totale_da_pagare * 100) / 100;
+		totale_utente = Math.round(totale_utente*100)/100;
+		totale_da_pagare = Math.round(totale_da_pagare*100)/100;
 
 
-        diff = Math.abs(totale_da_pagare) - Math.abs(totale_utente);
+		diff = Math.abs(totale_da_pagare) - Math.abs(totale_utente);
 
-        if (diff == 0) {
-            $('#btn-saves').removeClass('hide');
-            $('#totale').addClass('hide');
-        } else {
-            $('#btn-saves').addClass('hide');
-            $('#totale').removeClass('hide');
-        }
+		if( diff == 0 ){
+			$('#btn-saves').removeClass('hide');
+			$('#totale').addClass('hide');
+		}
 
-        $('#diff').html(diff.toLocale());
-        $('#totale_utente').html(totale_utente.toLocale());
-    }
+		else{
+			$('#btn-saves').addClass('hide');
+			$('#totale').removeClass('hide');
+		}
+
+		$('#diff').html(diff.toLocale());
+		$('#totale_utente').html(totale_utente.toLocale());
+	}
 </script>

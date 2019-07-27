@@ -28,4 +28,4 @@ echo '
 	</div>
 </form>	
 
-<script>$(document).ready(init)</script>';
+<script src="'.$rootdir.'/lib/init.js"></script>';

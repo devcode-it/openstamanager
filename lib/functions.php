@@ -283,7 +283,6 @@ function redirectOperation($id_module, $id_record)
     if (!empty($backto)) {
         $hash = filter('hash');
         $hash = !starts_with($hash, '#') ? '#'.$hash : $hash;
-        $hash = $hash == '#tab_0' ? '' : $hash;
 
         if ($backto == 'record-edit') {
             redirect(ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.$hash);

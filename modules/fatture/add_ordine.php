@@ -45,7 +45,7 @@ echo '
 
 $file = basename(__FILE__);
 echo '
-<script>$(document).ready(init)</script>
+<script src="'.$rootdir.'/lib/init.js"></script>
     
 <script>
     var content = $("#righe_documento");

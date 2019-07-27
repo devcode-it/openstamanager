@@ -175,11 +175,11 @@ echo '
 <script>
 $(document).ready(function(){
 	$(document).on('click', '#add', function(){
-        cleanup_inputs();
+        $("#template .superselect, #template_filter .superselectajax").select2().select2("destroy");
 
-	    $(this).parent().parent().find('.data').append($('#template').html());
+        $(this).parent().parent().find('.data').append($('#template').html());
 
-        restart_inputs();
+        start_superselect();
 	});
 
 	$(document).on('change', '[id*=scadenza]', function(){

@@ -271,11 +271,3 @@ if (filter('op') == 'link_file') {
         Settings::setValue($nome, $upload);
     }
 }
-// Operazioni aggiuntive per il logo
-elseif (filter('op') == 'unlink_file') {
-    $nome = 'Logo stampe';
-
-    if (setting('Azienda predefinita') == $id_record && filter('filename') == setting($nome)) {
-        Settings::setValue($nome, '');
-    }
-}

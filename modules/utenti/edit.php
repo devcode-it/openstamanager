@@ -54,7 +54,7 @@ if (!empty($utenti)) {
         // Disabilitazione utente, se diverso da id_utente #1 (admin)
         if ($utente['id'] == '1') {
             echo '
-                <a title="'.tr("Non è possibile disabilitare l'utente admin").'" class="text-muted tip">
+                <a title=""'.tr("Non è possibile disabilitare l'utente admin").'" class="text-muted tip">
                     <i class="fa fa-2x fa-eye-slash"></i>
                 </a>';
         } elseif ($utente['enabled'] == 1) {

@@ -4,21 +4,19 @@ include_once __DIR__.'/core.php';
 
 use Carbon\Carbon;
 
-if (empty($id_record) && !empty($id_module) && empty($id_plugin)) {
+if (empty($id_record) && !empty($id_module)) {
     redirect(ROOTDIR.'/controller.php?id_module='.$id_module);
-} elseif (empty($id_record) && empty($id_module) && empty($id_plugin)) {
+} elseif (empty($id_record) && empty($id_module)) {
     redirect(ROOTDIR.'/index.php');
 }
 
 include_once App::filepath('include|custom|', 'top.php');
 
-if (!empty($id_record)) {
-    Util\Query::setSegments(false);
-    $query = Util\Query::getQuery($structure, [
-        'id' => $id_record,
-    ]);
-    Util\Query::setSegments(true);
-}
+Util\Query::setSegments(false);
+$query = Util\Query::getQuery($structure, [
+    'id' => $id_record,
+]);
+Util\Query::setSegments(true);
 
 $query = str_replace(['AND `deleted_at` IS NULL', '`deleted_at` IS NULL AND', '`deleted_at` IS NULL', 'AND deleted_at IS NULL', 'deleted_at IS NULL AND', 'deleted_at IS NULL'], '', $query);
 
@@ -89,14 +87,6 @@ if (empty($record) || !$has_access) {
         echo '
 				<li class="bg-warning">
 					<a data-toggle="tab" href="#tab_info" id="link-tab_info">'.tr('Info').'</a>
-				</li>';
-    }
-
-    // Tab per le note interne
-    if ($structure->permission != '-') {
-        echo '
-				<li class="bg-info">
-					<a data-toggle="tab" href="#tab_note" id="link-tab_note">'.tr('Note interne').'</a>
 				</li>';
     }
 
@@ -250,10 +240,17 @@ if (empty($record) || !$has_access) {
 
                 <script>
                 $(document).ready(function(){
-                    cleanup_inputs();
-                    
                     var form = $("#module-edit").find("form").first();
-                  
+                    
+                    // Rimozione select inizializzati
+                    $("#custom_fields_bottom-edit").find("select").each(function () {
+                        $(this).select2().select2("destroy");
+                    });
+                    
+                    $("#custom_fields_bottom-edit").find("select").each(function () {
+                        $(this).select2().select2("destroy");
+                    });
+
                     // Campi a inizio form
                     form.prepend($("#custom_fields_top-edit").html());
 
@@ -267,107 +264,12 @@ if (empty($record) || !$has_access) {
                     if (!last.length) {
                         last = form.find(".row").eq(-2);
                     }
-                    
+
                     last.after($("#custom_fields_bottom-edit").html());
-                    restart_inputs();
+                    
+                    start_superselect();
                 });
                 </script>';
-
-    if ($structure->permission != '-') {
-        echo '
-                <div id="tab_note" class="tab-pane">';
-
-        $note = $structure->notes($id_record);
-        if (!empty($note)) {
-            echo '
-        <div class="box box-warning direct-chat direct-chat-warning">
-            <div class="box-header with-border">
-                <h3 class="box-title">'.tr('Note interne').'</h3>
-            </div>
-
-            <div class="box-body">
-                <div class="direct-chat-messages" style="height: 50vh">';
-
-            foreach ($note as $nota) {
-                $utente = $nota->user;
-                $nome = $utente->anagrafica ? $utente->anagrafica->ragione_sociale.' ('.$utente->username.')' : $utente->username;
-                $photo = $utente->photo;
-
-                echo '
-                    <div class="direct-chat-msg '.($utente->id == $user->id ? 'right' : '').'" id="nota_'.$nota->id.'">
-                        <div class="direct-chat-info clearfix">
-                            <span class="direct-chat-name pull-left">'.$nome.'</span>
-                            <span class="direct-chat-timestamp pull-right">
-                                '.timestampFormat($nota->created_at).'
-                            </span>
-                        </div>';
-
-                if ($photo) {
-                    echo '
-                        <img class="direct-chat-img" src="'.$photo.'">';
-                } else {
-                    echo '
-                
-                        <i class="fa fa-user-circle-o direct-chat-img fa-3x" alt="'.tr('OpenSTAManager').'"></i>';
-                }
-
-                echo '
-                        <div class="direct-chat-text">
-                            <div class="pull-right">';
-
-                if (!empty($nota->notification_date)) {
-                    echo '
-                                <span class="label label-default tip" title="'.tr('Data di notifica').'" style="margin-right: 5px">
-                                    <i class="fa fa-bell"></i> '.dateFormat($nota->notification_date).'
-                                </span>';
-                }
-
-                if ($user->is_admin || $utente->id == $user->id) {
-                    echo '
-                                <button type="button" class="btn btn-danger btn-xs ask" data-op="delete_nota" data-id_nota="'.$nota->id.'" data-msg="'.tr('Rimuovere questa nota?').'" data-backto="record-edit">
-                                    <i class="fa fa-trash-o"></i>
-                                </button>';
-                }
-
-                echo '
-                            </div>
-                            '.$nota->content.'
-                        </div>
-                    </div>';
-            }
-            echo '
-                </div>
-            </div>
-        </div>';
-        } else {
-            echo '
-                    <p>'.tr('Non sono presenti note interne').'</p>';
-        }
-
-        if ($structure->permission == 'rw') {
-            echo '
-                    <form action="" method="post">
-                        <input type="hidden" name="op" value="add_nota">
-                        <input type="hidden" name="backto" value="record-edit">
-                        
-                        {[ "type": "date", "label": "'.tr('Data di notifica').'", "name": "data_notifica" ]}
-
-                        {[ "type": "ckeditor", "label": "'.tr('Nuova nota').'", "name": "contenuto", "required": 1]}
-                        
-                        <!-- PULSANTI -->
-                        <div class="row">
-                            <div class="col-md-12 text-right">
-                                <button type="sumbit" class="btn btn-primary">
-                                    <i class="fa fa-plus"></i> '.tr('Aggiungi').'
-                                </button>
-                            </div>
-                        </div>
-                    </form>';
-        }
-
-        echo '
-                </div>';
-    }
 
     // Informazioni sulle operazioni
     if (Auth::admin()) {
@@ -446,7 +348,6 @@ if (empty($record) || !$has_access) {
                         <b>'.tr('Informazione:').'</b> '.tr('Nessun log disponibile per questa scheda').'.
                     </div>';
         }
-
         echo '
                 </div>';
     }

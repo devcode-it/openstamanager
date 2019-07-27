@@ -47,14 +47,9 @@ switch (filter('op')) {
 
             $utente->username = $username;
             $utente->email = $email;
-
-            $cambia_password = filter('change_password');
-            if (!empty($cambia_password)) {
-                $utente->password = $password;
-            }
+            $utente->password = $password;
         } else {
-            $gruppo = \Models\Group::find($id_record);
-            $utente = User::build($gruppo, $username, $email, $password);
+            $utente = User::build($username, $email, $password);
         }
 
         // Foto

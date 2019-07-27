@@ -54,11 +54,6 @@ switch (get('op')) {
 
         break;
 
-    case 'checklists':
-        echo '{( "name": "checklists", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "id_plugin": "'.$id_plugin.'" )}';
-
-        break;
-
     case 'active_users':
         $posizione = get('id_module');
         if (isset($id_record)) {

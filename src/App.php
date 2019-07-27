@@ -35,7 +35,6 @@ class App
         // JS
         'js' => [
             'app.min.js',
-            'functions.min.js',
             'custom.min.js',
             'i18n/parsleyjs/|lang|.min.js',
             'i18n/select2/|lang|.min.js',
@@ -191,10 +190,10 @@ class App
         }
 
         // JS aggiuntivi per gli utenti connessi
-        //if (Auth::check()) {
-        //$assets['js'][] = ROOTDIR.'/lib/functions.js';
-        //$assets['js'][] = ROOTDIR.'/lib/init.js';
-        //}
+        if (Auth::check()) {
+            $assets['js'][] = ROOTDIR.'/lib/functions.js';
+            $assets['js'][] = ROOTDIR.'/lib/init.js';
+        }
 
         return $assets;
     }

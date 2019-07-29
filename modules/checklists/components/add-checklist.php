@@ -4,26 +4,20 @@ include_once __DIR__.'/../../../core.php';
 
 $manager_id = filter('manager_id');
 
-$checks = $structure->checks($id_record);
+$checklists = $structure->checklists();
 $list = [];
-foreach ($checks as $check) {
+foreach ($checklists as $checklist) {
     $list[] = [
-        'id' => $check->id,
-        'text' => $check->content,
+        'id' => $checklist->id,
+        'text' => $checklist->name,
     ];
 }
 
 echo '
 <form action="" method="post" id="check-form">
     <div class="row">
-        <div class="col-md-12">
-            {[ "type": "text", "label": "'.tr('Contenuto').'", "name": "content", "required": 1 ]}
-        </div>
-    </div>
-    
-    <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Genitore').'", "name": "parent", "values": '.json_encode($list).', "required": 1 ]}
+            {[ "type": "select", "label": "'.tr('Checklist').'", "name": "checklist", "values": '.json_encode($list).', "required": 1 ]}
         </div>
         
          <div class="col-md-6">
@@ -48,27 +42,11 @@ import Checklist from "./modules/checklists/js/checklist.js";
 
 $(document).ready(function() {
     $("#check-add").click(function(event){
-        addCheck(this);
-    });
-    
-    $("#parent").change(function(){
-        if ($(this).val()) {
-            $("#assigned_user").val("").attr("disabled", true).attr("required", false);
-        } else {
-            $("#assigned_user").val("").attr("disabled", false).attr("required", true);
-        }
-    });
-    
-    $("#assigned_user").change(function(){
-        if ($(this).val()) {
-            $("#parent").val("").attr("disabled", true).attr("required", false);
-        } else {
-            $("#parent").val("").attr("disabled", false).attr("required", true);
-        }
+        addChecklist(this);
     });
 });
 
-function addCheck(btn) {
+function addChecklist(btn) {
     var $form = $(btn).closest("form");
     
     var continua = true;
@@ -92,9 +70,8 @@ function addCheck(btn) {
         id_record: "'.$id_record.'",
     }, "'.$manager_id.'");
    
-    checklist.addCheck({
-        content: $form.find("#content").val(),
-        parent: $form.find("#parent").val(),
+    checklist.cloneChecklist({
+        checklist: $form.find("#checklist").val(),
         assigned_user: $form.find("#assigned_user").val(),
     });
     

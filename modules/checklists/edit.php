@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-use HTMLBuilder\Manager\ChecklistManager;
+use Modules\Checklists\HTMLBuilder\ChecklistManager;
 
 echo '
 <form action="" method="post" id="edit-form">
@@ -37,17 +37,17 @@ echo '
 $(document).ready(function() {
     $("#module").change(function() {
         if ($(this).val()){
-            $("#plugin").attr("disabled", true);
+            $("#plugin").val("").attr("disabled", true);
         } else {
-            $("#plugin").attr("disabled", false);
+            $("#plugin").val("").attr("disabled", false);
         }
     });
     
     $("#plugin").change(function() {
         if ($(this).val()){
-            $("#module").attr("disabled", true);
+            $("#module").val("").attr("disabled", true);
         } else {
-            $("#module").attr("disabled", false);
+            $("#module").val("").attr("disabled", false);
         }
     });
 });

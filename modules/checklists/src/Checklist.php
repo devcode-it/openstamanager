@@ -3,6 +3,9 @@
 namespace Modules\Checklists;
 
 use Common\Model;
+use Models\Module;
+use Models\Plugin;
+use Models\User;
 
 class Checklist extends Model
 {
@@ -28,6 +31,24 @@ class Checklist extends Model
     public function mainChecks()
     {
         return $this->checks()->whereNull('id_parent')->orderBy('created_at')->get();
+    }
+
+    public function copia(User $user, User $assigned_user, $id_record)
+    {
+        $structure = $this->plugin ?: $this->module;
+
+        $checks = $this->mainChecks();
+        $relations = [];
+
+        while (!$checks->isEmpty()) {
+            $child = $checks->shift();
+            $id_parent = $child->id_parent ? $relations[$child->id_parent] : null;
+
+            $check = Check::build($user, $structure, $id_record, $child->content, $assigned_user, $id_parent);
+            $relations[$child->id] = $check->id;
+
+            $checks = $checks->merge($child->children);
+        }
     }
 
     /* Relazioni Eloquent */

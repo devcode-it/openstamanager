@@ -14,7 +14,7 @@ trait ChecklistTrait
 
     public function mainChecks($id_record)
     {
-        return $this->hasMany(Check::class, $this->component_identifier)->where('id_record', $id_record)->whereNull('id_parent')->orderBy('created_at')->get();
+        return $this->hasMany(Check::class, $this->component_identifier)->where('id_record', $id_record)->whereNull('id_parent')->orderBy('id_utente_assegnato', 'created_at')->get();
     }
 
     public function checklists()

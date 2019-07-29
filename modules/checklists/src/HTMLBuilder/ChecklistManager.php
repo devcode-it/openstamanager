@@ -3,6 +3,7 @@
 namespace Modules\Checklists\HTMLBuilder;
 
 use HTMLBuilder\Manager\ManagerInterface;
+use Models\User;
 use Modules;
 use Plugins;
 
@@ -26,62 +27,76 @@ class ChecklistManager implements ManagerInterface
         $module = Modules::get('Checklists');
         $structure = Plugins::get($options['id_plugin']) ?: Modules::get($options['id_module']);
 
+        $utente = \Auth::user();
+
         // ID del form
         $manager_id = 'checklist_'.$options['id_module'].'_'.$options['id_plugin'];
 
-        $checklists = $structure->checklists();
-        $checklist_select = [];
-        foreach ($checklists as $checklist) {
-            $checklist_select[] = [
-                'id' => $checklist->id,
-                'text' => $checklist->name,
-            ];
-        }
-
         $result = '
-    <div class="panel panel-primary" id="'.$manager_id.'" style="position:relative">
-        <div class="panel-heading">
-            <h3 class="panel-title">'.tr('Checklist').'</h3>
-        </div>
-        <div class="panel-body" style="position:relative">
-            <div id="loading_'.$manager_id.'" class="text-center hide component-loader">
-                <div>
-                    <i class="fa fa-refresh fa-spin fa-3x fa-fw"></i>
-                    <span class="sr-only">'.tr('Caricamento...').'</span>
-                </div>
-            </div>';
+<div class="panel panel-primary" id="'.$manager_id.'" style="position:relative">
+    <div class="panel-heading">
+        <h3 class="panel-title">'.tr('Checklist').'</h3>
+    </div>
+    <div class="panel-body" style="position:relative">
+        <div id="loading_'.$manager_id.'" class="text-center hide component-loader">
+            <div>
+                <i class="fa fa-refresh fa-spin fa-3x fa-fw"></i>
+                <span class="sr-only">'.tr('Caricamento...').'</span>
+            </div>
+        </div>';
 
         // Form per la creazione di una nuova checklist
         if (!$options['readonly']) {
             $result .= '
-            <div class="row">
-                <div class="col-md-12">
-                    <a class="btn btn-sm btn-primary" data-href="'.$module->fileurl('components/add-check.php').'?id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id_plugin='.$options['id_plugin'].'&manager_id='.$manager_id.'" data-toggle="tooltip" data-title="'.tr('Aggiungi check').'">
-                        <i class="fa fa-plus"></i> '.tr('Check').'
-                    </a>
-                    
-                    <a class="btn btn-sm btn-primary" data-href="'.$module->fileurl('components/add-checklist.php').'?id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id_plugin='.$options['id_plugin'].'&manager_id='.$manager_id.'" data-toggle="tooltip" data-title="'.tr('Aggiungi check').'">
-                        <i class="fa fa-plus"></i> '.tr('Checklist').'
-                    </a>
-                </div>
+        <div class="row">
+            <div class="col-md-12">
+                <a class="btn btn-sm btn-primary" data-href="'.$module->fileurl('components/add-check.php').'?id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id_plugin='.$options['id_plugin'].'&manager_id='.$manager_id.'" data-toggle="tooltip" data-title="'.tr('Aggiungi check').'">
+                    <i class="fa fa-plus"></i> '.tr('Check').'
+                </a>
+                
+                <a class="btn btn-sm btn-primary" data-href="'.$module->fileurl('components/add-checklist.php').'?id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id_plugin='.$options['id_plugin'].'&manager_id='.$manager_id.'" data-toggle="tooltip" data-title="'.tr('Aggiungi check').'">
+                    <i class="fa fa-plus"></i> '.tr('Checklist').'
+                </a>
             </div>
-            
-            <div class="clearfix"></div>
-            <br>';
+        </div>
+        
+        <div class="clearfix"></div>
+        <br>';
         }
-
-        $result .= '
-            <ul class="checklist">';
 
         $checks = $structure->mainChecks($options['id_record']);
-        foreach ($checks as $check) {
-            $result .= self::renderChecklist($check);
+        $users = $checks->groupBy('id_utente_assegnato');
+
+        $result .= '
+        <div class="row">';
+        foreach ($users as $user_id => $checks) {
+            $user = User::find($user_id);
+
+            $result .= '
+            <div class="col-md-6" '.($utente->id != $user_id ? 'style="opacity: 0.5"' : '').'>
+                <div class="box box-info">
+                    <div class="box-header">
+                        <h3 class="box-title">'.$user->nome_completo.'</h3>
+                    </div>
+                
+                    <div class="box-body">
+                        <ul class="checklist">';
+
+            foreach ($checks as $check) {
+                $result .= self::renderChecklist($check);
+            }
+
+            $result .= '
+                        </ul>
+                    </div>
+                </div>
+            </div>';
         }
 
         $result .= '
-            </ul>
         </div>
-    </div>';
+    </div>
+</div>';
 
         $result .= '
 <script>$(document).ready(init)</script>
@@ -100,14 +115,22 @@ $(document).ready(function() {
     $(".check-item").click(function(event){
         var id = $(this).attr("id").replace("check_", "");
 
-        checklists["'.$manager_id.'"].toggleCheck(id);
+        var result = checklists["'.$manager_id.'"].toggleCheck(id, '.$utente->id.');
+        
+        if (!result){
+            swal("'.tr('Errore').'", "'.tr('La tua utenza non corrisponde a quella assegnata al check').'", "error");
+        }
     });
     
     $(".check-delete").click(function(event){
         var li = $(this).closest("li");
         var id = li.attr("id").replace("check_", "");
 
-        checklists["'.$manager_id.'"].deleteCheck(id);
+        var result = checklists["'.$manager_id.'"].deleteCheck(id, '.$utente->id.');
+        
+        if (!result){
+            swal("'.tr('Errore').'", "'.tr('La tua utenza non possiede i permessi di modificare questo check').'", "error");
+        }
         
         event.stopPropagation();  
     });
@@ -132,7 +155,7 @@ function deleteCheck(id) {
     public static function renderChecklist($check, $level = 0)
     {
         $result = '
-            <li id="check_'.$check->id.'" class="check-item'.(!empty($check->checked_at) ? ' checked' : '').'">
+            <li id="check_'.$check->id.'" class="check-item'.(!empty($check->checked_at) ? ' checked' : '').'" data-user_id="'.$check->id_utente.'" data-assigned_user_id="'.$check->id_utente_assegnato.'">
                 '.str_repeat('&nbsp;', $level * 8).'
                 
                 <i class="check-icon fa '.(!empty($check->checked_at) ? 'fa-check-square-o' : 'fa-square-o').'"></i>

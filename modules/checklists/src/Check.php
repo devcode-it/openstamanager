@@ -23,17 +23,23 @@ class Check extends Model
      * @param User           $assigned_user
      * @param ChecklistTrait $structure
      * @param int            $id_record
-     * @param string         $contenuto
-     * @param int            $id_parent
+     * @param string         $content
+     * @param int            $parent_id
      *
      * @return self
      */
-    public static function build(User $user, User $assigned_user, $structure, $id_record, $contenuto, $id_parent = null)
+    public static function build(User $user, $structure, $id_record, $content, User $assigned_user = null, $parent_id = null)
     {
         $model = parent::build();
 
         $model->user()->associate($user);
-        $model->assignedUser()->associate($assigned_user);
+        $model->id_parent = $parent_id;
+
+        if (empty($parent_id)) {
+            $model->assignedUser()->associate($assigned_user);
+        } else {
+            $model->assignedUser()->associate($model->parent->assignedUser);
+        }
 
         if ($structure instanceof Module) {
             $model->module()->associate($structure);
@@ -42,8 +48,7 @@ class Check extends Model
         }
 
         $model->id_record = $id_record;
-        $model->id_parent = $id_parent;
-        $model->content = $contenuto;
+        $model->content = $content;
 
         $model->save();
 

@@ -5,6 +5,7 @@ include_once __DIR__.'/core.php';
 use Models\Note;
 use Models\User;
 use Modules\Checklists\Check;
+use Modules\Checklists\Checklist;
 
 if (empty($structure) || empty($structure['enabled'])) {
     die(tr('Accesso negato'));
@@ -117,17 +118,27 @@ elseif (filter('op') == 'delete_nota') {
     flash()->info(tr('Nota interna aggiunta correttamente!'));
 }
 
-// Rimozione checklist
+// Clonazione di una checklist
+elseif (filter('op') == 'clone_checklist') {
+    $content = post('content');
+    $checklist_id = post('checklist');
+    $assigned_user = User::find(post('assigned_user'));
+
+    $checklist = Checklist::find($checklist_id);
+    $checklist->copia($user, $assigned_user, $id_record);
+}
+
+// Aggiunta check alla checklist
 elseif (filter('op') == 'add_check') {
     $content = post('content');
     $parent_id = post('parent') ?: null;
 
     $assigned_user = User::find(post('assigned_user'));
 
-    $check = Check::build($user, $assigned_user, $structure, $id_record, $content, $parent_id);
+    $check = Check::build($user, $structure, $id_record, $content, $assigned_user, $parent_id);
 }
 
-// Rimozione checklist
+// Rimozione di un check della checklist
 elseif (filter('op') == 'delete_check') {
     $check_id = post('check_id');
     $check = Check::find($check_id);

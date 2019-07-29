@@ -4,6 +4,12 @@ class Checklist {
         this.id = id;
     }
 
+    cloneChecklist(data){
+        data.op = "clone_checklist";
+
+        this.request(data);
+    }
+
     addCheck(data){
         data.op = "add_check";
 
@@ -30,24 +36,36 @@ class Checklist {
         });
     }
 
-    deleteCheck(id) {
+    deleteCheck(id, user_id) {
         var check = this.findCheck(id);
+        if (check.user_id != user_id && check.assigned_user_id != user_id) {
+            return false;
+        }
+
         check.icon.removeClass("fa-check-square-o").addClass("fa-refresh fa-spin bg-danger").show();
 
         this.request({
             op: "delete_check",
             check_id: id,
         });
+
+        return true;
     }
 
-    toggleCheck(id) {
+    toggleCheck(id, user_id) {
         var check = this.findCheck(id);
+        if (check.assigned_user_id != user_id) {
+            return false;
+        }
+
         check.icon.removeClass("fa-square-o fa-check-square-o ").addClass("fa-refresh fa-spin").show();
 
         this.request({
             op: "toggle_check",
             check_id: id,
         });
+
+        return true;
     }
 
     findCheck(id) {
@@ -59,6 +77,8 @@ class Checklist {
             date: li.find(".check-date"),
             text: li.find(".check-text"),
             children: li.find(".check-children"),
+            user_id: li.data('user_id'),
+            assigned_user_id: li.data('assigned_user_id'),
         };
     }
 

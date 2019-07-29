@@ -258,5 +258,9 @@ UPDATE `zz_prints` SET `options` = REPLACE(`options`, "hide_header", "hide-heade
 UPDATE `zz_prints` SET `options` = REPLACE(`options`, "hide_footer", "hide-footer");
 UPDATE `zz_prints` SET `options` = '{"last-page-footer": true}' WHERE `zz_prints`.`name` = 'Fattura di vendita';
 UPDATE `zz_prints` SET `options` = '{"hide-header": true, "hide-footer": true, "last-page-footer": true}' WHERE `zz_prints`.`name` = 'Fattura di vendita (senza intestazione)';
-UPDATE `zz_prints` SET `options` = '{"pricing":true, "last-page-footer": true}' WHERE `zz_prints`.`name` = 'Ordine cliente';
-UPDATE `zz_prints` SET `options` = '{"pricing":false, "last-page-footer": true}' WHERE `zz_prints`.`name` = 'Ordine cliente (senza costi)';
+UPDATE `zz_prints` SET `options` = '{"pricing": true, "last-page-footer": true}' WHERE `zz_prints`.`name` = 'Ordine cliente';
+UPDATE `zz_prints` SET `options` = '{"pricing": false, "last-page-footer": true}' WHERE `zz_prints`.`name` = 'Ordine cliente (senza costi)';
+UPDATE `zz_prints` SET `options` = '{"pricing": true, "last-page-footer": true}' WHERE `zz_prints`.`name` = 'Preventivo';
+UPDATE `zz_prints` SET `options` = '{"pricing": false, "last-page-footer": true}' WHERE `zz_prints`.`name` = 'Preventivo (senza costi)';
+UPDATE `zz_prints` SET `options` = '{"pricing": true, "last-page-footer": true}' WHERE `zz_prints`.`name` = 'Contratto';
+UPDATE `zz_prints` SET `options` = '{"pricing": false, "last-page-footer": true}' WHERE `zz_prints`.`name` = 'Contratto (senza costi)';

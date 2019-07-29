@@ -28,9 +28,6 @@ $namespaces = require_once __DIR__.'/config/namespaces.php';
 foreach ($namespaces as $path => $namespace) {
     $loader->addPsr4($namespace.'\\', __DIR__.'/'.$path.'/custom/src');
     $loader->addPsr4($namespace.'\\', __DIR__.'/'.$path.'/src');
-
-    $loader->addPsr4($namespace.'\\API\\', __DIR__.'/'.$path.'/custom/api');
-    $loader->addPsr4($namespace.'\\API\\', __DIR__.'/'.$path.'/api');
 }
 
 // Individuazione dei percorsi di base

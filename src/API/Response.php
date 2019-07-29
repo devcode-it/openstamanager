@@ -92,17 +92,17 @@ class Response
             ]);
         }
 
+        if ($type == 'retrieve' && empty($request['resource'])) {
+            $resources = self::getResources($type, $version)->toArray();
+            $list = array_column($resources, 'resource') ?: [];
+
+            return self::response([
+                'resources' => $list,
+            ]);
+        }
+
         try {
             $manager = new Manager($request['resource'], $type, $version);
-
-            if ($type == 'retrieve' && empty($request['resource'])) {
-                $resources = self::getResources($type, $version)->toArray();
-                $list = array_column($resources, 'resource') ?: [];
-
-                return self::response([
-                    'resources' => $list,
-                ]);
-            }
 
             $response = $manager->manage($request);
         } catch (ResourceNotFound $e) {

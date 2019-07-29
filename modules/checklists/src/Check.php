@@ -1,13 +1,13 @@
 <?php
 
-namespace Models\Checklist;
+namespace Modules\Checklists;
 
 use Common\Model;
-use Traits\Components\ChecklistTrait;
-use Traits\HierarchyTrait;
-use Models\User;
 use Models\Module;
 use Models\Plugin;
+use Models\User;
+use Modules\Checklists\Traits\ChecklistTrait;
+use Traits\HierarchyTrait;
 
 class Check extends Model
 {
@@ -19,12 +19,12 @@ class Check extends Model
     /**
      * Crea un nuovo elemento della checklist.
      *
-     * @param User      $user
-     * @param User      $assigned_user
+     * @param User           $user
+     * @param User           $assigned_user
      * @param ChecklistTrait $structure
-     * @param int       $id_record
-     * @param string    $contenuto
-     * @param int       $id_parent
+     * @param int            $id_record
+     * @param string         $contenuto
+     * @param int            $id_parent
      *
      * @return self
      */
@@ -49,6 +49,38 @@ class Check extends Model
 
         return $model;
     }
+
+    public function toggleCheck()
+    {
+        $checked_at = $this->checked_at ? null : date('Y-m-d H:i:s');
+        $this->checked_at = $checked_at;
+        $this->save();
+
+        $children = $this->children;
+        while (!$children->isEmpty()) {
+            $child = $children->shift();
+            $child->checked_at = $checked_at;
+            $child->save();
+
+            $children = $children->merge($child->children);
+        }
+    }
+
+    /*
+     * Rimozione ricorsiva gestita da MySQL.
+    public function delete()
+    {
+        return parent::delete();
+
+        $children = $check->children;
+        while (!$children->isEmpty()){
+            $child = $children->shift();
+            $child->delete();
+
+            $children = $children->merge($child->children);
+        }
+    }
+    */
 
     /* Relazioni Eloquent */
 

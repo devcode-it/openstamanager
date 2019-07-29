@@ -367,9 +367,9 @@ if ($vista == 'mese') {
 ?>
 
 <script type="text/javascript">
-	
+
 	function load_interventi_da_pianificare(mese){
-		
+
 		if (mese == undefined){
 			// Seleziono il mese corrente per gli interventi da pianificare
 			var date = new Date();
@@ -381,10 +381,10 @@ if ($vista == 'mese') {
 
 			$('#select-intreventi-pianificare option[value='+mese+']').attr('selected','selected').trigger('change');
 		}
-		
+
 		$('#interventi-pianificare').html('<center><br><br><i class=\'fa fa-refresh fa-spin fa-2x fa-fw\'></i></center>');
 		$.get( '<?php echo $rootdir; ?>/modules/dashboard/actions.php', { op: 'load_intreventi', mese: mese }, function(data){
-			
+
         })
 		.done(function( data ) {
 			$('#interventi-pianificare').html(data);
@@ -395,9 +395,9 @@ if ($vista == 'mese') {
                     revertDuration: 0
                 });
             });
-			
+
 		});
-		
+
 	}
     $('#select-intreventi-pianificare').change(function(){
         var mese = $(this).val();
@@ -406,8 +406,8 @@ if ($vista == 'mese') {
     });
 
 	$(document).ready(function() {
-       
-		
+
+
 		load_interventi_da_pianificare();
 
         // Comandi seleziona tutti
@@ -623,7 +623,7 @@ if (Modules::getPermission('Interventi') == 'rw') {
                     name = 'id_intervento';
                 }
 
-                launch_modal('<?php echo tr('Pianifica intervento'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::get('Interventi')['id']; ?>&data='+data+'&orario_inizio='+ora_dal+'&orario_fine='+ora_al+'&ref=dashboard&idcontratto=' + $(this).data('idcontratto') + '&' + name + '=' + $(this).data('id'), 1);
+                launch_modal('<?php echo tr('Pianifica intervento'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::get('Interventi')['id']; ?>&data='+data+'&orario_inizio='+ora_dal+'&orario_fine='+ora_al+'&ref=dashboard&idcontratto=' + $(this).data('idcontratto') + '&' + name + '=' + $(this).data('id'));
 
                 $(this).remove();
 
@@ -638,7 +638,7 @@ if (Modules::getPermission('Interventi') == 'rw') {
 				ora_dal = moment(start).format("HH:mm");
 				ora_al = moment(end).format("HH:mm");
 
-                launch_modal('<?php echo tr('Aggiungi intervento'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::get('Interventi')['id']; ?>&ref=dashboard&data='+data+'&orario_inizio='+ora_dal+'&orario_fine='+ora_al, 1 );
+                launch_modal('<?php echo tr('Aggiungi intervento'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::get('Interventi')['id']; ?>&ref=dashboard&data='+data+'&orario_inizio='+ora_dal+'&orario_fine='+ora_al);
 
 				$('#calendar').fullCalendar('unselect');
 			},
@@ -687,7 +687,7 @@ if (setting('Utilizzare i tooltip sul calendario') == '1') {
 				element.mouseover( function(){
 				    if( !element.hasClass('tooltipstered') ){
 				        $(this).data('idintervento', event.idintervento );
-				        
+
 				        $.get(globals.rootdir + "/modules/dashboard/actions.php?op=get_more_info&id="+$(this).data('idintervento'), function(data,response){
 							if( response=="success" ){
 								data = $.trim(data);

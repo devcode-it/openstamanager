@@ -58,6 +58,7 @@ if (!isset($options['edit_articolo']) || !empty($options['edit_articolo'])) {
     echo '
     <script>
     $(document).ready(function () {
+        console.log($(this).closest("modal"));
         $("#idarticolo").on("change", function(){
             // Autoimpostazione dei valori relativi
             if ($(this).val()) {

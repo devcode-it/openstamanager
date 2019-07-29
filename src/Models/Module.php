@@ -5,7 +5,7 @@ namespace Models;
 use Auth;
 use Common\Model;
 use Illuminate\Database\Eloquent\Builder;
-use Traits\Components\ChecklistTrait;
+use Modules\Checklists\Traits\ChecklistTrait;
 use Traits\Components\NoteTrait;
 use Traits\Components\UploadTrait;
 use Traits\ManagerTrait;

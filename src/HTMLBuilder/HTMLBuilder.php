@@ -75,7 +75,7 @@ class HTMLBuilder
     protected static $managers = [
         'list' => [
             'filelist_and_upload' => Manager\FileManager::class,
-            'checklists' => Manager\ChecklistManager::class,
+            'checklists' => \Modules\Checklists\HTMLBuilder\ChecklistManager::class,
             'button' => Manager\ButtonManager::class,
             'csrf' => Manager\CSRFManager::class,
             'custom_fields' => Manager\FieldManager::class,

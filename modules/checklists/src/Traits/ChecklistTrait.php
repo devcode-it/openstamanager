@@ -1,13 +1,18 @@
 <?php
 
-namespace Traits\Components;
+namespace Modules\Checklists\Traits;
 
-use Models\Checklist\Check;
-use Models\Checklist\Checklist;
+use Modules\Checklists\Check;
+use Modules\Checklists\Checklist;
 
 trait ChecklistTrait
 {
     public function checks($id_record)
+    {
+        return $this->hasMany(Check::class, $this->component_identifier)->where('id_record', $id_record)->orderBy('created_at')->get();
+    }
+
+    public function mainChecks($id_record)
     {
         return $this->hasMany(Check::class, $this->component_identifier)->where('id_record', $id_record)->whereNull('id_parent')->orderBy('created_at')->get();
     }

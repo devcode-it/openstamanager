@@ -1,11 +1,11 @@
 <?php
 
-namespace Models\Checklist;
+namespace Modules\Checklists;
 
 use Common\Model;
 use Traits\HierarchyTrait;
 
-class Checklist extends Model
+class ChecklistItem extends Model
 {
     use HierarchyTrait;
 
@@ -15,7 +15,7 @@ class Checklist extends Model
     /**
      * Crea un nuovo elemento della checklist.
      *
-     * @param Checklist      $checklist
+     * @param Checklist $checklist
      * @param string    $contenuto
      * @param int       $id_parent
      *

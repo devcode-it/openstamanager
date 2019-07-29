@@ -4,7 +4,7 @@ function init() {
 
     // Modal di default
     $('[data-href]').not('.ask, .bound').click(function () {
-        launch_modal($(this).data('title'), $(this).data('href'), 1, $(this).data('target'));
+        launch_modal($(this).data('title'), $(this).data('href'), $(this).data('target'));
     });
     $('[data-href]').not('.ask, .bound').addClass('bound clickable');
 

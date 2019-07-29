@@ -242,3 +242,11 @@ CREATE TABLE IF NOT EXISTS `zz_checklist_items` (
   FOREIGN KEY (`id_checklist`) REFERENCES `zz_checklists`(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`id_parent`) REFERENCES `zz_checklist_items`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Checklists', 'Checklists', 'checklists', 'SELECT |select| FROM `zz_checklists` WHERE 1=1 HAVING 2=2', '', 'fa fa-check-square-o', '2.4.11', '2.4.11', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Strumenti'), '1', '1');
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `default`, `visible`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Checklists'), 'id', 'id', 1, 0, 0, 1, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Checklists'), 'Nome', 'name', 2, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Checklists'), 'Modulo', '(SELECT name FROM zz_modules WHERE id = zz_checklists.id_module)', 5, 1, 0, 1, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Checklists'), 'Plugin', '(SELECT name FROM zz_plugins WHERE id = zz_checklists.id_plugin)', 5, 1, 0, 1, 1);

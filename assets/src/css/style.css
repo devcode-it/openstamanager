@@ -47,7 +47,7 @@ a.disabled {
     font-weight: bold;
 }
 
-input[type=file]{
+input[type=file] {
     height: initial;
     margin-bottom: 5px;
 }
@@ -201,9 +201,9 @@ body .header .logo {
     border-color: rgba(0, 0, 0, 0.2) !important;
 }
 
-.navbar-custom-menu>ul>li>a:hover,
-.navbar-custom-menu>ul>li>a:focus,
-.navbar-custom-menu>ul>li>a:active{
+.navbar-custom-menu > ul > li > a:hover,
+.navbar-custom-menu > ul > li > a:focus,
+.navbar-custom-menu > ul > li > a:active {
     filter: brightness(75%);
 }
 
@@ -532,7 +532,7 @@ input.small-width {
 }
 
 @media screen and (max-width: 767px) {
-    .navbar-left{
+    .navbar-left {
         display: none;
     }
 
@@ -826,14 +826,15 @@ input.small-width {
     margin-bottom: 5px;
 }
 
-.skin-default .nav.navbar-nav li a{
+.skin-default .nav.navbar-nav li a {
     color: #FFFFFF;
 }
-.skin-default .nav.navbar-nav li a:hover{
+
+.skin-default .nav.navbar-nav li a:hover {
     background: #222222;
 }
 
-.row{
+.row {
     overflow-wrap: break-word;
     word-wrap: break-word;
     -ms-word-break: break-all;
@@ -845,7 +846,7 @@ input.small-width {
     hyphens: auto;
 }
 
-.request .morelink{
+.request .morelink {
     color: #fff;
     font-weight: bold;
 }
@@ -875,7 +876,7 @@ ul.checklist li:hover {
     background: #ddd;
 }
 
-ul.checklist li.checked  {
+ul.checklist li.checked {
     background: #eee;
 }
 
@@ -883,10 +884,17 @@ ul.checklist li.checked > .check-text {
     text-decoration: line-through;
 }
 
-ul.checklist li > .check-icon {
-    display: none;
+.component-loader {
+    position: absolute;
+    z-index: 20;
+    opacity: 0.5;
+    width: 100%;
+    height: 100%;
+    background: #fff;
 }
 
-ul.checklist li.checked > .check-icon {
-    display: inline-block;
+.component-loader > div {
+    position: relative;
+    top: 50%;
+    color: #333;
 }

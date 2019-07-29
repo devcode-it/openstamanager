@@ -1,23 +1,25 @@
 // Modal
 function launch_modal(title, href, init_modal, id) {
+    openModal(title, href, id ? id : '#bs-popup');
+}
+
+// Modal
+function openModal(title, href, generate_id) {
     // Fix - Select2 does not function properly when I use it inside a Bootstrap modal.
     $.fn.modal.Constructor.prototype.enforceFocus = function () {
     };
 
-    if (id == null) {
-        id = '#bs-popup';
-
-        // Generazione dinamica modal
-        /*
-        id = 'bs-popup-' + Math.floor(Math.random() * 100);
-        $('#modals').append('<div class="modal fade" id="' + id + '" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="true"></div>');
-
-        id = '#' + id;
-        */
+    // Generazione dinamica modal
+    if (generate_id == null) {
+        do {
+            id = '#bs-popup-' + Math.floor(Math.random() * 100);
+        } while ($(id).length != 0);
+    } else {
+        id = generate_id;
     }
 
-    if (init_modal == null) {
-        init_modal = 1;
+    if ($(id).length == 0){
+        $('#modals').append('<div class="modal fade" id="' + id.replace("#", "") + '" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="true"></div>');
     }
 
     $(id).on('hidden.bs.modal', function () {
@@ -27,37 +29,31 @@ function launch_modal(title, href, init_modal, id) {
         }
     });
 
+    var content =  '<div class="modal-dialog modal-lg">\
+    <div class="modal-content">\
+        <div class="modal-header bg-light-blue">\
+            <button type="button" class="close" data-dismiss="modal">\
+                <span aria-hidden="true">&times;</span><span class="sr-only">' + globals.translations.close + '</span>\
+            </button>\
+            <h4 class="modal-title">\
+                <i class="fa fa-pencil"></i> ' + title + '\
+            </h4>\
+        </div>\
+        <div class="modal-body">|data|</div>\
+    </div>\
+</div>';
+
     // Lettura contenuto div
     if (href.substr(0, 1) == '#') {
-        data = $(href).html();
+        var data = $(href).html();
 
-        $(id).html(
-            '<div class="modal-dialog modal-lg">' +
-            '	<div class="modal-content">' +
-            '		<div class="modal-header bg-light-blue">' +
-            '			<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">' + globals.translations.close + '</span></button>' +
-            '			<h4 class="modal-title"><i class="fa fa-pencil"></i> ' + title + '</h4>' +
-            '		</div>' +
-            '		<div class="modal-body">' + data + '</div>'
-        );
-        if (init_modal == 1) {
-            $(id).modal('show');
-        }
+        $(id).html(content.replace("|data|", data));
+        $(id).modal('show');
     } else {
         $.get(href, function (data, response) {
             if (response == 'success') {
-                $(id).html(
-                    '<div class="modal-dialog modal-lg">' +
-                    '	<div class="modal-content">' +
-                    '		<div class="modal-header bg-light-blue">' +
-                    '			<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">' + globals.translations.close + '</span></button>' +
-                    '			<h4 class="modal-title"><i class="fa fa-pencil"></i> ' + title + '</h4>' +
-                    '		</div>' +
-                    '		<div class="modal-body">' + data + '</div>'
-                );
-                if (init_modal == 1) {
-                    $(id).modal('show');
-                }
+                $(id).html(content.replace("|data|", data));
+                $(id).modal('show');
             }
         });
     }

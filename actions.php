@@ -2,9 +2,9 @@
 
 include_once __DIR__.'/core.php';
 
-use Models\Checklist\Check;
 use Models\Note;
 use Models\User;
+use Modules\Checklists\Check;
 
 if (empty($structure) || empty($structure['enabled'])) {
     die(tr('Accesso negato'));
@@ -132,7 +132,9 @@ elseif (filter('op') == 'delete_check') {
     $check_id = post('check_id');
     $check = Check::find($check_id);
 
-    $check->delete();
+    if (!empty($check)) {
+        $check->delete();
+    }
 }
 
 // Gestione check per le checklist
@@ -141,12 +143,7 @@ elseif (filter('op') == 'toggle_check') {
     $check = Check::find($check_id);
 
     if (!empty($check)) {
-        $check->checked_at = $check->checked_at ? null : date('Y-m-d H:i:s');
-        $check->save();
-
-        echo json_encode([
-            'checked_at' => timestampFormat($check->checked_at) ?: null,
-        ]);
+        $check->toggleCheck();
     }
 }
 

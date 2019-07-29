@@ -1,4 +1,6 @@
 UPDATE `zz_prints` SET `filename` = 'Preventivo num. {numero} del {data}' WHERE `name` = 'Preventivo (senza totali)';
+UPDATE `zz_prints` SET `filename` = 'Fattura num. {numero} del {data}' WHERE `name` = 'Fattura di vendita (senza intestazione)';
+UPDATE `zz_prints` SET `filename` = 'Calendario' WHERE `name` = 'Stampa calendario';
 
 DELETE FROM `zz_plugins` WHERE `name` = 'Pianificazione ordini di servizio';
 
@@ -250,3 +252,11 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Checklists'), 'Nome', 'name', 2, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Checklists'), 'Modulo', '(SELECT name FROM zz_modules WHERE id = zz_checklists.id_module)', 5, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Checklists'), 'Plugin', '(SELECT name FROM zz_plugins WHERE id = zz_checklists.id_plugin)', 5, 1, 0, 1, 1);
+
+-- Miglioramento gestione header e footer per le stampe
+UPDATE `zz_prints` SET `options` = REPLACE(`options`, "hide_header", "hide-header");
+UPDATE `zz_prints` SET `options` = REPLACE(`options`, "hide_footer", "hide-footer");
+UPDATE `zz_prints` SET `options` = '{"last-page-footer": true}' WHERE `zz_prints`.`name` = 'Fattura di vendita';
+UPDATE `zz_prints` SET `options` = '{"hide-header": true, "hide-footer": true, "last-page-footer": true}' WHERE `zz_prints`.`name` = 'Fattura di vendita (senza intestazione)';
+UPDATE `zz_prints` SET `options` = '{"pricing":true, "last-page-footer": true}' WHERE `zz_prints`.`name` = 'Ordine cliente';
+UPDATE `zz_prints` SET `options` = '{"pricing":false, "last-page-footer": true}' WHERE `zz_prints`.`name` = 'Ordine cliente (senza costi)';

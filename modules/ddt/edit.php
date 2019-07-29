@@ -100,7 +100,7 @@ $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione']
                     ?>
 				</div>
 			</div>
-            
+
                 <?php
                 // Conteggio numero articoli ddt in uscita
                 $articolo = $dbo->fetchArray('SELECT mg_articoli.id FROM ((mg_articoli INNER JOIN dt_righe_ddt ON mg_articoli.id=dt_righe_ddt.idarticolo) INNER JOIN dt_ddt ON dt_ddt.id=dt_righe_ddt.idddt) WHERE dt_ddt.id='.prepare($id_record));
@@ -109,7 +109,7 @@ $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione']
                     <div class="col-md-3">
                         {[ "type": "select", "label": "<?php echo ($dir == 'uscita') ? tr('Fornitore') : tr('Destinatario'); ?>", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti_fornitori" ]}
                     </div>
-                        
+
                     <?php
                         if ($dir == 'entrata') {
                             ?>
@@ -127,7 +127,7 @@ $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione']
                     </div>
                     <div class="col-md-3">
                         {[ "type": "select", "label": "<?php echo tr('Destinazione merce'); ?>", "name": "idsede_destinazione", "ajax-source": "sedi_azienda",  "value": "$idsede_destinazione$" ]}
-                    </div>                
+                    </div>
 
                     <?php
                         }
@@ -182,7 +182,7 @@ $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione']
                             $("#idvettore").next().next().find("button.bound:nth-child(1)").prop("disabled", false);
                         }
                     });
-                    
+
                     $("#idcausalet").change( function(){
                         if ($(this).val() == 3) {
                             $("#tipo_resa").attr("disabled", false);

@@ -4,7 +4,11 @@ include_once __DIR__.'/../../core.php';
 
 // Creazione righe fantasma
 $autofill = new \Util\Autofill($options['pricing'] ? 5 : 2);
-$autofill->setRows(16);
+$rows_per_page = 16;
+if (!empty($options['last-page-footer'])) {
+    $rows_per_page += 10;
+}
+$autofill->setRows($rows_per_page);
 
 // Intestazione tabella per righe
 echo "

@@ -61,7 +61,9 @@ trait StoreTrait
             ->orWhere(self::$name, $identifier)
             ->first();
 
-        self::$collection->push($result);
+        if (!empty($result)) {
+            self::$collection->push($result);
+        }
 
         return $result;
     }

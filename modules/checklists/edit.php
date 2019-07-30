@@ -2,8 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\Checklists\HTMLBuilder\ChecklistManager;
-
 echo '
 <form action="" method="post" id="edit-form">
     <input type="hidden" name="op" value="update">
@@ -91,11 +89,11 @@ echo '
         </form>
         <hr>
         
-        <ul class="checklist">';
+        <ul class="todo-list checklist">';
 
     $checks = $record->mainChecks();
     foreach ($checks as $check) {
-        echo ChecklistManager::renderChecklist($check);
+        echo renderChecklist($check);
     }
 
     echo '
@@ -106,6 +104,26 @@ echo '
 echo '
 <script>
 $(document).ready(function() {
+    $(".checklist").sortable({
+        placeholder: "sort-highlight",
+        handle: ".handle",
+        forcePlaceholderSize: true,
+        zIndex: 999999,
+        update: function(event, ui) {
+            var order = [];
+            $(".checklist > li").each( function(){
+                order.push($(this).data("id"));
+            });
+
+            $.post(globals.rootdir + "/actions.php", {
+                id_module: globals.id_module,
+                id_record: globals.id_record,
+                op: "update_position",
+                order: order.join(","),
+            });
+        }
+    });
+
     $(".check-delete").click(function(event){
         var li = $(this).closest("li");
         var id = li.attr("id").replace("check_", "");

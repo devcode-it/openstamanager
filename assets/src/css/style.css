@@ -851,39 +851,6 @@ input.small-width {
     font-weight: bold;
 }
 
-/* Checklist */
-ul.checklist {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-}
-
-ul.checklist li {
-    cursor: pointer;
-    position: relative;
-    padding: 12px 8px 12px 10px;
-    font-size: 18px;
-    transition: 0.2s;
-
-    /* make the list items unselectable */
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
-ul.checklist li:hover {
-    background: #ddd;
-}
-
-ul.checklist li.checked {
-    background: #eee;
-}
-
-ul.checklist li.checked > .check-text {
-    text-decoration: line-through;
-}
-
 .component-loader {
     position: absolute;
     z-index: 20;
@@ -897,4 +864,10 @@ ul.checklist li.checked > .check-text {
     position: relative;
     top: 50%;
     color: #333;
+}
+
+/* Checklist */
+.todo-list ul {
+    list-style: none;
+    margin-left: 11px;
 }

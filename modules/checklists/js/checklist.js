@@ -32,18 +32,13 @@ class Checklist {
             data: data,
             success: function() {
                 $this.reload();
+
+                renderMessages();
             }
         });
     }
 
-    deleteCheck(id, user_id) {
-        var check = this.findCheck(id);
-        if (check.user_id != user_id && check.assigned_user_id != user_id) {
-            return false;
-        }
-
-        check.icon.removeClass("fa-check-square-o").addClass("fa-refresh fa-spin bg-danger").show();
-
+    deleteCheck(id) {
         this.request({
             op: "delete_check",
             check_id: id,
@@ -52,14 +47,7 @@ class Checklist {
         return true;
     }
 
-    toggleCheck(id, user_id) {
-        var check = this.findCheck(id);
-        if (check.assigned_user_id != user_id) {
-            return false;
-        }
-
-        check.icon.removeClass("fa-square-o fa-check-square-o ").addClass("fa-refresh fa-spin").show();
-
+    toggleCheck(id) {
         this.request({
             op: "toggle_check",
             check_id: id,
@@ -73,12 +61,10 @@ class Checklist {
 
         return {
             item: li,
-            icon: li.find(".check-icon"),
-            date: li.find(".check-date"),
-            text: li.find(".check-text"),
-            children: li.find(".check-children"),
-            user_id: li.data('user_id'),
-            assigned_user_id: li.data('assigned_user_id'),
+            input: li.find("input"),
+            info: li.find(".badge"),
+            text: li.find(".text"),
+            children: li.find("ul"),
         };
     }
 

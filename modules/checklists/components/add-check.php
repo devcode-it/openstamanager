@@ -4,7 +4,7 @@ include_once __DIR__.'/../../../core.php';
 
 $manager_id = filter('manager_id');
 
-$checks = $structure->checks($id_record);
+$checks = $structure->recordChecks($id_record);
 $list = [];
 foreach ($checks as $check) {
     $list[] = [
@@ -16,18 +16,22 @@ foreach ($checks as $check) {
 echo '
 <form action="" method="post" id="check-form">
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-9">
             {[ "type": "text", "label": "'.tr('Contenuto').'", "name": "content", "required": 1 ]}
+        </div>
+        
+        <div class="col-md-3">
+            {[ "type": "select", "label": "'.tr('Genitore').'", "name": "parent", "values": '.json_encode($list).' ]}
         </div>
     </div>
     
     <div class="row">
-        <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Genitore').'", "name": "parent", "values": '.json_encode($list).', "required": 1 ]}
+         <div class="col-md-6">
+            {[ "type": "select", "label": "'.tr('Utente').'", "name": "assigned_users", "ajax-source": "utenti", "multiple": 1 ]}
         </div>
         
-         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Utente').'", "name": "assigned_user", "ajax-source": "utenti", "required": 1 ]}
+        <div class="col-md-6">
+            {[ "type": "select", "label": "'.tr('Gruppo').'", "name": "group_id", "values": "query=SELECT id, nome AS text FROM zz_groups" ]}
         </div>
     </div>
     
@@ -52,18 +56,32 @@ $(document).ready(function() {
     });
     
     $("#parent").change(function(){
-        if ($(this).val()) {
-            $("#assigned_user").val("").attr("disabled", true).attr("required", false);
+        if ($(this).selectData()) {
+            $("#assigned_users").val("").attr("disabled", true).attr("required", false);
+            $("#group_id").val("").attr("disabled", true).attr("required", false);
         } else {
-            $("#assigned_user").val("").attr("disabled", false).attr("required", true);
+            $("#assigned_users").val("").attr("disabled", false).attr("required", true);
+            $("#group_id").val("").attr("disabled", false).attr("required", true);
         }
     });
     
-    $("#assigned_user").change(function(){
-        if ($(this).val()) {
+    $("#assigned_users").change(function(){
+        if ($(this).selectData()) {
             $("#parent").val("").attr("disabled", true).attr("required", false);
+            $("#group_id").val("").attr("disabled", true).attr("required", false);
         } else {
             $("#parent").val("").attr("disabled", false).attr("required", true);
+            $("#group_id").val("").attr("disabled", false).attr("required", true);
+        }
+    });
+    
+    $("#group_id").change(function(){
+        if ($(this).selectData()) {
+            $("#parent").val("").attr("disabled", true).attr("required", false);
+            $("#assigned_users").val("").attr("disabled", true).attr("required", false);
+        } else {
+            $("#parent").val("").attr("disabled", false).attr("required", true);
+            $("#assigned_users").val("").attr("disabled", false).attr("required", true);
         }
     });
 });
@@ -95,7 +113,8 @@ function addCheck(btn) {
     checklist.addCheck({
         content: $form.find("#content").val(),
         parent: $form.find("#parent").val(),
-        assigned_user: $form.find("#assigned_user").val(),
+        assigned_users: $form.find("#assigned_users").val(),
+        group_id: $form.find("#group_id").val(),
     });
     
     $form.closest(".modal").modal("hide");

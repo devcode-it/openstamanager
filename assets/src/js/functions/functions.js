@@ -68,15 +68,10 @@ function openLink(event, link) {
 }
 
 /**
- * Funzione per far scrollare la pagina fino a un id + focus e offset
+ * Funzione per far scrollare la pagina fino a un offset
  * @param integer offset
- * @param string id
  */
-function scrollToAndFocus(offset, id) {
-    if (id) {
-        offset += $('#' + id).offset().top;
-    }
-
+function scrollToOffset(offset) {
     $('html,body').animate({
         scrollTop: offset
     }, 'slow');
@@ -420,32 +415,7 @@ function submitAjax(form, data, callback, errorCallback) {
 
                 $("#main_loading").fadeOut();
 
-                // Visualizzazione messaggi
-                $.ajax({
-                    url: globals.rootdir + '/ajax.php',
-                    type: 'get',
-                    data: {
-                        op: 'flash',
-                    },
-                    success: function (flash) {
-                        messages = JSON.parse(flash);
-
-                        info = messages.info ? messages.info : {};
-                        Object.keys(info).forEach(function (element) {
-                            toastr["success"](info[element]);
-                        });
-
-                        warning = messages.warning ? messages.warning : {};
-                        Object.keys(warning).forEach(function (element) {
-                            toastr["warning"](warning[element]);
-                        });
-
-                        error = messages.error ? messages.error : {};
-                        Object.keys(error).forEach(function (element) {
-                            toastr["error"](error[element]);
-                        });
-                    }
-                });
+                renderMessages();
             },
             error: function (data) {
                 $("#main_loading").fadeOut();
@@ -460,6 +430,34 @@ function submitAjax(form, data, callback, errorCallback) {
     return valid;
 }
 
+function renderMessages() {
+    // Visualizzazione messaggi
+    $.ajax({
+        url: globals.rootdir + '/ajax.php',
+        type: 'get',
+        data: {
+            op: 'flash',
+        },
+        success: function (flash) {
+            messages = JSON.parse(flash);
+
+            info = messages.info ? messages.info : {};
+            Object.keys(info).forEach(function (element) {
+                toastr["success"](info[element]);
+            });
+
+            warning = messages.warning ? messages.warning : {};
+            Object.keys(warning).forEach(function (element) {
+                toastr["warning"](warning[element]);
+            });
+
+            error = messages.error ? messages.error : {};
+            Object.keys(error).forEach(function (element) {
+                toastr["error"](error[element]);
+            });
+        }
+    });
+}
 function removeHash() {
     history.replaceState(null, null, ' ');
 }

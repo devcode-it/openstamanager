@@ -28,7 +28,7 @@ INSERT INTO `zz_hooks` (`id`, `name`, `class`, `frequency`, `id_module`) VALUES
 (NULL, 'Ricevute', 'Modules\\Aggiornamenti\\UpdateHook', '7 day', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Aggiornamenti'));
 
 --
--- Aggiunta nuovi campi per tracciamento sedi 
+-- Aggiunta nuovi campi per tracciamento sedi
 --
 ALTER TABLE `mg_movimenti` ADD `idsede_azienda` INT NOT NULL AFTER `idautomezzo`, ADD `idsede_controparte` INT NOT NULL AFTER `idsede_azienda`;
 
@@ -106,7 +106,7 @@ UPDATE `zz_views` SET `query` = 'CONCAT_WS(co_movimenti_modelli.nome, co_movimen
 
 UPDATE `co_movimenti_modelli` SET `nome` = `descrizione` WHERE `nome` = '';
 
--- Rimuovo le interruzioni di riga per descrizioni vuote 
+-- Rimuovo le interruzioni di riga per descrizioni vuote
 -- UPDATE `in_interventi` SET `descrizione` = REPLACE(`descrizione`, '\n', '') where `descrizione` LIKE '%\n';
 
 -- Aggiunto tabella co_tipi_scadenze
@@ -181,6 +181,7 @@ UPDATE `in_interventi_tecnici` INNER JOIN `in_tipiintervento` ON `in_interventi_
 ALTER TABLE `in_interventi_tecnici` CHANGE `idtipointervento` `idtipointervento` INT(11) NOT NULL, ADD FOREIGN KEY (`idtipointervento`) REFERENCES `in_tipiintervento`(`idtipointervento`);
 
 UPDATE `in_tariffe` INNER JOIN `in_tipiintervento` ON `in_tariffe`.`idtipointervento` = `in_tipiintervento`.`codice` SET `in_tariffe`.`idtipointervento` = `in_tipiintervento`.`idtipointervento`;
+DELETE FROM `in_tariffe` WHERE `idtipointervento` NOT IN (SELECT `idtipointervento` FROM `in_tipiintervento`);
 ALTER TABLE `in_tariffe` CHANGE `idtipointervento` `idtipointervento` INT(11) NOT NULL, ADD FOREIGN KEY (`idtipointervento`) REFERENCES `in_tipiintervento`(`idtipointervento`);
 
 -- Ottimizzazione query Fatture

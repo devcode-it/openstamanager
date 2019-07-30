@@ -3,6 +3,7 @@
 namespace Modules\Checklists;
 
 use Common\Model;
+use Models\Group;
 use Models\Module;
 use Models\Plugin;
 use Models\User;
@@ -20,7 +21,6 @@ class Check extends Model
      * Crea un nuovo elemento della checklist.
      *
      * @param User           $user
-     * @param User           $assigned_user
      * @param ChecklistTrait $structure
      * @param int            $id_record
      * @param string         $content
@@ -28,18 +28,12 @@ class Check extends Model
      *
      * @return self
      */
-    public static function build(User $user, $structure, $id_record, $content, User $assigned_user = null, $parent_id = null)
+    public static function build(User $user, $structure, $id_record, $content, $parent_id = null)
     {
         $model = parent::build();
 
         $model->user()->associate($user);
         $model->id_parent = $parent_id;
-
-        if (empty($parent_id)) {
-            $model->assignedUser()->associate($assigned_user);
-        } else {
-            $model->assignedUser()->associate($model->parent->assignedUser);
-        }
 
         if ($structure instanceof Module) {
             $model->module()->associate($structure);
@@ -49,6 +43,9 @@ class Check extends Model
 
         $model->id_record = $id_record;
         $model->content = $content;
+
+        // Ordinamento temporaneo alla creazione
+        $model->order = 99;
 
         $model->save();
 
@@ -71,6 +68,28 @@ class Check extends Model
         }
     }
 
+    public function setAccess($users, $group_id)
+    {
+        if (!empty($this->id_parent)) {
+            $users = $this->parent->assignedUsers->pluck('id')->toArray();
+            $this->assignedUsers()->sync($users);
+
+            return;
+        }
+
+        if (empty($users)) {
+            if (!empty($group_id)) {
+                $group = Group::find($group_id);
+
+                $users = $group->users->pluck('id')->toArray();
+            } else {
+                $users = User::all()->pluck('id')->toArray();
+            }
+        }
+
+        $this->assignedUsers()->sync($users);
+    }
+
     /*
      * Rimozione ricorsiva gestita da MySQL.
     public function delete()
@@ -91,12 +110,12 @@ class Check extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'id_utente');
+        return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function assignedUser()
+    public function assignedUsers()
     {
-        return $this->belongsTo(User::class, 'id_utente_assegnato');
+        return $this->belongsToMany(User::class, 'zz_check_user', 'id_check', 'id_utente');
     }
 
     public function plugin()

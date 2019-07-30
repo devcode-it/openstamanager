@@ -30,10 +30,10 @@ class Checklist extends Model
 
     public function mainChecks()
     {
-        return $this->checks()->whereNull('id_parent')->orderBy('created_at')->get();
+        return $this->checks()->whereNull('id_parent')->orderBy('order')->get();
     }
 
-    public function copia(User $user, User $assigned_user, $id_record)
+    public function copia(User $user, $id_record, $users, $group_id)
     {
         $structure = $this->plugin ?: $this->module;
 
@@ -44,7 +44,9 @@ class Checklist extends Model
             $child = $checks->shift();
             $id_parent = $child->id_parent ? $relations[$child->id_parent] : null;
 
-            $check = Check::build($user, $structure, $id_record, $child->content, $assigned_user, $id_parent);
+            $check = Check::build($user, $structure, $id_record, $child->content, $id_parent);
+            $check->setAccess($users, $group_id);
+
             $relations[$child->id] = $check->id;
 
             $checks = $checks->merge($child->children);

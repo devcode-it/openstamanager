@@ -108,6 +108,17 @@ elseif (filter('op') == 'add_nota') {
     flash()->info(tr('Nota interna aggiunta correttamente!'));
 }
 
+// Rimozione data di notifica dalla nota interna
+elseif (filter('op') == 'notification_nota') {
+    $id_nota = post('id_nota');
+    $nota = Note::find($id_nota);
+
+    $nota->notification_date = null;
+    $nota->save();
+
+    flash()->info(tr('Data di notifica rimossa dalla nota interna!'));
+}
+
 // Rimozione nota interna
 elseif (filter('op') == 'delete_nota') {
     $id_nota = post('id_nota');
@@ -122,10 +133,14 @@ elseif (filter('op') == 'delete_nota') {
 elseif (filter('op') == 'clone_checklist') {
     $content = post('content');
     $checklist_id = post('checklist');
-    $assigned_user = User::find(post('assigned_user'));
+
+    $users = post('assigned_users');
+    $users = array_clean($users);
+
+    $group_id = post('group_id');
 
     $checklist = Checklist::find($checklist_id);
-    $checklist->copia($user, $assigned_user, $id_record);
+    $checklist->copia($user, $id_record, $users, $group_id);
 }
 
 // Aggiunta check alla checklist
@@ -133,9 +148,13 @@ elseif (filter('op') == 'add_check') {
     $content = post('content');
     $parent_id = post('parent') ?: null;
 
-    $assigned_user = User::find(post('assigned_user'));
+    $users = post('assigned_users');
+    $users = array_clean($users);
 
-    $check = Check::build($user, $structure, $id_record, $content, $assigned_user, $parent_id);
+    $group_id = post('group_id');
+
+    $check = Check::build($user, $structure, $id_record, $content, $parent_id);
+    $check->setAccess($users, $group_id);
 }
 
 // Rimozione di un check della checklist
@@ -143,8 +162,10 @@ elseif (filter('op') == 'delete_check') {
     $check_id = post('check_id');
     $check = Check::find($check_id);
 
-    if (!empty($check)) {
+    if (!empty($check) && $check->user->id == $user->id) {
         $check->delete();
+    } else {
+        flash()->error(tr('Impossibile eliminare il check!'));
     }
 }
 
@@ -153,8 +174,21 @@ elseif (filter('op') == 'toggle_check') {
     $check_id = post('check_id');
     $check = Check::find($check_id);
 
-    if (!empty($check)) {
+    if (!empty($check) && $check->assignedUsers->pluck('id')->search($user->id) !== false) {
         $check->toggleCheck();
+    } else {
+        flash()->error(tr('Impossibile cambiare lo stato del check!'));
+    }
+}
+
+// Gestione ordine per le checklist
+elseif (filter('op') == 'sort_checks') {
+    $ids = explode(',', $_POST['order']);
+    $order = 0;
+
+    foreach ($ids as $id) {
+        $dbo->query('UPDATE `zz_checks` SET `order` = '.prepare($order).' WHERE id = '.prepare($id));
+        ++$order;
     }
 }
 

@@ -4,7 +4,7 @@ include_once __DIR__.'/../../../core.php';
 
 $manager_id = filter('manager_id');
 
-$checklists = $structure->checklists();
+$checklists = $structure->checklists()->orderBy('created_at')->get();
 $list = [];
 foreach ($checklists as $checklist) {
     $list[] = [
@@ -16,12 +16,18 @@ foreach ($checklists as $checklist) {
 echo '
 <form action="" method="post" id="check-form">
     <div class="row">
-        <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Checklist').'", "name": "checklist", "values": '.json_encode($list).', "required": 1 ]}
+        <div class="col-md-12">
+            {[ "type": "select", "label": "'.tr('Checklist').'", "name": "checklist", "values": '.json_encode($list).' ]}
+        </div>
+    </div>
+    
+    <div class="row">
+         <div class="col-md-6">
+            {[ "type": "select", "label": "'.tr('Utente').'", "name": "assigned_users", "ajax-source": "utenti", "multiple": 1 ]}
         </div>
         
-         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Utente').'", "name": "assigned_user", "ajax-source": "utenti", "required": 1 ]}
+        <div class="col-md-6">
+            {[ "type": "select", "label": "'.tr('Gruppo').'", "name": "group_id", "values": "query=SELECT id, nome AS text FROM zz_groups" ]}
         </div>
     </div>
     
@@ -43,6 +49,22 @@ import Checklist from "./modules/checklists/js/checklist.js";
 $(document).ready(function() {
     $("#check-add").click(function(event){
         addChecklist(this);
+    });
+
+    $("#assigned_users").change(function(){
+        if ($(this).selectData()) {
+            $("#group_id").val("").attr("disabled", true).attr("required", false);
+        } else {
+            $("#group_id").val("").attr("disabled", false).attr("required", true);
+        }
+    });
+    
+    $("#group_id").change(function(){
+        if ($(this).selectData()) {
+            $("#assigned_users").val("").attr("disabled", true).attr("required", false);
+        } else {
+            $("#assigned_users").val("").attr("disabled", false).attr("required", true);
+        }
     });
 });
 

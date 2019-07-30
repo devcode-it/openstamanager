@@ -29,6 +29,8 @@ class ChecklistItem extends Model
         $model->id_parent = $id_parent;
         $model->content = $contenuto;
 
+        $model->findOrder();
+
         $model->save();
 
         return $model;
@@ -39,5 +41,10 @@ class ChecklistItem extends Model
     public function checklist()
     {
         return $this->belongsTo(Checklist::class, 'id_checklist');
+    }
+
+    protected function findOrder()
+    {
+        $this->order = orderValue($this->table, 'id_checklist', $this->id_checklist);
     }
 }

@@ -53,4 +53,15 @@ switch (post('op')) {
         flash()->info(tr('Riga della checklist eliminata!'));
 
         break;
+
+    case 'update_position':
+        $ids = explode(',', $_POST['order']);
+        $order = 0;
+
+        foreach ($ids as $id) {
+            $dbo->query('UPDATE `zz_checklist_items` SET `order` = '.prepare($order).' WHERE id = '.prepare($id));
+            ++$order;
+        }
+
+        break;
 }

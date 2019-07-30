@@ -82,7 +82,7 @@ class DefaultHandler implements HandlerInterface
      */
     protected function password(&$values, &$extras)
     {
-        $values['icon-after'] = '<i onclick="togglePassword_'.$values['id'].'()" class="fa clickable" id="'.$values['id'].'_toggle"></i>';
+        $values['icon-after'] = '<i onclick="togglePassword_'.$values['id'].'()" class="clickable fa" id="'.$values['id'].'_toggle"></i>';
 
         $result = '
     <script>
@@ -122,7 +122,15 @@ class DefaultHandler implements HandlerInterface
                     },
                     progressBarExtraCssClasses: "progress-bar-striped active",
                     showPopover: true,
+                    showProgressBar: false,
+                    popoverPlacement: "top",
+                    showStatus: true,
                     showErrors: true,
+                    showVerdicts: true,
+                    useVerdictCssClass: false,
+                    showScore: false,
+                    progressBarMinWidth: 50,
+                    colorClasses: ["danger", "danger", "warning", "warning", "success", "success"],
                 },
                 i18n: {
                     t: function (key) {

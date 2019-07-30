@@ -97,15 +97,15 @@ if (Auth::check()) {
     }
     echo '
             password: {
-                    "wordMinLength": "'.tr('La tua password è troppo corta').'",
-                    "wordMaxLength": "'.tr('La tua password è troppo lunga').'",
-                    "wordInvalidChar": "'.tr('La tua password contiene un carattere non valido').'",
+                    "wordMinLength": "'.tr('La password è troppo corta').'",
+                    "wordMaxLength": "'.tr('La password è troppo lunga').'",
+                    "wordInvalidChar": "'.tr('La password contiene un carattere non valido').'",
                     "wordNotEmail": "'.tr('Non usare la tua e-mail come password').'",
-                    "wordSimilarToUsername": "'.tr('La tua password non può contenere il tuo nome').'",
+                    "wordSimilarToUsername": "'.tr('La password non può contenere il tuo nome').'",
                     "wordTwoCharacterClasses": "'.tr('Usa classi di caratteri diversi').'",
-                    "wordRepetitions": "'.tr('Troppe ripetizioni').'",
-                    "wordSequences": "'.tr('La tua password contiene sequenze').'",
-                    "errorList": "'.tr('Errori').':",
+                    "wordRepetitions": "'.tr('La password contiene ripetizioni').'",
+                    "wordSequences": "'.tr('La password contiene sequenze').'",
+                    "errorList": "'.tr('Attenzione').':",
                     "veryWeak": "'.tr('Molto debole').'",
                     "weak": "'.tr('Debole').'",
                     "normal": "'.tr('Normale').'",
@@ -338,7 +338,7 @@ if (Auth::check()) {
     $user_photo = $user->photo;
     if ($user_photo) {
         echo '
-                            <img src="'.$user_photo.'" class="img-responsive" alt="'.$user['username'].'" />';
+                            <img src="'.$user_photo.'" class="img-circle pull-left" alt="'.$user['username'].'" />';
     } else {
         echo '
                             <i class="fa fa-user-circle-o fa-3x pull-left" alt="'.tr('OpenSTAManager').'"></i>';

@@ -871,3 +871,7 @@ input.small-width {
     list-style: none;
     margin-left: 11px;
 }
+
+.progress .progress-bar span{
+    color:#000;
+}

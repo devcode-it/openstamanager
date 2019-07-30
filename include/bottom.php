@@ -53,6 +53,8 @@ if (Auth::check()) {
     echo '
     <script>
     $(document).ready(function() {
+        alertPush();
+        
         $.ajax({
             url: globals.rootdir + "/ajax.php",
             type: "get",

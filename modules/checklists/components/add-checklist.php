@@ -94,7 +94,8 @@ function addChecklist(btn) {
    
     checklist.cloneChecklist({
         checklist: $form.find("#checklist").val(),
-        assigned_user: $form.find("#assigned_user").val(),
+        assigned_users: $form.find("#assigned_users").val(),
+        group_id: $form.find("#group_id").val(),
     });
     
     $form.closest(".modal").modal("hide");

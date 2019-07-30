@@ -3,7 +3,7 @@
 function renderChecklist($check, $level = 0)
 {
     $user = auth()->getUser();
-    $enabled = $check->assignedUsers->pluck('id')->search($user->id) !== false;
+    $enabled = $check->assignedUsers ? $check->assignedUsers->pluck('id')->search($user->id) !== false : true;
 
     $result = '
 <li id="check_'.$check->id.'" class="check-item'.(!empty($check->checked_at) ? ' done' : '').'" '.(!$enabled ? 'style="opacity: 0.4"' : '').' data-id="'.$check->id.'">    

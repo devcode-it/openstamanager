@@ -25,7 +25,7 @@ $module = Modules::get('Utenti e permessi');
 
 echo '
 <div class="box box-widget widget-user">
-    <div class="widget-user-header bg-'.(($theme!='default') ? $theme : 'primary').'">
+    <div class="widget-user-header bg-'.(($theme != 'default') ? $theme : 'primary').'">
       <h3 class="widget-user-username">'.$user['username'].'</h3>
       <h5 class="widget-user-desc">'.$user['gruppo'].'</h5>
     </div>

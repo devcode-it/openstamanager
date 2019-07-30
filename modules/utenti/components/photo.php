@@ -6,7 +6,7 @@ $user_photo = $user->photo;
 if ($user_photo) {
     echo '
         <center><img src="'.$user_photo.'" class="img-responsive" alt="'.$user['username'].'" /></center>';
-} 
+}
 
 echo '
     <div class="row">

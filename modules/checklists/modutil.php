@@ -10,7 +10,7 @@ function renderChecklist($check, $level = 0)
     <input type="checkbox" value="'.(!empty($check->checked_at) ? '1' : '0').'" '.(!empty($check->checked_at) ? 'checked' : '').'>
 
     <span class="text">'.$check->content.'</span>
-    <span class="badge">'.(!empty($check->checked_at) ? timestampFormat($check->checked_at).' - '.$check->user->username : '').'</span>';
+    <span class="badge">'.(!empty($check->checked_at) ? timestampFormat($check->checked_at).' - '.$check->checkUser->username : '').'</span>';
 
     if ($level == 0) {
         $result .= '
@@ -20,11 +20,14 @@ function renderChecklist($check, $level = 0)
     </span>';
     }
 
-    $result .= '
+    if (empty($check->user) || $check->user->id == $user->id) {
+        $result .= '
     <div class="tools">
         <i class="fa fa-trash-o check-delete"></i>
-    </div>
-    
+    </div>';
+    }
+
+    $result .= '
     <ul class="todo-list">';
 
     $children = $check->children;

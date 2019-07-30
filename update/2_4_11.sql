@@ -213,6 +213,7 @@ CREATE TABLE IF NOT EXISTS `zz_checks` (
   `id_plugin` int(11),
   `id_record` int(11) NOT NULL,
   `created_by` int(11) NOT NULL,
+  `checked_by` int(11) ,
   `checked_at` TIMESTAMP NULL,
   `content` TEXT,
   `id_parent` int(11),
@@ -221,6 +222,7 @@ CREATE TABLE IF NOT EXISTS `zz_checks` (
   FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`id_plugin`) REFERENCES `zz_plugins`(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`created_by`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`checked_by`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`id_parent`) REFERENCES `zz_checks`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 

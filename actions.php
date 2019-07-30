@@ -174,7 +174,7 @@ elseif (filter('op') == 'toggle_check') {
     $check = Check::find($check_id);
 
     if (!empty($check) && $check->assignedUsers->pluck('id')->search($user->id) !== false) {
-        $check->toggleCheck();
+        $check->toggleCheck($user);
     } else {
         flash()->error(tr('Impossibile cambiare lo stato del check!'));
     }

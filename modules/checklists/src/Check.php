@@ -52,16 +52,18 @@ class Check extends Model
         return $model;
     }
 
-    public function toggleCheck()
+    public function toggleCheck(User $user)
     {
         $checked_at = $this->checked_at ? null : date('Y-m-d H:i:s');
         $this->checked_at = $checked_at;
+        $this->checkUser()->associate($user);
         $this->save();
 
         $children = $this->children;
         while (!$children->isEmpty()) {
             $child = $children->shift();
             $child->checked_at = $checked_at;
+            $child->checkUser()->associate($user);
             $child->save();
 
             $children = $children->merge($child->children);
@@ -111,6 +113,11 @@ class Check extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function checkUser()
+    {
+        return $this->belongsTo(User::class, 'checked_by');
     }
 
     public function assignedUsers()

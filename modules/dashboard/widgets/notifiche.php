@@ -43,22 +43,28 @@ foreach ($moduli as $module_id => $note) {
         <th width="5%" >'.tr('Record').'</th>
         <th>'.tr('Contenuto').'</th>
         <th width="20%" class="text-center">'.tr('Data di notifica').'</th>
+        <th class="text-center">#</th>
     </tr>';
 
     foreach ($note as $nota) {
         echo '
     <tr>
         <td>'.$nota->id_record.'</td>
+        
         <td>
-            <span class="pull-right">'.Modules::link($module_id, $nota->id_record, null, null, null, true, 'tab_note').'</span>
+            <span class="pull-right"></span>
             
             '.$nota->content.'
            
             <small>'.$nota->user->nome_completo.'</small>
         </td>
+        
         <td class="text-center">
-            '.$nota->notification_date.'
-            ('.Carbon::parse($nota->notification_date)->diffForHumans().')
+            '.dateFormat($nota->notification_date).' ('.Carbon::parse($nota->notification_date)->diffForHumans().')
+        </td>
+        
+        <td class="text-center">
+            '.Modules::link($module_id, $nota->id_record, '', null, 'class="btn btn-primary btn-xs"', true, 'tab_note').'
         </td>
     </tr>';
     }

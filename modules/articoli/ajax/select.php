@@ -124,7 +124,7 @@ switch ($resource) {
         }
 
         // IVA da impostazioni
-        $idiva_predefinita = get_var('Iva predefinita');
+        $idiva_predefinita = setting('Iva predefinita');
         $iva_predefinita = $dbo->fetchOne('SELECT descrizione FROM co_iva WHERE id='.prepare($idiva_predefinita))['descrizione'];
 
         $previous_category = -1;

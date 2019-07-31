@@ -2,69 +2,35 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\PrimaNota\Movimento;
+use Modules\PrimaNota\PrimaNota;
+use Modules\Scadenzario\Scadenza;
+
 switch (post('op')) {
     case 'add':
-        $all_ok = true;
         $data = post('data');
-        $idmastrino = get_new_idmastrino();
         $descrizione = post('descrizione');
+        $is_insoluto = post('is_insoluto');
+
+        $prima_nota = PrimaNota::build($descrizione, $data, $is_insoluto, true);
 
         $conti = post('idconto');
         foreach ($conti as $i => $id_conto) {
             $id_scadenza = post('id_scadenza')[$i];
-            $insoluto = post('insoluto')[$i];
             $dare = post('dare')[$i];
             $avere = post('avere')[$i];
 
-            if (!empty($dare) || !empty($avere)) {
-                if (!empty($avere)) {
-                    $totale = -$avere;
-                } else {
-                    $totale = $dare;
-                }
+            $scadenza = Scadenza::find($id_scadenza);
 
-                $scadenza = $database->fetchOne('SELECT iddocumento, data_emissione FROM co_scadenziario WHERE id = '.prepare($id_scadenza));
-                $id_documento = $scadenza['iddocumento'];
-
-                $database->insert('co_movimenti', [
-                    'idmastrino' => $idmastrino,
-                    'data' => $data,
-                    'data_documento' => $scadenza['data_emissione'],
-                    'iddocumento' => $id_documento ?: 0,
-                    'descrizione' => $descrizione,
-                    'idconto' => $id_conto,
-                    'totale' => $totale,
-                    'primanota' => 1,
-                ]);
-
-                // Inserisco nello scadenziario il totale pagato
-                if (empty($insoluto)) {
-                    aggiorna_scadenziario($id_documento, abs($totale), $data, $id_scadenza);
-                }
-                // Rimuovo dallo scadenzario l'insoluto
-                else {
-                    aggiorna_scadenziario($id_documento, -abs($totale), $data, $id_scadenza);
-                }
-
-                if (!empty($id_documento)) {
-                    // Verifico se la fattura è stata pagata tutta, così imposto lo stato a "Pagato"
-                    $rs = $dbo->fetchArray('SELECT SUM(pagato) AS tot_pagato, SUM(da_pagare) AS tot_da_pagare FROM co_scadenziario WHERE iddocumento='.prepare($id_documento));
-
-                    // Aggiorno lo stato della fattura
-                    if (abs($rs[0]['tot_pagato']) == abs($rs[0]['tot_da_pagare'])) {
-                        $stato = 'Pagato';
-                    } elseif (abs($rs[0]['tot_pagato']) != abs($rs[0]['tot_da_pagare']) && abs($rs[0]['tot_pagato']) != '0') {
-                        $stato = 'Parzialmente pagato';
-                    } else {
-                        $stato = 'Emessa';
-                    }
-
-                    $dbo->query('UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione='.prepare($stato).') WHERE id='.prepare($id_documento));
-                }
-            }
+            $movimento = Movimento::build($prima_nota, $id_conto, $scadenza);
+            $movimento->setTotale($avere, $dare);
+            $movimento->save();
         }
 
-        $id_record = $idmastrino;
+        $prima_nota->aggiornaScadenzario();
+
+        $id_record = $prima_nota->id;
+
         flash()->info(tr('Movimento aggiunto in prima nota!'));
 
         // Creo il modello di prima nota
@@ -85,204 +51,35 @@ switch (post('op')) {
 
         break;
 
-    case 'editriga':
-        $all_ok = true;
-        $iddocumento = post('iddocumento');
+    case 'update':
         $data = post('data');
-        $idmastrino = post('idmastrino');
         $descrizione = post('descrizione');
 
-        // Leggo il totale di questo mastrino
-        $query = 'SELECT totale FROM co_movimenti WHERE idmastrino='.prepare($idmastrino).' AND primanota=1 AND totale>0';
-        $rs = $dbo->fetchArray($query);
-        $tot_mastrino = 0.00;
+        $prima_nota->descrizione = $descrizione;
+        $prima_nota->data = $data;
 
-        for ($i = 0; $i < sizeof($rs); ++$i) {
-            $tot_mastrino += abs($rs[0]['totale']);
-        }
+        $prima_nota->cleanup();
 
-        // Eliminazione prima nota
-        $dbo->query('DELETE FROM co_movimenti WHERE idmastrino='.prepare($idmastrino).' AND primanota=1');
-
-        for ($i = 0; $i < sizeof(post('idconto')); ++$i) {
-            $iddocumento = post('iddocumento')[$i];
-
-            // Lettura info fattura
-            $query = 'SELECT *, co_documenti.note, co_documenti.idpagamento, co_documenti.id AS iddocumento, co_statidocumento.descrizione AS `stato`, co_tipidocumento.descrizione AS `descrizione_tipodoc` FROM ((co_documenti LEFT OUTER JOIN co_statidocumento ON co_documenti.idstatodocumento=co_statidocumento.id) INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
-            $rs = $dbo->fetchArray($query);
-            $ragione_sociale = $rs[0]['ragione_sociale'];
-            $dir = $rs[0]['dir'];
-
-            $idconto = post('idconto')[$i];
+        $conti = post('idconto');
+        foreach ($conti as $i => $id_conto) {
+            $id_scadenza = post('id_scadenza')[$i];
             $dare = post('dare')[$i];
             $avere = post('avere')[$i];
 
-            if ($dare != '' && $dare != 0) {
-                $totale = $dare;
-            } elseif ($avere != '' && $avere != 0) {
-                $totale = -$avere;
-            } else {
-                $totale = 0;
-            }
+            $scadenza = Scadenza::find($id_scadenza);
 
-            if ($totale != 0) {
-                $query = 'INSERT INTO co_movimenti(idmastrino, data, iddocumento, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($iddocumento).', '.prepare($descrizione).', '.prepare($idconto).', '.prepare($totale).", '1')";
-
-                if (!$dbo->query($query)) {
-                    $all_ok = false;
-                } else {
-                    $id_record = $idmastrino;
-                    /*
-                        Devo azzerare il totale pagato nello scadenziario perché verrà ricalcolato.
-                        Se c'erano delle rate già pagate ne devo tener conto per rigenerare il totale pagato
-                    */
-                    // Tengo conto dei valori negativi per gli acquisti e dei valori positivi per le vendite
-                    if (($dir == 'uscita' && $totale < 0) || ($dir == 'entrata' && $totale > 0)) {
-                        // Azzero lo scadenziario e lo ricalcolo
-                        $dbo->query('UPDATE co_scadenziario SET pagato=0, data_pagamento = NULL WHERE iddocumento='.prepare($iddocumento));
-
-                        // Ricalcolo lo scadenziario per il solo nuovo importo
-                        aggiorna_scadenziario($iddocumento, $totale, $data);
-
-                        // Se il totale pagato non è il totale da pagare rimetto la fattura in stato "Emessa"
-                        $query2 = 'SELECT SUM(pagato) AS tot_pagato, SUM(da_pagare) AS tot_da_pagare FROM co_scadenziario WHERE iddocumento='.prepare($iddocumento);
-                        $rs2 = $dbo->fetchArray($query2);
-
-                        // Aggiorno lo stato della fattura a "Emessa"
-                        if (abs($rs2[0]['tot_pagato']) < abs($rs2[0]['tot_da_pagare'])) {
-                            $dbo->query("UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione='Emessa') WHERE id=".prepare($iddocumento));
-
-                            // Aggiorno lo stato dei preventivi collegati alla fattura se ce ne sono
-                            $query3 = 'SELECT idpreventivo FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento).' AND NOT idpreventivo=0 AND idpreventivo IS NOT NULL';
-                            $rs3 = $dbo->fetchArray($query3);
-
-                            for ($j = 0; $j < sizeof($rs3); ++$j) {
-                                $dbo->query("UPDATE co_preventivi SET idstato=(SELECT id FROM co_statipreventivi WHERE descrizione='In attesa di pagamento') WHERE id=".prepare($rs3[$j]['idpreventivo']));
-
-                                // Aggiorno anche lo stato degli interventi collegati ai preventivi
-                                $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Completato') WHERE id_preventivo=".prepare($rs3[$j]['idpreventivo']));
-                            }
-
-                            // Aggiorno lo stato degli interventi collegati alla fattura se ce ne sono
-                            $query3 = 'SELECT idintervento FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento).' AND idintervento IS NOT NULL';
-                            $rs3 = $dbo->fetchArray($query3);
-
-                            for ($j = 0; $j < sizeof($rs3); ++$j) {
-                                $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Fatturato') WHERE id=".prepare($rs3[$j]['idintervento']));
-                            }
-                        }
-                    }
-                }
-            }
+            $movimento = Movimento::build($prima_nota, $id_conto, $scadenza);
+            $movimento->setTotale($avere, $dare);
+            $movimento->save();
         }
 
-        // Se non va a buon fine qualcosa elimino il mastrino per non lasciare incongruenze nel db
-        if (!$all_ok) {
-            flash()->error(tr("Errore durante l'aggiunta del movimento!"));
-            $dbo->query('DELETE FROM co_movimenti WHERE idmastrino='.prepare($idmastrino));
-        } else {
-            flash()->info(tr('Movimento modificato in prima nota!'));
+        $prima_nota->aggiornaScadenzario();
 
-            foreach (post('iddocumento') as $iddocumento) {
-                // Verifico se la fattura è stata pagata, così imposto lo stato a "Pagato"
-                $query = 'SELECT SUM(pagato) AS tot_pagato, SUM(da_pagare) AS tot_da_pagare FROM co_scadenziario GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
-                $rs = $dbo->fetchArray($query);
-
-                // Aggiorno lo stato della fattura
-                if ($rs[0]['tot_pagato'] == $rs[0]['tot_da_pagare']) {
-                    $stato = 'Pagato';
-                } else {
-                    $stato = 'Parzialmente pagato';
-                }
-
-                $dbo->query('UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione='.prepare($stato).') WHERE id='.prepare($iddocumento));
-            }
-        }
+        flash()->info(tr('Movimento modificato in prima nota!'));
         break;
 
     // eliminazione movimento prima nota
     case 'delete':
-        $idmastrino = post('idmastrino');
-
-        if ($idmastrino != '') {
-            // Leggo l'id della fattura per azzerare i valori di preventivi e interventi collegati
-            $query = 'SELECT iddocumento FROM co_movimenti WHERE idmastrino='.prepare($idmastrino).' AND primanota=1';
-            $rs = $dbo->fetchArray($query);
-            $iddocumento = $rs[0]['iddocumento'];
-
-            // Leggo il totale dal mastrino e lo rimuovo dal totale pagato dello scadenziario, ciclando tra le rate
-            $query = 'SELECT totale FROM co_movimenti WHERE idmastrino='.prepare($idmastrino).' AND primanota=1 AND totale>0';
-            $rs = $dbo->fetchArray($query);
-            $totale_mastrino = 0.00;
-
-            for ($i = 0; $i < sizeof($rs); ++$i) {
-                $totale_mastrino += $rs[0]['totale'];
-            }
-
-            $rimanente = $totale_mastrino;
-
-            $query = 'SELECT * FROM co_scadenziario WHERE iddocumento='.prepare($iddocumento).' ORDER BY scadenza DESC';
-            $rs = $dbo->fetchArray($query);
-
-            for ($i = 0; $i < sizeof($rs); ++$i) {
-                if (abs($rimanente) > 0) {
-                    if (abs($rs[$i]['pagato']) >= abs($rimanente)) {
-                        $query2 = 'SELECT pagato FROM co_scadenziario WHERE id='.prepare($rs[$i]['id']);
-                        $rs2 = $dbo->fetchArray($query2);
-                        $pagato = $rs2[0]['pagato'];
-
-                        ($pagato < 0) ? $sign = -1 : $sign = 1;
-                        $new_value = ((abs($pagato) - abs($rimanente)) * $sign);
-
-                        // Se resta ancora un po' di pagato cambio solo l'importo...
-                        if ($new_value > 0) {
-                            $dbo->query('UPDATE co_scadenziario SET pagato='.prepare($new_value).' WHERE id='.prepare($rs[$i]['id']));
-                        }
-
-                        // ...se l'importo è a zero, azzero anche la data di pagamento
-                        else {
-                            $dbo->query('UPDATE co_scadenziario SET pagato='.prepare($new_value).', data_pagamento = NULL WHERE id='.prepare($rs[$i]['id']));
-                        }
-
-                        $rimanente = 0;
-                    } else {
-                        $dbo->query("UPDATE co_scadenziario SET pagato='0', data_pagamento = NULL WHERE id=".prepare($rs[$i]['id']));
-                        $rimanente -= abs($rs[$i]['pagato']);
-                    }
-                }
-            }
-
-            // Eliminazione prima nota
-            $dbo->query('DELETE FROM co_movimenti WHERE idmastrino='.prepare($idmastrino).' AND primanota=1');
-
-            // Aggiorno lo stato della fattura a "Emessa" o "Parzialmente pagato"
-            $rs_pagamenti = $dbo->fetchArray("SELECT SUM(pagato) AS pagato FROM co_scadenziario WHERE iddocumento='".$iddocumento."'");
-            if ($rs_pagamenti[0]['pagato'] > 0) {
-                $dbo->query("UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione='Parzialmente pagato') WHERE id=".prepare($iddocumento));
-            } else {
-                $dbo->query("UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione='Emessa') WHERE id=".prepare($iddocumento));
-            }
-
-            // Aggiorno lo stato dei preventivi collegati alla fattura se ce ne sono
-            $query = 'SELECT idpreventivo FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento).' AND NOT idpreventivo=0 AND idpreventivo IS NOT NULL';
-            $rs = $dbo->fetchArray($query);
-
-            for ($i = 0; $i < sizeof($rs); ++$i) {
-                $dbo->query("UPDATE co_preventivi SET idstato=(SELECT id FROM co_statipreventivi WHERE descrizione='In attesa di pagamento') WHERE id=".prepare($rs[$i]['idpreventivo']));
-
-                // Aggiorno anche lo stato degli interventi collegati ai preventivi
-                $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Completato') WHERE id_preventivo=".prepare($rs[$i]['idpreventivo']));
-            }
-
-            // Aggiorno lo stato degli interventi collegati alla fattura se ce ne sono
-            $query = 'SELECT idintervento FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento).' AND NOT idintervento IS NOT NULL';
-            $rs = $dbo->fetchArray($query);
-
-            for ($i = 0; $i < sizeof($rs); ++$i) {
-                $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Fatturato') WHERE id=".prepare($rs[$i]['idintervento']));
-            }
-
-            flash()->info(tr('Movimento eliminato!'));
-        }
+        $prima_nota->delete();
         break;
 }

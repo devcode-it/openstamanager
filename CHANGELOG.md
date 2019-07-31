@@ -48,6 +48,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  
 ### Rimosso (Removed)
  - Funzione *get_costi_intervento* del modulo **Attività**, a causa dell'aggiornamento della maggior parte del sistema di gestione degli **Attività** con le classi Eloquent
+ - Funzione *aggiorna_scadenziario* del modulo **Prima Nota**
  
 ### Fixed
 

@@ -18,6 +18,8 @@ return [
     'modules/interventi' => 'Modules\Interventi',
     'modules/pagamenti' => 'Modules\Pagamenti',
     'modules/statistiche' => 'Modules\Statistiche',
+    'modules/scadenzario' => 'Modules\Scadenzario',
+    'modules/primanota' => 'Modules\PrimaNota',
     'modules/utenti' => 'Modules\Utenti',
     'modules/stato_servizi' => 'Modules\StatoServizi',
     'modules/stati_intervento' => 'Modules\StatiIntervento',

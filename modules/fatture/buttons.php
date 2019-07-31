@@ -59,7 +59,7 @@ if (!empty($record['is_fiscale'])) {
     //Aggiunta insoluto
     if (!empty($record['riba']) && ($record['stato'] == 'Emessa' || $record['stato'] == 'Parzialmente pagato' || $record['stato'] == 'Pagato') && $dir == 'entrata') {
         ?>
-                    <button type="button" class="btn btn-primary" onclick="launch_modal( '<?php echo tr('Registra insoluto'); ?>', '<?php echo $rootdir; ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>&id_documenti=<?php echo $id_record; ?>&single=1&insoluto=1');"><i class="fa fa-euro"></i> <?php echo tr('Registra insoluto'); ?>...</button>
+                    <button type="button" class="btn btn-primary" onclick="launch_modal( '<?php echo tr('Registra insoluto'); ?>', '<?php echo $rootdir; ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>&id_documenti=<?php echo $id_record; ?>&single=1&is_insoluto=1');"><i class="fa fa-euro"></i> <?php echo tr('Registra insoluto'); ?>...</button>
     <?php
     }
 

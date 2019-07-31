@@ -6,48 +6,50 @@ $checklist_module = Modules::get('Checklists');
 $checks_id = 'checklist_'.$id_module.'_'.$id_plugin;
 
 echo '
-<div class="box box-primary" id="'.$checks_id.'">
-    <div class="box-header">
-        <h3 class="box-title">'.tr('Checklist').'</h3>
-    </div>
-    <div class="box-body" style="position:relative">
-        <div id="loading_'.$checks_id.'" class="text-center hide component-loader">
-            <div>
-                <i class="fa fa-refresh fa-spin fa-3x fa-fw"></i>
-                <span class="sr-only">'.tr('Caricamento...').'</span>
-            </div>
-        </div>';
+<div id="'.$checks_id.'">
+    <div class="box box-primary">
+        <div class="box-header">
+            <h3 class="box-title">'.tr('Checklist').'</h3>
+        </div>
+        <div class="box-body" style="position:relative">
+            <div id="loading_'.$checks_id.'" class="text-center hide component-loader">
+                <div>
+                    <i class="fa fa-refresh fa-spin fa-3x fa-fw"></i>
+                    <span class="sr-only">'.tr('Caricamento...').'</span>
+                </div>
+            </div>';
 
 // Form per la creazione di una nuova checklist
 if ($structure->permission == 'rw') {
     echo '
-        <div class="row">
-            <div class="col-md-12">
-                <a class="btn btn-sm btn-primary" data-href="'.$checklist_module->fileurl('components/add-check.php').'?id_module='.$id_module.'&id_record='.$id_record.'&id_plugin='.$id_plugin.'&manager_id='.$checks_id.'" data-toggle="tooltip" data-title="'.tr('Aggiungi check').'">
-                    <i class="fa fa-plus"></i> '.tr('Check').'
-                </a>
-                
-                <a class="btn btn-sm btn-primary" data-href="'.$checklist_module->fileurl('components/add-checklist.php').'?id_module='.$id_module.'&id_record='.$id_record.'&id_plugin='.$id_plugin.'&manager_id='.$checks_id.'" data-toggle="tooltip" data-title="'.tr('Aggiungi check').'">
-                    <i class="fa fa-plus"></i> '.tr('Checklist').'
-                </a>
+            <div class="row">
+                <div class="col-md-12">
+                    <a class="btn btn-sm btn-primary" data-href="'.$checklist_module->fileurl('components/add-check.php').'?id_module='.$id_module.'&id_record='.$id_record.'&id_plugin='.$id_plugin.'&manager_id='.$checks_id.'" data-toggle="tooltip" data-title="'.tr('Aggiungi check').'">
+                        <i class="fa fa-plus"></i> '.tr('Check').'
+                    </a>
+                    
+                    <a class="btn btn-sm btn-primary" data-href="'.$checklist_module->fileurl('components/add-checklist.php').'?id_module='.$id_module.'&id_record='.$id_record.'&id_plugin='.$id_plugin.'&manager_id='.$checks_id.'" data-toggle="tooltip" data-title="'.tr('Aggiungi check').'">
+                        <i class="fa fa-plus"></i> '.tr('Checklist').'
+                    </a>
+                </div>
             </div>
-        </div>
-        
-        <div class="clearfix"></div>
-        <br>';
+            
+            <div class="clearfix"></div>
+            <br>';
 }
 
 $checks = $structure->mainChecks($id_record);
 
 echo '
-        <ul class="todo-list checklist">';
+            <ul class="todo-list checklist">';
 
     foreach ($checks as $check) {
         echo renderChecklist($check);
     }
 
     echo '
-        </ul>
+            </ul>
+        </div>
     </div>
 </div>';
 

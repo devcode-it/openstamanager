@@ -78,6 +78,18 @@ elseif (filter('op') == 'download_file') {
     download($upload_dir.'/'.$rs[0]['filename'], $rs[0]['original']);
 }
 
+// Modifica nome della categoria degli allegati
+elseif (filter('op') == 'upload_category') {
+    $category = post('category');
+    $name = post('name');
+
+    $uploads = $structure->uploads($id_record)->where('category', $category);
+    foreach ($uploads as $upload) {
+        $upload->category = $name;
+        $upload->save();
+    }
+}
+
 // Validazione dati
 elseif (filter('op') == 'validate') {
     // Lettura informazioni di base

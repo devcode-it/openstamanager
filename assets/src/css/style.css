@@ -875,3 +875,8 @@ input.small-width {
 .progress .progress-bar span{
     color:#000;
 }
+
+.attachment-img {
+    max-width: 20px;
+    max-height: 20px;
+}

@@ -26,12 +26,11 @@ class Upload extends Model
      */
     public static function build($source, $data, $name = null, $category = null)
     {
-        $original_name = isset($source['name']) ? $source['name'] : basename($source);
-
         $model = parent::build();
 
         // Informazioni di base
-        $model->original_name = $original_name; // Fix per original di Eloquent
+        $original_name = isset($source['name']) ? $source['name'] : basename($source);
+        $model->original_name = $original_name; // Fix per "original" di Eloquent
         $model->size = $source['size'];
 
         $model->name = !empty($name) ? $name : $original_name;
@@ -56,6 +55,7 @@ class Upload extends Model
         }
 
         $model->size = \Util\FileSystem::fileSize($directory.'/'.$filename);
+        $model->user()->associate(auth()->getUser());
 
         $model->save();
 
@@ -158,18 +158,6 @@ class Upload extends Model
         return $this->isImage() || $this->isFatturaElettronica() || $this->isPDF();
     }
 
-    /* Relazioni Eloquent */
-
-    public function module()
-    {
-        return $this->belongsTo(Module::class, 'id_module');
-    }
-
-    public function plugin()
-    {
-        return $this->belongsTo(Plugin::class, 'id_plugin');
-    }
-
     public function delete()
     {
         $info = $this->info;
@@ -206,6 +194,23 @@ class Upload extends Model
     public static function getInfo($file)
     {
         return pathinfo($file);
+    }
+
+    /* Relazioni Eloquent */
+
+    public function module()
+    {
+        return $this->belongsTo(Module::class, 'id_module');
+    }
+
+    public function plugin()
+    {
+        return $this->belongsTo(Plugin::class, 'id_plugin');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     /**

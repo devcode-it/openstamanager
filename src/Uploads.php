@@ -236,6 +236,7 @@ class Uploads
             'id_plugin' => !empty($data['id_plugin']) ? $data['id_plugin'] : null,
             'id_record' => $data['id_record'],
             'size' => $data['size'],
+            'created_by' => auth()->getUser()->id,
         ]);
     }
 

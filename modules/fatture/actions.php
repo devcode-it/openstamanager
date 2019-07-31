@@ -636,6 +636,7 @@ switch (post('op')) {
 
     case 'transform':
         $fattura->id_segment = post('id_segment');
+        $fattura->data = post('data');
         $fattura->save();
 
         break;

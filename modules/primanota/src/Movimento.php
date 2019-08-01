@@ -16,15 +16,15 @@ class Movimento extends Model
         'dare',
     ];
 
-    public static function build(PrimaNota $prima_nota, $id_conto, Scadenza $scadenza = null)
+    public static function build(Mastrino $mastrino, $id_conto, Scadenza $scadenza = null)
     {
         $model = parent::build();
 
-        $model->idmastrino = $prima_nota->idmastrino;
-        $model->data = $prima_nota->data;
-        $model->descrizione = $prima_nota->descrizione;
-        $model->primanota = $prima_nota->primanota;
-        $model->is_insoluto = $prima_nota->is_insoluto;
+        $model->idmastrino = $mastrino->idmastrino;
+        $model->data = $mastrino->data;
+        $model->descrizione = $mastrino->descrizione;
+        $model->primanota = $mastrino->primanota;
+        $model->is_insoluto = $mastrino->is_insoluto;
 
         $model->id_scadenza = $scadenza ? $scadenza->id : null;
 

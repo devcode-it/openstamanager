@@ -57,7 +57,7 @@ include_once __DIR__.'/../../core.php';
 	</div>
 <?php
 
-$righe = $prima_nota->movimenti->toArray();
+$righe = $mastrino->movimenti->toArray();
 
 include $structure->filepath('movimenti.php');
 
@@ -66,14 +66,7 @@ include $structure->filepath('movimenti.php');
 
 <script>
     $("#edit-form").submit(function(e) {
-        var result = calcolaBilancio();
-
-        if(!result) {
-            setTimeout(function(){ bloccaZeri(); }, 300);
-            e.preventDefault();
-        }
-
-        return result;
+        return calcolaBilancio();
     });
 </script>
 

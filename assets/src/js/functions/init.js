@@ -27,14 +27,10 @@ function init() {
         $('form').not('.no-check').parsley();
     }
 
-    window.Parsley.on('field:success', function () {
-        this.$element.removeClass('parsley-success');
-    });
-
     // Aggiunta nell'URL del nome tab su cui tornare dopo il submit
     // Blocco del pulsante di submit dopo il primo submit
-    $("form").submit(function () {
-        if ($(this).parsley().validate()) {
+    $('form').on("submit", function(e) {
+        if ($(this).parsley().validate() && e.result) {
             $(this).submit(function () {
                 return false;
             });
@@ -58,6 +54,10 @@ function init() {
         }
 
         return false;
+    });
+
+    window.Parsley.on('field:success', function () {
+        this.$element.removeClass('parsley-success');
     });
 
     restart_inputs();

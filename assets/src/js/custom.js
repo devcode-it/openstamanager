@@ -63,8 +63,6 @@ $(document).ready(function () {
     // Richiamo alla generazione di Datatables
     start_datatables();
 
-    init();
-
     // Calendario principale
     start_complete_calendar("#daterange", function (start, end) {
         // Esegue il submit del periodo selezionato e ricarica la pagina

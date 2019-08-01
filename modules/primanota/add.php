@@ -237,15 +237,9 @@ include $structure->filepath('movimenti.php');
     var nuovo_modello = "<?php echo tr('Aggiungi e crea modello'); ?>";
     var modifica_modello = "<?php echo tr('Aggiungi e modifica modello'); ?>";
 
-    $(document).ready(function() {
-        $("#bs-popup #add-form").submit(function() {
-            var result = calcolaBilancio();
-
-            if(!result) {
-                setTimeout(function(){ bloccaZeri(); }, 300);
-            }
-
-            return result;
+    $(document).ready(function(e) {
+        $("#bs-popup #add-form").on("submit", function(e) {
+            return calcolaBilancio();
         });
 
         $('#bs-popup #modello_primanota').change(function() {

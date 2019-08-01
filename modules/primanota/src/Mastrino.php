@@ -6,7 +6,7 @@ use Common\Model;
 use Modules\Fatture\Fattura;
 use Modules\Scadenzario\Scadenza;
 
-class PrimaNota extends Model
+class Mastrino extends Model
 {
     public $incrementing = false;
     protected $table = 'co_movimenti';

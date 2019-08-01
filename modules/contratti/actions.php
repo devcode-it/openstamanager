@@ -306,7 +306,12 @@ switch (post('op')) {
                 $rs = $dbo->fetchArray('SELECT * FROM co_righe_contratti WHERE idcontratto='.prepare($id_record));
 
                 for ($i = 0; $i < sizeof($rs); ++$i) {
-                    $dbo->query('INSERT INTO co_righe_contratti(idcontratto, descrizione, subtotale, um, qta) VALUES('.prepare($new_idcontratto).', '.prepare($rs[$i]['descrizione']).', '.prepare($rs[$i]['subtotale']).', '.prepare($rs[$i]['um']).', '.prepare($rs[$i]['qta']).')');
+                    unset( $rs[$i]['id'] );
+                    unset( $rs[$i]['created_at'] );
+                    unset( $rs[$i]['updated_at'] );
+                    $rs[$i]['idcontratto'] = $new_idcontratto;
+
+                    $dbo->insert('co_righe_contratti', $rs);
                 }
 
                 // Replicazione degli impianti

@@ -11,10 +11,13 @@ class StatiInterventi extends Resource implements RetrieveInterface
     {
         $table = 'in_statiintervento';
 
-        $select = [
-            '*',
-            'id' => 'idstatointervento',
-        ];
+        $select = $request['select'];
+        if (empty($select)) {
+            $select = [
+                '*',
+                'id' => 'idstatointervento',
+            ];
+        }
 
         $where = $request['where'];
         if (empty($where['deleted_at'])) {

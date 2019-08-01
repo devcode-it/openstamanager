@@ -122,10 +122,12 @@ DELETE FROM `zz_settings` WHERE `nome` = 'Tabelle escluse per la sincronizzazion
 
 INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES
 (NULL, 'v1', 'create', 'allegato', 'Api\\Common\\Allegato', '1'),
+(NULL, 'v1', 'retrieve', 'clienti', 'Modules\\Anagrafiche\\API\\v1\\Anagrafiche', '1'),
 (NULL, 'v1', 'retrieve', 'anagrafiche', 'Modules\\Anagrafiche\\API\\v1\\Anagrafiche', '1'),
 (NULL, 'v1', 'create', 'anagrafica', 'Modules\\Anagrafiche\\API\\v1\\Anagrafiche', '1'),
 (NULL, 'v1', 'update', 'anagrafica', 'Modules\\Anagrafiche\\API\\v1\\Anagrafiche', '1'),
 (NULL, 'v1', 'delete', 'anagrafica', 'Modules\\Anagrafiche\\API\\v1\\Anagrafiche', '1'),
+(NULL, 'v1', 'retrieve', 'sedi', 'Modules\\Anagrafiche\\API\\v1\\Sedi', '1'),
 (NULL, 'v1', 'create', 'movimento_articolo', 'Modules\\Articoli\\API\\v1\\Movimenti', '1'),
 (NULL, 'v1', 'retrieve', 'articoli', 'Modules\\Articoli\\API\\v1\\Articoli', '1'),
 (NULL, 'v1', 'create', 'login', 'Modules\\Utenti\\API\\v1\\Login', '1'),

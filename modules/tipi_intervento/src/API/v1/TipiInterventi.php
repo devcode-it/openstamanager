@@ -11,10 +11,13 @@ class TipiInterventi extends Resource implements RetrieveInterface
     {
         $table = 'in_tipiintervento';
 
-        $select = [
-            '*',
-            'id' => 'idtipointervento',
-        ];
+        $select = $request['select'];
+        if (empty($select)) {
+            $select = [
+                '*',
+                'id' => 'idtipointervento',
+            ];
+        }
 
         return [
             'select' => $select,

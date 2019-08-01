@@ -83,7 +83,6 @@ if (Auth::check()) {
 
     echo '
         <script>$(document).ready(init)</script>';
-
 }
 
 echo '

@@ -4,7 +4,7 @@ namespace Modules\Interventi\Components;
 
 use Common\Model;
 use DateTime;
-use http\Exception\InvalidArgumentException;
+use InvalidArgumentException;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\Intervento;
 use Modules\Iva\Aliquota;

@@ -6,6 +6,7 @@ use API\Exceptions\InternalError;
 use API\Exceptions\ResourceNotFound;
 use API\Exceptions\ServiceError;
 use Auth;
+use Exception;
 use Filter;
 use Models\ApiResource as Resource;
 
@@ -111,6 +112,8 @@ class Response
             return self::error('internalError');
         } catch (ServiceError $e) {
             return self::error('externalError');
+        } catch (Exception $e) {
+            return self::error('serverError');
         }
 
         return self::response($response);

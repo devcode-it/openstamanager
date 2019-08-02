@@ -2,13 +2,13 @@
 
 namespace Modules\Interventi\API\v1;
 
-use API\Interfaces\CreateInterface;
+use API\Interfaces\UpdateInterface;
 use API\Resource;
 use Models\Upload;
 
-class Firma extends Resource implements CreateInterface
+class Firma extends Resource implements UpdateInterface
 {
-    public function create($request)
+    public function update($request)
     {
         $database = database();
         $data = $request['data'];

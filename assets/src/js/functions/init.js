@@ -30,7 +30,7 @@ function init() {
     // Aggiunta nell'URL del nome tab su cui tornare dopo il submit
     // Blocco del pulsante di submit dopo il primo submit
     $('form').on("submit", function(e) {
-        if ($(this).parsley().validate() && e.result) {
+        if ($(this).parsley().validate() && (e.result == undefined || e.result)) {
             $(this).submit(function () {
                 return false;
             });

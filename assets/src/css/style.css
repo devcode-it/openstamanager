@@ -880,3 +880,8 @@ input.small-width {
     max-width: 20px;
     max-height: 20px;
 }
+
+.logo-image {
+    max-width: 100px;
+    max-height: 100px;
+}

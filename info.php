@@ -11,7 +11,7 @@ include_once App::filepath('include|custom|', 'top.php');
 echo '
 <div class="box">
     <div class="box-header">
-        <img src="'.$paths['img'].'/logo.png" alt="'.tr('OSM Logo').'">
+        <img src="'.$paths['img'].'/logo.png" class="logo-image" alt="'.tr('OSM Logo').'">
         <h3 class="box-title">'.tr('OpenSTAManager').'</h3>
         <div class="pull-right">
             <i class="fa fa-info"></i> '.tr('Informazioni').'

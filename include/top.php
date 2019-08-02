@@ -21,7 +21,7 @@ echo '<!DOCTYPE html>
         
 		<link href="'.$paths['img'].'/favicon.png" rel="icon" type="image/x-icon" />';
 
-if (file_exists(DOCROOT.'/manifest.json')){
+if (file_exists(DOCROOT.'/manifest.json')) {
     echo '
         <link rel="manifest" href="'.ROOTDIR.'/manifest.json">';
 }

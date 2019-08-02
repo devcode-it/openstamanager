@@ -290,6 +290,17 @@ class App
         $db_password = '';
         $db_name = '';
         $port = '';
+        $lang = '';
+
+        $formatter = [
+            'timestamp' => 'd/m/Y H:i',
+            'date' => 'd/m/Y',
+            'time' => 'H:i',
+            'number' => [
+                'decimals' => ',',
+                'thousands' => '.',
+            ],
+        ];
 
         return get_defined_vars();
     }

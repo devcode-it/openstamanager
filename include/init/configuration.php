@@ -98,25 +98,25 @@ if (post('db_host') !== null) {
 
     // Creazione della configurazione
     if ($dbo->isConnected()) {
-        // Impostazioni di configurazione strettamente necessarie al funzionamento del progetto
-        $backup_config = '<?php
+        $new_config = file_get_contents(DOCROOT.'/config.example.php');
 
-$backup_dir = __DIR__.\'/backup/\';
-
-$db_host = \'|host|\';
-$db_username = \'|username|\';
-$db_password = \'|password|\';
-$db_name = \'|database|\';
-
-';
-
-        $new_config = (file_exists($docroot.'/config.example.php')) ? file_get_contents($docroot.'/config.example.php') : $backup_config;
+        $decimals = post('decimal_separator');
+        $thousands = post('thousand_separator');
+        $decimals = $decimals == 'dot' ? '.' : ',';
+        $thousands = $thousands == 'dot' ? '.' : $thousands;
+        $thousands = $thousands == 'comma' ? ',' : $thousands;
 
         $values = [
             '|host|' => $db_host,
             '|username|' => $db_username,
             '|password|' => $db_password,
             '|database|' => $db_name,
+            '|lang|' => post('lang'),
+            '|timestamp|' => post('timestamp_format'),
+            '|date|' => post('date_format'),
+            '|time|' => post('time_format'),
+            '|decimals|' => $decimals,
+            '|thousands|' => $thousands,
         ];
         $new_config = str_replace(array_keys($values), $values, $new_config);
 
@@ -262,9 +262,9 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
 
                 if($(this).closest("form").parsley().validate()){
                     prev_html = $("#install").html();
-                    $("#install").html("<i class=\'fa fa-spinner fa-pulse  fa-fw\'></i> '.tr('Attendere').'...");
-                    $("#install").prop(\'disabled\', true);
-                    $("#test").prop(\'disabled\', true);
+                    $("#install").html("<i class=\'fa fa-spinner fa-pulse fa-fw\'></i> '.tr('Attendere').'...");
+                    $("#install").prop("disabled", true);
+                    $("#test").prop("disabled", true);
 
                     $("#config-form").submit();
                 }
@@ -274,9 +274,9 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
             $("#test").on("click", function(){
                 if($(this).closest("form").parsley().validate()){
 					prev_html = $("#test").html();
-					$("#test").html("<i class=\'fa fa-spinner fa-pulse  fa-fw\'></i> '.tr('Attendere').'...");
-                    $("#test").prop(\'disabled\', true);
-                    $("#install").prop(\'disabled\', true);
+					$("#test").html("<i class=\'fa fa-spinner fa-pulse fa-fw\'></i> '.tr('Attendere').'...");
+                    $("#test").prop("disabled", true);
+                    $("#install").prop("disabled", true);
                     $(this).closest("form").ajaxSubmit({
                         url: "'.$rootdir.'/index.php",
                         data: {
@@ -287,15 +287,17 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                             data = parseFloat(data.trim());
 
 							$("#test").html(prev_html);
-                            $("#test").prop(\'disabled\', false);
-                            $("#install").prop(\'disabled\', false);
+                            $("#test").prop("disabled", false);
+                            $("#install").prop("disabled", false);
 
                             if(data == 0){
                                 swal("'.tr('Errore della configurazione').'", "'.tr('La configurazione non è corretta').'.", "error");
                             } else if(data == 1){
                                 swal("'.tr('Permessi insufficienti').'", "'.tr("L'utente non possiede permessi sufficienti per il testing della connessione. Potresti rilevare problemi in fase di installazione.").'.", "error");
                             } else {
-                                swal("'.tr('Configurazione corretta').'", "'.tr('Ti sei connesso con successo al database').'. '.tr("Clicca su 'Installa' per proseguire").'.", "success");
+                                swal("'.tr('Configurazione corretta').'", "'.tr('Ti sei connesso con successo al database').'. '.tr('Clicca su _BTN_ per proseguire', [
+        '_BTN_' => "'".tr('Installa')."'",
+    ]).'.", "success");
                             }
                         },
                         error: function(data) {
@@ -314,9 +316,87 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                 <h3 class="box-title">'.tr('OpenSTAManager').'</h3>
             </div>
 
-            <div class="box-body" id="smartwizard">';
+            <div class="box-body" id="smartwizard">
+                <span class="pull-right col-md-4">
+                    <select class="form-control hide" id="language" required="1">';
+
+    $languages = [
+        'it' => [
+            'title' => tr('Italiano'),
+            'flag' => 'IT',
+        ],
+        'en' => [
+            'title' => tr('Inglese'),
+            'flag' => 'GB',
+        ],
+    ];
+
+    $current = trans()->getCurrentLocale();
+    foreach ($languages as $code => $language) {
+        echo '
+                        <option data-country="'.$language['flag'].'" value="'.$code.'" '.($code == $current ? 'selected' : '').'>'.$language['title'].'</option>';
+    }
 
     echo '
+                    </select>
+
+                    <script>
+                    var flag_link = "https://lipis.github.io/flag-icon-css/flags/4x3/|flag|.svg";
+
+                    $(document).ready(function() {
+                        $.ajax({
+                            url: flag_link.replace("|flag|", "it"),
+                            success: function(){
+                                initLanguage(true);
+                            },
+                            error: function(){
+                                initLanguage(false);
+                            },
+                            timeout: 500
+                        });
+                    });
+                    
+                    function initLanguage(flag) {
+                        $("#language").removeClass("hide");
+                        
+                        $("#language").select2({
+                            theme: "bootstrap",
+                            templateResult: function(item) {
+                                if (!item.id || !flag) {
+                                    return item.text;
+                                }
+    
+                                var element = $(item.element);
+                                var img = $("<img>", {
+                                    class: "img-flag",
+                                    width: 26,
+                                    src: flag_link.replace("|flag|", element.data("country").toLowerCase()),
+                                });
+    
+                                var span = $("<span>", {
+                                    text: " " + item.text
+                                });
+                                span.prepend(img);
+    
+                                return span;
+                            }
+                        });
+    
+                        $("#language").on("change", function(){
+                            if ($(this).val()) {
+                                var location = window.location;
+                                var url = location.protocol + "//" + location.host + "" + location.pathname;
+                                
+                                var parameters = getUrlVars();
+                                parameters.lang = $(this).val();
+                                
+                                redirect(url, parameters);
+                            }
+                        });
+                    }
+                    </script>
+                </span>
+
                 <ul>
                     <li><a href="#step-1">
                         <h3>'.tr('Requisiti').'</h3>
@@ -363,7 +443,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
 
                         <div class="row">
                             <div class="col-md-8">
-                                <span class="pull-left" title='.tr('Visiona e accetta la licenza per proseguire').' >'.tr('Accetti la licenza GPLv3 di OpenSTAManager?').'*</span>
+                                <span class="pull-left" title="'.tr('Visiona e accetta la licenza per proseguire').'">'.tr('Accetti la licenza GPLv3 di OpenSTAManager?').'*</span>
                             </div>
 
                             <form class="col-md-4">
@@ -390,17 +470,77 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                         <p>'.tr('Non hai ancora configurato OpenSTAManager').'.</p>
                         <p><small class="help-block">'.tr('Configura correttamente il software con i seguenti parametri (modificabili successivamente dal file _FILE_)', [
                             '_FILE_' => '<b>config.inc.php</b>',
-                        ]).'</small></p>';
+                        ]).'</small></p>
+                        
+                        <hr>';
 
     // Form dei parametri
     echo '
                         <form action="?action=updateconfig&firstuse=true" method="post" id="config-form">
+                            <input type="hidden" name="lang" value="'.trans()->getCurrentLocale().'">
+                            
+                            <h4>'.tr('Formato date').'</h4>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    {[ "type": "text", "label": "'.tr('Formato data lunga').'", "name": "timestamp_format", "value": "d/m/Y H:i", "required": 1 ]}
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    {[ "type": "text", "label": "'.tr('Formato data corta').'", "name": "date_format", "value": "d/m/Y", "required": 1 ]}
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    {[ "type": "text", "label": "'.tr('Formato orario').'", "name": "time_format", "value": "H:i", "required": 1 ]}
+                                </div>
+                            </div>
+                            
+                            <small>'.tr('I formati sono impostabili attraverso lo standard previsto da PHP: _LINK_', [
+                                '_LINK_' => '<a href="https://www.php.net/manual/en/function.date.php#refsect1-function.date-parameters">https://www.php.net/manual/en/function.date.php#refsect1-function.date-parameters</a>',
+                            ]).'.</small>
+                            
+                            <hr>';
+
+    if (class_exists('NumberFormatter')) {
+        $list = [
+            [
+                'id' => 'comma',
+                'text' => tr('Virgola'),
+            ],
+            [
+                'id' => 'dot',
+                'text' => tr('Punto'),
+            ],
+        ];
+
+        echo '
+                            <h4>'.tr('Formato numeri').'</h4>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {[ "type": "select", "label": "'.tr('Separatore dei decimali').'", "name": "decimal_separator", "value": "comma", "values": '.json_encode($list).', "required": 1 ]}
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    {[ "type": "select", "label": "'.tr('Separatore delle migliaia').'", "name": "thousand_separator", "value": "dot", "values": '.json_encode($list).' ]}
+                                </div>
+                            </div>
+                            
+                            <small>'.tr("Si consiglia l'abilitazione dell'estensione _EXT_ di PHP", [
+                                '_EXT_' => 'intl',
+                            ]).'.</small>
+                            
+                            <hr>';
+    }
+
+    echo '
+
+                            <h4>'.tr('Database').'</h4>
                             <div class="row">';
 
     // db_host
     echo '
                                 <div class="col-md-12">
-                                    {[ "type": "text", "label": "'.tr('Host del database').'", "name": "db_host", "placeholder": "'.tr("Indirizzo dell'host del database").'", "value": "'.$host.'", "help": "'.tr('Esempio').': localhost", "show-help": 0, "required": 1 ]}
+                                    {[ "type": "text", "label": "'.tr('Host del database').'", "name": "db_host", "placeholder": "'.tr('Host').'", "value": "'.$host.'", "help": "'.tr('Esempio').': localhost", "show-help": 0, "required": 1 ]}
                                 </div>
                             </div>
 
@@ -409,19 +549,19 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
     // db_username
     echo '
                                 <div class="col-md-4">
-                                    {[ "type": "text", "label": "'.tr("Username dell'utente MySQL").'", "name": "db_username", "placeholder": "'.tr("Username dell'utente MySQL").'", "value": "'.$username.'", "help": "'.tr('Esempio').': root", "show-help": 0, "required": 1 ]}
+                                    {[ "type": "text", "label": "'.tr("Username dell'utente MySQL").'", "name": "db_username", "placeholder": "'.tr('Username').'", "value": "'.$username.'", "help": "'.tr('Esempio').': root", "show-help": 0, "required": 1 ]}
                                 </div>';
 
     // db_password
     echo '
                                 <div class="col-md-4">
-                                    {[ "type": "password", "label": "'.tr("Password dell'utente MySQL").'", "name": "db_password", "placeholder": "'.tr("Password dell'utente MySQL").'", "value": "'.$password.'", "help": "'.tr('Esempio').': mysql", "show-help": 0 ]}
+                                    {[ "type": "password", "label": "'.tr("Password dell'utente MySQL").'", "name": "db_password", "placeholder": "'.tr('Password').'", "value": "'.$password.'", "help": "'.tr('Esempio').': mysql", "show-help": 0 ]}
                                 </div>';
 
     // db_name
     echo '
                                 <div class="col-md-4">
-                                    {[ "type": "text", "label": "'.tr('Nome del database').'", "name": "db_name", "placeholder": "'.tr('Nome del database').'", "value": "'.$name.'", "help": "'.tr('Esempio').': openstamanager", "show-help": 0, "required": 1 ]}
+                                    {[ "type": "text", "label": "'.tr('Nome del database').'", "name": "db_name", "placeholder": "'.tr('Database').'", "value": "'.$name.'", "help": "'.tr('Esempio').': openstamanager", "show-help": 0, "required": 1 ]}
                                 </div>
                             </div>';
 

@@ -19,6 +19,7 @@ $settings = [
     'Conto predefinito fatture di acquisto' => true,
     "Percentuale ritenuta d'acconto" => false,
     "Causale ritenuta d'acconto" => false,
+    'Valuta' => true,
 ];
 
 if (!empty(setting("Percentuale ritenuta d'acconto"))) {

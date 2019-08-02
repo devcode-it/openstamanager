@@ -306,9 +306,9 @@ switch (post('op')) {
                 $rs = $dbo->fetchArray('SELECT * FROM co_righe_contratti WHERE idcontratto='.prepare($id_record));
 
                 for ($i = 0; $i < sizeof($rs); ++$i) {
-                    unset( $rs[$i]['id'] );
-                    unset( $rs[$i]['created_at'] );
-                    unset( $rs[$i]['updated_at'] );
+                    unset($rs[$i]['id']);
+                    unset($rs[$i]['created_at']);
+                    unset($rs[$i]['updated_at']);
                     $rs[$i]['idcontratto'] = $new_idcontratto;
 
                     $dbo->insert('co_righe_contratti', $rs);

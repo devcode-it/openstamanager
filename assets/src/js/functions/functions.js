@@ -80,20 +80,15 @@ function scrollToOffset(offset) {
 /**
  * Ritorna un array associativo con i parametri passati via GET
  */
-function getUrlVars(url) {
-    var vars = [],
-        hash;
-    if (url == null)
-        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-    else
-        var hashes = url.slice(url.indexOf('?') + 1).split('&');
-    for (var i = 0; i < hashes.length; i++) {
-        hash = hashes[i].split('=');
-        vars.push(hash[0]);
-        vars[hash[0]] = hash[1];
-    }
+function getUrlVars() {
+    var search = window.location.search.substring(1);
+    if (!search) return {};
 
-    return vars;
+    var results = JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g,'":"') + '"}', function(key, value) {
+        return key === "" ? value : decodeURIComponent(value)
+    });
+
+    return results;
 }
 
 // Data e ora (orologio)

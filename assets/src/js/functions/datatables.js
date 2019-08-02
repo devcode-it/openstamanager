@@ -34,19 +34,7 @@ function start_datatables() {
             var id_parent = $this.data('idparent');
 
             // Parametri di ricerca da url o sessione
-            var search = getUrlVars();
-
-            globals.search.forEach(function (value, index, array) {
-                if (search[array[index]] == undefined) {
-                    search.push(array[index]);
-                    search[array[index]] = array[value];
-                }
-            });
-
-            // Fix per l'URL encoding
-            search.forEach(function (value, index, array) {
-                search[array[index]] = decodeURIComponent(array[value]);
-            });
+            var search = getTableSearch();
 
             var res = [];
             $this.find("th").each(function () {
@@ -236,12 +224,14 @@ function start_datatables() {
                     });
 
                     // Ricerca di base ereditata dalla  sessione
-                    search.forEach(function (value, index, array) {
+                    var search = getTableSearch();
+                    var keys = Object.keys(search);
+                    keys.forEach(function (key) {
                         var exists = setInterval(function () {
-                            input = $('#th_' + array[index].replace('search_', '') + ' input');
-                            if (input.length || array[index] == 'id_module' || array[index] == 'id_record') {
+                            input = $('#th_' + key.replace('search_', '') + ' input');
+                            if (input.length || key == 'id_module' || key == 'id_record') {
                                 clearInterval(exists);
-                                if (input.val() == '') input.val(array[value]).trigger('keyup');
+                                if (input.val() == '') input.val(search[key]).trigger('keyup');
                             }
                         }, 100);
                     });
@@ -426,4 +416,17 @@ function searchFieldName(field) {
  */
 function searchTable(module_id, field, value) {
     session_set('module_' + module_id + ',' + 'search_' + searchFieldName(field), value, 0);
+}
+
+function getTableSearch() {
+    // Parametri di ricerca da url o sessione
+    var search = getUrlVars();
+
+    globals.search.forEach(function (value, index, array) {
+        if (search[array[index]] == undefined) {
+            search[array[index]] = array[value];
+        }
+    });
+
+    return search;
 }

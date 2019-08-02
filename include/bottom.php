@@ -80,7 +80,6 @@ if (Auth::check()) {
         });
         
         </script>';
-
 }
 
 echo '

@@ -81,10 +81,10 @@ if (Auth::check()) {
         
         </script>';
 
-    echo '
-        <script>$(document).ready(init)</script>';
 }
 
+echo '
+        <script>$(document).ready(init)</script>';
 echo '
 	</body>
 </html>';

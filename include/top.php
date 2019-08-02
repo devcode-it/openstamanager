@@ -18,8 +18,13 @@ echo '<!DOCTYPE html>
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
         <meta name="robots" content="noindex,nofollow">
-
+        
 		<link href="'.$paths['img'].'/favicon.png" rel="icon" type="image/x-icon" />';
+
+if (file_exists(DOCROOT.'/manifest.json')){
+    echo '
+        <link rel="manifest" href="'.ROOTDIR.'/manifest.json">';
+}
 
 // CSS
 foreach (App::getAssets()['css'] as $style) {

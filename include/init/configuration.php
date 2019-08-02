@@ -162,6 +162,30 @@ $db_name = \'|database|\';
         }
         // Continua con l'esecuzione delle operazioni previste
         else {
+            // Creazione manifest.json
+            $manifest = '{
+    "dir" : "ltr",
+    "lang" : "it-IT",
+    "name" : "OpenSTAManager",
+    "scope" : "'.ROOTDIR.'",
+    "display" : "fullscreen",
+    "start_url" : "'.ROOTDIR.'",
+    "short_name" : "OSM",
+    "theme_color" : "transparent",
+    "description" : "OpenSTAManager",
+    "orientation" : "any",
+    "background_color" : "transparent",
+    "generated" : "true",
+    "icons" : [
+        {
+            "src": "assets/dist/img/logo.png",
+            "type": "image/png",
+            "sizes": "512x512"
+        }
+    ]
+}';
+            file_put_contents('manifest.json', $manifest);
+
             redirect(ROOTDIR.'/index.php');
             exit();
         }
@@ -286,7 +310,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
     echo '
         <div class="box box-center-large box-warning">
             <div class="box-header with-border text-center">
-                <img src="'.$img.'/logo.png" alt="'.tr('OSM Logo').'">
+                <img src="'.$img.'/logo.png" class="logo-image" alt="'.tr('OSM Logo').'">
                 <h3 class="box-title">'.tr('OpenSTAManager').'</h3>
             </div>
 

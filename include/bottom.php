@@ -54,6 +54,9 @@ if (Auth::check()) {
         <script>
         $(document).ready(function() {
             alertPush();
+                    
+            // Orologio
+            clock();
             
             $.ajax({
                 url: globals.rootdir + "/ajax.php",
@@ -78,7 +81,6 @@ if (Auth::check()) {
                 },
             });
         });
-        
         </script>';
 }
 

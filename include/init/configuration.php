@@ -321,11 +321,11 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                     <select class="form-control hide" id="language" required="1">';
 
     $languages = [
-        'it' => [
+        'it_IT' => [
             'title' => tr('Italiano'),
             'flag' => 'IT',
         ],
-        'en' => [
+        'en_GB' => [
             'title' => tr('Inglese'),
             'flag' => 'GB',
         ],

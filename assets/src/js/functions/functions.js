@@ -93,7 +93,7 @@ function getUrlVars() {
 
 // Data e ora (orologio)
 function clock() {
-    $('#datetime').html(moment().format(globals.timestampFormat));
+    $('#datetime').html(moment().formatPHP(globals.timestamp_format));
     setTimeout('clock()', 1000);
 }
 
@@ -436,20 +436,21 @@ function renderMessages() {
         success: function (flash) {
             messages = JSON.parse(flash);
 
-            info = messages.info ? messages.info : {};
-            Object.keys(info).forEach(function (element) {
-                toastr["success"](info[element]);
+            info = messages.info ? messages.info : [];
+            info.forEach(function (element) {
+                toastr["success"](element);
             });
 
-            warning = messages.warning ? messages.warning : {};
-            Object.keys(warning).forEach(function (element) {
-                toastr["warning"](warning[element]);
+            warning = messages.warning ? messages.warning : [];
+            warning.forEach(function (element) {
+                toastr["warning"](element);
             });
 
-            error = messages.error ? messages.error : {};
-            Object.keys(error).forEach(function (element) {
-                toastr["error"](error[element]);
+            error = messages.error ? messages.error : [];
+            error.forEach(function (element) {
+                toastr["error"](element);
             });
+
         }
     });
 }

@@ -101,7 +101,7 @@ if (Auth::check()) {
                 '.$key.': "'.addslashes($value).'",';
     }
     echo '
-            password: {
+                password: {
                     "wordMinLength": "'.tr('La password è troppo corta').'",
                     "wordMaxLength": "'.tr('La password è troppo lunga').'",
                     "wordInvalidChar": "'.tr('La password contiene un carattere non valido').'",
@@ -118,6 +118,24 @@ if (Auth::check()) {
                     "strong": "'.tr('Forte').'",
                     "veryStrong": "'.tr('Molto forte').'",
                 },
+                datatables: {
+                    "emptyTable": "'.tr('Nessun dato presente nella tabella').'",
+                    "info": "'.tr('Vista da _START_ a _END_ di _TOTAL_ elementi').'",
+                    "infoEmpty": "'.tr('Vista da 0 a 0 di 0 elementi').'",
+                    "infoFiltered": "('.tr('filtrati da _MAX_ elementi totali').')",
+                    "infoPostFix": "",
+                    "lengthMenu": "'.tr('Visualizza _MENU_ elementi').'",
+                    "loadingRecords": " ",
+                    "processing": "'.tr('Elaborazione').'...",
+                    "search": "'.tr('Cerca').':",
+                    "zeroRecords": "'.tr('La ricerca non ha portato alcun risultato').'.",
+                    "paginate": {
+                        "first": "'.tr('Inizio').'",
+                        "previous": "'.tr('Precedente').'",
+                        "next": "'.tr('Successivo').'",
+                        "last": "'.tr('Fine').'"
+                    },
+                },
             };
 			globals = {
                 rootdir: "'.$rootdir.'",
@@ -132,14 +150,17 @@ if (Auth::check()) {
 
                 cifre_decimali: '.setting('Cifre decimali per importi').',
 
+                timestamp_format: "'.formatter()->getTimestampPattern().'",
+                date_format: "'.formatter()->getDatePattern().'",
+                time_format: "'.formatter()->getTimePattern().'",
                 decimals: "'.formatter()->getNumberSeparators()['decimals'].'",
                 thousands: "'.formatter()->getNumberSeparators()['thousands'].'",
                 currency: "'.currency().'",
 
                 search: search,
                 translations: translations,
-                locale: "'.$lang.'",
-				full_locale: "'.$lang.'_'.strtoupper($lang).'",
+                locale: "'.(explode('_', $lang)[0]).'",
+				full_locale: "'.$lang.'",
 
                 start_date: "'.$_SESSION['period_start'].'",
                 start_date_formatted: "'.Translator::dateToLocale($_SESSION['period_start']).'",
@@ -182,8 +203,12 @@ if (Auth::check()) {
                     },
                 },
                 
-                locale: "'.$lang.'",
-                full_locale: "'.$lang.'_'.strtoupper($lang).'",
+                timestamp_format: "'.formatter()->getTimestampPattern().'",
+                date_format: "'.formatter()->getDatePattern().'",
+                time_format: "'.formatter()->getTimePattern().'",
+
+                locale: "'.(explode('_', $lang)[0]).'",
+				full_locale: "'.$lang.'",
             };
         </script>';
 }
@@ -274,13 +299,13 @@ if (Auth::check()) {
                             <li><a  href="#" id="daterange" style="color:'.$calendar.';" role="button" >
                                 <i class="fa fa-calendar" style="color:inherit"></i> <i class="fa fa-caret-down" style="color:inherit"></i>
                             </a></li>
-                            
+
                             <li><a style="color:'.$calendar.';background:inherit;cursor:default;">
                                 '.Translator::dateToLocale($_SESSION['period_start']).' - '.Translator::dateToLocale($_SESSION['period_end']).'
                             </a></li>
                         </ul>
                      </div>
-                
+
                      <!-- Navbar Right Menu -->
                      <div class="navbar-custom-menu">
                         <ul class="nav navbar-nav">
@@ -296,33 +321,33 @@ if (Auth::check()) {
                                 <ul class="dropdown-menu">
 									<li class="header"><span class="small" id="hooks-header"></span></li>
                                     <li><ul class="menu" id="hooks">
-                                                                    
+
                                     </ul></li>
                                 </ul>
                             </li>
-                            
+
                             <li><a href="#" onclick="window.print()" class="tip"  title="'.tr('Stampa').'">
                                 <i class="fa fa-print"></i>
                             </a></li>
-                            
+
                             <li><a href="'.$rootdir.'/bug.php" class="tip"title="'.tr('Segnalazione bug').'">
                                 <i class="fa fa-bug"></i>
                             </a></li>
-                            
+
                             <li><a href="'.$rootdir.'/log.php" class="tip"title="'.tr('Log accessi').'">
                                 <i class="fa fa-book"></i>
                             </a></li>
-                            
+
                             <li><a href="'.$rootdir.'/info.php" class="tip"title="'.tr('Informazioni').'">
                                 <i class="fa fa-info"></i>
                             </a></li>
-                            
+
                             <li><a href="'.$rootdir.'/index.php?op=logout" onclick="sessionStorage.clear()" class="bg-red tip" title="'.tr('Esci').'">
                                 <i class="fa fa-power-off"></i>
                             </a></li>
                         </ul>
                      </div>
-				
+
 				</nav>
 			</header>
 

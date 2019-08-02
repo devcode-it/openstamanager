@@ -7,7 +7,7 @@ function start_inputmask(element) {
         element = element + ' ';
     }
 
-    var date = moment.localeData().longDateFormat('L').toLowerCase();
+    var date = dateFormatMoment(globals.date_format).toLowerCase();
 
     $(element + ".date-mask").not('.bound').inputmask(date, {
         "placeholder": date

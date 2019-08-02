@@ -3,9 +3,7 @@ function start_local_datatables(){
     $('.datatables').each(function () {
         if (!$.fn.DataTable.isDataTable($(this))) {
             $(this).DataTable({
-                language: {
-                    url: globals.js + "/i18n/datatables/" + globals.locale + ".min.json"
-                },
+                language: globals.translations.datatables,
                 retrieve: true,
                 ordering: true,
                 searching: true,
@@ -52,9 +50,7 @@ function start_datatables() {
             var tempo_attesa_ricerche = (globals.tempo_attesa_ricerche * 1000);
 
             var table = $this.DataTable({
-                language: {
-                    url: globals.js + '/i18n/datatables/' + globals.locale + '.min.json'
-                },
+                language: globals.translations.datatables,
                 autoWidth: true,
                 dom: "ti",
                 serverSide: true,
@@ -133,10 +129,9 @@ function start_datatables() {
                             format: {
                                 body: function(data, row, column, node) {
                                     data = $('<p>' + data + '</p>').text();
-                                    data_edit = data.replace('.', '');
-                                    data_edit = data_edit.replace(',', '.');
+                                    data_edit = data.toEnglish();
 
-                                    return data_edit.match(/^[0-9\.]+$/) ? data_edit : data;
+                                    return data_edit ? data_edit : data;
                                 }
                             }
                         }

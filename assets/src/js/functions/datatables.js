@@ -81,14 +81,14 @@ function start_datatables() {
                     selector: 'td:first-child'
                 },
                 buttons: [{
-                    extend: 'csv',
-                    fieldSeparator: ";",
-                    exportOptions: {
-                        modifier: {
-                            selected: true
+                        extend: 'csv',
+                        fieldSeparator: ";",
+                        exportOptions: {
+                            modifier: {
+                                selected: true
+                            }
                         }
-                    }
-                },
+                    },
                     {
                         extend: 'copy',
                         exportOptions: {
@@ -129,9 +129,10 @@ function start_datatables() {
                             format: {
                                 body: function(data, row, column, node) {
                                     data = $('<p>' + data + '</p>').text();
-                                    data_edit = data.toEnglish();
+                                    data_edit = data.replace('.', ''); // Fix specifico per i numeri italiani
+                                    data_edit = data_edit.replace(',', '.');
 
-                                    return data_edit ? data_edit : data;
+                                    return data_edit.match(/^[0-9\.]+$/) ? data_edit : data;
                                 }
                             }
                         }

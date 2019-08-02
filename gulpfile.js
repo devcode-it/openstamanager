@@ -51,7 +51,7 @@ gulp.task('JS', function () {
             debugging: config.debug,
         }))
         .pipe(concat('app.min.js'))
-        .pipe(minifyJS())
+        //.pipe(minifyJS())
         .pipe(gulp.dest(config.production + '/' + config.paths.js));
 
     gulp.start('srcJS');

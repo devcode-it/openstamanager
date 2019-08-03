@@ -49,6 +49,12 @@ function start_datatables() {
             var tempo;
             var tempo_attesa_ricerche = (globals.tempo_attesa_ricerche * 1000);
 
+            $this.on('preInit.dt', function (ev, settings) {
+                if ($(ev.target).hasClass("main-records")) {
+                    $('#mini-loader').show();
+                }
+            });
+
             var table = $this.DataTable({
                 language: globals.translations.datatables,
                 autoWidth: true,

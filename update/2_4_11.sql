@@ -326,11 +326,12 @@ ALTER TABLE `zz_emails` RENAME TO `em_templates`;
 ALTER TABLE `zz_smtps` RENAME TO `em_accounts`;
 ALTER TABLE `zz_email_print` RENAME TO `em_template_print`;
 
-UPDATE zz_modules SET options = REPLACE(options, 'zz_emails', 'em_templates');
-UPDATE zz_modules SET options2 = REPLACE(options2, 'zz_emails', 'em_templates');
+UPDATE zz_modules SET options = REPLACE(options, 'zz_emails', 'em_templates'), options2 = REPLACE(options2, 'zz_emails', 'em_templates');
+UPDATE zz_modules SET options = REPLACE(options, 'zz_smtps', 'em_accounts'), options2 = REPLACE(options2, 'zz_smtps', 'em_accounts');
 UPDATE zz_views SET query = REPLACE(query, 'zz_emails', 'em_templates');
+UPDATE zz_views SET query = REPLACE(query, 'zz_smtps', 'em_accounts');
 
-CREATE TABLE IF NOT EXISTS `em_campaings` (
+CREATE TABLE IF NOT EXISTS `em_campaigns` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `id_account` int(11) NOT NULL,
@@ -359,14 +360,14 @@ CREATE TABLE IF NOT EXISTS `em_emails` (
   PRIMARY KEY (`id`),
   FOREIGN KEY (`id_account`) REFERENCES `em_accounts`(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`id_template`) REFERENCES `em_templates`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`id_campaign`) REFERENCES `em_campaings`(`id`) ON DELETE CASCADE
+  FOREIGN KEY (`id_campaign`) REFERENCES `em_campaigns`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
-CREATE TABLE IF NOT EXISTS `em_campaing_anagrafica` (
+CREATE TABLE IF NOT EXISTS `em_campaign_anagrafica` (
   `id_campaign` int(11) NOT NULL,
   `id_anagrafica` int(11) NOT NULL,
   `id_email` int(11),
-  FOREIGN KEY (`id_campaign`) REFERENCES `em_campaings`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`id_campaign`) REFERENCES `em_campaigns`(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`id_anagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE CASCADE,
   FOREIGN KEY (`id_email`) REFERENCES `em_emails`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;

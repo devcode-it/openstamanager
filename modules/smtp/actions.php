@@ -1,5 +1,7 @@
 <?php
 
+use Notifications\EmailNotification;
+
 include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
@@ -74,7 +76,7 @@ switch (post('op')) {
         break;
 
     case 'test':
-        $mail = new Mail($id_record);
+        $mail = new EmailNotification($id_record);
 
         echo json_encode([
             'test' => $mail->testSMTP(),

@@ -166,6 +166,22 @@ class EmailNotification extends PHPMailer implements NotificationInterface
     }
 
     /**
+     * Testa la connessione al server SMTP.
+     *
+     * @return bool
+     */
+    public function testSMTP()
+    {
+        if ($this->smtpConnect()) {
+            $this->smtpClose();
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Restituisce gli allegati della notifica.
      *
      * @return array

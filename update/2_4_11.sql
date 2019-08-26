@@ -298,7 +298,6 @@ ALTER TABLE `co_movimenti` ADD `id_scadenza` INT(11) AFTER `iddocumento`, ADD FO
 -- Aggiornamento indirizzo email SDI
 UPDATE `zz_emails` SET `cc` = 'sdi52@pec.fatturapa.it' WHERE `name` = 'PEC';
 
-
 -- Correzione query per visualizzazione fattura inviata o meno nella vista principale
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_documenti`
     INNER JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
@@ -310,3 +309,6 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_documenti`
 WHERE 1=1 AND `dir` = ''entrata'' |segment(co_documenti.id_segment)| AND `co_documenti`.`data` >= ''|period_start|'' AND `co_documenti`.`data` <= ''|period_end|''
 HAVING 2=2
 ORDER BY `co_documenti`.`data` DESC, CAST(`co_documenti`.`numero_esterno` AS UNSIGNED) DESC' WHERE `name` = 'Fatture di vendita';
+
+-- Rimozione Pianificazione fatturazione
+DELETE FROM `zz_plugins` WHERE `name` = 'Pianificazione fatturazione';

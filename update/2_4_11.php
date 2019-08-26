@@ -17,6 +17,12 @@ $files = [
     'modules\interventi\api\create.php',
     'modules\aggiornamenti\api',
     'plugins\exportFE\src\Connection.php',
+    'modules\contratti\plugins\addfattura.php',
+    'modules\contratti\plugins\contratti.fatturaordiniservizio.php',
+    'modules\contratti\plugins\contratti.ordiniservizio.interventi.php ',
+    'modules\contratti\plugins\contratti.ordiniservizio.php',
+    'templates\contratti_cons\body.php',
+    'templates\preventivi_cons\body.php',
 ];
 
 foreach ($files as $key => $value) {

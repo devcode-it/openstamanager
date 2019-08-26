@@ -19,6 +19,7 @@ $settings = [
     'Conto predefinito fatture di acquisto' => true,
     "Percentuale ritenuta d'acconto" => false,
     "Causale ritenuta d'acconto" => false,
+    'Valuta' => true,
 ];
 
 if (!empty(setting("Percentuale ritenuta d'acconto"))) {
@@ -105,7 +106,7 @@ $img = App::getPaths()['img'];
 echo '
 <div class="box box-center-large box-warning">
     <div class="box-header with-border text-center">
-        <img src="'.$img.'/logo.png" alt="'.tr('OSM Logo').'">
+        <img src="'.$img.'/logo.png" class="logo-image" alt="'.tr('OSM Logo').'">
         <h3 class="box-title">'.tr('OpenSTAManager').'</h3>
     </div>
 

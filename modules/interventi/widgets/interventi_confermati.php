@@ -9,7 +9,7 @@ if (!empty($rs)) {
 <table class="table table-hover">
     <tr>
         <th width="50%">'.tr('Attività').'</th>
-        <th width="15%">'.tr('Data richiesta').'</th>
+        <th width="15%" class="text-center">'.tr('Data richiesta').'</th>
     </tr>';
 
     foreach ($rs as $r) {

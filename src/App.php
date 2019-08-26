@@ -66,6 +66,7 @@ class App
 
             // Operazioni di normalizzazione sulla configurazione
             $result['debug'] = isset(self::$config['debug']) ? self::$config['debug'] : !empty($result['debug']);
+            $result['lang'] = $result['lang'] == 'it' ? 'it_IT' : $result['lang'];
 
             self::$config = $result;
         }
@@ -175,6 +176,16 @@ class App
             'js' => 'js',
         ];
 
+        $first_lang = explode('_', $lang);
+        $lang_replace = [
+            $lang,
+            strtolower($lang),
+            strtolower($first_lang[0]),
+            strtoupper($first_lang[0]),
+            str_replace('_', '-', $lang),
+            str_replace('_', '-', strtolower($lang)),
+        ];
+
         $assets = [];
 
         foreach ($sections as $section => $dir) {
@@ -182,19 +193,21 @@ class App
 
             foreach ($result as $key => $element) {
                 $element = $paths[$dir].'/'.$element;
-                $element = str_replace('|lang|', $lang, $element);
+
+                foreach ($lang_replace as $replace) {
+                    $name = str_replace('|lang|', $replace, $element);
+
+                    if (file_exists(str_replace(ROOTDIR, DOCROOT, $name))) {
+                        $element = $name;
+                        break;
+                    }
+                }
 
                 $result[$key] = $element;
             }
 
             $assets[$section] = $result;
         }
-
-        // JS aggiuntivi per gli utenti connessi
-        //if (Auth::check()) {
-        //$assets['js'][] = ROOTDIR.'/lib/functions.js';
-        //$assets['js'][] = ROOTDIR.'/lib/init.js';
-        //}
 
         return $assets;
     }
@@ -290,6 +303,17 @@ class App
         $db_password = '';
         $db_name = '';
         $port = '';
+        $lang = '';
+
+        $formatter = [
+            'timestamp' => 'd/m/Y H:i',
+            'date' => 'd/m/Y',
+            'time' => 'H:i',
+            'number' => [
+                'decimals' => ',',
+                'thousands' => '.',
+            ],
+        ];
 
         return get_defined_vars();
     }

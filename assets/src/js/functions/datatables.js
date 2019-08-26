@@ -3,9 +3,7 @@ function start_local_datatables(){
     $('.datatables').each(function () {
         if (!$.fn.DataTable.isDataTable($(this))) {
             $(this).DataTable({
-                language: {
-                    url: globals.js + "/i18n/datatables/" + globals.locale + ".min.json"
-                },
+                language: globals.translations.datatables,
                 retrieve: true,
                 ordering: true,
                 searching: true,
@@ -34,19 +32,7 @@ function start_datatables() {
             var id_parent = $this.data('idparent');
 
             // Parametri di ricerca da url o sessione
-            var search = getUrlVars();
-
-            globals.search.forEach(function (value, index, array) {
-                if (search[array[index]] == undefined) {
-                    search.push(array[index]);
-                    search[array[index]] = array[value];
-                }
-            });
-
-            // Fix per l'URL encoding
-            search.forEach(function (value, index, array) {
-                search[array[index]] = decodeURIComponent(array[value]);
-            });
+            var search = getTableSearch();
 
             var res = [];
             $this.find("th").each(function () {
@@ -63,10 +49,14 @@ function start_datatables() {
             var tempo;
             var tempo_attesa_ricerche = (globals.tempo_attesa_ricerche * 1000);
 
+            $this.on('preInit.dt', function (ev, settings) {
+                if ($(ev.target).hasClass("main-records")) {
+                    $('#mini-loader').show();
+                }
+            });
+
             var table = $this.DataTable({
-                language: {
-                    url: globals.js + '/i18n/datatables/' + globals.locale + '.min.json'
-                },
+                language: globals.translations.datatables,
                 autoWidth: true,
                 dom: "ti",
                 serverSide: true,
@@ -97,14 +87,14 @@ function start_datatables() {
                     selector: 'td:first-child'
                 },
                 buttons: [{
-                    extend: 'csv',
-                    fieldSeparator: ";",
-                    exportOptions: {
-                        modifier: {
-                            selected: true
+                        extend: 'csv',
+                        fieldSeparator: ";",
+                        exportOptions: {
+                            modifier: {
+                                selected: true
+                            }
                         }
-                    }
-                },
+                    },
                     {
                         extend: 'copy',
                         exportOptions: {
@@ -145,7 +135,7 @@ function start_datatables() {
                             format: {
                                 body: function(data, row, column, node) {
                                     data = $('<p>' + data + '</p>').text();
-                                    data_edit = data.replace('.', '');
+                                    data_edit = data.replace('.', ''); // Fix specifico per i numeri italiani
                                     data_edit = data_edit.replace(',', '.');
 
                                     return data_edit.match(/^[0-9\.]+$/) ? data_edit : data;
@@ -236,12 +226,14 @@ function start_datatables() {
                     });
 
                     // Ricerca di base ereditata dalla  sessione
-                    search.forEach(function (value, index, array) {
+                    var search = getTableSearch();
+                    var keys = Object.keys(search);
+                    keys.forEach(function (key) {
                         var exists = setInterval(function () {
-                            input = $('#th_' + array[index].replace('search_', '') + ' input');
-                            if (input.length || array[index] == 'id_module' || array[index] == 'id_record') {
+                            input = $('#th_' + key.replace('search_', '') + ' input');
+                            if (input.length || key == 'id_module' || key == 'id_record') {
                                 clearInterval(exists);
-                                if (input.val() == '') input.val(array[value]).trigger('keyup');
+                                if (input.val() == '') input.val(search[key]).trigger('keyup');
                             }
                         }, 100);
                     });
@@ -426,4 +418,17 @@ function searchFieldName(field) {
  */
 function searchTable(module_id, field, value) {
     session_set('module_' + module_id + ',' + 'search_' + searchFieldName(field), value, 0);
+}
+
+function getTableSearch() {
+    // Parametri di ricerca da url o sessione
+    var search = getUrlVars();
+
+    globals.search.forEach(function (value, index, array) {
+        if (search[array[index]] == undefined) {
+            search[array[index]] = array[value];
+        }
+    });
+
+    return search;
 }

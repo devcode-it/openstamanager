@@ -48,8 +48,6 @@ if (!empty($documento['idsede_destinazione'])) {
     if (!empty($rsd[0]['provincia'])) {
         $destinazione .= ' ('.$rsd[0]['provincia'].')';
     }
-
-    $settings['header-height'] += 8;
 }
 
 // Sostituzioni specifiche

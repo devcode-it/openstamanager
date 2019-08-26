@@ -111,7 +111,7 @@ if (empty($record['is_fiscale'])) {
 ?>
 				<?php if ($dir == 'uscita') {
     ?>
-					
+
 				<div class="col-md-2">
 					{[ "type": "date", "label": "<?php echo tr('Data registrazione'); ?>", "name": "data_registrazione", "required": 0, "value": "$data_registrazione$" ]}
 				</div>
@@ -132,7 +132,7 @@ if (empty($record['is_fiscale'])) {
                         })
                     });
                 </script>
-				
+
 				<?php
 } ?>
 
@@ -164,7 +164,7 @@ if (empty($record['is_fiscale'])) {
                     }
                     ?>
 				</div>
-                
+
                 <?php
                 // Conteggio numero articoli fatture
                 $articolo = $dbo->fetchArray('SELECT mg_articoli.id FROM ((mg_articoli INNER JOIN co_righe_documenti ON mg_articoli.id=co_righe_documenti.idarticolo) INNER JOIN co_documenti ON co_documenti.id=co_righe_documenti.iddocumento) WHERE co_documenti.id='.prepare($id_record));
@@ -173,7 +173,7 @@ if (empty($record['is_fiscale'])) {
                     <div class="col-md-3">
                         {[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza", "ajax-source": "sedi", "placeholder": "Sede legale", "value": "$idsede_partenza$", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|id_plugin=<?php echo Plugins::get('Sedi')['id']; ?>&id_parent=<?php echo $record['idanagrafica']; ?>||<?php echo (intval($block_edit)) ? 'disabled' : ''; ?>" ]}
                     </div>
-                    
+
                     <div class="col-md-3">
                         {[ "type": "select", "label": "<?php echo tr('Destinazione merce'); ?>", "name": "idsede_destinazione", "ajax-source": "sedi_azienda",  "value": "$idsede_destinazione$", "readonly": "<?php echo (sizeof($articolo)) ? 1 : 0; ?>" ]}
                     </div>
@@ -183,7 +183,7 @@ if (empty($record['is_fiscale'])) {
                     <div class="col-md-3">
                         {[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "placeholder": "Sede legale", "value": "$idsede_partenza$", "readonly": "<?php echo (sizeof($articolo)) ? 1 : 0; ?>"  ]}
                     </div>
-                    
+
                     <div class="col-md-3">
                         {[ "type": "select", "label": "<?php echo tr('Destinazione merce'); ?>", "name": "idsede_destinazione", "ajax-source": "sedi",  "value": "$idsede_destinazione$", "readonly": "", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|id_plugin=<?php echo Plugins::get('Sedi')['id']; ?>&id_parent=<?php echo $record['idanagrafica']; ?>||<?php echo (intval($block_edit)) ? 'disabled' : ''; ?>" ]}
                     </div>
@@ -536,12 +536,12 @@ if (!$block_edit) {
     }
 
     // Lettura articoli
-    $art_query = 'SELECT COUNT(*) AS tot FROM mg_articoli WHERE attivo = 1';
+    $art_query = 'SELECT id FROM mg_articoli WHERE attivo = 1 AND deleted_at IS NULL';
     if ($dir == 'entrata') {
         $art_query .= ' AND (qta > 0 OR servizio = 1)';
     }
 
-    $articoli = $dbo->fetchArray($art_query)[0]['tot'];
+    $articoli = $dbo->fetchNum($art_query);
     echo '
                         <a class="btn btn-sm btn-primary'.(!empty($articoli) ? '' : ' disabled').'" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_articolo" data-toggle="tooltip" data-title="'.tr('Aggiungi articolo').'">
                             <i class="fa fa-plus"></i> '.tr('Articolo').'

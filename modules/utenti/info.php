@@ -25,7 +25,7 @@ $module = Modules::get('Utenti e permessi');
 
 echo '
 <div class="box box-widget widget-user">
-    <div class="widget-user-header bg-yellow">
+    <div class="widget-user-header bg-'.(($theme != 'default') ? $theme : 'primary').'">
       <h3 class="widget-user-username">'.$user['username'].'</h3>
       <h5 class="widget-user-desc">'.$user['gruppo'].'</h5>
     </div>
@@ -35,7 +35,7 @@ echo '
 $user_photo = $user->photo;
 if ($user_photo) {
     echo '
-        <img src="'.$user_photo.'" class="img-responsive" alt="'.$user['username'].'" />';
+        <img src="'.$user_photo.'" class="img-circle" alt="'.$user['username'].'" />';
 } else {
     echo '
         <i class="fa fa-user-circle-o fa-4x pull-left" alt="'.tr('OpenSTAManager').'"></i>';
@@ -43,7 +43,6 @@ if ($user_photo) {
 
 echo '
     </div>
-    
     <div class="box-footer">
         <div class="row">
             <div class="col-sm-4 border-right">

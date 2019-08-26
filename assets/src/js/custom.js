@@ -15,10 +15,6 @@ $(document).on('hidden.bs.modal', '.modal', function () {
 });
 
 $(document).ready(function () {
-    // Imposta la lingua per la gestione automatica delle date dei diversi plugin
-    moment.locale(globals.locale);
-    globals.timestampFormat = moment.localeData().longDateFormat('L') + ' ' + moment.localeData().longDateFormat('LT');
-
     // Standard per i popup
     toastr.options = {
         "closeButton": true,
@@ -39,7 +35,7 @@ $(document).ready(function () {
     };
 
     // Imposta lo standard per la conversione dei numeri
-    numeral.register('locale', 'it', {
+    numeral.register('locale', 'current', {
         delimiters: {
             thousands: globals.thousands,
             decimal: globals.decimals,
@@ -54,16 +50,11 @@ $(document).ready(function () {
             symbol: '€'
         }
     });
-    numeral.locale('it');
+    numeral.locale('current');
     numeral.defaultFormat('0,0.' + ('0').repeat(globals.cifre_decimali));
-
-    // Orologio
-    clock();
 
     // Richiamo alla generazione di Datatables
     start_datatables();
-
-    init();
 
     // Calendario principale
     start_complete_calendar("#daterange", function (start, end) {

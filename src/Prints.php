@@ -437,10 +437,8 @@ class Prints
             'font-size' => $settings['font-size'],
             'margin_left' => $settings['margins']['left'],
             'margin_right' => $settings['margins']['right'],
-            'margin_top' => $settings['margins']['top'] + $settings['header-height'],
-            'margin_bottom' => $settings['margins']['bottom'] + $settings['footer-height'],
-            'margin_header' => $settings['margins']['top'],
-            'margin_footer' => $settings['margins']['bottom'],
+            'setAutoBottomMargin' => 'stretch',
+            'setAutoTopMargin' => 'stretch',
 
             // Abilitazione per lo standard PDF/A
             //'PDFA' => true,
@@ -478,13 +476,13 @@ class Prints
         include self::filepath($id_print, 'header.php');
         $head = ob_get_clean();
 
+        // Header di default
+        $head = !empty($head) ? $head : '$default_header$';
+
         // Generazione dei contenuti del footer
         ob_start();
         include self::filepath($id_print, 'footer.php');
         $foot = ob_get_clean();
-
-        // Header di default
-        $head = !empty($head) ? $head : '$default_header$';
 
         // Footer di default
         $foot = !empty($foot) ? $foot : '$default_footer$';
@@ -493,8 +491,8 @@ class Prints
         include DOCROOT.'/templates/replace.php';
 
         // Impostazione di header e footer
-        $mpdf->SetHTMLFooter($foot);
         $mpdf->SetHTMLHeader($head);
+        $mpdf->SetHTMLFooter($foot);
 
         // Generazione dei contenuti della stampa
 
@@ -526,6 +524,16 @@ class Prints
             $report = '';
         }
 
+        // Footer per l'ultima pagina
+        if (!empty($options['last-page-footer'])) {
+            $is_last_page = true;
+
+            // Generazione dei contenuti del footer
+            ob_start();
+            include self::filepath($id_print, 'footer.php');
+            $foot = ob_get_clean();
+        }
+
         // Operazioni di sostituzione
         include DOCROOT.'/templates/replace.php';
 
@@ -540,6 +548,13 @@ class Prints
 
         // Aggiunta dei contenuti
         $mpdf->WriteHTML($report);
+
+        // Impostazione footer per l'ultima pagina
+        if (!empty($options['last-page-footer'])) {
+            $mpdf->WriteHTML('<div class="fake-footer">'.$foot.'</div>');
+
+            $mpdf->WriteHTML('<div style="position:absolute; bottom: 13mm; margin-right: '.($settings['margins']['right']).'mm">'.$foot.'</div>');
+        }
 
         // Creazione effettiva del PDF
         $mpdf->Output($path, $mode);

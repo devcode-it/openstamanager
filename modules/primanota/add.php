@@ -21,8 +21,9 @@ if (!empty($id_records)) {
 }
 
 // ID predefiniti
-$dir = get('dir');
+$dir = 'uscita'; // Le scadenze normali hanno solo direzione in uscita
 $singola_scadenza = get('single') != null;
+$is_insoluto = get('is_insoluto') != null;
 
 $id_documenti = $id_documenti ?: get('id_documenti');
 $id_documenti = $id_documenti ? explode(',', $id_documenti) : [];
@@ -32,11 +33,13 @@ $id_scadenze = $id_scadenze ? explode(',', $id_scadenze) : [];
 
 // Scadenze
 foreach ($id_scadenze as $id_scadenza) {
-    $scadenza = $dbo->fetchOne('SELECT descrizione, scadenza, iddocumento, SUM(da_pagare - pagato) AS rata FROM co_scadenziario WHERE id='.prepare($id_scadenza));
+    $scadenza = $dbo->fetchOne('SELECT *, SUM(da_pagare - pagato) AS rata FROM co_scadenziario WHERE id='.prepare($id_scadenza));
     if (!empty($scadenza['iddocumento'])) {
         $id_documenti[] = $scadenza['iddocumento'];
         continue;
     }
+
+    $scadenza['rata'] = abs($scadenza['rata']);
 
     $descrizione_conto = ($dir == 'entrata') ? 'Riepilogativo clienti' : 'Riepilogativo fornitori';
     $conto = $dbo->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE descrizione = '.prepare($descrizione_conto));
@@ -45,17 +48,26 @@ foreach ($id_scadenze as $id_scadenza) {
     $righe_documento = [];
     $righe_documento[] = [
         'id_scadenza' => $scadenza['id'],
-        'conto' => null,
+        'id_conto' => null,
         'dare' => ($dir == 'entrata') ? 0 : $scadenza['rata'],
         'avere' => ($dir == 'entrata') ? $scadenza['rata'] : 0,
     ];
 
     $righe_documento[] = [
         'id_scadenza' => $scadenza['id'],
-        'conto' => $id_conto_controparte,
+        'id_conto' => $id_conto_controparte,
         'dare' => ($dir == 'entrata') ? $scadenza['rata'] : 0,
         'avere' => ($dir == 'entrata') ? 0 : $scadenza['rata'],
     ];
+
+    // Se è un insoluto, inverto i valori
+    if ($is_insoluto) {
+        foreach ($righe_documento as $key => $value) {
+            $tmp = $value['avere'];
+            $righe_documento[$key]['avere'] = $righe_documento[$key]['dare'];
+            $righe_documento[$key]['dare'] = $tmp;
+        }
+    }
 
     $righe = array_merge($righe, $righe_documento);
 }
@@ -78,7 +90,6 @@ foreach ($id_documenti as $id_documento) {
     $numeri[] = !empty($fattura['numero_esterno']) ? $fattura['numero_esterno'] : $fattura['numero'];
 
     $nota_credito = $tipo->descrizione == 'Nota di credito';
-    $is_insoluto = (!empty($fattura['riba']) && $dir == 'entrata');
 
     // Predisposizione prima riga
     $conto_field = 'idconto_'.($dir == 'entrata' ? 'vendite' : 'acquisti');
@@ -103,8 +114,7 @@ foreach ($id_documenti as $id_documento) {
     if ($totale != 0) {
         $righe_documento[] = [
             'id_scadenza' => $scadenze[0]['id'],
-            'insoluto' => $is_insoluto,
-            'conto' => $id_conto_aziendale,
+            'id_conto' => $id_conto_aziendale,
             'dare' => ($dir == 'entrata') ? 0 : $totale,
             'avere' => ($dir == 'entrata') ? $totale : 0,
         ];
@@ -114,14 +124,13 @@ foreach ($id_documenti as $id_documento) {
     foreach ($scadenze as $scadenza) {
         $righe_documento[] = [
             'id_scadenza' => $scadenza['id'],
-            'insoluto' => $is_insoluto,
-            'conto' => $id_conto_controparte,
+            'id_conto' => $id_conto_controparte,
             'dare' => ($dir == 'entrata') ? $scadenza['rata'] : 0,
             'avere' => ($dir == 'entrata') ? 0 : $scadenza['rata'],
         ];
     }
 
-    // Se è una nota di credito, inverto i valori
+    // Se è una nota di credito o un insoluto, inverto i valori
     if ($nota_credito || $is_insoluto) {
         foreach ($righe_documento as $key => $value) {
             $tmp = $value['avere'];
@@ -173,11 +182,11 @@ if (!empty($id_records) && get('origine') == 'fatture' && !empty($counter)) {
     echo '
 <div class="alert alert-info">
 <p>'.tr('Solo le fatture in stato _STATE_ possono essere registrate contabilmente ignorate', [
-        '_STATE_' => implode(', ', $descrizione_stati),
-]).'.</p>
+            '_STATE_' => implode(', ', $descrizione_stati),
+        ]).'.</p>
 <p><b>'.tr('Sono state ignorate _NUM_ fatture', [
-    '_NUM_' => $counter,
-]).'.</b></p>
+            '_NUM_' => $counter,
+        ]).'.</b></p>
 </div>';
 }
 
@@ -186,7 +195,8 @@ echo '
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="crea_modello" id="crea_modello" value="0">
-	<input type="hidden" name="idmastrino" id="idmastrino" value="0">';
+	<input type="hidden" name="idmastrino" id="idmastrino" value="0">
+    <input type="hidden" name="is_insoluto" value="'.$is_insoluto.'">';
 
     echo '
 	<div class="row">
@@ -205,70 +215,7 @@ echo '
 		</div>
 	</div>';
 
-    echo '
-    <table class="table table-striped table-condensed table-hover table-bordered"
-        <tr>
-            <th>'.tr('Conto').'</th>
-            <th width="20%">'.tr('Dare').'</th>
-            <th width="20%">'.tr('Avere').'</th>
-        </tr>';
-
-    $max = max(count($righe), 10);
-    for ($i = 0; $i < $max; ++$i) {
-        $required = ($i <= 1);
-        $riga = $righe[$i];
-
-        // Conto
-        echo '
-			<tr>
-                <input type="hidden" name="id_scadenza[]" value="'.$riga['id_scadenza'].'">
-                <input type="hidden" name="insoluto[]" value="'.$riga['insoluto'].'">
-                
-				<td>
-					{[ "type": "select", "name": "idconto[]", "id": "conto'.$i.'", "value": "'.($riga['conto'] ?: '').'", "ajax-source": "conti", "required": "'.$required.'" ]}
-				</td>';
-
-        // Dare
-        echo '
-				<td>
-					{[ "type": "number", "name": "dare[]", "id": "dare'.$i.'", "value": "'.($riga['dare'] ?: 0).'" ]}
-				</td>';
-
-        // Avere
-        echo '
-				<td>
-					{[ "type": "number", "name": "avere[]", "id": "avere'.$i.'", "value": "'.($riga['avere'] ?: 0).'" ]}
-				</td>
-			</tr>';
-    }
-
-    // Totale per controllare sbilancio
-    echo '
-            <tr>
-                <td align="right"><b>'.tr('Totale').':</b></td>';
-
-    // Totale dare
-    echo '
-                <td align="right">
-                    <span><span id="totale_dare"></span> '.currency().'</span>
-                </td>';
-
-    // Totale avere
-    echo '
-                <td align="right">
-                    <span><span id="totale_avere"></span> '.currency().'</span>
-                </td>
-            </tr>';
-
-    // Verifica sbilancio
-    echo '
-            <tr>
-                <td align="right"></td>
-                <td colspan="2" align="center">
-                    <span id="testo_aggiuntivo"></span>
-                </td>
-            </tr>
-        </table>';
+include $structure->filepath('movimenti.php');
 
     echo '
 	<!-- PULSANTI -->
@@ -287,116 +234,12 @@ echo '
 
 <script type="text/javascript">
     var variables = <?php echo json_encode($variables); ?>;
-    var formatted_zero = "<?php echo Translator::numberToLocale(0); ?>";
     var nuovo_modello = "<?php echo tr('Aggiungi e crea modello'); ?>";
     var modifica_modello = "<?php echo tr('Aggiungi e modifica modello'); ?>";
-    var sbilancio = "<?php echo tr('sbilancio di _NUM_', [
-        '_NUM_' => '|value| '.currency(),
-    ]); ?>";
 
-    $("#bs-popup #add-form").submit(function() {
-        return calcolaBilancio();
-    });
-    
-    // Ad ogni modifica dell'importo verifica che siano stati selezionati: il conto, la causale, la data. Inoltre aggiorna lo sbilancio
-    function calcolaBilancio() {
-        bilancio = 0.00;
-        totale_dare = 0.00;
-        totale_avere = 0.00;
-
-        // Calcolo il totale dare e totale avere
-        $('#bs-popup input[id*=dare]').each(function() {
-            valore = $(this).val() ? $(this).val().toEnglish() : 0;
-
-            totale_dare += Math.round(valore * 100) / 100;
-        });
-
-        $('#bs-popup input[id*=avere]').each(function() {
-            valore = $(this).val() ? $(this).val().toEnglish() : 0;
-
-            totale_avere += Math.round(valore * 100) / 100;
-        });
-
-        $('#bs-popup #totale_dare').text(totale_dare.toLocale());
-        $('#bs-popup #totale_avere').text(totale_avere.toLocale());
-
-        bilancio = Math.round(totale_dare * 100) / 100 - Math.round(totale_avere * 100) / 100;
-
-        if (bilancio == 0) {
-            $('#bs-popup #testo_aggiuntivo').removeClass('text-danger').html("");
-            $('#bs-popup #add-submit').removeClass('hide');
-            $('#bs-popup #btn_crea_modello').removeClass('hide');
-        } else {
-            $('#bs-popup #testo_aggiuntivo').addClass('text-danger').html(sbilancio.replace('|value|', bilancio.toLocale()));
-            $('#bs-popup #add-submit').addClass('hide');
-            $('#bs-popup #btn_crea_modello').addClass('hide');
-        }
-
-        return bilancio == 0;
-    }
-
-    function bloccaZeri(){
-        $('#bs-popup input[id*=dare], #bs-popup input[id*=avere]').each(function() {
-            if ($(this).val() == formatted_zero) {
-                $(this).prop("disabled", true);
-            } else {
-                $(this).prop("disabled", false);
-            }
-        });
-    }
-
-    $(document).ready(function() {
-        calcolaBilancio();
-        bloccaZeri();
-
-        $("#bs-popup #add-form").submit(function() {
-            var result = calcolaBilancio();
-
-            if(!result) bloccaZeri();
-
-            return result;
-        });
-
-        $('select').on('change', function() {
-            if ($(this).parent().parent().find('input[disabled]').length != 1) {
-                if ($(this).val()) {
-                    $(this).parent().parent().find('input').prop("disabled", false);
-                } else {
-                    $(this).parent().parent().find('input').prop("disabled", true);
-                    $(this).parent().parent().find('input').val("0.00");
-                }
-            }
-        });
-
-        $('#bs-popup input[id*=dare]').on('keyup change', function() {
-            if (!$(this).prop('disabled')) {
-                if ($(this).val()) {
-                    $(this).parent().parent().find('input[id*=avere]').prop("disabled", true);
-                } else {
-                    $(this).parent().parent().find('input[id*=avere]').prop("disabled", false);
-                }
-
-                calcolaBilancio();
-            }
-        });
-
-        $('#bs-popup input[id*=avere]').on('keyup change', function() {
-            if (!$(this).prop('disabled')) {
-                if ($(this).val()) {
-                    $(this).parent().parent().find('input[id*=dare]').prop("disabled", true);
-                } else {
-                    $(this).parent().parent().find('input[id*=dare]').prop("disabled", false);
-                }
-
-                calcolaBilancio();
-            }
-        });
-
-        // Trigger dell'evento keyup() per la prima volta, per eseguire i dovuti controlli nel caso siano predisposte delle righe in prima nota
-        $("#bs-popup input[id*=dare][value!=''], #bs-popup input[id*=avere][value!='']").keyup();
-
-        $("#bs-popup select[id*=idconto]").click(function() {
-            $("#bs-popup input[id*=dare][value!=''], #bs-popup input[id*=avere][value!='']").keyup();
+    $(document).ready(function(e) {
+        $("#bs-popup #add-form").on("submit", function(e) {
+            return calcolaBilancio();
         });
 
         $('#bs-popup #modello_primanota').change(function() {

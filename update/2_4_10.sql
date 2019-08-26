@@ -28,7 +28,7 @@ INSERT INTO `zz_hooks` (`id`, `name`, `class`, `frequency`, `id_module`) VALUES
 (NULL, 'Ricevute', 'Modules\\Aggiornamenti\\UpdateHook', '7 day', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Aggiornamenti'));
 
 --
--- Aggiunta nuovi campi per tracciamento sedi 
+-- Aggiunta nuovi campi per tracciamento sedi
 --
 ALTER TABLE `mg_movimenti` ADD `idsede_azienda` INT NOT NULL AFTER `idautomezzo`, ADD `idsede_controparte` INT NOT NULL AFTER `idsede_azienda`;
 
@@ -106,7 +106,7 @@ UPDATE `zz_views` SET `query` = 'CONCAT_WS(co_movimenti_modelli.nome, co_movimen
 
 UPDATE `co_movimenti_modelli` SET `nome` = `descrizione` WHERE `nome` = '';
 
--- Rimuovo le interruzioni di riga per descrizioni vuote 
+-- Rimuovo le interruzioni di riga per descrizioni vuote
 -- UPDATE `in_interventi` SET `descrizione` = REPLACE(`descrizione`, '\n', '') where `descrizione` LIKE '%\n';
 
 -- Aggiunto tabella co_tipi_scadenze
@@ -169,18 +169,22 @@ UPDATE `an_anagrafiche` SET `idtipointervento_default` = NULL WHERE `idtipointer
 ALTER TABLE `an_anagrafiche` CHANGE `idtipointervento_default` `idtipointervento_default` INT(11), ADD FOREIGN KEY (`idtipointervento_default`) REFERENCES `in_tipiintervento`(`idtipointervento`);
 
 UPDATE `co_contratti_tipiintervento` INNER JOIN `in_tipiintervento` ON `co_contratti_tipiintervento`.`idtipointervento` = `in_tipiintervento`.`codice` SET `co_contratti_tipiintervento`.`idtipointervento` = `in_tipiintervento`.`idtipointervento`;
+DELETE FROM `co_contratti_tipiintervento` WHERE `idtipointervento` NOT IN (SELECT `idtipointervento` FROM `in_tipiintervento`);
 ALTER TABLE `co_contratti_tipiintervento` CHANGE `idtipointervento` `idtipointervento` INT(11) NOT NULL, ADD FOREIGN KEY (`idtipointervento`) REFERENCES `in_tipiintervento`(`idtipointervento`);
 
 UPDATE `co_preventivi` INNER JOIN `in_tipiintervento` ON `co_preventivi`.`idtipointervento` = `in_tipiintervento`.`codice` SET `co_preventivi`.`idtipointervento` = `in_tipiintervento`.`idtipointervento`;
+UPDATE `co_preventivi`  SET `idtipointervento` = NULL WHERE `idtipointervento` NOT IN (SELECT `idtipointervento` FROM `in_tipiintervento`);
 ALTER TABLE `co_preventivi` CHANGE `idtipointervento` `idtipointervento` INT(11) NOT NULL, ADD FOREIGN KEY (`idtipointervento`) REFERENCES `in_tipiintervento`(`idtipointervento`);
 
 UPDATE `co_promemoria` INNER JOIN `in_tipiintervento` ON `co_promemoria`.`idtipointervento` = `in_tipiintervento`.`codice` SET `co_promemoria`.`idtipointervento` = `in_tipiintervento`.`idtipointervento`;
 ALTER TABLE `co_promemoria` CHANGE `idtipointervento` `idtipointervento` INT(11) NOT NULL, ADD FOREIGN KEY (`idtipointervento`) REFERENCES `in_tipiintervento`(`idtipointervento`);
 
 UPDATE `in_interventi_tecnici` INNER JOIN `in_tipiintervento` ON `in_interventi_tecnici`.`idtipointervento` = `in_tipiintervento`.`codice` SET `in_interventi_tecnici`.`idtipointervento` = `in_tipiintervento`.`idtipointervento`;
+UPDATE `in_interventi_tecnici`  SET `idtipointervento` = NULL WHERE `idtipointervento` NOT IN (SELECT `idtipointervento` FROM `in_tipiintervento`);
 ALTER TABLE `in_interventi_tecnici` CHANGE `idtipointervento` `idtipointervento` INT(11) NOT NULL, ADD FOREIGN KEY (`idtipointervento`) REFERENCES `in_tipiintervento`(`idtipointervento`);
 
 UPDATE `in_tariffe` INNER JOIN `in_tipiintervento` ON `in_tariffe`.`idtipointervento` = `in_tipiintervento`.`codice` SET `in_tariffe`.`idtipointervento` = `in_tipiintervento`.`idtipointervento`;
+DELETE FROM `in_tariffe` WHERE `idtipointervento` NOT IN (SELECT `idtipointervento` FROM `in_tipiintervento`);
 ALTER TABLE `in_tariffe` CHANGE `idtipointervento` `idtipointervento` INT(11) NOT NULL, ADD FOREIGN KEY (`idtipointervento`) REFERENCES `in_tipiintervento`(`idtipointervento`);
 
 -- Ottimizzazione query Fatture

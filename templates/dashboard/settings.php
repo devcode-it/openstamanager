@@ -6,5 +6,4 @@ $orientation = (isset($_SESSION['settings']['orientation'])) ? $_SESSION['settin
 return [
     'format' => $format,
     'orientation' => $orientation,
-    // 'header-height' => 0,
 ];

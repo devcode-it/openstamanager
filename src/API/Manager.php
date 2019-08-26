@@ -55,12 +55,11 @@ class Manager
     {
         $user = Auth::user();
 
-        $select = '*';
         $where = [];
         $order = [];
 
         // Selezione personalizzata
-        $select = !empty($request['display']) ? explode(',', substr($request['display'], 1, -1)) : $select;
+        $select = !empty($request['display']) ? explode(',', substr($request['display'], 1, -1)) : null;
 
         // Ricerca personalizzata
         $values = isset($request['filter']) ? (array) $request['filter'] : [];
@@ -94,7 +93,11 @@ class Manager
 
         $response = $this->getResponse($data);
         $parameters = $response['parameters'];
+
         $table = $response['table'];
+        $select = $response['select'] ?: $select;
+        $select = $select ?: '*';
+
         $query = $response['query'];
 
         try {

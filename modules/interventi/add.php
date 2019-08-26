@@ -341,7 +341,8 @@ if (!empty($id_intervento)) {
 
 		// Quando modifico orario inizio, allineo anche l'orario fine
         $("#bs-popup #orario_inizio").on("dp.change", function (e) {
-			$("#bs-popup #orario_fine").data("DateTimePicker").minDate(e.date).format(globals.timestampFormat);
+            $("#bs-popup #orario_fine").data("DateTimePicker").minDate(e.date);
+            $("#bs-popup #orario_fine").change();
         });
 
         // Refresh modulo dopo la chiusura di una pianificazione attività derivante dalle attività
@@ -430,9 +431,9 @@ if (!empty($id_intervento)) {
 		if ($(this).selectData() && (($(this).selectData().tempo_standard)>0) && ('<?php echo filter('orario_fine'); ?>' == '')){
 			tempo_standard = $(this).selectData().tempo_standard;
 
-			data = moment($('#bs-popup #orario_inizio').val(), globals.timestampFormat);
+			data = moment($('#bs-popup #orario_inizio').val(), globals.timestamp_format);
 			orario_fine = data.add(tempo_standard, 'hours');
-			$('#bs-popup #orario_fine').val(orario_fine.format(globals.timestampFormat));
+			$('#bs-popup #orario_fine').val(orario_fine.format(globals.timestamp_format));
 		}
 
 	});

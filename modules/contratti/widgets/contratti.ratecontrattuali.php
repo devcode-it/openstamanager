@@ -133,7 +133,7 @@ if (!empty($rsp)) {
             echo '
                 <td>';
             if (empty($r['idintervento'])) {
-                echo '<button type="button" class="btn btn-primary btn-sm" onclick="launch_modal( \'Crea fattura\', \''.$rootdir.'/modules/contratti/plugins/addfattura.php?idcontratto='.$r['idcontratto'].'&idpianificazione='.$r['id'].'&importo='.$importo.'&n_rata='.$n_rata[$r['idzona']][$r['idcontratto']].'\', 1 );">
+                echo '<button type="button" class="btn btn-primary btn-sm" onclick="launch_modal( \'Crea fattura\', \''.$rootdir.'/modules/contratti/plugins/addfattura.php?idcontratto='.$r['idcontratto'].'&idpianificazione='.$r['id'].'&importo='.$importo.'&n_rata='.$n_rata[$r['idzona']][$r['idcontratto']].'\');">
 					<i class="fa fa-euro"></i> Crea fattura
 				</button>';
             }

@@ -286,8 +286,6 @@ include $structure->filepath('ajax_righe.php');
 	</div>
 </form>
 
-{( "name": "checklists", "id_module": "$id_module$", "id_record": "$id_record$" )}
-
 {( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$", <?php echo ($record['flag_completato']) ? '"readonly": 1' : '"readonly": 0'; ?> )}
 
 <!-- EVENTUALE FIRMA GIA' EFFETTUATA -->

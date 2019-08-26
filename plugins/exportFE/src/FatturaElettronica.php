@@ -966,11 +966,14 @@ class FatturaElettronica
         $iva_descrizioni = $righe->first(function ($item, $key) {
             return $item->aliquota != null;
         })->aliquota;
-        foreach ($righe as $numero => $riga) {
+
+        $numero = 1;
+
+        foreach ($righe as $idx => $riga) {
             $dati_aggiuntivi = $riga->dati_aggiuntivi_fe;
 
             $dettaglio = [
-                'NumeroLinea' => $numero + 1,
+                'NumeroLinea' => $numero++,
             ];
 
             // 2.2.1.2

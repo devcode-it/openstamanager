@@ -12,9 +12,14 @@ function start_datepickers() {
         close: 'fa fa-times'
     };
 
+    var date_format = dateFormatMoment(globals.date_format);
+    var timestamp_format = dateFormatMoment(globals.timestamp_format);
+    var time_format = dateFormatMoment(globals.time_format);
+
     $('.timestamp-picker').each(function () {
         $this = $(this);
         $this.datetimepicker({
+            format: timestamp_format,
             locale: globals.locale,
             icons: icons,
             collapse: false,
@@ -44,10 +49,10 @@ function start_datepickers() {
     $('.datepicker').each(function () {
         $this = $(this);
         $this.datetimepicker({
+            format: date_format,
             locale: globals.locale,
             icons: icons,
             useCurrent: false,
-            format: 'L',
             minDate: moment($this.attr('min-date')).isValid() ? $this.attr('min-date') : false,
             maxDate: moment($this.attr('max-date')).isValid() ? $this.attr('max-date') : false,
         });
@@ -56,10 +61,10 @@ function start_datepickers() {
     $('.timepicker').each(function () {
         $this = $(this);
         $this.datetimepicker({
+            format: time_format,
             locale: globals.locale,
             icons: icons,
             useCurrent: false,
-            format: 'LT',
             stepping: 5,
             minDate: moment($this.attr('min-date')).isValid() ? $this.attr('min-date') : false,
             maxDate: moment($this.attr('max-date')).isValid() ? $this.attr('max-date') : false,
@@ -81,8 +86,10 @@ function start_complete_calendar(id, callback) {
     ranges[globals.translations.thisYear] = [moment().startOf('year'), moment().endOf('year')];
     ranges[globals.translations.lastYear] = [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')];
 
+    var format = dateFormatMoment(globals.date_format);
     $(id).daterangepicker({
             locale: {
+                format: format,
                 customRangeLabel: globals.translations.custom,
                 applyLabel: globals.translations.apply,
                 cancelLabel: globals.translations.cancel,

@@ -7,7 +7,9 @@ use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Fatture\Components\Riga;
 use Modules\Pagamenti\Pagamento;
+use Modules\PrimaNota\Movimento;
 use Modules\RitenuteContributi\RitenutaContributi;
+use Modules\Scadenzario\Scadenza;
 use Plugins\ExportFE\FatturaElettronica;
 use Traits\RecordTrait;
 use Util\Generator;
@@ -290,6 +292,16 @@ class Fattura extends Document
         return $this->hasOne(Components\Riga::class, 'iddocumento')->where('id', $this->id_riga_bollo);
     }
 
+    public function scadenze()
+    {
+        return $this->hasMany(Scadenza::class, 'iddocumento');
+    }
+
+    public function movimentiContabili()
+    {
+        return $this->hasMany(Movimento::class, 'iddocumento')->where('primanota', 1);
+    }
+
     // Metodi generali
 
     public function getXML()
@@ -361,25 +373,21 @@ class Fattura extends Document
      *
      * @param Fattura $fattura
      * @param float   $importo
-     * @param string  $scadenza
+     * @param string  $data_scadenza
      * @param bool    $is_pagato
      * @param string  $type
      */
-    public static function registraScadenza(Fattura $fattura, $importo, $scadenza, $is_pagato, $type = 'fattura')
+    public static function registraScadenza(Fattura $fattura, $importo, $data_scadenza, $is_pagato, $type = 'fattura')
     {
-        // Individuazione della descrizione
-        $descrizione = database()->fetchOne("SELECT CONCAT(co_tipidocumento.descrizione, CONCAT(' numero ', IF(numero_esterno!='', numero_esterno, numero))) AS descrizione FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='".$fattura->id."'")['descrizione'];
+        $numero = $fattura->numero_esterno ?: $fattura->numero;
+        $descrizione = $fattura->tipo->descrizione.' numero '.$numero;
 
-        database()->insert('co_scadenziario', [
-            'iddocumento' => $fattura->id,
-            'data_emissione' => $fattura->data,
-            'scadenza' => $scadenza,
-            'da_pagare' => $importo,
-            'tipo' => $type,
-            'pagato' => $is_pagato ? $importo : 0,
-            'data_pagamento' => $is_pagato ? $scadenza : null,
-            'descrizione' => $descrizione,
-        ]);
+        $scadenza = Scadenza::build($descrizione, $importo, $data_scadenza, $type, $is_pagato);
+
+        $scadenza->documento()->associate($fattura);
+        $scadenza->data_emissione = $fattura->data;
+
+        $scadenza->save();
     }
 
     /**
@@ -481,62 +489,6 @@ class Fattura extends Document
         return $this->tipo->reversed == 1;
     }
 
-    // Metodi statici
-
-    /**
-     * Calcola il nuovo numero di fattura.
-     *
-     * @param string $data
-     * @param string $direzione
-     * @param int    $id_segment
-     *
-     * @return string
-     */
-    public static function getNextNumero($data, $direzione, $id_segment)
-    {
-        if ($direzione == 'entrata') {
-            return '';
-        }
-
-        // Recupero maschera per questo segmento
-        $maschera = Generator::getMaschera($id_segment);
-
-        $ultimo = Generator::getPreviousFrom($maschera, 'co_documenti', 'numero', [
-            'YEAR(data) = '.prepare(date('Y', strtotime($data))),
-            'id_segment = '.prepare($id_segment),
-        ]);
-        $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data));
-
-        return $numero;
-    }
-
-    /**
-     * Calcola il nuovo numero secondario di fattura.
-     *
-     * @param string $data
-     * @param string $direzione
-     * @param int    $id_segment
-     *
-     * @return string
-     */
-    public static function getNextNumeroSecondario($data, $direzione, $id_segment)
-    {
-        if ($direzione == 'uscita') {
-            return '';
-        }
-
-        // Recupero maschera per questo segmento
-        $maschera = Generator::getMaschera($id_segment);
-
-        $ultimo = Generator::getPreviousFrom($maschera, 'co_documenti', 'numero_esterno', [
-            'YEAR(data) = '.prepare(date('Y', strtotime($data))),
-            'id_segment = '.prepare($id_segment),
-        ]);
-        $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data));
-
-        return $numero;
-    }
-
     /**
      * Restituisce i dati bancari in base al pagamento.
      *
@@ -614,5 +566,61 @@ class Fattura extends Document
         $riga->idconto = setting('Conto predefinito per la marca da bollo');
 
         $riga->save();
+    }
+
+    // Metodi statici
+
+    /**
+     * Calcola il nuovo numero di fattura.
+     *
+     * @param string $data
+     * @param string $direzione
+     * @param int    $id_segment
+     *
+     * @return string
+     */
+    public static function getNextNumero($data, $direzione, $id_segment)
+    {
+        if ($direzione == 'entrata') {
+            return '';
+        }
+
+        // Recupero maschera per questo segmento
+        $maschera = Generator::getMaschera($id_segment);
+
+        $ultimo = Generator::getPreviousFrom($maschera, 'co_documenti', 'numero', [
+            'YEAR(data) = '.prepare(date('Y', strtotime($data))),
+            'id_segment = '.prepare($id_segment),
+        ]);
+        $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data));
+
+        return $numero;
+    }
+
+    /**
+     * Calcola il nuovo numero secondario di fattura.
+     *
+     * @param string $data
+     * @param string $direzione
+     * @param int    $id_segment
+     *
+     * @return string
+     */
+    public static function getNextNumeroSecondario($data, $direzione, $id_segment)
+    {
+        if ($direzione == 'uscita') {
+            return '';
+        }
+
+        // Recupero maschera per questo segmento
+        $maschera = Generator::getMaschera($id_segment);
+
+        $ultimo = Generator::getPreviousFrom($maschera, 'co_documenti', 'numero_esterno', [
+            'YEAR(data) = '.prepare(date('Y', strtotime($data))),
+            'id_segment = '.prepare($id_segment),
+        ]);
+        $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data));
+
+        return $numero;
     }
 }

@@ -28,7 +28,7 @@ $(document).ready(function () {
         // Riporto l'utente allo scroll precedente
         if (sessionStorage['scrollTop_' + globals.id_module + '_' + globals.id_record] != undefined) {
             setTimeout(function () {
-                scrollToAndFocus(sessionStorage['scrollTop_' + globals.id_module + '_' + globals.id_record]);
+                scrollToOffset(sessionStorage['scrollTop_' + globals.id_module + '_' + globals.id_record]);
             }, 1);
         }
     }

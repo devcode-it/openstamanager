@@ -163,6 +163,16 @@ class User extends Model
         $this->image_file_id = $upload->id;
     }
 
+    public function getNomeCompletoAttribute()
+    {
+        $anagrafica = $this->anagrafica;
+        if (empty($anagrafica)) {
+            return $this->username;
+        }
+
+        return $anagrafica->ragione_sociale.' ('.$this->username.')';
+    }
+
     /* Relazioni Eloquent */
 
     public function group()

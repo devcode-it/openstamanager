@@ -1,5 +1,5 @@
 $(document).ready(function () {
-// Pulsanti di Datatables
+    // Pulsanti di Datatables
     $(".btn-csv").click(function (e) {
         var table = $(document).find("#" + $(this).closest("[data-target]").data("target")).DataTable();
 

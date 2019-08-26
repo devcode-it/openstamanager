@@ -182,7 +182,7 @@ if (!empty($sessioni)) {
         if (!$is_completato) {
             echo '
             <td class="text-center">
-                <button type="button" class="btn btn-sm btn-warning" onclick="launch_modal(\''.tr('Modifica sessione').'\', \''.$module->fileurl('manage_sessione.php').'?id_module='.$id_module.'&id_record='.$id_record.'&id_sessione='.$sessione['id'].'\', 1);" title="'.tr('Modifica sessione').'"><i class="fa fa-edit"></i></button>
+                <button type="button" class="btn btn-sm btn-warning" onclick="launch_modal(\''.tr('Modifica sessione').'\', \''.$module->fileurl('manage_sessione.php').'?id_module='.$id_module.'&id_record='.$id_record.'&id_sessione='.$sessione['id'].'\');" title="'.tr('Modifica sessione').'"><i class="fa fa-edit"></i></button>
 
 				<button type="button" class="btn btn-sm btn-danger" id="delbtn_'.$sessione['id'].'" onclick="elimina_sessione(\''.$sessione['id'].'\');" title="Elimina riga" class="only_rw"><i class="fa fa-trash"></i></button>
             </td>';

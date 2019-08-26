@@ -55,7 +55,7 @@ switch (get('op')) {
         break;
 
     case 'checklists':
-        echo '{( "name": "checklists", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "id_plugin": "'.$id_plugin.'" )}';
+        include DOCROOT.'/plugins/checks.php';
 
         break;
 

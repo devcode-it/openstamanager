@@ -61,7 +61,23 @@ class FileManager implements ManagerInterface
 <div class="box box-success">
     <div class="box-header with-border">
         <h3 class="box-title">'.(!empty($category) ? $category : tr('Generale')).'</h3>
-        <div class="box-tools pull-right">
+        
+        {[ "type": "text", "class": "hide category-name", "value": "'.$category.'" ]}
+        
+        <div class="box-tools pull-right">';
+
+                if (!empty($category)) {
+                    $result .= '
+            <button type="button" class="btn btn-box-tool category-save hide">
+                <i class="fa fa-check"></i>
+            </button>
+            
+            <button type="button" class="btn btn-box-tool category-edit">
+                <i class="fa fa-edit"></i>
+            </button>';
+                }
+
+                $result .= '
             <button type="button" class="btn btn-box-tool" data-widget="collapse">
                 <i class="fa fa-minus"></i>
             </button>
@@ -73,7 +89,7 @@ class FileManager implements ManagerInterface
         <tr>
             <th scope="col" >'.tr('Nome').'</th>
             <th scope="col" width="15%" >'.tr('Data').'</th>
-            <th scope="col" width="15%" class="text-right"></th>
+            <th scope="col" width="10%" class="text-center">#</th>
         </tr>
 	  </thead>
 	  <tbody>';
@@ -83,13 +99,29 @@ class FileManager implements ManagerInterface
 
                     $result .= '
         <tr>
-            <td align="left">
+            <td align="left">';
+
+                    if ($file->user && $file->user->photo) {
+                        $result .= '
+                <img class="attachment-img tip" src="'.$file->user->photo.'" title="'.$file->user->nome_completo.'">';
+                    } else {
+                        $result .= '
+        
+                <i class="fa fa-user-circle-o attachment-img tip" title="'.tr('OpenSTAManager').'"></i>';
+                    }
+
+                    $result .= '
+
                 <a href="'.ROOTDIR.'/view.php?file_id='.$r['id'].'" target="_blank">
                     <i class="fa fa-external-link"></i> '.$r['name'].'
-                </a><small> ('.$file->extension.')'.((!empty($file->size)) ? ' ('.\Util\FileSystem::formatBytes($file->size).')' : '').'</small>'.'
+                </a>
+                
+                <small> ('.$file->extension.')'.((!empty($file->size)) ? ' ('.\Util\FileSystem::formatBytes($file->size).')' : '').'</small>'.'
             </td>
+            
             <td>'.\Translator::timestampToLocale($r['created_at']).'</td>
-            <td class="text-right">
+            
+            <td class="text-center">
                 <a class="btn btn-xs btn-primary" href="'.ROOTDIR.'/actions.php?id_module='.$options['id_module'].'&op=download_file&id='.$r['id'].'&filename='.$r['filename'].'" target="_blank">
                     <i class="fa fa-download"></i>
                 </a>';
@@ -178,7 +210,48 @@ class FileManager implements ManagerInterface
 <script>$(document).ready(init)</script>
 
 <script>
-$(document).ready(function(){
+$(document).ready(function() {
+    // Modifica categoria
+    $("#'.$attachment_id.' .category-edit").click(function() {
+        var nome = $(this).parent().parent().find(".box-title");
+        var save_button = $(this).parent().find(".category-save");
+        var input = $(this).parent().parent().find(".category-name");
+        
+        nome.hide();
+        $(this).hide();
+        
+        input.removeClass("hide");
+        save_button.removeClass("hide");
+    });
+    
+    $("#'.$attachment_id.' .category-save").click(function() {
+        var nome = $(this).parent().parent().find(".box-title");
+        var input = $(this).parent().parent().find(".category-name");
+        
+        show_'.$attachment_id.'();
+
+        $.ajax({
+            url: globals.rootdir + "/actions.php",
+            cache: false,
+            type: "POST",
+            data: {
+                id_module: "'.$options['id_module'].'",
+                id_plugin: "'.$options['id_plugin'].'",
+                id_record: "'.$options['id_record'].'",
+                op: "upload_category",
+                category: nome.text(),
+                name: input.val(),
+            },
+            success: function(data) {
+                reload_'.$attachment_id.'();
+            },
+            error: function(data) {
+                reload_'.$attachment_id.'();
+            }
+        });
+    });
+    
+    // Autocompletamento nome
     $("#'.$attachment_id.' #blob").change(function(){
         var nome = $("#'.$attachment_id.' #nome_allegato");
         
@@ -190,8 +263,9 @@ $(document).ready(function(){
             
             nome.val(filename);
         }
-    })
+    });
     
+    // Autocompletamento categoria
     $("#'.$attachment_id.' #categoria").autocomplete({
         source: '.json_encode($source).',
         minLength: 0
@@ -199,13 +273,14 @@ $(document).ready(function(){
         $(this).autocomplete("search", $(this).val())
     });
 
-    data = {
+    var data = {
         op: "link_file",
         id_module: "'.$options['id_module'].'",
         id_plugin: "'.$options['id_plugin'].'",
         id_record: "'.$options['id_record'].'",
     };
 
+    // Upload
     $("#'.$attachment_id.' #upload").click(function(){
         $form = $("#'.$attachment_id.' #upload-form");
 

@@ -79,11 +79,12 @@ switch ($resource) {
             $filter[] = 'mg_articoli.id='.prepare($element);
         }
 
-        $where[] = 'attivo = 1';
+        $where[] = 'mg_articoli.attivo = 1';
+        $where[] = 'mg_articoli.deleted_at IS NULL';
 
         // Filtro articolo solo per documenti di vendita
         if ($superselect['dir'] == 'entrata' && isset($superselect['idsede_partenza'])) {
-            $where[] = '(idsede_azienda='.prepare($superselect['idsede_partenza']).' OR idsede_controparte='.prepare($superselect['idsede_partenza']).')';
+            $where[] = '(idsede_azienda IS NULL AND idsede_controparte IS NULL) OR (idsede_azienda='.prepare($superselect['idsede_partenza']).' OR idsede_controparte='.prepare($superselect['idsede_partenza']).')';
         }
 
         if (!empty($search)) {
@@ -124,7 +125,7 @@ switch ($resource) {
         }
 
         // IVA da impostazioni
-        $idiva_predefinita = get_var('Iva predefinita');
+        $idiva_predefinita = setting('Iva predefinita');
         $iva_predefinita = $dbo->fetchOne('SELECT descrizione FROM co_iva WHERE id='.prepare($idiva_predefinita))['descrizione'];
 
         $previous_category = -1;
@@ -196,23 +197,6 @@ switch ($resource) {
 
         break;
 
-    case 'prodotti_lotti':
-        $query = 'SELECT DISTINCT lotto AS descrizione FROM mg_prodotti |where|';
-
-        $where[] = 'idarticolo='.prepare($superselect['idarticolo']);
-
-        foreach ($elements as $element) {
-            $filter[] = 'lotto='.prepare($element);
-        }
-
-        if (!empty($search)) {
-            $search_fields[] = 'lotto LIKE '.prepare('%'.$search.'%');
-        }
-
-        $custom['id'] = 'descrizione';
-
-        break;
-
     case 'prodotti_serial':
         $query = 'SELECT DISTINCT serial AS descrizione FROM mg_prodotti |where|';
 
@@ -224,24 +208,6 @@ switch ($resource) {
         }
         if (!empty($search)) {
             $search_fields[] = 'serial LIKE '.prepare('%'.$search.'%');
-        }
-
-        $custom['id'] = 'descrizione';
-
-        break;
-
-    case 'prodotti_altro':
-        $query = 'SELECT DISTINCT altro AS descrizione FROM mg_prodotti |where|';
-
-        $where[] = 'id_articolo='.prepare($superselect['idarticolo']);
-        $where[] = 'lotto='.prepare($superselect['lotto']);
-        $where[] = 'serial='.prepare($superselect['serial']);
-
-        foreach ($elements as $element) {
-            $filter[] = 'altro='.prepare($element);
-        }
-        if (!empty($search)) {
-            $search_fields[] = 'altro LIKE '.prepare('%'.$search.'%');
         }
 
         $custom['id'] = 'descrizione';

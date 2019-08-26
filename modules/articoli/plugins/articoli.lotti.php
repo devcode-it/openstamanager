@@ -17,16 +17,6 @@ echo '
     </div>
     <div class="panel-body">';
 
-$search_lotto = get('search_lotto');
-$search_serial = get('search_serial');
-$search_altro = get('search_altro');
-
-// Calcolo prossimo lotto e serial number
-$rs = $dbo->fetchArray('SELECT serial FROM mg_prodotti WHERE id_articolo='.prepare($id_record).' ORDER BY id DESC LIMIT 0,1');
-$max_serial = $rs[0]['serial'];
-
-$next_serial = get_next_code($max_serial);
-
 echo '
         <form action="" method="post" role="form">
             <input type="hidden" name="backto" value="record-edit">
@@ -46,7 +36,7 @@ echo '
                 <label class="col-md-2 control-label" for="serial_start">'.tr('Serial number da').':</label>
 
                 <div class="col-md-2">
-                    <input type="text" class="form-control input-md" name="serial_start" onkeyup="$(\'input[name=serial_end]\').val( $(\'input[name=serial_start]\').val() ); $(\'#warn_serial\').hide(); ricalcola_totale_prodotti();" value="'.$next_serial.'" />
+                    <input type="text" class="form-control input-md" name="serial_start" onkeyup="$(\'input[name=serial_end]\').val( $(\'input[name=serial_start]\').val() ); $(\'#warn_serial\').hide(); ricalcola_totale_prodotti();" value="" />
                 </div>
 
                 <label class="col-md-1 control-label text-center" for="serial_end">
@@ -54,7 +44,7 @@ echo '
                 </label>
 
                 <div class="col-md-2">
-                    <input type="text" class="form-control input-md" name="serial_end" onkeyup="check_progressivo( $(\'input[name=serial_start]\'), $(\'input[name=serial_end]\'), $(\'#warn_serial\'), $(\'#inserisci\') );" value="'.$next_serial.'" />
+                    <input type="text" class="form-control input-md" name="serial_end" onkeyup="check_progressivo( $(\'input[name=serial_start]\'), $(\'input[name=serial_end]\'), $(\'#warn_serial\'), $(\'#inserisci\') );" value="" />
                 </div>';
 
 if (!empty($max_serial)) {
@@ -119,6 +109,7 @@ $rs = $dbo->fetchArray('SELECT COUNT(id) AS tot FROM mg_prodotti WHERE id_artico
 $tot_prodotti = $rs[0]['tot'];
 
 // Visualizzazione di tutti i prodotti
+$search_serial = get('search_serial');
 $query = 'SELECT id, serial, created_at FROM mg_prodotti WHERE serial IS NOT NULL AND id_articolo='.prepare($id_record).(!empty($search_serial) ? ' AND serial LIKE '.prepare('%'.$search_serial.'%') : '').' GROUP BY serial ORDER BY created_at DESC, serial DESC, lotto DESC, altro DESC';
 $rs2 = $dbo->fetchArray($query);
 

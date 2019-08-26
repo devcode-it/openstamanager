@@ -80,7 +80,6 @@ class Autofill
         $result = '';
 
         $number = $this->getAdditionalNumber();
-        //dd($this->space, $number);exit();
 
         for ($i = 0; $i < $number; ++$i) {
             $result .= '

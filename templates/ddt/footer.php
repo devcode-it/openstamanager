@@ -1,5 +1,9 @@
 <?php
 
+if (!empty($options['last-page-footer']) && !$is_last_page) {
+    return;
+}
+
 // Calcoli
 $imponibile = $documento->imponibile;
 $sconto = $documento->sconto;
@@ -180,5 +184,6 @@ echo '
     </tr>
 </table>';
 
-echo '
-$default_footer$';
+if (empty($options['last-page-footer'])) {
+    echo '$default_footer$';
+}

@@ -42,11 +42,16 @@ if (!empty($user)) {
     echo '
 	<div class="row">
 		<div class="col-md-12">
-		    {[ "type": "checkbox", "label": "'.tr('Cambia password').'", "name": "change_password", "value": "1" ]}
+		    {[ "type": "checkbox", "label": "'.tr('Cambia password').'", "name": "change_password", "value": "0" ]}
 		</div>
     </div>
     
     <script>
+        $(function() {
+            $("#password").attr("disabled", true);
+            $("#submit-button").attr("disabled", false).removeClass("disabled");
+        });
+
         $("#change_password").change(function() {
             if (this.checked) {
                 $("#password").attr("disabled", false);

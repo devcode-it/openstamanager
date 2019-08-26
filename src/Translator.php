@@ -22,7 +22,7 @@ class Translator extends Util\Singleton
     /** @var string Lingua selezionata */
     protected $locale;
 
-    public function __construct($default_locale = 'it', $fallback_locales = ['it'])
+    public function __construct($default_locale = 'it_IT', $fallback_locales = ['it_IT'])
     {
         $translator = new Symfony\Component\Translation\Translator($default_locale);
         $translator->setFallbackLocales($fallback_locales);

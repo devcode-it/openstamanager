@@ -27,37 +27,26 @@ function init() {
         $('form').not('.no-check').parsley();
     }
 
-    window.Parsley.on('field:success', function () {
-        this.$element.removeClass('parsley-success');
-    });
-
     // Aggiunta nell'URL del nome tab su cui tornare dopo il submit
     // Blocco del pulsante di submit dopo il primo submit
-    $("form").submit(function () {
-        if ($(this).parsley().validate()) {
+    $('form').on("submit", function(e) {
+        if ($(this).parsley().validate() && (e.result == undefined || e.result)) {
             $(this).submit(function () {
                 return false;
             });
 
             $(this).find('[type=submit]').prop("disabled", true).addClass("disabled");
 
-            $(this).find('input:disabled, select:disabled').prop('disabled', false);
-
-            var hash = window.location.hash;
-            if (hash) {
-                var input = $('<input/>', {
-                    type: 'hidden',
-                    name: 'hash',
-                    value: hash,
-                });
-
-                $(this).append(input);
-            }
+            prepareForm(this);
 
             return true;
         }
 
         return false;
+    });
+
+    window.Parsley.on('field:success', function () {
+        this.$element.removeClass('parsley-success');
     });
 
     restart_inputs();

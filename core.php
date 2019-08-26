@@ -28,9 +28,6 @@ $namespaces = require_once __DIR__.'/config/namespaces.php';
 foreach ($namespaces as $path => $namespace) {
     $loader->addPsr4($namespace.'\\', __DIR__.'/'.$path.'/custom/src');
     $loader->addPsr4($namespace.'\\', __DIR__.'/'.$path.'/src');
-
-    $loader->addPsr4($namespace.'\\API\\', __DIR__.'/'.$path.'/custom/api');
-    $loader->addPsr4($namespace.'\\API\\', __DIR__.'/'.$path.'/api');
 }
 
 // Individuazione dei percorsi di base
@@ -152,7 +149,7 @@ if (!API\Response::isAPIRequest()) {
 
 /* INTERNAZIONALIZZAZIONE */
 // Istanziamento del gestore delle traduzioni del progetto
-$lang = !empty($config['lang']) ? $config['lang'] : 'it';
+$lang = !empty($config['lang']) ? $config['lang'] : $_GET['lang'];
 $formatter = !empty($config['formatter']) ? $config['formatter'] : [];
 $translator = trans();
 $translator->addLocalePath($docroot.'/locale');

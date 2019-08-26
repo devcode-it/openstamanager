@@ -6,9 +6,12 @@ use Common\Model;
 use Modules;
 use Modules\Interventi\Components\Articolo as ArticoloIntervento;
 use Uploads;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Articolo extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'mg_articoli';
 
     /**

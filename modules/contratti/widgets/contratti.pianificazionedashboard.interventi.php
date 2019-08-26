@@ -88,7 +88,7 @@ if (!empty($rsp)) {
                 <td>';
         if (empty($r['idintervento'])) {
             echo "
-                    <a class=\"btn btn-primary\" title=\"Pianifica ora!\" onclick=\"launch_modal( '".tr('Pianifica intervento')."', '".$rootdir.'/add.php?id_module='.Modules::get('Interventi')['id'].'&ref=dashboard&idcontratto='.urlencode($r['idcontratto']).'&idcontratto_riga='.$r['id']."', 1 );\">
+                    <a class=\"btn btn-primary\" title=\"Pianifica ora!\" onclick=\"launch_modal( '".tr('Pianifica intervento')."', '".$rootdir.'/add.php?id_module='.Modules::get('Interventi')['id'].'&ref=dashboard&idcontratto='.urlencode($r['idcontratto']).'&idcontratto_riga='.$r['id']."');\">
                         <i class='fa fa-calendar'></i>
                     </a>";
         }

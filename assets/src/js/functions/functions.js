@@ -1,23 +1,25 @@
 // Modal
 function launch_modal(title, href, init_modal, id) {
+    openModal(title, href, id ? id : '#bs-popup');
+}
+
+// Modal
+function openModal(title, href, generate_id) {
     // Fix - Select2 does not function properly when I use it inside a Bootstrap modal.
     $.fn.modal.Constructor.prototype.enforceFocus = function () {
     };
 
-    if (id == null) {
-        id = '#bs-popup';
-
-        // Generazione dinamica modal
-        /*
-        id = 'bs-popup-' + Math.floor(Math.random() * 100);
-        $('#modals').append('<div class="modal fade" id="' + id + '" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="true"></div>');
-
-        id = '#' + id;
-        */
+    // Generazione dinamica modal
+    if (generate_id == undefined) {
+        do {
+            id = '#bs-popup-' + Math.floor(Math.random() * 100);
+        } while ($(id).length != 0);
+    } else {
+        id = generate_id;
     }
 
-    if (init_modal == null) {
-        init_modal = 1;
+    if ($(id).length == 0){
+        $('#modals').append('<div class="modal fade" id="' + id.replace("#", "") + '" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="true"></div>');
     }
 
     $(id).on('hidden.bs.modal', function () {
@@ -27,37 +29,31 @@ function launch_modal(title, href, init_modal, id) {
         }
     });
 
+    var content =  '<div class="modal-dialog modal-lg">\
+    <div class="modal-content">\
+        <div class="modal-header bg-light-blue">\
+            <button type="button" class="close" data-dismiss="modal">\
+                <span aria-hidden="true">&times;</span><span class="sr-only">' + globals.translations.close + '</span>\
+            </button>\
+            <h4 class="modal-title">\
+                <i class="fa fa-pencil"></i> ' + title + '\
+            </h4>\
+        </div>\
+        <div class="modal-body">|data|</div>\
+    </div>\
+</div>';
+
     // Lettura contenuto div
     if (href.substr(0, 1) == '#') {
-        data = $(href).html();
+        var data = $(href).html();
 
-        $(id).html(
-            '<div class="modal-dialog modal-lg">' +
-            '	<div class="modal-content">' +
-            '		<div class="modal-header bg-light-blue">' +
-            '			<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">' + globals.translations.close + '</span></button>' +
-            '			<h4 class="modal-title"><i class="fa fa-pencil"></i> ' + title + '</h4>' +
-            '		</div>' +
-            '		<div class="modal-body">' + data + '</div>'
-        );
-        if (init_modal == 1) {
-            $(id).modal('show');
-        }
+        $(id).html(content.replace("|data|", data));
+        $(id).modal('show');
     } else {
         $.get(href, function (data, response) {
             if (response == 'success') {
-                $(id).html(
-                    '<div class="modal-dialog modal-lg">' +
-                    '	<div class="modal-content">' +
-                    '		<div class="modal-header bg-light-blue">' +
-                    '			<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">' + globals.translations.close + '</span></button>' +
-                    '			<h4 class="modal-title"><i class="fa fa-pencil"></i> ' + title + '</h4>' +
-                    '		</div>' +
-                    '		<div class="modal-body">' + data + '</div>'
-                );
-                if (init_modal == 1) {
-                    $(id).modal('show');
-                }
+                $(id).html(content.replace("|data|", data));
+                $(id).modal('show');
             }
         });
     }
@@ -72,15 +68,10 @@ function openLink(event, link) {
 }
 
 /**
- * Funzione per far scrollare la pagina fino a un id + focus e offset
+ * Funzione per far scrollare la pagina fino a un offset
  * @param integer offset
- * @param string id
  */
-function scrollToAndFocus(offset, id) {
-    if (id) {
-        offset += $('#' + id).offset().top;
-    }
-
+function scrollToOffset(offset) {
     $('html,body').animate({
         scrollTop: offset
     }, 'slow');
@@ -89,25 +80,20 @@ function scrollToAndFocus(offset, id) {
 /**
  * Ritorna un array associativo con i parametri passati via GET
  */
-function getUrlVars(url) {
-    var vars = [],
-        hash;
-    if (url == null)
-        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-    else
-        var hashes = url.slice(url.indexOf('?') + 1).split('&');
-    for (var i = 0; i < hashes.length; i++) {
-        hash = hashes[i].split('=');
-        vars.push(hash[0]);
-        vars[hash[0]] = hash[1];
-    }
+function getUrlVars() {
+    var search = window.location.search.substring(1);
+    if (!search) return {};
 
-    return vars;
+    var results = JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g,'":"') + '"}', function(key, value) {
+        return key === "" ? value : decodeURIComponent(value)
+    });
+
+    return results;
 }
 
 // Data e ora (orologio)
 function clock() {
-    $('#datetime').html(moment().format(globals.timestampFormat));
+    $('#datetime').html(moment().formatPHP(globals.timestamp_format));
     setTimeout('clock()', 1000);
 }
 
@@ -409,6 +395,8 @@ function submitAjax(form, data, callback, errorCallback) {
         data.id_plugin = data.id_plugin ? data.id_plugin : globals.id_plugin;
         data.ajax = 1;
 
+        prepareForm(form);
+
         // Invio dei dati
         $(form).ajaxSubmit({
             url: globals.rootdir + "/actions.php",
@@ -424,32 +412,7 @@ function submitAjax(form, data, callback, errorCallback) {
 
                 $("#main_loading").fadeOut();
 
-                // Visualizzazione messaggi
-                $.ajax({
-                    url: globals.rootdir + '/ajax.php',
-                    type: 'get',
-                    data: {
-                        op: 'flash',
-                    },
-                    success: function (flash) {
-                        messages = JSON.parse(flash);
-
-                        info = messages.info ? messages.info : {};
-                        Object.keys(info).forEach(function (element) {
-                            toastr["success"](info[element]);
-                        });
-
-                        warning = messages.warning ? messages.warning : {};
-                        Object.keys(warning).forEach(function (element) {
-                            toastr["warning"](warning[element]);
-                        });
-
-                        error = messages.error ? messages.error : {};
-                        Object.keys(error).forEach(function (element) {
-                            toastr["error"](error[element]);
-                        });
-                    }
-                });
+                renderMessages();
             },
             error: function (data) {
                 $("#main_loading").fadeOut();
@@ -462,6 +425,51 @@ function submitAjax(form, data, callback, errorCallback) {
     }
 
     return valid;
+}
+
+function prepareForm(form) {
+    $(form).find('input:disabled, select:disabled').prop('disabled', false);
+
+    var hash = window.location.hash;
+    if (hash) {
+        var input = $('<input/>', {
+            type: 'hidden',
+            name: 'hash',
+            value: hash,
+        });
+
+        $(form).append(input);
+    }
+}
+
+function renderMessages() {
+    // Visualizzazione messaggi
+    $.ajax({
+        url: globals.rootdir + '/ajax.php',
+        type: 'get',
+        data: {
+            op: 'flash',
+        },
+        success: function (flash) {
+            messages = JSON.parse(flash);
+
+            info = messages.info ? messages.info : [];
+            info.forEach(function (element) {
+                toastr["success"](element);
+            });
+
+            warning = messages.warning ? messages.warning : [];
+            warning.forEach(function (element) {
+                toastr["warning"](element);
+            });
+
+            error = messages.error ? messages.error : [];
+            error.forEach(function (element) {
+                toastr["error"](element);
+            });
+
+        }
+    });
 }
 
 function removeHash() {
@@ -486,3 +494,33 @@ function restart_inputs() {
     autosize($('.autosize'));
 }
 
+function alertPush() {
+    // Messaggio di avviso salvataggio a comparsa sulla destra solo nella versione a desktop intero
+    if ($(window).width() > 1023) {
+        var i = 0;
+
+        $('.alert-success.push').each(function () {
+            i++;
+            tops = 60 * i + 95;
+
+            $(this).css({
+                'position': 'fixed',
+                'z-index': 3,
+                'right': '10px',
+                'top': -100,
+            }).delay(1000).animate({
+                'top': tops,
+            }).delay(3000).animate({
+                'top': -100,
+            });
+        });
+    }
+
+    // Nascondo la notifica se passo sopra col mouse
+    $('.alert-success.push').on('mouseover', function () {
+        $(this).stop().animate({
+            'top': -100,
+            'opacity': 0
+        });
+    });
+}

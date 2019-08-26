@@ -87,10 +87,12 @@ foreach ($replace as $prefix => $values) {
 // Header di default
 $header_file = App::filepath('templates/base|custom|/header.php');
 $default_header = include $header_file;
+$default_header = !empty($options['hide-header']) ? '' : $default_header;
 
 // Footer di default
 $footer_file = App::filepath('templates/base|custom|/footer.php');
 $default_footer = include $footer_file;
+$default_footer = !empty($options['hide-footer']) ? '' : $default_footer;
 
 // Logo di default
 $default_logo = App::filepath('templates/base|custom|/logo_azienda.jpg');

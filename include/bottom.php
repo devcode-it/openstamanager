@@ -17,8 +17,6 @@ if (Auth::check()) {
 			</footer>
 
             <div id="modals">
-                <div class="modal fade" id="bs-popup" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="true"></div>
-                <div class="modal fade" id="bs-popup2" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="true"></div>
             </div>';
 }
 echo '
@@ -53,35 +51,41 @@ if (Auth::check()) {
 
     // Hooks
     echo '
-    <script>
-    $(document).ready(function() {
-        $.ajax({
-            url: globals.rootdir + "/ajax.php",
-            type: "get",
-            data: {
-                op: "hooks",
-            },
-            success: function(data) {
-                hooks = JSON.parse(data);
-
-                $("#hooks-header").text(globals.translations.hooksExecuting);
-
-                if (hooks.length == 0) {
-                    $("#hooks-loading").hide();
-                    $("#hooks-number").text(0);
-                    $("#hooks-header").text(globals.translations.hookNone);
-                }
-                
-                hooks.forEach(function(item, index){
-                    executeHook(item, hooks.length);
-                });
-            },
-        });
-    });
+        <script>
+        $(document).ready(function() {
+            alertPush();
+                    
+            // Orologio
+            clock();
+            
+            $.ajax({
+                url: globals.rootdir + "/ajax.php",
+                type: "get",
+                data: {
+                    op: "hooks",
+                },
+                success: function(data) {
+                    hooks = JSON.parse(data);
     
-    </script>';
+                    $("#hooks-header").text(globals.translations.hooksExecuting);
+    
+                    if (hooks.length == 0) {
+                        $("#hooks-loading").hide();
+                        $("#hooks-number").text(0);
+                        $("#hooks-header").text(globals.translations.hookNone);
+                    }
+                    
+                    hooks.forEach(function(item, index){
+                        executeHook(item, hooks.length);
+                    });
+                },
+            });
+        });
+        </script>';
 }
 
+echo '
+        <script>$(document).ready(init)</script>';
 echo '
 	</body>
 </html>';

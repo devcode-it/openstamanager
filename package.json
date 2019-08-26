@@ -55,7 +55,7 @@
         "gulp-rename": "^1.2.2",
         "gulp-sass": "^3.1.0",
         "gulp-stylus": "^2.6.0",
-        "gulp-uglify": "^1.5.3",
+        "gulp-uglify": "^2.0.0",
         "gulp-util": "^3.0.8",
         "inquirer": "^4.0.1",
         "main-bower-files": "^2.13.1",

@@ -181,7 +181,9 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_scadenziario`
    LEFT JOIN `co_pagamenti` ON `co_documenti`.`idpagamento` = `co_pagamenti`.`id`
    LEFT JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`
    LEFT JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`
-WHERE 1=1 AND ABS(`co_scadenziario`.`pagato`) < ABS(`co_scadenziario`.`da_pagare`) AND (`co_statidocumento`.`descrizione` IS NULL OR `co_statidocumento`.`descrizione` IN(''Emessa'',''Parzialmente pagato''))
+WHERE 1=1 AND
+    (`co_scadenziario`.`scadenza` BETWEEN ''|period_start|'' AND ''|period_end|'' OR ABS(`co_scadenziario`.`pagato`) < ABS(`co_scadenziario`.`da_pagare`)) AND
+    (`co_statidocumento`.`descrizione` IS NULL OR `co_statidocumento`.`descrizione` IN(''Emessa'',''Parzialmente pagato''))
 HAVING 2=2
 ORDER BY `scadenza` ASC' WHERE `name` = 'Scadenzario';
 

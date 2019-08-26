@@ -30,6 +30,8 @@ if (!empty($search_filters)) {
     $module_query = str_replace('2=2', '2=2 AND ('.implode(' AND ', $search_filters).') ', $module_query);
 }
 
+$module_query = str_replace('1=1', '1=1 AND ABS(`co_scadenziario`.`pagato`) < ABS(`co_scadenziario`.`da_pagare`) ', $module_query);
+
 // Filtri derivanti dai permessi (eventuali)
 $module_query = Modules::replaceAdditionals($id_module, $module_query);
 

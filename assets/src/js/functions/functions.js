@@ -10,7 +10,7 @@ function openModal(title, href, generate_id) {
     };
 
     // Generazione dinamica modal
-    if (generate_id == null) {
+    if (generate_id == undefined) {
         do {
             id = '#bs-popup-' + Math.floor(Math.random() * 100);
         } while ($(id).length != 0);
@@ -454,6 +454,7 @@ function renderMessages() {
         }
     });
 }
+
 function removeHash() {
     history.replaceState(null, null, ' ');
 }

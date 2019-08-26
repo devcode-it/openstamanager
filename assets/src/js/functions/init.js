@@ -37,18 +37,7 @@ function init() {
 
             $(this).find('[type=submit]').prop("disabled", true).addClass("disabled");
 
-            $(this).find('input:disabled, select:disabled').prop('disabled', false);
-
-            var hash = window.location.hash;
-            if (hash) {
-                var input = $('<input/>', {
-                    type: 'hidden',
-                    name: 'hash',
-                    value: hash,
-                });
-
-                $(this).append(input);
-            }
+            prepareForm(this);
 
             return true;
         }

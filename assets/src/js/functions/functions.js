@@ -395,6 +395,8 @@ function submitAjax(form, data, callback, errorCallback) {
         data.id_plugin = data.id_plugin ? data.id_plugin : globals.id_plugin;
         data.ajax = 1;
 
+        prepareForm(form);
+
         // Invio dei dati
         $(form).ajaxSubmit({
             url: globals.rootdir + "/actions.php",
@@ -423,6 +425,21 @@ function submitAjax(form, data, callback, errorCallback) {
     }
 
     return valid;
+}
+
+function prepareForm(form) {
+    $(form).find('input:disabled, select:disabled').prop('disabled', false);
+
+    var hash = window.location.hash;
+    if (hash) {
+        var input = $('<input/>', {
+            type: 'hidden',
+            name: 'hash',
+            value: hash,
+        });
+
+        $(form).append(input);
+    }
 }
 
 function renderMessages() {

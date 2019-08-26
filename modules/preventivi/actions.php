@@ -321,4 +321,15 @@ switch (post('op')) {
 
         flash()->info(tr('Aggiunta nuova revisione!'));
         break;
+
+    case 'update_position':
+        $orders = explode(',', $_POST['order']);
+        $order = 0;
+
+        foreach ($orders as $idriga) {
+            $dbo->query('UPDATE `co_righe_preventivi` SET `order`='.prepare($order).' WHERE id='.prepare($idriga));
+            ++$order;
+        }
+
+        break;
 }

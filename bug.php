@@ -1,8 +1,10 @@
 <?php
 
+use Notifications\EmailNotification;
+
 include_once __DIR__.'/core.php';
 
-$mail = Mail::get();
+$mail = new EmailNotification();
 $bug_email = 'info@openstamanager.com';
 
 $user = Auth::user();

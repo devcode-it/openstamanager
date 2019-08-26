@@ -2,6 +2,7 @@
 
 include_once __DIR__.'/core.php';
 
+use Models\MailTemplate;
 use Models\Note;
 use Modules\Checklists\Check;
 use Modules\Checklists\Checklist;
@@ -203,16 +204,15 @@ elseif (filter('op') == 'sort_checks') {
     }
 }
 
-// Invio email
+// Inizializzazione email
 elseif (post('op') == 'send-email') {
-    $id_template = post('template');
+    $template = MailTemplate::find(post('template'));
 
-    // Inizializzazione
-    $mail = new Notifications\EmailNotification();
-    $mail->setTemplate($id_template, $id_record);
+    $mail = \Models\Mail::build($template, $id_record);
 
     // Rimozione allegati predefiniti
-    $mail->setAttachments([]);
+    $mail->resetAttachments();
+    $mail->resetPrints();
 
     // Destinatari
     $receivers = array_clean(post('destinatari'));
@@ -222,29 +222,25 @@ elseif (post('op') == 'send-email') {
     }
 
     // Contenuti
-    $mail->setSubject(post('subject'));
-    $mail->setContent(post('body'));
+    $mail->subject = post('subject');
+    $mail->content = post('body');
+
+    // Conferma di lettura
+    $mail->read_notify = post('read_notify');
 
     // Stampe da allegare
     $prints = post('prints');
     foreach ($prints as $print) {
-        $mail->addPrint($print, $id_record);
+        $mail->addPrint($print);
     }
 
     // Allegati originali
     $files = post('attachments');
     foreach ($files as $file) {
-        $mail->addUpload($file);
+        $mail->addAttachment($file);
     }
 
-    // Invio mail
-    try {
-        $mail->send(true); // Il valore true impone la gestione degli errori tramite eccezioni
-
-        flash()->info(tr('Email inviata correttamente!'));
-    } catch (PHPMailer\PHPMailer\Exception $e) {
-        flash()->error(tr("Errore durante l'invio dell'email").': '.$e->errorMessage());
-    }
+    $mail->save();
 }
 
 // Inclusione di eventuale plugin personalizzato

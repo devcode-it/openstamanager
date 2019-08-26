@@ -78,11 +78,11 @@ class Backup
     }
 
     /**
-     * Effettua il backup giornaliero.
+     * Controlla se il backup giornaliero è stato effettuato.
      *
      * @return bool|null
      */
-    public static function daily()
+    public static function isDailyComplete()
     {
         // Costruzione del pattern
         $replaces = self::getReplaces();
@@ -100,8 +100,18 @@ class Backup
         // Individuazione dei backup
         $backups = self::getList($pattern);
 
+        return !empty($backups);
+    }
+
+    /**
+     * Effettua il backup giornaliero.
+     *
+     * @return bool|null
+     */
+    public static function daily()
+    {
         // Creazione del backup eventuale
-        if (empty($backups)) {
+        if (!self::isDailyComplete()) {
             return self::create();
         }
     }

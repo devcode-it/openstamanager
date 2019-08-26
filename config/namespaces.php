@@ -4,6 +4,7 @@ return [
     'include' => 'Common',
     'modules/aggiornamenti' => 'Modules\Aggiornamenti',
     'modules/anagrafiche' => 'Modules\Anagrafiche',
+    'modules/backups' => 'Modules\Backups',
     'modules/articoli' => 'Modules\Articoli',
     'modules/checklists' => 'Modules\Checklists',
     'modules/ritenute' => 'Modules\Ritenute',

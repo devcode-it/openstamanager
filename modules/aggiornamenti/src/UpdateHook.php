@@ -2,16 +2,16 @@
 
 namespace Modules\Aggiornamenti;
 
-use Common\HookManager;
 use GuzzleHttp\Client;
+use Hooks\CachedManager;
 use Modules;
 use Update;
 
-class UpdateHook extends HookManager
+class UpdateHook extends CachedManager
 {
     protected static $client = null;
 
-    public function manage()
+    public function execute()
     {
         $result = self::isAvailable();
 

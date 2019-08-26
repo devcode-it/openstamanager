@@ -3,10 +3,10 @@
 namespace Modules\Articoli;
 
 use Common\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules;
 use Modules\Interventi\Components\Articolo as ArticoloIntervento;
 use Uploads;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Articolo extends Model
 {

@@ -2,12 +2,12 @@
 
 namespace Plugins\ReceiptFE;
 
-use Common\HookManager;
+use Hooks\CachedManager;
 use Modules;
 
-class ReceiptHook extends HookManager
+class ReceiptHook extends CachedManager
 {
-    public function manage()
+    public function execute()
     {
         $list = Interaction::getReceiptList();
 

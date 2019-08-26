@@ -5,7 +5,7 @@ $r = $dbo->fetchOne('SELECT co_scadenziario.*, co_documenti.*,
 	an_anagrafiche.pec,
 	an_anagrafiche.ragione_sociale,
     co_scadenziario.da_pagare - co_scadenziario.pagato AS totale,
-	(SELECT pec FROM zz_smtps WHERE zz_smtps.id='.prepare($template['id_smtp']).') AS is_pec,
+	(SELECT pec FROM em_accounts WHERE em_accounts.id='.prepare($template['id_smtp']).') AS is_pec,
 	(SELECT descrizione FROM co_pagamenti WHERE co_pagamenti.id = co_documenti.idpagamento) AS pagamento
 FROM co_scadenziario
     INNER JOIN co_documenti ON co_documenti.id = co_scadenziario.iddocumento

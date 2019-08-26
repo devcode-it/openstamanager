@@ -2,12 +2,12 @@
 
 namespace Plugins\ImportFE;
 
-use Common\HookManager;
+use Hooks\CachedManager;
 use Modules;
 
-class InvoiceHook extends HookManager
+class InvoiceHook extends CachedManager
 {
-    public function manage()
+    public function execute()
     {
         $list = Interaction::getInvoiceList();
 

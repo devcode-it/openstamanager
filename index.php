@@ -16,19 +16,6 @@ switch ($op) {
 
             // Rimozione log vecchi
             $dbo->query('DELETE FROM `zz_operations` WHERE DATE_ADD(`created_at`, INTERVAL 30*24*60*60 SECOND) <= NOW()');
-
-            // Auto backup del database giornaliero
-            if (setting('Backup automatico')) {
-                $result = Backup::daily();
-
-                if (!isset($result)) {
-                    flash()->info(tr('Backup saltato perché già esistente!'));
-                } elseif (!empty($result)) {
-                    flash()->info(tr('Backup automatico eseguito correttamente!'));
-                } else {
-                    flash()->error(tr('Errore durante la generazione del backup automatico!'));
-                }
-            }
         } else {
             $status = auth()->getCurrentStatus();
 
@@ -172,13 +159,7 @@ echo '/> '.tr('Mantieni attiva la sessione').'
             <script>
             $(document).ready( function(){
                 $("#login").click(function(){
-                    $("#login").text("';
-    if ($dbo->isInstalled() && !Update::isUpdateAvailable() && setting('Backup automatico')) {
-        echo tr('Backup automatico in corso');
-    } else {
-        echo tr('Autenticazione');
-    }
-    echo '...");
+                    $("#login").text("'.tr('Autenticazione').'...");
                 });
 
                 if( $("input[name=username]").val() == ""){

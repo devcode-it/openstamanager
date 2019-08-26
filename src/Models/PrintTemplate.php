@@ -3,6 +3,7 @@
 namespace Models;
 
 use Common\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Traits\PathTrait;
 use Traits\StoreTrait;
 

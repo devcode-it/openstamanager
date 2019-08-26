@@ -1,7 +1,77 @@
+/**
+ *
+ */
+function startHooks() {
+    $.ajax({
+        url: globals.rootdir + "/ajax.php",
+        type: "get",
+        data: {
+            op: "hooks",
+        },
+        success: function(data) {
+            hooks = JSON.parse(data);
 
-function executeHook(hook, length){
-    $("#hooks").append('<li id="hook-loader-' + hook.id + '"><a href="#">' + globals.translations.hookExecuting.replace('_NAME_', hook.name) + '</a></li>');
+            $("#hooks-header").text(globals.translations.hooksExecuting);
+            $("#hooks-number").text(hooks.length);
 
+            if (hooks.length == 0) {
+                $("#hooks-loading").hide();
+                $("#hooks-number").text(0);
+                $("#hooks-header").text(globals.translations.hookNone);
+            }
+
+            hooks.forEach(function(item, index){
+                startHook(item);
+            });
+        },
+    });
+}
+
+/**
+ *
+ * @param hook
+ */
+function startHook(hook){
+    var element_id = "hook-" + hook.id;
+    $("#hooks").append('<li class="hook-element" id="' + element_id + '"><a href="#">' + globals.translations.hookExecuting.replace('_NAME_', hook.name) + '</a></li>');
+
+    element_id = "#" + element_id;
+
+    $.ajax({
+        url: globals.rootdir + "/ajax.php",
+        type: "get",
+        data: {
+            op: "prepare-hook",
+            id: hook.id,
+        },
+        success: function(data) {
+            var result = JSON.parse(data);
+
+            addHookCount("#hooks-counter");
+
+            if (result){
+                renderHook(element_id, result);
+
+                if (result.execute){
+                    addHookCount("#hooks-notified");
+
+                    executeHook(hook, element_id, true)
+                } else {
+                    $(element_id).remove();
+                }
+            } else {
+                executeHook(hook, element_id)
+            }
+        },
+    });
+}
+
+/**
+ *
+ * @param hook
+ * @param element_id
+ */
+function executeHook(hook, element_id, is_background){
     $.ajax({
         url: globals.rootdir + "/ajax.php",
         type: "get",
@@ -10,35 +80,22 @@ function executeHook(hook, length){
             id: hook.id,
         },
         success: function(data) {
-            result = JSON.parse(data);
+            var result = JSON.parse(data);
 
-            $("#hook-loader-" + hook.id).remove();
+            renderHook(element_id, result);
 
-            notification = '<li class="hook-element"><a href="' + (result.link ? result.link : "#") + '"><i class="' + result.icon + '"></i><span class="small" > ' + result.message + '</span></a></li>';
-
-            // Inserimento della notifica
-            hooks_number = $("#hooks-number");
-            number = parseInt(hooks_number.text());
-            number = isNaN(number) ? 0 : number;
-
-            if(result.notify) {
-                number++;
-
-                $("#hooks").prepend(notification);
-            } else {
-                //$("#hooks").append(notification);
+            if (!is_background) {
+                if (result.notify) {
+                    addHookCount("#hooks-notified");
+                } else {
+                    $(element_id).remove();
+                }
             }
 
-            hooks_number.text(number);
-
-            // Contatore dell'esecuzione degli hook
-            hooks_counter = $("#hooks-counter");
-            counter = parseInt(hooks_counter.text());
-            counter++;
-            hooks_counter.text(counter);
-
             // Rimozione eventuale della rotella di caricamento
-            if(counter == hooks.length) {
+            var counter = $("#hooks-counter").text();
+            var number = $("#hooks-notified").text();
+            if(counter == $("#hooks-number").text()) {
                 $("#hooks-loading").hide();
 
                 if (number > 1){
@@ -53,4 +110,27 @@ function executeHook(hook, length){
             }
         },
     });
+}
+
+/**
+ * Aggiunta dell'hook al numero totale.
+ */
+function addHookCount(id) {
+    var hooks_number = $(id);
+    var number = parseInt(hooks_number.text());
+    number = isNaN(number) ? 0 : number;
+
+    number++;
+    hooks_number.text(number);
+
+    return number;
+}
+
+/**
+ *
+ * @param element_id
+ * @param result
+ */
+function renderHook(element_id, result) {
+    $(element_id).html('<a href="' + (result.link ? result.link : "#") + '"><i class="' + result.icon + '"></i><span class="small" > ' + result.message + '</span></a>');
 }

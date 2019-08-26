@@ -2,8 +2,6 @@
 
 namespace Models;
 
-use Carbon\Carbon;
-use Carbon\CarbonInterval;
 use Common\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Traits\StoreTrait;
@@ -18,9 +16,6 @@ class Hook extends Model
         'permission',
     ];
 
-    protected $cached = null;
-    protected $use_cached = null;
-
     /**
      * Restituisce i permessi relativi all'account in utilizzo.
      *
@@ -31,75 +26,31 @@ class Hook extends Model
         return $this->module->permission;
     }
 
-    public function getIsCachedAttribute()
-    {
-        if (!isset($this->use_cached)) {
-            $cache = $this->cache;
-
-            $use_cached = false;
-            if (!empty($cache)) {
-                $date = new Carbon($cache['created_at']);
-                $interval = CarbonInterval::make($this->frequency);
-
-                $date = $date->add($interval);
-
-                $now = new Carbon();
-                $use_cached = $date->greaterThan($now);
-            }
-
-            $this->use_cached = $use_cached;
-        }
-
-        return $this->use_cached;
-    }
-
     public function execute()
     {
         $class = $this->class;
         $hook = new $class();
 
-        if ($this->is_cached) {
-            $results = $this->cache['results'];
+        $this->processing = true;
+        $this->save();
 
-            // Interpretazione della cache
-            $results = json_decode($results, true);
-        } else {
-            $results = $hook->manage();
+        $data = $hook->manage();
+        $results = $hook->response($data);
 
-            $this->updateCache($results);
-        }
+        $this->processing = false;
+        $this->save();
 
-        return $hook->response($results);
+        return $results;
     }
 
-    public function updateCache($results)
+    public function prepare()
     {
-        // Rimozione cache precedente
-        $database = database();
-        $database->delete('zz_hook_cache', [
-            'hook_id' => $this->id,
-        ]);
+        $class = $this->class;
+        $hook = new $class();
 
-        // Aggiunta del risultato come cache
-        $cache = json_encode($results);
-        $database->insert('zz_hook_cache', [
-            'hook_id' => $this->id,
-            'results' => $cache,
-        ]);
+        $results = $hook->prepare();
 
-        $this->cached = null;
-        $this->getCacheAttribute();
-    }
-
-    public function getCacheAttribute()
-    {
-        if (!isset($this->cached)) {
-            $cache = database()->selectOne('zz_hook_cache', '*', ['hook_id' => $this->id], ['id' => 'DESC']);
-
-            $this->cached = $cache;
-        }
-
-        return $this->cached;
+        return $results;
     }
 
     /* Relazioni Eloquent */

@@ -11,12 +11,12 @@ class MailAccount extends Model
     use StoreTrait;
     use SoftDeletes;
 
-    protected $table = 'zz_smtps';
+    protected $table = 'em_accounts';
 
     /* Relazioni Eloquent */
 
-    public function account()
+    public function templates()
     {
-        return $this->belongsTo(MailTemplate::class, 'id_smtp');
+        return $this->hasMany(MailTemplate::class, 'id_smtp');
     }
 }

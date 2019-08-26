@@ -114,6 +114,16 @@ switch (get('op')) {
 
         break;
 
+    case 'prepare-hook':
+        $hook_id = filter('id');
+        $hook = Hook::find($hook_id);
+
+        $response = $hook->prepare();
+
+        echo json_encode($response);
+
+        break;
+
     case 'flash':
         $response = flash()->getMessages();
 

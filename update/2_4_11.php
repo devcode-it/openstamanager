@@ -3,6 +3,7 @@
 // File e cartelle deprecate
 $files = [
     'src\API.php',
+    'src\Mail.php',
     'modules\utenti\api',
     'modules\stato_servizi\api',
     'modules\stati_preventivo\api',

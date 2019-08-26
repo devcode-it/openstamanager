@@ -316,3 +316,57 @@ DELETE FROM `zz_plugins` WHERE `name` = 'Pianificazione fatturazione';
 -- Aggiunta deleted_at su mg_articoli
 ALTER TABLE `mg_articoli` ADD `deleted_at` timestamp NULL DEFAULT NULL;
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `mg_articoli` WHERE 1=1 AND `deleted_at` IS NULL HAVING 2=2 ORDER BY `descrizione`' WHERE `name` = 'Articoli';
+
+-- Ampliamento hooks
+ALTER TABLE `zz_hooks` ADD `processing` BOOLEAN DEFAULT FALSE;
+INSERT INTO `zz_hooks` (`id`, `name`, `class`, `frequency`, `id_module`) VALUES (NULL, 'Backup', 'Modules\\Backups\\BackupHook', '1 day', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Backup'));
+
+-- Miglioramento gestione email
+ALTER TABLE `zz_emails` RENAME TO `em_templates`;
+ALTER TABLE `zz_smtps` RENAME TO `em_accounts`;
+ALTER TABLE `zz_email_print` RENAME TO `em_template_print`;
+
+UPDATE zz_modules SET options = REPLACE(options, 'zz_emails', 'em_templates');
+UPDATE zz_modules SET options2 = REPLACE(options2, 'zz_emails', 'em_templates');
+UPDATE zz_views SET query = REPLACE(query, 'zz_emails', 'em_templates');
+
+CREATE TABLE IF NOT EXISTS `em_campaings` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `id_account` int(11) NOT NULL,
+  `id_template` int(11) NOT NULL,
+  `state` varchar(25) NOT NULL,
+  `completed_at` TIMESTAMP NULL DEFAULT NULL,
+  `deleted_at` TIMESTAMP NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`id_account`) REFERENCES `em_accounts`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`id_template`) REFERENCES `em_templates`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `em_emails` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_account` int(11) NOT NULL,
+  `id_template` int(11),
+  `id_campaign` int(11),
+  `id_record` int(11),
+  `subject` varchar(255),
+  `content` TEXT,
+  `receivers` TEXT,
+  `attachments` TEXT,
+  `prints` TEXT,
+  `options` TEXT,
+  `sent_at` TIMESTAMP NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`id_account`) REFERENCES `em_accounts`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`id_template`) REFERENCES `em_templates`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`id_campaign`) REFERENCES `em_campaings`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `em_campaing_anagrafica` (
+  `id_campaign` int(11) NOT NULL,
+  `id_anagrafica` int(11) NOT NULL,
+  `id_email` int(11),
+  FOREIGN KEY (`id_campaign`) REFERENCES `em_campaings`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`id_anagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE CASCADE,
+  FOREIGN KEY (`id_email`) REFERENCES `em_emails`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB;

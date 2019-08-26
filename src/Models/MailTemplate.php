@@ -11,7 +11,7 @@ class MailTemplate extends Model
     use StoreTrait;
     use SoftDeletes;
 
-    protected $table = 'zz_emails';
+    protected $table = 'em_templates';
 
     public function getVariablesAttribute()
     {
@@ -32,6 +32,6 @@ class MailTemplate extends Model
 
     public function account()
     {
-        return $this->hasOne(MailAccount::class, 'id_smtp');
+        return $this->belongsTo(MailAccount::class, 'id_smtp');
     }
 }

@@ -2,6 +2,8 @@
 
 namespace HTMLBuilder\Manager;
 
+use Models\MailTemplate;
+
 /**
  * @since 2.4
  */
@@ -36,7 +38,7 @@ class ButtonManager implements ManagerInterface
                 'icon' => $print['icon'],
             ];
         } else {
-            $template = \Mail::getTemplate($options['id']);
+            $template = MailTemplate::find($options['id']);
 
             $result = [
                 'link' => ROOTDIR.'/mail.php?id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id='.$options['id'],
@@ -85,7 +87,7 @@ class ButtonManager implements ManagerInterface
         if ($options['type'] == 'print') {
             $results = \Prints::getModulePrints($options['id_module']);
         } else {
-            $results = \Mail::getModuleTemplates($options['id_module']);
+            $results = MailTemplate::where('id_module', $options['id_module'])->get()->toArray();
         }
 
         return $results;

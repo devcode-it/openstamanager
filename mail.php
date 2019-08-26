@@ -1,10 +1,12 @@
 <?php
 
+use Models\MailTemplate;
+
 include_once __DIR__.'/core.php';
 
-$template = Mail::getTemplate(get('id'));
-$module = Modules::get($id_module);
-$smtp = Mail::get($template['id_smtp']);
+$template = MailTemplate::find(get('id'));
+$module = $template->module;
+$smtp = $template->account;
 
 $body = $template['body'];
 $subject = $template['subject'];
@@ -79,7 +81,7 @@ echo '
     </div>';
 
 // Stampe
-$selected_prints = $dbo->fetchArray('SELECT id_print FROM zz_email_print WHERE id_email = '.prepare($template['id']));
+$selected_prints = $dbo->fetchArray('SELECT id_print FROM em_template_print WHERE id_email = '.prepare($template['id']));
 $selected = array_column($selected_prints, 'id_print');
 
 echo '

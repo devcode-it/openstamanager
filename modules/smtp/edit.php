@@ -36,12 +36,12 @@ include_once __DIR__.'/../../core.php';
                 <div class="col-md-3">
                     {[ "type": "email", "label": "<?php echo tr('Email mittente'); ?>", "name": "from_address", "value": "$from_address$", "required": 1 ]}
                 </div>
-			
+
 				<div class="col-md-3">
                     {[ "type": "checkbox", "label": "<?php echo tr('Non verificare il certificato SSL'); ?>", "name": "ssl_no_verify", "value": "$ssl_no_verify$" ]}
                 </div>
-				
-				
+
+
             </div>
 
             <div class="row">
@@ -82,7 +82,7 @@ include_once __DIR__.'/../../core.php';
 <?php
 // Collegamenti diretti
 // Template email collegati a questo account
-$elementi = $dbo->fetchArray('SELECT `id`, `name` FROM `zz_emails` WHERE `id_smtp` = '.prepare($id_record));
+$elementi = $dbo->fetchArray('SELECT `id`, `name` FROM `em_templates` WHERE `id_smtp` = '.prepare($id_record));
 
 if (!empty($elementi)) {
     echo '

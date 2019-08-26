@@ -79,7 +79,8 @@ switch ($resource) {
             $filter[] = 'mg_articoli.id='.prepare($element);
         }
 
-        $where[] = 'attivo = 1';
+        $where[] = 'mg_articoli.attivo = 1';
+        $where[] = 'mg_articoli.deleted_at IS NULL';
 
         // Filtro articolo solo per documenti di vendita
         if ($superselect['dir'] == 'entrata' && isset($superselect['idsede_partenza'])) {
@@ -196,23 +197,6 @@ switch ($resource) {
 
         break;
 
-    case 'prodotti_lotti':
-        $query = 'SELECT DISTINCT lotto AS descrizione FROM mg_prodotti |where|';
-
-        $where[] = 'idarticolo='.prepare($superselect['idarticolo']);
-
-        foreach ($elements as $element) {
-            $filter[] = 'lotto='.prepare($element);
-        }
-
-        if (!empty($search)) {
-            $search_fields[] = 'lotto LIKE '.prepare('%'.$search.'%');
-        }
-
-        $custom['id'] = 'descrizione';
-
-        break;
-
     case 'prodotti_serial':
         $query = 'SELECT DISTINCT serial AS descrizione FROM mg_prodotti |where|';
 
@@ -224,24 +208,6 @@ switch ($resource) {
         }
         if (!empty($search)) {
             $search_fields[] = 'serial LIKE '.prepare('%'.$search.'%');
-        }
-
-        $custom['id'] = 'descrizione';
-
-        break;
-
-    case 'prodotti_altro':
-        $query = 'SELECT DISTINCT altro AS descrizione FROM mg_prodotti |where|';
-
-        $where[] = 'id_articolo='.prepare($superselect['idarticolo']);
-        $where[] = 'lotto='.prepare($superselect['lotto']);
-        $where[] = 'serial='.prepare($superselect['serial']);
-
-        foreach ($elements as $element) {
-            $filter[] = 'altro='.prepare($element);
-        }
-        if (!empty($search)) {
-            $search_fields[] = 'altro LIKE '.prepare('%'.$search.'%');
         }
 
         $custom['id'] = 'descrizione';

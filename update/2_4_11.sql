@@ -312,3 +312,7 @@ ORDER BY `co_documenti`.`data` DESC, CAST(`co_documenti`.`numero_esterno` AS UNS
 
 -- Rimozione Pianificazione fatturazione
 DELETE FROM `zz_plugins` WHERE `name` = 'Pianificazione fatturazione';
+
+-- Aggiunta deleted_at su mg_articoli
+ALTER TABLE `mg_articoli` ADD `deleted_at` timestamp NULL DEFAULT NULL;
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `mg_articoli` WHERE 1=1 AND `deleted_at` IS NULL HAVING 2=2 ORDER BY `descrizione`' WHERE `name` = 'Articoli';

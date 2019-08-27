@@ -440,13 +440,17 @@ class FatturaElettronica
             if (!empty($anagrafica->nazione->iso2)) {
                 $result['IdFiscaleIVA']['IdPaese'] = $anagrafica->nazione->iso2;
             }
-
-            $result['IdFiscaleIVA']['IdCodice'] = str_replace($anagrafica->nazione->iso2, '', $anagrafica['piva']);
+            //Rimuovo eventuali idicazioni relative alla nazione
+            $result['IdFiscaleIVA']['IdCodice'] = str_replace($anagrafica->nazione->iso2, '', $anagrafica['piva'], 2);
         }
 
         // Codice fiscale
         if (!empty($anagrafica['codice_fiscale'])) {
+
             $result['CodiceFiscale'] = preg_replace('/\s+/', '', $anagrafica['codice_fiscale']);
+            
+            //Rimuovo eventuali idicazioni relative alla nazione
+            $result['CodiceFiscale'] = preg_replace($anagrafica->nazione->iso2, '', $result['CodiceFiscale'], 2);
         }
 
         if (!empty($anagrafica['nome']) or !empty($anagrafica['cognome'])) {
@@ -1315,6 +1319,11 @@ class FatturaElettronica
         //Terzo Intermediario o Soggetto Emittente
         if (!empty(setting('Terzo intermediario'))) {
             $result['TerzoIntermediarioOSoggettoEmittente'] = static::getTerzoIntermediarioOSoggettoEmittente($fattura);
+
+            //cessionario/committente, da valorizzare nel caso di autofattura in quanto emessa dal destinatario - cessionario/ committente
+            //$result['SoggettoEmittente'] = 'CC';
+
+            //Soggetto terzo, che non è il destinatario (es. provider)
             $result['SoggettoEmittente'] = 'TZ';
         }
 

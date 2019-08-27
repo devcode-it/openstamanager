@@ -12,7 +12,6 @@ class EmailHook extends Manager
     public function execute()
     {
         $accounts = MailAccount::all();
-
         $diff = date('Y-m-d', strtotime('-4 hours'));
 
         $list = [];
@@ -50,6 +49,7 @@ class EmailHook extends Manager
     public function prepare()
     {
         $yesterday = date('Y-m-d', strtotime('-1 days'));
+        $diff = date('Y-m-d', strtotime('-4 hours'));
         $user = auth()->getUser();
 
         $remaining = Mail::whereNull('sent_at')
@@ -61,7 +61,9 @@ class EmailHook extends Manager
             ->count();
         $current = $total - $remaining;
 
-        $total_remaining = Mail::whereNull('sent_at')->count();
+        $total_remaining = Mail::whereNull('sent_at')
+            ->whereDate('failed_at', '<', $diff)
+            ->count();
 
         $message = !empty($remaining) ? tr('Invio email in corso...') : tr('Invio email completato!');
 

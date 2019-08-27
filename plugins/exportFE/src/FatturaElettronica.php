@@ -1316,15 +1316,22 @@ class FatturaElettronica
             'CessionarioCommittente' => static::getCessionarioCommittente($fattura),
         ];
 
-        //Terzo Intermediario o Soggetto Emittente
+        //1.5 Terzo Intermediario
         if (!empty(setting('Terzo intermediario'))) {
             $result['TerzoIntermediarioOSoggettoEmittente'] = static::getTerzoIntermediarioOSoggettoEmittente($fattura);
 
-            //cessionario/committente, da valorizzare nel caso di autofattura in quanto emessa dal destinatario - cessionario/ committente
-            //$result['SoggettoEmittente'] = 'CC';
-
-            //Soggetto terzo, che non è il destinatario (es. provider)
+            //1.6 Soggetto terzo
             $result['SoggettoEmittente'] = 'TZ';
+        }
+
+        //1.5 o Soggetto Emittente (Autofattura) - da parte del fornitore per conto del cliente esonerato
+        //In caso di acquisto di prodotti da un agricolo in regime agevolato (art. 34, comma 6, del d.P.R. n. 633/72) da parte di un operatore IVA obbligato alla FE, quest'ultimo emetterà una FE usando la tipologia "TD01" per conto dell'agricoltore venditore
+        $documento = $fattura->getDocumento();
+        if (!empty($documento['is_fattura_conto_terzi'])) {
+            $result['TerzoIntermediarioOSoggettoEmittente'] = static::getCessionarioCommittente($fattura);
+
+            //1.6 Cessionario/Committente
+            $result['SoggettoEmittente'] = 'CC';
         }
 
         return $result;

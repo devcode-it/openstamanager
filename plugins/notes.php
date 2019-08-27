@@ -77,9 +77,9 @@ if ($structure->permission == 'rw') {
             <input type="hidden" name="op" value="add_nota">
             <input type="hidden" name="backto" value="record-edit">
             
-            {[ "type": "date", "label": "'.tr('Data di notifica').'", "name": "data_notifica" ]}
+            {[ "type": "date", "label": "'.tr('Data di notifica').'", "name": "data_notifica", "class": "unblockable" ]}
 
-            {[ "type": "ckeditor", "label": "'.tr('Nuova nota').'", "name": "contenuto", "required": 1]}
+            {[ "type": "ckeditor", "label": "'.tr('Nuova nota').'", "name": "contenuto", "required": 1, "class": "unblockable" ]}
             
             <!-- PULSANTI -->
             <div class="row">

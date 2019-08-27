@@ -10,7 +10,23 @@ abstract class CachedManager extends Manager
     protected static $cache = null;
     protected static $is_cached = null;
 
-    abstract public function execute();
+    abstract public function data();
+
+    public function execute()
+    {
+        if (self::isCached()) {
+            $results = self::getCache()['results'];
+
+            // Interpretazione della cache
+            $results = json_decode($results, true);
+        } else {
+            $results = $this->data();
+
+            self::update($results);
+        }
+
+        return $results;
+    }
 
     public static function getCache()
     {
@@ -67,21 +83,5 @@ abstract class CachedManager extends Manager
         }
 
         return self::$is_cached;
-    }
-
-    public function manage()
-    {
-        if (self::isCached()) {
-            $results = self::getCache()['results'];
-
-            // Interpretazione della cache
-            $results = json_decode($results, true);
-        } else {
-            $results = $this->execute();
-
-            self::update($results);
-        }
-
-        return $results;
     }
 }

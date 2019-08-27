@@ -71,7 +71,7 @@ class EmailNotification extends PHPMailer implements NotificationInterface
         $this->WordWrap = 78;
     }
 
-    public static function build(\Models\Mail $mail, $exceptions = true)
+    public static function build(\Models\Mail $mail, $exceptions = null)
     {
         $result = new self($mail->account->id, $exceptions);
 
@@ -143,6 +143,17 @@ class EmailNotification extends PHPMailer implements NotificationInterface
         } catch (PHPMailer\PHPMailer\Exception $e) {
             $result = false;
             $exception = $e;
+        }
+
+        // Registazione invio
+        if (!empty($this->mail)) {
+            if ($result) {
+                $this->mail->sent_at = date('Y-m-d H:i:s');
+            } else {
+                $this->mail->failed_at = date('Y-m-d H:i:s');
+            }
+
+            $this->mail->save();
         }
 
         $this->SmtpClose();

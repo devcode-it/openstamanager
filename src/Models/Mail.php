@@ -10,14 +10,16 @@ class Mail extends Model
 
     protected $receivers = [];
 
-    protected $attachments = [];
-    protected $prints = [];
+    protected $attachments = null;
+    protected $prints = null;
 
-    protected $options = [];
+    protected $options = null;
 
-    public static function build($template = null, $id_record = null, $account = null)
+    public static function build(User $user, $template = null, $id_record = null, $account = null)
     {
         $model = parent::build();
+
+        $model->created_by = $user->id;
 
         $model->id_template = $template->id;
         $model->id_record = $id_record;
@@ -42,6 +44,10 @@ class Mail extends Model
      */
     public function addAttachment($file_id)
     {
+        if (!isset($this->attachments)) {
+            $this->attachments = [];
+        }
+
         $this->attachments[] = $file_id;
     }
 
@@ -58,6 +64,10 @@ class Mail extends Model
      */
     public function addPrint($print_id, $name = null)
     {
+        if (!isset($this->prints)) {
+            $this->prints = [];
+        }
+
         $print = PrintTemplate::find($print_id);
 
         if (empty($name)) {
@@ -87,6 +97,10 @@ class Mail extends Model
             return;
         }
 
+        if (!isset($this->receivers)) {
+            $this->receivers = [];
+        }
+
         $list = explode(';', $value);
         foreach ($list as $element) {
             $this->receivers[] = [
@@ -98,10 +112,21 @@ class Mail extends Model
 
     public function save(array $options = [])
     {
-        $this->setReceiversAttribute($this->receivers);
-        $this->setAttachmentsAttribute($this->attachments);
-        $this->setPrintsAttribute($this->prints);
-        $this->setOptionsAttribute($this->options);
+        if (isset($this->receivers)) {
+            $this->setReceiversAttribute($this->receivers);
+        }
+
+        if (isset($this->attachments)) {
+            $this->setAttachmentsAttribute($this->attachments);
+        }
+
+        if (isset($this->prints)) {
+            $this->setPrintsAttribute($this->prints);
+        }
+
+        if (isset($this->options)) {
+            $this->setOptionsAttribute($this->options);
+        }
 
         return parent::save($options);
     }

@@ -7,7 +7,7 @@ use Modules;
 
 class InvoiceHook extends CachedManager
 {
-    public function execute()
+    public function data()
     {
         $list = Interaction::getInvoiceList();
 
@@ -40,7 +40,7 @@ class InvoiceHook extends CachedManager
             'icon' => 'fa fa-file-text-o text-yellow',
             'link' => $link,
             'message' => $message,
-            'notify' => $notify,
+            'show' => $notify,
         ];
     }
 }

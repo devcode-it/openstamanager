@@ -11,7 +11,7 @@ class UpdateHook extends CachedManager
 {
     protected static $client = null;
 
-    public function execute()
+    public function data()
     {
         $result = self::isAvailable();
 
@@ -31,7 +31,7 @@ class UpdateHook extends CachedManager
             'icon' => 'fa fa-download text-info',
             'link' => $link,
             'message' => $message,
-            'notify' => !empty($update),
+            'show' => !empty($update),
         ];
     }
 

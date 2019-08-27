@@ -208,7 +208,7 @@ elseif (filter('op') == 'sort_checks') {
 elseif (post('op') == 'send-email') {
     $template = MailTemplate::find(post('template'));
 
-    $mail = \Models\Mail::build($template, $id_record);
+    $mail = \Models\Mail::build($user, $template, $id_record);
 
     // Rimozione allegati predefiniti
     $mail->resetAttachments();

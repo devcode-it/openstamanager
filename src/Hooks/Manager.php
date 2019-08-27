@@ -11,7 +11,7 @@ abstract class Manager
      *
      * @return mixed
      */
-    abstract public function manage();
+    abstract public function execute();
 
     /**
      * Restituisce le informazioni per la visualizzazione dell'hook.
@@ -29,7 +29,22 @@ abstract class Manager
      */
     public function prepare()
     {
-        return null;
+        return [
+            'execute' => true,
+        ];
+    }
+
+    public function manage()
+    {
+        $prepare = $this->prepare();
+        if (empty($prepare['execute'])) {
+            return [];
+        }
+
+        $data = $this->execute();
+        $results = $this->response($data);
+
+        return $results;
     }
 
     /**

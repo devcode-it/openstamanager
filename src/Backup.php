@@ -114,6 +114,8 @@ class Backup
         if (!self::isDailyComplete()) {
             return self::create();
         }
+
+        return false;
     }
 
     /**

@@ -8,7 +8,7 @@ function startHooks() {
         data: {
             op: "hooks",
         },
-        success: function(data) {
+        success: function (data) {
             hooks = JSON.parse(data);
 
             $("#hooks-header").text(globals.translations.hooksExecuting);
@@ -20,48 +20,14 @@ function startHooks() {
                 $("#hooks-header").text(globals.translations.hookNone);
             }
 
-            hooks.forEach(function(item, index){
-                startHook(item);
+            hooks.forEach(function (item, index) {
+                renderHook(item, {
+                    show: true,
+                    message: globals.translations.hookExecuting.replace('_NAME_', item.name)
+                });
+
+                executeHook(item, true);
             });
-        },
-    });
-}
-
-/**
- *
- * @param hook
- */
-function startHook(hook){
-    var element_id = "hook-" + hook.id;
-    $("#hooks").append('<li class="hook-element" id="' + element_id + '"><a href="#">' + globals.translations.hookExecuting.replace('_NAME_', hook.name) + '</a></li>');
-
-    element_id = "#" + element_id;
-
-    $.ajax({
-        url: globals.rootdir + "/ajax.php",
-        type: "get",
-        data: {
-            op: "prepare-hook",
-            id: hook.id,
-        },
-        success: function(data) {
-            var result = JSON.parse(data);
-
-            addHookCount("#hooks-counter");
-
-            if (result){
-                renderHook(element_id, result);
-
-                if (result.execute){
-                    addHookCount("#hooks-notified");
-
-                    executeHook(hook, element_id, true)
-                } else {
-                    $(element_id).remove();
-                }
-            } else {
-                executeHook(hook, element_id)
-            }
         },
     });
 }
@@ -71,38 +37,49 @@ function startHook(hook){
  * @param hook
  * @param element_id
  */
-function executeHook(hook, element_id, is_background){
+function executeHook(hook, init) {
     $.ajax({
         url: globals.rootdir + "/ajax.php",
         type: "get",
         data: {
             op: "hook",
             id: hook.id,
+            init: init,
         },
-        success: function(data) {
+        success: function (data) {
             var result = JSON.parse(data);
 
-            renderHook(element_id, result);
+            renderHook(hook, result);
 
-            if (!is_background) {
-                if (result.notify) {
-                    addHookCount("#hooks-notified");
-                } else {
-                    $(element_id).remove();
-                }
+            var timeout;
+            if (result.execute) {
+                timeout = 1;
+            } else {
+                timeout = 30;
+            }
+
+            setTimeout(function () {
+                executeHook(hook);
+            }, timeout * 1000);
+
+            if (init) {
+                hookCount("#hooks-counter");
             }
 
             // Rimozione eventuale della rotella di caricamento
             var counter = $("#hooks-counter").text();
-            var number = $("#hooks-notified").text();
-            if(counter == $("#hooks-number").text()) {
+            var number = $("#hooks > li").length;
+            $("#hooks-notified").text(number);
+
+            if (counter == $("#hooks-number").text()) {
                 $("#hooks-loading").hide();
 
-                if (number > 1){
+                var hookMessage;
+                if (number > 1) {
                     hookMessage = globals.translations.hookMultiple.replace('_NUM_', number);
-                }else if(number == 1){
+                } else if (number == 1) {
                     hookMessage = globals.translations.hookSingle;
-                }else {
+                } else {
                     hookMessage = globals.translations.hookNone;
                 }
 
@@ -115,22 +92,57 @@ function executeHook(hook, element_id, is_background){
 /**
  * Aggiunta dell'hook al numero totale.
  */
-function addHookCount(id) {
-    var hooks_number = $(id);
-    var number = parseInt(hooks_number.text());
+function hookCount(id, value) {
+    value = value ? value : 1;
+
+    var element = $(id);
+    var number = parseInt(element.text());
     number = isNaN(number) ? 0 : number;
 
-    number++;
-    hooks_number.text(number);
+    number += value;
+    element.text(number);
 
     return number;
 }
 
 /**
+ * Genera l'HTML per la visualizzazione degli hook.
  *
  * @param element_id
  * @param result
  */
-function renderHook(element_id, result) {
-    $(element_id).html('<a href="' + (result.link ? result.link : "#") + '"><i class="' + result.icon + '"></i><span class="small" > ' + result.message + '</span></a>');
+function renderHook(hook, result) {
+    if (result.length == 0) return;
+
+    var element_id = "hook-" + hook.id;
+
+    // Inizializzazione
+    var element = $("#" + element_id);
+    if (element.length == 0) {
+        $("#hooks").append('<li class="hook-element" id="' + element_id + '"></li>');
+
+        element = $("#" + element_id);
+    }
+
+    // Rimozione
+    if (!result.show) {
+        element.remove();
+
+        return;
+    }
+
+    // Contenuto
+    var content = '<a href="' + (result.link ? result.link : "#") + '"><i class="' + result.icon + '"></i><span class="small"> ' + result.message + '</span>';
+
+    if (result.progress) {
+        var current = result.progress.current;
+        var total = result.progress.total;
+        var percentage = total == 0 ? current / total * 100 : 100;
+
+        content += '<div class="progress" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="' + percentage + '" aria-valuemin="0" aria-valuemax="100" style="width:' + percentage + '%">' + percentage + '% (' + current + '/' + total + ')</div></div>';
+    }
+
+    content += '</a>';
+
+    element.html(content);
 }

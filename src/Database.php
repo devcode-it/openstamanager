@@ -632,6 +632,11 @@ class Database extends Util\Singleton
         Capsule::commit();
     }
 
+    public function rollbackTransaction()
+    {
+        Capsule::rollBack();
+    }
+
     /**
      * Esegue le query interne ad un file ".sql".
      *

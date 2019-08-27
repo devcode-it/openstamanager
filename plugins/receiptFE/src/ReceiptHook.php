@@ -7,7 +7,7 @@ use Modules;
 
 class ReceiptHook extends CachedManager
 {
-    public function execute()
+    public function data()
     {
         $list = Interaction::getReceiptList();
 
@@ -40,7 +40,7 @@ class ReceiptHook extends CachedManager
             'icon' => 'fa fa-ticket text-yellow',
             'link' => $link,
             'message' => $message,
-            'notify' => $notify,
+            'show' => $notify,
         ];
     }
 }

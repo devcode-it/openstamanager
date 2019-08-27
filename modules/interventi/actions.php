@@ -2,6 +2,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Models\Mail;
+use Models\MailTemplate;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Interventi\Components\Articolo;
@@ -11,6 +13,7 @@ use Modules\Interventi\Components\Sessione;
 use Modules\Interventi\Intervento;
 use Modules\Interventi\Stato;
 use Modules\TipiIntervento\Tipo as TipoSessione;
+use Notifications\EmailNotification;
 
 switch (post('op')) {
     case 'update':
@@ -49,12 +52,14 @@ switch (post('op')) {
         // Notifica chiusura intervento
         $stato = $dbo->selectOne('in_statiintervento', '*', ['idstatointervento' => post('idstatointervento')]);
         if (!empty($stato['notifica']) && !empty($stato['destinatari']) && $stato['idstatointervento'] != $record['idstatointervento']) {
-            $n = new Notifications\EmailNotification();
+            $template = MailTemplate::find($stato['id_email']);
 
-            $n->setTemplate($stato['id_email'], $id_record);
-            $n->setReceivers($stato['destinatari']);
+            $mail = Mail::build(auth()->getUser(), $template, $id_record);
+            $mail->addReceiver($stato['destinatari']);
+            $mail->save();
 
-            if ($n->send()) {
+            $email = EmailNotification::build($mail);
+            if ($email->send()) {
                 flash()->info(tr('Notifica inviata'));
             } else {
                 flash()->warning(tr("Errore nell'invio della notifica"));
@@ -480,12 +485,14 @@ switch (post('op')) {
                     $stato = $dbo->selectOne('in_statiintervento', '*', ['descrizione' => 'Completato']);
                     // Notifica chiusura intervento
                     if (!empty($stato['notifica']) && !empty($stato['destinatari'])) {
-                        $n = new Notifications\EmailNotification();
+                        $template = MailTemplate::find($stato['id_email']);
 
-                        $n->setTemplate($stato['id_email'], $id_record);
-                        $n->setReceivers($stato['destinatari']);
+                        $mail = Mail::build(auth()->getUser(), $template, $id_record);
+                        $mail->addReceiver($stato['destinatari']);
+                        $mail->save();
 
-                        if ($n->send()) {
+                        $email = EmailNotification::build($mail);
+                        if ($email->send()) {
                             flash()->info(tr('Notifica inviata'));
                         } else {
                             flash()->warning(tr("Errore nell'invio della notifica"));
@@ -529,12 +536,14 @@ switch (post('op')) {
 
         // Notifica rimozione dell' intervento al tecnico
         if (!empty($tecnico['email'])) {
-            $n = new Notifications\EmailNotification();
+            $template = MailTemplate::get('Notifica rimozione intervento');
 
-            $n->setTemplate('Notifica rimozione intervento', $id_record);
-            $n->setReceivers($tecnico['email']);
+            $mail = Mail::build(auth()->getUser(), $template, $id_record);
+            $mail->addReceiver($tecnico['email']);
+            $mail->save();
 
-            if ($n->send()) {
+            $email = EmailNotification::build($mail);
+            if ($email->send()) {
                 flash()->info(tr('Notifica inviata'));
             } else {
                 flash()->warning(tr("Errore nell'invio della notifica"));

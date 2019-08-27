@@ -2,12 +2,15 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Models\Mail;
+use Models\MailTemplate;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Fatture\Components\Descrizione;
 use Modules\Fatture\Components\Riga;
 use Modules\Fatture\Fattura;
 use Modules\Interventi\Components\Sessione;
 use Modules\Interventi\Intervento;
+use Notifications\EmailNotification;
 
 /**
  * Recupera il totale delle ore spese per un intervento.
@@ -61,12 +64,14 @@ function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto = n
 
     // Notifica nuovo intervento al tecnico
     if (!empty($tecnico['email'])) {
-        $n = new Notifications\EmailNotification();
+        $template = MailTemplate::get('Notifica intervento');
 
-        $n->setTemplate('Notifica intervento', $idintervento);
-        $n->setReceivers($anagrafica['email']);
+        $mail = Mail::build(auth()->getUser(), $template, $idintervento);
+        $mail->addReceiver($anagrafica['email']);
+        $mail->save();
 
-        $n->send();
+        $email = EmailNotification::build($mail);
+        $email->send();
     }
 
     return true;

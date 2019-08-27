@@ -108,17 +108,12 @@ switch (get('op')) {
         $hook_id = filter('id');
         $hook = Hook::find($hook_id);
 
-        $response = $hook->execute();
-
-        echo json_encode($response);
-
-        break;
-
-    case 'prepare-hook':
-        $hook_id = filter('id');
-        $hook = Hook::find($hook_id);
-
-        $response = $hook->prepare();
+        $init = filter('init');
+        if (!empty($init)) {
+            $response = $hook->prepare();
+        } else {
+            $response = $hook->execute();
+        }
 
         echo json_encode($response);
 

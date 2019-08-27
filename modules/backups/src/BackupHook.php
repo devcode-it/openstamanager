@@ -7,25 +7,25 @@ use Hooks\Manager;
 
 class BackupHook extends Manager
 {
-    public function manage()
+    public function execute()
     {
         $result = Backup::daily();
 
         return $result;
     }
 
-    public function response($update)
+    public function response($data)
     {
         return [
             'icon' => 'fa fa-file-o text-info',
             'message' => tr('Backup completato!'),
-            'notify' => true,
+            'show' => true,
         ];
     }
 
     public function prepare()
     {
-        $result = setting('Backup automatico') && !Backup::isDailyComplete() && self::getHook()->processing == 0;
+        $result = setting('Backup automatico') && !Backup::isDailyComplete();
 
         return [
             'icon' => 'fa fa-file-o text-danger',

@@ -5,6 +5,7 @@ return [
     'modules/aggiornamenti' => 'Modules\Aggiornamenti',
     'modules/anagrafiche' => 'Modules\Anagrafiche',
     'modules/backups' => 'Modules\Backups',
+    'modules/emails' => 'Modules\Emails',
     'modules/articoli' => 'Modules\Articoli',
     'modules/checklists' => 'Modules\Checklists',
     'modules/ritenute' => 'Modules\Ritenute',

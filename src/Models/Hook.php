@@ -3,6 +3,7 @@
 namespace Models;
 
 use Common\Model;
+use Hooks\Manager;
 use Illuminate\Database\Eloquent\Builder;
 use Traits\StoreTrait;
 
@@ -31,16 +32,13 @@ class Hook extends Model
         $class = $this->class;
         $hook = new $class();
 
-        $this->processing = true;
-        $this->save();
+        if (!$hook instanceof Manager) {
+            return [
+                'show' => false,
+            ];
+        }
 
-        $data = $hook->manage();
-        $results = $hook->response($data);
-
-        $this->processing = false;
-        $this->save();
-
-        return $results;
+        return $hook->manage();
     }
 
     public function prepare()
@@ -48,9 +46,7 @@ class Hook extends Model
         $class = $this->class;
         $hook = new $class();
 
-        $results = $hook->prepare();
-
-        return $results;
+        return $hook->prepare();
     }
 
     /* Relazioni Eloquent */

@@ -357,10 +357,13 @@ CREATE TABLE IF NOT EXISTS `em_emails` (
   `prints` TEXT,
   `options` TEXT,
   `sent_at` TIMESTAMP NULL DEFAULT NULL,
+  `failed_at` TIMESTAMP NULL DEFAULT NULL,
+  `created_by` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   FOREIGN KEY (`id_account`) REFERENCES `em_accounts`(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`id_template`) REFERENCES `em_templates`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`id_campaign`) REFERENCES `em_campaigns`(`id`) ON DELETE CASCADE
+  FOREIGN KEY (`id_campaign`) REFERENCES `em_campaigns`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`created_by`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `em_campaign_anagrafica` (
@@ -371,3 +374,5 @@ CREATE TABLE IF NOT EXISTS `em_campaign_anagrafica` (
   FOREIGN KEY (`id_anagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE CASCADE,
   FOREIGN KEY (`id_email`) REFERENCES `em_emails`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+INSERT INTO `zz_hooks` (`id`, `name`, `class`, `frequency`, `id_module`) VALUES (NULL, 'Email', 'Modules\\Emails\\EmailHook', '1 minute', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Account email'));

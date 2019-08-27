@@ -3,7 +3,10 @@
 $skip_permissions = true;
 include_once __DIR__.'/core.php';
 
+use Models\Mail;
+use Models\MailTemplate;
 use Models\User;
+use Notifications\EmailNotification;
 
 $token = get('reset_token');
 
@@ -23,12 +26,14 @@ switch (post('op')) {
             $utente->reset_token = secure_random_string();
             $utente->save();
 
-            $n = new Notifications\EmailNotification();
+            $template = MailTemplate::get('Reset password');
 
-            $n->setTemplate('Reset password', $utente->id);
-            $n->setReceivers($utente->email);
+            $mail = Mail::build($user, $template, $utente->id);
+            $mail->addReceiver($utente->email);
+            $mail->save();
 
-            $n->send();
+            $email = EmailNotification::build($mail);
+            $email->send();
         }
 
         //$message_email = substr($email, 0, 2).str_repeat('*', strlen($email)-8).substr($email, -6);

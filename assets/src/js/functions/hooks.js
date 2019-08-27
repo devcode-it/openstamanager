@@ -139,6 +139,8 @@ function renderHook(hook, result) {
         var total = result.progress.total;
         var percentage = total == 0 ? current / total * 100 : 100;
 
+        percentage = Math.round(percentage * 100) / 100;
+
         content += '<div class="progress" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="' + percentage + '" aria-valuemin="0" aria-valuemax="100" style="width:' + percentage + '%">' + percentage + '% (' + current + '/' + total + ')</div></div>';
     }
 

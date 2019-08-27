@@ -183,6 +183,28 @@ class Mail extends Model
         return $this->options['read-notify'];
     }
 
+    public function setSubjecyAttribute($value)
+    {
+        if (isset($this->template)) {
+            $module = $this->template->module;
+
+            $value = $module->replacePlaceholders($this->id_record, $value);
+        }
+
+        $this->attributes['subject'] = $value;
+    }
+
+    public function setContentAttribute($value)
+    {
+        if (isset($this->template)) {
+            $module = $this->template->module;
+
+            $value = $module->replacePlaceholders($this->id_record, $value);
+        }
+
+        $this->attributes['content'] = $value;
+    }
+
     /**
      * Imposta il titolo della notifica.
      *
@@ -205,6 +227,11 @@ class Mail extends Model
         return $this->belongsTo(MailTemplate::class, 'id_template');
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
     protected function resetFromTemplate()
     {
         $template = $this->template;
@@ -213,18 +240,8 @@ class Mail extends Model
         $this->read_notify = $template->read_notify;
 
         // Contentuto e oggetto
-        $body = $template->body;
-        $subject = $template->subject;
-
-        if (!empty($this->id_record)) {
-            $module = $this->template->module;
-
-            $body = $module->replacePlaceholders($this->id_record, $body);
-            $subject = $module->replacePlaceholders($this->id_record, $subject);
-        }
-
-        $this->content = $body;
-        $this->subject = $subject;
+        $this->content = $template->body;
+        $this->subject = $template->subject;
 
         // Reply To
         if (!empty($template['reply_to'])) {

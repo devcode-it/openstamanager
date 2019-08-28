@@ -65,16 +65,17 @@ class EmailHook extends Manager
             ->where('created_by', $user->id)
             ->count();
 
-        $total_remaining = Mail::whereNull('sent_at')
+        $remaining = Mail::whereNull('sent_at')
             ->where($failed)
             ->count();
 
         $message = !empty($remaining) ? tr('Invio email in corso...') : tr('Invio email completato!');
+        $message = empty($total) ? tr('Nessuna email presente...') : $message;
 
         return [
             'icon' => 'fa fa-envelope text-info',
             'message' => $message,
-            'execute' => !empty($total_remaining),
+            'execute' => !empty($remaining),
             'show' => true,
             'progress' => [
                 'current' => $current,

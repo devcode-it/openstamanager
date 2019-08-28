@@ -139,7 +139,8 @@ function renderHook(hook, result) {
     if (result.progress) {
         var current = result.progress.current;
         var total = result.progress.total;
-        var percentage = total == 0 ? current / total * 100 : 100;
+        var percentage = current / total * 100;
+        percentage = isNaN(percentage) ? 100 : percentage;
 
         percentage = Math.round(percentage * 100) / 100;
 

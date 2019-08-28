@@ -57,13 +57,6 @@ switch (post('op')) {
             $mail = Mail::build(auth()->getUser(), $template, $id_record);
             $mail->addReceiver($stato['destinatari']);
             $mail->save();
-
-            $email = EmailNotification::build($mail);
-            if ($email->send()) {
-                flash()->info(tr('Notifica inviata'));
-            } else {
-                flash()->warning(tr("Errore nell'invio della notifica"));
-            }
         }
         aggiorna_sedi_movimenti('interventi', $id_record);
         flash()->info(tr('Informazioni salvate correttamente!'));
@@ -490,13 +483,6 @@ switch (post('op')) {
                         $mail = Mail::build(auth()->getUser(), $template, $id_record);
                         $mail->addReceiver($stato['destinatari']);
                         $mail->save();
-
-                        $email = EmailNotification::build($mail);
-                        if ($email->send()) {
-                            flash()->info(tr('Notifica inviata'));
-                        } else {
-                            flash()->warning(tr("Errore nell'invio della notifica"));
-                        }
                     }
                 } else {
                     flash()->error(tr('Errore durante il salvataggio della firma nel database!'));
@@ -541,13 +527,6 @@ switch (post('op')) {
             $mail = Mail::build(auth()->getUser(), $template, $id_record);
             $mail->addReceiver($tecnico['email']);
             $mail->save();
-
-            $email = EmailNotification::build($mail);
-            if ($email->send()) {
-                flash()->info(tr('Notifica inviata'));
-            } else {
-                flash()->warning(tr("Errore nell'invio della notifica"));
-            }
         }
 
         break;

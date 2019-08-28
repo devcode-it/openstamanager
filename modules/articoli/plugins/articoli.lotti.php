@@ -2,107 +2,87 @@
 
 include_once __DIR__.'/../../../core.php';
 
-// Gestione dei lotti degli articoli
-
 $record['abilita_serial'] = ($record['serial'] > 0) ? 1 : $record['abilita_serial'];
 if (empty($record['abilita_serial'])) {
     echo '
 <script>$("#link-tab_'.$plugin['id'].'").addClass("disabled");</script>';
 }
 
+// Visualizzo, in base alle impostazioni scelte, se il magazzino verrà movimentato
+$message = setting("Movimenta il magazzino durante l'inserimento o eliminazione dei lotti/serial number") ? tr("L'inserimento e la rimozione dei seriali modificherà la quantità dell'articolo!") : tr("L'inserimento e la rimozione dei seriali non movimenterà la quantità dell'articolo!");
 echo '
-<div class="panel panel-primary">
-    <div class="panel-heading">
-        <h3 class="panel-title">'.tr('Produzione').'</h3>
-    </div>
-    <div class="panel-body">';
+<div class="alert alert-info">
+    '.$message.'
+</div>';
 
+// Inserimento seriali
 echo '
-        <form action="" method="post" role="form">
+<div class="nav-tabs-custom">
+    <ul class="nav nav-tabs nav-justified">
+        <li class="active"><a href="#generazione" data-toggle="tab">'.tr('Generazione').'</a></li>
+        <li><a href="#inserimento" data-toggle="tab">'.tr('Inserimento').'</a></li>
+    </ul>
+        
+    <div class="tab-content">
+        <form action="" method="post" role="form" class="tab-pane active" id="generazione">
             <input type="hidden" name="backto" value="record-edit">
-            <input type="hidden" name="op" value="addprodotto">';
-
-// Campi di inserimento lotti
-echo '
-            <div class="row form-group">
-                <div class="col-md-12">
-                    <h4>'.tr('Inserimento nuovi prodotti').'</h4>
-                </div>
-            </div>';
-
-// Serial
-echo '
-            <div class="row form-group">
-                <label class="col-md-2 control-label" for="serial_start">'.tr('Serial number da').':</label>
-
-                <div class="col-md-2">
-                    <input type="text" class="form-control input-md" name="serial_start" onkeyup="$(\'input[name=serial_end]\').val( $(\'input[name=serial_start]\').val() ); $(\'#warn_serial\').hide(); ricalcola_totale_prodotti();" value="" />
-                </div>
-
-                <label class="col-md-1 control-label text-center" for="serial_end">
-                    <i class="fa fa-arrow-circle-right fa-2x"></i>
-                </label>
-
-                <div class="col-md-2">
-                    <input type="text" class="form-control input-md" name="serial_end" onkeyup="check_progressivo( $(\'input[name=serial_start]\'), $(\'input[name=serial_end]\'), $(\'#warn_serial\'), $(\'#inserisci\') );" value="" />
-                </div>';
-
-if (!empty($max_serial)) {
-    echo '
+            <input type="hidden" name="op" value="generate_serials">
+            
+            <div class="row">
                 <div class="col-md-5">
-                    <p id="warn_serial" class="text-danger"><b>'.tr('Ultimo serial number inserito').': </b> '.$max_serial.'</p>
-                </div>';
-}
-echo '
-            </div>';
-
-// Totale prodotti da inserire
-echo '
+                    {[ "type": "text", "label": "'.tr('Inizio').'", "name": "serial_start", "extra": "onkeyup=\"$(\'#serial_end\').val( $(this).val()); ricalcola_generazione();\"" ]}
+                </div>
+                
+                <div class="col-md-2 text-center" style="padding-top: 20px;">
+                    <i class="fa fa-arrow-circle-right fa-2x"></i>
+                </div>
+                
+                <div class="col-md-5">
+                    {[ "type": "text", "label": "'.tr('Fine').'", "name": "serial_end", "extra": "onkeyup=\"ricalcola_generazione();\"" ]}
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-9">
+                    <p class="text-danger">'.tr('Totale prodotti da inserire').': <span id="totale_generazione">0</span></p>
+                </div>
+            
+                <div class="col-md-3 text-right">
+                    <button type="button" class="btn btn-primary" onclick="addSerial(\'#generazione\', $(\'#totale_generazione\').text())"><i class="fa fa-plus"></i> '.tr('Aggiungi').'</button>
+                </div>
+            </div>
+        </form>
+        
+        <form action="" method="post" role="form" class="tab-pane active" id="inserimento">
+            <input type="hidden" name="backto" value="record-edit">
+            <input type="hidden" name="op" value="add_serials">
+            
             <div class="row">
                 <div class="col-md-12">
-                    <p class="text-danger">'.tr('Totale prodotti da inserire').': <span id="totale_prodotti">0</span></p>
+                    {[ "type": "select", "label": "'.tr('Nuovi seriali').'", "name": "serials[]", "extra": "onchange=\"ricalcola_inserimento();\"", "multiple": 1, "values": [] ]}
+                </div>
+            </div>
 
-                    <button type="submit" id="inserisci" class="btn btn-success pull-right" onclick="if( confirm(\'Confermi l\\\'inserimento di \' + globalsp.n_prodotti + \' prodotti?\') ){ $(\'#insert_form\').submit(); }"><i class="fa fa-check"></i> '.tr('Salva modifiche').'</button>
-                    <div class="clearfix"></div>
-                    <div class="alert alert-info">';
-
-// Visualizzo, in base alle impostazioni scelte, se il magazzino verrà movimentato
-if (setting("Movimenta il magazzino durante l'inserimento o eliminazione dei lotti/serial number")) {
-    echo '
-                        '.tr("L'inserimento incrementerà la quantità dell'articolo!");
-} else {
-    echo '
-                        '.tr("L'inserimento non movimenterà la quantità dell'articolo!");
-}
-
-echo '
-                    </div>
+            <div class="row">
+                <div class="col-md-9">
+                    <p class="text-danger">'.tr('Totale prodotti da inserire').': <span id="totale_inserimento">0</span></p>
+                </div>
+            
+                <div class="col-md-3 text-right">
+                    <button type="button" class="btn btn-primary" onclick="addSerial(\'#inserimento\', $(\'#totale_inserimento\').text())"><i class="fa fa-plus"></i> '.tr('Aggiungi').'</button>
                 </div>
             </div>
         </form>
     </div>
 </div>';
 
-// Ricerca
+// Elenco
 echo '
 <div class="box">
     <div class="box-header with-border">
-        <h3 class="box-title">'.tr('Ricerca prodotti').'</h3>
+        <h3 class="box-title">'.tr('Elenco seriali').'</h3>
     </div>
-    <div class="box-body">
-        <div class="text-right">
-            <small style="color:#f00;">';
-
-// Visualizzo, in base alle impostazioni scelte, se il magazzino verrà movimentato
-if (setting("Movimenta il magazzino durante l'inserimento o eliminazione dei lotti/serial number")) {
-    echo tr("La cancellazione decrementerà la quantità dell'articolo!");
-} else {
-    echo tr("L'inserimento decrementerà la quantità dell'articolo!");
-}
-
-echo '
-            </small>
-        </div>';
+    <div class="box-body">';
 
 // Conteggio totale prodotti
 $rs = $dbo->fetchArray('SELECT COUNT(id) AS tot FROM mg_prodotti WHERE id_articolo='.prepare($id_record));
@@ -261,85 +241,63 @@ echo '
     </div>
 </div>';
 
-?>
-
+echo '
 <script type="text/javascript">
+$(document).ready(function() {
+    $("#serials").removeClass("superselect");
+    $("#serials").select2().select2("destroy");
 
-globalsp = { n_prodotti: 0 };
-
-$(document).ready( function(){
-	setInterval("ricalcola_totale_prodotti()", 1000);
+    $("#serials").select2({
+        theme: "bootstrap",
+        language: "it",
+        allowClear: true,
+        tags: true,
+        tokenSeparators: [\',\']
+    });
 });
-
-/*
-	Queste funzioni servono a verificare se i codici di lotti, serial number e "altro" sono progressivi
-*/
-function check_progressivo( start, end, warn, submit_btn ){
-	digits_start 	= get_last_numeric_part( start.val().toString() );
-	digits_end 		= get_last_numeric_part( end.val().toString() );
-
-	// Nessun codice numerico trovato
-	if( digits_start=="" || digits_end=="" ){
-		warn.show();
-		submit_btn.hide();
-	}
-	else{
-		warn.hide();
-		submit_btn.show();
-	}
-
-	ricalcola_totale_prodotti();
+        
+function addSerial(form_id, numero) {    
+    if (numero > 0){
+        swal({
+            title: "' . tr('Nuovi seriali') . '",
+            html: "' . tr("Confermi l'inserimento di _NUM_ nuovi seriali?", [
+                '_NUM_' => '" + numero + "',
+            ]) . '",
+            type: "success",
+            showCancelButton: true,
+            confirmButtonText: "' . tr('Continua') . '"
+        }).then(function (result) {
+            $(form_id).submit();
+        })
+    } else {
+        swal("'.tr('Errore').'", "'.tr('Nessun seriale inserito').'", "error");
+    }
 }
 
-function ricalcola_totale_prodotti(){
-	if( $("input[name=serial_start]").val() != undefined ){
-        var lotti, altro, serial;
-        /*
-		lotto_start 	= get_last_numeric_part( $("input[name=lotto_start]").val().toString() );
-		lotto_end 		= get_last_numeric_part( $("input[name=lotto_end]").val().toString() );
-        lotti = Math.abs( parseInt(lotto_end,10) - parseInt(lotto_start,10) )+1;
+function ricalcola_generazione(){
+	if($("#serial_start").val() == undefined) return 0;
 
-		altro_start 	= get_last_numeric_part( $("input[name=altro_start]").val().toString() );
-		altro_end 		= get_last_numeric_part( $("input[name=altro_end]").val().toString() );
-		altro = Math.abs( parseInt(altro_end,10) - parseInt(altro_start,10) )+1;
-        */
+    var serial_start = get_last_numeric_part( $("#serial_start").val().toString() );
+    var serial_end = get_last_numeric_part( $("#serial_end").val().toString() );
+    var serial = Math.abs(parseInt(serial_end, 10) - parseInt(serial_start, 10))+1;
 
-		serial_start 	= get_last_numeric_part( $("input[name=serial_start]").val().toString() );
-		serial_end 		= get_last_numeric_part( $("input[name=serial_end]").val().toString() );
-		serial = Math.abs( parseInt(serial_end,10) - parseInt(serial_start,10) )+1;
+    // Se tutti i campi sono vuoti, il numero di prodotti è zero!
+    if(isNaN(serial)) {
+        serial = 0;
+    }
 
-		// Se tutti i campi sono vuoti, il numero di prodotti è zero!
-		if(isNaN(serial) /*&& isNaN(lotti) && isNaN(altro)*/ ){
-			globalsp.n_prodotti = 0;
-		}
+    $("#totale_generazione").text(serial);
+}
 
-		else{
-			if( isNaN(lotti) )
-				lotti = 1;
-
-			if( isNaN(serial) )
-				serial = 1;
-
-			if( isNaN(altro) )
-				altro = 1;
-
-			globalsp.n_prodotti = serial /* * lotti * altro */;
-		}
-
-		$("#totale_prodotti").text( globalsp.n_prodotti );
-
-		if( globalsp.n_prodotti==0 )
-			$("#inserisci").hide();
-		else
-			$("#inserisci").show();
-	}
+function ricalcola_inserimento(){
+    $("#totale_inserimento").text($("#serials").select2("data").length);
 }
 
 /*
 	Questa funzione restituisce la parte numerica di una stringa
 */
-function get_last_numeric_part( str ){
+function get_last_numeric_part(str){
 	var matches = str.match(/(.*?)([\d]*$)/);
 	return matches[2];
 }
-</script>
+</script>';

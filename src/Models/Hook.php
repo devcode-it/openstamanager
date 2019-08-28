@@ -24,7 +24,7 @@ class Hook extends Model
      */
     public function getPermissionAttribute()
     {
-        return $this->module->permission;
+        return $this->module ? $this->module->permission : 'rw';
     }
 
     public function execute()

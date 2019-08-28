@@ -582,6 +582,7 @@ class Database extends Util\Singleton
 
         $field = key($list);
         $sync = array_unique((array) current($list));
+        $inserts = [];
 
         if (!empty($field)) {
             $results = array_column($this->select($table, $field, $conditions), $field);
@@ -591,6 +592,8 @@ class Database extends Util\Singleton
                 $this->insert($table, array_merge($conditions, [$field => $insert]));
             }
         }
+
+        return count($inserts);
     }
 
     /**

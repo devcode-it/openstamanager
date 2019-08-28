@@ -377,7 +377,8 @@ CREATE TABLE IF NOT EXISTS `em_campaign_anagrafica` (
   FOREIGN KEY (`id_email`) REFERENCES `em_emails`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
-INSERT INTO `zz_hooks` (`id`, `name`, `class`, `frequency`, `id_module`) VALUES (NULL, 'Email', 'Modules\\Emails\\EmailHook', '1 minute', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Account email'));
+ALTER TABLE `zz_hooks` CHANGE `id_module` `id_module` INT(11) NULL;
+INSERT INTO `zz_hooks` (`id`, `name`, `class`, `frequency`, `id_module`) VALUES (NULL, 'Email', 'Modules\\Emails\\EmailHook', '1 minute', NULL);
 
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Newsletter', 'Newsletter', 'newsletter', 'SELECT |select| FROM `em_campaigns` WHERE 1=1 AND deleted_at IS NULL HAVING 2=2', '', 'fa fa-newspaper-o ', '2.4.11', '2.4.11', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Gestione email'), '1', '1');
 

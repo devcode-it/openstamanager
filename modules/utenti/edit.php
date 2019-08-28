@@ -202,10 +202,9 @@ function update_permissions(id, value){
     $.get(
         globals.rootdir + "/actions.php?id_module='.$id_module.'&id_record='.$id_record.'&op=update_permission&idmodulo=" + id + "&permesso=" + value,
         function(data){
-            if(data == "ok"){
-                swal("'.tr('Salvataggio completato').'", "'.tr('Permessi aggiornati!').'", "success");
-            }
-            else{
+            if(data == "ok") {
+                toastr["success"]("'.tr('Permessi aggiornati!').'");
+            } else {
                 swal("'.tr('Errore').'", "'.tr("Errore durante l'aggiornamento dei permessi!").'", "error");
             }
         }

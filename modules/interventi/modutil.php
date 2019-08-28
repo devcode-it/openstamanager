@@ -69,9 +69,6 @@ function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto = n
         $mail = Mail::build(auth()->getUser(), $template, $idintervento);
         $mail->addReceiver($anagrafica['email']);
         $mail->save();
-
-        $email = EmailNotification::build($mail);
-        $email->send();
     }
 
     return true;

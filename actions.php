@@ -4,6 +4,7 @@ include_once __DIR__.'/core.php';
 
 use Models\MailTemplate;
 use Models\Note;
+use Models\OperationLog;
 use Modules\Checklists\Check;
 use Modules\Checklists\Checklist;
 
@@ -241,6 +242,8 @@ elseif (post('op') == 'send-email') {
     }
 
     $mail->save();
+
+    OperationLog::setInfo('id_email', $mail->id);
 }
 
 // Inclusione di eventuale plugin personalizzato

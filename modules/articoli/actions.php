@@ -164,6 +164,7 @@ switch (post('op')) {
             $serials[] = $serial;
         }
 
+        // no break
     case 'add_serials':
         $serials = $serials ?: filter('serials');
 
@@ -182,7 +183,7 @@ switch (post('op')) {
         ]));
 
         if ($count != $totale) {
-            flash()->warning(tr('Alcuni seriali erano già presenti') . '...');
+            flash()->warning(tr('Alcuni seriali erano già presenti').'...');
         }
 
         break;

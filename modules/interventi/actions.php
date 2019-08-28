@@ -13,7 +13,6 @@ use Modules\Interventi\Components\Sessione;
 use Modules\Interventi\Intervento;
 use Modules\Interventi\Stato;
 use Modules\TipiIntervento\Tipo as TipoSessione;
-use Notifications\EmailNotification;
 
 switch (post('op')) {
     case 'update':

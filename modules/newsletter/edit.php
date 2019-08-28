@@ -49,7 +49,7 @@ echo '
                 </div>
     
                 <div class="col-md-6">
-                    {[ "type": "timestamp", "label": "'.tr('Data di completamento').'", "name": "completed_at", "value": "$completed_at$" ]}
+                    {[ "type": "timestamp", "label": "'.tr('Data di completamento').'", "name": "completed_at", "value": "$completed_at$", "disabled": 1 ]}
                 </div>
             </div>
 
@@ -108,9 +108,9 @@ if (!$anagrafiche->isEmpty()) {
 
     foreach ($anagrafiche as $anagrafica) {
         $mail_id = $anagrafica->pivot->id_email;
-        if (!empty($mail_id)) {
-            $data = Mail::find($mail_id)->sent_at;
-            $data = timestampFormat($data);
+        $mail = Mail::find($mail_id);
+        if (!empty($mail) && !empty($mail->sent_at)) {
+            $data = timestampFormat($mail->sent_at);
         } else {
             $data = tr('Non ancora inviata');
         }
@@ -139,6 +139,8 @@ if (!$anagrafiche->isEmpty()) {
         </div>
     </div>
 </form>
+
+{( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> '.tr('Elimina').'

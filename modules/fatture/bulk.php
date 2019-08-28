@@ -141,7 +141,7 @@ switch (post('op')) {
 
                     if ($result) {
                         ++$added;
-                        operationLog('export-xml-bulk', ['id_record' => $r['id']]);
+                        //operationLog('export-xml-bulk', ['id_record' => $r['id']]);
                     } else {
                         $failed[] = $fattura->numero_esterno;
                     }

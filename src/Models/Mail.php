@@ -3,12 +3,13 @@
 namespace Models;
 
 use Common\Model;
+use Modules\Newsletter\Newsletter;
 
 class Mail extends Model
 {
     protected $table = 'em_emails';
 
-    protected $receivers = [];
+    protected $receivers = null;
 
     protected $attachments = null;
     protected $prints = null;
@@ -128,6 +129,11 @@ class Mail extends Model
             $this->setOptionsAttribute($this->options);
         }
 
+        $newsletter = $this->newsletter;
+        if (!empty($newsletter)) {
+            $newsletter->fixStato();
+        }
+
         return parent::save($options);
     }
 
@@ -219,17 +225,22 @@ class Mail extends Model
 
     public function account()
     {
-        return $this->belongsTo(MailAccount::class, 'id_account');
+        return $this->belongsTo(MailAccount::class, 'id_account')->withTrashed();
     }
 
     public function template()
     {
-        return $this->belongsTo(MailTemplate::class, 'id_template');
+        return $this->belongsTo(MailTemplate::class, 'id_template')->withTrashed();
     }
 
     public function user()
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function newsletter()
+    {
+        return $this->belongsTo(Newsletter::class, 'id_campaign');
     }
 
     protected function resetFromTemplate()

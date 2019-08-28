@@ -52,7 +52,7 @@ class EmailHook extends Manager
         $diff = date('Y-m-d', strtotime('-4 hours'));
         $user = auth()->getUser();
 
-        $failed = function($query) use ($diff) {
+        $failed = function ($query) use ($diff) {
             $query->whereDate('failed_at', '<', $diff)
                 ->orWhereNull('failed_at');
         };

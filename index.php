@@ -15,7 +15,7 @@ switch ($op) {
             $_SESSION['keep_alive'] = true;
 
             // Rimozione log vecchi
-            $dbo->query('DELETE FROM `zz_operations` WHERE DATE_ADD(`created_at`, INTERVAL 30*24*60*60 SECOND) <= NOW()');
+            //$dbo->query('DELETE FROM `zz_operations` WHERE DATE_ADD(`created_at`, INTERVAL 30*24*60*60 SECOND) <= NOW()');
         } else {
             $status = auth()->getCurrentStatus();
 

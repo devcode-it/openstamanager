@@ -10,7 +10,6 @@ use Modules\Fatture\Components\Riga;
 use Modules\Fatture\Fattura;
 use Modules\Interventi\Components\Sessione;
 use Modules\Interventi\Intervento;
-use Notifications\EmailNotification;
 
 /**
  * Recupera il totale delle ore spese per un intervento.

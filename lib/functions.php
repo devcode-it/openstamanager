@@ -6,6 +6,8 @@
  * @since 2.3
  */
 
+use Models\OperationLog;
+
 /**
  * Esegue il redirect.
  *
@@ -194,27 +196,32 @@ function translateTemplate()
 {
     $id_record = filter('id_record');
     $id_parent = filter('id_parent');
-    $id_email = filter('id_email');
 
     $id_module = Modules::getCurrent()['id'];
     $id_plugin = Plugins::getCurrent()['id'];
 
     $template = ob_get_clean();
 
-    $template = str_replace('$id_module$', $id_module, $template);
-    $template = str_replace('$id_plugin$', $id_plugin, $template);
-    $template = str_replace('$id_record$', $id_record, $template);
+    $replaces = [
+        '$id_module$' => $id_module,
+        '$id_plugin$' => $id_plugin,
+        '$id_record$' => $id_record,
+    ];
 
+    $template = replace($template, $replaces);
     $template = \HTMLBuilder\HTMLBuilder::replace($template);
-
-    $template = str_replace('$id_module$', $id_module, $template);
-    $template = str_replace('$id_plugin$', $id_plugin, $template);
-    $template = str_replace('$id_record$', $id_record, $template);
+    $template = replace($template, $replaces);
 
     // Informazioni estese sulle azioni dell'utente
-    if (!empty(post('op')) && post('op') != 'send-email') {
-        operationLog(post('op'));
+    $op = post('op');
+    if (!empty($op)) {
+        OperationLog::setInfo('id_module', $id_module);
+        OperationLog::setInfo('id_plugin', $id_plugin);
+        OperationLog::setInfo('id_record', $id_record);
+
+        OperationLog::build($op);
     }
+    //dd("afssa", $op, $_POST);exit();
 
     // Retrocompatibilità
     if (!empty($_SESSION['infos'])) {
@@ -354,40 +361,6 @@ function getURLPath()
 function searchFieldName($field)
 {
     return str_replace([' ', '.'], ['-', ''], $field);
-}
-
-/**
- * Registra un'azione specifica nei log.
- *
- * @since 2.4.3
- *
- * @param string $operation
- * @param int    $id_record
- * @param int    $id_module
- * @param int    $id_plugin
- * @param int    $id_parent
- * @param int    $id_email
- * @param array  $options
- */
-function operationLog($operation, array $ids = [], array $options = [])
-{
-    if (!Auth::check()) {
-        return false;
-    }
-
-    $ids['id_module'] = $ids['id_module'] ?: Modules::getCurrent()['id'];
-    $ids['id_plugin'] = $ids['id_plugin'] ?: Plugins::getCurrent()['id'];
-    $ids['id_record'] = $ids['id_record'] ?: filter('id_record');
-    //$ids['id_parent'] = $ids['id_parent'] ?: filter('id_parent');
-
-    database()->insert('zz_operations', array_merge($ids, [
-        'op' => $operation,
-        'id_utente' => Auth::user()['id'],
-
-        'options' => !empty($options) ? json_encode($options) : null,
-    ]));
-
-    return true;
 }
 
 /**

@@ -41,6 +41,8 @@ switch (filter('op')) {
         $anagrafiche = $newsletter->anagrafiche;
         $template = $newsletter->template;
 
+        $uploads = $newsletter->uploads()->pluck('id');
+
         foreach ($anagrafiche as $anagrafica) {
             if (empty($anagrafica['email'])) {
                 continue;
@@ -52,9 +54,15 @@ switch (filter('op')) {
             $mail->subject = $newsletter->subject;
             $mail->content = $newsletter->content;
 
+            $mail->id_campaign = $newsletter->id;
+
+            foreach ($uploads as $upload) {
+                $mail->addAttachment($upload);
+            }
+
             $mail->save();
 
-            $newsletter->anagrafiche()->updateExistingPivot($anagrafica->id, ['id_email' => $mail->id], false);
+            $newsletter->anagrafiche()->updateExistingPivot($anagrafica->id, ['id_email' => $mail->id]);
         }
 
         $newsletter->state = 'WAIT';

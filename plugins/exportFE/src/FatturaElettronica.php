@@ -1327,7 +1327,7 @@ class FatturaElettronica
         //In caso di acquisto di prodotti da un agricolo in regime agevolato (art. 34, comma 6, del d.P.R. n. 633/72) da parte di un operatore IVA obbligato alla FE, quest'ultimo emetterà una FE usando la tipologia "TD01" per conto dell'agricoltore venditore
         if ($fattura->getDocumento()['is_fattura_conto_terzi']) {
             $result['TerzoIntermediarioOSoggettoEmittente'] = [
-                'DatiAnagrafici' => static::getDatiAnagrafici(static::getAzienda())
+                'DatiAnagrafici' => static::getDatiAnagrafici(static::getAzienda()),
             ];
 
             //1.6 Cessionario/Committente

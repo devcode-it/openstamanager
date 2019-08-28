@@ -32,6 +32,6 @@ class MailTemplate extends Model
 
     public function account()
     {
-        return $this->belongsTo(MailAccount::class, 'id_smtp');
+        return $this->belongsTo(MailAccount::class, 'id_smtp')->withTrashed();
     }
 }

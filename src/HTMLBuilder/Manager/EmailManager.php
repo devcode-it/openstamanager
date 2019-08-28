@@ -2,6 +2,7 @@
 
 namespace HTMLBuilder\Manager;
 
+use Models\Mail;
 use Prints;
 use Translator;
 
@@ -25,9 +26,11 @@ class EmailManager implements ManagerInterface
         $database = database();
 
         // Visualizzo il log delle operazioni di invio email
-        $operations = $database->fetchArray('SELECT created_at, options, (SELECT name FROM em_templates WHERE id = id_email) AS email, (SELECT username FROM zz_users WHERE id = id_utente) AS user FROM zz_operations WHERE id_record = '.prepare($options['id_record']).' AND id_module = '.prepare($options['id_module'])." AND op = 'send-email' AND id_email IS NOT NULL ORDER BY created_at DESC");
+        $emails = Mail::whereRaw('id IN (SELECT id_email FROM zz_operations WHERE id_record = '.prepare($options['id_record']).' AND id_module = '.prepare($options['id_module']).' AND id_email IS NOT NULL)')
+            ->orderByDesc('created_at')
+            ->get();
 
-        if (empty($operations)) {
+        if ($emails->isEmpty()) {
             return ' ';
         }
 
@@ -36,7 +39,7 @@ class EmailManager implements ManagerInterface
 <div class="box box-info collapsable collapsed-box">
     <div class="box-header with-border">
         <h3 class="box-title"><i class="fa fa-envelope"></i> '.tr('Email inviate: _NUM_', [
-            '_NUM_' => count($operations),
+            '_NUM_' => $emails->count(),
         ]).'</h3>
         <div class="box-tools pull-right">
             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
@@ -45,32 +48,36 @@ class EmailManager implements ManagerInterface
     <div class="box-body">
         <ul>';
 
-        foreach ($operations as $operation) {
-            $options = json_decode($operation['options'], true);
-            $receivers = $options['receivers'];
+        foreach ($emails as $operation) {
+            $receivers = array_column($operation->receivers, 'email');
 
             $prints = [];
-            foreach ($options['prints'] as $print) {
-                $print = Prints::get($print);
+            $list = $operation->prints;
+            foreach ($list as $print) {
+                $print = Prints::get($print['id']);
 
                 $prints[] = $print['title'];
             }
 
             $attachments = [];
-            foreach ($options['attachments'] as $attachment) {
+            $list = $operation->attachments;
+            foreach ($list as $attachment) {
                 $attachment = $database->selectOne('zz_files', '*', ['id' => $attachment]);
 
                 $attachments[] = $attachment['name'];
             }
 
+            $sent = !empty($operation['sent_at']) ? tr('inviata il _DATE_ alle _HOUR_', [
+                '_DATE_' => dateFormat($operation['sent_at']),
+                '_HOUR_' => timeFormat($operation['sent_at']),
+            ]) : tr('in coda di invio') ;
+
             $result .= '
             <li>
-                '.tr('Email "_EMAIL_" inviata il _DATE_ alle _HOUR_ da _USER_', [
-                    '_EMAIL_' => $operation['email'],
-                    '_DATE_' => Translator::dateToLocale($operation['created_at']),
-                    '_HOUR_' => Translator::timeToLocale($operation['created_at']),
-                    '_USER_' => $operation['user'],
-                ]).'.
+                '.tr('Email "_EMAIL_" da _USER_', [
+                    '_EMAIL_' => $operation->template->name,
+                    '_USER_' => $operation->user->username,
+                ]).' ('.$sent.').
                 <ul>
                     <li><b>'.tr('Destinatari').'</b>: '.implode(', ', $receivers).'.</li>';
 

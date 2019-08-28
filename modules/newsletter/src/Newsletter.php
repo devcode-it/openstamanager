@@ -9,10 +9,12 @@ use Models\MailAccount;
 use Models\MailTemplate;
 use Models\User;
 use Modules\Anagrafiche\Anagrafica;
+use Traits\RecordTrait;
 
 class Newsletter extends Model
 {
     use SoftDeletes;
+    use RecordTrait;
 
     protected $table = 'em_campaigns';
 
@@ -34,6 +36,33 @@ class Newsletter extends Model
         return $model;
     }
 
+    /**
+     * Restituisce il nome del modulo a cui l'oggetto è collegato.
+     *
+     * @return string
+     */
+    public function getModuleAttribute()
+    {
+        return 'Newsletter';
+    }
+
+    public function fixStato()
+    {
+        $mails = $this->emails;
+
+        $completed = true;
+        foreach ($mails as $mail) {
+            if (empty($mail->sent_at)) {
+                $completed = false;
+                break;
+            }
+        }
+
+        $this->state = $completed ? 'OK' : $this->state;
+        $this->completed_at = $completed ? date('Y-m-d H:i:s') : $this->completed_at;
+        $this->save();
+    }
+
     // Relazione Eloquent
 
     public function anagrafiche()
@@ -43,7 +72,7 @@ class Newsletter extends Model
 
     public function emails()
     {
-        return $this->belongsToMany(Mail::class, 'em_campaign_anagrafica', 'id_campaign', 'id_email')->withPivot('id_anagrafica');
+        return $this->hasMany(Mail::class, 'id_campaign');
     }
 
     public function account()

@@ -259,13 +259,13 @@ $(document).ready(function() {
 function addSerial(form_id, numero) {    
     if (numero > 0){
         swal({
-            title: "' . tr('Nuovi seriali') . '",
-            html: "' . tr("Confermi l'inserimento di _NUM_ nuovi seriali?", [
+            title: "'.tr('Nuovi seriali').'",
+            html: "'.tr("Confermi l'inserimento di _NUM_ nuovi seriali?", [
                 '_NUM_' => '" + numero + "',
-            ]) . '",
+            ]).'",
             type: "success",
             showCancelButton: true,
-            confirmButtonText: "' . tr('Continua') . '"
+            confirmButtonText: "'.tr('Continua').'"
         }).then(function (result) {
             $(form_id).submit();
         })

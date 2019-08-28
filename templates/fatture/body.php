@@ -9,7 +9,7 @@ $v_totale = [];
 $autofill = new \Util\Autofill(5, 40);
 $rows_per_page = $fattura_accompagnatoria ? 15 : 20;
 if (!empty($options['last-page-footer'])) {
-    $rows_per_page += 10;
+    $rows_per_page += 7;
 }
 $autofill->setRows($rows_per_page);
 

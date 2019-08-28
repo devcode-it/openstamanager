@@ -12,7 +12,7 @@ switch ($op) {
         $password = post('password');
 
         if ($dbo->isConnected() && $dbo->isInstalled() && auth()->attempt($username, $password)) {
-            $_SESSION['keep_alive'] = (filter('keep_alive') != null);
+            $_SESSION['keep_alive'] = true;
 
             // Rimozione log vecchi
             $dbo->query('DELETE FROM `zz_operations` WHERE DATE_ADD(`created_at`, INTERVAL 30*24*60*60 SECOND) <= NOW()');
@@ -131,21 +131,10 @@ echo'>
 					</div>
 					
 					{[ "type": "password", "name": "password", "autocomplete": "current-password", "placeholder": "'.tr('Password').'", "icon-before": "<i class=\"fa fa-lock\"></i>" ]}
-										
-                    <div class="text-right">
+							
+					<div class="text-right">
                         <a href="'.ROOTDIR.'/reset.php">'.tr('Dimenticata la password?').'</a>
                     </div>
-                    
-					<hr>
-					
-					<div class="text-center">
-						<input type="checkbox" name="keep_alive"';
-if (filter('keep_alive') != null) {
-    echo ' checked';
-}
-echo '/> '.tr('Mantieni attiva la sessione').'
-
-					</div>
 				</div>
 				
 				<!-- /.box-body -->

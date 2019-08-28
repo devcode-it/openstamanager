@@ -33,6 +33,8 @@ function startHooks() {
 }
 
 /**
+ * Esegue l'hook e lo visualizza.
+ * Considerare l'utilizzo di localStorage per bloccare l'esecuzione locale multipla dell'hook nel caso di problemi.
  *
  * @param hook
  * @param element_id

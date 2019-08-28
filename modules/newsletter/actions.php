@@ -53,12 +53,32 @@ switch (filter('op')) {
             $mail->content = $newsletter->content;
 
             $mail->save();
+
+            $newsletter->anagrafiche()->updateExistingPivot($anagrafica->id, ['id_email' => $mail->id], false);
         }
 
         $newsletter->state = 'WAIT';
         $newsletter->save();
 
         flash()->info(tr('Campagna newsletter in invio!'));
+
+        break;
+
+    case 'block':
+        $mails = $newsletter->emails;
+
+        foreach ($mails as $mail) {
+            if (empty($mail->sent_at)) {
+                $newsletter->emails()->updateExistingPivot($mail->id, ['id_email' => null], false);
+
+                $mail->delete();
+            }
+        }
+
+        $newsletter->state = 'DEV';
+        $newsletter->save();
+
+        flash()->info(tr('Coda della campagna newsletter svuotata!'));
 
         break;
 

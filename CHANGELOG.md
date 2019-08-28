@@ -38,6 +38,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Stampe dei consuntivi interni (i prezzi sono sostituiti dai costi)
  - Supporto all'inserimento manuale di maggiori attributi per le *Fatture Elettroniche*, tramite gli appositi pulsanti "Attributi avanzati" all'interno delle **Fatture di vendita** 
  - Aggiunto Identificativo documento, Num Item, codici CIG e CUP in **DDT di uscita**
+ - Modulo **Newsletter** per la gestione delle campagne di newsletter sulla base delle informazioni delle **Anagrafiche**
 
 ### Modificato (Changed)
 
@@ -45,10 +46,15 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Correzione dell'importazione delle *Fatture Elettroniche* per supportare Ritenuta d'Acconto (dove indicata), Rivalsa INPS (su tutto il documento) e Ritenuta contributi (su tutto il documento)
  - Miglioramento del sistema di evasione delle quantità nel passaggio tra documenti, ora integrato nelle classi Eloquent e completamente automatico
  - Correzione delle diciure generali *Imponibile scontato* in *Totale imponibile* e *Sconto* in *Sconto/maggiorazione*
+ - Aggiornamento degli hook per permettere l'aggiunta di task in background
+    - Invio email massimo
+    - Backup automatico
+ - **Articoli** ora eliminabili solo virtualmente attraverso il flag *deleted_at*
  
 ### Rimosso (Removed)
  - Funzione *get_costi_intervento* del modulo **Attività**, a causa dell'aggiornamento della maggior parte del sistema di gestione degli **Attività** con le classi Eloquent
  - Funzione *aggiorna_scadenziario* del modulo **Prima Nota**
+ - Classe *src/Mail.php*
  
 ### Fixed
 

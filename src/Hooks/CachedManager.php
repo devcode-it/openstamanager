@@ -12,13 +12,15 @@ abstract class CachedManager extends Manager
 
     abstract public function data();
 
+    public function needsExecution()
+    {
+        return !self::isCached();
+    }
+
     public function execute()
     {
         if (self::isCached()) {
             $results = self::getCache()['results'];
-
-            // Interpretazione della cache
-            $results = json_decode($results, true);
         } else {
             $results = $this->data();
 
@@ -34,6 +36,9 @@ abstract class CachedManager extends Manager
             $hook = self::getHook();
 
             $cache = database()->selectOne('zz_hook_cache', '*', ['hook_id' => $hook->id], ['id' => 'DESC']);
+
+            // Interpretazione della cache
+            $cache['results'] = json_decode($cache['results'], true);
 
             self::$cache = $cache;
         }

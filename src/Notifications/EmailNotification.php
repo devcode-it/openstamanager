@@ -84,6 +84,12 @@ class EmailNotification extends PHPMailer implements NotificationInterface
     {
         $this->mail = $mail;
 
+        // Registazione della processazione
+        if (!empty($this->mail)) {
+            $this->mail->processing_at = date('Y-m-d H:i:s');
+            $this->mail->save();
+        }
+
         // Destinatari
         $receivers = $mail->receivers;
         foreach ($receivers as $receiver) {
@@ -91,7 +97,7 @@ class EmailNotification extends PHPMailer implements NotificationInterface
         }
 
         // Allegati
-        $uploads = $mail->attachments;
+        $uploads = $mail->uploads;
         foreach ($uploads as $upload) {
             $this->addUpload($upload);
         }
@@ -153,7 +159,7 @@ class EmailNotification extends PHPMailer implements NotificationInterface
                 $this->mail->failed_at = date('Y-m-d H:i:s');
             }
 
-            //$this->mail->save();
+            $this->mail->save();
         }
 
         $this->SmtpClose();

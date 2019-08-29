@@ -7,6 +7,16 @@ use Hooks\Manager;
 
 class BackupHook extends Manager
 {
+    public function isSingleton()
+    {
+        return true;
+    }
+
+    public function needsExecution()
+    {
+        return setting('Backup automatico') && !Backup::isDailyComplete();
+    }
+
     public function execute()
     {
         $result = Backup::daily();
@@ -14,23 +24,15 @@ class BackupHook extends Manager
         return $result;
     }
 
-    public function response($data)
+    public function response()
     {
-        return [
-            'icon' => 'fa fa-file-o text-info',
-            'message' => tr('Backup completato!'),
-            'show' => true,
-        ];
-    }
-
-    public function prepare()
-    {
-        $result = setting('Backup automatico') && !Backup::isDailyComplete();
+        $show = boolval(setting('Backup automatico'));
+        $message = $show && !Backup::isDailyComplete() ? tr('Backup in corso...') : tr('Backup completato!');
 
         return [
-            'icon' => 'fa fa-file-o text-danger',
-            'message' => tr('Backup in corso...'),
-            'execute' => $result,
+            'icon' => 'fa fa-file-o text-success',
+            'message' => $message,
+            'show' => $show,
         ];
     }
 }

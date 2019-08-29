@@ -14,8 +14,10 @@ class ReceiptHook extends CachedManager
         return $list;
     }
 
-    public function response($results)
+    public function response()
     {
+        $results = self::getCache()['results'];
+
         $count = count($results);
         $notify = false;
 

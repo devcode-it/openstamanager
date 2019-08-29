@@ -16,35 +16,41 @@ abstract class Manager
     /**
      * Restituisce le informazioni per la visualizzazione dell'hook.
      *
-     * @param $results
-     *
      * @return array
      */
-    abstract public function response($results);
+    abstract public function response();
 
     /**
-     * Restituisce le informazioni per l'inizializzazione dell'hook.
+     * Restituisce se l'hook è un singletion, cioè deve essere richiamato solo da una istanza di navigazione.
      *
-     * @return array|null
+     * @return bool
      */
-    public function prepare()
+    public function isSingleton()
     {
-        return [
-            'execute' => true,
-        ];
+        return false;
     }
 
+    /**
+     * Restituisce se l'hook ha bisogno di una esecuzione;.
+     *
+     * @return bool
+     */
+    abstract public function needsExecution();
+
+    /**
+     * Gestisce la chiamata per l'esecuzione dell'hook.
+     *
+     * @return array|mixed
+     */
     public function manage()
     {
-        $prepare = $this->prepare();
-        if (empty($prepare['execute'])) {
+        if (!$this->needsExecution()) {
             return [];
         }
 
-        $data = $this->execute();
-        $results = $this->response($data);
+        $results = $this->execute();
 
-        return $results;
+        return [];
     }
 
     /**

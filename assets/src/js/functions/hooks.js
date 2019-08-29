@@ -26,32 +26,65 @@ function startHooks() {
                     message: globals.translations.hookExecuting.replace('_NAME_', item.name)
                 });
 
-                executeHook(item, true);
+                startHook(item, true);
             });
         },
     });
 }
 
 /**
- * Esegue l'hook e lo visualizza.
- * Considerare l'utilizzo di localStorage per bloccare l'esecuzione locale multipla dell'hook nel caso di problemi.
+ * Richiama l'hook per l'esecuzione.
  *
  * @param hook
- * @param element_id
  */
-function executeHook(hook, init) {
+function startHook(hook, init) {
     $.ajax({
         url: globals.rootdir + "/ajax.php",
         type: "get",
         data: {
-            op: "hook",
+            op: "hook-lock",
             id: hook.id,
-            init: init,
+        },
+        success: function (data) {
+            var token = JSON.parse(data);
+
+            if (init) {
+                hookCount("#hooks-counter");
+
+                updateHook(hook);
+            }
+
+            if (token){
+                executeHook(hook, token);
+            } else {
+                var timeout = 10;
+
+                setTimeout(function () {
+                    startHook(hook);
+                }, timeout * 1000);
+            }
+        },
+    });
+}
+
+/**
+ * Richiama l'hook per l'esecuzione.
+ *
+ * @param hook
+ * @param token
+ */
+function executeHook(hook, token) {
+    $.ajax({
+        url: globals.rootdir + "/ajax.php",
+        type: "get",
+        data: {
+            op: "hook-execute",
+            id: hook.id,
+            token: token,
         },
         success: function (data) {
             var result = JSON.parse(data);
-
-            renderHook(hook, result);
+            updateHook(hook);
 
             var timeout;
             if (result.execute) {
@@ -61,12 +94,29 @@ function executeHook(hook, init) {
             }
 
             setTimeout(function () {
-                executeHook(hook);
+                startHook(hook);
             }, timeout * 1000);
+        },
+    });
+}
 
-            if (init) {
-                hookCount("#hooks-counter");
-            }
+/**
+ * Aggiorna le informazioni dell'hook.
+ *
+ * @param hook
+ * @param init
+ */
+function updateHook(hook) {
+    $.ajax({
+        url: globals.rootdir + "/ajax.php",
+        type: "get",
+        data: {
+            op: "hook-response",
+            id: hook.id,
+        },
+        success: function (data) {
+            var result = JSON.parse(data);
+            renderHook(hook, result);
 
             // Rimozione eventuale della rotella di caricamento
             var counter = $("#hooks-counter").text();

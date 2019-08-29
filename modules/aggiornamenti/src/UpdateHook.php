@@ -18,8 +18,10 @@ class UpdateHook extends CachedManager
         return $result;
     }
 
-    public function response($update)
+    public function response()
     {
+        $update = self::getCache()['results'];
+
         $module = Modules::get('Aggiornamenti');
         $link = ROOTDIR.'/controller.php?id_module='.$module->id;
 

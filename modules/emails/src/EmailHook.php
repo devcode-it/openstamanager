@@ -7,6 +7,26 @@ use Notifications\EmailNotification;
 
 class EmailHook extends Manager
 {
+    public function isSingleton()
+    {
+        return true;
+    }
+
+    public function needsExecution()
+    {
+        $diff = date('Y-m-d', strtotime('-4 hours'));
+        $failed = function ($query) use ($diff) {
+            $query->whereDate('failed_at', '<', $diff)
+                ->orWhereNull('failed_at');
+        };
+
+        $remaining = Mail::whereNull('sent_at')
+            ->where($failed)
+            ->count();
+
+        return !empty($remaining);
+    }
+
     public function execute()
     {
         $accounts = Account::all();
@@ -36,24 +56,13 @@ class EmailHook extends Manager
             }
         }
 
-        return count($list);
+        return $list;
     }
 
-    public function response($data)
-    {
-        return $this->prepare();
-    }
-
-    public function prepare()
+    public function response()
     {
         $yesterday = date('Y-m-d', strtotime('-1 days'));
-        $diff = date('Y-m-d', strtotime('-4 hours'));
         $user = auth()->getUser();
-
-        $failed = function ($query) use ($diff) {
-            $query->whereDate('failed_at', '<', $diff)
-                ->orWhereNull('failed_at');
-        };
 
         $current = Mail::whereDate('sent_at', '>', $yesterday)
             ->where('created_by', $user->id)
@@ -63,17 +72,12 @@ class EmailHook extends Manager
             ->where('created_by', $user->id)
             ->count();
 
-        $remaining = Mail::whereNull('sent_at')
-            ->where($failed)
-            ->count();
-
-        $message = !empty($remaining) ? tr('Invio email in corso...') : tr('Invio email completato!');
+        $message = $total != $current ? tr('Invio email in corso...') : tr('Invio email completato!');
         $message = empty($total) ? tr('Nessuna email presente...') : $message;
 
         return [
             'icon' => 'fa fa-envelope text-info',
             'message' => $message,
-            'execute' => !empty($remaining),
             'show' => true,
             'progress' => [
                 'current' => $current,

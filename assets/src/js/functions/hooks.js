@@ -88,14 +88,14 @@ function executeHook(hook, token) {
 
             var timeout;
             if (result.execute) {
-                timeout = 1;
+                startHook(hook);
             } else {
                 timeout = 30;
-            }
 
-            setTimeout(function () {
-                startHook(hook);
-            }, timeout * 1000);
+                setTimeout(function () {
+                    startHook(hook);
+                }, timeout * 1000);
+            }
         },
     });
 }

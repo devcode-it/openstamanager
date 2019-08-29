@@ -35,6 +35,7 @@ switch (post('op')) {
             'from_address' => post('from_address'),
             'encryption' => post('encryption'),
             'pec' => post('pec'),
+            'timeout' => post('timeout'),
             'ssl_no_verify' => post('ssl_no_verify'),
             'predefined' => $predefined,
         ], ['id' => $id_record]);

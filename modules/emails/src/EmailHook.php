@@ -2,6 +2,7 @@
 
 namespace Modules\Emails;
 
+use Carbon\Carbon;
 use Hooks\Manager;
 use Notifications\EmailNotification;
 
@@ -29,20 +30,32 @@ class EmailHook extends Manager
 
     public function execute()
     {
-        $accounts = Account::all();
         $diff = date('Y-m-d', strtotime('-4 hours'));
+        $failed = function ($query) use ($diff) {
+            $query->whereDate('failed_at', '<', $diff)
+                ->orWhereNull('failed_at');
+        };
 
+        $accounts = Account::all();
         $list = [];
         foreach ($accounts as $account) {
-            $mail = Mail::whereNull('sent_at')
-                ->where('id_account', $account->id)
-                ->whereNull('failed_at')
-                ->orWhereDate('failed_at', '<', $diff)
-                ->orderBy('created_at')
-                ->first();
+            $last_mail = $account->emails()->whereNotNull('sent_at')->orderBy('sent_at')->first();
 
-            if (!empty($mail)) {
-                $list[] = $mail;
+            // Controllo sul timeout dell'account
+            $date = new Carbon($last_mail->sent_at);
+            $now = new Carbon();
+            $diff = $date->diffInMilliseconds($now);
+
+            if (empty($last_mail) || $diff > $account->timeout) {
+                $mail = Mail::whereNull('sent_at')
+                    ->where('id_account', $account->id)
+                    ->where($failed)
+                    ->orderBy('created_at')
+                    ->first();
+
+                if (!empty($mail)) {
+                    $list[] = $mail;
+                }
             }
         }
 

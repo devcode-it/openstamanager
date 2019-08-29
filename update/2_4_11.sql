@@ -419,7 +419,7 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Newsletter'), 'Completato', 'IF(completed_at IS NULL, ''No'', ''Si'')', 4, 1, 0, 1, 1);
 
 -- Modulo Stato email
-INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Stato email', 'Stato email', 'stato_email', 'SELECT |select| FROM `em_emails` WHERE 1=1 AND (`em_emails`.`created_at` BETWEEN ''|period_start|'' AND ''|period_end|'' OR `em_emails`.`sent_at` IS NULL) HAVING 2=2', '', 'fa fa-spinner ', '2.4.11', '2.4.11', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Gestione email'), '1', '1');
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Stato email', 'Coda di invio', 'stato_email', 'SELECT |select| FROM `em_emails` WHERE 1=1 AND (`em_emails`.`created_at` BETWEEN ''|period_start|'' AND ''|period_end|'' OR `em_emails`.`sent_at` IS NULL) HAVING 2=2', '', 'fa fa-spinner ', '2.4.11', '2.4.11', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Gestione email'), '1', '1');
 
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `default`, `visible`, `format`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stato email'), 'id', 'id', 1, 0, 0, 1, 0, 0),
@@ -432,3 +432,4 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 
 ALTER TABLE `em_templates` CHANGE `id_smtp` `id_account` INT(11) NOT NULL;
 ALTER TABLE `em_print_template` CHANGE `id_email` `id_template` INT(11) NOT NULL;
+ALTER TABLE `em_accounts` ADD `timeout` INT(11) NOT NULL DEFAULT 1000;

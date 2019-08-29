@@ -434,3 +434,11 @@ ALTER TABLE `em_templates` CHANGE `id_smtp` `id_account` INT(11) NOT NULL;
 ALTER TABLE `em_print_template` CHANGE `id_email` `id_template` INT(11) NOT NULL;
 ALTER TABLE `em_accounts` ADD `timeout` INT(11) NOT NULL DEFAULT 1000;
 ALTER TABLE `an_anagrafiche` ADD `enable_newsletter` BOOLEAN DEFAULT TRUE;
+
+-- Aggiunta coda di invio per le Fatture Elettroniche
+ALTER TABLE `co_documenti` ADD `hook_send` BOOLEAN DEFAULT FALSE;
+INSERT INTO `zz_hooks` (`id`, `name`, `class`, `frequency`, `id_module`) VALUES (NULL, 'Fatture Elettroniche', 'Plugins\\ExportFE\\InvoiceHook', '1 minute', NULL);
+
+INSERT INTO `fe_stati_documento` (`codice`, `descrizione`, `icon`) VALUES
+('ERR', 'Trasmissione non riuscita', 'fa fa-close'),
+('QUEUE', 'In coda di elaborazione', 'fa fa-spinner');

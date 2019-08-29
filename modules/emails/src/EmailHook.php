@@ -80,8 +80,10 @@ class EmailHook extends Manager
         $current = Mail::whereDate('sent_at', '>', $yesterday)
             ->where('created_by', $user->id)
             ->count();
-        $total = Mail::whereDate('sent_at', '>', $yesterday)
-            ->orWhereNull('sent_at')
+        $total = Mail::where(function ($query) use ($yesterday) {
+            $query->whereDate('sent_at', '>', $yesterday)
+                ->orWhereNull('sent_at');
+        })
             ->where('created_by', $user->id)
             ->count();
 
@@ -91,7 +93,7 @@ class EmailHook extends Manager
         return [
             'icon' => 'fa fa-envelope text-info',
             'message' => $message,
-            'show' => true,
+            'show' => ($total != $current),
             'progress' => [
                 'current' => $current,
                 'total' => $total,

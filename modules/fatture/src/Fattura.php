@@ -136,7 +136,10 @@ class Fattura extends Document
             $data = $this->data;
 
             $this->numero = static::getNextNumero($data, $direzione, $value);
-            $this->numero_esterno = static::getNextNumeroSecondario($data, $direzione, $value);
+
+            if (!empty($previous)) {
+                $this->numero_esterno = static::getNextNumeroSecondario($data, $direzione, $value);
+            }
         }
     }
 

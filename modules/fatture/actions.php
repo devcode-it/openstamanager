@@ -123,12 +123,17 @@ switch (post('op')) {
                 aggiungi_movimento($id_record, $dir);
             }
 
-            // Generazione automatica della Fattura Elettronica
-            $stato_fe = empty($fattura->codice_stato_fe) || in_array($fattura->codice_stato_fe, ['GEN', 'NS', 'EC02']);
-            if ($stato_precedente->descrizione == 'Bozza' && $stato['descrizione'] == 'Emessa' && $stato_fe) {
-                $checks = FatturaElettronica::controllaFattura($fattura);
+            if ($stato_precedente->descrizione == 'Bozza' && $stato['descrizione'] == 'Emessa'){
+                // Generazione numero fattura se non presente
+                if(empty($fattura->numero_esterno)){
+                    $fattura->numero_esterno = Fattura::getNextNumeroSecondario($fattura->data, $fattura->direzione, $fattura->id_segment);
+                    $fattura->save();
+                }
 
-                if (empty($checks)) {
+                // Generazione automatica della Fattura Elettronica
+                $stato_fe = empty($fattura->codice_stato_fe) || in_array($fattura->codice_stato_fe, ['GEN', 'NS', 'EC02']);
+                $checks = FatturaElettronica::controllaFattura($fattura);
+                if($stato_fe && empty($checks)) {
                     try {
                         $fattura_pa = new FatturaElettronica($id_record);
                         $file = $fattura_pa->save(DOCROOT.'/'.FatturaElettronica::getDirectory());
@@ -144,7 +149,7 @@ switch (post('op')) {
                         }
                     } catch (UnexpectedValueException $e) {
                     }
-                } else {
+                } else if(!empty($checks)){
                     $message = tr('La fattura elettronica non è stata generata a causa di alcune informazioni mancanti').':';
 
                     foreach ($checks as $check) {

@@ -145,7 +145,7 @@ $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione']
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Porto'); ?>", "name": "idporto", "placeholder": "-", "help": "<?php echo tr('<ul><li>Franco: pagamento del trasporto a carico del mittente</li> <li>Assegnato pagamento del trasporto a carico del destinatario</li> </ul>'); ?>", "values": "query=SELECT id, descrizione FROM dt_porto ORDER BY descrizione ASC", "value": "$idporto$" ]}
+					{[ "type": "select", "label": "<?php echo tr('Tipo di spedizione'); ?>", "name": "idspedizione", "placeholder": "-", "values": "query=SELECT id, descrizione FROM dt_spedizione ORDER BY descrizione ASC", "value": "$idspedizione$" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -158,8 +158,8 @@ $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione']
 					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "ajax-source": "pagamenti", "value": "$idpagamento$" ]}
 				</div>
 
-				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Tipo di spedizione'); ?>", "name": "idspedizione", "placeholder": "-", "values": "query=SELECT id, descrizione FROM dt_spedizione ORDER BY descrizione ASC", "value": "$idspedizione$" ]}
+                <div class="col-md-3">
+					{[ "type": "select", "label": "<?php echo tr('Porto'); ?>", "name": "idporto", "placeholder": "-", "help": "<?php echo tr('<ul><li>Franco: pagamento del trasporto a carico del mittente</li> <li>Assegnato: pagamento del trasporto a carico del destinatario</li> </ul>'); ?>", "values": "query=SELECT id, descrizione FROM dt_porto ORDER BY descrizione ASC", "value": "$idporto$" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -169,7 +169,8 @@ $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione']
 
                  <script>
                     $("#idspedizione").change( function(){
-                        if ($(this).val() == 3) {
+                        //a parte Espressa o Vettore
+                        if ($(this).val() != 1 && $(this).val() != 2 ) {
                             $("#idvettore").attr("required", false);
                             $("#idvettore").attr("disabled", true);
                             $("label[for=idvettore]").text("<?php echo tr('Vettore'); ?>");

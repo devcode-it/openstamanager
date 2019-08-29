@@ -7,7 +7,7 @@ $r = $dbo->fetchOne('SELECT co_documenti.*,
 	an_anagrafiche.pec,
 	an_anagrafiche.ragione_sociale,
 	co_tipidocumento.descrizione AS tipo_documento,
-	(SELECT pec FROM em_accounts WHERE em_accounts.id='.prepare($template['id_smtp']).') AS is_pec
+	(SELECT pec FROM em_accounts WHERE em_accounts.id='.prepare($template['id_account']).') AS is_pec
 FROM co_documenti
     INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica
     INNER JOIN co_tipidocumento ON co_tipidocumento.id=co_documenti.idtipodocumento

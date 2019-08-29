@@ -1,10 +1,10 @@
 <?php
 
-use Models\MailTemplate;
+use Modules\Emails\Template;
 
 include_once __DIR__.'/core.php';
 
-$template = MailTemplate::find(get('id'));
+$template = Template::find(get('id'));
 $module = $template->module;
 $smtp = $template->account;
 
@@ -81,7 +81,7 @@ echo '
     </div>';
 
 // Stampe
-$selected_prints = $dbo->fetchArray('SELECT id_print FROM em_template_print WHERE id_email = '.prepare($template['id']));
+$selected_prints = $dbo->fetchArray('SELECT id_print FROM em_print_template WHERE id_template = '.prepare($template['id']));
 $selected = array_column($selected_prints, 'id_print');
 
 echo '
@@ -91,17 +91,17 @@ echo '
             {[ "type": "select", "multiple": "1", "label": "'.tr('Stampe').'", "name": "prints[]", "value": "'.implode(',', $selected).'", "values": "query=SELECT id, title AS text FROM zz_prints WHERE id_module = '.prepare($id_module).' AND enabled=1" ]}
         </div>';
 
-$attachments = [];
+$uploads = [];
 if ($template['name'] == 'Fattura Elettronica') {
-    $attachments = $dbo->fetchArray('SELECT id FROM zz_files WHERE id_module = '.prepare($module['id']).' AND id_record = '.prepare($id_record).' AND category = \'Fattura Elettronica\'');
-    $attachments = array_column($attachments, 'id');
+    $uploads = $dbo->fetchArray('SELECT id FROM zz_files WHERE id_module = '.prepare($module['id']).' AND id_record = '.prepare($id_record).' AND category = \'Fattura Elettronica\'');
+    $uploads = array_column($uploads, 'id');
 }
 
 // Allegati
 echo '
 
         <div class="col-md-6">
-            {[ "type": "select", "multiple": "1", "label": "'.tr('Allegati').'", "name": "attachments[]", "value": "'.implode(',', $attachments).'", "values": "query=SELECT id, name AS text FROM zz_files WHERE id_module = '.prepare($id_module).' AND id_record = '.prepare($id_record)." UNION SELECT id, CONCAT(name, ' (Azienda)') AS text FROM zz_files WHERE id_module = ".prepare(Modules::get('Anagrafiche')['id'])." AND id_record = (SELECT valore FROM zz_settings WHERE nome = 'Azienda predefinita')\" ]}
+            {[ "type": "select", "multiple": "1", "label": "'.tr('Allegati').'", "name": "uploads[]", "value": "'.implode(',', $uploads).'", "values": "query=SELECT id, name AS text FROM zz_files WHERE id_module = '.prepare($id_module).' AND id_record = '.prepare($id_record)." UNION SELECT id, CONCAT(name, ' (Azienda)') AS text FROM zz_files WHERE id_module = ".prepare(Modules::get('Anagrafiche')['id'])." AND id_record = (SELECT valore FROM zz_settings WHERE nome = 'Azienda predefinita')\" ]}
         </div>
     </div>";
 

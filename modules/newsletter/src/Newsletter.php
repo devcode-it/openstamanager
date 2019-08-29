@@ -4,11 +4,11 @@ namespace Modules\Newsletter;
 
 use Common\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Models\Mail;
-use Models\MailAccount;
-use Models\MailTemplate;
 use Models\User;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Emails\Account;
+use Modules\Emails\Mail;
+use Modules\Emails\Template;
 use Traits\RecordTrait;
 
 class Newsletter extends Model
@@ -16,9 +16,9 @@ class Newsletter extends Model
     use SoftDeletes;
     use RecordTrait;
 
-    protected $table = 'em_campaigns';
+    protected $table = 'em_newsletters';
 
-    public static function build(User $user, MailTemplate $template, $name)
+    public static function build(User $user, Template $template, $name)
     {
         $model = parent::build();
 
@@ -67,22 +67,22 @@ class Newsletter extends Model
 
     public function anagrafiche()
     {
-        return $this->belongsToMany(Anagrafica::class, 'em_campaign_anagrafica', 'id_campaign', 'id_anagrafica')->withPivot('id_email');
+        return $this->belongsToMany(Anagrafica::class, 'em_newsletter_anagrafica', 'id_newsletter', 'id_anagrafica')->withPivot('id_email');
     }
 
     public function emails()
     {
-        return $this->hasMany(Mail::class, 'id_campaign');
+        return $this->hasMany(Mail::class, 'id_newsletter');
     }
 
     public function account()
     {
-        return $this->belongsTo(MailAccount::class, 'id_account');
+        return $this->belongsTo(Account::class, 'id_account');
     }
 
     public function template()
     {
-        return $this->belongsTo(MailTemplate::class, 'id_template');
+        return $this->belongsTo(Template::class, 'id_template');
     }
 
     public function user()

@@ -2,9 +2,9 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Models\Mail;
-use Models\MailTemplate;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Emails\Mail;
+use Modules\Emails\Template;
 use Modules\Fatture\Components\Descrizione;
 use Modules\Fatture\Components\Riga;
 use Modules\Fatture\Fattura;
@@ -63,7 +63,7 @@ function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto = n
 
     // Notifica nuovo intervento al tecnico
     if (!empty($tecnico['email'])) {
-        $template = MailTemplate::get('Notifica intervento');
+        $template = Template::get('Notifica intervento');
 
         $mail = Mail::build(auth()->getUser(), $template, $idintervento);
         $mail->addReceiver($anagrafica['email']);

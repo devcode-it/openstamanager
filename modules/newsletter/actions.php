@@ -1,13 +1,13 @@
 <?php
 
-use Models\MailTemplate;
+use Modules\Emails\Template;
 use Modules\Newsletter\Newsletter;
 
 include_once __DIR__.'/../../core.php';
 
 switch (filter('op')) {
     case 'add':
-        $template = MailTemplate::find(filter('id_template'));
+        $template = Template::find(filter('id_template'));
         $newsletter = Newsletter::build($user, $template, filter('name'));
 
         $id_record = $newsletter->id;
@@ -48,16 +48,16 @@ switch (filter('op')) {
                 continue;
             }
 
-            $mail = \Models\Mail::build($user, $template, $anagrafica->id);
+            $mail = \Modules\Emails\Mail::build($user, $template, $anagrafica->id);
 
             $mail->addReceiver($anagrafica['email']);
             $mail->subject = $newsletter->subject;
             $mail->content = $newsletter->content;
 
-            $mail->id_campaign = $newsletter->id;
+            $mail->id_newsletter = $newsletter->id;
 
             foreach ($uploads as $upload) {
-                $mail->addAttachment($upload);
+                $mail->addUpload($upload);
             }
 
             $mail->save();

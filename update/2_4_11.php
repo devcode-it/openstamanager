@@ -1,27 +1,36 @@
 <?php
 
 // Correzione zz_operations
-use Models\Mail;
-use Models\MailTemplate;
 use Models\User;
+use Modules\Emails\Mail;
+use Modules\Emails\Template;
 
 $database->query('ALTER TABLE `zz_operations` DROP FOREIGN KEY `zz_operations_ibfk_3`');
 $logs = $database->fetchArray("SELECT * FROM `zz_operations` WHERE `op` = 'send-email'");
 foreach ($logs as $log) {
     $user = User::find($log['id_utente']);
-    $template = MailTemplate::find($log['id_email']);
+    $template = Template::find($log['id_email']);
+
     $mail = Mail::build($user, $template, $log['id_record']);
+    $mail->resetPrints();
 
     $options = json_decode($log['options'], true);
-    $mail->attachments = $options['attachments'] ?: [];
-    $mail->prints = $options['prints'] ?: [];
 
-    foreach ($options['receivers'] as $receiver){
+    foreach ($options['receivers'] as $receiver) {
         $mail->addReceiver($receiver);
     }
 
-    $mail->created_at = $log['created_at'];
-    $mail->sent_at = $log['created_at'];
+    foreach ($options['attachments'] as $upload) {
+        $mail->addUpload($upload);
+    }
+
+    foreach ($options['prints'] as $print) {
+        $mail->addPrint($print);
+    }
+
+    $sent_at = $log['created_at'] ?: date('Y-m-d H:i:s');
+    $mail->created_at = $sent_at;
+    $mail->sent_at = $sent_at;
 
     $mail->save();
 

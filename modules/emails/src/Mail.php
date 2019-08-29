@@ -1,18 +1,16 @@
 <?php
 
-namespace Models;
+namespace Modules\Emails;
 
 use Common\Model;
+use Models\PrintTemplate;
+use Models\Upload;
+use Models\User;
 use Modules\Newsletter\Newsletter;
 
 class Mail extends Model
 {
     protected $table = 'em_emails';
-
-    protected $receivers = null;
-
-    protected $attachments = null;
-    protected $prints = null;
 
     protected $options = null;
 
@@ -22,8 +20,14 @@ class Mail extends Model
 
         $model->created_by = $user->id;
 
-        $model->id_template = $template->id;
+        if (!empty($template)) {
+            $model->id_template = $template->id;
+            $model->id_account = $template->account->id;
+        }
+
         $model->id_record = $id_record;
+
+        $model->save();
 
         if (!empty($template)) {
             $model->resetFromTemplate();
@@ -43,18 +47,9 @@ class Mail extends Model
      *
      * @param string $file_id
      */
-    public function addAttachment($file_id)
+    public function addUpload($file_id, $name = null)
     {
-        if (!isset($this->attachments)) {
-            $this->attachments = [];
-        }
-
-        $this->attachments[] = $file_id;
-    }
-
-    public function resetAttachments()
-    {
-        $this->attachments = [];
+        $this->uploads()->attach($file_id, ['id_email' => $this->id, 'name' => $name]);
     }
 
     /**
@@ -65,25 +60,16 @@ class Mail extends Model
      */
     public function addPrint($print_id, $name = null)
     {
-        if (!isset($this->prints)) {
-            $this->prints = [];
-        }
-
-        $print = PrintTemplate::find($print_id);
-
-        if (empty($name)) {
-            $name = $print['title'].'.pdf';
-        }
-
-        $this->prints[] = [
-            'id' => $print['id'],
-            'name' => $name,
-        ];
+        $this->prints()->attach($print_id, ['id_email' => $this->id, 'name' => $name]);
     }
 
     public function resetPrints()
     {
-        $this->prints = [];
+        $prints = $this->prints;
+
+        foreach ($prints as $print) {
+            $this->prints()->detach($print->id, ['id_email' => $this->id]);
+        }
     }
 
     /**
@@ -98,33 +84,16 @@ class Mail extends Model
             return;
         }
 
-        if (!isset($this->receivers)) {
-            $this->receivers = [];
-        }
-
         $list = explode(';', $value);
-        foreach ($list as $element) {
-            $this->receivers[] = [
-                'email' => $element,
-                'type' => $type,
-            ];
+        foreach ($list as $address) {
+            if (!empty($address)) {
+                $receiver = Receiver::build($this, $address, $type);
+            }
         }
     }
 
     public function save(array $options = [])
     {
-        if (isset($this->receivers)) {
-            $this->setReceiversAttribute($this->receivers);
-        }
-
-        if (isset($this->attachments)) {
-            $this->setAttachmentsAttribute($this->attachments);
-        }
-
-        if (isset($this->prints)) {
-            $this->setPrintsAttribute($this->prints);
-        }
-
         if (isset($this->options)) {
             $this->setOptionsAttribute($this->options);
         }
@@ -138,36 +107,6 @@ class Mail extends Model
     }
 
     // Attributi Eloquent
-
-    public function setReceiversAttribute($value)
-    {
-        $this->attributes['receivers'] = json_encode($value);
-    }
-
-    public function getReceiversAttribute()
-    {
-        return json_decode($this->attributes['receivers'], true);
-    }
-
-    public function setAttachmentsAttribute($value)
-    {
-        $this->attributes['attachments'] = json_encode($value);
-    }
-
-    public function getAttachmentsAttribute()
-    {
-        return json_decode($this->attributes['attachments'], true);
-    }
-
-    public function setPrintsAttribute($value)
-    {
-        $this->attributes['prints'] = json_encode($value);
-    }
-
-    public function getPrintsAttribute()
-    {
-        return json_decode($this->attributes['prints'], true);
-    }
 
     public function setOptionsAttribute($value)
     {
@@ -189,7 +128,17 @@ class Mail extends Model
         return $this->options['read-notify'];
     }
 
-    public function setSubjecyAttribute($value)
+    /**
+     * Imposta il titolo della notifica.
+     *
+     * @param bool $value
+     */
+    public function setReadNotifyAttribute($value)
+    {
+        $this->options['read-notify'] = boolval($value);
+    }
+
+    public function setSubjectAttribute($value)
     {
         if (isset($this->template)) {
             $module = $this->template->module;
@@ -211,26 +160,16 @@ class Mail extends Model
         $this->attributes['content'] = $value;
     }
 
-    /**
-     * Imposta il titolo della notifica.
-     *
-     * @param bool $value
-     */
-    public function setReadNotifyAttribute($value)
-    {
-        $this->options['read-notify'] = boolval($value);
-    }
-
     /* Relazioni Eloquent */
 
     public function account()
     {
-        return $this->belongsTo(MailAccount::class, 'id_account')->withTrashed();
+        return $this->belongsTo(Account::class, 'id_account')->withTrashed();
     }
 
     public function template()
     {
-        return $this->belongsTo(MailTemplate::class, 'id_template')->withTrashed();
+        return $this->belongsTo(Template::class, 'id_template')->withTrashed();
     }
 
     public function user()
@@ -240,7 +179,22 @@ class Mail extends Model
 
     public function newsletter()
     {
-        return $this->belongsTo(Newsletter::class, 'id_campaign');
+        return $this->belongsTo(Newsletter::class, 'id_newsletter');
+    }
+
+    public function receivers()
+    {
+        return $this->hasMany(Receiver::class, 'id_email');
+    }
+
+    public function uploads()
+    {
+        return $this->belongsToMany(Upload::class, 'em_email_upload', 'id_email', 'id_file')->withPivot('name');
+    }
+
+    public function prints()
+    {
+        return $this->belongsToMany(PrintTemplate::class, 'em_email_print', 'id_email', 'id_print')->withPivot('name');
     }
 
     protected function resetFromTemplate()
@@ -270,9 +224,9 @@ class Mail extends Model
         }
 
         // Incluesione stampe predefinite
-        $prints = database()->fetchArray('SELECT id_print FROM em_template_print WHERE id_email = '.prepare($template['id']));
+        $prints = $template->prints;
         foreach ($prints as $print) {
-            $this->addPrint($print['id_print']);
+            $this->addPrint($print['id']);
         }
     }
 }

@@ -7,7 +7,7 @@ switch (post('op')) {
         $dbo->insert('em_templates', [
             'name' => post('name'),
             'id_module' => post('module'),
-            'id_smtp' => post('smtp'),
+            'id_account' => post('smtp'),
             'subject' => post('subject'),
         ]);
 
@@ -20,7 +20,7 @@ switch (post('op')) {
     case 'update':
         $dbo->update('em_templates', [
             'name' => post('name'),
-            'id_smtp' => post('smtp'),
+            'id_account' => post('smtp'),
             'icon' => post('icon'),
             'subject' => post('subject'),
             'reply_to' => post('reply_to'),
@@ -30,7 +30,7 @@ switch (post('op')) {
             'read_notify' => post('read_notify'),
         ], ['id' => $id_record]);
 
-        $dbo->sync('em_template_print', ['id_email' => $id_record], ['id_print' => (array) post('prints')]);
+        $dbo->sync('em_print_template', ['id_template' => $id_record], ['id_print' => (array) post('prints')]);
 
         flash()->info(tr('Informazioni salvate correttamente!'));
 

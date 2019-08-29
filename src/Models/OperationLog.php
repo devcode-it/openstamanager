@@ -10,11 +10,13 @@ class OperationLog extends Model
 
     protected static $info = [];
 
-    public static function setInfo($name, $value){
+    public static function setInfo($name, $value)
+    {
         self::$info[$name] = $value;
     }
 
-    public static function getInfo($name){
+    public static function getInfo($name)
+    {
         return self::$info[$name];
     }
 
@@ -26,7 +28,7 @@ class OperationLog extends Model
 
         $model = parent::build();
 
-        foreach (self::$info as $key => $value){
+        foreach (self::$info as $key => $value) {
             $model->{$key} = $value;
         }
 

@@ -26,7 +26,7 @@ include_once __DIR__.'/../../core.php';
 
             <div class="row">
                 <div class="col-md-8">
-                    {[ "type": "select", "label": "<?php echo tr('Indirizzo email'); ?>", "name": "smtp", "value": "$id_smtp$", "ajax-source": "smtp" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Indirizzo email'); ?>", "name": "smtp", "value": "$id_account$", "ajax-source": "smtp" ]}
                 </div>
 
                 <div class="col-md-4">
@@ -62,7 +62,7 @@ include_once __DIR__.'/../../core.php';
 <?php
 
 // Stampe
-$selected_prints = $dbo->fetchArray('SELECT id_print FROM em_template_print WHERE id_email = '.prepare($id_record));
+$selected_prints = $dbo->fetchArray('SELECT id_print FROM em_print_template WHERE id_template = '.prepare($id_record));
 $selected = array_column($selected_prints, 'id_print');
 
 echo '

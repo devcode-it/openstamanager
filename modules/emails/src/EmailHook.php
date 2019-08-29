@@ -3,15 +3,13 @@
 namespace Modules\Emails;
 
 use Hooks\Manager;
-use Models\Mail;
-use Models\MailAccount;
 use Notifications\EmailNotification;
 
 class EmailHook extends Manager
 {
     public function execute()
     {
-        $accounts = MailAccount::all();
+        $accounts = Account::all();
         $diff = date('Y-m-d', strtotime('-4 hours'));
 
         $list = [];

@@ -2,11 +2,11 @@
 
 include_once __DIR__.'/core.php';
 
-use Models\MailTemplate;
 use Models\Note;
 use Models\OperationLog;
 use Modules\Checklists\Check;
 use Modules\Checklists\Checklist;
+use Modules\Emails\Template;
 
 if (empty($structure) || empty($structure['enabled'])) {
     die(tr('Accesso negato'));
@@ -207,12 +207,11 @@ elseif (filter('op') == 'sort_checks') {
 
 // Inizializzazione email
 elseif (post('op') == 'send-email') {
-    $template = MailTemplate::find(post('template'));
+    $template = Template::find(post('template'));
 
-    $mail = \Models\Mail::build($user, $template, $id_record);
+    $mail = \Modules\Emails\Mail::build($user, $template, $id_record);
 
     // Rimozione allegati predefiniti
-    $mail->resetAttachments();
     $mail->resetPrints();
 
     // Destinatari
@@ -236,9 +235,9 @@ elseif (post('op') == 'send-email') {
     }
 
     // Allegati originali
-    $files = post('attachments');
+    $files = post('uploads');
     foreach ($files as $file) {
-        $mail->addAttachment($file);
+        $mail->addUpload($file);
     }
 
     $mail->save();

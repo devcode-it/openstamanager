@@ -5,7 +5,6 @@
  *
  * @since 2.3
  */
-
 use Models\OperationLog;
 
 /**

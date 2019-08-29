@@ -318,26 +318,27 @@ ALTER TABLE `mg_articoli` ADD `deleted_at` timestamp NULL DEFAULT NULL;
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `mg_articoli` WHERE 1=1 AND `deleted_at` IS NULL HAVING 2=2 ORDER BY `descrizione`' WHERE `name` = 'Articoli';
 
 -- Ampliamento hooks
-ALTER TABLE `zz_hooks` ADD `processing` BOOLEAN DEFAULT FALSE;
+ALTER TABLE `zz_hooks` ADD `processing_at` TIMESTAMP NULL DEFAULT NULL, ADD `processing_token` varchar(255);
 INSERT INTO `zz_hooks` (`id`, `name`, `class`, `frequency`, `id_module`) VALUES (NULL, 'Backup', 'Modules\\Backups\\BackupHook', '1 day', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Backup'));
 
 -- Miglioramento gestione email
 ALTER TABLE `zz_emails` RENAME TO `em_templates`;
 ALTER TABLE `zz_smtps` RENAME TO `em_accounts`;
-ALTER TABLE `zz_email_print` RENAME TO `em_template_print`;
+ALTER TABLE `zz_email_print` RENAME TO `em_print_template`;
 
 UPDATE zz_modules SET options = REPLACE(options, 'zz_emails', 'em_templates'), options2 = REPLACE(options2, 'zz_emails', 'em_templates');
 UPDATE zz_modules SET options = REPLACE(options, 'zz_smtps', 'em_accounts'), options2 = REPLACE(options2, 'zz_smtps', 'em_accounts');
 UPDATE zz_views SET query = REPLACE(query, 'zz_emails', 'em_templates');
 UPDATE zz_views SET query = REPLACE(query, 'zz_smtps', 'em_accounts');
 
-CREATE TABLE IF NOT EXISTS `em_campaigns` (
+CREATE TABLE IF NOT EXISTS `em_newsletters` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `id_template` int(11) NOT NULL,
   `state` varchar(25) NOT NULL,
   `subject` varchar(255) NOT NULL,
   `content` TEXT NOT NULL,
+  `notes` TEXT,
   `created_by` int(11) NOT NULL,
   `completed_at` TIMESTAMP NULL DEFAULT NULL,
   `deleted_at` TIMESTAMP NULL DEFAULT NULL,
@@ -350,40 +351,84 @@ CREATE TABLE IF NOT EXISTS `em_emails` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `id_account` int(11) NOT NULL,
   `id_template` int(11),
-  `id_campaign` int(11),
+  `id_newsletter` int(11),
   `id_record` int(11),
   `subject` varchar(255),
   `content` TEXT,
-  `receivers` TEXT,
-  `attachments` TEXT,
-  `prints` TEXT,
   `options` TEXT,
   `sent_at` TIMESTAMP NULL DEFAULT NULL,
   `failed_at` TIMESTAMP NULL DEFAULT NULL,
+  `processing_at` TIMESTAMP NULL DEFAULT NULL,
   `created_by` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   FOREIGN KEY (`id_account`) REFERENCES `em_accounts`(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`id_template`) REFERENCES `em_templates`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`id_campaign`) REFERENCES `em_campaigns`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`id_newsletter`) REFERENCES `em_newsletters`(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`created_by`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
-CREATE TABLE IF NOT EXISTS `em_campaign_anagrafica` (
-  `id_campaign` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `em_email_receiver` (
+   `id` int(11) NOT NULL AUTO_INCREMENT,
+   `id_email` int(11) NOT NULL,
+   `type` varchar(255) NOT NULL,
+   `address` varchar(255) NOT NULL,
+   PRIMARY KEY (`id`),
+   FOREIGN KEY (`id_email`) REFERENCES `em_emails`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `em_email_upload` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_email` int(11) NOT NULL,
+  `id_file` int(11) NOT NULL,
+  `name` varchar(255),
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`id_email`) REFERENCES `em_emails`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`id_file`) REFERENCES `zz_files`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `em_email_print` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_email` int(11) NOT NULL,
+  `id_print` int(11) NOT NULL,
+  `name` varchar(255),
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`id_email`) REFERENCES `em_emails`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`id_print`) REFERENCES `zz_prints`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `em_newsletter_anagrafica` (
+  `id_newsletter` int(11) NOT NULL,
   `id_anagrafica` int(11) NOT NULL,
   `id_email` int(11),
-  FOREIGN KEY (`id_campaign`) REFERENCES `em_campaigns`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`id_newsletter`) REFERENCES `em_newsletters`(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`id_anagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE CASCADE,
   FOREIGN KEY (`id_email`) REFERENCES `em_emails`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+-- Hook per la gestione della coda di invio
 ALTER TABLE `zz_hooks` CHANGE `id_module` `id_module` INT(11) NULL;
 INSERT INTO `zz_hooks` (`id`, `name`, `class`, `frequency`, `id_module`) VALUES (NULL, 'Email', 'Modules\\Emails\\EmailHook', '1 minute', NULL);
 
-INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Newsletter', 'Newsletter', 'newsletter', 'SELECT |select| FROM `em_campaigns` WHERE 1=1 AND deleted_at IS NULL HAVING 2=2', '', 'fa fa-newspaper-o ', '2.4.11', '2.4.11', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Gestione email'), '1', '1');
+-- Modulo Newsletter
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Newsletter', 'Newsletter', 'newsletter', 'SELECT |select| FROM `em_newsletters` WHERE 1=1 AND deleted_at IS NULL HAVING 2=2', '', 'fa fa-newspaper-o ', '2.4.11', '2.4.11', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Gestione email'), '1', '1');
 
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `default`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Newsletter'), 'id', 'id', 1, 0, 0, 1, 0),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Newsletter'), 'Nome', 'name', 2, 1, 0, 0, 1),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Newsletter'), 'Template', '(SELECT name FROM em_templates WHERE id = em_campaigns.id_template)', 3, 1, 0, 1, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Newsletter'), 'Template', '(SELECT name FROM em_templates WHERE id = em_newsletters.id_template)', 3, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Newsletter'), 'Completato', 'IF(completed_at IS NULL, ''No'', ''Si'')', 4, 1, 0, 1, 1);
+
+-- Modulo Stato email
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Stato email', 'Stato email', 'stato_email', 'SELECT |select| FROM `em_emails` WHERE 1=1 AND (`em_emails`.`created_at` BETWEEN ''|period_start|'' AND ''|period_end|'' OR `em_emails`.`sent_at` IS NULL) HAVING 2=2', '', 'fa fa-spinner ', '2.4.11', '2.4.11', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Gestione email'), '1', '1');
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `default`, `visible`, `format`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stato email'), 'id', 'id', 1, 0, 0, 1, 0, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stato email'), 'Oggetto', 'subject', 2, 1, 0, 0, 1, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stato email'), 'Contenuto', 'content', 3, 1, 0, 0, 1, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stato email'), 'Template', '(SELECT name FROM em_templates WHERE id = em_emails.id_template)', 3, 1, 0, 1, 1, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stato email'), 'Data invio', 'sent_at', 4, 1, 0, 1, 1, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stato email'), 'Ultimo tentativo', 'failed_at', 5, 1, 0, 1, 1, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stato email'), '_bg_', 'IF(sent_at IS NULL, IF(failed_at IS NULL, ''#CC9837'', ''#CC4D37''), ''#38CD4E'')', 6, 1, 0, 0, 0, 0);
+
+ALTER TABLE `em_templates` CHANGE `id_smtp` `id_account` INT(11) NOT NULL;
+ALTER TABLE `em_print_template` CHANGE `id_email` `id_template` INT(11) NOT NULL;

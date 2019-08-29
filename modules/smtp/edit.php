@@ -82,7 +82,7 @@ include_once __DIR__.'/../../core.php';
 <?php
 // Collegamenti diretti
 // Template email collegati a questo account
-$elementi = $dbo->fetchArray('SELECT `id`, `name` FROM `em_templates` WHERE `id_smtp` = '.prepare($id_record));
+$elementi = $dbo->fetchArray('SELECT `id`, `name` FROM `em_templates` WHERE `id_account` = '.prepare($id_record));
 
 if (!empty($elementi)) {
     echo '

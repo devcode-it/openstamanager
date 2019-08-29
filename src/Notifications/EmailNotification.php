@@ -2,7 +2,7 @@
 
 namespace Notifications;
 
-use Models\MailAccount;
+use Modules\Emails\Account;
 use PHPMailer\PHPMailer\PHPMailer;
 use Prints;
 use Uploads;
@@ -21,9 +21,9 @@ class EmailNotification extends PHPMailer implements NotificationInterface
         $this->CharSet = 'UTF-8';
 
         // Configurazione di base
-        $config = MailAccount::find($account);
+        $config = Account::find($account);
         if (empty($config)) {
-            $config = MailAccount::where('predefined', true)->first();
+            $config = Account::where('predefined', true)->first();
         }
 
         // Preparazione email
@@ -71,7 +71,7 @@ class EmailNotification extends PHPMailer implements NotificationInterface
         $this->WordWrap = 78;
     }
 
-    public static function build(\Models\Mail $mail, $exceptions = null)
+    public static function build(\Modules\Emails\Mail $mail, $exceptions = null)
     {
         $result = new self($mail->account->id, $exceptions);
 
@@ -153,7 +153,7 @@ class EmailNotification extends PHPMailer implements NotificationInterface
                 $this->mail->failed_at = date('Y-m-d H:i:s');
             }
 
-            $this->mail->save();
+            //$this->mail->save();
         }
 
         $this->SmtpClose();
@@ -193,32 +193,6 @@ class EmailNotification extends PHPMailer implements NotificationInterface
     }
 
     /**
-     * Restituisce gli allegati della notifica.
-     *
-     * @return array
-     */
-    public function getAttachments()
-    {
-        return $this->attachments;
-    }
-
-    /**
-     * Imposta gli allegati della notifica.
-     *
-     * @param array $values
-     */
-    public function setAttachments(array $values)
-    {
-        $this->attachments = [];
-
-        foreach ($values as $value) {
-            $path = is_array($value) ? $value['path'] : $value;
-            $name = is_array($value) ? $value['name'] : null;
-            $this->addAttachment($path, $name);
-        }
-    }
-
-    /**
      * Aggiunge un allegato del gestionale alla notifica.
      *
      * @param string $file_id
@@ -226,9 +200,8 @@ class EmailNotification extends PHPMailer implements NotificationInterface
     public function addUpload($file_id)
     {
         $attachment = database()->fetchOne('SELECT * FROM zz_files WHERE id = '.prepare($file_id));
-        $this->addAttachment(DOCROOT.'/'.Uploads::getDirectory($attachment['id_module'], $attachment['id_plugin']).'/'.$attachment['filename']);
 
-        $this->logs['attachments'][] = $attachment['id'];
+        $this->addAttachment(DOCROOT.'/'.Uploads::getDirectory($attachment['id_module'], $attachment['id_plugin']).'/'.$attachment['filename']);
     }
 
     /**
@@ -253,8 +226,6 @@ class EmailNotification extends PHPMailer implements NotificationInterface
         $name = $name ?: $info['name'];
 
         $this->addAttachment($info['path'], $name);
-
-        $this->logs['prints'][] = $print['id'];
     }
 
     /**

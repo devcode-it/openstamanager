@@ -1,6 +1,6 @@
 <?php
 
-use Models\Mail;
+use Modules\Emails\Mail;
 
 include_once __DIR__.'/../../core.php';
 

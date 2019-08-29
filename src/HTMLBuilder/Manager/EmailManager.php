@@ -2,9 +2,7 @@
 
 namespace HTMLBuilder\Manager;
 
-use Models\Mail;
-use Prints;
-use Translator;
+use Modules\Emails\Mail;
 
 /**
  * Gestione allegati.
@@ -49,28 +47,24 @@ class EmailManager implements ManagerInterface
         <ul>';
 
         foreach ($emails as $operation) {
-            $receivers = array_column($operation->receivers, 'email');
+            $receivers = $operation->receivers->pluck('address')->toArray();
 
             $prints = [];
             $list = $operation->prints;
             foreach ($list as $print) {
-                $print = Prints::get($print['id']);
-
                 $prints[] = $print['title'];
             }
 
-            $attachments = [];
-            $list = $operation->attachments;
-            foreach ($list as $attachment) {
-                $attachment = $database->selectOne('zz_files', '*', ['id' => $attachment]);
-
-                $attachments[] = $attachment['name'];
+            $uploads = [];
+            $list = $operation->uploads;
+            foreach ($list as $upload) {
+                $uploads[] = $upload['name'];
             }
 
             $sent = !empty($operation['sent_at']) ? tr('inviata il _DATE_ alle _HOUR_', [
                 '_DATE_' => dateFormat($operation['sent_at']),
                 '_HOUR_' => timeFormat($operation['sent_at']),
-            ]) : tr('in coda di invio') ;
+            ]) : tr('in coda di invio');
 
             $result .= '
             <li>
@@ -86,9 +80,9 @@ class EmailManager implements ManagerInterface
                     <li><b>'.tr('Stampe').'</b>: '.implode(', ', $prints).'.</li>';
             }
 
-            if (!empty($attachments)) {
+            if (!empty($uploads)) {
                 $result .= '
-                    <li><b>'.tr('Allegati').'</b>: '.implode(', ', $attachments).'.</li>';
+                    <li><b>'.tr('Allegati').'</b>: '.implode(', ', $uploads).'.</li>';
             }
 
             $result .= '

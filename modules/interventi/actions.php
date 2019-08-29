@@ -2,10 +2,10 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Models\Mail;
-use Models\MailTemplate;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
+use Modules\Emails\Mail;
+use Modules\Emails\Template;
 use Modules\Interventi\Components\Articolo;
 use Modules\Interventi\Components\Riga;
 use Modules\Interventi\Components\Sconto;
@@ -51,7 +51,7 @@ switch (post('op')) {
         // Notifica chiusura intervento
         $stato = $dbo->selectOne('in_statiintervento', '*', ['idstatointervento' => post('idstatointervento')]);
         if (!empty($stato['notifica']) && !empty($stato['destinatari']) && $stato['idstatointervento'] != $record['idstatointervento']) {
-            $template = MailTemplate::find($stato['id_email']);
+            $template = Template::find($stato['id_email']);
 
             $mail = Mail::build(auth()->getUser(), $template, $id_record);
             $mail->addReceiver($stato['destinatari']);
@@ -477,7 +477,7 @@ switch (post('op')) {
                     $stato = $dbo->selectOne('in_statiintervento', '*', ['descrizione' => 'Completato']);
                     // Notifica chiusura intervento
                     if (!empty($stato['notifica']) && !empty($stato['destinatari'])) {
-                        $template = MailTemplate::find($stato['id_email']);
+                        $template = Template::find($stato['id_email']);
 
                         $mail = Mail::build(auth()->getUser(), $template, $id_record);
                         $mail->addReceiver($stato['destinatari']);
@@ -521,7 +521,7 @@ switch (post('op')) {
 
         // Notifica rimozione dell' intervento al tecnico
         if (!empty($tecnico['email'])) {
-            $template = MailTemplate::get('Notifica rimozione intervento');
+            $template = Template::get('Notifica rimozione intervento');
 
             $mail = Mail::build(auth()->getUser(), $template, $id_record);
             $mail->addReceiver($tecnico['email']);

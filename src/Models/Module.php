@@ -123,9 +123,9 @@ class Module extends Model
         return $this->hasMany(PrintTemplate::class, 'id_module');
     }
 
-    public function mailTemplates()
+    public function Templates()
     {
-        return $this->hasMany(MailTemplate::class, 'id_module');
+        return $this->hasMany(Template::class, 'id_module');
     }
 
     public function views()

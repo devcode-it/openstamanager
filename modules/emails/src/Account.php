@@ -1,12 +1,12 @@
 <?php
 
-namespace Models;
+namespace Modules\Emails;
 
 use Common\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Traits\StoreTrait;
 
-class MailAccount extends Model
+class Account extends Model
 {
     use StoreTrait;
     use SoftDeletes;
@@ -17,6 +17,6 @@ class MailAccount extends Model
 
     public function templates()
     {
-        return $this->hasMany(MailTemplate::class, 'id_smtp');
+        return $this->hasMany(Template::class, 'id_account');
     }
 }

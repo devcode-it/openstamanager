@@ -82,7 +82,7 @@ echo '
         <div class="panel-body">
             <div class="row">
                 <div class="col-md-9">
-                    {[ "type": "select", "label": "'.tr('Destinatari').'", "name": "receivers[]", "ajax-source": "anagrafiche", "multiple": 1 ]}
+                    {[ "type": "select", "label": "'.tr('Destinatari').'", "name": "receivers[]", "ajax-source": "anagrafiche_newsletter", "multiple": 1 ]}
                 </div>
                 
                 <div class="col-md-3 text-right">
@@ -116,19 +116,19 @@ if (!$anagrafiche->isEmpty()) {
         }
 
         echo '
-                        <tr>
-                            <td>'.Modules::link('Anagrafiche', $anagrafica->id, $anagrafica->ragione_sociale).'</td>
-                            <td class="text-center">'.$data.'</td>
-                            <td class="text-center">
-                                <a class="btn btn-danger ask btn-sm" data-backto="record-edit" data-op="remove_receiver" data-id="'.$anagrafica->id.'">
-                                    <i class="fa fa-trash"></i>
-                                </a>
-                            </td>
-                        </tr>';
+                    <tr>
+                        <td>'.Modules::link('Anagrafiche', $anagrafica->id, $anagrafica->ragione_sociale).'</td>
+                        <td class="text-center">'.$data.'</td>
+                        <td class="text-center">
+                            <a class="btn btn-danger ask btn-sm" data-backto="record-edit" data-op="remove_receiver" data-id="'.$anagrafica->id.'">
+                                <i class="fa fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>';
     }
 
     echo '
-                    </tbody>
+                </tbody>
             </table>';
 } else {
     echo '

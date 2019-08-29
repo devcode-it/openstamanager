@@ -53,7 +53,7 @@ if (!$is_cliente) {
 				</div>
 
 				<div class="row">
-				
+
 					<div class="col-md-4">
 							{[ "type": "text", "label": "<?php echo tr('Cognome'); ?>", "name": "cognome", "required": 0, "value": "$cognome$", "extra": "" ]}
 					</div>
@@ -86,8 +86,6 @@ if (!$is_cliente) {
 				</div>
 				<?php
 } ?>
-
-
 
 				<div class="row">
 					<div class="col-md-2">
@@ -498,6 +496,12 @@ echo '
 						{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$" ]}
 					</div>
 				</div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        {[ "type": "checkbox", "label": "<?php echo tr('Opt-out newsletter'); ?>", "name": "disable_newsletter", "value": "<?php echo empty($record['enable_newsletter']); ?>" ]}
+                    </div>
+                </div>
 			</div>
 		</div>
 	</fieldset>

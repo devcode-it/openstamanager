@@ -31,6 +31,9 @@ switch (post('op')) {
         $sede->idzona = post('idzona');
         $sede->email = post('email');
 
+        $opt_out_newsletter = post('disable_newsletter');
+        $sede->enable_newsletter = empty($opt_out_newsletter);
+
         $sede->save();
 
         // Informazioni sull'anagrafica

@@ -72,7 +72,7 @@ class Newsletter extends Model
 
     public function emails()
     {
-        return $this->hasMany(Mail::class, 'id_newsletter');
+        return $this->belongsToMany(Mail::class, 'em_newsletter_anagrafica', 'id_newsletter', 'id_email')->withPivot('id_anagrafica');
     }
 
     public function account()

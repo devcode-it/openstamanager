@@ -433,3 +433,4 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ALTER TABLE `em_templates` CHANGE `id_smtp` `id_account` INT(11) NOT NULL;
 ALTER TABLE `em_print_template` CHANGE `id_email` `id_template` INT(11) NOT NULL;
 ALTER TABLE `em_accounts` ADD `timeout` INT(11) NOT NULL DEFAULT 1000;
+ALTER TABLE `an_anagrafiche` ADD `enable_newsletter` BOOLEAN DEFAULT TRUE;

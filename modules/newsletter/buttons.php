@@ -8,6 +8,6 @@ if ($newsletter->state == 'DEV') {
 } elseif ($newsletter->state == 'WAIT') {
     echo '
 <button type="button" class="btn btn-danger ask" data-msg="'.tr('Svuotare la coda di invio della newsletter?').'" data-op="block" data-button="'.tr('Svuota').'" data-class="btn btn-lg btn-warning">
-    <i class="fa fa-envelope"></i> '.tr('Svuota coda di invio').'
+    <i class="fa fa-envelope"></i> '.tr('Svuota coda newsletter').'
 </button>';
 }

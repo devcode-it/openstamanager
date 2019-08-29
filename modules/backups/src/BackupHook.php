@@ -27,7 +27,7 @@ class BackupHook extends Manager
     public function response()
     {
         $show = boolval(setting('Backup automatico'));
-        $message = $show && !Backup::isDailyComplete() ? tr('Backup in corso...') : tr('Backup completato!');
+        $message = $show && !Backup::isDailyComplete() ? tr('Backup in corso...') : tr('Backup automatico completato!');
 
         return [
             'icon' => 'fa fa-file-o text-success',

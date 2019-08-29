@@ -321,7 +321,7 @@ if (!empty($righe)) {
                 {[ "type": "select", "name": "conto['.$key.']", "ajax-source": "conti-acquisti", "required": 1, "placeholder": "Conto acquisti" ]}
             </td>
             <td>
-                {[ "type": "select", "name": "articoli['.$key.']", "ajax-source": "articoli", "class": "", "icon-after": "add|'.Modules::get('Articoli')['id'].'|codice='.htmlentities($riga['CodiceArticolo'][0]['CodiceValore']).'&descrizione='.htmlentities($riga['Descrizione']).'" ]}
+                {[ "type": "select", "name": "articoli['.$key.']", "ajax-source": "articoli", "icon-after": "add|'.Modules::get('Articoli')['id'].'|codice='.htmlentities($riga['CodiceArticolo'][0]['CodiceValore']).'&descrizione='.htmlentities($riga['Descrizione']).'" ]}
             </td>
         </tr>';
     }

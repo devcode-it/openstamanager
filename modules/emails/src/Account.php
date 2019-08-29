@@ -19,4 +19,9 @@ class Account extends Model
     {
         return $this->hasMany(Template::class, 'id_account');
     }
+
+    public function emails()
+    {
+        return $this->hasMany(Mail::class, 'id_account');
+    }
 }

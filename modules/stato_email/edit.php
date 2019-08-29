@@ -10,17 +10,21 @@ echo '
     </div>
     
     <div class="panel-body">
+        
         <div class="row">
             <div class="col-md-4">
-                {[ "type": "select", "label": "'.tr('Template email').'", "name": "id_template", "values": "query=SELECT id, name AS descrizione FROM em_templates", "required": 1, "value": "$id_template$", "disabled": 1 ]}
+                <h4>'.tr('Template').'</h4>
+                '.$mail->template->name.'
             </div>
 
             <div class="col-md-4">
-                {[ "type": "span", "label": "'.tr('Data di invio').'", "name": "sent_at", "value": "$sent_at$" ]}
+                <h4>'.tr('Data di invio').'</h4>
+                '.timestampFormat($mail->sent_at).'
             </div>
             
             <div class="col-md-4">
-                {[ "type": "span", "label": "'.tr('Ultimo tentativo').'", "name": "failed_at", "value": "$failed_at$" ]}
+                <h4>'.tr('Ultimo tentativo').'</h4>
+                '.timestampFormat($mail->failed_at).'
             </div>
         </div>
 

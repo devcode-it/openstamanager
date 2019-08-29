@@ -364,6 +364,153 @@ class FatturaElettronica
         return $this->xml;
     }
 
+    public static function controllaFattura(Fattura $fattura)
+    {
+        $database = database();
+        $errors = [];
+
+        // Controlli sulla fattura stessa
+        if ($fattura->stato->descrizione != 'Emessa') {
+            $missing = [
+                'state' => tr('Stato ("Emessa")'),
+            ];
+        }
+
+        if (!empty($missing)) {
+            $link = Modules::link('Fatture di vendita', $fattura->id);
+            $errors[] = [
+                'link' => $link,
+                'name' => tr('Fattura'),
+                'errors' => $missing,
+            ];
+        }
+
+        // Natura obbligatoria per iva con esenzione
+        $iva = $database->fetchArray('SELECT * FROM `co_iva` WHERE `id` IN (SELECT idiva FROM co_righe_documenti WHERE iddocumento = '.prepare($fattura->id).') AND esente = 1');
+        $fields = [
+            'codice_natura_fe' => 'Natura IVA',
+        ];
+
+        foreach ($iva as $data) {
+            $missing = [];
+            if (!empty($data)) {
+                foreach ($fields as $key => $name) {
+                    if (empty($data[$key])) {
+                        $missing[] = $name;
+                    }
+                }
+            }
+
+            if (!empty($missing)) {
+                $link = Modules::link('IVA', $data['id']);
+                $errors[] = [
+                    'link' => $link,
+                    'name' => tr('IVA _DESC_', [
+                        '_DESC_' => $data['descrizione'],
+                    ]),
+                    'errors' => $missing,
+                ];
+            }
+        }
+
+        // Campi obbligatori per il pagamento
+        $data = $fattura->pagamento;
+        $fields = [
+            'codice_modalita_pagamento_fe' => 'Codice modalità pagamento FE',
+        ];
+
+        $missing = [];
+        if (!empty($data)) {
+            foreach ($fields as $key => $name) {
+                if (empty($data[$key])) {
+                    $missing[] = $name;
+                }
+            }
+        }
+
+        if (!empty($missing)) {
+            $link = Modules::link('Pagamenti', $data['id']);
+            $errors[] = [
+                'link' => $link,
+                'name' => tr('Pagamento'),
+                'errors' => $missing,
+            ];
+        }
+
+        // Campi obbligatori per l'anagrafica Azienda
+        $data = FatturaElettronica::getAzienda();
+        $fields = [
+            'piva' => 'Partita IVA',
+            // 'codice_fiscale' => 'Codice Fiscale',
+            'citta' => 'Città',
+            'indirizzo' => 'Indirizzo',
+            'cap' => 'C.A.P.',
+            'nazione' => 'Nazione',
+        ];
+
+        $missing = [];
+        if (!empty($data)) {
+            foreach ($fields as $key => $name) {
+                if (empty($data[$key])) {
+                    $missing[] = $name;
+                }
+            }
+        }
+
+        if (!empty($missing)) {
+            $link = Modules::link('Anagrafiche', $data['id']);
+            $errors[] = [
+                'link' => $link,
+                'name' => tr('Anagrafica Azienda'),
+                'errors' => $missing,
+            ];
+        }
+
+        // Campi obbligatori per l'anagrafica Cliente
+        $data = $fattura->anagrafica;
+        $fields = [
+            // 'piva' => 'Partita IVA',
+            // 'codice_fiscale' => 'Codice Fiscale',
+            'citta' => 'Città',
+            'indirizzo' => 'Indirizzo',
+            'cap' => 'C.A.P.',
+            'nazione' => 'Nazione',
+        ];
+
+        // se privato/pa o azienda
+        if ($data['tipo'] == 'Privato' or $data['tipo'] == 'Ente pubblico') {
+            // se privato/pa chiedo obbligatoriamente codice fiscale
+            $fields['codice_fiscale'] = 'Codice Fiscale';
+            // se pa chiedo codice unico ufficio
+            $fields['codice_destinatario'] = ($data['tipo'] == 'Ente pubblico' && empty($data['codice_destinatario'])) ? 'Codice unico ufficio' : '';
+        } else {
+            // se azienda chiedo partita iva
+            $fields['piva'] = 'Partita IVA';
+            // se italiana e non ho impostato ne il codice destinatario ne indirizzo PEC chiedo la compilazione di almeno uno dei due
+            $fields['codice_destinatario'] = (empty($data['codice_destinatario']) and empty($data['pec']) && intval($data['nazione'] == 'IT')) ? 'Codice destinatario o indirizzo PEC' : '';
+        }
+
+        $missing = [];
+        if (!empty($data)) {
+            foreach ($fields as $key => $name) {
+                if (empty($data[$key])) {
+                    $missing[] = $name;
+                }
+            }
+        }
+
+        if (!empty($missing)) {
+            $link = Modules::link('Anagrafiche', $data['id']);
+            $errors[] = [
+                'link' => $link,
+                'name' => tr('Anagrafica Cliente'),
+                'errors' => $missing,
+            ];
+        }
+
+        return $errors;
+    }
+
     /**
      * Restituisce l'array responsabile per la generazione del tag DatiTrasmission.
      *

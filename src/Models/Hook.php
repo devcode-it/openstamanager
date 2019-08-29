@@ -88,7 +88,7 @@ class Hook extends Model
         $date = $date->add($interval);
 
         $now = new Carbon();
-        $result |= $date->greaterThan($now);
+        $result |= $date->lessThan($now);
 
         $token = null;
         if ($result) {

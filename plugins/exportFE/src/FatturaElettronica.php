@@ -923,6 +923,10 @@ class FatturaElettronica
 
         $result = [];
         foreach ($lista as $element) {
+            if (empty($element['id_documento'])) {
+                continue;
+            }
+
             $dati = [];
 
             foreach ($element['riferimento_linea'] as $linea) {

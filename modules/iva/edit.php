@@ -52,11 +52,11 @@ if ($res) {
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "number", "label": "<?php echo tr('Percentuale'); ?>", "name": "percentuale", "id": "percentuale-edit", "value": "$percentuale$", "icon-after": "<i class=\"fa fa-percent\"></i>", "disabled": <?php echo intval($record['esente']); ?>, "readonly": "<?php echo $is_readonly; ?>", "extra": "<?php echo $attr; ?>" ]}
+					{[ "type": "number", "label": "<?php echo tr('Percentuale'); ?>", "name": "percentuale", "id": "percentuale-edit", "value": "$percentuale$", "icon-after": "<i class=\"fa fa-percent\"></i>", "disabled": <?php echo intval($record['esente']); ?>, "readonly": "<?php echo $is_readonly; ?>", "extra": "<?php echo $attr; ?>", "max-value": "100" ]}
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "number", "label": "<?php echo tr('Indetraibile'); ?>", "name": "indetraibile", "value": "$indetraibile$", "icon-after": "<i class=\"fa fa-percent\"></i>", "readonly": "<?php echo $is_readonly; ?>",  "extra": "<?php echo $attr; ?>" ]}
+					{[ "type": "number", "label": "<?php echo tr('Indetraibile'); ?>", "name": "indetraibile", "value": "$indetraibile$", "icon-after": "<i class=\"fa fa-percent\"></i>", "readonly": "<?php echo $is_readonly; ?>",  "extra": "<?php echo $attr; ?>", "max-value": "100" ]}
 				</div>
 			</div>
 

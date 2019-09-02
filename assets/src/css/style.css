@@ -885,3 +885,7 @@ input.small-width {
     max-width: 100px;
     max-height: 100px;
 }
+
+.has-feedback .form-control{
+    padding-right: 6px;
+}

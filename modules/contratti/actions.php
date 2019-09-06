@@ -309,6 +309,7 @@ switch (post('op')) {
                     unset($rs[$i]['id']);
                     unset($rs[$i]['created_at']);
                     unset($rs[$i]['updated_at']);
+                    unset($rs[$i]['qta_evasa']);
                     $rs[$i]['idcontratto'] = $new_idcontratto;
 
                     $dbo->insert('co_righe_contratti', $rs);

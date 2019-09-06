@@ -38,6 +38,7 @@ abstract class CachedManager extends Manager
             $cache = database()->selectOne('zz_hook_cache', '*', ['hook_id' => $hook->id], ['id' => 'DESC']);
 
             // Interpretazione della cache
+            if (isset($cache['results']))
             $cache['results'] = json_decode($cache['results'], true);
 
             self::$cache = $cache;

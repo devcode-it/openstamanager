@@ -84,7 +84,6 @@ switch (post('op')) {
         }
 
         flash()->info(tr('Preventivo duplicato correttamente!'));
-
     break;
 
     case 'addintervento':

@@ -105,10 +105,10 @@ if (!empty($rsi)) {
                     <th width="230">'.tr('Tipo attività').'</th>
                     <th width="120">'.tr('Ore').'</th>
                     <th width="120">'.tr('Km').'</th>
-                    <th width="120">'.tr('Costo orario').'</th>
+                    <th width="120">'.tr('Costo ore').'</th>
                     <th width="120">'.tr('Costo km').'</th>
                     <th width="120">'.tr('Diritto ch.').'</th>
-                    <th width="120">'.tr('Costo addebitato').'</th>
+                    <th width="120">'.tr('Prezzo ore').'</th>
                     <th width="120">'.tr('Prezzo km').'</th>
                     <th width="120">'.tr('Diritto ch.').'</th>
                 </tr>';
@@ -215,9 +215,9 @@ if (!empty($rsi)) {
         $totale_ore_interventi += $int['ore'];
         $totale_ore_completate += !empty($int['completato']) ? $int['ore'] : 0;
         $totale_km += $int['km'];
-        $totale_costo += $int['totale_costo'];
-        $totale_addebito += $int['totale_addebito'];
-        $totale += $int['totale_scontato'];
+        $totale_costo += $intervento->spesa;
+        $totale_addebito += $intervento->imponibile;
+        $totale += $intervento->totale_imponibile;
     }
 
     // Totali

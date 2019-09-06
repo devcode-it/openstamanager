@@ -15,7 +15,7 @@ class EmailHook extends Manager
 
     public function needsExecution()
     {
-        $diff = date('Y-m-d', strtotime('-4 hours'));
+        $diff = date('Y-m-d H:i:s', strtotime('-4 hours'));
         $failed = function ($query) use ($diff) {
             $query->whereDate('failed_at', '<', $diff)
                 ->orWhereNull('failed_at');
@@ -30,7 +30,7 @@ class EmailHook extends Manager
 
     public function execute()
     {
-        $diff = date('Y-m-d', strtotime('-4 hours'));
+        $diff = date('Y-m-d H:i:s', strtotime('-4 hours'));
         $failed = function ($query) use ($diff) {
             $query->whereDate('failed_at', '<', $diff)
                 ->orWhereNull('failed_at');

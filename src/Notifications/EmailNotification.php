@@ -93,7 +93,7 @@ class EmailNotification extends PHPMailer implements NotificationInterface
         // Destinatari
         $receivers = $mail->receivers;
         foreach ($receivers as $receiver) {
-            $this->addReceiver($receiver['email'], $receiver['type']);
+            $this->addReceiver($receiver['address'], $receiver['type']);
         }
 
         // Allegati

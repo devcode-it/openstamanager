@@ -596,7 +596,7 @@ class FatturaElettronica
             $result['CodiceFiscale'] = preg_replace('/\s+/', '', $anagrafica['codice_fiscale']);
 
             //Rimuovo eventuali idicazioni relative alla nazione
-            $result['CodiceFiscale'] = preg_replace($anagrafica->nazione->iso2, '', $result['CodiceFiscale'], 2);
+            $result['CodiceFiscale'] = str_replace($anagrafica->nazione->iso2, '', $result['CodiceFiscale']);
         }
 
         if (!empty($anagrafica['nome']) or !empty($anagrafica['cognome'])) {

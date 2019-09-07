@@ -137,6 +137,8 @@ switch (post('op')) {
         $new->qta = 0;
         $new->save();
 
+        $id_record = $new->id;
+
         flash()->info(tr('Articolo duplicato correttamente!'));
 
     break;

@@ -70,10 +70,7 @@ class Articolo extends Model
         return true;
     }
 
-    public function articoli()
-    {
-        return $this->hasMany(ArticoloIntervento::class, 'idarticolo');
-    }
+    // Attributi Eloquent
 
     public function getImageAttribute()
     {
@@ -102,4 +99,12 @@ class Articolo extends Model
     {
         return 'Articoli';
     }
+
+    // Relazioni Eloquent
+
+    public function articoli()
+    {
+        return $this->hasMany(ArticoloIntervento::class, 'idarticolo');
+    }
+
 }

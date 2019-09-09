@@ -16,7 +16,7 @@ echo '
 // Quantità
 echo '
         <div class="col-md-4">
-            {[ "type": "number", "label": "'.tr('Q.tà').'", "name": "qta", "required": 1, "value": "'.$result['qta'].'", "decimals": "qta"'.(isset($result['max_qta']) ? ', "icon-after": "/ '.numberFormat($result['max_qta'], 'qta').'", "help": "'.tr("Quantità dell'elemento / quantità totale massima").'"' : '').' ]}
+            {[ "type": "number", "label": "'.tr('Q.tà').'", "name": "qta", "required": 1, "value": "'.$result['qta'].'", "decimals": "qta"'.(isset($result['max_qta']) ? ', "icon-after": "<span class=\"tip\" title=\"'.tr("L'elemento è collegato a un documento: la quantità massima ammessa è relativa allo stato di evasione dell'elemento nel documento di osrigine (quantità dell'elemento / quantità massima ammessa)").'\">/ '.numberFormat($result['max_qta'], 'qta').' <i class=\"fa fa-question-circle-o\"></i></span>"' : '').' ]}
         </div>';
 
 // Unità di misura

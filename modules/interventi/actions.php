@@ -112,7 +112,7 @@ switch (post('op')) {
                     'idtipointervento' => $idtipointervento,
                     'data_richiesta' => $data_richiesta,
                     'richiesta' => $richiesta,
-                    'idsede_destinazione' => $idsede_destinazione ?: 0,
+                    'idsede' => $idsede_destinazione ?: 0,
                 ], ['idcontratto' => $idcontratto, 'id' => $idcontratto_riga]);
 
                 //copio le righe dal promemoria all'intervento

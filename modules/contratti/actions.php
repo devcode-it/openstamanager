@@ -70,28 +70,14 @@ switch (post('op')) {
 
             // Salvataggio costi attività unitari del contratto
             foreach (post('costo_ore') as $id_tipo => $valore) {
-                $rs = $dbo->fetchArray('SELECT * FROM co_contratti_tipiintervento WHERE idcontratto='.prepare($id_record).' AND idtipointervento='.prepare($id_tipo));
-
-                // Se non esiste il record lo inserisco...
-                if (sizeof($rs) == 0) {
-                    // Se almeno un valore è diverso da 0 inserisco l'importo...
-                    if (post('costo_ore')[$id_tipo] != 0 || post('costo_km')[$id_tipo] != 0 || post('costo_dirittochiamata')[$id_tipo] != 0) {
-                        $dbo->query('INSERT INTO co_contratti_tipiintervento(idcontratto, idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico) VALUES('.prepare($id_record).', '.prepare($id_tipo).', '.prepare(post('costo_ore')[$id_tipo]).', '.prepare(post('costo_km')[$id_tipo]).', '.prepare(post('costo_dirittochiamata')[$id_tipo]).', '.prepare(post('costo_ore_tecnico')[$id_tipo]).', '.prepare(post('costo_km_tecnico')[$id_tipo]).', '.prepare(post('costo_dirittochiamata_tecnico')[$id_tipo]).')');
-                    }
-                }
-
-                // ...altrimenti...
-                else {
-                    // Aggiorno il nuovo valore se è diverso da 0...
-                    if (post('costo_ore')[$id_tipo] != 0 || post('costo_km')[$id_tipo] != 0 || post('costo_dirittochiamata')[$id_tipo] != 0) {
-                        $dbo->query('UPDATE co_contratti_tipiintervento SET costo_ore='.prepare(post('costo_ore')[$id_tipo]).', costo_km='.prepare(post('costo_km')[$id_tipo]).', costo_dirittochiamata='.prepare(post('costo_dirittochiamata')[$id_tipo]).', costo_ore_tecnico='.prepare(post('costo_ore_tecnico')[$id_tipo]).', costo_km_tecnico='.prepare(post('costo_km_tecnico')[$id_tipo]).', costo_dirittochiamata_tecnico='.prepare(post('costo_dirittochiamata_tecnico')[$id_tipo]).' WHERE idcontratto='.prepare($id_record).' AND idtipointervento='.prepare($id_tipo));
-                    }
-
-                    // ...altrimenti cancello l'eventuale riga
-                    else {
-                        $dbo->query('DELETE FROM co_contratti_tipiintervento WHERE idcontratto='.prepare($id_record).' AND idtipointervento='.prepare($id_tipo));
-                    }
-                }
+                $dbo->update('co_contratti_tipiintervento', [
+                    'costo_ore' => post('costo_ore')[$id_tipo],
+                    'costo_km' => post('costo_km')[$id_tipo],
+                    'costo_dirittochiamata' => post('costo_dirittochiamata')[$id_tipo],
+                ], [
+                    'idcontratto' => $id_record,
+                    'idtipointervento' => $id_tipo,
+                ]);
             }
 
             flash()->info(tr('Contratto modificato correttamente!'));

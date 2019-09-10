@@ -55,9 +55,7 @@ if (!empty($query)) {
     $results['recordsFiltered'] = $data['count'];
 
     // SOMME
-    if ($draw_numer == 1) {
-        $results['summable'] = Util\Query::getSums($structure, $search);
-    }
+    $results['summable'] = Util\Query::getSums($structure, $search);
 
     // Allineamento delle righe
     $align = [];

@@ -78,6 +78,57 @@ class Preventivo extends Document
         return $model;
     }
 
+    // Attributi Eloquent
+
+    public function getOreProgrammateAttribute()
+    {
+        if (!isset($this->info['ore_programmate'])) {
+            $sessioni = collect();
+
+            $interventi = $this->interventi()->whereHas('stato', function ($query) {
+                $query->where('completato', '=', 0);
+            })->get();
+
+            foreach ($interventi as $intervento) {
+                $sessioni = $sessioni->merge($intervento->sessioni);
+            }
+
+            $this->info['ore_programmate'] = $sessioni->sum('ore');
+        }
+
+        return $this->info['ore_programmate'];
+    }
+
+    public function getOreCompletateAttribute()
+    {
+        if (!isset($this->info['ore_completate'])) {
+            $sessioni = collect();
+
+            $interventi = $this->interventi()->whereHas('stato', function ($query) {
+                $query->where('completato', '=', 1);
+            })->get();
+
+            foreach ($interventi as $intervento) {
+                $sessioni = $sessioni->merge($intervento->sessioni);
+            }
+
+            $this->info['ore_completate'] = $sessioni->sum('ore');
+        }
+
+        return $this->info['ore_completate'];
+    }
+
+    public function getOrePrevisteAttribute()
+    {
+        if (!isset($this->info['ore_previste'])) {
+            $sessioni = $this->getRighe()->where('um', 'ore');
+
+            $this->info['ore_previste'] = $sessioni->sum('qta');
+        }
+
+        return $this->info['ore_previste'];
+    }
+
     /**
      * Restituisce il nome del modulo a cui l'oggetto è collegato.
      *

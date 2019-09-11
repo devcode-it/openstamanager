@@ -56,7 +56,7 @@ if (!empty($movimenti)) {
         } else {
             $movimento['progressivo_finale'] = $movimenti[$i - 1]['progressivo_iniziale'];
         }
-        $movimento['progressivo_iniziale'] = $movimento['progressivo_finale'] - intval($movimento['qta']);
+        $movimento['progressivo_iniziale'] = $movimento['progressivo_finale'] - floatval($movimento['qta']);
 
         $movimenti[$i]['progressivo_iniziale'] = $movimento['progressivo_iniziale'];
         $movimenti[$i]['progressivo_finale'] = $movimento['progressivo_finale'];

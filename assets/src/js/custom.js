@@ -11,6 +11,7 @@ $(window).on("load", function () {
 
 // Fix multi-modal
 $(document).on('hidden.bs.modal', '.modal', function () {
+    $(this).remove();
     $('.modal:visible').length && $(document.body).addClass('modal-open');
 });
 

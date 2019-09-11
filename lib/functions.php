@@ -220,7 +220,6 @@ function translateTemplate()
 
         OperationLog::build($op);
     }
-    //dd("afssa", $op, $_POST);exit();
 
     // Retrocompatibilità
     if (!empty($_SESSION['infos'])) {

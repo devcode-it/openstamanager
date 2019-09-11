@@ -80,53 +80,20 @@ class Preventivo extends Document
 
     // Attributi Eloquent
 
-    public function getOreProgrammateAttribute()
+    public function getOreInterventiAttribute()
     {
-        if (!isset($this->info['ore_programmate'])) {
+        if (!isset($this->info['ore_interventi'])) {
             $sessioni = collect();
 
-            $interventi = $this->interventi()->whereHas('stato', function ($query) {
-                $query->where('completato', '=', 0);
-            })->get();
-
+            $interventi = $this->interventi;
             foreach ($interventi as $intervento) {
                 $sessioni = $sessioni->merge($intervento->sessioni);
             }
 
-            $this->info['ore_programmate'] = $sessioni->sum('ore');
+            $this->info['ore_interventi'] = $sessioni->sum('ore');
         }
 
-        return $this->info['ore_programmate'];
-    }
-
-    public function getOreCompletateAttribute()
-    {
-        if (!isset($this->info['ore_completate'])) {
-            $sessioni = collect();
-
-            $interventi = $this->interventi()->whereHas('stato', function ($query) {
-                $query->where('completato', '=', 1);
-            })->get();
-
-            foreach ($interventi as $intervento) {
-                $sessioni = $sessioni->merge($intervento->sessioni);
-            }
-
-            $this->info['ore_completate'] = $sessioni->sum('ore');
-        }
-
-        return $this->info['ore_completate'];
-    }
-
-    public function getOrePrevisteAttribute()
-    {
-        if (!isset($this->info['ore_previste'])) {
-            $sessioni = $this->getRighe()->where('um', 'ore');
-
-            $this->info['ore_previste'] = $sessioni->sum('qta');
-        }
-
-        return $this->info['ore_previste'];
+        return $this->info['ore_interventi'];
     }
 
     /**

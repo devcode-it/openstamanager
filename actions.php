@@ -241,8 +241,9 @@ elseif (post('op') == 'send-email') {
     }
 
     $mail->save();
-
     OperationLog::setInfo('id_email', $mail->id);
+
+    flash()->info(tr('Email aggiunta correttamente alla coda di invio!'));
 }
 
 // Inclusione di eventuale plugin personalizzato

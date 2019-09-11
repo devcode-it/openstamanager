@@ -106,5 +106,4 @@ class Articolo extends Model
     {
         return $this->hasMany(ArticoloIntervento::class, 'idarticolo');
     }
-
 }

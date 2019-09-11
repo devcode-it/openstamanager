@@ -158,6 +158,36 @@ class HTMLBuilder
     }
 
     /**
+     * Esegue la sostituzione per un singolo tag personalizzato con il relativo codice HTML.
+     *
+     * @param array $json
+     *
+     * @return string
+     */
+    public static function parse(array $json)
+    {
+        $result = null;
+        try {
+            $result = self::generate($json);
+        } catch (\Exception $exception) {
+            logger()->error($exception->getMessage(), [
+                'code' => $exception->getCode(),
+                'message' => $exception->getMessage(),
+                'file' => $exception->getFile(),
+                'line' => $exception->getLine(),
+                'trace' => $exception->getTraceAsString(),
+            ]);
+        }
+
+        // Ricorsione
+        if ($depth < self::$max_recursion) {
+            $result = self::replace($result, $depth + 1);
+        }
+
+        return !empty($result) ? $result : json_encode($json);
+    }
+
+    /**
      * Restituisce il nome della classe resposabile per la gestione di una determinata tipologia di tag di input.
      *
      * @param string $input

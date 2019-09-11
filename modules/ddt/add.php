@@ -9,15 +9,15 @@ if ($module['name'] == 'Ddt di vendita') {
 
     $id_tipoddt = $dbo->fetchOne("SELECT id FROM dt_tipiddt WHERE descrizione='Ddt in uscita'")['id'];
 
-	$tipo_anagrafica = tr('Cliente');
-	$label = tr('Destinatario');
+    $tipo_anagrafica = tr('Cliente');
+    $label = tr('Destinatario');
 } else {
     $dir = 'uscita';
 
     $id_tipoddt = $dbo->fetchOne("SELECT id FROM dt_tipiddt WHERE descrizione='Ddt in entrata'")['id'];
 
-	$tipo_anagrafica = tr('Fornitore');
-	$label = tr('Mittente');
+    $tipo_anagrafica = tr('Fornitore');
+    $label = tr('Mittente');
 }
 
 $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : $user['idanagrafica'];

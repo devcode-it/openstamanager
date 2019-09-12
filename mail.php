@@ -15,6 +15,7 @@ $body = $module->replacePlaceholders($id_record, $template['body']);
 $subject = $module->replacePlaceholders($id_record, $template['subject']);
 
 $email = $module->replacePlaceholders($id_record, '{email}');
+$id_anagrafica = $module->replacePlaceholders($id_record, '{id_anagrafica}');
 
 // Campi mancanti
 $campi_mancanti = [];
@@ -140,9 +141,9 @@ echo '
     $(document).ready(function(){';
 
         // Autocompletamento destinatario
-        if (!empty($variables['id_anagrafica'])) {
+        if (!empty($id_anagrafica)) {
             echo '
-		$(document).load(globals.rootdir + "/ajax_complete.php?module=Anagrafiche&op=get_email&id_anagrafica='.$variables['id_anagrafica'].(($smtp['pec']) ? '&type=pec' : '').'", function(response) {
+		$(document).load(globals.rootdir + "/ajax_complete.php?module=Anagrafiche&op=get_email&id_anagrafica='.$id_anagrafica.(($smtp['pec']) ? '&type=pec' : '').'", function(response) {
             emails = JSON.parse(response);
 
             $(".destinatari").each(function(){

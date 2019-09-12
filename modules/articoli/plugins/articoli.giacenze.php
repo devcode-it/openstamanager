@@ -27,58 +27,64 @@ echo '
 <div class="row">
 	<div class="col-md-3">
         <div class="alert alert-info" style="height: 75px;">
-            <i class="fa fa-info-circle"></i> Quantità impegnate in ordini cliente che non siano già completamente evasi o articoli in cesta commessa
+            <i class="fa fa-info-circle"></i> '.tr('Quantità impegnate in ordini cliente che non siano già completamente evasi o articoli in cesta commessa').'
         </div>
 
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				<h3 class="panel-title">Impegnato</h3>
+				<h3 class="panel-title">'.tr('Impegnato').'</h3>
 			</div>
-			<div class="panel-body">
+			<div class="panel-body">';
 
+$ordini = $dbo->fetchArray(str_replace('|dir|', 'entrata', $query));
+$impegnato = sum(array_column($ordini, 'qta_ordinata'));
+if (!empty($ordini)) {
+    echo '
                 <table class="table table-bordered table-condensed table-striped">
                     <thead>
                         <tr>
-                            <th>Descrizione</th>
-                            <th>Qta</th>
+                            <th>'.tr('Descrizione').'</th>
+                            <th>'.tr('Qta').'</th>
                         </tr>
                     </thead>
                     
                     <tbody>';
 
-$ordini = $dbo->fetchArray(str_replace('|dir|', 'entrata', $query));
-$impegnato = sum(array_column($ordini, 'qta_ordinata'));
+    $modulo = Modules::get('Ordini cliente');
+    foreach ($ordini as $documento) {
+        $numero = !empty($documento['numero_esterno']) ? $documento['numero_esterno'] : $documento['numero'];
+        $qta = $documento['qta_ordinata'];
 
-$modulo = Modules::get('Ordini cliente');
-foreach ($ordini as $documento) {
-    $numero = !empty($documento['numero_esterno']) ? $documento['numero_esterno'] : $documento['numero'];
-    $qta = $documento['qta_ordinata'];
-
-    echo '
+        echo '
                     <tr>
                         <td>
                             '.Modules::link($modulo['id'], $documento['id'], tr('Ordine num. _NUM_ del _DATE_', [
-                                '_NUM_' => $numero,
-                                '_DATE_' => dateFormat($documento['data']),
-                            ])).'
+                '_NUM_' => $numero,
+                '_DATE_' => dateFormat($documento['data']),
+            ])).'
                         </td>
                         <td class="text-right">
                             '.numberFormat($qta).' '.$documento['um'].'
                         </td>
                     </tr>';
-}
+    }
 
-echo '
+    echo '
                     <tr>
                         <td class="text-right">
-                            <b>Totale</b>
+                            <b>'.tr('Totale').'</b>
                         </td>
                         <td class="text-right">
                             '.numberFormat($impegnato).'
                         </td>
                     </tr>
 
-                </table>
+                </table>';
+} else {
+    echo '
+                <p>'.tr('Nessun ordine cliente con quantità da evadere individuato').'.</p>';
+}
+echo '
 			</div>
 		</div>
 	</div>';
@@ -88,33 +94,34 @@ echo '
  */
 echo '
 	<div class="col-md-3">
-	    <div class="alert alert-info" style="height: 75px;"><i class="fa fa-info-circle"></i> Quantità ordinate al fornitore in ordini che non siano già completamente evasi</div>
+	    <div class="alert alert-info" style="height: 75px;"><i class="fa fa-info-circle"></i> '.tr('Quantità ordinate al fornitore in ordini che non siano già completamente evasi').'</div>
 	
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				<h3 class="panel-title">In ordine</h3>
+				<h3 class="panel-title">'.tr('In ordine').'</h3>
 			</div>
-			<div class="panel-body">
+			<div class="panel-body">';
 
+$ordini = $dbo->fetchArray(str_replace('|dir|', 'uscita', $query));
+$ordinato = sum(array_column($ordini, 'qta_ordinata'));
+if (!empty($ordini)) {
+    echo '
                 <table class="table table-bordered table-condensed table-striped">
                     <thead>
                         <tr>
-                            <th>Descrizione</th>
-                            <th>Qta</th>
+                            <th>'.tr('Descrizione').'</th>
+                            <th>'.tr('Qta').'</th>
                         </tr>
                     </thead>
                     
                     <tbody>';
 
-$ordini = $dbo->fetchArray(str_replace('|dir|', 'uscita', $query));
-$ordinato = sum(array_column($ordini, 'qta_ordinata'));
+    $modulo = Modules::get('Ordini fornitore');
+    foreach ($ordini as $documento) {
+        $numero = !empty($documento['numero_esterno']) ? $documento['numero_esterno'] : $documento['numero'];
+        $qta = $documento['qta_ordinata'];
 
-$modulo = Modules::get('Ordini cliente');
-foreach ($ordini as $documento) {
-    $numero = !empty($documento['numero_esterno']) ? $documento['numero_esterno'] : $documento['numero'];
-    $qta = $documento['qta_ordinata'];
-
-    echo '
+        echo '
                     <tr>
                         <td>
                             '.Modules::link($modulo['id'], $documento['id'], tr('Ordine num. _NUM_ del _DATE_', [
@@ -126,19 +133,25 @@ foreach ($ordini as $documento) {
                             '.numberFormat($qta).' '.$documento['um'].'
                         </td>
                     </tr>';
-}
+    }
 
-echo '
+    echo '
                     <tr>
                         <td class="text-right">
-                            <b>Totale</b>
+                            <b>'.tr('Totale').'</b>
                         </td>
                         <td class="text-right">
                             '.numberFormat($ordinato).'
                         </td>
                     </tr>
 
-                </table>
+                </table>';
+} else {
+    echo '
+                <p>'.tr('Nessun ordine fornitore con quantità da evadere individuato').'.</p>';
+}
+
+echo '
 			</div>
 		</div>
 	</div>';
@@ -152,11 +165,11 @@ $da_ordinare = $diff < 0 ? 0 : $diff;
 
 echo '
 	<div class="col-md-3">
-	      <div class="alert alert-info" style="height: 75px;"><i class="fa fa-info-circle"></i> Quantità richieste dal cliente meno le quantità già ordinate</div>
+	      <div class="alert alert-info" style="height: 75px;"><i class="fa fa-info-circle"></i> '.tr('Quantità richieste dal cliente meno le quantità già ordinate').'</div>
 
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				<h3 class="panel-title">Da ordinare</h3>
+				<h3 class="panel-title">'.tr('Da ordinare').'</h3>
 			</div>
 			<div class="panel-body">
               <div class="row">
@@ -176,11 +189,11 @@ $qta_disponibile = $qta_presente - $impegnato;
 $disponibile = $qta_presente < 0 ? 0 : $qta_presente;
 echo '
 	<div class="col-md-3">
-        <div class="alert alert-info" style="height: 75px;"><i class="fa fa-info-circle"></i> Quantità disponibili nel magazzino</div>
+        <div class="alert alert-info" style="height: 75px;"><i class="fa fa-info-circle"></i> '.tr('Quantità disponibili nel magazzino').'</div>
 
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				<h3 class="panel-title">Disponibile</h3>
+				<h3 class="panel-title">'.tr('Disponibile').'</h3>
 			</div>
 			<div class="panel-body">
 

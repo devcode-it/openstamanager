@@ -121,13 +121,23 @@ abstract class Document extends Model
     }
 
     /**
-     * Calcola il guadagno del documento.
+     * Calcola il margine del documento.
      *
      * @return float
      */
-    public function getGuadagnoAttribute()
+    public function getMargineAttribute()
     {
-        return $this->calcola('guadagno');
+        return $this->calcola('margine');
+    }
+
+    /**
+     * Restituisce il margine percentuale del documento.
+     *
+     * @return float
+     */
+    public function getMarginePercentualeAttribute()
+    {
+        return (1 - ($this->spesa / $this->imponibile)) * 100;
     }
 
     public function delete()

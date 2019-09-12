@@ -67,13 +67,23 @@ abstract class Row extends Description
     }
 
     /**
-     * Restituisce il gaudagno totale (totale_imponibile - spesa) relativo all'elemento.
+     * Restituisce il margine totale (imponibile - spesa) relativo all'elemento.
      *
      * @return float
      */
-    public function getGuadagnoAttribute()
+    public function getMargineAttribute()
     {
-        return $this->totale_imponibile - $this->spesa;
+        return $this->imponibile - $this->spesa;
+    }
+
+    /**
+     * Restituisce il margine percentuale relativo all'elemento.
+     *
+     * @return float
+     */
+    public function getMarginePercentualeAttribute()
+    {
+        return (1 - ($this->spesa / $this->imponibile)) * 100;
     }
 
     // Attributi della componente

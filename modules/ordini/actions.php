@@ -83,6 +83,9 @@ switch (post('op')) {
             'rivalsainps' => 0,
             'ritenutaacconto' => 0,
 
+            'numero_cliente' => post('numero_cliente'),
+            'data_cliente' => post('data_cliente'),
+
             'id_documento_fe' => post('id_documento_fe'),
             'codice_cup' => post('codice_cup'),
             'codice_cig' => post('codice_cig'),

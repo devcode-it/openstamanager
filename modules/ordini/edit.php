@@ -80,7 +80,7 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
                     }
                     ?>
 				</div>
-                
+
                 <div class="col-md-3">
 					{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "required": 1, "ajax-source": "sedi", "value": "<?php echo $record['idsede']; ?>" ]}
 				</div>
@@ -89,6 +89,23 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 1, "ajax-source": "pagamenti", "value": "$idpagamento$" ]}
 				</div>
 			</div>
+
+            <?php
+            if ($dir == 'entrata') {
+                ?>
+            <div class="row">
+                <div class="col-md-6">
+                    {[ "type": "text", "label": "<?php echo tr('Numero ordine cliente'); ?>", "name": "numero_cliente", "value": "<?php echo $record['numero_cliente']; ?>" ]}
+                </div>
+
+                <div class="col-md-6">
+                    {[ "type": "date", "label": "<?php echo tr('Data ordine cliente'); ?>", "name": "data_cliente", "value": "<?php echo $record['data_cliente']; ?>" ]}
+                </div>
+            </div>
+
+                <?php
+            }
+            ?>
 
 			<div class="row">
 				<div class="col-md-12">
@@ -250,16 +267,16 @@ $('#idanagrafica').change( function(){
 });
 
 $(document).ready( function(){
-	
+
 	$('#codice_cig, #codice_cup').bind("keyup change", function(e) {
-		
+
 		if ($('#codice_cig').val() == '' && $('#codice_cup').val() == '' ){
 			$('#id_documento_fe').prop('required', false);
 		}else{
 			$('#id_documento_fe').prop('required', true);
 		}
-		
+
 	});
-		
+
 });
 </script>

@@ -610,3 +610,13 @@ ORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC' WHERE `name` = 'O
 
 UPDATE `zz_views` SET `query` = 'righe.totale' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore') AND `name` = 'Totale';
 UPDATE `zz_views` SET `query` = 'an_anagrafiche.ragione_sociale ' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore') AND `name` = 'Ragione sociale';
+
+-- Correzioni per gli ordini
+INSERT INTO `or_statiordine` (`id`, `descrizione`, `annullato`, `icona`, `completato`) VALUES
+(NULL, 'In attesa di conferma', '0', 'fa fa-clock-o text-warning', '0'),
+(NULL, 'Accettato', '0', 'fa fa-thumbs-up text-success', '0');
+
+ALTER TABLE `or_ordini` ADD `data_cliente` DATE NULL DEFAULT NULL, ADD `numero_cliente` varchar(255) NULL DEFAULT NULL;
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente'), 'Numero ordine cliente', 'numero_cliente', 3, 1, 0, 1, 1);

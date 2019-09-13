@@ -1231,6 +1231,19 @@ class FatturaElettronica
                 ];
             }
 
+            // Dichiarazione d'intento
+            $dichiarazione = $documento->dichiarazione;
+            $id_iva_dichiarazione = setting("Iva per lettere d'intento");
+            if (!empty($dichiarazione) && $riga->aliquota->id == $id_iva_dichiarazione) {
+                $dettaglio[]['AltriDatiGestionali'] = [
+                    'TipoDato' => 'AswDichInt',
+                    'RiferimentoTesto' => $dichiarazione->numero_protocollo,
+                    'RiferimentoTesto' => $dichiarazione->numero_progressivo,
+                    'RiferimentoData' => $dichiarazione->data_emissione,
+                ];
+            }
+
+            // Dati aggiuntivi dinamici
             if (!empty($dati_aggiuntivi['altri_dati'])) {
                 foreach ($dati_aggiuntivi['altri_dati'] as $dato) {
                     $altri_dati = [];

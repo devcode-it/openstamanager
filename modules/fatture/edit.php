@@ -329,7 +329,7 @@ if (empty($record['is_fiscale'])) {
                 if ($dir == 'entrata') {
                     ?>
                     <div class="col-md-3">
-                        {[ "type": "select", "label": "<?php echo tr("Dichiarazione d'intento"); ?>", "name": "id_dichiarazione_intento", "values": "query=SELECT id, CONCAT_WS(' - ', numero_protocollo, numero_progressivo) as text FROM co_dichiarazioni_intento WHERE deleted_at IS NULL AND id_anagrafica = $idanagrafica$", "value": "$id_dichiarazione_intento$" ]}
+                        {[ "type": "select", "label": "<?php echo tr("Dichiarazione d'intento"); ?>", "name": "id_dichiarazione_intento", "ajax-source": "dichiarazioni_intento", "value": "$id_dichiarazione_intento$" ]}
                     </div>
 
                     <?php
@@ -692,12 +692,16 @@ if ($dir == 'entrata') {
 echo '
 <script type="text/javascript">
 	$("#idanagrafica").change(function(){
-        session_set("superselect,idanagrafica", $(this).val(), 0);';
+        session_set("superselect,idanagrafica", $(this).val(), 0);
+        
+        $("#id_dichiarazione_intento").selectReset();';
+
         if ($dir == 'entrata') {
             echo '$("#idsede_destinazione").selectReset();';
         } else {
             echo '$("#idsede_partenza").selectReset();';
         }
+
 echo '
 	});
 

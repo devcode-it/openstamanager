@@ -39,6 +39,9 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Supporto all'inserimento manuale di maggiori attributi per le *Fatture Elettroniche*, tramite gli appositi pulsanti "Attributi avanzati" all'interno delle **Fatture di vendita** 
  - Aggiunto Identificativo documento, Num Item, codici CIG e CUP in **DDT di uscita**
  - Modulo **Newsletter** per la gestione delle campagne di newsletter sulla base delle informazioni delle **Anagrafiche**
+ - Supporto alle *Dichiarazione d'Intento* per le *Fatture di vendita**
+ - Calcolo del margine per i **Preventivi**
+ - Supporto alla selezione della lingua durante la configurazione 
 
 ### Modificato (Changed)
 
@@ -47,9 +50,11 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Miglioramento del sistema di evasione delle quantità nel passaggio tra documenti, ora integrato nelle classi Eloquent e completamente automatico
  - Correzione delle diciure generali *Imponibile scontato* in *Totale imponibile* e *Sconto* in *Sconto/maggiorazione*
  - Aggiornamento degli hook per permettere l'aggiunta di task in background
-    - Invio email massimo
+    - Invio delle email
     - Backup automatico
  - **Articoli** ora eliminabili solo virtualmente attraverso il flag *deleted_at*
+ - Miglioramento del plugin *Giacenze* nel modulo **Articoli** per interagire con gli **Ordini** registrati, e aggiunta della quantità progressiva per nel plugin *Movimenti*
+ - Generazione del numero delle **Fatture di vendita** a seguito dell'emissione della stessa
  
 ### Rimosso (Removed)
  - Funzione *get_costi_intervento* del modulo **Attività**, a causa dell'aggiornamento della maggior parte del sistema di gestione degli **Attività** con le classi Eloquent
@@ -58,7 +63,8 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  
 ### Fixed
 
- - 
+ - Fix selezione di articoli senza movimenti
+ - Fix per l'autocompletamento delle email nella procedura di invio
  
 ## 2.4.10 (2019-07-23)
 

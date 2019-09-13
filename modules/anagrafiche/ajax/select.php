@@ -287,4 +287,26 @@ switch ($resource) {
         }
 
         break;
+
+    case 'dichiarazioni_intento':
+        $query = "SELECT id, CONCAT_WS(' - ', numero_protocollo, numero_progressivo) as descrizione FROM co_dichiarazioni_intento |where| ORDER BY data";
+
+        foreach ($elements as $element) {
+            $filter[] = 'id='.prepare($element);
+        }
+
+        $where[] = 'data_inizio < NOW()';
+        $where[] = 'data_fine > NOW()';
+        if (empty($filter)) {
+            $where[] = 'deleted_at IS NULL';
+        }
+
+        $where[] = 'id_anagrafica='.prepare($superselect['idanagrafica']);
+
+        if (!empty($search)) {
+            $search_fields[] = 'numero_protocollo LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = 'numero_progressivo LIKE '.prepare('%'.$search.'%');
+        }
+
+        break;
 }

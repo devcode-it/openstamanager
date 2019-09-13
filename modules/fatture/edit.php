@@ -1,5 +1,7 @@
 <?php
 
+use Modules\Iva\Aliquota;
+
 include_once __DIR__.'/../../core.php';
 
 $block_edit = !empty($note_accredito) || $record['stato'] == 'Emessa' || $record['stato'] == 'Pagato' || $record['stato'] == 'Parzialmente pagato';
@@ -22,6 +24,40 @@ if ($dir == 'entrata') {
     $conto = 'vendite';
 } else {
     $conto = 'acquisti';
+}
+
+// Informazioni sulla dichiarazione d'intento
+if ($dir == 'entrata' && !empty($fattura->dichiarazione) && $fattura->stato->descrizione == 'Bozza') {
+    $diff = $fattura->dichiarazione->massimale - $fattura->dichiarazione->totale;
+
+    $id_iva = setting("Iva per lettere d'intento");
+    $iva = Aliquota::find($id_iva);
+
+    if ($diff > 0) {
+        echo '
+    <div class="alert alert-info">
+        <i class="fa fa-warning"></i> '.tr("La fattura è collegata a una dichiarazione d'intento con diponibilità di _MONEY_: per collegare una riga alla dichiarazione è sufficiente inserire come IVA _IVA_", [
+                '_MONEY_' => moneyFormat(abs($diff)),
+                '_IVA_' => '"'.$iva->descrizione.'"',
+            ]).'</b>
+    </div>';
+    } elseif ($diff == 0) {
+        echo '
+    <div class="alert alert-warning">
+        <i class="fa fa-warning"></i> '.tr("La dichiarazione d'intento ha raggiunto il massimale previsto di _MONEY_: le nuove righe della fattura devono presentare IVA diversa da _IVA_", [
+                '_MONEY_' => moneyFormat(abs($fattura->dichiarazione->massimale)),
+                '_IVA_' => '"'.$iva->descrizione.'"',
+            ]).'</b>
+    </div>';
+    } else {
+        echo '
+    <div class="alert alert-danger">
+        <i class="fa fa-warning"></i> '.tr("La dichiarazione d'intento ha superato il massimale previsto di _MONEY_: per rimuovere righe della fattura dalla dichiarazione è sufficiente modificare l'IVA in qualcosa di diverso da _IVA_", [
+            '_MONEY_' => moneyFormat(abs($diff)),
+                '_IVA_' => '"'.$iva->descrizione.'"',
+        ]).'</b>
+    </div>';
+    }
 }
 
 ?>
@@ -78,9 +114,9 @@ if ($dir == 'entrata') {
                 <?php
                 if ($dir == 'uscita') {
                     echo '
-                				<div class="col-md-3">
-                					{[ "type": "text", "label": "'.tr('Numero fattura/protocollo').'", "required": 1, "name": "numero","class": "text-center alphanumeric-mask", "value": "$numero$" ]}
-                                </div>';
+                <div class="col-md-3">
+                    {[ "type": "text", "label": "'.tr('Numero fattura/protocollo').'", "required": 1, "name": "numero","class": "text-center alphanumeric-mask", "value": "$numero$" ]}
+                </div>';
                     $label = tr('Numero fattura del fornitore');
                 } else {
                     $label = tr('Numero fattura');
@@ -136,15 +172,22 @@ if (empty($record['is_fiscale'])) {
 				<?php
 } ?>
 
-                <div class="col-md-3">
 					<?php
                     if ($dir == 'entrata') {
                         ?>
-					{[ "type": "select", "label": "<?php echo tr('Stato FE'); ?>", "name": "codice_stato_fe", "required": 0, "values": "query=SELECT codice as id, CONCAT_WS(' - ',codice,descrizione) as text FROM fe_stati_documento", "value": "$codice_stato_fe$", "disabled": <?php echo intval(API\Services::isEnabled()); ?>, "class": "unblockable", "help": "<?php echo (!empty($record['data_stato_fe'])) ? Translator::timestampToLocale($record['data_stato_fe']) : ''; ?>", "disabled": "<?php echo intval($record['stato'] == 'Bozza'); ?>" ]}
-					<?php
+
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "<?php echo tr('Stato FE'); ?>", "name": "codice_stato_fe", "required": 0, "values": "query=SELECT codice as id, CONCAT_WS(' - ',codice,descrizione) as text FROM fe_stati_documento", "value": "$codice_stato_fe$", "disabled": <?php echo intval(API\Services::isEnabled() || $record['stato'] == 'Bozza'); ?>, "class": "unblockable", "help": "<?php echo (!empty($record['data_stato_fe'])) ? Translator::timestampToLocale($record['data_stato_fe']) : ''; ?>" ]}
+                </div>
+
+                        <?php
                     }
                     ?>
-				</div>
+
+                <div class="col-md-3">
+                    <!-- TODO: Rimuovere possibilità di selezionare lo stato pagato obbligando l'utente ad aggiungere il movimento in prima nota -->
+                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatodocumento", "required": 1, "values": "query=<?php echo $query; ?>", "value": "$idstatodocumento$", "class": "unblockable", "extra": " onchange = \"if ($('#idstatodocumento option:selected').text()=='Pagato' || $('#idstatodocumento option:selected').text()=='Parzialmente pagato' ){if( confirm('<?php echo tr('Sicuro di voler impostare manualmente la fattura come pagata senza aggiungere il movimento in prima nota?'); ?>') ){ return true; }else{ $('#idstatodocumento').selectSet(<?php echo $record['idstatodocumento']; ?>); }}\" " ]}
+                </div>
 			</div>
 
 			<div class="row">
@@ -190,11 +233,6 @@ if (empty($record['is_fiscale'])) {
                 <?php
                 }
                 ?>
-
-				<div class="col-md-3">
-					<!-- TODO: Rimuovere possibilità di selezionare lo stato pagato obbligando l'utente ad aggiungere il movimento in prima nota -->
-					{[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatodocumento", "required": 1, "values": "query=<?php echo $query; ?>", "value": "$idstatodocumento$", "class": "unblockable", "extra": " onchange = \"if ($('#idstatodocumento option:selected').text()=='Pagato' || $('#idstatodocumento option:selected').text()=='Parzialmente pagato' ){if( confirm('<?php echo tr('Sicuro di voler impostare manualmente la fattura come pagata senza aggiungere il movimento in prima nota?'); ?>') ){ return true; }else{ $('#idstatodocumento').selectSet(<?php echo $record['idstatodocumento']; ?>); }}\" " ]}
-				</div>
 
 				<?php if ($dir == 'entrata') {
                     ?>
@@ -286,6 +324,17 @@ if (empty($record['is_fiscale'])) {
                 <div class="col-md-3">
                     {[ "type": "select", "label": "<?php echo tr('Ritenuta contributi'); ?>", "name": "id_ritenuta_contributi", "value": "$id_ritenuta_contributi$", "values": "query=SELECT * FROM co_ritenuta_contributi" ]}
                 </div>
+
+                <?php
+                if ($dir == 'entrata') {
+                    ?>
+                    <div class="col-md-3">
+                        {[ "type": "select", "label": "<?php echo tr("Dichiarazione d'intento"); ?>", "name": "id_dichiarazione_intento", "values": "query=SELECT id, CONCAT_WS(' - ', numero_protocollo, numero_progressivo) as text FROM co_dichiarazioni_intento WHERE deleted_at IS NULL AND id_anagrafica = $idanagrafica$", "value": "$id_dichiarazione_intento$" ]}
+                    </div>
+
+                    <?php
+                }
+                ?>
             </div>
 
 			<div class="row">

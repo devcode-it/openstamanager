@@ -78,10 +78,11 @@ switch (post('op')) {
             $fattura->rivalsainps = 0;
             $fattura->ritenutaacconto = 0;
             $fattura->iva_rivalsainps = 0;
-
-            $fattura->codice_stato_fe = post('codice_stato_fe') ?: null;
             $fattura->id_ritenuta_contributi = post('id_ritenuta_contributi') ?: null;
 
+            $fattura->codice_stato_fe = post('codice_stato_fe') ?: null;
+
+            // Informazioni per le fatture di acquisto
             if ($dir == 'uscita') {
                 $fattura->numero = post('numero');
                 $fattura->numero_esterno = post('numero_esterno');
@@ -89,6 +90,7 @@ switch (post('op')) {
                 $fattura->idritenutaacconto = post('id_ritenuta_acconto');
             }
 
+            // Operazioni sul bollo
             $fattura->addebita_bollo = post('addebita_bollo');
             $bollo_automatico = post('bollo_automatico');
             if (empty($bollo_automatico)) {
@@ -97,7 +99,25 @@ switch (post('op')) {
                 $fattura->bollo = null;
             }
 
+            // Operazioni sulla dichiarazione d'intento
+            $dichiarazione_precedente = $fattura->dichiarazione;
+            $fattura->id_dichiarazione_intento = post('id_dichiarazione_intento') ?: null;
+
             $fattura->save();
+
+            // Operazioni sulla dichiarazione d'intento
+            if (!empty($dichiarazione_precedente) && $dichiarazione_precedente->id != $fattura->id_dichiarazione_intento) {
+                // Correzione dichiarazione precedente
+                $dichiarazione_precedente->fixTotale();
+                $dichiarazione_precedente->save();
+
+                // Correzione nuova dichiarazione
+                $dichiarazione = $fattura->dichiarazione;
+                if (!empty($dichiarazione)) {
+                    $dichiarazione->fixTotale();
+                    $dichiarazione->save();
+                }
+            }
 
             // Ricalcolo inps, ritenuta e bollo (se la fattura non è stata pagata)
             ricalcola_costiagg_fattura($id_record);
@@ -721,22 +741,4 @@ if (get('op') == 'nota_addebito') {
 
     $id_record = $nota->id;
     aggiorna_sedi_movimenti('documenti', $id_record);
-}
-
-// Aggiornamento stato dei ddt presenti in questa fattura in base alle quantità totali evase
-if (!empty($id_record) && setting('Cambia automaticamente stato ddt fatturati')) {
-    $rs = $dbo->fetchArray('SELECT DISTINCT idddt FROM co_righe_documenti WHERE iddocumento='.prepare($id_record));
-
-    for ($i = 0; $i < sizeof($rs); ++$i) {
-        $dbo->query('UPDATE dt_ddt SET idstatoddt=(SELECT id FROM dt_statiddt WHERE descrizione="'.get_stato_ddt($rs[$i]['idddt']).'") WHERE id = '.prepare($rs[$i]['idddt']));
-    }
-}
-
-// Aggiornamento stato degli ordini presenti in questa fattura in base alle quantità totali evase
-if (!empty($id_record) && setting('Cambia automaticamente stato ordini fatturati')) {
-    $rs = $dbo->fetchArray('SELECT DISTINCT idordine FROM co_righe_documenti WHERE iddocumento='.prepare($id_record));
-
-    for ($i = 0; $i < sizeof($rs); ++$i) {
-        $dbo->query('UPDATE or_ordini SET idstatoordine=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($rs[$i]['idordine']).'") WHERE id = '.prepare($rs[$i]['idordine']));
-    }
 }

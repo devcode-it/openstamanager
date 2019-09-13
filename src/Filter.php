@@ -160,6 +160,7 @@ class Filter
 
             //$config->set('Cache.SerializerPath', realpath(__DIR__.'/cache/HTMLPurifier'));
             $config->set('Cache.DefinitionImpl', null);
+            $config->set('URI.AllowedSchemes', ['data' => true]);
 
             self::$purifier = new \HTMLPurifier($config);
         }

@@ -445,7 +445,7 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_documenti`
     LEFT JOIN (
         SELECT `numero_esterno`, `id_segment`
         FROM `co_documenti`
-        WHERE `co_documenti`.`idtipodocumento` IN(SELECT `id` FROM `co_tipidocumento` WHERE `dir` = ''entrata'') |date_period(`co_documenti`.`data`)|
+        WHERE `co_documenti`.`idtipodocumento` IN(SELECT `id` FROM `co_tipidocumento` WHERE `dir` = ''entrata'') |date_period(`co_documenti`.`data`)| AND `numero_esterno` != ''''
         GROUP BY `id_segment`, `numero_esterno`
         HAVING COUNT(`numero_esterno`) > 1
     ) dup ON `co_documenti`.`numero_esterno` = `dup`.`numero_esterno` AND `dup`.`id_segment` = `co_documenti`.`id_segment`
@@ -620,3 +620,26 @@ ALTER TABLE `or_ordini` ADD `data_cliente` DATE NULL DEFAULT NULL, ADD `numero_c
 
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente'), 'Numero ordine cliente', 'numero_cliente', 3, 1, 0, 1, 1);
+
+-- Dichiarazioni d'Intento
+CREATE TABLE IF NOT EXISTS `co_dichiarazioni_intento` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `id_anagrafica` int(11) NOT NULL,
+    `data` DATE NOT NULL,
+    `numero_protocollo` varchar(255) NOT NULL,
+    `numero_progressivo` varchar(255) NOT NULL,
+    `data_inizio` DATE NOT NULL,
+    `data_fine` DATE NOT NULL,
+    `data_protocollo` DATE NULL DEFAULT NULL,
+    `data_emissione` DATE NULL DEFAULT NULL,
+    `massimale` DECIMAL(12, 4) NOT NULL,
+    `totale` DECIMAL(12, 4) NOT NULL,
+    `deleted_at` timestamp NULL DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    FOREIGN KEY (`id_anagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+ALTER TABLE `co_documenti` ADD `id_dichiarazione_intento` int(11), ADD FOREIGN KEY (`id_dichiarazione_intento`) REFERENCES `co_dichiarazioni_intento`(`id`) ON DELETE SET NULL;
+
+INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`, `position`, `script`, `enabled`, `default`, `order`, `compatibility`, `version`, `options2`, `options`, `directory`, `help`) VALUES (NULL, 'Dichiarazioni d''Intento', 'Dichiarazioni d''Intento', (SELECT id FROM zz_modules WHERE name = 'Fatture di vendita'), (SELECT id FROM zz_modules WHERE name='Anagrafiche'), 'tab', '', '1', '1', '0', '', '', NULL, '{ "main_query": [	{	"type": "table", "fields": "Protocollo, Progressivo, Massimale, Totale, Data inizio, Data fine", "query": "SELECT id, numero_protocollo AS Protocollo, numero_progressivo AS Progressivo, DATE_FORMAT(data_inizio,''%d/%m/%Y'') AS ''Data inizio'', DATE_FORMAT(data_inizio,''%d/%m/%Y'') AS ''Data fine'', ROUND(massimale, 2) AS Massimale, ROUND(totale, 2) AS Totale FROM co_dichiarazioni_intento WHERE 1=1 AND deleted_at IS NULL AND id_anagrafica = |id_parent| HAVING 2=2 ORDER BY co_dichiarazioni_intento.id DESC"}	]}', 'dichiarazioni_intento', '');
+

@@ -102,9 +102,12 @@ abstract class Description extends Model
         $this->qta = 0;
         $result = parent::delete();
 
-        // Fix stato automatico
+        // Trigger per la modifica delle righe
+        $this->parent->triggerComponent($this);
+
+        // Trigger per l'evasione delle quantità
         if ($this->hasOriginal()) {
-            $original->parent->fixStato($this);
+            $original->parent->triggerEvasione($this);
         }
 
         return $result;
@@ -221,11 +224,14 @@ abstract class Description extends Model
     {
         $result = parent::save($options);
 
-        // Fix stato automatico
+        // Trigger per la modifica delle righe
+        $this->parent->triggerComponent($this);
+
+        // Trigger per l'evasione delle quantità
         if ($this->hasOriginal()) {
             $original = $this->getOriginal();
 
-            $original->parent->fixStato($this);
+            $original->parent->triggerEvasione($this);
         }
 
         return $result;

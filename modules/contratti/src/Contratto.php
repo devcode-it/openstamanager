@@ -156,9 +156,9 @@ class Contratto extends Document
      *
      * @param Description $trigger
      */
-    public function fixStato(Description $trigger)
+    public function triggerEvasione(Description $trigger)
     {
-        parent::fixStato($trigger);
+        parent::triggerEvasione($trigger);
 
         $righe = $this->getRighe();
 

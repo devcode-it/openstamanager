@@ -32,5 +32,6 @@ return [
     'plugins/exportFE' => 'Plugins\ExportFE',
     'plugins/importFE' => 'Plugins\ImportFE',
     'plugins/receiptFE' => 'Plugins\ReceiptFE',
+    'plugins/dichiarazioni_intento' => 'Plugins\DichiarazioniIntento',
     'plugins/statistiche_articoli' => 'Plugins\StatisticheArticoli',
 ];

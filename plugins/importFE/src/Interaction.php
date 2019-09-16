@@ -85,8 +85,8 @@ class Interaction extends Services
     public static function processInvoice($filename)
     {
         $response = static::request('POST', 'fattura_xml_salvata', [
-                'filename' => $filename,
-            ]);
+            'filename' => $filename,
+        ]);
 
         $body = static::responseBody($response);
 

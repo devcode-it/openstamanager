@@ -1,4 +1,3 @@
-
 function start_datepickers() {
     var icons = {
         time: 'fa fa-clock-o',

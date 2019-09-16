@@ -1,4 +1,3 @@
-
 // Inputmask
 function start_inputmask(element) {
     if (element == undefined) {

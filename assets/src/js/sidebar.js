@@ -39,8 +39,8 @@ $(document).ready(function () {
         $(".sidebar-menu").sortable("disable");
     }
 
-    $(".sidebar-toggle").click(function(){
-        setTimeout(function(){
+    $(".sidebar-toggle").click(function () {
+        setTimeout(function () {
             window.dispatchEvent(new Event('resize'));
         }, 350);
     });

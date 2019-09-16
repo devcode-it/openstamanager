@@ -54,7 +54,7 @@ function startHook(hook, init) {
                 updateHook(hook);
             }
 
-            if (token){
+            if (token) {
                 executeHook(hook, token);
             } else {
                 var timeout = 10;

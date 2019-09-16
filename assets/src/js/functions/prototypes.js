@@ -18,9 +18,9 @@ Number.prototype.toLocale = function () {
     return numeral(this).format();
 };
 
-jQuery.fn.scrollTo = function(elem, speed) {
+jQuery.fn.scrollTo = function (elem, speed) {
     $(this).animate({
-        scrollTop:  $(this).scrollTop() - $(this).offset().top + $(elem).offset().top
+        scrollTop: $(this).scrollTop() - $(this).offset().top + $(elem).offset().top
     }, speed == undefined ? 1000 : speed);
     return this;
 };

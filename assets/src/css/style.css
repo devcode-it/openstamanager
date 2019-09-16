@@ -872,8 +872,8 @@ input.small-width {
     margin-left: 11px;
 }
 
-.progress .progress-bar span{
-    color:#000;
+.progress .progress-bar span {
+    color: #000;
 }
 
 .attachment-img {
@@ -886,6 +886,6 @@ input.small-width {
     max-height: 100px;
 }
 
-.has-feedback .form-control{
+.has-feedback .form-control {
     padding-right: 6px;
 }

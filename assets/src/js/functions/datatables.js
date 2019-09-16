@@ -1,5 +1,4 @@
-
-function start_local_datatables(){
+function start_local_datatables() {
     $('.datatables').each(function () {
         if (!$.fn.DataTable.isDataTable($(this))) {
             $(this).DataTable({
@@ -87,14 +86,14 @@ function start_datatables() {
                     selector: 'td:first-child'
                 },
                 buttons: [{
-                        extend: 'csv',
-                        fieldSeparator: ";",
-                        exportOptions: {
-                            modifier: {
-                                selected: true
-                            }
+                    extend: 'csv',
+                    fieldSeparator: ";",
+                    exportOptions: {
+                        modifier: {
+                            selected: true
                         }
-                    },
+                    }
+                },
                     {
                         extend: 'copy',
                         exportOptions: {
@@ -133,7 +132,7 @@ function start_datatables() {
                                 selected: true
                             },
                             format: {
-                                body: function(data, row, column, node) {
+                                body: function (data, row, column, node) {
                                     data = $('<p>' + data + '</p>').text();
                                     data_edit = data.replace('.', ''); // Fix specifico per i numeri italiani
                                     data_edit = data_edit.replace(',', '.');
@@ -220,7 +219,7 @@ function start_datatables() {
                     $('.deleteicon').on("click", function (e) {
                         resetTableSearch($(this).parent().attr("id").replace("th_", ""));
 
-                        if (api.page.len() == -1){
+                        if (api.page.len() == -1) {
                             api.page.len($(id).data('page-length'));
                         }
                     });

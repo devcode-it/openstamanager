@@ -1,4 +1,3 @@
-
 // Select
 function start_superselect() {
     // Statico

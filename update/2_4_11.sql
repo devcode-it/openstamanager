@@ -148,7 +148,8 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 (NULL, 'v1', 'create', 'sessione', 'Modules\\Interventi\\API\\v1\\Sessioni', '1'),
 (NULL, 'v1', 'delete', 'sessioni_intervento', 'Modules\\Interventi\\API\\v1\\Sessioni', '1'),
 (NULL, 'v1', 'retrieve', 'articoli_intervento', 'Modules\\Interventi\\API\\v1\\Articoli', '1'),
-(NULL, 'v1', 'create', 'articolo_intervento', 'Modules\\Interventi\\API\\v1\\Articoli', '1');
+(NULL, 'v1', 'create', 'articolo_intervento', 'Modules\\Interventi\\API\\v1\\Articoli', '1'),
+(NULL, 'v1', 'retrieve', 'stampa', 'Api\\Common\\Stampa', '1');
 
 -- Supporto alla personalizzazione dell'API remota OSMCloud
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES

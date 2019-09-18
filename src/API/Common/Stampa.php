@@ -2,7 +2,6 @@
 
 namespace Api\Common;
 
-use API\Interfaces\CreateInterface;
 use API\Interfaces\RetrieveInterface;
 use API\Resource;
 use Models\PrintTemplate;

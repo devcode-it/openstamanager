@@ -55,7 +55,7 @@ switch ($name) {
             ['idanagrafica', '<>', $id_record],
         ])->count() == 0;
 
-        $message = $disponibile ? tr('La partita iva non è già inserita in una anagrafica') : tr('La partita iva è già utilizzata in un altro articolo');
+        $message = $disponibile ? tr('La partita iva non è già inserita in una anagrafica') : tr("La partita iva è già utilizzata in un'altra anagrafica");
 
         $partita_iva = !empty($anagrafica) && is_numeric($value) ? $anagrafica->nazione->iso2.$value : $value;
 
@@ -68,6 +68,39 @@ switch ($name) {
 
         $response = [
             'result' => $disponibile,
+            'message' => $message,
+        ];
+
+        break;
+
+    case 'email':
+        $disponibile = Anagrafica::where([
+            ['email', $value],
+            ['email', '<>', ''],
+            ['idanagrafica', '<>', $id_record],
+        ])->count() == 0;
+
+        $message = $disponibile ? tr("L'email non è già inserita in una anagrafica") : tr("L'email è già utilizzata in un'altra anagrafica");
+
+        $result = $disponibile;
+        $check = Validate::isValidEmail($value);
+        if (is_bool($check)) {
+            $result = false;
+            $message .= '. '.tr("Attenzione: l'email inserita non possiede un formato valido");
+        }else {
+            if(empty($check['format_valid'])){
+                $result = false;
+                $message .= '. '.tr("Attenzione: l'email inserita non possiede un formato valido");
+            }
+
+            if(empty($check['smtp_check'])){
+                $result = false;
+                $message .= '. '.tr("Attenzione: impossibile verificare l'origine dell'email");
+            }
+        }
+
+        $response = [
+            'result' => $result,
             'message' => $message,
         ];
 

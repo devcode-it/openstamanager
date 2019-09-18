@@ -124,32 +124,17 @@ class Validate
 
         // Controllo attraverso apilayer
         if (Services::isEnabled()) {
-            $response = Services::request('get', 'check_email', [
+            $response = Services::request('post', 'check_email', [
                 'email' => $email,
                 'smtp' => $smtp,
                 'format' => 1,
             ]);
             $data = Services::responseBody($response);
 
-            /*se la riposta è null verificando il formato, il record mx o il server smtp imposto la relativa proprietà dell'oggetto a 0*/
-            if ($data['format_valid'] == null) {
-                $data['format_valid'] = 0;
-            }
-
-            if ($data['mx_found'] == null && $smtp) {
-                $data['mx_found'] = 0;
-            }
-
-            if ($data['smtp_check'] == null && $smtp) {
-                $data['smtp_check'] = 0;
-            }
-
-            $data['smtp'] = $smtp;
-
-            return empty($data['format_valid']) ? false : $data;
+            return $data['result'];
         }
 
-        return true;
+        return null;
     }
 
     public static function isValidTaxCode($codice_fiscale)

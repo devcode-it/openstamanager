@@ -198,6 +198,13 @@ class Anagrafica extends Model
         }
     }
 
+    public function save(array $options = [])
+    {
+        $this->fixRagioneSociale();
+
+        return parent::save($options);
+    }
+
     // Attributi Eloquent
 
     /**
@@ -223,15 +230,11 @@ class Anagrafica extends Model
     public function setNomeAttribute($value)
     {
         $this->attributes['nome'] = trim($value);
-
-        $this->fixRagioneSociale();
     }
 
     public function setCognomeAttribute($value)
     {
         $this->attributes['cognome'] = trim($value);
-
-        $this->fixRagioneSociale();
     }
 
     public function setCodiceFiscaleAttribute($value)

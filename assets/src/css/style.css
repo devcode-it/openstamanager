@@ -889,3 +889,7 @@ input.small-width {
 .has-feedback .form-control {
     padding-right: 6px;
 }
+
+.direct-chat-text img {
+    max-width: 100%;
+}

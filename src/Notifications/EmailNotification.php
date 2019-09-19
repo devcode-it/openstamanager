@@ -99,7 +99,7 @@ class EmailNotification extends PHPMailer implements NotificationInterface
         // Allegati
         $uploads = $mail->uploads;
         foreach ($uploads as $upload) {
-            $this->addUpload($upload);
+            $this->addUpload($upload->id);
         }
 
         // Stampe

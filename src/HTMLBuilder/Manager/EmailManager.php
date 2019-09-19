@@ -3,6 +3,7 @@
 namespace HTMLBuilder\Manager;
 
 use Modules\Emails\Mail;
+use Modules;
 
 /**
  * Gestione allegati.
@@ -21,8 +22,6 @@ class EmailManager implements ManagerInterface
      */
     public function manage($options)
     {
-        $database = database();
-
         // Visualizzo il log delle operazioni di invio email
         $emails = Mail::whereRaw('id IN (SELECT id_email FROM zz_operations WHERE id_record = '.prepare($options['id_record']).' AND id_module = '.prepare($options['id_module']).' AND id_email IS NOT NULL)')
             ->orderByDesc('created_at')
@@ -46,29 +45,29 @@ class EmailManager implements ManagerInterface
     <div class="box-body">
         <ul>';
 
-        foreach ($emails as $operation) {
-            $receivers = $operation->receivers->pluck('address')->toArray();
+        foreach ($emails as $email) {
+            $receivers = $email->receivers->pluck('address')->toArray();
 
             $prints = [];
-            $list = $operation->prints;
+            $list = $email->prints;
             foreach ($list as $print) {
                 $prints[] = $print['title'];
             }
 
             $uploads = [];
-            $list = $operation->uploads;
+            $list = $email->uploads;
             foreach ($list as $upload) {
                 $uploads[] = $upload['name'];
             }
 
-            $sent = !empty($operation['sent_at']) ? tr('inviata il _DATE_ alle _HOUR_', [
-                '_DATE_' => dateFormat($operation['sent_at']),
-                '_HOUR_' => timeFormat($operation['sent_at']),
+            $sent = !empty($email['sent_at']) ? tr('inviata il _DATE_ alle _HOUR_', [
+                '_DATE_' => dateFormat($email['sent_at']),
+                '_HOUR_' => timeFormat($email['sent_at']),
             ]) : tr('in coda di invio');
 
-            $descrizione = Modules::link('Stato email', $operation->id_email, tr('Email "_EMAIL_" da _USER_', [
-                '_EMAIL_' => $operation->template->name,
-                '_USER_' => $operation->user->username,
+            $descrizione = Modules::link('Stato email', $email->id, tr('Email "_EMAIL_" da _USER_', [
+                '_EMAIL_' => $email->template->name,
+                '_USER_' => $email->user->username,
             ]));
 
             $result .= '

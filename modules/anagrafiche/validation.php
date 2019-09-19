@@ -59,16 +59,31 @@ switch ($name) {
 
         $partita_iva = !empty($anagrafica) && is_numeric($value) ? $anagrafica->nazione->iso2.$value : $value;
 
+        $result = $disponibile;
         $check = Validate::isValidVatNumber($partita_iva);
-        if (empty($check)) {
-            $message .= '. '.tr('Attenzione: la partita IVA _IVA_ potrebbe non essere valida', [
-                '_IVA_' => $partita_iva,
-            ]);
+        if (empty($check['valid-format'])) {
+            $result = false;
+            $errors[] = tr('La partita iva inserita non possiede un formato valido');
+        }
+
+        if (empty($check['valid'])) {
+            $result = false;
+            $errors[] = tr("Impossibile verificare l'origine della partita iva");
+        }
+
+        $message .= '. ';
+        if (!empty($errors)) {
+            $message .= tr('Attenzione').':<ul>';
+            foreach ($errors as $error) {
+                $message .= '<li>'.$error.'</li>';
+            }
+            $message .= '</ul>';
         }
 
         $response = [
-            'result' => $disponibile,
+            'result' => $result,
             'message' => $message,
+            'fields' => $check['fields'],
         ];
 
         break;
@@ -79,24 +94,29 @@ switch ($name) {
             ['email', '<>', ''],
             ['idanagrafica', '<>', $id_record],
         ])->count() == 0;
+        $result = $disponibile;
 
         $message = $disponibile ? tr("L'email non è già inserita in una anagrafica") : tr("L'email è già utilizzata in un'altra anagrafica");
 
-        $result = $disponibile;
+        $errors = [];
         $check = Validate::isValidEmail($value);
-        if (is_bool($check)) {
+        if (empty($check['valid-format'])) {
             $result = false;
-            $message .= '. '.tr("Attenzione: l'email inserita non possiede un formato valido");
-        }else {
-            if(empty($check['format_valid'])){
-                $result = false;
-                $message .= '. '.tr("Attenzione: l'email inserita non possiede un formato valido");
-            }
+            $errors[] = tr("L'email inserita non possiede un formato valido");
+        }
 
-            if(empty($check['smtp_check'])){
-                $result = false;
-                $message .= '. '.tr("Attenzione: impossibile verificare l'origine dell'email");
+        if (empty($check['smtp-check'])) {
+            $result = false;
+            $errors[] = tr("Impossibile verificare l'origine dell'email");
+        }
+
+        $message .= '. ';
+        if (!empty($errors)) {
+            $message .= tr('Attenzione').':<ul>';
+            foreach ($errors as $error) {
+                $message .= '<li>'.$error.'</li>';
             }
+            $message .= '</ul>';
         }
 
         $response = [

@@ -45,29 +45,20 @@ switch (post('op')) {
         // Validazione indirizzo email mittente
         $check_email = Validate::isValidEmail(post('from_address'));
 
-        // Se $check_email non è null e la riposta è negativa --> mostro il messaggio di avviso.
-        if (!empty($check_email)) {
+        // Controllo sulla validazione
+        if (!empty($check_email['valid-format'])) {
             flash()->info(tr('Sintassi email verificata'));
-
-            if (is_object($check_email) && $check_email->smtp) {
-                if ($check_email->smtp_check) {
-                    flash()->info(tr('SMTP email verificato'));
-                } elseif (!$check_email->smtp_check) {
-                    flash()->warning(tr('SMTP email non verificato'));
-                } else {
-                    flash()->error(tr("Attenzione: l'SMTP email _EMAIL_ sembra non essere valido", [
-                        '_EMAIL_' => $check_email->email,
-                    ]));
-                }
-            }
         } else {
             flash()->error(tr("Attenzione: l'indirizzo email _EMAIL_ sembra non essere valido", [
                 '_EMAIL_' => $check_email->email,
             ]));
+        }
 
-            if (is_object($check_email) && !empty($check_email->error->info)) {
-                flash()->error($check_email->error->info);
-            }
+        // Controllo sulla verifica
+        if (!empty($check_email['smtp-check'])) {
+            flash()->info(tr('SMTP email verificato'));
+        } else {
+            flash()->warning(tr('SMTP email non verificato'));
         }
 
         if (isAjaxRequest()) {

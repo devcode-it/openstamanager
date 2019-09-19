@@ -135,7 +135,7 @@ switch (post('op')) {
         $partita_iva = is_numeric($partita_iva) ? $anagrafica->nazione->iso2.$partita_iva : $partita_iva;
 
         $check_vat_number = Validate::isValidVatNumber($partita_iva);
-        if (empty($check_vat_number)) {
+        if (empty($check_vat_number['valid-format'])) {
             flash()->warning(tr('Attenzione: la partita IVA _IVA_ potrebbe non essere valida', [
                 '_IVA_' => $partita_iva,
             ]));

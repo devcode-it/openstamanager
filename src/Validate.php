@@ -61,6 +61,8 @@ class Validate
         // Controllo sulla sintassi
         if (starts_with($vat_number, 'IT') && !static::vatCheckIT($vat_number)) {
             $result['valid-format'] = false;
+
+            return $result;
         }
 
         /*
@@ -120,6 +122,8 @@ class Validate
         $result = [];
         if (!v::email()->validate($email)) {
             $result['valid-format'] = false;
+
+            return $result;
         }
 
         // Controllo attraverso apilayer

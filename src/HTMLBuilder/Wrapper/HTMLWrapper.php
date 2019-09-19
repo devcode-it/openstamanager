@@ -137,11 +137,12 @@ class HTMLWrapper implements WrapperInterface
                         input.attr("valid", +(data.result));
                     
                         if (data.fields) {
-                            fields = data.fields;
+                            var fields = data.fields;
                 
+                            var form = input.closest("form");
                             Object.keys(fields).forEach(function(element) {
-                                var single_input = $("[name=" + element + "]");
-                                if (!single_input.val()) single_input.val(fields[element]);
+                                var single_input = form.find("[name=" + element + "]");
+                                if (!single_input.val()) single_input.val(fields[element]).trigger("change");
                             });
                         }
 

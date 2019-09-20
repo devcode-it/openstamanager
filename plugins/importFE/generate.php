@@ -189,9 +189,10 @@ echo '
         </div>';
 
 // Data di registrazione
+$data_registrazione = get('data_registrazione');
 echo '
         <div class="col-md-3">
-            {[ "type": "date", "label": "'.tr('Data di registrazione').'", "name": "data_registrazione", "required": 1, "value": "'.(get('data_registrazione') ?: $dati_generali['Data']).'", "max-date": "-now-", "min-date": "'.$dati_generali['Data'].'", "readonly": "'.(intval(get('data_registrazione') != null)).'" ]}
+            {[ "type": "date", "label": "'.tr('Data di registrazione').'", "name": "data_registrazione", "required": 1, "value": "'.($data_registrazione ?: $dati_generali['Data']).'", "max-date": "-now-", "min-date": "'.$dati_generali['Data'].'", "readonly": "'.(!empty($data_registrazione)).'" ]}
         </div>';
 
 if (!empty($anagrafica)) {

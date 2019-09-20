@@ -127,7 +127,7 @@ echo '
 if (isset($username)) {
     echo ' value="'.$username.'"';
 }
-echo'>
+echo' required>
 					</div>
 					
 					{[ "type": "password", "name": "password", "autocomplete": "current-password", "placeholder": "'.tr('Password').'", "icon-before": "<i class=\"fa fa-lock\"></i>" ]}

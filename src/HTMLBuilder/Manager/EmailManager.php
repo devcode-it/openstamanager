@@ -2,8 +2,8 @@
 
 namespace HTMLBuilder\Manager;
 
-use Modules\Emails\Mail;
 use Modules;
+use Modules\Emails\Mail;
 
 /**
  * Gestione allegati.

@@ -370,7 +370,7 @@ class FatturaElettronica
         $errors = [];
 
         // Controlli sulla fattura stessa
-        if ($fattura->stato->descrizione != 'Emessa') {
+        if ($fattura->stato->descrizione == 'Bozza') {
             $missing = [
                 'state' => tr('Stato ("Emessa")'),
             ];
@@ -451,7 +451,7 @@ class FatturaElettronica
         $missing = [];
         if (!empty($data)) {
             foreach ($fields as $key => $name) {
-                if (empty($data[$key])) {
+                if (empty($data[$key]) && !empty($name)) {
                     $missing[] = $name;
                 }
             }
@@ -493,7 +493,7 @@ class FatturaElettronica
         $missing = [];
         if (!empty($data)) {
             foreach ($fields as $key => $name) {
-                if (empty($data[$key])) {
+                if (empty($data[$key]) && !empty($name)) {
                     $missing[] = $name;
                 }
             }

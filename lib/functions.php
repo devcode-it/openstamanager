@@ -375,3 +375,17 @@ function clean($string, $permitted = '')
 {
     return preg_replace('/[^A-Za-z0-9'.$permitted.']/', '', $string); // Removes special chars.
 }
+
+function check_query($query)
+{
+    $query = mb_strtoupper($query);
+
+    $blacklist = ['INSERT', 'UPDATE', 'TRUNCATE', 'DELETE', 'DROP', 'GRANT', 'CREATE', 'REVOKE'];
+    foreach ($blacklist as $value) {
+        if (preg_match("/\b".preg_quote($value)."\b/", $query)) {
+            return false;
+        }
+    }
+
+    return true;
+}

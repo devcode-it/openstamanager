@@ -67,7 +67,7 @@ class Newsletter extends Model
 
     public function anagrafiche()
     {
-        return $this->belongsToMany(Anagrafica::class, 'em_newsletter_anagrafica', 'id_newsletter', 'id_anagrafica')->withPivot('id_email');
+        return $this->belongsToMany(Anagrafica::class, 'em_newsletter_anagrafica', 'id_newsletter', 'id_anagrafica')->withPivot('id_email')->withTrashed();
     }
 
     public function emails()

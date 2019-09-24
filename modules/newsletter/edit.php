@@ -74,37 +74,79 @@ echo '
 	<input type="hidden" name="op" value="add_receivers">
 	
 	<!-- Destinatari -->
-    <div class="panel panel-primary">
-        <div class="panel-heading">
-            <h3 class="panel-title">'.tr('Destinatari').'</h3>
+    <div class="box box-primary">
+        <div class="box-header">
+            <h3 class="box-title">'.tr('Aggiunta destinatari').'</h3>
         </div>
         
-        <div class="panel-body">
+        <div class="box-body">
             <div class="row">
-                <div class="col-md-9">
+                <div class="col-md-6">
                     {[ "type": "select", "label": "'.tr('Destinatari').'", "name": "receivers[]", "ajax-source": "anagrafiche_newsletter", "multiple": 1 ]}
                 </div>
                 
-                <div class="col-md-3 text-right">
+                <div class="col-md-6">
+                    {[ "type": "select", "label": "'.tr('Lista').'", "name": "id_list", "ajax-source": "liste_newsletter" ]}
+                </div>
+            </div>
+        
+            <div class="row pull-right">
+                <div class="col-md-12">
                     <button type="submit" class="btn btn-primary">
                         <i class="fa fa-plus"></i> '.tr('Aggiungi').'
                     </button>
                 </div>
-            </div>';
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+$(document).ready(function() {
+    $("#receivers").on("change", function() {
+        if ($(this).selectData()) {
+            $("#id_list").attr("disabled", true).addClass("disabled")
+        } else {
+            $("#id_list").attr("disabled", false).removeClass("disabled")
+        }
+    })
+    
+    $("#id_list").on("change", function() {
+        if ($(this).selectData()) {
+            $("#receivers").attr("disabled", true).addClass("disabled")
+        } else {
+            $("#receivers").attr("disabled", false).removeClass("disabled")
+        }
+    })
+})
+</script>';
 
 $anagrafiche = $newsletter->anagrafiche;
+
+echo '
+<!-- Destinatari -->
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            '.tr('Destinatari').'
+            <span class="badge">'.$anagrafiche->count().'</span>
+        </h3>
+    </div>
+    
+    <div class="panel-body">';
+
 if (!$anagrafiche->isEmpty()) {
     echo '
-            <table class="table table-striped table-hover table-condensed table-bordered">
-                <thead>
-                    <tr>
-                        <th>'.tr('Nome').'</th>
-                        <th class="text-center">'.tr('Data di invio').'</th>
-                        <th class="text-center" width="60">#</th>
-                    </tr>
-                </thead>
-            
-                <tbody>';
+        <table class="table table-hover table-condensed table-bordered">
+            <thead>
+                <tr>
+                    <th>'.tr('Nome').'</th>
+                    <th class="text-center">'.tr('Indirizzo').'</th>
+                    <th class="text-center">'.tr('Data di invio').'</th>
+                    <th class="text-center" width="60">#</th>
+                </tr>
+            </thead>
+        
+            <tbody>';
 
     foreach ($anagrafiche as $anagrafica) {
         $mail_id = $anagrafica->pivot->id_email;
@@ -116,29 +158,29 @@ if (!$anagrafiche->isEmpty()) {
         }
 
         echo '
-                    <tr>
-                        <td>'.Modules::link('Anagrafiche', $anagrafica->id, $anagrafica->ragione_sociale).'</td>
-                        <td class="text-center">'.$data.'</td>
-                        <td class="text-center">
-                            <a class="btn btn-danger ask btn-sm" data-backto="record-edit" data-op="remove_receiver" data-id="'.$anagrafica->id.'">
-                                <i class="fa fa-trash"></i>
-                            </a>
-                        </td>
-                    </tr>';
+                <tr '.(empty($anagrafica->email) ? 'class="bg-danger"' : '').'>
+                    <td>'.Modules::link('Anagrafiche', $anagrafica->id, $anagrafica->ragione_sociale).'</td>
+                    <td class="text-center">'.$anagrafica->email.'</td>
+                    <td class="text-center">'.$data.'</td>
+                    <td class="text-center">
+                        <a class="btn btn-danger ask btn-sm" data-backto="record-edit" data-op="remove_receiver" data-id="'.$anagrafica->id.'">
+                            <i class="fa fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>';
     }
 
     echo '
-                </tbody>
-            </table>';
+            </tbody>
+        </table>';
 } else {
     echo '
-            <p>'.tr('Nessuna anagrafica collegata alla campagna').'.</p>';
+        <p>'.tr('Nessuna anagrafica collegata alla campagna').'.</p>';
 }
 
     echo '
-        </div>
     </div>
-</form>
+</div>
 
 {( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$" )}
 

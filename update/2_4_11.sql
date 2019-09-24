@@ -267,11 +267,11 @@ UPDATE `zz_modules` SET `use_notes` = 1 WHERE `name` IN ('Anagrafiche', 'Interve
 UPDATE `zz_modules` SET `use_checklists` = 1 WHERE `name` IN ('Interventi', 'MyImpianti');
 
 -- Modulo per i template delle Checklist
-INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Checklists', 'Checklists', 'checklists', 'SELECT |select| FROM `zz_checklists` WHERE 1=1 HAVING 2=2', '', 'fa fa-check-square-o', '2.4.11', '2.4.11', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Strumenti'), '1', '1');
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Checklists', 'Checklists', 'checklists', 'SELECT |select| FROM `zz_checklists` WHERE 1=1 HAVING 2=2', '', 'fa fa-check-square-o', '2.4.11', '2.*', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Strumenti'), '1', '1');
 
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `default`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Checklists'), 'id', 'id', 1, 0, 0, 1, 0),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Checklists'), 'Nome', 'name', 2, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Checklists'), 'Nome', 'name', 2, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Checklists'), 'Modulo', '(SELECT name FROM zz_modules WHERE id = zz_checklists.id_module)', 5, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Checklists'), 'Plugin', '(SELECT name FROM zz_plugins WHERE id = zz_checklists.id_plugin)', 5, 1, 0, 1, 1);
 
@@ -399,11 +399,11 @@ ALTER TABLE `zz_hooks` CHANGE `id_module` `id_module` INT(11) NULL;
 INSERT INTO `zz_hooks` (`id`, `name`, `class`, `frequency`, `id_module`) VALUES (NULL, 'Email', 'Modules\\Emails\\EmailHook', '1 minute', NULL);
 
 -- Modulo Newsletter
-INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Newsletter', 'Newsletter', 'newsletter', 'SELECT |select| FROM `em_newsletters` WHERE 1=1 AND deleted_at IS NULL HAVING 2=2', '', 'fa fa-newspaper-o ', '2.4.11', '2.4.11', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Gestione email'), '1', '1');
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Newsletter', 'Newsletter', 'newsletter', 'SELECT |select| FROM `em_newsletters` WHERE 1=1 AND deleted_at IS NULL HAVING 2=2', '', 'fa fa-newspaper-o ', '2.4.11', '2.*', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Gestione email'), '1', '1');
 
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `default`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Newsletter'), 'id', 'id', 1, 0, 0, 1, 0),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Newsletter'), 'Nome', 'name', 2, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Newsletter'), 'Nome', 'name', 2, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Newsletter'), 'Template', '(SELECT name FROM em_templates WHERE id = em_newsletters.id_template)', 3, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Newsletter'), 'Completato', 'IF(completed_at IS NULL, ''No'', ''Si'')', 4, 1, 0, 1, 1);
 
@@ -414,11 +414,11 @@ FROM `em_emails`
     INNER JOIN `zz_users` ON `zz_users`.`id` = `em_emails`.`created_by`
 WHERE 1=1 AND (`em_emails`.`created_at` BETWEEN ''|period_start|'' AND ''|period_end|'' OR `em_emails`.`sent_at` IS NULL)
 HAVING 2=2
-ORDER BY `em_emails`.`created_at` DESC', '', 'fa fa-spinner ', '2.4.11', '2.4.11', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Gestione email'), '1', '1');
+ORDER BY `em_emails`.`created_at` DESC', '', 'fa fa-spinner ', '2.4.11', '2.*', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Gestione email'), '1', '1');
 
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `default`, `visible`, `format`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stato email'), 'em_emails.id', 'id', 1, 0, 0, 1, 0, 0),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stato email'), 'Oggetto', 'em_emails.subject', 2, 1, 0, 0, 1, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stato email'), 'Oggetto', 'em_emails.subject', 2, 1, 0, 1, 1, 0),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stato email'), 'Contenuto', 'em_emails.content', 3, 1, 0, 0, 1, 0),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stato email'), 'Template', 'em_templates.name', 3, 1, 0, 1, 1, 0),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stato email'), 'Data invio', 'em_emails.sent_at', 4, 1, 0, 1, 1, 1),
@@ -653,3 +653,28 @@ INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`,
 
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES
 (NULL, 'Iva per lettere d''intento', '', 'query=SELECT id, descrizione FROM `co_iva` WHERE codice_natura_fe = ''N3'' AND deleted_at IS NULL ORDER BY descrizione ASC', 1, 'Fatturazione', 11);
+
+-- Liste per le newsletter
+CREATE TABLE IF NOT EXISTS `em_lists` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `name` varchar(255) NOT NULL,
+    `description` TEXT,
+    `query` TEXT,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `em_list_anagrafica` (
+  `id_list` int(11) NOT NULL,
+  `id_anagrafica` int(11) NOT NULL,
+  FOREIGN KEY (`id_list`) REFERENCES `em_newsletters`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`id_anagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Liste newsletter', 'Liste', 'liste_newsletter', 'SELECT |select| FROM `em_lists` WHERE deleted_at IS NULL AND 1=1 HAVING 2=2', '', 'fa fa-list', '2.4.11', '2.*', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Gestione email'), '1', '0');
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `default`, `visible`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Liste newsletter'), 'id', 'id', 1, 0, 0, 1, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Liste newsletter'), 'Nome', 'name', 2, 1, 0, 1, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Liste newsletter'), 'Descrizione', 'description', 3, 1, 0, 1, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Liste newsletter'), 'Dinamica', 'IF(query IS NULL, ''No'', ''Si'')', 4, 1, 0, 1, 1);

@@ -1,6 +1,7 @@
 <?php
 
 use Modules\Emails\Template;
+use Modules\Newsletter\Lista;
 use Modules\Newsletter\Newsletter;
 
 include_once __DIR__.'/../../core.php';
@@ -93,9 +94,15 @@ switch (filter('op')) {
     case 'add_receivers':
         $receivers = post('receivers');
 
-        $newsletter->anagrafiche()->attach($receivers);
+        $id_list = post('id_list');
+        if (!empty($id_list)) {
+            $list = Lista::find($id_list);
+            $receivers = $list->anagrafiche->pluck('idanagrafica');
+        }
 
-        flash()->info(tr('Nuovi destinatari della newsletter aggiunti!'));
+        $newsletter->anagrafiche()->syncWithoutDetaching($receivers);
+
+        flash()->info(tr('Aggiunti nuovi destinatari alla newsletter!'));
 
         break;
 

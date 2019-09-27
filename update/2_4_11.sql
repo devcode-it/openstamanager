@@ -19,7 +19,7 @@ INSERT INTO `zz_prints` (`id_module`, `name`, `title`, `filename`, `directory`, 
 -- Reset password per gli utenti
 ALTER TABLE `zz_users` ADD `reset_token` VARCHAR(255);
 
-INSERT INTO `em_emails` (`id`, `id_module`, `id_smtp`, `name`, `icon`, `subject`, `reply_to`, `cc`, `bcc`, `body`, `read_notify`) VALUES
+INSERT INTO `zz_emails` (`id`, `id_module`, `id_smtp`, `name`, `icon`, `subject`, `reply_to`, `cc`, `bcc`, `body`, `read_notify`) VALUES
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Utenti e permessi'), 1, 'Reset password', 'fa fa-envelope', 'Richiesta di reset password', '', '', '', '<p>Gentile {username},</p>\r\n<p>a seguito della richiesta di reimpostazione della password del Suo account è pregato di inserire la nuova password che desidera utilizzare al seguente link:</p>\r\n<p class="text-center"><a href="{reset_link}">{reset_link}</a></p>\r\n<p>&nbsp;</p><p>Se non sei il responsabile della richiesta in questione, contatta l''amministratore il prima possibile per richiedere un cambio di username.</p>\r\n<p>&nbsp;</p>\r\n<p>Distinti saluti</p>\r\n', '0');
 
 -- Relazione tra le righe dei documenti
@@ -297,7 +297,7 @@ ALTER TABLE `zz_files` ADD `created_by` INT(11) AFTER `id_record`, ADD FOREIGN K
 ALTER TABLE `co_movimenti` ADD `id_scadenza` INT(11) AFTER `iddocumento`, ADD FOREIGN KEY (`id_scadenza`) REFERENCES `co_scadenziario`(`id`) ON DELETE CASCADE, ADD `is_insoluto` BOOLEAN NOT NULL DEFAULT FALSE AFTER `id_scadenza`;
 
 -- Aggiornamento indirizzo email SDI
-UPDATE `em_emails` SET `cc` = 'sdi52@pec.fatturapa.it' WHERE `name` = 'PEC';
+UPDATE `zz_emails` SET `cc` = 'sdi52@pec.fatturapa.it' WHERE `name` = 'PEC';
 
 -- Rimozione Pianificazione fatturazione
 DELETE FROM `zz_plugins` WHERE `name` = 'Pianificazione fatturazione';
@@ -311,13 +311,13 @@ ALTER TABLE `zz_hooks` ADD `processing_at` TIMESTAMP NULL DEFAULT NULL, ADD `pro
 INSERT INTO `zz_hooks` (`id`, `name`, `class`, `frequency`, `id_module`) VALUES (NULL, 'Backup', 'Modules\\Backups\\BackupHook', '1 day', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Backup'));
 
 -- Miglioramento gestione email
-ALTER TABLE `em_emails` RENAME TO `em_templates`;
+ALTER TABLE `zz_emails` RENAME TO `em_templates`;
 ALTER TABLE `zz_smtps` RENAME TO `em_accounts`;
 ALTER TABLE `zz_email_print` RENAME TO `em_print_template`;
 
-UPDATE zz_modules SET options = REPLACE(options, 'em_emails', 'em_templates'), options2 = REPLACE(options2, 'em_emails', 'em_templates');
+UPDATE zz_modules SET options = REPLACE(options, 'zz_emails', 'em_templates'), options2 = REPLACE(options2, 'zz_emails', 'em_templates');
 UPDATE zz_modules SET options = REPLACE(options, 'zz_smtps', 'em_accounts'), options2 = REPLACE(options2, 'zz_smtps', 'em_accounts');
-UPDATE zz_views SET query = REPLACE(query, 'em_emails', 'em_templates');
+UPDATE zz_views SET query = REPLACE(query, 'zz_emails', 'em_templates');
 UPDATE zz_views SET query = REPLACE(query, 'zz_smtps', 'em_accounts');
 
 CREATE TABLE IF NOT EXISTS `em_newsletters` (

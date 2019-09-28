@@ -2,6 +2,12 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Fatture\Fattura;
+
+$documento = Fattura::find($record['iddocumento']);
+$dir = $documento->direzione;
+$numero = $documento->numero_esterno ?: $documento->numero;
+
 echo '
 <form action="" method="post" id="edit-form">
 	<input type="hidden" name="op" value="update">
@@ -16,7 +22,7 @@ echo '
 		<div class="panel-heading">
 			<h3 class="panel-title">
 			    '.tr('Dettagli scadenza').'
-                <button type="button" class="btn btn-xs btn-info pull-right" id="add-scadenza">
+                <button type="button" class="btn btn-xs btn-info pull-right '.(empty($documento) ? 'disabled' : '').'" id="add-scadenza" '.(empty($documento) ? 'disabled' : '').'>
                     <i class="fa fa-plus"></i> '.tr('Aggiungi scadenza').'
                 </button>
             </h3>
@@ -26,26 +32,21 @@ echo '
 			<div class="row">
 
 				<!-- Info scadenza -->
-				<div class="col-md-7">
-					<table class="table table-striped table-hover table-condensed table-bordered">';
+				<div class="col-md-7">';
 
-$rs = $dbo->fetchArray('SELECT * FROM (co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id) INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica WHERE co_documenti.id='.prepare($record['iddocumento']));
-$dir = $rs[0]['dir'];
-$numero = (!empty($rs[0]['numero_esterno'])) ? $rs[0]['numero_esterno'] : $rs[0]['numero'];
-$modulo_fattura = $dir == 'entrata' ? 'Fatture di vendita' : 'Fatture di acquisto';
-
-if (!empty($rs)) {
-    echo "
+if (!empty($documento)) {
+    echo '
+					<table class="table table-striped table-hover table-condensed table-bordered">
                         <tr>
-                            <th width='120'>".($dir == 'entrata' ? tr('Cliente') : tr('Fornitore')).':</th>
+                            <th width="120">'.($dir == 'entrata' ? tr('Cliente') : tr('Fornitore')).':</th>
                             <td>
-                                '.Modules::link('Anagrafiche', $rs[0]['idanagrafica'], $rs[0]['ragione_sociale']).'
+                                '.Modules::link('Anagrafiche', $documento->anagrafica->id, $documento->anagrafica->ragione_sociale).'
                             </td>
                         </tr>';
     echo '
                         <tr>
                             <th>'.tr('Documento').':</th>
-                            <td>'.$rs[0]['descrizione'].'</td>
+                            <td>'.$documento->tipo->descrizione.'</td>
                         </tr>';
     echo '
                         <tr>
@@ -55,21 +56,24 @@ if (!empty($rs)) {
     echo '
                         <tr>
                             <th>'.tr('Data').':</th>
-                            <td>'.Translator::dateToLocale($rs[0]['data']).'</td>
-                        </tr>';
+                            <td>'.Translator::dateToLocale($documento->data).'</td>
+                        </tr>
+                    </table>
+
+                    '.Modules::link($documento->module, $record['iddocumento'], '<i class="fa fa-folder-open"></i> '.tr('Apri documento'), null, 'class="btn btn-primary"');
 } else {
-    $rs = $dbo->fetchArray("SELECT * FROM co_scadenziario WHERE id='".$id_record."'");
-    echo "
-                        <tr>
-                                <th width='120'>".tr('Descrizione').':</th>
-                                <td><input type="text" class="form-control" name="descrizione" value="'.$rs[0]['descrizione'].'"></td>
-                        </tr>';
+    $scadenza = $dbo->fetchOne('SELECT * FROM co_scadenziario WHERE id='.prepare($id_record));
+
+    echo input([
+        'type' => 'textarea',
+        'label' => tr('Descrizione'),
+        'name' => 'descrizione',
+        'required' => 1,
+        'value' => $scadenza['descrizione'],
+    ]);
 }
 
 echo '
-                    </table>
-
-                    '.Modules::link($modulo_fattura, $record['iddocumento'], '<i class="fa fa-folder-open"></i> '.tr('Apri documento'), null, 'class="btn btn-primary"').'
 				</div>
 
 				<!-- Elenco scadenze -->
@@ -83,25 +87,25 @@ echo '
                                 <th width="150">'.tr('Data concordata').'</th>
                             </tr>
                         </thead>
-                        
+
                         <tbody id="scadenze">';
 
 $totale_da_pagare = 0;
 $totale_pagato = 0;
 
-//Scelgo la query in base al segmento
-if ($record['iddocumento'] != 0) {
-    $rs = $dbo->fetchArray('SELECT * FROM co_scadenziario WHERE iddocumento = (SELECT iddocumento FROM co_scadenziario s WHERE id='.prepare($id_record).') ORDER BY scadenza ASC');
+// Scelgo la query in base al segmento
+if (!empty($documento)) {
+    $rs = $dbo->fetchArray('SELECT * FROM co_scadenziario WHERE iddocumento = '.prepare($documento->id).' ORDER BY scadenza ASC');
 } else {
-    $rs = $dbo->fetchArray('SELECT * FROM co_scadenziario WHERE id='.prepare($id_record).' ORDER BY scadenza ASC');
+    $rs = $dbo->fetchArray('SELECT * FROM co_scadenziario WHERE id = '.prepare($id_record).' ORDER BY scadenza ASC');
 }
 
-for ($i = 0; $i < count($rs); ++$i) {
-    if ($rs[$i]['da_pagare'] == $rs[$i]['pagato']) {
+foreach ($rs as $i => $scadenza) {
+    if ($scadenza['da_pagare'] == $scadenza['pagato']) {
         $class = 'success';
-    } elseif (abs($rs[$i]['pagato']) == 0) {
+    } elseif (abs($scadenza['pagato']) == 0) {
         $class = 'danger';
-    } elseif (abs($rs[$i]['pagato']) <= abs($rs[$i]['da_pagare'])) {
+    } elseif (abs($scadenza['pagato']) <= abs($scadenza['da_pagare'])) {
         $class = 'warning';
     } else {
         $class = 'danger';
@@ -109,20 +113,22 @@ for ($i = 0; $i < count($rs); ++$i) {
 
     echo '
                         <tr class="'.$class.'">
+                            <input type="hidden" name="id_scadenza['.$i.']" value="'.$scadenza['id'].'">
+
                             <td align="center">
-                                {[ "type": "date", "name": "scadenza['.$rs[$i]['id'].']", "value": "'.$rs[$i]['scadenza'].'" ]}
+                                {[ "type": "date", "name": "scadenza['.$i.']", "value": "'.$scadenza['scadenza'].'" ]}
                             </td>
 
                             <td align="right">
-                                {[ "type": "number", "name": "da_pagare['.$rs[$i]['id'].']", "decimals": 2, "value": "'.Translator::numberToLocale($rs[$i]['da_pagare'], 2).'", "onchange": "controlloTotale()" ]}
+                                {[ "type": "number", "name": "da_pagare['.$i.']", "decimals": 2, "value": "'.Translator::numberToLocale($scadenza['da_pagare'], 2).'", "onchange": "controlloTotale()" ]}
                             </td>
 
                             <td align="right">
-                                {[ "type": "number", "name": "pagato['.$rs[$i]['id'].']", "decimals": 2, "value": "'.Translator::numberToLocale($rs[$i]['pagato']).'"  ]}
+                                {[ "type": "number", "name": "pagato['.$i.']", "decimals": 2, "value": "'.Translator::numberToLocale($scadenza['pagato']).'"  ]}
                             </td>
-                            
+
                             <td align="center">
-                                {[ "type": "date", "name": "data_concordata['.$rs[$i]['id'].']", "value": "'.$rs[$i]['data_concordata'].'" ]}
+                                {[ "type": "date", "name": "data_concordata['.$i.']", "value": "'.$scadenza['data_concordata'].'" ]}
                             </td>
                         </tr>';
 }
@@ -189,7 +195,7 @@ echo '
 <table class="hide">
     <tbody id="scadenza-template">
         <tr class="danger">
-            <input type="hidden" name="nuova[-id-]" value="1">
+            <input type="hidden" name="id_scadenza[-id-]" value="">
             
             <td align="center">
                 {[ "type": "date", "name": "scadenza[-id-]" ]}

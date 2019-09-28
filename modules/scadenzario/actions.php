@@ -30,11 +30,18 @@ switch (post('op')) {
             $totale_utente = sum($totale_utente, $da_pagare);
         }
 
+        $totale_pagato = 0;
+        $id_scadenza_non_completa = null;
         if ($totale_utente == $totale_da_pagare || empty($scadenza['iddocumento'])) {
             foreach (post('da_pagare') as $id => $da_pagare) {
                 $pagato = post('pagato')[$id];
                 $scadenza = post('scadenza')[$id];
                 $data_concordata = post('data_concordata')[$id];
+
+                $pagato = floatval($pagato);
+                $da_pagare = floatval($da_pagare);
+
+                $totale_pagato = sum($totale_pagato, $pagato);
 
                 $id_scadenza = post('id_scadenza')[$id];
                 if (!empty($id_scadenza)) {
@@ -60,10 +67,25 @@ switch (post('op')) {
                         'data_concordata' => $data_concordata,
                         'data_emissione' => date('Y-m-d'),
                     ]);
+
+                    $id_scadenza = $database->lastInsertedID();
+                }
+
+                if ($pagato != $da_pagare) {
+                    $id_scadenza_non_completa = $id_scadenza;
                 }
             }
 
             flash()->info(tr('Scadenze aggiornate!'));
+
+            if ($totale_pagato == $totale_da_pagare) {
+                flash()->warning(tr('Le scadenze sono state completate!'));
+
+                redirect(ROOTDIR.'/controller.php?id_module='.$id_module);
+                Filter::set('post', 'backto', null);
+            } else {
+                $id_record = $id_scadenza_non_completa;
+            }
         } else {
             flash()->error(tr('Il totale degli importi inseriti non corrisponde al totale da pagare!'));
         }

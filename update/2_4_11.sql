@@ -471,6 +471,8 @@ HAVING 2=2
 ORDER BY `co_documenti`.`data` DESC, CAST(`co_documenti`.`numero_esterno` AS UNSIGNED) DESC' WHERE `name` = 'Fatture di vendita';
 
 UPDATE `zz_views` SET `query` = 'righe.totale' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') AND `name` = 'Totale';
+UPDATE `zz_views` SET `query` = 'IF(`email`.`id_email` IS NOT NULL, ''fa fa-envelope text-success'', '''')' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') AND `name` = 'icon_Inviata';
+UPDATE `zz_views` SET `query` = 'IF(`email`.`id_email` IS NOT NULL, ''Inviata via email'', '''')' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') AND `name` = 'icon_title_Inviata';
 
 -- Ottimizzazione Fatture di acquisto
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_documenti`

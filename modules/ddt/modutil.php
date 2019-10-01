@@ -93,7 +93,7 @@ function get_ivaindetraibile_ddt($id_ddt)
  * 	$idarticolo		integer		codice dell'articolo da scollegare dal ddt
  * 	$idddt		 	integer		codice del ddt da cui scollegare l'articolo.
  *
- * @deprecated
+ * @deprecated 2.4.11
  */
 function rimuovi_articolo_daddt($idarticolo, $idddt, $idrigaddt)
 {
@@ -246,7 +246,7 @@ function ricalcola_costiagg_ddt($idddt, $idrivalsainps = '', $idritenutaacconto 
  * $qta			float		quantità dell'articolo nell'ordine
  * $prezzo			float		prezzo totale degli articoli (prezzounitario*qtà).
  *
- * @deprecated
+ * @deprecated 2.4.11
  */
 function add_articolo_inddt($idddt, $idarticolo, $descrizione, $idiva, $qta, $idum, $prezzo, $sconto = 0, $sconto_unitario = 0, $tipo_sconto = 'UNT')
 {

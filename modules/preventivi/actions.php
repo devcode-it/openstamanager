@@ -124,9 +124,13 @@ switch (post('op')) {
 
     // Eliminazione preventivo
     case 'delete':
-        $preventivo->delete();
+        try {
+            $preventivo->delete();
 
-        flash()->info(tr('Preventivo eliminato!'));
+            flash()->info(tr('Preventivo eliminato!'));
+        } catch (InvalidArgumentException $e) {
+            flash()->error(tr('Sono stati utilizzati alcuni serial number nel documento: impossibile procedere!'));
+        }
 
         break;
 

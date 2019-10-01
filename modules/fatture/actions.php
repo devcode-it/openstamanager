@@ -536,7 +536,7 @@ switch (post('op')) {
         break;
 
     // Scollegamento riga generica da documento
-    case 'unlink_riga':
+    case 'delete_riga':
         $id_riga = post('idriga');
 
         if (!empty($id_riga)) {

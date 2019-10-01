@@ -37,7 +37,7 @@ foreach ($righe as $row) {
 
     $extra = '';
 
-    $delete = 'unlink_riga';
+    $delete = 'delete_riga';
 
     // Articoli
     if ($row->isArticolo()) {

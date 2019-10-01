@@ -277,58 +277,24 @@ switch (post('op')) {
 
         break;
 
-    // Scollegamento articolo da ddt
-    case 'unlink_articolo':
-        $idriga = post('idriga');
-        $idarticolo = post('idarticolo');
-
-        if (!rimuovi_articolo_daddt($idarticolo, $id_record, $idriga)) {
-            flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
-
-            return;
-        }
-
-        // Ricalcolo inps, ritenuta e bollo
-        if ($dir == 'entrata') {
-            ricalcola_costiagg_ddt($id_record);
-        } else {
-            ricalcola_costiagg_ddt($id_record, 0, 0, 0);
-        }
-
-        flash()->info(tr('Articolo rimosso!'));
-        break;
-
     // Scollegamento riga generica da ddt
-    case 'unlink_riga':
-        $idriga = post('idriga');
+    case 'delete_riga':
+        $id_riga = post('idriga');
 
-        if ($id_record != '' && $idriga != '') {
-            // Se la riga è stata creata da un ordine, devo riportare la quantità evasa nella tabella degli ordini
-            // al valore di prima, riaggiungendo la quantità che sto togliendo
-            $rs = $dbo->fetchArray('SELECT qta, descrizione, idarticolo, idordine, idiva FROM dt_righe_ddt WHERE idddt='.prepare($id_record).' AND id='.prepare($idriga));
+        if (!empty($id_riga)) {
+            $riga = $ddt->getRighe()->find($id_riga);
 
-            // Rimpiazzo la quantità negli ordini
-            $dbo->query('UPDATE or_righe_ordini SET qta_evasa=qta_evasa-'.$rs[0]['qta'].' WHERE descrizione='.prepare($rs[0]['descrizione']).' AND idarticolo='.prepare($rs[0]['idarticolo']).' AND idordine='.prepare($rs[0]['idordine']).' AND idiva='.prepare($rs[0]['idiva']));
-
-            // Eliminazione delle righe dal ddt
-            $query = 'DELETE FROM dt_righe_ddt WHERE idddt='.prepare($id_record).' AND id='.prepare($idriga);
-
-            if ($dbo->query($query)) {
-                //Aggiorno lo stato dell'ordine
-                if (setting('Cambia automaticamente stato ordini fatturati') && !empty($rs[0]['idordine'])) {
-                    $dbo->query('UPDATE or_ordini SET idstatoordine=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($rs[0]['idordine']).'") WHERE id = '.prepare($rs[0]['idordine']));
-                }
-
-                // Ricalcolo inps, ritenuta e bollo
-                if ($dir == 'entrata') {
-                    ricalcola_costiagg_ddt($id_record);
-                } else {
-                    ricalcola_costiagg_ddt($id_record, 0, 0, 0);
-                }
+            try {
+                $riga->delete();
 
                 flash()->info(tr('Riga rimossa!'));
+            } catch (InvalidArgumentException $e) {
+                flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
             }
         }
+
+        ricalcola_costiagg_ddt($id_record);
+
         break;
 
     // eliminazione ddt
@@ -336,7 +302,7 @@ switch (post('op')) {
         try {
             $ddt->delete();
 
-            $dbo->query('DELETE FROM mg_movimenti WHERE idddt='.prepare($id_record));
+            $dbo->query('DELETE FROM mg_movimenti WHERE idddt = '.prepare($id_record));
 
             flash()->info(tr('Ddt eliminato!'));
         } catch (InvalidArgumentException $e) {

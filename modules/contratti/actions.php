@@ -259,11 +259,15 @@ switch (post('op')) {
 
     // eliminazione contratto
     case 'delete':
-        $dbo->query('DELETE FROM co_promemoria WHERE idcontratto='.prepare($id_record));
+        try {
+            $contratto->delete();
 
-        $contratto->delete();
+            $dbo->query('DELETE FROM co_promemoria WHERE idcontratto='.prepare($id_record));
 
-        flash()->info(tr('Contratto eliminato!'));
+            flash()->info(tr('Contratto eliminato!'));
+        } catch (InvalidArgumentException $e) {
+            flash()->error(tr('Sono stati utilizzati alcuni serial number nel documento: impossibile procedere!'));
+        }
 
         break;
 

@@ -7,7 +7,7 @@ use Modules\Articoli\Articolo;
 /**
  * Funzione per inserire i movimenti di magazzino.
  *
- * @deprecated
+ * @deprecated 2.4.11
  */
 function add_movimento_magazzino($id_articolo, $qta, $array = [], $descrizone = '', $data = '')
 {
@@ -71,8 +71,8 @@ function add_movimento_magazzino($id_articolo, $qta, $array = [], $descrizone = 
 
     // Descrizione di default
     if (empty($movimento)) {
-        $carico = (!empty($rs[0]['dir']) && $rs[0]['dir'] == 'entrata') ? tr('Ripristino articolo da _TYPE_ _NUM_') : tr('Carico magazzino da _TYPE_ numero _NUM_');
-        $scarico = (!empty($rs[0]['dir']) && $rs[0]['dir'] == 'uscita') ? tr('Rimozione articolo da _TYPE_ _NUM_') : tr('Scarico magazzino per _TYPE_ numero _NUM_');
+        $carico = (!empty($rs[0]['dir']) && $rs[0]['dir'] == 'entrata') ? tr('Ripristino articolo da _TYPE_ numero _NUM_') : tr('Carico magazzino da _TYPE_ numero _NUM_');
+        $scarico = (!empty($rs[0]['dir']) && $rs[0]['dir'] == 'uscita') ? tr('Rimozione articolo da _TYPE_ numero _NUM_') : tr('Scarico magazzino per _TYPE_ numero _NUM_');
 
         $movimento = ($qta > 0) ? $carico : $scarico;
     }

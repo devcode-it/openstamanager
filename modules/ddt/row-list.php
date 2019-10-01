@@ -144,19 +144,8 @@ if (!empty($rs)) {
                 <input type='hidden' name='backto' value='record-edit'>
                 <input type='hidden' name='id_record' value='".$id_record."'>
                 <input type='hidden' name='idriga' value='".$r['id']."'>
-                <input type='hidden' name='dir' value='".$dir."'>";
-
-            if (!empty($r['idarticolo'])) {
-                echo "
-                <input type='hidden' name='idarticolo' value='".$r['idarticolo']."'>
-                <input type='hidden' name='op' value='unlink_articolo'>";
-            } else {
-                echo "
-
-                <input type='hidden' name='op' value='unlink_riga'>";
-            }
-
-            echo "
+                <input type='hidden' name='dir' value='".$dir."'>
+                <input type='hidden' name='op' value='delete_riga'>
 
                 <div class='input-group-btn'>";
 

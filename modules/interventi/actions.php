@@ -189,32 +189,31 @@ switch (post('op')) {
 
     // Eliminazione intervento
     case 'delete':
-        // Elimino anche eventuali file caricati
-        Uploads::deleteLinked([
-            'id_module' => $id_module,
-            'id_record' => $id_record,
-        ]);
+        try {
+            $intervento->delete();
 
-        // Eliminazione associazioni tra interventi e contratti
-        $dbo->query('UPDATE co_promemoria SET idintervento = NULL WHERE idintervento='.prepare($id_record));
+            // Eliminazione associazioni tra interventi e contratti
+            $dbo->query('UPDATE co_promemoria SET idintervento = NULL WHERE idintervento='.prepare($id_record));
 
-        // Elimino il collegamento al componente
-        $dbo->query('DELETE FROM my_impianto_componenti WHERE idintervento='.prepare($id_record));
+            // Elimino il collegamento al componente
+            $dbo->query('DELETE FROM my_impianto_componenti WHERE idintervento='.prepare($id_record));
 
-        // Eliminazione associazione tecnici collegati all'intervento
-        $query = 'DELETE FROM in_interventi_tecnici WHERE idintervento='.prepare($id_record);
-        $dbo->query($query);
+            // Eliminazione associazione tecnici collegati all'intervento
+            $dbo->query('DELETE FROM in_interventi_tecnici WHERE idintervento='.prepare($id_record));
 
-        // Eliminazione associazione interventi e my_impianti
-        $query = 'DELETE FROM my_impianti_interventi WHERE idintervento='.prepare($id_record);
-        $dbo->query($query);
+            // Eliminazione associazione interventi e my_impianti
+            $dbo->query('DELETE FROM my_impianti_interventi WHERE idintervento='.prepare($id_record));
 
-        // Eliminazione dell'intervento
-        $intervento->delete();
+            // Elimino anche eventuali file caricati
+            Uploads::deleteLinked([
+                'id_module' => $id_module,
+                'id_record' => $id_record,
+            ]);
 
-        flash()->info(tr('Intervento _NUM_ eliminato!', [
-            '_NUM_' => "'".$intervento->codice."'",
-        ]));
+            flash()->info(tr('Intervento eliminato!'));
+        } catch (InvalidArgumentException $e) {
+            flash()->error(tr('Sono stati utilizzati alcuni serial number nel documento: impossibile procedere!'));
+        }
 
         break;
 
@@ -288,9 +287,10 @@ switch (post('op')) {
             ' WHERE id='.prepare($idriga));
 
         aggiorna_sedi_movimenti('interventi', $id_record);
+
         break;
 
-    case 'unlink_riga':
+    case 'delete_riga':
         $id_riga = post('idriga');
 
         if (!empty($id_riga)) {

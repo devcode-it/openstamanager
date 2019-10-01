@@ -158,7 +158,7 @@ if (!$righe->isEmpty()) {
 <script type="text/javascript">
     function elimina_riga( id ){
         $.post(globals.rootdir + '/actions.php', {
-            op: 'unlink_riga',
+            op: 'delete_riga',
             id_module: globals.id_module,
             id_record: globals.id_record,
             idriga: id

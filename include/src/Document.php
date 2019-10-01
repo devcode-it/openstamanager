@@ -6,14 +6,6 @@ use Common\Components\Description;
 
 abstract class Document extends Model
 {
-    protected $appends = [
-        'iva',
-        'imponibile',
-        'sconto',
-        'totale_imponibile',
-        'totale',
-    ];
-
     /**
      * Restituisce la collezione di righe e articoli con valori rilevanti per i conti.
      *

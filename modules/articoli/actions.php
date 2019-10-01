@@ -39,7 +39,6 @@ switch (post('op')) {
 
     // Modifica articolo
     case 'update':
-        $componente = post('componente_filename');
         $qta = post('qta');
 
         // Inserisco l'articolo e avviso se esiste un altro articolo con stesso codice.
@@ -50,27 +49,29 @@ switch (post('op')) {
             ]));
         }
 
-        $dbo->update('mg_articoli', [
-            'codice' => post('codice'),
-            'descrizione' => post('descrizione'),
-            'um' => post('um'),
-            'id_categoria' => post('categoria'),
-            'id_sottocategoria' => post('subcategoria'),
-            'abilita_serial' => post('abilita_serial'),
-            'threshold_qta' => post('threshold_qta'),
-            'prezzo_vendita' => post('prezzo_vendita'),
-            'prezzo_acquisto' => post('prezzo_acquisto'),
-            'idconto_vendita' => post('idconto_vendita'),
-            'idconto_acquisto' => post('idconto_acquisto'),
-            'idiva_vendita' => post('idiva_vendita'),
-            'gg_garanzia' => post('gg_garanzia'),
-            'servizio' => post('servizio'),
-            'volume' => post('volume'),
-            'peso_lordo' => post('peso_lordo'),
-            'componente_filename' => $componente,
-            'attivo' => post('attivo'),
-            'note' => post('note'),
-        ], ['id' => $id_record]);
+        $articolo->codice = post('codice');
+        $articolo->descrizione = post('descrizione');
+        $articolo->um = post('um');
+        $articolo->id_categoria = post('categoria');
+        $articolo->id_sottocategoria = post('subcategoria');
+        $articolo->abilita_serial = post('abilita_serial');
+        $articolo->threshold_qta = post('threshold_qta');
+        $articolo->prezzo_vendita = post('prezzo_vendita');
+        $articolo->prezzo_acquisto = post('prezzo_acquisto');
+        $articolo->idconto_vendita = post('idconto_vendita');
+        $articolo->idconto_acquisto = post('idconto_acquisto');
+        $articolo->idiva_vendita = post('idiva_vendita');
+        $articolo->gg_garanzia = post('gg_garanzia');
+        $articolo->servizio = post('servizio');
+        $articolo->volume = post('volume');
+        $articolo->peso_lordo = post('peso_lordo');
+
+        $componente = post('componente_filename');
+        $articolo->componente_filename = $componente;
+        $articolo->attivo = post('attivo');
+        $articolo->note = post('note');
+
+        $articolo->save();
 
         // Leggo la quantità attuale per capire se l'ho modificata
         $old_qta = $record['qta'];
@@ -80,12 +81,12 @@ switch (post('op')) {
             $descrizione_movimento = post('descrizione_movimento');
             $data_movimento = post('data_movimento');
 
-            add_movimento_magazzino($id_record, $movimento, [], $descrizione_movimento, $data_movimento);
+            $articolo->movimenta($movimento, $descrizione_movimento, $data_movimento);
         }
 
         // Salvataggio info componente (campo `contenuto`)
         if (!empty($componente)) {
-            $contenuto = \Util\Ini::write(file_get_contents($docroot.'/files/my_impianti/'.$componente), $post);
+            $contenuto = \Util\Ini::write(file_get_contents(DOCROOT.'/files/my_impianti/'.$componente), $post);
 
             $dbo->query('UPDATE mg_articoli SET contenuto='.prepare($contenuto).' WHERE id='.prepare($id_record));
         }
@@ -107,9 +108,7 @@ switch (post('op')) {
                     'id' => $id_record,
                 ]);
             } else {
-                flash()->warning(tr('Errore durante il caricamento del file in _DIR_!', [
-                    '_DIR_' => $upload_dir,
-                ]));
+                flash()->warning(tr("Errore durante il caricamento dell'immagine!"));
             }
         }
 
@@ -174,10 +173,10 @@ switch (post('op')) {
 
         // Movimento il magazzino se l'ho specificato nelle impostazioni
         if (setting("Movimenta il magazzino durante l'inserimento o eliminazione dei lotti/serial number")) {
-            add_movimento_magazzino($id_record, $count, [], tr('Carico magazzino con serial da _INIZIO_ a _FINE_', [
+            $articolo->movimenta($count, tr('Carico magazzino con serial da _INIZIO_ a _FINE_', [
                 '_INIZIO_' => $serial_start,
                 '_FINE_' => $serial_end,
-            ]));
+            ]), date());
         }
 
         flash()->info(tr('Aggiunti _NUM_ seriali!', [
@@ -200,9 +199,9 @@ switch (post('op')) {
         if ($dbo->query($query)) {
             // Movimento il magazzino se l'ho specificato nelle impostazioni
             if (setting("Movimenta il magazzino durante l'inserimento o eliminazione dei lotti/serial number")) {
-                add_movimento_magazzino($id_record, -1, [], tr('Eliminazione dal magazzino del prodotto con serial _SERIAL_', [
+                $articolo->movimenta(-1, tr('Eliminazione dal magazzino del prodotto con serial _SERIAL_', [
                     '_SERIAL_' => $rs[0]['serial'],
-                ]));
+                ]), date());
             }
 
             flash()->info(tr('Prodotto rimosso!'));

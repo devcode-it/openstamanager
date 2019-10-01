@@ -92,6 +92,8 @@ function get_ivaindetraibile_ddt($id_ddt)
  * Questa funzione rimuove un articolo dal ddt data e lo riporta in magazzino
  * 	$idarticolo		integer		codice dell'articolo da scollegare dal ddt
  * 	$idddt		 	integer		codice del ddt da cui scollegare l'articolo.
+ *
+ * @deprecated
  */
 function rimuovi_articolo_daddt($idarticolo, $idddt, $idrigaddt)
 {
@@ -243,6 +245,8 @@ function ricalcola_costiagg_ddt($idddt, $idrivalsainps = '', $idritenutaacconto 
  * $idiva			integer		id del codice iva associato all'articolo
  * $qta			float		quantità dell'articolo nell'ordine
  * $prezzo			float		prezzo totale degli articoli (prezzounitario*qtà).
+ *
+ * @deprecated
  */
 function add_articolo_inddt($idddt, $idarticolo, $descrizione, $idiva, $qta, $idum, $prezzo, $sconto = 0, $sconto_unitario = 0, $tipo_sconto = 'UNT')
 {

@@ -142,7 +142,7 @@ $_SESSION['superselect']['id_categoria'] = $record['id_categoria'];
 
                 <div class="panel-body">
 
-                    
+
                     <div class="clearfix"></div>
 
                     <div class="row">
@@ -311,7 +311,7 @@ function scorpora_iva() {
 
 $("#scorpora_iva").click( function(){
 	scorpora_iva();
-});	
+});
 
 </script>
 

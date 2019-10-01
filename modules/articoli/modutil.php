@@ -2,8 +2,12 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Articoli\Articolo;
+
 /**
  * Funzione per inserire i movimenti di magazzino.
+ *
+ * @deprecated
  */
 function add_movimento_magazzino($id_articolo, $qta, $array = [], $descrizone = '', $data = '')
 {
@@ -18,7 +22,6 @@ function add_movimento_magazzino($id_articolo, $qta, $array = [], $descrizone = 
     $numero = null;
 
     // Informazioni articolo
-    $articolo = $dbo->fetchOne('SELECT * FROM mg_articoli WHERE id='.prepare($id_articolo));
     $manuale = 0;
 
     // Ddt
@@ -78,23 +81,14 @@ function add_movimento_magazzino($id_articolo, $qta, $array = [], $descrizone = 
     $movimento .= $descrizone;
     $movimento = str_replace(['_NAME_', '_TYPE_', '_NUM_'], [$nome, $tipo, $numero], $movimento);
 
-    $new = ($qta > 0 ? '+' : '').$qta;
-
     // Movimento il magazzino solo se l'articolo non è un servizio
-    if ($articolo['servizio'] == 0) {
-        // Movimentazione effettiva
-        if (empty($array['idintervento'])) {
-            $dbo->query('UPDATE mg_articoli SET qta = qta + '.$new.' WHERE id = '.prepare($id_articolo));
-        }
+    $articolo = Articolo::find($id_articolo);
 
-        // Registrazione della movimentazione
-        $dbo->insert('mg_movimenti', array_merge($array, [
-            'idarticolo' => $id_articolo,
-            'qta' => $qta,
-            'movimento' => $movimento,
-            'data' => $data,
-            'manuale' => $manuale,
-        ]));
+    // Movimentazione effettiva
+    if (empty($array['idintervento'])) {
+        return $articolo->movimenta($qta, $movimento, $data, $manuale, $array);
+    } else {
+        return $articolo->registra($qta, $movimento, $data, $manuale, $array);
     }
 
     return true;

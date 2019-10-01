@@ -33,6 +33,8 @@ class Articolo extends Model
             $this->qta += $qta;
 
             $this->save();
+
+            $this->movimentaRicorsivo($qta, $descrizone, $data, $manuale, $array);
         }
 
         return true;
@@ -115,5 +117,46 @@ class Articolo extends Model
     public function sottocategoria()
     {
         return $this->belongsTo(Categoria::class, 'id_sottocategoria');
+    }
+
+    /**
+     * @version distinta_base
+     *
+     * @return mixed
+     */
+    public function componenti()
+    {
+        return $this->belongsToMany(Articolo::class, 'mg_articoli_distinte', 'id_articolo', 'id_figlio')->withPivot('qta');
+    }
+
+    public function parti()
+    {
+        return $this->belongsToMany(Articolo::class, 'mg_articoli_distinte', 'id_figlio', 'id_articolo')->withPivot('qta');
+    }
+
+    /**
+     * Funzione per inserire i movimenti di magazzino.
+     *
+     * @version distinta_base
+     *
+     * @param $qta
+     * @param null  $descrizone
+     * @param null  $data
+     * @param bool  $manuale
+     * @param array $array
+     *
+     * @return bool
+     */
+    protected function movimentaRicorsivo($qta, $descrizone = null, $data = null, $manuale = false, $array = [])
+    {
+        $componenti = $this->componenti;
+
+        $suffix = ' (di.ba.)';
+        $descrizone = strpos($descrizone, $suffix) !== false ? $descrizone : $descrizone.$suffix;
+
+        foreach ($componenti as $componente) {
+            $qta_componente = $qta * $componente->pivot->qta;
+            $componente->movimenta($qta_componente, $descrizone, $data, $manuale, $array);
+        }
     }
 }

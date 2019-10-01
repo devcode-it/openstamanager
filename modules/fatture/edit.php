@@ -622,7 +622,9 @@ if ($dir == 'entrata') {
 		<div class="row">
 			<div class="col-md-12">
 <?php
-include $docroot.'/modules/fatture/row-list.php';
+
+include $structure->filepath('row-list.php');
+
 ?>
 			</div>
 		</div>

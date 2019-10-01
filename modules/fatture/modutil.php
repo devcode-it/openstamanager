@@ -357,6 +357,8 @@ function ricalcola_costiagg_fattura($iddocumento)
  * $qta			float		quantità dell'articolo in fattura
  * $prezzo			float		prezzo totale dell'articolo (prezzounitario*qtà)
  * $idintervento	integer		id dell'intervento da cui arriva l'articolo (per non creare casini quando si rimuoverà un articolo dalla fattura).
+ *
+ * @deprecated
  */
 function add_articolo_infattura($iddocumento, $idarticolo, $descrizione, $idiva, $qta, $prezzo, $sconto = 0, $sconto_unitario = 0, $tipo_sconto = 'UNT', $idintervento = 0, $idconto = 0, $idum = 0, $idrivalsainps = '', $idritenutaacconto = '', $calcolo_ritenuta_acconto = '')
 {

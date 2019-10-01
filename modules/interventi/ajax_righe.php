@@ -10,7 +10,7 @@ if (file_exists(__DIR__.'/../../../core.php')) {
 
 $show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
 
-$intervento = Intervento::find($id_record);
+$intervento = $intervento ?: Intervento::find($id_record);
 $righe = $intervento->getRighe();
 
 if (!$righe->isEmpty()) {
@@ -136,7 +136,7 @@ if (!$righe->isEmpty()) {
                     <i class="fa fa-edit"></i>
                 </button>
 
-                <button type="button" class="btn btn-danger btn-xs" data-toggle="tooltip" onclick="if(confirm(\''.tr('Eliminare questa riga?').'\')){ '.($riga->isArticolo() ? 'ritorna_al_magazzino' : 'elimina_riga').'( \''.$r['id'].'\' ); }">
+                <button type="button" class="btn btn-danger btn-xs" data-toggle="tooltip" onclick="if(confirm(\''.tr('Eliminare questa riga?').'\')){ elimina_riga( \''.$r['id'].'\' ); }">
                     <i class="fa fa-trash"></i>
                 </button>
             </td>';
@@ -157,20 +157,14 @@ if (!$righe->isEmpty()) {
 
 <script type="text/javascript">
     function elimina_riga( id ){
-        $.post(globals.rootdir + '/modules/interventi/actions.php', { op: 'delriga', idriga: id }, function(data, result){
+        $.post(globals.rootdir + '/actions.php', {
+            op: 'unlink_riga',
+            id_module: globals.id_module,
+            id_record: globals.id_record,
+            idriga: id
+        }, function(data, result){
             if( result=='success' ){
                 //ricarico l'elenco delle righe
-                $('#righe').load( globals.rootdir + '/modules/interventi/ajax_righe.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
-
-                $('#costi').load(globals.rootdir + '/modules/interventi/ajax_costi.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
-            }
-        });
-    }
-
-    function ritorna_al_magazzino( id ){
-        $.post(globals.rootdir + '/modules/interventi/actions.php', {op: 'unlink_articolo', idriga: id, id_record: '<?php echo $id_record; ?>', id_module: '<?php echo $id_module; ?>' }, function(data, result){
-            if( result == 'success' ){
-                // ricarico l'elenco degli articoli
                 $('#righe').load( globals.rootdir + '/modules/interventi/ajax_righe.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
 
                 $('#costi').load(globals.rootdir + '/modules/interventi/ajax_costi.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');

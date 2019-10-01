@@ -6,7 +6,7 @@ trait MorphTrait
 {
     public function hasOriginal()
     {
-        return !empty($this->original_type) && !empty($this->original);
+        return !empty($this->original_type) && !empty($this->getOriginal());
     }
 
     public function original()

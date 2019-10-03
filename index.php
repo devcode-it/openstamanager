@@ -132,8 +132,8 @@ echo' required>
 					
 					{[ "type": "password", "name": "password", "autocomplete": "current-password", "placeholder": "'.tr('Password').'", "icon-before": "<i class=\"fa fa-lock\"></i>" ]}
 							
-					<div class="text-right">
-                        <a href="'.ROOTDIR.'/reset.php">'.tr('Dimenticata la password?').'</a>
+                    <div class="text-right">
+                        <small><a href="'.ROOTDIR.'/reset.php">'.tr('Password dimenticata?').'</a></small>
                     </div>
 				</div>
 				

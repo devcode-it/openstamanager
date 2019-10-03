@@ -417,7 +417,7 @@ HAVING 2=2
 ORDER BY `em_emails`.`created_at` DESC', '', 'fa fa-spinner ', '2.4.11', '2.*', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Gestione email'), '1', '1');
 
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `default`, `visible`, `format`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stato email'), 'em_emails.id', 'id', 1, 0, 0, 1, 0, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stato email'), 'id', 'em_emails.id', 1, 0, 0, 1, 0, 0),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stato email'), 'Oggetto', 'em_emails.subject', 2, 1, 0, 1, 1, 0),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stato email'), 'Contenuto', 'em_emails.content', 3, 1, 0, 0, 1, 0),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stato email'), 'Template', 'em_templates.name', 3, 1, 0, 1, 1, 0),

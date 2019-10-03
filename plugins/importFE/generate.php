@@ -235,7 +235,7 @@ echo '
     <div class="row" >
 		<div class="col-md-6">
 		    <button type="button" class="btn btn-info btn-xs pull-right" onclick="session_set(\'superselect,codice_modalita_pagamento_fe\', \'\', 0)">
-		        <i class="fa fa-refresh"></i> '.tr('Reset modalità').'
+		        <i class="fa fa-refresh"></i> '.tr('Visualizza tutte le modalità').'
             </button>
 		    
             {[ "type": "select", "label": "'.tr('Pagamento').'", "name": "pagamento", "required": 1, "ajax-source": "pagamenti" ]}

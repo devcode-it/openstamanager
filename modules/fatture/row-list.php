@@ -395,7 +395,7 @@ if (!empty($fattura->totale_ritenuta_contributi)) {
             <b>'.tr('Ritenuta contributi', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.moneyFormat($fattura->totale_ritenuta_contributi).'
+            '.moneyFormat($fattura->totale_ritenuta_contributi, 2).'
         </td>
         <td></td>
     </tr>';

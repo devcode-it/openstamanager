@@ -680,3 +680,5 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Liste newsletter'), 'Nome', 'name', 2, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Liste newsletter'), 'Descrizione', 'description', 3, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Liste newsletter'), 'Dinamica', 'IF(query IS NULL, ''No'', ''Si'')', 4, 1, 0, 1, 1);
+
+UPDATE `zz_prints` SET `is_record` = '0' WHERE `zz_prints`.`name` = 'Inventario magazzino';

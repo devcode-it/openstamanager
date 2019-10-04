@@ -39,7 +39,7 @@ switch (post('op')) {
         // Informazioni sull'anagrafica
         $anagrafica->codice = post('codice');
         $anagrafica->tipo = post('tipo');
-        $anagrafica->codice_destinatario = post('codice_destinatario');
+        $anagrafica->codice_destinatario = strtoupper(post('codice_destinatario'));
         $anagrafica->ragione_sociale = post('ragione_sociale');
         $anagrafica->nome = post('nome');
         $anagrafica->cognome = post('cognome');
@@ -230,8 +230,8 @@ switch (post('op')) {
         $anagrafica->idagente = $idagente;
         $anagrafica->pec = post('pec');
         $anagrafica->tipo = post('tipo');
-        $anagrafica->codice_destinatario = post('codice_destinatario');
         $anagrafica->id_nazione = post('id_nazione') ?: null;
+        $anagrafica->codice_destinatario = strtoupper(post('codice_destinatario'));
 
         $anagrafica->save();
 

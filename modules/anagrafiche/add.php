@@ -108,7 +108,7 @@ echo '
 
 echo '
 				<div class="col-md-4">
-					{[ "type": "text", "label": "'.tr('Codice destinatario').'", "name": "codice_destinatario", "required": 0, "class": "text-center text-uppercase alphanumeric-mask", "maxlength": "7", "extra": "", "help": "'.tr($help_codice_destinatario).'" ]}
+					{[ "type": "text", "label": "'.tr('Codice destinatario').'", "name": "codice_destinatario", "required": 0, "class": "text-center text-uppercase alphanumeric-mask", "maxlength": "7", "extra": "", "help": "'.tr($help_codice_destinatario).'", "readonly": "1" ]}
 				</div>
 			</div>
 		</div>
@@ -144,4 +144,11 @@ echo
             $('#ragione_sociale', '#bs-popup, #bs-popup2').prop('disabled', false).prop('required', true);
         }
     });
+
+	$('#id_nazione', '#bs-popup, #bs-popup2').change(function(){
+		if ($(this).find('option:selected').data('text')=='IT - Italia'){
+			$('#codice_destinatario',  '#bs-popup, #bs-popup2').removeAttr('readonly');
+		}
+	});
+
 </script>

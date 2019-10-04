@@ -682,3 +682,36 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Liste newsletter'), 'Dinamica', 'IF(query IS NULL, ''No'', ''Si'')', 4, 1, 0, 1, 1);
 
 UPDATE `zz_prints` SET `is_record` = '0' WHERE `zz_prints`.`name` = 'Inventario magazzino';
+
+-- Gestione permessi per le categorie documentali
+ALTER TABLE `zz_documenti` RENAME TO `do_documenti`;
+ALTER TABLE `zz_documenti_categorie` RENAME TO `do_categorie`;
+
+CREATE TABLE IF NOT EXISTS `do_permessi` (
+    `id_categoria` int(11) NOT NULL,
+    `id_gruppo` int(11) NOT NULL,
+    FOREIGN KEY (`id_categoria`) REFERENCES `do_categorie`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`id_gruppo`) REFERENCES `zz_groups`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `do_categorie`
+WHERE 1=1 AND `deleted_at` IS NULL AND
+    (SELECT `idgruppo` FROM `zz_users` WHERE `id` = |id_utente|) IN (SELECT `id_gruppo` FROM `do_permessi` WHERE `id_categoria` = `do_categorie`.`id`)
+HAVING 2=2' WHERE `name` = 'Categorie documenti';
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `default`, `visible`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Categorie documenti'), 'id', 'id', 1, 0, 0, 1, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Categorie documenti'), 'Descrizione', 'descrizione', 2, 0, 0, 1, 1);
+
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `do_documenti`
+INNER JOIN `do_categorie` ON `do_categorie`.`id` = `do_documenti`.`idcategoria`
+WHERE 1=1 AND `deleted_at` IS NULL AND
+    (SELECT `idgruppo` FROM `zz_users` WHERE `zz_users`.`id` = |id_utente|) IN (SELECT `id_gruppo` FROM `do_permessi` WHERE `id_categoria` = `do_documenti`.`idcategoria`)
+    |date_period(`data`)|
+HAVING 2=2' WHERE `name` = 'Gestione documentale';
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Gestione documentale'), '`do_documenti`.`id`', 'id', 1, 0, 0, 1, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Gestione documentale'), 'Categoria', '`do_categorie`.`descrizione`', 2, 0, 0, 1, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Gestione documentale'), 'Nome', '`do_documenti`.`nome`', 3, 0, 0, 1, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Gestione documentale'), 'Data', '`do_documenti`.`data`', 4, 0, 1, 1, 1);

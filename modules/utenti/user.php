@@ -67,8 +67,6 @@ if (!empty($user)) {
     </script>';
 }
 
-
-
 include $structure->filepath('components/password.php');
 
 echo '

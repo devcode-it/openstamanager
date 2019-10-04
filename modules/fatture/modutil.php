@@ -327,7 +327,7 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
     // 6) Aggiungo la ritenuta enasarco se c'è
     // Lettura id conto ritenuta e la storno subito
     if ($totale_ritenutacontributi != 0) {
-        $query = "SELECT id, descrizione FROM co_pianodeiconti3 WHERE descrizione=\"Erario c/enasarco\"";
+        $query = 'SELECT id, descrizione FROM co_pianodeiconti3 WHERE descrizione="Erario c/enasarco"';
         $rs = $dbo->fetchArray($query);
         $idconto_ritenutaenasarco = $rs[0]['id'];
         $descrizione_conto_ritenutaenasarco = $rs[0]['descrizione'];

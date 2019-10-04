@@ -29,6 +29,7 @@ return [
     'modules/stati_preventivo' => 'Modules\StatiPreventivo',
     'modules/stati_contratto' => 'Modules\StatiContratto',
     'modules/tipi_intervento' => 'Modules\TipiIntervento',
+    'modules/categorie_documenti' => 'Modules\CategorieDocumentali',
     'plugins/exportFE' => 'Plugins\ExportFE',
     'plugins/importFE' => 'Plugins\ImportFE',
     'plugins/receiptFE' => 'Plugins\ReceiptFE',

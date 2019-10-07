@@ -733,7 +733,7 @@ if (!empty($note_accredito)) {
 
 <?php
 // Eliminazione ddt solo se ho accesso alla sede aziendale
-$field_name = ($dir == 'entrata') ? 'idsede_partenza' : 'idsede_uscita';
+$field_name = ($dir == 'entrata') ? 'idsede_partenza' : 'idsede_destinazione';
 if (in_array($record[$field_name], $user->sedi)) {
     ?>
     <a class="btn btn-danger ask" data-backto="record-list">

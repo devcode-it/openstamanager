@@ -295,7 +295,8 @@ if (!function_exists('download')) {
      * @return bool
      */
     function download($file, $filename = null)
-    {
+    {   
+        ob_get_clean();
         ob_end_clean();
 
         if (!headers_sent()) {

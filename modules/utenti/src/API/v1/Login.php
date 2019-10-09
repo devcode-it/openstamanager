@@ -6,6 +6,7 @@ use API\Interfaces\CreateInterface;
 use API\Resource;
 use Auth;
 use Update;
+use API\Response;
 
 class Login extends Resource implements CreateInterface
 {
@@ -30,7 +31,7 @@ class Login extends Resource implements CreateInterface
             $response['version'] = Update::getVersion();
         } else {
             $response = [
-                'status' => API\Response::getStatus()['unauthorized']['code'],
+                'status' => Response::getStatus()['unauthorized']['code'],
             ];
 
             // Se è in corso un brute-force, aggiunge il timeout

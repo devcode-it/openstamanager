@@ -850,3 +850,6 @@ ALTER TABLE `or_righe_ordini` CHANGE `qta_evasa` `qta_evasa` decimal(12, 6) NOT 
 
 UPDATE `zz_settings` SET `tipo` = 'list[1,2,3,4,5]' WHERE `nome` = 'Cifre decimali per importi';
 UPDATE `zz_settings` SET `tipo` = 'list[1,2,3,4,5]' WHERE `nome` = 'Cifre decimali per quantità';
+
+-- Aggiunta percentuale combinata in listini
+ALTER TABLE `mg_listini` ADD `prc_combinato` VARCHAR(255);

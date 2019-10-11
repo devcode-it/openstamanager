@@ -30,6 +30,7 @@ return [
     'modules/stati_contratto' => 'Modules\StatiContratto',
     'modules/tipi_intervento' => 'Modules\TipiIntervento',
     'modules/categorie_documenti' => 'Modules\CategorieDocumentali',
+    'modules/listini' => 'Modules\Listini',
     'plugins/exportFE' => 'Plugins\ExportFE',
     'plugins/importFE' => 'Plugins\ImportFE',
     'plugins/receiptFE' => 'Plugins\ReceiptFE',

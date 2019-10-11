@@ -2,40 +2,35 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Listini\Listino;
+
 switch (post('op')) {
     case 'update':
-        $nome = post('nome');
-        $prc_guadagno = post('prc_guadagno');
-        $note = post('note');
+        $listino->nome = post('nome');
+        $listino->note = post('note');
 
-        if (abs($prc_guadagno) > 100) {
-            $prc_guadagno = ($prc_guadagno > 0) ? 100 : -100;
-        }
+        $listino->percentuale = post('prc_guadagno');
+        $listino->percentuale_combinato = post('prc_combinato');
 
-        $query = 'UPDATE mg_listini SET nome='.prepare($nome).', prc_guadagno='.prepare($prc_guadagno).', note='.prepare($note).' WHERE id='.prepare($id_record);
-        $dbo->query($query);
+        $listino->save();
 
         flash()->info(tr('Informazioni salvate correttamente!'));
         break;
 
     case 'add':
-        $nome = post('nome');
-        $prc_guadagno = post('prc_guadagno');
+        $listino = Listino::build(post('nome'), post('prc_guadagno'));
 
-        if (abs($prc_guadagno) > 100) {
-            $prc_guadagno = ($prc_guadagno > 0) ? 100 : -100;
-        }
+        $listino->percentuale_combinato = post('prc_combinato');
 
-        if (isset($nome)) {
-            $dbo->query('INSERT INTO mg_listini( nome, prc_guadagno ) VALUES ('.prepare($nome).', '.prepare($prc_guadagno).')');
-            $id_record = $dbo->lastInsertedID();
+        $listino->save();
+        $id_record = $listino->id;
 
-            flash()->info(tr('Nuovo listino aggiunto!'));
-        }
+        flash()->info(tr('Nuovo listino aggiunto!'));
         break;
 
     case 'delete':
-        $dbo->query('DELETE FROM mg_listini WHERE id='.prepare($id_record));
+        $listino->delete();
+
         flash()->info(tr('Listino eliminato!'));
         break;
 }

@@ -20,6 +20,10 @@ function start_inputmask(element) {
         regex: "[A-Za-z0-9#_|\/\\-.]*",
     }).addClass('bound');
 
+    $(element + '.math-mask').not('.bound').inputmask('Regex', {
+        regex: "[0-9,.+\-]*",
+    }).addClass('bound');
+
     if (globals.is_mobile) {
         $(element + '.inputmask-decimal, ' + element + '.date-mask, ' + element + '.timestamp-mask').each(function () {
             $(this).attr('type', 'tel');

@@ -4,9 +4,9 @@ namespace Modules\Utenti\API\v1;
 
 use API\Interfaces\CreateInterface;
 use API\Resource;
+use API\Response;
 use Auth;
 use Update;
-use API\Response;
 
 class Login extends Resource implements CreateInterface
 {

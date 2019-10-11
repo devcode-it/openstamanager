@@ -43,6 +43,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Calcolo del margine per i **Preventivi**
  - Supporto alla selezione della lingua durante la configurazione 
  - Gestione dei permessi per gruppi all'interno del sistema di **Gestione documentale**
+ - Supporto agli sconti combinati nel modulo **Listini**
 
 ### Modificato (Changed)
 

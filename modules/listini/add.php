@@ -12,7 +12,7 @@ include_once __DIR__.'/../../core.php';
 		</div>
 
         <div class="col-md-4">
-            {[ "type": "text", "label": "<?php echo tr('Rincaro/sconto combinato'); ?>", "name": "prc_combinato", "value": "$prc_combinato$", "icon-after": "%", "class": "math-mask text-right", "help": "<?php echo tr('Esempio: 50+10-20 viene convertito in 50% di sconto con 10% aggiuntivo sul totale scontato e 20% di maggiorazione sul totale finale (54% di sconto finale)').'. '.tr('Sono ammessi i segni +/-').'.'; ?>" ]}
+            {[ "type": "text", "label": "<?php echo tr('Rincaro/sconto combinato'); ?>", "name": "prc_combinato", "value": "$prc_combinato$", "icon-after": "%", "class": "math-mask text-right", "help": "<?php echo tr('Esempio: 50+10-20 viene convertito in 50% di sconto con 10% aggiuntivo sul totale scontato e 20% di maggiorazione sul totale finale (54% di sconto finale)').'. '.tr('Sono ammessi i segni + e -').'.'; ?>" ]}
         </div>
 
 		<div class="col-md-4">

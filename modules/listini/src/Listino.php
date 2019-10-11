@@ -62,7 +62,7 @@ class Listino extends Model
                 $result *= 1 - floatval($sign.$piece) / 100;
             }
 
-            $this->percentuale = $result;
+            $this->percentuale = $result * 100;
         }
 
         return parent::save($options);

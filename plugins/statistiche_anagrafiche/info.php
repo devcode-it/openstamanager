@@ -17,14 +17,14 @@ $end = filter('end');
 $anagrafica = Anagrafica::find($id_record);
 
 // Preventivi
-$preventivi = Preventivo::whereBetween('data_accettazione', [$start, $end])
+$preventivi = Preventivo::whereBetween('data_bozza', [$start, $end])
     ->where('idanagrafica', $id_record)
     ->where('default_revision', 1)
     ->get();
 $totale_preventivi = $preventivi->sum('totale_imponibile');
 
 // Contratti
-$contratti = Contratto::whereBetween('data_accettazione', [$start, $end])
+$contratti = Contratto::whereBetween('data_bozza', [$start, $end])
     ->where('idanagrafica', $id_record)
     ->get();
 $totale_contratti = $contratti->sum('totale_imponibile');

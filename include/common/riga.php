@@ -29,7 +29,7 @@ echo '
 echo '
     <div class="row">';
 
-//Fix per Altre spese intervento
+// Fix per Altre spese intervento
 if ($module['name'] == 'Interventi') {
     $options['dir'] = 'entrata';
     $result['prezzo_unitario_acquisto'] = $result['prezzo_acquisto'];

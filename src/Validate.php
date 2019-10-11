@@ -99,9 +99,12 @@ class Validate
                 $fields['indirizzo'] = $info[0];
 
                 $info = explode(' ', $info[1]);
+
                 $fields['cap'] = $info[0];
-                $fields['citta'] = $info[1];
-                $fields['provincia'] = $info[2];
+                $fields['provincia'] = end($info);
+
+                $citta = array_slice($info, 1, -1);
+                $fields['citta'] = implode(' ', $citta);
 
                 $result['fields'] = $fields;
             }

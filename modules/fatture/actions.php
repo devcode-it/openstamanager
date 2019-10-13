@@ -582,15 +582,21 @@ switch (post('op')) {
         $type = post('type');
 
         $movimenta = true;
+        $idsede = 0;
+
         if ($type == 'ordine') {
             $documento = \Modules\Ordini\Ordine::find($id_documento);
+            $idsede = $documento->idsede;
         } elseif ($type == 'ddt') {
             $documento = \Modules\DDT\DDT::find($id_documento);
+            $idsede = ($documento->direzione == 'entrata') ? $documento->idsede_destinazione : $documento->idsede_partenza;
             $movimenta = false;
         } elseif ($type == 'preventivo') {
             $documento = \Modules\Preventivi\Preventivo::find($id_documento);
+            $idsede = $documento->idsede;
         } elseif ($type == 'contratto') {
             $documento = \Modules\Contratti\Contratto::find($id_documento);
+            $idsede = $documento->idsede;
         }
 
         // Creazione della fattura al volo
@@ -600,6 +606,7 @@ switch (post('op')) {
 
             $fattura = Fattura::build($documento->anagrafica, $tipo, post('data'), post('id_segment'));
             $fattura->idpagamento = $documento->idpagamento;
+            $fattura->idsede_destinazione = $idsede;
             $fattura->id_ritenuta_contributi = post('id_ritenuta_contributi') ?: null;
             $fattura->save();
 

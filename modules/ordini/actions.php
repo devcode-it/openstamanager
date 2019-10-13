@@ -292,6 +292,7 @@ switch (post('op')) {
 
             $ordine = Ordine::build($preventivo->anagrafica, $tipo, post('data'));
             $ordine->idpagamento = $preventivo->idpagamento;
+            $ordine->idsede = $preventivo->idsede;
 
             $ordine->id_documento_fe = $preventivo->id_documento_fe;
             $ordine->codice_cup = $preventivo->codice_cup;

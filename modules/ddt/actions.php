@@ -243,6 +243,7 @@ switch (post('op')) {
             $ddt->codice_cup = $ordine->codice_cup;
             $ddt->codice_cig = $ordine->codice_cig;
             $ddt->num_item = $ordine->num_item;
+            $ddt->idsede_destinazione = $ordine->idsede;
 
             $ddt->save();
 

@@ -134,10 +134,14 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
         <div class="panel panel-primary <?php echo ($record['tipo_anagrafica'] == 'Ente pubblico' || $record['tipo_anagrafica'] == 'Azienda') ? 'show' : 'hide'; ?>">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <a data-toggle="collapse" href="#collapse1"><?php echo tr('Dati appalto'); ?></a>
+                    <?php echo tr('Dati appalto'); ?>
+
+                    <div class="box-tools pull-right">    
+                        <a data-toggle="collapse" href="#dati_appalto"><i class="fa fa-plus" style='color:white;margin-top:2px;'></i></a>           
+                    </div>
                 </h4>
             </div>
-            <div id="collapse1" class="panel-collapse collapse <?=$collapsed?>">
+            <div id="dati_appalto" class="panel-collapse collapse <?=$collapsed?>">
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-md-6">

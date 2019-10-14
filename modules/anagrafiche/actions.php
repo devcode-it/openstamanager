@@ -88,7 +88,7 @@ switch (post('op')) {
 
         // Avviso durante il salvataggio del codice fiscale se già presente e informo l'utente delle schede presenti
         if (!empty(post('codice_fiscale'))) {
-            $idanagrafica = $dbo->fetchOne('SELECT GROUP_CONCAT(idanagrafica) AS idanagrafica FROM an_anagrafiche WHERE codice_fiscale = '.prepare(post('codice_fiscale')).' AND idanagrafica != '.prepare($id_record))['idanagrafica'];
+            $idanagrafica = $dbo->fetchOne('SELECT GROUP_CONCAT(idanagrafica) AS idanagrafica FROM an_anagrafiche WHERE codice_fiscale = '.prepare(post('codice_fiscale')).' AND idanagrafica != '.prepare($id_record).' AND deleted_at IS NULL')['idanagrafica'];
 
             if (!empty($idanagrafica)) {
                 $array = explode(',', $idanagrafica);

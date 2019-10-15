@@ -33,7 +33,7 @@ class Sync extends Resource implements RetrieveInterface, UpdateInterface
         $result = '';
 
         $result .= "BEGIN:VCALENDAR\n";
-        $result .= 'VERSION:'.Update::getVersion()."\n";
+        $result .= "VERSION:2.0\n";
         $result .= "PRODID:-// OpenSTAManager\n";
 
         foreach ($rs as $r) {

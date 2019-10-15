@@ -7,6 +7,8 @@ use Modules\Emails\Template;
 
 $database->query('ALTER TABLE `zz_operations` DROP FOREIGN KEY `zz_operations_ibfk_3`');
 $logs = $database->fetchArray("SELECT * FROM `zz_operations` WHERE `op` = 'send-email'");
+
+$database->query('UPDATE `zz_operations` SET `id_email` = NULL');
 foreach ($logs as $log) {
     $user = User::find($log['id_utente']);
     $template = Template::find($log['id_email']);

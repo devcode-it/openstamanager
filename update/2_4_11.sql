@@ -189,7 +189,7 @@ HAVING 2=2
 ORDER BY `scadenza` ASC' WHERE `name` = 'Scadenzario';
 
 -- Aggiunte impostazione Autocomple web form
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Autocompletamento form', 'on', 'list[on,off]', '1', 'Generali', '', NULL);
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Autocompletamento form', 'off', 'list[on,off]', '1', 'Generali', '', NULL);
 
 -- Data concordata per le scadenza
 ALTER TABLE `co_scadenziario` ADD `data_concordata` DATE;

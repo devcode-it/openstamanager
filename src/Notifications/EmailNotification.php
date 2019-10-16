@@ -221,10 +221,6 @@ class EmailNotification extends PHPMailer implements NotificationInterface
     {
         $print = Prints::get($print);
 
-        if (empty($name)) {
-            $name = $print['title'].'.pdf';
-        }
-
         // Utilizzo di una cartella particolare per il salvataggio temporaneo degli allegati
         $path = DOCROOT.'/files/notifications/'.rand(0, 999);
 

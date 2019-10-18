@@ -91,6 +91,7 @@ switch (filter('op')) {
             'iva' => post('iva'),
             'conto' => post('conto'),
             'movimentazione' => post('movimentazione'),
+            'crea_articoli' => post('crea_articoli'),
         ];
 
         $fattura_pa = FatturaElettronica::manage($filename);

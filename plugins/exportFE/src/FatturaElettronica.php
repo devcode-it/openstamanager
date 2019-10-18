@@ -1232,7 +1232,7 @@ class FatturaElettronica
                 ];
             }
 
-            $rs_ritenuta = $database->fetchOne("SELECT percentuale_imponibile FROM co_ritenutaacconto WHERE id=".prepare($riga['idritenutaacconto']));
+            $rs_ritenuta = $database->fetchOne('SELECT percentuale_imponibile FROM co_ritenutaacconto WHERE id='.prepare($riga['idritenutaacconto']));
             if (!empty($rs_ritenuta['percentuale_imponibile'])) {
                 $dettaglio[]['AltriDatiGestionali'] = [
                     'TipoDato' => 'IMPON-RACC',

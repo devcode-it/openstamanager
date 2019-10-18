@@ -14,6 +14,24 @@ class Articolo extends Model
 
     protected $table = 'mg_articoli';
 
+    public static function build($codice, $nome, Categoria $categoria, Categoria $sottocategoria = null)
+    {
+        $model = parent::build();
+
+        $model->codice = $codice;
+        $model->descrizione = $nome;
+
+        $model->abilita_serial = false;
+        $model->attivo = true;
+
+        $model->categoria()->associate($categoria);
+        $model->sottocategoria()->associate($sottocategoria);
+
+        $model->save();
+
+        return $model;
+    }
+
     /**
      * Funzione per inserire i movimenti di magazzino.
      *

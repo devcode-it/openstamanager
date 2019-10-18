@@ -243,8 +243,12 @@ echo '
 
 // Movimentazioni
 echo '
-        <div class="col-md-6">
+        <div class="col-md-3">
             {[ "type": "checkbox", "label": "'.tr('Movimenta gli articoli').'", "name": "movimentazione", "value": 1 ]}
+        </div>
+        
+        <div class="col-md-3">
+            {[ "type": "checkbox", "label": "'.tr('Creazione automatica articoli').'", "name": "crea_articoli", "value": 0, "help": "'.tr("Nel caso di righe con tag CodiceArticolo, il gestionale procede alla creazione dell'articolo se la riga non risulta assegnata manualmente").'" ]}
         </div>
     </div>';
 
@@ -280,16 +284,13 @@ if (!empty($righe)) {
         $codici = $riga['CodiceArticolo'] ?: [];
         $codici = !empty($codici) && !isset($codici[0]) ? [$codici] : $codici;
 
-        $codice_principale = null;
-
         $codici_articoli = [];
         foreach ($codici as $codice) {
-            $codice_principale = $codice_principale ?: $codice['CodiceValore'];
-
             $codici_articoli[] = $codice['CodiceValore'].' ('.$codice['CodiceTipo'].')';
         }
 
         // Individuazione articolo con codice relativo
+        $codice_principale = $codici[0]['CodiceValore'];
         $id_articolo = $database->fetchOne('SELECT id FROM mg_articoli WHERE codice = '.prepare($codice_principale))['id'];
 
         echo '

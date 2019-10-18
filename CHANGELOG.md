@@ -57,7 +57,8 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - **Articoli** ora eliminabili solo virtualmente attraverso il flag *deleted_at*
  - Miglioramento del plugin *Giacenze* nel modulo **Articoli** per interagire con gli **Ordini** registrati, e aggiunta della quantità progressiva per nel plugin *Movimenti*
  - Generazione del numero delle **Fatture di vendita** a seguito dell'emissione della stessa
-  - Supporto alla precisione di importi e quantità fino a 5 decimali
+ - Supporto alla precisione di importi e quantità fino a 5 decimali
+ - Opzione per la creazione automatica degli articoli presenti in **Fattura Elettronica**
   
 ### Rimosso (Removed)
  - Funzione *get_costi_intervento* del modulo **Attività**, a causa dell'aggiornamento della maggior parte del sistema di gestione degli **Attività** con le classi Eloquent

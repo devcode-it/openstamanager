@@ -12,6 +12,16 @@ class Categoria extends Model
     protected $table = 'mg_categorie';
     protected static $parent_identifier = 'parent';
 
+    public static function build($nome)
+    {
+        $model = parent::build();
+
+        $model->nome = $nome;
+        $model->save();
+
+        return $model;
+    }
+
     public function articoli()
     {
         return $this->hasMany(Articolo::class, 'id_categoria');

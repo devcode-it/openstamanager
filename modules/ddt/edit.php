@@ -209,9 +209,9 @@ $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione']
 	</div>
 
     <?php
-        if(!empty($record['id_documento_fe']) || !empty($record['num_item']) || !empty($record['codice_cig']) || !empty($record['codice_cup'])){
+        if (!empty($record['id_documento_fe']) || !empty($record['num_item']) || !empty($record['codice_cig']) || !empty($record['codice_cup'])) {
             $collapsed = 'in';
-        }else{
+        } else {
             $collapsed = '';
         }
     ?>
@@ -228,7 +228,7 @@ $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione']
                     </div>
                 </h4>
             </div>
-            <div id="dati_appalto" class="panel-collapse collapse <?=$collapsed?>">
+            <div id="dati_appalto" class="panel-collapse collapse <?php echo $collapsed; ?>">
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-md-6">

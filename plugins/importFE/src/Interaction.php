@@ -76,7 +76,9 @@ class Interaction extends Services
             ]);
             $body = static::responseBody($response);
 
-            FatturaElettronica::store($name, $body['content']);
+            if (!empty($body['content'])) {
+                FatturaElettronica::store($name, $body['content']);
+            }
         }
 
         return $name;

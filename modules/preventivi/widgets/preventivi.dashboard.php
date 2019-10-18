@@ -10,8 +10,8 @@
         echo "<th width='15%'>Data conclusione</th></tr>\n";
 
         for ($i = 0; $i < sizeof($rs); ++$i) {
-            $data_accettazione = ($rs[$i]['data_accettazione'] != '0000-00-00' ) ? Translator::dateToLocale($rs[$i]['data_accettazione']) : '';
-            $data_conclusione = ($rs[$i]['data_conclusione'] != '0000-00-00' ) ? Translator::dateToLocale($rs[$i]['data_conclusione']) : '';
+            $data_accettazione = ($rs[$i]['data_accettazione'] != '0000-00-00') ? Translator::dateToLocale($rs[$i]['data_accettazione']) : '';
+            $data_conclusione = ($rs[$i]['data_conclusione'] != '0000-00-00') ? Translator::dateToLocale($rs[$i]['data_conclusione']) : '';
 
             if (strtotime($rs[$i]['data_conclusione']) < strtotime(date('Y-m-d')) && $data_conclusione != '') {
                 $attr = ' class="danger"';

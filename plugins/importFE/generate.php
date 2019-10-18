@@ -276,35 +276,28 @@ if (!empty($righe)) {
 
         $query .= ' ORDER BY descrizione ASC';
 
-        /*Visualizzo codici articoli*/
-        $codici_articoli = '';
+        // Visualizzazione codici articoli
+        $codici = $riga['CodiceArticolo'] ?: [];
+        $codici = !empty($codici) && !isset($codici[0]) ? [$codici] : $codici;
 
-        //caso di un solo codice articolo
-        if (isset($riga['CodiceArticolo']) and empty($riga['CodiceArticolo'][0]['CodiceValore'])) {
-            $riga['CodiceArticolo'][0]['CodiceValore'] = $riga['CodiceArticolo']['CodiceValore'];
-            $riga['CodiceArticolo'][0]['CodiceTipo'] = $riga['CodiceArticolo']['CodiceTipo'];
+        $codice_principale = null;
+
+        $codici_articoli = [];
+        foreach ($codici as $codice) {
+            $codice_principale = $codice_principale ?: $codice['CodiceValore'];
+
+            $codici_articoli[] = $codice['CodiceValore'].' ('.$codice['CodiceTipo'].')';
         }
 
-        foreach ($riga['CodiceArticolo'] as $key2 => $item) {
-            foreach ($item as $key2 => $name) {
-                if ($key2 == 'CodiceValore') {
-                    if (!empty($item['CodiceValore'])) {
-                        $codici_articoli .= '<small>'.$item['CodiceValore'].' ('.$item['CodiceTipo'].')</small>';
-
-                        if (($item['CodiceValore'] != end($riga['CodiceArticolo'][(count($riga['CodiceArticolo']) - 1)])) and (is_array($riga['CodiceArticolo'][1]))) {
-                            $codici_articoli .= ', ';
-                        }
-                    }
-                }
-            }
-        }
+        // Individuazione articolo con codice relativo
+        $id_articolo = $database->fetchOne('SELECT id FROM mg_articoli WHERE codice = '.prepare($codice_principale))['id'];
 
         echo '
         <tr>
             <td>
                 '.$riga['Descrizione'].'<br>
 				
-				'.(($codici_articoli != '') ? $codici_articoli.'<br>' : '').'
+				'.(!empty($codici_articoli) ? '<small>'.implode(', ', $codici_articoli).'</small><br>' : '').'
                 
                 <small>'.tr('Q.tà: _QTA_ _UM_', [
                     '_QTA_' => Translator::numberToLocale($riga['Quantita']),
@@ -322,7 +315,7 @@ if (!empty($righe)) {
                 {[ "type": "select", "name": "conto['.$key.']", "ajax-source": "conti-acquisti", "required": 1, "placeholder": "Conto acquisti" ]}
             </td>
             <td>
-                {[ "type": "select", "name": "articoli['.$key.']", "ajax-source": "articoli", "icon-after": "add|'.Modules::get('Articoli')['id'].'|codice='.htmlentities($riga['CodiceArticolo'][0]['CodiceValore']).'&descrizione='.htmlentities($riga['Descrizione']).'" ]}
+                {[ "type": "select", "name": "articoli['.$key.']", "ajax-source": "articoli", "icon-after": "add|'.Modules::get('Articoli')['id'].'|codice='.htmlentities($codice_principale).'&descrizione='.htmlentities($riga['Descrizione']).'", "value": "'.$id_articolo.'" ]}
             </td>
         </tr>';
     }

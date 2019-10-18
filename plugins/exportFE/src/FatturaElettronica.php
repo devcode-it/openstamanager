@@ -1232,6 +1232,15 @@ class FatturaElettronica
                 ];
             }
 
+            $rs_ritenuta = $database->fetchOne("SELECT percentuale_imponibile FROM co_ritenutaacconto WHERE id=".prepare($riga['idritenutaacconto']));
+            if (!empty($rs_ritenuta['percentuale_imponibile'])) {
+                $dettaglio[]['AltriDatiGestionali'] = [
+                    'TipoDato' => 'IMPON-RACC',
+                    'RiferimentoTesto' => 'Imponibile % ritenuta d\'acconto',
+                    'RiferimentoNumero' => $rs_ritenuta['percentuale_imponibile'],
+                ];
+            }
+
             // Dichiarazione d'intento
             $dichiarazione = $documento->dichiarazione;
             $id_iva_dichiarazione = setting("Iva per lettere d'intento");

@@ -105,7 +105,7 @@ class EmailNotification extends PHPMailer implements NotificationInterface
         // Stampe
         $prints = $mail->prints;
         foreach ($prints as $print) {
-            $this->addPrint($print['id'], $mail->id_record, $print['name']);
+            $this->addPrint($print['id'], $mail->id_record);
         }
 
         // Conferma di lettura
@@ -226,7 +226,7 @@ class EmailNotification extends PHPMailer implements NotificationInterface
 
         $info = Prints::render($print['id'], $id_record, $path);
         $name = $name ?: $info['name'];
-
+        
         $this->addAttachment($info['path'], $name);
     }
 

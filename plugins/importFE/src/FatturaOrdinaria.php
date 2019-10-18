@@ -109,15 +109,20 @@ class FatturaOrdinaria extends FatturaElettronica
 
             // Creazione articolo relativo
             if (!empty($codici) && !empty($crea_articoli) && empty($articolo)) {
-                $nome_categoria = 'Importazione automatica';
-                $categoria = Categoria::where('nome', $nome_categoria)->first();
-                if (empty($categoria)) {
-                    $categoria = Categoria::build($nome_categoria);
-                }
-
                 $codice = $codici[0]['CodiceValore'];
-                $articolo = ArticoloOriginale::build($codice, $riga['Descrizione'], $categoria);
-                $articolo->prezzo_acquisto = $riga['PrezzoUnitario'];
+                $articolo = ArticoloOriginale::where('codice', $codice)->first();
+
+                if (empty($articolo)) {
+                    $nome_categoria = 'Importazione automatica';
+                    $categoria = Categoria::where('nome', $nome_categoria)->first();
+                    if (empty($categoria)) {
+                        $categoria = Categoria::build($nome_categoria);
+                    }
+
+                    $articolo = ArticoloOriginale::build($codice, $riga['Descrizione'], $categoria);
+                    $articolo->prezzo_acquisto = $riga['PrezzoUnitario'];
+                    $articolo->save();
+                }
             }
 
             if (!empty($articolo)) {

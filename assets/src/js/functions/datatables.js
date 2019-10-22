@@ -33,19 +33,19 @@ function start_datatables() {
             // Parametri di ricerca da url o sessione
             var search = getTableSearch();
 
-            var res = [];
+            var column_search = [];
             $this.find("th").each(function () {
                 var id = $(this).attr('id').replace("th_", "");
+                var single_value = search["search_" + id] ? search["search_" + id] : "";
 
-                sear = search["search_" + id] ? search["search_" + id] : "";
-
-                res.push({
-                    "sSearch": sear
+                column_search.push({
+                    "sSearch": single_value,
                 });
             });
 
+            console.log(column_search);
+
             var sum;
-            var tempo;
             var tempo_attesa_ricerche = (globals.tempo_attesa_ricerche * 1000);
 
             $this.on('preInit.dt', function (ev, settings) {
@@ -63,7 +63,7 @@ function start_datatables() {
                 ordering: true,
                 searching: true,
                 aaSorting: [],
-                aoSearchCols: res,
+                aoSearchCols: column_search,
                 scrollY: "60vh",
                 scrollX: '100%',
                 retrieve: true,
@@ -85,15 +85,16 @@ function start_datatables() {
                     style: 'multi',
                     selector: 'td:first-child'
                 },
-                buttons: [{
-                    extend: 'csv',
-                    fieldSeparator: ";",
-                    exportOptions: {
-                        modifier: {
-                            selected: true
+                buttons: [
+                    {
+                        extend: 'csv',
+                        fieldSeparator: ";",
+                        exportOptions: {
+                            modifier: {
+                                selected: true
+                            }
                         }
-                    }
-                },
+                    },
                     {
                         extend: 'copy',
                         exportOptions: {
@@ -165,13 +166,21 @@ function start_datatables() {
                 },
                 initComplete: function (settings) {
                     var api = this.api();
+                    var search = getTableSearch();
 
                     api.columns('.search').every(function () {
                         var column = this;
-                        $('<br><input type="text" style="width:100%" class="form-control" placeholder="' + globals.translations.filter + '..."><i class="deleteicon fa fa-times fa-2x hide"></i>')
+
+                        // Valore predefinito della ricerca
+                        var tempo;
+                        var header = $(column.header());
+                        var name = header.attr('id').replace('th_', '');
+
+                        var value = search['search_' + name] ? search['search_' + name] : '';
+
+                        $('<br><input type="text" style="width:100%" class="form-control' + (value ? ' input-searching' : '') + '" placeholder="' + globals.translations.filter + '..." value="' + value + '"><i class="deleteicon fa fa-times fa-2x' + (value ? '' : ' hide') + '"></i>')
                             .appendTo(column.header())
                             .on('keyup', function (e) {
-
                                 clearInterval(tempo);
 
                                 // Fix del pulsante di pulizia ricerca e del messaggio sulla ricerca lenta
@@ -222,19 +231,6 @@ function start_datatables() {
                         if (api.page.len() == -1) {
                             api.page.len($(id).data('page-length'));
                         }
-                    });
-
-                    // Ricerca di base ereditata dalla  sessione
-                    var search = getTableSearch();
-                    var keys = Object.keys(search);
-                    keys.forEach(function (key) {
-                        var exists = setInterval(function () {
-                            input = $('#th_' + key.replace('search_', '') + ' input');
-                            if (input.length || key == 'id_module' || key == 'id_record') {
-                                clearInterval(exists);
-                                if (input.val() == '') input.val(search[key]).trigger('keyup');
-                            }
-                        }, 100);
                     });
                 },
                 rowCallback: function (row, data, index) {

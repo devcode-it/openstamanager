@@ -115,8 +115,8 @@ foreach ($id_documenti as $id_documento) {
         $righe_documento[] = [
             'id_scadenza' => $scadenze[0]['id'],
             'id_conto' => $id_conto_aziendale,
-            'dare' => ($dir == 'entrata') ? 0 : $totale,
-            'avere' => ($dir == 'entrata') ? $totale : 0,
+            'dare' => ($dir == 'entrata') ? $totale : 0,
+            'avere' => ($dir == 'entrata') ? 0 : $totale,
         ];
     }
 
@@ -125,8 +125,8 @@ foreach ($id_documenti as $id_documento) {
         $righe_documento[] = [
             'id_scadenza' => $scadenza['id'],
             'id_conto' => $id_conto_controparte,
-            'dare' => ($dir == 'entrata') ? $scadenza['rata'] : 0,
-            'avere' => ($dir == 'entrata') ? 0 : $scadenza['rata'],
+            'dare' => ($dir == 'entrata') ? 0 : $scadenza['rata'],
+            'avere' => ($dir == 'entrata') ? $scadenza['rata'] : 0,
         ];
     }
 

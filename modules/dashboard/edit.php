@@ -706,6 +706,8 @@ if (setting('Utilizzare i tooltip sul calendario') == '1') {
 										trigger: 'hover',
 										position: 'left'
 									});
+                                    element.tooltipster('show');
+
 								}
 								else{
 									return false;

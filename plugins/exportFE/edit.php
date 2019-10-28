@@ -164,6 +164,7 @@ echo '
         event.preventDefault();
 
         var form = $("#edit-form");
+        form.find("*").prop("disabled", false);
         valid = submitAjax(form);
         
         if (valid) {';

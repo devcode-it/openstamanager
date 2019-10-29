@@ -443,7 +443,7 @@ if ($read_only || !empty($block_edit)) {
     if ($read_only) {
         echo '
 				$("a.btn, button, input[type=button], input[type=submit]", "section.content").hide();
-                $("a.btn-info, a.btn-warning, button.btn-info, button.btn-warning, input[type=button].btn-info", "section.content").show();';
+                $("a.btn-info, button.btn-info, input[type=button].btn-info", "section.content").show();';
     }
 
     echo '

@@ -159,6 +159,9 @@ class EmailNotification extends PHPMailer implements NotificationInterface
                 $this->mail->failed_at = date('Y-m-d H:i:s');
             }
 
+            // Salvataggio del numero di tentativi
+            $this->mail->attempt = $this->mail->attempt + 1;
+
             $this->mail->save();
         }
 
@@ -226,7 +229,7 @@ class EmailNotification extends PHPMailer implements NotificationInterface
 
         $info = Prints::render($print['id'], $id_record, $path);
         $name = $name ?: $info['name'];
-        
+
         $this->addAttachment($info['path'], $name);
     }
 

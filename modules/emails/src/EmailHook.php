@@ -24,6 +24,7 @@ class EmailHook extends Manager
         $accounts = Account::all();
         $remaining = Mail::whereNull('sent_at')
             ->where($failed)
+            ->where('attempt', '<', 10)
             ->whereIn('id_account', $accounts->pluck('id'))
             ->count();
 
@@ -55,6 +56,7 @@ class EmailHook extends Manager
                 $mail = Mail::whereNull('sent_at')
                     ->where('id_account', $account->id)
                     ->where($failed)
+                    ->where('attempt', '<', 10)
                     ->orderBy('created_at')
                     ->first();
 
@@ -83,12 +85,14 @@ class EmailHook extends Manager
         $user = auth()->getUser();
 
         $current = Mail::whereDate('sent_at', '>', $yesterday)
+            ->where('attempt', '<', 10)
             ->where('created_by', $user->id)
             ->count();
         $total = Mail::where(function ($query) use ($yesterday) {
             $query->whereDate('sent_at', '>', $yesterday)
                 ->orWhereNull('sent_at');
         })
+            ->where('attempt', '<', 10)
             ->where('created_by', $user->id)
             ->count();
 

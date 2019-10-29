@@ -29,7 +29,9 @@ echo '
             
             <div class="col-md-3">
                 <h4>'.tr('Ultimo tentativo').'</h4>
-                '.($mail->failed_at ? timestampFormat($mail->failed_at) : '-').'
+                '.($mail->processing_at ? timestampFormat($mail->processing_at) : '-').' ('.tr('totale: _TOT_', [
+                    '_TOT_' => $mail->attempt,
+    ]).')
             </div>
         </div>
 
@@ -139,3 +141,17 @@ echo '
 <div class="well">
     '.$mail->content.'
 </div>';
+
+if (empty($mail->sent_at)) {
+    echo '
+<a class="btn btn-danger ask" data-backto="record-list">
+    <i class="fa fa-trash"></i> '.tr('Elimina').'
+</a>';
+
+    if ($mail->attempt >= 10) {
+        echo '
+<a class="btn btn-warning ask pull-right" data-backto="record-edit" data-msg="'.tr("Rimettere in coda l'email?").'" data-op="retry" data-button="'.tr('Rimetti in coda').'" data-class="btn btn-lg btn-warning" >
+    <i class="fa fa-refresh"></i> '.tr('Rimetti in coda').'
+</a>';
+    }
+}

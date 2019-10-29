@@ -853,3 +853,6 @@ UPDATE `zz_settings` SET `tipo` = 'list[1,2,3,4,5]' WHERE `nome` = 'Cifre decima
 
 -- Aggiunta percentuale combinata in listini
 ALTER TABLE `mg_listini` ADD `prc_combinato` VARCHAR(255);
+
+-- Aggiunto supporto ai tentativi di invio email
+ALTER TABLE `em_emails` ADD `attempt` INT(11) NOT NULL DEFAULT 0;

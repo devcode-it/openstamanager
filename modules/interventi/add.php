@@ -183,7 +183,7 @@ if (!empty($id_intervento)) {
 				</div>
 
 				<div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "value": "<?php echo $idsede; ?>", "placheholder": "<?php echo tr('Seleziona prima un cliente'); ?>...", "ajax-source": "sedi" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede_destinazione", "value": "<?php echo $idsede; ?>", "placheholder": "<?php echo tr('Seleziona prima un cliente'); ?>...", "ajax-source": "sedi" ]}
 				</div>
 
 				<div class="col-md-4">

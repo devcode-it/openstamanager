@@ -101,6 +101,7 @@ switch (post('op')) {
             $intervento->id_preventivo = post('idpreventivo');
             $intervento->id_contratto = post('idcontratto');
             $intervento->richiesta = $richiesta;
+            $intervento->idsede_destinazione = $idsede_destinazione;
             $intervento->data_scadenza = $data_scadenza;
 
             $intervento->save();

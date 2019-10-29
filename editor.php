@@ -4,6 +4,9 @@ include_once __DIR__.'/core.php';
 
 use Carbon\Carbon;
 
+// Disabilitazione dei campi
+$read_only = $structure->permission == 'r';
+
 if (empty($id_record) && !empty($id_module) && empty($id_plugin)) {
     redirect(ROOTDIR.'/controller.php?id_module='.$id_module);
 } elseif (empty($id_record) && empty($id_module) && empty($id_plugin)) {
@@ -429,7 +432,6 @@ echo '
         <script>';
 
 // Se l'utente ha i permessi in sola lettura per il modulo, converto tutti i campi di testo in span
-$read_only = $structure->permission == 'r';
 if ($read_only || !empty($block_edit)) {
     $not = $read_only ? '' : '.not(".unblockable")';
 

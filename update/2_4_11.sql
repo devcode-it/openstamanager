@@ -464,7 +464,7 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_documenti`
             INNER JOIN `em_templates` ON `em_emails`.`id_template` = `em_templates`.`id`
             INNER JOIN `zz_modules` ON `zz_operations`.`id_module` = `zz_modules`.`id`
         WHERE `zz_modules`.`name` = ''Fatture di vendita'' AND `zz_operations`.`op` = ''send-email''
-        GROUP BY `zz_operations`.`id_email`, `zz_operations`.`id_record`
+        GROUP BY `zz_operations`.`id_record`
     ) AS `email` ON `email`.`id_record` = `co_documenti`.`id`
 WHERE 1=1 AND `dir` = ''entrata'' |segment(`co_documenti`.`id_segment`)| |date_period(`co_documenti`.`data`)|
 HAVING 2=2

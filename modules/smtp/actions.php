@@ -50,7 +50,7 @@ switch (post('op')) {
             flash()->info(tr('Sintassi email verificata'));
         } else {
             flash()->error(tr("Attenzione: l'indirizzo email _EMAIL_ sembra non essere valido", [
-                '_EMAIL_' => $check_email->email,
+                '_EMAIL_' => post('from_address'),
             ]));
         }
 

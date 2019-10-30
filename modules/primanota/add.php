@@ -76,6 +76,8 @@ foreach ($id_scadenze as $id_scadenza) {
 $numeri = [];
 $counter = 0;
 
+$id_documenti = array_unique($id_documenti);
+
 foreach ($id_documenti as $id_documento) {
     $fattura = Fattura::find($id_documento);
     $tipo = $fattura->stato;
@@ -112,7 +114,7 @@ foreach ($id_documenti as $id_documento) {
     // Riga aziendale
     $totale = sum(array_column($scadenze, 'rata'));
     if ($totale != 0) {
-        $righe_documento[] = [
+        $righe_azienda[] = [
             'id_scadenza' => $scadenze[0]['id'],
             'id_conto' => $id_conto_aziendale,
             'dare' => ($dir == 'entrata') ? $totale : 0,
@@ -141,6 +143,19 @@ foreach ($id_documenti as $id_documento) {
 
     $righe = array_merge($righe, $righe_documento);
 }
+
+$k = 0;
+foreach($righe_azienda AS $key => $riga_azienda){
+    if($righe_azienda[$key]['id_conto']!=$righe_azienda[$key-1]['id_conto']){
+        $k++;
+    }
+
+    $riga_documento[$k]['id_conto'] = $riga_azienda['id_conto'];
+    $riga_documento[$k]['dare'] += $riga_azienda['dare'];
+    $riga_documento[$k]['avere'] += $riga_azienda['avere'];
+}
+
+$righe = array_merge($righe, $riga_documento);
 
 // Descrizione
 $numero_scadenze = count($id_scadenze);

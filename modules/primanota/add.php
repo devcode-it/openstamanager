@@ -47,6 +47,7 @@ foreach ($id_scadenze as $id_scadenza) {
 
     $righe_documento = [];
     $righe_documento[] = [
+        'iddocumento' => null,
         'id_scadenza' => $scadenza['id'],
         'id_conto' => null,
         'dare' => ($dir == 'entrata') ? 0 : $scadenza['rata'],
@@ -54,6 +55,7 @@ foreach ($id_scadenze as $id_scadenza) {
     ];
 
     $righe_documento[] = [
+        'iddocumento' => null,
         'id_scadenza' => $scadenza['id'],
         'id_conto' => $id_conto_controparte,
         'dare' => ($dir == 'entrata') ? $scadenza['rata'] : 0,
@@ -102,7 +104,7 @@ foreach ($id_documenti as $id_documento) {
     $id_conto_controparte = $fattura->anagrafica[$conto_field];
 
     // Lettura delle scadenza della fattura
-    $scadenze = $dbo->fetchArray('SELECT id, ABS(da_pagare - pagato) AS rata FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) > ABS(pagato) ORDER BY YEAR(scadenza) ASC, MONTH(scadenza) ASC');
+    $scadenze = $dbo->fetchArray('SELECT id, ABS(da_pagare - pagato) AS rata, iddocumento FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) > ABS(pagato) ORDER BY YEAR(scadenza) ASC, MONTH(scadenza) ASC');
 
     // Selezione prima scadenza
     if ($singola_scadenza && !empty($scadenze)) {
@@ -114,7 +116,8 @@ foreach ($id_documenti as $id_documento) {
     // Riga aziendale
     $totale = sum(array_column($scadenze, 'rata'));
     if ($totale != 0) {
-        $righe_azienda[] = [
+        $righe_documento[] = [//righe_azienda
+            'iddocumento' => $scadenze[0]['iddocumento'],
             'id_scadenza' => $scadenze[0]['id'],
             'id_conto' => $id_conto_aziendale,
             'dare' => ($dir == 'entrata') ? $totale : 0,
@@ -125,6 +128,7 @@ foreach ($id_documenti as $id_documento) {
     // Riga controparte
     foreach ($scadenze as $scadenza) {
         $righe_documento[] = [
+            'iddocumento' => $scadenza['iddocumento'],
             'id_scadenza' => $scadenza['id'],
             'id_conto' => $id_conto_controparte,
             'dare' => ($dir == 'entrata') ? 0 : $scadenza['rata'],
@@ -143,19 +147,20 @@ foreach ($id_documenti as $id_documento) {
 
     $righe = array_merge($righe, $righe_documento);
 }
-
+/*
 $k = 0;
 foreach ($righe_azienda as $key => $riga_azienda) {
     if ($righe_azienda[$key]['id_conto'] != $righe_azienda[$key - 1]['id_conto']) {
         ++$k;
     }
 
+    $riga_documento[$k]['iddocumento'] = $riga_azienda['iddocumento'];
+    $riga_documento[$k]['id_scadenza'] = $riga_azienda['id_scadenza'];
     $riga_documento[$k]['id_conto'] = $riga_azienda['id_conto'];
     $riga_documento[$k]['dare'] += $riga_azienda['dare'];
     $riga_documento[$k]['avere'] += $riga_azienda['avere'];
-}
-
-$righe = array_merge($righe, $riga_documento);
+$righe = array_merge($righe, $righe_azienda);
+}*/
 
 // Descrizione
 $numero_scadenze = count($id_scadenze);

@@ -2,6 +2,11 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Anagrafiche\Anagrafica;
+use Modules\Interventi\Intervento;
+use Modules\Interventi\Stato;
+use Modules\TipiIntervento\Tipo as TipoSessione;
+
 $operazione = filter('op');
 
 // Pianificazione intervento
@@ -64,7 +69,7 @@ switch ($operazione) {
 
         break;
 
-    // pianificazione ciclica
+    // Pianificazione ciclica
     case 'pianificazione':
         $intervallo = post('intervallo');
         $min_date = post('data_inizio');
@@ -140,33 +145,20 @@ switch ($operazione) {
                         }
 
                         // Controllo che non esista già un intervento collegato a questo promemoria e, se ho spuntato di creare l'intervento, creo già anche quello
-                        if ((empty($dbo->fetchArray("SELECT idintervento FROM co_promemoria WHERE id = '".((empty($idriga)) ? $id_record : $idriga)."'")[0]['idintervento'])) && (post('pianifica_intervento'))) {
-                            // pianificare anche l' intervento?
-                            // if (post('pianifica_intervento')) {
-                            /*$orario_inizio = post('orario_inizio');
-                            $orario_fine = post('orario_fine');*/
+                        if (post('pianifica_intervento') && empty($dbo->fetchArray('SELECT idintervento FROM co_promemoria WHERE id = '.prepare(empty($idriga) ? $id_record : $idriga))[0]['idintervento'])) {
+                            // Creazione intervento
+                            $anagrafica = Anagrafica::find($idanagrafica);
+                            $tipo = TipoSessione::find($idtipointervento);
+                            // Stato "In programmazione"
+                            $stato = Stato::where('codice', 'WIP')->first();
 
-                            // $idanagrafica = 2;
+                            $intervento = Intervento::build($anagrafica, $tipo, $stato, $data_richiesta);
+                            $intervento->idsede_destinazione = $idsede ?: 0;
+                            $intervento->richiesta = $richiesta;
+                            $intervento->idclientefinale = post('idclientefinale') ?: 0;
+                            $intervento->save();
 
-                            // intervento sempre nello stato "In programmazione"
-                            $idstatointervento = 'WIP';
-
-                            $codice = \Modules\Interventi\Intervento::getNextCodice();
-
-                            // Creo intervento
-                            $dbo->insert('in_interventi', [
-                                'idanagrafica' => $idanagrafica,
-                                'idclientefinale' => post('idclientefinale') ?: 0,
-                                'idstatointervento' => $idstatointervento,
-                                'idtipointervento' => $idtipointervento,
-                                'idsede' => $idsede ?: 0,
-
-                                'codice' => $codice,
-                                'data_richiesta' => $data_richiesta,
-                                'richiesta' => $richiesta,
-                            ]);
-
-                            $idintervento = $dbo->lastInsertedID();
+                            $idintervento = $intervento->id;
 
                             $idtecnici = post('idtecnico');
 

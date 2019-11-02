@@ -132,12 +132,12 @@ class Mastrino extends Model
 
             $movimenti = $documento->movimentiContabili;
 
-            if($dir=='entrata'){
+            if ($dir == 'entrata') {
                 $totale_movimenti = $movimenti->where('totale', '<', 0)->where('is_insoluto', 0)->sum('totale');
                 $totale_insoluto = $movimenti->where('totale', '<', 0)->where('is_insoluto', 1)->sum('totale');
             }
 
-            if($dir=='uscita'){
+            if ($dir == 'uscita') {
                 $totale_movimenti = $movimenti->where('totale', '>', 0)->where('is_insoluto', 0)->sum('totale');
                 $totale_insoluto = $movimenti->where('totale', '>', 0)->where('is_insoluto', 1)->sum('totale');
             }

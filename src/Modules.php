@@ -106,7 +106,7 @@ class Modules
      *
      * @return string
      */
-    public static function getAdditionals($module)
+    public static function getAdditionals($module, $include_segments = true)
     {
         $module = self::get($module);
         $user = Auth::user();
@@ -127,13 +127,15 @@ class Modules
             }
 
             // Aggiunta dei segmenti
-            $segments = self::getSegments($module['id']);
-            $id_segment = $_SESSION['module_'.$module['id']]['id_segment'];
-            foreach ($segments as $result) {
-                if (!empty($result['clause']) && $result['id'] == $id_segment) {
-                    $result['clause'] = Util\Query::replacePlaceholder($result['clause']);
+            if ($include_segments) {
+                $segments = self::getSegments($module['id']);
+                $id_segment = $_SESSION['module_'.$module['id']]['id_segment'];
+                foreach ($segments as $result) {
+                    if (!empty($result['clause']) && $result['id'] == $id_segment) {
+                        $result['clause'] = Util\Query::replacePlaceholder($result['clause']);
 
-                    $additionals[$result['position']][] = $result['clause'];
+                        $additionals[$result['position']][] = $result['clause'];
+                    }
                 }
             }
 
@@ -174,9 +176,9 @@ class Modules
      *
      * @return array
      */
-    public static function getAdditionalsQuery($module, $type = null)
+    public static function getAdditionalsQuery($module, $type = null, $include_segments = true)
     {
-        $array = self::getAdditionals($module);
+        $array = self::getAdditionals($module, $include_segments);
         if (!empty($type) && isset($array[$type])) {
             $result = (array) $array[$type];
         } else {

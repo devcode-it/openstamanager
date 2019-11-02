@@ -145,9 +145,9 @@ foreach ($id_documenti as $id_documento) {
 }
 
 $k = 0;
-foreach($righe_azienda AS $key => $riga_azienda){
-    if($righe_azienda[$key]['id_conto']!=$righe_azienda[$key-1]['id_conto']){
-        $k++;
+foreach ($righe_azienda as $key => $riga_azienda) {
+    if ($righe_azienda[$key]['id_conto'] != $righe_azienda[$key - 1]['id_conto']) {
+        ++$k;
     }
 
     $riga_documento[$k]['id_conto'] = $riga_azienda['id_conto'];

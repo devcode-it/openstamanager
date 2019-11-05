@@ -153,12 +153,13 @@ var n = '.$counter.';
 
 function addRiga(btn) {
     var raggruppamento = $(btn).parent();
+    console.log(raggruppamento)
     n++;
     cleanup_inputs();
 
     var tabella = raggruppamento.find("tbody");
     var content = $("#template").html();
-    content.replace("-id_scadenza-", raggruppamento.data("id_scadenza"));
+    content = content.replace("-id_scadenza-", raggruppamento.data("id_scadenza"));
     
     var text = replaceAll(content, "-id-", "" + n);
     tabella.append(text);
@@ -167,16 +168,31 @@ function addRiga(btn) {
 }
 
 /**
+* Funzione per controllare lo stato dei conti della prima nota.
 * 
 * @returns {boolean}
 */
-function controllaBilanci() {
+function controllaConti() {
     var continuare = true;
 
+    // Controlli sullo stato dei raggruppamenti
     $(".raggruppamento_primanota").each(function() {
         var bilancio = calcolaBilancio(this);
         
         continuare &= bilancio == 0;
+    });
+    
+    // Blocco degli input con valore non impostato
+    $("input[id*=dare], input[id*=avere]").each(function() {
+        var conto_relativo = $(this).parent().parent().find("select").val();
+        
+        if (!conto_relativo) {
+            $(this).prop("disabled", true);
+        } 
+        
+        if ($(this).val().toEnglish()){
+            continuare &= conto_relativo ? true : false;
+        }
     });
 
     if (continuare) {
@@ -238,10 +254,10 @@ function calcolaBilancio(gruppo) {
     return bilancio;
 }
 
-/**
-* 
-*/
-function bloccaZeri(){
+$(document).ready(function() {
+    controllaConti();
+    
+    // Fix per l\'inizializzazione degli input 
     $("input[id*=dare], input[id*=avere]").each(function() {
         if ($(this).val() == formatted_zero) {
             $(this).prop("disabled", true);
@@ -249,13 +265,8 @@ function bloccaZeri(){
             $(this).prop("disabled", false);
         }
     });
-}
-
-$(document).ready(function() {
-    controllaBilanci();
-    bloccaZeri();
     
-    // Trigger dell"evento keyup() per la prima volta, per eseguire i dovuti controlli nel caso siano predisposte delle righe in prima nota
+    // Trigger dell\'evento keyup() per la prima volta, per eseguire i dovuti controlli nel caso siano predisposte delle righe in prima nota
     $("input[id*=dare][value!=\'\'], input[id*=avere][value!=\'\']").keyup();
 
     $("select[id*=idconto]").click(function() {
@@ -264,37 +275,32 @@ $(document).ready(function() {
 });
 
 $(document).on("change", "select", function() {
+    var row = $(this).parent().parent();
+
     if ($(this).parent().parent().find("input[disabled]").length != 1) {
-        if ($(this).val()) {
-            $(this).parent().parent().find("input").prop("disabled", false);
-        } else {
-            $(this).parent().parent().find("input").prop("disabled", true);
-            $(this).parent().parent().find("input").val("0.00");
-        }
+        row.find("input").prop("disabled", $(this).val() ? false : true);
     }
+    
+    controllaConti();
 });
 
 $(document).on("keyup change", "input[id*=dare]", function() {
-    if (!$(this).prop("disabled")) {
-        if ($(this).val()) {
-            $(this).parent().parent().find("input[id*=avere]").prop("disabled", true);
-        } else {
-            $(this).parent().parent().find("input[id*=avere]").prop("disabled", false);
-        }
+    var row = $(this).parent().parent();
 
-        controllaBilanci();
+    if (!$(this).prop("disabled")) {
+        row.find("input[id*=avere]").prop("disabled", $(this).val() ? true : false);
+
+        controllaConti();
     }
 });
 
 $(document).on("keyup change", "input[id*=avere]", function() {
+    var row = $(this).parent().parent();
+    
     if (!$(this).prop("disabled")) {
-        if ($(this).val()) {
-            $(this).parent().parent().find("input[id*=dare]").prop("disabled", true);
-        } else {
-            $(this).parent().parent().find("input[id*=dare]").prop("disabled", false);
-        }
+        row.find("input[id*=dare]").prop("disabled", $(this).val() ? true : false);
 
-        controllaBilanci();
+        controllaConti();
     }
 });
 </script>';

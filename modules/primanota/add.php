@@ -259,7 +259,7 @@ include $structure->filepath('movimenti.php');
 
     $(document).ready(function(e) {
         $("#bs-popup #add-form").on("submit", function(e) {
-            return calcolaBilancio();
+            return controllaConti();
         });
 
         $('#bs-popup #modello_primanota').change(function() {

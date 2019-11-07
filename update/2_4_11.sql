@@ -856,3 +856,18 @@ ALTER TABLE `mg_listini` ADD `prc_combinato` VARCHAR(255);
 
 -- Aggiunto supporto ai tentativi di invio email
 ALTER TABLE `em_emails` ADD `attempt` INT(11) NOT NULL DEFAULT 0;
+
+-- Fix calcolo totale contratti in scadenza
+UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato,
+       DATEDIFF(data_conclusione, NOW()) AS giorni_rimanenti,
+       data_conclusione,
+       ore_preavviso_rinnovo,
+       giorni_preavviso_rinnovo,
+       (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=co_contratti.idanagrafica) AS ragione_sociale
+FROM co_contratti WHERE
+        idstato IN (SELECT id FROM co_staticontratti WHERE is_fatturabile = 1) AND
+        rinnovabile = 1 AND
+        YEAR(data_conclusione) > 1970 AND
+        (SELECT id FROM co_contratti contratti WHERE contratti.idcontratto_prev = co_contratti.id) IS NULL
+AND (IFNULL( ((SELECT SUM(co_righe_contratti.qta) FROM co_righe_contratti WHERE co_righe_contratti.um=\'ore\' AND co_righe_contratti.idcontratto=co_contratti.id) - IFNULL( (SELECT SUM(in_interventi_tecnici.ore) FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id WHERE in_interventi.id_contratto=co_contratti.id AND in_interventi.idstatointervento IN (SELECT in_statiintervento.idstatointervento FROM in_statiintervento WHERE in_statiintervento.completato = 1)), 0) ), 0 ) < ore_preavviso_rinnovo OR DATEDIFF(data_conclusione, NOW()) < ABS(giorni_preavviso_rinnovo))
+ORDER BY giorni_rimanenti ASC, IFNULL( ((SELECT SUM(co_righe_contratti.qta) FROM co_righe_contratti WHERE co_righe_contratti.um=\'ore\' AND co_righe_contratti.idcontratto=co_contratti.id) - IFNULL( (SELECT SUM(in_interventi_tecnici.ore) FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id WHERE in_interventi.id_contratto=co_contratti.id AND in_interventi.idstatointervento IN (SELECT in_statiintervento.idstatointervento FROM in_statiintervento WHERE in_statiintervento.completato = 1)), 0) ), 0 ) ASC' WHERE `zz_widgets`.`name` = 'Contratti in scadenza';

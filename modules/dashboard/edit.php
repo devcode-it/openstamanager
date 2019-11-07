@@ -705,7 +705,7 @@ if (setting('Utilizzare i tooltip sul calendario') == '1') {
 										touchDevices: true,
 										trigger: 'hover',
 										position: 'left'
-									});
+									}).trigger('mouseover');
 								}
 								else{
 									return false;

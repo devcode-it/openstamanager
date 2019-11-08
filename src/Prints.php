@@ -136,7 +136,7 @@ class Prints
             ]);
             Util\Query::setSegments(true);
 
-            $has_access = database()->fetchNum($query) !== 0;
+            $has_access = !empty($query) ? $dbo->fetchNum($query) !== 0 : true;
         }
 
         if (empty($infos) || empty($infos['enabled']) || !Permissions::check([], false) || !$has_access) {

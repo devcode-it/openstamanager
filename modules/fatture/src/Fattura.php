@@ -496,7 +496,49 @@ class Fattura extends Document
         $this->attributes['rivalsainps'] = $this->rivalsa_inps;
         $this->attributes['ritenutaacconto'] = $this->ritenuta_acconto;
 
-        return parent::save($options);
+        // Informazioni sul cambio dei valori
+        $stato_precedente = Stato::find($this->original['idstatodocumento']);
+        $dichiarazione_precedente = Dichiarazione::find($this->original['id_dichiarazione_intento']);
+
+        // Generazione numero fattura se non presente
+        if ($stato_precedente->descrizione == 'Bozza' && $this->stato['descrizione'] == 'Emessa' && empty($this->numero_esterno)) {
+            $this->numero_esterno = self::getNextNumeroSecondario($this->data, $this->direzione, $this->id_segment);
+        }
+
+        // Salvataggio effettivo
+        $result = parent::save($options);
+
+        // Operazioni al cambiamento di stato
+        if (
+            in_array($stato_precedente->descrizione, ['Bozza', 'Annullata'])
+            && !in_array($this->stato['descrizione'], ['Bozza', 'Annullata'])
+        ) {
+            // Registrazione scadenze
+            $this->registraScadenze($this->stato['descrizione'] == 'Pagato');
+
+            // Registrazione movimenti
+            aggiungi_movimento($this->id, $this->direzione);
+        } elseif (in_array($this->stato['descrizione'], ['Bozza', 'Annullata'])) {
+            $this->rimuoviScadenze();
+
+            elimina_movimenti($this->id, 1);
+        }
+
+        // Operazioni sulla dichiarazione d'intento
+        if (!empty($dichiarazione_precedente) && $dichiarazione_precedente->id != $this->id_dichiarazione_intento) {
+            // Correzione dichiarazione precedente
+            $dichiarazione_precedente->fixTotale();
+            $dichiarazione_precedente->save();
+
+            // Correzione nuova dichiarazione
+            $dichiarazione = Dichiarazione::find($this->id_dichiarazione_intento);
+            if (!empty($dichiarazione)) {
+                $dichiarazione->fixTotale();
+                $dichiarazione->save();
+            }
+        }
+
+        return $result;
     }
 
     public function delete()

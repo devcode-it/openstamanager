@@ -50,6 +50,7 @@ switch (post('op')) {
         }
 
         $articolo->codice = post('codice');
+        $articolo->barcode = post('barcode');
         $articolo->descrizione = post('descrizione');
         $articolo->um = post('um');
         $articolo->id_categoria = post('categoria');

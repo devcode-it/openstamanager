@@ -711,7 +711,7 @@ WHERE 1=1 AND `deleted_at` IS NULL AND
 HAVING 2=2' WHERE `name` = 'Gestione documentale';
 
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Gestione documentale'), '`do_documenti`.`id`', 'id', 1, 0, 0, 1, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Gestione documentale'), 'id', '`do_documenti`.`id`', 1, 0, 0, 1, 0),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Gestione documentale'), 'Categoria', '`do_categorie`.`descrizione`', 2, 0, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Gestione documentale'), 'Nome', '`do_documenti`.`nome`', 3, 0, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Gestione documentale'), 'Data', '`do_documenti`.`data`', 4, 0, 1, 1, 1);

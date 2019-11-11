@@ -29,7 +29,7 @@ echo '
 	
 	<div class="row">
 		<div class="col-md-12">
-		    {[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede[]",  "ajax-source": "sedi", "multiple": "1", "value":"'.($sedi ?: '').'" ]}
+		    {[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede[]",  "ajax-source": "sedi_azienda", "multiple": "1", "value":"'.($sedi ?: '').'" ]}
 		</div>
 	</div>';
 

@@ -874,3 +874,12 @@ ORDER BY giorni_rimanenti ASC, IFNULL( ((SELECT SUM(co_righe_contratti.qta) FROM
 
 -- Aggiunta campo barcode per gli articoli
 ALTER TABLE `mg_articoli` ADD `barcode` VARCHAR(255);
+
+-- Aggiunta campo fornitore per gli articoli
+ALTER TABLE `mg_articoli` ADD `id_fornitore` INT(11) NULL DEFAULT NULL;
+
+-- Aggiunta vista prezzo vendita e prezzo acquisto per gli articoli
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `summable`, `visible`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), 'Fornitore', '(SELECT `ragione_sociale` FROM `an_anagrafiche` WHERE `idanagrafica` = `id_fornitore`)', 6, 1, 0, 0, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), 'Prezzo di acquisto', 'prezzo_acquisto', 6, 1, 0, 1, 1, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), 'Prezzo di vendita', 'prezzo_vendita', 6, 1, 0, 1, 1, 0, 1);

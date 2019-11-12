@@ -114,7 +114,7 @@ if ($dir == 'entrata' && !empty($fattura->dichiarazione) && $fattura->stato->des
                 <?php
                 if ($dir == 'uscita') {
                     echo '
-                <div class="col-md-3">
+                <div class="col-md-'.(($dir == 'entrata') ? '3' : '2').'">
                     {[ "type": "text", "label": "'.tr('Numero fattura/protocollo').'", "required": 1, "name": "numero","class": "text-center alphanumeric-mask", "value": "$numero$" ]}
                 </div>';
                     $label = tr('Numero fattura del fornitore');
@@ -126,7 +126,7 @@ if ($dir == 'entrata' && !empty($fattura->dichiarazione) && $fattura->stato->des
 				<!-- id_segment -->
 				{[ "type": "hidden", "label": "Segmento", "name": "id_segment", "class": "text-center", "value": "$id_segment$" ]}
 
-				<div class="col-md-3">
+				<div class="col-md-<?php echo ($dir == 'entrata') ? '3' : '2'; ?>">
 					{[ "type": "text", "label": "<?php echo $label; ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$" ]}
 				</div>
 
@@ -171,7 +171,7 @@ if (empty($record['is_fiscale'])) {
                     }
                     ?>
 
-                <div class="col-md-3">
+                <div class="col-md-<?php echo ($dir == 'entrata') ? '3' : '2'; ?>">
                     <!-- TODO: Rimuovere possibilità di selezionare lo stato pagato obbligando l'utente ad aggiungere il movimento in prima nota -->
                     {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatodocumento", "required": 1, "values": "query=<?php echo $query; ?>", "value": "$idstatodocumento$", "class": "unblockable", "extra": " onchange = \"if ($('#idstatodocumento option:selected').text()=='Pagato' || $('#idstatodocumento option:selected').text()=='Parzialmente pagato' ){if( confirm('<?php echo tr('Sicuro di voler impostare manualmente la fattura come pagata senza aggiungere il movimento in prima nota?'); ?>') ){ return true; }else{ $('#idstatodocumento').selectSet(<?php echo $record['idstatodocumento']; ?>); }}\" " ]}
                 </div>

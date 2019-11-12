@@ -67,6 +67,7 @@ switch (post('op')) {
         $articolo->prezzo_acquisto = post('prezzo_acquisto');
         $articolo->idconto_vendita = post('idconto_vendita');
         $articolo->idconto_acquisto = post('idconto_acquisto');
+        $articolo->id_fornitore = post('id_fornitore');
         $articolo->idiva_vendita = post('idiva_vendita');
         $articolo->gg_garanzia = post('gg_garanzia');
         $articolo->servizio = post('servizio');

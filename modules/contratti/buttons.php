@@ -7,9 +7,14 @@ echo'
 
 $rs_documento = $dbo->fetchArray('SELECT * FROM co_righe_contratti WHERE idcontratto='.prepare($id_record));
 
+$disabled = $record['is_fatturabile']  && !empty($rs_documento);
+
+$stati_abilitati = $dbo->fetchOne('SELECT GROUP_CONCAT(`descrizione` SEPARATOR ", ") AS stati_abilitati FROM `co_staticontratti` WHERE `is_fatturabile` = 1')['stati_abilitati'];
+
+
 /* permetto di fatturare il contratto solo se contiene righe e si trova in uno stato fatturabile */
 echo '
-<button type="button" '.(($record['is_fatturabile'] && !empty($rs_documento)) ? '' : 'disabled').' class="btn btn-info '.(($record['is_fatturabile'] && !empty($rs_documento)) ? '' : 'disabled').'" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=fattura" data-toggle="modal" data-title="'.tr('Crea fattura').'">
+<button type="button" '.($disabled ? '' : 'disabled').' class="btn btn-info '.($disabled ? '' : 'disabled tip').' " data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=fattura" data-toggle="modal" data-title="'.tr('Crea fattura').'" title="'.($disabled ? '' : tr('Per creare un documento deve essere inserita almeno una riga e lo stato del contratto deve essere tra: ').$stati_abilitati).'">
     <i class="fa fa-magic"></i> '.tr('Crea fattura').'
 </button>';
 

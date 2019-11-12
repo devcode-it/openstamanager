@@ -30,7 +30,13 @@ switch (post('op')) {
         $id_record = $dbo->lastInsertedID();
 
         if (isAjaxRequest()) {
-            echo json_encode(['id' => $id_record, 'text' => post('descrizione')]);
+            echo json_encode([
+                'id' => $id_record,
+                'text' => post('descrizione'),
+                'data' => [
+                    'descrizione' => post('descrizione'),
+                ],
+            ]);
         }
 
         flash()->info(tr('Aggiunto un nuovo articolo'));
@@ -42,7 +48,7 @@ switch (post('op')) {
         $qta = post('qta');
 
         // Inserisco l'articolo e avviso se esiste un altro articolo con stesso codice.
-        if ($n = $dbo->fetchNum('SELECT * FROM mg_articoli WHERE codice='.prepare(post('codice')).' AND id != '.$id_record.'') > 0) {
+        if ($n = $dbo->fetchNum('SELECT * FROM mg_articoli WHERE codice='.prepare(post('codice')).' AND id != '.prepare($id_record)) > 0) {
             flash()->warning(tr('Attenzione: il codice _CODICE_ è già stato utilizzato _N_ volta', [
                 '_CODICE_' => post('codice'),
                 '_N_' => $n,

@@ -107,10 +107,10 @@ switch (filter('op')) {
 
         //Aggiorno la tipologia di anagrafica fornitore
         $anagrafica = $dbo->fetchOne("SELECT idanagrafica FROM co_documenti WHERE co_documenti.id=".prepare($id_fattura));
-        $rs_t = $dbo->fetchOne("SELECT * FROM an_tipianagrafiche_anagrafiche WHERE idtipoanagrafica=4 AND idanagrafica=".prepare($anagrafica['idanagrafica']));
+        $rs_t = $dbo->fetchOne("SELECT * FROM an_tipianagrafiche_anagrafiche WHERE idtipoanagrafica=(SELECT an_tipianagrafiche.idtipoanagrafica FROM an_tipianagrafiche WHERE an_tipianagrafiche.descrizione='Fornitore') AND idanagrafica=".prepare($anagrafica['idanagrafica']));
 
         if( !$rs_t ){
-            $dbo->query("INSERT INTO an_tipianagrafiche_anagrafiche (idtipoanagrafica, idanagrafica) VALUES (4, ".prepare($anagrafica['idanagrafica']));
+            $dbo->query("INSERT INTO an_tipianagrafiche_anagrafiche (idtipoanagrafica, idanagrafica) VALUES ((SELECT an_tipianagrafiche.idtipoanagrafica FROM an_tipianagrafiche WHERE an_tipianagrafiche.descrizione='Fornitore'), ".prepare($anagrafica['idanagrafica']));
         }
 
         // Processo il file ricevuto

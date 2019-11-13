@@ -9,6 +9,10 @@ echo '
 
 $num = 0;
 $additionals = $dbo->fetchArray('SELECT * FROM zz_group_module WHERE idmodule='.prepare($record['id']).' ORDER BY `id` ASC');
+
+if (!empty($additionals)){
+
+
 foreach ($additionals as $num => $additional) {
     $editable = !($additional['default'] && $enable_readonly);
 
@@ -64,6 +68,15 @@ foreach ($additionals as $num => $additional) {
 
             </div>
         </div>';
+}
+
+}else{
+    echo '<br>
+    <div class="alert alert-info">
+        <i class="fa fa-info-circle"></i>
+        <b>'.tr('Informazione:').'</b> '.tr('Nessun filtro per questo modulo').'.
+    </div>';
+
 }
 
 echo '

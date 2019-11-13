@@ -124,12 +124,13 @@ jQuery.fn.selectReset = function (placeholder) {
  * Aggiorna un <select> creato con select2 impostando un valore di default.
  * Da utilizzare per l'impostazione dei select basati su richieste AJAX.
  */
-jQuery.fn.selectSetNew = function (value, label) {
+jQuery.fn.selectSetNew = function (value, label, data) {
     this.selectReset();
 
     this.selectAdd([{
         'value': value,
         'text': label,
+        'data': data,
     }]);
 
     this.selectSet(value);
@@ -153,7 +154,15 @@ jQuery.fn.selectSet = function (value) {
 jQuery.fn.selectAdd = function (values) {
     $this = this;
 
-    values.forEach(function (item, index, array) {
+    values.forEach(function (item) {
+        if (item.data) {
+            Object.keys(item.data).forEach(function(element) {
+                item['data-' + element] = item.data[element];
+            });
+        }
+
+        delete item.data;
+
         var option = $('<option/>', item);
 
         $this.append(option);

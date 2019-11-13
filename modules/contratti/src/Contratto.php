@@ -18,6 +18,16 @@ class Contratto extends Document
     protected $table = 'co_contratti';
 
     /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = [
+        'data_conclusione',
+        'data_accettazione',
+    ];
+
+    /**
      * Crea un nuovo contratto.
      *
      * @param Anagrafica $anagrafica

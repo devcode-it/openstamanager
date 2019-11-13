@@ -136,6 +136,12 @@ $_SESSION['superselect']['id_categoria'] = $record['id_categoria'];
 
                     <div class="row">
                         <div class="col-md-12">
+                            {[ "type": "select", "label": "<?php echo tr('Fornitore predefinito'); ?>", "name": "id_fornitore", "value": "$id_fornitore$", "ajax-source": "fornitori" ]}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
                             {[ "type": "select", "label": "<?php echo tr('Conto predefinito di acquisto'); ?>", "name": "idconto_acquisto", "value": "$idconto_acquisto$", "ajax-source": "conti-acquisti" ]}
                         </div>
                     </div>

@@ -884,16 +884,16 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), 'Prezzo di acquisto', 'prezzo_acquisto', 6, 1, 0, 1, 1, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), 'Prezzo di vendita', 'prezzo_vendita', 6, 1, 0, 1, 1, 0, 1);
 
--- Aggiunta  flag is_cancellabile per stati preventivi e contratti
-ALTER TABLE `co_statipreventivi` ADD `is_cancellabile` BOOLEAN NOT NULL DEFAULT TRUE;
-ALTER TABLE `co_staticontratti` ADD `is_cancellabile` BOOLEAN NOT NULL DEFAULT TRUE;
+-- Aggiunta  flag can_delete per stati preventivi e contratti
+ALTER TABLE `co_statipreventivi` ADD `can_delete` BOOLEAN NOT NULL DEFAULT TRUE;
+ALTER TABLE `co_staticontratti` ADD `can_delete` BOOLEAN NOT NULL DEFAULT TRUE;
 
 -- Imposto gli stati Bozza, In lavorazione e Concluso non eliminabili per stati preventivi e contratti
-UPDATE `co_statipreventivi` SET `is_cancellabile` = '0' WHERE `co_statipreventivi`.`descrizione` = 'Bozza'; 
-UPDATE `co_statipreventivi` SET `is_cancellabile` = '0' WHERE `co_statipreventivi`.`descrizione` = 'In lavorazione';
+UPDATE `co_statipreventivi` SET `can_delete` = '0' WHERE `co_statipreventivi`.`descrizione` = 'Bozza'; 
+UPDATE `co_statipreventivi` SET `can_delete` = '0' WHERE `co_statipreventivi`.`descrizione` = 'In lavorazione';
 
-UPDATE `co_staticontratti` SET `is_cancellabile` = '0' WHERE `co_staticontratti`.`descrizione` = 'Bozza'; 
-UPDATE `co_staticontratti` SET `is_cancellabile` = '0' WHERE `co_staticontratti`.`descrizione` = 'In lavorazione';
-UPDATE `co_staticontratti` SET `is_cancellabile` = '0' WHERE `co_staticontratti`.`descrizione` = 'Concluso';
-UPDATE `co_staticontratti` SET `is_cancellabile` = '0' WHERE `co_staticontratti`.`descrizione` = 'Fatturato';
-UPDATE `co_staticontratti` SET `is_cancellabile` = '0' WHERE `co_staticontratti`.`descrizione` = 'Parzialmente fatturato';
+UPDATE `co_staticontratti` SET `can_delete` = '0' WHERE `co_staticontratti`.`descrizione` = 'Bozza'; 
+UPDATE `co_staticontratti` SET `can_delete` = '0' WHERE `co_staticontratti`.`descrizione` = 'In lavorazione';
+UPDATE `co_staticontratti` SET `can_delete` = '0' WHERE `co_staticontratti`.`descrizione` = 'Concluso';
+UPDATE `co_staticontratti` SET `can_delete` = '0' WHERE `co_staticontratti`.`descrizione` = 'Fatturato';
+UPDATE `co_staticontratti` SET `can_delete` = '0' WHERE `co_staticontratti`.`descrizione` = 'Parzialmente fatturato';

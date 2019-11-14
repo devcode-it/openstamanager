@@ -2,7 +2,7 @@
 include_once __DIR__.'/../../core.php';
 
 
-if ($record['is_cancellabile']) {
+if ($record['can_delete']) {
     $attr = '';
 } else {
     $attr = 'readonly';
@@ -59,7 +59,7 @@ if (!empty($preventivi)) {
 }
 
 
-if (!empty($record['is_cancellabile'])) {
+if (!empty($record['can_delete'])) {
     echo '
 <a class="btn btn-danger ask" data-backto="record-list">
 	<i class="fa fa-trash"></i>'.tr('Elimina').'

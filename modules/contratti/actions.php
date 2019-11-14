@@ -263,6 +263,7 @@ switch (post('op')) {
             $contratto->delete();
 
             $dbo->query('DELETE FROM co_promemoria WHERE idcontratto='.prepare($id_record));
+            $dbo->query('DELETE FROM co_contratti_tipiintervento WHERE idcontratto='.prepare($id_record));
 
             flash()->info(tr('Contratto eliminato!'));
         } catch (InvalidArgumentException $e) {

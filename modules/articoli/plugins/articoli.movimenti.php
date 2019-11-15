@@ -11,20 +11,17 @@ echo '
     <div class="box-body">';
 
 // Calcolo la quantità dai movimenti in magazzino
-$rst = $dbo->fetchArray('SELECT COUNT(mg_movimenti.id) AS `row`, SUM(qta) AS qta_totale, (SELECT SUM(qta) FROM mg_movimenti  WHERE idarticolo='.prepare($id_record).' AND (idintervento IS NULL) AND data <= CURDATE()) AS qta_totale_attuale FROM mg_movimenti WHERE idarticolo='.prepare($id_record).' AND (idintervento IS NULL)');
-$qta_totale = $rst[0]['qta_totale'];
-$qta_totale_attuale = $rst[0]['qta_totale_attuale'];
+$qta_totale = $dbo->fetchOne('SELECT SUM(qta) AS qta FROM mg_movimenti WHERE idarticolo='.prepare($id_record))['qta'];
+$qta_totale_attuale = $dbo->fetchOne('SELECT SUM(qta) AS qta FROM mg_movimenti WHERE idarticolo='.prepare($id_record).' AND data <= CURDATE()')['qta'];
 
-if ($rst[0]['row'] > 0) {
-    echo '
-	<p>'.tr('Quantità calcolata dai movimenti').': <b>'.Translator::numberToLocale($qta_totale, 'qta').' '.$record['um'].'</b> <span  class=\'tip\' title=\''.tr('Quantità calcolata da tutti i movimenti registrati').'.\' ><i class="fa fa-question-circle-o"></i></span></p>';
+echo '
+<p>'.tr('Quantità calcolata dai movimenti').': <b>'.Translator::numberToLocale($qta_totale, 'qta').' '.$record['um'].'</b> <span  class=\'tip\' title=\''.tr('Quantità calcolata da tutti i movimenti registrati').'.\' ><i class="fa fa-question-circle-o"></i></span></p>';
 
-    echo '
-	<p>'.tr('Quantità calcolata attuale').': <b>'.Translator::numberToLocale($qta_totale_attuale, 'qta').' '.$record['um'].'</b> <span  class=\'tip\' title=\''.tr('Quantità calcolata secondo i movimenti registrati con data oggi o date trascorse').'.\' ><i class="fa fa-question-circle-o"></i></span></p>';
-}
+echo '
+<p>'.tr('Quantità calcolata attuale').': <b>'.Translator::numberToLocale($qta_totale_attuale, 'qta').' '.$record['um'].'</b> <span  class=\'tip\' title=\''.tr('Quantità calcolata secondo i movimenti registrati con data oggi o date trascorse').'.\' ><i class="fa fa-question-circle-o"></i></span></p>';
 
 // Elenco movimenti magazzino
-$query = 'SELECT * FROM mg_movimenti WHERE idarticolo='.prepare($id_record).' ORDER BY created_at DESC, id DESC';
+$query = 'SELECT * FROM mg_movimenti WHERE idarticolo='.prepare($id_record).' ORDER BY data DESC, id DESC';
 if (empty($_GET['show_all1'])) {
     $query .= ' LIMIT 0, 20';
 }
@@ -56,7 +53,7 @@ if (!empty($movimenti)) {
         } else {
             $movimento['progressivo_finale'] = $movimenti[$i - 1]['progressivo_iniziale'];
         }
-        $movimento['progressivo_iniziale'] = $movimento['progressivo_finale'] - floatval($movimento['qta']);
+        $movimento['progressivo_iniziale'] = $movimento['progressivo_finale'] - $movimento['qta'];
 
         $movimenti[$i]['progressivo_iniziale'] = $movimento['progressivo_iniziale'];
         $movimenti[$i]['progressivo_finale'] = $movimento['progressivo_finale'];

@@ -104,14 +104,18 @@ foreach ($id_documenti as $id_documento) {
 
     // Predisposizione prima riga
     $conto_field = 'idconto_'.($dir == 'entrata' ? 'vendite' : 'acquisti');
-    $id_conto_aziendale = $fattura->pagamento[$conto_field] ?: setting('Conto aziendale predefinito');
+    $id_conto_aziendale = $fattura->pagamento[$conto_field] ?: get_var('Conto aziendale predefinito');
 
     // Predisposizione conto crediti clienti
     $conto_field = 'idconto_'.($dir == 'entrata' ? 'cliente' : 'fornitore');
     $id_conto_controparte = $fattura->anagrafica[$conto_field];
 
     // Lettura delle scadenza della fattura
-    $scadenze = $dbo->fetchArray('SELECT id, ABS(da_pagare - pagato) AS rata FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) > ABS(pagato) ORDER BY YEAR(scadenza) ASC, MONTH(scadenza) ASC');
+    if(sizeof($id_scadenze)>0){
+        $scadenze = $dbo->fetchArray('SELECT id, ABS(da_pagare - pagato) AS rata FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) > ABS(pagato) AND id IN("'.implode('","', $id_scadenze).'") ORDER BY YEAR(scadenza) ASC, MONTH(scadenza) ASC');
+    }else{
+        $scadenze = $dbo->fetchArray('SELECT id, ABS(da_pagare - pagato) AS rata FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) > ABS(pagato) ORDER BY YEAR(scadenza) ASC, MONTH(scadenza) ASC');
+    }
 
     // Selezione prima scadenza
     if ($singola_scadenza && !empty($scadenze)) {
@@ -122,12 +126,20 @@ foreach ($id_documenti as $id_documento) {
 
     // Riga aziendale
     $totale = sum(array_column($scadenze, 'rata'));
+
     if ($totale != 0) {
+
+        if($nota_credito){
+            $totaleA = -$totale;
+        }else{
+            $totaleA = $totale;
+        }
+
         $righe_azienda[] = [
             'id_scadenza' => $scadenze[0]['id'],
             'id_conto' => $id_conto_aziendale,
-            'dare' => ($dir == 'entrata') ? $totale : 0,
-            'avere' => ($dir == 'entrata') ? 0 : $totale,
+            'dare' => ($dir == 'entrata') ? $totaleA : 0,
+            'avere' => ($dir == 'entrata') ? 0 : $totaleA,
         ];
     }
 
@@ -136,24 +148,9 @@ foreach ($id_documenti as $id_documento) {
         $righe_documento[] = [
             'id_scadenza' => $scadenza['id'],
             'id_conto' => $id_conto_controparte,
-            'dare' => ($dir == 'entrata') ? 0 : $scadenza['rata'],
-            'avere' => ($dir == 'entrata') ? $scadenza['rata'] : 0,
+            'dare' => ($dir == 'entrata' && !$nota_credito && !$is_insoluto) ? 0 : $scadenza['rata'],
+            'avere' => ($dir == 'entrata' && !$nota_credito && !$is_insoluto) ? $scadenza['rata'] : 0,
         ];
-    }
-
-    // Se è una nota di credito o un insoluto, inverto i valori
-    if ($nota_credito || $is_insoluto) {
-        foreach ($righe_documento as $key => $value) {
-            $tmp = $value['avere'];
-            $righe_documento[$key]['avere'] = $righe_documento[$key]['dare'];
-            $righe_documento[$key]['dare'] = $tmp;
-        }
-
-        foreach ($righe_azienda as $key => $value) {
-            $tmp = $value['avere'];
-            $righe_azienda[$key]['avere'] = $righe_azienda[$key]['dare'];
-            $righe_azienda[$key]['dare'] = $tmp;
-        }
     }
 
     $righe = array_merge($righe, $righe_documento);
@@ -161,6 +158,7 @@ foreach ($id_documenti as $id_documento) {
 
 $k = 0;
 foreach ($righe_azienda as $key => $riga_azienda) {
+
     if ($righe_azienda[$key]['id_conto'] != $righe_azienda[$key - 1]['id_conto']) {
         ++$k;
     }
@@ -168,6 +166,15 @@ foreach ($righe_azienda as $key => $riga_azienda) {
     $riga_documento[$k]['id_conto'] = $riga_azienda['id_conto'];
     $riga_documento[$k]['dare'] += $riga_azienda['dare'];
     $riga_documento[$k]['avere'] += $riga_azienda['avere'];
+}
+
+foreach($riga_documento AS $key => $value){
+    //Inverto dare e avere per importi negativi
+    if($riga_documento[$key]['dare']<0 || $riga_documento[$key]['avere']<0){
+        $tmp = abs($riga_documento[$key]['dare']);
+        $riga_documento[$key]['dare'] = abs($riga_documento[$key]['avere']);
+        $riga_documento[$key]['avere'] = $tmp;
+    }
 }
 
 $righe = array_merge($righe, $riga_documento);

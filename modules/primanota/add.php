@@ -2,8 +2,8 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\Fatture\Fattura;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Fatture\Fattura;
 
 $module = Modules::get('Prima nota');
 
@@ -91,10 +91,10 @@ foreach ($id_documenti as $id_documento) {
         ++$counter;
         continue;
     }
-    
-    if($fattura->idanagrafica!=$idanagrafica_mov && $idanagrafica_mov!=''){
+
+    if ($fattura->idanagrafica != $idanagrafica_mov && $idanagrafica_mov != '') {
         $idanagrafica_mov = 0;
-    }else{
+    } else {
         $idanagrafica_mov = $fattura->idanagrafica;
     }
 
@@ -148,7 +148,7 @@ foreach ($id_documenti as $id_documento) {
             $righe_documento[$key]['avere'] = $righe_documento[$key]['dare'];
             $righe_documento[$key]['dare'] = $tmp;
         }
-        
+
         foreach ($righe_azienda as $key => $value) {
             $tmp = $value['avere'];
             $righe_azienda[$key]['avere'] = $righe_azienda[$key]['dare'];
@@ -176,11 +176,11 @@ $righe = array_merge($righe, $riga_documento);
 $numero_scadenze = count($id_scadenze);
 $numero_documenti = count($id_documenti);
 if ($numero_documenti + $numero_scadenze > 1) {
-    if($idanagrafica_mov!=0){
+    if ($idanagrafica_mov != 0) {
         $an = Anagrafica::find($idanagrafica_mov);
 
         $descrizione = 'Pag. fatture '.$an->ragione_sociale.' num. '.implode(', ', $numeri);
-    }else{
+    } else {
         $descrizione = 'Pag. fatture num. '.implode(', ', $numeri);
     }
 } elseif ($numero_documenti == 1) {

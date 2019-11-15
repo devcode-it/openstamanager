@@ -54,10 +54,10 @@ switch (post('op')) {
 
             if ($dir == 'entrata') {
                 $fattura->data_registrazione = post('data');
-            }else{
+            } else {
                 $fattura->data_registrazione = post('data_registrazione');
             }
-            
+
             $fattura->data_competenza = post('data_competenza');
 
             $fattura->numero_esterno = post('numero_esterno');

@@ -7,11 +7,10 @@ use Plugins\ReceiptFE\Interaction;
 echo '
 <p>'.tr('Le ricevute delle Fatture Elettroniche permettono di individuare se una determinata fattura tramessa è stata accettata dal Sistema Di Interscambio').'.</p>';
 if (Interaction::isEnabled()) {
-echo '
+    echo '
 <p>'.tr('Tramite il pulsante _BTN_ è possibile procedere al recupero delle ricevute, aggiornando automaticamente lo stato delle relative fatture e allegandole ad esse', [
     '_BTN_' => '<b>'.tr('Ricerca ricevute').'</b>',
 ]).'.</p>';
-
 }
 echo '
 <div class="box box-success">

@@ -105,7 +105,7 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 				</div>
 
                 <div class="col-md-3">
-					{[ "type": "number", "label": "<?php echo tr('Ore rimanenti rinnovo'); ?>", "name": "ore_preavviso_rinnovo", "decimals": "0", "value": "$ore_preavviso_rinnovo$", "icon-after": "ore", "disabled": <?php echo $record['rinnovabile'] ? 0 : 1; ?>, "help": "<?php echo tr("Ore residue nel contratto prima di visualizzare una avviso per un eventuale rinnovo anticipato."); ?>" ]}
+					{[ "type": "number", "label": "<?php echo tr('Ore rimanenti rinnovo'); ?>", "name": "ore_preavviso_rinnovo", "decimals": "0", "value": "$ore_preavviso_rinnovo$", "icon-after": "ore", "disabled": <?php echo $record['rinnovabile'] ? 0 : 1; ?>, "help": "<?php echo tr('Ore residue nel contratto prima di visualizzare una avviso per un eventuale rinnovo anticipato.'); ?>" ]}
 				</div>
 			</div>
 
@@ -391,7 +391,6 @@ $elementi = $dbo->fetchArray('SELECT 0 AS `codice`, `co_documenti`.`id` AS `id`,
 UNION
 SELECT  `in_interventi`.`codice` AS `codice`, `in_interventi`.`id` AS `id`, 0 AS `numero`, 0 AS `numero_esterno`, `in_interventi`.`data_richiesta` AS `data`, 0 AS `tipo_documento`, 0 AS `dir` FROM `in_interventi` WHERE `in_interventi`.`id_contratto` = '.prepare($id_record).' ORDER BY `data` ');
 
-
 if (!empty($elementi)) {
     echo '
 <div class="box box-warning collapsable collapsed-box">
@@ -405,11 +404,10 @@ if (!empty($elementi)) {
     </div>
     <div class="box-body">
         <ul>';
-    
+
     // Elenco attività o contratti collegati
     foreach ($elementi as $riga) {
-        if (!empty($riga['dir'])){
-
+        if (!empty($riga['dir'])) {
             $descrizione = tr('_DOC_ num. _NUM_ del _DATE_', [
                 '_DOC_' => $riga['tipo_documento'],
                 '_NUM_' => !empty($riga['numero_esterno']) ? $riga['numero_esterno'] : $riga['numero'],
@@ -421,11 +419,9 @@ if (!empty($elementi)) {
 
             echo '
             <li>'.Modules::link($modulo, $id, $descrizione).'</li>';
-
-        }else{
-
+        } else {
             $descrizione = tr('Intervento num. _NUM_ del _DATE_', [
-                '_NUM_' =>  $riga['codice'],
+                '_NUM_' => $riga['codice'],
                 '_DATE_' => Translator::dateToLocale($riga['data']),
             ]);
 
@@ -434,9 +430,7 @@ if (!empty($elementi)) {
 
             echo '
             <li>'.Modules::link($modulo, $id, $descrizione).'</li>';
-
         }
-
     }
 
     echo '
@@ -450,16 +444,13 @@ if (!empty($elementi)) {
 <div class="alert alert-error">
     '.tr('Eliminando questo documento si potrebbero verificare problemi nelle altre sezioni del gestionale').'.
 </div>';
-
-}else{
-
-?>
+} else {
+    ?>
 
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>
 
 <?php
-
-    }
+}
 ?>

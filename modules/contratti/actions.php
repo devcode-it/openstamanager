@@ -266,7 +266,6 @@ switch (post('op')) {
         SELECT  `in_interventi`.`codice` AS `codice`, `in_interventi`.`id` AS `id`, 0 AS `numero`, 0 AS `numero_esterno`, `in_interventi`.`data_richiesta` AS `data`, 0 AS `tipo_documento`, 0 AS `dir` FROM `in_interventi` WHERE `in_interventi`.`id_contratto` = '.prepare($id_record).' ORDER BY `data` ');
 
         if (empty($elementi)) {
-
             try {
                 $contratto->delete();
 
@@ -278,7 +277,6 @@ switch (post('op')) {
             } catch (InvalidArgumentException $e) {
                 flash()->error(tr('Sono stati utilizzati alcuni serial number nel documento: impossibile procedere!'));
             }
-
         }
 
         break;

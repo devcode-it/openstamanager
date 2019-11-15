@@ -1,7 +1,6 @@
 <?php
 include_once __DIR__.'/../../core.php';
 
-
 if ($record['can_delete']) {
     $attr = '';
 } else {
@@ -57,7 +56,6 @@ if (!empty($preventivi)) {
     ]).'.
 </div>';
 }
-
 
 if (!empty($record['can_delete'])) {
     echo '

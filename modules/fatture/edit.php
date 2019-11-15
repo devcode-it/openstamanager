@@ -146,8 +146,8 @@ if (empty($record['is_fiscale'])) {
 
 ?>
 				<?php if ($dir == 'entrata') {
-                    $readonly = '"readonly":1,';
-                }
+    $readonly = '"readonly":1,';
+}
     ?>
 
 				<div class="col-md-2">

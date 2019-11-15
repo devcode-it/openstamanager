@@ -85,7 +85,6 @@ UNION
 SELECT `co_contratti_tipiintervento`.`idtipointervento` FROM `co_contratti_tipiintervento` WHERE `co_contratti_tipiintervento`.`idtipointervento` = '.prepare($id_record).'
 ORDER BY `idtipointervento`');
 
-
 if (!empty($elementi)) {
     echo '
     <div class="alert alert-danger">

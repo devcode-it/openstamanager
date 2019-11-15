@@ -57,8 +57,6 @@ if (!empty($contratti)) {
 </div>';
 }
 
-
-
 if (!empty($record['can_delete'])) {
     echo '
 <a class="btn btn-danger ask" data-backto="record-list">

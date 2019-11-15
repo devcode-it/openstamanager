@@ -49,7 +49,7 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        
+
         // Permetto eliminazione tipo intervento solo se questo non è utilizzado da nessun'altra parte a gestionale
         $elementi = $dbo->fetchArray('SELECT `in_interventi`.`idtipointervento`  FROM `in_interventi` WHERE `in_interventi`.`idtipointervento` = '.prepare($id_record).'
         UNION
@@ -66,10 +66,7 @@ switch (post('op')) {
         SELECT `co_contratti_tipiintervento`.`idtipointervento` FROM `co_contratti_tipiintervento` WHERE `co_contratti_tipiintervento`.`idtipointervento` = '.prepare($id_record).'
         ORDER BY `idtipointervento`');
 
-        
-        
         if (empty($elementi)) {
-        
             $query = 'DELETE FROM in_tipiintervento WHERE idtipointervento='.prepare($id_record);
             $dbo->query($query);
 
@@ -79,9 +76,9 @@ switch (post('op')) {
 
             flash()->info(tr('Tipo di intervento eliminato!'));
             break;
-
         }
 
+        // no break
     case 'import':
         $values = [
             'costo_ore' => $record['costo_orario'],

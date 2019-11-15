@@ -889,10 +889,10 @@ ALTER TABLE `co_statipreventivi` ADD `can_delete` BOOLEAN NOT NULL DEFAULT TRUE;
 ALTER TABLE `co_staticontratti` ADD `can_delete` BOOLEAN NOT NULL DEFAULT TRUE;
 
 -- Imposto gli stati Bozza, In lavorazione e Concluso non eliminabili per stati preventivi e contratti
-UPDATE `co_statipreventivi` SET `can_delete` = '0' WHERE `co_statipreventivi`.`descrizione` = 'Bozza'; 
+UPDATE `co_statipreventivi` SET `can_delete` = '0' WHERE `co_statipreventivi`.`descrizione` = 'Bozza';
 UPDATE `co_statipreventivi` SET `can_delete` = '0' WHERE `co_statipreventivi`.`descrizione` = 'In lavorazione';
 
-UPDATE `co_staticontratti` SET `can_delete` = '0' WHERE `co_staticontratti`.`descrizione` = 'Bozza'; 
+UPDATE `co_staticontratti` SET `can_delete` = '0' WHERE `co_staticontratti`.`descrizione` = 'Bozza';
 UPDATE `co_staticontratti` SET `can_delete` = '0' WHERE `co_staticontratti`.`descrizione` = 'In lavorazione';
 UPDATE `co_staticontratti` SET `can_delete` = '0' WHERE `co_staticontratti`.`descrizione` = 'Concluso';
 UPDATE `co_staticontratti` SET `can_delete` = '0' WHERE `co_staticontratti`.`descrizione` = 'Fatturato';

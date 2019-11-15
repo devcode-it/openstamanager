@@ -3,6 +3,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Fatture\Fattura;
+use Modules\Anagrafiche\Anagrafica;
 
 $module = Modules::get('Prima nota');
 
@@ -78,15 +79,23 @@ $counter = 0;
 
 $id_documenti = array_unique($id_documenti);
 
+$idanagrafica_mov = 0;
+
 foreach ($id_documenti as $id_documento) {
     $fattura = Fattura::find($id_documento);
-    $tipo = $fattura->stato;
+    $tipo = $fattura->tipo;
     $dir = $fattura->direzione;
 
     // Inclusione delle sole fatture in stato Emessa, Parzialmente pagato o Pagato
     if (!in_array($fattura->stato->descrizione, ['Emessa', 'Parzialmente pagato', 'Pagato'])) {
         ++$counter;
         continue;
+    }
+    
+    if($fattura->idanagrafica!=$idanagrafica_mov && $idanagrafica_mov!=''){
+        $idanagrafica_mov = 0;
+    }else{
+        $idanagrafica_mov = $fattura->idanagrafica;
     }
 
     $numeri[] = !empty($fattura['numero_esterno']) ? $fattura['numero_esterno'] : $fattura['numero'];
@@ -139,6 +148,12 @@ foreach ($id_documenti as $id_documento) {
             $righe_documento[$key]['avere'] = $righe_documento[$key]['dare'];
             $righe_documento[$key]['dare'] = $tmp;
         }
+        
+        foreach ($righe_azienda as $key => $value) {
+            $tmp = $value['avere'];
+            $righe_azienda[$key]['avere'] = $righe_azienda[$key]['dare'];
+            $righe_azienda[$key]['dare'] = $tmp;
+        }
     }
 
     $righe = array_merge($righe, $righe_documento);
@@ -161,7 +176,13 @@ $righe = array_merge($righe, $riga_documento);
 $numero_scadenze = count($id_scadenze);
 $numero_documenti = count($id_documenti);
 if ($numero_documenti + $numero_scadenze > 1) {
-    $descrizione = 'Pag. fatture num. '.implode(', ', $numeri);
+    if($idanagrafica_mov!=0){
+        $an = Anagrafica::find($idanagrafica_mov);
+
+        $descrizione = 'Pag. fatture '.$an->ragione_sociale.' num. '.implode(', ', $numeri);
+    }else{
+        $descrizione = 'Pag. fatture num. '.implode(', ', $numeri);
+    }
 } elseif ($numero_documenti == 1) {
     $numero_fattura = !empty($fattura['numero_esterno']) ? $fattura['numero_esterno'] : $fattura['numero'];
 

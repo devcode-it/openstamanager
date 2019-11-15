@@ -14,7 +14,7 @@ switch ($op) {
         if ($dbo->isConnected() && $dbo->isInstalled() && auth()->attempt($username, $password)) {
             $_SESSION['keep_alive'] = true;
 
-        // Rimozione log vecchi
+            // Rimozione log vecchi
             //$dbo->query('DELETE FROM `zz_operations` WHERE DATE_ADD(`created_at`, INTERVAL 30*24*60*60 SECOND) <= NOW()');
         } else {
             $status = auth()->getCurrentStatus();

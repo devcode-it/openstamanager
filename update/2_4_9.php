@@ -219,7 +219,7 @@ foreach ($files as $key => $value) {
 
 delete($files);
 
-//Calcolo la descrizione per il nuovo campo descrizione in scadenzario
+// Calcolo la descrizione per il nuovo campo descrizione in scadenzario
 $rs = $dbo->fetchArray('SELECT * FROM co_scadenziario');
 
 for ($i = 0; $i < sizeof($rs); ++$i) {

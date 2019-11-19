@@ -69,7 +69,7 @@ include_once __DIR__.'/../../core.php';
 </form>
 
 <?php
- // Permetto eliminazione tipo intervento solo se questo non è utilizzado da nessun'altra parte a gestionale
+ // Permetto eliminazione tipo intervento solo se questo non è utilizzado da nessun'altra parte nel gestionale
 $elementi = $dbo->fetchArray('SELECT `in_interventi`.`idtipointervento`  FROM `in_interventi` WHERE `in_interventi`.`idtipointervento` = '.prepare($id_record).'
 UNION
 SELECT `an_anagrafiche`.`idtipointervento_default` AS `idtipointervento` FROM `an_anagrafiche` WHERE `an_anagrafiche`.`idtipointervento_default` = '.prepare($id_record).'

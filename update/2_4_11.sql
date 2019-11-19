@@ -897,3 +897,5 @@ UPDATE `co_staticontratti` SET `can_delete` = '0' WHERE `co_staticontratti`.`des
 UPDATE `co_staticontratti` SET `can_delete` = '0' WHERE `co_staticontratti`.`descrizione` = 'Concluso';
 UPDATE `co_staticontratti` SET `can_delete` = '0' WHERE `co_staticontratti`.`descrizione` = 'Fatturato';
 UPDATE `co_staticontratti` SET `can_delete` = '0' WHERE `co_staticontratti`.`descrizione` = 'Parzialmente fatturato';
+
+ALTER TABLE `an_sedi` ADD `note` TEXT NULL DEFAULT NULL AFTER `idzona`;

@@ -53,6 +53,7 @@ switch ($operazione) {
             'fax' => post('fax'),
             'id_nazione' => !empty(post('id_nazione')) ? post('id_nazione') : null,
             'idzona' => post('idzona'),
+            'note' => post('note'),
             'gaddress' => post('gaddress'),
             'lat' => post('lat'),
             'lng' => post('lng'),

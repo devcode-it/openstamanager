@@ -49,39 +49,42 @@ switch (post('op')) {
             'lng',
         ];
 
-        foreach ($data as $key => $value) {
-            if (!empty($value)) {
-                $id_tipo_anagrafica = (array) $data[$key]['tipologia'];
-                unset($data[$key]['tipologia']);
+        $id_azienda = setting('Azienda predefinita');
 
-                $dati_anagrafica = $data[$key];
+        foreach ($data as $key => $dati_anagrafica) {
+            if (!empty($dati_anagrafica)) {
+                $id_tipo_anagrafica = (array) $dati_anagrafica['tipologia'];
+                unset($dati_anagrafica['tipologia']);
+
+                // Separazione dei campi relativi alla sede legale
                 $dati_sede = [];
                 foreach ($sede_fields as $field) {
-                    $dati_sede[$field] = $dati_anagrafica[$field];
-                    unset($dati_anagrafica[$field]);
+                    if (isset($dati_anagrafica[$field])) {
+                        $dati_sede[$field] = $dati_anagrafica[$field];
+                        unset($dati_anagrafica[$field]);
+                    }
                 }
 
                 // Ricerca di eventuale anagrafica corrispondente
                 if (!empty($primary_key)) {
-                    //impedisco di aggiornare la mia anagrafica azienda
-                    if ($dati_anagrafica[$primary_key] != setting('Azienda predefinita')) {
-                        $anagrafica = Anagrafica::where($primary_key, '=', $dati_anagrafica[$primary_key])->first();
-                    }
+                    $anagrafica = Anagrafica::where($primary_key, '=', $dati_anagrafica[$primary_key])->first();
                 }
 
+                // Creazione dell'anagrafica
                 if (empty($anagrafica)) {
                     $anagrafica = Anagrafica::build($dati_anagrafica['ragione_sociale']);
                 }
 
-                $anagrafica->fill($dati_anagrafica);
-                $anagrafica->tipologie = (array) $id_tipo_anagrafica;
-                $anagrafica->save();
+                // Impedisco di aggiornare la mia anagrafica azienda
+                if ($dati_anagrafica[$primary_key] != $id_azienda) {
+                    $anagrafica->fill($dati_anagrafica);
+                    $anagrafica->tipologie = $id_tipo_anagrafica;
+                    $anagrafica->save();
 
-                $sede = $anagrafica->sedeLegale;
-                $sede->fill($dati_sede);
-                $sede->save();
-
-                unset($data[$key]);
+                    $sede = $anagrafica->sedeLegale;
+                    $sede->fill($dati_sede);
+                    $sede->save();
+                }
             }
         }
 

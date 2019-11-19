@@ -111,9 +111,9 @@ foreach ($id_documenti as $id_documento) {
     $id_conto_controparte = $fattura->anagrafica[$conto_field];
 
     // Lettura delle scadenza della fattura
-    if(sizeof($id_scadenze)>0){
+    if (sizeof($id_scadenze) > 0) {
         $scadenze = $dbo->fetchArray('SELECT id, ABS(da_pagare - pagato) AS rata FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) > ABS(pagato) AND id IN("'.implode('","', $id_scadenze).'") ORDER BY YEAR(scadenza) ASC, MONTH(scadenza) ASC');
-    }else{
+    } else {
         $scadenze = $dbo->fetchArray('SELECT id, ABS(da_pagare - pagato) AS rata FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) > ABS(pagato) ORDER BY YEAR(scadenza) ASC, MONTH(scadenza) ASC');
     }
 
@@ -128,10 +128,9 @@ foreach ($id_documenti as $id_documento) {
     $totale = sum(array_column($scadenze, 'rata'));
 
     if ($totale != 0) {
-
-        if($nota_credito){
+        if ($nota_credito) {
             $totaleA = -$totale;
-        }else{
+        } else {
             $totaleA = $totale;
         }
 
@@ -158,7 +157,6 @@ foreach ($id_documenti as $id_documento) {
 
 $k = 0;
 foreach ($righe_azienda as $key => $riga_azienda) {
-
     if ($righe_azienda[$key]['id_conto'] != $righe_azienda[$key - 1]['id_conto']) {
         ++$k;
     }
@@ -168,9 +166,9 @@ foreach ($righe_azienda as $key => $riga_azienda) {
     $riga_documento[$k]['avere'] += $riga_azienda['avere'];
 }
 
-foreach($riga_documento AS $key => $value){
+foreach ($riga_documento as $key => $value) {
     //Inverto dare e avere per importi negativi
-    if($riga_documento[$key]['dare']<0 || $riga_documento[$key]['avere']<0){
+    if ($riga_documento[$key]['dare'] < 0 || $riga_documento[$key]['avere'] < 0) {
         $tmp = abs($riga_documento[$key]['dare']);
         $riga_documento[$key]['dare'] = abs($riga_documento[$key]['avere']);
         $riga_documento[$key]['avere'] = $tmp;

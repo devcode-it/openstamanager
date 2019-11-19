@@ -27,6 +27,9 @@ $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : $user['idan
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="dir" value="<?php echo $dir; ?>">
 
+    <!-- Fix creazione da Anagrafica -->
+    <input type="hidden" name="id_record" value="">
+
 	<div class="row">
 		<div class="col-md-4">
 			 {[ "type": "date", "label": "<?php echo tr('Data'); ?>", "name": "data", "required": 1, "value": "-now-" ]}

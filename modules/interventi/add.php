@@ -154,6 +154,10 @@ $orario_fine = $data.' '.$orario_fine;
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="ref" value="<?php echo get('ref'); ?>">
 	<input type="hidden" name="backto" value="record-edit">
+
+    <!-- Fix creazione da Anagrafica -->
+    <input type="hidden" name="id_record" value="">
+
 <?php
 if (!empty($idcontratto_riga)) {
     echo '<input type="hidden" name="idcontratto_riga" value="'.$idcontratto_riga.'">';

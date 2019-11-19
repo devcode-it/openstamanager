@@ -95,6 +95,9 @@ return [
     [
         'field' => 'codice',
         'label' => 'Codice',
+        'names' => [
+            'codice',
+        ],
         'primary_key' => true,
     ],
     [

@@ -123,6 +123,8 @@ class Validate
     public static function isValidEmail($email)
     {
         $result = [];
+        $result['valid-format'] = true;
+
         if (!v::email()->validate($email)) {
             $result['valid-format'] = false;
 

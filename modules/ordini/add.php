@@ -22,7 +22,7 @@ $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : $user['idan
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="dir" value="<?php echo $dir; ?>">
-    
+
     <!-- Fix creazione da Anagrafica -->
     <input type="hidden" name="id_record" value="">
 

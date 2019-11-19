@@ -4,7 +4,7 @@ if (in_array($id_cliente, $tipi_anagrafica)) {
     echo '
 <div class="btn-group">
     <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-magic"></i>
-        '.tr('Crea').'...<span class="caret"></span>
+        '.tr('Crea').'... <span class="caret"></span>
         <span class="sr-only">Toggle Dropdown</span>
     </button>
 

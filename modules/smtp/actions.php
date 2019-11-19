@@ -44,11 +44,11 @@ switch (post('op')) {
 
         // Validazione indirizzo email mittente
         $check_email = Validate::isValidEmail(post('from_address'));
-
+      
         // Controllo sulla validazione
-        if (!empty($check_email['valid-format'])) {
+        if (empty($check_email)) {
             flash()->info(tr('Sintassi email verificata'));
-        } else {
+        } else if (!$check_email['valid-format']) {
             flash()->error(tr("Attenzione: l'indirizzo email _EMAIL_ sembra non essere valido", [
                 '_EMAIL_' => post('from_address'),
             ]));

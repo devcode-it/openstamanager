@@ -134,9 +134,9 @@ if (!empty($google)) {
 
 
 // Permetto eliminazione tipo sede solo se non è utilizzata da nessun'altra parte nel gestionale
-$elementi = $dbo->fetchArray('SELECT `zz_user_sedi`.`id_user` AS `id` FROM `zz_user_sedi` WHERE `zz_user_sedi`.`idsede` = '.prepare($id_parent).'
+$elementi = $dbo->fetchArray('SELECT `zz_user_sedi`.`id_user` AS `id` FROM `zz_user_sedi` WHERE `zz_user_sedi`.`idsede` = '.prepare($id_record).'
 UNION
-SELECT `an_referenti`.`id` AS `id` FROM `an_referenti` WHERE `an_referenti`.`idsede` = '.prepare($id_parent).' 
+SELECT `an_referenti`.`id` AS `id` FROM `an_referenti` WHERE `an_referenti`.`idsede` = '.prepare($id_record).' 
 ORDER BY `id`');
 
 if (!empty($elementi)) {

@@ -12,6 +12,7 @@ switch ($operazione) {
                 'idanagrafica' => $id_parent,
                 'nomesede' => post('nomesede'),
                 'indirizzo' => post('indirizzo'),
+                'codice_destinatario' => post('codice_destinatario'),
                 'citta' => post('citta'),
                 'cap' => post('cap'),
                 'provincia' => strtoupper(post('provincia')),

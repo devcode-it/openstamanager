@@ -47,7 +47,7 @@ echo '
 			{[ "type": "select", "label": "'.tr('Nazione').'", "name": "id_nazione", "ajax-source": "nazioni" ]}
 		</div>
         <div class="col-md-6">
-			{[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "values": "query=SELECT `id`, CONCAT(`nome`, \' - \', `descrizione`) AS `descrizione` FROM `an_zone` ORDER BY `descrizione` ASC" ]}
+			{[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "ajax-source": "zone", "placeholder": "'.tr('Nessuna zona').'", "icon-after": "add|'.Modules::get('Zone')['id'].'" ]}
 		</div>
 	</div>
 

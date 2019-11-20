@@ -27,7 +27,7 @@ class Preventivo extends Document
      *
      * @return self
      */
-    public static function build(Anagrafica $anagrafica, TipoSessione $tipo_sessione, $nome)
+    public static function build(Anagrafica $anagrafica, TipoSessione $tipo_sessione, $nome, $data_bozza, $id_sede)
     {
         $model = parent::build();
 
@@ -53,8 +53,15 @@ class Preventivo extends Document
 
         // Salvataggio delle informazioni
         $model->nome = $nome;
-        $model->data_bozza = Carbon::now();
+        if (empty($data_bozza))
+            $model->data_bozza = Carbon::now();
+        else
+            $model->data_bozza = $data_bozza;
         $model->data_conclusione = Carbon::now()->addMonth();
+        
+        if (!empty($id_sede)) {
+            $model->idsede = $id_sede;
+        }
 
         if (!empty($id_agente)) {
             $model->idagente = $id_agente;

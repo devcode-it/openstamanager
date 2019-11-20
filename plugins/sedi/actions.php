@@ -21,7 +21,7 @@ switch ($operazione) {
                 'telefono' => post('telefono'),
                 'email' => post('email'),
                 'id_nazione' => !empty(post('id_nazione')) ? post('id_nazione') : null,
-                'idzona' => post('idzona'),
+                'idzona' => !empty(post('id_zona')) ? post('id_zona') : 0,
             ]);
              $id_record = $dbo->lastInsertedID();
 

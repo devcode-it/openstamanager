@@ -160,10 +160,12 @@ if (!$righe->isEmpty()) {
             idriga: id
         }, function(data, result){
             if(result == 'success'){
-                //ricarico l'elenco delle righe
-                $('#righe').load( globals.rootdir + '/modules/interventi/ajax_righe.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
+                // Ricarico le righe
+                $('#righe').load('<?php echo $module->fileurl('ajax_righe.php');?>?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
 
-                $('#costi').load(globals.rootdir + '/modules/interventi/ajax_costi.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
+                // Ricarico la tabella dei costi
+                $('#costi').load('<?php echo $module->fileurl('ajax_costi.php');?>?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
+
 
                 // Toast
                 alertPush();

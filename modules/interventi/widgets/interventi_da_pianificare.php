@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../../core.php';
 
-$rs = $dbo->fetchArray('SELECT * FROM in_interventi WHERE in_interventi.idstatointervento = (SELECT in_statiintervento.idstatointervento FROm in_statiintervento WHERE in_statiintervento.descrizione=\'Da programmare\') ORDER BY data_richiesta ASC');
+$rs = $dbo->fetchArray('SELECT * FROM in_interventi WHERE in_interventi.idstatointervento = (SELECT in_statiintervento.idstatointervento FROm in_statiintervento WHERE in_statiintervento.codice=\'DAP\') ORDER BY data_richiesta ASC');
 
 if (!empty($rs)) {
     echo '
@@ -28,5 +28,5 @@ if (!empty($rs)) {
 </table>';
 } else {
     echo '
-<p>'.tr('Non ci sono attività in programmazione').'.</p>';
+<p>'.tr('Non ci sono attività da programmare').'.</p>';
 }

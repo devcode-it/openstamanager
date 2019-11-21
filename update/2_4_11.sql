@@ -899,3 +899,7 @@ UPDATE `co_staticontratti` SET `can_delete` = '0' WHERE `co_staticontratti`.`des
 UPDATE `co_staticontratti` SET `can_delete` = '0' WHERE `co_staticontratti`.`descrizione` = 'Parzialmente fatturato';
 
 ALTER TABLE `an_sedi` ADD `note` TEXT NULL DEFAULT NULL AFTER `idzona`;
+
+UPDATE `zz_views` SET `query` = 'codice' WHERE `zz_views`.`name` = 'Codice' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati di intervento');
+UPDATE `zz_views` SET `query` = 'codice' WHERE `zz_views`.`name` = 'Codice' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di intervento');
+UPDATE `zz_modules` SET `icon` = 'fa fa-angle-right' WHERE `zz_modules`.`name` = 'Categorie documenti';

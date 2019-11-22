@@ -4,7 +4,6 @@ include_once __DIR__.'/../../core.php';
 
 $google = setting('Google Maps API key');
 
-
 /*
 if (!empty($google)) {
     echo '
@@ -131,8 +130,6 @@ if (!empty($google)) {
     </div>';
 }
 
-
-
 // Permetto eliminazione tipo sede solo se non è utilizzata da nessun'altra parte nel gestionale
 $elementi = $dbo->fetchArray('SELECT `zz_user_sedi`.`id_user` AS `id` FROM `zz_user_sedi` WHERE `zz_user_sedi`.`idsede` = '.prepare($id_record).'
 UNION
@@ -146,8 +143,8 @@ if (!empty($elementi)) {
             '_NUM_' => count($elementi),
         ]).'.
 	</div>';
-	
-	$disabled = 'disabled';
+
+    $disabled = 'disabled';
 }
 
 echo '

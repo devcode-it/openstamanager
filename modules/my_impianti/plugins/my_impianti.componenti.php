@@ -155,7 +155,7 @@ if (!empty($rs2)) {
         // Per più "versioni" dello stesso componente mostro un riga meno evidente
         // per non confonderlo come componente in uso in questo momento
         $same = ($prev_componente == $nome_componente);
-        
+
         if (get('id') == $rs2[$j]['id']) {
             $collapsed = '';
             $icon = 'minus';

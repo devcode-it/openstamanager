@@ -23,10 +23,10 @@ class Fattura extends Document
     /**
      * Crea una nuova fattura.
      *
-     * @param Anagrafica $anagrafica
-     * @param TipoFattura       $tipo_documento
-     * @param string     $data
-     * @param int        $id_segment
+     * @param Anagrafica  $anagrafica
+     * @param TipoFattura $tipo_documento
+     * @param string      $data
+     * @param int         $id_segment
      *
      * @return self
      */

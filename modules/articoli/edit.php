@@ -94,7 +94,7 @@ $_SESSION['superselect']['id_categoria'] = $record['id_categoria'];
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "checkbox", "label": "<?php echo tr("Attivo"); ?>", "name": "attivo", "help": "<?php echo tr('Seleziona per rendere attivo l\'articolo'); ?>", "value": "$attivo$", "placeholder": "<?php echo tr('Articolo attivo'); ?>" ]}
+                    {[ "type": "checkbox", "label": "<?php echo tr('Attivo'); ?>", "name": "attivo", "help": "<?php echo tr('Seleziona per rendere attivo l\'articolo'); ?>", "value": "$attivo$", "placeholder": "<?php echo tr('Articolo attivo'); ?>" ]}
                 </div>
 
 			</div>

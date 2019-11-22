@@ -53,12 +53,13 @@ class Preventivo extends Document
 
         // Salvataggio delle informazioni
         $model->nome = $nome;
-        if (empty($data_bozza))
+        if (empty($data_bozza)) {
             $model->data_bozza = Carbon::now();
-        else
+        } else {
             $model->data_bozza = $data_bozza;
+        }
         $model->data_conclusione = Carbon::now()->addMonth();
-        
+
         if (!empty($id_sede)) {
             $model->idsede = $id_sede;
         }

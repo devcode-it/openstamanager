@@ -116,10 +116,10 @@ echo '
                 $('#bs-popup').modal('hide');
 
                 // Ricarico le righe
-                $('#righe').load('<?php echo $module->fileurl('ajax_righe.php');?>?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
+                $('#righe').load('<?php echo $module->fileurl('ajax_righe.php'); ?>?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
 
                 // Ricarico la tabella dei costi
-                $('#costi').load('<?php echo $module->fileurl('ajax_costi.php');?>?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
+                $('#costi').load('<?php echo $module->fileurl('ajax_costi.php'); ?>?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
             }
         });
     });

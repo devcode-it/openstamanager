@@ -60,7 +60,7 @@ $(function() {
         format: "MMMM YYYY",
         locale: globals.locale,
         useCurrent: false,
-        defaultDate: moment("'.$date->format("Y-m-d H:i:s").'")
+        defaultDate: moment("'.$date->format('Y-m-d H:i:s').'")
     });
 
     $("#date").on("dp.change", function(e) {

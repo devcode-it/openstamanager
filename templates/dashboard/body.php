@@ -52,7 +52,7 @@ if ($calendar['format'] == 'week') {
     $min_date = $date->copy()->startOfMonth();
     $max_date = $date->copy()->endOfMonth();
 
-    $where = '  (in_interventi_tecnici.orario_inizio) <= '.prepare($max_date).' AND  (in_interventi_tecnici.orario_inizio) >= '.prepare($min_date).' AND ';
+    $where = ' (in_interventi_tecnici.orario_inizio) <= '.prepare($max_date).' AND  (in_interventi_tecnici.orario_inizio) >= '.prepare($min_date).' AND ';
 }
 
 $height = '80';
@@ -61,17 +61,18 @@ $stati = (array) $calendar['idstatiintervento'];
 $tipi = (array) $calendar['idtipiintervento'];
 $tecnici = (array) $calendar['idtecnici'];
 
-$query = 'SELECT 
+$query = "SELECT 
         DATE(orario_inizio) AS data,
         (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=in_interventi.idanagrafica) AS anagrafica,
-        (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=in_interventi_tecnici.idtecnico) AS tecnico
+        GROUP_CONCAT((SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=in_interventi_tecnici.idtecnico) SEPARATOR ', ') AS tecnico
 FROM in_interventi_tecnici
     INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id
     LEFT OUTER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento
-WHERE '.$where.' 
+WHERE ".$where.' 
     idtecnico IN('.implode(',', $tecnici).') AND
     in_interventi.idstatointervento IN('.implode(',', $stati).') AND
-    in_interventi_tecnici.idtipointervento IN('.implode(',', $tipi).') '.Modules::getAdditionalsQuery('Interventi');
+    in_interventi_tecnici.idtipointervento IN('.implode(',', $tipi).') '.Modules::getAdditionalsQuery('Interventi').'
+GROUP BY in_interventi.id, data';
 $sessioni = $dbo->fetchArray($query);
 
 $sessioni = collect($sessioni)->groupBy('data');
@@ -127,7 +128,7 @@ for ($i = 0; $i < $count; $i = $i + 7) {
     echo '
     <tr>';
 
-    for ($c = 0; $c < 7; ++$c ) {
+    for ($c = 0; $c < 7; ++$c) {
         $element = $list[$i + $c];
 
         echo '
@@ -140,7 +141,7 @@ for ($i = 0; $i < $count; $i = $i + 7) {
     echo '
     <tr>';
 
-    for ($c = 0; $c < 7; ++$c ) {
+    for ($c = 0; $c < 7; ++$c) {
         $element = $list[$i + $c];
 
         $clienti = '';

@@ -92,9 +92,9 @@ foreach ($id_documenti as $id_documento) {
         continue;
     }
 
-    if(empty($id_anagrafica_movimenti)){
+    if (empty($id_anagrafica_movimenti)) {
         $id_anagrafica_movimenti = $fattura->idanagrafica;
-    }elseif ($fattura->idanagrafica != $id_anagrafica_movimenti) {
+    } elseif ($fattura->idanagrafica != $id_anagrafica_movimenti) {
         $id_anagrafica_movimenti = null;
     }
 

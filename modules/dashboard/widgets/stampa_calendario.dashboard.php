@@ -2,15 +2,18 @@
 
 include_once __DIR__.'/../../../core.php';
 
-//trovo id_print della stampa
-$id_print = Prints::getModulePredefinedPrint(1)['id'];
+use Carbon\Carbon;
+
+// Trovo id_print della stampa
+$id_print = Prints::getModulePredefinedPrint('Dashboard')['id'];
+$date = new Carbon($_SESSION['dashboard']['date']);
 
 echo '
 <form action="" method="post" onsubmit="if($(this).parsley().validate()) { return stampa_calendario(); }" >
 
 	<div class="row">
 		<div class="col-md-4">
-			{[ "type": "text", "label": "'.tr('Mese e anno').'", "name": "date", "required": "1", "value": "'.$_SESSION['dashboard']['date'].'" ]}
+			{[ "type": "text", "label": "'.tr('Mese e anno').'", "name": "date", "required": "1" ]}
 		</div>
 		
 		<div class="col-md-2">
@@ -36,31 +39,32 @@ echo '
 
 <script>$(document).ready(init)</script>';
 
-?>
+echo '
 <script>
 function stampa_calendario (){
-	window.open('<?php echo $rootdir; ?>/pdfgen.php?id_print=<?php echo $id_print; ?>');
+	window.open(globals.rootdir + "/pdfgen.php?id_print='.$id_print.'");
 
 	return false;
 }
 
-$('#format').change(function() {
-	session_set('settings,format', $(this).val(), 0, 0);
+$("#format").change(function() {
+	session_set("dashboard,format", $(this).val(), 0, 0);
 });
 
-$('#orientation').change(function() {
-	session_set('settings,orientation', $(this).val(), 0, 0);
+$("#orientation").change(function() {
+	session_set("dashboard,orientation", $(this).val(), 0, 0);
 });
 
 $(function() {
-    $('#date').datetimepicker({
-        format: 'MMMM YYYY',
+    $("#date").datetimepicker({
+        format: "MMMM YYYY",
         locale: globals.locale,
         useCurrent: false,
+        defaultDate: moment("'.$date->format("Y-m-d H:i:s").'")
     });
 
-    $('#date').on('dp.change', function(e) {
-        session_set('dashboard,date', e.date.format("YYYY-MM-DD"), 0, 0);
+    $("#date").on("dp.change", function(e) {
+        session_set("dashboard,date", e.date.format("YYYY-MM-DD"), 0, 0);
     });
 });
-</script>
+</script>';

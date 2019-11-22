@@ -903,3 +903,6 @@ ALTER TABLE `an_sedi` ADD `note` TEXT NULL DEFAULT NULL AFTER `idzona`;
 UPDATE `zz_views` SET `query` = 'codice' WHERE `zz_views`.`name` = 'Codice' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati di intervento');
 UPDATE `zz_views` SET `query` = 'codice' WHERE `zz_views`.`name` = 'Codice' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di intervento');
 UPDATE `zz_modules` SET `icon` = 'fa fa-angle-right' WHERE `zz_modules`.`name` = 'Categorie documenti';
+
+UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM(prezzo_acquisto*qta),2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM mg_articoli WHERE qta>0 AND deleted_at IS NULL' WHERE `zz_widgets`.`name` = 'Valore magazzino';
+UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM(qta),2), ",", "#"), ".", ","), "#", "."), "unit&agrave;") AS dato FROM mg_articoli WHERE qta>0 AND deleted_at IS NULL' WHERE `zz_widgets`.`name` = 'Articoli in magazzino';

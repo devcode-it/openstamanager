@@ -120,25 +120,6 @@ foreach ($id_documenti as $id_documento) {
 
     $righe_documento = [];
 
-    // Riga aziendale
-    $totale = sum(array_column($scadenze, 'rata'));
-
-    if ($totale != 0) {
-        if ($nota_credito) {
-            $totaleA = -$totale;
-        } else {
-            $totaleA = $totale;
-        }
-
-        $righe_documento[] = [
-            'iddocumento' => $scadenze[0]['iddocumento'],
-            'id_scadenza' => $scadenze[0]['id'],
-            'id_conto' => $id_conto_aziendale,
-            'dare' => ($dir == 'entrata') ? $totaleA : 0,
-            'avere' => ($dir == 'entrata') ? 0 : $totaleA,
-        ];
-    }
-
     // Riga controparte
     foreach ($scadenze as $scadenza) {
         $righe_documento[] = [
@@ -147,6 +128,25 @@ foreach ($id_documenti as $id_documento) {
             'id_conto' => $id_conto_controparte,
             'dare' => ($dir == 'entrata' && !$nota_credito && !$is_insoluto) ? 0 : $scadenza['rata'],
             'avere' => ($dir == 'entrata' && !$nota_credito && !$is_insoluto) ? $scadenza['rata'] : 0,
+        ];
+    }
+
+    // Riga aziendale
+    $totale = sum(array_column($scadenze, 'rata'));
+
+    if ($totale != 0) {
+        if ($nota_credito) {
+            $totale_rata = -$totale;
+        } else {
+            $totale_rata = $totale;
+        }
+
+        $righe_documento[] = [
+            'iddocumento' => $scadenze[0]['iddocumento'],
+            'id_scadenza' => $scadenze[0]['id'],
+            'id_conto' => $id_conto_aziendale,
+            'dare' => ($dir == 'entrata') ? $totale_rata : 0,
+            'avere' => ($dir == 'entrata') ? 0 : $totale_rata,
         ];
     }
 

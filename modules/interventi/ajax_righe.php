@@ -2,11 +2,7 @@
 
 use Modules\Interventi\Intervento;
 
-if (file_exists(__DIR__.'/../../../core.php')) {
-    include_once __DIR__.'/../../../core.php';
-} else {
-    include_once __DIR__.'/../../core.php';
-}
+include_once __DIR__.'/../../core.php';
 
 $show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
 
@@ -163,11 +159,16 @@ if (!$righe->isEmpty()) {
             id_record: globals.id_record,
             idriga: id
         }, function(data, result){
-            if( result=='success' ){
-                //ricarico l'elenco delle righe
-                $('#righe').load( globals.rootdir + '/modules/interventi/ajax_righe.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
+            if(result == 'success'){
+                // Ricarico le righe
+                $('#righe').load('<?php echo $module->fileurl('ajax_righe.php'); ?>?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
 
-                $('#costi').load(globals.rootdir + '/modules/interventi/ajax_costi.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
+                // Ricarico la tabella dei costi
+                $('#costi').load('<?php echo $module->fileurl('ajax_costi.php'); ?>?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
+
+
+                // Toast
+                alertPush();
             }
         });
     }

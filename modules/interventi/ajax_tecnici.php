@@ -1,10 +1,6 @@
 <?php
 
-if (file_exists(__DIR__.'/../../../core.php')) {
-    include_once __DIR__.'/../../../core.php';
-} else {
-    include_once __DIR__.'/../../core.php';
-}
+include_once __DIR__.'/../../core.php';
 
 $show_costi = true;
 // Limitazione delle azioni dei tecnici

@@ -40,7 +40,7 @@ ALTER TABLE `co_righe_preventivi` ADD `abilita_serial` tinyint(1) NOT NULL DEFAU
 -- Collegamento Articoli
 UPDATE `co_righe_documenti` INNER JOIN `or_righe_ordini` ON `co_righe_documenti`.`idordine` = `or_righe_ordini`.`idordine` AND `co_righe_documenti`.`descrizione` = `or_righe_ordini`.`descrizione` AND `co_righe_documenti`.`idarticolo` = `or_righe_ordini`.`idarticolo` SET `co_righe_documenti`.`original_id` = `or_righe_ordini`.`id`, `co_righe_documenti`.`original_type` = 'Modules\\Ordini\\Components\\Articolo' WHERE `co_righe_documenti`.`idarticolo` != 0;
 
-UPDATE `co_righe_documenti` INNER JOIN `dt_righe_ddt` ON `co_righe_documenti`.`idddt` = `dt_righe_ddt`.`idddt` AND `co_righe_documenti`.`descrizione` = `dt_righe_ddt`.`descrizione` AND `co_righe_documenti`.`idarticolo` = `dt_righe_ddt`.`idarticolo` SET `co_righe_documenti`.`original_id` = `dt_righe_ddt`.`id`, `co_righe_documenti`.`original_type` = 'Modules\\Ddt\\Components\\Articolo' WHERE `co_righe_documenti`.`idarticolo` != 0;
+UPDATE `co_righe_documenti` INNER JOIN `dt_righe_ddt` ON `co_righe_documenti`.`idddt` = `dt_righe_ddt`.`idddt` AND `co_righe_documenti`.`descrizione` = `dt_righe_ddt`.`descrizione` AND `co_righe_documenti`.`idarticolo` = `dt_righe_ddt`.`idarticolo` SET `co_righe_documenti`.`original_id` = `dt_righe_ddt`.`id`, `co_righe_documenti`.`original_type` = 'Modules\\DDT\\Components\\Articolo' WHERE `co_righe_documenti`.`idarticolo` != 0;
 
 UPDATE `co_righe_documenti` INNER JOIN `co_righe_contratti` ON `co_righe_documenti`.`idcontratto` = `co_righe_contratti`.`idcontratto` AND `co_righe_documenti`.`descrizione` = `co_righe_contratti`.`descrizione` AND `co_righe_documenti`.`idarticolo` = `co_righe_contratti`.`idarticolo` SET `co_righe_documenti`.`original_id` = `co_righe_contratti`.`id`, `co_righe_documenti`.`original_type` = 'Modules\\Contratti\\Components\\Articolo' WHERE `co_righe_documenti`.`idarticolo` != 0;
 
@@ -49,7 +49,7 @@ UPDATE `co_righe_documenti` INNER JOIN `co_righe_preventivi` ON `co_righe_docume
 -- Collegamento Sconti
 UPDATE `co_righe_documenti` INNER JOIN `or_righe_ordini` ON `co_righe_documenti`.`idordine` = `or_righe_ordini`.`idordine` AND `co_righe_documenti`.`descrizione` = `or_righe_ordini`.`descrizione` AND `co_righe_documenti`.`idarticolo` = `or_righe_ordini`.`idarticolo` SET `co_righe_documenti`.`original_id` = `or_righe_ordini`.`id`, `co_righe_documenti`.`original_type` = 'Modules\\Ordini\\Components\\Sconto' WHERE `co_righe_documenti`.`is_sconto` != 0;
 
-UPDATE `co_righe_documenti` INNER JOIN `dt_righe_ddt` ON `co_righe_documenti`.`idddt` = `dt_righe_ddt`.`idddt` AND `co_righe_documenti`.`descrizione` = `dt_righe_ddt`.`descrizione` AND `co_righe_documenti`.`idarticolo` = `dt_righe_ddt`.`idarticolo` SET `co_righe_documenti`.`original_id` = `dt_righe_ddt`.`id`, `co_righe_documenti`.`original_type` = 'Modules\\Ddt\\Components\\Sconto' WHERE `co_righe_documenti`.`is_sconto` != 0;
+UPDATE `co_righe_documenti` INNER JOIN `dt_righe_ddt` ON `co_righe_documenti`.`idddt` = `dt_righe_ddt`.`idddt` AND `co_righe_documenti`.`descrizione` = `dt_righe_ddt`.`descrizione` AND `co_righe_documenti`.`idarticolo` = `dt_righe_ddt`.`idarticolo` SET `co_righe_documenti`.`original_id` = `dt_righe_ddt`.`id`, `co_righe_documenti`.`original_type` = 'Modules\\DDT\\Components\\Sconto' WHERE `co_righe_documenti`.`is_sconto` != 0;
 
 UPDATE `co_righe_documenti` INNER JOIN `co_righe_contratti` ON `co_righe_documenti`.`idcontratto` = `co_righe_contratti`.`idcontratto` AND `co_righe_documenti`.`descrizione` = `co_righe_contratti`.`descrizione` AND `co_righe_documenti`.`idarticolo` = `co_righe_contratti`.`idarticolo` SET `co_righe_documenti`.`original_id` = `co_righe_contratti`.`id`, `co_righe_documenti`.`original_type` = 'Modules\\Contratti\\Components\\Sconto' WHERE `co_righe_documenti`.`is_sconto` != 0;
 
@@ -58,7 +58,7 @@ UPDATE `co_righe_documenti` INNER JOIN `co_righe_preventivi` ON `co_righe_docume
 -- Collegamento Descrizioni
 UPDATE `co_righe_documenti` INNER JOIN `or_righe_ordini` ON `co_righe_documenti`.`idordine` = `or_righe_ordini`.`idordine` AND `co_righe_documenti`.`descrizione` = `or_righe_ordini`.`descrizione` AND `co_righe_documenti`.`idarticolo` = `or_righe_ordini`.`idarticolo` SET `co_righe_documenti`.`original_id` = `or_righe_ordini`.`id`, `co_righe_documenti`.`original_type` = 'Modules\\Ordini\\Components\\Descrizione' WHERE `co_righe_documenti`.`is_descrizione` != 0;
 
-UPDATE `co_righe_documenti` INNER JOIN `dt_righe_ddt` ON `co_righe_documenti`.`idddt` = `dt_righe_ddt`.`idddt` AND `co_righe_documenti`.`descrizione` = `dt_righe_ddt`.`descrizione` AND `co_righe_documenti`.`idarticolo` = `dt_righe_ddt`.`idarticolo` SET `co_righe_documenti`.`original_id` = `dt_righe_ddt`.`id`, `co_righe_documenti`.`original_type` = 'Modules\\Ddt\\Components\\Descrizione' WHERE `co_righe_documenti`.`is_descrizione` != 0;
+UPDATE `co_righe_documenti` INNER JOIN `dt_righe_ddt` ON `co_righe_documenti`.`idddt` = `dt_righe_ddt`.`idddt` AND `co_righe_documenti`.`descrizione` = `dt_righe_ddt`.`descrizione` AND `co_righe_documenti`.`idarticolo` = `dt_righe_ddt`.`idarticolo` SET `co_righe_documenti`.`original_id` = `dt_righe_ddt`.`id`, `co_righe_documenti`.`original_type` = 'Modules\\DDT\\Components\\Descrizione' WHERE `co_righe_documenti`.`is_descrizione` != 0;
 
 UPDATE `co_righe_documenti` INNER JOIN `co_righe_contratti` ON `co_righe_documenti`.`idcontratto` = `co_righe_contratti`.`idcontratto` AND `co_righe_documenti`.`descrizione` = `co_righe_contratti`.`descrizione` AND `co_righe_documenti`.`idarticolo` = `co_righe_contratti`.`idarticolo` SET `co_righe_documenti`.`original_id` = `co_righe_contratti`.`id`, `co_righe_documenti`.`original_type` = 'Modules\\Contratti\\Components\\Descrizione' WHERE `co_righe_documenti`.`is_descrizione` != 0;
 
@@ -67,7 +67,7 @@ UPDATE `co_righe_documenti` INNER JOIN `co_righe_preventivi` ON `co_righe_docume
 -- Collegamento Righe
 UPDATE `co_righe_documenti` INNER JOIN `or_righe_ordini` ON `co_righe_documenti`.`idordine` = `or_righe_ordini`.`idordine` AND `co_righe_documenti`.`descrizione` = `or_righe_ordini`.`descrizione` AND `co_righe_documenti`.`idarticolo` = `or_righe_ordini`.`idarticolo` SET `co_righe_documenti`.`original_id` = `or_righe_ordini`.`id`, `co_righe_documenti`.`original_type` = 'Modules\\Ordini\\Components\\Riga' WHERE `co_righe_documenti`.`original_id` IS NULL;
 
-UPDATE `co_righe_documenti` INNER JOIN `dt_righe_ddt` ON `co_righe_documenti`.`idddt` = `dt_righe_ddt`.`idddt` AND `co_righe_documenti`.`descrizione` = `dt_righe_ddt`.`descrizione` AND `co_righe_documenti`.`idarticolo` = `dt_righe_ddt`.`idarticolo` SET `co_righe_documenti`.`original_id` = `dt_righe_ddt`.`id`, `co_righe_documenti`.`original_type` = 'Modules\\Ddt\\Components\\Riga' WHERE `co_righe_documenti`.`original_id` IS NULL;
+UPDATE `co_righe_documenti` INNER JOIN `dt_righe_ddt` ON `co_righe_documenti`.`idddt` = `dt_righe_ddt`.`idddt` AND `co_righe_documenti`.`descrizione` = `dt_righe_ddt`.`descrizione` AND `co_righe_documenti`.`idarticolo` = `dt_righe_ddt`.`idarticolo` SET `co_righe_documenti`.`original_id` = `dt_righe_ddt`.`id`, `co_righe_documenti`.`original_type` = 'Modules\\DDT\\Components\\Riga' WHERE `co_righe_documenti`.`original_id` IS NULL;
 
 UPDATE `co_righe_documenti` INNER JOIN `co_righe_contratti` ON `co_righe_documenti`.`idcontratto` = `co_righe_contratti`.`idcontratto` AND `co_righe_documenti`.`descrizione` = `co_righe_contratti`.`descrizione` AND `co_righe_documenti`.`idarticolo` = `co_righe_contratti`.`idarticolo` SET `co_righe_documenti`.`original_id` = `co_righe_contratti`.`id`, `co_righe_documenti`.`original_type` = 'Modules\\Contratti\\Components\\Riga' WHERE `co_righe_documenti`.`original_id` IS NULL;
 
@@ -711,7 +711,7 @@ WHERE 1=1 AND `deleted_at` IS NULL AND
 HAVING 2=2' WHERE `name` = 'Gestione documentale';
 
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Gestione documentale'), '`do_documenti`.`id`', 'id', 1, 0, 0, 1, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Gestione documentale'), 'id', '`do_documenti`.`id`', 1, 0, 0, 1, 0),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Gestione documentale'), 'Categoria', '`do_categorie`.`descrizione`', 2, 0, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Gestione documentale'), 'Nome', '`do_documenti`.`nome`', 3, 0, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Gestione documentale'), 'Data', '`do_documenti`.`data`', 4, 0, 1, 1, 1);
@@ -856,3 +856,50 @@ ALTER TABLE `mg_listini` ADD `prc_combinato` VARCHAR(255);
 
 -- Aggiunto supporto ai tentativi di invio email
 ALTER TABLE `em_emails` ADD `attempt` INT(11) NOT NULL DEFAULT 0;
+
+-- Fix calcolo totale contratti in scadenza
+UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato,
+       DATEDIFF(data_conclusione, NOW()) AS giorni_rimanenti,
+       data_conclusione,
+       ore_preavviso_rinnovo,
+       giorni_preavviso_rinnovo,
+       (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=co_contratti.idanagrafica) AS ragione_sociale
+FROM co_contratti WHERE
+        idstato IN (SELECT id FROM co_staticontratti WHERE is_fatturabile = 1) AND
+        rinnovabile = 1 AND
+        YEAR(data_conclusione) > 1970 AND
+        (SELECT id FROM co_contratti contratti WHERE contratti.idcontratto_prev = co_contratti.id) IS NULL
+AND (IFNULL( ((SELECT SUM(co_righe_contratti.qta) FROM co_righe_contratti WHERE co_righe_contratti.um=\'ore\' AND co_righe_contratti.idcontratto=co_contratti.id) - IFNULL( (SELECT SUM(in_interventi_tecnici.ore) FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id WHERE in_interventi.id_contratto=co_contratti.id AND in_interventi.idstatointervento IN (SELECT in_statiintervento.idstatointervento FROM in_statiintervento WHERE in_statiintervento.completato = 1)), 0) ), 0 ) < ore_preavviso_rinnovo OR DATEDIFF(data_conclusione, NOW()) < ABS(giorni_preavviso_rinnovo))
+ORDER BY giorni_rimanenti ASC, IFNULL( ((SELECT SUM(co_righe_contratti.qta) FROM co_righe_contratti WHERE co_righe_contratti.um=\'ore\' AND co_righe_contratti.idcontratto=co_contratti.id) - IFNULL( (SELECT SUM(in_interventi_tecnici.ore) FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id WHERE in_interventi.id_contratto=co_contratti.id AND in_interventi.idstatointervento IN (SELECT in_statiintervento.idstatointervento FROM in_statiintervento WHERE in_statiintervento.completato = 1)), 0) ), 0 ) ASC' WHERE `zz_widgets`.`name` = 'Contratti in scadenza';
+
+-- Aggiunta campo barcode per gli articoli
+ALTER TABLE `mg_articoli` ADD `barcode` VARCHAR(255);
+
+-- Aggiunta campo fornitore per gli articoli
+ALTER TABLE `mg_articoli` ADD `id_fornitore` INT(11) NULL DEFAULT NULL;
+
+-- Aggiunta vista prezzo vendita e prezzo acquisto per gli articoli
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `summable`, `visible`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), 'Fornitore', '(SELECT `ragione_sociale` FROM `an_anagrafiche` WHERE `idanagrafica` = `id_fornitore`)', 6, 1, 0, 0, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), 'Prezzo di acquisto', 'prezzo_acquisto', 6, 1, 0, 1, 1, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), 'Prezzo di vendita', 'prezzo_vendita', 6, 1, 0, 1, 1, 0, 1);
+
+-- Aggiunta  flag can_delete per stati preventivi e contratti
+ALTER TABLE `co_statipreventivi` ADD `can_delete` BOOLEAN NOT NULL DEFAULT TRUE;
+ALTER TABLE `co_staticontratti` ADD `can_delete` BOOLEAN NOT NULL DEFAULT TRUE;
+
+-- Imposto gli stati Bozza, In lavorazione e Concluso non eliminabili per stati preventivi e contratti
+UPDATE `co_statipreventivi` SET `can_delete` = '0' WHERE `co_statipreventivi`.`descrizione` = 'Bozza';
+UPDATE `co_statipreventivi` SET `can_delete` = '0' WHERE `co_statipreventivi`.`descrizione` = 'In lavorazione';
+
+UPDATE `co_staticontratti` SET `can_delete` = '0' WHERE `co_staticontratti`.`descrizione` = 'Bozza';
+UPDATE `co_staticontratti` SET `can_delete` = '0' WHERE `co_staticontratti`.`descrizione` = 'In lavorazione';
+UPDATE `co_staticontratti` SET `can_delete` = '0' WHERE `co_staticontratti`.`descrizione` = 'Concluso';
+UPDATE `co_staticontratti` SET `can_delete` = '0' WHERE `co_staticontratti`.`descrizione` = 'Fatturato';
+UPDATE `co_staticontratti` SET `can_delete` = '0' WHERE `co_staticontratti`.`descrizione` = 'Parzialmente fatturato';
+
+ALTER TABLE `an_sedi` ADD `note` TEXT NULL DEFAULT NULL AFTER `idzona`;
+
+UPDATE `zz_views` SET `query` = 'codice' WHERE `zz_views`.`name` = 'Codice' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati di intervento');
+UPDATE `zz_views` SET `query` = 'codice' WHERE `zz_views`.`name` = 'Codice' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di intervento');
+UPDATE `zz_modules` SET `icon` = 'fa fa-angle-right' WHERE `zz_modules`.`name` = 'Categorie documenti';

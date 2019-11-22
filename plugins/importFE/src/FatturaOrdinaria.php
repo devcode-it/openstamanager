@@ -121,6 +121,7 @@ class FatturaOrdinaria extends FatturaElettronica
 
                     $articolo = ArticoloOriginale::build($codice, $riga['Descrizione'], $categoria);
                     $articolo->prezzo_acquisto = $riga['PrezzoUnitario'];
+                    $articolo->id_fornitore = $fattura->idanagrafica;
                     $articolo->save();
                 }
             }

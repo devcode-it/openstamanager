@@ -2,29 +2,15 @@
 
 include_once __DIR__.'/../../core.php';
 
-$height = '80';
+use Carbon\Carbon;
 
-if (isset($_SESSION['period']['month'])) {
-    $period = explode(' ', $_SESSION['period']['month']);
-    $month = $period[0];
-    $year = $period[1];
+$calendar = $_SESSION['dashboard'];
 
-    $months = ['Gennaio' => '01', 'Febbraio' => '02', 'Marzo' => '03', 'Aprile' => '04', 'Maggio' => '05', 'Giugno' => '06', 'Luglio' => '07', 'Agosto' => '08', 'Settembre' => '09', 'Ottobre' => '10', 'Novembre' => '11', 'Dicembre' => '12'];
-    $month = $months[$month];
+$date = $calendar['date'];
+$date = new Carbon($date);
 
-    $title = $_SESSION['period']['month'];
-
-    //numero di giorni nel mese
-    $maxday = cal_days_in_month(CAL_GREGORIAN, $month, $year) + 1;
-
-    $mindate = $year.'-'.$month.'-'.'01';
-    $maxdate = $year.'-'.$month.'-'.$maxday;
-
-    $where = '  (in_interventi_tecnici.orario_inizio) <= '.prepare($maxdate).' AND  (in_interventi_tecnici.orario_inizio) >= '.prepare($mindate).' AND ';
-}
-
-if (isset($_SESSION['period']['week'])) {
-    $period = explode(' ', $_SESSION['period']['week']);
+if ($calendar['format'] == 'week') {
+    $period = explode(' ', $_SESSION['dashboard']['week']);
 
     $day = $period[0];
 
@@ -48,179 +34,133 @@ if (isset($_SESSION['period']['week'])) {
     $month = $months[$month];
     $maxmonth = $months[$maxmonth];
 
-    $title = $_SESSION['period']['week'];
+    $title = $_SESSION['dashboard']['week'];
 
     //numero di giorni nel mese
     $maxday = cal_days_in_month(CAL_GREGORIAN, $month, $year) + 1;
 
-    $mindate = $year.'-'.$month.'-'.$day;
-    $maxdate = $year.'-'.$maxmonth.'-'.$maxday_;
+    $min_date = $year.'-'.$month.'-'.$day;
+    $max_date = $year.'-'.$maxmonth.'-'.$maxday_;
 
     //aggiungo un giorno
-    $maxdate = date('Y-m-d', date(strtotime('+1 day', strtotime($maxdate))));
+    $max_date = date('Y-m-d', date(strtotime('+1 day', strtotime($max_date))));
 
-    $where = '  (in_interventi_tecnici.orario_inizio) <= '.prepare($maxdate).' AND  (in_interventi_tecnici.orario_inizio) >= '.prepare($mindate).' AND ';
+    $where = '  (in_interventi_tecnici.orario_inizio) <= '.prepare($max_date).' AND  (in_interventi_tecnici.orario_inizio) >= '.prepare($min_date).' AND ';
+} else {
+    $title = $date->formatLocalized('%B %Y');
+
+    $min_date = $date->copy()->startOfMonth();
+    $max_date = $date->copy()->endOfMonth();
+
+    $where = '  (in_interventi_tecnici.orario_inizio) <= '.prepare($max_date).' AND  (in_interventi_tecnici.orario_inizio) >= '.prepare($min_date).' AND ';
 }
 
-$custom = [
-    'periodo' => $month.'-'.$year,
-];
+$height = '80';
 
-//$date_start = $_SESSION['period_start'];
-//$date_end = $_SESSION['period_end'];
-$stati = (array) $_SESSION['dashboard']['idstatiintervento'];
-$tipi = (array) $_SESSION['dashboard']['idtipiintervento'];
-$tecnici = (array) $_SESSION['dashboard']['idtecnici'];
+$stati = (array) $calendar['idstatiintervento'];
+$tipi = (array) $calendar['idtipiintervento'];
+$tecnici = (array) $calendar['idtecnici'];
 
-//in_interventi_tecnici.idintervento, colore, in_interventi_tecnici.id, idtecnico, orario_inizio, orario_fine,(SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS nome_tecnico, (SELECT colore FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS colore_tecnico,
-$query = 'SELECT DAY(in_interventi_tecnici.orario_inizio) AS giorno, orario_inizio AS data, GROUP_CONCAT(CONCAT((SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=in_interventi.idanagrafica), \'<br><small>\', (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=in_interventi_tecnici.idtecnico), \'</small>\' )  SEPARATOR \'<br>\') AS attivita FROM in_interventi_tecnici INNER JOIN (in_interventi LEFT OUTER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento) ON in_interventi_tecnici.idintervento=in_interventi.id WHERE '.$where.' idtecnico IN('.implode(',', $tecnici).') AND in_interventi.idstatointervento IN('.implode(',', $stati).') AND in_interventi_tecnici.idtipointervento IN('.implode(',', $tipi).') '.Modules::getAdditionalsQuery('Interventi').' GROUP BY giorno ORDER BY CAST(giorno AS UNSIGNED)';
-
-//echo $query;
-
+$query = 'SELECT 
+        DATE(orario_inizio) AS data,
+        (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=in_interventi.idanagrafica) AS anagrafica,
+        (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=in_interventi_tecnici.idtecnico) AS tecnico
+FROM in_interventi_tecnici
+    INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id
+    LEFT OUTER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento
+WHERE '.$where.' 
+    idtecnico IN('.implode(',', $tecnici).') AND
+    in_interventi.idstatointervento IN('.implode(',', $stati).') AND
+    in_interventi_tecnici.idtipointervento IN('.implode(',', $tipi).') '.Modules::getAdditionalsQuery('Interventi');
 $sessioni = $dbo->fetchArray($query);
 
-//echo $query;
-$rs = [];
-for ($i = 0; $i < 33; ++$i) {
-    $rs[$sessioni[$i]['giorno']]['cliente'] = $sessioni[$i]['attivita'];
-    $rs[$sessioni[$i]['giorno']]['data'] = $sessioni[$i]['data'];
-}
+$sessioni = collect($sessioni)->groupBy('data');
 
-function showMonth($month, $year, &$rs, &$height)
-{
-    $date = mktime(12, 0, 0, $month, 1, $year);
-    $daysInMonth = date('t', $date);
-    // calculate the position of the first day in the calendar (sunday = 1st column, etc)
-    $offset = (date('w', $date) - 1) % 7;
-
-    if ($offset < 0) {
-        $offset = 7 + $offset;
-    }
-
-    //echo  $date."<br>";
-    //echo date("w", $date)."<br>";
-    //echo $offset;
-
-    $rows = 1;
-
-    //echo "<h1>Displaying calendar for " . date("F Y", $date) . "</h1>\n";
-    $header = [];
-    $row = [];
-
-    //$table .=  "<table border=\"1\">\n";
-    //echo "\t<tr><th>Su</th><th>M</th><th>Tu</th><th>W</th><th>Th</th><th>F</th><th>Sa</th></tr>";
-    // $table .= "\t<tr><th>Lun</th><th>Mar</th><th>Mer</th><th>Gio</th><th>Ven</th><th>Sab</th><th>Dom</th></tr>";
-
-    //$header[$rows] =  "\n\t<tr>";
-    //$row[$rows] =  "\n\t<tr>";
-
-    //giorni prima
-    for ($i = 1; $i <= $offset; ++$i) {
-        $current_month = $month;
-        if ($current_month == 1) {
-            $current_month = 12;
-            $current_year = $year - 1;
-        } else {
-            $current_month = $month - 1;
-            $current_year = $year;
-        }
-
-        $lastdateofmonth = date('t', $current_month);
-
-        //$lastdate = $lastdateofmonth."/".$current_month."/".$current_year;
-
-        $day = (($lastdateofmonth - $offset) + ($i));
-        $weekday = date('l', strtotime($current_year.'-'.$current_month.'-'.(sprintf('%02d', $day))));
-        $weekdays = ['Monday' => 'Lunedi\'', 'Tuesday' => 'Martedi\'', 'Wednesday' => 'Mercoledi\'', 'Thursday' => 'Giovedi\'', 'Friday' => 'Venerdi\'', 'Saturday' => 'Sabato', 'Sunday' => 'Domenica'];
-        $weekday = $weekdays[$weekday];
-
-        $header[$rows] .= '<th>'.tr($weekday.' '.(sprintf('%02d', $day)).'/'.(sprintf('%02d', $current_month)), [], ['upper' => true])."</th>\n";
-        $row[$rows] .= "<td style=\"background:lightgray;\" ><b> </b></td>\n";
-    }
-
-    //giorni del mese
-    for ($day = 1; $day <= $daysInMonth; ++$day) {
-        if (($day + $offset - 1) % 7 == 0 && $day != 1) {
-            // $table .= "\t<tr><th>Lun ".$day."</th><th>Mar ".($day+1)."</th><th>Mer ".($day+2)."</th><th>Gio ".($day+3)."</th><th>Ven ".($day+4)."</th><th>Sab ".($day+5)."</th><th>Dom ".($day+6)."</th></tr>";
-
-            // $header[$rows] .= "</tr>\n\t<tr>";
-            //$row[$rows] .= "</tr>\n\t<tr>";
-
-            ++$rows;
-        }
-
-        $weekday = date('l', strtotime($year.'-'.$month.'-'.(sprintf('%02d', $day))));
-        $weekdays = ['Monday' => 'Lunedi\'', 'Tuesday' => 'Martedi\'', 'Wednesday' => 'Mercoledi\'', 'Thursday' => 'Giovedi\'', 'Friday' => 'Venerdi\'', 'Saturday' => 'Sabato', 'Sunday' => 'Domenica'];
-        $weekday = $weekdays[$weekday];
-
-        $header[$rows] .= '<th>'.tr($weekday.' '.(sprintf('%02d', $day)).'/'.$month, [], ['upper' => true])."</th>\n";
-        if (empty($rs[$day]['cliente'])) {
-            $rs[$day]['cliente'] = ' ';
-        }
-
-        $row[$rows] .= "<td  style='height:".$height."px' >".'<b>'.$rs[$day]['cliente']."</b></td>\n";
-    }
-
-    //$i = 1;
-    //giorni dopo
-    //while( ($day + $offset) <= $rows * 7){
-
-    for ($i = 1; ($day + $offset) <= ($rows * 7); ++$i) {
-        $current_month = $month;
-        if ($current_month == 12) {
-            $current_month = 1;
-            $current_year = $year + 1;
-        } else {
-            $current_month = $month + 1;
-            $current_year = $year;
-        }
-
-        //$lastdateofmonth = date('t',$current_month);
-
-        //$lastdate = $lastdateofmonth."/".$current_month."/".$current_year;
-
-        $weekday = date('l', strtotime($current_year.'-'.$current_month.'-'.(sprintf('%02d', $i))));
-        $weekdays = ['Monday' => 'Lunedi\'', 'Tuesday' => 'Martedi\'', 'Wednesday' => 'Mercoledi\'', 'Thursday' => 'Giovedi\'', 'Friday' => 'Venerdi\'', 'Saturday' => 'Sabato', 'Sunday' => 'Domenica'];
-        $weekday = $weekdays[$weekday];
-
-        $header[$rows] .= '<th> '.tr($weekday.' '.(sprintf('%02d', $i)).'/'.(sprintf('%02d', $current_month)), [], ['upper' => true])." </th>\n";
-        //$row[$rows] .= "<td> ".($offset+$day)."<br>".($rows * 7)." </td>\n";
-        $row[$rows] .= "<td style=\"background:lightgray;\" ><b> </b> </td>\n";
-
-        ++$day;
-    }
-
-    //$header[$rows] .= "</tr>";
-    //$row[$rows] .= "</tr>";
-
-    //print_r($header);
-    //echo "<br>";
-    //print_r($row);
-
-    echo '<table class="table table-bordered">\n';
-
-    //creo righe
-    for ($i = 1; $i <= count($row); ++$i) {
-        echo "<tr>\n";
-        echo  $header[$i];
-        echo "</tr>\n";
-
-        echo "<tr>\n";
-        echo  $row[$i];
-        echo "</tr>\n";
-    }
-
-    echo '</table>';
-
-    //$table .= "</table>\n";
-
-  //echo $table;
-}
-
-// Intestazione tabella per righe
-echo "
-<h3 class='text-bold'>".tr('Calendario _PERIOD_', [
+// Intestazione tabella
+echo '
+<h3 class="text-bold">'.tr('Calendario _PERIOD_', [
     '_PERIOD_' => $title,
 ], ['upper' => true]).'</h3>';
 
-showMonth($month, $year, $rs, $height);
+// Elenco per la gestione
+$list = [];
+
+// Filler per i giorni non inclusi della settimana iniziale
+$week_start = $min_date->startOfWeek();
+$current_day = $week_start;
+while ($current_day->lessThan($min_date)) {
+    $list[] = [
+        'date' => $current_day->copy(),
+        'contents' => [],
+    ];
+
+    $current_day->addDay();
+}
+
+// Elenco del periodo indicato
+while ($current_day->lessThan($max_date)) {
+    $list[] = [
+        'date' => $current_day->copy(),
+        'contents' => $sessioni[$current_day->toDateString()] ?: [],
+    ];
+
+    $current_day->addDay();
+}
+
+// Filler per i giorni non inclusi della settimana finale
+$week_end = $max_date->endOfWeek();
+while ($current_day->lessThan($week_end)) {
+    $list[] = [
+        'date' => $current_day->copy(),
+        'contents' => [],
+    ];
+
+    $current_day->addDay();
+}
+
+// Stampa della tabella
+echo '
+<table class="table table-bordered">';
+
+$count = count($list);
+for ($i = 0; $i < $count; $i = $i + 7) {
+    echo '
+    <tr>';
+
+    for ($c = 0; $c < 7; ++$c ) {
+        $element = $list[$i + $c];
+
+        echo '
+        <th class="text-capitalize">'.$element['date']->formatLocalized('%A %d/%m').'</th>';
+    }
+
+    echo '
+    </tr>';
+
+    echo '
+    <tr>';
+
+    for ($c = 0; $c < 7; ++$c ) {
+        $element = $list[$i + $c];
+
+        $clienti = '';
+        foreach ($element['contents'] as $sessione) {
+            $clienti .= $sessione['anagrafica'].'<br>
+            <small>'.$sessione['tecnico'].'</small><br>';
+        }
+
+        $background = '#ffffff';
+        if (empty($clienti)) {
+            $background = 'lightgray';
+        }
+
+        echo '
+        <td style="height:'.$height.'px;background:'.$background.'">'.$clienti.'</td>';
+    }
+
+    echo '
+    </tr>';
+}
+
+echo '
+</table>';

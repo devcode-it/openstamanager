@@ -44,6 +44,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Supporto alla selezione della lingua durante la configurazione 
  - Gestione dei permessi per gruppi all'interno del sistema di **Gestione documentale**
  - Supporto agli sconti combinati nel modulo **Listini**
+ - Supporto al caricamento di archivi ZIP per le *Fatture Elettroniche* di acquisto da importare (solo estrazione)
 
 ### Modificato (Changed)
 

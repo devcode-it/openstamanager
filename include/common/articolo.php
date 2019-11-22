@@ -11,7 +11,7 @@ if (!isset($options['edit_articolo']) || !empty($options['edit_articolo'])) {
     echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "required": 1, "value": "'.$result['idarticolo'].'", "ajax-source": "articoli", "icon-after": "add|'.Modules::get('Articoli')['id'].'||'.(($options['dir'] == 'uscita') ? '' : 'disabled').'" ]}
+            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "required": 1, "value": "'.$result['idarticolo'].'", "ajax-source": "articoli", "icon-after": "add|'.Modules::get('Articoli')['id'].'" ]}
         </div>
     </div>';
 } else {

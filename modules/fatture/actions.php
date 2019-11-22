@@ -51,7 +51,13 @@ switch (post('op')) {
             $fattura->tipo()->associate($tipo);
 
             $fattura->data = post('data');
-            $fattura->data_registrazione = post('data_registrazione');
+
+            if ($dir == 'entrata') {
+                $fattura->data_registrazione = post('data');
+            } else {
+                $fattura->data_registrazione = post('data_registrazione');
+            }
+
             $fattura->data_competenza = post('data_competenza');
 
             $fattura->numero_esterno = post('numero_esterno');
@@ -105,51 +111,7 @@ switch (post('op')) {
 
             $fattura->save();
 
-            // Operazioni sulla dichiarazione d'intento
-            if (!empty($dichiarazione_precedente) && $dichiarazione_precedente->id != $fattura->id_dichiarazione_intento) {
-                // Correzione dichiarazione precedente
-                $dichiarazione_precedente->fixTotale();
-                $dichiarazione_precedente->save();
-
-                // Correzione nuova dichiarazione
-                $dichiarazione = $fattura->dichiarazione;
-                if (!empty($dichiarazione)) {
-                    $dichiarazione->fixTotale();
-                    $dichiarazione->save();
-                }
-            }
-
-            // Ricalcolo inps, ritenuta e bollo (se la fattura non è stata pagata)
-            ricalcola_costiagg_fattura($id_record);
-
-            // Elimino la scadenza e tutti i movimenti, poi se la fattura è emessa le ricalcolo
-            if ($stato['descrizione'] == 'Bozza' or $stato['descrizione'] == 'Annullata') {
-                elimina_scadenze($id_record);
-                //elimina_movimenti($id_record, 0);
-                //elimino movimento anche prima nota (se pagata o parzialmente pagata)
-                elimina_movimenti($id_record, 1);
-            } elseif ($stato['descrizione'] == 'Emessa') {
-                elimina_scadenze($id_record);
-                elimina_movimenti($id_record, 0);
-            } elseif (($stato['descrizione'] == 'Pagato' or $stato['descrizione'] == 'Parzialmente pagato') and ($dbo->fetchNum('SELECT id  FROM co_scadenziario WHERE iddocumento = '.prepare($id_record)) == 0)) {
-                // aggiungo la scadenza come già pagata
-                aggiungi_scadenza($id_record, null, 1);
-                aggiungi_movimento($id_record, $dir);
-            }
-
-            // Se la fattura è in stato "Emessa" posso inserirla in scadenzario e aprire il mastrino cliente
-            if ($stato['descrizione'] == 'Emessa') {
-                aggiungi_scadenza($id_record);
-                aggiungi_movimento($id_record, $dir);
-            }
-
             if ($stato_precedente->descrizione == 'Bozza' && $stato['descrizione'] == 'Emessa') {
-                // Generazione numero fattura se non presente
-                if (empty($fattura->numero_esterno)) {
-                    $fattura->numero_esterno = Fattura::getNextNumeroSecondario($fattura->data, $fattura->direzione, $fattura->id_segment);
-                    $fattura->save();
-                }
-
                 // Generazione automatica della Fattura Elettronica
                 $stato_fe = empty($fattura->codice_stato_fe) || in_array($fattura->codice_stato_fe, ['GEN', 'NS', 'EC02']);
                 $checks = FatturaElettronica::controllaFattura($fattura);

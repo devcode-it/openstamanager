@@ -12,7 +12,7 @@ echo '
 
     echo '
         <li>
-            <a data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=ddt" data-toggle="modal" data-title="'.tr('Crea ddt').'" class="'.(in_array($record['stato'], ['Bozza', 'Parzialmente evaso']) ? '' : 'disabled').'"><i class="fa fa-file-o"></i>&nbsp;'.tr('Ddt').'
+            <a data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=ddt" data-toggle="modal" data-title="'.tr('Crea ddt').'" class="'.(in_array($record['stato'], ['Bozza', 'Parzialmente evaso']) ? '' : 'disabled').'"><i class="fa fa-truck"></i>&nbsp;'.tr('Ddt').'
             </a>
         </li>';
 

@@ -155,26 +155,36 @@ if (!empty($rs2)) {
         // Per più "versioni" dello stesso componente mostro un riga meno evidente
         // per non confonderlo come componente in uso in questo momento
         $same = ($prev_componente == $nome_componente);
-        echo '
-            <div class="panel panel-'.($same ? 'default' : 'primary').'">
-                <div class="panel-heading'.($same ? ' mini' : '').'">
-                    <h4 class="panel-title'.($same ? ' mini' : '').'">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse_'.$j.'">'.($same ? '<small>' : '').$nome_componente.' ('.$statocomponente.')'.($same ? '</small>' : '').'</a>
-                    </h4>
-                </div>';
 
         if (get('id') == $rs2[$j]['id']) {
-            $in = 'in';
+            $collapsed = '';
+            $icon = 'minus';
         } elseif ($_SESSION['idcomponente'] == $rs2[$j]['id']) {
             unset($_SESSION['idcomponente']);
-            $in = 'in';
+            $collapsed = '';
+            $icon = 'minus';
         } else {
-            $in = '';
+            $collapsed = 'collapsed-box';
+            $icon = 'plus';
         }
 
         echo '
-                <div id="collapse_'.$j.'" class="panel-collapse collapse '.$in.'">
-                    <div class="panel-body">';
+            <div class="box '.$collapsed.' box-'.($same ? 'default' : 'primary').'">
+                <div class="box-header with-border'.($same ? ' mini' : '').'">
+                    <h3 class="box-title'.($same ? ' mini' : '').'">'.
+                        ($same ? '<small>' : '').$nome_componente.' ('.$statocomponente.')'.($same ? '</small>' : '').'
+                    </h3>
+
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-'.$icon.'"></i>
+                        </button>
+                    </div>
+                </div>';
+
+        echo '
+                <div id="collapse_'.$j.'" class="box-body">
+                    <div class="row">';
         // FORM COMPONENTE
         echo '
                         <form method="post" action="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=updatecomponente&id='.$rs2[$j]['id'].'">

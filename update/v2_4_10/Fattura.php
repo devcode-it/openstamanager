@@ -1,18 +1,11 @@
 <?php
 
-namespace Modules\Fatture;
+namespace Update\v2_4_10;
 
 use Auth;
-use Carbon\Carbon;
-use Common\Components\Description;
 use Common\Document;
-use Modules\Anagrafiche\Anagrafica;
-use Modules\Fatture\Components\Riga;
 use Modules\Pagamenti\Pagamento;
-use Modules\PrimaNota\Movimento;
 use Modules\RitenuteContributi\RitenutaContributi;
-use Modules\Scadenzario\Scadenza;
-use Plugins\DichiarazioniIntento\Dichiarazione;
 use Plugins\ExportFE\FatturaElettronica;
 use Traits\RecordTrait;
 use Util\Generator;
@@ -30,20 +23,22 @@ class Fattura extends Document
     /**
      * Crea una nuova fattura.
      *
-     * @param Anagrafica $anagrafica
-     * @param Tipo       $tipo_documento
-     * @param string     $data
-     * @param int        $id_segment
+     * @param Anagrafica  $anagrafica
+     * @param TipoFattura $tipo_documento
+     * @param string      $data
+     * @param int         $id_segment
      *
      * @return self
      */
-    public static function build(Anagrafica $anagrafica, Tipo $tipo_documento, $data, $id_segment)
+    public static function build(Anagrafica $anagrafica, TipoFattura $tipo_documento, $data, $id_segment)
     {
         $model = parent::build();
 
         $user = Auth::user();
 
         $stato_documento = Stato::where('descrizione', 'Bozza')->first();
+
+        $id_anagrafica = $anagrafica->id;
         $direzione = $tipo_documento->dir;
 
         $database = database();
@@ -55,6 +50,28 @@ class Fattura extends Document
             $id_conto = setting('Conto predefinito fatture di acquisto');
             $conto = 'acquisti';
         }
+
+        // Tipo di pagamento e banca predefinite dall'anagrafica
+        $id_pagamento = $database->fetchOne('SELECT id FROM co_pagamenti WHERE id = :id_pagamento', [
+            ':id_pagamento' => $anagrafica['idpagamento_'.$conto],
+        ])['id'];
+        $id_banca = $anagrafica['idbanca_'.$conto];
+
+        $split_payment = $anagrafica->split_payment;
+
+        // Se la fattura è di vendita e non è stato associato un pagamento predefinito al cliente leggo il pagamento dalle impostazioni
+        if ($direzione == 'entrata' && empty($id_pagamento)) {
+            $id_pagamento = setting('Tipo di pagamento predefinito');
+        }
+
+        // Se non è impostata la banca dell'anagrafica, uso quella del pagamento.
+        if (empty($id_banca)) {
+            $id_banca = $database->fetchOne('SELECT id FROM co_banche WHERE id_pianodeiconti3 = (SELECT idconto_'.$conto.' FROM co_pagamenti WHERE id = :id_pagamento)', [
+                ':id_pagamento' => $id_pagamento,
+            ])['id'];
+        }
+
+        $id_sede = $anagrafica->idsede_fatturazione;
 
         $model->anagrafica()->associate($anagrafica);
         $model->tipo()->associate($tipo_documento);
@@ -81,24 +98,6 @@ class Fattura extends Document
         $id_ritenuta_contributi = ($tipo_documento->dir == 'entrata') ? setting('Ritenuta contributi') : null;
         $model->id_ritenuta_contributi = $id_ritenuta_contributi ?: null;
 
-        // Tipo di pagamento e banca predefinite dall'anagrafica
-        $id_pagamento = $database->fetchOne('SELECT id FROM co_pagamenti WHERE id = :id_pagamento', [
-            ':id_pagamento' => $anagrafica['idpagamento_'.$conto],
-        ])['id'];
-        $id_banca = $anagrafica['idbanca_'.$conto];
-
-        // Se la fattura è di vendita e non è stato associato un pagamento predefinito al cliente leggo il pagamento dalle impostazioni
-        if ($direzione == 'entrata' && empty($id_pagamento)) {
-            $id_pagamento = setting('Tipo di pagamento predefinito');
-        }
-
-        // Se non è impostata la banca dell'anagrafica, uso quella del pagamento.
-        if (empty($id_banca)) {
-            $id_banca = $database->fetchOne('SELECT id FROM co_banche WHERE id_pianodeiconti3 = (SELECT idconto_'.$conto.' FROM co_pagamenti WHERE id = :id_pagamento)', [
-                ':id_pagamento' => $id_pagamento,
-            ])['id'];
-        }
-
         if (!empty($id_pagamento)) {
             $model->idpagamento = $id_pagamento;
         }
@@ -106,37 +105,14 @@ class Fattura extends Document
             $model->idbanca = $id_banca;
         }
 
-        // Split Payment
-        $split_payment = $anagrafica->split_payment;
         if (!empty($split_payment)) {
             $model->split_payment = $split_payment;
-        }
-
-        // Dichiarazione d'Intento
-        $now = new Carbon();
-        $dichiarazione = $anagrafica->dichiarazioni()
-            ->where('massimale', '>', 'totale')
-            ->where('data_inizio', '<', $now)
-            ->where('data_fine', '>', $now)
-            ->first();
-        if (!empty($dichiarazione)) {
-            $model->dichiarazione()->associate($dichiarazione);
-
-            $model->note = tr("Operazione non imponibile come da vostra dichiarazione d'intento nr _PROT_ del _PROT_DATE_ emessa in data _RELEASE_DATE_, da noi registrata al nr _ID_ del _DATE_", [
-                '_PROT_' => $dichiarazione->numero_protocollo,
-                '_PROT_DATE_' => $dichiarazione->data_protocollo,
-                '_RELEASE_DATE_' => $dichiarazione->data_emissione,
-                '_ID_' => $dichiarazione->id,
-                '_DATE_' => $dichiarazione->data,
-            ]).'.';
         }
 
         $model->save();
 
         return $model;
     }
-
-    // Attributi Eloquent
 
     /**
      * Imposta il sezionale relativo alla fattura e calcola il relativo numero.
@@ -156,10 +132,7 @@ class Fattura extends Document
             $data = $this->data;
 
             $this->numero = static::getNextNumero($data, $direzione, $value);
-
-            if (!empty($previous)) {
-                $this->numero_esterno = static::getNextNumeroSecondario($data, $direzione, $value);
-            }
+            $this->numero_esterno = static::getNextNumeroSecondario($data, $direzione, $value);
         }
     }
 
@@ -235,29 +208,6 @@ class Fattura extends Document
         return $this->calcola('ritenuta_contributi');
     }
 
-    /**
-     * Restituisce i dati aggiuntivi per la fattura elettronica dell'elemento.
-     *
-     * @return array
-     */
-    public function getDatiAggiuntiviFEAttribute()
-    {
-        $result = json_decode($this->attributes['dati_aggiuntivi_fe'], true);
-
-        return (array) $result;
-    }
-
-    /**
-     * Imposta i dati aggiuntivi per la fattura elettronica dell'elemento.
-     */
-    public function setDatiAggiuntiviFEAttribute($values)
-    {
-        $values = (array) $values;
-        $dati = array_deep_clean($values);
-
-        $this->attributes['dati_aggiuntivi_fe'] = json_encode($dati);
-    }
-
     // Relazioni Eloquent
 
     public function anagrafica()
@@ -267,12 +217,7 @@ class Fattura extends Document
 
     public function tipo()
     {
-        return $this->belongsTo(Tipo::class, 'idtipodocumento');
-    }
-
-    public function stato()
-    {
-        return $this->belongsTo(Stato::class, 'idstatodocumento');
+        return $this->belongsTo(TipoFattura::class, 'idtipodocumento');
     }
 
     public function pagamento()
@@ -280,9 +225,9 @@ class Fattura extends Document
         return $this->belongsTo(Pagamento::class, 'idpagamento');
     }
 
-    public function dichiarazione()
+    public function stato()
     {
-        return $this->belongsTo(Dichiarazione::class, 'id_dichiarazione_intento');
+        return $this->belongsTo(Stato::class, 'idstatodocumento');
     }
 
     public function statoFE()
@@ -320,35 +265,8 @@ class Fattura extends Document
         return $this->hasOne(Components\Riga::class, 'iddocumento')->where('id', $this->id_riga_bollo);
     }
 
-    public function scadenze()
-    {
-        return $this->hasMany(Scadenza::class, 'iddocumento');
-    }
-
-    public function movimentiContabili()
-    {
-        return $this->hasMany(Movimento::class, 'iddocumento')->where('primanota', 1);
-    }
-
     // Metodi generali
 
-    public function triggerComponent(Description $trigger)
-    {
-        parent::triggerComponent($trigger);
-
-        // Correzione del totale della dichiarazione d'intento
-        $dichiarazione = $this->dichiarazione;
-        if (!empty($dichiarazione)) {
-            $dichiarazione->fixTotale();
-            $dichiarazione->save();
-        }
-    }
-
-    /**
-     * Restituisce i contenuti della fattura elettronica relativa al documento.
-     *
-     * @return false|string
-     */
     public function getXML()
     {
         if (empty($this->progressivo_invio) && $this->module == 'Fatture di acquisto') {
@@ -362,11 +280,6 @@ class Fattura extends Document
         return file_get_contents($file->filepath);
     }
 
-    /**
-     * Controlla se la fattura di acquisto è elettronica.
-     *
-     * @return bool
-     */
     public function isFE()
     {
         $file = $this->uploads()->where('name', 'Fattura Elettronica')->first();
@@ -423,21 +336,25 @@ class Fattura extends Document
      *
      * @param Fattura $fattura
      * @param float   $importo
-     * @param string  $data_scadenza
+     * @param string  $scadenza
      * @param bool    $is_pagato
      * @param string  $type
      */
-    public static function registraScadenza(Fattura $fattura, $importo, $data_scadenza, $is_pagato, $type = 'fattura')
+    public static function registraScadenza(Fattura $fattura, $importo, $scadenza, $is_pagato, $type = 'fattura')
     {
-        $numero = $fattura->numero_esterno ?: $fattura->numero;
-        $descrizione = $fattura->tipo->descrizione.' numero '.$numero;
+        //Calcolo la descrizione
+        $descrizione = database()->fetchOne("SELECT CONCAT(co_tipidocumento.descrizione, CONCAT(' numero ', IF(numero_esterno!='', numero_esterno, numero))) AS descrizione FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='".$fattura->id."'")['descrizione'];
 
-        $scadenza = Scadenza::build($descrizione, $importo, $data_scadenza, $type, $is_pagato);
-
-        $scadenza->documento()->associate($fattura);
-        $scadenza->data_emissione = $fattura->data;
-
-        $scadenza->save();
+        database()->insert('co_scadenziario', [
+            'iddocumento' => $fattura->id,
+            'data_emissione' => $fattura->data,
+            'scadenza' => $scadenza,
+            'da_pagare' => $importo,
+            'tipo' => $type,
+            'pagato' => $is_pagato ? $importo : 0,
+            'data_pagamento' => $is_pagato ? $scadenza : null,
+            'descrizione' => $descrizione,
+        ]);
     }
 
     /**
@@ -496,59 +413,7 @@ class Fattura extends Document
         $this->attributes['rivalsainps'] = $this->rivalsa_inps;
         $this->attributes['ritenutaacconto'] = $this->ritenuta_acconto;
 
-        // Informazioni sul cambio dei valori
-        $stato_precedente = Stato::find($this->original['idstatodocumento']);
-        $dichiarazione_precedente = Dichiarazione::find($this->original['id_dichiarazione_intento']);
-
-        // Generazione numero fattura se non presente
-        if ($stato_precedente->descrizione == 'Bozza' && $this->stato['descrizione'] == 'Emessa' && empty($this->numero_esterno)) {
-            $this->numero_esterno = self::getNextNumeroSecondario($this->data, $this->direzione, $this->id_segment);
-        }
-
-        // Salvataggio effettivo
-        $result = parent::save($options);
-
-        // Operazioni al cambiamento di stato
-        if (
-            in_array($stato_precedente->descrizione, ['Bozza', 'Annullata'])
-            && !in_array($this->stato['descrizione'], ['Bozza', 'Annullata'])
-        ) {
-            // Registrazione scadenze
-            $this->registraScadenze($this->stato['descrizione'] == 'Pagato');
-
-            // Registrazione movimenti
-            aggiungi_movimento($this->id, $this->direzione);
-        } elseif (in_array($this->stato['descrizione'], ['Bozza', 'Annullata'])) {
-            $this->rimuoviScadenze();
-
-            elimina_movimenti($this->id, 1);
-        }
-
-        // Operazioni sulla dichiarazione d'intento
-        if (!empty($dichiarazione_precedente) && $dichiarazione_precedente->id != $this->id_dichiarazione_intento) {
-            // Correzione dichiarazione precedente
-            $dichiarazione_precedente->fixTotale();
-            $dichiarazione_precedente->save();
-
-            // Correzione nuova dichiarazione
-            $dichiarazione = Dichiarazione::find($this->id_dichiarazione_intento);
-            if (!empty($dichiarazione)) {
-                $dichiarazione->fixTotale();
-                $dichiarazione->save();
-            }
-        }
-
-        return $result;
-    }
-
-    public function delete()
-    {
-        $result = parent::delete();
-
-        $this->rimuoviScadenze();
-        elimina_movimenti($this->id);
-
-        return $result;
+        return parent::save($options);
     }
 
     /**
@@ -579,93 +444,6 @@ class Fattura extends Document
     public function isNota()
     {
         return $this->tipo->reversed == 1;
-    }
-
-    /**
-     * Restituisce i dati bancari in base al pagamento.
-     *
-     * @return array
-     */
-    public function getBanca()
-    {
-        $result = [];
-        $riba = database()->fetchOne('SELECT riba FROM co_pagamenti WHERE id ='.prepare($this->idpagamento));
-
-        if ($riba['riba'] == 1) {
-            $result = database()->fetchOne('SELECT codiceiban, appoggiobancario, bic FROM an_anagrafiche WHERE idanagrafica ='.prepare($this->idanagrafica));
-        } else {
-            $result = database()->fetchOne('SELECT iban AS codiceiban, nome AS appoggiobancario, bic FROM co_banche WHERE id='.prepare($this->idbanca));
-        }
-
-        return $result;
-    }
-
-    /**
-     * Metodo per calcolare automaticamente il bollo da applicare al documento.
-     *
-     * @return float
-     */
-    public function getBollo()
-    {
-        if (isset($this->bollo)) {
-            return $this->bollo;
-        }
-
-        $righe_bollo = $this->getRighe()->filter(function ($item, $key) {
-            return $item->aliquota != null && in_array($item->aliquota->codice_natura_fe, ['N1', 'N2', 'N3', 'N4']);
-        });
-        $importo_righe_bollo = $righe_bollo->sum('netto');
-
-        // Leggo la marca da bollo se c'è e se il netto a pagare supera la soglia
-        $bollo = ($this->direzione == 'uscita') ? $this->bollo : setting('Importo marca da bollo');
-
-        $marca_da_bollo = 0;
-        if (abs($bollo) > 0 && abs($importo_righe_bollo) > setting("Soglia minima per l'applicazione della marca da bollo")) {
-            $marca_da_bollo = $bollo;
-        }
-
-        // Se l'importo è negativo può essere una nota di credito, quindi cambio segno alla marca da bollo
-        $marca_da_bollo = abs($marca_da_bollo);
-
-        return $marca_da_bollo;
-    }
-
-    /**
-     * Metodo per aggiornare ed eventualemente aggiungere la marca da bollo al documento.
-     */
-    public function manageRigaMarcaDaBollo()
-    {
-        $riga = $this->rigaBollo;
-
-        $addebita_bollo = $this->addebita_bollo;
-        $marca_da_bollo = $this->getBollo();
-
-        // Rimozione riga bollo se nullo
-        if (empty($addebita_bollo) || empty($marca_da_bollo)) {
-            if (!empty($riga)) {
-                $this->id_riga_bollo = null;
-
-                $riga->delete();
-            }
-
-            return;
-        }
-
-        // Creazione riga bollo se non presente
-        if (empty($riga)) {
-            $riga = Components\Riga::build($this);
-            $riga->save();
-
-            $this->id_riga_bollo = $riga->id;
-        }
-
-        $riga->prezzo_unitario_vendita = $marca_da_bollo;
-        $riga->qta = 1;
-        $riga->descrizione = setting('Descrizione addebito bollo');
-        $riga->id_iva = setting('Iva da applicare su marca da bollo');
-        $riga->idconto = setting('Conto predefinito per la marca da bollo');
-
-        $riga->save();
     }
 
     // Metodi statici
@@ -722,5 +500,84 @@ class Fattura extends Document
         $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data));
 
         return $numero;
+    }
+
+    /**
+     * Restituisce i dati bancari in base al pagamento.
+     *
+     * @return array
+     */
+    public function getBanca()
+    {
+        $result = [];
+        $riba = database()->fetchOne('SELECT riba FROM co_pagamenti WHERE id ='.prepare($this->idpagamento));
+
+        if ($riba['riba'] == 1) {
+            $result = database()->fetchOne('SELECT codiceiban, appoggiobancario, bic FROM an_anagrafiche WHERE idanagrafica ='.prepare($this->idanagrafica));
+        } else {
+            $result = database()->fetchOne('SELECT iban AS codiceiban, nome AS appoggiobancario, bic FROM co_banche WHERE id='.prepare($this->idbanca));
+        }
+
+        return $result;
+    }
+
+    public function getBollo()
+    {
+        if (isset($this->bollo)) {
+            return $this->bollo;
+        }
+
+        $righe_bollo = $this->getRighe()->filter(function ($item, $key) {
+            return $item->aliquota != null && in_array($item->aliquota->codice_natura_fe, ['N1', 'N2', 'N3', 'N4']);
+        });
+        $importo_righe_bollo = $righe_bollo->sum('netto');
+
+        // Leggo la marca da bollo se c'è e se il netto a pagare supera la soglia
+        $bollo = ($this->direzione == 'uscita') ? $this->bollo : setting('Importo marca da bollo');
+
+        $marca_da_bollo = 0;
+        if (abs($bollo) > 0 && abs($importo_righe_bollo) > setting("Soglia minima per l'applicazione della marca da bollo")) {
+            $marca_da_bollo = $bollo;
+        }
+
+        // Se l'importo è negativo può essere una nota di credito, quindi cambio segno alla marca da bollo
+        $marca_da_bollo = abs($marca_da_bollo);
+
+        return $marca_da_bollo;
+    }
+
+    public function manageRigaMarcaDaBollo()
+    {
+        $riga = $this->rigaBollo;
+
+        $addebita_bollo = $this->addebita_bollo;
+        $marca_da_bollo = $this->getBollo();
+
+        // Rimozione riga bollo se nullo
+        if (empty($addebita_bollo) || empty($marca_da_bollo)) {
+            if (!empty($riga)) {
+                $this->id_riga_bollo = null;
+
+                $riga->delete();
+            }
+
+            return;
+        }
+
+        // Creazione riga bollo se non presente
+        if (empty($riga)) {
+            $riga = Components\Riga::build($this);
+            $riga->save();
+
+            $this->id_riga_bollo = $riga->id;
+        }
+
+        $riga->prezzo_unitario_vendita = $marca_da_bollo;
+        $riga->qta = 1;
+        $riga->descrizione = setting('Descrizione addebito bollo');
+        $riga->id_iva = setting('Iva da applicare su marca da bollo');
+        $riga->idconto = setting('Conto predefinito per la marca da bollo');
+
+        $riga->save();
     }
 }

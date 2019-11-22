@@ -84,7 +84,8 @@ switch ($op) {
 
             $id_record = $dbo->lastInsertedID();
 
-            if (isAjaxRequest() && post('source') != '') {
+            //&& post('source') != ''
+            if (isAjaxRequest()) {
                 echo json_encode(['id' => $id_record, 'text' => $matricola.' - '.$nome]);
             }
 

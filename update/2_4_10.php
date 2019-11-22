@@ -1,9 +1,10 @@
 <?php
 
-use Modules\Anagrafiche\Anagrafica;
+use Update\v2_4_10\Anagrafica;
+use Update\v2_4_10\Fattura;
 
 // Fix del calcolo del bollo
-$fatture = \Modules\Fatture\Fattura::all();
+$fatture = Fattura::all();
 foreach ($fatture as $fattura) {
     $fattura->manageRigaMarcaDaBollo();
 }

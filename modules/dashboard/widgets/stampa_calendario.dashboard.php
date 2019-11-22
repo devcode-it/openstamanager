@@ -9,77 +9,58 @@ echo '
 <form action="" method="post" onsubmit="if($(this).parsley().validate()) { return stampa_calendario(); }" >
 
 	<div class="row">
-
 		<div class="col-md-4">
-			{[ "type": "text", "label": "'.tr('Anno Mese').'", "name": "anno-mese", "required": "1", "extra":"readonly", "value": "'.$_SESSION['period']['month'].'" ]}
+			{[ "type": "text", "label": "'.tr('Mese e anno').'", "name": "date", "required": "1", "value": "'.$_SESSION['dashboard']['date'].'" ]}
 		</div>
-
+		
 		<div class="col-md-2">
-			{[ "type": "select", "label": "'.tr('Formato').'", "name": "format", "required": "1", "values": "list=\"A4\": \"'.tr('A4').'\", \"A3\": \"'.tr('A3').'\"", "value": "'.$_SESSION['settings']['format'].'" ]}
+			{[ "type": "select", "label": "'.tr('Formato').'", "name": "format", "required": "1", "values": "list=\"A4\": \"'.tr('A4').'\", \"A3\": \"'.tr('A3').'\"", "value": "'.$_SESSION['dashboard']['format'].'" ]}
 		</div>
 
 		<div class="col-md-4">
-			{[ "type": "select", "label": "'.tr('Orientamento').'", "name": "orientation", "required": "1", "values": "list=\"L\": \"'.tr('Orizzontale').'\", \"P\": \"'.tr('Verticale').'\"", "value": "'.$_SESSION['settings']['orientation'].'" ]}
+			{[ "type": "select", "label": "'.tr('Orientamento').'", "name": "orientation", "required": "1", "values": "list=\"L\": \"'.tr('Orizzontale').'\", \"P\": \"'.tr('Verticale').'\"", "value": "'.$_SESSION['dashboard']['orientation'].'" ]}
 		</div>
 
 
 		<div class="col-md-2">
 			<p style="line-height:14px;">&nbsp;</p>
-			<button type="submit" class="btn btn-primary btn-block"><i class="fa fa-print"></i> '.tr('Stampa').'</button>
+			
+			<button type="submit" class="btn btn-primary btn-block">
+			<i class="fa fa-print"></i> '.tr('Stampa').'
+			</button>
 		</div>
 
 	</div>
 
-</form>';
+</form>
 
-echo '<script>$(document).ready(init)</script>';
-echo '<link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/base/jquery-ui.css">';
+<script>$(document).ready(init)</script>';
 
 ?>
-<style>
-.ui-datepicker-calendar, .ui-datepicker-current{
-		display:none;
-}
-</style>
-
 <script>
-
 function stampa_calendario (){
 	window.open('<?php echo $rootdir; ?>/pdfgen.php?id_print=<?php echo $id_print; ?>');
-	//$('button[type=submit]').removeAttr("disabled");
-	//$('button[type=submit]').prop("disabled", false);
+
 	return false;
 }
 
-$( '#format' ).change(function() {
+$('#format').change(function() {
 	session_set('settings,format', $(this).val(), 0, 0);
 });
 
-$( '#orientation' ).change(function() {
+$('#orientation').change(function() {
 	session_set('settings,orientation', $(this).val(), 0, 0);
 });
 
-
 $(function() {
+    $('#date').datetimepicker({
+        format: 'MMMM YYYY',
+        locale: globals.locale,
+        useCurrent: false,
+    });
 
-	$('#anno-mese').datepicker( {
-
-        changeMonth: true,
-        changeYear: true,
-        showButtonPanel: true,
-        dateFormat: 'MM yy',
-		todayBtn: false,
-
-        onClose: function(dateText, inst) {
-            $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
-			session_set('period,month', $('#anno-mese').val(), 0, 0);
-        },
-
-		beforeShow : function(input, inst) {
-			session_set('period,month', '', 1, 0);
-		}
-
+    $('#date').on('dp.change', function(e) {
+        session_set('dashboard,date', e.date.format("YYYY-MM-DD"), 0, 0);
     });
 });
-
 </script>

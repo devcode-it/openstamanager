@@ -69,8 +69,12 @@ switch (filter('op')) {
         $utente->save();
 
         $dbo->query('DELETE FROM zz_user_sedi WHERE id_user = '.prepare($id_utente));
-        foreach (post('idsede') as $i => $idsede) {
-            $dbo->query('INSERT INTO `zz_user_sedi` (`id_user`,`idsede`) VALUES ('.prepare($id_utente).', '.prepare($idsede).')');
+        $sedi = post('idsede');
+        if (empty($sedi)) {
+            $sedi = [0];
+        }
+        foreach ($sedi as $id_sede) {
+            $dbo->query('INSERT INTO `zz_user_sedi` (`id_user`,`idsede`) VALUES ('.prepare($id_utente).', '.prepare($id_sede).')');
         }
 
         break;

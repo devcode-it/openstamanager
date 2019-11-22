@@ -2,6 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Anagrafiche\Anagrafica;
 use Modules\Fatture\Fattura;
 
 $module = Modules::get('Prima nota');
@@ -79,10 +80,10 @@ $numeri = [];
 $counter = 0;
 
 $id_documenti = array_unique($id_documenti);
-
+$id_anagrafica_movimenti = null;
 foreach ($id_documenti as $id_documento) {
     $fattura = Fattura::find($id_documento);
-    $tipo = $fattura->stato;
+    $tipo = $fattura->tipo;
     $dir = $fattura->direzione;
 
     // Inclusione delle sole fatture in stato Emessa, Parzialmente pagato o Pagato
@@ -91,13 +92,19 @@ foreach ($id_documenti as $id_documento) {
         continue;
     }
 
+    if(empty($id_anagrafica_movimenti)){
+        $id_anagrafica_movimenti = $fattura->idanagrafica;
+    }elseif ($fattura->idanagrafica != $id_anagrafica_movimenti) {
+        $id_anagrafica_movimenti = null;
+    }
+
     $numeri[] = !empty($fattura['numero_esterno']) ? $fattura['numero_esterno'] : $fattura['numero'];
 
     $nota_credito = $tipo->descrizione == 'Nota di credito';
 
     // Predisposizione prima riga
     $conto_field = 'idconto_'.($dir == 'entrata' ? 'vendite' : 'acquisti');
-    $id_conto_aziendale = $fattura->pagamento[$conto_field] ?: setting('Conto aziendale predefinito');
+    $id_conto_aziendale = $fattura->pagamento[$conto_field] ?: get_var('Conto aziendale predefinito');
 
     // Predisposizione conto crediti clienti
     $conto_field = 'idconto_'.($dir == 'entrata' ? 'cliente' : 'fornitore');
@@ -115,13 +122,20 @@ foreach ($id_documenti as $id_documento) {
 
     // Riga aziendale
     $totale = sum(array_column($scadenze, 'rata'));
+
     if ($totale != 0) {
-        $righe_documento[] = [//righe_azienda
+        if ($nota_credito) {
+            $totaleA = -$totale;
+        } else {
+            $totaleA = $totale;
+        }
+
+        $righe_documento[] = [
             'iddocumento' => $scadenze[0]['iddocumento'],
             'id_scadenza' => $scadenze[0]['id'],
             'id_conto' => $id_conto_aziendale,
-            'dare' => ($dir == 'entrata') ? $totale : 0,
-            'avere' => ($dir == 'entrata') ? 0 : $totale,
+            'dare' => ($dir == 'entrata') ? $totaleA : 0,
+            'avere' => ($dir == 'entrata') ? 0 : $totaleA,
         ];
     }
 
@@ -131,18 +145,9 @@ foreach ($id_documenti as $id_documento) {
             'iddocumento' => $scadenza['iddocumento'],
             'id_scadenza' => $scadenza['id'],
             'id_conto' => $id_conto_controparte,
-            'dare' => ($dir == 'entrata') ? 0 : $scadenza['rata'],
-            'avere' => ($dir == 'entrata') ? $scadenza['rata'] : 0,
+            'dare' => ($dir == 'entrata' && !$nota_credito && !$is_insoluto) ? 0 : $scadenza['rata'],
+            'avere' => ($dir == 'entrata' && !$nota_credito && !$is_insoluto) ? $scadenza['rata'] : 0,
         ];
-    }
-
-    // Se è una nota di credito o un insoluto, inverto i valori
-    if ($nota_credito || $is_insoluto) {
-        foreach ($righe_documento as $key => $value) {
-            $tmp = $value['avere'];
-            $righe_documento[$key]['avere'] = $righe_documento[$key]['dare'];
-            $righe_documento[$key]['dare'] = $tmp;
-        }
     }
 
     $righe = array_merge($righe, $righe_documento);
@@ -162,11 +167,26 @@ foreach ($righe_azienda as $key => $riga_azienda) {
 $righe = array_merge($righe, $righe_azienda);
 }*/
 
+// Inverto dare e avere per importi negativi
+foreach ($righe as $key => $value) {
+    if ($righe[$key]['dare'] < 0 || $righe[$key]['avere'] < 0) {
+        $tmp = abs($righe[$key]['dare']);
+        $righe[$key]['dare'] = abs($righe[$key]['avere']);
+        $righe[$key]['avere'] = $tmp;
+    }
+}
+
 // Descrizione
 $numero_scadenze = count($id_scadenze);
 $numero_documenti = count($id_documenti);
 if ($numero_documenti + $numero_scadenze > 1) {
-    $descrizione = 'Pag. fatture num. '.implode(', ', $numeri);
+    if (!empty($id_anagrafica_movimenti)) {
+        $an = Anagrafica::find($id_anagrafica_movimenti);
+
+        $descrizione = 'Pag. fatture '.$an->ragione_sociale.' num. '.implode(', ', $numeri);
+    } else {
+        $descrizione = 'Pag. fatture num. '.implode(', ', $numeri);
+    }
 } elseif ($numero_documenti == 1) {
     $numero_fattura = !empty($fattura['numero_esterno']) ? $fattura['numero_esterno'] : $fattura['numero'];
 

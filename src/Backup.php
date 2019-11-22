@@ -217,6 +217,9 @@ class Backup
         $database = database();
         $extraction_dir = is_dir($path) ? $path : Zip::extract($path);
 
+        // TODO: Forzo il log out di tutti gli utenti e ne impedisco il login
+        // fino a ripristino ultimato
+
         // Rimozione del database
         $tables = include DOCROOT.'/update/tables.php';
 

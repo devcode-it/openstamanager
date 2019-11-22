@@ -1,15 +1,13 @@
 <?php
 include_once __DIR__.'/../../core.php';
 
-$preventivi = $dbo->fetchNum('SELECT id FROM co_preventivi WHERE idstato='.prepare($id_record));
-$attr = '';
-/*
-if ($preventivi == 0) {
+if ($record['can_delete']) {
     $attr = '';
 } else {
     $attr = 'readonly';
-    echo '<div class="alert alert-warning">'.tr('Alcune impostazioni non possono essere modificate per questo stato perché già utilizzato in alcuni preventivi.').'</div>';
-}*/
+    echo '<div class="alert alert-warning">'.tr('Alcune impostazioni non possono essere modificate per questo stato.').'</div>';
+}
+
 ?>
 <form action="" method="post" id="edit-form">
 	<input type="hidden" name="op" value="update">
@@ -20,19 +18,19 @@ if ($preventivi == 0) {
 
 
 		<div class="col-md-6">
-			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$" ]}
+			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$", "extra": "<?php echo $attr; ?>" ]}
 		</div>
 
         <div class="col-md-2">
-            {[ "type": "checkbox", "label": "<?php echo tr('Questo è uno stato completato'); ?>", "name": "is_completato", "value": "$is_completato$", "help": "<?php echo tr('I preventivi che si trovano in questo stato verranno considerati come completati'); ?>", "placeholder": "<?php echo tr('Completato'); ?>", "extra": "<?php echo $attr; ?>" ]}
+            {[ "type": "checkbox", "label": "<?php echo tr('Stato completato?'); ?>", "name": "is_completato", "value": "$is_completato$", "help": "<?php echo tr('I preventivi che si trovano in questo stato verranno considerati come completati'); ?>", "placeholder": "<?php echo tr('Completato'); ?>", "extra": "" ]}
 		</div>
 
 		 <div class="col-md-2">
-            {[ "type": "checkbox", "label": "<?php echo tr('Questo è uno stato pianificabile'); ?>", "name": "is_pianificabile", "value": "$is_pianificabile$", "help": "<?php echo tr('I preventivi che si trovano in questo stato verranno considerati come pianificabili'); ?>", "placeholder": "<?php echo tr('Pianificabile'); ?>", "extra": "<?php echo $attr; ?>" ]}
+            {[ "type": "checkbox", "label": "<?php echo tr('Stato pianificabile?'); ?>", "name": "is_pianificabile", "value": "$is_pianificabile$", "help": "<?php echo tr('I preventivi che si trovano in questo stato verranno considerati come pianificabili'); ?>", "placeholder": "<?php echo tr('Pianificabile'); ?>", "extra": "" ]}
 		</div>
 
 		 <div class="col-md-2">
-            {[ "type": "checkbox", "label": "<?php echo tr('Questo è uno stato fatturabile'); ?>", "name": "is_fatturabile", "value": "$is_fatturabile$", "help": "<?php echo tr('I preventivi che si trovano in questo stato verranno considerati come fatturabili'); ?>", "placeholder": "<?php echo tr('Fatturabile'); ?>", "extra": "<?php echo $attr; ?>" ]}
+            {[ "type": "checkbox", "label": "<?php echo tr('Stato fatturabile?'); ?>", "name": "is_fatturabile", "value": "$is_fatturabile$", "help": "<?php echo tr('I preventivi che si trovano in questo stato verranno considerati come fatturabili'); ?>", "placeholder": "<?php echo tr('Fatturabile'); ?>", "extra": "" ]}
 		</div>
 
 	</div>
@@ -58,8 +56,12 @@ if (!empty($preventivi)) {
     ]).'.
 </div>';
 }
-?>
 
+if (!empty($record['can_delete'])) {
+    echo '
 <a class="btn btn-danger ask" data-backto="record-list">
-	<i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
-</a>
+	<i class="fa fa-trash"></i>'.tr('Elimina').'
+</a>';
+}
+
+?>

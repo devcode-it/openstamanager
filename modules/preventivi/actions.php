@@ -16,11 +16,13 @@ switch (post('op')) {
         $idanagrafica = post('idanagrafica');
         $nome = post('nome');
         $idtipointervento = post('idtipointervento');
+        $data_bozza = post('data_bozza');
+        $id_sede = post('idsede');
 
         $anagrafica = Anagrafica::find($idanagrafica);
         $tipo = TipoSessione::find($idtipointervento);
 
-        $preventivo = Preventivo::build($anagrafica, $tipo, $nome);
+        $preventivo = Preventivo::build($anagrafica, $tipo, $nome, $data_bozza, $id_sede);
         $id_record = $preventivo->id;
 
         flash()->info(tr('Aggiunto preventivo numero _NUM_!', [

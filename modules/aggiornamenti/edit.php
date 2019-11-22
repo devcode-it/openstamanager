@@ -125,7 +125,7 @@ function search(button) {
             op: "check",
         },
         success: function(data){
-            if (data == "none") {
+            if (data == "none" || data == "" ) {
                 $("#update-search").html("'.tr('Nessun aggiornamento disponibile').'.");
             } else {
                 $("#update-search").html("'.tr("E' stato individuato un nuovo aggiornamento").': " + data + ".<br>'.tr('Scaricalo ora: _LINK_', [

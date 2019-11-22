@@ -121,7 +121,7 @@ class Prints
     public static function render($print, $id_record, $directory = null)
     {
         //ob_end_clean(); // Compatibilità con versioni vecchie delle stampe
-
+        $dbo = $database = database();
         $infos = self::get($print);
 
         Permissions::addModule($infos['id_module']);
@@ -136,7 +136,7 @@ class Prints
             ]);
             Util\Query::setSegments(true);
 
-            $has_access = database()->fetchNum($query) !== 0;
+            $has_access = !empty($query) ? $dbo->fetchNum($query) !== 0 : true;
         }
 
         if (empty($infos) || empty($infos['enabled']) || !Permissions::check([], false) || !$has_access) {

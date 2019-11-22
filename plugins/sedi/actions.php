@@ -12,6 +12,7 @@ switch ($operazione) {
                 'idanagrafica' => $id_parent,
                 'nomesede' => post('nomesede'),
                 'indirizzo' => post('indirizzo'),
+                'codice_destinatario' => post('codice_destinatario'),
                 'citta' => post('citta'),
                 'cap' => post('cap'),
                 'provincia' => strtoupper(post('provincia')),
@@ -20,7 +21,7 @@ switch ($operazione) {
                 'telefono' => post('telefono'),
                 'email' => post('email'),
                 'id_nazione' => !empty(post('id_nazione')) ? post('id_nazione') : null,
-                'idzona' => post('idzona'),
+                'idzona' => !empty(post('id_zona')) ? post('id_zona') : 0,
             ]);
              $id_record = $dbo->lastInsertedID();
 
@@ -53,6 +54,7 @@ switch ($operazione) {
             'fax' => post('fax'),
             'id_nazione' => !empty(post('id_nazione')) ? post('id_nazione') : null,
             'idzona' => post('idzona'),
+            'note' => post('note'),
             'gaddress' => post('gaddress'),
             'lat' => post('lat'),
             'lng' => post('lng'),

@@ -15,8 +15,24 @@ switch (filter('op')) {
         break;
 
     case 'save':
-        $content = file_get_contents($_FILES['blob']['tmp_name']);
-        $file = FatturaElettronica::store($_FILES['blob']['name'], $content);
+        $temp_name = $_FILES['blob']['tmp_name'];
+        $name = $_FILES['blob']['name'];
+
+        if (ends_with($name, '.zip')) {
+            $directory = FatturaElettronica::getImportDirectory();
+
+            Util\Zip::extract($temp_name, $directory);
+
+            // Redirect forzato per l'importazione
+            echo json_encode([
+                'id' => 1,
+            ]);
+            exit();
+        } else {
+            $content = file_get_contents($temp_name);
+
+            $file = FatturaElettronica::store($_FILES['blob']['name'], $content);
+        }
 
         // no break
     case 'prepare':
@@ -104,6 +120,14 @@ switch (filter('op')) {
         aggiungi_movimento($id_fattura, 'uscita');
 
         $fattura_pa->delete();
+
+        //Aggiorno la tipologia di anagrafica fornitore
+        $anagrafica = $dbo->fetchOne('SELECT idanagrafica FROM co_documenti WHERE co_documenti.id='.prepare($id_fattura));
+        $rs_t = $dbo->fetchOne("SELECT * FROM an_tipianagrafiche_anagrafiche WHERE idtipoanagrafica=(SELECT an_tipianagrafiche.idtipoanagrafica FROM an_tipianagrafiche WHERE an_tipianagrafiche.descrizione='Fornitore') AND idanagrafica=".prepare($anagrafica['idanagrafica']));
+
+        if (!$rs_t) {
+            $dbo->query("INSERT INTO an_tipianagrafiche_anagrafiche (idtipoanagrafica, idanagrafica) VALUES ((SELECT an_tipianagrafiche.idtipoanagrafica FROM an_tipianagrafiche WHERE an_tipianagrafiche.descrizione='Fornitore'), ".prepare($anagrafica['idanagrafica']));
+        }
 
         // Processo il file ricevuto
         if (Interaction::isEnabled()) {

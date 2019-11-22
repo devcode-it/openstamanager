@@ -153,7 +153,6 @@ var n = '.$counter.';
 
 function addRiga(btn) {
     var raggruppamento = $(btn).parent();
-    console.log(raggruppamento)
     n++;
     cleanup_inputs();
 

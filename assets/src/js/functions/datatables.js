@@ -43,8 +43,6 @@ function start_datatables() {
                 });
             });
 
-            console.log(column_search);
-
             var sum;
             var tempo_attesa_ricerche = (globals.tempo_attesa_ricerche * 1000);
 

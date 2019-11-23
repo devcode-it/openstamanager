@@ -67,7 +67,7 @@ echo '
         <h3 class="box-title">
             '.tr('Carica un XML').'
 
-            <span class="tip" title="'.tr('Formati supportati: XML e P7M').'.">
+            <span class="tip" title="'.tr('Formati supportati: XML, P7M e ZIP').'.">
                 <i class="fa fa-question-circle-o"></i>
             </span>
 

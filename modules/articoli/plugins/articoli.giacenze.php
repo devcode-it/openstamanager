@@ -26,15 +26,12 @@ HAVING qta_ordinata > 0";
 echo '
 <div class="row">
 	<div class="col-md-3">
-        <div class="alert alert-info" style="height: 75px;">
-            <i class="fa fa-info-circle"></i> '.tr('Quantità impegnate in ordini cliente che non siano già completamente evasi o articoli in cesta commessa').'
-        </div>
-
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				<h3 class="panel-title">'.tr('Impegnato').'</h3>
+                <h3 class="panel-title">'.tr('Impegnato').'<span class="tip" title="'.tr('Quantità impegnate in ordini cliente che non siano già completamente evasi o articoli in cesta commessa.').'">
+                <i class="fa fa-question-circle-o"></i></span></h3>
 			</div>
-			<div class="panel-body">';
+			<div class="panel-body" style="min-height:98px;">';
 
 $ordini = $dbo->fetchArray(str_replace('|dir|', 'entrata', $query));
 $impegnato = sum(array_column($ordini, 'qta_ordinata'));
@@ -94,13 +91,12 @@ echo '
  */
 echo '
 	<div class="col-md-3">
-	    <div class="alert alert-info" style="height: 75px;"><i class="fa fa-info-circle"></i> '.tr('Quantità ordinate al fornitore in ordini che non siano già completamente evasi').'</div>
-	
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				<h3 class="panel-title">'.tr('In ordine').'</h3>
+				<h3 class="panel-title">'.tr('In ordine').'<span class="tip" title="'.tr('Quantità ordinate al fornitore in ordini che non siano già completamente evasi.').'">
+                <i class="fa fa-question-circle-o"></i></span></h3>
 			</div>
-			<div class="panel-body">';
+			<div class="panel-body" style="min-height:98px;">';
 
 $ordini = $dbo->fetchArray(str_replace('|dir|', 'uscita', $query));
 $ordinato = sum(array_column($ordini, 'qta_ordinata'));
@@ -165,11 +161,10 @@ $da_ordinare = $diff < 0 ? 0 : $diff;
 
 echo '
 	<div class="col-md-3">
-	      <div class="alert alert-info" style="height: 75px;"><i class="fa fa-info-circle"></i> '.tr('Quantità richieste dal cliente meno le quantità già ordinate').'</div>
-
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				<h3 class="panel-title">'.tr('Da ordinare').'</h3>
+				<h3 class="panel-title">'.tr('Da ordinare').'<span class="tip" title="'.tr('Quantità richieste dal cliente meno le quantità già ordinate.').'">
+                <i class="fa fa-question-circle-o"></i></span></h3>
 			</div>
 			<div class="panel-body">
               <div class="row">
@@ -189,11 +184,10 @@ $qta_disponibile = $qta_presente - $impegnato;
 $disponibile = $qta_presente < 0 ? 0 : $qta_presente;
 echo '
 	<div class="col-md-3">
-        <div class="alert alert-info" style="height: 75px;"><i class="fa fa-info-circle"></i> '.tr('Quantità disponibili nel magazzino').'</div>
-
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				<h3 class="panel-title">'.tr('Disponibile').'</h3>
+				<h3 class="panel-title">'.tr('Disponibile').'<span class="tip" title="'.tr('Quantità disponibili nel magazzino.').'">
+                <i class="fa fa-question-circle-o"></i></span></h3>
 			</div>
 			<div class="panel-body">
 

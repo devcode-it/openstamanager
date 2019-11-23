@@ -248,19 +248,20 @@ echo '
                 <div class="tab-content '.(!$is_cliente && !$is_fornitore && !$is_tecnico ? 'hide' : '').'">
                     <div class="tab-pane '.(!$is_cliente && !$is_fornitore ? ' hide' : '').'" id="cliente_fornitore">
                         <div class="row">
-                             <div class="col-md-3">
+                             <div class="col-md-6">
                                  {[ "type": "text", "label": "'.tr('Appoggio bancario').'", "name": "appoggiobancario", "value": "$appoggiobancario$" ]}
                              </div>
         
-                             <div class="col-md-3">
+                             <div class="col-md-6">
                                  {[ "type": "text", "label": "'.tr('Filiale banca').'", "name": "filiale", "value": "$filiale$" ]}
                              </div>
-        
-                             <div class="col-md-3">
+                        </div>
+                        <div class="row">
+                             <div class="col-md-6">
                                  {[ "type": "text", "label": "'.tr('Codice IBAN').'", "name": "codiceiban", "value": "$codiceiban$" ]}
                              </div>
         
-                             <div class="col-md-3">
+                             <div class="col-md-6">
                                  {[ "type": "text", "label": "'.tr('Codice BIC').'", "name": "bic", "value": "$bic$" ]}
                              </div>
                          </div>

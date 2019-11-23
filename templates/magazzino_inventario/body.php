@@ -21,6 +21,7 @@ $search['tipo'] = $search['tipo'] ?: 'solo prodotti attivi';
 
 // Filtri effettivi
 $where = [
+    'deleted_at IS NULL',
     'servizio = 0',
 ];
 if ($search['tipo'] == 'solo prodotti attivi') {

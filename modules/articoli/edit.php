@@ -221,7 +221,7 @@ $_SESSION['superselect']['id_categoria'] = $record['id_categoria'];
     echo "
                         <select class=\"form-control superselect\" id=\"componente_filename\" name=\"componente_filename\" onchange=\"$.post('".$rootdir."/modules/my_impianti/actions.php', {op: 'load_componente', idarticolo: '".$id_record."', filename: $(this).find('option:selected').val() }, function(response){ $('#info_componente').html( response ); start_superselect();    $('.datepicker').datetimepicker({  locale: globals.locale, format: 'L' } ); } );\">\n";
     echo '
-                            <option value="0">- Collega ad un componente -</option>';
+                            <option value="0">'.tr('Nessuno').'</option>';
 
     $cmp = \Util\Ini::getList($docroot.'/files/my_impianti/');
 

@@ -28,7 +28,7 @@ echo '
 	<div class="col-md-3">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-                <h3 class="panel-title">'.tr('Impegnato').'<span class="tip" title="'.tr('Quantità impegnate in ordini cliente che non siano già completamente evasi o articoli in cesta commessa.').'">
+                <h3 class="panel-title">'.tr('Impegnato').'<span class="tip pull-right" title="'.tr('Quantità impegnate in ordini cliente che non siano già completamente evasi o articoli in cesta commessa.').'">
                 <i class="fa fa-question-circle-o"></i></span></h3>
 			</div>
 			<div class="panel-body" style="min-height:98px;">';
@@ -93,7 +93,7 @@ echo '
 	<div class="col-md-3">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				<h3 class="panel-title">'.tr('In ordine').'<span class="tip" title="'.tr('Quantità ordinate al fornitore in ordini che non siano già completamente evasi.').'">
+				<h3 class="panel-title">'.tr('In ordine').'<span class="tip pull-right" title="'.tr('Quantità ordinate al fornitore in ordini che non siano già completamente evasi.').'">
                 <i class="fa fa-question-circle-o"></i></span></h3>
 			</div>
 			<div class="panel-body" style="min-height:98px;">';
@@ -163,7 +163,7 @@ echo '
 	<div class="col-md-3">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				<h3 class="panel-title">'.tr('Da ordinare').'<span class="tip" title="'.tr('Quantità richieste dal cliente meno le quantità già ordinate.').'">
+				<h3 class="panel-title">'.tr('Da ordinare').'<span class="tip pull-right" title="'.tr('Quantità richieste dal cliente meno le quantità già ordinate.').'">
                 <i class="fa fa-question-circle-o"></i></span></h3>
 			</div>
 			<div class="panel-body">
@@ -186,7 +186,7 @@ echo '
 	<div class="col-md-3">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				<h3 class="panel-title">'.tr('Disponibile').'<span class="tip" title="'.tr('Quantità disponibili nel magazzino.').'">
+				<h3 class="panel-title">'.tr('Disponibile').'<span class="tip pull-right" title="'.tr('Quantità disponibili nel magazzino.').'">
                 <i class="fa fa-question-circle-o"></i></span></h3>
 			</div>
 			<div class="panel-body">

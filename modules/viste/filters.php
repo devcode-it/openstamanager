@@ -15,13 +15,19 @@ if (!empty($additionals)) {
         $editable = !($additional['default'] && $enable_readonly);
 
         echo '
-        <div class="box box-'.($additional['enabled'] ? 'success' : 'danger').'">
+        <div class="box collapsed-box box-'.($additional['enabled'] ? 'success' : 'danger').'">
             <div class="box-header with-border">
-                <h3 class="box-title">
-                    <a data-toggle="collapse" href="#additional-'.$additional['id'].'">'.tr('Filtro: _NAME_', [
+                <h3 class="box-title">'.
+                    tr('Filtro: _NAME_', [
 '_NAME_' => $additional['name'],
-]).'</a>
-                </h3>';
+]).'
+                </h3>
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                    <i class="fa fa-plus"></i>
+                    </button>
+                </div>';
+
 
         if ($editable) {
             echo '

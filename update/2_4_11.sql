@@ -909,3 +909,5 @@ UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE
 
 -- Fix accesso alla stampa dell'inverntario magazzino
 UPDATE `zz_prints` SET `is_record` = '0' WHERE `zz_prints`.`name` = 'Inventario magazzino';
+
+UPDATE `in_statiintervento` SET `can_delete` = '0', `in_statiintervento`.`codice` = 'TODO'  WHERE `in_statiintervento`.`codice` = 'DAP';

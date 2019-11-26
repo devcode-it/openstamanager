@@ -113,12 +113,16 @@ function aggiungi_scadenza($iddocumento, $pagamento = '', $pagato = false)
 
 /**
  * Elimina i movimenti collegati ad una fattura.
+ * Se il flag $prima_nota è impostato a 1 elimina solo i movimenti di Prima Nota, altrimenti rimuove quelli automatici.
+ *
+ * @param $iddocumento
+ * @param int $prima_nota
  */
-function elimina_movimenti($iddocumento, $anche_prima_nota = 0)
+function elimina_movimenti($id_documento, $prima_nota = 0)
 {
     $dbo = database();
 
-    $query2 = 'DELETE FROM co_movimenti WHERE iddocumento='.prepare($iddocumento).' AND primanota='.prepare($anche_prima_nota);
+    $query2 = 'DELETE FROM co_movimenti WHERE iddocumento='.prepare($id_documento).' AND primanota='.prepare($prima_nota);
     $dbo->query($query2);
 }
 

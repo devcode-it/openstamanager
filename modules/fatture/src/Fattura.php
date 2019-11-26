@@ -522,6 +522,7 @@ class Fattura extends Document
             $this->rimuoviScadenze();
 
             elimina_movimenti($this->id, 1);
+            elimina_movimenti($this->id);
         }
 
         // Operazioni sulla dichiarazione d'intento

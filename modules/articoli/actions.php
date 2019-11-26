@@ -97,9 +97,8 @@ switch (post('op')) {
             $contenuto = \Util\Ini::write(file_get_contents(DOCROOT.'/files/my_impianti/'.$componente), $post);
 
             $dbo->query('UPDATE mg_articoli SET contenuto='.prepare($contenuto).' WHERE id='.prepare($id_record));
-        }else{
+        } else {
             $dbo->query('UPDATE mg_articoli SET contenuto = \'\' WHERE id='.prepare($id_record));
-            
         }
 
         // Upload file

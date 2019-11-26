@@ -28,7 +28,6 @@ if (!empty($additionals)) {
                     </button>
                 </div>';
 
-
         if ($editable) {
             echo '
                 <a class="btn btn-danger ask pull-right" data-backto="record-edit" data-op="delete_filter" data-id="'.$additional['id'].'">

@@ -10,7 +10,7 @@ use Uploads;
 class EmailNotification extends PHPMailer implements NotificationInterface
 {
     protected $mail;
-    protected $attachments = [];
+    protected $directory;
 
     protected $infos = [];
 
@@ -168,7 +168,7 @@ class EmailNotification extends PHPMailer implements NotificationInterface
         $this->SmtpClose();
 
         // Pulizia file generati
-        delete(DOCROOT.'/files/notifications/');
+        delete($this->getTempDirectory());
 
         // Segnalazione degli errori
         if (!$result) {
@@ -225,7 +225,7 @@ class EmailNotification extends PHPMailer implements NotificationInterface
         $print = Prints::get($print);
 
         // Utilizzo di una cartella particolare per il salvataggio temporaneo degli allegati
-        $path = DOCROOT.'/files/notifications/'.rand(0, 999);
+        $path = $this->getTempDirectory();
 
         $info = Prints::render($print['id'], $id_record, $path);
         $name = $name ?: $info['name'];
@@ -261,5 +261,16 @@ class EmailNotification extends PHPMailer implements NotificationInterface
                 $this->AddAddress($email, $name);
             }
         }
+    }
+
+    protected function getTempDirectory()
+    {
+        if (!isset($this->directory)) {
+            $this->directory = DOCROOT.'/files/notifications/'.rand(0, 999);
+
+            directory($this->directory);
+        }
+
+        return $this->directory;
     }
 }

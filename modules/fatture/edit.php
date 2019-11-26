@@ -788,6 +788,15 @@ $(document).ready(function () {
         if(data.data("DateTimePicker").date() < e.date){
             data.data("DateTimePicker").date(e.date);
         }
-    })
+    });
+
+    $("#data").on("dp.change", function (e) {
+        var data_competenza = $("#data_competenza");
+        data_competenza.data("DateTimePicker").minDate(e.date);
+
+        if(data_competenza.data("DateTimePicker").date() < e.date){
+            data_competenza.data("DateTimePicker").date(e.date);
+        }
+    });
 });
 </script>';

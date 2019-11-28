@@ -387,7 +387,7 @@ class Prints
         $name = replace($name, $replaces);
 
         $filename = sanitizeFilename($name);
-        $file = rtrim($directory, '/').'/'.$filename;
+        $file = ( empty($directory) ) ? $filename : rtrim($directory, '/').'/'.$filename;
 
         return [
             'name' => $name,

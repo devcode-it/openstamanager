@@ -106,7 +106,7 @@ switch (post('op')) {
         }
 
         // Avviso durante il salvataggio della partita iva se già presente e informo l'utente delle schede presenti
-        if (!empty(post('piva'))) {
+        if (!empty(post('piva')) && !in_array(post('piva'), ['99999999999', '00000000000'])) {
             $idanagrafica = $dbo->fetchOne('SELECT GROUP_CONCAT(idanagrafica) AS idanagrafica FROM an_anagrafiche WHERE piva = '.prepare(post('piva')).' AND idanagrafica != '.prepare($id_record))['idanagrafica'];
 
             if (!empty($idanagrafica)) {

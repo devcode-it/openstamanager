@@ -911,3 +911,8 @@ UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE
 UPDATE `zz_prints` SET `is_record` = '0' WHERE `zz_prints`.`name` = 'Inventario magazzino';
 
 UPDATE `in_statiintervento` SET `can_delete` = '0', `in_statiintervento`.`codice` = 'TODO'  WHERE `in_statiintervento`.`codice` = 'DAP';
+
+-- Fix possibili problemi per data_registrazione e data_competenza
+UPDATE `co_documenti` SET `data_registrazione` = NULL WHERE `data_registrazione` = '0000-00-00';
+UPDATE `co_documenti` SET `data_registrazione` = `data` WHERE `data_registrazione` IS NULL AND idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE dir = 'uscita');
+UPDATE `co_documenti` SET `data_competenza` = `data_registrazione` WHERE `data_competenza` = '0000-00-00' OR `data_competenza` IS NULL;

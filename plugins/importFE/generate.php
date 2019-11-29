@@ -41,7 +41,7 @@ if (empty($fattura_pa)) {
         </button>
     </div>
 </div>
-    
+
 <script>
 function skip() {
     redirect("'.$skip_link.'");
@@ -57,8 +57,8 @@ function cleanup(){
             op: "delete",
             name: "'.$record['name'].'",
         }
-    }); 
-    
+    });
+
     $.ajax({
         url: globals.rootdir + "/actions.php",
         type: "get",
@@ -69,7 +69,7 @@ function cleanup(){
             name: "'.$record['name'].'",
         }
     });
-    
+
     skip();
 }
 </script>';
@@ -104,14 +104,14 @@ echo '
 <form action="" method="post">
     <input type="hidden" name="filename" value="'.$record['name'].'">
     <input type="hidden" name="op" value="generate">
-    
+
     <div class="row">
 		<div class="col-md-3">
 			<h4>
 			    '.$ragione_sociale.'
-			    
+
 			    '.(empty($anagrafica) ? '<span class="badge badge-success">'.tr('Nuova anagrafica').'</span>' : '<small>'.Modules::link('Anagrafiche', $anagrafica->id, '', null, '')).'</small><br>
-			    
+
 				<small>
 					'.(!empty($codice_fiscale) ? (tr('Codice Fiscale').': '.$codice_fiscale.'<br>') : '').'
 					'.(!empty($partita_iva) ? (tr('Partita IVA').': '.$partita_iva.'<br>') : '').'
@@ -119,15 +119,15 @@ echo '
 				</small>
 			</h4>
 		</div>
-		
+
 		<div class="col-md-3">
 			<h4>
 			    '.$dati_generali['Numero'].'
-			
+
 				<a href="'.$structure->fileurl('view.php').'?filename='.$record['name'].'" class="btn btn-info btn-xs" target="_blank" >
 					<i class="fa fa-eye"></i> '.tr('Visualizza').'
 				</a>
-				
+
 				<br><small>
 					'.$tipo_documento.'
 					<br>'.Translator::dateToLocale($dati_generali['Data']).'
@@ -141,7 +141,7 @@ if (!empty($pagamenti)) {
     echo '
 		<div class="col-md-6">
             <h4>'.tr('Pagamento').'</h4>
-    
+
             <p>'.tr('La fattura importata presenta _NUM_ rat_E_ di pagamento con le seguenti scadenze', [
                 '_NUM_' => count($metodi),
                 '_E_' => ((count($metodi) > 1) ? 'e' : 'a'),
@@ -190,6 +190,7 @@ echo '
 
 // Data di registrazione
 $data_registrazione = get('data_registrazione');
+$data_registrazione = new \Carbon\Carbon($data_registrazione);
 echo '
         <div class="col-md-3">
             {[ "type": "date", "label": "'.tr('Data di registrazione').'", "name": "data_registrazione", "required": 1, "value": "'.($data_registrazione ?: $dati_generali['Data']).'", "max-date": "-now-", "min-date": "'.$dati_generali['Data'].'" ]}
@@ -237,7 +238,7 @@ echo '
 		    <button type="button" class="btn btn-info btn-xs pull-right" onclick="session_set(\'superselect,codice_modalita_pagamento_fe\', \'\', 0)">
 		        <i class="fa fa-refresh"></i> '.tr('Visualizza tutte le modalità').'
             </button>
-		    
+
             {[ "type": "select", "label": "'.tr('Pagamento').'", "name": "pagamento", "required": 1, "ajax-source": "pagamenti" ]}
         </div>';
 
@@ -246,7 +247,7 @@ echo '
         <div class="col-md-3">
             {[ "type": "checkbox", "label": "'.tr('Movimenta gli articoli').'", "name": "movimentazione", "value": 1 ]}
         </div>
-        
+
         <div class="col-md-3">
             {[ "type": "checkbox", "label": "'.tr('Creazione automatica articoli').'", "name": "crea_articoli", "value": 0, "help": "'.tr("Nel caso di righe con tag CodiceArticolo, il gestionale procede alla creazione dell'articolo se la riga non risulta assegnata manualmente").'" ]}
         </div>
@@ -297,14 +298,14 @@ if (!empty($righe)) {
         <tr>
             <td>
                 '.$riga['Descrizione'].'<br>
-				
+
 				'.(!empty($codici_articoli) ? '<small>'.implode(', ', $codici_articoli).'</small><br>' : '').'
-                
+
                 <small>'.tr('Q.tà: _QTA_ _UM_', [
                     '_QTA_' => Translator::numberToLocale($riga['Quantita']),
                     '_UM_' => $riga['UnitaMisura'],
                 ]).'</small><br>
-                
+
                 <small>'.tr('Aliquota IVA: _VALUE_ _DESC_', [
                     '_VALUE_' => empty($riga['Natura']) ? numberFormat($riga['AliquotaIVA']).'%' : $riga['Natura'],
                     '_DESC_' => $riga['RiferimentoNormativo'] ? ' - '.$riga['RiferimentoNormativo'] : '',
@@ -371,7 +372,7 @@ echo '
             <a href="'.$skip_link.'" class="btn btn-warning">
                 <i class="fa fa-ban "></i> '.tr('Salta fattura').'
             </a>
-            
+
             <button type="submit" class="btn btn-primary">
                 <i class="fa fa-arrow-right"></i> '.tr('Continua').'...
             </button>

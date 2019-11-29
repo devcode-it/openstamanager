@@ -24,7 +24,7 @@ $default_header$
 				</td>
 
                 <td class="border-right border-bottom border-top text-center">
-                    <p class="small-bold">'.tr('Cliente', [], ['upper' => true]).'</p>
+                    <p class="small-bold">'.($documento->direzione == 'entrata' ? tr('Cliente', [], ['upper' => true]) : tr('Fornitore', [], ['upper' => true])).'</p>
                     <p>$c_codice$</p>
                 </td>
 
@@ -33,7 +33,7 @@ $default_header$
 					<p>{PAGENO}/{nb}</p>
 				</td>
 			</tr>
-			
+
 			<tr>
                 <td colspan="4" style="height:10mm;padding-top:2mm;">
                     <p class="small-bold">'.tr('Pagamento', [], ['upper' => true]).'</p>
@@ -42,7 +42,7 @@ $default_header$
             </tr>
 		</table>
 	</div>
-	
+
 	<!-- Dati Cliente/Fornitore -->
 	<div class="col-xs-6" style="margin-left: 10px">
         <table class="table" style="width:100%;margin-top:5mm;">
@@ -55,6 +55,6 @@ $default_header$
             </tr>
         </table>
     </div>
-	
-	
+
+
 </div>';

@@ -283,19 +283,14 @@ switch (post('op')) {
 
     // Rinnovo contratto
     case 'renew':
-        $giorni = $contratto->data_conclusione->diffInDays($contratto->data_accettazione);
-
-        // Verifico se il rinnovo contratto è un numero accettabile con la differenza di data inizio e data fine
-        if ($giorni < 0 || $giorni > 365 * 10) {
-            $giorni = 0;
-        }
+        $diff = $contratto->data_conclusione->diffAsCarbonInterval($contratto->data_accettazione);
 
         $new_contratto = $contratto->replicate();
         $new_contratto->numero = Contratto::getNextNumero();
 
         $new_contratto->idcontratto_prev = $contratto->id;
-        $new_contratto->data_accettazione = $contratto->data_conclusione->addDays(1);
-        $new_contratto->data_conclusione = $new_contratto->data_accettazione->addDays($giorni);
+        $new_contratto->data_accettazione = $contratto->data_conclusione->copy()->addDays(1);
+        $new_contratto->data_conclusione = $new_contratto->data_accettazione->copy()->add($diff);
         $new_contratto->save();
         $new_idcontratto = $new_contratto->id;
 
@@ -320,6 +315,7 @@ switch (post('op')) {
 
         // Replicazione dei promemoria
         $promemoria = $dbo->fetchArray('SELECT * FROM co_promemoria WHERE idcontratto='.prepare($id_record));
+        $giorni = $contratto->data_conclusione->diffInDays($contratto->data_accettazione);
         foreach ($promemoria as $p) {
             $dbo->insert('co_promemoria', [
                 'idcontratto' => $new_idcontratto,

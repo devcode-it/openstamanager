@@ -116,6 +116,7 @@ $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione']
                     <div class="col-md-3">
                         {[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza", "ajax-source": "sedi_azienda",  "value": "$idsede_partenza$", "readonly": "<?php echo sizeof($articolo) ? 1 : 0; ?>" ]}
                     </div>
+
                     <div class="col-md-3">
                         {[ "type": "select", "label": "<?php echo tr('Destinazione merce'); ?>", "name": "idsede_destinazione", "ajax-source": "sedi",  "value": "$idsede_destinazione$" ]}
                     </div>
@@ -125,6 +126,7 @@ $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione']
                     <div class="col-md-3">
                         {[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza", "ajax-source": "sedi",  "value": "$idsede_partenza$" ]}
                     </div>
+
                     <div class="col-md-3">
                         {[ "type": "select", "label": "<?php echo tr('Destinazione merce'); ?>", "name": "idsede_destinazione", "ajax-source": "sedi_azienda",  "value": "$idsede_destinazione$" ]}
                     </div>
@@ -223,8 +225,8 @@ $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione']
                 <h4 class="panel-title">
                     <?php echo tr('Dati appalto'); ?>
 
-                    <div class="box-tools pull-right">    
-                        <a data-toggle="collapse" href="#dati_appalto"><i class="fa fa-plus" style='color:white;margin-top:2px;'></i></a>           
+                    <div class="box-tools pull-right">
+                        <a data-toggle="collapse" href="#dati_appalto"><i class="fa fa-plus" style='color:white;margin-top:2px;'></i></a>
                     </div>
                 </h4>
             </div>

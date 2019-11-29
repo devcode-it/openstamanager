@@ -4,7 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
-- [2.4.11 (2019-)](#2411-2019-)
+- [2.4.11 (2019-11-29)](#2411-2019-11-29)
 - [2.4.10 (2019-07-23)](#2410-2019-07-23)
 - [2.4.9 (2019-05-17)](#249-2019-05-17)
 - [2.4.8 (2019-03-01)](#248-2019-03-01)
@@ -21,7 +21,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
-## 2.4.11 (2019-)
+## 2.4.11 (2019-11-29)
 
 ### Aggiunto (Added)
 
@@ -36,12 +36,12 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Possibilità di indicare una foto per l'utente, visualizzata nelle *Note interne* e nei futuri allegati che verranno caricati
  - Possibilità di modificare il nome delle categorie degli allegati
  - Stampe dei consuntivi interni (i prezzi sono sostituiti dai costi)
- - Supporto all'inserimento manuale di maggiori attributi per le *Fatture Elettroniche*, tramite gli appositi pulsanti "Attributi avanzati" all'interno delle **Fatture di vendita** 
+ - Supporto all'inserimento manuale di maggiori attributi per le *Fatture Elettroniche*, tramite gli appositi pulsanti "Attributi avanzati" all'interno delle **Fatture di vendita**
  - Aggiunto Identificativo documento, Num Item, codici CIG e CUP in **DDT di uscita**
  - Modulo **Newsletter** per la gestione delle campagne di newsletter sulla base delle informazioni delle **Anagrafiche**
  - Supporto alle *Dichiarazione d'Intento* per le *Fatture di vendita**
  - Calcolo del margine per i **Preventivi**
- - Supporto alla selezione della lingua durante la configurazione 
+ - Supporto alla selezione della lingua durante la configurazione
  - Gestione dei permessi per gruppi all'interno del sistema di **Gestione documentale**
  - Supporto agli sconti combinati nel modulo **Listini**
  - Supporto al caricamento di archivi ZIP per le *Fatture Elettroniche* di acquisto da importare (solo estrazione)
@@ -60,17 +60,19 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Generazione del numero delle **Fatture di vendita** a seguito dell'emissione della stessa
  - Supporto alla precisione di importi e quantità fino a 5 decimali
  - Opzione per la creazione automatica degli articoli presenti in **Fattura Elettronica**
-  
+ - Revisione della visualizzazione grafica del modulo **Prima Nota**, per rendere più chiara la suddivisione logica delle righe in relazione all'evasione delle scadenze
+ - Aggiornamento delle stampe *Inventario magazzino* e *Calendario*
+
 ### Rimosso (Removed)
  - Funzione *get_costi_intervento* del modulo **Attività**, a causa dell'aggiornamento della maggior parte del sistema di gestione degli **Attività** con le classi Eloquent
  - Funzione *aggiorna_scadenziario* del modulo **Prima Nota**
  - Classe *src/Mail.php*
- 
+
 ### Fixed
 
  - Fix selezione di articoli senza movimenti
  - Fix per l'autocompletamento delle email nella procedura di invio
- 
+
 ## 2.4.10 (2019-07-23)
 
 ### Aggiunto (Added)
@@ -97,19 +99,19 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Ottimizzazione delle stampe **Scadenzario** e **Registro IVA**, e della tabella principale del modulp **Fatture di vendita**
  - Miglioramento della plugin *Statistiche* in **Anagrafiche**,con visualizzazione dei dati in periodi personalizzabili
  - Miglioramento del sistema di importazione delle ricevute delle Fatture Elettroniche, per permetterne il caricamento manuale
- - Standardizzazione dei nomi predefiniti delle stampa e dei relativi file generati 
- 
+ - Standardizzazione dei nomi predefiniti delle stampa e dei relativi file generati
+
 ### Rimosso (Removed)
  - Supporto ai raggruppamenti di **Contratti** e **Preventivi** nelle **Fatture**
- 
+
 ### Fixed
 
  - Fix export delle tabelle principali in Excel
- - Fix bug della configurazione iniziale nella selezione della nazione 
+ - Fix bug della configurazione iniziale nella selezione della nazione
  - Fix delle somme filtrate sulle tabelle principali
  - Fix per includere le stampe previste nelle notifiche
  - Risolti alcuni bug generali
- 
+
 ## 2.4.9 (2019-05-17)
 
 ### Aggiunto (Added)
@@ -127,7 +129,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
     - Controllo automatico della presenza di Fatture Elettroniche da importare **(integrazione con sistemi interni)**
     - Controllo automatico della presenza di ricevute di Fatture Elettroniche rilasciate **(integrazione con sistemi interni)**
  - Possibilità di duplicare gli **Impianti**
-    
+
 ### Modificato (Changed)
 
  - La marca da bollo considera solo le righe con esenzione iva da natura N1 a N4, ed è modificabile manualmente a livello di fattura
@@ -138,7 +140,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Spostamento della gestione di widget e moduli da **Aggiornamenti** al modulo **Stato dei servizi**
  - I totali vengono visualizzati e arrotondati sempre a due cifre per legge (la modifica consiste **solo nella visualizzazione dei totali**, e non influenza i conteggi in alcun modo)
  - Modernizzazione del plugin *Statistiche* nel modulo **Anagrafiche**
- 
+
 ### Fixed
 
  - Fix selezione righe multiple sulle tabelle
@@ -147,7 +149,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Fix API per APP OSM
  - Fix per compatibilità con MySQL 8
  - Risolti altri bug generali
- 
+
 ## 2.4.8 (2019-03-01)
 
 ### Aggiunto (Added)

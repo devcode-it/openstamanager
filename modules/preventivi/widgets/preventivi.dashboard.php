@@ -1,4 +1,5 @@
 <?php
+
     include_once __DIR__.'/../../../core.php';
 
     $rs = $dbo->fetchArray("SELECT *, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=co_preventivi.idanagrafica) AS ragione_sociale FROM co_preventivi WHERE idstato=(SELECT id FROM co_statipreventivi WHERE descrizione='In lavorazione') ORDER BY data_conclusione ASC");

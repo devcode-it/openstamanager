@@ -41,7 +41,7 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
                     {[ "type": "date", "label": "<?php echo tr('Data rifiuto'); ?>", "name": "data_rifiuto", "value": "$data_rifiuto$" ]}
                 </div>
 			</div>
-			
+
 			<div class="row">
                 <div class="col-md-3">
                     <?php
@@ -63,7 +63,7 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 
 					{[ "type": "select", "label": "<?php echo tr('Referente'); ?>", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti" ]}
 				</div>
-				
+
 				<div class="col-md-3">
                     <?php
                         if ($record['idagente'] != 0) {
@@ -94,7 +94,7 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 					{[ "type": "number", "label": "<?php echo tr('Validità offerta'); ?>", "name": "validita", "decimals": "0", "value": "$validita$", "icon-after": "giorni" ]}
 
 				</div>
-				
+
 				<div class="col-md-3">
 					{[ "type": "select", "label": "<?php echo tr('Tipo di attività'); ?>", "name": "idtipointervento", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione", "value": "$idtipointervento$" ]}
 				</div>
@@ -102,12 +102,12 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 				<!--div class="col-md-3">
 					{[ "type": "select", "label": "<?php echo tr('Resa materiale'); ?>", "name": "idporto", "values": "query=SELECT id, descrizione FROM dt_porto ORDER BY descrizione", "value": "$idporto$" ]}
 				</div-->
-				
-				
+
+
 				<div class="col-md-3">
 					{[ "type": "text", "label": "<?php echo tr('Tempi di consegna'); ?>", "name": "tempi_consegna", "value": "$tempi_consegna$" ]}
 				</div>
-				
+
 			</div>
 			<div class="row">
 
@@ -131,7 +131,7 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 
 		</div>
 	</div>
-	
+
     <?php
         if (!empty($record['id_documento_fe']) || !empty($record['num_item']) || !empty($record['codice_cig']) || !empty($record['codice_cup'])) {
             $collapsed = 'in';
@@ -147,8 +147,8 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
                 <h4 class="panel-title">
                     <?php echo tr('Dati appalto'); ?>
 
-                    <div class="box-tools pull-right">    
-                        <a data-toggle="collapse" href="#dati_appalto"><i class="fa fa-plus" style='color:white;margin-top:2px;'></i></a>           
+                    <div class="box-tools pull-right">
+                        <a data-toggle="collapse" href="#dati_appalto"><i class="fa fa-plus" style='color:white;margin-top:2px;'></i></a>
                     </div>
                 </h4>
             </div>
@@ -235,6 +235,12 @@ include $docroot.'/modules/preventivi/row-list.php';
 
 <script type="text/javascript">
     $(document).ready(function(){
+        $('#idanagrafica').change( function(){
+            session_set('superselect,idanagrafica', $(this).val(), 0);
+
+            $("#idsede").selectReset();
+        });
+
         $('#data_accettazione').on("dp.change", function(){
             if($(this).val()){
                 $('#data_rifiuto').attr('disabled', true);
@@ -253,17 +259,17 @@ include $docroot.'/modules/preventivi/row-list.php';
 
         $("#data_accettazione").trigger("dp.change");
         $("#data_rifiuto").trigger("dp.change");
-		
+
 		$('#codice_cig, #codice_cup').bind("keyup change", function(e) {
-		
+
 			if ($('#codice_cig').val() == '' && $('#codice_cup').val() == '' ){
 				$('#id_documento_fe').prop('required', false);
 			}else{
 				$('#id_documento_fe').prop('required', true);
 			}
-		
+
 		});
-		
+
     });
 </script>
 
@@ -275,7 +281,7 @@ include $docroot.'/modules/preventivi/row-list.php';
 
 <?php
 //fatture, ordini collegate a questo preventivo
-$elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idpreventivo` = '.prepare($id_record).') 
+$elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idpreventivo` = '.prepare($id_record).')
 
 UNION
 SELECT `or_ordini`.`id`, `or_ordini`.`data`, `or_ordini`.`numero`, `or_ordini`.`numero_esterno`, "Ordine cliente" AS tipo_documento, 0 AS dir FROM `or_ordini` JOIN `or_righe_ordini` ON `or_righe_ordini`.`idordine` = `or_ordini`.`id` WHERE `or_righe_ordini`.`idpreventivo` = '.prepare($id_record).'

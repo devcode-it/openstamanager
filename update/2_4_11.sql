@@ -907,7 +907,7 @@ UPDATE `zz_modules` SET `icon` = 'fa fa-angle-right' WHERE `zz_modules`.`name` =
 UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM(prezzo_acquisto*qta),2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM mg_articoli WHERE qta>0 AND deleted_at IS NULL' WHERE `zz_widgets`.`name` = 'Valore magazzino';
 UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM(qta),2), ",", "#"), ".", ","), "#", "."), "unit&agrave;") AS dato FROM mg_articoli WHERE qta>0 AND deleted_at IS NULL' WHERE `zz_widgets`.`name` = 'Articoli in magazzino';
 
--- Fix accesso alla stampa dell'inverntario magazzino
+-- Fix accesso alla stampa dell'Inventario magazzino
 UPDATE `zz_prints` SET `is_record` = '0' WHERE `zz_prints`.`name` = 'Inventario magazzino';
 
 UPDATE `in_statiintervento` SET `can_delete` = '0', `in_statiintervento`.`codice` = 'TODO'  WHERE `in_statiintervento`.`codice` = 'DAP';

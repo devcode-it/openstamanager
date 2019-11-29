@@ -168,7 +168,7 @@ class EmailNotification extends PHPMailer implements NotificationInterface
         $this->SmtpClose();
 
         // Pulizia file generati
-        delete($this->getTempDirectory());
+        //delete($this->getTempDirectory());
 
         // Segnalazione degli errori
         if (!$result) {
@@ -224,13 +224,10 @@ class EmailNotification extends PHPMailer implements NotificationInterface
     {
         $print = Prints::get($print);
 
-        // Utilizzo di una cartella particolare per il salvataggio temporaneo degli allegati
-        $path = $this->getTempDirectory();
+        $info = Prints::render($print['id'], $id_record, null, true);
+        $name = $name ?: $info['path'];
 
-        $info = Prints::render($print['id'], $id_record, $path);
-        $name = $name ?: $info['name'];
-
-        $this->addAttachment($info['path'], $name);
+        $this->AddStringAttachment($info['pdf'], $name);
     }
 
     /**

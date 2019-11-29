@@ -16,15 +16,12 @@ class Interaction extends Services
         $list = self::getRemoteList();
 
         // Ricerca fisica
-        $names = array_column($list, 'name');
-        $files = self::getFileList($names);
-
-        $list = array_merge($list, $files);
+        $result = self::getFileList($list);
 
         // Aggiornamento cache hook
-        InvoiceHook::update($list);
+        InvoiceHook::update($result);
 
-        return $list;
+        return $result;
     }
 
     public static function getRemoteList()
@@ -42,9 +39,9 @@ class Interaction extends Services
         return $list ?: [];
     }
 
-    public static function getFileList($names = [])
+    public static function getFileList($list = [])
     {
-        $list = [];
+        $names = array_column($list, 'name');
 
         // Ricerca fisica
         $directory = FatturaElettronica::getImportDirectory();
@@ -52,13 +49,16 @@ class Interaction extends Services
         $files = glob($directory.'/*.xml*');
         foreach ($files as $id => $file) {
             $name = basename($file);
+            $pos = array_search($name, $names);
 
-            if (!in_array($name, $names)) {
+            if ($pos === false) {
                 $list[] = [
                     'id' => $id,
                     'name' => $name,
                     'file' => true,
                 ];
+            } else {
+                $list[$pos]['id'] = $id;
             }
         }
 

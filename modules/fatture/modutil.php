@@ -213,10 +213,10 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
     }
 
     // Lettura info fattura
-    $query = 'SELECT *, co_documenti.note, co_documenti.idpagamento, co_documenti.id AS iddocumento, co_statidocumento.descrizione AS `stato`, co_tipidocumento.descrizione AS `descrizione_tipodoc` FROM ((co_documenti LEFT OUTER JOIN co_statidocumento ON co_documenti.idstatodocumento=co_statidocumento.id) INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
+    $query = 'SELECT *, co_documenti.data_competenza, co_documenti.note, co_documenti.idpagamento, co_documenti.id AS iddocumento, co_statidocumento.descrizione AS `stato`, co_tipidocumento.descrizione AS `descrizione_tipodoc` FROM ((co_documenti LEFT OUTER JOIN co_statidocumento ON co_documenti.idstatodocumento=co_statidocumento.id) INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
     $rs = $dbo->fetchArray($query);
     $n = sizeof($rs);
-    $data = $rs[0]['data'];
+    $data = $rs[0]['data_competenza'];
     $idanagrafica = $rs[0]['idanagrafica'];
     $ragione_sociale = $rs[0]['ragione_sociale'];
     $stato = $rs[0]['stato'];

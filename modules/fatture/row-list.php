@@ -37,7 +37,7 @@ foreach ($righe as $row) {
 
     $extra = '';
 
-    $delete = 'unlink_riga';
+    $delete = 'delete_riga';
 
     // Articoli
     if ($row->isArticolo()) {
@@ -217,11 +217,6 @@ foreach ($righe as $row) {
     if (!$row->isDescrizione()) {
         echo '
             '.moneyFormat($riga['totale_imponibile']);
-        /*
-        <br><small class="text-'.($row->guadagno > 0 ? 'success' : 'danger').'">
-            '.tr('Guadagno').': '.moneyFormat($row->guadagno).'
-        </small>';
-        */
     }
     echo '
         </td>';
@@ -251,15 +246,15 @@ foreach ($righe as $row) {
         }
 
         echo "
-                    <a class='btn btn-xs btn-info' data-toggle='modal' data-title='".tr('Dati Fattura Elettronica')."' data-href='".$structure->fileurl('fe/row-fe.php').'?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga['id']."'>
+                    <a class='btn btn-xs btn-info'  title='".tr('Aggiungi informazioni FE per questa riga...')."' data-toggle='modal' data-title='".tr('Dati Fattura Elettronica')."' data-href='".$structure->fileurl('fe/row-fe.php').'?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga['id']."'>
                         <i class='fa fa-file-code-o '></i>
                     </a>
 
-                    <a class='btn btn-xs btn-warning' title='Modifica questa riga...' onclick=\"launch_modal( 'Modifica riga', '".$structure->fileurl('row-edit.php').'?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga['id']."');\">
+                    <a class='btn btn-xs btn-warning' title='".tr('Modifica questa riga...')."' onclick=\"launch_modal( 'Modifica riga', '".$structure->fileurl('row-edit.php').'?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga['id']."');\">
                         <i class='fa fa-edit'></i>
                     </a>
 
-                    <a class='btn btn-xs btn-danger' title='Rimuovi questa riga...' onclick=\"if( confirm('Rimuovere questa riga dalla fattura?') ){ $('#delete-form-".$riga['id']."').submit(); }\">
+                    <a class='btn btn-xs btn-danger' title='".tr('Rimuovi questa riga...')."' onclick=\"if( confirm('".tr('Rimuovere questa riga dalla fattura?')."') ){ $('#delete-form-".$riga['id']."').submit(); }\">
                         <i class='fa fa-trash'></i>
                     </a>
                 </div>
@@ -286,7 +281,6 @@ $totale_imponibile = abs($fattura->totale_imponibile);
 $iva = abs($fattura->iva);
 $totale = abs($fattura->totale);
 $netto_a_pagare = abs($fattura->netto);
-$guadagno = $fattura->guadagno;
 
 // IMPONIBILE
 echo '
@@ -401,7 +395,7 @@ if (!empty($fattura->totale_ritenuta_contributi)) {
             <b>'.tr('Ritenuta contributi', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.moneyFormat($fattura->totale_ritenuta_contributi).'
+            '.moneyFormat($fattura->totale_ritenuta_contributi, 2).'
         </td>
         <td></td>
     </tr>';
@@ -419,24 +413,6 @@ if ($totale != $netto_a_pagare) {
         </td>
         <td></td>
     </tr>';
-}
-
-// GUADAGNO TOTALE
-if ($dir == 'entrata') {
-    $guadagno_style = $guadagno < 0 ? 'background-color: #FFC6C6; border: 3px solid red' : '';
-
-    /*
-    echo '
-    <tr>
-        <td colspan="5" class="text-right">
-            <b>'.tr('Guadagno', [], ['upper' => true]).':</b>
-        </td>
-        <td align="right" style="'.$guadagno_style.'">
-            '.moneyFormat($guadagno).'
-        </td>
-        <td></td>
-    </tr>';
-    */
 }
 
 echo '

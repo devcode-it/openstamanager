@@ -82,7 +82,7 @@ foreach ($righe as $riga) {
         // Imponibile
         echo '
             <td class="text-right">
-            '.moneyFormat($riga->imponibile_scontato).'
+            '.moneyFormat($riga->totale_imponibile).'
             </td>';
     }
 
@@ -90,7 +90,7 @@ foreach ($righe as $riga) {
     echo '
             <td class="text-center">';
 
-    if ($record['stato'] != 'Pagato') {
+    if (empty($record['is_completato'])) {
         echo '
                 <form action="" method="post" id="delete-form-'.$riga->id.'" role="form">
                     <input type="hidden" name="backto" value="record-edit">
@@ -187,7 +187,7 @@ echo '
         <td></td>
     </tr>';
 
-// Totale contratto
+// Totale
 echo '
     <tr>
         <td colspan="5" class="text-right">
@@ -198,6 +198,25 @@ echo '
         </td>
         <td></td>
     </tr>';
+
+// Margine
+$margine = $preventivo->margine;
+if (!empty($margine)) {
+    $margine_style = $margine < 0 ? 'background-color: #FFC6C6; border: 3px solid red' : '';
+
+    echo '
+    <tr>
+        <td colspan="5" class="text-right">
+            '.tr('Margine (_PRC_%)', [
+                '_PRC_' => numberFormat($preventivo->margine_percentuale),
+        ]).':
+        </td>
+        <td align="right" style="'.$margine_style.'">
+            '.moneyFormat($preventivo->margine).'
+        </td>
+        <td></td>
+    </tr>';
+}
 
 echo '
 </table>';

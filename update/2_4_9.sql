@@ -33,11 +33,11 @@ UPDATE `co_righe_contratti` INNER JOIN `co_righe_documenti` ON `co_righe_documen
 
 -- Standardizzazione stati preventivi e contratti
 ALTER TABLE `co_staticontratti` ADD `is_completato` BOOLEAN NOT NULL DEFAULT FALSE AFTER `pianificabile`;
-ALTER TABLE `co_statipreventivi` ADD `is_fatturabile` BOOLEAN NOT NULL DEFAULT FALSE AFTER `completato`;
-ALTER TABLE `co_statipreventivi` ADD `is_pianificabile` BOOLEAN NOT NULL DEFAULT FALSE AFTER `is_fatturabile`;
-ALTER TABLE `co_statipreventivi` DROP `annullato`;
 
 ALTER TABLE `co_statipreventivi` CHANGE `completato` `is_completato` BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE `co_statipreventivi` CHANGE `fatturabile` `is_fatturabile` BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE `co_statipreventivi` ADD `is_pianificabile` BOOLEAN NOT NULL DEFAULT FALSE AFTER `is_fatturabile`;
+ALTER TABLE `co_statipreventivi` DROP `annullato`;
 
 ALTER TABLE `co_staticontratti` CHANGE `pianificabile` `is_pianificabile` BOOLEAN NOT NULL DEFAULT FALSE;
 ALTER TABLE `co_staticontratti` CHANGE `fatturabile` `is_fatturabile` BOOLEAN NOT NULL DEFAULT FALSE;
@@ -255,7 +255,7 @@ UPDATE `zz_settings` SET `help` = NULL WHERE `help` = '';
 
 ALTER TABLE `co_documenti` CHANGE `bollo` `bollo` decimal(12,4), CHANGE `data_stato_fe` `data_stato_fe` TIMESTAMP NULL, ADD `addebita_bollo` BOOLEAN NOT NULL DEFAULT TRUE, ADD `id_riga_bollo` int(11), ADD FOREIGN KEY (`id_riga_bollo`) REFERENCES `co_righe_documenti`(`id`) ON DELETE SET NULL;
 UPDATE `co_documenti` SET `bollo` = NULL WHERE `idstatodocumento` = (SELECT `id` FROM `co_statidocumento` WHERE `descrizione` = 'Bozza');
-UPDATE `co_documenti` SET `data_registrazione` = NULL WHERE `data_registrazione` = 0000-00-00;
+UPDATE `co_documenti` SET `data_registrazione` = NULL WHERE `data_registrazione` = '0000-00-00';
 UPDATE `co_documenti` SET `data_registrazione` = `data` WHERE `data_registrazione` IS NULL AND idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE dir = 'uscita');
 UPDATE `co_documenti` SET `data_competenza` = `data_registrazione`;
 UPDATE `co_documenti` SET `data_stato_fe` = NULL WHERE `data_stato_fe` = '0000-00-00 00:00:00';

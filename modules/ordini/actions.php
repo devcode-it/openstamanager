@@ -83,6 +83,9 @@ switch (post('op')) {
             'rivalsainps' => 0,
             'ritenutaacconto' => 0,
 
+            'numero_cliente' => post('numero_cliente'),
+            'data_cliente' => post('data_cliente'),
+
             'id_documento_fe' => post('id_documento_fe'),
             'codice_cup' => post('codice_cup'),
             'codice_cig' => post('codice_cig'),
@@ -221,70 +224,35 @@ switch (post('op')) {
 
         break;
 
-    // Scollegamento articolo da ordine
-    case 'unlink_articolo':
-        $idarticolo = post('idarticolo');
-        $idriga = post('idriga');
-
-        if (!empty($idarticolo)) {
-            if (!rimuovi_articolo_daordine($idarticolo, $id_record, $idriga)) {
-                flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
-
-                return;
-            }
-
-            // if( $dbo->query($query) ){
-            // Ricalcolo inps, ritenuta e bollo
-            if ($dir == 'entrata') {
-                ricalcola_costiagg_ordine($id_record);
-            } else {
-                ricalcola_costiagg_ordine($id_record, 0, 0, 0);
-            }
-
-            flash()->info(tr('Articolo rimosso!'));
-        }
-
-        break;
-
     // Scollegamento riga generica da ordine
-    case 'unlink_riga':
-        $idriga = post('idriga');
+    case 'delete_riga':
+        $id_riga = post('idriga');
 
-        if (!empty($idriga)) {
-            $query = 'DELETE FROM or_righe_ordini WHERE idordine='.prepare($id_record).' AND id='.prepare($idriga);
+        if (!empty($id_riga)) {
+            $riga = $ordine->getRighe()->find($id_riga);
 
-            $dbo->query($query);
+            try {
+                $riga->delete();
 
-            // Ricalcolo inps, ritenuta e bollo
-            if ($dir == 'entrata') {
-                ricalcola_costiagg_ordine($id_record);
-            } else {
-                ricalcola_costiagg_ordine($id_record, 0, 0, 0);
+                flash()->info(tr('Riga rimossa!'));
+            } catch (InvalidArgumentException $e) {
+                flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
             }
-
-            flash()->info(tr('Riga rimossa!'));
         }
+
+        ricalcola_costiagg_ordine($id_record);
 
         break;
 
-    // eliminazione ordine
+    // Eliminazione ordine
     case 'delete':
-        // Se ci sono degli articoli collegati (ma non collegati a preventivi o interventi) li rimetto nel magazzino
-        $query = 'SELECT id, idarticolo FROM or_righe_ordini WHERE idordine='.prepare($id_record).' AND NOT idarticolo=0';
-        $rs = $dbo->fetchArray($query);
+        try {
+            $ordine->delete();
 
-        foreach ($rs as $value) {
-            $non_rimovibili = seriali_non_rimuovibili('id_riga_documento', $value['id'], $dir);
-            if (!empty($non_rimovibili)) {
-                flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
-
-                return;
-            }
+            flash()->info(tr('Ordine eliminato!'));
+        } catch (InvalidArgumentException $e) {
+            flash()->error(tr('Sono stati utilizzati alcuni serial number nel documento: impossibile procedere!'));
         }
-
-        $dbo->query('DELETE FROM or_ordini WHERE id='.prepare($id_record));
-        $dbo->query('DELETE FROM or_righe_ordini WHERE idordine='.prepare($id_record));
-        flash()->info(tr('Ordine eliminato!'));
 
         break;
 
@@ -324,6 +292,7 @@ switch (post('op')) {
 
             $ordine = Ordine::build($preventivo->anagrafica, $tipo, post('data'));
             $ordine->idpagamento = $preventivo->idpagamento;
+            $ordine->idsede = $preventivo->idsede;
 
             $ordine->id_documento_fe = $preventivo->id_documento_fe;
             $ordine->codice_cup = $preventivo->codice_cup;

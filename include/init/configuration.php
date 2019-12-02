@@ -500,7 +500,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                             
                             <hr>';
 
-    if (class_exists('NumberFormatter')) {
+    if (!extension_loaded('intl')) {
         $list = [
             [
                 'id' => 'comma',

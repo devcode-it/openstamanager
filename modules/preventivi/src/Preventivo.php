@@ -27,7 +27,7 @@ class Preventivo extends Document
      *
      * @return self
      */
-    public static function build(Anagrafica $anagrafica, TipoSessione $tipo_sessione, $nome)
+    public static function build(Anagrafica $anagrafica, TipoSessione $tipo_sessione, $nome, $data_bozza, $id_sede)
     {
         $model = parent::build();
 
@@ -53,8 +53,16 @@ class Preventivo extends Document
 
         // Salvataggio delle informazioni
         $model->nome = $nome;
-        $model->data_bozza = Carbon::now();
+        if (empty($data_bozza)) {
+            $model->data_bozza = Carbon::now();
+        } else {
+            $model->data_bozza = $data_bozza;
+        }
         $model->data_conclusione = Carbon::now()->addMonth();
+
+        if (!empty($id_sede)) {
+            $model->idsede = $id_sede;
+        }
 
         if (!empty($id_agente)) {
             $model->idagente = $id_agente;
@@ -76,6 +84,24 @@ class Preventivo extends Document
         $model->save();
 
         return $model;
+    }
+
+    // Attributi Eloquent
+
+    public function getOreInterventiAttribute()
+    {
+        if (!isset($this->info['ore_interventi'])) {
+            $sessioni = collect();
+
+            $interventi = $this->interventi;
+            foreach ($interventi as $intervento) {
+                $sessioni = $sessioni->merge($intervento->sessioni);
+            }
+
+            $this->info['ore_interventi'] = $sessioni->sum('ore');
+        }
+
+        return $this->info['ore_interventi'];
     }
 
     /**
@@ -135,7 +161,7 @@ class Preventivo extends Document
 
     public function fixBudget()
     {
-        $this->budget = $this->imponibile_scontato ?: 0;
+        $this->budget = $this->totale_imponibile ?: 0;
     }
 
     public function save(array $options = [])
@@ -163,9 +189,9 @@ class Preventivo extends Document
      *
      * @param Description $trigger
      */
-    public function fixStato(Description $trigger)
+    public function triggerEvasione(Description $trigger)
     {
-        parent::fixStato($trigger);
+        parent::triggerEvasione($trigger);
 
         $righe = $this->getRighe();
 

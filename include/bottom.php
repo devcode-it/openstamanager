@@ -53,40 +53,20 @@ if (Auth::check()) {
     echo '
         <script>
         $(document).ready(function() {
+            // Toast
             alertPush();
                     
             // Orologio
             clock();
             
-            $.ajax({
-                url: globals.rootdir + "/ajax.php",
-                type: "get",
-                data: {
-                    op: "hooks",
-                },
-                success: function(data) {
-                    hooks = JSON.parse(data);
-    
-                    $("#hooks-header").text(globals.translations.hooksExecuting);
-    
-                    if (hooks.length == 0) {
-                        $("#hooks-loading").hide();
-                        $("#hooks-number").text(0);
-                        $("#hooks-header").text(globals.translations.hookNone);
-                    }
-                    
-                    hooks.forEach(function(item, index){
-                        executeHook(item, hooks.length);
-                    });
-                },
-            });
+            // Hooks
+            startHooks();
         });
         </script>';
 }
 
 echo '
-        <script>$(document).ready(init)</script>';
-echo '
+        <script>$(document).ready(init)</script>
 	</body>
 </html>';
 

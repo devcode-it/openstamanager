@@ -7,11 +7,15 @@ include_once __DIR__.'/../../core.php';
 	<input type="hidden" name="backto" value="record-edit">
 
 	<div class="row">
-		<div class="col-md-6">
+		<div class="col-md-4">
 			{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1 ]}
 		</div>
 
-		<div class="col-md-6">
+        <div class="col-md-4">
+            {[ "type": "text", "label": "<?php echo tr('Rincaro/sconto combinato'); ?>", "name": "prc_combinato", "value": "$prc_combinato$", "icon-after": "%", "class": "math-mask text-right", "help": "<?php echo tr('Esempio: 50+10-20 viene convertito in 50% di sconto con 10% aggiuntivo sul totale scontato e 20% di maggiorazione sul totale finale (54% di sconto finale)').'. '.tr('Sono ammessi i segni + e -').'.'; ?>" ]}
+        </div>
+
+		<div class="col-md-4">
 			{[ "type": "number", "label": "<?php echo tr('Rincaro/sconto'); ?>", "name": "prc_guadagno", "required": 1, "value": "0", "icon-after": "%", "help": "<?php echo tr('Il valore positivo indica uno sconto: per applicare una percentuale di rincaro inserire un valore negativo'); ?>" ]}
 		</div>
 	</div>
@@ -23,3 +27,26 @@ include_once __DIR__.'/../../core.php';
 		</div>
 	</div>
 </form>
+
+<script>
+    $("#prc_guadagno").change(function () {
+        if ($(this).val() && $(this).val() != (0).toLocale()) {
+            $("#prc_combinato").attr("disabled", true).addClass("disabled");
+        } else {
+            $("#prc_combinato").attr("disabled", false).removeClass("disabled");
+        }
+    });
+
+    $("#prc_combinato").change(function () {
+        if ($(this).val()) {
+            $("#prc_guadagno").attr("disabled", true).addClass("disabled").attr("required", false);
+        } else {
+            $("#prc_guadagno").attr("disabled", false).removeClass("disabled").attr("required", true);
+        }
+    });
+
+    $(document).ready(function () {
+        $("#prc_combinato").change();
+        $("#prc_guadagno").change();
+    })
+</script>

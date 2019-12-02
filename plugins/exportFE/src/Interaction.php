@@ -23,6 +23,19 @@ class Interaction extends Services
             ]);
             $body = static::responseBody($response);
 
+            // Aggiornamento dello stato
+            if ($body['status'] == 200) {
+                database()->update('co_documenti', [
+                    'codice_stato_fe' => 'WAIT',
+                    'data_stato_fe' => date('Y-m-d H:i:s'),
+                ], ['id' => $id_record]);
+            } elseif ($body['status'] == 405) {
+                database()->update('co_documenti', [
+                    'codice_stato_fe' => 'ERR',
+                    'data_stato_fe' => date('Y-m-d H:i:s'),
+                ], ['id' => $id_record]);
+            }
+
             return [
                 'code' => $body['status'],
                 'message' => $body['message'],

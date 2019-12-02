@@ -204,7 +204,7 @@ class Query
 
         // Ordinamento dei risultati
         if (isset($order['dir']) && isset($order['column'])) {
-            $pos = array_search($order['column'], total['fields']);
+            $pos = array_search($order['column'], $total['fields']);
 
             if ($pos !== false) {
                 $pieces = explode('ORDER', $query);
@@ -328,7 +328,7 @@ class Query
         $query = $element['option'];
 
         // Aggiunta eventuali filtri dai segmenti per eseguire la query filtrata
-        $query = str_replace('1=1', '1=1 '.Modules::getAdditionalsQuery($element['attributes']['name']), $query);
+        $query = str_replace('1=1', '1=1 '.Modules::getAdditionalsQuery($element['attributes']['name'], null, self::$segments), $query);
         $views = self::getViews($element);
 
         $select = [];

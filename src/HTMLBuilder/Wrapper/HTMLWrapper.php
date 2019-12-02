@@ -120,13 +120,11 @@ class HTMLWrapper implements WrapperInterface
                 success: function(data) {
                     data = JSON.parse(data);
                     
-                    if (value == ""){
+                    if (value == "") {
                         parent.removeClass("has-success").removeClass("has-error");
                         icon.attr("class", "fa fa-question-circle");
                         message.tooltipster("content", "'.tr('Validazione').'");
-                    }
-                    else{
-
+                    } else {
                         if(data.result) {
                             icon.attr("class", "fa fa-check");
                             parent.addClass("has-success").removeClass("has-error");
@@ -139,10 +137,12 @@ class HTMLWrapper implements WrapperInterface
                         input.attr("valid", +(data.result));
                     
                         if (data.fields) {
-                            fields = data.fields;
+                            var fields = data.fields;
                 
+                            var form = input.closest("form");
                             Object.keys(fields).forEach(function(element) {
-                                $("[name=" + element + "]").val(fields[element]);
+                                var single_input = form.find("[name=" + element + "]");
+                                if (!single_input.val()) single_input.val(fields[element]).trigger("change");
                             });
                         }
 

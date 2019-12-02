@@ -113,13 +113,23 @@ abstract class Document extends Model
     }
 
     /**
-     * Calcola il guadagno del documento.
+     * Calcola il margine del documento.
      *
      * @return float
      */
-    public function getGuadagnoAttribute()
+    public function getMargineAttribute()
     {
-        return $this->calcola('guadagno');
+        return $this->calcola('margine');
+    }
+
+    /**
+     * Restituisce il margine percentuale del documento.
+     *
+     * @return float
+     */
+    public function getMarginePercentualeAttribute()
+    {
+        return (1 - ($this->spesa / $this->imponibile)) * 100;
     }
 
     public function delete()
@@ -143,17 +153,25 @@ abstract class Document extends Model
     }
 
     /**
-     * Effettua un controllo sui campi del documento.
-     * Viene richiamatp dalle modifiche alle righe del documento.
+     * Metodo richiamato a seguito di modifiche sull'evasione generale delle righe del documento.
+     * Utilizzabile per limpostazione automatica degli stati.
      *
      * @param Description $trigger
      */
-    public function fixStato(Description $trigger)
+    public function triggerEvasione(Description $trigger)
     {
-        $this->load('righe');
-        $this->load('articoli');
-        $this->load('descrizioni');
-        $this->load('sconti');
+        $this->setRelations([]);
+    }
+
+    /**
+     * Metodo richiamato a seguito della modifica o creazione di una riga del documento.
+     * Utilizzabile per limpostazione automatica di campi statici del documento.
+     *
+     * @param Description $trigger
+     */
+    public function triggerComponent(Description $trigger)
+    {
+        $this->setRelations([]);
     }
 
     /**

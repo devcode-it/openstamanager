@@ -5,6 +5,7 @@
  *
  * @since 2.4.2
  */
+use HTMLBuilder\HTMLBuilder;
 
 /**
  * Restituisce l'oggetto dedicato alla gestione della connessione con il database.
@@ -260,4 +261,18 @@ function moneyFormat($number, $decimals = null)
         '_TOTAL_' => numberFormat($number, $decimals),
         '_CURRENCY_' => currency(),
     ]);
+}
+
+/**
+ * Restituisce il numero indicato formattato come una valuta secondo la configurazione del sistema.
+ *
+ * @param array $json
+ *
+ * @return string
+ *
+ * @since 2.4.11
+ */
+function input(array $json)
+{
+    return HTMLBuilder::parse($json);
 }

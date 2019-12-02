@@ -2,24 +2,26 @@
 
 namespace Modules\Aggiornamenti;
 
-use Common\HookManager;
 use GuzzleHttp\Client;
+use Hooks\CachedManager;
 use Modules;
 use Update;
 
-class UpdateHook extends HookManager
+class UpdateHook extends CachedManager
 {
     protected static $client = null;
 
-    public function manage()
+    public function data()
     {
         $result = self::isAvailable();
 
         return $result;
     }
 
-    public function response($update)
+    public function response()
     {
+        $update = self::getCache()['results'];
+
         $module = Modules::get('Aggiornamenti');
         $link = ROOTDIR.'/controller.php?id_module='.$module->id;
 
@@ -31,7 +33,7 @@ class UpdateHook extends HookManager
             'icon' => 'fa fa-download text-info',
             'link' => $link,
             'message' => $message,
-            'notify' => !empty($update),
+            'show' => !empty($update),
         ];
     }
 

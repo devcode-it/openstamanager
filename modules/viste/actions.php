@@ -4,20 +4,6 @@ include_once __DIR__.'/../../core.php';
 
 use Models\Module;
 
-function check_query($query)
-{
-    $query = mb_strtoupper($query);
-
-    $blacklist = ['INSERT', 'UPDATE', 'TRUNCATE', 'DELETE', 'DROP', 'GRANT', 'CREATE', 'REVOKE'];
-    foreach ($blacklist as $value) {
-        if (preg_match("/\b".preg_quote($value)."\b/", $query)) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
 switch (filter('op')) {
     case 'update':
         $options2 = htmlspecialchars_decode(post('options2'), ENT_QUOTES);

@@ -11,7 +11,7 @@ if (!isset($options['edit_articolo']) || !empty($options['edit_articolo'])) {
     echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "required": 1, "value": "'.$result['idarticolo'].'", "ajax-source": "articoli", "icon-after": "add|'.Modules::get('Articoli')['id'].'||'.(($options['dir'] == 'uscita') ? '' : 'disabled').'" ]}
+            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "required": 1, "value": "'.$result['idarticolo'].'", "ajax-source": "articoli", "icon-after": "add|'.Modules::get('Articoli')['id'].'" ]}
         </div>
     </div>';
 } else {
@@ -61,7 +61,6 @@ if (!isset($options['edit_articolo']) || !empty($options['edit_articolo'])) {
         $("#idarticolo").on("change", function(){
             // Autoimpostazione dei valori relativi
             if ($(this).val()) {
-
                 session_set("superselect,idarticolo", $(this).val(), 0);
 				session_set("superselect,idanagrafica", "'.$options['idanagrafica'].'", 0);
 				session_set("superselect,dir", "'.$options['dir'].'", 0);
@@ -71,8 +70,15 @@ if (!isset($options['edit_articolo']) || !empty($options['edit_articolo'])) {
                 var id_conto = $data.idconto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').';
 
                 $("#prezzo").val($data.prezzo_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').');
+                
+                $("#prezzo_acquisto").val($data.prezzo_acquisto);
+                
                 $("#descrizione_riga").val($data.descrizione);
-                $("#idiva").selectSetNew($data.idiva_vendita, $data.iva_vendita);
+
+                if( $data.idiva_vendita ){
+                    $("#idiva").selectSetNew($data.idiva_vendita, $data.iva_vendita);
+                }
+                
                 if(id_conto) {
                     $("#idconto").selectSetNew(id_conto, $data.idconto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').'_title);
                 }

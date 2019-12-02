@@ -1,11 +1,6 @@
 <?php
 
-if (file_exists(__DIR__.'/../../../core.php')) {
-    include_once __DIR__.'/../../../core.php';
-} else {
-    include_once __DIR__.'/../../core.php';
-}
-$module_name = 'Interventi';
+include_once __DIR__.'/../../core.php';
 
 if (get('anteprima') !== null) {
     // Lettura dati intervento

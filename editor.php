@@ -4,6 +4,9 @@ include_once __DIR__.'/core.php';
 
 use Carbon\Carbon;
 
+// Disabilitazione dei campi
+$read_only = $structure->permission == 'r';
+
 if (empty($id_record) && !empty($id_module) && empty($id_plugin)) {
     redirect(ROOTDIR.'/controller.php?id_module='.$id_module);
 } elseif (empty($id_record) && empty($id_module) && empty($id_plugin)) {
@@ -140,15 +143,10 @@ if (empty($record) || !$has_access) {
         }
 
         echo '
-        <div class="alert alert-danger">
+        <div class="alert alert-warning">
             <div class="row" >
                 <div class="col-md-8">
-                    <i class="fa fa-warning"></i> '.$info.'<strong>'.tr('Ripristinare il record?').'</strong>
-                </div>
-                <div class="col-md-4">
-                    <button type="button" class="btn btn-warning pull-right" id="restore">
-                        <i class="fa fa-undo"></i> '.tr('Salva e ripristina').'
-                    </button>
+                    <i class="fa fa-warning"></i> '.$info.'
                 </div>
             </div>
 		</div>
@@ -175,8 +173,8 @@ if (empty($record) || !$has_access) {
 
                             {( "name": "button", "type": "email", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'" )}
 
-                            <a class="btn btn-success" id="save">
-                                <i class="fa fa-check"></i> '.tr('Salva').'
+                            <a class="btn btn-success" id="'.(!empty($record['deleted_at']) ? 'restore' : 'save').'">
+                                <i class="fa fa-'.(!empty($record['deleted_at']) ? 'undo' : 'check').'"></i> '.(!empty($record['deleted_at']) ? tr('Salva e Ripristina') : tr('Salva')).'
                             </a>
                         </div>
                     </div>
@@ -429,7 +427,6 @@ echo '
         <script>';
 
 // Se l'utente ha i permessi in sola lettura per il modulo, converto tutti i campi di testo in span
-$read_only = $structure->permission == 'r';
 if ($read_only || !empty($block_edit)) {
     $not = $read_only ? '' : '.not(".unblockable")';
 
@@ -441,7 +438,7 @@ if ($read_only || !empty($block_edit)) {
     if ($read_only) {
         echo '
 				$("a.btn, button, input[type=button], input[type=submit]", "section.content").hide();
-                $("a.btn-info, a.btn-warning, button.btn-info, button.btn-warning, input[type=button].btn-info", "section.content").show();';
+                $("a.btn-info, button.btn-info, input[type=button].btn-info", "section.content").show();';
     }
 
     echo '
@@ -457,6 +454,11 @@ if ($read_only || !empty($block_edit)) {
                     content_was_modified = true;
                 }
             });
+
+            $(".superselect, .superselectajax").on("change", function (e) {
+                content_was_modified = true;
+            });
+
 
             //tolgo il controllo se sto salvando
             $(".btn-success, button[type=submit]").bind("click", function() {

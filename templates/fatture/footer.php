@@ -250,9 +250,9 @@ if (!empty($record['ritenutaacconto']) || !empty($documento->totale_ritenuta_con
     echo '
         <th class="text-center small" colspan="'.$second_colspan.'">';
     if (empty($record['split_payment'])) {
-        echo   tr('Netto a pagare', [], ['upper' => true]);
+        echo tr('Netto a pagare', [], ['upper' => true]);
     } else {
-        echo   tr('Totale', [], ['upper' => true]);
+        echo tr('Totale', [], ['upper' => true]);
     }
     echo '
 		</th>';
@@ -262,13 +262,13 @@ if (!empty($record['ritenutaacconto']) || !empty($documento->totale_ritenuta_con
 
     <tr>
         <td class="cell-padded text-center" colspan="'.$first_colspan.'">
-            '.moneyFormat(abs($documento->ritenuta_acconto) + $documento->totale_ritenuta_contributi, 2).'
+            '.moneyFormat(abs($documento->ritenuta_acconto) + abs($documento->totale_ritenuta_contributi), 2).'
         </td>';
 
     echo '
 
         <td class="cell-padded text-center" colspan="'.$second_colspan.'">
-            '.moneyFormat($totale - abs($documento->ritenuta_acconto) - $documento->totale_ritenuta_contributi, 2).'
+            '.moneyFormat($netto_a_pagare, 2).'
         </td>
     </tr>';
 }
@@ -281,7 +281,7 @@ if (!empty($record['split_payment'])) {
     echo '
     <tr>
         <th class="text-center small" colspan="'.$first_colspan.'">
-            '.tr('iva a carico del destinatario', [], ['upper' => true]).'
+            '.tr('IVA a carico del destinatario', [], ['upper' => true]).'
         </th>
 
         <th class="text-center small" colspan="'.$second_colspan.'">
@@ -292,11 +292,11 @@ if (!empty($record['split_payment'])) {
     echo '
 	 <tr>
         <td class="cell-padded text-center" colspan="'.$first_colspan.'">
-        '.moneyFormat($totale_iva, 2).'
+            '.moneyFormat($totale_iva, 2).'
         </td>
 
         <td class="cell-padded text-center" colspan="'.$second_colspan.'">
-            '.moneyFormat($totale - $totale_iva - abs($documento->ritenuta_acconto) - $documento->totale_ritenuta_contributi, 2).'
+            '.moneyFormat($netto_a_pagare, 2).'
         </td>
     </tr>';
 }

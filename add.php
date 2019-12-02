@@ -77,7 +77,7 @@ $(document).ready(function(){
             // Selezione automatica nuovo valore per il select
             select = "#'.get('select').'";
             if ($(select).val() !== undefined) {
-                $(select).selectSetNew(response.id, response.text);
+                $(select).selectSetNew(response.id, response.text, response.data);
             }
 
             $("#bs-popup2").modal("hide");

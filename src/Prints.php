@@ -117,11 +117,12 @@ class Prints
      * @param string|int $print
      * @param int        $id_record
      * @param string     $directory
+     * @param bool       $return_string
      */
-    public static function render($print, $id_record, $directory = null)
+    public static function render($print, $id_record, $directory = null, $return_string = false)
     {
         //ob_end_clean(); // Compatibilità con versioni vecchie delle stampe
-
+        $dbo = $database = database();
         $infos = self::get($print);
 
         Permissions::addModule($infos['id_module']);
@@ -136,7 +137,7 @@ class Prints
             ]);
             Util\Query::setSegments(true);
 
-            $has_access = database()->fetchNum($query) !== 0;
+            $has_access = !empty($query) ? $dbo->fetchNum($query) !== 0 : true;
         }
 
         if (empty($infos) || empty($infos['enabled']) || !Permissions::check([], false) || !$has_access) {
@@ -158,9 +159,9 @@ class Prints
         }
 
         if (self::isOldStandard($print)) {
-            return self::oldLoader($infos['id'], $id_record, $directory);
+            return self::oldLoader($infos['id'], $id_record, $directory, $return_string);
         } else {
-            return self::loader($infos['id'], $id_record, $directory);
+            return self::loader($infos['id'], $id_record, $directory, $return_string);
         }
     }
 
@@ -310,10 +311,12 @@ class Prints
      * @param string|int $id_print
      * @param int        $id_record
      * @param string     $directory
-     * @param string     $format
+     * @param bool       $return_string
      */
-    protected static function oldLoader($id_print, $id_record, $directory = null, $format = 'A4')
+    protected static function oldLoader($id_print, $id_record, $directory = null, $return_string = false)
     {
+        $format = 'A4';
+
         $infos = self::get($id_print);
         $options = self::readOptions($infos['options']);
         $docroot = DOCROOT;
@@ -355,6 +358,7 @@ class Prints
         include DOCROOT.'/templates/replace.php';
 
         $mode = !empty($directory) ? 'F' : 'I';
+        $mode = !empty($return_string) ? 'S' : $mode;
 
         $file = self::getFile($infos, $id_record, $directory, $replaces);
         $title = $file['name'];
@@ -365,7 +369,8 @@ class Prints
         $html2pdf->writeHTML($report);
         $html2pdf->pdf->setTitle($title);
 
-        $html2pdf->output($path, $mode);
+        $pdf = $html2pdf->output($path, $mode);
+        $file['pdf'] = $pdf;
 
         return $file;
     }
@@ -387,7 +392,7 @@ class Prints
         $name = replace($name, $replaces);
 
         $filename = sanitizeFilename($name);
-        $file = rtrim($directory, '/').'/'.$filename;
+        $file = (empty($directory)) ? $filename : rtrim($directory, '/').'/'.$filename;
 
         return [
             'name' => $name,
@@ -401,8 +406,9 @@ class Prints
      * @param string|int $id_print
      * @param int        $id_record
      * @param string     $directory
+     * @param bool       $return_string
      */
-    protected static function loader($id_print, $id_record, $directory = null)
+    protected static function loader($id_print, $id_record, $directory = null, $return_string = false)
     {
         $infos = self::get($id_print);
         $options = self::readOptions($infos['options']);
@@ -538,6 +544,7 @@ class Prints
         include DOCROOT.'/templates/replace.php';
 
         $mode = !empty($directory) ? 'F' : 'I';
+        $mode = !empty($return_string) ? 'S' : $mode;
 
         $file = self::getFile($infos, $id_record, $directory, $replaces);
         $title = $file['name'];
@@ -557,7 +564,8 @@ class Prints
         }
 
         // Creazione effettiva del PDF
-        $mpdf->Output($path, $mode);
+        $pdf = $mpdf->Output($path, $mode);
+        $file['pdf'] = $pdf;
 
         return $file;
     }

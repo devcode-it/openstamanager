@@ -5,13 +5,14 @@ include_once __DIR__.'/../../core.php';
 use Plugins\ReceiptFE\Interaction;
 
 echo '
-<p>'.tr('Le ricevute delle Fatture Elettroniche permettono di individuare se una determinata fattura tramessa è stata accettata dal Sistema Di Interscambio').'.</p>
-
+<p>'.tr('Le ricevute delle Fatture Elettroniche permettono di individuare se una determinata fattura tramessa è stata accettata dal Sistema Di Interscambio').'.</p>';
+if (Interaction::isEnabled()) {
+    echo '
 <p>'.tr('Tramite il pulsante _BTN_ è possibile procedere al recupero delle ricevute, aggiornando automaticamente lo stato delle relative fatture e allegandole ad esse', [
     '_BTN_' => '<b>'.tr('Ricerca ricevute').'</b>',
-]).'.</p>
-<br>
-
+]).'.</p>';
+}
+echo '
 <div class="box box-success">
     <div class="box-header with-border">
         <h3 class="box-title">
@@ -184,8 +185,11 @@ function importAll(btn) {
                     html: html,
                     type: "info",
                 })
-    
-                buttonRestore(btn, restore);
+                
+                $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
+                    buttonRestore(button, restore);
+                });
+                
             },
             error: function(data) {
                 alert("'.tr('Errore').': " + data);

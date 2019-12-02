@@ -3,6 +3,7 @@
 namespace Plugins\ImportFE;
 
 use Modules\Articoli\Articolo as ArticoloOriginale;
+use Modules\Articoli\Categoria;
 use Modules\Fatture\Components\Articolo;
 use Modules\Fatture\Components\Riga;
 use Modules\Fatture\Fattura;
@@ -85,7 +86,7 @@ class FatturaOrdinaria extends FatturaElettronica
         return $this->forceArray($result);
     }
 
-    public function saveRighe($articoli, $iva, $conto, $movimentazione = true)
+    public function saveRighe($articoli, $iva, $conto, $movimentazione = true, $crea_articoli = false)
     {
         $info = $this->getRitenutaRivalsa();
 
@@ -102,6 +103,28 @@ class FatturaOrdinaria extends FatturaElettronica
 
             $riga['PrezzoUnitario'] = floatval($riga['PrezzoUnitario']);
             $riga['Quantita'] = floatval($riga['Quantita']);
+
+            $codici = $riga['CodiceArticolo'] ?: [];
+            $codici = !empty($codici) && !isset($codici[0]) ? [$codici] : $codici;
+
+            // Creazione articolo relativo
+            if (!empty($codici) && !empty($crea_articoli) && empty($articolo)) {
+                $codice = $codici[0]['CodiceValore'];
+                $articolo = ArticoloOriginale::where('codice', $codice)->first();
+
+                if (empty($articolo)) {
+                    $nome_categoria = 'Importazione automatica';
+                    $categoria = Categoria::where('nome', $nome_categoria)->first();
+                    if (empty($categoria)) {
+                        $categoria = Categoria::build($nome_categoria);
+                    }
+
+                    $articolo = ArticoloOriginale::build($codice, $riga['Descrizione'], $categoria);
+                    $articolo->prezzo_acquisto = $riga['PrezzoUnitario'];
+                    $articolo->id_fornitore = $fattura->idanagrafica;
+                    $articolo->save();
+                }
+            }
 
             if (!empty($articolo)) {
                 $obj = Articolo::build($fattura, $articolo);

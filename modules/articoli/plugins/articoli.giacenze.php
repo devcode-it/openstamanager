@@ -1,46 +1,250 @@
 <?php
 
-$sedi = $dbo->fetchArray('(SELECT "0" AS id, "Sede legale" AS nomesede) UNION (SELECT id, CONCAT(nomesede, " - ", citta ) AS nomesede FROM an_sedi WHERE idanagrafica='.prepare(setting('Azienda predefinita')).')');
-?>
+include_once __DIR__.'/../../../core.php';
 
+$impegnato = 0;
+$ordinato = 0;
+
+$query = 'SELECT 
+    or_ordini.id AS id,
+    or_ordini.numero,
+    or_ordini.numero_esterno,
+    data,
+    SUM(or_righe_ordini.qta) AS qta_ordinata,
+    or_righe_ordini.um
+FROM or_ordini
+    INNER JOIN or_righe_ordini ON or_ordini.id = or_righe_ordini.idordine
+WHERE idarticolo = '.prepare($articolo->id)."
+     AND (SELECT dir FROM or_tipiordine WHERE or_tipiordine.id=or_ordini.idtipoordine) = '|direzione|'
+     AND (or_righe_ordini.qta - or_righe_ordini.qta_evasa) > 0
+GROUP BY or_ordini.id
+HAVING qta_ordinata > 0";
+
+/*
+ ** Impegnato
+ */
+echo '
 <div class="row">
-  <div class="col-md-6">
-    <div class="panel panel-primary">
-      <div class="panel-heading">
-        <h3 class="panel-title"><?php echo tr('Giacenze'); ?></h3>
-      </div>
-      
-      <div class="panel-body">
-          <table class="table table-striped table-condensed table-bordered">
-            <thead>
-              <tr>
-                <th width="400"><?php echo tr('Sede'); ?></th>
-                <th width="200"><?php echo tr('Q.tà'); ?></th>
-              </tr>
-            </thead>
+	<div class="col-md-3">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+                <h3 class="panel-title">'.tr('Impegnato').'<span class="tip pull-right" title="'.tr('Quantità impegnate in ordini cliente che non siano già completamente evasi o articoli in cesta commessa.').'">
+                <i class="fa fa-question-circle-o"></i></span></h3>
+			</div>
+			<div class="panel-body" style="min-height:98px;">';
 
-            <tbody>
-              <?php
-                    foreach ($sedi as $sede) {
-                        // Lettura movimenti delle mie sedi
-                        $qta_azienda = $dbo->fetchOne("SELECT SUM(mg_movimenti.qta) AS qta, IF(mg_movimenti.idsede_azienda= 0,'Sede legale',(CONCAT_WS(' - ',an_sedi.nomesede,an_sedi.citta))) as sede FROM mg_movimenti LEFT JOIN an_sedi ON an_sedi.id = mg_movimenti.idsede_azienda WHERE mg_movimenti.idarticolo=".prepare($id_record).' AND idsede_azienda='.prepare($sede['id']).' GROUP BY idsede_azienda');
+$ordini = $dbo->fetchArray(str_replace('|dir|', 'entrata', $query));
+$impegnato = sum(array_column($ordini, 'qta_ordinata'));
+if (!empty($ordini)) {
+    echo '
+                <table class="table table-bordered table-condensed table-striped">
+                    <thead>
+                        <tr>
+                            <th>'.tr('Descrizione').'</th>
+                            <th>'.tr('Qta').'</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody>';
 
-                        // Lettura eventuali movimenti ad una propria sede (nel caso di movimenti fra sedi della mia azienda)
-                        if ($sede['id'] != 0) {
-                            $qta_controparte = $dbo->fetchOne("SELECT SUM(mg_movimenti.qta) AS qta, IF(mg_movimenti.idsede_controparte= 0,'Sede legale',(CONCAT_WS(' - ',an_sedi.nomesede,an_sedi.citta))) as sede FROM mg_movimenti LEFT JOIN an_sedi ON an_sedi.id = mg_movimenti.idsede_controparte WHERE mg_movimenti.idarticolo=".prepare($id_record).' AND idsede_controparte='.prepare($sede['id']).' GROUP BY idsede_controparte');
-                        } else {
-                            $qta_controparte = $dbo->fetchOne("SELECT SUM(mg_movimenti.qta) AS qta, IF(mg_movimenti.idsede_controparte= 0,'Sede legale',(CONCAT_WS(' - ',an_sedi.nomesede,an_sedi.citta))) as sede FROM ((( mg_movimenti LEFT JOIN an_sedi ON an_sedi.id = mg_movimenti.idsede_controparte ) LEFT JOIN dt_ddt ON mg_movimenti.idddt = dt_ddt.id ) LEFT JOIN co_documenti ON mg_movimenti.iddocumento = co_documenti.id ) WHERE mg_movimenti.idarticolo=".prepare($id_record).' AND idsede_controparte='.prepare($sede['id']).' AND IFNULL( dt_ddt.idanagrafica, co_documenti.idanagrafica ) = '.prepare(setting('Azienda predefinita')).' GROUP BY idsede_controparte');
-                        }
+    $modulo = Modules::get('Ordini cliente');
+    foreach ($ordini as $documento) {
+        $numero = !empty($documento['numero_esterno']) ? $documento['numero_esterno'] : $documento['numero'];
+        $qta = $documento['qta_ordinata'];
 
-                        echo '
+        echo '
+                    <tr>
+                        <td>
+                            '.Modules::link($modulo['id'], $documento['id'], tr('Ordine num. _NUM_ del _DATE_', [
+                '_NUM_' => $numero,
+                '_DATE_' => dateFormat($documento['data']),
+            ])).'
+                        </td>
+                        <td class="text-right">
+                            '.numberFormat($qta).' '.$documento['um'].'
+                        </td>
+                    </tr>';
+    }
+
+    echo '
+                    <tr>
+                        <td class="text-right">
+                            <b>'.tr('Totale').'</b>
+                        </td>
+                        <td class="text-right">
+                            '.numberFormat($impegnato).'
+                        </td>
+                    </tr>
+
+                </table>';
+} else {
+    echo '
+                <p>'.tr('Nessun ordine cliente con quantità da evadere individuato').'.</p>';
+}
+echo '
+			</div>
+		</div>
+	</div>';
+
+/*
+ ** In ordine
+ */
+echo '
+	<div class="col-md-3">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<h3 class="panel-title">'.tr('In ordine').'<span class="tip pull-right" title="'.tr('Quantità ordinate al fornitore in ordini che non siano già completamente evasi.').'">
+                <i class="fa fa-question-circle-o"></i></span></h3>
+			</div>
+			<div class="panel-body" style="min-height:98px;">';
+
+$ordini = $dbo->fetchArray(str_replace('|dir|', 'uscita', $query));
+$ordinato = sum(array_column($ordini, 'qta_ordinata'));
+if (!empty($ordini)) {
+    echo '
+                <table class="table table-bordered table-condensed table-striped">
+                    <thead>
+                        <tr>
+                            <th>'.tr('Descrizione').'</th>
+                            <th>'.tr('Qta').'</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody>';
+
+    $modulo = Modules::get('Ordini fornitore');
+    foreach ($ordini as $documento) {
+        $numero = !empty($documento['numero_esterno']) ? $documento['numero_esterno'] : $documento['numero'];
+        $qta = $documento['qta_ordinata'];
+
+        echo '
+                    <tr>
+                        <td>
+                            '.Modules::link($modulo['id'], $documento['id'], tr('Ordine num. _NUM_ del _DATE_', [
+                                '_NUM_' => $numero,
+                                '_DATE_' => dateFormat($documento['data']),
+                            ])).'
+                        </td>
+                        <td class="text-right">
+                            '.numberFormat($qta).' '.$documento['um'].'
+                        </td>
+                    </tr>';
+    }
+
+    echo '
+                    <tr>
+                        <td class="text-right">
+                            <b>'.tr('Totale').'</b>
+                        </td>
+                        <td class="text-right">
+                            '.numberFormat($ordinato).'
+                        </td>
+                    </tr>
+
+                </table>';
+} else {
+    echo '
+                <p>'.tr('Nessun ordine fornitore con quantità da evadere individuato').'.</p>';
+}
+
+echo '
+			</div>
+		</div>
+	</div>';
+
+/**
+ ** Da ordinare.
+ */
+$qta_presente = $articolo->qta > 0 ? $articolo->qta : 0;
+$diff = ($qta_presente - $impegnato + $ordinato) * -1;
+$da_ordinare = $diff < 0 ? 0 : $diff;
+
+echo '
+	<div class="col-md-3">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<h3 class="panel-title">'.tr('Da ordinare').'<span class="tip pull-right" title="'.tr('Quantità richieste dal cliente meno le quantità già ordinate.').'">
+                <i class="fa fa-question-circle-o"></i></span></h3>
+			</div>
+			<div class="panel-body">
+              <div class="row">
+                 <div class="col-md-12 text-center" style="font-size:35pt;">
+                      <b>
+                       '.numberFormat($da_ordinare).' '.$articolo->um.'</b>
+			       </div>
+			   </div>
+			</div>
+		</div>
+	</div>';
+
+/**
+ ** Disponibile.
+ */
+$qta_disponibile = $qta_presente - $impegnato;
+$disponibile = $qta_presente < 0 ? 0 : $qta_presente;
+echo '
+	<div class="col-md-3">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<h3 class="panel-title">'.tr('Disponibile').'<span class="tip pull-right" title="'.tr('Quantità disponibili nel magazzino.').'">
+                <i class="fa fa-question-circle-o"></i></span></h3>
+			</div>
+			<div class="panel-body">
+
+              <div class="row">
+                 <div class="col-md-12 text-center" style="font-size:35pt;">
+                       '.numberFormat($disponibile).' '.$articolo->um.'</b>
+			       </div>
+			   </div>
+
+			</div>
+		</div>
+	</div>
+</div>';
+
+$sedi = $dbo->fetchArray('(SELECT "0" AS id, "Sede legale" AS nomesede) UNION (SELECT id, CONCAT(nomesede, " - ", citta ) AS nomesede FROM an_sedi WHERE idanagrafica='.prepare(setting('Azienda predefinita')).')');
+
+echo '
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">'.tr('Giacenze').'</h3>
+            </div>
+
+            <div class="panel-body">
+                <table class="table table-striped table-condensed table-bordered">
+                    <thead>
+                        <tr>
+                            <th width="400">'.tr('Sede').'</th>
+                            <th width="200">'.tr('Q.tà').'</th>
+                        </tr>
+                    </thead>
+        
+                    <tbody>';
+
+foreach ($sedi as $sede) {
+    // Lettura movimenti delle mie sedi
+    $qta_azienda = $dbo->fetchOne("SELECT SUM(mg_movimenti.qta) AS qta, IF(mg_movimenti.idsede_azienda= 0,'Sede legale',(CONCAT_WS(' - ',an_sedi.nomesede,an_sedi.citta))) as sede FROM mg_movimenti LEFT JOIN an_sedi ON an_sedi.id = mg_movimenti.idsede_azienda WHERE mg_movimenti.idarticolo=".prepare($id_record).' AND idsede_azienda='.prepare($sede['id']).' GROUP BY idsede_azienda');
+
+    // Lettura eventuali movimenti ad una propria sede (nel caso di movimenti fra sedi della mia azienda)
+    if ($sede['id'] != 0) {
+        $qta_controparte = $dbo->fetchOne("SELECT SUM(mg_movimenti.qta) AS qta, IF(mg_movimenti.idsede_controparte= 0,'Sede legale',(CONCAT_WS(' - ',an_sedi.nomesede,an_sedi.citta))) as sede FROM mg_movimenti LEFT JOIN an_sedi ON an_sedi.id = mg_movimenti.idsede_controparte WHERE mg_movimenti.idarticolo=".prepare($id_record).' AND idsede_controparte='.prepare($sede['id']).' GROUP BY idsede_controparte');
+    } else {
+        $qta_controparte = $dbo->fetchOne("SELECT SUM(mg_movimenti.qta) AS qta, IF(mg_movimenti.idsede_controparte= 0,'Sede legale',(CONCAT_WS(' - ',an_sedi.nomesede,an_sedi.citta))) as sede FROM ((( mg_movimenti LEFT JOIN an_sedi ON an_sedi.id = mg_movimenti.idsede_controparte ) LEFT JOIN dt_ddt ON mg_movimenti.idddt = dt_ddt.id ) LEFT JOIN co_documenti ON mg_movimenti.iddocumento = co_documenti.id ) WHERE mg_movimenti.idarticolo=".prepare($id_record).' AND idsede_controparte='.prepare($sede['id']).' AND IFNULL( dt_ddt.idanagrafica, co_documenti.idanagrafica ) = '.prepare(setting('Azienda predefinita')).' GROUP BY idsede_controparte');
+    }
+
+    echo '
                         <tr>
                             <td>'.$sede['nomesede'].'</td>
                             <td class="text-right">'.Translator::numberToLocale($qta_azienda['qta'] - $qta_controparte['qta']).'</td>
                         </tr>';
-                    } ?>
-            </tbody>
-          </table>
-      </div>
+}
+
+                    echo '
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
+</div>';

@@ -1,4 +1,3 @@
-
 // Inputmask
 function start_inputmask(element) {
     if (element == undefined) {
@@ -19,6 +18,10 @@ function start_inputmask(element) {
 
     $(element + '.alphanumeric-mask').not('.bound').inputmask('Regex', {
         regex: "[A-Za-z0-9#_|\/\\-.]*",
+    }).addClass('bound');
+
+    $(element + '.math-mask').not('.bound').inputmask('Regex', {
+        regex: "[0-9,.+\-]*",
     }).addClass('bound');
 
     if (globals.is_mobile) {

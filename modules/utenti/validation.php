@@ -14,7 +14,7 @@ switch ($name) {
             ['id', '<>', $id_record],
         ])->count() == 0;
 
-        $message = $disponibile ? tr("L'username è disponbile") : tr("L'username è  già utilizzato");
+        $message = $disponibile ? tr("L'username è disponbile") : tr("L'username è già in uso");
         $result = $disponibile;
 
         // Lunghezza minima del nome utente (username)

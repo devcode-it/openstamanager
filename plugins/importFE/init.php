@@ -19,4 +19,13 @@ if (isset($id_record)) {
     } catch (Exception $e) {
         $error = true;
     }
+
+    // Rimozione .p7m dal nome del file (causa eventuale estrazione da ZIP)
+    $record['name'] = str_replace('.p7m', '', $record['name']);
+
+    if (empty($record)) {
+        flash()->warning(tr('Nessuna fattura da importare!'));
+
+        redirect(ROOTDIR.'/controller.php?id_module='.$id_module);
+    }
 }

@@ -2,6 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Anagrafiche\Anagrafica;
 use Modules\Fatture\Fattura;
 
 $module = Modules::get('Prima nota');
@@ -47,6 +48,7 @@ foreach ($id_scadenze as $id_scadenza) {
 
     $righe_documento = [];
     $righe_documento[] = [
+        'iddocumento' => null,
         'id_scadenza' => $scadenza['id'],
         'id_conto' => null,
         'dare' => ($dir == 'entrata') ? 0 : $scadenza['rata'],
@@ -54,6 +56,7 @@ foreach ($id_scadenze as $id_scadenza) {
     ];
 
     $righe_documento[] = [
+        'iddocumento' => null,
         'id_scadenza' => $scadenza['id'],
         'id_conto' => $id_conto_controparte,
         'dare' => ($dir == 'entrata') ? $scadenza['rata'] : 0,
@@ -76,9 +79,11 @@ foreach ($id_scadenze as $id_scadenza) {
 $numeri = [];
 $counter = 0;
 
+$id_documenti = array_unique($id_documenti);
+$id_anagrafica_movimenti = null;
 foreach ($id_documenti as $id_documento) {
     $fattura = Fattura::find($id_documento);
-    $tipo = $fattura->stato;
+    $tipo = $fattura->tipo;
     $dir = $fattura->direzione;
 
     // Inclusione delle sole fatture in stato Emessa, Parzialmente pagato o Pagato
@@ -87,20 +92,26 @@ foreach ($id_documenti as $id_documento) {
         continue;
     }
 
+    if (empty($id_anagrafica_movimenti)) {
+        $id_anagrafica_movimenti = $fattura->idanagrafica;
+    } elseif ($fattura->idanagrafica != $id_anagrafica_movimenti) {
+        $id_anagrafica_movimenti = null;
+    }
+
     $numeri[] = !empty($fattura['numero_esterno']) ? $fattura['numero_esterno'] : $fattura['numero'];
 
     $nota_credito = $tipo->descrizione == 'Nota di credito';
 
     // Predisposizione prima riga
     $conto_field = 'idconto_'.($dir == 'entrata' ? 'vendite' : 'acquisti');
-    $id_conto_aziendale = $fattura->pagamento[$conto_field] ?: setting('Conto aziendale predefinito');
+    $id_conto_aziendale = $fattura->pagamento[$conto_field] ?: get_var('Conto aziendale predefinito');
 
     // Predisposizione conto crediti clienti
     $conto_field = 'idconto_'.($dir == 'entrata' ? 'cliente' : 'fornitore');
     $id_conto_controparte = $fattura->anagrafica[$conto_field];
 
     // Lettura delle scadenza della fattura
-    $scadenze = $dbo->fetchArray('SELECT id, ABS(da_pagare - pagato) AS rata FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) > ABS(pagato) ORDER BY YEAR(scadenza) ASC, MONTH(scadenza) ASC');
+    $scadenze = $dbo->fetchArray('SELECT id, ABS(da_pagare - pagato) AS rata, iddocumento FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) > ABS(pagato) ORDER BY YEAR(scadenza) ASC, MONTH(scadenza) ASC');
 
     // Selezione prima scadenza
     if ($singola_scadenza && !empty($scadenze)) {
@@ -109,44 +120,73 @@ foreach ($id_documenti as $id_documento) {
 
     $righe_documento = [];
 
-    // Riga aziendale
-    $totale = sum(array_column($scadenze, 'rata'));
-    if ($totale != 0) {
-        $righe_documento[] = [
-            'id_scadenza' => $scadenze[0]['id'],
-            'id_conto' => $id_conto_aziendale,
-            'dare' => ($dir == 'entrata') ? 0 : $totale,
-            'avere' => ($dir == 'entrata') ? $totale : 0,
-        ];
-    }
-
     // Riga controparte
     foreach ($scadenze as $scadenza) {
         $righe_documento[] = [
+            'iddocumento' => $scadenza['iddocumento'],
             'id_scadenza' => $scadenza['id'],
             'id_conto' => $id_conto_controparte,
-            'dare' => ($dir == 'entrata') ? $scadenza['rata'] : 0,
-            'avere' => ($dir == 'entrata') ? 0 : $scadenza['rata'],
+            'dare' => ($dir == 'entrata' && !$nota_credito && !$is_insoluto) ? 0 : $scadenza['rata'],
+            'avere' => ($dir == 'entrata' && !$nota_credito && !$is_insoluto) ? $scadenza['rata'] : 0,
         ];
     }
 
-    // Se è una nota di credito o un insoluto, inverto i valori
-    if ($nota_credito || $is_insoluto) {
-        foreach ($righe_documento as $key => $value) {
-            $tmp = $value['avere'];
-            $righe_documento[$key]['avere'] = $righe_documento[$key]['dare'];
-            $righe_documento[$key]['dare'] = $tmp;
+    // Riga aziendale
+    $totale = sum(array_column($scadenze, 'rata'));
+
+    if ($totale != 0) {
+        if ($nota_credito) {
+            $totale_rata = -$totale;
+        } else {
+            $totale_rata = $totale;
         }
+
+        $righe_documento[] = [
+            'iddocumento' => $scadenze[0]['iddocumento'],
+            'id_scadenza' => $scadenze[0]['id'],
+            'id_conto' => $id_conto_aziendale,
+            'dare' => ($dir == 'entrata') ? $totale_rata : 0,
+            'avere' => ($dir == 'entrata') ? 0 : $totale_rata,
+        ];
     }
 
     $righe = array_merge($righe, $righe_documento);
+}
+/*
+$k = 0;
+foreach ($righe_azienda as $key => $riga_azienda) {
+    if ($righe_azienda[$key]['id_conto'] != $righe_azienda[$key - 1]['id_conto']) {
+        ++$k;
+    }
+
+    $riga_documento[$k]['iddocumento'] = $riga_azienda['iddocumento'];
+    $riga_documento[$k]['id_scadenza'] = $riga_azienda['id_scadenza'];
+    $riga_documento[$k]['id_conto'] = $riga_azienda['id_conto'];
+    $riga_documento[$k]['dare'] += $riga_azienda['dare'];
+    $riga_documento[$k]['avere'] += $riga_azienda['avere'];
+$righe = array_merge($righe, $righe_azienda);
+}*/
+
+// Inverto dare e avere per importi negativi
+foreach ($righe as $key => $value) {
+    if ($righe[$key]['dare'] < 0 || $righe[$key]['avere'] < 0) {
+        $tmp = abs($righe[$key]['dare']);
+        $righe[$key]['dare'] = abs($righe[$key]['avere']);
+        $righe[$key]['avere'] = $tmp;
+    }
 }
 
 // Descrizione
 $numero_scadenze = count($id_scadenze);
 $numero_documenti = count($id_documenti);
 if ($numero_documenti + $numero_scadenze > 1) {
-    $descrizione = 'Pag. fatture num. '.implode(', ', $numeri);
+    if (!empty($id_anagrafica_movimenti)) {
+        $an = Anagrafica::find($id_anagrafica_movimenti);
+
+        $descrizione = 'Pag. fatture '.$an->ragione_sociale.' num. '.implode(', ', $numeri);
+    } else {
+        $descrizione = 'Pag. fatture num. '.implode(', ', $numeri);
+    }
 } elseif ($numero_documenti == 1) {
     $numero_fattura = !empty($fattura['numero_esterno']) ? $fattura['numero_esterno'] : $fattura['numero'];
 
@@ -239,7 +279,7 @@ include $structure->filepath('movimenti.php');
 
     $(document).ready(function(e) {
         $("#bs-popup #add-form").on("submit", function(e) {
-            return calcolaBilancio();
+            return controllaConti();
         });
 
         $('#bs-popup #modello_primanota').change(function() {

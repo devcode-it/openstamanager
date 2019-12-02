@@ -41,7 +41,7 @@ if (empty($fattura_pa)) {
         </button>
     </div>
 </div>
-    
+
 <script>
 function skip() {
     redirect("'.$skip_link.'");
@@ -57,8 +57,8 @@ function cleanup(){
             op: "delete",
             name: "'.$record['name'].'",
         }
-    }); 
-    
+    });
+
     $.ajax({
         url: globals.rootdir + "/actions.php",
         type: "get",
@@ -69,7 +69,7 @@ function cleanup(){
             name: "'.$record['name'].'",
         }
     });
-    
+
     skip();
 }
 </script>';
@@ -104,14 +104,14 @@ echo '
 <form action="" method="post">
     <input type="hidden" name="filename" value="'.$record['name'].'">
     <input type="hidden" name="op" value="generate">
-    
+
     <div class="row">
 		<div class="col-md-3">
 			<h4>
 			    '.$ragione_sociale.'
-			    
+
 			    '.(empty($anagrafica) ? '<span class="badge badge-success">'.tr('Nuova anagrafica').'</span>' : '<small>'.Modules::link('Anagrafiche', $anagrafica->id, '', null, '')).'</small><br>
-			    
+
 				<small>
 					'.(!empty($codice_fiscale) ? (tr('Codice Fiscale').': '.$codice_fiscale.'<br>') : '').'
 					'.(!empty($partita_iva) ? (tr('Partita IVA').': '.$partita_iva.'<br>') : '').'
@@ -119,15 +119,15 @@ echo '
 				</small>
 			</h4>
 		</div>
-		
+
 		<div class="col-md-3">
 			<h4>
 			    '.$dati_generali['Numero'].'
-			
+
 				<a href="'.$structure->fileurl('view.php').'?filename='.$record['name'].'" class="btn btn-info btn-xs" target="_blank" >
 					<i class="fa fa-eye"></i> '.tr('Visualizza').'
 				</a>
-				
+
 				<br><small>
 					'.$tipo_documento.'
 					<br>'.Translator::dateToLocale($dati_generali['Data']).'
@@ -141,7 +141,7 @@ if (!empty($pagamenti)) {
     echo '
 		<div class="col-md-6">
             <h4>'.tr('Pagamento').'</h4>
-    
+
             <p>'.tr('La fattura importata presenta _NUM_ rat_E_ di pagamento con le seguenti scadenze', [
                 '_NUM_' => count($metodi),
                 '_E_' => ((count($metodi) > 1) ? 'e' : 'a'),
@@ -189,9 +189,11 @@ echo '
         </div>';
 
 // Data di registrazione
+$data_registrazione = get('data_registrazione');
+$data_registrazione = new \Carbon\Carbon($data_registrazione);
 echo '
         <div class="col-md-3">
-            {[ "type": "date", "label": "'.tr('Data di registrazione').'", "name": "data_registrazione", "required": 1, "value": "'.(get('data_registrazione') ?: $dati_generali['Data']).'", "max-date": "-now-", "min-date": "'.$dati_generali['Data'].'", "readonly": "'.(intval(get('data_registrazione') != null)).'" ]}
+            {[ "type": "date", "label": "'.tr('Data di registrazione').'", "name": "data_registrazione", "required": 1, "value": "'.($data_registrazione ?: $dati_generali['Data']).'", "max-date": "-now-", "min-date": "'.$dati_generali['Data'].'" ]}
         </div>';
 
 if (!empty($anagrafica)) {
@@ -234,16 +236,20 @@ echo '
     <div class="row" >
 		<div class="col-md-6">
 		    <button type="button" class="btn btn-info btn-xs pull-right" onclick="session_set(\'superselect,codice_modalita_pagamento_fe\', \'\', 0)">
-		        <i class="fa fa-refresh"></i> '.tr('Reset modalità').'
+		        <i class="fa fa-refresh"></i> '.tr('Visualizza tutte le modalità').'
             </button>
-		    
+
             {[ "type": "select", "label": "'.tr('Pagamento').'", "name": "pagamento", "required": 1, "ajax-source": "pagamenti" ]}
         </div>';
 
 // Movimentazioni
 echo '
-        <div class="col-md-6">
+        <div class="col-md-3">
             {[ "type": "checkbox", "label": "'.tr('Movimenta gli articoli').'", "name": "movimentazione", "value": 1 ]}
+        </div>
+
+        <div class="col-md-3">
+            {[ "type": "checkbox", "label": "'.tr('Creazione automatica articoli').'", "name": "crea_articoli", "value": 0, "help": "'.tr("Nel caso di righe con tag CodiceArticolo, il gestionale procede alla creazione dell'articolo se la riga non risulta assegnata manualmente").'" ]}
         </div>
     </div>';
 
@@ -275,41 +281,31 @@ if (!empty($righe)) {
 
         $query .= ' ORDER BY descrizione ASC';
 
-        /*Visualizzo codici articoli*/
-        $codici_articoli = '';
+        // Visualizzazione codici articoli
+        $codici = $riga['CodiceArticolo'] ?: [];
+        $codici = !empty($codici) && !isset($codici[0]) ? [$codici] : $codici;
 
-        //caso di un solo codice articolo
-        if (isset($riga['CodiceArticolo']) and empty($riga['CodiceArticolo'][0]['CodiceValore'])) {
-            $riga['CodiceArticolo'][0]['CodiceValore'] = $riga['CodiceArticolo']['CodiceValore'];
-            $riga['CodiceArticolo'][0]['CodiceTipo'] = $riga['CodiceArticolo']['CodiceTipo'];
+        $codici_articoli = [];
+        foreach ($codici as $codice) {
+            $codici_articoli[] = $codice['CodiceValore'].' ('.$codice['CodiceTipo'].')';
         }
 
-        foreach ($riga['CodiceArticolo'] as $key2 => $item) {
-            foreach ($item as $key2 => $name) {
-                if ($key2 == 'CodiceValore') {
-                    if (!empty($item['CodiceValore'])) {
-                        $codici_articoli .= '<small>'.$item['CodiceValore'].' ('.$item['CodiceTipo'].')</small>';
-
-                        if (($item['CodiceValore'] != end($riga['CodiceArticolo'][(count($riga['CodiceArticolo']) - 1)])) and (is_array($riga['CodiceArticolo'][1]))) {
-                            $codici_articoli .= ', ';
-                        }
-                    }
-                }
-            }
-        }
+        // Individuazione articolo con codice relativo
+        $codice_principale = $codici[0]['CodiceValore'];
+        $id_articolo = $database->fetchOne('SELECT id FROM mg_articoli WHERE codice = '.prepare($codice_principale))['id'];
 
         echo '
         <tr>
             <td>
                 '.$riga['Descrizione'].'<br>
-				
-				'.(($codici_articoli != '') ? $codici_articoli.'<br>' : '').'
-                
+
+				'.(!empty($codici_articoli) ? '<small>'.implode(', ', $codici_articoli).'</small><br>' : '').'
+
                 <small>'.tr('Q.tà: _QTA_ _UM_', [
                     '_QTA_' => Translator::numberToLocale($riga['Quantita']),
                     '_UM_' => $riga['UnitaMisura'],
                 ]).'</small><br>
-                
+
                 <small>'.tr('Aliquota IVA: _VALUE_ _DESC_', [
                     '_VALUE_' => empty($riga['Natura']) ? numberFormat($riga['AliquotaIVA']).'%' : $riga['Natura'],
                     '_DESC_' => $riga['RiferimentoNormativo'] ? ' - '.$riga['RiferimentoNormativo'] : '',
@@ -321,7 +317,7 @@ if (!empty($righe)) {
                 {[ "type": "select", "name": "conto['.$key.']", "ajax-source": "conti-acquisti", "required": 1, "placeholder": "Conto acquisti" ]}
             </td>
             <td>
-                {[ "type": "select", "name": "articoli['.$key.']", "ajax-source": "articoli", "class": "", "icon-after": "add|'.Modules::get('Articoli')['id'].'|codice='.htmlentities($riga['CodiceArticolo'][0]['CodiceValore']).'&descrizione='.htmlentities($riga['Descrizione']).'" ]}
+                {[ "type": "select", "name": "articoli['.$key.']", "ajax-source": "articoli", "icon-after": "add|'.Modules::get('Articoli')['id'].'|codice='.htmlentities($codice_principale).'&descrizione='.htmlentities($riga['Descrizione']).'", "value": "'.$id_articolo.'" ]}
             </td>
         </tr>';
     }
@@ -376,7 +372,7 @@ echo '
             <a href="'.$skip_link.'" class="btn btn-warning">
                 <i class="fa fa-ban "></i> '.tr('Salta fattura').'
             </a>
-            
+
             <button type="submit" class="btn btn-primary">
                 <i class="fa fa-arrow-right"></i> '.tr('Continua').'...
             </button>

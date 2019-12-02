@@ -21,7 +21,9 @@ class MessageHandler extends AbstractProcessingHandler
 
         if (auth()->check()) {
             $message .= '
-            '.tr('Se il problema persiste siete pregati di chiedere assistenza tramite la sezione Bug').'. <a href="'.ROOTDIR.'/bug.php"><i class="fa fa-external-link"></i></a>';
+            '.tr('Se il problema persiste siete pregati di chiedere assistenza tramite il forum apposito (_LINK_FORUM_)', [
+                '_LINK_FORUM_' => '<a href="https://forum.openstamanager.com/">https://forum.openstamanager.com/</a>',
+            ]).'.</a>';
 
             if (auth()->isAdmin()) {
                 $message .= '

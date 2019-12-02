@@ -2,7 +2,7 @@
 
 namespace Notifications;
 
-abstract class Notification
+abstract class Notification implements NotificationInterface
 {
     public $receivers = [];
     public $content = null;

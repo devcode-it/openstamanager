@@ -80,7 +80,7 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
                     }
                     ?>
 				</div>
-                
+
                 <div class="col-md-3">
 					{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "required": 1, "ajax-source": "sedi", "value": "<?php echo $record['idsede']; ?>" ]}
 				</div>
@@ -89,6 +89,23 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 1, "ajax-source": "pagamenti", "value": "$idpagamento$" ]}
 				</div>
 			</div>
+
+            <?php
+            if ($dir == 'entrata') {
+                ?>
+            <div class="row">
+                <div class="col-md-6">
+                    {[ "type": "text", "label": "<?php echo tr('Numero ordine cliente'); ?>", "name": "numero_cliente", "value": "<?php echo $record['numero_cliente']; ?>" ]}
+                </div>
+
+                <div class="col-md-6">
+                    {[ "type": "date", "label": "<?php echo tr('Data ordine cliente'); ?>", "name": "data_cliente", "value": "<?php echo $record['data_cliente']; ?>" ]}
+                </div>
+            </div>
+
+                <?php
+            }
+            ?>
 
 			<div class="row">
 				<div class="col-md-12">
@@ -104,29 +121,46 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 		</div>
 	</div>
 
+    <?php
+        if (!empty($record['id_documento_fe']) || !empty($record['num_item']) || !empty($record['codice_cig']) || !empty($record['codice_cup'])) {
+            $collapsed = 'in';
+        } else {
+            $collapsed = '';
+        }
+    ?>
+
     <!-- Fatturazione Elettronica PA-->
-    <div class="panel panel-primary <?php echo ($record['tipo_anagrafica'] == 'Ente pubblico' || $record['tipo_anagrafica'] == 'Azienda') ? 'show' : 'hide'; ?>" >
-        <div class="panel-heading">
-            <h3 class="panel-title"><?php echo tr('Dati appalto'); ?></h3>
-        </div>
+    <div class="panel-group">
+        <div class="panel panel-primary <?php echo ($record['tipo_anagrafica'] == 'Ente pubblico' || $record['tipo_anagrafica'] == 'Azienda') ? 'show' : 'hide'; ?>">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <?php echo tr('Dati appalto'); ?>
 
-        <div class="panel-body">
-            <div class="row">
-                <div class="col-md-6">
-                    {[ "type": "text", "label": "<?php echo tr('Identificatore Documento'); ?>", "name": "id_documento_fe", "required": 0, "help": "<?php echo tr('<span>Obbligatorio per valorizzare CIG/CUP. &Egrave; possible inserire: </span><ul><li>N. determina</li><li>RDO</li><li>Ordine MEPA</li></ul>'); ?>", "value": "$id_documento_fe$", "maxlength": 20 ]}
-                </div>
+                    <div class="box-tools pull-right">    
+                        <a data-toggle="collapse" href="#dati_appalto"><i class="fa fa-plus" style='color:white;margin-top:2px;'></i></a>           
+                    </div>
+                </h4>
+            </div>
+            <div id="dati_appalto" class="panel-collapse collapse <?php echo $collapsed; ?>">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            {[ "type": "text", "label": "<?php echo tr('Identificatore Documento'); ?>", "name": "id_documento_fe", "required": 0, "help": "<?php echo tr('<span>Obbligatorio per valorizzare CIG/CUP. &Egrave; possible inserire: </span><ul><li>N. determina</li><li>RDO</li><li>Ordine MEPA</li></ul>'); ?>", "value": "$id_documento_fe$", "maxlength": 20 ]}
+                        </div>
 
-                <div class="col-md-6">
-                    {[ "type": "text", "label": "<?php echo tr('Numero Riga'); ?>", "name": "num_item", "required": 0, "value": "$num_item$", "maxlength": 15 ]}
-                </div>
-			</div>
-			<div class="row">
-                <div class="col-md-6">
-                    {[ "type": "text", "label": "<?php echo tr('Codice CIG'); ?>", "name": "codice_cig", "required": 0, "value": "$codice_cig$", "maxlength": 15 ]}
-                </div>
+                        <div class="col-md-6">
+                            {[ "type": "text", "label": "<?php echo tr('Numero Riga'); ?>", "name": "num_item", "required": 0, "value": "$num_item$", "maxlength": 15 ]}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            {[ "type": "text", "label": "<?php echo tr('Codice CIG'); ?>", "name": "codice_cig", "required": 0, "value": "$codice_cig$", "maxlength": 15 ]}
+                        </div>
 
-                <div class="col-md-6">
-                    {[ "type": "text", "label": "<?php echo tr('Codice CUP'); ?>", "name": "codice_cup", "required": 0, "value": "$codice_cup$", "maxlength": 15 ]}
+                        <div class="col-md-6">
+                            {[ "type": "text", "label": "<?php echo tr('Codice CUP'); ?>", "name": "codice_cup", "required": 0, "value": "$codice_cup$", "maxlength": 15 ]}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -250,16 +284,16 @@ $('#idanagrafica').change( function(){
 });
 
 $(document).ready( function(){
-	
+
 	$('#codice_cig, #codice_cup').bind("keyup change", function(e) {
-		
+
 		if ($('#codice_cig').val() == '' && $('#codice_cup').val() == '' ){
 			$('#id_documento_fe').prop('required', false);
 		}else{
 			$('#id_documento_fe').prop('required', true);
 		}
-		
+
 	});
-		
+
 });
 </script>

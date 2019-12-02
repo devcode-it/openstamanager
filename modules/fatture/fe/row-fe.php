@@ -51,9 +51,9 @@ echo '
         <tr class="first-level">
             <th colspan="2">
                 2 FatturaElettronicaBody
-                <button type="submit" class="btn btn-primary pull-right">
+                <!--button type="submit" class="btn btn-primary pull-right">
                     <i class="fa fa-edit"></i> '.tr('Salva').'
-                </button>
+                </button-->
 			</th>
         </tr>
         <tr class="second-level">

@@ -1,10 +1,12 @@
 <?php
 
+use Modules\Emails\Template;
+
 include_once __DIR__.'/core.php';
 
-$template = Mail::getTemplate(get('id'));
-$module = Modules::get($id_module);
-$smtp = Mail::get($template['id_smtp']);
+$template = Template::find(get('id'));
+$module = $template->module;
+$smtp = $template->account;
 
 $body = $template['body'];
 $subject = $template['subject'];
@@ -13,6 +15,7 @@ $body = $module->replacePlaceholders($id_record, $template['body']);
 $subject = $module->replacePlaceholders($id_record, $template['subject']);
 
 $email = $module->replacePlaceholders($id_record, '{email}');
+$id_anagrafica = $module->replacePlaceholders($id_record, '{id_anagrafica}');
 
 // Campi mancanti
 $campi_mancanti = [];
@@ -41,7 +44,10 @@ if (sizeof($campi_mancanti) > 0) {
 echo '
 <form action="" method="post" id="email-form">
 	<input type="hidden" name="op" value="send-email">
-	<input type="hidden" name="backto" value="record-edit">
+	<input type="hidden" name="backto" value="'.(get('back') ? get('back') : 'record-edit').'">
+	
+	<input type="hidden" name="id_module" value="'.$id_module.'">
+	<input type="hidden" name="id_record" value="'.$id_record.'">
 
     <input type="hidden" name="template" value="'.$template['id'].'">
 
@@ -79,7 +85,7 @@ echo '
     </div>';
 
 // Stampe
-$selected_prints = $dbo->fetchArray('SELECT id_print FROM zz_email_print WHERE id_email = '.prepare($template['id']));
+$selected_prints = $dbo->fetchArray('SELECT id_print FROM em_print_template WHERE id_template = '.prepare($template['id']));
 $selected = array_column($selected_prints, 'id_print');
 
 echo '
@@ -89,17 +95,17 @@ echo '
             {[ "type": "select", "multiple": "1", "label": "'.tr('Stampe').'", "name": "prints[]", "value": "'.implode(',', $selected).'", "values": "query=SELECT id, title AS text FROM zz_prints WHERE id_module = '.prepare($id_module).' AND enabled=1" ]}
         </div>';
 
-$attachments = [];
+$uploads = [];
 if ($template['name'] == 'Fattura Elettronica') {
-    $attachments = $dbo->fetchArray('SELECT id FROM zz_files WHERE id_module = '.prepare($module['id']).' AND id_record = '.prepare($id_record).' AND category = \'Fattura Elettronica\'');
-    $attachments = array_column($attachments, 'id');
+    $uploads = $dbo->fetchArray('SELECT id FROM zz_files WHERE id_module = '.prepare($module['id']).' AND id_record = '.prepare($id_record).' AND category = \'Fattura Elettronica\'');
+    $uploads = array_column($uploads, 'id');
 }
 
 // Allegati
 echo '
 
         <div class="col-md-6">
-            {[ "type": "select", "multiple": "1", "label": "'.tr('Allegati').'", "name": "attachments[]", "value": "'.implode(',', $attachments).'", "values": "query=SELECT id, name AS text FROM zz_files WHERE id_module = '.prepare($id_module).' AND id_record = '.prepare($id_record)." UNION SELECT id, CONCAT(name, ' (Azienda)') AS text FROM zz_files WHERE id_module = ".prepare(Modules::get('Anagrafiche')['id'])." AND id_record = (SELECT valore FROM zz_settings WHERE nome = 'Azienda predefinita')\" ]}
+            {[ "type": "select", "multiple": "1", "label": "'.tr('Allegati').'", "name": "uploads[]", "value": "'.implode(',', $uploads).'", "values": "query=SELECT id, name AS text FROM zz_files WHERE id_module = '.prepare($id_module).' AND id_record = '.prepare($id_record)." UNION SELECT id, CONCAT(name, ' (Azienda)') AS text FROM zz_files WHERE id_module = ".prepare(Modules::get('Anagrafiche')['id'])." AND id_record = (SELECT valore FROM zz_settings WHERE nome = 'Azienda predefinita')\" ]}
         </div>
     </div>";
 
@@ -135,9 +141,9 @@ echo '
     $(document).ready(function(){';
 
         // Autocompletamento destinatario
-        if (!empty($variables['id_anagrafica'])) {
+        if (!empty($id_anagrafica)) {
             echo '
-		$(document).load(globals.rootdir + "/ajax_complete.php?module=Anagrafiche&op=get_email&id_anagrafica='.$variables['id_anagrafica'].(($smtp['pec']) ? '&type=pec' : '').'", function(response) {
+		$(document).load(globals.rootdir + "/ajax_complete.php?module=Anagrafiche&op=get_email&id_anagrafica='.$id_anagrafica.(($smtp['pec']) ? '&type=pec' : '').'", function(response) {
             emails = JSON.parse(response);
 
             $(".destinatari").each(function(){

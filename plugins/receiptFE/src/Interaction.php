@@ -13,8 +13,6 @@ class Interaction extends Services
 {
     public static function getReceiptList()
     {
-        $directory = Ricevuta::getImportDirectory();
-
         $list = self::getRemoteList();
 
         // Ricerca fisica

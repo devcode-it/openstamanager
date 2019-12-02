@@ -48,7 +48,7 @@ if (!empty($record['immagine'])) {
 							{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "extra": "", "ajax-source": "clienti" ]}
 						</div>
                         <div class="col-md-6">
-                            {[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "id_categoria", "required": 0, "class": "", "value": "$id_categoria$", "values": "query=SELECT id, nome AS descrizione FROM my_impianti_categorie" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "values": "query=SELECT id, nome AS descrizione FROM my_impianti_categorie" ]}
                         </div>
 					</div>
 				</div>

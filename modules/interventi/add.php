@@ -154,6 +154,10 @@ $orario_fine = $data.' '.$orario_fine;
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="ref" value="<?php echo get('ref'); ?>">
 	<input type="hidden" name="backto" value="record-edit">
+
+    <!-- Fix creazione da Anagrafica -->
+    <input type="hidden" name="id_record" value="">
+
 <?php
 if (!empty($idcontratto_riga)) {
     echo '<input type="hidden" name="idcontratto_riga" value="'.$idcontratto_riga.'">';
@@ -183,7 +187,7 @@ if (!empty($id_intervento)) {
 				</div>
 
 				<div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "value": "<?php echo $idsede; ?>", "placheholder": "<?php echo tr('Seleziona prima un cliente'); ?>...", "ajax-source": "sedi" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Sede destinazione'); ?>", "name": "idsede_destinazione", "value": "<?php echo $idsede; ?>", "placheholder": "<?php echo tr('Seleziona prima un cliente'); ?>...", "ajax-source": "sedi" ]}
 				</div>
 
 				<div class="col-md-4">

@@ -2,20 +2,22 @@
 
 namespace Plugins\ImportFE;
 
-use Common\HookManager;
+use Hooks\CachedManager;
 use Modules;
 
-class InvoiceHook extends HookManager
+class InvoiceHook extends CachedManager
 {
-    public function manage()
+    public function data()
     {
         $list = Interaction::getInvoiceList();
 
         return $list;
     }
 
-    public function response($results)
+    public function response()
     {
+        $results = self::getCache()['results'];
+
         $count = count($results);
         $notify = false;
 
@@ -40,7 +42,7 @@ class InvoiceHook extends HookManager
             'icon' => 'fa fa-file-text-o text-yellow',
             'link' => $link,
             'message' => $message,
-            'notify' => $notify,
+            'show' => $notify,
         ];
     }
 }

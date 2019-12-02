@@ -16,11 +16,13 @@ switch (post('op')) {
         $idanagrafica = post('idanagrafica');
         $nome = post('nome');
         $idtipointervento = post('idtipointervento');
+        $data_bozza = post('data_bozza');
+        $id_sede = post('idsede');
 
         $anagrafica = Anagrafica::find($idanagrafica);
         $tipo = TipoSessione::find($idtipointervento);
 
-        $preventivo = Preventivo::build($anagrafica, $tipo, $nome);
+        $preventivo = Preventivo::build($anagrafica, $tipo, $nome, $data_bozza, $id_sede);
         $id_record = $preventivo->id;
 
         flash()->info(tr('Aggiunto preventivo numero _NUM_!', [
@@ -84,7 +86,6 @@ switch (post('op')) {
         }
 
         flash()->info(tr('Preventivo duplicato correttamente!'));
-
     break;
 
     case 'addintervento':
@@ -125,9 +126,13 @@ switch (post('op')) {
 
     // Eliminazione preventivo
     case 'delete':
-        $preventivo->delete();
+        try {
+            $preventivo->delete();
 
-        flash()->info(tr('Preventivo eliminato!'));
+            flash()->info(tr('Preventivo eliminato!'));
+        } catch (InvalidArgumentException $e) {
+            flash()->error(tr('Sono stati utilizzati alcuni serial number nel documento: impossibile procedere!'));
+        }
 
         break;
 
@@ -146,7 +151,7 @@ switch (post('op')) {
 
         $articolo->id_iva = post('idiva');
 
-        //$articolo->prezzo_unitario_acquisto = post('prezzo_acquisto') ?: 0;
+        $articolo->prezzo_unitario_acquisto = post('prezzo_acquisto') ?: 0;
         $articolo->prezzo_unitario_vendita = post('prezzo');
         $articolo->sconto_unitario = post('sconto');
         $articolo->tipo_sconto = post('tipo_sconto');
@@ -204,7 +209,7 @@ switch (post('op')) {
 
         $riga->id_iva = post('idiva');
 
-        //$riga->prezzo_unitario_acquisto = post('prezzo_acquisto') ?: 0;
+        $riga->prezzo_unitario_acquisto = post('prezzo_acquisto') ?: 0;
         $riga->prezzo_unitario_vendita = post('prezzo');
         $riga->sconto_unitario = post('sconto');
         $riga->tipo_sconto = post('tipo_sconto');

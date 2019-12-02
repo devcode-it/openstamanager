@@ -364,6 +364,153 @@ class FatturaElettronica
         return $this->xml;
     }
 
+    public static function controllaFattura(Fattura $fattura)
+    {
+        $database = database();
+        $errors = [];
+
+        // Controlli sulla fattura stessa
+        if ($fattura->stato->descrizione == 'Bozza') {
+            $missing = [
+                'state' => tr('Stato ("Emessa")'),
+            ];
+        }
+
+        if (!empty($missing)) {
+            $link = Modules::link('Fatture di vendita', $fattura->id);
+            $errors[] = [
+                'link' => $link,
+                'name' => tr('Fattura'),
+                'errors' => $missing,
+            ];
+        }
+
+        // Natura obbligatoria per iva con esenzione
+        $iva = $database->fetchArray('SELECT * FROM `co_iva` WHERE `id` IN (SELECT idiva FROM co_righe_documenti WHERE iddocumento = '.prepare($fattura->id).') AND esente = 1');
+        $fields = [
+            'codice_natura_fe' => 'Natura IVA',
+        ];
+
+        foreach ($iva as $data) {
+            $missing = [];
+            if (!empty($data)) {
+                foreach ($fields as $key => $name) {
+                    if (empty($data[$key])) {
+                        $missing[] = $name;
+                    }
+                }
+            }
+
+            if (!empty($missing)) {
+                $link = Modules::link('IVA', $data['id']);
+                $errors[] = [
+                    'link' => $link,
+                    'name' => tr('IVA _DESC_', [
+                        '_DESC_' => $data['descrizione'],
+                    ]),
+                    'errors' => $missing,
+                ];
+            }
+        }
+
+        // Campi obbligatori per il pagamento
+        $data = $fattura->pagamento;
+        $fields = [
+            'codice_modalita_pagamento_fe' => 'Codice modalità pagamento FE',
+        ];
+
+        $missing = [];
+        if (!empty($data)) {
+            foreach ($fields as $key => $name) {
+                if (empty($data[$key])) {
+                    $missing[] = $name;
+                }
+            }
+        }
+
+        if (!empty($missing)) {
+            $link = Modules::link('Pagamenti', $data['id']);
+            $errors[] = [
+                'link' => $link,
+                'name' => tr('Pagamento'),
+                'errors' => $missing,
+            ];
+        }
+
+        // Campi obbligatori per l'anagrafica Azienda
+        $data = FatturaElettronica::getAzienda();
+        $fields = [
+            'piva' => 'Partita IVA',
+            // 'codice_fiscale' => 'Codice Fiscale',
+            'citta' => 'Città',
+            'indirizzo' => 'Indirizzo',
+            'cap' => 'C.A.P.',
+            'nazione' => 'Nazione',
+        ];
+
+        $missing = [];
+        if (!empty($data)) {
+            foreach ($fields as $key => $name) {
+                if (empty($data[$key]) && !empty($name)) {
+                    $missing[] = $name;
+                }
+            }
+        }
+
+        if (!empty($missing)) {
+            $link = Modules::link('Anagrafiche', $data['id']);
+            $errors[] = [
+                'link' => $link,
+                'name' => tr('Anagrafica Azienda'),
+                'errors' => $missing,
+            ];
+        }
+
+        // Campi obbligatori per l'anagrafica Cliente
+        $data = $fattura->anagrafica;
+        $fields = [
+            // 'piva' => 'Partita IVA',
+            // 'codice_fiscale' => 'Codice Fiscale',
+            'citta' => 'Città',
+            'indirizzo' => 'Indirizzo',
+            'cap' => 'C.A.P.',
+            'nazione' => 'Nazione',
+        ];
+
+        // se privato/pa o azienda
+        if ($data['tipo'] == 'Privato' or $data['tipo'] == 'Ente pubblico') {
+            // se privato/pa chiedo obbligatoriamente codice fiscale
+            $fields['codice_fiscale'] = 'Codice Fiscale';
+            // se pa chiedo codice unico ufficio
+            $fields['codice_destinatario'] = ($data['tipo'] == 'Ente pubblico' && empty($data['codice_destinatario'])) ? 'Codice unico ufficio' : '';
+        } else {
+            // se azienda chiedo partita iva
+            $fields['piva'] = 'Partita IVA';
+            // se italiana e non ho impostato ne il codice destinatario ne indirizzo PEC chiedo la compilazione di almeno uno dei due
+            $fields['codice_destinatario'] = (empty($data['codice_destinatario']) and empty($data['pec']) && intval($data['nazione'] == 'IT')) ? 'Codice destinatario o indirizzo PEC' : '';
+        }
+
+        $missing = [];
+        if (!empty($data)) {
+            foreach ($fields as $key => $name) {
+                if (empty($data[$key]) && !empty($name)) {
+                    $missing[] = $name;
+                }
+            }
+        }
+
+        if (!empty($missing)) {
+            $link = Modules::link('Anagrafiche', $data['id']);
+            $errors[] = [
+                'link' => $link,
+                'name' => tr('Anagrafica Cliente'),
+                'errors' => $missing,
+            ];
+        }
+
+        return $errors;
+    }
+
     /**
      * Restituisce l'array responsabile per la generazione del tag DatiTrasmission.
      *
@@ -440,13 +587,17 @@ class FatturaElettronica
             if (!empty($anagrafica->nazione->iso2)) {
                 $result['IdFiscaleIVA']['IdPaese'] = $anagrafica->nazione->iso2;
             }
-
+            //Rimuovo eventuali idicazioni relative alla nazione
             $result['IdFiscaleIVA']['IdCodice'] = str_replace($anagrafica->nazione->iso2, '', $anagrafica['piva']);
         }
 
         // Codice fiscale
+        //TODO: Nella fattura elettronica, emessa nei confronti di soggetti titolari di partita IVA (nodo CessionarioCommittente), non va indicato il codice fiscale se è già presente la partita iva.
         if (!empty($anagrafica['codice_fiscale'])) {
             $result['CodiceFiscale'] = preg_replace('/\s+/', '', $anagrafica['codice_fiscale']);
+
+            //Rimuovo eventuali idicazioni relative alla nazione
+            $result['CodiceFiscale'] = str_replace($anagrafica->nazione->iso2, '', $result['CodiceFiscale']);
         }
 
         if (!empty($anagrafica['nome']) or !empty($anagrafica['cognome'])) {
@@ -773,6 +924,10 @@ class FatturaElettronica
 
         $result = [];
         foreach ($lista as $element) {
+            if (empty($element['id_documento'])) {
+                continue;
+            }
+
             $dati = [];
 
             foreach ($element['riferimento_linea'] as $linea) {
@@ -1077,6 +1232,28 @@ class FatturaElettronica
                 ];
             }
 
+            $rs_ritenuta = $database->fetchOne('SELECT percentuale_imponibile FROM co_ritenutaacconto WHERE id='.prepare($riga['idritenutaacconto']));
+            if (!empty($rs_ritenuta['percentuale_imponibile'])) {
+                $dettaglio[]['AltriDatiGestionali'] = [
+                    'TipoDato' => 'IMPON-RACC',
+                    'RiferimentoTesto' => 'Imponibile % ritenuta d\'acconto',
+                    'RiferimentoNumero' => $rs_ritenuta['percentuale_imponibile'],
+                ];
+            }
+
+            // Dichiarazione d'intento
+            $dichiarazione = $documento->dichiarazione;
+            $id_iva_dichiarazione = setting("Iva per lettere d'intento");
+            if (!empty($dichiarazione) && $riga->aliquota->id == $id_iva_dichiarazione) {
+                $dettaglio[]['AltriDatiGestionali'] = [
+                    'TipoDato' => 'AswDichInt',
+                    'RiferimentoTesto' => $dichiarazione->numero_protocollo,
+                    'RiferimentoTesto' => $dichiarazione->numero_progressivo,
+                    'RiferimentoData' => $dichiarazione->data_emissione,
+                ];
+            }
+
+            // Dati aggiuntivi dinamici
             if (!empty($dati_aggiuntivi['altri_dati'])) {
                 foreach ($dati_aggiuntivi['altri_dati'] as $dato) {
                     $altri_dati = [];
@@ -1312,10 +1489,23 @@ class FatturaElettronica
             'CessionarioCommittente' => static::getCessionarioCommittente($fattura),
         ];
 
-        //Terzo Intermediario o Soggetto Emittente
+        //1.5 Terzo Intermediario
         if (!empty(setting('Terzo intermediario'))) {
             $result['TerzoIntermediarioOSoggettoEmittente'] = static::getTerzoIntermediarioOSoggettoEmittente($fattura);
+
+            //1.6 Soggetto terzo
             $result['SoggettoEmittente'] = 'TZ';
+        }
+
+        //1.5 o Soggetto Emittente (Autofattura) - da parte del fornitore (mia Azienda) per conto del cliente esonerato
+        //In caso di acquisto di prodotti da un agricolo in regime agevolato (art. 34, comma 6, del d.P.R. n. 633/72) da parte di un operatore IVA obbligato alla FE, quest'ultimo emetterà una FE usando la tipologia "TD01" per conto dell'agricoltore venditore
+        if ($fattura->getDocumento()['is_fattura_conto_terzi']) {
+            $result['TerzoIntermediarioOSoggettoEmittente'] = [
+                'DatiAnagrafici' => static::getDatiAnagrafici(static::getAzienda()),
+            ];
+
+            //1.6 Cessionario/Committente
+            $result['SoggettoEmittente'] = 'CC';
         }
 
         return $result;

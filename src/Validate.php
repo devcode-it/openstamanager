@@ -55,15 +55,17 @@ class Validate
     public static function isValidVatNumber($vat_number)
     {
         if (empty($vat_number)) {
-            return true;
+            $result['valid-format'] = true;
         }
 
         // Controllo sulla sintassi
         if (starts_with($vat_number, 'IT') && !static::vatCheckIT($vat_number)) {
-            return false;
+            $result['valid-format'] = false;
+
+            return $result;
         }
 
-        /**
+        /*
         // Controllo con API europea ufficiale
         if (extension_loaded('soap')) {
             try {
@@ -77,79 +79,72 @@ class Validate
         } */
 
         // Controllo attraverso apilayer
-        $access_key = setting('apilayer API key for VAT number');
-        if (!empty($access_key)) {
-            if (!extension_loaded('curl')) {
-                flash()->warning(tr('Estensione cURL non installata'));
+        if (Services::isEnabled()) {
+            $response = Services::request('post', 'check_iva', [
+                'partita_iva' => $vat_number,
+            ]);
+            $data = Services::responseBody($response);
 
-                return true;
+            if (!empty($data['result'])) {
+                $result['valid-format'] = $data['result']['format_valid'];
+                $result['valid'] = $data['result']['valid'];
+
+                $fields = [];
+                // Ragione sociale
+                $fields['ragione_sociale'] = $data['result']['company_name'];
+
+                // Indirizzo
+                $address = $data['result']['company_address'];
+                $info = explode(PHP_EOL, $address);
+                $fields['indirizzo'] = $info[0];
+
+                $info = explode(' ', $info[1]);
+
+                $fields['cap'] = $info[0];
+                $fields['provincia'] = end($info);
+
+                $citta = array_slice($info, 1, -1);
+                $fields['citta'] = implode(' ', $citta);
+
+                $result['fields'] = $fields;
             }
-
-            $ch = curl_init();
-
-            $qs = '&vat_number='.urlencode(strtoupper($vat_number));
-
-            $url = "http://apilayer.net/api/validate?access_key=$access_key".$qs;
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_HEADER, 0);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-
-            $data = json_decode(curl_exec($ch));
-            curl_close($ch);
-
-            /*se la riposta è null imposto la relativa proprietà dell'oggetto a 0*/
-            if ($data->valid == null) {
-                $data->valid = 0;
-            }
-
-            return $data->valid;
         }
 
-        return true;
+        return $result;
     }
 
     /**
      * Controlla se l'email inserita è valida.
      *
      * @param string $email
-     * @param bool   $smtp
      *
-     * @return bool|object
+     * @return array
      */
-    public static function isValidEmail($email, $smtp = 0)
+    public static function isValidEmail($email)
     {
+        $result = [];
+        $result['valid-format'] = true;
+
         if (!v::email()->validate($email)) {
-            return false;
+            $result['valid-format'] = false;
+
+            return $result;
         }
 
         // Controllo attraverso apilayer
         if (Services::isEnabled()) {
-            $response = Services::request('get', 'check_email', [
+            $response = Services::request('post', 'check_email', [
                 'email' => $email,
-                'smtp' => $smtp,
-                'format' => 1,
             ]);
             $data = Services::responseBody($response);
 
-            /*se la riposta è null verificando il formato, il record mx o il server smtp imposto la relativa proprietà dell'oggetto a 0*/
-            if ($data['format_valid'] == null) {
-                $data['format_valid'] = 0;
+            if (!empty($data['result'])) {
+                $result['valid-format'] = $data['result']['format_valid'];
+                $result['smtp-check'] = $data['result']['smtp_check'];
             }
-
-            if ($data['mx_found'] == null && $smtp) {
-                $data['mx_found'] = 0;
-            }
-
-            if ($data['smtp_check'] == null && $smtp) {
-                $data['smtp_check'] = 0;
-            }
-
-            $data['smtp'] = $smtp;
-
-            return empty($data['format_valid']) ? false : $data;
         }
 
-        return true;
+        return $result;
     }
 
     public static function isValidTaxCode($codice_fiscale)

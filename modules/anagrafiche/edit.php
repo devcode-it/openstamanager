@@ -53,7 +53,7 @@ if (!$is_cliente) {
 				</div>
 
 				<div class="row">
-				
+
 					<div class="col-md-4">
 							{[ "type": "text", "label": "<?php echo tr('Cognome'); ?>", "name": "cognome", "required": 0, "value": "$cognome$", "extra": "" ]}
 					</div>
@@ -87,8 +87,6 @@ if (!$is_cliente) {
 				<?php
 } ?>
 
-
-
 				<div class="row">
 					<div class="col-md-2">
 						{[ "type": "text", "label": "<?php echo tr('Codice anagrafica'); ?>", "name": "codice", "required": 1, "class": "text-center alphanumeric-mask", "value": "$codice$", "maxlength": 20, "validation": "codice" ]}
@@ -109,7 +107,7 @@ if (!$is_cliente) {
 					</div>
 
                     <div class="col-md-4">
-						{[ "type": "text", "label": "<?php echo tr('PEC'); ?>", "name": "pec", "class": "email-mask", "placeholder":"pec@dominio.ext", "value": "$pec$", "icon-before": "<i class='fa fa-envelope-o'></i>" ]}
+						{[ "type": "text", "label": "<?php echo tr('PEC'); ?>", "name": "pec", "class": "email-mask", "placeholder":"pec@dominio.ext", "value": "$pec$", "icon-before": "<i class='fa fa-envelope-o'></i>", "validation": "email" ]}
 					</div>
 
 					<div class="col-md-4">
@@ -175,7 +173,7 @@ if (!$is_cliente) {
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "text", "label": "<?php echo tr('Email'); ?>", "name": "email", "class": "email-mask", "placeholder":"casella@dominio.ext", "value": "$email$", "icon-before": "<i class='fa fa-envelope'></i>" ]}
+                    {[ "type": "text", "label": "<?php echo tr('Email'); ?>", "name": "email", "class": "email-mask", "placeholder": "casella@dominio.ext", "value": "$email$", "icon-before": "<i class='fa fa-envelope'></i>", "validation": "email" ]}
                 </div>
             </div>
 
@@ -238,28 +236,32 @@ echo '
         <div class="panel-body">
             <div class="nav-tabs-custom">
                 <ul class="nav nav-tabs nav-justified">
-                    <li '.($is_cliente || $is_fornitore ? 'class="active"' : '').'><a href="#cliente_fornitore" data-toggle="tab" class="'.($is_cliente || $is_fornitore ? '' : 'disabled').'" '.($is_cliente || $is_fornitore ? '' : 'disabled').'>'.tr('Cliente e fornitore').'</a></li>
-                    <li><a href="#cliente" data-toggle="tab" class="'.($is_cliente ? '' : 'disabled').'" '.($is_cliente ? '' : 'disabled').'>'.tr('Cliente').'</a></li>
-                    <li><a href="#fornitore" data-toggle="tab" class="'.($is_fornitore ? '' : 'disabled').'" '.($is_fornitore ? '' : 'disabled').'>'.tr('Fornitore').'</a></li>
+                    <li '.($is_cliente ? 'class="active"' : '').'><a href="#cliente" data-toggle="tab" class="'.($is_cliente ? '' : 'disabled').'" '.($is_cliente ? '' : 'disabled').'>'.tr('Cliente').'</a></li>
+                    
+                    <li '.(!$is_cliente && $is_fornitore ? 'class="active"' : '').'><a href="#fornitore" data-toggle="tab" class="'.($is_fornitore ? '' : 'disabled').'" '.($is_fornitore ? '' : 'disabled').'>'.tr('Fornitore').'</a></li>
+                    
+                    <li><a href="#cliente_fornitore" data-toggle="tab" class="'.($is_cliente || $is_fornitore ? '' : 'disabled').'" '.($is_cliente || $is_fornitore ? '' : 'disabled').'>'.tr('Cliente e fornitore').'</a></li>
+
                     <li '.(!$is_cliente && !$is_fornitore && $is_tecnico ? 'class="active"' : '').'><a href="#tecnico" data-toggle="tab" class="'.($is_tecnico ? '' : 'disabled').'" '.($is_tecnico ? '' : 'disabled').'>'.tr('Tecnico').'</a></li>
                 </ul>
                 
                 <div class="tab-content '.(!$is_cliente && !$is_fornitore && !$is_tecnico ? 'hide' : '').'">
-                    <div class="tab-pane '.($is_cliente || $is_fornitore ? 'active' : '').''.(!$is_cliente && !$is_fornitore ? ' hide' : '').'" id="cliente_fornitore">
+                    <div class="tab-pane '.(!$is_cliente && !$is_fornitore ? ' hide' : '').'" id="cliente_fornitore">
                         <div class="row">
-                             <div class="col-md-3">
+                             <div class="col-md-6">
                                  {[ "type": "text", "label": "'.tr('Appoggio bancario').'", "name": "appoggiobancario", "value": "$appoggiobancario$" ]}
                              </div>
         
-                             <div class="col-md-3">
+                             <div class="col-md-6">
                                  {[ "type": "text", "label": "'.tr('Filiale banca').'", "name": "filiale", "value": "$filiale$" ]}
                              </div>
-        
-                             <div class="col-md-3">
+                        </div>
+                        <div class="row">
+                             <div class="col-md-6">
                                  {[ "type": "text", "label": "'.tr('Codice IBAN').'", "name": "codiceiban", "value": "$codiceiban$" ]}
                              </div>
         
-                             <div class="col-md-3">
+                             <div class="col-md-6">
                                  {[ "type": "text", "label": "'.tr('Codice BIC').'", "name": "bic", "value": "$bic$" ]}
                              </div>
                          </div>
@@ -276,7 +278,7 @@ echo '
                     </div>';
 
         echo '
-                    <div class="tab-pane'.(!$is_cliente ? ' hide' : '').'" id="cliente">
+                    <div class="tab-pane '.(!$is_cliente ? 'hide' : 'active').'" id="cliente">
                         <div class="row">
                             <div class="col-md-6">
                                 {[ "type": "select", "label": "'.tr('Agenti secondari').'", "multiple": "1", "name": "idagenti[]", "values": "query=SELECT an_anagrafiche.idanagrafica AS id, IF(deleted_at IS NOT NULL, CONCAT(ragione_sociale, \' (Eliminato)\'), ragione_sociale ) AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE (descrizione=\'Agente\' AND deleted_at IS NULL AND an_anagrafiche.idanagrafica NOT IN (SELECT idagente FROM an_anagrafiche WHERE  idanagrafica = '.prepare($record['idanagrafica']).')) OR (an_anagrafiche.idanagrafica IN (SELECT idagente FROM an_anagrafiche_agenti WHERE idanagrafica = '.prepare($record['idanagrafica']).') ) ORDER BY ragione_sociale", "value": "$idagenti$" ]}
@@ -351,7 +353,7 @@ echo '
                     </div>';
 
         echo '
-                    <div class="tab-pane'.(!$is_fornitore ? ' hide' : '').'" id="fornitore">
+                    <div class="tab-pane '.(!$is_fornitore ? 'hide' : (!$is_cliente ? 'active' : '')).'" id="fornitore">
                         <div class="row">
                             <div class="col-md-6">
                                 {[ "type": "select", "label": "'.tr('Pagamento predefinito').'", "name": "idpagamento_acquisti", "values": "query=SELECT id, descrizione FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione ASC", "value": "$idpagamento_acquisti$" ]}
@@ -498,6 +500,12 @@ echo '
 						{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$" ]}
 					</div>
 				</div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        {[ "type": "checkbox", "label": "<?php echo tr('Opt-out newsletter'); ?>", "name": "disable_newsletter", "value": "<?php echo empty($record['enable_newsletter']); ?>" ]}
+                    </div>
+                </div>
 			</div>
 		</div>
 	</fieldset>

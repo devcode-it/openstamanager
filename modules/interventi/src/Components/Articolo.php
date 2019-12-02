@@ -38,8 +38,6 @@ class Articolo extends Article
     {
         $articolo = $this->articolo;
 
-        $dbo = database();
-
         $intervento = $this->intervento;
 
         $numero = $intervento->codice;
@@ -49,7 +47,7 @@ class Articolo extends Article
 
         $data = $data ?: $intervento->data_richiesta;
 
-        $descrizione = ($qta < 0) ? tr('Ripristino articolo da intervento _NUM_', [
+        $descrizione = ($qta < 0) ? tr('Ripristino articolo da Attività numero _NUM_', [
             '_NUM_' => $numero,
         ]) : tr('Scarico magazzino per intervento _NUM_', [
             '_NUM_' => $numero,

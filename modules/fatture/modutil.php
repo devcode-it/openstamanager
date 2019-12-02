@@ -113,12 +113,16 @@ function aggiungi_scadenza($iddocumento, $pagamento = '', $pagato = false)
 
 /**
  * Elimina i movimenti collegati ad una fattura.
+ * Se il flag $prima_nota è impostato a 1 elimina solo i movimenti di Prima Nota, altrimenti rimuove quelli automatici.
+ *
+ * @param $iddocumento
+ * @param int $prima_nota
  */
-function elimina_movimenti($iddocumento, $anche_prima_nota = 0)
+function elimina_movimenti($id_documento, $prima_nota = 0)
 {
     $dbo = database();
 
-    $query2 = 'DELETE FROM co_movimenti WHERE iddocumento='.prepare($iddocumento).' AND primanota='.prepare($anche_prima_nota);
+    $query2 = 'DELETE FROM co_movimenti WHERE iddocumento='.prepare($id_documento).' AND primanota='.prepare($prima_nota);
     $dbo->query($query2);
 }
 
@@ -132,11 +136,14 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
 {
     $dbo = database();
 
+    $fattura = Modules\Fatture\Fattura::find($iddocumento);
+
     // Totale marca da bollo, inps, ritenuta, idagente
     $query = 'SELECT data, bollo, ritenutaacconto, rivalsainps, split_payment FROM co_documenti WHERE id='.prepare($iddocumento);
     $rs = $dbo->fetchArray($query);
     $totale_bolli = $rs[0]['bollo'];
     $totale_ritenutaacconto = $rs[0]['ritenutaacconto'];
+    $totale_ritenutacontributi = $fattura->totale_ritenuta_contributi;
     $totale_rivalsainps = $rs[0]['rivalsainps'];
     $data_documento = $rs[0]['data'];
     $split_payment = $rs[0]['split_payment'];
@@ -206,10 +213,10 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
     }
 
     // Lettura info fattura
-    $query = 'SELECT *, co_documenti.note, co_documenti.idpagamento, co_documenti.id AS iddocumento, co_statidocumento.descrizione AS `stato`, co_tipidocumento.descrizione AS `descrizione_tipodoc` FROM ((co_documenti LEFT OUTER JOIN co_statidocumento ON co_documenti.idstatodocumento=co_statidocumento.id) INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
+    $query = 'SELECT *, co_documenti.data_competenza, co_documenti.note, co_documenti.idpagamento, co_documenti.id AS iddocumento, co_statidocumento.descrizione AS `stato`, co_tipidocumento.descrizione AS `descrizione_tipodoc` FROM ((co_documenti LEFT OUTER JOIN co_statidocumento ON co_documenti.idstatodocumento=co_statidocumento.id) INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
     $rs = $dbo->fetchArray($query);
     $n = sizeof($rs);
-    $data = $rs[0]['data'];
+    $data = $rs[0]['data_competenza'];
     $idanagrafica = $rs[0]['idanagrafica'];
     $ragione_sociale = $rs[0]['ragione_sociale'];
     $stato = $rs[0]['stato'];
@@ -320,6 +327,23 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
         $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_controparte).', '.prepare(($totale_ritenutaacconto * $segno_mov5_ritenutaacconto) * -1).', '.prepare($primanota).')';
         $dbo->query($query2);
     }
+
+    // 6) Aggiungo la ritenuta enasarco se c'è
+    // Lettura id conto ritenuta e la storno subito
+    if ($totale_ritenutacontributi != 0) {
+        $query = 'SELECT id, descrizione FROM co_pianodeiconti3 WHERE descrizione="Erario c/enasarco"';
+        $rs = $dbo->fetchArray($query);
+        $idconto_ritenutaenasarco = $rs[0]['id'];
+        $descrizione_conto_ritenutaenasarco = $rs[0]['descrizione'];
+
+        // DARE nel conto ritenuta
+        $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_ritenutaenasarco).', '.prepare($totale_ritenutacontributi * $segno_mov5_ritenutaacconto).', '.prepare($primanota).')';
+        $dbo->query($query2);
+
+        // AVERE nel riepilogativo clienti
+        $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_controparte).', '.prepare(($totale_ritenutacontributi * $segno_mov5_ritenutaacconto) * -1).', '.prepare($primanota).')';
+        $dbo->query($query2);
+    }
 }
 
 /**
@@ -357,6 +381,8 @@ function ricalcola_costiagg_fattura($iddocumento)
  * $qta			float		quantità dell'articolo in fattura
  * $prezzo			float		prezzo totale dell'articolo (prezzounitario*qtà)
  * $idintervento	integer		id dell'intervento da cui arriva l'articolo (per non creare casini quando si rimuoverà un articolo dalla fattura).
+ *
+ * @deprecated 2.4.11
  */
 function add_articolo_infattura($iddocumento, $idarticolo, $descrizione, $idiva, $qta, $prezzo, $sconto = 0, $sconto_unitario = 0, $tipo_sconto = 'UNT', $idintervento = 0, $idconto = 0, $idum = 0, $idrivalsainps = '', $idritenutaacconto = '', $calcolo_ritenuta_acconto = '')
 {

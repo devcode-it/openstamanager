@@ -84,7 +84,7 @@ switch ($resource) {
 
         // Filtro articolo solo per documenti di vendita
         if ($superselect['dir'] == 'entrata' && isset($superselect['idsede_partenza'])) {
-            $where[] = '(idsede_azienda IS NULL AND idsede_controparte IS NULL) OR (idsede_azienda='.prepare($superselect['idsede_partenza']).' OR idsede_controparte='.prepare($superselect['idsede_partenza']).')';
+            $where[] = '((idsede_azienda='.prepare($superselect['idsede_partenza']).' OR idsede_azienda IS NULL) OR (idsede_controparte='.prepare($superselect['idsede_partenza']).' OR idsede_controparte IS NULL))';
         }
 
         if (!empty($search)) {

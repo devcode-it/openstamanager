@@ -82,7 +82,7 @@ foreach ($righe as $riga) {
         // Imponibile
         echo '
             <td class="text-right">
-            '.moneyFormat($riga->imponibile_scontato).'
+            '.moneyFormat($riga->totale_imponibile).'
             </td>';
     }
 
@@ -90,7 +90,7 @@ foreach ($righe as $riga) {
     echo '
             <td class="text-center">';
 
-    if ($record['stato'] != 'Pagato') {
+    if (empty($record['is_completato'])) {
         echo '
                 <form action="" method="post" id="delete-form-'.$riga->id.'" role="form">
                     <input type="hidden" name="backto" value="record-edit">

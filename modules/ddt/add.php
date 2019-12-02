@@ -10,12 +10,14 @@ if ($module['name'] == 'Ddt di vendita') {
     $id_tipoddt = $dbo->fetchOne("SELECT id FROM dt_tipiddt WHERE descrizione='Ddt in uscita'")['id'];
 
     $tipo_anagrafica = tr('Cliente');
+    $label = tr('Destinatario');
 } else {
     $dir = 'uscita';
 
     $id_tipoddt = $dbo->fetchOne("SELECT id FROM dt_tipiddt WHERE descrizione='Ddt in entrata'")['id'];
 
     $tipo_anagrafica = tr('Fornitore');
+    $label = tr('Mittente');
 }
 
 $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : $user['idanagrafica'];
@@ -25,13 +27,16 @@ $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : $user['idan
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="dir" value="<?php echo $dir; ?>">
 
+    <!-- Fix creazione da Anagrafica -->
+    <input type="hidden" name="id_record" value="">
+
 	<div class="row">
 		<div class="col-md-4">
 			 {[ "type": "date", "label": "<?php echo tr('Data'); ?>", "name": "data", "required": 1, "value": "-now-" ]}
 		</div>
 
 		<div class="col-md-4">
-			{[ "type": "select", "label": "Destinatario", "name": "idanagrafica", "id": "idanagrafica_add", "required": 1, "ajax-source": "clienti_fornitori", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=<?php echo $tipo_anagrafica; ?>" ]}
+			{[ "type": "select", "label": "<?php echo $label; ?>", "name": "idanagrafica", "id": "idanagrafica_add", "required": 1, "value": "<?php echo $id_anagrafica; ?>", "ajax-source": "clienti_fornitori", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=<?php echo $tipo_anagrafica; ?>" ]}
 		</div>
 
 		<div class="col-md-4">

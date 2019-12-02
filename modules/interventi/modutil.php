@@ -3,6 +3,8 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Emails\Mail;
+use Modules\Emails\Template;
 use Modules\Fatture\Components\Descrizione;
 use Modules\Fatture\Components\Riga;
 use Modules\Fatture\Fattura;
@@ -61,12 +63,11 @@ function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto = n
 
     // Notifica nuovo intervento al tecnico
     if (!empty($tecnico['email'])) {
-        $n = new Notifications\EmailNotification();
+        $template = Template::get('Notifica intervento');
 
-        $n->setTemplate('Notifica intervento', $idintervento);
-        $n->setReceivers($anagrafica['email']);
-
-        $n->send();
+        $mail = Mail::build(auth()->getUser(), $template, $idintervento);
+        $mail->addReceiver($anagrafica['email']);
+        $mail->save();
     }
 
     return true;
@@ -228,5 +229,5 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
     ricalcola_costiagg_fattura($id_fattura);
 
     // Metto l'intervento in stato "Fatturato"
-    $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Fatturato') WHERE id=".prepare($id_intervento));
+    $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE codice='FAT') WHERE id=".prepare($id_intervento));
 }

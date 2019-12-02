@@ -17,14 +17,14 @@ $end = filter('end');
 $anagrafica = Anagrafica::find($id_record);
 
 // Preventivi
-$preventivi = Preventivo::whereBetween('data_accettazione', [$start, $end])
+$preventivi = Preventivo::whereBetween('data_bozza', [$start, $end])
     ->where('idanagrafica', $id_record)
     ->where('default_revision', 1)
     ->get();
 $totale_preventivi = $preventivi->sum('totale_imponibile');
 
 // Contratti
-$contratti = Contratto::whereBetween('data_accettazione', [$start, $end])
+$contratti = Contratto::whereBetween('data_bozza', [$start, $end])
     ->where('idanagrafica', $id_record)
     ->get();
 $totale_contratti = $contratti->sum('totale_imponibile');
@@ -39,12 +39,12 @@ $totale_ordini_cliente = $ordini_cliente->sum('totale_imponibile');
 $interventi = [];
 // Clienti
 if ($anagrafica->isTipo('Cliente')) {
-    $interventi = $dbo->fetchArray('SELECT id FROM in_interventi WHERE in_interventi.idanagrafica='.prepare($id_record).' AND data_richiesta BETWEEN '.prepare($start).' AND '.prepare($end));
+    $interventi = $dbo->fetchArray('SELECT in_interventi.id FROM in_interventi WHERE in_interventi.idanagrafica='.prepare($id_record).' AND data_richiesta BETWEEN '.prepare($start).' AND '.prepare($end));
 }
 
 // Tecnici
 elseif ($anagrafica->isTipo('Tecnico')) {
-    $interventi = $dbo->fetchArray('SELECT id FROM in_interventi INNER JOIN in_interventi_tecnici ON in_interventi.id = in_interventi_tecnici.idintervento WHERE in_interventi_tecnici.idtecnico='.prepare($id_record).' AND data_richiesta BETWEEN '.prepare($start).' AND '.prepare($end));
+    $interventi = $dbo->fetchArray('SELECT in_interventi.id FROM in_interventi INNER JOIN in_interventi_tecnici ON in_interventi.id = in_interventi_tecnici.idintervento WHERE in_interventi_tecnici.idtecnico='.prepare($id_record).' AND data_richiesta BETWEEN '.prepare($start).' AND '.prepare($end));
 }
 
 $interventi = Intervento::whereIn('id', array_column($interventi, 'id'))->get();

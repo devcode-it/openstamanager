@@ -116,6 +116,7 @@ $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione']
                     <div class="col-md-3">
                         {[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza", "ajax-source": "sedi_azienda",  "value": "$idsede_partenza$", "readonly": "<?php echo sizeof($articolo) ? 1 : 0; ?>" ]}
                     </div>
+
                     <div class="col-md-3">
                         {[ "type": "select", "label": "<?php echo tr('Destinazione merce'); ?>", "name": "idsede_destinazione", "ajax-source": "sedi",  "value": "$idsede_destinazione$" ]}
                     </div>
@@ -125,6 +126,7 @@ $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione']
                     <div class="col-md-3">
                         {[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza", "ajax-source": "sedi",  "value": "$idsede_partenza$" ]}
                     </div>
+
                     <div class="col-md-3">
                         {[ "type": "select", "label": "<?php echo tr('Destinazione merce'); ?>", "name": "idsede_destinazione", "ajax-source": "sedi_azienda",  "value": "$idsede_destinazione$" ]}
                     </div>
@@ -145,7 +147,7 @@ $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione']
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Porto'); ?>", "name": "idporto", "placeholder": "-", "help": "<?php echo tr('<ul><li>Franco: pagamento del trasporto a carico del mittente</li> <li>Assegnato pagamento del trasporto a carico del destinatario</li> </ul>'); ?>", "values": "query=SELECT id, descrizione FROM dt_porto ORDER BY descrizione ASC", "value": "$idporto$" ]}
+					{[ "type": "select", "label": "<?php echo tr('Tipo di spedizione'); ?>", "name": "idspedizione", "placeholder": "-", "values": "query=SELECT id, descrizione FROM dt_spedizione ORDER BY descrizione ASC", "value": "$idspedizione$" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -158,8 +160,8 @@ $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione']
 					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "ajax-source": "pagamenti", "value": "$idpagamento$" ]}
 				</div>
 
-				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Tipo di spedizione'); ?>", "name": "idspedizione", "placeholder": "-", "values": "query=SELECT id, descrizione FROM dt_spedizione ORDER BY descrizione ASC", "value": "$idspedizione$" ]}
+                <div class="col-md-3">
+					{[ "type": "select", "label": "<?php echo tr('Porto'); ?>", "name": "idporto", "placeholder": "-", "help": "<?php echo tr('<ul><li>Franco: pagamento del trasporto a carico del mittente</li> <li>Assegnato: pagamento del trasporto a carico del destinatario</li> </ul>'); ?>", "values": "query=SELECT id, descrizione FROM dt_porto ORDER BY descrizione ASC", "value": "$idporto$" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -169,7 +171,8 @@ $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione']
 
                  <script>
                     $("#idspedizione").change( function(){
-                        if ($(this).val() == 3) {
+                        //a parte Espressa o Vettore
+                        if ($(this).val() != 1 && $(this).val() != 2 ) {
                             $("#idvettore").attr("required", false);
                             $("#idvettore").attr("disabled", true);
                             $("label[for=idvettore]").text("<?php echo tr('Vettore'); ?>");
@@ -207,29 +210,46 @@ $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione']
 		</div>
 	</div>
 
+    <?php
+        if (!empty($record['id_documento_fe']) || !empty($record['num_item']) || !empty($record['codice_cig']) || !empty($record['codice_cup'])) {
+            $collapsed = 'in';
+        } else {
+            $collapsed = '';
+        }
+    ?>
+
     <!-- Fatturazione Elettronica PA-->
-    <div class="panel panel-primary <?php echo ($record['tipo_anagrafica'] == 'Ente pubblico' || $record['tipo_anagrafica'] == 'Azienda') ? 'show' : 'hide'; ?>" >
-        <div class="panel-heading">
-            <h3 class="panel-title"><?php echo tr('Dati appalto'); ?></h3>
-        </div>
+    <div class="panel-group">
+        <div class="panel panel-primary <?php echo ($record['tipo_anagrafica'] == 'Ente pubblico' || $record['tipo_anagrafica'] == 'Azienda') ? 'show' : 'hide'; ?>">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <?php echo tr('Dati appalto'); ?>
 
-        <div class="panel-body">
-            <div class="row">
-                <div class="col-md-6">
-                    {[ "type": "text", "label": "<?php echo tr('Identificatore Documento'); ?>", "name": "id_documento_fe", "required": 0, "help": "<?php echo tr('<span>Obbligatorio per valorizzare CIG/CUP. &Egrave; possible inserire: </span><ul><li>N. determina</li><li>RDO</li><li>Ordine MEPA</li></ul>'); ?>", "value": "$id_documento_fe$", "maxlength": 20 ]}
-                </div>
-
-                <div class="col-md-6">
-                    {[ "type": "text", "label": "<?php echo tr('Numero Riga'); ?>", "name": "num_item", "required": 0, "value": "$num_item$", "maxlength": 15 ]}
-                </div>
+                    <div class="box-tools pull-right">
+                        <a data-toggle="collapse" href="#dati_appalto"><i class="fa fa-plus" style='color:white;margin-top:2px;'></i></a>
+                    </div>
+                </h4>
             </div>
-            <div class="row">
-                <div class="col-md-6">
-                    {[ "type": "text", "label": "<?php echo tr('Codice CIG'); ?>", "name": "codice_cig", "required": 0, "value": "$codice_cig$", "maxlength": 15 ]}
-                </div>
+            <div id="dati_appalto" class="panel-collapse collapse <?php echo $collapsed; ?>">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            {[ "type": "text", "label": "<?php echo tr('Identificatore Documento'); ?>", "name": "id_documento_fe", "required": 0, "help": "<?php echo tr('<span>Obbligatorio per valorizzare CIG/CUP. &Egrave; possible inserire: </span><ul><li>N. determina</li><li>RDO</li><li>Ordine MEPA</li></ul>'); ?>", "value": "$id_documento_fe$", "maxlength": 20 ]}
+                        </div>
 
-                <div class="col-md-6">
-                    {[ "type": "text", "label": "<?php echo tr('Codice CUP'); ?>", "name": "codice_cup", "required": 0, "value": "$codice_cup$", "maxlength": 15 ]}
+                        <div class="col-md-6">
+                            {[ "type": "text", "label": "<?php echo tr('Numero Riga'); ?>", "name": "num_item", "required": 0, "value": "$num_item$", "maxlength": 15 ]}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            {[ "type": "text", "label": "<?php echo tr('Codice CIG'); ?>", "name": "codice_cig", "required": 0, "value": "$codice_cig$", "maxlength": 15 ]}
+                        </div>
+
+                        <div class="col-md-6">
+                            {[ "type": "text", "label": "<?php echo tr('Codice CUP'); ?>", "name": "codice_cup", "required": 0, "value": "$codice_cup$", "maxlength": 15 ]}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

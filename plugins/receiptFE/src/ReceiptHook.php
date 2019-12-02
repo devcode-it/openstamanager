@@ -2,20 +2,22 @@
 
 namespace Plugins\ReceiptFE;
 
-use Common\HookManager;
+use Hooks\CachedManager;
 use Modules;
 
-class ReceiptHook extends HookManager
+class ReceiptHook extends CachedManager
 {
-    public function manage()
+    public function data()
     {
         $list = Interaction::getReceiptList();
 
         return $list;
     }
 
-    public function response($results)
+    public function response()
     {
+        $results = self::getCache()['results'];
+
         $count = count($results);
         $notify = false;
 
@@ -40,7 +42,7 @@ class ReceiptHook extends HookManager
             'icon' => 'fa fa-ticket text-yellow',
             'link' => $link,
             'message' => $message,
-            'notify' => $notify,
+            'show' => $notify,
         ];
     }
 }

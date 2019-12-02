@@ -1,4 +1,3 @@
-
 // Aggiunta dell'ingranaggio all'unload della pagina
 $(window).on("beforeunload", function () {
     $("#main_loading").show();
@@ -11,6 +10,7 @@ $(window).on("load", function () {
 
 // Fix multi-modal
 $(document).on('hidden.bs.modal', '.modal', function () {
+    $(this).remove();
     $('.modal:visible').length && $(document.body).addClass('modal-open');
 });
 
@@ -71,9 +71,9 @@ $(document).ready(function () {
 
     // Forza l'evento "blur" nei campi di testo per formattare i numeri con
     // jquery inputmask prima del submit
-    setTimeout( function(){
-        $('form').on('submit', function(){
+    setTimeout(function () {
+        $('form').on('submit', function () {
             $('input').trigger('blur');
         });
-    }, 1000 );
+    }, 1000);
 });

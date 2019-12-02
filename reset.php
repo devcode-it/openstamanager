@@ -4,6 +4,9 @@ $skip_permissions = true;
 include_once __DIR__.'/core.php';
 
 use Models\User;
+use Modules\Emails\Mail;
+use Modules\Emails\Template;
+use Notifications\EmailNotification;
 
 $token = get('reset_token');
 
@@ -23,12 +26,14 @@ switch (post('op')) {
             $utente->reset_token = secure_random_string();
             $utente->save();
 
-            $n = new Notifications\EmailNotification();
+            $template = Template::get('Reset password');
 
-            $n->setTemplate('Reset password', $utente->id);
-            $n->setReceivers($utente->email);
+            $mail = Mail::build($user, $template, $utente->id);
+            $mail->addReceiver($utente->email);
+            $mail->save();
 
-            $n->send();
+            $email = EmailNotification::build($mail);
+            $email->send();
         }
 
         //$message_email = substr($email, 0, 2).str_repeat('*', strlen($email)-8).substr($email, -6);
@@ -95,6 +100,7 @@ if (Auth::isBrute()) {
 echo '
     <form action="" method="post" class="box box-center-large box-warning" id="reset">        
         <div class="box-header with-border text-center">
+            <a href="'.ROOTDIR.'/index.php"><i  class="fa fa-arrow-left btn btn-xs btn-warning pull-left tip" title="'.tr('Torna indietro').'" ></i></a>
             <h3 class="box-title">'.$pageTitle.'</h3>
         </div>
 
@@ -104,8 +110,8 @@ if (empty($token)) {
     echo '
             <input type="hidden" name="op" value="reset">
 
-            <p>'.tr("Per richiedere la reimpostazione della password, inserisci l'username e l'indirizzo email con cui hai accesso al gestionale").'.</p>
-            <p>'.tr("Una volta inviata e validata la richiesta, riceverai un'email dove sarà indicato un link a cui potrai reimpostare la password di accesso ad OpenSTAManager").'.</p>
+            <p>'.tr("Per reimpostare password, inserisci l'username con cui hai accesso al gestionale e l'indirizzo email associato all'utente").'.<br>
+            '.tr("Se i dati inseriti risulteranno corretti riceverai un'email dove sarà indicato il link da cui potrai reimpostare la tua password").'.</p>
             
             {[ "type": "text", "label": "'.tr('Username').'", "placeholder": "'.tr('Username').'", "name": "username", "icon-before": "<i class=\"fa fa-user\"></i>", "required": 1 ]}
             
@@ -124,7 +130,7 @@ echo '
             
             <div class="box-footer">
                     <button type="submit" id="submit-button" class="btn btn-success btn-block">
-                        <i class="fa fa-arrow-right"></i> '.tr('Procedi').'
+                        <i class="fa fa-arrow-right"></i> '.tr('Invia richiesta').'
             </button>
         </div>
     </form>';

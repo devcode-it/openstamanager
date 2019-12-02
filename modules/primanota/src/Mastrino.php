@@ -131,8 +131,17 @@ class Mastrino extends Model
             $scadenze = $documento->scadenze->sortBy('scadenza');
 
             $movimenti = $documento->movimentiContabili;
-            $totale_movimenti = $movimenti->where('totale', '>', 0)->where('is_insoluto', 0)->sum('totale');
-            $totale_insoluto = $movimenti->where('totale', '>', 0)->where('is_insoluto', 1)->sum('totale');
+
+            if ($dir == 'entrata') {
+                $totale_movimenti = $movimenti->where('totale', '<', 0)->where('is_insoluto', 0)->sum('totale');
+                $totale_insoluto = $movimenti->where('totale', '<', 0)->where('is_insoluto', 1)->sum('totale');
+            }
+
+            if ($dir == 'uscita') {
+                $totale_movimenti = $movimenti->where('totale', '>', 0)->where('is_insoluto', 0)->sum('totale');
+                $totale_insoluto = $movimenti->where('totale', '>', 0)->where('is_insoluto', 1)->sum('totale');
+            }
+
             $totale_pagato = $totale_movimenti - $totale_insoluto;
         } else {
             $scadenze = [$scadenza];

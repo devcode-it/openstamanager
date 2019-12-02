@@ -349,7 +349,7 @@ class FatturaElettronica
     {
         $this->saveFattura($info['id_pagamento'], $info['id_segment'], $info['id_tipo'], $info['data_registrazione'], $info['ref_fattura']);
 
-        $this->saveRighe($info['articoli'], $info['iva'], $info['conto'], $info['movimentazione']);
+        $this->saveRighe($info['articoli'], $info['iva'], $info['conto'], $info['movimentazione'], $info['crea_articoli']);
 
         $this->saveAllegati();
 

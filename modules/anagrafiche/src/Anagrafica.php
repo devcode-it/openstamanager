@@ -4,8 +4,13 @@ namespace Modules\Anagrafiche;
 
 use Common\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Modules\Contratti\Contratto;
+use Modules\DDT\DDT;
 use Modules\Fatture\Fattura;
+use Modules\Ordini\Ordine;
+use Modules\Preventivi\Preventivo;
 use Modules\TipiIntervento\Tipo as TipoSessione;
+use Plugins\DichiarazioniIntento\Dichiarazione;
 use Settings;
 use Traits\RecordTrait;
 use Util\Generator;
@@ -186,6 +191,22 @@ class Anagrafica extends Model
         }) !== false;
     }
 
+    public function delete()
+    {
+        if (!$this->isAzienda()) {
+            return parent::delete();
+        }
+    }
+
+    public function save(array $options = [])
+    {
+        $this->fixRagioneSociale();
+
+        return parent::save($options);
+    }
+
+    // Attributi Eloquent
+
     /**
      * Restituisce l'identificativo.
      *
@@ -209,15 +230,11 @@ class Anagrafica extends Model
     public function setNomeAttribute($value)
     {
         $this->attributes['nome'] = trim($value);
-
-        $this->fixRagioneSociale();
     }
 
     public function setCognomeAttribute($value)
     {
         $this->attributes['cognome'] = trim($value);
-
-        $this->fixRagioneSociale();
     }
 
     public function setCodiceFiscaleAttribute($value)
@@ -236,21 +253,6 @@ class Anagrafica extends Model
         $this->attributes['codice_destinatario'] = trim(strtoupper($codice_destinatario));
     }
 
-    public function tipi()
-    {
-        return $this->belongsToMany(Tipo::class, 'an_tipianagrafiche_anagrafiche', 'idanagrafica', 'idtipoanagrafica');
-    }
-
-    public function fatture()
-    {
-        return $this->hasMany(Fattura::class, 'idanagrafica');
-    }
-
-    public function nazione()
-    {
-        return $this->belongsTo(Nazione::class, 'id_nazione');
-    }
-
     /**
      * Restituisce la sede legale collegata.
      *
@@ -261,11 +263,46 @@ class Anagrafica extends Model
         return $this;
     }
 
-    public function delete()
+    // Relazioni Eloquent
+
+    public function tipi()
     {
-        if (!$this->isAzienda()) {
-            return parent::delete();
-        }
+        return $this->belongsToMany(Tipo::class, 'an_tipianagrafiche_anagrafiche', 'idanagrafica', 'idtipoanagrafica');
+    }
+
+    public function nazione()
+    {
+        return $this->belongsTo(Nazione::class, 'id_nazione');
+    }
+
+    public function fatture()
+    {
+        return $this->hasMany(Fattura::class, 'idanagrafica');
+    }
+
+    public function ordini()
+    {
+        return $this->hasMany(Ordine::class, 'idanagrafica');
+    }
+
+    public function ddt()
+    {
+        return $this->hasMany(DDT::class, 'idanagrafica');
+    }
+
+    public function contratti()
+    {
+        return $this->hasMany(Contratto::class, 'idanagrafica');
+    }
+
+    public function preventivi()
+    {
+        return $this->hasMany(Preventivo::class, 'idanagrafica');
+    }
+
+    public function dichiarazioni()
+    {
+        return $this->hasMany(Dichiarazione::class, 'id_anagrafica');
     }
 
     // Metodi statici

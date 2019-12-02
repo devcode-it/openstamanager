@@ -15,11 +15,13 @@ if ($record['doc_associati'] > 0) {
 	<input type="hidden" name="op" value="update">
 
 	<div class="row">
-
-		<div class="col-md-12">
-			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "class": "", "value": "$descrizione$", "extra": "" ]}
+		<div class="col-md-9">
+			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$" ]}
 		</div>
 
+        <div class="col-md-3">
+            {[ "type": "select", "label": "<?php echo tr('Gruppi abilitati'); ?>", "name": "permessi[]", "value": "$permessi$", "values": "query=SELECT `id`, `nome` AS text FROM `zz_groups`", "multiple": 1 ]}
+        </div>
 	</div>
 </form>
 

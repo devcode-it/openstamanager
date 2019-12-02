@@ -2,9 +2,9 @@
 
 include_once __DIR__.'/../core.php';
 
-if (!empty($notes)) {
+if (count($notes) > 0) {
     echo '
-        <div class="box box-warning direct-chat direct-chat-warning">
+        <div class="box box-info direct-chat direct-chat-info">
             <div class="box-header with-border">
                 <h3 class="box-title">'.tr('Note interne').'</h3>
             </div>
@@ -68,7 +68,7 @@ if (!empty($notes)) {
         </div>';
 } else {
     echo '
-        <p>'.tr('Non sono presenti note interne').'</p>';
+        <div class="alert alert-info" ><i class="fa fa-info-circle" ></i> '.tr('Non sono presenti note interne.').'</div>';
 }
 
 if ($structure->permission == 'rw') {
@@ -76,11 +76,14 @@ if ($structure->permission == 'rw') {
         <form action="" method="post">
             <input type="hidden" name="op" value="add_nota">
             <input type="hidden" name="backto" value="record-edit">
-            
-            {[ "type": "date", "label": "'.tr('Data di notifica').'", "name": "data_notifica" ]}
-
-            {[ "type": "ckeditor", "label": "'.tr('Nuova nota').'", "name": "contenuto", "required": 1]}
-            
+            <div class="row" >
+                <div class="col-md-12" >
+                    {[ "type": "ckeditor", "label": "'.tr('Nuova nota').'", "name": "contenuto", "required": 1, "class": "unblockable" ]}
+                </div>
+                <div class="col-md-4" >
+                    {[ "type": "date", "label": "'.tr('Data di notifica').'", "name": "data_notifica", "class": "unblockable", "help": "'.tr('Eventuale data di notifica di un promemoria di questa nota.').'" ]}
+                </div>
+            </div>
             <!-- PULSANTI -->
             <div class="row">
                 <div class="col-md-12 text-right">

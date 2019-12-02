@@ -16,13 +16,19 @@ foreach ($fields as $key => $field) {
     $editable = !($field['default'] && $enable_readonly);
 
     echo '
-                <div class="box box-'.($field['visible'] ? 'success' : 'danger').'">
+                <div class="box collapsed-box box-'.($field['visible'] ? 'success' : 'danger').'">
                     <div class="box-header with-border">
-                        <h3 class="box-title">
-                            <a data-toggle="collapse" href="#field-'.$field['id'].'">'.tr('Campo in posizione _POSITION_', [
+                        <h3 class="box-title">'.
+                            tr('Campo in posizione _POSITION_', [
                                 '_POSITION_' => $field['order'],
-                                ]).' ('.$field['name'].')</a>
-                        </h3>';
+                                ]).' ('.$field['name'].')
+                        </h3>
+
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-plus"></i>
+                            </button>
+                        </div>';
 
     if ($editable) {
         echo '

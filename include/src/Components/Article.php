@@ -10,8 +10,9 @@ use UnexpectedValueException;
 abstract class Article extends Row
 {
     public $movimenta_magazzino = true;
-    protected $serialRowID = null;
     protected $abilita_movimentazione = true;
+
+    protected $serialRowID = null;
     protected $serialsList = null;
 
     protected $qta_movimentazione = 0;
@@ -57,6 +58,10 @@ abstract class Article extends Row
      */
     public function setSerialsAttribute($serials)
     {
+        if (!$this->useSerials()) {
+            return;
+        }
+
         $serials = array_clean($serials);
 
         database()->sync('mg_prodotti', [
@@ -77,6 +82,10 @@ abstract class Article extends Row
      */
     public function removeSerials($serials)
     {
+        if (!$this->useSerials()) {
+            return;
+        }
+
         database()->detach('mg_prodotti', [
             'id_riga_'.$this->serialRowID => $this->id,
             'dir' => $this->getDirection(),
@@ -95,7 +104,7 @@ abstract class Article extends Row
      */
     public function getSerialsAttribute()
     {
-        if (empty($this->abilita_serial)) {
+        if (!$this->useSerials()) {
             return [];
         }
 
@@ -116,7 +125,7 @@ abstract class Article extends Row
      */
     public function getMissingSerialsNumberAttribute()
     {
-        if (!$this->abilita_serial) {
+        if (!$this->useSerials()) {
             return 0;
         }
 
@@ -192,6 +201,11 @@ abstract class Article extends Row
         return parent::delete();
     }
 
+    protected function useSerials()
+    {
+        return !empty($this->abilita_serial) && !empty($this->serialRowID);
+    }
+
     abstract protected function movimentaMagazzino($qta);
 
     protected static function boot()
@@ -205,8 +219,16 @@ abstract class Article extends Row
         });
     }
 
+    /**
+     * Restituisce l'elenco dei seriali collegati e utilizzati da altri documenti.
+     *
+     * @return array
+     */
     protected function usedSerials()
     {
+        if (!$this->useSerials()) {
+            return [];
+        }
         if ($this->getDirection() == 'uscita') {
             $results = database()->fetchArray("SELECT serial FROM mg_prodotti WHERE serial IN (SELECT DISTINCT serial FROM mg_prodotti WHERE dir = 'entrata') AND serial IS NOT NULL AND id_riga_".$this->serialRowID.' = '.prepare($this->id));
 
@@ -216,8 +238,19 @@ abstract class Article extends Row
         return [];
     }
 
+    /**
+     * Pulisce i seriali non utilizzati nel caso di riduzione della quantità, se possibile.
+     *
+     * @param $new_qta
+     *
+     * @return bool
+     */
     protected function cleanupSerials($new_qta)
     {
+        if (!$this->useSerials()) {
+            return true;
+        }
+
         // Se la nuova quantità è minore della precedente
         if ($this->qta > $new_qta) {
             $seriali_usati = $this->usedSerials();

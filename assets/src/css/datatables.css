@@ -110,14 +110,14 @@ div.dataTables_paginate a.last:after {
  * Bootstrap and foundation style pagination controls
  */
 
-div.dataTables_paginate li.first>a,
-div.dataTables_paginate li.previous>a {
+div.dataTables_paginate li.first > a,
+div.dataTables_paginate li.previous > a {
     position: relative;
     padding-left: 24px;
 }
 
-div.dataTables_paginate li.next>a,
-div.dataTables_paginate li.last>a {
+div.dataTables_paginate li.next > a,
+div.dataTables_paginate li.last > a {
     position: relative;
     padding-right: 24px;
 }

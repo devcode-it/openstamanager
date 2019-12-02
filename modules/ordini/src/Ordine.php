@@ -128,9 +128,9 @@ class Ordine extends Document
      *
      * @param Description $trigger
      */
-    public function fixStato(Description $trigger)
+    public function triggerEvasione(Description $trigger)
     {
-        parent::fixStato($trigger);
+        parent::triggerEvasione($trigger);
 
         if (setting('Cambia automaticamente stato ordini fatturati')) {
             $righe = $this->getRighe();

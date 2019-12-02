@@ -58,7 +58,7 @@ if ($_GET['lev'] == '3') {
     $saldo_finale = [];
 
     // Calcolo saldo iniziale
-    $rs = $dbo->fetchArray('SELECT SUM(totale) AS totale FROM co_movimenti WHERE idconto="'.$idconto.'" AND data < "'.$date_start.'"');
+    $rs = $dbo->fetchArray('SELECT SUM(totale) AS totale FROM co_movimenti WHERE idconto="'.$idconto.'" AND data < '.prepare($date_start).'');
     $saldo_iniziale = $rs[0]['totale'];
     $saldo_finale = $saldo_iniziale;
 
@@ -72,7 +72,14 @@ if ($_GET['lev'] == '3') {
 
     $body .= "		<tr><td class='br bb padded'></td><td class='br bb padded'><b>SALDO INIZIALE</b></td><td class='br bb padded text-right'><b>".moneyFormat(abs($dare), 2)."</b></td><td class='bb padded text-right'><b>".moneyFormat(abs($avere), 2)."</b></td></tr>\n";
 
-    $rs = $dbo->fetchArray('SELECT * FROM co_movimenti WHERE idconto="'.$idconto.'" AND data >= "'.$date_start.'" AND data <= "'.$date_end.'" ORDER BY data ASC');
+    $rs = $dbo->fetchArray('SELECT *, SUM(totale) AS totale
+    FROM co_movimenti
+    WHERE idconto='.prepare($idconto).' AND
+        data >= '.prepare($date_start).' AND
+        data <= '.prepare($date_end).'
+    GROUP BY idmastrino
+    ORDER BY data ASC');
+
     // Inizializzo saldo finale
     $saldo_finale2 = [];
     for ($i = 0; $i < sizeof($rs); ++$i) {
@@ -121,7 +128,7 @@ elseif ($_GET['lev'] == '2') {
         $saldo_finale = [];
 
         // Calcolo saldo iniziale
-        $rs = $dbo->fetchArray('SELECT SUM(totale) AS totale FROM co_movimenti WHERE idconto="'.$rs3[$z]['id'].'" AND data < "'.$date_start.'"');
+        $rs = $dbo->fetchArray('SELECT SUM(totale) AS totale FROM co_movimenti WHERE idconto="'.$rs3[$z]['id'].'" AND data < '.prepare($date_start).'');
         $saldo_iniziale = $rs[0]['totale'];
         $saldo_finale[] = $saldo_iniziale;
 
@@ -131,7 +138,7 @@ elseif ($_GET['lev'] == '2') {
             $v_dare[] = abs($saldo_iniziale);
         }
 
-        $rs = $dbo->fetchArray('SELECT * FROM co_movimenti WHERE idconto="'.$rs3[$z]['id'].'" AND data >= "'.$date_start.'" AND data <= "'.$date_end.'" ORDER BY data ASC');
+        $rs = $dbo->fetchArray('SELECT * FROM co_movimenti WHERE idconto="'.$rs3[$z]['id'].'" AND data >= '.prepare($date_start).' AND data <= '.prepare($date_end).' ORDER BY data ASC');
 
         for ($i = 0; $i < sizeof($rs); ++$i) {
             if ($rs[$i]['totale'] >= 0) {
@@ -187,7 +194,7 @@ elseif (get('lev') == '1') {
                 $v_dare = [];
                 $v_avere = [];
 
-                $rs = $dbo->fetchArray('SELECT * FROM co_movimenti WHERE idconto="'.$rs3[$z]['id'].'" AND data >= "'.$date_start.'" AND data <= "'.$date_end.'" ORDER BY data ASC');
+                $rs = $dbo->fetchArray('SELECT * FROM co_movimenti WHERE idconto="'.$rs3[$z]['id'].'" AND data >= '.prepare($date_start).' AND data <= '.prepare($date_end).' ORDER BY data ASC');
 
                 for ($i = 0; $i < sizeof($rs); ++$i) {
                     if ($rs[$i]['totale'] >= 0) {
@@ -245,11 +252,11 @@ elseif (get('lev') == '1') {
                     $saldo_finale = [];
 
                     // Calcolo saldo iniziale
-                    $rs = $dbo->fetchArray('SELECT SUM(totale) AS totale FROM co_movimenti WHERE idconto="'.$rs2[$y]['id'].'" AND data < "'.$date_start.'"');
+                    $rs = $dbo->fetchArray('SELECT SUM(totale) AS totale FROM co_movimenti WHERE idconto="'.$rs2[$y]['id'].'" AND data < '.prepare($date_start).'');
                     $dare = [];
                     $avere = [];
 
-                    $rs = $dbo->fetchArray('SELECT * FROM co_movimenti WHERE idconto="'.$rs3[$z]['id'].'" AND data >= "'.$date_start.'" AND data <= "'.$date_end.'" ORDER BY data ASC');
+                    $rs = $dbo->fetchArray('SELECT * FROM co_movimenti WHERE idconto="'.$rs3[$z]['id'].'" AND data >= '.prepare($date_start).' AND data <= '.prepare($date_end).' ORDER BY data ASC');
 
                     for ($i = 0; $i < sizeof($rs); ++$i) {
                         if ($rs[$i]['totale'] >= 0) {

@@ -242,7 +242,7 @@ class Fattura extends Document
 
     public function righe()
     {
-        return $this->hasMany(Riga::class, 'iddocumento');
+        return $this->hasMany(Components\Riga::class, 'iddocumento');
     }
 
     public function sconti()
@@ -262,7 +262,7 @@ class Fattura extends Document
 
     public function rigaBollo()
     {
-        return $this->hasOne(Riga::class, 'iddocumento')->where('id', $this->id_riga_bollo);
+        return $this->hasOne(Components\Riga::class, 'iddocumento')->where('id', $this->id_riga_bollo);
     }
 
     // Metodi generali
@@ -566,7 +566,7 @@ class Fattura extends Document
 
         // Creazione riga bollo se non presente
         if (empty($riga)) {
-            $riga = Riga::build($this);
+            $riga = Components\Riga::build($this);
             $riga->save();
 
             $this->id_riga_bollo = $riga->id;

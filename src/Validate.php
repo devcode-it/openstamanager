@@ -54,8 +54,10 @@ class Validate
      */
     public static function isValidVatNumber($vat_number)
     {
+        $result['valid-format'] = true;
+
         if (empty($vat_number)) {
-            $result['valid-format'] = true;
+            return $result;
         }
 
         // Controllo sulla sintassi

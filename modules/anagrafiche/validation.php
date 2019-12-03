@@ -66,7 +66,7 @@ switch ($name) {
             $errors[] = tr('La partita iva inserita non possiede un formato valido');
         }
 
-        if (empty($check['valid'])) {
+        if (isset($check['valid']) && empty($check['valid'])) {
             $result = false;
             $errors[] = tr("Impossibile verificare l'origine della partita iva");
         }

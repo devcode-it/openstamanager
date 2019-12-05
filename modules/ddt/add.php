@@ -20,7 +20,7 @@ if ($module['name'] == 'Ddt di vendita') {
     $label = tr('Mittente');
 }
 
-$id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : $user['idanagrafica'];
+$id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : '';
 
 ?><form action="" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
@@ -38,9 +38,12 @@ $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : $user['idan
 		<div class="col-md-4">
 			{[ "type": "select", "label": "<?php echo $label; ?>", "name": "idanagrafica", "id": "idanagrafica_add", "required": 1, "value": "<?php echo $id_anagrafica; ?>", "ajax-source": "clienti_fornitori", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=<?php echo $tipo_anagrafica; ?>" ]}
 		</div>
-
-		<div class="col-md-4">
+		<!-- il campo idtipoddt può essere anche rimosso -->
+		<div class="col-md-4 hide">
 			{[ "type": "select", "label": "<?php echo tr('Tipo ddt'); ?>", "name": "idtipoddt", "required": 1, "values": "query=SELECT id, descrizione FROM dt_tipiddt WHERE dir='<?php echo $dir; ?>'", "value": "<?php echo $id_tipoddt; ?>" ]}
+		</div>
+		<div class="col-md-4">
+			{[ "type": "select", "label": "<?php echo tr('Causale trasporto'); ?>", "name": "idcausalet",  "value": "$idcausalet$", "ajax-source": "causali", "icon-after": "add|<?php echo Modules::get('Causali')['id']; ?>|||<?php echo $block_edit ? 'disabled' : ''; ?>" ]}
 		</div>
 	</div>
 
@@ -51,3 +54,11 @@ $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : $user['idan
 		</div>
 	</div>
 </form>
+<script>
+//autosubmit se tutti i campi obbligatori sono valorizzati
+$('#bs-popup').on('shown.bs.modal', function () {
+	if ($('#add-form').parsley().isValid()) {
+		$("#add-form").submit();
+	}
+});
+</script>

@@ -87,7 +87,7 @@ if ($total == 0) {
 <div class="row">
 	<!-- STATI INTERVENTO -->
 	<div class="dropdown col-md-3">
-		<a class="btn <?php echo $class; ?> btn-block" data-toggle="dropdown" href="javascript:;" id="idstati_count"><i class="fa fa-filter"></i> <?php echo tr('Stati intervento'); ?> (<?php echo $count.'/'.$total; ?>) <i class="caret"></i></a>
+		<a class="btn <?php echo $class; ?> btn-block" data-toggle="dropdown" href="javascript:;" id="idstati_count"><i class="fa fa-filter"></i> <?php echo tr('Stati attività'); ?> (<?php echo $count.'/'.$total; ?>) <i class="caret"></i></a>
 
 		<ul class="dropdown-menu" role="menu" id="idstati_ul">
 			<?php echo $checks; ?>
@@ -138,7 +138,7 @@ if ($total == 0) {
 ?>
 	<!-- TIPI DI INTERVENTO -->
 	<div class="dropdown col-md-3">
-		<a class="btn <?php echo $class; ?> btn-block" data-toggle="dropdown" href="javascript:;" id="idtipi_count"><i class="fa fa-filter"></i> <?php echo tr('Tipi intervento'); ?> (<?php echo $count.'/'.$total; ?>) <i class="caret"></i></a>
+		<a class="btn <?php echo $class; ?> btn-block" data-toggle="dropdown" href="javascript:;" id="idtipi_count"><i class="fa fa-filter"></i> <?php echo tr('Tipi attività'); ?> (<?php echo $count.'/'.$total; ?>) <i class="caret"></i></a>
 
 		<ul class="dropdown-menu" role="menu" id="idtipi_ul">
 			<?php echo $checks; ?>

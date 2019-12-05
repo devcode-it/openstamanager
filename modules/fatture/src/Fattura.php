@@ -15,11 +15,13 @@ use Modules\Scadenzario\Scadenza;
 use Plugins\DichiarazioniIntento\Dichiarazione;
 use Plugins\ExportFE\FatturaElettronica;
 use Traits\RecordTrait;
+use Traits\ReferenceTrait;
 use Util\Generator;
 
 class Fattura extends Document
 {
     use RecordTrait;
+    use ReferenceTrait;
 
     protected $table = 'co_documenti';
 
@@ -723,5 +725,21 @@ class Fattura extends Document
         $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data));
 
         return $numero;
+    }
+
+    protected function getReferenceName(){
+        return $this->tipo->descrizione;
+    }
+
+    protected function getReferenceNumber(){
+        return $this->numero_esterno ?: $this->numero;
+    }
+
+    protected function getReferenceDate(){
+        return $this->data;
+    }
+
+    protected static function referenceName(){
+        return tr('Fattura');
     }
 }

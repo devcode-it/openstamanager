@@ -125,6 +125,11 @@ class Articolo extends Model
         return $this->hasMany(ArticoloIntervento::class, 'idarticolo');
     }
 
+    public function movimenti()
+    {
+        return $this->hasMany(Movimento::class, 'idarticolo');
+    }
+
     public function categoria()
     {
         return $this->belongsTo(Categoria::class, 'id_categoria');

@@ -7,6 +7,8 @@ use Models\Plugin;
 
 trait RecordTrait
 {
+    public abstract function getModuleAttribute();
+
     public function getModule()
     {
         return !empty($this->module) ? Module::get($this->module) : null;

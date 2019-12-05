@@ -15,25 +15,29 @@ $qta_totale = $dbo->fetchOne('SELECT SUM(qta) AS qta FROM mg_movimenti WHERE ida
 $qta_totale_attuale = $dbo->fetchOne('SELECT SUM(qta) AS qta FROM mg_movimenti WHERE idarticolo='.prepare($id_record).' AND data <= CURDATE()')['qta'];
 
 echo '
-<p>'.tr('Quantità calcolata dai movimenti').': <b>'.Translator::numberToLocale($qta_totale, 'qta').' '.$record['um'].'</b> <span  class=\'tip\' title=\''.tr('Quantità calcolata da tutti i movimenti registrati').'.\' ><i class="fa fa-question-circle-o"></i></span></p>';
+<p>'.tr('Quantità calcolata dai movimenti').': <b>'.Translator::numberToLocale($qta_totale, 'qta').' '.$record['um'].'</b> <span class="tip" title="'.tr('Quantità calcolata da tutti i movimenti registrati').'." ><i class="fa fa-question-circle-o"></i></span></p>';
 
 echo '
-<p>'.tr('Quantità calcolata attuale').': <b>'.Translator::numberToLocale($qta_totale_attuale, 'qta').' '.$record['um'].'</b> <span  class=\'tip\' title=\''.tr('Quantità calcolata secondo i movimenti registrati con data oggi o date trascorse').'.\' ><i class="fa fa-question-circle-o"></i></span></p>';
+<p>'.tr('Quantità calcolata attuale').': <b>'.Translator::numberToLocale($qta_totale_attuale, 'qta').' '.$record['um'].'</b> <span class="tip" title="'.tr('Quantità calcolata secondo i movimenti registrati con data oggi o date trascorse').'." ><i class="fa fa-question-circle-o"></i></span></p>';
 
-// Elenco movimenti magazzino
-$query = 'SELECT * FROM mg_movimenti WHERE idarticolo='.prepare($id_record).' ORDER BY data DESC, id DESC';
-if (empty($_GET['show_all1'])) {
-    $query .= ' LIMIT 0, 20';
+// Individuazione movimenti
+$movimenti = $articolo->movimenti()
+    ->selectRaw('*, sum(qta) as qta_movimenti')
+    ->groupBy('reference_type', 'reference_id')
+    ->orderBy('data', 'id');
+if (empty($_GET['movimentazione_completa'])) {
+    //$movimenti->limit(20);
 }
 
-$movimenti = $dbo->fetchArray($query);
+// Raggruppamento per documento
+$movimenti = $movimenti->get();
 if (!empty($movimenti)) {
-    if (empty($_GET['show_all1'])) {
+    if (empty($_GET['movimentazione_completa'])) {
         echo '
-        <p><a href="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&show_all1=1#tab_'.$id_plugin.'">[ '.tr('Mostra tutti i movimenti').' ]</a></p>';
+        <p><a href="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&movimentazione_completa=1#tab_'.$id_plugin.'">[ '.tr('Mostra tutti i movimenti').' ]</a></p>';
     } else {
         echo '
-        <p><a href="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&show_all1=0#tab_'.$id_plugin.'">[ '.tr('Mostra solo gli ultimi 20 movimenti').' ]</a></p>';
+        <p><a href="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&movimentazione_completa=0#tab_'.$id_plugin.'">[ '.tr('Mostra solo gli ultimi 20 movimenti').' ]</a></p>';
     }
 
     echo '
@@ -62,9 +66,9 @@ if (!empty($movimenti)) {
         echo '
             <tr>
                 <td class="text-center">
-                    '.numberFormat($movimento['qta'], 'qta').' '.$record['um'].'
+                    '.numberFormat($movimento['qta_movimenti'], 'qta').' '.$record['um'].'
                 </td>
-                
+
                 <td class="text-center">
                     '.numberFormat($movimento['progressivo_iniziale'], 'qta').' '.$record['um'].'
                     <i class="fa fa-arrow-circle-right"></i>
@@ -78,6 +82,13 @@ if (!empty($movimenti)) {
             $dir = $dbo->fetchArray('SELECT dir FROM co_tipidocumento WHERE id = (SELECT idtipodocumento FROM co_documenti WHERE id = '.prepare($movimento['iddocumento']).')')[0]['dir'] == 'entrata' ? 'vendita' : 'acquisto';
         }
 
+        $document = $movimento->getDocument();
+        if ($movimento->hasDocument()){
+            $document = $movimento->getDocument();
+
+            echo Modules::link($document->module, $document->id, null, null, ($movimento->hasDocument() ? '' : 'class="disabled"'));
+            //echo '<br>'.$document::reference($document->id);
+        }
         echo '
                 <td>'.$movimento['movimento'].'
 				'.((!empty($movimento['idintervento'])) ? Modules::link('Interventi', $movimento['idintervento']) : '').'
@@ -87,7 +98,9 @@ if (!empty($movimenti)) {
 
         // Data
         echo '
-                <td class="text-center" >'.Translator::dateToLocale($movimento['data']).' <span  class=\'tip\' title=\''.tr('Data del movimento: ').Translator::timestampToLocale($movimento['created_at']).'\' ><i class="fa fa-question-circle-o"></i></span> </td>';
+                <td class="text-center" >'.Translator::dateToLocale($movimento['data']).' <span  class="tip" title="'.tr('Data del movimento: _DATE_', [
+               '_DATE_' => Translator::timestampToLocale($movimento['created_at'])
+            ]).'"><i class="fa fa-question-circle-o"></i></span> </td>';
 
         // Operazioni
         echo '

@@ -301,7 +301,7 @@ if (!empty($id_intervento)) {
 <script type="text/javascript">
 	$(document).ready(function(){
         if(!$("#bs-popup #idanagrafica").val()){
-            $("#bs-popup #idsede").prop("disabled", true);
+            $("#bs-popup #idsede_destinazione").prop("disabled", true);
             $("#bs-popup #idpreventivo").prop("disabled", true);
             $("#bs-popup #idcontratto").prop("disabled", true);
             $("#bs-popup #idimpianti").prop("disabled", true);
@@ -325,7 +325,7 @@ if (!empty($id_intervento)) {
 
 if (!empty($id_intervento)) {
     echo '
-        $("#bs-popup #idsede").prop("disabled", true);
+        $("#bs-popup #idsede_destinazione").prop("disabled", true);
         $("#bs-popup #idpreventivo").prop("disabled", true);
         $("#bs-popup #idcontratto").prop("disabled", true);
         $("#bs-popup #idimpianti").prop("disabled", true);
@@ -365,8 +365,8 @@ if (!empty($id_intervento)) {
         var value = !$(this).val() ? true : false;
         var placeholder = !$(this).val() ? "<?php echo tr('Seleziona prima un cliente...'); ?>" : "<?php echo tr("Seleziona un'opzione"); ?>";
 
-		$("#bs-popup #idsede").prop("disabled", value);
-		$("#bs-popup #idsede").selectReset(placeholder);
+		$("#bs-popup #idsede_destinazione").prop("disabled", value);
+		$("#bs-popup #idsede_destinazione").selectReset(placeholder);
 
 		$("#bs-popup #idpreventivo").prop("disabled", value);
 		$("#bs-popup #idpreventivo").selectReset(placeholder);
@@ -389,8 +389,8 @@ if (!empty($id_intervento)) {
 		}
 	});
 
-	$('#bs-popup #idsede').change( function(){
-		session_set('superselect,idsede', $(this).val(), 0);
+	$('#bs-popup #idsede_destinazione').change( function(){
+		session_set('superselect,idsede_destinazione', $(this).val(), 0);
 		$("#bs-popup #idimpianti").selectReset();
 
 		if (($(this).val())) {

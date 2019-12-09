@@ -45,7 +45,7 @@ echo '
         </div>
     </div>';
 
-if ($show_costi) {
+
     echo '
     <div class="row">';
 
@@ -55,6 +55,7 @@ if ($show_costi) {
             {[ "type": "number", "label": "'.tr('Km').'", "name": "km", "value": "'.$sessione['km'].'"]}
         </div>';
 
+if ($show_costi) {
     // Sconto ore
     echo '
         <div class="col-md-4">
@@ -81,9 +82,12 @@ if ($show_costi) {
 
         <div class="col-md-4">
             {[ "type": "number", "label": "'.tr('Addebito diritto ch.').'", "name": "prezzo_dirittochiamata", "value": "'.$sessione['prezzo_dirittochiamata'].'" ]}
-        </div>
+        </div>';
+    }
+    
+    echo'
     </div>';
-}
+
 
 echo '
 

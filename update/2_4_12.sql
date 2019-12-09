@@ -9,3 +9,9 @@ INSERT INTO `dt_causalet` (`id`, `descrizione`, `predefined`) VALUES (NULL, 'Con
 UPDATE `zz_widgets` SET `name` = 'Attività nello stato da programmare', `text` = 'Attività nello stato da programmare'  WHERE `zz_widgets`.`name` = 'Attività in programmazione';
 
 UPDATE `in_statiintervento` SET `descrizione` = 'Programmato' WHERE `in_statiintervento`.`descrizione` = 'In Programmazione' AND `in_statiintervento`.`codice` = 'WIP';
+
+-- Uniformo le date scadenza non settate correttamente
+UPDATE `in_interventi` SET `data_scadenza` = NULL WHERE `data_scadenza` = '0000-00-00 00:00:00';
+
+-- Permetti inserimento sessioni anche per altri tecnici
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `created_at`, `updated_at`, `order`, `help`) VALUES (NULL, 'Permetti inserimento sessioni degli altri tecnici', '0', 'boolean', '1', 'Interventi', NULL, NULL, NULL, 'Permette al tecnico l\'inserimento delle sessioni di lavoro anche per gli altri tecnici.');

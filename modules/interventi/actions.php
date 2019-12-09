@@ -68,7 +68,7 @@ switch (post('op')) {
             $idtipointervento = post('idtipointervento');
             $idstatointervento = post('idstatointervento');
             $data_richiesta = post('data_richiesta');
-            $data_scadenza = post('data_scadenza');
+            $data_scadenza = post('data_scadenza') ?: null;
 
             $anagrafica = Anagrafica::find($idanagrafica);
             $tipo = TipoSessione::find($idtipointervento);

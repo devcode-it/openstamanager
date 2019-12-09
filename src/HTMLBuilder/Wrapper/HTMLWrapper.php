@@ -96,7 +96,7 @@ class HTMLWrapper implements WrapperInterface
     <script>
         var container = $("#'.$pseudo_id.'_validation");
         
-        container.closest(".input-group").find("input").on("change", function(){
+        container.closest(".input-group").find("input").on("change, blur", function(e){
             var input = $(this);
             var value = input.val();
  

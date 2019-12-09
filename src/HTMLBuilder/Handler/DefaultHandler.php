@@ -53,7 +53,7 @@ class DefaultHandler implements HandlerInterface
     {
         // Generazione del codice HTML
         return '
-    <input |attr|>';
+    <input |attr| autocomplete="off">';
     }
 
     /**

@@ -144,8 +144,8 @@ switch (get('op')) {
         ORDER BY data_richiesta ASC";
 
         $rsp = $dbo->fetchArray($qp);
-
-        $interventi = $dbo->fetchArray("SELECT id, richiesta, id_contratto AS idcontratto, DATE_FORMAT(data_richiesta,'%m%Y') AS mese, data_richiesta, data_scadenza, an_anagrafiche.ragione_sociale, 'intervento' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE in_tipiintervento.idtipointervento=in_interventi.idtipointervento) AS tipointervento FROM in_interventi INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE (SELECT COUNT(*) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento = in_interventi.id) = 0 ORDER BY data_richiesta ASC");
+        
+        $interventi = $dbo->fetchArray("SELECT id, richiesta, id_contratto AS idcontratto, DATE_FORMAT(IF(data_scadenza IS NULL, data_richiesta, data_scadenza),'%m%Y') AS mese, IF(data_scadenza IS NULL, data_richiesta, data_scadenza)AS data_richiesta, data_scadenza, an_anagrafiche.ragione_sociale, 'intervento' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE in_tipiintervento.idtipointervento=in_interventi.idtipointervento) AS tipointervento FROM in_interventi INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE (SELECT COUNT(*) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento = in_interventi.id) = 0 ORDER BY data_richiesta ASC");
 
         $rsp = array_merge($rsp, $interventi);
 

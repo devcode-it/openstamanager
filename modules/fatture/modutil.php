@@ -122,7 +122,9 @@ function elimina_movimenti($id_documento, $prima_nota = 0)
 {
     $dbo = database();
 
-    $query2 = 'DELETE FROM co_movimenti WHERE iddocumento='.prepare($id_documento).' AND primanota='.prepare($prima_nota);
+    $idmastrino = $dbo->fetchOne('SELECT idmastrino FROM co_movimenti WHERE iddocumento='.prepare($id_documento).' AND primanota='.prepare($prima_nota))['idmastrino'];
+
+    $query2 = 'DELETE FROM co_movimenti WHERE idmastrino='.prepare($idmastrino).' AND primanota='.prepare($prima_nota);
     $dbo->query($query2);
 }
 

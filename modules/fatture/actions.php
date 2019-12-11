@@ -249,8 +249,8 @@ switch (post('op')) {
     case 'reopen':
         if (!empty($id_record)) {
             $dbo->query("UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione='Bozza') WHERE id=".prepare($id_record));
-            elimina_scadenze($id_record);
             elimina_movimenti($id_record, 1);
+            elimina_scadenze($id_record);
             ricalcola_costiagg_fattura($id_record);
             flash()->info(tr('Fattura riaperta!'));
         }

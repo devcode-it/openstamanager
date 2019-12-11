@@ -100,7 +100,7 @@ foreach ($id_documenti as $id_documento) {
 
     $numeri[] = !empty($fattura['numero_esterno']) ? $fattura['numero_esterno'] : $fattura['numero'];
 
-    $nota_credito = $tipo->descrizione == 'Nota di credito';
+    $nota_credito = $tipo->reversed;
 
     // Predisposizione prima riga
     $conto_field = 'idconto_'.($dir == 'entrata' ? 'vendite' : 'acquisti');
@@ -126,8 +126,8 @@ foreach ($id_documenti as $id_documento) {
             'iddocumento' => $scadenza['iddocumento'],
             'id_scadenza' => $scadenza['id'],
             'id_conto' => $id_conto_controparte,
-            'dare' => ($dir == 'entrata' && !$nota_credito && !$is_insoluto) ? 0 : $scadenza['rata'],
-            'avere' => ($dir == 'entrata' && !$nota_credito && !$is_insoluto) ? $scadenza['rata'] : 0,
+            'dare' => (($dir == 'entrata' && !$nota_credito && !$is_insoluto) || ($dir == 'uscita' && ($nota_credito || $is_insoluto))) ? 0 : $scadenza['rata'],
+            'avere' => (($dir == 'entrata' && !$nota_credito && !$is_insoluto) || ($dir == 'uscita' && ($nota_credito || $is_insoluto))) ? $scadenza['rata'] : 0,
         ];
     }
 

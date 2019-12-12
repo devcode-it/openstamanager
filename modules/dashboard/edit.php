@@ -595,6 +595,7 @@ echo "
 
 ?>
             lazyFetching: true,
+            slotEventOverlap :false,
 			selectHelper: true,
 			eventLimit: false, // allow "more" link when too many events
 			allDaySlot: false,

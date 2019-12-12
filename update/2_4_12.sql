@@ -15,3 +15,6 @@ UPDATE `in_interventi` SET `data_scadenza` = NULL WHERE `data_scadenza` = '0000-
 
 -- Permetti inserimento sessioni anche per altri tecnici
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `created_at`, `updated_at`, `order`, `help`) VALUES (NULL, 'Permetti inserimento sessioni degli altri tecnici', '0', 'boolean', '1', 'Interventi', NULL, NULL, NULL, 'Permette al tecnico l\'inserimento delle sessioni di lavoro anche per gli altri tecnici.');
+
+-- Aggiunta cartella per il modulo "Movimenti"
+UPDATE `zz_modules` SET `directory` = 'movimenti' WHERE `name` = 'Movimenti';

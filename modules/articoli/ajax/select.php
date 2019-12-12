@@ -90,6 +90,7 @@ switch ($resource) {
         if (!empty($search)) {
             $search_fields[] = 'mg_articoli.descrizione LIKE '.prepare('%'.$search.'%');
             $search_fields[] = 'mg_articoli.codice LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = 'mg_articoli.barcode LIKE '.prepare('%'.$search.'%');
         }
 
         $custom = [

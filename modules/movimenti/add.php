@@ -100,7 +100,7 @@ $_SESSION['superselect']['idsede_destinazione'] = 0;
                         else {
                             $('#buttons').next('hr').remove();
                             $('#buttons').next('div.alert').remove();
-                            $('#buttons').after( '<hr><div class="alert alert-danger text-center"><big>Articolo <b>' + barcode + '</b> non trovato!</big></div>' );
+                            $('#buttons').after( '<hr><div class="alert alert-danger text-center"><big>Articolo <b>' + search + '</b> non trovato!</big></div>' );
                         }
                     }
                 );

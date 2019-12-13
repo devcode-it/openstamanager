@@ -111,48 +111,49 @@ switch (post('op')) {
 
             $fattura->save();
 
-            if ($stato_precedente->descrizione == 'Bozza' && $stato['descrizione'] == 'Emessa') {
+            if ($fattura->direzione == 'entrata' && $stato_precedente->descrizione == 'Bozza' && $stato['descrizione'] == 'Emessa') {
                 // Generazione automatica della Fattura Elettronica
                 $stato_fe = empty($fattura->codice_stato_fe) || in_array($fattura->codice_stato_fe, ['GEN', 'NS', 'EC02']);
                 $checks = FatturaElettronica::controllaFattura($fattura);
                 if ($stato_fe && empty($checks)) {
                     try {
                         $fattura_pa = new FatturaElettronica($id_record);
-                        $file = $fattura_pa->save(DOCROOT.'/'.FatturaElettronica::getDirectory());
+                        $file = $fattura_pa->save(DOCROOT . '/' . FatturaElettronica::getDirectory());
 
                         flash()->info(tr('Fattura elettronica generata correttamente!'));
 
                         if (!$fattura_pa->isValid()) {
                             $errors = $fattura_pa->getErrors();
 
-                            flash()->warning(tr('La fattura elettronica potrebbe avere delle irregolarità!').' '.tr('Controllare i seguenti campi: _LIST_', [
+                            flash()->warning(tr('La fattura elettronica potrebbe avere delle irregolarità!') . ' ' . tr('Controllare i seguenti campi: _LIST_', [
                                     '_LIST_' => implode(', ', $errors),
-                                ]).'.');
+                                ]) . '.');
                         }
                     } catch (UnexpectedValueException $e) {
                     }
                 } elseif (!empty($checks)) {
-                    $message = tr('La fattura elettronica non è stata generata a causa di alcune informazioni mancanti').':';
+                    $message = tr('La fattura elettronica non è stata generata a causa di alcune informazioni mancanti') . ':';
 
                     foreach ($checks as $check) {
                         $message .= '
-    <p><b>'.$check['name'].' '.$check['link'].'</b></p>
-    <ul>';
+<p><b>' . $check['name'] . ' ' . $check['link'] . '</b></p>
+<ul>';
 
                         foreach ($check['errors'] as $error) {
                             if (!empty($error)) {
                                 $message .= '
-        <li>'.$error.'</li>';
+    <li>' . $error . '</li>';
                             }
                         }
 
                         $message .= '
-    </ul>';
+</ul>';
                     }
 
                     flash()->warning($message);
                 }
             }
+
 
             aggiorna_sedi_movimenti('documenti', $id_record);
 
@@ -636,6 +637,9 @@ switch (post('op')) {
 
     // Nota di credito
     case 'nota_credito':
+        $id_documento = post('id_documento');
+        $fattura = Fattura::find($id_documento);
+
         $id_segment = post('id_segment');
         $data = post('data');
 

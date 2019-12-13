@@ -13,9 +13,10 @@ switch (filter('op')) {
 
         // Verifico che questo nome gruppo non sia già stato usato
         if ($dbo->fetchNum('SELECT nome FROM zz_groups WHERE nome='.prepare($nome)) == 0) {
-            $dbo->query('INSERT INTO zz_groups( nome, editable ) VALUES('.prepare($nome).', 1)');
-            flash()->info(tr('Gruppo aggiunto!'));
+            $dbo->query('INSERT INTO zz_groups(nome, editable) VALUES('.prepare($nome).', 1)');
             $id_record = $dbo->lastInsertedID();
+
+            flash()->info(tr('Gruppo aggiunto!'));
         } else {
             flash()->error(tr('Gruppo già esistente!'));
         }

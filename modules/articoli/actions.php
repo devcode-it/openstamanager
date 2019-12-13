@@ -7,13 +7,13 @@ switch (post('op')) {
     case 'add':
         //Se non specifico il codice articolo lo imposto uguale all'id della riga
         if (empty(post('codice'))) {
-            $codice = $dbo->fetchOne('SELECT (MAX(id)+1) as codice FROM mg_articoli')['codice'];
+            $codice = $dbo->fetchOne('SELECT MAX(id) as codice FROM mg_articoli')['codice'] + 1;
         } else {
             $codice = post('codice');
         }
 
         // Inserisco l'articolo e avviso se esiste un altro articolo con stesso codice.
-        if ($n = $dbo->fetchNum('SELECT * FROM mg_articoli WHERE codice='.prepare($codice)) > 0) {
+        if ($n = $dbo->fetchNum('SELECT * FROM mg_articoli WHERE codice = '.prepare($codice)) > 0) {
             flash()->warning(tr('Attenzione: il codice _CODICE_ è già stato utilizzato _N_ volta', [
                 '_CODICE_' => $codice,
                 '_N_' => $n,

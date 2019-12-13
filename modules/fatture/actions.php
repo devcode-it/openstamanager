@@ -636,6 +636,9 @@ switch (post('op')) {
 
     // Nota di credito
     case 'nota_credito':
+        $id_documento = post('id_documento');
+        $fattura = Fattura::find($id_documento);
+
         $id_segment = post('id_segment');
         $data = post('data');
 

@@ -53,7 +53,7 @@ if (!empty($n)) {
 				<td><a target="_blank" >'.Modules::link(Modules::get('Interventi')['id'], $r['id'], $r['codice']).'</a></td>
                 <td>'.$r['ragione_sociale'].'</td>
                 <td>'.Translator::dateToLocale($r['data_richiesta']).'</td>
-                <td>'.((empty($r['data_scadenza'])) ? " - " : Translator::dateToLocale($r['data_scadenza'])).'</td>
+                <td>'.((empty($r['data_scadenza'])) ? ' - ' : Translator::dateToLocale($r['data_scadenza'])).'</td>
                 <td>'.$r['tipointervento'].'</td>
                 <td>'.nl2br($r['richiesta']).'</td>
 				';

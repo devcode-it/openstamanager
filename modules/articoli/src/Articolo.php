@@ -70,7 +70,7 @@ class Articolo extends Model
     public function registra($qta, $descrizone = null, $data = null, $manuale = false, $array = [])
     {
         $id = false;
-        
+
         if (empty($qta)) {
             return false;
         }

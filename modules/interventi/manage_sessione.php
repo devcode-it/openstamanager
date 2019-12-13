@@ -45,7 +45,6 @@ echo '
         </div>
     </div>';
 
-
     echo '
     <div class="row">';
 
@@ -83,11 +82,10 @@ if ($show_costi) {
         <div class="col-md-4">
             {[ "type": "number", "label": "'.tr('Addebito diritto ch.').'", "name": "prezzo_dirittochiamata", "value": "'.$sessione['prezzo_dirittochiamata'].'" ]}
         </div>';
-    }
-    
+}
+
     echo'
     </div>';
-
 
 echo '
 

@@ -115,10 +115,8 @@ switch ($resource) {
         if (empty($filter)) {
             $where[] = 'deleted_at IS NULL';
 
-          
-            if (setting('Permetti inserimento sessioni degli altri tecnici')){
-
-            }else{
+            if (setting('Permetti inserimento sessioni degli altri tecnici')) {
+            } else {
                 //come tecnico posso aprire attività solo a mio nome
                 $user = Auth::user();
                 if ($user['gruppo'] == 'Tecnici' && !empty($user['idanagrafica'])) {

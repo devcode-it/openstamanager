@@ -19,25 +19,25 @@ $_SESSION['superselect']['idsede_destinazione'] = 0;
 
     <div class="row">
         <div class="col-md-4">
-            {["type":"select", "label":"<?php echo tr('Articolo');?>", "name":"idarticolo", "ajax-source":"articoli", "value":"", "required":1]}
+            {["type":"select", "label":"<?php echo tr('Articolo'); ?>", "name":"idarticolo", "ajax-source":"articoli", "value":"", "required":1]}
         </div>
 
         <div class="col-md-2">
-            {["type":"number", "label":"<?php echo tr('Quantità');?>", "name":"qta", "decimals":"2", "value":"1", "required":1]}
+            {["type":"number", "label":"<?php echo tr('Quantità'); ?>", "name":"qta", "decimals":"2", "value":"1", "required":1]}
         </div>
 
         <div class="col-md-2">
-            {["type":"date", "label":"<?php echo tr('Data');?>", "name":"data", "value":"-now-", "required":1]}
+            {["type":"date", "label":"<?php echo tr('Data'); ?>", "name":"data", "value":"-now-", "required":1]}
         </div>
 
         <div class="col-md-4">
-            {["type":"select", "label":"<?php echo tr('Causale');?>", "name":"direzione", "values":"list=\"Carico manuale\":\"Carico\", \"Scarico manuale\":\"Scarico\" ", "value":"Carico manuale", "required":1]}
+            {["type":"select", "label":"<?php echo tr('Causale'); ?>", "name":"direzione", "values":"list=\"Carico manuale\":\"Carico\", \"Scarico manuale\":\"Scarico\" ", "value":"Carico manuale", "required":1]}
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-12">
-            {["type":"textarea", "label":"<?php echo tr('Descrizione movimento');?>", "name":"movimento", "required":1]}
+            {["type":"textarea", "label":"<?php echo tr('Descrizione movimento'); ?>", "name":"movimento", "required":1]}
         </div>
     </div>
 

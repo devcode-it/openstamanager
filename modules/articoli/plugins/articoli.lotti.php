@@ -22,41 +22,41 @@ echo '
         <li class="active"><a href="#generazione" data-toggle="tab">'.tr('Generazione').'</a></li>
         <li><a href="#inserimento" data-toggle="tab">'.tr('Inserimento').'</a></li>
     </ul>
-        
+
     <div class="tab-content">
         <form action="" method="post" role="form" class="tab-pane active" id="generazione">
             <input type="hidden" name="backto" value="record-edit">
             <input type="hidden" name="op" value="generate_serials">
-            
+
             <div class="row">
                 <div class="col-md-5">
                     {[ "type": "text", "label": "'.tr('Inizio').'", "name": "serial_start", "extra": "onkeyup=\"$(\'#serial_end\').val( $(this).val()); ricalcola_generazione();\"" ]}
                 </div>
-                
+
                 <div class="col-md-2 text-center" style="padding-top: 20px;">
                     <i class="fa fa-arrow-circle-right fa-2x"></i>
                 </div>
-                
+
                 <div class="col-md-5">
                     {[ "type": "text", "label": "'.tr('Fine').'", "name": "serial_end", "extra": "onkeyup=\"ricalcola_generazione();\"" ]}
                 </div>
             </div>
-            
+
             <div class="row">
                 <div class="col-md-9">
                     <p class="text-danger">'.tr('Totale prodotti da inserire').': <span id="totale_generazione">0</span></p>
                 </div>
-            
+
                 <div class="col-md-3 text-right">
                     <button type="button" class="btn btn-primary" onclick="addSerial(\'#generazione\', $(\'#totale_generazione\').text())"><i class="fa fa-plus"></i> '.tr('Aggiungi').'</button>
                 </div>
             </div>
         </form>
-        
-        <form action="" method="post" role="form" class="tab-pane active" id="inserimento">
+
+        <form action="" method="post" role="form" class="tab-pane" id="inserimento">
             <input type="hidden" name="backto" value="record-edit">
             <input type="hidden" name="op" value="add_serials">
-            
+
             <div class="row">
                 <div class="col-md-12">
                     {[ "type": "select", "label": "'.tr('Nuovi seriali').'", "name": "serials[]", "extra": "onchange=\"ricalcola_inserimento();\"", "multiple": 1, "values": [] ]}
@@ -67,7 +67,7 @@ echo '
                 <div class="col-md-9">
                     <p class="text-danger">'.tr('Totale prodotti da inserire').': <span id="totale_inserimento">0</span></p>
                 </div>
-            
+
                 <div class="col-md-3 text-right">
                     <button type="button" class="btn btn-primary" onclick="addSerial(\'#inserimento\', $(\'#totale_inserimento\').text())"><i class="fa fa-plus"></i> '.tr('Aggiungi').'</button>
                 </div>
@@ -255,8 +255,8 @@ $(document).ready(function() {
         tokenSeparators: [\',\']
     });
 });
-        
-function addSerial(form_id, numero) {    
+
+function addSerial(form_id, numero) {
     if (numero > 0){
         swal({
             title: "'.tr('Nuovi seriali').'",

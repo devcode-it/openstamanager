@@ -111,6 +111,11 @@ $_SESSION['superselect']['idsede_destinazione'] = 0;
         });
     });
 
+    // Reload pagina appena chiudo il modal
+    $('#bs-popup').on('hidden.bs.modal', function(){
+        location.reload();
+    });
+
     function ajax_submit( barcode, articolo ) {
         //Controllo che siano presenti tutti i dati richiesti
         if( $("#add-form").parsley().validate() ){

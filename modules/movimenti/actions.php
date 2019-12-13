@@ -12,7 +12,7 @@ switch (post('op')) {
         $qta = ( post('direzione') == 'Carico manuale' ) ? post('qta') : -post('qta');
 
         if( post('direzione') == 'Carico manuale' ){
-            if( $idsede_partenza == 0){
+            if( $idsede_partenza == 0 && $idsede_destinazione != 0){
                 $qta = -post('qta');
             } elseif( $idsede_partenza != 0 && $idsede_destinazione == 0){
                 $qta = post('qta');
@@ -20,7 +20,7 @@ switch (post('op')) {
                 $idsede_destinazione = post('idsede_partenza');
             }
         } else {
-            if( $idsede_destinazione == 0){
+            if( $idsede_partenza != 0 && $idsede_destinazione == 0){
                 $qta = -post('qta');
                 $idsede_partenza = post('idsede_destinazione');
                 $idsede_destinazione = post('idsede_partenza');

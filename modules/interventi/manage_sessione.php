@@ -54,16 +54,19 @@ echo '
             {[ "type": "number", "label": "'.tr('Km').'", "name": "km", "value": "'.$sessione['km'].'"]}
         </div>';
 
-if ($show_costi) {
+    $hide = '';
+    if ($show_costi) {
+        $hide = 'hide';
+    }
     // Sconto ore
     echo '
-        <div class="col-md-4">
+        <div class="col-md-4 '.$hide.'" >
             {[ "type": "number", "label": "'.tr('Sconto ore').'", "name": "sconto", "value": "'.$sessione['sconto_unitario'].'", "icon-after": "choice|untprc|'.$sessione['tipo_sconto'].'"]}
         </div>';
 
     // Sconto km
     echo '
-        <div class="col-md-4">
+        <div class="col-md-4 '.$hide.'">
             {[ "type": "number", "label": "'.tr('Sconto km').'", "name": "sconto_km", "value": "'.$sessione['scontokm_unitario'].'", "icon-after": "choice|untprc|'.$sessione['tipo_sconto_km'].'"]}
         </div>';
 
@@ -71,18 +74,17 @@ if ($show_costi) {
     </div>
     
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-4 '.$hide.'">
             {[ "type": "number", "label": "'.tr('Addebito orario').'", "name": "prezzo_ore_unitario", "value": "'.$sessione['prezzo_ore_unitario'].'" ]}
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-4 '.$hide.'">
             {[ "type": "number", "label": "'.tr('Addebito km').'", "name": "prezzo_km_unitario", "value": "'.$sessione['prezzo_km_unitario'].'" ]}
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-4 '.$hide.'">
             {[ "type": "number", "label": "'.tr('Addebito diritto ch.').'", "name": "prezzo_dirittochiamata", "value": "'.$sessione['prezzo_dirittochiamata'].'" ]}
         </div>';
-}
 
     echo'
     </div>';

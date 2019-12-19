@@ -62,6 +62,7 @@ switch (post('op')) {
         $articolo->id_categoria = post('categoria');
         $articolo->id_sottocategoria = post('subcategoria');
         $articolo->abilita_serial = post('abilita_serial');
+        $articolo->ubicazione = post('ubicazione');
         $articolo->threshold_qta = post('threshold_qta');
         $articolo->prezzo_vendita = post('prezzo_vendita');
         $articolo->prezzo_acquisto = post('prezzo_acquisto');

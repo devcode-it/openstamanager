@@ -18,3 +18,6 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 
 -- Aggiunta cartella per il modulo "Movimenti"
 UPDATE `zz_modules` SET `directory` = 'movimenti' WHERE `name` = 'Movimenti';
+
+-- Aggiunta campo "Ubicazione" per gli articoli
+ALTER TABLE `mg_articoli` ADD `ubicazione` VARCHAR(255) NOT NULL AFTER `threshold_qta`;

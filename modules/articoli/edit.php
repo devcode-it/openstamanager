@@ -49,7 +49,7 @@ $_SESSION['superselect']['id_categoria'] = $record['id_categoria'];
 			</div>
 
 			<div class="row">
-				<div class="col-md-3">
+				<div class="col-md-2">
 					{[ "type": "number", "label": "<?php echo tr('Quantità'); ?>", "name": "qta", "required": 1, "value": "$qta$", "readonly": 1, "decimals": "qta", "min-value": "undefined" ]}
 					<input type="hidden" id="old_qta" value="<?php echo $record['qta']; ?>">
 				</div>
@@ -93,10 +93,13 @@ $_SESSION['superselect']['id_categoria'] = $record['id_categoria'];
 					{[ "type": "checkbox", "label": "<?php echo tr('Abilita serial number'); ?>", "name": "abilita_serial", "value": "$abilita_serial$", "help": "<?php echo tr('Abilita serial number in fase di aggiunta articolo in fattura o ddt'); ?>", "placeholder": "<?php echo tr('Serial number'); ?>", "extra": "<?php echo ($record['serial'] > 0) ? 'readonly' : ''; ?>" ]}
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-2">
                     {[ "type": "checkbox", "label": "<?php echo tr('Attivo'); ?>", "name": "attivo", "help": "<?php echo tr('Seleziona per rendere attivo l\'articolo'); ?>", "value": "$attivo$", "placeholder": "<?php echo tr('Articolo attivo'); ?>" ]}
                 </div>
 
+                <div class="col-md-2">
+                    {[ "type": "text", "label": "<?php echo tr('Ubicazione'); ?>", "name": "ubicazione", "value": "$ubicazione$" ]}
+                </div>
 			</div>
 
 			<div class='row' id="div_modifica_manuale" style="display:none;">

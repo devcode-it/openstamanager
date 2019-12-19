@@ -19,7 +19,13 @@ class Categoria extends Model
         $model->save();
 
         $gruppi = database()->fetchArray('SELECT `id` FROM `zz_groups`');
-        $model->syncPermessi($gruppi);
+        foreach($gruppi as $array) {
+            foreach($array as $k=>$v) {
+                $newArray[$k] = $v;
+            }
+        }
+        
+        $model->syncPermessi($newArray);
 
         return $model;
     }
@@ -27,7 +33,7 @@ class Categoria extends Model
     public function syncPermessi(array $groups)
     {
         $groups[] = 1;
-
+        
         $database = database();
         $database->sync('do_permessi', ['id_categoria' => $this->id], [
            'id_gruppo' => $groups,

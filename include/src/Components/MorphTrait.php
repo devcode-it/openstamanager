@@ -13,7 +13,7 @@ trait MorphTrait
 
     public function getOriginal()
     {
-        if(!isset($this->original_model) && !empty($this->original_type)) {
+        if (!isset($this->original_model) && !empty($this->original_type)) {
             $class = $this->original_type;
 
             $this->original_model = $class::find($this->original_id);

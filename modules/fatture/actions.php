@@ -118,31 +118,31 @@ switch (post('op')) {
                 if ($stato_fe && empty($checks)) {
                     try {
                         $fattura_pa = new FatturaElettronica($id_record);
-                        $file = $fattura_pa->save(DOCROOT . '/' . FatturaElettronica::getDirectory());
+                        $file = $fattura_pa->save(DOCROOT.'/'.FatturaElettronica::getDirectory());
 
                         flash()->info(tr('Fattura elettronica generata correttamente!'));
 
                         if (!$fattura_pa->isValid()) {
                             $errors = $fattura_pa->getErrors();
 
-                            flash()->warning(tr('La fattura elettronica potrebbe avere delle irregolarità!') . ' ' . tr('Controllare i seguenti campi: _LIST_', [
+                            flash()->warning(tr('La fattura elettronica potrebbe avere delle irregolarità!').' '.tr('Controllare i seguenti campi: _LIST_', [
                                     '_LIST_' => implode(', ', $errors),
-                                ]) . '.');
+                                ]).'.');
                         }
                     } catch (UnexpectedValueException $e) {
                     }
                 } elseif (!empty($checks)) {
-                    $message = tr('La fattura elettronica non è stata generata a causa di alcune informazioni mancanti') . ':';
+                    $message = tr('La fattura elettronica non è stata generata a causa di alcune informazioni mancanti').':';
 
                     foreach ($checks as $check) {
                         $message .= '
-<p><b>' . $check['name'] . ' ' . $check['link'] . '</b></p>
+<p><b>'.$check['name'].' '.$check['link'].'</b></p>
 <ul>';
 
                         foreach ($check['errors'] as $error) {
                             if (!empty($error)) {
                                 $message .= '
-    <li>' . $error . '</li>';
+    <li>'.$error.'</li>';
                             }
                         }
 
@@ -153,7 +153,6 @@ switch (post('op')) {
                     flash()->warning($message);
                 }
             }
-
 
             aggiorna_sedi_movimenti('documenti', $id_record);
 

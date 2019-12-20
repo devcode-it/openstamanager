@@ -2,8 +2,8 @@
 
 namespace Update\v2_4_10;
 
-use Common\Document;
 use Common\Components\Row;
+use Common\Document;
 use Illuminate\Database\Eloquent\Builder;
 use Modules\Articoli\Articolo as Original;
 use UnexpectedValueException;

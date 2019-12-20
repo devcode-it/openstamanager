@@ -2,8 +2,8 @@
 
 namespace Update\v2_4_10\Components;
 
-use Update\v2_4_10\Article;
 use Modules\Articoli\Articolo as Original;
+use Update\v2_4_10\Article;
 use Update\v2_4_10\Fattura;
 
 class Articolo extends Article

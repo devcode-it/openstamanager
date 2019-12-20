@@ -125,6 +125,7 @@ class Prints
         $dbo = $database = database();
         $infos = self::get($print);
 
+        $additional_checks = false;
         if (!$return_string) {
             Permissions::addModule($infos['id_module']);
 
@@ -141,9 +142,11 @@ class Prints
                 $has_access = !empty($query) ? $dbo->fetchNum($query) !== 0 : true;
             }
 
-            if (empty($infos) || empty($infos['enabled']) || !Permissions::check([], false) || !$has_access) {
-                return false;
-            }
+            $additional_checks = !Permissions::check([], false) || !$has_access;
+        }
+
+        if (empty($infos) || empty($infos['enabled']) || $additional_checks) {
+            return false;
         }
 
         // Individuazione della configurazione

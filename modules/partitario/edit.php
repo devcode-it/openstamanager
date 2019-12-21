@@ -56,6 +56,14 @@ foreach ($primo_livello as $conto_primo) {
             $movimenti = $dbo->fetchArray($query);
 
             $totale_conto = sum(array_column($movimenti, 'totale'));
+
+            // Se il conto è patrimoniale, aggiungo i movimenti del periodo precedente
+            if ($conto_primo['descrizione'] == 'Patrimoniale') {
+                $saldo_precedente = $dbo->fetchOne('SELECT SUM(totale) AS totale FROM co_movimenti WHERE idconto='.prepare($conto_terzo['id']).' AND data < '.prepare($_SESSION['period_start']).' GROUP BY idconto')['totale'];
+
+                $totale_conto += $saldo_precedente;
+            }
+
             $totale_conto = ($conto_primo['descrizione'] == 'Patrimoniale') ? $totale_conto : -$totale_conto;
 
             // Somma dei totali

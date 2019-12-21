@@ -19,30 +19,6 @@ GROUP BY co_movimenti.idmastrino
 ORDER BY co_movimenti.data DESC';
 $movimenti = $dbo->fetchArray($query);
 
-// Se il conto fa parte dello stato patrimoniale, sommo i movimenti del periodo precedente
-$primo_livello = $dbo->fetchOne('SELECT co_pianodeiconti1.descrizione FROM co_pianodeiconti1 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti1.id=co_pianodeiconti2.idpianodeiconti1 INNER JOIN co_pianodeiconti3 ON co_pianodeiconti2.id=co_pianodeiconti3.idpianodeiconti2 WHERE co_pianodeiconti3.id='.prepare($id_conto))['descrizione'];
-
-if ($primo_livello == 'Patrimoniale') {
-    $saldo_precedente = $dbo->fetchOne('SELECT SUM(totale) AS totale FROM co_movimenti WHERE idconto='.prepare($id_conto).' AND data < '.prepare($_SESSION['period_start']).' GROUP BY idconto')['totale'];
-
-    $movimenti_precedenti[] =
-        [
-           'id' => null,
-           'idmastrino' => null,
-           'data' => $_SESSION['period_start'],
-           'data_documento' => null,
-           'iddocumento' => 0,
-           'id_scadenza' => null,
-           'is_insoluto' => 0,
-           'idanagrafica' => 0,
-           'descrizione' => 'Apertura conti',
-           'idconto' => $idconto,
-           'totale' => $saldo_precedente,
-           'primanota' => 0,
-        ];
-    $movimenti = array_merge($movimenti_precedenti, $movimenti);
-}
-
 if (!empty($movimenti)) {
     echo '
 <table class="table table-bordered table-hover table-condensed table-striped">

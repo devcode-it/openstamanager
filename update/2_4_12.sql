@@ -30,3 +30,6 @@ UPDATE `zz_prints` SET `title` = 'Ordine fornitore (senza prezzi)' WHERE `name` 
 UPDATE `zz_prints` SET `title` = 'Ddt di vendita (senza prezzi)' WHERE `name` = 'Ddt di vendita (senza costi)';
 -- Aggiunta campo "Ubicazione" per gli articoli
 ALTER TABLE `mg_articoli` ADD `ubicazione` VARCHAR(255) NOT NULL AFTER `threshold_qta`;
+
+-- Aggiunta flag per apertura e chiusura bilancio automatici
+ALTER TABLE `co_movimenti` ADD `is_apertura` BOOLEAN NOT NULL DEFAULT FALSE AFTER `is_insoluto`, ADD `is_chiusura` BOOLEAN NOT NULL DEFAULT FALSE AFTER `is_apertura`; 

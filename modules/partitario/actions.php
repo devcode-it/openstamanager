@@ -2,6 +2,9 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\PrimaNota\Mastrino;
+use Modules\PrimaNota\Movimento;
+
 switch (post('op')) {
     // Aggiunta nuovo conto nel partitario
     case 'add':
@@ -62,5 +65,109 @@ switch (post('op')) {
                 flash()->info(tr('Conto eliminato!'));
             }
         }
+        break;
+    
+
+    // Apertura bilancio
+    case 'apri-bilancio':
+        // Eliminazione eventuali movimenti di apertura fatti finora
+        $dbo->query('DELETE FROM co_movimenti WHERE is_apertura=1 AND data='.prepare($_SESSION['period_start']));
+
+        $idconto_apertura = $dbo->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE descrizione="Apertura conti patrimoniali"')['id'];
+
+        // Lettura di tutti i conti dello stato patrimoniale con saldo != 0
+        $conti = $dbo->fetchArray('SELECT co_pianodeiconti3.id, SUM(co_movimenti.totale) AS totale FROM ((co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id) INNER JOIN co_pianodeiconti1 ON co_pianodeiconti2.idpianodeiconti1=co_pianodeiconti1.id) INNER JOIN co_movimenti ON co_pianodeiconti3.id=co_movimenti.idconto WHERE co_pianodeiconti1.descrizione="Patrimoniale" AND data < '.prepare($_SESSION['period_start']).' AND co_pianodeiconti3.descrizione NOT IN("Apertura conti patrimoniali", "Chiusura conti patrimoniali") AND is_apertura=0 AND is_chiusura=0 GROUP BY co_pianodeiconti3.id HAVING totale != 0');
+
+        $mastrino = Mastrino::build(tr('Apertura conto'), $_SESSION['period_start'], 0, true);
+
+        $totale = 0;
+
+        foreach( $conti as $conto ){
+            if( $conto['totale'] >= 0 ){
+                $dare = abs($conto['totale']);
+                $avere = 0;
+            } else {
+                $dare = 0;
+                $avere = abs($conto['totale']);
+            }
+
+            $movimento = Movimento::build($mastrino, $conto['id']);
+            $movimento->setTotale($avere, $dare);
+            $movimento->is_apertura = true;
+            $movimento->save();
+
+            $totale += $conto['totale'];
+        }
+
+        // Movimento sul conto di apertura
+        $totale = -$totale;
+
+        if( $totale >= 0 ){
+            $dare = abs($totale);
+            $avere = 0;
+        } else {
+            $dare = 0;
+            $avere = abs($totale);
+        }
+
+        $movimento = Movimento::build($mastrino, $idconto_apertura);
+        $movimento->setTotale($avere, $dare);
+        $movimento->is_apertura = true;
+        $movimento->save();
+
+        flash()->info(tr('Apertura bilancio completata!'));
+        
+        break;
+    
+
+    // Chiusura bilancio
+    case 'chiudi-bilancio':
+        // Eliminazione eventuali movimenti di chiusura fatti finora
+        $dbo->query('DELETE FROM co_movimenti WHERE is_chiusura=1 AND data='.prepare($_SESSION['period_end']));
+
+        $idconto_chiusura = $dbo->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE descrizione="Chiusura conti patrimoniali"')['id'];
+
+        // Lettura di tutti i conti dello stato patrimoniale con saldo != 0
+        $conti = $dbo->fetchArray('SELECT co_pianodeiconti3.id, SUM(co_movimenti.totale) AS totale FROM ((co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id) INNER JOIN co_pianodeiconti1 ON co_pianodeiconti2.idpianodeiconti1=co_pianodeiconti1.id) INNER JOIN co_movimenti ON co_pianodeiconti3.id=co_movimenti.idconto WHERE co_pianodeiconti1.descrizione="Patrimoniale" AND data <= '.prepare($_SESSION['period_end']).' AND co_pianodeiconti3.descrizione NOT IN("Apertura conti patrimoniali", "Chiusura conti patrimoniali") AND is_apertura=0 AND is_chiusura=0 GROUP BY co_pianodeiconti3.id HAVING totale != 0');
+
+        $mastrino = Mastrino::build(tr('Chiusura conto'), $_SESSION['period_end'], 0, true);
+
+        $totale = 0;
+
+        foreach( $conti as $conto ){
+            if( $conto['totale'] < 0 ){
+                $dare = abs($conto['totale']);
+                $avere = 0;
+            } else {
+                $dare = 0;
+                $avere = abs($conto['totale']);
+            }
+
+            $movimento = Movimento::build($mastrino, $conto['id']);
+            $movimento->setTotale($avere, $dare);
+            $movimento->is_chiusura = true;
+            $movimento->save();
+
+            $totale += $conto['totale'];
+        }
+
+        // Movimento sul conto di chiusura
+        //$totale = -$totale;
+
+        if( $totale >= 0 ){
+            $dare = abs($totale);
+            $avere = 0;
+        } else {
+            $dare = 0;
+            $avere = abs($totale);
+        }
+
+        $movimento = Movimento::build($mastrino, $idconto_chiusura);
+        $movimento->setTotale($avere, $dare);
+        $movimento->is_chiusura = true;
+        $movimento->save();
+
+        flash()->info(tr('Chiusura bilancio completata!'));
+        
         break;
 }

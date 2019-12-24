@@ -201,22 +201,20 @@ echo '
 
 // Margine
 $margine = $preventivo->margine;
-if (!empty($margine)) {
-    $margine_style = $margine < 0 ? 'background-color: #FFC6C6; border: 3px solid red' : '';
+$margine_style = $margine <= 0 ? 'background-color: #FFC6C6; border: 3px solid red' : '';
 
-    echo '
-    <tr>
-        <td colspan="5" class="text-right">
-            '.tr('Margine (_PRC_%)', [
-                '_PRC_' => numberFormat($preventivo->margine_percentuale),
-        ]).':
-        </td>
-        <td align="right" style="'.$margine_style.'">
-            '.moneyFormat($preventivo->margine).'
-        </td>
-        <td></td>
-    </tr>';
-}
+echo '
+<tr>
+    <td colspan="5" class="text-right">
+        '.tr('Margine (_PRC_%)', [
+            '_PRC_' => numberFormat($preventivo->margine_percentuale),
+    ]).':
+    </td>
+    <td align="right" style="'.$margine_style.'">
+        '.moneyFormat($preventivo->margine).'
+    </td>
+    <td></td>
+</tr>';
 
 echo '
 </table>';

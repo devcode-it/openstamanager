@@ -66,7 +66,6 @@ switch (post('op')) {
             }
         }
         break;
-    
 
     // Apertura bilancio
     case 'apri-bilancio':
@@ -82,8 +81,8 @@ switch (post('op')) {
 
         $totale = 0;
 
-        foreach( $conti as $conto ){
-            if( $conto['totale'] >= 0 ){
+        foreach ($conti as $conto) {
+            if ($conto['totale'] >= 0) {
                 $dare = abs($conto['totale']);
                 $avere = 0;
             } else {
@@ -102,7 +101,7 @@ switch (post('op')) {
         // Movimento sul conto di apertura
         $totale = -$totale;
 
-        if( $totale >= 0 ){
+        if ($totale >= 0) {
             $dare = abs($totale);
             $avere = 0;
         } else {
@@ -116,9 +115,8 @@ switch (post('op')) {
         $movimento->save();
 
         flash()->info(tr('Apertura bilancio completata!'));
-        
+
         break;
-    
 
     // Chiusura bilancio
     case 'chiudi-bilancio':
@@ -134,8 +132,8 @@ switch (post('op')) {
 
         $totale = 0;
 
-        foreach( $conti as $conto ){
-            if( $conto['totale'] < 0 ){
+        foreach ($conti as $conto) {
+            if ($conto['totale'] < 0) {
                 $dare = abs($conto['totale']);
                 $avere = 0;
             } else {
@@ -154,7 +152,7 @@ switch (post('op')) {
         // Movimento sul conto di chiusura
         //$totale = -$totale;
 
-        if( $totale >= 0 ){
+        if ($totale >= 0) {
             $dare = abs($totale);
             $avere = 0;
         } else {
@@ -168,6 +166,6 @@ switch (post('op')) {
         $movimento->save();
 
         flash()->info(tr('Chiusura bilancio completata!'));
-        
+
         break;
 }

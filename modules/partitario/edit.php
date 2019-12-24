@@ -8,7 +8,7 @@ $bilancio_gia_aperto = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE is_aper
 $msg = tr('Sei sicuro di voler aprire il bilancio?');
 $btn_class = 'btn-info';
 
-if( $bilancio_gia_aperto){
+if ($bilancio_gia_aperto) {
     $msg .= ' '.tr('I movimenti di apertura già esistenti verranno annullati e ricreati').'.';
     $btn_class = 'btn-default';
 }
@@ -272,14 +272,13 @@ foreach ($primo_livello as $conto_primo) {
     </table>';
 }
 
-
 // Verifico se è già stata eseguita l'apertura bilancio
 $bilancio_gia_chiuso = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE is_chiusura=1 AND data BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']));
 
 $msg = tr('Sei sicuro di voler aprire il bilancio?');
 $btn_class = 'btn-info';
 
-if( $bilancio_gia_chiuso){
+if ($bilancio_gia_chiuso) {
     $msg .= ' '.tr('I movimenti di apertura già esistenti verranno annullati e ricreati').'.';
     $btn_class = 'btn-default';
 }

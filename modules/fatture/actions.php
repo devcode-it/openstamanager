@@ -173,7 +173,7 @@ switch (post('op')) {
             $xml = \Util\XML::read($fattura->getXML());
 
             $dati_generali = $xml['FatturaElettronicaBody']['DatiGenerali']['DatiGeneraliDocumento'];
-            $totale_documento = $dati_generali['ImportoTotaleDocumento'] ?: null;
+            $totale_documento = abs(floatval($dati_generali['ImportoTotaleDocumento'])) ?: null;
         } catch (Exception $e) {
             $totale_documento = null;
         }

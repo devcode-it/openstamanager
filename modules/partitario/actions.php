@@ -18,7 +18,7 @@ switch (post('op')) {
             $rs = $dbo->fetchArray($query);
 
             if (sizeof($rs) == 0) {
-                $query = 'INSERT INTO co_pianodeiconti3(numero, descrizione, idpianodeiconti2, dir, can_edit, can_delete) VALUES('.prepare($numero).', '.prepare($descrizione).', '.prepare($idpianodeiconti2).', (SELECT dir FROM co_pianodeiconti2 WHERE id='.prepare($idpianodeiconti2).'), 1, 1)';
+                $query = 'INSERT INTO co_pianodeiconti3(numero, descrizione, idpianodeiconti2, dir) VALUES('.prepare($numero).', '.prepare($descrizione).', '.prepare($idpianodeiconti2).', (SELECT dir FROM co_pianodeiconti2 WHERE id='.prepare($idpianodeiconti2).'))';
 
                 if ($dbo->query($query)) {
                     flash()->info(tr('Nuovo conto aggiunto!'));

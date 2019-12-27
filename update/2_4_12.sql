@@ -32,4 +32,18 @@ UPDATE `zz_prints` SET `title` = 'Ddt di vendita (senza prezzi)' WHERE `name` = 
 ALTER TABLE `mg_articoli` ADD `ubicazione` VARCHAR(255) NOT NULL AFTER `threshold_qta`;
 
 -- Aggiunta flag per apertura e chiusura bilancio automatici
-ALTER TABLE `co_movimenti` ADD `is_apertura` BOOLEAN NOT NULL DEFAULT FALSE AFTER `is_insoluto`, ADD `is_chiusura` BOOLEAN NOT NULL DEFAULT FALSE AFTER `is_apertura`; 
+ALTER TABLE `co_movimenti` ADD `is_apertura` BOOLEAN NOT NULL DEFAULT FALSE AFTER `is_insoluto`, ADD `is_chiusura` BOOLEAN NOT NULL DEFAULT FALSE AFTER `is_apertura`;
+
+ALTER TABLE `co_pianodeiconti3` DROP `can_delete`,  DROP `can_edit`;
+
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES
+(NULL, 'Conto per Riepilogativo fornitori', (SELECT id FROM co_pianodeiconti3 WHERE descrizione = 'Riepilogativo fornitori'), 'query=SELECT `id`, CONCAT_WS('' - '', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti3` ORDER BY `descrizione` ASC', 1, 'Piano dei Conti', 1),
+(NULL, 'Conto per Riepilogativo clienti', (SELECT id FROM co_pianodeiconti3 WHERE descrizione = 'Riepilogativo clienti'), 'query=SELECT `id`, CONCAT_WS('' - '', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti3` ORDER BY `descrizione` ASC', 1, 'Piano dei Conti', 1),
+(NULL, 'Conto per Iva indetraibile', (SELECT id FROM co_pianodeiconti3 WHERE descrizione = 'Iva indetraibile'), 'query=SELECT `id`, CONCAT_WS('' - '', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti3` ORDER BY `descrizione` ASC', 1, 'Piano dei Conti', 1),
+(NULL, 'Conto per Iva su vendite', (SELECT id FROM co_pianodeiconti3 WHERE descrizione = 'Iva su vendite'), 'query=SELECT `id`, CONCAT_WS('' - '', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti3` ORDER BY `descrizione` ASC', 1, 'Piano dei Conti', 1),
+(NULL, 'Conto per Iva su acquisti', (SELECT id FROM co_pianodeiconti3 WHERE descrizione = 'Iva su acquisti'), 'query=SELECT `id`, CONCAT_WS('' - '', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti3` ORDER BY `descrizione` ASC', 1, 'Piano dei Conti', 1),
+(NULL, 'Conto per Erario c/ritenute d''acconto', (SELECT id FROM co_pianodeiconti3 WHERE descrizione = 'Erario c/ritenute d''acconto'), 'query=SELECT `id`, CONCAT_WS('' - '', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti3` ORDER BY `descrizione` ASC', 1, 'Piano dei Conti', 1),
+(NULL, 'Conto per Erario c/INPS', (SELECT id FROM co_pianodeiconti3 WHERE descrizione = 'Erario c/INPS'), 'query=SELECT `id`, CONCAT_WS('' - '', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti3` ORDER BY `descrizione` ASC', 1, 'Piano dei Conti', 1),
+(NULL, 'Conto per Erario c/enasarco', (SELECT id FROM co_pianodeiconti3 WHERE descrizione = 'Erario c/enasarco'), 'query=SELECT `id`, CONCAT_WS('' - '', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti3` ORDER BY `descrizione` ASC', 1, 'Piano dei Conti', 1),
+(NULL, 'Conto per Apertura conti patrimoniali', (SELECT id FROM co_pianodeiconti3 WHERE descrizione = 'Apertura conti patrimoniali'), 'query=SELECT `id`, CONCAT_WS('' - '', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti3` ORDER BY `descrizione` ASC', 1, 'Piano dei Conti', 1),
+(NULL, 'Conto per Chiusura conti patrimoniali', (SELECT id FROM co_pianodeiconti3 WHERE descrizione = 'Chiusura conti patrimoniali'), 'query=SELECT `id`, CONCAT_WS('' - '', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti3` ORDER BY `descrizione` ASC', 1, 'Piano dei Conti', 1);

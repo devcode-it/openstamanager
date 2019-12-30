@@ -73,7 +73,7 @@ abstract class Row extends Description
      */
     public function getMargineAttribute()
     {
-        return $this->imponibile - $this->spesa;
+        return $this->totale_imponibile - $this->spesa;
     }
 
     /**

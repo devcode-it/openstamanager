@@ -311,8 +311,8 @@ include $structure->filepath('ajax_righe.php');
 <script>
 	$('#idanagrafica').change( function(){
 		session_set('superselect,idanagrafica', $(this).val(), 0);
-
-		$("#idsede").selectReset();
+		
+		$("#idsede_destinazione").selectReset();
 		$("#idpreventivo").selectReset();
 		$("#idcontratto").selectReset();
 

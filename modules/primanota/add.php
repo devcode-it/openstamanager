@@ -8,7 +8,7 @@ use Modules\Fatture\Fattura;
 $module = Modules::get('Prima nota');
 
 $variables = Modules::get('Fatture di vendita')->getPlaceholders($id_documento);
-$righe = [];
+$movimenti = [];
 
 // Registrazione da remoto
 $id_records = get('id_records');
@@ -72,7 +72,7 @@ foreach ($id_scadenze as $id_scadenza) {
         }
     }
 
-    $righe = array_merge($righe, $righe_documento);
+    $movimenti = array_merge($movimenti, $righe_documento);
 }
 
 // Fatture
@@ -100,7 +100,7 @@ foreach ($id_documenti as $id_documento) {
 
     $numeri[] = !empty($fattura['numero_esterno']) ? $fattura['numero_esterno'] : $fattura['numero'];
 
-    $nota_credito = $tipo->descrizione == 'Nota di credito';
+    $nota_credito = $tipo->reversed;
 
     // Predisposizione prima riga
     $conto_field = 'idconto_'.($dir == 'entrata' ? 'vendite' : 'acquisti');
@@ -126,8 +126,8 @@ foreach ($id_documenti as $id_documento) {
             'iddocumento' => $scadenza['iddocumento'],
             'id_scadenza' => $scadenza['id'],
             'id_conto' => $id_conto_controparte,
-            'dare' => ($dir == 'entrata' && !$nota_credito && !$is_insoluto) ? 0 : $scadenza['rata'],
-            'avere' => ($dir == 'entrata' && !$nota_credito && !$is_insoluto) ? $scadenza['rata'] : 0,
+            'dare' => (($dir == 'entrata' && !$nota_credito && !$is_insoluto) || ($dir == 'uscita' && ($nota_credito || $is_insoluto))) ? 0 : $scadenza['rata'],
+            'avere' => (($dir == 'entrata' && !$nota_credito && !$is_insoluto) || ($dir == 'uscita' && ($nota_credito || $is_insoluto))) ? $scadenza['rata'] : 0,
         ];
     }
 
@@ -150,7 +150,7 @@ foreach ($id_documenti as $id_documento) {
         ];
     }
 
-    $righe = array_merge($righe, $righe_documento);
+    $movimenti = array_merge($movimenti, $righe_documento);
 }
 /*
 $k = 0;
@@ -168,11 +168,11 @@ $righe = array_merge($righe, $righe_azienda);
 }*/
 
 // Inverto dare e avere per importi negativi
-foreach ($righe as $key => $value) {
-    if ($righe[$key]['dare'] < 0 || $righe[$key]['avere'] < 0) {
-        $tmp = abs($righe[$key]['dare']);
-        $righe[$key]['dare'] = abs($righe[$key]['avere']);
-        $righe[$key]['avere'] = $tmp;
+foreach ($movimenti as $key => $value) {
+    if ($movimenti[$key]['dare'] < 0 || $movimenti[$key]['avere'] < 0) {
+        $tmp = abs($movimenti[$key]['dare']);
+        $movimenti[$key]['dare'] = abs($movimenti[$key]['avere']);
+        $movimenti[$key]['avere'] = $tmp;
     }
 }
 

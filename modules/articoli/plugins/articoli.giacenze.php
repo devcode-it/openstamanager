@@ -28,7 +28,7 @@ echo '
 	<div class="col-md-3">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-                <h3 class="panel-title">'.tr('Impegnato').'<span class="tip pull-right" title="'.tr('Quantità impegnate in ordini cliente che non siano già completamente evasi o articoli in cesta commessa.').'">
+                <h3 class="panel-title">'.tr('Impegnato').'<span class="tip pull-right" title="'.tr('Quantità impegnate in ordini cliente che non siano già completamente evasi.').'">
                 <i class="fa fa-question-circle-o"></i></span></h3>
 			</div>
 			<div class="panel-body" style="min-height:98px;">';
@@ -169,8 +169,7 @@ echo '
 			<div class="panel-body">
               <div class="row">
                  <div class="col-md-12 text-center" style="font-size:35pt;">
-                      <b>
-                       '.numberFormat($da_ordinare).' '.$articolo->um.'</b>
+                       '.numberFormat($da_ordinare).' '.$articolo->um.'
 			       </div>
 			   </div>
 			</div>
@@ -193,7 +192,7 @@ echo '
 
               <div class="row">
                  <div class="col-md-12 text-center" style="font-size:35pt;">
-                       '.numberFormat($disponibile).' '.$articolo->um.'</b>
+                       '.numberFormat($disponibile).' '.$articolo->um.'
 			       </div>
 			   </div>
 

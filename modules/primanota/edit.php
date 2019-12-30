@@ -57,7 +57,7 @@ include_once __DIR__.'/../../core.php';
 	</div>
 <?php
 
-$righe = $mastrino->movimenti->toArray();
+$movimenti = $mastrino->movimenti->toArray();
 
 include $structure->filepath('movimenti.php');
 

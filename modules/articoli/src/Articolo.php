@@ -45,7 +45,7 @@ class Articolo extends Model
      */
     public function movimenta($qta, $descrizone = null, $data = null, $manuale = false, $array = [])
     {
-        $this->registra($qta, $descrizone, $data, $manuale, $array);
+        $id = $this->registra($qta, $descrizone, $data, $manuale, $array);
 
         if ($this->servizio == 0) {
             $this->qta += $qta;
@@ -53,7 +53,7 @@ class Articolo extends Model
             $this->save();
         }
 
-        return true;
+        return $id;
     }
 
     /**
@@ -69,6 +69,8 @@ class Articolo extends Model
      */
     public function registra($qta, $descrizone = null, $data = null, $manuale = false, $array = [])
     {
+        $id = false;
+
         if (empty($qta)) {
             return false;
         }
@@ -84,8 +86,9 @@ class Articolo extends Model
                 'manuale' => $manuale,
             ]));
         }
+        $id = database()->lastInsertedID();
 
-        return true;
+        return $id;
     }
 
     // Attributi Eloquent

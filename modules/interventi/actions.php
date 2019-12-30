@@ -26,7 +26,7 @@ switch (post('op')) {
 
         // Salvataggio modifiche intervento
         $intervento->data_richiesta = post('data_richiesta');
-        $intervento->data_scadenza = post('data_scadenza');
+        $intervento->data_scadenza = post('data_scadenza') ?: null;
         $intervento->richiesta = post('richiesta');
         $intervento->descrizione = post('descrizione');
         $intervento->informazioniaggiuntive = post('informazioniaggiuntive');
@@ -68,7 +68,7 @@ switch (post('op')) {
             $idtipointervento = post('idtipointervento');
             $idstatointervento = post('idstatointervento');
             $data_richiesta = post('data_richiesta');
-            $data_scadenza = post('data_scadenza');
+            $data_scadenza = post('data_scadenza') ?: null;
 
             $anagrafica = Anagrafica::find($idanagrafica);
             $tipo = TipoSessione::find($idtipointervento);

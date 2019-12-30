@@ -8,8 +8,8 @@ switch (post('op')) {
         $module = filter('module');
 
         $list = [
-            ['Codice', 'Descrizione', 'Quantità', 'Unità di misura', 'Prezzo acquisto', 'Prezzo vendita', 'Peso lordo (KG)', 'Volume (M3)', 'Categoria', 'Note'],
-            ['00004', 'Articolo', '10', 'Kg', '5,25', '12,72', '10,2', '500', 'Categoria4', 'Articolo di prova'],
+            ['Codice', 'Descrizione', 'Quantità', 'Unità di misura', 'Prezzo acquisto', 'Prezzo vendita', 'Peso lordo (KG)', 'Volume (M3)', 'Categoria', 'Ubicazione', 'Note'],
+            ['00004', 'Articolo', '10', 'Kg', '5,25', '12,72', '10,2', '500', 'Categoria4', 'Scaffale 1', 'Articolo di prova'],
         ];
 
         directory('../../files/'.$module);
@@ -184,6 +184,10 @@ return [
             'Codice IVA vendita',
             'idiva_vendita',
         ],
+    ],
+    [
+        'field' => 'ubicazione',
+        'label' => 'Ubicazione',
     ],
     [
         'field' => 'note',

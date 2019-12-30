@@ -90,7 +90,7 @@ class Anagrafica extends Model
             $new_numero = $rs[0]['max_numero'] + 1;
             $new_numero = str_pad($new_numero, 6, '0', STR_PAD_LEFT);
 
-            $database->query('INSERT INTO co_pianodeiconti3(numero, descrizione, idpianodeiconti2, can_delete, can_edit) VALUES('.prepare($new_numero).', '.prepare($anagrafica->ragione_sociale).", (SELECT id FROM co_pianodeiconti2 WHERE descrizione='Crediti clienti e crediti diversi'), 1, 1)");
+            $database->query('INSERT INTO co_pianodeiconti3(numero, descrizione, idpianodeiconti2) VALUES('.prepare($new_numero).', '.prepare($anagrafica->ragione_sociale).", (SELECT id FROM co_pianodeiconti2 WHERE descrizione='Crediti clienti e crediti diversi'))");
             $idconto = $database->lastInsertedID();
 
             // Collegamento conto
@@ -110,7 +110,7 @@ class Anagrafica extends Model
             $new_numero = $rs[0]['max_numero'] + 1;
             $new_numero = str_pad($new_numero, 6, '0', STR_PAD_LEFT);
 
-            $database->query('INSERT INTO co_pianodeiconti3(numero, descrizione, idpianodeiconti2, can_delete, can_edit) VALUES('.prepare($new_numero).', '.prepare($anagrafica->ragione_sociale).", (SELECT id FROM co_pianodeiconti2 WHERE descrizione='Debiti fornitori e debiti diversi'), 1, 1)");
+            $database->query('INSERT INTO co_pianodeiconti3(numero, descrizione, idpianodeiconti2) VALUES('.prepare($new_numero).', '.prepare($anagrafica->ragione_sociale).", (SELECT id FROM co_pianodeiconti2 WHERE descrizione='Debiti fornitori e debiti diversi'))");
             $idconto = $database->lastInsertedID();
 
             // Collegamento conto

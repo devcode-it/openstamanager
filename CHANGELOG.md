@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.12 (2019-12-30)](#2412-2019-12-30)
 - [2.4.11 (2019-11-29)](#2411-2019-11-29)
 - [2.4.10 (2019-07-23)](#2410-2019-07-23)
 - [2.4.9 (2019-05-17)](#249-2019-05-17)
@@ -20,6 +21,35 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.3 (2018-02-16)](#23-2018-02-16)
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
+
+## 2.4.12 (2019-12-30)
+
+### Aggiunto (Added)
+ - Nuova tipologia di fattura elettronica TD02 Acconto/anticipo su fattura
+ - Nuova impostazione per non sovrapporre le attività in dashboard
+ - Movimentazione articoli dal modulo dei movimenti generali, con supporto a lettori barcode
+ - Possibilità di fatturare interventi con importo totale pari a zero
+ - Nuovo campo "Ubicazione" per gli articoli
+ - Nuova funzione di apertura bilancio con la ripresa saldi dal periodo precedente
+ - Nuova funzione di chiusura bilancio con lo spostamento saldi nel conto di chiusura
+ - Possibilità di modifica dei conti di livello 2 e di quelli standard di livello 3
+
+### Modificato (Changed)
+ - Rimozione funzione di autocompletamento campi di testo da browser
+
+### Fixed
+ - Fix caricamento assets dopo aggiornamenti, con aggiunta versionamento
+ - Fix creazione utenti con stesso username
+ - Fix movimenti contabili alla riapertura fattura
+ - Fix creazione nota di credito
+ - Fix salvataggio sessioni di lavoro da accesso tecnico
+ - Fix gestione categorie documenti
+ - Fix orario lavorativo in dashboard
+ - Fix problema generazione stampe in invio mail durante accesso multi-utente
+ - Fix calcolo margine nei preventivi
+ - Fix importazione note di credito con importi negativi
+ - Altri fix minori
+
 
 ## 2.4.11 (2019-11-29)
 

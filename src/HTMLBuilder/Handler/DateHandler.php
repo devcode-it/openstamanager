@@ -66,7 +66,7 @@ class DateHandler implements HandlerInterface
             }
 
             $result .= '
-    <input |attr|>';
+    <input |attr| autocomplete="off">';
 
             if (empty($values['label'])) {
                 if (empty($values['icon-before']) || empty($values['icon-after'])) {

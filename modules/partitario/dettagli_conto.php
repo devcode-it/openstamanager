@@ -16,7 +16,7 @@ WHERE co_movimenti.idconto='.prepare($id_conto).' AND
     co_movimenti.data >= '.prepare($_SESSION['period_start']).' AND
     co_movimenti.data <= '.prepare($_SESSION['period_end']).'
 GROUP BY co_movimenti.idmastrino
-ORDER BY co_movimenti.data DESC';
+ORDER BY co_movimenti.data ASC';
 $movimenti = $dbo->fetchArray($query);
 
 if (!empty($movimenti)) {
@@ -35,7 +35,7 @@ if (!empty($movimenti)) {
     <tr>
         <td>';
 
-        if (!empty($movimento['iddocumento'])) {
+        if (!empty($movimento['primanota'])) {
             $modulo_fattura = ($movimento['dir'] == 'entrata') ? Modules::get('Fatture di vendita')['id'] : Modules::get('Fatture di acquisto')['id'];
 
             echo Modules::link($prima_nota->id, $movimento['idmastrino'], $movimento['descrizione']);

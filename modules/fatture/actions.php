@@ -111,7 +111,7 @@ switch (post('op')) {
 
             $fattura->save();
 
-            if ($stato_precedente->descrizione == 'Bozza' && $stato['descrizione'] == 'Emessa') {
+            if ($fattura->direzione == 'entrata' && $stato_precedente->descrizione == 'Bozza' && $stato['descrizione'] == 'Emessa') {
                 // Generazione automatica della Fattura Elettronica
                 $stato_fe = empty($fattura->codice_stato_fe) || in_array($fattura->codice_stato_fe, ['GEN', 'NS', 'EC02']);
                 $checks = FatturaElettronica::controllaFattura($fattura);
@@ -136,18 +136,18 @@ switch (post('op')) {
 
                     foreach ($checks as $check) {
                         $message .= '
-    <p><b>'.$check['name'].' '.$check['link'].'</b></p>
-    <ul>';
+<p><b>'.$check['name'].' '.$check['link'].'</b></p>
+<ul>';
 
                         foreach ($check['errors'] as $error) {
                             if (!empty($error)) {
                                 $message .= '
-        <li>'.$error.'</li>';
+    <li>'.$error.'</li>';
                             }
                         }
 
                         $message .= '
-    </ul>';
+</ul>';
                     }
 
                     flash()->warning($message);
@@ -173,7 +173,7 @@ switch (post('op')) {
             $xml = \Util\XML::read($fattura->getXML());
 
             $dati_generali = $xml['FatturaElettronicaBody']['DatiGenerali']['DatiGeneraliDocumento'];
-            $totale_documento = $dati_generali['ImportoTotaleDocumento'] ?: null;
+            $totale_documento = abs(floatval($dati_generali['ImportoTotaleDocumento'])) ?: null;
         } catch (Exception $e) {
             $totale_documento = null;
         }
@@ -249,8 +249,8 @@ switch (post('op')) {
     case 'reopen':
         if (!empty($id_record)) {
             $dbo->query("UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione='Bozza') WHERE id=".prepare($id_record));
-            elimina_scadenze($id_record);
             elimina_movimenti($id_record, 1);
+            elimina_scadenze($id_record);
             ricalcola_costiagg_fattura($id_record);
             flash()->info(tr('Fattura riaperta!'));
         }
@@ -636,6 +636,9 @@ switch (post('op')) {
 
     // Nota di credito
     case 'nota_credito':
+        $id_documento = post('id_documento');
+        $fattura = Fattura::find($id_documento);
+
         $id_segment = post('id_segment');
         $data = post('data');
 

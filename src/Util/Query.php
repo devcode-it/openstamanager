@@ -204,7 +204,8 @@ class Query
 
         // Ordinamento dei risultati
         if (isset($order['dir']) && isset($order['column'])) {
-            $pos = array_search($order['column'], $total['fields']);
+            //$pos = array_search($order['column'], $total['fields']);
+            $pos = $order['column'];
 
             if ($pos !== false) {
                 $pieces = explode('ORDER', $query);

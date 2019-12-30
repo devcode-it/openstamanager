@@ -2,6 +2,23 @@
 
 include_once __DIR__.'/../../core.php';
 
+// Verifico se è già stata eseguita l'apertura bilancio
+$bilancio_gia_aperto = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE is_apertura=1 AND data BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']));
+
+$msg = tr('Sei sicuro di voler aprire il bilancio?');
+$btn_class = 'btn-info';
+
+if ($bilancio_gia_aperto) {
+    $msg .= ' '.tr('I movimenti di apertura già esistenti verranno annullati e ricreati').'.';
+    $btn_class = 'btn-default';
+}
+?>
+
+<div class="text-right">
+    <button type="button" class="btn btn-lg <?php echo $btn_class; ?>" data-op="apri-bilancio" data-title="<?php echo tr('Apertura bilancio'); ?>" data-backto="record-list" data-msg="<?php echo $msg; ?>" data-button="<?php echo tr('Riprendi saldi'); ?>" data-class="btn btn-lg btn-warning" onclick="message( this );"><i class="fa fa-folder-open"></i> <?php echo tr('Apertura bilancio'); ?></button>
+</div>
+
+<?php
 // Livello 1
 $query1 = 'SELECT * FROM `co_pianodeiconti1` ORDER BY id DESC';
 $primo_livello = $dbo->fetchArray($query1);
@@ -22,7 +39,7 @@ foreach ($primo_livello as $conto_primo) {
         <br>'.Prints::getLink('Mastrino', $conto_primo['id'], null, tr('Stampa'), null, 'lev=1').'
     </div>
     <div class="clearfix"></div>
-    
+
     <div style="padding-left:10px;">';
 
     // Livello 2
@@ -32,11 +49,16 @@ foreach ($primo_livello as $conto_primo) {
     foreach ($secondo_livello as $conto_secondo) {
         // Livello 2
         echo '
-        <div>
+        <div class="pull-right">
             '.Prints::getLink('Mastrino', $conto_secondo['id'], 'btn-info btn-xs', '', null, 'lev=2').'
-            <b>'.$conto_secondo['numero'].' '.$conto_secondo['descrizione'].'</b><br>
+
+            <button type="button" class="btn btn-warning btn-xs" data-toggle="tooltip" title="Modifica questo conto..." onclick="launch_modal(\'Modifica conto\', \''.$structure->fileurl('edit_conto.php').'?id='.$conto_secondo['id'].'&lvl=2\');">
+                <i class="fa fa-edit"></i>
+            </button>
         </div>
-        
+
+        <h5><b>'.$conto_secondo['numero'].' '.$conto_secondo['descrizione'].'</b></h5>
+
         <div style="padding-left:10px;">
             <table class="table table-striped table-hover table-condensed" style="margin-bottom:0;">';
 
@@ -49,7 +71,7 @@ foreach ($primo_livello as $conto_primo) {
             $numero_movimenti = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE idconto = '.prepare($conto_terzo['id']));
 
             // Calcolo totale conto da elenco movimenti di questo conto
-            $query = 'SELECT co_movimenti.*, dir FROM co_movimenti
+            $query = 'SELECT co_movimenti.* FROM co_movimenti
                 LEFT OUTER JOIN co_documenti ON co_movimenti.iddocumento = co_documenti.id
                 LEFT OUTER JOIN co_tipidocumento ON co_documenti.idtipodocumento = co_tipidocumento.id
             WHERE co_movimenti.idconto='.prepare($conto_terzo['id']).' AND co_movimenti.data >= '.prepare($_SESSION['period_start']).' AND co_movimenti.data <= '.prepare($_SESSION['period_end']).' ORDER BY co_movimenti.data DESC';
@@ -85,7 +107,7 @@ foreach ($primo_livello as $conto_primo) {
             $id_anagrafica = $conto_terzo['id_cliente'] ?: $conto_terzo['id_fornitore'];
 
             echo '
-                    <span class="hide tools">';
+                    <span class="hide tools pull-right">';
 
             // Stampa mastrino
             if (!empty($movimenti)) {
@@ -93,7 +115,7 @@ foreach ($primo_livello as $conto_primo) {
                         '.Prints::getLink('Mastrino', $conto_terzo['id'], 'btn-info btn-xs', '', null, 'lev=3');
             }
 
-            if ($numero_movimenti <= 0 && !empty($conto_terzo['can_delete'])) {
+            if ($numero_movimenti <= 0) {
                 echo '
                         <a class="btn btn-danger btn-xs ask" data-toggle="tooltip" title="'.tr('Elimina').'" data-backto="record-list" data-op="del" data-idconto="'.$conto_terzo['id'].'">
                             <i class="fa fa-trash"></i>
@@ -101,21 +123,19 @@ foreach ($primo_livello as $conto_primo) {
             }
 
             // Possibilità di modificare il nome del conto livello3
-            if (!empty($conto_terzo['can_edit'])) {
-                echo '
+            echo '
                         <button type="button" class="btn btn-warning btn-xs" data-toggle="tooltip" title="Modifica questo conto..." onclick="launch_modal(\'Modifica conto\', \''.$structure->fileurl('edit_conto.php').'?id='.$conto_terzo['id'].'\');">
                             <i class="fa fa-edit"></i>
                         </button>';
-            }
 
             echo  '
                         </span>
                             &nbsp;'.$conto_secondo['numero'].'.'.$conto_terzo['numero'].' '.$conto_terzo['descrizione'].' '.(isset($id_anagrafica) ? Modules::link('Anagrafiche', $id_anagrafica, 'Anagrafica', null) : '').'
                         </span>
-                
+
                         <div id="conto_'.$conto_terzo['id'].'" style="display:none;"></div>
                     </td>
-                    
+
                     <td width="100" align="right" valign="top">
                         '.moneyFormat(sum($totale_conto), 2).'
                     </td>
@@ -130,14 +150,14 @@ foreach ($primo_livello as $conto_primo) {
             <button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" title="'.tr('Aggiungi un nuovo conto...').'" onclick="add_conto('.$conto_secondo['id'].')">
                 <i class="fa fa-plus-circle"></i>
             </button>
-    
+
             <br><br>
         </div>';
     }
 
     echo '
     </div>
-    
+
     <table class="table table-condensed table-hover">'
     ;
     // Riepiloghi
@@ -213,7 +233,7 @@ foreach ($primo_livello as $conto_primo) {
                 <big>'.moneyFormat(sum($pareggio1), 2).'</big>
             </td>
             <td width="50"></td>
-            
+
             <th class="text-right">
                 <big>'.tr('Totale a pareggio').':</big>
             </th>
@@ -231,7 +251,7 @@ foreach ($primo_livello as $conto_primo) {
                 <big>'.moneyFormat(sum($totale_ricavi), 2).'</big>
             </td>
         </tr>
-        
+
         <tr>
             <th class="text-right">
                 <big>'.tr('Costi').':</big>
@@ -240,7 +260,7 @@ foreach ($primo_livello as $conto_primo) {
                 <big>'.moneyFormat(sum($totale_costi), 2).'</big>
             </td>
         </tr>
-        
+
         <tr>
             <th class="text-right">
                 <big>'.tr('Utile/perdita').':</big>
@@ -255,20 +275,35 @@ foreach ($primo_livello as $conto_primo) {
     </table>';
 }
 
-echo '
+// Verifico se è già stata eseguita l'apertura bilancio
+$bilancio_gia_chiuso = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE is_chiusura=1 AND data BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']));
+
+$msg = tr('Sei sicuro di voler aprire il bilancio?');
+$btn_class = 'btn-info';
+
+if ($bilancio_gia_chiuso) {
+    $msg .= ' '.tr('I movimenti di apertura già esistenti verranno annullati e ricreati').'.';
+    $btn_class = 'btn-default';
+}
+?>
+
+<div class="text-right">
+    <button type="button" class="btn btn-lg <?php echo $btn_class; ?>" data-op="chiudi-bilancio" data-title="<?php echo tr('Chiusura bilancio'); ?>" data-backto="record-list" data-msg="<?php echo $msg; ?>" data-button="<?php echo tr('Chiudi bilancio'); ?>" data-class="btn btn-lg btn-primary" onclick="message( this );"><i class="fa fa-folder"></i> <?php echo tr('Chiusura bilancio'); ?></button>
+</div>
+
 <script>
 $(document).ready(function(){
-    $("span[id^=movimenti-]").each(function() {
+    $("tr").each(function() {
         $(this).on("mouseover", function() {
             $(this).find(".tools").removeClass("hide");
         });
-        
+
         $(this).on("mouseleave", function() {
             $(this).find(".tools").addClass("hide");
         });
-        
+
         $(this).on("click", function() {
-            var movimenti = $(this).parent().find("div[id^=conto_]");            
+            var movimenti = $(this).parent().find("div[id^=conto_]");
 
             if(!movimenti.html()) {
                 var id_conto = movimenti.attr("id").split("_").pop();
@@ -277,21 +312,21 @@ $(document).ready(function(){
             } else {
                 movimenti.slideToggle();
             }
-            
+
             $(this).find(".plus-btn i").toggleClass("fa-plus").toggleClass("fa-minus");
         });
     })
 });
 
 function add_conto(id) {
-    launch_modal("'.tr('Nuovo conto').'",  "'.$structure->fileurl('add_conto.php').'?id=" + id);
+    launch_modal("<?php echo tr('Nuovo conto'); ?>",  "<?php echo $structure->fileurl('add_conto.php'); ?>?id=" + id);
 }
 
 function load_movimenti(selector, id_conto) {
 	$("#main_loading").show();
-    
+
     $.ajax({
-        url: "'.$structure->fileurl('dettagli_conto.php').'",
+        url: "<?php echo $structure->fileurl('dettagli_conto.php'); ?>",
         type: "get",
         data: {
             id_module: globals.id_module,
@@ -300,9 +335,9 @@ function load_movimenti(selector, id_conto) {
         success: function(data){
            $("#" + selector).html(data);
            $("#" + selector).slideToggle();
-           
+
            $("#main_loading").fadeOut();
         }
 	});
 }
-</script>';
+</script>

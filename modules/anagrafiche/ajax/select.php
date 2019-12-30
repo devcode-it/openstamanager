@@ -115,10 +115,13 @@ switch ($resource) {
         if (empty($filter)) {
             $where[] = 'deleted_at IS NULL';
 
-            //come tecnico posso aprire attività solo a mio nome
-            $user = Auth::user();
-            if ($user['gruppo'] == 'Tecnici' && !empty($user['idanagrafica'])) {
-                $where[] = 'an_anagrafiche.idanagrafica='.$user['idanagrafica'];
+            if (setting('Permetti inserimento sessioni degli altri tecnici')) {
+            } else {
+                //come tecnico posso aprire attività solo a mio nome
+                $user = Auth::user();
+                if ($user['gruppo'] == 'Tecnici' && !empty($user['idanagrafica'])) {
+                    $where[] = 'an_anagrafiche.idanagrafica='.$user['idanagrafica'];
+                }
             }
         }
 

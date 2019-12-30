@@ -129,7 +129,7 @@ abstract class Document extends Model
      */
     public function getMarginePercentualeAttribute()
     {
-        return (1 - ($this->spesa / $this->imponibile)) * 100;
+        return (1 - ($this->spesa / ($this->totale_imponibile))) * 100;
     }
 
     public function delete()

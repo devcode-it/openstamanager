@@ -165,6 +165,8 @@ class App
         // Assets aggiuntivi
         $config = self::getConfig();
 
+        $version = Update::getVersion();
+
         // Impostazione dei percorsi
         $paths = self::getPaths();
         $lang = trans()->getCurrentLocale();
@@ -203,7 +205,7 @@ class App
                     }
                 }
 
-                $result[$key] = $element;
+                $result[$key] = $element.'?v='.$version;
             }
 
             $assets[$section] = $result;

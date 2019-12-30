@@ -125,22 +125,27 @@ class Prints
         $dbo = $database = database();
         $infos = self::get($print);
 
-        Permissions::addModule($infos['id_module']);
+        $additional_checks = false;
+        if (!$return_string) {
+            Permissions::addModule($infos['id_module']);
 
-        $has_access = true;
-        if (!empty($infos['is_record'])) {
-            $module = Modules::get($infos['id_module']);
+            $has_access = true;
+            if (!empty($infos['is_record'])) {
+                $module = Modules::get($infos['id_module']);
 
-            Util\Query::setSegments(false);
-            $query = Util\Query::getQuery($module, [
-                'id' => $id_record,
-            ]);
-            Util\Query::setSegments(true);
+                Util\Query::setSegments(false);
+                $query = Util\Query::getQuery($module, [
+                    'id' => $id_record,
+                ]);
+                Util\Query::setSegments(true);
 
-            $has_access = !empty($query) ? $dbo->fetchNum($query) !== 0 : true;
+                $has_access = !empty($query) ? $dbo->fetchNum($query) !== 0 : true;
+            }
+
+            $additional_checks = !Permissions::check([], false) || !$has_access;
         }
 
-        if (empty($infos) || empty($infos['enabled']) || !Permissions::check([], false) || !$has_access) {
+        if (empty($infos) || empty($infos['enabled']) || $additional_checks) {
             return false;
         }
 

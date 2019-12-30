@@ -5,6 +5,7 @@ namespace Modules\Emails;
 use Carbon\Carbon;
 use Hooks\Manager;
 use Notifications\EmailNotification;
+use PHPMailer\PHPMailer\Exception;
 
 class EmailHook extends Manager
 {
@@ -72,7 +73,7 @@ class EmailHook extends Manager
             try {
                 // Invio mail
                 $email->send();
-            } catch (PHPMailer\PHPMailer\Exception $e) {
+            } catch (Exception $e) {
             }
         }
 

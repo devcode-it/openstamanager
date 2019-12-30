@@ -4,6 +4,8 @@ namespace Notifications;
 
 use Modules\Emails\Account;
 use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+use Modules\Emails\Mail;
 use Prints;
 use Uploads;
 
@@ -71,7 +73,7 @@ class EmailNotification extends PHPMailer implements NotificationInterface
         $this->WordWrap = 78;
     }
 
-    public static function build(\Modules\Emails\Mail $mail, $exceptions = null)
+    public static function build(Mail $mail, $exceptions = null)
     {
         $result = new self($mail->account->id, $exceptions);
 
@@ -146,7 +148,7 @@ class EmailNotification extends PHPMailer implements NotificationInterface
         $exception = null;
         try {
             $result = parent::send();
-        } catch (PHPMailer\PHPMailer\Exception $e) {
+        } catch (Exception $e) {
             $result = false;
             $exception = $e;
         }

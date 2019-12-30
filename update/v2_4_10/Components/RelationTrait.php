@@ -1,9 +1,10 @@
 <?php
 
-namespace Update\v2_4_10;
+namespace Update\v2_4_10\Components;
 
 use Modules\Ritenute\RitenutaAcconto;
 use Modules\Rivalse\RivalsaINPS;
+use Update\v2_4_10\Fattura;
 
 trait RelationTrait
 {

@@ -292,6 +292,7 @@ if ($bilancio_gia_chiuso) {
 </div>
 
 <script>
+var tr = '';
 $(document).ready(function(){
     $("tr").each(function() {
         $(this).on("mouseover", function() {
@@ -301,12 +302,14 @@ $(document).ready(function(){
         $(this).on("mouseleave", function() {
             $(this).find(".tools").addClass("hide");
         });
+    });
 
+    $("span[id^=movimenti-]").each(function() {
         $(this).on("click", function() {
             var movimenti = $(this).parent().find("div[id^=conto_]");
 
             if(!movimenti.html()) {
-                var id_conto = movimenti.attr("id").split("_").pop();
+                var id_conto = $(this).attr("id").split("-").pop();
 
                 load_movimenti(movimenti.attr("id"), id_conto);
             } else {

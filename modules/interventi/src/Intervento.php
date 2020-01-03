@@ -16,7 +16,7 @@ class Intervento extends Document
     protected $info = [];
 
     /**
-     * Crea un nuovo intrevento.
+     * Crea un nuovo intervento.
      *
      * @param Anagrafica   $anagrafica
      * @param TipoSessione $tipo_sessione
@@ -117,6 +117,11 @@ class Intervento extends Document
     public function stato()
     {
         return $this->belongsTo(Stato::class, 'idstatointervento');
+    }
+
+    public function tipo()
+    {
+        return $this->belongsTo(Tipo::class, 'idtipointervento');
     }
 
     public function tipoSessione()

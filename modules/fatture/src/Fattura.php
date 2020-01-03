@@ -719,7 +719,7 @@ class Fattura extends Document
         $ultimo = Generator::getPreviousFrom($maschera, 'co_documenti', 'numero_esterno', [
             'YEAR(data) = '.prepare(date('Y', strtotime($data))),
             'id_segment = '.prepare($id_segment),
-        ]);
+        ], $data);
         $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data));
 
         return $numero;

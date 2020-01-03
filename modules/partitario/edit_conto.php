@@ -6,7 +6,7 @@ $idconto = get('id');
 $lvl = get('lvl');
 
 // Info conto
-if ($lvl == 2){
+if ($lvl == 2) {
     $query = 'SELECT *, idpianodeiconti1 AS idpianodeiconti FROM co_pianodeiconti2 WHERE id='.prepare($idconto);
 } else {
     $query = 'SELECT *, idpianodeiconti2 AS idpianodeiconti FROM co_pianodeiconti3 WHERE id='.prepare($idconto);

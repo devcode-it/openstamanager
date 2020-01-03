@@ -38,7 +38,7 @@ switch (post('op')) {
         $descrizione = post('descrizione');
 
         $lvl = post('lvl');
-        if ($lvl == 2){
+        if ($lvl == 2) {
             $duplicate_query = 'SELECT numero FROM co_pianodeiconti2 WHERE numero='.prepare($numero).' AND NOT id='.prepare($idconto).' AND idpianodeiconti1='.prepare($idpianodeiconti);
 
             $update_query = 'UPDATE co_pianodeiconti2 SET numero='.prepare($numero).', descrizione='.prepare($descrizione).' WHERE id='.prepare($idconto);

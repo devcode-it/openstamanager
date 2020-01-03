@@ -3,9 +3,9 @@
 namespace Notifications;
 
 use Modules\Emails\Account;
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
 use Modules\Emails\Mail;
+use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\PHPMailer;
 use Prints;
 use Uploads;
 

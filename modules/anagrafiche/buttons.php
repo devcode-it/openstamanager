@@ -1,6 +1,6 @@
 <?php
 
-if (in_array($id_cliente, $tipi_anagrafica)) {
+if (in_array($id_cliente, $tipi_anagrafica) or  in_array($id_fornitore, $tipi_anagrafica) ) {
     echo '
 <div class="btn-group">
     <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-magic"></i>

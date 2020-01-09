@@ -107,6 +107,7 @@ $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione']
                 ?>
                 <div class="row">
                     <div class="col-md-3">
+                        <?php echo Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"'); ?>
                         {[ "type": "select", "label": "<?php echo ($dir == 'uscita') ? tr('Fornitore') : tr('Destinatario'); ?>", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti_fornitori" ]}
                     </div>
 

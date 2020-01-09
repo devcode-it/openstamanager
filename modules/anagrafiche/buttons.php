@@ -7,8 +7,10 @@ if (in_array($id_cliente, $tipi_anagrafica) or  in_array($id_fornitore, $tipi_an
         '.tr('Crea').'... <span class="caret"></span>
         <span class="sr-only">Toggle Dropdown</span>
     </button>
+    <ul class="dropdown-menu dropdown-menu-right">';
 
-    <ul class="dropdown-menu dropdown-menu-right">
+if (in_array($id_cliente, $tipi_anagrafica)){
+echo '
         <li><a data-toggle="modal" data-title="'.tr('Aggiungi intervento').'" data-href="add.php?id_module='.Modules::get('Interventi')['id'].'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-wrench"></i>'.tr('Nuovo intervento').'
         </a></li>
 
@@ -18,15 +20,31 @@ if (in_array($id_cliente, $tipi_anagrafica) or  in_array($id_fornitore, $tipi_an
         <li><a data-toggle="modal" data-title="'.tr('Aggiungi contratto').'" data-href="add.php?id_module='.Modules::get('Contratti')['id'].'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-file-text-o"></i>'.tr('Nuovo contratto').'
         </a></li>
 
-        <li><a data-toggle="modal" data-title="'.tr('Aggiungi ordine').'" data-href="add.php?id_module='.Modules::get('Ordini cliente')['id'].'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-file-o"></i>'.tr('Nuovo ordine').'
+        <li><a data-toggle="modal" data-title="'.tr('Aggiungi ordine cliente').'" data-href="add.php?id_module='.Modules::get('Ordini cliente')['id'].'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-file-o"></i>'.tr('Nuovo ordine cliente').'
         </a></li>
 
-		  <li><a data-toggle="modal" data-title="'.tr('Aggiungi ddt').'" data-href="add.php?id_module='.Modules::get('Ddt di vendita')['id'].'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-truck"></i>'.tr('Nuovo ddt').'
+		  <li><a data-toggle="modal" data-title="'.tr('Aggiungi ddt uscita').'" data-href="add.php?id_module='.Modules::get('Ddt di vendita')['id'].'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-truck"></i>'.tr('Nuovo ddt in uscita').'
         </a></li>
 
-        <li><a data-toggle="modal" data-title="'.tr('Aggiungi fattura').'" data-href="add.php?id_module='.Modules::get('Fatture di vendita')['id'].'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-file"></i>'.tr('Nuova fattura').'
-        </a></li>
+        <li><a data-toggle="modal" data-title="'.tr('Aggiungi fattura di vendita').'" data-href="add.php?id_module='.Modules::get('Fatture di vendita')['id'].'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-file"></i>'.tr('Nuova fattura di vendita').'
+        </a></li>';
+}
 
+if (in_array($id_fornitore, $tipi_anagrafica)){
+
+    echo  '<li><a data-toggle="modal" data-title="'.tr('Aggiungi ordine fornitore').'" data-href="add.php?id_module='.Modules::get('Ordini fornitore')['id'].'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-file-o fa-flip-horizontal"></i>'.tr('Nuovo ordine fornitore').'
+    </a></li>
+
+      <li><a data-toggle="modal" data-title="'.tr('Aggiungi ddt entrata').'" data-href="add.php?id_module='.Modules::get('Ddt di acquisto')['id'].'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-truck fa-flip-horizontal"></i>'.tr('Nuovo ddt in entrata').'
+    </a></li>
+
+    <li><a data-toggle="modal" data-title="'.tr('Aggiungi fattura di acquisto').'" data-href="add.php?id_module='.Modules::get('Fatture di acquisto')['id'].'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-file fa-flip-horizontal"></i>'.tr('Nuova fattura di acquisto').'
+    </a></li>';
+
+}
+
+
+echo '
     </ul>
 </div>';
 }

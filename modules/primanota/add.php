@@ -241,7 +241,7 @@ echo '
     echo '
 	<div class="row">
 		<div class="col-md-12">
-			{[ "type": "select", "label": "'.tr('Modello primanota').'", "id": "modello_primanota", "values": "query=SELECT idmastrino AS id, nome AS descrizione, descrizione as causale FROM co_movimenti_modelli GROUP BY idmastrino" ]}
+			{[ "type": "select", "label": "'.tr('Modello prima nota').'", "id": "modello_primanota", "values": "query=SELECT idmastrino AS id, nome AS descrizione, descrizione as causale FROM co_movimenti_modelli GROUP BY idmastrino" ]}
 		</div>
 	</div>
 

@@ -57,12 +57,14 @@ if (empty($record['is_fiscale'])) {
 <?php
 
 if (!empty($record['is_fiscale'])) {
+    $disabled1 = 1;
     //Aggiunta insoluto
     if (!empty($record['riba']) && ($record['stato'] == 'Emessa' || $record['stato'] == 'Parzialmente pagato' || $record['stato'] == 'Pagato') && $dir == 'entrata') {
-        ?>
-                    <button type="button" class="btn btn-primary" onclick="launch_modal( '<?php echo tr('Registra insoluto'); ?>', '<?php echo $rootdir; ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>&id_documenti=<?php echo $id_record; ?>&single=1&is_insoluto=1');"><i class="fa fa-euro"></i> <?php echo tr('Registra insoluto'); ?>...</button>
-    <?php
+        $disabled1 = 0;
     }
+    ?>
+        <a class="btn btn-primary <?php echo ( empty($disabled1) ) ? '' : 'disabled'; ?>" data-href="<?php echo $rootdir; ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>&id_documenti=<?php echo $id_record; ?>&single=1&is_insoluto=1" data-title="<?php echo tr('Registra insoluto'); ?>" ><i class="fa fa-ban fa-inverse"></i> <?php echo tr('Registra insoluto'); ?></a>
+    <?php
 
     // Aggiunta prima nota solo se non c'è già, se non si è in bozza o se il pagamento non è completo
     $n2 = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE iddocumento='.prepare($id_record).' AND primanota=1');
@@ -70,12 +72,16 @@ if (!empty($record['is_fiscale'])) {
     $rs3 = $dbo->fetchArray('SELECT SUM(da_pagare-pagato) AS differenza, SUM(da_pagare) FROM co_scadenziario GROUP BY iddocumento HAVING iddocumento='.prepare($id_record));
     $differenza = isset($rs3[0]) ? $rs3[0]['differenza'] : null;
     $da_pagare = isset($rs3[0]) ? $rs3[0]['da_pagare'] : null;
-
+    $disabled2 = 1;
     if (($n2 <= 0 && $record['stato'] == 'Emessa') || $differenza != 0) {
-        ?>
-					<button type="button" class="btn btn-primary <?php echo (!empty(Modules::get('Prima nota'))) ? '' : 'disabled'; ?>" onclick="launch_modal( '<?php echo tr('Aggiungi prima nota'); ?>', '<?php echo $rootdir; ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>&id_documenti=<?php echo $id_record; ?>&single=1');"><small><i class="fa fa-euro"></i> <?php echo tr('Registra contabile pagamento'); ?>...</small></button>
-<?php
+        $disabled2 = 0;
     }
+    ?>
+
+        <a class="btn btn-primary <?php echo (!empty(Modules::get('Prima nota')) and empty($disabled2) ) ? '' : 'disabled'; ?>" data-href="<?php echo $rootdir; ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>&id_documenti=<?php echo $id_record; ?>&single=1"  data-title="<?php echo tr('Registra contabile'); ?>" > <i class="fa fa-euro"></i> <?php echo tr('Registra contabile'); ?></a>
+
+    <?php
+
 
     if ($record['stato'] == 'Pagato') {
         echo '

@@ -216,7 +216,7 @@ switch ($resource) {
         break;
 
     case 'categorie':
-        $query = 'SELECT id, nome AS descrizione FROM mg_categorie |where| ORDER BY id';
+        $query = 'SELECT id, nome AS descrizione FROM mg_categorie |where| ORDER BY nome';
 
         foreach ($elements as $element) {
             $filter[] = 'id='.prepare($element);
@@ -232,7 +232,7 @@ switch ($resource) {
 
     case 'sottocategorie':
         if (isset($superselect['id_categoria'])) {
-            $query = 'SELECT id, nome AS descrizione FROM mg_categorie |where| ORDER BY id';
+            $query = 'SELECT id, nome AS descrizione FROM mg_categorie |where| ORDER BY nome';
 
             foreach ($elements as $element) {
                 $filter[] = 'id='.prepare($element);

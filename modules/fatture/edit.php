@@ -127,7 +127,7 @@ if ($dir == 'entrata' && !empty($fattura->dichiarazione) && $fattura->stato->des
 				{[ "type": "hidden", "label": "Segmento", "name": "id_segment", "class": "text-center", "value": "$id_segment$" ]}
 
 				<div class="col-md-2">
-					{[ "type": "text", "label": "<?php echo $label; ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$" ]}
+					{[ "type": "text", "label": "<?php echo $label; ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$", "help": "<?php echo (!empty($record['numero_esterno']) and $dir=='entrata' ) ? '' : tr('Il numero della fattura sarà generato automaticamente in fase di emissione.'); ?>" ]}
 				</div>
 
 				<div class="col-md-2">

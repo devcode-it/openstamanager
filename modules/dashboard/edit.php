@@ -680,46 +680,40 @@ if (Modules::getPermission('Interventi') == 'rw') {
 ?>
 			eventAfterRender: function(event, element) {
 				element.find('.fc-title').html(event.title);
-                element.data('idintervento', event.idintervento);
 <?php
 
 if (setting('Utilizzare i tooltip sul calendario') == '1') {
     ?>
-				element.mouseover( function(){
-				    if( !element.hasClass('tooltipstered') ){
-				        $(this).data('idintervento', event.idintervento );
+                element.tooltipster({
+                    content: '<?php echo tr('Caricamento...'); ?>',
+                    animation: 'grow',
+                    contentAsHTML: true,
+                    hideOnClick: true,
+                    speed: 200,
+                    delay: 300,
+                    maxWidth: 400,
+                    theme: 'tooltipster-shadow',
+                    touchDevices: true,
+                    trigger: 'hover',
+                    position: 'left',
+                    functionBefore: function(instance, helper) {
+                        var $origin = $(helper.origin);
+                        
+                        // we set a variable so the data is only loaded once via Ajax, not every time the tooltip opens
+                        if ($origin.data('loaded') !== true) {
 
-				        $.get(globals.rootdir + "/modules/dashboard/actions.php?op=get_more_info&id="+$(this).data('idintervento'), function(data,response){
-							if( response=="success" ){
-								data = $.trim(data);
-								if( data!="ok" ){
-									element.tooltipster({
-										content: data,
-										animation: 'grow',
-										contentAsHTML: true,
-										hideOnClick: true,
-										onlyOne: true,
-										speed: 200,
-										delay: 100,
-										maxWidth: 400,
-										theme: 'tooltipster-shadow',
-										touchDevices: true,
-										trigger: 'hover',
-										position: 'left'
-									});
+                            $.get(globals.rootdir + "/modules/dashboard/actions.php?op=get_more_info&id="+event.idintervento, function(data) {
 
-                                    $('.tooltipstered').tooltipster('hide');
-                                    element.tooltipster('show');
-								}
-								else{
-									return false;
-								}
+                                // call the 'content' method to update the content of our tooltip with the returned data.
+                                // note: this content update will trigger an update animation (see the updateAnimation option)
+                                instance.content(data);
 
-				                $('#calendar').fullCalendar('option', 'contentHeight', 'auto');
-				            }
-				        });
-					}
-				});
+                                // to remember that the data has been loaded
+                                $origin.data('loaded', true);
+                            });
+                        }
+                    }
+                });
 <?php
 }
 ?>

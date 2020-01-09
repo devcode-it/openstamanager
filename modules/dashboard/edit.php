@@ -687,6 +687,7 @@ if (setting('Utilizzare i tooltip sul calendario') == '1') {
                 element.tooltipster({
                     content: '<?php echo tr('Caricamento...'); ?>',
                     animation: 'grow',
+                    updateAnimation: 'grow',
                     contentAsHTML: true,
                     hideOnClick: true,
                     speed: 200,

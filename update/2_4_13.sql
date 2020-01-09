@@ -101,3 +101,7 @@ FROM `or_ordini`
 WHERE 1=1 AND `dir` = ''uscita'' |date_period(`data`)|
 HAVING 2=2
 ORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC' WHERE `name` = 'Ordini fornitore';
+
+-- Fix data registrazione e data competenza non settate
+UPDATE `co_documenti` SET `data_registrazione` = `data` WHERE `data_registrazione` IS NULL;
+UPDATE `co_documenti` SET `data_competenza` = `data_registrazione` WHERE `data_competenza` IS NULL;

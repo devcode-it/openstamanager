@@ -12,6 +12,7 @@ $database->query('UPDATE `zz_operations` SET `id_email` = NULL');
 foreach ($logs as $log) {
     $user = User::find($log['id_utente']);
     $template = Template::find($log['id_email']);
+    if (empty($template)) continue;
 
     $mail = Mail::build($user, $template, $log['id_record']);
     $mail->resetPrints();

@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../../core.php';
 
-$rs = $dbo->fetchArray('SELECT * FROM in_interventi WHERE in_interventi.idstatointervento = (SELECT in_statiintervento.idstatointervento FROm in_statiintervento WHERE in_statiintervento.codice=\'TODO\') ORDER BY data_richiesta ASC');
+$rs = $dbo->fetchArray('SELECT * FROM in_interventi WHERE in_interventi.idstatointervento = (SELECT in_statiintervento.idstatointervento FROM in_statiintervento WHERE in_statiintervento.codice=\'TODO\') ORDER BY data_richiesta ASC');
 
 if (!empty($rs)) {
     echo '

@@ -13,5 +13,6 @@ $id_cliente = $documento['idanagrafica'];
 $id_sede = $documento['idsede'];
 
 //Se utente tencico e ho deciso di non mostrare i prezzi al tencico mi assicuro che non li possa vedere dalla stampa
-if (Auth::user()['gruppo'] == 'Tecnici' and $options['pricing'] == true and setting('Mostra i prezzi al tecnico') == 0)
+if (Auth::user()['gruppo'] == 'Tecnici' and $options['pricing'] == true and setting('Mostra i prezzi al tecnico') == 0) {
     $options['pricing'] = false;
+}

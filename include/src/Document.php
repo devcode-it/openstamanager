@@ -13,12 +13,9 @@ abstract class Document extends Model
      */
     public function getRighe()
     {
-        $descrizioni = $this->descrizioni;
-        $righe = $this->righe;
-        $articoli = $this->articoli;
-        $sconti = $this->sconti;
+        $results = $this->mergeCollections($this->descrizioni, $this->righe, $this->articoli, $this->sconti);
 
-        return $descrizioni->merge($righe)->merge($articoli)->merge($sconti)->sortBy('order');
+        return $results->sortBy('order');
     }
 
     /**
@@ -172,6 +169,20 @@ abstract class Document extends Model
     public function triggerComponent(Description $trigger)
     {
         $this->setRelations([]);
+    }
+
+    /**
+     * Costruisce una nuova collezione Laravel a partire da quelle indicate.
+     *
+     * @param array<\Illuminate\Support\Collection> ...$args
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    protected function mergeCollections(...$args)
+    {
+        $collection = collect($args);
+
+        return $collection->collapse();
     }
 
     /**

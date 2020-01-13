@@ -61,9 +61,8 @@ if (!empty($record['is_fiscale'])) {
     //Aggiunta insoluto
     if (!empty($record['riba']) && ($record['stato'] == 'Emessa' || $record['stato'] == 'Parzialmente pagato' || $record['stato'] == 'Pagato') && $dir == 'entrata') {
         $disabled1 = 0;
-    }
-    ?>
-        <a class="btn btn-primary <?php echo ( empty($disabled1) ) ? '' : 'disabled'; ?>" data-href="<?php echo $rootdir; ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>&id_documenti=<?php echo $id_record; ?>&single=1&is_insoluto=1" data-title="<?php echo tr('Registra insoluto'); ?>" ><i class="fa fa-ban fa-inverse"></i> <?php echo tr('Registra insoluto'); ?></a>
+    } ?>
+        <a class="btn btn-primary <?php echo (empty($disabled1)) ? '' : 'disabled'; ?>" data-href="<?php echo $rootdir; ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>&id_documenti=<?php echo $id_record; ?>&single=1&is_insoluto=1" data-title="<?php echo tr('Registra insoluto'); ?>" ><i class="fa fa-ban fa-inverse"></i> <?php echo tr('Registra insoluto'); ?></a>
     <?php
 
     // Aggiunta prima nota solo se non c'è già, se non si è in bozza o se il pagamento non è completo
@@ -75,13 +74,11 @@ if (!empty($record['is_fiscale'])) {
     $disabled2 = 1;
     if (($n2 <= 0 && $record['stato'] == 'Emessa') || $differenza != 0) {
         $disabled2 = 0;
-    }
-    ?>
+    } ?>
 
-        <a class="btn btn-primary <?php echo (!empty(Modules::get('Prima nota')) and empty($disabled2) ) ? '' : 'disabled'; ?>" data-href="<?php echo $rootdir; ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>&id_documenti=<?php echo $id_record; ?>&single=1"  data-title="<?php echo tr('Registra contabile'); ?>" > <i class="fa fa-euro"></i> <?php echo tr('Registra contabile'); ?></a>
+        <a class="btn btn-primary <?php echo (!empty(Modules::get('Prima nota')) and empty($disabled2)) ? '' : 'disabled'; ?>" data-href="<?php echo $rootdir; ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>&id_documenti=<?php echo $id_record; ?>&single=1"  data-title="<?php echo tr('Registra contabile'); ?>" > <i class="fa fa-euro"></i> <?php echo tr('Registra contabile'); ?></a>
 
     <?php
-
 
     if ($record['stato'] == 'Pagato') {
         echo '

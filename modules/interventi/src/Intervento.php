@@ -94,7 +94,7 @@ class Intervento extends Document
     {
         $results = parent::getRigheContabili();
 
-        return $results->merge($this->sessioni);
+        return $this->mergeCollections($results, $this->sessioni);
     }
 
     // Relazioni Eloquent

@@ -188,7 +188,7 @@ class Query
 
                         $value = trim(str_replace(['&lt;', '=', '&gt;'], '', $value));
 
-                        if ($more || $minus){
+                        if ($more || $minus) {
                             $search_filters[] = 'CAST('.$search_query.' AS UNSIGNED) '.$sign.' '.prepare($value);
                         } else {
                             $search_filters[] = $search_query.' = '.prepare($value);

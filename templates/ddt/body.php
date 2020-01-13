@@ -66,7 +66,7 @@ foreach ($righe as $riga) {
 
     // Aggiunta dei riferimenti ai documenti
     if (setting('Riferimento dei documenti nelle stampe')) {
-        $ref = doc_references($r, $record['dir'], ['iddocumento']);
+        $ref = doc_references($r, $record['dir'], ['idddt']);
 
         if (!empty($ref)) {
             echo '

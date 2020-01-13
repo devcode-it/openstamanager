@@ -10,7 +10,7 @@ switch (post('op')) {
         $module = filter('module');
 
         $list = [
-            ['Codice', 'Ragione sociale', 'Partita IVA', 'Codice destinatario' ,'Nazione', 'Indirizzo', 'CAP', 'Città', 'Provincia', 'Telefono', 'Fax', 'Cellulare', 'Email', 'PEC', 'IBAN', 'Note', 'Tipologia'],
+            ['Codice', 'Ragione sociale', 'Partita IVA', 'Codice destinatario', 'Nazione', 'Indirizzo', 'CAP', 'Città', 'Provincia', 'Telefono', 'Fax', 'Cellulare', 'Email', 'PEC', 'IBAN', 'Note', 'Tipologia'],
             ['00001', 'Mia anagrafica', '12345678910', '1234567', 'ITALIA', 'Via Giuseppe Mazzini, 123', '12345', 'Este', 'PD', '+39 0429 60 25 12', '+39 0429 456 781', '+39 321 12 34 567', 'email@anagrafica.it', 'pec@anagrafica.it', 'IT60 X054 2811 1010 0000 0123 456', 'Note dell\'anagrafica di esempio', 'Cliente,Fornitore'],
         ];
 
@@ -75,12 +75,11 @@ switch (post('op')) {
                 if (empty($anagrafica)) {
                     $anagrafica = Anagrafica::build($dati_anagrafica['ragione_sociale']);
                 }
-               
+
                 // Impedisco di aggiornare la mia anagrafica azienda
                 if ($dati_anagrafica[$primary_key] != $id_azienda) {
-
                     //se non imposto nessun codice evito di resettare quello calcolato automaticamente o già presente
-                    if (empty($dati_anagrafica['codice'])){
+                    if (empty($dati_anagrafica['codice'])) {
                         unset($dati_anagrafica['codice']);
                     }
 
@@ -106,7 +105,7 @@ return [
         'names' => [
             'Codice interno',
             'Numero',
-        ]
+        ],
     ],
     [
         'field' => 'ragione_sociale',
@@ -114,7 +113,7 @@ return [
         'names' => [
             'Nome',
             'Denominazione',
-        ]
+        ],
     ],
     [
         'field' => 'codice_destinatario',
@@ -125,7 +124,7 @@ return [
             'Codice univoco',
             'Codice univoco ufficio',
             'SDI',
-        ]
+        ],
     ],
     [
         'field' => 'provincia',
@@ -137,7 +136,7 @@ return [
         'names' => [
             'Citt_',
             'Citt&agrave;',
-        ]
+        ],
     ],
     [
         'field' => 'telefono',
@@ -170,7 +169,7 @@ return [
             'E-mail',
             'Indirizzo email',
             'Mail',
-        ]
+        ],
     ],
     [
         'field' => 'pec',
@@ -179,7 +178,7 @@ return [
             'E-mail PEC',
             'Email certificata',
             'Indirizzo email certificata',
-        ]
+        ],
     ],
     [
         'field' => 'codice_fiscale',
@@ -204,7 +203,7 @@ return [
             'P.IVA',
             'P.IVA/TAX ID',
             'TAX ID',
-        ]
+        ],
     ],
     [
         'field' => 'codiceiban',
@@ -215,7 +214,7 @@ return [
         'label' => 'Note',
         'names' => [
             'Note Extra',
-        ]
+        ],
     ],
     [
         'field' => 'id_nazione',

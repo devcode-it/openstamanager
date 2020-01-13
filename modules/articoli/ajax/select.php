@@ -63,8 +63,8 @@ switch ($resource) {
                     LEFT JOIN co_pianodeiconti2 AS conto_vendita_categoria ON conto_vendita_sottocategoria.idpianodeiconti2=conto_vendita_categoria.id
                 LEFT JOIN co_pianodeiconti3 AS conto_acquisto_sottocategoria ON conto_acquisto_sottocategoria.id=mg_articoli.idconto_acquisto
                     LEFT JOIN co_pianodeiconti2 AS conto_acquisto_categoria ON conto_acquisto_sottocategoria.idpianodeiconti2=conto_acquisto_categoria.id
-                LEFT JOIN mg_movimenti ON mg_movimenti.idarticolo=mg_articoli.id
-                LEFT JOIN an_sedi ON an_sedi.id = mg_movimenti.idsede_azienda           
+                LEFT JOIN (SELECT idarticolo, idsede_azienda, idsede_controparte FROM mg_movimenti GROUP BY idarticolo) movimenti ON movimenti.idarticolo=mg_articoli.id
+                LEFT JOIN an_sedi ON an_sedi.id = movimenti.idsede_azienda           
             |where|
             GROUP BY
                 mg_articoli.id

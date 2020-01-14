@@ -256,7 +256,24 @@ if (empty($record['is_fiscale'])) {
                     $scadenze = $dbo->fetchArray('SELECT * FROM co_scadenziario WHERE iddocumento = '.prepare($id_record));
                     echo '
                 <div class="col-md-3">
-                    <p><strong>'.tr('Scadenze').'</strong></p>';
+                    <p class="pull-left"><strong>'.tr('Scadenze').'</strong></p>
+
+                    <div class="btn-group pull-right">
+                        '.Modules::link('Scadenzario', $scadenze[0]['id'], tr('<i class="fa fa-edit tip" title="'.tr('Modifica scadenze').'"></i>'), '', 'class="btn btn-xs btn-primary"');
+
+                    if ($fattura->isFE() && $ricalcola && $module['name'] == 'Fatture di acquisto') {
+                        echo '
+                    <button type="button" class="btn btn-info btn-xs pull-right tip" title="'.tr('Ricalcola le scadenze').'. '.tr('Per ricalcolare correttamente le scadenze, imposta la fattura in stato \'\'Bozza\'\' e correggi il metodo di  come desiderato, poi re-imposta lo stato \'\'Emessa\'\' e utilizza questa funzione').'." id="ricalcola_scadenze">
+                        <i class="fa fa-calculator" aria-hidden="true"></i>
+                    </button>';
+                    }
+                    echo '
+                        </div>
+                    ';
+
+                    echo '
+                    <div class="clearfix"></div>';
+
                     foreach ($scadenze as $scadenza) {
                         echo '
                     <p>'.Translator::dateToLocale($scadenza['scadenza']).': ';
@@ -277,13 +294,6 @@ if (empty($record['is_fiscale'])) {
                     </p>';
 
                         $ricalcola = empty(floatval($scadenza['pagato'])) && $ricalcola;
-                    }
-
-                    if ($fattura->isFE() && $ricalcola && $module['name'] == 'Fatture di acquisto') {
-                        echo '
-                    <button type="button" class="btn btn-info btn-xs pull-right tip" title="'.tr('Ricalcola le scadenze').'. '.tr('Per ricalcolare correttamente le scadenze, imposta la fattura in stato \'\'Bozza\'\' e correggi il metodo di  come desiderato, poi re-imposta lo stato \'\'Emessa\'\' e utilizza questa funzione').'." id="ricalcola_scadenze">
-                        <i class="fa fa-calculator" aria-hidden="true"></i>
-                    </button>';
                     }
 
                     echo '

@@ -15,7 +15,7 @@ if ($record['can_delete']) {
 
 	<div class="row">
 		<div class="col-md-2">
-			{[ "type": "span", "label": "<?php echo tr('Codice'); ?>", "name": "codice", "value": "$codice$" ]}
+			{[ "type": "text", "label": "<?php echo tr('Codice'); ?>", "name": "codice", "value": "$codice$", "extra": "<?php echo $attr; ?>" ]}
 		</div>
 
 		<div class="col-md-5">

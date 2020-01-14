@@ -32,62 +32,62 @@ switch (post('op')) {
 
         $totale_pagato = 0;
         $id_scadenza_non_completa = null;
-        if ($totale_utente == $totale_da_pagare || empty($scadenza['iddocumento'])) {
-            foreach (post('da_pagare') as $id => $da_pagare) {
-                $pagato = post('pagato')[$id];
-                $scadenza = post('scadenza')[$id];
-                $data_concordata = post('data_concordata')[$id];
+        foreach (post('da_pagare') as $id => $da_pagare) {
+            $pagato = post('pagato')[$id];
+            $scadenza = post('scadenza')[$id];
+            $data_concordata = post('data_concordata')[$id];
 
-                $pagato = floatval($pagato);
-                $da_pagare = floatval($da_pagare);
+            $pagato = floatval($pagato);
+            $da_pagare = floatval($da_pagare);
 
-                $totale_pagato = sum($totale_pagato, $pagato);
+            $totale_pagato = sum($totale_pagato, $pagato);
 
-                $id_scadenza = post('id_scadenza')[$id];
-                if (!empty($id_scadenza)) {
-                    $database->update('co_scadenziario', [
-                        'descrizione' => $descrizione,
-                        'da_pagare' => $da_pagare,
-                        'pagato' => $pagato,
-                        'scadenza' => $scadenza,
-                        'data_concordata' => $data_concordata,
-                    ], ['id' => $id_scadenza]);
+            $id_scadenza = post('id_scadenza')[$id];
+            if (!empty($id_scadenza)) {
+                $database->update('co_scadenziario', [
+                    'descrizione' => $descrizione,
+                    'da_pagare' => $da_pagare,
+                    'pagato' => $pagato,
+                    'scadenza' => $scadenza,
+                    'data_concordata' => $data_concordata,
+                ], ['id' => $id_scadenza]);
 
-                    if ($da_pagare == 0) {
-                        $database->delete('co_scadenziario', ['id' => $id]);
-                    }
-                } else {
-                    $database->insert('co_scadenziario', [
-                        'descrizione' => $descrizione,
-                        'tipo' => $tipo,
-                        'iddocumento' => $iddocumento,
-                        'da_pagare' => $da_pagare,
-                        'pagato' => $pagato,
-                        'scadenza' => $scadenza,
-                        'data_concordata' => $data_concordata,
-                        'data_emissione' => date('Y-m-d'),
-                    ]);
-
-                    $id_scadenza = $database->lastInsertedID();
+                if ($da_pagare == 0) {
+                    $database->delete('co_scadenziario', ['id' => $id]);
                 }
-
-                if ($pagato != $da_pagare) {
-                    $id_scadenza_non_completa = $id_scadenza;
-                }
-            }
-
-            flash()->info(tr('Scadenze aggiornate!'));
-
-            if ($totale_pagato == $totale_da_pagare) {
-                flash()->warning(tr('Le scadenze sono state completate!'));
-
-                redirect(ROOTDIR.'/controller.php?id_module='.$id_module);
-                Filter::set('post', 'backto', null);
             } else {
-                $id_record = $id_scadenza_non_completa;
+                $database->insert('co_scadenziario', [
+                    'descrizione' => $descrizione,
+                    'tipo' => $tipo,
+                    'iddocumento' => $iddocumento,
+                    'da_pagare' => $da_pagare,
+                    'pagato' => $pagato,
+                    'scadenza' => $scadenza,
+                    'data_concordata' => $data_concordata,
+                    'data_emissione' => date('Y-m-d'),
+                ]);
+
+                $id_scadenza = $database->lastInsertedID();
             }
+
+            if ($pagato != $da_pagare) {
+                $id_scadenza_non_completa = $id_scadenza;
+            }
+        }
+
+        flash()->info(tr('Scadenze aggiornate!'));
+
+        if ($totale_pagato == $totale_da_pagare) {
+            flash()->warning(tr('Le scadenze sono state completate!'));
+
+            redirect(ROOTDIR.'/controller.php?id_module='.$id_module);
+            Filter::set('post', 'backto', null);
         } else {
-            flash()->error(tr('Il totale degli importi inseriti non corrisponde al totale da pagare!'));
+            $id_record = $id_scadenza_non_completa;
+        }
+
+        if ($totale_da_pagare != $totale_utente) {
+            flash()->error(tr('ATTENZIONE: il totale degli importi inseriti non corrisponde al totale da pagare!'));
         }
 
         break;

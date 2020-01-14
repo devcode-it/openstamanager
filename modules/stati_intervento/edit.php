@@ -5,7 +5,7 @@ if ($record['can_delete']) {
     $attr = '';
 } else {
     $attr = 'readonly';
-    echo '<div class="alert alert-warning">'.tr('Alcune impostazioni non possono essere modificate per questo stato intervento.').'</div>';
+    echo '<div class="alert alert-warning">'.tr('Alcune impostazioni non possono essere modificate per questo stato attività.').'</div>';
 }
 ?>
 <form action="" method="post" id="edit-form">
@@ -23,7 +23,7 @@ if ($record['can_delete']) {
 		</div>
 
         <div class="col-md-2">
-            {[ "type": "checkbox", "label": "<?php echo tr('Stato completato?'); ?>", "name": "completato", "value": "$completato$", "help": "<?php echo tr('Gli interventi che si trovano in questo stato verranno considerati come completati'); ?>", "placeholder": "<?php echo tr('Completato'); ?>", "extra": "<?php echo $attr; ?>" ]}
+            {[ "type": "checkbox", "label": "<?php echo tr('Stato completato?'); ?>", "name": "completato", "value": "$completato$", "help": "<?php echo tr('Le attività che si trovano in questo stato verranno considerate come completate.'); ?>", "placeholder": "<?php echo tr('Completato'); ?>", "extra": "<?php echo $attr; ?>" ]}
 		</div>
 
 		<div class="col-md-3">
@@ -33,7 +33,7 @@ if ($record['can_delete']) {
 
     <div class="row">
 		<div class="col-md-2">
-			{[ "type": "checkbox", "label": "<?php echo tr('Abilita notifiche'); ?>", "name": "notifica", "help": "<?php echo tr('Quando l\'intervento passa in questo stato viene inoltrata una notifica ai destinatari designati'); ?>.", "value": "$notifica$" ]}
+			{[ "type": "checkbox", "label": "<?php echo tr('Abilita notifiche'); ?>", "name": "notifica", "help": "<?php echo tr('Quando l\'attività passa in questo stato viene inviata una notifica ai destinatari designati.'); ?>.", "value": "$notifica$" ]}
 		</div>
 
 		<div class="col-md-5">
@@ -62,5 +62,21 @@ if ($record['can_delete']) {
 			$('#colore').parent().find('.square').css( 'background', $('#colore').val() );
 		});
 		$('#colore').parent().find('.square').css( 'background', $('#colore').val() );
+	
+
+	$("#notifica").change( function(){
+		if ($(this).is(":checked")) {
+			$("#email").attr("required", true);
+			$("#email").attr("disabled", false);
+			$("#destinatari").attr("required", true);
+			$("#destinatari").attr("disabled", false);
+		}else{
+			$("#email").attr("required", false);
+			$("#email").attr("disabled", true);
+			$("#destinatari").attr("required", false);
+			$("#destinatari").attr("disabled", true);
+		}
+	});
+
 	});
 </script>

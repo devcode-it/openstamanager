@@ -80,6 +80,7 @@ switch (post('op')) {
                 'idsede_partenza' => post('idsede_partenza'),
                 'idsede_destinazione' => post('idsede_destinazione'),
                 'idvettore' => post('idvettore'),
+                'data_ora_trasporto' => post('data_ora_trasporto'),
                 'idporto' => post('idporto'),
                 'idaspettobeni' => post('idaspettobeni'),
                 'idrivalsainps' => $idrivalsainps,

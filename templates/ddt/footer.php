@@ -96,6 +96,10 @@ echo '
             '.tr('Num. colli', [], ['upper' => true]).'
         </th>
 
+        <th class="small" class style="width:20%">
+            '.tr('Data ora trasporto', [], ['upper' => true]).'
+        </th>
+
         <th class="small" style="width:30%">
             '.tr('Causale trasporto', [], ['upper' => true]).'
         </th>
@@ -112,6 +116,10 @@ echo '
 
         <td class="cell-padded">
             $n_colli$ &nbsp;
+        </td>
+
+        <td class="cell-padded">
+            '.Translator::TimestampToLocale($documento['data_ora_trasporto']).' &nbsp;
         </td>
 
         <td class="cell-padded">
@@ -136,7 +144,7 @@ echo '
             '.tr('Vettore', [], ['upper' => true]).'
         </th>
 
-        <th class="small">
+        <th class="small" colspan="2">
             '.tr('Tipo di spedizione', [], ['upper' => true]).'
         </th>
     </tr>
@@ -154,7 +162,7 @@ echo '
             $vettore$ &nbsp;
         </td>
 
-        <td class="cell-padded">
+        <td class="cell-padded" colspan="2">
             $spedizione$ &nbsp;
         </td>
     </tr>

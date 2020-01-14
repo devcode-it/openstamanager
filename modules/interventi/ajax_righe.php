@@ -166,7 +166,6 @@ if (!$righe->isEmpty()) {
                 // Ricarico la tabella dei costi
                 $('#costi').load('<?php echo $module->fileurl('ajax_costi.php'); ?>?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
 
-
                 // Toast
                 alertPush();
             }

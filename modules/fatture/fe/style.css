@@ -17,6 +17,7 @@
 .first-level td,
 .second-level td,
 .third-level td,
-.fourth-level td{
+.fourth-level td,
+.fifth-level td{
     vertical-align: middle;
 }

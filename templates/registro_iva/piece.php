@@ -5,12 +5,11 @@ include_once __DIR__.'/../../core.php';
 $previous_number = $previous_number ?: null;
 
 if ($record['numero'] != $previous_number) {
-        if ($color == '#dddddd') {
-                $color = '#ffffff';
-        }
-        else if ($color == '#ffffff') {
-                $color = '#dddddd';
-        }
+    if ($color == '#dddddd') {
+        $color = '#ffffff';
+    } elseif ($color == '#ffffff') {
+        $color = '#dddddd';
+    }
 }
 
 echo '

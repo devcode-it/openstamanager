@@ -66,15 +66,12 @@ switch (post('op')) {
         ORDER BY `idtipointervento`');
 
         if (empty($elementi)) {
-
-             // Elimino anche le tariffe collegate ai vari tecnici
+            // Elimino anche le tariffe collegate ai vari tecnici
             $query = 'DELETE FROM in_tariffe WHERE idtipointervento='.prepare($id_record);
             $dbo->query($query);
 
             $query = 'DELETE FROM in_tipiintervento WHERE idtipointervento='.prepare($id_record);
             $dbo->query($query);
-
-           
 
             flash()->info(tr('Tipo di intervento eliminato!'));
             break;

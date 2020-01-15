@@ -253,7 +253,9 @@ switch ($resource) {
             }
 
             $where[] = 'idanagrafica='.prepare($id_azienda);
-            $where[] = 'id IN('.implode(',', $user->sedi).')';
+            //admin o utente senza una sede prefissata, avrà accesso a tutte le sedi
+            if (!empty($user->sedi) and !$user->is_admin)
+                $where[] = 'id IN('.implode(',', $user->sedi).')';
 
             if (!empty($search)) {
                 $search_fields[] = 'nomesede LIKE '.prepare('%'.$search.'%');

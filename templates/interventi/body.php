@@ -42,7 +42,19 @@ echo '
     echo '</tr>';
 
     //Indirizzo
-    if (!empty($c_indirizzo) or !empty($c_cap) or !empty($c_citta) or !empty($c_provincia)) {
+    if (!empty($s_indirizzo) or !empty($s_cap) or !empty($s_citta) or !empty($s_provincia)) {
+        echo '
+			<tr>
+				<td colspan="4">
+					'.((!empty($s_indirizzo)) ? tr('Via').': <b>'.$s_indirizzo.'</b>' : '').'
+					'.((!empty($s_cap)) ? tr('CAP').': <b>'.$s_cap.'</b>' : '').'
+					'.((!empty($s_citta)) ? tr('Città').': <b>'.$s_citta.'</b>' : '').'
+					'.((!empty($s_provincia)) ? tr('Provincia').': <b>'.strtoupper($s_provincia).'</b>' : '').'
+				</td>
+			</tr>';
+    }
+    
+    else if (!empty($c_indirizzo) or !empty($c_cap) or !empty($c_citta) or !empty($c_provincia)) {
         echo '
 			<tr>
 				<td colspan="4">

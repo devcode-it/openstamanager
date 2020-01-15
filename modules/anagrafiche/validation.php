@@ -105,7 +105,7 @@ switch ($name) {
             $errors[] = tr("L'email inserita non possiede un formato valido");
         }
 
-        if (empty($check['smtp-check'])) {
+        if (isset($check['smtp-check']) && empty($check['smtp-check'])) {
             $result = false;
             $errors[] = tr("Impossibile verificare l'origine dell'email");
         }

@@ -19,6 +19,23 @@ abstract class Document extends Model
     }
 
     /**
+     * Restituisce la riga identificata dall'ID indicato.
+     *
+     * @param $type
+     * @param $id
+     *
+     * @return mixed
+     */
+    public function getRiga($type, $id)
+    {
+        $righe = $this->getRighe();
+
+        return $righe->first(function ($item) use ($type, $id){
+            return $item instanceof $type && $item->id == $id ;
+        });
+    }
+
+    /**
      * Restituisce la collezione di righe e articoli con valori rilevanti per i conti, raggruppate sulla base dei documenti di provenienza.
      * La chiave è la serializzazione del documento di origine, oppure null in caso non esista.
      *

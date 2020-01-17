@@ -293,10 +293,10 @@ switch (post('op')) {
 
     case 'delete_riga':
         $id_riga = post('idriga');
+        $type = post('type');
+$riga = $intervento->getRiga($type, $id_riga);
 
-        if (!empty($id_riga)) {
-            $riga = $intervento->getRighe()->find($id_riga);
-
+        if (!empty($riga)) {
             try {
                 $riga->delete();
 

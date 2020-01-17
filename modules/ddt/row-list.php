@@ -16,28 +16,25 @@ echo '
 
     <tbody class="sortable">';
 
-/*
-    Articoli e righe generiche
-*/
-$q_art = 'SELECT *, round(sconto_unitario,'.setting('Cifre decimali per importi').') AS sconto_unitario, round(sconto,'.setting('Cifre decimali per importi').') AS sconto, round(subtotale,'.setting('Cifre decimali per importi').') AS subtotale, (SELECT codice FROM mg_articoli WHERE id=idarticolo) AS codice FROM `dt_righe_ddt` WHERE idddt='.prepare($id_record).' ORDER BY `order`';
-$rs = $dbo->fetchArray($q_art);
+// Righe documento
+$righe = $ddt->getRighe();
+foreach ($righe as $riga) {
+    $r = $riga->toArray();
 
-if (!empty($rs)) {
-    foreach ($rs as $r) {
-        $extra = '';
-        $mancanti = 0;
+    $extra = '';
+    $mancanti = 0;
 
-        // Individuazione dei seriali
-        if (!empty($r['idarticolo']) && !empty($r['abilita_serial'])) {
-            $serials = array_column($dbo->fetchArray('SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND id_riga_ddt='.prepare($r['id'])), 'serial');
-            $mancanti = $r['qta'] - count($serials);
+    // Individuazione dei seriali
+    if (!empty($r['idarticolo']) && !empty($r['abilita_serial'])) {
+        $serials = array_column($dbo->fetchArray('SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND id_riga_ddt='.prepare($r['id'])), 'serial');
+        $mancanti = $r['qta'] - count($serials);
 
-            if ($mancanti > 0) {
-                $extra = 'class="warning"';
-            } else {
-                $mancanti = 0;
-            }
+        if ($mancanti > 0) {
+            $extra = 'class="warning"';
+        } else {
+            $mancanti = 0;
         }
+    }
 
         echo '
     <tr data-id="'.$r['id'].'" '.$extra.'>
@@ -45,7 +42,7 @@ if (!empty($rs)) {
 
         if (!empty($r['idarticolo'])) {
             echo '
-            '.Modules::link('Articoli', $r['idarticolo'], $r['codice'].' - '.$r['descrizione']);
+            '.Modules::link('Articoli', $r['idarticolo'], $riga->articolo->codice.' - '.$r['descrizione']);
 
             if (!empty($r['abilita_serial'])) {
                 if (!empty($mancanti)) {
@@ -138,13 +135,14 @@ if (!empty($rs)) {
         // Possibilità di rimuovere una riga solo se il ddt non è evaso
         echo '
         <td class="text-center">';
+
         if ($record['flag_completato'] == 0) {
             echo "
             <form action='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record."' method='post' id='delete-form-".$r['id']."' role='form'>
                 <input type='hidden' name='backto' value='record-edit'>
                 <input type='hidden' name='id_record' value='".$id_record."'>
                 <input type='hidden' name='idriga' value='".$r['id']."'>
-                <input type='hidden' name='dir' value='".$dir."'>
+                <input type='hidden' name='type' value='".get_class($riga)."'>
                 <input type='hidden' name='op' value='delete_riga'>
 
                 <div class='input-group-btn'>";
@@ -155,7 +153,7 @@ if (!empty($rs)) {
             }
 
             echo "
-                    <a class='btn btn-xs btn-warning' title='Modifica questa riga...' onclick=\"launch_modal( 'Modifica riga', '".$rootdir.'/modules/ddt/row-edit.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id']."');\">
+                    <a class='btn btn-xs btn-warning' title='Modifica questa riga...' onclick=\"launch_modal('Modifica riga', '".$rootdir.'/modules/ddt/row-edit.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'&type='.urlencode(get_class($riga))."');\">
                         <i class='fa fa-edit'></i>
                     </a>
 
@@ -174,7 +172,6 @@ if (!empty($rs)) {
         echo '
         </td>
     </tr>';
-    }
 }
 
 echo '

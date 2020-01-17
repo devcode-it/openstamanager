@@ -282,10 +282,11 @@ switch (post('op')) {
     // Scollegamento riga generica da ddt
     case 'delete_riga':
         $id_riga = post('idriga');
+        $type = post('type');
 
-        if (!empty($id_riga)) {
-            $riga = $ddt->getRighe()->find($id_riga);
+        $riga = $ddt->getRiga($type, $id_riga);
 
+        if (!empty($riga)) {
             try {
                 $riga->delete();
 

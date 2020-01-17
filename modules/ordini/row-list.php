@@ -2,7 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-// Mostro le righe dell'ordine
 echo '
 <table class="table table-striped table-hover table-condensed table-bordered">
     <thead>
@@ -19,17 +18,17 @@ echo '
 
     <tbody class="sortable">';
 
-$q = 'SELECT *, round(sconto_unitario,'.setting('Cifre decimali per importi').') AS sconto_unitario, round(sconto,'.setting('Cifre decimali per importi').') AS sconto, round(subtotale,'.setting('Cifre decimali per importi').') AS subtotale, (SELECT codice FROM mg_articoli WHERE mg_articoli.id=`or_righe_ordini`.`idarticolo`) AS codice FROM `or_righe_ordini` WHERE idordine='.prepare($id_record).' ORDER BY `order`';
-$rs = $dbo->fetchArray($q);
+// Righe documento
+$righe = $ordine->getRighe();
+foreach ($righe as $riga) {
+    $r = $riga->toArray();
 
-if (!empty($rs)) {
-    foreach ($rs as $r) {
-        $extra = '';
-        $mancanti = 0;
+    $extra = '';
+    $mancanti = 0;
 
-        // Individuazione dei seriali
-        if (!empty($r['idarticolo']) && !empty($r['abilita_serial'])) {
-            $serials = array_column($dbo->fetchArray('SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND id_riga_ordine='.prepare($r['id'])), 'serial');
+    // Individuazione dei seriali
+    if (!empty($r['idarticolo']) && !empty($r['abilita_serial'])) {
+        $serials = array_column($dbo->fetchArray('SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND id_riga_ordine='.prepare($r['id'])), 'serial');
             $mancanti = $r['qta'] - count($serials);
 
             if ($mancanti > 0) {
@@ -45,7 +44,7 @@ if (!empty($rs)) {
 
         if (!empty($r['idarticolo'])) {
             echo '
-            '.Modules::link('Articoli', $r['idarticolo'], $r['codice'].' - '.$r['descrizione']);
+            '.Modules::link('Articoli', $r['idarticolo'], $riga->articolo->codice.' - '.$r['descrizione']);
 
             if (!empty($r['abilita_serial'])) {
                 if (!empty($mancanti)) {
@@ -145,13 +144,8 @@ if (!empty($rs)) {
                 <input type='hidden' name='backto' value='record-edit'>
                 <input type='hidden' name='id_record' value='".$id_record."'>
                 <input type='hidden' name='idriga' value='".$r['id']."'>
-                <input type='hidden' name='dir' value='".$dir."'>
+                <input type='hidden' name='type' value='".get_class($riga)."'>
                 <input type='hidden' name='op' value='delete_riga'>";
-
-            if (!empty($r['idarticolo'])) {
-                echo "
-                <input type='hidden' name='idarticolo' value='".$r['idarticolo']."'>";
-            }
 
             echo "
 
@@ -163,7 +157,7 @@ if (!empty($rs)) {
             }
 
             echo "
-                    <a class='btn btn-xs btn-warning' title='Modifica questa riga...' onclick=\"launch_modal( 'Modifica riga', '".$rootdir.'/modules/ordini/row-edit.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'&dir='.$dir."');\"><i class='fa fa-edit'></i></a>
+                    <a class='btn btn-xs btn-warning' title='Modifica questa riga...' onclick=\"launch_modal( 'Modifica riga', '".$rootdir.'/modules/ordini/row-edit.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'&type='.urlencode(get_class($riga))."');\"><i class='fa fa-edit'></i></a>
 
                     <a class='btn btn-xs btn-danger' title='Rimuovi questa riga...' onclick=\"if( confirm('Rimuovere questa riga dall\\'ordine?') ){ $('#delete-form-".$r['id']."').submit(); }\"><i class='fa fa-trash'></i></a>
                 </div>
@@ -180,7 +174,7 @@ if (!empty($rs)) {
 
     </tr>';
     }
-}
+
 echo '
     </tbody>';
 

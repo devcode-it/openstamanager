@@ -500,10 +500,10 @@ switch (post('op')) {
     // Scollegamento riga generica da documento
     case 'delete_riga':
         $id_riga = post('idriga');
+        $type = post('type');
+$riga = $fattura->getRiga($type, $id_riga);
 
-        if (!empty($id_riga)) {
-            $riga = $fattura->getRighe()->find($id_riga);
-
+        if (!empty($riga)) {
             try {
                 $riga->delete();
 

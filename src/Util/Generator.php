@@ -2,6 +2,7 @@
 
 namespace Util;
 
+use Carbon\Carbon;
 use Illuminate\Database\Capsule\Manager;
 
 /**
@@ -118,14 +119,12 @@ class Generator
     {
         $replaces = self::$replaces;
 
-        if ($date == null) {
-            $date = date('Y-m-d');
-        }
+        $date_object = new Carbon($date);
 
         foreach ($replaces as $key => $value) {
             if (!isset($replaces[$key]['value'])) {
                 if (isset($replaces[$key]['date'])) {
-                    $replaces[$key]['value'] = date($replaces[$key]['date'], strtotime($date));
+                    $replaces[$key]['value'] = $date_object->format($replaces[$key]['date']);
                 } else {
                     $replaces[$key]['value'] = $key;
                 }

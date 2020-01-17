@@ -283,7 +283,7 @@ if (empty($record['is_fiscale'])) {
                         <strike>';
                         }
 
-                        echo (empty($scadenza['da_pagare']) ? '<i class="fa fa-exclamation-triangle"></i> ' : '').moneyFormat($scadenza['da_pagare']);
+                        echo(empty($scadenza['da_pagare']) ? '<i class="fa fa-exclamation-triangle"></i> ' : '').moneyFormat($scadenza['da_pagare']);
 
                         if ($scadenza['pagato'] == $scadenza['da_pagare']) {
                             echo '

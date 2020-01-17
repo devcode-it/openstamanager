@@ -185,34 +185,32 @@ switch (post('op')) {
         }
         break;
 
-
     case 'copy-bulk':
 
         foreach ($id_records as $id_record) {
-
             // Lettura dati fattura attuale
             $rs = $dbo->fetchOne('SELECT * FROM co_documenti WHERE id='.prepare($id_record));
 
-            $dir = $dbo->fetchOne("SELECT dir FROM co_tipidocumento WHERE id=".prepare($rs['idtipodocumento']))['dir'];
+            $dir = $dbo->fetchOne('SELECT dir FROM co_tipidocumento WHERE id='.prepare($rs['idtipodocumento']))['dir'];
 
             //+ 1 settimana
-            if(post('skip_time')=='Giorno'){
-                $data = date("Y-m-d", strtotime( '+1 day' , strtotime ( $rs['data'] )) );
+            if (post('skip_time') == 'Giorno') {
+                $data = date('Y-m-d', strtotime('+1 day', strtotime($rs['data'])));
             }
 
             //+ 1 settimana
-            if(post('skip_time')=='Settimana'){
-                $data = date("Y-m-d", strtotime( '+1 week' , strtotime ( $rs['data'] )) );
+            if (post('skip_time') == 'Settimana') {
+                $data = date('Y-m-d', strtotime('+1 week', strtotime($rs['data'])));
             }
 
             //+ 1 mese
-            if(post('skip_time')=='Mese'){
-                $data = date("Y-m-d", strtotime( '+1 month' , strtotime ( $rs['data'] )) );
+            if (post('skip_time') == 'Mese') {
+                $data = date('Y-m-d', strtotime('+1 month', strtotime($rs['data'])));
             }
 
             //+ 1 anno
-            if(post('skip_time')=='Anno'){
-                $data = date("Y-m-d", strtotime( '+1 year' , strtotime ( $rs['data'] )) );
+            if (post('skip_time') == 'Anno') {
+                $data = date('Y-m-d', strtotime('+1 year', strtotime($rs['data'])));
             }
 
             // Duplicazione righe
@@ -235,8 +233,7 @@ switch (post('op')) {
 
             // TODO: sistemare la duplicazione delle righe generiche e degli articoli, ignorando interventi, ddt, ordini, preventivi
             foreach ($righe as $riga) {
-
-                if( !post('riferimenti') ){
+                if (!post('riferimenti')) {
                     $riga['idpreventivo'] = 0;
                     $riga['idcontratto'] = 0;
                     $riga['idintervento'] = 0;
@@ -254,8 +251,6 @@ switch (post('op')) {
             // Ricalcolo inps, ritenuta e bollo (se la fattura non è stata pagata)
             ricalcola_costiagg_fattura($id_record);
             aggiorna_sedi_movimenti('documenti', $id_record);
-
-
         }
 
         flash()->info(tr('Fatture duplicate correttamente!'));

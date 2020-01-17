@@ -12,15 +12,13 @@ $contratto = $dbo->fetchOne('SELECT nome, numero FROM co_contratti WHERE id = '.
 $id_cliente = $documento['idanagrafica'];
 $id_sede = $documento['idsede'];
 
-if (!empty($documento['idsede_destinazione'])){
-    
+if (!empty($documento['idsede_destinazione'])) {
     $sedi = $dbo->fetchOne('SELECT nomesede, cap, citta, indirizzo, provincia FROM an_sedi WHERE id = '.prepare($documento['idsede_destinazione']));
 
     $s_citta = $sedi['citta'];
     $s_indirizzo = $sedi['indirizzo'];
     $s_cap = $sedi['cap'];
     $s_provincia = $sedi['provincia'];
-
 }
 
 //Se ho deciso di NON mostrare i prezzi al tencico mi assicuro che non li possa vedere dalla stampa

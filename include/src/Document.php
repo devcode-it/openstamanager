@@ -30,8 +30,8 @@ abstract class Document extends Model
     {
         $righe = $this->getRighe();
 
-        return $righe->first(function ($item) use ($type, $id){
-            return $item instanceof $type && $item->id == $id ;
+        return $righe->first(function ($item) use ($type, $id) {
+            return $item instanceof $type && $item->id == $id;
         });
     }
 

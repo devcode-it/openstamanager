@@ -52,9 +52,7 @@ echo '
 					'.((!empty($s_provincia)) ? tr('Provincia').': <b>'.strtoupper($s_provincia).'</b>' : '').'
 				</td>
 			</tr>';
-    }
-    
-    else if (!empty($c_indirizzo) or !empty($c_cap) or !empty($c_citta) or !empty($c_provincia)) {
+    } elseif (!empty($c_indirizzo) or !empty($c_cap) or !empty($c_citta) or !empty($c_provincia)) {
         echo '
 			<tr>
 				<td colspan="4">

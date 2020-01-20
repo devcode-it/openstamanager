@@ -55,7 +55,7 @@ $_SESSION['superselect']['idsede_destinazione'] = 0;
 	<div class="row" id="buttons">
 		<div class="col-md-12 text-right">
 			<button type="submit" class="btn btn-default"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi e chiudi'); ?></button>
-            <a type="button" class="btn btn-primary" onclick="ajax_submit( '', '' );"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></a>
+            <a type="button" class="btn btn-primary" onclick="ajax_submit( $('#idarticolo', '#bs-popup').selectData().codice, $('#idarticolo', '#bs-popup').selectData().descrizione );"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></a>
 		</div>
 	</div>
 </form>

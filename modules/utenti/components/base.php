@@ -2,6 +2,9 @@
 
 include_once __DIR__.'/../../core.php';
 
+if (!empty(filter('idanagrafica')))
+	$utente['id_anagrafica'] = filter('idanagrafica');
+
 $_SESSION['superselect']['idanagrafica'] = $utente['id_anagrafica'];
 
 echo '
@@ -29,7 +32,7 @@ echo '
 	
 	<div class="row">
 		<div class="col-md-12">
-		    {[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede[]",  "ajax-source": "sedi_azienda", "multiple": "1", "value":"'.($sedi ?: '').'" ]}
+		    {[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede[]",  "ajax-source": "sedi_azienda", "multiple": "1", "value":"'.($sedi ?: '').'", "help": "'.tr('Sede Azienda abilitata per la movimentazione degli articoli.').'" ]}
 		</div>
 	</div>';
 

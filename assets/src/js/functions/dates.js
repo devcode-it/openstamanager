@@ -27,7 +27,7 @@ function start_datepickers() {
             stepping: 5,
             widgetPositioning: {
                 horizontal: 'left',
-                vertical: 'bottom'
+                vertical: 'auto'
             },
             minDate: moment($this.attr('min-date')).isValid() ? $this.attr('min-date') : false,
             maxDate: moment($this.attr('max-date')).isValid() ? $this.attr('max-date') : false,

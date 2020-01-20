@@ -73,7 +73,7 @@ echo '
     </a>';
 
     // Scelgo quando posso inviarla
-    $send = Interaction::isEnabled() && $generated && in_array($record['codice_stato_fe'], ['GEN', 'ERVAL']);
+    $send = Interaction::isEnabled() && $generated && in_array($record['codice_stato_fe'], ['GEN', 'ERVAL', 'ERR']);
 
 echo '
     <i class="fa fa-arrow-right fa-fw text-muted"></i>

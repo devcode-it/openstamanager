@@ -455,6 +455,24 @@ class Prints
             //'PDFA' => true,
             //'PDFAauto' => true,
         ]);
+        
+        if (setting('Filigrana stampe')){
+
+            $mpdf->SetWatermarkImage(
+                DOCROOT.'/files/anagrafiche/'.setting('Filigrana stampe'),
+                0.5,
+                'F',
+                'F'
+            );
+
+            // false = 'showWatermarkImage' => false,
+            if ($settings['showWatermarkImage']==null){
+                $mpdf->showWatermarkImage = true;
+            }else{
+                $mpdf->showWatermarkImage = intval($settings['showWatermarkImage']);
+            }
+
+        }
 
         // Inclusione dei fogli di stile CSS
         $styles = [

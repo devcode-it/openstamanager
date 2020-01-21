@@ -276,17 +276,27 @@ switch (post('op')) {
 
 // Operazioni aggiuntive per il logo
 if (filter('op') == 'link_file') {
-    $nome = 'Logo stampe';
+    $nome = filter('nome_allegato');
 
-    if (setting('Azienda predefinita') == $id_record && filter('nome_allegato') == $nome) {
-        Settings::setValue($nome, $upload);
+    if ($nome == 'Logo stampe' or $nome = 'Filigrana stampe' ){
+        if (setting('Azienda predefinita') == $id_record && filter('nome_allegato') == $nome) {
+            Settings::setValue($nome, $upload);
+        }
     }
 }
+
 // Operazioni aggiuntive per il logo
 elseif (filter('op') == 'unlink_file') {
-    $nome = 'Logo stampe';
+    $filename = filter('filename');
 
-    if (setting('Azienda predefinita') == $id_record && filter('filename') == setting($nome)) {
+    if (strpos($filename, setting('Logo stampe')) !== false) {
+        $nome = 'Logo stampe';
+    }
+    if (strpos($filename, setting('Filigrana stampe')) !== false) {
+        $nome = 'Filigrana stampe';
+    }
+
+    if (setting('Azienda predefinita') == $id_record && $filename == setting($nome)) {
         Settings::setValue($nome, '');
     }
 }

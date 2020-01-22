@@ -263,7 +263,7 @@ if (empty($record['is_fiscale'])) {
                     //Ricalcola scadenze disponibile solo per fatture di acquisto
                     if ($fattura->isFE() && $ricalcola && $module['name'] == 'Fatture di acquisto') {
                         echo '
-                    <button type="button" class="btn btn-info btn-xs pull-right tip" title="'.tr('Ricalcola le scadenze').'. '.tr('Per ricalcolare correttamente le scadenze, imposta la fattura di acquisto nello stato \'\'Bozza\'\' e correggi il metodo di come desiderato, poi re-imposta lo stato \'\'Emessa\'\' e utilizza questa funzione').'." id="ricalcola_scadenze">
+                    <button type="button" class="btn btn-info btn-xs pull-right tip" title="'.tr('Ricalcola le scadenze').'. '.tr('Per ricalcolare correttamente le scadenze, imposta la fattura di acquisto nello stato \'\'Bozza\'\' e correggi il documento come desiderato, poi re-imposta lo stato \'\'Emessa\'\' e utilizza questa funzione').'." id="ricalcola_scadenze">
                         <i class="fa fa-calculator" aria-hidden="true"></i>
                     </button>';
                     }

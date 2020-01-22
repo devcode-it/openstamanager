@@ -86,7 +86,7 @@ foreach ($righe as $riga) {
 
     echo '
         <tr>
-            <td>
+            <td style="vertical-align: middle">
                 '.nl2br($r['descrizione']);
 
     if ($riga->isArticolo()) {
@@ -105,14 +105,14 @@ foreach ($righe as $riga) {
 
     if (!$riga->isDescrizione()) {
         echo '
-            <td class="text-center">
+            <td class="text-center" style="vertical-align: middle" >
                 '.Translator::numberToLocale(abs($riga->qta), 'qta').' '.$r['um'].'
             </td>';
 
         if ($options['pricing']) {
             // Prezzo unitario
             echo '
-            <td class="text-right">
+            <td class="text-right" style="vertical-align: middle">
 				'.moneyFormat($riga->prezzo_unitario_vendita);
 
             if ($riga->sconto > 0) {
@@ -132,13 +132,13 @@ foreach ($righe as $riga) {
 
             // Imponibile
             echo '
-            <td class="text-right">
+            <td class="text-right" style="vertical-align: middle" >
 				'.moneyFormat($riga->totale_imponibile).'
             </td>';
 
             // Iva
             echo '
-            <td class="text-center">
+            <td class="text-center" style="vertical-align: middle">
                 '.Translator::numberToLocale($riga->aliquota->percentuale, 0).'
             </td>';
         }

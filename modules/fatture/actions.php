@@ -501,7 +501,7 @@ switch (post('op')) {
     case 'delete_riga':
         $id_riga = post('idriga');
         $type = post('type');
-$riga = $fattura->getRiga($type, $id_riga);
+        $riga = $fattura->getRiga($type, $id_riga);
 
         if (!empty($riga)) {
             try {

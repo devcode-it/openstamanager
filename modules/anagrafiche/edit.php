@@ -296,7 +296,7 @@ echo '
                             </div>
         
                             <div class="col-md-6">
-                                    {[ "type": "select", "label": "'.tr('Relazione con il cliente').'", "name": "idrelazione", "values": "query=SELECT id, descrizione, colore AS _bgcolor_ FROM an_relazioni ORDER BY descrizione", "value": "$idrelazione$" ]}
+                                    {[ "type": "select", "label": "'.tr('Relazione con il cliente').'", "name": "idrelazione", "ajax-source": "relazioni", "value": "$idrelazione$", "icon-after": "add|'.Modules::get('Relazioni')['id'].'" ]}
                             </div>
                         </div>
                         

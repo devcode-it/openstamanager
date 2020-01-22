@@ -124,3 +124,14 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stato email'), 'Modulo', '(SELECT zz_modules.title FROM zz_modules WHERE zz_modules.id = em_templates.id_module)', 3, 1, 0, 1, 1, 0),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stato email'), 'Destinatari', '(SELECT GROUP_CONCAT(address SEPARATOR "<br>") FROM em_email_receiver WHERE em_email_receiver.id_email = em_emails.id)', 1, 1, 0, 1, 1, 0);
 
+-- Modulo Relazioni
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Relazioni', 'Relazioni', 'relazioni_anagrafiche', 'SELECT |select|
+FROM `an_relazioni`
+WHERE 1=1 
+HAVING 2=2
+ORDER BY `an_relazioni`.`created_at` DESC', '', 'fa fa-angle-right ', '2.4.13', '2.*', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Anagrafiche'), '1', '1');
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `default`, `visible`, `format`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Relazioni'), 'id', 'an_relazioni.id', 1, 0, 0, 1, 0, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Relazioni'), 'Descrizione', 'an_relazioni.descrizione', 2, 1, 0, 1, 1, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Relazioni'), 'Colore', 'an_relazioni.colore', 3, 1, 0, 1, 1, 0);

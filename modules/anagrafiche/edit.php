@@ -13,6 +13,17 @@ if (!empty($google)) {
 <script src="//maps.googleapis.com/maps/api/js?libraries=places&key='.$google.'"></script>';
 }
 
+if (!$is_cliente && !$is_fornitore && $is_tecnico) {
+    $ignore = $dbo->fetchArray("SELECT id FROM zz_plugins WHERE name='Sedi' OR name='Referenti' OR  name='Dichiarazioni d\'intento'");
+
+    foreach ($ignore as $plugin) {
+        echo '
+<script>
+    $("#link-tab_'.$plugin['id'].'").addClass("disabled");
+</script>';
+    }
+}
+
 if (!$is_cliente) {
     $ignore = $dbo->fetchArray("SELECT id FROM zz_plugins WHERE name='Impianti del cliente' OR name='Ddt del cliente'");
 

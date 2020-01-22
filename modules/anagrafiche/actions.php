@@ -93,8 +93,8 @@ switch (post('op')) {
             if (!empty($idanagrafica)) {
                 $array = explode(',', $idanagrafica);
                 foreach ($array as $value) {
-                    flash()->warning(tr('Attenzione: il codice fiscale _COD_ è già stato censito _LINK_', [
-                        '_COD_' => post('codice_fiscale'),
+                    flash()->warning(tr('Attenzione: il codice fiscale _COD_ è già stato censito. _LINK_', [
+                        '_COD_' => '<b>'.post('codice_fiscale').'</b>',
                         '_LINK_' => Modules::link('Anagrafiche', $value, null, null, ''),
                     ]));
                 }
@@ -136,7 +136,7 @@ switch (post('op')) {
 
         $check_vat_number = Validate::isValidVatNumber($partita_iva);
         if (empty($check_vat_number['valid-format'])) {
-            flash()->warning(tr('Attenzione: la partita IVA _IVA_ potrebbe non essere valida', [
+            flash()->warning(tr('Attenzione: la partita IVA _IVA_ potrebbe non essere valida.', [
                 '_IVA_' => $partita_iva,
             ]));
         }
@@ -145,7 +145,7 @@ switch (post('op')) {
         if ($anagrafica->tipo != 'Ente pubblico' and $anagrafica->codice_fiscale != $anagrafica->partita_iva) {
             $check_codice_fiscale = Validate::isValidTaxCode($anagrafica->codice_fiscale);
             if (empty($check_codice_fiscale)) {
-                flash()->warning(tr('Attenzione: il codice fiscale _COD_ potrebbe non essere valido', [
+                flash()->warning(tr('Attenzione: il codice fiscale _COD_ potrebbe non essere valido.', [
                     '_COD_' => $anagrafica->codice_fiscale,
                 ]));
             }
@@ -183,7 +183,7 @@ switch (post('op')) {
                 $array = explode(',', $idanagrafica);
                 foreach ($array as $value) {
                     flash()->warning(tr('Attenzione: il codice fiscale _COD_ è già stato censito. _LINK_', [
-                        '_COD_' => post('codice_fiscale'),
+                        '_COD_' => '<b>'.post('codice_fiscale').'</b>',
                         '_LINK_' => Modules::link('Anagrafiche', $value, null, null, ''),
                     ]));
                 }

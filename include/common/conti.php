@@ -14,8 +14,6 @@ if ($options['dir'] == 'entrata') {
     $show_ritenuta_acconto = 1;
 }
 
-$show_calcolo_ritenuta_acconto = $show_ritenuta_acconto;
-
 // Percentuale rivalsa e Percentuale ritenuta d'acconto
 if ($options['action'] == 'edit') {
     $id_rivalsa_inps = $result['idrivalsainps'];
@@ -60,7 +58,7 @@ if ($show_rivalsa == 1 || $show_ritenuta_acconto == 1) {
     }
 
     // Calcola ritenuta d'acconto su
-    if ($show_calcolo_ritenuta_acconto == 1) {
+    if ($show_ritenuta_acconto == 1) {
         echo '
     <div class="col-md-4">
         {[ "type": "select", "label": "'.tr("Calcola ritenuta d'acconto su").'", "name": "calcolo_ritenuta_acconto", "value": "'.$calcolo_ritenuta_acconto.'", "values": "list=\"IMP\":\"Imponibile\", \"IMP+RIV\":\"Imponibile + rivalsa\"", "required": "1" ]}

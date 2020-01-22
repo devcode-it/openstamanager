@@ -116,7 +116,7 @@ class FileManager implements ManagerInterface
                     <i class="fa fa-external-link"></i> '.$r['name'].'
                 </a>
                 
-                <small> ('.$file->extension.')'.((!empty($file->size)) ? ' ('.\Util\FileSystem::formatBytes($file->size).')' : '').'</small>'.'
+                <small> ('.$file->extension.')'.((!empty($file->size)) ? ' ('.\Util\FileSystem::formatBytes($file->size).')' : '').' '.(($r['name']=='Logo stampe' or $r['name']=='Filigrana stampe') ? '<i class="fa fa-file-text-o"></i>': '' ).'</small>'.'
             </td>
             
             <td>'.\Translator::timestampToLocale($r['created_at']).'</td>

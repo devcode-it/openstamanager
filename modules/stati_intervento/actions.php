@@ -48,7 +48,7 @@ switch (post('op')) {
 
         $dbo->query($query);
 
-        flash()->info(tr('Stato attiviyà eliminato.'));
+        flash()->info(tr('Stato attività eliminato.'));
 
         break;
 }

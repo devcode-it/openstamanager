@@ -52,6 +52,7 @@ switch (post('op')) {
 
         // Permetto eliminazione tipo intervento solo se questo non è utilizzado da nessun'altra parte a gestionale
         // UNION SELECT `in_tariffe`.`idtipointervento` FROM `in_tariffe` WHERE `in_tariffe`.`idtipointervento` = '.prepare($id_record).'
+        // UNION SELECT `co_contratti_tipiintervento`.`idtipointervento` FROM `co_contratti_tipiintervento` WHERE `co_contratti_tipiintervento`.`idtipointervento` = '.prepare($id_record).'
         $elementi = $dbo->fetchArray('SELECT `in_interventi`.`idtipointervento`  FROM `in_interventi` WHERE `in_interventi`.`idtipointervento` = '.prepare($id_record).'
         UNION
         SELECT `an_anagrafiche`.`idtipointervento_default` AS `idtipointervento` FROM `an_anagrafiche` WHERE `an_anagrafiche`.`idtipointervento_default` = '.prepare($id_record).'
@@ -61,14 +62,17 @@ switch (post('op')) {
         SELECT `co_promemoria`.`idtipointervento` FROM `co_promemoria` WHERE `co_promemoria`.`idtipointervento` = '.prepare($id_record).'
         UNION
         SELECT `in_interventi_tecnici`.`idtipointervento` FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idtipointervento` = '.prepare($id_record).'
-        UNION
-        SELECT `co_contratti_tipiintervento`.`idtipointervento` FROM `co_contratti_tipiintervento` WHERE `co_contratti_tipiintervento`.`idtipointervento` = '.prepare($id_record).'
         ORDER BY `idtipointervento`');
 
         if (empty($elementi)) {
             // Elimino anche le tariffe collegate ai vari tecnici
             $query = 'DELETE FROM in_tariffe WHERE idtipointervento='.prepare($id_record);
             $dbo->query($query);
+
+            // Elimino anche le tariffe collegate ai contratti
+            $query = 'DELETE FROM co_contratti_tipiintervento WHERE idtipointervento='.prepare($id_record);
+            $dbo->query($query);
+
 
             $query = 'DELETE FROM in_tipiintervento WHERE idtipointervento='.prepare($id_record);
             $dbo->query($query);

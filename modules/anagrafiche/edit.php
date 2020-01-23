@@ -306,7 +306,7 @@ echo '
                             </div>
         
                             <div class="col-md-6">
-                                {[ "type": "select", "label": "'.tr('Banca predefinita').'", "name": "idbanca_vendite", "values": "query=SELECT id, nome AS descrizione FROM co_banche ORDER BY nome ASC", "value": "$idbanca_vendite$", "icon-after": "add|'.Modules::get('Banche')['id'].'", "help": "'.tr('Banca predefinita su cui accreditare i pagamenti.').'" ]}
+                                {[ "type": "select", "label": "'.tr('Banca predefinita').'", "name": "idbanca_vendite", "values": "query=SELECT id, nome AS descrizione FROM co_banche WHERE deleted_at IS NULL ORDER BY nome ASC", "value": "$idbanca_vendite$", "icon-after": "add|'.Modules::get('Banche')['id'].'", "help": "'.tr('Banca predefinita su cui accreditare i pagamenti.').'" ]}
                             </div>
                         </div>
         

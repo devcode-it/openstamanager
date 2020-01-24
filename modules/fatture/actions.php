@@ -489,8 +489,6 @@ switch (post('op')) {
                 $r->delete();
             }
 
-            //$dbo->query("UPDATE in_interventi SET idstatointervento = (SELECT idstatointervento FROM in_statiintervento WHERE descrizione = 'Completato') WHERE id=".prepare($idintervento));
-
             flash()->info(tr('Intervento _NUM_ rimosso!', [
                 '_NUM_' => $idintervento,
             ]));

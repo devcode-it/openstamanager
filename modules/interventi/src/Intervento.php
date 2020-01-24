@@ -146,7 +146,7 @@ class Intervento extends Document
 
     public function descrizioni()
     {
-        return $this->righe()->where('prezzo_vendita', 0);
+        return $this->righe()->where('is_descrizione', 1);
     }
 
     public function sessioni()

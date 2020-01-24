@@ -480,18 +480,24 @@ switch (post('op')) {
     case 'unlink_intervento':
         if (!empty($id_record) && post('idriga') !== null) {
             $id_riga = post('idriga');
+            $type = post('type');
+            $riga = $fattura->getRiga($type, $id_riga);
 
-            $righe = $fattura->getRighe();
-            $riga = $righe->find($id_riga);
+            if (!empty($riga)) {
+                try {
+                    $righe = $fattura->getRighe();
+                    $righe_intervento = $righe->where('idintervento', $riga->idintervento);
+                    foreach ($righe_intervento as $r) {
+                        $r->delete();
+                    }
 
-            $righe_intervento = $righe->where('idintervento', $riga->idintervento);
-            foreach ($righe_intervento as $r) {
-                $r->delete();
+                    flash()->info(tr('Intervento _NUM_ rimosso!', [
+                        '_NUM_' => $idintervento,
+                    ]));
+                } catch (InvalidArgumentException $e) {
+                    flash()->error(tr('Errore durante l\'eliminazione della riga!'));
+                }
             }
-
-            flash()->info(tr('Intervento _NUM_ rimosso!', [
-                '_NUM_' => $idintervento,
-            ]));
         }
         break;
 

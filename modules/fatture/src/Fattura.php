@@ -391,7 +391,7 @@ class Fattura extends Document
 
             foreach ($rate as $rata) {
                 $scadenza = $rata['DataScadenzaPagamento'] ?: $this->data;
-                $importo = -$rata['ImportoPagamento'];
+                $importo = ($this->isNota() ) ? $rata['ImportoPagamento'] : -$rata['ImportoPagamento'];
 
                 self::registraScadenza($this, $importo, $scadenza, $is_pagato);
             }

@@ -129,7 +129,7 @@ class FatturaElettronica
             $dati_aggiuntivi = $documento->dati_aggiuntivi_fe;
             $dati = $dati_aggiuntivi['dati_contratto'] ?: [];
 
-            $this->contratti = array_unique(array_merge($contratti, $preventivi, $interventi, $dati));
+            $this->contratti = array_merge($contratti, $preventivi, $interventi, $dati);
         }
 
         return $this->contratti;

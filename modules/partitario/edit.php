@@ -63,12 +63,12 @@ foreach ($primo_livello as $conto_primo) {
             <table class="table table-striped table-hover table-condensed" style="margin-bottom:0;">';
 
         // Livello 3
-        $query3 = 'SELECT `co_pianodeiconti3`.*, movimenti.numero_movimenti, movimenti.totale FROM `co_pianodeiconti3` LEFT OUTER JOIN (SELECT COUNT(id) AS numero_movimenti, idconto, SUM( ROUND(totale,2)) AS totale FROM co_movimenti GROUP BY idconto) movimenti ON co_pianodeiconti3.id=movimenti.idconto WHERE `idpianodeiconti2` = '.prepare($conto_secondo['id']).' ORDER BY numero ASC';
+        $query3 = 'SELECT `co_pianodeiconti3`.*, movimenti.numero_movimenti, movimenti.totale FROM `co_pianodeiconti3` LEFT OUTER JOIN (SELECT COUNT(idconto) AS numero_movimenti, idconto, SUM( ROUND(totale,2)) AS totale FROM co_movimenti WHERE data BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']).' GROUP BY idconto) movimenti ON co_pianodeiconti3.id=movimenti.idconto WHERE `idpianodeiconti2` = '.prepare($conto_secondo['id']).' ORDER BY numero ASC';
         $terzo_livello = $dbo->fetchArray($query3);
 
         foreach ($terzo_livello as $conto_terzo) {
             // Se il conto non ha documenti collegati posso eliminarlo
-			$numero_movimenti = $conto_terzo['numero_movimenti'];
+			$movimenti = $conto_terzo['numero_movimenti'];
 
             $totale_conto = $conto_terzo['totale'];
             $totale_conto = ($conto_primo['descrizione'] == 'Patrimoniale') ? $totale_conto : -$totale_conto;

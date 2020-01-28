@@ -187,70 +187,62 @@ switch (post('op')) {
 
     case 'copy-bulk':
 
-        foreach ($id_records as $id_record) {
-            // Lettura dati fattura attuale
-            $rs = $dbo->fetchOne('SELECT * FROM co_documenti WHERE id='.prepare($id_record));
+        foreach ($id_records as $id) {
+            $fattura = Fattura::find($id);
 
-            $dir = $dbo->fetchOne('SELECT dir FROM co_tipidocumento WHERE id='.prepare($rs['idtipodocumento']))['dir'];
+            $id_segment = (post('id_segment') ? post('id_segment') : $fattura->id_segment);
+            $dir = $dbo->fetchOne("SELECT dir FROM co_tipidocumento WHERE id=".prepare($fattura->idtipodocumento))['dir'];
 
-            //+ 1 settimana
-            if (post('skip_time') == 'Giorno') {
-                $data = date('Y-m-d', strtotime('+1 day', strtotime($rs['data'])));
+            //+ 1 giorno
+            if(post('skip_time')=='Giorno'){
+                $data = date("Y-m-d", strtotime( '+1 day' , strtotime ( $fattura->data )) );
             }
 
             //+ 1 settimana
-            if (post('skip_time') == 'Settimana') {
-                $data = date('Y-m-d', strtotime('+1 week', strtotime($rs['data'])));
+            if(post('skip_time')=='Settimana'){
+                $data = date("Y-m-d", strtotime( '+1 week' , strtotime ( $fattura->data )) );
             }
 
             //+ 1 mese
-            if (post('skip_time') == 'Mese') {
-                $data = date('Y-m-d', strtotime('+1 month', strtotime($rs['data'])));
+            if(post('skip_time')=='Mese'){
+                $data = date("Y-m-d", strtotime( '+1 month' , strtotime ( $fattura->data )) );
             }
 
             //+ 1 anno
-            if (post('skip_time') == 'Anno') {
-                $data = date('Y-m-d', strtotime('+1 year', strtotime($rs['data'])));
+            if(post('skip_time')=='Anno'){
+                $data = date("Y-m-d", strtotime( '+1 year' , strtotime ( $fattura->data )) );
             }
 
-            // Duplicazione righe
-            $righe = $dbo->fetchArray('SELECT * FROM co_righe_documenti WHERE iddocumento='.prepare($id_record));
+            $new = $fattura->replicate();
+            $new->id_segment = $id_segment;
+            $new->numero_esterno = Fattura::getNextNumeroSecondario($data, $dir, $id_segment);
+            $new->numero = Fattura::getNextNumero($data, $dir, $id_segment);
+            $new->idstatodocumento = 2;
+            $new->data = $data;
+            $new->save();
 
-            $id_segment = $rs['id_segment'];
-
-            // Calcolo prossimo numero fattura
-            $numero = get_new_numerofattura(date('Y-m-d'));
-
-            if ($dir == 'entrata') {
-                $numero_esterno = get_new_numerosecondariofattura(date('Y-m-d'));
-            } else {
-                $numero_esterno = '';
-            }
-
-            // Duplicazione intestazione
-            $dbo->query('INSERT INTO co_documenti(numero, numero_esterno, data, idanagrafica, idcausalet, idspedizione, idporto, idaspettobeni, idvettore, n_colli, idsede_partenza, idsede_destinazione, idtipodocumento, idstatodocumento, idpagamento, idconto, idrivalsainps, idritenutaacconto, rivalsainps, iva_rivalsainps, ritenutaacconto, bollo, note, note_aggiuntive, buono_ordine, id_segment) VALUES('.prepare($numero).', '.prepare($numero_esterno).', '.prepare($data).', '.prepare($rs['idanagrafica']).', '.prepare($rs[0]['idcausalet']).', '.prepare($rs['idspedizione']).', '.prepare($rs['idporto']).', '.prepare($rs['idaspettobeni']).', '.prepare($rs['idvettore']).', '.prepare($rs['n_colli']).', '.prepare($rs['idsede_partenza']).', '.prepare($rs['idsede_destinazione']).', '.prepare($rs['idtipodocumento']).', (SELECT id FROM co_statidocumento WHERE descrizione=\'Bozza\'), '.prepare($rs['idpagamento']).', '.prepare($rs['idconto']).', '.prepare($rs['idrivalsainps']).', '.prepare($rs['idritenutaacconto']).', '.prepare($rs['rivalsainps']).', '.prepare($rs['iva_rivalsainps']).', '.prepare($rs['ritenutaacconto']).', '.prepare($rs['bollo']).', '.prepare($rs['note']).', '.prepare($rs['note_aggiuntive']).', '.prepare($rs['buono_ordine']).', '.prepare($rs['id_segment']).')');
-            $id_record = $dbo->lastInsertedID();
-
-            // TODO: sistemare la duplicazione delle righe generiche e degli articoli, ignorando interventi, ddt, ordini, preventivi
+            $righe = $fattura->getRighe();
             foreach ($righe as $riga) {
-                if (!post('riferimenti')) {
-                    $riga['idpreventivo'] = 0;
-                    $riga['idcontratto'] = 0;
-                    $riga['idintervento'] = 0;
-                    $riga['idddt'] = 0;
-                    $riga['idordine'] = 0;
+
+                if( !post('riferimenti') ){
+                    $riga->idpreventivo = 0;
+                    $riga->idcontratto = 0;
+                    $riga->idintervento = 0;
+                    $riga->idddt = 0;
+                    $riga->idordine = 0;
                 }
-                // Scarico/carico nuovamente l'articolo da magazzino
-                if (!empty($riga['idarticolo'])) {
-                    add_articolo_infattura($id_record, $riga['idarticolo'], $riga['descrizione'], $riga['idiva'], $riga['qta'], $riga['subtotale'], $riga['sconto'], $riga['sconto_unitario'], $riga['tipo_sconto'], $riga['idintervento'], $riga['idconto'], $riga['um']);
-                } else {
-                    $dbo->query('INSERT INTO co_righe_documenti(iddocumento, idordine, idddt, idintervento, idarticolo, idpreventivo, idcontratto, is_descrizione, idtecnico, idagente, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, idritenutaacconto, ritenutaacconto, idrivalsainps, rivalsainps, um, qta, `order`) VALUES('.prepare($id_record).', '.prepare($riga['idordine']).', '.prepare($riga['idddt']).', '.prepare($riga['idintervento']).', '.prepare($riga['idarticolo']).', '.prepare($riga['idpreventivo']).', '.prepare($riga['idcontratto']).', '.prepare($riga['is_descrizione']).', '.prepare($riga['idtecnico']).', '.prepare($riga['idagente']).', '.prepare($riga['idconto']).', '.prepare($riga['idiva']).', '.prepare($riga['desc_iva']).', '.prepare($riga['iva']).', '.prepare($riga['iva_indetraibile']).', '.prepare($riga['descrizione']).', '.prepare($riga['subtotale']).', '.prepare($riga['sconto']).', '.prepare($riga['sconto_unitario']).', '.prepare($riga['tipo_sconto']).', '.prepare($riga['idritenutaacconto']).', '.prepare($riga['ritenutaacconto']).', '.prepare($riga['idrivalsainps']).', '.prepare($riga['rivalsainps']).', '.prepare($riga['um']).', '.prepare($riga['qta']).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))');
+
+                $new_riga = $riga->replicate();
+                $new_riga->setParent($new);
+
+                $new_riga->save();
+
+                if( $new_riga->idarticolo ){
+                    $articolo = Articolo::find($new_riga->id);
+                    $articolo->movimentaMagazzino($articolo->qta);
                 }
             }
 
-            // Ricalcolo inps, ritenuta e bollo (se la fattura non è stata pagata)
-            ricalcola_costiagg_fattura($id_record);
-            aggiorna_sedi_movimenti('documenti', $id_record);
         }
 
         flash()->info(tr('Fatture duplicate correttamente!'));
@@ -267,10 +259,9 @@ if (App::debug()) {
 $operations['copy-bulk'] = [
     'text' => '<span><i class="fa fa-copy"></i> '.tr('Duplica selezionati').'</span>',
     'data' => [
-        'msg' => tr('Vuoi davvero duplicare le righe selezionate?').'<br><br>{[ "type": "select", "label": "", "name": "skip_time", "required": 1, "values": "list=\"Giorno\":\"'.tr('Giorno').'\", \"Settimana\":\"'.tr('Settimana').'\", \"Mese\":\"'.tr('Mese').'\", \"Anno\":\"'.tr('Anno').'\" ", "value": "Giorno" ]}<br>{[ "type": "checkbox", "placeholder": "'.tr('Aggiungere i riferimenti ai documenti esterni?').'", "name": "riferimenti" ]}',
+        'msg' => tr('Vuoi davvero duplicare le righe selezionate?').'<br><br>{[ "type": "select", "label": "", "name": "skip_time", "required": 1, "values": "list=\"Giorno\":\"'.tr('Giorno').'\", \"Settimana\":\"'.tr('Settimana').'\", \"Mese\":\"'.tr('Mese').'\", \"Anno\":\"'.tr('Anno').'\" ", "value": "Giorno" ]}<br>{[ "type": "select", "label": "", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.$id_module.' ORDER BY name", "value": "Giorno" ]}<br>{[ "type": "checkbox", "placeholder": "'.tr('Aggiungere i riferimenti ai documenti esterni?').'", "name": "riferimenti" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
-        'blank' => false,
     ],
 ];
 

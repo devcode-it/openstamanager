@@ -50,6 +50,7 @@ switch (post('op')) {
                     'pagato' => $pagato,
                     'scadenza' => $scadenza,
                     'data_concordata' => $data_concordata,
+                    'note' => post('note'),
                 ], ['id' => $id_scadenza]);
 
                 if ($da_pagare == 0) {
@@ -65,6 +66,7 @@ switch (post('op')) {
                     'scadenza' => $scadenza,
                     'data_concordata' => $data_concordata,
                     'data_emissione' => date('Y-m-d'),
+                    'note' => post('note'),
                 ]);
 
                 $id_scadenza = $database->lastInsertedID();

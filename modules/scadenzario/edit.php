@@ -64,6 +64,13 @@ if (!empty($documento)) {
                             <td>'.moneyFormat($documento->totale).'</td>
                         </tr>
 
+                        <tr>
+                            <th>'.tr('Note').':</th>
+                            <td>
+                                {[ "type": "textarea", "name": "note", "value": "'.$record['note'].'" ]}
+                            </td>
+                        </tr>
+
                     </table>
 
                     '.Modules::link($documento->module, $record['iddocumento'], '<i class="fa fa-folder-open"></i> '.tr('Apri documento'), null, 'class="btn btn-primary"');

@@ -485,15 +485,12 @@ switch (post('op')) {
 
             if (!empty($riga)) {
                 try {
-                    $righe = $fattura->getRighe();
-                    $righe_intervento = $righe->where('idintervento', $riga->idintervento);
-                    foreach ($righe_intervento as $r) {
-                        $r->delete();
-                    }
+                    $riga->delete();
 
                     flash()->info(tr('Intervento _NUM_ rimosso!', [
                         '_NUM_' => $idintervento,
                     ]));
+
                 } catch (InvalidArgumentException $e) {
                     flash()->error(tr('Errore durante l\'eliminazione della riga!'));
                 }

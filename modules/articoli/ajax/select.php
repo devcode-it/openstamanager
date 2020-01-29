@@ -9,6 +9,7 @@ switch ($resource) {
             $query = 'SELECT 
                 mg_articoli.id, 
                 mg_articoli.codice, 
+                mg_articoli.barcode, 
                 mg_articoli.descrizione,
                 round(mg_articoli.qta,'.setting('Cifre decimali per quantità').') AS qta, 
                 mg_articoli.um, 
@@ -43,6 +44,7 @@ switch ($resource) {
             $query = 'SELECT 
                 mg_articoli.id, 
                 mg_articoli.codice, 
+                mg_articoli.barcode, 
                 mg_articoli.descrizione,	
                 mg_articoli.um, 
                 mg_articoli.idiva_vendita, 
@@ -109,6 +111,7 @@ switch ($resource) {
             'idconto_acquisto_title' => 'idconto_acquisto_title',
             'prezzo_acquisto' => 'prezzo_acquisto',
             'prezzo_vendita' => 'prezzo_vendita',
+            'barcode' => 'barcode',
         ];
 
         $data = AJAX::selectResults($query, $where, $filter, $search_fields, $limit, $custom);

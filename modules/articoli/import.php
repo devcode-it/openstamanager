@@ -8,8 +8,8 @@ switch (post('op')) {
         $module = filter('module');
 
         $list = [
-            ['Codice', 'Descrizione', 'Quantità', 'Unità di misura', 'Prezzo acquisto', 'Prezzo vendita', 'Peso lordo (KG)', 'Volume (M3)', 'Categoria', 'Ubicazione', 'Note'],
-            ['00004', 'Articolo', '10', 'Kg', '5,25', '12,72', '10,2', '500', 'Categoria4', 'Scaffale 1', 'Articolo di prova'],
+            ['Codice', 'Descrizione', 'Fornitore', 'Quantità', 'Unità di misura', 'Prezzo acquisto', 'Prezzo vendita', 'Peso lordo (KG)', 'Volume (M3)', 'Categoria', 'Sottocategoria', 'Ubicazione', 'Note'],
+            ['00004', 'Articolo', 'Mario Rossi', '10', 'Kg', '5,25', '12,72', '10,2', '500', 'Categoria4', 'Sottocategoria2', 'Scaffale 1', 'Articolo di prova'],
         ];
 
         directory('../../files/'.$module);
@@ -59,6 +59,24 @@ switch (post('op')) {
                         $data[$key]['id_categoria'] = $dbo->lastInsertedID();
                     } else {
                         $data[$key]['id_categoria'] = $rs_cat[0]['id'];
+                    }
+                }
+
+                // Sottocategorie
+                if (!empty($data[$key]['id_sottocategoria'])) {
+                    $rs_cat2 = $dbo->select('mg_categorie', 'id', [
+                        'nome' => $data[$key]['id_sottocategoria'],
+                        'parent' => $data[$key]['id_categoria'],
+                    ]);
+
+                    if (empty($rs_cat2[0]['id'])) {
+                        $dbo->insert('mg_categorie', [
+                            'nome' => $data[$key]['id_sottocategoria'],
+                            'parent' => $data[$key]['id_categoria'],
+                        ]);
+                        $data[$key]['id_sottocategoria'] = $dbo->lastInsertedID();
+                    } else {
+                        $data[$key]['id_sottocategoria'] = $rs_cat2[0]['id'];
                     }
                 }
 
@@ -176,6 +194,25 @@ return [
             'id_categoria',
             'idcategoria',
         ],
+    ],
+    [
+        'field' => 'id_sottocategoria',
+        'label' => 'Sottocategoria',
+        'names' => [
+            'Sottocategoria',
+            'id_sottocategoria',
+            'idsottocategoria',
+        ],
+    ],
+    [
+        'field' => 'id_fornitore',
+        'label' => 'Fornitore',
+        'names' => [
+            'id_fornitore',
+            'Id Fornitore',
+            'Fornitore',
+        ],
+        'query' => 'SELECT idanagrafica as result FROM an_anagrafiche WHERE LOWER(ragione_sociale) = LOWER(|value|)',
     ],
     [
         'field' => 'idiva_vendita',

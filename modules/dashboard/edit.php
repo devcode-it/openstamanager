@@ -589,8 +589,8 @@ if (empty($domenica)) {
 <?php
 
 echo "
-            minTime: '".setting('Inizio orario lavorativo')."',
-            maxTime: '".((setting('Fine orario lavorativo') != '00:00:00' and !empty(setting('Fine orario lavorativo'))) ? setting('Fine orario lavorativo') : '23:59:59')."',
+            minTime: '".setting('Ora inizio sul calendario')."',
+            maxTime: '".((setting('Ora fine sul calendario') != '00:00:00' and !empty(setting('Ora fine sul calendario'))) ? setting('Ora fine sul calendario') : '23:59:59')."',
 ";
 
 ?>

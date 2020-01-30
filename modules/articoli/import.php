@@ -8,8 +8,8 @@ switch (post('op')) {
         $module = filter('module');
 
         $list = [
-            ['Codice', 'Descrizione', 'Fornitore', 'Quantità', 'Unità di misura', 'Prezzo acquisto', 'Prezzo vendita', 'Peso lordo (KG)', 'Volume (M3)', 'Categoria', 'Sottocategoria', 'Ubicazione', 'Note'],
-            ['00004', 'Articolo', 'Mario Rossi', '10', 'Kg', '5,25', '12,72', '10,2', '500', 'Categoria4', 'Sottocategoria2', 'Scaffale 1', 'Articolo di prova'],
+            ['Codice', 'Barcode', 'Descrizione', 'Fornitore', 'Quantità', 'Unità di misura', 'Prezzo acquisto', 'Prezzo vendita', 'Peso lordo (KG)', 'Volume (M3)', 'Categoria', 'Sottocategoria', 'Ubicazione', 'Note'],
+            ['00004', '719376861871', 'Articolo', 'Mario Rossi', '10', 'Kg', '5,25', '12,72', '10,2', '500', 'Categoria4', 'Sottocategoria2', 'Scaffale 1', 'Articolo di prova'],
         ];
 
         directory('../../files/'.$module);
@@ -202,6 +202,15 @@ return [
             'Sottocategoria',
             'id_sottocategoria',
             'idsottocategoria',
+        ],
+    ],
+    [
+        'field' => 'barcode',
+        'label' => 'Barcode',
+        'names' => [
+            'barcode',
+            'Barcode',
+            'EAN',
         ],
     ],
     [

@@ -169,9 +169,13 @@ class Intervento extends Document
 
         //$ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice');
 
-        $ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice', [
-            'YEAR(data_richiesta) = '.prepare(date('Y', strtotime($data))),
-        ]);
+        if (setting('Continua la numerazione')){
+            $ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice', [
+                'YEAR(data_richiesta) = '.prepare(date('Y', strtotime($data))),
+            ]);
+        }else{
+            $ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice', []);
+        }
 
         $numero = Generator::generate($maschera, $ultimo);
 

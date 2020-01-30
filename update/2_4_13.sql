@@ -145,3 +145,11 @@ ALTER TABLE `co_scadenziario` ADD `note` VARCHAR(255) DEFAULT NULL AFTER `data_p
 
 -- Aggiunta note in vista scadenzario --
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name`='Scadenzario' ), 'Note', 'co_scadenziario.note', '5', '1', '0', '0', '', '', '0', '0', '0');
+
+
+
+UPDATE `zz_settings` SET `nome` = 'Ora inizio sul calendario' WHERE `zz_settings`.`nome` = 'Inizio orario lavorativo';
+UPDATE `zz_settings` SET `nome` = 'Ora fine sul calendario' WHERE `zz_settings`.`nome` = 'Fine orario lavorativo';
+
+-- Flag per decisere se continuare attraverso gli anni la numerazione delle attività sulla base dello stesso contatore
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `help`) VALUES (NULL, 'Continua la numerazione', '0', 'boolean', '1', 'Interventi', 'Continua attraverso gli anni la numerazione delle attività sulla base dello stesso contatore.');

@@ -165,16 +165,16 @@ class Intervento extends Document
      */
     public static function getNextCodice($data)
     {
-        $maschera = setting('Formato codice intervento');
+        $maschera = setting('Formato codice attività');
 
         //$ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice');
 
-        if (setting('Continua la numerazione')){
+        if (setting('Ingnora il periodo temporale per il calcolo del codice attività')){
+            $ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice', []);
+        }else{
             $ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice', [
                 'YEAR(data_richiesta) = '.prepare(date('Y', strtotime($data))),
             ]);
-        }else{
-            $ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice', []);
         }
 
         $numero = Generator::generate($maschera, $ultimo);

@@ -162,3 +162,7 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 
 -- Giorni lavorativi
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`,`help`) VALUES (NULL, 'Giorni lavorativi', 'Lunedì,Martedì,Mercoledì,Giovedì,Venerdì', 'multiple[Lunedì,Martedì,Mercoledì,Giovedì,Venerdì,Sabato,Domenica]', '1', 'Interventi', '');
+
+ALTER TABLE `zz_settings` CHANGE `help` `help` TEXT;
+
+UPDATE `zz_settings` SET `help` = '<p>Impostare la maschera senza indicare l''anno per evitare il reset del contatore.</p><ul><li><b>####</b>: Numero progressivo del documento, con zeri non significativi per raggiungere il numero desiderato di caratteri</li><li><b>YYYY</b>: Anno corrente a 4 cifre</li><li><b>yy</b>: Anno corrente a 2 cifre</li></ul>' WHERE `zz_settings`.`nome` = 'Formato codice preventivi';

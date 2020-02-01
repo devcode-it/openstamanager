@@ -107,11 +107,12 @@ echo '
     </tr>';
 
 // Descrizione
+// Rimosso nl2br, non necessario con ckeditor
 echo '
     <tr>
         <td colspan="4" style="height:20mm;">
             <b>'.tr('Descrizione').':</b>
-            <p>'.nl2br($documento['descrizione']).'</p>
+            <p>'.($documento['descrizione']).'</p>
         </td>
     </tr>';
 

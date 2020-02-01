@@ -179,7 +179,7 @@ if (empty($record['is_fiscale'])) {
 			</div>
 
 			<div class="row">
-				<div class="col-md-3">
+				<div class="col-md-6">
 					<?php
 
                     echo Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"');
@@ -191,44 +191,62 @@ if (empty($record['is_fiscale'])) {
                     } else {
                         ?>
 						{[ "type": "select", "label": "<?php echo tr('Fornitore'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "fornitori", "value": "$idanagrafica$" ]}
-					<?php
-                    }
-                    ?>
+					<?php } ?>
+                </div>
+                
+                
+				<?php if ($dir == 'entrata') { ?>
+				<div class="col-md-6">
+					{[ "type": "select", "label": "<?php echo tr('Agente di riferimento'); ?>", "name": "idagente", "ajax-source": "agenti", "value": "$idagente_fattura$" ]}
 				</div>
+				<?php } ?>
+                
 
                 <?php
                 // Conteggio numero articoli fatture
                 $articolo = $dbo->fetchArray('SELECT mg_articoli.id FROM ((mg_articoli INNER JOIN co_righe_documenti ON mg_articoli.id=co_righe_documenti.idarticolo) INNER JOIN co_documenti ON co_documenti.id=co_righe_documenti.iddocumento) WHERE co_documenti.id='.prepare($id_record));
                 if ($dir == 'uscita') {
                     ?>
-                    <div class="col-md-3">
+                    <div class="col-md-6">
+                        
+                        <?php
+                        echo Plugins::link('Sedi', $record['idsede_partenza'], null, null, 'class="pull-right"');
+                        ?>
+
                         {[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza", "ajax-source": "sedi", "placeholder": "Sede legale", "value": "$idsede_partenza$", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|id_plugin=<?php echo Plugins::get('Sedi')['id']; ?>&id_parent=<?php echo $record['idanagrafica']; ?>||<?php echo (intval($block_edit)) ? 'disabled' : ''; ?>" ]}
                     </div>
 
-                    <div class="col-md-3">
+                    <div class="col-md-6">
+
+                        <?php
+                        echo Plugins::link('Sedi', $record['idsede_destinazione'], null, null, 'class="pull-right"');
+                        ?>
+
                         {[ "type": "select", "label": "<?php echo tr('Destinazione merce'); ?>", "name": "idsede_destinazione", "ajax-source": "sedi_azienda",  "value": "$idsede_destinazione$", "readonly": "<?php echo (sizeof($articolo)) ? 1 : 0; ?>" ]}
                     </div>
                 <?php
                 } else {
                     ?>
-                    <div class="col-md-3">
+                    <div class="col-md-6">
+                        
+                        <?php
+                        echo Plugins::link('Sedi', $record['idsede_partenza'], null, null, 'class="pull-right"');
+                        ?>
+
                         {[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "placeholder": "Sede legale", "value": "$idsede_partenza$", "readonly": "<?php echo (sizeof($articolo)) ? 1 : 0; ?>"  ]}
                     </div>
 
-                    <div class="col-md-3">
+                    <div class="col-md-6">
+                        
+                        <?php
+                        echo Plugins::link('Sedi', $record['idsede_destinazione'], null, null, 'class="pull-right"');
+                        ?>
+
                         {[ "type": "select", "label": "<?php echo tr('Destinazione merce'); ?>", "name": "idsede_destinazione", "ajax-source": "sedi",  "value": "$idsede_destinazione$", "readonly": "", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|id_plugin=<?php echo Plugins::get('Sedi')['id']; ?>&id_parent=<?php echo $record['idanagrafica']; ?>||<?php echo (intval($block_edit)) ? 'disabled' : ''; ?>" ]}
                     </div>
                 <?php
                 }
                 ?>
-
-				<?php if ($dir == 'entrata') {
-                    ?>
-				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Agente di riferimento'); ?>", "name": "idagente", "ajax-source": "agenti", "value": "$idagente_fattura$" ]}
-				</div>
-				<?php
-                } ?>
 			</div>
 			<hr>
 

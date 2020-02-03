@@ -146,10 +146,25 @@ ALTER TABLE `co_scadenziario` ADD `note` VARCHAR(255) DEFAULT NULL AFTER `data_p
 -- Aggiunta note in vista scadenzario --
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name`='Scadenzario' ), 'Note', 'co_scadenziario.note', '5', '1', '0', '0', '', '', '0', '0', '0');
 
-
-
 UPDATE `zz_settings` SET `nome` = 'Ora inizio sul calendario' WHERE `zz_settings`.`nome` = 'Inizio orario lavorativo';
 UPDATE `zz_settings` SET `nome` = 'Ora fine sul calendario' WHERE `zz_settings`.`nome` = 'Fine orario lavorativo';
+UPDATE `zz_settings` SET `nome` = 'Formato codice attività' WHERE `zz_settings`.`nome` = 'Formato codice intervento';
 
 -- Flag per decisere se continuare attraverso gli anni la numerazione delle attività sulla base dello stesso contatore
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `help`) VALUES (NULL, 'Continua la numerazione', '0', 'boolean', '1', 'Interventi', 'Continua attraverso gli anni la numerazione delle attività sulla base dello stesso contatore.');
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `help`) VALUES (NULL, 'Ingnora il periodo temporale per il calcolo del codice attività', '0', 'boolean', '1', 'Interventi', 'Continua attraverso gli anni la numerazione delle attività sulla base dello stesso contatore.');
+
+
+-- Inizio orario lavorativo
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `help`) VALUES (NULL, 'Inizio orario lavorativo', '08:00:00', 'time', '1', 'Interventi', 'Inizio dell''orario lavorativo standard.');
+
+-- Fine orario lavorativo
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `help`) VALUES (NULL, 'Fine orario lavorativo', '18:00:00', 'time', '1', 'Interventi', 'Fine dell''orario lavorativo standard.');
+
+-- Giorni lavorativi
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`,`help`) VALUES (NULL, 'Giorni lavorativi', 'Lunedì,Martedì,Mercoledì,Giovedì,Venerdì', 'multiple[Lunedì,Martedì,Mercoledì,Giovedì,Venerdì,Sabato,Domenica]', '1', 'Interventi', '');
+
+ALTER TABLE `zz_settings` CHANGE `help` `help` TEXT;
+
+UPDATE `zz_settings` SET `help` = '<p>Impostare la maschera senza indicare l''anno per evitare il reset del contatore.</p><ul><li><b>####</b>: Numero progressivo del documento, con zeri non significativi per raggiungere il numero desiderato di caratteri</li><li><b>YYYY</b>: Anno corrente a 4 cifre</li><li><b>yy</b>: Anno corrente a 2 cifre</li></ul>' WHERE `zz_settings`.`nome` = 'Formato codice preventivi';
+
+UPDATE `zz_hooks` SET `name` = 'Aggiornamenti' WHERE `class` = 'Modules\Aggiornamenti\UpdateHook';

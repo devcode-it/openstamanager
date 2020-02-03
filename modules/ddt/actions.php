@@ -31,6 +31,9 @@ switch (post('op')) {
         $ddt = DDT::build($anagrafica, $tipo, $data);
         $id_record = $ddt->id;
 
+        $ddt->idcausalet = post('idcausalet');
+        $ddt->save();
+
         flash()->info(tr('Aggiunto ddt in _TYPE_ numero _NUM_!', [
             '_TYPE_' => $dir,
             '_NUM_' => $ddt->numero,

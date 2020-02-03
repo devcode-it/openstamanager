@@ -49,7 +49,7 @@ class Preventivo extends Document
         $model->stato()->associate($stato_documento);
         $model->tipoSessione()->associate($tipo_sessione);
 
-        $model->numero = static::getNextNumero();
+        $model->numero = static::getNextNumero($data_bozza);
 
         // Salvataggio delle informazioni
         $model->nome = $nome;
@@ -233,11 +233,20 @@ class Preventivo extends Document
      *
      * @return string
      */
-    public static function getNextNumero()
+    public static function getNextNumero($data)
     {
         $maschera = setting('Formato codice preventivi');
+        
+        if ((strpos($maschera, 'YYYY') !== false) or (strpos($maschera, 'yy') !== false)) {
+            
+            $ultimo = Generator::getPreviousFrom($maschera, 'co_preventivi', 'numero', [
+                'YEAR(data_bozza) = '.prepare(date('Y', strtotime($data))),
+            ]);
 
-        $ultimo = Generator::getPreviousFrom($maschera, 'co_preventivi', 'numero');
+        }else{
+            $ultimo = Generator::getPreviousFrom($maschera, 'co_preventivi', 'numero');
+        }
+
         $numero = Generator::generate($maschera, $ultimo);
 
         return $numero;

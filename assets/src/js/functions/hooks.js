@@ -121,7 +121,16 @@ function updateHook(hook) {
             // Rimozione eventuale della rotella di caricamento
             var counter = $("#hooks-counter").text();
             var number = $("#hooks > li").length;
-            $("#hooks-notified").text(number);
+
+            if (number == 0) {
+                $("#hooks-notified").html('<i class="fa fa-check" aria-hidden="true"></i>');
+                $("#hooks-label").removeClass('label-warning');
+                $("#hooks-label").addClass('label-success');
+            }else{
+                $("#hooks-notified").text(number);
+                $("#hooks-label").removeClass('label-success');
+                $("#hooks-label").addClass('label-warning');
+            }
 
             if (counter == $("#hooks-number").text()) {
                 $("#hooks-loading").hide();

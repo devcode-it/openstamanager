@@ -68,7 +68,7 @@ switch (post('op')) {
     case 'copy':
         // Copia del preventivo
         $new = $preventivo->replicate();
-        $new->numero = Preventivo::getNextNumero();
+        $new->numero = Preventivo::getNextNumero($new->data_bozza);
         $new->idstato = 1;
         $new->save();
 

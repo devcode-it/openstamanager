@@ -39,18 +39,18 @@ if (!empty($search['descrizione'])) {
 }
 
 if (!empty($search['categoria'])) {
-    $where[] = 'id_categoria IN (SELECT id FROM mg_categorie WHERE descrizione LIKE '.prepare('%'.$search['categoria'].'%').')';
+    $where[] = 'id_categoria IN (SELECT id FROM mg_categorie WHERE nome LIKE '.prepare('%'.$search['categoria'].'%').' AND parent IS NULL)';
 }
 
 if (!empty($search['subcategoria'])) {
-    $where[] = 'id_sottocategoria IN (SELECT id FROM mg_categorie WHERE descrizione LIKE '.prepare('%'.$search['subcategoria'].'%').')';
+    $where[] = 'id_sottocategoria IN (SELECT id FROM mg_categorie WHERE nome LIKE '.prepare('%'.$search['subcategoria'].'%').' AND parent NOT NULL)';
 }
 
 $period_end = $_SESSION['period_end'];
 
 $query = 'SELECT *,
        (SELECT SUM(qta) FROM mg_movimenti WHERE mg_movimenti.idarticolo=mg_articoli.id AND (mg_movimenti.idintervento IS NULL) AND data <= '.prepare($period_end).') AS qta
-FROM mg_articoli WHERE 1=1
+FROM mg_articoli LEFT OUTER JOIN (SELECT id, nome FROM mg_categorie) AS categoria ON mg_articoli.id_categoria = categoria.id WHERE 1=1
 ORDER BY codice ASC';
 
 $query = str_replace('1=1', '1=1'.(!empty($where) ? ' AND '.implode(' AND ', $where) : ''), $query);
@@ -65,6 +65,7 @@ echo '
     <thead>
         <tr>
             <th class="text-center" width="150">'.tr('Codice', [], ['upper' => true]).'</th>
+            <th class="text-center">'.tr('Categoria', [], ['upper' => true]).'</th>
             <th class="text-center">'.tr('Descrizione', [], ['upper' => true]).'</th>
             <th class="text-center" width="70">'.tr('Prezzo di vendita', [], ['upper' => true]).'</th>
             <th class="text-center" width="70">'.tr('Q.tà', [], ['upper' => true]).'</th>
@@ -82,6 +83,7 @@ foreach ($rs as $r) {
     echo '
         <tr>
             <td>'.$r['codice'].'</td>
+            <td>'.$r['nome'].'</td>
             <td>'.$r['descrizione'].'</td>
             <td class="text-right">'.moneyFormat($r['prezzo_vendita']).'</td>
             <td class="text-right">'.Translator::numberToLocale($r['qta']).' '.$r['um'].'</td>

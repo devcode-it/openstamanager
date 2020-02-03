@@ -283,7 +283,7 @@ switch ($resource) {
         break;
 
     case 'nazioni':
-        $query = 'SELECT id AS id, CONCAT_WS(\' - \', iso2, nome) AS descrizione FROM an_nazioni |where| ORDER BY CASE WHEN iso2=\'IT\' THEN -1 ELSE iso2 END';
+        $query = 'SELECT id AS id, iso2, CONCAT_WS(\' - \', iso2, nome) AS descrizione FROM an_nazioni |where| ORDER BY CASE WHEN iso2=\'IT\' THEN -1 ELSE iso2 END';
 
         foreach ($elements as $element) {
             $filter[] = 'id='.prepare($element);
@@ -291,6 +291,8 @@ switch ($resource) {
 
         if (!empty($search)) {
             $search_fields[] = 'nome LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = 'iso2 LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = 'CONCAT_WS(\' - \', iso2, nome) LIKE '.prepare('%'.$search.'%');
         }
 
         break;

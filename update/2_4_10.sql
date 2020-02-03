@@ -25,7 +25,7 @@ UPDATE `zz_hooks` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` 
 ALTER TABLE `zz_hooks` ADD FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE;
 
 INSERT INTO `zz_hooks` (`id`, `name`, `class`, `frequency`, `id_module`) VALUES
-(NULL, 'Ricevute', 'Modules\\Aggiornamenti\\UpdateHook', '7 day', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Aggiornamenti'));
+(NULL, 'Aggiornamenti', 'Modules\\Aggiornamenti\\UpdateHook', '7 day', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Aggiornamenti'));
 
 --
 -- Aggiunta nuovi campi per tracciamento sedi

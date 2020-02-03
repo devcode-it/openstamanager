@@ -149,9 +149,12 @@ echo '
             $(".destinatari").each(function(){
                 $(this).autocomplete({
                     source: emails,
-                    minLength: 0
+                    minLength: 0,
+                    close: function(){
+                        aggiungi_destinatario();
+                    }
                 }).focus(function() {
-                    $(this).autocomplete("search", $(this).val())
+                    $(this).autocomplete("search", $(this).val());
                 });
             });
 

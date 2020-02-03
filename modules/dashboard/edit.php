@@ -570,6 +570,7 @@ if ($vista == 'mese') {
 
 		var calendar = $('#calendar').fullCalendar({
             locale: globals.locale,
+            height: "auto",
 <?php
 $domenica = setting('Visualizzare la domenica sul calendario');
 if (empty($domenica)) {

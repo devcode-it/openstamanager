@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-$is_fornitore = (in_array($id_fornitore, $tipi_anagrafica) or in_array($id_vettore, $tipi_anagrafica));
+$is_fornitore = in_array($id_fornitore, $tipi_anagrafica);
 $is_cliente = in_array($id_cliente, $tipi_anagrafica);
 $is_tecnico = in_array($id_tecnico, $tipi_anagrafica);
 

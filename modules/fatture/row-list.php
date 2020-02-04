@@ -34,6 +34,9 @@ foreach ($righe as $riga) {
         $r['descrizione_conto'] = $dbo->fetchOne('SELECT descrizione FROM co_pianodeiconti3 WHERE id = '.prepare($r['idconto']))['descrizione'];
     }
 
+    $r['ritenuta_acconto'] = !empty($fattura->ritenuta_acconto) ? moneyFormat(abs($fattura->ritenuta_acconto), 2) : null;
+    $r['ritenuta_contributi'] = !empty($fattura->totale_ritenuta_contributi) ? moneyFormat(abs($fattura->totale_ritenuta_contributi), 2) : null;
+
     $extra = '';
 
     $delete = 'delete_riga';
@@ -95,7 +98,9 @@ foreach ($righe as $riga) {
 
     $extra_riga = '';
     if (!$r['is_descrizione']) {
-        $extra_riga = tr('_DESCRIZIONE_CONTO__ID_DOCUMENTO__NUMERO_RIGA__CODICE_CIG__CODICE_CUP_', [
+        $extra_riga = tr('_DESCRIZIONE_CONTO__ID_DOCUMENTO__NUMERO_RIGA__CODICE_CIG__CODICE_CUP__RITENUTA_ACCONTO__RITENUTA_CONTRIBUTI_', [
+            '_RITENUTA_ACCONTO_' => $r['ritenuta_acconto'] ? '<br>Ritenuta acconto: '.$r['ritenuta_acconto']: null,
+            '_RITENUTA_CONTRIBUTI_' => $r['ritenuta_contributi'] ? '<br>Ritenuta contributi: '.$r['ritenuta_contributi']: null,
             '_DESCRIZIONE_CONTO_' => $r['descrizione_conto'] ?: null,
             '_ID_DOCUMENTO_' => $r['id_documento_fe'] ? ' - DOC: '.$r['id_documento_fe'] : null,
             '_NUMERO_RIGA_' => $r['num_item'] ? ', NRI: '.$r['num_item'] : null,
@@ -108,7 +113,7 @@ foreach ($righe as $riga) {
     <tr data-id="'.$r['id'].'" '.$extra.'>
         <td>
             '.Modules::link($riga->isArticolo() ? Modules::get('Articoli')['id'] : null, $riga->isArticolo() ? $r['idarticolo'] : null, $r['descrizione']).'
-            <small class="pull-right text-muted">'.$extra_riga.'</small>';
+            <small class="pull-right text-right text-muted">'.$extra_riga.'</small>';
 
     if (!empty($r['abilita_serial'])) {
         if (!empty($mancanti)) {
@@ -395,7 +400,7 @@ if (!empty($fattura->totale_ritenuta_contributi)) {
             <b>'.tr('Ritenuta contributi', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.moneyFormat($fattura->totale_ritenuta_contributi, 2).'
+            '.moneyFormat(abs($fattura->totale_ritenuta_contributi), 2).'
         </td>
         <td></td>
     </tr>';

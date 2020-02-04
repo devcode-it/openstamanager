@@ -248,7 +248,11 @@ class Prints
      */
     public static function getPDFLink($path)
     {
-        return ROOTDIR.'/assets/dist/pdfjs/web/viewer.html?file=../../../../'.ltrim(str_replace(DOCROOT, '', $path), '/');
+        //http://localhost/openstamanager/
+        $folders = explode('/', dirname($_SERVER['PHP_SELF']));
+        $base = (stripos($_SERVER['SERVER_PROTOCOL'],'https') === 0 ? 'https://' : 'http://').$_SERVER['SERVER_NAME'].'/'.$folders[1].'/';
+
+        return ROOTDIR.'/assets/dist/pdfjs/web/viewer.html?file='.$base.ltrim(str_replace(DOCROOT, '', $path), '/');
     }
 
     /**

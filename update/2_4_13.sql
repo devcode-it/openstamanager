@@ -182,3 +182,9 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `
 (NULL, (SELECT id FROM zz_modules WHERE `name`='Articoli'), 'Q.tà disponibile', 'qta-IFNULL(a.qta_impegnata, 0)', 11, 1, 0, 1, '', '', 0, 0, 1);
 
 UPDATE `zz_views` SET `order` = '9' WHERE `zz_views`.`name` = 'Q.tà' AND `zz_views`.`id_module` = (SELECT id FROM zz_modules WHERE `name`='Articoli');
+
+UPDATE `zz_views` SET `visible` = '1' WHERE `zz_views`.`name` = 'Fornitore' AND `zz_views`.`id_module` = (SELECT id FROM zz_modules WHERE `name`='Articoli');
+UPDATE `zz_views` SET `visible` = '1' WHERE `zz_views`.`name` = 'Prezzo di acquisto' AND `zz_views`.`id_module` = (SELECT id FROM zz_modules WHERE `name`='Articoli');
+UPDATE `zz_views` SET `visible` = '1' WHERE `zz_views`.`name` = 'Prezzo di vendita' AND `zz_views`.`id_module` = (SELECT id FROM zz_modules WHERE `name`='Articoli');
+
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT id FROM zz_modules WHERE `name`='Articoli'), 'Barcode', 'mg_articoli.barcode', '2', '1', '0', '0', '', '', '1', '0', '1');

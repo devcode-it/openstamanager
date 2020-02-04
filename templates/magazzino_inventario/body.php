@@ -9,6 +9,8 @@ $search = [
     'categoria' => $_GET['search_categoria'],
     'subcategoria' => $_GET['search_subcategoria'],
     'tipo' => $_GET['search_tipo'],
+    'fornitore' => $_GET['search_fornitore'],
+    'barcode' => $_GET['search_barcode'],
 ];
 
 foreach ($search as $name => $value) {
@@ -44,6 +46,14 @@ if (!empty($search['categoria'])) {
 
 if (!empty($search['subcategoria'])) {
     $where[] = 'id_sottocategoria IN (SELECT id FROM mg_categorie WHERE nome LIKE '.prepare('%'.$search['subcategoria'].'%').' AND parent NOT NULL)';
+}
+
+if (!empty($search['fornitore'])) {
+    $where[] = 'id_fornitore IN (SELECT idanagrafica FROM an_anagrafiche WHERE ragione_sociale LIKE '.prepare('%'.$search['fornitore'].'%').')';
+}
+
+if (!empty($search['barcode'])) {
+    $where[] = "(REPLACE(barcode, '.', '') LIKE ".prepare('%'.$search['barcode'].'%').' OR barcode LIKE '.prepare('%'.$search['barcode'].'%').')';
 }
 
 $period_end = $_SESSION['period_end'];

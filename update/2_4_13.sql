@@ -168,3 +168,23 @@ ALTER TABLE `zz_settings` CHANGE `help` `help` TEXT;
 UPDATE `zz_settings` SET `help` = '<p>Impostare la maschera senza indicare l''anno per evitare il reset del contatore.</p><ul><li><b>####</b>: Numero progressivo del documento, con zeri non significativi per raggiungere il numero desiderato di caratteri</li><li><b>YYYY</b>: Anno corrente a 4 cifre</li><li><b>yy</b>: Anno corrente a 2 cifre</li></ul>' WHERE `zz_settings`.`nome` = 'Formato codice preventivi';
 
 UPDATE `zz_hooks` SET `name` = 'Aggiornamenti' WHERE `class` = 'Modules\Aggiornamenti\UpdateHook';
+
+-- Colonne aggiuntive articoli
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `mg_articoli` LEFT OUTER JOIN an_anagrafiche ON mg_articoli.id_fornitore=an_anagrafiche.idanagrafica LEFT OUTER JOIN co_iva ON mg_articoli.idiva_vendita=co_iva.id LEFT OUTER JOIN (SELECT SUM(qta) AS qta_impegnata, idarticolo FROM or_righe_ordini INNER JOIN or_ordini ON or_righe_ordini.idordine=or_ordini.id WHERE idstatoordine IN(SELECT id FROM or_statiordine WHERE completato=0) GROUP BY idarticolo) a ON a.idarticolo=mg_articoli.id WHERE 1=1 AND (`mg_articoli`.`deleted_at`) IS NULL HAVING 2=2 ORDER BY `descrizione`' WHERE `zz_modules`.`name` = 'Articoli';
+
+UPDATE `zz_views` SET `query` = 'mg_articoli.codice' WHERE `zz_views`.`name` = 'Codice' AND `zz_views`.`id_module` = (SELECT id FROM zz_modules WHERE `name`='Articoli');
+UPDATE `zz_views` SET `query` = 'mg_articoli.id' WHERE `zz_views`.`name` = 'id' AND `zz_views`.`id_module` = (SELECT id FROM zz_modules WHERE `name`='Articoli');
+UPDATE `zz_views` SET `query` = 'mg_articoli.descrizione' WHERE `zz_views`.`name` = 'Descrizione' AND `zz_views`.`id_module` = (SELECT id FROM zz_modules WHERE `name`='Articoli');
+
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
+(NULL, (SELECT id FROM zz_modules WHERE `name`='Articoli'), 'Prezzo vendita ivato', 'IF( co_iva.percentuale IS NOT NULL, (mg_articoli.prezzo_vendita + mg_articoli.prezzo_vendita * co_iva.percentuale / 100), mg_articoli.prezzo_vendita + mg_articoli.prezzo_vendita*(SELECT co_iva.percentuale FROM co_iva INNER JOIN zz_settings ON co_iva.id=zz_settings.valore AND nome=\'Iva predefinita\')/100 )', 8, 1, 0, 1, '', '', 0, 0, 1),
+(NULL, (SELECT id FROM zz_modules WHERE `name`='Articoli'), 'Q.tà impegnata', 'IFNULL(a.qta_impegnata, 0)', 10, 1, 0, 1, '', '', 0, 0, 1),
+(NULL, (SELECT id FROM zz_modules WHERE `name`='Articoli'), 'Q.tà disponibile', 'qta-IFNULL(a.qta_impegnata, 0)', 11, 1, 0, 1, '', '', 0, 0, 1);
+
+UPDATE `zz_views` SET `order` = '9' WHERE `zz_views`.`name` = 'Q.tà' AND `zz_views`.`id_module` = (SELECT id FROM zz_modules WHERE `name`='Articoli');
+
+UPDATE `zz_views` SET `visible` = '1' WHERE `zz_views`.`name` = 'Fornitore' AND `zz_views`.`id_module` = (SELECT id FROM zz_modules WHERE `name`='Articoli');
+UPDATE `zz_views` SET `visible` = '1' WHERE `zz_views`.`name` = 'Prezzo di acquisto' AND `zz_views`.`id_module` = (SELECT id FROM zz_modules WHERE `name`='Articoli');
+UPDATE `zz_views` SET `visible` = '1' WHERE `zz_views`.`name` = 'Prezzo di vendita' AND `zz_views`.`id_module` = (SELECT id FROM zz_modules WHERE `name`='Articoli');
+
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT id FROM zz_modules WHERE `name`='Articoli'), 'Barcode', 'mg_articoli.barcode', '2', '1', '0', '0', '', '', '1', '0', '1');

@@ -151,7 +151,7 @@ $_SESSION['superselect']['idsede_destinazione'] = 0;
                 qta_rimanente = parseFloat(articolo.qta)-parseFloat(qta_movimento);
             }
             
-            if( articolo.barcode != '' ){
+            if( articolo.descrizione != '' ){
                 $('#buttons').after( 
                     '<hr>'+
                     '<div class="row">'+

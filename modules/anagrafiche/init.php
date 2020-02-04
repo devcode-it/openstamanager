@@ -8,6 +8,8 @@ $id_azienda = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche 
 $id_cliente = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Cliente'")[0]['idtipoanagrafica'];
 $id_fornitore = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Fornitore'")[0]['idtipoanagrafica'];
 $id_tecnico = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Tecnico'")[0]['idtipoanagrafica'];
+$id_vettore = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Vettore'")[0]['idtipoanagrafica'];
+$id_agente = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Agente'")[0]['idtipoanagrafica'];
 
 if (isset($id_record)) {
     $anagrafica = Anagrafica::withTrashed()->find($id_record);

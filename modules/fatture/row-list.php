@@ -240,7 +240,7 @@ foreach ($righe as $riga) {
         echo "
                 <div class='input-group-btn'>";
 
-        if (!$fattura->isNota() && $riga->isArticolo() && $r['abilita_serial'] && (empty($r['idddt']) || empty($r['idintervento']))) {
+        if ($riga->isArticolo() && $r['abilita_serial'] && (empty($r['idddt']) || empty($r['idintervento']))) {
             echo "
                     <a class='btn btn-primary btn-xs'data-toggle='tooltip' title='Aggiorna SN...' onclick=\"launch_modal( 'Aggiorna SN', '".$structure->fileurl('add_serial.php').'?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'&idarticolo='.$r['idarticolo']."');\"><i class='fa fa-barcode' aria-hidden='true'></i></a>";
         }

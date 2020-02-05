@@ -60,6 +60,8 @@ $_SESSION['superselect']['idsede_destinazione'] = 0;
 	</div>
 </form>
 
+<div id="messages"></div>
+
 <script>
     $('#bs-popup').on('shown.bs.modal', function(){
         $('#direzione').on('change', function(){
@@ -98,9 +100,7 @@ $_SESSION['superselect']['idsede_destinazione'] = 0;
                         
                         // Articolo non trovato
                         else {
-                            $('#buttons').next('hr').remove();
-                            $('#buttons').next('div.alert').remove();
-                            $('#buttons').after( '<hr><div class="alert alert-danger text-center"><big>Articolo <b>' + search + '</b> non trovato!</big></div>' );
+                            $('#messages').html( '<hr><div class="alert alert-danger text-center"><big>Articolo <b>' + search + '</b> non trovato!</big></div>' );
                         }
                     }
                 );
@@ -126,8 +126,7 @@ $_SESSION['superselect']['idsede_destinazione'] = 0;
                 function(){}
             );
 
-            $('#buttons').next('hr').remove();
-            $('#buttons').next('div.alert').remove();
+            $('#messages').html('');
 
             var prezzo_acquisto = parseFloat(articolo.prezzo_acquisto);
             var prezzo_vendita = parseFloat(articolo.prezzo_vendita);
@@ -152,7 +151,7 @@ $_SESSION['superselect']['idsede_destinazione'] = 0;
             }
             
             if( articolo.descrizione != '' ){
-                $('#buttons').after( 
+                $('#messages').html( 
                     '<hr>'+
                     '<div class="row">'+
                         '<div class="col-md-6">'+

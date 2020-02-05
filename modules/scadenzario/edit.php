@@ -60,8 +60,8 @@ if (!empty($documento)) {
                         </tr>
 
                         <tr>
-                            <th>'.tr('Importo').':</th>
-                            <td>'.moneyFormat($documento->totale).'</td>
+                            <th>'.tr('Netto a pagare').':</th>
+                            <td>'.moneyFormat($documento->netto).'</td>
                         </tr>
 
                         <tr>
@@ -146,7 +146,7 @@ foreach ($rs as $i => $scadenza) {
                         </tr>';
 }
 
-$totale_da_pagare = $documento->totale;
+$totale_da_pagare = $documento->netto;
 $totale_pagato = sum(array_column($rs, 'pagato'));
 
 if ($totale_da_pagare == $totale_pagato) {

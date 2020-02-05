@@ -56,6 +56,7 @@ for ($r = 0; $r < sizeof($rs); ++$r) {
 
     $totale_imponibile += $rs2[0]['imponibile'];
     $totale_iva += $rs2[0]['iva'];
+    //Nel fatturato totale è corretto NON tenere in considerazione eventuali rivalse, ritenute acconto o contributi.
     $totale += $rs2[0]['imponibile'] + $rs2[0]['iva'];
 }
 

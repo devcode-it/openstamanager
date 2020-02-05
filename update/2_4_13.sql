@@ -225,6 +225,8 @@ ORDER BY `co_documenti`.`data` DESC, CAST(`co_documenti`.`numero_esterno` AS UNS
 
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT id FROM zz_modules WHERE `name`='Fatture di vendita'), 'Imponibile', 'righe.imponibile', '5', '1', '0', '1', '', '', '1', '1', '1');
 
+UPDATE `zz_views` SET `order` = '6' WHERE `zz_views`.`id_module` = (SELECT id FROM zz_modules WHERE `name`='Fatture di vendita') AND `zz_views`.`name` = 'Totale';
+
 -- Fatture di acquisto perfezionato campo totale
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_documenti`
     INNER JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
@@ -242,8 +244,16 @@ ORDER BY `co_documenti`.`data` DESC, CAST(IF(`co_documenti`.`numero_esterno` = '
 
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT id FROM zz_modules WHERE `name`='Fatture di acquisto'), 'Imponibile', 'righe.imponibile', '5', '1', '0', '1', '', '', '1', '1', '1');
 
+UPDATE `zz_views` SET `order` = '6' WHERE `zz_views`.`id_module` = (SELECT id FROM zz_modules WHERE `name`='Fatture di acquisto') AND `zz_views`.`name` = 'Totale';
+
 -- Widget Fatturato fatture di vendita
 UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS('' '', REPLACE(REPLACE(REPLACE(FORMAT((SELECT SUM(subtotale-sconto)), 2), '','', ''#''), ''.'', '',''), ''#'', ''.''), ''&euro;'') AS dato FROM (co_righe_documenti INNER JOIN co_documenti ON co_righe_documenti.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=''entrata'' |segment| AND data >= ''|period_start|'' AND data <= ''|period_end|'' AND 1=1' WHERE `zz_widgets`.`name` = 'Fatturato';
 
 -- Widget Acquisti fatture di acquisto
 UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS('' '', REPLACE(REPLACE(REPLACE(FORMAT((SELECT SUM(subtotale-sconto)), 2), '','', ''#''), ''.'', '',''), ''#'', ''.''), ''&euro;'') AS dato FROM (co_righe_documenti INNER JOIN co_documenti ON co_righe_documenti.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=''uscita'' |segment| AND data >= ''|period_start|'' AND data <= ''|period_end|'' AND 1=1' WHERE `zz_widgets`.`name` = 'Acquisti';
+
+UPDATE `zz_widgets` SET `help` = 'Crediti iva inclusa accumulati con i clienti durante tutti gli anni di attività.' WHERE `zz_widgets`.`name` = 'Crediti da clienti';
+UPDATE `zz_widgets` SET `help` = 'Debiti iva inclusa accumulati con i fornitori durante tutti gli anni di attività.' WHERE `zz_widgets`.`name` = 'Debiti verso fornitori';
+
+-- Fix relazione su modulo liste
+ALTER TABLE `em_list_anagrafica` DROP FOREIGN KEY `em_list_anagrafica_ibfk_1`; ALTER TABLE `em_list_anagrafica` ADD CONSTRAINT `em_list_anagrafica_ibfk_1` FOREIGN KEY (`id_list`) REFERENCES `em_lists`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT;

@@ -138,7 +138,7 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 
 -- Ripristino modulo pianificazione fatturazione
 INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`, `position`, `script`, `enabled`, `default`, `order`, `compatibility`, `version`, `options2`, `options`, `directory`, `help`) VALUES
-(27, 'Pianificazione fatturazione', 'Pianificazione fatturazione', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), 'tab', 'contratti.fatturaordiniservizio.php', 1, 0, 0, '', '', NULL, NULL, '', '');
+(NULL, 'Pianificazione fatturazione', 'Pianificazione fatturazione', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), 'tab', 'contratti.fatturaordiniservizio.php', 1, 0, 0, '', '', NULL, NULL, '', '');
 
 -- Aggiunta campo note nello scadenzario --
 ALTER TABLE `co_scadenziario` ADD `note` VARCHAR(255) DEFAULT NULL AFTER `data_pagamento`; 
@@ -188,4 +188,4 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `
 
 UPDATE `zz_settings` SET `help` = '<p>Impostare la maschera senza indicare l''anno per evitare il reset del contatore.</p><ul><li><b>####</b>: Numero progressivo dell''attività, con zeri non significativi per raggiungere il numero desiderato di caratteri</li><li><b>YYYY</b>: Anno corrente a 4 cifre</li><li><b>yy</b>: Anno corrente a 2 cifre</li></ul>' WHERE `zz_settings`.`nome` = 'Formato codice attività';
 
-UPDATE `or_statiordine` SET `completato` = '0' WHERE `or_statiordine`.`descrizione` = ='Parzialmente evaso';
+UPDATE `or_statiordine` SET `completato` = '0' WHERE `or_statiordine`.`descrizione` ='Parzialmente evaso';

@@ -36,6 +36,7 @@ foreach ($righe as $riga) {
 
     $r['ritenuta_acconto'] = !empty($r['idritenutaacconto']) ? moneyFormat(abs($r['ritenutaacconto']), 2) : null;
     $r['ritenuta_contributi'] = !empty($r['ritenuta_contributi']) ? moneyFormat(abs($r['ritenuta_contributi']), 2) : null;
+    $r['rivalsa'] = !empty($r['idrivalsainps']) ? moneyFormat(abs($r['rivalsainps']), 2) : null;
 
     $extra = '';
 
@@ -98,7 +99,8 @@ foreach ($righe as $riga) {
 
     $extra_riga = '';
     if (!$r['is_descrizione']) {
-        $extra_riga = tr('_DESCRIZIONE_CONTO__ID_DOCUMENTO__NUMERO_RIGA__CODICE_CIG__CODICE_CUP__RITENUTA_ACCONTO__RITENUTA_CONTRIBUTI_', [
+        $extra_riga = tr('_DESCRIZIONE_CONTO__ID_DOCUMENTO__NUMERO_RIGA__CODICE_CIG__CODICE_CUP__RITENUTA_ACCONTO__RITENUTA_CONTRIBUTI__RIVALSA_', [
+            '_RIVALSA_' => $r['rivalsa'] ? '<br>Rivalsa: '.$r['rivalsa'] : null,
             '_RITENUTA_ACCONTO_' => $r['ritenuta_acconto'] ? '<br>Ritenuta acconto: '.$r['ritenuta_acconto'] : null,
             '_RITENUTA_CONTRIBUTI_' => $r['ritenuta_contributi'] ? '<br>Ritenuta contributi: '.$r['ritenuta_contributi'] : null,
             '_DESCRIZIONE_CONTO_' => $r['descrizione_conto'] ?: null,

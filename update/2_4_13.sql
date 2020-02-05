@@ -185,7 +185,59 @@ UPDATE `zz_views` SET `visible` = '1' WHERE `zz_views`.`name` = 'Prezzo di vendi
 
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT id FROM zz_modules WHERE `name`='Articoli'), 'Barcode', 'mg_articoli.barcode', '2', '1', '0', '0', '', '', '1', '0', '1');
 
-
+-- Aggiunto help per maschera codice attività
 UPDATE `zz_settings` SET `help` = '<p>Impostare la maschera senza indicare l''anno per evitare il reset del contatore.</p><ul><li><b>####</b>: Numero progressivo dell''attività, con zeri non significativi per raggiungere il numero desiderato di caratteri</li><li><b>YYYY</b>: Anno corrente a 4 cifre</li><li><b>yy</b>: Anno corrente a 2 cifre</li></ul>' WHERE `zz_settings`.`nome` = 'Formato codice attività';
 
+-- Rimosso stato completato dallo stato ordine Parzialmente evaso 
 UPDATE `or_statiordine` SET `completato` = '0' WHERE `or_statiordine`.`descrizione` = ='Parzialmente evaso';
+
+-- Fatture di vendita perfezionato campo totale
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_documenti`
+    INNER JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+    INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`
+    INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`
+    LEFT JOIN `fe_stati_documento` ON `co_documenti`.`codice_stato_fe` = `fe_stati_documento`.`codice`
+    LEFT OUTER JOIN (
+        SELECT `iddocumento`, SUM(`subtotale` - `sconto`) AS `totale`
+        FROM `co_righe_documenti`
+        GROUP BY `iddocumento`
+    ) AS righe ON `co_documenti`.`id` = `righe`.`iddocumento`
+    LEFT JOIN (
+        SELECT `numero_esterno`, `id_segment`
+        FROM `co_documenti`
+        WHERE `co_documenti`.`idtipodocumento` IN(SELECT `id` FROM `co_tipidocumento` WHERE `dir` = ''entrata'') |date_period(`co_documenti`.`data`)| AND `numero_esterno` != ''''
+        GROUP BY `id_segment`, `numero_esterno`
+        HAVING COUNT(`numero_esterno`) > 1
+    ) dup ON `co_documenti`.`numero_esterno` = `dup`.`numero_esterno` AND `dup`.`id_segment` = `co_documenti`.`id_segment`
+    LEFT OUTER JOIN (
+        SELECT `zz_operations`.`id_email`, `zz_operations`.`id_record`
+        FROM `zz_operations`
+            INNER JOIN `em_emails` ON `zz_operations`.`id_email` = `em_emails`.`id`
+            INNER JOIN `em_templates` ON `em_emails`.`id_template` = `em_templates`.`id`
+            INNER JOIN `zz_modules` ON `zz_operations`.`id_module` = `zz_modules`.`id`
+        WHERE `zz_modules`.`name` = ''Fatture di vendita'' AND `zz_operations`.`op` = ''send-email''
+        GROUP BY `zz_operations`.`id_record`
+    ) AS `email` ON `email`.`id_record` = `co_documenti`.`id`
+WHERE 1=1 AND `dir` = ''entrata'' |segment(`co_documenti`.`id_segment`)| |date_period(`co_documenti`.`data`)|
+HAVING 2=2
+ORDER BY `co_documenti`.`data` DESC, CAST(`co_documenti`.`numero_esterno` AS UNSIGNED) DESC' WHERE `name` = 'Fatture di vendita';
+
+-- Fatture di acquisto perfezionato campo totale
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_documenti`
+    INNER JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+    INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`
+    INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`
+    LEFT OUTER JOIN (
+        SELECT `iddocumento`, SUM(`subtotale` - `sconto`) AS `totale`
+        FROM `co_righe_documenti`
+        GROUP BY `iddocumento`
+    ) AS righe ON `co_documenti`.`id` = `righe`.`iddocumento`
+WHERE 1=1 AND `dir` = ''uscita'' |segment(`co_documenti`.`id_segment`)| |date_period(`co_documenti`.`data`)|
+HAVING 2=2
+ORDER BY `co_documenti`.`data` DESC, CAST(IF(`co_documenti`.`numero_esterno` = '''', `co_documenti`.`numero`, `co_documenti`.`numero_esterno`) AS UNSIGNED) DESC' WHERE `name` = 'Fatture di acquisto';
+
+-- Widget Fatturato fatture di vendita
+UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS('' '', REPLACE(REPLACE(REPLACE(FORMAT((SELECT SUM(subtotale-sconto)), 2), '','', ''#''), ''.'', '',''), ''#'', ''.''), ''&euro;'') AS dato FROM (co_righe_documenti INNER JOIN co_documenti ON co_righe_documenti.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=''entrata'' |segment| AND data >= ''|period_start|'' AND data <= ''|period_end|'' AND 1=1' WHERE `zz_widgets`.`name` = 'Fatturato';
+
+-- Widget Acquisti fatture di acquisto
+UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS('' '', REPLACE(REPLACE(REPLACE(FORMAT((SELECT SUM(subtotale-sconto)), 2), '','', ''#''), ''.'', '',''), ''#'', ''.''), ''&euro;'') AS dato FROM (co_righe_documenti INNER JOIN co_documenti ON co_righe_documenti.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=''uscita'' |segment| AND data >= ''|period_start|'' AND data <= ''|period_end|'' AND 1=1' WHERE `zz_widgets`.`name` = 'Acquisti';

@@ -173,7 +173,7 @@ switch (post('op')) {
             $xml = \Util\XML::read($fattura->getXML());
 
             $dati_generali = $xml['FatturaElettronicaBody']['DatiGenerali']['DatiGeneraliDocumento'];
-            $totale_documento = ($fattura->isNota() ) ? -abs(floatval($dati_generali['ImportoTotaleDocumento'])) : abs(floatval($dati_generali['ImportoTotaleDocumento'])) ?: null;
+            $totale_documento = ($fattura->isNota()) ? -abs(floatval($dati_generali['ImportoTotaleDocumento'])) : abs(floatval($dati_generali['ImportoTotaleDocumento'])) ?: null;
         } catch (Exception $e) {
             $totale_documento = null;
         }
@@ -490,7 +490,6 @@ switch (post('op')) {
                     flash()->info(tr('Intervento _NUM_ rimosso!', [
                         '_NUM_' => $idintervento,
                     ]));
-
                 } catch (InvalidArgumentException $e) {
                     flash()->error(tr('Errore durante l\'eliminazione della riga!'));
                 }

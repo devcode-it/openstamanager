@@ -247,7 +247,7 @@ elseif (post('op') == 'send-email') {
     $email = EmailNotification::build($mail);
     $email_success = $email->send();
 
-    if ($email_success){
+    if ($email_success) {
         OperationLog::setInfo('id_email', $mail->id);
         flash()->info(tr('Email inviata correttamente!'));
     } else {

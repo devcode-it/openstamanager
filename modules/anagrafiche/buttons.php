@@ -1,4 +1,5 @@
 <?php
+
 if (in_array($id_cliente, $tipi_anagrafica) or in_array($id_fornitore, $tipi_anagrafica)) {
     echo '
 <div class="btn-group">
@@ -14,7 +15,6 @@ if (in_array($id_cliente, $tipi_anagrafica) or in_array($id_fornitore, $tipi_ana
         <li><a data-toggle="modal" data-title="'.tr('Aggiungi utente').'" data-href="modules/utenti/user.php?id_module='.Modules::get('Utenti e permessi')['id'].'&id_record='.$dbo->fetchOne('SELECT id FROM zz_groups WHERE nome=\'Tecnici\'')['id'].'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-user"></i>'.tr('Nuovo utente').'
         </a></li>';
     }
-
 
     if (in_array($id_cliente, $tipi_anagrafica)) {
         echo '

@@ -21,14 +21,14 @@ echo '
 <tr>
     <td colspan="2">';
 
-if (dateFormat($intervento->inizio)){
-echo '
+if (dateFormat($intervento->inizio)) {
+    echo '
         <p>'.tr('Intervento _NUM_ del _DATE_', [
             '_NUM_' => $intervento->codice,
             '_DATE_' => dateFormat($intervento->inizio),
         ]).'</p>';
-}else{
-echo '
+} else {
+    echo '
         <p>'.tr('Promemoria _NUM_', [
             '_NUM_' => $intervento->codice,
         ]).'</p>';
@@ -46,7 +46,7 @@ echo '
 
 // Sessioni
 $sessioni = $intervento->sessioni;
-if (count($sessioni)>0) {
+if (count($sessioni) > 0) {
     echo '
 <tr>
     <td style="border-top: 0; border-bottom: 0;"></td>

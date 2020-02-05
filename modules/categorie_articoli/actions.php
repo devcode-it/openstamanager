@@ -22,10 +22,10 @@ switch (filter('op')) {
         $nota = filter('nota');
         $colore = filter('colore');
 
-        $n = $dbo->fetchNum("SELECT * FROM `mg_categorie` WHERE `nome` LIKE ".prepare($nome));
+        $n = $dbo->fetchNum('SELECT * FROM `mg_categorie` WHERE `nome` LIKE '.prepare($nome));
 
         if (isset($nome)) {
-            if ($n==0) {
+            if ($n == 0) {
                 $dbo->query('INSERT INTO `mg_categorie` (`nome`, `colore`, `nota`) VALUES ('.prepare($nome).', '.prepare($colore).', '.prepare($nota).')');
 
                 $id_record = $dbo->lastInsertedID();
@@ -37,7 +37,7 @@ switch (filter('op')) {
                 flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
                     '_TYPE_' => 'categoria',
                 ]));
-            }else{
+            } else {
                 flash()->error(tr('Esiste già una categoria con lo stesso nome!'));
             }
         } else {

@@ -4,9 +4,9 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\Anagrafiche\Anagrafica;
 
-$rs = $dbo->fetchArray("SELECT idtipoanagrafica, descrizione FROM an_tipianagrafiche");
-foreach ($rs as $riga){
-    ${"id_".strtolower($riga['descrizione'])} = $riga['idtipoanagrafica'];
+$rs = $dbo->fetchArray('SELECT idtipoanagrafica, descrizione FROM an_tipianagrafiche');
+foreach ($rs as $riga) {
+    ${'id_'.strtolower($riga['descrizione'])} = $riga['idtipoanagrafica'];
 }
 
 if (isset($id_record)) {

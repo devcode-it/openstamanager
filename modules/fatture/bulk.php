@@ -191,26 +191,26 @@ switch (post('op')) {
             $fattura = Fattura::find($id);
 
             $id_segment = (post('id_segment') ? post('id_segment') : $fattura->id_segment);
-            $dir = $dbo->fetchOne("SELECT dir FROM co_tipidocumento WHERE id=".prepare($fattura->idtipodocumento))['dir'];
+            $dir = $dbo->fetchOne('SELECT dir FROM co_tipidocumento WHERE id='.prepare($fattura->idtipodocumento))['dir'];
 
             //+ 1 giorno
-            if(post('skip_time')=='Giorno'){
-                $data = date("Y-m-d", strtotime( '+1 day' , strtotime ( $fattura->data )) );
+            if (post('skip_time') == 'Giorno') {
+                $data = date('Y-m-d', strtotime('+1 day', strtotime($fattura->data)));
             }
 
             //+ 1 settimana
-            if(post('skip_time')=='Settimana'){
-                $data = date("Y-m-d", strtotime( '+1 week' , strtotime ( $fattura->data )) );
+            if (post('skip_time') == 'Settimana') {
+                $data = date('Y-m-d', strtotime('+1 week', strtotime($fattura->data)));
             }
 
             //+ 1 mese
-            if(post('skip_time')=='Mese'){
-                $data = date("Y-m-d", strtotime( '+1 month' , strtotime ( $fattura->data )) );
+            if (post('skip_time') == 'Mese') {
+                $data = date('Y-m-d', strtotime('+1 month', strtotime($fattura->data)));
             }
 
             //+ 1 anno
-            if(post('skip_time')=='Anno'){
-                $data = date("Y-m-d", strtotime( '+1 year' , strtotime ( $fattura->data )) );
+            if (post('skip_time') == 'Anno') {
+                $data = date('Y-m-d', strtotime('+1 year', strtotime($fattura->data)));
             }
 
             $new = $fattura->replicate();
@@ -223,8 +223,7 @@ switch (post('op')) {
 
             $righe = $fattura->getRighe();
             foreach ($righe as $riga) {
-
-                if( !post('riferimenti') ){
+                if (!post('riferimenti')) {
                     $riga->idpreventivo = 0;
                     $riga->idcontratto = 0;
                     $riga->idintervento = 0;
@@ -237,12 +236,11 @@ switch (post('op')) {
 
                 $new_riga->save();
 
-                if( $new_riga->idarticolo ){
+                if ($new_riga->idarticolo) {
                     $articolo = Articolo::find($new_riga->id);
                     $articolo->movimentaMagazzino($articolo->qta);
                 }
             }
-
         }
 
         flash()->info(tr('Fatture duplicate correttamente!'));

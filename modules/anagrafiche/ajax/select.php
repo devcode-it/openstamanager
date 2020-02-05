@@ -297,7 +297,6 @@ switch ($resource) {
 
         break;
 
-    
     case 'relazioni':
 
         $query = 'SELECT id, descrizione, colore AS _bgcolor_ FROM an_relazioni ORDER BY descrizione';
@@ -311,7 +310,6 @@ switch ($resource) {
         }
 
         break;
-    
 
     case 'dichiarazioni_intento':
         $query = "SELECT id, CONCAT_WS(' - ', numero_protocollo, numero_progressivo) as descrizione FROM co_dichiarazioni_intento |where| ORDER BY data";

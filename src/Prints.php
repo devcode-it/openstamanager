@@ -250,7 +250,7 @@ class Prints
     {
         //http://localhost/openstamanager/
         $folders = explode('/', dirname($_SERVER['PHP_SELF']));
-        $base = (stripos($_SERVER['SERVER_PROTOCOL'],'https') === 0 ? 'https://' : 'http://').$_SERVER['SERVER_NAME'].'/'.$folders[1].'/';
+        $base = (stripos($_SERVER['SERVER_PROTOCOL'], 'https') === 0 ? 'https://' : 'http://').$_SERVER['SERVER_NAME'].'/'.$folders[1].'/';
 
         return ROOTDIR.'/assets/dist/pdfjs/web/viewer.html?file='.$base.ltrim(str_replace(DOCROOT, '', $path), '/');
     }
@@ -460,9 +460,8 @@ class Prints
             //'PDFA' => true,
             //'PDFAauto' => true,
         ]);
-        
-        if (setting('Filigrana stampe')){
 
+        if (setting('Filigrana stampe')) {
             $mpdf->SetWatermarkImage(
                 DOCROOT.'/files/anagrafiche/'.setting('Filigrana stampe'),
                 0.5,
@@ -471,12 +470,11 @@ class Prints
             );
 
             // false = 'showWatermarkImage' => false,
-            if ($settings['showWatermarkImage']==null){
+            if ($settings['showWatermarkImage'] == null) {
                 $mpdf->showWatermarkImage = true;
-            }else{
+            } else {
                 $mpdf->showWatermarkImage = intval($settings['showWatermarkImage']);
             }
-
         }
 
         // Inclusione dei fogli di stile CSS

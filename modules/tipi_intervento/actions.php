@@ -73,7 +73,6 @@ switch (post('op')) {
             $query = 'DELETE FROM co_contratti_tipiintervento WHERE idtipointervento='.prepare($id_record);
             $dbo->query($query);
 
-
             $query = 'DELETE FROM in_tipiintervento WHERE idtipointervento='.prepare($id_record);
             $dbo->query($query);
 

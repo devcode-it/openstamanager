@@ -87,9 +87,7 @@ class Settings
      */
     public static function setValue($setting, $value)
     {
-        
         $setting = self::get($setting);
-       
 
         // Trasformazioni
         // Boolean (checkbox)
@@ -107,15 +105,12 @@ class Settings
         // verifico che il valore scelto sia nella lista enumerata nel db
         elseif (preg_match("/list\[(.+?)\]/", $setting->tipo, $m)) {
             $validator = v::in(explode(',', $m[1]));
-           
         }
 
         // multiple
         // verifico che il valore scelto sia nella lista enumerata nel db
         elseif (preg_match("/multiple\[(.+?)\]/", $setting->tipo, $m[0][0])) {
-            
             //$validator =  v::in(explode(',', $m[0][0][1]));
-           
         }
 
         // Boolean (checkbox)
@@ -172,7 +167,7 @@ class Settings
                     'text' => $value,
                 ];
             }
-            
+
             $result = '
     {[ "type": "select", "multiple": 1, "label": "'.$setting->nome.'", "name": "setting['.$setting->id.'][]", "values": '.json_encode($list).', "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'" ]}';
         }

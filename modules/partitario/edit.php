@@ -68,7 +68,7 @@ foreach ($primo_livello as $conto_primo) {
 
         foreach ($terzo_livello as $conto_terzo) {
             // Se il conto non ha documenti collegati posso eliminarlo
-			$movimenti = $conto_terzo['numero_movimenti'];
+            $movimenti = $conto_terzo['numero_movimenti'];
 
             $totale_conto = $conto_terzo['totale'];
             $totale_conto = ($conto_primo['descrizione'] == 'Patrimoniale') ? $totale_conto : -$totale_conto;

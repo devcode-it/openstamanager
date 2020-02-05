@@ -279,7 +279,7 @@ switch (post('op')) {
 if (filter('op') == 'link_file') {
     $nome = filter('nome_allegato');
 
-    if ($nome == 'Logo stampe' or $nome = 'Filigrana stampe' ){
+    if ($nome == 'Logo stampe' or $nome = 'Filigrana stampe') {
         if (setting('Azienda predefinita') == $id_record && filter('nome_allegato') == $nome) {
             Settings::setValue($nome, $upload);
         }

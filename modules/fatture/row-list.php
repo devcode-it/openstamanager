@@ -99,8 +99,8 @@ foreach ($righe as $riga) {
     $extra_riga = '';
     if (!$r['is_descrizione']) {
         $extra_riga = tr('_DESCRIZIONE_CONTO__ID_DOCUMENTO__NUMERO_RIGA__CODICE_CIG__CODICE_CUP__RITENUTA_ACCONTO__RITENUTA_CONTRIBUTI_', [
-            '_RITENUTA_ACCONTO_' => $r['ritenuta_acconto'] ? '<br>Ritenuta acconto: '.$r['ritenuta_acconto']: null,
-            '_RITENUTA_CONTRIBUTI_' => $r['ritenuta_contributi'] ? '<br>Ritenuta contributi: '.$r['ritenuta_contributi']: null,
+            '_RITENUTA_ACCONTO_' => $r['ritenuta_acconto'] ? '<br>Ritenuta acconto: '.$r['ritenuta_acconto'] : null,
+            '_RITENUTA_CONTRIBUTI_' => $r['ritenuta_contributi'] ? '<br>Ritenuta contributi: '.$r['ritenuta_contributi'] : null,
             '_DESCRIZIONE_CONTO_' => $r['descrizione_conto'] ?: null,
             '_ID_DOCUMENTO_' => $r['id_documento_fe'] ? ' - DOC: '.$r['id_documento_fe'] : null,
             '_NUMERO_RIGA_' => $r['num_item'] ? ', NRI: '.$r['num_item'] : null,

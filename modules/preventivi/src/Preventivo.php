@@ -236,14 +236,12 @@ class Preventivo extends Document
     public static function getNextNumero($data)
     {
         $maschera = setting('Formato codice preventivi');
-        
+
         if ((strpos($maschera, 'YYYY') !== false) or (strpos($maschera, 'yy') !== false)) {
-            
             $ultimo = Generator::getPreviousFrom($maschera, 'co_preventivi', 'numero', [
                 'YEAR(data_bozza) = '.prepare(date('Y', strtotime($data))),
             ]);
-
-        }else{
+        } else {
             $ultimo = Generator::getPreviousFrom($maschera, 'co_preventivi', 'numero');
         }
 

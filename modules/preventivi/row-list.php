@@ -204,7 +204,7 @@ echo '
 
 // Margine
 $margine = $preventivo->margine;
-$margine_style = ($margine <= 0 and $preventivo->totale > 0)  ? 'background-color: #FFC6C6; border: 3px solid red' : '';
+$margine_style = ($margine <= 0 and $preventivo->totale > 0) ? 'background-color: #FFC6C6; border: 3px solid red' : '';
 
 echo '
 <tr>

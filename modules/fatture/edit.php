@@ -193,7 +193,8 @@ if (empty($record['is_fiscale'])) {
                     } else {
                         ?>
 						{[ "type": "select", "label": "<?php echo tr('Fornitore'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "fornitori", "value": "$idanagrafica$" ]}
-					<?php } ?>
+					<?php
+                    } ?>
                 </div>
                 
                 
@@ -212,8 +213,7 @@ if (empty($record['is_fiscale'])) {
                     <div class="col-md-6">
                         
                         <?php
-                        echo Plugins::link('Sedi', $record['idsede_partenza'], null, null, 'class="pull-right"');
-                        ?>
+                        echo Plugins::link('Sedi', $record['idsede_partenza'], null, null, 'class="pull-right"'); ?>
 
                         {[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza", "ajax-source": "sedi", "placeholder": "Sede legale", "value": "$idsede_partenza$", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|id_plugin=<?php echo Plugins::get('Sedi')['id']; ?>&id_parent=<?php echo $record['idanagrafica']; ?>||<?php echo (intval($block_edit)) ? 'disabled' : ''; ?>" ]}
                     </div>
@@ -221,8 +221,7 @@ if (empty($record['is_fiscale'])) {
                     <div class="col-md-6">
 
                         <?php
-                        echo Plugins::link('Sedi', $record['idsede_destinazione'], null, null, 'class="pull-right"');
-                        ?>
+                        echo Plugins::link('Sedi', $record['idsede_destinazione'], null, null, 'class="pull-right"'); ?>
 
                         {[ "type": "select", "label": "<?php echo tr('Destinazione merce'); ?>", "name": "idsede_destinazione", "ajax-source": "sedi_azienda",  "value": "$idsede_destinazione$", "readonly": "<?php echo (sizeof($articolo)) ? 1 : 0; ?>" ]}
                     </div>
@@ -232,8 +231,7 @@ if (empty($record['is_fiscale'])) {
                     <div class="col-md-6">
                         
                         <?php
-                        echo Plugins::link('Sedi', $record['idsede_partenza'], null, null, 'class="pull-right"');
-                        ?>
+                        echo Plugins::link('Sedi', $record['idsede_partenza'], null, null, 'class="pull-right"'); ?>
 
                         {[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "placeholder": "Sede legale", "value": "$idsede_partenza$", "readonly": "<?php echo (sizeof($articolo)) ? 1 : 0; ?>"  ]}
                     </div>
@@ -241,8 +239,7 @@ if (empty($record['is_fiscale'])) {
                     <div class="col-md-6">
                         
                         <?php
-                        echo Plugins::link('Sedi', $record['idsede_destinazione'], null, null, 'class="pull-right"');
-                        ?>
+                        echo Plugins::link('Sedi', $record['idsede_destinazione'], null, null, 'class="pull-right"'); ?>
 
                         {[ "type": "select", "label": "<?php echo tr('Destinazione merce'); ?>", "name": "idsede_destinazione", "ajax-source": "sedi",  "value": "$idsede_destinazione$", "readonly": "", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|id_plugin=<?php echo Plugins::get('Sedi')['id']; ?>&id_parent=<?php echo $record['idanagrafica']; ?>||<?php echo (intval($block_edit)) ? 'disabled' : ''; ?>" ]}
                     </div>

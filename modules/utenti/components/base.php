@@ -2,8 +2,9 @@
 
 include_once __DIR__.'/../../core.php';
 
-if (!empty(filter('idanagrafica')))
-	$utente['id_anagrafica'] = filter('idanagrafica');
+if (!empty(filter('idanagrafica'))) {
+    $utente['id_anagrafica'] = filter('idanagrafica');
+}
 
 $_SESSION['superselect']['idanagrafica'] = $utente['id_anagrafica'];
 

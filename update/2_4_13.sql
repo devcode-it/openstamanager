@@ -198,7 +198,8 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_documenti`
     INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`
     LEFT JOIN `fe_stati_documento` ON `co_documenti`.`codice_stato_fe` = `fe_stati_documento`.`codice`
     LEFT OUTER JOIN (
-        SELECT `iddocumento`, SUM(`subtotale` - `sconto`) AS `totale`
+        SELECT `iddocumento`, SUM(`subtotale` - `sconto`) AS `imponibile`,
+        SUM(`subtotale` - `sconto` + `iva` ) AS `totale`
         FROM `co_righe_documenti`
         GROUP BY `iddocumento`
     ) AS righe ON `co_documenti`.`id` = `righe`.`iddocumento`
@@ -222,19 +223,24 @@ WHERE 1=1 AND `dir` = ''entrata'' |segment(`co_documenti`.`id_segment`)| |date_p
 HAVING 2=2
 ORDER BY `co_documenti`.`data` DESC, CAST(`co_documenti`.`numero_esterno` AS UNSIGNED) DESC' WHERE `name` = 'Fatture di vendita';
 
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT id FROM zz_modules WHERE `name`='Fatture di vendita'), 'Imponibile', 'righe.imponibile', '5', '1', '0', '1', '', '', '1', '1', '1');
+
 -- Fatture di acquisto perfezionato campo totale
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_documenti`
     INNER JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
     INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`
     INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`
     LEFT OUTER JOIN (
-        SELECT `iddocumento`, SUM(`subtotale` - `sconto`) AS `totale`
+        SELECT `iddocumento`, SUM(`subtotale` - `sconto`) AS `imponibile`,
+        SUM(`subtotale` - `sconto`  + `iva`) AS `totale`
         FROM `co_righe_documenti`
         GROUP BY `iddocumento`
     ) AS righe ON `co_documenti`.`id` = `righe`.`iddocumento`
 WHERE 1=1 AND `dir` = ''uscita'' |segment(`co_documenti`.`id_segment`)| |date_period(`co_documenti`.`data`)|
 HAVING 2=2
 ORDER BY `co_documenti`.`data` DESC, CAST(IF(`co_documenti`.`numero_esterno` = '''', `co_documenti`.`numero`, `co_documenti`.`numero_esterno`) AS UNSIGNED) DESC' WHERE `name` = 'Fatture di acquisto';
+
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT id FROM zz_modules WHERE `name`='Fatture di acquisto'), 'Imponibile', 'righe.imponibile', '5', '1', '0', '1', '', '', '1', '1', '1');
 
 -- Widget Fatturato fatture di vendita
 UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS('' '', REPLACE(REPLACE(REPLACE(FORMAT((SELECT SUM(subtotale-sconto)), 2), '','', ''#''), ''.'', '',''), ''#'', ''.''), ''&euro;'') AS dato FROM (co_righe_documenti INNER JOIN co_documenti ON co_righe_documenti.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=''entrata'' |segment| AND data >= ''|period_start|'' AND data <= ''|period_end|'' AND 1=1' WHERE `zz_widgets`.`name` = 'Fatturato';

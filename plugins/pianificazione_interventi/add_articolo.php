@@ -177,7 +177,7 @@ echo '
     $(document).ready(function() {
         $("#add-articoli").ajaxForm({
             success: function(){
-                $("#bs-popup2").modal("hide");
+                $("#modals > div").modal("hide");
                 refreshArticoli('.$id_record.');
             }
         });

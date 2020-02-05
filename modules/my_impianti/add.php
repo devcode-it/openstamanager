@@ -48,33 +48,33 @@ if ($source == 'Attività') {
 <script type="text/javascript">
 $(document).ready(function(){
 
-	$('#bs-popup #idanagrafica').change( function(){
+	$('#modals > div #idanagrafica').change( function(){
 
 		session_set('superselect,idanagrafica', $(this).val(), 0);
 
         var value = !$(this).val() ? true : false;
 
-		$("#bs-popup #idsede").prop("disabled", value);
-		$("#bs-popup #idsede").selectReset();
+		$("#modals > div #idsede").prop("disabled", value);
+		$("#modals > div #idsede").selectReset();
 
 	});
 
-	$('#bs-popup #idsede').change( function(){
+	$('#modals > div #idsede').change( function(){
 		//session_set('superselect,idsede', $(this).val(), 0);
 	});
 
-    $('#bs-popup2 #idanagrafica').change( function(){
+    $('#modals > div #idanagrafica').change( function(){
 
         session_set('superselect,idanagrafica', $(this).val(), 0);
 
         var value = !$(this).val() ? true : false;
 
-        $("#bs-popup2 #idsede").prop("disabled", value);
-        $("#bs-popup2 #idsede").selectReset();
+        $("#modals > div #idsede").prop("disabled", value);
+        $("#modals > div #idsede").selectReset();
 
     });
 
-    $('#bs-popup2 #idsede').change( function(){
+    $('#modals > div #idsede').change( function(){
         //session_set('superselect,idsede', $(this).val(), 0);
     });
 

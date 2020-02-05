@@ -113,7 +113,7 @@ echo '
     $(document).ready(function() {
         $('#add-righe').ajaxForm({
             success: function(){
-                $('#bs-popup').modal('hide');
+                $('#modals > div').modal('hide');
 
                 // Ricarico le righe
                 $('#righe').load('<?php echo $module->fileurl('ajax_righe.php'); ?>?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');

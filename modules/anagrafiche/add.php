@@ -125,29 +125,29 @@ echo
 
 <script>
     // Abilito solo ragione sociale oppure solo nome-cognome in base a cosa compilo
-    $('#nome_, #cognome', '#bs-popup, #bs-popup2').blur(function(){
-        if ($('#nome_', '#bs-popup, #bs-popup2').val() == '' && $('#cognome', '#bs-popup, #bs-popup2').val() == '' ){
-            $('#nome_, #cognome', '#bs-popup, #bs-popup2').prop('disabled', true).prop('required', false);
-            $('#ragione_sociale', '#bs-popup, #bs-popup2').prop('disabled', false).prop('required', true);
+    $('#nome_, #cognome', '#modals > div').blur(function(){
+        if ($('#nome_', '#modals > div').val() == '' && $('#cognome', '#modals > div').val() == '' ){
+            $('#nome_, #cognome', '#modals > div').prop('disabled', true).prop('required', false);
+            $('#ragione_sociale', '#modals > div').prop('disabled', false).prop('required', true);
         }else{
-            $('#nome_, #cognome', '#bs-popup, #bs-popup2').prop('disabled', false).prop('required', true);
-            $('#ragione_sociale', '#bs-popup, #bs-popup2').prop('disabled', true).prop('required', false);
+            $('#nome_, #cognome', '#modals > div').prop('disabled', false).prop('required', true);
+            $('#ragione_sociale', '#modals > div').prop('disabled', true).prop('required', false);
         }
     });
 
-    $('#ragione_sociale', '#bs-popup, #bs-popup2').blur(function(){
-        if ($('#ragione_sociale', '#bs-popup, #bs-popup2').val() == '' ){
-            $('#nome_, #cognome', '#bs-popup, #bs-popup2').prop('disabled', false).prop('required', true);
-            $('#ragione_sociale', '#bs-popup, #bs-popup2').prop('disabled', true).prop('required', false);
+    $('#ragione_sociale', '#modals > div').blur(function(){
+        if ($('#ragione_sociale', '#modals > div').val() == '' ){
+            $('#nome_, #cognome', '#modals > div').prop('disabled', false).prop('required', true);
+            $('#ragione_sociale', '#modals > div').prop('disabled', true).prop('required', false);
         }else{
-            $('#nome_, #cognome', '#bs-popup, #bs-popup2').prop('disabled', true).prop('required', false);
-            $('#ragione_sociale', '#bs-popup, #bs-popup2').prop('disabled', false).prop('required', true);
+            $('#nome_, #cognome', '#modals > div').prop('disabled', true).prop('required', false);
+            $('#ragione_sociale', '#modals > div').prop('disabled', false).prop('required', true);
         }
     });
 
-	$('#id_nazione', '#bs-popup, #bs-popup2').change(function(){
+	$('#id_nazione', '#modals > div').change(function(){
 		if ($(this).find('option:selected').data('text')=='IT - Italia'){
-			$('#codice_destinatario',  '#bs-popup, #bs-popup2').removeAttr('readonly');
+			$('#codice_destinatario',  '#modals > div').removeAttr('readonly');
 		}
 	});
 

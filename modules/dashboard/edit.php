@@ -629,7 +629,7 @@ if (Modules::getPermission('Interventi') == 'rw') {
 
                 $(this).remove();
 
-                $('#bs-popup').on('hidden.bs.modal', function () {
+                $('#modals > div').on('hidden.bs.modal', function () {
                     $('#calendar').fullCalendar('refetchEvents');
                 });
             },

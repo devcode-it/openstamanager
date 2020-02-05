@@ -278,17 +278,17 @@ include $structure->filepath('movimenti.php');
     var modifica_modello = "<?php echo tr('Aggiungi e modifica modello'); ?>";
 
     $(document).ready(function(e) {
-        $("#bs-popup #add-form").on("submit", function(e) {
+        $("#modals > div #add-form").on("submit", function(e) {
             return controllaConti();
         });
 
-        $('#bs-popup #modello_primanota').change(function() {
+        $('#modals > div #modello_primanota').change(function() {
             if ($(this).val() != '') {
                 $('#btn_crea_modello').html('<i class="fa fa-edit"></i> ' + modifica_modello);
-                $('#bs-popup #idmastrino').val($(this).val());
+                $('#modals > div #idmastrino').val($(this).val());
             } else {
                 $('#btn_crea_modello').html('<i class="fa fa-plus"></i> ' + nuovo_modello);
-                $('#bs-popup #idmastrino').val(0);
+                $('#modals > div #idmastrino').val(0);
             }
 
             var idmastrino = $(this).val();
@@ -312,7 +312,7 @@ include $structure->filepath('movimenti.php');
 
                 // aggiornava erroneamente anche la causale ed eventuale numero di fattura e data
                 if (replaced > 0 || $('#iddocumento').val() == '') {
-                    $('#bs-popup #desc').val(causale);
+                    $('#modals > div #desc').val(causale);
                 }
 
                 $.get(globals.rootdir + '/ajax_complete.php?op=get_conti&idmastrino=' + idmastrino, function(data) {
@@ -323,26 +323,26 @@ include $structure->filepath('movimenti.php');
                         if (conto[0] == -1) {
                             if ($('#iddocumento').val() != '') {
                                 var option = $("<option selected></option>").val(variables['conto']).text(variables['conto_descrizione']);
-                                $('#bs-popup #conto' + i).selectReset();
-                                $('#bs-popup #conto' + i).append(option).trigger('change');
+                                $('#modals > div #conto' + i).selectReset();
+                                $('#modals > div #conto' + i).append(option).trigger('change');
                             }
                         } else {
                             var option = $("<option selected></option>").val(conto[0]).text(conto[1]);
-                            $('#bs-popup #conto' + i).selectReset();
-                            $('#bs-popup #conto' + i).append(option).trigger('change');
+                            $('#modals > div #conto' + i).selectReset();
+                            $('#modals > div #conto' + i).append(option).trigger('change');
                         }
                     }
                     for (i = 9; i >= conti.length; i--) {
-                        $('#bs-popup #conto' + i).selectReset();
-                        console.log('#bs-popup #conto' + i);
+                        $('#modals > div #conto' + i).selectReset();
+                        console.log('#modals > div #conto' + i);
                     }
                 });
             }
         });
 
-        $('#bs-popup #btn_crea_modello').click(function() {
-            $('#bs-popup #crea_modello').val("1");
-            $('#bs-popup #add-form').submit();
+        $('#modals > div #btn_crea_modello').click(function() {
+            $('#modals > div #crea_modello').val("1");
+            $('#modals > div #add-form').submit();
         });
     });
 </script>

@@ -52,7 +52,7 @@ if (!empty($user)) {
             $("#submit-button").attr("disabled", false).removeClass("disabled");
         }
         
-        $("#bs-popup").on("shown.bs.modal", function () {
+        $("#modals > div").on("shown.bs.modal", function () {
             no_check_pwd();
         });
 

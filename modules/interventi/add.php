@@ -300,23 +300,23 @@ if (!empty($id_intervento)) {
 
 <script type="text/javascript">
 	$(document).ready(function(){
-        if(!$("#bs-popup #idanagrafica").val()){
-            $("#bs-popup #idsede_destinazione").prop("disabled", true);
-            $("#bs-popup #idpreventivo").prop("disabled", true);
-            $("#bs-popup #idcontratto").prop("disabled", true);
-            $("#bs-popup #idimpianti").prop("disabled", true);
-            $("#bs-popup #componenti").prop("disabled", true);
+        if(!$("#modals > div #idanagrafica").val()){
+            $("#modals > div #idsede_destinazione").prop("disabled", true);
+            $("#modals > div #idpreventivo").prop("disabled", true);
+            $("#modals > div #idcontratto").prop("disabled", true);
+            $("#modals > div #idimpianti").prop("disabled", true);
+            $("#modals > div #componenti").prop("disabled", true);
 
         <?php
         if (!empty($idcontratto) && (!empty($idordineservizio) || !empty($idcontratto_riga))) {
             // Disabilito i campi che non devono essere modificati per poter collegare l'intervento all'ordine di servizio
 
             echo '
-            $("#bs-popup #idanagrafica").prop("disabled", true);
-            $("#bs-popup #idclientefinale").prop("disabled", true);
-            $("#bs-popup #idzona").prop("disabled", true);
-            $("#bs-popup #idtipointervento").prop("disabled", true);
-            $("#bs-popup #impianti").find("button").prop("disabled", true);';
+            $("#modals > div #idanagrafica").prop("disabled", true);
+            $("#modals > div #idclientefinale").prop("disabled", true);
+            $("#modals > div #idzona").prop("disabled", true);
+            $("#modals > div #idtipointervento").prop("disabled", true);
+            $("#modals > div #impianti").find("button").prop("disabled", true);';
         }
 ?>
         }
@@ -325,130 +325,130 @@ if (!empty($id_intervento)) {
 
 if (!empty($id_intervento)) {
     echo '
-        $("#bs-popup #idsede_destinazione").prop("disabled", true);
-        $("#bs-popup #idpreventivo").prop("disabled", true);
-        $("#bs-popup #idcontratto").prop("disabled", true);
-        $("#bs-popup #idimpianti").prop("disabled", true);
-        $("#bs-popup #componenti").prop("disabled", true);
-        $("#bs-popup #idanagrafica").prop("disabled", true);
-        $("#bs-popup #idanagrafica").find("button").prop("disabled", true);
-        $("#bs-popup #idclientefinale").prop("disabled", true);
-        $("#bs-popup #idzona").prop("disabled", true);
-        $("#bs-popup #idtipointervento").prop("disabled", true);
-        $("#bs-popup #idstatointervento").prop("disabled", true);
-        $("#bs-popup #richiesta").prop("disabled", true);
-        $("#bs-popup #data_richiesta").prop("disabled", true);
-        $("#bs-popup #impianti").find("button").prop("disabled", true);
+        $("#modals > div #idsede_destinazione").prop("disabled", true);
+        $("#modals > div #idpreventivo").prop("disabled", true);
+        $("#modals > div #idcontratto").prop("disabled", true);
+        $("#modals > div #idimpianti").prop("disabled", true);
+        $("#modals > div #componenti").prop("disabled", true);
+        $("#modals > div #idanagrafica").prop("disabled", true);
+        $("#modals > div #idanagrafica").find("button").prop("disabled", true);
+        $("#modals > div #idclientefinale").prop("disabled", true);
+        $("#modals > div #idzona").prop("disabled", true);
+        $("#modals > div #idtipointervento").prop("disabled", true);
+        $("#modals > div #idstatointervento").prop("disabled", true);
+        $("#modals > div #richiesta").prop("disabled", true);
+        $("#modals > div #data_richiesta").prop("disabled", true);
+        $("#modals > div #impianti").find("button").prop("disabled", true);
     ';
 }
 ?>
 
 		// Quando modifico orario inizio, allineo anche l'orario fine
-        $("#bs-popup #orario_inizio").on("dp.change", function (e) {
-            $("#bs-popup #orario_fine").data("DateTimePicker").minDate(e.date);
-            $("#bs-popup #orario_fine").change();
+        $("#modals > div #orario_inizio").on("dp.change", function (e) {
+            $("#modals > div #orario_fine").data("DateTimePicker").minDate(e.date);
+            $("#modals > div #orario_fine").change();
         });
 
         // Refresh modulo dopo la chiusura di una pianificazione attività derivante dalle attività
         // da pianificare, altrimenti il promemoria non si vede più nella lista a destra
 		// TODO: da gestire via ajax
         if( $('input[name=idcontratto_riga]').val() != undefined ){
-            $('#bs-popup button.close').on('click', function(){
+            $('#modals > div button.close').on('click', function(){
                 location.reload();
             });
         }
     });
 
-	$('#bs-popup #idanagrafica').change( function(){
+	$('#modals > div #idanagrafica').change( function(){
 		session_set('superselect,idanagrafica', $(this).val(), 0);
 
         var value = !$(this).val() ? true : false;
         var placeholder = !$(this).val() ? "<?php echo tr('Seleziona prima un cliente...'); ?>" : "<?php echo tr("Seleziona un'opzione"); ?>";
 
-		$("#bs-popup #idsede_destinazione").prop("disabled", value);
-		$("#bs-popup #idsede_destinazione").selectReset(placeholder);
+		$("#modals > div #idsede_destinazione").prop("disabled", value);
+		$("#modals > div #idsede_destinazione").selectReset(placeholder);
 
-		$("#bs-popup #idpreventivo").prop("disabled", value);
-		$("#bs-popup #idpreventivo").selectReset(placeholder);
+		$("#modals > div #idpreventivo").prop("disabled", value);
+		$("#modals > div #idpreventivo").selectReset(placeholder);
 
-		$("#bs-popup #idcontratto").prop("disabled", value);
-		$("#bs-popup #idcontratto").selectReset(placeholder);
+		$("#modals > div #idcontratto").prop("disabled", value);
+		$("#modals > div #idcontratto").selectReset(placeholder);
 
-		$("#bs-popup #idimpianti").prop("disabled", value);
-        $("#bs-popup #impianti").find("button").prop("disabled", value);
-		$("#bs-popup #idimpianti").selectReset(placeholder);
+		$("#modals > div #idimpianti").prop("disabled", value);
+        $("#modals > div #impianti").find("button").prop("disabled", value);
+		$("#modals > div #idimpianti").selectReset(placeholder);
 
 		if (($(this).val())) {
 			if (($(this).selectData().idzona)){
-				$('#bs-popup #idzona').val($(this).selectData().idzona).change();
+				$('#modals > div #idzona').val($(this).selectData().idzona).change();
 
 			}else{
-				$('#bs-popup #idzona').val('').change();
+				$('#modals > div #idzona').val('').change();
 			}
 			// session_set('superselect,idzona', $(this).selectData().idzona, 0);
 		}
 	});
 
-	$('#bs-popup #idsede_destinazione').change( function(){
+	$('#modals > div #idsede_destinazione').change( function(){
 		session_set('superselect,idsede_destinazione', $(this).val(), 0);
-		$("#bs-popup #idimpianti").selectReset();
+		$("#modals > div #idimpianti").selectReset();
 
 		if (($(this).val())) {
 			if (($(this).selectData().idzona)){
-				$('#bs-popup #idzona').val($(this).selectData().idzona).change();
+				$('#modals > div #idzona').val($(this).selectData().idzona).change();
 			}else{
-				$('#bs-popup #idzona').val('').change();
+				$('#modals > div #idzona').val('').change();
 			}
 			// session_set('superselect,idzona', $(this).selectData().idzona, 0);
 		}
 	});
 
-	$('#bs-popup #idpreventivo').change( function(){
-		if($('#bs-popup #idcontratto').val() && $(this).val()){
-            $("#bs-popup #idcontratto").selectReset();
+	$('#modals > div #idpreventivo').change( function(){
+		if($('#modals > div #idcontratto').val() && $(this).val()){
+            $("#modals > div #idcontratto").selectReset();
         }
 
         if($(this).val()){
             //TODO: disattivato perché genera problemi con il change successivo di iditpointervento per il tempo standard*
-			$('#bs-popup #idtipointervento').selectSetNew($(this).selectData().idtipointervento, $(this).selectData().idtipointervento_descrizione);
+			$('#modals > div #idtipointervento').selectSetNew($(this).selectData().idtipointervento, $(this).selectData().idtipointervento_descrizione);
         }
 	});
 
-	$('#bs-popup #idcontratto').change( function(){
-		if($('#bs-popup #idpreventivo').val() && $(this).val()){
-            $("#bs-popup #idpreventivo").selectReset();
+	$('#modals > div #idcontratto').change( function(){
+		if($('#modals > div #idpreventivo').val() && $(this).val()){
+            $("#modals > div #idpreventivo").selectReset();
 			$('input[name=idcontratto_riga]').val('');
 		}
 	});
 
-	$('#bs-popup #idimpianti').change( function(){
+	$('#modals > div #idimpianti').change( function(){
 		session_set('superselect,marticola', $(this).val(), 0);
 
-        $("#bs-popup #componenti").prop("disabled", !$(this).val() ? true : false);
-        $("#bs-popup #componenti").selectReset();
+        $("#modals > div #componenti").prop("disabled", !$(this).val() ? true : false);
+        $("#modals > div #componenti").selectReset();
 	});
 
 	// tempo standard
     // TODO: tempo_standard da preventivo e contratto attraverso selectData() relativi
-	$('#bs-popup #idtipointervento').change( function(){
+	$('#modals > div #idtipointervento').change( function(){
 
 		if ($(this).selectData() && (($(this).selectData().tempo_standard)>0) && ('<?php echo filter('orario_fine'); ?>' == '')){
 			tempo_standard = $(this).selectData().tempo_standard;
 
-			data = moment($('#bs-popup #orario_inizio').val(), globals.timestamp_format);
+			data = moment($('#modals > div #orario_inizio').val(), globals.timestamp_format);
 			orario_fine = data.add(tempo_standard, 'hours');
-			$('#bs-popup #orario_fine').val(orario_fine.format(globals.timestamp_format));
+			$('#modals > div #orario_fine').val(orario_fine.format(globals.timestamp_format));
 		}
 
 	});
 
-	$('#bs-popup #idtecnico').change( function(){
+	$('#modals > div #idtecnico').change( function(){
 		<?php if (!get('ref')) {
     ?>
 	   var value = ($(this).val()>0) ? true : false;
-		$('#bs-popup #orario_inizio').prop("required", value);
-		$('#bs-popup #orario_fine').prop("required", value);
-		$('#bs-popup #data').prop("required", value);
+		$('#modals > div #orario_inizio').prop("required", value);
+		$('#modals > div #orario_fine').prop("required", value);
+		$('#modals > div #data').prop("required", value);
 		<?php
 } ?>
 	});
@@ -465,7 +465,7 @@ if (!empty($id_intervento)) {
                 if(response=="success"){
                     // Se l'aggiunta intervento proviene dalla scheda di pianificazione ordini di servizio della dashboard, la ricarico
                     if(ref == "dashboard"){
-                        $("#bs-popup").modal('hide');
+                        $("#modals > div").modal('hide');
 
                         // Aggiornamento elenco interventi da pianificare
                         $('#calendar').fullCalendar('refetchEvents');
@@ -475,7 +475,7 @@ if (!empty($id_intervento)) {
                     // Se l'aggiunta intervento proviene dai contratti, faccio il submit via ajax e ricarico la tabella dei contratti
                     else if(ref == "interventi_contratti"){
 
-						$("#bs-popup").modal('hide');
+						$("#modals > div").modal('hide');
 						parent.window.location.reload();
 						//TODO: da gestire via ajax
 						//$('#elenco_interventi > tbody').load(globals.rootdir + '/modules/contratti/plugins/contratti.pianificazioneinterventi.php?op=get_interventi_pianificati&idcontratto=<?php echo $idcontratto; ?>');

@@ -43,7 +43,7 @@ $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : $user['idan
 </form>
 
 <script>
-	$('#bs-popup #idanagrafica').change( function(){
+	$('#modals > div #idanagrafica').change( function(){
 		session_set('superselect,idanagrafica', $(this).val(), 0);
 	});
 </script>

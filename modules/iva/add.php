@@ -46,18 +46,18 @@ include_once __DIR__.'/../../core.php';
 
 <script>
 $(document).ready(function(){
-    $('#bs-popup #esente-add').change(function(){
+    $('#modals > div #esente-add').change(function(){
         var checkbox = $(this).parent().find('[type=hidden]');
 
         if (checkbox.val() == 1) {
-            $("#bs-popup #percentuale-add").prop("disabled", true);
-            $("#bs-popup #codice_natura_fe").prop("required", true);
-            $("#bs-popup #codice_natura_fe").prop("disabled", false);
+            $("#modals > div #percentuale-add").prop("disabled", true);
+            $("#modals > div #codice_natura_fe").prop("required", true);
+            $("#modals > div #codice_natura_fe").prop("disabled", false);
         } else {
-            $("#bs-popup #percentuale-add").prop("disabled", false);
-            $("#bs-popup #codice_natura_fe").prop("required", false);
-            $("#bs-popup #codice_natura_fe").val("").change();
-            $("#bs-popup #codice_natura_fe").prop("disabled", true);
+            $("#modals > div #percentuale-add").prop("disabled", false);
+            $("#modals > div #codice_natura_fe").prop("required", false);
+            $("#modals > div #codice_natura_fe").val("").change();
+            $("#modals > div #codice_natura_fe").prop("disabled", true);
         }
     });
 });

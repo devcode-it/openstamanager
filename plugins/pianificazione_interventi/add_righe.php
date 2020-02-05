@@ -114,7 +114,7 @@ echo '
     $(document).ready(function() {
         $("#add-righe").ajaxForm({
             success: function(){
-                $("#bs-popup2").modal("hide");
+                $("#modals > div").modal("hide");
 
                 refreshRighe('.$id_record.');
             }

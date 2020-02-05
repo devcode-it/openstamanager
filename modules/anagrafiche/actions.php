@@ -248,10 +248,11 @@ switch (post('op')) {
         }
 
         // Lettura tipologia della nuova anagrafica
-        $descrizioni_tipi = $anagrafica->tipi()->get()->pluck('descrizione')->toArray();
-        if (isAjaxRequest() && in_array(post('tipoanagrafica'), $descrizioni_tipi)) {
+        if (isAjaxRequest()) {
             echo json_encode(['id' => $id_record, 'text' => $anagrafica->ragione_sociale]);
         }
+
+        $descrizioni_tipi = $anagrafica->tipi()->get()->pluck('descrizione')->toArray();
 
         flash()->info(tr('Aggiunta nuova anagrafica di tipo _TYPE_', [
             '_TYPE_' => '"'.implode(', ', $descrizioni_tipi).'"',

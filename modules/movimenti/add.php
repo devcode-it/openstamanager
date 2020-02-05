@@ -55,7 +55,7 @@ $_SESSION['superselect']['idsede_destinazione'] = 0;
 	<div class="row" id="buttons">
 		<div class="col-md-12 text-right">
 			<button type="submit" class="btn btn-default"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi e chiudi'); ?></button>
-            <a type="button" class="btn btn-primary" onclick="ajax_submit( $('#idarticolo', '#bs-popup').selectData() );"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></a>
+            <a type="button" class="btn btn-primary" onclick="ajax_submit( $('#idarticolo').selectData() );"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></a>
 		</div>
 	</div>
 </form>
@@ -63,7 +63,7 @@ $_SESSION['superselect']['idsede_destinazione'] = 0;
 <div id="messages"></div>
 
 <script>
-    $('#bs-popup').on('shown.bs.modal', function(){
+    $('#modals > div').on('shown.bs.modal', function(){
         $('#direzione').on('change', function(){
             $('#movimento').val( $(this).val() );
         });
@@ -112,7 +112,7 @@ $_SESSION['superselect']['idsede_destinazione'] = 0;
     });
 
     // Reload pagina appena chiudo il modal
-    $('#bs-popup').on('hidden.bs.modal', function(){
+    $('#modals > div').on('hidden.bs.modal', function(){
         location.reload();
     });
 

@@ -797,12 +797,12 @@ $(".btn-sm[data-toggle=\"tooltip\"]").each(function() {
                 text:  "'.tr('Alcuni campi obbligatori non sono stati compilati correttamente').'.",
             });
 			 
-            $(document).one("show.bs.modal","#bs-popup", function (e) {                 
+            $(document).one("show.bs.modal","#modals > div", function (e) {                 
                 return e.preventDefault();
             });
 		}
 	   
-	    $(document).one("show.bs.modal","#bs-popup", function () {
+	    $(document).one("show.bs.modal","#modals > div", function () {
             buttonRestore(btn, restore);         
         });
 	});

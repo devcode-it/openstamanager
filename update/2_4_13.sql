@@ -150,10 +150,6 @@ UPDATE `zz_settings` SET `nome` = 'Ora inizio sul calendario' WHERE `zz_settings
 UPDATE `zz_settings` SET `nome` = 'Ora fine sul calendario' WHERE `zz_settings`.`nome` = 'Fine orario lavorativo';
 UPDATE `zz_settings` SET `nome` = 'Formato codice attività' WHERE `zz_settings`.`nome` = 'Formato codice intervento';
 
--- Flag per decisere se continuare attraverso gli anni la numerazione delle attività sulla base dello stesso contatore
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `help`) VALUES (NULL, 'Ingnora il periodo temporale per il calcolo del codice attività', '0', 'boolean', '1', 'Interventi', 'Continua attraverso gli anni la numerazione delle attività sulla base dello stesso contatore.');
-
-
 -- Inizio orario lavorativo
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `help`) VALUES (NULL, 'Inizio orario lavorativo', '08:00:00', 'time', '1', 'Interventi', 'Inizio dell''orario lavorativo standard.');
 
@@ -188,3 +184,6 @@ UPDATE `zz_views` SET `visible` = '1' WHERE `zz_views`.`name` = 'Prezzo di acqui
 UPDATE `zz_views` SET `visible` = '1' WHERE `zz_views`.`name` = 'Prezzo di vendita' AND `zz_views`.`id_module` = (SELECT id FROM zz_modules WHERE `name`='Articoli');
 
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT id FROM zz_modules WHERE `name`='Articoli'), 'Barcode', 'mg_articoli.barcode', '2', '1', '0', '0', '', '', '1', '0', '1');
+
+
+UPDATE `zz_settings` SET `help` = '<p>Impostare la maschera senza indicare l''anno per evitare il reset del contatore.</p><ul><li><b>####</b>: Numero progressivo dell''attività, con zeri non significativi per raggiungere il numero desiderato di caratteri</li><li><b>YYYY</b>: Anno corrente a 4 cifre</li><li><b>yy</b>: Anno corrente a 2 cifre</li></ul>' WHERE `zz_settings`.`nome` = 'Formato codice attività';

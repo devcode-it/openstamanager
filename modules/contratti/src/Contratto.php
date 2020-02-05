@@ -179,10 +179,10 @@ class Contratto extends Document
         // Impostazione del nuovo stato
         if ($qta_evasa == 0) {
             $descrizione = 'In lavorazione';
-            $descrizione_intervento = 'Completato';
+            $codice_intervento = 'OK';
         } else {
             $descrizione = $parziale ? 'Parzialmente fatturato' : 'Fatturato';
-            $descrizione_intervento = 'Fatturato';
+            $codice_intervento = 'FAT';
         }
 
         $stato = Stato::where('descrizione', $descrizione)->first();
@@ -191,7 +191,7 @@ class Contratto extends Document
 
         // Trasferimento degli interventi collegati
         $interventi = $this->interventi;
-        $stato_intervento = \Modules\Interventi\Stato::where('descrizione', $descrizione_intervento)->first();
+        $stato_intervento = \Modules\Interventi\Stato::where('codice', $codice_intervento)->first();
         foreach ($interventi as $intervento) {
             $intervento->stato()->associate($stato_intervento);
             $intervento->save();

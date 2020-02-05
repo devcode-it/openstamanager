@@ -48,7 +48,7 @@ class Settings
     }
 
     /**
-     * Restituisce le informazioni relative a una singolo impostazione specificata.
+     * Restituisce le informazioni relative ad una singola impostazione specificata.
      *
      * @param string|int $setting
      *
@@ -107,6 +107,12 @@ class Settings
             $validator = v::in(explode(',', $m[1]));
         }
 
+        // multiple
+        // verifico che il valore scelto sia nella lista enumerata nel db
+        elseif (preg_match("/multiple\[(.+?)\]/", $setting->tipo, $m[0][0])) {
+            //$validator =  v::in(explode(',', $m[0][0][1]));
+        }
+
         // Boolean (checkbox)
         elseif ($setting->tipo == 'boolean') {
             $validator = v::boolType();
@@ -148,6 +154,22 @@ class Settings
 
             $result = '
     {[ "type": "select", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "values": '.json_encode($list).', "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'" ]}';
+        }
+
+        // Lista multipla
+        if (preg_match("/multiple\[(.+?)\]/", $setting->tipo, $m)) {
+            $values = explode(',', $m[1]);
+
+            $list = [];
+            foreach ($values as $value) {
+                $list[] = [
+                    'id' => $value,
+                    'text' => $value,
+                ];
+            }
+
+            $result = '
+    {[ "type": "select", "multiple": 1, "label": "'.$setting->nome.'", "name": "setting['.$setting->id.'][]", "values": '.json_encode($list).', "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'" ]}';
         }
 
         // Lista da query

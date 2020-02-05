@@ -16,7 +16,7 @@ class Intervento extends Document
     protected $info = [];
 
     /**
-     * Crea un nuovo intrevento.
+     * Crea un nuovo intervento.
      *
      * @param Anagrafica   $anagrafica
      * @param TipoSessione $tipo_sessione
@@ -94,7 +94,7 @@ class Intervento extends Document
     {
         $results = parent::getRigheContabili();
 
-        return $results->merge($this->sessioni);
+        return $this->mergeCollections($results, $this->sessioni);
     }
 
     // Relazioni Eloquent
@@ -119,6 +119,11 @@ class Intervento extends Document
         return $this->belongsTo(Stato::class, 'idstatointervento');
     }
 
+    public function tipo()
+    {
+        return $this->belongsTo(Tipo::class, 'idtipointervento');
+    }
+
     public function tipoSessione()
     {
         return $this->belongsTo(TipoSessione::class, 'idtipointervento');
@@ -141,7 +146,7 @@ class Intervento extends Document
 
     public function descrizioni()
     {
-        return $this->righe()->where('prezzo_vendita', 0);
+        return $this->righe()->where('is_descrizione', 1);
     }
 
     public function sessioni()
@@ -160,13 +165,17 @@ class Intervento extends Document
      */
     public static function getNextCodice($data)
     {
-        $maschera = setting('Formato codice intervento');
+        $maschera = setting('Formato codice attività');
 
         //$ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice');
 
-        $ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice', [
-            'YEAR(data_richiesta) = '.prepare(date('Y', strtotime($data))),
-        ]);
+        if ((strpos($maschera, 'YYYY') !== false) or (strpos($maschera, 'yy') !== false)) {
+            $ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice', [
+                'YEAR(data_richiesta) = '.prepare(date('Y', strtotime($data))),
+            ]);
+        } else {
+            $ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice');
+        }
 
         $numero = Generator::generate($maschera, $ultimo);
 

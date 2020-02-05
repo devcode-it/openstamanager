@@ -1,6 +1,6 @@
 <?php
 
 return [
-    //'orientation' => 'L',
+    'orientation' => 'L',
     'font-size' => '11pt',
 ];

@@ -32,7 +32,7 @@ echo '
 			<div class="row">
 
 				<!-- Info scadenza -->
-				<div class="col-md-7">';
+				<div class="col-md-6">';
 
 if (!empty($documento)) {
     echo '
@@ -42,22 +42,35 @@ if (!empty($documento)) {
                             <td>
                                 '.Modules::link('Anagrafiche', $documento->anagrafica->id, $documento->anagrafica->ragione_sociale).'
                             </td>
-                        </tr>';
-    echo '
+                        </tr>
+
                         <tr>
                             <th>'.tr('Documento').':</th>
                             <td>'.$documento->tipo->descrizione.'</td>
-                        </tr>';
-    echo '
+                        </tr>
+
                         <tr>
                             <th>'.tr('Numero').':</th>
                             <td>'.$numero.'</td>
-                        </tr>';
-    echo '
+                        </tr>
+
                         <tr>
                             <th>'.tr('Data').':</th>
                             <td>'.Translator::dateToLocale($documento->data).'</td>
                         </tr>
+
+                        <tr>
+                            <th>'.tr('Netto a pagare').':</th>
+                            <td>'.moneyFormat($documento->netto).'</td>
+                        </tr>
+
+                        <tr>
+                            <th>'.tr('Note').':</th>
+                            <td>
+                                {[ "type": "textarea", "name": "note", "value": "'.$record['note'].'" ]}
+                            </td>
+                        </tr>
+
                     </table>
 
                     '.Modules::link($documento->module, $record['iddocumento'], '<i class="fa fa-folder-open"></i> '.tr('Apri documento'), null, 'class="btn btn-primary"');
@@ -77,7 +90,7 @@ echo '
 				</div>
 
 				<!-- Elenco scadenze -->
-				<div class="col-md-5">
+				<div class="col-md-6">
 					<table class="table table-hover table-condensed table-bordered">
                         <thead>
                             <tr>
@@ -133,7 +146,7 @@ foreach ($rs as $i => $scadenza) {
                         </tr>';
 }
 
-$totale_da_pagare = sum(array_column($rs, 'da_pagare'));
+$totale_da_pagare = $documento->netto;
 $totale_pagato = sum(array_column($rs, 'pagato'));
 
 if ($totale_da_pagare == $totale_pagato) {
@@ -164,7 +177,8 @@ echo '
                     </div>
 
 					<div class="clearfix"></div>
-
+                    <br>
+                    
 					<div class="alert alert-error hide" id="totale"><?php echo tr('Il totale da pagare deve essere pari a _MONEY_', [
                         '_MONEY_' => '<b>'.moneyFormat($totale_da_pagare).'</b>',
                     ]); ?>.<br><?php echo tr('Differenza di _TOT_ _CURRENCY_', [

@@ -1,22 +1,18 @@
 // Modal
-function launch_modal(title, href, init_modal, id) {
-    openModal(title, href, id ? id : '#bs-popup');
+function launch_modal(title, href, init_modal) {
+    openModal(title, href);
 }
 
 // Modal
-function openModal(title, href, generate_id) {
+function openModal(title, href) {
     // Fix - Select2 does not function properly when I use it inside a Bootstrap modal.
     $.fn.modal.Constructor.prototype.enforceFocus = function () {
     };
 
     // Generazione dinamica modal
-    if (generate_id == undefined) {
-        do {
-            id = '#bs-popup-' + Math.floor(Math.random() * 100);
-        } while ($(id).length != 0);
-    } else {
-        id = generate_id;
-    }
+    do {
+        id = '#bs-popup-' + Math.floor(Math.random() * 100);
+    } while ($(id).length != 0);
 
     if ($(id).length == 0) {
         $('#modals').append('<div class="modal fade" id="' + id.replace("#", "") + '" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="true"></div>');

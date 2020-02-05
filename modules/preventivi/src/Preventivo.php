@@ -49,7 +49,7 @@ class Preventivo extends Document
         $model->stato()->associate($stato_documento);
         $model->tipoSessione()->associate($tipo_sessione);
 
-        $model->numero = static::getNextNumero();
+        $model->numero = static::getNextNumero($data_bozza);
 
         // Salvataggio delle informazioni
         $model->nome = $nome;
@@ -204,13 +204,13 @@ class Preventivo extends Document
         // Impostazione del nuovo stato
         if ($qta_evasa == 0) {
             $descrizione = 'In lavorazione';
-            $descrizione_intervento = 'Completato';
+            $codice_intervento = 'OK';
         } elseif (!in_array($stato_attuale->descrizione, ['Parzialmente fatturato', 'Fatturato']) && $trigger->parent instanceof Ordine) {
             $descrizione = $this->stato->descrizione;
-            $descrizione_intervento = 'Completato';
+            $codice_intervento = 'OK';
         } else {
             $descrizione = $parziale ? 'Parzialmente fatturato' : 'Fatturato';
-            $descrizione_intervento = 'Fatturato';
+            $codice_intervento = 'FAT';
         }
 
         $stato = Stato::where('descrizione', $descrizione)->first();
@@ -219,7 +219,7 @@ class Preventivo extends Document
 
         // Trasferimento degli interventi collegati
         $interventi = $this->interventi;
-        $stato_intervento = \Modules\Interventi\Stato::where('descrizione', $descrizione_intervento)->first();
+        $stato_intervento = \Modules\Interventi\Stato::where('codice', $codice_intervento)->first();
         foreach ($interventi as $intervento) {
             $intervento->stato()->associate($stato_intervento);
             $intervento->save();
@@ -233,11 +233,18 @@ class Preventivo extends Document
      *
      * @return string
      */
-    public static function getNextNumero()
+    public static function getNextNumero($data)
     {
         $maschera = setting('Formato codice preventivi');
 
-        $ultimo = Generator::getPreviousFrom($maschera, 'co_preventivi', 'numero');
+        if ((strpos($maschera, 'YYYY') !== false) or (strpos($maschera, 'yy') !== false)) {
+            $ultimo = Generator::getPreviousFrom($maschera, 'co_preventivi', 'numero', [
+                'YEAR(data_bozza) = '.prepare(date('Y', strtotime($data))),
+            ]);
+        } else {
+            $ultimo = Generator::getPreviousFrom($maschera, 'co_preventivi', 'numero');
+        }
+
         $numero = Generator::generate($maschera, $ultimo);
 
         return $numero;

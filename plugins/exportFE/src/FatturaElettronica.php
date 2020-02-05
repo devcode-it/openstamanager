@@ -129,7 +129,7 @@ class FatturaElettronica
             $dati_aggiuntivi = $documento->dati_aggiuntivi_fe;
             $dati = $dati_aggiuntivi['dati_contratto'] ?: [];
 
-            $this->contratti = array_unique(array_merge($contratti, $preventivi, $interventi, $dati));
+            $this->contratti = array_merge($contratti, $preventivi, $interventi, $dati);
         }
 
         return $this->contratti;
@@ -772,6 +772,7 @@ class FatturaElettronica
     {
         $documento = $fattura->getDocumento();
         $azienda = static::getAzienda();
+        $cliente = $fattura->getCliente();
 
         $result = [
             'TipoDocumento' => $documento->tipo->codice_tipo_documento_fe,
@@ -807,7 +808,7 @@ class FatturaElettronica
             $percentuale = database()->fetchOne('SELECT percentuale FROM co_ritenutaacconto WHERE id = '.prepare($id_ritenuta))['percentuale'];
 
             $result['DatiRitenuta'] = [
-                'TipoRitenuta' => Validate::isValidTaxCode($azienda['codice_fiscale']) ? 'RT01' : 'RT02',
+                'TipoRitenuta' => (Validate::isValidTaxCode($azienda['codice_fiscale']) and $cliente['tipo'] == 'Privato') ? 'RT01' : 'RT02',
                 'ImportoRitenuta' => $totale_ritenutaacconto,
                 'AliquotaRitenuta' => $percentuale,
                 'CausalePagamento' => setting("Causale ritenuta d'acconto"),
@@ -849,8 +850,18 @@ class FatturaElettronica
             $result['DatiCassaPrevidenziale'] = $dati_cassa;
         }
 
-        // Sconto globale (2.1.1.8)
-        // Disabilitazione per aggiornamento sconti
+        // Sconto / Maggiorazione (2.1.1.8)
+        if (!empty($documento->dati_aggiuntivi_fe['sconto_maggiorazione_tipo'])) {
+            $result['ScontoMaggiorazione']['Tipo'] = $documento->dati_aggiuntivi_fe['sconto_maggiorazione_tipo'];
+        }
+
+        if (!empty($documento->dati_aggiuntivi_fe['sconto_maggiorazione_percentuale'])) {
+            $result['ScontoMaggiorazione']['Percentuale'] = $documento->dati_aggiuntivi_fe['sconto_maggiorazione_percentuale'];
+        }
+
+        if (!empty($documento->dati_aggiuntivi_fe['sconto_maggiorazione_importo'])) {
+            $result['ScontoMaggiorazione']['Importo'] = $documento->dati_aggiuntivi_fe['sconto_maggiorazione_importo'];
+        }
 
         // Importo Totale Documento (2.1.1.9)
         // Valorizzare l’importo complessivo lordo della fattura (onnicomprensivo di Iva, bollo, contributi previdenziali, ecc…)

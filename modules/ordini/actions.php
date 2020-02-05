@@ -227,10 +227,10 @@ switch (post('op')) {
     // Scollegamento riga generica da ordine
     case 'delete_riga':
         $id_riga = post('idriga');
+        $type = post('type');
+$riga = $ordine->getRiga($type, $id_riga);
 
-        if (!empty($id_riga)) {
-            $riga = $ordine->getRighe()->find($id_riga);
-
+        if (!empty($riga)) {
             try {
                 $riga->delete();
 

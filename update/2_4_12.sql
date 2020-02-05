@@ -28,6 +28,7 @@ UPDATE `zz_prints` SET `title` = 'Consuntivo contratto (senza prezzi)' WHERE `na
 UPDATE `zz_prints` SET `title` = 'Ordine cliente (senza prezzi)' WHERE `name` = 'Ordine cliente (senza costi)';
 UPDATE `zz_prints` SET `title` = 'Ordine fornitore (senza prezzi)' WHERE `name` = 'Ordine fornitore (senza costi)';
 UPDATE `zz_prints` SET `title` = 'Ddt di vendita (senza prezzi)' WHERE `name` = 'Ddt di vendita (senza costi)';
+
 -- Aggiunta campo "Ubicazione" per gli articoli
 ALTER TABLE `mg_articoli` ADD `ubicazione` VARCHAR(255) NOT NULL AFTER `threshold_qta`;
 

@@ -248,7 +248,11 @@ class Prints
      */
     public static function getPDFLink($path)
     {
-        return ROOTDIR.'/assets/dist/pdfjs/web/viewer.html?file=../../../../'.ltrim(str_replace(DOCROOT, '', $path), '/');
+        //http://localhost/openstamanager/
+        $folders = explode('/', dirname($_SERVER['PHP_SELF']));
+        $base = (stripos($_SERVER['SERVER_PROTOCOL'], 'https') === 0 ? 'https://' : 'http://').$_SERVER['SERVER_NAME'].'/'.$folders[1].'/';
+
+        return ROOTDIR.'/assets/dist/pdfjs/web/viewer.html?file='.$base.ltrim(str_replace(DOCROOT, '', $path), '/');
     }
 
     /**
@@ -442,7 +446,7 @@ class Prints
 
         // Instanziamento dell'oggetto mPDF
         $mpdf = new \Mpdf\Mpdf([
-            'mode' => 'utf-8',
+            'mode' => 'c',
             'format' => $settings['format'],
             'orientation' => strtoupper($settings['orientation']) == 'L' ? 'L' : 'P',
             'font-size' => $settings['font-size'],
@@ -450,11 +454,28 @@ class Prints
             'margin_right' => $settings['margins']['right'],
             'setAutoBottomMargin' => 'stretch',
             'setAutoTopMargin' => 'stretch',
+            'default_font' => 'helvetica',
 
             // Abilitazione per lo standard PDF/A
             //'PDFA' => true,
             //'PDFAauto' => true,
         ]);
+
+        if (setting('Filigrana stampe')) {
+            $mpdf->SetWatermarkImage(
+                DOCROOT.'/files/anagrafiche/'.setting('Filigrana stampe'),
+                0.5,
+                'F',
+                'F'
+            );
+
+            // false = 'showWatermarkImage' => false,
+            if ($settings['showWatermarkImage'] == null) {
+                $mpdf->showWatermarkImage = true;
+            } else {
+                $mpdf->showWatermarkImage = intval($settings['showWatermarkImage']);
+            }
+        }
 
         // Inclusione dei fogli di stile CSS
         $styles = [

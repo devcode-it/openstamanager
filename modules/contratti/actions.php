@@ -219,11 +219,10 @@ switch (post('op')) {
     // Eliminazione riga
     case 'delete_riga':
         $id_riga = post('idriga');
-        if ($id_riga !== null) {
-            $riga = Descrizione::find($id_riga) ?: Riga::find($id_riga);
-            $riga = $riga ? $riga : Articolo::find($id_riga);
-            $riga = $riga ? $riga : Sconto::find($id_riga);
+        $type = post('type');
+$riga = $contratto->getRiga($type, $id_riga);
 
+        if (!empty($riga)) {
             $riga->delete();
 
             flash()->info(tr('Riga eliminata!'));

@@ -184,6 +184,68 @@ switch (post('op')) {
             }
         }
         break;
+
+    case 'copy-bulk':
+
+        foreach ($id_records as $id) {
+            $fattura = Fattura::find($id);
+
+            $id_segment = (post('id_segment') ? post('id_segment') : $fattura->id_segment);
+            $dir = $dbo->fetchOne('SELECT dir FROM co_tipidocumento WHERE id='.prepare($fattura->idtipodocumento))['dir'];
+
+            //+ 1 giorno
+            if (post('skip_time') == 'Giorno') {
+                $data = date('Y-m-d', strtotime('+1 day', strtotime($fattura->data)));
+            }
+
+            //+ 1 settimana
+            if (post('skip_time') == 'Settimana') {
+                $data = date('Y-m-d', strtotime('+1 week', strtotime($fattura->data)));
+            }
+
+            //+ 1 mese
+            if (post('skip_time') == 'Mese') {
+                $data = date('Y-m-d', strtotime('+1 month', strtotime($fattura->data)));
+            }
+
+            //+ 1 anno
+            if (post('skip_time') == 'Anno') {
+                $data = date('Y-m-d', strtotime('+1 year', strtotime($fattura->data)));
+            }
+
+            $new = $fattura->replicate();
+            $new->id_segment = $id_segment;
+            $new->numero_esterno = Fattura::getNextNumeroSecondario($data, $dir, $id_segment);
+            $new->numero = Fattura::getNextNumero($data, $dir, $id_segment);
+            $new->idstatodocumento = 2;
+            $new->data = $data;
+            $new->save();
+
+            $righe = $fattura->getRighe();
+            foreach ($righe as $riga) {
+                if (!post('riferimenti')) {
+                    $riga->idpreventivo = 0;
+                    $riga->idcontratto = 0;
+                    $riga->idintervento = 0;
+                    $riga->idddt = 0;
+                    $riga->idordine = 0;
+                }
+
+                $new_riga = $riga->replicate();
+                $new_riga->setParent($new);
+
+                $new_riga->save();
+
+                if ($new_riga->idarticolo) {
+                    $articolo = Articolo::find($new_riga->id);
+                    $articolo->movimentaMagazzino($articolo->qta);
+                }
+            }
+        }
+
+        flash()->info(tr('Fatture duplicate correttamente!'));
+
+        break;
 }
 
 if (App::debug()) {
@@ -191,6 +253,15 @@ if (App::debug()) {
         'delete-bulk' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span>',
     ];
 }
+
+$operations['copy-bulk'] = [
+    'text' => '<span><i class="fa fa-copy"></i> '.tr('Duplica selezionati').'</span>',
+    'data' => [
+        'msg' => tr('Vuoi davvero duplicare le righe selezionate?').'<br><br>{[ "type": "select", "label": "", "name": "skip_time", "required": 1, "values": "list=\"Giorno\":\"'.tr('Giorno').'\", \"Settimana\":\"'.tr('Settimana').'\", \"Mese\":\"'.tr('Mese').'\", \"Anno\":\"'.tr('Anno').'\" ", "value": "Giorno" ]}<br>{[ "type": "select", "label": "", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.$id_module.' ORDER BY name", "value": "Giorno" ]}<br>{[ "type": "checkbox", "placeholder": "'.tr('Aggiungere i riferimenti ai documenti esterni?').'", "name": "riferimenti" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+    ],
+];
 
 $operations['registrazione-contabile'] = [
     'text' => '<span><i class="fa fa-calculator"></i> '.tr('Registrazione contabile').'</span>',

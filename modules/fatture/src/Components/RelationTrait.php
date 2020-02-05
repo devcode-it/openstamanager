@@ -167,7 +167,7 @@ trait RelationTrait
         $result = parent::delete();
 
         if (!empty($this->idintervento)) {
-            database()->query("UPDATE in_interventi SET idstatointervento = (SELECT idstatointervento FROM in_statiintervento WHERE descrizione = 'Completato') WHERE id=".prepare($this->idintervento));
+            database()->query("UPDATE in_interventi SET idstatointervento = (SELECT idstatointervento FROM in_statiintervento WHERE codice = 'OK') WHERE id=".prepare($this->idintervento));
         }
 
         return $result;

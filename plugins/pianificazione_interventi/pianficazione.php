@@ -123,7 +123,7 @@ echo '
 
 if (!empty($is_add)) {
     echo '
-            <button type="button" class="btn btn-primary" data-title="'.tr('Aggiungi articolo').'" data-target="#bs-popup2" data-toggle="modal" data-href="'.$plugin->fileurl('add_articolo.php').'?id_plugin='.$id_plugin.'&id_record='.$id_record.'&add='.$is_add.'" ><i class="fa fa-plus"></i> '.tr('Aggiungi articolo').'...</button>';
+            <button type="button" class="btn btn-primary" data-title="'.tr('Aggiungi articolo').'" data-toggle="modal" data-href="'.$plugin->fileurl('add_articolo.php').'?id_plugin='.$id_plugin.'&id_record='.$id_record.'&add='.$is_add.'" ><i class="fa fa-plus"></i> '.tr('Aggiungi articolo').'...</button>';
 }
 
 echo '
@@ -147,7 +147,7 @@ echo '
 
 if (!empty($is_add)) {
     echo '
-                <button type="button" class="btn btn-primary"  data-title="'.tr('Aggiungi altre spese').'" data-target="#bs-popup2" data-toggle="modal" data-href="'.$plugin->fileurl('add_righe.php').'?id_plugin='.$id_plugin.'&id_record='.$id_record.'&add='.$is_add.'"><i class="fa fa-plus"></i> '.tr('Aggiungi altre spese').'...</button>';
+                <button type="button" class="btn btn-primary"  data-title="'.tr('Aggiungi altre spese').'" data-toggle="modal" data-href="'.$plugin->fileurl('add_righe.php').'?id_plugin='.$id_plugin.'&id_record='.$id_record.'&add='.$is_add.'"><i class="fa fa-plus"></i> '.tr('Aggiungi altre spese').'...</button>';
 }
 
 echo '
@@ -241,16 +241,16 @@ echo '
 
         if ($("#idtipointervento_").val()==null){
             $("#add_form .panel-primary .panel-primary").hide();
-            $("#bs-popup .btn-primary").hide();
+            $("#modals > div .btn-primary").hide();
         };
 
         $("#idtipointervento_").change(function(){
             if (($(this).val()!="")){
                 $("#add_form .panel-primary .panel-primary").show();
-                $("#bs-popup .btn-primary").show();
+                $("#modals > div .btn-primary").show();
             } else {
                 $("#add_form .panel-primary .panel-primary").hide();
-                $("#bs-popup .btn-primary").hide();
+                $("#modals > div .btn-primary").hide();
             }
         });
 		
@@ -261,13 +261,13 @@ echo '
                 $("#data_inizio").removeAttr("disabled");
 				$("#pianifica_intervento").removeAttr("disabled");
 				
-				$("#bs-popup .btn-primary").removeAttr("disabled");
+				$("#modals > div .btn-primary").removeAttr("disabled");
             } else {
                 $("#intervallo").prop("disabled", true);
                 $("#data_inizio").prop("disabled", true);
 				$("#pianifica_intervento").prop("checked", false);
 				$("#pianifica_intervento").prop("disabled", true);
-				$("#bs-popup .btn-primary").prop("disabled", true);
+				$("#modals > div .btn-primary").prop("disabled", true);
 				
 				$("#idtecnico").prop("disabled", true);
                 $("#idtecnico").removeAttr("required");

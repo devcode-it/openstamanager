@@ -237,7 +237,7 @@ function calcolaBilancio(gruppo) {
     raggruppamento.find(".totale_avere").text(totale_avere.toLocale());
 
     // Calcolo il bilancio
-    var bilancio = totale_dare - totale_avere;
+    var bilancio = totale_dare.toFixed(2) - totale_avere.toFixed(2);
     
     // Visualizzazione dello sbilancio eventuale
     var sbilancio = raggruppamento.find(".sbilancio");

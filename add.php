@@ -63,24 +63,23 @@ if (isAjaxRequest()) {
     echo '
 <script>
 $(document).ready(function(){
-    data = {};';
-
-    foreach (Filter::getGET() as $key => $value) {
-        echo '
-    data.'.$key.' = "'.$value.'";';
-    }
-
-    echo '
-
     $("#form_'.$id_module.'-'.$id_plugin.'").find("form").submit(function () {
-        submitAjax(this, data, function(response) {
+        $form = $(this);
+        $form.variables = new Object();
+        $form.variables.id_module = \''.$id_module.'\';
+        $form.variables.id_plugin = \''.$id_plugin.'\';
+
+        submitAjax(this, $form.variables, function(response) {
             // Selezione automatica nuovo valore per il select
             select = "#'.get('select').'";
+            console.log($(select).val());
             if ($(select).val() !== undefined) {
+                console.log(response.id + " | " + response.text);
                 $(select).selectSetNew(response.id, response.text, response.data);
             }
 
-            $("#bs-popup2").modal("hide");
+            $form.closest("div[id^=bs-popup").modal("hide");
+            
         });
         
         return false;

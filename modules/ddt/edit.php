@@ -107,6 +107,7 @@ $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione']
                 ?>
                 <div class="row">
                     <div class="col-md-3">
+                        <?php echo Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"'); ?>
                         {[ "type": "select", "label": "<?php echo ($dir == 'uscita') ? tr('Fornitore') : tr('Destinatario'); ?>", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti_fornitori" ]}
                     </div>
 
@@ -165,24 +166,30 @@ $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione']
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "ajax-source": "vettori", "value": "$idvettore$", "disabled": <?php echo intval($record['idspedizione'] == 3); ?>, "required": <?php echo (!empty($record['idspedizione'])) ? intval($record['idspedizione'] != 3) : 0; ?>, "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Vettore||<?php echo (($record['idspedizione'] != 3 and intval(!$record['flag_completato']))) ? '' : 'disabled'; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "ajax-source": "vettori", "value": "$idvettore$", "disabled": <?php echo intval($record['idspedizione'] == 3); ?>, "required": <?php echo (!empty($record['idspedizione'])) ? intval($record['idspedizione'] != 3) : 0; ?>, "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Vettore&readonly_tipo=1|btn_idvettore|<?php echo (($record['idspedizione'] != 3 and intval(!$record['flag_completato']))) ? '' : 'disabled'; ?>" ]}
 				</div>
 
-
+                <div class="col-md-3">
+					{[ "type": "timestamp", "label": "<?php echo tr('Data ora trasporto'); ?>", "name": "data_ora_trasporto", "required": 0, "value": "$data_ora_trasporto$" ]}
+				</div>
+                
                  <script>
                     $("#idspedizione").change( function(){
-                        //a parte Espressa o Vettore
+                        //Per tutti tipi di spedizione, a parte "Espressa" o "Vettore", il campo vettore non deve essere richiesto
                         if ($(this).val() != 1 && $(this).val() != 2 ) {
                             $("#idvettore").attr("required", false);
                             $("#idvettore").attr("disabled", true);
                             $("label[for=idvettore]").text("<?php echo tr('Vettore'); ?>");
-                            $("#idvettore").selectReset("<?php echo tr("Seleziona un'opzione"); ?>");
-                            $("#idvettore").next().next().find("button.bound:nth-child(1)").prop("disabled", true);
+                            $("#idvettore").selectReset("<?php echo tr("Seleziona un\'opzione"); ?>");
+                            $(".btn_idvettore").prop("disabled", true);
+                            $(".btn_idvettore").addClass("disabled");
                         }else{
                             $("#idvettore").attr("required", true);
                             $("#idvettore").attr("disabled", false);
                             $("label[for=idvettore]").text("<?php echo tr('Vettore'); ?>*");
-                            $("#idvettore").next().next().find("button.bound:nth-child(1)").prop("disabled", false);
+                            $(".btn_idvettore").prop("disabled", false);
+                            $(".btn_idvettore").removeClass("disabled");
+                            
                         }
                     });
 

@@ -4,7 +4,6 @@ namespace Update\v2_4_10;
 
 use Common\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Modules\Fatture\Fattura;
 use Modules\TipiIntervento\Tipo as TipoSessione;
 use Settings;
 use Traits\RecordTrait;

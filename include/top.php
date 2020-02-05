@@ -312,7 +312,7 @@ if (Auth::check()) {
                             <li class="dropdown notifications-menu" >
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                     <i class="fa fa-bell-o"></i>
-                                    <span class="label label-warning">
+                                    <span id="hooks-label" class="label label-warning">
                                         <span id="hooks-loading"><i class="fa fa-spinner fa-spin"></i></span>
                                         <span id="hooks-notified"></span>
                                         <span id="hooks-counter" class="hide">0</span>

@@ -63,21 +63,14 @@ foreach ($primo_livello as $conto_primo) {
             <table class="table table-striped table-hover table-condensed" style="margin-bottom:0;">';
 
         // Livello 3
-        $query3 = 'SELECT `co_pianodeiconti3`.*, `clienti`.`idanagrafica` AS id_cliente, `fornitori`.`idanagrafica` AS id_fornitore FROM `co_pianodeiconti3` LEFT OUTER JOIN `an_anagrafiche` `clienti` ON `clienti`.`idconto_cliente` = `co_pianodeiconti3`.`id` LEFT OUTER JOIN `an_anagrafiche` `fornitori` ON `fornitori`.`idconto_fornitore` = `co_pianodeiconti3`.`id` WHERE `idpianodeiconti2` = '.prepare($conto_secondo['id']).' ORDER BY numero ASC';
+        $query3 = 'SELECT `co_pianodeiconti3`.*, movimenti.numero_movimenti, movimenti.totale FROM `co_pianodeiconti3` LEFT OUTER JOIN (SELECT COUNT(idconto) AS numero_movimenti, idconto, SUM( ROUND(totale,2)) AS totale FROM co_movimenti WHERE data BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']).' GROUP BY idconto) movimenti ON co_pianodeiconti3.id=movimenti.idconto WHERE `idpianodeiconti2` = '.prepare($conto_secondo['id']).' ORDER BY numero ASC';
         $terzo_livello = $dbo->fetchArray($query3);
 
         foreach ($terzo_livello as $conto_terzo) {
             // Se il conto non ha documenti collegati posso eliminarlo
-            $numero_movimenti = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE idconto = '.prepare($conto_terzo['id']));
+            $movimenti = $conto_terzo['numero_movimenti'];
 
-            // Calcolo totale conto da elenco movimenti di questo conto
-            $query = 'SELECT co_movimenti.* FROM co_movimenti
-                LEFT OUTER JOIN co_documenti ON co_movimenti.iddocumento = co_documenti.id
-                LEFT OUTER JOIN co_tipidocumento ON co_documenti.idtipodocumento = co_tipidocumento.id
-            WHERE co_movimenti.idconto='.prepare($conto_terzo['id']).' AND co_movimenti.data >= '.prepare($_SESSION['period_start']).' AND co_movimenti.data <= '.prepare($_SESSION['period_end']).' ORDER BY co_movimenti.data DESC';
-            $movimenti = $dbo->fetchArray($query);
-
-            $totale_conto = sum(array_column($movimenti, 'totale'));
+            $totale_conto = $conto_terzo['totale'];
             $totale_conto = ($conto_primo['descrizione'] == 'Patrimoniale') ? $totale_conto : -$totale_conto;
 
             // Somma dei totali
@@ -292,6 +285,7 @@ if ($bilancio_gia_chiuso) {
 </div>
 
 <script>
+var tr = '';
 $(document).ready(function(){
     $("tr").each(function() {
         $(this).on("mouseover", function() {
@@ -301,12 +295,14 @@ $(document).ready(function(){
         $(this).on("mouseleave", function() {
             $(this).find(".tools").addClass("hide");
         });
+    });
 
+    $("span[id^=movimenti-]").each(function() {
         $(this).on("click", function() {
             var movimenti = $(this).parent().find("div[id^=conto_]");
 
             if(!movimenti.html()) {
-                var id_conto = movimenti.attr("id").split("_").pop();
+                var id_conto = $(this).attr("id").split("-").pop();
 
                 load_movimenti(movimenti.attr("id"), id_conto);
             } else {

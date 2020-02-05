@@ -116,7 +116,7 @@ class FileManager implements ManagerInterface
                     <i class="fa fa-external-link"></i> '.$r['name'].'
                 </a>
                 
-                <small> ('.$file->extension.')'.((!empty($file->size)) ? ' ('.\Util\FileSystem::formatBytes($file->size).')' : '').'</small>'.'
+                <small> ('.$file->extension.')'.((!empty($file->size)) ? ' ('.\Util\FileSystem::formatBytes($file->size).')' : '').' '.(($r['name'] == 'Logo stampe' or $r['name'] == 'Filigrana stampe') ? '<i class="fa fa-file-text-o"></i>' : '').'</small>'.'
             </td>
             
             <td>'.\Translator::timestampToLocale($r['created_at']).'</td>
@@ -129,7 +129,7 @@ class FileManager implements ManagerInterface
                     // Anteprime supportate dal browser
                     if ($file->hasPreview()) {
                         $result .= '
-                <button class="btn btn-xs btn-info" data-target="#bs-popup2" type="button" data-title="'.prepareToField($r['name']).' <small style=\'color:white\'><i>('.$r['filename'].')</i></small>" data-href="'.ROOTDIR.'/view.php?file_id='.$r['id'].'">
+                <button class="btn btn-xs btn-info" type="button" data-title="'.prepareToField($r['name']).' <small style=\'color:white\'><i>('.$r['filename'].')</i></small>" data-href="'.ROOTDIR.'/view.php?file_id='.$r['id'].'">
                     <i class="fa fa-eye"></i>
                 </button>';
                     } else {

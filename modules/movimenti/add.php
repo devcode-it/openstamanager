@@ -55,13 +55,15 @@ $_SESSION['superselect']['idsede_destinazione'] = 0;
 	<div class="row" id="buttons">
 		<div class="col-md-12 text-right">
 			<button type="submit" class="btn btn-default"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi e chiudi'); ?></button>
-            <a type="button" class="btn btn-primary" onclick="ajax_submit( '', '' );"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></a>
+            <a type="button" class="btn btn-primary" onclick="ajax_submit( $('#idarticolo').selectData() );"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></a>
 		</div>
 	</div>
 </form>
 
+<div id="messages"></div>
+
 <script>
-    $('#bs-popup').on('shown.bs.modal', function(){
+    $('#modals > div').on('shown.bs.modal', function(){
         $('#direzione').on('change', function(){
             $('#movimento').val( $(this).val() );
         });
@@ -93,14 +95,12 @@ $_SESSION['superselect']['idsede_destinazione'] = 0;
                         if( data.results.length == 1 ){
                             var record = data.results[0].children[0];
                             $('#idarticolo').selectSetNew( record.id, record.text );
-                            ajax_submit( search, record.text );
+                            ajax_submit( record );
                         }
                         
                         // Articolo non trovato
                         else {
-                            $('#buttons').next('hr').remove();
-                            $('#buttons').next('div.alert').remove();
-                            $('#buttons').after( '<hr><div class="alert alert-danger text-center"><big>Articolo <b>' + search + '</b> non trovato!</big></div>' );
+                            $('#messages').html( '<hr><div class="alert alert-danger text-center"><big>Articolo <b>' + search + '</b> non trovato!</big></div>' );
                         }
                     }
                 );
@@ -112,11 +112,11 @@ $_SESSION['superselect']['idsede_destinazione'] = 0;
     });
 
     // Reload pagina appena chiudo il modal
-    $('#bs-popup').on('hidden.bs.modal', function(){
+    $('#modals > div').on('hidden.bs.modal', function(){
         location.reload();
     });
 
-    function ajax_submit( barcode, articolo ) {
+    function ajax_submit( articolo ) {
         //Controllo che siano presenti tutti i dati richiesti
         if( $("#add-form").parsley().validate() ){
             submitAjax(
@@ -126,11 +126,47 @@ $_SESSION['superselect']['idsede_destinazione'] = 0;
                 function(){}
             );
 
-            $('#buttons').next('hr').remove();
-            $('#buttons').next('div.alert').remove();
+            $('#messages').html('');
+
+            var prezzo_acquisto = parseFloat(articolo.prezzo_acquisto);
+            var prezzo_vendita = parseFloat(articolo.prezzo_vendita);
+
+            var qta_movimento = parseFloat($('#qta').val());
+
+            var alert = '';
+            var icon = '';
+            var text = '';
+            var qta_rimanente = 0;
+
+            if($('#direzione').val()=='Carico manuale'){
+                alert = 'alert-success';
+                icon = '<i class="fa fa-arrow-up"></i>';
+                text = 'Carico';
+                qta_rimanente = parseFloat(articolo.qta)+parseFloat(qta_movimento);
+            }else{
+                alert = 'alert-danger';
+                icon = '<i class="fa fa-arrow-down"></i>';
+                text = 'Scarico';
+                qta_rimanente = parseFloat(articolo.qta)-parseFloat(qta_movimento);
+            }
             
-            if( barcode != '' || articolo != '' ){
-                $('#buttons').after( '<hr><div class="alert alert-success text-center"><big>Inserito movimento articolo<br><b>' + barcode +'</b><br><b>' + articolo + '</b>!</big></div>' );
+            if( articolo.descrizione != '' ){
+                $('#messages').html( 
+                    '<hr>'+
+                    '<div class="row">'+
+                        '<div class="col-md-6">'+
+                            '<div class="alert alert-info text-center" style="line-height: 1.6;">'+
+                                '<b style="font-size:14pt;"><i class="fa fa-barcode"></i> ' + articolo.barcode + ' - ' + articolo.descrizione + '</b><br>'+
+                                '<b>Prezzo acquisto:</b> ' + prezzo_acquisto.toLocale() + " " + globals.currency + '<br><b>Prezzo vendita:</b> ' + prezzo_vendita.toLocale() + " " + globals.currency +
+                            '</div>'+ 
+                        '</div>'+ 
+                        '<div class="col-md-6">'+
+                            '<div class="alert '+alert+' text-center">'+
+                                '<p style="font-size:14pt;">'+icon+' '+text+' '+qta_movimento.toLocale()+' '+articolo.um+' <i class="fa fa-arrow-circle-right"></i> '+qta_rimanente.toLocale()+' '+articolo.um+' rimanenti</p>'+
+                            '</div>'+ 
+                        '</div>'+ 
+                    '</div>'
+                );
             }
             
             $("#qta").val(1);

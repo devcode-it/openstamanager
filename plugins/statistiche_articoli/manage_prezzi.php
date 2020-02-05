@@ -5,7 +5,7 @@ include_once __DIR__.'/../../core.php';
 use Plugins\StatisticheArticoli\Stats;
 
 $calendar_id = filter('calendar_id');
-$direzione = filter('dir');
+$direzione = filter('direzione');
 $start = filter('start');
 $end = filter('end');
 

@@ -38,7 +38,7 @@ switch (post('op')) {
         $descrizione = post('descrizione');
 
         $lvl = post('lvl');
-        if ($lvl == 2){
+        if ($lvl == 2) {
             $duplicate_query = 'SELECT numero FROM co_pianodeiconti2 WHERE numero='.prepare($numero).' AND NOT id='.prepare($idconto).' AND idpianodeiconti1='.prepare($idpianodeiconti);
 
             $update_query = 'UPDATE co_pianodeiconti2 SET numero='.prepare($numero).', descrizione='.prepare($descrizione).' WHERE id='.prepare($idconto);
@@ -133,7 +133,7 @@ switch (post('op')) {
         $idconto_chiusura = setting('Conto per Chiusura conti patrimoniali');
 
         // Lettura di tutti i conti dello stato patrimoniale con saldo != 0
-        $conti = $dbo->fetchArray('SELECT co_pianodeiconti3.id, SUM(co_movimenti.totale) AS totale FROM ((co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id) INNER JOIN co_pianodeiconti1 ON co_pianodeiconti2.idpianodeiconti1=co_pianodeiconti1.id) INNER JOIN co_movimenti ON co_pianodeiconti3.id=co_movimenti.idconto WHERE co_pianodeiconti1.descrizione="Patrimoniale" AND data <= '.prepare($_SESSION['period_end']).' AND AND co_pianodeiconti3.id NOT IN('.prepare($idconto_apertura).', '.prepare($idconto_chiusura).') AND is_apertura=0 AND is_chiusura=0 GROUP BY co_pianodeiconti3.id HAVING totale != 0');
+        $conti = $dbo->fetchArray('SELECT co_pianodeiconti3.id, SUM(co_movimenti.totale) AS totale FROM ((co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id) INNER JOIN co_pianodeiconti1 ON co_pianodeiconti2.idpianodeiconti1=co_pianodeiconti1.id) INNER JOIN co_movimenti ON co_pianodeiconti3.id=co_movimenti.idconto WHERE co_pianodeiconti1.descrizione="Patrimoniale" AND data <= '.prepare($_SESSION['period_end']).' AND co_pianodeiconti3.id NOT IN('.prepare($idconto_apertura).', '.prepare($idconto_chiusura).') AND is_apertura=0 AND is_chiusura=0 GROUP BY co_pianodeiconti3.id HAVING totale != 0');
 
         $mastrino = Mastrino::build(tr('Chiusura conto'), $_SESSION['period_end'], 0, true);
 

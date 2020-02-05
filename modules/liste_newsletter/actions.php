@@ -40,7 +40,7 @@ switch (filter('op')) {
 
         $lista->anagrafiche()->syncWithoutDetaching($receivers);
 
-        flash()->info(tr('Aggiunti nuovi destinatari alla newsletter!'));
+        flash()->info(tr('Aggiunti nuovi destinatari alla lista!'));
 
         break;
 
@@ -49,7 +49,7 @@ switch (filter('op')) {
 
         $lista->anagrafiche()->detach($receiver);
 
-        flash()->info(tr('Destinatario rimosso dalla newsletter!'));
+        flash()->info(tr('Destinatario rimosso dalla lista!'));
 
         break;
 }

@@ -7,6 +7,7 @@ use Models\OperationLog;
 use Modules\Checklists\Check;
 use Modules\Checklists\Checklist;
 use Modules\Emails\Template;
+use Notifications\EmailNotification;
 
 if (empty($structure) || empty($structure['enabled'])) {
     die(tr('Accesso negato'));
@@ -241,9 +242,18 @@ elseif (post('op') == 'send-email') {
     }
 
     $mail->save();
-    OperationLog::setInfo('id_email', $mail->id);
 
-    flash()->info(tr('Email aggiunta correttamente alla coda di invio!'));
+    // Invio mail istantaneo
+    $email = EmailNotification::build($mail);
+    $email_success = $email->send();
+
+    if ($email_success) {
+        OperationLog::setInfo('id_email', $mail->id);
+        flash()->info(tr('Email inviata correttamente!'));
+    } else {
+        $mail->delete();
+        flash()->error(tr('Errore durante l\'invio email! Verifica i parametri dell\'account SMTP utilizzato.'));
+    }
 }
 
 // Inclusione di eventuale plugin personalizzato

@@ -173,7 +173,7 @@ switch (post('op')) {
             $xml = \Util\XML::read($fattura->getXML());
 
             $dati_generali = $xml['FatturaElettronicaBody']['DatiGenerali']['DatiGeneraliDocumento'];
-            $totale_documento = abs(floatval($dati_generali['ImportoTotaleDocumento'])) ?: null;
+            $totale_documento = ($fattura->isNota()) ? -abs(floatval($dati_generali['ImportoTotaleDocumento'])) : abs(floatval($dati_generali['ImportoTotaleDocumento'])) ?: null;
         } catch (Exception $e) {
             $totale_documento = null;
         }
@@ -480,30 +480,30 @@ switch (post('op')) {
     case 'unlink_intervento':
         if (!empty($id_record) && post('idriga') !== null) {
             $id_riga = post('idriga');
+            $type = post('type');
+            $riga = $fattura->getRiga($type, $id_riga);
 
-            $righe = $fattura->getRighe();
-            $riga = $righe->find($id_riga);
+            if (!empty($riga)) {
+                try {
+                    $riga->delete();
 
-            $righe_intervento = $righe->where('idintervento', $riga->idintervento);
-            foreach ($righe_intervento as $r) {
-                $r->delete();
+                    flash()->info(tr('Intervento _NUM_ rimosso!', [
+                        '_NUM_' => $idintervento,
+                    ]));
+                } catch (InvalidArgumentException $e) {
+                    flash()->error(tr('Errore durante l\'eliminazione della riga!'));
+                }
             }
-
-            //$dbo->query("UPDATE in_interventi SET idstatointervento = (SELECT idstatointervento FROM in_statiintervento WHERE descrizione = 'Completato') WHERE id=".prepare($idintervento));
-
-            flash()->info(tr('Intervento _NUM_ rimosso!', [
-                '_NUM_' => $idintervento,
-            ]));
         }
         break;
 
     // Scollegamento riga generica da documento
     case 'delete_riga':
         $id_riga = post('idriga');
+        $type = post('type');
+        $riga = $fattura->getRiga($type, $id_riga);
 
-        if (!empty($id_riga)) {
-            $riga = $fattura->getRighe()->find($id_riga);
-
+        if (!empty($riga)) {
             try {
                 $riga->delete();
 

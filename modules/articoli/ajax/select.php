@@ -9,6 +9,7 @@ switch ($resource) {
             $query = 'SELECT 
                 mg_articoli.id, 
                 mg_articoli.codice, 
+                mg_articoli.barcode, 
                 mg_articoli.descrizione,
                 round(mg_articoli.qta,'.setting('Cifre decimali per quantità').') AS qta, 
                 mg_articoli.um, 
@@ -43,7 +44,9 @@ switch ($resource) {
             $query = 'SELECT 
                 mg_articoli.id, 
                 mg_articoli.codice, 
-                mg_articoli.descrizione,	
+                mg_articoli.barcode, 
+                mg_articoli.descrizione,
+                round(mg_articoli.qta,'.setting('Cifre decimali per quantità').') AS qta, 	
                 mg_articoli.um, 
                 mg_articoli.idiva_vendita, 
                 mg_articoli.idconto_vendita, 
@@ -63,8 +66,8 @@ switch ($resource) {
                     LEFT JOIN co_pianodeiconti2 AS conto_vendita_categoria ON conto_vendita_sottocategoria.idpianodeiconti2=conto_vendita_categoria.id
                 LEFT JOIN co_pianodeiconti3 AS conto_acquisto_sottocategoria ON conto_acquisto_sottocategoria.id=mg_articoli.idconto_acquisto
                     LEFT JOIN co_pianodeiconti2 AS conto_acquisto_categoria ON conto_acquisto_sottocategoria.idpianodeiconti2=conto_acquisto_categoria.id
-                LEFT JOIN mg_movimenti ON mg_movimenti.idarticolo=mg_articoli.id
-                LEFT JOIN an_sedi ON an_sedi.id = mg_movimenti.idsede_azienda           
+                LEFT JOIN (SELECT idarticolo, idsede_azienda, idsede_controparte FROM mg_movimenti GROUP BY idarticolo) movimenti ON movimenti.idarticolo=mg_articoli.id
+                LEFT JOIN an_sedi ON an_sedi.id = movimenti.idsede_azienda           
             |where|
             GROUP BY
                 mg_articoli.id
@@ -109,6 +112,7 @@ switch ($resource) {
             'idconto_acquisto_title' => 'idconto_acquisto_title',
             'prezzo_acquisto' => 'prezzo_acquisto',
             'prezzo_vendita' => 'prezzo_vendita',
+            'barcode' => 'barcode',
         ];
 
         $data = AJAX::selectResults($query, $where, $filter, $search_fields, $limit, $custom);
@@ -178,6 +182,7 @@ switch ($resource) {
                 'text' => $r['codice'].' - '.$r['descrizione'].' ('.Translator::numberToLocale($qta).(!empty($r['um']) ? ' '.$r['um'] : '').')',
                 'codice' => $r['codice'],
                 'descrizione' => $r['descrizione'],
+                'barcode' => $r['barcode'],
                 'qta' => $r['qta'],
                 'um' => $r['um'],
                 'idiva_vendita' => $idiva,
@@ -216,7 +221,7 @@ switch ($resource) {
         break;
 
     case 'categorie':
-        $query = 'SELECT id, nome AS descrizione FROM mg_categorie |where| ORDER BY id';
+        $query = 'SELECT id, nome AS descrizione FROM mg_categorie |where| ORDER BY nome';
 
         foreach ($elements as $element) {
             $filter[] = 'id='.prepare($element);
@@ -232,7 +237,7 @@ switch ($resource) {
 
     case 'sottocategorie':
         if (isset($superselect['id_categoria'])) {
-            $query = 'SELECT id, nome AS descrizione FROM mg_categorie |where| ORDER BY id';
+            $query = 'SELECT id, nome AS descrizione FROM mg_categorie |where| ORDER BY nome';
 
             foreach ($elements as $element) {
                 $filter[] = 'id='.prepare($element);

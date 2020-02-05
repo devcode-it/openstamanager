@@ -31,6 +31,9 @@ switch (post('op')) {
         $ddt = DDT::build($anagrafica, $tipo, $data);
         $id_record = $ddt->id;
 
+        $ddt->idcausalet = post('idcausalet');
+        $ddt->save();
+
         flash()->info(tr('Aggiunto ddt in _TYPE_ numero _NUM_!', [
             '_TYPE_' => $dir,
             '_NUM_' => $ddt->numero,
@@ -80,6 +83,7 @@ switch (post('op')) {
                 'idsede_partenza' => post('idsede_partenza'),
                 'idsede_destinazione' => post('idsede_destinazione'),
                 'idvettore' => post('idvettore'),
+                'data_ora_trasporto' => post('data_ora_trasporto'),
                 'idporto' => post('idporto'),
                 'idaspettobeni' => post('idaspettobeni'),
                 'idrivalsainps' => $idrivalsainps,
@@ -281,10 +285,11 @@ switch (post('op')) {
     // Scollegamento riga generica da ddt
     case 'delete_riga':
         $id_riga = post('idriga');
+        $type = post('type');
 
-        if (!empty($id_riga)) {
-            $riga = $ddt->getRighe()->find($id_riga);
+        $riga = $ddt->getRiga($type, $id_riga);
 
+        if (!empty($riga)) {
             try {
                 $riga->delete();
 

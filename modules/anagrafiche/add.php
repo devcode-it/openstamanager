@@ -18,7 +18,7 @@ echo '
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "'.tr('Tipo di anagrafica').'", "name": "idtipoanagrafica[]", "multiple": "1", "required": 1, "values": "query=SELECT idtipoanagrafica AS id, descrizione FROM an_tipianagrafiche WHERE idtipoanagrafica NOT IN (SELECT DISTINCT(x.idtipoanagrafica) FROM an_tipianagrafiche_anagrafiche x INNER JOIN an_tipianagrafiche t ON x.idtipoanagrafica = t.idtipoanagrafica INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = x.idanagrafica WHERE t.descrizione = \'Azienda\' AND deleted_at IS NULL) ORDER BY descrizione", "value": "'.(isset($idtipoanagrafica) ? $idtipoanagrafica : null).'", "readonly": '.(!empty($readonly_tipo) ? 1 : 0).' ]}
+			{[ "type": "select", "label": "'.tr('Tipo di anagrafica').'", "name": "idtipoanagrafica[]", "multiple": "1", "required": 1, "values": "query=SELECT idtipoanagrafica AS id, descrizione FROM an_tipianagrafiche WHERE idtipoanagrafica NOT IN (SELECT DISTINCT(x.idtipoanagrafica) FROM an_tipianagrafiche_anagrafiche x INNER JOIN an_tipianagrafiche t ON x.idtipoanagrafica = t.idtipoanagrafica INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = x.idanagrafica WHERE t.descrizione = \'Azienda\' AND deleted_at IS NULL) ORDER BY descrizione", "value": "'.(isset($idtipoanagrafica) ? $idtipoanagrafica : null).'", "readonly": '.(!empty(get('readonly_tipo')) ? 1 : 0).' ]}
 		</div>
 	</div>
 
@@ -125,29 +125,29 @@ echo
 
 <script>
     // Abilito solo ragione sociale oppure solo nome-cognome in base a cosa compilo
-    $('#nome_, #cognome', '#bs-popup, #bs-popup2').blur(function(){
-        if ($('#nome_', '#bs-popup, #bs-popup2').val() == '' && $('#cognome', '#bs-popup, #bs-popup2').val() == '' ){
-            $('#nome_, #cognome', '#bs-popup, #bs-popup2').prop('disabled', true).prop('required', false);
-            $('#ragione_sociale', '#bs-popup, #bs-popup2').prop('disabled', false).prop('required', true);
+    $('#nome_, #cognome', '#modals > div').blur(function(){
+        if ($('#nome_', '#modals > div').val() == '' && $('#cognome', '#modals > div').val() == '' ){
+            $('#nome_, #cognome', '#modals > div').prop('disabled', true).prop('required', false);
+            $('#ragione_sociale', '#modals > div').prop('disabled', false).prop('required', true);
         }else{
-            $('#nome_, #cognome', '#bs-popup, #bs-popup2').prop('disabled', false).prop('required', true);
-            $('#ragione_sociale', '#bs-popup, #bs-popup2').prop('disabled', true).prop('required', false);
+            $('#nome_, #cognome', '#modals > div').prop('disabled', false).prop('required', true);
+            $('#ragione_sociale', '#modals > div').prop('disabled', true).prop('required', false);
         }
     });
 
-    $('#ragione_sociale', '#bs-popup, #bs-popup2').blur(function(){
-        if ($('#ragione_sociale', '#bs-popup, #bs-popup2').val() == '' ){
-            $('#nome_, #cognome', '#bs-popup, #bs-popup2').prop('disabled', false).prop('required', true);
-            $('#ragione_sociale', '#bs-popup, #bs-popup2').prop('disabled', true).prop('required', false);
+    $('#ragione_sociale', '#modals > div').blur(function(){
+        if ($('#ragione_sociale', '#modals > div').val() == '' ){
+            $('#nome_, #cognome', '#modals > div').prop('disabled', false).prop('required', true);
+            $('#ragione_sociale', '#modals > div').prop('disabled', true).prop('required', false);
         }else{
-            $('#nome_, #cognome', '#bs-popup, #bs-popup2').prop('disabled', true).prop('required', false);
-            $('#ragione_sociale', '#bs-popup, #bs-popup2').prop('disabled', false).prop('required', true);
+            $('#nome_, #cognome', '#modals > div').prop('disabled', true).prop('required', false);
+            $('#ragione_sociale', '#modals > div').prop('disabled', false).prop('required', true);
         }
     });
 
-	$('#id_nazione', '#bs-popup, #bs-popup2').change(function(){
+	$('#id_nazione', '#modals > div').change(function(){
 		if ($(this).find('option:selected').data('text')=='IT - Italia'){
-			$('#codice_destinatario',  '#bs-popup, #bs-popup2').removeAttr('readonly');
+			$('#codice_destinatario',  '#modals > div').removeAttr('readonly');
 		}
 	});
 

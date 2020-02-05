@@ -2,9 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-// Righe documento
-$righe = $preventivo->getRighe();
-
 echo '
 <table class="table table-striped table-hover table-condensed table-bordered">
     <thead>
@@ -20,6 +17,8 @@ echo '
 	</thead>
     <tbody class="sortable">';
 
+// Righe documento
+$righe = $preventivo->getRighe();
 foreach ($righe as $riga) {
     echo '
         <tr data-id="'.$riga->id.'">';
@@ -92,16 +91,15 @@ foreach ($righe as $riga) {
 
     if (empty($record['is_completato'])) {
         echo '
-                <form action="" method="post" id="delete-form-'.$riga->id.'" role="form">
-                    <input type="hidden" name="backto" value="record-edit">
-                    <input type="hidden" name="op" value="delete_riga">
-                    <input type="hidden" name="idriga" value="'.$riga->id.'">
+                <div class="btn-group">
+                    <a class="btn btn-xs btn-warning" onclick="editRow(\''.addslashes(get_class($riga)).'\', '.$riga->id.')">
+                        <i class="fa fa-edit"></i>
+                    </a>
 
-                    <div class="btn-group">
-                        <a class="btn btn-xs btn-warning" onclick="editRow('.$riga->id.')"><i class="fa fa-edit"></i></a>
-                        <a class="btn btn-xs btn-danger" onclick="deleteRow('.$riga->id.')"><i class="fa fa-trash"></i></a>
-                    </div>
-                </form>';
+                    <a class="btn btn-xs btn-danger" onclick="deleteRow(\''.addslashes(get_class($riga)).'\', '.$riga->id.')">
+                        <i class="fa fa-trash"></i>
+                    </a>
+                </div>';
     }
 
     echo '
@@ -119,13 +117,18 @@ echo '
 
 echo '
 <script>
-function editRow(id){
-    launch_modal("'.tr('Modifica riga').'", "'.$module->fileurl('row-edit.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&idriga=" + id);
+function editRow(type, id){
+    launch_modal("'.tr('Modifica riga').'", "'.$module->fileurl('row-edit.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&idriga=" + id + "&type=" + encodeURIComponent(type));
 }
 
-function deleteRow(id){
+function deleteRow(type, id){
     if(confirm("'.tr('Rimuovere questa riga dal documento?').'")){
-        $("#delete-form-" + id).submit();
+        redirect("", {
+            backto: "record-edit",
+            op: "delete_riga",
+            idriga: id,
+            type: type,
+        }, "post");
     }
 }
 </script>';
@@ -201,7 +204,7 @@ echo '
 
 // Margine
 $margine = $preventivo->margine;
-$margine_style = $margine <= 0 ? 'background-color: #FFC6C6; border: 3px solid red' : '';
+$margine_style = ($margine <= 0 and $preventivo->totale > 0) ? 'background-color: #FFC6C6; border: 3px solid red' : '';
 
 echo '
 <tr>

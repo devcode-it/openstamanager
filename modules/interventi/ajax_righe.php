@@ -128,11 +128,11 @@ if (!$righe->isEmpty()) {
             }
 
             echo '
-                <button type="button" class="btn btn-warning btn-xs" data-toggle="tooltip" onclick="launch_modal(\''.tr('Modifica').'\', \''.$link.'?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'\');">
+                <button type="button" class="btn btn-warning btn-xs" data-toggle="tooltip" onclick="launch_modal(\''.tr('Modifica').'\', \''.$link.'?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'&type='.urlencode(get_class($riga)).'\');">
                     <i class="fa fa-edit"></i>
                 </button>
 
-                <button type="button" class="btn btn-danger btn-xs" data-toggle="tooltip" onclick="if(confirm(\''.tr('Eliminare questa riga?').'\')){ elimina_riga( \''.$r['id'].'\' ); }">
+                <button type="button" class="btn btn-danger btn-xs" data-toggle="tooltip" onclick="elimina_riga(\''.addslashes(get_class($riga)).'\', \''.$riga->id.'\');">
                     <i class="fa fa-trash"></i>
                 </button>
             </td>';
@@ -152,24 +152,26 @@ if (!$righe->isEmpty()) {
 ?>
 
 <script type="text/javascript">
-    function elimina_riga( id ){
-        $.post(globals.rootdir + '/actions.php', {
-            op: 'delete_riga',
-            id_module: globals.id_module,
-            id_record: globals.id_record,
-            idriga: id
-        }, function(data, result){
-            if(result == 'success'){
-                // Ricarico le righe
-                $('#righe').load('<?php echo $module->fileurl('ajax_righe.php'); ?>?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
+    function elimina_riga(type, id){
+        if(confirm('<?php echo tr('Eliminare questa riga?'); ?>')) {
+            $.post(globals.rootdir + '/actions.php', {
+                op: 'delete_riga',
+                id_module: globals.id_module,
+                id_record: globals.id_record,
+                type: type,
+                idriga: id,
+            }, function (data, result) {
+                if (result == 'success') {
+                    // Ricarico le righe
+                    $('#righe').load('<?php echo $module->fileurl('ajax_righe.php'); ?>?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
 
-                // Ricarico la tabella dei costi
-                $('#costi').load('<?php echo $module->fileurl('ajax_costi.php'); ?>?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
+                    // Ricarico la tabella dei costi
+                    $('#costi').load('<?php echo $module->fileurl('ajax_costi.php'); ?>?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
 
-
-                // Toast
-                alertPush();
-            }
-        });
+                    // Toast
+                    alertPush();
+                }
+            });
+        }
     }
 </script>

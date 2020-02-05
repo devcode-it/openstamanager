@@ -391,7 +391,7 @@ class Fattura extends Document
 
             foreach ($rate as $rata) {
                 $scadenza = $rata['DataScadenzaPagamento'] ?: $this->data;
-                $importo = -$rata['ImportoPagamento'];
+                $importo = ($this->isNota()) ? $rata['ImportoPagamento'] : -$rata['ImportoPagamento'];
 
                 self::registraScadenza($this, $importo, $scadenza, $is_pagato);
             }
@@ -719,7 +719,7 @@ class Fattura extends Document
         $ultimo = Generator::getPreviousFrom($maschera, 'co_documenti', 'numero_esterno', [
             'YEAR(data) = '.prepare(date('Y', strtotime($data))),
             'id_segment = '.prepare($id_segment),
-        ]);
+        ], $data);
         $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data));
 
         return $numero;

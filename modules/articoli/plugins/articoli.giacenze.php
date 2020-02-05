@@ -201,7 +201,7 @@ echo '
 	</div>
 </div>';
 
-$sedi = $dbo->fetchArray('(SELECT "0" AS id, "Sede legale" AS nomesede) UNION (SELECT id, CONCAT(nomesede, " - ", citta ) AS nomesede FROM an_sedi WHERE idanagrafica='.prepare(setting('Azienda predefinita')).')');
+$sedi = $dbo->fetchArray('(SELECT "0" AS id, CONCAT_WS (" - ", "Sede legale", citta) AS nomesede FROM an_anagrafiche WHERE  idanagrafica = '.prepare(setting('Azienda predefinita')).') UNION (SELECT id, CONCAT_WS(" - ", nomesede, citta ) AS nomesede FROM an_sedi WHERE idanagrafica='.prepare(setting('Azienda predefinita')).')');
 
 echo '
 <div class="row">
@@ -236,7 +236,7 @@ foreach ($sedi as $sede) {
     echo '
                         <tr>
                             <td>'.$sede['nomesede'].'</td>
-                            <td class="text-right">'.Translator::numberToLocale($qta_azienda['qta'] - $qta_controparte['qta']).'</td>
+                            <td class="text-right">'.Translator::numberToLocale($qta_azienda['qta'] - $qta_controparte['qta']).' '.$articolo->um.'</td>
                         </tr>';
 }
 

@@ -316,7 +316,7 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
     // 6) Aggiungo la ritenuta enasarco se c'è
     // Lettura id conto ritenuta e la storno subito
     if ($totale_ritenutacontributi != 0) {
-        $idconto_ritenutaenasarco = setting("Conto per Erario c/enasarco");
+        $idconto_ritenutaenasarco = setting('Conto per Erario c/enasarco');
 
         // DARE nel conto ritenuta
         $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_ritenutaenasarco).', '.prepare($totale_ritenutacontributi * $segno_mov5_ritenutaacconto).', '.prepare($primanota).')';

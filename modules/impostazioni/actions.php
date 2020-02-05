@@ -7,11 +7,15 @@ switch (filter('op')) {
         $is_all_valid = true;
 
         foreach (post('setting') as $id => $value) {
+            $result = Settings::get($id);
+
+            if (preg_match("/multiple\[(.+?)\]/", $result['tipo'], $m)) {
+                $value = implode(',', $value);
+            }
+
             $is_valid = Settings::setValue($id, $value);
 
             if (!$is_valid) {
-                $result = Settings::get($id);
-
                 // integer
                 if ($result['tipo'] == 'integer') {
                     flash()->error(tr('Il valore inserito del parametro _NAME_ deve essere un numero intero!', [

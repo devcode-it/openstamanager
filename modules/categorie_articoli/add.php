@@ -68,16 +68,16 @@ if (isset($id_record)) {
 
 <script>
 		$(document).ready( function(){
-			$('#bs-popup .colorpicker').colorpicker().on('changeColor', function(){
-				$('#bs-popup #colore_').parent().find('.square').css('background', $('#bs-popup #colore_').val());
+			$('#modals > div .colorpicker').colorpicker().on('changeColor', function(){
+				$('#modals > div #colore_').parent().find('.square').css('background', $('#modals > div #colore_').val());
 			});
 
-			$('#bs-popup #colore_').parent().find('.square').css('background', $('#bs-popup #colore_').val());
+			$('#modals > div #colore_').parent().find('.square').css('background', $('#modals > div #colore_').val());
             
-            $('#bs-popup2 .colorpicker').colorpicker().on('changeColor', function(){
-				$('#bs-popup2 #colore_').parent().find('.square').css('background', $('#bs-popup2 #colore_').val());
+            $('#modals > div .colorpicker').colorpicker().on('changeColor', function(){
+				$('#modals > div #colore_').parent().find('.square').css('background', $('#modals > div #colore_').val());
 			});
 
-			$('#bs-popup2 #colore_').parent().find('.square').css('background', $('#bs-popup2 #colore_').val());
+			$('#modals > div #colore_').parent().find('.square').css('background', $('#modals > div #colore_').val());
 		});
 </script>

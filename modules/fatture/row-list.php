@@ -34,8 +34,8 @@ foreach ($righe as $riga) {
         $r['descrizione_conto'] = $dbo->fetchOne('SELECT descrizione FROM co_pianodeiconti3 WHERE id = '.prepare($r['idconto']))['descrizione'];
     }
 
-    $r['ritenuta_acconto'] = !empty($fattura->ritenuta_acconto) ? moneyFormat(abs($fattura->ritenuta_acconto), 2) : null;
-    $r['ritenuta_contributi'] = !empty($fattura->totale_ritenuta_contributi) ? moneyFormat(abs($fattura->totale_ritenuta_contributi), 2) : null;
+    $r['ritenuta_acconto'] = !empty($r['idritenutaacconto']) ? moneyFormat(abs($r['ritenutaacconto']), 2) : null;
+    $r['ritenuta_contributi'] = !empty($r['ritenuta_contributi']) ? moneyFormat(abs($r['ritenuta_contributi']), 2) : null;
 
     $extra = '';
 

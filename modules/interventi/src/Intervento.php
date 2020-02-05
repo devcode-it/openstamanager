@@ -169,12 +169,15 @@ class Intervento extends Document
 
         //$ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice');
 
-        if (setting('Ingnora il periodo temporale per il calcolo del codice attività')){
-            $ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice', []);
-        }else{
+       
+        if ((strpos($maschera, 'YYYY') !== false) or (strpos($maschera, 'yy') !== false)) {
+            
             $ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice', [
                 'YEAR(data_richiesta) = '.prepare(date('Y', strtotime($data))),
             ]);
+
+        }else{
+            $ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice');
         }
 
         $numero = Generator::generate($maschera, $ultimo);

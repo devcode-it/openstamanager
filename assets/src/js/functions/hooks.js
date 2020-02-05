@@ -124,12 +124,12 @@ function updateHook(hook) {
 
             if (number == 0) {
                 $("#hooks-notified").html('<i class="fa fa-check" aria-hidden="true"></i>');
-                $("#hooks-label").removeClass('label-warning');
-                $("#hooks-label").addClass('label-success');
+                $("#hooks-label").removeClass();
+                $("#hooks-label").addClass('label').addClass('label-success');
             }else{
                 $("#hooks-notified").text(number);
-                $("#hooks-label").removeClass('label-success');
-                $("#hooks-label").addClass('label-warning');
+                $("#hooks-label").removeClass();
+                $("#hooks-label").addClass('label').addClass('label-danger');
             }
 
             if (counter == $("#hooks-number").text()) {

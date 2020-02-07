@@ -4,8 +4,6 @@ include_once __DIR__.'/../../core.php';
 
 use Models\Module;
 
-$enable_readonly = !setting('Modifica Viste di default');
-
 echo '
 <form action="" method="post" role="form">
 	<input type="hidden" name="backto" value="record-edit">

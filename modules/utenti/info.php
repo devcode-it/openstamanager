@@ -54,7 +54,7 @@ echo '
             
             <div class="col-sm-4 border-right">
                 <div class="description-block">
-                    <a class="btn btn-info btn-block tip" data-href="'.$module->fileurl('self.php').'?id_module='.$module->id.'&resource=photo" data-toggle="modal" data-title="'.tr('Cambia foto utente').'">
+                    <a class="btn btn-info btn-block tip '.(($module) ? '' : 'disabled').'" data-href="'.(($module) ? ($module->fileurl('self.php').'?id_module='.$module->id): '#').'&resource=photo" data-toggle="modal" data-title="'.tr('Cambia foto utente').'">
                         <i class="fa fa-picture-o"></i> '.tr('Cambia foto utente').'
                     </a>
                 </div>
@@ -62,7 +62,7 @@ echo '
             
             <div class="col-sm-4 border-right">
                 <div class="description-block">
-                    <a class="btn btn-warning btn-block tip" data-href="'.$module->fileurl('self.php').'?id_module='.$module->id.'&resource=password" data-toggle="modal" data-title="'.tr('Cambia password').'">
+                    <a class="btn btn-warning btn-block tip '.(($module) ? '' : 'disabled').'" data-href="'.(($module) ? $module->fileurl('self.php').'?id_module='.$module->id: '#').'&resource=password" data-toggle="modal" data-title="'.tr('Cambia password').'">
                         <i class="fa fa-unlock-alt"></i> '.tr('Cambia password').'
                     </a>
                 </div>

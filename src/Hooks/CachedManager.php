@@ -52,21 +52,23 @@ abstract class CachedManager extends Manager
     {
         $hook = self::getHook();
 
-        // Rimozione cache precedente
-        $database = database();
-        $database->delete('zz_hook_cache', [
-            'hook_id' => $hook->id,
-        ]);
+        if( !empty($hook) ){
+            // Rimozione cache precedente
+            $database = database();
+            $database->delete('zz_hook_cache', [
+                'hook_id' => $hook->id,
+            ]);
 
-        // Aggiunta del risultato come cache
-        $cache = json_encode($results);
-        $database->insert('zz_hook_cache', [
-            'hook_id' => $hook->id,
-            'results' => $cache,
-        ]);
+            // Aggiunta del risultato come cache
+            $cache = json_encode($results);
+            $database->insert('zz_hook_cache', [
+                'hook_id' => $hook->id,
+                'results' => $cache,
+            ]);
 
-        self::$cache = $results;
-        self::$is_cached = null;
+            self::$cache = $results;
+            self::$is_cached = null;
+        }
     }
 
     public static function isCached()

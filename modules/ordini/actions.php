@@ -286,7 +286,7 @@ $riga = $ordine->getRiga($type, $id_riga);
     case 'add_preventivo':
         $preventivo = \Modules\Preventivi\Preventivo::find(post('id_documento'));
 
-        // Creazione della fattura al volo
+        // Creazione dell' ordine al volo
         if (post('create_document') == 'on') {
             $tipo = Tipo::where('dir', $dir)->first();
 
@@ -307,7 +307,7 @@ $riga = $ordine->getRiga($type, $id_riga);
         $parziale = false;
         $righe = $preventivo->getRighe();
         foreach ($righe as $riga) {
-            if (post('evadere')[$riga->id] == 'on') {
+            if (post('evadere')[$riga->id] == 'on' and !empty(post('qta_da_evadere')[$riga->id])) {
                 $qta = post('qta_da_evadere')[$riga->id];
 
                 $copia = $riga->copiaIn($ordine, $qta);

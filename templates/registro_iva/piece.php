@@ -29,7 +29,7 @@ if ($record['numero'] == $previous_number) {
             <td>'.$record['numero_esterno'].'</td>
             <td>'.Translator::datetoLocale($record['data']).'</td>
             <td>'.$record['codice_tipo_documento_fe'].'</td>
-            <td>'.$record['codice_anagrafica'].' / '.tr($record['ragione_sociale'], [], ['upper' => true]).'</td>
+            <td>'.$record['codice_anagrafica'].' / '.safe_truncate(mb_strtoupper(html_entity_decode($record['ragione_sociale']), 'UTF-8'), 50).'</td>
             <td>'.moneyFormat($record['totale']).'</td>';
 }
 

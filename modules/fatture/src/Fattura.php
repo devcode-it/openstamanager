@@ -463,7 +463,7 @@ class Fattura extends Document
 
         // Se c'è una ritenuta d'acconto, la aggiungo allo scadenzario
         if ($direzione == 'uscita' && $ritenuta_acconto > 0) {
-            $data = $this->data;
+            $data = date( 'Y-m', strtotime($this->data) ).'-01';
             $scadenza = date('Y-m', strtotime($data.' +1 month')).'-15';
             $importo = -$ritenuta_acconto;
 

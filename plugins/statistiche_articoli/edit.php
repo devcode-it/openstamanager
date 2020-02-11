@@ -78,15 +78,13 @@ echo '
 
 $statistiche = Modules::get('Statistiche');
 
-if( $statistiche->enabled==1 ){
-
+if( $statistiche != null ){
     echo '
     <script src="'.$statistiche->fileurl('js/functions.js').'"></script>
     <script src="'.$statistiche->fileurl('js/manager.js').'"></script>
     <script src="'.$statistiche->fileurl('js/calendar.js').'"></script>
     <script src="'.$statistiche->fileurl('js/stat.js').'"></script>
-    <script src="'.$statistiche->fileurl('js/stats/table.js').'"></script>
-    <script src="'.$statistiche->fileurl('js/init.js').'"></script>';
+    <script src="'.$statistiche->fileurl('js/stats/table.js').'"></script>';
 }
 
 echo'
@@ -104,3 +102,8 @@ function init_calendar(calendar) {
     calendar.addElement(prezzo_vendita);
 }
 </script>';
+
+if( $statistiche != null ){
+    echo '
+    <script src="'.$statistiche->fileurl('js/init.js').'"></script>';
+}

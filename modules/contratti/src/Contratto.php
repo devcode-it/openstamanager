@@ -30,8 +30,7 @@ class Contratto extends Document
     /**
      * Crea un nuovo contratto.
      *
-     * @param Anagrafica $anagrafica
-     * @param string     $nome
+     * @param string $nome
      *
      * @return self
      */
@@ -163,8 +162,6 @@ class Contratto extends Document
     /**
      * Effettua un controllo sui campi del documento.
      * Viene richiamatp dalle modifiche alle righe del documento.
-     *
-     * @param Description $trigger
      */
     public function triggerEvasione(Description $trigger)
     {

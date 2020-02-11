@@ -160,8 +160,6 @@ class HTMLBuilder
     /**
      * Esegue la sostituzione per un singolo tag personalizzato con il relativo codice HTML.
      *
-     * @param array $json
-     *
      * @return string
      */
     public static function parse(array $json)

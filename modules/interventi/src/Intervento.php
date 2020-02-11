@@ -18,10 +18,7 @@ class Intervento extends Document
     /**
      * Crea un nuovo intervento.
      *
-     * @param Anagrafica   $anagrafica
-     * @param TipoSessione $tipo_sessione
-     * @param Stato        $stato
-     * @param string       $data_richiesta
+     * @param string $data_richiesta
      *
      * @return self
      */

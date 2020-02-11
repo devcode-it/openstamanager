@@ -169,8 +169,6 @@ abstract class Document extends Model
     /**
      * Metodo richiamato a seguito di modifiche sull'evasione generale delle righe del documento.
      * Utilizzabile per limpostazione automatica degli stati.
-     *
-     * @param Description $trigger
      */
     public function triggerEvasione(Description $trigger)
     {
@@ -180,8 +178,6 @@ abstract class Document extends Model
     /**
      * Metodo richiamato a seguito della modifica o creazione di una riga del documento.
      * Utilizzabile per limpostazione automatica di campi statici del documento.
-     *
-     * @param Description $trigger
      */
     public function triggerComponent(Description $trigger)
     {

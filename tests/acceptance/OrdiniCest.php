@@ -17,8 +17,6 @@ class OrdiniCest
 
     /**
      * Crea un nuovo ordine.
-     *
-     * @param AcceptanceTester $t
      */
     public function testOrdineCliente(AcceptanceTester $t)
     {
@@ -31,8 +29,6 @@ class OrdiniCest
 
     /**
      * Crea un nuovo ordine.
-     *
-     * @param AcceptanceTester $t
      */
     public function testOrdineFornitore(AcceptanceTester $t)
     {
@@ -52,8 +48,6 @@ class OrdiniCest
 
     /**
      * Crea un nuovo ordine.
-     *
-     * @param AcceptanceTester $t
      */
     protected function addOrdine(AcceptanceTester $t, $entrata, $anagrafica)
     {
@@ -76,8 +70,6 @@ class OrdiniCest
 
     /**
      * Crea una nuova anagrafica di tipo cliente e la elimina.
-     *
-     * @param AcceptanceTester $t
      */
     protected function addAndDeleteOrdine(AcceptanceTester $t, $entrata, $anagrafica = 2)
     {

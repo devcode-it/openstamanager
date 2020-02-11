@@ -30,10 +30,8 @@ class Fattura extends Document
     /**
      * Crea una nuova fattura.
      *
-     * @param Anagrafica $anagrafica
-     * @param Tipo       $tipo_documento
-     * @param string     $data
-     * @param int        $id_segment
+     * @param string $data
+     * @param int    $id_segment
      *
      * @return self
      */
@@ -421,11 +419,10 @@ class Fattura extends Document
     /**
      * Registra una specifica scadenza nel database.
      *
-     * @param Fattura $fattura
-     * @param float   $importo
-     * @param string  $data_scadenza
-     * @param bool    $is_pagato
-     * @param string  $type
+     * @param float  $importo
+     * @param string $data_scadenza
+     * @param bool   $is_pagato
+     * @param string $type
      */
     public static function registraScadenza(Fattura $fattura, $importo, $data_scadenza, $is_pagato, $type = 'fattura')
     {
@@ -463,7 +460,7 @@ class Fattura extends Document
 
         // Se c'è una ritenuta d'acconto, la aggiungo allo scadenzario
         if ($direzione == 'uscita' && $ritenuta_acconto > 0) {
-            $data = date( 'Y-m', strtotime($this->data) ).'-01';
+            $data = date('Y-m', strtotime($this->data)).'-01';
             $scadenza = date('Y-m', strtotime($data.' +1 month')).'-15';
             $importo = -$ritenuta_acconto;
 
@@ -481,8 +478,6 @@ class Fattura extends Document
 
     /**
      * Salva la fattura, impostando i campi dipendenti dai singoli parametri.
-     *
-     * @param array $options
      *
      * @return bool
      */

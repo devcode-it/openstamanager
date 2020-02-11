@@ -21,7 +21,6 @@ class Dichiarazione extends Model
     /**
      * Crea una nuova dichiarazione d'intento.
      *
-     * @param Anagrafica $anagrafica
      * @param $data
      * @param $numero_protocollo
      * @param $numero_progressivo

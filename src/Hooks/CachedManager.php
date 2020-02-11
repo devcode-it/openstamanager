@@ -52,7 +52,7 @@ abstract class CachedManager extends Manager
     {
         $hook = self::getHook();
 
-        if( !empty($hook) ){
+        if (!empty($hook)) {
             // Rimozione cache precedente
             $database = database();
             $database->delete('zz_hook_cache', [

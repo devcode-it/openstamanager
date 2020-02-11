@@ -115,8 +115,6 @@ abstract class Description extends Model
 
     /**
      * Imposta il proprietario dell'oggetto e l'ordine relativo all'interno delle righe.
-     *
-     * @param Document $document
      */
     public function setParent(Document $document)
     {
@@ -131,7 +129,6 @@ abstract class Description extends Model
     /**
      * Copia l'oggetto (articolo, riga, descrizione) nel corrispettivo per il documento indicato.
      *
-     * @param Document   $document
      * @param float|null $qta
      *
      * @return self

@@ -16,9 +16,6 @@ class Articolo extends Article
     /**
      * Crea un nuovo articolo collegato ad una ddt.
      *
-     * @param DDT      $ddt
-     * @param Original $articolo
-     *
      * @return self
      */
     public static function build(DDT $ddt, Original $articolo)

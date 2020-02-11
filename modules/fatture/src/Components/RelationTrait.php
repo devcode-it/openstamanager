@@ -150,8 +150,6 @@ trait RelationTrait
     /**
      * Salva la riga, impostando i campi dipendenti dai parametri singoli.
      *
-     * @param array $options
-     *
      * @return bool
      */
     public function save(array $options = [])

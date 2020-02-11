@@ -17,8 +17,6 @@ class DDTCest
 
     /**
      * Crea un nuovo ddt.
-     *
-     * @param AcceptanceTester $t
      */
     public function testDdtDiVendita(AcceptanceTester $t)
     {
@@ -31,8 +29,6 @@ class DDTCest
 
     /**
      * Crea un nuovo ddt.
-     *
-     * @param AcceptanceTester $t
      */
     public function testDdtDiAcquisto(AcceptanceTester $t)
     {
@@ -48,8 +44,6 @@ class DDTCest
 
     /**
      * Crea un nuovo ddt.
-     *
-     * @param AcceptanceTester $t
      */
     protected function addDdt(AcceptanceTester $t, $entrata, $anagrafica, $tipo)
     {
@@ -73,8 +67,6 @@ class DDTCest
 
     /**
      * Crea una nuova anagrafica di tipo cliente e la elimina.
-     *
-     * @param AcceptanceTester $t
      */
     protected function addAndDeleteDdt(AcceptanceTester $t, $entrata, $anagrafica, $tipo)
     {

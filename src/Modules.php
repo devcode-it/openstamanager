@@ -208,7 +208,6 @@ class Modules
     /**
      * Restituisce tutte le informazioni dei moduli installati in una scala gerarchica fino alla profondità indicata.
      *
-     *
      * @param int $depth
      *
      * @return array

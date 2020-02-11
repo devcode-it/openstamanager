@@ -14,8 +14,6 @@ class Riga extends Row
     /**
      * Crea una nuova riga collegata ad una ddt.
      *
-     * @param DDT $ddt
-     *
      * @return self
      */
     public static function build(DDT $ddt)

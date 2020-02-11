@@ -13,9 +13,8 @@ class RowHelper extends \Codeception\Module
     /**
      * Aggiunge un nuovo sconto.
      *
-     * @param AcceptanceTester $t
-     * @param string           $value
-     * @param int              $type
+     * @param string $value
+     * @param int    $type
      */
     public function addDiscount(AcceptanceTester $t, $descrizione, $value, $type)
     {
@@ -42,15 +41,14 @@ class RowHelper extends \Codeception\Module
     /**
      * Aggiunge una nuova riga.
      *
-     * @param AcceptanceTester $t
-     * @param string           $descrizione
-     * @param int              $qta
-     * @param float            $prezzo
-     * @param int              $sconto
-     * @param string           $tipo_sconto
-     * @param int              $id_iva
-     * @param int              $id_rivalsa_inps
-     * @param int              $id_ritenuta_acconto
+     * @param string $descrizione
+     * @param int    $qta
+     * @param float  $prezzo
+     * @param int    $sconto
+     * @param string $tipo_sconto
+     * @param int    $id_iva
+     * @param int    $id_rivalsa_inps
+     * @param int    $id_ritenuta_acconto
      */
     public function addRow(AcceptanceTester $t, $descrizione, $qta, $prezzo, $sconto = 0, $tipo_sconto = 'UNT', $id_iva = null, $id_rivalsa_inps = null, $id_ritenuta_acconto = null)
     {
@@ -71,15 +69,14 @@ class RowHelper extends \Codeception\Module
     /**
      * Aggiunge un nuovo articolo.
      *
-     * @param AcceptanceTester $t
-     * @param string           $descrizione
-     * @param int              $qta
-     * @param float            $prezzo
-     * @param int              $sconto
-     * @param string           $tipo_sconto
-     * @param int              $id_iva
-     * @param int              $id_rivalsa_inps
-     * @param int              $id_ritenuta_acconto
+     * @param string $descrizione
+     * @param int    $qta
+     * @param float  $prezzo
+     * @param int    $sconto
+     * @param string $tipo_sconto
+     * @param int    $id_iva
+     * @param int    $id_rivalsa_inps
+     * @param int    $id_ritenuta_acconto
      */
     public function addArticle(AcceptanceTester $t, $id_articolo, $descrizione, $qta, $prezzo, $sconto = 0, $tipo_sconto = 'UNT', $id_iva = null, $id_rivalsa_inps = null, $id_ritenuta_acconto = null)
     {
@@ -100,8 +97,6 @@ class RowHelper extends \Codeception\Module
 
     /**
      * Undocumented function.
-     *
-     * @param AcceptanceTester $t
      */
     public function testImporti(AcceptanceTester $t, $direzione = 'entrata')
     {
@@ -154,15 +149,14 @@ class RowHelper extends \Codeception\Module
     /**
      * Completa le informazioni per la creazione di un nuovo elemento.
      *
-     * @param AcceptanceTester $t
-     * @param [type]           $descrizione
-     * @param [type]           $qta
-     * @param [type]           $prezzo
-     * @param int              $sconto
-     * @param string           $tipo_sconto
-     * @param [type]           $id_iva
-     * @param [type]           $id_rivalsa_inps
-     * @param [type]           $id_ritenuta_acconto
+     * @param [type] $descrizione
+     * @param [type] $qta
+     * @param [type] $prezzo
+     * @param int    $sconto
+     * @param string $tipo_sconto
+     * @param [type] $id_iva
+     * @param [type] $id_rivalsa_inps
+     * @param [type] $id_ritenuta_acconto
      */
     protected function fill(AcceptanceTester $t, $descrizione, $qta, $prezzo, $sconto = 0, $tipo_sconto = 'UNT', $id_iva = null, $id_rivalsa_inps = null, $id_ritenuta_acconto = null)
     {

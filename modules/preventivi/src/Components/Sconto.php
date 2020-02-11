@@ -14,8 +14,6 @@ class Sconto extends Discount
     /**
      * Crea un nuovo sconto collegato ad un preventivo.
      *
-     * @param Preventivo $preventivo
-     *
      * @return self
      */
     public static function build(Preventivo $preventivo)

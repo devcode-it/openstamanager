@@ -14,8 +14,6 @@ class Descrizione extends Description
     /**
      * Crea una nuova riga collegata ad un contratto.
      *
-     * @param Contratto $contratto
-     *
      * @return self
      */
     public static function build(Contratto $contratto)

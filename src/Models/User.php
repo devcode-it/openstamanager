@@ -40,7 +40,6 @@ class User extends Model
     /**
      * Crea un nuovo utente.
      *
-     * @param Group  $gruppo
      * @param string $username
      * @param string $email
      * @param string $password

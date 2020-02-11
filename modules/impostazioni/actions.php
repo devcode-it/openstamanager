@@ -14,8 +14,7 @@ switch (filter('op')) {
             }
 
             //Se è un'impostazione editabile
-            if ($result->editable){
-
+            if ($result->editable) {
                 $is_valid = Settings::setValue($id, $value);
 
                 if (!$is_valid) {

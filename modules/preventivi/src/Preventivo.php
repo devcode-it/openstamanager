@@ -21,9 +21,7 @@ class Preventivo extends Document
     /**
      * Crea un nuovo preventivo.
      *
-     * @param Anagrafica   $anagrafica
-     * @param TipoSessione $tipo_sessione
-     * @param string       $nome
+     * @param string $nome
      *
      * @return self
      */
@@ -186,8 +184,6 @@ class Preventivo extends Document
     /**
      * Effettua un controllo sui campi del documento.
      * Viene richiamatp dalle modifiche alle righe del documento.
-     *
-     * @param Description $trigger
      */
     public function triggerEvasione(Description $trigger)
     {

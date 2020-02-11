@@ -16,9 +16,6 @@ class Articolo extends Article
     /**
      * Crea una nuova riga collegata ad un intervento.
      *
-     * @param Intervento $intervento
-     * @param Original   $articolo
-     *
      * @return self
      */
     public static function build(Intervento $intervento, Original $articolo)

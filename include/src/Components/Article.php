@@ -165,8 +165,6 @@ abstract class Article extends Row
     /**
      * Salva l'articolo, eventualmente movimentandone il magazzino.
      *
-     * @param array $options
-     *
      * @return bool
      */
     public function save(array $options = [])

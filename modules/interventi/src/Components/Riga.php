@@ -14,8 +14,6 @@ class Riga extends Row
     /**
      * Crea una nuova riga collegata ad un intervento.
      *
-     * @param Intervento $intervento
-     *
      * @return self
      */
     public static function build(Intervento $intervento)

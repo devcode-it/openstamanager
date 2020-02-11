@@ -159,8 +159,6 @@ abstract class Row extends Description
     /**
      * Salva la riga, impostando i campi dipendenti dai singoli parametri.
      *
-     * @param array $options
-     *
      * @return bool
      */
     public function save(array $options = [])

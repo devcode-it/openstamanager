@@ -458,10 +458,11 @@ class Fattura extends Document
         $direzione = $this->tipo->dir;
         $ritenuta_acconto = $this->ritenuta_acconto;
 
-        // Se c'è una ritenuta d'acconto, la aggiungo allo scadenzario
+        // Se c'è una ritenuta d'acconto, la aggiungo allo scadenzario al 15 del mese dopo l'ultima scadenza di pagamento
         if ($direzione == 'uscita' && $ritenuta_acconto > 0) {
-            $data = date('Y-m', strtotime($this->data)).'-01';
-            $scadenza = date('Y-m', strtotime($data.' +1 month')).'-15';
+            $scadenze = database()->select('co_scadenziario', 'scadenza', ['tipo' => 'fattura', 'iddocumento' => $this->id]);
+            $data_ultima_scadenza = end($scadenze)['scadenza'];
+            $scadenza = Carbon::parse($data_ultima_scadenza)->startOfMonth()->addMonth()->format('Y-m').'-15';
             $importo = -$ritenuta_acconto;
 
             self::registraScadenza($this, $importo, $scadenza, $is_pagato, 'ritenutaacconto');

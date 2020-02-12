@@ -250,7 +250,7 @@ class Prints
     {
         //http://localhost/openstamanager/
         $folders = explode('/', dirname($_SERVER['PHP_SELF']));
-        $base = (stripos($_SERVER['SERVER_PROTOCOL'], 'https') === 0 ? 'https://' : 'http://').$_SERVER['SERVER_NAME'].'/'.$folders[1].'/';
+        $base = (stripos($_SERVER['SERVER_PROTOCOL'], 'https') === 0 ? 'https://' : 'http://').$_SERVER['SERVER_NAME'].'/'.ROOTDIR.'/';
 
         return ROOTDIR.'/assets/dist/pdfjs/web/viewer.html?file='.$base.ltrim(str_replace(DOCROOT, '', $path), '/');
     }

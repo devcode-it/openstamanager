@@ -176,8 +176,11 @@ switch (post('op')) {
 
         // Collegamenti tecnici/interventi
         $idtecnici = post('idtecnico');
-        foreach ($idtecnici as $idtecnico) {
-            add_tecnico($id_record, $idtecnico, post('orario_inizio'), post('orario_fine'), $idcontratto);
+        if(!empty(post('orario_inizio')) && !empty(post('orario_fine'))){
+            
+            foreach ($idtecnici as $idtecnico) {
+                add_tecnico($id_record, $idtecnico, post('orario_inizio'), post('orario_fine'), $idcontratto);
+            }
         }
 
         if (post('ref') == 'dashboard') {

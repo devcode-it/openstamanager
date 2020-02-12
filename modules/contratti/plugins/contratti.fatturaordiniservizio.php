@@ -347,7 +347,7 @@ else {
             echo '
             <div class="col-md-3">
                 <small><label for="m_'.date('Ym', strtotime($rs2[0]['data_accettazione'].' +'.$j.' month')).'_'.$rs[$i]['id'].'">
-                    <input type="checkbox" id="m_'.date('Ym', strtotime($rs2[0]['data_accettazione'].' +'.$j.' month')).'_'.$rs[$i]['id'].'" name="zona['.date('Y-m-t', strtotime($rs2[0]['data_accettazione'].' +'.$j.' month')).'][]" value="'.$rs[$i]['id'].'" />'.$mesi[intval(date('m', strtotime($rs2[0]['data_accettazione'].' +'.$j.' month'))) - 1].' '.date('Y', strtotime($rs2[0]['data_accettazione'].' +'.$j.' month')).'
+                    <input type="checkbox" class="unblockable"  id="m_'.date('Ym', strtotime($rs2[0]['data_accettazione'].' +'.$j.' month')).'_'.$rs[$i]['id'].'" name="zona['.date('Y-m-t', strtotime($rs2[0]['data_accettazione'].' +'.$j.' month')).'][]" value="'.$rs[$i]['id'].'" />'.$mesi[intval(date('m', strtotime($rs2[0]['data_accettazione'].' +'.$j.' month'))) - 1].' '.date('Y', strtotime($rs2[0]['data_accettazione'].' +'.$j.' month')).'
                 </label></small>
             </div>';
         }

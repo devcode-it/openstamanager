@@ -179,8 +179,7 @@ echo '
 /**
  ** Disponibile.
  */
-$qta_disponibile = $qta_presente - $impegnato;
-$disponibile = $qta_presente < 0 ? 0 : $qta_presente;
+$disponibile = $qta_presente - $impegnato;
 echo '
 	<div class="col-md-3">
 		<div class="panel panel-primary">

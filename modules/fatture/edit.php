@@ -118,16 +118,18 @@ if ($dir == 'entrata' && !empty($fattura->dichiarazione) && $fattura->stato->des
                     {[ "type": "text", "label": "'.tr('Numero fattura/protocollo').'", "required": 1, "name": "numero","class": "text-center alphanumeric-mask", "value": "$numero$" ]}
                 </div>';
                     $label = tr('Numero fattura del fornitore');
+                    $size = 2;
                 } else {
                     $label = tr('Numero fattura');
+                    $size = 4;
                 }
                 ?>
 
 				<!-- id_segment -->
 				{[ "type": "hidden", "label": "Segmento", "name": "id_segment", "class": "text-center", "value": "$id_segment$" ]}
 
-				<div class="col-md-2">
-					{[ "type": "text", "label": "<?php echo $label; ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$", "help": "<?php echo (!empty($record['numero_esterno']) and $dir == 'entrata') ? '' : tr('Il numero della fattura sarà generato automaticamente in fase di emissione.'); ?>" ]}
+				<div class="col-md-<?php echo $size; ?>">
+					{[ "type": "text", "label": "<?php echo $label; ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$", "help": "<?php echo (empty($record['numero_esterno']) and $dir == 'entrata') ? tr('Il numero della fattura sarà generato automaticamente in fase di emissione.') :'' ?>" ]}
 				</div>
 
 				<div class="col-md-2">
@@ -150,13 +152,11 @@ if (empty($record['is_fiscale'])) {
 }
     ?>
 
-				<div class="col-md-2">
-                    <div <?php echo ($dir == 'entrata') ? 'hidden' : ''; ?>>
-					    {[ "type": "date", "label": "<?php echo tr('Data registrazione'); ?>", <?php echo $readonly; ?> "name": "data_registrazione", "required": 0, "value": "$data_registrazione$", "help": "<?php echo tr('Data in cui si è effettuata la registrazione della fattura in contabilità'); ?>" ]}
-                    </div>
+				<div class="col-md-2" <?php echo ($dir == 'entrata') ? 'hidden' : ''; ?>>
+                    {[ "type": "date", "label": "<?php echo tr('Data registrazione'); ?>", <?php echo $readonly; ?> "name": "data_registrazione", "required": 0, "value": "$data_registrazione$", "help": "<?php echo tr('Data in cui si è effettuata la registrazione della fattura in contabilità'); ?>" ]}
 				</div>
 
-                <div class="col-md-2">
+                <div class="col-md-2" <?php echo ($is_fiscale) ? '' : 'hidden'; ?>>
                     {[ "type": "date", "label": "<?php echo tr('Data competenza'); ?>", "name": "data_competenza", "required": 1, "value": "$data_competenza$", "min-date": "$data_registrazione$", "help": "<?php echo tr('Data nella quale considerare il movimento contabile, che può essere posticipato rispetto la data della fattura'); ?>" ]}
                 </div>
 
@@ -166,7 +166,7 @@ if (empty($record['is_fiscale'])) {
                     if ($dir == 'entrata') {
                         ?>
 
-                <div class="col-md-2">
+                <div class="col-md-2" <?php echo ($is_fiscale) ? '' : 'hidden'; ?> >
                     {[ "type": "select", "label": "<?php echo tr('Stato FE'); ?>", "name": "codice_stato_fe", "required": 0, "values": "query=SELECT codice as id, CONCAT_WS(' - ',codice,descrizione) as text FROM fe_stati_documento", "value": "$codice_stato_fe$", "disabled": <?php echo intval(API\Services::isEnabled() || $record['stato'] == 'Bozza'); ?>, "class": "unblockable", "help": "<?php echo (!empty($record['data_stato_fe'])) ? Translator::timestampToLocale($record['data_stato_fe']) : ''; ?>" ]}
                 </div>
 
@@ -174,7 +174,7 @@ if (empty($record['is_fiscale'])) {
                     }
                     ?>
 
-                <div class="col-md-2">
+                <div class="col-md-<?php echo ($is_fiscale) ? 2 : 6; ?>">
                     <!-- TODO: Rimuovere possibilità di selezionare lo stato pagato obbligando l'utente ad aggiungere il movimento in prima nota -->
                     {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatodocumento", "required": 1, "values": "query=<?php echo $query; ?>", "value": "$idstatodocumento$", "class": "unblockable", "extra": " onchange = \"if ($('#idstatodocumento option:selected').text()=='Pagato' || $('#idstatodocumento option:selected').text()=='Parzialmente pagato' ){if( confirm('<?php echo tr('Sicuro di voler impostare manualmente la fattura come pagata senza aggiungere il movimento in prima nota?'); ?>') ){ return true; }else{ $('#idstatodocumento').selectSet(<?php echo $record['idstatodocumento']; ?>); }}\" " ]}
                 </div>

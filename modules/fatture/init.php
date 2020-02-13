@@ -34,4 +34,5 @@ if (isset($id_record)) {
     WHERE co_tipidocumento.dir = '.prepare($dir).' AND co_documenti.id='.prepare($id_record));
 
     $note_accredito = $dbo->fetchArray("SELECT co_documenti.id, IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM co_documenti JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE reversed = 1 AND ref_documento=".prepare($id_record));
+    $is_fiscale = $fattura->isFiscale();
 }

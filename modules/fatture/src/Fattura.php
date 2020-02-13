@@ -495,9 +495,11 @@ class Fattura extends Document
         // Informazioni sul cambio dei valori
         $stato_precedente = Stato::find($this->original['idstatodocumento']);
         $dichiarazione_precedente = Dichiarazione::find($this->original['id_dichiarazione_intento']);
-
+        $is_fiscale = $this->isFiscale();
+        
         // Generazione numero fattura se non presente
-        if ($stato_precedente->descrizione == 'Bozza' && $this->stato['descrizione'] == 'Emessa' && empty($this->numero_esterno)) {
+        if ((($stato_precedente->descrizione == 'Bozza' && $this->stato['descrizione'] == 'Emessa') OR (!$is_fiscale)) && empty($this->numero_esterno)) {
+
             $this->numero_esterno = self::getNextNumeroSecondario($this->data, $this->direzione, $this->id_segment);
         }
 
@@ -577,6 +579,18 @@ class Fattura extends Document
     {
         return $this->tipo->reversed == 1;
     }
+
+    /**
+     * Controlla se la fattura è fiscale.
+     *
+     * @return bool
+     */
+    public function isFiscale()
+    {
+        $result = database()->fetchOne('SELECT is_fiscale FROM zz_segments WHERE id ='.prepare($this->id_segment))['is_fiscale'];
+        return $result;
+    }
+
 
     /**
      * Restituisce i dati bancari in base al pagamento.

@@ -23,8 +23,9 @@ if (!empty($results)) {
             </tr>';
 
     foreach ($results as $result) {
-        $costi_intervento = get_costi_intervento($result['id']);
-        $totale_interventi += $costi_intervento['totale'];
+        $intervento = \Modules\Interventi\Intervento::find($result['id']);
+        $totale_interventi += $intervento->totale;
+
         echo '
             <tr>
                 <td>
@@ -34,7 +35,7 @@ if (!empty($results)) {
                     ])).'
                 </td>
                 <td>'.nl2br($result['descrizione']).'</td>
-                <td class="text-right">'.Translator::numberToLocale($costi_intervento['totale']).' &euro;</td>
+                <td class="text-right">'.moneyFormat($intervento->totale).'</td>
             </tr>';
     }
 
@@ -43,7 +44,7 @@ if (!empty($results)) {
     echo '          <b>Totale:</b>';
     echo '      </td>';
     echo '      <td class="text-right">';
-    echo            '<b>'.Translator::numberToLocale($totale_interventi).' &euro;</b>';
+    echo            '<b>'.moneyFormat($totale_interventi).'</b>';
     echo '      </td>';
     echo '  </tr>';
 

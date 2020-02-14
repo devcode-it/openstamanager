@@ -2,21 +2,75 @@
 
 namespace Plugins\ReceiptFE;
 
-use Plugins\ExportFE\Connection;
+use API\Services;
 
 /**
  * Classe per l'interazione con API esterne.
  *
  * @since 2.4.3
  */
-class Interaction extends Connection
+class Interaction extends Services
 {
     public static function getReceiptList()
     {
-        $response = static::request('POST', 'notifiche_da_importare');
-        $body = static::responseBody($response);
+        $list = self::getRemoteList();
 
-        return $body['results'];
+        // Ricerca fisica
+        $names = array_column($list, 'name');
+        $files = self::getFileList($names);
+
+        $list = array_merge($list, $files);
+
+        // Aggiornamento cache hook
+        ReceiptHook::update($list);
+
+        return $list;
+    }
+
+    public static function getRemoteList()
+    {
+        $list = [];
+
+        // Ricerca da remoto
+        if (self::isEnabled()) {
+            $response = static::request('POST', 'notifiche_da_importare');
+            $body = static::responseBody($response);
+
+            if ($body['status'] == '200') {
+                $results = $body['results'];
+
+                foreach ($results as $result) {
+                    $list[] = [
+                        'name' => $result,
+                    ];
+                }
+            }
+        }
+
+        return $list ?: [];
+    }
+
+    public static function getFileList($names = [])
+    {
+        $list = [];
+
+        // Ricerca fisica
+        $directory = Ricevuta::getImportDirectory();
+
+        $files = glob($directory.'/*.xml*');
+        foreach ($files as $id => $file) {
+            $name = basename($file);
+
+            if (!in_array($name, $names)) {
+                $list[] = [
+                    'id' => $id,
+                    'name' => $name,
+                    'file' => true,
+                ];
+            }
+        }
+
+        return $list;
     }
 
     public static function getReceipt($name)
@@ -30,7 +84,9 @@ class Interaction extends Connection
             ]);
             $body = static::responseBody($response);
 
-            Ricevuta::store($name, $body['content']);
+            if (!empty($body['content'])) {
+                Ricevuta::store($name, $body['content']);
+            }
         }
 
         return $name;

@@ -21,7 +21,7 @@ $totale = 0;
 $totale_stato = [];
 
 // Tabella con riepilogo interventi
-$rsi = $dbo->fetchArray('SELECT in_interventi.id, in_interventi.codice, 
+$rsi = $dbo->fetchArray('SELECT in_interventi.id, in_interventi.idstatointervento, 
        (SELECT completato FROM in_statiintervento WHERE in_statiintervento.idstatointervento = in_interventi.idstatointervento) AS completato,
        (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS inizio,
        (SELECT SUM(ore) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS ore,
@@ -30,7 +30,7 @@ $rsi = $dbo->fetchArray('SELECT in_interventi.id, in_interventi.codice,
     INNER JOIN in_interventi ON co_promemoria.idintervento=in_interventi.id
     WHERE co_promemoria.idcontratto='.prepare($id_record).'
 UNION
-    SELECT in_interventi.id, in_interventi.codice,  
+    SELECT in_interventi.id, in_interventi.idstatointervento,  
         (SELECT completato FROM in_statiintervento WHERE in_statiintervento.idstatointervento = in_interventi.idstatointervento) AS completato,
         (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS inizio,
         (SELECT SUM(ore) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS ore,
@@ -53,8 +53,8 @@ if (!empty($rsi)) {
 
     // Tabella con i dati
     foreach ($rsi as $int) {
-        $int = array_merge($int, get_costi_intervento($int['id']));
-        $totale_stato[$int['idstatointervento']] = sum($totale_stato[$int['idstatointervento']], $int['totale_scontato']);
+        $intervento = \Modules\Interventi\Intervento::find($int['id']);
+        $totale_stato[$int['idstatointervento']] = sum($totale_stato[$int['idstatointervento']], $intervento->totale_imponibile);
 
         // Riga intervento singolo
         echo '
@@ -76,15 +76,15 @@ if (!empty($rsi)) {
         </td>
 
         <td class="text-right">
-            '.Translator::numberToLocale($int['totale_costo']).'
+            '.Translator::numberToLocale($intervento->spesa).'
         </td>
 
         <td class="text-right">
-            '.Translator::numberToLocale($int['totale_addebito']).'
+            '.Translator::numberToLocale($intervento->imponibile).'
         </td>
 
         <td class="text-right">
-            '.Translator::numberToLocale($int['totale_scontato']).'
+            '.Translator::numberToLocale($intervento->totale_imponibile).'
         </td>
     </tr>';
 
@@ -105,22 +105,22 @@ if (!empty($rsi)) {
                     <th width="230">'.tr('Tipo attività').'</th>
                     <th width="120">'.tr('Ore').'</th>
                     <th width="120">'.tr('Km').'</th>
-                    <th width="120">'.tr('Costo orario').'</th>
+                    <th width="120">'.tr('Costo ore').'</th>
                     <th width="120">'.tr('Costo km').'</th>
                     <th width="120">'.tr('Diritto ch.').'</th>
-                    <th width="120">'.tr('Costo addebitato').'</th>
+                    <th width="120">'.tr('Prezzo ore').'</th>
                     <th width="120">'.tr('Prezzo km').'</th>
                     <th width="120">'.tr('Diritto ch.').'</th>
                 </tr>';
 
             foreach ($rst as $r) {
                 // Visualizzo lo sconto su ore o km se c'è
-                $sconto_ore = ($r['sconto'] != 0) ? '<br><span class="label label-danger">'.Translator::numberToLocale(-$r['sconto']).' &euro;</span>' : '';
-                $sconto_km = ($r['scontokm'] != 0) ? '<br><span class="label label-danger">'.Translator::numberToLocale(-$r['scontokm']).' &euro;</span>' : '';
+                $sconto_ore = ($r['sconto'] != 0) ? '<br><span class="label label-danger">'.moneyFormat(-$r['sconto']).'</span>' : '';
+                $sconto_km = ($r['scontokm'] != 0) ? '<br><span class="label label-danger">'.moneyFormat(-$r['scontokm']).'</span>' : '';
 
                 // Aggiungo lo sconto globale nel totale ore
                 if ($int['sconto_globale'] > 0) {
-                    $sconto_ore .= ' <span class="label label-danger">'.Translator::numberToLocale(-$int['sconto_globale']).' &euro;</span>';
+                    $sconto_ore .= ' <span class="label label-danger">'.moneyFormat(-$int['sconto_globale']).'</span>';
                 }
 
                 echo '
@@ -158,7 +158,7 @@ if (!empty($rsi)) {
 
             foreach ($rst as $r) {
                 // Visualizzo lo sconto su ore o km se c'è
-                $sconto = ($r['sconto'] != 0) ? '<br><span class="label label-danger">'.Translator::numberToLocale(-$r['sconto']).' &euro;</span>' : '';
+                $sconto = ($r['sconto'] != 0) ? '<br><span class="label label-danger">'.moneyFormat(-$r['sconto']).'</span>' : '';
 
                 echo '
                 <tr>
@@ -191,7 +191,7 @@ if (!empty($rsi)) {
 
             foreach ($rst as $r) {
                 // Visualizzo lo sconto su ore o km se c'è
-                $sconto = ($r['sconto'] != 0) ? '<br><span class="label label-danger">'.Translator::numberToLocale(-$r['sconto']).' &euro;</span>' : '';
+                $sconto = ($r['sconto'] != 0) ? '<br><span class="label label-danger">'.moneyFormat(-$r['sconto']).'</span>' : '';
 
                 echo '
                 <tr>
@@ -215,9 +215,9 @@ if (!empty($rsi)) {
         $totale_ore_interventi += $int['ore'];
         $totale_ore_completate += !empty($int['completato']) ? $int['ore'] : 0;
         $totale_km += $int['km'];
-        $totale_costo += $int['totale_costo'];
-        $totale_addebito += $int['totale_addebito'];
-        $totale += $int['totale_scontato'];
+        $totale_costo += $intervento->spesa;
+        $totale_addebito += $intervento->imponibile;
+        $totale += $intervento->totale_imponibile;
     }
 
     // Totali
@@ -292,11 +292,11 @@ $totale_ore_contratto = $rs[0]['totale_ore'];
 $diff = sum($budget, -$totale);
 
 if ($diff > 0) {
-    $bilancio = '<span class="text-success"><big>'.Translator::numberToLocale($diff).' &euro;</big></span>';
+    $bilancio = '<span class="text-success"><big>'.moneyFormat($diff).'</big></span>';
 } elseif ($diff < 0) {
-    $bilancio = '<span class="text-danger"><big>'.Translator::numberToLocale($diff).' &euro;</big></span>';
+    $bilancio = '<span class="text-danger"><big>'.moneyFormat($diff).'</big></span>';
 } else {
-    $bilancio = '<span><big>'.Translator::numberToLocale($diff).' &euro;</big></span>';
+    $bilancio = '<span><big>'.moneyFormat($diff).'</big></span>';
 }
 
 echo '

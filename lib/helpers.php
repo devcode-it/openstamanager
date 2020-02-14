@@ -5,6 +5,7 @@
  *
  * @since 2.4.2
  */
+use HTMLBuilder\HTMLBuilder;
 
 /**
  * Restituisce l'oggetto dedicato alla gestione della connessione con il database.
@@ -186,7 +187,7 @@ function logger()
  *
  * @since 2.4.8
  */
-function numberFormat($number, $decimals)
+function numberFormat($number, $decimals = null)
 {
     return Translator::numberToLocale($number, $decimals);
 }
@@ -231,4 +232,45 @@ function dateFormat($date)
 function timeFormat($time)
 {
     return Translator::timeToLocale($time);
+}
+
+/**
+ * Restituisce il simbolo della valuta del gestione.
+ *
+ * @since 2.4.9
+ *
+ * @return string
+ */
+function currency()
+{
+    return \Translator::getCurrency();
+}
+
+/**
+ * Restituisce il numero indicato formattato come una valuta secondo la configurazione del sistema.
+ *
+ * @param string $time
+ *
+ * @return string
+ *
+ * @since 2.4.9
+ */
+function moneyFormat($number, $decimals = null)
+{
+    return tr('_TOTAL_ _CURRENCY_', [
+        '_TOTAL_' => numberFormat($number, $decimals),
+        '_CURRENCY_' => currency(),
+    ]);
+}
+
+/**
+ * Restituisce il numero indicato formattato come una valuta secondo la configurazione del sistema.
+ *
+ * @return string
+ *
+ * @since 2.4.11
+ */
+function input(array $json)
+{
+    return HTMLBuilder::parse($json);
 }

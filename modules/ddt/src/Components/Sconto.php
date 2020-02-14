@@ -14,8 +14,6 @@ class Sconto extends Discount
     /**
      * Crea un nuovo sconto collegato ad un ddt.
      *
-     * @param DDT $ddt
-     *
      * @return self
      */
     public static function build(DDT $ddt)

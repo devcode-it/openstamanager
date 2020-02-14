@@ -1,12 +1,14 @@
 <?php
 
 $r = $dbo->fetchOne('SELECT *,
-    (SELECT email FROM an_anagrafiche WHERE an_anagrafiche.idanagrafica=co_contratti.idanagrafica) AS email
-FROM co_contratti WHERE id='.prepare($id_record));
+    an_anagrafiche.email,
+    an_anagrafiche.ragione_sociale
+FROM co_contratti INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE co_contratti.id='.prepare($id_record));
 
 // Variabili da sostituire
 return [
     'email' => $r['email'],
+    'ragione_sociale' => $r['ragione_sociale'],
     'numero' => $r['numero'],
     'descrizione' => $r['descrizione'],
     'data' => Translator::dateToLocale($r['data_bozza']),

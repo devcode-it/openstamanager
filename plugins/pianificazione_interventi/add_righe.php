@@ -16,6 +16,7 @@ if (empty($idriga)) {
     $um = '';
     $prezzo_vendita = '0';
     $prezzo_acquisto = '0';
+    $idiva = setting('Iva predefinita');
 
     if (!empty($rs[0]['prc_guadagno'])) {
         $sconto_unitario = $rs[0]['prc_guadagno'];
@@ -80,13 +81,13 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "number", "label": "'.tr('Prezzo di acquisto (un.)').'", "name": "prezzo_acquisto", "required": 1, "value": "'.$prezzo_acquisto.'", "icon-after": "&euro;" ]}
+            {[ "type": "number", "label": "'.tr('Prezzo di acquisto (un.)').'", "name": "prezzo_acquisto", "required": 1, "value": "'.$prezzo_acquisto.'", "icon-after": "'.currency().'" ]}
         </div>';
 
 // Prezzo di vendita
 echo '
         <div class="col-md-4">
-            {[ "type": "number", "label": "'.tr('Prezzo di vendita (un.)').'", "name": "prezzo_vendita", "required": 1, "value": "'.$prezzo_vendita.'", "icon-after": "&euro;" ]}
+            {[ "type": "number", "label": "'.tr('Prezzo di vendita (un.)').'", "name": "prezzo_vendita", "required": 1, "value": "'.$prezzo_vendita.'", "icon-after": "'.currency().'" ]}
         </div>';
 
 // Sconto unitario
@@ -106,14 +107,14 @@ echo '
 </form>';
 
 echo '
-<script src="'.$rootdir.'/lib/init.js"></script>';
+<script>$(document).ready(init)</script>';
 
 echo '
 <script type="text/javascript">
     $(document).ready(function() {
         $("#add-righe").ajaxForm({
             success: function(){
-                $("#bs-popup2").modal("hide");
+                $("#modals > div").modal("hide");
 
                 refreshRighe('.$id_record.');
             }

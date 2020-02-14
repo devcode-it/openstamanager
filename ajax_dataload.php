@@ -7,6 +7,7 @@ use Util\Query;
 // Informazioni fondamentali
 $columns = filter('columns');
 $order = filter('order')[0];
+$draw_numer = intval(filter('draw'));
 
 $order['column'] = $order['column'] - 1;
 array_shift($columns);
@@ -32,6 +33,7 @@ $results = [
     'recordsTotal' => 0,
     'recordsFiltered' => 0,
     'summable' => [],
+    'draw' => $draw_numer,
 ];
 
 $query = Query::getQuery($structure);

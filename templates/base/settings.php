@@ -10,8 +10,6 @@ $settings = [
         'left' => 12,
         'right' => 12,
     ],
-    'header-height' => 35,
-    'footer-height' => 5,
     'header-font-size' => 10,
 ];
 

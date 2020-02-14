@@ -106,7 +106,7 @@ class Modules
      *
      * @return string
      */
-    public static function getAdditionals($module)
+    public static function getAdditionals($module, $include_segments = true)
     {
         $module = self::get($module);
         $user = Auth::user();
@@ -127,13 +127,15 @@ class Modules
             }
 
             // Aggiunta dei segmenti
-            $segments = self::getSegments($module['id']);
-            $id_segment = $_SESSION['module_'.$module['id']]['id_segment'];
-            foreach ($segments as $result) {
-                if (!empty($result['clause']) && $result['id'] == $id_segment) {
-                    $result['clause'] = Util\Query::replacePlaceholder($result['clause']);
+            if ($include_segments) {
+                $segments = self::getSegments($module['id']);
+                $id_segment = $_SESSION['module_'.$module['id']]['id_segment'];
+                foreach ($segments as $result) {
+                    if (!empty($result['clause']) && $result['id'] == $id_segment) {
+                        $result['clause'] = Util\Query::replacePlaceholder($result['clause']);
 
-                    $additionals[$result['position']][] = $result['clause'];
+                        $additionals[$result['position']][] = $result['clause'];
+                    }
                 }
             }
 
@@ -174,9 +176,9 @@ class Modules
      *
      * @return array
      */
-    public static function getAdditionalsQuery($module, $type = null)
+    public static function getAdditionalsQuery($module, $type = null, $include_segments = true)
     {
-        $array = self::getAdditionals($module);
+        $array = self::getAdditionals($module, $include_segments);
         if (!empty($type) && isset($array[$type])) {
             $result = (array) $array[$type];
         } else {
@@ -205,7 +207,6 @@ class Modules
 
     /**
      * Restituisce tutte le informazioni dei moduli installati in una scala gerarchica fino alla profondità indicata.
-     *
      *
      * @param int $depth
      *
@@ -250,10 +251,12 @@ class Modules
      * @param string     $testo
      * @param string     $alternativo
      * @param string     $extra
+     * @param bool       $blank
+     * @param string     $anchor
      *
      * @return string
      */
-    public static function link($modulo, $id_record = null, $testo = null, $alternativo = true, $extra = null, $blank = true)
+    public static function link($modulo, $id_record = null, $testo = null, $alternativo = true, $extra = null, $blank = true, $anchor = null)
     {
         $testo = isset($testo) ? nl2br($testo) : tr('Visualizza scheda');
         $alternativo = is_bool($alternativo) && $alternativo ? $testo : $alternativo;
@@ -270,7 +273,7 @@ class Modules
         if (!empty($module) && in_array($module->permission, ['r', 'rw'])) {
             $link = !empty($id_record) ? 'editor.php?id_module='.$module['id'].'&id_record='.$id_record : 'controller.php?id_module='.$module['id'];
 
-            return '<a href="'.ROOTDIR.'/'.$link.'" '.$extra.'>'.$testo.'</a>';
+            return '<a href="'.ROOTDIR.'/'.$link.'#'.$anchor.'" '.$extra.'>'.$testo.'</a>';
         } else {
             return $alternativo;
         }

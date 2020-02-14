@@ -100,7 +100,7 @@ elseif (get('op') == 'addfattura') {
         $idbanca = $rs[0]['id'];
     }
 
-    $query = 'INSERT INTO co_documenti(numero, numero_esterno, idanagrafica, idtipodocumento, idpagamento, data, idstatodocumento, note, idsede, id_segment, idconto, idbanca) VALUES ('.prepare($numero).', '.prepare($numero_esterno).', '.prepare($idanagrafica).', '.prepare($idtipodocumento).', '.prepare($idpagamento).', '.prepare($data).", (SELECT `id` FROM `co_statidocumento` WHERE `descrizione`='Bozza'), ".prepare($note).', (SELECT idsede_fatturazione FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).'), '.prepare($id_segment).', '.prepare($idconto).', '.prepare($idbanca).' )';
+    $query = 'INSERT INTO co_documenti(numero, numero_esterno, idanagrafica, idtipodocumento, idpagamento, data, idstatodocumento, note, idsede_destinazione, id_segment, idconto, idbanca) VALUES ('.prepare($numero).', '.prepare($numero_esterno).', '.prepare($idanagrafica).', '.prepare($idtipodocumento).', '.prepare($idpagamento).', '.prepare($data).", (SELECT `id` FROM `co_statidocumento` WHERE `descrizione`='Bozza'), ".prepare($note).', (SELECT idsede_fatturazione FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).'), '.prepare($id_segment).', '.prepare($idconto).', '.prepare($idbanca).' )';
     $dbo->query($query);
     $iddocumento = $dbo->lastInsertedID();
 
@@ -238,8 +238,8 @@ if (empty($rs)) {
 
         echo '
         <td class="center">
-            '.Translator::numberToLocale($importo).' &euro;<br>
-            <small>'.Translator::numberToLocale($rs[$i]['budget_contratto']).' &euro; x '.$n_sedi_pianificate.' sedi / '.$n_rate[$rs[$i]['idzona']].' rate'.$extra.'</small>
+            '.moneyFormat($importo).'<br>
+            <small>'.moneyFormat($rs[$i]['budget_contratto']).' x '.$n_sedi_pianificate.' sedi / '.$n_rate[$rs[$i]['idzona']].' rate'.$extra.'</small>
         </td>';
 
         // Documento collegato (fattura)
@@ -331,7 +331,7 @@ else {
     echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Zone per le quali pianificare la fatturazione').'", "name": "idzona[]", "values": "query=SELECT id, descrizione FROM an_zone WHERE (id IN (SELECT idzona FROM an_sedi WHERE id IN (SELECT idsede FROM my_impianti WHERE id IN (SELECT idimpianto FROM co_ordiniservizio WHERE idcontratto='.prepare($id_record).')))) OR ( id=(SELECT idzona FROM an_anagrafiche WHERE idanagrafica=(SELECT idanagrafica FROM co_contratti WHERE id='.prepare($id_record).') AND idzona=an_zone.id) ) UNION SELECT 0, \'Altro\'", "multiple": 1, "extra": "onchange=\"$(this).find(\'option\').each( function(){ if( $(this).is(\':selected\') ){ $(\'#zona_\'+$(this).val()).removeClass(\'hide\'); }else{ $(\'#zona_\'+$(this).val()).addClass(\'hide\'); } });\"" ]}
+            {[ "type": "select", "label": "'.tr('Zone per le quali pianificare la fatturazione').'", "name": "idzona[]", "class": "unblockable", "values": "query=SELECT id, descrizione FROM an_zone WHERE (id IN (SELECT idzona FROM an_sedi WHERE id IN (SELECT idsede FROM my_impianti WHERE id IN (SELECT idimpianto FROM co_ordiniservizio WHERE idcontratto='.prepare($id_record).')))) OR ( id=(SELECT idzona FROM an_anagrafiche WHERE idanagrafica=(SELECT idanagrafica FROM co_contratti WHERE id='.prepare($id_record).') AND idzona=an_zone.id) ) UNION SELECT 0, \'Altro\'", "multiple": 1, "extra": "onchange=\"$(this).find(\'option\').each( function(){ if( $(this).is(\':selected\') ){ $(\'#zona_\'+$(this).val()).removeClass(\'hide\'); }else{ $(\'#zona_\'+$(this).val()).addClass(\'hide\'); } });\"" ]}
         </div>
     </div>';
 
@@ -347,7 +347,7 @@ else {
             echo '
             <div class="col-md-3">
                 <small><label for="m_'.date('Ym', strtotime($rs2[0]['data_accettazione'].' +'.$j.' month')).'_'.$rs[$i]['id'].'">
-                    <input type="checkbox" id="m_'.date('Ym', strtotime($rs2[0]['data_accettazione'].' +'.$j.' month')).'_'.$rs[$i]['id'].'" name="zona['.date('Y-m-t', strtotime($rs2[0]['data_accettazione'].' +'.$j.' month')).'][]" value="'.$rs[$i]['id'].'" />'.$mesi[intval(date('m', strtotime($rs2[0]['data_accettazione'].' +'.$j.' month'))) - 1].' '.date('Y', strtotime($rs2[0]['data_accettazione'].' +'.$j.' month')).'
+                    <input type="checkbox" class="unblockable"  id="m_'.date('Ym', strtotime($rs2[0]['data_accettazione'].' +'.$j.' month')).'_'.$rs[$i]['id'].'" name="zona['.date('Y-m-t', strtotime($rs2[0]['data_accettazione'].' +'.$j.' month')).'][]" value="'.$rs[$i]['id'].'" />'.$mesi[intval(date('m', strtotime($rs2[0]['data_accettazione'].' +'.$j.' month'))) - 1].' '.date('Y', strtotime($rs2[0]['data_accettazione'].' +'.$j.' month')).'
                 </label></small>
             </div>';
         }
@@ -362,9 +362,10 @@ else {
     <div class='clearfix'></div>
     <br>";
 
+    $disabled_pianificazione = $record['is_fatturabile'] && !empty($rs_documento) && !empty($record['data_conclusione']) && !empty($record['data_accettazione']);
     // Pianificazione
     echo "
-    <button type='button' class='btn btn-primary' onclick=\"if( $('input[type=checkbox]:checked').length>0 ){ if( confirm('Pianificare la fatturazione?') ){ $('#pianifica_form').submit(); } }\">
+    <button type='button ".($disabled_pianificazione ? '' : 'disabled')."'  title='".($disabled_pianificazione ? '' : tr('Per pianificare la fatturazione del contratto deve inserita almeno una riga, data accettazione e conclusione devono essere definite e lo stato del contratto deve essere tra: ').$stati_fatturabili)."' class='btn btn-primary ".($disabled_pianificazione ? '' : 'disabled tip')."' data-href=\"if( $('input[type=checkbox]:checked').length>0 ){ if( confirm('Pianificare la fatturazione?') ){ $('#pianifica_form').submit(); } }\">
         <i class='fa fa-plus'></i> ".tr('Pianifica ora').'
     </button>';
 

@@ -2,13 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-if (!$record['default']) {
-    $attr = '';
-} else {
-    $attr = 'readonly';
-    echo '<div class="alert alert-warning">'.tr('Alcune impostazioni non possono essere modificate.').'</div>';
-}
-
 $esigibilita = [
     [
         'id' => 'I',
@@ -23,6 +16,18 @@ $esigibilita = [
         'text' => tr('Scissione dei pagamenti'),
     ],
 ];
+
+$res = $dbo->fetchNum('SELECT `co_righe_documenti`.`id` FROM `co_righe_documenti` WHERE `co_righe_documenti`.`idiva`='.prepare($id_record).
+' UNION SELECT `co_righe_preventivi`.`id` FROM `co_righe_preventivi` WHERE `co_righe_preventivi`.`idiva` = '.prepare($id_record).
+' UNION SELECT `co_righe_contratti`.`id` FROM `co_righe_contratti` WHERE `co_righe_contratti`.`idiva` = '.prepare($id_record).
+' UNION SELECT `dt_righe_ddt`.`id` FROM `dt_righe_ddt` WHERE `dt_righe_ddt`.`idiva` = '.prepare($id_record).
+' UNION SELECT `or_righe_ordini`.`id` FROM `or_righe_ordini` WHERE `or_righe_ordini`.`idiva` = '.prepare($id_record).
+' UNION SELECT `mg_articoli`.`id` FROM `mg_articoli` WHERE `mg_articoli`.`idiva_vendita` = '.prepare($id_record).
+' UNION SELECT `an_anagrafiche`.`idanagrafica` AS `id` FROM `an_anagrafiche` WHERE `an_anagrafiche`.`idiva_vendite` = '.prepare($id_record).' OR `an_anagrafiche`.`idiva_acquisti` = '.prepare($id_record));
+$is_readonly = 0;
+if ($res) {
+    $is_readonly = '1';
+}
 
 ?><form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
@@ -43,29 +48,29 @@ $esigibilita = [
 
 			<div class="row">
                 <div class="col-md-4">
-					{[ "type": "checkbox", "label": "<?php echo tr('Esente'); ?>", "name": "esente", "id": "esente-edit", "value": "$esente$", "extra": "<?php echo $attr; ?>"]}
+					{[ "type": "checkbox", "label": "<?php echo tr('Esente'); ?>", "name": "esente", "id": "esente-edit", "value": "$esente$", "readonly": "<?php echo $is_readonly; ?>",  "extra": "<?php echo $attr; ?>"]}
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "number", "label": "<?php echo tr('Percentuale'); ?>", "name": "percentuale", "id": "percentuale-edit", "value": "$percentuale$", "icon-after": "<i class=\"fa fa-percent\"></i>", "disabled": <?php echo intval($record['esente']); ?>, "extra": "<?php echo $attr; ?>" ]}
+					{[ "type": "number", "label": "<?php echo tr('Percentuale'); ?>", "name": "percentuale", "id": "percentuale-edit", "value": "$percentuale$", "icon-after": "<i class=\"fa fa-percent\"></i>", "disabled": <?php echo intval($record['esente']); ?>, "readonly": "<?php echo $is_readonly; ?>", "extra": "<?php echo $attr; ?>", "max-value": "100" ]}
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "number", "label": "<?php echo tr('Indetraibile'); ?>", "name": "indetraibile", "value": "$indetraibile$", "icon-after": "<i class=\"fa fa-percent\"></i>", "extra": "<?php echo $attr; ?>" ]}
+					{[ "type": "number", "label": "<?php echo tr('Indetraibile'); ?>", "name": "indetraibile", "value": "$indetraibile$", "icon-after": "<i class=\"fa fa-percent\"></i>", "readonly": "<?php echo $is_readonly; ?>",  "extra": "<?php echo $attr; ?>", "max-value": "100" ]}
 				</div>
 			</div>
 
             <div class="row">
 				<div class="col-md-4">
-					{[ "type": "number", "label": "<?php echo tr('Codice'); ?>", "name": "codice", "value": "$codice$", "decimals":0, "min-value":"0", "max-value":"999", "maxlength": 3, "extra": "<?php echo $attr; ?>" ]}
+					{[ "type": "number", "label": "<?php echo tr('Codice'); ?>", "name": "codice", "value": "$codice$", "required": 1, "decimals":0, "min-value":"0", "max-value":"999", "maxlength": 3, "extra": "<?php echo $attr; ?>" ]}
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Codice Natura (Fatturazione Elettronica)'); ?>", "name": "codice_natura_fe", "value": "$codice_natura_fe$", "required": <?php echo intval($record['esente']); ?>, "disabled": <?php echo intval(!$record['esente']); ?>, "values": "query=SELECT codice as id, CONCAT(codice, ' - ', descrizione) AS descrizione FROM fe_natura", "extra": "<?php echo $attr; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Codice Natura (Fatturazione Elettronica)'); ?>", "name": "codice_natura_fe", "value": "$codice_natura_fe$", "required": <?php echo intval($record['esente']); ?>, "disabled": <?php echo intval(!$record['esente']); ?>, "values": "query=SELECT codice as id, CONCAT(codice, ' - ', descrizione) AS descrizione FROM fe_natura", "readonly": "<?php echo $is_readonly; ?>",  "extra": "<?php echo $attr; ?>" ]}
 				</div>
 
                 <div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Esigibilità (Fatturazione Elettronica)'); ?>", "name": "esigibilita", "value": "$esigibilita$", "values": <?php echo json_encode($esigibilita); ?>, "required": 1, "extra": "<?php echo $attr; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Esigibilità (Fatturazione Elettronica)'); ?>", "name": "esigibilita", "value": "$esigibilita$", "values": <?php echo json_encode($esigibilita); ?>, "required": 1, "readonly": "<?php echo $is_readonly; ?>",  "extra": "<?php echo $attr; ?>" ]}
 				</div>
 			</div>
 
@@ -79,16 +84,6 @@ $esigibilita = [
 
 </form>
 
-<?php
-// Record eliminabile solo se permesso
-if (!$record['default']) {
-    ?>
-        <a class="btn btn-danger ask" data-backto="record-list">
-            <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
-        </a>
-<?php
-}
-?>
 
 <script>
 $(document).ready(function(){
@@ -108,3 +103,18 @@ $(document).ready(function(){
     });
 });
 </script>
+
+
+<?php
+
+if ($res) {
+    echo '
+    <div class="alert alert-warning">
+        <p>'.tr('Ci sono '.count($res).' documenti collegati a questa aliquota IVA. Non è possibile eliminarla o modificarne alcuni campi.').'</p>
+    </div>';
+} else {
+    echo '
+    <a class="btn btn-danger ask" data-backto="record-list">
+        <i class="fa fa-trash"></i> '.tr('Elimina').'
+    </a>';
+}

@@ -2,6 +2,8 @@
 
 include_once __DIR__.'/core.php';
 
+use Models\Hook;
+
 switch (get('op')) {
     // Imposta un valore ad un array di $_SESSION
     // esempio: push di un valore in $_SESSION['dashboard']['idtecnici']
@@ -52,6 +54,11 @@ switch (get('op')) {
 
         break;
 
+    case 'checklists':
+        include DOCROOT.'/plugins/checks.php';
+
+        break;
+
     case 'active_users':
         $posizione = get('id_module');
         if (isset($id_record)) {
@@ -77,5 +84,61 @@ switch (get('op')) {
         ]);
 
         echo json_encode($datas);
-    break;
+
+        break;
+
+    case 'hooks':
+        $hooks = Hook::all();
+
+        $results = [];
+        foreach ($hooks as $hook) {
+            if ($hook->permission != '-') {
+                $results[] = [
+                    'id' => $hook->id,
+                    'name' => $hook->name,
+                ];
+            }
+        }
+
+        echo json_encode($results);
+
+        break;
+
+    case 'hook-lock':
+        $hook_id = filter('id');
+        $hook = Hook::find($hook_id);
+
+        $token = $hook->lock();
+
+        echo json_encode($token);
+
+        break;
+
+    case 'hook-execute':
+        $hook_id = filter('id');
+        $token = filter('token');
+        $hook = Hook::find($hook_id);
+
+        $response = $hook->execute($token);
+
+        echo json_encode($response);
+
+        break;
+
+    case 'hook-response':
+        $hook_id = filter('id');
+        $hook = Hook::find($hook_id);
+
+        $response = $hook->response();
+
+        echo json_encode($response);
+
+        break;
+
+    case 'flash':
+        $response = flash()->getMessages();
+
+        echo json_encode($response);
+
+        break;
 }

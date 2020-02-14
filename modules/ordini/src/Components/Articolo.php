@@ -10,14 +10,13 @@ class Articolo extends Article
 {
     use RelationTrait;
 
+    public $movimenta_magazzino = false;
+
     protected $table = 'or_righe_ordini';
     protected $serialRowID = 'ordine';
 
     /**
      * Crea un nuovo articolo collegato ad una ordine.
-     *
-     * @param Ordine   $ordine
-     * @param Original $articolo
      *
      * @return self
      */
@@ -28,9 +27,9 @@ class Articolo extends Article
         return $model;
     }
 
-    public function movimenta($qta)
+    public function movimentaMagazzino($qta)
     {
-        return true;
+        return;
     }
 
     public function getDirection()

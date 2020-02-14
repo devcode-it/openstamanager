@@ -35,18 +35,41 @@ trait RelationTrait
     }
 
     /**
+     * Restituisce i dati aggiuntivi per la fattura elettronica dell'elemento.
+     *
+     * @return array
+     */
+    public function getDatiAggiuntiviFEAttribute()
+    {
+        $result = json_decode($this->attributes['dati_aggiuntivi_fe'], true);
+
+        return (array) $result;
+    }
+
+    /**
+     * Imposta i dati aggiuntivi per la fattura elettronica dell'elemento.
+     */
+    public function setDatiAggiuntiviFEAttribute($values)
+    {
+        $values = (array) $values;
+        $dati = array_deep_clean($values);
+
+        $this->attributes['dati_aggiuntivi_fe'] = json_encode($dati);
+    }
+
+    /**
      * Restituisce il totale (imponibile + iva + rivalsa_inps + iva_rivalsainps) dell'elemento.
      *
      * @return float
      */
     public function getTotaleAttribute()
     {
-        return $this->imponibile_scontato + $this->iva + $this->rivalsa_inps + $this->iva_rivalsa_inps;
+        return $this->totale_imponibile + $this->iva + $this->rivalsa_inps + $this->iva_rivalsa_inps;
     }
 
     public function getRivalsaINPSAttribute()
     {
-        return $this->imponibile_scontato / 100 * $this->rivalsa->percentuale;
+        return $this->totale_imponibile / 100 * $this->rivalsa->percentuale;
     }
 
     public function getIvaRivalsaINPSAttribute()
@@ -56,7 +79,7 @@ trait RelationTrait
 
     public function getRitenutaAccontoAttribute()
     {
-        $result = $this->imponibile_scontato;
+        $result = $this->totale_imponibile;
 
         if ($this->calcolo_ritenuta_acconto == 'IMP+RIV') {
             $result += $this->rivalsainps;
@@ -71,7 +94,7 @@ trait RelationTrait
     public function getRitenutaContributiAttribute()
     {
         if ($this->attributes['ritenuta_contributi']) {
-            $result = $this->imponibile_scontato;
+            $result = $this->totale_imponibile;
             $ritenuta = $this->parent->ritenutaContributi;
 
             $result = $result * $ritenuta->percentuale_imponibile / 100;
@@ -127,8 +150,6 @@ trait RelationTrait
     /**
      * Salva la riga, impostando i campi dipendenti dai parametri singoli.
      *
-     * @param array $options
-     *
      * @return bool
      */
     public function save(array $options = [])
@@ -137,6 +158,17 @@ trait RelationTrait
         $this->fixRivalsaINPS();
 
         return parent::save($options);
+    }
+
+    public function delete()
+    {
+        $result = parent::delete();
+
+        if (!empty($this->idintervento)) {
+            database()->query("UPDATE in_interventi SET idstatointervento = (SELECT idstatointervento FROM in_statiintervento WHERE codice = 'OK') WHERE id=".prepare($this->idintervento));
+        }
+
+        return $result;
     }
 
     /**
@@ -169,6 +201,16 @@ trait RelationTrait
         // Se c'è un collegamento ad un ordine, aggiorno la quantità evasa
         elseif (!empty($this->idordine)) {
             $database->query('UPDATE or_righe_ordini SET qta_evasa = qta_evasa + '.$diff.' WHERE descrizione = '.prepare($this->descrizione).' AND idarticolo = '.prepare($this->idarticolo).' AND idordine = '.prepare($this->idordine).' AND idiva = '.prepare($this->idiva).' AND qta_evasa < qta LIMIT 1');
+        }
+
+        // Se c'è un collegamento ad un preventivo, aggiorno la quantità evasa
+        elseif (!empty($this->idpreventivo)) {
+            $database->query('UPDATE co_righe_preventivi SET qta_evasa = qta_evasa + '.$diff.' WHERE descrizione = '.prepare($this->descrizione).' AND idarticolo = '.prepare($this->idarticolo).' AND idpreventivo = '.prepare($this->idpreventivo).' AND idiva = '.prepare($this->idiva).' AND qta_evasa < qta LIMIT 1');
+        }
+
+        // Se c'è un collegamento ad un contratto, aggiorno la quantità evasa
+        elseif (!empty($this->idcontratto)) {
+            $database->query('UPDATE co_righe_contratti SET qta_evasa = qta_evasa + '.$diff.' WHERE descrizione = '.prepare($this->descrizione).' AND idarticolo = '.prepare($this->idarticolo).' AND idcontratto = '.prepare($this->idcontratto).' AND idiva = '.prepare($this->idiva).' AND qta_evasa < qta LIMIT 1');
         }
     }
 }

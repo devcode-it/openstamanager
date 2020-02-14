@@ -2,19 +2,13 @@
 
 include_once __DIR__.'/../../core.php';
 
-$report_name = 'ddt_'.$numero.'.pdf';
-
-$autofill = [
-    'count' => 0,
-    'words' => 70,
-    'rows' => 16,
-    'additional' => 15,
-    'columns' => $options['pricing'] ? 5 : 2,
-];
-
-$imponibile = [];
-$iva = [];
-$sconto = [];
+// Creazione righe fantasma
+$autofill = new \Util\Autofill($options['pricing'] ? 5 : 2);
+$rows_per_page = 16;
+if (!empty($options['last-page-footer'])) {
+    $rows_per_page += 10;
+}
+$autofill->setRows($rows_per_page);
 
 // Intestazione tabella per righe
 echo "
@@ -37,131 +31,112 @@ if ($options['pricing']) {
 
     <tbody>';
 
-// Righe
-$rs_gen = $dbo->fetchArray("SELECT *,
-    IFNULL((SELECT `codice` FROM `mg_articoli` WHERE `id` = `dt_righe_ddt`.`idarticolo`), '') AS codice_articolo,
-    (SELECT GROUP_CONCAT(`serial` SEPARATOR ', ') FROM `mg_prodotti` WHERE `id_riga_ddt` = `dt_righe_ddt`.`id`) AS seriali,
-    (SELECT `percentuale` FROM `co_iva` WHERE `id` = `dt_righe_ddt`.`idiva`) AS perc_iva,
-    IFNULL((SELECT peso_lordo FROM mg_articoli WHERE id=idarticolo),0) * qta AS peso_lordo,
-    IFNULL((SELECT volume FROM mg_articoli WHERE id=idarticolo),0) * qta AS volume
-FROM `dt_righe_ddt` WHERE idddt=".prepare($id_record).' ORDER BY `order`');
-foreach ($rs_gen as $r) {
-    $count = 0;
-    $count += ceil(strlen($r['descrizione']) / $autofill['words']);
-    $count += substr_count($r['descrizione'], PHP_EOL);
+// Righe documento
+$righe = $documento->getRighe();
+foreach ($righe as $riga) {
+    $r = $riga->toArray();
+
+    $autofill->count($r['descrizione']);
 
     echo '
     <tr>
         <td>
             '.nl2br($r['descrizione']);
 
-    // Codice articolo
-    if (!empty($r['codice_articolo'])) {
+    if ($riga->isArticolo()) {
+        // Codice articolo
+        $text = tr('COD. _COD_', [
+            '_COD_' => $riga->articolo->codice,
+        ]);
         echo '
-            <br><small>'.tr('COD. _COD_', [
-                '_COD_' => $r['codice_articolo'],
-            ]).'</small>';
+                <br><small>'.$text.'</small>';
 
-        if ($count <= 1) {
-            $count += 0.4;
-        }
-    }
+        $autofill->count($text, true);
 
-    // Seriali
-    if (!empty($r['seriali'])) {
-        echo '
-            <br><small>'.tr('SN').': '.$r['seriali'].'</small>';
+        // Seriali
+        $seriali = $riga->serials;
+        if (!empty($seriali)) {
+            $text = tr('SN').': '.implode(', ', $seriali);
+            echo '
+                    <br><small>'.$text.'</small>';
 
-        if ($count <= 1) {
-            $count += 0.4;
+            $autofill->count($text, true);
         }
     }
 
     // Aggiunta dei riferimenti ai documenti
-    $ref = doc_references($r, $records[0]['dir'], ['idddt']);
+    if (setting('Riferimento dei documenti nelle stampe')) {
+        $ref = doc_references($r, $record['dir'], ['idddt']);
 
-    if (!empty($ref)) {
-        echo '
+        if (!empty($ref)) {
+            echo '
                 <br><small>'.$ref['description'].'</small>';
-        if ($count <= 1) {
-            $count += 0.4;
+
+            $autofill->count($ref['description'], true);
         }
     }
 
     echo '
         </td>';
 
-    echo '
-        <td class="text-center">';
-    if (empty($r['is_descrizione'])) {
+    if (!$riga->isDescrizione()) {
         echo '
-            '.Translator::numberToLocale($r['qta'], 'qta').' '.$r['um'];
-    }
-    echo '
-        </td>';
+            <td class="text-center">
+                '.Translator::numberToLocale(abs($riga->qta), 'qta').' '.$r['um'].'
+            </td>';
 
-    if ($options['pricing']) {
-        // Prezzo unitario
-        echo "
-        <td class='text-right'>";
-        if (empty($r['is_descrizione'])) {
+        if ($options['pricing']) {
+            // Prezzo unitario
             echo '
-            '.Translator::numberToLocale($r['subtotale'] / $r['qta']).' &euro;';
-        }
-        echo '
-        </td>';
+            <td class="text-right">
+				'.moneyFormat($riga->prezzo_unitario_vendita);
 
-        // Imponibile
-        echo "
-        <td class='text-right'>";
-        if (empty($r['is_descrizione'])) {
-            echo '
-            '.Translator::numberToLocale($r['subtotale']).' &euro;';
+            if ($riga->sconto > 0) {
+                $text = tr('sconto _TOT_ _TYPE_', [
+                    '_TOT_' => Translator::numberToLocale($riga->sconto_unitario),
+                    '_TYPE_' => ($riga->tipo_sconto == 'PRC' ? '%' : currency()),
+                ]);
 
-            if ($r['sconto'] > 0) {
-                if ($count <= 1) {
-                    $count += 0.4;
-                }
                 echo '
-            <br><small class="help-block">- '.tr('sconto _TOT_ _TYPE_', [
-                '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
-                '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
-            ]).'</small>';
+                <br><small class="text-muted">'.$text.'</small>';
+
+                $autofill->count($text, true);
             }
-        }
-        echo '
-        </td>';
 
-        // Iva
-        echo "
-        <td class='text-center'>";
-        if (empty($r['is_descrizione'])) {
             echo '
-            '.Translator::numberToLocale($r['perc_iva']);
+            </td>';
+
+            // Imponibile
+            echo '
+            <td class="text-right">
+				'.moneyFormat($riga->totale_imponibile).'
+            </td>';
+
+            // Iva
+            echo '
+            <td class="text-center">
+                '.Translator::numberToLocale($riga->aliquota->percentuale, 0).'
+            </td>';
         }
+    } else {
         echo '
-        </td>';
+            <td></td>';
+
+        if ($options['pricing']) {
+            echo '
+            <td></td>
+            <td></td>
+            <td></td>';
+        }
     }
+
     echo '
-    </tr>';
+        </tr>';
 
-    $autofill['count'] += $count;
-
-    $imponibile[] = $r['subtotale'];
-    $iva[] = $r['iva'];
-    $sconto[] = $r['sconto'];
+    $autofill->next();
 }
 
 echo '
         |autofill|
     </tbody>
 </table>';
-
-// Info per il footer
-$imponibile = sum($imponibile) - sum($sconto);
-$iva = sum($iva);
-
-$totale = $imponibile + $iva;
-
-$volume = sum(array_column($rs_gen, 'volume'));
-$peso_lordo = sum(array_column($rs_gen, 'peso_lordo'));

@@ -4,13 +4,13 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\Anagrafiche\Anagrafica;
 
-$id_azienda = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Azienda'")[0]['idtipoanagrafica'];
-$id_cliente = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Cliente'")[0]['idtipoanagrafica'];
-$id_fornitore = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Fornitore'")[0]['idtipoanagrafica'];
-$id_tecnico = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Tecnico'")[0]['idtipoanagrafica'];
+$rs = $dbo->fetchArray('SELECT idtipoanagrafica, descrizione FROM an_tipianagrafiche');
+foreach ($rs as $riga) {
+    ${'id_'.strtolower($riga['descrizione'])} = $riga['idtipoanagrafica'];
+}
 
 if (isset($id_record)) {
-    $anagrafica = Anagrafica::find($id_record);
+    $anagrafica = Anagrafica::withTrashed()->find($id_record);
 
     $record = $dbo->fetchOne('SELECT *,
         (SELECT GROUP_CONCAT(an_tipianagrafiche.idtipoanagrafica) FROM an_tipianagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche.idtipoanagrafica=an_tipianagrafiche_anagrafiche.idtipoanagrafica WHERE idanagrafica=an_anagrafiche.idanagrafica) AS idtipianagrafica,

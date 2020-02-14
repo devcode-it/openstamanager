@@ -26,15 +26,15 @@ $HTMLHandlers = [];
 $HTMLManagers = [];
 
 // Lingua del progetto (per la traduzione e la conversione numerica)
-$lang = 'it';
+$lang = '|lang|';
 // Personalizzazione della formattazione di timestamp, date e orari
 $formatter = [
-    'timestamp' => 'd/m/Y H:i',
-    'date' => 'd/m/Y',
-    'time' => 'H:i',
+    'timestamp' => '|timestamp|',
+    'date' => '|date|',
+    'time' => '|time|',
     'number' => [
-        'decimals' => ',',
-        'thousands' => '.',
+        'decimals' => '|decimals|',
+        'thousands' => '|thousands|',
     ],
 ];
 

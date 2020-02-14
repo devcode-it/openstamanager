@@ -41,19 +41,19 @@
     color: #72AFD2;
 }
 
-.skin-default .main-header .navbar {
+.skin-default .main-header .navbar > span {
     color: #eee;
     background: #222;
     border: none;
 }
 
-.skin-default .main-header .navbar .nav li a
-.skin-default .main-header .navbar .nav li a:hover,
-.skin-default .main-header .navbar .nav li a:active,
-.skin-default .main-header .navbar .nav li a:focus,
-.skin-default .main-header .navbar .nav .open a,
-.skin-default .main-header .navbar .nav .open a:hover,
-.skin-default .main-header .navbar .nav .open a:focus,
+.skin-default .main-header .navbar .nav > li > a
+.skin-default .main-header .navbar .nav > li > a:hover,
+.skin-default .main-header .navbar .nav > li > a:active,
+.skin-default .main-header .navbar .nav > li > a:focus,
+.skin-default .main-header .navbar .nav .open > a,
+.skin-default .main-header .navbar .nav .open > a:hover,
+.skin-default .main-header .navbar .nav .open > a:focus,
 .skin-default .main-header .navbar .nav .active a,
 .skin-default .main-header .navbar .nav .actual a,
 .skin-default .main-header .navbar .nav .menu-open a {
@@ -83,9 +83,11 @@
     .skin-default .main-header .navbar .dropdown-menu li.divider {
         background: rgba(255, 255, 255, 0.1);
     }
+
     .skin-default .main-header .navbar .dropdown-menu li a {
         color: #f6f6f6;
     }
+
     .skin-default .main-header .navbar .dropdown-menu li a:hover {
         background: #222;
     }
@@ -139,8 +141,8 @@
     border-left-color: #222;
 }
 
-.skin-default .sidebar-menu li:hover>a,
-.skin-default .sidebar-menu li.actual>a {
+.skin-default .sidebar-menu li:hover > a,
+.skin-default .sidebar-menu li.actual > a {
     color: #f6f6f6;
 }
 
@@ -177,12 +179,12 @@
 }
 
 .skin-default .sidebar-form input[type="text"]:focus,
-.skin-default .sidebar-form input[type="text"]:focus+.input-group-btn .btn {
+.skin-default .sidebar-form input[type="text"]:focus + .input-group-btn .btn {
     background: #f6f6f6;
     color: #666;
 }
 
-.skin-default .sidebar-form input[type="text"]:focus+.input-group-btn .btn {
+.skin-default .sidebar-form input[type="text"]:focus + .input-group-btn .btn {
     border-left-color: #f6f6f6;
 }
 

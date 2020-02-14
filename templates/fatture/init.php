@@ -2,6 +2,11 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Fatture\Fattura;
+
+$documento = Fattura::find($id_record);
+$banca = $documento->getBanca();
+
 // Lettura info fattura
 $record = $dbo->fetchOne('SELECT *,
     (SELECT descrizione FROM co_statidocumento WHERE id=idstatodocumento) AS stato_doc,
@@ -14,9 +19,6 @@ $record = $dbo->fetchOne('SELECT *,
     (SELECT descrizione FROM dt_spedizione WHERE id=idspedizione) AS spedizione,
     (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idvettore) AS vettore,
     (SELECT id FROM co_banche WHERE id=idbanca) AS id_banca,
-    (SELECT nome FROM co_banche WHERE id=idbanca) AS nome_banca,
-    (SELECT iban FROM co_banche WHERE id=idbanca) AS iban_banca,
-    (SELECT bic FROM co_banche WHERE id=idbanca) AS bic_banca,
     (SELECT is_fiscale FROM zz_segments WHERE id = id_segment) AS is_fiscale
 FROM co_documenti WHERE id='.prepare($id_record));
 
@@ -24,14 +26,14 @@ $record['rivalsainps'] = floatval($record['rivalsainps']);
 $record['ritenutaacconto'] = floatval($record['ritenutaacconto']);
 $record['bollo'] = floatval($record['bollo']);
 
-$nome_banca = $record['nome_banca'];
-$iban_banca = $record['iban_banca'];
-$bic_banca = $record['bic_banca'];
+$nome_banca = $banca['appoggiobancario'];
+$iban_banca = $banca['codiceiban'];
+$bic_banca = $banca['bic'];
 
 $module_name = ($record['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
 
 $id_cliente = $record['idanagrafica'];
-$id_sede = $record['idsede'];
+$id_sede = $record['idsede_partenza'];
 
 $tipo_doc = $record['tipo_doc'];
 $numero = !empty($record['numero_esterno']) ? $record['numero_esterno'] : $record['numero'];
@@ -46,34 +48,34 @@ $fattura_accompagnatoria = ($record['tipo_doc'] == 'Fattura accompagnatoria di v
 $tipo_doc = ($fattura_accompagnatoria) ? 'Fattura accompagnatoria di vendita' : $tipo_doc;
 
 // Leggo i dati della destinazione (se 0=sede legale, se!=altra sede da leggere da tabella an_sedi)
-$rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS ragione_sociale, nomesede, indirizzo, indirizzo2, cap, citta, provincia, piva, codice_fiscale FROM an_sedi WHERE idanagrafica='.prepare($id_cliente).(!empty($record['idsede']) ? ' AND id='.prepare($record['idsede']) : ''));
-
 $destinazione = '';
-if (!empty($rsd[0]['nomesede'])) {
-    $destinazione .= $rsd[0]['nomesede'].'<br/>';
-}
-if (!empty($rsd[0]['indirizzo'])) {
-    $destinazione .= $rsd[0]['indirizzo'].'<br/>';
-}
-if (!empty($rsd[0]['indirizzo2'])) {
-    $destinazione .= $rsd[0]['indirizzo2'].'<br/>';
-}
-if (!empty($rsd[0]['cap'])) {
-    $destinazione .= $rsd[0]['cap'].' ';
-}
-if (!empty($rsd[0]['citta'])) {
-    $destinazione .= $rsd[0]['citta'];
-}
-if (!empty($rsd[0]['provincia'])) {
-    $destinazione .= ' ('.$rsd[0]['provincia'].')';
-}
+if (!empty($record['idsede_destinazione'])) {
+    $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS ragione_sociale, nomesede, indirizzo, indirizzo2, cap, citta, provincia, piva, codice_fiscale FROM an_sedi WHERE idanagrafica='.prepare($id_cliente).' AND id='.prepare($record['idsede_destinazione']));
 
-$id_sede = 0;
+    if (!empty($rsd[0]['nomesede'])) {
+        $destinazione .= $rsd[0]['nomesede'].'<br/>';
+    }
+    if (!empty($rsd[0]['indirizzo'])) {
+        $destinazione .= $rsd[0]['indirizzo'].'<br/>';
+    }
+    if (!empty($rsd[0]['indirizzo2'])) {
+        $destinazione .= $rsd[0]['indirizzo2'].'<br/>';
+    }
+    if (!empty($rsd[0]['cap'])) {
+        $destinazione .= $rsd[0]['cap'].' ';
+    }
+    if (!empty($rsd[0]['citta'])) {
+        $destinazione .= $rsd[0]['citta'];
+    }
+    if (!empty($rsd[0]['provincia'])) {
+        $destinazione .= ' ('.$rsd[0]['provincia'].')';
+    }
+}
 
 // Sostituzioni specifiche
 $custom = [
     'tipo_doc' => Stringy\Stringy::create($tipo_doc)->toUpperCase(),
-    'numero_doc' => $numero,
+    'numero' => $numero,
     'data' => Translator::dateToLocale($record['data']),
     'pagamento' => $record['tipo_pagamento'],
     'c_destinazione' => $destinazione,

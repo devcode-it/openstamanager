@@ -1,10 +1,6 @@
 <?php
 
-if (file_exists(__DIR__.'/../../../core.php')) {
-    include_once __DIR__.'/../../../core.php';
-} else {
-    include_once __DIR__.'/../../core.php';
-}
+include_once __DIR__.'/../../core.php';
 
 $show_costi = true;
 // Limitazione delle azioni dei tecnici
@@ -162,7 +158,7 @@ if (!empty($sessioni)) {
             <td style="border-right:1px solid #aaa;">
                 '.tr('_TOT_ _TYPE_', [
                     '_TOT_' => Translator::numberToLocale($sessione['sconto_unitario']),
-                    '_TYPE_' => ($sessione['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
+                    '_TYPE_' => ($sessione['tipo_sconto'] == 'PRC' ? '%' : currency()),
                 ]).'
             </td>';
         }
@@ -173,7 +169,7 @@ if (!empty($sessioni)) {
             <td style="border-right:1px solid #aaa;">
                 '.tr('_TOT_ _TYPE_', [
                     '_TOT_' => Translator::numberToLocale($sessione['scontokm_unitario']),
-                    '_TYPE_' => ($sessione['tipo_sconto_km'] == 'PRC' ? '%' : '&euro;'),
+                    '_TYPE_' => ($sessione['tipo_sconto_km'] == 'PRC' ? '%' : currency()),
                 ]).'
             </td>';
         }
@@ -182,7 +178,7 @@ if (!empty($sessioni)) {
         if (!$is_completato) {
             echo '
             <td class="text-center">
-                <button type="button" class="btn btn-sm btn-warning" onclick="launch_modal(\''.tr('Modifica sessione').'\', \''.$module->fileurl('manage_sessione.php').'?id_module='.$id_module.'&id_record='.$id_record.'&id_sessione='.$sessione['id'].'\', 1);" title="'.tr('Modifica sessione').'"><i class="fa fa-edit"></i></button>
+                <button type="button" class="btn btn-sm btn-warning" onclick="launch_modal(\''.tr('Modifica sessione').'\', \''.$module->fileurl('manage_sessione.php').'?id_module='.$id_module.'&id_record='.$id_record.'&id_sessione='.$sessione['id'].'\');" title="'.tr('Modifica sessione').'"><i class="fa fa-edit"></i></button>
 
 				<button type="button" class="btn btn-sm btn-danger" id="delbtn_'.$sessione['id'].'" onclick="elimina_sessione(\''.$sessione['id'].'\');" title="Elimina riga" class="only_rw"><i class="fa fa-trash"></i></button>
             </td>';
@@ -208,7 +204,7 @@ if (!$is_completato) {
 <!-- AGGIUNTA TECNICO -->
 <div class="row">
     <div class="col-md-offset-6 col-md-4">
-        {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "nuovotecnico", "placeholder": "'.tr('- Seleziona un tecnico -').'", "ajax-source": "tecnici", "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|tipoanagrafica=Tecnico" ]}
+        {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "nuovotecnico", "placeholder": "'.tr('Seleziona un tecnico').'", "ajax-source": "tecnici", "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|tipoanagrafica=Tecnico" ]}
     </div>
 
     <div class="col-md-2">
@@ -221,7 +217,7 @@ if (!$is_completato) {
 }
 
 echo '
-<script src="'.$rootdir.'/lib/init.js"></script>
+<script>$(document).ready(init)</script>
 
 <script type="text/javascript">
     $(document).ready(function(){';

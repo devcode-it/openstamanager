@@ -2,6 +2,7 @@
 
 namespace Util;
 
+use Carbon\Carbon;
 use Illuminate\Database\Capsule\Manager;
 
 /**
@@ -46,10 +47,10 @@ class Generator
      *
      * @return string
      */
-    public static function generate($pattern, $last = null, $quantity = 1, $values = [])
+    public static function generate($pattern, $last = null, $quantity = 1, $values = [], $date = null)
     {
         // Costruzione del pattern
-        $result = self::complete($pattern, $values);
+        $result = self::complete($pattern, $values, $date);
         $length = substr_count($result, '#');
 
         // Individuazione dei valori precedenti
@@ -70,10 +71,10 @@ class Generator
      *
      * @return string
      */
-    public static function complete($pattern, $values = [])
+    public static function complete($pattern, $values = [], $date = null)
     {
         // Costruzione del pattern
-        $replaces = array_merge(self::getReplaces(), $values);
+        $replaces = array_merge(self::getReplaces($date), $values);
 
         $keys = array_keys($replaces);
         $values = array_column($replaces, 'value');
@@ -88,10 +89,10 @@ class Generator
      *
      * @return array
      */
-    public static function read($pattern, $string)
+    public static function read($pattern, $string, $date = null)
     {
         // Costruzione del pattern
-        $replaces = self::getReplaces();
+        $replaces = self::getReplaces($date);
 
         $replaces['#'] = [
             'regex' => '(?<number>[0-9]+)',
@@ -114,14 +115,16 @@ class Generator
      *
      * @return array
      */
-    public static function getReplaces()
+    public static function getReplaces($date = null)
     {
         $replaces = self::$replaces;
+
+        $date_object = new Carbon($date);
 
         foreach ($replaces as $key => $value) {
             if (!isset($replaces[$key]['value'])) {
                 if (isset($replaces[$key]['date'])) {
-                    $replaces[$key]['value'] = date($replaces[$key]['date']);
+                    $replaces[$key]['value'] = $date_object->format($replaces[$key]['date']);
                 } else {
                     $replaces[$key]['value'] = $key;
                 }
@@ -174,11 +177,11 @@ class Generator
         return $maschera['pattern'];
     }
 
-    public static function getPreviousFrom($maschera, $table, $field, $where = [])
+    public static function getPreviousFrom($maschera, $table, $field, $where = [], $date = null)
     {
         $order = static::getMascheraOrder($maschera, $field);
 
-        $maschera = Generator::complete($maschera);
+        $maschera = Generator::complete($maschera, [], $date);
         $maschera = str_replace('#', '%', $maschera);
 
         $query = Manager::table($table)->select($field)->where($field, 'like', $maschera)->orderByRaw($order);

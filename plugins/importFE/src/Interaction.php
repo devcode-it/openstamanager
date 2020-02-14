@@ -2,44 +2,70 @@
 
 namespace Plugins\ImportFE;
 
-use Plugins\ExportFE\Connection;
+use API\Services;
 
 /**
  * Classe per l'interazione con API esterne.
  *
  * @since 2.4.3
  */
-class Interaction extends Connection
+class Interaction extends Services
 {
-    public static function listToImport()
+    public static function getInvoiceList()
     {
-        $directory = FatturaElettronica::getImportDirectory();
+        $list = self::getRemoteList();
 
-        $list = [];
+        // Ricerca fisica
+        $result = self::getFileList($list);
 
-        $files = glob($directory.'/*.xml*');
-        foreach ($files as $file) {
-            $list[] = basename($file);
-        }
+        // Aggiornamento cache hook
+        InvoiceHook::update($result);
 
+        return $result;
+    }
+
+    public static function getRemoteList()
+    {
         // Ricerca da remoto
         if (self::isEnabled()) {
             $response = static::request('POST', 'fatture_da_importare');
             $body = static::responseBody($response);
 
             if ($body['status'] == '200') {
-                $files = $body['results'];
-
-                foreach ($files as $file) {
-                    $list[] = basename($file);
-                }
+                $list = $body['results'];
             }
         }
 
-        return array_clean($list);
+        return $list ?: [];
     }
 
-    public static function getImportXML($name)
+    public static function getFileList($list = [])
+    {
+        $names = array_column($list, 'name');
+
+        // Ricerca fisica
+        $directory = FatturaElettronica::getImportDirectory();
+
+        $files = glob($directory.'/*.xml*');
+        foreach ($files as $id => $file) {
+            $name = basename($file);
+            $pos = array_search($name, $names);
+
+            if ($pos === false) {
+                $list[] = [
+                    'id' => $id,
+                    'name' => $name,
+                    'file' => true,
+                ];
+            } else {
+                $list[$pos]['id'] = $id;
+            }
+        }
+
+        return $list;
+    }
+
+    public static function getInvoiceFile($name)
     {
         $directory = FatturaElettronica::getImportDirectory();
         $file = $directory.'/'.$name;
@@ -50,17 +76,19 @@ class Interaction extends Connection
             ]);
             $body = static::responseBody($response);
 
-            FatturaElettronica::store($name, $body['content']);
+            if (!empty($body['content'])) {
+                FatturaElettronica::store($name, $body['content']);
+            }
         }
 
         return $name;
     }
 
-    public static function processXML($filename)
+    public static function processInvoice($filename)
     {
         $response = static::request('POST', 'fattura_xml_salvata', [
-                'filename' => $filename,
-            ]);
+            'filename' => $filename,
+        ]);
 
         $body = static::responseBody($response);
 

@@ -8,7 +8,7 @@ switch ($resource) {
             $query = 'SELECT id, nome AS descrizione, contenuto FROM my_impianto_componenti |where| ORDER BY id';
 
             foreach ($elements as $element) {
-                $filter[] = 'idimpianto='.prepare($element);
+                $filter[] = 'id='.prepare($element);
             }
 
             $temp = [];
@@ -25,13 +25,16 @@ switch ($resource) {
             $custom['contenuto'] = 'contenuto';
 
             $results = AJAX::selectResults($query, $where, $filter, $search, $limit, $custom);
-            foreach ($results as $key => $value) {
+            $data = $results['results'];
+            foreach ($data as $key => $value) {
                 $matricola = \Util\Ini::getValue($r['contenuto'], 'Matricola');
 
-                $results[$key]['text'] = (empty($matricola) ? '' : $matricola.' - ').$results[$key]['text'];
+                $data[$key]['text'] = (empty($matricola) ? '' : $matricola.' - ').$data[$key]['text'];
 
-                unset($results[$key]['content']);
+                unset($data[$key]['content']);
             }
+
+            $results['results'] = $data;
         }
 
         break;

@@ -3,10 +3,11 @@
 namespace Modules\Contratti;
 
 use Carbon\Carbon;
+use Common\Components\Description;
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\Intervento;
-use Modules\Interventi\TipoSessione;
+use Modules\TipiIntervento\Tipo as TipoSessione;
 use Traits\RecordTrait;
 use Util\Generator;
 
@@ -17,10 +18,19 @@ class Contratto extends Document
     protected $table = 'co_contratti';
 
     /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = [
+        'data_conclusione',
+        'data_accettazione',
+    ];
+
+    /**
      * Crea un nuovo contratto.
      *
-     * @param Anagrafica $anagrafica
-     * @param string     $nome
+     * @param string $nome
      *
      * @return self
      */
@@ -43,7 +53,6 @@ class Contratto extends Document
 
         $model->numero = static::getNextNumero();
 
-        // Salvataggio delle informazioni
         $model->nome = $nome;
         $model->data_bozza = Carbon::now();
 
@@ -55,9 +64,8 @@ class Contratto extends Document
             $model->idpagamento = $id_pagamento;
         }
 
+        // Salvataggio delle informazioni
         $model->save();
-
-        $model->fixTipiSessioni();
 
         return $model;
     }
@@ -65,13 +73,11 @@ class Contratto extends Document
     public function fixTipiSessioni()
     {
         $database = database();
-        $database->query('DELETE FROM co_contratti_tipiintervento WHERE idcontratto = '.prepare($this->id));
+
+        $presenti = $database->fetchArray('SELECT idtipointervento AS id FROM co_contratti_tipiintervento WHERE idcontratto = '.prepare($this->id));
 
         // Aggiunta associazioni costi unitari al contratto
-        $tipi = TipoSessione::where('costo_orario', '<>', 0)
-            ->where('costo_km', '<>', 0)
-            ->where('costo_diritto_chiamata', '<>', 0)
-            ->get();
+        $tipi = TipoSessione::whereNotIn('idtipointervento', array_column($presenti, 'id'))->get();
 
         foreach ($tipi as $tipo) {
             $database->insert('co_contratti_tipiintervento', [
@@ -135,6 +141,58 @@ class Contratto extends Document
     public function interventi()
     {
         return $this->hasMany(Intervento::class, 'id_contratto');
+    }
+
+    public function fixBudget()
+    {
+        $this->budget = $this->totale_imponibile ?: 0;
+    }
+
+    public function save(array $options = [])
+    {
+        $this->fixBudget();
+
+        $result = parent::save($options);
+
+        $this->fixTipiSessioni();
+
+        return $result;
+    }
+
+    /**
+     * Effettua un controllo sui campi del documento.
+     * Viene richiamatp dalle modifiche alle righe del documento.
+     */
+    public function triggerEvasione(Description $trigger)
+    {
+        parent::triggerEvasione($trigger);
+
+        $righe = $this->getRighe();
+
+        $qta_evasa = $righe->sum('qta_evasa');
+        $qta = $righe->sum('qta');
+        $parziale = $qta != $qta_evasa;
+
+        // Impostazione del nuovo stato
+        if ($qta_evasa == 0) {
+            $descrizione = 'In lavorazione';
+            $codice_intervento = 'OK';
+        } else {
+            $descrizione = $parziale ? 'Parzialmente fatturato' : 'Fatturato';
+            $codice_intervento = 'FAT';
+        }
+
+        $stato = Stato::where('descrizione', $descrizione)->first();
+        $this->stato()->associate($stato);
+        $this->save();
+
+        // Trasferimento degli interventi collegati
+        $interventi = $this->interventi;
+        $stato_intervento = \Modules\Interventi\Stato::where('codice', $codice_intervento)->first();
+        foreach ($interventi as $intervento) {
+            $intervento->stato()->associate($stato_intervento);
+            $intervento->save();
+        }
     }
 
     // Metodi statici

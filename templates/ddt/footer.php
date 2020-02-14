@@ -1,5 +1,23 @@
 <?php
 
+if (!empty($options['last-page-footer']) && !$is_last_page) {
+    return;
+}
+
+// Calcoli
+$imponibile = $documento->imponibile;
+$sconto = $documento->sconto;
+$totale_imponibile = $documento->totale_imponibile;
+$totale_iva = $documento->iva;
+$totale = $documento->totale;
+
+$volume = $righe->sum(function ($item) {
+    return $item->isArticolo() ? $item->articolo->volume : 0;
+});
+$peso_lordo = $righe->sum(function ($item) {
+    return $item->isArticolo() ? $item->articolo->peso_lordo : 0;
+});
+
 // TABELLA PRINCIPALE
 echo '
 <table class="table-bordered">';
@@ -10,7 +28,7 @@ if ($options['pricing']) {
     <tr>
         <td rowspan='7'>
             <p class='small-bold'>".tr('Note', [], ['upper' => true]).'</p>
-            <p>'.nl2br($records[0]['note'])."</p>
+            <p>'.nl2br($documento['note'])."</p>
         </td>
         <td style='width:33mm;'>
             <p class='small-bold'>".tr('Totale imponibile', [], ['upper' => true]).'</p>
@@ -21,7 +39,7 @@ if ($options['pricing']) {
     echo "
     <tr>
         <td class='cell-padded text-right'>
-            ".Translator::numberToLocale($imponibile).' &euro;
+            ".moneyFormat($imponibile, 2).'
         </td>
     </tr>';
 
@@ -29,13 +47,13 @@ if ($options['pricing']) {
     echo "
     <tr>
         <td style='width:33mm;'>
-            <p class='small-bold'>".tr('Totale imposte', [], ['upper' => true])."</p>
+            <p class='small-bold'>".tr('Totale IVA', [], ['upper' => true])."</p>
         </td>
     </tr>
 
     <tr>
         <td class='cell-padded text-right'>
-            ".Translator::numberToLocale($iva).' &euro;
+            ".moneyFormat($totale_iva, 2).'
         </td>
     </tr>';
 
@@ -49,7 +67,7 @@ if ($options['pricing']) {
 
     <tr>
         <td class='cell-padded text-right'>
-            ".Translator::numberToLocale($totale).' &euro;
+            ".moneyFormat($totale, 2).'
         </td>
     </tr>';
 } else {
@@ -58,7 +76,7 @@ if ($options['pricing']) {
     <tr>
         <td style='height:40mm;'>
             <p class='small-bold'>".tr('Note', [], ['upper' => true]).'</p>
-            '.nl2br($records[0]['note']).'
+            '.nl2br($documento['note']).'
         </td>
     </tr>';
 }
@@ -78,6 +96,10 @@ echo '
             '.tr('Num. colli', [], ['upper' => true]).'
         </th>
 
+        <th class="small" class style="width:20%">
+            '.tr('Data ora trasporto', [], ['upper' => true]).'
+        </th>
+
         <th class="small" style="width:30%">
             '.tr('Causale trasporto', [], ['upper' => true]).'
         </th>
@@ -94,6 +116,10 @@ echo '
 
         <td class="cell-padded">
             $n_colli$ &nbsp;
+        </td>
+
+        <td class="cell-padded">
+            '.Translator::TimestampToLocale($documento['data_ora_trasporto']).' &nbsp;
         </td>
 
         <td class="cell-padded">
@@ -118,25 +144,25 @@ echo '
             '.tr('Vettore', [], ['upper' => true]).'
         </th>
 
-        <th class="small">
+        <th class="small" colspan="2">
             '.tr('Tipo di spedizione', [], ['upper' => true]).'
         </th>
     </tr>
 
     <tr>
         <td class="cell-padded">
-        '.(!empty($peso_lordo) ? Translator::numberToLocale($peso_lordo) : '').'&nbsp;KG
+        '.(!empty($peso_lordo) ? Translator::numberToLocale($peso_lordo).'&nbsp;KG' : '').'
         </td>
 
         <td class="cell-padded">
-            '.(!empty($volume) ? Translator::numberToLocale($volume) : '').'&nbsp;M<sup>3</sup>
+            '.(!empty($volume) ? Translator::numberToLocale($volume).'&nbsp;M<sup>3</sup>' : '').'
         </td>
 
         <td class="cell-padded">
             $vettore$ &nbsp;
         </td>
 
-        <td class="cell-padded">
+        <td class="cell-padded" colspan="2">
             $spedizione$ &nbsp;
         </td>
     </tr>
@@ -166,5 +192,6 @@ echo '
     </tr>
 </table>';
 
-echo '
-$default_footer$';
+if (empty($options['last-page-footer'])) {
+    echo '$default_footer$';
+}

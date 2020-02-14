@@ -12,12 +12,13 @@ $options = [
     'action' => 'edit',
     'dir' => $documento->direzione,
     'idanagrafica' => $documento['idanagrafica'],
-    'totale' => $documento->totale,
+    'totale_imponibile' => $documento->totale_imponibile,
 ];
 
 // Dati della riga
 $id_riga = get('idriga');
-$riga = $documento->getRighe()->find($id_riga);
+$type = get('type');
+$riga = $documento->getRiga($type, $id_riga);
 
 $result = $riga->toArray();
 $result['prezzo'] = $riga->prezzo_unitario_vendita;

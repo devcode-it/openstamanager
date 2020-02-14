@@ -2,122 +2,205 @@
 
 namespace Notifications;
 
-use Mail;
-use PHPMailer\PHPMailer\Exception as PHPMailerException;
+use Modules\Emails\Account;
+use Modules\Emails\Mail;
+use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\PHPMailer;
 use Prints;
 use Uploads;
 
-class EmailNotification extends Notification
+class EmailNotification extends PHPMailer implements NotificationInterface
 {
-    protected $subject = null;
-    protected $readNotify = false;
+    protected $mail;
+    protected $directory;
 
-    protected $template = null;
-    protected $account = null;
-    protected $attachments = null;
+    protected $infos = [];
 
-    protected $logs = [];
-
-    /**
-     * Restituisce l'account email della notifica.
-     *
-     * @return array
-     */
-    public function getAccount()
+    public function __construct($account = null, $exceptions = null)
     {
-        return Mail::get($this->account);
-    }
+        parent::__construct($exceptions);
 
-    /**
-     * Imposta l'account email della notifica.
-     *
-     * @param string|int $value
-     */
-    public function setAccount($value)
-    {
-        $this->account = $value;
-    }
+        $this->CharSet = 'UTF-8';
 
-    /**
-     * Restituisce il template della notifica.
-     *
-     * @return array
-     */
-    public function getTemplate()
-    {
-        return Mail::getTemplate($this->template);
-    }
+        // Configurazione di base
+        $config = Account::find($account);
+        if (empty($config)) {
+            $config = Account::where('predefined', true)->first();
+        }
 
-    /**
-     * Imposta il template della notifica.
-     *
-     * @param string|int $value
-     * @param int        $id_record
-     */
-    public function setTemplate($value, $id_record = null)
-    {
-        $this->template = $value;
+        // Preparazione email
+        $this->IsHTML(true);
 
-        $template = $this->getTemplate();
+        if (!empty($config['server'])) {
+            $this->IsSMTP(true);
 
-        $this->setReadNotify($template['read_notify']);
-        $this->setAccount($template['id_smtp']);
+            // Impostazioni di debug
+            $this->SMTPDebug = \App::debug() ? 2 : 0;
+            $this->Debugoutput = function ($str, $level) {
+                $this->infos[] = $str;
+            };
 
-        if (!empty($id_record)) {
-            $variables = Mail::getTemplateVariables($template['id'], $id_record);
+            // Impostazioni dell'host
+            $this->Host = $config['server'];
+            $this->Port = $config['port'];
 
-            // Sostituzione delle variabili di base
-            $replaces = [];
-            foreach ($variables as $key => $value) {
-                $replaces['{'.$key.'}'] = $value;
+            // Impostazioni di autenticazione
+            if (!empty($config['username'])) {
+                $this->SMTPAuth = true;
+                $this->Username = $config['username'];
+                $this->Password = $config['password'];
             }
-            $body = replace($template['body'], $replaces);
-            $subject = replace($template['subject'], $replaces);
 
-            $this->setContent($body);
-            $this->setSubject($subject);
+            // Impostazioni di sicurezza
+            if (in_array(strtolower($config['encryption']), ['ssl', 'tls'])) {
+                $this->SMTPSecure = strtolower($config['encryption']);
+            }
+
+            if (!empty($config['ssl_no_verify'])) {
+                $this->SMTPOptions = [
+                    'ssl' => [
+                        'verify_peer' => false,
+                        'verify_peer_name' => false,
+                        'allow_self_signed' => true,
+                    ],
+                ];
+            }
         }
+
+        $this->From = $config['from_address'];
+        $this->FromName = $config['from_name'];
+
+        $this->WordWrap = 78;
     }
 
-    /**
-     * Include le stampe selezionate dal template.
-     *
-     * @param int $id_record
-     */
-    public function includeTemplatePrints($id_record)
+    public static function build(Mail $mail, $exceptions = null)
     {
-        $template = $this->getTemplate();
+        $result = new self($mail->account->id, $exceptions);
 
-        $prints = database()->fetchArray('SELECT id_print FROM zz_email_print WHERE id_email = '.prepare($template['id']));
+        $result->setMail($mail);
+
+        return $result;
+    }
+
+    public function setMail($mail)
+    {
+        $this->mail = $mail;
+
+        // Registazione della processazione
+        if (!empty($this->mail)) {
+            $this->mail->processing_at = date('Y-m-d H:i:s');
+            $this->mail->save();
+        }
+
+        // Destinatari
+        $receivers = $mail->receivers;
+        foreach ($receivers as $receiver) {
+            $this->addReceiver($receiver['address'], $receiver['type']);
+        }
+
+        // Allegati
+        $uploads = $mail->uploads;
+        foreach ($uploads as $upload) {
+            $this->addUpload($upload->id);
+        }
+
+        // Stampe
+        $prints = $mail->prints;
         foreach ($prints as $print) {
-            $this->addPrint($print['id_print'], $id_record);
+            $this->addPrint($print['id'], $mail->id_record);
         }
+
+        // Conferma di lettura
+        if (!empty($mail->read_notify)) {
+            $this->ConfirmReadingTo = $mail->From;
+        }
+
+        // Reply To
+        if (!empty($mail->options['reply_to'])) {
+            $this->AddReplyTo($mail->options['reply_to']);
+        }
+
+        // Oggetto
+        $this->Subject = $mail->subject;
+
+        // Contenuto
+        $this->Body = $mail->content;
+    }
+
+    public function getMail()
+    {
+        return $this->mail;
     }
 
     /**
-     * Restituisce gli allegati della notifica.
+     * Invia l'email impostata.
      *
-     * @return array
+     * @throws Exception
+     *
+     * @return bool
      */
-    public function getAttachments()
+    public function send()
     {
-        return $this->attachments;
+        if (empty($this->AltBody)) {
+            $this->AltBody = strip_tags($this->Body);
+        }
+
+        $exception = null;
+        try {
+            $result = parent::send();
+        } catch (Exception $e) {
+            $result = false;
+            $exception = $e;
+        }
+
+        // Registazione invio
+        if (!empty($this->mail)) {
+            if ($result) {
+                $this->mail->sent_at = date('Y-m-d H:i:s');
+            } else {
+                $this->mail->failed_at = date('Y-m-d H:i:s');
+            }
+
+            // Salvataggio del numero di tentativi
+            $this->mail->attempt = $this->mail->attempt + 1;
+
+            $this->mail->save();
+        }
+
+        $this->SmtpClose();
+
+        // Pulizia file generati
+        //delete($this->getTempDirectory());
+
+        // Segnalazione degli errori
+        if (!$result) {
+            $logger = logger();
+            foreach ($this->infos as $info) {
+                $logger->addRecord(\Monolog\Logger::ERROR, $info);
+            }
+        }
+
+        if (!empty($exception)) {
+            throw $exception;
+        }
+
+        return $result;
     }
 
     /**
-     * Imposta gli allegati della notifica.
+     * Testa la connessione al server SMTP.
      *
-     * @param array $values
+     * @return bool
      */
-    public function setAttachments(array $values)
+    public function testSMTP()
     {
-        $this->attachments = [];
+        if ($this->smtpConnect()) {
+            $this->smtpClose();
 
-        foreach ($values as $value) {
-            $path = is_array($value) ? $value['path'] : $value;
-            $name = is_array($value) ? $value['name'] : null;
-            $this->addAttachment($path, $name);
+            return true;
         }
+
+        return false;
     }
 
     /**
@@ -128,23 +211,8 @@ class EmailNotification extends Notification
     public function addUpload($file_id)
     {
         $attachment = database()->fetchOne('SELECT * FROM zz_files WHERE id = '.prepare($file_id));
+
         $this->addAttachment(DOCROOT.'/'.Uploads::getDirectory($attachment['id_module'], $attachment['id_plugin']).'/'.$attachment['filename']);
-
-        $this->logs['attachments'][] = $attachment['id'];
-    }
-
-    /**
-     * Aggiunge un allegato alla notifica.
-     *
-     * @param string $path
-     * @param string $name
-     */
-    public function addAttachment($path, $name = null)
-    {
-        $this->attachments[] = [
-            'path' => $path,
-            'name' => $name ?: basename($path),
-        ];
     }
 
     /**
@@ -158,129 +226,50 @@ class EmailNotification extends Notification
     {
         $print = Prints::get($print);
 
-        if (empty($name)) {
-            $name = $print['title'].'.pdf';
-        }
+        $info = Prints::render($print['id'], $id_record, null, true);
+        $name = $name ?: $info['path'];
 
-        // Utilizzo di una cartella particolare per il salvataggio temporaneo degli allegati
-        $path = DOCROOT.'/files/notifications/'.$print['title'].' - '.$id_record.'.pdf';
-
-        Prints::render($print['id'], $id_record, $path);
-
-        $this->addAttachment($path, $name);
-
-        $this->logs['prints'][] = $print['id'];
+        $this->AddStringAttachment($info['pdf'], $name);
     }
 
     /**
-     * Restituisce il titolo della notifica.
+     * Aggiunge un destinatario.
      *
-     * @return string
+     * @param array $receiver
+     * @param array $type
      */
-    public function getSubject()
+    public function addReceiver($receiver, $type = null)
     {
-        return $this->subject;
-    }
+        $pieces = explode('<', $receiver);
+        $count = count($pieces);
 
-    /**
-     * Imposta il titolo della notifica.
-     *
-     * @param string $value
-     */
-    public function setSubject($value)
-    {
-        $this->subject = $value;
-    }
-
-    /**
-     * Restituisce il titolo della notifica.
-     *
-     * @return bool
-     */
-    public function getReadNotify()
-    {
-        return $this->readNotify;
-    }
-
-    /**
-     * Imposta il titolo della notifica.
-     *
-     * @param bool $value
-     */
-    public function setReadNotify($value)
-    {
-        $this->readNotify = boolval($value);
-    }
-
-    /**
-     * Aggiunge un destinatario alla notifica.
-     *
-     * @param string $value
-     * @param string $type
-     */
-    public function addReceiver($value, $type = null)
-    {
-        if (empty($value)) {
-            return;
+        $name = null;
+        if ($count > 1) {
+            $email = substr(end($pieces), 0, -1);
+            $name = substr($receiver, 0, strpos($receiver, '<'.$email));
+        } else {
+            $email = $receiver;
         }
 
-        $this->receivers[] = [
-            'email' => $value,
-            'type' => $type,
-        ];
-
-        $this->logs['receivers'][] = $value;
-    }
-
-    public function send($exceptions = false)
-    {
-        $account = $this->getAccount();
-        $mail = new Mail($account['id'], true);
-
-        // Template
-        $template = $this->getTemplate();
-        if (!empty($template)) {
-            $mail->setTemplate($template);
-        }
-
-        // Destinatari
-        $receivers = $this->getReceivers();
-        foreach ($receivers as $receiver) {
-            $mail->addReceiver($receiver['email'], $receiver['type']);
-        }
-
-        // Allegati
-        $attachments = $this->getAttachments();
-        foreach ($attachments as $attachment) {
-            $mail->AddAttachment($attachment['path'], $attachment['name']);
-        }
-
-        // Conferma di lettura
-        if (!empty($this->getReadNotify())) {
-            $mail->ConfirmReadingTo = $mail->From;
-        }
-
-        // Oggetto
-        $mail->Subject = $this->getSubject();
-
-        // Contenuto
-        $mail->Body = $this->getContent();
-
-        // Invio mail
-        try {
-            $mail->send();
-
-            operationLog('send-email', [
-                'id_email' => $template['id'],
-            ], $this->logs);
-
-            return true;
-        } catch (PHPMailerException $e) {
-            if ($exceptions) {
-                throw $e;
+        if (!empty($email)) {
+            if ($type == 'cc') {
+                $this->AddCC($email, $name);
+            } elseif ($type == 'bcc') {
+                $this->AddBCC($email, $name);
+            } else {
+                $this->AddAddress($email, $name);
             }
-
-            return false;
         }
+    }
+
+    protected function getTempDirectory()
+    {
+        if (!isset($this->directory)) {
+            $this->directory = DOCROOT.'/files/notifications/'.rand(0, 999);
+
+            directory($this->directory);
+        }
+
+        return $this->directory;
     }
 }

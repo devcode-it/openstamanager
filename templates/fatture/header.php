@@ -16,19 +16,19 @@ if ($options['hide_header']) {
 }
 
 echo '
-<br>
+
 <div class="row">
     <!-- Dati Fattura -->
     <div class="col-xs-6">
-        <div class="text-center" style="height:5mm;">
-            <b>$tipo_doc$</b>
-        </div>
+		<div class="text-center" style="height:5mm;">
+			<b>$tipo_doc$</b>
+		</div>
 
-        <table class="table" style="overflow: visible">
+		<table class="table">
             <tr>
                 <td valign="top" class="border-full text-center">
                     <p class="small-bold">'.tr('Nr. documento', [], ['upper' => true]).'</p>
-                    <p>$numero_doc$</p>
+                    <p>$numero$</p>
                 </td>
 
                 <td class="border-right border-bottom border-top text-center">
@@ -67,17 +67,17 @@ echo '
                     <p>$bic$</p>
                 </td>
             </tr>
-
         </table>
     </div>
 
-    <div class="col-xs-5 col-xs-offset-1">
+	<div class="col-xs-6" style="margin-left: 10px">
         <table class="table" style="width:100%;margin-top:5mm;">
             <tr>
                 <td colspan=2 class="border-full"'.(!$fattura_accompagnatoria ? ' style="height:20mm;"' : '').'>
                     <p class="small-bold">'.tr('Spett.le', [], ['upper' => true]).'</p>
                     <p>$c_ragionesociale$</p>
-                    <p>$c_indirizzo$<br>$c_citta_full$</p>
+					<p>'.(!empty($c_indirizzo) ? $c_indirizzo : '').(!empty($c_citta_full) ? '<br>'.$c_citta_full : '').'</p>
+					<small>'.(!empty($c_codice_destinatario) ? tr('Cod.Fatturazione').': '.$c_codice_destinatario : '').'</small>
                 </td>
             </tr>
 
@@ -99,16 +99,14 @@ echo '
                 </td>
             </tr>';
 
-if ($fattura_accompagnatoria) {
+if (!empty($destinazione)) {
     echo '
             <tr>
-                <td colspan=2 class="border-full">
+                <td colspan=2 class="border-full" style="height:16mm;">
                     <p class="small-bold">'.tr('Destinazione diversa', [], ['upper' => true]).'</p>
-                    <p>$c_destinazione$</p>
+                    <small>$c_destinazione$</small>
                 </td>
             </tr>';
-
-    $settings['header-height'] += 13;
 }
 
 echo '

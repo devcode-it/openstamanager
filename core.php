@@ -60,7 +60,7 @@ use Monolog\Handler\RotatingFileHandler;
 use Monolog\Handler\StreamHandler;
 
 $handlers = [];
-if (!API::isAPIRequest()) {
+if (!API\Response::isAPIRequest()) {
     // File di log di base (logs/error.log, logs/setup.log)
     $handlers[] = new StreamHandler($docroot.'/logs/error.log', Monolog\Logger::ERROR);
     $handlers[] = new StreamHandler($docroot.'/logs/setup.log', Monolog\Logger::EMERGENCY);
@@ -105,7 +105,7 @@ if (!API::isAPIRequest()) {
 // Disabilita i messaggi nativi di PHP
 ini_set('display_errors', 0);
 // Ignora gli avvertimenti e le informazioni relative alla deprecazione di componenti
-error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE & ~E_USER_DEPRECATED & ~E_STRICT);
+error_reporting(E_ALL & ~E_WARNING & ~E_CORE_WARNING & ~E_NOTICE & ~E_USER_DEPRECATED & ~E_STRICT);
 
 $pattern = '[%datetime%] %channel%.%level_name%: %message% %context%'.PHP_EOL.'%extra% '.PHP_EOL;
 $monologFormatter = new Monolog\Formatter\LineFormatter($pattern);
@@ -124,7 +124,7 @@ Monolog\ErrorHandler::register($logger, [], Monolog\Logger::ERROR, Monolog\Logge
 $dbo = $database = database();
 
 /* SESSIONE */
-if (!API::isAPIRequest()) {
+if (!API\Response::isAPIRequest()) {
     // Sicurezza della sessioni
     ini_set('session.use_trans_sid', '0');
     ini_set('session.use_only_cookies', '1');
@@ -149,7 +149,7 @@ if (!API::isAPIRequest()) {
 
 /* INTERNAZIONALIZZAZIONE */
 // Istanziamento del gestore delle traduzioni del progetto
-$lang = !empty($config['lang']) ? $config['lang'] : 'it';
+$lang = !empty($config['lang']) ? $config['lang'] : $_GET['lang'];
 $formatter = !empty($config['formatter']) ? $config['formatter'] : [];
 $translator = trans();
 $translator->addLocalePath($docroot.'/locale');
@@ -162,7 +162,7 @@ $revision = Update::getRevision();
 
 /* ACCESSO E INSTALLAZIONE */
 // Controllo sulla presenza dei permessi di accesso basilari
-$continue = $dbo->isInstalled() && !Update::isUpdateAvailable() && (Auth::check() || API::isAPIRequest());
+$continue = $dbo->isInstalled() && !Update::isUpdateAvailable() && (Auth::check() || API\Response::isAPIRequest());
 
 if (!empty($skip_permissions)) {
     Permissions::skip();
@@ -179,7 +179,7 @@ if (!$continue && getURLPath() != slashes(ROOTDIR.'/index.php') && !Permissions:
 
 /* INIZIALIZZAZIONE GENERALE */
 // Operazione aggiuntive (richieste non API)
-if (!API::isAPIRequest()) {
+if (!API\Response::isAPIRequest()) {
     // Impostazioni di Content-Type e Charset Header
     header('Content-Type: text/html; charset=UTF-8');
 
@@ -267,6 +267,21 @@ if (!API::isAPIRequest()) {
 // TODO: sostituire tutte le funzioni dei moduli con classi Eloquent relative
 $files = glob(__DIR__.'/{modules,plugins}/*/modutil.php', GLOB_BRACE);
 $custom_files = glob(__DIR__.'/{modules,plugins}/*/custom/modutil.php', GLOB_BRACE);
+foreach ($custom_files as $key => $value) {
+    $index = array_search(str_replace('custom/', '', $value), $files);
+    if ($index !== false) {
+        unset($files[$index]);
+    }
+}
+
+$list = array_merge($files, $custom_files);
+foreach ($list as $file) {
+    include_once $file;
+}
+
+// Inclusione dei file vendor/autoload.php di Composer
+$files = glob(__DIR__.'/{modules,plugins}/*/vendor/autoload.php', GLOB_BRACE);
+$custom_files = glob(__DIR__.'/{modules,plugins}/*/custom/vendor/autoload.php', GLOB_BRACE);
 foreach ($custom_files as $key => $value) {
     $index = array_search(str_replace('custom/', '', $value), $files);
     if ($index !== false) {

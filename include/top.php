@@ -18,8 +18,13 @@ echo '<!DOCTYPE html>
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
         <meta name="robots" content="noindex,nofollow">
-
+        
 		<link href="'.$paths['img'].'/favicon.png" rel="icon" type="image/x-icon" />';
+
+if (file_exists(DOCROOT.'/manifest.json')) {
+    echo '
+        <link rel="manifest" href="'.ROOTDIR.'/manifest.json">';
+}
 
 // CSS
 foreach (App::getAssets()['css'] as $style) {
@@ -84,41 +89,90 @@ if (Auth::check()) {
         'details' => tr('Dettagli'),
         'waiting' => tr('Impossibile procedere'),
         'waiting_msg' => tr('Prima di proseguire devi selezionare alcuni elementi!'),
+        'hooksExecuting' => tr('Hooks in esecuzione'),
+        'hookExecuting' => tr('Hook "_NAME_" in esecuzione'),
+        'hookMultiple' => tr('Hai _NUM_ notifiche'),
+        'hookSingle' => tr('Hai 1 notifica'),
+        'hookNone' => tr('Nessuna notifica'),
+        'singleCalendar' => tr("E' presente un solo periodo!"),
     ];
     foreach ($translations as $key => $value) {
         echo '
-                '.$key.': \''.addslashes($value).'\',';
+                '.$key.': "'.addslashes($value).'",';
     }
     echo '
+                password: {
+                    "wordMinLength": "'.tr('La password è troppo corta').'",
+                    "wordMaxLength": "'.tr('La password è troppo lunga').'",
+                    "wordInvalidChar": "'.tr('La password contiene un carattere non valido').'",
+                    "wordNotEmail": "'.tr('Non usare la tua e-mail come password').'",
+                    "wordSimilarToUsername": "'.tr('La password non può contenere il tuo nome').'",
+                    "wordTwoCharacterClasses": "'.tr('Usa classi di caratteri diversi').'",
+                    "wordRepetitions": "'.tr('La password contiene ripetizioni').'",
+                    "wordSequences": "'.tr('La password contiene sequenze').'",
+                    "errorList": "'.tr('Attenzione').':",
+                    "veryWeak": "'.tr('Molto debole').'",
+                    "weak": "'.tr('Debole').'",
+                    "normal": "'.tr('Normale').'",
+                    "medium": "'.tr('Media').'",
+                    "strong": "'.tr('Forte').'",
+                    "veryStrong": "'.tr('Molto forte').'",
+                },
+                datatables: {
+                    "emptyTable": "'.tr('Nessun dato presente nella tabella').'",
+                    "info": "'.tr('Vista da _START_ a _END_ di _TOTAL_ elementi').'",
+                    "infoEmpty": "'.tr('Vista da 0 a 0 di 0 elementi').'",
+                    "infoFiltered": "('.tr('filtrati da _MAX_ elementi totali').')",
+                    "infoPostFix": "",
+                    "lengthMenu": "'.tr('Visualizza _MENU_ elementi').'",
+                    "loadingRecords": " ",
+                    "processing": "'.tr('Elaborazione').'...",
+                    "search": "'.tr('Cerca').':",
+                    "zeroRecords": "'.tr('La ricerca non ha portato alcun risultato').'.",
+                    "paginate": {
+                        "first": "'.tr('Inizio').'",
+                        "previous": "'.tr('Precedente').'",
+                        "next": "'.tr('Successivo').'",
+                        "last": "'.tr('Fine').'"
+                    },
+                },
             };
 			globals = {
-                rootdir: \''.$rootdir.'\',
-                js: \''.$paths['js'].'\',
-                css: \''.$paths['css'].'\',
-                img: \''.$paths['img'].'\',
+                rootdir: "'.$rootdir.'",
+                js: "'.$paths['js'].'",
+                css: "'.$paths['css'].'",
+                img: "'.$paths['img'].'",
 
-                id_module: \''.$id_module.'\',
-                id_record: \''.$id_record.'\',
-
-                aggiornamenti_id: \''.($dbo->isInstalled() ? Modules::get('Aggiornamenti')['id'] : '').'\',
+                id_module: "'.$id_module.'",
+                id_record: "'.$id_record.'",
+                
+                is_mobile: '.isMobile().',
 
                 cifre_decimali: '.setting('Cifre decimali per importi').',
 
+                timestamp_format: "'.formatter()->getTimestampPattern().'",
+                date_format: "'.formatter()->getDatePattern().'",
+                time_format: "'.formatter()->getTimePattern().'",
                 decimals: "'.formatter()->getNumberSeparators()['decimals'].'",
                 thousands: "'.formatter()->getNumberSeparators()['thousands'].'",
+                currency: "'.currency().'",
 
                 search: search,
                 translations: translations,
-                locale: \''.$lang.'\',
-				full_locale: \''.$lang.'_'.strtoupper($lang).'\',
+                locale: "'.(explode('_', $lang)[0]).'",
+				full_locale: "'.$lang.'",
 
-                start_date: \''.Translator::dateToLocale($_SESSION['period_start']).'\',
-                end_date: \''.Translator::dateToLocale($_SESSION['period_end']).'\',
+                start_date: "'.$_SESSION['period_start'].'",
+                start_date_formatted: "'.Translator::dateToLocale($_SESSION['period_start']).'",
+                end_date: "'.$_SESSION['period_end'].'",
+                end_date_formatted: "'.Translator::dateToLocale($_SESSION['period_end']).'",
 
                 ckeditorToolbar: [
 					["Undo","Redo","-","Cut","Copy","Paste","PasteText","PasteFromWord","-","Scayt", "-","Link","Unlink","-","Bold","Italic","Underline","Superscript","SpecialChar","HorizontalRule","-","JustifyLeft","JustifyCenter","JustifyRight","JustifyBlock","-","NumberedList","BulletedList","Outdent","Indent","Blockquote","-","Styles","Format","Image","Table", "TextColor", "BGColor" ],
 				],
-
+				
+                order_manager_id: "'.($dbo->isInstalled() ? Modules::get('Stato dei servizi')['id'] : '').'",
+                dataload_page_buffer: '.setting('Lunghezza in pagine del buffer Datatables').',
                 tempo_attesa_ricerche: '.setting('Tempo di attesa ricerche in secondi').',
             };
 		</script>';
@@ -126,8 +180,35 @@ if (Auth::check()) {
     echo '
         <script>
             globals = {
-                locale: \''.$lang.'\',
-                full_locale: \''.$lang.'_'.strtoupper($lang).'\',
+                rootdir: "'.$rootdir.'",
+                
+                search: {},
+                translations: {
+                    password: {
+                        "wordMinLength": "'.tr('La tua password è troppo corta').'",
+                        "wordMaxLength": "'.tr('La tua password è troppo lunga').'",
+                        "wordInvalidChar": "'.tr('La tua password contiene un carattere non valido').'",
+                        "wordNotEmail": "'.tr('Non usare la tua e-mail come password').'",
+                        "wordSimilarToUsername": "'.tr('La tua password non può contenere il tuo nome').'",
+                        "wordTwoCharacterClasses": "'.tr('Usa classi di caratteri diversi').'",
+                        "wordRepetitions": "'.tr('Troppe ripetizioni').'",
+                        "wordSequences": "'.tr('La tua password contiene sequenze').'",
+                        "errorList": "'.tr('Errori').':",
+                        "veryWeak": "'.tr('Molto debole').'",
+                        "weak": "'.tr('Debole').'",
+                        "normal": "'.tr('Normale').'",
+                        "medium": "'.tr('Media').'",
+                        "strong": "'.tr('Forte').'",
+                        "veryStrong": "'.tr('Molto forte').'",
+                    },
+                },
+                
+                timestamp_format: "'.formatter()->getTimestampPattern().'",
+                date_format: "'.formatter()->getDatePattern().'",
+                time_format: "'.formatter()->getTimePattern().'",
+
+                locale: "'.(explode('_', $lang)[0]).'",
+				full_locale: "'.$lang.'",
             };
         </script>';
 }
@@ -195,14 +276,15 @@ if (Auth::check()) {
 			<div id="tiny-loader" style="display:none;"></div>
 
 			<header class="main-header">
-				<a href="https://www.openstamanager.com" class="logo" title="'.tr('Il gestionale open source per l\'assistenza tecnica e la fatturazione').'" target="_blank">
+				<a href="'.tr('https://www.openstamanager.com').'" class="logo" title="'.tr("Il gestionale open source per l'assistenza tecnica e la fatturazione").'" target="_blank">
 					<!-- mini logo for sidebar mini 50x50 pixels -->
 					<span class="logo-mini">'.tr('OSM').'</span>
 					<!-- logo for regular state and mobile devices -->
 					<span class="logo-lg">'.tr('OpenSTAManager').'</span>
 				</a>
 				<!-- Header Navbar: style can be found in header.less -->
-				<nav class="navbar navbar-static-top" role="navigation">
+                <nav class="navbar navbar-static-top" role="navigation">
+                
 					<!-- Sidebar toggle button-->
 					<a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
 						<span class="sr-only">'.tr('Mostra/nascondi menu').'</span>
@@ -211,31 +293,62 @@ if (Auth::check()) {
 						<span class="icon-bar"></span>
 					</a>
 
-					<div class="input-group btn-calendar pull-left">
-                        <button id="daterange" class="btn"><i class="fa fa-calendar" style="color:'.$calendar.'"></i> <i class="fa fa-caret-down" style="color:'.$calendar.';" ></i></button>
-                        <span class="hidden-xs" style="vertical-align:middle; color:'.$calendar.';">
-                            '.Translator::dateToLocale($_SESSION['period_start']).' - '.Translator::dateToLocale($_SESSION['period_end']).'
-                        </span>
-                    </div>
+                    <!-- Navbar Left Menu -->
+                     <div class="navbar-left" class="hidden-xs">
+                        <ul class="nav navbar-nav" class="hidden-xs">
+                            <li><a  href="#" id="daterange" style="color:'.$calendar.';" role="button" >
+                                <i class="fa fa-calendar" style="color:inherit"></i> <i class="fa fa-caret-down" style="color:inherit"></i>
+                            </a></li>
 
+                            <li><a style="color:'.$calendar.';background:inherit;cursor:default;">
+                                '.Translator::dateToLocale($_SESSION['period_start']).' - '.Translator::dateToLocale($_SESSION['period_end']).'
+                            </a></li>
+                        </ul>
+                     </div>
 
-					<div id="right-menu" class="pull-right">
-                        <button onclick="window.print()" class="btn btn-sm btn-info tip" title="'.tr('Stampa').'">
-                            <i class="fa fa-print"></i>
-                        </button>
-						<a href="'.$rootdir.'/bug.php" class="btn btn-sm btn-github tip" title="'.tr('Segnalazione bug').'">
-                            <i class="fa fa-bug"></i>
-                        </a>
-						<a href="'.$rootdir.'/log.php" class="btn btn-sm btn-github tip" title="'.tr('Log accessi').'">
-                            <i class="fa fa-book"></i>
-                        </a>
-						<a href="'.$rootdir.'/info.php" class="btn btn-sm btn-github tip" title="'.tr('Informazioni').'">
-                            <i class="fa fa-info"></i>
-                        </a>
-						<a href="'.$rootdir.'/index.php?op=logout" class="btn btn-sm btn-danger tip" title="'.tr('Esci').'">
-                            <i class="fa fa-power-off"></i>
-                        </a>
-					</div>
+                     <!-- Navbar Right Menu -->
+                     <div class="navbar-custom-menu">
+                        <ul class="nav navbar-nav">
+                            <li class="dropdown notifications-menu" >
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <i class="fa fa-bell-o"></i>
+                                    <span id="hooks-label" class="label label-warning">
+                                        <span id="hooks-loading"><i class="fa fa-spinner fa-spin"></i></span>
+                                        <span id="hooks-notified"></span>
+                                        <span id="hooks-counter" class="hide">0</span>
+                                        <span id="hooks-number" class="hide">0</span>
+                                    </span>
+                                </a>
+                                <ul class="dropdown-menu">
+									<li class="header"><span class="small" id="hooks-header"></span></li>
+                                    <li><ul class="menu" id="hooks">
+
+                                    </ul></li>
+                                </ul>
+                            </li>
+
+                            <li><a href="#" onclick="window.print()" class="tip"  title="'.tr('Stampa').'">
+                                <i class="fa fa-print"></i>
+                            </a></li>
+
+                            <li><a href="'.$rootdir.'/bug.php" class="tip"title="'.tr('Segnalazione bug').'">
+                                <i class="fa fa-bug"></i>
+                            </a></li>
+
+                            <li><a href="'.$rootdir.'/log.php" class="tip"title="'.tr('Log accessi').'">
+                                <i class="fa fa-book"></i>
+                            </a></li>
+
+                            <li><a href="'.$rootdir.'/info.php" class="tip"title="'.tr('Informazioni').'">
+                                <i class="fa fa-info"></i>
+                            </a></li>
+
+                            <li><a href="'.$rootdir.'/index.php?op=logout" onclick="sessionStorage.clear()" class="bg-red tip" title="'.tr('Esci').'">
+                                <i class="fa fa-power-off"></i>
+                            </a></li>
+                        </ul>
+                     </div>
+
 				</nav>
 			</header>
 
@@ -243,18 +356,27 @@ if (Auth::check()) {
                 <section class="sidebar">
 
                     <!-- Sidebar user panel -->
-                    <div class="user-panel text-center info">
+                    <div class="user-panel text-center info" style="height: 60px">
                         <div class="info">
                             <p><a href="'.$rootdir.'/modules/utenti/info.php">
-                                <i class="fa fa-user"></i>
                                 '.$user['username'].'
                             </a></p>
                             <p id="datetime"></p>
                         </div>
 
-                        <div class="image">
-                            <img src="'.$paths['img'].'/logo.png" class="img-circle img-responsive" alt="'.tr('OpenSTAManager').'" />
-                        </div>
+                        <a class="image" href="'.$rootdir.'/modules/utenti/info.php">';
+
+    $user_photo = $user->photo;
+    if ($user_photo) {
+        echo '
+                            <img src="'.$user_photo.'" class="img-circle pull-left" alt="'.$user['username'].'" />';
+    } else {
+        echo '
+                            <i class="fa fa-user-circle-o fa-3x pull-left" alt="'.tr('OpenSTAManager').'"></i>';
+    }
+
+    echo '
+                        </a>
                     </div>
 
                     <!-- search form -->

@@ -96,6 +96,8 @@ function get_ivaindetraibile_ordine($idordine)
  * $idiva			integer		id del codice iva associato all'articolo
  * $qta			float		quantità dell'articolo nell'ordine
  * $prezzo			float		prezzo totale degli articoli (prezzounitario*qtà).
+ *
+ * @deprecated 2.4.11
  */
 function add_articolo_inordine($idordine, $idarticolo, $descrizione, $idiva, $qta, $idum, $prezzo, $sconto = 0, $sconto_unitario = 0, $tipo_sconto = 'UNT')
 {
@@ -127,6 +129,8 @@ function add_articolo_inordine($idordine, $idarticolo, $descrizione, $idiva, $qt
  * 	$idarticolo		integer		codice dell'articolo da scollegare dall'ordine
  * 	$idordine	 	integer		codice dell'ordine da cui scollegare l'articolo
  * 	$idrigaordine 	integer		id della riga ordine da rimuovere.
+ *
+ * @deprecated 2.4.11
  */
 function rimuovi_articolo_daordine($idarticolo, $idordine, $idrigaordine)
 {

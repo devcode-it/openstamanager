@@ -4,25 +4,32 @@ include_once __DIR__.'/core.php';
 
 use Carbon\Carbon;
 
-if (empty($id_record) && !empty($id_module)) {
+// Disabilitazione dei campi
+$read_only = $structure->permission == 'r';
+
+if (empty($id_record) && !empty($id_module) && empty($id_plugin)) {
     redirect(ROOTDIR.'/controller.php?id_module='.$id_module);
-} elseif (empty($id_record) && empty($id_module)) {
+} elseif (empty($id_record) && empty($id_module) && empty($id_plugin)) {
     redirect(ROOTDIR.'/index.php');
 }
 
 include_once App::filepath('include|custom|', 'top.php');
 
-Util\Query::setSegments(false);
-$query = Util\Query::getQuery($module, [
-    'id' => $id_record,
-]);
-Util\Query::setSegments(true);
+if (!empty($id_record)) {
+    Util\Query::setSegments(false);
+    $query = Util\Query::getQuery($structure, [
+        'id' => $id_record,
+    ]);
+    Util\Query::setSegments(true);
+}
+
+$query = str_replace(['AND `deleted_at` IS NULL', '`deleted_at` IS NULL AND', '`deleted_at` IS NULL', 'AND deleted_at IS NULL', 'deleted_at IS NULL AND', 'deleted_at IS NULL'], '', $query);
 
 $has_access = !empty($query) ? $dbo->fetchNum($query) !== 0 : true;
 
 if ($has_access) {
     // Inclusione gli elementi fondamentali
-    include_once $docroot.'/actions.php';
+    include_once DOCROOT.'/actions.php';
 }
 
 if (empty($record) || !$has_access) {
@@ -88,6 +95,27 @@ if (empty($record) || !$has_access) {
 				</li>';
     }
 
+    // Tab per le note interne
+    if ($structure->permission != '-' && $structure->use_notes) {
+        $notes = $structure->recordNotes($id_record);
+
+        echo '
+				<li class="bg-info">
+					<a data-toggle="tab" href="#tab_note" id="link-tab_note">
+					    '.tr('Note interne').'
+					    <span class="badge">'.($notes->count() ?: '').'</span>
+                    </a>
+				</li>';
+    }
+
+    // Tab per le checklist
+    if ($structure->permission != '-' && $structure->use_checklists) {
+        echo '
+				<li class="bg-success">
+					<a data-toggle="tab" href="#tab_checks" id="link-tab_checks">'.tr('Checklist').'</a>
+				</li>';
+    }
+
     $plugins = $dbo->fetchArray('SELECT id, title FROM zz_plugins WHERE idmodule_to='.prepare($id_module)." AND position='tab' AND enabled = 1 ORDER BY zz_plugins.order DESC");
 
     // Tab dei plugin
@@ -104,6 +132,35 @@ if (empty($record) || !$has_access) {
 			<div class="tab-content">
                 <div id="tab_0" class="tab-pane active">';
 
+    if (!empty($record['deleted_at'])) {
+        $operation = $dbo->fetchOne("SELECT zz_operations.created_at, username FROM zz_operations INNER JOIN zz_users ON zz_operations.id_utente =  zz_users.id  WHERE op='delete' AND id_module=".prepare($id_module).' AND id_record='.prepare($id_record).' ORDER BY zz_operations.created_at DESC');
+
+        if (!empty($operation['username'])) {
+            $info = tr('Il record è stato eliminato il <b>_DATE_</b> da <b>_USER_</b>', [
+                '_DATE_' => Translator::timestampToLocale($operation['created_at']),
+                '_USER_' => $operation['username'],
+            ]).'. ';
+        }
+
+        echo '
+        <div class="alert alert-warning">
+            <div class="row" >
+                <div class="col-md-8">
+                    <i class="fa fa-warning"></i> '.$info.'
+                </div>
+            </div>
+		</div>
+		
+		<script>
+            $(document).ready(function(){        
+                $("#restore").click(function(){
+                    $("input[name=op]").attr("value", "restore");
+                    $("#submit").trigger("click");
+                })
+            });
+        </script>';
+    }
+
     // Pulsanti di default
     echo '
                     <div id="pulsanti">
@@ -116,8 +173,8 @@ if (empty($record) || !$has_access) {
 
                             {( "name": "button", "type": "email", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'" )}
 
-                            <a class="btn btn-success" id="save">
-                                <i class="fa fa-check"></i> '.tr('Salva').'
+                            <a class="btn btn-success" id="'.(!empty($record['deleted_at']) ? 'restore' : 'save').'">
+                                <i class="fa fa-'.(!empty($record['deleted_at']) ? 'undo' : 'check').'"></i> '.(!empty($record['deleted_at']) ? tr('Salva e Ripristina') : tr('Salva')).'
                             </a>
                         </div>
                     </div>
@@ -130,6 +187,8 @@ if (empty($record) || !$has_access) {
                         form.prepend(\'<button type="submit" id="submit" class="hide"></button>\');
 
                         $("#save").click(function(){
+                            //submitAjax(form);
+                        
                             $("#submit").trigger("click");
                         });';
 
@@ -202,8 +261,10 @@ if (empty($record) || !$has_access) {
 
                 <script>
                 $(document).ready(function(){
-                    var form = $("#custom_fields_top-edit").parent().find("form").first();
-
+                    cleanup_inputs();
+                    
+                    var form = $("#module-edit").find("form").first();
+                  
                     // Campi a inizio form
                     form.prepend($("#custom_fields_top-edit").html());
 
@@ -217,10 +278,31 @@ if (empty($record) || !$has_access) {
                     if (!last.length) {
                         last = form.find(".row").eq(-2);
                     }
-
+                    
                     last.after($("#custom_fields_bottom-edit").html());
+                    restart_inputs();
                 });
                 </script>';
+
+    if ($structure->permission != '-' && $structure->use_notes) {
+        echo '
+                <div id="tab_note" class="tab-pane">';
+
+        include DOCROOT.'/plugins/notes.php';
+
+        echo '
+                </div>';
+    }
+
+    if ($structure->permission != '-' && $structure->use_checklists) {
+        echo '
+                <div id="tab_checks" class="tab-pane">';
+
+        include DOCROOT.'/plugins/checks.php';
+
+        echo '
+                </div>';
+    }
 
     // Informazioni sulle operazioni
     if (Auth::admin()) {
@@ -257,6 +339,12 @@ if (empty($record) || !$has_access) {
                         $icon = 'times';
                         $color = 'danger';
                         break;
+                    
+                    case 'copy':
+                        $description = tr('Duplicato');
+                        $icon = 'clone';
+                        $color = 'info';
+                        break;
 
                     default:
                         $timeline_class = ' class="timeline-inverted"';
@@ -291,7 +379,8 @@ if (empty($record) || !$has_access) {
                         </li>';
             }
 
-            echo '  </ul>';
+            echo '
+                    </ul>';
         } else {
             echo '
                     <div class="alert alert-info">
@@ -299,6 +388,7 @@ if (empty($record) || !$has_access) {
                         <b>'.tr('Informazione:').'</b> '.tr('Nessun log disponibile per questa scheda').'.
                     </div>';
         }
+
         echo '
                 </div>';
     }
@@ -313,7 +403,7 @@ if (empty($record) || !$has_access) {
 
         $id_plugin = $plugin['id'];
 
-        include $docroot.'/include/manager.php';
+        include DOCROOT.'/include/manager.php';
 
         echo '
 				</div>';
@@ -343,7 +433,6 @@ echo '
         <script>';
 
 // Se l'utente ha i permessi in sola lettura per il modulo, converto tutti i campi di testo in span
-$read_only = $structure->permission == 'r';
 if ($read_only || !empty($block_edit)) {
     $not = $read_only ? '' : '.not(".unblockable")';
 
@@ -355,7 +444,7 @@ if ($read_only || !empty($block_edit)) {
     if ($read_only) {
         echo '
 				$("a.btn, button, input[type=button], input[type=submit]", "section.content").hide();
-                $("a.btn-info, a.btn-warning, button.btn-info, button.btn-warning, input[type=button].btn-info", "section.content").show();';
+                $("a.btn-info, button.btn-info, input[type=button].btn-info", "section.content").show();';
     }
 
     echo '
@@ -371,6 +460,11 @@ if ($read_only || !empty($block_edit)) {
                     content_was_modified = true;
                 }
             });
+
+            $(".superselect, .superselectajax").on("change", function (e) {
+                content_was_modified = true;
+            });
+
 
             //tolgo il controllo se sto salvando
             $(".btn-success, button[type=submit]").bind("click", function() {

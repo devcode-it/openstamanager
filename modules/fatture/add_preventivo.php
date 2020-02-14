@@ -2,33 +2,32 @@
 
 include_once __DIR__.'/../../core.php';
 
-$module = Modules::get($id_module);
+use Modules\Fatture\Fattura;
+use Modules\Preventivi\Preventivo;
 
-if (get('op')) {
+$documento_finale = Fattura::find($id_record);
+$dir = $documento_finale->direzione;
+
+$id_documento = get('id_documento');
+if (!empty($id_documento)) {
+    $documento = Preventivo::find($id_documento);
+
     $options = [
-        'op' => 'add_preventivo',
-        'id_importazione' => 'id_preventivo',
-        'final_module' => $module['name'],
-        'original_module' => 'Preventivi',
-        'sql' => [
-            'table' => 'co_preventivi',
-            'rows' => 'co_righe_preventivi',
-            'id_rows' => 'idpreventivo',
-        ],
-        'serials' => false,
+        'op' => 'add_documento',
+        'type' => 'preventivo',
         'button' => tr('Aggiungi'),
-        'dir' => 'entrata',
+        'documento' => $documento,
+        'documento_finale' => $documento_finale,
     ];
 
-    $result = [
-        'id_record' => $id_record,
-        'id_documento' => get('iddocumento'),
-    ];
-
-    echo App::load('importa.php', $result, $options, true);
+    echo App::load('importa.php', [], $options, true);
 
     return;
 }
+
+$id_anagrafica = $documento_finale->idanagrafica;
+
+$_SESSION['superselect']['idanagrafica'] = $id_anagrafica;
 
 echo '
 <div class="row">
@@ -37,12 +36,8 @@ echo '
     </div>
 </div>
 
-<div class="box" id="info-box">
-    <div class="box-header with-border">
-        <h3 class="box-title">'.tr('Informazioni di importazione').'</h3>
-    </div>
-    <div class="box-body" id="righe_documento">
-    </div>
+<div id="righe_documento">
+    
 </div>
 
 <div class="alert alert-info" id="box-loading">
@@ -51,33 +46,24 @@ echo '
 
 $file = basename(__FILE__);
 echo '
-<script src="'.$rootdir.'/lib/init.js"></script>
+<script>$(document).ready(init)</script>
     
 <script>
-    var box = $("#info-box");
     var content = $("#righe_documento");
     var loader = $("#box-loading");
     
     $(document).ready(function(){
-        box.hide();
         loader.hide();
-    })
+    });
     
     $("#id_documento").on("change", function(){
         loader.show();
-        box.hide();
 
         var id = $(this).selectData() ? $(this).selectData().id  : "";
     
-        content.html("<i>'.tr('Caricamento in corso').'...</i>");
-        content.load("'.$structure->fileurl($file).'?id_module='.$id_module.'&id_record=" + id + "&documento=fattura&op=add_ordine&iddocumento='.$id_record.'", function() {
-            if(content.html() != ""){
-                box.show();
-            }
-            
+        content.html("");
+        content.load("'.$structure->fileurl($file).'?id_module='.$id_module.'&id_record='.$id_record.'&id_documento=" + id, function() {
             loader.hide();
         });
-        
-        
     });
 </script>';

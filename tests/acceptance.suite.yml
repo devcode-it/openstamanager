@@ -18,3 +18,5 @@ modules:
         - \Helper\Select2
         - \Helper\Select2Ajax
         - \Helper\Common\RowHelper
+step_decorators:
+    - \Codeception\Step\Retry

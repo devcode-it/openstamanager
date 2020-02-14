@@ -83,7 +83,7 @@ if (!empty($rs)) {
         if ($pricing) {
             echo '
         <td class="text-right">
-            '.Translator::numberToLocale($r['prezzo_acquisto']).' &euro;
+            '.moneyFormat($r['prezzo_acquisto']).'
         </td>';
         }
 
@@ -91,14 +91,14 @@ if (!empty($rs)) {
             // Prezzo unitario
             echo '
         <td class="text-right">
-            '.Translator::numberToLocale($r['prezzo_vendita']).' &euro;';
+            '.moneyFormat($r['prezzo_vendita']).'';
 
             if ($r['sconto_unitario'] > 0) {
                 echo '
             <br><span class="label label-danger">
                 - '.tr('sconto _TOT_ _TYPE_', [
                     '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
-                    '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
+                    '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : currency()),
                 ]).'
             </span>';
             }
@@ -108,21 +108,20 @@ if (!empty($rs)) {
 
             echo '
         <td class="text-right">
-            <span>'.Translator::numberToLocale($r['iva']).'</span> &euro;';
-            echo '
+            '.moneyFormat($r['iva']).'
         </td>';
 
             // Prezzo di vendita
             echo '
         <td class="text-right">
-            <span class="prezzo_articolo">'.Translator::numberToLocale(sum($r['prezzo_vendita'] * $r['qta'], -$r['sconto'])).'</span> &euro;
+            <span class="prezzo_articolo">'.Translator::numberToLocale(sum($r['prezzo_vendita'] * $r['qta'], -$r['sconto'])).'</span> '.currency().'
         </td>';
         }
 
         if (!empty($is_add)) {
             echo '
         <td>
-            <button type="button" class="btn btn-warning btn-xs" data-title="'.tr('Modifica spesa').'" onclick="launch_modal(\'Modifica spesa\', \''.$plugin->fileurl('add_articolo.php').'?id_plugin='.$id_plugin.'&id_record='.$id_record.'&idriga='.$r['id'].'\', 1, \'#bs-popup2\');">
+            <button type="button" class="btn btn-warning btn-xs" data-title="'.tr('Modifica spesa').'" onclick="launch_modal(\'Modifica spesa\', \''.$plugin->fileurl('add_articolo.php').'?id_plugin='.$id_plugin.'&id_record='.$id_record.'&idriga='.$r['id'].'\');">
                 <i class="fa fa-edit"></i>
             </button>
 

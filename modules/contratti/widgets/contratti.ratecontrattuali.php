@@ -125,15 +125,15 @@ if (!empty($rsp)) {
                 </td>
                 <td>'.$zona.' ('.$n_sedi.')</td>
                 <td>
-                    '.Translator::numberToLocale($importo).' &euro;<br>
-                    <small><small>'.Translator::numberToLocale($r['budget_contratto']).' &euro; x '.$n_sedi_pianificate.' sedi / '.$n_rate[$r['idcontratto']][$r['idzona']].' rate</small></small>
+                    '.moneyFormat($importo).'<br>
+                    <small><small>'.moneyFormat($r['budget_contratto']).' x '.$n_sedi_pianificate.' sedi / '.$n_rate[$r['idcontratto']][$r['idzona']].' rate</small></small>
                 </td>';
 
             // Pulsanti
             echo '
                 <td>';
             if (empty($r['idintervento'])) {
-                echo '<button type="button" class="btn btn-primary btn-sm" onclick="launch_modal( \'Crea fattura\', \''.$rootdir.'/modules/contratti/plugins/addfattura.php?idcontratto='.$r['idcontratto'].'&idpianificazione='.$r['id'].'&importo='.$importo.'&n_rata='.$n_rata[$r['idzona']][$r['idcontratto']].'\', 1 );">
+                echo '<button type="button" class="btn btn-primary btn-sm" onclick="launch_modal( \'Crea fattura\', \''.$rootdir.'/modules/contratti/plugins/addfattura.php?idcontratto='.$r['idcontratto'].'&idpianificazione='.$r['id'].'&importo='.$importo.'&n_rata='.$n_rata[$r['idzona']][$r['idcontratto']].'\');">
 					<i class="fa fa-euro"></i> Crea fattura
 				</button>';
             }

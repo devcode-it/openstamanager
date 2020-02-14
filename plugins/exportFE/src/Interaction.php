@@ -2,14 +2,16 @@
 
 namespace Plugins\ExportFE;
 
+use API\Services;
+
 /**
  * Classe per l'interazione con API esterne.
  *
  * @since 2.4.3
  */
-class Interaction extends Connection
+class Interaction extends Services
 {
-    public static function sendXML($id_record)
+    public static function sendInvoice($id_record)
     {
         try {
             $fattura = new FatturaElettronica($id_record);
@@ -20,6 +22,19 @@ class Interaction extends Connection
                 'filename' => $fattura->getFilename(),
             ]);
             $body = static::responseBody($response);
+
+            // Aggiornamento dello stato
+            if ($body['status'] == 200) {
+                database()->update('co_documenti', [
+                    'codice_stato_fe' => 'WAIT',
+                    'data_stato_fe' => date('Y-m-d H:i:s'),
+                ], ['id' => $id_record]);
+            } elseif ($body['status'] == 405) {
+                database()->update('co_documenti', [
+                    'codice_stato_fe' => 'ERR',
+                    'data_stato_fe' => date('Y-m-d H:i:s'),
+                ], ['id' => $id_record]);
+            }
 
             return [
                 'code' => $body['status'],

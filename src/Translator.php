@@ -11,6 +11,8 @@ class Translator extends Util\Singleton
 {
     /** @var Intl\Formatter Oggetto per la conversione di date e numeri nella lingua selezionata */
     protected static $formatter;
+    /** @var string Simbolo della valuta corrente */
+    protected static $currency;
 
     /** @var Symfony\Component\Translation\Translator Oggetto dedicato alle traduzioni */
     protected $translator;
@@ -20,7 +22,7 @@ class Translator extends Util\Singleton
     /** @var string Lingua selezionata */
     protected $locale;
 
-    public function __construct($default_locale = 'it', $fallback_locales = ['it'])
+    public function __construct($default_locale = 'it_IT', $fallback_locales = ['it_IT'])
     {
         $translator = new Symfony\Component\Translation\Translator($default_locale);
         $translator->setFallbackLocales($fallback_locales);
@@ -79,8 +81,17 @@ class Translator extends Util\Singleton
             $this->translator->setLocale($locale);
             $this->locale = $locale;
 
-            setlocale(LC_TIME, $locale);
+            Carbon::setUtf8(true);
+
+            $result = setlocale(LC_TIME, $locale);
             Carbon::setLocale($locale);
+
+            if (empty($result)) {
+                $reduced = explode('_', $locale)[0];
+
+                $result = setlocale(LC_TIME, $reduced);
+                Carbon::setLocale($reduced);
+            }
 
             self::setFormatter($locale, $formatter);
         }
@@ -142,6 +153,25 @@ class Translator extends Util\Singleton
     public static function getFormatter()
     {
         return self::$formatter;
+    }
+
+    /**
+     * Restituisce il simbolo della valuta del gestione.
+     *
+     * @since 2.4.9
+     *
+     * @return string
+     */
+    public static function getCurrency()
+    {
+        if (!isset(self::$currency)) {
+            $id = setting('Valuta');
+            $valuta = database()->fetchOne('SELECT symbol FROM zz_currencies WHERE id = '.prepare($id));
+
+            self::$currency = $valuta['symbol'];
+        }
+
+        return self::$currency;
     }
 
     /**

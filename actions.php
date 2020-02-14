@@ -2,6 +2,13 @@
 
 include_once __DIR__.'/core.php';
 
+use Models\Note;
+use Models\OperationLog;
+use Modules\Checklists\Check;
+use Modules\Checklists\Checklist;
+use Modules\Emails\Template;
+use Notifications\EmailNotification;
+
 if (empty($structure) || empty($structure['enabled'])) {
     die(tr('Accesso negato'));
 }
@@ -10,7 +17,7 @@ $upload_dir = DOCROOT.'/'.Uploads::getDirectory($id_module, $id_plugin);
 
 $database->beginTransaction();
 
-// GESTIONE UPLOAD
+// Upload allegati e rimozione
 if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
     // Controllo sui permessi di scrittura per il modulo
     if (Modules::getPermission($id_module) != 'rw') {
@@ -65,16 +72,148 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
 
         redirect(ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.((!empty($options['id_plugin'])) ? '#tab_'.$options['id_plugin'] : ''));
     }
-} elseif (filter('op') == 'download_file') {
+}
+
+// Download allegati
+elseif (filter('op') == 'download_file') {
     $rs = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module='.prepare($id_module).' AND id='.prepare(filter('id')).' AND filename='.prepare(filter('filename')));
 
     download($upload_dir.'/'.$rs[0]['filename'], $rs[0]['original']);
-} elseif (post('op') == 'send-email') {
-    $id_template = post('template');
+}
 
-    // Inizializzazione
-    $mail = new Notifications\EmailNotification();
-    $mail->setTemplate($id_template, $id_record);
+// Modifica nome della categoria degli allegati
+elseif (filter('op') == 'upload_category') {
+    $category = post('category');
+    $name = post('name');
+
+    $uploads = $structure->uploads($id_record)->where('category', $category);
+    foreach ($uploads as $upload) {
+        $upload->category = $name;
+        $upload->save();
+    }
+}
+
+// Validazione dati
+elseif (filter('op') == 'validate') {
+    // Lettura informazioni di base
+    $init = $structure->filepath('init.php');
+    if (!empty($init)) {
+        include_once $init;
+    }
+
+    // Validazione del campo
+    $validation = $structure->filepath('validation.php');
+    if (!empty($validation)) {
+        include_once $validation;
+    }
+
+    echo json_encode($response);
+
+    return;
+}
+
+// Aggiunta nota interna
+elseif (filter('op') == 'add_nota') {
+    $contenuto = post('contenuto');
+    $data_notifica = post('data_notifica') ?: null;
+
+    $nota = Note::build($user, $structure, $id_record, $contenuto, $data_notifica);
+
+    flash()->info(tr('Nota interna aggiunta correttamente!'));
+}
+
+// Rimozione data di notifica dalla nota interna
+elseif (filter('op') == 'notification_nota') {
+    $id_nota = post('id_nota');
+    $nota = Note::find($id_nota);
+
+    $nota->notification_date = null;
+    $nota->save();
+
+    flash()->info(tr('Data di notifica rimossa dalla nota interna!'));
+}
+
+// Rimozione nota interna
+elseif (filter('op') == 'delete_nota') {
+    $id_nota = post('id_nota');
+    $nota = Note::find($id_nota);
+
+    $nota->delete();
+
+    flash()->info(tr('Nota interna aggiunta correttamente!'));
+}
+
+// Clonazione di una checklist
+elseif (filter('op') == 'clone_checklist') {
+    $content = post('content');
+    $checklist_id = post('checklist');
+
+    $users = post('assigned_users');
+    $users = array_clean($users);
+
+    $group_id = post('group_id');
+
+    $checklist = Checklist::find($checklist_id);
+    $checklist->copia($user, $id_record, $users, $group_id);
+}
+
+// Aggiunta check alla checklist
+elseif (filter('op') == 'add_check') {
+    $content = post('content');
+    $parent_id = post('parent') ?: null;
+
+    $users = post('assigned_users');
+    $users = array_clean($users);
+
+    $group_id = post('group_id');
+
+    $check = Check::build($user, $structure, $id_record, $content, $parent_id);
+    $check->setAccess($users, $group_id);
+}
+
+// Rimozione di un check della checklist
+elseif (filter('op') == 'delete_check') {
+    $check_id = post('check_id');
+    $check = Check::find($check_id);
+
+    if (!empty($check) && $check->user->id == $user->id) {
+        $check->delete();
+    } else {
+        flash()->error(tr('Impossibile eliminare il check!'));
+    }
+}
+
+// Gestione check per le checklist
+elseif (filter('op') == 'toggle_check') {
+    $check_id = post('check_id');
+    $check = Check::find($check_id);
+
+    if (!empty($check) && $check->assignedUsers->pluck('id')->search($user->id) !== false) {
+        $check->toggleCheck($user);
+    } else {
+        flash()->error(tr('Impossibile cambiare lo stato del check!'));
+    }
+}
+
+// Gestione ordine per le checklist
+elseif (filter('op') == 'sort_checks') {
+    $ids = explode(',', $_POST['order']);
+    $order = 0;
+
+    foreach ($ids as $id) {
+        $dbo->query('UPDATE `zz_checks` SET `order` = '.prepare($order).' WHERE id = '.prepare($id));
+        ++$order;
+    }
+}
+
+// Inizializzazione email
+elseif (post('op') == 'send-email') {
+    $template = Template::find(post('template'));
+
+    $mail = \Modules\Emails\Mail::build($user, $template, $id_record);
+
+    // Rimozione allegati predefiniti
+    $mail->resetPrints();
 
     // Destinatari
     $receivers = array_clean(post('destinatari'));
@@ -84,28 +223,36 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
     }
 
     // Contenuti
-    $mail->setSubject(post('subject'));
-    $mail->setContent(post('body'));
+    $mail->subject = post('subject');
+    $mail->content = post('body');
+
+    // Conferma di lettura
+    $mail->read_notify = post('read_notify');
 
     // Stampe da allegare
     $prints = post('prints');
     foreach ($prints as $print) {
-        $mail->addPrint($print, $id_record);
+        $mail->addPrint($print);
     }
 
     // Allegati originali
-    $files = post('attachments');
+    $files = post('uploads');
     foreach ($files as $file) {
         $mail->addUpload($file);
     }
 
-    // Invio mail
-    try {
-        $mail->send(true); // Il valore true impone la gestione degli errori tramite eccezioni
+    $mail->save();
 
+    // Invio mail istantaneo
+    $email = EmailNotification::build($mail);
+    $email_success = $email->send();
+
+    if ($email_success) {
+        OperationLog::setInfo('id_email', $mail->id);
         flash()->info(tr('Email inviata correttamente!'));
-    } catch (PHPMailer\PHPMailer\Exception $e) {
-        flash()->error(tr("Errore durante l'invio dell'email").': '.$e->errorMessage());
+    } else {
+        $mail->delete();
+        flash()->error(tr('Errore durante l\'invio email! Verifica i parametri dell\'account SMTP utilizzato.'));
     }
 }
 

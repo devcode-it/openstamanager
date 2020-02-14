@@ -5,6 +5,13 @@ include_once __DIR__.'/../../core.php';
 use Modules\Anagrafiche\Anagrafica;
 
 switch (post('op')) {
+    case 'restore':
+        $anagrafica->restore();
+        flash()->info(tr('Anagrafica _NAME_ ripristinata correttamente!', [
+            '_NAME_' => post('ragione_sociale'),
+        ]));
+
+        // no break
     case 'update':
         // Informazioni sulla sede
         $sede = $anagrafica->sedeLegale;
@@ -24,24 +31,18 @@ switch (post('op')) {
         $sede->idzona = post('idzona');
         $sede->email = post('email');
 
-        $sede->save();
+        $opt_out_newsletter = post('disable_newsletter');
+        $sede->enable_newsletter = empty($opt_out_newsletter);
 
-        if (empty(post('ragione_sociale'))) {
-            $ragione_sociale = post('cognome').' '.post('nome');
-        } else {
-            $ragione_sociale = post('ragione_sociale');
-        }
+        $sede->save();
 
         // Informazioni sull'anagrafica
         $anagrafica->codice = post('codice');
         $anagrafica->tipo = post('tipo');
-        $anagrafica->codice_destinatario = post('codice_destinatario');
-        $anagrafica->ragione_sociale = $ragione_sociale;
+        $anagrafica->codice_destinatario = strtoupper(post('codice_destinatario'));
+        $anagrafica->ragione_sociale = post('ragione_sociale');
         $anagrafica->nome = post('nome');
         $anagrafica->cognome = post('cognome');
-
-        $anagrafica->partita_iva = post('piva');
-        $anagrafica->codice_fiscale = post('codice_fiscale');
         $anagrafica->tipo = post('tipo');
         $anagrafica->data_nascita = post('data_nascita');
         $anagrafica->luogo_nascita = post('luogo_nascita');
@@ -78,24 +79,64 @@ switch (post('op')) {
         $anagrafica->n_alboartigiani = post('n_alboartigiani');
         $anagrafica->foro_competenza = post('foro_competenza');
         $anagrafica->colore = post('colore');
-        $anagrafica->idtipointervento_default = post('idtipointervento_default');
+        $anagrafica->idtipointervento_default = post('idtipointervento_default') ?: null;
         $anagrafica->id_ritenuta_acconto_acquisti = post('id_ritenuta_acconto_acquisti');
         $anagrafica->id_ritenuta_acconto_vendite = post('id_ritenuta_acconto_vendite');
         $anagrafica->split_payment = post('split_payment');
 
         $anagrafica->tipologie = (array) post('idtipoanagrafica');
 
+        // Avviso durante il salvataggio del codice fiscale se già presente e informo l'utente delle schede presenti
+        if (!empty(post('codice_fiscale'))) {
+            $idanagrafica = $dbo->fetchOne('SELECT GROUP_CONCAT(idanagrafica) AS idanagrafica FROM an_anagrafiche WHERE codice_fiscale = '.prepare(post('codice_fiscale')).' AND idanagrafica != '.prepare($id_record).' AND deleted_at IS NULL')['idanagrafica'];
+
+            if (!empty($idanagrafica)) {
+                $array = explode(',', $idanagrafica);
+                foreach ($array as $value) {
+                    flash()->warning(tr('Attenzione: il codice fiscale _COD_ è già stato censito. _LINK_', [
+                        '_COD_' => '<b>'.post('codice_fiscale').'</b>',
+                        '_LINK_' => Modules::link('Anagrafiche', $value, null, null, ''),
+                    ]));
+                }
+            } else {
+                $anagrafica->codice_fiscale = strtoupper(post('codice_fiscale'));
+            }
+        } else {
+            $anagrafica->codice_fiscale = strtoupper(post('codice_fiscale'));
+        }
+
+        // Avviso durante il salvataggio della partita iva se già presente e informo l'utente delle schede presenti
+        if (!empty(post('piva')) && !in_array(post('piva'), ['99999999999', '00000000000'])) {
+            $idanagrafica = $dbo->fetchOne('SELECT GROUP_CONCAT(idanagrafica) AS idanagrafica FROM an_anagrafiche WHERE piva = '.prepare(post('piva')).' AND idanagrafica != '.prepare($id_record))['idanagrafica'];
+
+            if (!empty($idanagrafica)) {
+                $array = explode(',', $idanagrafica);
+                foreach ($array as $value) {
+                    flash()->warning(tr('Attenzione: la partita IVA _IVA_ è già stata censita. _LINK_', [
+                        '_IVA_' => post('piva'),
+                        '_LINK_' => Modules::link('Anagrafiche', $value, null, null, ''),
+                    ]));
+                }
+            } else {
+                $anagrafica->partita_iva = post('piva');
+            }
+        } else {
+            $anagrafica->partita_iva = post('piva');
+        }
+
         $anagrafica->save();
 
-        flash()->info(str_replace('_NAME_', '"'.post('ragione_sociale').'"', "Informazioni per l'anagrafica _NAME_ salvate correttamente!"));
+        flash()->info(tr("Informazioni per l'anagrafica _NAME_ salvate correttamente!", [
+            '_NAME_' => $anagrafica->ragione_sociale,
+        ]));
 
         // Validazione della Partita IVA
         $partita_iva = $anagrafica->partita_iva;
         $partita_iva = is_numeric($partita_iva) ? $anagrafica->nazione->iso2.$partita_iva : $partita_iva;
 
         $check_vat_number = Validate::isValidVatNumber($partita_iva);
-        if (empty($check_vat_number)) {
-            flash()->warning(tr('Attenzione: la partita IVA _IVA_ potrebbe non essere valida', [
+        if (empty($check_vat_number['valid-format'])) {
+            flash()->warning(tr('Attenzione: la partita IVA _IVA_ potrebbe non essere valida.', [
                 '_IVA_' => $partita_iva,
             ]));
         }
@@ -104,7 +145,7 @@ switch (post('op')) {
         if ($anagrafica->tipo != 'Ente pubblico' and $anagrafica->codice_fiscale != $anagrafica->partita_iva) {
             $check_codice_fiscale = Validate::isValidTaxCode($anagrafica->codice_fiscale);
             if (empty($check_codice_fiscale)) {
-                flash()->warning(tr('Attenzione: il codice fiscale _COD_ potrebbe non essere valido', [
+                flash()->warning(tr('Attenzione: il codice fiscale _COD_ potrebbe non essere valido.', [
                     '_COD_' => $anagrafica->codice_fiscale,
                 ]));
             }
@@ -112,7 +153,9 @@ switch (post('op')) {
 
         // Aggiorno il codice anagrafica se non è già presente, altrimenti lo ignoro
         if ($anagrafica->codice != post('codice')) {
-            flash()->error(tr("Il codice anagrafica inserito esiste già! Inserirne un'altro..."));
+            flash()->warning(tr('Attenzione: il codice anagrafica _COD_ esiste già', [
+                '_COD_' => $anagrafica->codice,
+            ]));
         }
 
         // Aggiorno gli agenti collegati
@@ -127,15 +170,48 @@ switch (post('op')) {
 
     case 'add':
         $idtipoanagrafica = post('idtipoanagrafica');
+        $ragione_sociale = post('ragione_sociale');
 
-        if (empty(post('ragione_sociale'))) {
-            $ragione_sociale = post('cognome').' '.post('nome');
+        $anagrafica = Anagrafica::build($ragione_sociale, post('nome'), post('cognome'), $idtipoanagrafica);
+        $id_record = $anagrafica->id;
+
+        // Blocco il salvataggio del codice fiscale se già presente
+        if (!empty(post('codice_fiscale'))) {
+            $idanagrafica = $dbo->fetchOne('SELECT GROUP_CONCAT(idanagrafica) AS idanagrafica FROM an_anagrafiche WHERE codice_fiscale = '.prepare(post('codice_fiscale')).' AND idanagrafica != '.prepare($id_record))['idanagrafica'];
+
+            if (!empty($idanagrafica)) {
+                $array = explode(',', $idanagrafica);
+                foreach ($array as $value) {
+                    flash()->warning(tr('Attenzione: il codice fiscale _COD_ è già stato censito. _LINK_', [
+                        '_COD_' => '<b>'.post('codice_fiscale').'</b>',
+                        '_LINK_' => Modules::link('Anagrafiche', $value, null, null, ''),
+                    ]));
+                }
+            } else {
+                $anagrafica->codice_fiscale = strtoupper(post('codice_fiscale'));
+            }
         } else {
-            $ragione_sociale = post('ragione_sociale');
+            $anagrafica->codice_fiscale = strtoupper(post('codice_fiscale'));
         }
 
-        $anagrafica = Anagrafica::build($ragione_sociale, $idtipoanagrafica);
-        $id_record = $anagrafica->id;
+        // Blocco il salvataggio della partita iva se già presente
+        if (!empty(post('piva'))) {
+            $idanagrafica = $dbo->fetchOne('SELECT GROUP_CONCAT(idanagrafica) AS idanagrafica FROM an_anagrafiche WHERE piva = '.prepare(post('piva')).' AND idanagrafica != '.prepare($id_record))['idanagrafica'];
+
+            if (!empty($idanagrafica)) {
+                $array = explode(',', $idanagrafica);
+                foreach ($array as $value) {
+                    flash()->warning(tr('Attenzione: la partita IVA _IVA_ è già stata censita. _LINK_', [
+                    '_IVA_' => post('piva'),
+                    '_LINK_' => Modules::link('Anagrafiche', $value, null, null, ''),
+                    ]));
+                }
+            } else {
+                $anagrafica->partita_iva = post('piva');
+            }
+        } else {
+            $anagrafica->partita_iva = post('piva');
+        }
 
         // Se ad aggiungere un cliente è un agente, lo imposto come agente di quel cliente
         // Lettura tipologia dell'utente loggato
@@ -152,10 +228,6 @@ switch (post('op')) {
 
         $idagente = ($agente_is_logged && in_array($id_cliente, $idtipoanagrafica)) ? $user['idanagrafica'] : 0;
 
-        $anagrafica->nome = post('nome');
-        $anagrafica->cognome = post('cognome');
-        $anagrafica->partita_iva = post('piva');
-        $anagrafica->codice_fiscale = post('codice_fiscale');
         $anagrafica->indirizzo = post('indirizzo');
         $anagrafica->citta = post('citta');
         $anagrafica->cap = post('cap');
@@ -166,8 +238,8 @@ switch (post('op')) {
         $anagrafica->idagente = $idagente;
         $anagrafica->pec = post('pec');
         $anagrafica->tipo = post('tipo');
-        $anagrafica->codice_destinatario = post('codice_destinatario');
         $anagrafica->id_nazione = post('id_nazione') ?: null;
+        $anagrafica->codice_destinatario = strtoupper(post('codice_destinatario'));
 
         $anagrafica->save();
 
@@ -176,10 +248,11 @@ switch (post('op')) {
         }
 
         // Lettura tipologia della nuova anagrafica
-        $descrizioni_tipi = $anagrafica->tipi()->get()->pluck('descrizione')->toArray();
-        if (isAjaxRequest() && in_array(post('tipoanagrafica'), $descrizioni_tipi)) {
-            echo json_encode(['id' => $id_record, 'text' => $ragione_sociale]);
+        if (isAjaxRequest()) {
+            echo json_encode(['id' => $id_record, 'text' => $anagrafica->ragione_sociale]);
         }
+
+        $descrizioni_tipi = $anagrafica->tipi()->get()->pluck('descrizione')->toArray();
 
         flash()->info(tr('Aggiunta nuova anagrafica di tipo _TYPE_', [
             '_TYPE_' => '"'.implode(', ', $descrizioni_tipi).'"',
@@ -189,7 +262,8 @@ switch (post('op')) {
 
     case 'delete':
         // Se l'anagrafica non è l'azienda principale, la disattivo
-        if (!in_array($id_azienda, $tipi_anagrafica)) {
+        if (!$anagrafica->isAzienda()) {
+            //$anagrafica->delete();
             $dbo->query('UPDATE an_anagrafiche SET deleted_at = NOW() WHERE idanagrafica = '.prepare($id_record));
 
             // Se l'anagrafica è collegata ad un utente lo disabilito
@@ -203,9 +277,27 @@ switch (post('op')) {
 
 // Operazioni aggiuntive per il logo
 if (filter('op') == 'link_file') {
-    $nome = 'Logo stampe';
+    $nome = filter('nome_allegato');
 
-    if (setting('Azienda predefinita') == $id_record && filter('nome_allegato') == $nome) {
-        Settings::setValue($nome, $upload);
+    if ($nome == 'Logo stampe' or $nome = 'Filigrana stampe') {
+        if (setting('Azienda predefinita') == $id_record && filter('nome_allegato') == $nome) {
+            Settings::setValue($nome, $upload);
+        }
+    }
+}
+
+// Operazioni aggiuntive per il logo
+elseif (filter('op') == 'unlink_file') {
+    $filename = filter('filename');
+
+    if (strpos($filename, setting('Logo stampe')) !== false) {
+        $nome = 'Logo stampe';
+    }
+    if (strpos($filename, setting('Filigrana stampe')) !== false) {
+        $nome = 'Filigrana stampe';
+    }
+
+    if (setting('Azienda predefinita') == $id_record && $filename == setting($nome)) {
+        Settings::setValue($nome, '');
     }
 }

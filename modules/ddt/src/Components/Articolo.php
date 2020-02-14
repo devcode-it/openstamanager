@@ -16,9 +16,6 @@ class Articolo extends Article
     /**
      * Crea un nuovo articolo collegato ad una ddt.
      *
-     * @param DDT      $ddt
-     * @param Original $articolo
-     *
      * @return self
      */
     public static function build(DDT $ddt, Original $articolo)
@@ -28,7 +25,7 @@ class Articolo extends Article
         return $model;
     }
 
-    public function movimenta($qta)
+    public function movimentaMagazzino($qta)
     {
         $ddt = $this->ddt;
         $tipo = $ddt->tipo;
@@ -36,8 +33,8 @@ class Articolo extends Article
         $numero = $ddt->numero_esterno ?: $ddt->numero;
         $data = $ddt->data;
 
-        $carico = ($tipo->dir == 'entrata') ? tr('Ripristino articolo da _TYPE_ _NUM_') : tr('Carico magazzino da _TYPE_ numero _NUM_');
-        $scarico = ($tipo->dir == 'entrata') ? tr('Scarico magazzino per _TYPE_ numero _NUM_') : tr('Rimozione articolo da _TYPE_ _NUM_');
+        $carico = ($tipo->dir == 'entrata') ? tr('Ripristino articolo da _TYPE_ numero _NUM_') : tr('Carico magazzino da _TYPE_ numero _NUM_');
+        $scarico = ($tipo->dir == 'entrata') ? tr('Scarico magazzino per _TYPE_ numero _NUM_') : tr('Rimozione articolo da _TYPE_ numero _NUM_');
 
         $qta = ($tipo->dir == 'uscita') ? -$qta : $qta;
         $movimento = ($qta < 0) ? $carico : $scarico;
@@ -47,8 +44,13 @@ class Articolo extends Article
             '_NUM_' => $numero,
         ]);
 
+        $partenza = $ddt->direzione == 'uscita' ? $ddt->idsede_destinazione : $ddt->idsede_partenza;
+        $arrivo = $ddt->direzione == 'uscita' ? $ddt->idsede_partenza : $ddt->idsede_destinazione;
+
         $this->articolo->movimenta(-$qta, $movimento, $data, false, [
             'idddt' => $ddt->id,
+            'idsede_azienda' => $partenza,
+            'idsede_controparte' => $arrivo,
         ]);
     }
 

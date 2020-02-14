@@ -22,18 +22,24 @@ switch (filter('op')) {
         $nota = filter('nota');
         $colore = filter('colore');
 
+        $n = $dbo->fetchNum('SELECT * FROM `mg_categorie` WHERE `nome` LIKE '.prepare($nome));
+
         if (isset($nome)) {
-            $dbo->query('INSERT INTO `mg_categorie` (`nome`, `colore`, `nota`) VALUES ('.prepare($nome).', '.prepare($colore).', '.prepare($nota).')');
+            if ($n == 0) {
+                $dbo->query('INSERT INTO `mg_categorie` (`nome`, `colore`, `nota`) VALUES ('.prepare($nome).', '.prepare($colore).', '.prepare($nota).')');
 
-            $id_record = $dbo->lastInsertedID();
+                $id_record = $dbo->lastInsertedID();
 
-            if (isAjaxRequest()) {
-                echo json_encode(['id' => $id_record, 'text' => $nome]);
+                if (isAjaxRequest()) {
+                    echo json_encode(['id' => $id_record, 'text' => $nome]);
+                }
+
+                flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
+                    '_TYPE_' => 'categoria',
+                ]));
+            } else {
+                flash()->error(tr('Esiste già una categoria con lo stesso nome!'));
             }
-
-            flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
-                '_TYPE_' => 'categoria',
-            ]));
         } else {
             flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
         }

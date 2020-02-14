@@ -2,200 +2,159 @@
 
 include_once __DIR__.'/../../core.php';
 
-/**
- * Elenco conti.
- */
-$query1 = 'SELECT * FROM `co_pianodeiconti1` ORDER BY id DESC';
-$rs1 = $dbo->fetchArray($query1);
-$n1 = sizeof($rs1);
+// Verifico se è già stata eseguita l'apertura bilancio
+$bilancio_gia_aperto = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE is_apertura=1 AND data BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']));
 
+$msg = tr('Sei sicuro di voler aprire il bilancio?');
+$btn_class = 'btn-info';
+
+if ($bilancio_gia_aperto) {
+    $msg .= ' '.tr('I movimenti di apertura già esistenti verranno annullati e ricreati').'.';
+    $btn_class = 'btn-default';
+}
+?>
+
+<div class="text-right">
+    <button type="button" class="btn btn-lg <?php echo $btn_class; ?>" data-op="apri-bilancio" data-title="<?php echo tr('Apertura bilancio'); ?>" data-backto="record-list" data-msg="<?php echo $msg; ?>" data-button="<?php echo tr('Riprendi saldi'); ?>" data-class="btn btn-lg btn-warning" onclick="message( this );"><i class="fa fa-folder-open"></i> <?php echo tr('Apertura bilancio'); ?></button>
+</div>
+
+<?php
 // Livello 1
-for ($x = 0; $x < $n1; ++$x) {
+$query1 = 'SELECT * FROM `co_pianodeiconti1` ORDER BY id DESC';
+$primo_livello = $dbo->fetchArray($query1);
+
+foreach ($primo_livello as $conto_primo) {
     $totale_attivita = [];
     $totale_passivita = [];
 
     $costi = [];
     $ricavi = [];
 
-    if ($rs1[$x]['descrizione'] == 'Economico') {
-        echo "<hr><h2 class=\"pull-left\">Conto economico</h2>\n";
-    } else {
-        echo "<hr><h2 class=\"pull-left\">Stato patrimoniale</h2>\n";
-    }
+    $titolo = $conto_primo['descrizione'] == 'Economico' ? tr('Conto economico') : tr('Stato patrimoniale');
 
-    echo "<div class=\"pull-right\"><br>\n";
-    echo Prints::getLink('Mastrino', $rs1[$x]['id'], null, tr('Stampa'), null, 'lev=1');
-    echo "</div>\n";
-    echo "<div class=\"clearfix\"></div>\n";
+    echo '
+<hr>
+<h2>'.$titolo.'</h2>
+    <div class="pull-right">
+        <br>'.Prints::getLink('Mastrino', $conto_primo['id'], null, tr('Stampa'), null, 'lev=1').'
+    </div>
+    <div class="clearfix"></div>
+
+    <div style="padding-left:10px;">';
 
     // Livello 2
-    $query2 = "SELECT * FROM `co_pianodeiconti2` WHERE idpianodeiconti1='".$rs1[$x]['id']."' ORDER BY numero ASC";
-    $rs2 = $dbo->fetchArray($query2);
-    $n2 = sizeof($rs2);
+    $query2 = "SELECT * FROM `co_pianodeiconti2` WHERE idpianodeiconti1='".$conto_primo['id']."' ORDER BY numero ASC";
+    $secondo_livello = $dbo->fetchArray($query2);
 
-    echo "<div style='padding-left:10px;'>\n";
-
-    for ($y = 0; $y < $n2; ++$y) {
+    foreach ($secondo_livello as $conto_secondo) {
         // Livello 2
-        echo "	<div>\n";
+        echo '
+        <div class="pull-right">
+            '.Prints::getLink('Mastrino', $conto_secondo['id'], 'btn-info btn-xs', '', null, 'lev=2').'
 
-        // Stampa mastrino
-        echo Prints::getLink('Mastrino', $rs2[$y]['id'], 'btn-info btn-xs', '', null, 'lev=2');
+            <button type="button" class="btn btn-warning btn-xs" data-toggle="tooltip" title="Modifica questo conto..." onclick="launch_modal(\'Modifica conto\', \''.$structure->fileurl('edit_conto.php').'?id='.$conto_secondo['id'].'&lvl=2\');">
+                <i class="fa fa-edit"></i>
+            </button>
+        </div>
 
-        echo '		<b>'.$rs2[$y]['numero'].' '.htmlentities($rs2[$y]['descrizione'], ENT_QUOTES, 'ISO-8859-1')."</b><br>\n";
+        <h5><b>'.$conto_secondo['numero'].' '.$conto_secondo['descrizione'].'</b></h5>
 
-        echo "	</div>\n";
+        <div style="padding-left:10px;">
+            <table class="table table-striped table-hover table-condensed" style="margin-bottom:0;">';
 
         // Livello 3
-        $query3 = 'SELECT `co_pianodeiconti3`.*, `clienti`.`idanagrafica` AS id_cliente, `fornitori`.`idanagrafica` AS id_fornitore FROM `co_pianodeiconti3` LEFT OUTER JOIN `an_anagrafiche` `clienti` ON `clienti`.`idconto_cliente` = `co_pianodeiconti3`.`id` LEFT OUTER JOIN `an_anagrafiche` `fornitori` ON `fornitori`.`idconto_fornitore` = `co_pianodeiconti3`.`id` WHERE `idpianodeiconti2` = '.prepare($rs2[$y]['id']).' ORDER BY numero ASC';
-        $rs3 = $dbo->fetchArray($query3);
-        $n3 = sizeof($rs3);
+        $query3 = 'SELECT `co_pianodeiconti3`.*, movimenti.numero_movimenti, movimenti.totale FROM `co_pianodeiconti3` LEFT OUTER JOIN (SELECT COUNT(idconto) AS numero_movimenti, idconto, SUM( ROUND(totale,2)) AS totale FROM co_movimenti WHERE data BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']).' GROUP BY idconto) movimenti ON co_pianodeiconti3.id=movimenti.idconto WHERE `idpianodeiconti2` = '.prepare($conto_secondo['id']).' ORDER BY numero ASC';
+        $terzo_livello = $dbo->fetchArray($query3);
 
-        echo "	<div style='padding-left:10px;'>\n";
-        echo "		<table class='table table-striped table-hover table-condensed' style='margin-bottom:0;'>\n";
-
-        for ($z = 0; $z < $n3; ++$z) {
-            $totale_conto_liv3 = [];
-
-            echo "		<tr><td>\n";
-
+        foreach ($terzo_livello as $conto_terzo) {
             // Se il conto non ha documenti collegati posso eliminarlo
-            $query = "SELECT id FROM co_movimenti WHERE idconto='".$rs3[$z]['id']."'";
-            $nr = $dbo->fetchNum($query);
+            $movimenti = $conto_terzo['numero_movimenti'];
 
-            // Calcolo totale conto da elenco movimenti di questo conto
-            $query = "SELECT co_movimenti.*, dir FROM (co_movimenti LEFT OUTER JOIN co_documenti ON co_movimenti.iddocumento=co_documenti.id) LEFT OUTER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_movimenti.idconto='".$rs3[$z]['id']."' AND co_movimenti.data >= '".$_SESSION['period_start']."' AND co_movimenti.data <= '".$_SESSION['period_end']."' ORDER BY co_movimenti.data ASC";
-            $rs = $dbo->fetchArray($query);
+            $totale_conto = $conto_terzo['totale'];
+            $totale_conto = ($conto_primo['descrizione'] == 'Patrimoniale') ? $totale_conto : -$totale_conto;
 
-            $tools = "			<span class='hide tools'>\n";
-
-            // Stampa mastrino
-            if (!empty($rs)) {
-                $tools .= Prints::getLink('Mastrino', $rs3[$z]['id'], 'btn-info btn-xs', '', null, 'lev=3');
+            // Somma dei totali
+            if ($conto_primo['descrizione'] == 'Patrimoniale') {
+                if ($totale_conto > 0) {
+                    $totale_attivita[] = abs($totale_conto);
+                } else {
+                    $totale_passivita[] = abs($totale_conto);
+                }
+            } else {
+                if ($totale_conto > 0) {
+                    $totale_ricavi[] = abs($totale_conto);
+                } else {
+                    $totale_costi[] = abs($totale_conto);
+                }
             }
 
-            if ($nr <= 0 && $rs3[$z]['can_delete'] == '1') {
-                $tools .= '
-                                    <a class="btn btn-danger btn-xs ask" data-toggle="tooltip" title="'.tr('Elimina').'" data-backto="record-list" data-op="del" data-idconto="'.$rs3[$z]['id'].'">
-                                        <i class="fa fa-trash"></i>
-                                    </a>';
-            }
+            echo '
+                <tr style="'.(!empty($movimenti) ? '' : 'opacity: 0.5;').'">
+                    <td><span class="clickable" id="movimenti-'.$conto_terzo['id'].'">';
 
-            // Possibilità di modificare il nome del conto livello3
-            if ($rs3[$z]['can_edit'] == '1') {
-                $tools .= "			<button type='button' class='btn btn-warning btn-xs' data-toggle='tooltip' title='Modifica questo conto...' onclick=\"launch_modal( 'Modifica conto', '".$rootdir.'/modules/partitario/edit_conto.php?id='.$rs3[$z]['id']."', 1 );\"><i class='fa fa-edit'></i></button>\n";
-            }
-
-            $tools .= "			</span>\n";
-
-            echo "
-                <span class='clickable' onmouseover=\"$(this).find('.tools').removeClass('hide');\" onmouseleave=\"$(this).find('.tools').addClass('hide');\" onclick=\"$('#conto_".$rs3[$z]['id']."').slideToggle(); $(this).find('.plus-btn i').toggleClass('fa-plus').toggleClass('fa-minus');\">";
-
-            if (!empty($rs)) {
+            if (!empty($movimenti)) {
                 echo '
                     <a href="javascript:;" class="btn btn-primary btn-xs plus-btn"><i class="fa fa-plus"></i></a>';
             }
 
-            $id_anagrafica = $rs3[$z]['id_cliente'] ?: $rs3[$z]['id_fornitore'];
+            $id_anagrafica = $conto_terzo['id_cliente'] ?: $conto_terzo['id_fornitore'];
 
             echo '
-                    '.$tools.'&nbsp;'.$rs2[$y]['numero'].'.'.$rs3[$z]['numero'].' '.$rs3[$z]['descrizione'].' '.(isset($id_anagrafica) ? Modules::link('Anagrafiche', $id_anagrafica, 'Anagrafica', null) : '').'
-                </span>';
+                    <span class="hide tools pull-right">';
 
-            echo '			<div id="conto_'.$rs3[$z]['id']."\" style=\"display:none;\">\n";
-
-            if (sizeof($rs) > 0) {
-                $totale_conto_liv3 = [];
-
-                echo "				<table class='table table-bordered table-hover table-condensed table-striped'>\n";
-                echo "				<tr><th>Causale</th>\n";
-                echo "				<th width='100'>Data</th>\n";
-                echo "				<th width='100'>Dare</th>\n";
-                echo "				<th width='100'>Avere</th></tr>\n";
-
-                // Elenco righe del partitario
-                for ($i = 0; $i < sizeof($rs); ++$i) {
-                    echo "				<tr><td>\n";
-
-                    if (!empty($rs[$i]['iddocumento'])) {
-                        $module = ($rs[$i]['dir'] == 'entrata') ? Modules::get('Fatture di vendita')['id'] : Modules::get('Fatture di acquisto')['id'];
-                        echo "<a data-toggle='modal' data-title='Dettagli movimento...' data-target='#bs-popup' class='clickable' data-href='".$rootdir.'/modules/partitario/dettagli_movimento.php?id_movimento='.$rs[$i]['id'].'&id_conto='.$rs[$i]['idconto'].'&id_module='.$module."' >".$rs[$i]['descrizione']."</a>\n";
-                    // echo "					<a href='".$rootdir.'/editor.php?id_module='.$module.'&id_record='.$rs[$i]['iddocumento']."'>".$rs[$i]['descrizione']."</a>\n";
-                    } else {
-                        echo '					<span>'.$rs[$i]['descrizione']."</span>\n";
-                    }
-
-                    echo "				</td>\n";
-
-                    // Data
-                    echo "				<td>\n";
-                    echo date('d/m/Y', strtotime($rs[$i]['data']));
-                    echo                "</td>\n";
-
-                    // Dare
-                    if ($rs[$i]['totale'] > 0) {
-                        echo "				<td align='right'>\n";
-                        echo Translator::numberToLocale(abs($rs[$i]['totale']))." &euro;\n";
-                        echo "				</td>\n";
-                        echo "				<td></td></tr>\n";
-
-                        if ($rs1[$x]['descrizione'] == 'Patrimoniale') {
-                            $totale_conto_liv3[] = $rs[$i]['totale'];
-                        } else {
-                            $totale_conto_liv3[] = -$rs[$i]['totale'];
-                        }
-                    }
-
-                    // Avere
-                    else {
-                        echo "				<td></td><td  align='right'>\n";
-                        echo Translator::numberToLocale(abs($rs[$i]['totale']))." &euro;\n";
-                        echo "				</td>\n";
-
-                        if ($rs1[$x]['descrizione'] == 'Patrimoniale') {
-                            $totale_conto_liv3[] = $rs[$i]['totale'];
-                        } else {
-                            $totale_conto_liv3[] = -$rs[$i]['totale'];
-                        }
-                    }
-                    echo "				</td></tr>\n";
-                }
-
-                // Somma dei totali
-                if ($rs1[$x]['descrizione'] == 'Patrimoniale') {
-                    if (sum($totale_conto_liv3) > 0) {
-                        $totale_attivita[] = abs(sum($totale_conto_liv3));
-                    } else {
-                        $totale_passivita[] = abs(sum($totale_conto_liv3));
-                    }
-                } else {
-                    if (sum($totale_conto_liv3) > 0) {
-                        $totale_ricavi[] = abs(sum($totale_conto_liv3));
-                    } else {
-                        $totale_costi[] = abs(sum($totale_conto_liv3));
-                    }
-                }
-                echo "				</table>\n";
+            // Stampa mastrino
+            if (!empty($movimenti)) {
+                echo '
+                        '.Prints::getLink('Mastrino', $conto_terzo['id'], 'btn-info btn-xs', '', null, 'lev=3');
             }
-            echo "			</div>\n";
-            echo "		</td>\n";
 
-            echo "		<td width='100' align='right' valign='top'>\n";
-            echo Translator::numberToLocale(sum($totale_conto_liv3))." &euro;\n";
-            echo "		</td></tr>\n";
-        } // Fine livello3
+            if ($numero_movimenti <= 0) {
+                echo '
+                        <a class="btn btn-danger btn-xs ask" data-toggle="tooltip" title="'.tr('Elimina').'" data-backto="record-list" data-op="del" data-idconto="'.$conto_terzo['id'].'">
+                            <i class="fa fa-trash"></i>
+                        </a>';
+            }
 
-        echo "	</table>\n";
+            // Possibilità di modificare il nome del conto livello3
+            echo '
+                        <button type="button" class="btn btn-warning btn-xs" data-toggle="tooltip" title="Modifica questo conto..." onclick="launch_modal(\'Modifica conto\', \''.$structure->fileurl('edit_conto.php').'?id='.$conto_terzo['id'].'\');">
+                            <i class="fa fa-edit"></i>
+                        </button>';
+
+            echo  '
+                        </span>
+                            &nbsp;'.$conto_secondo['numero'].'.'.$conto_terzo['numero'].' '.$conto_terzo['descrizione'].' '.(isset($id_anagrafica) ? Modules::link('Anagrafiche', $id_anagrafica, 'Anagrafica', null) : '').'
+                        </span>
+
+                        <div id="conto_'.$conto_terzo['id'].'" style="display:none;"></div>
+                    </td>
+
+                    <td width="100" align="right" valign="top">
+                        '.moneyFormat(sum($totale_conto), 2).'
+                    </td>
+                </tr>';
+        }
+
+        echo '
+            </table>';
 
         // Possibilità di inserire un nuovo conto
-        echo "	<button type='button' class='btn btn-xs btn-primary' data-toggle='tooltip'  title='".tr('Aggiungi un nuovo conto...')."' onclick=\"launch_modal( '".tr('Nuovo conto')."', '".$rootdir.'/modules/partitario/add_conto.php?id='.$rs2[$y]['id']."', 1 );\"><i class='fa fa-plus-circle'></i></button><br><br>\n";
-        echo "</div>\n";
-    } // Fine livello 2
+        echo '
+            <button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" title="'.tr('Aggiungi un nuovo conto...').'" onclick="add_conto('.$conto_secondo['id'].')">
+                <i class="fa fa-plus-circle"></i>
+            </button>
 
-    echo "</div>\n";
+            <br><br>
+        </div>';
+    }
 
-    if ($rs1[$x]['descrizione'] == 'Patrimoniale') {
-        // Riepilogo
+    echo '
+    </div>
+
+    <table class="table table-condensed table-hover">'
+    ;
+    // Riepiloghi
+    if ($conto_primo['descrizione'] == 'Patrimoniale') {
         $attivita = abs(sum($totale_attivita));
         $passivita = abs(sum($totale_passivita));
         $utile_perdita = abs(sum($totale_ricavi)) - abs(sum($totale_costi));
@@ -207,66 +166,174 @@ for ($x = 0; $x < $n1; ++$x) {
             $pareggio2 = abs($passivita) + abs($utile_perdita);
         }
 
-        echo "<table class='table table-condensed table-hover'>\n";
-
         // Attività
-        echo "<tr><th>\n";
-        echo "	<p align='right'><big>Totale attività:</big></p>\n";
-        echo "</th>\n";
-
-        echo "<td width='150' align='right'>\n";
-        echo "	<p align='right'><big>".Translator::numberToLocale($attivita)." &euro;</big></p>\n";
-        echo "</td>\n";
-        echo "<td width='50'></td>\n";
+        echo '
+        <tr>
+            <th class="text-right">
+                <big>'.tr('Totale attività').':</big>
+            </th>
+            <td class="text-right" width="150">
+                <big>'.moneyFormat($attivita, 2).'</big>
+            </td>
+            <td width="50"></td>';
 
         // Passività
-        echo "<th align='right'>\n";
-        echo "	<p align='right'><big>Passività:</big></p>\n";
-        echo "</th>\n";
-        echo "<td width='150' align='right'>\n";
-        echo "	<p align='right'><big>".Translator::numberToLocale($passivita)." &euro;</big></p>\n";
-        echo "</td></tr>\n";
+        echo '
+            <th class="text-right">
+                <big>'.tr('Passività').':</big>
+            </th>
+            <td class="text-right" width="150">
+                <big>'.moneyFormat($passivita, 2).'</big>
+            </td>
+        </tr>';
 
         // Perdita d'esercizio
         if ($utile_perdita < 0) {
-            echo "<tr><th align='right'>\n";
-            echo "	<p align='right'><big>Perdita d'esercizio:</big></p>\n";
-            echo "</th>\n";
-            echo "<td align='right'>\n";
-            echo "	<p align='right'><big>".Translator::numberToLocale(sum($utile_perdita))." &euro;</big></p>\n";
-            echo "</td>\n";
-            echo "<td></td>\n";
-            echo "<td></td><td></td></tr>\n";
+            echo '
+        <tr>
+            <th class="text-right">
+                <big>'.tr("Perdita d'esercizio").':</big>
+            </th>
+            <td class="text-right">
+                <big>'.moneyFormat(sum($utile_perdita), 2).'</big>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>';
         } else {
-            echo "<tr><td></td><td></td><td></td><th align='right'>\n";
-            echo "	<p align='right'><big>Utile:</big></p>\n";
-            echo "</th>\n";
-            echo "<td align='right'>\n";
-            echo "	<p align='right'><big>".Translator::numberToLocale(sum($utile_perdita))." &euro;</big></p>\n";
-            echo "</td></tr>\n";
+            echo '
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <th class="text-right">
+                <big>'.tr('Utile').':</big>
+            </th>
+            <td class="text-right">
+                <big>'.moneyFormat(sum($utile_perdita), 2).'</big>
+            </td>
+        </tr>';
         }
 
         // Totale a pareggio
-        echo "<tr><th align='right'>\n";
-        echo "	<p align='right'><big>Totale a pareggio:</big></p>\n";
-        echo "</th>\n";
-        echo "<td align='right'>\n";
-        echo "	<p align='right'><big>".Translator::numberToLocale(sum($pareggio1))." &euro;</big></p>\n";
-        echo "</td>\n";
-        echo "<td></td>\n";
+        echo '
+        <tr>
+            <th class="text-right">
+                <big>'.tr('Totale a pareggio').':</big>
+            </th>
+            <td class="text-right" width="150">
+                <big>'.moneyFormat(sum($pareggio1), 2).'</big>
+            </td>
+            <td width="50"></td>
 
-        // Totale a pareggio
-        echo "<th align='right'>\n";
-        echo "	<p align='right'><big>Totale a pareggio:</big></p>\n";
-        echo "</th>\n";
-        echo "<td align='right'>\n";
-        echo "	<p align='right'><big>".Translator::numberToLocale(sum($pareggio2))." &euro;</big></p>\n";
-        echo "</td></tr>\n";
-
-        echo '</table>';
+            <th class="text-right">
+                <big>'.tr('Totale a pareggio').':</big>
+            </th>
+            <td class="text-right" width="150">
+                <big>'.moneyFormat(sum($pareggio2), 2).'</big>
+            </td>
+        </tr>';
     } else {
-        echo "<p align='right'><big><b>RICAVI:</b> ".Translator::numberToLocale(sum($totale_ricavi))." &euro;</big></p>\n";
-        echo "<p align='right'><big><b>COSTI:</b> ".Translator::numberToLocale(abs(sum($totale_costi)))." &euro;</big></p>\n";
-        echo "<p align='right'><big><b>UTILE/PERDITA:</b> ".Translator::numberToLocale(sum($totale_ricavi) - abs(sum($totale_costi)))." &euro;</big></p>\n";
+        echo '
+        <tr>
+            <th class="text-right">
+                <big>'.tr('Ricavi').':</big>
+            </th>
+            <td class="text-right" width="150">
+                <big>'.moneyFormat(sum($totale_ricavi), 2).'</big>
+            </td>
+        </tr>
+
+        <tr>
+            <th class="text-right">
+                <big>'.tr('Costi').':</big>
+            </th>
+            <td class="text-right" width="150">
+                <big>'.moneyFormat(sum($totale_costi), 2).'</big>
+            </td>
+        </tr>
+
+        <tr>
+            <th class="text-right">
+                <big>'.tr('Utile/perdita').':</big>
+            </th>
+            <td class="text-right" width="150">
+                <big>'.moneyFormat(sum($totale_ricavi) - abs(sum($totale_costi)), 2).'</big>
+            </td>
+        </tr>';
     }
+
+    echo '
+    </table>';
 }
+
+// Verifico se è già stata eseguita l'apertura bilancio
+$bilancio_gia_chiuso = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE is_chiusura=1 AND data BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']));
+
+$msg = tr('Sei sicuro di voler aprire il bilancio?');
+$btn_class = 'btn-info';
+
+if ($bilancio_gia_chiuso) {
+    $msg .= ' '.tr('I movimenti di apertura già esistenti verranno annullati e ricreati').'.';
+    $btn_class = 'btn-default';
+}
+?>
+
+<div class="text-right">
+    <button type="button" class="btn btn-lg <?php echo $btn_class; ?>" data-op="chiudi-bilancio" data-title="<?php echo tr('Chiusura bilancio'); ?>" data-backto="record-list" data-msg="<?php echo $msg; ?>" data-button="<?php echo tr('Chiudi bilancio'); ?>" data-class="btn btn-lg btn-primary" onclick="message( this );"><i class="fa fa-folder"></i> <?php echo tr('Chiusura bilancio'); ?></button>
+</div>
+
+<script>
+var tr = '';
+$(document).ready(function(){
+    $("tr").each(function() {
+        $(this).on("mouseover", function() {
+            $(this).find(".tools").removeClass("hide");
+        });
+
+        $(this).on("mouseleave", function() {
+            $(this).find(".tools").addClass("hide");
+        });
+    });
+
+    $("span[id^=movimenti-]").each(function() {
+        $(this).on("click", function() {
+            var movimenti = $(this).parent().find("div[id^=conto_]");
+
+            if(!movimenti.html()) {
+                var id_conto = $(this).attr("id").split("-").pop();
+
+                load_movimenti(movimenti.attr("id"), id_conto);
+            } else {
+                movimenti.slideToggle();
+            }
+
+            $(this).find(".plus-btn i").toggleClass("fa-plus").toggleClass("fa-minus");
+        });
+    })
+});
+
+function add_conto(id) {
+    launch_modal("<?php echo tr('Nuovo conto'); ?>",  "<?php echo $structure->fileurl('add_conto.php'); ?>?id=" + id);
+}
+
+function load_movimenti(selector, id_conto) {
+	$("#main_loading").show();
+
+    $.ajax({
+        url: "<?php echo $structure->fileurl('dettagli_conto.php'); ?>",
+        type: "get",
+        data: {
+            id_module: globals.id_module,
+            id_conto: id_conto,
+        },
+        success: function(data){
+           $("#" + selector).html(data);
+           $("#" + selector).slideToggle();
+
+           $("#main_loading").fadeOut();
+        }
+	});
+}
+</script>

@@ -87,7 +87,7 @@ if ($total == 0) {
 <div class="row">
 	<!-- STATI INTERVENTO -->
 	<div class="dropdown col-md-3">
-		<a class="btn <?php echo $class; ?> btn-block" data-toggle="dropdown" href="javascript:;" id="idstati_count"><i class="fa fa-filter"></i> <?php echo tr('Stati intervento'); ?> (<?php echo $count.'/'.$total; ?>) <i class="caret"></i></a>
+		<a class="btn <?php echo $class; ?> btn-block" data-toggle="dropdown" href="javascript:;" id="idstati_count"><i class="fa fa-filter"></i> <?php echo tr('Stati attività'); ?> (<?php echo $count.'/'.$total; ?>) <i class="caret"></i></a>
 
 		<ul class="dropdown-menu" role="menu" id="idstati_ul">
 			<?php echo $checks; ?>
@@ -138,7 +138,7 @@ if ($total == 0) {
 ?>
 	<!-- TIPI DI INTERVENTO -->
 	<div class="dropdown col-md-3">
-		<a class="btn <?php echo $class; ?> btn-block" data-toggle="dropdown" href="javascript:;" id="idtipi_count"><i class="fa fa-filter"></i> <?php echo tr('Tipi intervento'); ?> (<?php echo $count.'/'.$total; ?>) <i class="caret"></i></a>
+		<a class="btn <?php echo $class; ?> btn-block" data-toggle="dropdown" href="javascript:;" id="idtipi_count"><i class="fa fa-filter"></i> <?php echo tr('Tipi attività'); ?> (<?php echo $count.'/'.$total; ?>) <i class="caret"></i></a>
 
 		<ul class="dropdown-menu" role="menu" id="idtipi_ul">
 			<?php echo $checks; ?>
@@ -289,7 +289,7 @@ $qp = 'SELECT MONTH(data_richiesta) AS mese, YEAR(data_richiesta) AS anno FROM (
 
 UNION SELECT MONTH(data_scadenza) AS mese, YEAR(data_scadenza) AS anno FROM (co_ordiniservizio INNER JOIN co_contratti ON co_ordiniservizio.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE is_pianificabile = 1) ) AND idintervento IS NULL
 
-UNION SELECT MONTH(data_richiesta) AS mese, YEAR(data_richiesta) AS anno FROM in_interventi INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE (SELECT COUNT(*) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento = in_interventi.id) = 0 ORDER BY anno,mese';
+UNION SELECT MONTH(IF(data_scadenza IS NULL, data_richiesta, data_scadenza)) AS mese, YEAR(IF(data_scadenza IS NULL, data_richiesta, data_scadenza)) AS anno FROM in_interventi INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE (SELECT COUNT(*) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento = in_interventi.id) = 0 ORDER BY anno,mese';
 $rsp = $dbo->fetchArray($qp);
 
 if (!empty($rsp)) {
@@ -313,11 +313,11 @@ if (!empty($rsp)) {
 
     UNION SELECT co_ordiniservizio.id FROM co_ordiniservizio INNER JOIN co_contratti ON co_ordiniservizio.idcontratto=co_contratti.id WHERE idstato IN(SELECT id FROM co_staticontratti WHERE is_pianificabile = 1) AND idintervento IS NULL AND DATE_ADD(co_ordiniservizio.data_scadenza, INTERVAL 1 DAY) <= NOW()
 
-    UNION SELECT in_interventi.id FROM in_interventi INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE (SELECT COUNT(*) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento = in_interventi.id) = 0 AND DATE_ADD(in_interventi.data_richiesta, INTERVAL 1 DAY) <= NOW()';
+    UNION SELECT in_interventi.id FROM in_interventi INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE (SELECT COUNT(*) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento = in_interventi.id) = 0 AND DATE_ADD(IF(in_interventi.data_scadenza IS NULL, in_interventi.data_richiesta, in_interventi.data_scadenza), INTERVAL 1 DAY) <= NOW()';
     $rsp_old = $dbo->fetchNum($qp_old);
 
     if ($rsp_old > 0) {
-        echo '<div class="alert alert-warning alert-dismissible" role="alert"><i class="fa fa-exclamation-triangle"></i><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> '.tr('Ci sono '.$rsp_old.' interventi scaduti da pianificare.').'</div>';
+        echo '<div class="alert alert-warning alert-dismissible text-sm" role="alert"><i class="fa fa-exclamation-triangle"></i><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button> '.tr('Ci sono '.$rsp_old.' attività scadute.').'</div>';
     }
 
     $mesi = months();
@@ -368,42 +368,47 @@ if ($vista == 'mese') {
 
 <script type="text/javascript">
 
-    $('#select-intreventi-pianificare').change(function(){
-        var mese = $(this).val();
-        $.get( '<?php echo $rootdir; ?>/modules/dashboard/actions.php', { op: 'load_intreventi', mese: mese }, function(data){
-            $('#interventi-pianificare').html(data);
-            $('#external-events .fc-event').each(function() {
+	function load_interventi_da_pianificare(mese){
+
+		if (mese == undefined){
+			// Seleziono il mese corrente per gli interventi da pianificare
+			var date = new Date();
+			var mese;
+			date.setDate(date.getDate());
+
+			//Note: January is 0, February is 1, and so on.
+			mese = ('0' + (date.getMonth()+1)).slice(-2) + date.getFullYear();
+
+			$('#select-intreventi-pianificare option[value='+mese+']').attr('selected','selected').trigger('change');
+		}
+
+		$('#interventi-pianificare').html('<center><br><br><i class=\'fa fa-refresh fa-spin fa-2x fa-fw\'></i></center>');
+		$.get( '<?php echo $rootdir; ?>/modules/dashboard/actions.php', { op: 'load_intreventi', mese: mese }, function(data){
+
+        })
+		.done(function( data ) {
+			$('#interventi-pianificare').html(data);
+			$('#external-events .fc-event').each(function() {
                 $(this).draggable({
                     zIndex: 999,
                     revert: true,
                     revertDuration: 0
                 });
             });
-        });
+
+		});
+
+	}
+    $('#select-intreventi-pianificare').change(function(){
+        var mese = $(this).val();
+        load_interventi_da_pianificare(mese);
+
     });
 
 	$(document).ready(function() {
-        // Seleziono il mese corrente per gli interventi da pianificare
-        var date = new Date();
-        var mese;
-        date.setDate(date.getDate());
 
-        //Note: January is 0, February is 1, and so on.
-        mese = ('0' + (date.getMonth()+1)).slice(-2) + date.getFullYear();
 
-        $('#select-intreventi-pianificare option[value='+mese+']').attr('selected','selected').trigger('change');
-
-        $.get( '<?php echo $rootdir; ?>/modules/dashboard/actions.php', { op: 'load_intreventi', mese: mese }, function(data){
-            $('#interventi-pianificare').html(data);
-            $('#external-events .fc-event').each(function() {
-                $(this).draggable({
-                    zIndex: 999,
-                    revert: true,
-                    revertDuration: 0
-                });
-            });
-        });
-
+		load_interventi_da_pianificare();
 
         // Comandi seleziona tutti
         $('#selectallstati').click(function(event) {
@@ -452,7 +457,7 @@ if ($vista == 'mese') {
 
             $(this).parent().parent().find('li input[type=checkbox]').each(function(i) { // loop through each checkbox
 				this.checked = true;
-				 $.when (session_set_array( 'dashboard,idzone', this.value, 0 )).promise().then(function() {
+				$.when (session_set_array( 'dashboard,idzone', this.value, 0 )).promise().then(function() {
 						$('#calendar').fullCalendar('refetchEvents');
 				});
 
@@ -468,7 +473,7 @@ if ($vista == 'mese') {
 
 			$(this).parent().parent().find('li input[type=checkbox]').each(function() { // loop through each checkbox
 				this.checked = false;
-				 $.when (session_set_array( 'dashboard,idstatiintervento', this.value, 1 )).promise().then(function() {
+				$.when (session_set_array( 'dashboard,idstatiintervento', this.value, 1 )).promise().then(function() {
 						$('#calendar').fullCalendar('refetchEvents');
 				});
 
@@ -482,7 +487,7 @@ if ($vista == 'mese') {
 
 			$(this).parent().parent().find('li input[type=checkbox]').each(function() { // loop through each checkbox
 				this.checked = false;
-				 $.when (session_set_array( 'dashboard,idtipiintervento', this.value, 1 )).promise().then(function() {
+				$.when (session_set_array( 'dashboard,idtipiintervento', this.value, 1 )).promise().then(function() {
 						$('#calendar').fullCalendar('refetchEvents');
 				});
 
@@ -497,7 +502,7 @@ if ($vista == 'mese') {
 
 			$(this).parent().parent().find('li input[type=checkbox]').each(function() { // loop through each checkbox
 				this.checked = false;
-				 $.when (session_set_array( 'dashboard,idtecnici', this.value, 1 )).promise().then(function() {
+				$.when (session_set_array( 'dashboard,idtecnici', this.value, 1 )).promise().then(function() {
 						$('#calendar').fullCalendar('refetchEvents');
 				});
 
@@ -565,6 +570,7 @@ if ($vista == 'mese') {
 
 		var calendar = $('#calendar').fullCalendar({
             locale: globals.locale,
+            height: "auto",
 <?php
 $domenica = setting('Visualizzare la domenica sul calendario');
 if (empty($domenica)) {
@@ -584,12 +590,13 @@ if (empty($domenica)) {
 <?php
 
 echo "
-            minTime: '".setting('Inizio orario lavorativo')."',
-            maxTime: '".setting('Fine orario lavorativo')."',
+            minTime: '".setting('Ora inizio sul calendario')."',
+            maxTime: '".((setting('Ora fine sul calendario') != '00:00:00' and !empty(setting('Ora fine sul calendario'))) ? setting('Ora fine sul calendario') : '23:59:59')."',
 ";
 
 ?>
             lazyFetching: true,
+            slotEventOverlap :false,
 			selectHelper: true,
 			eventLimit: false, // allow "more" link when too many events
 			allDaySlot: false,
@@ -618,11 +625,11 @@ if (Modules::getPermission('Interventi') == 'rw') {
                     nome = 'id_intervento';
                 }
 
-                launch_modal('<?php echo tr('Pianifica intervento'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::get('Interventi')['id']; ?>&data='+data+'&orario_inizio='+ora_dal+'&orario_fine='+ora_al+'&ref=dashboard&idcontratto=' + $(this).data('idcontratto') + '&' + nome + '=' + $(this).data('id'), 1);
+                launch_modal('<?php echo tr('Pianifica intervento'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::get('Interventi')['id']; ?>&data='+data+'&orario_inizio='+ora_dal+'&orario_fine='+ora_al+'&ref=dashboard&idcontratto=' + $(this).data('idcontratto') + '&' + nome + '=' + $(this).data('id'));
 
                 $(this).remove();
 
-                $('#bs-popup').on('hidden.bs.modal', function () {
+                $('#modals > div').on('hidden.bs.modal', function () {
                     $('#calendar').fullCalendar('refetchEvents');
                 });
             },
@@ -634,7 +641,7 @@ if (Modules::getPermission('Interventi') == 'rw') {
 				ora_dal = moment(start).format("HH:mm");
 				ora_al = moment(end).format("HH:mm");
 
-                launch_modal('<?php echo tr('Aggiungi intervento'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::get('Interventi')['id']; ?>&ref=dashboard&data='+data+'&orario_inizio='+ora_dal+'&data_fine='+data_fine+'&orario_fine='+ora_al, 1 );
+                launch_modal('<?php echo tr('Aggiungi intervento'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::get('Interventi')['id']; ?>&ref=dashboard&data='+data+'&orario_inizio='+ora_dal+'&orario_fine='+ora_al, 1 );
 
 				$('#calendar').fullCalendar('unselect');
 			},
@@ -679,32 +686,36 @@ if (Modules::getPermission('Interventi') == 'rw') {
 
 if (setting('Utilizzare i tooltip sul calendario') == '1') {
     ?>
-				$.get(globals.rootdir + "/modules/dashboard/actions.php?op=get_more_info&id="+event.idintervento+"&timeStart="+moment(event.start).format("YYYY-MM-DD HH:mm")+"&timeEnd="+moment(event.end).format("YYYY-MM-DD HH:mm"), function(data,response){
-					if( response=="success" ){
-						data = $.trim(data);
-						if( data!="ok" ){
-							element.tooltipster({
-								content: data,
-								animation: 'grow',
-								contentAsHTML: true,
-								hideOnClick: true,
-								onlyOne: true,
-								speed: 200,
-								delay: 100,
-								maxWidth: 400,
-								theme: 'tooltipster-shadow',
-								touchDevices: true,
-								trigger: 'hover',
-								position: 'left'
-							});
+                element.tooltipster({
+                    content: '<?php echo tr('Caricamento...'); ?>',
+                    animation: 'grow',
+                    updateAnimation: 'grow',
+                    contentAsHTML: true,
+                    hideOnClick: true,
+                    speed: 200,
+                    delay: 300,
+                    maxWidth: 400,
+                    theme: 'tooltipster-shadow',
+                    touchDevices: true,
+                    trigger: 'hover',
+                    position: 'left',
+                    functionBefore: function(instance, helper) {
+                        var $origin = $(helper.origin);
+                        
+                        // we set a variable so the data is only loaded once via Ajax, not every time the tooltip opens
+                        if ($origin.data('loaded') !== true) {
 
-						}
-						else{
-							return false;
-						}
+                            $.get(globals.rootdir + "/modules/dashboard/actions.php?op=get_more_info&id="+event.idintervento, function(data) {
 
-                        $('#calendar').fullCalendar('option', 'contentHeight', 'auto');
-					}
+                                // call the 'content' method to update the content of our tooltip with the returned data.
+                                // note: this content update will trigger an update animation (see the updateAnimation option)
+                                instance.content(data);
+
+                                // to remember that the data has been loaded
+                                $origin.data('loaded', true);
+                            });
+                        }
+                    }
                 });
 <?php
 }

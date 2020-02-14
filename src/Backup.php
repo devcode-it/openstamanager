@@ -78,11 +78,11 @@ class Backup
     }
 
     /**
-     * Effettua il backup giornaliero.
+     * Controlla se il backup giornaliero è stato effettuato.
      *
      * @return bool|null
      */
-    public static function daily()
+    public static function isDailyComplete()
     {
         // Costruzione del pattern
         $replaces = self::getReplaces();
@@ -100,10 +100,22 @@ class Backup
         // Individuazione dei backup
         $backups = self::getList($pattern);
 
+        return !empty($backups);
+    }
+
+    /**
+     * Effettua il backup giornaliero.
+     *
+     * @return bool|null
+     */
+    public static function daily()
+    {
         // Creazione del backup eventuale
-        if (empty($backups)) {
+        if (!self::isDailyComplete()) {
             return self::create();
         }
+
+        return false;
     }
 
     /**
@@ -204,6 +216,9 @@ class Backup
     {
         $database = database();
         $extraction_dir = is_dir($path) ? $path : Zip::extract($path);
+
+        // TODO: Forzo il log out di tutti gli utenti e ne impedisco il login
+        // fino a ripristino ultimato
 
         // Rimozione del database
         $tables = include DOCROOT.'/update/tables.php';

@@ -45,6 +45,42 @@ if (!function_exists('array_clean')) {
     }
 }
 
+if (!function_exists('array_deep_clean')) {
+    /**
+     * Pulisce i contenuti vuoti di un array.
+     *
+     * @param  $array
+     *
+     * @since 2.4.11
+     *
+     * @return array
+     */
+    function array_deep_clean($input)
+    {
+        // If it is an element, then just return it
+        if (!is_array($input)) {
+            return $input;
+        }
+
+        $non_empty_items = [];
+
+        foreach ($input as $key => $value) {
+            // Ignore empty cells
+            if ($value) {
+                $cleaned = array_deep_clean($value);
+
+                // Use recursion to evaluate cells
+                if (!empty($cleaned)) {
+                    $non_empty_items[$key] = $cleaned;
+                }
+            }
+        }
+
+        // Finally return the array without empty items
+        return $non_empty_items;
+    }
+}
+
 if (!function_exists('starts_with')) {
     /**
      * Check if a string starts with the given string.
@@ -139,7 +175,6 @@ if (!function_exists('replace')) {
 if (!function_exists('random_string')) {
     /**
      * Generates a string of random characters.
-     *
      *
      * @param int  $length             The length of the string to
      *                                 generate
@@ -260,6 +295,7 @@ if (!function_exists('download')) {
      */
     function download($file, $filename = null)
     {
+        ob_get_clean();
         ob_end_clean();
 
         if (!headers_sent()) {

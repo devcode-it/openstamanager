@@ -1,11 +1,34 @@
 <?php
 
+if (!empty($options['last-page-footer']) && !$is_last_page) {
+    return;
+}
+
+// Calcoli
+$imponibile = abs($documento->imponibile);
+$sconto = $documento->sconto;
+$totale_imponibile = abs($documento->totale_imponibile);
+$totale_iva = abs($documento->iva);
+$totale = abs($documento->totale);
+$netto_a_pagare = abs($documento->netto);
+
+$show_sconto = $sconto > 0;
+
+$volume = $righe->sum(function ($item) {
+    return $item->isArticolo() ? $item->articolo->volume : 0;
+});
+$peso_lordo = $righe->sum(function ($item) {
+    return $item->isArticolo() ? $item->articolo->peso_lordo : 0;
+});
+
+$width = round(100 / ($show_sconto ? 5 : 3), 2);
+
 // SCADENZE  |  TOTALI
 // TABELLA PRINCIPALE
 echo "
 <table class='table-bordered'>
     <tr>
-        <td colspan=".(!empty($sconto) ? 5 : 3)." class='cell-padded' style='height:".($record['ritenutaacconto'] != 0 ? 20 : 30)."mm'>";
+        <td colspan=".($show_sconto ? 5 : 3)." class='cell-padded' style='height:".($record['ritenutaacconto'] != 0 ? 20 : 30)."mm'>";
 
 // Tabella (scadenze + iva)
 echo "
@@ -31,7 +54,7 @@ if (!empty($rs2)) {
                                     <small>".Translator::dateToLocale($rs2[$i]['scadenza'])."</small>
                                 </td>
                                 <td style='width:50%;' class='text-right'>
-                                    <small>".Translator::numberToLocale($rs2[$i]['da_pagare']).' &euro;</small>
+                                    <small>".moneyFormat($rs2[$i]['da_pagare'], 2).'</small>
                                 </td>
                             </tr>';
     }
@@ -75,11 +98,11 @@ if (!empty($v_iva)) {
                                 </td>
 
                                 <td class='text-right'>
-                                    <small>".Translator::numberToLocale($v_totale[$desc_iva])." &euro;</small>
+                                    <small>".moneyFormat($v_totale[$desc_iva], 2)."</small>
                                 </td>
 
                                 <td class='text-right'>
-                                    <small>".Translator::numberToLocale($v_iva[$desc_iva]).' &euro;</small>
+                                    <small>".moneyFormat($v_iva[$desc_iva], 2).'</small>
                                 </td>
                             </tr>';
         }
@@ -92,7 +115,7 @@ if (!empty($v_iva)) {
 echo '
                     </td>
 
-                    <td style="width:10mm;">&nbsp;</td>";
+                    <td style="width:10mm;">&nbsp;</td>
                 </tr>';
 // Fine tabelle iva
 echo '
@@ -102,21 +125,20 @@ echo '
         </td>';
 
 // TOTALI
-$width = round(100 / (!empty($sconto) ? 5 : 3), 2);
 echo "
     <tr>
         <th class='text-center small' style='width:".$width."'>
             ".tr('Imponibile', [], ['upper' => true]).'
         </th>';
 
-if (!empty($sconto)) {
+if ($show_sconto) {
     echo "
         <th class='text-center small' style='width:".$width."'>
             ".tr('Sconto', [], ['upper' => true])."
         </th>
 
         <th class='text-center small' style='width:".$width."'>
-            ".tr('Imponibile scontato', [], ['upper' => true]).'
+            ".tr('Totale imponibile', [], ['upper' => true]).'
         </th>';
 }
 
@@ -132,43 +154,38 @@ echo "
 
     <tr>
         <td class='cell-padded text-center'>
-            ".Translator::numberToLocale($imponibile).' &euro;
+            ".moneyFormat($show_sconto ? $imponibile : $totale_imponibile, 2).'
         </td>';
 
-if (!empty($sconto)) {
+if ($show_sconto) {
     echo "
 
         <td class='cell-padded text-center'>
-            ".Translator::numberToLocale($sconto)." &euro;
+            ".moneyFormat(abs($sconto), 2)."
         </td>
 
         <td class='cell-padded text-center'>
-            ".Translator::numberToLocale($imponibile - $sconto).' &euro;
+            ".moneyFormat($totale_imponibile, 2).'
         </td>';
 }
 
 echo "
         <td class='cell-padded text-center'>
-            ".Translator::numberToLocale($totale_iva)." &euro;
+            ".moneyFormat($totale_iva, 2)."
         </td>
 
         <td class='cell-padded text-center'>
-            ".Translator::numberToLocale($totale).' &euro;
+            ".moneyFormat($totale, 2).'
         </td>
     </tr>';
 
-// Aggiunta della marca da bollo al totale
-$totale = sum($totale, $record['bollo']);
-
-// Rivalsa INPS (+ bollo)
+// Rivalsa INPS
 if (!empty($record['rivalsainps'])) {
     $rs2 = $dbo->fetchArray('SELECT percentuale FROM co_rivalse WHERE id=(SELECT idrivalsainps FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idrivalsainps!=0 LIMIT 0,1)');
 
     $first_colspan = 3;
     $second_colspan = 2;
-    if (abs($record['bollo']) > 0) {
-        --$first_colspan;
-    }
+
     if (empty($sconto)) {
         --$first_colspan;
         --$second_colspan;
@@ -182,14 +199,6 @@ if (!empty($record['rivalsainps'])) {
             ], ['upper' => true]).'
         </th>';
 
-    if (abs($record['bollo']) > 0) {
-        echo '
-
-        <th class="text-center small" colspan="1">
-            '.tr('Marca da bollo', [], ['upper' => true]).'
-        </th>';
-    }
-
     echo '
 
         <th class="text-center small" colspan="'.$second_colspan.'">
@@ -199,43 +208,31 @@ if (!empty($record['rivalsainps'])) {
 
     <tr>
         <td class="cell-padded text-center" colspan="'.$first_colspan.'">
-            '.Translator::numberToLocale($record['rivalsainps']).' &euro;
+            '.moneyFormat($record['rivalsainps'], 2).'
         </td>';
-
-    if (abs($record['bollo']) > 0) {
-        echo '
-
-        <td class="cell-padded text-center" colspan="1">
-            '.Translator::numberToLocale($record['bollo']).' &euro;
-        </td>';
-    }
 
     echo '
 
         <td class="cell-padded text-center" colspan="'.$second_colspan.'">
-            '.Translator::numberToLocale($totale).' &euro;
+            '.moneyFormat($totale, 2).'
         </td>
     </tr>';
 }
 
-$fattura = \Modules\Fatture\Fattura::find($id_record);
-
-// Ritenuta d'acconto ( + bollo, se no rivalsa inps)
-if (!empty($record['ritenutaacconto']) || !empty($fattura->totale_ritenuta_contributi) || !empty($record['spit_payment'])) {
+// Ritenuta d'acconto ( + se no rivalsa inps)
+if (!empty($record['ritenutaacconto']) || !empty($documento->totale_ritenuta_contributi) || !empty($record['spit_payment'])) {
     $rs2 = $dbo->fetchArray('SELECT percentuale FROM co_ritenutaacconto WHERE id=(SELECT idritenutaacconto FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idritenutaacconto!=0 LIMIT 0,1)');
 
     $first_colspan = 3;
     $second_colspan = 2;
-    if (empty($record['rivalsainps']) && abs($record['bollo']) > 0) {
-        --$first_colspan;
-    }
+
     if (empty($sconto)) {
         --$first_colspan;
         --$second_colspan;
     }
 
     $contributi = (!empty($record['ritenutaacconto']) ? ' - ' : '').tr('contributi: _PRC_%', [
-        '_PRC_' => Translator::numberToLocale($fattura->ritenutaContributi->percentuale, 2),
+        '_PRC_' => Translator::numberToLocale($documento->ritenutaContributi->percentuale, 2),
     ]);
     $acconto = tr('acconto: _PRC_%', [
         '_PRC_' => Translator::numberToLocale($rs2[0]['percentuale'], 0),
@@ -246,24 +243,16 @@ if (!empty($record['ritenutaacconto']) || !empty($fattura->totale_ritenuta_contr
         <th class="text-center small" colspan="'.$first_colspan.'">
             '.tr('Ritenuta (_ACCONTO__CONTRIBUTI_)', [
             '_ACCONTO_' => $acconto,
-            '_CONTRIBUTI_' => empty($fattura->ritenutaContributi) ? null : $contributi,
+            '_CONTRIBUTI_' => empty($documento->ritenutaContributi) ? null : $contributi,
             ], ['upper' => true]).'
         </th>';
-
-    if (empty($record['rivalsainps']) && abs($record['bollo']) > 0) {
-        echo '
-
-        <th class="text-center small" colspan="1">
-            '.tr('Marca da bollo', [], ['upper' => true]).'
-        </th>';
-    }
 
     echo '
         <th class="text-center small" colspan="'.$second_colspan.'">';
     if (empty($record['split_payment'])) {
-        echo   tr('Netto a pagare', [], ['upper' => true]);
+        echo tr('Netto a pagare', [], ['upper' => true]);
     } else {
-        echo   tr('Totale', [], ['upper' => true]);
+        echo tr('Totale', [], ['upper' => true]);
     }
     echo '
 		</th>';
@@ -273,21 +262,13 @@ if (!empty($record['ritenutaacconto']) || !empty($fattura->totale_ritenuta_contr
 
     <tr>
         <td class="cell-padded text-center" colspan="'.$first_colspan.'">
-            '.Translator::numberToLocale($record['ritenutaacconto'] + $fattura->totale_ritenuta_contributi).' &euro;
+            '.moneyFormat(abs($documento->ritenuta_acconto) + abs($documento->totale_ritenuta_contributi), 2).'
         </td>';
-
-    if (empty($record['rivalsainps']) && abs($record['bollo']) > 0) {
-        echo '
-
-        <td class="cell-padded text-center" colspan="1">
-            '.Translator::numberToLocale($record['bollo']).' &euro;
-        </td>';
-    }
 
     echo '
 
         <td class="cell-padded text-center" colspan="'.$second_colspan.'">
-            '.Translator::numberToLocale($totale - $record['ritenutaacconto'] - $fattura->totale_ritenuta_contributi).' &euro;
+            '.moneyFormat($netto_a_pagare, 2).'
         </td>
     </tr>';
 }
@@ -300,7 +281,7 @@ if (!empty($record['split_payment'])) {
     echo '
     <tr>
         <th class="text-center small" colspan="'.$first_colspan.'">
-            '.tr('iva a carico del destinatario', [], ['upper' => true]).'
+            '.tr('IVA a carico del destinatario', [], ['upper' => true]).'
         </th>
 
         <th class="text-center small" colspan="'.$second_colspan.'">
@@ -311,41 +292,11 @@ if (!empty($record['split_payment'])) {
     echo '
 	 <tr>
         <td class="cell-padded text-center" colspan="'.$first_colspan.'">
-        '.Translator::numberToLocale($totale_iva).' &euro;
+            '.moneyFormat($totale_iva, 2).'
         </td>
 
         <td class="cell-padded text-center" colspan="'.$second_colspan.'">
-            '.Translator::numberToLocale($totale - $totale_iva - $record['ritenutaacconto'] - $fattura->totale_ritenuta_contributi).' &euro;
-        </td>
-    </tr>';
-}
-
-// Solo bollo
-if (empty($record['ritenutaacconto']) && empty($record['rivalsainps']) && empty($record['split_payment']) && abs($record['bollo']) > 0) {
-    $first_colspan = 3;
-    $second_colspan = 2;
-    if (empty($sconto)) {
-        $first_colspan = 1;
-    }
-
-    echo '
-    <tr>
-        <th class="text-center small" colspan="'.$first_colspan.'">
-            '.tr('Marca da bollo', [], ['upper' => true]).'
-        </th>
-
-        <th class="text-center small" colspan="'.$second_colspan.'">
-            '.tr('Netto a pagare', [], ['upper' => true]).'
-        </th>
-    </tr>
-
-    <tr>
-        <td class="cell-padded text-center" colspan="'.$first_colspan.'">
-        '.Translator::numberToLocale($record['bollo']).' &euro;
-        </td>
-
-        <td class="cell-padded text-center" colspan="'.$second_colspan.'">
-            '.Translator::numberToLocale($totale - $record['ritenutaacconto']).' &euro;
+            '.moneyFormat($netto_a_pagare, 2).'
         </td>
     </tr>';
 }
@@ -358,24 +309,40 @@ if ($fattura_accompagnatoria) {
     echo '
 <table class="table-bordered">
     <tr>
-        <th class="small" class style="width:25%">
+         <th class="small" class style="width:15%">
+            '.tr('Peso lordo', [], ['upper' => true]).'
+        </th>
+
+         <th class="small" class style="width:15%">
+            '.tr('Volume', [], ['upper' => true]).'
+        </th>
+
+        <th class="small" class style="width:15%">
             '.tr('Aspetto beni', [], ['upper' => true]).'
         </th>
 
-        <th class="small" class style="width:20%">
-            '.tr('Num. colli', [], ['upper' => true]).'
+        <th class="small" class style="width:10%">
+            '.tr('Colli', [], ['upper' => true]).'
         </th>
 
         <th class="small" style="width:30%">
             '.tr('Causale trasporto', [], ['upper' => true]).'
         </th>
 
-        <th class="small" style="width:25%">
+        <th class="small" style="width:15%">
             '.tr('Porto', [], ['upper' => true]).'
         </th>
     </tr>
 
     <tr>
+        <td class="cell-padded">
+        '.(!empty($peso_lordo) ? Translator::numberToLocale($peso_lordo).'&nbsp;KG' : '').'
+        </td>
+
+        <td class="cell-padded">
+            '.(!empty($volume) ? Translator::numberToLocale($volume).'&nbsp;M<sup>3</sup>' : '').'
+        </td>
+
         <td class="cell-padded">
             $aspettobeni$ &nbsp;
         </td>
@@ -428,18 +395,6 @@ echo '
     </tr>
 </table>';
 
-if ($options['hide_footer']) {
-    echo '
-	<table style="color:#aaa; font-size:10px;">
-	<tr>
-		<td align="left" style="width:97mm; height:5mm;">
-			&nbsp;
-		</td>
-		<td align="right" style="width:97mm;">
-			&nbsp;
-		</td>
-	</tr>
-	</table>';
-} else {
+if (empty($options['last-page-footer'])) {
     echo '$default_footer$';
 }

@@ -12,23 +12,10 @@ switch ($op) {
         $password = post('password');
 
         if ($dbo->isConnected() && $dbo->isInstalled() && auth()->attempt($username, $password)) {
-            $_SESSION['keep_alive'] = (filter('keep_alive') != null);
+            $_SESSION['keep_alive'] = true;
 
-            // Rimozione log vecchi
-            $dbo->query('DELETE FROM `zz_operations` WHERE DATE_ADD(`created_at`, INTERVAL 30*24*60*60 SECOND) <= NOW()');
-
-            // Auto backup del database giornaliero
-            if (setting('Backup automatico')) {
-                $result = Backup::daily();
-
-                if (!isset($result)) {
-                    flash()->info(tr('Backup saltato perché già esistente!'));
-                } elseif (!empty($result)) {
-                    flash()->info(tr('Backup automatico eseguito correttamente!'));
-                } else {
-                    flash()->error(tr('Errore durante la generazione del backup automatico!'));
-                }
-            }
+        // Rimozione log vecchi
+            //$dbo->query('DELETE FROM `zz_operations` WHERE DATE_ADD(`created_at`, INTERVAL 30*24*60*60 SECOND) <= NOW()');
         } else {
             $status = auth()->getCurrentStatus();
 
@@ -127,9 +114,9 @@ if (!empty(flash()->getMessage('error'))) {
 }
 
 echo '
-			<form action="?op=login" method="post" class="login-box box">
+			<form action="?op=login" method="post" class="login-box box" autocomplete="off" >
 				<div class="box-header with-border text-center">
-					<img src="'.App::getPaths()['img'].'/logo.png" alt="'.tr('OSM Logo').'">
+					<img src="'.App::getPaths()['img'].'/logo.png" class="logo-image" alt="'.tr('OSM Logo').'">
 					<h3 class="box-title">'.tr('OpenSTAManager').'</h3>
 				</div>
 
@@ -140,20 +127,16 @@ echo '
 if (isset($username)) {
     echo ' value="'.$username.'"';
 }
-echo'>
+echo' required>
 					</div>
-					<div class="form-group input-group">
-						<span class="input-group-addon before"><i class="fa fa-lock"></i> </span>
-						<input type="password" name="password" autocomplete="current-password" class="form-control" placeholder="'.tr('Password').'">
-					</div>
-					<div class="form-group">
-						<input type="checkbox" name="keep_alive"';
-if (filter('keep_alive') != null) {
-    echo ' checked';
-}
-echo '/> '.tr('Mantieni attiva la sessione').'
-					</div>
+					
+					{[ "type": "password", "name": "password", "autocomplete": "current-password", "placeholder": "'.tr('Password').'", "icon-before": "<i class=\"fa fa-lock\"></i>" ]}
+							
+                    <div class="text-right">
+                        <small><a href="'.ROOTDIR.'/reset.php">'.tr('Password dimenticata?').'</a></small>
+                    </div>
 				</div>
+				
 				<!-- /.box-body -->
 				<div class="box-footer">
 					<button type="submit" id="login" class="btn btn-danger btn-block">'.tr('Accedi').'</button>
@@ -165,13 +148,7 @@ echo '/> '.tr('Mantieni attiva la sessione').'
             <script>
             $(document).ready( function(){
                 $("#login").click(function(){
-                    $("#login").text("';
-    if ($dbo->isInstalled() && !Update::isUpdateAvailable() && setting('Backup automatico')) {
-        echo tr('Backup automatico in corso');
-    } else {
-        echo tr('Autenticazione');
-    }
-    echo '...");
+                    $("#login").text("'.tr('Autenticazione').'...");
                 });
 
                 if( $("input[name=username]").val() == ""){

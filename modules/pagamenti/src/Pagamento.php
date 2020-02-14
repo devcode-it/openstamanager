@@ -24,43 +24,55 @@ class Pagamento extends Model
         $rate = $this->rate->sortBy('num_giorni');
         $number = count($rate);
 
-        //dd($rate, $this);
         $totale = 0.0;
 
         $results = [];
+        $count = 0;
         foreach ($rate as $key => $rata) {
+            $date = new DateTime($data);
+
             // X giorni esatti
             if ($rata['giorno'] == 0) {
-                $scadenza = date('Y-m-d', strtotime($data.' +'.$rata['num_giorni'].' day'));
+                // Offset della rata
+                $date->modify('+'.($rata['num_giorni']).' day');
             }
 
             // Ultimo del mese
             elseif ($rata['giorno'] < 0) {
-                $date = new DateTime($data);
-
+                // Offset della rata in mesi
                 $add = floor($rata['num_giorni'] / 30);
                 for ($c = 0; $c < $add; ++$c) {
                     $date->modify('last day of next month');
                 }
 
-                // Ultimo del mese più X giorni
+                // Opzione ultimo del mese più X giorni
                 $giorni = -$rata['giorno'] - 1;
                 if ($giorni > 0) {
                     $date->modify('+'.($giorni).' day');
                 } else {
                     $date->modify('last day of this month');
                 }
-
-                $scadenza = $date->format('Y-m-d');
             }
 
             // Giorno preciso del mese
             else {
-                $scadenza = date('Y-m-'.$rata['giorno'], strtotime($data.' +'.$rata['num_giorni'].' day'));
+                // Offset della rata
+                $date->modify('+'.($rata['num_giorni']).' day');
+
+                // Individuazione giorno effettivo (se il giorno indicato è eccessivamente grande, viene preso il massimo possibile)
+                $date->modify('last day of this month');
+                $last_day = $date->format('d');
+                $day = $rata['giorno'] > $last_day ? $last_day : $rata['giorno'];
+
+                // Correzione data
+                $date->setDate($date->format('Y'), $date->format('m'), $day);
             }
 
+            // Comversione della data in stringa standard
+            $scadenza = $date->format('Y-m-d');
+
             // All'ultimo ciclo imposto come cifra da pagare il totale della fattura meno gli importi già inseriti in scadenziario per evitare di inserire cifre arrotondate "male"
-            if ($key + 1 == $number) {
+            if ($count + 1 == $number) {
                 $da_pagare = sum($importo, -$totale, 2);
             }
 
@@ -75,6 +87,8 @@ class Pagamento extends Model
                 'scadenza' => $scadenza,
                 'importo' => $da_pagare,
             ];
+
+            ++$count;
         }
 
         return $results;

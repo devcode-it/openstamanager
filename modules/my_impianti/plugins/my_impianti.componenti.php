@@ -95,7 +95,7 @@ $cmp = \Util\Ini::getList($docroot.'/files/my_impianti/', $id_list);
 
 echo '
         <div class="row">
-            <div class="col-md-4 col-md-push-6">
+            <div class="col-md-9">
                 <select class="superselect" id="filename" name="filename">';
 
 if (count($cmp) > 0) {
@@ -114,7 +114,7 @@ echo '
                 </select>
             </div>
 
-            <div class="col-md-2 col-md-push-6">';
+            <div class="col-md-3">';
 echo "
                 <a class=\"btn btn-primary btn-block\" id=\"addta\" href=\"javascript:;\" onclick=\"if ( $('#filename').val()!='0' ){ redirect('".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record."&op=linkcomponente&backto=record-edit&filename='+$('#filename').val() + '&hash=tab_".$id_plugin."');}else{ alert('".tr('Seleziona prima un componente')."'); $('#filename').focus(); }\"><i class='fa fa-plus'></i> ".tr('Aggiungi').'</a>';
 echo '
@@ -155,26 +155,36 @@ if (!empty($rs2)) {
         // Per più "versioni" dello stesso componente mostro un riga meno evidente
         // per non confonderlo come componente in uso in questo momento
         $same = ($prev_componente == $nome_componente);
-        echo '
-            <div class="panel panel-'.($same ? 'default' : 'primary').'">
-                <div class="panel-heading'.($same ? ' mini' : '').'">
-                    <h4 class="panel-title'.($same ? ' mini' : '').'">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse_'.$j.'">'.($same ? '<small>' : '').$nome_componente.' ('.$statocomponente.')'.($same ? '</small>' : '').'</a>
-                    </h4>
-                </div>';
 
         if (get('id') == $rs2[$j]['id']) {
-            $in = 'in';
+            $collapsed = '';
+            $icon = 'minus';
         } elseif ($_SESSION['idcomponente'] == $rs2[$j]['id']) {
             unset($_SESSION['idcomponente']);
-            $in = 'in';
+            $collapsed = '';
+            $icon = 'minus';
         } else {
-            $in = '';
+            $collapsed = 'collapsed-box';
+            $icon = 'plus';
         }
 
         echo '
-                <div id="collapse_'.$j.'" class="panel-collapse collapse '.$in.'">
-                    <div class="panel-body">';
+            <div class="box '.$collapsed.' box-'.($same ? 'default' : 'primary').'">
+                <div class="box-header with-border'.($same ? ' mini' : '').'">
+                    <h3 class="box-title'.($same ? ' mini' : '').'">'.
+                        ($same ? '<small>' : '').$nome_componente.' ('.$statocomponente.')'.($same ? '</small>' : '').'
+                    </h3>
+
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-'.$icon.'"></i>
+                        </button>
+                    </div>
+                </div>';
+
+        echo '
+                <div id="collapse_'.$j.'" class="box-body">
+                    <div class="row">';
         // FORM COMPONENTE
         echo '
                         <form method="post" action="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=updatecomponente&id='.$rs2[$j]['id'].'">
@@ -253,23 +263,20 @@ if (!empty($rs2)) {
 
         // Pulsante Salva/Elimina
         echo '
-                            <div class="col-md-12">
-                                
-								<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva modifiche').'</button>';
+                            <div class="col-md-12">		
+								<a class="btn btn-danger ask" data-backto="record-edit" data-op="unlinkcomponente" data-id="'.$rs2[$j]['id'].'"><i class="fa fa-trash"></i> '.tr('Elimina').'</a>';
 
         // Sostituisci componente con un altro dello stesso tipo, posso sostituire solo i componenti installati
         if (empty($rs2[$j]['data_sostituzione'])) {
             echo "
-														<button  class=\"btn btn-warning\" onclick=\"if( confirm('".tr('Vuoi sostituire questo componente con un altro dello stesso tipo?')."') ){ location.href='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=sostituiscicomponente&backto=record-edit&filename='.$filename.'&id='.$rs2[$j]['id']."'; }\"><i class='fa fa-refresh'></i> ".tr('Sostituisci questo componente').'</button>';
+								<button  class=\"btn btn-warning\" onclick=\"if(confirm('".tr('Vuoi sostituire questo componente con un altro dello stesso tipo?')."')){ location.href='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=sostituiscicomponente&backto=record-edit&filename='.$filename.'&id='.$rs2[$j]['id']."'; }else{ return false} \"><i class='fa fa-refresh'></i> ".tr('Sostituisci questo componente').'</button>';
         } else {
             echo '
-														<button class="btn btn-warning disabled" disabled>'.tr('Componente già sostituito').'</button>';
+								<button class="btn btn-warning disabled" disabled>'.tr('Componente già sostituito').'</button>';
         }
 
-        echo '					
-								    <a class="btn btn-danger ask" data-backto="record-edit" data-op="unlinkcomponente" data-id="'.$rs2[$j]['id'].'">
-                                    <i class="fa fa-trash"></i> '.tr('Elimina').'
-                                </a>';
+        echo '
+								<button type="submit" class="btn btn-success pull-right"><i class="fa fa-check"></i> '.tr('Salva modifiche').'</button>';
 
         echo '
                             </div>

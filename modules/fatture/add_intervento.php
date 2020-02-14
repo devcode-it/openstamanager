@@ -28,7 +28,7 @@ echo '
 ]).'</p>
 
 <form action="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'" method="post">
-    <input type="hidden" name="op" value="addintervento">
+    <input type="hidden" name="op" value="add_intervento">
     <input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="dir" value="'.$dir.'">';
 
@@ -46,19 +46,22 @@ $rs = $dbo->fetchArray('SELECT
         AND in_interventi.id_preventivo IS NULL
         AND NOT in_interventi.id IN (SELECT idintervento FROM co_promemoria WHERE idintervento IS NOT NULL)');
 foreach ($rs as $key => $value) {
-    $rs[$key]['prezzo'] = Translator::numberToLocale(get_costi_intervento($value['id'])['totale']);
+    $intervento = \Modules\Interventi\Intervento::find($value['id']);
+    $prezzo = $intervento->totale;
+
+    $rs[$key]['prezzo'] = Translator::numberToLocale($prezzo);
+    $rs[$key]['descrizione_intervento'] = strip_tags($rs[$key]['descrizione_intervento']);
 }
 
 // Intervento
 echo '
     <div class="row">
-
         <div class="col-md-6">
             {[ "type": "select", "label": "'.tr('Intervento').'", "name": "idintervento", "required": 1, "values": '.json_encode($rs).', "extra": "onchange=\"$data = $(this).selectData(); $(\'#descrizione\').val($data.descrizione); if($(\'#copia_descrizione\').is(\':checked\')){  $(\'#descrizione\').val($data.descrizione + $data.descrizione_intervento); }; $(\'#prezzo\').val($data.prezzo);\"" ]}
         </div>
 
 		<div class="col-md-6">
-            {[ "type": "checkbox", "label": "'.tr('Copia descrizione').'", "name": "copia_descrizione", "placeholder": "'.tr('In fase di selezione copia la descrizione dell\'intervento').'." ]}
+            {[ "type": "checkbox", "label": "'.tr('Copia descrizione').'", "name": "copia_descrizione", "placeholder": "'.tr('In fase di selezione copia anche la descrizione dell\'intervento').'." ]}
         </div>
 
     </div>';
@@ -103,7 +106,7 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "number", "label": "'.tr('Costo unitario').'", "name": "prezzo", "required": 1, "icon-after": "&euro;", "disabled": 1 ]}
+            {[ "type": "number", "label": "'.tr('Costo unitario').'", "name": "prezzo", "required": 1, "icon-after": "'.currency().'", "disabled": 1 ]}
         </div>
     </div>';
 
@@ -118,4 +121,4 @@ echo '
 </form>';
 
 echo '
-	<script src="'.$rootdir.'/lib/init.js"></script>';
+<script>$(document).ready(init)</script>';

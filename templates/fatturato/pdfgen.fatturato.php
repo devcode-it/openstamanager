@@ -47,26 +47,25 @@ $body .= "<th bgcolor='#dddddd' class='full_cell cell-padded' width='100'>Totale
 
 for ($r = 0; $r < sizeof($rs); ++$r) {
     // Lettura totali
-    $rs2 = $dbo->fetchArray("SELECT SUM(subtotale-co_righe_documenti.sconto) AS imponibile, SUM(iva) AS iva, (SELECT SUM(bollo) FROM co_documenti WHERE DATE_FORMAT(data,'%m-%Y') = \"".$rs[$r]['periodo'].'" AND idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir="'.$dir."\")) AS bollo, SUM(co_righe_documenti.rivalsainps) AS rivalsainps, SUM(co_righe_documenti.ritenutaacconto) AS ritenutaacconto FROM co_righe_documenti INNER JOIN co_documenti ON co_righe_documenti.iddocumento=co_documenti.id WHERE DATE_FORMAT(data,'%m-%Y') = \"".$rs[$r]['periodo'].'" AND idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir="'.$dir.'")');
+    $rs2 = $dbo->fetchArray("SELECT SUM(subtotale-co_righe_documenti.sconto) AS imponibile, SUM(iva) AS iva FROM co_righe_documenti INNER JOIN co_documenti ON co_righe_documenti.iddocumento=co_documenti.id WHERE DATE_FORMAT(data,'%m-%Y') = \"".$rs[$r]['periodo'].'" AND idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir="'.$dir.'")');
 
     $body .= "<tr><td class='first_cell cell-padded'>".$mesi[intval(date('m', strtotime($rs[$r]['data'])))].' '.date('Y', strtotime($rs[$r]['data']))."</td>\n";
-    $body .= "<td class='table_cell cell-padded text-right'>".Translator::numberToLocale($rs2[0]['imponibile'])." &euro;</td>\n";
-    $body .= "<td class='table_cell cell-padded text-right'>".Translator::numberToLocale($rs2[0]['iva'])." &euro;</td>\n";
-    $body .= "<td class='table_cell cell-padded text-right'>".Translator::numberToLocale($rs2[0]['imponibile'] + $rs2[0]['iva'] + $rs2[0]['rivalsainps'] + $rs2[0]['bollo'] + $rs2[0]['ritenutaacconto'])." &euro;</td></tr>\n";
+    $body .= "<td class='table_cell cell-padded text-right'>".moneyFormat($rs2[0]['imponibile'])."</td>\n";
+    $body .= "<td class='table_cell cell-padded text-right'>".moneyFormat($rs2[0]['iva'])."</td>\n";
+    $body .= "<td class='table_cell cell-padded text-right'>".moneyFormat($rs2[0]['imponibile'] + $rs2[0]['iva'])."</td></tr>\n";
 
     $totale_imponibile += $rs2[0]['imponibile'];
     $totale_iva += $rs2[0]['iva'];
-    $totale += $rs2[0]['imponibile'] + $rs2[0]['iva'] + $rs2[0]['rivalsainps'] + $rs2[0]['bollo'] + $rs2[0]['ritenutaacconto'];
+    //Nel fatturato totale è corretto NON tenere in considerazione eventuali rivalse, ritenute acconto o contributi.
+    $totale += $rs2[0]['imponibile'] + $rs2[0]['iva'];
 }
 
 // Totali
 $body .= "<tr>\n";
 $body .= "	<td class='first_cell cell-padded text-right'><b>TOTALE:</b></td>\n";
-$body .= "	<td class='table_cell text-right cell-padded'><b>".Translator::numberToLocale($totale_imponibile)." &euro;</b></td>\n";
-$body .= "	<td class='table_cell text-right cell-padded'><b>".Translator::numberToLocale($totale_iva)." &euro;</b></td>\n";
-$body .= "	<td class='table_cell text-right cell-padded'><b>".Translator::numberToLocale($totale)." &euro;</b></td>\n";
+$body .= "	<td class='table_cell text-right cell-padded'><b>".moneyFormat($totale_imponibile)."</b></td>\n";
+$body .= "	<td class='table_cell text-right cell-padded'><b>".moneyFormat($totale_iva)."</b></td>\n";
+$body .= "	<td class='table_cell text-right cell-padded'><b>".moneyFormat($totale)."</b></td>\n";
 $body .= "</tr>\n";
 
 $body .= "</table>\n";
-
-$report_name = 'fatturato.pdf';

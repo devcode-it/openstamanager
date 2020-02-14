@@ -14,8 +14,6 @@ class Sconto extends Discount
     /**
      * Crea un nuovo sconto collegato ad un contratto.
      *
-     * @param Contratto $contratto
-     *
      * @return self
      */
     public static function build(Contratto $contratto)

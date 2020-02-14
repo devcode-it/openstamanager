@@ -91,7 +91,7 @@ function get_ivaindetraibile_fattura($iddocumento)
 /**
  * Elimina una scadenza in base al codice documento.
  */
-function elimina_scadenza($iddocumento)
+function elimina_scadenze($iddocumento)
 {
     $fattura = Fattura::find($iddocumento);
 
@@ -112,119 +112,19 @@ function aggiungi_scadenza($iddocumento, $pagamento = '', $pagato = false)
 }
 
 /**
- * Funzione per aggiornare lo stato dei pagamenti nello scadenziario.
- *
- * @param $iddocumento int			ID della fattura
- * @param $totale_pagato float		Totale importo pagato
- * @param $data_pagamento datetime	Data in cui avviene il pagamento (yyyy-mm-dd)
- */
-function aggiorna_scadenziario($iddocumento, $totale_pagato, $data_pagamento)
-{
-    $dbo = database();
-
-    if ($totale_pagato > 0) {
-        // Lettura righe scadenziario
-        $query = "SELECT * FROM co_scadenziario WHERE iddocumento='$iddocumento' AND ABS(pagato) < ABS(da_pagare) ORDER BY scadenza ASC";
-        $rs = $dbo->fetchArray($query);
-        $rimanente_da_pagare = abs($rs[0]['pagato']) + $totale_pagato;
-
-        // Verifico se la fattura è di acquisto o di vendita per scegliere che segno mettere nel totale
-        $query2 = 'SELECT dir FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
-        $rs2 = $dbo->fetchArray($query2);
-        $dir = $rs2[0]['dir'];
-
-        // Ciclo tra le rate dei pagamenti per inserire su `pagato` l'importo effettivamente pagato.
-        // Nel caso il pagamento superi la rata, devo distribuirlo sulle rate successive
-        for ($i = 0; $i < sizeof($rs); ++$i) {
-            if ($rimanente_da_pagare > 0) {
-                // ...riempio il pagato della rata con il totale della rata stessa se ho ricevuto un pagamento superiore alla rata stessa
-                if (abs($rimanente_da_pagare) >= abs($rs[$i]['da_pagare'])) {
-                    $pagato = abs($rs[$i]['da_pagare']);
-                    $rimanente_da_pagare -= abs($rs[$i]['da_pagare']);
-                } else {
-                    // Se si inserisce una somma maggiore al dovuto, tengo valido il rimanente per saldare il tutto...
-                    if (abs($rimanente_da_pagare) > abs($rs[$i]['da_pagare'])) {
-                        $pagato = abs($rs[$i]['da_pagare']);
-                        $rimanente_da_pagare -= abs($rs[$i]['da_pagare']);
-                    }
-
-                    // ...altrimenti aggiungo l'importo pagato
-                    else {
-                        $pagato = abs($rimanente_da_pagare);
-                        $rimanente_da_pagare -= abs($rimanente_da_pagare);
-                    }
-                }
-
-                if ($dir == 'uscita') {
-                    $rimanente_da_pagare = -$rimanente_da_pagare;
-                }
-
-                if ($pagato > 0) {
-                    if ($dir == 'uscita') {
-                        $dbo->query('UPDATE co_scadenziario SET pagato='.prepare(-$pagato).', data_pagamento='.prepare($data_pagamento).' WHERE id='.prepare($rs[$i]['id']));
-                    } else {
-                        $dbo->query('UPDATE co_scadenziario SET pagato='.prepare($pagato).', data_pagamento='.prepare($data_pagamento).' WHERE id='.prepare($rs[$i]['id']));
-                    }
-                }
-            }
-        }
-    } else {
-        // Lettura righe scadenziario
-        $query = "SELECT * FROM co_scadenziario WHERE iddocumento='$iddocumento' AND ABS(pagato)>0  ORDER BY scadenza DESC";
-        $rs = $dbo->fetchArray($query);
-        $residuo_pagato = abs($rs[0]['pagato']) + $totale_pagato;
-
-        // Verifico se la fattura è di acquisto o di vendita per scegliere che segno mettere nel totale
-        $query2 = 'SELECT dir FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
-        $rs2 = $dbo->fetchArray($query2);
-        $dir = $rs2[0]['dir'];
-
-        // Ciclo tra le rate dei pagamenti per inserire su `pagato` l'importo effettivamente pagato.
-        // Nel caso il pagamento superi la rata, devo distribuirlo sulle rate successive
-        for ($i = 0; $i < sizeof($rs); ++$i) {
-            if ($residuo_pagato >= 0) {
-                // ...riempio il pagato della rata con il totale della rata stessa se ho ricevuto un pagamento superiore alla rata stessa
-                if (abs($residuo_pagato) <= abs($rs[$i]['pagato'])) {
-                    $pagato = 0;
-                    $residuo_pagato -= abs($rs[$i]['pagato']);
-                } else {
-                    // Se si inserisce una somma maggiore al dovuto, tengo valido il rimanente per saldare il tutto...
-                    if (abs($residuo_pagato) < abs($rs[$i]['pagato'])) {
-                        $pagato = 0;
-                        $residuo_pagato -= abs($rs[$i]['pagato']);
-                    }
-
-                    // ...altrimenti aggiungo l'importo pagato
-                    else {
-                        $pagato = abs($residuo_pagato);
-                        $residuo_pagato -= abs($residuo_pagato);
-                    }
-                }
-
-                if ($dir == 'uscita') {
-                    $residuo_pagato = -$residuo_pagato;
-                }
-
-                if ($pagato >= 0) {
-                    if ($dir == 'uscita') {
-                        $dbo->query('UPDATE co_scadenziario SET pagato='.prepare(-$pagato).', data_pagamento='.prepare($data_pagamento).' WHERE id='.prepare($rs[$i]['id']));
-                    } else {
-                        $dbo->query('UPDATE co_scadenziario SET pagato='.prepare($pagato).', data_pagamento='.prepare($data_pagamento).' WHERE id='.prepare($rs[$i]['id']));
-                    }
-                }
-            }
-        }
-    }
-}
-
-/**
  * Elimina i movimenti collegati ad una fattura.
+ * Se il flag $prima_nota è impostato a 1 elimina solo i movimenti di Prima Nota, altrimenti rimuove quelli automatici.
+ *
+ * @param $iddocumento
+ * @param int $prima_nota
  */
-function elimina_movimento($iddocumento, $anche_prima_nota = 0)
+function elimina_movimenti($id_documento, $prima_nota = 0)
 {
     $dbo = database();
 
-    $query2 = 'DELETE FROM co_movimenti WHERE iddocumento='.prepare($iddocumento).' AND primanota='.prepare($anche_prima_nota);
+    $idmastrino = $dbo->fetchOne('SELECT idmastrino FROM co_movimenti WHERE iddocumento='.prepare($id_documento).' AND primanota='.prepare($prima_nota))['idmastrino'];
+
+    $query2 = 'DELETE FROM co_movimenti WHERE idmastrino='.prepare($idmastrino).' AND primanota='.prepare($prima_nota);
     $dbo->query($query2);
 }
 
@@ -238,11 +138,14 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
 {
     $dbo = database();
 
+    $fattura = Modules\Fatture\Fattura::find($iddocumento);
+
     // Totale marca da bollo, inps, ritenuta, idagente
     $query = 'SELECT data, bollo, ritenutaacconto, rivalsainps, split_payment FROM co_documenti WHERE id='.prepare($iddocumento);
     $rs = $dbo->fetchArray($query);
     $totale_bolli = $rs[0]['bollo'];
     $totale_ritenutaacconto = $rs[0]['ritenutaacconto'];
+    $totale_ritenutacontributi = $fattura->totale_ritenuta_contributi;
     $totale_rivalsainps = $rs[0]['rivalsainps'];
     $data_documento = $rs[0]['data'];
     $split_payment = $rs[0]['split_payment'];
@@ -280,7 +183,6 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
 
         $segno_mov4_inps = 1;
         $segno_mov5_ritenutaacconto = -1;
-        $segno_mov6_bollo = 1;
 
         // Lettura conto fornitore
         $query = 'SELECT idconto_fornitore FROM an_anagrafiche INNER JOIN co_documenti ON an_anagrafiche.idanagrafica=co_documenti.idanagrafica WHERE co_documenti.id='.prepare($iddocumento);
@@ -288,9 +190,7 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
         $idconto_controparte = $rs[0]['idconto_fornitore'];
 
         if ($idconto_controparte == '') {
-            $query = "SELECT id FROM co_pianodeiconti3 WHERE descrizione='Riepilogativo fornitori'";
-            $rs = $dbo->fetchArray($query);
-            $idconto_controparte = $rs[0]['idconto_fornitore'];
+            $idconto_controparte = setting('Conto per Riepilogativo fornitori');
         }
     } else {
         $segno_mov1_cliente = 1;
@@ -299,7 +199,6 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
 
         $segno_mov4_inps = -1;
         $segno_mov5_ritenutaacconto = 1;
-        $segno_mov6_bollo = -1;
 
         // Lettura conto cliente
         $query = 'SELECT idconto_cliente FROM an_anagrafiche INNER JOIN co_documenti ON an_anagrafiche.idanagrafica=co_documenti.idanagrafica WHERE co_documenti.id='.prepare($iddocumento);
@@ -307,17 +206,15 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
         $idconto_controparte = $rs[0]['idconto_cliente'];
 
         if ($idconto_controparte == '') {
-            $query = "SELECT id FROM co_pianodeiconti3 WHERE descrizione='Riepilogativo clienti'";
-            $rs = $dbo->fetchArray($query);
-            $idconto_controparte = $rs[0]['idconto_cliente'];
+            $idconto_controparte = setting('Conto per Riepilogativo clienti');
         }
     }
 
     // Lettura info fattura
-    $query = 'SELECT *, co_documenti.note, co_documenti.idpagamento, co_documenti.id AS iddocumento, co_statidocumento.descrizione AS `stato`, co_tipidocumento.descrizione AS `descrizione_tipodoc` FROM ((co_documenti LEFT OUTER JOIN co_statidocumento ON co_documenti.idstatodocumento=co_statidocumento.id) INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
+    $query = 'SELECT *, co_documenti.data_competenza, co_documenti.note, co_documenti.idpagamento, co_documenti.id AS iddocumento, co_statidocumento.descrizione AS `stato`, co_tipidocumento.descrizione AS `descrizione_tipodoc` FROM ((co_documenti LEFT OUTER JOIN co_statidocumento ON co_documenti.idstatodocumento=co_statidocumento.id) INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
     $rs = $dbo->fetchArray($query);
     $n = sizeof($rs);
-    $data = $rs[0]['data'];
+    $data = $rs[0]['data_competenza'];
     $idanagrafica = $rs[0]['idanagrafica'];
     $ragione_sociale = $rs[0]['ragione_sociale'];
     $stato = $rs[0]['stato'];
@@ -352,7 +249,6 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
         aggiuntivo:
         4) eventuale rivalsa inps
         5) eventuale ritenuta d'acconto
-        6) eventuale marca da bollo
     */
     // 1) Aggiungo la riga del conto cliente
     $importo_cliente = $totale_fattura;
@@ -380,10 +276,7 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
     // Lettura id conto iva
     if ($iva_fattura != 0 && !$split_payment) {
         $descrizione_conto_iva = ($dir == 'entrata') ? 'Iva su vendite' : 'Iva su acquisti';
-        $query = 'SELECT id, descrizione FROM co_pianodeiconti3 WHERE descrizione='.prepare($descrizione_conto_iva);
-        $rs = $dbo->fetchArray($query);
-        $idconto_iva = $rs[0]['id'];
-        $descrizione_conto_iva = $rs[0]['descrizione'];
+        $idconto_iva = setting('Conto per '.$descrizione_conto_iva);
 
         $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_iva).', '.prepare($iva_fattura * $segno_mov3_iva).', '.prepare($primanota).')';
         $dbo->query($query2);
@@ -391,11 +284,7 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
 
     // Lettura id conto iva indetraibile
     if ($iva_indetraibile_fattura != 0 && !$split_payment) {
-        $descrizione_conto_iva2 = 'Iva indetraibile';
-        $query = 'SELECT id, descrizione FROM co_pianodeiconti3 WHERE descrizione='.prepare($descrizione_conto_iva2);
-        $rs = $dbo->fetchArray($query);
-        $idconto_iva2 = $rs[0]['id'];
-        $descrizione_conto_iva2 = $rs[0]['descrizione'];
+        $idconto_iva2 = setting('Conto per Iva indetraibile');
 
         $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_iva2).', '.prepare($iva_indetraibile_fattura * $segno_mov3_iva).', '.prepare($primanota).')';
         $dbo->query($query2);
@@ -404,10 +293,7 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
     // 4) Aggiungo la rivalsa INPS se c'è
     // Lettura id conto inps
     if ($totale_rivalsainps != 0) {
-        $query = "SELECT id, descrizione FROM co_pianodeiconti3 WHERE descrizione='Erario c/INPS'";
-        $rs = $dbo->fetchArray($query);
-        $idconto_inps = $rs[0]['id'];
-        $descrizione_conto_inps = $rs[0]['descrizione'];
+        $idconto_inps = setting('Conto per Erario c/INPS');
 
         $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_inps).', '.prepare($totale_rivalsainps * $segno_mov4_inps).', '.prepare($primanota).')';
         $dbo->query($query2);
@@ -416,10 +302,7 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
     // 5) Aggiungo la ritenuta d'acconto se c'è
     // Lettura id conto ritenuta e la storno subito
     if ($totale_ritenutaacconto != 0) {
-        $query = "SELECT id, descrizione FROM co_pianodeiconti3 WHERE descrizione=\"Erario c/ritenute d'acconto\"";
-        $rs = $dbo->fetchArray($query);
-        $idconto_ritenutaacconto = $rs[0]['id'];
-        $descrizione_conto_ritenutaacconto = $rs[0]['descrizione'];
+        $idconto_ritenutaacconto = setting("Conto per Erario c/ritenute d'acconto");
 
         // DARE nel conto ritenuta
         $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_ritenutaacconto).', '.prepare($totale_ritenutaacconto * $segno_mov5_ritenutaacconto).', '.prepare($primanota).')';
@@ -430,15 +313,17 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
         $dbo->query($query2);
     }
 
-    // 6) Aggiungo la marca da bollo se c'è
-    // Lettura id conto marca da bollo
-    if ($totale_bolli != 0) {
-        $query = "SELECT id, descrizione FROM co_pianodeiconti3 WHERE descrizione='Rimborso spese marche da bollo'";
-        $rs = $dbo->fetchArray($query);
-        $idconto_bolli = $rs[0]['id'];
-        $descrizione_conto_bolli = $rs[0]['descrizione'];
+    // 6) Aggiungo la ritenuta enasarco se c'è
+    // Lettura id conto ritenuta e la storno subito
+    if ($totale_ritenutacontributi != 0) {
+        $idconto_ritenutaenasarco = setting('Conto per Erario c/enasarco');
 
-        $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_bolli).', '.prepare($totale_bolli * $segno_mov6_bollo).', '.prepare($primanota).')';
+        // DARE nel conto ritenuta
+        $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_ritenutaenasarco).', '.prepare($totale_ritenutacontributi * $segno_mov5_ritenutaacconto).', '.prepare($primanota).')';
+        $dbo->query($query2);
+
+        // AVERE nel riepilogativo clienti
+        $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_controparte).', '.prepare(($totale_ritenutacontributi * $segno_mov5_ritenutaacconto) * -1).', '.prepare($primanota).')';
         $dbo->query($query2);
     }
 }
@@ -459,71 +344,14 @@ function get_new_idmastrino($table = 'co_movimenti')
 /**
  * Ricalcola i costi aggiuntivi in fattura (rivalsa inps, ritenuta d'acconto, marca da bollo)
  * Deve essere eseguito ogni volta che si aggiunge o toglie una riga
- * $iddocumento		int		ID della fattura
- * $idrivalsainps		int		ID della rivalsa inps da applicare. Se omesso non viene calcolata
- * $idritenutaacconto	int		ID della ritenuta d'acconto da applicare. Se omesso non viene calcolata
- * $bolli				float	Costi aggiuntivi delle marche da bollo. Se omesso verrà usata la cifra predefinita.
+ * $iddocumento		int		ID della fattura.
  */
-function ricalcola_costiagg_fattura($iddocumento, $idrivalsainps = '', $idritenutaacconto = '', $bolli = '')
+function ricalcola_costiagg_fattura($iddocumento)
 {
     global $dir;
 
-    $dbo = database();
-
-    // Se ci sono righe in fattura faccio i conteggi, altrimenti azzero gli sconti e le spese aggiuntive (inps, ritenuta, marche da bollo)
-    $query = 'SELECT COUNT(id) AS righe FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento);
-    $rs = $dbo->fetchArray($query);
-    if ($rs[0]['righe'] > 0) {
-        $totale_imponibile = get_imponibile_fattura($iddocumento);
-        $totale_fattura = get_totale_fattura($iddocumento);
-
-        // Leggo gli id dei costi aggiuntivi
-        if ($dir == 'uscita') {
-            $query2 = 'SELECT bollo FROM co_documenti WHERE id='.prepare($iddocumento);
-            $rs2 = $dbo->fetchArray($query2);
-            $bollo = $rs2[0]['bollo'];
-        }
-
-        $query = 'SELECT SUM(rivalsainps) AS rivalsainps, SUM(ritenutaacconto) AS ritenutaacconto FROM co_righe_documenti GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
-        $rs = $dbo->fetchArray($query);
-        $rivalsainps = $rs[0]['rivalsainps'];
-        $ritenutaacconto = $rs[0]['ritenutaacconto'];
-
-        $iva_rivalsainps = 0;
-
-        $rsr = $dbo->fetchArray('SELECT idiva, rivalsainps FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento));
-
-        for ($r = 0; $r < sizeof($rsr); ++$r) {
-            $qi = 'SELECT percentuale FROM co_iva WHERE id='.prepare($rsr[$r]['idiva']);
-            $rsi = $dbo->fetchArray($qi);
-            $iva_rivalsainps += $rsr[$r]['rivalsainps'] / 100 * $rsi[0]['percentuale'];
-        }
-
-        // Leggo la ritenuta d'acconto se c'è
-        $fattura = Fattura::find($iddocumento);
-
-        $righe_bollo = $fattura->getRighe()->filter(function ($item, $key) {
-            return $item->aliquota != null && in_array($item->aliquota->codice_natura_fe, ['N1', 'N2', 'N3', 'N4']);
-        });
-
-        $importo_righe_bollo = $righe_bollo->sum('netto');
-
-        // Leggo la marca da bollo se c'è e se il netto a pagare supera la soglia
-        $bolli = ($dir == 'uscita') ? $bolli : setting('Importo marca da bollo');
-        $bolli = formatter()->parse($bolli);
-
-        $marca_da_bollo = 0;
-        if (abs($bolli) > 0 && abs($importo_righe_bollo) > setting("Soglia minima per l'applicazione della marca da bollo")) {
-            $marca_da_bollo = $bolli;
-        }
-
-        // Se l'importo è negativo può essere una nota di credito, quindi cambio segno alla marca da bollo
-        $marca_da_bollo = abs($marca_da_bollo);
-
-        $dbo->query('UPDATE co_documenti SET ritenutaacconto='.prepare($ritenutaacconto).', rivalsainps='.prepare($rivalsainps).', iva_rivalsainps='.prepare($iva_rivalsainps).', bollo='.prepare($marca_da_bollo).' WHERE id='.prepare($iddocumento));
-    } else {
-        $dbo->query("UPDATE co_documenti SET ritenutaacconto='0', bollo='0', rivalsainps='0', iva_rivalsainps='0' WHERE id=".prepare($iddocumento));
-    }
+    $fattura = Fattura::find($iddocumento);
+    $fattura->save();
 }
 
 /**
@@ -535,6 +363,8 @@ function ricalcola_costiagg_fattura($iddocumento, $idrivalsainps = '', $idritenu
  * $qta			float		quantità dell'articolo in fattura
  * $prezzo			float		prezzo totale dell'articolo (prezzounitario*qtà)
  * $idintervento	integer		id dell'intervento da cui arriva l'articolo (per non creare casini quando si rimuoverà un articolo dalla fattura).
+ *
+ * @deprecated 2.4.11
  */
 function add_articolo_infattura($iddocumento, $idarticolo, $descrizione, $idiva, $qta, $prezzo, $sconto = 0, $sconto_unitario = 0, $tipo_sconto = 'UNT', $idintervento = 0, $idconto = 0, $idum = 0, $idrivalsainps = '', $idritenutaacconto = '', $calcolo_ritenuta_acconto = '')
 {
@@ -630,200 +460,4 @@ function add_articolo_infattura($iddocumento, $idarticolo, $descrizione, $idiva,
     }
 
     return $idriga;
-}
-
-/**
- * Questa funzione rimuove un articolo dalla fattura data e lo riporta in magazzino nel primo lotto libero
- * a partire dal lotto più vecchio
- * 	$idarticolo		integer		codice dell'articolo da scollegare dalla fattura
- * 	$iddocumento 	integer		codice della fattura da cui scollegare l'articolo.
- */
-function rimuovi_articolo_dafattura($idarticolo, $iddocumento, $idrigadocumento)
-{
-    global $dir;
-
-    $dbo = database();
-
-    // Leggo la quantità di questo articolo in fattura
-    $query = 'SELECT qta, idintervento, idpreventivo, idordine, idddt, subtotale, descrizione FROM co_righe_documenti WHERE id='.prepare($idrigadocumento);
-    $rs = $dbo->fetchArray($query);
-    $idintervento = $rs[0]['idintervento'];
-    $idpreventivo = $rs[0]['idpreventivo'];
-    $idddt = $rs[0]['idddt'];
-    $idordine = $rs[0]['idordine'];
-    $qta = $rs[0]['qta'];
-    $subtotale = $rs[0]['subtotale'];
-
-    $descrizione = $rs[0]['descrizione'];
-
-    $lotto = $rs[0]['lotto'];
-    $serial = $rs[0]['serial'];
-    $altro = $rs[0]['altro'];
-
-    $non_rimovibili = seriali_non_rimuovibili('id_riga_documento', $idrigadocumento, $dir);
-    if (!empty($non_rimovibili)) {
-        return false;
-    }
-
-    // Se l'articolo è stato aggiunto in fattura perché era collegato ad un intervento o
-    // preventivo o ddt o ordine non devo riportarlo in magazzino quando lo tolgo dalla fattura, perché
-    // se lo scollegassi poi anche dall'intervento aggiungerei in magazzino la quantità 2 volte!!
-    if ($qta > 0) {
-        if (empty($idintervento) && empty($idddt)) {
-            // Fatture di vendita
-            if ($dir == 'entrata') {
-                add_movimento_magazzino($idarticolo, $qta, ['iddocumento' => $iddocumento]);
-            }
-
-            // Fatture di acquisto
-            else {
-                add_movimento_magazzino($idarticolo, -$qta, ['iddocumento' => $iddocumento]);
-            }
-        }
-
-        // TODO: possibile ambiguità tra righe molto simili tra loro
-        // Se l'articolo è stato inserito in fattura tramite un ddt devo sanare la qta_evasa
-        if (!empty($idddt)) {
-            $dbo->query('UPDATE dt_righe_ddt SET qta_evasa=qta_evasa-'.$qta.' WHERE qta='.prepare($qta).' AND idarticolo='.prepare($idarticolo).' AND idddt='.prepare($idddt));
-        }
-
-        // TODO: possibile ambiguità tra righe molto simili tra loro
-        // Se l'articolo è stato inserito in fattura tramite un ordine devo sanare la qta_evasa
-        if (!empty($idordine)) {
-            $dbo->query('UPDATE or_righe_ordini SET qta_evasa=qta_evasa-'.$qta.' WHERE qta='.prepare($qta).' AND idarticolo='.prepare($idarticolo).' AND idordine='.prepare($idordine));
-        }
-    }
-
-    // Elimino la riga dal documento
-    $dbo->query('DELETE FROM `co_righe_documenti` WHERE id='.prepare($idrigadocumento).' AND iddocumento='.prepare($iddocumento));
-
-    // Aggiorno lo stato dell'ordine
-    if (setting('Cambia automaticamente stato ordini fatturati') && !empty($idordine)) {
-        $dbo->query('UPDATE or_ordini SET idstatoordine=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($idordine).'") WHERE id = '.prepare($idordine));
-    }
-
-    // Aggiorno lo stato del ddt
-    if (setting('Cambia automaticamente stato ddt fatturati') && !empty($idddt)) {
-        $dbo->query('UPDATE dt_ddt SET idstatoddt=(SELECT id FROM dt_statiddt WHERE descrizione="'.get_stato_ddt($idddt).'") WHERE id = '.prepare($idddt));
-    }
-
-    // Elimino i movimenti avvenuti nel magazzino per questo articolo lotto, serial, altro
-    $dbo->query('DELETE FROM `mg_movimenti` WHERE idarticolo = '.prepare($idarticolo).' AND iddocumento = '.prepare($iddocumento).' AND id = '.prepare($idrigadocumento));
-
-    // Elimino i seriali utilizzati dalla riga
-    $dbo->query('DELETE FROM `mg_prodotti` WHERE id_articolo = '.prepare($idarticolo).' AND id_riga_documento = '.prepare($idrigadocumento));
-
-    return true;
-}
-
-function rimuovi_riga_fattura($id_documento, $id_riga, $dir)
-{
-    $dbo = database();
-
-    // Leggo la quantità di questo articolo in fattura
-    $riga = $dbo->fetchOne('SELECT * FROM co_righe_documenti WHERE id='.prepare($id_riga));
-
-    $non_rimovibili = seriali_non_rimuovibili('id_riga_documento', $id_riga, $dir);
-    if (!empty($non_rimovibili)) {
-        return false;
-    }
-
-    $serials = $dbo->fetchArray('SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND id_riga_documento='.prepare($id_riga));
-
-    // Elimino la riga dal documento
-    $dbo->query('DELETE FROM `co_righe_documenti` WHERE id='.prepare($id_riga).' AND iddocumento='.prepare($id_documento));
-
-    if (empty($riga['qta'])) {
-        return true;
-    }
-
-    // Operazioni per la rimozione degli articoli
-    if (!empty($riga['idarticolo'])) {
-        // Movimentazione articoli se da interventi o ddt
-        if (empty($riga['idintervento']) && empty($riga['idddt'])) {
-            add_movimento_magazzino($riga['idarticolo'], ($dir == 'entrata') ? $riga['qta'] : -$riga['qta'], ['iddocumento' => $id_documento]);
-        }
-
-        // Se l'articolo è stato inserito in fattura tramite un preventivo devo sanare la qta_evasa
-        if (!empty($riga['idpreventivo'])) {
-            $dbo->query('UPDATE co_righe_preventivi SET qta_evasa=qta_evasa-'.$riga['qta'].' WHERE qta='.prepare($riga['qta']).' AND idarticolo='.prepare($riga['idarticolo']).' AND idpreventivo='.prepare($riga['idpreventivo']).' AND qta_evasa > 0 LIMIT 1');
-        }
-
-        // Se l'articolo è stato inserito in fattura tramite un ddt devo sanare la qta_evasa
-        if (!empty($riga['idddt'])) {
-            $dbo->query('UPDATE dt_righe_ddt SET qta_evasa=qta_evasa-'.$riga['qta'].' WHERE qta='.prepare($riga['qta']).' AND idarticolo='.prepare($riga['idarticolo']).' AND idddt='.prepare($riga['idddt']).' AND qta_evasa > 0 LIMIT 1');
-        }
-
-        // Se l'articolo è stato inserito in fattura tramite un ordine devo sanare la qta_evasa
-        elseif (!empty($riga['idordine'])) {
-            $dbo->query('UPDATE or_righe_ordini SET qta_evasa=qta_evasa-'.$riga['qta'].' WHERE qta='.prepare($riga['qta']).' AND idarticolo='.prepare($riga['idarticolo']).' AND idordine='.prepare($riga['idordine']).' AND qta_evasa > 0 LIMIT 1');
-        }
-    }
-
-    // Nota di credito
-    if (!empty($riga['ref_riga_documento'])) {
-        $dbo->query('UPDATE co_righe_documenti SET qta_evasa = qta_evasa+'.$riga['qta'].' WHERE id='.prepare($riga['ref_riga_documento']));
-
-        if (!empty($riga['idarticolo'])) {
-            $serials = array_column($serials, 'serial');
-            $serials = array_clean($serials);
-
-            $dbo->attach('mg_prodotti', ['id_riga_documento' => $riga['ref_riga_documento'], 'dir' => $dir, 'id_articolo' => $riga['idarticolo']], ['serial' => $serials]);
-        }
-    }
-
-    // Rimozione articoli collegati ad un preventivo importato con riga unica
-    if (empty($riga['idarticolo']) && $riga['is_preventivo']) {
-        //rimetto a magazzino gli articoli collegati al preventivo
-        $rsa = $dbo->fetchArray('SELECT idarticolo, qta FROM co_righe_preventivi WHERE idpreventivo = '.prepare($riga['idpreventivo']));
-        for ($i = 0; $i < sizeof($rsa); ++$i) {
-            if (!empty($rsa[$i]['idarticolo'])) {
-                add_movimento_magazzino($rsa[$i]['idarticolo'], $rsa[$i]['qta'], ['iddocumento' => $id_documento]);
-            }
-        }
-    }
-
-    // Rimozione articoli collegati ad un contratto importato con riga unica
-    if (empty($riga['idarticolo']) && $riga['is_contratto']) {
-        //rimetto a magazzino gli articoli collegati al contratto
-        $rsa = $dbo->fetchArray('SELECT idarticolo, qta FROM co_righe_contratti WHERE idcontratto = '.prepare($riga['idcontratto']));
-        for ($i = 0; $i < sizeof($rsa); ++$i) {
-            if (!empty($rsa[$i]['idarticolo'])) {
-                add_movimento_magazzino($rsa[$i]['idarticolo'], $rsa[$i]['qta'], ['iddocumento' => $id_documento]);
-            }
-        }
-    }
-
-    //Rimozione righe generiche
-    if (empty($riga['idarticolo'])) {
-        // TODO: possibile ambiguità tra righe molto simili tra loro
-        // Se l'articolo è stato inserito in fattura tramite un ddt devo sanare la qta_evasa
-        if (!empty($riga['idddt'])) {
-            $dbo->query('UPDATE dt_righe_ddt SET qta_evasa=qta_evasa-'.$riga['qta'].' WHERE qta='.prepare($riga['qta']).' AND descrizione='.prepare($riga['descrizione']).' AND idddt='.prepare($riga['idddt']));
-        }
-
-        // TODO: possibile ambiguità tra righe molto simili tra loro
-        // Se l'articolo è stato inserito in fattura tramite un ordine devo sanare la qta_evasa
-        if (!empty($riga['idordine'])) {
-            $dbo->query('UPDATE or_righe_ordini SET qta_evasa=qta_evasa-'.$riga['qta'].' WHERE qta='.prepare($riga['qta']).' AND descrizione='.prepare($riga['descrizione']).' AND idordine='.prepare($riga['idordine']));
-        }
-    }
-
-    // Aggiorno lo stato dell'ordine
-    if (!empty($riga['idordine']) && setting('Cambia automaticamente stato ordini fatturati')) {
-        $dbo->query('UPDATE or_ordini SET idstatoordine = (SELECT id FROM or_statiordine WHERE descrizione = '.prepare(get_stato_ordine($riga['idordine'])).') WHERE id = '.prepare($riga['idordine']));
-    }
-
-    // Aggiorno lo stato del ddt
-    if (!empty($riga['idddt']) && setting('Cambia automaticamente stato ddt fatturati')) {
-        $dbo->query('UPDATE dt_ddt SET idstatoddt = (SELECT id FROM dt_statiddt WHERE descrizione = '.prepare(get_stato_ddt($riga['idddt'])).') WHERE id = '.prepare($riga['idddt']));
-    }
-
-    // Elimino i movimenti avvenuti nel magazzino per questo articolo lotto, serial, altro
-    $dbo->query('DELETE FROM `mg_movimenti` WHERE idarticolo = '.prepare($riga['idarticolo']).' AND iddocumento = '.prepare($id_documento).' AND id = '.prepare($id_riga));
-
-    // Elimino i seriali utilizzati dalla riga
-    $dbo->query('DELETE FROM `mg_prodotti` WHERE id_articolo = '.prepare($riga['idarticolo']).' AND id_riga_documento = '.prepare($id_riga));
-
-    return true;
 }

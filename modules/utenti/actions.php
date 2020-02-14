@@ -2,9 +2,26 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Models\User;
+
 $id_utente = filter('id_utente');
 
 switch (filter('op')) {
+    // Aggiunta nuovo gruppo
+    case 'add':
+        $nome = filter('nome');
+
+        // Verifico che questo nome gruppo non sia già stato usato
+        if ($dbo->fetchNum('SELECT nome FROM zz_groups WHERE nome='.prepare($nome)) == 0) {
+            $dbo->query('INSERT INTO zz_groups(nome, editable) VALUES('.prepare($nome).', 1)');
+            $id_record = $dbo->lastInsertedID();
+
+            flash()->info(tr('Gruppo aggiunto!'));
+        } else {
+            flash()->error(tr('Gruppo già esistente!'));
+        }
+        break;
+
     // Abilita utente
     case 'enable':
         if ($dbo->query('UPDATE zz_users SET enabled=1 WHERE id='.prepare($id_utente))) {
@@ -19,105 +36,75 @@ switch (filter('op')) {
         }
         break;
 
-    // Cambio di password e usernome dell'utente
-    case 'change_pwd':
-        $id_utente = filter('id_utente');
-        $min_length = filter('min_length');
-        $min_length_username = filter('min_length_username');
-
-        $password = filter('password1');
-        $password_rep = filter('password2');
-        $email = filter('email');
-
-        // Verifico che la password sia di almeno x caratteri
-        if (strlen($password) < $min_length) {
-            flash()->error(tr('La password deve essere lunga almeno _MIN_ caratteri!', [
-                '_MIN_' => $min_length,
-            ]));
-        } elseif ($password != $password_rep) {
-            flash()->error(tr('Le password non coincidono'));
-        } else {
-            $idanagrafica = filter('idanag');
-
-            $dbo->query('UPDATE zz_users SET password='.prepare(Auth::hashPassword($password)).', idanagrafica='.prepare($idanagrafica).', email='.prepare($email).' WHERE id='.prepare($id_utente));
-
-            flash()->info(tr('Password aggiornata!'));
-        }
-
+    // Cambio di password e username dell'utente
+    case 'update_user':
         $username = filter('username');
+        $email = filter('email');
+        $password = filter('password');
 
-        // Se ho modificato l'username, verifico che questo non sia già stato usato
-        $rs = $dbo->fetchArray('SELECT username FROM zz_users WHERE id='.prepare($id_utente));
+        $id_utente = filter('id_utente');
+        if ($dbo->fetchNum('SELECT username FROM zz_users WHERE id != '.prepare($id_utente).' AND username='.prepare($username)) == 0) {
+            //Aggiunta/modifica utente
+            if (!empty($id_utente)) {
+                $utente = User::find($id_utente);
 
-        if ($rs[0]['username'] != $username) {
-            $n = $dbo->fetchNum('SELECT id FROM zz_users WHERE username='.prepare($username));
+                $utente->username = $username;
+                $utente->email = $email;
 
-            if ($n == 0) {
-                $dbo->query('UPDATE zz_users SET username='.prepare($username).' WHERE id='.prepare($id_utente));
-
-                flash()->info(tr('Username aggiornato!'));
+                $cambia_password = filter('change_password');
+                if (!empty($cambia_password)) {
+                    $utente->password = $password;
+                }
             } else {
-                flash()->error(tr('Utente già esistente!'));
+                $gruppo = \Models\Group::find($id_record);
+                $utente = User::build($gruppo, $username, $email, $password);
             }
-        }
 
-        if (empty($id_record)) {
-            redirect(ROOTDIR.'/modules/utenti/info.php');
+            // Foto
+            if (!empty($_FILES['photo']['tmp_name'])) {
+                $utente->photo = $_FILES['photo'];
+            }
+
+            // Anagrafica
+            $id_anagrafica = filter('idanag');
+            $utente->id_anagrafica = $id_anagrafica;
+
+            $utente->save();
+
+            $dbo->query('DELETE FROM zz_user_sedi WHERE id_user = '.prepare($id_utente));
+            $sedi = post('idsede');
+            if (empty($sedi)) {
+                $sedi = [0];
+            }
+            foreach ($sedi as $id_sede) {
+                $dbo->query('INSERT INTO `zz_user_sedi` (`id_user`,`idsede`) VALUES ('.prepare($id_utente).', '.prepare($id_sede).')');
+            }
+        } else {
+            flash()->error(tr('Utente già esistente!'));
         }
 
         break;
 
     // Aggiunta di un nuovo utente
-    case 'adduser':
-        $username = filter('username');
-        $email = filter('email');
-        $min_length = filter('min_length');
-        $min_length_username = filter('min_length_username');
+    case 'self_update':
+        $password = filter('password');
 
-        $password = filter('password1');
-        $password_rep = filter('password2');
+        $utente = Auth::user();
 
-        $idanagrafica = filter('idanag');
-
-        // Verifico che questo username non sia già stato usato
-        $n = $dbo->fetchNum('SELECT * FROM zz_users WHERE username='.prepare($username));
-
-        if ($n == 0) {
-            // Verifico che la password sia di almeno x caratteri
-            if (strlen($password) < $min_length) {
-                flash()->error(tr('La password deve essere lunga almeno _MIN_ caratteri!', [
-                    '_MIN_' => $min_length,
-                ]));
-            } elseif ($password != $password_rep) {
-                flash()->error(tr('Le password non coincidono'));
-            } else {
-                if ($dbo->query('INSERT INTO zz_users(idgruppo, username, password, idanagrafica, enabled, email) VALUES('.prepare($id_record).', '.prepare($username).', '.prepare(Auth::hashPassword($password)).', '.prepare($idanagrafica).', 1, '.prepare($email).')')) {
-                    $dbo->query('INSERT INTO `zz_tokens` (`id_utente`, `token`) VALUES ('.prepare($dbo->lastInsertedID()).', '.prepare(secure_random_string()).')');
-
-                    flash()->info(tr('Utente aggiunto!'));
-                }
-            }
-        } else {
-            flash()->error(tr('Utente già esistente!'));
+        if (!empty($password)) {
+            $utente->password = $password;
+        } elseif (!empty($_FILES['photo']['tmp_name'])) {
+            $utente->photo = $_FILES['photo'];
         }
-        break;
 
-    // Aggiunta nuovo gruppo
-    case 'add':
-        $nome = filter('nome');
+        $utente->save();
 
-        // Verifico che questo username non sia già stato usato
-        if ($dbo->fetchNum('SELECT nome FROM zz_groups WHERE nome='.prepare($nome)) == 0) {
-            $dbo->query('INSERT INTO zz_groups( nome, editable ) VALUES('.prepare($nome).', 1)');
-            flash()->info(tr('Gruppo aggiunto!'));
-            $id_record = $dbo->lastInsertedID();
-        } else {
-            flash()->error(tr('Gruppo già esistente!'));
-        }
+        redirect(ROOTDIR.'/modules/utenti/info.php');
+
         break;
 
     // Elimina utente
-    case 'delete':
+    case 'delete_user':
         if ($dbo->query('DELETE FROM zz_users WHERE id='.prepare($id_utente))) {
             flash()->info(tr('Utente eliminato!'));
         }
@@ -157,7 +144,6 @@ switch (filter('op')) {
 
     // Impostazione/reimpostazione dei permessi di accesso di default
     case 'restore_permission':
-
         //Gruppo Tecnici
         if ($dbo->fetchArray('SELECT `nome` FROM `zz_groups` WHERE `id` = '.prepare($id_record))[0]['nome'] == 'Tecnici') {
             $permessi = [];

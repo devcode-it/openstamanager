@@ -1,20 +1,16 @@
 <?php
 
-if (file_exists(__DIR__.'/../../../core.php')) {
-    include_once __DIR__.'/../../../core.php';
-} else {
-    include_once __DIR__.'/../../core.php';
-}
+include_once __DIR__.'/../../core.php';
+
+use Modules\Interventi\Intervento;
+
+$intervento = Intervento::find($id_record);
+$sessioni = $intervento->sessioni;
+$righe = $intervento->getRighe();
 
 $show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
 
-$idiva = setting('Iva predefinita');
-$rs_iva = $dbo->fetchArray('SELECT descrizione, percentuale, indetraibile FROM co_iva WHERE id='.prepare($idiva));
-($rs_iva[0]['percentuale'] > 0) ? $hide = '' : $hide = 'hide';
-
 if ($show_prezzi) {
-    $costi = get_costi_intervento($id_record);
-
     $rss = $dbo->fetchArray('SELECT in_statiintervento.completato AS flag_completato FROM in_statiintervento INNER JOIN in_interventi ON in_statiintervento.idstatointervento=in_interventi.idstatointervento WHERE in_interventi.id='.prepare($id_record));
 
     if ($rss[0]['flag_completato']) {
@@ -26,79 +22,111 @@ if ($show_prezzi) {
     echo '
 <!-- Riepilogo dei costi -->
 <table class="table table condensed table-striped table-hover table-bordered">
+    <thead>
+        <tr>
+            <th width="40%"></th>
+            <th width="20%" class="text-center">'.tr('Costo', [], ['upper' => true]).' <span class="tip" title="'.tr('Costo interno').'"><i class="fa fa-question-circle-o"></i></span></th>
+            <th width="20%" class="text-center">'.tr('Addebito', [], ['upper' => true]).' <span class="tip" title="'.tr('Addebito al cliente').'"><i class="fa fa-question-circle-o"></i></span></th>
+            <th width="20%" class="text-center">'.tr('Tot. Scontato', [], ['upper' => true]).' <span class="tip" title="'.tr('Addebito scontato al cliente').'"><i class="fa fa-question-circle-o"></i></span></th>
+        </tr>
+    </thead>
+    
+    <tbody>
+        <tr>
+            <th>'.tr('Totale manodopera', [], ['upper' => true]).'</th>
+            <td class="text-right">'.moneyFormat($sessioni->sum('costo_manodopera'), 2).'</td>
+            <td class="text-right">'.moneyFormat($sessioni->sum('prezzo_manodopera'), 2).'</td>
+            <td class="text-right">'.moneyFormat($sessioni->sum('prezzo_manodopera_scontato'), 2).'</td>
+        </tr>
+    
+        <tr>
+            <th>'.tr('Totale diritto di chiamata', [], ['upper' => true]).'</th>
+            <td class="text-right">'.moneyFormat($sessioni->sum('costo_diritto_chiamata'), 2).'</td>
+            <td class="text-right">'.moneyFormat($sessioni->sum('prezzo_diritto_chiamata'), 2).'</td>
+            <td class="text-right">'.moneyFormat($sessioni->sum('prezzo_diritto_chiamata'), 2).'</td>
+        </tr>
+    
+        <tr>
+            <th>'.tr('Totale viaggio', [], ['upper' => true]).'</th>
+            <td class="text-right">'.moneyFormat($sessioni->sum('costo_viaggio'), 2).'</td>
+            <td class="text-right">'.moneyFormat($sessioni->sum('prezzo_viaggio'), 2).'</td>
+            <td class="text-right">'.moneyFormat($sessioni->sum('prezzo_viaggio_scontato'), 2).'</td>
+        </tr>
+    
+        <tr>
+            <th>'.tr('Totale righe', [], ['upper' => true]).'</th>
+            <td class="text-right">'.moneyFormat($righe->sum('spesa'), 2).'</td>
+            <td class="text-right">'.moneyFormat($righe->sum('imponibile'), 2).'</td>
+            <td class="text-right">'.moneyFormat($righe->sum('totale_imponibile'), 2).'</td>
+        </tr>
+    </tbody>';
+
+    // Calcoli
+    $imponibile = abs($intervento->imponibile);
+    $sconto = $intervento->sconto;
+    $totale_imponibile = abs($intervento->totale_imponibile);
+    $iva = abs($intervento->iva);
+    $totale = abs($intervento->totale);
+
+    echo '
     <tr>
-        <th width="40%"></th>
-        <th width="20%" class="text-center">'.tr('Costo', [], ['upper' => true]).'</th>
-        <th width="20%" class="text-center">'.tr('Addebito', [], ['upper' => true]).'</th>
-        <th width="20%" class="text-center">'.tr('Tot. Scontato', [], ['upper' => true]).'</th>
-    </tr>
+        <td colspan="3" class="text-right">
+            <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
+        </td>
+        <td align="right">
+            '.moneyFormat($imponibile, 2).'
+        </td>
+    </tr>';
 
+    // SCONTO
+    if (!empty($sconto)) {
+        echo '
     <tr>
-        <th>'.tr('Totale manodopera', [], ['upper' => true]).'</th>
-        <td class="text-right">'.Translator::numberToLocale($costi['manodopera_costo']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['manodopera_addebito']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['manodopera_scontato']).' &euro;</td>
-    </tr>
+        <td colspan="3" class="text-right">
+            <b><span class="tip" title="'.tr('Un importo positivo indica uno sconto, mentre uno negativo indica una maggiorazione').'"> <i class="fa fa-question-circle-o"></i> '.tr('Sconto/maggiorazione', [], ['upper' => true]).':</span></b>
+        </td>
+        <td align="right">
+            '.moneyFormat($sconto, 2).'
+        </td>
+    </tr>';
 
+        // Totale imponibile
+        echo '
     <tr>
-        <th>'.tr('Totale diritto di chiamata', [], ['upper' => true]).'</th>
-        <td class="text-right">'.Translator::numberToLocale($costi['dirittochiamata_costo']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['dirittochiamata_addebito']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['dirittochiamata_scontato']).' &euro;</td>
-    </tr>
+        <td colspan="3" class="text-right">
+            <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
+        </td>
+        <td align="right">
+            '.moneyFormat($totale_imponibile, 2).'
+        </td>
+    </tr>';
+    }
 
+    // Totale iva
+    echo '
     <tr>
-        <th>'.tr('Totale viaggio', [], ['upper' => true]).'</th>
-        <td class="text-right">'.Translator::numberToLocale($costi['viaggio_costo']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['viaggio_addebito']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['viaggio_scontato']).' &euro;</td>
-    </tr>
+        <td colspan="3" class="text-right">
+            <b>'.tr('IVA', [], ['upper' => true]).':</b>
+        </td>
+        <td align="right">
+            '.moneyFormat($iva, 2).'
+        </td>
+    </tr>';
 
+    // Totale preventivo
+    echo '
     <tr>
-        <th>'.tr('Totale articoli', [], ['upper' => true]).'</th>
-        <td class="text-right">'.Translator::numberToLocale($costi['ricambi_costo']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['ricambi_addebito']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['ricambi_scontato']).' &euro;</td>
-    </tr>
+        <td colspan="3" class="text-right">
+            <b>'.tr('Totale', [], ['upper' => true]).':</b>
+        </td>
+        <td align="right">
+            '.moneyFormat($totale, 2).'
+        </td>
+    </tr>';
 
-    <tr>
-        <th>'.tr('Totale altre spese', [], ['upper' => true]).'</th>
-        <td class="text-right">'.Translator::numberToLocale($costi['altro_costo']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['altro_addebito']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['altro_scontato']).' &euro;</td>
-    </tr>
-
-    <tr>
-        <th>'.tr('Sconto incondizionato', [], ['upper' => true]).'</th>
-        <td class="text-right">-</td>
-        <td class="text-right">-</td>
-        <td class="text-right">'.Translator::numberToLocale(-$costi['sconto_globale']).' &euro;</td>
-    </tr>
-
-
-	<tr class='.$hide.' >
-        <th>'.tr('Imponibile', [], ['upper' => true]).'</th>
-        <td class="text-right">'.Translator::numberToLocale($costi['totale_costo']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['totale_addebito']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['totale_scontato']).' &euro;</td>
-    </tr>
-
-
-	<tr class='.$hide.' >
-        <th>'.tr('IVA', [], ['upper' => true]).'</th>
-        <td class="text-right">'.Translator::numberToLocale($costi['iva_costo']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['iva_addebito']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['iva_totale']).' &euro;</td>
-    </tr>
-
-    <tr>
-        <th>'.tr('Totale', [], ['upper' => true]).'</th>
-        <th class="text-right">'.Translator::numberToLocale($costi['totaleivato_costo']).' &euro;</th>
-        <th class="text-right">'.Translator::numberToLocale($costi['totaleivato_addebito']).' &euro;</th>
-        <th class="text-right">'.Translator::numberToLocale($costi['totale']).' &euro;</th>
-    </tr>
+    echo '
 </table>';
 }
 
 echo '
-<script src="'.$rootdir.'/lib/init.js"></script>';
+<script>$(document).ready(init)</script>';

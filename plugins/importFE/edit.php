@@ -4,6 +4,12 @@ include_once __DIR__.'/../../core.php';
 
 use Plugins\ImportFE\Interaction;
 
+if (!empty($record)) {
+    include $structure->filepath('generate.php');
+
+    return;
+}
+
 echo '
 <script>
     function upload(btn) {
@@ -28,7 +34,7 @@ echo '
                         data = JSON.parse(data);
 
                         if (!data.already) {
-                            launch_modal("'.tr('Righe fattura').'", globals.rootdir + "/actions.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&op=list&filename=" + data.filename);
+                            redirect(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=" + data.id);
                         } else {
                             swal({
                                 title: "'.tr('Fattura già importata').'.",
@@ -37,6 +43,7 @@ echo '
 							
 							$("#blob").val("");
                         }
+                        
 						buttonRestore(btn, restore);
                     },
                     error: function(xhr) {
@@ -60,7 +67,7 @@ echo '
         <h3 class="box-title">
             '.tr('Carica un XML').'
 
-            <span class="tip" title="'.tr('Formati supportati: XML e P7M').'.">
+            <span class="tip" title="'.tr('Formati supportati: XML, P7M e ZIP').'.">
                 <i class="fa fa-question-circle-o"></i>
             </span>
 
@@ -69,7 +76,7 @@ echo '
     <div class="box-body" id="upload">
         <div class="row">
             <div class="col-md-9">
-                <label><input type="file" name="blob" id="blob"></label>
+                {[ "type": "file", "name": "blob", "required": 1 ]}
             </div>
 
             <div class="col-md-3">
@@ -86,17 +93,23 @@ echo '
     <div class="box-header with-border">
         <h3 class="box-title">
             '.tr('Fatture da importare').'</span>
-        </h3>';
+        </h3>
+        
+        <div class="pull-right">
+            <button type="button" class="btn btn-warning" onclick="importAll(this)">
+                <i class="fa fa-cloud-download"></i> '.tr('Importa in sequenza').'
+            </button>';
 
 // Ricerca automatica
 if (Interaction::isEnabled()) {
     echo '
-        <button type="button" class="btn btn-primary pull-right" onclick="search(this)">
-            <i class="fa fa-refresh"></i> '.tr('Ricerca fatture di acquisto').'
-        </button>';
+            <button type="button" class="btn btn-primary" onclick="search(this)">
+                <i class="fa fa-refresh"></i> '.tr('Ricerca fatture di acquisto').'
+            </button>';
 }
 
 echo '
+        </div>
     </div>
     <div class="box-body" id="list">';
 
@@ -115,11 +128,94 @@ if (Interaction::isEnabled()) {
 </div>
 
 <script>
-function search(button) {
-    var restore = buttonLoading(button);
+$(document).ready(function() {
+    $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
+    $($.fn.dataTable.tables(true)).DataTable().scroller.measure();
+});';
 
-    $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
-        buttonRestore(button, restore);
+if (Interaction::isEnabled()) {
+    echo '
+function importAll(btn) {
+    swal({
+        title: "'.tr('Importare tutte le fatture?').'",
+        html: "'.tr('Verranno scaricate tutte le fatture da importare, e non sarà più possibile visualizzare altre informazioni oltre al nome per le fatture che non verranno importate completamente. Continuare?').'",
+        showCancelButton: true,
+        confirmButtonText: "'.tr('Procedi').'",
+        type: "info",
+    }).then(function (result) {
+        var restore = buttonLoading(btn);
+        $("#main_loading").show();
+
+        $.ajax({
+            url: globals.rootdir + "/actions.php",
+            data: {
+                op: "list",
+                id_module: "'.$id_module.'",
+                id_plugin: "'.$id_plugin.'",
+            },
+            type: "post",
+            success: function(data){
+                data = JSON.parse(data);
+        
+                count = data.length;
+                counter = 0;
+                data.forEach(function(element) {
+                    $.ajax({
+                        url: globals.rootdir + "/actions.php",
+                        type: "get",
+                        data: {
+                            id_module: "'.$id_module.'",
+                            id_plugin: "'.$id_plugin.'",
+                            op: "prepare",
+                            name: element.name,
+                        },
+                        success: function(data) {
+                            counter ++;
+                            
+                            importComplete(count, counter, btn, restore);
+                        },
+                        error: function(data) {
+                            counter ++;
+                            
+                            importComplete(count, counter, btn, restore);
+                        }
+                    });
+                });
+                
+                importComplete(count, counter, btn, restore);
+            },
+            error: function(data) {
+                alert("'.tr('Errore').': " + data);
+                
+				$("#main_loading").fadeOut();
+                buttonRestore(btn, restore);
+            }
+        });
     });
 }
+
+function importComplete(count, counter, btn, restore) {        
+    if(counter == count){
+        $("#main_loading").fadeOut();
+        buttonRestore(btn, restore);
+        
+        redirect(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=1&sequence=1");
+    }
+}';
+} else {
+    echo '
+function importAll(btn) {
+    redirect(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=1&sequence=1");
+}';
+}
+echo '
+
+function search(btn) {
+    var restore = buttonLoading(btn);
+
+    $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
+        buttonRestore(btn, restore);
+    });
+}
+
 </script>';

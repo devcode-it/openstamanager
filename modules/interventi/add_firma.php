@@ -1,11 +1,6 @@
 <?php
 
-if (file_exists(__DIR__.'/../../../core.php')) {
-    include_once __DIR__.'/../../../core.php';
-} else {
-    include_once __DIR__.'/../../core.php';
-}
-$module_name = 'Interventi';
+include_once __DIR__.'/../../core.php';
 
 if (get('anteprima') !== null) {
     // Lettura dati intervento
@@ -18,8 +13,7 @@ if (get('anteprima') !== null) {
     }
 
     // Gestione della stampa
-    $rapportino_nome = sanitizeFilename('Rapportino'.$rs[0]['codice'].'.pdf');
-    $filename = $docroot.'/files/interventi/'.$rapportino_nome;
+    $directory = $docroot.'/files/interventi/';
     $id_print = setting('Stampa per anteprima e firma');
 
     // HTML per la visualizzazione
@@ -32,7 +26,7 @@ if (get('anteprima') !== null) {
 
     <div class="clearfix"></div>
 
-    <iframe src="'.Prints::getPreviewLink($id_print, $id_record, $filename).'" frameborder="0" width="100%" height="550"></iframe>
+    <iframe src="'.Prints::getPreviewLink($id_print, $id_record, $directory).'" frameborder="0" width="100%" height="550"></iframe>
 </div>';
 }
 

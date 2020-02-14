@@ -1,66 +1,79 @@
+// Aggiunta dell'ingranaggio all'unload della pagina
+$(window).on("beforeunload", function () {
+    $("#main_loading").show();
+});
+
+// Rimozione dell'ingranaggio al caricamento completo della pagina
+$(window).on("load", function () {
+    $("#main_loading").fadeOut();
+});
+
+// Fix multi-modal
+$(document).on('hidden.bs.modal', '.modal', function () {
+    $(this).remove();
+    $('.modal:visible').length && $(document.body).addClass('modal-open');
+});
+
 $(document).ready(function () {
-    // Fix per il menu principale
-    $('.sidebar-menu').tree({
-        followLink: true,
-    });
+    // Standard per i popup
+    toastr.options = {
+        "closeButton": true,
+        "debug": false,
+        "newestOnTop": false,
+        "progressBar": true,
+        "positionClass": "toast-top-right",
+        "preventDuplicates": true,
+        "onclick": null,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "12000",
+        "extendedTimeOut": "8000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    };
 
-    // Pulsante per il ritorno a inizio pagina
-    var slideToTop = $("<div />");
-    slideToTop.html('<i class="fa fa-chevron-up"></i>');
-    slideToTop.css({
-        position: 'fixed',
-        bottom: '20px',
-        right: '25px',
-        width: '40px',
-        height: '40px',
-        color: '#eee',
-        'font-size': '',
-        'line-height': '40px',
-        'text-align': 'center',
-        'background-color': 'rgba(255, 78, 0)',
-        'box-shadow': '0 0 10px rgba(0, 0, 0, 0.05)',
-        cursor: 'pointer',
-        'z-index': '99999',
-        opacity: '.7',
-        'display': 'none'
-    });
-
-    slideToTop.on('mouseenter', function () {
-        $(this).css('opacity', '1');
-    });
-
-    slideToTop.on('mouseout', function () {
-        $(this).css('opacity', '.7');
-    });
-
-    $('.wrapper').append(slideToTop);
-    $(window).scroll(function () {
-        if ($(window).scrollTop() >= 150) {
-            if (!$(slideToTop).is(':visible')) {
-                $(slideToTop).fadeIn(500);
-            }
-        } else {
-            $(slideToTop).fadeOut(500);
+    // Imposta lo standard per la conversione dei numeri
+    numeral.register('locale', 'current', {
+        delimiters: {
+            thousands: globals.thousands,
+            decimal: globals.decimals,
+        },
+        abbreviations: {
+            thousand: 'k',
+            million: 'm',
+            billion: 'b',
+            trillion: 't'
+        },
+        currency: {
+            symbol: '€'
         }
     });
+    numeral.locale('current');
+    numeral.defaultFormat('0,0.' + ('0').repeat(globals.cifre_decimali));
 
-    $(slideToTop).click(function () {
-        $("html, body").animate({
-            scrollTop: 0
-        }, 500);
+    // Richiamo alla generazione di Datatables
+    start_datatables();
+
+    // Calendario principale
+    start_complete_calendar("#daterange", function (start, end) {
+        // Esegue il submit del periodo selezionato e ricarica la pagina
+        $.get(globals.rootdir + '/core.php?period_start=' + start.format('YYYY-MM-DD') + '&period_end=' + end.format('YYYY-MM-DD'), function (data) {
+            location.reload();
+        });
     });
-    
-    $(".sidebar-toggle").click(function(){
-        setTimeout(function(){
-            window.dispatchEvent(new Event('resize'));
-        }, 350);
+
+    // Messaggi automatici di eliminazione
+    $(document).on('click', '.ask', function () {
+        message(this);
     });
-    
+
     // Forza l'evento "blur" nei campi di testo per formattare i numeri con
     // jquery inputmask prima del submit
-    setTimeout( function(){
-        $('form').on('submit', function(){
+    setTimeout(function () {
+        $('form').on('submit', function () {
             $('input').trigger('blur');
         });
-    }, 1000 );
+    }, 1000);
 });

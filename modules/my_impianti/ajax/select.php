@@ -25,8 +25,8 @@ switch ($resource) {
             }
 
             $where[] = 'idanagrafica='.prepare($superselect['idanagrafica']);
-            if (!empty($superselect['idsede'])) {
-                $where[] = 'idsede='.prepare($superselect['idsede']);
+            if (!empty($superselect['idsede_destinazione'])) {
+                $where[] = 'idsede='.prepare($superselect['idsede_destinazione']);
             }
 
             if (!empty($search)) {

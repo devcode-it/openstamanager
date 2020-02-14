@@ -2,6 +2,8 @@
 
 namespace HTMLBuilder\Manager;
 
+use Modules\Emails\Template;
+
 /**
  * @since 2.4
  */
@@ -10,6 +12,11 @@ class ButtonManager implements ManagerInterface
     public function manage($options)
     {
         $options['parameters'] = isset($options['parameters']) ? $options['parameters'] : null;
+
+        // Impostazione id HTML automatico
+        if (empty($options['html_id'])) {
+            $options['html_id'] = ($options['type'] == 'print') ? 'print-button' : 'email-button';
+        }
 
         if (isset($options['id'])) {
             $result = $this->link($options);
@@ -31,10 +38,10 @@ class ButtonManager implements ManagerInterface
                 'icon' => $print['icon'],
             ];
         } else {
-            $template = \Mail::getTemplate($options['id']);
+            $template = Template::find($options['id']);
 
             $result = [
-                'link' => ROOTDIR.'/mail.php?id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id='.$options['id'],
+                'link' => ROOTDIR.'/mail.php?id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id='.$options['id'].$options['parameters'],
                 'title' => tr('Invia').' '.((strtoupper($template['name']) == $template['name']) ? $template['name'] : lcfirst($template['name'])),
                 'icon' => $template['icon'],
                 'type' => 'modal',
@@ -59,13 +66,13 @@ class ButtonManager implements ManagerInterface
         // Modal
         if (isset($info['type']) && $info['type'] == 'modal') {
             $result = '
-<a '.$class.' data-href="'.$info['link'].'" data-toggle="modal" data-title="'.$title.'">';
+<a '.$class.' data-href="'.$info['link'].'" data-toggle="modal" data-title="'.$title.'" id="'.$options['html_id'].'">';
         }
 
         // Link normale
         else {
             $result = '
-<a '.$class.' href="'.$info['link'].'" target="_blank">';
+<a '.$class.' href="'.$info['link'].'" target="_blank" id="'.$options['html_id'].'">';
         }
 
         $result .= '
@@ -80,7 +87,7 @@ class ButtonManager implements ManagerInterface
         if ($options['type'] == 'print') {
             $results = \Prints::getModulePrints($options['id_module']);
         } else {
-            $results = \Mail::getModuleTemplates($options['id_module']);
+            $results = Template::where('id_module', $options['id_module'])->get()->toArray();
         }
 
         return $results;
@@ -95,7 +102,7 @@ class ButtonManager implements ManagerInterface
 
         if ($count > 1) {
             $result = '
-<div class="btn-group">';
+<div class="btn-group" id="'.$options['html_id'].'">';
 
             $predefined = array_search(1, array_column($list, 'predefined'));
             if ($predefined !== false) {
@@ -143,6 +150,7 @@ class ButtonManager implements ManagerInterface
                 'id_record' => $options['id_record'],
                 'class' => $options['class'],
                 'parameters' => $options['parameters'],
+                'html_id' => $options['html_id'],
             ]);
         } else {
             $result = ' ';

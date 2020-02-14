@@ -17,7 +17,7 @@ switch (get('op')) {
 
         $tipi = (array) $_SESSION['dashboard']['idtipiintervento'];
 
-        $query = 'SELECT in_interventi_tecnici.id, in_interventi_tecnici.idintervento, in_interventi.codice, colore, idtecnico, orario_inizio, orario_fine, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS nome_tecnico, (SELECT colore FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS colore_tecnico, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=in_interventi.idanagrafica) AS cliente, (SELECT idzona FROM an_anagrafiche WHERE idanagrafica=in_interventi.idanagrafica) AS idzona FROM in_interventi_tecnici INNER JOIN (in_interventi LEFT OUTER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento) ON in_interventi_tecnici.idintervento=in_interventi.id WHERE ( (in_interventi_tecnici.orario_inizio >= '.prepare($start).' AND in_interventi_tecnici.orario_fine <= '.prepare($end).') OR (in_interventi_tecnici.orario_inizio >= '.prepare($start).' AND in_interventi_tecnici.orario_inizio <= '.prepare($end).') OR (in_interventi_tecnici.orario_fine >= '.prepare($start).' AND in_interventi_tecnici.orario_fine <= '.prepare($end).')) AND idtecnico IN('.implode(',', $_SESSION['dashboard']['idtecnici']).') AND in_interventi.idstatointervento IN('.implode(',', $stati).') AND in_interventi_tecnici.idtipointervento IN('.implode(',', $tipi).') '.Modules::getAdditionalsQuery('Interventi').' HAVING idzona IN ('.implode(',', $_SESSION['dashboard']['idzone']).')';
+        $query = 'SELECT in_interventi_tecnici.id, in_interventi_tecnici.idintervento, in_interventi.codice, colore, idtecnico, orario_inizio, orario_fine, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS nome_tecnico, (SELECT id FROM zz_files WHERE id_record=in_interventi.id AND id_module = '.Modules::get('Interventi')['id'].' LIMIT 1) AS have_attachments, (SELECT colore FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS colore_tecnico, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=in_interventi.idanagrafica) AS cliente, (SELECT idzona FROM an_anagrafiche WHERE idanagrafica=in_interventi.idanagrafica) AS idzona FROM in_interventi_tecnici INNER JOIN (in_interventi LEFT OUTER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento) ON in_interventi_tecnici.idintervento=in_interventi.id WHERE ( (in_interventi_tecnici.orario_inizio >= '.prepare($start).' AND in_interventi_tecnici.orario_fine <= '.prepare($end).') OR (in_interventi_tecnici.orario_inizio >= '.prepare($start).' AND in_interventi_tecnici.orario_inizio <= '.prepare($end).') OR (in_interventi_tecnici.orario_fine >= '.prepare($start).' AND in_interventi_tecnici.orario_fine <= '.prepare($end).')) AND idtecnico IN('.implode(',', $_SESSION['dashboard']['idtecnici']).') AND in_interventi.idstatointervento IN('.implode(',', $stati).') AND in_interventi_tecnici.idtipointervento IN('.implode(',', $tipi).') '.Modules::getAdditionalsQuery('Interventi').' HAVING idzona IN ('.implode(',', $_SESSION['dashboard']['idzone']).')';
         $rs = $dbo->fetchArray($query);
 
         $results = [];
@@ -26,7 +26,7 @@ switch (get('op')) {
                 'id' => $r['id'],
                 'idintervento' => $r['idintervento'],
                 'idtecnico' => $r['idtecnico'],
-                'title' => '<b>Int. '.$r['codice'].'</b> '.$r['cliente'].'<br><b>'.tr('Tecnici').':</b> '.$r['nome_tecnico'],
+                'title' => '<b>Int. '.$r['codice'].'</b> '.$r['cliente'].'<br><b>'.tr('Tecnici').':</b> '.$r['nome_tecnico'].' '.(($r['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : ''),
                 'start' => $r['orario_inizio'],
                 'end' => $r['orario_fine'],
                 'url' => $rootdir.'/editor.php?id_module='.Modules::get('Interventi')['id'].'&id_record='.$r['idintervento'],
@@ -85,7 +85,7 @@ switch (get('op')) {
             }
 
             // Lettura dati intervento
-            $query = 'SELECT *, in_interventi.codice, idstatointervento AS parent_idstato, idtipointervento AS parent_idtipo, (SELECT descrizione FROM in_statiintervento WHERE idstatointervento=parent_idstato) AS stato, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=parent_idtipo) AS tipo, (SELECT nomesede FROM an_sedi WHERE id=idsede) AS sede, (SELECT idzona FROM an_anagrafiche WHERE idanagrafica=in_interventi.idanagrafica) AS idzona FROM in_interventi LEFT JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE in_interventi.id='.prepare($id).' '.Modules::getAdditionalsQuery('Interventi');
+            $query = 'SELECT *, in_interventi.codice, idstatointervento AS parent_idstato, idtipointervento AS parent_idtipo, (SELECT descrizione FROM in_statiintervento WHERE idstatointervento=parent_idstato) AS stato, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=parent_idtipo) AS tipo, (SELECT nomesede FROM an_sedi WHERE id=idsede_destinazione) AS sede, (SELECT idzona FROM an_anagrafiche WHERE idanagrafica=in_interventi.idanagrafica) AS idzona FROM in_interventi LEFT JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE in_interventi.id='.prepare($id).' '.Modules::getAdditionalsQuery('Interventi');
             $rs = $dbo->fetchArray($query);
 
             $desc_tipointervento = $rs[0]['tipo'];
@@ -137,15 +137,15 @@ switch (get('op')) {
         $mese = $_GET['mese'];
 
         // Righe inserite
-        $qp = "SELECT co_promemoria.id, idcontratto, richiesta, DATE_FORMAT( data_richiesta, '%m%Y') AS mese, data_richiesta, an_anagrafiche.ragione_sociale, 'promemoria' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_promemoria.idtipointervento) AS tipointervento FROM (co_promemoria INNER JOIN co_contratti ON co_promemoria.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE is_pianificabile = 1) ) AND idintervento IS NULL
+        $qp = "SELECT co_promemoria.id, idcontratto, richiesta,co_contratti.nome AS nomecontratto, DATE_FORMAT( data_richiesta, '%m%Y') AS mese, data_richiesta, an_anagrafiche.ragione_sociale, 'promemoria' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_promemoria.idtipointervento) AS tipointervento FROM (co_promemoria INNER JOIN co_contratti ON co_promemoria.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE is_pianificabile = 1) ) AND idintervento IS NULL
 
-        UNION SELECT co_ordiniservizio.id, idcontratto, '', DATE_FORMAT( data_scadenza, '%m%Y') AS mese, data_scadenza, an_anagrafiche.ragione_sociale, 'ordine' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento='ODS') AS tipointervento FROM (co_ordiniservizio INNER JOIN co_contratti ON co_ordiniservizio.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE is_pianificabile = 1) ) AND idintervento IS NULL
+        UNION SELECT co_ordiniservizio.id, idcontratto, '', co_contratti.nome AS nomecontratto, DATE_FORMAT( data_scadenza, '%m%Y') AS mese, data_scadenza, an_anagrafiche.ragione_sociale, 'ordine' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE descrizione='Ordine di servizio') AS tipointervento FROM (co_ordiniservizio INNER JOIN co_contratti ON co_ordiniservizio.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE is_pianificabile = 1) ) AND idintervento IS NULL
 
         ORDER BY data_richiesta ASC";
 
         $rsp = $dbo->fetchArray($qp);
 
-        $interventi = $dbo->fetchArray("SELECT id, richiesta, id_contratto AS idcontratto, DATE_FORMAT(data_richiesta,'%m%Y') AS mese, data_richiesta, an_anagrafiche.ragione_sociale, 'intervento' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE in_tipiintervento.idtipointervento=in_interventi.idtipointervento) AS tipointervento FROM in_interventi INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE (SELECT COUNT(*) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento = in_interventi.id) = 0 ORDER BY data_richiesta ASC");
+        $interventi = $dbo->fetchArray("SELECT id, richiesta, id_contratto AS idcontratto, DATE_FORMAT(IF(data_scadenza IS NULL, data_richiesta, data_scadenza),'%m%Y') AS mese, IF(data_scadenza IS NULL, data_richiesta, data_scadenza)AS data_richiesta, data_scadenza, an_anagrafiche.ragione_sociale, 'intervento' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE in_tipiintervento.idtipointervento=in_interventi.idtipointervento) AS tipointervento FROM in_interventi INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE (SELECT COUNT(*) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento = in_interventi.id) = 0 ORDER BY data_richiesta ASC");
 
         $rsp = array_merge($rsp, $interventi);
 
@@ -163,10 +163,19 @@ switch (get('op')) {
 
                     echo '
                     <div class="fc-event '.$class.'" data-id="'.$r['id'].'" data-idcontratto="'.$r['idcontratto'].'" data-ref="'.$r['ref'].'">'.(($r['ref'] == 'intervento') ? '<i class=\'fa fa-wrench pull-right\'></i>' : '<i class=\'fa fa-file-text-o pull-right\'></i>').'
-                        <b>'.$r['ragione_sociale'].'</b><br>'.Translator::dateToLocale($r['data_richiesta']).' ('.$r['tipointervento'].')'.(!empty($r['richiesta']) ? ' - '.$r['richiesta'] : '').'
+                        <b>'.$r['ragione_sociale'].'</b><br>'.Translator::dateToLocale($r['data_richiesta']).' ('.$r['tipointervento'].')<div class="request" >'.(!empty($r['richiesta']) ? ' - '.$r['richiesta'] : '').'</div>'.(!empty($r['nomecontratto']) ? '<br><b>Contratto:</b> '.$r['nomecontratto'] : '').
+                        (!empty($r['data_scadenza'] and $r['data_scadenza'] != '0000-00-00 00:00:00') ? '<br><small>'.tr('entro il: ').''.Translator::dateToLocale($r['data_scadenza']).'</small>' : '').'
                     </div>';
                 }
-            }
+            } ?>
+            <script type="text/javascript">
+                $(".request").shorten({
+                    moreText: '<?php echo tr('Mostra tutto'); ?>',
+                    lessText: '<?php echo tr('Comprimi'); ?>',
+                    showChars : 200
+                });
+            </script>
+            <?php
         } else {
             echo '<br><small class="help-block">'.tr('Non ci sono interventi da pianificare per questo mese').'</small>';
         }

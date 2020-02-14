@@ -36,8 +36,10 @@ echo '
 
 <script>
 $(document).ready(function(){
-    var form = $("#custom_fields_top-add").parent().find("form").first();
+    cleanup_inputs();
 
+    var form = $("#custom_fields_top-add").parent().find("form").first();
+                        
     // Campi a inizio form
     form.prepend($("#custom_fields_top-add").html());
 
@@ -51,8 +53,9 @@ $(document).ready(function(){
     if (!last.length) {
         last = form.find(".row").eq(-2);
     }
-
+    
     last.after($("#custom_fields_bottom-add").html());
+    restart_inputs();
 });
 </script>';
 
@@ -60,39 +63,30 @@ if (isAjaxRequest()) {
     echo '
 <script>
 $(document).ready(function(){
-    data = {};';
+    $("#form_'.$id_module.'-'.$id_plugin.'").find("form").submit(function () {
+        $form = $(this);
+        $form.variables = new Object();
+        $form.variables.id_module = \''.$id_module.'\';
+        $form.variables.id_plugin = \''.$id_plugin.'\';
 
-    foreach (Filter::getGET() as $key => $value) {
-        echo '
-    data.'.$key.' = "'.$value.'";';
-    }
-
-    echo '
-
-    $("#form_'.$id_module.'-'.$id_plugin.'").find("form").ajaxForm({
-        url: globals.rootdir + "/actions.php",
-        beforeSubmit: function(arr, $form, options) {
-            return $form.parsley().validate();
-        },
-        data: data,
-        type: "post",
-        success: function(data){
-            data = data.trim();
-
-            if(data && $("#'.get('select').'").val() !== undefined ) {
-                result = JSON.parse(data);
-                $("#'.get('select').'").selectSetNew(result.id, result.text);
+        submitAjax(this, $form.variables, function(response) {
+            // Selezione automatica nuovo valore per il select
+            select = "#'.get('select').'";
+            console.log($(select).val());
+            if ($(select).val() !== undefined) {
+                console.log(response.id + " | " + response.text);
+                $(select).selectSetNew(response.id, response.text, response.data);
             }
 
-            $("#bs-popup2").modal("hide");
-        },
-        error: function(data) {
-            alert("'.tr('Errore').': " + data);
-        }
-    });
+            $form.closest("div[id^=bs-popup").modal("hide");
+            
+        });
+        
+        return false;
+    })
 });
 </script>';
 }
 
 echo '
-	<script src="'.$rootdir.'/lib/init.js"></script>';
+<script>$(document).ready(init)</script>';

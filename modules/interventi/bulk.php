@@ -1,10 +1,6 @@
 <?php
 
-if (file_exists(__DIR__.'/../../../core.php')) {
-    include_once __DIR__.'/../../../core.php';
-} else {
-    include_once __DIR__.'/../../core.php';
-}
+include_once __DIR__.'/../../core.php';
 
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Fatture\Fattura;
@@ -36,16 +32,9 @@ switch (post('op')) {
 
         if (!empty($interventi)) {
             foreach ($interventi as $r) {
-                $numero = $r['codice'];
-                $numero = str_replace(['/', '\\'], '-', $numero);
-
-                // Gestione della stampa
-                $rapportino_nome = sanitizeFilename($numero.' '.date('Y_m_d', strtotime($r['data_richiesta'])).' '.$r['ragione_sociale'].'.pdf');
-                $filename = slashes($dir.'tmp/'.$rapportino_nome);
-
                 $print = Prints::getModulePredefinedPrint($id_module);
 
-                Prints::render($print['id'], $r['id'], $filename);
+                Prints::render($print['id'], $r['id'], $dir.'tmp/');
             }
 
             $dir = slashes($dir);
@@ -79,7 +68,7 @@ switch (post('op')) {
         $accodare = post('accodare');
         $id_segment = post('id_segment');
 
-        $interventi = $dbo->fetchArray('SELECT *, IFNULL((SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento = in_interventi.id), in_interventi.data_richiesta) AS data, in_statiintervento.descrizione AS stato FROM in_interventi INNER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento WHERE in_statiintervento.completato=1 AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND in_interventi.id_preventivo IS NULL AND in_interventi.id NOT IN (SELECT idintervento FROM co_promemoria WHERE idintervento IS NOT NULL) AND in_interventi.id IN ('.implode(',', $id_records).')');
+        $interventi = $dbo->fetchArray('SELECT *, IFNULL((SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento = in_interventi.id), in_interventi.data_richiesta) AS data, in_statiintervento.descrizione AS stato, in_interventi.codice AS codice_intervento FROM in_interventi INNER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento WHERE in_statiintervento.completato=1 AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND in_interventi.id_preventivo IS NULL AND in_interventi.id NOT IN (SELECT idintervento FROM co_promemoria WHERE idintervento IS NOT NULL) AND in_interventi.id IN ('.implode(',', $id_records).')');
 
         // Lettura righe selezionate
         foreach ($interventi as $intervento) {
@@ -106,7 +95,7 @@ switch (post('op')) {
             }
 
             $descrizione = tr('Intervento numero _NUM_ del _DATE_ [_STATE_]', [
-                '_NUM_' => $intervento['codice'],
+                '_NUM_' => $intervento['codice_intervento'],
                 '_DATE_' => Translator::dateToLocale($intervento['data']),
                 '_STATE_' => $intervento['stato'],
             ]);

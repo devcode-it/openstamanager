@@ -151,18 +151,12 @@ class Uploads
     public static function getDirectory($id_module, $id_plugin = null)
     {
         if (empty($id_plugin)) {
-            $directory = Modules::get($id_module)['directory'];
+            $structure = Modules::get($id_module);
         } else {
-            $info = Plugins::get($id_plugin);
-
-            if (!empty($info['script'])) {
-                $directory = self::fileInfo($info['script'])['filename'];
-            } else {
-                $directory = $info['directory'];
-            }
+            $structure = Plugins::get($id_plugin);
         }
 
-        return 'files/'.$directory;
+        return $structure->upload_directory;
     }
 
     /**
@@ -242,6 +236,7 @@ class Uploads
             'id_plugin' => !empty($data['id_plugin']) ? $data['id_plugin'] : null,
             'id_record' => $data['id_record'],
             'size' => $data['size'],
+            'created_by' => auth()->getUser()->id,
         ]);
     }
 

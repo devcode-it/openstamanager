@@ -12,7 +12,7 @@ include_once __DIR__.'/../../core.php';
 		</div>
 
 		<div class="col-md-4">
-			{[ "type": "number", "label": "<?php echo tr('Codice'); ?>", "name": "codice", "decimals":0, "min-value":"0", "max-value":"999", "maxlength": 3 ]}
+			{[ "type": "number", "label": "<?php echo tr('Codice'); ?>", "name": "codice", "required": 1, "decimals":0, "min-value":"0", "max-value":"999", "maxlength": 3 ]}
 		</div>
 	</div>
 
@@ -22,12 +22,12 @@ include_once __DIR__.'/../../core.php';
         </div>
 
 		<div class="col-md-6">
-			{[ "type": "number", "label": "<?php echo tr('Percentuale'); ?>", "name": "percentuale", "id": "percentuale-add", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
+			{[ "type": "number", "label": "<?php echo tr('Percentuale'); ?>", "name": "percentuale", "id": "percentuale-add", "icon-after": "<i class=\"fa fa-percent\"></i>", "max-value": "100" ]}
 		</div>
 	</div>
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "number", "label": "<?php echo tr('Indetraibile'); ?>", "name": "indetraibile", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
+			{[ "type": "number", "label": "<?php echo tr('Indetraibile'); ?>", "name": "indetraibile", "icon-after": "<i class=\"fa fa-percent\"></i>", "max-value": "100" ]}
 		</div>
 
 		<div class="col-md-6">
@@ -46,18 +46,18 @@ include_once __DIR__.'/../../core.php';
 
 <script>
 $(document).ready(function(){
-    $('#bs-popup #esente-add').change(function(){
+    $('#modals > div #esente-add').change(function(){
         var checkbox = $(this).parent().find('[type=hidden]');
 
         if (checkbox.val() == 1) {
-            $("#bs-popup #percentuale-add").prop("disabled", true);
-            $("#bs-popup #codice_natura_fe").prop("required", true);
-            $("#bs-popup #codice_natura_fe").prop("disabled", false);
+            $("#modals > div #percentuale-add").prop("disabled", true);
+            $("#modals > div #codice_natura_fe").prop("required", true);
+            $("#modals > div #codice_natura_fe").prop("disabled", false);
         } else {
-            $("#bs-popup #percentuale-add").prop("disabled", false);
-            $("#bs-popup #codice_natura_fe").prop("required", false);
-            $("#bs-popup #codice_natura_fe").val("").change();
-            $("#bs-popup #codice_natura_fe").prop("disabled", true);
+            $("#modals > div #percentuale-add").prop("disabled", false);
+            $("#modals > div #codice_natura_fe").prop("required", false);
+            $("#modals > div #codice_natura_fe").val("").change();
+            $("#modals > div #codice_natura_fe").prop("disabled", true);
         }
     });
 });

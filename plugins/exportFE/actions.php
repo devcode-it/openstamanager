@@ -25,15 +25,7 @@ switch (filter('op')) {
         break;
 
     case 'send':
-        $result = Interaction::sendXML($id_record);
-
-        // Aggiornamento dello stato
-        if ($result['code'] == 200) {
-            database()->update('co_documenti', [
-                'codice_stato_fe' => 'WAIT',
-                'data_stato_fe' => date('Y-m-d H:i:s'),
-            ], ['id' => $id_record]);
-        }
+        $result = Interaction::sendInvoice($id_record);
 
         echo json_encode($result);
 

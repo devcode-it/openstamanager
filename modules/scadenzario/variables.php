@@ -5,7 +5,7 @@ $r = $dbo->fetchOne('SELECT co_scadenziario.*, co_documenti.*,
 	an_anagrafiche.pec,
 	an_anagrafiche.ragione_sociale,
     co_scadenziario.da_pagare - co_scadenziario.pagato AS totale,
-	(SELECT pec FROM zz_smtps WHERE zz_smtps.id='.prepare($template['id_smtp']).') AS is_pec,
+	(SELECT pec FROM em_accounts WHERE em_accounts.id='.prepare($template['id_account']).') AS is_pec,
 	(SELECT descrizione FROM co_pagamenti WHERE co_pagamenti.id = co_documenti.idpagamento) AS pagamento
 FROM co_scadenziario
     INNER JOIN co_documenti ON co_documenti.id = co_scadenziario.iddocumento
@@ -24,6 +24,6 @@ return [
     'pagamento' => $r['pagamento'],
     'totale' => Translator::numberToLocale(abs($r['totale'])),
     'data_scadenza' => Translator::dateToLocale($r['scadenza']),
-    'data' => Translator::dateToLocale($r['scadenza']),
+    'data' => Translator::dateToLocale($r['data']),
     'logo_azienda' => !empty($logo_azienda) ? '<img src="'.$logo_azienda.'" />' : '',
 ];

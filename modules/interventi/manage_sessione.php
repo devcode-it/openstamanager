@@ -1,7 +1,7 @@
 <?php
 
 include_once __DIR__.'/../../core.php';
-include_once __DIR__.'/../../../crore.php';
+include_once __DIR__.'/../../../core.php';
 
 $show_costi = true;
 // Limitazione delle azioni dei tecnici
@@ -9,7 +9,7 @@ if ($user['gruppo'] == 'Tecnici') {
     $show_costi = !empty($user['idanagrafica']) && setting('Mostra i prezzi al tecnico');
 }
 
-$sessione = $dbo->fetchOne('SELECT in_interventi_tecnici.*, an_anagrafiche.ragione_sociale, an_anagrafiche.deleted_at, in_interventi_tecnici.tipo_scontokm AS tipo_sconto_km  FROM in_interventi_tecnici INNER JOIN an_anagrafiche ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica WHERE in_interventi_tecnici.id = '.prepare(get('id_sessione')));
+$sessione = $dbo->fetchOne('SELECT in_interventi_tecnici.*, an_anagrafiche.ragione_sociale, an_anagrafiche.deleted_at, in_interventi_tecnici.tipo_scontokm AS tipo_sconto_km, in_interventi_tecnici.prezzo_ore_unitario, in_interventi_tecnici.prezzo_km_unitario, in_interventi_tecnici.prezzo_dirittochiamata FROM in_interventi_tecnici INNER JOIN an_anagrafiche ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica WHERE in_interventi_tecnici.id = '.prepare(get('id_sessione')));
 
 $op = 'edit_sessione';
 $button = '<i class="fa fa-edit"></i> '.tr('Modifica');
@@ -23,15 +23,19 @@ echo '
 
 // Tecnico
 echo '
-<p>'.tr('Tecnico').': '.$sessione['ragione_sociale'].' '.(!empty($sessione['deleted_at']) ? '<small class="text-danger"><em>('.tr('Eliminato').')</em></small>' : '').'</p>';
+    <div class="row">
+        <div class="col-md-4">
+            {[ "type": "span", "label": "'.tr('Tecnico').'", "name": "tecnico", "required": 0, "value": "'.$sessione['ragione_sociale'].' '.(!empty($sessione['deleted_at']) ? '<small class="text-danger"><em>('.tr('Eliminato').')</em></small>' : '').'" ]}
+        </div>
+    </div>';
 
 // Orari
 echo '
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Tipo attività').'", "name": "idtipointerventot", "value": "'.$sessione['idtipointervento'].'", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione, IFNULL((SELECT costo_ore FROM in_tariffe WHERE idtipointervento=in_tipiintervento.idtipointervento AND idtecnico='.prepare($sessione['idtecnico']).'), 0) AS costo_orario FROM in_tipiintervento ORDER BY descrizione" ]}
+            {[ "type": "select", "label": "'.tr('Tipo attività').'", "name": "idtipointerventot", "value": "'.$sessione['idtipointervento'].'", "required": 1, "values": "query=SELECT in_tipiintervento.idtipointervento AS id, descrizione, in_tariffe.costo_ore AS prezzo_ore_unitario, in_tariffe.costo_km AS prezzo_km_unitario, in_tariffe.costo_dirittochiamata AS prezzo_dirittochiamata FROM in_tipiintervento JOIN in_tariffe ON in_tipiintervento.idtipointervento = in_tariffe.idtipointervento WHERE in_tariffe.idtecnico = '.prepare($sessione['idtecnico']).' ORDER BY descrizione" ]}
         </div>
-    
+
         <div class="col-md-4">
             {[ "type": "timestamp", "label": "'.tr('Inizio attività').'", "name": "orario_inizio", "required": 1, "value": "'.$sessione['orario_inizio'].'" ]}
         </div>
@@ -41,7 +45,6 @@ echo '
         </div>
     </div>';
 
-if ($show_costi) {
     echo '
     <div class="row">';
 
@@ -51,21 +54,38 @@ if ($show_costi) {
             {[ "type": "number", "label": "'.tr('Km').'", "name": "km", "value": "'.$sessione['km'].'"]}
         </div>';
 
+    $class = $show_costi ? '' : 'hide';
+
     // Sconto ore
     echo '
-        <div class="col-md-4">
+        <div class="col-md-4 '.$class.'" >
             {[ "type": "number", "label": "'.tr('Sconto ore').'", "name": "sconto", "value": "'.$sessione['sconto_unitario'].'", "icon-after": "choice|untprc|'.$sessione['tipo_sconto'].'"]}
         </div>';
 
     // Sconto km
     echo '
-        <div class="col-md-4">
+        <div class="col-md-4 '.$class.'">
             {[ "type": "number", "label": "'.tr('Sconto km').'", "name": "sconto_km", "value": "'.$sessione['scontokm_unitario'].'", "icon-after": "choice|untprc|'.$sessione['tipo_sconto_km'].'"]}
         </div>';
 
     echo'
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 '.$class.'">
+            {[ "type": "number", "label": "'.tr('Addebito orario').'", "name": "prezzo_ore_unitario", "value": "'.$sessione['prezzo_ore_unitario'].'" ]}
+        </div>
+
+        <div class="col-md-4 '.$class.'">
+            {[ "type": "number", "label": "'.tr('Addebito km').'", "name": "prezzo_km_unitario", "value": "'.$sessione['prezzo_km_unitario'].'" ]}
+        </div>
+
+        <div class="col-md-4 '.$class.'">
+            {[ "type": "number", "label": "'.tr('Addebito diritto ch.').'", "name": "prezzo_dirittochiamata", "value": "'.$sessione['prezzo_dirittochiamata'].'" ]}
+        </div>';
+
+    echo'
     </div>';
-}
 
 echo '
 
@@ -78,14 +98,23 @@ echo '
 </form>';
 
 echo '
-<script src="'.$rootdir.'/lib/init.js"></script>';
+<script>$(document).ready(init)</script>';
 
 echo '
 <script>
 $(document).ready(function () {
     // Quando modifico orario inizio, allineo anche l\'orario fine
     $("#orario_inizio").on("dp.change", function (e) {
-        $("#orario_fine").data("DateTimePicker").minDate(e.date).format(globals.timestampFormat);
+        $("#orario_fine").data("DateTimePicker").minDate(e.date);
+        $("#orario_fine").change();
+    });
+
+    $("#idtipointerventot").change(function() {
+        data = $(this).selectData();
+
+        $("#prezzo_ore_unitario").val(data.prezzo_ore_unitario);
+        $("#prezzo_km_unitario").val(data.prezzo_km_unitario);
+        $("#prezzo_dirittochiamata").val(data.prezzo_dirittochiamata);
     });
 });
 </script>';

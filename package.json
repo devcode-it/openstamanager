@@ -23,16 +23,19 @@
         "jquery": "^3.2.1",
         "jquery-form": "^4.2.1",
         "jquery-ui-touch-punch": "^0.2.3",
+        "jquery.shorten": "^1.0.0",
         "moment": "^2.18.1",
         "numeral": "^2.0.6",
         "parsleyjs": "^2.7.2",
         "pdf": "git://github.com/mozilla/pdf.js#gh-pages",
         "pdf.js": "git://github.com/mozilla/pdf.js#gh-pages",
+        "pwstrength-bootstrap": "^3.0.4",
         "select2": "4.0.3",
         "select2-bootstrap-theme": "^0.1.0-beta.10",
         "signature_pad": "^2.1.1",
         "smartwizard": "^4.2.2",
         "sweetalert2": "^6.11.4",
+        "toastr": "^2.1.4",
         "tooltipster": "^4.2.5"
     },
     "devDependencies": {
@@ -52,7 +55,7 @@
         "gulp-rename": "^1.2.2",
         "gulp-sass": "^3.1.0",
         "gulp-stylus": "^2.6.0",
-        "gulp-uglify": "^1.5.3",
+        "gulp-uglify": "^2.0.0",
         "gulp-util": "^3.0.8",
         "inquirer": "^4.0.1",
         "main-bower-files": "^2.13.1",
@@ -76,6 +79,9 @@
             "ignore": true
         },
         "chart.js": {
+            "ignore": true
+        },
+        "pwstrength-bootstrap": {
             "ignore": true
         },
         "admin-lte": {
@@ -166,6 +172,17 @@
             "main": [
                 "dist/sweetalert2.js",
                 "dist/sweetalert2.css"
+            ]
+        },
+        "jquery.shorten": {
+            "main": [
+                "src/jquery.shorten.js"
+            ]
+        },
+        "toastr": {
+            "main": [
+                "build/toastr.min.js",
+                "build/toastr.min.css"
             ]
         }
     }

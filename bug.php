@@ -1,15 +1,18 @@
 <?php
 
+use Modules\Emails\Account;
+use Notifications\EmailNotification;
+
 include_once __DIR__.'/core.php';
 
-$mail = Mail::get();
+$account = Account::where('predefined', true)->first();
 $bug_email = 'info@openstamanager.com';
 
 $user = Auth::user();
 
 if (filter('op') == 'send') {
     // Preparazione email
-    $mail = new Mail();
+    $mail = new EmailNotification();
 
     // Destinatario
     $mail->AddAddress($bug_email);
@@ -75,13 +78,13 @@ $pageTitle = tr('Bug');
 
 include_once App::filepath('include|custom|', 'top.php');
 
-if (empty($mail['from_address']) || empty($mail['server'])) {
+if (empty($account['from_address']) || empty($account['server'])) {
     echo '
 <div class="alert alert-warning">
     <i class="fa fa-warning"></i>
     <b>'.tr('Attenzione!').'</b> '.tr('Per utilizzare correttamente il modulo di segnalazione bug devi configurare alcuni parametri riguardanti le impostazione delle email').'.
 
-    '.Modules::link('Account email', $mail['id'], tr('Correggi account'), null, 'class="btn btn-warning pull-right"').'
+    '.Modules::link('Account email', $account['id'], tr('Correggi account'), null, 'class="btn btn-warning pull-right"').'
     <div class="clearfix"></div>
 </div>';
 }
@@ -99,7 +102,7 @@ echo '
             <table class="table table-bordered table-condensed table-striped table-hover">
                 <tr>
                     <th width="150" class="text-right">'.tr('Da').':</th>
-                    <td>'.$mail['from_address'].'</td>
+                    <td>'.$account['from_address'].'</td>
                 </tr>
 
                 <!-- A -->

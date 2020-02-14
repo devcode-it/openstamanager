@@ -2,15 +2,24 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Anagrafiche\Anagrafica;
+use Modules\Interventi\Intervento;
+use Modules\Interventi\Stato;
+use Modules\TipiIntervento\Tipo as TipoSessione;
+
 $operazione = filter('op');
 
 // Pianificazione intervento
 switch ($operazione) {
     case 'add-promemoria':
+        // Lettura sede contratto
+        $idsede = $dbo->fetchOne('SELECT idsede FROM co_contratti WHERE id='.prepare($id_parent))['idsede'];
+
         $dbo->insert('co_promemoria', [
             'idcontratto' => $id_parent,
             'data_richiesta' => filter('data_richiesta'),
             'idtipointervento' => filter('idtipointervento'),
+            'idsede' => $idsede,
         ]);
         $id_record = $dbo->lastInsertedID();
 
@@ -23,6 +32,7 @@ switch ($operazione) {
             'idtipointervento' => post('idtipointervento'),
             'richiesta' => post('richiesta'),
             'idimpianti' => implode(',', post('idimpianti')),
+            'idsede' => implode(',', post('idsede_c')),
         ], ['id' => $id_record]);
 
         flash()->info(tr('Promemoria inserito!'));
@@ -59,7 +69,7 @@ switch ($operazione) {
 
         break;
 
-    // pianificazione ciclica
+    // Pianificazione ciclica
     case 'pianificazione':
         $intervallo = post('intervallo');
         $min_date = post('data_inizio');
@@ -115,7 +125,7 @@ switch ($operazione) {
                                 $dbo->query('INSERT INTO co_promemoria_righe (descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,	desc_iva,iva,id_promemoria,sconto,sconto_unitario,tipo_sconto) SELECT descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,	desc_iva,iva,'.$idriga.',sconto,sconto_unitario,tipo_sconto FROM co_promemoria_righe WHERE id_promemoria = '.$id_record.'  ');
 
                                 // copio righe articoli nel nuovo promemoria
-                                $dbo->query('INSERT INTO co_promemoria_articoli (idarticolo, id_promemoria,descrizione,prezzo_acquisto,prezzo_vendita,sconto,	sconto_unitario,	tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto) SELECT idarticolo, '.$idriga.',descrizione,prezzo_acquisto,prezzo_vendita,sconto,sconto_unitario,tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto FROM co_promemoria_articoli WHERE id_promemoria = '.$id_record.'  ');
+                                $dbo->query('INSERT INTO co_promemoria_articoli (idarticolo, id_promemoria,descrizione,prezzo_acquisto,prezzo_vendita,sconto,	sconto_unitario,	tipo_sconto,idiva,desc_iva,iva, qta, um, abilita_serial, idimpianto) SELECT idarticolo, '.$idriga.',descrizione,prezzo_acquisto,prezzo_vendita,sconto,sconto_unitario,tipo_sconto,idiva,desc_iva,iva, qta, um, abilita_serial, idimpianto FROM co_promemoria_articoli WHERE id_promemoria = '.$id_record.'  ');
 
                                 // Copia degli allegati
                                 Uploads::copy([
@@ -135,34 +145,20 @@ switch ($operazione) {
                         }
 
                         // Controllo che non esista già un intervento collegato a questo promemoria e, se ho spuntato di creare l'intervento, creo già anche quello
-                        if ((empty($dbo->fetchArray("SELECT idintervento FROM co_promemoria WHERE id = '".((empty($idriga)) ? $id_record : $idriga)."'")[0]['idintervento'])) && (post('pianifica_intervento'))) {
-                            // pianificare anche l' intervento?
-                            // if (post('pianifica_intervento')) {
-                            /*$orario_inizio = post('orario_inizio');
-                            $orario_fine = post('orario_fine');*/
+                        if (post('pianifica_intervento') && empty($dbo->fetchArray('SELECT idintervento FROM co_promemoria WHERE id = '.prepare(empty($idriga) ? $id_record : $idriga))[0]['idintervento'])) {
+                            // Creazione intervento
+                            $anagrafica = Anagrafica::find($idanagrafica);
+                            $tipo = TipoSessione::find($idtipointervento);
+                            // Stato "In programmazione"
+                            $stato = Stato::where('codice', 'WIP')->first();
 
-                            // $idanagrafica = 2;
+                            $intervento = Intervento::build($anagrafica, $tipo, $stato, $data_richiesta);
+                            $intervento->idsede_destinazione = $idsede ?: 0;
+                            $intervento->richiesta = $richiesta;
+                            $intervento->idclientefinale = post('idclientefinale') ?: 0;
+                            $intervento->save();
 
-                            // intervento sempre nello stato "In programmazione"
-                            $idstatointervento = 'WIP';
-
-                            $codice = \Modules\Interventi\Intervento::getNextCodice();
-
-                            // Creo intervento
-                            $dbo->insert('in_interventi', [
-                                'idanagrafica' => $idanagrafica,
-                                'idclientefinale' => post('idclientefinale') ?: 0,
-                                'idstatointervento' => $idstatointervento,
-                                'idtipointervento' => $idtipointervento,
-                                'idsede' => $idsede ?: 0,
-                                'idautomezzo' => $idautomezzo ?: 0,
-
-                                'codice' => $codice,
-                                'data_richiesta' => $data_richiesta,
-                                'richiesta' => $richiesta,
-                            ]);
-
-                            $idintervento = $dbo->lastInsertedID();
+                            $idintervento = $intervento->id;
 
                             $idtecnici = post('idtecnico');
 
@@ -178,7 +174,7 @@ switch ($operazione) {
                             $dbo->query('INSERT INTO in_righe_interventi (descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,idintervento,sconto,sconto_unitario,tipo_sconto) SELECT descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,'.$idintervento.',sconto,sconto_unitario,tipo_sconto FROM co_promemoria_righe WHERE id_promemoria = '.$id_record.'  ');
 
                             // copio gli articoli dal promemoria all'intervento
-                            $dbo->query('INSERT INTO mg_articoli_interventi (idarticolo, idintervento,descrizione,prezzo_acquisto,prezzo_vendita,sconto,	sconto_unitario,	tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto) SELECT idarticolo, '.$idintervento.',descrizione,prezzo_acquisto,prezzo_vendita,sconto,sconto_unitario,tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto FROM co_promemoria_articoli WHERE id_promemoria = '.$id_record.'  ');
+                            $dbo->query('INSERT INTO mg_articoli_interventi (idarticolo, idintervento,descrizione,prezzo_acquisto,prezzo_vendita,sconto,	sconto_unitario,	tipo_sconto,idiva,desc_iva,iva, qta, um, abilita_serial, idimpianto) SELECT idarticolo, '.$idintervento.',descrizione,prezzo_acquisto,prezzo_vendita,sconto,sconto_unitario,tipo_sconto,idiva,desc_iva,iva, qta, um, abilita_serial, idimpianto FROM co_promemoria_articoli WHERE id_promemoria = '.$id_record.'  ');
 
                             // Copia degli allegati
                             Uploads::copy([
@@ -192,7 +188,7 @@ switch ($operazione) {
                             // Decremento la quantità per ogni articolo copiato
                             $rs_articoli = $dbo->fetchArray('SELECT * FROM mg_articoli_interventi WHERE idintervento = '.$idintervento.' ');
                             foreach ($rs_articoli as $rs_articolo) {
-                                add_movimento_magazzino($rs_articolo['idarticolo'], -$rs_articolo['qta'], ['idautomezzo' => $rs_articolo['idautomezzo'], 'idintervento' => $idintervento]);
+                                add_movimento_magazzino($rs_articolo['idarticolo'], -$rs_articolo['qta'], ['idintervento' => $idintervento]);
                             }
 
                             // Collego gli impianti del promemoria all' intervento appena inserito
@@ -231,7 +227,7 @@ switch ($operazione) {
         $idimpianto = post('idimpianto');
 
         // Leggo la quantità attuale nell'intervento
-        $q = 'SELECT qta, idautomezzo, idimpianto FROM co_promemoria_articoli WHERE id='.prepare($idriga);
+        $q = 'SELECT qta, idimpianto FROM co_promemoria_articoli WHERE id='.prepare($idriga);
         $rs = $dbo->fetchArray($q);
         $old_qta = $rs[0]['qta'];
         $idimpianto = $rs[0]['idimpianto'];
@@ -243,7 +239,6 @@ switch ($operazione) {
 
     case 'addarticolo':
         $idarticolo = post('idarticolo');
-        // $idautomezzo = post('idautomezzo');
         $descrizione = post('descrizione');
         $idimpianto = post('idimpianto');
         $qta = post('qta');
@@ -267,7 +262,7 @@ switch ($operazione) {
         $iva = (($prezzo_vendita * $qta) - $sconto) * $rs_iva[0]['percentuale'] / 100;
 
         // Aggiunto il collegamento fra l'articolo e l'intervento
-        $idriga = $dbo->query('INSERT INTO co_promemoria_articoli(idarticolo, id_promemoria, idimpianto, idautomezzo, descrizione, prezzo_vendita, prezzo_acquisto, sconto, sconto_unitario, tipo_sconto, idiva, desc_iva, iva, qta, um, abilita_serial) VALUES ('.prepare($idarticolo).', '.prepare($id_record).', '.(empty($idimpianto) ? 'NULL' : prepare($idimpianto)).', '.prepare($idautomezzo).', '.prepare($descrizione).', '.prepare($prezzo_vendita).', '.prepare($prezzo_acquisto).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($qta).', '.prepare($um).', '.prepare($rsart[0]['abilita_serial']).')');
+        $idriga = $dbo->query('INSERT INTO co_promemoria_articoli(idarticolo, id_promemoria, idimpianto, descrizione, prezzo_vendita, prezzo_acquisto, sconto, sconto_unitario, tipo_sconto, idiva, desc_iva, iva, qta, um, abilita_serial) VALUES ('.prepare($idarticolo).', '.prepare($id_record).', '.(empty($idimpianto) ? 'NULL' : prepare($idimpianto)).', '.prepare($descrizione).', '.prepare($prezzo_vendita).', '.prepare($prezzo_acquisto).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($qta).', '.prepare($um).', '.prepare($rsart[0]['abilita_serial']).')');
 
         break;
 

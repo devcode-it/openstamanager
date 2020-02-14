@@ -14,8 +14,6 @@ class Sconto extends Discount
     /**
      * Crea un nuovo sconto collegato ad un ordine.
      *
-     * @param Ordine $ordine
-     *
      * @return self
      */
     public static function build(Ordine $ordine)

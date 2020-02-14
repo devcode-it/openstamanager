@@ -36,12 +36,12 @@ include_once __DIR__.'/../../core.php';
                 <div class="col-md-3">
                     {[ "type": "email", "label": "<?php echo tr('Email mittente'); ?>", "name": "from_address", "value": "$from_address$", "required": 1 ]}
                 </div>
-			
+
 				<div class="col-md-3">
                     {[ "type": "checkbox", "label": "<?php echo tr('Non verificare il certificato SSL'); ?>", "name": "ssl_no_verify", "value": "$ssl_no_verify$" ]}
                 </div>
-				
-				
+
+
             </div>
 
             <div class="row">
@@ -63,8 +63,12 @@ include_once __DIR__.'/../../core.php';
                     {[ "type": "text", "label": "<?php echo tr('Username SMTP'); ?>", "name": "username", "value": "$username$" ]}
                 </div>
 
-                <div class="col-md-6">
-                    {[ "type": "password", "label": "<?php echo tr('Password SMTP'); ?>", "class": "", "name": "password", "value": "$password$", "icon-after": "<i title=\"<?php echo tr('Visualizza password'); ?>\" class=\"fa fa-eye clickable\" ></i>" ]}
+                <div class="col-md-3">
+                    {[ "type": "password", "label": "<?php echo tr('Password SMTP'); ?>", "name": "password", "value": "$password$" ]}
+                </div>
+
+                <div class="col-md-3">
+                    {[ "type": "number", "label": "<?php echo tr('Timeout coda di invio (millisecondi)'); ?>", "name": "timeout", "value": "$timeout$", "decimals": 0 ]}
                 </div>
             </div>
 
@@ -82,7 +86,7 @@ include_once __DIR__.'/../../core.php';
 <?php
 // Collegamenti diretti
 // Template email collegati a questo account
-$elementi = $dbo->fetchArray('SELECT `id`, `name` FROM `zz_emails` WHERE `id_smtp` = '.prepare($id_record));
+$elementi = $dbo->fetchArray('SELECT `id`, `name` FROM `em_templates` WHERE `id_account` = '.prepare($id_record));
 
 if (!empty($elementi)) {
     echo '

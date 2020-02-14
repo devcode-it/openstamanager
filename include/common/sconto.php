@@ -8,20 +8,24 @@ echo App::internalLoad('conti.php', $result, $options);
 
 // Sconto percentuale
 echo '
-    <div class="row">
+    <div class="row">';
+
+if ($options['action'] == 'add') {
+    echo '
         <div class="col-md-4">
             {[ "type": "number", "label": "'.tr('Sconto/maggiorazione percentuale').'", "name": "sconto_percentuale", "icon-after": "%", "help": "'.tr('Il valore positivo indica uno sconto: per applicare una maggiorazione inserire un valore negativo').'" ]}
         </div>';
+}
 
 // Sconto unitario
 echo '
-        <div class="col-md-4">
-            {[ "type": "number", "label": "'.tr('Sconto/maggiorazione unitario').'", "name": "sconto_unitario", "value": "'.$result['sconto_unitario'].'", "icon-after": "&euro;", "help": "'.tr('Il valore positivo indica uno sconto: per applicare una maggiorazione inserire un valore negativo').'" ]}
+        <div class="col-md-'.($options['action'] == 'add' ? 4 : 6).'">
+            {[ "type": "number", "label": "'.tr('Sconto/maggiorazione unitario').'", "name": "sconto_unitario", "value": "'.$result['sconto_unitario'].'", "icon-after": "'.currency().'", "help": "'.tr('Il valore positivo indica uno sconto: per applicare una maggiorazione inserire un valore negativo').'" ]}
         </div>';
 
 // Iva
 echo '
-        <div class="col-md-4">
+        <div class="col-md-'.($options['action'] == 'add' ? 4 : 6).'">
             {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$result['idiva'].'", "ajax-source": "iva" ]}
         </div>
     </div>';
@@ -35,7 +39,7 @@ echo '
         var sconto_percentuale = form.find("#sconto_percentuale");
         var sconto_unitario = form.find("#sconto_unitario");
 
-        var totale = '.$options['totale'].';
+        var totale = '.($options['totale_imponibile'] ?: 0).';
         
         function aggiorna_sconto_percentuale() {
             var sconto = sconto_percentuale.val().toEnglish();
@@ -44,13 +48,20 @@ echo '
             msg = sconto >= 0 ? "'.tr('Sconto percentuale').'" : "'.tr('Maggiorazione percentuale').'";
             
             sconto_unitario.val(unitario.toLocale());
-            descrizione.val(msg + " " + Math.abs(sconto).toLocale() + "%");
+            
+            if (!descrizione.val()) {
+                descrizione.val(msg + " " + Math.abs(sconto).toLocale() + "%");
+            }
         }
         
         function aggiorna_sconto_unitario(){
             msg = sconto_unitario.val().toEnglish() >= 0 ? "'.tr('Sconto unitario').'" : "'.tr('Maggiorazione unitaria').'";
 
-            descrizione.val(msg);
+            sconto_percentuale.val(0);
+            
+            if (!descrizione.val()) {
+                descrizione.val(msg);
+            }
         }
 
         sconto_percentuale.keyup(aggiorna_sconto_percentuale);

@@ -2,6 +2,9 @@
 
 include_once __DIR__.'/../../core.php';
 
+$block_edit = $record['is_completato'];
+
+unset($_SESSION['superselect']['idsede_destinazione']);
 unset($_SESSION['superselect']['idanagrafica']);
 $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 
@@ -20,37 +23,47 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 
 		<div class="panel-body">
 			<div class="row">
-				<div class="col-md-2">
+				<div class="col-md-3">
 					{[ "type": "text", "label": "<?php echo tr('Numero'); ?>", "name": "numero", "required": 1, "class": "text-center", "value": "$numero$" ]}
 				</div>
 
-				<div class="col-md-6">
-                    <?php
-                        echo Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"');
-                    ?>
+                <div class="col-md-3">
+                    {[ "type": "date", "label": "<?php echo tr('Data bozza'); ?>", "name": "data_bozza", "value": "$data_bozza$" ]}
+                </div>
 
-					{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "id": "idanagrafica_c", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti" ]}
-				</div>
+                <div class="col-md-2">
+                    {[ "type": "date", "label": "<?php echo tr('Data accettazione'); ?>", "name": "data_accettazione", "value": "$data_accettazione$" ]}
+                </div>
 
-				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "value": "$idsede$", "ajax-source": "sedi", "placeholder": "Sede legale" ]}
-				</div>
+                <div class="col-md-2">
+                    {[ "type": "date", "label": "<?php echo tr('Data conclusione'); ?>", "name": "data_conclusione", "value": "$data_conclusione$" ]}
+                </div>
 
-
-			</div>
-
+                <div class="col-md-2">
+                    {[ "type": "date", "label": "<?php echo tr('Data rifiuto'); ?>", "name": "data_rifiuto", "value": "$data_rifiuto$" ]}
+                </div>
+            </div>
 
 			<div class="row">
+                <div class="col-md-3">
+                    <?php
+                    echo Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"');
+                    ?>
 
-				<div class="col-md-6">
-					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$nome$" ]}
-				</div>
+                    {[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "id": "idanagrafica_c", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti" ]}
+                </div>
 
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "value": "$idsede$", "ajax-source": "sedi", "placeholder": "Sede legale" ]}
+                </div>
 
 				<div class="col-md-3">
+                    <?php
+                    echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
+                    ?>
+
 					{[ "type": "select", "label": "<?php echo tr('Referente'); ?>", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti" ]}
 				</div>
-
 
 				<div class="col-md-3">
                     <?php
@@ -63,10 +76,24 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 
 			</div>
 
+            <div class="row">
+                <div class="col-md-6">
+                    {[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$nome$" ]}
+                </div>
+
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "values": "query=SELECT id, descrizione FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione", "value": "$idpagamento$" ]}
+                </div>
+
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstato", "required": 1, "values": "query=SELECT id, descrizione FROM co_staticontratti", "value": "$idstato$", "class": "unblockable" ]}
+                </div>
+            </div>
+
 			<div class="row">
 
 				<div class="col-md-3">
-					{[ "type": "number", "label": "<?php echo tr('Validità'); ?>", "name": "validita", "decimals": "0", "value": "$validita$", "icon-after": "giorni" ]}
+					{[ "type": "number", "label": "<?php echo tr('Validità offerta'); ?>", "name": "validita", "decimals": "0", "value": "$validita$", "icon-after": "giorni" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -76,40 +103,21 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 				<div class="col-md-3">
 					{[ "type": "number", "label": "<?php echo tr('Preavviso per rinnovo'); ?>", "name": "giorni_preavviso_rinnovo", "decimals": "0", "value": "$giorni_preavviso_rinnovo$", "icon-after": "giorni", "disabled": <?php echo $record['rinnovabile'] ? 0 : 1; ?> ]}
 				</div>
-			</div>
 
-			<div class="row">
-				<div class="col-md-3">
-					{[ "type": "date", "label": "<?php echo tr('Data bozza'); ?>", "name": "data_bozza", "value": "$data_bozza$" ]}
-				</div>
-
-				<div class="col-md-3">
-					{[ "type": "date", "label": "<?php echo tr('Data accettazione'); ?>", "name": "data_accettazione", "value": "$data_accettazione$" ]}
-				</div>
-
-				<div class="col-md-3">
-					{[ "type": "date", "label": "<?php echo tr('Data conclusione'); ?>", "name": "data_conclusione", "value": "$data_conclusione$" ]}
-				</div>
-
-				<div class="col-md-3">
-					{[ "type": "date", "label": "<?php echo tr('Data rifiuto'); ?>", "name": "data_rifiuto", "value": "$data_rifiuto$" ]}
+                <div class="col-md-3">
+					{[ "type": "number", "label": "<?php echo tr('Ore rimanenti rinnovo'); ?>", "name": "ore_preavviso_rinnovo", "decimals": "0", "value": "$ore_preavviso_rinnovo$", "icon-after": "ore", "disabled": <?php echo $record['rinnovabile'] ? 0 : 1; ?>, "help": "<?php echo tr('Ore residue nel contratto prima di visualizzare una avviso per un eventuale rinnovo anticipato.'); ?>" ]}
 				</div>
 			</div>
 
 			<div class="row">
-				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Metodo di pagamento'); ?>", "name": "idpagamento", "values": "query=SELECT id, descrizione FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione", "value": "$idpagamento$" ]}
-				</div>
 
-				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstato", "required": 1, "values": "query=SELECT id, descrizione FROM co_staticontratti", "value": "$idstato$" ]}
-				</div>
+			</div>
 
-				<div class="col-md-3">
-					{[ "type": "select", "multiple": "1", "label": "<?php echo tr('Impianti'); ?>", "name": "matricolaimpianto[]", "values": "query=SELECT idanagrafica, id AS id, IF(nome = '', matricola, CONCAT(matricola, ' - ', nome)) AS descrizione FROM my_impianti WHERE idanagrafica='$idanagrafica$' ORDER BY descrizione", "value": "$idimpianti$" ]}
+			<div class="row">
+				<div class="col-md-6">
+					{[ "type": "select", "multiple": "1", "label": "<?php echo tr('Impianti'); ?>", "name": "matricolaimpianto[]", "values": "query=SELECT idanagrafica, id AS id, IF(nome = '', matricola, CONCAT(matricola, ' - ', nome)) AS descrizione FROM my_impianti WHERE idanagrafica='$idanagrafica$' ORDER BY descrizione", "value": "$idimpianti$", "icon-after": "add|<?php echo Modules::get('MyImpianti')['id']; ?>|||<?php echo (empty($block_edit)) ? '' : 'disabled'; ?>" ]}
 				</div>
             </div>
-
 
 			<div class="row">
 				<div class="col-md-12">
@@ -125,30 +133,47 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 		</div>
 	</div>
 
-    <!-- Fatturazione Elettronica -->
-    <div class="panel panel-primary <?php echo ($record['tipo_anagrafica'] == 'Ente pubblico' || $record['tipo_anagrafica'] == 'Azienda') ? 'show' : 'hide'; ?>" >
-        <div class="panel-heading">
-            <h3 class="panel-title"><?php echo tr('Dati appalto'); ?></h3>
-        </div>
+    <?php
+        if (!empty($record['id_documento_fe']) || !empty($record['num_item']) || !empty($record['codice_cig']) || !empty($record['codice_cup'])) {
+            $collapsed = 'in';
+        } else {
+            $collapsed = '';
+        }
+    ?>
 
-        <div class="panel-body">
-            <div class="row">
-                <div class="col-md-6">
-					{[ "type": "text", "label": "<?php echo tr('Identificatore Documento'); ?>", "help": "<?php echo tr('<span>Obbligatorio per valorizzare CIG/CUP. &Egrave; possible inserire: </span><ul><li>N. determina</li><li>RDO</li><li>Ordine MEPA</li></ul>'); ?>","name": "id_documento_fe", "required": 0, "value": "$id_documento_fe$", "maxlength": 20 ]}
-				</div>
+    <!-- Fatturazione Elettronica PA-->
+    <div class="panel-group">
+        <div class="panel panel-primary <?php echo ($record['tipo_anagrafica'] == 'Ente pubblico' || $record['tipo_anagrafica'] == 'Azienda') ? 'show' : 'hide'; ?>">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <?php echo tr('Dati appalto'); ?>
 
-                <div class="col-md-6">
-					{[ "type": "text", "label": "<?php echo tr('Numero Riga'); ?>", "name": "num_item", "required": 0, "value": "$num_item$", "maxlength": 15 ]}
-				</div>
-			</div>
-			<div class="row">
-                <div class="col-md-6">
-					{[ "type": "text", "label": "<?php echo tr('Codice CIG'); ?>", "name": "codice_cig", "required": 0, "value": "$codice_cig$", "maxlength": 15 ]}
-				</div>
+                    <div class="box-tools pull-right">    
+                        <a data-toggle="collapse" href="#dati_appalto"><i class="fa fa-plus" style='color:white;margin-top:2px;'></i></a>           
+                    </div>
+                </h4>
+            </div>
+            <div id="dati_appalto" class="panel-collapse collapse <?php echo $collapsed; ?>">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            {[ "type": "text", "label": "<?php echo tr('Identificatore Documento'); ?>", "name": "id_documento_fe", "required": 0, "help": "<?php echo tr('<span>Obbligatorio per valorizzare CIG/CUP. &Egrave; possible inserire: </span><ul><li>N. determina</li><li>RDO</li><li>Ordine MEPA</li></ul>'); ?>", "value": "$id_documento_fe$", "maxlength": 20 ]}
+                        </div>
 
-				<div class="col-md-6">
-					{[ "type": "text", "label": "<?php echo tr('Codice CUP'); ?>", "name": "codice_cup", "required": 0, "value": "$codice_cup$", "maxlength": 15 ]}
-				</div>
+                        <div class="col-md-6">
+                            {[ "type": "text", "label": "<?php echo tr('Numero Riga'); ?>", "name": "num_item", "required": 0, "value": "$num_item$", "maxlength": 15 ]}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            {[ "type": "text", "label": "<?php echo tr('Codice CIG'); ?>", "name": "codice_cig", "required": 0, "value": "$codice_cig$", "maxlength": 15 ]}
+                        </div>
+
+                        <div class="col-md-6">
+                            {[ "type": "text", "label": "<?php echo tr('Codice CUP'); ?>", "name": "codice_cup", "required": 0, "value": "$codice_cup$", "maxlength": 15 ]}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -166,22 +191,20 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 
 $idtipiintervento = ['-1'];
 
-//Loop fra i tipi di attività e i relativi costi del tipo intervento
-$rs = $dbo->fetchArray('SELECT co_contratti_tipiintervento.*, in_tipiintervento.descrizione FROM in_tipiintervento INNER JOIN co_contratti_tipiintervento ON in_tipiintervento.idtipointervento=co_contratti_tipiintervento.idtipointervento WHERE idcontratto='.prepare($id_record).' AND (co_contratti_tipiintervento.costo_ore!=0 OR co_contratti_tipiintervento.costo_km!=0 OR co_contratti_tipiintervento.costo_dirittochiamata!=0) ORDER BY in_tipiintervento.descrizione');
+// Loop fra i tipi di attività e i relativi costi del tipo intervento
+$rs = $dbo->fetchArray('SELECT co_contratti_tipiintervento.*, in_tipiintervento.descrizione FROM co_contratti_tipiintervento INNER JOIN in_tipiintervento ON in_tipiintervento.idtipointervento = co_contratti_tipiintervento.idtipointervento WHERE idcontratto='.prepare($id_record).' AND (co_contratti_tipiintervento.costo_ore != in_tipiintervento.costo_orario OR co_contratti_tipiintervento.costo_km != in_tipiintervento.costo_km OR co_contratti_tipiintervento.costo_dirittochiamata != in_tipiintervento.costo_diritto_chiamata) ORDER BY in_tipiintervento.descrizione');
 
-if (sizeof($rs) > 0) {
+if (!empty($rs)) {
     echo '
                     <table class="table table-striped table-condensed table-bordered">
                         <tr>
                             <th width="300">'.tr('Tipo attività').'</th>
 
-                            <th>'.tr('Costo orario').'</th>
-                            <th>'.tr('Costo al km').'</th>
-                            <th>'.tr('Diritto di chiamata').'</th>
-
-                            <th>'.tr('Costo orario (tecnico)').'</th>
-                            <th>'.tr('Costo al km (tecnico)').'</th>
-                            <th>'.tr('Diritto di chiamata (tecnico)').'</th>
+                            <th>'.tr('Addebito orario').' <span class="tip" title="'.tr('Addebito al cliente').'"><i class="fa fa-question-circle-o"></i></span></th>
+                            <th>'.tr('Addebito km').' <span class="tip" title="'.tr('Addebito al cliente').'"><i class="fa fa-question-circle-o"></i></span></th>
+                            <th>'.tr('Addebito diritto ch.').' <span class="tip" title="'.tr('Addebito al cliente').'"><i class="fa fa-question-circle-o"></i></span></th>
+                            
+                            <th width="40"></th>
                         </tr>';
 
     for ($i = 0; $i < sizeof($rs); ++$i) {
@@ -202,16 +225,11 @@ if (sizeof($rs) > 0) {
                                 </td>
 
                                 <td>
-                                    {[ "type": "number", "name": "costo_ore_tecnico['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_ore_tecnico'].'" ]}
+                                    <button type="button" class="btn btn-warning" data-toggle="tooltip" title="Importa valori da tariffe standard" onclick="if( confirm(\'Importare i valori dalle tariffe standard?\') ){ $.post( \''.$rootdir.'/modules/contratti/actions.php\', { op: \'import\', idcontratto: \''.$id_record.'\', idtipointervento: \''.$rs[$i]['idtipointervento'].'\' }, function(data){ location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'\'; } ); }">
+                                    <i class="fa fa-download"></i>
+                                    </button>
                                 </td>
 
-                                <td>
-                                    {[ "type": "number", "name": "costo_km_tecnico['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_km_tecnico'].'" ]}
-                                </td>
-
-                                <td>
-                                    {[ "type": "number", "name": "costo_dirittochiamata_tecnico['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_dirittochiamata_tecnico'].'" ]}
-                                </td>
                             </tr>';
 
         $idtipiintervento[] = prepare($rs[$i]['idtipointervento']);
@@ -221,26 +239,24 @@ if (sizeof($rs) > 0) {
 }
 
 echo '
-                    <button type="button" onclick="$(this).next().toggleClass(\'hide\');" class="btn btn-info btn-sm"><i class="fa fa-th-list"></i> '.tr('Mostra tipi di attività non utilizzate').'</button>
+                    <button type="button" onclick="$(this).next().toggleClass(\'hide\');" class="btn btn-info btn-sm"><i class="fa fa-th-list"></i> '.tr('Mostra tipi di attività non modificati').'</button>
 					<div class="hide">';
 
 //Loop fra i tipi di attività e i relativi costi del tipo intervento (quelli a 0)
-$rs = $dbo->fetchArray('SELECT * FROM in_tipiintervento WHERE idtipointervento NOT IN('.implode(',', $idtipiintervento).') ORDER BY descrizione');
+$rs = $dbo->fetchArray('SELECT * FROM co_contratti_tipiintervento INNER JOIN in_tipiintervento ON in_tipiintervento.idtipointervento = co_contratti_tipiintervento.idtipointervento WHERE co_contratti_tipiintervento.idtipointervento NOT IN('.implode(',', $idtipiintervento).') AND idcontratto='.prepare($id_record).' ORDER BY descrizione');
 
-if (sizeof($rs) > 0) {
+if (!empty($rs)) {
     echo '
                         <div class="clearfix">&nbsp;</div>
 						<table class="table table-striped table-condensed table-bordered">
 							<tr>
 								<th width="300">'.tr('Tipo attività').'</th>
 
-								<th>'.tr('Costo orario').'</th>
-								<th>'.tr('Costo al km').'</th>
-								<th>'.tr('Diritto di chiamata').'</th>
+								<th>'.tr('Addebito orario').' <span class="tip" title="'.tr('Addebito al cliente').'"><i class="fa fa-question-circle-o"></i></span></th>
+								<th>'.tr('Addebito km').' <span class="tip" title="'.tr('Addebito al cliente').'"><i class="fa fa-question-circle-o"></i></span></th>
+								<th>'.tr('Addebito diritto ch.').' <span class="tip" title="'.tr('Addebito al cliente').'"><i class="fa fa-question-circle-o"></i></span></th>
 
-								<th>'.tr('Costo orario (tecnico)').'</th>
-								<th>'.tr('Costo al km (tecnico)').'</th>
-								<th>'.tr('Diritto di chiamata (tecnico)').'</th>
+                                <th width="40"></th>
 							</tr>';
 
     for ($i = 0; $i < sizeof($rs); ++$i) {
@@ -261,16 +277,11 @@ if (sizeof($rs) > 0) {
                                 </td>
 
                                 <td>
-                                    {[ "type": "number", "name": "costo_ore_tecnico['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_orario_tecnico'].'" ]}
+                                <button type="button" class="btn btn-warning" data-toggle="tooltip" title="Importa valori da tariffe standard" onclick="if( confirm(\'Importare i valori dalle tariffe standard?\') ){ $.post( \''.$rootdir.'/modules/contratti/actions.php\', { op: \'import\', idcontratto: \''.$id_record.'\', idtipointervento: \''.$rs[$i]['idtipointervento'].'\' }, function(data){ location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'\'; } ); }">
+                                    <i class="fa fa-download"></i>
+                                </button>
                                 </td>
 
-                                <td>
-                                    {[ "type": "number", "name": "costo_km_tecnico['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_km_tecnico'].'" ]}
-                                </td>
-
-                                <td>
-                                    {[ "type": "number", "name": "costo_dirittochiamata_tecnico['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_diritto_chiamata_tecnico'].'" ]}
-                                </TD>
                             </tr>';
     }
     echo '
@@ -293,7 +304,7 @@ if (sizeof($rs) > 0) {
 
     <div class="panel-body">
 <?php
-if ($record['stato'] != 'Pagato') {
+if (!$block_edit) {
     echo '
             <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_articolo" data-toggle="tooltip" data-title="'.tr('Aggiungi articolo').'">
                 <i class="fa fa-plus"></i> '.tr('Articolo').'
@@ -329,59 +340,6 @@ include $docroot.'/modules/contratti/row-list.php';
         </div>
     </div>
 </div>
-
-
-<?php
-if (!empty($record['idcontratto_prev'])) {
-    echo '
-<!-- RIGHE -->
-<div class="panel panel-primary">
-    <div class="panel-heading">
-        <h3 class="panel-title">'.tr('Rinnovi precedenti').'</h3>
-    </div>
-
-    <div class="panel-body">
-        <div class="row">
-            <div class="col-md-12">';
-
-    $idcontratto_prev = $record['idcontratto_prev'];
-
-    echo '
-                <table class="table table-hover table-condensed table-bordered table-striped">
-                    <tr>
-                        <th>'.tr('Descrizione').'</th>
-                        <th width="100">'.tr('Totale').'</th>
-                        <th width="150">'.tr('Data inizio').'</th>
-                        <th width="150">'.tr('Data conclusione').'</th>
-                    </tr>';
-
-    while (!empty($idcontratto_prev)) {
-        $rs = $dbo->fetchArray('SELECT nome, numero, data_accettazione, data_conclusione, budget, idcontratto_prev FROM co_contratti WHERE id='.prepare($idcontratto_prev));
-
-        echo '
-                    <tr>
-                        <td>
-                            '.Modules::link($id_module, $idcontratto_prev, tr('Contratto num. _NUM_', [
-                                '_NUM_' => $rs[0]['numero'],
-                            ]).'<br><small class="text-muted">'.$rs[0]['nome'].'</small>').'
-                        </td>
-                        <td align="right">'.Translator::numberToLocale($rs[0]['budget']).' &euro;</td>
-                        <td align="center">'.Translator::dateToLocale($rs[0]['data_accettazione']).'</td>
-                        <td align="center">'.Translator::dateToLocale($rs[0]['data_conclusione']).'</td>
-                    </tr>';
-
-        $idcontratto_prev = $rs[0]['idcontratto_prev'];
-    }
-
-    echo '
-                </table>
-            </div>
-        </div>
-    </div>
-</div>';
-}
-?>
-
 
 {( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
@@ -428,8 +386,10 @@ if (!empty($record['idcontratto_prev'])) {
 
 <?php
 // Collegamenti diretti
-// Fatture collegate a questo contratto
-$elementi = $dbo->fetchArray('SELECT `co_documenti`.*, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idcontratto` = '.prepare($id_record).') ORDER BY `data`');
+// Fatture o interventi collegati a questo contratto
+$elementi = $dbo->fetchArray('SELECT 0 AS `codice`, `co_documenti`.`id` AS `id`, `co_documenti`.`numero` AS `numero`, `co_documenti`.`numero_esterno` AS `numero_esterno`,  `co_documenti`.`data`, `co_tipidocumento`.`descrizione` AS `tipo_documento`, `co_tipidocumento`.`dir` AS `dir`  FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idcontratto` = '.prepare($id_record).')'.'
+UNION
+SELECT  `in_interventi`.`codice` AS `codice`, `in_interventi`.`id` AS `id`, 0 AS `numero`, 0 AS `numero_esterno`, `in_interventi`.`data_richiesta` AS `data`, 0 AS `tipo_documento`, 0 AS `dir` FROM `in_interventi` WHERE `in_interventi`.`id_contratto` = '.prepare($id_record).' ORDER BY `data` ');
 
 if (!empty($elementi)) {
     echo '
@@ -445,18 +405,32 @@ if (!empty($elementi)) {
     <div class="box-body">
         <ul>';
 
-    foreach ($elementi as $fattura) {
-        $descrizione = tr('_DOC_ num. _NUM_ del _DATE_', [
-            '_DOC_' => $fattura['tipo_documento'],
-            '_NUM_' => !empty($fattura['numero_esterno']) ? $fattura['numero_esterno'] : $fattura['numero'],
-            '_DATE_' => Translator::dateToLocale($fattura['data']),
-        ]);
+    // Elenco attività o contratti collegati
+    foreach ($elementi as $riga) {
+        if (!empty($riga['dir'])) {
+            $descrizione = tr('_DOC_ num. _NUM_ del _DATE_', [
+                '_DOC_' => $riga['tipo_documento'],
+                '_NUM_' => !empty($riga['numero_esterno']) ? $riga['numero_esterno'] : $riga['numero'],
+                '_DATE_' => Translator::dateToLocale($riga['data']),
+            ]);
 
-        $modulo = ($fattura['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
-        $id = $fattura['id'];
+            $modulo = ($riga['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
+            $id = $riga['id'];
 
-        echo '
-        <li>'.Modules::link($modulo, $id, $descrizione).'</li>';
+            echo '
+            <li>'.Modules::link($modulo, $id, $descrizione).'</li>';
+        } else {
+            $descrizione = tr('Intervento num. _NUM_ del _DATE_', [
+                '_NUM_' => $riga['codice'],
+                '_DATE_' => Translator::dateToLocale($riga['data']),
+            ]);
+
+            $modulo = 'Interventi';
+            $id = $riga['id'];
+
+            echo '
+            <li>'.Modules::link($modulo, $id, $descrizione).'</li>';
+        }
     }
 
     echo '
@@ -470,10 +444,13 @@ if (!empty($elementi)) {
 <div class="alert alert-error">
     '.tr('Eliminando questo documento si potrebbero verificare problemi nelle altre sezioni del gestionale').'.
 </div>';
-}
-
-?>
+} else {
+    ?>
 
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>
+
+<?php
+}
+?>

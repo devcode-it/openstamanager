@@ -4,19 +4,19 @@ include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
     case 'add':
-        $dbo->insert('zz_documenti', [
+        $dbo->insert('do_documenti', [
             'idcategoria' => post('idcategoria'),
             'nome' => post('nome'),
             'data' => post('data'),
         ]);
-        $id_record = $dbo->last_inserted_id();
+        $id_record = $dbo->lastInsertedID();
 
         flash()->info(tr('Nuova documento aggiunto!'));
 
         break;
 
     case 'update':
-        $dbo->update('zz_documenti', [
+        $dbo->update('do_documenti', [
             'idcategoria' => post('idcategoria'),
             'nome' => post('nome'),
             'data' => post('data'),
@@ -26,7 +26,7 @@ switch (post('op')) {
     break;
 
     case 'delete':
-        $dbo->query('DELETE FROM zz_documenti WHERE id = '.prepare($id_record));
+        $dbo->query('DELETE FROM do_documenti WHERE id = '.prepare($id_record));
 
         Uploads::deleteLinked([
             'id_module' => $id_module,

@@ -606,7 +606,14 @@ class Validator
             }
 
             // Formattazione testo
-            elseif ($info['type'] == 'string') {
+            elseif ($info['type'] == 'string' || $info['type'] == 'normalizedString') {
+                $output = replace(html_entity_decode($output), [
+                    '&' => '&amp;',
+                    '"' => '&quot;',
+                    "'" => '&apos;',
+                    '<' => '&lt;',
+                    '>' => '&gt;',
+                ]);
             }
 
             // Riduzione delle dimensioni

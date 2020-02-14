@@ -10,13 +10,12 @@ class Articolo extends Article
 {
     use RelationTrait;
 
+    public $movimenta_magazzino = false;
+
     protected $table = 'co_righe_preventivi';
 
     /**
      * Crea un nuovo articolo collegato ad una preventivo.
-     *
-     * @param Preventivo $preventivo
-     * @param Original   $articolo
      *
      * @return self
      */
@@ -27,7 +26,7 @@ class Articolo extends Article
         return $model;
     }
 
-    public function movimenta($qta)
+    public function movimentaMagazzino($qta)
     {
         return;
     }

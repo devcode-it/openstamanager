@@ -58,30 +58,26 @@ if ($_GET['lev'] == '3') {
     $saldo_finale = [];
 
     // Calcolo saldo iniziale
-    $rs = $dbo->fetchArray('SELECT SUM(totale) AS totale FROM co_movimenti WHERE idconto="'.$idconto.'" AND data < "'.$date_start.'"');
-    $saldo_iniziale = $rs[0]['totale'];
+    $saldo_iniziale = 0;
     $saldo_finale = $saldo_iniziale;
 
-    if ($saldo_iniziale < 0) {
-        $dare = '';
-        $avere = abs($saldo_iniziale);
-    } else {
-        $dare = abs($saldo_iniziale);
-        $avere = '';
-    }
+    $rs = $dbo->fetchArray('SELECT *, SUM(totale) AS totale
+    FROM co_movimenti
+    WHERE idconto='.prepare($idconto).' AND
+        data >= '.prepare($date_start).' AND
+        data <= '.prepare($date_end).'
+    GROUP BY idmastrino
+    ORDER BY data ASC');
 
-    $body .= "		<tr><td class='br bb padded'></td><td class='br bb padded'><b>SALDO INIZIALE</b></td><td class='br bb padded text-right'><b>".Translator::numberToLocale(abs($dare))."</b></td><td class='bb padded text-right'><b>".Translator::numberToLocale(abs($avere))."</b></td></tr>\n";
-
-    $rs = $dbo->fetchArray('SELECT * FROM co_movimenti WHERE idconto="'.$idconto.'" AND data >= "'.$date_start.'" AND data <= "'.$date_end.'" ORDER BY data ASC');
     // Inizializzo saldo finale
     $saldo_finale2 = [];
     for ($i = 0; $i < sizeof($rs); ++$i) {
         if ($rs[$i]['totale'] >= 0) {
-            $dare = Translator::numberToLocale(abs($rs[$i]['totale']));
+            $dare = moneyFormat(abs($rs[$i]['totale']), 2);
             $avere = '';
         } else {
             $dare = '';
-            $avere = Translator::numberToLocale(abs($rs[$i]['totale']));
+            $avere = moneyFormat(abs($rs[$i]['totale']), 2);
         }
 
         $body .= "		<tr><td class='br bb padded text-center'>".Translator::dateToLocale($rs[$i]['data'])."</td><td class='br bb padded'>".$rs[$i]['descrizione']."</td><td class='br bb padded text-right'>".$dare."</td><td class='bb padded text-right'>".$avere."</td></tr>\n";
@@ -98,7 +94,7 @@ if ($_GET['lev'] == '3') {
     }
 
     // Mostro il saldo finale
-    $body .= "		<tr><td class='br bb padded'></td><td class='br bb padded'><b>SALDO FINALE</b></td><td class='br bb padded text-right'><b>".Translator::numberToLocale(abs(sum($dare)))."</b></td><td class='bb padded text-right'><b>".Translator::numberToLocale(abs(sum($avere)))."</b></td></tr>\n";
+    $body .= "		<tr><td class='br bb padded'></td><td class='br bb padded'><b>SALDO FINALE</b></td><td class='br bb padded text-right'><b>".moneyFormat(abs(sum($dare)), 2)."</b></td><td class='bb padded text-right'><b>".moneyFormat(abs(sum($avere)), 2)."</b></td></tr>\n";
 
     $body .= "		</tbody>
                 </table>\n";
@@ -121,17 +117,10 @@ elseif ($_GET['lev'] == '2') {
         $saldo_finale = [];
 
         // Calcolo saldo iniziale
-        $rs = $dbo->fetchArray('SELECT SUM(totale) AS totale FROM co_movimenti WHERE idconto="'.$rs3[$z]['id'].'" AND data < "'.$date_start.'"');
-        $saldo_iniziale = $rs[0]['totale'];
+        $saldo_iniziale = 0;
         $saldo_finale[] = $saldo_iniziale;
 
-        if ($saldo_iniziale < 0) {
-            $v_avere[] = abs($saldo_iniziale);
-        } else {
-            $v_dare[] = abs($saldo_iniziale);
-        }
-
-        $rs = $dbo->fetchArray('SELECT * FROM co_movimenti WHERE idconto="'.$rs3[$z]['id'].'" AND data >= "'.$date_start.'" AND data <= "'.$date_end.'" ORDER BY data ASC');
+        $rs = $dbo->fetchArray('SELECT * FROM co_movimenti WHERE idconto="'.$rs3[$z]['id'].'" AND data >= '.prepare($date_start).' AND data <= '.prepare($date_end).' ORDER BY data ASC');
 
         for ($i = 0; $i < sizeof($rs); ++$i) {
             if ($rs[$i]['totale'] >= 0) {
@@ -144,11 +133,11 @@ elseif ($_GET['lev'] == '2') {
         $totale = sum($v_dare) - sum($v_avere);
 
         if ($totale >= 0) {
-            $dare = Translator::numberToLocale(abs($totale));
+            $dare = moneyFormat(abs($totale), 2);
             $avere = '';
         } else {
             $dare = '';
-            $avere = Translator::numberToLocale(abs($totale));
+            $avere = moneyFormat(abs($totale), 2);
         }
 
         // Mostro il saldo finale del conto di livello 3
@@ -187,7 +176,7 @@ elseif (get('lev') == '1') {
                 $v_dare = [];
                 $v_avere = [];
 
-                $rs = $dbo->fetchArray('SELECT * FROM co_movimenti WHERE idconto="'.$rs3[$z]['id'].'" AND data >= "'.$date_start.'" AND data <= "'.$date_end.'" ORDER BY data ASC');
+                $rs = $dbo->fetchArray('SELECT * FROM co_movimenti WHERE idconto="'.$rs3[$z]['id'].'" AND data >= '.prepare($date_start).' AND data <= '.prepare($date_end).' ORDER BY data ASC');
 
                 for ($i = 0; $i < sizeof($rs); ++$i) {
                     if ($rs[$i]['totale'] >= 0) {
@@ -212,16 +201,16 @@ elseif (get('lev') == '1') {
                 }
 
                 // Mostro il saldo finale del conto di livello 3
-                $body .= "		<tr><td class='br bb padded'></td><td class='br bb padded'>".$rs3[$z]['numero'].' '.$rs3[$z]['descrizione']."</td><td class='br bb padded text-right'>".Translator::numberToLocale(abs($dare))."</td><td class='bb padded text-right'>".Translator::numberToLocale(abs($avere))."</td></tr>\n";
+                $body .= "		<tr><td class='br bb padded'></td><td class='br bb padded'>".$rs3[$z]['numero'].' '.$rs3[$z]['descrizione']."</td><td class='br bb padded text-right'>".moneyFormat(abs($dare), 2)."</td><td class='bb padded text-right'>".moneyFormat(abs($avere), 2)."</td></tr>\n";
             }
         }
     }
 
     // Stampa "Costi/Ricavi" se conto economico
     if ($rs1[0]['descrizione'] == 'Economico') {
-        $body .= "		<tr><th colspan='3' class='br bb padded'>RICAVI</th><th align='right' class='bb padded'>".Translator::numberToLocale(sum($ricavi))."</th></tr>\n";
-        $body .= "		<tr><th colspan='3' class='br bb padded'>COSTI</th><th align='right' class='bb padded'>".Translator::numberToLocale(sum($costi))."</th></tr>\n";
-        $body .= "		<tr><th colspan='3' class='br padded'>UTILE</th><th class='padded' align='right'>".Translator::numberToLocale(sum($ricavi) - sum($costi))."</th></tr>\n";
+        $body .= "		<tr><th colspan='3' class='br bb padded'>RICAVI</th><th align='right' class='bb padded'>".moneyFormat(sum($ricavi), 2)."</th></tr>\n";
+        $body .= "		<tr><th colspan='3' class='br bb padded'>COSTI</th><th align='right' class='bb padded'>".moneyFormat(sum($costi), 2)."</th></tr>\n";
+        $body .= "		<tr><th colspan='3' class='br padded'>UTILE</th><th class='padded' align='right'>".moneyFormat(sum($ricavi) - sum($costi), 2)."</th></tr>\n";
     }
 
     // Stampa "Attività/Passività" se stato patrimoniale
@@ -245,11 +234,11 @@ elseif (get('lev') == '1') {
                     $saldo_finale = [];
 
                     // Calcolo saldo iniziale
-                    $rs = $dbo->fetchArray('SELECT SUM(totale) AS totale FROM co_movimenti WHERE idconto="'.$rs2[$y]['id'].'" AND data < "'.$date_start.'"');
+                    $rs = $dbo->fetchArray('SELECT SUM(totale) AS totale FROM co_movimenti WHERE idconto="'.$rs2[$y]['id'].'" AND data < '.prepare($date_start).'');
                     $dare = [];
                     $avere = [];
 
-                    $rs = $dbo->fetchArray('SELECT * FROM co_movimenti WHERE idconto="'.$rs3[$z]['id'].'" AND data >= "'.$date_start.'" AND data <= "'.$date_end.'" ORDER BY data ASC');
+                    $rs = $dbo->fetchArray('SELECT * FROM co_movimenti WHERE idconto="'.$rs3[$z]['id'].'" AND data >= '.prepare($date_start).' AND data <= '.prepare($date_end).' ORDER BY data ASC');
 
                     for ($i = 0; $i < sizeof($rs); ++$i) {
                         if ($rs[$i]['totale'] >= 0) {
@@ -291,14 +280,14 @@ elseif (get('lev') == '1') {
                     <tbody>\n";
 
         // Attività
-        $body .= "		<tr><th class='br bb padded'>TOTALE ATTIVIT&Agrave;</th><th align='right' class='bb br padded'>".Translator::numberToLocale($totale_attivita)."</th>\n";
+        $body .= "		<tr><th class='br bb padded'>TOTALE ATTIVIT&Agrave;</th><th align='right' class='bb br padded'>".moneyFormat($totale_attivita, 2)."</th>\n";
 
         // Passività
-        $body .= "		<th class='br bb padded'>PASSIVIT&Agrave;</th><th align='right' class='bb padded'>".Translator::numberToLocale($totale_passivita)."</th></tr>\n";
+        $body .= "		<th class='br bb padded'>PASSIVIT&Agrave;</th><th align='right' class='bb padded'>".moneyFormat($totale_passivita, 2)."</th></tr>\n";
 
         if ($utile_perdita < 0) {
             // Perdita d'esercizio
-            $body .= "		<tr><th class='br bb padded'>PERDITA D'ESERCIZIO</th><th align='right' class='bb br padded'>".Translator::numberToLocale(abs($utile_perdita))."</th>\n";
+            $body .= "		<tr><th class='br bb padded'>PERDITA D'ESERCIZIO</th><th align='right' class='bb br padded'>".moneyFormat(abs($utile_perdita), 2)."</th>\n";
 
             // Utile
             $body .= "		<th class='br bb padded'>&nbsp;</th><th align='right' class='bb padded'>&nbsp;</th></tr>\n";
@@ -307,18 +296,16 @@ elseif (get('lev') == '1') {
             $body .= "		<tr><th class='br bb padded'>&nbsp;</th><th align='right' class='bb br padded'>&nbsp;</th>\n";
 
             // Utile
-            $body .= "		<th class='br bb padded'>UTILE</th><th align='right' class='bb padded'>".Translator::numberToLocale(abs($utile_perdita))."</th></tr>\n";
+            $body .= "		<th class='br bb padded'>UTILE</th><th align='right' class='bb padded'>".moneyFormat(abs($utile_perdita), 2)."</th></tr>\n";
         }
 
         // PAREGGIO 1
-        $body .= "		<tr><th class='br padded'>TOTALE A PAREGGIO</th><th align='right' class='br padded'>".Translator::numberToLocale($pareggio1)."</th>\n";
+        $body .= "		<tr><th class='br padded'>TOTALE A PAREGGIO</th><th align='right' class='br padded'>".moneyFormat($pareggio1, 2)."</th>\n";
 
         // PAREGGIO 2
-        $body .= "		<th class='br padded'>TOTALE A PAREGGIO</th><th align='right' class='padded'>".Translator::numberToLocale($pareggio2)."</th></tr>\n";
+        $body .= "		<th class='br padded'>TOTALE A PAREGGIO</th><th align='right' class='padded'>".moneyFormat($pareggio2, 2)."</th></tr>\n";
     }
 
     $body .= "		</tbody>
                 </table>\n";
 }
-
-$report_name = 'mastrino.pdf';

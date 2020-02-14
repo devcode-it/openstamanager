@@ -20,6 +20,6 @@ echo '
 <!-- EVENTUALE FIRMA GIA\' EFFETTUATA -->
 '.$info_firma.'
 
-<button type="button" class="btn btn-primary " onclick="launch_modal( \''.tr('Anteprima e firma').'\', globals.rootdir + \'/modules/interventi/add_firma.php?id_module='.$id_module.'&id_record='.$id_record.'&anteprima=1\', 1 );" '.($record['flag_completato'] ? 'disabled' : '').'>
+<button type="button" class="btn btn-primary " onclick="launch_modal( \''.tr('Anteprima e firma').'\', globals.rootdir + \'/modules/interventi/add_firma.php?id_module='.$id_module.'&id_record='.$id_record.'&anteprima=1\');" '.($record['flag_completato'] ? 'disabled' : '').'>
     <i class="fa fa-desktop"></i> '.$frase.'...
 </button>';

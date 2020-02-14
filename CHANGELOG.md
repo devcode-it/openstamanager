@@ -4,7 +4,11 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
-- [2.4.9 (2019-03-15)](#249-2019-03-15)
+- [2.4.13 (2020-02-05)](#2413-2020-02-05)
+- [2.4.12 (2019-12-30)](#2412-2019-12-30)
+- [2.4.11 (2019-11-29)](#2411-2019-11-29)
+- [2.4.10 (2019-07-23)](#2410-2019-07-23)
+- [2.4.9 (2019-05-17)](#249-2019-05-17)
 - [2.4.8 (2019-03-01)](#248-2019-03-01)
 - [2.4.7 (2019-02-21)](#247-2019-02-21)
 - [2.4.6 (2019-02-12)](#246-2019-02-12)
@@ -19,28 +23,201 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
+## 2.4.13 (2020-02-05)
 
-## 2.4.9 (2019-03-15)
+### Aggiunto (Added)
+ - Aggiunta di nuovi campi di default nel modulo **Articoli**, con gestione delle quantità impegnati tramite gli ordini cliente
+ - Aggiunta funzionalità di copia fatture in bulk
+ - Aggiunta filtro di ricerca nelle tabelle con il carattere speciale "=" per ricercare una stringa o numero esatti
+ - Aggiunta data e ora trasporto nei ddt
+ - Aggiunta gestione nodo **ScontoMaggiorazione** su **Fattura elettronica**
+ - Inserimento campi aggiuntivi per le importazioni di **Anagrafiche** e **Articoli**
+ - Aggiunta gestione allegati nel modulo di **Prima nota**
+ - Aggiunta creazione accesso utente dall'anagrafica per i tecnici
+ - Aggiunta gestione filigrana per le stampe
+ - Aggiunto modulo per la gestione delle tipologie di relazioni clienti
+ - Ripristinato temporaneamente il plugin **Pianificazione fatturazione** nei **Contratti**
+ - Aggiunta campo "Note" nello **Scadenzario**
+ - Aggiunta visualizzazione dettagli ritenute applicate/calcolate nelle righe delle fatture
+
+### Modificato (Changed)
+ - Aggiornamento colonne con totali mantenendo solo l'imponibile
+ - Miglioramento caricamento dettagli interventi a calendario tramite tooltip
+ - Migliorata visualizzazione scadenze nella scheda fattura
+ - Modificato invio email ritornando all'invio istantaneo quando viene effettuato l'invio dai documenti
+ - Migliorata graficamente la gestione del modulo di movimentazione articoli
+ - Ottimizzazione query sul **Piano dei conti**
+ - Modificato funzionamento del calcolo numero progressivo per **Attività** e **Preventivi*, considerando la presenza dell'anno nel formato
+
+### Fixed
+ - Correzione generatore di numeri documenti in base alla data del documento e non più in base alla data odierna
+ - Correzione calcoli nel plugin **Statistiche**
+ - Corretta stampa registri iva
+ - Correzione selezione sedi azienda
+ - Correzione calcolo stato intervento dopo l'aggiunta di preventivi o contratti in fattura
+ - Correzione calcolo trasferta in fattura
+ - Correzione scelta destinatari multipli nell'invio mail
+ - Correzione calcolo totali interventi svolti nel plugin **MyImpianti**
+
+
+## 2.4.12 (2019-12-30)
+
+### Aggiunto (Added)
+ - Nuova tipologia di fattura elettronica TD02 Acconto/anticipo su fattura
+ - Nuova impostazione per non sovrapporre le attività in dashboard
+ - Movimentazione articoli dal modulo dei movimenti generali, con supporto a lettori barcode
+ - Possibilità di fatturare interventi con importo totale pari a zero
+ - Nuovo campo "Ubicazione" per gli articoli
+ - Nuova funzione di apertura bilancio con la ripresa saldi dal periodo precedente
+ - Nuova funzione di chiusura bilancio con lo spostamento saldi nel conto di chiusura
+ - Possibilità di modifica dei conti di livello 2 e di quelli standard di livello 3
+
+### Modificato (Changed)
+ - Rimozione funzione di autocompletamento campi di testo da browser
+
+### Fixed
+ - Fix caricamento assets dopo aggiornamenti, con aggiunta versionamento
+ - Fix creazione utenti con stesso username
+ - Fix movimenti contabili alla riapertura fattura
+ - Fix creazione nota di credito
+ - Fix salvataggio sessioni di lavoro da accesso tecnico
+ - Fix gestione categorie documenti
+ - Fix orario lavorativo in dashboard
+ - Fix problema generazione stampe in invio mail durante accesso multi-utente
+ - Fix calcolo margine nei preventivi
+ - Fix importazione note di credito con importi negativi
+ - Altri fix minori
+
+
+## 2.4.11 (2019-11-29)
+
+### Aggiunto (Added)
+
+ - Nuova sezione *Note interne* nei moduli **Anagrafiche**, **Attività**, **Preventivi**, **Contratti**, **Fatture di vendita**, **Fatture di acquisto**, **Scadenzario**, **Ordini cliente**, **Ordini fornitore**, **Articoli**, **DDT di uscita**, **DDT di entrata** e **MyImpianti**
+ - Nuova sezione *Checklist* nei moduli **Attività** e **MyImpianti**
+ - Nuova procedura di ripristino password via email
+ - Supporto a multiple versioni dell'API interna, per mantenere la compatibilità con servizi esterni collegati a seguito di aggiornamenti e nuove funzionalità
+ - Possibilità di registrare contabilmente in modo massivo le fatture in **Fatture di vendita** e le scadenze in **Scadenzario**
+ - Possibilità di importare in sequenza tutte le *Fatture Elettroniche* presenti, con supporto alle relazioni delle **Fatture di acquisto** con le *Note di credito/debito* e le *Parcelle*
+ - Supporto al footer solo nell'ultima pagina per le stampe (**Fatture di vendita** e **DDT di uscita**)  tramite l'opzione *last-page-footer*
+ - Informazioni più complete sulle *Fatture Elettroniche* da importare per gli utenti con servizio di importazione automatica
+ - Possibilità di indicare una foto per l'utente, visualizzata nelle *Note interne* e nei futuri allegati che verranno caricati
+ - Possibilità di modificare il nome delle categorie degli allegati
+ - Stampe dei consuntivi interni (i prezzi sono sostituiti dai costi)
+ - Supporto all'inserimento manuale di maggiori attributi per le *Fatture Elettroniche*, tramite gli appositi pulsanti "Attributi avanzati" all'interno delle **Fatture di vendita**
+ - Aggiunto Identificativo documento, Num Item, codici CIG e CUP in **DDT di uscita**
+ - Modulo **Newsletter** per la gestione delle campagne di newsletter sulla base delle informazioni delle **Anagrafiche**
+ - Supporto alle *Dichiarazione d'Intento* per le *Fatture di vendita**
+ - Calcolo del margine per i **Preventivi**
+ - Supporto alla selezione della lingua durante la configurazione
+ - Gestione dei permessi per gruppi all'interno del sistema di **Gestione documentale**
+ - Supporto agli sconti combinati nel modulo **Listini**
+ - Supporto al caricamento di archivi ZIP per le *Fatture Elettroniche* di acquisto da importare (solo estrazione)
+
+### Modificato (Changed)
+
+ - Aggiornamento delle stampe di *Riepilogo intervento*, *Consuntivo contratto* e *Consuntivo preventivo*
+ - Correzione dell'importazione delle *Fatture Elettroniche* per supportare Ritenuta d'Acconto (dove indicata), Rivalsa INPS (su tutto il documento) e Ritenuta contributi (su tutto il documento)
+ - Miglioramento del sistema di evasione delle quantità nel passaggio tra documenti, ora integrato nelle classi Eloquent e completamente automatico
+ - Correzione delle diciure generali *Imponibile scontato* in *Totale imponibile* e *Sconto* in *Sconto/maggiorazione*
+ - Aggiornamento degli hook per permettere l'aggiunta di task in background
+    - Invio delle email
+    - Backup automatico
+ - **Articoli** ora eliminabili solo virtualmente attraverso il flag *deleted_at*
+ - Miglioramento del plugin *Giacenze* nel modulo **Articoli** per interagire con gli **Ordini** registrati, e aggiunta della quantità progressiva per nel plugin *Movimenti*
+ - Generazione del numero delle **Fatture di vendita** a seguito dell'emissione della stessa
+ - Supporto alla precisione di importi e quantità fino a 5 decimali
+ - Opzione per la creazione automatica degli articoli presenti in **Fattura Elettronica**
+ - Revisione della visualizzazione grafica del modulo **Prima Nota**, per rendere più chiara la suddivisione logica delle righe in relazione all'evasione delle scadenze
+ - Aggiornamento delle stampe *Inventario magazzino* e *Calendario*
+
+### Rimosso (Removed)
+ - Funzione *get_costi_intervento* del modulo **Attività**, a causa dell'aggiornamento della maggior parte del sistema di gestione degli **Attività** con le classi Eloquent
+ - Funzione *aggiorna_scadenziario* del modulo **Prima Nota**
+ - Classe *src/Mail.php*
+
+### Fixed
+
+ - Fix selezione di articoli senza movimenti
+ - Fix per l'autocompletamento delle email nella procedura di invio
+
+## 2.4.10 (2019-07-23)
+
+### Aggiunto (Added)
+
+ - Possibilità di gestire più magazzini attraverso la sezione delle sedi nelle **Anagrafiche** (gli **Automezzi** sono stati trasformati in **Sedi**, con possibilità di tracciamento di partenza e destinazione tra le sedi)
+ - Modulo **Tipi scadenze** (in **Strumenti** -> **Tabelle**) per gestire i tipi di scadenze
+ - Prima versione della traduzione parziale in inglese del gestionale
+ - Validazione AJAX dei campi (*partita iva*, *codice fiscale* e *codice* in **Anagrafiche**, *codice* in **Articoli**)
+ - Possibilità di ripristinare gli elementi eliminati dove l'eliminazione avviene a livello virtuale (**Anagrafiche**)
+ - Plugin **Rinnovi** in **Contratti**
+ - Caricamento del **Piano dei conti** attraverso AJAX
+ - Plugin *Statistiche* in **Articoli**, con visualizzazione del *Prezzo medio acquisto* in periodi personalizzabili
+ - Supporto ai select come **Campi personalizzati**
+ - Possibilità di generazione massiva delle fatture elettroniche
+
+### Modificato (Changed)
+
+ - Miglioramento grafica degli hook, con gestione automatica degli aggiornamenti delle informazioni causati da altre componente del gestionale
+ - Le tariffe dei tecnici sono state standardizzate nel seguente modo:
+    - Il modulo **Tipi di attività** permette di definire le tariffe standard per i nuovi tecnici
+    - Il modulo **Tecnici e tariffe** permette di definire le tariffe personalizzate per i diversi tecnici in relazione ai tipi di attività
+    - Il modulo **Contratti** permette di definire le tariffe personalizzate per le *nuove sessioni* delle attività collegate
+    - La sezione di modifica delle sessioni permette la modifica manuale delle tariffe interessate; il cambiamento del tipo di sessione provoca l'utilizzo delle tariffe definite da **Tecnici e tariffe**
+ - Ottimizzazione delle stampe **Scadenzario** e **Registro IVA**, e della tabella principale del modulp **Fatture di vendita**
+ - Miglioramento della plugin *Statistiche* in **Anagrafiche**,con visualizzazione dei dati in periodi personalizzabili
+ - Miglioramento del sistema di importazione delle ricevute delle Fatture Elettroniche, per permetterne il caricamento manuale
+ - Standardizzazione dei nomi predefiniti delle stampa e dei relativi file generati
+
+### Rimosso (Removed)
+ - Supporto ai raggruppamenti di **Contratti** e **Preventivi** nelle **Fatture**
+
+### Fixed
+
+ - Fix export delle tabelle principali in Excel
+ - Fix bug della configurazione iniziale nella selezione della nazione
+ - Fix delle somme filtrate sulle tabelle principali
+ - Fix per includere le stampe previste nelle notifiche
+ - Risolti alcuni bug generali
+
+## 2.4.9 (2019-05-17)
 
 ### Aggiunto (Added)
 
  - Possibilità di ricalcolare le scadenze delle **Fatture di acquisto** importate da fatture elettroniche
- - Aggiunto campo data ricezione per le **Fatture di acquisto**
- - Aggiunta stampa **Preventivo** senza costi totali
- - Aggiunto export massivo XML fatture
+ - Campo *Data registrazione* e *Data competenza*  per le **Fatture di acquisto**
+ - Stampa **Preventivo** senza costi totali
+ - Impostazione di esportazione massiva degli XML delle **Fatture di vendita**
+ - Impostazioni "Riferimento dei documenti nelle stampe" e "Riferimento dei documenti in Fattura Elettronica" per permettere l'inclusione o meno delle relative diciture in stampe e Fattura Elettronica
+ - Supporto all'importazione delle Fatture Elettroniche Semplificate e alle notifiche ZIP
+ - Sistema di confronto dei totali delle Fatture Elettroniche importate (totale nel file XML) con il totale calcolato dal gestionale per la visualizzazione grafica di eventuali errori di arrotondamento
+ - Pulsante per impostare la Fatture Elettroniche remota come processata **(integrazione con sistemi interni)**
+ - Modulo **Stato dei servizi** per la gestione di widget e moduli, e la visualizzazione dello spazione occupato
+  - Sistema di hook (e notifiche) per l'esecuzione automatica di alcune azioni periodiche
+    - Controllo automatico della presenza di Fatture Elettroniche da importare **(integrazione con sistemi interni)**
+    - Controllo automatico della presenza di ricevute di Fatture Elettroniche rilasciate **(integrazione con sistemi interni)**
+ - Possibilità di duplicare gli **Impianti**
 
 ### Modificato (Changed)
 
- - Corretto calcolo marca da bollo contemplando solo le righe con esenzione iva da natura N1 a N4
- - Aggiornati stylesheet per le notifiche fattura elettronica
+ - La marca da bollo considera solo le righe con esenzione iva da natura N1 a N4, ed è modificabile manualmente a livello di fattura
+ - Gli sconti incodizionati sono ora gestiti a tutti gli effetti come righe
+ - Miglioramento della procedura di interpretazione degli XML codificati in P7M (basata sulla libreria OpenSSL)
+ - Aggiornati gli stylesheet per le notifiche della Fattura elettronica
  - Possibilità di ricercare per valori maggiori/uguali o minori/uguali sui campi delle tabelle (importi)
+ - Spostamento della gestione di widget e moduli da **Aggiornamenti** al modulo **Stato dei servizi**
+ - I totali vengono visualizzati e arrotondati sempre a due cifre per legge (la modifica consiste **solo nella visualizzazione dei totali**, e non influenza i conteggi in alcun modo)
+ - Modernizzazione del plugin *Statistiche* nel modulo **Anagrafiche**
 
 ### Fixed
 
  - Fix selezione righe multiple sulle tabelle
+ - Fix dei conteggi dei widget *Acquisti* e *Fatturato* (esclusione dell'IVA)
+ - Fix dei ripristini delle quantità evase nei **Preventivi** e nei **Contratti**
  - Fix API per APP OSM
+ - Fix per compatibilità con MySQL 8
  - Risolti altri bug generali
- 
+
 ## 2.4.8 (2019-03-01)
 
 ### Aggiunto (Added)

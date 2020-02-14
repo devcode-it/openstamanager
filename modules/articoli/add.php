@@ -10,15 +10,15 @@ unset($_SESSION['superselect']['id_categoria']);
 
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "text", "label": "<?php echo tr('Inserisci il codice:'); ?>", "name": "codice", "required": 1 ]}
+			{[ "type": "text", "label": "<?php echo tr('Inserisci il codice:'); ?>", "name": "codice", "required": 0, "value": "<?php echo htmlentities(filter('codice')) ?: ''; ?>", "help": "<?php echo tr('Se non specificato, il codice verrà calcolato automaticamente'); ?>" ]}
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "text", "label": "<?php echo tr('Inserisci la descrizione:'); ?>", "name": "descrizione", "required": 1 ]}
+			{[ "type": "text", "label": "<?php echo tr('Inserisci la descrizione:'); ?>", "name": "descrizione", "required": 1, "value": "<?php echo htmlentities(filter('descrizione')) ?: ''; ?>" ]}
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Inserisci la categoria:'); ?>", "name": "categoria", "required": 1, "ajax-source": "categorie", "icon-after": "add|<?php echo Modules::get('Categorie articoli')['id']; ?>" ]}
+			{[ "type": "select", "label": "<?php echo tr('Inserisci la categoria:'); ?>", "name": "categoria", "required": 0, "ajax-source": "categorie", "icon-after": "add|<?php echo Modules::get('Categorie articoli')['id']; ?>" ]}
 		</div>
 
 		<div class="col-md-6">

@@ -70,7 +70,7 @@ $_SESSION['module_'.$record['id_module']]['id_segment'] = $previous_module;
 
 <?php
 
-if (str_contains($current_module['option'], '|segment|')) {
+if (str_contains($current_module['option'], '|segment')) {
     ?>
 	<!-- Campi extra -->
 	<div class="panel panel-primary">
@@ -81,7 +81,7 @@ if (str_contains($current_module['option'], '|segment|')) {
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-md-6">
-                    {[ "type": "text", "label": "<?php echo tr('Maschera'); ?>", "name": "pattern", "class": "", "value": "$pattern$", "maxlength": 25, "placeholder":"####/YYYY", "extra": "<?php echo ($tot > 0) ? 'readonly' : ''; ?>" ]}
+                    {[ "type": "text", "label": "<?php echo tr('Maschera'); ?>", "name": "pattern", "value": "$pattern$", "maxlength": 25, "placeholder":"####/YYYY", "extra": "<?php echo ($tot > 0) ? 'readonly' : ''; ?>" ]}
 				</div>
 
                 <div class="col-md-6">

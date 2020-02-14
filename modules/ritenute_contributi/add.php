@@ -14,11 +14,11 @@ include_once __DIR__.'/../../core.php';
 
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "number", "label": "<?php echo tr('Percentuale'); ?>", "name": "percentuale", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
+			{[ "type": "number", "label": "<?php echo tr('Percentuale'); ?>", "name": "percentuale", "min-value": "1", "max-value": "100","icon-after": "<i class=\"fa fa-percent\"></i>", "value": "100" ]}
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "number", "label": "<?php echo tr('Percentuale imponibile'); ?>", "name": "percentuale_imponibile", "min-value": "1", "max-value": "100", "help": "<?php echo tr('Percentuale imponibile sui cui applicare il calcolo della ritenuta'); ?>", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
+			{[ "type": "number", "label": "<?php echo tr('Percentuale imponibile'); ?>", "name": "percentuale_imponibile", "min-value": "1", "max-value": "100", "help": "<?php echo tr('Percentuale imponibile sui cui applicare il calcolo della ritenuta'); ?>", "icon-after": "<i class=\"fa fa-percent\"></i>", "value": "100" ]}
 		</div>
 	</div>
 

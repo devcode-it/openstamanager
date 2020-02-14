@@ -7,24 +7,53 @@ use AcceptanceTester;
 class RowHelper extends \Codeception\Module
 {
     /** @param string */
-    protected $finalPattern = "//div[@class='panel-heading' and contains(string(), 'Righe')]/parent::*//table//tr[contains(string(), '|name|')]//td[2]";
+    protected $tablePattern = "//div[@class='panel-heading' and contains(string(), 'Righe')]/parent::*//table//tr[contains(string(), '|name|')]";
     protected $dir;
+
+    /**
+     * Aggiunge un nuovo sconto.
+     *
+     * @param string $value
+     * @param int    $type
+     */
+    public function addDiscount(AcceptanceTester $t, $descrizione, $value, $type)
+    {
+        $t->wait(0.5);
+
+        // Apre il modal
+        $t->clickAndWaitModal('Sconto/maggiorazione', '#tab_0');
+
+        $t->fillField('#descrizione_riga', $descrizione);
+
+        if ($type == 'UNT') {
+            $t->fillField('#sconto_unitario', $value);
+        } else {
+            $t->fillField('#sconto_percentuale', $value);
+        }
+
+        // Effettua il submit
+        $t->clickAndWait('Aggiungi', '.modal');
+
+        // Controlla il salvataggio finale
+        $t->see('Sconto/maggiorazione aggiunto');
+    }
 
     /**
      * Aggiunge una nuova riga.
      *
-     * @param AcceptanceTester $t
-     * @param string           $descrizione
-     * @param int              $qta
-     * @param float            $prezzo
-     * @param int              $sconto
-     * @param string           $tipo_sconto
-     * @param int              $id_iva
-     * @param int              $id_rivalsa_inps
-     * @param int              $id_ritenuta_acconto
+     * @param string $descrizione
+     * @param int    $qta
+     * @param float  $prezzo
+     * @param int    $sconto
+     * @param string $tipo_sconto
+     * @param int    $id_iva
+     * @param int    $id_rivalsa_inps
+     * @param int    $id_ritenuta_acconto
      */
     public function addRow(AcceptanceTester $t, $descrizione, $qta, $prezzo, $sconto = 0, $tipo_sconto = 'UNT', $id_iva = null, $id_rivalsa_inps = null, $id_ritenuta_acconto = null)
     {
+        $t->wait(0.5);
+
         // Apre il modal
         $t->clickAndWaitModal('Riga', '#tab_0');
 
@@ -40,18 +69,19 @@ class RowHelper extends \Codeception\Module
     /**
      * Aggiunge un nuovo articolo.
      *
-     * @param AcceptanceTester $t
-     * @param string           $descrizione
-     * @param int              $qta
-     * @param float            $prezzo
-     * @param int              $sconto
-     * @param string           $tipo_sconto
-     * @param int              $id_iva
-     * @param int              $id_rivalsa_inps
-     * @param int              $id_ritenuta_acconto
+     * @param string $descrizione
+     * @param int    $qta
+     * @param float  $prezzo
+     * @param int    $sconto
+     * @param string $tipo_sconto
+     * @param int    $id_iva
+     * @param int    $id_rivalsa_inps
+     * @param int    $id_ritenuta_acconto
      */
     public function addArticle(AcceptanceTester $t, $id_articolo, $descrizione, $qta, $prezzo, $sconto = 0, $tipo_sconto = 'UNT', $id_iva = null, $id_rivalsa_inps = null, $id_ritenuta_acconto = null)
     {
+        $t->wait(0.5);
+
         // Apre il modal
         $t->clickAndWaitModal('Articolo', '#tab_0');
 
@@ -67,8 +97,6 @@ class RowHelper extends \Codeception\Module
 
     /**
      * Undocumented function.
-     *
-     * @param AcceptanceTester $t
      */
     public function testImporti(AcceptanceTester $t, $direzione = 'entrata')
     {
@@ -76,6 +104,7 @@ class RowHelper extends \Codeception\Module
 
         // Righe di test (issue #98)
         $this->addRow($t, 'Riga 1', 1, 34);
+
         $this->addRow($t, 'Riga 2', 1, 17.44);
         $this->addRow($t, 'Riga 3', 48, 0.52);
         $this->addRow($t, 'Riga 4', 66, 0.44);
@@ -92,45 +121,42 @@ class RowHelper extends \Codeception\Module
 
         $t->see('542,34', $this->getFinalValue('Imponibile'));
         $t->see('60,00', $this->getFinalValue('Sconto'));
-        $t->see('482,34', $this->getFinalValue('Imponibile scontato'));
+        $t->see('482,34', $this->getFinalValue('Totale imponibile'));
         $t->see('106,11', $this->getFinalValue('IVA'));
         $t->see('588,45', $this->getFinalValue('Totale'));
 
         // Sconto globale in euro
-        $t->fillField('#sconto_generico', 100);
-        $t->select2ajax('#tipo_sconto_generico', 'UNT');
-        $t->clickAndWait('Salva');
+        $this->addDiscount($t, 'Sconto unitario', 100, 'UNT');
 
-        $t->see('442,34', $this->getFinalValue('Imponibile'));
-        $t->see('60,00', $this->getFinalValue('Sconto'));
-        $t->see('382,34', $this->getFinalValue('Imponibile scontato'));
+        $t->see('542,34', $this->getFinalValue('Imponibile'));
+        $t->see('160,00', $this->getFinalValue('Sconto'));
+        $t->see('382,34', $this->getFinalValue('Totale imponibile'));
         $t->see('84,11', $this->getFinalValue('IVA'));
         $t->see('466,45', $this->getFinalValue('Totale'));
 
         // Sconto globale in percentuale
-        $t->fillField('#sconto_generico', 10);
-        $t->select2ajax('#tipo_sconto_generico', 'PRC');
-        $t->clickAndWait('Salva');
+        $this->addDiscount($t, null, 10, 'PRC');
 
-        $t->see('494,11', $this->getFinalValue('Imponibile'));
-        $t->see('60,00', $this->getFinalValue('Sconto'));
-        $t->see('434,11', $this->getFinalValue('Imponibile scontato'));
-        $t->see('95,50', $this->getFinalValue('IVA'));
-        $t->see('529,61', $this->getFinalValue('Totale'));
+        $this->delete($t, 'Sconto unitario');
+
+        $t->see('542,34', $this->getFinalValue('Imponibile'));
+        $t->see('98,23', $this->getFinalValue('Sconto'));
+        $t->see('444,11', $this->getFinalValue('Totale imponibile'));
+        $t->see('97,70', $this->getFinalValue('IVA'));
+        $t->see('541,81', $this->getFinalValue('Totale'));
     }
 
     /**
      * Completa le informazioni per la creazione di un nuovo elemento.
      *
-     * @param AcceptanceTester $t
-     * @param [type]           $descrizione
-     * @param [type]           $qta
-     * @param [type]           $prezzo
-     * @param int              $sconto
-     * @param string           $tipo_sconto
-     * @param [type]           $id_iva
-     * @param [type]           $id_rivalsa_inps
-     * @param [type]           $id_ritenuta_acconto
+     * @param [type] $descrizione
+     * @param [type] $qta
+     * @param [type] $prezzo
+     * @param int    $sconto
+     * @param string $tipo_sconto
+     * @param [type] $id_iva
+     * @param [type] $id_rivalsa_inps
+     * @param [type] $id_ritenuta_acconto
      */
     protected function fill(AcceptanceTester $t, $descrizione, $qta, $prezzo, $sconto = 0, $tipo_sconto = 'UNT', $id_iva = null, $id_rivalsa_inps = null, $id_ritenuta_acconto = null)
     {
@@ -143,7 +169,7 @@ class RowHelper extends \Codeception\Module
             $t->fillField('#sconto', $sconto);
 
             if (in_array($tipo_sconto, ['PRC', 'UNT'])) {
-                $t->select2ajax('#tipo_sconto', $tipo_sconto);
+                $t->select2ajax('#tipo_sconto', $tipo_sconto == 'PRC' ? 0 : 1);
             }
         }
 
@@ -159,23 +185,41 @@ class RowHelper extends \Codeception\Module
         }
     }
 
-    /**
-     * Undocumented function.
-     *
-     * @param string $pattern
-     */
-    protected function setFinalPattern($pattern)
+    protected function delete(AcceptanceTester $t, $descrizione)
     {
-        $this->finalPattern = $pattern;
+        $path = $this->getPattern($descrizione).'//td[last()]';
+
+        $t->wait(0.5);
+        $t->click('.btn-danger', $path);
+        $t->acceptPopup();
+
+        $t->waitForElementNotVisible('#main_loading');
+        $t->waitForElementNotVisible('#mini-loader');
+
+        $t->see('Riga eliminata!');
+
+        //$t->click('#save', '#tab_0');
     }
 
     /**
      * Undocumented function.
      *
-     * @param string $type
+     * @param string $pattern
      */
-    protected function getFinalValue($type)
+    protected function setPattern($pattern)
     {
-        return str_replace('|name|', strtoupper($type), $this->finalPattern);
+        $this->tablePattern = $pattern;
+    }
+
+    protected function getPattern($name)
+    {
+        return str_replace('|name|', $name, $this->tablePattern);
+    }
+
+    protected function getFinalValue($name)
+    {
+        $name = strtoupper($name);
+
+        return $this->getPattern($name).'//td[2]';
     }
 }

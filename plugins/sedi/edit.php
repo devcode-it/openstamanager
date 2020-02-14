@@ -15,7 +15,7 @@ echo '
 <form action="" method="post" role="form" id="form_sedi">
     <input type="hidden" name="id_plugin" value="'.$id_plugin.'">
     <input type="hidden" name="id_parent" value="'.$id_parent.'">
-    <input type="hidden" name="id_record" value="'.$id_record.'">
+    <input type="hidden" name="id" value="'.$record['id'].'">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="updatesede">
 
@@ -37,7 +37,7 @@ echo '
 
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "text", "label": "'.tr('Città').'", "name": "citta", "id": "citta_", "value": "$citta$" ]}
+			{[ "type": "text", "label": "'.tr('Città').'", "name": "citta", "id": "citta_", "value": "$citta$", "required": 1 ]}
 		</div>
 
 		<div class="col-md-2">
@@ -55,7 +55,7 @@ echo '
 
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "select", "label": "'.tr('Nazione').'", "name": "id_nazione", "values": "query=SELECT `id`, CONCAT_WS(\' - \', `iso2`, `nome`) AS `descrizione` FROM `an_nazioni` ORDER BY `descrizione` ASC", "value": "$id_nazione$" ]}
+			{[ "type": "select", "label": "'.tr('Nazione').'", "name": "id_nazione", "value": "$id_nazione$", "ajax-source": "nazioni" ]}
 		</div>
 
 		<div class="col-md-6">
@@ -79,9 +79,14 @@ echo '
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "values": "query=SELECT `id`, CONCAT(`nome`, \' - \', `descrizione`) AS `descrizione` FROM `an_zone` ORDER BY `descrizione` ASC", "value": "$idzona$" ]}
+			{[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "ajax-source": "zone",  "value": "$idzona$", "placeholder": "'.tr('Nessuna zona').'", "icon-after": "add|'.Modules::get('Zone')['id'].'" ]}
 		</div>
-    </div>';
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			{[ "type": "textarea", "label": "'.tr('Note').'", "name": "note", "value": "$note$" ]}
+		</div>
+	</div>';
 
 if (!empty($google)) {
     echo '
@@ -125,15 +130,32 @@ if (!empty($google)) {
     </div>';
 }
 
+// Permetto eliminazione tipo sede solo se non è utilizzata da nessun'altra parte nel gestionale
+$elementi = $dbo->fetchArray('SELECT `zz_user_sedi`.`id_user` AS `id` FROM `zz_user_sedi` WHERE `zz_user_sedi`.`idsede` = '.prepare($id_record).'
+UNION
+SELECT `an_referenti`.`id` AS `id` FROM `an_referenti` WHERE `an_referenti`.`idsede` = '.prepare($id_record).' 
+ORDER BY `id`');
+
+if (!empty($elementi)) {
+    echo '
+    <div class="alert alert-danger">
+        '.tr('Ci sono _NUM_ documenti collegati', [
+            '_NUM_' => count($elementi),
+        ]).'.
+	</div>';
+
+    $disabled = 'disabled';
+}
+
 echo '
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12">
-            <a class="btn btn-danger ask" data-backto="record-edit" data-op="deletesede" data-id_record="'.$record['id'].'" data-id_plugin="'.$id_plugin.'" data-id_module="'.$id_module.'" data-id_parent="'.$id_parent.'">
+            <a class="btn btn-danger ask '.$disabled.'" data-backto="record-edit" data-op="deletesede" data-id="'.$record['id'].'" data-id_plugin="'.$id_plugin.'" data-id_module="'.$id_module.'" data-id_parent="'.$id_parent.'" '.$disabled.'>
                 <i class="fa fa-trash"></i> '.tr('Elimina').'
             </a>
 
-			<button type="submit" class="btn btn-primary pull-right"><i class="fa fa-plus"></i> '.tr('Modifica').'</button>
+			<button type="submit" class="btn btn-primary pull-right"><i class="fa fa-edit"></i> '.tr('Modifica').'</button>
 		</div>
 	</div>
 </form>';

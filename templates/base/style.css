@@ -122,3 +122,18 @@ table#contents tbody td {
 .cell-padded {
     padding: 4px;
 }
+
+.fake-footer p,
+.fake-footer table,
+.fake-footer table.table-bordered th,
+.fake-footer table.table-striped tbody tr td,
+.fake-footer th,
+.fake-footer tbody,
+.fake-footer thead,
+.fake-footer tfoot,
+.fake-footer td,
+.fake-footer tr {
+    color: white !important;
+    background: none !important;
+    border-color: white !important;
+}

@@ -4,8 +4,6 @@ include_once __DIR__.'/../../core.php';
 
 use Models\Module;
 
-$enable_readonly = !setting('Modifica Viste di default');
-
 echo '
 <form action="" method="post" role="form">
 	<input type="hidden" name="backto" value="record-edit">
@@ -14,7 +12,7 @@ echo '
 	<!-- DATI -->
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title">'.tr('Opzioni di visualizzazione').'</h3>
+			<h3 class="panel-title">'.tr('Opzioni generali').'</h3>
 		</div>
 
 		<div class="panel-body">';
@@ -51,11 +49,14 @@ echo '
 if ($options != '' && $options != 'menu' && $options != 'custom') {
     $module_query = Util\Query::getQuery(Module::find($id_record));
 
+    $beautiful_query = nl2br(htmlentities($module_query));
+    $beautiful_query = str_replace('   ', '&nbsp;&nbsp;&nbsp;&nbsp;', $beautiful_query);
+
     echo '
 			<div class="row">
 				<div class="col-md-12">
 					<p><strong>'.tr('Query risultante').':</strong></p>
-                    <p>'.htmlentities($module_query).'</p>
+                    <div class="well">'.$beautiful_query.'</div>
 
                     <div class="row">
                         <div class="col-md-12 text-right">
@@ -79,369 +80,32 @@ echo '
 
 if (!empty($options) && $options != 'custom' && $options != 'menu') {
     echo '
+<div class="nav-tabs-custom">
+    <ul class="nav nav-tabs nav-justified">
+        <li class="active"><a data-toggle="tab" href="#fields">'.tr('Campi').' <span class="badge">'.($dbo->fetchNum('SELECT * FROM zz_views WHERE id_module='.prepare($record['id']).' ORDER BY `order` ASC')).'</a></li>
+        <li><a data-toggle="tab" href="#filters">'.tr('Filtri').' <span class="badge">'.($dbo->fetchNum('SELECT * FROM zz_group_module WHERE idmodule='.prepare($record['id']).' ORDER BY `id` ASC')).'</span></a></li>
+    </ul>
 
-<form action="" method="post" role="form">
-	<input type="hidden" name="backto" value="record-edit">
-	<input type="hidden" name="op" value="fields">
+    <div class="tab-content">
 
-	<div class="row">
-		<div class="col-md-9">
-			<div class="panel panel-primary">
-				<div class="panel-heading">
-					<h3 class="panel-title">'.tr('Campi disponibili').'</h3>
-				</div>
+        <!-- CAMPI -->
+        <div id="fields" class="tab-pane fade in active">';
 
-				<div class="panel-body">
-					<div class="data">';
-
-    $key = 0;
-    $fields = $dbo->fetchArray('SELECT * FROM zz_views WHERE id_module='.prepare($record['id']).' ORDER BY `order` ASC');
-    foreach ($fields as $key => $field) {
-        $editable = !($field['default'] && $enable_readonly);
-
-        echo '
-					    <div class="box ';
-        if ($field['visible']) {
-            echo 'box-success';
-        } else {
-            echo 'box-danger';
-        }
-        echo '">
-							<div class="box-header with-border">
-								<h3 class="box-title">
-									<a data-toggle="collapse" href="#field-'.$field['id'].'">'.tr('Campo in posizione _POSITION_', [
-                                        '_POSITION_' => $field['order'],
-                                    ]).' ('.$field['name'].')</a>
-								</h3>';
-        if ($editable) {
-            echo '
-                                <a class="btn btn-danger ask pull-right" data-backto="record-edit" data-id="'.$field['id'].'">
-                                    <i class="fa fa-trash"></i> '.tr('Elimina').'
-                                </a>';
-        }
-        echo '
-							</div>
-							<div id="field-'.$field['id'].'" class="box-body collapse">
-								<div class="row">
-									<input type="hidden" value="'.$field['id'].'" name="id['.$key.']">
-
-									<div class="col-md-12">
-										{[ "type": "text", "label": "'.tr('Nome').'", "name": "name['.$key.']", "value": "'.$field['name'].'"';
-        if (!$editable) {
-            echo ', "readonly": "1"';
-        }
-        echo ', "help": "'.tr('Nome con cui il campo viene identificato e visualizzato nella tabella').'" ]}
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-md-12">
-										{[ "type": "textarea", "label": "'.tr('Query prevista').'", "name": "query['.$key.']", "value": "'.prepareToField($field['query']).'"';
-        if (!$editable) {
-            echo ', "readonly": "1"';
-        }
-        echo ', "required": "1", "help": "'.tr('Nome effettivo del campo sulla tabella oppure subquery che permette di ottenere il valore del campo').'.<br>'.tr('ATTENZIONE: utilizza sempre i caratteri < o > seguiti da spazio!').'" ]}
-									</div>
-								</div>
-
-								<div class="row">
-									<div class="col-md-6">
-										{[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi['.$key.'][]", "multiple": "1", "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC", "value": "';
-        $results = $dbo->fetchArray('SELECT GROUP_CONCAT(DISTINCT id_gruppo SEPARATOR \',\') AS gruppi FROM zz_group_view WHERE id_vista='.prepare($field['id']));
-
-        echo $results[0]['gruppi'].'"';
-
-        echo ', "help": "'.tr('Gruppi di utenti in grado di visualizzare questo campo').'" ]}
-									</div>
-
-									<div class="col-xs-12 col-md-6">
-										{[ "type": "select", "label": "'.tr('Visibilità').'", "name": "visible['.$key.']", "values": "list=\"0\":\"'.tr('Nascosto (variabili di stato)').'\",\"1\": \"'.tr('Visibile nella sezione').'\"", "value": "'.$field['visible'].'", "help": "'.tr('Stato del campo: visibile nella tabella oppure nascosto').'" ]}
-									</div>
-								</div>
-
-								<div class="row">
-									<div class="col-md-3">
-										{[ "type": "checkbox", "label": "'.tr('Ricercabile').'", "name": "search['.$key.']", "value": "'.$field['search'].'", "help": "'.tr('Indica se il campo è ricercabile').'" ]}
-									</div>
-
-									<div class="col-md-3">
-										{[ "type": "checkbox", "label": "'.tr('Ricerca lenta').'", "name": "slow['.$key.']", "value": "'.$field['slow'].'", "help": "'.tr("Indica se la ricerca per questo campo è lenta (da utilizzare nel caso di evidenti rallentamenti, mostra solo un avviso all'utente").'" ]}
-									</div>
-
-									<div class="col-md-3">
-										{[ "type": "checkbox", "label": "'.tr('Sommabile').'", "name": "sum['.$key.']", "value": "'.$field['summable'].'", "help": "'.tr('Indica se il campo è da sommare').'" ]}
-									</div>
-
-                                    <div class="col-md-3">
-										{[ "type": "checkbox", "label": "'.tr('Formattabile').'", "name": "format['.$key.']", "value": "'.$field['format'].'", "help": "'.tr('Indica se il campo è formattabile in modo automatico').'" ]}
-									</div>
-								</div>
-
-								<div class="row">
-									<div class="col-md-6">
-										{[ "type": "text", "label": "'.tr('Ricerca tramite').'", "name": "search_inside['.$key.']", "value": "'.$field['search_inside'].'"';
-        if (!$editable) {
-            echo ', "readonly": "1"';
-        }
-        echo ', "help": "'.tr('Query personalizzata per la ricerca (consigliata per colori e icone)').'.<br>'.tr('ATTENZIONE: utilizza sempre i caratteri < o > seguiti da spazio!').'" ]}
-									</div>
-
-									<div class="col-md-6">
-										{[ "type": "text", "label": "'.tr('Ordina tramite').'", "name": "order_by['.$key.']", "value": "'.$field['order_by'].'"';
-        if (!$editable) {
-            echo ', "readonly": "1"';
-        }
-        echo ', "help": "'.tr("Query personalizzata per l'ordinamento (date e numeri formattati tramite query)").'.<br>'.tr('ATTENZIONE: utilizza sempre i caratteri < o > seguiti da spazio!').'" ]}
-									</div>
-								</div>
-							</div>
-						</div>';
-    }
-    echo '
-				</div>
-
-                <div class="row">
-                    <div class="col-md-12 text-right">
-                        <button type="button" class="btn btn-info" id="add">
-                            <i class="fa fa-plus"></i> '.tr('Aggiungi nuovo campo').'
-                        </button>
-
-                        <button type="submit" class="btn btn-success">
-                            <i class="fa fa-check"></i> '.tr('Salva').'
-                        </button>
-                    </div>
-                </div>
-
-				</div>
-			</div>
-		</div>
-
-		<div class="col-md-3">
-			<div class="panel panel-primary">
-				<div class="panel-heading">
-					<h3 class="panel-title">'.tr('Ordine di visualizzazione').' <span class="tip pull-right" title="'.tr('Trascina per ordinare le colonne').'."><i class="fa fa-question-circle-o"></i></span></h3>
-				</div>
-
-				<div class="panel-body sortable">';
-
-    foreach ($fields as $field) {
-        echo '
-            <p class="clickable" data-id="'.$field['id'].'">
-                <i class="fa fa-sort" ></i>
-                ';
-        if ($field['visible']) {
-            echo '<strong class="text-success">'.$field['name'].'</strong>';
-        } else {
-            echo '<span class="text-danger">'.$field['name'].'</span>';
-        }
-        echo '
-            </p>';
-    }
+    include $module->filepath('fields.php');
 
     echo '
-			</div>
-		</div>
-	</div>
-</form>';
-
-    echo '
-<form class="hide" id="template">
-	<div class="box">
-		<div class="box-header with-border">
-			<h3 class="box-title">'.tr('Nuovo campo').'</h3>
-		</div>
-		<div class="box-body">
-			<div class="row">
-				<input type="hidden" value="" name="id[-id-]">
-				<div class="col-md-12">
-					{[ "type": "text", "label": "'.tr('Nome').'", "name": "name[-id-]" ]}
-				</div>
-            </div>
-
-			<div class="row">
-				<div class="col-md-12">
-					{[ "type": "textarea", "label": "'.tr('Query prevista').'", "name": "query[-id-]" ]}
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-md-6">
-					{[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi[-id-][]", "multiple": "1", "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC" ]}
-				</div>
-
-				<div class="col-md-6">
-					{[ "type": "select", "label": "'.tr('Visibilità').'", "name": "visible[-id-]", "values": "list=\"0\":\"'.tr('Nascosto (variabili di stato)').'\",\"1\": \"'.tr('Visibile nella sezione').'\"" ]}
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-md-3">
-					{[ "type": "checkbox", "label": "'.tr('Ricercabile').'", "name": "search[-id-]" ]}
-				</div>
-
-				<div class="col-md-3">
-					{[ "type": "checkbox", "label": "'.tr('Ricerca lenta').'", "name": "slow[-id-]" ]}
-				</div>
-
-				<div class="col-md-3">
-					{[ "type": "checkbox", "label": "'.tr('Sommabile').'", "name": "sum[-id-]" ]}
-				</div>
-
-                <div class="col-md-3">
-					{[ "type": "checkbox", "label": "'.tr('Formattabile').'", "name": "format[-id-]" ]}
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-md-6">
-					{[ "type": "text", "label": "'.tr('Ricerca tramite').'", "name": "search_inside[-id-]" ]}
-				</div>
-
-				<div class="col-md-6">
-					{[ "type": "text", "label": "'.tr('Ordina tramite').'", "name": "order_by[-id-]" ]}
-				</div>
-            </div>
-
-		</div>
-	</div>
-</form>';
-
-    echo '
-<form action="" method="post" role="form">
-	<input type="hidden" name="backto" value="record-edit">
-	<input type="hidden" name="op" value="filters">
-
-    <div class="col-md-12">
-        <div class="panel panel-warning">
-            <div class="panel-heading">
-                <h3 class="panel-title">'.tr('Filtri per gruppo di utenti').'</h3>
-            </div>
-
-            <div class="panel-body">
-                <div class="data">';
-
-    $num = 0;
-    $additionals = $dbo->fetchArray('SELECT * FROM zz_group_module WHERE idmodule='.prepare($record['id']).' ORDER BY `id` ASC');
-    foreach ($additionals as $num => $additional) {
-        $editable = !($additional['default'] && $enable_readonly);
-
-        echo '
-                    <div class="box ';
-        if ($additional['enabled']) {
-            echo 'box-success';
-        } else {
-            echo 'box-danger';
-        }
-        echo '">
-                        <div class="box-header with-border">
-                            <h3 class="box-title">
-                                <a data-toggle="collapse" href="#additional-'.$additional['id'].'">'.tr('Filtro: _NAME_', [
-                                    '_NAME_' => $additional['name'],
-                                ]).'</a>
-                            </h3>';
-        if ($editable) {
-            echo '
-                            <a class="btn btn-danger ask pull-right" data-backto="record-edit" data-op="delete_filter" data-id="'.$additional['id'].'">
-                                <i class="fa fa-trash"></i> '.tr('Elimina').'
-                            </a>';
-        }
-        echo '
-                            <a class="btn btn-warning ask pull-right" data-backto="record-edit" data-msg="'.($additional['enabled'] ? tr('Disabilitare questo elemento?') : tr('Abilitare questo elemento?')).'" data-op="change" data-id="'.$additional['id'].'" data-class="btn btn-lg btn-warning" data-button="'.($additional['enabled'] ? tr('Disabilita') : tr('Abilita')).'">
-                                <i class="fa fa-eye-slash"></i> '.($additional['enabled'] ? tr('Disabilita') : tr('Abilita')).'
-                            </a>';
-        echo '
-                        </div>
-                        <div id="additional-'.$additional['id'].'" class="box-body collapse">
-
-                            <div class="row">
-                                <div class="col-md-12">
-                                    {[ "type": "textarea", "label": "'.tr('Query').'", "name": "query['.$num.']", "value": "'.prepareToField($additional['clause']).'"';
-        if (!$editable) {
-            echo ', "readonly": "1"';
-        }
-        echo ' ]}
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <input type="hidden" value="'.$additional['id'].'" name="id['.$num.']">
-
-                                <div class="col-md-6">
-                                    {[ "type": "text", "label": "'.tr('Name').'", "name": "name['.$num.']", "value": "'.$additional['name'].'"  ]}
-                                </div>
-
-                                <div class="col-md-3">
-                                    {[ "type": "select", "label": "'.tr('Gruppo').'", "name": "gruppo['.$num.']", "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC", "value": "'.$additional['idgruppo'].'"';
-        if (!$editable) {
-            echo ', "readonly": "1"';
-        }
-        echo ' ]}
-                                </div>
-
-                                <div class="col-md-3">
-                                    {[ "type": "select", "label": "'.tr('Posizione').'", "name": "position['.$num.']", "values": "list=\"0\":\"'.tr('WHERE').'\",\"1\": \"'.tr('HAVING').'\"", "value": "'.$additional['position'].'"';
-        if (!$editable) {
-            echo ', "readonly": "1"';
-        }
-        echo ' ]}
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>';
-    }
-
-    echo '
-                </div>
-
-                <div class="row">
-                    <div class="col-md-12 text-right">
-                        <button type="button" class="btn btn-info" id="add_filter">
-                            <i class="fa fa-plus"></i> '.tr('Aggiungi nuovo filtro').'
-                        </button>
-
-                        <button type="submit" class="btn btn-success">
-                            <i class="fa fa-check"></i> '.tr('Salva').'
-                        </button>
-                    </div>
-                </div>
-
-            </div>
         </div>
-    </div>
-</form>';
+
+        <!-- FILTRI -->
+        <div id="filters" class="tab-pane fade">';
+
+    include $module->filepath('filters.php');
 
     echo '
-<form class="hide" id="template_filter">
-	<div class="box">
-		<div class="box-header with-border">
-			<h3 class="box-title">'.tr('Nuovo filtro').'</h3>
-		</div>
-		<div class="box-body">
-
-			<div class="row">
-				<div class="col-md-12">
-					{[ "type": "textarea", "label": "'.tr('Query').'", "name": "query[-id-]" ]}
-				</div>
-			</div>
-
-			<div class="row">
-				<input type="hidden" value="" name="id[-id-]">
-
-				<div class="col-md-6">
-					{[ "type": "text", "label": "'.tr('Nome').'", "name": "name[-id-]" ]}
-				</div>
-
-				<div class="col-md-3">
-					{[ "type": "select", "label": "'.tr('Gruppo').'", "name": "gruppo[-id-]", "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC" ]}
-				</div>
-
-                <div class="col-md-3">
-					{[ "type": "select", "label": "'.tr('Posizione').'", "name": "position[-id-]", "values": "list=\"0\":\"'.tr('WHERE').'\",\"1\": \"'.tr('HAVING').'\"" ]}
-				</div>
-            </div>
         </div>
+
     </div>
-</form>';
+</div>';
 
     echo '
 <script>
@@ -467,60 +131,5 @@ function testQuery(){
         }
     })
 }
-
-function replaceAll(str, find, replace) {
-  return str.replace(new RegExp(find, "g"), replace);
-}
-
-$(document).ready(function(){
-    $("#save").addClass("hide");
-
-	var n = '.$key.';
-	$(document).on("click", "#add", function(){
-		$("#template .superselect, #template .superselectajax").select2().select2("destroy");
-		n++;
-		var text = replaceAll($("#template").html(), "-id-", "" + n);
-		$(this).parent().parent().parent().find(".data").append(text);
-		start_superselect();
-	});
-
-    var i = '.$num.';
-	$(document).on("click", "#add_filter", function(){
-		$("#template_filter .superselect, #template_filter .superselectajax").select2().select2("destroy");
-		i++;
-		var text = replaceAll($("#template_filter").html(), "-id-", "" + i);
-		$(this).parent().parent().parent().find(".data").append(text);
-		start_superselect();
-	});
-
-	$( ".sortable" ).disableSelection();
-	$(".sortable").each(function() {
-		$(this).sortable({
-            axis: "y",
-			cursor: "move",
-			dropOnEmpty: true,
-			scroll: true,
-			update: function(event, ui) {
-				
-				var order = "";
-                $("div.panel-body.sortable  p[data-id]").each( function(){
-                    order += ","+$(this).data("id");
-                });
-				
-                order = order.replace(/^,/, "");
-				
-				$.post("'.$rootdir.'/actions.php", {
-					id: ui.item.data("id"),
-					id_module: '.$id_module.',
-					id_record: '.$id_record.',
-					op: "update_position",
-					order: order,
-				});
-			}
-		});
-	});
-});
 </script>';
-    // Fix apertura non corrisposta di un tag div
-    echo '</div>';
 }

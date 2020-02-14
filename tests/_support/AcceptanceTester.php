@@ -1,28 +1,9 @@
 <?php
 
-/**
- * Inherited Methods.
- *
- * @method void                    wantToTest($text)
- * @method void                    wantTo($text)
- * @method void                    execute($callable)
- * @method void                    expectTo($prediction)
- * @method void                    expect($prediction)
- * @method void                    amGoingTo($argumentation)
- * @method void                    am($role)
- * @method void                    lookForwardTo($achieveValue)
- * @method void                    comment($description)
- * @method \Codeception\Lib\Friend haveFriend($name, $actorClass = NULL)
- *
- * @SuppressWarnings(PHPMD)
- */
 class AcceptanceTester extends \Codeception\Actor
 {
     use _generated\AcceptanceTesterActions;
-
-    /*
-     * Define custom actions here
-     */
+    use \Codeception\Lib\Actor\Shared\Retry;
 
     /**
      * Clicca sul pulsante e attende la conclusione del caricamento.
@@ -34,7 +15,7 @@ class AcceptanceTester extends \Codeception\Actor
     {
         $t = $this;
 
-        $t->click($link, $context);
+        $t->retryClick($link, $context);
 
         $t->waitForElementNotVisible('#main_loading');
         $t->waitForElementNotVisible('#mini-loader');
@@ -97,6 +78,8 @@ class AcceptanceTester extends \Codeception\Actor
 
     public function navigateTo($link)
     {
+        $this->wait(0.5);
+
         $this->clickAndWait($link, '.sidebar');
     }
 

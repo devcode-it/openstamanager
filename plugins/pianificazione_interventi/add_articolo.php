@@ -8,7 +8,6 @@ $plugin = Plugins::get($id_plugin);
 $show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
 
 $idriga = get('idriga');
-//$idautomezzo = (get('idautomezzo') == 'undefined') ? '' : get('idautomezzo');
 
 // Lettura idanagrafica cliente e percentuale di sconto/rincaro in base al listino
 $rs = $dbo->fetchArray('SELECT idanagrafica FROM co_contratti WHERE id='.prepare($id_record));
@@ -56,8 +55,6 @@ if (empty($idriga)) {
 
     $sconto_unitario = $rsr[0]['sconto_unitario'];
     $tipo_sconto = $rsr[0]['tipo_sconto'];
-
-    $idautomezzo = $rsr[0]['idautomezzo'];
 
     $idimpianto = $rsr[0]['idimpianto'];
     $idcontratto_riga = $rsr[0]['id_promemoria'];
@@ -126,7 +123,7 @@ echo '
 // Prezzo di vendita
 echo '
         <div class="col-md-4">
-            {[ "type": "number", "label": "'.tr('Costo unitario').'", "name": "prezzo_vendita", "required": 1, "value": "'.$prezzo_vendita.'", "icon-after": "&euro;" ]}
+            {[ "type": "number", "label": "'.tr('Costo unitario').'", "name": "prezzo_vendita", "required": 1, "value": "'.$prezzo_vendita.'", "icon-after": "'.currency().'" ]}
         </div>';
 
 // Sconto
@@ -173,14 +170,14 @@ echo '
 </form>';
 
 echo '
-	<script src="'.$rootdir.'/lib/init.js"></script>';
+<script>$(document).ready(init)</script>';
 
 echo '
 <script type="text/javascript">
     $(document).ready(function() {
         $("#add-articoli").ajaxForm({
             success: function(){
-                $("#bs-popup2").modal("hide");
+                $("#modals > div").modal("hide");
                 refreshArticoli('.$id_record.');
             }
         });

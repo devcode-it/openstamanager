@@ -5,17 +5,25 @@ namespace Models;
 use Auth;
 use Common\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Modules\Checklists\Traits\ChecklistTrait;
+use Traits\Components\NoteTrait;
+use Traits\Components\UploadTrait;
 use Traits\ManagerTrait;
 use Traits\StoreTrait;
-use Traits\UploadTrait;
 
 class Module extends Model
 {
-    use ManagerTrait, UploadTrait, StoreTrait;
+    use ManagerTrait;
+    use UploadTrait;
+    use StoreTrait;
+    use NoteTrait;
+    use ChecklistTrait;
 
     protected $table = 'zz_modules';
     protected $main_folder = 'modules';
-    protected $upload_identifier = 'id_module';
+    protected $component_identifier = 'id_module';
+
+    protected $variables = [];
 
     protected $appends = [
         'permission',
@@ -26,6 +34,35 @@ class Module extends Model
         'options',
         'options2',
     ];
+
+    public function replacePlaceholders($id_record, $value)
+    {
+        $replaces = $this->getPlaceholders($id_record);
+
+        $value = str_replace(array_keys($replaces), array_values($replaces), $value);
+
+        return $value;
+    }
+
+    public function getPlaceholders($id_record)
+    {
+        if (!isset($variables[$id_record])) {
+            $dbo = $database = database();
+
+            // Lettura delle variabili nei singoli moduli
+            $variables = include $this->filepath('variables.php');
+
+            // Sostituzione delle variabili di base
+            $replaces = [];
+            foreach ($variables as $key => $value) {
+                $replaces['{'.$key.'}'] = $value;
+            }
+
+            $this->variables[$id_record] = $replaces;
+        }
+
+        return $this->variables[$id_record];
+    }
 
     /**
      * Restituisce i permessi relativi all'account in utilizzo.
@@ -86,9 +123,9 @@ class Module extends Model
         return $this->hasMany(PrintTemplate::class, 'id_module');
     }
 
-    public function mailTemplates()
+    public function Templates()
     {
-        return $this->hasMany(MailTemplate::class, 'id_module');
+        return $this->hasMany(Template::class, 'id_module');
     }
 
     public function views()

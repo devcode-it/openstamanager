@@ -116,7 +116,7 @@ class Update
     {
         $database = database();
 
-        $results = $database->fetchArray("SELECT version FROM `updates` WHERE version NOT LIKE '%\_%' ORDER BY version DESC LIMIT 1");
+        $results = $database->fetchArray("SELECT version FROM `updates` WHERE version NOT LIKE '%\_%' ORDER BY INET_ATON(SUBSTRING_INDEX(CONCAT(version,'.0.0.0'),'.',4)) DESC LIMIT 1");
 
         return $results[0]['version'];
     }
@@ -181,6 +181,10 @@ class Update
 
             // Normalizzazione di charset e collation
             self::normalizeDatabase($database->getDatabaseName());
+
+            if (class_exists('\Modules\Aggiornamenti\UpdateHook')) {
+                \Modules\Aggiornamenti\UpdateHook::update(null);
+            }
 
             return true;
         }
@@ -264,6 +268,9 @@ class Update
                         $database->insert('zz_group_view', $array);
                     }
                 }
+
+                // Normalizzazione di charset e collation
+                self::normalizeDatabase($database->getDatabaseName());
 
                 // Normalizzazione dei campi per l'API
                 self::executeScript(DOCROOT.'/update/api.php');
@@ -377,6 +384,7 @@ class Update
         $previous = [];
 
         $files = glob($directory.'/*.{php,sql}', GLOB_BRACE);
+        natsort($files);
         foreach ($files as $file) {
             $infos = pathinfo($file);
             $version = str_replace('_', '.', $infos['filename']);
@@ -393,7 +401,7 @@ class Update
             }
         }
 
-        asort($results);
+        $results;
 
         return $results;
     }

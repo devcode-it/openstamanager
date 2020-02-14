@@ -2,8 +2,12 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Articoli\Articolo;
+
 /**
  * Funzione per inserire i movimenti di magazzino.
+ *
+ * @deprecated 2.4.11
  */
 function add_movimento_magazzino($id_articolo, $qta, $array = [], $descrizone = '', $data = '')
 {
@@ -18,7 +22,6 @@ function add_movimento_magazzino($id_articolo, $qta, $array = [], $descrizone = 
     $numero = null;
 
     // Informazioni articolo
-    $articolo = $dbo->fetchOne('SELECT * FROM mg_articoli WHERE id='.prepare($id_articolo));
     $manuale = 0;
 
     // Ddt
@@ -39,27 +42,6 @@ function add_movimento_magazzino($id_articolo, $qta, $array = [], $descrizone = 
 
         $rs_data = $dbo->fetchArray("SELECT data FROM co_documenti WHERE id='".$array['iddocumento']."'");
         $data = $rs_data[0]['data'];
-    }
-
-    // Automezzo
-    elseif (!empty($array['idautomezzo'])) {
-        $rs = $dbo->fetchArray("SELECT CONCAT_WS( ' - ', nome, targa ) AS nome FROM dt_automezzi WHERE id=".prepare($array['idautomezzo']));
-        $nome = $rs[0]['nome'];
-
-        if (empty($array['idintervento'])) {
-            $movimento = ($qta < 0) ? tr("Carico dal magazzino sull'automezzo _NAME_") : tr("Scarico nel magazzino dall'automezzo _NAME_");
-        }
-        // Automezzo legato a intervento
-        else {
-            $movimento = ($qta > 0) ? tr("Carico sull'automezzo _NAME_") : tr("Scarico dall'automezzo _NAME_");
-
-            $qta = -$qta;
-        }
-
-        $new = ($qta < 0 ? '+' : '').-$qta;
-
-        $dbo->query('UPDATE mg_articoli_automezzi SET qta = qta + '.$new.' WHERE idarticolo = '.prepare($id_articolo).' AND idautomezzo = '.prepare($array['idautomezzo']));
-        $data = date('Y-m-d');
     }
 
     // Intervento
@@ -89,8 +71,8 @@ function add_movimento_magazzino($id_articolo, $qta, $array = [], $descrizone = 
 
     // Descrizione di default
     if (empty($movimento)) {
-        $carico = (!empty($rs[0]['dir']) && $rs[0]['dir'] == 'entrata') ? tr('Ripristino articolo da _TYPE_ _NUM_') : tr('Carico magazzino da _TYPE_ numero _NUM_');
-        $scarico = (!empty($rs[0]['dir']) && $rs[0]['dir'] == 'uscita') ? tr('Rimozione articolo da _TYPE_ _NUM_') : tr('Scarico magazzino per _TYPE_ numero _NUM_');
+        $carico = (!empty($rs[0]['dir']) && $rs[0]['dir'] == 'entrata') ? tr('Ripristino articolo da _TYPE_ numero _NUM_') : tr('Carico magazzino da _TYPE_ numero _NUM_');
+        $scarico = (!empty($rs[0]['dir']) && $rs[0]['dir'] == 'uscita') ? tr('Rimozione articolo da _TYPE_ numero _NUM_') : tr('Scarico magazzino per _TYPE_ numero _NUM_');
 
         $movimento = ($qta > 0) ? $carico : $scarico;
     }
@@ -99,24 +81,46 @@ function add_movimento_magazzino($id_articolo, $qta, $array = [], $descrizone = 
     $movimento .= $descrizone;
     $movimento = str_replace(['_NAME_', '_TYPE_', '_NUM_'], [$nome, $tipo, $numero], $movimento);
 
-    $new = ($qta > 0 ? '+' : '').$qta;
-
     // Movimento il magazzino solo se l'articolo non è un servizio
-    if ($articolo['servizio'] == 0) {
-        // Movimentazione effettiva
-        if (empty($array['idintervento']) || empty($array['idautomezzo'])) {
-            $dbo->query('UPDATE mg_articoli SET qta = qta + '.$new.' WHERE id = '.prepare($id_articolo));
-        }
+    $articolo = Articolo::find($id_articolo);
 
-        // Registrazione della movimentazione
-        $dbo->insert('mg_movimenti', array_merge($array, [
-            'idarticolo' => $id_articolo,
-            'qta' => $qta,
-            'movimento' => $movimento,
-            'data' => $data,
-            'manuale' => $manuale,
-        ]));
+    // Movimentazione effettiva
+    if (empty($array['idintervento'])) {
+        return $articolo->movimenta($qta, $movimento, $data, $manuale, $array);
+    } else {
+        return $articolo->registra($qta, $movimento, $data, $manuale, $array);
     }
 
     return true;
+}
+
+/**
+ * Funzione per aggiornare le sedi nei movimenti di magazzino.
+ */
+function aggiorna_sedi_movimenti($module, $id)
+{
+    $dbo = database();
+
+    if ($module == 'ddt') {
+        $rs = $dbo->fetchArray('SELECT idsede_partenza, idsede_destinazione, dir FROM dt_ddt INNER JOIN dt_tipiddt ON dt_tipiddt.id = dt_ddt.idtipoddt WHERE dt_ddt.id='.prepare($id));
+
+        $idsede_azienda = ($rs[0]['dir'] == 'uscita') ? $rs[0]['idsede_destinazione'] : $rs[0]['idsede_partenza'];
+        $idsede_controparte = ($rs[0]['dir'] == 'uscita') ? $rs[0]['idsede_partenza'] : $rs[0]['idsede_destinazione'];
+
+        $dbo->query('UPDATE mg_movimenti SET idsede_azienda='.prepare($idsede_azienda).', idsede_controparte='.prepare($idsede_controparte).' WHERE idddt='.prepare($id));
+    } elseif ($module == 'documenti') {
+        $rs = $dbo->fetchArray('SELECT idsede_partenza, idsede_destinazione, dir FROM co_documenti INNER JOIN co_tipidocumento ON co_tipidocumento.id = co_documenti.idtipodocumento WHERE co_documenti.id='.prepare($id));
+
+        $idsede_azienda = ($rs[0]['dir'] == 'uscita') ? $rs[0]['idsede_destinazione'] : $rs[0]['idsede_partenza'];
+        $idsede_controparte = ($rs[0]['dir'] == 'uscita') ? $rs[0]['idsede_partenza'] : $rs[0]['idsede_destinazione'];
+
+        $dbo->query('UPDATE mg_movimenti SET idsede_azienda='.prepare($idsede_azienda).', idsede_controparte='.prepare($idsede_controparte).' WHERE iddocumento='.prepare($id));
+    } elseif ($module == 'interventi') {
+        $rs = $dbo->fetchArray('SELECT idsede_partenza, idsede_destinazione FROM in_interventi WHERE in_interventi.id='.prepare($id));
+
+        $idsede_azienda = $rs[0]['idsede_partenza'];
+        $idsede_controparte = $rs[0]['idsede_destinazione'];
+
+        $dbo->query('UPDATE mg_movimenti SET idsede_azienda='.prepare($idsede_azienda).', idsede_controparte='.prepare($idsede_controparte).' WHERE idintervento='.prepare($id));
+    }
 }

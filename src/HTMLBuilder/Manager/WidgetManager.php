@@ -59,6 +59,11 @@ class WidgetManager implements ManagerInterface
         return $result;
     }
 
+    protected static function getModule()
+    {
+        return \Modules::get('Stato dei servizi');
+    }
+
     protected function prints($widget)
     {
         return $this->stats($widget);
@@ -86,11 +91,42 @@ class WidgetManager implements ManagerInterface
             }
         }
 
-        // Generazione del codice HTML
+        return $this->render($widget, $widget['text'], $value);
+    }
+
+    protected function chart($widget, $number = null)
+    {
+        $content = null;
+        if (!empty($widget['php_include'])) {
+            $is_title_request = true;
+
+            ob_start();
+            include DOCROOT.'/'.$widget['php_include'];
+            $content = ob_get_clean();
+        }
+
+        return $this->render($widget, $content, $number);
+    }
+
+    protected function custom($widget)
+    {
+        $content = null;
+        if (!empty($widget['php_include'])) {
+            $is_number_request = true;
+            ob_start();
+            include DOCROOT.'/'.$widget['php_include'];
+            $content = ob_get_clean();
+        }
+
+        return $this->chart($widget, $content);
+    }
+
+    protected function render($widget, $title, $number = null)
+    {
         $result = '
-<button type="button" class="close" onclick="if(confirm(\'Disabilitare questo widget?\')) { $.post( \''.ROOTDIR.'/modules/aggiornamenti/actions.php?id_module='.$widget['id_module'].'\', { op: \'disable_widget\', id: \''.$widget['id'].'\' }, function(response){ location.reload(); }); };" >
-    <span aria-hidden="true">&times;</span><span class="sr-only">'.tr('Chiudi').'</span>
-</button>';
+        <button type="button" class="close" onclick="if(confirm(\'Disabilitare questo widget?\')) { $.post( \''.ROOTDIR.'/actions.php?id_module='.self::getModule()->id.'\', { op: \'disable_widget\', id: \''.$widget['id'].'\' }, function(response){ location.reload(); }); };" >
+            <span aria-hidden="true">&times;</span><span class="sr-only">'.tr('Chiudi').'</span>
+        </button>';
 
         if (!empty($widget['more_link'])) {
             $result .= '
@@ -119,20 +155,35 @@ class WidgetManager implements ManagerInterface
         }
 
         $result .= '
-            <div class="info-box">
-                <span class="info-box-icon" style="background-color:'.$widget['bgcolor'].'">
-                    <i class="'.$widget['icon'].'"></i>
-                </span>
 
-                <div class="info-box-content">
-                    <span class="info-box-text'.(!empty($widget['help']) ? ' tip' : '').'"'.(!empty($widget['help']) ? ' title="'.prepareToField($widget['help']).'" data-position="bottom"' : '').'>
-                        '.$widget['text'].'
+        <div class="info-box">
+            <span class="info-box-icon" style="background-color:'.$widget['bgcolor'].'">';
 
-                        '.(!empty($widget['help']) ? '<i class="fa fa-question-circle-o"></i>' : '').'
-                    </span>
-                    <span class="info-box-number">'.$value.'</span>
-                </div>
+        if (!empty($widget['icon'])) {
+            $result .= '
+                <i class="'.$widget['icon'].'"></i>';
+        }
+
+        $result .= '
+            </span>
+
+            <div class="info-box-content">
+                <span class="info-box-text'.(!empty($widget['help']) ? ' tip' : '').'"'.(!empty($widget['help']) ? ' title="'.prepareToField($widget['help']).'" data-position="bottom"' : '').'>
+                    '.$title.'
+                    
+                    '.(!empty($widget['help']) ? '<i class="fa fa-question-circle-o"></i>' : '').'
+                </span>';
+
+        if (isset($number)) {
+            $result .= '
+                <span class="info-box-number">'.$number.'</span>';
+        }
+
+        $result .= '
             </div>';
+
+        $result .= '
+        </div>';
 
         if (!empty($widget['more_link'])) {
             $result .= '
@@ -141,57 +192,6 @@ class WidgetManager implements ManagerInterface
             $result .= '
         </li>';
         }
-
-        return $result;
-    }
-
-    protected function chart($widget)
-    {
-        return $this->custom($widget);
-    }
-
-    protected function custom($widget)
-    {
-        $result = '
-        <button type="button" class="close" onclick="if(confirm(\'Disabilitare questo widget?\')) { $.post( \''.ROOTDIR.'/modules/aggiornamenti/actions.php?id_module='.$widget['id_module'].'\', { op: \'disable_widget\', id: \''.$widget['id'].'\' }, function(response){ location.reload(); }); };" >
-            <span aria-hidden="true">&times;</span><span class="sr-only">'.tr('Chiudi').'</span>
-        </button>';
-
-        $result .= '
-
-        <div class="info-box">
-            <span class="info-box-icon" style="background-color:'.$widget['bgcolor'].'">';
-
-        if (!empty($widget['icon'])) {
-            $result .= '
-                            <i class="'.$widget['icon'].'"></i>';
-        }
-
-        $result .= '
-            </span>
-
-            <div class="info-box-content">
-                <span class="info-box-text">';
-
-        if (!empty($widget['php_include'])) {
-            $result_ob = '';
-
-            ob_start();
-
-            include DOCROOT.'/'.$widget['php_include'];
-            $result_ob = ob_get_contents();
-
-            ob_end_clean();
-
-            $result .= $result_ob;
-        }
-
-        $result .= '
-                </span>
-            </div>';
-
-        $result .= '
-        </div>';
 
         return $result;
     }

@@ -2,8 +2,10 @@
 
 namespace Modules\Ordini;
 
+use Common\Components\Description;
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\DDT\DDT;
 use Traits\RecordTrait;
 use Util\Generator;
 
@@ -16,9 +18,7 @@ class Ordine extends Document
     /**
      * Crea un nuovo ordine.
      *
-     * @param Anagrafica $anagrafica
-     * @param Tipo       $tipo_documento
-     * @param string     $data
+     * @param string $data
      *
      * @return self
      */
@@ -118,6 +118,38 @@ class Ordine extends Document
     public function descrizioni()
     {
         return $this->hasMany(Components\Descrizione::class, 'idordine');
+    }
+
+    /**
+     * Effettua un controllo sui campi del documento.
+     * Viene richiamatp dalle modifiche alle righe del documento.
+     */
+    public function triggerEvasione(Description $trigger)
+    {
+        parent::triggerEvasione($trigger);
+
+        if (setting('Cambia automaticamente stato ordini fatturati')) {
+            $righe = $this->getRighe();
+
+            $qta_evasa = $righe->sum('qta_evasa');
+            $qta = $righe->sum('qta');
+            $parziale = $qta != $qta_evasa;
+
+            $stato_attuale = $this->stato;
+
+            // Impostazione del nuovo stato
+            if ($qta_evasa == 0) {
+                $descrizione = 'Bozza';
+            } elseif (!in_array($stato_attuale->descrizione, ['Parzialmente fatturato', 'Fatturato']) && $trigger->parent instanceof DDT) {
+                $descrizione = $parziale ? 'Parzialmente evaso' : 'Evaso';
+            } else {
+                $descrizione = $parziale ? 'Parzialmente fatturato' : 'Fatturato';
+            }
+
+            $stato = Stato::where('descrizione', $descrizione)->first();
+            $this->stato()->associate($stato);
+            $this->save();
+        }
     }
 
     // Metodi statici

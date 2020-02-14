@@ -16,9 +16,6 @@ class Articolo extends Article
     /**
      * Crea un nuovo articolo collegato ad una fattura.
      *
-     * @param Fattura  $fattura
-     * @param Original $articolo
-     *
      * @return self
      */
     public static function build(Fattura $fattura, Original $articolo)
@@ -28,7 +25,7 @@ class Articolo extends Article
         return $model;
     }
 
-    public function movimenta($qta)
+    public function movimentaMagazzino($qta)
     {
         // Se il documento è generato da un ddt o intervento allora **non** movimento il magazzino
         if (!empty($this->idddt) || !empty($this->idintervento)) {
@@ -41,8 +38,8 @@ class Articolo extends Article
         $numero = $fattura->numero_esterno ?: $fattura->numero;
         $data = $fattura->data;
 
-        $carico = ($tipo->dir == 'entrata') ? tr('Ripristino articolo da _TYPE_ _NUM_') : tr('Carico magazzino da _TYPE_ numero _NUM_');
-        $scarico = ($tipo->dir == 'entrata') ? tr('Scarico magazzino per _TYPE_ numero _NUM_') : tr('Rimozione articolo da _TYPE_ _NUM_');
+        $carico = ($tipo->dir == 'entrata') ? tr('Ripristino articolo da _TYPE_ numero _NUM_') : tr('Carico magazzino da _TYPE_ numero _NUM_');
+        $scarico = ($tipo->dir == 'entrata') ? tr('Scarico magazzino per _TYPE_ numero _NUM_') : tr('Rimozione articolo da _TYPE_ numero _NUM_');
 
         $qta = ($tipo->dir == 'uscita') ? -$qta : $qta;
         $movimento = ($qta < 0) ? $carico : $scarico;
@@ -52,8 +49,13 @@ class Articolo extends Article
             '_NUM_' => $numero,
         ]);
 
+        $partenza = $fattura->direzione == 'uscita' ? $fattura->idsede_destinazione : $fattura->idsede_partenza;
+        $arrivo = $fattura->direzione == 'uscita' ? $fattura->idsede_partenza : $fattura->idsede_destinazione;
+
         $this->articolo->movimenta(-$qta, $movimento, $data, false, [
             'iddocumento' => $fattura->id,
+            'idsede_azienda' => $partenza,
+            'idsede_controparte' => $arrivo,
         ]);
     }
 

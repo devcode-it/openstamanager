@@ -17,13 +17,13 @@ include_once __DIR__.'/../../core.php';
 			<div class="row">
 
 				<div class="col-md-6">
-					{[ "type": "text", "label": "Nome", "name": "nome", "required": 1, "class": "", "value": "$nome$", "extra": "" ]}
+					{[ "type": "text", "label": "Nome", "name": "nome", "required": 1, "value": "$nome$", "extra": "" ]}
 				</div>
 
 
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "Categoria", "name": "idcategoria", "required": 1, "class": "", "ajax-source": "categorie_documenti", "value": "$idcategoria$", "extra": "" ]}
+					{[ "type": "select", "label": "Categoria", "name": "idcategoria", "required": 1, "ajax-source": "categorie_documenti", "value": "$idcategoria$", "extra": "" ]}
 				</div>
 
 

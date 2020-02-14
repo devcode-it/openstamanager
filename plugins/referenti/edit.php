@@ -47,3 +47,11 @@ echo '
 		</div>
 	</div>
 </form>';
+?>
+<script>
+    $(document).ready( function(){
+        $(document).load("ajax_complete.php?op=get_mansioni", function(response){
+            $("#mansione").autocomplete({source: response.split("|")});
+        } );
+    });
+</script>

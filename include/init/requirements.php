@@ -71,11 +71,11 @@ $settings = [
     //],
     'upload_max_filesize' => [
         'type' => 'value',
-        'description' => '>16M',
+        'description' => '>32M',
     ],
     'post_max_size' => [
         'type' => 'value',
-        'description' => '>16M',
+        'description' => '>32M',
     ],
 ];
 

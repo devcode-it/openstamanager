@@ -45,7 +45,7 @@ class Acceptance extends \Codeception\Module
     {
         try {
             $this->getAcceptanceModule()->seeElement($element);
-        } catch (\PHPUnit_Framework_AssertionFailedError $f) {
+        } catch (\Exception $f) {
             return false;
         }
 

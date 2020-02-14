@@ -111,7 +111,7 @@ echo '
     </tbody>
 
     <tr>
-        <td colspan="2" class="text-right border-top"><b>'.tr('Totale', [], ['upper' => true]).':</b></td>
+        <td colspan="3" class="text-right border-top"><b>'.tr('Totale', [], ['upper' => true]).':</b></td>
         <td class="border-top"></td>
         <td class="text-right border-top"><b>'.Translator::numberToLocale($totale_qta).'</b></td>
         <td class="border-top"></td>

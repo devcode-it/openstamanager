@@ -2,18 +2,12 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\DDT\DDT;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Stato;
 use Modules\Fatture\Tipo;
+use Modules\Preventivi\Preventivo;
 
-if ($module['name'] == 'Ddt di vendita') {
-    $dir = 'entrata';
-    $module_fatture = 'Fatture di vendita';
-} else {
-    $dir = 'uscita';
-    $module_fatture = 'Fatture di acquisto';
-}
+$module_fatture = 'Fatture di vendita';
 
 // Segmenti
 $id_fatture = Modules::get($module_fatture)['id'];
@@ -29,12 +23,7 @@ switch (post('op')) {
         $numero_totale = 0;
 
         // Informazioni della fattura
-        if ($dir == 'entrata') {
-            $descrizione_tipo = 'Fattura immediata di vendita';
-        } else {
-            $descrizione_tipo = 'Fattura immediata di acquisto';
-        }
-
+        $descrizione_tipo = 'Fattura immediata di vendita';
         $tipo_documento = Tipo::where('descrizione', $descrizione_tipo)->first();
 
         $stato_documenti_accodabili = Stato::where('descrizione', 'Bozza')->first();
@@ -45,7 +34,7 @@ switch (post('op')) {
 
         // Lettura righe selezionate
         foreach ($id_records as $id) {
-            $documento_import = DDT::find($id);
+            $documento_import = Preventivo::find($id);
             $anagrafica = $documento_import->anagrafica;
             $id_anagrafica = $anagrafica->id;
 
@@ -86,6 +75,8 @@ switch (post('op')) {
 
                         // Aggiornamento seriali dalla riga dell'ordine
                         if ($copia->isArticolo()) {
+                            $copia->movimenta($copia->qta);
+
                             $copia->serials = $riga->serials;
                         }
                     }
@@ -94,41 +85,24 @@ switch (post('op')) {
         }
 
         if ($numero_totale > 0) {
-            flash()->info(tr('_NUM_ ddt fatturati!', [
+            flash()->info(tr('_NUM_ preventivi fatturati!', [
                 '_NUM_' => $numero_totale,
             ]));
         } else {
-            flash()->warning(tr('Nessun ddt fatturato!'));
+            flash()->warning(tr('Nessun preventivi fatturato!'));
         }
-    break;
-
-    case 'delete-bulk':
-        foreach ($id_records as $id) {
-            $dbo->query('DELETE  FROM dt_ddt  WHERE id = '.prepare($id).Modules::getAdditionalsQuery($id_module));
-            $dbo->query('DELETE FROM dt_righe_ddt WHERE idddt='.prepare($id).Modules::getAdditionalsQuery($id_module));
-            $dbo->query('DELETE FROM mg_movimenti WHERE idddt='.prepare($id).Modules::getAdditionalsQuery($id_module));
-        }
-
-        flash()->info(tr('Ddt eliminati!'));
-    break;
-}
-
-if (App::debug()) {
-    $operations = [
-        'delete-bulk' => tr('Elimina selezionati'),
-    ];
+        break;
 }
 
 $operations['crea_fattura'] = [
-        'text' => tr('Fattura documenti'),
-        'data' => [
-            'title' => tr('Vuoi davvero fatturare questi documenti?'),
-            'msg' => '<br>{[ "type": "checkbox", "placeholder": "'.tr('Aggiungere alle fatture esistenti non ancora emesse?').'", "name": "accodare" ]}
-            <br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module=\''.$id_fatture.'\' AND is_fiscale = 1 ORDER BY name", "value": "'.$id_segment.'" ]}',
-            'button' => tr('Procedi'),
-            'class' => 'btn btn-lg btn-warning',
-            'blank' => false,
-        ],
-    ];
+    'text' => tr('Fattura documenti'),
+    'data' => [
+        'title' => tr('Vuoi davvero fatturare questi documenti?'),
+        'msg' => '{[ "type": "checkbox", "placeholder": "'.tr('Aggiungere alle fatture esistenti non ancora emesse?').'", "name": "accodare" ]}<br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module=\''.$id_fatture.'\' AND is_fiscale = 1 ORDER BY name", "value": "'.$id_segment.'" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => false,
+    ],
+];
 
 return $operations;

@@ -4511,7 +4511,7 @@ msgid "Ddt eliminati!"
 msgstr "Ddt eliminated!"
 
 #: modules/ddt/bulk.php:139
-msgid "Vuoi davvero creare una fattura per questi interventi?"
+msgid "Vuoi davvero fatturare questi interventi?"
 msgstr "Do you really want create a invoice for this interventions?"
 
 #: modules/ddt/edit.php:59 modules/fatture/edit.php:108

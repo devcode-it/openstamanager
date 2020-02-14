@@ -128,7 +128,7 @@ return [
     ],
 
     'crea_fattura' => [
-        'text' => tr('Crea fattura'),
+        'text' => tr('Fattura documenti'),
         'data' => [
             'title' => tr('Vuoi davvero generare le fatture per questi interventi?'),
             'msg' => tr('Verranno fatturati gli interventi completati non inseriti in preventivi e contratti').'.<br>{[ "type": "checkbox", "placeholder": "'.tr('Aggiungere alle fatture esistenti non ancora emesse?').'", "name": "accodare" ]}

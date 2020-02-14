@@ -15,6 +15,14 @@ class Intervento extends Document
 
     protected $info = [];
 
+    protected $appends = [
+        'ore_totali',
+        'km_totali',
+        'spesa',
+        'imponibile',
+        'totale_imponibile',
+    ];
+
     /**
      * Crea un nuovo intervento.
      *

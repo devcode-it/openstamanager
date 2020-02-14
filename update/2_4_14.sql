@@ -34,3 +34,17 @@ ALTER TABLE `mg_articoli` CHANGE `threshold_qta` `threshold_qta` decimal(14, 6) 
 
 INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `filename`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `default`, `enabled`) VALUES
 (NULL, (SELECT id FROM zz_modules WHERE `name`='Preventivi'), 1, 'Preventivo (solo totale)', 'Preventivo (solo totale)', 'Preventivo num. {numero} del {data}', 'preventivi', 'idpreventivo', '{\"pricing\":false, \"show_only_total\":true}', 'fa fa-print', '', '', 0, 0, 1, 1);
+
+-- Unificazione righe e articoli interventi
+ALTER TABLE `in_righe_interventi` ADD `abilita_serial` boolean NOT NULL DEFAULT '0' AFTER `um`;
+ALTER TABLE `in_righe_interventi` ADD `idimpianto` int(11);
+ALTER TABLE `in_righe_interventi` ADD `old_id` int(11);
+
+INSERT INTO `in_righe_interventi` (`old_id`, `idarticolo`, `idintervento`, `is_descrizione`, `is_sconto`, `descrizione`, `prezzo_acquisto`, `prezzo_vendita`, `sconto`, `sconto_unitario`, `tipo_sconto`, `idiva`, `desc_iva`, `iva`, `qta`, `um`, `abilita_serial`, `created_at`, `updated_at`, `idimpianto`) SELECT `id`, `idarticolo`, `idintervento`, `is_descrizione`, `is_sconto`, `descrizione`, `prezzo_acquisto`, `prezzo_vendita`, `sconto`, `sconto_unitario`, `tipo_sconto`, `idiva`, `desc_iva`, `iva`, `qta`, `um`, `abilita_serial`, `created_at`, `updated_at`, `idimpianto` FROM `mg_articoli_interventi`;
+
+UPDATE `mg_prodotti` SET `id_riga_intervento` = (SELECT `id` FROM `in_righe_interventi` WHERE `in_righe_interventi`.`old_id` = `id_riga_intervento`) WHERE `id_riga_intervento` IS NOT NULL;
+ALTER TABLE `in_righe_interventi` DROP `old_id`;
+
+-- ALTER TABLE `in_righe_interventi` CHANGE `prezzo_acquisto` `prezzo_unitario_acquisto` decimal(12,6),
+--    CHANGE `prezzo_vendita` `prezzo_unitario_vendita` decimal(12,6);
+-- TODO su tutte le tabelle

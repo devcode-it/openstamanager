@@ -57,6 +57,14 @@ trait RelationTrait
     }
 
     /**
+     * Restituisce il costo unitario della riga.
+     */
+    public function setPrezzoUnitarioAcquistoAttribute($value)
+    {
+        $this->prezzo_acquisto = $value;
+    }
+
+    /**
      * Effettua i conti per il subtotale della riga.
      */
     protected function fixSubtotale()

@@ -117,13 +117,13 @@ switch (post('op')) {
                 ], ['idcontratto' => $idcontratto, 'id' => $idcontratto_riga]);
 
                 //copio le righe dal promemoria all'intervento
-                $dbo->query('INSERT INTO in_righe_interventi (descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,idintervento,sconto,sconto_unitario,tipo_sconto) SELECT descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,'.$id_record.',sconto,sconto_unitario,tipo_sconto FROM co_promemoria_righe WHERE id_promemoria = '.$idcontratto_riga);
+                $dbo->query('INSERT INTO in_righe_interventi (descrizione, qta, um, prezzo_vendita, prezzo_acquisto, idiva,desc_iva, iva, idintervento, sconto, sconto_unitario, tipo_sconto) SELECT descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,'.$id_record.',sconto,sconto_unitario,tipo_sconto FROM co_promemoria_righe WHERE id_promemoria = '.$idcontratto_riga);
 
                 //copio  gli articoli dal promemoria all'intervento
-                $dbo->query('INSERT INTO mg_articoli_interventi (idarticolo, idintervento,descrizione,prezzo_acquisto,prezzo_vendita,sconto,	sconto_unitario,	tipo_sconto,idiva,desc_iva,iva, qta, um, abilita_serial, idimpianto) SELECT idarticolo, '.$id_record.',descrizione,prezzo_acquisto,prezzo_vendita,sconto,sconto_unitario,tipo_sconto,idiva,desc_iva,iva, qta, um, abilita_serial, idimpianto FROM co_promemoria_articoli WHERE id_promemoria = '.$idcontratto_riga);
+                $dbo->query('INSERT INTO in_righe_interventi (idarticolo, idintervento, descrizione, prezzo_acquisto,prezzo_vendita, sconto, sconto_unitario, tipo_sconto,idiva,desc_iva,iva, qta, um, abilita_serial, idimpianto) SELECT idarticolo, '.$id_record.',descrizione,prezzo_acquisto,prezzo_vendita,sconto,sconto_unitario,tipo_sconto,idiva,desc_iva,iva, qta, um, abilita_serial, idimpianto FROM co_promemoria_articoli WHERE id_promemoria = '.$idcontratto_riga);
 
                 // Copia degli allegati
-                $alleagti = Uploads::copy([
+                $allegati = Uploads::copy([
                     'id_plugin' => Plugins::get('Pianificazione interventi')['id'],
                     'id_record' => $idcontratto_riga,
                 ], [
@@ -131,15 +131,15 @@ switch (post('op')) {
                     'id_record' => $id_record,
                 ]);
 
-                if (!$alleagti) {
+                if (!$allegati) {
                     $errors = error_get_last();
                     flash()->warning(tr('Errore durante la copia degli allegati'));
                 }
 
-                // Decremento la quantità per ogni articolo copiato
-                $rs_articoli = $dbo->fetchArray('SELECT * FROM mg_articoli_interventi WHERE idintervento = '.$id_record.' ');
-                foreach ($rs_articoli as $rs_articolo) {
-                    add_movimento_magazzino($rs_articolo['idarticolo'], -$rs_articolo['qta'], ['idintervento' => $id_record]);
+                // Movimento il magazziono per ogni articolo copiato
+                $articoli = $intervento->articoli;
+                foreach ($articoli as $articolo) {
+                    $articolo->movimenta($articolo->qta);
                 }
             }
 
@@ -312,6 +312,45 @@ $riga = $intervento->getRiga($type, $id_riga);
 
         break;
 
+    case 'manage_articolo':
+        if (post('idriga') != null) {
+            $articolo = Articolo::find(post('idriga'));
+        } else {
+            $originale = ArticoloOriginale::find(post('idarticolo'));
+            $articolo = Articolo::build($intervento, $originale);
+        }
+
+        $qta = post('qta');
+
+        $articolo->descrizione = post('descrizione');
+        $articolo->um = post('um') ?: null;
+
+        $articolo->id_iva = post('idiva');
+
+        $articolo->prezzo_unitario_acquisto = post('prezzo_acquisto') ?: 0;
+        $articolo->prezzo_unitario_vendita = post('prezzo');
+        $articolo->sconto_unitario = post('sconto');
+        $articolo->tipo_sconto = post('tipo_sconto');
+
+        try {
+            $articolo->qta = $qta;
+        } catch (UnexpectedValueException $e) {
+            flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
+        }
+
+        $articolo->save();
+
+        if (post('idriga') != null) {
+            flash()->info(tr('Articolo modificato!'));
+        } else {
+            flash()->info(tr('Articolo aggiunto!'));
+        }
+
+        // Collegamento all'impianto
+        link_componente_to_articolo($id_record, post('idimpianto'), $articolo->idarticolo, $qta);
+
+        break;
+
     case 'manage_sconto':
         if (post('idriga') != null) {
             $sconto = Sconto::find(post('idriga'));
@@ -335,65 +374,34 @@ $riga = $intervento->getRiga($type, $id_riga);
 
         break;
 
-    /*
-        GESTIONE ARTICOLI
-    */
-
-    case 'editarticolo':
-        $idriga = post('idriga');
-        $idarticolo = post('idarticolo');
-        $idimpianto = post('idimpianto');
-
-        $idarticolo_originale = post('idarticolo_originale');
-
-        // Leggo la quantità attuale nell'intervento
-        $q = 'SELECT qta, idimpianto FROM mg_articoli_interventi WHERE idarticolo='.prepare($idarticolo_originale).' AND idintervento='.prepare($id_record);
-        $rs = $dbo->fetchArray($q);
-        $old_qta = $rs[0]['qta'];
-        $idimpianto = $rs[0]['idimpianto'];
-
-        $serials = array_column($dbo->select('mg_prodotti', 'serial', ['id_riga_intervento' => $idriga]), 'serial');
-
-        add_movimento_magazzino($idarticolo_originale, $old_qta, ['idintervento' => $id_record]);
-
-        // Elimino questo articolo dall'intervento
-        $dbo->query('DELETE FROM mg_articoli_interventi WHERE id='.prepare($idriga));
-
-        // Elimino il collegamento al componente
-        $dbo->query('DELETE FROM my_impianto_componenti WHERE idimpianto='.prepare($idimpianto).' AND idintervento='.prepare($id_record));
-
-        /* Ricollego l'articolo modificato all'intervento */
-        /* ci può essere il caso in cui cambio idarticolo e anche qta */
-
-        // no break
-    case 'addarticolo':
-        $originale = ArticoloOriginale::find(post('idarticolo'));
-        $intervento = Intervento::find($id_record);
-        $articolo = Articolo::build($intervento, $originale);
-
-        $articolo->qta = post('qta');
-        $articolo->descrizione = post('descrizione');
-        $articolo->prezzo_unitario_vendita = post('prezzo_vendita');
-        $articolo->prezzo_acquisto = post('prezzo_acquisto');
-        $articolo->um = post('um');
-
-        $articolo->sconto_unitario = post('sconto');
-        $articolo->tipo_sconto = post('tipo_sconto');
-        $articolo->id_iva = post('idiva');
-
-        $articolo->save();
-
-        aggiorna_sedi_movimenti('interventi', $id_record);
-
-        if (!empty($serials)) {
-            if ($old_qta > $qta) {
-                $serials = array_slice($serials, 0, $qta);
-            }
-
-            $articolo->serials = $serials;
+    case 'manage_riga':
+        if (post('idriga') != null) {
+            $riga = Riga::find(post('idriga'));
+        } else {
+            $riga = Riga::build($intervento);
         }
 
-        link_componente_to_articolo($id_record, $idimpianto, $idarticolo, $qta);
+        $qta = post('qta');
+
+        $riga->descrizione = post('descrizione');
+        $riga->um = post('um') ?: null;
+
+        $riga->id_iva = post('idiva');
+
+        $riga->prezzo_unitario_acquisto = post('prezzo_acquisto') ?: 0;
+        $riga->prezzo_unitario_vendita = post('prezzo');
+        $riga->sconto_unitario = post('sconto');
+        $riga->tipo_sconto = post('tipo_sconto');
+
+        $riga->qta = $qta;
+
+        $riga->save();
+
+        if (post('idriga') != null) {
+            flash()->info(tr('Riga modificata!'));
+        } else {
+            flash()->info(tr('Riga aggiunta!'));
+        }
 
         break;
 

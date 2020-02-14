@@ -31,7 +31,7 @@ $data = [
         'id' => 'idordine',
     ],
     'int' => [
-        'table' => 'mg_articoli_interventi',
+        'table' => 'in_righe_interventi',
         'id' => 'idintervento',
     ],
 ];

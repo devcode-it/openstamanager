@@ -278,7 +278,7 @@ msgid "Creazione"
 msgstr "Creation"
 
 #: editor.php:332 include/common/form.php:19 modules/interventi/add_articolo.php:45 modules/interventi/add_righe.php:24
-#: modules/interventi/ajax_righe.php:131 modules/interventi/manage_sessione.php:15 modules/partitario/edit_conto.php:38
+#: modules/interventi/row-list.php:131 modules/interventi/manage_sessione.php:15 modules/partitario/edit_conto.php:38
 #: modules/utenti/self.php:25 modules/utenti/user.php:83 plugins/dichiarazioni_intento/edit.php:61
 #: plugins/pianificazione_interventi/add_articolo.php:41 plugins/pianificazione_interventi/add_righe.php:27
 #: plugins/referenti/edit.php:46 plugins/sedi/edit.php:158
@@ -366,7 +366,7 @@ msgstr "Bill"
 #: modules/contratti/row-list.php:9 modules/contratti/widgets/contratti.pianificazionedashboard.interventi.php:54
 #: modules/dashboard/actions.php:123 modules/ddt/edit.php:297 modules/ddt/row-list.php:8 modules/fatture/add_intervento.php:73
 #: modules/fatture/edit.php:621 modules/fatture/row-list.php:9 modules/interventi/add_articolo.php:92
-#: modules/interventi/add_righe.php:53 modules/interventi/ajax_righe.php:17 modules/interventi/edit.php:127
+#: modules/interventi/add_righe.php:53 modules/interventi/row-list.php:17 modules/interventi/edit.php:127
 #: modules/interventi/plugins/my_impianti.interventi.php:21
 #: modules/interventi/widgets/interventi.pianificazionedashboard.interventi.php:43 modules/iva/add.php:11
 #: modules/iva/edit.php:45 modules/liste_newsletter/edit.php:25 modules/my_impianti/edit.php:73
@@ -384,7 +384,7 @@ msgstr "Bill"
 #: modules/tipi_scadenze/add.php:13 modules/tipi_scadenze/edit.php:32 modules/voci_servizio/add.php:15
 #: modules/voci_servizio/edit.php:16 modules/zone/add.php:15 modules/zone/edit.php:17 plugins/importFE/generate.php:270
 #: plugins/importFE/list.php:16 plugins/pianificazione_interventi/add_articolo.php:91
-#: plugins/pianificazione_interventi/add_righe.php:55 plugins/pianificazione_interventi/ajax_righe.php:16
+#: plugins/pianificazione_interventi/add_righe.php:55 plugins/pianificazione_interventi/row-list.php:16
 #: plugins/pianificazione_interventi/edit.php:44 plugins/pianificazione_interventi/pianficazione.php:103
 #: plugins/rinnovi_contratti/edit.php:15 templates/contratti/body.php:79 templates/ddt/body.php:18
 #: templates/fatture/body.php:21 templates/interventi/body.php:114 templates/interventi/body.php:136
@@ -428,12 +428,12 @@ msgstr "Receipts to import:_COUNT_"
 #: modules/articoli/plugins/articoli.movimenti.php:42 modules/articoli/widgets/articoli.dashboard.php:12
 #: modules/contratti/plugins/contratti.consuntivo.php:154 modules/contratti/plugins/contratti.consuntivo.php:187
 #: modules/contratti/row-list.php:10 modules/ddt/row-list.php:9 modules/fatture/row-list.php:10
-#: modules/interventi/add_articolo.php:108 modules/interventi/add_righe.php:62 modules/interventi/ajax_righe.php:18
+#: modules/interventi/add_articolo.php:108 modules/interventi/add_righe.php:62 modules/interventi/row-list.php:18
 #: modules/ordini/row-list.php:10 modules/preventivi/plugins/preventivi.consuntivo.php:141
 #: modules/preventivi/plugins/preventivi.consuntivo.php:174 modules/preventivi/row-list.php:10
 #: modules/statistiche/edit.php:204 plugins/pianificazione_interventi/add_articolo.php:100
 #: plugins/pianificazione_interventi/add_righe.php:64 plugins/pianificazione_interventi/ajax_articoli.php:17
-#: plugins/pianificazione_interventi/ajax_righe.php:17 templates/contratti/body.php:80 templates/ddt/body.php:19
+#: plugins/pianificazione_interventi/row-list.php:17 templates/contratti/body.php:80 templates/ddt/body.php:19
 #: templates/fatture/body.php:22 templates/interventi/body.php:140 templates/magazzino_inventario/body.php:81
 #: templates/ordini/body.php:38 templates/preventivi/body.php:65
 msgid "Q.tà"
@@ -467,10 +467,10 @@ msgstr "Total"
 #: include/common/riga.php:13 include/common/sconto.php:29 modules/contratti/row-list.php:13
 #: modules/contratti/row-list.php:185 modules/ddt/row-list.php:12 modules/fatture/add_intervento.php:96
 #: modules/fatture/row-list.php:13 modules/fatture/row-list.php:360 modules/interventi/add_articolo.php:120
-#: modules/interventi/add_righe.php:74 modules/interventi/ajax_righe.php:24 modules/ordini/row-list.php:13
+#: modules/interventi/add_righe.php:74 modules/interventi/row-list.php:24 modules/ordini/row-list.php:13
 #: modules/ordini/row-list.php:230 modules/preventivi/row-list.php:13 modules/preventivi/row-list.php:185
 #: plugins/pianificazione_interventi/add_articolo.php:120 plugins/pianificazione_interventi/add_righe.php:76
-#: plugins/pianificazione_interventi/ajax_articoli.php:27 plugins/pianificazione_interventi/ajax_righe.php:23
+#: plugins/pianificazione_interventi/ajax_articoli.php:27 plugins/pianificazione_interventi/row-list.php:23
 #: templates/interventi/body.php:426 templates/registro_iva/bottom.php:18 templates/registro_iva/top.php:41
 msgid "Iva"
 msgstr "Iva"
@@ -2858,9 +2858,9 @@ msgid "Acquisto"
 msgstr "Purchase "
 
 #: modules/articoli/edit.php:132 modules/contratti/plugins/contratti.consuntivo.php:155
-#: modules/contratti/plugins/contratti.consuntivo.php:188 modules/interventi/ajax_righe.php:19
+#: modules/contratti/plugins/contratti.consuntivo.php:188 modules/interventi/row-list.php:19
 #: modules/preventivi/plugins/preventivi.consuntivo.php:142 modules/preventivi/plugins/preventivi.consuntivo.php:175
-#: plugins/pianificazione_interventi/ajax_articoli.php:21 plugins/pianificazione_interventi/ajax_righe.php:18
+#: plugins/pianificazione_interventi/ajax_articoli.php:21 plugins/pianificazione_interventi/row-list.php:18
 #: templates/magazzino_inventario/body.php:82
 msgid "Prezzo di acquisto"
 msgstr "Purchase price"
@@ -2888,9 +2888,9 @@ msgid "Scorpora iva dal prezzo di vendita."
 msgstr "Spin off VAT from the sale price."
 
 #: modules/articoli/edit.php:171 modules/contratti/plugins/contratti.consuntivo.php:156
-#: modules/contratti/plugins/contratti.consuntivo.php:189 modules/interventi/ajax_righe.php:23
+#: modules/contratti/plugins/contratti.consuntivo.php:189 modules/interventi/row-list.php:23
 #: modules/preventivi/plugins/preventivi.consuntivo.php:143 modules/preventivi/plugins/preventivi.consuntivo.php:176
-#: plugins/pianificazione_interventi/ajax_articoli.php:26 plugins/pianificazione_interventi/ajax_righe.php:22
+#: plugins/pianificazione_interventi/ajax_articoli.php:26 plugins/pianificazione_interventi/row-list.php:22
 #: templates/magazzino_inventario/body.php:80
 msgid "Prezzo di vendita"
 msgstr "Sale price"
@@ -4151,7 +4151,7 @@ msgstr "Unitary cost"
 
 #: modules/contratti/row-list.php:14 modules/contratti/row-list.php:147 modules/ddt/row-list.php:13
 #: modules/ddt/row-list.php:191 modules/fatture/row-list.php:296 modules/interventi/ajax_costi.php:74
-#: modules/interventi/ajax_righe.php:25 modules/ordini/row-list.php:14 modules/ordini/row-list.php:192
+#: modules/interventi/row-list.php:25 modules/ordini/row-list.php:14 modules/ordini/row-list.php:192
 #: modules/preventivi/row-list.php:14 modules/preventivi/row-list.php:147
 #: plugins/pianificazione_interventi/ajax_articoli.php:28 templates/contratti/body.php:85 templates/contratti/body.php:189
 #: templates/contratti_cons/top.php:60 templates/fatture/footer.php:131 templates/interventi/body.php:148
@@ -4163,15 +4163,15 @@ msgid "Imponibile"
 msgstr "Taxable"
 
 #: modules/contratti/row-list.php:62 modules/ddt/row-list.php:102 modules/fatture/row-list.php:194
-#: modules/interventi/ajax_righe.php:90 modules/ordini/row-list.php:104 modules/preventivi/row-list.php:62
-#: plugins/pianificazione_interventi/ajax_articoli.php:99 plugins/pianificazione_interventi/ajax_righe.php:65
+#: modules/interventi/row-list.php:90 modules/ordini/row-list.php:104 modules/preventivi/row-list.php:62
+#: plugins/pianificazione_interventi/ajax_articoli.php:99 plugins/pianificazione_interventi/row-list.php:65
 #: templates/contratti/body.php:133 templates/ddt/body.php:95 templates/fatture/body.php:109 templates/interventi/body.php:197
 #: templates/ordini/body.php:116 templates/preventivi/body.php:119
 msgid "sconto _TOT_ _TYPE_"
 msgstr "discount _TOT_ _TYPE_"
 
 #: modules/contratti/row-list.php:62 modules/ddt/row-list.php:102 modules/fatture/row-list.php:194
-#: modules/interventi/ajax_righe.php:90 modules/ordini/row-list.php:104 modules/preventivi/row-list.php:62
+#: modules/interventi/row-list.php:90 modules/ordini/row-list.php:104 modules/preventivi/row-list.php:62
 #, fuzzy
 #| msgid "sconto _TOT_ _TYPE_"
 msgid "maggiorazione _TOT_ _TYPE_"
@@ -4592,12 +4592,12 @@ msgstr "Additional notes"
 msgid "Note interne."
 msgstr "Internal note."
 
-#: modules/ddt/row-list.php:50 modules/fatture/row-list.php:123 modules/interventi/ajax_righe.php:56
+#: modules/ddt/row-list.php:50 modules/fatture/row-list.php:123 modules/interventi/row-list.php:56
 #: modules/ordini/row-list.php:52 plugins/pianificazione_interventi/ajax_articoli.php:64
 msgid "_NUM_ serial mancanti"
 msgstr "_NUM_ serial missing "
 
-#: modules/ddt/row-list.php:57 modules/fatture/row-list.php:129 modules/interventi/ajax_righe.php:64
+#: modules/ddt/row-list.php:57 modules/fatture/row-list.php:129 modules/interventi/row-list.php:64
 #: modules/ordini/row-list.php:59 plugins/pianificazione_interventi/ajax_articoli.php:70 templates/ddt/body.php:59
 #: templates/fatture/body.php:59 templates/interventi/body.php:175 templates/ordini/body.php:92
 #, fuzzy
@@ -5293,7 +5293,7 @@ msgstr "Column _NUM_"
 msgid "Campo"
 msgstr "Field"
 
-#: modules/import/edit.php:81 modules/interventi/ajax_righe.php:30
+#: modules/import/edit.php:81 modules/interventi/row-list.php:30
 msgid "#"
 msgstr "#"
 
@@ -5494,17 +5494,17 @@ msgstr "Total travel"
 msgid "Totale righe"
 msgstr "Total travel"
 
-#: modules/interventi/ajax_righe.php:125
+#: modules/interventi/row-list.php:125
 msgid "Modifica articoli"
 msgstr "Edit articles"
 
-#: modules/interventi/ajax_righe.php:149
+#: modules/interventi/row-list.php:149
 #, fuzzy
 #| msgid "Nessuna spesa presente"
 msgid "Nessuna riga presente"
 msgstr "No expense present"
 
-#: modules/interventi/ajax_righe.php:156
+#: modules/interventi/row-list.php:156
 #, fuzzy
 #| msgid "Eliminare questa spesa?"
 msgid "Eliminare questa riga?"
@@ -8493,7 +8493,7 @@ msgstr "None end date of contract or the last one has already passed, impossible
 msgid "Nessun promemoria pianificato"
 msgstr "None reminder planned"
 
-#: plugins/pianificazione_interventi/ajax_articoli.php:124 plugins/pianificazione_interventi/ajax_righe.php:91
+#: plugins/pianificazione_interventi/ajax_articoli.php:124 plugins/pianificazione_interventi/row-list.php:91
 msgid "Modifica spesa"
 msgstr "Spending change"
 
@@ -8510,15 +8510,15 @@ msgstr "Delete this material?"
 msgid "Nessun articolo caricato"
 msgstr "None article loaded"
 
-#: plugins/pianificazione_interventi/ajax_righe.php:24
+#: plugins/pianificazione_interventi/row-list.php:24
 msgid "Subtotale"
 msgstr "Subtotal"
 
-#: plugins/pianificazione_interventi/ajax_righe.php:95
+#: plugins/pianificazione_interventi/row-list.php:95
 msgid "Eliminare questa spesa?"
 msgstr "Delete this expense?"
 
-#: plugins/pianificazione_interventi/ajax_righe.php:109
+#: plugins/pianificazione_interventi/row-list.php:109
 #, fuzzy
 msgid "Nessuna riga caricata"
 msgstr "None rows loaded"

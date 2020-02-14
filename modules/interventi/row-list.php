@@ -114,9 +114,6 @@ if (!$righe->isEmpty()) {
         // Pulsante per riportare nel magazzino centrale.
         // Visibile solo se l'intervento non è stato nè fatturato nè completato.
         if (!$record['flag_completato']) {
-            $link = $riga->isSconto() ? $structure->fileurl('row-edit.php') : $structure->fileurl('add_righe.php');
-            $link = $riga->isArticolo() ? $structure->fileurl('add_articolo.php') : $link;
-
             echo '
             <td class="text-center">';
 
@@ -128,7 +125,7 @@ if (!$righe->isEmpty()) {
             }
 
             echo '
-                <button type="button" class="btn btn-warning btn-xs" data-toggle="tooltip" onclick="launch_modal(\''.tr('Modifica').'\', \''.$link.'?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'&type='.urlencode(get_class($riga)).'\');">
+                <button type="button" class="btn btn-warning btn-xs" data-toggle="tooltip" onclick="launch_modal(\''.tr('Modifica').'\', \''.$structure->fileurl('row-edit.php').'?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'&type='.urlencode(get_class($riga)).'\');">
                     <i class="fa fa-edit"></i>
                 </button>
 
@@ -163,7 +160,7 @@ if (!$righe->isEmpty()) {
             }, function (data, result) {
                 if (result == 'success') {
                     // Ricarico le righe
-                    $('#righe').load('<?php echo $module->fileurl('ajax_righe.php'); ?>?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
+                    $('#righe').load('<?php echo $module->fileurl('row-list.php'); ?>?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
 
                     // Ricarico la tabella dei costi
                     $('#costi').load('<?php echo $module->fileurl('ajax_costi.php'); ?>?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');

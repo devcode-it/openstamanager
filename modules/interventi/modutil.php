@@ -162,7 +162,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
                 '_DATE_' => dateFormat($data),
             ]);
             $riga->idintervento = $id_intervento;
-            $riga->um = 'ore';
+            //$riga->um = 'ore';
 
             $riga->id_iva = $id_iva;
             $riga->idconto = $id_conto;

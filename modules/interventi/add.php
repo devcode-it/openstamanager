@@ -139,7 +139,7 @@ if (empty($data_fine)) {
     if (null !== filter('data_fine')) {
         $data_fine = filter('data_fine');
     } else {
-        $data_fine = date(formatter()->getDatePattern());
+        $data_fine = date('Y-m-d');
     }
 }
 
@@ -147,7 +147,7 @@ if (empty($data)) {
     if (null !== filter('data')) {
         $data = filter('data');
     } else {
-        $data = date(formatter()->getDatePattern());
+        $data = date('Y-m-d');
     }
 }
 

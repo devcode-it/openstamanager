@@ -641,7 +641,7 @@ if (Modules::getPermission('Interventi') == 'rw') {
 				ora_dal = moment(start).format("HH:mm");
 				ora_al = moment(end).format("HH:mm");
 
-                launch_modal('<?php echo tr('Aggiungi intervento'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::get('Interventi')['id']; ?>&ref=dashboard&data='+data+'&orario_inizio='+ora_dal+'&orario_fine='+ora_al, 1 );
+                launch_modal('<?php echo tr('Aggiungi intervento'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::get('Interventi')['id']; ?>&ref=dashboard&data=' + data + '&data_fine=' + data_fine + '&orario_inizio=' + ora_dal + '&orario_fine=' + ora_al, 1);
 
 				$('#calendar').fullCalendar('unselect');
 			},
@@ -701,7 +701,7 @@ if (setting('Utilizzare i tooltip sul calendario') == '1') {
                     position: 'left',
                     functionBefore: function(instance, helper) {
                         var $origin = $(helper.origin);
-                        
+
                         // we set a variable so the data is only loaded once via Ajax, not every time the tooltip opens
                         if ($origin.data('loaded') !== true) {
 

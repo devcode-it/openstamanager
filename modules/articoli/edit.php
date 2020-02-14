@@ -33,7 +33,7 @@ $_SESSION['superselect']['id_categoria'] = $record['id_categoria'];
 
                     <div class="row">
                         <div class="col-md-6">
-                            {[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "categoria", "required": 1, "value": "$id_categoria$", "ajax-source": "categorie" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie" ]}
                         </div>
 
                         <div class="col-md-6">

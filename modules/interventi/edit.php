@@ -237,12 +237,12 @@ if (!$block_edit) {
                 <i class="fa fa-plus"></i> '.tr('Riga').'
             </a>';
 
-/*
-    echo '
-            <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_descrizione" data-toggle="tooltip" data-title="'.tr('Aggiungi descrizione').'">
-                <i class="fa fa-plus"></i> '.tr('Descrizione').'
-            </a>';
-*/
+    /*
+        echo '
+                <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_descrizione" data-toggle="tooltip" data-title="'.tr('Aggiungi descrizione').'">
+                    <i class="fa fa-plus"></i> '.tr('Descrizione').'
+                </a>';
+    */
     echo '
             <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_sconto" data-toggle="tooltip" data-title="'.tr('Aggiungi sconto/maggiorazione').'">
                 <i class="fa fa-plus"></i> '.tr('Sconto/maggiorazione').'

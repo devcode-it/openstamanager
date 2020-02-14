@@ -357,10 +357,9 @@ switch (post('op')) {
         $articolo->ritenuta_contributi = boolval(post('ritenuta_contributi'));
         $articolo->id_rivalsa_inps = post('id_rivalsa_inps') ?: null;
 
-        $articolo->costo_unitario = post('prezzo_acquisto') ?: 0;
-        $articolo->prezzo_unitario = post('prezzo');
-        $articolo->sconto_unitario = post('sconto');
-        $articolo->tipo_sconto = post('tipo_sconto');
+        $articolo->costo_unitario = post('costo_unitario') ?: 0;
+        $articolo->prezzo_unitario = post('prezzo_unitario');
+        $articolo->setSconto(post('sconto'), post('tipo_sconto'));
 
         try {
             $articolo->qta = $qta;
@@ -437,10 +436,9 @@ switch (post('op')) {
         $riga->ritenuta_contributi = boolval(post('ritenuta_contributi'));
         $riga->id_rivalsa_inps = post('id_rivalsa_inps') ?: null;
 
-        $riga->costo_unitario = post('prezzo_acquisto') ?: 0;
-        $riga->prezzo_unitario = post('prezzo');
-        $riga->sconto_unitario = post('sconto');
-        $riga->tipo_sconto = post('tipo_sconto');
+        $riga->costo_unitario = post('costo_unitario') ?: 0;
+        $riga->prezzo_unitario = post('prezzo_unitario');
+        $riga->setSconto(post('sconto'), post('tipo_sconto'));
 
         $riga->qta = $qta;
 

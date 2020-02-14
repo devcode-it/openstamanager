@@ -133,6 +133,61 @@ abstract class Row extends Description
     }
 
     /**
+     * Imposta il prezzo unitario per la riga.
+     *
+     * @param int $value
+     */
+    public function setPrezzoUnitarioAttribute($value)
+    {
+        $percentuale_iva = floatval($this->aliquota->percentuale) / 100;
+
+        // Gestione IVA incorporata
+        if ($this->parent->direzione == 'entrata' && setting('Utilizza prezzi di vendita con IVA incorporata')) {
+            $this->attributes['prezzo_unitario_ivato'] = $value;
+
+            $this->attributes['iva_unitaria'] = $value * $percentuale_iva / (1 + $percentuale_iva); // Calcolo IVA
+            $this->attributes['prezzo_unitario'] = $value - $this->attributes['iva_unitaria'];
+        } else {
+            $this->attributes['prezzo_unitario'] = $value;
+
+            $this->attributes['iva_unitaria'] = $value * $percentuale_iva; // Calcolo IVA
+            $this->attributes['prezzo_unitario_ivato'] = $value + $this->attributes['iva_unitaria'];
+        }
+    }
+
+    public function setSconto($value, $type)
+    {
+        $percentuale_iva = floatval($this->aliquota->percentuale) / 100;
+
+        if ($type == 'PRC') {
+            $this->attributes['sconto_percentuale'] = $value;
+
+            $sconto = calcola_sconto([
+                'sconto' => $this->sconto_unitario,
+                'prezzo' => $this->prezzo_unitario,
+                'tipo' => 'PRC',
+                'qta' => 1,
+            ]);
+        } else {
+            $this->attributes['sconto_percentuale'] = 0;
+            $sconto = $value;
+        }
+
+        // Gestione IVA incorporata
+        if ($this->parent->direzione == 'entrata' && setting('Utilizza prezzi di vendita con IVA incorporata')) {
+            $this->attributes['sconto_unitario_ivato'] = $sconto;
+
+            $this->attributes['sconto_iva'] = $sconto * $percentuale_iva / (1 + $percentuale_iva); // Calcolo IVA
+            $this->attributes['sconto_unitario'] = $sconto - $this->attributes['sconto_iva'];
+        } else {
+            $this->attributes['sconto_unitario'] = $sconto;
+
+            $this->attributes['sconto_iva'] = $sconto * $percentuale_iva; // Calcolo IVA
+            $this->attributes['sconto_unitario_ivato'] = $sconto + $this->attributes['sconto_iva'];
+        }
+    }
+
+    /**
      * Salva la riga, impostando i campi dipendenti dai singoli parametri.
      *
      * @return bool

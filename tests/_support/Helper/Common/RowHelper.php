@@ -163,7 +163,7 @@ class RowHelper extends \Codeception\Module
         $t->fillField('#descrizione_riga', $descrizione);
         $t->fillField('#qta', $qta);
 
-        $t->fillField('#prezzo', $prezzo);
+        $t->fillField('#prezzo_unitario', $prezzo);
 
         if (!empty($sconto)) {
             $t->fillField('#sconto', $sconto);

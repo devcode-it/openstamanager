@@ -78,9 +78,9 @@ $(document).ready(function () {
 
             var id_conto = $data.idconto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').';
 
-            $("#prezzo").val($data.prezzo_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').');
+            $("#prezzo_unitario").val($data.prezzo_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').');
 
-            $("#prezzo_acquisto").val($data.prezzo_acquisto);
+            $("#costo_unitario").val($data.prezzo_acquisto);
 
             $("#descrizione_riga").val($data.descrizione);
 

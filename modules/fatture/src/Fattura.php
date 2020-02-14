@@ -460,8 +460,10 @@ class Fattura extends Document
 
         // Se c'è una ritenuta d'acconto, la aggiungo allo scadenzario al 15 del mese dopo l'ultima scadenza di pagamento
         if ($direzione == 'uscita' && $ritenuta_acconto > 0) {
-            $ultima_scadenza = $this->scadenze()->last();
-            $scadenza = $ultima_scadenza->scadenza->copy()->setDay(15)->addMonth();
+            $ultima_scadenza = $this->scadenze->last();
+            $scadenza = $ultima_scadenza->scadenza->copy()->startOfMonth()->addMonth();
+            $scadenza->setDate($scadenza->year, $scadenza->month, 15);
+
             $importo = -$ritenuta_acconto;
 
             self::registraScadenza($this, $importo, $scadenza, $is_pagato, 'ritenutaacconto');

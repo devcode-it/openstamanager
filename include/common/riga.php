@@ -32,8 +32,6 @@ echo '
 // Fix per Altre spese intervento
 if ($module['name'] == 'Interventi') {
     $options['dir'] = 'entrata';
-    $result['prezzo_unitario_acquisto'] = $result['prezzo_acquisto'];
-    $result['prezzo'] = $result['prezzo_vendita'];
 }
 
 $width = $options['dir'] == 'entrata' ? 4 : 6;
@@ -43,7 +41,7 @@ if ($options['dir'] == 'entrata') {
     // Prezzo di acquisto unitario
     echo '
         <div class="col-md-'.$width.'">
-            {[ "type": "number", "label": "'.tr('Prezzo unitario di acquisto').'", "name": "prezzo_acquisto", "value": "'.$result['prezzo_unitario_acquisto'].'", "icon-after": "'.currency().'" ]}
+            {[ "type": "number", "label": "'.tr('Prezzo unitario di acquisto').'", "name": "prezzo_acquisto", "value": "'.$result['costo_unitario'].'", "icon-after": "'.currency().'" ]}
         </div>';
 
     // Funzione per l'aggiornamento in tempo reale del guadagno
@@ -83,7 +81,7 @@ if ($options['dir'] == 'entrata') {
 // Prezzo di vendita unitario
 echo '
         <div class="col-md-'.$width.'">
-            {[ "type": "number", "label": "'.$label.'", "name": "prezzo", "value": "'.$result['prezzo'].'", "required": 1, "icon-after": "'.currency().'" ]}
+            {[ "type": "number", "label": "'.$label.'", "name": "prezzo", "value": "'.$result['prezzo_unitario'].'", "required": 1, "icon-after": "'.currency().'" ]}
         </div>';
 
 // Sconto unitario

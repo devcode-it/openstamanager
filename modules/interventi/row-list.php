@@ -77,14 +77,14 @@ if (!$righe->isEmpty()) {
         //Costo unitario
         echo '
             <td class="text-right">
-                '.moneyFormat($riga->prezzo_unitario_acquisto).'
+                '.moneyFormat($riga->costo_unitario).'
             </td>';
 
         if ($show_prezzi) {
             // Prezzo unitario
             echo '
             <td class="text-right">
-                '.moneyFormat($riga->prezzo_unitario_vendita);
+                '.moneyFormat($riga->prezzo_unitario);
 
             if (abs($r['sconto_unitario']) > 0) {
                 $text = $r['sconto_unitario'] > 0 ? tr('sconto _TOT_ _TYPE_') : tr('maggiorazione _TOT_ _TYPE_');

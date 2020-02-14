@@ -153,8 +153,8 @@ switch (post('op')) {
 
         $articolo->id_iva = post('idiva');
 
-        $articolo->prezzo_unitario_acquisto = post('prezzo_acquisto') ?: 0;
-        $articolo->prezzo_unitario_vendita = post('prezzo');
+        $articolo->costo_unitario = post('prezzo_acquisto') ?: 0;
+        $articolo->prezzo_unitario = post('prezzo');
         $articolo->sconto_unitario = post('sconto');
         $articolo->tipo_sconto = post('tipo_sconto');
 
@@ -211,8 +211,8 @@ switch (post('op')) {
 
         $riga->id_iva = post('idiva');
 
-        $riga->prezzo_unitario_acquisto = post('prezzo_acquisto') ?: 0;
-        $riga->prezzo_unitario_vendita = post('prezzo');
+        $riga->costo_unitario = post('prezzo_acquisto') ?: 0;
+        $riga->prezzo_unitario = post('prezzo');
         $riga->sconto_unitario = post('sconto');
         $riga->tipo_sconto = post('tipo_sconto');
 

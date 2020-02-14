@@ -1189,7 +1189,7 @@ class FatturaElettronica
                 $dettaglio['DataFinePeriodo'] = $dati_aggiuntivi['data_fine_periodo'];
             }
 
-            $dettaglio['PrezzoUnitario'] = $riga->prezzo_unitario_vendita ?: 0;
+            $dettaglio['PrezzoUnitario'] = $riga->prezzo_unitario ?: 0;
 
             // Sconto (2.2.1.10)
             $sconto = $riga->sconto;

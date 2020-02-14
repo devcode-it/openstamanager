@@ -117,10 +117,10 @@ switch (post('op')) {
                 ], ['idcontratto' => $idcontratto, 'id' => $idcontratto_riga]);
 
                 //copio le righe dal promemoria all'intervento
-                $dbo->query('INSERT INTO in_righe_interventi (descrizione, qta, um, prezzo_vendita, prezzo_acquisto, idiva,desc_iva, iva, idintervento, sconto, sconto_unitario, tipo_sconto) SELECT descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,'.$id_record.',sconto,sconto_unitario,tipo_sconto FROM co_promemoria_righe WHERE id_promemoria = '.$idcontratto_riga);
+                $dbo->query('INSERT INTO in_righe_interventi (descrizione, qta, um, prezzo_unitario, costo_unitario, idiva,desc_iva, iva, idintervento, sconto, sconto_unitario, tipo_sconto) SELECT descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,'.$id_record.',sconto,sconto_unitario,tipo_sconto FROM co_promemoria_righe WHERE id_promemoria = '.$idcontratto_riga);
 
                 //copio  gli articoli dal promemoria all'intervento
-                $dbo->query('INSERT INTO in_righe_interventi (idarticolo, idintervento, descrizione, prezzo_acquisto,prezzo_vendita, sconto, sconto_unitario, tipo_sconto,idiva,desc_iva,iva, qta, um, abilita_serial, idimpianto) SELECT idarticolo, '.$id_record.',descrizione,prezzo_acquisto,prezzo_vendita,sconto,sconto_unitario,tipo_sconto,idiva,desc_iva,iva, qta, um, abilita_serial, idimpianto FROM co_promemoria_articoli WHERE id_promemoria = '.$idcontratto_riga);
+                $dbo->query('INSERT INTO in_righe_interventi (idarticolo, idintervento, descrizione, costo_unitario, prezzo_unitario, sconto, sconto_unitario, tipo_sconto,idiva,desc_iva,iva, qta, um, abilita_serial, idimpianto) SELECT idarticolo, '.$id_record.',descrizione,prezzo_acquisto,prezzo_vendita,sconto,sconto_unitario,tipo_sconto,idiva,desc_iva,iva, qta, um, abilita_serial, idimpianto FROM co_promemoria_articoli WHERE id_promemoria = '.$idcontratto_riga);
 
                 // Copia degli allegati
                 $allegati = Uploads::copy([
@@ -220,79 +220,6 @@ switch (post('op')) {
 
         break;
 
-    /*
-        Gestione righe generiche
-    */
-    case 'addriga':
-        $descrizione = post('descrizione');
-        $qta = post('qta');
-        $um = post('um');
-        $idiva = post('idiva');
-        $prezzo_vendita = post('prezzo_vendita');
-        $prezzo_acquisto = post('prezzo_acquisto');
-
-        $sconto_unitario = post('sconto');
-        $tipo_sconto = post('tipo_sconto');
-        $sconto = calcola_sconto([
-            'sconto' => $sconto_unitario,
-            'prezzo' => $prezzo_vendita,
-            'tipo' => $tipo_sconto,
-            'qta' => $qta,
-        ]);
-
-        //Calcolo iva
-        $rs_iva = $dbo->fetchArray('SELECT * FROM co_iva WHERE id='.prepare($idiva));
-        $desc_iva = $rs_iva[0]['descrizione'];
-
-        $iva = (($prezzo_vendita * $qta) - $sconto) * $rs_iva[0]['percentuale'] / 100;
-
-        $dbo->query('INSERT INTO in_righe_interventi(descrizione, qta, um, prezzo_vendita, prezzo_acquisto, idiva, desc_iva, iva, sconto, sconto_unitario, tipo_sconto, idintervento) VALUES ('.prepare($descrizione).', '.prepare($qta).', '.prepare($um).', '.prepare($prezzo_vendita).', '.prepare($prezzo_acquisto).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($id_record).')');
-
-        aggiorna_sedi_movimenti('interventi', $id_record);
-        break;
-
-    case 'editriga':
-        $idriga = post('idriga');
-        $descrizione = post('descrizione');
-        $qta = post('qta');
-        $um = post('um');
-        $idiva = post('idiva');
-        $prezzo_vendita = post('prezzo_vendita');
-        $prezzo_acquisto = post('prezzo_acquisto');
-
-        $sconto_unitario = post('sconto');
-        $tipo_sconto = post('tipo_sconto');
-        $sconto = calcola_sconto([
-            'sconto' => $sconto_unitario,
-            'prezzo' => $prezzo_vendita,
-            'tipo' => $tipo_sconto,
-            'qta' => $qta,
-        ]);
-
-        //Calcolo iva
-        $rs_iva = $dbo->fetchArray('SELECT * FROM co_iva WHERE id='.prepare($idiva));
-        $desc_iva = $rs_iva[0]['descrizione'];
-
-        $iva = (($prezzo_vendita * $qta) - $sconto) * $rs_iva[0]['percentuale'] / 100;
-
-        $dbo->query('UPDATE in_righe_interventi SET '.
-            ' descrizione='.prepare($descrizione).','.
-            ' qta='.prepare($qta).','.
-            ' um='.prepare($um).','.
-            ' prezzo_vendita='.prepare($prezzo_vendita).','.
-            ' prezzo_acquisto='.prepare($prezzo_acquisto).','.
-            ' idiva='.prepare($idiva).','.
-            ' desc_iva='.prepare($desc_iva).','.
-            ' iva='.prepare($iva).','.
-            ' sconto='.prepare($sconto).','.
-            ' sconto_unitario='.prepare($sconto_unitario).','.
-            ' tipo_sconto='.prepare($tipo_sconto).
-            ' WHERE id='.prepare($idriga));
-
-        aggiorna_sedi_movimenti('interventi', $id_record);
-
-        break;
-
     case 'delete_riga':
         $id_riga = post('idriga');
         $type = post('type');
@@ -327,8 +254,8 @@ $riga = $intervento->getRiga($type, $id_riga);
 
         $articolo->id_iva = post('idiva');
 
-        $articolo->prezzo_unitario_acquisto = post('prezzo_acquisto') ?: 0;
-        $articolo->prezzo_unitario_vendita = post('prezzo');
+        $articolo->costo_unitario = post('prezzo_acquisto') ?: 0;
+        $articolo->prezzo_unitario = post('prezzo');
         $articolo->sconto_unitario = post('sconto');
         $articolo->tipo_sconto = post('tipo_sconto');
 
@@ -388,8 +315,8 @@ $riga = $intervento->getRiga($type, $id_riga);
 
         $riga->id_iva = post('idiva');
 
-        $riga->prezzo_unitario_acquisto = post('prezzo_acquisto') ?: 0;
-        $riga->prezzo_unitario_vendita = post('prezzo');
+        $riga->costo_unitario = post('prezzo_acquisto') ?: 0;
+        $riga->prezzo_unitario = post('prezzo');
         $riga->sconto_unitario = post('sconto');
         $riga->tipo_sconto = post('tipo_sconto');
 

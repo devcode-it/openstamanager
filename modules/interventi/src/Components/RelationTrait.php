@@ -37,39 +37,11 @@ trait RelationTrait
     }
 
     /**
-     * Restituisce il prezzo unitario della riga.
-     */
-    public function getPrezzoUnitarioVenditaAttribute()
-    {
-        if (!isset($this->prezzo_unitario_vendita_riga)) {
-            $this->prezzo_unitario_vendita_riga = $this->prezzo_vendita;
-        }
-
-        return !is_nan($this->prezzo_unitario_vendita_riga) ? $this->prezzo_unitario_vendita_riga : 0;
-    }
-
-    /**
-     * Restituisce il costo unitario della riga.
-     */
-    public function getPrezzoUnitarioAcquistoAttribute()
-    {
-        return $this->prezzo_acquisto;
-    }
-
-    /**
-     * Restituisce il costo unitario della riga.
-     */
-    public function setPrezzoUnitarioAcquistoAttribute($value)
-    {
-        $this->prezzo_acquisto = $value;
-    }
-
-    /**
      * Effettua i conti per il subtotale della riga.
      */
     protected function fixSubtotale()
     {
-        $this->prezzo_vendita = $this->prezzo_unitario_vendita;
+        $this->prezzo_vendita = $this->prezzo_unitario;
 
         $this->fixIva();
     }

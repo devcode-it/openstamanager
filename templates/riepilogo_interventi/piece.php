@@ -81,7 +81,7 @@ if (!$righe->isEmpty()) {
 </tr>';
 
     foreach ($righe as $riga) {
-        $prezzo = empty($options['dir']) ? $riga->prezzo_unitario_vendita : $riga->prezzo_unitario_acquisto;
+        $prezzo = empty($options['dir']) ? $riga->prezzo_unitario : $riga->costo_unitario;
         $totale = empty($options['dir']) ? $riga->totale_imponibile : $riga->spesa;
 
         echo '

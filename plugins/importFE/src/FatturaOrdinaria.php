@@ -158,7 +158,7 @@ class FatturaOrdinaria extends FatturaElettronica
             }
 
             // Prezzo e quantità
-            $obj->prezzo_unitario_vendita = $prezzo;
+            $obj->prezzo_unitario = $prezzo;
             $obj->qta = $qta;
 
             if (!empty($riga['UnitaMisura'])) {
@@ -183,7 +183,7 @@ class FatturaOrdinaria extends FatturaElettronica
                     $elenco = implode('+', $lista);
                     $sconto = calcola_sconto([
                         'sconto' => $elenco,
-                        'prezzo' => $obj->prezzo_unitario_vendita,
+                        'prezzo' => $obj->prezzo_unitario,
                         'tipo' => 'PRC',
                         'qta' => $obj->qta,
                     ]);
@@ -225,7 +225,7 @@ class FatturaOrdinaria extends FatturaElettronica
             $obj->descrizione = tr('Arrotondamento calcolato in automatico');
             $obj->id_iva = $iva[0];
             $obj->idconto = $conto[0];
-            $obj->prezzo_unitario_vendita = round($diff, 4);
+            $obj->prezzo_unitario = round($diff, 4);
             $obj->qta = 1;
 
             $obj->save();

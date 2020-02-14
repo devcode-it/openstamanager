@@ -56,7 +56,7 @@ foreach ($righe as $riga) {
         // Costo unitario
         echo '
             <td class="text-right">
-                '.moneyFormat($riga->prezzo_unitario_vendita);
+                '.moneyFormat($riga->prezzo_unitario);
 
         if (abs($riga->sconto_unitario) > 0) {
             $text = $riga->sconto_unitario > 0 ? tr('sconto _TOT_ _TYPE_') : tr('maggiorazione _TOT_ _TYPE_');

@@ -116,7 +116,7 @@ class FatturaSemplificata extends FatturaElettronica
             }
 
             // Prezzo e quantità
-            $obj->prezzo_unitario_vendita = $prezzo;
+            $obj->prezzo_unitario = $prezzo;
             $obj->qta = $qta;
 
             $obj->save();

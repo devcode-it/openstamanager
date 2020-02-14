@@ -18,19 +18,19 @@ UPDATE `zz_settings` SET `help` = 'Esegue automaticamente un backup completo del
 UPDATE `or_statiordine` SET `completato` = '1' WHERE `or_statiordine`.`descrizione` = 'Accettato' OR `or_statiordine`.`descrizione` = 'Parzialmente evaso';
 
 -- Aumento dimensione campo qta
-ALTER TABLE `co_righe_preventivi` CHANGE `qta` `qta` DECIMAL(14,6) NOT NULL;
-ALTER TABLE `co_righe_contratti` CHANGE `qta` `qta` decimal(14, 6) NOT NULL;
-ALTER TABLE `co_righe_documenti` CHANGE `qta` `qta` decimal(14, 6) NOT NULL;
-ALTER TABLE `dt_righe_ddt` CHANGE `qta` `qta` decimal(14, 6) NOT NULL;
-ALTER TABLE `mg_articoli` CHANGE `qta` `qta` decimal(14, 6) NOT NULL;
-ALTER TABLE `mg_movimenti` CHANGE `qta` `qta` decimal(14, 6) NOT NULL;
-ALTER TABLE `or_righe_ordini` CHANGE `qta` `qta` decimal(14, 6) NOT NULL;
-ALTER TABLE `or_righe_ordini` CHANGE `qta_evasa` `qta_evasa` decimal(14, 6) NOT NULL;
-ALTER TABLE `dt_righe_ddt` CHANGE `qta_evasa` `qta_evasa` decimal(14, 6) NOT NULL;
-ALTER TABLE `co_righe_preventivi` CHANGE `qta_evasa` `qta_evasa` decimal(14, 6) NOT NULL;
-ALTER TABLE `co_righe_documenti` CHANGE `qta_evasa` `qta_evasa` decimal(14, 6) NOT NULL;
-ALTER TABLE `co_righe_contratti` CHANGE `qta_evasa` `qta_evasa` decimal(14, 6) NOT NULL;
-ALTER TABLE `mg_articoli` CHANGE `threshold_qta` `threshold_qta` decimal(14, 6) NOT NULL;
+ALTER TABLE `co_righe_preventivi` CHANGE `qta` `qta` decimal(15, 6) NOT NULL;
+ALTER TABLE `co_righe_contratti` CHANGE `qta` `qta` decimal(15, 6) NOT NULL;
+ALTER TABLE `co_righe_documenti` CHANGE `qta` `qta` decimal(15, 6) NOT NULL;
+ALTER TABLE `dt_righe_ddt` CHANGE `qta` `qta` decimal(15, 6) NOT NULL;
+ALTER TABLE `mg_articoli` CHANGE `qta` `qta` decimal(15, 6) NOT NULL;
+ALTER TABLE `mg_movimenti` CHANGE `qta` `qta` decimal(15, 6) NOT NULL;
+ALTER TABLE `or_righe_ordini` CHANGE `qta` `qta` decimal(15, 6) NOT NULL;
+ALTER TABLE `or_righe_ordini` CHANGE `qta_evasa` `qta_evasa` decimal(15, 6) NOT NULL;
+ALTER TABLE `dt_righe_ddt` CHANGE `qta_evasa` `qta_evasa` decimal(15, 6) NOT NULL;
+ALTER TABLE `co_righe_preventivi` CHANGE `qta_evasa` `qta_evasa` decimal(15, 6) NOT NULL;
+ALTER TABLE `co_righe_documenti` CHANGE `qta_evasa` `qta_evasa` decimal(15, 6) NOT NULL;
+ALTER TABLE `co_righe_contratti` CHANGE `qta_evasa` `qta_evasa` decimal(15, 6) NOT NULL;
+ALTER TABLE `mg_articoli` CHANGE `threshold_qta` `threshold_qta` decimal(15, 6) NOT NULL;
 
 INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `filename`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `default`, `enabled`) VALUES
 (NULL, (SELECT id FROM zz_modules WHERE `name`='Preventivi'), 1, 'Preventivo (solo totale)', 'Preventivo (solo totale)', 'Preventivo num. {numero} del {data}', 'preventivi', 'idpreventivo', '{\"pricing\":false, \"show_only_total\":true}', 'fa fa-print', '', '', 0, 0, 1, 1);
@@ -40,11 +40,44 @@ ALTER TABLE `in_righe_interventi` ADD `abilita_serial` boolean NOT NULL DEFAULT 
 ALTER TABLE `in_righe_interventi` ADD `idimpianto` int(11);
 ALTER TABLE `in_righe_interventi` ADD `old_id` int(11);
 
-INSERT INTO `in_righe_interventi` (`old_id`, `idarticolo`, `idintervento`, `is_descrizione`, `is_sconto`, `descrizione`, `prezzo_acquisto`, `prezzo_vendita`, `sconto`, `sconto_unitario`, `tipo_sconto`, `idiva`, `desc_iva`, `iva`, `qta`, `um`, `abilita_serial`, `created_at`, `updated_at`, `idimpianto`) SELECT `id`, `idarticolo`, `idintervento`, `is_descrizione`, `is_sconto`, `descrizione`, `prezzo_acquisto`, `prezzo_vendita`, `sconto`, `sconto_unitario`, `tipo_sconto`, `idiva`, `desc_iva`, `iva`, `qta`, `um`, `abilita_serial`, `created_at`, `updated_at`, `idimpianto` FROM `mg_articoli_interventi`;
+INSERT INTO `in_righe_interventi` (`old_id`, `idarticolo`, `idintervento`, `is_descrizione`, `is_sconto`, `descrizione`, `prezzo_acquisto`, `prezzo_vendita`, `sconto`, `sconto_unitario`, `tipo_sconto`, `idiva`, `desc_iva`, `iva`, `qta`, `um`, `abilita_serial`, `idimpianto`) SELECT `id`, `idarticolo`, `idintervento`, `is_descrizione`, `is_sconto`, `descrizione`, `prezzo_acquisto`, `prezzo_vendita`, `sconto`, `sconto_unitario`, `tipo_sconto`, `idiva`, `desc_iva`, `iva`, `qta`, `um`, `abilita_serial`, `idimpianto` FROM `mg_articoli_interventi`;
 
 UPDATE `mg_prodotti` SET `id_riga_intervento` = (SELECT `id` FROM `in_righe_interventi` WHERE `in_righe_interventi`.`old_id` = `id_riga_intervento`) WHERE `id_riga_intervento` IS NOT NULL;
 ALTER TABLE `in_righe_interventi` DROP `old_id`;
 
--- ALTER TABLE `in_righe_interventi` CHANGE `prezzo_acquisto` `prezzo_unitario_acquisto` decimal(12,6),
---    CHANGE `prezzo_vendita` `prezzo_unitario_vendita` decimal(12,6);
--- TODO su tutte le tabelle
+ALTER TABLE `in_righe_interventi` CHANGE `prezzo_acquisto` `costo_unitario` decimal(12,6) NOT NULL AFTER `qta`,
+    CHANGE `prezzo_vendita` `prezzo_unitario` decimal(12,6) NOT NULL AFTER `costo_unitario`,
+    ADD `prezzo_unitario_ivato` decimal(12,6) NOT NULL AFTER `prezzo_unitario`,
+    ADD `sconto_iva` decimal(12,6) NOT NULL AFTER `sconto_unitario`,
+    ADD `sconto_unitario_ivato` decimal(12,6) NOT NULL AFTER `sconto_iva`;
+ALTER TABLE `co_righe_documenti` CHANGE `prezzo_unitario_acquisto` `costo_unitario` decimal(12,6) NOT NULL AFTER `qta`,
+    ADD `prezzo_unitario` decimal(12,6) NOT NULL AFTER `costo_unitario`,
+    ADD `prezzo_unitario_ivato` decimal(12,6) NOT NULL AFTER `prezzo_unitario`,
+    ADD `sconto_iva` decimal(12,6) NOT NULL AFTER `sconto_unitario`,
+    ADD `sconto_unitario_ivato` decimal(12,6) NOT NULL AFTER `sconto_iva`;
+ALTER TABLE `co_righe_preventivi` CHANGE `prezzo_unitario_acquisto` `costo_unitario` decimal(12,6) NOT NULL AFTER `qta`,
+    ADD `prezzo_unitario` decimal(12,6) NOT NULL AFTER `costo_unitario`,
+    ADD `prezzo_unitario_ivato` decimal(12,6) NOT NULL AFTER `prezzo_unitario`,
+    ADD `sconto_iva` decimal(12,6) NOT NULL AFTER `sconto_unitario`,
+    ADD `sconto_unitario_ivato` decimal(12,6) NOT NULL AFTER `sconto_iva`;
+ALTER TABLE `co_righe_contratti` CHANGE `prezzo_unitario_acquisto` `costo_unitario` decimal(12,6) NOT NULL AFTER `qta`,
+    ADD `prezzo_unitario` decimal(12,6) NOT NULL AFTER `costo_unitario`,
+    ADD `prezzo_unitario_ivato` decimal(12,6) NOT NULL AFTER `prezzo_unitario`,
+    ADD `sconto_iva` decimal(12,6) NOT NULL AFTER `sconto_unitario`,
+    ADD `sconto_unitario_ivato` decimal(12,6) NOT NULL AFTER `sconto_iva`;
+ALTER TABLE `dt_righe_ddt` CHANGE `prezzo_unitario_acquisto` `costo_unitario` decimal(12,6) NOT NULL AFTER `qta`,
+    ADD `prezzo_unitario` decimal(12,6) NOT NULL AFTER `costo_unitario`,
+    ADD `prezzo_unitario_ivato` decimal(12,6) NOT NULL AFTER `prezzo_unitario`,
+    ADD `sconto_iva` decimal(12,6) NOT NULL AFTER `sconto_unitario`,
+    ADD `sconto_unitario_ivato` decimal(12,6) NOT NULL AFTER `sconto_iva`;
+ALTER TABLE `or_righe_ordini` CHANGE `prezzo_unitario_acquisto` `costo_unitario` decimal(12,6) NOT NULL AFTER `qta`,
+    ADD `prezzo_unitario` decimal(12,6) NOT NULL AFTER `costo_unitario`,
+    ADD `prezzo_unitario_ivato` decimal(12,6) NOT NULL AFTER `prezzo_unitario`,
+    ADD `sconto_iva` decimal(12,6) NOT NULL AFTER `sconto_unitario`,
+    ADD `sconto_unitario_ivato` decimal(12,6) NOT NULL AFTER `sconto_iva`;
+
+UPDATE `co_righe_documenti` SET `qta` = IF(`qta` = 0, 1, `qta`), `prezzo_unitario` = `subtotale` / `qta`, `prezzo_unitario_ivato` = `prezzo_unitario` + `iva`, `sconto_unitario_ivato` = `sconto_unitario`;
+UPDATE `co_righe_preventivi` SET `qta` = IF(`qta` = 0, 1, `qta`), `prezzo_unitario` = `subtotale` / `qta`, `prezzo_unitario_ivato` = `prezzo_unitario` + `iva`, `sconto_unitario_ivato` = `sconto_unitario`;
+UPDATE `co_righe_contratti` SET `qta` = IF(`qta` = 0, 1, `qta`), `prezzo_unitario` = `subtotale` / `qta`, `prezzo_unitario_ivato` = `prezzo_unitario` + `iva`, `sconto_unitario_ivato` = `sconto_unitario`;
+UPDATE `dt_righe_ddt` SET `qta` = IF(`qta` = 0, 1, `qta`), `prezzo_unitario` = `subtotale` / `qta`, `prezzo_unitario_ivato` = `prezzo_unitario` + `iva`, `sconto_unitario_ivato` = `sconto_unitario`;
+UPDATE `or_righe_ordini` SET `qta` = IF(`qta` = 0, 1, `qta`), `prezzo_unitario` = `subtotale` / `qta`, `prezzo_unitario_ivato` = `prezzo_unitario` + `iva`, `sconto_unitario_ivato` = `sconto_unitario`;

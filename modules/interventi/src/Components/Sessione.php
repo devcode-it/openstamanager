@@ -344,7 +344,7 @@ class Sessione extends Model
     }
 
     /**
-     * Restituisce la spesa (prezzo_unitario_acquisto * qta) relativa all'elemento.
+     * Restituisce la spesa (costo_unitario * qta) relativa all'elemento.
      *
      * @return float
      */

@@ -103,7 +103,7 @@ foreach ($righe as $riga) {
         // Prezzo unitario
         echo '
             <td class="text-right">
-				'.moneyFormat($riga->prezzo_unitario_vendita);
+				'.moneyFormat($riga->prezzo_unitario);
 
         if ($riga->sconto > 0) {
             $text = tr('sconto _TOT_ _TYPE_', [

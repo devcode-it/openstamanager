@@ -24,7 +24,7 @@ foreach ($righe as $riga) {
 
     // Valori assoluti
     $r['qta'] = abs($r['qta']);
-    $r['prezzo_unitario_acquisto'] = abs($r['prezzo_unitario_acquisto']);
+    $r['costo_unitario'] = abs($r['costo_unitario']);
     $r['totale_imponibile'] = ($fattura->isNota() ? -$riga->totale_imponibile : $riga->totale_imponibile);
     $r['sconto_unitario'] = abs($r['sconto_unitario']);
     $r['sconto'] = abs($r['sconto']);
@@ -181,12 +181,12 @@ foreach ($righe as $riga) {
 
     if (!$riga->isDescrizione()) {
         echo '
-            '.moneyFormat($riga->prezzo_unitario_vendita);
+            '.moneyFormat($riga->prezzo_unitario);
 
-        if ($dir == 'entrata' && $riga->prezzo_unitario_acquisto != 0) {
+        if ($dir == 'entrata' && $riga->costo_unitario != 0) {
             echo '
             <br><small>
-                '.tr('Acquisto').': '.moneyFormat($riga->prezzo_unitario_acquisto).'
+                '.tr('Acquisto').': '.moneyFormat($riga->costo_unitario).'
             </small>';
         }
 

@@ -8,8 +8,6 @@ use Modules\Iva\Aliquota;
 
 abstract class Row extends Description
 {
-    protected $prezzo_unitario_vendita_riga = null;
-
     protected $casts = [
         'qta' => 'float',
         //'qta_evasa' => 'float',
@@ -29,7 +27,7 @@ abstract class Row extends Description
      */
     public function getImponibileAttribute()
     {
-        return $this->prezzo_unitario_vendita * $this->qta;
+        return $this->prezzo_unitario * $this->qta;
     }
 
     /**
@@ -39,11 +37,11 @@ abstract class Row extends Description
      */
     public function getTotaleImponibileAttribute()
     {
-        $result = $this->prezzo_unitario_vendita >= 0 ? $this->imponibile : -$this->imponibile;
+        $result = $this->prezzo_unitario >= 0 ? $this->imponibile : -$this->imponibile;
 
         $result -= $this->sconto;
 
-        return $this->prezzo_unitario_vendita >= 0 ? $result : -$result;
+        return $this->prezzo_unitario >= 0 ? $result : -$result;
     }
 
     /**
@@ -57,13 +55,13 @@ abstract class Row extends Description
     }
 
     /**
-     * Restituisce la spesa (prezzo_unitario_acquisto * qta) relativa all'elemento.
+     * Restituisce la spesa (costo_unitario * qta) relativa all'elemento.
      *
      * @return float
      */
     public function getSpesaAttribute()
     {
-        return $this->prezzo_unitario_acquisto * $this->qta;
+        return $this->costo_unitario * $this->qta;
     }
 
     /**
@@ -117,7 +115,7 @@ abstract class Row extends Description
     {
         return calcola_sconto([
             'sconto' => $this->sconto_unitario,
-            'prezzo' => $this->prezzo_unitario_vendita,
+            'prezzo' => $this->prezzo_unitario,
             'tipo' => $this->tipo_sconto,
             'qta' => $this->qta,
         ]);
@@ -132,28 +130,6 @@ abstract class Row extends Description
     {
         $this->attributes['idiva'] = $value;
         $this->load('aliquota');
-    }
-
-    /**
-     * Imposta il prezzo unitario della riga.
-     *
-     * @param float $value
-     */
-    public function setPrezzoUnitarioVenditaAttribute($value)
-    {
-        $this->prezzo_unitario_vendita_riga = $value;
-    }
-
-    /**
-     * Restituisce il prezzo unitario della riga.
-     */
-    public function getPrezzoUnitarioVenditaAttribute()
-    {
-        if (!isset($this->prezzo_unitario_vendita_riga)) {
-            $this->prezzo_unitario_vendita_riga = $this->attributes['subtotale'] / $this->qta;
-        }
-
-        return !is_nan($this->prezzo_unitario_vendita_riga) ? $this->prezzo_unitario_vendita_riga : 0;
     }
 
     /**
@@ -240,7 +216,7 @@ abstract class Row extends Description
      */
     protected function customAfterDataCopiaIn($original)
     {
-        $this->prezzo_unitario_vendita = $original->prezzo_unitario_vendita;
+        $this->prezzo_unitario = $original->prezzo_unitario;
 
         parent::customAfterDataCopiaIn($original);
     }

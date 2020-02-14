@@ -670,7 +670,7 @@ class Fattura extends Document
             $this->id_riga_bollo = $riga->id;
         }
 
-        $riga->prezzo_unitario_vendita = $marca_da_bollo;
+        $riga->prezzo_unitario = $marca_da_bollo;
         $riga->qta = 1;
         $riga->descrizione = setting('Descrizione addebito bollo');
         $riga->id_iva = setting('Iva da applicare su marca da bollo');

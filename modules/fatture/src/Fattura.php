@@ -320,7 +320,7 @@ class Fattura extends Document
 
     public function scadenze()
     {
-        return $this->hasMany(Scadenza::class, 'iddocumento');
+        return $this->hasMany(Scadenza::class, 'iddocumento')->orderBy('scadenza');
     }
 
     public function movimentiContabili()
@@ -460,9 +460,10 @@ class Fattura extends Document
 
         // Se c'è una ritenuta d'acconto, la aggiungo allo scadenzario al 15 del mese dopo l'ultima scadenza di pagamento
         if ($direzione == 'uscita' && $ritenuta_acconto > 0) {
-            $scadenze = database()->select('co_scadenziario', 'scadenza', ['tipo' => 'fattura', 'iddocumento' => $this->id]);
-            $data_ultima_scadenza = end($scadenze)['scadenza'];
-            $scadenza = Carbon::parse($data_ultima_scadenza)->startOfMonth()->addMonth()->format('Y-m').'-15';
+            $ultima_scadenza = $this->scadenze->last();
+            $scadenza = $ultima_scadenza->scadenza->copy()->startOfMonth()->addMonth();
+            $scadenza->setDate($scadenza->year, $scadenza->month, 15);
+
             $importo = -$ritenuta_acconto;
 
             self::registraScadenza($this, $importo, $scadenza, $is_pagato, 'ritenutaacconto');

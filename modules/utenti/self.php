@@ -1,5 +1,6 @@
 <?php
 
+$skip_permissions = true;
 include_once __DIR__.'/../../core.php';
 
 $resource = filter('resource');
@@ -26,6 +27,6 @@ echo '
             </button>
 		</div>
 	</div>
-</form>	
+</form>
 
 <script>$(document).ready(init)</script>';

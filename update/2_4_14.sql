@@ -31,3 +31,6 @@ ALTER TABLE `co_righe_preventivi` CHANGE `qta_evasa` `qta_evasa` decimal(14, 6) 
 ALTER TABLE `co_righe_documenti` CHANGE `qta_evasa` `qta_evasa` decimal(14, 6) NOT NULL;
 ALTER TABLE `co_righe_contratti` CHANGE `qta_evasa` `qta_evasa` decimal(14, 6) NOT NULL;
 ALTER TABLE `mg_articoli` CHANGE `threshold_qta` `threshold_qta` decimal(14, 6) NOT NULL;
+
+INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `filename`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `default`, `enabled`) VALUES
+(NULL, (SELECT id FROM zz_modules WHERE `name`='Preventivi'), 1, 'Preventivo (solo totale)', 'Preventivo (solo totale)', 'Preventivo num. {numero} del {data}', 'preventivi', 'idpreventivo', '{\"pricing\":false, \"show_only_total\":true}', 'fa fa-print', '', '', 0, 0, 1, 1);

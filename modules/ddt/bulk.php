@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\Anagrafiche\Anagrafica;
+use Modules\DDT\DDT;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Tipo;
 
@@ -24,8 +24,9 @@ $id_segment = $_SESSION['module_'.$id_fatture]['id_segment'];
 
 switch (post('op')) {
     case 'crea_fattura':
+        $documenti = collect();
         $id_documento_cliente = [];
-        $totale_n_ddt = 0;
+        $numero_totale = 0;
 
         // Informazioni della fattura
         if ($dir == 'entrata') {
@@ -36,28 +37,27 @@ switch (post('op')) {
 
         $tipo_documento = Tipo::where('descrizione', $tipo_documento)->first();
 
-        $idiva = setting('Iva predefinita');
         $data = date('Y-m-d');
         $id_segment = post('id_segment');
 
         // Lettura righe selezionate
         foreach ($id_records as $id) {
-            $id_anagrafica = $dbo->selectOne('dt_ddt', 'idanagrafica', ['id' => $id])['idanagrafica'];
+            $documento_import = DDT::find($id);
+            $anagrafica = $documento_import->anagrafica;
+            $id_anagrafica = $anagrafica->id;
 
-            $righe = $dbo->fetchArray('SELECT * FROM dt_righe_ddt WHERE idddt='.prepare($id).' AND idddt NOT IN (SELECT idddt FROM co_righe_documenti WHERE idddt IS NOT NULL)');
-
-            // Proseguo solo se i ddt scelti sono fatturabili
+            // Proseguo solo se i documenti scelti sono fatturabili
+            $righe = $documento_import->getRighe();
             if (!empty($righe)) {
-                $id_documento = $id_documento_cliente[$id_anagrafica];
-                ++$totale_n_ddt;
+                ++$numero_totale;
 
                 // Se non c'è già una fattura appena creata per questo cliente, creo una fattura nuova
-                if (empty($id_documento)) {
-                    $anagrafica = Anagrafica::find($id_anagrafica);
+                $fattura = $documenti->first(function ($item, $key) use ($id_anagrafica) {
+                    return $item->anagrafica->id == $id_anagrafica;
+                });
+                if (empty($fattura)) {
                     $fattura = Fattura::build($anagrafica, $tipo_documento, $data, $id_segment);
-
-                    $id_documento = $fattura->id;
-                    $id_documento_cliente[$id_anagrafica] = $id_documento;
+                    $documenti->push($fattura);
                 }
 
                 // Inserimento righe
@@ -65,48 +65,20 @@ switch (post('op')) {
                     $qta = $riga['qta'] - $riga['qta_evasa'];
 
                     if ($qta > 0) {
-                        $dbo->insert('co_righe_documenti', [
-                            'iddocumento' => $id_documento,
-                            'idarticolo' => $riga['idarticolo'],
-                            'idddt' => $id,
-                            'idiva' => $riga['idiva'],
-                            'desc_iva' => $riga['desc_iva'],
-                            'iva' => $riga['iva'],
-                            'iva_indetraibile' => $riga['iva_indetraibile'],
-                            'descrizione' => $riga['descrizione'],
-                            'is_descrizione' => $riga['is_descrizione'],
-                            'subtotale' => $riga['subtotale'],
-                            'sconto' => $riga['sconto'],
-                            'sconto_unitario' => $riga['sconto_unitario'],
-                            'tipo_sconto' => $riga['tipo_sconto'],
-                            'um' => $riga['um'],
-                            'qta' => $qta,
-                            'abilita_serial' => $riga['abilita_serial'],
-                            'order' => orderValue('co_righe_documenti', 'iddocumento', $id_documento),
-                        ]);
-                        $id_riga_documento = $dbo->lastInsertedID();
+                        $copia = $riga->copiaIn($fattura, $qta);
 
-                        // Copia dei serial tra le righe
-                        if (!empty($riga['idarticolo'])) {
-                            $dbo->query('INSERT INTO mg_prodotti (id_riga_documento, id_articolo, dir, serial, lotto, altro) SELECT '.prepare($id_riga_documento).', '.prepare($riga['idarticolo']).', '.prepare($dir).', serial, lotto, altro FROM mg_prodotti AS t WHERE id_riga_ddt='.prepare($riga['id']));
+                        // Aggiornamento seriali dalla riga dell'ordine
+                        if ($copia->isArticolo()) {
+                            $copia->serials = $riga->serials;
                         }
-
-                        // Aggiorno la quantità evasa
-                        $dbo->query('UPDATE dt_righe_ddt SET qta_evasa = qta WHERE id='.prepare($riga['id']));
-
-                        // Aggiorno lo stato ddt
-                        $dbo->query('UPDATE dt_ddt SET idstatoddt = (SELECT id FROM dt_statiddt WHERE descrizione="Fatturato") WHERE id='.prepare($id));
                     }
-
-                    // Ricalcolo inps, ritenuta e bollo
-                    ricalcola_costiagg_fattura($id_documento);
                 }
             }
         }
 
-        if ($totale_n_ddt > 0) {
+        if ($numero_totale > 0) {
             flash()->info(tr('_NUM_ ddt fatturati!', [
-                '_NUM_' => $totale_n_ddt,
+                '_NUM_' => $numero_totale,
             ]));
         } else {
             flash()->warning(tr('Nessun ddt fatturato!'));

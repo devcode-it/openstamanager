@@ -214,7 +214,7 @@ class Generator
         // Estraggo blocchi di caratteri standard
         preg_match('/[#]+/', $maschera, $m1);
 
-        $pos1 = strpos($maschera, $m1[0]);
+        $pos1 = strpos($maschera, (string) $m1[0]);
         if ($pos1 == 0) {
             $query = 'CAST('.$field.' AS UNSIGNED) DESC';
         }

@@ -178,11 +178,11 @@ if (($options['pricing'] && !isset($options['hide_total'])) || $options['show_on
     // Totale imponibile
     echo '
     <tr>
-        <td colspan="'.($options['show_only_total']?1:3).'" class="text-right border-top">
+        <td colspan="'.($options['show_only_total'] ? 1 : 3).'" class="text-right border-top">
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
 
-        <th colspan="'.($options['show_only_total']?1:2).'" class="text-right">
+        <th colspan="'.($options['show_only_total'] ? 1 : 2).'" class="text-right">
             <b>'.moneyFormat($show_sconto ? $imponibile : $totale_imponibile, 2).'</b>
         </th>
     </tr>';
@@ -191,11 +191,11 @@ if (($options['pricing'] && !isset($options['hide_total'])) || $options['show_on
     if ($show_sconto) {
         echo '
     <tr>
-        <td colspan="'.($options['show_only_total']?1:3).'" class="text-right border-top">
+        <td colspan="'.($options['show_only_total'] ? 1 : 3).'" class="text-right border-top">
             <b>'.tr('Sconto', [], ['upper' => true]).':</b>
         </td>
 
-        <th colspan="'.($options['show_only_total']?1:2).'" class="text-right">
+        <th colspan="'.($options['show_only_total'] ? 1 : 2).'" class="text-right">
             <b>'.moneyFormat($sconto, 2).'</b>
         </th>
     </tr>';
@@ -203,11 +203,11 @@ if (($options['pricing'] && !isset($options['hide_total'])) || $options['show_on
         // Totale imponibile
         echo '
     <tr>
-        <td colspan="'.($options['show_only_total']?1:3).'" class="text-right border-top">
+        <td colspan="'.($options['show_only_total'] ? 1 : 3).'" class="text-right border-top">
             <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
         </td>
 
-        <th colspan="'.($options['show_only_total']?1:2).'" class="text-right">
+        <th colspan="'.($options['show_only_total'] ? 1 : 2).'" class="text-right">
             <b>'.moneyFormat($totale_imponibile, 2).'</b>
         </th>
     </tr>';
@@ -216,11 +216,11 @@ if (($options['pricing'] && !isset($options['hide_total'])) || $options['show_on
     // IVA
     echo '
     <tr>
-        <td colspan="'.($options['show_only_total']?1:3).'" class="text-right border-top">
+        <td colspan="'.($options['show_only_total'] ? 1 : 3).'" class="text-right border-top">
             <b>'.tr('Totale IVA', [], ['upper' => true]).':</b>
         </td>
 
-        <th colspan="'.($options['show_only_total']?1:2).'" class="text-right">
+        <th colspan="'.($options['show_only_total'] ? 1 : 2).'" class="text-right">
             <b>'.moneyFormat($totale_iva, 2).'</b>
         </th>
     </tr>';
@@ -228,10 +228,10 @@ if (($options['pricing'] && !isset($options['hide_total'])) || $options['show_on
     // TOTALE
     echo '
     <tr>
-    	<td colspan="'.($options['show_only_total']?1:3).'" class="text-right border-top">
+    	<td colspan="'.($options['show_only_total'] ? 1 : 3).'" class="text-right border-top">
             <b>'.tr('Totale documento', [], ['upper' => true]).':</b>
     	</td>
-    	<th colspan="'.($options['show_only_total']?1:2).'" class="text-right">
+    	<th colspan="'.($options['show_only_total'] ? 1 : 2).'" class="text-right">
     		<b>'.moneyFormat($totale, 2).'</b>
     	</th>
     </tr>';

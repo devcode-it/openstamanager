@@ -84,7 +84,9 @@ class Interaction extends Services
             ]);
             $body = static::responseBody($response);
 
-            Ricevuta::store($name, $body['content']);
+            if (!empty($body['content'])) {
+                Ricevuta::store($name, $body['content']);
+            }
         }
 
         return $name;

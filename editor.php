@@ -339,7 +339,7 @@ if (empty($record) || !$has_access) {
                         $icon = 'times';
                         $color = 'danger';
                         break;
-                    
+
                     case 'copy':
                         $description = tr('Duplicato');
                         $icon = 'clone';

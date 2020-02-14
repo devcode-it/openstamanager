@@ -53,7 +53,7 @@ if (!empty($options['create_document'])) {
                 </div>';
 
     if (in_array($final_module['name'], ['Fatture di vendita', 'Fatture di acquisto'])) {
-        if ($op == 'nota_accredito' && !empty($segmenti)) {
+        if ($options['op'] == 'nota_accredito' && !empty($segmenti)) {
             $segmento = $dbo->fetchOne("SELECT * FROM zz_segments WHERE predefined_accredito='1'");
 
             $id_segment = $segmento['id'];
@@ -69,6 +69,14 @@ if (!empty($options['create_document'])) {
                 <div class="col-md-12">
                     {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.prepare($final_module['id']).' ORDER BY name", "value": "'.$id_segment.'" ]}
                 </div>';
+    } elseif ($options['op'] == 'add_ordine_cliente') {
+        $tipo_anagrafica = tr('Fornitore');
+        $ajax = 'fornitori';
+
+        echo '
+            <div class="col-md-6">
+                {[ "type": "select", "label": "'.$tipo_anagrafica.'", "name": "idanagrafica", "required": 1, "ajax-source": "'.$ajax.'", "icon-after": "add|<'.Modules::get('Anagrafiche')['id'].'|tipoanagrafica='.$tipo_anagrafica.'" ]}
+            </div>';
     }
 
     echo '

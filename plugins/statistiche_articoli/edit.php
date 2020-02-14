@@ -78,7 +78,7 @@ echo '
 
 $statistiche = Modules::get('Statistiche');
 
-if( $statistiche != null ){
+if ($statistiche != null) {
     echo '
     <script src="'.$statistiche->fileurl('js/functions.js').'"></script>
     <script src="'.$statistiche->fileurl('js/manager.js').'"></script>
@@ -103,7 +103,7 @@ function init_calendar(calendar) {
 }
 </script>';
 
-if( $statistiche != null ){
+if ($statistiche != null) {
     echo '
     <script src="'.$statistiche->fileurl('js/init.js').'"></script>';
 }

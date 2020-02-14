@@ -332,4 +332,45 @@ $riga = $ordine->getRiga($type, $id_riga);
         ]));
 
         break;
+
+    // Aggiunta di un ordine cliente in ordine fornitore
+    case 'add_ordine_cliente':
+        $ordine_cliente = Ordine::find(post('id_documento'));
+
+        // Creazione dell' ordine al volo
+        if (post('create_document') == 'on') {
+            $anagrafica = Anagrafica::find(post('idanagrafica'));
+            $tipo = Tipo::where('dir', $dir)->first();
+
+            $ordine = Ordine::build($anagrafica, $tipo, post('data'));
+            $ordine->save();
+
+            $id_record = $ordine->id;
+        }
+
+        $righe = $ordine_cliente->getRighe();
+        foreach ($righe as $riga) {
+            if (post('evadere')[$riga->id] == 'on' and !empty(post('qta_da_evadere')[$riga->id])) {
+                $qta = post('qta_da_evadere')[$riga->id];
+
+                $copia = $riga->replicate();
+                $copia->setParent($ordine);
+
+                $riga->original_id = null;
+                $riga->original_type = null;
+                $riga->qta_evasa = 0;
+
+                $riga->qta = $qta;
+
+                $copia->save();
+            }
+        }
+
+        ricalcola_costiagg_ordine($id_record);
+
+        flash()->info(tr('Ordine _NUM_ aggiunto!', [
+            '_NUM_' => $ordine->numero,
+        ]));
+
+        break;
 }

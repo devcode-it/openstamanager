@@ -10,6 +10,12 @@ echo '
 	</button>
 	<ul class="dropdown-menu dropdown-menu-right">';
 
+echo '
+        <li>
+            <a data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=ordine_fornitore" data-toggle="modal" data-title="'.tr('Crea ordine fornitore').'" class="'.(in_array($record['stato'], ['Accettato', 'Parzialmente evaso']) ? '' : 'disabled').'"><i class="fa fa-file-o"></i>&nbsp;'.tr('Ordine fornitore').'
+            </a>
+        </li>';
+
     echo '
         <li>
             <a data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=ddt" data-toggle="modal" data-title="'.tr('Crea ddt').'" class="'.(in_array($record['stato'], ['Accettato', 'Parzialmente evaso']) ? '' : 'disabled').'"><i class="fa fa-truck"></i>&nbsp;'.tr('Ddt').'

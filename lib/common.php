@@ -268,7 +268,6 @@ function orderValue($table, $field, $id)
 /**
  * Visualizza le informazioni relative allo sconto presente su una riga.
  *
- * @param \Common\Components\Row $riga
  * @param bool $mostra_maggiorazione
  *
  * @return string|null

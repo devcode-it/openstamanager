@@ -191,13 +191,10 @@ foreach ($righe as $riga) {
         }
 
         if (abs($riga->sconto_unitario) > 0) {
-            $text = $riga->sconto_unitario > 0 ? tr('sconto _TOT_ _TYPE_') : tr('maggiorazione _TOT_ _TYPE_');
+            $text = discountInfo($riga);
 
             echo '
-            <br><small class="label label-danger">'.replace($text, [
-                '_TOT_' => Translator::numberToLocale(abs($riga->sconto_unitario)),
-                '_TYPE_' => ($riga->tipo_sconto == 'PRC' ? '%' : currency()),
-            ]).'</small>';
+            <br><small class="label label-danger">'.$text.'</small>';
         }
     }
 

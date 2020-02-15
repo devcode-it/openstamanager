@@ -10,7 +10,19 @@ abstract class Row extends Description
 {
     protected $casts = [
         'qta' => 'float',
+        'prezzo_unitario' => 'float',
+        'prezzo_unitario_ivato' => 'float',
+        'iva_unitaria' => 'float',
+        'sconto_percentuale' => 'float',
+        'sconto_unitario' => 'float',
+        'sconto_iva' => 'float',
+        'sconto_unitario_ivato' => 'float',
         //'qta_evasa' => 'float',
+    ];
+
+    protected $appends = [
+        'prezzo_unitario_corrente',
+        'sconto_unitario_corrente',
     ];
 
     public static function build(Document $document, $bypass = false)
@@ -113,12 +125,17 @@ abstract class Row extends Description
      */
     public function getScontoAttribute()
     {
-        return calcola_sconto([
-            'sconto' => $this->sconto_unitario,
-            'prezzo' => $this->prezzo_unitario,
-            'tipo' => $this->tipo_sconto,
-            'qta' => $this->qta,
-        ]);
+        return $this->qta * $this->sconto_unitario;
+    }
+
+    /**
+     * Restituisce il tipo di sconto della riga corrente.
+     *
+     * @return float
+     */
+    public function getTipoScontoAttribute()
+    {
+        return $this->sconto_percentuale ? 'PRC' : 'UNT';
     }
 
     /**
@@ -142,7 +159,7 @@ abstract class Row extends Description
         $percentuale_iva = floatval($this->aliquota->percentuale) / 100;
 
         // Gestione IVA incorporata
-        if ($this->parent->direzione == 'entrata' && setting('Utilizza prezzi di vendita con IVA incorporata')) {
+        if ($this->incorporaIVA()) {
             $this->attributes['prezzo_unitario_ivato'] = $value;
 
             $this->attributes['iva_unitaria'] = $value * $percentuale_iva / (1 + $percentuale_iva); // Calcolo IVA
@@ -155,6 +172,42 @@ abstract class Row extends Description
         }
     }
 
+    /**
+     * Imposta il prezzo unitario corrente (unitario oppure unitario ivato a seconda dell'impostazione 'Utilizza prezzi di vendita con IVA incorporata') per la riga.
+     *
+     * @return float
+     */
+    public function getPrezzoUnitarioCorrenteAttribute()
+    {
+        // Gestione IVA incorporata
+        if ($this->incorporaIVA()) {
+            return $this->prezzo_unitario_ivato;
+        } else {
+            return $this->prezzo_unitario;
+        }
+    }
+
+    /**
+     * Imposta lo sconto unitario corrente (unitario oppure unitario ivato a seconda dell'impostazione 'Utilizza prezzi di vendita con IVA incorporata') per la riga.
+     *
+     * @return float
+     */
+    public function getScontoUnitarioCorrenteAttribute()
+    {
+        // Gestione IVA incorporata
+        if ($this->incorporaIVA()) {
+            return $this->sconto_unitario_ivato;
+        } else {
+            return $this->sconto_unitario;
+        }
+    }
+
+    /**
+     * Imposta lo sconto secondo le informazioni indicate per valore e tipologia (UNT o PRC).
+     *
+     * @param $value
+     * @param $type
+     */
     public function setSconto($value, $type)
     {
         $percentuale_iva = floatval($this->aliquota->percentuale) / 100;
@@ -163,7 +216,7 @@ abstract class Row extends Description
             $this->attributes['sconto_percentuale'] = $value;
 
             $sconto = calcola_sconto([
-                'sconto' => $this->sconto_unitario,
+                'sconto' => $value,
                 'prezzo' => $this->prezzo_unitario,
                 'tipo' => 'PRC',
                 'qta' => 1,
@@ -174,7 +227,7 @@ abstract class Row extends Description
         }
 
         // Gestione IVA incorporata
-        if ($this->parent->direzione == 'entrata' && setting('Utilizza prezzi di vendita con IVA incorporata')) {
+        if ($this->incorporaIVA()) {
             $this->attributes['sconto_unitario_ivato'] = $sconto;
 
             $this->attributes['sconto_iva'] = $sconto * $percentuale_iva / (1 + $percentuale_iva); // Calcolo IVA
@@ -262,6 +315,7 @@ abstract class Row extends Description
     protected function fixSconto()
     {
         $this->attributes['sconto'] = $this->sconto;
+        $this->attributes['tipo_sconto'] = $this->sconto_percentuale ? 'PRC' : 'UNT';
     }
 
     /**
@@ -274,5 +328,10 @@ abstract class Row extends Description
         $this->prezzo_unitario = $original->prezzo_unitario;
 
         parent::customAfterDataCopiaIn($original);
+    }
+
+    protected function incorporaIVA()
+    {
+        return $this->parent->direzione == 'entrata' && setting('Utilizza prezzi di vendita con IVA incorporata');
     }
 }

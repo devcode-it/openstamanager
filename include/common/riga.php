@@ -81,12 +81,12 @@ if ($options['dir'] == 'entrata') {
 // Prezzo di vendita unitario
 echo '
         <div class="col-md-'.$width.'">
-            {[ "type": "number", "label": "'.$label.'", "name": "prezzo_unitario", "value": "'.$result['prezzo_unitario'].'", "required": 1, "icon-after": "'.currency().'", "help": "'.($options['dir'] == 'entrata' && setting('Utilizza prezzi di vendita con IVA incorporata') ? tr('Importo con IVA incorporata') : '').'" ]}
+            {[ "type": "number", "label": "'.$label.'", "name": "prezzo_unitario", "value": "'.$result['prezzo_unitario_corrente'].'", "required": 1, "icon-after": "'.currency().'", "help": "'.($options['dir'] == 'entrata' && setting('Utilizza prezzi di vendita con IVA incorporata') ? tr('Importo con IVA incorporata') : '').'" ]}
         </div>';
 
 // Sconto unitario
 echo '
         <div class="col-md-'.$width.'">
-            {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.$result['sconto_unitario'].'", "icon-after": "choice|untprc|'.$result['tipo_sconto'].'", "help": "'.tr('Il valore positivo indica uno sconto. Per applicare un rincaro inserire un valore negativo.').'" ]}
+            {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.($result['sconto_percentuale'] ?: $result['sconto_unitario_corrente']).'", "icon-after": "choice|untprc|'.$result['tipo_sconto'].'", "help": "'.tr('Il valore positivo indica uno sconto. Per applicare una maggiorazione inserire un valore negativo.').'" ]}
         </div>
     </div>';

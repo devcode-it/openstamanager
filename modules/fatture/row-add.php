@@ -66,7 +66,7 @@ if (get('is_descrizione') !== null) {
     $listino = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_listini ON an_anagrafiche.idlistino_vendite=mg_listini.id WHERE idanagrafica='.prepare($documento['idanagrafica']));
 
     if (!empty($listino['prc_guadagno'])) {
-        $result['sconto_unitario'] = $listino['prc_guadagno'];
+        $result['sconto_percentuale'] = $listino['prc_guadagno'];
         $result['tipo_sconto'] = 'PRC';
     }
 

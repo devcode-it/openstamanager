@@ -1192,16 +1192,15 @@ class FatturaElettronica
             $dettaglio['PrezzoUnitario'] = $riga->prezzo_unitario ?: 0;
 
             // Sconto (2.2.1.10)
-            $sconto = $riga->sconto;
-            $sconto_unitario = $riga->sconto_unitario;
+            $sconto_unitario = (float) $riga->sconto_unitario;
 
-            if (!empty((float) $sconto_unitario)) {
+            if (!empty($sconto_unitario)) {
                 $sconto = [
-                    'Tipo' => $riga->sconto_unitario > 0 ? 'SC' : 'MG',
+                    'Tipo' => $sconto_unitario > 0 ? 'SC' : 'MG',
                 ];
 
                 if ($riga['tipo_sconto'] == 'PRC') {
-                    $sconto['Percentuale'] = $sconto_unitario;
+                    $sconto['Percentuale'] = $riga->sconto_percentuale;
                 } else {
                     $sconto['Importo'] = $sconto_unitario;
                 }

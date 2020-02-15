@@ -121,4 +121,4 @@ UPDATE `or_righe_ordini` SET `qta` = IF(`qta` = 0, 1, `qta`),
     `sconto_unitario_ivato` = `sconto_unitario`;
 
 -- Aggiunta supporto a prezzi ivati
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `created_at`, `updated_at`, `order`, `help`) VALUES (NULL, 'Utilizza prezzi di vendita con IVA incorporata', '1', 'boolean', '0', 'Fatturazione', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, NULL, 'Abilita la gestione degli importi ivati per i documenti di vendita.');
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `created_at`, `updated_at`, `order`, `help`) VALUES (NULL, 'Utilizza prezzi di vendita con IVA incorporata', '0', 'boolean', '1', 'Fatturazione', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, NULL, 'Abilita la gestione degli importi ivati per i documenti di vendita.');

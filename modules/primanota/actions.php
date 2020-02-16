@@ -42,9 +42,9 @@ switch (post('op')) {
                 $idmastrino = post('idmastrino');
             }
 
-            for ($i = 0; $i < sizeof(post('idconto')); ++$i) {
+            foreach ($conti as $i => $id_conto) {
                 $idconto = post('idconto')[$i];
-                $query = 'INSERT INTO co_movimenti_modelli(idmastrino, nome, descrizione, idconto) VALUES('.prepare($idmastrino).', '.prepare($descrizione).', '.prepare($descrizione).', '.prepare($idconto).')';
+                $query = 'INSERT INTO co_movimenti_modelli(idmastrino, nome, descrizione, idconto) VALUES('.prepare($idmastrino).', '.prepare($descrizione).', '.prepare($descrizione).', '.prepare($id_conto).')';
                 $dbo->query($query);
             }
         }

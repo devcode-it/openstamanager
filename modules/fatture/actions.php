@@ -358,7 +358,7 @@ switch (post('op')) {
         $articolo->id_rivalsa_inps = post('id_rivalsa_inps') ?: null;
 
         $articolo->costo_unitario = post('costo_unitario') ?: 0;
-        $articolo->prezzo_unitario = post('prezzo_unitario');
+        $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
         $articolo->setSconto(post('sconto'), post('tipo_sconto'));
 
         try {
@@ -437,7 +437,7 @@ switch (post('op')) {
         $riga->id_rivalsa_inps = post('id_rivalsa_inps') ?: null;
 
         $riga->costo_unitario = post('costo_unitario') ?: 0;
-        $riga->prezzo_unitario = post('prezzo_unitario');
+        $riga->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
         $riga->setSconto(post('sconto'), post('tipo_sconto'));
 
         $riga->qta = $qta;

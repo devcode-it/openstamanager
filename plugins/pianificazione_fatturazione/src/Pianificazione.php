@@ -5,9 +5,6 @@ namespace Plugins\PianificazioneFatturazione;
 use Common\Document;
 use Modules\Contratti\Contratto;
 use Modules\Fatture\Fattura;
-use Modules\Interventi\Intervento;
-use Modules\TipiIntervento\Tipo as TipoSessione;
-use Traits\RecordTrait;
 
 class Pianificazione extends Document
 {
@@ -75,11 +72,11 @@ class Pianificazione extends Document
         $numero_righe = $righe->count() / $pianificazioni->count();
 
         $p = $this;
-        $index = $pianificazioni->search(function($item) use($p){
+        $index = $pianificazioni->search(function ($item) use ($p) {
             return $item->id == $p->id;
         });
 
-        return $righe->splice($index*$numero_righe, $numero_righe);
+        return $righe->splice($index * $numero_righe, $numero_righe);
     }
 
     public function articoli()

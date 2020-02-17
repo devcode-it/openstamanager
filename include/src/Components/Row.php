@@ -15,7 +15,7 @@ abstract class Row extends Description
         'iva_unitaria' => 'float',
         'sconto_percentuale' => 'float',
         'sconto_unitario' => 'float',
-        'sconto_iva' => 'float',
+        'sconto_iva_unitario' => 'float',
         'sconto_unitario_ivato' => 'float',
         //'qta_evasa' => 'float',
     ];
@@ -150,29 +150,6 @@ abstract class Row extends Description
     }
 
     /**
-     * Imposta il prezzo unitario per la riga.
-     *
-     * @param int $value
-     */
-    public function setPrezzoUnitarioAttribute($value)
-    {
-        $percentuale_iva = floatval($this->aliquota->percentuale) / 100;
-
-        // Gestione IVA incorporata
-        if ($this->incorporaIVA()) {
-            $this->attributes['prezzo_unitario_ivato'] = $value;
-
-            $this->attributes['iva_unitaria'] = $value * $percentuale_iva / (1 + $percentuale_iva); // Calcolo IVA
-            $this->attributes['prezzo_unitario'] = $value - $this->attributes['iva_unitaria'];
-        } else {
-            $this->attributes['prezzo_unitario'] = $value;
-
-            $this->attributes['iva_unitaria'] = $value * $percentuale_iva; // Calcolo IVA
-            $this->attributes['prezzo_unitario_ivato'] = $value + $this->attributes['iva_unitaria'];
-        }
-    }
-
-    /**
      * Imposta il prezzo unitario corrente (unitario oppure unitario ivato a seconda dell'impostazione 'Utilizza prezzi di vendita con IVA incorporata') per la riga.
      *
      * @return float
@@ -199,6 +176,52 @@ abstract class Row extends Description
             return $this->sconto_unitario_ivato;
         } else {
             return $this->sconto_unitario;
+        }
+    }
+
+    /**
+     * Imposta il prezzo unitario (senza IVA) per la riga corrente.
+     *
+     * @param $value
+     */
+    public function setPrezzoUnitarioAttribute($value)
+    {
+        $this->attributes['prezzo_unitario'] = $value;
+        $percentuale_iva = floatval($this->aliquota->percentuale) / 100;
+
+        $this->attributes['iva_unitaria'] = $value * $percentuale_iva; // Calcolo IVA
+        $this->attributes['prezzo_unitario_ivato'] = $value + $this->attributes['iva_unitaria'];
+    }
+
+    /**
+     * Imposta il prezzo unitario ivato (con IVA) per la riga corrente.
+     *
+     * @param $value
+     */
+    public function setPrezzoUnitarioIvatoAttribute($value)
+    {
+        $this->attributes['prezzo_unitario_ivato'] = $value;
+        $percentuale_iva = floatval($this->aliquota->percentuale) / 100;
+
+        $this->attributes['iva_unitaria'] = $value * $percentuale_iva / (1 + $percentuale_iva); // Calcolo IVA
+        $this->attributes['prezzo_unitario'] = $value - $this->attributes['iva_unitaria'];
+    }
+
+    /**
+     * Imposta il prezzo unitario secondo le informazioni indicate per valore e tipologia (UNT o PRC).
+     *
+     * @param $value
+     * @param $type
+     */
+    public function setPrezzoUnitario($prezzo_unitario, $id_iva)
+    {
+        $this->id_iva = $id_iva;
+
+        // Gestione IVA incorporata
+        if ($this->incorporaIVA()) {
+            $this->prezzo_unitario_ivato = $prezzo_unitario;
+        } else {
+            $this->prezzo_unitario = $prezzo_unitario;
         }
     }
 
@@ -230,13 +253,13 @@ abstract class Row extends Description
         if ($this->incorporaIVA()) {
             $this->attributes['sconto_unitario_ivato'] = $sconto;
 
-            $this->attributes['sconto_iva'] = $sconto * $percentuale_iva / (1 + $percentuale_iva); // Calcolo IVA
-            $this->attributes['sconto_unitario'] = $sconto - $this->attributes['sconto_iva'];
+            $this->attributes['sconto_iva_unitario'] = $sconto * $percentuale_iva / (1 + $percentuale_iva); // Calcolo IVA
+            $this->attributes['sconto_unitario'] = $sconto - $this->attributes['sconto_iva_unitario'];
         } else {
             $this->attributes['sconto_unitario'] = $sconto;
 
-            $this->attributes['sconto_iva'] = $sconto * $percentuale_iva; // Calcolo IVA
-            $this->attributes['sconto_unitario_ivato'] = $sconto + $this->attributes['sconto_iva'];
+            $this->attributes['sconto_iva_unitario'] = $sconto * $percentuale_iva; // Calcolo IVA
+            $this->attributes['sconto_unitario_ivato'] = $sconto + $this->attributes['sconto_iva_unitario'];
         }
     }
 

@@ -1,10 +1,10 @@
 <?php
 
-use Modules\Contratti\Contratto;
 use Modules\Contratti\Components\Riga;
-use Plugins\PianificazioneFatturazione\Pianificazione;
+use Modules\Contratti\Contratto;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Tipo;
+use Plugins\PianificazioneFatturazione\Pianificazione;
 
 include_once __DIR__.'/../../core.php';
 
@@ -49,12 +49,11 @@ switch ($operazione) {
 
                 $prezzo_unitario = $totale / $qta_riga / $numero_fatture;
 
-                for($rata = 1; $rata <= $numero_fatture; $rata++) {
+                for ($rata = 1; $rata <= $numero_fatture; ++$rata) {
                     $riga = Riga::build($contratto);
 
                     $riga->descrizione = $descrizione_riga;
-                    $riga->id_iva = $id_iva;
-                    $riga->prezzo_unitario = $prezzo_unitario;
+                    $riga->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
                     $riga->qta = $qta_riga;
 
                     $riga->save();

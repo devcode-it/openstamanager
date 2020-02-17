@@ -122,10 +122,9 @@ switch (post('op')) {
 
         $articolo->descrizione = post('descrizione');
         $articolo->um = post('um') ?: null;
-        $articolo->id_iva = post('idiva');
 
         $articolo->costo_unitario = post('costo_unitario') ?: 0;
-        $articolo->prezzo_unitario = post('prezzo_unitario');
+        $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
         $articolo->setSconto(post('sconto'), post('tipo_sconto'));
 
         try {
@@ -182,10 +181,9 @@ switch (post('op')) {
 
         $riga->descrizione = post('descrizione');
         $riga->um = post('um') ?: null;
-        $riga->id_iva = post('idiva');
 
         $riga->costo_unitario = post('costo_unitario') ?: 0;
-        $riga->prezzo_unitario = post('prezzo_unitario');
+        $riga->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
         $riga->setSconto(post('sconto'), post('tipo_sconto'));
 
         $riga->qta = post('qta');

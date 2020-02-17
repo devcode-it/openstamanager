@@ -37,7 +37,7 @@ if (!$pianificazioni->isEmpty()) {
     <tbody>';
 
     $previous = null;
-    foreach ($pianificazioni as $rata => $pianificazione){
+    foreach ($pianificazioni as $rata => $pianificazione) {
         echo '
         <tr>
             <td>';

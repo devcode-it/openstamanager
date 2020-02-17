@@ -53,7 +53,7 @@ switch ($operazione) {
                     $riga = Riga::build($contratto);
 
                     $riga->descrizione = $descrizione_riga;
-                    $riga->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
+                    $riga->setPrezzoUnitario($prezzo_unitario, $id_iva);
                     $riga->qta = $qta_riga;
 
                     $riga->save();
@@ -75,6 +75,8 @@ switch ($operazione) {
 
         // Creazione fattura
         $fattura = Fattura::build($contratto->anagrafica, $tipo, $data, $id_segment);
+        $fattura->note = post('note');
+        $fattura->save();
 
         // Copia righe
         $righe = $pianificazione->getRighe();

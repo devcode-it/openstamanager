@@ -29,9 +29,9 @@ if (!$pianificazioni->isEmpty()) {
     <thead>
         <tr>
             <th width="10%">'.tr('Scadenza').'</th>
-            <th width="15%">'.tr('Importo').'</th>
+            <th class="text-center" width="15%">'.tr('Importo').'</th>
             <th>'.tr('Documento').'</th>
-            <th width="12%">#</th>
+            <th class="text-center" width="12%">#</th>
         </tr>
     </thead>
     <tbody>';
@@ -52,7 +52,7 @@ if (!$pianificazioni->isEmpty()) {
         echo '
             </td>
 
-            <td class="center">
+            <td class="text-right">
                 '.moneyFormat($pianificazione->totale).'
             </td>';
 
@@ -75,7 +75,7 @@ if (!$pianificazioni->isEmpty()) {
 
         // Creazione fattura
         echo '
-            <td>
+            <td class="text-center">
                 <button type="button" class="btn btn-primary btn-sm '.(!empty($fattura) ? 'disabled' : '').'" '.(!empty($fattura) ? 'disabled' : '').' onclick="crea_fattura('.$rata.')">
                     <i class="fa fa-euro"></i> '.tr('Crea fattura').'
                 </button>

@@ -76,7 +76,11 @@ class Pianificazione extends Document
             return $item->id == $p->id;
         });
 
-        return $righe->splice($index * $numero_righe, $numero_righe);
+        $skip = $pianificazioni->count();
+
+        return $righe->filter(function ($value, $key) use ($skip, $index) {
+            return $key % $skip == $index;
+        });
     }
 
     public function articoli()

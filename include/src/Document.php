@@ -184,6 +184,22 @@ abstract class Document extends Model
         $this->setRelations([]);
     }
 
+    public function toArray()
+    {
+        $array = parent::toArray();
+
+        $result = array_merge($array, [
+            'spesa' => $this->spesa,
+            'imponibile' => $this->imponibile,
+            'sconto' => $this->sconto,
+            'totale_imponibile' => $this->totale_imponibile,
+            'iva' => $this->iva,
+            'totale' => $this->totale,
+        ]);
+
+        return $result;
+    }
+
     /**
      * Costruisce una nuova collezione Laravel a partire da quelle indicate.
      *

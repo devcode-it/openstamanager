@@ -253,6 +253,7 @@ class App
 
         $id_module = $module['id'];
         $id_record = filter('id_record');
+        $id_plugin = $options['id_plugin'];
 
         $directory = empty($directory) ? 'include|custom|/common/' : $directory;
 

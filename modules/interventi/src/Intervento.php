@@ -15,14 +15,6 @@ class Intervento extends Document
 
     protected $info = [];
 
-    protected $appends = [
-        'ore_totali',
-        'km_totali',
-        'spesa',
-        'imponibile',
-        'totale_imponibile',
-    ];
-
     /**
      * Crea un nuovo intervento.
      *
@@ -157,6 +149,18 @@ class Intervento extends Document
     public function sessioni()
     {
         return $this->hasMany(Components\Sessione::class, 'idintervento');
+    }
+
+    public function toArray()
+    {
+        $array = parent::toArray();
+
+        $result = array_merge($array, [
+            'ore_totali' => $this->ore_totali,
+            'km_totali' => $this->km_totali,
+        ]);
+
+        return $result;
     }
 
     // Metodi statici

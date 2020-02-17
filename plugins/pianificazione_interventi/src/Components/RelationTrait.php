@@ -1,8 +1,8 @@
 <?php
 
-namespace Modules\Interventi\Components;
+namespace Plugins\PianificazioneInterventi\Components;
 
-use Modules\Interventi\Intervento;
+use Plugins\PianificazioneInterventi\Promemoria;
 
 trait RelationTrait
 {
@@ -10,15 +10,15 @@ trait RelationTrait
 
     public function getParentID()
     {
-        return 'idintervento';
+        return 'id_promemoria';
     }
 
     public function parent()
     {
-        return $this->belongsTo(Intervento::class, $this->getParentID());
+        return $this->belongsTo(Promemoria::class, $this->getParentID());
     }
 
-    public function intervento()
+    public function contratto()
     {
         return $this->parent();
     }

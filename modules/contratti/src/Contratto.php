@@ -8,6 +8,7 @@ use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\Intervento;
 use Modules\TipiIntervento\Tipo as TipoSessione;
+use Plugins\PianificazioneInterventi\Promemoria;
 use Traits\RecordTrait;
 use Util\Generator;
 
@@ -141,6 +142,11 @@ class Contratto extends Document
     public function interventi()
     {
         return $this->hasMany(Intervento::class, 'id_contratto');
+    }
+
+    public function promemoria()
+    {
+        return $this->hasMany(Promemoria::class, 'idcontratto');
     }
 
     public function fixBudget()

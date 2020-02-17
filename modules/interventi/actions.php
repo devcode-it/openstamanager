@@ -117,7 +117,7 @@ switch (post('op')) {
                 ], ['idcontratto' => $idcontratto, 'id' => $idcontratto_riga]);
 
                 //copio le righe dal promemoria all'intervento
-                $dbo->query('INSERT INTO in_righe_interventi (descrizione, qta, um, prezzo_unitario, costo_unitario, idiva,desc_iva, iva, idintervento, sconto, sconto_unitario, tipo_sconto) SELECT descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,'.$id_record.',sconto,sconto_unitario,tipo_sconto FROM co_promemoria_righe WHERE id_promemoria = '.$idcontratto_riga);
+                $dbo->query('INSERT INTO in_righe_interventi (descrizione, qta, um, prezzo_unitario, costo_unitario, idiva,desc_iva, iva, idintervento, sconto, sconto_unitario, tipo_sconto) SELECT descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,'.$id_record.',sconto,sconto_unitario,tipo_sconto FROM co_righe_promemoria WHERE id_promemoria = '.$idcontratto_riga);
 
                 //copio  gli articoli dal promemoria all'intervento
                 $dbo->query('INSERT INTO in_righe_interventi (idarticolo, idintervento, descrizione, costo_unitario, prezzo_unitario, sconto, sconto_unitario, tipo_sconto,idiva,desc_iva,iva, qta, um, abilita_serial, idimpianto) SELECT idarticolo, '.$id_record.',descrizione,prezzo_acquisto,prezzo_vendita,sconto,sconto_unitario,tipo_sconto,idiva,desc_iva,iva, qta, um, abilita_serial, idimpianto FROM co_promemoria_articoli WHERE id_promemoria = '.$idcontratto_riga);

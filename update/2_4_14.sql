@@ -42,16 +42,11 @@ ALTER TABLE `in_righe_interventi` ADD `old_id` int(11);
 
 INSERT INTO `in_righe_interventi` (`old_id`, `idarticolo`, `idintervento`, `is_descrizione`, `is_sconto`, `descrizione`, `prezzo_acquisto`, `prezzo_vendita`, `sconto`, `sconto_unitario`, `tipo_sconto`, `idiva`, `desc_iva`, `iva`, `qta`, `um`, `abilita_serial`, `idimpianto`) SELECT `id`, `idarticolo`, `idintervento`, `is_descrizione`, `is_sconto`, `descrizione`, `prezzo_acquisto`, `prezzo_vendita`, `sconto`, `sconto_unitario`, `tipo_sconto`, `idiva`, `desc_iva`, `iva`, `qta`, `um`, `abilita_serial`, `idimpianto` FROM `mg_articoli_interventi`;
 
-UPDATE `mg_prodotti` SET `id_riga_intervento` = (SELECT `id` FROM `in_righe_interventi` WHERE `in_righe_interventi`.`old_id` = `id_riga_intervento`) WHERE `id_riga_intervento` IS NOT NULL;
-ALTER TABLE `in_righe_interventi` DROP `old_id`;
+ALTER TABLE `co_promemoria_righe` ADD `abilita_serial` boolean NOT NULL DEFAULT '0' AFTER `um`, ADD `idimpianto` int(11), ADD `idarticolo` int(11), ADD FOREIGN KEY  (`idarticolo`) REFERENCES `mg_articoli`(`id`) ON DELETE SET NULL, CHANGE `um` `um` varchar(25);
+ALTER TABLE `co_promemoria_righe` ADD `is_descrizione` TINYINT(1) DEFAULT FALSE NOT NULL, ADD `is_sconto` BOOLEAN DEFAULT FALSE NOT NULL AFTER `is_descrizione`;
 
-ALTER TABLE `in_righe_interventi` CHANGE `prezzo_acquisto` `costo_unitario` decimal(12,6) NOT NULL AFTER `qta`,
-    CHANGE `prezzo_vendita` `prezzo_unitario` decimal(12,6) NOT NULL AFTER `costo_unitario`,
-    ADD `iva_unitaria` decimal(12,6) NOT NULL AFTER `prezzo_unitario`,
-    ADD `prezzo_unitario_ivato` decimal(12,6) NOT NULL AFTER `iva_unitaria`,
-    ADD `sconto_percentuale` decimal(12,6) NOT NULL AFTER `sconto_unitario`,
-    ADD `sconto_iva` decimal(12,6) NOT NULL AFTER `sconto_unitario`,
-    ADD `sconto_unitario_ivato` decimal(12,6) NOT NULL AFTER `sconto_iva`;
+INSERT INTO `co_promemoria_righe` (`idarticolo`, `id_promemoria`, `descrizione`, `prezzo_acquisto`, `prezzo_vendita`, `sconto`, `sconto_unitario`, `tipo_sconto`, `idiva`, `desc_iva`, `iva`, `qta`, `um`, `abilita_serial`, `idimpianto`) SELECT `idarticolo`, `id_promemoria`, `descrizione`, `prezzo_acquisto`, `prezzo_vendita`, `sconto`, `sconto_unitario`, `tipo_sconto`, `idiva`, `desc_iva`, `iva`, `qta`, `um`, `abilita_serial`, `idimpianto` FROM `co_promemoria_articoli`;
+
 ALTER TABLE `co_righe_documenti` CHANGE `prezzo_unitario_acquisto` `costo_unitario` decimal(12,6) NOT NULL AFTER `qta`,
     ADD `prezzo_unitario` decimal(12,6) NOT NULL AFTER `costo_unitario`,
     ADD `iva_unitaria` decimal(12,6) NOT NULL AFTER `prezzo_unitario`,
@@ -87,38 +82,76 @@ ALTER TABLE `or_righe_ordini` CHANGE `prezzo_unitario_acquisto` `costo_unitario`
     ADD `sconto_percentuale` decimal(12,6) NOT NULL AFTER `sconto_unitario`,
     ADD `sconto_iva` decimal(12,6) NOT NULL AFTER `sconto_percentuale`,
     ADD `sconto_unitario_ivato` decimal(12,6) NOT NULL AFTER `sconto_iva`;
+ALTER TABLE `in_righe_interventi` CHANGE `prezzo_acquisto` `costo_unitario` decimal(12,6) NOT NULL AFTER `qta`,
+    CHANGE `prezzo_vendita` `prezzo_unitario` decimal(12,6) NOT NULL AFTER `costo_unitario`,
+    ADD `iva_unitaria` decimal(12,6) NOT NULL AFTER `prezzo_unitario`,
+    ADD `prezzo_unitario_ivato` decimal(12,6) NOT NULL AFTER `iva_unitaria`,
+    ADD `sconto_percentuale` decimal(12,6) NOT NULL AFTER `sconto_unitario`,
+    ADD `sconto_iva` decimal(12,6) NOT NULL AFTER `sconto_unitario`,
+    ADD `sconto_unitario_ivato` decimal(12,6) NOT NULL AFTER `sconto_iva`;
+ALTER TABLE `co_promemoria_righe` CHANGE `prezzo_acquisto` `costo_unitario` decimal(12,6) NOT NULL AFTER `qta`,
+    CHANGE `prezzo_vendita` `prezzo_unitario` decimal(12,6) NOT NULL AFTER `costo_unitario`,
+    ADD `iva_unitaria` decimal(12,6) NOT NULL AFTER `prezzo_unitario`,
+    ADD `prezzo_unitario_ivato` decimal(12,6) NOT NULL AFTER `iva_unitaria`,
+    ADD `sconto_percentuale` decimal(12,6) NOT NULL AFTER `sconto_unitario`,
+    ADD `sconto_iva` decimal(12,6) NOT NULL AFTER `sconto_unitario`,
+    ADD `sconto_unitario_ivato` decimal(12,6) NOT NULL AFTER `sconto_iva`;
 
 UPDATE `co_righe_documenti` SET `qta` = IF(`qta` = 0, 1, `qta`),
     `prezzo_unitario` = `subtotale` / `qta`,
+    `iva_unitaria` = `iva` / `qta`,
     `prezzo_unitario_ivato` = `prezzo_unitario` + `iva`,
     `sconto_percentuale` = IF(`tipo_sconto` = 'PRC', `sconto_unitario`, 0),
     `sconto_unitario` = IF(`tipo_sconto` = 'PRC', `sconto` / `qta`, `sconto_unitario`),
     `sconto_unitario_ivato` = `sconto_unitario`;
 UPDATE `co_righe_preventivi` SET `qta` = IF(`qta` = 0, 1, `qta`),
     `prezzo_unitario` = `subtotale` / `qta`,
-    `prezzo_unitario_ivato` = `prezzo_unitario` + `iva`,
+    `iva_unitaria` = `iva` / `qta`,
+    `prezzo_unitario_ivato` = `prezzo_unitario` + `iva_unitaria`,
     `sconto_percentuale` = IF(`tipo_sconto` = 'PRC', `sconto_unitario`, 0),
     `sconto_unitario` = IF(`tipo_sconto` = 'PRC', `sconto` / `qta`, `sconto_unitario`),
     `sconto_unitario_ivato` = `sconto_unitario`;
 UPDATE `co_righe_contratti` SET `qta` = IF(`qta` = 0, 1, `qta`),
     `prezzo_unitario` = `subtotale` / `qta`,
+    `iva_unitaria` = `iva` / `qta`,
     `prezzo_unitario_ivato` = `prezzo_unitario` + `iva`,
     `sconto_percentuale` = IF(`tipo_sconto` = 'PRC', `sconto_unitario`, 0),
     `sconto_unitario` = IF(`tipo_sconto` = 'PRC', `sconto` / `qta`, `sconto_unitario`),
     `sconto_unitario_ivato` = `sconto_unitario`;
 UPDATE `dt_righe_ddt` SET `qta` = IF(`qta` = 0, 1, `qta`),
     `prezzo_unitario` = `subtotale` / `qta`,
-    `prezzo_unitario_ivato` = `prezzo_unitario` + `iva`,
+    `iva_unitaria` = `iva` / `qta`,
+    `prezzo_unitario_ivato` = `prezzo_unitario` + `iva_unitaria`,
     `sconto_percentuale` = IF(`tipo_sconto` = 'PRC', `sconto_unitario`, 0),
     `sconto_unitario` = IF(`tipo_sconto` = 'PRC', `sconto` / `qta`, `sconto_unitario`),
     `sconto_unitario_ivato` = `sconto_unitario`;
 UPDATE `or_righe_ordini` SET `qta` = IF(`qta` = 0, 1, `qta`),
     `prezzo_unitario` = `subtotale` / `qta`,
-    `prezzo_unitario_ivato` = `prezzo_unitario` + `iva`,
+    `iva_unitaria` = `iva` / `qta`,
+    `prezzo_unitario_ivato` = `prezzo_unitario` + `iva_unitaria`,
     `sconto_unitario_ivato` = `sconto_unitario`,
     `sconto_percentuale` = IF(`tipo_sconto` = 'PRC', `sconto_unitario`, 0),
     `sconto_unitario` = IF(`tipo_sconto` = 'PRC', `sconto` / `qta`, `sconto_unitario`),
     `sconto_unitario_ivato` = `sconto_unitario`;
+UPDATE `in_righe_interventi` SET `qta` = IF(`qta` = 0, 1, `qta`),
+    `prezzo_unitario_ivato` = `prezzo_unitario` + `iva_unitaria`,
+    `iva_unitaria` = `iva` / `qta`,
+    `prezzo_unitario_ivato` = `prezzo_unitario` + `iva_unitaria`,
+    `sconto_percentuale` = IF(`tipo_sconto` = 'PRC', `sconto_unitario`, 0),
+    `sconto_unitario` = IF(`tipo_sconto` = 'PRC', `sconto` / `qta`, `sconto_unitario`),
+    `sconto_unitario_ivato` = `sconto_unitario`;
+UPDATE `co_promemoria_righe` SET `qta` = IF(`qta` = 0, 1, `qta`),
+    `prezzo_unitario_ivato` = `prezzo_unitario` + `iva_unitaria`,
+    `iva_unitaria` = `iva` / `qta`,
+    `prezzo_unitario_ivato` = `prezzo_unitario` + `iva_unitaria`,
+    `sconto_percentuale` = IF(`tipo_sconto` = 'PRC', `sconto_unitario`, 0),
+    `sconto_unitario` = IF(`tipo_sconto` = 'PRC', `sconto` / `qta`, `sconto_unitario`),
+    `sconto_unitario_ivato` = `sconto_unitario`;
+
+ALTER TABLE `co_promemoria_righe` RENAME TO `co_righe_promemoria`;
+
+DROP TABLE `mg_articoli_interventi`;
+DROP TABLE `co_promemoria_articoli`;
 
 -- Aggiunta supporto a prezzi ivati
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `created_at`, `updated_at`, `order`, `help`) VALUES (NULL, 'Utilizza prezzi di vendita con IVA incorporata', '0', 'boolean', '1', 'Fatturazione', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, NULL, 'Abilita la gestione degli importi ivati per i documenti di vendita.');

@@ -5,7 +5,7 @@ include_once __DIR__.'/../../core.php';
 $plugin = Plugins::get($id_plugin);
 
 $id_module = Modules::get('Contratti')['id'];
-$is_add = filter('add') ? true : false;
+$block_edit = filter('add') ? false : true;
 
 // Informazioni contratto
 $contratto = $dbo->fetchOne('SELECT * FROM `co_contratti` WHERE `id` = :id', [
@@ -60,14 +60,13 @@ $orario_inizio = '09:00';
 $orario_fine = !empty($tempo_standard) ? date('H:i', strtotime($orario_inizio) + ((60 * 60) * $tempo_standard)) : '17:00';
 
 echo '
-<form id="add_form" action="'.$rootdir.'/controller.php" method="post" role="form">
-
+<form id="add_form" action="" method="post" role="form">
 	<input type="hidden" name="id_plugin" value="'.$id_plugin.'">
     <input type="hidden" name="id_parent" value="'.$id_parent.'">
     <input type="hidden" name="id_record" value="'.$id_record.'">
 
 	<input type="hidden" name="backto" value="record-edit">
-    <input type="hidden" name="op" value="'.(!empty($is_add) ? 'edit-promemoria' : 'pianificazione').'">';
+    <input type="hidden" name="op" value="'.(!$block_edit ? 'edit-promemoria' : 'pianificazione').'">';
 
     echo '
 	<!-- DATI PROMEMORIA -->
@@ -80,85 +79,72 @@ echo '
 
 			<div class="row">
 				<div class="col-md-6">
-					{[ "type": "date",  "label": "'.tr('Data promemoria').'", "name": "data_richiesta", "required": 1, "value": "'.$data_accettazione.'", "readonly": '.intval(empty($is_add)).', "min-date": "'.$data_accettazione.'", "max-date": "'.$data_conclusione.'" ]}
+					{[ "type": "date",  "label": "'.tr('Data promemoria').'", "name": "data_richiesta", "required": 1, "value": "'.$data_accettazione.'", "readonly": '.intval($block_edit).', "min-date": "'.$data_accettazione.'", "max-date": "'.$data_conclusione.'" ]}
 				</div>
 
 				<div class="col-md-6">
-					 {[ "type": "select", "label": "'.tr('Tipo intervento').'", "name": "idtipointervento", "required": 1, "id": "idtipointervento_", "value": "'.$record['idtipointervento'].'", "readonly": '.intval(empty($is_add)).', "ajax-source": "tipiintervento", "value": "'.$idtipointervento.'"  ]}
+					 {[ "type": "select", "label": "'.tr('Tipo intervento').'", "name": "idtipointervento", "required": 1, "id": "idtipointervento_", "value": "'.$record['idtipointervento'].'", "readonly": '.intval($block_edit).', "ajax-source": "tipiintervento", "value": "'.$idtipointervento.'"  ]}
 				</div>
 			</div>
 
 			<div class="row">
 				<div class="col-md-6">
-					{[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede_c", "values": "query=SELECT 0 AS id, \'Sede legale\' AS descrizione UNION SELECT id, CONCAT( CONCAT_WS( \' (\', CONCAT_WS(\', \', `nomesede`, `citta`), `indirizzo` ), \')\') AS descrizione FROM an_sedi WHERE idanagrafica='.$id_anagrafica.'", "value": "'.$id_sede.'", "readonly": '.intval(empty($is_add)).', "required" : "1" ]}
+					{[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede_c", "values": "query=SELECT 0 AS id, \'Sede legale\' AS descrizione UNION SELECT id, CONCAT( CONCAT_WS( \' (\', CONCAT_WS(\', \', `nomesede`, `citta`), `indirizzo` ), \')\') AS descrizione FROM an_sedi WHERE idanagrafica='.$id_anagrafica.'", "value": "'.$id_sede.'", "readonly": '.intval($block_edit).', "required" : "1" ]}
 			   </div>
 
 				<div class="col-md-6">
-                    {[ "type": "select", "multiple": "1", "label": "'.tr('Impianti a contratto').'", "name": "idimpianti[]", "help": "'.tr('Impianti sede selezionata').'", "values": "query=SELECT my_impianti.id AS id, my_impianti.nome AS descrizione FROM my_impianti_contratti INNER JOIN my_impianti ON my_impianti_contratti.idimpianto = my_impianti.id  WHERE my_impianti_contratti.idcontratto = '.$id_parent.' ORDER BY descrizione", "value": "'.implode(',', $id_impianti).'", "readonly": '.intval(empty($is_add)).' ]}
+                    {[ "type": "select", "multiple": "1", "label": "'.tr('Impianti a contratto').'", "name": "idimpianti[]", "help": "'.tr('Impianti sede selezionata').'", "values": "query=SELECT my_impianti.id AS id, my_impianti.nome AS descrizione FROM my_impianti_contratti INNER JOIN my_impianti ON my_impianti_contratti.idimpianto = my_impianti.id  WHERE my_impianti_contratti.idcontratto = '.$id_parent.' ORDER BY descrizione", "value": "'.implode(',', $id_impianti).'", "readonly": '.intval($block_edit).' ]}
 				</div>
 			</div>
 
 			<div class="row">
 				<div class="col-md-12">
-					 {[ "type": "textarea", "label": "'.tr('Descrizione').'",  "name": "richiesta", "id": "richiesta_", "readonly": '.intval(empty($is_add)).', "value": "'.$record['richiesta'].'" ]}
+					 {[ "type": "textarea", "label": "'.tr('Descrizione').'",  "name": "richiesta", "id": "richiesta_", "readonly": '.intval($block_edit).', "value": "'.$record['richiesta'].'" ]}
 				</div>
             </div>
         </div>
     </div>';
 
 echo '
-        <!-- ARTICOLI -->
+    <!-- RIGHE -->
     <div class="panel panel-primary">
         <div class="panel-heading">
-            <h3 class="panel-title">'.tr('Materiale da utilizzare').'</h3>
+            <h3 class="panel-title">'.tr('Righe').'</h3>
         </div>
 
         <div class="panel-body">
-            <div id="articoli">';
+            <div class="row">
+                <div class="col-md-12">';
 
-include $plugin->filepath('ajax_articoli.php');
+            if (!$block_edit) {
+                echo '
+                    <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'&is_articolo" data-toggle="tooltip" data-title="'.tr('Aggiungi articolo').'">
+                        <i class="fa fa-plus"></i> '.tr('Articolo').'
+                    </a>';
 
-echo '
-            </div>';
-
-if (!empty($is_add)) {
-    echo '
-            <button type="button" class="btn btn-primary" data-title="'.tr('Aggiungi articolo').'" data-toggle="modal" data-href="'.$plugin->fileurl('add_articolo.php').'?id_plugin='.$id_plugin.'&id_record='.$id_record.'&add='.$is_add.'" ><i class="fa fa-plus"></i> '.tr('Aggiungi articolo').'...</button>';
-}
-
-echo '
-        </div>
-    </div>';
-
-echo '
-        <!-- SPESE AGGIUNTIVE -->
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <h3 class="panel-title">'.tr('Altre spese previste').'</h3>
+                echo '
+                    <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'&is_riga" data-toggle="tooltip" data-title="'.tr('Aggiungi riga').'">
+                        <i class="fa fa-plus"></i> '.tr('Riga').'
+                    </a>';
+            }
+            echo '
+                </div>
             </div>
 
-            <div class="panel-body">
-                <div id="righe">';
+            <div id="righe">';
 
-include $plugin->filepath('row-list.php');
+include $structure->filepath('row-list.php');
 
-echo '
-                </div>';
-
-if (!empty($is_add)) {
-    echo '
-                <button type="button" class="btn btn-primary"  data-title="'.tr('Aggiungi altre spese').'" data-toggle="modal" data-href="'.$plugin->fileurl('add_righe.php').'?id_plugin='.$id_plugin.'&id_record='.$id_record.'&add='.$is_add.'"><i class="fa fa-plus"></i> '.tr('Aggiungi altre spese').'...</button>';
-}
-
-echo '
+        echo '
+            </div>
         </div>
     </div>';
 
-echo '{( "name": "filelist_and_upload", "id_record": "'.$id_record.'", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", "readonly": '.intval(empty($is_add)).' )}';
+echo '{( "name": "filelist_and_upload", "id_record": "'.$id_record.'", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", "readonly": '.intval($block_edit).' )}';
 
 echo '
 	<!-- PIANIFICAZIONE CICLICA -->
-	<div class="panel panel-primary '.(!empty($is_add) ? 'hide' : '').'">
+	<div class="panel panel-primary '.(!$block_edit ? 'hide' : '').'">
 		<div class="panel-heading">
 			<h3 class="panel-title">'.tr('Promemoria ciclico?').'</h3>
 		</div>
@@ -193,7 +179,7 @@ echo '
 
 echo '
 	<!-- PIANIFICARE INTERVENTI -->
-	<div class="panel panel-primary '.(!empty($is_add) ? 'hide' : '').'">
+	<div class="panel panel-primary '.(!$block_edit ? 'hide' : '').'">
 		<div class="panel-heading">
 			<h3 class="panel-title">'.tr('Pianificare interventi?').'</h3>
 		</div>
@@ -227,7 +213,7 @@ echo '
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary" '.(empty($is_add) ? 'disabled' : '').' ><i class="fa fa-plus"></i> '.tr('Pianifica').'</button>
+			<button type="submit" class="btn btn-primary" '.($block_edit ? 'disabled' : '').' ><i class="fa fa-plus"></i> '.tr('Pianifica').'</button>
 		</div>
 	</div>
 </form>';
@@ -300,11 +286,7 @@ echo '
 
     });
 
-    function refreshArticoli(id){
-        $("#articoli").load("'.$plugin->fileurl('ajax_articoli.php').'?id_plugin='.$id_plugin.'&id_record=" + id + "&add='.$is_add.'");
-    }
-
     function refreshRighe(id){
-        $("#righe").load("'.$plugin->fileurl('row-list.php').'?id_plugin='.$id_plugin.'&id_record=" + id + "&add='.$is_add.'");
+        $("#righe").load("'.$plugin->fileurl('row-list.php').'?id_plugin='.$id_plugin.'&id_record=" + id + "&add='.$block_edit.'");
     }
 </script>';

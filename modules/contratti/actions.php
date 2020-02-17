@@ -330,7 +330,7 @@ $riga = $contratto->getRiga($type, $id_riga);
             ]);
 
             // Copia delle righe
-            $dbo->query('INSERT INTO co_promemoria_righe(id_promemoria, descrizione, qta, um, prezzo_vendita, prezzo_acquisto, idiva, desc_iva, iva, sconto, sconto_unitario, tipo_sconto) SELECT :id_new, descrizione, qta, um, prezzo_vendita, prezzo_acquisto, idiva, desc_iva, iva, sconto, sconto_unitario, tipo_sconto FROM co_promemoria_righe AS z WHERE id_promemoria = :id_old', [
+            $dbo->query('INSERT INTO co_righe_promemoria(id_promemoria, descrizione, qta, um, prezzo_vendita, prezzo_acquisto, idiva, desc_iva, iva, sconto, sconto_unitario, tipo_sconto) SELECT :id_new, descrizione, qta, um, prezzo_vendita, prezzo_acquisto, idiva, desc_iva, iva, sconto, sconto_unitario, tipo_sconto FROM co_righe_promemoria AS z WHERE id_promemoria = :id_old', [
                 ':id_new' => $id_promemoria,
                 ':id_old' => $p['id'],
             ]);

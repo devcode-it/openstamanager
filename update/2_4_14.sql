@@ -150,8 +150,10 @@ UPDATE `co_promemoria_righe` SET `qta` = IF(`qta` = 0, 1, `qta`),
 
 ALTER TABLE `co_promemoria_righe` RENAME TO `co_righe_promemoria`;
 
+SET FOREIGN_KEY_CHECKS=0;
 DROP TABLE `mg_articoli_interventi`;
 DROP TABLE `co_promemoria_articoli`;
+SET FOREIGN_KEY_CHECKS=1;
 
 ALTER TABLE `co_righe_promemoria` ADD `original_id` int(11), ADD `original_type` varchar(255);
 ALTER TABLE `in_righe_interventi` ADD `original_id` int(11), ADD `original_type` varchar(255);

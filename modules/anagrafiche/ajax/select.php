@@ -298,8 +298,7 @@ switch ($resource) {
         break;
 
     case 'relazioni':
-
-        $query = 'SELECT id, descrizione, colore AS _bgcolor_ FROM an_relazioni ORDER BY descrizione';
+        $query = 'SELECT id, descrizione, colore AS bgcolor FROM an_relazioni |where| ORDER BY descrizione';
 
         foreach ($elements as $element) {
             $filter[] = 'id='.prepare($element);

@@ -153,5 +153,8 @@ ALTER TABLE `co_promemoria_righe` RENAME TO `co_righe_promemoria`;
 DROP TABLE `mg_articoli_interventi`;
 DROP TABLE `co_promemoria_articoli`;
 
+ALTER TABLE `co_righe_promemoria` ADD `original_id` int(11), ADD `original_type` varchar(255);
+ALTER TABLE `in_righe_interventi` ADD `original_id` int(11), ADD `original_type` varchar(255);
+
 -- Aggiunta supporto a prezzi ivati
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `created_at`, `updated_at`, `order`, `help`) VALUES (NULL, 'Utilizza prezzi di vendita con IVA incorporata', '0', 'boolean', '1', 'Fatturazione', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, NULL, 'Abilita la gestione degli importi ivati per i documenti di vendita.');

@@ -67,11 +67,11 @@ if (!$elenco_promemoria->isEmpty()) {
         }
 
         // Intervento svolto
-        $intervento = $promemoria->intevento;
+        $intervento = $promemoria->intervento;
         if (!empty($intervento)) {
             $info_intervento = Modules::link('Interventi', $intervento['id'], tr('Intervento num. _NUM_ del _DATE_', [
-                '_NUM_' => $intervento['codice'],
-                '_DATE_' => Translator::dateToLocale($intervento['data']),
+                '_NUM_' => $intervento->codice,
+                '_DATE_' => dateFormat($intervento->data_richiesta),
             ]));
 
             $disabled = 'disabled';

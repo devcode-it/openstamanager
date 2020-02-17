@@ -7,10 +7,13 @@ use Modules\Anagrafiche\Anagrafica;
 use Modules\Contratti\Contratto;
 use Modules\Preventivi\Preventivo;
 use Modules\TipiIntervento\Tipo as TipoSessione;
+use Traits\RecordTrait;
 use Util\Generator;
 
 class Intervento extends Document
 {
+    use RecordTrait;
+
     protected $table = 'in_interventi';
 
     protected $info = [];
@@ -80,6 +83,11 @@ class Intervento extends Document
         }
 
         return $this->info['fine'];
+    }
+
+    public function getModuleAttribute()
+    {
+        return 'Interventi';
     }
 
     /**

@@ -75,6 +75,9 @@ switch ($operazione) {
         $data_inizio = post('data_inizio');
 
         $count = 0;
+        $count_interventi = 0;
+        $count_promemoria = 0;
+
         $date_con_promemoria = [];
         $date_con_intervento = [];
         if (post('pianifica_promemoria')) {
@@ -124,6 +127,8 @@ switch ($operazione) {
                             'id_record' => $promemoria_corrente->id,
                         ]);
                     }
+
+                    $count_promemoria++;
                 } else {
                     $promemoria_corrente = $promemoria_contratto[$data_promemoria]->first();
                     $date_con_promemoria[] = dateFormat($data_promemoria);
@@ -141,13 +146,13 @@ switch ($operazione) {
                     // Aggiungo i tecnici selezionati
                     $idtecnici = post('idtecnico');
                     foreach ($idtecnici as $idtecnico) {
-                        add_tecnico($intervento->id, $idtecnico, $data_richiesta.' '.post('orario_inizio'), $data_richiesta.' '.post('orario_fine'));
+                        add_tecnico($intervento->id, $idtecnico, $data_promemoria.' '.post('orario_inizio'), $data_promemoria.' '.post('orario_fine'));
                     }
 
                     // Copia delle informazioni del promemoria
                     $promemoria_corrente->pianifica($intervento);
 
-                    flash()->info(tr('Interventi pianificati correttamente'));
+                    $count_interventi++;
                 } elseif (post('pianifica_intervento')) {
                     $date_con_intervento[] = dateFormat($data_promemoria);
                 }
@@ -161,8 +166,8 @@ switch ($operazione) {
         if ($count == 0) {
             flash()->warning(tr('Nessun promemoria pianificato'));
         } else {
-            flash()->info(tr('Sono stati pianificati _NUM_ interventi!', [
-                '_NUM_' => $count,
+            flash()->info(tr('Sono stati creati _NUM_ promemoria!', [
+                '_NUM_' => $count_promemoria,
             ]));
 
             if (!empty($date_con_promemoria)) {
@@ -171,10 +176,16 @@ switch ($operazione) {
                 ]));
             }
 
-            if (!empty($date_con_intervento)) {
-                flash()->warning(tr('I promemoria delle seguenti date presentano già un intervento collegato: _LIST_', [
-                    '_LIST_' => implode(', ', $date_con_intervento),
+            if (post('pianifica_intervento')) {
+                flash()->info(tr('Sono stati pianificati _NUM_ interventi!', [
+                    '_NUM_' => $count_interventi,
                 ]));
+
+                if (!empty($date_con_intervento)) {
+                    flash()->warning(tr('I promemoria delle seguenti date presentano già un intervento collegato: _LIST_', [
+                        '_LIST_' => implode(', ', $date_con_intervento),
+                    ]));
+                }
             }
         }
     break;

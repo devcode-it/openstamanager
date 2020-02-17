@@ -23,11 +23,11 @@ echo '
 	</div>
 
 	<div class="row">
-	
+
 		<div class="col-md-6">
 			{[ "type": "text", "label": "'.tr('Cognome').'", "name": "cognome", "required": 0 ]}
 		</div>
-		
+
 		<div class="col-md-6">
 			{[ "type": "text", "label": "'.tr('Nome').'", "name": "nome", "id": "nome_", "required": 0 ]}
 		</div>
@@ -53,12 +53,12 @@ echo '
 				<div class="col-md-4">
 					{[ "type": "text", "label": "'.tr('Codice fiscale').'", "maxlength": 16, "name": "codice_fiscale", "class": "text-center alphanumeric-mask", "validation": "codice_fiscale" ]}
 				</div>
-				
+
 				<div class="col-md-4">
 					{[ "type": "select", "label": "'.tr('Tipologia').'", "name": "tipo", "values": "list=\"\": \"'.tr('Non specificato').'\", \"Azienda\": \"'.tr('Azienda').'\", \"Privato\": \"'.tr('Privato').'\", \"Ente pubblico\": \"'.tr('Ente pubblico').'\"" ]}
 				</div>
-				
-					
+
+
 			</div>
 
 			<div class="row">
@@ -80,11 +80,11 @@ echo '
 			</div>
 
 			<div class="row">
-				
+
 				<div class="col-md-4">
                     {[ "type": "select", "label": "'.tr('Nazione').'", "name": "id_nazione", "values": "query=SELECT id AS id, CONCAT_WS(\' - \', iso2, nome) AS descrizione FROM an_nazioni ORDER BY CASE WHEN iso2=\'IT\' THEN -1 ELSE iso2 END" ]}
                 </div>
-				
+
 				<div class="col-md-4">
 					{[ "type": "text", "label": "'.tr('Telefono').'", "name": "telefono", "class": "text-center", "icon-before": "<i class=\"fa fa-phone\"></i>" ]}
 				</div>
@@ -93,13 +93,13 @@ echo '
 				</div>
 
 			</div>
-			
+
 			<div class="row">
-			
+
 				<div class="col-md-4">
 					{[ "type": "text", "label": "'.tr('Email').'", "name": "email", "class": "email-mask", "placeholder":"casella@dominio.ext", "icon-before": "<i class=\"fa fa-envelope\"></i>" ]}
 				</div>
-				
+
 				<div class="col-md-4">
 					{[ "type": "text", "label": "'.tr('PEC').'", "name": "pec", "class": "email-mask", "placeholder":"pec@dominio.ext", "icon-before": "<i class=\'fa fa-envelope-o\'></i>" ]}
 				</div>';
@@ -114,8 +114,8 @@ echo '
 		</div>
 	</div>';
 
-echo
-    '<div class="row">
+echo '
+    <div class="row">
 		<div class="col-md-12 text-right">
 			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> '.tr('Aggiungi').'</button>
 		</div>

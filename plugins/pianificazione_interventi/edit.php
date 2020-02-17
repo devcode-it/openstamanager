@@ -14,10 +14,11 @@ $stati_pianificabili = Stato::where('is_pianificabile', 1)->get();
 $elenco_stati = $stati_pianificabili->implode('descrizione', ', ');
 
 echo '
+<p>'.tr('Puoi <b>pianificare dei "promemoria" o direttamente gli interventi</b> da effettuare entro determinate scadenze').'. '.tr('Per poter pianificare i promemoria, il contratto deve avere <b>data accettazione</b> e <b>data conclusione</b> definita ed essere in uno dei seguenti stati: _LINK_', [
+    '_LINK_' => '<b>'.$elenco_stati.'</b>',
+]).'
 
-<p>'.tr('Puoi <b>pianificare dei "promemoria" o direttamente gli interventi</b> da effettuare entro determinate scadenze. Per poter pianificare i promemoria, il contratto deve avere <b>data accettazione</b> e <b>data conclusione</b> definita ed essere in uno dei seguenti stati: <b>'.$elenco_stati.'</b>').'.
-
-<span class="tip" title="'.tr("I promemoria  verranno visualizzati sulla 'Dashboard' e serviranno per semplificare la pianificazione del giorno dell'intervento, ad esempio nel caso di interventi con cadenza mensile").'">
+<span class="tip" title="'.tr("I promemoria verranno visualizzati sulla 'Dashboard' e serviranno per semplificare la pianificazione del giorno dell'intervento, ad esempio nel caso di interventi con cadenza mensile").'">
     <i class="fa fa-question-circle-o"></i>
 </span></p>';
 

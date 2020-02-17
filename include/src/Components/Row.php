@@ -105,7 +105,7 @@ abstract class Row extends Description
 
     public function getIvaAttribute()
     {
-        return ($this->totale_imponibile) * $this->aliquota->percentuale / 100;
+        return $this->iva_unitaria * $this->qta;
     }
 
     public function getIvaDetraibileAttribute()

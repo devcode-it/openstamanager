@@ -194,7 +194,7 @@ switch (post('op')) {
             $dbo->query('DELETE FROM co_movimenti WHERE iddocumento='.prepare($id_record));
 
             // Azzeramento collegamento della rata contrattuale alla pianificazione
-            $dbo->query('UPDATE co_ordiniservizio_pianificazionefatture SET iddocumento=0 WHERE iddocumento='.prepare($id_record));
+            $dbo->query('UPDATE co_fatturazione_contratti SET iddocumento=0 WHERE iddocumento='.prepare($id_record));
 
             flash()->info(tr('Fattura eliminata!'));
         } catch (InvalidArgumentException $e) {

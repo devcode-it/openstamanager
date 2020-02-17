@@ -113,6 +113,22 @@ abstract class Description extends Model
         return $result;
     }
 
+    public function toArray()
+    {
+        $array = parent::toArray();
+
+        $result = array_merge($array, [
+            'spesa' => $this->spesa,
+            'imponibile' => $this->imponibile,
+            'sconto' => $this->sconto,
+            'totale_imponibile' => $this->totale_imponibile,
+            'iva' => $this->iva,
+            'totale' => $this->totale,
+        ]);
+
+        return $result;
+    }
+
     /**
      * Imposta il proprietario dell'oggetto e l'ordine relativo all'interno delle righe.
      */

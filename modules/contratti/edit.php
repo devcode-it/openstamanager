@@ -8,8 +8,7 @@ unset($_SESSION['superselect']['idsede_destinazione']);
 unset($_SESSION['superselect']['idanagrafica']);
 $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 
-?><script src="<?php echo $rootdir; ?>/modules/contratti/js/contratti_helper.js"></script>
-
+?>
 <form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">

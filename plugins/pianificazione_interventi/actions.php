@@ -128,7 +128,7 @@ switch ($operazione) {
                         ]);
                     }
 
-                    $count_promemoria++;
+                    ++$count_promemoria;
                 } else {
                     $promemoria_corrente = $promemoria_contratto[$data_promemoria]->first();
                     $date_con_promemoria[] = dateFormat($data_promemoria);
@@ -152,7 +152,7 @@ switch ($operazione) {
                     // Copia delle informazioni del promemoria
                     $promemoria_corrente->pianifica($intervento);
 
-                    $count_interventi++;
+                    ++$count_interventi;
                 } elseif (post('pianifica_intervento')) {
                     $date_con_intervento[] = dateFormat($data_promemoria);
                 }

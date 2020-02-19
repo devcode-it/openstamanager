@@ -248,9 +248,7 @@ class Prints
      */
     public static function getPDFLink($path)
     {
-        $base = (stripos($_SERVER['SERVER_PROTOCOL'], 'https') === 0 ? 'https://' : 'http://').$_SERVER['SERVER_NAME'].'/'.ROOTDIR.'/';
-
-        return ROOTDIR.'/assets/dist/pdfjs/web/viewer.html?file='.$base.ltrim(str_replace(DOCROOT, '', $path), '/');
+        return ROOTDIR.'/assets/dist/pdfjs/web/viewer.html?file='.BASEURL.'/'.ltrim(str_replace(DOCROOT, '', $path), '/');
     }
 
     /**

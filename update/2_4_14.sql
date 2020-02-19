@@ -167,3 +167,7 @@ DROP TABLE `co_ordiniservizio_vociservizio`;
 ALTER TABLE `co_ordiniservizio_pianificazionefatture` RENAME TO `co_fatturazione_contratti`;
 
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM co_fatturazione_contratti WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE descrizione IN("Bozza", "Accettato", "In lavorazione", "In attesa di pagamento")) ) AND co_fatturazione_contratti.iddocumento=0' WHERE `name` = 'Rate contrattuali';
+
+-- Introduzione segmento scadenzario completo (su periodo temporale) il quale contempla tutte le scadenze (anche quelle chiuse)
+INSERT INTO `zz_segments` (`id`, `id_module`, `name`, `clause`, `position`, `pattern`, `note`, `predefined`, `predefined_accredito`, `predefined_addebito`, `is_fiscale`) VALUES
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario'), 'Scadenziaro completo', '(`co_scadenziario`.`scadenza` BETWEEN ''|period_start|'' AND ''|period_end|'' )', 'WHR', '####', '', 0, 0, 0, 0);

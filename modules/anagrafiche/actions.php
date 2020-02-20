@@ -268,7 +268,9 @@ switch (post('op')) {
 
             // Se l'anagrafica è collegata ad un utente lo disabilito
             $dbo->query('UPDATE zz_users SET enabled = 0 WHERE idanagrafica = '.prepare($id_record));
-
+            // Disabilito anche il token
+            $dbo->query('UPDATE zz_tokens SET enabled = 0 WHERE id_utente = '.prepare($id_utente));
+           
             flash()->info(tr('Anagrafica eliminata!'));
         }
 

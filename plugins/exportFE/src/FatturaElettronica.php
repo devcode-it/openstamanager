@@ -589,6 +589,7 @@ class FatturaElettronica
             }
             //Rimuovo eventuali idicazioni relative alla nazione
             $result['IdFiscaleIVA']['IdCodice'] = str_replace($anagrafica->nazione->iso2, '', $anagrafica['piva']);
+
         }
 
         // Codice fiscale
@@ -596,8 +597,10 @@ class FatturaElettronica
         if (!empty($anagrafica['codice_fiscale'])) {
             $result['CodiceFiscale'] = preg_replace('/\s+/', '', $anagrafica['codice_fiscale']);
 
-            //Rimuovo eventuali idicazioni relative alla nazione
-            $result['CodiceFiscale'] = str_replace($anagrafica->nazione->iso2, '', $result['CodiceFiscale']);
+            //$result['CodiceFiscale'] = str_replace($anagrafica->nazione->iso2, '', $result['CodiceFiscale']);
+            
+            //Rimuovo eventuali idicazioni relative all'iso2 della nazione, solo se la stringa inizia con quest'ultima.
+            $result['CodiceFiscale'] =  preg_replace('/^' . preg_quote($anagrafica->nazione->iso2, '/') . '/', '', $anagrafica['codice_fiscale']);
         }
 
         if (!empty($anagrafica['nome']) or !empty($anagrafica['cognome'])) {

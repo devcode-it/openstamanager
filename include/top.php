@@ -246,6 +246,18 @@ if (Auth::check()) {
         <script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
         <script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>';
     }
+
+    if (setting('Attiva scorciatoie da tastiera')) {
+        echo '<script type="text/javascript" charset="utf-8" src="'.App::getPaths()['js'].'/hotkeys-js/hotkeys.min.js"></script>';
+        echo '
+        <script>
+        hotkeys(\'ctrl+shift+c\', \'save\', function(event, handler){
+            event.preventDefault();
+            $( "button[data-toggle]" ).first().trigger( "click" );
+        });
+        hotkeys.setScope(\'save\');
+        </script>';
+    }
 }
 
 $hide_sidebar = Auth::check() && setting('Nascondere la barra sinistra di default');

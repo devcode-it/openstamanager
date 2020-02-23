@@ -8,10 +8,9 @@ use Stringy\Stringy;
 
 trait ReferenceTrait
 {
-    protected abstract function getReferenceName();
-    protected abstract function getReferenceNumber();
-    protected abstract function getReferenceDate();
-    protected abstract static function referenceName();
+    public abstract function getReferenceName();
+    public abstract function getReferenceNumber();
+    public abstract function getReferenceDate();
 
     public function getReference(){
         $name = $this->getReferenceName();
@@ -40,22 +39,6 @@ trait ReferenceTrait
         }else {
             $description = tr('Rif. _DOC_', [
                 '_DOC_' => $name,
-            ]);
-        }
-
-        return $description;
-    }
-
-    public static function reference($id)
-    {
-        $document = self::find($id);
-
-        if (!empty($document)){
-            $description = $document->getReference();
-        } else {
-            $description = tr('_DOC_ di riferimento _ID_ eliminato', [
-                '_DOC_' => self::referenceName(),
-                '_ID_' => $id,
             ]);
         }
 

@@ -35,6 +35,18 @@ class Movimento extends Model
         return $model;
     }
 
+    public function getDescrizioneAttribute() {
+        $direzione = 'uscita';
+        if ($this->hasDocument()){
+            $direzione = $this->getDocument()->direzione;
+        }
+
+        $carico = ($direzione == 'entrata') ? tr('Ripristino articolo') : tr('Carico magazzino');
+        $scarico = ($direzione == 'entrata') ? tr('Scarico magazzino') : tr('Rimozione articolo');
+
+        return ($this->qta > 0) ? $carico : $scarico;
+    }
+
     public function articolo()
     {
         return $this->hasOne(Articolo::class, 'idarticolo');

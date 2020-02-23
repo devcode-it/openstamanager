@@ -249,3 +249,25 @@ function orderValue($table, $field, $id)
 {
     return database()->fetchOne('SELECT IFNULL(MAX(`order`) + 1, 0) AS value FROM '.$table.' WHERE '.$field.' = '.prepare($id))['value'];
 }
+
+function reference($document) {
+    if (!empty($document) && !($document instanceof \Traits\ReferenceInterface)) {
+        return;
+    }
+
+    $extra = '';
+    $module_id = null;
+    $document_id = null;
+
+    if (empty($document)){
+        $description = tr('Documento di riferimento non disponibile');
+        $extra = 'class="disabled"';
+    } else {
+        $module_id = $document->module;
+        $document_id = $document->id;
+
+        $description = $document->getReference();
+    }
+
+    return Modules::link($module_id, $document_id, $description, $description, $extra);
+}

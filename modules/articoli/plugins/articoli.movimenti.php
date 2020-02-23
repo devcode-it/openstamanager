@@ -45,7 +45,8 @@ if (!empty($movimenti)) {
             <tr>
                 <th class="text-center">'.tr('Q.tà').'</th>
                 <th class="text-center">'.tr('Q.tà progressiva').'</th>
-                <th>'.tr('Causale').'</th>
+                <th class="text-center">'.tr('Operazione').'</th>
+                <th>'.tr('Documento').'</th>
                 <th class="text-center">'.tr('Data').'</th>
                 <th class="text-center" width="7%">#</th>
             </tr>';
@@ -73,28 +74,15 @@ if (!empty($movimenti)) {
                     '.numberFormat($movimento['progressivo_iniziale'], 'qta').' '.$record['um'].'
                     <i class="fa fa-arrow-circle-right"></i>
                     '.numberFormat($movimento['progressivo_finale'], 'qta').' '.$record['um'].'
+                </td>
+
+                <td class="text-center">
+                    '.$movimento->descrizione.'
+                </td>
+
+                <td>
+                    '.($movimento->hasDocument() ? reference($movimento->getDocument()) : tr('Nessun documento collegato')).'
                 </td>';
-
-        // Causale
-        $dir = ($movimento['qta'] < 0) ? 'vendita' : 'acquisto';
-
-        if (!empty($movimento['iddocumento'])) {
-            $dir = $dbo->fetchArray('SELECT dir FROM co_tipidocumento WHERE id = (SELECT idtipodocumento FROM co_documenti WHERE id = '.prepare($movimento['iddocumento']).')')[0]['dir'] == 'entrata' ? 'vendita' : 'acquisto';
-        }
-
-        $document = $movimento->getDocument();
-        if ($movimento->hasDocument()){
-            $document = $movimento->getDocument();
-
-            echo Modules::link($document->module, $document->id, null, null, ($movimento->hasDocument() ? '' : 'class="disabled"'));
-            //echo '<br>'.$document::reference($document->id);
-        }
-        echo '
-                <td>'.$movimento['movimento'].'
-				'.((!empty($movimento['idintervento'])) ? Modules::link('Interventi', $movimento['idintervento']) : '').'
-				'.((!empty($movimento['idddt'])) ? (Modules::link('DDt di '.$dir, $movimento['idddt'], null, null, (intval($database->fetchOne('SELECT * FROM `dt_ddt` WHERE `id` ='.prepare($movimento['idddt'])))) ? '' : 'class="disabled"')) : '').'
-				'.((!empty($movimento['iddocumento'])) ? (Modules::link('Fatture di '.$dir, $movimento['iddocumento'], null, null, (intval($database->fetchOne('SELECT * FROM `co_documenti` WHERE `id` ='.prepare($movimento['iddocumento'])))) ? '' : 'class="disabled"')) : '').'
-				</td>';
 
         // Data
         echo '

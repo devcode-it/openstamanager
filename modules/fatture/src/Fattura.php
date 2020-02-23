@@ -17,8 +17,9 @@ use Plugins\ExportFE\FatturaElettronica;
 use Traits\RecordTrait;
 use Traits\ReferenceTrait;
 use Util\Generator;
+use Traits\ReferenceInterface;
 
-class Fattura extends Document
+class Fattura extends Document implements ReferenceInterface
 {
     use RecordTrait;
     use ReferenceTrait;
@@ -727,19 +728,16 @@ class Fattura extends Document
         return $numero;
     }
 
-    protected function getReferenceName(){
+    // Opzioni di riferimento
+    public function getReferenceName(){
         return $this->tipo->descrizione;
     }
 
-    protected function getReferenceNumber(){
+    public function getReferenceNumber(){
         return $this->numero_esterno ?: $this->numero;
     }
 
-    protected function getReferenceDate(){
+    public function getReferenceDate(){
         return $this->data;
-    }
-
-    protected static function referenceName(){
-        return tr('Fattura');
     }
 }

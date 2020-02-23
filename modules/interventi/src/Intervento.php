@@ -7,10 +7,14 @@ use Modules\Anagrafiche\Anagrafica;
 use Modules\Contratti\Contratto;
 use Modules\Preventivi\Preventivo;
 use Modules\TipiIntervento\Tipo as TipoSessione;
+use Traits\ReferenceInterface;
+use Traits\ReferenceTrait;
 use Util\Generator;
 
-class Intervento extends Document
+class Intervento extends Document implements ReferenceInterface
 {
+    use ReferenceTrait;
+
     protected $table = 'in_interventi';
 
     protected $info = [];
@@ -171,5 +175,18 @@ class Intervento extends Document
         $numero = Generator::generate($maschera, $ultimo);
 
         return $numero;
+    }
+
+    // Opzioni di riferimento
+    public function getReferenceName(){
+        return 'Attività';
+    }
+
+    public function getReferenceNumber(){
+        return $this->codice;
+    }
+
+    public function getReferenceDate(){
+        return $this->data_richiesta;
     }
 }

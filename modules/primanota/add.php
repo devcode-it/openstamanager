@@ -8,7 +8,7 @@ use Modules\Fatture\Fattura;
 $module = Modules::get('Prima nota');
 
 $variables = Modules::get('Fatture di vendita')->getPlaceholders($id_documento);
-$righe = [];
+$movimenti = [];
 
 // Registrazione da remoto
 $id_records = get('id_records');
@@ -72,7 +72,7 @@ foreach ($id_scadenze as $id_scadenza) {
         }
     }
 
-    $righe = array_merge($righe, $righe_documento);
+    $movimenti = array_merge($movimenti, $righe_documento);
 }
 
 // Fatture
@@ -100,7 +100,7 @@ foreach ($id_documenti as $id_documento) {
 
     $numeri[] = !empty($fattura['numero_esterno']) ? $fattura['numero_esterno'] : $fattura['numero'];
 
-    $nota_credito = $tipo->descrizione == 'Nota di credito';
+    $nota_credito = $tipo->reversed;
 
     // Predisposizione prima riga
     $conto_field = 'idconto_'.($dir == 'entrata' ? 'vendite' : 'acquisti');
@@ -126,8 +126,8 @@ foreach ($id_documenti as $id_documento) {
             'iddocumento' => $scadenza['iddocumento'],
             'id_scadenza' => $scadenza['id'],
             'id_conto' => $id_conto_controparte,
-            'dare' => ($dir == 'entrata' && !$nota_credito && !$is_insoluto) ? 0 : $scadenza['rata'],
-            'avere' => ($dir == 'entrata' && !$nota_credito && !$is_insoluto) ? $scadenza['rata'] : 0,
+            'dare' => (($dir == 'entrata' && !$nota_credito && !$is_insoluto) || ($dir == 'uscita' && ($nota_credito || $is_insoluto))) ? 0 : $scadenza['rata'],
+            'avere' => (($dir == 'entrata' && !$nota_credito && !$is_insoluto) || ($dir == 'uscita' && ($nota_credito || $is_insoluto))) ? $scadenza['rata'] : 0,
         ];
     }
 
@@ -150,7 +150,7 @@ foreach ($id_documenti as $id_documento) {
         ];
     }
 
-    $righe = array_merge($righe, $righe_documento);
+    $movimenti = array_merge($movimenti, $righe_documento);
 }
 /*
 $k = 0;
@@ -168,11 +168,11 @@ $righe = array_merge($righe, $righe_azienda);
 }*/
 
 // Inverto dare e avere per importi negativi
-foreach ($righe as $key => $value) {
-    if ($righe[$key]['dare'] < 0 || $righe[$key]['avere'] < 0) {
-        $tmp = abs($righe[$key]['dare']);
-        $righe[$key]['dare'] = abs($righe[$key]['avere']);
-        $righe[$key]['avere'] = $tmp;
+foreach ($movimenti as $key => $value) {
+    if ($movimenti[$key]['dare'] < 0 || $movimenti[$key]['avere'] < 0) {
+        $tmp = abs($movimenti[$key]['dare']);
+        $movimenti[$key]['dare'] = abs($movimenti[$key]['avere']);
+        $movimenti[$key]['avere'] = $tmp;
     }
 }
 
@@ -241,7 +241,7 @@ echo '
     echo '
 	<div class="row">
 		<div class="col-md-12">
-			{[ "type": "select", "label": "'.tr('Modello primanota').'", "id": "modello_primanota", "values": "query=SELECT idmastrino AS id, nome AS descrizione, descrizione as causale FROM co_movimenti_modelli GROUP BY idmastrino" ]}
+			{[ "type": "select", "label": "'.tr('Modello prima nota').'", "id": "modello_primanota", "values": "query=SELECT idmastrino AS id, nome AS descrizione, descrizione as causale FROM co_movimenti_modelli GROUP BY idmastrino" ]}
 		</div>
 	</div>
 
@@ -278,17 +278,17 @@ include $structure->filepath('movimenti.php');
     var modifica_modello = "<?php echo tr('Aggiungi e modifica modello'); ?>";
 
     $(document).ready(function(e) {
-        $("#bs-popup #add-form").on("submit", function(e) {
+        $("#modals > div #add-form").on("submit", function(e) {
             return controllaConti();
         });
 
-        $('#bs-popup #modello_primanota').change(function() {
+        $('#modals > div #modello_primanota').change(function() {
             if ($(this).val() != '') {
                 $('#btn_crea_modello').html('<i class="fa fa-edit"></i> ' + modifica_modello);
-                $('#bs-popup #idmastrino').val($(this).val());
+                $('#modals > div #idmastrino').val($(this).val());
             } else {
                 $('#btn_crea_modello').html('<i class="fa fa-plus"></i> ' + nuovo_modello);
-                $('#bs-popup #idmastrino').val(0);
+                $('#modals > div #idmastrino').val(0);
             }
 
             var idmastrino = $(this).val();
@@ -312,37 +312,54 @@ include $structure->filepath('movimenti.php');
 
                 // aggiornava erroneamente anche la causale ed eventuale numero di fattura e data
                 if (replaced > 0 || $('#iddocumento').val() == '') {
-                    $('#bs-popup #desc').val(causale);
+                    $('#modals > div #desc').val(causale);
                 }
 
                 $.get(globals.rootdir + '/ajax_complete.php?op=get_conti&idmastrino=' + idmastrino, function(data) {
                     var conti = data.split(',');
+
+                    // Reinizializzazione di tutti i superselect nel caso di modelli con più di 2 conti
+                    $('.select2-container').remove();
+
                     for (i = 0; i < conti.length; i++) {
                         var conto = conti[i].split(';');
                         // Sostituzione conto cliente/fornitore
                         if (conto[0] == -1) {
                             if ($('#iddocumento').val() != '') {
                                 var option = $("<option selected></option>").val(variables['conto']).text(variables['conto_descrizione']);
-                                $('#bs-popup #conto' + i).selectReset();
-                                $('#bs-popup #conto' + i).append(option).trigger('change');
+
+                                // Creazione riga aggiuntiva da modello se le 2 iniziali non sono abbastanza
+                                if ($('#modals > div #conto' + i).length == 0 ) {
+                                    $new_tr = $('#modals > div table.scadenze > tbody tr').last().html();
+                                    $('#modals > div table.scadenze > tbody').append( '<tr>' + $new_tr + '</tr>' );
+                                    $('#modals > div table.scadenze > tbody tr').last().find('select').attr('id', 'conto' + i).attr('name', 'idconto[' + i + ']');
+                                }
+                                
+                                $('#modals > div #conto' + i).append(option);
                             }
                         } else {
                             var option = $("<option selected></option>").val(conto[0]).text(conto[1]);
-                            $('#bs-popup #conto' + i).selectReset();
-                            $('#bs-popup #conto' + i).append(option).trigger('change');
+
+                            // Creazione riga aggiuntiva da modello se le 2 iniziali non sono abbastanza
+                            if ($('#modals > div #conto' + i).length == 0 ) {
+                                $new_tr = $('#modals > div table.scadenze > tbody tr').last().html();
+                                $('#modals > div table.scadenze > tbody').append( '<tr>' + $new_tr + '</tr>' );
+                                $('#modals > div table.scadenze > tbody tr').last().find('select').attr('id', 'conto' + i).attr('name', 'idconto[' + i + ']');
+                            }
+
+                            $('#modals > div #conto' + i).append(option);
                         }
                     }
-                    for (i = 9; i >= conti.length; i--) {
-                        $('#bs-popup #conto' + i).selectReset();
-                        console.log('#bs-popup #conto' + i);
-                    }
+
+                    start_superselect();
+                    $('#modals > div select.superselectajax').trigger('change');
                 });
             }
         });
 
-        $('#bs-popup #btn_crea_modello').click(function() {
-            $('#bs-popup #crea_modello').val("1");
-            $('#bs-popup #add-form').submit();
+        $('#modals > div #btn_crea_modello').click(function() {
+            $('#modals > div #crea_modello').val("1");
+            $('#modals > div #add-form').submit();
         });
     });
 </script>

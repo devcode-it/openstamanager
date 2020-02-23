@@ -31,6 +31,9 @@ switch (post('op')) {
         $ddt = DDT::build($anagrafica, $tipo, $data);
         $id_record = $ddt->id;
 
+        $ddt->idcausalet = post('idcausalet');
+        $ddt->save();
+
         flash()->info(tr('Aggiunto ddt in _TYPE_ numero _NUM_!', [
             '_TYPE_' => $dir,
             '_NUM_' => $ddt->numero,
@@ -80,6 +83,7 @@ switch (post('op')) {
                 'idsede_partenza' => post('idsede_partenza'),
                 'idsede_destinazione' => post('idsede_destinazione'),
                 'idvettore' => post('idvettore'),
+                'data_ora_trasporto' => post('data_ora_trasporto'),
                 'idporto' => post('idporto'),
                 'idaspettobeni' => post('idaspettobeni'),
                 'idrivalsainps' => $idrivalsainps,
@@ -126,12 +130,10 @@ switch (post('op')) {
 
         $articolo->descrizione = post('descrizione');
         $articolo->um = post('um') ?: null;
-        $articolo->id_iva = post('idiva');
 
-        $articolo->prezzo_unitario_acquisto = post('prezzo_acquisto') ?: 0;
-        $articolo->prezzo_unitario_vendita = post('prezzo');
-        $articolo->sconto_unitario = post('sconto');
-        $articolo->tipo_sconto = post('tipo_sconto');
+        $articolo->costo_unitario = post('costo_unitario') ?: 0;
+        $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
+        $articolo->setSconto(post('sconto'), post('tipo_sconto'));
 
         try {
             $articolo->qta = post('qta');
@@ -187,12 +189,10 @@ switch (post('op')) {
 
         $riga->descrizione = post('descrizione');
         $riga->um = post('um') ?: null;
-        $riga->id_iva = post('idiva');
 
-        $riga->prezzo_unitario_acquisto = post('prezzo_acquisto') ?: 0;
-        $riga->prezzo_unitario_vendita = post('prezzo');
-        $riga->sconto_unitario = post('sconto');
-        $riga->tipo_sconto = post('tipo_sconto');
+        $riga->costo_unitario = post('costo_unitario') ?: 0;
+        $riga->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
+        $riga->setSconto(post('sconto'), post('tipo_sconto'));
 
         $riga->qta = post('qta');
 
@@ -232,7 +232,7 @@ switch (post('op')) {
     case 'add_ordine':
         $ordine = \Modules\Ordini\Ordine::find(post('id_documento'));
 
-        // Creazione della fattura al volo
+        // Creazione del ddt al volo
         if (post('create_document') == 'on') {
             $tipo = Tipo::where('dir', $dir)->first();
 
@@ -252,7 +252,7 @@ switch (post('op')) {
 
         $righe = $ordine->getRighe();
         foreach ($righe as $riga) {
-            if (post('evadere')[$riga->id] == 'on') {
+            if (post('evadere')[$riga->id] == 'on' and !empty(post('qta_da_evadere')[$riga->id])) {
                 $qta = post('qta_da_evadere')[$riga->id];
 
                 $copia = $riga->copiaIn($ddt, $qta);
@@ -281,10 +281,11 @@ switch (post('op')) {
     // Scollegamento riga generica da ddt
     case 'delete_riga':
         $id_riga = post('idriga');
+        $type = post('type');
 
-        if (!empty($id_riga)) {
-            $riga = $ddt->getRighe()->find($id_riga);
+        $riga = $ddt->getRiga($type, $id_riga);
 
+        if (!empty($riga)) {
             try {
                 $riga->delete();
 

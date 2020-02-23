@@ -57,12 +57,14 @@ include_once __DIR__.'/../../core.php';
 	</div>
 <?php
 
-$righe = $mastrino->movimenti->toArray();
+$movimenti = $mastrino->movimenti->toArray();
 
 include $structure->filepath('movimenti.php');
 
 ?>
 </form>
+
+{( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
 <script>
     $("#edit-form").submit(function(e) {

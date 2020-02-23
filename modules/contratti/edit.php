@@ -8,8 +8,7 @@ unset($_SESSION['superselect']['idsede_destinazione']);
 unset($_SESSION['superselect']['idanagrafica']);
 $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 
-?><script src="<?php echo $rootdir; ?>/modules/contratti/js/contratti_helper.js"></script>
-
+?>
 <form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
@@ -148,8 +147,8 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
                 <h4 class="panel-title">
                     <?php echo tr('Dati appalto'); ?>
 
-                    <div class="box-tools pull-right">    
-                        <a data-toggle="collapse" href="#dati_appalto"><i class="fa fa-plus" style='color:white;margin-top:2px;'></i></a>           
+                    <div class="box-tools pull-right">
+                        <a data-toggle="collapse" href="#dati_appalto"><i class="fa fa-plus" style='color:white;margin-top:2px;'></i></a>
                     </div>
                 </h4>
             </div>
@@ -203,7 +202,7 @@ if (!empty($rs)) {
                             <th>'.tr('Addebito orario').' <span class="tip" title="'.tr('Addebito al cliente').'"><i class="fa fa-question-circle-o"></i></span></th>
                             <th>'.tr('Addebito km').' <span class="tip" title="'.tr('Addebito al cliente').'"><i class="fa fa-question-circle-o"></i></span></th>
                             <th>'.tr('Addebito diritto ch.').' <span class="tip" title="'.tr('Addebito al cliente').'"><i class="fa fa-question-circle-o"></i></span></th>
-                            
+
                             <th width="40"></th>
                         </tr>';
 
@@ -372,15 +371,15 @@ include $docroot.'/modules/contratti/row-list.php';
 
 		$("#idsede").selectReset();
 	});
-	
+
 	$('#codice_cig, #codice_cup').bind("keyup change", function(e) {
-		
+
 		if ($('#codice_cig').val() == '' && $('#codice_cup').val() == '' ){
 			$('#id_documento_fe').prop('required', false);
 		}else{
 			$('#id_documento_fe').prop('required', true);
 		}
-	
+
 	});
 </script>
 
@@ -453,4 +452,3 @@ if (!empty($elementi)) {
 
 <?php
 }
-?>

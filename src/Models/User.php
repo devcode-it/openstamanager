@@ -40,7 +40,6 @@ class User extends Model
     /**
      * Crea un nuovo utente.
      *
-     * @param Group  $gruppo
      * @param string $username
      * @param string $email
      * @param string $password
@@ -171,6 +170,24 @@ class User extends Model
         }
 
         return $anagrafica->ragione_sociale.' ('.$this->username.')';
+    }
+
+    public function getApiTokens(){
+        $query = 'SELECT * FROM `zz_tokens` WHERE `enabled` = 1 AND `id_utente` = '.prepare($this->id);
+        $database = database();
+
+        // Generazione del token per l'utente
+        $tokens = $database->fetchArray($query);
+        if (empty($tokens)) {
+            $token = secure_random_string();
+
+            $database->insert('zz_tokens', [
+                'id_utente' => $this->id,
+                'token' => $token,
+            ]);
+        }
+
+        return $database->fetchArray($query);
     }
 
     /* Relazioni Eloquent */

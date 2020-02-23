@@ -111,7 +111,7 @@ switch (post('op')) {
 
             $fattura->save();
 
-            if ($stato_precedente->descrizione == 'Bozza' && $stato['descrizione'] == 'Emessa') {
+            if ($fattura->direzione == 'entrata' && $stato_precedente->descrizione == 'Bozza' && $stato['descrizione'] == 'Emessa') {
                 // Generazione automatica della Fattura Elettronica
                 $stato_fe = empty($fattura->codice_stato_fe) || in_array($fattura->codice_stato_fe, ['GEN', 'NS', 'EC02']);
                 $checks = FatturaElettronica::controllaFattura($fattura);
@@ -136,18 +136,18 @@ switch (post('op')) {
 
                     foreach ($checks as $check) {
                         $message .= '
-    <p><b>'.$check['name'].' '.$check['link'].'</b></p>
-    <ul>';
+<p><b>'.$check['name'].' '.$check['link'].'</b></p>
+<ul>';
 
                         foreach ($check['errors'] as $error) {
                             if (!empty($error)) {
                                 $message .= '
-        <li>'.$error.'</li>';
+    <li>'.$error.'</li>';
                             }
                         }
 
                         $message .= '
-    </ul>';
+</ul>';
                     }
 
                     flash()->warning($message);
@@ -173,7 +173,7 @@ switch (post('op')) {
             $xml = \Util\XML::read($fattura->getXML());
 
             $dati_generali = $xml['FatturaElettronicaBody']['DatiGenerali']['DatiGeneraliDocumento'];
-            $totale_documento = $dati_generali['ImportoTotaleDocumento'] ?: null;
+            $totale_documento = $fattura->isNota() ? -abs(floatval($dati_generali['ImportoTotaleDocumento'])) : abs(floatval($dati_generali['ImportoTotaleDocumento']));
         } catch (Exception $e) {
             $totale_documento = null;
         }
@@ -194,7 +194,7 @@ switch (post('op')) {
             $dbo->query('DELETE FROM co_movimenti WHERE iddocumento='.prepare($id_record));
 
             // Azzeramento collegamento della rata contrattuale alla pianificazione
-            $dbo->query('UPDATE co_ordiniservizio_pianificazionefatture SET iddocumento=0 WHERE iddocumento='.prepare($id_record));
+            $dbo->query('UPDATE co_fatturazione_contratti SET iddocumento=0 WHERE iddocumento='.prepare($id_record));
 
             flash()->info(tr('Fattura eliminata!'));
         } catch (InvalidArgumentException $e) {
@@ -249,8 +249,8 @@ switch (post('op')) {
     case 'reopen':
         if (!empty($id_record)) {
             $dbo->query("UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione='Bozza') WHERE id=".prepare($id_record));
-            elimina_scadenze($id_record);
             elimina_movimenti($id_record, 1);
+            elimina_scadenze($id_record);
             ricalcola_costiagg_fattura($id_record);
             flash()->info(tr('Fattura riaperta!'));
         }
@@ -357,10 +357,9 @@ switch (post('op')) {
         $articolo->ritenuta_contributi = boolval(post('ritenuta_contributi'));
         $articolo->id_rivalsa_inps = post('id_rivalsa_inps') ?: null;
 
-        $articolo->prezzo_unitario_acquisto = post('prezzo_acquisto') ?: 0;
-        $articolo->prezzo_unitario_vendita = post('prezzo');
-        $articolo->sconto_unitario = post('sconto');
-        $articolo->tipo_sconto = post('tipo_sconto');
+        $articolo->costo_unitario = post('costo_unitario') ?: 0;
+        $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
+        $articolo->setSconto(post('sconto'), post('tipo_sconto'));
 
         try {
             $articolo->qta = $qta;
@@ -437,10 +436,9 @@ switch (post('op')) {
         $riga->ritenuta_contributi = boolval(post('ritenuta_contributi'));
         $riga->id_rivalsa_inps = post('id_rivalsa_inps') ?: null;
 
-        $riga->prezzo_unitario_acquisto = post('prezzo_acquisto') ?: 0;
-        $riga->prezzo_unitario_vendita = post('prezzo');
-        $riga->sconto_unitario = post('sconto');
-        $riga->tipo_sconto = post('tipo_sconto');
+        $riga->costo_unitario = post('costo_unitario') ?: 0;
+        $riga->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
+        $riga->setSconto(post('sconto'), post('tipo_sconto'));
 
         $riga->qta = $qta;
 
@@ -480,30 +478,30 @@ switch (post('op')) {
     case 'unlink_intervento':
         if (!empty($id_record) && post('idriga') !== null) {
             $id_riga = post('idriga');
+            $type = post('type');
+            $riga = $fattura->getRiga($type, $id_riga);
 
-            $righe = $fattura->getRighe();
-            $riga = $righe->find($id_riga);
+            if (!empty($riga)) {
+                try {
+                    $riga->delete();
 
-            $righe_intervento = $righe->where('idintervento', $riga->idintervento);
-            foreach ($righe_intervento as $r) {
-                $r->delete();
+                    flash()->info(tr('Intervento _NUM_ rimosso!', [
+                        '_NUM_' => $idintervento,
+                    ]));
+                } catch (InvalidArgumentException $e) {
+                    flash()->error(tr('Errore durante l\'eliminazione della riga!'));
+                }
             }
-
-            //$dbo->query("UPDATE in_interventi SET idstatointervento = (SELECT idstatointervento FROM in_statiintervento WHERE descrizione = 'Completato') WHERE id=".prepare($idintervento));
-
-            flash()->info(tr('Intervento _NUM_ rimosso!', [
-                '_NUM_' => $idintervento,
-            ]));
         }
         break;
 
     // Scollegamento riga generica da documento
     case 'delete_riga':
         $id_riga = post('idriga');
+        $type = post('type');
+        $riga = $fattura->getRiga($type, $id_riga);
 
-        if (!empty($id_riga)) {
-            $riga = $fattura->getRighe()->find($id_riga);
-
+        if (!empty($riga)) {
             try {
                 $riga->delete();
 
@@ -636,6 +634,9 @@ switch (post('op')) {
 
     // Nota di credito
     case 'nota_credito':
+        $id_documento = post('id_documento');
+        $fattura = Fattura::find($id_documento);
+
         $id_segment = post('id_segment');
         $data = post('data');
 
@@ -653,7 +654,7 @@ switch (post('op')) {
 
         $righe = $fattura->getRighe();
         foreach ($righe as $riga) {
-            if (post('evadere')[$riga->id] == 'on') {
+            if (post('evadere')[$riga->id] == 'on' and !empty(post('qta_da_evadere')[$riga->id])) {
                 $qta = post('qta_da_evadere')[$riga->id];
 
                 $copia = $riga->copiaIn($nota, -$qta);

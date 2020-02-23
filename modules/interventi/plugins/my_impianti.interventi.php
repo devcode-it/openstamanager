@@ -35,7 +35,7 @@ if (!empty($results)) {
                     ])).'
                 </td>
                 <td>'.nl2br($result['descrizione']).'</td>
-                <td class="text-right">'.moneyFormat($costi_intervento['totale']).'</td>
+                <td class="text-right">'.moneyFormat($intervento->totale).'</td>
             </tr>';
     }
 

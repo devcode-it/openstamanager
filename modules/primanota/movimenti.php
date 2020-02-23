@@ -92,10 +92,10 @@ function renderTabella($nome, $righe, $id_scadenza_default = null)
 }
 
 $counter = 0;
-$righe = collect($righe);
+$movimenti = collect($movimenti);
 
 // Elenco per documenti
-$scadenze = $righe
+$scadenze = $movimenti
     ->where('iddocumento', '<>', '')
     ->groupBy('iddocumento');
 foreach ($scadenze as $id_documento => $righe) {
@@ -109,7 +109,7 @@ foreach ($scadenze as $id_documento => $righe) {
 }
 
 // Elenco per scadenze
-$scadenze = $righe
+$scadenze = $movimenti
     ->where('iddocumento', '=', '')
     ->where('id_scadenza', '<>', '')
     ->groupBy('id_scadenza');
@@ -122,16 +122,16 @@ foreach ($scadenze as $id_scadenza => $righe) {
 }
 
 // Elenco generale
-$righe_generali = $righe
+$movimenti_generali = $movimenti
     ->where('iddocumento', '=', '')
     ->where('id_scadenza', '=', '');
-if ($righe_generali->isEmpty()) {
-    $righe_generali->push([]);
-    $righe_generali->push([]);
+if ($movimenti_generali->isEmpty()) {
+    $movimenti_generali->push([]);
+    $movimenti_generali->push([]);
 }
 $nome = tr('Generale');
 
-renderTabella($nome, $righe_generali);
+renderTabella($nome, $movimenti_generali);
 
 // Nuova riga
 echo '
@@ -153,9 +153,8 @@ var n = '.$counter.';
 
 function addRiga(btn) {
     var raggruppamento = $(btn).parent();
-    n++;
     cleanup_inputs();
-
+    
     var tabella = raggruppamento.find("tbody");
     var content = $("#template").html();
     content = content.replace("-id_scadenza-", raggruppamento.data("id_scadenza"));
@@ -164,6 +163,7 @@ function addRiga(btn) {
     tabella.append(text);
     
     restart_inputs();
+    n++;
 }
 
 /**
@@ -237,7 +237,7 @@ function calcolaBilancio(gruppo) {
     raggruppamento.find(".totale_avere").text(totale_avere.toLocale());
 
     // Calcolo il bilancio
-    var bilancio = totale_dare - totale_avere;
+    var bilancio = totale_dare.toFixed(2) - totale_avere.toFixed(2);
     
     // Visualizzazione dello sbilancio eventuale
     var sbilancio = raggruppamento.find(".sbilancio");

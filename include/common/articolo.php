@@ -7,7 +7,7 @@ $_SESSION['superselect']['idanagrafica'] = $options['idanagrafica'];
 $_SESSION['superselect']['idarticolo'] = $options['idarticolo'];
 
 // Articolo
-if (!isset($options['edit_articolo']) || !empty($options['edit_articolo'])) {
+if (empty($result['idarticolo'])) {
     echo '
     <div class="row">
         <div class="col-md-12">
@@ -19,91 +19,99 @@ if (!isset($options['edit_articolo']) || !empty($options['edit_articolo'])) {
     $articolo = $database->fetchArray('SELECT codice, descrizione FROM mg_articoli WHERE id = '.prepare($result['idarticolo']))[0];
 
     echo '
-    <p><strong>'.tr('Articolo').'</strong><br> '.$articolo['codice'].' - '.$articolo['descrizione'].'.</p>';
+    <p><strong>'.tr('Articolo').':</strong> '.$articolo['codice'].' - '.$articolo['descrizione'].'.</p>';
+}
+
+// Selezione impianto per gli Interventi
+if ($module['name'] == 'Interventi') {
+    echo '
+<div class="row">
+    <div class="col-md-12">
+        {[ "type": "select", "label": "'.tr('Impianto su cui installare').'", "name": "idimpianto", "value": "'.$idimpianto.'", "ajax-source": "impianti-intervento" ]}
+    </div>
+</div>';
 }
 
 echo App::internalLoad('riga.php', $result, $options);
 
-if (!isset($options['edit_articolo']) || !empty($options['edit_articolo'])) {
-    // Informazioni aggiuntive
-    if ($module['name'] != 'Contratti' && $module['name'] != 'Preventivi') {
-        $disabled = empty($result['idarticolo']);
-
-        echo '
-    <div class="row" id="prezzi_articolo">
-        <div class="col-md-4 text-center">
-            <button type="button" class="btn btn-sm btn-info btn-block '.($disabled ? 'disabled' : '').'" '.($disabled ? 'disabled' : '').' onclick="$(\'#prezzi\').toggleClass(\'hide\'); $(\'#prezzi\').load(\''.ROOTDIR."/ajax_complete.php?module=Articoli&op=getprezzi&idarticolo=' + $('#idarticolo option:selected').val() + '&idanagrafica=".$options['idanagrafica'].'\');">
-                <i class="fa fa-search"></i> '.tr('Visualizza ultimi prezzi (cliente)').'
-            </button>
-            <div id="prezzi" class="hide"></div>
-        </div>
-
-        <div class="col-md-4 text-center">
-            <button type="button" class="btn btn-sm btn-info btn-block '.($disabled ? 'disabled' : '').'" '.($disabled ? 'disabled' : '').' onclick="$(\'#prezziacquisto\').toggleClass(\'hide\'); $(\'#prezziacquisto\').load(\''.ROOTDIR."/ajax_complete.php?module=Articoli&op=getprezziacquisto&idarticolo=' + $('#idarticolo option:selected').val() + '&idanagrafica=".$options['idanagrafica'].'\');">
-                <i class="fa fa-search"></i> '.tr('Visualizza ultimi prezzi (acquisto)').'
-            </button>
-            <div id="prezziacquisto" class="hide"></div>
-        </div>
-
-        <div class="col-md-4 text-center">
-            <button type="button" class="btn btn-sm btn-info btn-block '.($disabled ? 'disabled' : '').'" '.($disabled ? 'disabled' : '').' onclick="$(\'#prezzivendita\').toggleClass(\'hide\'); $(\'#prezzivendita\').load(\''.ROOTDIR."/ajax_complete.php?module=Articoli&op=getprezzivendita&idarticolo=' + $('#idarticolo option:selected').val() + '&idanagrafica=".$options['idanagrafica'].'\');">
-                <i class="fa fa-search"></i> '.tr('Visualizza ultimi prezzi (vendita)').'
-            </button>
-            <div id="prezzivendita" class="hide"></div>
-        </div>
-    </div>
-    <br>';
-    }
+// Informazioni aggiuntive
+if ($module['name'] != 'Contratti' && $module['name'] != 'Preventivi') {
+    $disabled = empty($result['idarticolo']);
 
     echo '
-    <script>
-    $(document).ready(function () {
-        $("#idarticolo").on("change", function(){
-            // Autoimpostazione dei valori relativi
-            if ($(this).val()) {
-                session_set("superselect,idarticolo", $(this).val(), 0);
-				session_set("superselect,idanagrafica", "'.$options['idanagrafica'].'", 0);
-				session_set("superselect,dir", "'.$options['dir'].'", 0);
+<div class="row" id="prezzi_articolo">
+    <div class="col-md-4 text-center">
+        <button type="button" class="btn btn-sm btn-info btn-block '.($disabled ? 'disabled' : '').'" '.($disabled ? 'disabled' : '').' onclick="$(\'#prezzi\').toggleClass(\'hide\'); $(\'#prezzi\').load(\''.ROOTDIR."/ajax_complete.php?module=Articoli&op=getprezzi&idarticolo=' + $('#idarticolo option:selected').val() + '&idanagrafica=".$options['idanagrafica'].'\');">
+            <i class="fa fa-search"></i> '.tr('Visualizza ultimi prezzi (cliente)').'
+        </button>
+        <div id="prezzi" class="hide"></div>
+    </div>
 
-				$data = $(this).selectData();
+    <div class="col-md-4 text-center">
+        <button type="button" class="btn btn-sm btn-info btn-block '.($disabled ? 'disabled' : '').'" '.($disabled ? 'disabled' : '').' onclick="$(\'#prezziacquisto\').toggleClass(\'hide\'); $(\'#prezziacquisto\').load(\''.ROOTDIR."/ajax_complete.php?module=Articoli&op=getprezziacquisto&idarticolo=' + $('#idarticolo option:selected').val() + '&idanagrafica=".$options['idanagrafica'].'\');">
+            <i class="fa fa-search"></i> '.tr('Visualizza ultimi prezzi (acquisto)').'
+        </button>
+        <div id="prezziacquisto" class="hide"></div>
+    </div>
 
-                var id_conto = $data.idconto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').';
+    <div class="col-md-4 text-center">
+        <button type="button" class="btn btn-sm btn-info btn-block '.($disabled ? 'disabled' : '').'" '.($disabled ? 'disabled' : '').' onclick="$(\'#prezzivendita\').toggleClass(\'hide\'); $(\'#prezzivendita\').load(\''.ROOTDIR."/ajax_complete.php?module=Articoli&op=getprezzivendita&idarticolo=' + $('#idarticolo option:selected').val() + '&idanagrafica=".$options['idanagrafica'].'\');">
+            <i class="fa fa-search"></i> '.tr('Visualizza ultimi prezzi (vendita)').'
+        </button>
+        <div id="prezzivendita" class="hide"></div>
+    </div>
+</div>
+<br>';
+}
 
-                $("#prezzo").val($data.prezzo_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').');
-                
-                $("#prezzo_acquisto").val($data.prezzo_acquisto);
-                
-                $("#descrizione_riga").val($data.descrizione);
+echo '
+<script>
+$(document).ready(function () {
+    $("#idarticolo").on("change", function(){
+        // Autoimpostazione dei valori relativi
+        if ($(this).val()) {
+            session_set("superselect,idarticolo", $(this).val(), 0);
+            session_set("superselect,idanagrafica", "'.$options['idanagrafica'].'", 0);
+            session_set("superselect,dir", "'.$options['dir'].'", 0);
 
-                if( $data.idiva_vendita ){
-                    $("#idiva").selectSetNew($data.idiva_vendita, $data.iva_vendita);
-                }
-                
-                if(id_conto) {
-                    $("#idconto").selectSetNew(id_conto, $data.idconto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').'_title);
-                }
-                $("#um").selectSetNew($data.um, $data.um);
-            }';
+            $data = $(this).selectData();
 
-    if ($module['name'] != 'Contratti' && $module['name'] != 'Preventivi') {
-        echo '
+            var id_conto = $data.idconto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').';
 
-            // Operazioni sui prezzi in fondo alla pagina
-            $("#prezzi_articolo button").attr("disabled", !$(this).val());
+            $("#prezzo_unitario").val($data.prezzo_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').');
 
-            if ($(this).val()) {
-                $("#prezzi_articolo button").removeClass("disabled");
-            } else {
-                $("#prezzi_articolo button").addClass("disabled");
+            $("#costo_unitario").val($data.prezzo_acquisto);
+
+            $("#descrizione_riga").val($data.descrizione);
+
+            if( $data.idiva_vendita ){
+                $("#idiva").selectSetNew($data.idiva_vendita, $data.iva_vendita);
             }
 
-            $("#prezzi").html("");
-            $("#prezzivendita").html("");
-            $("#prezziacquisto").html("");';
-    }
+            if(id_conto) {
+                $("#idconto").selectSetNew(id_conto, $data.idconto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').'_title);
+            }
+            $("#um").selectSetNew($data.um, $data.um);
+        }';
 
+if ($module['name'] != 'Contratti' && $module['name'] != 'Preventivi') {
     echo '
-        });
-    });
-    </script>';
+
+        // Operazioni sui prezzi in fondo alla pagina
+        $("#prezzi_articolo button").attr("disabled", !$(this).val());
+
+        if ($(this).val()) {
+            $("#prezzi_articolo button").removeClass("disabled");
+        } else {
+            $("#prezzi_articolo button").addClass("disabled");
+        }
+
+        $("#prezzi").html("");
+        $("#prezzivendita").html("");
+        $("#prezziacquisto").html("");';
 }
+
+echo '
+    });
+});
+</script>';

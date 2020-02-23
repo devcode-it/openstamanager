@@ -174,17 +174,25 @@ class Query
                     $real_value = trim(str_replace(['&lt;', '&gt;'], ['<', '>'], $value));
                     $more = starts_with($real_value, '>=') || starts_with($real_value, '> =') || starts_with($real_value, '>');
                     $minus = starts_with($real_value, '<=') || starts_with($real_value, '< =') || starts_with($real_value, '<');
+                    $equal = starts_with($real_value, '=');
 
-                    if ($minus || $more) {
+                    if ($minus || $more || $equal) {
                         $sign = str_contains($real_value, '=') ? '=' : '';
                         if ($more) {
                             $sign = '>'.$sign;
-                        } else {
+                        } elseif ($minus) {
                             $sign = '<'.$sign;
+                        } else {
+                            $sign = '=';
                         }
 
                         $value = trim(str_replace(['&lt;', '=', '&gt;'], '', $value));
-                        $search_filters[] = 'CAST('.$search_query.' AS UNSIGNED) '.$sign.' '.prepare($value);
+
+                        if ($more || $minus) {
+                            $search_filters[] = 'CAST('.$search_query.' AS UNSIGNED) '.$sign.' '.prepare($value);
+                        } else {
+                            $search_filters[] = $search_query.' = '.prepare($value);
+                        }
                     } else {
                         $search_filters[] = $search_query.' LIKE '.prepare('%'.$value.'%');
                     }
@@ -204,7 +212,8 @@ class Query
 
         // Ordinamento dei risultati
         if (isset($order['dir']) && isset($order['column'])) {
-            $pos = array_search($order['column'], $total['fields']);
+            //$pos = array_search($order['column'], $total['fields']);
+            $pos = $order['column'];
 
             if ($pos !== false) {
                 $pieces = explode('ORDER', $query);

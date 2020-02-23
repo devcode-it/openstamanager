@@ -14,8 +14,6 @@ class Riga extends Row
     /**
      * Crea una nuova riga collegata ad una fattura.
      *
-     * @param Fattura $fattura
-     *
      * @return self
      */
     public static function build(Fattura $fattura)

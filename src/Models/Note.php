@@ -12,7 +12,6 @@ class Note extends Model
     /**
      * Crea una nuova nota.
      *
-     * @param User      $user
      * @param NoteTrait $structure
      * @param int       $id_record
      * @param string    $contenuto

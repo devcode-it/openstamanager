@@ -42,7 +42,17 @@ echo '
     echo '</tr>';
 
     //Indirizzo
-    if (!empty($c_indirizzo) or !empty($c_cap) or !empty($c_citta) or !empty($c_provincia)) {
+    if (!empty($s_indirizzo) or !empty($s_cap) or !empty($s_citta) or !empty($s_provincia)) {
+        echo '
+			<tr>
+				<td colspan="4">
+					'.((!empty($s_indirizzo)) ? tr('Via').': <b>'.$s_indirizzo.'</b>' : '').'
+					'.((!empty($s_cap)) ? tr('CAP').': <b>'.$s_cap.'</b>' : '').'
+					'.((!empty($s_citta)) ? tr('Città').': <b>'.$s_citta.'</b>' : '').'
+					'.((!empty($s_provincia)) ? tr('Provincia').': <b>'.strtoupper($s_provincia).'</b>' : '').'
+				</td>
+			</tr>';
+    } elseif (!empty($c_indirizzo) or !empty($c_cap) or !empty($c_citta) or !empty($c_provincia)) {
         echo '
 			<tr>
 				<td colspan="4">
@@ -83,7 +93,7 @@ echo '
 echo '
     <tr>
         <td colspan="4">
-            <b>'.tr('Tipo intervento').':</b> '.$documento['tipointervento'].'
+            <b>'.tr('Tipo intervento').':</b> '.$documento->tipo->descrizione.'
         </td>
     </tr>';
 
@@ -97,11 +107,12 @@ echo '
     </tr>';
 
 // Descrizione
+// Rimosso nl2br, non necessario con ckeditor
 echo '
     <tr>
         <td colspan="4" style="height:20mm;">
             <b>'.tr('Descrizione').':</b>
-            <p>'.nl2br($documento['descrizione']).'</p>
+            <p>'.($documento['descrizione']).'</p>
         </td>
     </tr>';
 
@@ -179,7 +190,7 @@ if (!$righe->isEmpty()) {
         // Prezzo unitario
         echo '
         <td class="text-center">
-            '.($options['pricing'] ? moneyFormat($riga->prezzo_unitario_vendita) : '-');
+            '.($options['pricing'] ? moneyFormat($riga->prezzo_unitario) : '-');
 
         if ($options['pricing'] && $r['sconto'] > 0) {
             echo "

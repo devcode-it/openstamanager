@@ -39,7 +39,7 @@ foreach ($iva as $descrizione => $tot_iva) {
             </td>
 
             <td class="text-right">
-                '.moneyFormat($somma_totale).'
+                '.moneyFormat($somma_iva).'
             </td>
         </tr>';
     }

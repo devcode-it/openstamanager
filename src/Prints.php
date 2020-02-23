@@ -125,22 +125,27 @@ class Prints
         $dbo = $database = database();
         $infos = self::get($print);
 
-        Permissions::addModule($infos['id_module']);
+        $additional_checks = false;
+        if (!$return_string) {
+            Permissions::addModule($infos['id_module']);
 
-        $has_access = true;
-        if (!empty($infos['is_record'])) {
-            $module = Modules::get($infos['id_module']);
+            $has_access = true;
+            if (!empty($infos['is_record'])) {
+                $module = Modules::get($infos['id_module']);
 
-            Util\Query::setSegments(false);
-            $query = Util\Query::getQuery($module, [
-                'id' => $id_record,
-            ]);
-            Util\Query::setSegments(true);
+                Util\Query::setSegments(false);
+                $query = Util\Query::getQuery($module, [
+                    'id' => $id_record,
+                ]);
+                Util\Query::setSegments(true);
 
-            $has_access = !empty($query) ? $dbo->fetchNum($query) !== 0 : true;
+                $has_access = !empty($query) ? $dbo->fetchNum($query) !== 0 : true;
+            }
+
+            $additional_checks = !Permissions::check([], false) || !$has_access;
         }
 
-        if (empty($infos) || empty($infos['enabled']) || !Permissions::check([], false) || !$has_access) {
+        if (empty($infos) || empty($infos['enabled']) || $additional_checks) {
             return false;
         }
 
@@ -243,7 +248,7 @@ class Prints
      */
     public static function getPDFLink($path)
     {
-        return ROOTDIR.'/assets/dist/pdfjs/web/viewer.html?file=../../../../'.ltrim(str_replace(DOCROOT, '', $path), '/');
+        return ROOTDIR.'/assets/dist/pdfjs/web/viewer.html?file='.BASEURL.'/'.ltrim(str_replace(DOCROOT, '', $path), '/');
     }
 
     /**
@@ -437,7 +442,7 @@ class Prints
 
         // Instanziamento dell'oggetto mPDF
         $mpdf = new \Mpdf\Mpdf([
-            'mode' => 'utf-8',
+            'mode' => 'c',
             'format' => $settings['format'],
             'orientation' => strtoupper($settings['orientation']) == 'L' ? 'L' : 'P',
             'font-size' => $settings['font-size'],
@@ -445,11 +450,28 @@ class Prints
             'margin_right' => $settings['margins']['right'],
             'setAutoBottomMargin' => 'stretch',
             'setAutoTopMargin' => 'stretch',
+            'default_font' => 'helvetica',
 
             // Abilitazione per lo standard PDF/A
             //'PDFA' => true,
             //'PDFAauto' => true,
         ]);
+
+        if (setting('Filigrana stampe')) {
+            $mpdf->SetWatermarkImage(
+                DOCROOT.'/files/anagrafiche/'.setting('Filigrana stampe'),
+                0.5,
+                'F',
+                'F'
+            );
+
+            // false = 'showWatermarkImage' => false,
+            if ($settings['showWatermarkImage'] == null) {
+                $mpdf->showWatermarkImage = true;
+            } else {
+                $mpdf->showWatermarkImage = intval($settings['showWatermarkImage']);
+            }
+        }
 
         // Inclusione dei fogli di stile CSS
         $styles = [

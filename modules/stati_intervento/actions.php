@@ -5,6 +5,7 @@ include_once __DIR__.'/../../core.php';
 switch (post('op')) {
     case 'update':
         $dbo->update('in_statiintervento', [
+            'codice' => post('codice'),
             'descrizione' => post('descrizione'),
             'colore' => post('colore'),
             'completato' => post('completato'),
@@ -18,18 +19,20 @@ switch (post('op')) {
         break;
 
     case 'add':
-        $idstatointervento = post('codice');
+        $codice = post('codice');
         $descrizione = post('descrizione');
         $colore = post('colore');
 
-        //controllo idstatointervento che non sia duplicato
-        if (count($dbo->fetchArray('SELECT idstatointervento FROM in_statiintervento WHERE idstatointervento='.prepare($idstatointervento))) > 0) {
-            flash()->error(tr('Stato di intervento già esistente.'));
+        //controllo che il codice non sia duplicato
+        if (count($dbo->fetchArray('SELECT idstatointervento FROM in_statiintervento WHERE codice='.prepare($codice))) > 0) {
+            flash()->warning(tr('Attenzione: lo stato attività _COD_ risulta già esistente.', [
+                '_COD_' => $codice,
+            ]));
         } else {
-            $query = 'INSERT INTO in_statiintervento(codice, descrizione, colore) VALUES ('.prepare($idstatointervento).', '.prepare($descrizione).', '.prepare($colore).')';
+            $query = 'INSERT INTO in_statiintervento(codice, descrizione, colore) VALUES ('.prepare($codice).', '.prepare($descrizione).', '.prepare($colore).')';
             $dbo->query($query);
             $id_record = $database->lastInsertedID();
-            flash()->info(tr('Nuovo stato di intervento aggiunto.'));
+            flash()->info(tr('Nuovo stato attività aggiunto.'));
         }
 
         break;
@@ -45,7 +48,7 @@ switch (post('op')) {
 
         $dbo->query($query);
 
-        flash()->info(tr('Stato di intervento eliminato.'));
+        flash()->info(tr('Stato attività eliminato.'));
 
         break;
 }

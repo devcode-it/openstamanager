@@ -29,7 +29,8 @@ $documento = Fattura::find($id_record);
 
 // Dati della riga
 $id_riga = get('idriga');
-$riga = $documento->getRighe()->find($id_riga);
+$type = get('type');
+$riga = $documento->getRiga($type, $id_riga);
 
 $result = $riga->toArray();
 $result = array_merge($result, $riga->dati_aggiuntivi_fe);
@@ -120,12 +121,12 @@ echo '
 var n = '.($key - 1).';
 function add_altri_dati(btn){
     cleanup_inputs();
-    
+
     var last = $(btn).closest("table").find("tr[id^=last-altri_dati]").parent().last();
 
     n++;
     var text = replaceAll($("#altri_dati-templace").html(), "-id-", "" + n);
-    
+
     last.after(text);
     restart_inputs();
 };

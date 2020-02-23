@@ -8,6 +8,8 @@ use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\Intervento;
 use Modules\TipiIntervento\Tipo as TipoSessione;
+use Plugins\PianificazioneFatturazione\Pianificazione;
+use Plugins\PianificazioneInterventi\Promemoria;
 use Traits\RecordTrait;
 use Util\Generator;
 
@@ -30,8 +32,7 @@ class Contratto extends Document
     /**
      * Crea un nuovo contratto.
      *
-     * @param Anagrafica $anagrafica
-     * @param string     $nome
+     * @param string $nome
      *
      * @return self
      */
@@ -144,6 +145,16 @@ class Contratto extends Document
         return $this->hasMany(Intervento::class, 'id_contratto');
     }
 
+    public function promemoria()
+    {
+        return $this->hasMany(Promemoria::class, 'idcontratto');
+    }
+
+    public function pianificazioni()
+    {
+        return $this->hasMany(Pianificazione::class, 'idcontratto');
+    }
+
     public function fixBudget()
     {
         $this->budget = $this->totale_imponibile ?: 0;
@@ -163,8 +174,6 @@ class Contratto extends Document
     /**
      * Effettua un controllo sui campi del documento.
      * Viene richiamatp dalle modifiche alle righe del documento.
-     *
-     * @param Description $trigger
      */
     public function triggerEvasione(Description $trigger)
     {
@@ -179,10 +188,10 @@ class Contratto extends Document
         // Impostazione del nuovo stato
         if ($qta_evasa == 0) {
             $descrizione = 'In lavorazione';
-            $descrizione_intervento = 'Completato';
+            $codice_intervento = 'OK';
         } else {
             $descrizione = $parziale ? 'Parzialmente fatturato' : 'Fatturato';
-            $descrizione_intervento = 'Fatturato';
+            $codice_intervento = 'FAT';
         }
 
         $stato = Stato::where('descrizione', $descrizione)->first();
@@ -191,7 +200,7 @@ class Contratto extends Document
 
         // Trasferimento degli interventi collegati
         $interventi = $this->interventi;
-        $stato_intervento = \Modules\Interventi\Stato::where('descrizione', $descrizione_intervento)->first();
+        $stato_intervento = \Modules\Interventi\Stato::where('codice', $codice_intervento)->first();
         foreach ($interventi as $intervento) {
             $intervento->stato()->associate($stato_intervento);
             $intervento->save();

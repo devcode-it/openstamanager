@@ -13,6 +13,17 @@ if (!empty($google)) {
 <script src="//maps.googleapis.com/maps/api/js?libraries=places&key='.$google.'"></script>';
 }
 
+if (!$is_cliente && !$is_fornitore && $is_tecnico) {
+    $ignore = $dbo->fetchArray("SELECT id FROM zz_plugins WHERE name='Sedi' OR name='Referenti' OR  name='Dichiarazioni d\'intento'");
+
+    foreach ($ignore as $plugin) {
+        echo '
+<script>
+    $("#link-tab_'.$plugin['id'].'").addClass("disabled");
+</script>';
+    }
+}
+
 if (!$is_cliente) {
     $ignore = $dbo->fetchArray("SELECT id FROM zz_plugins WHERE name='Impianti del cliente' OR name='Ddt del cliente'");
 
@@ -226,7 +237,8 @@ echo '
         </div>
     </div>';
 
-echo '
+if ($is_cliente or $is_fornitore or $is_tecnico) {
+    echo '
 
     <div class="panel panel-primary">
         <div class="panel-heading">
@@ -277,7 +289,7 @@ echo '
                         </div>
                     </div>';
 
-        echo '
+    echo '
                     <div class="tab-pane '.(!$is_cliente ? 'hide' : 'active').'" id="cliente">
                         <div class="row">
                             <div class="col-md-6">
@@ -285,7 +297,7 @@ echo '
                             </div>
         
                             <div class="col-md-6">
-                                    {[ "type": "select", "label": "'.tr('Relazione con il cliente').'", "name": "idrelazione", "values": "query=SELECT id, descrizione, colore AS _bgcolor_ FROM an_relazioni ORDER BY descrizione", "value": "$idrelazione$" ]}
+                                    {[ "type": "select", "label": "'.tr('Relazione con il cliente').'", "name": "idrelazione", "ajax-source": "relazioni", "value": "$idrelazione$", "icon-after": "add|'.Modules::get('Relazioni')['id'].'" ]}
                             </div>
                         </div>
                         
@@ -295,7 +307,7 @@ echo '
                             </div>
         
                             <div class="col-md-6">
-                                {[ "type": "select", "label": "'.tr('Banca predefinita').'", "name": "idbanca_vendite", "values": "query=SELECT id, nome AS descrizione FROM co_banche ORDER BY nome ASC", "value": "$idbanca_vendite$", "icon-after": "add|'.Modules::get('Banche')['id'].'", "help": "'.tr('Banca predefinita su cui accreditare i pagamenti.').'" ]}
+                                {[ "type": "select", "label": "'.tr('Banca predefinita').'", "name": "idbanca_vendite", "values": "query=SELECT id, nome AS descrizione FROM co_banche WHERE deleted_at IS NULL ORDER BY nome ASC", "value": "$idbanca_vendite$", "icon-after": "add|'.Modules::get('Banche')['id'].'", "help": "'.tr('Banca predefinita su cui accreditare i pagamenti.').'" ]}
                             </div>
                         </div>
         
@@ -329,30 +341,30 @@ echo '
                             </div>
                         </div>';
 
-            // Collegamento con il conto
-            $conto = $dbo->fetchOne('SELECT co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione as descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_cliente']));
+    // Collegamento con il conto
+    $conto = $dbo->fetchOne('SELECT co_pianodeiconti3.id, co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione as descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_cliente']));
 
-                echo '
+    echo '
                         <div class="row">
                             <div class="col-md-6">
                 ';
 
-                            if (!empty($conto['numero_conto'])) {
-                                $piano_dei_conti_cliente = tr('_NAME_', [
+    if (!empty($conto['numero_conto'])) {
+        $piano_dei_conti_cliente = tr('_NAME_', [
                                     '_NAME_' => $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'],
                                 ]);
-                                echo Modules::link('Piano dei conti', null, null, null, 'class="pull-right"');
-                            } else {
-                                $piano_dei_conti_cliente = tr('Nessuno');
-                            }
+        echo Modules::link('Piano dei conti', null, null, null, 'class="pull-right"', 1, 'movimenti-'.$conto['id']);
+    } else {
+        $piano_dei_conti_cliente = tr('Nessuno');
+    }
 
-                echo '
+    echo '
                                 {[ "type": "select", "label": "'.tr('Piano dei conti cliente').'", "name": "piano_dei_conti_cliente", "values": "list=\"\": \"'.$piano_dei_conti_cliente.'\"", "readonly": 1 ]}
                             </div>
                         </div>
                     </div>';
 
-        echo '
+    echo '
                     <div class="tab-pane '.(!$is_fornitore ? 'hide' : (!$is_cliente ? 'active' : '')).'" id="fornitore">
                         <div class="row">
                             <div class="col-md-6">
@@ -379,33 +391,33 @@ echo '
                                 {[ "type": "select", "label": "'.tr('Listino articoli').'", "name": "idlistino_acquisti", "values": "query=SELECT id, nome AS descrizione FROM mg_listini ORDER BY nome ASC", "value": "$idlistino_acquisti$" ]}
                             </div>';
 
-                echo '
+    echo '
                             <div class="col-md-6">';
 
-                            /*echo '
-                            <p>'.tr('Piano dei conti collegato: _NAME_', [
-                                '_NAME_' => $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'],
-                            ]).Modules::link('Piano dei conti', null, '').'</p>';*/
+    /*echo '
+    <p>'.tr('Piano dei conti collegato: _NAME_', [
+        '_NAME_' => $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'],
+    ]).Modules::link('Piano dei conti', null, '').'</p>';*/
 
-                            // Collegamento con il conto
-                            $conto = $dbo->fetchOne('SELECT co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione as descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_fornitore']));
+    // Collegamento con il conto
+    $conto = $dbo->fetchOne('SELECT co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione as descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_fornitore']));
 
-                            if (!empty($conto['numero_conto'])) {
-                                $piano_dei_conti_fornitore = tr('_NAME_', [
+    if (!empty($conto['numero_conto'])) {
+        $piano_dei_conti_fornitore = tr('_NAME_', [
                                     '_NAME_' => $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'],
                                 ]);
-                                echo Modules::link('Piano dei conti', null, null, null, 'class="pull-right"');
-                            } else {
-                                $piano_dei_conti_fornitore = tr('Nessuno');
-                            }
+        echo Modules::link('Piano dei conti', null, null, null, 'class="pull-right"');
+    } else {
+        $piano_dei_conti_fornitore = tr('Nessuno');
+    }
 
-                echo '
+    echo '
                                 {[ "type": "select", "label": "'.tr('Piano dei conti fornitore').'", "name": "piano_dei_conti_fornitore", "values": "list=\"\": \"'.$piano_dei_conti_fornitore.'\"", "readonly": 1 ]}
                             </div>
                         </div>
                     </div>';
 
-        echo '
+    echo '
                     <div class="tab-pane'.(!$is_cliente && !$is_fornitore && $is_tecnico ? ' active' : '').''.(!$is_tecnico ? ' hide' : '').'" id="tecnico">
                         <div class="row">
                             <div class="col-md-6">
@@ -414,12 +426,12 @@ echo '
                         </div>
                     </div>';
 
-        echo '
+    echo '
                 </div>
             </div>
         </div>
     </div>';
-
+}
     ?>
 
 		<div class="panel panel-primary">
@@ -517,7 +529,7 @@ echo '
 
 if (setting('Azienda predefinita') == $id_record) {
     echo '
-<div class="alert alert-info text-center">'.tr('Per impostare il logo delle stampe, caricare un\'immagine specificando come nome "Logo stampe" (Risoluzione consigliata 302x111 pixel)').'.</div>';
+<div class="alert alert-info">'.tr('Per impostare il <b>logo nelle stampe</b>, caricare un\'immagine specificando come nome "<b>Logo stampe</b>" (Risoluzione consigliata 302x111 pixel).<br>Per impostare una <b>filigrana nelle stampe</b>, caricare un\'immagine specificando come nome "<b>Filigrana stampe</b>"').'.</div>';
 }
 
 // Collegamenti diretti

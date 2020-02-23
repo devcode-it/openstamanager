@@ -11,6 +11,9 @@ $module = Modules::get($documento->module);
 if (get('documento') == 'fattura') {
     $final_module = $module['name'] == 'Ordini cliente' ? 'Fatture di vendita' : 'Fatture di acquisto';
     $op = 'add_documento';
+} elseif (get('documento') == 'ordine_fornitore') {
+    $final_module = 'Ordini fornitore';
+    $op = 'add_ordine_cliente';
 } else {
     $final_module = $module['name'] == 'Ordini cliente' ? 'Ddt di vendita' : 'Ddt di acquisto';
     $op = 'add_ordine';

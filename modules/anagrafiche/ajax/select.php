@@ -115,10 +115,13 @@ switch ($resource) {
         if (empty($filter)) {
             $where[] = 'deleted_at IS NULL';
 
-            //come tecnico posso aprire attività solo a mio nome
-            $user = Auth::user();
-            if ($user['gruppo'] == 'Tecnici' && !empty($user['idanagrafica'])) {
-                $where[] = 'an_anagrafiche.idanagrafica='.$user['idanagrafica'];
+            if (setting('Permetti inserimento sessioni degli altri tecnici')) {
+            } else {
+                //come tecnico posso aprire attività solo a mio nome
+                $user = Auth::user();
+                if ($user['gruppo'] == 'Tecnici' && !empty($user['idanagrafica'])) {
+                    $where[] = 'an_anagrafiche.idanagrafica='.$user['idanagrafica'];
+                }
             }
         }
 
@@ -223,7 +226,7 @@ switch ($resource) {
 
     case 'sedi':
         if (isset($superselect['idanagrafica'])) {
-            $query = "SELECT * FROM (SELECT '0' AS id, CONCAT_WS(' - ', 'Sede legale' , (SELECT CONCAT (citta, ' (', ragione_sociale,')') FROM an_anagrafiche |where|)) AS descrizione UNION SELECT id, CONCAT_WS(' - ', nomesede, citta) FROM an_sedi |where|) AS tab |filter| ORDER BY descrizione";
+            $query = "SELECT * FROM (SELECT '0' AS id, CONCAT_WS(' - ', 'Sede legale' , (SELECT CONCAT (citta, ' (', ragione_sociale,')') FROM an_anagrafiche |where|)) AS descrizione UNION SELECT id, CONCAT_WS(' - ', nomesede, citta) FROM an_sedi |where|) AS tab HAVING descrizione LIKE ".prepare('%'.$search.'%')." ORDER BY descrizione";
 
             foreach ($elements as $element) {
                 $filter[] = 'id='.prepare($element);
@@ -232,7 +235,6 @@ switch ($resource) {
             $where[] = 'idanagrafica='.prepare($superselect['idanagrafica']);
 
             if (!empty($search)) {
-                $search_fields[] = 'nomesede LIKE '.prepare('%'.$search.'%');
                 $search_fields[] = 'citta LIKE '.prepare('%'.$search.'%');
             }
         }
@@ -250,7 +252,10 @@ switch ($resource) {
             }
 
             $where[] = 'idanagrafica='.prepare($id_azienda);
-            $where[] = 'id IN('.implode(',', $user->sedi).')';
+            //admin o utente senza una sede prefissata, avrà accesso a tutte le sedi
+            if (!empty($user->sedi) and !$user->is_admin) {
+                $where[] = 'id IN('.implode(',', $user->sedi).')';
+            }
 
             if (!empty($search)) {
                 $search_fields[] = 'nomesede LIKE '.prepare('%'.$search.'%');
@@ -277,7 +282,7 @@ switch ($resource) {
         break;
 
     case 'nazioni':
-        $query = 'SELECT id AS id, CONCAT_WS(\' - \', iso2, nome) AS descrizione FROM an_nazioni |where| ORDER BY CASE WHEN iso2=\'IT\' THEN -1 ELSE iso2 END';
+        $query = 'SELECT id AS id, iso2, CONCAT_WS(\' - \', iso2, nome) AS descrizione FROM an_nazioni |where| ORDER BY CASE WHEN iso2=\'IT\' THEN -1 ELSE iso2 END';
 
         foreach ($elements as $element) {
             $filter[] = 'id='.prepare($element);
@@ -285,6 +290,21 @@ switch ($resource) {
 
         if (!empty($search)) {
             $search_fields[] = 'nome LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = 'iso2 LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = 'CONCAT_WS(\' - \', iso2, nome) LIKE '.prepare('%'.$search.'%');
+        }
+
+        break;
+
+    case 'relazioni':
+        $query = 'SELECT id, descrizione, colore AS bgcolor FROM an_relazioni |where| ORDER BY descrizione';
+
+        foreach ($elements as $element) {
+            $filter[] = 'id='.prepare($element);
+        }
+
+        if (!empty($search)) {
+            $search_fields[] = 'descrizione LIKE '.prepare('%'.$search.'%');
         }
 
         break;

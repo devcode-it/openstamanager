@@ -48,7 +48,7 @@ class Settings
     }
 
     /**
-     * Restituisce le informazioni relative a una singolo impostazione specificata.
+     * Restituisce le informazioni relative ad una singola impostazione specificata.
      *
      * @param string|int $setting
      *
@@ -107,6 +107,12 @@ class Settings
             $validator = v::in(explode(',', $m[1]));
         }
 
+        // multiple
+        // verifico che il valore scelto sia nella lista enumerata nel db
+        elseif (preg_match("/multiple\[(.+?)\]/", $setting->tipo, $m[0][0])) {
+            //$validator =  v::in(explode(',', $m[0][0][1]));
+        }
+
         // Boolean (checkbox)
         elseif ($setting->tipo == 'boolean') {
             $validator = v::boolType();
@@ -147,25 +153,41 @@ class Settings
             }
 
             $result = '
-    {[ "type": "select", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "values": '.json_encode($list).', "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'" ]}';
+    {[ "type": "select", "label": "'.$setting->nome.'", "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "values": '.json_encode($list).', "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'" ]}';
+        }
+
+        // Lista multipla
+        if (preg_match("/multiple\[(.+?)\]/", $setting->tipo, $m)) {
+            $values = explode(',', $m[1]);
+
+            $list = [];
+            foreach ($values as $value) {
+                $list[] = [
+                    'id' => $value,
+                    'text' => $value,
+                ];
+            }
+
+            $result = '
+    {[ "type": "select", "multiple": 1, "label": "'.$setting->nome.'", "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.'][]", "values": '.json_encode($list).', "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'" ]}';
         }
 
         // Lista da query
         elseif (preg_match('/^query=(.+?)$/', $setting->tipo, $m)) {
             $result = '
-    {[ "type": "select", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "values": "'.str_replace('"', '\"', $setting->tipo).'", "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'"   ]}';
+    {[ "type": "select", "label": "'.$setting->nome.'", "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "values": "'.str_replace('"', '\"', $setting->tipo).'", "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'"   ]}';
         }
 
         // Boolean (checkbox)
         elseif ($setting->tipo == 'boolean') {
             $result = '
-    {[ "type": "checkbox", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "placeholder": "'.tr('Attivo').'", "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'"  ]}';
+    {[ "type": "checkbox", "label": "'.$setting->nome.'", "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "placeholder": "'.tr('Attivo').'", "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'"  ]}';
         }
 
         // Campi di default
         elseif (in_array($setting->tipo, ['textarea', 'ckeditor', 'timestamp', 'date', 'time'])) {
             $result = '
-    {[ "type": "'.$setting->tipo.'", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "value": '.json_encode($setting->valore).', "required": "'.intval($required).'", "help": "'.$setting->help.'"  ]}';
+    {[ "type": "'.$setting->tipo.'", "label": "'.$setting->nome.'", "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "value": '.json_encode($setting->valore).', "required": "'.intval($required).'", "help": "'.$setting->help.'"  ]}';
         }
 
         // Campo di testo
@@ -176,7 +198,7 @@ class Settings
             $tipo = $numerico ? 'number' : 'text';
 
             $result = '
-    {[ "type": "'.$tipo.'", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "value": "'.$setting->valore.'"'.($numerico && $setting->tipo == 'integer' ? ', "decimals": 0' : '').', "required": "'.intval($required).'", "help": "'.$setting->help.'"  ]}';
+    {[ "type": "'.$tipo.'", "label": "'.$setting->nome.'", "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "value": "'.$setting->valore.'"'.($numerico && $setting->tipo == 'integer' ? ', "decimals": 0' : '').', "required": "'.intval($required).'", "help": "'.$setting->help.'"  ]}';
         }
 
         return $result;

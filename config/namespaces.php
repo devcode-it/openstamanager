@@ -35,5 +35,7 @@ return [
     'plugins/importFE' => 'Plugins\ImportFE',
     'plugins/receiptFE' => 'Plugins\ReceiptFE',
     'plugins/dichiarazioni_intento' => 'Plugins\DichiarazioniIntento',
+    'plugins/pianificazione_interventi' => 'Plugins\PianificazioneInterventi',
+    'plugins/pianificazione_fatturazione' => 'Plugins\PianificazioneFatturazione',
     'plugins/statistiche_articoli' => 'Plugins\StatisticheArticoli',
 ];

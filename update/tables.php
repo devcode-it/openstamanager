@@ -78,7 +78,6 @@ return [
     'in_tipiintervento',
     'in_vociservizio',
     'mg_articoli',
-    'mg_articoli_interventi',
     'mg_categorie',
     'mg_listini',
     'mg_movimenti',

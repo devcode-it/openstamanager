@@ -4,7 +4,6 @@ namespace Modules\Anagrafiche\API\v1;
 
 use API\Interfaces\RetrieveInterface;
 use API\Resource;
-use Modules;
 
 class Sedi extends Resource implements RetrieveInterface
 {

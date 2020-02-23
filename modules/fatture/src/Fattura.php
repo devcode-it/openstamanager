@@ -33,10 +33,8 @@ class Fattura extends Document implements ReferenceInterface
     /**
      * Crea una nuova fattura.
      *
-     * @param Anagrafica $anagrafica
-     * @param Tipo       $tipo_documento
-     * @param string     $data
-     * @param int        $id_segment
+     * @param string $data
+     * @param int    $id_segment
      *
      * @return self
      */
@@ -325,7 +323,7 @@ class Fattura extends Document implements ReferenceInterface
 
     public function scadenze()
     {
-        return $this->hasMany(Scadenza::class, 'iddocumento');
+        return $this->hasMany(Scadenza::class, 'iddocumento')->orderBy('scadenza');
     }
 
     public function movimentiContabili()
@@ -394,7 +392,7 @@ class Fattura extends Document implements ReferenceInterface
 
             foreach ($rate as $rata) {
                 $scadenza = $rata['DataScadenzaPagamento'] ?: $this->data;
-                $importo = -$rata['ImportoPagamento'];
+                $importo = ($this->isNota()) ? $rata['ImportoPagamento'] : -$rata['ImportoPagamento'];
 
                 self::registraScadenza($this, $importo, $scadenza, $is_pagato);
             }
@@ -424,11 +422,10 @@ class Fattura extends Document implements ReferenceInterface
     /**
      * Registra una specifica scadenza nel database.
      *
-     * @param Fattura $fattura
-     * @param float   $importo
-     * @param string  $data_scadenza
-     * @param bool    $is_pagato
-     * @param string  $type
+     * @param float  $importo
+     * @param string $data_scadenza
+     * @param bool   $is_pagato
+     * @param string $type
      */
     public static function registraScadenza(Fattura $fattura, $importo, $data_scadenza, $is_pagato, $type = 'fattura')
     {
@@ -464,10 +461,12 @@ class Fattura extends Document implements ReferenceInterface
         $direzione = $this->tipo->dir;
         $ritenuta_acconto = $this->ritenuta_acconto;
 
-        // Se c'è una ritenuta d'acconto, la aggiungo allo scadenzario
+        // Se c'è una ritenuta d'acconto, la aggiungo allo scadenzario al 15 del mese dopo l'ultima scadenza di pagamento
         if ($direzione == 'uscita' && $ritenuta_acconto > 0) {
-            $data = $this->data;
-            $scadenza = date('Y-m', strtotime($data.' +1 month')).'-15';
+            $ultima_scadenza = $this->scadenze->last();
+            $scadenza = $ultima_scadenza->scadenza->copy()->startOfMonth()->addMonth();
+            $scadenza->setDate($scadenza->year, $scadenza->month, 15);
+
             $importo = -$ritenuta_acconto;
 
             self::registraScadenza($this, $importo, $scadenza, $is_pagato, 'ritenutaacconto');
@@ -485,8 +484,6 @@ class Fattura extends Document implements ReferenceInterface
     /**
      * Salva la fattura, impostando i campi dipendenti dai singoli parametri.
      *
-     * @param array $options
-     *
      * @return bool
      */
     public function save(array $options = [])
@@ -502,9 +499,10 @@ class Fattura extends Document implements ReferenceInterface
         // Informazioni sul cambio dei valori
         $stato_precedente = Stato::find($this->original['idstatodocumento']);
         $dichiarazione_precedente = Dichiarazione::find($this->original['id_dichiarazione_intento']);
+        $is_fiscale = $this->isFiscale();
 
         // Generazione numero fattura se non presente
-        if ($stato_precedente->descrizione == 'Bozza' && $this->stato['descrizione'] == 'Emessa' && empty($this->numero_esterno)) {
+        if ((($stato_precedente->descrizione == 'Bozza' && $this->stato['descrizione'] == 'Emessa') or (!$is_fiscale)) && empty($this->numero_esterno)) {
             $this->numero_esterno = self::getNextNumeroSecondario($this->data, $this->direzione, $this->id_segment);
         }
 
@@ -586,6 +584,18 @@ class Fattura extends Document implements ReferenceInterface
     }
 
     /**
+     * Controlla se la fattura è fiscale.
+     *
+     * @return bool
+     */
+    public function isFiscale()
+    {
+        $result = database()->fetchOne('SELECT is_fiscale FROM zz_segments WHERE id ='.prepare($this->id_segment))['is_fiscale'];
+
+        return $result;
+    }
+
+    /**
      * Restituisce i dati bancari in base al pagamento.
      *
      * @return array
@@ -663,7 +673,7 @@ class Fattura extends Document implements ReferenceInterface
             $this->id_riga_bollo = $riga->id;
         }
 
-        $riga->prezzo_unitario_vendita = $marca_da_bollo;
+        $riga->prezzo_unitario = $marca_da_bollo;
         $riga->qta = 1;
         $riga->descrizione = setting('Descrizione addebito bollo');
         $riga->id_iva = setting('Iva da applicare su marca da bollo');
@@ -722,7 +732,7 @@ class Fattura extends Document implements ReferenceInterface
         $ultimo = Generator::getPreviousFrom($maschera, 'co_documenti', 'numero_esterno', [
             'YEAR(data) = '.prepare(date('Y', strtotime($data))),
             'id_segment = '.prepare($id_segment),
-        ]);
+        ], $data);
         $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data));
 
         return $numero;

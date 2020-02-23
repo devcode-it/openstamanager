@@ -23,7 +23,7 @@ include_once __DIR__.'/../../core.php';
                 </div>
 
 				<div class="col-md-4">
-					{[ "type": "number", "label": "<?php echo tr('Rincaro/sconto'); ?>", "name": "prc_guadagno", "required": 1, "value": "$prc_guadagno$", "icon-after": "%", "help": "<?php echo tr('Il valore positivo indica uno sconto').'. '.tr('Per applicare una percentuale di rincaro inserire un valore negativo').'.'; ?>", "disabled": "<?php echo intval(!empty($record['prc_combinato'])); ?>" ]}
+					{[ "type": "number", "label": "<?php echo tr('Rincaro/sconto'); ?>", "name": "prc_guadagno", "required": 1, "value": "$prc_guadagno$", "icon-after": "%", "help": "<?php echo tr('Il valore positivo indica uno sconto: per applicare una maggiorazione inserire un valore negativo').'.'; ?>", "disabled": "<?php echo intval(!empty($record['prc_combinato'])); ?>" ]}
 				</div>
 			</div>
 

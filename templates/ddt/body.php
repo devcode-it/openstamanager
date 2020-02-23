@@ -66,7 +66,7 @@ foreach ($righe as $riga) {
 
     // Aggiunta dei riferimenti ai documenti
     if (setting('Riferimento dei documenti nelle stampe')) {
-        $ref = doc_references($r, $record['dir'], ['iddocumento']);
+        $ref = doc_references($r, $record['dir'], ['idddt']);
 
         if (!empty($ref)) {
             echo '
@@ -89,13 +89,10 @@ foreach ($righe as $riga) {
             // Prezzo unitario
             echo '
             <td class="text-right">
-				'.moneyFormat($riga->prezzo_unitario_vendita);
+				'.moneyFormat($riga->prezzo_unitario);
 
             if ($riga->sconto > 0) {
-                $text = tr('sconto _TOT_ _TYPE_', [
-                    '_TOT_' => Translator::numberToLocale($riga->sconto_unitario),
-                    '_TYPE_' => ($riga->tipo_sconto == 'PRC' ? '%' : currency()),
-                ]);
+                $text = discountInfo($riga, false);
 
                 echo '
                 <br><small class="text-muted">'.$text.'</small>';

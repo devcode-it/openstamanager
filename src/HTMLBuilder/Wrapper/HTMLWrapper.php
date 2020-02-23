@@ -96,7 +96,7 @@ class HTMLWrapper implements WrapperInterface
     <script>
         var container = $("#'.$pseudo_id.'_validation");
         
-        container.closest(".input-group").find("input").on("change", function(){
+        container.closest(".input-group").find("input").on("change, blur", function(e){
             var input = $(this);
             var value = input.val();
  
@@ -191,7 +191,7 @@ class HTMLWrapper implements WrapperInterface
 
         if (in_array($module->permission, ['r', 'rw'])) {
             $result = '
-<button '.$btn_extras.' data-href="'.ROOTDIR.'/add.php?id_module='.$module->id.$get.'&select='.$values['id'].'&ajax=yes" data-target="#bs-popup2" data-toggle="modal" data-title="'.tr('Aggiungi').'" type="button" class="btn'.$classes.'">
+<button '.$btn_extras.' data-href="'.ROOTDIR.'/add.php?id_module='.$module->id.$get.'&select='.$values['id'].'&ajax=yes" data-toggle="modal" data-title="'.tr('Aggiungi').'" type="button" class="btn'.$classes.'">
     <i class="fa fa-plus"></i>
 </button>';
         }

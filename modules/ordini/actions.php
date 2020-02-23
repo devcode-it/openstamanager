@@ -122,12 +122,10 @@ switch (post('op')) {
 
         $articolo->descrizione = post('descrizione');
         $articolo->um = post('um') ?: null;
-        $articolo->id_iva = post('idiva');
 
-        $articolo->prezzo_unitario_acquisto = post('prezzo_acquisto') ?: 0;
-        $articolo->prezzo_unitario_vendita = post('prezzo');
-        $articolo->sconto_unitario = post('sconto');
-        $articolo->tipo_sconto = post('tipo_sconto');
+        $articolo->costo_unitario = post('costo_unitario') ?: 0;
+        $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
+        $articolo->setSconto(post('sconto'), post('tipo_sconto'));
 
         try {
             $articolo->qta = post('qta');
@@ -183,12 +181,10 @@ switch (post('op')) {
 
         $riga->descrizione = post('descrizione');
         $riga->um = post('um') ?: null;
-        $riga->id_iva = post('idiva');
 
-        $riga->prezzo_unitario_acquisto = post('prezzo_acquisto') ?: 0;
-        $riga->prezzo_unitario_vendita = post('prezzo');
-        $riga->sconto_unitario = post('sconto');
-        $riga->tipo_sconto = post('tipo_sconto');
+        $riga->costo_unitario = post('costo_unitario') ?: 0;
+        $riga->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
+        $riga->setSconto(post('sconto'), post('tipo_sconto'));
 
         $riga->qta = post('qta');
 
@@ -227,10 +223,10 @@ switch (post('op')) {
     // Scollegamento riga generica da ordine
     case 'delete_riga':
         $id_riga = post('idriga');
+        $type = post('type');
+$riga = $ordine->getRiga($type, $id_riga);
 
-        if (!empty($id_riga)) {
-            $riga = $ordine->getRighe()->find($id_riga);
-
+        if (!empty($riga)) {
             try {
                 $riga->delete();
 
@@ -286,7 +282,7 @@ switch (post('op')) {
     case 'add_preventivo':
         $preventivo = \Modules\Preventivi\Preventivo::find(post('id_documento'));
 
-        // Creazione della fattura al volo
+        // Creazione dell' ordine al volo
         if (post('create_document') == 'on') {
             $tipo = Tipo::where('dir', $dir)->first();
 
@@ -307,7 +303,7 @@ switch (post('op')) {
         $parziale = false;
         $righe = $preventivo->getRighe();
         foreach ($righe as $riga) {
-            if (post('evadere')[$riga->id] == 'on') {
+            if (post('evadere')[$riga->id] == 'on' and !empty(post('qta_da_evadere')[$riga->id])) {
                 $qta = post('qta_da_evadere')[$riga->id];
 
                 $copia = $riga->copiaIn($ordine, $qta);
@@ -329,6 +325,47 @@ switch (post('op')) {
 
         flash()->info(tr('Preventivo _NUM_ aggiunto!', [
             '_NUM_' => $preventivo->numero,
+        ]));
+
+        break;
+
+    // Aggiunta di un ordine cliente in ordine fornitore
+    case 'add_ordine_cliente':
+        $ordine_cliente = Ordine::find(post('id_documento'));
+
+        // Creazione dell' ordine al volo
+        if (post('create_document') == 'on') {
+            $anagrafica = Anagrafica::find(post('idanagrafica'));
+            $tipo = Tipo::where('dir', $dir)->first();
+
+            $ordine = Ordine::build($anagrafica, $tipo, post('data'));
+            $ordine->save();
+
+            $id_record = $ordine->id;
+        }
+
+        $righe = $ordine_cliente->getRighe();
+        foreach ($righe as $riga) {
+            if (post('evadere')[$riga->id] == 'on' and !empty(post('qta_da_evadere')[$riga->id])) {
+                $qta = post('qta_da_evadere')[$riga->id];
+
+                $copia = $riga->replicate();
+                $copia->setParent($ordine);
+
+                $riga->original_id = null;
+                $riga->original_type = null;
+                $riga->qta_evasa = 0;
+
+                $riga->qta = $qta;
+
+                $copia->save();
+            }
+        }
+
+        ricalcola_costiagg_ordine($id_record);
+
+        flash()->info(tr('Ordine _NUM_ aggiunto!', [
+            '_NUM_' => $ordine->numero,
         ]));
 
         break;

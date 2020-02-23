@@ -21,18 +21,18 @@ $mesi = [
 // Righe inserite
 //idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE is_pianificabile = 1) ) AND
 $qp = "SELECT *,
-    (SELECT SUM(subtotale) FROM co_righe_contratti WHERE idcontratto=co_ordiniservizio_pianificazionefatture.idcontratto) AS budget_contratto,
+    (SELECT SUM(subtotale) FROM co_righe_contratti WHERE idcontratto=co_fatturazione_contratti.idcontratto) AS budget_contratto,
     DATE_FORMAT(data_scadenza, '%m-%Y') AS mese,
     (SELECT idanagrafica FROM co_contratti WHERE id=idcontratto) AS idcliente,
 	(SELECT nome FROM co_contratti WHERE id=idcontratto) AS nome,
     (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=(SELECT idanagrafica FROM co_contratti WHERE id=idcontratto)) AS ragione_sociale,
-    (SELECT descrizione FROM an_zone WHERE id=co_ordiniservizio_pianificazionefatture.idzona) AS zona
-FROM co_ordiniservizio_pianificazionefatture WHERE  co_ordiniservizio_pianificazionefatture.iddocumento=0 ORDER BY data_scadenza ASC, idcliente ASC";
+    (SELECT descrizione FROM an_zone WHERE id=co_fatturazione_contratti.idzona) AS zona
+FROM co_fatturazione_contratti WHERE  co_fatturazione_contratti.iddocumento=0 ORDER BY data_scadenza ASC, idcliente ASC";
 $rsp = $dbo->fetchArray($qp);
 
 if (!empty($rsp)) {
     // Lettura numero di rate e totale già fatturato
-    $rs2 = $dbo->fetchArray('SELECT * FROM co_ordiniservizio_pianificazionefatture');
+    $rs2 = $dbo->fetchArray('SELECT * FROM co_fatturazione_contratti');
 
     for ($j = 0; $j < sizeof($rs2); ++$j) {
         // Leggo quante rate sono pianificate per dividere l'importo delle sedi in modo corretto

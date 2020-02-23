@@ -16,9 +16,6 @@ class Articolo extends Article
     /**
      * Crea un nuovo articolo collegato ad una fattura.
      *
-     * @param Fattura  $fattura
-     * @param Original $articolo
-     *
      * @return self
      */
     public static function build(Fattura $fattura, Original $articolo)

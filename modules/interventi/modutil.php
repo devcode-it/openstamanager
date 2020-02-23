@@ -62,7 +62,7 @@ function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto = n
     $sessione = Sessione::build($intervento, $anagrafica, $inizio, $fine);
 
     // Notifica nuovo intervento al tecnico
-    if (!empty($tecnico['email'])) {
+    if (!empty($anagrafica['email'])) {
         $template = Template::get('Notifica intervento');
 
         $mail = Mail::build(auth()->getUser(), $template, $idintervento);
@@ -140,7 +140,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
             $riga->id_ritenuta_acconto = $id_ritenuta_acconto;
             $riga->id_rivalsa_inps = $id_rivalsa_inps;
 
-            $riga->prezzo_unitario_vendita = $sessione->prezzo_orario;
+            $riga->prezzo_unitario = $sessione->prezzo_orario;
             $riga->sconto_unitario = $sessione->sconto_unitario;
             $riga->tipo_sconto = $sessione->tipo_sconto;
 
@@ -162,7 +162,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
                 '_DATE_' => dateFormat($data),
             ]);
             $riga->idintervento = $id_intervento;
-            $riga->um = 'ore';
+            //$riga->um = 'ore';
 
             $riga->id_iva = $id_iva;
             $riga->idconto = $id_conto;
@@ -171,9 +171,40 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
             $riga->id_ritenuta_acconto = $id_ritenuta_acconto;
             $riga->id_rivalsa_inps = $id_rivalsa_inps;
 
-            $riga->prezzo_unitario_vendita = $diritto_chiamata->prezzo_diritto_chiamata;
+            $riga->prezzo_unitario = $diritto_chiamata->prezzo_diritto_chiamata;
 
             $riga->qta = $gruppo->count();
+
+            $riga->save();
+        }
+
+        // Viaggi raggruppati per costo
+        $viaggi = $sessioni->where('prezzo_km_unitario', '>', 0)->groupBy(function ($item, $key) {
+            return $item['prezzo_km_unitario'];
+        });
+        foreach ($viaggi as $gruppo) {
+            $viaggio = $gruppo->first();
+            $riga = Riga::build($fattura);
+
+            $riga->descrizione = tr("Trasferta dell'intervento _NUM_ del _DATE_", [
+                '_NUM_' => $codice,
+                '_DATE_' => dateFormat($data),
+            ]);
+            $riga->idintervento = $id_intervento;
+            $riga->um = 'km';
+
+            $riga->id_iva = $id_iva;
+            $riga->idconto = $id_conto;
+
+            $riga->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
+            $riga->id_ritenuta_acconto = $id_ritenuta_acconto;
+            $riga->id_rivalsa_inps = $id_rivalsa_inps;
+
+            $riga->prezzo_unitario = $viaggio->prezzo_km_unitario;
+            $riga->sconto_unitario = $sessione->scontokm_unitario;
+            $riga->tipo_sconto = $sessione->tipo_scontokm;
+
+            $riga->qta = $gruppo->sum('km');
 
             $riga->save();
         }
@@ -197,32 +228,6 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
         }
 
         $copia->save();
-    }
-
-    // Aggiunta km come "Trasferta" (se c'è)
-    if ($intervento->prezzo_viaggio > 0) {
-        $riga = Riga::build($fattura);
-
-        $riga->descrizione = tr("Trasferta dell'intervento _NUM_ del _DATE_", [
-            '_NUM_' => $codice,
-            '_DATE_' => dateFormat($data),
-        ]);
-        $riga->idintervento = $id_intervento;
-
-        $riga->id_iva = $id_iva;
-        $riga->idconto = $id_conto;
-
-        $riga->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
-        $riga->id_ritenuta_acconto = $id_ritenuta_acconto;
-        $riga->id_rivalsa_inps = $id_rivalsa_inps;
-
-        $riga->prezzo_unitario_vendita = $intervento->prezzo_viaggio;
-        $riga->sconto_unitario = $intervento->sconto_totale_viaggio;
-        $riga->tipo_sconto = 'UNT';
-
-        $riga->qta = 1;
-
-        $riga->save();
     }
 
     // Ricalcolo inps, ritenuta e bollo

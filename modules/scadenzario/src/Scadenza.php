@@ -9,6 +9,11 @@ class Scadenza extends Model
 {
     protected $table = 'co_scadenziario';
 
+    protected $dates = [
+        'scadenza',
+        'data_pagamento',
+    ];
+
     public static function build($descrizione, $importo, $data_scadenza, $type = 'fattura', $is_pagato = false)
     {
         $model = parent::build();

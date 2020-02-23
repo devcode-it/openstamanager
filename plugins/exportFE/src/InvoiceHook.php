@@ -19,7 +19,7 @@ class InvoiceHook extends Manager
         }
 
         $remaining = Fattura::where('hook_send', 1)
-            ->where('codice_stato_fe', 'ERR')
+            ->where('codice_stato_fe', 'QUEUE')
             ->count();
 
         return !empty($remaining);
@@ -28,7 +28,7 @@ class InvoiceHook extends Manager
     public function execute()
     {
         $fattura = Fattura::where('hook_send', 1)
-            ->where('codice_stato_fe', 'ERR')
+            ->where('codice_stato_fe', 'QUEUE')
             ->first();
 
         $result = Interaction::sendInvoice($fattura->id);

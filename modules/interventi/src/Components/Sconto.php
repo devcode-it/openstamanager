@@ -14,8 +14,6 @@ class Sconto extends Discount
     /**
      * Crea un nuovo sconto collegata ad un intervento.
      *
-     * @param Intervento $intervento
-     *
      * @return self
      */
     public static function build(Intervento $intervento)

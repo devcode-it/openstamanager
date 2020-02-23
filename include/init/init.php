@@ -20,6 +20,7 @@ $settings = [
     "Percentuale ritenuta d'acconto" => false,
     "Causale ritenuta d'acconto" => false,
     'Valuta' => true,
+    'Utilizza prezzi di vendita con IVA incorporata' => false,
 ];
 
 if (!empty(setting("Percentuale ritenuta d'acconto"))) {
@@ -174,8 +175,8 @@ if (!$has_azienda) {
                             <div class="col-md-12">
                                 {[ "type": "file", "placeholder": "'.tr('File').'", "name": "blob" ]}
                             </div>
-							
-							  
+
+
 							<p>&nbsp;</p><div class="col-md-12 alert alert-info text-center">'.tr('Per impostare il logo delle stampe, caricare un file ".jpg". Risoluzione consigliata 302x111 pixel').'.</div>
 
                         </div>

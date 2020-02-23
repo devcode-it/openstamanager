@@ -10,8 +10,6 @@ class AnagraficheCest
 
     /**
      * Crea una nuova anagrafica di tipo Cliente.
-     *
-     * @param AcceptanceTester $t
      */
     public function testAnagraficaCliente(AcceptanceTester $t)
     {
@@ -20,8 +18,6 @@ class AnagraficheCest
 
     /**
      * Crea una nuova anagrafica di tipo Tecnico.
-     *
-     * @param AcceptanceTester $t
      */
     public function testAnagraficaTecnico(AcceptanceTester $t)
     {
@@ -30,8 +26,6 @@ class AnagraficheCest
 
     /**
      * Crea una nuova anagrafica di tipo Fornitore.
-     *
-     * @param AcceptanceTester $t
      */
     public function testAnagraficaFornitore(AcceptanceTester $t)
     {
@@ -40,8 +34,6 @@ class AnagraficheCest
 
     /**
      * Crea una nuova anagrafica di tipo Vettore.
-     *
-     * @param AcceptanceTester $t
      */
     public function testAnagraficaVettore(AcceptanceTester $t)
     {
@@ -50,8 +42,6 @@ class AnagraficheCest
 
     /**
      * Crea una nuova anagrafica di tipo Agente.
-     *
-     * @param AcceptanceTester $t
      */
     public function testAnagraficaAgente(AcceptanceTester $t)
     {
@@ -60,8 +50,6 @@ class AnagraficheCest
 
     /**
      * Crea una nuova anagrafica.
-     *
-     * @param AcceptanceTester $t
      */
     protected function addAnag(AcceptanceTester $t, $name = 'ANAGRAFICA DI PROVA', $tipo = 1, $partita_iva = '')
     {
@@ -87,8 +75,6 @@ class AnagraficheCest
 
     /**
      * Crea una nuova anagrafica di tipo cliente e la elimina.
-     *
-     * @param AcceptanceTester $t
      */
     protected function addAndDeleteAnag(AcceptanceTester $t, $name = 'ANAGRAFICA DI PROVA', $tipo = 1, $partita_iva = '')
     {

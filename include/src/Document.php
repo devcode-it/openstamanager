@@ -13,12 +13,26 @@ abstract class Document extends Model
      */
     public function getRighe()
     {
-        $descrizioni = $this->descrizioni;
-        $righe = $this->righe;
-        $articoli = $this->articoli;
-        $sconti = $this->sconti;
+        $results = $this->mergeCollections($this->descrizioni, $this->righe, $this->articoli, $this->sconti);
 
-        return $descrizioni->merge($righe)->merge($articoli)->merge($sconti)->sortBy('order');
+        return $results->sortBy('order');
+    }
+
+    /**
+     * Restituisce la riga identificata dall'ID indicato.
+     *
+     * @param $type
+     * @param $id
+     *
+     * @return mixed
+     */
+    public function getRiga($type, $id)
+    {
+        $righe = $this->getRighe();
+
+        return $righe->first(function ($item) use ($type, $id) {
+            return $item instanceof $type && $item->id == $id;
+        });
     }
 
     /**
@@ -129,7 +143,7 @@ abstract class Document extends Model
      */
     public function getMarginePercentualeAttribute()
     {
-        return (1 - ($this->spesa / $this->imponibile)) * 100;
+        return (1 - ($this->spesa / ($this->totale_imponibile))) * 100;
     }
 
     public function delete()
@@ -155,8 +169,6 @@ abstract class Document extends Model
     /**
      * Metodo richiamato a seguito di modifiche sull'evasione generale delle righe del documento.
      * Utilizzabile per limpostazione automatica degli stati.
-     *
-     * @param Description $trigger
      */
     public function triggerEvasione(Description $trigger)
     {
@@ -166,12 +178,40 @@ abstract class Document extends Model
     /**
      * Metodo richiamato a seguito della modifica o creazione di una riga del documento.
      * Utilizzabile per limpostazione automatica di campi statici del documento.
-     *
-     * @param Description $trigger
      */
     public function triggerComponent(Description $trigger)
     {
         $this->setRelations([]);
+    }
+
+    public function toArray()
+    {
+        $array = parent::toArray();
+
+        $result = array_merge($array, [
+            'spesa' => $this->spesa,
+            'imponibile' => $this->imponibile,
+            'sconto' => $this->sconto,
+            'totale_imponibile' => $this->totale_imponibile,
+            'iva' => $this->iva,
+            'totale' => $this->totale,
+        ]);
+
+        return $result;
+    }
+
+    /**
+     * Costruisce una nuova collezione Laravel a partire da quelle indicate.
+     *
+     * @param array<\Illuminate\Support\Collection> ...$args
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    protected function mergeCollections(...$args)
+    {
+        $collection = collect($args);
+
+        return $collection->collapse();
     }
 
     /**

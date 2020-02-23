@@ -13,20 +13,21 @@ use Modules\Interventi\Components\Sessione;
 use Modules\Interventi\Intervento;
 use Modules\Interventi\Stato;
 use Modules\TipiIntervento\Tipo as TipoSessione;
+use Plugins\PianificazioneInterventi\Promemoria;
 
 switch (post('op')) {
     case 'update':
         $idcontratto = post('idcontratto');
-        $idcontratto_riga = post('idcontratto_riga');
+        $id_promemoria = post('idcontratto_riga');
 
         // Rimozione del collegamento al promemoria
-        if (!empty($idcontratto_riga) && $intervento->id_contratto != $idcontratto) {
+        if (!empty($id_promemoria) && $intervento->id_contratto != $idcontratto) {
             $dbo->update('co_promemoria', ['idintervento' => null], ['idintervento' => $id_record]);
         }
 
         // Salvataggio modifiche intervento
         $intervento->data_richiesta = post('data_richiesta');
-        $intervento->data_scadenza = post('data_scadenza');
+        $intervento->data_scadenza = post('data_scadenza') ?: null;
         $intervento->richiesta = post('richiesta');
         $intervento->descrizione = post('descrizione');
         $intervento->informazioniaggiuntive = post('informazioniaggiuntive');
@@ -68,7 +69,7 @@ switch (post('op')) {
             $idtipointervento = post('idtipointervento');
             $idstatointervento = post('idstatointervento');
             $data_richiesta = post('data_richiesta');
-            $data_scadenza = post('data_scadenza');
+            $data_scadenza = post('data_scadenza') ?: null;
 
             $anagrafica = Anagrafica::find($idanagrafica);
             $tipo = TipoSessione::find($idtipointervento);
@@ -84,7 +85,7 @@ switch (post('op')) {
             // Informazioni di base
             $idpreventivo = post('idpreventivo');
             $idcontratto = post('idcontratto');
-            $idcontratto_riga = post('idcontratto_riga');
+            $id_promemoria = post('idcontratto_riga');
             $idtipointervento = post('idtipointervento');
             $idsede_partenza = post('idsede_partenza');
             $idsede_destinazione = post('idsede_destinazione');
@@ -106,41 +107,10 @@ switch (post('op')) {
 
             $intervento->save();
 
-            // Se è specificato che l'intervento fa parte di una pianificazione aggiorno il codice dell'intervento sulla riga della pianificazione
-            if (!empty($idcontratto_riga)) {
-                $dbo->update('co_promemoria', [
-                    'idintervento' => $id_record,
-                    'idtipointervento' => $idtipointervento,
-                    'data_richiesta' => $data_richiesta,
-                    'richiesta' => $richiesta,
-                    'idsede' => $idsede_destinazione ?: 0,
-                ], ['idcontratto' => $idcontratto, 'id' => $idcontratto_riga]);
-
-                //copio le righe dal promemoria all'intervento
-                $dbo->query('INSERT INTO in_righe_interventi (descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,idintervento,sconto,sconto_unitario,tipo_sconto) SELECT descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,'.$id_record.',sconto,sconto_unitario,tipo_sconto FROM co_promemoria_righe WHERE id_promemoria = '.$idcontratto_riga);
-
-                //copio  gli articoli dal promemoria all'intervento
-                $dbo->query('INSERT INTO mg_articoli_interventi (idarticolo, idintervento,descrizione,prezzo_acquisto,prezzo_vendita,sconto,	sconto_unitario,	tipo_sconto,idiva,desc_iva,iva, qta, um, abilita_serial, idimpianto) SELECT idarticolo, '.$id_record.',descrizione,prezzo_acquisto,prezzo_vendita,sconto,sconto_unitario,tipo_sconto,idiva,desc_iva,iva, qta, um, abilita_serial, idimpianto FROM co_promemoria_articoli WHERE id_promemoria = '.$idcontratto_riga);
-
-                // Copia degli allegati
-                $alleagti = Uploads::copy([
-                    'id_plugin' => Plugins::get('Pianificazione interventi')['id'],
-                    'id_record' => $idcontratto_riga,
-                ], [
-                    'id_module' => $id_module,
-                    'id_record' => $id_record,
-                ]);
-
-                if (!$alleagti) {
-                    $errors = error_get_last();
-                    flash()->warning(tr('Errore durante la copia degli allegati'));
-                }
-
-                // Decremento la quantità per ogni articolo copiato
-                $rs_articoli = $dbo->fetchArray('SELECT * FROM mg_articoli_interventi WHERE idintervento = '.$id_record.' ');
-                foreach ($rs_articoli as $rs_articolo) {
-                    add_movimento_magazzino($rs_articolo['idarticolo'], -$rs_articolo['qta'], ['idintervento' => $id_record]);
-                }
+            // Sincronizzazione con il promemoria indicato
+            if (!empty($id_promemoria)) {
+                $promemoria = Promemoria::find($id_promemoria);
+                $promemoria->pianifica($intervento);
             }
 
             if (!empty(post('idordineservizio'))) {
@@ -176,8 +146,10 @@ switch (post('op')) {
 
         // Collegamenti tecnici/interventi
         $idtecnici = post('idtecnico');
-        foreach ($idtecnici as $idtecnico) {
-            add_tecnico($id_record, $idtecnico, post('orario_inizio'), post('orario_fine'), $idcontratto);
+        if (!empty(post('orario_inizio')) && !empty(post('orario_fine'))) {
+            foreach ($idtecnici as $idtecnico) {
+                add_tecnico($id_record, $idtecnico, post('orario_inizio'), post('orario_fine'), $idcontratto);
+            }
         }
 
         if (post('ref') == 'dashboard') {
@@ -218,85 +190,12 @@ switch (post('op')) {
 
         break;
 
-    /*
-        Gestione righe generiche
-    */
-    case 'addriga':
-        $descrizione = post('descrizione');
-        $qta = post('qta');
-        $um = post('um');
-        $idiva = post('idiva');
-        $prezzo_vendita = post('prezzo_vendita');
-        $prezzo_acquisto = post('prezzo_acquisto');
-
-        $sconto_unitario = post('sconto');
-        $tipo_sconto = post('tipo_sconto');
-        $sconto = calcola_sconto([
-            'sconto' => $sconto_unitario,
-            'prezzo' => $prezzo_vendita,
-            'tipo' => $tipo_sconto,
-            'qta' => $qta,
-        ]);
-
-        //Calcolo iva
-        $rs_iva = $dbo->fetchArray('SELECT * FROM co_iva WHERE id='.prepare($idiva));
-        $desc_iva = $rs_iva[0]['descrizione'];
-
-        $iva = (($prezzo_vendita * $qta) - $sconto) * $rs_iva[0]['percentuale'] / 100;
-
-        $dbo->query('INSERT INTO in_righe_interventi(descrizione, qta, um, prezzo_vendita, prezzo_acquisto, idiva, desc_iva, iva, sconto, sconto_unitario, tipo_sconto, idintervento) VALUES ('.prepare($descrizione).', '.prepare($qta).', '.prepare($um).', '.prepare($prezzo_vendita).', '.prepare($prezzo_acquisto).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($id_record).')');
-
-        aggiorna_sedi_movimenti('interventi', $id_record);
-        break;
-
-    case 'editriga':
-        $idriga = post('idriga');
-        $descrizione = post('descrizione');
-        $qta = post('qta');
-        $um = post('um');
-        $idiva = post('idiva');
-        $prezzo_vendita = post('prezzo_vendita');
-        $prezzo_acquisto = post('prezzo_acquisto');
-
-        $sconto_unitario = post('sconto');
-        $tipo_sconto = post('tipo_sconto');
-        $sconto = calcola_sconto([
-            'sconto' => $sconto_unitario,
-            'prezzo' => $prezzo_vendita,
-            'tipo' => $tipo_sconto,
-            'qta' => $qta,
-        ]);
-
-        //Calcolo iva
-        $rs_iva = $dbo->fetchArray('SELECT * FROM co_iva WHERE id='.prepare($idiva));
-        $desc_iva = $rs_iva[0]['descrizione'];
-
-        $iva = (($prezzo_vendita * $qta) - $sconto) * $rs_iva[0]['percentuale'] / 100;
-
-        $dbo->query('UPDATE in_righe_interventi SET '.
-            ' descrizione='.prepare($descrizione).','.
-            ' qta='.prepare($qta).','.
-            ' um='.prepare($um).','.
-            ' prezzo_vendita='.prepare($prezzo_vendita).','.
-            ' prezzo_acquisto='.prepare($prezzo_acquisto).','.
-            ' idiva='.prepare($idiva).','.
-            ' desc_iva='.prepare($desc_iva).','.
-            ' iva='.prepare($iva).','.
-            ' sconto='.prepare($sconto).','.
-            ' sconto_unitario='.prepare($sconto_unitario).','.
-            ' tipo_sconto='.prepare($tipo_sconto).
-            ' WHERE id='.prepare($idriga));
-
-        aggiorna_sedi_movimenti('interventi', $id_record);
-
-        break;
-
     case 'delete_riga':
         $id_riga = post('idriga');
+        $type = post('type');
+$riga = $intervento->getRiga($type, $id_riga);
 
-        if (!empty($id_riga)) {
-            $riga = $intervento->getRighe()->find($id_riga);
-
+        if (!empty($riga)) {
             try {
                 $riga->delete();
 
@@ -307,6 +206,42 @@ switch (post('op')) {
         }
 
         aggiorna_sedi_movimenti('interventi', $id_record);
+
+        break;
+
+    case 'manage_articolo':
+        if (post('idriga') != null) {
+            $articolo = Articolo::find(post('idriga'));
+        } else {
+            $originale = ArticoloOriginale::find(post('idarticolo'));
+            $articolo = Articolo::build($intervento, $originale);
+        }
+
+        $qta = post('qta');
+
+        $articolo->descrizione = post('descrizione');
+        $articolo->um = post('um') ?: null;
+
+        $articolo->costo_unitario = post('costo_unitario') ?: 0;
+        $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
+        $articolo->setSconto(post('sconto'), post('tipo_sconto'));
+
+        try {
+            $articolo->qta = $qta;
+        } catch (UnexpectedValueException $e) {
+            flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
+        }
+
+        $articolo->save();
+
+        if (post('idriga') != null) {
+            flash()->info(tr('Articolo modificato!'));
+        } else {
+            flash()->info(tr('Articolo aggiunto!'));
+        }
+
+        // Collegamento all'impianto
+        link_componente_to_articolo($id_record, post('idimpianto'), $articolo->idarticolo, $qta);
 
         break;
 
@@ -333,65 +268,31 @@ switch (post('op')) {
 
         break;
 
-    /*
-        GESTIONE ARTICOLI
-    */
-
-    case 'editarticolo':
-        $idriga = post('idriga');
-        $idarticolo = post('idarticolo');
-        $idimpianto = post('idimpianto');
-
-        $idarticolo_originale = post('idarticolo_originale');
-
-        // Leggo la quantità attuale nell'intervento
-        $q = 'SELECT qta, idimpianto FROM mg_articoli_interventi WHERE idarticolo='.prepare($idarticolo_originale).' AND idintervento='.prepare($id_record);
-        $rs = $dbo->fetchArray($q);
-        $old_qta = $rs[0]['qta'];
-        $idimpianto = $rs[0]['idimpianto'];
-
-        $serials = array_column($dbo->select('mg_prodotti', 'serial', ['id_riga_intervento' => $idriga]), 'serial');
-
-        add_movimento_magazzino($idarticolo_originale, $old_qta, ['idintervento' => $id_record]);
-
-        // Elimino questo articolo dall'intervento
-        $dbo->query('DELETE FROM mg_articoli_interventi WHERE id='.prepare($idriga));
-
-        // Elimino il collegamento al componente
-        $dbo->query('DELETE FROM my_impianto_componenti WHERE idimpianto='.prepare($idimpianto).' AND idintervento='.prepare($id_record));
-
-        /* Ricollego l'articolo modificato all'intervento */
-        /* ci può essere il caso in cui cambio idarticolo e anche qta */
-
-        // no break
-    case 'addarticolo':
-        $originale = ArticoloOriginale::find(post('idarticolo'));
-        $intervento = Intervento::find($id_record);
-        $articolo = Articolo::build($intervento, $originale);
-
-        $articolo->qta = post('qta');
-        $articolo->descrizione = post('descrizione');
-        $articolo->prezzo_unitario_vendita = post('prezzo_vendita');
-        $articolo->prezzo_acquisto = post('prezzo_acquisto');
-        $articolo->um = post('um');
-
-        $articolo->sconto_unitario = post('sconto');
-        $articolo->tipo_sconto = post('tipo_sconto');
-        $articolo->id_iva = post('idiva');
-
-        $articolo->save();
-
-        aggiorna_sedi_movimenti('interventi', $id_record);
-
-        if (!empty($serials)) {
-            if ($old_qta > $qta) {
-                $serials = array_slice($serials, 0, $qta);
-            }
-
-            $articolo->serials = $serials;
+    case 'manage_riga':
+        if (post('idriga') != null) {
+            $riga = Riga::find(post('idriga'));
+        } else {
+            $riga = Riga::build($intervento);
         }
 
-        link_componente_to_articolo($id_record, $idimpianto, $idarticolo, $qta);
+        $qta = post('qta');
+
+        $riga->descrizione = post('descrizione');
+        $riga->um = post('um') ?: null;
+
+        $riga->costo_unitario = post('costo_unitario') ?: 0;
+        $riga->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
+        $riga->setSconto(post('sconto'), post('tipo_sconto'));
+
+        $riga->qta = $qta;
+
+        $riga->save();
+
+        if (post('idriga') != null) {
+            flash()->info(tr('Riga modificata!'));
+        } else {
+            flash()->info(tr('Riga aggiunta!'));
+        }
 
         break;
 

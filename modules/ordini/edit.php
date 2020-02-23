@@ -50,7 +50,7 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
                     <?php
                         } else {
                             ?>
-                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT * FROM or_statiordine WHERE descrizione IN('Bozza')", "value": "$idstatoordine$", "class": "unblockable" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT * FROM or_statiordine WHERE descrizione IN('Bozza', 'Accettato')", "value": "$idstatoordine$", "class": "unblockable" ]}
                     <?php
                         }
                     } else {
@@ -86,7 +86,7 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 1, "ajax-source": "pagamenti", "value": "$idpagamento$" ]}
+					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 0, "ajax-source": "pagamenti", "value": "$idpagamento$" ]}
 				</div>
 			</div>
 

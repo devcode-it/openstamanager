@@ -24,7 +24,7 @@ if ($source == 'Attività') {
 		</div>
 
 		<div class="col-md-4">
-			{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione='Cliente' AND deleted_at IS NULL ORDER BY ragione_sociale", "value": "<?php echo $idanagrafica; ?>", "ajax-source": "clienti" ]}
+			{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione='Cliente' AND deleted_at IS NULL ORDER BY ragione_sociale", "value": "<?php echo $idanagrafica; ?>", "ajax-source": "clienti", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Cliente&readonly_tipo=1" ]}
 		</div>
 
 		<div class="col-md-4">
@@ -48,33 +48,33 @@ if ($source == 'Attività') {
 <script type="text/javascript">
 $(document).ready(function(){
 
-	$('#bs-popup #idanagrafica').change( function(){
+	$('#modals > div #idanagrafica').change( function(){
 
 		session_set('superselect,idanagrafica', $(this).val(), 0);
 
         var value = !$(this).val() ? true : false;
 
-		$("#bs-popup #idsede").prop("disabled", value);
-		$("#bs-popup #idsede").selectReset();
+		$("#modals > div #idsede").prop("disabled", value);
+		$("#modals > div #idsede").selectReset();
 
 	});
 
-	$('#bs-popup #idsede').change( function(){
+	$('#modals > div #idsede').change( function(){
 		//session_set('superselect,idsede', $(this).val(), 0);
 	});
 
-    $('#bs-popup2 #idanagrafica').change( function(){
+    $('#modals > div #idanagrafica').change( function(){
 
         session_set('superselect,idanagrafica', $(this).val(), 0);
 
         var value = !$(this).val() ? true : false;
 
-        $("#bs-popup2 #idsede").prop("disabled", value);
-        $("#bs-popup2 #idsede").selectReset();
+        $("#modals > div #idsede").prop("disabled", value);
+        $("#modals > div #idsede").selectReset();
 
     });
 
-    $('#bs-popup2 #idsede').change( function(){
+    $('#modals > div #idsede').change( function(){
         //session_set('superselect,idsede', $(this).val(), 0);
     });
 

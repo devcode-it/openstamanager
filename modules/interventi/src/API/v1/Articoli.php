@@ -13,7 +13,7 @@ class Articoli extends Resource implements RetrieveInterface, CreateInterface
 {
     public function retrieve($request)
     {
-        $query = 'SELECT id, idarticolo AS id_articolo, idintervento AS id_intervento, qta, created_at as data FROM mg_articoli_interventi WHERE `idintervento` = :id_intervento';
+        $query = 'SELECT id, idarticolo AS id_articolo, idintervento AS id_intervento, qta, created_at as data FROM in_righe_interventi WHERE `idarticolo` IS NOT NULL AND `idintervento` = :id_intervento';
 
         $parameters = [
             ':id_intervento' => $request['id_intervento'],
@@ -43,7 +43,7 @@ class Articoli extends Resource implements RetrieveInterface, CreateInterface
     {
         $database = database();
 
-        $database->query('DELETE FROM `mg_articoli_interventi` WHERE `idintervento` = :id_intervento', [
+        $database->query('DELETE FROM `in_righe_interventi` WHERE `idarticolo` IS NOT NULL AND `idintervento` = :id_intervento', [
             ':id_intervento' => $request['id_intervento'],
         ]);
     }

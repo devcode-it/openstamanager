@@ -176,7 +176,6 @@ if (!function_exists('random_string')) {
     /**
      * Generates a string of random characters.
      *
-     *
      * @param int  $length             The length of the string to
      *                                 generate
      * @param bool $human_friendly     Whether or not to make the

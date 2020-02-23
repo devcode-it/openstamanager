@@ -21,9 +21,7 @@ class DDT extends Document implements ReferenceInterface
     /**
      * Crea un nuovo ddt.
      *
-     * @param Anagrafica $anagrafica
-     * @param Tipo       $tipo_documento
-     * @param string     $data
+     * @param string $data
      *
      * @return self
      */
@@ -137,8 +135,6 @@ class DDT extends Document implements ReferenceInterface
     /**
      * Effettua un controllo sui campi del documento.
      * Viene richiamatp dalle modifiche alle righe del documento.
-     *
-     * @param Description $trigger
      */
     public function triggerEvasione(Description $trigger)
     {

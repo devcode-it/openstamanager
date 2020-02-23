@@ -17,9 +17,6 @@ class Articolo extends Article
     /**
      * Crea un nuovo articolo collegato ad una preventivo.
      *
-     * @param Preventivo $preventivo
-     * @param Original   $articolo
-     *
      * @return self
      */
     public static function build(Preventivo $preventivo, Original $articolo)

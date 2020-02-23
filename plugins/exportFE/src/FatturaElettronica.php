@@ -129,7 +129,7 @@ class FatturaElettronica
             $dati_aggiuntivi = $documento->dati_aggiuntivi_fe;
             $dati = $dati_aggiuntivi['dati_contratto'] ?: [];
 
-            $this->contratti = array_unique(array_merge($contratti, $preventivi, $interventi, $dati));
+            $this->contratti = array_merge($contratti, $preventivi, $interventi, $dati);
         }
 
         return $this->contratti;
@@ -589,6 +589,7 @@ class FatturaElettronica
             }
             //Rimuovo eventuali idicazioni relative alla nazione
             $result['IdFiscaleIVA']['IdCodice'] = str_replace($anagrafica->nazione->iso2, '', $anagrafica['piva']);
+
         }
 
         // Codice fiscale
@@ -596,8 +597,10 @@ class FatturaElettronica
         if (!empty($anagrafica['codice_fiscale'])) {
             $result['CodiceFiscale'] = preg_replace('/\s+/', '', $anagrafica['codice_fiscale']);
 
-            //Rimuovo eventuali idicazioni relative alla nazione
-            $result['CodiceFiscale'] = str_replace($anagrafica->nazione->iso2, '', $result['CodiceFiscale']);
+            //$result['CodiceFiscale'] = str_replace($anagrafica->nazione->iso2, '', $result['CodiceFiscale']);
+            
+            //Rimuovo eventuali idicazioni relative all'iso2 della nazione, solo se la stringa inizia con quest'ultima.
+            $result['CodiceFiscale'] =  preg_replace('/^' . preg_quote($anagrafica->nazione->iso2, '/') . '/', '', $anagrafica['codice_fiscale']);
         }
 
         if (!empty($anagrafica['nome']) or !empty($anagrafica['cognome'])) {
@@ -772,6 +775,7 @@ class FatturaElettronica
     {
         $documento = $fattura->getDocumento();
         $azienda = static::getAzienda();
+        $cliente = $fattura->getCliente();
 
         $result = [
             'TipoDocumento' => $documento->tipo->codice_tipo_documento_fe,
@@ -807,7 +811,7 @@ class FatturaElettronica
             $percentuale = database()->fetchOne('SELECT percentuale FROM co_ritenutaacconto WHERE id = '.prepare($id_ritenuta))['percentuale'];
 
             $result['DatiRitenuta'] = [
-                'TipoRitenuta' => Validate::isValidTaxCode($azienda['codice_fiscale']) ? 'RT01' : 'RT02',
+                'TipoRitenuta' => (Validate::isValidTaxCode($azienda['codice_fiscale']) and $cliente['tipo'] == 'Privato') ? 'RT01' : 'RT02',
                 'ImportoRitenuta' => $totale_ritenutaacconto,
                 'AliquotaRitenuta' => $percentuale,
                 'CausalePagamento' => setting("Causale ritenuta d'acconto"),
@@ -849,8 +853,18 @@ class FatturaElettronica
             $result['DatiCassaPrevidenziale'] = $dati_cassa;
         }
 
-        // Sconto globale (2.1.1.8)
-        // Disabilitazione per aggiornamento sconti
+        // Sconto / Maggiorazione (2.1.1.8)
+        if (!empty($documento->dati_aggiuntivi_fe['sconto_maggiorazione_tipo'])) {
+            $result['ScontoMaggiorazione']['Tipo'] = $documento->dati_aggiuntivi_fe['sconto_maggiorazione_tipo'];
+        }
+
+        if (!empty($documento->dati_aggiuntivi_fe['sconto_maggiorazione_percentuale'])) {
+            $result['ScontoMaggiorazione']['Percentuale'] = $documento->dati_aggiuntivi_fe['sconto_maggiorazione_percentuale'];
+        }
+
+        if (!empty($documento->dati_aggiuntivi_fe['sconto_maggiorazione_importo'])) {
+            $result['ScontoMaggiorazione']['Importo'] = $documento->dati_aggiuntivi_fe['sconto_maggiorazione_importo'];
+        }
 
         // Importo Totale Documento (2.1.1.9)
         // Valorizzare l’importo complessivo lordo della fattura (onnicomprensivo di Iva, bollo, contributi previdenziali, ecc…)
@@ -1178,19 +1192,18 @@ class FatturaElettronica
                 $dettaglio['DataFinePeriodo'] = $dati_aggiuntivi['data_fine_periodo'];
             }
 
-            $dettaglio['PrezzoUnitario'] = $riga->prezzo_unitario_vendita ?: 0;
+            $dettaglio['PrezzoUnitario'] = $riga->prezzo_unitario ?: 0;
 
             // Sconto (2.2.1.10)
-            $sconto = $riga->sconto;
-            $sconto_unitario = $riga->sconto_unitario;
+            $sconto_unitario = (float) $riga->sconto_unitario;
 
-            if (!empty((float) $sconto_unitario)) {
+            if (!empty($sconto_unitario)) {
                 $sconto = [
-                    'Tipo' => $riga->sconto_unitario > 0 ? 'SC' : 'MG',
+                    'Tipo' => $sconto_unitario > 0 ? 'SC' : 'MG',
                 ];
 
                 if ($riga['tipo_sconto'] == 'PRC') {
-                    $sconto['Percentuale'] = $sconto_unitario;
+                    $sconto['Percentuale'] = $riga->sconto_percentuale;
                 } else {
                     $sconto['Importo'] = $sconto_unitario;
                 }

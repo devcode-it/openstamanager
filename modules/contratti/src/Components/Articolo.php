@@ -17,9 +17,6 @@ class Articolo extends Article
     /**
      * Crea un nuovo articolo collegato ad un contratto.
      *
-     * @param Contratto $contratto
-     * @param Original  $articolo
-     *
      * @return self
      */
     public static function build(Contratto $contratto, Original $articolo)

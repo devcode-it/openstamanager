@@ -15,7 +15,7 @@ $query = 'SELECT
 FROM or_ordini
     INNER JOIN or_righe_ordini ON or_ordini.id = or_righe_ordini.idordine
 WHERE idarticolo = '.prepare($articolo->id)."
-     AND (SELECT dir FROM or_tipiordine WHERE or_tipiordine.id=or_ordini.idtipoordine) = '|direzione|'
+     AND (SELECT dir FROM or_tipiordine WHERE or_tipiordine.id=or_ordini.idtipoordine) = '|dir|'
      AND (or_righe_ordini.qta - or_righe_ordini.qta_evasa) > 0
 GROUP BY or_ordini.id
 HAVING qta_ordinata > 0";
@@ -28,7 +28,7 @@ echo '
 	<div class="col-md-3">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-                <h3 class="panel-title">'.tr('Impegnato').'<span class="tip pull-right" title="'.tr('Quantità impegnate in ordini cliente che non siano già completamente evasi o articoli in cesta commessa.').'">
+                <h3 class="panel-title">'.tr('Impegnato').'<span class="tip pull-right" title="'.tr('Quantità impegnate in ordini cliente che non siano già completamente evasi.').'">
                 <i class="fa fa-question-circle-o"></i></span></h3>
 			</div>
 			<div class="panel-body" style="min-height:98px;">';
@@ -169,8 +169,7 @@ echo '
 			<div class="panel-body">
               <div class="row">
                  <div class="col-md-12 text-center" style="font-size:35pt;">
-                      <b>
-                       '.numberFormat($da_ordinare).' '.$articolo->um.'</b>
+                       '.numberFormat($da_ordinare).' '.$articolo->um.'
 			       </div>
 			   </div>
 			</div>
@@ -180,8 +179,7 @@ echo '
 /**
  ** Disponibile.
  */
-$qta_disponibile = $qta_presente - $impegnato;
-$disponibile = $qta_presente < 0 ? 0 : $qta_presente;
+$disponibile = $qta_presente - $impegnato;
 echo '
 	<div class="col-md-3">
 		<div class="panel panel-primary">
@@ -193,7 +191,7 @@ echo '
 
               <div class="row">
                  <div class="col-md-12 text-center" style="font-size:35pt;">
-                       '.numberFormat($disponibile).' '.$articolo->um.'</b>
+                       '.numberFormat($disponibile).' '.$articolo->um.'
 			       </div>
 			   </div>
 
@@ -202,7 +200,7 @@ echo '
 	</div>
 </div>';
 
-$sedi = $dbo->fetchArray('(SELECT "0" AS id, "Sede legale" AS nomesede) UNION (SELECT id, CONCAT(nomesede, " - ", citta ) AS nomesede FROM an_sedi WHERE idanagrafica='.prepare(setting('Azienda predefinita')).')');
+$sedi = $dbo->fetchArray('(SELECT "0" AS id, CONCAT_WS (" - ", "Sede legale", citta) AS nomesede FROM an_anagrafiche WHERE  idanagrafica = '.prepare(setting('Azienda predefinita')).') UNION (SELECT id, CONCAT_WS(" - ", nomesede, citta ) AS nomesede FROM an_sedi WHERE idanagrafica='.prepare(setting('Azienda predefinita')).')');
 
 echo '
 <div class="row">
@@ -237,7 +235,7 @@ foreach ($sedi as $sede) {
     echo '
                         <tr>
                             <td>'.$sede['nomesede'].'</td>
-                            <td class="text-right">'.Translator::numberToLocale($qta_azienda['qta'] - $qta_controparte['qta']).'</td>
+                            <td class="text-right">'.Translator::numberToLocale($qta_azienda['qta'] - $qta_controparte['qta']).' '.$articolo->um.'</td>
                         </tr>';
 }
 

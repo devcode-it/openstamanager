@@ -43,6 +43,19 @@ function sum($first, $second = null, $decimals = 4)
     return floatval($result);
 }
 
+/**
+ * @param $field
+ * @param $id_riga
+ * @param $old_qta
+ * @param $new_qta
+ * @param $dir
+ *
+ * @throws Exception
+ *
+ * @return bool
+ *
+ * @deprecated
+ */
 function controlla_seriali($field, $id_riga, $old_qta, $new_qta, $dir)
 {
     $dbo = database();
@@ -79,6 +92,8 @@ function controlla_seriali($field, $id_riga, $old_qta, $new_qta, $dir)
  * @param string $dir
  *
  * @return array
+ *
+ * @deprecated
  */
 function seriali_non_rimuovibili($field, $id_riga, $dir)
 {
@@ -248,6 +263,27 @@ function months()
 function orderValue($table, $field, $id)
 {
     return database()->fetchOne('SELECT IFNULL(MAX(`order`) + 1, 0) AS value FROM '.$table.' WHERE '.$field.' = '.prepare($id))['value'];
+}
+
+/**
+ * Visualizza le informazioni relative allo sconto presente su una riga.
+ *
+ * @param bool $mostra_maggiorazione
+ *
+ * @return string|null
+ */
+function discountInfo(\Common\Components\Row $riga, $mostra_maggiorazione = true)
+{
+    if (empty($riga->sconto_unitario) || (!$mostra_maggiorazione && $riga->sconto_unitario < 0)) {
+        return null;
+    }
+
+    $text = $riga->sconto_unitario > 0 ? tr('sconto _TOT_ _TYPE_') : tr('maggiorazione _TOT_ _TYPE_');
+
+    return replace($text, [
+        '_TOT_' => Translator::numberToLocale(!empty($riga->sconto_percentuale) ? $riga->sconto_percentuale : $riga->sconto_unitario),
+        '_TYPE_' => (!empty($riga->sconto_percentuale) ? '%' : currency()),
+    ]);
 }
 
 function reference($document) {

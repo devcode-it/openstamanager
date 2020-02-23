@@ -17,8 +17,6 @@ class FattureCest
 
     /**
      * Crea una nuova fattura di vendita.
-     *
-     * @param AcceptanceTester $t
      */
     public function testFatturaDiVendita(AcceptanceTester $t)
     {
@@ -29,8 +27,6 @@ class FattureCest
 
     /**
      * Crea una nuova fattura di acquisto.
-     *
-     * @param AcceptanceTester $t
      */
     public function testFatturaDiAcquisto(AcceptanceTester $t)
     {
@@ -50,8 +46,6 @@ class FattureCest
 
     /**
      * Crea una nuova fattura.
-     *
-     * @param AcceptanceTester $t
      */
     protected function addFattura(AcceptanceTester $t, $entrata, $tipo, $anagrafica)
     {
@@ -75,8 +69,6 @@ class FattureCest
 
     /**
      * Crea una nuova fattura e la elimina.
-     *
-     * @param AcceptanceTester $t
      */
     protected function addAndDeleteFattura(AcceptanceTester $t, $cliente, $tipo)
     {

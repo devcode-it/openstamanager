@@ -93,8 +93,8 @@ switch (post('op')) {
             if (!empty($idanagrafica)) {
                 $array = explode(',', $idanagrafica);
                 foreach ($array as $value) {
-                    flash()->warning(tr('Attenzione: il codice fiscale _COD_ è già stato censito _LINK_', [
-                        '_COD_' => post('codice_fiscale'),
+                    flash()->warning(tr('Attenzione: il codice fiscale _COD_ è già stato censito. _LINK_', [
+                        '_COD_' => '<b>'.post('codice_fiscale').'</b>',
                         '_LINK_' => Modules::link('Anagrafiche', $value, null, null, ''),
                     ]));
                 }
@@ -136,7 +136,7 @@ switch (post('op')) {
 
         $check_vat_number = Validate::isValidVatNumber($partita_iva);
         if (empty($check_vat_number['valid-format'])) {
-            flash()->warning(tr('Attenzione: la partita IVA _IVA_ potrebbe non essere valida', [
+            flash()->warning(tr('Attenzione: la partita IVA _IVA_ potrebbe non essere valida.', [
                 '_IVA_' => $partita_iva,
             ]));
         }
@@ -145,7 +145,7 @@ switch (post('op')) {
         if ($anagrafica->tipo != 'Ente pubblico' and $anagrafica->codice_fiscale != $anagrafica->partita_iva) {
             $check_codice_fiscale = Validate::isValidTaxCode($anagrafica->codice_fiscale);
             if (empty($check_codice_fiscale)) {
-                flash()->warning(tr('Attenzione: il codice fiscale _COD_ potrebbe non essere valido', [
+                flash()->warning(tr('Attenzione: il codice fiscale _COD_ potrebbe non essere valido.', [
                     '_COD_' => $anagrafica->codice_fiscale,
                 ]));
             }
@@ -183,7 +183,7 @@ switch (post('op')) {
                 $array = explode(',', $idanagrafica);
                 foreach ($array as $value) {
                     flash()->warning(tr('Attenzione: il codice fiscale _COD_ è già stato censito. _LINK_', [
-                        '_COD_' => post('codice_fiscale'),
+                        '_COD_' => '<b>'.post('codice_fiscale').'</b>',
                         '_LINK_' => Modules::link('Anagrafiche', $value, null, null, ''),
                     ]));
                 }
@@ -248,10 +248,11 @@ switch (post('op')) {
         }
 
         // Lettura tipologia della nuova anagrafica
-        $descrizioni_tipi = $anagrafica->tipi()->get()->pluck('descrizione')->toArray();
-        if (isAjaxRequest() && in_array(post('tipoanagrafica'), $descrizioni_tipi)) {
+        if (isAjaxRequest()) {
             echo json_encode(['id' => $id_record, 'text' => $anagrafica->ragione_sociale]);
         }
+
+        $descrizioni_tipi = $anagrafica->tipi()->get()->pluck('descrizione')->toArray();
 
         flash()->info(tr('Aggiunta nuova anagrafica di tipo _TYPE_', [
             '_TYPE_' => '"'.implode(', ', $descrizioni_tipi).'"',
@@ -267,7 +268,9 @@ switch (post('op')) {
 
             // Se l'anagrafica è collegata ad un utente lo disabilito
             $dbo->query('UPDATE zz_users SET enabled = 0 WHERE idanagrafica = '.prepare($id_record));
-
+            // Disabilito anche il token
+            $dbo->query('UPDATE zz_tokens SET enabled = 0 WHERE id_utente = '.prepare($id_utente));
+           
             flash()->info(tr('Anagrafica eliminata!'));
         }
 
@@ -276,17 +279,27 @@ switch (post('op')) {
 
 // Operazioni aggiuntive per il logo
 if (filter('op') == 'link_file') {
-    $nome = 'Logo stampe';
+    $nome = filter('nome_allegato');
 
-    if (setting('Azienda predefinita') == $id_record && filter('nome_allegato') == $nome) {
-        Settings::setValue($nome, $upload);
+    if ($nome == 'Logo stampe' or $nome = 'Filigrana stampe') {
+        if (setting('Azienda predefinita') == $id_record && filter('nome_allegato') == $nome) {
+            Settings::setValue($nome, $upload);
+        }
     }
 }
+
 // Operazioni aggiuntive per il logo
 elseif (filter('op') == 'unlink_file') {
-    $nome = 'Logo stampe';
+    $filename = filter('filename');
 
-    if (setting('Azienda predefinita') == $id_record && filter('filename') == setting($nome)) {
+    if (strpos($filename, setting('Logo stampe')) !== false) {
+        $nome = 'Logo stampe';
+    }
+    if (strpos($filename, setting('Filigrana stampe')) !== false) {
+        $nome = 'Filigrana stampe';
+    }
+
+    if (setting('Azienda predefinita') == $id_record && $filename == setting($nome)) {
         Settings::setValue($nome, '');
     }
 }

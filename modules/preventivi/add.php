@@ -21,7 +21,7 @@ $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : $user['idan
 	</div>
 	<div class="row">
 		<div class="col-md-6">
-				{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "value": "<?php echo $id_anagrafica; ?>", "ajax-source": "clienti", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Cliente" ]}
+				{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "value": "<?php echo $id_anagrafica; ?>", "ajax-source": "clienti", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Cliente&readonly_tipo=1" ]}
 		</div>
 
 		<div class="col-md-6">
@@ -41,3 +41,9 @@ $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : $user['idan
 		</div>
 	</div>
 </form>
+
+<script>
+	$('#modals > div #idanagrafica').change( function(){
+		session_set('superselect,idanagrafica', $(this).val(), 0);
+	});
+</script>

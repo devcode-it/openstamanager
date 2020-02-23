@@ -11,11 +11,12 @@ switch (filter('op')) {
     case 'add':
         $nome = filter('nome');
 
-        // Verifico che questo username non sia già stato usato
+        // Verifico che questo nome gruppo non sia già stato usato
         if ($dbo->fetchNum('SELECT nome FROM zz_groups WHERE nome='.prepare($nome)) == 0) {
-            $dbo->query('INSERT INTO zz_groups( nome, editable ) VALUES('.prepare($nome).', 1)');
-            flash()->info(tr('Gruppo aggiunto!'));
+            $dbo->query('INSERT INTO zz_groups(nome, editable) VALUES('.prepare($nome).', 1)');
             $id_record = $dbo->lastInsertedID();
+
+            flash()->info(tr('Gruppo aggiunto!'));
         } else {
             flash()->error(tr('Gruppo già esistente!'));
         }
@@ -42,39 +43,44 @@ switch (filter('op')) {
         $password = filter('password');
 
         $id_utente = filter('id_utente');
-        if (!empty($id_utente)) {
-            $utente = User::find($id_utente);
+        if ($dbo->fetchNum('SELECT username FROM zz_users WHERE id != '.prepare($id_utente).' AND username='.prepare($username)) == 0) {
+            //Aggiunta/modifica utente
+            if (!empty($id_utente)) {
+                $utente = User::find($id_utente);
 
-            $utente->username = $username;
-            $utente->email = $email;
+                $utente->username = $username;
+                $utente->email = $email;
 
-            $cambia_password = filter('change_password');
-            if (!empty($cambia_password)) {
-                $utente->password = $password;
+                $cambia_password = filter('change_password');
+                if (!empty($cambia_password)) {
+                    $utente->password = $password;
+                }
+            } else {
+                $gruppo = \Models\Group::find($id_record);
+                $utente = User::build($gruppo, $username, $email, $password);
+            }
+
+            // Foto
+            if (!empty($_FILES['photo']['tmp_name'])) {
+                $utente->photo = $_FILES['photo'];
+            }
+
+            // Anagrafica
+            $id_anagrafica = filter('idanag');
+            $utente->id_anagrafica = $id_anagrafica;
+
+            $utente->save();
+
+            $dbo->query('DELETE FROM zz_user_sedi WHERE id_user = '.prepare($id_utente));
+            $sedi = post('idsede');
+            if (empty($sedi)) {
+                $sedi = [0];
+            }
+            foreach ($sedi as $id_sede) {
+                $dbo->query('INSERT INTO `zz_user_sedi` (`id_user`,`idsede`) VALUES ('.prepare($id_utente).', '.prepare($id_sede).')');
             }
         } else {
-            $gruppo = \Models\Group::find($id_record);
-            $utente = User::build($gruppo, $username, $email, $password);
-        }
-
-        // Foto
-        if (!empty($_FILES['photo']['tmp_name'])) {
-            $utente->photo = $_FILES['photo'];
-        }
-
-        // Anagrafica
-        $id_anagrafica = filter('idanag');
-        $utente->id_anagrafica = $id_anagrafica;
-
-        $utente->save();
-
-        $dbo->query('DELETE FROM zz_user_sedi WHERE id_user = '.prepare($id_utente));
-        $sedi = post('idsede');
-        if (empty($sedi)) {
-            $sedi = [0];
-        }
-        foreach ($sedi as $id_sede) {
-            $dbo->query('INSERT INTO `zz_user_sedi` (`id_user`,`idsede`) VALUES ('.prepare($id_utente).', '.prepare($id_sede).')');
+            flash()->error(tr('Utente già esistente!'));
         }
 
         break;
@@ -97,25 +103,39 @@ switch (filter('op')) {
 
         break;
 
-    // Elimina utente
+    // Elimina utente + disattivazione token
     case 'delete_user':
         if ($dbo->query('DELETE FROM zz_users WHERE id='.prepare($id_utente))) {
             flash()->info(tr('Utente eliminato!'));
+
+            if ($dbo->query('UPDATE zz_tokens SET enabled = 0 WHERE id_utente = '.prepare($id_utente))) {
+                flash()->info(tr('Token disabilitato!'));
+            }
         }
         break;
 
     // Abilita API utente
     case 'token_enable':
-         if ($dbo->query('UPDATE zz_tokens SET enabled = 1 WHERE id_utente = '.prepare($id_utente))) {
-             flash()->info(tr('Token abilitato!'));
-         }
+        $utente = User::find($id_utente);
+        $tokens = $utente->getApiTokens();
+
+        foreach ($tokens as $token){
+            $dbo->query('UPDATE zz_tokens SET enabled = 1 WHERE id = '.prepare($token['id']));
+        }
+
+        flash()->info(tr('Token abilitato!'));
         break;
 
     // Disabilita API utente
     case 'token_disable':
-        if ($dbo->query('UPDATE zz_tokens SET enabled = 0 WHERE id_utente = '.prepare($id_utente))) {
-            flash()->info(tr('Token disabilitato!'));
+        $utente = User::find($id_utente);
+        $tokens = $utente->getApiTokens();
+
+        foreach ($tokens as $token){
+            $dbo->query('UPDATE zz_tokens SET enabled = 0 WHERE id = '.prepare($token['id']));
         }
+
+        flash()->info(tr('Token abilitato!'));
         break;
 
     // Elimina gruppo

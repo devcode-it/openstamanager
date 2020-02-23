@@ -1,13 +1,14 @@
 <?php
 
-use Modules\Interventi\Intervento;
+use Plugins\PianificazioneInterventi\Promemoria;
 
 include_once __DIR__.'/../../core.php';
 
-$show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
+$block_edit = filter('add') ? false : true;
+$show_prezzi = true;
 
-$intervento = $intervento ?: Intervento::find($id_record);
-$righe = $intervento->getRighe();
+$promemoria = $promemoria ?: Promemoria::find($id_record);
+$righe = $promemoria->getRighe();
 
 if (!$righe->isEmpty()) {
     echo '
@@ -25,7 +26,7 @@ if (!$righe->isEmpty()) {
             <th class="text-center" width="15%">'.tr('Imponibile').'</th>';
     }
 
-    if (!$record['flag_completato']) {
+    if (!$block_edit) {
         echo '
             <th class="text-center"  width="120" class="text-center">'.tr('#').'</th>';
     }
@@ -77,14 +78,14 @@ if (!$righe->isEmpty()) {
         //Costo unitario
         echo '
             <td class="text-right">
-                '.moneyFormat($riga->prezzo_unitario_acquisto).'
+                '.moneyFormat($riga->costo_unitario).'
             </td>';
 
         if ($show_prezzi) {
             // Prezzo unitario
             echo '
             <td class="text-right">
-                '.moneyFormat($riga->prezzo_unitario_vendita);
+                '.moneyFormat($riga->prezzo_unitario);
 
             if (abs($r['sconto_unitario']) > 0) {
                 $text = $r['sconto_unitario'] > 0 ? tr('sconto _TOT_ _TYPE_') : tr('maggiorazione _TOT_ _TYPE_');
@@ -113,10 +114,7 @@ if (!$righe->isEmpty()) {
 
         // Pulsante per riportare nel magazzino centrale.
         // Visibile solo se l'intervento non è stato nè fatturato nè completato.
-        if (!$record['flag_completato']) {
-            $link = $riga->isSconto() ? $structure->fileurl('row-edit.php') : $structure->fileurl('add_righe.php');
-            $link = $riga->isArticolo() ? $structure->fileurl('add_articolo.php') : $link;
-
+        if (!$block_edit) {
             echo '
             <td class="text-center">';
 
@@ -128,11 +126,11 @@ if (!$righe->isEmpty()) {
             }
 
             echo '
-                <button type="button" class="btn btn-warning btn-xs" data-toggle="tooltip" onclick="launch_modal(\''.tr('Modifica').'\', \''.$link.'?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'\');">
+                <button type="button" class="btn btn-warning btn-xs" data-toggle="tooltip" onclick="launch_modal(\''.tr('Modifica').'\', \''.$structure->fileurl('row-edit.php').'?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'&type='.urlencode(get_class($riga)).'\');">
                     <i class="fa fa-edit"></i>
                 </button>
 
-                <button type="button" class="btn btn-danger btn-xs" data-toggle="tooltip" onclick="if(confirm(\''.tr('Eliminare questa riga?').'\')){ elimina_riga( \''.$r['id'].'\' ); }">
+                <button type="button" class="btn btn-danger btn-xs" data-toggle="tooltip" onclick="elimina_riga(\''.addslashes(get_class($riga)).'\', \''.$riga->id.'\');">
                     <i class="fa fa-trash"></i>
                 </button>
             </td>';
@@ -152,24 +150,23 @@ if (!$righe->isEmpty()) {
 ?>
 
 <script type="text/javascript">
-    function elimina_riga( id ){
-        $.post(globals.rootdir + '/actions.php', {
-            op: 'delete_riga',
-            id_module: globals.id_module,
-            id_record: globals.id_record,
-            idriga: id
-        }, function(data, result){
-            if(result == 'success'){
-                // Ricarico le righe
-                $('#righe').load('<?php echo $module->fileurl('ajax_righe.php'); ?>?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
+    function elimina_riga(type, id){
+        if(confirm('<?php echo tr('Eliminare questa riga?'); ?>')) {
+            $.post(globals.rootdir + '/actions.php', {
+                op: 'delete_riga',
+                id_module: globals.id_module,
+                id_record: globals.id_record,
+                type: type,
+                idriga: id,
+            }, function (data, result) {
+                if (result == 'success') {
+                    // Ricarico le righe
+                    $('#righe').load('<?php echo $module->fileurl('row-list.php'); ?>?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
 
-                // Ricarico la tabella dei costi
-                $('#costi').load('<?php echo $module->fileurl('ajax_costi.php'); ?>?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
-
-
-                // Toast
-                alertPush();
-            }
-        });
+                    // Toast
+                    alertPush();
+                }
+            });
+        }
     }
 </script>

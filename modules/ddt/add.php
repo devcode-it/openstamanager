@@ -56,7 +56,7 @@ $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : '';
 </form>
 <script>
 //autosubmit se tutti i campi obbligatori sono valorizzati
-$('#bs-popup').on('shown.bs.modal', function () {
+$('#modals > div').on('shown.bs.modal', function () {
 	if ($('#add-form').parsley().isValid()) {
 		$("#add-form").submit();
 	}

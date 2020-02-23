@@ -9,23 +9,23 @@ use Modules\Preventivi\Preventivo;
 use Modules\TipiIntervento\Tipo as TipoSessione;
 use Traits\ReferenceInterface;
 use Traits\ReferenceTrait;
+use Traits\RecordTrait;
 use Util\Generator;
 
 class Intervento extends Document implements ReferenceInterface
 {
     use ReferenceTrait;
 
+    use RecordTrait;
+
     protected $table = 'in_interventi';
 
     protected $info = [];
 
     /**
-     * Crea un nuovo intrevento.
+     * Crea un nuovo intervento.
      *
-     * @param Anagrafica   $anagrafica
-     * @param TipoSessione $tipo_sessione
-     * @param Stato        $stato
-     * @param string       $data_richiesta
+     * @param string $data_richiesta
      *
      * @return self
      */
@@ -89,6 +89,11 @@ class Intervento extends Document implements ReferenceInterface
         return $this->info['fine'];
     }
 
+    public function getModuleAttribute()
+    {
+        return 'Interventi';
+    }
+
     /**
      * Restituisce la collezione di righe e articoli con valori rilevanti per i conti.
      *
@@ -98,7 +103,7 @@ class Intervento extends Document implements ReferenceInterface
     {
         $results = parent::getRigheContabili();
 
-        return $results->merge($this->sessioni);
+        return $this->mergeCollections($results, $this->sessioni);
     }
 
     // Relazioni Eloquent
@@ -123,6 +128,11 @@ class Intervento extends Document implements ReferenceInterface
         return $this->belongsTo(Stato::class, 'idstatointervento');
     }
 
+    public function tipo()
+    {
+        return $this->belongsTo(Tipo::class, 'idtipointervento');
+    }
+
     public function tipoSessione()
     {
         return $this->belongsTo(TipoSessione::class, 'idtipointervento');
@@ -145,12 +155,24 @@ class Intervento extends Document implements ReferenceInterface
 
     public function descrizioni()
     {
-        return $this->righe()->where('prezzo_vendita', 0);
+        return $this->righe()->where('is_descrizione', 1);
     }
 
     public function sessioni()
     {
         return $this->hasMany(Components\Sessione::class, 'idintervento');
+    }
+
+    public function toArray()
+    {
+        $array = parent::toArray();
+
+        $result = array_merge($array, [
+            'ore_totali' => $this->ore_totali,
+            'km_totali' => $this->km_totali,
+        ]);
+
+        return $result;
     }
 
     // Metodi statici
@@ -164,13 +186,17 @@ class Intervento extends Document implements ReferenceInterface
      */
     public static function getNextCodice($data)
     {
-        $maschera = setting('Formato codice intervento');
+        $maschera = setting('Formato codice attività');
 
         //$ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice');
 
-        $ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice', [
-            'YEAR(data_richiesta) = '.prepare(date('Y', strtotime($data))),
-        ]);
+        if ((strpos($maschera, 'YYYY') !== false) or (strpos($maschera, 'yy') !== false)) {
+            $ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice', [
+                'YEAR(data_richiesta) = '.prepare(date('Y', strtotime($data))),
+            ]);
+        } else {
+            $ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice');
+        }
 
         $numero = Generator::generate($maschera, $ultimo);
 

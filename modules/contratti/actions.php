@@ -120,12 +120,9 @@ switch (post('op')) {
         $articolo->descrizione = post('descrizione');
         $articolo->um = post('um') ?: null;
 
-        $articolo->id_iva = post('idiva');
-
-        $articolo->prezzo_unitario_acquisto = post('prezzo_acquisto') ?: 0;
-        $articolo->prezzo_unitario_vendita = post('prezzo');
-        $articolo->sconto_unitario = post('sconto');
-        $articolo->tipo_sconto = post('tipo_sconto');
+        $articolo->costo_unitario = post('costo_unitario') ?: 0;
+        $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
+        $articolo->setSconto(post('sconto'), post('tipo_sconto'));
 
         try {
             $articolo->qta = $qta;
@@ -180,10 +177,9 @@ switch (post('op')) {
 
         $riga->id_iva = post('idiva');
 
-        $riga->prezzo_unitario_acquisto = post('prezzo_acquisto') ?: 0;
-        $riga->prezzo_unitario_vendita = post('prezzo');
-        $riga->sconto_unitario = post('sconto');
-        $riga->tipo_sconto = post('tipo_sconto');
+        $riga->costo_unitario = post('costo_unitario') ?: 0;
+        $riga->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
+        $riga->setSconto(post('sconto'), post('tipo_sconto'));
 
         $riga->qta = $qta;
 
@@ -219,11 +215,10 @@ switch (post('op')) {
     // Eliminazione riga
     case 'delete_riga':
         $id_riga = post('idriga');
-        if ($id_riga !== null) {
-            $riga = Descrizione::find($id_riga) ?: Riga::find($id_riga);
-            $riga = $riga ? $riga : Articolo::find($id_riga);
-            $riga = $riga ? $riga : Sconto::find($id_riga);
+        $type = post('type');
+$riga = $contratto->getRiga($type, $id_riga);
 
+        if (!empty($riga)) {
             $riga->delete();
 
             flash()->info(tr('Riga eliminata!'));
@@ -333,7 +328,7 @@ switch (post('op')) {
             ]);
 
             // Copia delle righe
-            $dbo->query('INSERT INTO co_promemoria_righe(id_promemoria, descrizione, qta, um, prezzo_vendita, prezzo_acquisto, idiva, desc_iva, iva, sconto, sconto_unitario, tipo_sconto) SELECT :id_new, descrizione, qta, um, prezzo_vendita, prezzo_acquisto, idiva, desc_iva, iva, sconto, sconto_unitario, tipo_sconto FROM co_promemoria_righe AS z WHERE id_promemoria = :id_old', [
+            $dbo->query('INSERT INTO co_righe_promemoria(id_promemoria, descrizione, qta, um, prezzo_vendita, prezzo_acquisto, idiva, desc_iva, iva, sconto, sconto_unitario, tipo_sconto) SELECT :id_new, descrizione, qta, um, prezzo_vendita, prezzo_acquisto, idiva, desc_iva, iva, sconto, sconto_unitario, tipo_sconto FROM co_righe_promemoria AS z WHERE id_promemoria = :id_old', [
                 ':id_new' => $id_promemoria,
                 ':id_old' => $p['id'],
             ]);

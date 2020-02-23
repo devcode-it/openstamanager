@@ -10,14 +10,11 @@ class Articolo extends Article
 {
     use RelationTrait;
 
-    protected $table = 'mg_articoli_interventi';
+    protected $table = 'in_righe_interventi';
     protected $serialRowID = 'intervento';
 
     /**
      * Crea una nuova riga collegata ad un intervento.
-     *
-     * @param Intervento $intervento
-     * @param Original   $articolo
      *
      * @return self
      */
@@ -36,8 +33,6 @@ class Articolo extends Article
 
     public function movimentaMagazzino($qta)
     {
-        $articolo = $this->articolo;
-
         $intervento = $this->intervento;
 
         $numero = $intervento->codice;
@@ -53,8 +48,13 @@ class Articolo extends Article
             '_NUM_' => $numero,
         ]);
 
-        $articolo->movimenta(-$qta, $descrizione, $data, false, [
+        $partenza = $intervento->idsede_partenza;
+        $arrivo = $intervento->idsede_destinazione;
+
+        $this->articolo->movimenta(-$qta, $descrizione, $data, false, [
             'idintervento' => $intervento->id,
+            'idsede_azienda' => $partenza,
+            'idsede_controparte' => $arrivo,
         ]);
     }
 

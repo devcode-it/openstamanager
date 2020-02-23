@@ -28,11 +28,11 @@ if (empty($righe)) {
 $link = !empty($documento_finale) ? ROOTDIR.'/editor.php?id_module='.$final_module['id'].'&id_record='.$documento_finale->id : ROOTDIR.'/controller.php?id_module='.$final_module['id'];
 
 echo '
-    
+
 <form action="'.$link.'" method="post">
     <input type="hidden" name="op" value="'.$options['op'].'">
     <input type="hidden" name="backto" value="record-edit">
-    
+
     <input type="hidden" name="id_documento" value="'.$documento->id.'">
     <input type="hidden" name="type" value="'.$options['type'].'">';
 
@@ -44,16 +44,16 @@ if (!empty($options['create_document'])) {
             <h3 class="box-title">'.tr('Nuovo documento').'</h3>
         </div>
         <div class="box-body">
-    
+
             <div class="row">
                 <input type="hidden" name="create_document" value="on" />
-        
+
                 <div class="col-md-6">
                     {[ "type": "date", "label": "'.tr('Data del documento').'", "name": "data", "required": 1, "value": "-now-" ]}
                 </div>';
 
     if (in_array($final_module['name'], ['Fatture di vendita', 'Fatture di acquisto'])) {
-        if ($op == 'nota_accredito' && !empty($segmenti)) {
+        if ($options['op'] == 'nota_accredito' && !empty($segmenti)) {
             $segmento = $dbo->fetchOne("SELECT * FROM zz_segments WHERE predefined_accredito='1'");
 
             $id_segment = $segmento['id'];
@@ -65,10 +65,18 @@ if (!empty($options['create_document'])) {
             <div class="col-md-6">
                     {[ "type": "select", "label": "'.tr('Ritenuta contributi').'", "name": "id_ritenuta_contributi", "value": "$id_ritenuta_contributi$", "values": "query=SELECT * FROM co_ritenuta_contributi" ]}
                 </div>
-                
+
                 <div class="col-md-12">
                     {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.prepare($final_module['id']).' ORDER BY name", "value": "'.$id_segment.'" ]}
                 </div>';
+    } elseif ($options['op'] == 'add_ordine_cliente') {
+        $tipo_anagrafica = tr('Fornitore');
+        $ajax = 'fornitori';
+
+        echo '
+            <div class="col-md-6">
+                {[ "type": "select", "label": "'.$tipo_anagrafica.'", "name": "idanagrafica", "required": 1, "ajax-source": "'.$ajax.'", "icon-after": "add|<'.Modules::get('Anagrafiche')['id'].'|tipoanagrafica='.$tipo_anagrafica.'" ]}
+            </div>';
     }
 
     echo '
@@ -161,7 +169,7 @@ if (in_array($final_module['name'], ['Fatture di vendita', 'Fatture di acquisto'
         <div class="box-header with-border">
             <h3 class="box-title">'.tr('Righe da importare').'</h3>
         </div>
-    
+
         <table class="box-body table table-striped table-hover table-condensed">
             <tr>
                 <th>'.tr('Descrizione').'</th>
@@ -213,7 +221,7 @@ foreach ($righe as $i => $r) {
     echo '
                 <td>
                     <big id="subtotale_'.$i.'">'.moneyFormat($r->totale).'</big><br/>
-    
+
                     <small style="color:#777;" id="subtotaledettagli_'.$i.'">'.Translator::numberToLocale($r->totale_imponibile).' + '.Translator::numberToLocale($r->iva).'</small>
                 </td>';
 

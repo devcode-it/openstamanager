@@ -115,7 +115,9 @@ echo '
 
 $upload_max_filesize = ini_get('upload_max_filesize');
 $max_execution_time = ini_get('max_execution_time');
-echo '
+
+if (setting('Permetti il ripristino di backup da file esterni')) {
+    echo '
     <div class="col-md-4">
         <div class="box box-success">
             <div class="box-header with-border">
@@ -135,7 +137,10 @@ echo '
                 </form>
             </div>
         </div>
-    </div>
+    </div>';
+}
+
+echo '
 </div>';
 
 // Lettura file di backup

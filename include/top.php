@@ -246,6 +246,18 @@ if (Auth::check()) {
         <script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
         <script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>';
     }
+
+    if (setting('Attiva scorciatoie da tastiera')) {
+        echo '<script type="text/javascript" charset="utf-8" src="'.App::getPaths()['js'].'/hotkeys-js/hotkeys.min.js"></script>';
+        echo '
+        <script>
+        hotkeys(\'ctrl+shift+c\', \'save\', function(event, handler){
+            event.preventDefault();
+            $( "button[data-toggle]" ).first().trigger( "click" );
+        });
+        hotkeys.setScope(\'save\');
+        </script>';
+    }
 }
 
 $hide_sidebar = Auth::check() && setting('Nascondere la barra sinistra di default');
@@ -276,7 +288,7 @@ if (Auth::check()) {
 			<div id="tiny-loader" style="display:none;"></div>
 
 			<header class="main-header">
-				<a href="https://www.openstamanager.com" class="logo" title="'.tr("Il gestionale open source per l'assistenza tecnica e la fatturazione").'" target="_blank">
+				<a href="'.tr('https://www.openstamanager.com').'" class="logo" title="'.tr("Il gestionale open source per l'assistenza tecnica e la fatturazione").'" target="_blank">
 					<!-- mini logo for sidebar mini 50x50 pixels -->
 					<span class="logo-mini">'.tr('OSM').'</span>
 					<!-- logo for regular state and mobile devices -->
@@ -312,7 +324,7 @@ if (Auth::check()) {
                             <li class="dropdown notifications-menu" >
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                     <i class="fa fa-bell-o"></i>
-                                    <span class="label label-warning">
+                                    <span id="hooks-label" class="label label-warning">
                                         <span id="hooks-loading"><i class="fa fa-spinner fa-spin"></i></span>
                                         <span id="hooks-notified"></span>
                                         <span id="hooks-counter" class="hide">0</span>

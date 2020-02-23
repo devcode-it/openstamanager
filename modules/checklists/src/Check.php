@@ -20,7 +20,6 @@ class Check extends Model
     /**
      * Crea un nuovo elemento della checklist.
      *
-     * @param User           $user
      * @param ChecklistTrait $structure
      * @param int            $id_record
      * @param string         $content

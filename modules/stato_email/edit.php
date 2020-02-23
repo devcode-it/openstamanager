@@ -39,6 +39,12 @@ echo '
 </div>';
 
 echo '
+<h4>'.tr('Account mittente').'</h4>
+<div class="well">
+'.$mail->template->account->from_name.' &lt;'.$mail->template->account->from_address.'&gt; - '.Modules::link('Account email', $mail->template->account->id, $mail->template->account->name).'
+</div>';
+
+echo '
 <h4>'.tr('Oggetto').'</h4>
 <div class="well">
 '.$mail->subject.'

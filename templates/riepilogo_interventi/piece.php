@@ -19,13 +19,25 @@ $pricing = isset($pricing) ? $pricing : true;
 // Informazioni intervento
 echo '
 <tr>
-    <td colspan="2">
+    <td colspan="2">';
+
+if (dateFormat($intervento->inizio)) {
+    echo '
         <p>'.tr('Intervento _NUM_ del _DATE_', [
             '_NUM_' => $intervento->codice,
             '_DATE_' => dateFormat($intervento->inizio),
-        ]).'</p>
+        ]).'</p>';
+} else {
+    echo '
+        <p>'.tr('Promemoria _NUM_', [
+            '_NUM_' => $intervento->codice,
+        ]).'</p>';
+}
+echo '
         <p><small><b>'.tr('Cliente').':</b> '.$intervento->anagrafica->ragione_sociale.'</small></p>
         <p><small><b>'.tr('Stato').':</b> '.$intervento->stato->descrizione.'</small></p>
+        <p><small><b>'.tr('Data richiesta').':</b> '.dateFormat($intervento->data_richiesta).'</small></p>
+        <p><small><b>'.tr('Richiesta').':</b> '.$intervento->richiesta.'</small></p>
     </td>
     <td class="text-center">'.($pricing ? moneyFormat($imponibile, 2) : '-').'</td>
     <td class="text-center">'.($pricing && empty($options['dir']) ? moneyFormat($sconto, 2) : '-').'</td>
@@ -34,7 +46,7 @@ echo '
 
 // Sessioni
 $sessioni = $intervento->sessioni;
-if (!empty($sessioni)) {
+if (count($sessioni) > 0) {
     echo '
 <tr>
     <td style="border-top: 0; border-bottom: 0;"></td>
@@ -69,7 +81,7 @@ if (!$righe->isEmpty()) {
 </tr>';
 
     foreach ($righe as $riga) {
-        $prezzo = empty($options['dir']) ? $riga->prezzo_unitario_vendita : $riga->prezzo_unitario_acquisto;
+        $prezzo = empty($options['dir']) ? $riga->prezzo_unitario : $riga->costo_unitario;
         $totale = empty($options['dir']) ? $riga->totale_imponibile : $riga->spesa;
 
         echo '

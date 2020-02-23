@@ -39,6 +39,43 @@ echo '
             <th colspan="2">'.str_repeat($space, 2).'2.1.1 DatiGeneraliDocumento</th>
         </tr>';
 
+// ScontoMaggiorazione
+echo '
+        <tr class="fourth-level">
+            <th colspan="2" style="vertical-align: middle;">'.str_repeat($space, 3).'2.1.1.8 ScontoMaggiorazione</th>
+        </tr>
+';
+
+// ScontoMaggiorazione - Tipo
+echo '
+        <tr class="fifth-level">
+            <td style="vertical-align: middle;">'.str_repeat($space, 4).'2.1.1.8.1 Tipo</td>
+            <td>
+                {[ "type": "select", "name": "sconto_maggiorazione_tipo", "values": "list=\"SC\":\"Sconto\",\"MG\":\"Maggiorazione\"", "value": "'.$result['sconto_maggiorazione_tipo'].'" ]}
+            </td>
+        </tr>
+';
+
+// ScontoMaggiorazione - Percentuale
+echo '
+        <tr class="fifth-level">
+            <td style="vertical-align: middle;">'.str_repeat($space, 4).'2.1.1.8.2 Percentuale</td>
+            <td>
+                {[ "type": "number", "name": "sconto_maggiorazione_percentuale", "value": "'.$result['sconto_maggiorazione_percentuale'].'" ]}
+            </td>
+        </tr>
+';
+
+// ScontoMaggiorazione - Importo
+echo '
+        <tr class="fifth-level">
+            <td style="vertical-align: middle;">'.str_repeat($space, 4).'2.1.1.8.3 Importo</td>
+            <td>
+                {[ "type": "number", "name": "sconto_maggiorazione_importo", "value": "'.$result['sconto_maggiorazione_importo'].'" ]}
+            </td>
+        </tr>
+';
+
 // Art73
 echo '
         <tr class="fourth-level">

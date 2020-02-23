@@ -66,8 +66,9 @@ switch (post('op')) {
 
     // Duplica preventivo
     case 'copy':
+        // Copia del preventivo
         $new = $preventivo->replicate();
-        $new->numero = Preventivo::getNextNumero();
+        $new->numero = Preventivo::getNextNumero($new->data_bozza);
         $new->idstato = 1;
         $new->save();
 
@@ -76,6 +77,7 @@ switch (post('op')) {
 
         $id_record = $new->id;
 
+        // Copia delle righe
         $righe = $preventivo->getRighe();
         foreach ($righe as $riga) {
             $new_riga = $riga->replicate();
@@ -149,12 +151,9 @@ switch (post('op')) {
         $articolo->descrizione = post('descrizione');
         $articolo->um = post('um') ?: null;
 
-        $articolo->id_iva = post('idiva');
-
-        $articolo->prezzo_unitario_acquisto = post('prezzo_acquisto') ?: 0;
-        $articolo->prezzo_unitario_vendita = post('prezzo');
-        $articolo->sconto_unitario = post('sconto');
-        $articolo->tipo_sconto = post('tipo_sconto');
+        $articolo->costo_unitario = post('costo_unitario') ?: 0;
+        $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
+        $articolo->setSconto(post('sconto'), post('tipo_sconto'));
 
         try {
             $articolo->qta = $qta;
@@ -207,12 +206,9 @@ switch (post('op')) {
         $riga->descrizione = post('descrizione');
         $riga->um = post('um') ?: null;
 
-        $riga->id_iva = post('idiva');
-
-        $riga->prezzo_unitario_acquisto = post('prezzo_acquisto') ?: 0;
-        $riga->prezzo_unitario_vendita = post('prezzo');
-        $riga->sconto_unitario = post('sconto');
-        $riga->tipo_sconto = post('tipo_sconto');
+        $riga->costo_unitario = post('costo_unitario') ?: 0;
+        $riga->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
+        $riga->setSconto(post('sconto'), post('tipo_sconto'));
 
         $riga->qta = $qta;
 
@@ -248,11 +244,11 @@ switch (post('op')) {
     // Eliminazione riga
     case 'delete_riga':
         $id_riga = post('idriga');
-        if ($id_riga !== null) {
-            $riga = Descrizione::find($id_riga) ?: Riga::find($id_riga);
-            $riga = $riga ? $riga : Articolo::find($id_riga);
-            $riga = $riga ? $riga : Sconto::find($id_riga);
+        $type = post('type');
 
+        $riga = $preventivo->getRiga($type, $id_riga);
+
+        if (!empty($riga)) {
             $riga->delete();
 
             flash()->info(tr('Riga eliminata!'));
@@ -261,68 +257,27 @@ switch (post('op')) {
         break;
 
     case 'add_revision':
-        //Copio il preventivo
-        $rs_preventivo = $dbo->fetchArray("SELECT * FROM co_preventivi WHERE id='".$id_record."'");
+        // Rimozione flag default_revision dal record principale e dalle revisioni
+        $dbo->query('UPDATE co_preventivi SET default_revision=0 WHERE master_revision = '.prepare($preventivo->master_revision));
 
-        //Tolgo il flag default_revision da tutte le revisioni e dal record_principale
-        $dbo->query('UPDATE co_preventivi SET default_revision=0 WHERE master_revision='.prepare($rs_preventivo[0]['master_revision']));
+        // Copia del preventivo
+        $new = $preventivo->replicate();
+        $new->save();
 
-        $preventivo = [
-            'numero' => $rs_preventivo[0]['numero'],
-            'nome' => $rs_preventivo[0]['nome'],
-            'idagente' => $rs_preventivo[0]['idagente'],
-            'data_bozza' => $rs_preventivo[0]['data_bozza'],
-            'data_accettazione' => $rs_preventivo[0]['data_accettazione'],
-            'data_rifiuto' => $rs_preventivo[0]['data_rifiuto'],
-            'data_conclusione' => $rs_preventivo[0]['data_conclusione'],
-            'data_pagamento' => $rs_preventivo[0]['data_pagamento'],
-            'budget' => $rs_preventivo[0]['budget'],
-            'descrizione' => $rs_preventivo[0]['descrizione'],
-            'idstato' => $rs_preventivo[0]['idstato'],
-            'validita' => $rs_preventivo[0]['validita'],
-            'tempi_consegna' => $rs_preventivo[0]['tempi_consegna'],
-            'idanagrafica' => $rs_preventivo[0]['idanagrafica'],
-            'esclusioni' => $rs_preventivo[0]['esclusioni'],
-            'idreferente' => $rs_preventivo[0]['idreferente'],
-            'idpagamento' => $rs_preventivo[0]['idpagamento'],
-            'idporto' => $rs_preventivo[0]['idporto'],
-            'idtipointervento' => $rs_preventivo[0]['idtipointervento'],
-            'idiva' => $rs_preventivo[0]['idiva'],
-            'costo_diritto_chiamata' => $rs_preventivo[0]['costo_diritto_chiamata'],
-            'ore_lavoro' => $rs_preventivo[0]['ore_lavoro'],
-            'costo_orario' => $rs_preventivo[0]['costo_orario'],
-            'costo_km' => $rs_preventivo[0]['costo_km'],
-            'master_revision' => $rs_preventivo[0]['master_revision'],
-            'default_revision' => '1',
-        ];
+        $new->default_revision = 1;
+        $new->save();
 
-        $dbo->insert('co_preventivi', $preventivo);
-        $id_record_new = $dbo->lastInsertedID();
+        $id_record = $new->id;
 
-        $rs_righe_preventivo = $dbo->fetchArray('SELECT * FROM co_righe_preventivi WHERE idpreventivo='.prepare($id_record));
+        // Copia delle righe
+        $righe = $preventivo->getRighe();
+        foreach ($righe as $riga) {
+            $new_riga = $riga->replicate();
+            $new_riga->setParent($new);
 
-        for ($i = 0; $i < sizeof($rs_righe_preventivo); ++$i) {
-            $righe_preventivo = [
-                'idpreventivo' => $id_record_new,
-                'idarticolo' => $rs_righe_preventivo[$i]['idarticolo'],
-                'is_descrizione' => $rs_righe_preventivo[$i]['is_descrizione'],
-                'idiva' => $rs_righe_preventivo[$i]['idiva'],
-                'desc_iva' => $rs_righe_preventivo[$i]['desc_iva'],
-                'iva' => $rs_righe_preventivo[$i]['iva'],
-                'iva_indetraibile' => $rs_righe_preventivo[$i]['iva_indetraibile'],
-                'descrizione' => $rs_righe_preventivo[$i]['descrizione'],
-                'subtotale' => $rs_righe_preventivo[$i]['subtotale'],
-                'sconto' => $rs_righe_preventivo[$i]['sconto'],
-                'sconto_unitario' => $rs_righe_preventivo[$i]['sconto_unitario'],
-                'tipo_sconto' => $rs_righe_preventivo[$i]['tipo_sconto'],
-                'um' => $rs_righe_preventivo[$i]['um'],
-                'qta' => $rs_righe_preventivo[$i]['qta'],
-                'order' => $rs_righe_preventivo[$i]['order'],
-            ];
-            $dbo->insert('co_righe_preventivi', $righe_preventivo);
+            $new_riga->qta_evasa = 0;
+            $new_riga->save();
         }
-
-        $id_record = $id_record_new;
 
         flash()->info(tr('Aggiunta nuova revisione!'));
         break;

@@ -340,6 +340,12 @@ if (empty($record) || !$has_access) {
                         $color = 'danger';
                         break;
 
+                    case 'copy':
+                        $description = tr('Duplicato');
+                        $icon = 'clone';
+                        $color = 'info';
+                        break;
+
                     default:
                         $timeline_class = ' class="timeline-inverted"';
                         break;

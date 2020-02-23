@@ -10,8 +10,8 @@ switch (post('op')) {
         $module = filter('module');
 
         $list = [
-            ['Codice', 'Ragione sociale', 'Partita IVA', 'Nazione', 'Indirizzo', 'CAP', 'Città', 'Provincia', 'Telefono', 'Fax', 'Cellulare', 'Email', 'IBAN', 'Note', 'Tipologia'],
-            ['00001', 'Cliente', '12345678910', 'ITALIA', 'Via Giuseppe Mazzini, 123', '12345', 'Este', 'PD', '786 543 21', '123 456 78', '321 123 456 78', 'email@cliente.it', 'IT60 X054 2811 1010 0000 0123 456', 'Anagrafica di esempio', 'Cliente'],
+            ['Codice', 'Ragione sociale', 'Partita IVA', 'Codice destinatario', 'Nazione', 'Indirizzo', 'CAP', 'Città', 'Provincia', 'Telefono', 'Fax', 'Cellulare', 'Email', 'PEC', 'IBAN', 'Note', 'Tipologia'],
+            ['00001', 'Mia anagrafica', '12345678910', '1234567', 'ITALIA', 'Via Giuseppe Mazzini, 123', '12345', 'Este', 'PD', '+39 0429 60 25 12', '+39 0429 456 781', '+39 321 12 34 567', 'email@anagrafica.it', 'pec@anagrafica.it', 'IT60 X054 2811 1010 0000 0123 456', 'Note dell\'anagrafica di esempio', 'Cliente,Fornitore'],
         ];
 
         directory('../../files/'.$module);
@@ -32,6 +32,7 @@ switch (post('op')) {
         $sede_fields = [
             'piva',
             'codice_fiscale',
+            'codice_destinatario',
             'indirizzo',
             'indirizzo2',
             'citta',
@@ -65,18 +66,23 @@ switch (post('op')) {
                     }
                 }
 
-                // Ricerca di eventuale anagrafica corrispondente
+                // Ricerca di eventuale anagrafica corrispondente sulla base del campo definito come primary_key (es. codice)
                 if (!empty($primary_key)) {
                     $anagrafica = Anagrafica::where($primary_key, '=', $dati_anagrafica[$primary_key])->first();
                 }
 
-                // Creazione dell'anagrafica
+                // Se non trovo nessuna anagrafica corrispondente, allora la creo
                 if (empty($anagrafica)) {
                     $anagrafica = Anagrafica::build($dati_anagrafica['ragione_sociale']);
                 }
 
                 // Impedisco di aggiornare la mia anagrafica azienda
                 if ($dati_anagrafica[$primary_key] != $id_azienda) {
+                    //se non imposto nessun codice evito di resettare quello calcolato automaticamente o già presente
+                    if (empty($dati_anagrafica['codice'])) {
+                        unset($dati_anagrafica['codice']);
+                    }
+
                     $anagrafica->fill($dati_anagrafica);
                     $anagrafica->tipologie = $id_tipo_anagrafica;
                     $anagrafica->save();
@@ -96,10 +102,29 @@ return [
         'field' => 'codice',
         'label' => 'Codice',
         'primary_key' => true,
+        'names' => [
+            'Codice interno',
+            'Numero',
+        ],
     ],
     [
         'field' => 'ragione_sociale',
         'label' => 'Ragione sociale',
+        'names' => [
+            'Nome',
+            'Denominazione',
+        ],
+    ],
+    [
+        'field' => 'codice_destinatario',
+        'label' => 'Codice destinatario',
+        'names' => [
+            'Codice destinatario',
+            'Codice SDI',
+            'Codice univoco',
+            'Codice univoco ufficio',
+            'SDI',
+        ],
     ],
     [
         'field' => 'provincia',
@@ -108,6 +133,10 @@ return [
     [
         'field' => 'citta',
         'label' => 'Città',
+        'names' => [
+            'Citt_',
+            'Citt&agrave;',
+        ],
     ],
     [
         'field' => 'telefono',
@@ -136,6 +165,20 @@ return [
     [
         'field' => 'email',
         'label' => 'Email',
+        'names' => [
+            'E-mail',
+            'Indirizzo email',
+            'Mail',
+        ],
+    ],
+    [
+        'field' => 'pec',
+        'label' => 'PEC',
+        'names' => [
+            'E-mail PEC',
+            'Email certificata',
+            'Indirizzo email certificata',
+        ],
     ],
     [
         'field' => 'codice_fiscale',
@@ -156,6 +199,11 @@ return [
     [
         'field' => 'piva',
         'label' => 'Partita IVA',
+        'names' => [
+            'P.IVA',
+            'P.IVA/TAX ID',
+            'TAX ID',
+        ],
     ],
     [
         'field' => 'codiceiban',
@@ -164,12 +212,16 @@ return [
     [
         'field' => 'note',
         'label' => 'Note',
+        'names' => [
+            'Note Extra',
+        ],
     ],
     [
         'field' => 'id_nazione',
         'label' => 'Nazione',
         'names' => [
             'Nazione',
+            'Paese',
             'id_nazione',
             'idnazione',
             'nazione',

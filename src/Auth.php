@@ -200,22 +200,8 @@ class Auth extends \Util\Singleton
         if ($this->isAuthenticated()) {
             $user = self::user();
 
-            $database = database();
-            $tokens = $database->fetchArray('SELECT `token` FROM `zz_tokens` WHERE `enabled` = 1 AND `id_utente` = :user_id', [
-                ':user_id' => $user->id,
-            ]);
-
-            // Generazione del token per l'utente
-            if (empty($tokens)) {
-                $token = secure_random_string();
-
-                $database->insert('zz_tokens', [
-                    'id_utente' => $user->id,
-                    'token' => $token,
-                ]);
-            } else {
-                $token = $tokens[0]['token'];
-            }
+            $tokens = $user->getApiTokens();
+            $token = $tokens[0]['token'];
         }
 
         return $token;

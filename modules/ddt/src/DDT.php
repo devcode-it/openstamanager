@@ -210,15 +210,18 @@ class DDT extends Document implements ReferenceInterface
     }
 
     // Opzioni di riferimento
-    public function getReferenceName(){
+    public function getReferenceName()
+    {
         return $this->tipo->descrizione;
     }
 
-    public function getReferenceNumber(){
+    public function getReferenceNumber()
+    {
         return $this->numero_esterno ?: $this->numero;
     }
 
-    public function getReferenceDate(){
+    public function getReferenceDate()
+    {
         return $this->data;
     }
 }

@@ -286,7 +286,8 @@ function discountInfo(\Common\Components\Row $riga, $mostra_maggiorazione = true
     ]);
 }
 
-function reference($document) {
+function reference($document)
+{
     if (!empty($document) && !($document instanceof \Traits\ReferenceInterface)) {
         return;
     }
@@ -295,7 +296,7 @@ function reference($document) {
     $module_id = null;
     $document_id = null;
 
-    if (empty($document)){
+    if (empty($document)) {
         $description = tr('Documento di riferimento non disponibile');
         $extra = 'class="disabled"';
     } else {

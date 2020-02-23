@@ -10,12 +10,6 @@ UPDATE `zz_widgets` SET `name` = 'Attività nello stato da programmare', `text` 
 
 UPDATE `in_statiintervento` SET `descrizione` = 'Programmato' WHERE `in_statiintervento`.`descrizione` = 'In Programmazione' AND `in_statiintervento`.`codice` = 'WIP';
 
--- Aggiunta gestione dinamica dei movimenti degli Articoli
-ALTER TABLE `mg_movimenti` ADD `reference_id` int(11), ADD `reference_type` varchar(255);
-UPDATE `mg_movimenti` SET `reference_id`  = `iddocumento`, `reference_type` = 'Modules\\Fatture\\Fattura' WHERE `iddocumento` IS NOT NULL AND `iddocumento` != 0;
-UPDATE `mg_movimenti` SET `reference_id`  = `idintervento`, `reference_type` = 'Modules\\Interventi\\Intervento' WHERE `idintervento` IS NOT NULL AND `idintervento` != 0;
-UPDATE `mg_movimenti` SET `reference_id`  = `idddt`, `reference_type` = 'Modules\\DDT\\DDT' WHERE `idddt` IS NOT NULL AND `idddt` != 0;
-
 -- Uniformo le date scadenza non settate correttamente
 UPDATE `in_interventi` SET `data_scadenza` = NULL WHERE `data_scadenza` = '0000-00-00 00:00:00';
 

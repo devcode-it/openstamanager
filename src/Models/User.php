@@ -172,7 +172,8 @@ class User extends Model
         return $anagrafica->ragione_sociale.' ('.$this->username.')';
     }
 
-    public function getApiTokens(){
+    public function getApiTokens()
+    {
         $query = 'SELECT * FROM `zz_tokens` WHERE `enabled` = 1 AND `id_utente` = '.prepare($this->id);
         $database = database();
 

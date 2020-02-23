@@ -2,17 +2,18 @@
 
 namespace Traits;
 
-use Models\Module;
-use Models\Plugin;
 use Stringy\Stringy;
 
 trait ReferenceTrait
 {
-    public abstract function getReferenceName();
-    public abstract function getReferenceNumber();
-    public abstract function getReferenceDate();
+    abstract public function getReferenceName();
 
-    public function getReference(){
+    abstract public function getReferenceNumber();
+
+    abstract public function getReferenceDate();
+
+    public function getReference()
+    {
         $name = $this->getReferenceName();
         $number = $this->getReferenceNumber();
         $date = $this->getReferenceDate();
@@ -26,17 +27,17 @@ trait ReferenceTrait
                 '_NUM_' => $number,
                 '_DATE_' => dateFormat($date),
             ]);
-        } else if (!empty($number)) {
+        } elseif (!empty($number)) {
             $description = tr('Rif. _DOC_ num. _NUM_', [
                 '_DOC_' => $name,
                 '_NUM_' => $number,
             ]);
-        } else if (!empty($date)) {
+        } elseif (!empty($date)) {
             $description = tr('Rif. _DOC_ del _DATE_', [
                 '_DOC_' => $name,
                 '_DATE_' => dateFormat($date),
             ]);
-        }else {
+        } else {
             $description = tr('Rif. _DOC_', [
                 '_DOC_' => $name,
             ]);

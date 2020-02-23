@@ -75,15 +75,13 @@ if (!empty($utenti)) {
 
         // Disabilitazione token API, se diverso da id_utente #1 (admin)
         $token = $dbo->fetchOne('SELECT `enabled` FROM `zz_tokens` WHERE `id_utente` = '.prepare($utente['id']).'')['enabled'];
-        
+
         if ($utente['id'] == '1') {
             echo '
                 <span title="'.tr("Non è possibile gestire l'accesso API per l'utente admin").'" class="text-muted tip">
                     <i class="fa fa-2x fa-key "></i>
                 </span>';
         } elseif (!empty($token)) {
-
-           
             echo '
                 <a title="'.tr('Disabilita API').'" class="text-danger clickable tip ask" data-msg="" data-backto="record-edit" data-title="'.tr("Disabilitare l'accesso API per questo utente?").'" data-op="token_disable" data-id_utente="'.$utente['id'].'" data-button="'.tr('Disabilita').'">
                     <i class="fa fa-2x fa-key"></i>

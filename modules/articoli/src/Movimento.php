@@ -3,7 +3,6 @@
 namespace Modules\Articoli;
 
 use Common\Model;
-use Traits\HierarchyTrait;
 
 class Movimento extends Model
 {
@@ -20,13 +19,13 @@ class Movimento extends Model
         $model->descrizone = $descrizone;
         $model->data = $data;
 
-        if (!empty($document)){
+        if (!empty($document)) {
             $class = get_class($document);
             $id = $document->id;
 
             $model->reference_type = $class;
             $model->reference_id = $id;
-        }else {
+        } else {
             $model->manuale = true;
         }
 
@@ -35,9 +34,10 @@ class Movimento extends Model
         return $model;
     }
 
-    public function getDescrizioneAttribute() {
+    public function getDescrizioneAttribute()
+    {
         $direzione = 'uscita';
-        if ($this->hasDocument()){
+        if ($this->hasDocument()) {
             $direzione = $this->getDocument()->direzione;
         }
 
@@ -52,7 +52,8 @@ class Movimento extends Model
         return $this->hasOne(Articolo::class, 'idarticolo');
     }
 
-    public function hasDocument(){
+    public function hasDocument()
+    {
         return isset($this->reference_type);
     }
 
@@ -67,7 +68,7 @@ class Movimento extends Model
             $class = $this->reference_type;
             $id = $this->reference_id;
 
-            $this->document =  $class::find($id);
+            $this->document = $class::find($id);
         }
 
         return $this->document;

@@ -7,7 +7,7 @@ use Models\Plugin;
 
 trait RecordTrait
 {
-    public abstract function getModuleAttribute();
+    abstract public function getModuleAttribute();
 
     public function getModule()
     {

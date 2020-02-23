@@ -119,7 +119,7 @@ switch (filter('op')) {
         $utente = User::find($id_utente);
         $tokens = $utente->getApiTokens();
 
-        foreach ($tokens as $token){
+        foreach ($tokens as $token) {
             $dbo->query('UPDATE zz_tokens SET enabled = 1 WHERE id = '.prepare($token['id']));
         }
 
@@ -131,7 +131,7 @@ switch (filter('op')) {
         $utente = User::find($id_utente);
         $tokens = $utente->getApiTokens();
 
-        foreach ($tokens as $token){
+        foreach ($tokens as $token) {
             $dbo->query('UPDATE zz_tokens SET enabled = 0 WHERE id = '.prepare($token['id']));
         }
 

@@ -7,9 +7,9 @@ use Modules\Anagrafiche\Anagrafica;
 use Modules\Contratti\Contratto;
 use Modules\Preventivi\Preventivo;
 use Modules\TipiIntervento\Tipo as TipoSessione;
+use Traits\RecordTrait;
 use Traits\ReferenceInterface;
 use Traits\ReferenceTrait;
-use Traits\RecordTrait;
 use Util\Generator;
 
 class Intervento extends Document implements ReferenceInterface
@@ -204,15 +204,18 @@ class Intervento extends Document implements ReferenceInterface
     }
 
     // Opzioni di riferimento
-    public function getReferenceName(){
+    public function getReferenceName()
+    {
         return 'Attività';
     }
 
-    public function getReferenceNumber(){
+    public function getReferenceNumber()
+    {
         return $this->codice;
     }
 
-    public function getReferenceDate(){
+    public function getReferenceDate()
+    {
         return $this->data_richiesta;
     }
 }

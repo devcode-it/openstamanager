@@ -87,7 +87,7 @@ if (!empty($movimenti)) {
         // Data
         echo '
                 <td class="text-center" >'.Translator::dateToLocale($movimento['data']).' <span  class="tip" title="'.tr('Data del movimento: _DATE_', [
-               '_DATE_' => Translator::timestampToLocale($movimento['created_at'])
+               '_DATE_' => Translator::timestampToLocale($movimento['created_at']),
             ]).'"><i class="fa fa-question-circle-o"></i></span> </td>';
 
         // Operazioni

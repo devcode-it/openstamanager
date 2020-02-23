@@ -15,9 +15,9 @@ use Modules\Scadenzario\Scadenza;
 use Plugins\DichiarazioniIntento\Dichiarazione;
 use Plugins\ExportFE\FatturaElettronica;
 use Traits\RecordTrait;
+use Traits\ReferenceInterface;
 use Traits\ReferenceTrait;
 use Util\Generator;
-use Traits\ReferenceInterface;
 
 class Fattura extends Document implements ReferenceInterface
 {
@@ -739,15 +739,18 @@ class Fattura extends Document implements ReferenceInterface
     }
 
     // Opzioni di riferimento
-    public function getReferenceName(){
+    public function getReferenceName()
+    {
         return $this->tipo->descrizione;
     }
 
-    public function getReferenceNumber(){
+    public function getReferenceNumber()
+    {
         return $this->numero_esterno ?: $this->numero;
     }
 
-    public function getReferenceDate(){
+    public function getReferenceDate()
+    {
         return $this->data;
     }
 }

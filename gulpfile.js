@@ -214,6 +214,14 @@ gulp.task('password-strength', function () {
         .pipe(gulp.dest(config.production + '/password-strength'));
 });
 
+gulp.task('hotkeys-js', function () {
+    gulp.src([
+        config.main.bowerDirectory + '/hotkeys-js/dist/hotkeys.min.js',
+    ])
+        .pipe(flatten())
+        .pipe(gulp.dest(config.production + '/' + config.paths.js + '/hotkeys-js'));
+});
+
 gulp.task('chartjs', function () {
     gulp.src([
             config.main.bowerDirectory + '/chart.js/dist/Chart.min.js',
@@ -385,6 +393,7 @@ gulp.task('other', ['clean'], function () {
     gulp.start('ckeditor');
     gulp.start('colorpicker');
     gulp.start('password-strength');
+    gulp.start('hotkeys-js');
     gulp.start('i18n');
 
     gulp.start('pdfjs');

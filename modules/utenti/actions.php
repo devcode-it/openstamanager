@@ -103,10 +103,14 @@ switch (filter('op')) {
 
         break;
 
-    // Elimina utente
+    // Elimina utente + disattivazione token
     case 'delete_user':
         if ($dbo->query('DELETE FROM zz_users WHERE id='.prepare($id_utente))) {
             flash()->info(tr('Utente eliminato!'));
+
+            if ($dbo->query('UPDATE zz_tokens SET enabled = 0 WHERE id_utente = '.prepare($id_utente))) {
+                flash()->info(tr('Token disabilitato!'));
+            }
         }
         break;
 

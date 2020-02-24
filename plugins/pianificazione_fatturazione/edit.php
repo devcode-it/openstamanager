@@ -63,12 +63,12 @@ if (!$pianificazioni->isEmpty()) {
         if (!empty($fattura)) {
             echo '
                 '.Modules::link('Fatture di vendita', $fattura->id, tr('Fattura num. _NUM_ del _DATE_', [
-                '_NUM_' => $fattura->numero,
+                '_NUM_' => $fattura->numero_esterno,
                 '_DATE_' => dateFormat($fattura->data),
             ])).' (<i class="'.$fattura->stato->icona.'"></i> '.$fattura->stato->descrizione.')';
         } else {
             echo '
-                <i class="fa fa-clock-o"></i> '.tr('Non ancora fatturato');
+                <i class="fa fa-hourglass-start"></i> '.tr('Non ancora fatturato');
         }
         echo '
             </td>';
@@ -89,7 +89,7 @@ if (!$pianificazioni->isEmpty()) {
 } else {
     echo '
 <div class="alert alert-info">
-    <i class="fa fa-warning"></i> '.tr('Pianificazione non ancora effettuata per il contratto corrente').'.
+    <i class="fa fa-info-circle"></i> '.tr('Pianificazione della fatturazione non impostata per questo contratto').'.
 </div>
 
 <button type="button" '.(!empty($is_pianificabile) ? '' : 'disabled').' title="'.tr('Aggiungi una nuova pianificazione').'" data-toggle="tooltip" class="btn btn-primary pull-right tip" id="pianifica">

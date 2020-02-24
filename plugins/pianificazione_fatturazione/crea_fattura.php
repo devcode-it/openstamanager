@@ -49,7 +49,7 @@ $descrizione = tr('Rata _N_ del contratto numero _NUM_', [
 echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "textarea", "label": "'.tr('Note della fattira').'", "name": "note", "value": "'.$descrizione.'" ]}
+            {[ "type": "textarea", "label": "'.tr('Note della fattura').'", "name": "note", "value": "'.$descrizione.'" ]}
         </div>
     </div>';
 

@@ -76,7 +76,7 @@ foreach ($righe as $riga) {
         <td class="text-center">';
     if (empty($r['is_descrizione'])) {
         echo '
-                <span >'.Translator::numberToLocale($r['qta'] - $r['qta_evasa'], 'qta').' / '.Translator::numberToLocale($r['qta'], 'qta').'</span>';
+                <span>'.Translator::numberToLocale($r['qta'] - $r['qta_evasa'], 'qta').' / '.Translator::numberToLocale($r['qta'], 'qta').'</span>';
     }
     echo '
         </td>';

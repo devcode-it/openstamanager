@@ -78,7 +78,7 @@ class FatturaSemplificata extends FatturaElettronica
         return $result;
     }
 
-    public function saveRighe($articoli, $iva, $conto, $movimentazione = true)
+    public function saveRighe($articoli, $iva, $conto, $movimentazione = true, $crea_articoli = false, $tipi_riferimenti = [], $id_riferimenti = [])
     {
         $righe = $this->getRighe();
         $fattura = $this->getFattura();

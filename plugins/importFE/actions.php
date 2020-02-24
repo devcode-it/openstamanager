@@ -106,6 +106,8 @@ switch (filter('op')) {
             'articoli' => post('articoli'),
             'iva' => post('iva'),
             'conto' => post('conto'),
+            'tipo_riga_riferimento' => post('tipo_riga_riferimento'),
+            'id_riga_riferimento' => post('id_riga_riferimento'),
             'movimentazione' => post('movimentazione'),
             'crea_articoli' => post('crea_articoli'),
         ];

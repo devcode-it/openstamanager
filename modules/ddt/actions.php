@@ -259,7 +259,7 @@ switch (post('op')) {
 
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
-                    $copia->movimenta($copia->qta);
+                    //$copia->movimenta($copia->qta);
 
                     $serials = is_array(post('serial')[$riga->id]) ? post('serial')[$riga->id] : [];
 

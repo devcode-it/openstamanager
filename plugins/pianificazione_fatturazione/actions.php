@@ -85,7 +85,7 @@ switch ($operazione) {
 
             // Aggiornamento movimentazioni
             if ($copia->isArticolo()) {
-                $copia->movimenta($copia->qta);
+                //$copia->movimenta($copia->qta);
             }
         }
 

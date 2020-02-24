@@ -58,7 +58,7 @@ class Promemoria extends Document
             $copia = $riga->copiaIn($intervento, $riga->qta);
 
             if ($copia->isArticolo()) {
-                $copia->movimenta($copia->qta);
+                //$copia->movimenta($copia->qta);
             }
         }
 

@@ -197,8 +197,7 @@ class FatturaOrdinaria extends FatturaElettronica
                     $sconto_unitario = sum($lista);
                 }
 
-                $obj->sconto_unitario = $sconto_unitario;
-                $obj->tipo_sconto = $tipo;
+                $obj->setSconto($sconto_unitario, $tipo);
             }
 
             $obj->save();

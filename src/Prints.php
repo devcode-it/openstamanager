@@ -433,6 +433,7 @@ class Prints
 
         // Individuazione delle impostazioni finali
         $settings = array_merge($default, (array) $custom);
+        $settings = array_merge($settings, (array) $options);
 
         // Individuazione delle variabili fondamentali per la sostituzione dei contenuti
         include self::filepath($id_print, 'init.php');

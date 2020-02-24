@@ -310,6 +310,8 @@ if (!empty($righe)) {
                     '_VALUE_' => empty($riga['Natura']) ? numberFormat($riga['AliquotaIVA']).'%' : $riga['Natura'],
                     '_DESC_' => $riga['RiferimentoNormativo'] ? ' - '.$riga['RiferimentoNormativo'] : '',
                 ]).'</small>
+
+                <span class="hide" id="aliquota['.$key.']">'.$riga['AliquotaIVA'].'</span>
             </td>
             <td>
                 {[ "type": "select", "name": "iva['.$key.']", "values": "query='.str_replace('"', '\"', $query).'", "required": 1, "placeholder": "Aliquota iva" ]}

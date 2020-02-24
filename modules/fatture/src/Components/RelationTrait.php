@@ -129,7 +129,7 @@ trait RelationTrait
 
     public function getIdContoAttribute()
     {
-        return $this->idconto;
+        return $this->attributes['idconto'];
     }
 
     public function setIdContoAttribute($value)

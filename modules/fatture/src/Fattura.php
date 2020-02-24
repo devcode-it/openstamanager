@@ -6,6 +6,7 @@ use Auth;
 use Carbon\Carbon;
 use Common\Components\Description;
 use Common\Document;
+use Illuminate\Database\Eloquent\Builder;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Fatture\Components\Riga;
 use Modules\Pagamenti\Pagamento;
@@ -590,6 +591,20 @@ class Fattura extends Document
         $result = database()->fetchOne('SELECT is_fiscale FROM zz_segments WHERE id ='.prepare($this->id_segment))['is_fiscale'];
 
         return $result;
+    }
+
+    /**
+     * Scope a query to only include popular users.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeContabile($query)
+    {
+        return $query->whereHas('stato', function (Builder $query) {
+            $query->whereIn('descrizione', ['Emessa', 'Parzialmente pagato', 'Pagato']);
+        });
     }
 
     /**

@@ -226,7 +226,7 @@ switch ($resource) {
 
     case 'sedi':
         if (isset($superselect['idanagrafica'])) {
-            $query = "SELECT * FROM (SELECT '0' AS id, CONCAT_WS(' - ', 'Sede legale' , (SELECT CONCAT (citta, ' (', ragione_sociale,')') FROM an_anagrafiche |where|)) AS descrizione UNION SELECT id, CONCAT_WS(' - ', nomesede, citta) FROM an_sedi |where|) AS tab HAVING descrizione LIKE ".prepare('%'.$search.'%')." ORDER BY descrizione";
+            $query = "SELECT * FROM (SELECT '0' AS id, CONCAT_WS(' - ', 'Sede legale' , (SELECT CONCAT (citta, ' (', ragione_sociale,')') FROM an_anagrafiche |where|)) AS descrizione UNION SELECT id, CONCAT_WS(' - ', nomesede, citta) FROM an_sedi |where|) AS tab HAVING descrizione LIKE ".prepare('%'.$search.'%').' ORDER BY descrizione';
 
             foreach ($elements as $element) {
                 $filter[] = 'id='.prepare($element);

@@ -63,7 +63,7 @@ foreach ($primo_livello as $conto_primo) {
             <table class="table table-striped table-hover table-condensed" style="margin-bottom:0;">';
 
         // Livello 3
-        $query3 = 'SELECT `co_pianodeiconti3`.*, movimenti.numero_movimenti, movimenti.totale FROM `co_pianodeiconti3` LEFT OUTER JOIN (SELECT COUNT(idconto) AS numero_movimenti, idconto, SUM( ROUND(totale,2)) AS totale FROM co_movimenti WHERE data BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']).' GROUP BY idconto) movimenti ON co_pianodeiconti3.id=movimenti.idconto WHERE `idpianodeiconti2` = '.prepare($conto_secondo['id']).' ORDER BY numero ASC';
+        $query3 = 'SELECT `co_pianodeiconti3`.*, movimenti.numero_movimenti, movimenti.totale, anagrafica.idanagrafica, anagrafica.deleted_at FROM `co_pianodeiconti3` LEFT OUTER JOIN (SELECT idanagrafica, idconto_cliente, idconto_fornitore, deleted_at FROM an_anagrafiche) AS anagrafica ON co_pianodeiconti3.id IN (anagrafica.idconto_cliente, idconto_fornitore) LEFT OUTER JOIN (SELECT COUNT(idconto) AS numero_movimenti, idconto, SUM( ROUND(totale,2)) AS totale FROM co_movimenti  WHERE data BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']).' GROUP BY idconto) movimenti ON co_pianodeiconti3.id=movimenti.idconto WHERE `idpianodeiconti2` = '.prepare($conto_secondo['id']).' ORDER BY numero ASC';
         $terzo_livello = $dbo->fetchArray($query3);
 
         foreach ($terzo_livello as $conto_terzo) {
@@ -89,30 +89,29 @@ foreach ($primo_livello as $conto_primo) {
             }
 
             echo '
-                <tr style="'.(!empty($movimenti) ? '' : 'opacity: 0.5;').'">
-                    <td><span class="clickable" id="movimenti-'.$conto_terzo['id'].'">';
-
+                <tr>
+                    <td>';
+            
+            // Possibilità di esplodere i movimenti del conto
             if (!empty($movimenti)) {
                 echo '
                     <a href="javascript:;" class="btn btn-primary btn-xs plus-btn"><i class="fa fa-plus"></i></a>';
             }
 
-            $id_anagrafica = $conto_terzo['id_cliente'] ?: $conto_terzo['id_fornitore'];
-
+            // Span con i pulsanti
             echo '
                     <span class="hide tools pull-right">';
+
+            //  Possibilità di visionare l'anagrafica
+            $id_anagrafica = $conto_terzo['idanagrafica'];
+            $anagrafica_deleted = $conto_terzo['deleted_at'];
+            echo    (isset($id_anagrafica) ? Modules::link('Anagrafiche', $id_anagrafica, ' <i title="'.(isset($anagrafica_deleted) ? 'Anagrafica eliminata': 'Visualizza anagrafica').'" class="btn btn-'.(isset($anagrafica_deleted) ? 'danger': 'primary').' btn-xs fa fa-user" ></i>', null) : '');
+
 
             // Stampa mastrino
             if (!empty($movimenti)) {
                 echo '
                         '.Prints::getLink('Mastrino', $conto_terzo['id'], 'btn-info btn-xs', '', null, 'lev=3');
-            }
-
-            if ($numero_movimenti <= 0) {
-                echo '
-                        <a class="btn btn-danger btn-xs ask" data-toggle="tooltip" title="'.tr('Elimina').'" data-backto="record-list" data-op="del" data-idconto="'.$conto_terzo['id'].'">
-                            <i class="fa fa-trash"></i>
-                        </a>';
             }
 
             // Possibilità di modificare il nome del conto livello3
@@ -121,15 +120,30 @@ foreach ($primo_livello as $conto_primo) {
                             <i class="fa fa-edit"></i>
                         </button>';
 
-            echo  '
-                        </span>
-                            &nbsp;'.$conto_secondo['numero'].'.'.$conto_terzo['numero'].' '.$conto_terzo['descrizione'].' '.(isset($id_anagrafica) ? Modules::link('Anagrafiche', $id_anagrafica, 'Anagrafica', null) : '').'
-                        </span>
+            // Possibilità di eliminare il conto se non ci sono movimenti collegati
+            if ($numero_movimenti <= 0) {
+                echo '
+                        <a class="btn btn-danger btn-xs ask" data-toggle="tooltip" title="'.tr('Elimina').'" data-backto="record-list" data-op="del" data-idconto="'.$conto_terzo['id'].'">
+                            <i class="fa fa-trash"></i>
+                        </a>';
+            }
 
+            echo  ' </span>';
+
+            // Span con info del conto
+            echo '
+                    <span  style="'.(!empty($movimenti) ? '' : 'opacity: 0.5;').'" class="clickable" id="movimenti-'.$conto_terzo['id'].'">';
+
+            echo  '
+                            &nbsp;'.$conto_secondo['numero'].'.'.$conto_terzo['numero'].' '.$conto_terzo['descrizione'];
+
+            echo '  </span>';
+
+            echo '
                         <div id="conto_'.$conto_terzo['id'].'" style="display:none;"></div>
                     </td>
 
-                    <td width="100" align="right" valign="top">
+                    <td width="100" align="right" valign="top"  style="'.(!empty($movimenti) ? '' : 'opacity: 0.5;').'">
                         '.moneyFormat(sum($totale_conto), 2).'
                     </td>
                 </tr>';

@@ -62,6 +62,13 @@ switch ($operazione) {
         }
 
         break;
+        
+    case 'reset':
+
+        $dbo->query('DELETE FROM `co_fatturazione_contratti` WHERE `idcontratto`='.prepare($id_record));
+        flash()->info(tr('Pianificazione rimossa'));
+
+        break;
 
     case 'add_fattura':
         $contratto = Contratto::find($id_record);

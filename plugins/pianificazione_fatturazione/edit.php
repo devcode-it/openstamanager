@@ -7,7 +7,7 @@ use Modules\Contratti\Stato;
 
 $contratto = Contratto::find($id_record);
 $is_pianificabile = $contratto->stato->is_pianificabile && !empty($contratto['data_accettazione']); // Contratto permette la pianificazione
-
+$is_pianificato = false;
 $stati_pianificabili = Stato::where('is_pianificabile', 1)->get();
 $elenco_stati = $stati_pianificabili->implode('descrizione', ', ');
 
@@ -61,6 +61,7 @@ if (!$pianificazioni->isEmpty()) {
             <td>';
         $fattura = $pianificazione->fattura;
         if (!empty($fattura)) {
+            $is_pianificato = true;
             echo '
                 '.Modules::link('Fatture di vendita', $fattura->id, tr('Fattura num. _NUM_ del _DATE_', [
                 '_NUM_' => $fattura->numero_esterno,
@@ -86,6 +87,15 @@ if (!$pianificazioni->isEmpty()) {
     echo '
     </tbody>
 </table>';
+
+
+echo '<button type="button" '.(($is_pianificato) ? 'disabled' : '').' title="'.tr('Annulla le pianificazioni').'"  data-id_plugin="'.$id_plugin.'" data-id_record="'.$id_record.'" data-id_module="'.$id_module.'" data-op="reset" data-msg="'.tr('Eliminare la pianificazione?').'"  data-button="'.tr('Elimina pianificazione').'" class="ask btn btn-danger pull-right tip"  data-backto="record-edit" >
+<i class="fa fa-ban"></i> '.tr('Annulla pianificazioni').'
+</button>';
+
+echo '<div class="clearfix"></div>';
+
+
 } else {
     echo '
 <div class="alert alert-info">

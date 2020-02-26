@@ -82,12 +82,16 @@ $(document).ready(function () {
 
             $("#costo_unitario").val($data.prezzo_acquisto);
 
-            $("#descrizione_riga").val($data.descrizione);
+            $("#descrizione_riga").val($data.descrizione);';
 
+if ($options['dir']=='entrata'){
+    echo '
             if( $data.idiva_vendita ){
                 $("#idiva").selectSetNew($data.idiva_vendita, $data.iva_vendita);
-            }
-
+            }';
+}
+        
+echo '
             if(id_conto) {
                 $("#idconto").selectSetNew(id_conto, $data.idconto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').'_title);
             }

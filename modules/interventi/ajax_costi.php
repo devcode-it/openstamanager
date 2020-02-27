@@ -30,7 +30,7 @@ if ($show_prezzi) {
             <th width="20%" class="text-center">'.tr('Tot. Scontato', [], ['upper' => true]).' <span class="tip" title="'.tr('Addebito scontato al cliente').'"><i class="fa fa-question-circle-o"></i></span></th>
         </tr>
     </thead>
-    
+
     <tbody>
         <tr>
             <th>'.tr('Totale manodopera', [], ['upper' => true]).'</th>
@@ -38,21 +38,21 @@ if ($show_prezzi) {
             <td class="text-right">'.moneyFormat($sessioni->sum('prezzo_manodopera'), 2).'</td>
             <td class="text-right">'.moneyFormat($sessioni->sum('prezzo_manodopera_scontato'), 2).'</td>
         </tr>
-    
+
         <tr>
             <th>'.tr('Totale diritto di chiamata', [], ['upper' => true]).'</th>
             <td class="text-right">'.moneyFormat($sessioni->sum('costo_diritto_chiamata'), 2).'</td>
             <td class="text-right">'.moneyFormat($sessioni->sum('prezzo_diritto_chiamata'), 2).'</td>
             <td class="text-right">'.moneyFormat($sessioni->sum('prezzo_diritto_chiamata'), 2).'</td>
         </tr>
-    
+
         <tr>
             <th>'.tr('Totale viaggio', [], ['upper' => true]).'</th>
             <td class="text-right">'.moneyFormat($sessioni->sum('costo_viaggio'), 2).'</td>
             <td class="text-right">'.moneyFormat($sessioni->sum('prezzo_viaggio'), 2).'</td>
             <td class="text-right">'.moneyFormat($sessioni->sum('prezzo_viaggio_scontato'), 2).'</td>
         </tr>
-    
+
         <tr>
             <th>'.tr('Totale righe', [], ['upper' => true]).'</th>
             <td class="text-right">'.moneyFormat($righe->sum('spesa'), 2).'</td>
@@ -106,7 +106,7 @@ if ($show_prezzi) {
     echo '
     <tr>
         <td colspan="3" class="text-right">
-            <b>'.tr('IVA', [], ['upper' => true]).':</b>
+            <b><i class="fa fa-question-circle-o tip" title="'.tr("Il valore dell'IVA totale è esclusivamente indicativo e basato sulle impostazioni dei default del gestionale").'. '.tr("In particolare, l'IVA delle sessioni di lavoro sarà personalizzabile durante la procedura di importazione dell'Attività in Fattura").'."></i> '.tr('IVA', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
             '.moneyFormat($iva, 2).'

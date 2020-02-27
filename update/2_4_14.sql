@@ -192,3 +192,5 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stampe'), 'Titolo', 'title', 2, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stampe'), 'id', 'id', 1, 1, 0, 0, 0);
 
+-- Fix widget Attività confermate
+UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM in_interventi WHERE in_interventi.idstatointervento = (SELECT in_statiintervento.idstatointervento FROM in_statiintervento WHERE in_statiintervento.codice=''WIP'') ORDER BY in_interventi.data_richiesta ASC' WHERE `name` = 'Attività confermate';

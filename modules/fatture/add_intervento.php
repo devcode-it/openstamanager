@@ -44,6 +44,7 @@ $rs = $dbo->fetchArray('SELECT
         AND in_statiintervento.completato=1
         AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL)
         AND in_interventi.id_preventivo IS NULL
+        AND in_interventi.id_contratto IS NULL
         AND NOT in_interventi.id IN (SELECT idintervento FROM co_promemoria WHERE idintervento IS NOT NULL)');
 foreach ($rs as $key => $value) {
     $intervento = \Modules\Interventi\Intervento::find($value['id']);

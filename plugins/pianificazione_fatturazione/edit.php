@@ -88,14 +88,11 @@ if (!$pianificazioni->isEmpty()) {
     </tbody>
 </table>';
 
-
-echo '<button type="button" '.(($is_pianificato) ? 'disabled' : '').' title="'.tr('Annulla le pianificazioni').'"  data-id_plugin="'.$id_plugin.'" data-id_record="'.$id_record.'" data-id_module="'.$id_module.'" data-op="reset" data-msg="'.tr('Eliminare la pianificazione?').'"  data-button="'.tr('Elimina pianificazione').'" class="ask btn btn-danger pull-right tip"  data-backto="record-edit" >
+    echo '<button type="button" '.(($is_pianificato) ? 'disabled' : '').' title="'.tr('Annulla le pianificazioni').'"  data-id_plugin="'.$id_plugin.'" data-id_record="'.$id_record.'" data-id_module="'.$id_module.'" data-op="reset" data-msg="'.tr('Eliminare la pianificazione?').'"  data-button="'.tr('Elimina pianificazione').'" class="ask btn btn-danger pull-right tip"  data-backto="record-edit" >
 <i class="fa fa-ban"></i> '.tr('Annulla pianificazioni').'
 </button>';
 
-echo '<div class="clearfix"></div>';
-
-
+    echo '<div class="clearfix"></div>';
 } else {
     echo '
 <div class="alert alert-info">

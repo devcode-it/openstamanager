@@ -186,7 +186,6 @@ switch (post('op')) {
         break;
 
     case 'copy-bulk':
-
         foreach ($id_records as $id) {
             $fattura = Fattura::find($id);
 
@@ -223,22 +222,24 @@ switch (post('op')) {
 
             $righe = $fattura->getRighe();
             foreach ($righe as $riga) {
-                if (!post('riferimenti')) {
-                    $riga->idpreventivo = 0;
-                    $riga->idcontratto = 0;
-                    $riga->idintervento = 0;
-                    $riga->idddt = 0;
-                    $riga->idordine = 0;
-                }
-
                 $new_riga = $riga->replicate();
                 $new_riga->setParent($new);
 
+                if (!post('riferimenti')) {
+                    $new_riga->idpreventivo = 0;
+                    $new_riga->idcontratto = 0;
+                    $new_riga->idintervento = 0;
+                    $new_riga->idddt = 0;
+                    $new_riga->idordine = 0;
+                }
+
+                $new_riga->qta_evasa = 0;
+                $new_riga->original_type = null;
+                $new_riga->original_id = null;
                 $new_riga->save();
 
-                if ($new_riga->idarticolo) {
-                    $articolo = Articolo::find($new_riga->id);
-                    $articolo->movimentaMagazzino($articolo->qta);
+                if ($new_riga->isArticolo()) {
+                    $new_riga->movimenta($new_riga->qta);
                 }
             }
         }

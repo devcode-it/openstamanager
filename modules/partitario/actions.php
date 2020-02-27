@@ -62,12 +62,11 @@ switch (post('op')) {
     // Eliminazione conto dal partitario
     case 'del':
         $idconto = post('idconto');
-        
+
         //Controllo che non esistano movimenti associati al conto
         $movimenti = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE idconto = '.prepare($idconto));
 
         if ($idconto != '' and empty($movimenti)) {
-
             //Se elimino il conto lo scollego anche da eventuali anagrafiche (cliente e fornitore)
             $dbo->query('UPDATE an_anagrafiche SET idconto_cliente = NULL WHERE idconto_cliente = '.prepare($idconto));
             $dbo->query('UPDATE an_anagrafiche SET idconto_fornitore = NULL WHERE idconto_fornitore = '.prepare($idconto));

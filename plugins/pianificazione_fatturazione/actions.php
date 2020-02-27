@@ -62,7 +62,7 @@ switch ($operazione) {
         }
 
         break;
-        
+
     case 'reset':
 
         $dbo->query('DELETE FROM `co_fatturazione_contratti` WHERE `idcontratto`='.prepare($id_record));

@@ -91,7 +91,7 @@ foreach ($primo_livello as $conto_primo) {
             echo '
                 <tr>
                     <td>';
-            
+
             // Possibilità di esplodere i movimenti del conto
             if (!empty($movimenti)) {
                 echo '
@@ -105,8 +105,7 @@ foreach ($primo_livello as $conto_primo) {
             //  Possibilità di visionare l'anagrafica
             $id_anagrafica = $conto_terzo['idanagrafica'];
             $anagrafica_deleted = $conto_terzo['deleted_at'];
-            echo    (isset($id_anagrafica) ? Modules::link('Anagrafiche', $id_anagrafica, ' <i title="'.(isset($anagrafica_deleted) ? 'Anagrafica eliminata': 'Visualizza anagrafica').'" class="btn btn-'.(isset($anagrafica_deleted) ? 'danger': 'primary').' btn-xs fa fa-user" ></i>', null) : '');
-
+            echo    isset($id_anagrafica) ? Modules::link('Anagrafiche', $id_anagrafica, ' <i title="'.(isset($anagrafica_deleted) ? 'Anagrafica eliminata' : 'Visualizza anagrafica').'" class="btn btn-'.(isset($anagrafica_deleted) ? 'danger' : 'primary').' btn-xs fa fa-user" ></i>', null) : '';
 
             // Stampa mastrino
             if (!empty($movimenti)) {

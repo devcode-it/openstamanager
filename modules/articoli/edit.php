@@ -166,13 +166,13 @@ $_SESSION['superselect']['id_categoria'] = $record['id_categoria'];
                     <div class="row">
                         <div class="col-md-6">
 <?php
-if (!setting('Utilizza prezzi di vendita con IVA incorporata')) {
+if (!setting('Utilizza prezzi di vendita comprensivi di IVA')) {
     echo '
                             <button type="button" class="btn btn-info btn-xs pull-right tip pull-right" title="'.tr('Scorpora iva dal prezzo di vendita.').'" id="scorpora_iva"><i class="fa fa-calculator" aria-hidden="true"></i></button>';
 }
 ?>
 
-                            {[ "type": "number", "label": "<?php echo tr('Prezzo di vendita'); ?>", "name": "prezzo_vendita", "value": "$prezzo_vendita$", "icon-after": "<?php echo currency(); ?>" ]}
+                            {[ "type": "number", "label": "<?php echo tr('Prezzo di vendita'); ?>", "name": "prezzo_vendita", "value": "$prezzo_vendita$", "icon-after": "<?php echo currency(); ?>", "help": "<?php echo (setting('Utilizza prezzi di vendita comprensivi di IVA') ? tr('Importo IVA inclusa') : ''); ?>" ]}
                         </div>
 
                         <div class="col-md-6">

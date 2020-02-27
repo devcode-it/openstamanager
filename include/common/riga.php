@@ -81,7 +81,7 @@ if ($options['dir'] == 'entrata') {
 // Prezzo di vendita unitario
 echo '
         <div class="col-md-'.$width.'">
-            {[ "type": "number", "label": "'.$label.'", "name": "prezzo_unitario", "value": "'.$result['prezzo_unitario_corrente'].'", "required": 1, "icon-after": "'.currency().'", "help": "'.($options['dir'] == 'entrata' && setting('Utilizza prezzi di vendita con IVA incorporata') ? tr('Importo con IVA incorporata') : '').'" ]}
+            {[ "type": "number", "label": "'.$label.'", "name": "prezzo_unitario", "value": "'.$result['prezzo_unitario_corrente'].'", "required": 1, "icon-after": "'.currency().'", "help": "'.($options['dir'] == 'entrata' && setting('Utilizza prezzi di vendita comprensivi di IVA') ? tr('Importo IVA inclusa') : '').'" ]}
         </div>';
 
 // Sconto unitario

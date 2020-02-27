@@ -138,6 +138,10 @@ class FatturaOrdinaria extends FatturaElettronica
             if (!empty($tipi_riferimenti[$key])) {
                 $obj->original_id = $id_riferimenti[$key];
                 $obj->original_type = $tipi_riferimenti[$key];
+
+                // Riferimenti deprecati
+                //$id_rif = strpos($tipi_riferimenti[$key], 'Ordini') === false ? 'idddt' : 'idordine';
+                //$obj->{$id_rif} = $obj->original_id;
             }
 
             $obj->descrizione = $riga['Descrizione'];

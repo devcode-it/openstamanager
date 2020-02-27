@@ -45,7 +45,7 @@ if (!empty($tipo_documento)) {
 
         if ($qta_rimanente >= $qta) {
             echo '
-                <button type="button" class="btn btn-info btn-xs" onclick="selezionaRiga(\''.$tipo_documento.'\',\''.$id_documento.'\', \''.addslashes(get_class($riga)).'\', \''.$riga->id.'\', \'Rif. '.$tipo_documento.' num. '.$documento->numero.'\')">
+                <button type="button" class="btn btn-info btn-xs" onclick="selezionaRiga(this, \''.$tipo_documento.'\',\''.$id_documento.'\', \''.addslashes(get_class($riga)).'\', \''.$riga->id.'\', \'Rif. '.$tipo_documento.' num. '.$documento->numero.'\')">
                     <i class="fa fa-check"></i>
                 </button>';
         }
@@ -163,7 +163,9 @@ echo '
         id_riga_riferimento = "";
     }
 
-    function selezionaRiga(tipo_documento, id_documento, tipo_riga_riferimento, id_riga_riferimento, testo) {
+    function selezionaRiga(btn, tipo_documento, id_documento, tipo_riga_riferimento, id_riga_riferimento, testo) {
         impostaRiferimento("'.$id_riga.'", tipo_documento, id_documento, tipo_riga_riferimento, id_riga_riferimento, testo);
+
+        $(btn).closest(".modal").modal("hide");
     }
 </script>';

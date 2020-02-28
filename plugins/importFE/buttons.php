@@ -28,7 +28,9 @@ function compile(btn) {
 
             $("select[name^=iva]").each(function(){
                 var aliquota = $(this).closest("tr").find("[id^=aliquota]").text();
-                $(this).selectSet(data.iva[aliquota].id);
+                if (data.iva[aliquota] !== undefined){
+                    $(this).selectSet(data.iva[aliquota].id);
+                }
             });
 
             $("select[name^=conto]").each(function(){

@@ -42,82 +42,90 @@ switch (post('op')) {
         break;
 
     case 'update':
-        if (!empty($id_record)) {
-            $idstatoddt = post('idstatoddt');
-            $idpagamento = post('idpagamento');
+        $idstatoddt = post('idstatoddt');
+        $idpagamento = post('idpagamento');
+        $numero_esterno = post('numero_esterno');
+        $id_anagrafica = post('idanagrafica');
 
-            $totale_imponibile = get_imponibile_ddt($id_record);
-            $totale_ddt = get_totale_ddt($id_record);
-
-            if ($dir == 'uscita') {
-                $idrivalsainps = post('id_rivalsa_inps');
-                $idritenutaacconto = post('id_ritenuta_acconto');
-                $bollo = post('bollo');
-            } else {
-                $idrivalsainps = 0;
-                $idritenutaacconto = 0;
-                $bollo = 0;
-            }
-
-            $tipo_sconto = post('tipo_sconto_generico');
-            $sconto = post('sconto_generico');
-
-            // Leggo la descrizione del pagamento
-            $query = 'SELECT descrizione FROM co_pagamenti WHERE id='.prepare($idpagamento);
-            $rs = $dbo->fetchArray($query);
-            $pagamento = $rs[0]['descrizione'];
-
-            // Query di aggiornamento
-            $dbo->update('dt_ddt', [
-                'data' => post('data'),
-                'numero_esterno' => post('numero_esterno'),
-                'note' => post('note'),
-                'note_aggiuntive' => post('note_aggiuntive'),
-
-                'idstatoddt' => $idstatoddt,
-                'idpagamento' => $idpagamento,
-                'idconto' => post('idconto'),
-                'idanagrafica' => post('idanagrafica'),
-                'idspedizione' => post('idspedizione'),
-                'idcausalet' => post('idcausalet'),
-                'idsede_partenza' => post('idsede_partenza'),
-                'idsede_destinazione' => post('idsede_destinazione'),
-                'idvettore' => post('idvettore'),
-                'data_ora_trasporto' => post('data_ora_trasporto'),
-                'idporto' => post('idporto'),
-                'idaspettobeni' => post('idaspettobeni'),
-                'idrivalsainps' => $idrivalsainps,
-                'idritenutaacconto' => $idritenutaacconto,
-
-                'n_colli' => post('n_colli'),
-                'bollo' => 0,
-                'rivalsainps' => 0,
-                'ritenutaacconto' => 0,
-
-                'id_documento_fe' => post('id_documento_fe'),
-                'codice_cup' => post('codice_cup'),
-                'codice_cig' => post('codice_cig'),
-                'num_item' => post('num_item'),
-            ], ['id' => $id_record]);
-
-            $query = 'SELECT descrizione FROM dt_statiddt WHERE id='.prepare($idstatoddt);
-            $rs = $dbo->fetchArray($query);
-
-            // Ricalcolo inps, ritenuta e bollo (se l'ddt non è stato evaso)
-            if ($dir == 'entrata') {
-                if ($rs[0]['descrizione'] != 'Pagato') {
-                    ricalcola_costiagg_ddt($id_record);
-                }
-            } else {
-                if ($rs[0]['descrizione'] != 'Pagato') {
-                    ricalcola_costiagg_ddt($id_record, $idrivalsainps, $idritenutaacconto, $bollo);
-                }
-            }
-
-            aggiorna_sedi_movimenti('ddt', $id_record);
-
-            flash()->info(tr('Ddt modificato correttamente!'));
+        if ($dir == 'uscita') {
+            $idrivalsainps = post('id_rivalsa_inps');
+            $idritenutaacconto = post('id_ritenuta_acconto');
+            $bollo = post('bollo');
+        } else {
+            $idrivalsainps = 0;
+            $idritenutaacconto = 0;
+            $bollo = 0;
         }
+
+        $tipo_sconto = post('tipo_sconto_generico');
+        $sconto = post('sconto_generico');
+
+        // Leggo la descrizione del pagamento
+        $query = 'SELECT descrizione FROM co_pagamenti WHERE id='.prepare($idpagamento);
+        $rs = $dbo->fetchArray($query);
+        $pagamento = $rs[0]['descrizione'];
+
+        // Query di aggiornamento
+        $dbo->update('dt_ddt', [
+            'data' => post('data'),
+            'numero_esterno' => $numero_esterno,
+            'note' => post('note'),
+            'note_aggiuntive' => post('note_aggiuntive'),
+
+            'idstatoddt' => $idstatoddt,
+            'idpagamento' => $idpagamento,
+            'idconto' => post('idconto'),
+            'idanagrafica' => $id_anagrafica,
+            'idspedizione' => post('idspedizione'),
+            'idcausalet' => post('idcausalet'),
+            'idsede_partenza' => post('idsede_partenza'),
+            'idsede_destinazione' => post('idsede_destinazione'),
+            'idvettore' => post('idvettore'),
+            'data_ora_trasporto' => post('data_ora_trasporto'),
+            'idporto' => post('idporto'),
+            'idaspettobeni' => post('idaspettobeni'),
+            'idrivalsainps' => $idrivalsainps,
+            'idritenutaacconto' => $idritenutaacconto,
+
+            'n_colli' => post('n_colli'),
+            'bollo' => 0,
+            'rivalsainps' => 0,
+            'ritenutaacconto' => 0,
+
+            'id_documento_fe' => post('id_documento_fe'),
+            'codice_cup' => post('codice_cup'),
+            'codice_cig' => post('codice_cig'),
+            'num_item' => post('num_item'),
+        ], ['id' => $id_record]);
+
+        $query = 'SELECT descrizione FROM dt_statiddt WHERE id='.prepare($idstatoddt);
+        $rs = $dbo->fetchArray($query);
+
+        // Ricalcolo inps, ritenuta e bollo (se l'ddt non è stato evaso)
+        if ($dir == 'entrata') {
+            if ($rs[0]['descrizione'] != 'Pagato') {
+                ricalcola_costiagg_ddt($id_record);
+            }
+        } else {
+            if ($rs[0]['descrizione'] != 'Pagato') {
+                ricalcola_costiagg_ddt($id_record, $idrivalsainps, $idritenutaacconto, $bollo);
+            }
+        }
+
+        aggiorna_sedi_movimenti('ddt', $id_record);
+
+        // Controllo sulla presenza di DDT con lo stesso numero secondario
+        $count = DDT::where('numero_esterno', $numero_esterno)
+            ->where('id', '!=', $id_record)
+            ->where('idanagrafica', '=', $id_anagrafica)
+            ->whereHas('tipo', function ($query) use ($dir) {
+                $query->where('dt_tipiddt.dir', '=', $dir);
+            })->count();
+        if (!empty($count)) {
+            flash()->warning(tr('Esiste già un DDT con lo stesso numero secondario e la stessa anagrafica collegata!'));
+        }
+
+        flash()->info(tr('Ddt modificato correttamente!'));
         break;
 
     case 'manage_articolo':

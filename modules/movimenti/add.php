@@ -173,9 +173,9 @@ $_SESSION['superselect']['idsede_destinazione'] = 0;
         }
 	}
 </script>
-<?php 
+<?php
 if (setting('Attiva scorciatoie da tastiera')) {
-echo '
+    echo '
         <script>
         hotkeys(\'f8\', \'carico\', function(event, handler){
             $("#modals > div #direzione").val("Carico manuale").change();

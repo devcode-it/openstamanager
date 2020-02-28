@@ -160,7 +160,7 @@ abstract class Row extends Description
     }
 
     /**
-     * Imposta il prezzo unitario corrente (unitario oppure unitario ivato a seconda dell'impostazione 'Utilizza prezzi di vendita con IVA incorporata') per la riga.
+     * Imposta il prezzo unitario corrente (unitario oppure unitario ivato a seconda dell'impostazione 'Utilizza prezzi di vendita comprensivi di IVA') per la riga.
      *
      * @return float
      */
@@ -175,7 +175,7 @@ abstract class Row extends Description
     }
 
     /**
-     * Imposta lo sconto unitario corrente (unitario oppure unitario ivato a seconda dell'impostazione 'Utilizza prezzi di vendita con IVA incorporata') per la riga.
+     * Imposta lo sconto unitario corrente (unitario oppure unitario ivato a seconda dell'impostazione 'Utilizza prezzi di vendita comprensivi di IVA') per la riga.
      *
      * @return float
      */
@@ -387,6 +387,6 @@ abstract class Row extends Description
 
     protected function incorporaIVA()
     {
-        return $this->parent->direzione == 'entrata' && setting('Utilizza prezzi di vendita con IVA incorporata');
+        return $this->parent->direzione == 'entrata' && setting('Utilizza prezzi di vendita comprensivi di IVA');
     }
 }

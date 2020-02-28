@@ -20,7 +20,7 @@ $settings = [
     "Percentuale ritenuta d'acconto" => false,
     "Causale ritenuta d'acconto" => false,
     'Valuta' => true,
-    'Utilizza prezzi di vendita con IVA incorporata' => false,
+    'Utilizza prezzi di vendita comprensivi di IVA' => false,
 ];
 
 if (!empty(setting("Percentuale ritenuta d'acconto"))) {

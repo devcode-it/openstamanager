@@ -42,7 +42,7 @@ switch ($operazione) {
                 $iva = $righe->first()->aliquota;
                 $righe = $righe->toArray();
 
-                $totale = sum(array_column($righe, setting('Utilizza prezzi di vendita con IVA incorporata') ? 'totale' : 'totale_imponibile'));
+                $totale = sum(array_column($righe, setting('Utilizza prezzi di vendita comprensivi di IVA') ? 'totale' : 'totale_imponibile'));
 
                 $qta_riga = $qta[$id_iva];
                 $descrizione_riga = $descrizioni[$id_iva];

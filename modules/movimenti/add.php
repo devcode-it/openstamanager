@@ -173,3 +173,19 @@ $_SESSION['superselect']['idsede_destinazione'] = 0;
         }
 	}
 </script>
+<?php 
+if (setting('Attiva scorciatoie da tastiera')) {
+echo '
+        <script>
+        hotkeys(\'f8\', \'carico\', function(event, handler){
+            $("#modals > div #direzione").val("Carico manuale").change();
+        });
+        hotkeys.setScope(\'carico\');
+
+        hotkeys(\'f9\', \'carico\', function(event, handler){
+            $("#modals > div #direzione").val("Scarico manuale").change();
+        });
+        hotkeys.setScope(\'carico\');
+
+        </script>';
+}

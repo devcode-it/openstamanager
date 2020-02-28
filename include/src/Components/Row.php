@@ -67,6 +67,16 @@ abstract class Row extends Description
     }
 
     /**
+     * Restituisce l'importo (unitario oppure unitario ivato a seconda dell'impostazione 'Utilizza prezzi di vendita con IVA incorporata') per la riga.
+     *
+     * @return float
+     */
+    public function getImportoAttribute()
+    {
+        return $this->incorporaIVA() ? $this->totale : $this->totale_imponibile;
+    }
+
+    /**
      * Restituisce la spesa (costo_unitario * qta) relativa all'elemento.
      *
      * @return float

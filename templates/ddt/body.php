@@ -65,14 +65,14 @@ foreach ($righe as $riga) {
     }
 
     // Aggiunta dei riferimenti ai documenti
-    if (setting('Riferimento dei documenti nelle stampe')) {
-        $ref = doc_references($r, $record['dir'], ['idddt']);
+    if (setting('Riferimento dei documenti nelle stampe') && $riga->hasOriginal()) {
+        $ref = $riga->getOriginal()->parent->getReference();
 
         if (!empty($ref)) {
             echo '
-                <br><small>'.$ref['description'].'</small>';
+                <br><small>'.$ref.'</small>';
 
-            $autofill->count($ref['description'], true);
+            $autofill->count($ref, true);
         }
     }
 

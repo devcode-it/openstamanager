@@ -7,6 +7,29 @@ echo '
 <div class="box">
     <div class="box-header with-border">
         <h3 class="box-title">'.tr('Movimenti').'</h3>
+        <div class="pull-right">';
+if (empty($_GET['movimentazione_completa'])) {
+    echo '
+        <a class="btn btn-info btn-xs" href="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&movimentazione_completa=1#tab_'.$id_plugin.'">
+            <i class="fa fa-eye"></i>
+            '.tr('Mostra tutti i movimenti').'
+        </a>';
+} else {
+    echo '
+        <a class="btn btn-info btn-xs" href="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&movimentazione_completa=0#tab_'.$id_plugin.'">
+            <i class="fa fa-eye-slash"></i>
+            '.tr('Mostra gli ultimi 20 movimenti').'
+        </a>';
+}
+
+echo '
+        <a class="btn btn-warning btn-xs" href="'.$rootdir.'/controller.php?id_module='.Modules::get('Movimenti')->id.'&search_Articolo='.($articolo->codice.' - '.$articolo->descrizione).'">
+            <i class="fa fa-external-link"></i>
+            '.tr('Visualizza dettagli').'
+        </a>';
+
+echo '
+        </div>
     </div>
     <div class="box-body">';
 
@@ -21,32 +44,21 @@ echo '
 <p>'.tr('Quantità calcolata attuale').': <b>'.Translator::numberToLocale($qta_totale_attuale, 'qta').' '.$record['um'].'</b> <span class="tip" title="'.tr('Quantità calcolata secondo i movimenti registrati con data oggi o date trascorse').'." ><i class="fa fa-question-circle-o"></i></span></p>';
 
 // Individuazione movimenti
-$movimenti = $articolo->movimenti()
-    ->selectRaw('*, sum(qta) as qta_movimenti')
-    ->groupBy('reference_type', 'reference_id')
+$movimenti = $articolo->movimentiComposti()
     ->orderBy('data', 'id');
 if (empty($_GET['movimentazione_completa'])) {
-    //$movimenti->limit(20);
+    $movimenti->limit(20);
 }
 
 // Raggruppamento per documento
 $movimenti = $movimenti->get();
 if (!empty($movimenti)) {
-    if (empty($_GET['movimentazione_completa'])) {
-        echo '
-        <p><a href="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&movimentazione_completa=1#tab_'.$id_plugin.'">[ '.tr('Mostra tutti i movimenti').' ]</a></p>';
-    } else {
-        echo '
-        <p><a href="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&movimentazione_completa=0#tab_'.$id_plugin.'">[ '.tr('Mostra solo gli ultimi 20 movimenti').' ]</a></p>';
-    }
-
     echo '
         <table class="table table-striped table-condensed table-bordered">
             <tr>
                 <th class="text-center">'.tr('Q.tà').'</th>
                 <th class="text-center">'.tr('Q.tà progressiva').'</th>
-                <th class="text-center">'.tr('Operazione').'</th>
-                <th>'.tr('Documento').'</th>
+                <th>'.tr('Operazione').'</th>
                 <th class="text-center">'.tr('Data').'</th>
                 <th class="text-center" width="7%">#</th>
             </tr>';
@@ -58,7 +70,8 @@ if (!empty($movimenti)) {
         } else {
             $movimento['progressivo_finale'] = $movimenti[$i - 1]['progressivo_iniziale'];
         }
-        $movimento['progressivo_iniziale'] = $movimento['progressivo_finale'] - $movimento['qta'];
+        $movimento['progressivo_iniziale'] = $movimento['progressivo_finale'] - $movimento->qta;
+        $movimento['progressivo_iniziale'] = $movimento['progressivo_finale'] - $movimento->qta;
 
         $movimenti[$i]['progressivo_iniziale'] = $movimento['progressivo_iniziale'];
         $movimenti[$i]['progressivo_finale'] = $movimento['progressivo_finale'];
@@ -67,7 +80,7 @@ if (!empty($movimenti)) {
         echo '
             <tr>
                 <td class="text-center">
-                    '.numberFormat($movimento['qta_movimenti'], 'qta').' '.$record['um'].'
+                    '.numberFormat($movimento->qta, 'qta').' '.$record['um'].'
                 </td>
 
                 <td class="text-center">
@@ -76,27 +89,23 @@ if (!empty($movimenti)) {
                     '.numberFormat($movimento['progressivo_finale'], 'qta').' '.$record['um'].'
                 </td>
 
-                <td class="text-center">
-                    '.$movimento->descrizione.'
-                </td>
-
                 <td>
-                    '.($movimento->hasDocument() ? reference($movimento->getDocument()) : tr('Nessun documento collegato')).'
+                    '.$movimento->descrizione.''.($movimento->hasDocument() ? ' - '.reference($movimento->getDocument()) : '').'
                 </td>';
 
         // Data
         echo '
-                <td class="text-center" >'.Translator::dateToLocale($movimento['data']).' <span  class="tip" title="'.tr('Data del movimento: _DATE_', [
-               '_DATE_' => Translator::timestampToLocale($movimento['created_at']),
+                <td class="text-center">'.dateFormat($movimento->data).' <span  class="tip" title="'.tr('Data di creazione del movimento: _DATE_', [
+               '_DATE_' => timestampFormat($movimento->created_at),
             ]).'"><i class="fa fa-question-circle-o"></i></span> </td>';
 
         // Operazioni
         echo '
                 <td class="text-center">';
 
-        if (Auth::admin() && $movimento['manuale'] == '1') {
+        if (Auth::admin() && $movimento->isManuale()) {
             echo '
-                    <a class="btn btn-danger btn-sm ask" data-backto="record-edit" data-op="delmovimento" data-idmovimento="'.$movimento['id'].'">
+                    <a class="btn btn-danger btn-xs ask" data-backto="record-edit" data-op="delmovimento" data-idmovimento="'.$movimento['id'].'">
                         <i class="fa fa-trash"></i>
                     </a>';
         }

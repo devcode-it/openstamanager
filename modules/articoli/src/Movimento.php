@@ -36,15 +36,35 @@ class Movimento extends Model
 
     public function getDescrizioneAttribute()
     {
-        $direzione = 'uscita';
+        $descrizione = $this->movimento;
         if ($this->hasDocument()) {
-            $direzione = $this->getDocument()->direzione;
+            $documento = $this->getDocument();
+
+            $descrizione = $documento ? self::descrizioneMovimento($this->qta, $documento->direzione) : $descrizione;
         }
 
-        $carico = ($direzione == 'entrata') ? tr('Ripristino articolo') : tr('Carico magazzino');
-        $scarico = ($direzione == 'entrata') ? tr('Scarico magazzino') : tr('Rimozione articolo');
+        return $descrizione;
+    }
 
-        return ($this->qta > 0) ? $carico : $scarico;
+    public function getDataAttribute()
+    {
+        $data = $this->attributes['data'];
+        if ($this->hasDocument()) {
+            $documento = $this->getDocument();
+
+            $data = $documento ? $documento->getReferenceDate() : $data;
+        }
+
+        return $data;
+    }
+
+    public function getQtaAttribute()
+    {
+        if (isset($this->qta_documento)) {
+            return $this->qta_documento;
+        }
+
+        return $this->qta;
     }
 
     public function articolo()
@@ -52,9 +72,21 @@ class Movimento extends Model
         return $this->hasOne(Articolo::class, 'idarticolo');
     }
 
+    public function movimentiRelativi()
+    {
+        return $this->hasMany(Movimento::class, 'idarticolo', 'idarticolo')
+            ->where('reference_type', $this->reference_type)
+            ->where('reference_id', $this->reference_id);
+    }
+
     public function hasDocument()
     {
         return isset($this->reference_type);
+    }
+
+    public function isManuale()
+    {
+        return !empty($this->manuale);
     }
 
     /**
@@ -72,5 +104,24 @@ class Movimento extends Model
         }
 
         return $this->document;
+    }
+
+    public static function descrizioneMovimento($qta, $direzione = 'entrata')
+    {
+        if (empty($direzione)) {
+            $direzione = 'entrata';
+        }
+
+        $carico = ($direzione == 'entrata') ? tr('Ripristino articolo') : tr('Carico magazzino');
+        $scarico = ($direzione == 'entrata') ? tr('Scarico magazzino') : tr('Rimozione articolo');
+
+        $descrizione = $qta > 0 ? $carico : $scarico;
+
+        // Descrizione per vecchi documenti rimossi ma con movimenti azzerati
+        if ($qta == 0) {
+            $descrizione = tr('Nessun movimento');
+        }
+
+        return $descrizione;
     }
 }

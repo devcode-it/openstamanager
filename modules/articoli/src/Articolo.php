@@ -128,9 +128,26 @@ class Articolo extends Model
         return $this->hasMany(ArticoloIntervento::class, 'idarticolo');
     }
 
+    /**
+     * Restituisce i movimenti di magazzino dell'articolo.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany|\Illuminate\Database\Query\Builder
+     */
     public function movimenti()
     {
         return $this->hasMany(Movimento::class, 'idarticolo');
+    }
+
+    /**
+     * Restituisce i movimenti di magazzino dell'articolo raggruppati per documento relativo.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany|\Illuminate\Database\Query\Builder
+     */
+    public function movimentiComposti()
+    {
+        return $this->movimenti()
+            ->selectRaw('*, sum(qta) as qta_documento, IFNULL(reference_type, UUID()) as tipo_gruppo')
+            ->groupBy('tipo_gruppo', 'reference_id');
     }
 
     public function categoria()

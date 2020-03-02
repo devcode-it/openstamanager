@@ -16,11 +16,10 @@ use Modules\Scadenzario\Scadenza;
 use Plugins\DichiarazioniIntento\Dichiarazione;
 use Plugins\ExportFE\FatturaElettronica;
 use Traits\RecordTrait;
-use Traits\ReferenceInterface;
 use Traits\ReferenceTrait;
 use Util\Generator;
 
-class Fattura extends Document implements ReferenceInterface
+class Fattura extends Document
 {
     use RecordTrait;
     use ReferenceTrait;
@@ -754,6 +753,7 @@ class Fattura extends Document implements ReferenceInterface
     }
 
     // Opzioni di riferimento
+
     public function getReferenceName()
     {
         return $this->tipo->descrizione;

@@ -4,7 +4,7 @@ namespace Common;
 
 use Common\Components\Description;
 
-abstract class Document extends Model
+abstract class Document extends Model implements ReferenceInterface
 {
     /**
      * Restituisce la collezione di righe e articoli con valori rilevanti per i conti.
@@ -65,6 +65,8 @@ abstract class Document extends Model
     abstract public function descrizioni();
 
     abstract public function sconti();
+
+    abstract public function getDirezioneAttribute();
 
     /**
      * Calcola l'imponibile del documento.

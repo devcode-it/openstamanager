@@ -312,8 +312,6 @@ switch (post('op')) {
         try {
             $ddt->delete();
 
-            $dbo->query('DELETE FROM mg_movimenti WHERE idddt = '.prepare($id_record));
-
             flash()->info(tr('Ddt eliminato!'));
         } catch (InvalidArgumentException $e) {
             flash()->error(tr('Sono stati utilizzati alcuni serial number nel documento: impossibile procedere!'));

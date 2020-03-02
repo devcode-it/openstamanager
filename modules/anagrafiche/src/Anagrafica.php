@@ -205,6 +205,11 @@ class Anagrafica extends Model
 
     // Attributi Eloquent
 
+    public function getModuleAttribute()
+    {
+        return 'Anagrafiche';
+    }
+
     /**
      * Restituisce l'identificativo.
      *

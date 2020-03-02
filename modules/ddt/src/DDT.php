@@ -7,11 +7,10 @@ use Common\Components\Description;
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
 use Traits\RecordTrait;
-use Traits\ReferenceInterface;
 use Traits\ReferenceTrait;
 use Util\Generator;
 
-class DDT extends Document implements ReferenceInterface
+class DDT extends Document
 {
     use ReferenceTrait;
     use RecordTrait;
@@ -210,6 +209,7 @@ class DDT extends Document implements ReferenceInterface
     }
 
     // Opzioni di riferimento
+
     public function getReferenceName()
     {
         return $this->tipo->descrizione;

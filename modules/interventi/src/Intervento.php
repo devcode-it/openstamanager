@@ -8,11 +8,10 @@ use Modules\Contratti\Contratto;
 use Modules\Preventivi\Preventivo;
 use Modules\TipiIntervento\Tipo as TipoSessione;
 use Traits\RecordTrait;
-use Traits\ReferenceInterface;
 use Traits\ReferenceTrait;
 use Util\Generator;
 
-class Intervento extends Document implements ReferenceInterface
+class Intervento extends Document
 {
     use ReferenceTrait;
 
@@ -92,6 +91,11 @@ class Intervento extends Document implements ReferenceInterface
     public function getModuleAttribute()
     {
         return 'Interventi';
+    }
+
+    public function getDirezioneAttribute()
+    {
+        return 'entrata';
     }
 
     /**
@@ -204,6 +208,7 @@ class Intervento extends Document implements ReferenceInterface
     }
 
     // Opzioni di riferimento
+
     public function getReferenceName()
     {
         return 'Attività';

@@ -288,7 +288,7 @@ function discountInfo(\Common\Components\Row $riga, $mostra_maggiorazione = true
 
 function reference($document)
 {
-    if (!empty($document) && !($document instanceof \Traits\ReferenceInterface)) {
+    if (!empty($document) && !($document instanceof \Common\ReferenceInterface)) {
         return;
     }
 

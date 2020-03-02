@@ -59,7 +59,7 @@ if (!empty($search['barcode'])) {
 $period_end = $_SESSION['period_end'];
 
 $query = 'SELECT *,
-       (SELECT SUM(qta) FROM mg_movimenti WHERE mg_movimenti.idarticolo=mg_articoli.id AND (mg_movimenti.idintervento IS NULL) AND data <= '.prepare($period_end).') AS qta
+       (SELECT SUM(qta) FROM mg_movimenti WHERE mg_movimenti.idarticolo=mg_articoli.id AND data <= '.prepare($period_end).') AS qta
 FROM mg_articoli LEFT OUTER JOIN (SELECT id, nome FROM mg_categorie) AS categoria ON mg_articoli.id_categoria = categoria.id WHERE 1=1
 ORDER BY codice ASC';
 
@@ -83,7 +83,7 @@ echo '
             <th class="text-center" width="90">'.tr('Valore totale', [], ['upper' => true]).'</th>
         </tr>
     </thead>
-    
+
     <tbody>';
 
 $totali = [];

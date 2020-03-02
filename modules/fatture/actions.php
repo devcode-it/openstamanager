@@ -205,44 +205,41 @@ switch (post('op')) {
 
     // Duplicazione fattura
     case 'copy':
-        if ($id_record) {
-            // Duplicazione righe
-            $righe = $dbo->fetchArray('SELECT * FROM co_righe_documenti WHERE iddocumento='.prepare($id_record));
+        $stato = Stato::where('descrizione', 'Bozza')->first();
 
-            // Lettura dati fattura attuale
-            $rs = $dbo->fetchArray('SELECT * FROM co_documenti WHERE id='.prepare($id_record));
-
-            $id_segment = $rs[0]['id_segment'];
-
-            // Calcolo prossimo numero fattura
-            $numero = get_new_numerofattura(date('Y-m-d'));
-
-            if ($dir == 'entrata') {
-                $numero_esterno = get_new_numerosecondariofattura(date('Y-m-d'));
-            } else {
-                $numero_esterno = '';
-            }
-
-            // Duplicazione intestazione
-            $dbo->query('INSERT INTO co_documenti(numero, numero_esterno, data, idanagrafica, idcausalet, idspedizione, idporto, idaspettobeni, idvettore, n_colli, idsede_partenza, idsede_destinazione, idtipodocumento, idstatodocumento, idpagamento, idconto, idrivalsainps, idritenutaacconto, rivalsainps, iva_rivalsainps, ritenutaacconto, bollo, note, note_aggiuntive, buono_ordine, id_segment) VALUES('.prepare($numero).', '.prepare($numero_esterno).', NOW(), '.prepare($rs[0]['idanagrafica']).', '.prepare($rs[0]['idcausalet']).', '.prepare($rs[0]['idspedizione']).', '.prepare($rs[0]['idporto']).', '.prepare($rs[0]['idaspettobeni']).', '.prepare($rs[0]['idvettore']).', '.prepare($rs[0]['n_colli']).', '.prepare($rs[0]['idsede_partenza']).', '.prepare($rs[0]['idsede_destinazione']).', '.prepare($rs[0]['idtipodocumento']).', (SELECT id FROM co_statidocumento WHERE descrizione=\'Bozza\'), '.prepare($rs[0]['idpagamento']).', '.prepare($rs[0]['idconto']).', '.prepare($rs[0]['idrivalsainps']).', '.prepare($rs[0]['idritenutaacconto']).', '.prepare($rs[0]['rivalsainps']).', '.prepare($rs[0]['iva_rivalsainps']).', '.prepare($rs[0]['ritenutaacconto']).', '.prepare($rs[0]['bollo']).', '.prepare($rs[0]['note']).', '.prepare($rs[0]['note_aggiuntive']).', '.prepare($rs[0]['buono_ordine']).', '.prepare($rs[0]['id_segment']).')');
-            $id_record = $dbo->lastInsertedID();
-
-            // TODO: sistemare la duplicazione delle righe generiche e degli articoli, ignorando interventi, ddt, ordini, preventivi
-            foreach ($righe as $riga) {
-                // Scarico/carico nuovamente l'articolo da magazzino
-                if (!empty($riga['idarticolo'])) {
-                    add_articolo_infattura($id_record, $riga['idarticolo'], $riga['descrizione'], $riga['idiva'], $riga['qta'], $riga['subtotale'], $riga['sconto'], $riga['sconto_unitario'], $riga['tipo_sconto'], $riga['idintervento'], $riga['idconto'], $riga['um']);
-                } else {
-                    $dbo->query('INSERT INTO co_righe_documenti(iddocumento, idordine, idddt, idintervento, idarticolo, idpreventivo, idcontratto, is_descrizione, idtecnico, idagente, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, idritenutaacconto, ritenutaacconto, idrivalsainps, rivalsainps, um, qta, `order`) VALUES('.prepare($id_record).', 0, 0, 0, '.prepare($riga['idarticolo']).', '.prepare($riga['idpreventivo']).', '.prepare($riga['idcontratto']).', '.prepare($riga['is_descrizione']).', '.prepare($riga['idtecnico']).', '.prepare($riga['idagente']).', '.prepare($riga['idconto']).', '.prepare($riga['idiva']).', '.prepare($riga['desc_iva']).', '.prepare($riga['iva']).', '.prepare($riga['iva_indetraibile']).', '.prepare($riga['descrizione']).', '.prepare($riga['subtotale']).', '.prepare($riga['sconto']).', '.prepare($riga['sconto_unitario']).', '.prepare($riga['tipo_sconto']).', '.prepare($riga['idritenutaacconto']).', '.prepare($riga['ritenutaacconto']).', '.prepare($riga['idrivalsainps']).', '.prepare($riga['rivalsainps']).', '.prepare($riga['um']).', '.prepare($riga['qta']).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))');
-                }
-            }
-
-            // Ricalcolo inps, ritenuta e bollo (se la fattura non è stata pagata)
-            ricalcola_costiagg_fattura($id_record);
-            aggiorna_sedi_movimenti('documenti', $id_record);
-
-            flash()->info(tr('Fattura duplicata correttamente!'));
+        $new = $fattura->replicate();
+        $new->numero = Fattura::getNextNumero($new->data, $new->direzione, $new->id_segment);
+        if ($new->direzione == 'entrata') {
+            $new->numero_esterno = Fattura::getNextNumeroSecondario($new->data, $new->direzione, $new->id_segment);
         }
+        $new->stato()->associate($stato);
+        $new->save();
+
+        $id_record = $new->id;
+
+        $righe = $fattura->getRighe();
+        foreach ($righe as $riga) {
+            $new_riga = $riga->replicate();
+            $new_riga->setParent($new);
+
+            // Rimozione riferimenti (deorecati)
+            $new_riga->idpreventivo = 0;
+            $new_riga->idcontratto = 0;
+            $new_riga->idintervento = 0;
+            $new_riga->idddt = 0;
+            $new_riga->idordine = 0;
+
+            $new_riga->qta_evasa = 0;
+            $new_riga->original_type = null;
+            $new_riga->original_id = null;
+            $new_riga->save();
+
+            if ($new_riga->isArticolo()) {
+                $new_riga->movimenta($new_riga->qta);
+            }
+        }
+
+        flash()->info(tr('Fattura duplicata correttamente!'));
 
         break;
 
@@ -595,7 +592,7 @@ switch (post('op')) {
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
                     if ($movimenta) {
-                        $copia->movimenta($copia->qta);
+                        //$copia->movimenta($copia->qta);
                     }
 
                     $serials = is_array(post('serial')[$riga->id]) ? post('serial')[$riga->id] : [];
@@ -662,7 +659,7 @@ switch (post('op')) {
 
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
-                    $copia->movimenta($copia->qta);
+                    //$copia->movimenta($copia->qta);
 
                     $serials = is_array(post('serial')[$riga->id]) ? post('serial')[$riga->id] : [];
 

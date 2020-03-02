@@ -38,6 +38,10 @@ switch (post('op')) {
             $anagrafica = $documento_import->anagrafica;
             $id_anagrafica = $anagrafica->id;
 
+            if(!$documento_import->stato->is_pianificabile){
+                break;
+            }
+
             // Proseguo solo se i documenti scelti sono fatturabili
             $righe = $documento_import->getRighe();
             if (!empty($righe)) {
@@ -75,7 +79,7 @@ switch (post('op')) {
 
                         // Aggiornamento seriali dalla riga dell'ordine
                         if ($copia->isArticolo()) {
-                            $copia->movimenta($copia->qta);
+                            //$copia->movimenta($copia->qta);
 
                             $copia->serials = $riga->serials;
                         }

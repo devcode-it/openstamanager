@@ -40,7 +40,7 @@ while ($data_corrente->lessThanOrEqualTo($data_conclusione)) {
                         <input type="hidden" name="periodo['.$count.']" value="'.$data.'">
                     </div>';
 
-    $data_corrente = $data_corrente->addMonth();
+    $data_corrente = $data_corrente->addDay();
     ++$count;
 }
 
@@ -67,12 +67,12 @@ foreach ($iva_righe as $id_iva => $righe) {
                             '_NUM_' => $contratto->numero,
                         ]).'" ]}
 
-                        {[ "type": "number", "label": "'.tr('Q.tà').'", "name": "qta['.$id_iva.']", "required": 1, "value": "1", "decimals": "qta", "min-value": "1" ]}
+                        {[ "type": "number", "label": "'.tr('Q.tà per fattura').'", "name": "qta['.$id_iva.']", "required": 1, "value": "1", "decimals": "qta", "min-value": "1" ]}
                     </div>
                     <div class="col-md-3">
                         <p><b>'.tr('Imponibile').'</b>: '.moneyFormat(sum(array_column($righe, 'imponibile'))).'</p>
                         <p><b>'.tr('IVA').'</b>: '.moneyFormat(sum(array_column($righe, 'iva'))).'</p>
-                        <p><b>'.tr('Totale imponibile').'</b>: '.moneyFormat(sum(array_column($righe, 'totale'))).'</p>
+                        <p><b>'.tr('Totale').'</b>: '.moneyFormat(sum(array_column($righe, 'totale'))).'</p>
                     </div>
                 </div>
                 <hr>';

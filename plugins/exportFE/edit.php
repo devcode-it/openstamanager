@@ -110,9 +110,9 @@ if (!empty($record['codice_stato_fe'])) {
         echo '
 		<div class="alert text-left alert-'.$class.'">
 		    <big><i class="'.$stato_fe['icon'].'" style="color:#fff;"></i> 
-		    <b>'.$stato_fe['codice'].'</b> - '.$stato_fe['descrizione'].'</big> '.(!empty($record['descrizione_ricevuta_fe']) ? '<br><b>NOTE:</b><br>'.$record['descrizione_ricevuta_fe'] : '').'
+		    <b>'.$stato_fe['codice'].'</b> - '.$stato_fe['descrizione'].'</big> '.(!empty($record['descrizione_ricevuta_fe']) ? '<br><b>NOTE:</b> '.$record['descrizione_ricevuta_fe'] : '').'
 		    <div class="pull-right">
-		        <i class="fa fa-clock-o"></i> '.Translator::timestampToLocale($record['data_stato_fe']).'
+		        <i class="fa fa-clock-o tip" title="'.tr('Data e ora ricezione').'" ></i> '.Translator::timestampToLocale($record['data_stato_fe']).'
             </div>
         </small>
 		';

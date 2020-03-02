@@ -27,11 +27,6 @@ class Articolo extends Article
 
     public function movimentaMagazzino($qta)
     {
-        // Se il documento è generato da un ddt o intervento allora **non** movimento il magazzino
-        if (!empty($this->idddt) || !empty($this->idintervento)) {
-            return;
-        }
-
         $fattura = $this->fattura;
         $tipo = $fattura->tipo;
 

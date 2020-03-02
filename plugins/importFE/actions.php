@@ -106,6 +106,8 @@ switch (filter('op')) {
             'articoli' => post('articoli'),
             'iva' => post('iva'),
             'conto' => post('conto'),
+            'tipo_riga_riferimento' => post('tipo_riga_riferimento'),
+            'id_riga_riferimento' => post('id_riga_riferimento'),
             'movimentazione' => post('movimentazione'),
             'crea_articoli' => post('crea_articoli'),
         ];
@@ -165,5 +167,79 @@ switch (filter('op')) {
             }
         }
 
+        break;
+
+    case 'compile':
+        $fatture = $anagrafica->fattureAcquisto()
+            ->contabile()
+            ->orderByDesc('created_at')
+            ->take(10)
+            ->get();
+
+        $righe = collect();
+        foreach ($fatture as $fattura) {
+            $righe->push($fattura->righe);
+            $righe->push($fattura->articoli);
+        }
+        $righe = $righe->flatten();
+
+        // Ricerca del tipo di documento più utilizzato
+        $tipi = $fatture->groupBy(function ($item, $key) {
+            return $item->tipo->id;
+        })->transform(function ($item, $key) {
+            return $item->count();
+        });
+        $id_tipo = $tipi->sort()->keys()->last();
+
+        // Ricerca del tipo di pagamento più utilizzato
+        $pagamenti = $fatture->mapToGroups(function ($item, $key) {
+            return [$item->pagamento->id => $item->pagamento];
+        });
+        $id_pagamento = $pagamenti->map(function ($item, $key) {
+            return $item->count();
+        })->sort()->keys()->last();
+        $pagamento = $pagamenti[$id_pagamento]->first();
+
+        // Ricerca del conto più utilizzato
+        $conti = $righe->groupBy(function ($item, $key) {
+            return $item->idconto;
+        })->transform(function ($item, $key) {
+            return $item->count();
+        });
+        $id_conto = $conti->sort()->keys()->last();
+        $conto = $dbo->fetchOne('SELECT * FROM co_pianodeiconti3 WHERE id = '.prepare($id_conto));
+
+        // Ricerca dell'IVA più utilizzata secondo percentuali
+        $iva = [];
+        $percentuali_iva = $righe->groupBy(function ($item, $key) {
+            return $item->aliquota->percentuale;
+        });
+        foreach ($percentuali_iva as $key => $values) {
+            $aliquote = $values->mapToGroups(function ($item, $key) {
+                return [$item->aliquota->id => $item->aliquota];
+            });
+            $id_aliquota = $aliquote->map(function ($item, $key) {
+                return $item->count();
+            })->sort()->keys()->last();
+            $aliquota = $aliquote[$id_aliquota]->first();
+
+            $iva[$key] = [
+                'id' => $aliquota->id,
+                'descrizione' => $aliquota->descrizione,
+            ];
+        }
+
+        echo json_encode([
+            'id_tipo' => $id_tipo,
+            'pagamento' => [
+                'id' => $pagamento->id,
+                'descrizione' => $pagamento->descrizione,
+            ],
+            'conto' => [
+                'id' => $conto['id'],
+                'descrizione' => $conto['descrizione'],
+            ],
+            'iva' => $iva,
+        ]);
         break;
 }

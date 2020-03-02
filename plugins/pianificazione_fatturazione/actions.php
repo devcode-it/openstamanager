@@ -42,7 +42,7 @@ switch ($operazione) {
                 $iva = $righe->first()->aliquota;
                 $righe = $righe->toArray();
 
-                $totale = sum(array_column($righe, setting('Utilizza prezzi di vendita con IVA incorporata') ? 'totale' : 'totale_imponibile'));
+                $totale = sum(array_column($righe, setting('Utilizza prezzi di vendita comprensivi di IVA') ? 'totale' : 'totale_imponibile'));
 
                 $qta_riga = $qta[$id_iva];
                 $descrizione_riga = $descrizioni[$id_iva];
@@ -60,6 +60,13 @@ switch ($operazione) {
                 }
             }
         }
+
+        break;
+
+    case 'reset':
+
+        $dbo->query('DELETE FROM `co_fatturazione_contratti` WHERE `idcontratto`='.prepare($id_record));
+        flash()->info(tr('Pianificazione rimossa'));
 
         break;
 
@@ -85,7 +92,7 @@ switch ($operazione) {
 
             // Aggiornamento movimentazioni
             if ($copia->isArticolo()) {
-                $copia->movimenta($copia->qta);
+                //$copia->movimenta($copia->qta);
             }
         }
 

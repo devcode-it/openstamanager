@@ -1,31 +1,38 @@
 <?php
 
-    include_once __DIR__.'/../../../core.php';
+include_once __DIR__.'/../../../core.php';
 
-    $rs = $dbo->fetchArray("SELECT *, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=co_preventivi.idanagrafica) AS ragione_sociale FROM co_preventivi WHERE idstato=(SELECT id FROM co_statipreventivi WHERE descrizione='In lavorazione') ORDER BY data_conclusione ASC");
+$id_module = Modules::get('Preventivi')['id'];
 
-    if (sizeof($rs) > 0) {
-        echo "<table class='table table-hover'>\n";
-        echo "<tr><th width='70%'>Preventivo</th>\n";
-        echo "<th width='15%'>Data inizio</th>\n";
-        echo "<th width='15%'>Data conclusione</th></tr>\n";
+$rs = $dbo->fetchArray("SELECT *, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=co_preventivi.idanagrafica) AS ragione_sociale FROM co_preventivi WHERE idstato=(SELECT id FROM co_statipreventivi WHERE descrizione='In lavorazione') AND default_revision = 1 ORDER BY data_conclusione ASC");
 
-        for ($i = 0; $i < sizeof($rs); ++$i) {
-            $data_accettazione = ($rs[$i]['data_accettazione'] != '0000-00-00') ? Translator::dateToLocale($rs[$i]['data_accettazione']) : '';
-            $data_conclusione = ($rs[$i]['data_conclusione'] != '0000-00-00') ? Translator::dateToLocale($rs[$i]['data_conclusione']) : '';
+if (!empty($rs)) {
+    echo "
+<table class='table table-hover'>
+    <tr>
+        <th width='70%'>Preventivo</th>
+        <th width='15%'>Data inizio</th>
+        <th width='15%'>Data conclusione</th>
+    </tr>";
 
-            if (strtotime($rs[$i]['data_conclusione']) < strtotime(date('Y-m-d')) && $data_conclusione != '') {
-                $attr = ' class="danger"';
-            } else {
-                $attr = '';
-            }
+    foreach ($rs as $preventivo) {
+        $data_accettazione = ($preventivo['data_accettazione'] != '0000-00-00') ? Translator::dateToLocale($preventivo['data_accettazione']) : '';
+        $data_conclusione = ($preventivo['data_conclusione'] != '0000-00-00') ? Translator::dateToLocale($preventivo['data_conclusione']) : '';
 
-            echo '<tr '.$attr.'><td><a href="'.$rootdir.'/editor.php?id_module='.Modules::get('Preventivi')['id'].'&id_record='.$rs[$i]['id'].'">'.$rs[$i]['nome']."</a><br><small class='help-block'>".$rs[$i]['ragione_sociale']."</small></td>\n";
-            echo "<td $attr>".$data_accettazione."</td>\n";
-            echo "<td $attr>".$data_conclusione."</td></tr>\n";
+        if (strtotime($preventivo['data_conclusione']) < strtotime(date('Y-m-d')) && $data_conclusione != '') {
+            $attr = ' class="danger"';
+        } else {
+            $attr = '';
         }
 
-        echo "</table>\n";
-    } else {
-        echo "<p>Non ci sono preventivi in lavorazione.</p>\n";
+        echo '<tr '.$attr.'><td><a href="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$preventivo['id'].'">'.$preventivo['nome']."</a><br><small class='help-block'>".$preventivo['ragione_sociale'].'</small></td>';
+        echo '<td '.$attr.'>'.$data_accettazione.'</td>';
+        echo '<td '.$attr.'>'.$data_conclusione.'</td></tr>';
     }
+
+    echo '
+</table>';
+} else {
+    echo '
+<p>'.tr('Non ci sono preventivi in lavorazione').'.</p>';
+}

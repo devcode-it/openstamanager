@@ -86,7 +86,7 @@ class FatturaOrdinaria extends FatturaElettronica
         return $this->forceArray($result);
     }
 
-    public function saveRighe($articoli, $iva, $conto, $movimentazione = true, $crea_articoli = false)
+    public function saveRighe($articoli, $iva, $conto, $movimentazione = true, $crea_articoli = false, $tipi_riferimenti = [], $id_riferimenti = [])
     {
         $info = $this->getRitenutaRivalsa();
 
@@ -132,6 +132,16 @@ class FatturaOrdinaria extends FatturaElettronica
                 $obj->movimentazione($movimentazione);
             } else {
                 $obj = Riga::build($fattura);
+            }
+
+            // Collegamento al documento di riferimento
+            if (!empty($tipi_riferimenti[$key])) {
+                $obj->original_id = $id_riferimenti[$key];
+                $obj->original_type = $tipi_riferimenti[$key];
+
+                // Riferimenti deprecati
+                //$id_rif = strpos($tipi_riferimenti[$key], 'Ordini') === false ? 'idddt' : 'idordine';
+                //$obj->{$id_rif} = $obj->original_id;
             }
 
             $obj->descrizione = $riga['Descrizione'];
@@ -197,8 +207,7 @@ class FatturaOrdinaria extends FatturaElettronica
                     $sconto_unitario = sum($lista);
                 }
 
-                $obj->sconto_unitario = $sconto_unitario;
-                $obj->tipo_sconto = $tipo;
+                $obj->setSconto($sconto_unitario, $tipo);
             }
 
             $obj->save();

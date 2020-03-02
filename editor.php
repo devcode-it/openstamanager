@@ -22,7 +22,6 @@ if (!empty($id_record)) {
     ]);
     Util\Query::setSegments(true);
 }
-
 $query = str_replace(['AND `deleted_at` IS NULL', '`deleted_at` IS NULL AND', '`deleted_at` IS NULL', 'AND deleted_at IS NULL', 'deleted_at IS NULL AND', 'deleted_at IS NULL'], '', $query);
 
 $has_access = !empty($query) ? $dbo->fetchNum($query) !== 0 : true;
@@ -150,9 +149,9 @@ if (empty($record) || !$has_access) {
                 </div>
             </div>
 		</div>
-		
+
 		<script>
-            $(document).ready(function(){        
+            $(document).ready(function(){
                 $("#restore").click(function(){
                     $("input[name=op]").attr("value", "restore");
                     $("#submit").trigger("click");
@@ -188,7 +187,7 @@ if (empty($record) || !$has_access) {
 
                         $("#save").click(function(){
                             //submitAjax(form);
-                        
+
                             $("#submit").trigger("click");
                         });';
 
@@ -262,9 +261,9 @@ if (empty($record) || !$has_access) {
                 <script>
                 $(document).ready(function(){
                     cleanup_inputs();
-                    
+
                     var form = $("#module-edit").find("form").first();
-                  
+
                     // Campi a inizio form
                     form.prepend($("#custom_fields_top-edit").html());
 
@@ -278,7 +277,7 @@ if (empty($record) || !$has_access) {
                     if (!last.length) {
                         last = form.find(".row").eq(-2);
                     }
-                    
+
                     last.after($("#custom_fields_bottom-edit").html());
                     restart_inputs();
                 });

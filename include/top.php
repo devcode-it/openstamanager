@@ -251,7 +251,7 @@ if (Auth::check()) {
         echo '<script type="text/javascript" charset="utf-8" src="'.App::getPaths()['js'].'/hotkeys-js/hotkeys.min.js"></script>';
         echo '
         <script>
-        hotkeys(\'ctrl+shift+c\', \'save\', function(event, handler){
+        hotkeys(\'f1\', \'save\', function(event, handler){
             event.preventDefault();
             $( "button[data-toggle]" ).first().trigger( "click" );
         });

@@ -310,7 +310,7 @@ $riga = $ordine->getRiga($type, $id_riga);
 
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
-                    $copia->movimenta($copia->qta);
+                    //$copia->movimenta($copia->qta);
                 }
 
                 $copia->save();

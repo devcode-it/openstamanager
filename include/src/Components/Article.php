@@ -171,6 +171,7 @@ abstract class Article extends Row
     {
         if (!empty($this->qta_movimentazione)) {
             $this->movimenta($this->qta_movimentazione);
+            $this->qta_movimentazione = 0;
         }
 
         return parent::save($options);
@@ -282,14 +283,14 @@ abstract class Article extends Row
 
     protected function customBeforeDataCopiaIn($original)
     {
-        $this->movimentazione(false);
+        //$this->movimentazione(false);
 
         parent::customBeforeDataCopiaIn($original);
     }
 
     protected function customAfterDataCopiaIn($original)
     {
-        $this->movimentazione(true);
+        //        $this->movimentazione(true);
 
         parent::customAfterDataCopiaIn($original);
     }

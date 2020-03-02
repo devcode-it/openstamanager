@@ -16,7 +16,7 @@ switch (filter('op')) {
                 ]));
             }
         } else {
-            flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio.'));
+            flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio'));
         }
 
         break;
@@ -43,7 +43,7 @@ switch (filter('op')) {
                 ]));
             }
         } else {
-            flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio.'));
+            flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio'));
         }
 
         break;

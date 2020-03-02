@@ -397,3 +397,25 @@ ALTER TABLE `mg_movimenti` ADD `reference_id` int(11), ADD `reference_type` varc
 UPDATE `mg_movimenti` SET `reference_id`  = `iddocumento`, `reference_type` = 'Modules\\Fatture\\Fattura' WHERE `iddocumento` IS NOT NULL AND `iddocumento` != 0;
 UPDATE `mg_movimenti` SET `reference_id`  = `idintervento`, `reference_type` = 'Modules\\Interventi\\Intervento' WHERE `idintervento` IS NOT NULL AND `idintervento` != 0;
 UPDATE `mg_movimenti` SET `reference_id`  = `idddt`, `reference_type` = 'Modules\\DDT\\DDT' WHERE `idddt` IS NOT NULL AND `idddt` != 0;
+
+-- Descrizioni movimenti predefinite per l'aggiunta dal modulo Movimenti
+CREATE TABLE IF NOT EXISTS `mg_causali_movimenti` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `nome` varchar(255) NOT NULL,
+    `descrizione` varchar(255) NOT NULL,
+    `movimento_carico` BOOLEAN DEFAULT TRUE,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+INSERT INTO `mg_causali_movimenti` (`id`, `nome`, `descrizione`, `movimento_carico`) VALUES
+(NULL, 'Carico', 'Carico manuale', '1'),
+(NULL, 'Scarico', 'Scarico manuale', '0');
+
+-- Introduzione modulo Movimenti predefiniti
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Causali movimenti', 'Causali movimenti', 'causali_movimenti', 'SELECT |select| FROM `mg_causali_movimenti` WHERE 1=1 HAVING 2=2', '', 'fa fa-truck', '2.4.14', '2.4.14', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Tabelle'), '1', '1');
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `default`, `visible`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Causali movimenti'), 'Movimento di carico', 'IF(movimento_carico, ''Si'',  ''No'')', 4, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Causali movimenti'), 'Descrizione', 'descrizione', 3, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Causali movimenti'), 'Nome', 'nome', 2, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Causali movimenti'), 'id', 'id', 1, 1, 0, 0, 0);

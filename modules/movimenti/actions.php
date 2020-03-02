@@ -8,9 +8,10 @@ switch (post('op')) {
     case 'add':
         $idsede_partenza = post('idsede_partenza');
         $idsede_destinazione = post('idsede_destinazione');
-        $qta = (post('direzione') == 'Carico manuale') ? post('qta') : -post('qta');
+        $direzione = post('direzione');
 
-        if (post('direzione') == 'Carico manuale') {
+        $qta = !empty($direzione) ? post('qta') : -post('qta');
+        if (!empty($direzione)) {
             if ($idsede_partenza == 0 && $idsede_destinazione != 0) {
                 $qta = -post('qta');
             } elseif ($idsede_partenza != 0 && $idsede_destinazione == 0) {

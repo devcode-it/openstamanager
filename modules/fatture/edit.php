@@ -35,31 +35,43 @@ if ($dir == 'entrata' && !empty($fattura->dichiarazione) && $fattura->stato->des
 
     if ($diff > 0) {
         echo '
-    <div class="alert alert-info">
-        <i class="fa fa-warning"></i> '.tr("La fattura è collegata a una dichiarazione d'intento con diponibilità di _MONEY_: per collegare una riga alla dichiarazione è sufficiente inserire come IVA _IVA_", [
-                '_MONEY_' => moneyFormat(abs($diff)),
-                '_IVA_' => '"'.$iva->descrizione.'"',
-            ]).'</b>
-    </div>';
+<div class="alert alert-info">
+    <i class="fa fa-warning"></i> '.tr("La fattura è collegata a una dichiarazione d'intento con diponibilità di _MONEY_: per collegare una riga alla dichiarazione è sufficiente inserire come IVA _IVA_", [
+            '_MONEY_' => moneyFormat(abs($diff)),
+            '_IVA_' => '"'.$iva->descrizione.'"',
+        ]).'.</b>
+</div>';
     } elseif ($diff == 0) {
         echo '
-    <div class="alert alert-warning">
-        <i class="fa fa-warning"></i> '.tr("La dichiarazione d'intento ha raggiunto il massimale previsto di _MONEY_: le nuove righe della fattura devono presentare IVA diversa da _IVA_", [
-                '_MONEY_' => moneyFormat(abs($fattura->dichiarazione->massimale)),
-                '_IVA_' => '"'.$iva->descrizione.'"',
-            ]).'</b>
-    </div>';
+<div class="alert alert-warning">
+    <i class="fa fa-warning"></i> '.tr("La dichiarazione d'intento ha raggiunto il massimale previsto di _MONEY_: le nuove righe della fattura devono presentare IVA diversa da _IVA_", [
+            '_MONEY_' => moneyFormat(abs($fattura->dichiarazione->massimale)),
+            '_IVA_' => '"'.$iva->descrizione.'"',
+        ]).'.</b>
+</div>';
     } else {
         echo '
-    <div class="alert alert-danger">
-        <i class="fa fa-warning"></i> '.tr("La dichiarazione d'intento ha superato il massimale previsto di _MONEY_: per rimuovere righe della fattura dalla dichiarazione è sufficiente modificare l'IVA in qualcosa di diverso da _IVA_", [
-            '_MONEY_' => moneyFormat(abs($diff)),
-                '_IVA_' => '"'.$iva->descrizione.'"',
-        ]).'</b>
-    </div>';
+<div class="alert alert-danger">
+    <i class="fa fa-warning"></i> '.tr("La dichiarazione d'intento ha superato il massimale previsto di _MONEY_: per rimuovere righe della fattura dalla dichiarazione è sufficiente modificare l'IVA in qualcosa di diverso da _IVA_", [
+        '_MONEY_' => moneyFormat(abs($diff)),
+            '_IVA_' => '"'.$iva->descrizione.'"',
+    ]).'.</b>
+</div>';
     }
 }
 
+if ($dir == 'entrata') {
+    $numero_previsto = verifica_numero($fattura);
+    if (!empty($numero_previsto)) {
+        echo '
+<div class="alert alert-warning">
+    <i class="fa fa-warning"></i> '.tr("E' assente una fattura di vendita di numero _NUM_ in data precedente o corrispondente a _DATE_: si potrebbero verificare dei problemi con la numerazione corrente delle fatture", [
+            '_DATE_' => dateFormat($fattura->data),
+            '_NUM_' => '"'.$numero_previsto.'"',
+        ]).'.</b>
+</div>';
+    }
+}
 ?>
 <form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
@@ -196,14 +208,14 @@ if (empty($record['is_fiscale'])) {
 					<?php
                     } ?>
                 </div>
-                
-                
+
+
 				<?php if ($dir == 'entrata') { ?>
 				<div class="col-md-6">
 					{[ "type": "select", "label": "<?php echo tr('Agente di riferimento'); ?>", "name": "idagente", "ajax-source": "agenti", "value": "$idagente_fattura$" ]}
 				</div>
 				<?php } ?>
-                
+
 
                 <?php
                 // Conteggio numero articoli fatture
@@ -211,7 +223,7 @@ if (empty($record['is_fiscale'])) {
                 if ($dir == 'uscita') {
                     ?>
                     <div class="col-md-6">
-                        
+
                         <?php
                         echo Plugins::link('Sedi', $record['idsede_partenza'], null, null, 'class="pull-right"'); ?>
 
@@ -229,7 +241,7 @@ if (empty($record['is_fiscale'])) {
                 } else {
                     ?>
                     <div class="col-md-6">
-                        
+
                         <?php
                         echo Plugins::link('Sedi', $record['idsede_partenza'], null, null, 'class="pull-right"'); ?>
 
@@ -237,7 +249,7 @@ if (empty($record['is_fiscale'])) {
                     </div>
 
                     <div class="col-md-6">
-                        
+
                         <?php
                         echo Plugins::link('Sedi', $record['idsede_destinazione'], null, null, 'class="pull-right"'); ?>
 
@@ -384,11 +396,11 @@ echo '
                             '_MONEY_' => moneyFormat(setting("Soglia minima per l'applicazione della marca da bollo")),
                         ]).'.", "placeholder": "'.tr('Bollo automatico').'" ]}
                 </div>
-                
+
                 <div class="col-md-4">
                     {[ "type": "number", "label": "'.tr('Importo marca da bollo').'", "name": "bollo", "value": "$bollo$", "disabled": '.intval(!isset($record['bollo'])).' ]}
                 </div>
-  
+
                 <script type="text/javascript">
                     $(document).ready(function() {
                         $("#bollo_automatico").click(function(){
@@ -665,7 +677,7 @@ if ($dir == 'uscita' && $fattura->isFE()) {
 <div class="alert alert-info text-center" id="controlla_totali"><i class="fa fa-spinner fa-spin"></i> '.tr('Controllo sui totali del documento e della fattura elettronica in corso').'...</div>
 
 <script>
-    $(document).ready(function() {        
+    $(document).ready(function() {
         $.ajax({
             url: globals.rootdir + "/actions.php",
             type: "post",
@@ -676,7 +688,7 @@ if ($dir == 'uscita' && $fattura->isFE()) {
             },
             success: function(data){
                 data = JSON.parse(data);
-             
+
                 var div = $("#controlla_totali");
                 div.removeClass("alert-info");
 
@@ -690,7 +702,7 @@ if ($dir == 'uscita' && $fattura->isFE()) {
                         '_CALC_' => '" + data.calculated + " " + globals.currency + "',
                     ]).'.")
                 }
-                
+
             }
         });
     })
@@ -710,7 +722,7 @@ echo '
 <script type="text/javascript">
 	$("#idanagrafica").change(function(){
         session_set("superselect,idanagrafica", $(this).val(), 0);
-        
+
         $("#id_dichiarazione_intento").selectReset();';
 
         if ($dir == 'entrata') {
@@ -785,7 +797,7 @@ $(".btn-sm[data-toggle=\"tooltip\"]").each(function() {
         }, function() {
             buttonRestore(btn, restore);
         });
-        
+
 		// Procedo al salvataggio solo se tutti i campi obbligatori sono compilati, altrimenti mostro avviso
         //form.find("input:disabled, select:disabled").removeAttr("disabled");
 
@@ -795,14 +807,14 @@ $(".btn-sm[data-toggle=\"tooltip\"]").each(function() {
                 title: "'.tr('Errore').'",
                 text:  "'.tr('Alcuni campi obbligatori non sono stati compilati correttamente').'.",
             });
-			 
-            $(document).one("show.bs.modal","#modals > div", function (e) {                 
+
+            $(document).one("show.bs.modal","#modals > div", function (e) {
                 return e.preventDefault();
             });
 		}
-	   
+
 	    $(document).one("show.bs.modal","#modals > div", function () {
-            buttonRestore(btn, restore);         
+            buttonRestore(btn, restore);
         });
 	});
 });

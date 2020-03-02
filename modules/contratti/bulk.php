@@ -38,7 +38,7 @@ switch (post('op')) {
             $anagrafica = $documento_import->anagrafica;
             $id_anagrafica = $anagrafica->id;
 
-            if(!$documento_import->stato->is_pianificabile){
+            if (!$documento_import->stato->is_pianificabile) {
                 break;
             }
 

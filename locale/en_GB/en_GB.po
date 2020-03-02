@@ -385,7 +385,7 @@ msgstr "Bill"
 #: modules/voci_servizio/edit.php:16 modules/zone/add.php:15 modules/zone/edit.php:17 plugins/importFE/generate.php:270
 #: plugins/importFE/list.php:16 plugins/pianificazione_interventi/add_articolo.php:91
 #: plugins/pianificazione_interventi/add_righe.php:55 plugins/pianificazione_interventi/row-list.php:16
-#: plugins/pianificazione_interventi/edit.php:44 plugins/pianificazione_interventi/pianficazione.php:103
+#: plugins/pianificazione_interventi/edit.php:44 plugins/pianificazione_interventi/pianificazione.php:103
 #: plugins/rinnovi_contratti/edit.php:15 templates/contratti/body.php:79 templates/ddt/body.php:18
 #: templates/fatture/body.php:21 templates/interventi/body.php:114 templates/interventi/body.php:136
 #: templates/magazzino_inventario/body.php:79 templates/ordini/body.php:37 templates/preventivi/body.php:64
@@ -3082,7 +3082,7 @@ msgstr "License"
 #: modules/interventi/widgets/interventi.pianificazionedashboard.interventi.php:44 modules/movimenti/add.php:46
 #: modules/my_impianti/add.php:31 modules/my_impianti/edit.php:67 modules/ordini/edit.php:85 modules/preventivi/add.php:28
 #: modules/preventivi/edit.php:54 modules/utenti/components/base.php:36 plugins/pianificazione_interventi/edit.php:46
-#: plugins/pianificazione_interventi/pianficazione.php:93 plugins/referenti/add.php:33 plugins/referenti/edit.php:35
+#: plugins/pianificazione_interventi/pianificazione.php:93 plugins/referenti/add.php:33 plugins/referenti/edit.php:35
 msgid "Sede"
 msgstr "Office"
 
@@ -3414,7 +3414,7 @@ msgstr "BIC"
 #: modules/emails/edit.php:13 modules/iva/edit.php:39 modules/misure/edit.php:12 modules/pagamenti/edit.php:12
 #: modules/porti/edit.php:11 modules/relazioni_anagrafiche/edit.php:12 modules/ritenute/edit.php:22
 #: modules/ritenute_contributi/edit.php:22 modules/rivalse/edit.php:12 modules/smtp/edit.php:13 modules/spedizioni/edit.php:11
-#: modules/tipi_scadenze/edit.php:21 plugins/pianificazione_interventi/pianficazione.php:76
+#: modules/tipi_scadenze/edit.php:21 plugins/pianificazione_interventi/pianificazione.php:76
 msgid "Dati"
 msgstr "Data"
 
@@ -3887,7 +3887,7 @@ msgid "Righe"
 msgstr "Rows"
 
 #: modules/contratti/edit.php:309 modules/ddt/edit.php:286 modules/fatture/edit.php:610 modules/interventi/edit.php:229
-#: modules/ordini/edit.php:182 modules/preventivi/edit.php:194 plugins/pianificazione_interventi/pianficazione.php:126
+#: modules/ordini/edit.php:182 modules/preventivi/edit.php:194 plugins/pianificazione_interventi/pianificazione.php:126
 msgid "Aggiungi articolo"
 msgstr "Add article"
 
@@ -4319,7 +4319,7 @@ msgid "Mostra di sopra"
 msgstr "Show upstairs"
 
 #: modules/dashboard/actions.php:29 modules/dashboard/actions.php:116 modules/dashboard/edit.php:223
-#: modules/interventi/add.php:284 plugins/pianificazione_interventi/pianficazione.php:209
+#: modules/interventi/add.php:284 plugins/pianificazione_interventi/pianificazione.php:209
 msgid "Tecnici"
 msgstr "Technicians"
 
@@ -4339,7 +4339,7 @@ msgstr "Requested date"
 
 #: modules/dashboard/actions.php:114 modules/interventi/widgets/interventi.pianificazionedashboard.interventi.php:42
 #: plugins/pianificazione_interventi/edit.php:43 plugins/pianificazione_interventi/edit.php:197
-#: plugins/pianificazione_interventi/pianficazione.php:87 templates/interventi/body.php:96
+#: plugins/pianificazione_interventi/pianificazione.php:87 templates/interventi/body.php:96
 msgid "Tipo intervento"
 msgstr "Type of intervention"
 
@@ -5514,11 +5514,11 @@ msgstr "Delete this expense?"
 msgid "Eliminato"
 msgstr "Removed"
 
-#: modules/interventi/ajax_tecnici.php:34 plugins/pianificazione_interventi/pianficazione.php:214
+#: modules/interventi/ajax_tecnici.php:34 plugins/pianificazione_interventi/pianificazione.php:214
 msgid "Orario inizio"
 msgstr "Start time"
 
-#: modules/interventi/ajax_tecnici.php:35 plugins/pianificazione_interventi/pianficazione.php:218
+#: modules/interventi/ajax_tecnici.php:35 plugins/pianificazione_interventi/pianificazione.php:218
 msgid "Orario fine"
 msgstr "End time"
 
@@ -5620,7 +5620,7 @@ msgstr ""
 msgid "Visualizza dettaglio costi"
 msgstr "View cost details"
 
-#: modules/interventi/edit.php:234 plugins/pianificazione_interventi/pianficazione.php:150
+#: modules/interventi/edit.php:234 plugins/pianificazione_interventi/pianificazione.php:150
 msgid "Aggiungi altre spese"
 msgstr "Add other expenses"
 
@@ -8580,98 +8580,98 @@ msgstr "Add a new reminder?"
 msgid "Seleziona un tipo intervento"
 msgstr "Select a component"
 
-#: plugins/pianificazione_interventi/pianficazione.php:46
+#: plugins/pianificazione_interventi/pianificazione.php:46
 msgid "Pianificare a partire da questo promemoria _DATE_"
 msgstr "Plan to go from this reminder _DATE_"
 
-#: plugins/pianificazione_interventi/pianficazione.php:52
+#: plugins/pianificazione_interventi/pianificazione.php:52
 msgid "Pianificare a partire da oggi _DATE_"
 msgstr "Plant to go from today _DATE_"
 
-#: plugins/pianificazione_interventi/pianficazione.php:83
+#: plugins/pianificazione_interventi/pianificazione.php:83
 msgid "Data promemoria"
 msgstr "Reminder data"
 
-#: plugins/pianificazione_interventi/pianficazione.php:97
+#: plugins/pianificazione_interventi/pianificazione.php:97
 #, fuzzy
 msgid "Impianti a contratto"
 msgstr "Plants a contract"
 
-#: plugins/pianificazione_interventi/pianficazione.php:97
+#: plugins/pianificazione_interventi/pianificazione.php:97
 #, fuzzy
 msgid "Impianti sede selezionata"
 msgstr "Plants seat selected"
 
-#: plugins/pianificazione_interventi/pianficazione.php:113
+#: plugins/pianificazione_interventi/pianificazione.php:113
 msgid "Materiale da utilizzare"
 msgstr "Material to use"
 
-#: plugins/pianificazione_interventi/pianficazione.php:137
+#: plugins/pianificazione_interventi/pianificazione.php:137
 #, fuzzy
 msgid "Altre spese previste"
 msgstr "Other expenses provided for"
 
-#: plugins/pianificazione_interventi/pianficazione.php:163
+#: plugins/pianificazione_interventi/pianificazione.php:163
 msgid "Promemoria ciclico?"
 msgstr "Reminder cycle?"
 
-#: plugins/pianificazione_interventi/pianficazione.php:169
+#: plugins/pianificazione_interventi/pianificazione.php:169
 msgid "Pianifica anche date passate"
 msgstr "Plan also past date "
 
-#: plugins/pianificazione_interventi/pianficazione.php:169
+#: plugins/pianificazione_interventi/pianificazione.php:169
 msgid "Pianificare promemoria anche con date precedenti ad oggi: "
 msgstr "Plan reminder also with preview date to date:"
 
-#: plugins/pianificazione_interventi/pianficazione.php:175
+#: plugins/pianificazione_interventi/pianificazione.php:175
 msgid "Promemoria ciclico"
 msgstr "Reminder cycle"
 
-#: plugins/pianificazione_interventi/pianficazione.php:175
+#: plugins/pianificazione_interventi/pianificazione.php:175
 msgid "Pianificare promemoria ciclici"
 msgstr "Plant reminder cycle"
 
-#: plugins/pianificazione_interventi/pianficazione.php:175
+#: plugins/pianificazione_interventi/pianificazione.php:175
 #, fuzzy
 msgid "Pianificare ciclicamente altri promemoria identici a questo"
 msgstr "Cyclically plan others reminder identical to this"
 
-#: plugins/pianificazione_interventi/pianficazione.php:179
+#: plugins/pianificazione_interventi/pianificazione.php:179
 msgid "Intervallo"
 msgstr "Interval"
 
-#: plugins/pianificazione_interventi/pianficazione.php:183
+#: plugins/pianificazione_interventi/pianificazione.php:183
 msgid "Inizio pianificazione"
 msgstr "Start planning"
 
-#: plugins/pianificazione_interventi/pianficazione.php:183
+#: plugins/pianificazione_interventi/pianificazione.php:183
 #, fuzzy
 msgid "Intervallo compreso dalla data accettazione contratto fino alla data di conclusione"
 msgstr "Interval included form acceptation contract date until to conclusion date"
 
-#: plugins/pianificazione_interventi/pianficazione.php:187
+#: plugins/pianificazione_interventi/pianificazione.php:187
 msgid "Fine pianificazione"
 msgstr "End planning"
 
-#: plugins/pianificazione_interventi/pianficazione.php:187
+#: plugins/pianificazione_interventi/pianificazione.php:187
 msgid "Data conclusione contratto"
 msgstr "Conclusion date contract"
 
-#: plugins/pianificazione_interventi/pianficazione.php:198
+#: plugins/pianificazione_interventi/pianificazione.php:198
 msgid "Pianificare interventi?"
 msgstr "Plan intervention?"
 
-#: plugins/pianificazione_interventi/pianficazione.php:205
+#: plugins/pianificazione_interventi/pianificazione.php:205
 #, fuzzy
 msgid "Pianifica anche l'intervento"
 msgstr "Plan also the intervention"
 
-#: plugins/pianificazione_interventi/pianficazione.php:205
+#: plugins/pianificazione_interventi/pianificazione.php:205
 #, fuzzy
 msgid "Pianificare già l'intervento"
 msgstr "Already plan the intervention"
 
-#: plugins/pianificazione_interventi/pianficazione.php:230
+#: plugins/pianificazione_interventi/pianificazione.php:230
 msgid "Pianifica"
 msgstr "Plan"
 

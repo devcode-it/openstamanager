@@ -134,7 +134,7 @@ if (!$elenco_promemoria->isEmpty()) {
                 <td>'.$info_allegati.'</td>
                 <td align="right">
 
-                <button type="button" class="btn btn-warning btn-sm" title="Pianifica..." data-toggle="tooltip" onclick="launch_modal(\'Pianifica\', \''.$structure->fileurl('pianficazione.php').'?id_module='.$id_module.'&id_plugin='.$structure['id'].'&id_parent='.$id_record.'&id_record='.$promemoria['id'].'\');"'.((!empty($is_pianificabile)) ? '' : ' disabled').'>
+                <button type="button" class="btn btn-warning btn-sm" title="Pianifica..." data-toggle="tooltip" onclick="launch_modal(\'Pianifica\', \''.$structure->fileurl('pianificazione.php').'?id_module='.$id_module.'&id_plugin='.$structure['id'].'&id_parent='.$id_record.'&id_record='.$promemoria['id'].'\');"'.((!empty($is_pianificabile)) ? '' : ' disabled').'>
                     <i class="fa fa-clock-o"></i>
                 </button>
 
@@ -183,7 +183,7 @@ echo '
             data_richiesta: "'.$contratto['data_accettazione'].'",
             idtipointervento: id_tipo,
         }).done(function(data) {
-            launch_modal("Nuovo promemoria", globals.rootdir + "/plugins/'.$structure['directory'].'/pianficazione.php?id_plugin='.$structure['id'].'&id_parent='.$id_record.'&id_record=" + data + "&add=1");
+            launch_modal("Nuovo promemoria", globals.rootdir + "/plugins/'.$structure['directory'].'/pianificazione.php?id_plugin='.$structure['id'].'&id_parent='.$id_record.'&id_record=" + data + "&add=1");
 
             buttonRestore("#add_promemoria", restore);
         });

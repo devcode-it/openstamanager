@@ -427,7 +427,7 @@ msgstr ""
 #: plugins/pianificazione_interventi/add_righe.php:55
 #: plugins/pianificazione_interventi/row-list.php:16
 #: plugins/pianificazione_interventi/edit.php:44
-#: plugins/pianificazione_interventi/pianficazione.php:103
+#: plugins/pianificazione_interventi/pianificazione.php:103
 #: plugins/rinnovi_contratti/edit.php:15 templates/contratti/body.php:79
 #: templates/ddt/body.php:18 templates/fatture/body.php:21
 #: templates/interventi/body.php:103 templates/interventi/body.php:125
@@ -3055,7 +3055,7 @@ msgstr ""
 #: modules/ordini/edit.php:85 modules/preventivi/edit.php:54
 #: modules/utenti/components/base.php:32
 #: plugins/pianificazione_interventi/edit.php:46
-#: plugins/pianificazione_interventi/pianficazione.php:93
+#: plugins/pianificazione_interventi/pianificazione.php:93
 #: plugins/referenti/add.php:33 plugins/referenti/edit.php:35
 msgid "Sede"
 msgstr ""
@@ -3389,7 +3389,7 @@ msgstr ""
 #: modules/rivalse/edit.php:12 modules/services/custom/edit.php:44
 #: modules/smtp/edit.php:13 modules/spedizioni/edit.php:11
 #: modules/tipi_scadenze/edit.php:21 modules/user_service/custom/edit.php:13
-#: plugins/pianificazione_interventi/pianficazione.php:76
+#: plugins/pianificazione_interventi/pianificazione.php:76
 msgid "Dati"
 msgstr ""
 
@@ -3876,7 +3876,7 @@ msgstr ""
 #: modules/contratti/edit.php:294 modules/ddt/edit.php:259
 #: modules/fatture/edit.php:546 modules/interventi/edit.php:229
 #: modules/ordini/edit.php:148 modules/preventivi/edit.php:177
-#: plugins/pianificazione_interventi/pianficazione.php:126
+#: plugins/pianificazione_interventi/pianificazione.php:126
 msgid "Aggiungi articolo"
 msgstr ""
 
@@ -4254,7 +4254,7 @@ msgstr ""
 
 #: modules/dashboard/actions.php:29 modules/dashboard/actions.php:116
 #: modules/dashboard/edit.php:223 modules/interventi/add.php:280
-#: plugins/pianificazione_interventi/pianficazione.php:209
+#: plugins/pianificazione_interventi/pianificazione.php:209
 msgid "Tecnici"
 msgstr ""
 
@@ -4278,7 +4278,7 @@ msgstr ""
 #: modules/interventi/widgets/interventi.pianificazionedashboard.interventi.php:54
 #: plugins/pianificazione_interventi/edit.php:43
 #: plugins/pianificazione_interventi/edit.php:204
-#: plugins/pianificazione_interventi/pianficazione.php:87
+#: plugins/pianificazione_interventi/pianificazione.php:87
 #: templates/interventi/body.php:86
 msgid "Tipo intervento"
 msgstr ""
@@ -5263,12 +5263,12 @@ msgid "Eliminato"
 msgstr ""
 
 #: modules/interventi/ajax_tecnici.php:38
-#: plugins/pianificazione_interventi/pianficazione.php:214
+#: plugins/pianificazione_interventi/pianificazione.php:214
 msgid "Orario inizio"
 msgstr ""
 
 #: modules/interventi/ajax_tecnici.php:39
-#: plugins/pianificazione_interventi/pianficazione.php:218
+#: plugins/pianificazione_interventi/pianificazione.php:218
 msgid "Orario fine"
 msgstr ""
 
@@ -5374,7 +5374,7 @@ msgid "Visualizza dettaglio costi"
 msgstr ""
 
 #: modules/interventi/edit.php:234
-#: plugins/pianificazione_interventi/pianficazione.php:150
+#: plugins/pianificazione_interventi/pianificazione.php:150
 msgid "Aggiungi altre spese"
 msgstr ""
 
@@ -7907,93 +7907,93 @@ msgstr ""
 msgid "Seleziona un tipo intervento"
 msgstr ""
 
-#: plugins/pianificazione_interventi/pianficazione.php:46
+#: plugins/pianificazione_interventi/pianificazione.php:46
 msgid "Pianificare a partire da questo promemoria _DATE_"
 msgstr ""
 
-#: plugins/pianificazione_interventi/pianficazione.php:52
+#: plugins/pianificazione_interventi/pianificazione.php:52
 msgid "Pianificare a partire da oggi _DATE_"
 msgstr ""
 
-#: plugins/pianificazione_interventi/pianficazione.php:83
+#: plugins/pianificazione_interventi/pianificazione.php:83
 msgid "Data promemoria"
 msgstr ""
 
-#: plugins/pianificazione_interventi/pianficazione.php:97
+#: plugins/pianificazione_interventi/pianificazione.php:97
 msgid "Impianti a contratto"
 msgstr ""
 
-#: plugins/pianificazione_interventi/pianficazione.php:97
+#: plugins/pianificazione_interventi/pianificazione.php:97
 msgid "Impianti sede selezionata"
 msgstr ""
 
-#: plugins/pianificazione_interventi/pianficazione.php:113
+#: plugins/pianificazione_interventi/pianificazione.php:113
 msgid "Materiale da utilizzare"
 msgstr ""
 
-#: plugins/pianificazione_interventi/pianficazione.php:137
+#: plugins/pianificazione_interventi/pianificazione.php:137
 msgid "Altre spese previste"
 msgstr ""
 
-#: plugins/pianificazione_interventi/pianficazione.php:163
+#: plugins/pianificazione_interventi/pianificazione.php:163
 msgid "Promemoria ciclico?"
 msgstr ""
 
-#: plugins/pianificazione_interventi/pianficazione.php:169
+#: plugins/pianificazione_interventi/pianificazione.php:169
 msgid "Pianifica anche date passate"
 msgstr ""
 
-#: plugins/pianificazione_interventi/pianficazione.php:169
+#: plugins/pianificazione_interventi/pianificazione.php:169
 msgid "Pianificare promemoria anche con date precedenti ad oggi: "
 msgstr ""
 
-#: plugins/pianificazione_interventi/pianficazione.php:175
+#: plugins/pianificazione_interventi/pianificazione.php:175
 msgid "Promemoria ciclico"
 msgstr ""
 
-#: plugins/pianificazione_interventi/pianficazione.php:175
+#: plugins/pianificazione_interventi/pianificazione.php:175
 msgid "Pianificare promemoria ciclici"
 msgstr ""
 
-#: plugins/pianificazione_interventi/pianficazione.php:175
+#: plugins/pianificazione_interventi/pianificazione.php:175
 msgid "Pianificare ciclicamente altri promemoria identici a questo"
 msgstr ""
 
-#: plugins/pianificazione_interventi/pianficazione.php:179
+#: plugins/pianificazione_interventi/pianificazione.php:179
 msgid "Intervallo"
 msgstr ""
 
-#: plugins/pianificazione_interventi/pianficazione.php:183
+#: plugins/pianificazione_interventi/pianificazione.php:183
 msgid "Inizio pianificazione"
 msgstr ""
 
-#: plugins/pianificazione_interventi/pianficazione.php:183
+#: plugins/pianificazione_interventi/pianificazione.php:183
 msgid ""
 "Intervallo compreso dalla data accettazione contratto fino alla data di "
 "conclusione"
 msgstr ""
 
-#: plugins/pianificazione_interventi/pianficazione.php:187
+#: plugins/pianificazione_interventi/pianificazione.php:187
 msgid "Fine pianificazione"
 msgstr ""
 
-#: plugins/pianificazione_interventi/pianficazione.php:187
+#: plugins/pianificazione_interventi/pianificazione.php:187
 msgid "Data conclusione contratto"
 msgstr ""
 
-#: plugins/pianificazione_interventi/pianficazione.php:198
+#: plugins/pianificazione_interventi/pianificazione.php:198
 msgid "Pianificare interventi?"
 msgstr ""
 
-#: plugins/pianificazione_interventi/pianficazione.php:205
+#: plugins/pianificazione_interventi/pianificazione.php:205
 msgid "Pianifica anche l'intervento"
 msgstr ""
 
-#: plugins/pianificazione_interventi/pianficazione.php:205
+#: plugins/pianificazione_interventi/pianificazione.php:205
 msgid "Pianificare già l'intervento"
 msgstr ""
 
-#: plugins/pianificazione_interventi/pianficazione.php:230
+#: plugins/pianificazione_interventi/pianificazione.php:230
 msgid "Pianifica"
 msgstr ""
 

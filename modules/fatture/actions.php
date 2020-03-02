@@ -223,9 +223,10 @@ switch (post('op')) {
 
         $new = $fattura->replicate();
         $new->numero = Fattura::getNextNumero($new->data, $new->direzione, $new->id_segment);
-        if ($new->direzione == 'entrata') {
+        if (!empty($fattura->numero_esterno)) {
             $new->numero_esterno = Fattura::getNextNumeroSecondario($new->data, $new->direzione, $new->id_segment);
         }
+
         $new->stato()->associate($stato);
         $new->save();
 

@@ -284,4 +284,11 @@ class Anagrafica extends Model
             $this->ragione_sociale = $this->cognome.' '.$this->nome;
         }
     }
+
+    // Attributi Eloquent
+
+    public function getModuleAttribute()
+    {
+        return 'Anagrafiche';
+    }
 }

@@ -574,5 +574,31 @@ class Fattura extends Document
         $riga->idconto = setting('Conto predefinito per la marca da bollo');
 
         $riga->save();
-    }
+    } 
+
+
+     // Opzioni di riferimento
+     public function getReferenceName()
+     {
+         return $this->tipo->descrizione;
+     }
+ 
+     public function getReferenceNumber()
+     {
+         return $this->numero_esterno ?: $this->numero;
+     }
+ 
+     public function getReferenceDate()
+     {
+         return $this->data;
+     }
+
+     public function getReference(){
+     
+        $name = $this->getReferenceName();
+        $number = $this->getReferenceNumber();
+        $date = $this->getReferenceDate();
+
+     }
+
 }

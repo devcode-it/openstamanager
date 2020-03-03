@@ -36,7 +36,7 @@ if (file_exists($docroot.'/assistenza.php')) {
 
                 <p><b>'.tr('Versione').':</b> '.$version.' <small class="text-muted">('.(!empty($revision) ? 'R'.$revision : tr('In sviluppo')).')</small></p>
 
-                <p><b>'.tr('Licenza').':</b> <a href="http://www.gnu.org/licenses/gpl-3.0.txt" target="_blank" title="'.tr('Vai al sito per leggere la licenza').'">GPLv3</a></p>
+                <p><b>'.tr('Licenza').':</b> <a href="https://www.gnu.org/licenses/gpl-3.0.txt" target="_blank" title="'.tr('Vai al sito per leggere la licenza').'">GPLv3</a></p>
             </div>
         </div>
 
@@ -56,11 +56,11 @@ if (file_exists($docroot.'/assistenza.php')) {
 
                         <p>'.tr('OpenSTAManager è inoltre stato progettato utilizzando altro software libero, tra cui principalmente').':</p>
                         <ul>
-                            <li><a href="http://www.php.net" target="_blank"><i class="fa fa-circle-o-notch"></i> PHP</a></li>
-                            <li><a href="http://www.mysql.com" target="_blank"><i class="fa fa-circle-o-notch"></i> MySQL</a></li>
-                            <li><a href="http://jquery.com" target="_blank"><i class="fa fa-circle-o-notch"></i> JQuery</a></li>
-                            <li><a href="http://getbootstrap.com" target="_blank"><i class="fa fa-circle-o-notch"></i> Bootstrap</a></li>
-                            <li><a href="http://fortawesome.github.io/Font-Awesome" target="_blank"><i class="fa fa-circle-o-notch"></i> FontAwesome</a></li>
+                            <li><a href="https://www.php.net" target="_blank"><i class="fa fa-circle-o-notch"></i> PHP</a></li>
+                            <li><a href="https://www.mysql.com" target="_blank"><i class="fa fa-circle-o-notch"></i> MySQL</a></li>
+                            <li><a href="https://jquery.com" target="_blank"><i class="fa fa-circle-o-notch"></i> JQuery</a></li>
+                            <li><a href="https://getbootstrap.com" target="_blank"><i class="fa fa-circle-o-notch"></i> Bootstrap</a></li>
+                            <li><a href="https://fortawesome.github.io/Font-Awesome" target="_blank"><i class="fa fa-circle-o-notch"></i> FontAwesome</a></li>
                         </ul>
                     </div>
                 </div>
@@ -85,13 +85,13 @@ if (file_exists($docroot.'/assistenza.php')) {
                                     </a>
                                 </div>
                                 <div class="col-xs-3 text-center">
-                                    <a href="http://www.openstamanager.com/forum/" target="_blank">
+                                    <a href="https://forum.openstamanager.com/" target="_blank">
                                         <i class="fa fa-2x fa-edit"></i><br>
                                         '.tr('Forum').'
                                     </a>
                                 </div>
                                 <div class="col-xs-3 text-center">
-                                    <a href="http://eepurl.com/8MFgH" target="_blank">
+                                    <a href="https://eepurl.com/8MFgH" target="_blank">
                                         <i class="fa fa-2x fa-envelope"></i><br>
                                         '.tr('Newsletter').'
                                     </a>
@@ -115,7 +115,7 @@ if (file_exists($docroot.'/assistenza.php')) {
 
                     <div class="box-body">
                         <p>'.tr("Tutti gli aggiornamenti e le nuove versioni sono disponibili all'indirizzo").':</p>
-                        <a href="http://www.openstamanager.com/downloads/" target="_blank"><i class="fa fa-external-link"></i> www.openstamanager.com/downloads/</a>
+                        <a href="https://www.openstamanager.com/downloads/" target="_blank"><i class="fa fa-external-link"></i> www.openstamanager.com/downloads/</a>
                     </div>
                 </div>
             </div>
@@ -135,7 +135,7 @@ if (file_exists($docroot.'/assistenza.php')) {
 
                         <p>'.tr('Offriamo supporto a pagamento professionale a chi fosse interessato, ma a chi non interessa il supporto a pagamento e sta comunque utilizzando il software chiediamo una donazione per il lavoro svolto finora e per la possibilità di continuare questo progetto con lo stesso spirito con cui è nato').'. '.tr('Le donazioni non ci rendono ricchi, ma sono un <b>grande simbolo di apprezzamento</b>').'.</p>
 
-                        <a href="http://sourceforge.net/donate/index.php?group_id=236538" class="btn btn-lg btn-success btn-block" target="_blank"><i class="fa fa-usd"></i> '.tr('Supporta questo progetto').'</a>
+                        <a href="https://sourceforge.net/donate/index.php?group_id=236538" class="btn btn-lg btn-success btn-block" target="_blank"><i class="fa fa-usd"></i> '.tr('Supporta questo progetto').'</a>
                     </div>
                 </div>
             </div>
@@ -152,7 +152,7 @@ if (file_exists($docroot.'/assistenza.php')) {
 
                         <p>'.tr("E' disponibile anche un <b>servizio cloud</b> su cui poter installare OpenSTAManager, in modo da non doverti più preoccupare di backup e gestione dei dati").'.</p>
 
-                        <p><a href="http://www.openstamanager.com/per-le-aziende/" class="btn btn-lg btn-info btn-block" target="_blank"><i class="fa fa-thumbs-up"></i> '.tr('Ottieni supporto professionale').'</a></p>
+                        <p><a href="https://www.openstamanager.com/per-le-aziende/" class="btn btn-lg btn-info btn-block" target="_blank"><i class="fa fa-thumbs-up"></i> '.tr('Ottieni supporto professionale').'</a></p>
                     </div>
                 </div>
             </div>

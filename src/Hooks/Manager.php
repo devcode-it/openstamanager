@@ -6,6 +6,13 @@ use Models\Hook;
 
 abstract class Manager
 {
+    protected $hook = null;
+
+    public function __construct(Hook $hook)
+    {
+        $this->hook = $hook;
+    }
+
     /**
      * Restituisce le informazioni sull'esecuzione dell'hook.
      *
@@ -31,7 +38,7 @@ abstract class Manager
     }
 
     /**
-     * Restituisce se l'hook ha bisogno di una esecuzione;.
+     * Restituisce se l'hook ha bisogno di una esecuzione.
      *
      * @return bool
      */
@@ -58,12 +65,8 @@ abstract class Manager
      *
      * @return Hook|null
      */
-    protected static function getHook()
+    protected function getHook()
     {
-        $class = get_called_class();
-
-        $hook = Hook::where('class', $class)->first();
-
-        return $hook;
+        return $this->getHook();
     }
 }

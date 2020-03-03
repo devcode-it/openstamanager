@@ -391,3 +391,20 @@ ORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC' WHERE `name` = 'O
 UPDATE `zz_views` SET `query` = 'righe.totale_imponibile' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore') AND `name` = 'Totale';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore'), 'Totale ivato', 'righe.totale', 5, 1, 1, 1, 1);
+
+-- Miglioramento della cache interna
+CREATE TABLE IF NOT EXISTS `zz_cache` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(255) NOT NULL,
+    `content` TEXT NOT NULL,
+    `valid_time` VARCHAR(255),
+    `expire_at` timestamp NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+INSERT INTO `zz_cache` (`id`, `name`, `content`, `valid_time`, `expire_at`) VALUES
+(NULL, 'Ricevute Elettroniche', '', '1 day', NULL),
+(NULL, 'Fatture Elettroniche', '', '1 day', NULL),
+(NULL, 'Ultima versione di OpenSTAManager disponibile', '', '7 day', NULL);
+
+DROP TABLE IF EXISTS `zz_hook_cache`;

@@ -1167,12 +1167,9 @@ class FatturaElettronica
             $descrizione = str_replace('…', '...', $descrizione);
             $descrizione = str_replace('’', ' ', $descrizione);
 
-            if (setting('Riferimento dei documenti in Fattura Elettronica')) {
-                $ref = doc_references($riga->toArray(), 'entrata', ['iddocumento']);
-
-                if (!empty($ref)) {
-                    $descrizione .= "\n".$ref['description'];
-                }
+            // Aggiunta dei riferimenti ai documenti
+            if (setting('Riferimento dei documenti in Fattura Elettronica') && $riga->hasOriginal()) {
+                $descrizione .= "\n".$riga->getOriginal()->parent->getReference();
             }
 
             $dettaglio['Descrizione'] = $descrizione;

@@ -104,9 +104,11 @@ switch (post('op')) {
 
     case 'delete-bulk':
         foreach ($id_records as $id) {
-            $dbo->query('DELETE  FROM dt_ddt  WHERE id = '.prepare($id).Modules::getAdditionalsQuery($id_module));
-            $dbo->query('DELETE FROM dt_righe_ddt WHERE idddt='.prepare($id).Modules::getAdditionalsQuery($id_module));
-            $dbo->query('DELETE FROM mg_movimenti WHERE idddt='.prepare($id).Modules::getAdditionalsQuery($id_module));
+            $documento = DDT::find($id);
+            try {
+                $documento->delete();
+            } catch (InvalidArgumentException $e) {
+            }
         }
 
         flash()->info(tr('Ddt eliminati!'));

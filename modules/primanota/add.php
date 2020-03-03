@@ -104,7 +104,7 @@ foreach ($id_documenti as $id_documento) {
 
     // Predisposizione prima riga
     $conto_field = 'idconto_'.($dir == 'entrata' ? 'vendite' : 'acquisti');
-    $id_conto_aziendale = $fattura->pagamento[$conto_field] ?: get_var('Conto aziendale predefinito');
+    $id_conto_aziendale = $fattura->pagamento[$conto_field] ?: setting('Conto aziendale predefinito');
 
     // Predisposizione conto crediti clienti
     $conto_field = 'idconto_'.($dir == 'entrata' ? 'cliente' : 'fornitore');
@@ -334,7 +334,7 @@ include $structure->filepath('movimenti.php');
                                     $('#modals > div table.scadenze > tbody').append( '<tr>' + $new_tr + '</tr>' );
                                     $('#modals > div table.scadenze > tbody tr').last().find('select').attr('id', 'conto' + i).attr('name', 'idconto[' + i + ']');
                                 }
-                                
+
                                 $('#modals > div #conto' + i).append(option);
                             }
                         } else {

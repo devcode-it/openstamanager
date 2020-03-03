@@ -79,6 +79,7 @@ return [
     'in_vociservizio',
     'mg_articoli',
     'mg_categorie',
+    'mg_causali_movimenti',
     'mg_listini',
     'mg_movimenti',
     'mg_prodotti',

@@ -10,10 +10,12 @@ use Modules\Interventi\Intervento;
 use Modules\Ordini\Ordine;
 use Modules\TipiIntervento\Tipo as TipoSessione;
 use Traits\RecordTrait;
+use Traits\ReferenceTrait;
 use Util\Generator;
 
 class Preventivo extends Document
 {
+    use ReferenceTrait;
     use RecordTrait;
 
     protected $table = 'co_preventivi';
@@ -244,5 +246,22 @@ class Preventivo extends Document
         $numero = Generator::generate($maschera, $ultimo);
 
         return $numero;
+    }
+
+    // Opzioni di riferimento
+
+    public function getReferenceName()
+    {
+        return 'Preventivo';
+    }
+
+    public function getReferenceNumber()
+    {
+        return $this->numero;
+    }
+
+    public function getReferenceDate()
+    {
+        return $this->data_bozza;
     }
 }

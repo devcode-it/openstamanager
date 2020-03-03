@@ -45,19 +45,6 @@ switch (post('op')) {
 
         break;
 
-    case 'delete-bulk':
-
-        foreach ($id_records as $id) {
-            $dbo->query('DELETE FROM co_documenti  WHERE id = '.prepare($id).Modules::getAdditionalsQuery($id_module));
-            $dbo->query('DELETE FROM co_righe_documenti WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
-            $dbo->query('DELETE FROM co_scadenziario WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
-            $dbo->query('DELETE FROM mg_movimenti WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
-        }
-
-        flash()->info(tr('Fatture eliminate!'));
-
-        break;
-
     case 'genera-xml':
         $failed = [];
         $added = [];
@@ -247,11 +234,23 @@ switch (post('op')) {
         flash()->info(tr('Fatture duplicate correttamente!'));
 
         break;
+
+    case 'delete-bulk':
+        foreach ($id_records as $id) {
+            $documento = Fattura::find($id);
+            try {
+                $documento->delete();
+            } catch (InvalidArgumentException $e) {
+            }
+        }
+
+        flash()->info(tr('Fatture eliminate!'));
+        break;
 }
 
 if (App::debug()) {
     $operations = [
-        'delete-bulk' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span>',
+        'delete-bulk' => tr('Elimina selezionati'),
     ];
 }
 

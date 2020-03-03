@@ -285,3 +285,26 @@ function discountInfo(\Common\Components\Row $riga, $mostra_maggiorazione = true
         '_TYPE_' => (!empty($riga->sconto_percentuale) ? '%' : currency()),
     ]);
 }
+
+function reference($document)
+{
+    if (!empty($document) && !($document instanceof \Common\ReferenceInterface)) {
+        return;
+    }
+
+    $extra = '';
+    $module_id = null;
+    $document_id = null;
+
+    if (empty($document)) {
+        $description = tr('Documento di riferimento non disponibile');
+        $extra = 'class="disabled"';
+    } else {
+        $module_id = $document->module;
+        $document_id = $document->id;
+
+        $description = $document->getReference();
+    }
+
+    return Modules::link($module_id, $document_id, $description, $description, $extra);
+}

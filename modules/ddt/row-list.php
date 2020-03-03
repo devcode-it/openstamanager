@@ -63,11 +63,9 @@ foreach ($righe as $riga) {
     }
 
     // Aggiunta dei riferimenti ai documenti
-    $ref = doc_references($r, $dir, ['idddt']);
-
-    if (!empty($ref)) {
+    if ($riga->hasOriginal()) {
         echo '
-            <br>'.Modules::link($ref['module'], $ref['id'], $ref['description'], $ref['description']);
+            <br>'.reference($riga->getOriginal()->parent);
     }
 
     echo '

@@ -142,10 +142,10 @@ foreach ($righe as $riga) {
             <br>'.Modules::link($id_module, $record['ref_documento'], $text, $text);
     }
 
-    $ref = doc_references($r, $dir, ['iddocumento']);
-    if (!empty($ref)) {
+    // Aggiunta dei riferimenti ai documenti
+    if ($riga->hasOriginal()) {
         echo '
-            <br>'.Modules::link($ref['module'], $ref['id'], $ref['description'], $ref['description']);
+            <br>'.reference($riga->getOriginal()->parent);
     }
 
     echo '

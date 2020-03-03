@@ -7,10 +7,12 @@ use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\DDT\DDT;
 use Traits\RecordTrait;
+use Traits\ReferenceTrait;
 use Util\Generator;
 
 class Ordine extends Document
 {
+    use ReferenceTrait;
     use RecordTrait;
 
     protected $table = 'or_ordini';
@@ -199,5 +201,22 @@ class Ordine extends Document
         $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data));
 
         return $numero;
+    }
+
+    // Opzioni di riferimento
+
+    public function getReferenceName()
+    {
+        return $this->tipo->descrizione;
+    }
+
+    public function getReferenceNumber()
+    {
+        return $this->numero_esterno ?: $this->numero;
+    }
+
+    public function getReferenceDate()
+    {
+        return $this->data;
     }
 }

@@ -3,7 +3,7 @@
 include_once __DIR__.'/../../core.php';
 
 // Imposto come azienda l'azienda predefinita per selezionare le sedi a cui ho accesso
-$_SESSION['superselect']['idanagrafica'] = get_var('Azienda predefinita');
+$_SESSION['superselect']['idanagrafica'] = setting('Azienda predefinita');
 
 // Azzero le sedi selezionate
 unset($_SESSION['superselect']['idsede_partenza']);
@@ -19,35 +19,37 @@ $_SESSION['superselect']['idsede_destinazione'] = 0;
 
     <div class="row">
         <div class="col-md-4">
-            {["type":"select", "label":"<?php echo tr('Articolo'); ?>", "name":"idarticolo", "ajax-source":"articoli", "value":"", "required":1]}
+            {["type": "select", "label": "<?php echo tr('Articolo'); ?>", "name": "idarticolo", "ajax-source": "articoli", "value": "", "required": 1 ]}
         </div>
 
         <div class="col-md-2">
-            {["type":"number", "label":"<?php echo tr('Quantità'); ?>", "name":"qta", "decimals":"2", "value":"1", "required":1]}
+            {["type": "number", "label": "<?php echo tr('Quantità'); ?>", "name": "qta", "decimals": "2", "value": "1", "required": 1 ]}
         </div>
 
         <div class="col-md-2">
-            {["type":"date", "label":"<?php echo tr('Data'); ?>", "name":"data", "value":"-now-", "required":1]}
+            {["type": "date", "label": "<?php echo tr('Data'); ?>", "name": "data", "value": "-now-", "required": 1 ]}
         </div>
 
         <div class="col-md-4">
-            {["type":"select", "label":"<?php echo tr('Causale'); ?>", "name":"direzione", "values":"list=\"Carico manuale\":\"Carico\", \"Scarico manuale\":\"Scarico\" ", "value":"Carico manuale", "required":1]}
+            {["type": "select", "label": "<?php echo tr('Causale'); ?>", "name": "causale", "values": "query=SELECT id, nome as text, descrizione, movimento_carico FROM mg_causali_movimenti", "value": 1, "required": 1 ]}
+
+            <input type="hidden" name="direzione" id="direzione">
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-12">
-            {["type":"textarea", "label":"<?php echo tr('Descrizione movimento'); ?>", "name":"movimento", "required":1]}
+            {["type": "textarea", "label": "<?php echo tr('Descrizione movimento'); ?>", "name": "movimento", "required": 1 ]}
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede_destinazione", "ajax-source": "sedi_azienda",  "value": "0", "required":1 ]}
+            {[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede_destinazione", "ajax-source": "sedi_azienda",  "value": "0", "required": 1 ]}
         </div>
 
         <div class="col-md-6">
-            {[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza", "ajax-source": "sedi_azienda",  "value": "0", "required":1 ]}
+            {[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza", "ajax-source": "sedi_azienda",  "value": "0", "required": 1 ]}
         </div>
     </div>
 
@@ -64,11 +66,15 @@ $_SESSION['superselect']['idsede_destinazione'] = 0;
 
 <script>
     $('#modals > div').on('shown.bs.modal', function(){
-        $('#direzione').on('change', function(){
-            $('#movimento').val( $(this).val() );
+        $('#causale').on('change', function() {
+            var data = $(this).selectData();
+            if (data) {
+                $('#movimento').val(data.descrizione);
+                $('#direzione').val(data.movimento_carico);
+            }
         });
 
-        $('#direzione').trigger('change');
+        $('#causale').trigger('change');
 
         // Lettura codici da lettore barcode
         var keys = '';
@@ -97,7 +103,7 @@ $_SESSION['superselect']['idsede_destinazione'] = 0;
                             $('#idarticolo').selectSetNew( record.id, record.text );
                             ajax_submit( record );
                         }
-                        
+
                         // Articolo non trovato
                         else {
                             $('#messages').html( '<hr><div class="alert alert-danger text-center"><big>Articolo <b>' + search + '</b> non trovato!</big></div>' );
@@ -149,26 +155,26 @@ $_SESSION['superselect']['idsede_destinazione'] = 0;
                 text = 'Scarico';
                 qta_rimanente = parseFloat(articolo.qta)-parseFloat(qta_movimento);
             }
-            
+
             if( articolo.descrizione != '' ){
-                $('#messages').html( 
+                $('#messages').html(
                     '<hr>'+
                     '<div class="row">'+
                         '<div class="col-md-6">'+
                             '<div class="alert alert-info text-center" style="line-height: 1.6;">'+
                                 '<b style="font-size:14pt;"><i class="fa fa-barcode"></i> ' + articolo.barcode + ' - ' + articolo.descrizione + '</b><br>'+
                                 '<b>Prezzo acquisto:</b> ' + prezzo_acquisto.toLocale() + " " + globals.currency + '<br><b>Prezzo vendita:</b> ' + prezzo_vendita.toLocale() + " " + globals.currency +
-                            '</div>'+ 
-                        '</div>'+ 
+                            '</div>'+
+                        '</div>'+
                         '<div class="col-md-6">'+
                             '<div class="alert '+alert+' text-center">'+
                                 '<p style="font-size:14pt;">'+icon+' '+text+' '+qta_movimento.toLocale()+' '+articolo.um+' <i class="fa fa-arrow-circle-right"></i> '+qta_rimanente.toLocale()+' '+articolo.um+' rimanenti</p>'+
-                            '</div>'+ 
-                        '</div>'+ 
+                            '</div>'+
+                        '</div>'+
                     '</div>'
                 );
             }
-            
+
             $("#qta").val(1);
         }
 	}
@@ -176,16 +182,15 @@ $_SESSION['superselect']['idsede_destinazione'] = 0;
 <?php
 if (setting('Attiva scorciatoie da tastiera')) {
     echo '
-        <script>
-        hotkeys(\'f8\', \'carico\', function(event, handler){
-            $("#modals > div #direzione").val("Carico manuale").change();
-        });
-        hotkeys.setScope(\'carico\');
+<script>
+hotkeys(\'f8\', \'carico\', function(event, handler){
+    $("#modals > div #direzione").val(1).change();
+});
+hotkeys.setScope(\'carico\');
 
-        hotkeys(\'f9\', \'carico\', function(event, handler){
-            $("#modals > div #direzione").val("Scarico manuale").change();
-        });
-        hotkeys.setScope(\'carico\');
-
-        </script>';
+hotkeys(\'f9\', \'carico\', function(event, handler){
+    $("#modals > div #direzione").val(2).change();
+});
+hotkeys.setScope(\'carico\');
+</script>';
 }

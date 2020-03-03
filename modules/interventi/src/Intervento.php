@@ -8,10 +8,13 @@ use Modules\Contratti\Contratto;
 use Modules\Preventivi\Preventivo;
 use Modules\TipiIntervento\Tipo as TipoSessione;
 use Traits\RecordTrait;
+use Traits\ReferenceTrait;
 use Util\Generator;
 
 class Intervento extends Document
 {
+    use ReferenceTrait;
+
     use RecordTrait;
 
     protected $table = 'in_interventi';
@@ -88,6 +91,11 @@ class Intervento extends Document
     public function getModuleAttribute()
     {
         return 'Interventi';
+    }
+
+    public function getDirezioneAttribute()
+    {
+        return 'entrata';
     }
 
     /**
@@ -197,5 +205,22 @@ class Intervento extends Document
         $numero = Generator::generate($maschera, $ultimo);
 
         return $numero;
+    }
+
+    // Opzioni di riferimento
+
+    public function getReferenceName()
+    {
+        return 'Attività';
+    }
+
+    public function getReferenceNumber()
+    {
+        return $this->codice;
+    }
+
+    public function getReferenceDate()
+    {
+        return $this->data_richiesta;
     }
 }

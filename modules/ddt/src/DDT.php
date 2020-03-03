@@ -7,10 +7,12 @@ use Common\Components\Description;
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
 use Traits\RecordTrait;
+use Traits\ReferenceTrait;
 use Util\Generator;
 
 class DDT extends Document
 {
+    use ReferenceTrait;
     use RecordTrait;
 
     protected $table = 'dt_ddt';
@@ -204,5 +206,22 @@ class DDT extends Document
         $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data));
 
         return $numero;
+    }
+
+    // Opzioni di riferimento
+
+    public function getReferenceName()
+    {
+        return $this->tipo->descrizione;
+    }
+
+    public function getReferenceNumber()
+    {
+        return $this->numero_esterno ?: $this->numero;
+    }
+
+    public function getReferenceDate()
+    {
+        return $this->data;
     }
 }

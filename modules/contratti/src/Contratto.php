@@ -11,10 +11,12 @@ use Modules\TipiIntervento\Tipo as TipoSessione;
 use Plugins\PianificazioneFatturazione\Pianificazione;
 use Plugins\PianificazioneInterventi\Promemoria;
 use Traits\RecordTrait;
+use Traits\ReferenceTrait;
 use Util\Generator;
 
 class Contratto extends Document
 {
+    use ReferenceTrait;
     use RecordTrait;
 
     protected $table = 'co_contratti';
@@ -222,5 +224,22 @@ class Contratto extends Document
         $numero = Generator::generate($maschera, $ultimo);
 
         return $numero;
+    }
+
+    // Opzioni di riferimento
+
+    public function getReferenceName()
+    {
+        return 'Contratto';
+    }
+
+    public function getReferenceNumber()
+    {
+        return $this->numero;
+    }
+
+    public function getReferenceDate()
+    {
+        return $this->data_bozza;
     }
 }

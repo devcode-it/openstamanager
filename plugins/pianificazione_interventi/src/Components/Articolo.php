@@ -26,14 +26,4 @@ class Articolo extends Article
 
         return $model;
     }
-
-    public function movimentaMagazzino($qta)
-    {
-        return;
-    }
-
-    public function getDirection()
-    {
-        return $this->contratto->tipo->dir;
-    }
 }

@@ -11,16 +11,19 @@ class UpdateHook extends CachedManager
 {
     protected static $client = null;
 
-    public function data()
+    public function getCacheName()
     {
-        $result = self::isAvailable();
+        return 'Ultima versione di OpenSTAManager disponibile';
+    }
 
-        return $result;
+    public function cacheData()
+    {
+        return self::isAvailable();
     }
 
     public function response()
     {
-        $update = self::getCache()['results'];
+        $update = $this->getCache()->content;
 
         $module = Modules::get('Aggiornamenti');
         $link = ROOTDIR.'/controller.php?id_module='.$module->id;

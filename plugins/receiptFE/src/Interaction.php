@@ -3,6 +3,7 @@
 namespace Plugins\ReceiptFE;
 
 use API\Services;
+use Models\Cache;
 
 /**
  * Classe per l'interazione con API esterne.
@@ -21,7 +22,7 @@ class Interaction extends Services
         $list = array_merge($list, $files);
 
         // Aggiornamento cache hook
-        ReceiptHook::update($list);
+        Cache::get('Ricevute Elettroniche')->set($list);
 
         return $list;
     }

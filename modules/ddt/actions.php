@@ -115,14 +115,17 @@ switch (post('op')) {
         aggiorna_sedi_movimenti('ddt', $id_record);
 
         // Controllo sulla presenza di DDT con lo stesso numero secondario
-        $count = DDT::where('numero_esterno', $numero_esterno)
-            ->where('id', '!=', $id_record)
-            ->where('idanagrafica', '=', $id_anagrafica)
-            ->whereHas('tipo', function ($query) use ($dir) {
-                $query->where('dt_tipiddt.dir', '=', $dir);
-            })->count();
-        if (!empty($count)) {
-            flash()->warning(tr('Esiste già un DDT con lo stesso numero secondario e la stessa anagrafica collegata!'));
+        $direzione = $ddt->direzione;
+        if ($direzione == 'uscita') {
+            $count = DDT::where('numero_esterno', $numero_esterno)
+                ->where('id', '!=', $id_record)
+                ->where('idanagrafica', '=', $id_anagrafica)
+                ->whereHas('tipo', function ($query) use ($direzione) {
+                    $query->where('dir', '=', $direzione);
+                })->count();
+            if (!empty($count)) {
+                flash()->warning(tr('Esiste già un DDT con lo stesso numero secondario e la stessa anagrafica collegata!'));
+            }
         }
 
         flash()->info(tr('Ddt modificato correttamente!'));

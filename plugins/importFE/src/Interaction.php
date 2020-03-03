@@ -3,6 +3,7 @@
 namespace Plugins\ImportFE;
 
 use API\Services;
+use Models\Cache;
 
 /**
  * Classe per l'interazione con API esterne.
@@ -19,7 +20,7 @@ class Interaction extends Services
         $result = self::getFileList($list);
 
         // Aggiornamento cache hook
-        InvoiceHook::update($result);
+        Cache::get('Fatture Elettroniche')->set($result);
 
         return $result;
     }

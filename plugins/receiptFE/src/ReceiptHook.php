@@ -7,16 +7,19 @@ use Modules;
 
 class ReceiptHook extends CachedManager
 {
-    public function data()
+    public function getCacheName()
     {
-        $list = Interaction::getReceiptList();
+        return 'Ricevute Elettroniche';
+    }
 
-        return $list;
+    public function cacheData()
+    {
+        return Interaction::getReceiptList();
     }
 
     public function response()
     {
-        $results = self::getCache()['results'];
+        $results = $this->getCache()->content;
 
         $count = count($results);
         $notify = false;

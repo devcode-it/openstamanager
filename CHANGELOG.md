@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.14](#2414)
 - [2.4.13 (2020-02-05)](#2413-2020-02-05)
 - [2.4.12 (2019-12-30)](#2412-2019-12-30)
 - [2.4.11 (2019-11-29)](#2411-2019-11-29)
@@ -22,6 +23,28 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.3 (2018-02-16)](#23-2018-02-16)
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
+
+## 2.4.14
+
+### Aggiunto (Added)
+ - Nuove funzionalità nell'importazione delle Fatture Elettroniche
+    - Riferimenti manuali a DDT e Ordini di acquisto nell'importazione delle Fatture Elettroniche
+    - Compilazione automatica dei campi principali sulla base delle Fatture precedentemente importate
+ - Controlli aggiuntivi sulla numerazione di **DDT** e **Fatture**
+ - Fatturazione massiva di Contratti e Preventivi
+ - Nuovo modulo **Stampe** sotto **Strumenti** per permettere la modifica manuale delle opzioni delle stampe
+
+### Modificato (Changed)
+ - Revisione e aggiornamento dei plugin *Pianificazione interventi* e *Pianficazione fatturazione*
+ - Modifica della gestione degli importi per le righe dei documenti (#758)
+ - Il plugin *Movimenti* degli **Articoli** presenta ora un raggruppamento per documento (#766)
+ - Aggiornamento del sistema di cache per prevedere una maggiore varietà di casi di utilizzo
+
+### Fixed
+ - Blocco della duplicazione per Fatture per cui esiste una Nota di credito
+ - Gestione delle quantità evase per la fatturazione massiva di DDT
+ - Abilitazione e disabilitazione API per utenti senza token
+ - Modifica del totale per scadenze generiche in **Scadenzario** (#764)
 
 ## 2.4.13 (2020-02-05)
 

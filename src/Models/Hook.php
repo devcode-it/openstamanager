@@ -119,7 +119,7 @@ class Hook extends Model
     public function getClass()
     {
         $class = $this->class;
-        $hook = new $class();
+        $hook = new $class($this);
 
         if (!$hook instanceof Manager) {
             throw new \UnexpectedValueException();

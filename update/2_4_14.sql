@@ -419,3 +419,20 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Causali movimenti'), 'Descrizione', 'descrizione', 3, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Causali movimenti'), 'Nome', 'nome', 2, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Causali movimenti'), 'id', 'id', 1, 1, 0, 0, 0);
+
+-- Miglioramento della cache interna
+CREATE TABLE IF NOT EXISTS `zz_cache` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(255) NOT NULL,
+    `content` TEXT NOT NULL,
+    `valid_time` VARCHAR(255),
+    `expire_at` timestamp NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+INSERT INTO `zz_cache` (`id`, `name`, `content`, `valid_time`, `expire_at`) VALUES
+(NULL, 'Ricevute Elettroniche', '', '1 day', NULL),
+(NULL, 'Fatture Elettroniche', '', '1 day', NULL),
+(NULL, 'Ultima versione di OpenSTAManager disponibile', '', '7 day', NULL);
+
+DROP TABLE IF EXISTS `zz_hook_cache`;

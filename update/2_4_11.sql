@@ -311,9 +311,9 @@ ALTER TABLE `zz_hooks` ADD `processing_at` TIMESTAMP NULL DEFAULT NULL, ADD `pro
 INSERT INTO `zz_hooks` (`id`, `name`, `class`, `frequency`, `id_module`) VALUES (NULL, 'Backup', 'Modules\\Backups\\BackupHook', '1 day', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Backup'));
 
 -- Miglioramento gestione email
-ALTER TABLE `zz_emails` RENAME TO `em_templates`;
-ALTER TABLE `zz_smtps` RENAME TO `em_accounts`;
-ALTER TABLE `zz_email_print` RENAME TO `em_print_template`;
+RENAME TABLE `zz_emails` TO `em_templates`;
+RENAME TABLE `zz_smtps` TO `em_accounts`;
+RENAME TABLE `zz_email_print` TO `em_print_template`;
 
 UPDATE zz_modules SET options = REPLACE(options, 'zz_emails', 'em_templates'), options2 = REPLACE(options2, 'zz_emails', 'em_templates');
 UPDATE zz_modules SET options = REPLACE(options, 'zz_smtps', 'em_accounts'), options2 = REPLACE(options2, 'zz_smtps', 'em_accounts');

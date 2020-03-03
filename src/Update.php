@@ -182,8 +182,8 @@ class Update
             // Normalizzazione di charset e collation
             self::normalizeDatabase($database->getDatabaseName());
 
-            if (class_exists('\Modules\Aggiornamenti\UpdateHook')) {
-                \Modules\Aggiornamenti\UpdateHook::update(null);
+            if (class_exists('\Models\Cache')) {
+                \Models\Cache::get('Ultima versione di OpenSTAManager disponibile')->set(null);
             }
 
             return true;

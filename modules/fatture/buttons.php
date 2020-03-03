@@ -9,7 +9,7 @@ echo '
     <input type="hidden" name="op" value="copy">
 </form>
 
-<button type="button" class="btn btn-primary" '.((empty($record['ref_documento']) and empty($record['reversed'])) ? '' : 'disabled').' onclick="if( confirm(\'Duplicare questa fattura?\') ){ $(\'#form-copy\').submit(); }">
+<button type="button" class="btn btn-primary" '.(empty($record['reversed']) ? '' : 'disabled').' onclick="if( confirm(\'Duplicare questa fattura?\') ){ $(\'#form-copy\').submit(); }">
     <i class="fa fa-copy"></i> '.tr('Duplica fattura').'
 </button>';
 

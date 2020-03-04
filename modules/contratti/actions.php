@@ -9,6 +9,7 @@ use Modules\Contratti\Components\Descrizione;
 use Modules\Contratti\Components\Riga;
 use Modules\Contratti\Components\Sconto;
 use Modules\Contratti\Contratto;
+use Plugins\PianificazioneInterventi\Promemoria;
 
 switch (post('op')) {
     case 'add':
@@ -321,17 +322,13 @@ $riga = $contratto->getRiga($type, $id_riga);
             ]);
             $id_promemoria = $dbo->lastInsertedID();
 
-            // Copia degli articoli
-            $dbo->query('INSERT INTO co_promemoria_articoli(idarticolo, id_promemoria, idimpianto, descrizione, prezzo_vendita, prezzo_acquisto, sconto, sconto_unitario, tipo_sconto, idiva, desc_iva, iva, qta, um, abilita_serial) SELECT idarticolo, :id_new, idimpianto, descrizione, prezzo_vendita, prezzo_acquisto, sconto, sconto_unitario, tipo_sconto, idiva, desc_iva, iva, qta, um, abilita_serial FROM co_promemoria_articoli AS z WHERE id_promemoria = :id_old', [
-                ':id_new' => $id_promemoria,
-                ':id_old' => $p['id'],
-            ]);
-
-            // Copia delle righe
-            $dbo->query('INSERT INTO co_righe_promemoria(id_promemoria, descrizione, qta, um, prezzo_vendita, prezzo_acquisto, idiva, desc_iva, iva, sconto, sconto_unitario, tipo_sconto) SELECT :id_new, descrizione, qta, um, prezzo_vendita, prezzo_acquisto, idiva, desc_iva, iva, sconto, sconto_unitario, tipo_sconto FROM co_righe_promemoria AS z WHERE id_promemoria = :id_old', [
-                ':id_new' => $id_promemoria,
-                ':id_old' => $p['id'],
-            ]);
+            $promemoria = Promemoria::find($p['id']);
+            $righe = $promemoria->getRighe();
+            foreach ($righe as $riga) {
+                $new_riga = $riga->replicate();
+                $new_riga->id_promemoria = $id_promemoria;
+                $new_riga->save();
+            }
 
             // Copia degli allegati
             Uploads::copy([

@@ -45,7 +45,6 @@ switch ($operazione) {
 
         $dbo->query('DELETE FROM `co_promemoria` WHERE id='.prepare($id));
         $dbo->query('DELETE FROM `co_righe_promemoria` WHERE id_promemoria='.prepare($id));
-        $dbo->query('DELETE FROM `co_promemoria_articoli` WHERE id_promemoria='.prepare($id));
 
         flash()->info(tr('Pianificazione eliminata!'));
 
@@ -54,10 +53,6 @@ switch ($operazione) {
     // Eliminazione tutti i promemoria di questo contratto con non hanno l'intervento associato
     case 'delete-non-associati':
         $dbo->query('DELETE FROM `co_righe_promemoria` WHERE id_promemoria IN (SELECT id FROM `co_promemoria` WHERE idcontratto = :id_contratto AND idintervento IS NULL)', [
-            ':id_contratto' => $id_record,
-        ]);
-
-        $dbo->query('DELETE FROM `co_promemoria_articoli` WHERE id_promemoria IN (SELECT id FROM `co_promemoria` WHERE idcontratto = :id_contratto AND idintervento IS NULL)', [
             ':id_contratto' => $id_record,
         ]);
 

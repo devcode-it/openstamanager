@@ -278,17 +278,17 @@ class Anagrafica extends Model
         return $codice;
     }
 
-    protected function fixRagioneSociale()
-    {
-        if (!empty($this->cognome) || !empty($this->nome)) {
-            $this->ragione_sociale = $this->cognome.' '.$this->nome;
-        }
-    }
-
     // Attributi Eloquent
 
     public function getModuleAttribute()
     {
         return 'Anagrafiche';
+    }
+
+    protected function fixRagioneSociale()
+    {
+        if (!empty($this->cognome) || !empty($this->nome)) {
+            $this->ragione_sociale = $this->cognome.' '.$this->nome;
+        }
     }
 }

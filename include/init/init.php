@@ -199,18 +199,18 @@ if (!$has_settings) {
     $i = 0;
     foreach ($settings as $setting => $required) {
         if (empty(setting($setting))) {
-            if ($i%2==0 or $i==0)
-            echo '  <div class="row">';
-            
+            if ($i % 2 == 0 or $i == 0) {
+                echo '  <div class="row">';
+            }
+
             echo '
                         <div class="col-md-6">
                             '.Settings::input($setting, $required).'
                         </div>';
-            $i++;
-            if ($i%2==0 or $i == sizeof($settings))
-            echo '  </div>';
-
-            
+            ++$i;
+            if ($i % 2 == 0 or $i == sizeof($settings)) {
+                echo '  </div>';
+            }
         }
     }
 

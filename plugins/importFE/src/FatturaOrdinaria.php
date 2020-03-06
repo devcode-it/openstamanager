@@ -343,6 +343,7 @@ class FatturaOrdinaria extends FatturaElettronica
 
             $totale_previsto = round($importo / $percentuale * 100, 2);
             $percentuale_importo = round($totale_previsto / $totale * 100, 2);
+            $percentuale_importo = min($percentuale_importo, 100); // Nota: Fix per la percentuale che superava il 100% nel caso di importi con Rivalsa compresa
 
             $ritenuta_acconto = $database->fetchOne('SELECT * FROM`co_ritenutaacconto` WHERE `percentuale` = '.prepare($percentuale).' AND `percentuale_imponibile` = '.prepare($percentuale_importo));
             if (empty($ritenuta_acconto)) {

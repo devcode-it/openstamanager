@@ -161,6 +161,7 @@ ALTER TABLE `in_statiintervento` DROP PRIMARY KEY;
 ALTER TABLE `in_statiintervento` CHANGE `idstatointervento` `codice` VARCHAR(25) NOT NULL, ADD `idstatointervento` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT;
 
 UPDATE `in_interventi` INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` = `in_statiintervento`.`codice` SET `in_interventi`.`idstatointervento` = `in_statiintervento`.`idstatointervento`;
+UPDATE `in_interventi`  SET `idstatointervento` = (SELECT `idstatointervento` FROM `in_statiintervento` LIMIT 1) WHERE `idstatointervento` NOT IN (SELECT `idstatointervento` FROM `in_statiintervento`);
 ALTER TABLE `in_interventi` CHANGE `idstatointervento` `idstatointervento` INT(11) NOT NULL, ADD FOREIGN KEY (`idstatointervento`) REFERENCES `in_statiintervento`(`idstatointervento`);
 
 UPDATE `an_anagrafiche` INNER JOIN `in_tipiintervento` ON `an_anagrafiche`.`idtipointervento_default` = `in_tipiintervento`.`codice` SET `an_anagrafiche`.`idtipointervento_default` = `in_tipiintervento`.`idtipointervento`;

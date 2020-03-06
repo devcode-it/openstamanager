@@ -158,7 +158,9 @@ class Fattura extends Document
 
             $this->numero = static::getNextNumero($data, $direzione, $value);
 
-            if (!empty($previous)) {
+            if ($this->stato->descrizione == 'Bozza') {
+                $this->numero_esterno = null;
+            } elseif (!empty($previous)) {
                 $this->numero_esterno = static::getNextNumeroSecondario($data, $direzione, $value);
             }
         }

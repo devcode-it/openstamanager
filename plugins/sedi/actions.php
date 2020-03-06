@@ -6,7 +6,6 @@ $operazione = filter('op');
 
 switch ($operazione) {
     case 'addsede':
-
          if (!empty(post('nomesede'))) {
              $dbo->insert('an_sedi', [
                 'idanagrafica' => $id_parent,
@@ -37,8 +36,7 @@ switch ($operazione) {
         break;
 
     case 'updatesede':
-        $id = filter('id');
-        $array = [
+        $dbo->update('an_sedi', [
             'nomesede' => post('nomesede'),
             'indirizzo' => post('indirizzo'),
             'codice_destinatario' => post('codice_destinatario'),
@@ -58,9 +56,7 @@ switch ($operazione) {
             'gaddress' => post('gaddress'),
             'lat' => post('lat'),
             'lng' => post('lng'),
-        ];
-
-        $dbo->update('an_sedi', $array, ['id' => $id]);
+        ], ['id' => $id_record]);
 
         flash()->info(tr('Salvataggio completato!'));
 

@@ -222,11 +222,15 @@ class Anagrafica extends Model
 
     public function getPartitaIvaAttribute()
     {
-        return $this->piva;
+        return $this->attributes['piva'];
     }
 
     public function setPartitaIvaAttribute($value)
     {
+        if (in_array($value, ['99999999999', '00000000000'])) {
+            $value = null;
+        }
+
         $this->attributes['piva'] = trim(strtoupper($value));
     }
 

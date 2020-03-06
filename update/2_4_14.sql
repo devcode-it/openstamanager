@@ -209,7 +209,7 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_documenti`
     LEFT OUTER JOIN (
         SELECT `iddocumento`,
             SUM(`subtotale` - `sconto`) AS `totale_imponibile`,
-            SUM(`subtotale` - `sconto` + `iva` ) AS `totale`
+            SUM(`subtotale` - `sconto` + `iva`) AS `totale`
         FROM `co_righe_documenti`
         GROUP BY `iddocumento`
     ) AS righe ON `co_documenti`.`id` = `righe`.`iddocumento`
@@ -236,7 +236,8 @@ ORDER BY `co_documenti`.`data` DESC, CAST(`co_documenti`.`numero_esterno` AS UNS
 UPDATE `zz_views` SET `query` = 'righe.totale_imponibile' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') AND `name` = 'Totale';
 DELETE FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore') AND `name` = 'Fatture di vendita';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Totale ivato', 'righe.totale', 9, 1, 1, 1, 1);
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Totale ivato', 'righe.totale', 9, 1, 1, 1, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Netto a pagare', 'righe.totale + rivalsainps + iva_rivalsainps - ritenutaacconto', 10, 1, 1, 1, 1);
 
 -- Fatture di acquisto
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_documenti`
@@ -246,7 +247,7 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_documenti`
     LEFT OUTER JOIN (
         SELECT `iddocumento`,
             SUM(`subtotale` - `sconto`) AS `totale_imponibile`,
-            SUM(`subtotale` - `sconto` + `iva` ) AS `totale`
+            SUM(`subtotale` - `sconto` + `iva`) AS `totale`
         FROM `co_righe_documenti`
         GROUP BY `iddocumento`
     ) AS righe ON `co_documenti`.`id` = `righe`.`iddocumento`
@@ -257,7 +258,8 @@ ORDER BY `co_documenti`.`data` DESC, CAST(IF(`co_documenti`.`numero_esterno` = '
 UPDATE `zz_views` SET `query` = 'righe.totale_imponibile' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto') AND `name` = 'Totale';
 DELETE FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore') AND `name` = 'Fatture di acquisto';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto'), 'Totale ivato', 'righe.totale', 6, 1, 1, 1, 1);
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto'), 'Totale ivato', 'righe.totale', 6, 1, 1, 1, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto'), 'Netto a pagare', 'righe.totale + rivalsainps + iva_rivalsainps - ritenutaacconto', 7, 1, 1, 1, 1);
 
 -- Contratti
 UPDATE `zz_modules` SET `options` = 'SELECT |select|
@@ -267,7 +269,7 @@ FROM `co_contratti`
     LEFT OUTER JOIN (
         SELECT `idcontratto`,
             SUM(`subtotale` - `sconto`) AS `totale_imponibile`,
-            SUM(`subtotale` - `sconto` + `iva` ) AS `totale`
+            SUM(`subtotale` - `sconto` + `iva`) AS `totale`
         FROM `co_righe_contratti`
         GROUP BY `idcontratto`
     ) AS righe ON `co_contratti`.`id` = `righe`.`idcontratto`
@@ -293,7 +295,7 @@ FROM `co_preventivi`
     LEFT OUTER JOIN (
         SELECT `idpreventivo`,
             SUM(`subtotale` - `sconto`) AS `totale_imponibile`,
-            SUM(`subtotale` - `sconto` + `iva` ) AS `totale`
+            SUM(`subtotale` - `sconto` + `iva`) AS `totale`
         FROM `co_righe_preventivi`
         GROUP BY `idpreventivo`
     ) AS righe ON `co_preventivi`.`id` = `righe`.`idpreventivo`
@@ -317,7 +319,7 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `dt_ddt`
     LEFT OUTER JOIN (
         SELECT `idddt`,
             SUM(`subtotale` - `sconto`) AS `totale_imponibile`,
-            SUM(`subtotale` - `sconto` + `iva` ) AS `totale`
+            SUM(`subtotale` - `sconto` + `iva`) AS `totale`
         FROM `dt_righe_ddt`
         GROUP BY `idddt`
     ) AS righe ON `dt_ddt`.`id` = `righe`.`idddt`
@@ -342,7 +344,7 @@ FROM `dt_ddt`
     LEFT OUTER JOIN (
         SELECT `idddt`,
             SUM(`subtotale` - `sconto`) AS `totale_imponibile`,
-            SUM(`subtotale` - `sconto` + `iva` ) AS `totale`
+            SUM(`subtotale` - `sconto` + `iva`) AS `totale`
         FROM `dt_righe_ddt`
         GROUP BY `idddt`
     ) AS righe ON `dt_ddt`.`id` = `righe`.`idddt`
@@ -362,7 +364,7 @@ FROM `or_ordini`
     LEFT OUTER JOIN (
         SELECT `idordine`,
             SUM(`subtotale` - `sconto`) AS `totale_imponibile`,
-            SUM(`subtotale` - `sconto` + `iva` ) AS `totale`
+            SUM(`subtotale` - `sconto` + `iva`) AS `totale`
         FROM `or_righe_ordini`
         GROUP BY `idordine`
     ) AS righe ON `or_ordini`.`id` = `righe`.`idordine`
@@ -382,7 +384,7 @@ FROM `or_ordini`
     LEFT OUTER JOIN (
         SELECT `idordine`,
             SUM(`subtotale` - `sconto`) AS `totale_imponibile`,
-            SUM(`subtotale` - `sconto` + `iva` ) AS `totale`
+            SUM(`subtotale` - `sconto` + `iva`) AS `totale`
         FROM `or_righe_ordini`
         GROUP BY `idordine`
     ) AS righe ON `or_ordini`.`id` = `righe`.`idordine`

@@ -10,7 +10,7 @@ echo '<style>
 }
 </style>';
 
-$number = 32;
+$number = 1; // 32
 for ($i = 0; $i < $number; ++$i) {
     echo '<barcode code="'.$articolo->barcode.'" type="EAN13" height="1" size="1" class="barcode" />';
 }

@@ -90,7 +90,7 @@ switch (post('op')) {
             $descrizione_movimento = post('descrizione_movimento');
             $data_movimento = post('data_movimento');
 
-            $articolo->movimenta($movimento, $descrizione_movimento, $data_movimento);
+            $articolo->movimenta($movimento, $descrizione_movimento, $data_movimento, true);
         }
 
         // Salvataggio info componente (campo `contenuto`)

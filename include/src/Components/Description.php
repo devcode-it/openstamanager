@@ -16,6 +16,10 @@ abstract class Description extends Model
         'max_qta',
     ];
 
+    protected $hidden = [
+        'parent',
+    ];
+
     public static function build(Document $document, $bypass = false)
     {
         $model = parent::build();
@@ -281,6 +285,11 @@ abstract class Description extends Model
 
     protected static function boot($bypass = false)
     {
+        // Precaricamento Documento
+        static::addGlobalScope('parent', function (Builder $builder) {
+            $builder->with('parent');
+        });
+
         parent::boot();
 
         $table = parent::getTableName();

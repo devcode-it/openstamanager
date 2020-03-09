@@ -3,6 +3,7 @@
 include_once __DIR__.'/../../core.php';
 
 echo '
+<div class="table-responsive">
 <table class="table table-striped table-hover table-condensed table-bordered">
     <thead>
         <tr>
@@ -19,75 +20,19 @@ echo '
 // Righe documento
 $righe = $fattura->getRighe();
 foreach ($righe as $riga) {
-    $r = $riga->toArray();
-
-    // Valori assoluti
-    $r['qta'] = abs($r['qta']);
-    $r['costo_unitario'] = abs($r['costo_unitario']);
-    $r['totale_imponibile'] = ($fattura->isNota() ? -$riga->totale_imponibile : $riga->totale_imponibile);
-    $r['sconto_unitario'] = abs($r['sconto_unitario']);
-    $r['sconto'] = abs($r['sconto']);
-    $r['iva'] = abs($r['iva']);
-
-    if (empty($r['is_descrizione'])) {
-        $r['descrizione_conto'] = $dbo->fetchOne('SELECT descrizione FROM co_pianodeiconti3 WHERE id = '.prepare($r['idconto']))['descrizione'];
-    }
-
-    $r['ritenuta_acconto'] = !empty($r['idritenutaacconto']) ? moneyFormat(abs($r['ritenutaacconto']), 2) : null;
-    $r['ritenuta_contributi'] = !empty($r['ritenuta_contributi']) ? moneyFormat(abs($r['ritenuta_contributi']), 2) : null;
-    $r['rivalsa'] = !empty($r['idrivalsainps']) ? moneyFormat(abs($r['rivalsainps']), 2) : null;
-
     $extra = '';
-
+    $mancanti = 0;
     $delete = 'delete_riga';
 
-    // Articoli
-    if ($riga->isArticolo()) {
-        $r['descrizione'] = (!empty($riga->articolo) ? $riga->articolo->codice.' - ' : '').$r['descrizione'];
-
-        $extra = '';
-        $mancanti = 0;
-    }
-
-    // Intervento
-    if (!empty($r['idintervento'])) {
-        $intervento = $dbo->fetchOne('SELECT num_item,codice_cig,codice_cup,id_documento_fe FROM in_interventi WHERE id = '.prepare($r['idintervento']));
-        $r['num_item'] = $intervento['num_item'];
-        $r['codice_cig'] = $intervento['codice_cig'];
-        $r['codice_cup'] = $intervento['codice_cup'];
-        $r['id_documento_fe'] = $intervento['id_documento_fe'];
-
+    // Operazione di rimozione specializzata per gli Interventi
+    if (!empty($documento_originale) && $documento_originale instanceof \Modules\Interventi\Intervento) {
         $delete = 'unlink_intervento';
-    }
-    // Preventivi
-    elseif (!empty($r['idpreventivo'])) {
-        $preventivo = $dbo->fetchOne('SELECT num_item,codice_cig,codice_cup,id_documento_fe FROM co_preventivi WHERE id = '.prepare($r['idpreventivo']));
-        $r['num_item'] = $preventivo['num_item'];
-        $r['codice_cig'] = $preventivo['codice_cig'];
-        $r['codice_cup'] = $preventivo['codice_cup'];
-        $r['id_documento_fe'] = $preventivo['id_documento_fe'];
-    }
-    // Contratti
-    elseif (!empty($r['idcontratto'])) {
-        $contratto = $dbo->fetchOne('SELECT num_item,codice_cig,codice_cup,id_documento_fe FROM co_contratti WHERE id = '.prepare($r['idcontratto']));
-        $r['num_item'] = $contratto['num_item'];
-        $r['codice_cig'] = $contratto['codice_cig'];
-        $r['codice_cup'] = $contratto['codice_cup'];
-        $r['id_documento_fe'] = $contratto['id_documento_fe'];
-    }
-    // Ordini (IDDOCUMENTO,CIG,CUP)
-    elseif (!empty($r['idordine'])) {
-        $ordine = $dbo->fetchOne('SELECT num_item,codice_cig,codice_cup,id_documento_fe FROM or_ordini WHERE id = '.prepare($r['idordine']));
-        $r['num_item'] = $ordine['num_item'];
-        $r['codice_cig'] = $ordine['codice_cig'];
-        $r['codice_cup'] = $ordine['codice_cup'];
-        $r['id_documento_fe'] = $ordine['id_documento_fe'];
     }
 
     // Individuazione dei seriali
-    if (!empty($r['abilita_serial'])) {
+    if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
         $serials = $riga->serials;
-        $mancanti = $r['qta'] - count($serials);
+        $mancanti = abs($riga->qta) - count($serials);
 
         if ($mancanti > 0) {
             $extra = 'class="warning"';
@@ -97,26 +42,47 @@ foreach ($righe as $riga) {
     }
 
     $extra_riga = '';
-    if (!$r['is_descrizione']) {
+    if (!$riga->isDescrizione()) {
+        // Informazioni su CIG, CUP, ...
+        if ($riga->hasOriginal()) {
+            $documento_originale = $riga->getOriginal()->parent;
+
+            $num_item = $documento_originale['num_item'];
+            $codice_cig = $documento_originale['codice_cig'];
+            $codice_cup = $documento_originale['codice_cup'];
+            $id_documento_fe = $documento_originale['id_documento_fe'];
+        }
+
+        $descrizione_conto = $dbo->fetchOne('SELECT descrizione FROM co_pianodeiconti3 WHERE id = '.prepare($riga->id_conto))['descrizione'];
+        //dump($documento_originale);exit();
+
         $extra_riga = tr('_DESCRIZIONE_CONTO__ID_DOCUMENTO__NUMERO_RIGA__CODICE_CIG__CODICE_CUP__RITENUTA_ACCONTO__RITENUTA_CONTRIBUTI__RIVALSA_', [
-            '_RIVALSA_' => $r['rivalsa'] ? '<br>Rivalsa: '.$r['rivalsa'] : null,
-            '_RITENUTA_ACCONTO_' => $r['ritenuta_acconto'] ? '<br>Ritenuta acconto: '.$r['ritenuta_acconto'] : null,
-            '_RITENUTA_CONTRIBUTI_' => $r['ritenuta_contributi'] ? '<br>Ritenuta contributi: '.$r['ritenuta_contributi'] : null,
-            '_DESCRIZIONE_CONTO_' => $r['descrizione_conto'] ?: null,
-            '_ID_DOCUMENTO_' => $r['id_documento_fe'] ? ' - DOC: '.$r['id_documento_fe'] : null,
-            '_NUMERO_RIGA_' => $r['num_item'] ? ', NRI: '.$r['num_item'] : null,
-            '_CODICE_CIG_' => $r['codice_cig'] ? ', CIG: '.$r['codice_cig'] : null,
-            '_CODICE_CUP_' => $r['codice_cup'] ? ', CUP: '.$r['codice_cup'] : null,
+            '_RIVALSA_' => $riga->rivalsa_inps ? '<br>Rivalsa: '.moneyFormat(abs($riga->rivalsa_inps)) : null,
+            '_RITENUTA_ACCONTO_' => $riga->ritenuta_acconto ? '<br>Ritenuta acconto: '.moneyFormat(abs($riga->ritenuta_acconto)) : null,
+            '_RITENUTA_CONTRIBUTI_' => $riga->ritenuta_contributi ? '<br>Ritenuta contributi: '.moneyFormat(abs($riga->ritenuta_contributi)) : null,
+            '_DESCRIZIONE_CONTO_' => $descrizione_conto ?: null,
+            '_ID_DOCUMENTO_' => $id_documento_fe ? ' - DOC: '.$id_documento_fe : null,
+            '_NUMERO_RIGA_' => $num_item ? ', NRI: '.$num_item : null,
+            '_CODICE_CIG_' => $codice_cig ? ', CIG: '.$codice_cig : null,
+            '_CODICE_CUP_' => $codice_cup ? ', CUP: '.$codice_cup : null,
         ]);
     }
 
     echo '
-    <tr data-id="'.$r['id'].'" '.$extra.'>
-        <td>
-            '.Modules::link($riga->isArticolo() ? Modules::get('Articoli')['id'] : null, $riga->isArticolo() ? $r['idarticolo'] : null, $r['descrizione']).'
+    <tr data-id="'.$riga->id.'" '.$extra.'>
+        <td>';
+
+    if ($riga->isArticolo()) {
+        echo '
+            '.Modules::link('Articoli', $riga->idarticolo, $riga->articolo->codice.' - '.$riga->descrizione);
+    } else {
+        echo nl2br($riga->descrizione);
+    }
+
+    echo '
             <small class="pull-right text-right text-muted">'.$extra_riga.'</small>';
 
-    if (!empty($r['abilita_serial'])) {
+    if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
         if (!empty($mancanti)) {
             echo '
             <br><b><small class="text-danger">'.tr('_NUM_ serial mancanti', [
@@ -127,19 +93,6 @@ foreach ($righe as $riga) {
             echo '
             <br>'.tr('SN').': '.implode(', ', $serials);
         }
-    }
-
-    // Aggiunta dei riferimenti ai documenti
-    if ($fattura->isNota() && !empty($record['ref_documento'])) {
-        $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM co_documenti WHERE id = ".prepare($record['ref_documento']));
-
-        $text = tr('Rif. fattura _NUM_ del _DATE_', [
-                '_NUM_' => $data[0]['numero'],
-                '_DATE_' => Translator::dateToLocale($data[0]['data']),
-            ]);
-
-        echo '
-            <br>'.Modules::link($id_module, $record['ref_documento'], $text, $text);
     }
 
     // Aggiunta dei riferimenti ai documenti
@@ -161,7 +114,7 @@ foreach ($righe as $riga) {
         // Quantità e unità di misura
         echo '
         <td class="text-center">
-            '.numberFormat($riga->qta, 'qta').' '.$r['um'].'
+            '.numberFormat($riga->qta, 'qta').' '.$riga->um.'
         </td>';
 
         // Prezzi unitari
@@ -204,37 +157,37 @@ foreach ($righe as $riga) {
     echo '
         <td class="text-center">';
 
-    if ($record['stato'] != 'Pagato' && $record['stato'] != 'Emessa' && $r['id'] != $fattura->rigaBollo->id) {
+    if ($record['stato'] != 'Pagato' && $record['stato'] != 'Emessa' && $riga->id != $fattura->rigaBollo->id) {
         echo "
-            <form action='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record."' method='post' id='delete-form-".$r['id']."' role='form'>
+            <form action='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record."' method='post' id='delete-form-".$riga->id."' role='form'>
                 <input type='hidden' name='backto' value='record-edit'>
-                <input type='hidden' name='idriga' value='".$r['id']."'>
+                <input type='hidden' name='idriga' value='".$riga->id."'>
                 <input type='hidden' name='type' value='".get_class($riga)."'>
                 <input type='hidden' name='op' value='".$delete."'>";
 
         if ($riga->isArticolo()) {
             echo "
-                <input type='hidden' name='idarticolo' value='".$r['idarticolo']."'>";
+                <input type='hidden' name='idarticolo' value='".$riga->idarticolo."'>";
         }
 
         echo "
                 <div class='input-group-btn'>";
 
-        if ($riga->isArticolo() && $r['abilita_serial'] && (empty($r['idddt']) || empty($r['idintervento']))) {
+        if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
             echo "
-                    <a class='btn btn-primary btn-xs'data-toggle='tooltip' title='Aggiorna SN...' onclick=\"launch_modal( 'Aggiorna SN', '".$structure->fileurl('add_serial.php').'?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'&idarticolo='.$r['idarticolo']."');\"><i class='fa fa-barcode' aria-hidden='true'></i></a>";
+                    <a class='btn btn-primary btn-xs'data-toggle='tooltip' title='Aggiorna SN...' onclick=\"launch_modal( 'Aggiorna SN', '".$structure->fileurl('add_serial.php').'?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga->id.'&idarticolo='.$riga->idarticolo."');\"><i class='fa fa-barcode' aria-hidden='true'></i></a>";
         }
 
         echo "
-                    <a class='btn btn-xs btn-info'  title='".tr('Aggiungi informazioni FE per questa riga...')."' data-toggle='modal' data-title='".tr('Dati Fattura Elettronica')."' data-href='".$structure->fileurl('fe/row-fe.php').'?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'&type='.urlencode(get_class($riga))."'>
+                    <a class='btn btn-xs btn-info'  title='".tr('Aggiungi informazioni FE per questa riga...')."' data-toggle='modal' data-title='".tr('Dati Fattura Elettronica')."' data-href='".$structure->fileurl('fe/row-fe.php').'?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga->id.'&type='.urlencode(get_class($riga))."'>
                         <i class='fa fa-file-code-o '></i>
                     </a>
 
-                    <a class='btn btn-xs btn-warning' title='".tr('Modifica questa riga...')."' onclick=\"launch_modal( 'Modifica riga', '".$structure->fileurl('row-edit.php').'?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'&type='.urlencode(get_class($riga))."');\">
+                    <a class='btn btn-xs btn-warning' title='".tr('Modifica questa riga...')."' onclick=\"launch_modal( 'Modifica riga', '".$structure->fileurl('row-edit.php').'?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga->id.'&type='.urlencode(get_class($riga))."');\">
                         <i class='fa fa-edit'></i>
                     </a>
 
-                    <a class='btn btn-xs btn-danger' title='".tr('Rimuovi questa riga...')."' onclick=\"if( confirm('".tr('Rimuovere questa riga dalla fattura?')."') ){ $('#delete-form-".$r['id']."').submit(); }\">
+                    <a class='btn btn-xs btn-danger' title='".tr('Rimuovi questa riga...')."' onclick=\"if( confirm('".tr('Rimuovere questa riga dalla fattura?')."') ){ $('#delete-form-".$riga->id."').submit(); }\">
                         <i class='fa fa-trash'></i>
                     </a>
                 </div>
@@ -255,12 +208,21 @@ foreach ($righe as $riga) {
 echo '
     </tbody>';
 
-$imponibile = abs($fattura->imponibile);
+// Individuazione dei totali
+$imponibile = $fattura->imponibile;
 $sconto = $fattura->sconto;
-$totale_imponibile = abs($fattura->totale_imponibile);
-$iva = abs($fattura->iva);
-$totale = abs($fattura->totale);
-$netto_a_pagare = abs($fattura->netto);
+$totale_imponibile = $fattura->totale_imponibile;
+$iva = $fattura->iva;
+$totale = $fattura->totale;
+$netto_a_pagare = $fattura->netto;
+
+// Inversione dei valori per le Note
+$imponibile = $fattura->isNota() ? -$imponibile : $imponibile;
+$sconto = $fattura->isNota() ? -$sconto : $sconto;
+$totale_imponibile = $fattura->isNota() ? -$totale_imponibile : $totale_imponibile;
+$iva = $fattura->isNota() ? -$iva : $iva;
+$totale = $fattura->isNota() ? -$totale : $totale;
+$netto_a_pagare = $fattura->isNota() ? -$netto_a_pagare : $netto_a_pagare;
 
 // IMPONIBILE
 echo '
@@ -396,7 +358,8 @@ if ($totale != $netto_a_pagare) {
 }
 
 echo '
-</table>';
+</table>
+</div>';
 
 echo '
 <script>

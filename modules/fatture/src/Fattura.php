@@ -30,6 +30,10 @@ class Fattura extends Document
         'bollo' => 'float',
     ];
 
+    protected $with = [
+        'tipo',
+    ];
+
     /**
      * Crea una nuova fattura.
      *

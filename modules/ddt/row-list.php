@@ -20,15 +20,13 @@ echo '
 // Righe documento
 $righe = $ddt->getRighe();
 foreach ($righe as $riga) {
-    $r = $riga->toArray();
-
     $extra = '';
     $mancanti = 0;
 
     // Individuazione dei seriali
-    if (!empty($r['idarticolo']) && !empty($r['abilita_serial'])) {
-        $serials = array_column($dbo->fetchArray('SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND id_riga_ddt='.prepare($r['id'])), 'serial');
-        $mancanti = $r['qta'] - count($serials);
+    if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
+        $serials = $riga->serials;
+        $mancanti = abs($riga->qta) - count($serials);
 
         if ($mancanti > 0) {
             $extra = 'class="warning"';
@@ -38,28 +36,26 @@ foreach ($righe as $riga) {
     }
 
     echo '
-    <tr data-id="'.$r['id'].'" '.$extra.'>
-        <td align="left">';
-
-    if (!empty($r['idarticolo'])) {
+    <tr data-id="'.$riga->id.'" '.$extra.'>
+        <td>';
+    if ($riga->isArticolo()) {
         echo '
-            '.Modules::link('Articoli', $r['idarticolo'], $riga->articolo->codice.' - '.$r['descrizione']);
-
-        if (!empty($r['abilita_serial'])) {
-            if (!empty($mancanti)) {
-                echo '
-            <br><b><small class="text-danger">'.tr('_NUM_ serial mancanti', [
-                '_NUM_' => $mancanti,
-            ]).'</small></b>';
-            }
-
-            if (!empty($serials)) {
-                echo '
-            <br>'.tr('SN').': '.implode(', ', $serials);
-            }
-        }
+            '.Modules::link('Articoli', $riga->idarticolo, $riga->articolo->codice.' - '.$riga->descrizione);
     } else {
-        echo nl2br($r['descrizione']);
+        echo nl2br($riga->descrizione);
+    }
+
+    if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
+        if (!empty($mancanti)) {
+            echo '
+            <br><b><small class="text-danger">'.tr('_NUM_ serial mancanti', [
+                    '_NUM_' => $mancanti,
+                ]).'</small></b>';
+        }
+        if (!empty($serials)) {
+            echo '
+            <br>'.tr('SN').': '.implode(', ', $serials);
+        }
     }
 
     // Aggiunta dei riferimenti ai documenti
@@ -81,7 +77,7 @@ foreach ($righe as $riga) {
         // Quantità e unità di misura
         echo '
         <td class="text-center">
-            '.numberFormat($riga->qta_rimanente, 'qta').' / '.numberFormat($riga->qta, 'qta').' '.$r['um'].'
+            '.numberFormat($riga->qta_rimanente, 'qta').' / '.numberFormat($riga->qta, 'qta').' '.$riga->um.'
         </td>';
 
         // Prezzi unitari
@@ -126,26 +122,26 @@ foreach ($righe as $riga) {
 
     if ($record['flag_completato'] == 0) {
         echo "
-            <form action='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record."' method='post' id='delete-form-".$r['id']."' role='form'>
+            <form action='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record."' method='post' id='delete-form-".$riga->id."' role='form'>
                 <input type='hidden' name='backto' value='record-edit'>
                 <input type='hidden' name='id_record' value='".$id_record."'>
-                <input type='hidden' name='idriga' value='".$r['id']."'>
+                <input type='hidden' name='idriga' value='".$riga->id."'>
                 <input type='hidden' name='type' value='".get_class($riga)."'>
                 <input type='hidden' name='op' value='delete_riga'>
 
                 <div class='input-group-btn'>";
 
-        if (!empty($r['idarticolo']) && $r['abilita_serial']) {
+        if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
             echo "
-                    <a class='btn btn-primary btn-xs'data-toggle='tooltip' title='Aggiorna SN...' onclick=\"launch_modal( 'Aggiorna SN', '".$rootdir.'/modules/fatture/add_serial.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'&idarticolo='.$r['idarticolo']."');\"><i class='fa fa-barcode' aria-hidden='true'></i></a>";
+                    <a class='btn btn-primary btn-xs'data-toggle='tooltip' title='Aggiorna SN...' onclick=\"launch_modal( 'Aggiorna SN', '".$rootdir.'/modules/fatture/add_serial.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga->id.'&idarticolo='.$riga->idarticolo."');\"><i class='fa fa-barcode' aria-hidden='true'></i></a>";
         }
 
         echo "
-                    <a class='btn btn-xs btn-warning' title='Modifica questa riga...' onclick=\"launch_modal('Modifica riga', '".$rootdir.'/modules/ddt/row-edit.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'&type='.urlencode(get_class($riga))."');\">
+                    <a class='btn btn-xs btn-warning' title='Modifica questa riga...' onclick=\"launch_modal('Modifica riga', '".$rootdir.'/modules/ddt/row-edit.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga->id.'&type='.urlencode(get_class($riga))."');\">
                         <i class='fa fa-edit'></i>
                     </a>
 
-                    <a class='btn btn-xs btn-danger' title='Rimuovi questa riga...' onclick=\"if( confirm('Rimuovere questa riga dal ddt?') ){ $('#delete-form-".$r['id']."').submit(); }\">
+                    <a class='btn btn-xs btn-danger' title='Rimuovi questa riga...' onclick=\"if( confirm('Rimuovere questa riga dal ddt?') ){ $('#delete-form-".$riga->id."').submit(); }\">
                         <i class='fa fa-trash'></i>
                     </a>
                 </div>

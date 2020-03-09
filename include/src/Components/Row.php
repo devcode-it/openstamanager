@@ -318,6 +318,11 @@ abstract class Row extends Description
 
     protected static function boot($bypass = false)
     {
+        // Precaricamento Aliquota IVA
+        static::addGlobalScope('aliquota', function (Builder $builder) {
+            $builder->with('aliquota');
+        });
+
         parent::boot(true);
 
         $table = parent::getTableName();

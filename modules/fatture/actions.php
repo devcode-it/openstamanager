@@ -186,8 +186,27 @@ switch (post('op')) {
         try {
             $xml = \Util\XML::read($fattura->getXML());
 
+            // Totale basato sul campo ImportoTotaleDocumento
             $dati_generali = $xml['FatturaElettronicaBody']['DatiGenerali']['DatiGeneraliDocumento'];
-            $totale_documento = $fattura->isNota() ? -abs(floatval($dati_generali['ImportoTotaleDocumento'])) : abs(floatval($dati_generali['ImportoTotaleDocumento']));
+            $totale_documento = abs(floatval($dati_generali['ImportoTotaleDocumento']));
+
+            // Calcolo del totale basato sui DatiRiepilogo
+            if (empty($totale_documento)) {
+                $totale_documento = 0;
+
+                $riepiloghi = $xml['FatturaElettronicaBody']['DatiBeniServizi']['DatiRiepilogo'];
+                if (!empty($riepiloghi) && !isset($riepiloghi[0])) {
+                    $riepiloghi = [$riepiloghi];
+                }
+
+                foreach ($riepiloghi as $riepilogo) {
+                    $totale_documento = sum([$totale_documento, $riepilogo['ImponibileImporto'], $riepilogo['Imposta']]);
+                }
+
+                $totale_documento = abs($totale_documento);
+            }
+
+            $totale_documento = $fattura->isNota() ? -$totale_documento : $totale_documento;
         } catch (Exception $e) {
             $totale_documento = null;
         }

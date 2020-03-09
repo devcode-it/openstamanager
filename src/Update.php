@@ -7,6 +7,8 @@
  */
 class Update
 {
+    protected static $current_version;
+
     /** @var array Elenco degli aggiornamenti da completare */
     protected static $updates;
     /** @var array Percorsi da controllare per gli aggiornamenti */
@@ -114,11 +116,14 @@ class Update
      */
     public static function getDatabaseVersion()
     {
-        $database = database();
+        if (!isset(self::$current_version)) {
+            $database = database();
 
-        $results = $database->fetchArray("SELECT version FROM `updates` WHERE version NOT LIKE '%\_%' ORDER BY INET_ATON(SUBSTRING_INDEX(CONCAT(version,'.0.0.0'),'.',4)) DESC LIMIT 1");
+            $results = $database->fetchArray("SELECT version FROM `updates` WHERE version NOT LIKE '%\_%' ORDER BY INET_ATON(SUBSTRING_INDEX(CONCAT(version,'.0.0.0'),'.',4)) DESC LIMIT 1");
+            self::$current_version = $results[0]['version'];
+        }
 
-        return $results[0]['version'];
+        return self::$current_version;
     }
 
     /**

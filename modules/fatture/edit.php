@@ -672,6 +672,7 @@ include $structure->filepath('row-list.php');
 </div>
 
 <?php
+
 if ($dir == 'uscita' && $fattura->isFE()) {
     echo '
 <div class="alert alert-info text-center" id="controlla_totali"><i class="fa fa-spinner fa-spin"></i> '.tr('Controllo sui totali del documento e della fattura elettronica in corso').'...</div>

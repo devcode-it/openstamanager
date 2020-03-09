@@ -17,6 +17,10 @@ class DDT extends Document
 
     protected $table = 'dt_ddt';
 
+    protected $with = [
+        'tipo',
+    ];
+
     /**
      * Crea un nuovo ddt.
      *

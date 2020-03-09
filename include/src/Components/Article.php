@@ -230,6 +230,11 @@ abstract class Article extends Row
 
     protected static function boot()
     {
+        // Precaricamento Articolo
+        static::addGlobalScope('articolo', function (Builder $builder) {
+            $builder->with('articolo');
+        });
+
         parent::boot(true);
 
         $table = parent::getTableName();

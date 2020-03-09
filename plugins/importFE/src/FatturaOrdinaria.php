@@ -66,6 +66,7 @@ class FatturaOrdinaria extends FatturaElettronica
     {
         $result = $this->getBody()['DatiBeniServizi']['DettaglioLinee'];
 
+        // Aggiunta degli arrotondamenti IVA come righe indipendenti
         $riepolighi = $this->getBody()['DatiBeniServizi']['DatiRiepilogo'];
         foreach ($riepolighi as $riepilogo) {
             if (!empty($riepilogo['Arrotondamento'])) {

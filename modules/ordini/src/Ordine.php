@@ -17,6 +17,10 @@ class Ordine extends Document
 
     protected $table = 'or_ordini';
 
+    protected $with = [
+        'tipo',
+    ];
+
     /**
      * Crea un nuovo ordine.
      *

@@ -448,4 +448,4 @@ UPDATE `zz_hooks` SET `name` = 'Aggiornamenti' WHERE `class` = 'Modules\\Aggiorn
 
 -- Aggiunta stampa Barcode
 INSERT INTO `zz_prints` (`id_module`, `name`, `title`, `filename`, `directory`, `icon`, `options`, `predefined`, `previous`, `enabled`, `default`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), 'Barcode', 'Barcode', 'Barcode', 'barcode', 'fa fa-print', '{"width": 54, "height": 20}', 1, '', 1, 1);
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), 'Barcode', 'Barcode', 'Barcode', 'barcode', 'fa fa-print', '{"width": 54, "height": 20, "format": [64, 55]}', 1, '', 1, 1);

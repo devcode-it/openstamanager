@@ -4,9 +4,13 @@ include_once __DIR__.'/../../core.php';
 
 echo '<style>
 .barcode {
-    padding: 4mm;
-    padding-bottom: 2.5mm;
+    padding: 0;
     margin: 0;
+    vertical-align: top;
+}
+.barcode-cell {
+    text-align: center;
+    vertical-align: middle;
 }
 </style>';
 
@@ -18,5 +22,8 @@ $height = $settings['height'] / $height_factor / $size;
 
 $number = 1; // 32
 for ($i = 0; $i < $number; ++$i) {
-    echo '<barcode code="'.$articolo->barcode.'" type="EAN13" height="'.$height.'" size="'.$size.'" class="barcode" />';
+    echo '
+    <div class="barcode-cell">
+        <barcode code="'.$articolo->barcode.'" type="EAN13" height="'.$height.'" size="'.$size.'" class="barcode" />
+    </div>';
 }

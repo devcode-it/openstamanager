@@ -436,10 +436,12 @@ CREATE TABLE IF NOT EXISTS `zz_cache` (
 
 INSERT INTO `zz_cache` (`id`, `name`, `content`, `valid_time`, `expire_at`) VALUES
 (NULL, 'Ricevute Elettroniche', '', '1 day', NULL),
+(NULL, 'Ricevute Elettroniche importate', '', '1 day', NULL),
 (NULL, 'Fatture Elettroniche', '', '1 day', NULL),
 (NULL, 'Ultima versione di OpenSTAManager disponibile', '', '7 day', NULL);
 
 DROP TABLE IF EXISTS `zz_hook_cache`;
+ALTER TABLE `zz_hooks` DROP `frequency`;
 
 -- Fix nome hook Aggiornamenti
 UPDATE `zz_hooks` SET `name` = 'Aggiornamenti' WHERE `class` = 'Modules\\Aggiornamenti\\UpdateHook';

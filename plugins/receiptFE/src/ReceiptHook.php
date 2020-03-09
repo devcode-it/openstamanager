@@ -2,48 +2,97 @@
 
 namespace Plugins\ReceiptFE;
 
-use Hooks\CachedManager;
-use Modules;
+use Hooks\Manager;
+use Models\Cache;
 
-class ReceiptHook extends CachedManager
+class ReceiptHook extends Manager
 {
-    public function getCacheName()
+    public function isSingleton()
     {
-        return 'Ricevute Elettroniche';
+        return true;
     }
 
-    public function cacheData()
+    public function needsExecution()
     {
-        return Interaction::getReceiptList();
+        // Lettura cache
+        $todo_cache = Cache::get('Ricevute Elettroniche');
+
+        return !$todo_cache->isValid() || !empty($todo_cache->content);
+    }
+
+    public function execute()
+    {
+        // Lettura cache
+        $todo_cache = Cache::get('Ricevute Elettroniche');
+        $completed_cache = Cache::get('Ricevute Elettroniche importate');
+
+        // Refresh cache
+        if (!$todo_cache->isValid()) {
+            $list = Interaction::getRemoteList();
+
+            $todo_cache->set($list);
+            $completed_cache->set([]);
+
+            return;
+        }
+
+        // Caricamento elenco di importazione
+        $todo = $todo_cache->content;
+        if (empty($todo)) {
+            return;
+        }
+
+        // Caricamento elenco di ricevute imporate
+        $completed = $completed_cache->content;
+        $count = count($todo);
+
+        // Esecuzione di 10 imporazioni
+        for ($i = 0; $i < 10 && $i < $count; ++$i) {
+            $element = $todo[$i];
+
+            // Importazione ricevuta
+            $name = $element['name'];
+            Interaction::getReceiptList($name);
+
+            try {
+                $receipt = new Ricevuta($name);
+                $receipt->save();
+
+                $receipt->delete();
+                Interaction::processReceipt($name);
+
+                $completed[] = $element;
+                unset($todo[$i]);
+            } catch (UnexpectedValueException $e) {
+            }
+        }
+
+        // Aggiornamento cache
+        $todo_cache->set($todo);
+        $completed_cache->set($completed);
     }
 
     public function response()
     {
-        $results = $this->getCache()->content;
+        // Lettura cache
+        $todo_cache = Cache::get('Ricevute Elettroniche');
+        $completed_cache = Cache::get('Ricevute Elettroniche importate');
 
-        $count = count($results);
-        $notify = false;
+        $completed_number = count($completed_cache->content);
+        $total_number = $completed_number + count($todo_cache->content);
 
-        $module = Modules::get('Fatture di vendita');
-        $plugins = $module->plugins;
-
-        if (!empty($plugins)) {
-            $notify = !empty($count);
-
-            $plugin = $plugins->first(function ($value, $key) {
-                return $value->name == 'Ricevute FE';
-            });
-
-            $link = ROOTDIR.'/controller.php?id_module='.$module->id.'#tab_'.$plugin->id;
-        }
-
-        $message = tr('Ci sono _NUM_ ricevute da importare', [
-            '_NUM_' => $count,
+        // Messaggio di importazione
+        $message = tr('Sono state importate _NUM_ ricevute su _TOT_', [
+            '_NUM_' => $completed_number,
+            '_TOT_' => $total_number,
         ]);
 
+        // Notifica sullo stato dell'importazione
+        $notify = $total_number != 0;
+        $color = $total_number == $completed_number ? 'success' : 'yellow';
+
         return [
-            'icon' => 'fa fa-ticket text-yellow',
-            'link' => $link,
+            'icon' => 'fa fa-ticket text-'.$color,
             'message' => $message,
             'show' => $notify,
         ];

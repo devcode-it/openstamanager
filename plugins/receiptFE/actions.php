@@ -16,7 +16,7 @@ switch (filter('op')) {
 
             $fattura = null;
             try {
-                $receipt = new Ricevuta($name, $content);
+                $receipt = new Ricevuta($name);
                 $receipt->save();
 
                 $fattura = $receipt->getFattura()->numero_esterno;
@@ -50,7 +50,7 @@ switch (filter('op')) {
 
         $fattura = null;
         try {
-            $receipt = new Ricevuta($name, $content);
+            $receipt = new Ricevuta($name);
             $receipt->save();
 
             $fattura = $receipt->getFattura()->numero_esterno;

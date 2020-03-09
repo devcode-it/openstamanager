@@ -147,6 +147,8 @@ function calcola_sconto($data)
  * @param $dir
  * @param array $ignore
  *
+ * @deprecated
+ *
  * @throws Exception
  *
  * @return array
@@ -242,6 +244,14 @@ function doc_references($info, $dir, $ignore = [])
     return [];
 }
 
+/**
+ * Restituisce i mesi tradotti nella lingua corrente.
+ * Da sostituire con il relativo corretto utilizzo delle date PHP.
+ *
+ * @deprecated
+ *
+ * @return array
+ */
 function months()
 {
     return [
@@ -260,6 +270,15 @@ function months()
     ];
 }
 
+/**
+ * Individua il valore della colonna order per i nuovi elementi di una tabella.
+ *
+ * @param $table
+ * @param $field
+ * @param $id
+ *
+ * @return mixed
+ */
 function orderValue($table, $field, $id)
 {
     return database()->fetchOne('SELECT IFNULL(MAX(`order`) + 1, 0) AS value FROM '.$table.' WHERE '.$field.' = '.prepare($id))['value'];
@@ -286,6 +305,13 @@ function discountInfo(\Common\Components\Row $riga, $mostra_maggiorazione = true
     ]);
 }
 
+/**
+ * Genera i riferimenti ai documenti del gestionale, attraverso l'interfaccia Common\ReferenceInterface.
+ *
+ * @param $document
+ *
+ * @return string
+ */
 function reference($document)
 {
     if (!empty($document) && !($document instanceof \Common\ReferenceInterface)) {
@@ -307,4 +333,31 @@ function reference($document)
     }
 
     return Modules::link($module_id, $document_id, $description, $description, $extra);
+}
+
+/**
+ * Funzione che gestisce il parsing di uno sconto combinato e la relativa trasformazione in sconto fisso.
+ * Esempio: (40 + 10) % = 44 %.
+ *
+ * @param $combinato
+ *
+ * @return float|int
+ */
+function parseScontoCombinato($combinato)
+{
+    $sign = substr($combinato, 0, 1);
+    $original = $sign != '+' && $sign != '-' ? '+'.$combinato : $combinato;
+    $pieces = preg_split('/[+,-]+/', $original);
+    unset($pieces[0]);
+
+    $result = 1;
+    $text = $original;
+    foreach ($pieces as $piece) {
+        $sign = substr($text, 0, 1);
+        $text = substr($text, 1 + strlen($piece));
+
+        $result *= 1 - floatval($sign.$piece) / 100;
+    }
+
+    return (1 - $result) * 100;
 }

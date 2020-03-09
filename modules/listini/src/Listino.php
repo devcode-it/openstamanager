@@ -48,21 +48,7 @@ class Listino extends Model
     {
         $combinato = $this->prc_combinato;
         if (!empty($combinato)) {
-            $sign = substr($combinato, 0, 1);
-            $original = $sign != '+' && $sign != '-' ? '+'.$combinato : $combinato;
-            $pieces = preg_split('/[+,-]+/', $original);
-            unset($pieces[0]);
-
-            $result = 1;
-            $text = $original;
-            foreach ($pieces as $piece) {
-                $sign = substr($text, 0, 1);
-                $text = substr($text, 1 + strlen($piece));
-
-                $result *= 1 - floatval($sign.$piece) / 100;
-            }
-
-            $this->percentuale = $result * 100;
+            $this->percentuale = parseScontoCombinato($combinato);
         }
 
         return parent::save($options);

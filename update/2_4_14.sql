@@ -440,3 +440,6 @@ INSERT INTO `zz_cache` (`id`, `name`, `content`, `valid_time`, `expire_at`) VALU
 (NULL, 'Ultima versione di OpenSTAManager disponibile', '', '7 day', NULL);
 
 DROP TABLE IF EXISTS `zz_hook_cache`;
+
+-- Fix nome hook Aggiornamenti
+UPDATE `zz_hooks` SET `name` = 'Aggiornamenti' WHERE `class` = 'Modules\\Aggiornamenti\\UpdateHook';

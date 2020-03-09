@@ -2,11 +2,9 @@
 
 include_once __DIR__.'/../../core.php';
 
-$backup_dir = Backup::getDirectory();
 $backups = Backup::getList();
 
-echo '<p>'.tr('Il backup è <b>molto importante</b> perché permette di creare una copia della propria installazione e relativi dati per poterla poi ripristinare in seguito a errori, cancellazioni accidentali o guasti hardware').'.</p>';
-
+// Controllo sul requisito ZIP
 if (!extension_loaded('zip')) {
     echo "
 <div class='alert alert-warning'>
@@ -15,25 +13,31 @@ if (!extension_loaded('zip')) {
 </div>';
 }
 
-if (starts_with($backup_dir, $docroot)) {
+if (!empty($backup_dir)) {
+    $message = tr('Il percorso di backup è attualmente in: _PATH_', [
+        '_PATH_' => '<b>'.slashes($backup_dir).'</b>',
+    ]);
+} else {
+    $message = tr('Sembra che tu non abbia ancora specificato un percorso per il backup').'.';
+}
+
+// Controllo sui permessi di scrittura
+if (!is_writable($backup_dir) || !is_readable($backup_dir)) {
+    echo '
+    <div class="alert alert-danger">
+        <i class="fa fa-warning"></i> '.$message.'<br>'.tr('La cartella di backup indicata non è utilizzabile dal gestionale a causa di alcuni permessi di scrittura non impostati correttamente').'.
+    </div>';
+
+    return;
+}
+
+echo '<p>'.tr('Il backup è molto importante perché permette di creare una copia della propria installazione e relativi dati per poterla poi ripristinare in seguito a errori, cancellazioni accidentali o guasti hardware').'.</p>';
+
+if (starts_with($backup_dir, DOCROOT)) {
     echo '
     <div class="alert alert-warning">
         <i class="fa fa-warning"></i> '.tr('Per motivi di sicurezza si consiglia di modificare il percorso della cartella di backup al di fuori della cartella di OSM, possibilmente in una unità esterna').'.
     </div>';
-}
-
-if (!is_writable($backup_dir)) {
-    echo '
-    <div class="alert alert-warning">
-        <i class="fa fa-warning"></i> '.tr('La cartella di backup presente nella configurazione non è utilizzabile dal gestionale').'.
-        '.tr('Verificare che la cartella abbia i permessi di scrittura abilitati').'.
-    </div>';
-}
-
-if (!empty($backup_dir)) {
-    $message = tr('Il percorso di backup è attualmente in').': <b>'.slashes($backup_dir).'</b>';
-} else {
-    $message = tr('Sembra che tu non abbia ancora specificato un percorso per il backup').'.';
 }
 
 // Operazioni JavaScript
@@ -97,7 +101,7 @@ echo '
     <div class="col-md-8">
         <div class="callout callout-success">
             <p>'.$message.'</p>
-			<p><small>'.tr('Dimensione totale: _SPAZIO_', [
+			<p><small>'.tr('Spazio totale occupato dai backup: _SPAZIO_', [
                 '_SPAZIO_' => '<i id="total_size"></i>',
             ]).'</small></p>
 			<p><small>'.tr('Numero di backup: _NUM_', [
@@ -108,7 +112,7 @@ echo '
             ]).'</small></p>
         </div>
     </div>
-    
+
     <script>
         loadSize("", "total_size");
     </script>';
@@ -158,7 +162,7 @@ if (file_exists($backup_dir)) {
 
     if (empty($backups_zip) && empty($backups_file)) {
         echo '
-<div class="alert alert-warning">
+<div class="alert alert-info">
     <i class="fa fa-warning"></i> '.tr('Non è ancora stato trovato alcun backup!').'
     '.tr('Se hai già inserito dei dati su OSM crealo il prima possibile...').'
 </div>';
@@ -186,11 +190,11 @@ if (file_exists($backup_dir)) {
                 '.tr('Nome del file').': '.$name.'<br>
                 '.tr('Dimensione').': <i id="c-'.$id.'"></i>
             </small></p>
-            
+
             <script>
                 loadSize("'.$id.'", "c-'.$id.'");
             </script>
-            
+
             <a class="btn btn-primary" href="'.$rootdir.'/modules/backups/actions.php?op=getfile&number='.$id.'" target="_blank"><i class="fa fa-download"></i> '.tr('Scarica').'</a>
 
             <div class="pull-right">
@@ -236,7 +240,7 @@ if (file_exists($backup_dir)) {
                 '.tr('Nome del file').': '.$name.'<br>
                 '.tr('Dimensione').': <i id="n-'.$id.'"></i>
             </small></p>
-            
+
             <script>
                 loadSize("'.$id.'", "n-'.$id.'");
             </script>

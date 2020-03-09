@@ -29,7 +29,7 @@ class Backup
 
         $result = rtrim($result, '/');
         if (!directory($result) || !is_writable($result)) {
-            throw new UnexpectedValueException();
+            //throw new UnexpectedValueException();
         }
 
         return slashes($result);
@@ -44,6 +44,11 @@ class Backup
      */
     public static function getList($pattern = null)
     {
+        $directory = self::getDirectory();
+        if (!is_writable($directory) || !is_readable($directory)) {
+            return [];
+        }
+
         // Costruzione del pattern
         if (empty($pattern)) {
             $replaces = self::getReplaces();
@@ -56,7 +61,7 @@ class Backup
         $backups = Symfony\Component\Finder\Finder::create()
             ->name('/^'.$pattern.'/')
             ->sortByName()
-            ->in(self::getDirectory())
+            ->in($directory)
             ->depth('== 0');
 
         $results = [];

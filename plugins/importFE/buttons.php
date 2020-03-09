@@ -1,11 +1,19 @@
 <?php
 
 echo '
-<button type="button" class="btn btn-primary tip" '.(!empty($anagrafica) ? '' : 'disabled').' onclick="compile(this)" title="'.tr('Tenta la compilazione automatica delle informazioni delle fattura elettronica sulla base delle precedenti fatture del Fornitore').'.">
+<button type="button" class="btn btn-primary tip" '.(!empty($anagrafica) ? '' : 'disabled').' id="compilazione_automatica" onclick="compile(this)" title="'.tr('Tenta la compilazione automatica delle informazioni delle fattura elettronica sulla base delle precedenti fatture del Fornitore').'.">
     <i class="fa fa-address-book"></i> '.tr('Compila automaticamente').'
 </button>
 
 <script>
+$(document).ready(function() {
+    var btn = $("#compilazione_automatica");
+
+    if (!btn.hasClass("disabled")) {
+        btn.click();
+    }
+});
+
 function compile(btn) {
     var restore = buttonLoading(btn);
 

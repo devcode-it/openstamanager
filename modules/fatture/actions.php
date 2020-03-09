@@ -187,8 +187,8 @@ switch (post('op')) {
             $xml = \Util\XML::read($fattura->getXML());
 
             // Totale basato sul campo ImportoTotaleDocumento
-            $dati_generali = $xml['FatturaElettronicaBody']['DatiGenerali']['DatiGeneraliDocumento'];
-            $totale_documento = abs(floatval($dati_generali['ImportoTotaleDocumento']));
+            //$dati_generali = $xml['FatturaElettronicaBody']['DatiGenerali']['DatiGeneraliDocumento'];
+            //$totale_documento = abs(floatval($dati_generali['ImportoTotaleDocumento']));
 
             // Calcolo del totale basato sui DatiRiepilogo
             if (empty($totale_documento)) {

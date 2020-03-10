@@ -443,11 +443,15 @@ if (!empty($id_intervento)) {
 	$('#modals > div #idtipointervento').change( function(){
 
 		if ($(this).selectData() && (($(this).selectData().tempo_standard)>0) && ('<?php echo filter('orario_fine'); ?>' == '')){
-			tempo_standard = $(this).selectData().tempo_standard;
-
-			data = moment($('#modals > div #orario_inizio').val(), globals.timestamp_format);
-			orario_fine = data.add(tempo_standard, 'hours');
-			$('#modals > div #orario_fine').val(orario_fine.format(globals.timestamp_format));
+            
+            orario_inizio = moment($('#modals > div #orario_inizio').val(), globals.timestamp_format, globals.locale).isValid() ? $('#modals > div #orario_inizio').val() : false;
+            //console.log(orario_inizio);
+            //da sistemare
+            if (orario_inizio){
+                tempo_standard = ($(this).selectData().tempo_standard)*60;
+                orario_fine = moment(orario_inizio).add(tempo_standard, 'm');
+                $('#modals > div #orario_fine').val(moment(orario_fine).format(globals.timestamp_format));
+            }
 		}
 
 	});

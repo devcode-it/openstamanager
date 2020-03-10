@@ -89,7 +89,7 @@ $_SESSION['superselect']['idsede_destinazione'] = 0;
             }
 
             if (evt.which === 13) {
-                var search = keys;
+                var search = keys.replace(/\W/g, '');
 
                 // Ricerca via ajax del barcode negli articoli
                 $.get(

@@ -35,6 +35,7 @@ echo '
 $rs = $dbo->fetchArray('SELECT
         in_interventi.id,
         CONCAT(\'Intervento numero \', in_interventi.codice, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento=in_interventi.id), in_interventi.data_richiesta), \'%d/%m/%Y\'), " [", `in_statiintervento`.`descrizione` , "]") AS descrizione,
+        CONCAT(\'Intervento numero \', in_interventi.codice, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento=in_interventi.id), in_interventi.data_richiesta), \'%d/%m/%Y\')) AS info,
         CONCAT(\'\n\', in_interventi.descrizione) AS descrizione_intervento,
         IF(idclientefinale='.prepare($idanagrafica).', \'Interventi conto terzi\', \'Interventi diretti\') AS `optgroup`
     FROM
@@ -58,7 +59,7 @@ foreach ($rs as $key => $value) {
 echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Intervento').'", "name": "idintervento", "required": 1, "values": '.json_encode($rs).', "extra": "onchange=\"$data = $(this).selectData(); $(\'#descrizione\').val($data.descrizione); if($(\'#copia_descrizione\').is(\':checked\')){  $(\'#descrizione\').val($data.descrizione + $data.descrizione_intervento); }; $(\'#prezzo\').val($data.prezzo);\"" ]}
+            {[ "type": "select", "label": "'.tr('Intervento').'", "name": "idintervento", "required": 1, "values": '.json_encode($rs).', "extra": "onchange=\"$data = $(this).selectData(); $(\'#descrizione\').val($data.info); if($(\'#copia_descrizione\').is(\':checked\')){  $(\'#descrizione\').val($data.info + $data.descrizione_intervento); }; $(\'#prezzo\').val($data.prezzo);\"" ]}
         </div>
 
 		<div class="col-md-6">

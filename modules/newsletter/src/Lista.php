@@ -45,4 +45,14 @@ class Lista extends Model
     {
         return $this->belongsToMany(Anagrafica::class, 'em_list_anagrafica', 'id_list', 'id_anagrafica')->withTrashed();
     }
+
+    /**
+     * Restituisce il nome del modulo a cui l'oggetto è collegato.
+     *
+     * @return string
+     */
+    public function getModuleAttribute()
+    {
+        return 'Liste';
+    }
 }

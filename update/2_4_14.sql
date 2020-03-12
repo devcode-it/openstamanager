@@ -469,3 +469,8 @@ UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato,
 
 
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM in_interventi WHERE id NOT IN (SELECT idintervento FROM in_interventi_tecnici) AND idstatointervento IN (SELECT idstatointervento FROM in_statiintervento WHERE is_completato = 0) ' WHERE `zz_widgets`.`name` = 'Attività da pianificare';
+
+
+-- Lista con indirizzi email validi per ogni anagrafica caricata a sistema
+INSERT INTO `em_lists` (`id`, `name`, `description`, `query`, `deleted_at`) VALUES
+(NULL, 'Tutte le anagrafiche', 'Indirizzi email validi per ogni anagrafica caricata a sistema', 'SELECT idanagrafica AS id FROM an_anagrafiche WHERE email != \'\'', NULL);

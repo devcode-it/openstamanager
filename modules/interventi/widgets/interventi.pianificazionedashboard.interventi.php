@@ -6,7 +6,7 @@ include_once __DIR__.'/../../../core.php';
 $mesi = months();
 
 // Righe inserite
-$qp = "SELECT  IF(data_scadenza IS NULL, data_richiesta, data_scadenza) AS data, id, codice, richiesta, data_richiesta, data_scadenza, DATE_FORMAT(IF(data_scadenza IS NULL, data_richiesta, data_scadenza), '%m%Y') AS mese, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento = in_interventi.idtipointervento ) AS tipointervento, idanagrafica AS idcliente, (SELECT ragione_sociale  FROM an_anagrafiche WHERE idanagrafica = in_interventi.idanagrafica) AS ragione_sociale FROM in_interventi WHERE id NOT IN (SELECT idintervento FROM in_interventi_tecnici) AND idstatointervento IN (SELECT idstatointervento FROM in_statiintervento WHERE completato = 0) ORDER BY DATE_FORMAT( IF(data_scadenza IS NULL, data_richiesta, data_scadenza), '%Y-%m') ASC, ragione_sociale ASC";
+$qp = "SELECT  IF(data_scadenza IS NULL, data_richiesta, data_scadenza) AS data, id, codice, richiesta, data_richiesta, data_scadenza, DATE_FORMAT(IF(data_scadenza IS NULL, data_richiesta, data_scadenza), '%m%Y') AS mese, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento = in_interventi.idtipointervento ) AS tipointervento, idanagrafica AS idcliente, (SELECT ragione_sociale  FROM an_anagrafiche WHERE idanagrafica = in_interventi.idanagrafica) AS ragione_sociale FROM in_interventi WHERE id NOT IN (SELECT idintervento FROM in_interventi_tecnici) AND idstatointervento IN (SELECT idstatointervento FROM in_statiintervento WHERE is_completato = 0) ORDER BY DATE_FORMAT( IF(data_scadenza IS NULL, data_richiesta, data_scadenza), '%Y-%m') ASC, ragione_sociale ASC";
 $rsp = $dbo->fetchArray($qp);
 $n = $dbo->fetchNum($qp);
 

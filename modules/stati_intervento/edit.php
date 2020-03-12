@@ -18,15 +18,19 @@ if ($record['can_delete']) {
 			{[ "type": "text", "label": "<?php echo tr('Codice'); ?>", "name": "codice", "value": "$codice$", "extra": "<?php echo $attr; ?>" ]}
 		</div>
 
-		<div class="col-md-5">
+		<div class="col-md-4">
 			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$" ]}
 		</div>
 
         <div class="col-md-2">
-            {[ "type": "checkbox", "label": "<?php echo tr('Stato completato?'); ?>", "name": "completato", "value": "$completato$", "help": "<?php echo tr('Le attività che si trovano in questo stato verranno considerate come completate.'); ?>", "placeholder": "<?php echo tr('Completato'); ?>", "extra": "<?php echo $attr; ?>" ]}
+            {[ "type": "checkbox", "label": "<?php echo tr('Stato completato?'); ?>", "name": "is_completato", "value": "$is_completato$", "help": "<?php echo tr('Le attività che si trovano in questo stato verranno considerate come completate.'); ?>", "placeholder": "<?php echo tr('Completato'); ?>", "extra": "<?php echo $attr; ?>" ]}
 		</div>
 
-		<div class="col-md-3">
+		<div class="col-md-2">
+            {[ "type": "checkbox", "label": "<?php echo tr('Stato fatturabile?'); ?>", "name": "is_fatturabile", "value": "$is_fatturabile$", "help": "<?php echo tr('Le attività che si trovano in questo stato verranno considerate come fatturabili.'); ?>", "placeholder": "<?php echo tr('Fatturabile'); ?>", "extra": "<?php echo $attr; ?>" ]}
+		</div>
+
+		<div class="col-md-2">
 			{[ "type": "text", "label": "<?php echo tr('Colore'); ?>", "name": "colore", "required": 1, "class": "colorpicker text-center", "value": "$colore$", "extra": "maxlength='7'", "icon-after": "<div class='img-circle square'></div>" ]}
 		</div>
 	</div>

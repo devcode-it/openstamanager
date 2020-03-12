@@ -41,7 +41,7 @@ $rs = $dbo->fetchArray('SELECT
         in_interventi INNER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento
     WHERE
         (in_interventi.idanagrafica='.prepare($idanagrafica).' OR in_interventi.idclientefinale='.prepare($idanagrafica).')
-        AND in_statiintervento.completato=1
+        AND in_statiintervento.is_completato=1 AND in_statiintervento.is_fatturabile=1
         AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL)
         AND in_interventi.id_preventivo IS NULL
         AND in_interventi.id_contratto IS NULL

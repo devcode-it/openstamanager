@@ -29,7 +29,9 @@ function compile(btn) {
         },
         success: function(response) {
             var data = JSON.parse(response);
-            console.log(data);
+            if (data.length == 0){
+                return;
+            }
 
             $("#id_tipo").selectSet(data.id_tipo);
             $("#pagamento").selectSetNew(data.pagamento.id, data.pagamento.descrizione);

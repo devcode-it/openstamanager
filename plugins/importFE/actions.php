@@ -170,6 +170,12 @@ switch (filter('op')) {
         break;
 
     case 'compile':
+        if (empty($anagrafica)) {
+            echo json_encode([]);
+
+            return;
+        }
+
         $fatture = $anagrafica->fattureAcquisto()
             ->contabile()
             ->orderByDesc('created_at')

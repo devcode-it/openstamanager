@@ -85,7 +85,7 @@ echo '
 
             <div class="row">
                 <div class="col-md-12">
-                    {[ "type": "ckeditor", "use_full_ckeditor": 1, "label": "'.tr('Contenuto').'", "name": "content", "value": "$content$" ]}
+                    {[ "type": "editor", "use_full_ckeditor": 1, "label": "'.tr('Contenuto').'", "name": "content", "value": "$content$" ]}
                 </div>
             </div>
 

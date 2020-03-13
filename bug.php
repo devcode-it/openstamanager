@@ -152,7 +152,7 @@ echo '
             <div class="clearfix"></div>
             <br>
 
-            {[ "type": "ckeditor", "label": "'.tr('Descrizione del bug').'", "name": "body" ]}
+            {[ "type": "editor", "label": "'.tr('Descrizione del bug').'", "name": "body", "placeholder": "<p>'.tr('Se hai riscontrato un bug ricordati di specificare').':</p><ul><li>'.tr('Modulo esatto (o pagina relativa) in cui questi si è verificato').';</li><li>'.tr('Dopo quali specifiche operazioni hai notato il malfunzionamento').'.</li></ul><p>'.tr('Assicurati inoltre di controllare che il checkbox relativo ai file di log sia contrassegnato, oppure riporta qui l\'errore visualizzato').'.</p><p>'.tr('Ti ringraziamo per il tuo contributo').',<br>'.tr('Lo staff di OSM').'</p>" ]}
 
             <!-- PULSANTI -->
             <div class="row">
@@ -164,40 +164,6 @@ echo '
             </div>
         </form>
     </div>
-</div>
-
-<script>
-    $(document).ready(function() {
-        init();
-
-        var html = "<p>'.tr('Se hai riscontrato un bug ricordati di specificare').':</p>" +
-        "<ul>" +
-            "<li>'.tr('Modulo esatto (o pagina relativa) in cui questi si è verificato').';</li>" +
-            "<li>'.tr('Dopo quali specifiche operazioni hai notato il malfunzionamento').'.</li>" +
-        "</ul>" +
-        "<p>'.tr('Assicurati inoltre di controllare che il checkbox relativo ai file di log sia contrassegnato, oppure riporta qui l\'errore visualizzato').'.</p>" +
-        "<p>'.tr('Ti ringraziamo per il tuo contributo').',<br>" +
-        "'.tr('Lo staff di OSM').'</p>";
-
-        var firstFocus = true;
-        let editor = input("body");
-        editor.set(html);
-
-        editor.on("change", function() {
-            setTimeout(function() {
-                $("#send").prop("disabled", editor.get() === "");
-            }, 10);
-        });
-
-        editor.on("focus", function() {
-            if (firstFocus) {
-                editor.set("");
-                firstFocus = false;
-            }
-        });
-    });
-</script>
-
-<script type="text/javascript" charset="utf-8" src="'.App::getPaths()['js'].'/ckeditor/ckeditor.js'.'"></script>';
+</div>';
 
 include_once App::filepath('include|custom|', 'bottom.php');

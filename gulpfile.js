@@ -283,6 +283,14 @@ function ckeditor() {
         .pipe(gulp.dest(config.production + '/' + config.paths.js + '/ckeditor'));
 }
 
+function summernote() {
+    return gulp.src([
+        config.nodeDirectory + '/summernote/dist/{font,lang,plugin}/**/*',
+        config.nodeDirectory + '/summernote/dist/summernote.{js,css}',
+    ])
+        .pipe(gulp.dest(config.production + '/' + config.paths.js + '/summernote'));
+}
+
 function colorpicker() {
     return gulp.src([
         config.nodeDirectory + '/bootstrap-colorpicker/dist/**/*.{jpg,png,jpeg}',
@@ -493,7 +501,7 @@ function clean() {
 }
 
 // Operazioni di default per la generazione degli assets
-const bower = gulp.series(clean, gulp.parallel(JS, CSS, images, fonts, phpDebugBar, ckeditor, colorpicker, i18n, pdfjs, hotkeys, chartjs, password_strength, csrf));
+const bower = gulp.series(clean, gulp.parallel(JS, CSS, images, fonts, phpDebugBar, summernote, colorpicker, i18n, pdfjs, hotkeys, chartjs, password_strength, csrf));
 
 // Debug su CSS e JS
 exports.srcJS = srcJS;

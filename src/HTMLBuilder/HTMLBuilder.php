@@ -77,7 +77,7 @@ class HTMLBuilder
             'timestamp' => Handler\DateHandler::class,
             'date' => Handler\DateHandler::class,
             'time' => Handler\DateHandler::class,
-            'ckeditor' => Handler\CKEditorHandler::class,
+            'editor' => Handler\EditorHandler::class,
         ],
         'instances' => [],
     ];

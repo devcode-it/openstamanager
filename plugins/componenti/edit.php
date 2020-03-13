@@ -167,7 +167,7 @@ foreach ($elenchi as $elenco) {
 
                                     <div class="row">
                                         <div class="col-md-12">
-                                            {[ "type": "ckeditor", "label": "'.tr('Note').'", "name": "note", "id": "note_'.$componente->id.'", "value": "'.$componente['note'].'" ]}
+                                            {[ "type": "editor", "label": "'.tr('Note').'", "name": "note", "id": "note_'.$componente->id.'", "value": "'.$componente['note'].'" ]}
                                         </div>
                                     </div>
 

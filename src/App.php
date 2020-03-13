@@ -61,6 +61,7 @@ class App
             'functions.min.js',
             'custom.min.js',
             'i18n/parsleyjs/|lang|.min.js',
+            'i18n/parsleyjs/|lang|.min.js',
             'i18n/select2/|lang|.min.js',
             'i18n/moment/|lang|.min.js',
             'i18n/fullcalendar/|lang|.min.js',

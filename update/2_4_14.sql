@@ -473,3 +473,7 @@ UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM in_interventi W
 -- Lista con indirizzi email validi per ogni anagrafica caricata a sistema
 INSERT INTO `em_lists` (`id`, `name`, `description`, `query`, `deleted_at`) VALUES
 (NULL, 'Tutte le anagrafiche', 'Indirizzi email validi per ogni anagrafica caricata a sistema', 'SELECT idanagrafica AS id FROM an_anagrafiche WHERE email != \'\'', NULL);
+
+-- Correzioni minori su widget
+UPDATE `zz_widgets` SET `more_link` = './modules/interventi/widgets/interventi_da_programmare.php' WHERE `name` = 'Attività nello stato da programmare';
+UPDATE `zz_widgets` SET `more_link` = './modules/interventi/widgets/interventi_da_pianificare.php' WHERE `name` = 'Attività da pianificare';

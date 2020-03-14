@@ -21,6 +21,11 @@ class Intervento extends Document
 
     protected $info = [];
 
+    protected $dates = [
+        'data_richiesta',
+        'data_scadenza',
+    ];
+
     /**
      * Crea un nuovo intervento.
      *

@@ -46,7 +46,7 @@ if (!$pianificazioni->isEmpty()) {
         if (!$pianificazione->data_scadenza->equalTo($previous)) {
             $previous = $pianificazione->data_scadenza;
             echo '
-                <b>'.$pianificazione->data_scadenza->formatLocalized('%B %Y').'</b>';
+                <b>'.ucfirst($pianificazione->data_scadenza->formatLocalized('%B %Y')).'</b>';
         }
 
         echo '

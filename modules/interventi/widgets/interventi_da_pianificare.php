@@ -11,7 +11,7 @@ $interventi_da_pianificare = Intervento::doesntHave('sessioni')
 $raggruppamenti = $interventi_da_pianificare->groupBy(function ($item, $key) {
     $data = $item->data_scadenza ?: $item->data_richiesta;
 
-    return $data->formatLocalized('%B %Y');
+    return ucfirst($data->formatLocalized('%B %Y'));
 });
 
 $counter = 0;

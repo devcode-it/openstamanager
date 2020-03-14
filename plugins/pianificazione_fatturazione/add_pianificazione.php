@@ -35,7 +35,7 @@ while ($data_corrente->lessThanOrEqualTo($data_conclusione)) {
                     <div class="col-md-3">
                         <label for="m_'.$count.'">
                             <input type="checkbox" class="unblockable" id="m_'.$count.'" name="selezione_periodo['.$count.']" />
-                            '.$data_corrente->formatLocalized('%B %Y').'
+                            '.ucfirst($data_corrente->formatLocalized('%B %Y')).'
                         </label>
                         <input type="hidden" name="periodo['.$count.']" value="'.$data.'">
                     </div>';

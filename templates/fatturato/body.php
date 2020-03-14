@@ -41,7 +41,7 @@ $totale_finale = 0;
 // Nel fatturato totale è corretto NON tenere in considerazione eventuali rivalse, ritenute acconto o contributi.
 foreach ($raggruppamenti as $raggruppamento) {
     $data = new \Carbon\Carbon($raggruppamento['data']);
-    $mese = $data->formatLocalized('%B %Y');
+    $mese = ucfirst($data->formatLocalized('%B %Y'));
 
     $imponibile = $raggruppamento['imponibile'];
     $iva = $raggruppamento['iva'];

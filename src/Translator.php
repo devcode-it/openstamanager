@@ -83,14 +83,16 @@ class Translator extends Util\Singleton
 
             Carbon::setUtf8(true);
 
-            $result = setlocale(LC_TIME, $locale);
+            $result = setlocale(LC_ALL, $locale);
             Carbon::setLocale($locale);
 
             if (empty($result)) {
-                $reduced = explode('_', $locale)[0];
+                $result = setlocale(LC_ALL, $locale.'.UTF-8');
+            }
 
-                $result = setlocale(LC_TIME, $reduced);
-                Carbon::setLocale($reduced);
+            if (empty($result)) {
+                $reduced = explode('_', $locale)[0];
+                $result = setlocale(LC_ALL, $reduced);
             }
 
             self::setFormatter($locale, $formatter);

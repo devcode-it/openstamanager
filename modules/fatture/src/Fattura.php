@@ -34,6 +34,10 @@ class Fattura extends Document
         'tipo',
     ];
 
+    protected $dates = [
+        'data',
+    ];
+
     /**
      * Crea una nuova fattura.
      *
@@ -602,7 +606,7 @@ class Fattura extends Document
     }
 
     /**
-     * Scope a query to only include popular users.
+     * Scope per l'inclusione delle sole fatture con valore contabile.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      *
@@ -729,6 +733,34 @@ class Fattura extends Document
         $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data));
 
         return $numero;
+    }
+
+    /**
+     * Scope per l'inclusione delle fatture di vendita.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeVendita($query)
+    {
+        return $query->whereHas('tipo', function (Builder $query) {
+            $query->where('dir', 'entrata');
+        });
+    }
+
+    /**
+     * Scope per l'inclusione delle fatture di acquisto.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeAcquisto($query)
+    {
+        return $query->whereHas('tipo', function (Builder $query) {
+            $query->where('dir', 'uscita');
+        });
     }
 
     /**

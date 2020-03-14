@@ -46,7 +46,6 @@ table.table-bordered thead tr:nth-child(2) th {
 small,
 .small,
 .small-bold,
-table.table-bordered thead th,
 table#contents thead th {
     font-size: 70%;
 }

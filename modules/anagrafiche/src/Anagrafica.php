@@ -250,13 +250,11 @@ class Anagrafica extends Model
 
     public function setCodiceDestinatarioAttribute($value)
     {
-        if ($this->tipo == 'Privato' || in_array($value, ['999999', '0000000']) || $this->sedeLegale->nazione->iso2 != 'IT') {
-            $codice_destinatario = '';
-        } else {
-            $codice_destinatario = $value;
+        if ($this->sedeLegale->nazione->iso2 != 'IT') {
+            $value = '';
         }
 
-        $this->attributes['codice_destinatario'] = trim(strtoupper($codice_destinatario));
+        $this->attributes['codice_destinatario'] = trim(strtoupper($value));
     }
 
     /**

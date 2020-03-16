@@ -1,5 +1,8 @@
 <?php
 
+use Modules\Articoli\Articolo;
+use Modules\Articoli\Categoria;
+
 include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
@@ -20,14 +23,17 @@ switch (post('op')) {
             ]));
         }
 
-        $dbo->insert('mg_articoli', [
-            'codice' => $codice,
-            'descrizione' => post('descrizione'),
-            'id_categoria' => post('categoria'),
-            'id_sottocategoria' => post('subcategoria'),
-            'attivo' => 1,
-        ]);
-        $id_record = $dbo->lastInsertedID();
+        $categoria = Categoria::find(post('categoria'));
+        $sottocategoria = Categoria::find(post('subcategoria'));
+        $articolo = Articolo::build($codice, post('descrizione'), $categoria, $sottocategoria);
+
+        $articolo->threshold_qta = post('threshold_qta');
+        $articolo->prezzo_vendita = post('prezzo_vendita');
+        $articolo->prezzo_acquisto = post('prezzo_acquisto');
+        $articolo->idiva_vendita = post('idiva_vendita');
+        $articolo->save();
+
+        $id_record = $articolo->id;
 
         if (isAjaxRequest()) {
             echo json_encode([
@@ -66,10 +72,10 @@ switch (post('op')) {
         $articolo->threshold_qta = post('threshold_qta');
         $articolo->prezzo_vendita = post('prezzo_vendita');
         $articolo->prezzo_acquisto = post('prezzo_acquisto');
+        $articolo->idiva_vendita = post('idiva_vendita');
         $articolo->idconto_vendita = post('idconto_vendita');
         $articolo->idconto_acquisto = post('idconto_acquisto');
         $articolo->id_fornitore = post('id_fornitore');
-        $articolo->idiva_vendita = post('idiva_vendita');
         $articolo->gg_garanzia = post('gg_garanzia');
         $articolo->servizio = post('servizio');
         $articolo->volume = post('volume');

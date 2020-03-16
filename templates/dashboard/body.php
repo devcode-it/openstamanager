@@ -61,14 +61,14 @@ $stati = (array) $calendar['idstatiintervento'];
 $tipi = (array) $calendar['idtipiintervento'];
 $tecnici = (array) $calendar['idtecnici'];
 
-$query = "SELECT 
+$query = "SELECT
         DATE(orario_inizio) AS data,
         (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=in_interventi.idanagrafica) AS anagrafica,
         GROUP_CONCAT((SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=in_interventi_tecnici.idtecnico) SEPARATOR ', ') AS tecnico
 FROM in_interventi_tecnici
     INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id
     LEFT OUTER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento
-WHERE ".$where.' 
+WHERE ".$where.'
     idtecnico IN('.implode(',', $tecnici).') AND
     in_interventi.idstatointervento IN('.implode(',', $stati).') AND
     in_interventi_tecnici.idtipointervento IN('.implode(',', $tipi).') '.Modules::getAdditionalsQuery('Interventi').'
@@ -132,7 +132,7 @@ for ($i = 0; $i < $count; $i = $i + 7) {
         $element = $list[$i + $c];
 
         echo '
-        <th class="text-capitalize">'.$element['date']->formatLocalized('%A %d/%m').'</th>';
+        <th>'.ucfirst($element['date']->formatLocalized('%A %d/%m')).'</th>';
     }
 
     echo '

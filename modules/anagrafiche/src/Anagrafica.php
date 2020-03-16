@@ -3,7 +3,6 @@
 namespace Modules\Anagrafiche;
 
 use Common\Model;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Contratti\Contratto;
 use Modules\DDT\DDT;
@@ -289,16 +288,12 @@ class Anagrafica extends Model
 
     public function fattureVendita()
     {
-        return $this->fatture()->whereHas('tipo', function (Builder $query) {
-            $query->where('dir', 'entrata');
-        });
+        return $this->fatture()->vendita();
     }
 
     public function fattureAcquisto()
     {
-        return $this->fatture()->whereHas('tipo', function (Builder $query) {
-            $query->where('dir', 'uscita');
-        });
+        return $this->fatture()->acquisto();
     }
 
     public function ordini()

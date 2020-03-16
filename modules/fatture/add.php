@@ -33,7 +33,6 @@ $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : $user['idan
 		</div>
 	</div>
 
-
 	<div class="row">
 		<div class="col-md-6">
 			{[ "type": "select", "label": "<?php echo tr('Tipo fattura'); ?>", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, descrizione FROM co_tipidocumento WHERE dir='<?php echo $dir; ?>'" ]}
@@ -44,6 +43,19 @@ $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : $user['idan
 		</div>
 	</div>
 
+    <div class="box box-warning hidden" id="info">
+        <div class="box-header with-border">
+            <h3 class="box-title"><?php echo tr('Fatture in stato Bozza del cliente'); ?></h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                    <i class="fa fa-minus"></i>
+                </button>
+            </div>
+        </div>
+        <div class="box-body" id="info-content">
+        </div>
+    </div>
+
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
@@ -51,3 +63,48 @@ $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : $user['idan
 		</div>
 	</div>
 </form>
+
+<?php
+
+if ($dir == 'entrata') {
+    echo '
+<script>
+$(document).ready(function () {
+    $("#idanagrafica_add").change(function () {
+        var data = $(this).selectData();
+        console.log(data)
+
+        if (!data.id){
+            $("#info").addClass("hidden");
+            return;
+        }
+
+        $.ajax({
+            url: globals.rootdir + "/actions.php",
+            type: "POST",
+            dataType: "json",
+            data: {
+                id_module: globals.id_module,
+                id_anagrafica: data.id,
+                op: "fatture_bozza",
+            },
+            success: function (results) {
+                $("#info").removeClass("hidden");
+
+                if (results.length === 0){
+                    $("#info-content").html("<p>'.tr('Nessuna fattura in stato Bozza presente per il cliente corrente').'</p>")
+                } else {
+                    var content = "";
+
+                    results.forEach(function(item) {
+                        content += "<li>" + item + "</li>";
+                    });
+
+                    $("#info-content").html("<p>'.tr('Sono presenti le seguenti fatture in stato Bozza per il cliente corrente').':</p><ul>" + content + "</ul>")
+                }
+            }
+        });
+    })
+})
+</script>';
+}

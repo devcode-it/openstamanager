@@ -218,6 +218,25 @@ switch (post('op')) {
 
         break;
 
+    // Elenco fatture in stato Bozza per il cliente
+    case 'fatture_bozza':
+        $id_anagrafica = post('id_anagrafica');
+        $stato = Stato::where('descrizione', 'Bozza')->first();
+
+        $fatture = Fattura::vendita()
+            ->where('idanagrafica', $id_anagrafica)
+            ->where('idstatodocumento', $stato->id)
+            ->get();
+
+        $results = [];
+        foreach ($fatture as $result) {
+            $results[] = Modules::link('Fatture di vendita', $result->id, reference($result));
+        }
+
+        echo json_encode($results);
+
+        break;
+
     // eliminazione documento
     case 'delete':
         try {

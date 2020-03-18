@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-$subcategorie = $dbo->fetchArray('SELECT * FROM `mg_categorie` WHERE `parent`='.prepare($id_record));
+$subcategorie = $dbo->fetchArray('SELECT * FROM `mg_categorie` WHERE `parent`='.prepare($id_record).' ORDER BY nome ASC ');
 
 foreach ($subcategorie as $sub) {
     echo '

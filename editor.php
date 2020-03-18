@@ -136,7 +136,7 @@ if (empty($record) || !$has_access) {
 
         
         $info = tr('Il record è stato eliminato il <b>_DATE_</b> da <b>_USER_</b>', [
-            '_DATE_' => Translator::timestampToLocale($operation['created_at']),
+            '_DATE_' => (($operation['created_at']) ? Translator::timestampToLocale($operation['created_at']) : Translator::timestampToLocale($record['deleted_at'])),
             '_USER_' => ((!empty($operation['username'])) ? $operation['username'] : 'N.D.'),
         ]).'. ';
 

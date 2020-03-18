@@ -59,7 +59,7 @@ switch (filter('op')) {
                 '_TYPE_' => 'categoria',
             ]));
         } else {
-            flash()->error(tr('Esistono ancora alcuni articoli sotto questa categoria!'));
+            flash()->error(tr('Esistono alcuni articoli collegati a questa categoria. Impossibile eliminarla.'));
         }
 
         break;

@@ -74,14 +74,39 @@ include_once __DIR__.'/../../core.php';
 
 <?php
 
-$res = $dbo->fetchNum('SELECT * FROM `mg_articoli` WHERE `id_categoria`='.prepare($id_record).' OR `id_sottocategoria`='.prepare($id_record).'  OR `id_sottocategoria` IN (SELECT id FROM `mg_categorie` WHERE `parent`='.prepare($id_record).')');
+$elementi = $dbo->fetchArray('SELECT `mg_articoli`.`id`, `mg_articoli`.`codice`, `mg_articoli`.`barcode`, `mg_articoli`.`deleted_at` FROM `mg_articoli` WHERE `id_categoria`='.prepare($id_record).' OR `id_sottocategoria`='.prepare($id_record).'  OR `id_sottocategoria` IN (SELECT id FROM `mg_categorie` WHERE `parent`='.prepare($id_record).')');
 
-if ($res) {
+if (!empty($elementi)) {
     echo '
-    <div class="alert alert-danger">
-        <p>'.tr('Ci sono '.count($res).' articoli collegati a questa categoria. Non è possibile eliminarla.').'</p>
-    </div>';
-} else {
+<div class="box box-warning collapsable collapsed-box">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Articoli collegati: _NUM_', [
+            '_NUM_' => count($elementi),
+        ]).'</h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+        </div>
+    </div>
+    <div class="box-body">
+        <ul>';
+
+    foreach ($elementi as $elemento) {
+        $descrizione = tr('Articolo _CODICE_ _DELETED_AT_', [
+        '_CODICE_' => !empty($elemento['codice']) ? $elemento['codice'] : $elemento['barcode'],
+        '_DELETED_AT_' => (!empty($elemento['deleted_at']) ? tr('Eliminato il:').' '.Translator::dateToLocale($elemento['deleted_at']) : ''),
+	]);
+	$modulo = 'Articoli';
+	$id = $elemento['id'];
+
+	echo '
+		<li>'.Modules::link($modulo, $id, $descrizione).'</li>';
+}
+
+echo '
+	</ul>
+</div>
+</div>';
+}else {
     echo '
     <a class="btn btn-danger ask" data-backto="record-list">
         <i class="fa fa-trash"></i> '.tr('Elimina').'

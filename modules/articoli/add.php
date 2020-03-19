@@ -10,19 +10,25 @@ unset($_SESSION['superselect']['id_categoria']);
 
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "text", "label": "<?php echo tr('Inserisci il codice:'); ?>", "name": "codice", "required": 0, "value": "<?php echo htmlentities(filter('codice')) ?: ''; ?>", "help": "<?php echo tr('Se non specificato, il codice verrà calcolato automaticamente'); ?>", "validation": "codice" ]}
+			{[ "type": "text", "label": "<?php echo tr('Codice:'); ?>", "name": "codice", "required": 0, "value": "<?php echo htmlentities(filter('codice')) ?: ''; ?>", "help": "<?php echo tr('Se non specificato, il codice verrà calcolato automaticamente'); ?>", "validation": "codice" ]}
+		</div>
+
+        <div class="col-md-6">
+			{[ "type": "text", "label": "<?php echo tr('Barcode:'); ?>", "name": "barcode", "required": 0, "value": "<?php echo htmlentities(filter('barcode')) ?: ''; ?>", "validation": "barcode" ]}
+		</div>
+    </div>
+
+    <div class="row">
+		<div class="col-md-12">
+			{[ "type": "text", "label": "<?php echo tr('Descrizione:'); ?>", "name": "descrizione", "required": 1, "value": "<?php echo htmlentities(filter('descrizione')) ?: ''; ?>" ]}
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "text", "label": "<?php echo tr('Inserisci la descrizione:'); ?>", "name": "descrizione", "required": 1, "value": "<?php echo htmlentities(filter('descrizione')) ?: ''; ?>" ]}
+			{[ "type": "select", "label": "<?php echo tr('Categoria:'); ?>", "name": "categoria", "required": 0, "ajax-source": "categorie", "icon-after": "add|<?php echo Modules::get('Categorie articoli')['id']; ?>" ]}
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Inserisci la categoria:'); ?>", "name": "categoria", "required": 0, "ajax-source": "categorie", "icon-after": "add|<?php echo Modules::get('Categorie articoli')['id']; ?>" ]}
-		</div>
-
-		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Inserisci la sottocategoria:'); ?>", "name": "subcategoria", "id": "subcategoria_add", "ajax-source": "sottocategorie", "icon-after": "add|<?php echo Modules::get('Categorie articoli')['id']; ?>||hide" ]}
+			{[ "type": "select", "label": "<?php echo tr('Sottocategoria:'); ?>", "name": "subcategoria", "id": "subcategoria_add", "ajax-source": "sottocategorie", "icon-after": "add|<?php echo Modules::get('Categorie articoli')['id']; ?>||hide" ]}
 		</div>
 	</div>
 

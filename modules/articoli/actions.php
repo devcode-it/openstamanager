@@ -27,6 +27,7 @@ switch (post('op')) {
         $sottocategoria = Categoria::find(post('subcategoria'));
         $articolo = Articolo::build($codice, post('descrizione'), $categoria, $sottocategoria);
 
+        $articolo->barcode = post('barcode');
         $articolo->threshold_qta = post('threshold_qta');
         $articolo->prezzo_vendita = post('prezzo_vendita');
         $articolo->prezzo_acquisto = post('prezzo_acquisto');

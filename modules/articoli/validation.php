@@ -22,4 +22,19 @@ switch ($name) {
         ];
 
         break;
+    
+    case 'barcode':
+        $disponibile = Articolo::where([
+            ['barcode', $value],
+            ['id', '<>', $id_record],
+        ])->count() == 0;
+
+        $message = $disponibile ? tr('Il barcode è disponbile') : tr('Il barcode è già utilizzato in un altro articolo');
+
+        $response = [
+            'result' => $disponibile,
+            'message' => $message,
+        ];
+
+        break;
 }

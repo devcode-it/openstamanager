@@ -14,7 +14,7 @@ class Articolo extends Model
 
     protected $table = 'mg_articoli';
 
-    public static function build($codice, $nome, Categoria $categoria, Categoria $sottocategoria = null)
+    public static function build($codice, $nome, Categoria $categoria = null, Categoria $sottocategoria = null)
     {
         $model = parent::build();
 

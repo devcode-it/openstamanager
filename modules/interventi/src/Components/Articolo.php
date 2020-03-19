@@ -20,14 +20,6 @@ class Articolo extends Article
      */
     public static function build(Intervento $intervento, Original $articolo)
     {
-        $model = parent::build($intervento, $articolo);
-
-        $model->prezzo_acquisto = $articolo->prezzo_acquisto;
-        $model->prezzo_vendita = $articolo->prezzo_vendita;
-        $model->desc_iva = '';
-
-        $model->save();
-
-        return $model;
+        return parent::build($intervento, $articolo);
     }
 }

@@ -211,8 +211,8 @@ abstract class Article extends Row
 
     protected function movimentaMagazzino($qta)
     {
-        $documento = $this->fattura;
-        $data = $documento->data;
+        $documento = $this->parent;
+        $data = $documento->getReferenceDate();
 
         $qta_movimento = $documento->direzione == 'uscita' ? $qta : -$qta;
         $movimento = Movimento::descrizioneMovimento($qta_movimento, $documento->direzione).' - '.$documento->getReference();

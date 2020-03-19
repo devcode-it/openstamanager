@@ -20,7 +20,7 @@ class Sconto extends Discount
     {
         $model = parent::build($intervento);
 
-        $model->prezzo_vendita = 0;
+        $model->prezzo_unitario = 0;
 
         return $model;
     }

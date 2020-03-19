@@ -34,3 +34,44 @@ include_once __DIR__.'/../../core.php';
         </div>
     </div>
 </form>
+
+<?php
+// Variabili utilizzabili
+$variables = include Modules::filepath($record['id_module'], 'variables.php');
+
+echo '
+<!-- Istruzioni per il contenuto -->
+<div class="box box-info">
+    <div class="box-header">
+        <h3 class="box-title">'.tr('Variabili').'</h3>
+    </div>
+
+    <div class="box-body">';
+
+if (!empty($variables)) {
+    echo '
+        <p>'.tr("Puoi utilizzare le seguenti variabili per generare il nome del file").':</p>
+        <ul>';
+
+    foreach ($variables as $variable => $value) {
+        echo '
+            <li><code>{'.$variable.'}</code></li>';
+    }
+
+    echo '
+        </ul>';
+} else {
+    echo '
+        <p><i class="fa fa-warning"></i> '.tr('Non sono state definite variabili da utilizzare nel template').'.</p>';
+}
+
+echo '
+    </div>
+</div>
+
+<hr>';
+
+?>
+
+        </div>
+    </div>

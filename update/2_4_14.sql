@@ -477,3 +477,6 @@ INSERT INTO `em_lists` (`id`, `name`, `description`, `query`, `deleted_at`) VALU
 -- Correzioni minori su widget
 UPDATE `zz_widgets` SET `more_link` = './modules/interventi/widgets/interventi_da_programmare.php' WHERE `name` = 'Attività nello stato da programmare';
 UPDATE `zz_widgets` SET `more_link` = './modules/interventi/widgets/interventi_da_pianificare.php' WHERE `name` = 'Attività da pianificare';
+
+-- Cambio formato quantità in vista, per migliorare l'eventuale esportazione csv
+UPDATE `zz_views` SET `query` = 'qta', `format` = 1 WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli') AND `name` = 'Q.tà';

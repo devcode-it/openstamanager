@@ -200,17 +200,28 @@ echo '
 
 // Margine
 $margine = $preventivo->margine;
-$margine_style = ($margine <= 0 and $preventivo->totale > 0) ? 'background-color: #FFC6C6; border: 3px solid red' : '';
+$margine_class = ($margine <= 0 and $preventivo->totale > 0) ? 'danger' : 'success';
+$margine_icon = ($margine <= 0 and $preventivo->totale > 0) ? 'warning' : 'check';
 
 echo '
+<tr>
+    <td colspan="4"  class="text-right">
+        '.tr('Costi').':
+    </td>
+    <td align="right">
+        '.moneyFormat($preventivo->spesa).'
+    </td>
+    <td></td>
+</tr>
+
 <tr>
     <td colspan="4"  class="text-right">
         '.tr('Margine (_PRC_%)', [
             '_PRC_' => numberFormat($preventivo->margine_percentuale),
     ]).':
     </td>
-    <td align="right" style="'.$margine_style.'">
-        '.moneyFormat($preventivo->margine).'
+    <td align="right" class="'.$margine_class.'">
+        <i class="fa fa-'.$margine_icon.' text-'.$margine_class.'"></i> '.moneyFormat($preventivo->margine).'
     </td>
     <td></td>
 </tr>';

@@ -387,13 +387,9 @@ if ($fattura_accompagnatoria) {
 }
 
 echo '
-<table style="font-size:7pt; color:#999;">
-    <tr>
-        <td style="text-align:center;">
-            $dicitura_fissa_fattura$
-        </td>
-    </tr>
-</table>';
+<div style="font-size: 7pt; color: #999; text-align: center">
+    $dicitura_fissa_fattura$
+</div>';
 
 if (empty($options['last-page-footer'])) {
     echo '$default_footer$';

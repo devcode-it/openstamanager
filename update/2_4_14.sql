@@ -480,3 +480,6 @@ UPDATE `zz_widgets` SET `more_link` = './modules/interventi/widgets/interventi_d
 
 -- Cambio formato quantità in vista, per migliorare l'eventuale esportazione csv
 UPDATE `zz_views` SET `query` = 'qta', `format` = 1 WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli') AND `name` = 'Q.tà';
+
+-- Aggiunta stato "Inviato" agli ordini fornitore
+INSERT INTO `or_statiordine` (`id`, `descrizione`, `annullato`, `icona`, `completato`) VALUES (NULL, 'Inviato', '0', 'fa fa-envelope text-primary', '0');

@@ -1199,9 +1199,9 @@ class FatturaElettronica
                 ];
 
                 if ($riga['tipo_sconto'] == 'PRC') {
-                    $sconto['Percentuale'] = $riga->sconto_percentuale;
+                    $sconto['Percentuale'] = abs($riga->sconto_percentuale);
                 } else {
-                    $sconto['Importo'] = $sconto_unitario;
+                    $sconto['Importo'] = abs($sconto_unitario);
                 }
 
                 $dettaglio['ScontoMaggiorazione'] = $sconto;

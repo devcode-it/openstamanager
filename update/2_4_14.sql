@@ -480,3 +480,10 @@ UPDATE `zz_widgets` SET `more_link` = './modules/interventi/widgets/interventi_d
 
 -- Cambio formato quantità in vista, per migliorare l'eventuale esportazione csv
 UPDATE `zz_views` SET `query` = 'qta', `format` = 1 WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli') AND `name` = 'Q.tà';
+
+-- Aggiornamento API
+INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES
+(NULL, 'v1', 'retrieve', 'impianti', 'Modules\\Impianti\\API\\v1\\Impianti', '1'),
+(NULL, 'v1', 'retrieve', 'impianti_intervento', 'Modules\\Interventi\\API\\v1\\Impianti', '1'),
+(NULL, 'v1', 'retrieve', 'rapportino', 'Modules\\Interventi\\API\\v1\\Rapportino', '1'),
+(NULL, 'v1', 'create', 'rapportino', 'Modules\\Interventi\\API\\v1\\Rapportino', '1');

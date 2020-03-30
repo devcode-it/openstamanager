@@ -488,3 +488,6 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 (NULL, 'v1', 'create', 'impianti_intervento', 'Modules\\Interventi\\API\\v1\\Impianti', '1'),
 (NULL, 'v1', 'retrieve', 'rapportino', 'Modules\\Interventi\\API\\v1\\Rapportino', '1'),
 (NULL, 'v1', 'create', 'rapportino', 'Modules\\Interventi\\API\\v1\\Rapportino', '1');
+
+-- Aggiunta stato "Inviato" agli ordini fornitore
+INSERT INTO `or_statiordine` (`id`, `descrizione`, `annullato`, `icona`, `completato`) VALUES (NULL, 'Inviato', '0', 'fa fa-envelope text-primary', '0');

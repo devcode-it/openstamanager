@@ -232,7 +232,7 @@ return [
             'idnazione',
             'nazione',
         ],
-        'query' => 'SELECT id as result FROM an_nazioni WHERE LOWER(nome) = LOWER(|value|)',
+        'query' => 'SELECT id as result FROM an_nazioni WHERE LOWER(nome) = LOWER(|value|) OR LOWER(iso2) = LOWER(|value|)',
     ],
     [
         'field' => 'idagente',

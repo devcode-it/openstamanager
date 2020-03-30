@@ -16,18 +16,15 @@ switch ($resource) {
             $fatture = $dbo->fetchArray('SELECT iddocumento, (subtotale-sconto)/qta AS costo_unitario, (SELECT numero FROM co_documenti WHERE id=iddocumento) AS n_fattura, (SELECT numero_esterno FROM co_documenti WHERE id=iddocumento) AS n2_fattura, (SELECT data FROM co_documenti WHERE id=iddocumento) AS data_fattura FROM co_righe_documenti WHERE idarticolo="'.$idarticolo."\" AND iddocumento IN(SELECT id FROM co_documenti WHERE idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir='entrata') AND idanagrafica=\"".$idanagrafica.'") LIMIT 0,5');
 
             if (sizeof($fatture) > 0) {
-                echo "<br/><table cellspacing='0' class='table-striped' >\n";
-                echo "<tr><th width='150'>Documento</th>\n";
-                echo "<th width='50'>Data</th>\n";
-                echo "<th width='80' class='text-right' >Totale</th></tr>\n";
+                echo "<br/><table cellspacing='0' class='table-striped table-bordered' >\n";
+                echo "<tr><th width='180'>Documento</th>\n";
+                echo "<th width='100' class='text-right' >Totale</th></tr>\n";
 
                 for ($i = 0; $i < sizeof($fatture); ++$i) {
                     ($fatture[$i]['n2_fattura'] != '') ? $n_fattura = $fatture[$i]['n2_fattura'] : $n_fattura = $fatture[$i]['n_fattura'];
 
                     $link_id = Modules::get('Fatture di vendita')['id'];
-                    echo "<tr><td class='first_cell text-left'><a href='".ROOTDIR.'/editor.php?id_module='.$link_id.'&id_record='.$fatture[$i]['iddocumento']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">Fatt. n. ".$n_fattura."</a></td>\n";
-
-                    echo "<td class='table_cell text-left'>".Translator::dateToLocale($fatture[$i]['data_fattura'])."</td>\n";
+                    echo "<tr><td class='first_cell text-left'><a href='".ROOTDIR.'/editor.php?id_module='.$link_id.'&id_record='.$fatture[$i]['iddocumento']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">Fatt. n. ".$n_fattura." del ".Translator::dateToLocale($fatture[$i]['data_fattura'])." </a></td>\n";
                     echo "<td class='table_cell text-right'>".moneyFormat($fatture[$i]['costo_unitario'])."</td></tr>\n";
                     array_push($ids, '"'.$fatture[$i]['iddocumento'].'"');
                 }
@@ -46,18 +43,15 @@ switch ($resource) {
         $fatture = $dbo->fetchArray("SELECT DISTINCT iddocumento, (subtotale-sconto)/qta AS costo_unitario, (SELECT numero FROM co_documenti WHERE id=iddocumento) AS n_fattura, (SELECT numero_esterno FROM co_documenti WHERE id=iddocumento) AS n2_fattura, (SELECT data FROM co_documenti WHERE id=iddocumento) AS data_fattura FROM co_righe_documenti WHERE idarticolo='".$idarticolo."' AND iddocumento IN(SELECT id FROM co_documenti WHERE idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir='entrata') ) ORDER BY data_fattura DESC, n_fattura DESC LIMIT 0,5");
 
         if (sizeof($fatture) > 0) {
-            echo "<br/><table cellspacing='0' class='table-striped' >\n";
-            echo "<tr><th width='150'>Documento</th>\n";
-            echo "<th width='50'>Data</th>\n";
-            echo "<th width='80' class='text-right' >Totale</th></tr>\n";
+            echo "<br/><table cellspacing='0' class='table-striped table-bordered' >\n";
+            echo "<tr><th width='180'>Documento</th>\n";
+            echo "<th width='100' class='text-right' >Totale</th></tr>\n";
 
             for ($i = 0; $i < sizeof($fatture); ++$i) {
                 ($fatture[$i]['n2_fattura'] != '') ? $n_fattura = $fatture[$i]['n2_fattura'] : $n_fattura = $fatture[$i]['n_fattura'];
 
                 $link_id = Modules::get('Fatture di vendita')['id'];
-                echo "<tr><td class='first_cell text-left'><a href='".ROOTDIR.'/editor.php?id_module='.$link_id.'&id_record='.$fatture[$i]['iddocumento']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">Fatt. n. ".$n_fattura."</a></td>\n";
-
-                echo "<td class='table_cell text-left'>".Translator::dateToLocale($fatture[$i]['data_fattura'])."</td>\n";
+                echo "<tr><td class='first_cell text-left'><a href='".ROOTDIR.'/editor.php?id_module='.$link_id.'&id_record='.$fatture[$i]['iddocumento']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">Fatt. n. ".$n_fattura." del ".Translator::dateToLocale($fatture[$i]['data_fattura'])."</a></td>\n";
                 echo "<td class='table_cell text-right'>".moneyFormat($fatture[$i]['costo_unitario'])."</td></tr>\n";
             }
             echo "</table>\n";
@@ -76,18 +70,15 @@ switch ($resource) {
         $fatture = $dbo->fetchArray("SELECT DISTINCT iddocumento, (subtotale-sconto)/qta AS costo_unitario, (SELECT numero FROM co_documenti WHERE id=iddocumento) AS n_fattura, (SELECT numero_esterno FROM co_documenti WHERE id=iddocumento) AS n2_fattura, (SELECT data FROM co_documenti WHERE id=iddocumento) AS data_fattura FROM co_righe_documenti WHERE idarticolo='".$idarticolo."' AND iddocumento IN(SELECT id FROM co_documenti WHERE idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir='uscita') ) ORDER BY data_fattura DESC, n_fattura DESC LIMIT 0,5");
 
         if (sizeof($fatture) > 0) {
-            echo "<br/><table cellspacing='0' class='table-striped' >\n";
-            echo "<tr><th width='150'>Documento</th>\n";
-            echo "<th width='50'>Data</th>\n";
-            echo "<th width='80' class='text-right'>Totale</th></tr>\n";
+            echo "<br/><table cellspacing='0' class='table-striped table-bordered' >\n";
+            echo "<tr><th width='180'>Documento</th>\n";
+            echo "<th width='100' class='text-right'>Totale</th></tr>\n";
 
             for ($i = 0; $i < sizeof($fatture); ++$i) {
                 ($fatture[$i]['n2_fattura'] != '') ? $n_fattura = $fatture[$i]['n2_fattura'] : $n_fattura = $fatture[$i]['n_fattura'];
 
                 $link_id = Modules::get('Fatture di acquisto')['id'];
-                echo "<tr><td class='first_cell text-left'><a href='".ROOTDIR.'/editor.php?id_module='.$link_id.'&id_record='.$fatture[$i]['iddocumento']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">Fatt. n. ".$n_fattura."</a></td>\n";
-
-                echo "<td class='table_cell text-left'>".Translator::dateToLocale($fatture[$i]['data_fattura'])."</td>\n";
+                echo "<tr><td class='first_cell text-left'><a href='".ROOTDIR.'/editor.php?id_module='.$link_id.'&id_record='.$fatture[$i]['iddocumento']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">Fatt. n. ".$n_fattura." del ".Translator::dateToLocale($fatture[$i]['data_fattura'])."</a></td>\n";
                 echo "<td class='table_cell text-right'>".moneyFormat($fatture[$i]['costo_unitario'])."</td></tr>\n";
             }
             echo "</table>\n";

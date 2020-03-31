@@ -73,16 +73,16 @@ class EmailNotification extends PHPMailer implements NotificationInterface
         $this->WordWrap = 78;
     }
 
-    public static function build(Mail $mail, $prints = null, $exceptions = null)
+    public static function build(Mail $mail, $exceptions = null)
     {
         $result = new self($mail->account->id, $exceptions);
 
-        $result->setMail($mail, $prints);
+        $result->setMail($mail);
 
         return $result;
     }
 
-    public function setMail($mail, $prints)
+    public function setMail($mail)
     {
         $this->mail = $mail;
 
@@ -105,8 +105,9 @@ class EmailNotification extends PHPMailer implements NotificationInterface
         }
 
         // Stampe
+        $prints = $mail->prints;
         foreach ($prints as $print) {
-            $this->addPrint($print, $mail->id_record);
+            $this->addPrint($print['id'], $mail->id_record);
         }
 
         // Conferma di lettura

@@ -62,15 +62,15 @@ foreach ($iva_righe as $id_iva => $righe) {
 
                 <div class="row">
                     <div class="col-md-9">
-                        {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione['.$id_iva.']", "value": "'.tr('Rata dal contratto numero _NUM_: _IVA_', [
-                            '_IVA_' => $iva->descrizione,
+                        {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione['.$id_iva.']", "value": "'.tr('Canone contratto numero _NUM__IVA_', [
+                            '_IVA_' => (count($iva_righe) > 1 ) ? $iva->descrizione : '',
                             '_NUM_' => $contratto->numero,
                         ]).'" ]}
 
                         {[ "type": "number", "label": "'.tr('Q.tà per fattura').'", "name": "qta['.$id_iva.']", "required": 1, "value": "1", "decimals": "qta", "min-value": "1" ]}
                     </div>
                     <div class="col-md-3">
-                        <p><b>'.tr('Imponibile').'</b>: '.moneyFormat(sum(array_column($righe, 'imponibile'))).'</p>
+                        <p><b>'.tr('Imponibile').'</b>: '.moneyFormat(sum(array_column($righe, 'totale_imponibile'))).'</p>
                         <p><b>'.tr('IVA').'</b>: '.moneyFormat(sum(array_column($righe, 'iva'))).'</p>
                         <p><b>'.tr('Totale').'</b>: '.moneyFormat(sum(array_column($righe, 'totale'))).'</p>
                     </div>

@@ -65,11 +65,7 @@ class Mail extends Model
 
     public function resetPrints()
     {
-        $prints = $this->prints;
-
-        foreach ($prints as $print) {
-            $this->prints()->detach($print->id, ['id_email' => $this->id]);
-        }
+        $this->prints()->detach();
     }
 
     /**

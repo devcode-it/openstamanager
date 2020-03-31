@@ -590,8 +590,11 @@ class Validator
             // Operazioni di normalizzazione
             // Formattazione decimali
             if ($info['type'] == 'decimal') {
-                if (in_array($key, ['Quantita', 'PrezzoUnitario', 'PrezzoTotale'])) {
-                    $output = number_format($output, 4, '.', '');
+                if (in_array($key, ['PrezzoUnitario', 'PrezzoTotale'])) {
+                    $output = number_format($output, setting('Cifre decimali per importi'), '.', '');
+                }
+                else if (in_array($key, ['Quantita'])) {
+                    $output = number_format($output, setting('Cifre decimali per quantità'), '.', '');
                 } else {
                     $output = number_format($output, 2, '.', '');
                 }

@@ -21,97 +21,99 @@ echo '
     <i class="fa fa-warning"></i> '.tr("Tutte le righe del contratto vengono convertite in righe generiche, rendendo impossibile risalire ad eventuali articoli utilizzati all'interno del contratto e pertanto non movimentando il magazzino").'.
 </div>';
 
-$pianificazioni = $contratto->pianificazioni;
-if (!$pianificazioni->isEmpty()) {
-    echo '
-<hr>
-<table class="table table-bordered table-striped table-hover table-condensed">
-    <thead>
-        <tr>
-            <th width="10%">'.tr('Scadenza').'</th>
-            <th class="text-center" width="15%">'.tr('Importo').'</th>
-            <th>'.tr('Documento').'</th>
-            <th class="text-center" width="12%">#</th>
-        </tr>
-    </thead>
-    <tbody>';
-
-    $previous = null;
-    foreach ($pianificazioni as $rata => $pianificazione) {
+if ($contratto->pianificazioni !== NULL) {
+    $pianificazioni = $contratto->pianificazioni;
+    if (!$pianificazioni->isEmpty()) {
         echo '
-        <tr>
-            <td>';
+    <hr>
+    <table class="table table-bordered table-striped table-hover table-condensed">
+        <thead>
+            <tr>
+                <th width="10%">'.tr('Scadenza').'</th>
+                <th class="text-center" width="15%">'.tr('Importo').'</th>
+                <th>'.tr('Documento').'</th>
+                <th class="text-center" width="12%">#</th>
+            </tr>
+        </thead>
+        <tbody>';
 
-        // Data scadenza
-        if (!$pianificazione->data_scadenza->equalTo($previous)) {
-            $previous = $pianificazione->data_scadenza;
+        $previous = null;
+        foreach ($pianificazioni as $rata => $pianificazione) {
             echo '
-                <b>'.ucfirst($pianificazione->data_scadenza->formatLocalized('%B %Y')).'</b>';
+            <tr>
+                <td>';
+
+            // Data scadenza
+            if (!$pianificazione->data_scadenza->equalTo($previous)) {
+                $previous = $pianificazione->data_scadenza;
+                echo '
+                    <b>'.ucfirst($pianificazione->data_scadenza->formatLocalized('%B %Y')).'</b>';
+            }
+
+            echo '
+                </td>
+
+                <td class="text-right">
+                    '.moneyFormat($pianificazione->totale).'
+                </td>';
+
+            // Documento collegato
+            echo '
+                <td>';
+            $fattura = $pianificazione->fattura;
+            if (!empty($fattura)) {
+                $is_pianificato = true;
+                echo '
+                    '.Modules::link('Fatture di vendita', $fattura->id, tr('Fattura num. _NUM_ del _DATE_', [
+                    '_NUM_' => $fattura->numero_esterno,
+                    '_DATE_' => dateFormat($fattura->data),
+                ])).' (<i class="'.$fattura->stato->icona.'"></i> '.$fattura->stato->descrizione.')';
+            } else {
+                echo '
+                    <i class="fa fa-hourglass-start"></i> '.tr('Non ancora fatturato');
+            }
+            echo '
+                </td>';
+
+            // Creazione fattura
+            echo '
+                <td class="text-center">
+                    <button type="button" class="btn btn-primary btn-sm '.(!empty($fattura) ? 'disabled' : '').'" '.(!empty($fattura) ? 'disabled' : '').' onclick="crea_fattura('.$rata.')">
+                        <i class="fa fa-euro"></i> '.tr('Crea fattura').'
+                    </button>
+                </td>
+            </tr>';
         }
 
         echo '
-            </td>
+        </tbody>
+    </table>';
 
-            <td class="text-right">
-                '.moneyFormat($pianificazione->totale).'
-            </td>';
+        echo '<button type="button" '.(($is_pianificato) ? 'disabled' : '').' title="'.tr('Annulla le pianificazioni').'"  data-id_plugin="'.$id_plugin.'" data-id_record="'.$id_record.'" data-id_module="'.$id_module.'" data-op="reset" data-msg="'.tr('Eliminare la pianificazione?').'"  data-button="'.tr('Elimina pianificazione').'" class="ask btn btn-danger pull-right tip"  data-backto="record-edit" >
+    <i class="fa fa-ban"></i> '.tr('Annulla pianificazioni').'
+    </button>';
 
-        // Documento collegato
+        echo '<div class="clearfix"></div>';
+    } else {
         echo '
-            <td>';
-        $fattura = $pianificazione->fattura;
-        if (!empty($fattura)) {
-            $is_pianificato = true;
-            echo '
-                '.Modules::link('Fatture di vendita', $fattura->id, tr('Fattura num. _NUM_ del _DATE_', [
-                '_NUM_' => $fattura->numero_esterno,
-                '_DATE_' => dateFormat($fattura->data),
-            ])).' (<i class="'.$fattura->stato->icona.'"></i> '.$fattura->stato->descrizione.')';
-        } else {
-            echo '
-                <i class="fa fa-hourglass-start"></i> '.tr('Non ancora fatturato');
-        }
-        echo '
-            </td>';
+    <div class="alert alert-info">
+        <i class="fa fa-info-circle"></i> '.tr('Pianificazione della fatturazione non impostata per questo contratto').'.
+    </div>
 
-        // Creazione fattura
-        echo '
-            <td class="text-center">
-                <button type="button" class="btn btn-primary btn-sm '.(!empty($fattura) ? 'disabled' : '').'" '.(!empty($fattura) ? 'disabled' : '').' onclick="crea_fattura('.$rata.')">
-                    <i class="fa fa-euro"></i> '.tr('Crea fattura').'
-                </button>
-            </td>
-        </tr>';
+    <button type="button" '.(!empty($is_pianificabile) ? '' : 'disabled').' title="'.tr('Aggiungi una nuova pianificazione').'" data-toggle="tooltip" class="btn btn-primary pull-right tip" id="pianifica">
+        <i class="fa fa-plus"></i> '.tr('Pianifica').'
+    </button>
+    <div class="clearfix"></div>';
     }
 
     echo '
-    </tbody>
-</table>';
+    <script type="text/javascript">
+        $("#pianifica").click(function() {
+            openModal("Nuova pianificazione", "'.$structure->fileurl('add_pianificazione.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'");
+        });
 
-    echo '<button type="button" '.(($is_pianificato) ? 'disabled' : '').' title="'.tr('Annulla le pianificazioni').'"  data-id_plugin="'.$id_plugin.'" data-id_record="'.$id_record.'" data-id_module="'.$id_module.'" data-op="reset" data-msg="'.tr('Eliminare la pianificazione?').'"  data-button="'.tr('Elimina pianificazione').'" class="ask btn btn-danger pull-right tip"  data-backto="record-edit" >
-<i class="fa fa-ban"></i> '.tr('Annulla pianificazioni').'
-</button>';
-
-    echo '<div class="clearfix"></div>';
-} else {
-    echo '
-<div class="alert alert-info">
-    <i class="fa fa-info-circle"></i> '.tr('Pianificazione della fatturazione non impostata per questo contratto').'.
-</div>
-
-<button type="button" '.(!empty($is_pianificabile) ? '' : 'disabled').' title="'.tr('Aggiungi una nuova pianificazione').'" data-toggle="tooltip" class="btn btn-primary pull-right tip" id="pianifica">
-    <i class="fa fa-plus"></i> '.tr('Pianifica').'
-</button>
-<div class="clearfix"></div>';
+        function crea_fattura(rata){
+            openModal("Crea fattura", "'.$structure->fileurl('crea_fattura.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'&rata=" + rata);
+        }
+    </script>';
 }
-
-echo '
-<script type="text/javascript">
-	$("#pianifica").click(function() {
-        openModal("Nuova pianificazione", "'.$structure->fileurl('add_pianificazione.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'");
-	});
-
-	function crea_fattura(rata){
-        openModal("Crea fattura", "'.$structure->fileurl('crea_fattura.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'&rata=" + rata);
-	}
-</script>';

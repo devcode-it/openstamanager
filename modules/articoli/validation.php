@@ -22,7 +22,7 @@ switch ($name) {
         ];
 
         break;
-    
+
     case 'barcode':
         $disponibile = Articolo::where([
             ['barcode', $value],

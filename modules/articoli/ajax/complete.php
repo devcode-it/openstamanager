@@ -24,7 +24,7 @@ switch ($resource) {
                     ($fatture[$i]['n2_fattura'] != '') ? $n_fattura = $fatture[$i]['n2_fattura'] : $n_fattura = $fatture[$i]['n_fattura'];
 
                     $link_id = Modules::get('Fatture di vendita')['id'];
-                    echo "<tr><td class='first_cell text-left'><a href='".ROOTDIR.'/editor.php?id_module='.$link_id.'&id_record='.$fatture[$i]['iddocumento']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">Fatt. n. ".$n_fattura." del ".Translator::dateToLocale($fatture[$i]['data_fattura'])." </a></td>\n";
+                    echo "<tr><td class='first_cell text-left'><a href='".ROOTDIR.'/editor.php?id_module='.$link_id.'&id_record='.$fatture[$i]['iddocumento']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">Fatt. n. ".$n_fattura.' del '.Translator::dateToLocale($fatture[$i]['data_fattura'])." </a></td>\n";
                     echo "<td class='table_cell text-right'>".moneyFormat($fatture[$i]['costo_unitario'])."</td></tr>\n";
                     array_push($ids, '"'.$fatture[$i]['iddocumento'].'"');
                 }
@@ -51,7 +51,7 @@ switch ($resource) {
                 ($fatture[$i]['n2_fattura'] != '') ? $n_fattura = $fatture[$i]['n2_fattura'] : $n_fattura = $fatture[$i]['n_fattura'];
 
                 $link_id = Modules::get('Fatture di vendita')['id'];
-                echo "<tr><td class='first_cell text-left'><a href='".ROOTDIR.'/editor.php?id_module='.$link_id.'&id_record='.$fatture[$i]['iddocumento']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">Fatt. n. ".$n_fattura." del ".Translator::dateToLocale($fatture[$i]['data_fattura'])."</a></td>\n";
+                echo "<tr><td class='first_cell text-left'><a href='".ROOTDIR.'/editor.php?id_module='.$link_id.'&id_record='.$fatture[$i]['iddocumento']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">Fatt. n. ".$n_fattura.' del '.Translator::dateToLocale($fatture[$i]['data_fattura'])."</a></td>\n";
                 echo "<td class='table_cell text-right'>".moneyFormat($fatture[$i]['costo_unitario'])."</td></tr>\n";
             }
             echo "</table>\n";
@@ -78,7 +78,7 @@ switch ($resource) {
                 ($fatture[$i]['n2_fattura'] != '') ? $n_fattura = $fatture[$i]['n2_fattura'] : $n_fattura = $fatture[$i]['n_fattura'];
 
                 $link_id = Modules::get('Fatture di acquisto')['id'];
-                echo "<tr><td class='first_cell text-left'><a href='".ROOTDIR.'/editor.php?id_module='.$link_id.'&id_record='.$fatture[$i]['iddocumento']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">Fatt. n. ".$n_fattura." del ".Translator::dateToLocale($fatture[$i]['data_fattura'])."</a></td>\n";
+                echo "<tr><td class='first_cell text-left'><a href='".ROOTDIR.'/editor.php?id_module='.$link_id.'&id_record='.$fatture[$i]['iddocumento']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">Fatt. n. ".$n_fattura.' del '.Translator::dateToLocale($fatture[$i]['data_fattura'])."</a></td>\n";
                 echo "<td class='table_cell text-right'>".moneyFormat($fatture[$i]['costo_unitario'])."</td></tr>\n";
             }
             echo "</table>\n";

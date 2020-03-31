@@ -94,19 +94,19 @@ if (!empty($elementi)) {
         $descrizione = tr('Articolo _CODICE_ _DELETED_AT_', [
         '_CODICE_' => !empty($elemento['codice']) ? $elemento['codice'] : $elemento['barcode'],
         '_DELETED_AT_' => (!empty($elemento['deleted_at']) ? tr('Eliminato il:').' '.Translator::dateToLocale($elemento['deleted_at']) : ''),
-	]);
-	$modulo = 'Articoli';
-	$id = $elemento['id'];
+    ]);
+        $modulo = 'Articoli';
+        $id = $elemento['id'];
 
-	echo '
+        echo '
 		<li>'.Modules::link($modulo, $id, $descrizione).'</li>';
-}
+    }
 
-echo '
+    echo '
 	</ul>
 </div>
 </div>';
-}else {
+} else {
     echo '
     <a class="btn btn-danger ask" data-backto="record-list">
         <i class="fa fa-trash"></i> '.tr('Elimina').'

@@ -134,12 +134,10 @@ if (empty($record) || !$has_access) {
     if (!empty($record['deleted_at'])) {
         $operation = $dbo->fetchOne("SELECT zz_operations.created_at, username FROM zz_operations INNER JOIN zz_users ON zz_operations.id_utente =  zz_users.id  WHERE op='delete' AND id_module=".prepare($id_module).' AND id_record='.prepare($id_record).' ORDER BY zz_operations.created_at DESC');
 
-        
         $info = tr('Il record è stato eliminato il <b>_DATE_</b> da <b>_USER_</b>', [
             '_DATE_' => (($operation['created_at']) ? Translator::timestampToLocale($operation['created_at']) : Translator::timestampToLocale($record['deleted_at'])),
             '_USER_' => ((!empty($operation['username'])) ? $operation['username'] : 'N.D.'),
         ]).'. ';
-
 
         echo '
         <div class="alert alert-warning">

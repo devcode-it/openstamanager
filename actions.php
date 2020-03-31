@@ -229,12 +229,6 @@ elseif (post('op') == 'send-email') {
     // Conferma di lettura
     $mail->read_notify = post('read_notify');
 
-    // Stampe da allegare
-    $prints = post('prints');
-    foreach ($prints as $print) {
-        $mail->addPrint($print);
-    }
-
     // Allegati originali
     $files = post('uploads');
     foreach ($files as $file) {
@@ -244,7 +238,7 @@ elseif (post('op') == 'send-email') {
     $mail->save();
 
     // Invio mail istantaneo
-    $email = EmailNotification::build($mail);
+    $email = EmailNotification::build($mail, post('prints'));
     $email_success = $email->send();
 
     if ($email_success) {

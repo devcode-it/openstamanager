@@ -6,7 +6,7 @@ echo'
 <button type="button" class="btn btn-primary" onclick="if( confirm(\'Duplicare questo preventivo?\') ){ $(\'#copia-preventivo\').submit(); }"> <i class="fa fa-copy"></i> '.tr('Duplica preventivo').'</button>';
 
 // Crea revisione
-if (!$record['is_fatturabile'] and !$record['is_completato']) {
+if (!$record['is_completato'] || ($record['is_completato'] && $record['stato']=='Rifiutato')) {
     echo '
 	<button type="button" class="btn btn-warning" onclick="if(confirm(\'Vuoi creare un nuova revisione?\')){$(\'#crea-revisione\').submit();}"><i class="fa fa-edit"></i> '.tr('Crea nuova revisione...').'</button>';
 }

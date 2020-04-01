@@ -495,3 +495,12 @@ INSERT INTO `or_statiordine` (`id`, `descrizione`, `annullato`, `icona`, `comple
 -- Aggiunta vincolo a pianificazione rate contratti
 DELETE FROM `co_fatturazione_contratti` WHERE `idcontratto` NOT IN(SELECT `id` FROM `co_contratti`);
 ALTER TABLE `co_fatturazione_contratti` ADD CONSTRAINT `fk_contratti_fatturazione` FOREIGN KEY (`idcontratto`) REFERENCES `co_contratti`(`id`) ON DELETE CASCADE;
+
+-- Aggiunta flag per gestione revisioni per stato
+ALTER TABLE `co_statipreventivi` ADD `is_revisionabile` BOOLEAN NOT NULL AFTER `is_pianificabile`;
+
+-- Impostazione flag revisionabile per i preventivi non completati o rifiutati
+UPDATE `co_statipreventivi` SET `is_revisionabile` = 1 WHERE `is_completato` = 0 OR `descrizione` = 'Rifiutato';
+
+-- Spostamento moduli "Stati preventivi" e "Stati contratti" sotto "Tabelle"
+UPDATE `zz_modules` SET `parent` = (SELECT `id` FROM (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tabelle') AS `m` ) WHERE `name` IN('Stati dei preventivi', 'Stati dei contratti');

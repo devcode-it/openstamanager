@@ -90,7 +90,7 @@ switch (post('op')) {
     case 'copy':
         $new = $contratto->replicate();
         $new->numero = Contratto::getNextNumero();
-        $new->idstato = 1;
+        $new->stato = 'Bozza';
         $new->save();
 
         $id_record = $new->id;
@@ -287,6 +287,7 @@ $riga = $contratto->getRiga($type, $id_riga);
         $new_contratto->idcontratto_prev = $contratto->id;
         $new_contratto->data_accettazione = $contratto->data_conclusione->copy()->addDays(1);
         $new_contratto->data_conclusione = $new_contratto->data_accettazione->copy()->add($diff);
+        $new_contratto->stato = 'Bozza';
         $new_contratto->save();
         $new_idcontratto = $new_contratto->id;
 

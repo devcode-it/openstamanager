@@ -167,23 +167,21 @@ elseif (get('lev') == '1') {
         $rs2 = $dbo->fetchArray('SELECT id, numero, descrizione FROM co_pianodeiconti2 WHERE idpianodeiconti1="'.$rs1[$x]['id'].'"');
 
         for ($y = 0; $y < sizeof($rs2); ++$y) {
-            $body .= "		<tr><th class='bb padded' colspan='4'><b>".$rs2[$y]['numero'].' '.$rs2[$y]['descrizione']."</b></th></tr>\n";
-
             // Ciclo fra i sotto-conti di livello 2
-            $rs3 = $dbo->fetchArray('SELECT id, numero, descrizione FROM co_pianodeiconti3 WHERE idpianodeiconti2="'.$rs2[$y]['id'].'"');
+            $rs3 = $dbo->fetchArray('SELECT id, numero, descrizione, movimenti.totale FROM co_pianodeiconti3 LEFT JOIN (SELECT SUM(totale) AS totale, idconto FROM co_movimenti GROUP BY idconto) AS movimenti ON co_pianodeiconti3.id=movimenti.idconto WHERE idpianodeiconti2="'.$rs2[$y]['id'].'" AND movimenti.totale != 0');
+
+            if( !empty($rs3)){
+                $body .= "		<tr><th class='bb padded' colspan='4'><b>".$rs2[$y]['numero'].' '.$rs2[$y]['descrizione']."</b></th></tr>\n";
+            }
 
             for ($z = 0; $z < sizeof($rs3); ++$z) {
                 $v_dare = [];
                 $v_avere = [];
 
-                $rs = $dbo->fetchArray('SELECT * FROM co_movimenti WHERE idconto="'.$rs3[$z]['id'].'" AND data >= '.prepare($date_start).' AND data <= '.prepare($date_end).' ORDER BY data ASC');
-
-                for ($i = 0; $i < sizeof($rs); ++$i) {
-                    if ($rs[$i]['totale'] >= 0) {
-                        $v_dare[] = abs($rs[$i]['totale']);
-                    } else {
-                        $v_avere[] = abs($rs[$i]['totale']);
-                    }
+                if ($rs3[$z]['totale'] >= 0) {
+                    $v_dare[] = abs($rs3[$z]['totale']);
+                } else {
+                    $v_avere[] = abs($rs3[$z]['totale']);
                 }
 
                 $totale = sum($v_dare) - sum($v_avere);

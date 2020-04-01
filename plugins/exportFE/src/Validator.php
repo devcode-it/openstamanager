@@ -592,8 +592,7 @@ class Validator
             if ($info['type'] == 'decimal') {
                 if (in_array($key, ['PrezzoUnitario', 'PrezzoTotale'])) {
                     $output = number_format($output, setting('Cifre decimali per importi'), '.', '');
-                }
-                else if (in_array($key, ['Quantita'])) {
+                } elseif (in_array($key, ['Quantita'])) {
                     $output = number_format($output, setting('Cifre decimali per quantità'), '.', '');
                 } else {
                     $output = number_format($output, 2, '.', '');

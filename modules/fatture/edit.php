@@ -615,7 +615,7 @@ if (!$block_edit) {
     $art_query = 'SELECT id FROM mg_articoli WHERE attivo = 1 AND deleted_at IS NULL';
     if ($dir == 'entrata') {
         $art_query .= ' AND (qta > 0 OR servizio = 1)';
-    }else{
+    } else {
         //Gli articoli possono essere creati al volo direttamente dal modale di aggiunta articolo
         $art_query .= ' OR 1=1';
     }

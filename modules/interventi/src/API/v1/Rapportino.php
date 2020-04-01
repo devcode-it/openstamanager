@@ -3,14 +3,10 @@
 namespace Modules\Interventi\API\v1;
 
 use API\Interfaces\CreateInterface;
-use API\Interfaces\DeleteInterface;
 use API\Interfaces\RetrieveInterface;
-use API\Interfaces\UpdateInterface;
 use API\Resource;
-use Modules;
-use Modules\Anagrafiche\Anagrafica;
-use Modules\Emails\Template;
 use Modules\Emails\Mail;
+use Modules\Emails\Template;
 
 class Rapportino extends Resource implements RetrieveInterface, CreateInterface
 {
@@ -65,7 +61,6 @@ class Rapportino extends Resource implements RetrieveInterface, CreateInterface
         $mail->save();
 
         return [
-
         ];
     }
 }

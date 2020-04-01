@@ -63,7 +63,7 @@ foreach ($iva_righe as $id_iva => $righe) {
                 <div class="row">
                     <div class="col-md-9">
                         {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione['.$id_iva.']", "value": "'.tr('Canone contratto numero _NUM__IVA_', [
-                            '_IVA_' => (count($iva_righe) > 1 ) ? ': '.$iva->descrizione : '',
+                            '_IVA_' => (count($iva_righe) > 1) ? ': '.$iva->descrizione : '',
                             '_NUM_' => $contratto->numero,
                         ]).'" ]}
 

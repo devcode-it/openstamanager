@@ -3,12 +3,8 @@
 namespace Modules\Interventi\API\v1;
 
 use API\Interfaces\CreateInterface;
-use API\Interfaces\DeleteInterface;
 use API\Interfaces\RetrieveInterface;
-use API\Interfaces\UpdateInterface;
 use API\Resource;
-use Modules;
-use Modules\Anagrafiche\Anagrafica;
 
 class Impianti extends Resource implements RetrieveInterface, CreateInterface
 {
@@ -32,7 +28,7 @@ class Impianti extends Resource implements RetrieveInterface, CreateInterface
         $id_record = $data['id_intervento'];
 
         $database = database();
-        $database->query('DELETE FROM my_impianti_interventi WHERE `idintervento` = :id_intervento',  [
+        $database->query('DELETE FROM my_impianti_interventi WHERE `idintervento` = :id_intervento', [
             ':id_intervento' => $id_record,
         ]);
 

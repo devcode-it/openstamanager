@@ -50,7 +50,7 @@ echo '
 
 if (!empty($variables)) {
     echo '
-        <p>'.tr("Puoi utilizzare le seguenti variabili per generare il nome del file").':</p>
+        <p>'.tr('Puoi utilizzare le seguenti variabili per generare il nome del file').':</p>
         <ul>';
 
     foreach ($variables as $variable => $value) {

@@ -69,7 +69,7 @@ switch (post('op')) {
         // Copia del preventivo
         $new = $preventivo->replicate();
         $new->numero = Preventivo::getNextNumero($new->data_bozza);
-        $new->idstato = 1;
+        $new->stato = 'Bozza';
         $new->save();
 
         $new->master_revision = $new->id;
@@ -262,6 +262,7 @@ switch (post('op')) {
 
         // Copia del preventivo
         $new = $preventivo->replicate();
+        $new->stato = 'Bozza';
         $new->save();
 
         $new->default_revision = 1;

@@ -264,4 +264,9 @@ class Preventivo extends Document
     {
         return $this->data_bozza;
     }
+
+    public function setStatoAttribute($stato)
+    {
+        $this->idstato = Stato::where('descrizione', $stato)->first()['id'];
+    }
 }

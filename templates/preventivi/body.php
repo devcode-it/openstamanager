@@ -11,7 +11,7 @@ echo '
     <div class="col-xs-6">
         <div class="text-center" style="height:5mm;">
             <b>'.tr('Preventivo num. _NUM_ del _DATE_', [
-                '_NUM_' => $documento['numero'],
+                '_NUM_' => $documento['numero'].(count($documento->revisioni) > 1 ? ' '.tr('rev.').' '.$documento->numero_revision : ''),
                 '_DATE_' => Translator::dateToLocale($documento['data_bozza']),
             ], ['upper' => true]).'</b>
         </div>

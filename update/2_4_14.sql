@@ -504,3 +504,6 @@ UPDATE `co_statipreventivi` SET `is_revisionabile` = 1 WHERE `is_completato` = 0
 
 -- Spostamento moduli "Stati preventivi" e "Stati contratti" sotto "Tabelle"
 UPDATE `zz_modules` SET `parent` = (SELECT `id` FROM (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tabelle') AS `m` ) WHERE `name` IN('Stati dei preventivi', 'Stati dei contratti');
+
+-- Aggiunta campo per salvare il numero di revisione del preventivo
+ALTER TABLE `co_preventivi` ADD `numero_revision` INT NOT NULL AFTER `default_revision`;

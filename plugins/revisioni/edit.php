@@ -45,7 +45,7 @@ foreach ($revisioni as $i => $revisione) {
             </td>
             <td>
                 '.tr('Revisione _NUM_ creata il _DATE_ alle _TIME_', [
-                    '_NUM_' => ($i + 1),
+                    '_NUM_' => ($revisione['numero_revision']),
                     '_DATE_' => dateFormat($revisione['created_at']),
                     '_TIME_' => timeFormat($revisione['created_at']),
                 ])."

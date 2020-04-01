@@ -265,8 +265,17 @@ class Preventivo extends Document
         return $this->data_bozza;
     }
 
+    public function getRevisioniAttribute()
+    {
+        $revisioni = Preventivo::where('master_revision', '=', $this->master_revision)->get()->pluck('id')->toArray();
+
+        return $revisioni;
+    }
+
+
     public function setStatoAttribute($stato)
     {
         $this->idstato = Stato::where('descrizione', $stato)->first()['id'];
     }
+
 }

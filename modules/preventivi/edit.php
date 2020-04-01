@@ -9,7 +9,7 @@ unset($_SESSION['superselect']['idanagrafica']);
 $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 
 // Mostro un avviso se ci sono più revisioni del preventivo
-if (count($preventivo->revisioni) > 0) {
+if (count($preventivo->revisioni) > 1) {
     echo '
     <div class="alert alert-info">
         <i class="fa fa-info-circle"></i> 

@@ -452,3 +452,14 @@ if (!empty($elementi)) {
 
 <?php
 }
+?>
+
+<script>
+$('#rinnovabile').on('change', function(){
+    if ($(this).is(':checked')) {
+        $('#giorni_preavviso_rinnovo').prop('disabled', false);
+    } else {
+        $('#giorni_preavviso_rinnovo').prop('disabled', true);
+    }
+});
+</script>

@@ -3,6 +3,8 @@
 // Rimozione header X-Powered-By
 header_remove('X-Powered-By');
 
+ini_set ('session.cookie_samesite', 'strict');
+
 // Impostazioni di configurazione PHP
 date_default_timezone_set('Europe/Rome');
 

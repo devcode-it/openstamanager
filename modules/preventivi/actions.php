@@ -266,7 +266,7 @@ switch (post('op')) {
         $new->save();
 
         $new->default_revision = 1;
-        $new->numero_revision = count($new->revisioni) - 1;
+        $new->numero_revision = $new->ultima_revisione + 1;
         $new->save();
 
         $id_record = $new->id;

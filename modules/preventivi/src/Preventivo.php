@@ -272,6 +272,10 @@ class Preventivo extends Document
         return $revisioni;
     }
 
+    public function getUltimaRevisioneAttribute()
+    {
+        return Preventivo::selectRaw('MAX(numero_revision) AS revisione')->where('master_revision', $this->master_revision)->get()->toArray()[0]['revisione'];
+    }
 
     public function setStatoAttribute($stato)
     {

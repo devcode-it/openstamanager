@@ -510,3 +510,12 @@ ALTER TABLE `co_preventivi` ADD `numero_revision` INT NOT NULL AFTER `default_re
 
 -- Riordinamento campi Fatture di vendita
 UPDATE `zz_views` SET `order` = '11' WHERE `zz_views`.`name` = 'icon_Stato' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
+
+-- Aggiornamento stampa inventario
+UPDATE `zz_widgets` SET `more_link` = './modules/articoli/widgets/stampa_inventario.php', `more_link_type` = 'popup' WHERE `zz_widgets`.`name` = 'Stampa inventario';
+
+-- Ottimizzazione query articoli
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `mg_articoli` LEFT OUTER JOIN an_anagrafiche ON mg_articoli.id_fornitore=an_anagrafiche.idanagrafica LEFT OUTER JOIN co_iva ON mg_articoli.idiva_vendita=co_iva.id LEFT OUTER JOIN (SELECT SUM(qta-qta_evasa) AS qta_impegnata, idarticolo FROM or_righe_ordini INNER JOIN or_ordini ON or_righe_ordini.idordine=or_ordini.id WHERE idstatoordine IN(SELECT id FROM or_statiordine WHERE completato=0) GROUP BY idarticolo) a ON a.idarticolo=mg_articoli.id LEFT JOIN mg_categorie ON mg_articoli.id_categoria=mg_categorie.id LEFT JOIN mg_categorie AS sottocategorie ON mg_articoli.id_sottocategoria=sottocategorie.id WHERE 1=1 AND (`mg_articoli`.`deleted_at`) IS NULL HAVING 2=2 ORDER BY `descrizione`' WHERE `zz_modules`.`name` = 'Articoli';
+UPDATE `zz_views` SET `query` = 'mg_categorie.nome' WHERE `zz_views`.`name` = 'Categoria' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
+UPDATE `zz_views` SET `query` = 'sottocategorie.nome' WHERE `zz_views`.`name` = 'Sottocategoria' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
+UPDATE `zz_views` SET `query` = 'an_anagrafiche.ragione_sociale' WHERE `zz_views`.`name` = 'Fornitore' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');

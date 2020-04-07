@@ -1,70 +1,43 @@
 <?php
 
+use Util\Query;
+
 include_once __DIR__.'/../../core.php';
 
+$id_module = Modules::get('Articoli')['id'];
+
 // Valori di ricerca
-$search = [
-    'codice' => $_GET['search_codice'],
-    'descrizione' => $_GET['search_descrizione'],
-    'categoria' => $_GET['search_categoria'],
-    'subcategoria' => $_GET['search_subcategoria'],
-    'tipo' => $_GET['search_tipo'],
-    'fornitore' => $_GET['search_fornitore'],
-    'barcode' => $_GET['search_barcode'],
-];
+$where['servizio'] = '0';
 
-foreach ($search as $name => $value) {
-    if ($value == 'undefined') {
-        $search[$name] = null;
+foreach( $_SESSION['module_'.$id_module] as $name => $value ){
+    if( preg_match('/^search_(.+?)$/', $name, $m) ){
+        $where[ $m[1] ] = $value;
     }
-}
-
-$search['tipo'] = $search['tipo'] ?: 'solo prodotti attivi';
-
-// Filtri effettivi
-$where = [
-    'deleted_at IS NULL',
-    'servizio = 0',
-];
-if ($search['tipo'] == 'solo prodotti attivi') {
-    $where[] = 'attivo = 1';
-} elseif ($search['tipo'] == 'solo prodotti non attivi') {
-    $where[] = 'attivo = 0';
-}
-
-if (!empty($search['codice'])) {
-    $where[] = "(REPLACE(codice, '.', '') LIKE ".prepare('%'.$search['codice'].'%').' OR codice LIKE '.prepare('%'.$search['codice'].'%').')';
-}
-
-if (!empty($search['descrizione'])) {
-    $where[] .= "REPLACE(descrizione, '.', '') LIKE ".prepare('%'.$search['descrizione'].'%');
-}
-
-if (!empty($search['categoria'])) {
-    $where[] = 'id_categoria IN (SELECT id FROM mg_categorie WHERE nome LIKE '.prepare('%'.$search['categoria'].'%').' AND parent IS NULL)';
-}
-
-if (!empty($search['subcategoria'])) {
-    $where[] = 'id_sottocategoria IN (SELECT id FROM mg_categorie WHERE nome LIKE '.prepare('%'.$search['subcategoria'].'%').' AND parent NOT NULL)';
-}
-
-if (!empty($search['fornitore'])) {
-    $where[] = 'id_fornitore IN (SELECT idanagrafica FROM an_anagrafiche WHERE ragione_sociale LIKE '.prepare('%'.$search['fornitore'].'%').')';
-}
-
-if (!empty($search['barcode'])) {
-    $where[] = "(REPLACE(barcode, '.', '') LIKE ".prepare('%'.$search['barcode'].'%').' OR barcode LIKE '.prepare('%'.$search['barcode'].'%').')';
 }
 
 $period_end = $_SESSION['period_end'];
 
-$query = 'SELECT *,
-       (SELECT SUM(qta) FROM mg_movimenti WHERE mg_movimenti.idarticolo=mg_articoli.id AND data <= '.prepare($period_end).') AS qta
-FROM mg_articoli LEFT OUTER JOIN (SELECT id, nome FROM mg_categorie) AS categoria ON mg_articoli.id_categoria = categoria.id WHERE 1=1
-ORDER BY codice ASC';
+$structure = Modules::get($id_module);
 
-$query = str_replace('1=1', '1=1'.(!empty($where) ? ' AND '.implode(' AND ', $where) : ''), $query);
-$rs = $dbo->fetchArray($query);
+// RISULTATI VISIBILI
+Util\Query::setSegments(false);
+$query = Query::getQuery($structure, $where, 0, []);
+
+$query = Modules::replaceAdditionals($id_module, $query);
+
+// Modifiche alla query principale
+$query = preg_replace('/ FROM `mg_articoli` /', ' FROM mg_articoli LEFT JOIN (SELECT idarticolo, SUM(qta) AS qta_totale FROM mg_movimenti GROUP BY idarticolo) movimenti ON movimenti.idarticolo=mg_articoli.id ', $query);
+
+$query = preg_replace('/^SELECT /', 'SELECT mg_articoli.prezzo_acquisto,', $query);
+$query = preg_replace('/^SELECT /', 'SELECT mg_articoli.prezzo_vendita,', $query);
+$query = preg_replace('/^SELECT /', 'SELECT mg_articoli.um,', $query);
+$query = preg_replace('/^SELECT /', 'SELECT movimenti.qta_totale,', $query);
+
+if (post('tipo') == 'nozero') {
+    $query = str_replace('2=2', '2=2 AND movimenti.qta_totale > 0', $query);
+}
+
+$data = Query::executeAndCount($query);
 
 echo '
 <h3>'.tr('Inventario al _DATE_', [
@@ -87,16 +60,16 @@ echo '
     <tbody>';
 
 $totali = [];
-foreach ($rs as $r) {
-    $valore_magazzino = $r['prezzo_acquisto'] * $r['qta'];
+foreach ($data['results'] as $r) {
+    $valore_magazzino = $r['prezzo_acquisto'] * $r['qta_totale'];
 
     echo '
         <tr>
-            <td>'.$r['codice'].'</td>
-            <td>'.$r['nome'].'</td>
-            <td>'.$r['descrizione'].'</td>
+            <td>'.$r['Codice'].'</td>
+            <td>'.$r['Categoria'].'</td>
+            <td>'.$r['Descrizione'].'</td>
             <td class="text-right">'.moneyFormat($r['prezzo_vendita']).'</td>
-            <td class="text-right">'.Translator::numberToLocale($r['qta']).' '.$r['um'].'</td>
+            <td class="text-right">'.Translator::numberToLocale($r['qta_totale']).' '.$r['um'].'</td>
             <td class="text-right">'.moneyFormat($r['prezzo_acquisto']).'</td>
             <td class="text-right">'.moneyFormat($valore_magazzino).'</td>
         </tr>';
@@ -106,7 +79,7 @@ foreach ($rs as $r) {
 
 // Totali
 $totale_acquisto = sum($totali);
-$totale_qta = sum(array_column($rs, 'qta'));
+$totale_qta = sum(array_column($rs, 'qta_totale'));
 echo '
     </tbody>
 

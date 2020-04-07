@@ -236,7 +236,7 @@ ORDER BY `co_documenti`.`data` DESC, CAST(`co_documenti`.`numero_esterno` AS UNS
 UPDATE `zz_views` SET `query` = 'righe.totale_imponibile' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') AND `name` = 'Totale';
 DELETE FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') AND `name` = 'Imponibile';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Totale ivato', 'righe.totale', 9, 1, 1, 1, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Totale ivato', 'righe.totale', 9, 1, 1, 1, 0),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Netto a pagare', 'righe.totale + rivalsainps + iva_rivalsainps - ritenutaacconto', 10, 1, 1, 1, 1);
 
 -- Fatture di acquisto
@@ -285,7 +285,7 @@ ORDER BY `co_contratti`.`id` DESC' WHERE `name` = 'Contratti';
 
 UPDATE `zz_views` SET `query` = 'righe.totale_imponibile' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti') AND `name` = 'Totale';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), 'Totale ivato', 'righe.totale', 5, 1, 1, 1, 1);
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), 'Totale ivato', 'righe.totale', 5, 1, 1, 1, 0);
 
 -- Preventivi
 UPDATE `zz_modules` SET `options` = 'SELECT |select|
@@ -305,7 +305,7 @@ ORDER BY `co_preventivi`.`id` DESC' WHERE `name` = 'Preventivi';
 
 UPDATE `zz_views` SET `query` = 'righe.totale_imponibile' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi') AND `name` = 'Totale';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi'), 'Totale ivato', 'righe.totale', 5, 1, 1, 1, 1);
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi'), 'Totale ivato', 'righe.totale', 5, 1, 1, 1, 0);
 
 -- Ddt di acquisto
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `dt_ddt`
@@ -329,7 +329,7 @@ ORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC,`dt_ddt`.created_a
 
 UPDATE `zz_views` SET `query` = 'righe.totale_imponibile' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di acquisto') AND `name` = 'Totale';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di acquisto'), 'Totale ivato', 'righe.totale', 9, 1, 1, 1, 1);
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di acquisto'), 'Totale ivato', 'righe.totale', 9, 1, 1, 1, 0);
 
 -- Ddt di vendita
 UPDATE `zz_modules` SET `options` = 'SELECT |select|
@@ -354,7 +354,7 @@ ORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC,`dt_ddt`.created_a
 
 UPDATE `zz_views` SET `query` = 'righe.totale_imponibile' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita') AND `name` = 'Totale';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita'), 'Totale ivato', 'righe.totale', 9, 1, 1, 1, 1);
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita'), 'Totale ivato', 'righe.totale', 9, 1, 1, 1, 0);
 
 -- Ordini cliente
 UPDATE `zz_modules` SET `options` = 'SELECT |select|
@@ -374,7 +374,7 @@ ORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC' WHERE `name` = 'O
 
 UPDATE `zz_views` SET `query` = 'righe.totale_imponibile' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente') AND `name` = 'Totale';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente'), 'Totale ivato', 'righe.totale', 5, 1, 1, 1, 1);
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente'), 'Totale ivato', 'righe.totale', 5, 1, 1, 1, 0);
 
 -- Ordini fornitore
 UPDATE `zz_modules` SET `options` = 'SELECT |select|
@@ -394,7 +394,7 @@ ORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC' WHERE `name` = 'O
 
 UPDATE `zz_views` SET `query` = 'righe.totale_imponibile' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore') AND `name` = 'Totale';
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore'), 'Totale ivato', 'righe.totale', 5, 1, 1, 1, 1);
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore'), 'Totale ivato', 'righe.totale', 5, 1, 1, 1, 0);
 
 -- Aggiunta gestione dinamica dei movimenti degli Articoli
 ALTER TABLE `mg_movimenti` ADD `reference_id` int(11), ADD `reference_type` varchar(255);
@@ -507,3 +507,6 @@ UPDATE `zz_modules` SET `parent` = (SELECT `id` FROM (SELECT `id` FROM `zz_modul
 
 -- Aggiunta campo per salvare il numero di revisione del preventivo
 ALTER TABLE `co_preventivi` ADD `numero_revision` INT NOT NULL AFTER `default_revision`;
+
+-- Riordinamento campi Fatture di vendita
+UPDATE `zz_views` SET `order` = '11' WHERE `zz_views`.`name` = 'icon_Stato' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');

@@ -151,18 +151,18 @@ if (!empty($clienti)) {
     echo '
                 <table class="table table-striped">
                     <tr>
-                        <th class="col-md-6" >'.tr('Ragione sociale').'</th>
+                        <th>'.tr('Ragione sociale').'</th>
                         <th class="text-center">'.tr('Num. fatture').'</th>
-                        <th class="text-right">'.tr('Totale').'</th>
-                        <th class="text-right">'.tr('Percentuale').'<span class="tip" title="'.tr('Incidenza sul fatturato').'">&nbsp;<i class="fa fa-question-circle-o" aria-hidden="true"></i></span></th>
+                        <th class="text-right" width="120">'.tr('Totale').'</th>
+                        <th class="text-right" width="120">'.tr('Percentuale').'<span class="tip" title="'.tr('Incidenza sul fatturato').'">&nbsp;<i class="fa fa-question-circle-o" aria-hidden="true"></i></span></th>
                     </tr>';
     foreach ($clienti as $cliente) {
         echo '
                     <tr>
                         <td>'.Modules::link('Anagrafiche', $cliente['idanagrafica'], $cliente['ragione_sociale']).'</td>
-                        <td class="text-center">'.intval($cliente['qta']).'</td>
-                        <td class="text-right">'.moneyFormat($cliente['totale']).'</td>
-                        <td class="text-right">'.Translator::numberToLocale($cliente['totale'] * 100 / $totale[0]['totale']).' %</td>
+                        <td class="text-right">'.intval($cliente['qta']).'</td>
+                        <td class="text-right">'.moneyFormat($cliente['totale'], 2).'</td>
+                        <td class="text-right">'.Translator::numberToLocale($cliente['totale'] * 100 / $totale[0]['totale'], 2).' %</td>
                     </tr>';
     }
     echo '
@@ -199,20 +199,18 @@ if (!empty($articoli)) {
     echo '
                 <table class="table table-striped">
                     <tr>
-                        <th>'.tr('Codice').'</th>
-                        <th class="col-md-6" >'.tr('Descrizione').'</th>
-                        <th class="text-right">'.tr('Q.tà').'</th>
-                        <th class="text-right">'.tr('Percentuale').'<span class="tip" title="'.tr('Incidenza sul numero di articoli venduti').'"> <i class="fa fa-question-circle-o" aria-hidden="true"></i></span></th>
-                        <th class="text-right">'.tr('Totale').'</th>
+                        <th>'.tr('Articolo').'</th>
+                        <th class="text-right" width="120">'.tr('Q.tà').'</th>
+                        <th class="text-right" width="120">'.tr('Percentuale').'<span class="tip" title="'.tr('Incidenza sul numero di articoli venduti').'"> <i class="fa fa-question-circle-o" aria-hidden="true"></i></span></th>
+                        <th class="text-right" width="120">'.tr('Totale').'</th>
                     </tr>';
     foreach ($articoli as $articolo) {
         echo '
                     <tr>
-                        <td>'.Modules::link('Articoli', $articolo['id'], $articolo['codice']).'</td>
-                        <td>'.$articolo['descrizione'].'</td>
-                        <td class="text-right">'.Translator::numberToLocale($articolo['qta']).' '.$articolo['um'].'</td>
-                        <td class="text-right">'.Translator::numberToLocale($articolo['qta'] * 100 / $totale[0]['totale_qta']).' %</td>
-                        <td class="text-right">'.moneyFormat($articolo['totale']).'</td>
+                        <td>'.Modules::link('Articoli', $articolo['id'], $articolo['codice'].' - '.$articolo['descrizione']).'</td>
+                        <td class="text-right">'.Translator::numberToLocale($articolo['qta'], 'qta').' '.$articolo['um'].'</td>
+                        <td class="text-right">'.Translator::numberToLocale($articolo['qta'] * 100 / $totale[0]['totale_qta'], 2).' %</td>
+                        <td class="text-right">'.moneyFormat($articolo['totale'], 2).'</td>
                     </tr>';
     }
     echo '

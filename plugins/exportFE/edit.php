@@ -5,7 +5,7 @@ include_once __DIR__.'/init.php';
 use Plugins\ExportFE\FatturaElettronica;
 use Plugins\ExportFE\Interaction;
 
-$abilita_genera = empty($fattura->codice_stato_fe) || in_array($fattura->codice_stato_fe, ['GEN', 'NS', 'EC02']);
+$abilita_genera = empty($fattura->codice_stato_fe) || in_array($fattura->codice_stato_fe, ['GEN', 'NS', 'EC02', 'ERR']);
 
 if (!empty($fattura_pa)) {
     $disabled = false;

@@ -75,8 +75,7 @@ if (!empty($rsp)) {
             <tr>
                 <th width="25%">'.tr('Entro il').'</th>
                 <th width="35%">'.tr('Ragione sociale').'</th>
-                <th width="10%">'.tr('Zona').'</th>
-                <th width="20%">'.tr('Impianto').'</th>
+                <th width="20%">'.tr('Importo').'</th>
                 <th width="10%"></th>
             </tr>
         </thead>
@@ -100,20 +99,6 @@ if (!empty($rsp)) {
         // $importo = ($r['budget_contratto'] * $n_sedi_pianificate / $n_rate[ $r['idcontratto'] ][ $r['idzona'] ]) - ($gia_fatturato[ $r['idcontratto'] ][ $r['idzona'] ] * $n_sedi_pianificate / sizeof($gia_fatturato[ $r['idcontratto'] ][ $r['idzona'] ]) );
         $importo = ($r['budget_contratto'] * $n_sedi_pianificate / $n_rate[$r['idcontratto']][$r['idzona']]);
 
-        // Sede
-        if ($r['zona'] == '') {
-            $zona = tr('Altro');
-        } else {
-            $zona = $r['zona'];
-        }
-
-        if ($n_sedi_pianificate == 1) {
-            $n_sedi = tr('1 sede');
-        } else {
-            $n_sedi = tr('_NUM_ sedi', [
-                '_NUM_' => $n_sedi_pianificate,
-            ]);
-        }
 
         // Visualizzo solo le rate non pagate
         if ($r['iddocumento'] == 0) {
@@ -123,10 +108,10 @@ if (!empty($rsp)) {
                 <td>
                     <a href='".$rootdir.'/editor.php?id_module='.Modules::get('Anagrafiche')['id'].'&id_record='.$r['idcliente']."'>".nl2br($r['ragione_sociale']).'</a>
                 </td>
-                <td>'.$zona.' ('.$n_sedi.')</td>
+
                 <td>
                     '.moneyFormat($importo).'<br>
-                    <small><small>'.moneyFormat($r['budget_contratto']).' x '.$n_sedi_pianificate.' sedi / '.$n_rate[$r['idcontratto']][$r['idzona']].' rate</small></small>
+                    <small><small>'.moneyFormat($r['budget_contratto']).' / '.$n_rate[$r['idcontratto']][$r['idzona']].' rate</small></small>
                 </td>';
 
             // Pulsanti

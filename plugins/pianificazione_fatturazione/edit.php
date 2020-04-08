@@ -33,8 +33,8 @@ if (!$pianificazioni->isEmpty()) {
         <thead>
             <tr>
                 <th width="10%">'.tr('Scadenza').'</th>
-                <th class="text-center" width="15%">'.tr('Importo').'</th>
                 <th>'.tr('Documento').'</th>
+                <th class="text-center" width="15%">'.tr('Importo').'</th>
                 <th class="text-center" width="12%">#</th>
             </tr>
         </thead>
@@ -54,10 +54,6 @@ if (!$pianificazioni->isEmpty()) {
         }
 
         echo '
-                </td>
-
-                <td class="text-right">
-                    '.moneyFormat($pianificazione->totale).'
                 </td>';
 
         // Documento collegato
@@ -76,6 +72,10 @@ if (!$pianificazioni->isEmpty()) {
                     <i class="fa fa-hourglass-start"></i> '.tr('Non ancora fatturato');
         }
         echo '
+                </td>
+
+                <td class="text-right">
+                    '.moneyFormat($pianificazione->totale_imponibile).'
                 </td>';
 
         // Creazione fattura

@@ -519,3 +519,9 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `mg_articoli` LEFT OUT
 UPDATE `zz_views` SET `query` = 'mg_categorie.nome' WHERE `zz_views`.`name` = 'Categoria' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
 UPDATE `zz_views` SET `query` = 'sottocategorie.nome' WHERE `zz_views`.`name` = 'Sottocategoria' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
 UPDATE `zz_views` SET `query` = 'an_anagrafiche.ragione_sociale' WHERE `zz_views`.`name` = 'Fornitore' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
+
+-- Ottimizzazione query attività
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM (`in_interventi` INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`) LEFT OUTER JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` LEFT OUTER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`idstatointervento` WHERE 1=1  |date_period(`orario_inizio`,`data_richiesta`)| GROUP BY `in_interventi`.`id` HAVING 2=2 ORDER BY IFNULL(`orario_fine`, `data_richiesta`) DESC' WHERE `name` = 'Interventi';
+
+UPDATE `zz_views` SET `query` = 'in_statiintervento.descrizione' WHERE `zz_views`.`name` = 'Stato' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi');
+UPDATE `zz_views` SET `query` = 'in_interventi.descrizione' WHERE `zz_views`.`name` = 'Descrizione' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi');

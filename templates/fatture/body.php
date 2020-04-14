@@ -91,6 +91,32 @@ foreach ($righe as $riga) {
         }
     }
 
+   
+
+     // Informazioni su CIG, CUP, ...
+     if ($riga->hasOriginal()) {
+         
+        $documento_originale = $riga->getOriginal()->parent;
+
+        $num_item = $documento_originale['num_item'];
+        $codice_cig = $documento_originale['codice_cig'];
+        $codice_cup = $documento_originale['codice_cup'];
+        $id_documento_fe = $documento_originale['id_documento_fe'];
+
+        $extra_riga = tr('_ID_DOCUMENTO__NUMERO_RIGA__CODICE_CIG__CODICE_CUP_', [
+            '_ID_DOCUMENTO_' => $id_documento_fe ? 'DOC: '.$id_documento_fe : null,
+            '_NUMERO_RIGA_' => $num_item ? ', NRI: '.$num_item : null,
+            '_CODICE_CIG_' => $codice_cig ? ', CIG: '.$codice_cig : null,
+            '_CODICE_CUP_' => $codice_cup ? ', CUP: '.$codice_cup : null,
+        ]);
+
+
+        echo '
+        <br><small>'.$extra_riga.'</small>';
+    }
+
+
+
     echo '
             </td>';
 

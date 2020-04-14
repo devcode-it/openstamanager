@@ -202,11 +202,11 @@ ALTER TABLE `mg_articoli` CHANGE `id_categoria` `id_categoria` INT(11) NULL;
 
 -- Fatture di vendita
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_documenti`
-    INNER JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-    INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`
-    INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`
+    LEFT JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+    LEFT JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`
+    LEFT JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`
     LEFT JOIN `fe_stati_documento` ON `co_documenti`.`codice_stato_fe` = `fe_stati_documento`.`codice`
-    LEFT OUTER JOIN (
+    LEFT JOIN (
         SELECT `iddocumento`,
             SUM(`subtotale` - `sconto`) AS `totale_imponibile`,
             SUM(`subtotale` - `sconto` + `iva`) AS `totale`
@@ -220,7 +220,7 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_documenti`
         GROUP BY `id_segment`, `numero_esterno`
         HAVING COUNT(`numero_esterno`) > 1
     ) dup ON `co_documenti`.`numero_esterno` = `dup`.`numero_esterno` AND `dup`.`id_segment` = `co_documenti`.`id_segment`
-    LEFT OUTER JOIN (
+    LEFT JOIN (
         SELECT `zz_operations`.`id_email`, `zz_operations`.`id_record`
         FROM `zz_operations`
             INNER JOIN `em_emails` ON `zz_operations`.`id_email` = `em_emails`.`id`
@@ -241,10 +241,10 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format
 
 -- Fatture di acquisto
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_documenti`
-    INNER JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-    INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`
-    INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`
-    LEFT OUTER JOIN (
+    LEFT JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+    LEFT JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`
+    LEFT JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`
+    LEFT JOIN (
         SELECT `iddocumento`,
             SUM(`subtotale` - `sconto`) AS `totale_imponibile`,
             SUM(`subtotale` - `sconto` + `iva`) AS `totale`
@@ -264,16 +264,16 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format
 -- Contratti
 UPDATE `zz_modules` SET `options` = 'SELECT |select|
 FROM `co_contratti`
-    INNER JOIN `an_anagrafiche` ON `co_contratti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-    INNER JOIN `co_staticontratti` ON `co_contratti`.`idstato` = `co_staticontratti`.`id`
-    LEFT OUTER JOIN (
+    LEFT JOIN `an_anagrafiche` ON `co_contratti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+    LEFT JOIN `co_staticontratti` ON `co_contratti`.`idstato` = `co_staticontratti`.`id`
+    LEFT JOIN (
         SELECT `idcontratto`,
             SUM(`subtotale` - `sconto`) AS `totale_imponibile`,
             SUM(`subtotale` - `sconto` + `iva`) AS `totale`
         FROM `co_righe_contratti`
         GROUP BY `idcontratto`
     ) AS righe ON `co_contratti`.`id` = `righe`.`idcontratto`
-    LEFT OUTER JOIN (
+    LEFT JOIN (
         SELECT GROUP_CONCAT(CONCAT(matricola, IF(nome != '''', CONCAT('' - '', nome), '''')) SEPARATOR ''<br>'') AS descrizione, my_impianti_contratti.idcontratto
         FROM my_impianti
             INNER JOIN my_impianti_contratti ON my_impianti.id = my_impianti_contratti.idimpianto
@@ -290,9 +290,9 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format
 -- Preventivi
 UPDATE `zz_modules` SET `options` = 'SELECT |select|
 FROM `co_preventivi`
-    INNER JOIN `an_anagrafiche` ON `co_preventivi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-    INNER JOIN `co_statipreventivi` ON `co_preventivi`.`idstato` = `co_statipreventivi`.`id`
-    LEFT OUTER JOIN (
+    LEFT JOIN `an_anagrafiche` ON `co_preventivi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+    LEFT JOIN `co_statipreventivi` ON `co_preventivi`.`idstato` = `co_statipreventivi`.`id`
+    LEFT JOIN (
         SELECT `idpreventivo`,
             SUM(`subtotale` - `sconto`) AS `totale_imponibile`,
             SUM(`subtotale` - `sconto` + `iva`) AS `totale`
@@ -309,14 +309,14 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format
 
 -- Ddt di acquisto
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `dt_ddt`
-    INNER JOIN `an_anagrafiche` ON `dt_ddt`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-    INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
-    LEFT OUTER JOIN `dt_causalet` ON `dt_ddt`.`idcausalet` = `dt_causalet`.`id`
-    LEFT OUTER JOIN `dt_spedizione` ON `dt_ddt`.`idspedizione` = `dt_spedizione`.`id`
-    LEFT OUTER JOIN `an_anagrafiche` `vettori` ON `dt_ddt`.`idvettore` = `vettori`.`idanagrafica`
-    LEFT OUTER JOIN `an_sedi` AS sedi ON `dt_ddt`.`idsede_partenza` = sedi.`id`
-    LEFT OUTER JOIN `an_sedi` AS `sedi_destinazione` ON `dt_ddt`.`idsede_destinazione` = `sedi_destinazione`.`id`
-    LEFT OUTER JOIN (
+    LEFT JOIN `an_anagrafiche` ON `dt_ddt`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+    LEFT JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
+    LEFT JOIN `dt_causalet` ON `dt_ddt`.`idcausalet` = `dt_causalet`.`id`
+    LEFT JOIN `dt_spedizione` ON `dt_ddt`.`idspedizione` = `dt_spedizione`.`id`
+    LEFT JOIN `an_anagrafiche` `vettori` ON `dt_ddt`.`idvettore` = `vettori`.`idanagrafica`
+    LEFT JOIN `an_sedi` AS sedi ON `dt_ddt`.`idsede_partenza` = sedi.`id`
+    LEFT JOIN `an_sedi` AS `sedi_destinazione` ON `dt_ddt`.`idsede_destinazione` = `sedi_destinazione`.`id`
+    LEFT JOIN (
         SELECT `idddt`,
             SUM(`subtotale` - `sconto`) AS `totale_imponibile`,
             SUM(`subtotale` - `sconto` + `iva`) AS `totale`
@@ -334,14 +334,14 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format
 -- Ddt di vendita
 UPDATE `zz_modules` SET `options` = 'SELECT |select|
 FROM `dt_ddt`
-    INNER JOIN `an_anagrafiche` ON `dt_ddt`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-    INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
-    LEFT OUTER JOIN `dt_causalet` ON `dt_ddt`.`idcausalet` = `dt_causalet`.`id`
-    LEFT OUTER JOIN `dt_spedizione` ON `dt_ddt`.`idspedizione` = `dt_spedizione`.`id`
-    LEFT OUTER JOIN `an_anagrafiche` `vettori` ON `dt_ddt`.`idvettore` = `vettori`.`idanagrafica`
-    LEFT OUTER JOIN `an_sedi` AS sedi ON `dt_ddt`.`idsede_partenza` = sedi.`id`
-    LEFT OUTER JOIN `an_sedi` AS `sedi_destinazione` ON `dt_ddt`.`idsede_destinazione` = `sedi_destinazione`.`id`
-    LEFT OUTER JOIN (
+    LEFT JOIN `an_anagrafiche` ON `dt_ddt`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+    LEFT JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
+    LEFT JOIN `dt_causalet` ON `dt_ddt`.`idcausalet` = `dt_causalet`.`id`
+    LEFT JOIN `dt_spedizione` ON `dt_ddt`.`idspedizione` = `dt_spedizione`.`id`
+    LEFT JOIN `an_anagrafiche` `vettori` ON `dt_ddt`.`idvettore` = `vettori`.`idanagrafica`
+    LEFT JOIN `an_sedi` AS sedi ON `dt_ddt`.`idsede_partenza` = sedi.`id`
+    LEFT JOIN `an_sedi` AS `sedi_destinazione` ON `dt_ddt`.`idsede_destinazione` = `sedi_destinazione`.`id`
+    LEFT JOIN (
         SELECT `idddt`,
             SUM(`subtotale` - `sconto`) AS `totale_imponibile`,
             SUM(`subtotale` - `sconto` + `iva`) AS `totale`
@@ -359,9 +359,9 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format
 -- Ordini cliente
 UPDATE `zz_modules` SET `options` = 'SELECT |select|
 FROM `or_ordini`
-    INNER JOIN `an_anagrafiche` ON `or_ordini`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-    INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`
-    LEFT OUTER JOIN (
+    LEFT JOIN `an_anagrafiche` ON `or_ordini`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+    LEFT JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`
+    LEFT JOIN (
         SELECT `idordine`,
             SUM(`subtotale` - `sconto`) AS `totale_imponibile`,
             SUM(`subtotale` - `sconto` + `iva`) AS `totale`
@@ -379,9 +379,9 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format
 -- Ordini fornitore
 UPDATE `zz_modules` SET `options` = 'SELECT |select|
 FROM `or_ordini`
-    INNER JOIN `an_anagrafiche` ON `or_ordini`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
-    INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`
-    LEFT OUTER JOIN (
+    LEFT JOIN `an_anagrafiche` ON `or_ordini`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+    LEFT JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`
+    LEFT JOIN (
         SELECT `idordine`,
             SUM(`subtotale` - `sconto`) AS `totale_imponibile`,
             SUM(`subtotale` - `sconto` + `iva`) AS `totale`

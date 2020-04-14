@@ -99,7 +99,6 @@ if (!empty($rsp)) {
         // $importo = ($r['budget_contratto'] * $n_sedi_pianificate / $n_rate[ $r['idcontratto'] ][ $r['idzona'] ]) - ($gia_fatturato[ $r['idcontratto'] ][ $r['idzona'] ] * $n_sedi_pianificate / sizeof($gia_fatturato[ $r['idcontratto'] ][ $r['idzona'] ]) );
         $importo = ($r['budget_contratto'] * $n_sedi_pianificate / $n_rate[$r['idcontratto']][$r['idzona']]);
 
-
         // Visualizzo solo le rate non pagate
         if ($r['iddocumento'] == 0) {
             echo "

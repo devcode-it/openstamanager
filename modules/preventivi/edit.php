@@ -13,9 +13,9 @@ if (count($preventivo->revisioni) > 1) {
     echo '
     <div class="alert alert-info">
         <i class="fa fa-info-circle"></i> 
-        '.tr('Questo preventivo presenta _N_ revisioni', 
+        '.tr('Questo preventivo presenta _N_ revisioni',
         [
-            '_N_' => count($preventivo->revisioni)
+            '_N_' => count($preventivo->revisioni),
         ]).'
     </div>
     ';
@@ -35,7 +35,7 @@ if (count($preventivo->revisioni) > 1) {
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo tr('Numero'); ?>", "name": "numero", "required": 1, "class": "text-center", "value": "$numero$", "icon-after": "<?php echo (count($preventivo->revisioni) > 1) ? tr('rev.').' '.$preventivo->numero_revision : '' ?>" ]}
+					{[ "type": "text", "label": "<?php echo tr('Numero'); ?>", "name": "numero", "required": 1, "class": "text-center", "value": "$numero$", "icon-after": "<?php echo (count($preventivo->revisioni) > 1) ? tr('rev.').' '.$preventivo->numero_revision : ''; ?>" ]}
 				</div>
 
                 <div class="col-md-3">

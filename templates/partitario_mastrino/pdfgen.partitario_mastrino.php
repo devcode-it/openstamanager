@@ -170,7 +170,7 @@ elseif (get('lev') == '1') {
             // Ciclo fra i sotto-conti di livello 2
             $rs3 = $dbo->fetchArray('SELECT id, numero, descrizione, movimenti.totale FROM co_pianodeiconti3 LEFT JOIN (SELECT SUM(totale) AS totale, idconto FROM co_movimenti GROUP BY idconto) AS movimenti ON co_pianodeiconti3.id=movimenti.idconto WHERE idpianodeiconti2="'.$rs2[$y]['id'].'" AND movimenti.totale != 0');
 
-            if( !empty($rs3)){
+            if (!empty($rs3)) {
                 $body .= "		<tr><th class='bb padded' colspan='4'><b>".$rs2[$y]['numero'].' '.$rs2[$y]['descrizione']."</b></th></tr>\n";
             }
 

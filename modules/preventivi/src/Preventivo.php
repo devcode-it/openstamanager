@@ -281,5 +281,4 @@ class Preventivo extends Document
     {
         $this->idstato = Stato::where('descrizione', $stato)->first()['id'];
     }
-
 }

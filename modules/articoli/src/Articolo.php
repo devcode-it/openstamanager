@@ -6,11 +6,13 @@ use Common\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules;
 use Modules\Interventi\Components\Articolo as ArticoloIntervento;
+use Traits\RecordTrait;
 use Uploads;
 
 class Articolo extends Model
 {
     use SoftDeletes;
+    use RecordTrait;
 
     protected $table = 'mg_articoli';
 
@@ -92,6 +94,15 @@ class Articolo extends Model
     }
 
     // Attributi Eloquent
+
+    public function getImmagineUploadAttribute()
+    {
+        if (empty($this->immagine)) {
+            return null;
+        }
+
+        return $this->uploads()->where('filename', $this->immagine)->first();
+    }
 
     public function getImageAttribute()
     {

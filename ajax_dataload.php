@@ -102,7 +102,7 @@ if (!empty($query)) {
                     $value = Translator::dateToLocale($value);
                 } elseif (formatter()->isStandardTime($value)) {
                     $value = Translator::timeToLocale($value);
-                }  elseif (formatter()->isStandardNumber($value)) {
+                } elseif (formatter()->isStandardNumber($value)) {
                     $value = Translator::numberToLocale($value);
                 }
             }

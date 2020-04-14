@@ -154,6 +154,20 @@ switch (post('op')) {
         $new->qta = 0;
         $new->save();
 
+        // Copia degli allegati
+        $allegati = $articolo->uploads();
+        foreach ($allegati as $allegato) {
+            $allegato->copia([
+                'id_module' => $new->getModule()->id,
+                'id_record' => $new->id,
+            ]);
+        }
+
+        // Salvataggio immagine relativa
+        $nome_immagine = $articolo->immagine_upload->name;
+        $new->immagine = $new->uploads()->where('name', $nome_immagine)->first()->filename;
+        $new->save();
+
         $id_record = $new->id;
 
         flash()->info(tr('Articolo duplicato correttamente!'));

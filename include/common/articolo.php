@@ -16,10 +16,11 @@ if (empty($result['idarticolo'])) {
     </div>';
 } else {
     $database = database();
-    $articolo = $database->fetchArray('SELECT codice, descrizione FROM mg_articoli WHERE id = '.prepare($result['idarticolo']))[0];
+    $articolo = $database->fetchArray('SELECT id, codice, descrizione FROM mg_articoli WHERE id = '.prepare($result['idarticolo']))[0];
 
     echo '
-    <p><strong>'.tr('Articolo').':</strong> '.$articolo['codice'].' - '.$articolo['descrizione'].'.</p>';
+    <p><strong>'.tr('Articolo').':</strong> '.$articolo['codice'].' - '.$articolo['descrizione'].'.</p>
+    <input type="hidden" name="idarticolo" id="idarticolo" value="'.$articolo['id'].'">';
 }
 
 // Selezione impianto per gli Interventi
@@ -41,22 +42,22 @@ if ($module['name'] != 'Contratti' && $module['name'] != 'Preventivi') {
     echo '
 <div class="row" id="prezzi_articolo">
     <div class="col-md-4 text-center">
-        <button type="button" class="btn btn-sm btn-info btn-block '.($disabled ? 'disabled' : '').'" '.($disabled ? 'disabled' : '').' onclick="$(\'#prezzi\').toggleClass(\'hide\'); $(\'#prezzi\').load(\''.ROOTDIR."/ajax_complete.php?module=Articoli&op=getprezzi&idarticolo=' + $('#idarticolo option:selected').val() + '&idanagrafica=".$options['idanagrafica'].'\');">
-            <i class="fa fa-search"></i> '.tr('Visualizza ultimi prezzi (cliente)').'
-        </button>
-        <div id="prezzi" class="hide"></div>
-    </div>
-
-    <div class="col-md-4 text-center">
-        <button type="button" class="btn btn-sm btn-info btn-block '.($disabled ? 'disabled' : '').'" '.($disabled ? 'disabled' : '').' onclick="$(\'#prezziacquisto\').toggleClass(\'hide\'); $(\'#prezziacquisto\').load(\''.ROOTDIR."/ajax_complete.php?module=Articoli&op=getprezziacquisto&idarticolo=' + $('#idarticolo option:selected').val() + '&idanagrafica=".$options['idanagrafica'].'\');">
-            <i class="fa fa-search"></i> '.tr('Visualizza ultimi prezzi (acquisto)').'
+        <button type="button" class="btn btn-sm btn-info btn-block '.($disabled ? 'disabled' : '').'" '.($disabled ? 'disabled' : '').' onclick="$(\'#prezziacquisto\').toggleClass(\'hide\'); $(\'#prezziacquisto\').load(\''.ROOTDIR."/ajax_complete.php?module=Articoli&op=getprezziacquisto&idarticolo=' + ( $('#idarticolo option:selected').val() || $('#idarticolo').val()) + '&idanagrafica=".$options['idanagrafica'].'\');">
+            <i class="fa fa-search"></i> '.tr('Ultimi prezzi di acquisto').'
         </button>
         <div id="prezziacquisto" class="hide"></div>
     </div>
 
     <div class="col-md-4 text-center">
-        <button type="button" class="btn btn-sm btn-info btn-block '.($disabled ? 'disabled' : '').'" '.($disabled ? 'disabled' : '').' onclick="$(\'#prezzivendita\').toggleClass(\'hide\'); $(\'#prezzivendita\').load(\''.ROOTDIR."/ajax_complete.php?module=Articoli&op=getprezzivendita&idarticolo=' + $('#idarticolo option:selected').val() + '&idanagrafica=".$options['idanagrafica'].'\');">
-            <i class="fa fa-search"></i> '.tr('Visualizza ultimi prezzi (vendita)').'
+        <button type="button" class="btn btn-sm btn-info btn-block '.($disabled ? 'disabled' : '').'" '.($disabled ? 'disabled' : '').' onclick="$(\'#prezzi\').toggleClass(\'hide\'); $(\'#prezzi\').load(\''.ROOTDIR."/ajax_complete.php?module=Articoli&op=getprezzi&idarticolo=' + ( $('#idarticolo option:selected').val() || $('#idarticolo').val()) + '&idanagrafica=".$options['idanagrafica'].'\');">
+            <i class="fa fa-search"></i> '.tr('Ultimi prezzi al cliente').'
+        </button>
+        <div id="prezzi" class="hide"></div>
+    </div>
+
+    <div class="col-md-4 text-center">
+        <button type="button" class="btn btn-sm btn-info btn-block '.($disabled ? 'disabled' : '').'" '.($disabled ? 'disabled' : '').' onclick="$(\'#prezzivendita\').toggleClass(\'hide\'); $(\'#prezzivendita\').load(\''.ROOTDIR."/ajax_complete.php?module=Articoli&op=getprezzivendita&idarticolo=' + ( $('#idarticolo option:selected').val() || $('#idarticolo').val()) + '&idanagrafica=".$options['idanagrafica'].'\');">
+            <i class="fa fa-search"></i> '.tr('Ultimi prezzi di vendita').'
         </button>
         <div id="prezzivendita" class="hide"></div>
     </div>

@@ -94,7 +94,7 @@ $query = 'SELECT id, serial, created_at FROM mg_prodotti WHERE serial IS NOT NUL
 $rs2 = $dbo->fetchArray($query);
 
 echo '
-    <table class="table table-striped table-hover table-condensed table-bordered text-center datatables">
+    <table id="table-serials" class="table table-striped table-hover table-condensed table-bordered text-center datatables">
         <thead>
             <tr>
                 <th id="th_Serial">'.tr('Serial').'</th>
@@ -244,6 +244,7 @@ echo '
 echo '
 <script type="text/javascript">
 $(document).ready(function() {
+    $("#table-serials").DataTable().draw();
     $("#serials").removeClass("superselect");
     $("#serials").select2().select2("destroy");
 

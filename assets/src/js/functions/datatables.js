@@ -90,6 +90,14 @@ function start_datatables() {
                         exportOptions: {
                             modifier: {
                                 selected: true
+                            },
+                            format: {
+                                body: function (data, row, column, node) {
+                                    data = $('<p>' + data + '</p>').text();
+                                    data_edit = data.replace('.', ''); // Rimozione punto delle migliaia
+
+                                    return data_edit.match(/^[0-9,]+$/) ? data_edit : data;
+                                }
                             }
                         }
                     },

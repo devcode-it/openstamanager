@@ -41,7 +41,7 @@ switch (post('op')) {
         flash()->info(tr("Se le informazioni inserite corrispondono ai dati di un utente, riceverai a breve un'email all'indirizzo collegato").'.');
 
         redirect(ROOTDIR.'/index.php');
-	exit()
+	    exit();
         break;
 
     case 'update':

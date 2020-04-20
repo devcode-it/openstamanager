@@ -546,3 +546,78 @@ UPDATE `zz_widgets` SET `more_link` = './plugins/pianificazione_interventi/widge
 DROP TABLE IF EXISTS `co_ordiniservizio`;
 DROP TABLE IF EXISTS `co_ordiniservizio_vociservizio`;
 DELETE FROM `zz_widgets` WHERE `name` = 'Ordini di servizio da impostare';
+
+-- 
+-- Aggiornamento FE in base alla normativa del 28/02/2020
+-- 
+ALTER TABLE `fe_natura` CHANGE `codice` `codice` VARCHAR(5) NOT NULL;
+
+-- Nuove nature IVA
+INSERT INTO `fe_natura` (`codice`, `descrizione`) VALUES
+('N2.1', 'non soggette ad IVA ai sensi degli artt. Da 7 a 7-septies del DPR 633/72'),
+('N2.2', 'non soggette - altri casi'),
+('N3.1', 'non imponibili - esportazioni'),
+('N3.2', 'non imponibili - cessioni intracomunitarie'),
+('N3.3', 'non imponibili - cessioni verso San Marino'),
+('N3.4', 'non imponibili - operazioni assimilate alle cessioni all\'esportazione'),
+('N3.5', 'non imponibili - a seguito di dichiarazioni d\'intento'),
+('N3.6', 'non imponibili - altre operazioni che non concorrono alla formazione del plafond'),
+('N6.1', 'inversione contabile - cessione di rottami e altri materiali di recupero'),
+('N6.2', 'inversione contabile - cessione di oro e argento pure'),
+('N6.3', 'inversione contabile - subappalto nel settore edile'),
+('N6.4', 'inversione contabile - cessione di fabbricati'),
+('N6.5', 'inversione contabile - cessione di telefoni cellulari'),
+('N6.6', 'inversione contabile - cessione di prodotti elettronici'),
+('N6.7', 'inversione contabile - prestazioni comparto edile e settori connessi'),
+('N6.8', 'inversione contabile - operazioni settore energetico'),
+('N6.9', 'inversione contabile - altri casi');
+
+-- Nuove aliquote di default collegate alle nuove nature IVA
+INSERT INTO `co_iva` (`id`, `descrizione`, `percentuale`, `esente`, `codice_natura_fe`, `esigibilita`, `default`) VALUES
+(NULL, 'Non soggetta ad IVA ai sensi degli artt. Da 7 a 7-septies del DPR 633/72', '0', '1', 'N2.1', 'I', '1'),
+(NULL, 'Non soggetta - altri casi', '0', '1', 'N2.2', 'I', '1'),
+(NULL, 'Non imponibile - esportazioni', '0', '1', 'N3.1', 'I', '1'),
+(NULL, 'Non imponibile - cessioni intracomunitarie', '0', '1', 'N3.2', 'I', '1'),
+(NULL, 'Non imponibile - cessioni verso San Marino', '0', '1', 'N3.3', 'I', '1'),
+(NULL, 'Non imponibile - operazioni assimilate alle cessioni all\'esportazione', '0', '1', 'N3.4', 'I', '1'),
+(NULL, 'Non imponibile - a seguito di dichiarazioni d\'intento', '0', '1', 'N3.5', 'I', '1'),
+(NULL, 'Non imponibile - altre operazioni che non concorrono alla formazione del plafond', '0', '1', 'N3.6', 'I', '1'),
+(NULL, 'Inversione contabile - cessione di rottami e altri materiali di recupero', '0', '1', 'N6.1', 'I', '1'),
+(NULL, 'Inversione contabile - cessione di oro e argento pure', '0', '1', 'N6.2', 'I', '1'),
+(NULL, 'Inversione contabile - subappalto nel settore edile', '0', '1', 'N6.3', 'I', '1'),
+(NULL, 'Inversione contabile - cessione di fabbricati', '0', '1', 'N6.4', 'I', '1'),
+(NULL, 'Inversione contabile - cessione di telefoni cellulari', '0', '1', 'N6.5', 'I', '1'),
+(NULL, 'Inversione contabile - cessione di prodotti elettronici', '0', '1', 'N6.6', 'I', '1'),
+(NULL, 'Inversione contabile - prestazioni comparto edile e settori connessi', '0', '1', 'N6.7', 'I', '1'),
+(NULL, 'Inversione contabile - operazioni settore energetico', '0', '1', 'N6.8', 'I', '1'),
+(NULL, 'Inversione contabile - altri casi', '0', '1', 'N6.9', 'I', '1');
+
+-- Nuovi tipi di documento
+INSERT INTO `fe_tipi_documento` (`codice`, `descrizione`) VALUES
+('TD16', 'Integrazione fattura reverse charge interno'),
+('TD17', 'Integrazione/autofattura per acquisto servizi dall\'estero'),
+('TD18', 'Integrazione per acquisto di beni intracomunitari'),
+('TD19', 'Integrazione/autofattura per acquisto di beni ex art.17 c.2 DPR 633/72'),
+('TD20', 'Autofattura per regolarizzazione e integrazione delle fatture (art.6 c.8 d.lgs. 471/97 o art.46 c.5 D.L. 331/93)'),
+('TD21', 'Autofattura per splafonamento'),
+('TD22', 'Estrazione beni da deposito IVA'),
+('TD23', 'Estrazione beni da deposito IVA con versamento dell\'IVA'),
+('TD24', 'Fattura differita di cui all\'art.21, comma 4, lett. a)'),
+('TD25', 'Fattura differita di cui all\'art.21, comma 4, terzo periodo lett. b)'),
+('TD26', 'Cessione di beni ammortizzabili e per passaggi interni (ex art.36 DPR 633/72)'),
+('TD27', 'Fattura per autoconsumo o per cessioni gratuite senza rivalsa');
+
+INSERT INTO `co_tipidocumento` (`id`, `descrizione`, `dir`, `reversed`, `codice_tipo_documento_fe`) VALUES
+(NULL, 'Integrazione fattura reverse charge interno', 'entrata', '0', 'TD16'),
+(NULL, 'Integrazione/autofattura per acquisto servizi dall\'estero', 'entrata', '0', 'TD17'),
+(NULL, 'Integrazione per acquisto di beni intracomunitari', 'entrata', '0', 'TD18'),
+(NULL, 'Integrazione/autofattura per acquisto di beni ex art.17 c.2 DPR 633/72', 'entrata', '0', 'TD19'),
+(NULL, 'Autofattura per regolarizzazione e integrazione delle fatture (art.6 c.8 d.lgs. 471/97 o art.46 c.5 D.L. 331/93)', 'entrata', '0', 'TD20'),
+(NULL, 'Autofattura per splafonamento', 'entrata', '0', 'TD21'),
+(NULL, 'Estrazione beni da deposito IVA', 'entrata', '0', 'TD22'),
+(NULL, 'Estrazione beni da deposito IVA con versamento dell\'IVA', 'entrata', '0', 'TD23'),
+(NULL, 'Cessione di beni ammortizzabili e per passaggi interni (ex art.36 DPR 633/72)', 'entrata', '0', 'TD26'),
+(NULL, 'Fattura per autoconsumo o per cessioni gratuite senza rivalsa', 'entrata', '0', 'TD27');
+
+-- Aggiornamento tipo documento FE per fatture differite
+UPDATE `co_tipidocumento` SET `codice_tipo_documento_fe` = 'TD24' WHERE `descrizione` IN('Fattura differita di acquisto', 'Fattura differita di vendita');

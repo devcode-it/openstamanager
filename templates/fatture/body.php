@@ -91,11 +91,8 @@ foreach ($righe as $riga) {
         }
     }
 
-   
-
-     // Informazioni su CIG, CUP, ...
-     if ($riga->hasOriginal()) {
-         
+    // Informazioni su CIG, CUP, ...
+    if ($riga->hasOriginal()) {
         $documento_originale = $riga->getOriginal()->parent;
 
         $num_item = $documento_originale['num_item'];
@@ -110,12 +107,9 @@ foreach ($righe as $riga) {
             '_CODICE_CUP_' => $codice_cup ? ', CUP: '.$codice_cup : null,
         ]);
 
-
         echo '
         <br><small>'.$extra_riga.'</small>';
     }
-
-
 
     echo '
             </td>';

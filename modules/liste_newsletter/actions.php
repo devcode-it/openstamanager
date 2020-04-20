@@ -19,7 +19,7 @@ switch (filter('op')) {
 
         $query = filter('query');
         if (check_query($query)) {
-            $lista->query = $query;
+            $lista->query = html_entity_decode($query);
         }
 
         $lista->save();

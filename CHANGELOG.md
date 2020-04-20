@@ -33,18 +33,31 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Controlli aggiuntivi sulla numerazione di **DDT** e **Fatture**
  - Fatturazione massiva di Contratti e Preventivi
  - Nuovo modulo **Stampe** sotto **Strumenti** per permettere la modifica manuale delle opzioni delle stampe
+ - Visualizzazione informazioni su CIG, CUP anche nella stampa delle **Fatture**
+ - Aggiunta prezzo vendita e acquisto in inserimento **Articoli**
+ - Aggiunto elenco di **Fatture di vendita** in stato *Bozza* alla creazione
+ - Aggiunta nuova stampa per i barcode degli **Articoli** e nuova variabile *revisione* nella stampa **Preventivi**
+ - Aggiunta azione di cambiamento massivo dello stato negli **Interventi**
+ - Aggiunto controllo sulla numerazione di **Fatture di acquisto** e **DDT in entrata**, con miglioramento delle informazioni per la numerazione delle **Fatture di vendita**
+ - Supporto alla data di fine nella selezione dashboard (#556)
 
 ### Modificato (Changed)
  - Revisione e aggiornamento dei plugin *Pianificazione interventi* e *Pianficazione fatturazione*
  - Modifica della gestione degli importi per le righe dei documenti (#758)
  - Il plugin *Movimenti* degli **Articoli** presenta ora un raggruppamento per documento (#766)
  - Aggiornamento del sistema di cache per prevedere una maggiore varietà di casi di utilizzo
+ - Estensione suggerimento prezzi di acquisto e vendita per gli **Articoli** nei documenti
+ - Rimozione blocco del codice destinatario sulla base della Tipologia di **Anagrafica** e rimozione dell'unicità obbligatoria del codice fiscale (#768)
+ - Ottimizzazione della procedura di caricamento delle righe per **Fatture**, **Ordini** e **DDT**
+ - Controllo del totale delle Fatture Elettroniche sulla base dei *Riepiloghi IVA*
 
 ### Fixed
  - Blocco della duplicazione per Fatture per cui esiste una Nota di credito
  - Gestione delle quantità evase per la fatturazione massiva di DDT
  - Abilitazione e disabilitazione API per utenti senza token
  - Modifica del totale per scadenze generiche in **Scadenzario** (#764)
+ - Fix totale volume e peso nelle stampe DDT e Fatture
+ - Fix percentuale negativa per Maggiorazione in Fattura Elettronica (#780)
 
 ## 2.4.13 (2020-02-05)
 

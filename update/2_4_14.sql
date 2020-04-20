@@ -534,3 +534,7 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format
 -- Aggiunta colonna Rif. fattura per attività
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), 'Rif. fattura', 'fattura.info', 17, 1, 0, 0, 1);
+
+-- Aggiornamento widget Rate contrattuali
+UPDATE `zz_widgets` SET `more_link` = './plugins/pianificazione_fatturazione/widgets/rate_contrattuali.php' WHERE `zz_widgets`.`name` = 'Rate contrattuali';
+

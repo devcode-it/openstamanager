@@ -29,17 +29,17 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
 
     echo "
 <h4>
-    <a class='clickable' onclick=\"if( $('#t1_".$counter."').css('display') == 'none' ){ $(this).children('i').removeClass('fa-plus-circle'); $(this).children('i').addClass('fa-minus-circle'); }else{ $(this).children('i').addClass('fa-plus-circle'); $(this).children('i').removeClass('fa-minus-circle'); } $('#t1_".$counter."').slideToggle();\">
+    <a class='clickable' onclick=\"if( $('#interventi_pianificare_".$counter."').css('display') == 'none' ){ $(this).children('i').removeClass('fa-plus-circle'); $(this).children('i').addClass('fa-minus-circle'); }else{ $(this).children('i').addClass('fa-plus-circle'); $(this).children('i').removeClass('fa-minus-circle'); } $('#interventi_pianificare_".$counter."').slideToggle();\">
         <i class='fa ".$class."'></i> ".$mese.'
     </a>
 </h4>';
 
     echo '
-<div id="t1_'.$counter.'" '.$attr.'>
+<div id="interventi_pianificare_'.$counter.'" '.$attr.'>
     <table class="table table-hover table-striped">
         <thead>
             <tr>
-				 <th width="70">'.tr('Codice').'</th>
+				<th width="70">'.tr('Codice').'</th>
                 <th width="120">'.tr('Cliente').'</th>
                 <th width="70"><small>'.tr('Data richiesta').'</small></th>
                 <th width="70"><small>'.tr('Data scadenza').'</small></th>

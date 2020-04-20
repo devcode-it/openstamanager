@@ -41,7 +41,7 @@ if (!$pianificazioni->isEmpty()) {
         <tbody>';
 
     $previous = null;
-    foreach ($pianificazioni as $rata => $pianificazione) {
+    foreach ($pianificazioni as $pianificazione) {
         echo '
             <tr>
                 <td>';
@@ -81,7 +81,7 @@ if (!$pianificazioni->isEmpty()) {
         // Creazione fattura
         echo '
                 <td class="text-center">
-                    <button type="button" class="btn btn-primary btn-sm '.(!empty($fattura) ? 'disabled' : '').'" '.(!empty($fattura) ? 'disabled' : '').' onclick="crea_fattura('.$rata.')">
+                    <button type="button" class="btn btn-primary btn-sm '.(!empty($fattura) ? 'disabled' : '').'" '.(!empty($fattura) ? 'disabled' : '').' onclick="crea_fattura('.$pianificazione->id.')">
                         <i class="fa fa-euro"></i> '.tr('Crea fattura').'
                     </button>
                 </td>

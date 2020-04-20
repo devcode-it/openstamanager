@@ -1,13 +1,17 @@
 <?php
 
-use Modules\Contratti\Contratto;
+use Plugins\PianificazioneFatturazione\Pianificazione;
 
 include_once __DIR__.'/../../core.php';
 
-$contratto = Contratto::find($id_record);
+$id_rata = get('rata');
+$pianificazione = Pianificazione::find($id_rata);
+$contratto = $pianificazione->contratto;
 
-$rata = get('rata');
-$pianificazione = $contratto->pianificazioni[$rata];
+$id_pianificazione = $pianificazione->id;
+$numero_rata = $contratto->pianificazioni->search(function ($item) use ($id_pianificazione) {
+    return $item->id = $id_pianificazione;
+}) + 1;
 
 $module_fattura = Modules::get('Fatture di vendita');
 
@@ -15,7 +19,7 @@ echo '
 <form action="" method="post">
     <input type="hidden" name="op" value="add_fattura">
     <input type="hidden" name="backto" value="record-edit">
-    <input type="hidden" name="rata" value="'.$rata.'">
+    <input type="hidden" name="rata" value="'.$id_rata.'">
     <input type="hidden" name="id_module" value="'.$id_module.'">
 	<input type="hidden" name="id_plugin" value="'.$id_plugin.'">
 	<input type="hidden" name="id_record" value="'.$id_record.'">';
@@ -42,7 +46,7 @@ echo '
 
 // Descrizione fattura
 $descrizione = tr('Rata _N_ del contratto numero _NUM_', [
-    '_N_' => ($rata + 1),
+    '_N_' => $numero_rata,
     '_NUM_' => $contratto->numero,
 ]);
 

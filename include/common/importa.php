@@ -190,10 +190,10 @@ foreach ($righe as $i => $r) {
     echo '
             <tr>
                 <td>
-                    <input type="hidden" id="subtot_'.$i.'" name="subtot['.$r['id'].']" value="'.$r['prezzo_unitario_vendita'].'" />
-                    <input type="hidden" id="sconto_'.$i.'" name="sconto['.$r['id'].']" value="'.$r['sconto'] / $r['qta'].'" />
-                    <input type="hidden" id="iva_'.$i.'" name="iva['.$r['id'].']" value="'.$r['iva'] / $r['qta'].'" />
-                    <input type="hidden" id="qtamax_'.$i.'" value="'.($r['qta_rimanente']).'" />';
+                    <input type="hidden" id="prezzo_unitario_'.$i.'" name="subtot['.$r['id'].']" value="'.$r['prezzo_unitario'].'" />
+                    <input type="hidden" id="sconto_unitario_'.$i.'" name="sconto['.$r['id'].']" value="'.$r['sconto_unitario'].'" />
+                    <input type="hidden" id="iva_unitaria_'.$i.'" name="iva['.$r['id'].']" value="'.$r['iva_unitaria'].'" />
+                    <input type="hidden" id="qta_max_'.$i.'" value="'.($r['qta_rimanente']).'" />';
 
     // Checkbox - da evadere?
     echo '
@@ -291,24 +291,25 @@ echo '
 
 <script type="text/javascript">
     function ricalcola_subtotale_riga(r) {
-        subtot = $("#subtot_" + r).val();
-        sconto = $("#sconto_" + r).val();
-        iva = $("#iva_" + r).val();
+        var prezzo_unitario = $("#prezzo_unitario_" + r).val();
+        var sconto = $("#sconto_unitario_" + r).val();
+        var iva = $("#iva_unitaria_" + r).val();
 
-        qtamax = $("#qtamax_" + r).val() ? $("#qtamax_" + r).val() : 0;
+        var qta_max_input = $("#qta_max_" + r);
+        var qta_max = qta_max_input.val() ? qta_max_input.val() : 0;
 
-        subtot = parseFloat(subtot);
+        prezzo_unitario = parseFloat(prezzo_unitario);
         sconto = parseFloat(sconto);
         iva = parseFloat(iva);
-        qtamax = parseFloat(qtamax);
+        qta_max = parseFloat(qta_max);
 
-        subtot = subtot - sconto;
+        var prezzo_scontato = prezzo_unitario - sconto;
 
-        qta = $("#qta_" + r).val().toEnglish();
+        var qta = $("#qta_" + r).val().toEnglish();
 
         // Se inserisco una quantità da evadere maggiore di quella rimanente, la imposto al massimo possibile
-        if (qta > qtamax) {
-            qta = qtamax;
+        if (qta > qta_max) {
+            qta = qta_max;
 
             $('#qta_' + r).val(qta);
         }
@@ -318,43 +319,44 @@ echo '
             qta = 0;
         }
 
-        $("#serial_" + r).selectClear();
-        $("#serial_" + r).select2("destroy");
-        $("#serial_" + r).data('maximum', qta);
+        var serial_select = $("#serial_" + r);
+        serial_select.selectClear();
+        serial_select.select2("destroy");
+        serial_select.data('maximum', qta);
         start_superselect();
 
-        subtotale = (subtot * qta + iva * qta).toLocale();
+        var subtotale = (prezzo_scontato * qta + iva * qta).toLocale();
 
         $("#subtotale_" + r).html(subtotale + " " + globals.currency);
-        $("#subtotaledettagli_" + r).html((subtot * qta).toLocale() + " + " + (iva * qta).toLocale());
+        $("#subtotaledettagli_" + r).html((prezzo_scontato * qta).toLocale() + " + " + (iva * qta).toLocale());
 
         ricalcola_totale();
     }
 
     function ricalcola_totale() {
-        totale = 0.00;
-        totale_qta = 0;
+        var totale = 0.00;
+        var totale_qta = 0;
 
         $('input[id*=qta_]').each(function() {
-            qta = $(this).val().toEnglish();
-            r = $(this).attr("id").replace("qta_", "");
+            var qta = $(this).val().toEnglish();
+            var r = $(this).attr("id").replace("qta_", "");
 
             if (!$("#checked_" + r).is(":checked") || isNaN(qta)) {
                 qta = 0;
             }
 
-            subtot = $("#subtot_" + r).val();
-            sconto = $("#sconto_" + r).val();
-            iva = $("#iva_" + r).val();
+            var prezzo_unitario = $("#prezzo_unitario_" + r).val();
+            var sconto = $("#sconto_unitario_" + r).val();
+            var iva = $("#iva_unitaria_" + r).val();
 
-            subtot = parseFloat(subtot);
+            prezzo_unitario = parseFloat(prezzo_unitario);
             sconto = parseFloat(sconto);
             iva = parseFloat(iva);
 
-            subtot = subtot - sconto;
+            var prezzo_scontato = prezzo_unitario - sconto;
 
-            if(subtot) {
-                totale += subtot * qta + iva * qta;
+            if(prezzo_scontato) {
+                totale += prezzo_scontato * qta + iva * qta;
             }
 
             totale_qta += qta;

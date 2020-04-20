@@ -12,10 +12,10 @@ $totale_iva = $documento->iva;
 $totale = $documento->totale;
 
 $volume = $righe->sum(function ($item) {
-    return $item->isArticolo() ? $item->articolo->volume*$item->qta : 0;
+    return $item->isArticolo() ? $item->articolo->volume * $item->qta : 0;
 });
 $peso_lordo = $righe->sum(function ($item) {
-    return $item->isArticolo() ? $item->articolo->peso_lordo*$item->qta : 0;
+    return $item->isArticolo() ? $item->articolo->peso_lordo * $item->qta : 0;
 });
 
 // TABELLA PRINCIPALE

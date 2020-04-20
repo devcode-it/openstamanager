@@ -27,12 +27,7 @@ echo '
     </div>';
 
 echo '
-    <div class="row">';
-
-// Fix per Altre spese intervento
-if ($module['name'] == 'Interventi') {
-    $options['dir'] = 'entrata';
-}
+    <div class="row '.(!empty($options['nascondi_prezzi']) ? 'hidden' : '').'">';
 
 $width = $options['dir'] == 'entrata' ? 4 : 6;
 $label = $options['dir'] == 'entrata' ? tr('Prezzo unitario di vendita') : tr('Prezzo unitario');

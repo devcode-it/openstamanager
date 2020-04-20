@@ -538,6 +538,10 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format
 -- Aggiornamento widget Rate contrattuali
 UPDATE `zz_widgets` SET `more_link` = './plugins/pianificazione_fatturazione/widgets/rate_contrattuali.php' WHERE `zz_widgets`.`name` = 'Rate contrattuali';
 
+-- Aggiornamento widget Promemoria contratti da pianificare
+UPDATE `zz_widgets` SET `name` = 'Promemoria contratti da pianificare' WHERE `zz_widgets`.`name` = 'Interventi da pianificare';
+UPDATE `zz_widgets` SET `more_link` = './plugins/pianificazione_interventi/widgets/promemoria_da_pianificare.php' WHERE `zz_widgets`.`name` = 'Promemoria contratti da pianificare';
+
 -- Rimozione completa co_ordiniservizio
 DROP TABLE IF EXISTS `co_ordiniservizio`;
 DROP TABLE IF EXISTS `co_ordiniservizio_vociservizio`;

@@ -59,11 +59,11 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
             <tr>
                 <td>
                     '.dateFormat($pianificazione->data_scadenza).'
-                    <br><small>'.reference($contratto)."</small>
+                    <br><small>'.reference($contratto).'</small>
                 </td>
 
                 <td>
-                    <a href='".$rootdir.'/editor.php?id_module='.Modules::get('Anagrafiche')['id'].'&id_record='.$anagrafica->id."'>".nl2br($anagrafica->ragione_sociale).'</a>
+                    '.Modules::link('Anagrafiche', $anagrafica->id, nl2br($anagrafica->ragione_sociale)).'
                 </td>
 
                 <td>

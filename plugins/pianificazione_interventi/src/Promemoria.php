@@ -15,6 +15,15 @@ class Promemoria extends Document
     protected $table = 'co_promemoria';
 
     /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = [
+        'data_richiesta',
+    ];
+
+    /**
      * Crea un nuovo promemoria.
      *
      * @param string $data_richiesta

@@ -538,3 +538,7 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format
 -- Aggiornamento widget Rate contrattuali
 UPDATE `zz_widgets` SET `more_link` = './plugins/pianificazione_fatturazione/widgets/rate_contrattuali.php' WHERE `zz_widgets`.`name` = 'Rate contrattuali';
 
+-- Rimozione completa co_ordiniservizio
+DROP TABLE IF EXISTS `co_ordiniservizio`;
+DROP TABLE IF EXISTS `co_ordiniservizio_vociservizio`;
+DELETE FROM `zz_widgets` WHERE `name` = 'Ordini di servizio da impostare';

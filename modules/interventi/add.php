@@ -47,35 +47,12 @@ if (null !== filter('orario_inizio') && '00:00:00' != filter('orario_inizio')) {
     $orario_fine = date('H', time() + 60 * 60).':00:00';
 }
 
-// Se sto pianificando un contratto, leggo tutti i dati del contratto per predisporre l'aggiunta intervento
-//ref (intervento,promemoria,ordine)
-
 $id_intervento = filter('id_intervento');
 $idcontratto = filter('idcontratto');
 $idcontratto_riga = filter('idcontratto_riga');
-$idordineservizio = filter('idordineservizio');
-
-if (!empty($idcontratto) && !empty($idordineservizio)) {
-    $rs = $dbo->fetchArray('SELECT *, (SELECT idzona FROM an_anagrafiche WHERE idanagrafica = co_contratti.idanagrafica) AS idzona FROM co_contratti WHERE id='.prepare($idcontratto));
-    $idanagrafica = $rs[0]['idanagrafica'];
-    $idzona = $rs[0]['idzona'];
-
-    // Info riga pianificata
-    $rs = $dbo->fetchArray('SELECT * FROM co_ordiniservizio WHERE idcontratto='.prepare($idcontratto).' AND id='.prepare($idordineservizio));
-    $data = $rs[0]['data_scadenza'];
-    $idimpianto = $rs[0]['id'];
-
-    // Seleziono "Ordine di servizio" come tipo intervento
-    $rs = $dbo->fetchArray("SELECT idtipointervento FROM in_tipiintervento WHERE descrizione='Ordine di servizio'");
-    $idtipointervento = $rs[0]['idtipointervento'];
-
-    // Spunto il tecnico di default assegnato all'impianto
-    $rs = $dbo->fetchArray('SELECT idtecnico FROM my_impianti WHERE id='.prepare($idimpianto));
-    $idtecnico = $rs[0]['idtecnico'] ?: '';
-}
 
 // Se sto pianificando un contratto, leggo tutti i dati del contratto per predisporre l'aggiunta intervento
-elseif (!empty($idcontratto) && !empty($idcontratto_riga)) {
+if (!empty($idcontratto) && !empty($idcontratto_riga)) {
     $rs = $dbo->fetchArray('SELECT *, (SELECT idzona FROM an_anagrafiche WHERE idanagrafica = co_contratti.idanagrafica) AS idzona FROM co_contratti WHERE id='.prepare($idcontratto));
     $idanagrafica = $rs[0]['idanagrafica'];
     $idzona = $rs[0]['idzona'];
@@ -171,10 +148,6 @@ $orario_fine = $data_fine.' '.$orario_fine;
 <?php
 if (!empty($idcontratto_riga)) {
     echo '<input type="hidden" name="idcontratto_riga" value="'.$idcontratto_riga.'">';
-}
-
-if (!empty($idordineservizio)) {
-    echo '<input type="hidden" name="idordineservizio" value="'.$idordineservizio.'">';
 }
 
 if (!empty($id_intervento)) {
@@ -443,7 +416,7 @@ if (!empty($id_intervento)) {
 	$('#modals > div #idtipointervento').change( function(){
 
 		if ($(this).selectData() && (($(this).selectData().tempo_standard)>0) && ('<?php echo filter('orario_fine'); ?>' == '')){
-            
+
             orario_inizio = moment($('#modals > div #orario_inizio').val(), globals.timestamp_format, globals.locale).isValid() ? $('#modals > div #orario_inizio').val() : false;
             //console.log(orario_inizio);
             //da sistemare

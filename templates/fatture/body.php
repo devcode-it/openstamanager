@@ -82,7 +82,15 @@ foreach ($righe as $riga) {
     // Aggiunta dei riferimenti ai documenti
     if (setting('Riferimento dei documenti nelle stampe') && $riga->hasOriginal()) {
         $ref = $riga->getOriginal()->parent->getReference();
+        if (!empty($riga->getOriginal()->parent->numero_cliente)){
+            
+            $ref .= tr('<br>_DOC_ num. _NUM_ del _DATE_', [
+                '_DOC_' => 'Rif. Vs. ordine cliente',
+                '_NUM_' => $riga->getOriginal()->parent->numero_cliente,
+                '_DATE_' => dateFormat($riga->getOriginal()->parent->data_cliente),
+            ]);
 
+        }
         if (!empty($ref)) {
             echo '
                 <br><small>'.$ref.'</small>';

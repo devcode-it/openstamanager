@@ -9,7 +9,7 @@ echo App::internalLoad('conti.php', $result, $options);
 // Iva
 echo '
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-4 '.(!empty($options['nascondi_prezzi']) ? 'hidden' : '').'">
             {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$result['idiva'].'", "ajax-source": "iva" ]}
         </div>';
 

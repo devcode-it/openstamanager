@@ -15,11 +15,11 @@ if (!$righe->isEmpty()) {
     <thead>
         <tr>
             <th>'.tr('Descrizione').'</th>
-            <th class="text-center" width="8%">'.tr('Q.tà').'</th>
-            <th class="text-center" width="15%">'.tr('Prezzo di acquisto').'</th>';
+            <th class="text-center" width="8%">'.tr('Q.tà').'</th>';
 
     if ($show_prezzi) {
         echo '
+            <th class="text-center" width="15%">'.tr('Prezzo di acquisto').'</th>
             <th class="text-center" width="15%">'.tr('Prezzo di vendita').'</th>
             <th class="text-center" width="10%">'.tr('Iva').'</th>
             <th class="text-center" width="15%">'.tr('Imponibile').'</th>';
@@ -74,13 +74,13 @@ if (!$righe->isEmpty()) {
                 '.Translator::numberToLocale($r['qta'], 'qta').' '.$r['um'].'
             </td>';
 
-        //Costo unitario
-        echo '
+        if ($show_prezzi) {
+            //Costo unitario
+            echo '
             <td class="text-right">
                 '.moneyFormat($riga->costo_unitario).'
             </td>';
-
-        if ($show_prezzi) {
+            
             // Prezzo unitario
             echo '
             <td class="text-right">

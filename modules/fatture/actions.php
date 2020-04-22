@@ -28,10 +28,15 @@ switch (post('op')) {
         $idtipodocumento = post('idtipodocumento');
         $id_segment = post('id_segment');
 
+        if ($dir == 'uscita') {
+            $numero_esterno = post('numero_esterno');
+        }
+
         $anagrafica = Anagrafica::find($idanagrafica);
         $tipo = Tipo::find($idtipodocumento);
+        
+        $fattura = Fattura::build($anagrafica, $tipo, $data, $id_segment, $numero_esterno);
 
-        $fattura = Fattura::build($anagrafica, $tipo, $data, $id_segment);
         $id_record = $fattura->id;
 
         flash()->info(tr('Aggiunta fattura numero _NUM_!', [

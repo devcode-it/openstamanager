@@ -40,6 +40,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Aggiunta azione di cambiamento massivo dello stato negli **Interventi**
  - Aggiunto controllo sulla numerazione di **Fatture di acquisto** e **DDT in entrata**, con miglioramento delle informazioni per la numerazione delle **Fatture di vendita**
  - Supporto alla data di fine nella selezione dashboard (#556)
+ - Aggiunta nuove aliquote e Nature IVA, e nuovi tipi documenti di Fattura Elettronica come da provvedimento Agenzia delle Entrate del 28/02/2020
 
 ### Modificato (Changed)
  - Revisione e aggiornamento dei plugin *Pianificazione interventi* e *Pianficazione fatturazione*

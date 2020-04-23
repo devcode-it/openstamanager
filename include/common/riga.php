@@ -9,7 +9,7 @@ echo App::internalLoad('conti.php', $result, $options);
 // Iva
 echo '
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-4 '.(!empty($options['nascondi_prezzi']) ? 'hidden' : '').'">
             {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$result['idiva'].'", "ajax-source": "iva" ]}
         </div>';
 
@@ -27,14 +27,7 @@ echo '
     </div>';
 
 echo '
-    <div class="row">';
-
-// Fix per Altre spese intervento
-if ($module['name'] == 'Interventi') {
-    $options['dir'] = 'entrata';
-    $result['prezzo_unitario_acquisto'] = $result['prezzo_acquisto'];
-    $result['prezzo'] = $result['prezzo_vendita'];
-}
+    <div class="row '.(!empty($options['nascondi_prezzi']) ? 'hidden' : '').'">';
 
 $width = $options['dir'] == 'entrata' ? 4 : 6;
 $label = $options['dir'] == 'entrata' ? tr('Prezzo unitario di vendita') : tr('Prezzo unitario');
@@ -43,22 +36,22 @@ if ($options['dir'] == 'entrata') {
     // Prezzo di acquisto unitario
     echo '
         <div class="col-md-'.$width.'">
-            {[ "type": "number", "label": "'.tr('Prezzo unitario di acquisto').'", "name": "prezzo_acquisto", "value": "'.$result['prezzo_unitario_acquisto'].'", "icon-after": "'.currency().'" ]}
+            {[ "type": "number", "label": "'.tr('Prezzo unitario di acquisto').'", "name": "costo_unitario", "value": "'.$result['costo_unitario'].'", "icon-after": "'.currency().'" ]}
         </div>';
 
     // Funzione per l'aggiornamento in tempo reale del guadagno
     echo '
     <script>
         function aggiorna_guadagno() {
-            var prezzo_acquisto = $("#prezzo_acquisto").val().toEnglish();
-            var prezzo = $("#prezzo").val().toEnglish();
+            var costo_unitario = $("#costo_unitario").val().toEnglish();
+            var prezzo = $("#prezzo_unitario").val().toEnglish();
             var sconto = $("#sconto").val().toEnglish();
             if ($("#tipo_sconto").val() === "PRC") {
                 sconto = sconto / 100 * prezzo;
             }
 
-            var guadagno = prezzo - sconto - prezzo_acquisto;
-            var parent = $("#prezzo_acquisto").closest("div").parent();
+            var guadagno = prezzo - sconto - costo_unitario;
+            var parent = $("#costo_unitario").closest("div").parent();
             var div = parent.find("div[id*=\"errors\"]");
 
             div.html("<small>'.tr('Guadagno').': " + guadagno.toLocale() + " " + globals.currency + "</small>");
@@ -73,8 +66,8 @@ if ($options['dir'] == 'entrata') {
 
         aggiorna_guadagno();
 
-        $("#prezzo").keyup(aggiorna_guadagno);
-        $("#prezzo_acquisto").keyup(aggiorna_guadagno);
+        $("#prezzo_unitario").keyup(aggiorna_guadagno);
+        $("#costo_unitario").keyup(aggiorna_guadagno);
         $("#sconto").keyup(aggiorna_guadagno);
         $("#tipo_sconto").change(aggiorna_guadagno);
     </script>';
@@ -83,12 +76,12 @@ if ($options['dir'] == 'entrata') {
 // Prezzo di vendita unitario
 echo '
         <div class="col-md-'.$width.'">
-            {[ "type": "number", "label": "'.$label.'", "name": "prezzo", "value": "'.$result['prezzo'].'", "required": 1, "icon-after": "'.currency().'" ]}
+            {[ "type": "number", "label": "'.$label.'", "name": "prezzo_unitario", "value": "'.$result['prezzo_unitario_corrente'].'", "required": 1, "icon-after": "'.currency().'", "help": "'.($options['dir'] == 'entrata' && setting('Utilizza prezzi di vendita comprensivi di IVA') ? tr('Importo IVA inclusa') : '').'" ]}
         </div>';
 
 // Sconto unitario
 echo '
         <div class="col-md-'.$width.'">
-            {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.$result['sconto_unitario'].'", "icon-after": "choice|untprc|'.$result['tipo_sconto'].'", "help": "'.tr('Il valore positivo indica uno sconto. Per applicare un rincaro inserire un valore negativo.').'" ]}
+            {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.($result['sconto_percentuale'] ?: $result['sconto_unitario_corrente']).'", "icon-after": "choice|untprc|'.$result['tipo_sconto'].'", "help": "'.tr('Il valore positivo indica uno sconto. Per applicare una maggiorazione inserire un valore negativo.').'" ]}
         </div>
     </div>';

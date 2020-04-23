@@ -29,14 +29,18 @@ echo '
 </div>';
 
 $statistiche = Modules::get('Statistiche');
-echo '
-<script src="'.$statistiche->fileurl('js/functions.js').'"></script>
-<script src="'.$statistiche->fileurl('js/manager.js').'"></script>
-<script src="'.$statistiche->fileurl('js/calendar.js').'"></script>
-<script src="'.$statistiche->fileurl('js/stat.js').'"></script>
-<script src="'.$statistiche->fileurl('js/stats/table.js').'"></script>
-<script src="'.$statistiche->fileurl('js/stats/widget.js').'"></script>
 
+if ($statistiche != null) {
+    echo '
+    <script src="'.$statistiche->fileurl('js/functions.js').'"></script>
+    <script src="'.$statistiche->fileurl('js/manager.js').'"></script>
+    <script src="'.$statistiche->fileurl('js/calendar.js').'"></script>
+    <script src="'.$statistiche->fileurl('js/stat.js').'"></script>
+    <script src="'.$statistiche->fileurl('js/stats/table.js').'"></script>
+    <script src="'.$statistiche->fileurl('js/stats/widget.js').'"></script>';
+}
+
+echo'
 <script>
 var local_url = "'.str_replace('edit.php', '', $structure->fileurl('edit.php')).'";
 
@@ -45,6 +49,9 @@ function init_calendar(calendar) {
     
     calendar.addElement(widgets);
 }
-</script>
+</script>';
 
-<script src="'.$statistiche->fileurl('js/init.js').'"></script>';
+if ($statistiche != null) {
+    echo '
+    <script src="'.$statistiche->fileurl('js/init.js').'"></script>';
+}

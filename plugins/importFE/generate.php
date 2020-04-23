@@ -310,6 +310,8 @@ if (!empty($righe)) {
                     '_VALUE_' => empty($riga['Natura']) ? numberFormat($riga['AliquotaIVA']).'%' : $riga['Natura'],
                     '_DESC_' => $riga['RiferimentoNormativo'] ? ' - '.$riga['RiferimentoNormativo'] : '',
                 ]).'</small>
+
+                <span class="hide" id="aliquota['.$key.']">'.$riga['AliquotaIVA'].'</span>
             </td>
             <td>
                 {[ "type": "select", "name": "iva['.$key.']", "values": "query='.str_replace('"', '\"', $query).'", "required": 1, "placeholder": "Aliquota iva" ]}
@@ -318,6 +320,19 @@ if (!empty($righe)) {
             </td>
             <td>
                 {[ "type": "select", "name": "articoli['.$key.']", "ajax-source": "articoli", "icon-after": "add|'.Modules::get('Articoli')['id'].'|codice='.htmlentities($codice_principale).'&descrizione='.htmlentities($riga['Descrizione']).'", "value": "'.$id_articolo.'" ]}
+
+                <br>
+                <span id="riferimento_'.$key.'"></span>
+                <button type="button" class="btn btn-info pull-right btn-xs" onclick="selezionaRiferimento('.$key.')">
+                    <i class="fa fa-chevron-right"></i> '.tr('Riferimenti').'
+                </button>
+
+                <input type="hidden" name="qta_riferimento['.$key.']" id="qta_riferimento_'.$key.'" value="'.$riga['Quantita'].'">
+
+                <input type="hidden" name="tipo_riferimento['.$key.']" id="tipo_riferimento_'.$key.'" value="">
+                <input type="hidden" name="id_riferimento['.$key.']" id="id_riferimento_'.$key.'" value="">
+                <input type="hidden" name="id_riga_riferimento['.$key.']" id="id_riga_riferimento_'.$key.'" value="">
+                <input type="hidden" name="tipo_riga_riferimento['.$key.']" id="tipo_riga_riferimento_'.$key.'" value="">
             </td>
         </tr>';
     }
@@ -378,4 +393,28 @@ echo '
             </button>
         </div>
     </div>
-</form>';
+</form>
+
+<script>
+function selezionaRiferimento(id_riga, qta) {
+    var qta = $("#qta_riferimento_" + id_riga).val();
+
+    var tipo = $("#tipo_riferimento_" + id_riga).val();
+    var id_documento = $("#id_riferimento_" + id_riga).val();
+    var id_riga_riferimento = $("#id_riga_riferimento_" + id_riga).val();
+
+    openModal("'.tr('Selezione riferimento').'", "'.$structure->fileurl('riferimento.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'&id_riga=" + id_riga + "&qta=" + qta + "&tipo_riferimento=" + tipo + "&id_documento=" + id_documento + "&id_riga_riferimento=" + id_riga_riferimento);
+    impostaRiferimento(id_riga, "", "", null);
+    $("#riferimento_" + id_riga).html("");
+}
+
+function impostaRiferimento(id_riga, tipo, id_documento, tipo_riga_riferimento, id_riga_riferimento, testo) {
+    $("#tipo_riferimento_" + id_riga).val(tipo);
+    $("#id_riferimento_" + id_riga).val(id_documento);
+
+    $("#tipo_riga_riferimento_" + id_riga).val(tipo_riga_riferimento);
+    $("#id_riga_riferimento_" + id_riga).val(id_riga_riferimento);
+
+    $("#riferimento_" + id_riga).html(testo);
+}
+</script>';

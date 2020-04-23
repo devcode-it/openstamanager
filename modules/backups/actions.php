@@ -2,8 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-$backup_dir = Backup::getDirectory();
-
 switch (filter('op')) {
     case 'getfile':
         $number = filter('number');
@@ -53,8 +51,7 @@ switch (filter('op')) {
         $number = intval($number);
 
         $backups = Backup::getList();
-        $backup = $backups[$number];
-        $filename = basename($backup);
+        $backup = $backups[$number] ?: $backup_dir;
 
         echo Util\FileSystem::size($backup);
 

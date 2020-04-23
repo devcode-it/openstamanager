@@ -285,14 +285,19 @@ if ($total == 0) {
 </div>
 <br>
 <?php
-$qp = 'SELECT MONTH(data_richiesta) AS mese, YEAR(data_richiesta) AS anno FROM (co_promemoria INNER JOIN co_contratti ON co_promemoria.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE is_pianificabile = 1) ) AND idintervento IS NULL
+$query_da_programmare = 'SELECT data_richiesta AS data FROM co_promemoria
+    INNER JOIN co_contratti ON co_promemoria.idcontratto=co_contratti.id
+    INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica
+WHERE
+    idcontratto IN (SELECT id FROM co_contratti WHERE idstato IN (SELECT id FROM co_staticontratti WHERE is_pianificabile = 1))
+    AND idintervento IS NULL
 
-UNION SELECT MONTH(data_scadenza) AS mese, YEAR(data_scadenza) AS anno FROM (co_ordiniservizio INNER JOIN co_contratti ON co_ordiniservizio.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE is_pianificabile = 1) ) AND idintervento IS NULL
+UNION SELECT IF(data_scadenza IS NULL, data_richiesta, data_scadenza) AS data FROM in_interventi
+    INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica
+WHERE (SELECT COUNT(*) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento = in_interventi.id) = 0';
+$risultati_da_programmare = $dbo->fetchArray($query_da_programmare);
 
-UNION SELECT MONTH(IF(data_scadenza IS NULL, data_richiesta, data_scadenza)) AS mese, YEAR(IF(data_scadenza IS NULL, data_richiesta, data_scadenza)) AS anno FROM in_interventi INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE (SELECT COUNT(*) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento = in_interventi.id) = 0 ORDER BY anno,mese';
-$rsp = $dbo->fetchArray($qp);
-
-if (!empty($rsp)) {
+if (!empty($risultati_da_programmare)) {
     echo '
 <div class="row">
     <div class="col-md-10">';
@@ -301,7 +306,7 @@ if (!empty($rsp)) {
 echo '
 <div id="calendar"></div>';
 
-if (!empty($rsp)) {
+if (!empty($risultati_da_programmare)) {
     echo '
     </div>
 
@@ -309,49 +314,45 @@ if (!empty($rsp)) {
         <h4>'.tr('Promemoria da pianificare').'</h4>';
 
     // Controllo pianificazioni mesi precedenti
-    $qp_old = 'SELECT co_promemoria.id FROM co_promemoria INNER JOIN co_contratti ON co_promemoria.idcontratto=co_contratti.id WHERE idstato IN(SELECT id FROM co_staticontratti WHERE is_pianificabile = 1) AND idintervento IS NULL AND DATE_ADD(co_promemoria.data_richiesta, INTERVAL 1 DAY) <= NOW()
-
-    UNION SELECT co_ordiniservizio.id FROM co_ordiniservizio INNER JOIN co_contratti ON co_ordiniservizio.idcontratto=co_contratti.id WHERE idstato IN(SELECT id FROM co_staticontratti WHERE is_pianificabile = 1) AND idintervento IS NULL AND DATE_ADD(co_ordiniservizio.data_scadenza, INTERVAL 1 DAY) <= NOW()
+    $query_mesi_precenti = 'SELECT co_promemoria.id FROM co_promemoria INNER JOIN co_contratti ON co_promemoria.idcontratto=co_contratti.id WHERE idstato IN(SELECT id FROM co_staticontratti WHERE is_pianificabile = 1) AND idintervento IS NULL AND DATE_ADD(co_promemoria.data_richiesta, INTERVAL 1 DAY) <= NOW()
 
     UNION SELECT in_interventi.id FROM in_interventi INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE (SELECT COUNT(*) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento = in_interventi.id) = 0 AND DATE_ADD(IF(in_interventi.data_scadenza IS NULL, in_interventi.data_richiesta, in_interventi.data_scadenza), INTERVAL 1 DAY) <= NOW()';
-    $rsp_old = $dbo->fetchNum($qp_old);
+    $numero_mesi_precenti = $dbo->fetchNum($query_mesi_precenti);
 
-    if ($rsp_old > 0) {
-        echo '<div class="alert alert-warning alert-dismissible text-sm" role="alert"><i class="fa fa-exclamation-triangle"></i><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button> '.tr('Ci sono '.$rsp_old.' attività scadute.').'</div>';
+    if ($numero_mesi_precenti > 0) {
+        echo '<div class="alert alert-warning alert-dismissible text-sm" role="alert"><i class="fa fa-exclamation-triangle"></i><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button> '.tr('Ci sono _NUM_ attività scadute', [
+                '_NUM_' => $numero_mesi_precenti,
+        ]).'.</div>';
     }
 
-    $mesi = months();
+    // Aggiunta della data corrente per visualizzare il mese corrente
+    $risultati_da_programmare[] = [
+        'data' => date('Y-m-d H:i:s'),
+    ];
 
-    // Creo un array con tutti i mesi che contengono interventi
-    $mesi_interventi = [];
-    for ($i = 0; $i < sizeof($rsp); ++$i) {
-        $mese_n = $rsp[$i]['mese'].$rsp[$i]['anno'];
-        $mese_t = $mesi[intval($rsp[$i]['mese'])].' '.$rsp[$i]['anno'];
-        $mesi_interventi[$mese_n] = $mese_t;
-    }
+    $mesi = collect($risultati_da_programmare)
+        ->unique(function ($item) {
+            $data = new Carbon\Carbon($item['data']);
 
-    // Aggiungo anche il mese corrente
-    $mesi_interventi[date('m').date('Y')] = $mesi[intval(date('m'))].' '.date('Y');
-
-    // Rimuovo i mesi doppi
-    array_unique($mesi_interventi);
-
-    // Ordino l'array per anno
-    foreach ($mesi_interventi as $key => &$data) {
-        ksort($data);
-    }
-
-    echo '<select class="superselect" id="select-intreventi-pianificare">';
-
-    foreach ($mesi_interventi as $key => $mese_intervento) {
-        echo '<option value="'.$key.'">'.$mese_intervento.'</option>';
-    }
-
-    echo '</select>';
-
-    echo '<div id="interventi-pianificare"></div>';
+            return $data->format('m-Y');
+        })
+        ->sortBy('data');
 
     echo '
+    <select class="superselect" id="select-intreventi-pianificare">';
+
+    foreach ($mesi as $mese) {
+        $data = new Carbon\Carbon($mese['data']);
+        $chiave = $data->format('mY');
+        $testo = $data->formatLocalized('%B %Y');
+
+        echo '
+        <option value="'.$chiave.'">'.ucfirst($testo).'</option>';
+    }
+
+    echo '
+        </select>
+        <div id="interventi-pianificare"></div>
     </div>
 </div>';
 }
@@ -461,7 +462,7 @@ if ($vista == 'mese') {
 						$('#calendar').fullCalendar('refetchEvents');
 				});
 
-				i++
+				i++;
 				update_counter( 'idzone_count', i);
 
             });
@@ -617,15 +618,13 @@ if (Modules::getPermission('Interventi') == 'rw') {
                 ora_al = moment(date).add(1, 'hours').format("HH:mm");
 
                 ref = $(this).data('ref');
-                if (ref == 'ordine') {
-                    name = 'idordineservizio';
-                } else if (ref == 'promemoria') {
-                    name = 'idcontratto_riga';
+                if (ref == 'promemoria') {
+                    nome = 'idcontratto_riga';
                 } else {
-                    name = 'id_intervento';
+                    nome = 'id_intervento';
                 }
 
-                launch_modal('<?php echo tr('Pianifica intervento'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::get('Interventi')['id']; ?>&data='+data+'&orario_inizio='+ora_dal+'&orario_fine='+ora_al+'&ref=dashboard&idcontratto=' + $(this).data('idcontratto') + '&' + name + '=' + $(this).data('id'));
+                launch_modal('<?php echo tr('Pianifica intervento'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::get('Interventi')['id']; ?>&data='+data+'&orario_inizio='+ora_dal+'&orario_fine='+ora_al+'&ref=dashboard&idcontratto=' + $(this).data('idcontratto') + '&' + nome + '=' + $(this).data('id'));
 
                 $(this).remove();
 
@@ -635,12 +634,13 @@ if (Modules::getPermission('Interventi') == 'rw') {
             },
 
             selectable: true,
-			select: function(start, end, allDay) {
-				data = moment(start).format("YYYY-MM-DD");
+            select: function(start, end, allDay) {
+                data = moment(start).format("YYYY-MM-DD");
+                data_fine = moment(end).format("YYYY-MM-DD");
 				ora_dal = moment(start).format("HH:mm");
 				ora_al = moment(end).format("HH:mm");
 
-                launch_modal('<?php echo tr('Aggiungi intervento'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::get('Interventi')['id']; ?>&ref=dashboard&data='+data+'&orario_inizio='+ora_dal+'&orario_fine='+ora_al);
+                launch_modal('<?php echo tr('Aggiungi intervento'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::get('Interventi')['id']; ?>&ref=dashboard&data=' + data + '&data_fine=' + data_fine + '&orario_inizio=' + ora_dal + '&orario_fine=' + ora_al, 1);
 
 				$('#calendar').fullCalendar('unselect');
 			},
@@ -700,7 +700,7 @@ if (setting('Utilizzare i tooltip sul calendario') == '1') {
                     position: 'left',
                     functionBefore: function(instance, helper) {
                         var $origin = $(helper.origin);
-                        
+
                         // we set a variable so the data is only loaded once via Ajax, not every time the tooltip opens
                         if ($origin.data('loaded') !== true) {
 

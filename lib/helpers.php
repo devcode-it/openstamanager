@@ -266,8 +266,6 @@ function moneyFormat($number, $decimals = null)
 /**
  * Restituisce il numero indicato formattato come una valuta secondo la configurazione del sistema.
  *
- * @param array $json
- *
  * @return string
  *
  * @since 2.4.11

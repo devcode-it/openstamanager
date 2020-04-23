@@ -90,14 +90,14 @@ echo '
 <!-- Istruzioni per il contenuto -->
 <div class="box box-info">
     <div class="box-header">
-        <h3 class="box-title">'.tr('Istruzioni per i campi automatici').'</h3>
+        <h3 class="box-title">'.tr('Variabili').'</h3>
     </div>
 
     <div class="box-body">';
 
 if (!empty($variables)) {
     echo '
-        <p>'.tr("Puoi utilizzare le seguenti sequenze di testo nell'oggetto e nel corpo della mail").':</p>
+        <p>'.tr("Puoi utilizzare le seguenti variabili nell'oggetto e nel corpo della mail").':</p>
         <ul>';
 
     foreach ($variables as $variable => $value) {

@@ -8,11 +8,15 @@ use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\Intervento;
 use Modules\TipiIntervento\Tipo as TipoSessione;
+use Plugins\PianificazioneFatturazione\Pianificazione;
+use Plugins\PianificazioneInterventi\Promemoria;
 use Traits\RecordTrait;
+use Traits\ReferenceTrait;
 use Util\Generator;
 
 class Contratto extends Document
 {
+    use ReferenceTrait;
     use RecordTrait;
 
     protected $table = 'co_contratti';
@@ -30,8 +34,7 @@ class Contratto extends Document
     /**
      * Crea un nuovo contratto.
      *
-     * @param Anagrafica $anagrafica
-     * @param string     $nome
+     * @param string $nome
      *
      * @return self
      */
@@ -144,6 +147,16 @@ class Contratto extends Document
         return $this->hasMany(Intervento::class, 'id_contratto');
     }
 
+    public function promemoria()
+    {
+        return $this->hasMany(Promemoria::class, 'idcontratto');
+    }
+
+    public function pianificazioni()
+    {
+        return $this->hasMany(Pianificazione::class, 'idcontratto');
+    }
+
     public function fixBudget()
     {
         $this->budget = $this->totale_imponibile ?: 0;
@@ -163,8 +176,6 @@ class Contratto extends Document
     /**
      * Effettua un controllo sui campi del documento.
      * Viene richiamatp dalle modifiche alle righe del documento.
-     *
-     * @param Description $trigger
      */
     public function triggerEvasione(Description $trigger)
     {
@@ -213,5 +224,27 @@ class Contratto extends Document
         $numero = Generator::generate($maschera, $ultimo);
 
         return $numero;
+    }
+
+    // Opzioni di riferimento
+
+    public function getReferenceName()
+    {
+        return 'Contratto';
+    }
+
+    public function getReferenceNumber()
+    {
+        return $this->numero;
+    }
+
+    public function getReferenceDate()
+    {
+        return $this->data_bozza;
+    }
+
+    public function setStatoAttribute($stato)
+    {
+        $this->idstato = Stato::where('descrizione', $stato)->first()['id'];
     }
 }

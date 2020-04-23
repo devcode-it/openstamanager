@@ -2,6 +2,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+$block_edit = $record['flag_completato'];
+
 unset($_SESSION['superselect']['idanagrafica']);
 unset($_SESSION['superselect']['idsede_partenza']);
 unset($_SESSION['superselect']['idsede_destinazione']);
@@ -112,7 +114,7 @@ $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione']
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL", "value": "$idstatointervento$" ]}
+					{[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL", "value": "$idstatointervento$", "class": "unblockable" ]}
 				</div>
 			</div>
 
@@ -224,25 +226,31 @@ $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione']
 
 <?php
 
-if (!$record['flag_completato']) {
+if (!$block_edit) {
     echo '
-                    <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('add_articolo.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_articolo&idriga=0" data-toggle="tooltip" data-title="'.tr('Aggiungi articolo').'">
-                        <i class="fa fa-plus"></i> '.tr('Articolo').'
-                    </a>';
+            <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_articolo" data-toggle="tooltip" data-title="'.tr('Aggiungi articolo').'">
+                <i class="fa fa-plus"></i> '.tr('Articolo').'
+            </a>';
 
     echo '
-                    <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('add_righe.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_riga" data-toggle="tooltip" data-title="'.tr('Aggiungi altre spese').'">
-                        <i class="fa fa-plus"></i> '.tr('Riga').'
-                    </a>';
+            <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_riga" data-toggle="tooltip" data-title="'.tr('Aggiungi riga').'">
+                <i class="fa fa-plus"></i> '.tr('Riga').'
+            </a>';
 
+    /*
+        echo '
+                <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_descrizione" data-toggle="tooltip" data-title="'.tr('Aggiungi descrizione').'">
+                    <i class="fa fa-plus"></i> '.tr('Descrizione').'
+                </a>';
+    */
     echo '
-                    <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_sconto" data-toggle="tooltip" data-title="'.tr('Aggiungi sconto/maggiorazione').'">
-                        <i class="fa fa-plus"></i> '.tr('Sconto/maggiorazione').'
-                    </a>';
+            <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_sconto" data-toggle="tooltip" data-title="'.tr('Aggiungi sconto/maggiorazione').'">
+                <i class="fa fa-plus"></i> '.tr('Sconto/maggiorazione').'
+            </a>';
 }
 
 // Conteggio numero articoli intervento per eventuale blocco della sede di partenza
-$articoli = $dbo->fetchArray('SELECT mg_articoli_interventi.id FROM mg_articoli_interventi INNER JOIN in_interventi ON in_interventi.id=mg_articoli_interventi.idintervento WHERE in_interventi.id='.prepare($id_record));
+$articoli = $intervento->articoli;
 
 ?>
                 </div>
@@ -254,7 +262,7 @@ $articoli = $dbo->fetchArray('SELECT mg_articoli_interventi.id FROM mg_articoli_
 
             <div id="righe">
 <?php
-include $structure->filepath('ajax_righe.php');
+include $structure->filepath('row-list.php');
 ?>
             </div>
         </div>
@@ -311,7 +319,7 @@ include $structure->filepath('ajax_righe.php');
 <script>
 	$('#idanagrafica').change( function(){
 		session_set('superselect,idanagrafica', $(this).val(), 0);
-		
+
 		$("#idsede_destinazione").selectReset();
 		$("#idpreventivo").selectReset();
 		$("#idcontratto").selectReset();
@@ -373,7 +381,7 @@ include $structure->filepath('ajax_righe.php');
 <?php
 // Collegamenti diretti
 // Fatture collegate a questo intervento
-$elementi = $dbo->fetchArray('SELECT `co_documenti`.*, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idintervento` = '.prepare($id_record).') ORDER BY `data`');
+$elementi = $dbo->fetchArray('SELECT `co_documenti`.*, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_statidocumento`.`descrizione` AS stato_documento, `co_tipidocumento`.`dir` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`idstatodocumento` WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idintervento` = '.prepare($id_record).') ORDER BY `data`');
 
 if (!empty($elementi)) {
     echo '
@@ -390,10 +398,11 @@ if (!empty($elementi)) {
         <ul>';
 
     foreach ($elementi as $fattura) {
-        $descrizione = tr('_DOC_ num. _NUM_ del _DATE_', [
+        $descrizione = tr('_DOC_ num. _NUM_ del _DATE_ [_STATE_]', [
             '_DOC_' => $fattura['tipo_documento'],
             '_NUM_' => !empty($fattura['numero_esterno']) ? $fattura['numero_esterno'] : $fattura['numero'],
             '_DATE_' => Translator::dateToLocale($fattura['data']),
+            '_STATE_' => $fattura['stato_documento'],
         ]);
 
         $modulo = ($fattura['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';

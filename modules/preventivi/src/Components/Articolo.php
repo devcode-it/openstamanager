@@ -17,9 +17,6 @@ class Articolo extends Article
     /**
      * Crea un nuovo articolo collegato ad una preventivo.
      *
-     * @param Preventivo $preventivo
-     * @param Original   $articolo
-     *
      * @return self
      */
     public static function build(Preventivo $preventivo, Original $articolo)
@@ -27,15 +24,5 @@ class Articolo extends Article
         $model = parent::build($preventivo, $articolo);
 
         return $model;
-    }
-
-    public function movimentaMagazzino($qta)
-    {
-        return;
-    }
-
-    public function getDirection()
-    {
-        return $this->preventivo->tipo->dir;
     }
 }

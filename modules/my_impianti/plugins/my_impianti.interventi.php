@@ -44,8 +44,8 @@ if (filter('op') == 'link_myimpianti') {
 }
 
 //Blocco della modifica impianti se l'intervento è completato
-$rss = $dbo->fetchArray('SELECT in_statiintervento.completato FROM in_statiintervento INNER JOIN in_interventi ON in_statiintervento.idstatointervento=in_interventi.idstatointervento WHERE in_interventi.id='.prepare($id_record));
-$flg_completato = $rss[0]['completato'];
+$rss = $dbo->fetchArray('SELECT in_statiintervento.is_completato FROM in_statiintervento INNER JOIN in_interventi ON in_statiintervento.idstatointervento=in_interventi.idstatointervento WHERE in_interventi.id='.prepare($id_record));
+$flg_completato = $rss[0]['is_completato'];
 
 if ($flg_completato) {
     $readonly = 'readonly';

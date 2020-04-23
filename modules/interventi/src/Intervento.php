@@ -7,21 +7,29 @@ use Modules\Anagrafiche\Anagrafica;
 use Modules\Contratti\Contratto;
 use Modules\Preventivi\Preventivo;
 use Modules\TipiIntervento\Tipo as TipoSessione;
+use Traits\RecordTrait;
+use Traits\ReferenceTrait;
 use Util\Generator;
 
 class Intervento extends Document
 {
+    use ReferenceTrait;
+
+    use RecordTrait;
+
     protected $table = 'in_interventi';
 
     protected $info = [];
 
+    protected $dates = [
+        'data_richiesta',
+        'data_scadenza',
+    ];
+
     /**
      * Crea un nuovo intervento.
      *
-     * @param Anagrafica   $anagrafica
-     * @param TipoSessione $tipo_sessione
-     * @param Stato        $stato
-     * @param string       $data_richiesta
+     * @param string $data_richiesta
      *
      * @return self
      */
@@ -83,6 +91,16 @@ class Intervento extends Document
         }
 
         return $this->info['fine'];
+    }
+
+    public function getModuleAttribute()
+    {
+        return 'Interventi';
+    }
+
+    public function getDirezioneAttribute()
+    {
+        return 'entrata';
     }
 
     /**
@@ -154,6 +172,18 @@ class Intervento extends Document
         return $this->hasMany(Components\Sessione::class, 'idintervento');
     }
 
+    public function toArray()
+    {
+        $array = parent::toArray();
+
+        $result = array_merge($array, [
+            'ore_totali' => $this->ore_totali,
+            'km_totali' => $this->km_totali,
+        ]);
+
+        return $result;
+    }
+
     // Metodi statici
 
     /**
@@ -180,5 +210,22 @@ class Intervento extends Document
         $numero = Generator::generate($maschera, $ultimo);
 
         return $numero;
+    }
+
+    // Opzioni di riferimento
+
+    public function getReferenceName()
+    {
+        return 'Attività';
+    }
+
+    public function getReferenceNumber()
+    {
+        return $this->codice;
+    }
+
+    public function getReferenceDate()
+    {
+        return $this->data_richiesta;
     }
 }

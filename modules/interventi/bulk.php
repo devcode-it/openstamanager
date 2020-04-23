@@ -5,6 +5,8 @@ include_once __DIR__.'/../../core.php';
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Tipo;
+use Modules\Interventi\Intervento;
+use Modules\Interventi\Stato;
 use Util\Zip;
 
 // Segmenti
@@ -17,7 +19,6 @@ $id_segment = $_SESSION['module_'.$id_fatture]['id_segment'];
 
 switch (post('op')) {
     case 'export-bulk':
-
         $dir = DOCROOT.'/files/export_interventi/';
         directory($dir.'tmp/');
 
@@ -68,7 +69,7 @@ switch (post('op')) {
         $accodare = post('accodare');
         $id_segment = post('id_segment');
 
-        $interventi = $dbo->fetchArray('SELECT *, IFNULL((SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento = in_interventi.id), in_interventi.data_richiesta) AS data, in_statiintervento.descrizione AS stato, in_interventi.codice AS codice_intervento FROM in_interventi INNER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento WHERE in_statiintervento.completato=1 AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND in_interventi.id_preventivo IS NULL AND in_interventi.id NOT IN (SELECT idintervento FROM co_promemoria WHERE idintervento IS NOT NULL) AND in_interventi.id IN ('.implode(',', $id_records).')');
+        $interventi = $dbo->fetchArray('SELECT *, IFNULL((SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento = in_interventi.id), in_interventi.data_richiesta) AS data, in_statiintervento.descrizione AS stato, in_interventi.codice AS codice_intervento FROM in_interventi INNER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento WHERE in_statiintervento.is_completato=1 AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND in_interventi.id_preventivo IS NULL AND in_interventi.id NOT IN (SELECT idintervento FROM co_promemoria WHERE idintervento IS NOT NULL) AND in_interventi.id IN ('.implode(',', $id_records).')');
 
         // Lettura righe selezionate
         foreach ($interventi as $intervento) {
@@ -113,6 +114,34 @@ switch (post('op')) {
         }
 
     break;
+
+    case 'cambia_stato':
+        $id_stato = post('id_stato');
+
+        $n_interventi = 0;
+        $stato = Stato::find($id_stato);
+
+        // Lettura righe selezionate
+        foreach ($id_records as $id) {
+            $intervento = Intervento::find($id);
+
+            if (!$intervento->stato->is_completato) {
+                $intervento->stato()->associate($stato);
+                $intervento->save();
+
+                ++$n_interventi;
+            }
+        }
+
+        if ($n_interventi > 0) {
+            flash()->info(tr('Stato cambiato a _NUM_ attività!', [
+                '_NUM_' => $n_interventi,
+            ]));
+        } else {
+            flash()->warning(tr('Nessuna attività modificata!'));
+        }
+
+        break;
 }
 
 return [
@@ -128,12 +157,24 @@ return [
     ],
 
     'crea_fattura' => [
-        'text' => tr('Crea fattura'),
+        'text' => tr('Fattura documenti'),
         'data' => [
             'title' => tr('Vuoi davvero generare le fatture per questi interventi?'),
             'msg' => tr('Verranno fatturati gli interventi completati non inseriti in preventivi e contratti').'.<br>{[ "type": "checkbox", "placeholder": "'.tr('Aggiungere alle fatture esistenti non ancora emesse?').'", "name": "accodare" ]}
             <br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module=\''.$id_fatture.'\' AND is_fiscale = 1 ORDER BY name", "value": "'.$id_segment.'" ]}',
             'button' => tr('Crea fatture'),
+            'class' => 'btn btn-lg btn-warning',
+            'blank' => false,
+        ],
+    ],
+
+    'cambia_stato' => [
+        'text' => tr('Cambia stato'),
+        'data' => [
+            'title' => tr('Vuoi davvero cambinare le stato per questi interventi?'),
+            'msg' => tr('Seleziona lo stato in cui spostare tutti gli interventi non completati').'.<br>
+            <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL" ]}',
+            'button' => tr('Sposta'),
             'class' => 'btn btn-lg btn-warning',
             'blank' => false,
         ],

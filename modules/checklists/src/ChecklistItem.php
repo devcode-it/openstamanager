@@ -15,9 +15,8 @@ class ChecklistItem extends Model
     /**
      * Crea un nuovo elemento della checklist.
      *
-     * @param Checklist $checklist
-     * @param string    $contenuto
-     * @param int       $id_parent
+     * @param string $contenuto
+     * @param int    $id_parent
      *
      * @return self
      */

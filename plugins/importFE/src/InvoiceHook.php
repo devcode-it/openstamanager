@@ -7,16 +7,19 @@ use Modules;
 
 class InvoiceHook extends CachedManager
 {
-    public function data()
+    public function getCacheName()
     {
-        $list = Interaction::getInvoiceList();
+        return 'Fatture Elettroniche';
+    }
 
-        return $list;
+    public function cacheData()
+    {
+        return Interaction::getInvoiceList();
     }
 
     public function response()
     {
-        $results = self::getCache()['results'];
+        $results = $this->getCache()->content;
 
         $count = count($results);
         $notify = false;

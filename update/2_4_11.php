@@ -79,8 +79,6 @@ $files = [
     'modules\interventi\api\create.php',
     'modules\aggiornamenti\api',
     'plugins\exportFE\src\Connection.php',
-    'modules\contratti\plugins\addfattura.php',
-    'modules\contratti\plugins\contratti.fatturaordiniservizio.php',
     'modules\contratti\plugins\contratti.ordiniservizio.interventi.php ',
     'modules\contratti\plugins\contratti.ordiniservizio.php',
     'templates\contratti_cons\body.php',
@@ -88,7 +86,7 @@ $files = [
 ];
 
 foreach ($files as $key => $value) {
-    $files[$key] = realpath(DOCROOT.'/'.$value);
+    $files[$key] = realpath(DOCROOT.'\\'.$value);
 }
 
 delete($files);

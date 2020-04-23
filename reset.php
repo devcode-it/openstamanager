@@ -41,6 +41,7 @@ switch (post('op')) {
         flash()->info(tr("Se le informazioni inserite corrispondono ai dati di un utente, riceverai a breve un'email all'indirizzo collegato").'.');
 
         redirect(ROOTDIR.'/index.php');
+        exit();
         break;
 
     case 'update':
@@ -57,6 +58,7 @@ switch (post('op')) {
         flash()->info(tr('Password cambiata!'));
 
         redirect(ROOTDIR.'/index.php');
+        exit();
         break;
 }
 
@@ -98,7 +100,7 @@ if (Auth::isBrute()) {
 }
 
 echo '
-    <form action="" method="post" class="box box-center-large box-warning" id="reset">        
+    <form action="" method="post" class="box box-center-large box-warning" id="reset">
         <div class="box-header with-border text-center">
             <a href="'.ROOTDIR.'/index.php"><i  class="fa fa-arrow-left btn btn-xs btn-warning pull-left tip" title="'.tr('Torna indietro').'" ></i></a>
             <h3 class="box-title">'.$pageTitle.'</h3>
@@ -112,22 +114,22 @@ if (empty($token)) {
 
             <p>'.tr("Per reimpostare password, inserisci l'username con cui hai accesso al gestionale e l'indirizzo email associato all'utente").'.<br>
             '.tr("Se i dati inseriti risulteranno corretti riceverai un'email dove sarà indicato il link da cui potrai reimpostare la tua password").'.</p>
-            
+
             {[ "type": "text", "label": "'.tr('Username').'", "placeholder": "'.tr('Username').'", "name": "username", "icon-before": "<i class=\"fa fa-user\"></i>", "required": 1 ]}
-            
+
             {[ "type": "email", "label": "'.tr('Email').'", "placeholder": "'.tr('Email').'", "name": "email", "icon-before": "<i class=\"fa fa-envelope\"></i>", "required": 1 ]}';
 } else {
     echo '
             <input type="hidden" name="op" value="update">
 
             <p>'.tr('Inserisci la nuova password per il tuo account').':</p>
-            
+
             {[ "type": "password", "label": "'.tr('Password').'", "name": "password", "required": 1, "strength": "#submit-button", "icon-before": "<i class=\"fa fa-lock\"></i>" ]}';
 }
 
 echo '
             </div>
-            
+
             <div class="box-footer">
                     <button type="submit" id="submit-button" class="btn btn-success btn-block">
                         <i class="fa fa-arrow-right"></i> '.tr('Invia richiesta').'

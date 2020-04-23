@@ -47,35 +47,12 @@ if (null !== filter('orario_inizio') && '00:00:00' != filter('orario_inizio')) {
     $orario_fine = date('H', time() + 60 * 60).':00:00';
 }
 
-// Se sto pianificando un contratto, leggo tutti i dati del contratto per predisporre l'aggiunta intervento
-//ref (intervento,promemoria,ordine)
-
 $id_intervento = filter('id_intervento');
 $idcontratto = filter('idcontratto');
 $idcontratto_riga = filter('idcontratto_riga');
-$idordineservizio = filter('idordineservizio');
-
-if (!empty($idcontratto) && !empty($idordineservizio)) {
-    $rs = $dbo->fetchArray('SELECT *, (SELECT idzona FROM an_anagrafiche WHERE idanagrafica = co_contratti.idanagrafica) AS idzona FROM co_contratti WHERE id='.prepare($idcontratto));
-    $idanagrafica = $rs[0]['idanagrafica'];
-    $idzona = $rs[0]['idzona'];
-
-    // Info riga pianificata
-    $rs = $dbo->fetchArray('SELECT * FROM co_ordiniservizio WHERE idcontratto='.prepare($idcontratto).' AND id='.prepare($idordineservizio));
-    $data = $rs[0]['data_scadenza'];
-    $idimpianto = $rs[0]['id'];
-
-    // Seleziono "Ordine di servizio" come tipo intervento
-    $rs = $dbo->fetchArray("SELECT idtipointervento FROM in_tipiintervento WHERE descrizione='Ordine di servizio'");
-    $idtipointervento = $rs[0]['idtipointervento'];
-
-    // Spunto il tecnico di default assegnato all'impianto
-    $rs = $dbo->fetchArray('SELECT idtecnico FROM my_impianti WHERE id='.prepare($idimpianto));
-    $idtecnico = $rs[0]['idtecnico'] ?: '';
-}
 
 // Se sto pianificando un contratto, leggo tutti i dati del contratto per predisporre l'aggiunta intervento
-elseif (!empty($idcontratto) && !empty($idcontratto_riga)) {
+if (!empty($idcontratto) && !empty($idcontratto_riga)) {
     $rs = $dbo->fetchArray('SELECT *, (SELECT idzona FROM an_anagrafiche WHERE idanagrafica = co_contratti.idanagrafica) AS idzona FROM co_contratti WHERE id='.prepare($idcontratto));
     $idanagrafica = $rs[0]['idanagrafica'];
     $idzona = $rs[0]['idzona'];
@@ -135,18 +112,28 @@ elseif (!empty($id_intervento)) {
     $idimpianto = implode(',', array_column($rs, 'idimpianto'));
 }
 
+if (empty($data_fine)) {
+    if (null !== filter('data_fine')) {
+        $data_fine = filter('data_fine');
+    } else {
+        $data_fine = date('Y-m-d');
+    }
+}
+
 if (empty($data)) {
     if (null !== filter('data')) {
         $data = filter('data');
     } else {
-        $data = date(formatter()->getDatePattern());
+        $data = date('Y-m-d');
     }
 }
+
+$data_fine = $data_fine ?: $data;
 
 $_SESSION['superselect']['idanagrafica'] = $idanagrafica;
 
 $orario_inizio = $data.' '.$orario_inizio;
-$orario_fine = $data.' '.$orario_fine;
+$orario_fine = $data_fine.' '.$orario_fine;
 
 ?>
 
@@ -161,10 +148,6 @@ $orario_fine = $data.' '.$orario_fine;
 <?php
 if (!empty($idcontratto_riga)) {
     echo '<input type="hidden" name="idcontratto_riga" value="'.$idcontratto_riga.'">';
-}
-
-if (!empty($idordineservizio)) {
-    echo '<input type="hidden" name="idordineservizio" value="'.$idordineservizio.'">';
 }
 
 if (!empty($id_intervento)) {
@@ -212,7 +195,7 @@ if (!empty($id_intervento)) {
 
 			<div class="row">
                 <div class="col-md-6" id='impianti'>
-                    {[ "type": "select", "label": "<?php echo tr('Impianto'); ?>", "multiple": 1, "name": "idimpianti[]", "value": "<?php echo $idimpianto; ?>"<?php echo !empty($idanagrafica) ? '' : ', "placeholder": "'.tr('Seleziona prima un cliente').'..."'; ?>, "ajax-source": "impianti-cliente", "icon-after": "add|<?php echo Modules::get('MyImpianti')['id']; ?>|source=Attività|<?php echo (empty($idimpianto)) ? '' : 'disabled'; ?>", "data-heavy": 0 ]}
+                    {[ "type": "select", "label": "<?php echo tr('Impianto'); ?>", "multiple": 1, "name": "idimpianti[]", "value": "<?php echo $idimpianto; ?>"<?php echo !empty($idanagrafica) ? '' : ', "placeholder": "'.tr('Seleziona prima un cliente').'..."'; ?>, "ajax-source": "impianti-cliente", "icon-after": "add|<?php echo Modules::get('MyImpianti')['id']; ?>|source=Attività||<?php echo (intval($idimpianto)) ? '' : 'disabled'; ?>", "data-heavy": 0 ]}
                 </div>
 
                 <div class="col-md-6">
@@ -433,11 +416,15 @@ if (!empty($id_intervento)) {
 	$('#modals > div #idtipointervento').change( function(){
 
 		if ($(this).selectData() && (($(this).selectData().tempo_standard)>0) && ('<?php echo filter('orario_fine'); ?>' == '')){
-			tempo_standard = $(this).selectData().tempo_standard;
 
-			data = moment($('#modals > div #orario_inizio').val(), globals.timestamp_format);
-			orario_fine = data.add(tempo_standard, 'hours');
-			$('#modals > div #orario_fine').val(orario_fine.format(globals.timestamp_format));
+            orario_inizio = moment($('#modals > div #orario_inizio').val(), globals.timestamp_format, globals.locale).isValid() ? $('#modals > div #orario_inizio').val() : false;
+            //console.log(orario_inizio);
+            //da sistemare
+            if (orario_inizio){
+                tempo_standard = ($(this).selectData().tempo_standard)*60;
+                orario_fine = moment(orario_inizio).add(tempo_standard, 'm');
+                $('#modals > div #orario_fine').val(moment(orario_fine).format(globals.timestamp_format));
+            }
 		}
 
 	});

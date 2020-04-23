@@ -48,7 +48,7 @@ switch (get('op')) {
         $orario_fine = get('timeEnd');
 
         // Aggiornamento prezzo totale
-        $q = 'SELECT in_interventi_tecnici.prezzo_ore_unitario, idtecnico, in_statiintervento.completato FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id LEFT OUTER JOIN in_statiintervento ON in_interventi.idstatointervento =  in_statiintervento.idstatointervento WHERE in_interventi.id='.prepare($idintervento).' AND in_statiintervento.completato = 0 '.Modules::getAdditionalsQuery('Interventi');
+        $q = 'SELECT in_interventi_tecnici.prezzo_ore_unitario, idtecnico, in_statiintervento.is_completato FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id LEFT OUTER JOIN in_statiintervento ON in_interventi.idstatointervento =  in_statiintervento.idstatointervento WHERE in_interventi.id='.prepare($idintervento).' AND in_statiintervento.is_completato = 0 '.Modules::getAdditionalsQuery('Interventi');
         $rs = $dbo->fetchArray($q);
         $prezzo_ore = 0.00;
 
@@ -133,14 +133,24 @@ switch (get('op')) {
     break;
 
     case 'load_intreventi':
-
         $mese = $_GET['mese'];
 
         // Righe inserite
-        $qp = "SELECT co_promemoria.id, idcontratto, richiesta,co_contratti.nome AS nomecontratto, DATE_FORMAT( data_richiesta, '%m%Y') AS mese, data_richiesta, an_anagrafiche.ragione_sociale, 'promemoria' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_promemoria.idtipointervento) AS tipointervento FROM (co_promemoria INNER JOIN co_contratti ON co_promemoria.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE is_pianificabile = 1) ) AND idintervento IS NULL
-
-        UNION SELECT co_ordiniservizio.id, idcontratto, '', co_contratti.nome AS nomecontratto, DATE_FORMAT( data_scadenza, '%m%Y') AS mese, data_scadenza, an_anagrafiche.ragione_sociale, 'ordine' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE descrizione='Ordine di servizio') AS tipointervento FROM (co_ordiniservizio INNER JOIN co_contratti ON co_ordiniservizio.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE is_pianificabile = 1) ) AND idintervento IS NULL
-
+        $qp = "SELECT
+            co_promemoria.id,
+            idcontratto,
+            richiesta,co_contratti.nome AS nomecontratto,
+            DATE_FORMAT( data_richiesta, '%m%Y') AS mese,
+            data_richiesta,
+            an_anagrafiche.ragione_sociale,
+            'promemoria' AS ref,
+            (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_promemoria.idtipointervento) AS tipointervento
+        FROM co_promemoria
+            INNER JOIN co_contratti ON co_promemoria.idcontratto=co_contratti.id
+            INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica
+        WHERE
+              idcontratto IN(SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE is_pianificabile = 1)) AND
+              idintervento IS NULL
         ORDER BY data_richiesta ASC";
 
         $rsp = $dbo->fetchArray($qp);

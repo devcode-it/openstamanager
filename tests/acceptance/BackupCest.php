@@ -10,8 +10,6 @@ class BackupCest
 
     /**
      * Crea un nuovo backup.
-     *
-     * @param AcceptanceTester $t
      */
     protected function createBackup(AcceptanceTester $t)
     {
@@ -30,8 +28,6 @@ class BackupCest
 
     /**
      * Ripristina un backup specifico.
-     *
-     * @param AcceptanceTester $t
      */
     protected function restoreBackup(AcceptanceTester $t, $name = null)
     {
@@ -42,8 +38,6 @@ class BackupCest
 
     /**
      * Crea una nuova anagrafica di tipo Cliente.
-     *
-     * @param AcceptanceTester $t
      */
     protected function testBackup(AcceptanceTester $t)
     {

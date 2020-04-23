@@ -9,6 +9,7 @@ use Modules\Contratti\Components\Descrizione;
 use Modules\Contratti\Components\Riga;
 use Modules\Contratti\Components\Sconto;
 use Modules\Contratti\Contratto;
+use Plugins\PianificazioneInterventi\Promemoria;
 
 switch (post('op')) {
     case 'add':
@@ -89,7 +90,7 @@ switch (post('op')) {
     case 'copy':
         $new = $contratto->replicate();
         $new->numero = Contratto::getNextNumero();
-        $new->idstato = 1;
+        $new->stato = 'Bozza';
         $new->save();
 
         $id_record = $new->id;
@@ -120,12 +121,9 @@ switch (post('op')) {
         $articolo->descrizione = post('descrizione');
         $articolo->um = post('um') ?: null;
 
-        $articolo->id_iva = post('idiva');
-
-        $articolo->prezzo_unitario_acquisto = post('prezzo_acquisto') ?: 0;
-        $articolo->prezzo_unitario_vendita = post('prezzo');
-        $articolo->sconto_unitario = post('sconto');
-        $articolo->tipo_sconto = post('tipo_sconto');
+        $articolo->costo_unitario = post('costo_unitario') ?: 0;
+        $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
+        $articolo->setSconto(post('sconto'), post('tipo_sconto'));
 
         try {
             $articolo->qta = $qta;
@@ -180,10 +178,9 @@ switch (post('op')) {
 
         $riga->id_iva = post('idiva');
 
-        $riga->prezzo_unitario_acquisto = post('prezzo_acquisto') ?: 0;
-        $riga->prezzo_unitario_vendita = post('prezzo');
-        $riga->sconto_unitario = post('sconto');
-        $riga->tipo_sconto = post('tipo_sconto');
+        $riga->costo_unitario = post('costo_unitario') ?: 0;
+        $riga->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
+        $riga->setSconto(post('sconto'), post('tipo_sconto'));
 
         $riga->qta = $qta;
 
@@ -290,6 +287,7 @@ $riga = $contratto->getRiga($type, $id_riga);
         $new_contratto->idcontratto_prev = $contratto->id;
         $new_contratto->data_accettazione = $contratto->data_conclusione->copy()->addDays(1);
         $new_contratto->data_conclusione = $new_contratto->data_accettazione->copy()->add($diff);
+        $new_contratto->stato = 'Bozza';
         $new_contratto->save();
         $new_idcontratto = $new_contratto->id;
 
@@ -325,17 +323,13 @@ $riga = $contratto->getRiga($type, $id_riga);
             ]);
             $id_promemoria = $dbo->lastInsertedID();
 
-            // Copia degli articoli
-            $dbo->query('INSERT INTO co_promemoria_articoli(idarticolo, id_promemoria, idimpianto, descrizione, prezzo_vendita, prezzo_acquisto, sconto, sconto_unitario, tipo_sconto, idiva, desc_iva, iva, qta, um, abilita_serial) SELECT idarticolo, :id_new, idimpianto, descrizione, prezzo_vendita, prezzo_acquisto, sconto, sconto_unitario, tipo_sconto, idiva, desc_iva, iva, qta, um, abilita_serial FROM co_promemoria_articoli AS z WHERE id_promemoria = :id_old', [
-                ':id_new' => $id_promemoria,
-                ':id_old' => $p['id'],
-            ]);
-
-            // Copia delle righe
-            $dbo->query('INSERT INTO co_promemoria_righe(id_promemoria, descrizione, qta, um, prezzo_vendita, prezzo_acquisto, idiva, desc_iva, iva, sconto, sconto_unitario, tipo_sconto) SELECT :id_new, descrizione, qta, um, prezzo_vendita, prezzo_acquisto, idiva, desc_iva, iva, sconto, sconto_unitario, tipo_sconto FROM co_promemoria_righe AS z WHERE id_promemoria = :id_old', [
-                ':id_new' => $id_promemoria,
-                ':id_old' => $p['id'],
-            ]);
+            $promemoria = Promemoria::find($p['id']);
+            $righe = $promemoria->getRighe();
+            foreach ($righe as $riga) {
+                $new_riga = $riga->replicate();
+                $new_riga->id_promemoria = $id_promemoria;
+                $new_riga->save();
+            }
 
             // Copia degli allegati
             Uploads::copy([

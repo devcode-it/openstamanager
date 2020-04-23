@@ -153,9 +153,8 @@ var n = '.$counter.';
 
 function addRiga(btn) {
     var raggruppamento = $(btn).parent();
-    n++;
     cleanup_inputs();
-
+    
     var tabella = raggruppamento.find("tbody");
     var content = $("#template").html();
     content = content.replace("-id_scadenza-", raggruppamento.data("id_scadenza"));
@@ -164,6 +163,7 @@ function addRiga(btn) {
     tabella.append(text);
     
     restart_inputs();
+    n++;
 }
 
 /**

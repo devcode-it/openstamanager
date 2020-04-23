@@ -15,7 +15,7 @@ $query = 'SELECT
 FROM or_ordini
     INNER JOIN or_righe_ordini ON or_ordini.id = or_righe_ordini.idordine
 WHERE idarticolo = '.prepare($articolo->id)."
-     AND (SELECT dir FROM or_tipiordine WHERE or_tipiordine.id=or_ordini.idtipoordine) = '|direzione|'
+     AND (SELECT dir FROM or_tipiordine WHERE or_tipiordine.id=or_ordini.idtipoordine) = '|dir|'
      AND (or_righe_ordini.qta - or_righe_ordini.qta_evasa) > 0
 GROUP BY or_ordini.id
 HAVING qta_ordinata > 0";
@@ -179,8 +179,7 @@ echo '
 /**
  ** Disponibile.
  */
-$qta_disponibile = $qta_presente - $impegnato;
-$disponibile = $qta_presente < 0 ? 0 : $qta_presente;
+$disponibile = $qta_presente - $impegnato;
 echo '
 	<div class="col-md-3">
 		<div class="panel panel-primary">

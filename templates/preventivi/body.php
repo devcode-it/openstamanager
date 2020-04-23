@@ -11,7 +11,7 @@ echo '
     <div class="col-xs-6">
         <div class="text-center" style="height:5mm;">
             <b>'.tr('Preventivo num. _NUM_ del _DATE_', [
-                '_NUM_' => $documento['numero'],
+                '_NUM_' => $documento['numero'].(count($documento->revisioni) > 1 ? ' '.tr('rev.').' '.$documento->numero_revision : ''),
                 '_DATE_' => Translator::dateToLocale($documento['data_bozza']),
             ], ['upper' => true]).'</b>
         </div>
@@ -113,13 +113,10 @@ foreach ($righe as $riga) {
             // Prezzo unitario
             echo '
             <td class="text-right" style="vertical-align: middle">
-				'.moneyFormat($riga->prezzo_unitario_vendita);
+				'.moneyFormat($riga->prezzo_unitario);
 
             if ($riga->sconto > 0) {
-                $text = tr('sconto _TOT_ _TYPE_', [
-                    '_TOT_' => Translator::numberToLocale($riga->sconto_unitario),
-                    '_TYPE_' => ($riga->tipo_sconto == 'PRC' ? '%' : currency()),
-                ]);
+                $text = discountInfo($riga, false);
 
                 echo '
                 <br><small class="text-muted">'.$text.'</small>';
@@ -174,15 +171,15 @@ $totale = $documento->totale;
 $show_sconto = $sconto > 0;
 
 // TOTALE COSTI FINALI
-if ($options['pricing'] and !isset($options['hide_total'])) {
+if (($options['pricing'] && !isset($options['hide_total'])) || $options['show_only_total']) {
     // Totale imponibile
     echo '
     <tr>
-        <td colspan="3" class="text-right border-top">
+        <td colspan="'.($options['show_only_total'] ? 1 : 3).'" class="text-right border-top">
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
 
-        <th colspan="2" class="text-right">
+        <th colspan="'.($options['show_only_total'] ? 1 : 2).'" class="text-right">
             <b>'.moneyFormat($show_sconto ? $imponibile : $totale_imponibile, 2).'</b>
         </th>
     </tr>';
@@ -191,11 +188,11 @@ if ($options['pricing'] and !isset($options['hide_total'])) {
     if ($show_sconto) {
         echo '
     <tr>
-        <td colspan="3" class="text-right border-top">
+        <td colspan="'.($options['show_only_total'] ? 1 : 3).'" class="text-right border-top">
             <b>'.tr('Sconto', [], ['upper' => true]).':</b>
         </td>
 
-        <th colspan="2" class="text-right">
+        <th colspan="'.($options['show_only_total'] ? 1 : 2).'" class="text-right">
             <b>'.moneyFormat($sconto, 2).'</b>
         </th>
     </tr>';
@@ -203,11 +200,11 @@ if ($options['pricing'] and !isset($options['hide_total'])) {
         // Totale imponibile
         echo '
     <tr>
-        <td colspan="3" class="text-right border-top">
+        <td colspan="'.($options['show_only_total'] ? 1 : 3).'" class="text-right border-top">
             <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
         </td>
 
-        <th colspan="2" class="text-right">
+        <th colspan="'.($options['show_only_total'] ? 1 : 2).'" class="text-right">
             <b>'.moneyFormat($totale_imponibile, 2).'</b>
         </th>
     </tr>';
@@ -216,11 +213,11 @@ if ($options['pricing'] and !isset($options['hide_total'])) {
     // IVA
     echo '
     <tr>
-        <td colspan="3" class="text-right border-top">
+        <td colspan="'.($options['show_only_total'] ? 1 : 3).'" class="text-right border-top">
             <b>'.tr('Totale IVA', [], ['upper' => true]).':</b>
         </td>
 
-        <th colspan="2" class="text-right">
+        <th colspan="'.($options['show_only_total'] ? 1 : 2).'" class="text-right">
             <b>'.moneyFormat($totale_iva, 2).'</b>
         </th>
     </tr>';
@@ -228,10 +225,10 @@ if ($options['pricing'] and !isset($options['hide_total'])) {
     // TOTALE
     echo '
     <tr>
-    	<td colspan="3" class="text-right border-top">
+    	<td colspan="'.($options['show_only_total'] ? 1 : 3).'" class="text-right border-top">
             <b>'.tr('Totale documento', [], ['upper' => true]).':</b>
     	</td>
-    	<th colspan="2" class="text-right">
+    	<th colspan="'.($options['show_only_total'] ? 1 : 2).'" class="text-right">
     		<b>'.moneyFormat($totale, 2).'</b>
     	</th>
     </tr>';

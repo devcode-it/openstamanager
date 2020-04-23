@@ -140,7 +140,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
             $riga->id_ritenuta_acconto = $id_ritenuta_acconto;
             $riga->id_rivalsa_inps = $id_rivalsa_inps;
 
-            $riga->prezzo_unitario_vendita = $sessione->prezzo_orario;
+            $riga->prezzo_unitario = $sessione->prezzo_orario;
             $riga->sconto_unitario = $sessione->sconto_unitario;
             $riga->tipo_sconto = $sessione->tipo_sconto;
 
@@ -162,7 +162,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
                 '_DATE_' => dateFormat($data),
             ]);
             $riga->idintervento = $id_intervento;
-            $riga->um = 'ore';
+            //$riga->um = 'ore';
 
             $riga->id_iva = $id_iva;
             $riga->idconto = $id_conto;
@@ -171,7 +171,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
             $riga->id_ritenuta_acconto = $id_ritenuta_acconto;
             $riga->id_rivalsa_inps = $id_rivalsa_inps;
 
-            $riga->prezzo_unitario_vendita = $diritto_chiamata->prezzo_diritto_chiamata;
+            $riga->prezzo_unitario = $diritto_chiamata->prezzo_diritto_chiamata;
 
             $riga->qta = $gruppo->count();
 
@@ -200,7 +200,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
             $riga->id_ritenuta_acconto = $id_ritenuta_acconto;
             $riga->id_rivalsa_inps = $id_rivalsa_inps;
 
-            $riga->prezzo_unitario_vendita = $viaggio->prezzo_km_unitario;
+            $riga->prezzo_unitario = $viaggio->prezzo_km_unitario;
             $riga->sconto_unitario = $sessione->scontokm_unitario;
             $riga->tipo_sconto = $sessione->tipo_scontokm;
 

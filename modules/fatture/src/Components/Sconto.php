@@ -14,8 +14,6 @@ class Sconto extends Discount
     /**
      * Crea un nuovo sconto collegato ad una fattura.
      *
-     * @param Fattura $fattura
-     *
      * @return self
      */
     public static function build(Fattura $fattura)

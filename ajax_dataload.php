@@ -96,12 +96,12 @@ if (!empty($query)) {
 
             // Formattazione automatica
             if (!empty($total['format'][$pos]) && !empty($value)) {
-                if (formatter()->isStandardDate($value)) {
+                if (formatter()->isStandardTimestamp($value)) {
+                    $value = Translator::timestampToLocale($value);
+                } elseif (formatter()->isStandardDate($value)) {
                     $value = Translator::dateToLocale($value);
                 } elseif (formatter()->isStandardTime($value)) {
                     $value = Translator::timeToLocale($value);
-                } elseif (formatter()->isStandardTimestamp($value)) {
-                    $value = Translator::timestampToLocale($value);
                 } elseif (formatter()->isStandardNumber($value)) {
                     $value = Translator::numberToLocale($value);
                 }

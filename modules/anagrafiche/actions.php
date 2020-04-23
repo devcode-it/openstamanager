@@ -83,73 +83,24 @@ switch (post('op')) {
         $anagrafica->id_ritenuta_acconto_acquisti = post('id_ritenuta_acconto_acquisti');
         $anagrafica->id_ritenuta_acconto_vendite = post('id_ritenuta_acconto_vendite');
         $anagrafica->split_payment = post('split_payment');
-
         $anagrafica->tipologie = (array) post('idtipoanagrafica');
 
-        // Avviso durante il salvataggio del codice fiscale se già presente e informo l'utente delle schede presenti
-        if (!empty(post('codice_fiscale'))) {
-            $idanagrafica = $dbo->fetchOne('SELECT GROUP_CONCAT(idanagrafica) AS idanagrafica FROM an_anagrafiche WHERE codice_fiscale = '.prepare(post('codice_fiscale')).' AND idanagrafica != '.prepare($id_record).' AND deleted_at IS NULL')['idanagrafica'];
-
-            if (!empty($idanagrafica)) {
-                $array = explode(',', $idanagrafica);
-                foreach ($array as $value) {
-                    flash()->warning(tr('Attenzione: il codice fiscale _COD_ è già stato censito. _LINK_', [
-                        '_COD_' => '<b>'.post('codice_fiscale').'</b>',
-                        '_LINK_' => Modules::link('Anagrafiche', $value, null, null, ''),
-                    ]));
-                }
-            } else {
-                $anagrafica->codice_fiscale = strtoupper(post('codice_fiscale'));
-            }
-        } else {
-            $anagrafica->codice_fiscale = strtoupper(post('codice_fiscale'));
-        }
-
-        // Avviso durante il salvataggio della partita iva se già presente e informo l'utente delle schede presenti
-        if (!empty(post('piva')) && !in_array(post('piva'), ['99999999999', '00000000000'])) {
-            $idanagrafica = $dbo->fetchOne('SELECT GROUP_CONCAT(idanagrafica) AS idanagrafica FROM an_anagrafiche WHERE piva = '.prepare(post('piva')).' AND idanagrafica != '.prepare($id_record))['idanagrafica'];
-
-            if (!empty($idanagrafica)) {
-                $array = explode(',', $idanagrafica);
-                foreach ($array as $value) {
-                    flash()->warning(tr('Attenzione: la partita IVA _IVA_ è già stata censita. _LINK_', [
-                        '_IVA_' => post('piva'),
-                        '_LINK_' => Modules::link('Anagrafiche', $value, null, null, ''),
-                    ]));
-                }
-            } else {
-                $anagrafica->partita_iva = post('piva');
-            }
-        } else {
-            $anagrafica->partita_iva = post('piva');
-        }
+        $anagrafica->codice_fiscale = strtoupper(post('codice_fiscale'));
+        $anagrafica->partita_iva = strtoupper(post('piva'));
 
         $anagrafica->save();
+
+        // Aggiorno gli agenti collegati
+        $dbo->sync('an_anagrafiche_agenti', ['idanagrafica' => $id_record], ['idagente' => (array) post('idagenti')]);
+
+        // Se l'agente di default è stato elencato anche tra gli agenti secondari lo rimuovo
+        if (!empty(post('idagente'))) {
+            $dbo->query('DELETE FROM an_anagrafiche_agenti WHERE idanagrafica='.prepare($id_record).' AND idagente='.prepare(post('idagente')));
+        }
 
         flash()->info(tr("Informazioni per l'anagrafica _NAME_ salvate correttamente!", [
             '_NAME_' => $anagrafica->ragione_sociale,
         ]));
-
-        // Validazione della Partita IVA
-        $partita_iva = $anagrafica->partita_iva;
-        $partita_iva = is_numeric($partita_iva) ? $anagrafica->nazione->iso2.$partita_iva : $partita_iva;
-
-        $check_vat_number = Validate::isValidVatNumber($partita_iva);
-        if (empty($check_vat_number['valid-format'])) {
-            flash()->warning(tr('Attenzione: la partita IVA _IVA_ potrebbe non essere valida.', [
-                '_IVA_' => $partita_iva,
-            ]));
-        }
-
-        // Validazione del Codice Fiscale, solo per anagrafiche Private e Aziende, ignoro controllo se codice fiscale e settato uguale alla p.iva
-        if ($anagrafica->tipo != 'Ente pubblico' and $anagrafica->codice_fiscale != $anagrafica->partita_iva) {
-            $check_codice_fiscale = Validate::isValidTaxCode($anagrafica->codice_fiscale);
-            if (empty($check_codice_fiscale)) {
-                flash()->warning(tr('Attenzione: il codice fiscale _COD_ potrebbe non essere valido.', [
-                    '_COD_' => $anagrafica->codice_fiscale,
-                ]));
-            }
-        }
 
         // Aggiorno il codice anagrafica se non è già presente, altrimenti lo ignoro
         if ($anagrafica->codice != post('codice')) {
@@ -158,12 +109,62 @@ switch (post('op')) {
             ]));
         }
 
-        // Aggiorno gli agenti collegati
-        $dbo->sync('an_anagrafiche_agenti', ['idanagrafica' => $id_record], ['idagente' => (array) post('idagenti')]);
+        // Controllo che il Codice Fiscale non sia già presente
+        $codice_fiscale = $anagrafica->codice_fiscale;
+        if (!empty($codice_fiscale)) {
+            $anagrafiche_codice_fiscale = Anagrafica::where('codice_fiscale', $codice_fiscale)
+                ->where('idanagrafica', '!=', $anagrafica->id)
+                ->get();
+            if (!$anagrafiche_codice_fiscale->isEmpty()) {
+                $message = tr('Attenzione: il codice fiscale _COD_ è già stato censito', [
+                    '_COD_' => $codice_fiscale,
+                ]);
 
-        // Se l'agente di default è stato elencato anche tra gli agenti secondari lo rimuovo
-        if (!empty(post('idagente'))) {
-            $dbo->query('DELETE FROM an_anagrafiche_agenti WHERE idanagrafica='.prepare($id_record).' AND idagente='.prepare(post('idagente')));
+                $links = [];
+                foreach ($anagrafiche_codice_fiscale as $anagrafica_singola) {
+                    $links[] = '<li>'.Modules::link('Anagrafiche', $anagrafica_singola->id, $anagrafica_singola->ragione_sociale).'</li>';
+                }
+
+                flash()->warning($message.'<ul>'.implode('', $links).'</ul>');
+            }
+        }
+
+        // Controllo che la Partita IVA non sia già presente
+        $partita_iva = $anagrafica->partita_iva;
+        if (!empty($partita_iva)) {
+            $anagrafiche_partita_iva = Anagrafica::where('piva', $partita_iva)
+                ->where('idanagrafica', '!=', $anagrafica->id)
+                ->get();
+            if (!$anagrafiche_partita_iva->isEmpty()) {
+                $message = tr('Attenzione: la partita IVA _IVA_ è già stata censita', [
+                    '__IVA__' => $partita_iva,
+                ]);
+
+                $links = [];
+                foreach ($anagrafiche_partita_iva as $anagrafica_singola) {
+                    $links[] = '<li>'.Modules::link('Anagrafiche', $anagrafica_singola->id, $anagrafica_singola->ragione_sociale).'</li>';
+                }
+
+                flash()->warning($message.'<ul>'.implode('', $links).'</ul>');
+            }
+
+            $vat_number = is_numeric($partita_iva) ? $anagrafica->nazione->iso2.$partita_iva : $partita_iva;
+            $check_vat_number = Validate::isValidVatNumber($vat_number);
+            if (empty($check_vat_number['valid-format'])) {
+                flash()->warning(tr('Attenzione: la partita IVA _IVA_ potrebbe non essere valida', [
+                    '_IVA_' => $partita_iva,
+                ]));
+            }
+        }
+
+        // Validazione del Codice Fiscale, solo per anagrafiche Private e Aziende, ignoro controllo se codice fiscale e settato uguale alla p.iva
+        if ($anagrafica->tipo != 'Ente pubblico' && !empty($anagrafica->codice_fiscale) && !empty($anagrafica->partita_iva) && $anagrafica->codice_fiscale != $anagrafica->partita_iva) {
+            $check_codice_fiscale = Validate::isValidTaxCode($codice_fiscale);
+            if (empty($check_codice_fiscale)) {
+                flash()->warning(tr('Attenzione: il codice fiscale _COD_ potrebbe non essere valido.', [
+                    '_COD_' => $codice_fiscale,
+                ]));
+            }
         }
 
         break;
@@ -174,44 +175,6 @@ switch (post('op')) {
 
         $anagrafica = Anagrafica::build($ragione_sociale, post('nome'), post('cognome'), $idtipoanagrafica);
         $id_record = $anagrafica->id;
-
-        // Blocco il salvataggio del codice fiscale se già presente
-        if (!empty(post('codice_fiscale'))) {
-            $idanagrafica = $dbo->fetchOne('SELECT GROUP_CONCAT(idanagrafica) AS idanagrafica FROM an_anagrafiche WHERE codice_fiscale = '.prepare(post('codice_fiscale')).' AND idanagrafica != '.prepare($id_record))['idanagrafica'];
-
-            if (!empty($idanagrafica)) {
-                $array = explode(',', $idanagrafica);
-                foreach ($array as $value) {
-                    flash()->warning(tr('Attenzione: il codice fiscale _COD_ è già stato censito. _LINK_', [
-                        '_COD_' => '<b>'.post('codice_fiscale').'</b>',
-                        '_LINK_' => Modules::link('Anagrafiche', $value, null, null, ''),
-                    ]));
-                }
-            } else {
-                $anagrafica->codice_fiscale = strtoupper(post('codice_fiscale'));
-            }
-        } else {
-            $anagrafica->codice_fiscale = strtoupper(post('codice_fiscale'));
-        }
-
-        // Blocco il salvataggio della partita iva se già presente
-        if (!empty(post('piva'))) {
-            $idanagrafica = $dbo->fetchOne('SELECT GROUP_CONCAT(idanagrafica) AS idanagrafica FROM an_anagrafiche WHERE piva = '.prepare(post('piva')).' AND idanagrafica != '.prepare($id_record))['idanagrafica'];
-
-            if (!empty($idanagrafica)) {
-                $array = explode(',', $idanagrafica);
-                foreach ($array as $value) {
-                    flash()->warning(tr('Attenzione: la partita IVA _IVA_ è già stata censita. _LINK_', [
-                    '_IVA_' => post('piva'),
-                    '_LINK_' => Modules::link('Anagrafiche', $value, null, null, ''),
-                    ]));
-                }
-            } else {
-                $anagrafica->partita_iva = post('piva');
-            }
-        } else {
-            $anagrafica->partita_iva = post('piva');
-        }
 
         // Se ad aggiungere un cliente è un agente, lo imposto come agente di quel cliente
         // Lettura tipologia dell'utente loggato
@@ -241,6 +204,9 @@ switch (post('op')) {
         $anagrafica->id_nazione = post('id_nazione') ?: null;
         $anagrafica->codice_destinatario = strtoupper(post('codice_destinatario'));
 
+        $anagrafica->codice_fiscale = strtoupper(post('codice_fiscale'));
+        $anagrafica->partita_iva = strtoupper(post('piva'));
+
         $anagrafica->save();
 
         if ($anagrafica->isAzienda()) {
@@ -258,6 +224,64 @@ switch (post('op')) {
             '_TYPE_' => '"'.implode(', ', $descrizioni_tipi).'"',
         ]));
 
+        // Controllo che il Codice Fiscale non sia già presente
+        $codice_fiscale = $anagrafica->codice_fiscale;
+        if (!empty($codice_fiscale)) {
+            $anagrafiche_codice_fiscale = Anagrafica::where('codice_fiscale', $codice_fiscale)
+                ->where('idanagrafica', '!=', $anagrafica->id)
+                ->get();
+            if (!$anagrafiche_codice_fiscale->isEmpty()) {
+                $message = tr('Attenzione: il codice fiscale _COD_ è già stato censito', [
+                    '_COD_' => $codice_fiscale,
+                ]);
+
+                $links = [];
+                foreach ($anagrafiche_codice_fiscale as $anagrafica_singola) {
+                    $links[] = '<li>'.Modules::link('Anagrafiche', $anagrafica_singola->id, $anagrafica_singola->ragione_sociale).'</li>';
+                }
+
+                flash()->warning($message.'<ul>'.implode('', $links).'</ul>');
+            }
+        }
+
+        // Controllo che la Partita IVA non sia già presente
+        $partita_iva = $anagrafica->partita_iva;
+        if (!empty($partita_iva)) {
+            $anagrafiche_partita_iva = Anagrafica::where('piva', $partita_iva)
+                ->where('idanagrafica', '!=', $anagrafica->id)
+                ->get();
+            if (!$anagrafiche_partita_iva->isEmpty()) {
+                $message = tr('Attenzione: la partita IVA _IVA_ è già stata censita', [
+                    '__IVA__' => $partita_iva,
+                ]);
+
+                $links = [];
+                foreach ($anagrafiche_partita_iva as $anagrafica_singola) {
+                    $links[] = '<li>'.Modules::link('Anagrafiche', $anagrafica_singola->id, $anagrafica_singola->ragione_sociale).'</li>';
+                }
+
+                flash()->warning($message.'<ul>'.implode('', $links).'</ul>');
+            }
+
+            $vat_number = is_numeric($partita_iva) ? $anagrafica->nazione->iso2.$partita_iva : $partita_iva;
+            $check_vat_number = Validate::isValidVatNumber($vat_number);
+            if (empty($check_vat_number['valid-format'])) {
+                flash()->warning(tr('Attenzione: la partita IVA _IVA_ potrebbe non essere valida', [
+                    '_IVA_' => $partita_iva,
+                ]));
+            }
+        }
+
+        // Validazione del Codice Fiscale, solo per anagrafiche Private e Aziende, ignoro controllo se codice fiscale e settato uguale alla p.iva
+        if ($anagrafica->tipo != 'Ente pubblico' && !empty($anagrafica->codice_fiscale) && !empty($anagrafica->partita_iva) && $anagrafica->codice_fiscale != $anagrafica->partita_iva) {
+            $check_codice_fiscale = Validate::isValidTaxCode($codice_fiscale);
+            if (empty($check_codice_fiscale)) {
+                flash()->warning(tr('Attenzione: il codice fiscale _COD_ potrebbe non essere valido.', [
+                    '_COD_' => $codice_fiscale,
+                ]));
+            }
+        }
+
         break;
 
     case 'delete':
@@ -268,6 +292,8 @@ switch (post('op')) {
 
             // Se l'anagrafica è collegata ad un utente lo disabilito
             $dbo->query('UPDATE zz_users SET enabled = 0 WHERE idanagrafica = '.prepare($id_record));
+            // Disabilito anche il token
+            $dbo->query('UPDATE zz_tokens SET enabled = 0 WHERE id_utente = '.prepare($id_utente));
 
             flash()->info(tr('Anagrafica eliminata!'));
         }

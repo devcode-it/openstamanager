@@ -20,6 +20,7 @@ $settings = [
     "Percentuale ritenuta d'acconto" => false,
     "Causale ritenuta d'acconto" => false,
     'Valuta' => true,
+    'Utilizza prezzi di vendita comprensivi di IVA' => false,
 ];
 
 if (!empty(setting("Percentuale ritenuta d'acconto"))) {
@@ -174,8 +175,8 @@ if (!$has_azienda) {
                             <div class="col-md-12">
                                 {[ "type": "file", "placeholder": "'.tr('File').'", "name": "blob" ]}
                             </div>
-							
-							  
+
+
 							<p>&nbsp;</p><div class="col-md-12 alert alert-info text-center">'.tr('Per impostare il logo delle stampe, caricare un file ".jpg". Risoluzione consigliata 302x111 pixel').'.</div>
 
                         </div>
@@ -194,20 +195,26 @@ if (!$has_settings) {
                     <h3 class="panel-title">'.tr('Impostazioni di base').'</h3>
                 </div>
 
-                <div class="panel-body">
-                    <div class="row">';
-
+                <div class="panel-body">';
+    $i = 0;
     foreach ($settings as $setting => $required) {
         if (empty(setting($setting))) {
+            if ($i % 2 == 0 or $i == 0) {
+                echo '  <div class="row">';
+            }
+
             echo '
                         <div class="col-md-6">
                             '.Settings::input($setting, $required).'
                         </div>';
+            ++$i;
+            if ($i % 2 == 0 or $i == sizeof($settings)) {
+                echo '  </div>';
+            }
         }
     }
 
-    echo '          </div>
-                </div>
+    echo '      </div>
             </div>';
 }
 

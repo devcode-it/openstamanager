@@ -5,6 +5,7 @@ namespace Common\Components;
 use Common\Document;
 use Illuminate\Database\Eloquent\Builder;
 use Modules\Articoli\Articolo as Original;
+use Modules\Articoli\Movimento;
 use UnexpectedValueException;
 
 abstract class Article extends Row
@@ -49,7 +50,10 @@ abstract class Article extends Row
         }
     }
 
-    abstract public function getDirection();
+    public function getDirection()
+    {
+        return $this->parent->direzione;
+    }
 
     /**
      * Imposta i seriali collegati all'articolo.
@@ -165,14 +169,13 @@ abstract class Article extends Row
     /**
      * Salva l'articolo, eventualmente movimentandone il magazzino.
      *
-     * @param array $options
-     *
      * @return bool
      */
     public function save(array $options = [])
     {
         if (!empty($this->qta_movimentazione)) {
             $this->movimenta($this->qta_movimentazione);
+            $this->qta_movimentazione = 0;
         }
 
         return parent::save($options);
@@ -206,10 +209,32 @@ abstract class Article extends Row
         return !empty($this->abilita_serial) && !empty($this->serialRowID);
     }
 
-    abstract protected function movimentaMagazzino($qta);
+    protected function movimentaMagazzino($qta)
+    {
+        $documento = $this->parent;
+        $data = $documento->getReferenceDate();
+
+        $qta_movimento = $documento->direzione == 'uscita' ? $qta : -$qta;
+        $movimento = Movimento::descrizioneMovimento($qta_movimento, $documento->direzione).' - '.$documento->getReference();
+
+        $partenza = $documento->direzione == 'uscita' ? $documento->idsede_destinazione : $documento->idsede_partenza;
+        $arrivo = $documento->direzione == 'uscita' ? $documento->idsede_partenza : $documento->idsede_destinazione;
+
+        $this->articolo->movimenta($qta_movimento, $movimento, $data, false, [
+            'reference_type' => get_class($documento),
+            'reference_id' => $documento->id,
+            'idsede_azienda' => $partenza,
+            'idsede_controparte' => $arrivo,
+        ]);
+    }
 
     protected static function boot()
     {
+        // Precaricamento Articolo
+        static::addGlobalScope('articolo', function (Builder $builder) {
+            $builder->with('articolo');
+        });
+
         parent::boot(true);
 
         $table = parent::getTableName();
@@ -284,14 +309,14 @@ abstract class Article extends Row
 
     protected function customBeforeDataCopiaIn($original)
     {
-        $this->movimentazione(false);
+        //$this->movimentazione(false);
 
         parent::customBeforeDataCopiaIn($original);
     }
 
     protected function customAfterDataCopiaIn($original)
     {
-        $this->movimentazione(true);
+        //        $this->movimentazione(true);
 
         parent::customAfterDataCopiaIn($original);
     }

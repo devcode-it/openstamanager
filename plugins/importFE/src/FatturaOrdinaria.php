@@ -66,6 +66,7 @@ class FatturaOrdinaria extends FatturaElettronica
     {
         $result = $this->getBody()['DatiBeniServizi']['DettaglioLinee'];
 
+        // Aggiunta degli arrotondamenti IVA come righe indipendenti
         $riepolighi = $this->getBody()['DatiBeniServizi']['DatiRiepilogo'];
         foreach ($riepolighi as $riepilogo) {
             if (!empty($riepilogo['Arrotondamento'])) {
@@ -86,7 +87,7 @@ class FatturaOrdinaria extends FatturaElettronica
         return $this->forceArray($result);
     }
 
-    public function saveRighe($articoli, $iva, $conto, $movimentazione = true, $crea_articoli = false)
+    public function saveRighe($articoli, $iva, $conto, $movimentazione = true, $crea_articoli = false, $tipi_riferimenti = [], $id_riferimenti = [])
     {
         $info = $this->getRitenutaRivalsa();
 
@@ -134,6 +135,16 @@ class FatturaOrdinaria extends FatturaElettronica
                 $obj = Riga::build($fattura);
             }
 
+            // Collegamento al documento di riferimento
+            if (!empty($tipi_riferimenti[$key])) {
+                $obj->original_id = $id_riferimenti[$key];
+                $obj->original_type = $tipi_riferimenti[$key];
+
+                // Riferimenti deprecati
+                //$id_rif = strpos($tipi_riferimenti[$key], 'Ordini') === false ? 'idddt' : 'idordine';
+                //$obj->{$id_rif} = $obj->original_id;
+            }
+
             $obj->descrizione = $riga['Descrizione'];
             $obj->id_iva = $iva[$key];
             $obj->idconto = $conto[$key];
@@ -158,7 +169,7 @@ class FatturaOrdinaria extends FatturaElettronica
             }
 
             // Prezzo e quantità
-            $obj->prezzo_unitario_vendita = $prezzo;
+            $obj->prezzo_unitario = $prezzo;
             $obj->qta = $qta;
 
             if (!empty($riga['UnitaMisura'])) {
@@ -183,7 +194,7 @@ class FatturaOrdinaria extends FatturaElettronica
                     $elenco = implode('+', $lista);
                     $sconto = calcola_sconto([
                         'sconto' => $elenco,
-                        'prezzo' => $obj->prezzo_unitario_vendita,
+                        'prezzo' => $obj->prezzo_unitario,
                         'tipo' => 'PRC',
                         'qta' => $obj->qta,
                     ]);
@@ -197,8 +208,7 @@ class FatturaOrdinaria extends FatturaElettronica
                     $sconto_unitario = sum($lista);
                 }
 
-                $obj->sconto_unitario = $sconto_unitario;
-                $obj->tipo_sconto = $tipo;
+                $obj->setSconto($sconto_unitario, $tipo);
             }
 
             $obj->save();
@@ -225,7 +235,7 @@ class FatturaOrdinaria extends FatturaElettronica
             $obj->descrizione = tr('Arrotondamento calcolato in automatico');
             $obj->id_iva = $iva[0];
             $obj->idconto = $conto[0];
-            $obj->prezzo_unitario_vendita = round($diff, 4);
+            $obj->prezzo_unitario = round($diff, 4);
             $obj->qta = 1;
 
             $obj->save();
@@ -334,6 +344,7 @@ class FatturaOrdinaria extends FatturaElettronica
 
             $totale_previsto = round($importo / $percentuale * 100, 2);
             $percentuale_importo = round($totale_previsto / $totale * 100, 2);
+            $percentuale_importo = min($percentuale_importo, 100); // Nota: Fix per la percentuale che superava il 100% nel caso di importi con Rivalsa compresa
 
             $ritenuta_acconto = $database->fetchOne('SELECT * FROM`co_ritenutaacconto` WHERE `percentuale` = '.prepare($percentuale).' AND `percentuale_imponibile` = '.prepare($percentuale_importo));
             if (empty($ritenuta_acconto)) {

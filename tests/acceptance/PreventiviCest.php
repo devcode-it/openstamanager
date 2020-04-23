@@ -17,8 +17,6 @@ class PreventiviCest
 
     /**
      * Crea un nuovo preventivo.
-     *
-     * @param AcceptanceTester $t
      */
     public function testPreventivo(AcceptanceTester $t)
     {
@@ -36,8 +34,6 @@ class PreventiviCest
 
     /**
      * Crea un nuovo preventivo.
-     *
-     * @param AcceptanceTester $t
      */
     protected function addPreventivo(AcceptanceTester $t, $name, $anagrafica, $tipo = 'GEN')
     {
@@ -62,8 +58,6 @@ class PreventiviCest
 
     /**
      * Crea una nuova anagrafica di tipo cliente e la elimina.
-     *
-     * @param AcceptanceTester $t
      */
     protected function addAndDeletePreventivo(AcceptanceTester $t, $name, $anagrafica = 2, $tipo = 'GEN')
     {

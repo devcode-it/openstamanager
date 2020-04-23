@@ -23,10 +23,8 @@ class Fattura extends Document
     /**
      * Crea una nuova fattura.
      *
-     * @param Anagrafica  $anagrafica
-     * @param TipoFattura $tipo_documento
-     * @param string      $data
-     * @param int         $id_segment
+     * @param string $data
+     * @param int    $id_segment
      *
      * @return self
      */
@@ -334,11 +332,10 @@ class Fattura extends Document
     /**
      * Registra una specifica scadenza nel database.
      *
-     * @param Fattura $fattura
-     * @param float   $importo
-     * @param string  $scadenza
-     * @param bool    $is_pagato
-     * @param string  $type
+     * @param float  $importo
+     * @param string $scadenza
+     * @param bool   $is_pagato
+     * @param string $type
      */
     public static function registraScadenza(Fattura $fattura, $importo, $scadenza, $is_pagato, $type = 'fattura')
     {
@@ -398,8 +395,6 @@ class Fattura extends Document
 
     /**
      * Salva la fattura, impostando i campi dipendenti dai singoli parametri.
-     *
-     * @param array $options
      *
      * @return bool
      */
@@ -579,5 +574,23 @@ class Fattura extends Document
         $riga->idconto = setting('Conto predefinito per la marca da bollo');
 
         $riga->save();
+    }
+
+    // Opzioni di riferimento
+
+    public function getReferenceName()
+    {
+    }
+
+    public function getReferenceNumber()
+    {
+    }
+
+    public function getReferenceDate()
+    {
+    }
+
+    public function getReference()
+    {
     }
 }

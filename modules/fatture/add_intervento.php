@@ -35,15 +35,17 @@ echo '
 $rs = $dbo->fetchArray('SELECT
         in_interventi.id,
         CONCAT(\'Intervento numero \', in_interventi.codice, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento=in_interventi.id), in_interventi.data_richiesta), \'%d/%m/%Y\'), " [", `in_statiintervento`.`descrizione` , "]") AS descrizione,
+        CONCAT(\'Intervento numero \', in_interventi.codice, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento=in_interventi.id), in_interventi.data_richiesta), \'%d/%m/%Y\')) AS info,
         CONCAT(\'\n\', in_interventi.descrizione) AS descrizione_intervento,
         IF(idclientefinale='.prepare($idanagrafica).', \'Interventi conto terzi\', \'Interventi diretti\') AS `optgroup`
     FROM
         in_interventi INNER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento
     WHERE
         (in_interventi.idanagrafica='.prepare($idanagrafica).' OR in_interventi.idclientefinale='.prepare($idanagrafica).')
-        AND in_statiintervento.completato=1
+        AND in_statiintervento.is_completato=1 AND in_statiintervento.is_fatturabile=1
         AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL)
         AND in_interventi.id_preventivo IS NULL
+        AND in_interventi.id_contratto IS NULL
         AND NOT in_interventi.id IN (SELECT idintervento FROM co_promemoria WHERE idintervento IS NOT NULL)');
 foreach ($rs as $key => $value) {
     $intervento = \Modules\Interventi\Intervento::find($value['id']);
@@ -57,7 +59,7 @@ foreach ($rs as $key => $value) {
 echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Intervento').'", "name": "idintervento", "required": 1, "values": '.json_encode($rs).', "extra": "onchange=\"$data = $(this).selectData(); $(\'#descrizione\').val($data.descrizione); if($(\'#copia_descrizione\').is(\':checked\')){  $(\'#descrizione\').val($data.descrizione + $data.descrizione_intervento); }; $(\'#prezzo\').val($data.prezzo);\"" ]}
+            {[ "type": "select", "label": "'.tr('Intervento').'", "name": "idintervento", "required": 1, "values": '.json_encode($rs).', "extra": "onchange=\"$data = $(this).selectData(); $(\'#descrizione\').val($data.info); if($(\'#copia_descrizione\').is(\':checked\')){  $(\'#descrizione\').val($data.info + $data.descrizione_intervento); }; $(\'#prezzo\').val($data.prezzo);\"" ]}
         </div>
 
 		<div class="col-md-6">
@@ -93,7 +95,7 @@ $idiva = $idiva ?: setting('Iva predefinita');
 echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$idiva.'", "ajax-source": "iva" ]}
+            {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$idiva.'", "ajax-source": "iva", "help": "'.tr("L'aliquota IVA selezionata sovrascrive il valore predditivo presentato in Attività, modificando di conseguenza le sessioni di lavoro dei tecnici").'. '.tr('Righe generiche, articoli e sconti non verranno influenzati').'."]}
         </div>';
 
 echo '

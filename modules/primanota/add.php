@@ -104,7 +104,7 @@ foreach ($id_documenti as $id_documento) {
 
     // Predisposizione prima riga
     $conto_field = 'idconto_'.($dir == 'entrata' ? 'vendite' : 'acquisti');
-    $id_conto_aziendale = $fattura->pagamento[$conto_field] ?: get_var('Conto aziendale predefinito');
+    $id_conto_aziendale = $fattura->pagamento[$conto_field] ?: setting('Conto aziendale predefinito');
 
     // Predisposizione conto crediti clienti
     $conto_field = 'idconto_'.($dir == 'entrata' ? 'cliente' : 'fornitore');
@@ -317,25 +317,42 @@ include $structure->filepath('movimenti.php');
 
                 $.get(globals.rootdir + '/ajax_complete.php?op=get_conti&idmastrino=' + idmastrino, function(data) {
                     var conti = data.split(',');
+
+                    // Reinizializzazione di tutti i superselect nel caso di modelli con più di 2 conti
+                    $('.select2-container').remove();
+
                     for (i = 0; i < conti.length; i++) {
                         var conto = conti[i].split(';');
                         // Sostituzione conto cliente/fornitore
                         if (conto[0] == -1) {
                             if ($('#iddocumento').val() != '') {
                                 var option = $("<option selected></option>").val(variables['conto']).text(variables['conto_descrizione']);
-                                $('#modals > div #conto' + i).selectReset();
-                                $('#modals > div #conto' + i).append(option).trigger('change');
+
+                                // Creazione riga aggiuntiva da modello se le 2 iniziali non sono abbastanza
+                                if ($('#modals > div #conto' + i).length == 0 ) {
+                                    $new_tr = $('#modals > div table.scadenze > tbody tr').last().html();
+                                    $('#modals > div table.scadenze > tbody').append( '<tr>' + $new_tr + '</tr>' );
+                                    $('#modals > div table.scadenze > tbody tr').last().find('select').attr('id', 'conto' + i).attr('name', 'idconto[' + i + ']');
+                                }
+
+                                $('#modals > div #conto' + i).append(option);
                             }
                         } else {
                             var option = $("<option selected></option>").val(conto[0]).text(conto[1]);
-                            $('#modals > div #conto' + i).selectReset();
-                            $('#modals > div #conto' + i).append(option).trigger('change');
+
+                            // Creazione riga aggiuntiva da modello se le 2 iniziali non sono abbastanza
+                            if ($('#modals > div #conto' + i).length == 0 ) {
+                                $new_tr = $('#modals > div table.scadenze > tbody tr').last().html();
+                                $('#modals > div table.scadenze > tbody').append( '<tr>' + $new_tr + '</tr>' );
+                                $('#modals > div table.scadenze > tbody tr').last().find('select').attr('id', 'conto' + i).attr('name', 'idconto[' + i + ']');
+                            }
+
+                            $('#modals > div #conto' + i).append(option);
                         }
                     }
-                    for (i = 9; i >= conti.length; i--) {
-                        $('#modals > div #conto' + i).selectReset();
-                        console.log('#modals > div #conto' + i);
-                    }
+
+                    start_superselect();
+                    $('#modals > div select.superselectajax').trigger('change');
                 });
             }
         });

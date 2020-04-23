@@ -190,7 +190,7 @@ if (!$righe->isEmpty()) {
         // Prezzo unitario
         echo '
         <td class="text-center">
-            '.($options['pricing'] ? moneyFormat($riga->prezzo_unitario_vendita) : '-');
+            '.($options['pricing'] ? moneyFormat($riga->prezzo_unitario) : '-');
 
         if ($options['pricing'] && $r['sconto'] > 0) {
             echo "

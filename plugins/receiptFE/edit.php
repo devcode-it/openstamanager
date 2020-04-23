@@ -17,7 +17,7 @@ echo '
     <div class="box-header with-border">
         <h3 class="box-title">
             '.tr('Carica un XML').'
-            
+
             <span class="tip" title="'.tr('Formati supportati: XML e P7M').'.">
                 <i class="fa fa-question-circle-o"></i>
             </span>
@@ -53,7 +53,7 @@ if (Interaction::isEnabled()) {
             <button type="button" class="btn btn-warning" onclick="importAll(this)">
                 <i class="fa fa-cloud-download"></i> '.tr('Importa tutte le ricevute').'
             </button>
-            
+
             <button type="button" class="btn btn-primary" onclick="search(this)">
                 <i class="fa fa-refresh"></i> '.tr('Ricerca ricevute').'
             </button>
@@ -101,7 +101,7 @@ function upload(btn) {
             type: "post",
             success: function(data){
                 importMessage(data);
-                
+
                 buttonRestore(btn, restore);
             },
             error: function(xhr) {
@@ -122,7 +122,7 @@ function importMessage(data) {
     data = JSON.parse(data);
 
     var ricevuta = "<br>'.tr('Ricevuta').': " + data.file;
-    
+
     if(data.fattura) {
         swal({
             title: "'.tr('Importazione completata!').'",
@@ -147,6 +147,7 @@ function importAll(btn) {
         type: "info",
     }).then(function (result) {
         var restore = buttonLoading(btn);
+        $("#main_loading").show();
 
         $.ajax({
             url: globals.rootdir + "/actions.php",
@@ -158,12 +159,12 @@ function importAll(btn) {
             type: "post",
             success: function(data){
                 data = JSON.parse(data);
-    
+
                 if(data.length == 0){
                     var html = "'.tr('Non sono state trovate ricevute da importare').'.";
                 } else {
                     var html = "'.tr('Sono state elaborate le seguenti ricevute:').'";
-        
+
                     data.forEach(function(element) {
                         var text = "";
                         if(element.fattura) {
@@ -171,29 +172,30 @@ function importAll(btn) {
                         } else {
                             text += "<i>'.tr('Fattura relativa alla ricevuta non rilevata. Controlla che esista una fattura di vendita corrispondente caricata a gestionale.').'</i>";
                         }
-        
+
                         text += " (" + element.file + ")";
-        
+
                         html += "<small><li>" + text + "</li></small>";
                     });
-        
+
                     html += "<br><small>'.tr("Se si sono verificati degli errori durante la procedura e il problema continua a verificarsi, contatta l'assistenza ufficiale").'</small>";
                 }
-    
-                swal({
-                    title: "'.tr('Operazione completata!').'",
-                    html: html,
-                    type: "info",
-                })
-                
+
                 $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
+                    swal({
+                        title: "'.tr('Operazione completata!').'",
+                        html: html,
+                        type: "info",
+                    });
+
                     buttonRestore(button, restore);
+                    $("#main_loading").fadeOut();
                 });
-                
+
             },
             error: function(data) {
                 alert("'.tr('Errore').': " + data);
-    
+
                 buttonRestore(btn, restore);
             }
         });

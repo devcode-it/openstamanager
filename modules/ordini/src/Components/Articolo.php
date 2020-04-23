@@ -18,9 +18,6 @@ class Articolo extends Article
     /**
      * Crea un nuovo articolo collegato ad una ordine.
      *
-     * @param Ordine   $ordine
-     * @param Original $articolo
-     *
      * @return self
      */
     public static function build(Ordine $ordine, Original $articolo)
@@ -28,15 +25,5 @@ class Articolo extends Article
         $model = parent::build($ordine, $articolo);
 
         return $model;
-    }
-
-    public function movimentaMagazzino($qta)
-    {
-        return;
-    }
-
-    public function getDirection()
-    {
-        return $this->ordine->tipo->dir;
     }
 }

@@ -34,7 +34,6 @@ class Anagrafica extends Model
      * Crea una nuova anagrafica.
      *
      * @param string $ragione_sociale
-     * @param array  $tipologie
      *
      * @return self
      */
@@ -138,8 +137,6 @@ class Anagrafica extends Model
 
     /**
      * Aggiorna la tipologia dell'anagrafica.
-     *
-     * @param array $tipologie
      */
     public function setTipologieAttribute(array $tipologie)
     {
@@ -279,6 +276,13 @@ class Anagrafica extends Model
         $codice = Generator::generate($maschera, $ultimo);
 
         return $codice;
+    }
+
+    // Attributi Eloquent
+
+    public function getModuleAttribute()
+    {
+        return 'Anagrafiche';
     }
 
     protected function fixRagioneSociale()

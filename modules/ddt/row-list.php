@@ -4,30 +4,29 @@ include_once __DIR__.'/../../core.php';
 
 echo '
 <table class="table table-striped table-hover table-condensed table-bordered">
-    <tr>
-        <th>'.tr('Descrizione').'</th>
-        <th width="120">'.tr('Q.tà').' <i title="'.tr('da evadere').' / '.tr('totale').'" class="tip fa fa-question-circle-o"></i></th>
-        <th width="80">'.tr('U.m.').'</th>
-        <th width="120">'.tr('Costo unitario').'</th>
-        <th width="120">'.tr('Iva').'</th>
-        <th width="120">'.tr('Imponibile').'</th>
-        <th width="60"></th>
-    </tr>
+    <thead>
+        <tr>
+            <th>'.tr('Descrizione').'</th>
+			<th class="text-center tip" width="150" title="'.tr('da evadere').' / '.tr('totale').'">'.tr('Q.tà').' <i class="fa fa-question-circle-o"></i></th>
+            <th class="text-center" width="150">'.tr('Prezzo unitario').'</th>
+            <th class="text-center" width="150">'.tr('Iva unitaria').'</th>
+            <th class="text-center" width="150">'.tr('Importo').'</th>
+            <th width="60"></th>
+        </tr>
+    </thead>
 
     <tbody class="sortable">';
 
 // Righe documento
 $righe = $ddt->getRighe();
 foreach ($righe as $riga) {
-    $r = $riga->toArray();
-
     $extra = '';
     $mancanti = 0;
 
     // Individuazione dei seriali
-    if (!empty($r['idarticolo']) && !empty($r['abilita_serial'])) {
-        $serials = array_column($dbo->fetchArray('SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND id_riga_ddt='.prepare($r['id'])), 'serial');
-        $mancanti = $r['qta'] - count($serials);
+    if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
+        $serials = $riga->serials;
+        $mancanti = abs($riga->qta) - count($serials);
 
         if ($mancanti > 0) {
             $extra = 'class="warning"';
@@ -37,100 +36,85 @@ foreach ($righe as $riga) {
     }
 
     echo '
-    <tr data-id="'.$r['id'].'" '.$extra.'>
-        <td align="left">';
-
-    if (!empty($r['idarticolo'])) {
+    <tr data-id="'.$riga->id.'" '.$extra.'>
+        <td>';
+    if ($riga->isArticolo()) {
         echo '
-            '.Modules::link('Articoli', $r['idarticolo'], $riga->articolo->codice.' - '.$r['descrizione']);
-
-        if (!empty($r['abilita_serial'])) {
-            if (!empty($mancanti)) {
-                echo '
-            <br><b><small class="text-danger">'.tr('_NUM_ serial mancanti', [
-                '_NUM_' => $mancanti,
-            ]).'</small></b>';
-            }
-
-            if (!empty($serials)) {
-                echo '
-            <br>'.tr('SN').': '.implode(', ', $serials);
-            }
-        }
+            '.Modules::link('Articoli', $riga->idarticolo, $riga->articolo->codice.' - '.$riga->descrizione);
     } else {
-        echo nl2br($r['descrizione']);
+        echo nl2br($riga->descrizione);
+    }
+
+    if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
+        if (!empty($mancanti)) {
+            echo '
+            <br><b><small class="text-danger">'.tr('_NUM_ serial mancanti', [
+                    '_NUM_' => $mancanti,
+                ]).'</small></b>';
+        }
+        if (!empty($serials)) {
+            echo '
+            <br>'.tr('SN').': '.implode(', ', $serials);
+        }
     }
 
     // Aggiunta dei riferimenti ai documenti
-    $ref = doc_references($r, $dir, ['idddt']);
-
-    if (!empty($ref)) {
+    if ($riga->hasOriginal()) {
         echo '
-            <br>'.Modules::link($ref['module'], $ref['id'], $ref['description'], $ref['description']);
+            <br>'.reference($riga->getOriginal()->parent);
     }
 
     echo '
         </td>';
 
-    echo '
-        <td class="text-center">';
-    if (empty($r['is_descrizione'])) {
+    if ($riga->isDescrizione()) {
         echo '
-                <span >'.Translator::numberToLocale($r['qta'] - $r['qta_evasa'], 'qta').' / '.Translator::numberToLocale($r['qta'], 'qta').'</span>';
-    }
-    echo '
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>';
+    } else {
+        // Quantità e unità di misura
+        echo '
+        <td class="text-center">
+            '.numberFormat($riga->qta_rimanente, 'qta').' / '.numberFormat($riga->qta, 'qta').' '.$riga->um.'
         </td>';
 
-    // Unità di misura
-    echo '
-        <td class="text-center">';
-    if (empty($r['is_descrizione'])) {
+        // Prezzi unitari
         echo '
-            '.$r['um'];
-    }
-    echo '
-        </td>';
+        <td class="text-right">
+            '.moneyFormat($riga->prezzo_unitario_corrente);
 
-    // Costo unitario
-    echo '
-        <td class="text-right">';
-    if (empty($r['is_descrizione'])) {
-        echo '
-            '.moneyFormat($r['subtotale'] / $r['qta']);
+        if ($dir == 'entrata' && $riga->costo_unitario != 0) {
+            echo '
+            <br><small>
+                '.tr('Acquisto').': '.moneyFormat($riga->costo_unitario).'
+            </small>';
+        }
 
-        if (abs($r['sconto_unitario']) > 0) {
-            $text = $r['sconto_unitario'] > 0 ? tr('sconto _TOT_ _TYPE_') : tr('maggiorazione _TOT_ _TYPE_');
+        if (abs($riga->sconto_unitario) > 0) {
+            $text = discountInfo($riga);
 
             echo '
-            <br><small class="label label-danger">'.replace($text, [
-                '_TOT_' => Translator::numberToLocale(abs($r['sconto_unitario'])),
-                '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : currency()),
-            ]).'</small>';
+            <br><small class="label label-danger">'.$text.'</small>';
         }
-    }
-    echo '
+
+        echo '
         </td>';
 
-    // Iva
-    echo '
-        <td class="text-right">';
-    if (empty($r['is_descrizione'])) {
+        // Iva
         echo '
-            '.moneyFormat($r['iva']).'
-            <br><small class="help-block">'.$r['desc_iva'].'</small>';
-    }
-    echo '
+        <td class="text-right">
+            '.moneyFormat($riga->iva_unitaria).'
+            <br><small class="'.(($riga->aliquota->deleted_at) ? 'text-red' : '').' help-block">'.$riga->aliquota->descrizione.(($riga->aliquota->esente) ? ' ('.$riga->aliquota->codice_natura_fe.')' : null).'</small>
         </td>';
 
-    // Imponibile
-    echo '
-        <td class="text-right">';
-    if (empty($r['is_descrizione'])) {
+        // Importo
         echo '
-            '.moneyFormat($r['subtotale'] - $r['sconto']);
-    }
-    echo '
+        <td class="text-right">
+            '.moneyFormat($riga->importo).'
         </td>';
+    }
 
     // Possibilità di rimuovere una riga solo se il ddt non è evaso
     echo '
@@ -138,26 +122,26 @@ foreach ($righe as $riga) {
 
     if ($record['flag_completato'] == 0) {
         echo "
-            <form action='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record."' method='post' id='delete-form-".$r['id']."' role='form'>
+            <form action='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record."' method='post' id='delete-form-".$riga->id."' role='form'>
                 <input type='hidden' name='backto' value='record-edit'>
                 <input type='hidden' name='id_record' value='".$id_record."'>
-                <input type='hidden' name='idriga' value='".$r['id']."'>
+                <input type='hidden' name='idriga' value='".$riga->id."'>
                 <input type='hidden' name='type' value='".get_class($riga)."'>
                 <input type='hidden' name='op' value='delete_riga'>
 
                 <div class='input-group-btn'>";
 
-        if (!empty($r['idarticolo']) && $r['abilita_serial']) {
+        if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
             echo "
-                    <a class='btn btn-primary btn-xs'data-toggle='tooltip' title='Aggiorna SN...' onclick=\"launch_modal( 'Aggiorna SN', '".$rootdir.'/modules/fatture/add_serial.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'&idarticolo='.$r['idarticolo']."');\"><i class='fa fa-barcode' aria-hidden='true'></i></a>";
+                    <a class='btn btn-primary btn-xs'data-toggle='tooltip' title='Aggiorna SN...' onclick=\"launch_modal( 'Aggiorna SN', '".$rootdir.'/modules/fatture/add_serial.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga->id.'&idarticolo='.$riga->idarticolo."');\"><i class='fa fa-barcode' aria-hidden='true'></i></a>";
         }
 
         echo "
-                    <a class='btn btn-xs btn-warning' title='Modifica questa riga...' onclick=\"launch_modal('Modifica riga', '".$rootdir.'/modules/ddt/row-edit.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'&type='.urlencode(get_class($riga))."');\">
+                    <a class='btn btn-xs btn-warning' title='Modifica questa riga...' onclick=\"launch_modal('Modifica riga', '".$rootdir.'/modules/ddt/row-edit.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga->id.'&type='.urlencode(get_class($riga))."');\">
                         <i class='fa fa-edit'></i>
                     </a>
 
-                    <a class='btn btn-xs btn-danger' title='Rimuovi questa riga...' onclick=\"if( confirm('Rimuovere questa riga dal ddt?') ){ $('#delete-form-".$r['id']."').submit(); }\">
+                    <a class='btn btn-xs btn-danger' title='Rimuovi questa riga...' onclick=\"if( confirm('Rimuovere questa riga dal ddt?') ){ $('#delete-form-".$riga->id."').submit(); }\">
                         <i class='fa fa-trash'></i>
                     </a>
                 </div>
@@ -187,7 +171,7 @@ $totale = abs($ddt->totale);
 // IMPONIBILE
 echo '
     <tr>
-        <td colspan="5" class="text-right">
+        <td colspan="4"  class="text-right">
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
 
@@ -202,7 +186,7 @@ echo '
 if (!empty($sconto)) {
     echo '
     <tr>
-        <td colspan="5" class="text-right">
+        <td colspan="4"  class="text-right">
             <b><span class="tip" title="'.tr('Un importo positivo indica uno sconto, mentre uno negativo indica una maggiorazione').'"> <i class="fa fa-question-circle-o"></i> '.tr('Sconto/maggiorazione', [], ['upper' => true]).':</span></b>
         </td>
 
@@ -216,7 +200,7 @@ if (!empty($sconto)) {
     // TOTALE IMPONIBILE
     echo '
     <tr>
-        <td colspan="5" class="text-right">
+        <td colspan="4"  class="text-right">
             <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
         </td>
 
@@ -231,7 +215,7 @@ if (!empty($sconto)) {
 // IVA
 echo '
     <tr>
-        <td colspan="5" class="text-right">
+        <td colspan="4"  class="text-right">
             <b>'.tr('IVA', [], ['upper' => true]).':</b>
         </td>
 
@@ -245,7 +229,7 @@ echo '
 // TOTALE
 echo '
     <tr>
-        <td colspan="5" class="text-right">
+        <td colspan="4"  class="text-right">
             <b>'.tr('Totale', [], ['upper' => true]).':</b>
         </td>
 

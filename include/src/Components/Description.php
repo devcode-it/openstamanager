@@ -16,6 +16,10 @@ abstract class Description extends Model
         'max_qta',
     ];
 
+    protected $hidden = [
+        'parent',
+    ];
+
     public static function build(Document $document, $bypass = false)
     {
         $model = parent::build();
@@ -113,10 +117,24 @@ abstract class Description extends Model
         return $result;
     }
 
+    public function toArray()
+    {
+        $array = parent::toArray();
+
+        $result = array_merge($array, [
+            'spesa' => $this->spesa,
+            'imponibile' => $this->imponibile,
+            'sconto' => $this->sconto,
+            'totale_imponibile' => $this->totale_imponibile,
+            'iva' => $this->iva,
+            'totale' => $this->totale,
+        ]);
+
+        return $result;
+    }
+
     /**
      * Imposta il proprietario dell'oggetto e l'ordine relativo all'interno delle righe.
-     *
-     * @param Document $document
      */
     public function setParent(Document $document)
     {
@@ -131,7 +149,6 @@ abstract class Description extends Model
     /**
      * Copia l'oggetto (articolo, riga, descrizione) nel corrispettivo per il documento indicato.
      *
-     * @param Document   $document
      * @param float|null $qta
      *
      * @return self
@@ -268,6 +285,11 @@ abstract class Description extends Model
 
     protected static function boot($bypass = false)
     {
+        // Precaricamento Documento
+        static::addGlobalScope('parent', function (Builder $builder) {
+            $builder->with('parent');
+        });
+
         parent::boot();
 
         $table = parent::getTableName();

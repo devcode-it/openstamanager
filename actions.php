@@ -241,6 +241,7 @@ elseif (post('op') == 'send-email') {
         $mail->addUpload($file);
     }
 
+    // Salvataggio email nella coda di invio
     $mail->save();
 
     // Invio mail istantaneo

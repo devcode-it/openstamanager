@@ -8,9 +8,6 @@ $template = Template::find(get('id'));
 $module = $template->module;
 $smtp = $template->account;
 
-$body = $template['body'];
-$subject = $template['subject'];
-
 $body = $module->replacePlaceholders($id_record, $template['body']);
 $subject = $module->replacePlaceholders($id_record, $template['subject']);
 
@@ -45,7 +42,7 @@ echo '
 <form action="" method="post" id="email-form">
 	<input type="hidden" name="op" value="send-email">
 	<input type="hidden" name="backto" value="'.(get('back') ? get('back') : 'record-edit').'">
-	
+
 	<input type="hidden" name="id_module" value="'.$id_module.'">
 	<input type="hidden" name="id_record" value="'.$id_record.'">
 

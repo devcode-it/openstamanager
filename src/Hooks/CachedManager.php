@@ -2,93 +2,47 @@
 
 namespace Hooks;
 
-use Carbon\Carbon;
-use Carbon\CarbonInterval;
+use Models\Cache;
+use Models\Hook;
 
 abstract class CachedManager extends Manager
 {
-    protected static $cache = null;
-    protected static $is_cached = null;
+    protected $cache = null;
 
-    abstract public function data();
+    public function __construct(Hook $hook)
+    {
+        parent::__construct($hook);
+
+        $this->cache = Cache::get($this->getCacheName());
+    }
+
+    abstract public function cacheData();
+
+    abstract public function getCacheName();
 
     public function needsExecution()
     {
-        return !self::isCached();
+        return !$this->isCached();
     }
 
     public function execute()
     {
-        if (self::isCached()) {
-            $results = self::getCache()['results'];
-        } else {
-            $results = $this->data();
+        if (!$this->isCached()) {
+            $data = $this->cacheData();
 
-            self::update($results);
+            $this->getCache()->set($data);
         }
 
-        return $results;
+        return $this->getCache()->content;
     }
 
-    public static function getCache()
+    public function getCache()
     {
-        if (!isset(self::$cache)) {
-            $hook = self::getHook();
-
-            $cache = database()->selectOne('zz_hook_cache', '*', ['hook_id' => $hook->id], ['id' => 'DESC']);
-
-            // Interpretazione della cache
-            if (isset($cache['results'])) {
-                $cache['results'] = json_decode($cache['results'], true);
-            }
-
-            self::$cache = $cache;
-        }
-
-        return self::$cache;
+        return $this->cache;
     }
 
-    public static function update($results)
+    public function isCached()
     {
-        $hook = self::getHook();
-
-        // Rimozione cache precedente
-        $database = database();
-        $database->delete('zz_hook_cache', [
-            'hook_id' => $hook->id,
-        ]);
-
-        // Aggiunta del risultato come cache
-        $cache = json_encode($results);
-        $database->insert('zz_hook_cache', [
-            'hook_id' => $hook->id,
-            'results' => $cache,
-        ]);
-
-        self::$cache = $results;
-        self::$is_cached = null;
-    }
-
-    public static function isCached()
-    {
-        if (!isset(self::$is_cached)) {
-            $hook = self::getHook();
-            $cache = self::getCache();
-
-            $is_cached = false;
-            if (!empty($cache)) {
-                $date = new Carbon($cache['created_at']);
-                $interval = CarbonInterval::make($hook->frequency);
-
-                $date = $date->add($interval);
-
-                $now = new Carbon();
-                $is_cached = $date->greaterThan($now);
-            }
-
-            self::$is_cached = $is_cached;
-        }
-
-        return self::$is_cached;
+        return $this->getCache()->isValid();
     }
 }

@@ -33,7 +33,7 @@ $_SESSION['superselect']['id_categoria'] = $record['id_categoria'];
 
                     <div class="row">
                         <div class="col-md-6">
-                            {[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "categoria", "required": 1, "value": "$id_categoria$", "ajax-source": "categorie" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie" ]}
                         </div>
 
                         <div class="col-md-6">
@@ -161,14 +161,18 @@ $_SESSION['superselect']['id_categoria'] = $record['id_categoria'];
                 </div>
 
                 <div class="panel-body">
-
-
                     <div class="clearfix"></div>
 
                     <div class="row">
                         <div class="col-md-6">
-						<button type="button" class="btn btn-info btn-xs pull-right tip pull-right" title="<?php echo tr('Scorpora iva dal prezzo di vendita.'); ?>" id="scorpora_iva"><i class="fa fa-calculator" aria-hidden="true"></i></button>
-                          {[ "type": "number", "label": "<?php echo tr('Prezzo di vendita'); ?>", "name": "prezzo_vendita", "value": "$prezzo_vendita$", "icon-after": "<?php echo currency(); ?>" ]}
+<?php
+if (!setting('Utilizza prezzi di vendita comprensivi di IVA')) {
+    echo '
+                            <button type="button" class="btn btn-info btn-xs pull-right tip pull-right" title="'.tr('Scorpora iva dal prezzo di vendita.').'" id="scorpora_iva"><i class="fa fa-calculator" aria-hidden="true"></i></button>';
+}
+?>
+
+                            {[ "type": "number", "label": "<?php echo tr('Prezzo di vendita'); ?>", "name": "prezzo_vendita", "value": "$prezzo_vendita$", "icon-after": "<?php echo currency(); ?>", "help": "<?php echo setting('Utilizza prezzi di vendita comprensivi di IVA') ? tr('Importo IVA inclusa') : ''; ?>" ]}
                         </div>
 
                         <div class="col-md-6">
@@ -371,7 +375,7 @@ if (!empty($elementi)) {
         //se non è un ddt è una fattura.
         if (in_array($elemento['tipo_documento'], ['Preventivo'])) {
             $modulo = 'Preventivi';
-        } elseif (!in_array($elemento['tipo_documento'], ['Ddt di vendita', 'Ddt di acquisto'])) {
+        } elseif (!in_array($elemento['tipo_documento'], ['Ddt di vendita', 'Ddt di acquisto', 'Ddt in entrata', 'Ddt in uscita'])) {
             $modulo = ($elemento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
         } else {
             $modulo = ($elemento['dir'] == 'entrata') ? 'Ddt di vendita' : 'Ddt di acquisto';

@@ -103,25 +103,39 @@ switch (filter('op')) {
 
         break;
 
-    // Elimina utente
+    // Elimina utente + disattivazione token
     case 'delete_user':
         if ($dbo->query('DELETE FROM zz_users WHERE id='.prepare($id_utente))) {
             flash()->info(tr('Utente eliminato!'));
+
+            if ($dbo->query('UPDATE zz_tokens SET enabled = 0 WHERE id_utente = '.prepare($id_utente))) {
+                flash()->info(tr('Token disabilitato!'));
+            }
         }
         break;
 
     // Abilita API utente
     case 'token_enable':
-         if ($dbo->query('UPDATE zz_tokens SET enabled = 1 WHERE id_utente = '.prepare($id_utente))) {
-             flash()->info(tr('Token abilitato!'));
-         }
+        $utente = User::find($id_utente);
+        $tokens = $utente->getApiTokens();
+
+        foreach ($tokens as $token) {
+            $dbo->query('UPDATE zz_tokens SET enabled = 1 WHERE id = '.prepare($token['id']));
+        }
+
+        flash()->info(tr('Token abilitato!'));
         break;
 
     // Disabilita API utente
     case 'token_disable':
-        if ($dbo->query('UPDATE zz_tokens SET enabled = 0 WHERE id_utente = '.prepare($id_utente))) {
-            flash()->info(tr('Token disabilitato!'));
+        $utente = User::find($id_utente);
+        $tokens = $utente->getApiTokens();
+
+        foreach ($tokens as $token) {
+            $dbo->query('UPDATE zz_tokens SET enabled = 0 WHERE id = '.prepare($token['id']));
         }
+
+        flash()->info(tr('Token abilitato!'));
         break;
 
     // Elimina gruppo

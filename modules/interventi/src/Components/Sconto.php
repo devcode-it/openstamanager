@@ -14,15 +14,13 @@ class Sconto extends Discount
     /**
      * Crea un nuovo sconto collegata ad un intervento.
      *
-     * @param Intervento $intervento
-     *
      * @return self
      */
     public static function build(Intervento $intervento)
     {
         $model = parent::build($intervento);
 
-        $model->prezzo_vendita = 0;
+        $model->prezzo_unitario = 0;
 
         return $model;
     }

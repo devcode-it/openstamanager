@@ -94,7 +94,7 @@ $query = 'SELECT id, serial, created_at FROM mg_prodotti WHERE serial IS NOT NUL
 $rs2 = $dbo->fetchArray($query);
 
 echo '
-    <table class="table table-striped table-hover table-condensed table-bordered text-center datatables">
+    <table id="table-serials" class="table table-striped table-hover table-condensed table-bordered text-center datatables">
         <thead>
             <tr>
                 <th id="th_Serial">'.tr('Serial').'</th>
@@ -163,7 +163,7 @@ for ($i = 0; $i < count($rs2); ++$i) {
                 $module_id = Modules::get('Interventi')['id'];
 
                 // Ricerca inserimenti su interventi
-                $query = 'SELECT mg_articoli_interventi.*, in_interventi.codice, ( SELECT orario_inizio FROM in_interventi_tecnici WHERE idintervento=mg_articoli_interventi.idintervento LIMIT 0,1 ) AS data FROM mg_articoli_interventi JOIN in_interventi ON in_interventi.id = mg_articoli_interventi.idintervento WHERE mg_articoli_interventi.id='.prepare($vendita['id_riga_intervento']);
+                $query = 'SELECT in_righe_interventi.*, in_interventi.codice, ( SELECT orario_inizio FROM in_interventi_tecnici WHERE idintervento=in_righe_interventi.idintervento LIMIT 0,1 ) AS data FROM in_righe_interventi JOIN in_interventi ON in_interventi.id = in_righe_interventi.idintervento WHERE in_righe_interventi.id='.prepare($vendita['id_riga_intervento']);
                 $data = $dbo->fetchArray($query);
 
                 $id = $data[0]['idintervento'];
@@ -244,6 +244,7 @@ echo '
 echo '
 <script type="text/javascript">
 $(document).ready(function() {
+    $("#table-serials").DataTable().draw();
     $("#serials").removeClass("superselect");
     $("#serials").select2().select2("destroy");
 

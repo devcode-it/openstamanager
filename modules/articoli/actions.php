@@ -1,5 +1,8 @@
 <?php
 
+use Modules\Articoli\Articolo;
+use Modules\Articoli\Categoria;
+
 include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
@@ -20,14 +23,18 @@ switch (post('op')) {
             ]));
         }
 
-        $dbo->insert('mg_articoli', [
-            'codice' => $codice,
-            'descrizione' => post('descrizione'),
-            'id_categoria' => post('categoria'),
-            'id_sottocategoria' => post('subcategoria'),
-            'attivo' => 1,
-        ]);
-        $id_record = $dbo->lastInsertedID();
+        $categoria = Categoria::find(post('categoria'));
+        $sottocategoria = Categoria::find(post('subcategoria'));
+        $articolo = Articolo::build($codice, post('descrizione'), $categoria, $sottocategoria);
+
+        $articolo->barcode = post('barcode');
+        $articolo->threshold_qta = post('threshold_qta');
+        $articolo->prezzo_vendita = post('prezzo_vendita');
+        $articolo->prezzo_acquisto = post('prezzo_acquisto');
+        $articolo->idiva_vendita = post('idiva_vendita');
+        $articolo->save();
+
+        $id_record = $articolo->id;
 
         if (isAjaxRequest()) {
             echo json_encode([
@@ -66,10 +73,10 @@ switch (post('op')) {
         $articolo->threshold_qta = post('threshold_qta');
         $articolo->prezzo_vendita = post('prezzo_vendita');
         $articolo->prezzo_acquisto = post('prezzo_acquisto');
+        $articolo->idiva_vendita = post('idiva_vendita');
         $articolo->idconto_vendita = post('idconto_vendita');
         $articolo->idconto_acquisto = post('idconto_acquisto');
         $articolo->id_fornitore = post('id_fornitore');
-        $articolo->idiva_vendita = post('idiva_vendita');
         $articolo->gg_garanzia = post('gg_garanzia');
         $articolo->servizio = post('servizio');
         $articolo->volume = post('volume');
@@ -90,7 +97,7 @@ switch (post('op')) {
             $descrizione_movimento = post('descrizione_movimento');
             $data_movimento = post('data_movimento');
 
-            $articolo->movimenta($movimento, $descrizione_movimento, $data_movimento);
+            $articolo->movimenta($movimento, $descrizione_movimento, $data_movimento, true);
         }
 
         // Salvataggio info componente (campo `contenuto`)
@@ -145,6 +152,20 @@ switch (post('op')) {
     case 'copy':
         $new = $articolo->replicate();
         $new->qta = 0;
+        $new->save();
+
+        // Copia degli allegati
+        $allegati = $articolo->uploads();
+        foreach ($allegati as $allegato) {
+            $allegato->copia([
+                'id_module' => $new->getModule()->id,
+                'id_record' => $new->id,
+            ]);
+        }
+
+        // Salvataggio immagine relativa
+        $nome_immagine = $articolo->immagine_upload->name;
+        $new->immagine = $new->uploads()->where('name', $nome_immagine)->first()->filename;
         $new->save();
 
         $id_record = $new->id;

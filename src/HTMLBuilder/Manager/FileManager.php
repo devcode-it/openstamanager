@@ -251,6 +251,16 @@ $(document).ready(function() {
         });
     });
     
+    function getFilenameAndExtension(pathfilename){
+
+        var filenameextension = pathfilename.replace(/^.*[\\\/]/, \'\');
+        var filename = filenameextension.substring(0, filenameextension.lastIndexOf(\'.\'));
+        var ext = filenameextension.split(\'.\').pop();
+      
+        return [filename, ext];
+      
+    }
+
     // Autocompletamento nome
     $("#'.$attachment_id.' #blob").change(function(){
         var nome = $("#'.$attachment_id.' #nome_allegato");
@@ -258,10 +268,9 @@ $(document).ready(function() {
         if (!nome.val()) {
             var fullPath = $(this).val();
             
-            var startIndex = Math.max(fullPath.lastIndexOf("\\\\"), fullPath.lastIndexOf("/")) + 1;
-            var filename = fullPath.substring(startIndex);
+            var filename = getFilenameAndExtension(fullPath);
             
-            nome.val(filename);
+            nome.val(filename[0]);
         }
     });
     

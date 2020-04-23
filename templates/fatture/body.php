@@ -80,15 +80,43 @@ foreach ($righe as $riga) {
     }
 
     // Aggiunta dei riferimenti ai documenti
-    if (setting('Riferimento dei documenti nelle stampe')) {
-        $ref = doc_references($r, $record['dir'], ['iddocumento']);
+    if (setting('Riferimento dei documenti nelle stampe') && $riga->hasOriginal()) {
+        $ref = $riga->getOriginal()->parent->getReference();
+        if (!empty($riga->getOriginal()->parent->numero_cliente)){
+            
+            $ref .= tr('<br>_DOC_ num. _NUM_ del _DATE_', [
+                '_DOC_' => 'Rif. Vs. ordine cliente',
+                '_NUM_' => $riga->getOriginal()->parent->numero_cliente,
+                '_DATE_' => dateFormat($riga->getOriginal()->parent->data_cliente),
+            ]);
 
+        }
         if (!empty($ref)) {
             echo '
-                <br><small>'.$ref['description'].'</small>';
+                <br><small>'.$ref.'</small>';
 
-            $autofill->count($ref['description'], true);
+            $autofill->count($ref, true);
         }
+    }
+
+    // Informazioni su CIG, CUP, ...
+    if ($riga->hasOriginal()) {
+        $documento_originale = $riga->getOriginal()->parent;
+
+        $num_item = $documento_originale['num_item'];
+        $codice_cig = $documento_originale['codice_cig'];
+        $codice_cup = $documento_originale['codice_cup'];
+        $id_documento_fe = $documento_originale['id_documento_fe'];
+
+        $extra_riga = tr('_ID_DOCUMENTO__NUMERO_RIGA__CODICE_CIG__CODICE_CUP_', [
+            '_ID_DOCUMENTO_' => $id_documento_fe ? 'DOC: '.$id_documento_fe : null,
+            '_NUMERO_RIGA_' => $num_item ? ', NRI: '.$num_item : null,
+            '_CODICE_CIG_' => $codice_cig ? ', CIG: '.$codice_cig : null,
+            '_CODICE_CUP_' => $codice_cup ? ', CUP: '.$codice_cup : null,
+        ]);
+
+        echo '
+        <br><small>'.$extra_riga.'</small>';
     }
 
     echo '
@@ -103,13 +131,10 @@ foreach ($righe as $riga) {
         // Prezzo unitario
         echo '
             <td class="text-right">
-				'.moneyFormat($riga->prezzo_unitario_vendita);
+				'.moneyFormat($riga->prezzo_unitario);
 
         if ($riga->sconto > 0) {
-            $text = tr('sconto _TOT_ _TYPE_', [
-                '_TOT_' => Translator::numberToLocale($riga->sconto_unitario),
-                '_TYPE_' => ($riga->tipo_sconto == 'PRC' ? '%' : currency()),
-            ]);
+            $text = discountInfo($riga, false);
 
             echo '
                 <br><small class="text-muted">'.$text.'</small>';

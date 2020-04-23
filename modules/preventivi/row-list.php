@@ -7,11 +7,10 @@ echo '
     <thead>
 		<tr>
 			<th>'.tr('Descrizione').'</th>
-			<th width="120">'.tr('Q.tà').' <i title="'.tr('da evadere').' / '.tr('totale').'" class="tip fa fa-question-circle-o"></i></th>
-			<th width="80">'.tr('U.m.').'</th>
-			<th width="120">'.tr('Costo unitario').'</th>
-			<th width="120">'.tr('Iva').'</th>
-			<th width="120">'.tr('Imponibile').'</th>
+			<th class="text-center tip" width="150" title="'.tr('da evadere').' / '.tr('totale').'">'.tr('Q.tà').' <i class="fa fa-question-circle-o"></i></th>
+			<th class="text-center" width="150">'.tr('Prezzo unitario').'</th>
+            <th class="text-center" width="150">'.tr('Iva unitaria').'</th>
+            <th class="text-center" width="150">'.tr('Importo').'</th>
 			<th width="60"></th>
 		</tr>
 	</thead>
@@ -38,51 +37,48 @@ foreach ($righe as $riga) {
             <td></td>
             <td></td>
             <td></td>
-            <td></td>
             <td></td>';
     } else {
-        // Q.tà
+        // Quantità e unità di misura
         echo '
-            <td class="text-center">
-                '.Translator::numberToLocale($riga->qta_rimanente, 'qta').' / '.Translator::numberToLocale($riga->qta, 'qta').'
-            </td>';
+        <td class="text-center">
+            '.numberFormat($riga->qta_rimanente, 'qta').' / '.numberFormat($riga->qta, 'qta').' '.$r['um'].'
+        </td>';
 
-        // Unità di misura
+        // Prezzi unitari
         echo '
-            <td class="text-center">
-                '.$riga->um.'
-            </td>';
+        <td class="text-right">
+            '.moneyFormat($riga->prezzo_unitario_corrente);
 
-        // Costo unitario
-        echo '
-            <td class="text-right">
-                '.moneyFormat($riga->prezzo_unitario_vendita);
-
-        if (abs($riga->sconto_unitario) > 0) {
-            $text = $riga->sconto_unitario > 0 ? tr('sconto _TOT_ _TYPE_') : tr('maggiorazione _TOT_ _TYPE_');
-
+        if ($dir == 'entrata' && $riga->costo_unitario != 0) {
             echo '
-                <br><small class="label label-danger">'.replace($text, [
-                    '_TOT_' => Translator::numberToLocale(abs($riga->sconto_unitario)),
-                    '_TYPE_' => ($riga->tipo_sconto == 'PRC' ? '%' : currency()),
-                ]).'</small>';
+            <br><small>
+                '.tr('Acquisto').': '.moneyFormat($riga->costo_unitario).'
+            </small>';
         }
 
-        echo'
-            </td>';
+        if (abs($riga->sconto_unitario) > 0) {
+            $text = discountInfo($riga);
 
-        // IVA
-        echo '
-            <td class="text-right">
-                '.moneyFormat($riga->iva).'<br>
-                <small class="help-block">'.$riga->aliquota->descrizione.(($riga->aliquota->esente) ? ' ('.$riga->aliquota->codice_natura_fe.')' : null).'</small>
-            </td>';
+            echo '
+            <br><small class="label label-danger">'.$text.'</small>';
+        }
 
-        // Imponibile
         echo '
-            <td class="text-right">
-            '.moneyFormat($riga->totale_imponibile).'
-            </td>';
+        </td>';
+
+        // Iva
+        echo '
+        <td class="text-right">
+            '.moneyFormat($riga->iva_unitaria).'
+            <br><small class="'.(($riga->aliquota->deleted_at) ? 'text-red' : '').' help-block">'.$riga->aliquota->descrizione.(($riga->aliquota->esente) ? ' ('.$riga->aliquota->codice_natura_fe.')' : null).'</small>
+        </td>';
+
+        // Importo
+        echo '
+        <td class="text-right">
+            '.moneyFormat($riga->importo).'
+        </td>';
     }
 
     // Possibilità di rimuovere una riga solo se il preventivo non è stato pagato
@@ -143,7 +139,7 @@ $totale = abs($preventivo->totale);
 // Totale imponibile scontato
 echo '
     <tr>
-        <td colspan="5" class="text-right">
+        <td colspan="4"  class="text-right">
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">
@@ -156,7 +152,7 @@ echo '
 if (!empty($sconto)) {
     echo '
     <tr>
-        <td colspan="5" class="text-right">
+        <td colspan="4"  class="text-right">
             <b><span class="tip" title="'.tr('Un importo positivo indica uno sconto, mentre uno negativo indica una maggiorazione').'"> <i class="fa fa-question-circle-o"></i> '.tr('Sconto/maggiorazione', [], ['upper' => true]).':</span></b>
         </td>
         <td class="text-right">
@@ -168,7 +164,7 @@ if (!empty($sconto)) {
     // Totale imponibile scontato
     echo '
     <tr>
-        <td colspan="5" class="text-right">
+        <td colspan="4"  class="text-right">
             <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
@@ -181,7 +177,7 @@ if (!empty($sconto)) {
 // Totale iva
 echo '
     <tr>
-        <td colspan="5" class="text-right">
+        <td colspan="4"  class="text-right">
             <b>'.tr('Iva', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">
@@ -193,7 +189,7 @@ echo '
 // Totale
 echo '
     <tr>
-        <td colspan="5" class="text-right">
+        <td colspan="4"  class="text-right">
             <b>'.tr('Totale', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">
@@ -204,17 +200,28 @@ echo '
 
 // Margine
 $margine = $preventivo->margine;
-$margine_style = ($margine <= 0 and $preventivo->totale > 0) ? 'background-color: #FFC6C6; border: 3px solid red' : '';
+$margine_class = ($margine <= 0 and $preventivo->totale > 0) ? 'danger' : 'success';
+$margine_icon = ($margine <= 0 and $preventivo->totale > 0) ? 'warning' : 'check';
 
 echo '
 <tr>
-    <td colspan="5" class="text-right">
+    <td colspan="4"  class="text-right">
+        '.tr('Costi').':
+    </td>
+    <td align="right">
+        '.moneyFormat($preventivo->spesa).'
+    </td>
+    <td></td>
+</tr>
+
+<tr>
+    <td colspan="4"  class="text-right">
         '.tr('Margine (_PRC_%)', [
             '_PRC_' => numberFormat($preventivo->margine_percentuale),
     ]).':
     </td>
-    <td align="right" style="'.$margine_style.'">
-        '.moneyFormat($preventivo->margine).'
+    <td align="right" class="'.$margine_class.'">
+        <i class="fa fa-'.$margine_icon.' text-'.$margine_class.'"></i> '.moneyFormat($preventivo->margine).'
     </td>
     <td></td>
 </tr>';

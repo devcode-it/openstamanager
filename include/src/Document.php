@@ -4,7 +4,7 @@ namespace Common;
 
 use Common\Components\Description;
 
-abstract class Document extends Model
+abstract class Document extends Model implements ReferenceInterface
 {
     /**
      * Restituisce la collezione di righe e articoli con valori rilevanti per i conti.
@@ -65,6 +65,8 @@ abstract class Document extends Model
     abstract public function descrizioni();
 
     abstract public function sconti();
+
+    abstract public function getDirezioneAttribute();
 
     /**
      * Calcola l'imponibile del documento.
@@ -169,8 +171,6 @@ abstract class Document extends Model
     /**
      * Metodo richiamato a seguito di modifiche sull'evasione generale delle righe del documento.
      * Utilizzabile per limpostazione automatica degli stati.
-     *
-     * @param Description $trigger
      */
     public function triggerEvasione(Description $trigger)
     {
@@ -180,12 +180,26 @@ abstract class Document extends Model
     /**
      * Metodo richiamato a seguito della modifica o creazione di una riga del documento.
      * Utilizzabile per limpostazione automatica di campi statici del documento.
-     *
-     * @param Description $trigger
      */
     public function triggerComponent(Description $trigger)
     {
         $this->setRelations([]);
+    }
+
+    public function toArray()
+    {
+        $array = parent::toArray();
+
+        $result = array_merge($array, [
+            'spesa' => $this->spesa,
+            'imponibile' => $this->imponibile,
+            'sconto' => $this->sconto,
+            'totale_imponibile' => $this->totale_imponibile,
+            'iva' => $this->iva,
+            'totale' => $this->totale,
+        ]);
+
+        return $result;
     }
 
     /**

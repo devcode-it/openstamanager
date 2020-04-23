@@ -6,6 +6,7 @@ use Auth;
 use Carbon\Carbon;
 use Common\Components\Description;
 use Common\Document;
+use Illuminate\Database\Eloquent\Builder;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Fatture\Components\Riga;
 use Modules\Pagamenti\Pagamento;
@@ -15,11 +16,13 @@ use Modules\Scadenzario\Scadenza;
 use Plugins\DichiarazioniIntento\Dichiarazione;
 use Plugins\ExportFE\FatturaElettronica;
 use Traits\RecordTrait;
+use Traits\ReferenceTrait;
 use Util\Generator;
 
 class Fattura extends Document
 {
     use RecordTrait;
+    use ReferenceTrait;
 
     protected $table = 'co_documenti';
 
@@ -27,17 +30,23 @@ class Fattura extends Document
         'bollo' => 'float',
     ];
 
+    protected $with = [
+        'tipo',
+    ];
+
+    protected $dates = [
+        'data',
+    ];
+
     /**
      * Crea una nuova fattura.
      *
-     * @param Anagrafica $anagrafica
-     * @param Tipo       $tipo_documento
-     * @param string     $data
-     * @param int        $id_segment
+     * @param string $data
+     * @param int    $id_segment
      *
      * @return self
      */
-    public static function build(Anagrafica $anagrafica, Tipo $tipo_documento, $data, $id_segment)
+    public static function build(Anagrafica $anagrafica, Tipo $tipo_documento, $data, $id_segment, $numero_esterno = null)
     {
         $model = parent::build();
 
@@ -67,6 +76,8 @@ class Fattura extends Document
         $model->data_registrazione = $data;
         $model->data_competenza = $data;
         $model->id_segment = $id_segment;
+        if ($numero_esterno)
+            $model->numero_esterno = $numero_esterno;
 
         $model->idconto = $id_conto;
 
@@ -157,7 +168,9 @@ class Fattura extends Document
 
             $this->numero = static::getNextNumero($data, $direzione, $value);
 
-            if (!empty($previous)) {
+            if ($this->stato->descrizione == 'Bozza') {
+                $this->numero_esterno = null;
+            } elseif (!empty($previous)) {
                 $this->numero_esterno = static::getNextNumeroSecondario($data, $direzione, $value);
             }
         }
@@ -322,7 +335,7 @@ class Fattura extends Document
 
     public function scadenze()
     {
-        return $this->hasMany(Scadenza::class, 'iddocumento');
+        return $this->hasMany(Scadenza::class, 'iddocumento')->orderBy('scadenza');
     }
 
     public function movimentiContabili()
@@ -421,11 +434,10 @@ class Fattura extends Document
     /**
      * Registra una specifica scadenza nel database.
      *
-     * @param Fattura $fattura
-     * @param float   $importo
-     * @param string  $data_scadenza
-     * @param bool    $is_pagato
-     * @param string  $type
+     * @param float  $importo
+     * @param string $data_scadenza
+     * @param bool   $is_pagato
+     * @param string $type
      */
     public static function registraScadenza(Fattura $fattura, $importo, $data_scadenza, $is_pagato, $type = 'fattura')
     {
@@ -461,10 +473,12 @@ class Fattura extends Document
         $direzione = $this->tipo->dir;
         $ritenuta_acconto = $this->ritenuta_acconto;
 
-        // Se c'è una ritenuta d'acconto, la aggiungo allo scadenzario
+        // Se c'è una ritenuta d'acconto, la aggiungo allo scadenzario al 15 del mese dopo l'ultima scadenza di pagamento
         if ($direzione == 'uscita' && $ritenuta_acconto > 0) {
-            $data = $this->data;
-            $scadenza = date('Y-m', strtotime($data.' +1 month')).'-15';
+            $ultima_scadenza = $this->scadenze->last();
+            $scadenza = $ultima_scadenza->scadenza->copy()->startOfMonth()->addMonth();
+            $scadenza->setDate($scadenza->year, $scadenza->month, 15);
+
             $importo = -$ritenuta_acconto;
 
             self::registraScadenza($this, $importo, $scadenza, $is_pagato, 'ritenutaacconto');
@@ -482,8 +496,6 @@ class Fattura extends Document
     /**
      * Salva la fattura, impostando i campi dipendenti dai singoli parametri.
      *
-     * @param array $options
-     *
      * @return bool
      */
     public function save(array $options = [])
@@ -499,9 +511,10 @@ class Fattura extends Document
         // Informazioni sul cambio dei valori
         $stato_precedente = Stato::find($this->original['idstatodocumento']);
         $dichiarazione_precedente = Dichiarazione::find($this->original['id_dichiarazione_intento']);
+        $is_fiscale = $this->isFiscale();
 
         // Generazione numero fattura se non presente
-        if ($stato_precedente->descrizione == 'Bozza' && $this->stato['descrizione'] == 'Emessa' && empty($this->numero_esterno)) {
+        if ((($stato_precedente->descrizione == 'Bozza' && $this->stato['descrizione'] == 'Emessa') or (!$is_fiscale)) && empty($this->numero_esterno)) {
             $this->numero_esterno = self::getNextNumeroSecondario($this->data, $this->direzione, $this->id_segment);
         }
 
@@ -583,6 +596,32 @@ class Fattura extends Document
     }
 
     /**
+     * Controlla se la fattura è fiscale.
+     *
+     * @return bool
+     */
+    public function isFiscale()
+    {
+        $result = database()->fetchOne('SELECT is_fiscale FROM zz_segments WHERE id ='.prepare($this->id_segment))['is_fiscale'];
+
+        return $result;
+    }
+
+    /**
+     * Scope per l'inclusione delle sole fatture con valore contabile.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeContabile($query)
+    {
+        return $query->whereHas('stato', function (Builder $query) {
+            $query->whereIn('descrizione', ['Emessa', 'Parzialmente pagato', 'Pagato']);
+        });
+    }
+
+    /**
      * Restituisce i dati bancari in base al pagamento.
      *
      * @return array
@@ -660,7 +699,7 @@ class Fattura extends Document
             $this->id_riga_bollo = $riga->id;
         }
 
-        $riga->prezzo_unitario_vendita = $marca_da_bollo;
+        $riga->prezzo_unitario = $marca_da_bollo;
         $riga->qta = 1;
         $riga->descrizione = setting('Descrizione addebito bollo');
         $riga->id_iva = setting('Iva da applicare su marca da bollo');
@@ -699,6 +738,34 @@ class Fattura extends Document
     }
 
     /**
+     * Scope per l'inclusione delle fatture di vendita.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeVendita($query)
+    {
+        return $query->whereHas('tipo', function (Builder $query) {
+            $query->where('dir', 'entrata');
+        });
+    }
+
+    /**
+     * Scope per l'inclusione delle fatture di acquisto.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeAcquisto($query)
+    {
+        return $query->whereHas('tipo', function (Builder $query) {
+            $query->where('dir', 'uscita');
+        });
+    }
+
+    /**
      * Calcola il nuovo numero secondario di fattura.
      *
      * @param string $data
@@ -723,5 +790,22 @@ class Fattura extends Document
         $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data));
 
         return $numero;
+    }
+
+    // Opzioni di riferimento
+
+    public function getReferenceName()
+    {
+        return $this->tipo->descrizione;
+    }
+
+    public function getReferenceNumber()
+    {
+        return $this->numero_esterno ?: $this->numero;
+    }
+
+    public function getReferenceDate()
+    {
+        return $this->data;
     }
 }

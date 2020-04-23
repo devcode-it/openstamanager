@@ -248,11 +248,7 @@ class Prints
      */
     public static function getPDFLink($path)
     {
-        //http://localhost/openstamanager/
-        $folders = explode('/', dirname($_SERVER['PHP_SELF']));
-        $base = (stripos($_SERVER['SERVER_PROTOCOL'], 'https') === 0 ? 'https://' : 'http://').$_SERVER['SERVER_NAME'].'/'.$folders[1].'/';
-
-        return ROOTDIR.'/assets/dist/pdfjs/web/viewer.html?file='.$base.ltrim(str_replace(DOCROOT, '', $path), '/');
+        return ROOTDIR.'/assets/dist/pdfjs/web/viewer.html?file='.BASEURL.'/'.ltrim(str_replace(DOCROOT, '', $path), '/');
     }
 
     /**
@@ -437,6 +433,7 @@ class Prints
 
         // Individuazione delle impostazioni finali
         $settings = array_merge($default, (array) $custom);
+        $settings = array_merge($settings, (array) $options);
 
         // Individuazione delle variabili fondamentali per la sostituzione dei contenuti
         include self::filepath($id_print, 'init.php');

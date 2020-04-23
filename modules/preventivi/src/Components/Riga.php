@@ -14,8 +14,6 @@ class Riga extends Row
     /**
      * Crea una nuova riga collegata ad una preventivo.
      *
-     * @param Preventivo $preventivo
-     *
      * @return self
      */
     public static function build(Preventivo $preventivo)

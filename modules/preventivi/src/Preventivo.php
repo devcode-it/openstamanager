@@ -10,10 +10,12 @@ use Modules\Interventi\Intervento;
 use Modules\Ordini\Ordine;
 use Modules\TipiIntervento\Tipo as TipoSessione;
 use Traits\RecordTrait;
+use Traits\ReferenceTrait;
 use Util\Generator;
 
 class Preventivo extends Document
 {
+    use ReferenceTrait;
     use RecordTrait;
 
     protected $table = 'co_preventivi';
@@ -21,9 +23,7 @@ class Preventivo extends Document
     /**
      * Crea un nuovo preventivo.
      *
-     * @param Anagrafica   $anagrafica
-     * @param TipoSessione $tipo_sessione
-     * @param string       $nome
+     * @param string $nome
      *
      * @return self
      */
@@ -186,8 +186,6 @@ class Preventivo extends Document
     /**
      * Effettua un controllo sui campi del documento.
      * Viene richiamatp dalle modifiche alle righe del documento.
-     *
-     * @param Description $trigger
      */
     public function triggerEvasione(Description $trigger)
     {
@@ -248,5 +246,39 @@ class Preventivo extends Document
         $numero = Generator::generate($maschera, $ultimo);
 
         return $numero;
+    }
+
+    // Opzioni di riferimento
+
+    public function getReferenceName()
+    {
+        return 'Preventivo';
+    }
+
+    public function getReferenceNumber()
+    {
+        return $this->numero;
+    }
+
+    public function getReferenceDate()
+    {
+        return $this->data_bozza;
+    }
+
+    public function getRevisioniAttribute()
+    {
+        $revisioni = Preventivo::where('master_revision', '=', $this->master_revision)->get()->pluck('id')->toArray();
+
+        return $revisioni;
+    }
+
+    public function getUltimaRevisioneAttribute()
+    {
+        return Preventivo::selectRaw('MAX(numero_revision) AS revisione')->where('master_revision', $this->master_revision)->get()->toArray()[0]['revisione'];
+    }
+
+    public function setStatoAttribute($stato)
+    {
+        $this->idstato = Stato::where('descrizione', $stato)->first()['id'];
     }
 }

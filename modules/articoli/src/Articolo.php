@@ -6,15 +6,17 @@ use Common\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules;
 use Modules\Interventi\Components\Articolo as ArticoloIntervento;
+use Traits\RecordTrait;
 use Uploads;
 
 class Articolo extends Model
 {
     use SoftDeletes;
+    use RecordTrait;
 
     protected $table = 'mg_articoli';
 
-    public static function build($codice, $nome, Categoria $categoria, Categoria $sottocategoria = null)
+    public static function build($codice, $nome, Categoria $categoria = null, Categoria $sottocategoria = null)
     {
         $model = parent::build();
 
@@ -93,6 +95,15 @@ class Articolo extends Model
 
     // Attributi Eloquent
 
+    public function getImmagineUploadAttribute()
+    {
+        if (empty($this->immagine)) {
+            return null;
+        }
+
+        return $this->uploads()->where('filename', $this->immagine)->first();
+    }
+
     public function getImageAttribute()
     {
         if (empty($this->immagine)) {
@@ -126,6 +137,28 @@ class Articolo extends Model
     public function articoli()
     {
         return $this->hasMany(ArticoloIntervento::class, 'idarticolo');
+    }
+
+    /**
+     * Restituisce i movimenti di magazzino dell'articolo.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany|\Illuminate\Database\Query\Builder
+     */
+    public function movimenti()
+    {
+        return $this->hasMany(Movimento::class, 'idarticolo');
+    }
+
+    /**
+     * Restituisce i movimenti di magazzino dell'articolo raggruppati per documento relativo.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany|\Illuminate\Database\Query\Builder
+     */
+    public function movimentiComposti()
+    {
+        return $this->movimenti()
+            ->selectRaw('*, sum(qta) as qta_documento, IFNULL(reference_type, UUID()) as tipo_gruppo')
+            ->groupBy('tipo_gruppo', 'reference_id');
     }
 
     public function categoria()

@@ -226,7 +226,7 @@ switch ($resource) {
 
     case 'sedi':
         if (isset($superselect['idanagrafica'])) {
-            $query = "SELECT * FROM (SELECT '0' AS id, CONCAT_WS(' - ', 'Sede legale' , (SELECT CONCAT (citta, ' (', ragione_sociale,')') FROM an_anagrafiche |where|)) AS descrizione UNION SELECT id, CONCAT_WS(' - ', nomesede, citta) FROM an_sedi |where|) AS tab |filter| ORDER BY descrizione";
+            $query = "SELECT * FROM (SELECT '0' AS id, CONCAT_WS(' - ', 'Sede legale' , (SELECT CONCAT (citta, ' (', ragione_sociale,')') FROM an_anagrafiche |where|)) AS descrizione UNION SELECT id, CONCAT_WS(' - ', nomesede, citta) FROM an_sedi |where|) AS tab HAVING descrizione LIKE ".prepare('%'.$search.'%').' ORDER BY descrizione';
 
             foreach ($elements as $element) {
                 $filter[] = 'id='.prepare($element);
@@ -235,7 +235,6 @@ switch ($resource) {
             $where[] = 'idanagrafica='.prepare($superselect['idanagrafica']);
 
             if (!empty($search)) {
-                $search_fields[] = 'nomesede LIKE '.prepare('%'.$search.'%');
                 $search_fields[] = 'citta LIKE '.prepare('%'.$search.'%');
             }
         }
@@ -244,7 +243,7 @@ switch ($resource) {
     case 'sedi_azienda':
         if (isset($superselect['idanagrafica'])) {
             $user = Auth::user();
-            $id_azienda = get_var('Azienda predefinita');
+            $id_azienda = setting('Azienda predefinita');
 
             $query = "SELECT * FROM (SELECT '0' AS id, CONCAT_WS(' - ', 'Sede legale' , (SELECT CONCAT (citta, ' (', ragione_sociale,')') FROM an_anagrafiche |where|)) AS descrizione UNION SELECT id, CONCAT_WS(' - ', nomesede, citta) FROM an_sedi |where|) AS tab |filter| ORDER BY descrizione";
 
@@ -298,8 +297,7 @@ switch ($resource) {
         break;
 
     case 'relazioni':
-
-        $query = 'SELECT id, descrizione, colore AS _bgcolor_ FROM an_relazioni ORDER BY descrizione';
+        $query = 'SELECT id, descrizione, colore AS bgcolor FROM an_relazioni |where| ORDER BY descrizione';
 
         foreach ($elements as $element) {
             $filter[] = 'id='.prepare($element);

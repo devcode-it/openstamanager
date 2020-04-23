@@ -2,6 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Models\Cache;
 use Modules\Aggiornamenti\UpdateHook;
 
 $id = post('id');
@@ -9,7 +10,8 @@ $id = post('id');
 switch (filter('op')) {
     case 'check':
         $result = UpdateHook::isAvailable();
-        UpdateHook::update($result);
+
+        Cache::get('Ultima versione di OpenSTAManager disponibile')->set($result);
 
         echo $result;
 

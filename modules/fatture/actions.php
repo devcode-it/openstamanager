@@ -28,10 +28,15 @@ switch (post('op')) {
         $idtipodocumento = post('idtipodocumento');
         $id_segment = post('id_segment');
 
+        if ($dir == 'uscita') {
+            $numero_esterno = post('numero_esterno');
+        }
+
         $anagrafica = Anagrafica::find($idanagrafica);
         $tipo = Tipo::find($idtipodocumento);
+        
+        $fattura = Fattura::build($anagrafica, $tipo, $data, $id_segment, $numero_esterno);
 
-        $fattura = Fattura::build($anagrafica, $tipo, $data, $id_segment);
         $id_record = $fattura->id;
 
         flash()->info(tr('Aggiunta fattura numero _NUM_!', [
@@ -41,123 +46,137 @@ switch (post('op')) {
         break;
 
     case 'update':
-        if (post('id_record') !== null) {
-            $stato_precedente = $fattura->stato;
+        $stato_precedente = $fattura->stato;
 
-            $stato = Stato::find(post('idstatodocumento'));
-            $fattura->stato()->associate($stato);
+        $stato = Stato::find(post('idstatodocumento'));
+        $fattura->stato()->associate($stato);
 
-            $tipo = Tipo::find(post('idtipodocumento'));
-            $fattura->tipo()->associate($tipo);
+        $tipo = Tipo::find(post('idtipodocumento'));
+        $fattura->tipo()->associate($tipo);
 
-            $fattura->data = post('data');
+        $fattura->data = post('data');
 
-            if ($dir == 'entrata') {
-                $fattura->data_registrazione = post('data');
-            } else {
-                $fattura->data_registrazione = post('data_registrazione');
-            }
+        if ($dir == 'entrata') {
+            $fattura->data_registrazione = post('data');
+        } else {
+            $fattura->data_registrazione = post('data_registrazione');
+        }
 
-            $fattura->data_competenza = post('data_competenza');
+        $fattura->data_competenza = post('data_competenza');
 
+        $fattura->numero_esterno = post('numero_esterno');
+        $fattura->note = post('note');
+        $fattura->note_aggiuntive = post('note_aggiuntive');
+
+        $fattura->idanagrafica = post('idanagrafica');
+        $fattura->idagente = post('idagente');
+        $fattura->idpagamento = post('idpagamento');
+        $fattura->idbanca = post('idbanca');
+        $fattura->idcausalet = post('idcausalet');
+        $fattura->idspedizione = post('idspedizione');
+        $fattura->idporto = post('idporto');
+        $fattura->idaspettobeni = post('idaspettobeni');
+        $fattura->idvettore = post('idvettore');
+        $fattura->idsede_partenza = post('idsede_partenza');
+        $fattura->idsede_destinazione = post('idsede_destinazione');
+        $fattura->idconto = post('idconto');
+        $fattura->split_payment = post('split_payment') ?: 0;
+        $fattura->is_fattura_conto_terzi = post('is_fattura_conto_terzi') ?: 0;
+        $fattura->n_colli = post('n_colli');
+        $fattura->tipo_resa = post('tipo_resa');
+
+        $fattura->rivalsainps = 0;
+        $fattura->ritenutaacconto = 0;
+        $fattura->iva_rivalsainps = 0;
+        $fattura->id_ritenuta_contributi = post('id_ritenuta_contributi') ?: null;
+
+        $fattura->codice_stato_fe = post('codice_stato_fe') ?: null;
+
+        // Informazioni per le fatture di acquisto
+        if ($dir == 'uscita') {
+            $fattura->numero = post('numero');
             $fattura->numero_esterno = post('numero_esterno');
-            $fattura->note = post('note');
-            $fattura->note_aggiuntive = post('note_aggiuntive');
+            $fattura->idrivalsainps = post('id_rivalsa_inps');
+            $fattura->idritenutaacconto = post('id_ritenuta_acconto');
+        }
 
-            $fattura->idanagrafica = post('idanagrafica');
-            $fattura->idagente = post('idagente');
-            $fattura->idpagamento = post('idpagamento');
-            $fattura->idbanca = post('idbanca');
-            $fattura->idcausalet = post('idcausalet');
-            $fattura->idspedizione = post('idspedizione');
-            $fattura->idporto = post('idporto');
-            $fattura->idaspettobeni = post('idaspettobeni');
-            $fattura->idvettore = post('idvettore');
-            $fattura->idsede_partenza = post('idsede_partenza');
-            $fattura->idsede_destinazione = post('idsede_destinazione');
-            $fattura->idconto = post('idconto');
-            $fattura->split_payment = post('split_payment') ?: 0;
-            $fattura->is_fattura_conto_terzi = post('is_fattura_conto_terzi') ?: 0;
-            $fattura->n_colli = post('n_colli');
-            $fattura->tipo_resa = post('tipo_resa');
+        // Operazioni sul bollo
+        $fattura->addebita_bollo = post('addebita_bollo');
+        $bollo_automatico = post('bollo_automatico');
+        if (empty($bollo_automatico)) {
+            $fattura->bollo = post('bollo');
+        } else {
+            $fattura->bollo = null;
+        }
 
-            $fattura->rivalsainps = 0;
-            $fattura->ritenutaacconto = 0;
-            $fattura->iva_rivalsainps = 0;
-            $fattura->id_ritenuta_contributi = post('id_ritenuta_contributi') ?: null;
+        // Operazioni sulla dichiarazione d'intento
+        $dichiarazione_precedente = $fattura->dichiarazione;
+        $fattura->id_dichiarazione_intento = post('id_dichiarazione_intento') ?: null;
 
-            $fattura->codice_stato_fe = post('codice_stato_fe') ?: null;
+        $fattura->save();
 
-            // Informazioni per le fatture di acquisto
-            if ($dir == 'uscita') {
-                $fattura->numero = post('numero');
-                $fattura->numero_esterno = post('numero_esterno');
-                $fattura->idrivalsainps = post('id_rivalsa_inps');
-                $fattura->idritenutaacconto = post('id_ritenuta_acconto');
-            }
+        if ($fattura->direzione == 'entrata' && $stato_precedente->descrizione == 'Bozza' && $stato['descrizione'] == 'Emessa') {
+            // Generazione automatica della Fattura Elettronica
+            $stato_fe = empty($fattura->codice_stato_fe) || in_array($fattura->codice_stato_fe, ['GEN', 'NS', 'EC02']);
+            $checks = FatturaElettronica::controllaFattura($fattura);
+            if ($stato_fe && empty($checks)) {
+                try {
+                    $fattura_pa = new FatturaElettronica($id_record);
+                    $file = $fattura_pa->save(DOCROOT.'/'.FatturaElettronica::getDirectory());
 
-            // Operazioni sul bollo
-            $fattura->addebita_bollo = post('addebita_bollo');
-            $bollo_automatico = post('bollo_automatico');
-            if (empty($bollo_automatico)) {
-                $fattura->bollo = post('bollo');
-            } else {
-                $fattura->bollo = null;
-            }
+                    flash()->info(tr('Fattura elettronica generata correttamente!'));
 
-            // Operazioni sulla dichiarazione d'intento
-            $dichiarazione_precedente = $fattura->dichiarazione;
-            $fattura->id_dichiarazione_intento = post('id_dichiarazione_intento') ?: null;
+                    if (!$fattura_pa->isValid()) {
+                        $errors = $fattura_pa->getErrors();
 
-            $fattura->save();
-
-            if ($fattura->direzione == 'entrata' && $stato_precedente->descrizione == 'Bozza' && $stato['descrizione'] == 'Emessa') {
-                // Generazione automatica della Fattura Elettronica
-                $stato_fe = empty($fattura->codice_stato_fe) || in_array($fattura->codice_stato_fe, ['GEN', 'NS', 'EC02']);
-                $checks = FatturaElettronica::controllaFattura($fattura);
-                if ($stato_fe && empty($checks)) {
-                    try {
-                        $fattura_pa = new FatturaElettronica($id_record);
-                        $file = $fattura_pa->save(DOCROOT.'/'.FatturaElettronica::getDirectory());
-
-                        flash()->info(tr('Fattura elettronica generata correttamente!'));
-
-                        if (!$fattura_pa->isValid()) {
-                            $errors = $fattura_pa->getErrors();
-
-                            flash()->warning(tr('La fattura elettronica potrebbe avere delle irregolarità!').' '.tr('Controllare i seguenti campi: _LIST_', [
-                                    '_LIST_' => implode(', ', $errors),
-                                ]).'.');
-                        }
-                    } catch (UnexpectedValueException $e) {
+                        flash()->warning(tr('La fattura elettronica potrebbe avere delle irregolarità!').' '.tr('Controllare i seguenti campi: _LIST_', [
+                                '_LIST_' => implode(', ', $errors),
+                            ]).'.');
                     }
-                } elseif (!empty($checks)) {
-                    $message = tr('La fattura elettronica non è stata generata a causa di alcune informazioni mancanti').':';
+                } catch (UnexpectedValueException $e) {
+                }
+            } elseif (!empty($checks)) {
+                $message = tr('La fattura elettronica non è stata generata a causa di alcune informazioni mancanti').':';
 
-                    foreach ($checks as $check) {
-                        $message .= '
+                foreach ($checks as $check) {
+                    $message .= '
 <p><b>'.$check['name'].' '.$check['link'].'</b></p>
 <ul>';
 
-                        foreach ($check['errors'] as $error) {
-                            if (!empty($error)) {
-                                $message .= '
-    <li>'.$error.'</li>';
-                            }
+                    foreach ($check['errors'] as $error) {
+                        if (!empty($error)) {
+                            $message .= '
+<li>'.$error.'</li>';
                         }
-
-                        $message .= '
-</ul>';
                     }
 
-                    flash()->warning($message);
+                    $message .= '
+</ul>';
                 }
+
+                flash()->warning($message);
             }
-
-            aggiorna_sedi_movimenti('documenti', $id_record);
-
-            flash()->info(tr('Fattura modificata correttamente!'));
         }
+
+        aggiorna_sedi_movimenti('documenti', $id_record);
+
+        // Controllo sulla presenza di fattura di acquisto con lo stesso numero secondario nello stesso periodo
+        $direzione = $fattura->direzione;
+        if ($direzione == 'uscita') {
+            $count = Fattura::where('numero_esterno', $fattura->numero_esterno)
+                ->where('id', '!=', $id_record)
+                ->where('idanagrafica', '=', $fattura->anagrafica->id)
+                ->where('data', '>=', $_SESSION['period_start'])
+                ->where('data', '<=', $_SESSION['period_end'])
+                ->whereHas('tipo', function ($query) use ($direzione) {
+                    $query->where('dir', '=', $direzione);
+                })->count();
+            if (!empty($count)) {
+                flash()->warning(tr('Esiste già una fattura con lo stesso numero secondario e la stessa anagrafica collegata!'));
+            }
+        }
+
+        flash()->info(tr('Fattura modificata correttamente!'));
 
         break;
 
@@ -172,8 +191,27 @@ switch (post('op')) {
         try {
             $xml = \Util\XML::read($fattura->getXML());
 
-            $dati_generali = $xml['FatturaElettronicaBody']['DatiGenerali']['DatiGeneraliDocumento'];
-            $totale_documento = ($fattura->isNota()) ? -abs(floatval($dati_generali['ImportoTotaleDocumento'])) : abs(floatval($dati_generali['ImportoTotaleDocumento'])) ?: null;
+            // Totale basato sul campo ImportoTotaleDocumento
+            //$dati_generali = $xml['FatturaElettronicaBody']['DatiGenerali']['DatiGeneraliDocumento'];
+            //$totale_documento = abs(floatval($dati_generali['ImportoTotaleDocumento']));
+
+            // Calcolo del totale basato sui DatiRiepilogo
+            if (empty($totale_documento)) {
+                $totale_documento = 0;
+
+                $riepiloghi = $xml['FatturaElettronicaBody']['DatiBeniServizi']['DatiRiepilogo'];
+                if (!empty($riepiloghi) && !isset($riepiloghi[0])) {
+                    $riepiloghi = [$riepiloghi];
+                }
+
+                foreach ($riepiloghi as $riepilogo) {
+                    $totale_documento = sum([$totale_documento, $riepilogo['ImponibileImporto'], $riepilogo['Imposta']]);
+                }
+
+                $totale_documento = abs($totale_documento);
+            }
+
+            $totale_documento = $fattura->isNota() ? -$totale_documento : $totale_documento;
         } catch (Exception $e) {
             $totale_documento = null;
         }
@@ -182,6 +220,25 @@ switch (post('op')) {
             'stored' => $totale_documento,
             'calculated' => $fattura->totale,
         ]);
+
+        break;
+
+    // Elenco fatture in stato Bozza per il cliente
+    case 'fatture_bozza':
+        $id_anagrafica = post('id_anagrafica');
+        $stato = Stato::where('descrizione', 'Bozza')->first();
+
+        $fatture = Fattura::vendita()
+            ->where('idanagrafica', $id_anagrafica)
+            ->where('idstatodocumento', $stato->id)
+            ->get();
+
+        $results = [];
+        foreach ($fatture as $result) {
+            $results[] = Modules::link('Fatture di vendita', $result->id, reference($result));
+        }
+
+        echo json_encode($results);
 
         break;
 
@@ -194,7 +251,7 @@ switch (post('op')) {
             $dbo->query('DELETE FROM co_movimenti WHERE iddocumento='.prepare($id_record));
 
             // Azzeramento collegamento della rata contrattuale alla pianificazione
-            $dbo->query('UPDATE co_ordiniservizio_pianificazionefatture SET iddocumento=0 WHERE iddocumento='.prepare($id_record));
+            $dbo->query('UPDATE co_fatturazione_contratti SET iddocumento=0 WHERE iddocumento='.prepare($id_record));
 
             flash()->info(tr('Fattura eliminata!'));
         } catch (InvalidArgumentException $e) {
@@ -205,44 +262,42 @@ switch (post('op')) {
 
     // Duplicazione fattura
     case 'copy':
-        if ($id_record) {
-            // Duplicazione righe
-            $righe = $dbo->fetchArray('SELECT * FROM co_righe_documenti WHERE iddocumento='.prepare($id_record));
+        $stato = Stato::where('descrizione', 'Bozza')->first();
 
-            // Lettura dati fattura attuale
-            $rs = $dbo->fetchArray('SELECT * FROM co_documenti WHERE id='.prepare($id_record));
-
-            $id_segment = $rs[0]['id_segment'];
-
-            // Calcolo prossimo numero fattura
-            $numero = get_new_numerofattura(date('Y-m-d'));
-
-            if ($dir == 'entrata') {
-                $numero_esterno = get_new_numerosecondariofattura(date('Y-m-d'));
-            } else {
-                $numero_esterno = '';
-            }
-
-            // Duplicazione intestazione
-            $dbo->query('INSERT INTO co_documenti(numero, numero_esterno, data, idanagrafica, idcausalet, idspedizione, idporto, idaspettobeni, idvettore, n_colli, idsede_partenza, idsede_destinazione, idtipodocumento, idstatodocumento, idpagamento, idconto, idrivalsainps, idritenutaacconto, rivalsainps, iva_rivalsainps, ritenutaacconto, bollo, note, note_aggiuntive, buono_ordine, id_segment) VALUES('.prepare($numero).', '.prepare($numero_esterno).', NOW(), '.prepare($rs[0]['idanagrafica']).', '.prepare($rs[0]['idcausalet']).', '.prepare($rs[0]['idspedizione']).', '.prepare($rs[0]['idporto']).', '.prepare($rs[0]['idaspettobeni']).', '.prepare($rs[0]['idvettore']).', '.prepare($rs[0]['n_colli']).', '.prepare($rs[0]['idsede_partenza']).', '.prepare($rs[0]['idsede_destinazione']).', '.prepare($rs[0]['idtipodocumento']).', (SELECT id FROM co_statidocumento WHERE descrizione=\'Bozza\'), '.prepare($rs[0]['idpagamento']).', '.prepare($rs[0]['idconto']).', '.prepare($rs[0]['idrivalsainps']).', '.prepare($rs[0]['idritenutaacconto']).', '.prepare($rs[0]['rivalsainps']).', '.prepare($rs[0]['iva_rivalsainps']).', '.prepare($rs[0]['ritenutaacconto']).', '.prepare($rs[0]['bollo']).', '.prepare($rs[0]['note']).', '.prepare($rs[0]['note_aggiuntive']).', '.prepare($rs[0]['buono_ordine']).', '.prepare($rs[0]['id_segment']).')');
-            $id_record = $dbo->lastInsertedID();
-
-            // TODO: sistemare la duplicazione delle righe generiche e degli articoli, ignorando interventi, ddt, ordini, preventivi
-            foreach ($righe as $riga) {
-                // Scarico/carico nuovamente l'articolo da magazzino
-                if (!empty($riga['idarticolo'])) {
-                    add_articolo_infattura($id_record, $riga['idarticolo'], $riga['descrizione'], $riga['idiva'], $riga['qta'], $riga['subtotale'], $riga['sconto'], $riga['sconto_unitario'], $riga['tipo_sconto'], $riga['idintervento'], $riga['idconto'], $riga['um']);
-                } else {
-                    $dbo->query('INSERT INTO co_righe_documenti(iddocumento, idordine, idddt, idintervento, idarticolo, idpreventivo, idcontratto, is_descrizione, idtecnico, idagente, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, idritenutaacconto, ritenutaacconto, idrivalsainps, rivalsainps, um, qta, `order`) VALUES('.prepare($id_record).', 0, 0, 0, '.prepare($riga['idarticolo']).', '.prepare($riga['idpreventivo']).', '.prepare($riga['idcontratto']).', '.prepare($riga['is_descrizione']).', '.prepare($riga['idtecnico']).', '.prepare($riga['idagente']).', '.prepare($riga['idconto']).', '.prepare($riga['idiva']).', '.prepare($riga['desc_iva']).', '.prepare($riga['iva']).', '.prepare($riga['iva_indetraibile']).', '.prepare($riga['descrizione']).', '.prepare($riga['subtotale']).', '.prepare($riga['sconto']).', '.prepare($riga['sconto_unitario']).', '.prepare($riga['tipo_sconto']).', '.prepare($riga['idritenutaacconto']).', '.prepare($riga['ritenutaacconto']).', '.prepare($riga['idrivalsainps']).', '.prepare($riga['rivalsainps']).', '.prepare($riga['um']).', '.prepare($riga['qta']).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))');
-                }
-            }
-
-            // Ricalcolo inps, ritenuta e bollo (se la fattura non è stata pagata)
-            ricalcola_costiagg_fattura($id_record);
-            aggiorna_sedi_movimenti('documenti', $id_record);
-
-            flash()->info(tr('Fattura duplicata correttamente!'));
+        $new = $fattura->replicate();
+        $new->numero = Fattura::getNextNumero($new->data, $new->direzione, $new->id_segment);
+        if (!empty($fattura->numero_esterno)) {
+            $new->numero_esterno = Fattura::getNextNumeroSecondario($new->data, $new->direzione, $new->id_segment);
         }
+
+        $new->stato()->associate($stato);
+        $new->save();
+
+        $id_record = $new->id;
+
+        $righe = $fattura->getRighe();
+        foreach ($righe as $riga) {
+            $new_riga = $riga->replicate();
+            $new_riga->setParent($new);
+
+            // Rimozione riferimenti (deorecati)
+            $new_riga->idpreventivo = 0;
+            $new_riga->idcontratto = 0;
+            $new_riga->idintervento = 0;
+            $new_riga->idddt = 0;
+            $new_riga->idordine = 0;
+
+            $new_riga->qta_evasa = 0;
+            $new_riga->original_type = null;
+            $new_riga->original_id = null;
+            $new_riga->save();
+
+            if ($new_riga->isArticolo()) {
+                $new_riga->movimenta($new_riga->qta);
+            }
+        }
+
+        flash()->info(tr('Fattura duplicata correttamente!'));
 
         break;
 
@@ -357,10 +412,9 @@ switch (post('op')) {
         $articolo->ritenuta_contributi = boolval(post('ritenuta_contributi'));
         $articolo->id_rivalsa_inps = post('id_rivalsa_inps') ?: null;
 
-        $articolo->prezzo_unitario_acquisto = post('prezzo_acquisto') ?: 0;
-        $articolo->prezzo_unitario_vendita = post('prezzo');
-        $articolo->sconto_unitario = post('sconto');
-        $articolo->tipo_sconto = post('tipo_sconto');
+        $articolo->costo_unitario = post('costo_unitario') ?: 0;
+        $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
+        $articolo->setSconto(post('sconto'), post('tipo_sconto'));
 
         try {
             $articolo->qta = $qta;
@@ -437,10 +491,9 @@ switch (post('op')) {
         $riga->ritenuta_contributi = boolval(post('ritenuta_contributi'));
         $riga->id_rivalsa_inps = post('id_rivalsa_inps') ?: null;
 
-        $riga->prezzo_unitario_acquisto = post('prezzo_acquisto') ?: 0;
-        $riga->prezzo_unitario_vendita = post('prezzo');
-        $riga->sconto_unitario = post('sconto');
-        $riga->tipo_sconto = post('tipo_sconto');
+        $riga->costo_unitario = post('costo_unitario') ?: 0;
+        $riga->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
+        $riga->setSconto(post('sconto'), post('tipo_sconto'));
 
         $riga->qta = $qta;
 
@@ -597,7 +650,7 @@ switch (post('op')) {
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
                     if ($movimenta) {
-                        $copia->movimenta($copia->qta);
+                        //$copia->movimenta($copia->qta);
                     }
 
                     $serials = is_array(post('serial')[$riga->id]) ? post('serial')[$riga->id] : [];
@@ -656,7 +709,7 @@ switch (post('op')) {
 
         $righe = $fattura->getRighe();
         foreach ($righe as $riga) {
-            if (post('evadere')[$riga->id] == 'on') {
+            if (post('evadere')[$riga->id] == 'on' and !empty(post('qta_da_evadere')[$riga->id])) {
                 $qta = post('qta_da_evadere')[$riga->id];
 
                 $copia = $riga->copiaIn($nota, -$qta);
@@ -664,7 +717,7 @@ switch (post('op')) {
 
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
-                    $copia->movimenta($copia->qta);
+                    //$copia->movimenta($copia->qta);
 
                     $serials = is_array(post('serial')[$riga->id]) ? post('serial')[$riga->id] : [];
 

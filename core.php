@@ -3,6 +3,8 @@
 // Rimozione header X-Powered-By
 header_remove('X-Powered-By');
 
+ini_set('session.cookie_samesite', 'strict');
+
 // Impostazioni di configurazione PHP
 date_default_timezone_set('Europe/Rome');
 
@@ -230,7 +232,6 @@ if (!API\Response::isAPIRequest()) {
 
         $id_record = filter('id_record');
         $id_parent = filter('id_parent');
-        $id_record = $id_record == $id_parent ? null : $id_record;
 
         Modules::setCurrent(filter('id_module'));
         Plugins::setCurrent(filter('id_plugin'));

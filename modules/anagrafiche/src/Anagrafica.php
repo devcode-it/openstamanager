@@ -40,7 +40,6 @@ class Anagrafica extends Model
      * Crea una nuova anagrafica.
      *
      * @param string $ragione_sociale
-     * @param array  $tipologie
      *
      * @return self
      */
@@ -144,8 +143,6 @@ class Anagrafica extends Model
 
     /**
      * Aggiorna la tipologia dell'anagrafica.
-     *
-     * @param array $tipologie
      */
     public function setTipologieAttribute(array $tipologie)
     {
@@ -207,6 +204,11 @@ class Anagrafica extends Model
 
     // Attributi Eloquent
 
+    public function getModuleAttribute()
+    {
+        return 'Anagrafiche';
+    }
+
     /**
      * Restituisce l'identificativo.
      *
@@ -219,11 +221,15 @@ class Anagrafica extends Model
 
     public function getPartitaIvaAttribute()
     {
-        return $this->piva;
+        return $this->attributes['piva'];
     }
 
     public function setPartitaIvaAttribute($value)
     {
+        if (in_array($value, ['99999999999', '00000000000'])) {
+            $value = null;
+        }
+
         $this->attributes['piva'] = trim(strtoupper($value));
     }
 
@@ -244,13 +250,11 @@ class Anagrafica extends Model
 
     public function setCodiceDestinatarioAttribute($value)
     {
-        if ($this->tipo == 'Privato' || in_array($value, ['999999', '0000000']) || $this->sedeLegale->nazione->iso2 != 'IT') {
-            $codice_destinatario = '';
-        } else {
-            $codice_destinatario = $value;
+        if ($this->sedeLegale->nazione->iso2 != 'IT') {
+            $value = '';
         }
 
-        $this->attributes['codice_destinatario'] = trim(strtoupper($codice_destinatario));
+        $this->attributes['codice_destinatario'] = trim(strtoupper($value));
     }
 
     /**
@@ -278,6 +282,16 @@ class Anagrafica extends Model
     public function fatture()
     {
         return $this->hasMany(Fattura::class, 'idanagrafica');
+    }
+
+    public function fattureVendita()
+    {
+        return $this->fatture()->vendita();
+    }
+
+    public function fattureAcquisto()
+    {
+        return $this->fatture()->acquisto();
     }
 
     public function ordini()

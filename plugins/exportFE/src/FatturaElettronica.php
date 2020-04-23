@@ -596,8 +596,10 @@ class FatturaElettronica
         if (!empty($anagrafica['codice_fiscale'])) {
             $result['CodiceFiscale'] = preg_replace('/\s+/', '', $anagrafica['codice_fiscale']);
 
-            //Rimuovo eventuali idicazioni relative alla nazione
-            $result['CodiceFiscale'] = str_replace($anagrafica->nazione->iso2, '', $result['CodiceFiscale']);
+            //$result['CodiceFiscale'] = str_replace($anagrafica->nazione->iso2, '', $result['CodiceFiscale']);
+
+            //Rimuovo eventuali idicazioni relative all'iso2 della nazione, solo se la stringa inizia con quest'ultima.
+            $result['CodiceFiscale'] = preg_replace('/^'.preg_quote($anagrafica->nazione->iso2, '/').'/', '', $anagrafica['codice_fiscale']);
         }
 
         if (!empty($anagrafica['nome']) or !empty($anagrafica['cognome'])) {
@@ -1165,12 +1167,9 @@ class FatturaElettronica
             $descrizione = str_replace('…', '...', $descrizione);
             $descrizione = str_replace('’', ' ', $descrizione);
 
-            if (setting('Riferimento dei documenti in Fattura Elettronica')) {
-                $ref = doc_references($riga->toArray(), 'entrata', ['iddocumento']);
-
-                if (!empty($ref)) {
-                    $descrizione .= "\n".$ref['description'];
-                }
+            // Aggiunta dei riferimenti ai documenti
+            if (setting('Riferimento dei documenti in Fattura Elettronica') && $riga->hasOriginal()) {
+                $descrizione .= "\n".$riga->getOriginal()->parent->getReference();
             }
 
             $dettaglio['Descrizione'] = $descrizione;
@@ -1189,21 +1188,20 @@ class FatturaElettronica
                 $dettaglio['DataFinePeriodo'] = $dati_aggiuntivi['data_fine_periodo'];
             }
 
-            $dettaglio['PrezzoUnitario'] = $riga->prezzo_unitario_vendita ?: 0;
+            $dettaglio['PrezzoUnitario'] = $riga->prezzo_unitario ?: 0;
 
             // Sconto (2.2.1.10)
-            $sconto = $riga->sconto;
-            $sconto_unitario = $riga->sconto_unitario;
+            $sconto_unitario = (float) $riga->sconto_unitario;
 
-            if (!empty((float) $sconto_unitario)) {
+            if (!empty($sconto_unitario)) {
                 $sconto = [
-                    'Tipo' => $riga->sconto_unitario > 0 ? 'SC' : 'MG',
+                    'Tipo' => $sconto_unitario > 0 ? 'SC' : 'MG',
                 ];
 
                 if ($riga['tipo_sconto'] == 'PRC') {
-                    $sconto['Percentuale'] = $sconto_unitario;
+                    $sconto['Percentuale'] = abs($riga->sconto_percentuale);
                 } else {
-                    $sconto['Importo'] = $sconto_unitario;
+                    $sconto['Importo'] = abs($sconto_unitario);
                 }
 
                 $dettaglio['ScontoMaggiorazione'] = $sconto;

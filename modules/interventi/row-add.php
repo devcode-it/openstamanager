@@ -5,6 +5,7 @@ use Modules\Interventi\Intervento;
 include_once __DIR__.'/../../core.php';
 
 $documento = Intervento::find($id_record);
+$show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
 
 // Impostazioni per la gestione
 $options = [
@@ -13,6 +14,7 @@ $options = [
     'dir' => $documento->direzione,
     'idanagrafica' => $documento['idanagrafica'],
     'totale_imponibile' => $documento->totale_imponibile,
+    'nascondi_prezzi' => !$show_prezzi,
 ];
 
 // Dati di default
@@ -45,7 +47,7 @@ if (get('is_descrizione') !== null) {
     $listino = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_listini ON an_anagrafiche.idlistino_vendite=mg_listini.id WHERE idanagrafica='.prepare($documento['idanagrafica']));
 
     if (!empty($listino['prc_guadagno'])) {
-        $result['sconto_unitario'] = $listino['prc_guadagno'];
+        $result['sconto_percentuale'] = $listino['prc_guadagno'];
         $result['tipo_sconto'] = 'PRC';
     }
 

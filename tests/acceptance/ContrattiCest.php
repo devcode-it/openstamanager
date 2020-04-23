@@ -17,8 +17,6 @@ class ContrattiCest
 
     /**
      * Crea un nuovo contratto.
-     *
-     * @param AcceptanceTester $t
      */
     public function testContratto(AcceptanceTester $t)
     {
@@ -36,8 +34,6 @@ class ContrattiCest
 
     /**
      * Crea un nuovo contratto.
-     *
-     * @param AcceptanceTester $t
      */
     protected function addContratto(AcceptanceTester $t, $name, $anagrafica)
     {
@@ -61,8 +57,6 @@ class ContrattiCest
 
     /**
      * Crea una nuova anagrafica di tipo cliente e la elimina.
-     *
-     * @param AcceptanceTester $t
      */
     protected function addAndDeleteContratto(AcceptanceTester $t, $name, $anagrafica = 2)
     {

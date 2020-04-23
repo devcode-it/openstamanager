@@ -63,7 +63,14 @@ switch (post('op')) {
     case 'del':
         $idconto = post('idconto');
 
-        if ($idconto != '') {
+        //Controllo che non esistano movimenti associati al conto
+        $movimenti = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE idconto = '.prepare($idconto));
+
+        if ($idconto != '' and empty($movimenti)) {
+            //Se elimino il conto lo scollego anche da eventuali anagrafiche (cliente e fornitore)
+            $dbo->query('UPDATE an_anagrafiche SET idconto_cliente = NULL WHERE idconto_cliente = '.prepare($idconto));
+            $dbo->query('UPDATE an_anagrafiche SET idconto_fornitore = NULL WHERE idconto_fornitore = '.prepare($idconto));
+
             $query = 'DELETE FROM co_pianodeiconti3 WHERE id='.prepare($idconto);
 
             if ($dbo->query($query)) {

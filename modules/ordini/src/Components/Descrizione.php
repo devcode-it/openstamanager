@@ -14,8 +14,6 @@ class Descrizione extends Description
     /**
      * Crea una nuova riga collegata ad una ordine.
      *
-     * @param Ordine $ordine
-     *
      * @return self
      */
     public static function build(Ordine $ordine)

@@ -9,7 +9,7 @@ if ($user['gruppo'] == 'Tecnici') {
 }
 
 // Stato dell'intervento
-$rss = $dbo->fetchArray('SELECT completato AS flag_completato FROM in_statiintervento WHERE idstatointervento = (SELECT idstatointervento FROM in_interventi WHERE id='.prepare($id_record).')');
+$rss = $dbo->fetchArray('SELECT is_completato AS flag_completato FROM in_statiintervento WHERE idstatointervento = (SELECT idstatointervento FROM in_interventi WHERE id='.prepare($id_record).')');
 $is_completato = $rss[0]['flag_completato'];
 
 // Sessioni dell'intervento

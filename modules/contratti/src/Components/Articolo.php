@@ -17,9 +17,6 @@ class Articolo extends Article
     /**
      * Crea un nuovo articolo collegato ad un contratto.
      *
-     * @param Contratto $contratto
-     * @param Original  $articolo
-     *
      * @return self
      */
     public static function build(Contratto $contratto, Original $articolo)
@@ -27,15 +24,5 @@ class Articolo extends Article
         $model = parent::build($contratto, $articolo);
 
         return $model;
-    }
-
-    public function movimentaMagazzino($qta)
-    {
-        return;
-    }
-
-    public function getDirection()
-    {
-        return $this->contratto->tipo->dir;
     }
 }

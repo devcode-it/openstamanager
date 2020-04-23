@@ -10,8 +10,8 @@ switch (post('op')) {
         $module = filter('module');
 
         $list = [
-            ['Codice', 'Ragione sociale', 'Partita IVA', 'Codice destinatario', 'Nazione', 'Indirizzo', 'CAP', 'Città', 'Provincia', 'Telefono', 'Fax', 'Cellulare', 'Email', 'PEC', 'IBAN', 'Note', 'Tipologia'],
-            ['00001', 'Mia anagrafica', '12345678910', '1234567', 'ITALIA', 'Via Giuseppe Mazzini, 123', '12345', 'Este', 'PD', '+39 0429 60 25 12', '+39 0429 456 781', '+39 321 12 34 567', 'email@anagrafica.it', 'pec@anagrafica.it', 'IT60 X054 2811 1010 0000 0123 456', 'Note dell\'anagrafica di esempio', 'Cliente,Fornitore'],
+            ['Codice', 'Ragione sociale', 'Tipologia', 'Partita IVA', 'Codice destinatario', 'Nazione', 'Indirizzo', 'CAP', 'Città', 'Provincia', 'Telefono', 'Fax', 'Cellulare', 'Email', 'PEC', 'IBAN', 'Note', 'Tipo'],
+            ['00001', 'Mia anagrafica', 'Azienda', '12345678910', '1234567', 'ITALIA', 'Via Giuseppe Mazzini, 123', '12345', 'Este', 'PD', '+39 0429 60 25 12', '+39 0429 456 781', '+39 321 12 34 567', 'email@anagrafica.it', 'pec@anagrafica.it', 'IT60 X054 2811 1010 0000 0123 456', 'Note dell\'anagrafica di esempio', 'Cliente,Fornitore'],
         ];
 
         directory('../../files/'.$module);
@@ -54,8 +54,8 @@ switch (post('op')) {
 
         foreach ($data as $key => $dati_anagrafica) {
             if (!empty($dati_anagrafica)) {
-                $id_tipo_anagrafica = (array) $dati_anagrafica['tipologia'];
-                unset($dati_anagrafica['tipologia']);
+                $id_tipo_anagrafica = (array) $dati_anagrafica['idtipoanagrafica'];
+                unset($dati_anagrafica['idtipoanagrafica']);
 
                 // Separazione dei campi relativi alla sede legale
                 $dati_sede = [];
@@ -105,6 +105,7 @@ return [
         'names' => [
             'Codice interno',
             'Numero',
+            'Codice',
         ],
     ],
     [
@@ -113,6 +114,7 @@ return [
         'names' => [
             'Nome',
             'Denominazione',
+            'Ragione sociale',
         ],
     ],
     [
@@ -136,6 +138,7 @@ return [
         'names' => [
             'Citt_',
             'Citt&agrave;',
+            'Città',
         ],
     ],
     [
@@ -169,6 +172,7 @@ return [
             'E-mail',
             'Indirizzo email',
             'Mail',
+            'Email',
         ],
     ],
     [
@@ -178,6 +182,7 @@ return [
             'E-mail PEC',
             'Email certificata',
             'Indirizzo email certificata',
+            'PEC',
         ],
     ],
     [
@@ -214,6 +219,7 @@ return [
         'label' => 'Note',
         'names' => [
             'Note Extra',
+            'Note',
         ],
     ],
     [
@@ -226,7 +232,7 @@ return [
             'idnazione',
             'nazione',
         ],
-        'query' => 'SELECT id as result FROM an_nazioni WHERE LOWER(nome) = LOWER(|value|)',
+        'query' => 'SELECT id as result FROM an_nazioni WHERE LOWER(nome) = LOWER(|value|) OR LOWER(iso2) = LOWER(|value|)',
     ],
     [
         'field' => 'idagente',
@@ -244,13 +250,17 @@ return [
         ],
     ],
     [
-        'field' => 'tipologia',
-        'label' => 'Tipologia',
+        'field' => 'idtipoanagrafica',
+        'label' => 'Tipo',
         'names' => [
-            'Tipologia',
-            'tipologia',
+            'Tipo',
+            'tipo',
             'idtipo',
         ],
         'query' => 'SELECT idtipoanagrafica as result FROM an_tipianagrafiche WHERE descrizione = |value|',
+    ],
+    [
+        'field' => 'tipo',
+        'label' => 'Tipologia',
     ],
 ];

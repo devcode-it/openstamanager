@@ -69,7 +69,7 @@ switch (post('op')) {
         // Copia del preventivo
         $new = $preventivo->replicate();
         $new->numero = Preventivo::getNextNumero($new->data_bozza);
-        $new->idstato = 1;
+        $new->stato = 'Bozza';
         $new->save();
 
         $new->master_revision = $new->id;
@@ -151,12 +151,9 @@ switch (post('op')) {
         $articolo->descrizione = post('descrizione');
         $articolo->um = post('um') ?: null;
 
-        $articolo->id_iva = post('idiva');
-
-        $articolo->prezzo_unitario_acquisto = post('prezzo_acquisto') ?: 0;
-        $articolo->prezzo_unitario_vendita = post('prezzo');
-        $articolo->sconto_unitario = post('sconto');
-        $articolo->tipo_sconto = post('tipo_sconto');
+        $articolo->costo_unitario = post('costo_unitario') ?: 0;
+        $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
+        $articolo->setSconto(post('sconto'), post('tipo_sconto'));
 
         try {
             $articolo->qta = $qta;
@@ -209,12 +206,9 @@ switch (post('op')) {
         $riga->descrizione = post('descrizione');
         $riga->um = post('um') ?: null;
 
-        $riga->id_iva = post('idiva');
-
-        $riga->prezzo_unitario_acquisto = post('prezzo_acquisto') ?: 0;
-        $riga->prezzo_unitario_vendita = post('prezzo');
-        $riga->sconto_unitario = post('sconto');
-        $riga->tipo_sconto = post('tipo_sconto');
+        $riga->costo_unitario = post('costo_unitario') ?: 0;
+        $riga->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
+        $riga->setSconto(post('sconto'), post('tipo_sconto'));
 
         $riga->qta = $qta;
 
@@ -268,9 +262,11 @@ switch (post('op')) {
 
         // Copia del preventivo
         $new = $preventivo->replicate();
+        $new->stato = 'Bozza';
         $new->save();
 
         $new->default_revision = 1;
+        $new->numero_revision = $new->ultima_revisione + 1;
         $new->save();
 
         $id_record = $new->id;

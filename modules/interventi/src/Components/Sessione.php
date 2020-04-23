@@ -26,10 +26,8 @@ class Sessione extends Model
     /**
      * Crea un nuova sessione collegata ad un intervento.
      *
-     * @param Intervento $intervento
-     * @param Anagrafica $anagrafica
-     * @param string     $inizio
-     * @param string     $fine
+     * @param string $inizio
+     * @param string $fine
      *
      * @return self
      */
@@ -118,8 +116,6 @@ class Sessione extends Model
 
     /**
      * Salva la sessione, impostando i campi dipendenti dai singoli parametri.
-     *
-     * @param array $options
      *
      * @return bool
      */
@@ -348,7 +344,7 @@ class Sessione extends Model
     }
 
     /**
-     * Restituisce la spesa (prezzo_unitario_acquisto * qta) relativa all'elemento.
+     * Restituisce la spesa (costo_unitario * qta) relativa all'elemento.
      *
      * @return float
      */

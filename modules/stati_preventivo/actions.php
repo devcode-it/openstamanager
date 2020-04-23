@@ -10,6 +10,7 @@ switch (post('op')) {
             'is_completato' => post('is_completato') ?: null,
             'is_fatturabile' => post('is_fatturabile') ?: null,
             'is_pianificabile' => post('is_pianificabile') ?: null,
+            'is_revisionabile' => post('is_revisionabile') ?: null,
         ], ['id' => $id_record]);
 
         flash()->info(tr('Informazioni salvate correttamente.'));

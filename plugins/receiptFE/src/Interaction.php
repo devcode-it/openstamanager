@@ -3,6 +3,7 @@
 namespace Plugins\ReceiptFE;
 
 use API\Services;
+use Models\Cache;
 
 /**
  * Classe per l'interazione con API esterne.
@@ -16,13 +17,12 @@ class Interaction extends Services
         $list = self::getRemoteList();
 
         // Ricerca fisica
-        $names = array_column($list, 'name');
-        $files = self::getFileList($names);
+        $files = self::getFileList($list);
 
         $list = array_merge($list, $files);
 
         // Aggiornamento cache hook
-        ReceiptHook::update($list);
+        Cache::get('Ricevute Elettroniche')->set($list);
 
         return $list;
     }
@@ -50,9 +50,9 @@ class Interaction extends Services
         return $list ?: [];
     }
 
-    public static function getFileList($names = [])
+    public static function getFileList($list = [])
     {
-        $list = [];
+        $names = array_column($list, 'name');
 
         // Ricerca fisica
         $directory = Ricevuta::getImportDirectory();
@@ -60,13 +60,16 @@ class Interaction extends Services
         $files = glob($directory.'/*.xml*');
         foreach ($files as $id => $file) {
             $name = basename($file);
+            $pos = array_search($name, $names);
 
-            if (!in_array($name, $names)) {
+            if ($pos === false) {
                 $list[] = [
                     'id' => $id,
                     'name' => $name,
                     'file' => true,
                 ];
+            } else {
+                $list[$pos]['id'] = $id;
             }
         }
 
@@ -84,7 +87,9 @@ class Interaction extends Services
             ]);
             $body = static::responseBody($response);
 
-            Ricevuta::store($name, $body['content']);
+            if (!empty($body['content'])) {
+                Ricevuta::store($name, $body['content']);
+            }
         }
 
         return $name;

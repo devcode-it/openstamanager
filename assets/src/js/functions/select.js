@@ -125,7 +125,14 @@ jQuery.fn.selectReset = function (placeholder) {
  * Da utilizzare per l'impostazione dei select basati su richieste AJAX.
  */
 jQuery.fn.selectSetNew = function (value, label, data) {
-    this.selectReset();
+    // Fix selezione per valori multipli
+    var values = this.val();
+    if (this.prop("multiple")) {
+        values.push(value);
+    } else {
+        this.selectReset();
+        values = value;
+    }
 
     this.selectAdd([{
         'value': value,
@@ -133,7 +140,7 @@ jQuery.fn.selectSetNew = function (value, label, data) {
         'data': data,
     }]);
 
-    this.selectSet(value);
+    this.selectSet(values);
 
     return this;
 };

@@ -15,34 +15,28 @@ if ($record['can_delete']) {
 	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
 
 	<div class="row">
-
-
-		<div class="col-md-6">
+		<div class="col-md-5">
 			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$", "extra": "<?php echo $attr; ?>" ]}
 		</div>
 
-        <div class="col-md-2">
-            {[ "type": "checkbox", "label": "<?php echo tr('Stato completato?'); ?>", "name": "is_completato", "value": "$is_completato$", "help": "<?php echo tr('I contratti che si trovano in questo stato verranno considerati come completati'); ?>", "placeholder": "<?php echo tr('Completato'); ?>", "extra": "" ]}
-		</div>
-
-		 <div class="col-md-2">
-            {[ "type": "checkbox", "label": "<?php echo tr('Stato pianificabile?'); ?>", "name": "is_pianificabile", "value": "$is_pianificabile$", "help": "<?php echo tr('I contratti che si trovano in questo stato verranno considerati come pianificabili'); ?>", "placeholder": "<?php echo tr('Pianificabile'); ?>", "extra": "" ]}
-		</div>
-
-		 <div class="col-md-2">
-            {[ "type": "checkbox", "label": "<?php echo tr('Stato fatturabile?'); ?>", "name": "is_fatturabile", "value": "$is_fatturabile$", "help": "<?php echo tr('I contratti che si trovano in questo stato verranno considerati come fatturabili'); ?>", "placeholder": "<?php echo tr('Fatturabile'); ?>", "extra": "" ]}
-		</div>
-
-	</div>
-
-	<div class="row">
-
-		<div class="col-md-6">
+		<div class="col-md-4">
 			{[ "type": "text", "label": "<?php echo tr('Icona'); ?>", "name": "icona", "required": 1, "class": "text-center", "value": "$icona$", "extra": "", "icon-after": "<?php echo (!empty($record['icona'])) ? '<i class=\"'.$record['icona'].'\"></i>' : ''; ?>"  ]}
 		</div>
 
-	</div>
+		<div class="col-md-3">
+		 	<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h3 class="panel-title"><?php echo tr('Flags'); ?></h3>
+				</div>
 
+				<div class="panel-body">
+		            {[ "type": "checkbox", "label": "<?php echo tr('Completato?'); ?>", "name": "is_completato", "value": "$is_completato$", "help": "<?php echo tr('I contratti che si trovano in questo stato verranno considerati come completati'); ?>", "placeholder": "<?php echo tr('Completato'); ?>", "extra": "" ]}
+		            {[ "type": "checkbox", "label": "<?php echo tr('Pianificabile?'); ?>", "name": "is_pianificabile", "value": "$is_pianificabile$", "help": "<?php echo tr('I contratti che si trovano in questo stato verranno considerati come pianificabili'); ?>", "placeholder": "<?php echo tr('Pianificabile'); ?>", "extra": "" ]}
+		            {[ "type": "checkbox", "label": "<?php echo tr('Fatturabile?'); ?>", "name": "is_fatturabile", "value": "$is_fatturabile$", "help": "<?php echo tr('I contratti che si trovano in questo stato verranno considerati come fatturabili'); ?>", "placeholder": "<?php echo tr('Fatturabile'); ?>", "extra": "" ]}
+				</div>
+			</div>
+		</div>
+	</div>
 </form>
 
 

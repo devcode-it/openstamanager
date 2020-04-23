@@ -13,22 +13,25 @@ switch (filter('op')) {
                 $value = implode(',', $value);
             }
 
-            $is_valid = Settings::setValue($id, $value);
+            //Se è un'impostazione editabile
+            if ($result->editable) {
+                $is_valid = Settings::setValue($id, $value);
 
-            if (!$is_valid) {
-                // integer
-                if ($result['tipo'] == 'integer') {
-                    flash()->error(tr('Il valore inserito del parametro _NAME_ deve essere un numero intero!', [
-                        '_NAME_' => '"'.$result['nome'].'"',
-                    ]));
-                }
+                if (!$is_valid) {
+                    // integer
+                    if ($result['tipo'] == 'integer') {
+                        flash()->error(tr('Il valore inserito del parametro _NAME_ deve essere un numero intero!', [
+                            '_NAME_' => '"'.$result['nome'].'"',
+                        ]));
+                    }
 
-                // list
-                // verifico che il valore scelto sia nella lista enumerata nel db
-                elseif (preg_match("/list\[(.+?)\]/", $result['tipo'], $m)) {
-                    flash()->error(tr('Il valore inserito del parametro _NAME_ deve essere un compreso tra i valori previsti!', [
-                        '_NAME_' => '"'.$result['nome'].'"',
-                    ]));
+                    // list
+                    // verifico che il valore scelto sia nella lista enumerata nel db
+                    elseif (preg_match("/list\[(.+?)\]/", $result['tipo'], $m)) {
+                        flash()->error(tr('Il valore inserito del parametro _NAME_ deve essere un compreso tra i valori previsti!', [
+                            '_NAME_' => '"'.$result['nome'].'"',
+                        ]));
+                    }
                 }
             }
 

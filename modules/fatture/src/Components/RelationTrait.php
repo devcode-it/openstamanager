@@ -2,6 +2,7 @@
 
 namespace Modules\Fatture\Components;
 
+use Illuminate\Database\Eloquent\Builder;
 use Modules\Fatture\Fattura;
 use Modules\Ritenute\RitenutaAcconto;
 use Modules\Rivalse\RivalsaINPS;
@@ -129,7 +130,7 @@ trait RelationTrait
 
     public function getIdContoAttribute()
     {
-        return $this->idconto;
+        return $this->attributes['idconto'];
     }
 
     public function setIdContoAttribute($value)
@@ -149,8 +150,6 @@ trait RelationTrait
 
     /**
      * Salva la riga, impostando i campi dipendenti dai parametri singoli.
-     *
-     * @param array $options
      *
      * @return bool
      */
@@ -189,30 +188,18 @@ trait RelationTrait
         $this->attributes['ritenutaacconto'] = $this->ritenuta_acconto;
     }
 
-    protected function evasione($diff)
+    protected static function boot($bypass = false)
     {
-        parent::evasione($diff);
+        parent::boot($bypass);
 
-        $database = database();
+        // Precaricamento Rivalsa INPS
+        static::addGlobalScope('rivalsa', function (Builder $builder) {
+            $builder->with('rivalsa');
+        });
 
-        // Se c'è un collegamento ad un ddt, aggiorno la quantità evasa
-        if (!empty($this->idddt)) {
-            $database->query('UPDATE dt_righe_ddt SET qta_evasa = qta_evasa + '.$diff.' WHERE descrizione = '.prepare($this->descrizione).' AND idarticolo = '.prepare($this->idarticolo).' AND idddt = '.prepare($this->idddt).' AND idiva = '.prepare($this->idiva).' AND qta_evasa < qta LIMIT 1');
-        }
-
-        // Se c'è un collegamento ad un ordine, aggiorno la quantità evasa
-        elseif (!empty($this->idordine)) {
-            $database->query('UPDATE or_righe_ordini SET qta_evasa = qta_evasa + '.$diff.' WHERE descrizione = '.prepare($this->descrizione).' AND idarticolo = '.prepare($this->idarticolo).' AND idordine = '.prepare($this->idordine).' AND idiva = '.prepare($this->idiva).' AND qta_evasa < qta LIMIT 1');
-        }
-
-        // Se c'è un collegamento ad un preventivo, aggiorno la quantità evasa
-        elseif (!empty($this->idpreventivo)) {
-            $database->query('UPDATE co_righe_preventivi SET qta_evasa = qta_evasa + '.$diff.' WHERE descrizione = '.prepare($this->descrizione).' AND idarticolo = '.prepare($this->idarticolo).' AND idpreventivo = '.prepare($this->idpreventivo).' AND idiva = '.prepare($this->idiva).' AND qta_evasa < qta LIMIT 1');
-        }
-
-        // Se c'è un collegamento ad un contratto, aggiorno la quantità evasa
-        elseif (!empty($this->idcontratto)) {
-            $database->query('UPDATE co_righe_contratti SET qta_evasa = qta_evasa + '.$diff.' WHERE descrizione = '.prepare($this->descrizione).' AND idarticolo = '.prepare($this->idarticolo).' AND idcontratto = '.prepare($this->idcontratto).' AND idiva = '.prepare($this->idiva).' AND qta_evasa < qta LIMIT 1');
-        }
+        // Precaricamento Ritenuta d'Acconto
+        static::addGlobalScope('ritenuta', function (Builder $builder) {
+            $builder->with('ritenuta');
+        });
     }
 }

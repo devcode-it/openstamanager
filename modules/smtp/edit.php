@@ -68,7 +68,7 @@ include_once __DIR__.'/../../core.php';
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "number", "label": "<?php echo tr('Timeout coda di invio (millisecondi)'); ?>", "name": "timeout", "value": "$timeout$", "decimals": 0 ]}
+                    {[ "type": "number", "label": "<?php echo tr('Timeout coda di invio (millisecondi)'); ?>", "name": "timeout", "value": "$timeout$", "decimals": 1, "min-value": 100 ]}
                 </div>
             </div>
 

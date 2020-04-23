@@ -15,10 +15,10 @@ $netto_a_pagare = abs($documento->netto);
 $show_sconto = $sconto > 0;
 
 $volume = $righe->sum(function ($item) {
-    return $item->isArticolo() ? $item->articolo->volume : 0;
+    return $item->isArticolo() ? $item->articolo->volume * $item->qta : 0;
 });
 $peso_lordo = $righe->sum(function ($item) {
-    return $item->isArticolo() ? $item->articolo->peso_lordo : 0;
+    return $item->isArticolo() ? $item->articolo->peso_lordo * $item->qta : 0;
 });
 
 $width = round(100 / ($show_sconto ? 5 : 3), 2);
@@ -387,13 +387,9 @@ if ($fattura_accompagnatoria) {
 }
 
 echo '
-<table style="font-size:7pt; color:#999;">
-    <tr>
-        <td style="text-align:center;">
-            $dicitura_fissa_fattura$
-        </td>
-    </tr>
-</table>';
+<div style="font-size: 7pt; color: #999; text-align: center">
+    <p>$dicitura_fissa_fattura$</p>
+</div>';
 
 if (empty($options['last-page-footer'])) {
     echo '$default_footer$';

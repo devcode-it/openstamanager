@@ -8,6 +8,19 @@ unset($_SESSION['superselect']['idsede_destinazione']);
 unset($_SESSION['superselect']['idanagrafica']);
 $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 
+// Mostro un avviso se ci sono più revisioni del preventivo
+if (count($preventivo->revisioni) > 1) {
+    echo '
+    <div class="alert alert-info">
+        <i class="fa fa-info-circle"></i> 
+        '.tr('Questo preventivo presenta _N_ revisioni',
+        [
+            '_N_' => count($preventivo->revisioni),
+        ]).'
+    </div>
+    ';
+}
+
 ?><form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
@@ -22,7 +35,7 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo tr('Numero'); ?>", "name": "numero", "required": 1, "class": "text-center", "value": "$numero$" ]}
+					{[ "type": "text", "label": "<?php echo tr('Numero'); ?>", "name": "numero", "required": 1, "class": "text-center", "value": "$numero$", "icon-after": "<?php echo (count($preventivo->revisioni) > 1) ? tr('rev.').' '.$preventivo->numero_revision : ''; ?>" ]}
 				</div>
 
                 <div class="col-md-3">

@@ -35,31 +35,43 @@ if ($dir == 'entrata' && !empty($fattura->dichiarazione) && $fattura->stato->des
 
     if ($diff > 0) {
         echo '
-    <div class="alert alert-info">
-        <i class="fa fa-warning"></i> '.tr("La fattura è collegata a una dichiarazione d'intento con diponibilità di _MONEY_: per collegare una riga alla dichiarazione è sufficiente inserire come IVA _IVA_", [
-                '_MONEY_' => moneyFormat(abs($diff)),
-                '_IVA_' => '"'.$iva->descrizione.'"',
-            ]).'</b>
-    </div>';
+<div class="alert alert-info">
+    <i class="fa fa-warning"></i> '.tr("La fattura è collegata a una dichiarazione d'intento con diponibilità di _MONEY_: per collegare una riga alla dichiarazione è sufficiente inserire come IVA _IVA_", [
+            '_MONEY_' => moneyFormat(abs($diff)),
+            '_IVA_' => '"'.$iva->descrizione.'"',
+        ]).'.</b>
+</div>';
     } elseif ($diff == 0) {
         echo '
-    <div class="alert alert-warning">
-        <i class="fa fa-warning"></i> '.tr("La dichiarazione d'intento ha raggiunto il massimale previsto di _MONEY_: le nuove righe della fattura devono presentare IVA diversa da _IVA_", [
-                '_MONEY_' => moneyFormat(abs($fattura->dichiarazione->massimale)),
-                '_IVA_' => '"'.$iva->descrizione.'"',
-            ]).'</b>
-    </div>';
+<div class="alert alert-warning">
+    <i class="fa fa-warning"></i> '.tr("La dichiarazione d'intento ha raggiunto il massimale previsto di _MONEY_: le nuove righe della fattura devono presentare IVA diversa da _IVA_", [
+            '_MONEY_' => moneyFormat(abs($fattura->dichiarazione->massimale)),
+            '_IVA_' => '"'.$iva->descrizione.'"',
+        ]).'.</b>
+</div>';
     } else {
         echo '
-    <div class="alert alert-danger">
-        <i class="fa fa-warning"></i> '.tr("La dichiarazione d'intento ha superato il massimale previsto di _MONEY_: per rimuovere righe della fattura dalla dichiarazione è sufficiente modificare l'IVA in qualcosa di diverso da _IVA_", [
-            '_MONEY_' => moneyFormat(abs($diff)),
-                '_IVA_' => '"'.$iva->descrizione.'"',
-        ]).'</b>
-    </div>';
+<div class="alert alert-danger">
+    <i class="fa fa-warning"></i> '.tr("La dichiarazione d'intento ha superato il massimale previsto di _MONEY_: per rimuovere righe della fattura dalla dichiarazione è sufficiente modificare l'IVA in qualcosa di diverso da _IVA_", [
+        '_MONEY_' => moneyFormat(abs($diff)),
+            '_IVA_' => '"'.$iva->descrizione.'"',
+    ]).'.</b>
+</div>';
     }
 }
 
+if ($dir == 'entrata') {
+    $numero_previsto = verifica_numero($fattura);
+    if (!empty($numero_previsto)) {
+        echo '
+<div class="alert alert-warning">
+    <i class="fa fa-warning"></i> '.tr("E' assente una fattura di vendita di numero _NUM_ in data precedente o corrispondente a _DATE_: si potrebbero verificare dei problemi con la numerazione corrente delle fatture", [
+            '_DATE_' => dateFormat($fattura->data),
+            '_NUM_' => '"'.$numero_previsto.'"',
+        ]).'.</b>
+</div>';
+    }
+}
 ?>
 <form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
@@ -118,16 +130,18 @@ if ($dir == 'entrata' && !empty($fattura->dichiarazione) && $fattura->stato->des
                     {[ "type": "text", "label": "'.tr('Numero fattura/protocollo').'", "required": 1, "name": "numero","class": "text-center alphanumeric-mask", "value": "$numero$" ]}
                 </div>';
                     $label = tr('Numero fattura del fornitore');
+                    $size = 2;
                 } else {
                     $label = tr('Numero fattura');
+                    $size = 4;
                 }
                 ?>
 
 				<!-- id_segment -->
 				{[ "type": "hidden", "label": "Segmento", "name": "id_segment", "class": "text-center", "value": "$id_segment$" ]}
 
-				<div class="col-md-2">
-					{[ "type": "text", "label": "<?php echo $label; ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$", "help": "<?php echo (!empty($record['numero_esterno']) and $dir == 'entrata') ? '' : tr('Il numero della fattura sarà generato automaticamente in fase di emissione.'); ?>" ]}
+				<div class="col-md-<?php echo $size; ?>">
+					{[ "type": "text", "label": "<?php echo $label; ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$", "help": "<?php echo (empty($record['numero_esterno']) and $dir == 'entrata') ? tr('Il numero della fattura sarà generato automaticamente in fase di emissione.') : ''; ?>" ]}
 				</div>
 
 				<div class="col-md-2">
@@ -150,13 +164,11 @@ if (empty($record['is_fiscale'])) {
 }
     ?>
 
-				<div class="col-md-2">
-                    <div <?php echo ($dir == 'entrata') ? 'hidden' : ''; ?>>
-					    {[ "type": "date", "label": "<?php echo tr('Data registrazione'); ?>", <?php echo $readonly; ?> "name": "data_registrazione", "required": 0, "value": "$data_registrazione$", "help": "<?php echo tr('Data in cui si è effettuata la registrazione della fattura in contabilità'); ?>" ]}
-                    </div>
+				<div class="col-md-2" <?php echo ($dir == 'entrata') ? 'hidden' : ''; ?>>
+                    {[ "type": "date", "label": "<?php echo tr('Data registrazione'); ?>", <?php echo $readonly; ?> "name": "data_registrazione", "required": 0, "value": "$data_registrazione$", "help": "<?php echo tr('Data in cui si è effettuata la registrazione della fattura in contabilità'); ?>" ]}
 				</div>
 
-                <div class="col-md-2">
+                <div class="col-md-2" <?php echo ($is_fiscale) ? '' : 'hidden'; ?>>
                     {[ "type": "date", "label": "<?php echo tr('Data competenza'); ?>", "name": "data_competenza", "required": 1, "value": "$data_competenza$", "min-date": "$data_registrazione$", "help": "<?php echo tr('Data nella quale considerare il movimento contabile, che può essere posticipato rispetto la data della fattura'); ?>" ]}
                 </div>
 
@@ -166,7 +178,7 @@ if (empty($record['is_fiscale'])) {
                     if ($dir == 'entrata') {
                         ?>
 
-                <div class="col-md-2">
+                <div class="col-md-2" <?php echo ($is_fiscale) ? '' : 'hidden'; ?> >
                     {[ "type": "select", "label": "<?php echo tr('Stato FE'); ?>", "name": "codice_stato_fe", "required": 0, "values": "query=SELECT codice as id, CONCAT_WS(' - ',codice,descrizione) as text FROM fe_stati_documento", "value": "$codice_stato_fe$", "disabled": <?php echo intval(API\Services::isEnabled() || $record['stato'] == 'Bozza'); ?>, "class": "unblockable", "help": "<?php echo (!empty($record['data_stato_fe'])) ? Translator::timestampToLocale($record['data_stato_fe']) : ''; ?>" ]}
                 </div>
 
@@ -174,7 +186,7 @@ if (empty($record['is_fiscale'])) {
                     }
                     ?>
 
-                <div class="col-md-2">
+                <div class="col-md-<?php echo ($is_fiscale) ? 2 : 6; ?>">
                     <!-- TODO: Rimuovere possibilità di selezionare lo stato pagato obbligando l'utente ad aggiungere il movimento in prima nota -->
                     {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatodocumento", "required": 1, "values": "query=<?php echo $query; ?>", "value": "$idstatodocumento$", "class": "unblockable", "extra": " onchange = \"if ($('#idstatodocumento option:selected').text()=='Pagato' || $('#idstatodocumento option:selected').text()=='Parzialmente pagato' ){if( confirm('<?php echo tr('Sicuro di voler impostare manualmente la fattura come pagata senza aggiungere il movimento in prima nota?'); ?>') ){ return true; }else{ $('#idstatodocumento').selectSet(<?php echo $record['idstatodocumento']; ?>); }}\" " ]}
                 </div>
@@ -196,14 +208,14 @@ if (empty($record['is_fiscale'])) {
 					<?php
                     } ?>
                 </div>
-                
-                
+
+
 				<?php if ($dir == 'entrata') { ?>
 				<div class="col-md-6">
 					{[ "type": "select", "label": "<?php echo tr('Agente di riferimento'); ?>", "name": "idagente", "ajax-source": "agenti", "value": "$idagente_fattura$" ]}
 				</div>
 				<?php } ?>
-                
+
 
                 <?php
                 // Conteggio numero articoli fatture
@@ -211,7 +223,7 @@ if (empty($record['is_fiscale'])) {
                 if ($dir == 'uscita') {
                     ?>
                     <div class="col-md-6">
-                        
+
                         <?php
                         echo Plugins::link('Sedi', $record['idsede_partenza'], null, null, 'class="pull-right"'); ?>
 
@@ -229,7 +241,7 @@ if (empty($record['is_fiscale'])) {
                 } else {
                     ?>
                     <div class="col-md-6">
-                        
+
                         <?php
                         echo Plugins::link('Sedi', $record['idsede_partenza'], null, null, 'class="pull-right"'); ?>
 
@@ -237,7 +249,7 @@ if (empty($record['is_fiscale'])) {
                     </div>
 
                     <div class="col-md-6">
-                        
+
                         <?php
                         echo Plugins::link('Sedi', $record['idsede_destinazione'], null, null, 'class="pull-right"'); ?>
 
@@ -254,7 +266,7 @@ if (empty($record['is_fiscale'])) {
 				<div class="col-md-3">
 					<!-- Nella realtà la fattura accompagnatoria non può esistere per la fatturazione elettronica, in quanto la risposta dal SDI potrebbe non essere immediata e le merci in viaggio. Dunque si può emettere una documento di viaggio valido per le merci ed eventualmente una fattura pro-forma per l'incasso della stessa, emettendo infine la fattura elettronica differita. -->
 
-					{[ "type": "select", "label": "<?php echo tr('Tipo fattura'); ?>", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, descrizione FROM co_tipidocumento WHERE dir='<?php echo $dir; ?>' AND (reversed = 0 OR id = <?php echo $record['idtipodocumento']; ?>)", "value": "$idtipodocumento$", "readonly": <?php echo intval($record['stato'] != 'Bozza' && $record['stato'] != 'Annullata'); ?>, "help": "<?php echo ($database->fetchOne('SELECT tipo FROM an_anagrafiche WHERE idanagrafica = '.prepare($record['idanagrafica']))['tipo'] == 'Ente pubblico') ? 'FPA12 - fattura verso PA (Ente pubblico)' : 'FPR12 - fattura verso soggetti privati (Azienda o Privato)'; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Tipo fattura'); ?>", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, CONCAT_WS(\" - \",codice_tipo_documento_fe, descrizione) AS descrizione FROM co_tipidocumento WHERE dir='<?php echo $dir; ?>' AND (reversed = 0 OR id = <?php echo $record['idtipodocumento']; ?>)", "value": "$idtipodocumento$", "readonly": <?php echo intval($record['stato'] != 'Bozza' && $record['stato'] != 'Annullata'); ?>, "help": "<?php echo ($database->fetchOne('SELECT tipo FROM an_anagrafiche WHERE idanagrafica = '.prepare($record['idanagrafica']))['tipo'] == 'Ente pubblico') ? 'FPA12 - fattura verso PA (Ente pubblico)' : 'FPR12 - fattura verso soggetti privati (Azienda o Privato)'; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -384,11 +396,11 @@ echo '
                             '_MONEY_' => moneyFormat(setting("Soglia minima per l'applicazione della marca da bollo")),
                         ]).'.", "placeholder": "'.tr('Bollo automatico').'" ]}
                 </div>
-                
+
                 <div class="col-md-4">
                     {[ "type": "number", "label": "'.tr('Importo marca da bollo').'", "name": "bollo", "value": "$bollo$", "disabled": '.intval(!isset($record['bollo'])).' ]}
                 </div>
-  
+
                 <script type="text/javascript">
                     $(document).ready(function() {
                         $("#bollo_automatico").click(function(){
@@ -544,13 +556,13 @@ if (!$block_edit) {
     if (empty($record['ref_documento'])) {
         if ($dir == 'entrata') {
             // Lettura interventi non rifiutati, non fatturati e non collegati a preventivi o contratti
-            $int_query = 'SELECT COUNT(*) AS tot FROM in_interventi INNER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento WHERE idanagrafica='.prepare($record['idanagrafica']).' AND in_statiintervento.completato=1 AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND in_interventi.id_preventivo IS NULL AND in_interventi.id NOT IN (SELECT idintervento FROM co_promemoria WHERE idintervento IS NOT NULL)';
+            $int_query = 'SELECT COUNT(*) AS tot FROM in_interventi INNER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento WHERE idanagrafica='.prepare($record['idanagrafica']).' AND in_statiintervento.is_completato=1 AND in_statiintervento.is_fatturabile=1 AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND in_interventi.id_preventivo IS NULL AND in_interventi.id NOT IN (SELECT idintervento FROM co_promemoria WHERE idintervento IS NOT NULL)';
             $interventi = $dbo->fetchArray($int_query)[0]['tot'];
 
             // Se non trovo niente provo a vedere se ce ne sono per clienti terzi
             if (empty($interventi)) {
                 // Lettura interventi non rifiutati, non fatturati e non collegati a preventivi o contratti (clienti terzi)
-                $int_query = 'SELECT COUNT(*) AS tot FROM in_interventi INNER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento WHERE idclientefinale='.prepare($record['idanagrafica']).' AND in_statiintervento.completato=1 AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND in_interventi.id_preventivo IS NULL AND in_interventi.id NOT IN (SELECT idintervento FROM co_promemoria WHERE idintervento IS NOT NULL)';
+                $int_query = 'SELECT COUNT(*) AS tot FROM in_interventi INNER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento WHERE idclientefinale='.prepare($record['idanagrafica']).' AND in_statiintervento.is_completato=1 AND in_statiintervento.is_fatturabile=1 AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND in_interventi.id_preventivo IS NULL AND in_interventi.id NOT IN (SELECT idintervento FROM co_promemoria WHERE idintervento IS NOT NULL)';
                 $interventi = $dbo->fetchArray($int_query)[0]['tot'];
             }
 
@@ -583,7 +595,7 @@ if (!$block_edit) {
         }
 
         // Lettura ddt
-        $ddt_query = 'SELECT COUNT(*) AS tot FROM dt_ddt WHERE idanagrafica='.prepare($record['idanagrafica']).' AND idstatoddt IN (SELECT id FROM dt_statiddt WHERE descrizione IN(\'Bozza\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoddt IN (SELECT id FROM dt_tipiddt WHERE dir='.prepare($dir).') AND dt_ddt.id IN (SELECT idddt FROM dt_righe_ddt WHERE dt_righe_ddt.idddt = dt_ddt.id AND (qta - qta_evasa) > 0)';
+        $ddt_query = 'SELECT COUNT(*) AS tot FROM dt_ddt WHERE idanagrafica='.prepare($record['idanagrafica']).' AND idstatoddt IN (SELECT id FROM dt_statiddt WHERE descrizione IN(\'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoddt IN (SELECT id FROM dt_tipiddt WHERE dir='.prepare($dir).') AND dt_ddt.id IN (SELECT idddt FROM dt_righe_ddt WHERE dt_righe_ddt.idddt = dt_ddt.id AND (qta - qta_evasa) > 0)';
         $ddt = $dbo->fetchArray($ddt_query)[0]['tot'];
         echo '
 					<a class="btn btn-sm btn-primary'.(!empty($ddt) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/add_ddt.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="Aggiungi ddt">
@@ -591,7 +603,7 @@ if (!$block_edit) {
 					</a>';
 
         // Lettura ordini
-        $ordini_query = 'SELECT COUNT(*) AS tot FROM or_ordini WHERE idanagrafica='.prepare($record['idanagrafica']).' AND idstatoordine IN (SELECT id FROM or_statiordine WHERE descrizione IN(\'Bozza\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoordine=(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).') AND or_ordini.id IN (SELECT idordine FROM or_righe_ordini WHERE or_righe_ordini.idordine = or_ordini.id AND (qta - qta_evasa) > 0)';
+        $ordini_query = 'SELECT COUNT(*) AS tot FROM or_ordini WHERE idanagrafica='.prepare($record['idanagrafica']).' AND idstatoordine IN (SELECT id FROM or_statiordine WHERE descrizione IN(\'Accettato\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoordine=(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).') AND or_ordini.id IN (SELECT idordine FROM or_righe_ordini WHERE or_righe_ordini.idordine = or_ordini.id AND (qta - qta_evasa) > 0)';
         $ordini = $dbo->fetchArray($ordini_query)[0]['tot'];
         echo '
 						<a class="btn btn-sm btn-primary'.(!empty($ordini) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/add_ordine.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="Aggiungi ordine">
@@ -603,6 +615,9 @@ if (!$block_edit) {
     $art_query = 'SELECT id FROM mg_articoli WHERE attivo = 1 AND deleted_at IS NULL';
     if ($dir == 'entrata') {
         $art_query .= ' AND (qta > 0 OR servizio = 1)';
+    } else {
+        //Gli articoli possono essere creati al volo direttamente dal modale di aggiunta articolo
+        $art_query .= ' OR 1=1';
     }
 
     $articoli = $dbo->fetchNum($art_query);
@@ -660,12 +675,13 @@ include $structure->filepath('row-list.php');
 </div>
 
 <?php
+
 if ($dir == 'uscita' && $fattura->isFE()) {
     echo '
 <div class="alert alert-info text-center" id="controlla_totali"><i class="fa fa-spinner fa-spin"></i> '.tr('Controllo sui totali del documento e della fattura elettronica in corso').'...</div>
 
 <script>
-    $(document).ready(function() {        
+    $(document).ready(function() {
         $.ajax({
             url: globals.rootdir + "/actions.php",
             type: "post",
@@ -676,7 +692,7 @@ if ($dir == 'uscita' && $fattura->isFE()) {
             },
             success: function(data){
                 data = JSON.parse(data);
-             
+
                 var div = $("#controlla_totali");
                 div.removeClass("alert-info");
 
@@ -690,7 +706,7 @@ if ($dir == 'uscita' && $fattura->isFE()) {
                         '_CALC_' => '" + data.calculated + " " + globals.currency + "',
                     ]).'.")
                 }
-                
+
             }
         });
     })
@@ -710,7 +726,7 @@ echo '
 <script type="text/javascript">
 	$("#idanagrafica").change(function(){
         session_set("superselect,idanagrafica", $(this).val(), 0);
-        
+
         $("#id_dichiarazione_intento").selectReset();';
 
         if ($dir == 'entrata') {
@@ -785,7 +801,7 @@ $(".btn-sm[data-toggle=\"tooltip\"]").each(function() {
         }, function() {
             buttonRestore(btn, restore);
         });
-        
+
 		// Procedo al salvataggio solo se tutti i campi obbligatori sono compilati, altrimenti mostro avviso
         //form.find("input:disabled, select:disabled").removeAttr("disabled");
 
@@ -795,14 +811,14 @@ $(".btn-sm[data-toggle=\"tooltip\"]").each(function() {
                 title: "'.tr('Errore').'",
                 text:  "'.tr('Alcuni campi obbligatori non sono stati compilati correttamente').'.",
             });
-			 
-            $(document).one("show.bs.modal","#modals > div", function (e) {                 
+
+            $(document).one("show.bs.modal","#modals > div", function (e) {
                 return e.preventDefault();
             });
 		}
-	   
+
 	    $(document).one("show.bs.modal","#modals > div", function () {
-            buttonRestore(btn, restore);         
+            buttonRestore(btn, restore);
         });
 	});
 });

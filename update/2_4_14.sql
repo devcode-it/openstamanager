@@ -526,6 +526,12 @@ UPDATE `zz_views` SET `query` = 'mg_categorie.nome' WHERE `zz_views`.`name` = 'C
 UPDATE `zz_views` SET `query` = 'sottocategorie.nome' WHERE `zz_views`.`name` = 'Sottocategoria' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
 UPDATE `zz_views` SET `query` = 'an_anagrafiche.ragione_sociale' WHERE `zz_views`.`name` = 'Fornitore' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
 
+-- Fix id ambigui modulo articoli
+UPDATE `zz_views` SET `query` = 'mg_articoli.id' WHERE `query` = 'id' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
+UPDATE `zz_views` SET `query` = 'mg_articoli.codice' WHERE `query` = 'codice' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
+UPDATE `zz_views` SET `query` = 'mg_articoli.descrizione' WHERE `query` = 'descrizione' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
+UPDATE `zz_views` SET `query` = 'mg_articoli.note' WHERE `query` = 'note' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
+
 -- Ottimizzazione query attività
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM (`in_interventi` INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`) LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` LEFT JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`idstatointervento` LEFT JOIN (SELECT an_sedi.id, CONCAT(an_sedi.nomesede,\'<br>\',an_sedi.telefono,\'<br>\',an_sedi.cellulare,\'<br>\',an_sedi.citta,\' - \', an_sedi.indirizzo) AS info FROM an_sedi) AS sede_destinazione ON sede_destinazione.id = in_interventi.idsede_destinazione WHERE 1=1 |date_period(`orario_inizio`,`data_richiesta`)| GROUP BY `in_interventi`.`id` HAVING 2=2 ORDER BY IFNULL(`orario_fine`, `data_richiesta`) DESC' WHERE `name` = 'Interventi';
 

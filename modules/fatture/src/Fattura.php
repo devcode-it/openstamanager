@@ -76,8 +76,9 @@ class Fattura extends Document
         $model->data_registrazione = $data;
         $model->data_competenza = $data;
         $model->id_segment = $id_segment;
-        if ($numero_esterno)
+        if ($numero_esterno) {
             $model->numero_esterno = $numero_esterno;
+        }
 
         $model->idconto = $id_conto;
 

@@ -80,7 +80,7 @@ if (!$righe->isEmpty()) {
             <td class="text-right">
                 '.moneyFormat($riga->costo_unitario).'
             </td>';
-            
+
             // Prezzo unitario
             echo '
             <td class="text-right">

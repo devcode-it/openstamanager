@@ -494,9 +494,6 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 (NULL, 'v1', 'retrieve', 'rapportino', 'Modules\\Interventi\\API\\v1\\Rapportino', '1'),
 (NULL, 'v1', 'create', 'rapportino', 'Modules\\Interventi\\API\\v1\\Rapportino', '1');
 
--- Aggiunta stato "In attesa di conferma" sugli ordini fornitore
-INSERT INTO `or_statiordine` (`id`, `descrizione`, `annullato`, `icona`, `completato`) VALUES (NULL, 'In attesa di conferma', '0', 'fa fa-envelope text-primary', '0');
-
 -- Aggiunta vincolo a pianificazione rate contratti
 DELETE FROM `co_fatturazione_contratti` WHERE `idcontratto` NOT IN(SELECT `id` FROM `co_contratti`);
 ALTER TABLE `co_fatturazione_contratti` ADD CONSTRAINT `fk_contratti_fatturazione` FOREIGN KEY (`idcontratto`) REFERENCES `co_contratti`(`id`) ON DELETE CASCADE;

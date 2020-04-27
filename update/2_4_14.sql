@@ -505,7 +505,8 @@ ALTER TABLE `co_statipreventivi` ADD `is_revisionabile` BOOLEAN NOT NULL AFTER `
 UPDATE `co_statipreventivi` SET `is_revisionabile` = 1 WHERE `is_completato` = 0 OR `descrizione` = 'Rifiutato';
 
 -- Spostamento moduli "Stati preventivi" e "Stati contratti" sotto "Tabelle"
-UPDATE `zz_modules` SET `parent` = (SELECT `id` FROM (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tabelle') AS `m` ) WHERE `name` IN('Stati dei preventivi', 'Stati dei contratti');
+UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Stati dei preventivi' AND `t2`.`name` = 'Tabelle') SET `t1`.`parent` = `t2`.`id`;
+UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Stati dei contratti' AND `t2`.`name` = 'Tabelle') SET `t1`.`parent` = `t2`.`id`;
 
 -- Aggiunta campo per salvare il numero di revisione del preventivo
 ALTER TABLE `co_preventivi` ADD `numero_revision` INT NOT NULL AFTER `default_revision`;
@@ -551,9 +552,9 @@ DROP TABLE IF EXISTS `co_ordiniservizio`;
 DROP TABLE IF EXISTS `co_ordiniservizio_vociservizio`;
 DELETE FROM `zz_widgets` WHERE `name` = 'Ordini di servizio da impostare';
 
--- 
+--
 -- Aggiornamento FE in base alla normativa del 28/02/2020
--- 
+--
 ALTER TABLE `fe_natura` CHANGE `codice` `codice` VARCHAR(5) NOT NULL;
 
 -- Nuove nature IVA

@@ -291,8 +291,11 @@ if (!empty($righe)) {
         }
 
         // Individuazione articolo con codice relativo
+        $id_articolo = null;
         $codice_principale = $codici[0]['CodiceValore'];
-        $id_articolo = $database->fetchOne('SELECT id FROM mg_articoli WHERE codice = '.prepare($codice_principale))['id'];
+        if (!empty($codice_principale)) {
+            $id_articolo = $database->fetchOne('SELECT id FROM mg_articoli WHERE codice = '.prepare($codice_principale))['id'];
+        }
 
         echo '
         <tr>

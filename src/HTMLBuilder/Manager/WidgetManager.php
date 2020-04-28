@@ -189,8 +189,7 @@ class WidgetManager implements ManagerInterface
             $result .= '
             </a>';
 
-            $result .= '
-        </li>';
+         
         }
 
         return $result;

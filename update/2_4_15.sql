@@ -16,3 +16,7 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format
 
 -- Ore preavviso rinnovo con decimali per frazioni ore
 ALTER TABLE `co_contratti` CHANGE `ore_preavviso_rinnovo` `ore_preavviso_rinnovo` DECIMAL(15,6) NULL DEFAULT NULL; 
+
+
+-- Canale aggiornamenti stable/pre-release
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Abilita canale pre-release per aggiornamenti', '0', 'boolean', '1', 'Generali', NULL, "Consente di recuperare dal canale di pre-release gli aggiornamenti NON stabili del gestionale.");

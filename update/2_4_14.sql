@@ -41,7 +41,7 @@ ALTER TABLE `in_righe_interventi` ADD `idimpianto` int(11);
 ALTER TABLE `in_righe_interventi` ADD `old_id` int(11);
 
 -- Agli articoli utilizzati negli interventi che fanno riferimento ad articoli eliminati assegno l'articolo fittizio DELETED
-INSERT INTO `mg_articoli` (`id`, `codice`, `descrizione`, `um`, `abilita_serial`, `immagine`, `note`, `qta`, `threshold_qta`, `ubicazione`, `prezzo_acquisto`, `prezzo_vendita`, `idiva_vendita`, `gg_garanzia`, `peso_lordo`, `volume`, `componente_filename`, `contenuto`, `attivo`, `created_at`, `updated_at`, `id_categoria`, `id_sottocategoria`, `servizio`, `idconto_vendita`, `idconto_acquisto`, `deleted_at`, `barcode`, `id_fornitore`) VALUES (NULL, 'DELETED', 'ARTICOLO RIMOSSO', '', '0', NULL, '', '0', '0', '', '0', '0', '0', '0', '0', '0', '', '', '0', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, NULL, NULL, '1', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `mg_articoli` (`id`, `codice`, `descrizione`, `um`, `abilita_serial`, `immagine`, `note`, `qta`, `threshold_qta`, `ubicazione`, `prezzo_acquisto`, `prezzo_vendita`, `idiva_vendita`, `gg_garanzia`, `peso_lordo`, `volume`, `componente_filename`, `contenuto`, `attivo`, `created_at`, `updated_at`, `id_categoria`, `id_sottocategoria`, `servizio`, `idconto_vendita`, `idconto_acquisto`, `deleted_at`, `barcode`, `id_fornitore`) VALUES (NULL, 'DELETED', 'ARTICOLO RIMOSSO', '', '0', NULL, '', '0', '0', '', '0', '0', '0', '0', '0', '0', '', '', '0', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0, NULL, '1', NULL, NULL, NULL, NULL, NULL);
 
 UPDATE `mg_articoli_interventi` SET `idarticolo` = (SELECT `id` FROM `mg_articoli` WHERE `codice` = 'DELETED' )  WHERE `idarticolo` NOT IN (SELECT `id` FROM `mg_articoli`);
 

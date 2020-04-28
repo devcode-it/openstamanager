@@ -339,19 +339,19 @@ if (Auth::check()) {
                                 </ul>
                             </li>
 
-                            <li><a href="#" onclick="window.print()" class="tip"  title="'.tr('Stampa').'">
+                            <li><a href="#" onclick="window.print()" class="tip" title="'.tr('Stampa').'">
                                 <i class="fa fa-print"></i>
                             </a></li>
 
-                            <li><a href="'.$rootdir.'/bug.php" class="tip"title="'.tr('Segnalazione bug').'">
+                            <li><a href="'.$rootdir.'/bug.php" class="tip" title="'.tr('Segnalazione bug').'">
                                 <i class="fa fa-bug"></i>
                             </a></li>
 
-                            <li><a href="'.$rootdir.'/log.php" class="tip"title="'.tr('Log accessi').'">
+                            <li><a href="'.$rootdir.'/log.php" class="tip" title="'.tr('Log accessi').'">
                                 <i class="fa fa-book"></i>
                             </a></li>
 
-                            <li><a href="'.$rootdir.'/info.php" class="tip"title="'.tr('Informazioni').'">
+                            <li><a href="'.$rootdir.'/info.php" class="tip" title="'.tr('Informazioni').'">
                                 <i class="fa fa-info"></i>
                             </a></li>
 

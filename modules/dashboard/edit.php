@@ -598,7 +598,7 @@ echo "
 ?>
             lazyFetching: true,
             slotEventOverlap :false,
-			selectHelper: true,
+			selectHelper: false,
 			eventLimit: false, // allow "more" link when too many events
 			allDaySlot: false,
             loading: function(isLoading, view) {

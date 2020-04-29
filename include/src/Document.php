@@ -15,7 +15,9 @@ abstract class Document extends Model implements ReferenceInterface
     {
         $results = $this->mergeCollections($this->descrizioni, $this->righe, $this->articoli, $this->sconti);
 
-        return $results->sortBy('order');
+        return $results->sortBy(function ($item) {
+            return [$item->order, $item->id];
+        });
     }
 
     /**

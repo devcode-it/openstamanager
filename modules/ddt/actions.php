@@ -116,7 +116,7 @@ switch (post('op')) {
 
         // Controllo sulla presenza di DDT con lo stesso numero secondario
         $direzione = $ddt->direzione;
-        if ($direzione == 'uscita') {
+        if ($direzione == 'uscita' and !empty($numero_esterno)) {
             $count = DDT::where('numero_esterno', $numero_esterno)
                 ->where('id', '!=', $id_record)
                 ->where('idanagrafica', '=', $id_anagrafica)

@@ -34,7 +34,7 @@ switch (post('op')) {
 
         $anagrafica = Anagrafica::find($idanagrafica);
         $tipo = Tipo::find($idtipodocumento);
-        
+
         $fattura = Fattura::build($anagrafica, $tipo, $data, $id_segment, $numero_esterno);
 
         $id_record = $fattura->id;

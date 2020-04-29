@@ -337,6 +337,9 @@ class FatturaElettronica
 
         $fattura->save();
 
+        // Fix generazione idsede
+        $fattura->refresh();
+
         return $fattura;
     }
 

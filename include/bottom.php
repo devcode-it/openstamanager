@@ -4,6 +4,7 @@ include_once __DIR__.'/../core.php';
 
 if (Auth::check()) {
     echo '
+                        </div>
                     </div><!-- /.row -->
                 </section><!-- /.content -->
             </aside><!-- /.content-wrapper -->

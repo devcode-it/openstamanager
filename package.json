@@ -21,7 +21,7 @@
         "geocomplete": "^1.7.0",
         "hotkeys-js": "3.7.3",
         "inputmask": "3.3.9",
-        "jquery": "3.4.1",
+        "jquery": "3.5.0",
         "jquery-form": "^4.2.1",
         "jquery-ui-touch-punch": "^0.2.3",
         "jquery.shorten": "^1.0.0",

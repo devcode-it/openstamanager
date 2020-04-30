@@ -4,7 +4,8 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
-- [2.4.14](#2414)
+- [2.4.15 (2020-05-01)](#2414-2020-05-01)
+- [2.4.14 (2020-04-23)](#2414-2020-04-23)
 - [2.4.13 (2020-02-05)](#2413-2020-02-05)
 - [2.4.12 (2019-12-30)](#2412-2019-12-30)
 - [2.4.11 (2019-11-29)](#2411-2019-11-29)
@@ -24,7 +25,18 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
-## 2.4.14
+## 2.4.15 (2020-05-01)
+
+### Modificato (Changed)
+ - Ordinamento righe documenti anche in funzione dell'ID
+
+### Fixed
+ - Bugfix Dashboard su vista settimanale e giornaliera (causato dalla nuova versione di JQuery)
+ - Fix importazione FE 
+ - Modulo Viste: non è possibile eliminare i campi (#794)
+ - Fix permessi alle API sync calendario da cliente
+
+## 2.4.14 (2020-04-23)
 
 ### Aggiunto (Added)
  - Nuove funzionalità nell'importazione delle Fatture Elettroniche

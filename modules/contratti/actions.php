@@ -48,6 +48,7 @@ switch (post('op')) {
             $contratto->budget = $budget;
             $contratto->idreferente = post('idreferente');
             $contratto->validita = post('validita');
+            $contratto->validita_periodo = post('tipo_validita');
             $contratto->data_bozza = post('data_bozza');
             $contratto->data_accettazione = post('data_accettazione');
             $contratto->data_rifiuto = post('data_rifiuto');

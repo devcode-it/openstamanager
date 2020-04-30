@@ -54,6 +54,7 @@ switch (post('op')) {
             $preventivo->codice_cig = post('codice_cig');
             $preventivo->codice_cup = post('codice_cup');
             $preventivo->validita = post('validita');
+            $preventivo->validita_periodo = post('tipo_validita');
             $preventivo->idtipointervento = post('idtipointervento');
             $preventivo->idiva = post('idiva');
 

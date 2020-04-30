@@ -104,8 +104,7 @@ if (count($preventivo->revisioni) > 1) {
 
 			<div class="row">
 				<div class="col-md-3">
-					{[ "type": "number", "label": "<?php echo tr('Validità offerta'); ?>", "name": "validita", "decimals": "0", "value": "$validita$", "icon-after": "giorni" ]}
-
+                    {[ "type": "number", "label": "<?php echo tr('Validità offerta'); ?>", "name": "validita", "decimals": "0", "value": "$validita$", "icon-after": "choice|period|<?php echo $record['validita_periodo']; ?>", "help": "<?php echo tr("Il campo validità viene utilizzato solo nelle stampe, non è incluso nel calcolo della fine del preventivo. Si può inserire questo valore nel campo Data conclusione") ?>" ]}
 				</div>
 
 				<div class="col-md-3">

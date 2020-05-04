@@ -84,7 +84,7 @@ switch ($operazione) {
                 ->where('idtipointervento', $promemoria_originale->tipo->id)
                 ->get()
                 ->groupBy(function ($item) {
-                    return $item->data_richiesta->toDateTimeString();
+                    return $item->data_richiesta->toDateString();
                 });
 
             $date_preimpostate = $promemoria_contratto->keys()->toArray();
@@ -130,7 +130,7 @@ switch ($operazione) {
                     $date_con_promemoria[] = dateFormat($data_promemoria);
                 }
 
-                // Creazione intervento collegato se non prensente
+                // Creazione intervento collegato se non presente
                 if (post('pianifica_intervento') && empty($promemoria->intervento)) {
                     // Creazione intervento
                     $intervento = Intervento::build($contratto->anagrafica, $promemoria_originale->tipo, $stato, $data_richiesta);

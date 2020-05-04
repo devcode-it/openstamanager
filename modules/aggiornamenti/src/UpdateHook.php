@@ -49,8 +49,7 @@ class UpdateHook extends CachedManager
     {
         $api = self::getAPI();
 
-        if(!$api['prerelease'] or setting('Abilita canale pre-release per aggiornamenti')){
-
+        if (!$api['prerelease'] or setting('Abilita canale pre-release per aggiornamenti')) {
             $version = ltrim($api['tag_name'], 'v');
             $current = Update::getVersion();
 

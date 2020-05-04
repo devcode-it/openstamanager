@@ -9,6 +9,8 @@ include_once __DIR__.'/../../core.php';
 switch (filter('op')) {
     case 'update_fornitore':
         $id_articolo = filter('id_articolo');
+        $articolo = Articolo::find($id_articolo);
+
         $id_anagrafica = filter('id_anagrafica');
         $precedente = Dettaglio::where('id_articolo', $id_record)
             ->where('id_fornitore', $id_anagrafica)
@@ -16,7 +18,6 @@ switch (filter('op')) {
 
         if (empty($precedente)) {
             $anagrafica = Anagrafica::find($id_anagrafica);
-            $articolo = Articolo::find($id_articolo);
 
             $fornitore = Dettaglio::build($anagrafica, $articolo);
         } else {

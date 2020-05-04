@@ -6,7 +6,7 @@ include_once __DIR__.'/../../core.php';
 
 echo '
 <p>'.tr("In questa sezione è possibile definire le caratteristiche di base dell'articolo in relazione fornitore di origine, come codice e prezzo di acquisto predefinito").'. '.tr("Queste informazioni saranno utilizzate in automatico per la compilazione dell'articolo al momento dell'inserimento in un documento di acquisto relativo al fornitore indicato, sovrascrivendo le impostazioni predefinite della sezione Acquisto per l'articolo").'.</p>
-<p>'.tr("Ogni fornitore, tra cui si evidenzia quello predefinito per l'articolo, può essere descritto una sola volta con le informazioni aggiuntive").'</p>
+<p>'.tr("Ogni fornitore, tra cui si evidenzia quello predefinito per l'articolo, può essere descritto una sola volta con le informazioni aggiuntive").'.</p>
 
 <div class="box">
     <div class="box-header">
@@ -30,7 +30,7 @@ echo '
 
 $fornitori = Dettaglio::where('id_articolo', $id_record)->get();
 if (!$fornitori->isEmpty()) {
-echo '
+    echo '
 <h4>'.tr('Elenco fornitori').'</h4>
 <table class="table table-striped table-condensed table-bordered">
     <thead>
@@ -49,7 +49,7 @@ echo '
         $anagrafica = $fornitore->anagrafica;
 
         $color = '';
-        if ($anagrafica->id ['predefinito'] == $articolo->id_fornitore) {
+        if ($anagrafica->id == $articolo->id_fornitore) {
             $color = '#b5f4a9';
         }
 
@@ -63,11 +63,11 @@ echo '
                 ]).'</small>
             </td>
 
-            <td class="text-right">
-                '.Translator::numberToLocale($fornitore['qta_minima']).'
+            <td class="text-center">
+                '.numberFormat($fornitore['qta_minima']).' '.$fornitore->articolo->um.'
             </td>
 
-            <td class="text-right">
+            <td class="text-center">
                 '.tr('_NUM_ giorni', [
                     '_NUM_' => numberFormat($fornitore['giorni_consegna']),
                 ]).'
@@ -107,9 +107,9 @@ function edit_fornitore(id_riga, id_anagrafica) {
 }
 
 function add_fornitore() {
-    var id_fornitore = $("#id_fornitore_informazioni").selectData().id;
+    var id_fornitore = $("#id_fornitore_informazioni").val();
     if (id_fornitore){
-        edit_fornitore(null, id_fornitore);
+        edit_fornitore("", id_fornitore);
     } else {
         swal("'.tr('Errore').'", "'.tr('Nessun fornitore selezionato').'", "error");
     }

@@ -10,7 +10,7 @@ use Modules\Articoli\Articolo;
 /**
  * Classe per la gestione delle relazioni tra articolo e fornitore.
  *
- * @since 2.4.11
+ * @since 2.4.15
  */
 class Dettaglio extends Model
 {

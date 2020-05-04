@@ -17,7 +17,7 @@ $_SESSION['superselect']['id_categoria'] = $record['id_categoria'];
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-md-3">
-					{[ "type": "image", "label": "<?php echo tr('Immagine'); ?>", "name": "immagine", "class": "img-thumbnail", "value": "<?php echo $articolo->image; ?>" ]}
+					{[ "type": "image", "label": "<?php echo tr('Immagine'); ?>", "name": "immagine", "class": "img-thumbnail", "value": "<?php echo $articolo->image; ?>", "accept": "image/x-png,image/gif,image/jpeg" ]}
 				</div>
 
                 <div class="col-md-9">

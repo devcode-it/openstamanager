@@ -6,6 +6,8 @@ $_SESSION['superselect']['dir'] = $options['dir'];
 $_SESSION['superselect']['idanagrafica'] = $options['idanagrafica'];
 $_SESSION['superselect']['idarticolo'] = $options['idarticolo'];
 
+$qta_minima = 0;
+
 // Articolo
 if (empty($result['idarticolo'])) {
     echo '
@@ -18,7 +20,16 @@ if (empty($result['idarticolo'])) {
     <input type="hidden" name="id_dettaglio_fornitore" id="id_dettaglio_fornitore" value="">';
 } else {
     $database = database();
-    $articolo = $database->fetchArray('SELECT id, codice, descrizione FROM mg_articoli WHERE id = '.prepare($result['idarticolo']))[0];
+    $articolo = $database->fetchOne('SELECT mg_articoli.id,
+        mg_fornitore_articolo.id AS id_dettaglio_fornitore,
+        IFNULL(mg_fornitore_articolo.codice_fornitore, mg_articoli.codice) AS codice,
+        IFNULL(mg_fornitore_articolo.descrizione, mg_articoli.descrizione) AS descrizione,
+        IFNULL(mg_fornitore_articolo.qta_minima, 0) AS qta_minima
+    FROM mg_articoli
+        LEFT JOIN mg_fornitore_articolo ON mg_fornitore_articolo.id_articolo = mg_articoli.id AND mg_fornitore_articolo.id = '.prepare($result['id_dettaglio_fornitore']).'
+    WHERE mg_articoli.id = '.prepare($result['idarticolo']));
+
+    $qta_minima = $articolo['qta_minima'];
 
     echo '
     <p><strong>'.tr('Articolo').':</strong> '.$articolo['codice'].' - '.$articolo['descrizione'].'.</p>
@@ -26,7 +37,7 @@ if (empty($result['idarticolo'])) {
 }
 
 echo '
-    <input type="hidden" name="qta_minima" id="qta_minima" value="0">';
+    <input type="hidden" name="qta_minima" id="qta_minima" value="'.$qta_minima.'">';
 
 // Selezione impianto per gli Interventi
 if ($module['name'] == 'Interventi') {

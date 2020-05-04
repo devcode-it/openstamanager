@@ -23,6 +23,9 @@ if (empty($result['idarticolo'])) {
     <input type="hidden" name="idarticolo" id="idarticolo" value="'.$articolo['id'].'">';
 }
 
+echo '
+    <input type="hidden" name="qta_minima" id="qta_minima" value="0">';
+
 // Selezione impianto per gli Interventi
 if ($module['name'] == 'Interventi') {
     echo '
@@ -68,7 +71,7 @@ if ($module['name'] != 'Contratti' && $module['name'] != 'Preventivi') {
 echo '
 <script>
 $(document).ready(function () {
-    $("#idarticolo").on("change", function(){
+    $("#idarticolo").on("change", function() {
         // Autoimpostazione dei valori relativi
         if ($(this).val()) {
             session_set("superselect,idarticolo", $(this).val(), 0);
@@ -76,8 +79,6 @@ $(document).ready(function () {
             session_set("superselect,dir", "'.$options['dir'].'", 0);
 
             $data = $(this).selectData();
-
-            var id_conto = $data.idconto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').';
 
             $("#prezzo_unitario").val($data.prezzo_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').');
 
@@ -87,15 +88,22 @@ $(document).ready(function () {
 
 if ($options['dir'] == 'entrata') {
     echo '
-            if( $data.idiva_vendita ){
+            if($data.idiva_vendita) {
                 $("#idiva").selectSetNew($data.idiva_vendita, $data.iva_vendita);
             }';
+} else {
+    echo '
+            $("#qta_minima").val($data.qta_minima);
+            aggiorna_qta_minima();';
 }
 
 echo '
+
+            var id_conto = $data.idconto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').';
             if(id_conto) {
                 $("#idconto").selectSetNew(id_conto, $data.idconto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').'_title);
             }
+
             $("#um").selectSetNew($data.um, $data.um);
         }';
 
@@ -117,6 +125,41 @@ if ($module['name'] != 'Contratti' && $module['name'] != 'Preventivi') {
 }
 
 echo '
-    });
-});
+    });';
+
+if ($options['dir'] == 'uscita') {
+    echo '
+
+    aggiorna_qta_minima();
+    $("#qta").keyup(aggiorna_qta_minima);';
+}
+
+echo '
+});';
+
+if ($options['dir'] == 'uscita') {
+    echo '
+// Funzione per l\'aggiornamento in tempo reale del guadagno
+function aggiorna_qta_minima() {
+    var qta_minima = parseFloat($("#qta_minima").val());
+    var qta = $("#qta").val().toEnglish();
+
+    if (qta_minima == 0) {
+        return;
+    }
+
+    var parent = $("#qta").closest("div").parent();
+    var div = parent.find("div[id*=\"errors\"]");
+
+    div.html("<small>'.tr('Quantità minima').': " + qta_minima.toLocale() + "</small>");
+    if (qta < qta_minima) {
+        parent.addClass("has-error");
+        div.addClass("text-danger").removeClass("text-success");
+    } else {
+        parent.removeClass("has-error");
+        div.removeClass("text-danger").addClass("text-success");
+    }
+}';
+}
+echo '
 </script>';

@@ -10,5 +10,5 @@ interface ReferenceInterface
 
     public function getReferenceDate();
 
-    public function getReference();
+    public function getReference($text = null);
 }

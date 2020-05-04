@@ -12,36 +12,37 @@ trait ReferenceTrait
 
     abstract public function getReferenceDate();
 
-    public function getReference()
+    public function getReference($text = null)
     {
-        $name = $this->getReferenceName();
-        $number = $this->getReferenceNumber();
-        $date = $this->getReferenceDate();
+        // Testo di default
+        $text = empty($text) ? tr('Rif. _DOCUMENT_') : $text;
+        $content = [];
 
         // Testo relativo
+        $name = $this->getReferenceName();
         $name = Stringy::create($name)->toLowerCase();
+        $content[] = $name;
 
-        if (!empty($date) && !empty($number)) {
-            $description = tr('Rif. _DOC_ num. _NUM_ del _DATE_', [
-                '_DOC_' => $name,
+        // Riferimento al numero
+        $number = $this->getReferenceNumber();
+        if (!empty($number)) {
+            $content[] = tr('num. _NUM_', [
                 '_NUM_' => $number,
-                '_DATE_' => dateFormat($date),
-            ]);
-        } elseif (!empty($number)) {
-            $description = tr('Rif. _DOC_ num. _NUM_', [
-                '_DOC_' => $name,
-                '_NUM_' => $number,
-            ]);
-        } elseif (!empty($date)) {
-            $description = tr('Rif. _DOC_ del _DATE_', [
-                '_DOC_' => $name,
-                '_DATE_' => dateFormat($date),
-            ]);
-        } else {
-            $description = tr('Rif. _DOC_', [
-                '_DOC_' => $name,
             ]);
         }
+
+        // Riferimento alla data
+        $date = $this->getReferenceDate();
+        if (!empty($date)) {
+            $content[] = tr('del _DATE_', [
+                '_DATE_' => dateFormat($date),
+            ]);
+        }
+
+        // Creazione descrizione
+        $description = replace($text, [
+            '_DOCUMENT_' => implode(' ', $content),
+        ]);
 
         return $description;
     }

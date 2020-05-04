@@ -153,7 +153,7 @@ abstract class Description extends Model
      *
      * @return self
      */
-    public function copiaIn(Document $document, $qta = null)
+    public function copiaIn(Document $document, $qta = null, $is_evasione = true)
     {
         // Individuazione classe di destinazione
         $class = get_class($document);
@@ -184,8 +184,10 @@ abstract class Description extends Model
         // Rimozione attributo in conflitto
         unset($attributes[$model->getParentID()]);
 
-        $model->original_id = $this->id;
-        $model->original_type = $current;
+        if ($is_evasione) {
+            $model->original_id = $this->id;
+            $model->original_type = $current;
+        }
 
         // Impostazione del genitore
         $model->setParent($document);

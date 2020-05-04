@@ -114,10 +114,11 @@ function discountInfo(\Common\Components\Row $riga, $mostra_maggiorazione = true
  * Genera i riferimenti ai documenti del gestionale, attraverso l'interfaccia Common\ReferenceInterface.
  *
  * @param $document
+ * @param string $text Formato "Contenuto descrittivo _DOCUMENT_"
  *
  * @return string
  */
-function reference($document)
+function reference($document, $text = null)
 {
     if (!empty($document) && !($document instanceof \Common\ReferenceInterface)) {
         return;
@@ -134,7 +135,7 @@ function reference($document)
         $module_id = $document->module;
         $document_id = $document->id;
 
-        $description = $document->getReference();
+        $description = $document->getReference($text);
     }
 
     return Modules::link($module_id, $document_id, $description, $description, $extra);

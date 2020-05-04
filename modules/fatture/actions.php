@@ -591,28 +591,23 @@ switch (post('op')) {
 
         break;
 
-    // Aggiunta di un documento in fattura
+    // Aggiunta di un documento esterno
     case 'add_documento':
-        $id_documento = post('id_documento');
         $type = post('type');
+        $class = post('class');
+        $id_documento = post('id_documento');
+        $is_evasione = post('is_evasione');
 
-        $movimenta = true;
-        $idsede = 0;
-
-        if ($type == 'ordine') {
-            $documento = \Modules\Ordini\Ordine::find($id_documento);
-            $idsede = $documento->idsede;
-        } elseif ($type == 'ddt') {
-            $documento = \Modules\DDT\DDT::find($id_documento);
-            $idsede = ($documento->direzione == 'entrata') ? $documento->idsede_destinazione : $documento->idsede_partenza;
-            $movimenta = false;
-        } elseif ($type == 'preventivo') {
-            $documento = \Modules\Preventivi\Preventivo::find($id_documento);
-            $idsede = $documento->idsede;
-        } elseif ($type == 'contratto') {
-            $documento = \Modules\Contratti\Contratto::find($id_documento);
-            $idsede = $documento->idsede;
+        if (!is_subclass_of($class, \Common\Document::class)) {
+            return;
         }
+
+        $documento = $class::find($id_documento);
+
+        // Individuazione sede
+        $id_sede = ($documento->direzione == 'entrata') ? $documento->idsede_destinazione : $documento->idsede_partenza;
+        $id_sede = $id_sede ?: $documento->idsede;
+        $id_sede = $id_sede ?: 0;
 
         // Creazione della fattura al volo
         if (post('create_document') == 'on') {
@@ -621,7 +616,7 @@ switch (post('op')) {
 
             $fattura = Fattura::build($documento->anagrafica, $tipo, post('data'), post('id_segment'));
             $fattura->idpagamento = $documento->idpagamento;
-            $fattura->idsede_destinazione = $idsede;
+            $fattura->idsede_destinazione = $id_sede;
             $fattura->id_ritenuta_contributi = post('id_ritenuta_contributi') ?: null;
             $fattura->save();
 
@@ -639,7 +634,7 @@ switch (post('op')) {
             if (post('evadere')[$riga->id] == 'on') {
                 $qta = post('qta_da_evadere')[$riga->id];
 
-                $copia = $riga->copiaIn($fattura, $qta);
+                $copia = $riga->copiaIn($fattura, $qta, $is_evasione);
                 $copia->id_conto = $id_conto;
 
                 $copia->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
@@ -648,11 +643,7 @@ switch (post('op')) {
                 $copia->ritenuta_contributi = $ritenuta_contributi;
 
                 // Aggiornamento seriali dalla riga dell'ordine
-                if ($copia->isArticolo()) {
-                    if ($movimenta) {
-                        //$copia->movimenta($copia->qta);
-                    }
-
+                if ($copia->isArticolo() && $is_evasione) {
                     $serials = is_array(post('serial')[$riga->id]) ? post('serial')[$riga->id] : [];
 
                     $copia->serials = $serials;

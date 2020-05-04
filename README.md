@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="http://openstamanager.com">
+  <a href="https://openstamanager.com">
     <img src="https://www.openstamanager.com/wp-content/uploads/2015/04/logo_full-2.png">
   </a>
 
@@ -7,11 +7,11 @@
     Il software gestionale open-source per l'assistenza tecnica e la fatturazione.
     <br>
     <br>
-    <a href="http://openstamanager.com">Sito web</a>
+    <a href="https://www.openstamanager.com">Sito web</a>
     &middot;
     <a href="https://docs.openstamanager.com/">Documentazione</a>
     &middot;
-    <a href="http://openstamanager.com/forum">Forum</a>
+    <a href="https://forum.openstamanager.com">Forum</a>
   </p>
 </p>
 

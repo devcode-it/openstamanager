@@ -406,6 +406,10 @@ class Uploads
         $fileinfo = self::fileInfo($filepath);
         $directory = empty($directory) ? dirname($filepath) : $directory;
 
+        if (!in_array(mime_content_type($filepath), ['image/x-png', 'image/gif', 'image/jpeg'])) {
+            return;
+        }
+
         $driver = extension_loaded('gd') ? 'gd' : 'imagick';
         Intervention\Image\ImageManagerStatic::configure(['driver' => $driver]);
 

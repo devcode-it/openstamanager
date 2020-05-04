@@ -84,8 +84,9 @@ switch ($operazione) {
                 ->where('idtipointervento', $promemoria_originale->tipo->id)
                 ->get()
                 ->groupBy(function ($item) {
-                    return $item->data_richiesta;
+                    return $item->data_richiesta->toDateTimeString();
                 });
+
             $date_preimpostate = $promemoria_contratto->keys()->toArray();
 
             $data_conclusione = $contratto->data_conclusione;

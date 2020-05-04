@@ -144,6 +144,7 @@ switch (post('op')) {
         } else {
             $originale = ArticoloOriginale::find(post('idarticolo'));
             $articolo = Articolo::build($preventivo, $originale);
+            $articolo->id_dettaglio_fornitore = post('id_dettaglio_fornitore') ?: null;
         }
 
         $qta = post('qta');

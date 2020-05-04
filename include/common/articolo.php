@@ -13,7 +13,9 @@ if (empty($result['idarticolo'])) {
         <div class="col-md-12">
             {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "required": 1, "value": "'.$result['idarticolo'].'", "ajax-source": "articoli", "icon-after": "add|'.Modules::get('Articoli')['id'].'" ]}
         </div>
-    </div>';
+    </div>
+
+    <input type="hidden" name="id_dettaglio_fornitore" id="id_dettaglio_fornitore" value="">';
 } else {
     $database = database();
     $articolo = $database->fetchArray('SELECT id, codice, descrizione FROM mg_articoli WHERE id = '.prepare($result['idarticolo']))[0];
@@ -81,9 +83,7 @@ $(document).ready(function () {
             $data = $(this).selectData();
 
             $("#prezzo_unitario").val($data.prezzo_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').');
-
             $("#costo_unitario").val($data.prezzo_acquisto);
-
             $("#descrizione_riga").val($data.descrizione);';
 
 if ($options['dir'] == 'entrata') {
@@ -93,6 +93,7 @@ if ($options['dir'] == 'entrata') {
             }';
 } else {
     echo '
+            $("#id_dettaglio_fornitore").val($data.id_dettaglio_fornitore);
             $("#qta_minima").val($data.qta_minima);
             aggiorna_qta_minima();';
 }

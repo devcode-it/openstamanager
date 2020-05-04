@@ -118,6 +118,7 @@ switch (post('op')) {
         } else {
             $originale = ArticoloOriginale::find(post('idarticolo'));
             $articolo = Articolo::build($ordine, $originale);
+            $articolo->id_dettaglio_fornitore = post('id_dettaglio_fornitore') ?: null;
         }
 
         $articolo->descrizione = post('descrizione');

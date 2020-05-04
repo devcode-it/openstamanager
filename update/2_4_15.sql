@@ -11,6 +11,9 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM (`in_interventi` INNER
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), 'Rif. fattura', 'fattura.info', 17, 1, 0, 0, 1);
 
+-- Aggiunta indice per idintervento in co_righe_documenti
+ALTER TABLE `co_righe_documenti` ADD INDEX(`idintervento`);
+
 -- Ore preavviso rinnovo con decimali per frazioni ore
 ALTER TABLE `co_contratti` CHANGE `ore_preavviso_rinnovo` `ore_preavviso_rinnovo` DECIMAL(15,6) NULL DEFAULT NULL; 
 

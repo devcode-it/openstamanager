@@ -15,14 +15,14 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format
 ALTER TABLE `co_righe_documenti` ADD INDEX(`idintervento`);
 
 -- Ore preavviso rinnovo con decimali per frazioni ore
-ALTER TABLE `co_contratti` CHANGE `ore_preavviso_rinnovo` `ore_preavviso_rinnovo` DECIMAL(15,6) NULL DEFAULT NULL; 
+ALTER TABLE `co_contratti` CHANGE `ore_preavviso_rinnovo` `ore_preavviso_rinnovo` DECIMAL(15,6) NULL DEFAULT NULL;
 
 -- Canale aggiornamenti stable/pre-release
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Abilita canale pre-release per aggiornamenti', '1', 'boolean', '1', 'Generali', NULL, "Consente di recuperare dal canale di pre-release gli aggiornamenti NON stabili del gestionale.");
 
 -- Per gli articoli con id_categoria e id_sottocategoria a 0 imposto il valore NULL (permesso dalla 2.4.14)
-UPDATE `mg_articoli` SET `id_categoria` = NULL WHERE `mg_articoli`.`id_categoria` = 0; 
-UPDATE `mg_articoli` SET `id_sottocategoria` = NULL WHERE `mg_articoli`.`id_sottocategoria` = 0; 
+UPDATE `mg_articoli` SET `id_categoria` = NULL WHERE `mg_articoli`.`id_categoria` = 0;
+UPDATE `mg_articoli` SET `id_sottocategoria` = NULL WHERE `mg_articoli`.`id_sottocategoria` = 0;
 
 -- Allineamento title stampe
 UPDATE `zz_prints` SET `title` = 'Ddt in uscita (senza prezzi)' WHERE `zz_prints`.`name` = 'Ddt di vendita (senza costi)';

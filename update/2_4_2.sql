@@ -544,15 +544,6 @@ ALTER TABLE `zz_modules` CHANGE `default` `default` boolean NOT NULL DEFAULT 0;
 
 ALTER TABLE `zz_segments` CHANGE `predefined` `predefined` boolean NOT NULL DEFAULT 0;
 
-<<<<<<< HEAD
--- Prezzo di acquisto su righe fatture/preventivi
-ALTER TABLE `co_righe_documenti` ADD `subtotale_acquisto` DECIMAL(12,4) NOT NULL AFTER `descrizione`;
-ALTER TABLE `co_righe_preventivi` ADD `subtotale_acquisto` DECIMAL(12,4) NOT NULL AFTER `descrizione`;
-
--- Guadagno su righe fatture/preventivi
-ALTER TABLE `co_righe_documenti` ADD `guadagno` DECIMAL(12,4) NOT NULL AFTER `subtotale`;
-ALTER TABLE `co_righe_preventivi` ADD `guadagno` DECIMAL(12,4) NOT NULL AFTER `subtotale`;
-=======
 -- Fix colore per fatture senza numero esterno
 UPDATE `zz_views` SET `query` = 'IF((SELECT COUNT(t.numero_esterno) FROM co_documenti AS t WHERE t.numero_esterno = co_documenti.numero_esterno AND t.numero_esterno != '''' AND t.id_segment = co_documenti.id_segment AND idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE dir = ''entrata'') AND t.data >= ''|period_start|'' AND t.data <= ''|period_end|'') > 1, ''red'', '''')' WHERE  `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') AND `name` = '_bg_';
 
@@ -663,4 +654,3 @@ UPDATE `dt_tipiddt` SET `descrizione`='Ddt in uscita' WHERE `descrizione`='Ddt d
 -- Ridenominazione "Ddt di acquisto" in "Ddt in ingresso"
 UPDATE `zz_modules` SET `title`='Ddt in entrata' WHERE `name`='Ddt di acquisto';
 UPDATE `dt_tipiddt` SET `descrizione`='Ddt in entrata' WHERE `descrizione`='Ddt di acquisto';
->>>>>>> 2ae57384089d87555550bf51f8419fa60ad26f2b

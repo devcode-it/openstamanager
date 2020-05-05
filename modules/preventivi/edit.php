@@ -47,7 +47,7 @@ if (count($preventivo->revisioni) > 1) {
                 </div>
 
                 <div class="col-md-2">
-                    {[ "type": "date", "label": "<?php echo tr('Data conclusione'); ?>", "name": "data_conclusione", "value": "$data_conclusione$" ]}
+                    {[ "type": "date", "label": "<?php echo tr('Data conclusione'); ?>", "name": "data_conclusione", "value": "$data_conclusione$", "disabled": "<?php echo !empty($record['validita']) ? '1", "help": "' . tr("La data di conclusione è calcolata in automatico in base al valore del campo Validità") : 0 ?>" ]}
                 </div>
 
                 <div class="col-md-2">

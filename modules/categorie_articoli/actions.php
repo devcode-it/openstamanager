@@ -71,7 +71,7 @@ switch (filter('op')) {
         $original = filter('id_original');
 
         if (isset($nome) && isset($nota) && isset($colore)) {
-            if (isset($id_record)) {
+            if (!empty($id_record)) {
                 $dbo->query('UPDATE `mg_categorie` SET `nome`='.prepare($nome).', `nota`='.prepare($nota).', `colore`='.prepare($colore).' WHERE `id`='.prepare($id_record));
             } else {
                 $dbo->query('INSERT INTO `mg_categorie` (`nome`,`nota`,`colore`, `parent`) VALUES ('.prepare($nome).', '.prepare($nota).', '.prepare($colore).', '.prepare($original).')');

@@ -6,6 +6,7 @@ use API\Interfaces\CreateInterface;
 use API\Interfaces\RetrieveInterface;
 use API\Interfaces\UpdateInterface;
 use API\Resource;
+use Auth;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\Intervento;
 use Modules\Interventi\Stato;
@@ -19,7 +20,9 @@ class Interventi extends Resource implements RetrieveInterface, CreateInterface,
         $today = date('Y-m-d');
         $period_end = date('Y-m-d', strtotime($today.' +7 days'));
         $period_start = date('Y-m-d', strtotime($today.' -2 months'));
+        $user = Auth::user();
 
+        // AND `in_statiintervento`.`is_completato`=0
         $query = "SELECT `in_interventi`.`id`,
             `in_interventi`.`codice`,
             `in_interventi`.`data_richiesta`,
@@ -44,11 +47,12 @@ class Interventi extends Resource implements RetrieveInterface, CreateInterface,
             INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` = `in_statiintervento`.`idstatointervento`
             INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
             LEFT JOIN `an_sedi` ON `in_interventi`.`idsede_destinazione` = `an_sedi`.`id`
-        WHERE EXISTS(SELECT `orario_fine` FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` AND `orario_fine` BETWEEN :period_start AND :period_end)";
+        WHERE EXISTS(SELECT `orario_fine` FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` AND `orario_fine` BETWEEN :period_start AND :period_end AND idtecnico = :idtecnico )";
 
         $parameters = [
             ':period_end' => $period_end,
             ':period_start' => $period_start,
+            ':idtecnico' => $user->idanagrafica,
         ];
 
         return [

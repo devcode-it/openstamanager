@@ -260,7 +260,7 @@ if (Auth::check()) {
     }
 }
 
-$hide_sidebar = Auth::check() && setting('Nascondere la barra sinistra di default');
+$hide_sidebar = Auth::check() && (setting('Nascondere la barra sinistra di default') or $_SESSION['settings']['sidebar-collapse']);
 echo '
 
     </head>

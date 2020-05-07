@@ -20,7 +20,6 @@ class Interventi extends Resource implements RetrieveInterface, CreateInterface,
         $today = date('Y-m-d');
         $period_end = date('Y-m-d', strtotime($today.' +7 days'));
         $period_start = date('Y-m-d', strtotime($today.' -2 months'));
-        $user = Auth::user();
 
         // AND `in_statiintervento`.`is_completato`=0
         $query = "SELECT `in_interventi`.`id`,

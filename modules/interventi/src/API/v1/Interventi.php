@@ -6,7 +6,7 @@ use API\Interfaces\CreateInterface;
 use API\Interfaces\RetrieveInterface;
 use API\Interfaces\UpdateInterface;
 use API\Resource;
-use Auth;
+use Modules;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\Intervento;
 use Modules\Interventi\Stato;
@@ -47,13 +47,23 @@ class Interventi extends Resource implements RetrieveInterface, CreateInterface,
             INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` = `in_statiintervento`.`idstatointervento`
             INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
             LEFT JOIN `an_sedi` ON `in_interventi`.`idsede_destinazione` = `an_sedi`.`id`
-        WHERE EXISTS(SELECT `orario_fine` FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` AND `orario_fine` BETWEEN :period_start AND :period_end AND idtecnico = :idtecnico )";
+        WHERE EXISTS(SELECT `orario_fine` FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` AND `orario_fine` BETWEEN :period_start AND :period_end)";
+
+        $query .= '
+        HAVING 2=2
+        ORDER BY `in_interventi`.`data_richiesta` DESC';
 
         $parameters = [
             ':period_end' => $period_end,
             ':period_start' => $period_start,
-            ':idtecnico' => $user->idanagrafica,
         ];
+        
+
+        $module = Modules::get('Interventi');
+        $query = Modules::replaceAdditionals($module->id, $query);
+
+
+       
 
         return [
             'query' => $query,

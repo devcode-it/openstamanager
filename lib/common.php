@@ -129,14 +129,18 @@ function reference($document, $text = null)
     $document_id = null;
 
     if (empty($document)) {
-        $description = tr('Documento di riferimento non disponibile');
+        $content = tr('non disponibile');
         $extra = 'class="disabled"';
     } else {
         $module_id = $document->module;
         $document_id = $document->id;
 
-        $description = $document->getReference($text);
+        $content = $document->getReference();
     }
+
+    $description = tr('Rif. _DOCUMENT_', [
+        '_DOCUMENT_' => $content,
+    ]);
 
     return Modules::link($module_id, $document_id, $description, $description, $extra);
 }

@@ -12,36 +12,31 @@ trait ReferenceTrait
 
     abstract public function getReferenceDate();
 
-    public function getReference($text = null)
+    public function getReference()
     {
-        // Testo di default
-        $text = empty($text) ? tr('Rif. _DOCUMENT_') : $text;
-        $content = [];
-
-        // Testo relativo
+        // Informazioni disponibili
         $name = $this->getReferenceName();
         $name = Stringy::create($name)->toLowerCase();
-        $content[] = $name;
 
-        // Riferimento al numero
         $number = $this->getReferenceNumber();
-        if (!empty($number)) {
-            $content[] = tr('num. _NUM_', [
-                '_NUM_' => $number,
-            ]);
-        }
-
-        // Riferimento alla data
         $date = $this->getReferenceDate();
-        if (!empty($date)) {
-            $content[] = tr('del _DATE_', [
-                '_DATE_' => dateFormat($date),
-            ]);
+
+        // Testi predefiniti
+        if (!empty($date) && !empty($number)) {
+            $description = tr('_DOC_ num. _NUM_ del _DATE_');
+        } elseif (!empty($number)) {
+            $description = tr('_DOC_ num. _NUM_');
+        } elseif (!empty($date)) {
+            $description = tr('_DOC_ del _DATE_');
+        } else {
+            $description = tr('_DOC_');
         }
 
         // Creazione descrizione
-        $description = replace($text, [
-            '_DOCUMENT_' => implode(' ', $content),
+        $description = replace($description, [
+            '_DOC_' => $name,
+            '_NUM_' => $number,
+            '_DATE_' => dateFormat($date),
         ]);
 
         return $description;

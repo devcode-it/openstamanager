@@ -598,10 +598,10 @@ switch (post('op')) {
         $id_documento = post('id_documento');
         $is_evasione = post('is_evasione');
 
+        // Individuazione documento originale
         if (!is_subclass_of($class, \Common\Document::class)) {
             return;
         }
-
         $documento = $class::find($id_documento);
 
         // Individuazione sede
@@ -615,8 +615,13 @@ switch (post('op')) {
             $tipo = Tipo::where('descrizione', $descrizione)->first();
 
             $fattura = Fattura::build($documento->anagrafica, $tipo, post('data'), post('id_segment'));
-            $fattura->idpagamento = $documento->idpagamento;
-            $fattura->idsede_destinazione = $id_sede;
+
+            // Informazioni da copiare nel caso di evasione documento
+            if ($is_evasione) {
+                $fattura->idpagamento = $documento->idpagamento;
+                $fattura->idsede_destinazione = $id_sede;
+            }
+
             $fattura->id_ritenuta_contributi = post('id_ritenuta_contributi') ?: null;
             $fattura->save();
 
@@ -658,19 +663,19 @@ switch (post('op')) {
         $message = '';
         if ($type == 'ordine') {
             $message = tr('Ordine _NUM_ aggiunto!', [
-                '_NUM_' => $ordine->numero,
+                '_NUM_' => $documento->numero,
             ]);
         } elseif ($type == 'ddt') {
             $message = tr('DDT _NUM_ aggiunto!', [
-                '_NUM_' => $ordine->numero,
+                '_NUM_' => $documento->numero,
             ]);
         } elseif ($type == 'preventivo') {
             $message = tr('Preventivo _NUM_ aggiunto!', [
-                '_NUM_' => $ordine->numero,
+                '_NUM_' => $documento->numero,
             ]);
         } elseif ($type == 'contratto') {
             $message = tr('Contratto _NUM_ aggiunto!', [
-                '_NUM_' => $ordine->numero,
+                '_NUM_' => $documento->numero,
             ]);
         }
 
@@ -708,8 +713,6 @@ switch (post('op')) {
 
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
-                    //$copia->movimenta($copia->qta);
-
                     $serials = is_array(post('serial')[$riga->id]) ? post('serial')[$riga->id] : [];
 
                     $copia->serials = $serials;

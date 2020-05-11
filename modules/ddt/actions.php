@@ -253,9 +253,14 @@ switch (post('op')) {
         }
         $documento = $class::find($id_documento);
 
+        // Individuazione sede
+        $id_sede = ($documento->direzione == 'entrata') ? $documento->idsede_destinazione : $documento->idsede_partenza;
+        $id_sede = $id_sede ?: $documento->idsede;
+        $id_sede = $id_sede ?: 0;
+
         // Creazione del ddt al volo
         if (post('create_document') == 'on') {
-            $tipo = Tipo::where('dir', $dir)->first();
+            $tipo = Tipo::where('dir', $documento->direzione)->first();
 
             $ddt = DDT::build($documento->anagrafica, $tipo, post('data'));
 
@@ -267,7 +272,7 @@ switch (post('op')) {
                 $ddt->codice_cup = $documento->codice_cup;
                 $ddt->codice_cig = $documento->codice_cig;
                 $ddt->num_item = $documento->num_item;
-                $ddt->idsede_destinazione = $documento->idsede;
+                $ddt->idsede_destinazione = $id_sede;
             }
 
             $ddt->save();

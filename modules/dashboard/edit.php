@@ -640,7 +640,7 @@ if (Modules::getPermission('Interventi') == 'rw') {
 				ora_dal = moment(start).format("HH:mm");
 				ora_al = moment(end).format("HH:mm");
 
-                launch_modal('<?php echo tr('Aggiungi intervento'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::get('Interventi')['id']; ?>&ref=dashboard&data=' + data + '&data_fine=' + data_fine + '&orario_inizio=' + ora_dal + '&orario_fine=' + ora_al, 1);
+                launch_modal('<?php echo tr('Aggiungi attività'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::get('Interventi')['id']; ?>&ref=dashboard&data=' + data + '&data_fine=' + data_fine + '&orario_inizio=' + ora_dal + '&orario_fine=' + ora_al, 1);
 
 				$('#calendar').fullCalendar('unselect');
 			},

@@ -705,6 +705,7 @@ switch (post('op')) {
         $nota->idbanca = $fattura->idbanca;
         $nota->idsede_partenza = $fattura->idsede_partenza;
         $nota->idsede_destinazione = $fattura->idsede_destinazione;
+        $nota->split_payment = $fattura->split_payment;
         $nota->save();
 
         $righe = $fattura->getRighe();

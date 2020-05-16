@@ -35,10 +35,12 @@ if (!$fornitori->isEmpty()) {
 <table class="table table-striped table-condensed table-bordered">
     <thead>
         <tr>
-            <th>'.tr('Ragione sociale').'</th>
-            <th class="text-center">'.tr('Q.tà minima ordinabile').'</th>
-            <th class="text-center">'.tr('Tempi di consegna').'</th>
-            <th class="text-center">'.tr('Prezzo acquisto').'</th>
+            <th>'.tr('Fornitore').'</th>
+            <th width="150">'.tr('Codice').'</th>
+            <th>'.tr('Descrizione').'</th>
+            <th class="text-center" width="210">'.tr('Q.tà minima ordinabile').'</th>
+            <th class="text-center" width="150">'.tr('Tempi di consegna').'</th>
+            <th class="text-center" width="150">'.tr('Prezzo acquisto').'</th>
             <th class="text-center" width="70"></th>
         </tr>
     </thead>
@@ -48,28 +50,27 @@ if (!$fornitori->isEmpty()) {
     foreach ($fornitori as $fornitore) {
         $anagrafica = $fornitore->anagrafica;
 
-        $color = '';
-        if ($anagrafica->id == $articolo->id_fornitore) {
-            $color = '#b5f4a9';
-        }
-
         echo '
-            <tr style="background-color:'.$color.'">
+            <tr '.( ($anagrafica->id == $articolo->id_fornitore) ? 'class="success"' : '' ).'>
             <td>
                 '.Modules::link('Anagrafiche', $anagrafica->id, $anagrafica->ragione_sociale).'
-                <br>
-                <small>'.tr('Codice: _CODE_', [
-                    '_CODE_' => $fornitore['codice_fornitore'],
-                ]).'</small>
             </td>
 
             <td class="text-center">
+                '.$fornitore['codice_fornitore'].'
+            </td>
+
+            <td>
+                '.$fornitore['descrizione'].'
+            </td>
+
+            <td class="text-right">
                 '.numberFormat($fornitore['qta_minima']).' '.$fornitore->articolo->um.'
             </td>
 
-            <td class="text-center">
-                '.tr('_NUM_ giorni', [
-                    '_NUM_' => numberFormat($fornitore['giorni_consegna']),
+            <td class="text-right">
+                '.tr('_NUM_ gg', [
+                    '_NUM_' => numberFormat($fornitore['giorni_consegna'], 0),
                 ]).'
             </td>
 

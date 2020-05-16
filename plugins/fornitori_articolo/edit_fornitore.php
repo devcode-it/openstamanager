@@ -52,11 +52,11 @@ echo '
         </div>
 
         <div class="col-md-4">
-            {[ "type": "number", "label": "'.tr('Qta minima ordinabile').'", "name": "qta_minima", "required": 0, "value": "'.$fornitore['qta_minima'].'" ]}
+            {[ "type": "number", "label": "'.tr('Qta minima ordinabile').'", "name": "qta_minima", "required": 0, "value": "'.$fornitore['qta_minima'].'", "icon-after": "'.$articolo->um.'" ]}
         </div>
 
         <div class="col-md-4">
-            {[ "type": "text", "label": "'.tr('Tempi di consegna').'", "name": "giorni_consegna", "class": "text-right", "required": 0, "value": "'.$fornitore['giorni_consegna'].'", "icon-after": "giorni" ]}
+            {[ "type": "text", "label": "'.tr('Tempi di consegna').'", "name": "giorni_consegna", "class": "text-right", "required": 0, "value": "'.$fornitore['giorni_consegna'].'", "icon-after": "'.tr('gg').'" ]}
         </div>
     </div>
 

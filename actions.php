@@ -255,6 +255,14 @@ elseif (post('op') == 'send-email') {
         $mail->delete();
         flash()->error(tr('Errore durante l\'invio email! Verifica i parametri dell\'account SMTP utilizzato.'));
     }
+} elseif (filter('op') == 'visualizza_riferimenti_riga') {
+    echo App::load('riferimenti.php', [], [], true);
+} elseif (filter('op') == 'visualizza_riferimenti_documento') {
+    echo App::load('riferimenti.php', [], [], true);
+} elseif (filter('op') == 'salva_riferimento_riga') {
+    echo App::load('riferimenti.php', [], [], true);
+} elseif (filter('op') == 'rimuovi_riferimento_riga') {
+    echo App::load('riferimenti.php', [], [], true);
 }
 
 // Inclusione di eventuale plugin personalizzato

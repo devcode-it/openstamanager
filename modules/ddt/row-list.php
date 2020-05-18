@@ -36,14 +36,23 @@ foreach ($righe as $riga) {
     }
 
     echo '
-    <tr data-id="'.$riga->id.'" '.$extra.'>
+    <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'" '.$extra.'>
         <td>';
+
     if ($riga->isArticolo()) {
-        echo '
-            '.Modules::link('Articoli', $riga->idarticolo, $riga->articolo->codice.' - '.$riga->descrizione);
+        echo Modules::link('Articoli', $riga->idarticolo, $riga->articolo->codice.' - '.$riga->descrizione);
     } else {
         echo nl2br($riga->descrizione);
     }
+
+    $numero_riferimenti_riga = $riga->referenceTargets()->count();
+    $numero_riferimenti_collegati = $riga->referenceSources()->count();
+    $riferimenti_presenti = $numero_riferimenti_collegati || $numero_riferimenti_riga;
+    $testo_aggiuntivo = $riferimenti_presenti ? $numero_riferimenti_riga.'-'.$numero_riferimenti_collegati : '';
+    echo '
+        <button type="button" class="btn btn-xs btn-'.($riferimenti_presenti ? 'primary' : 'info').' pull-right" onclick="apriRiferimenti(this)">
+            <i class="fa fa-chevron-right"></i> '.tr('Riferimenti').' '.$testo_aggiuntivo.'
+        </button>';
 
     if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
         if (!empty($mancanti)) {
@@ -245,6 +254,14 @@ echo '
 
 echo '
 <script>
+function apriRiferimenti(button) {
+    var riga = $(button).closest("tr");
+    var id = riga.data("id");
+    var type = riga.data("type");
+
+    openModal("'.tr('Riferimenti riga').'", globals.rootdir + "/actions.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&op=visualizza_riferimenti_riga&riga_id=" + id + "&riga_type=" + type)
+}
+
 $(document).ready(function(){
 	$(".sortable").each(function() {
         $(this).sortable({

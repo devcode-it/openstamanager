@@ -56,13 +56,9 @@ class Interventi extends Resource implements RetrieveInterface, CreateInterface,
             ':period_end' => $period_end,
             ':period_start' => $period_start,
         ];
-        
 
         $module = Modules::get('Interventi');
         $query = Modules::replaceAdditionals($module->id, $query);
-
-
-       
 
         return [
             'query' => $query,

@@ -54,9 +54,9 @@ class Zip
     /**
      * Crea un file zip comprimendo ricorsivamente tutte le sottocartelle a partire da una cartella specificata.
      *
-     * @param string $source
-     * @param string $destination
-     * @param array  $ignores
+     * @param array|string $source
+     * @param string       $destination
+     * @param array        $ignores
      */
     public static function create($source, $destination, $ignores = [])
     {

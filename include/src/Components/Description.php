@@ -149,8 +149,6 @@ abstract class Description extends Model
     /**
      * Copia l'oggetto (articolo, riga, descrizione) nel corrispettivo per il documento indicato.
      *
-     * @param float|null $qta
-     *
      * @return self
      */
     public function copiaIn(Document $document, $qta = null, $is_evasione = true)
@@ -184,15 +182,10 @@ abstract class Description extends Model
         // Rimozione attributo in conflitto
         unset($attributes[$model->getParentID()]);
 
-        // Riferimento di origine nel caso di evasione della riga
+        // Riferimento di origine per l'evasione automatica della riga
         if ($is_evasione) {
             $model->original_id = $this->id;
             $model->original_type = $current;
-        }
-        // Riferimento al documenti nel caso di copia o riferimento non contabile tra documenti
-        else {
-            $model->reference_id = $this->parent->id;
-            $model->reference_type = get_class($this->parent);
         }
 
         // Impostazione del genitore

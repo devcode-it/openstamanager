@@ -121,7 +121,7 @@ function discountInfo(\Common\Components\Row $riga, $mostra_maggiorazione = true
 function reference($document, $text = null)
 {
     if (!empty($document) && !($document instanceof \Common\ReferenceInterface)) {
-        return;
+        return null;
     }
 
     $extra = '';

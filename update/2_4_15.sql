@@ -32,10 +32,12 @@ UPDATE `zz_prints` SET `title` = 'Ddt in uscita' WHERE `zz_prints`.`name` = 'Ddt
 DELETE FROM `zz_prints` WHERE `zz_prints`.`name` = 'Ordine di servizio (senza costi)';
 DELETE FROM `zz_prints` WHERE `zz_prints`.`name` = 'Ordine di servizio';
 
--- Aggiunta dei riferimenti 1-n tra righe di documenti diversi
-ALTER TABLE `or_righe_ordini` ADD `reference_id` int(11), ADD `reference_type` varchar(255);
-ALTER TABLE `dt_righe_ddt` ADD `reference_id` int(11), ADD `reference_type` varchar(255);
-ALTER TABLE `co_righe_preventivi` ADD `reference_id` int(11), ADD `reference_type` varchar(255);
-ALTER TABLE `co_righe_contratti` ADD `reference_id` int(11), ADD `reference_type` varchar(255);
-ALTER TABLE `co_righe_documenti` ADD `reference_id` int(11), ADD `reference_type` varchar(255);
-ALTER TABLE `in_righe_interventi` ADD `reference_id` int(11), ADD `reference_type` varchar(255);
+-- Aggiunta dei riferimenti n-n tra righe di documenti diversi
+CREATE TABLE IF NOT EXISTS `co_riferimenti_righe` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `source_type` varchar(255) NOT NULL,
+    `source_id` int(11) NOT NULL,
+    `target_type` varchar(255) NOT NULL,
+    `target_id` int(11) NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB;

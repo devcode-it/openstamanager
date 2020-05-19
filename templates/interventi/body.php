@@ -300,7 +300,7 @@ foreach ($sessioni as $i => $sessione) {
     // Spazio aggiuntivo
     if ($i == 0) {
         echo '
-    	<td class="text-center" style="font-size:8pt;">
+    	<td class="text-center" style="font-size:6pt;">
             '.tr('Si dichiara che i lavori sono stati eseguiti ed i materiali installati nel rispetto delle vigenti normative tecniche').'
         </td>';
     } else {

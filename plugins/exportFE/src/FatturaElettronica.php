@@ -335,7 +335,7 @@ class FatturaElettronica
             $fattura = new FluidXml(null, ['stylesheet' => 'http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2.1/fatturaPA_v1.2.1.xsl']);
 
             // Generazione dell'elemento root
-            $fattura->namespace('p', 'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2.1');
+            $fattura->namespace('p', 'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2');
             $root = $fattura->addChild('p:FatturaElettronica', true);
             $rootNode = $root[0];
 

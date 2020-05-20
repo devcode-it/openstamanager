@@ -14,6 +14,7 @@ if ($module['name'] == 'Ordini cliente') {
 
 unset($_SESSION['superselect']['codice_modalita_pagamento_fe']);
 $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
+$_SESSION['superselect']['permetti_movimento_a_zero'] = true;
 
 ?><form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">

@@ -19,6 +19,7 @@ $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione']
 $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 $_SESSION['superselect']['ddt'] = $dir;
 $_SESSION['superselect']['split_payment'] = $record['split_payment'];
+$_SESSION['superselect']['permetti_movimento_a_zero'] = ($dir == 'uscita' ? true : false);
 
 if ($dir == 'entrata') {
     $conto = 'vendite';

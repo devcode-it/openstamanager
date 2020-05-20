@@ -18,6 +18,7 @@ switch ($resource) {
                 mg_articoli.idconto_acquisto, 
                 mg_articoli.prezzo_vendita, 
                 mg_articoli.prezzo_acquisto,
+                mg_articoli.servizio,
                 categoria.`nome` AS categoria,
                 sottocategoria.`nome` AS sottocategoria,
                 co_iva.descrizione AS iva_vendita,
@@ -56,6 +57,7 @@ switch ($resource) {
                 categoria.`nome` AS categoria,
                 sottocategoria.`nome` AS sottocategoria,
                 co_iva.descrizione AS iva_vendita,
+                mg_articoli.servizio,
                 CONCAT(conto_vendita_categoria .numero, ".", conto_vendita_sottocategoria.numero, " ", conto_vendita_sottocategoria.descrizione) AS idconto_vendita_title, 
                 CONCAT(conto_acquisto_categoria .numero, ".", conto_acquisto_sottocategoria.numero, " ", conto_acquisto_sottocategoria.descrizione) AS idconto_acquisto_title
             FROM mg_articoli
@@ -179,7 +181,7 @@ switch ($resource) {
 
             $results[count($results) - 1]['children'][] = [
                 'id' => $r['id'],
-                'text' => $r['codice'].' - '.$r['descrizione'].' ('.Translator::numberToLocale($qta).(!empty($r['um']) ? ' '.$r['um'] : '').')',
+                'text' => $r['codice'].' - '.$r['descrizione'].' S = '.$r['servizio'].' ('.Translator::numberToLocale($qta).(!empty($r['um']) ? ' '.$r['um'] : '').')',
                 'codice' => $r['codice'],
                 'descrizione' => $r['descrizione'],
                 'barcode' => $r['barcode'],
@@ -193,6 +195,7 @@ switch ($resource) {
                 'idconto_acquisto_title' => $r['idconto_acquisto_title'],
                 'prezzo_acquisto' => $r['prezzo_acquisto'],
                 'prezzo_vendita' => $prezzo_vendita,
+                'disabled' => ($r['qta'] <= 0 && !$superselect['permetti_movimento_a_zero'] && !$r['servizio'] ? true : false),
             ];
         }
 

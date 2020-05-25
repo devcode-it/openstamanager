@@ -270,6 +270,7 @@ switch (post('op')) {
             $new->numero_esterno = Fattura::getNextNumeroSecondario($new->data, $new->direzione, $new->id_segment);
         }
 
+        $new->codice_stato_fe = null;
         $new->stato()->associate($stato);
         $new->save();
 

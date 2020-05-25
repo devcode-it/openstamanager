@@ -48,7 +48,7 @@ foreach ($righe as $riga) {
     $numero_riferimenti_riga = $riga->referenceTargets()->count();
     $numero_riferimenti_collegati = $riga->referenceSources()->count();
     $riferimenti_presenti = $numero_riferimenti_collegati || $numero_riferimenti_riga;
-    $testo_aggiuntivo = $riferimenti_presenti ? $numero_riferimenti_riga.'-'.$numero_riferimenti_collegati : '';
+    $testo_aggiuntivo = $riferimenti_presenti ? $numero_riferimenti_riga : '';
     echo '
         <button type="button" class="btn btn-xs btn-'.($riferimenti_presenti ? 'primary' : 'info').' pull-right" onclick="apriRiferimenti(this)">
             <i class="fa fa-chevron-right"></i> '.tr('Riferimenti').' '.$testo_aggiuntivo.'
@@ -259,7 +259,7 @@ function apriRiferimenti(button) {
     var id = riga.data("id");
     var type = riga.data("type");
 
-    openModal("'.tr('Riferimenti riga').'", globals.rootdir + "/actions.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&op=visualizza_riferimenti_riga&riga_id=" + id + "&riga_type=" + type)
+    openModal("'.tr('Riferimenti riga').'", globals.rootdir + "/actions.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&op=visualizza_riferimenti&riga_id=" + id + "&riga_type=" + type)
 }
 
 $(document).ready(function(){

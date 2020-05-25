@@ -16,7 +16,6 @@ trait ReferenceTrait
     {
         // Informazioni disponibili
         $name = $this->getReferenceName();
-        $name = Stringy::create($name)->toLowerCase();
 
         $number = $this->getReferenceNumber();
         $date = $this->getReferenceDate();

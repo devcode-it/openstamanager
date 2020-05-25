@@ -7,7 +7,7 @@ echo '
         '.tr('Stampato con OpenSTAManager il _DATE_', ['_DATE_' => date('d/m/Y')]).'
     </td>
 
-    <td align="right" style="width:97mm;">
+    <td class="text-right" style="width:97mm;">
         '.tr('Pagina _PAGE_ di _TOTAL_', [
             '_PAGE_' => '{PAGENO}',
             '_TOTAL_' => '{nb}',

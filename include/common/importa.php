@@ -264,7 +264,7 @@ foreach ($righe as $i => $r) {
 // Totale
 echo '
             <tr>
-                <td colspan="'.(!empty($options['serials']) ? 4 : 3).'" align="right" class="text-right">
+                <td colspan="'.(!empty($options['serials']) ? 4 : 3).'" class="text-right">
                     <b>'.tr('Totale').':</b>
                 </td>
                 <td class="text-right" colspan="2">

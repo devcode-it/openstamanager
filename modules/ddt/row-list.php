@@ -47,7 +47,7 @@ foreach ($righe as $riga) {
 
     $numero_riferimenti_riga = $riga->referenceTargets()->count();
     $numero_riferimenti_collegati = $riga->referenceSources()->count();
-    $riferimenti_presenti = $numero_riferimenti_collegati || $numero_riferimenti_riga;
+    $riferimenti_presenti = $numero_riferimenti_riga;
     $testo_aggiuntivo = $riferimenti_presenti ? $numero_riferimenti_riga : '';
     echo '
         <button type="button" class="btn btn-xs btn-'.($riferimenti_presenti ? 'primary' : 'info').' pull-right" onclick="apriRiferimenti(this)">
@@ -130,37 +130,32 @@ foreach ($righe as $riga) {
         <td class="text-center">';
 
     if ($record['flag_completato'] == 0) {
-        echo "
-            <form action='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record."' method='post' id='delete-form-".$riga->id."' role='form'>
-                <input type='hidden' name='backto' value='record-edit'>
-                <input type='hidden' name='id_record' value='".$id_record."'>
-                <input type='hidden' name='idriga' value='".$riga->id."'>
-                <input type='hidden' name='type' value='".get_class($riga)."'>
-                <input type='hidden' name='op' value='delete_riga'>
-
-                <div class='input-group-btn'>";
+        echo '
+            <div class="input-group-btn">';
 
         if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
-            echo "
-                    <a class='btn btn-primary btn-xs'data-toggle='tooltip' title='Aggiorna SN...' onclick=\"launch_modal( 'Aggiorna SN', '".$rootdir.'/modules/fatture/add_serial.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga->id.'&idarticolo='.$riga->idarticolo."');\"><i class='fa fa-barcode' aria-hidden='true'></i></a>";
+            echo '
+                <a class="btn btn-primary btn-xs" title="'.tr('Modifica seriali della riga...').'"  onclick="modificaSeriali(this)">
+                    <i class="fa fa-barcode"></i>
+                </a>';
         }
 
-        echo "
-                    <a class='btn btn-xs btn-warning' title='Modifica questa riga...' onclick=\"launch_modal('Modifica riga', '".$rootdir.'/modules/ddt/row-edit.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga->id.'&type='.urlencode(get_class($riga))."');\">
-                        <i class='fa fa-edit'></i>
-                    </a>
+        echo '
 
-                    <a class='btn btn-xs btn-danger' title='Rimuovi questa riga...' onclick=\"if( confirm('Rimuovere questa riga dal ddt?') ){ $('#delete-form-".$riga->id."').submit(); }\">
-                        <i class='fa fa-trash'></i>
-                    </a>
-                </div>
-            </form>";
+                <a class="btn btn-xs btn-warning" title="'.tr('Modifica riga...').'"  onclick="modificaRiga(this)">
+                    <i class="fa fa-edit"></i>
+                </a>
+
+                <a class="btn btn-xs btn-danger" title="'.tr('Rimuovi riga...').'" onclick="rimuoviRiga(this)">
+                    <i class="fa fa-trash"></i>
+                </a>
+            </div>';
     }
 
     echo '
-		<div class="handle clickable" style="padding:10px">
-			<i class="fa fa-sort"></i>
-		</div>';
+            <div class="handle clickable" style="padding:10px">
+                <i class="fa fa-sort"></i>
+            </div>';
 
     echo '
         </td>
@@ -180,11 +175,11 @@ $totale = abs($ddt->totale);
 // IMPONIBILE
 echo '
     <tr>
-        <td colspan="4"  class="text-right">
+        <td colspan="4" class="text-right">
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
 
-        <td align="right">
+        <td class="text-right">
             '.moneyFormat($imponibile, 2).'
         </td>
 
@@ -195,11 +190,11 @@ echo '
 if (!empty($sconto)) {
     echo '
     <tr>
-        <td colspan="4"  class="text-right">
+        <td colspan="4" class="text-right">
             <b><span class="tip" title="'.tr('Un importo positivo indica uno sconto, mentre uno negativo indica una maggiorazione').'"> <i class="fa fa-question-circle-o"></i> '.tr('Sconto/maggiorazione', [], ['upper' => true]).':</span></b>
         </td>
 
-        <td align="right">
+        <td class="text-right">
             '.moneyFormat($sconto, 2).'
         </td>
 
@@ -209,11 +204,11 @@ if (!empty($sconto)) {
     // TOTALE IMPONIBILE
     echo '
     <tr>
-        <td colspan="4"  class="text-right">
+        <td colspan="4" class="text-right">
             <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
         </td>
 
-        <td align="right">
+        <td class="text-right">
             '.moneyFormat($totale_imponibile, 2).'
         </td>
 
@@ -224,11 +219,11 @@ if (!empty($sconto)) {
 // IVA
 echo '
     <tr>
-        <td colspan="4"  class="text-right">
+        <td colspan="4" class="text-right">
             <b>'.tr('IVA', [], ['upper' => true]).':</b>
         </td>
 
-        <td align="right">
+        <td class="text-right">
             '.moneyFormat($iva, 2).'
         </td>
 
@@ -238,11 +233,11 @@ echo '
 // TOTALE
 echo '
     <tr>
-        <td colspan="4"  class="text-right">
+        <td colspan="4" class="text-right">
             <b>'.tr('Totale', [], ['upper' => true]).':</b>
         </td>
 
-        <td align="right">
+        <td class="text-right">
             '.moneyFormat($totale, 2).'
         </td>
 
@@ -254,6 +249,55 @@ echo '
 
 echo '
 <script>
+function modificaRiga(button) {
+    var riga = $(button).closest("tr");
+    var id = riga.data("id");
+    var type = riga.data("type");
+
+    openModal("'.tr('Modifica riga').'", "'.$module->fileurl('row-edit.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&riga_id=" + id + "&riga_type=" + type)
+}
+
+function rimuoviRiga(button) {
+    swal({
+        title: "'.tr('Rimuovere questa riga?').'",
+        html: "'.tr('Sei sicuro di volere rimuovere questa riga dal documento?').' '.tr("L'operazione è irreversibile").'.",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonText: "'.tr('Sì').'"
+    }).then(function () {
+        var riga = $(button).closest("tr");
+        var id = riga.data("id");
+        var type = riga.data("type");
+
+        $.ajax({
+            url: globals.rootdir + "/actions.php",
+            type: "POST",
+            dataType: "json",
+            data: {
+                id_module: globals.id_module,
+                id_record: globals.id_record,
+                op: "delete_riga",
+                riga_type: type,
+                riga_id: id,
+            },
+            success: function (response) {
+                location.reload();
+            },
+            error: function() {
+                location.reload();
+            }
+        });
+    }).catch(swal.noop);
+}
+
+function modificaSeriali(button) {
+    var riga = $(button).closest("tr");
+    var id = riga.data("id");
+    var type = riga.data("type");
+
+    openModal("'.tr('Aggiorna SN').'", globals.rootdir + "/modules/fatture/add_serial.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&riga_id=" + id + "&riga_type=" + type);
+}
+
 function apriRiferimenti(button) {
     var riga = $(button).closest("tr");
     var id = riga.data("id");

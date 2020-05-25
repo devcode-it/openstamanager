@@ -51,7 +51,7 @@ $table = $data[$modulo]['table'];
 $id = $data[$modulo]['id'];
 $riga = str_replace('id', 'id_riga_', $id);
 
-$idriga = get('idriga');
+$idriga = get('idriga') ?: get('riga_id');
 
 $rs = $dbo->fetchArray('SELECT mg_articoli.id AS idarticolo, mg_articoli.codice, mg_articoli.descrizione, '.$table.'.qta FROM '.$table.' INNER JOIN mg_articoli ON '.$table.'.idarticolo=mg_articoli.id WHERE '.$table.'.'.$id.'='.prepare($id_record).' AND '.$table.'.id='.prepare($idriga));
 

@@ -135,7 +135,7 @@ if (!$elenco_promemoria->isEmpty()) {
                 <td>'.$info_impianti.'</td>
                 <td>'.$info_righe.'</td>
                 <td>'.$info_allegati.'</td>
-                <td align="right">
+                <td class="text-right">
 
                 <button type="button" class="btn btn-warning btn-sm" title="Pianifica..." data-toggle="tooltip" onclick="launch_modal(\'Pianifica\', \''.$structure->fileurl('pianificazione.php').'?id_module='.$id_module.'&id_plugin='.$structure['id'].'&id_parent='.$id_record.'&id_record='.$promemoria['id'].'\');"'.((!empty($is_pianificabile)) ? '' : ' disabled').'>
                     <i class="fa fa-clock-o"></i>

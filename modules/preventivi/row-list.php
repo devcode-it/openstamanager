@@ -20,7 +20,7 @@ echo '
 $righe = $preventivo->getRighe();
 foreach ($righe as $riga) {
     echo '
-        <tr data-id="'.$riga->id.'">';
+        <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'">';
 
     // Descrizione
     $descrizione = nl2br($riga->descrizione);
@@ -88,11 +88,11 @@ foreach ($righe as $riga) {
     if (empty($record['is_completato'])) {
         echo '
                 <div class="btn-group">
-                    <a class="btn btn-xs btn-warning" onclick="editRow(\''.addslashes(get_class($riga)).'\', '.$riga->id.')">
+                    <a class="btn btn-xs btn-warning" title="'.tr('Modifica riga...').'"  onclick="modificaRiga(this)">
                         <i class="fa fa-edit"></i>
                     </a>
 
-                    <a class="btn btn-xs btn-danger" onclick="deleteRow(\''.addslashes(get_class($riga)).'\', '.$riga->id.')">
+                    <a class="btn btn-xs btn-danger" title="'.tr('Rimuovi riga...').'" onclick="rimuoviRiga(this)">
                         <i class="fa fa-trash"></i>
                     </a>
                 </div>';
@@ -139,7 +139,7 @@ $totale = abs($preventivo->totale);
 // Totale imponibile scontato
 echo '
     <tr>
-        <td colspan="4"  class="text-right">
+        <td colspan="4" class="text-right">
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">
@@ -152,7 +152,7 @@ echo '
 if (!empty($sconto)) {
     echo '
     <tr>
-        <td colspan="4"  class="text-right">
+        <td colspan="4" class="text-right">
             <b><span class="tip" title="'.tr('Un importo positivo indica uno sconto, mentre uno negativo indica una maggiorazione').'"> <i class="fa fa-question-circle-o"></i> '.tr('Sconto/maggiorazione', [], ['upper' => true]).':</span></b>
         </td>
         <td class="text-right">
@@ -164,10 +164,10 @@ if (!empty($sconto)) {
     // Totale imponibile scontato
     echo '
     <tr>
-        <td colspan="4"  class="text-right">
+        <td colspan="4" class="text-right">
             <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
         </td>
-        <td align="right">
+        <td class="text-right">
             '.moneyFormat($totale_imponibile, 2).'
         </td>
         <td></td>
@@ -177,7 +177,7 @@ if (!empty($sconto)) {
 // Totale iva
 echo '
     <tr>
-        <td colspan="4"  class="text-right">
+        <td colspan="4" class="text-right">
             <b>'.tr('Iva', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">
@@ -189,7 +189,7 @@ echo '
 // Totale
 echo '
     <tr>
-        <td colspan="4"  class="text-right">
+        <td colspan="4" class="text-right">
             <b>'.tr('Totale', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">
@@ -205,22 +205,22 @@ $margine_icon = ($margine <= 0 and $preventivo->totale > 0) ? 'warning' : 'check
 
 echo '
 <tr>
-    <td colspan="4"  class="text-right">
+    <td colspan="4" class="text-right">
         '.tr('Costi').':
     </td>
-    <td align="right">
+    <td class="text-right">
         '.moneyFormat($preventivo->spesa).'
     </td>
     <td></td>
 </tr>
 
 <tr>
-    <td colspan="4"  class="text-right">
+    <td colspan="4" class="text-right">
         '.tr('Margine (_PRC_%)', [
             '_PRC_' => numberFormat($preventivo->margine_percentuale),
     ]).':
     </td>
-    <td align="right" class="'.$margine_class.'">
+    <td class="text-right" class="'.$margine_class.'">
         <i class="fa fa-'.$margine_icon.' text-'.$margine_class.'"></i> '.moneyFormat($preventivo->margine).'
     </td>
     <td></td>
@@ -231,6 +231,48 @@ echo '
 
 echo '
 <script>
+
+function modificaRiga(button) {
+    var riga = $(button).closest("tr");
+    var id = riga.data("id");
+    var type = riga.data("type");
+
+    openModal("'.tr('Modifica riga').'", "'.$module->fileurl('row-edit.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&riga_id=" + id + "&riga_type=" + type)
+}
+
+function rimuoviRiga(button) {
+    swal({
+        title: "'.tr('Rimuovere questa riga?').'",
+        html: "'.tr('Sei sicuro di volere rimuovere questa riga dal documento?').' '.tr("L'operazione è irreversibile").'.",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonText: "'.tr('Sì').'"
+    }).then(function () {
+        var riga = $(button).closest("tr");
+        var id = riga.data("id");
+        var type = riga.data("type");
+
+        $.ajax({
+            url: globals.rootdir + "/actions.php",
+            type: "POST",
+            dataType: "json",
+            data: {
+                id_module: globals.id_module,
+                id_record: globals.id_record,
+                op: "delete_riga",
+                riga_type: type,
+                riga_id: id,
+            },
+            success: function (response) {
+                location.reload();
+            },
+            error: function() {
+                location.reload();
+            }
+        });
+    }).catch(swal.noop);
+}
+
 $(document).ready(function(){
 	$(".sortable").each(function() {
         $(this).sortable({

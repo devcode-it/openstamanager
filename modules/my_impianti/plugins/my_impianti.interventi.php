@@ -78,14 +78,14 @@ foreach ($rs as $r) {
     // MATRICOLA
     echo '
                     <tr>
-                        <td align="right">'.tr('Matricola').':</td>
+                        <td class="text-right">'.tr('Matricola').':</td>
                         <td valign="top">'.$r['matricola'].'</td>
                     </tr>';
 
     // NOME
     echo '
                     <tr>
-                        <td align="right">'.tr('Nome').':</td>
+                        <td class="text-right">'.tr('Nome').':</td>
                         <td valign="top">
                             '.Modules::link('MyImpianti', $r['id'], $r['nome']).'
                         </td>
@@ -94,20 +94,20 @@ foreach ($rs as $r) {
     // DATA
     echo '
                     <tr>
-                        <td align="right">'.tr('Data').':</td>
+                        <td class="text-right">'.tr('Data').':</td>
                         <td valign="top">'.Translator::dateToLocale($r['data']).'</td>
                     </tr>';
 
     // DESCRIZIONE
     echo '
                     <tr>
-                        <td align="right">'.tr('Descrizione').':</td>
+                        <td class="text-right">'.tr('Descrizione').':</td>
                         <td valign="top">'.$r['descrizione'].'</td>
                     </tr>';
 
     echo '
                     <tr>
-                        <td valign="top" align="right">'.tr("Componenti soggetti all'intervento").'</td>
+                        <td valign="top" class="text-right">'.tr("Componenti soggetti all'intervento").'</td>
                         <td valign="top">
                             <form action="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=link_componenti&matricola='.$r['id'].'" method="post">
                                 <input type="hidden" name="backto" value="record-edit">

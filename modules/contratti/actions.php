@@ -384,4 +384,53 @@ $riga = $contratto->getRiga($type, $id_riga);
         }
 
         break;
+
+    case 'add_preventivo':
+
+        $preventivo = \Modules\Preventivi\Preventivo::find(post('id_documento'));
+
+        // Creazione del contratto al volo
+        if (post('create_document') == 'on') {
+
+            $contratto = Contratto::build($preventivo->anagrafica, $preventivo->nome);
+
+            $contratto->idpagamento = $preventivo->idpagamento;
+            $contratto->idsede = $preventivo->idsede;
+
+            $contratto->id_documento_fe = $preventivo->id_documento_fe;
+            $contratto->codice_cup = $preventivo->codice_cup;
+            $contratto->codice_cig = $preventivo->codice_cig;
+            $contratto->num_item = $preventivo->num_item;
+
+            $contratto->descrizione = $preventivo->descrizione;
+            $contratto->esclusioni = $preventivo->esclusioni;
+
+            $contratto->save();
+
+            $id_record = $contratto->id;
+        }
+
+        $parziale = false;
+        $righe = $preventivo->getRighe();
+        foreach ($righe as $riga) {
+            if (post('evadere')[$riga->id] == 'on' and !empty(post('qta_da_evadere')[$riga->id])) {
+                $qta = post('qta_da_evadere')[$riga->id];
+
+                $copia = $riga->copiaIn($contratto, $qta);
+
+                $copia->save();
+            }
+
+            if ($riga->qta != $riga->qta_evasa) {
+                $parziale = true;
+            }
+        }
+
+        ricalcola_costiagg_ordine($id_record);
+
+        flash()->info(tr('Preventivo _NUM_ aggiunto!', [
+            '_NUM_' => $preventivo->numero,
+        ]));
+
+        break;
 }

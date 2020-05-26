@@ -9,8 +9,11 @@ $documento = Preventivo::find($id_record);
 if (get('documento') == 'fattura') {
     $final_module = 'Fatture di vendita';
     $op = 'add_documento';
-} else {
+} elseif (get('documento') == 'ordine') {
     $final_module = 'Ordini cliente';
+    $op = 'add_preventivo';
+} else {
+    $final_module = 'Contratti';
     $op = 'add_preventivo';
 }
 

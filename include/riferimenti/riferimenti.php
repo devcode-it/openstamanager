@@ -35,7 +35,7 @@ $direzione_richiesta = $source->parent->direzione == 'entrata' ? 'uscita': 'entr
 
 // Individuazione DDT disponibili
 $ddt = DDT::whereHas('stato', function ($query) {
-    $query->where('descrizione', '=', 'Bozza');
+    $query->where('descrizione', '!=', 'Bozza');
 })->whereHas('tipo', function ($query) use($direzione_richiesta){
     $query->where('dir', '=', $direzione_richiesta);
 })->get();
@@ -49,7 +49,7 @@ foreach ($ddt as $elemento) {
 
 // Individuazione ordini disponibili
 $ordini = Ordine::whereHas('stato', function ($query) {
-    $query->where('descrizione', '=', 'Bozza');
+    $query->where('descrizione', '!=', 'Bozza');
 })->whereHas('tipo', function ($query) use($direzione_richiesta){
     $query->where('dir', '=', $direzione_richiesta);
 })->get();

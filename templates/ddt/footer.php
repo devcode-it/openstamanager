@@ -88,7 +88,7 @@ echo '
 echo '
 <table class="table-bordered">
     <tr>
-        <th class="small" class style="width:25%">
+        <th class="small" class style="width:25%;">
             '.tr('Aspetto beni', [], ['upper' => true]).'
         </th>
 

@@ -5,7 +5,8 @@ include_once __DIR__.'/../../core.php';
 echo '
 <table class="table table-striped table-hover table-condensed table-bordered">
     <thead>
-		<tr>
+        <tr>
+            <th width="35" class="text-center" >'.tr('#').'</th>
 			<th>'.tr('Descrizione').'</th>
 			<th class="text-center tip" width="150" title="'.tr('da evadere').' / '.tr('totale').'">'.tr('Q.tà').' <i class="fa fa-question-circle-o"></i></th>
 			<th class="text-center" width="150">'.tr('Prezzo unitario').'</th>
@@ -21,6 +22,12 @@ $righe = $contratto->getRighe();
 foreach ($righe as $riga) {
     echo '
         <tr data-id="'.$riga->id.'">';
+
+
+    echo '
+        <td class="text-center">
+            '.(($riga->order)+1).'
+        </td>';
 
     // Descrizione
     $descrizione = nl2br($riga->descrizione);
@@ -140,7 +147,7 @@ $totale = abs($contratto->totale);
 // Totale totale imponibile
 echo '
     <tr>
-        <td colspan="4"  class="text-right">
+        <td colspan="5" class="text-right">
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">
@@ -153,7 +160,7 @@ echo '
 if (!empty($sconto)) {
     echo '
     <tr>
-        <td colspan="4"  class="text-right">
+        <td colspan="5" class="text-right">
             <b><span class="tip" title="'.tr('Un importo positivo indica uno sconto, mentre uno negativo indica una maggiorazione').'"> <i class="fa fa-question-circle-o"></i> '.tr('Sconto/maggiorazione', [], ['upper' => true]).':</span></b>
         </td>
         <td class="text-right">
@@ -165,7 +172,7 @@ if (!empty($sconto)) {
     // Totale totale imponibile
     echo '
     <tr>
-        <td colspan="4"  class="text-right">
+        <td colspan="5" class="text-right">
             <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">
@@ -178,7 +185,7 @@ if (!empty($sconto)) {
 // Totale iva
 echo '
     <tr>
-        <td colspan="4"  class="text-right">
+        <td colspan="5" class="text-right">
             <b>'.tr('Iva', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">
@@ -190,7 +197,7 @@ echo '
 // Totale contratto
 echo '
     <tr>
-        <td colspan="4"  class="text-right">
+        <td colspan="5" class="text-right">
             <b>'.tr('Totale', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">

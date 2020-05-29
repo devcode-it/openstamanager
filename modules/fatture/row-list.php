@@ -7,6 +7,7 @@ echo '
 <table class="table table-striped table-hover table-condensed table-bordered">
     <thead>
         <tr>
+            <th width="35" class="text-center" >'.tr('#').'</th>
             <th>'.tr('Descrizione').'</th>
             <th class="text-center" width="150">'.tr('Q.tà').'</th>
             <th class="text-center" width="150">'.tr('Prezzo unitario').'</th>
@@ -69,7 +70,14 @@ foreach ($righe as $riga) {
     }
 
     echo '
-    <tr data-id="'.$riga->id.'" '.$extra.'>
+    <tr data-id="'.$riga->id.'" '.$extra.'>';
+
+    echo '
+    <td class="text-center">
+        '.(($riga->order)+1).'
+    </td>';
+
+    echo '
         <td>';
 
     if ($riga->isArticolo()) {
@@ -240,7 +248,7 @@ echo '
 if (!empty($sconto)) {
     echo '
     <tr>
-        <td colspan="4" class="text-right">
+        <td colspan="5" class="text-right">
             <b><span class="tip" title="'.tr('Un importo positivo indica uno sconto, mentre uno negativo indica una maggiorazione').'"><i class="fa fa-question-circle-o"></i> '.tr('Sconto/maggiorazione', [], ['upper' => true]).':</span></b>
         </td>
         <td align="right">
@@ -252,7 +260,7 @@ if (!empty($sconto)) {
     // TOTALE IMPONIBILE
     echo '
     <tr>
-        <td colspan="4" class="text-right">
+        <td colspan="5" class="text-right">
             <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
@@ -266,7 +274,7 @@ if (!empty($sconto)) {
 if (!empty($fattura->rivalsa_inps)) {
     echo '
     <tr>
-        <td colspan="4" class="text-right">';
+        <td colspan="5" class="text-right">';
 
     if ($dir == 'entrata') {
         echo '
@@ -287,7 +295,7 @@ if (!empty($fattura->rivalsa_inps)) {
 if (!empty($iva)) {
     echo '
     <tr>
-        <td colspan="4" class="text-right">';
+        <td colspan="5" class="text-right">';
 
     if ($records[0]['split_payment']) {
         echo '<b>'.tr('Iva a carico del destinatario', [], ['upper' => true]).':</b>';
@@ -306,7 +314,7 @@ if (!empty($iva)) {
 // TOTALE
 echo '
     <tr>
-        <td colspan="4" class="text-right">
+        <td colspan="5" class="text-right">
             <b>'.tr('Totale', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
@@ -319,7 +327,7 @@ echo '
 if (!empty($fattura->ritenuta_acconto)) {
     echo '
     <tr>
-        <td colspan="4" class="text-right">
+        <td colspan="5" class="text-right">
             <b>'.tr("Ritenuta d'acconto", [], ['upper' => true]).':</b>
         </td>
         <td align="right">
@@ -333,7 +341,7 @@ if (!empty($fattura->ritenuta_acconto)) {
 if (!empty($fattura->totale_ritenuta_contributi)) {
     echo '
     <tr>
-        <td colspan="4" class="text-right">
+        <td colspan="5" class="text-right">
             <b>'.tr('Ritenuta contributi', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
@@ -347,7 +355,7 @@ if (!empty($fattura->totale_ritenuta_contributi)) {
 if ($totale != $netto_a_pagare) {
     echo '
     <tr>
-        <td colspan="4" class="text-right">
+        <td colspan="5" class="text-right">
             <b>'.tr('Netto a pagare', [], ['upper' => true]).':</b>
         </td>
         <td align="right">

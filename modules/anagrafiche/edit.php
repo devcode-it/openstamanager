@@ -354,7 +354,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
 
     if (!empty($conto['numero_conto'])) {
         $piano_dei_conti_cliente = tr('_NAME_', [
-                                    '_NAME_' => $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'],
+                                    '_NAME_' => $conto['numero'].'.'.$conto['numero_conto'].' '.htmlentities($conto['descrizione']),
                                 ]);
         echo Modules::link('Piano dei conti', null, null, null, 'class="pull-right"', 1, 'movimenti-'.$conto['id']);
     } else {

@@ -9,7 +9,7 @@ UPDATE `zz_settings` SET `sezione` = 'API' WHERE `zz_settings`.`nome` = 'apilaye
 UPDATE `zz_settings` SET `sezione` = 'API' WHERE `zz_settings`.`nome` = 'Google Maps API key';
 
 -- Abilita la possibilità di ripristinare backup da archivi esterni al gestionale
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `created_at`, `updated_at`, `order`, `help`) VALUES (NULL, 'Permetti il ripristino di backup da file esterni', '1', 'boolean', '0', 'Backup', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, NULL, 'Abilita la possibilità di ripristinare backup da archivi esterni al gestionale.');
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `created_at`, `order`, `help`) VALUES (NULL, 'Permetti il ripristino di backup da file esterni', '1', 'boolean', '0', 'Backup', CURRENT_TIMESTAMP, NULL, 'Abilita la possibilità di ripristinare backup da archivi esterni al gestionale.');
 
 
 UPDATE `zz_settings` SET `help` = 'Esegue automaticamente un backup completo del gestionale al primo accesso della giornata.' WHERE `zz_settings`.`nome` = 'Backup automatico';
@@ -39,6 +39,11 @@ INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `filen
 ALTER TABLE `in_righe_interventi` ADD `abilita_serial` boolean NOT NULL DEFAULT '0' AFTER `um`;
 ALTER TABLE `in_righe_interventi` ADD `idimpianto` int(11);
 ALTER TABLE `in_righe_interventi` ADD `old_id` int(11);
+
+-- Agli articoli utilizzati negli interventi che fanno riferimento ad articoli eliminati assegno l'articolo fittizio DELETED
+INSERT INTO `mg_articoli` (`id`, `codice`, `descrizione`, `um`, `abilita_serial`, `immagine`, `note`, `qta`, `threshold_qta`, `ubicazione`, `prezzo_acquisto`, `prezzo_vendita`, `idiva_vendita`, `gg_garanzia`, `peso_lordo`, `volume`, `componente_filename`, `contenuto`, `attivo`, `created_at`, `id_categoria`, `id_sottocategoria`, `servizio`, `idconto_vendita`, `idconto_acquisto`, `deleted_at`, `barcode`, `id_fornitore`) VALUES (NULL, 'DELETED', 'ARTICOLO RIMOSSO', '', '0', NULL, '', '0', '0', '', '0', '0', '0', '0', '0', '0', '', '', '0', CURRENT_TIMESTAMP, 0, NULL, '1', NULL, NULL, NULL, NULL, NULL);
+
+UPDATE `mg_articoli_interventi` SET `idarticolo` = (SELECT `id` FROM `mg_articoli` WHERE `codice` = 'DELETED' )  WHERE `idarticolo` NOT IN (SELECT `id` FROM `mg_articoli`);
 
 INSERT INTO `in_righe_interventi` (`old_id`, `idarticolo`, `idintervento`, `is_descrizione`, `is_sconto`, `descrizione`, `prezzo_acquisto`, `prezzo_vendita`, `sconto`, `sconto_unitario`, `tipo_sconto`, `idiva`, `desc_iva`, `iva`, `qta`, `um`, `abilita_serial`, `idimpianto`) SELECT `id`, `idarticolo`, `idintervento`, `is_descrizione`, `is_sconto`, `descrizione`, `prezzo_acquisto`, `prezzo_vendita`, `sconto`, `sconto_unitario`, `tipo_sconto`, `idiva`, `desc_iva`, `iva`, `qta`, `um`, `abilita_serial`, `idimpianto` FROM `mg_articoli_interventi`;
 
@@ -159,7 +164,7 @@ ALTER TABLE `co_righe_promemoria` ADD `original_id` int(11), ADD `original_type`
 ALTER TABLE `in_righe_interventi` ADD `original_id` int(11), ADD `original_type` varchar(255);
 
 -- Aggiunta supporto a prezzi ivati
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `created_at`, `updated_at`, `order`, `help`) VALUES (NULL, 'Utilizza prezzi di vendita comprensivi di IVA', '0', 'boolean', '1', 'Fatturazione', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, NULL, 'Abilita la gestione con importi ivati per i prezzi di vendita.');
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `created_at`, `order`, `help`) VALUES (NULL, 'Utilizza prezzi di vendita comprensivi di IVA', '0', 'boolean', '1', 'Fatturazione', CURRENT_TIMESTAMP, NULL, 'Abilita la gestione con importi ivati per i prezzi di vendita.');
 
 -- Fix plugin "Pianificazione fatturazione"
 UPDATE `zz_plugins` SET `options` = 'custom', `script` = '', `directory` = 'pianificazione_fatturazione' WHERE `name` = 'Pianificazione fatturazione';
@@ -489,9 +494,6 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 (NULL, 'v1', 'retrieve', 'rapportino', 'Modules\\Interventi\\API\\v1\\Rapportino', '1'),
 (NULL, 'v1', 'create', 'rapportino', 'Modules\\Interventi\\API\\v1\\Rapportino', '1');
 
--- Aggiunta stato "In attesa di conferma" sugli ordini fornitore
-INSERT INTO `or_statiordine` (`id`, `descrizione`, `annullato`, `icona`, `completato`) VALUES (NULL, 'In attesa di conferma', '0', 'fa fa-envelope text-primary', '0');
-
 -- Aggiunta vincolo a pianificazione rate contratti
 DELETE FROM `co_fatturazione_contratti` WHERE `idcontratto` NOT IN(SELECT `id` FROM `co_contratti`);
 ALTER TABLE `co_fatturazione_contratti` ADD CONSTRAINT `fk_contratti_fatturazione` FOREIGN KEY (`idcontratto`) REFERENCES `co_contratti`(`id`) ON DELETE CASCADE;
@@ -503,7 +505,8 @@ ALTER TABLE `co_statipreventivi` ADD `is_revisionabile` BOOLEAN NOT NULL AFTER `
 UPDATE `co_statipreventivi` SET `is_revisionabile` = 1 WHERE `is_completato` = 0 OR `descrizione` = 'Rifiutato';
 
 -- Spostamento moduli "Stati preventivi" e "Stati contratti" sotto "Tabelle"
-UPDATE `zz_modules` SET `parent` = (SELECT `id` FROM (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tabelle') AS `m` ) WHERE `name` IN('Stati dei preventivi', 'Stati dei contratti');
+UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Stati dei preventivi' AND `t2`.`name` = 'Tabelle') SET `t1`.`parent` = `t2`.`id`;
+UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Stati dei contratti' AND `t2`.`name` = 'Tabelle') SET `t1`.`parent` = `t2`.`id`;
 
 -- Aggiunta campo per salvare il numero di revisione del preventivo
 ALTER TABLE `co_preventivi` ADD `numero_revision` INT NOT NULL AFTER `default_revision`;
@@ -521,8 +524,14 @@ UPDATE `zz_views` SET `query` = 'mg_categorie.nome' WHERE `zz_views`.`name` = 'C
 UPDATE `zz_views` SET `query` = 'sottocategorie.nome' WHERE `zz_views`.`name` = 'Sottocategoria' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
 UPDATE `zz_views` SET `query` = 'an_anagrafiche.ragione_sociale' WHERE `zz_views`.`name` = 'Fornitore' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
 
+-- Fix id ambigui modulo articoli
+UPDATE `zz_views` SET `query` = 'mg_articoli.id' WHERE `query` = 'id' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
+UPDATE `zz_views` SET `query` = 'mg_articoli.codice' WHERE `query` = 'codice' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
+UPDATE `zz_views` SET `query` = 'mg_articoli.descrizione' WHERE `query` = 'descrizione' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
+UPDATE `zz_views` SET `query` = 'mg_articoli.note' WHERE `query` = 'note' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
+
 -- Ottimizzazione query attività
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM (`in_interventi` INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`) LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` LEFT JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`idstatointervento` LEFT JOIN (SELECT an_sedi.id, CONCAT(an_sedi.nomesede,\'<br>\',an_sedi.telefono,\'<br>\',an_sedi.cellulare,\'<br>\',an_sedi.citta,\' - \', an_sedi.indirizzo) AS info FROM an_sedi) AS sede_destinazione ON sede_destinazione.id = in_interventi.idsede_destinazione LEFT JOIN (SELECT co_righe_documenti.idintervento, CONCAT(\'Fatt. \', co_documenti.numero_esterno,\' del \', DATE_FORMAT(co_documenti.data, \'%d/%m/%Y\')) AS info FROM co_documenti INNER JOIN co_righe_documenti ON co_documenti.id = co_righe_documenti.iddocumento) AS fattura ON fattura.idintervento = in_interventi.id WHERE 1=1 |date_period(`orario_inizio`,`data_richiesta`)| GROUP BY `in_interventi`.`id` HAVING 2=2 ORDER BY IFNULL(`orario_fine`, `data_richiesta`) DESC' WHERE `name` = 'Interventi';
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM (`in_interventi` INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`) LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` LEFT JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`idstatointervento` LEFT JOIN (SELECT an_sedi.id, CONCAT(an_sedi.nomesede,\'<br>\',an_sedi.telefono,\'<br>\',an_sedi.cellulare,\'<br>\',an_sedi.citta,\' - \', an_sedi.indirizzo) AS info FROM an_sedi) AS sede_destinazione ON sede_destinazione.id = in_interventi.idsede_destinazione WHERE 1=1 |date_period(`orario_inizio`,`data_richiesta`)| GROUP BY `in_interventi`.`id` HAVING 2=2 ORDER BY IFNULL(`orario_fine`, `data_richiesta`) DESC' WHERE `name` = 'Interventi';
 
 UPDATE `zz_views` SET `query` = 'in_statiintervento.descrizione' WHERE `zz_views`.`name` = 'Stato' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi');
 UPDATE `zz_views` SET `query` = 'in_interventi.descrizione' WHERE `zz_views`.`name` = 'Descrizione' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi');
@@ -531,10 +540,89 @@ UPDATE `zz_views` SET `query` = 'in_interventi.descrizione' WHERE `zz_views`.`na
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), 'Sede', 'sede_destinazione.info', 4, 1, 0, 0, 1);
 
--- Aggiunta colonna Rif. fattura per attività
-INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), 'Rif. fattura', 'fattura.info', 17, 1, 0, 0, 1);
-
 -- Aggiornamento widget Rate contrattuali
 UPDATE `zz_widgets` SET `more_link` = './plugins/pianificazione_fatturazione/widgets/rate_contrattuali.php' WHERE `zz_widgets`.`name` = 'Rate contrattuali';
 
+-- Aggiornamento widget Promemoria contratti da pianificare
+UPDATE `zz_widgets` SET `name` = 'Promemoria contratti da pianificare' WHERE `zz_widgets`.`name` = 'Interventi da pianificare';
+UPDATE `zz_widgets` SET `more_link` = './plugins/pianificazione_interventi/widgets/promemoria_da_pianificare.php' WHERE `zz_widgets`.`name` = 'Promemoria contratti da pianificare';
+
+-- Rimozione completa co_ordiniservizio
+DROP TABLE IF EXISTS `co_ordiniservizio`;
+DROP TABLE IF EXISTS `co_ordiniservizio_vociservizio`;
+DELETE FROM `zz_widgets` WHERE `name` = 'Ordini di servizio da impostare';
+
+--
+-- Aggiornamento FE in base alla normativa del 28/02/2020
+--
+ALTER TABLE `fe_natura` CHANGE `codice` `codice` VARCHAR(5) NOT NULL;
+
+-- Nuove nature IVA
+INSERT INTO `fe_natura` (`codice`, `descrizione`) VALUES
+('N2.1', 'non soggette ad IVA ai sensi degli artt. Da 7 a 7-septies del DPR 633/72'),
+('N2.2', 'non soggette - altri casi'),
+('N3.1', 'non imponibili - esportazioni'),
+('N3.2', 'non imponibili - cessioni intracomunitarie'),
+('N3.3', 'non imponibili - cessioni verso San Marino'),
+('N3.4', 'non imponibili - operazioni assimilate alle cessioni all\'esportazione'),
+('N3.5', 'non imponibili - a seguito di dichiarazioni d\'intento'),
+('N3.6', 'non imponibili - altre operazioni che non concorrono alla formazione del plafond'),
+('N6.1', 'inversione contabile - cessione di rottami e altri materiali di recupero'),
+('N6.2', 'inversione contabile - cessione di oro e argento pure'),
+('N6.3', 'inversione contabile - subappalto nel settore edile'),
+('N6.4', 'inversione contabile - cessione di fabbricati'),
+('N6.5', 'inversione contabile - cessione di telefoni cellulari'),
+('N6.6', 'inversione contabile - cessione di prodotti elettronici'),
+('N6.7', 'inversione contabile - prestazioni comparto edile e settori connessi'),
+('N6.8', 'inversione contabile - operazioni settore energetico'),
+('N6.9', 'inversione contabile - altri casi');
+
+-- Nuove aliquote di default collegate alle nuove nature IVA
+INSERT INTO `co_iva` (`id`, `descrizione`, `percentuale`, `esente`, `codice_natura_fe`, `esigibilita`, `default`) VALUES
+(NULL, 'Non soggetta ad IVA ai sensi degli artt. Da 7 a 7-septies del DPR 633/72', '0', '1', 'N2.1', 'I', '1'),
+(NULL, 'Non soggetta - altri casi', '0', '1', 'N2.2', 'I', '1'),
+(NULL, 'Non imponibile - esportazioni', '0', '1', 'N3.1', 'I', '1'),
+(NULL, 'Non imponibile - cessioni intracomunitarie', '0', '1', 'N3.2', 'I', '1'),
+(NULL, 'Non imponibile - cessioni verso San Marino', '0', '1', 'N3.3', 'I', '1'),
+(NULL, 'Non imponibile - operazioni assimilate alle cessioni all\'esportazione', '0', '1', 'N3.4', 'I', '1'),
+(NULL, 'Non imponibile - a seguito di dichiarazioni d\'intento', '0', '1', 'N3.5', 'I', '1'),
+(NULL, 'Non imponibile - altre operazioni che non concorrono alla formazione del plafond', '0', '1', 'N3.6', 'I', '1'),
+(NULL, 'Inversione contabile - cessione di rottami e altri materiali di recupero', '0', '1', 'N6.1', 'I', '1'),
+(NULL, 'Inversione contabile - cessione di oro e argento pure', '0', '1', 'N6.2', 'I', '1'),
+(NULL, 'Inversione contabile - subappalto nel settore edile', '0', '1', 'N6.3', 'I', '1'),
+(NULL, 'Inversione contabile - cessione di fabbricati', '0', '1', 'N6.4', 'I', '1'),
+(NULL, 'Inversione contabile - cessione di telefoni cellulari', '0', '1', 'N6.5', 'I', '1'),
+(NULL, 'Inversione contabile - cessione di prodotti elettronici', '0', '1', 'N6.6', 'I', '1'),
+(NULL, 'Inversione contabile - prestazioni comparto edile e settori connessi', '0', '1', 'N6.7', 'I', '1'),
+(NULL, 'Inversione contabile - operazioni settore energetico', '0', '1', 'N6.8', 'I', '1'),
+(NULL, 'Inversione contabile - altri casi', '0', '1', 'N6.9', 'I', '1');
+
+-- Nuovi tipi di documento
+INSERT INTO `fe_tipi_documento` (`codice`, `descrizione`) VALUES
+('TD16', 'Integrazione fattura reverse charge interno'),
+('TD17', 'Integrazione/autofattura per acquisto servizi dall\'estero'),
+('TD18', 'Integrazione per acquisto di beni intracomunitari'),
+('TD19', 'Integrazione/autofattura per acquisto di beni ex art.17 c.2 DPR 633/72'),
+('TD20', 'Autofattura per regolarizzazione e integrazione delle fatture (art.6 c.8 d.lgs. 471/97 o art.46 c.5 D.L. 331/93)'),
+('TD21', 'Autofattura per splafonamento'),
+('TD22', 'Estrazione beni da deposito IVA'),
+('TD23', 'Estrazione beni da deposito IVA con versamento dell\'IVA'),
+('TD24', 'Fattura differita di cui all\'art.21, comma 4, lett. a)'),
+('TD25', 'Fattura differita di cui all\'art.21, comma 4, terzo periodo lett. b)'),
+('TD26', 'Cessione di beni ammortizzabili e per passaggi interni (ex art.36 DPR 633/72)'),
+('TD27', 'Fattura per autoconsumo o per cessioni gratuite senza rivalsa');
+
+INSERT INTO `co_tipidocumento` (`id`, `descrizione`, `dir`, `reversed`, `codice_tipo_documento_fe`) VALUES
+(NULL, 'Integrazione fattura reverse charge interno', 'entrata', '0', 'TD16'),
+(NULL, 'Integrazione/autofattura per acquisto servizi dall\'estero', 'entrata', '0', 'TD17'),
+(NULL, 'Integrazione per acquisto di beni intracomunitari', 'entrata', '0', 'TD18'),
+(NULL, 'Integrazione/autofattura per acquisto di beni ex art.17 c.2 DPR 633/72', 'entrata', '0', 'TD19'),
+(NULL, 'Autofattura per regolarizzazione e integrazione delle fatture (art.6 c.8 d.lgs. 471/97 o art.46 c.5 D.L. 331/93)', 'entrata', '0', 'TD20'),
+(NULL, 'Autofattura per splafonamento', 'entrata', '0', 'TD21'),
+(NULL, 'Estrazione beni da deposito IVA', 'entrata', '0', 'TD22'),
+(NULL, 'Estrazione beni da deposito IVA con versamento dell\'IVA', 'entrata', '0', 'TD23'),
+(NULL, 'Cessione di beni ammortizzabili e per passaggi interni (ex art.36 DPR 633/72)', 'entrata', '0', 'TD26'),
+(NULL, 'Fattura per autoconsumo o per cessioni gratuite senza rivalsa', 'entrata', '0', 'TD27');
+
+-- Aggiornamento tipo documento FE per fatture differite
+UPDATE `co_tipidocumento` SET `codice_tipo_documento_fe` = 'TD24' WHERE `descrizione` IN('Fattura differita di acquisto', 'Fattura differita di vendita');

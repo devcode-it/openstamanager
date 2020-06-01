@@ -40,7 +40,7 @@ if ($module['name'] != 'Contratti' && $module['name'] != 'Preventivi') {
     $disabled = empty($result['idarticolo']);
 
     echo '
-<div class="row" id="prezzi_articolo">
+<div class="row '.(!empty($options['nascondi_prezzi']) ? 'hidden' : '').'" id="prezzi_articolo">
     <div class="col-md-4 text-center">
         <button type="button" class="btn btn-sm btn-info btn-block '.($disabled ? 'disabled' : '').'" '.($disabled ? 'disabled' : '').' onclick="$(\'#prezziacquisto\').toggleClass(\'hide\'); $(\'#prezziacquisto\').load(\''.ROOTDIR."/ajax_complete.php?module=Articoli&op=getprezziacquisto&idarticolo=' + ( $('#idarticolo option:selected').val() || $('#idarticolo').val()) + '&idanagrafica=".$options['idanagrafica'].'\');">
             <i class="fa fa-search"></i> '.tr('Ultimi prezzi di acquisto').'

@@ -153,11 +153,11 @@ class Settings
             }
 
             $result = '
-    {[ "type": "select", "label": "'.$setting->nome.'", "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "values": '.json_encode($list).', "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'" ]}';
+    {[ "type": "select", "multiple": 0, "label": "'.$setting->nome.'", "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "values": '.json_encode($list).', "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'" ]}';
         }
 
         // Lista multipla
-        if (preg_match("/multiple\[(.+?)\]/", $setting->tipo, $m)) {
+        elseif (preg_match("/multiple\[(.+?)\]/", $setting->tipo, $m)) {
             $values = explode(',', $m[1]);
 
             $list = [];

@@ -200,12 +200,12 @@ class App
                     $name = str_replace('|lang|', $replace, $element);
 
                     if (file_exists(DOCROOT.str_replace(ROOTDIR, '', $name))) {
-                        $element = $name;
+                        $assets_element = $name;
                         break;
                     }
                 }
 
-                $result[$key] = $element.'?v='.$version;
+                $result[$key] = $assets_element.'?v='.$version;
             }
 
             $assets[$section] = $result;

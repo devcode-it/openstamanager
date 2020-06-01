@@ -143,7 +143,7 @@ class SelectHandler implements HandlerInterface
             }
 
             $html .= '
-        <option value="'.prepareToField($element['id']).'" '.implode(' ', $attributes).'>'.$element['text'].'</option>';
+        <option value="'.prepareToField($element['id']).'" '.implode(' ', $attributes).($element['disabled'] ? 'disabled' : '').'>'.$element['text'].'</option>';
         }
 
         return $html;

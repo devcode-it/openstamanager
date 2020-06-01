@@ -260,7 +260,7 @@ if (Auth::check()) {
     }
 }
 
-$hide_sidebar = Auth::check() && setting('Nascondere la barra sinistra di default');
+$hide_sidebar = Auth::check() && (setting('Nascondere la barra sinistra di default') or $_SESSION['settings']['sidebar-collapse']);
 echo '
 
     </head>
@@ -306,8 +306,8 @@ if (Auth::check()) {
 					</a>
 
                     <!-- Navbar Left Menu -->
-                     <div class="navbar-left" class="hidden-xs">
-                        <ul class="nav navbar-nav" class="hidden-xs">
+                     <div class="navbar-left hidden-xs">
+                        <ul class="nav navbar-nav hidden-xs">
                             <li><a  href="#" id="daterange" style="color:'.$calendar.';" role="button" >
                                 <i class="fa fa-calendar" style="color:inherit"></i> <i class="fa fa-caret-down" style="color:inherit"></i>
                             </a></li>
@@ -339,19 +339,19 @@ if (Auth::check()) {
                                 </ul>
                             </li>
 
-                            <li><a href="#" onclick="window.print()" class="tip"  title="'.tr('Stampa').'">
+                            <li><a href="#" onclick="window.print()" class="tip" title="'.tr('Stampa').'">
                                 <i class="fa fa-print"></i>
                             </a></li>
 
-                            <li><a href="'.$rootdir.'/bug.php" class="tip"title="'.tr('Segnalazione bug').'">
+                            <li><a href="'.$rootdir.'/bug.php" class="tip" title="'.tr('Segnalazione bug').'">
                                 <i class="fa fa-bug"></i>
                             </a></li>
 
-                            <li><a href="'.$rootdir.'/log.php" class="tip"title="'.tr('Log accessi').'">
+                            <li><a href="'.$rootdir.'/log.php" class="tip" title="'.tr('Log accessi').'">
                                 <i class="fa fa-book"></i>
                             </a></li>
 
-                            <li><a href="'.$rootdir.'/info.php" class="tip"title="'.tr('Informazioni').'">
+                            <li><a href="'.$rootdir.'/info.php" class="tip" title="'.tr('Informazioni').'">
                                 <i class="fa fa-info"></i>
                             </a></li>
 

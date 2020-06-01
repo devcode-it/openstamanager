@@ -14,7 +14,10 @@ $calendar_id = filter('calendar_id');
 $start = filter('start');
 $end = filter('end');
 
-$anagrafica = Anagrafica::find($id_record);
+$anagrafica = Anagrafica::withTrashed()->find($id_record);
+if (empty($anagrafica)) {
+    return;
+}
 
 // Preventivi
 $preventivi = Preventivo::whereBetween('data_bozza', [$start, $end])

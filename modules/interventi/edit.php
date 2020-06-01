@@ -11,6 +11,7 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 $_SESSION['superselect']['idsede_partenza'] = $record['idsede_partenza'];
 $_SESSION['superselect']['idsede_partenza'];
 $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione'];
+$_SESSION['superselect']['permetti_movimento_a_zero'] = false;
 
 ?><form action="" method="post" id="edit-form">
 	<input type="hidden" name="op" value="update">

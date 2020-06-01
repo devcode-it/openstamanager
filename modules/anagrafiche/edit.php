@@ -157,7 +157,7 @@ if (!$is_cliente) {
 
             <div class="row">
                 <div class="col-md-3">
-                    {[ "type": "text", "label": "<?php echo tr('Provincia'); ?>", "name": "provincia", "maxlength": 2, "class": "text-center text-uppercase", "value": "$provincia$", "extra": "onkeyup=\"this.value = this.value.toUpperCase();\"" ]}
+                    {[ "type": "text", "label": "<?php echo tr('Provincia'); ?>", "name": "provincia", "maxlength": 2, "class": "text-center provincia-mask text-uppercase", "value": "$provincia$", "extra": "onkeyup=\"this.value = this.value.toUpperCase();\"" ]}
                 </div>
 
 				<div class="col-md-3">
@@ -354,7 +354,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
 
     if (!empty($conto['numero_conto'])) {
         $piano_dei_conti_cliente = tr('_NAME_', [
-                                    '_NAME_' => $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'],
+                                    '_NAME_' => $conto['numero'].'.'.$conto['numero_conto'].' '.htmlentities($conto['descrizione']),
                                 ]);
         echo Modules::link('Piano dei conti', null, null, null, 'class="pull-right"', 1, 'movimenti-'.$conto['id']);
     } else {
@@ -444,23 +444,27 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
 
 			<div class="panel-body">
 				<div class="row">
-					<div class="col-md-3">
-						{[ "type": "text", "label": "<?php echo tr('Codice registro imprese'); ?>", "name": "codiceri", "value": "$codiceri$" ]}
-					</div>
+					
+                    <div class="col-md-3">
+						{[ "type": "text", "label": "<?php echo tr('Numero d\'iscrizione registro imprese'); ?>", "name": "codiceri", "value": "$codiceri$", "help": "<?php echo tr('Il numero registro imprese è il numero di iscrizione attribuito dal Registro Imprese della Camera di Commercio.'); ?>" ]}
+                    </div>
 
 					<div class="col-md-3">
-						{[ "type": "text", "label": "<?php echo tr('Codice R.E.A.').'<small>('.tr('provincia-C.C.I.A.A.').')</small>'; ?>", "name": "codicerea", "value": "$codicerea$", "help": "<?php echo tr('Formato: _PATTERN_', [
+						{[ "type": "text", "label": "<?php echo tr('Codice R.E.A.').' <small>('.tr('provincia-C.C.I.A.A.').')</small>'; ?>", "name": "codicerea", "value": "$codicerea$", "class": "rea-mask", "help": "<?php echo tr('Formato: _PATTERN_', [
                             '_PATTERN_' => 'RM-123456',
                         ]); ?>" ]}
-					</div>
+                    </div>
+                    
 
-					<div class="col-md-3">
+                    <!-- campi già specificati in Codice R.E.A., da eliminare nelle prossime release -->
+                    <!--div class="col-md-3">
 						{[ "type": "text", "label": "<?php echo tr('Num. iscr. C.C.I.A.A.'); ?>", "name": "cciaa", "value": "$cciaa$" ]}
 					</div>
 
 					<div class="col-md-3">
 						{[ "type": "text", "label": "<?php echo tr('Città iscr. C.C.I.A.A.'); ?>", "name": "cciaa_citta", "value": "$cciaa_citta$" ]}
-					</div>
+                    </div-->
+                    
 				</div>
 				<div class="row">
 					<div class="col-md-3">

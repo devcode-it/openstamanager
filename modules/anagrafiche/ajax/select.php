@@ -144,7 +144,7 @@ switch ($resource) {
         $where = [];
         if (empty($filter)) {
             $where[] = 'deleted_at IS NULL';
-            $where[] = "an_tipianagrafiche_anagrafiche.idtipoanagrafica IN (SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione = 'Cliente' OR descrizione = 'Fornitore')";
+            $where[] = "an_tipianagrafiche_anagrafiche.idtipoanagrafica IN (SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione = 'Cliente' OR descrizione = 'Fornitore' OR descrizione = 'Azienda')";
         }
 
         if (!empty($search)) {

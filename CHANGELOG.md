@@ -4,7 +4,8 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
-- [2.4.14](#2414)
+- [2.4.15 (2020-05-01)](#2415-2020-05-01)
+- [2.4.14 (2020-04-23)](#2414-2020-04-23)
 - [2.4.13 (2020-02-05)](#2413-2020-02-05)
 - [2.4.12 (2019-12-30)](#2412-2019-12-30)
 - [2.4.11 (2019-11-29)](#2411-2019-11-29)
@@ -24,7 +25,23 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
-## 2.4.14
+## 2.4.15 (2020-05-01)
+
+### Aggiunto (Added)
+ - Aggiunta impostazione per abilitare la notifica di nuove pre-release oltre a release stabili
+
+### Modificato (Changed)
+ - Ordinamento righe documenti anche in funzione dell'ID
+ - Ottimizzato oscuramento campi prezzi per i tecnici quando è attiva l'opzione di nascondere i prezzi al tecnico
+
+### Fixed
+ - Bugfix Dashboard su vista settimanale e giornaliera (causato dalla nuova versione di JQuery)
+ - Fix importazione Fattura Elettronica 
+ - Fix eliminazione campi dal Modulo Viste (#794)
+ - Fix permessi API sync calendario per aggiungere il filtro cliente
+ - Fix esportazione dati in CSV per leggere correttamente importi con le migliaia
+
+## 2.4.14 (2020-04-23)
 
 ### Aggiunto (Added)
  - Nuove funzionalità nell'importazione delle Fatture Elettroniche
@@ -40,6 +57,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Aggiunta azione di cambiamento massivo dello stato negli **Interventi**
  - Aggiunto controllo sulla numerazione di **Fatture di acquisto** e **DDT in entrata**, con miglioramento delle informazioni per la numerazione delle **Fatture di vendita**
  - Supporto alla data di fine nella selezione dashboard (#556)
+ - Aggiunta nuove aliquote e Nature IVA, e nuovi tipi documenti di Fattura Elettronica come da provvedimento Agenzia delle Entrate del 28/02/2020
 
 ### Modificato (Changed)
  - Revisione e aggiornamento dei plugin *Pianificazione interventi* e *Pianficazione fatturazione*

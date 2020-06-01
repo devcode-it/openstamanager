@@ -8,8 +8,8 @@ echo '
 <script>
 $(document).ready(function() {
     var btn = $("#compilazione_automatica");
-
-    if (!btn.hasClass("disabled")) {
+    
+    if (!$("#compilazione_automatica").not("disabled")) {
         btn.click();
     }
 });

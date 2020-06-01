@@ -241,6 +241,10 @@ class Upload extends Model
 
         $filepath = $upload->filepath;
 
+        if (!in_array(mime_content_type($filepath), ['image/x-png', 'image/gif', 'image/jpeg'])) {
+            return;
+        }
+
         $driver = extension_loaded('gd') ? 'gd' : 'imagick';
         ImageManagerStatic::configure(['driver' => $driver]);
 

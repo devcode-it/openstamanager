@@ -24,7 +24,20 @@ $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : $user['idan
     <input type="hidden" name="id_record" value="">
 
 	<div class="row">
-		<div class="col-md-6">
+
+        <?php
+            if ($dir == 'uscita') {
+                echo '
+            <div class="col-md-3">
+                {[ "type": "text", "label": "'.tr('N. fattura del fornitore').'", "required": 1, "name": "numero_esterno","class": "text-center", "value": "" ]}
+            </div>';
+                $size = 3;
+            } else {
+                $size = 6;
+            }
+        ?>
+
+		<div class="col-md-<?php echo $size; ?>">
 			 {[ "type": "date", "label": "<?php echo tr('Data'); ?>", "name": "data", "required": 1, "value": "-now-" ]}
 		</div>
 

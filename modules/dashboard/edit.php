@@ -292,13 +292,6 @@ WHERE
     idcontratto IN (SELECT id FROM co_contratti WHERE idstato IN (SELECT id FROM co_staticontratti WHERE is_pianificabile = 1))
     AND idintervento IS NULL
 
-UNION SELECT data_scadenza AS data FROM co_ordiniservizio
-    INNER JOIN co_contratti ON co_ordiniservizio.idcontratto=co_contratti.id
-    INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica
-WHERE
-    idcontratto IN (SELECT id FROM co_contratti WHERE idstato IN (SELECT id FROM co_staticontratti WHERE is_pianificabile = 1))
-    AND idintervento IS NULL
-
 UNION SELECT IF(data_scadenza IS NULL, data_richiesta, data_scadenza) AS data FROM in_interventi
     INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica
 WHERE (SELECT COUNT(*) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento = in_interventi.id) = 0';
@@ -322,8 +315,6 @@ if (!empty($risultati_da_programmare)) {
 
     // Controllo pianificazioni mesi precedenti
     $query_mesi_precenti = 'SELECT co_promemoria.id FROM co_promemoria INNER JOIN co_contratti ON co_promemoria.idcontratto=co_contratti.id WHERE idstato IN(SELECT id FROM co_staticontratti WHERE is_pianificabile = 1) AND idintervento IS NULL AND DATE_ADD(co_promemoria.data_richiesta, INTERVAL 1 DAY) <= NOW()
-
-    UNION SELECT co_ordiniservizio.id FROM co_ordiniservizio INNER JOIN co_contratti ON co_ordiniservizio.idcontratto=co_contratti.id WHERE idstato IN(SELECT id FROM co_staticontratti WHERE is_pianificabile = 1) AND idintervento IS NULL AND DATE_ADD(co_ordiniservizio.data_scadenza, INTERVAL 1 DAY) <= NOW()
 
     UNION SELECT in_interventi.id FROM in_interventi INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE (SELECT COUNT(*) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento = in_interventi.id) = 0 AND DATE_ADD(IF(in_interventi.data_scadenza IS NULL, in_interventi.data_richiesta, in_interventi.data_scadenza), INTERVAL 1 DAY) <= NOW()';
     $numero_mesi_precenti = $dbo->fetchNum($query_mesi_precenti);
@@ -607,7 +598,7 @@ echo "
 ?>
             lazyFetching: true,
             slotEventOverlap :false,
-			selectHelper: true,
+			selectHelper: false,
 			eventLimit: false, // allow "more" link when too many events
 			allDaySlot: false,
             loading: function(isLoading, view) {
@@ -627,9 +618,7 @@ if (Modules::getPermission('Interventi') == 'rw') {
                 ora_al = moment(date).add(1, 'hours').format("HH:mm");
 
                 ref = $(this).data('ref');
-                if (ref == 'ordine') {
-                    nome = 'idordineservizio';
-                } else if (ref == 'promemoria') {
+                if (ref == 'promemoria') {
                     nome = 'idcontratto_riga';
                 } else {
                     nome = 'id_intervento';
@@ -651,7 +640,7 @@ if (Modules::getPermission('Interventi') == 'rw') {
 				ora_dal = moment(start).format("HH:mm");
 				ora_al = moment(end).format("HH:mm");
 
-                launch_modal('<?php echo tr('Aggiungi intervento'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::get('Interventi')['id']; ?>&ref=dashboard&data=' + data + '&data_fine=' + data_fine + '&orario_inizio=' + ora_dal + '&orario_fine=' + ora_al, 1);
+                launch_modal('<?php echo tr('Aggiungi attività'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::get('Interventi')['id']; ?>&ref=dashboard&data=' + data + '&data_fine=' + data_fine + '&orario_inizio=' + ora_dal + '&orario_fine=' + ora_al, 1);
 
 				$('#calendar').fullCalendar('unselect');
 			},

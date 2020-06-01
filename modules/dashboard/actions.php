@@ -85,7 +85,7 @@ switch (get('op')) {
             }
 
             // Lettura dati intervento
-            $query = 'SELECT *, in_interventi.codice, idstatointervento AS parent_idstato, idtipointervento AS parent_idtipo, (SELECT descrizione FROM in_statiintervento WHERE idstatointervento=parent_idstato) AS stato, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=parent_idtipo) AS tipo, (SELECT nomesede FROM an_sedi WHERE id=idsede_destinazione) AS sede, (SELECT idzona FROM an_anagrafiche WHERE idanagrafica=in_interventi.idanagrafica) AS idzona FROM in_interventi LEFT JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE in_interventi.id='.prepare($id).' '.Modules::getAdditionalsQuery('Interventi');
+            $query = 'SELECT *, in_interventi.codice, idstatointervento AS parent_idstato, in_interventi.idtipointervento AS parent_idtipo, (SELECT GROUP_CONCAT(CONCAT(matricola, " - ", nome) SEPARATOR ", ") FROM my_impianti INNER JOIN my_impianti_interventi ON my_impianti.id=my_impianti_interventi.idimpianto WHERE my_impianti_interventi.idintervento='.prepare($id).' GROUP BY my_impianti_interventi.idintervento) AS impianti, (SELECT descrizione FROM in_statiintervento WHERE idstatointervento=parent_idstato) AS stato, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=parent_idtipo) AS tipo, (SELECT nomesede FROM an_sedi WHERE id=idsede_destinazione) AS sede, (SELECT idzona FROM an_anagrafiche WHERE idanagrafica=in_interventi.idanagrafica) AS idzona FROM in_interventi LEFT JOIN in_interventi_tecnici ON in_interventi.id =in_interventi_tecnici.idintervento LEFT JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE in_interventi.id='.prepare($id).' '.Modules::getAdditionalsQuery('Interventi');
             $rs = $dbo->fetchArray($query);
 
             $desc_tipointervento = $rs[0]['tipo'];
@@ -115,6 +115,10 @@ switch (get('op')) {
 
             $tooltip_text .= '<b>'.tr('Tecnici').'</b>: '.implode(', ', $tecnici).'<br/>';
 
+            if ($rs[0]['impianti'] != '') {
+                $tooltip_text .= '<b>'.tr('Impianti').'</b>: '.$rs[0]['impianti'].'<br/>';
+            }
+
             if ($rs[0]['richiesta'] != '') {
                 $tooltip_text .= '<b>'.tr('Richiesta').'</b>: '.nl2br($rs[0]['richiesta']).'<br/>';
             }
@@ -133,14 +137,24 @@ switch (get('op')) {
     break;
 
     case 'load_intreventi':
-
         $mese = $_GET['mese'];
 
         // Righe inserite
-        $qp = "SELECT co_promemoria.id, idcontratto, richiesta,co_contratti.nome AS nomecontratto, DATE_FORMAT( data_richiesta, '%m%Y') AS mese, data_richiesta, an_anagrafiche.ragione_sociale, 'promemoria' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_promemoria.idtipointervento) AS tipointervento FROM (co_promemoria INNER JOIN co_contratti ON co_promemoria.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE is_pianificabile = 1) ) AND idintervento IS NULL
-
-        UNION SELECT co_ordiniservizio.id, idcontratto, '', co_contratti.nome AS nomecontratto, DATE_FORMAT( data_scadenza, '%m%Y') AS mese, data_scadenza, an_anagrafiche.ragione_sociale, 'ordine' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE descrizione='Ordine di servizio') AS tipointervento FROM (co_ordiniservizio INNER JOIN co_contratti ON co_ordiniservizio.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE is_pianificabile = 1) ) AND idintervento IS NULL
-
+        $qp = "SELECT
+            co_promemoria.id,
+            idcontratto,
+            richiesta,co_contratti.nome AS nomecontratto,
+            DATE_FORMAT( data_richiesta, '%m%Y') AS mese,
+            data_richiesta,
+            an_anagrafiche.ragione_sociale,
+            'promemoria' AS ref,
+            (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_promemoria.idtipointervento) AS tipointervento
+        FROM co_promemoria
+            INNER JOIN co_contratti ON co_promemoria.idcontratto=co_contratti.id
+            INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica
+        WHERE
+              idcontratto IN(SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE is_pianificabile = 1)) AND
+              idintervento IS NULL
         ORDER BY data_richiesta ASC";
 
         $rsp = $dbo->fetchArray($qp);
@@ -164,8 +178,9 @@ switch (get('op')) {
                     echo '
                     <div class="fc-event '.$class.'" data-id="'.$r['id'].'" data-idcontratto="'.$r['idcontratto'].'" data-ref="'.$r['ref'].'">'.(($r['ref'] == 'intervento') ? '<i class=\'fa fa-wrench pull-right\'></i>' : '<i class=\'fa fa-file-text-o pull-right\'></i>').'
                         <b>'.$r['ragione_sociale'].'</b><br>'.Translator::dateToLocale($r['data_richiesta']).' ('.$r['tipointervento'].')<div class="request" >'.(!empty($r['richiesta']) ? ' - '.$r['richiesta'] : '').'</div>'.(!empty($r['nomecontratto']) ? '<br><b>Contratto:</b> '.$r['nomecontratto'] : '').
-                        (!empty($r['data_scadenza'] and $r['data_scadenza'] != '0000-00-00 00:00:00') ? '<br><small>'.tr('entro il: ').''.Translator::dateToLocale($r['data_scadenza']).'</small>' : '').'
-                    </div>';
+                        (!empty($r['data_scadenza'] and $r['data_scadenza'] != '0000-00-00 00:00:00') ? '<br><small>'.tr('entro il: ').Translator::dateToLocale($r['data_scadenza']).'</small>' : '').
+                        (($r['ref'] == 'intervento') ? (Modules::link('Interventi', $r['id'], '<i class="fa fa-eye"></i>', null, 'title="'.tr("Visualizza scheda").'" class="btn btn-primary btn-xs pull-right"')) : (Modules::link('Contratti', $r['idcontratto'], '<i class="fa fa-eye"></i>', null, 'title="'.tr("Visualizza scheda").'" class="btn btn-primary btn-xs pull-right"'))).
+                    '</div>';
                 }
             } ?>
             <script type="text/javascript">

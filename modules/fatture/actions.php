@@ -28,10 +28,15 @@ switch (post('op')) {
         $idtipodocumento = post('idtipodocumento');
         $id_segment = post('id_segment');
 
+        if ($dir == 'uscita') {
+            $numero_esterno = post('numero_esterno');
+        }
+
         $anagrafica = Anagrafica::find($idanagrafica);
         $tipo = Tipo::find($idtipodocumento);
 
-        $fattura = Fattura::build($anagrafica, $tipo, $data, $id_segment);
+        $fattura = Fattura::build($anagrafica, $tipo, $data, $id_segment, $numero_esterno);
+
         $id_record = $fattura->id;
 
         flash()->info(tr('Aggiunta fattura numero _NUM_!', [
@@ -265,6 +270,7 @@ switch (post('op')) {
             $new->numero_esterno = Fattura::getNextNumeroSecondario($new->data, $new->direzione, $new->id_segment);
         }
 
+        $new->codice_stato_fe = null;
         $new->stato()->associate($stato);
         $new->save();
 
@@ -700,6 +706,7 @@ switch (post('op')) {
         $nota->idbanca = $fattura->idbanca;
         $nota->idsede_partenza = $fattura->idsede_partenza;
         $nota->idsede_destinazione = $fattura->idsede_destinazione;
+        $nota->split_payment = $fattura->split_payment;
         $nota->save();
 
         $righe = $fattura->getRighe();

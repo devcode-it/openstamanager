@@ -141,8 +141,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
             $riga->id_rivalsa_inps = $id_rivalsa_inps;
 
             $riga->prezzo_unitario = $sessione->prezzo_orario;
-            $riga->sconto_unitario = $sessione->sconto_unitario;
-            $riga->tipo_sconto = $sessione->tipo_sconto;
+            $riga->setSconto($sessione->sconto_unitario, $sessione->tipo_sconto);
 
             $riga->qta = $gruppo->sum('ore');
 
@@ -180,7 +179,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
 
         // Viaggi raggruppati per costo
         $viaggi = $sessioni->where('prezzo_km_unitario', '>', 0)->groupBy(function ($item, $key) {
-            return $item['prezzo_km_unitario'];
+            return $item['prezzo_km_unitario'].'|'.$item['scontokm_unitario'].'|'.$item['tipo_scontokm'];
         });
         foreach ($viaggi as $gruppo) {
             $viaggio = $gruppo->first();
@@ -201,8 +200,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
             $riga->id_rivalsa_inps = $id_rivalsa_inps;
 
             $riga->prezzo_unitario = $viaggio->prezzo_km_unitario;
-            $riga->sconto_unitario = $sessione->scontokm_unitario;
-            $riga->tipo_sconto = $sessione->tipo_scontokm;
+            $riga->setSconto($viaggio->scontokm_unitario, $viaggio->tipo_scontokm);
 
             $riga->qta = $gruppo->sum('km');
 

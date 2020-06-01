@@ -66,7 +66,7 @@
       </xsl:when>
       <xsl:otherwise>
         <xsl:if test="$importo">
-          <xsl:value-of select="format-number($importo,  '###.###.##0,00', 'euro')" />
+          <xsl:value-of select="format-number($importo,  '###.###.##0,00######', 'euro')" />
         </xsl:if>
       </xsl:otherwise>
     </xsl:choose>
@@ -100,7 +100,7 @@
       </xsl:when>
       <xsl:otherwise>
         <xsl:if test="$importo">
-          <xsl:value-of select="format-number($importo,  '###.###.##0,00', 'euro')" />
+          <xsl:value-of select="format-number($importo,  '###.###.##0,00######', 'euro')" />
         </xsl:if>
       </xsl:otherwise>
     </xsl:choose>
@@ -390,12 +390,7 @@
 									translate( TipoDato,
                                      'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
                                      'abcdefghijklmnopqrstuvwxyz'
-                                    ) != 'aswswhouse'  
-         and 									
-									translate( TipoDato,
-                                     'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
-                                     'abcdefghijklmnopqrstuvwxyz'
-                                    ) != 'aswtriga'   ">
+                                    ) != 'aswswhouse'   ">
 
 
                 <div class="tx-xsmall">
@@ -658,17 +653,7 @@
 
   <xsl:template match="DatiRitenuta">
 
-    <table class="tbFoglio">
-
-      <thead>
-        <tr>
-          <th class="title"> Dati ritenuta d'acconto</th>
-          <th class="perc">Aliquota ritenuta</th>
-          <th>Causale	</th>
-          <th width="15%">Importo </th>
-        </tr>
-      </thead>
-      <tbody>
+   
         <tr>
           <td >
 
@@ -682,11 +667,23 @@
               </xsl:variable>
               <xsl:choose>
                 <xsl:when test="$TR='RT01'">
-                  (ritenuta persone fisiche)
+                  Ritenuta persone fisiche
                 </xsl:when>
                 <xsl:when test="$TR='RT02'">
-                  (ritenuta persone giuridiche)
+                  Ritenuta persone giuridiche
                 </xsl:when>
+				<xsl:when test="$TR='RT03'">
+					Contributo INPS
+				</xsl:when>
+				<xsl:when test="$TR='RT04'">
+					Contributo ENASARCO
+				</xsl:when>
+				<xsl:when test="$TR='RT05'">
+					Contributo ENPAM
+				</xsl:when>
+				<xsl:when test="$TR='RT06'">
+					Altro contributo previdenziale
+				</xsl:when>
                 <xsl:when test="$TR=''">
                 </xsl:when>
                 <xsl:otherwise>
@@ -714,7 +711,7 @@
                 <xsl:value-of select="CausalePagamento" />
               </xsl:variable>
               <xsl:if test="$CP!=''">
-                (decodifica come da modello 770S)
+                (decodifica come da modello CU)
               </xsl:if>
 
             </xsl:if>
@@ -729,8 +726,7 @@
           </td>
 
         </tr>
-      </tbody>
-    </table>
+     
   </xsl:template>
 
   <xsl:template match="DettaglioPagamento">
@@ -951,63 +947,61 @@
                                     </xsl:variable>
                                     <xsl:choose>
                                       <xsl:when test="$RF='RF01'">
-                                        (ordinario)
+                                        ordinario
                                       </xsl:when>
                                       <xsl:when test="$RF='RF02'">
-                                        (contribuenti minimi)
+                                        contribuenti minimi
                                       </xsl:when>
                                       <xsl:when test="$RF='RF03'">
-                                        (nuove iniziative produttive)
+                                        nuove iniziative produttive - Non più valido in quanto abrogato dalla legge di stabilità 2015
                                       </xsl:when>
                                       <xsl:when test="$RF='RF04'">
-                                        (agricoltura e attività connesse e pesca)
+                                        agricoltura e attività connesse e pesca
                                       </xsl:when>
                                       <xsl:when test="$RF='RF05'">
-                                        (vendita sali e tabacchi)
+                                        vendita sali e tabacchi
                                       </xsl:when>
                                       <xsl:when test="$RF='RF06'">
-                                        (commercio fiammiferi)
+                                        commercio fiammiferi
                                       </xsl:when>
                                       <xsl:when test="$RF='RF07'">
-                                        (editoria)
+                                        editoria
                                       </xsl:when>
                                       <xsl:when test="$RF='RF08'">
-                                        (gestione servizi telefonia pubblica)
+                                        gestione servizi telefonia pubblica
                                       </xsl:when>
                                       <xsl:when test="$RF='RF09'">
-                                        (rivendita documenti di trasporto pubblico e di sosta)
+                                        rivendita documenti di trasporto pubblico e di sosta
                                       </xsl:when>
                                       <xsl:when test="$RF='RF10'">
-                                        (intrattenimenti, giochi e altre attività di cui alla tariffa allegata al DPR 640/72)
+                                        intrattenimenti, giochi e altre attività di cui alla tariffa allegata al DPR 640/72
                                       </xsl:when>
                                       <xsl:when test="$RF='RF11'">
-                                        (agenzie viaggi e turismo)
+                                        agenzie viaggi e turismo
                                       </xsl:when>
                                       <xsl:when test="$RF='RF12'">
-                                        (agriturismo)
+                                        agriturismo
                                       </xsl:when>
                                       <xsl:when test="$RF='RF13'">
-                                        (vendite a domicilio)
+                                        vendite a domicilio
                                       </xsl:when>
                                       <xsl:when test="$RF='RF14'">
-                                        (rivendita beni usati, oggetti d’arte,
-                                        d’antiquariato o da collezione)
+                                        rivendita beni usati, oggetti d’arte, d’antiquariato o da collezione
                                       </xsl:when>
                                       <xsl:when test="$RF='RF15'">
-                                        (agenzie di vendite all’asta di oggetti d’arte,
-                                        antiquariato o da collezione)
+                                        agenzie di vendite all’asta di oggetti d’arte, antiquariato o da collezione
                                       </xsl:when>
                                       <xsl:when test="$RF='RF16'">
-                                        (IVA per cassa P.A.)
+                                        IVA per cassa P.A.
                                       </xsl:when>
                                       <xsl:when test="$RF='RF17'">
-                                        (IVA per cassa - art. 32-bis, D.L. 83/2012)
+                                        IVA per cassa - art. 32-bis, D.L. 83/2012
                                       </xsl:when>
                                       <xsl:when test="$RF='RF19'">
-                                        (Regime forfettario)
+                                        Regime forfettario
                                       </xsl:when>
                                       <xsl:when test="$RF='RF18'">
-                                        (altro)
+                                        altro
                                       </xsl:when>
                                       <xsl:when test="$RF=''">
                                       </xsl:when>
@@ -1205,68 +1199,66 @@
                                   </xsl:variable>
                                   <xsl:choose>
                                     <xsl:when test="$RF='RF01'">
-                                      (ordinario)
+                                      ordinario
                                     </xsl:when>
                                     <xsl:when test="$RF='RF02'">
-                                      (contribuenti minimi)
+                                      contribuenti minimi
                                     </xsl:when>
                                     <xsl:when test="$RF='RF03'">
-                                      (nuove iniziative produttive)
+                                      nuove iniziative produttive - Non più valido in quanto abrogato dalla legge di stabilità 2015
                                     </xsl:when>
                                     <xsl:when test="$RF='RF04'">
-                                      (agricoltura e attività connesse e pesca)
+                                      agricoltura e attività connesse e pesca
                                     </xsl:when>
                                     <xsl:when test="$RF='RF05'">
-                                      (vendita sali e tabacchi)
+                                      vendita sali e tabacchi
                                     </xsl:when>
                                     <xsl:when test="$RF='RF06'">
-                                      (commercio fiammiferi)
+                                      commercio fiammiferi
                                     </xsl:when>
                                     <xsl:when test="$RF='RF07'">
-                                      (editoria)
+                                      editoria
                                     </xsl:when>
                                     <xsl:when test="$RF='RF08'">
-                                      (gestione servizi telefonia pubblica)
+                                      gestione servizi telefonia pubblica
                                     </xsl:when>
                                     <xsl:when test="$RF='RF09'">
-                                      (rivendita documenti di trasporto pubblico e di sosta)
+                                      rivendita documenti di trasporto pubblico e di sosta
                                     </xsl:when>
                                     <xsl:when test="$RF='RF10'">
-                                      (intrattenimenti, giochi e altre attività di cui alla tariffa allegata al DPR 640/72)
+                                      intrattenimenti, giochi e altre attività di cui alla tariffa allegata al DPR 640/72
                                     </xsl:when>
                                     <xsl:when test="$RF='RF11'">
-                                      (agenzie viaggi e turismo)
+                                      agenzie viaggi e turismo
                                     </xsl:when>
                                     <xsl:when test="$RF='RF12'">
-                                      (agriturismo)
+                                      agriturismo
                                     </xsl:when>
                                     <xsl:when test="$RF='RF13'">
-                                      (vendite a domicilio)
+                                      vendite a domicilio
                                     </xsl:when>
                                     <xsl:when test="$RF='RF14'">
-                                      (rivendita beni usati, oggetti d’arte,
-                                      d’antiquariato o da collezione)
+                                      rivendita beni usati, oggetti d’arte, d’antiquariato o da collezione
                                     </xsl:when>
                                     <xsl:when test="$RF='RF15'">
-                                      (agenzie di vendite all’asta di oggetti d’arte,
-                                      antiquariato o da collezione)
+                                      agenzie di vendite all’asta di oggetti d’arte, antiquariato o da collezione
                                     </xsl:when>
                                     <xsl:when test="$RF='RF16'">
-                                      (IVA per cassa P.A.)
+                                      IVA per cassa P.A.
                                     </xsl:when>
                                     <xsl:when test="$RF='RF17'">
-                                      (IVA per cassa - art. 32-bis, D.L. 83/2012)
+                                      IVA per cassa - art. 32-bis, D.L. 83/2012
                                     </xsl:when>
                                     <xsl:when test="$RF='RF19'">
-                                      (Regime forfettario)
+                                      Regime forfettario
                                     </xsl:when>
                                     <xsl:when test="$RF='RF18'">
-                                      (altro)
+                                      altro
                                     </xsl:when>
                                     <xsl:when test="$RF=''">
                                     </xsl:when>
                                     <xsl:otherwise>
-                                      <span>(!!! codice non previsto !!!)</span>
+                                      <span>!!! codice non previsto !!!</span>
                                     </xsl:otherwise>
                                   </xsl:choose>
 
@@ -1807,7 +1799,14 @@
               <tr>
 
                 <th>Tipologia documento</th>
-                <th class="perc">Art. 73</th>
+				<xsl:if test="$IsFPRS='0'">
+					<th class="perc">Art. 73</th>
+				</xsl:if>
+				
+				<xsl:if test="$IsFPRS='1'">
+                  <th class="perc">Imposta bollo</th>
+                </xsl:if>
+				
                 <th >Numero documento</th>
                 <th class="data">Data documento</th>
                 <th >Codice destinatario</th>
@@ -1827,35 +1826,69 @@
                     </xsl:variable>
                     <xsl:choose>
                       <xsl:when test="$TD='TD01'">
-                        (fattura)
+                        fattura
                       </xsl:when>
                       <xsl:when test="$TD='TD02'">
-                        (acconto/anticipo su fattura)
+                        acconto/anticipo su fattura
                       </xsl:when>
                       <xsl:when test="$TD='TD03'">
-                        (acconto/anticipo su parcella)
+                        acconto/anticipo su parcella
                       </xsl:when>
                       <xsl:when test="$TD='TD04'">
-                        (nota di credito)
+                        nota di credito
                       </xsl:when>
                       <xsl:when test="$TD='TD05'">
-                        (nota di debito)
+                        nota di debito
                       </xsl:when>
                       <xsl:when test="$TD='TD06'">
-                        (parcella)
+                        parcella
                       </xsl:when>
-                      <xsl:when test="$TD='TD20'">
-                        (autofattura)
-                      </xsl:when>
+                     <xsl:when test="$TD='TD16'">
+							integrazione fattura reverse charge interno
+						</xsl:when>
+						<xsl:when test="$TD='TD17'">
+							integrazione/autofattura per acquisto servizi da estero
+						</xsl:when>
+						<xsl:when test="$TD='TD18'">
+							integrazione per acquisto beni intracomunitari
+						</xsl:when>
+						<xsl:when test="$TD='TD19'">
+							integrazione/autofattura per acquisto beni ex art.17 c.2 DPR 633/72
+						</xsl:when>
+						<xsl:when test="$TD='TD20'">
+							autofattura per regolarizzazione e integrazione delle fatture - art.6 c.8 d.lgs.471/97 o art.46 c.5 D.L.331/93
+						</xsl:when>
+						<xsl:when test="$TD='TD21'">
+							autofattura per splafonamento
+						</xsl:when>
+						<xsl:when test="$TD='TD22'">
+							estrazione beni da Deposito IVA
+						</xsl:when>
+						<xsl:when test="$TD='TD23'">
+							estrazione beni da Deposito IVA con versamento IVA
+						</xsl:when>
+						<xsl:when test="$TD='TD24'">
+							fattura differita - art.21 c.4 lett. a)
+						</xsl:when>
+						<xsl:when test="$TD='TD25'">
+							fattura differita - art.21 c.4 terzo periodo lett. b)
+						</xsl:when>
+						<xsl:when test="$TD='TD26'">
+							cessione di beni ammortizzabili e per passaggi interni - art.36 DPR 633/72
+						</xsl:when>
+						<xsl:when test="$TD='TD27'">
+							fattura per autoconsumo o per cessioni gratuite senza rivalsa
+						</xsl:when>
+						
                       <!--FPRS-->
                       <xsl:when test="$TD='TD07'">
-                        (fattura semplificata)
+                        fattura semplificata
                       </xsl:when>
                       <xsl:when test="$TD='TD08'">
-                        (nota di credito semplificata)
+                        nota di credito semplificata
                       </xsl:when>
                       <xsl:when test="$TD='TD09'">
-                        (nota di debito semplificata)
+                        nota di debito semplificata
                       </xsl:when>
                       <xsl:when test="$TD=''">
                       </xsl:when>
@@ -1867,11 +1900,21 @@
                   </xsl:if>
                 </td>
 
-                <td class="ritenuta"  >
-                  <xsl:if test="DatiGenerali/DatiGeneraliDocumento/Art73">
-                    <xsl:value-of select="DatiGenerali/DatiGeneraliDocumento/Art73" />
-                  </xsl:if>
-                </td>
+				<xsl:if test="$IsFPRS='0'">
+					<td class="ritenuta"  >
+					  <xsl:if test="DatiGenerali/DatiGeneraliDocumento/Art73">
+						<xsl:value-of select="DatiGenerali/DatiGeneraliDocumento/Art73" />
+					  </xsl:if>
+					</td>
+				</xsl:if>
+				
+				 <xsl:if test="$IsFPRS='1'">
+                  <td class="textCenter">
+                    <xsl:if test="DatiGenerali/DatiGeneraliDocumento/BolloVirtuale">
+                      <xsl:value-of select="DatiGenerali/DatiGeneraliDocumento/BolloVirtuale" />
+                    </xsl:if>
+                  </td>
+                </xsl:if>
 
                 <td class="textCenter" >
 
@@ -1927,6 +1970,7 @@
 
                       <xsl:for-each select="DatiGenerali/DatiGeneraliDocumento/Causale"  >
                         <xsl:value-of select="." />
+						<br/>
                       </xsl:for-each>
 
                     </xsl:if>
@@ -2441,7 +2485,7 @@
                   <tr >
 
                     <th  colspan="2">
-                      Importo bollo
+                      Imposta bollo
                     </th>
                     <th  colspan="3">
                       Sconto/Maggiorazione
@@ -2459,11 +2503,19 @@
 
                   <tr >
                     <td colspan="2" class="import" >
-                      <xsl:if test="DatiGenerali/DatiGeneraliDocumento/DatiBollo/ImportoBollo">
-
-                        <xsl:value-of select="format-number(DatiGenerali/DatiGeneraliDocumento/DatiBollo/ImportoBollo,  '###.###.##0,00', 'euro')" />
-
-                      </xsl:if>
+					
+					 <xsl:if test="DatiGenerali/DatiGeneraliDocumento/DatiBollo">
+                        <xsl:choose>
+						<xsl:when test="DatiGenerali/DatiGeneraliDocumento/DatiBollo/ImportoBollo">
+							<xsl:value-of select="format-number(DatiGenerali/DatiGeneraliDocumento/DatiBollo/ImportoBollo,  '###.###.##0,00', 'euro')" />
+						</xsl:when>
+						<xsl:when test="DatiGenerali/DatiGeneraliDocumento/DatiBollo/BolloVirtuale">
+							<xsl:value-of select="DatiGenerali/DatiGeneraliDocumento/DatiBollo/BolloVirtuale" />
+						</xsl:when>
+						<xsl:otherwise></xsl:otherwise>
+					  </xsl:choose>						
+                      </xsl:if>					
+                    
                     </td>
                     <td colspan="3" class="import">
                       <xsl:for-each select="DatiGenerali/DatiGeneraliDocumento/ScontoMaggiorazione"  >
@@ -2510,7 +2562,25 @@
               <!--   Dati Ritenuta Acconto   -->
               <xsl:if test="DatiGenerali/DatiGeneraliDocumento/DatiRitenuta">
                 <div class="separa"> </div>
-                <xsl:apply-templates select="DatiGenerali/DatiGeneraliDocumento/DatiRitenuta"/>
+				
+				   <table class="tbFoglio">
+
+					  <thead>
+						<tr>
+						  <th class="title"> Dati ritenuta d'acconto</th>
+						  <th class="perc">Aliquota ritenuta</th>
+						  <th>Causale	</th>
+						  <th width="15%">Importo </th>
+						</tr>
+					  </thead>
+					  <tbody>
+					  
+					   <xsl:for-each select="DatiGenerali/DatiGeneraliDocumento/DatiRitenuta"  >
+							<xsl:apply-templates select="." />
+						</xsl:for-each>
+					  </tbody>
+					</table>				
+                
               </xsl:if>
               <!--  Fine Dati Ritenuta   -->
 
@@ -2616,6 +2686,9 @@
                               <xsl:when test="$MP='MP22'">
                                 Trattenuta su somme già riscosse
                               </xsl:when>
+							  <xsl:when test="$MP='MP23'">
+								  PagoPA
+								</xsl:when>
                               <xsl:when test="$MP=''">
                               </xsl:when>
                               <xsl:otherwise>

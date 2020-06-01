@@ -51,7 +51,7 @@ gulp.task('JS', function () {
             debugging: config.debug,
         }))
         .pipe(concat('app.min.js'))
-        .pipe(minifyJS())
+        .pipe(minifyJS()) // Commentare per togliere la minificazione
         .pipe(gulp.dest(config.production + '/' + config.paths.js));
 
     gulp.start('srcJS');
@@ -63,14 +63,14 @@ gulp.task('srcJS', function () {
             config.development + '/' + config.paths.js + '/*.js',
         ])
         .pipe(concat('custom.min.js'))
-        .pipe(minifyJS())
+        .pipe(minifyJS()) // Commentare per togliere la minificazione
         .pipe(gulp.dest(config.production + '/' + config.paths.js));
 
     gulp.src([
         config.development + '/' + config.paths.js + '/functions/*.js',
     ])
         .pipe(concat('functions.min.js'))
-        .pipe(minifyJS())
+        .pipe(minifyJS()) // Commentare per togliere la minificazione
         .pipe(gulp.dest(config.production + '/' + config.paths.js));
 });
 

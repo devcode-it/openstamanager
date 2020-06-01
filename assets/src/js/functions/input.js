@@ -9,11 +9,21 @@ function start_inputmask(element) {
     var date = dateFormatMoment(globals.date_format).toLowerCase();
 
     $(element + ".date-mask").not('.bound').inputmask(date, {
-        "placeholder": date
+        placeholder: date
     }).addClass('bound');
 
     $(element + '.email-mask').not('.bound').inputmask('Regex', {
         regex: "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^-]+(?:\\.[a-zA-Z0-9_!#$%&'*+/=?`{|}~^-]+)*@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$",
+    }).addClass('bound');
+
+    $(element + '.rea-mask').not('.bound').inputmask( {
+        mask: "AA-999999{1,15}",
+        casing: "upper",
+    }).addClass('bound');
+
+    $(element + '.provincia-mask').not('.bound').inputmask( {
+        mask: "AA",
+        casing: "upper",
     }).addClass('bound');
 
     $(element + '.alphanumeric-mask').not('.bound').inputmask('Regex', {

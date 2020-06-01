@@ -33,6 +33,7 @@
         "ext-simplexml": "*",
         "ext-xsl": "*",
         "ext-zip": "*",
+        "ext-fileinfo": "*",
         "aluguest/ical-easy-reader": "^1.5",
         "danielstjules/stringy": "^3.1",
         "davidepastore/codice-fiscale": "^0.4.0",

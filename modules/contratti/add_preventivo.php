@@ -2,20 +2,19 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\DDT\DDT;
-use Modules\Ordini\Ordine;
+use Modules\Contratti\Contratto;
+use Modules\Preventivi\Preventivo;
 
-$documento_finale = DDT::find($id_record);
-$dir = $documento_finale->direzione;
+$documento_finale = Contratto::find($id_record);
 
 $id_documento = get('id_documento');
 if (!empty($id_documento)) {
-    $documento = Ordine::find($id_documento);
+    $documento = Preventivo::find($id_documento);
 
     $options = [
-        'op' => 'add_ordine',
+        'op' => 'add_preventivo',
+        'type' => 'preventivo',
         'button' => tr('Aggiungi'),
-        'serials' => true,
         'documento' => $documento,
         'documento_finale' => $documento_finale,
     ];
@@ -27,10 +26,12 @@ if (!empty($id_documento)) {
 
 $id_anagrafica = $documento_finale->idanagrafica;
 
+$_SESSION['superselect']['idanagrafica'] = $id_anagrafica;
+
 echo '
 <div class="row">
     <div class="col-md-12">
-        {[ "type": "select", "label": "'.tr('Ordine').'", "name": "id_documento", "values": "query=SELECT or_ordini.id, CONCAT(IF(numero_esterno != \'\', numero_esterno, numero), \' del \', DATE_FORMAT(data, \'%d-%m-%Y\')) AS descrizione FROM or_ordini WHERE idanagrafica='.prepare($id_anagrafica).' AND idstatoordine IN (SELECT id FROM or_statiordine WHERE descrizione IN(\'Accettato\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoordine=(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).' LIMIT 0,1) AND or_ordini.id IN (SELECT idordine FROM or_righe_ordini WHERE or_righe_ordini.idordine = or_ordini.id AND (qta - qta_evasa) > 0) ORDER BY data DESC, numero DESC" ]}
+        {[ "type": "select", "label": "'.tr('Preventivo').'", "name": "id_documento", "ajax-source": "preventivi" ]}
     </div>
 </div>
 

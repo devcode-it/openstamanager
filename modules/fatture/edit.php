@@ -19,6 +19,7 @@ $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione']
 $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 $_SESSION['superselect']['ddt'] = $dir;
 $_SESSION['superselect']['split_payment'] = $record['split_payment'];
+$_SESSION['superselect']['permetti_movimento_a_zero'] = ($dir == 'uscita' ? true : false);
 
 if ($dir == 'entrata') {
     $conto = 'vendite';
@@ -594,7 +595,7 @@ if (!$block_edit) {
                     </div>';
         }
 
-        // Lettura ddt
+        // Lettura ddt (entrata o uscita)
         $ddt_query = 'SELECT COUNT(*) AS tot FROM dt_ddt WHERE idanagrafica='.prepare($record['idanagrafica']).' AND idstatoddt IN (SELECT id FROM dt_statiddt WHERE descrizione IN(\'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoddt IN (SELECT id FROM dt_tipiddt WHERE dir='.prepare($dir).') AND dt_ddt.id IN (SELECT idddt FROM dt_righe_ddt WHERE dt_righe_ddt.idddt = dt_ddt.id AND (qta - qta_evasa) > 0)';
         $ddt = $dbo->fetchArray($ddt_query)[0]['tot'];
         echo '
@@ -602,7 +603,7 @@ if (!$block_edit) {
 						<i class="fa fa-plus"></i> Ddt
 					</a>';
 
-        // Lettura ordini
+        // Lettura ordini (cliente o fornitore)
         $ordini_query = 'SELECT COUNT(*) AS tot FROM or_ordini WHERE idanagrafica='.prepare($record['idanagrafica']).' AND idstatoordine IN (SELECT id FROM or_statiordine WHERE descrizione IN(\'Accettato\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoordine=(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).') AND or_ordini.id IN (SELECT idordine FROM or_righe_ordini WHERE or_righe_ordini.idordine = or_ordini.id AND (qta - qta_evasa) > 0)';
         $ordini = $dbo->fetchArray($ordini_query)[0]['tot'];
         echo '

@@ -9,7 +9,7 @@ echo App::internalLoad('conti.php', $result, $options);
 // Iva
 echo '
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-4 '.(!empty($options['nascondi_prezzi']) ? 'hidden' : '').'">
             {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$result['idiva'].'", "ajax-source": "iva" ]}
         </div>';
 
@@ -27,12 +27,7 @@ echo '
     </div>';
 
 echo '
-    <div class="row">';
-
-// Fix per Altre spese intervento
-if ($module['name'] == 'Interventi') {
-    $options['dir'] = 'entrata';
-}
+    <div class="row '.(!empty($options['nascondi_prezzi']) ? 'hidden' : '').'">';
 
 $width = $options['dir'] == 'entrata' ? 4 : 6;
 $label = $options['dir'] == 'entrata' ? tr('Prezzo unitario di vendita') : tr('Prezzo unitario');
@@ -56,10 +51,11 @@ if ($options['dir'] == 'entrata') {
             }
 
             var guadagno = prezzo - sconto - costo_unitario;
+            var margine = (((prezzo - sconto)*100)/prezzo_acquisto)-100;
             var parent = $("#costo_unitario").closest("div").parent();
             var div = parent.find("div[id*=\"errors\"]");
 
-            div.html("<small>'.tr('Guadagno').': " + guadagno.toLocale() + " " + globals.currency + "</small>");
+            div.html("<small>'.tr('Guadagno').': " + guadagno.toLocale() + " " + globals.currency + " &nbsp; '.tr('Margine').': " + margine.toLocale() + " %</small>");
             if (guadagno < 0) {
                 parent.addClass("has-error");
                 div.addClass("text-danger").removeClass("text-success");

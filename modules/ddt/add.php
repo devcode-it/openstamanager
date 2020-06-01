@@ -34,7 +34,6 @@ $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : '';
 		<div class="col-md-4">
 			 {[ "type": "date", "label": "<?php echo tr('Data'); ?>", "name": "data", "required": 1, "value": "-now-" ]}
 		</div>
-
 		<div class="col-md-4">
 			{[ "type": "select", "label": "<?php echo $label; ?>", "name": "idanagrafica", "id": "idanagrafica_add", "required": 1, "value": "<?php echo $id_anagrafica; ?>", "ajax-source": "clienti_fornitori", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=<?php echo $tipo_anagrafica; ?>" ]}
 		</div>

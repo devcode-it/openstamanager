@@ -5,6 +5,7 @@ use Modules\Interventi\Intervento;
 include_once __DIR__.'/../../core.php';
 
 $documento = Intervento::find($id_record);
+$show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
 
 // Impostazioni per la gestione
 $options = [
@@ -13,6 +14,7 @@ $options = [
     'dir' => $documento->direzione,
     'idanagrafica' => $documento['idanagrafica'],
     'totale_imponibile' => $documento->totale_imponibile,
+    'nascondi_prezzi' => !$show_prezzi,
 ];
 
 // Dati della riga

@@ -113,10 +113,6 @@ switch (post('op')) {
                 $promemoria->pianifica($intervento);
             }
 
-            if (!empty(post('idordineservizio'))) {
-                $dbo->query('UPDATE co_ordiniservizio SET idintervento='.prepare($id_record).' WHERE id='.prepare(post('idordineservizio')));
-            }
-
             // Collegamenti intervento/impianti
             $impianti = (array) post('idimpianti');
             if (!empty($impianti)) {

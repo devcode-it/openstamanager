@@ -310,7 +310,7 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `mg_articoli` WHERE 1=
 ALTER TABLE `zz_hooks` ADD `processing_at` TIMESTAMP NULL DEFAULT NULL, ADD `processing_token` varchar(255);
 INSERT INTO `zz_hooks` (`id`, `name`, `class`, `frequency`, `id_module`) VALUES (NULL, 'Backup', 'Modules\\Backups\\BackupHook', '1 day', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Backup'));
 
--- Miglioramento gestione email
+-- Miglioramento gestione email (questo RENAME genera un errore rif. tabella se mysql <= 5.5.55)
 RENAME TABLE `zz_emails` TO `em_templates`;
 RENAME TABLE `zz_smtps` TO `em_accounts`;
 RENAME TABLE `zz_email_print` TO `em_print_template`;

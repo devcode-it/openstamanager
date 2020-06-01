@@ -85,38 +85,39 @@ if ($dir == 'entrata') {
 $(document).ready(function () {
     $("#idanagrafica_add").change(function () {
         var data = $(this).selectData();
-        console.log(data)
-
-        if (!data.id){
-            $("#info").addClass("hidden");
-            return;
-        }
-
-        $.ajax({
-            url: globals.rootdir + "/actions.php",
-            type: "POST",
-            dataType: "json",
-            data: {
-                id_module: globals.id_module,
-                id_anagrafica: data.id,
-                op: "fatture_bozza",
-            },
-            success: function (results) {
-                $("#info").removeClass("hidden");
-
-                if (results.length === 0){
-                    $("#info-content").html("<p>'.tr('Nessuna fattura in stato Bozza presente per il cliente corrente').'</p>")
-                } else {
-                    var content = "";
-
-                    results.forEach(function(item) {
-                        content += "<li>" + item + "</li>";
-                    });
-
-                    $("#info-content").html("<p>'.tr('Sono presenti le seguenti fatture in stato Bozza per il cliente corrente').':</p><ul>" + content + "</ul>")
-                }
+        
+        if (data !== undefined) {
+            if (!data.id){
+                $("#info").addClass("hidden");
+                return;
             }
-        });
+
+            $.ajax({
+                url: globals.rootdir + "/actions.php",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    id_module: globals.id_module,
+                    id_anagrafica: data.id,
+                    op: "fatture_bozza",
+                },
+                success: function (results) {
+                    $("#info").removeClass("hidden");
+
+                    if (results.length === 0){
+                        $("#info-content").html("<p>'.tr('Nessuna fattura in stato Bozza presente per il cliente corrente').'</p>")
+                    } else {
+                        var content = "";
+
+                        results.forEach(function(item) {
+                            content += "<li>" + item + "</li>";
+                        });
+
+                        $("#info-content").html("<p>'.tr('Sono presenti le seguenti fatture in stato Bozza per il cliente corrente').':</p><ul>" + content + "</ul>")
+                    }
+                }
+            });
+        }
     })
 })
 </script>';

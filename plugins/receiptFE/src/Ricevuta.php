@@ -110,9 +110,9 @@ class Ricevuta
         // Modifica lo stato solo se la fattura non è già stata consegnata (per evitare problemi da doppi invii)
         // In realtà per le PA potrebbe esserci lo stato NE (che può contenere un esito positivo EC01 o negativo EC02) successivo alla RC,
         // quindi aggiungo eccezzione nel caso il nuovo codice della ricevuta sia NE.
-        //if ($fattura->codice_stato_fe == 'RC' and $codice != 'NE') {
-            //return;
-        //}
+        if ($fattura->codice_stato_fe == 'RC' && ($codice != 'EC01' || $codice != 'EC02')) {
+            return;
+        }
 
         // Processo la ricevuta e salvo data ricezione, codice e messaggio
         $descrizione = $this->xml['Destinatario']['Descrizione'];

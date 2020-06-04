@@ -108,11 +108,11 @@ class Ricevuta
         $fattura = $this->getFattura();
 
         // Modifica lo stato solo se la fattura non è già stata consegnata (per evitare problemi da doppi invii)
-        // In realtà per le PA potrebbe esserci lo stato NE (che può essere positiva o negativa) successivo alla RC,
-        // quindi aggiungo eccezzione nel caso il nuovo codice della ricevuta sia NE
-        if ($fattura->codice_stato_fe == 'RC' and $codice != 'NE') {
-            return;
-        }
+        // In realtà per le PA potrebbe esserci lo stato NE (che può contenere un esito positivo EC01 o negativo EC02) successivo alla RC,
+        // quindi aggiungo eccezzione nel caso il nuovo codice della ricevuta sia NE.
+        //if ($fattura->codice_stato_fe == 'RC' and $codice != 'NE') {
+            //return;
+        //}
 
         // Processo la ricevuta e salvo data ricezione, codice e messaggio
         $descrizione = $this->xml['Destinatario']['Descrizione'];
@@ -133,6 +133,13 @@ class Ricevuta
         $codice = $pieces[2];
 
         $this->saveAllegato($codice);
+
+        //In caso di Notifica Esito il codice è definito dal nodo <Esito> della ricevuta
+        if ($codice == 'NE'){
+            $this->xml = XML::readFile($this->file);
+            $codice = $this->xml['EsitoCommittente']['Esito'];
+        }
+
         $this->saveStato($codice);
     }
 

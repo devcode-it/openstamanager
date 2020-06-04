@@ -12,3 +12,8 @@ ALTER TABLE `co_righe_contratti` ADD `original_id` INT(11) NULL DEFAULT NULL AFT
 
 -- Ripristino TD01 per fatture differite
 UPDATE `co_tipidocumento` SET `codice_tipo_documento_fe` = 'TD01' WHERE `co_tipidocumento`.`codice_tipo_documento_fe` = 'TD24';
+
+
+UPDATE `fe_stati_documento` SET `icon` = 'fa fa-paper-plane-o text-sucess' WHERE `fe_stati_documento`.`codice` = 'MC'; 
+
+UPDATE `fe_stati_documento` SET `icon` = 'fa fa-check-circle text-warning' WHERE `fe_stati_documento`.`codice` = 'NE'; 

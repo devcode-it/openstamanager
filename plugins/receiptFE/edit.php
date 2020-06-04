@@ -14,7 +14,7 @@ if (Interaction::isEnabled()) {
 ]).'.</p>';
 
 //controllo se ci sono fatture in elaborazione da più di 7 giorni per le quali non ho ancora una ricevuta
-$fatture_generate = $dbo->fetchArray('SELECT `co_documenti`.`numero_esterno`, `co_documenti`.`data`, `co_documenti`.`data_stato_fe` FROM `co_documenti`  JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_tipidocumento`.`dir` = \'entrata\' AND `co_documenti`.`codice_stato_fe` = \'WAIT\' AND `co_documenti`.`data_stato_fe` >= "'.$_SESSION['period_start'].'"  AND `co_documenti`.`data_stato_fe`<(NOW() - INTERVAL 7 DAY) ORDER BY `co_documenti`.`data_stato_fe`  ');
+$fatture_generate = $dbo->fetchArray('SELECT `co_documenti`.`numero_esterno`, `co_documenti`.`data`, `co_documenti`.`data_stato_fe` FROM `co_documenti`  JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_tipidocumento`.`dir` = \'entrata\' AND `co_documenti`.`codice_stato_fe` = \'WAIT\' AND `co_documenti`.`data_stato_fe` >= "'.$_SESSION['period_start'].'"  AND `co_documenti`.`data_stato_fe`<(NOW() - INTERVAL 7 DAY) ORDER BY `co_documenti`.`data_stato_fe`');
 
 foreach ($fatture_generate as $fattura_generata) {
     echo '

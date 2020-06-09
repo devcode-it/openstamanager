@@ -421,10 +421,10 @@ $riga = $intervento->getRiga($type, $id_riga);
 
         $new = $intervento->replicate();
         $new->idstatointervento = $idstatointervento;
-        
+
         //calcolo il nuovo codice
         $new->codice = Intervento::getNextCodice($data_richiesta);
-        
+
         $new->save();
 
         $id_record = $new->id;
@@ -435,12 +435,12 @@ $riga = $intervento->getRiga($type, $id_riga);
             $new_riga->setParent($new);
 
             //Copio le righe
-            if( $copia_righe==1 ){
+            if ($copia_righe == 1) {
                 $righe = $intervento->getRighe();
                 foreach ($righe as $riga) {
                     $new_riga = $riga->replicate();
                     $new_riga->setParent($new);
-        
+
                     $new_riga->qta_evasa = 0;
                     $new_riga->save();
                 }
@@ -450,29 +450,28 @@ $riga = $intervento->getRiga($type, $id_riga);
         $i = 0;
 
         //Copio le sessioni
-        if( $copia_sessioni==1 ){
+        if ($copia_sessioni == 1) {
             $sessioni = $intervento->sessioni;
             foreach ($sessioni as $sessione) {
-
                 //Se è la prima sessione che copio importo la data con quella della richiesta
-                if( $i == 0 ){
-                    $orario_inizio = date("Y-m-d", strtotime($data_richiesta)).' '.date("H:i:s", strtotime($sessione->orario_inizio));
-                }else{
+                if ($i == 0) {
+                    $orario_inizio = date('Y-m-d', strtotime($data_richiesta)).' '.date('H:i:s', strtotime($sessione->orario_inizio));
+                } else {
                     $diff = strtotime($sessione->orario_inizio) - strtotime($inizio_old);
-                    $orario_inizio = date("Y-m-d H:i:s", (strtotime($orario_inizio)+$diff));
+                    $orario_inizio = date('Y-m-d H:i:s', (strtotime($orario_inizio) + $diff));
                 }
 
                 $diff_fine = strtotime($sessione->orario_fine) - strtotime($sessione->orario_inizio);
-                $orario_fine = date("Y-m-d H:i:s", (strtotime($orario_inizio)+$diff_fine));
+                $orario_fine = date('Y-m-d H:i:s', (strtotime($orario_inizio) + $diff_fine));
 
                 $new_sessione = $sessione->replicate();
                 $new_sessione->idintervento = $new->id;
-    
+
                 $new_sessione->orario_inizio = $orario_inizio;
                 $new_sessione->orario_fine = $orario_fine;
                 $new_sessione->save();
 
-                $i++;
+                ++$i;
                 $inizio_old = $sessione->orario_inizio;
             }
         }
@@ -480,5 +479,4 @@ $riga = $intervento->getRiga($type, $id_riga);
         flash()->info(tr('Attività duplicata correttamente!'));
 
         break;
-
 }

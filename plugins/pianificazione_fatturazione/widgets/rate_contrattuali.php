@@ -54,9 +54,8 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
     foreach ($pianificazioni as $pianificazione) {
         $contratto = $pianificazione->contratto;
         $anagrafica = $contratto->anagrafica;
-        
-        if(strtolower($pianificazione->data_scadenza->formatLocalized('%B %Y'))==strtolower($mese)){
 
+        if (strtolower($pianificazione->data_scadenza->formatLocalized('%B %Y')) == strtolower($mese)) {
             echo '
             <tr>
                 <td>
@@ -84,7 +83,6 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
                     </button>
                 </td>
             </tr>';
-            
         }
     }
 

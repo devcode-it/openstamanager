@@ -42,12 +42,10 @@ foreach ($righe as $riga) {
     echo '
         <tr>';
 
-    
     echo'
         <td class=\'text-center\' >
-            '.($r['order']+1).'</td>';
+            '.($r['order'] + 1).'</td>';
 
-    
     echo '
             <td>
                 '.nl2br($r['descrizione']);

@@ -89,9 +89,11 @@ foreach ($righe as $riga) {
         <tr>';
 
     echo '<td>';
-			if (!empty($riga->articolo->immagine)) {echo '<img src="files/articoli/'.$riga->articolo->immagine.'" width="95" height="95">';}
+    if (!empty($riga->articolo->immagine)) {
+        echo '<img src="files/articoli/'.$riga->articolo->immagine.'" width="95" height="95">';
+    }
     echo '</td>';
-            
+
     echo '
             <td style="vertical-align: middle">
                 '.nl2br($r['descrizione']);

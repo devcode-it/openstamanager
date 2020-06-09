@@ -44,8 +44,7 @@ foreach ($righe as $riga) {
 
     echo'
         <td class=\'text-center\' >
-            '.($r['order']+1).'</td>';
-
+            '.($r['order'] + 1).'</td>';
 
     echo'
         <td>

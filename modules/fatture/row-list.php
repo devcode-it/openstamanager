@@ -74,7 +74,7 @@ foreach ($righe as $riga) {
 
     echo '
     <td class="text-center">
-        '.(($riga->order)+1).'
+        '.(($riga->order) + 1).'
     </td>';
 
     echo '

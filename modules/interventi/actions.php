@@ -421,6 +421,10 @@ $riga = $intervento->getRiga($type, $id_riga);
 
         $new = $intervento->replicate();
         $new->idstatointervento = $idstatointervento;
+        
+        //calcolo il nuovo codice
+        $new->codice = Intervento::getNextCodice($data_richiesta);
+        
         $new->save();
 
         $id_record = $new->id;

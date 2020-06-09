@@ -54,8 +54,10 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
     foreach ($pianificazioni as $pianificazione) {
         $contratto = $pianificazione->contratto;
         $anagrafica = $contratto->anagrafica;
+        
+        if(strtolower($pianificazione->data_scadenza->formatLocalized('%B %Y'))==strtolower($mese)){
 
-        echo '
+            echo '
             <tr>
                 <td>
                     '.dateFormat($pianificazione->data_scadenza).'
@@ -74,14 +76,16 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
                     ]).'</small>
                 </td>';
 
-        // Pulsanti
-        echo '
+            // Pulsanti
+            echo '
                 <td class="text-center">
                     <button type="button" class="btn btn-primary btn-sm" onclick="crea_fattura('.$contratto->id.', '.$pianificazione->id.')">
                         <i class="fa fa-euro"></i> '.tr('Crea fattura').'
                     </button>
                 </td>
             </tr>';
+            
+        }
     }
 
     echo '

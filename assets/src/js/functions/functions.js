@@ -213,6 +213,7 @@ function message(element) {
         onOpen: function () {
             start_superselect();
             start_inputmask();
+            start_datepickers();
         },
         preConfirm: function () {
             $form = $('#swal-form');

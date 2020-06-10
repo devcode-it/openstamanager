@@ -17,3 +17,6 @@ UPDATE `co_tipidocumento` SET `codice_tipo_documento_fe` = 'TD01' WHERE `co_tipi
 UPDATE `fe_stati_documento` SET `icon` = 'fa fa-paper-plane-o text-sucess' WHERE `fe_stati_documento`.`codice` = 'MC'; 
 
 UPDATE `fe_stati_documento` SET `icon` = 'fa fa-check-circle text-warning' WHERE `fe_stati_documento`.`codice` = 'NE'; 
+
+-- modifica vista tecnici attività --
+UPDATE `zz_views` SET `query` = 'GROUP_CONCAT(DISTINCT((SELECT DISTINCT(ragione_sociale) FROM an_anagrafiche WHERE idanagrafica = in_interventi_tecnici.idtecnico)))' WHERE `zz_wievs`.`id_module` = (SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Interventi' AND `zz_wievs`.`name` = 'Tecnici';

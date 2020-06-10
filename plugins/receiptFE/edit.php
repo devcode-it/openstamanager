@@ -7,24 +7,22 @@ use Plugins\ReceiptFE\Interaction;
 echo '
 <p>'.tr('Le ricevute delle Fatture Elettroniche permettono di individuare se una determinata fattura tramessa è stata accettata dal Sistema Di Interscambio').'.</p>';
 if (Interaction::isEnabled()) {
-
     echo '
 <p>'.tr('Tramite il pulsante _BTN_ è possibile procedere al recupero delle ricevute, aggiornando automaticamente lo stato delle relative fatture e allegandole ad esse', [
     '_BTN_' => '<i class="fa fa-refresh"></i> <b>'.tr('Ricerca ricevute').'</b>',
 ]).'.</p>';
 
-//controllo se ci sono fatture in elaborazione da più di 7 giorni per le quali non ho ancora una ricevuta
-$fatture_generate = $dbo->fetchArray('SELECT `co_documenti`.`numero_esterno`, `co_documenti`.`data`, `co_documenti`.`data_stato_fe` FROM `co_documenti`  JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_tipidocumento`.`dir` = \'entrata\' AND `co_documenti`.`codice_stato_fe` = \'WAIT\' AND `co_documenti`.`data_stato_fe` >= "'.$_SESSION['period_start'].'"  AND `co_documenti`.`data_stato_fe`<(NOW() - INTERVAL 7 DAY) ORDER BY `co_documenti`.`data_stato_fe`');
+    //controllo se ci sono fatture in elaborazione da più di 7 giorni per le quali non ho ancora una ricevuta
+    $fatture_generate = $dbo->fetchArray('SELECT `co_documenti`.`numero_esterno`, `co_documenti`.`data`, `co_documenti`.`data_stato_fe` FROM `co_documenti`  JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_tipidocumento`.`dir` = \'entrata\' AND `co_documenti`.`codice_stato_fe` = \'WAIT\' AND `co_documenti`.`data_stato_fe` >= "'.$_SESSION['period_start'].'"  AND `co_documenti`.`data_stato_fe`<(NOW() - INTERVAL 7 DAY) ORDER BY `co_documenti`.`data_stato_fe`');
 
-foreach ($fatture_generate as $fattura_generata) {
-    echo '
+    foreach ($fatture_generate as $fattura_generata) {
+        echo '
     <div class="alert alert-warning"><i class="fa fa-warning" ></i> '.tr('Attenzione: la fattura _NUM_ del _DATA_ è in attesa di una ricevuta dal _DATA_STATO_FE.', [
         '_NUM_' => $fattura_generata['numero_esterno'],
         '_DATA_' => Translator::dateToLocale($fattura_generata['data']),
-        '_DATA_STATO_FE' => Translator::timestampToLocale($fattura_generata['data_stato_fe'])
+        '_DATA_STATO_FE' => Translator::timestampToLocale($fattura_generata['data_stato_fe']),
     ]).'</div>';
-}
-
+    }
 }
 echo '
 <div class="box box-success">

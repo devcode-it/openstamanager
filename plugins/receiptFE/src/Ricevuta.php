@@ -135,7 +135,7 @@ class Ricevuta
         $this->saveAllegato($codice);
 
         //In caso di Notifica Esito il codice è definito dal nodo <Esito> della ricevuta
-        if ($codice == 'NE'){
+        if ($codice == 'NE') {
             $this->xml = XML::readFile($this->file);
             $codice = $this->xml['EsitoCommittente']['Esito'];
         }

@@ -142,6 +142,78 @@ switch (post('op')) {
         }
 
         break;
+
+    case 'copy':
+
+        $idstatointervento = post('idstatointervento');
+        $data_richiesta = post('data_richiesta');
+        $copia_sessioni = post('sessioni');
+        $copia_righe = post('righe');
+
+        foreach ($id_records as $idintervento) {
+            $intervento = Intervento::find($idintervento);
+
+            $new = $intervento->replicate();
+            $new->idstatointervento = $idstatointervento;
+
+            //calcolo il nuovo codice
+            $new->codice = Intervento::getNextCodice($data_richiesta);
+
+            $new->save();
+
+            $id_record = $new->id;
+
+            $righe = $intervento->getRighe();
+            foreach ($righe as $riga) {
+                $new_riga = $riga->replicate();
+                $new_riga->setParent($new);
+
+                //Copio le righe
+                if ($copia_righe == 1) {
+                    $righe = $intervento->getRighe();
+                    foreach ($righe as $riga) {
+                        $new_riga = $riga->replicate();
+                        $new_riga->setParent($new);
+
+                        $new_riga->qta_evasa = 0;
+                        $new_riga->save();
+                    }
+                }
+            }
+
+            $i = 0;
+
+            //Copio le sessioni
+            if ($copia_sessioni == 1) {
+                $sessioni = $intervento->sessioni;
+                foreach ($sessioni as $sessione) {
+                    //Se è la prima sessione che copio importo la data con quella della richiesta
+                    if ($i == 0) {
+                        $orario_inizio = date('Y-m-d', strtotime($data_richiesta)).' '.date('H:i:s', strtotime($sessione->orario_inizio));
+                    } else {
+                        $diff = strtotime($sessione->orario_inizio) - strtotime($inizio_old);
+                        $orario_inizio = date('Y-m-d H:i:s', (strtotime($orario_inizio) + $diff));
+                    }
+
+                    $diff_fine = strtotime($sessione->orario_fine) - strtotime($sessione->orario_inizio);
+                    $orario_fine = date('Y-m-d H:i:s', (strtotime($orario_inizio) + $diff_fine));
+
+                    $new_sessione = $sessione->replicate();
+                    $new_sessione->idintervento = $new->id;
+
+                    $new_sessione->orario_inizio = $orario_inizio;
+                    $new_sessione->orario_fine = $orario_fine;
+                    $new_sessione->save();
+
+                    ++$i;
+                    $inizio_old = $sessione->orario_inizio;
+                }
+            }
+        }
+
+        flash()->info(tr('Attività duplicate correttamente!'));
+
+        break;
 }
 
 return [
@@ -175,6 +247,20 @@ return [
             'msg' => tr('Seleziona lo stato in cui spostare tutti gli interventi non completati').'.<br>
             <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL" ]}',
             'button' => tr('Sposta'),
+            'class' => 'btn btn-lg btn-warning',
+            'blank' => false,
+        ],
+    ],
+
+    'copy' => [
+        'text' => tr('Duplica attività'),
+        'data' => [
+            'title' => tr('Vuoi davvero fare una copia degli interventi selezionati?'),
+            'msg' => '<br>{[ "type": "timestamp", "label": "'.tr('Data/ora richiesta').'", "name": "data_richiesta", "required": 0, "value": "-now-", "required":1 ]}
+            <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL", "value": "" ]}
+            <br>{[ "type":"checkbox", "label":"'.tr('Duplica righe').'", "name":"righe", "value":"" ]}
+            <br>{[ "type":"checkbox", "label":"'.tr('Duplica sessioni').'", "name":"sessioni", "value":"" ]}',
+            'button' => tr('Duplica attività'),
             'class' => 'btn btn-lg btn-warning',
             'blank' => false,
         ],

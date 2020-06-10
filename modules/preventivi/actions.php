@@ -69,7 +69,7 @@ switch (post('op')) {
     case 'copy':
         // Copia del preventivo
         $new = $preventivo->replicate();
-        $new->numero = Preventivo::getNextNumero( Carbon::now() );
+        $new->numero = Preventivo::getNextNumero(Carbon::now());
         $new->data_bozza = Carbon::now();
         $new->data_conclusione = Carbon::now()->addMonth();
         $new->stato = 'Bozza';

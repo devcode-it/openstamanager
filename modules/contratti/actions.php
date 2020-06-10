@@ -391,7 +391,6 @@ $riga = $contratto->getRiga($type, $id_riga);
 
         // Creazione del contratto al volo
         if (post('create_document') == 'on') {
-
             $contratto = Contratto::build($preventivo->anagrafica, $preventivo->nome);
 
             $contratto->idpagamento = $preventivo->idpagamento;

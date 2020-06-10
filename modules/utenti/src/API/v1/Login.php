@@ -27,6 +27,7 @@ class Login extends Resource implements CreateInterface
             $response['token'] = $token;
             $response['group'] = $user['gruppo'];
             $response['google_maps_token'] = setting('Google Maps API key');
+            $response['prezzi_al_tecnico'] = setting('Mostra i prezzi al tecnico');
 
             $response['version'] = Update::getVersion();
         } else {

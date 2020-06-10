@@ -35,6 +35,9 @@ class Articoli extends Resource implements RetrieveInterface, CreateInterface
 
         $articolo->qta = $data['qta'];
         $articolo->um = $data['um'];
+     
+        $articolo->prezzo_unitario = $originale->prezzo_vendita;
+        $articolo->costo_unitario =  $originale->prezzo_acquisto;
 
         $articolo->save();
     }

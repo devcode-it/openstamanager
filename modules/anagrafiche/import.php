@@ -139,6 +139,7 @@ return [
             'Citt_',
             'Citt&agrave;',
             'Città',
+            'Citta',
         ],
     ],
     [
@@ -208,6 +209,7 @@ return [
             'P.IVA',
             'P.IVA/TAX ID',
             'TAX ID',
+            'Partita IVA',
         ],
     ],
     [

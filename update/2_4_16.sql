@@ -20,3 +20,6 @@ UPDATE `fe_stati_documento` SET `icon` = 'fa fa-check-circle text-warning' WHERE
 
 -- modifica vista tecnici attività --
 UPDATE `zz_views` SET `query` = 'GROUP_CONCAT(DISTINCT((SELECT DISTINCT(ragione_sociale) FROM an_anagrafiche WHERE idanagrafica = in_interventi_tecnici.idtecnico)))' WHERE `zz_wievs`.`id_module` = (SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Interventi' AND `zz_wievs`.`name` = 'Tecnici';
+
+-- fix valore data_ora_trasporto
+UPDATE `dt_ddt` SET `data_ora_trasporto` = NULL WHERE `dt_ddt`.`id` = '0000-00-00 00:00:00'; 

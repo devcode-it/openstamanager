@@ -11,6 +11,7 @@ use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\Intervento;
 use Modules\Interventi\Stato;
 use Modules\TipiIntervento\Tipo as TipoSessione;
+use Auth;
 
 class Interventi extends Resource implements RetrieveInterface, CreateInterface, UpdateInterface
 {
@@ -20,6 +21,7 @@ class Interventi extends Resource implements RetrieveInterface, CreateInterface,
         $today = date('Y-m-d');
         $period_end = date('Y-m-d', strtotime($today.' +7 days'));
         $period_start = date('Y-m-d', strtotime($today.' -2 months'));
+        $user = Auth::user();
 
         // AND `in_statiintervento`.`is_completato`=0
         $query = "SELECT `in_interventi`.`id`,
@@ -46,24 +48,39 @@ class Interventi extends Resource implements RetrieveInterface, CreateInterface,
             INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` = `in_statiintervento`.`idstatointervento`
             INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
             LEFT JOIN `an_sedi` ON `in_interventi`.`idsede_destinazione` = `an_sedi`.`id`
+            LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
         WHERE EXISTS(SELECT `orario_fine` FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` AND `orario_fine` BETWEEN :period_start AND :period_end)";
+
+        //Filtro per far visualizzare al tecnico loggato solo le sue attività
+        $filters = [];
+        $filters[] = 'in_interventi_tecnici.idtecnico ='.$user->idanagrafica;
+        $query .= !empty($filters) ? ' AND ('.implode('OR ', $filters).')' : '';
 
         $query .= '
         HAVING 2=2
         ORDER BY `in_interventi`.`data_richiesta` DESC';
-
+       
         $parameters = [
             ':period_end' => $period_end,
             ':period_start' => $period_start,
         ];
 
+
+        
+
         $module = Modules::get('Interventi');
+
+       
         $query = Modules::replaceAdditionals($module->id, $query);
+
+        
 
         return [
             'query' => $query,
             'parameters' => $parameters,
         ];
+
+      
     }
 
     public function create($request)

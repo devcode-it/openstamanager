@@ -6,6 +6,7 @@ use API\Interfaces\CreateInterface;
 use API\Interfaces\DeleteInterface;
 use API\Interfaces\RetrieveInterface;
 use API\Resource;
+use Modules\Interventi\Components\Sessione;
 
 class Sessioni extends Resource implements RetrieveInterface, CreateInterface, DeleteInterface
 {
@@ -50,5 +51,6 @@ class Sessioni extends Resource implements RetrieveInterface, CreateInterface, D
             ':id_intervento' => $request['id_intervento'],
             ':id_tecnico' => $user['idanagrafica'],
         ]);
+
     }
 }

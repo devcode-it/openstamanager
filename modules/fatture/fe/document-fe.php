@@ -211,3 +211,14 @@ function add_riferimento(btn, nome, key) {
 </script>
 
 <script>$(document).ready(init)</script>';
+
+$attributi_editabili = $documento['stato'] != 'Emessa' && $documento['stato'] != 'Parzialmente pagato' && $documento['stato'] != 'Pagato';
+if (!$attributi_editabili){
+    echo '<script>
+    $( document ).ready(function() {
+        $(\'.modal-body > form button\').attr(\'disabled\', \'disabled\');
+        $(\'.modal-body > form select\').attr(\'disabled\', \'disabled\');
+        $(\'.modal-body > form input\').attr(\'disabled\', \'disabled\');
+    });
+    </script>';
+}

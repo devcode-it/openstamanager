@@ -158,6 +158,10 @@ if (empty($record['is_fiscale'])) {
     $plugin = $dbo->fetchArray("SELECT id FROM zz_plugins WHERE name='Fatturazione Elettronica' AND idmodule_to = ".prepare($id_module));
     echo '<script>$("#link-tab_'.$plugin[0]['id'].'").addClass("disabled");</script>';
 }
+//Forzo il passaggio della fattura da Bozza ad Emessa per il corretto calcolo del numero.
+else if ($record['stato']=='Bozza') {
+    $query .= " WHERE descrizione IN ('Emessa', 'Bozza')";
+}
 
 ?>
 				<?php if ($dir == 'entrata') {

@@ -14,7 +14,7 @@ foreach ($righe as $riga) {
 }
 $pagamento = $dbo->fetchOne('SELECT * FROM co_pagamenti WHERE id = '.$documento['idpagamento']);
 if (!empty($pagamento['idconto_vendite'])){
-    $banca = $dbo->fetchOne('SELECT co_banche.nome, co_banche.filiale, co_banche.bic FROM co_banche INNER JOIN co_pianodeiconti3 ON co_banche.id_pianodeiconti3 = co_pianodeiconti3.id WHERE co_pianodeiconti3.id = '.$pagamento['idconto_vendite']);
+    $banca = $dbo->fetchOne('SELECT co_banche.nome, co_banche.iban, co_banche.bic FROM co_banche INNER JOIN co_pianodeiconti3 ON co_banche.id_pianodeiconti3 = co_pianodeiconti3.id WHERE co_pianodeiconti3.id = '.$pagamento['idconto_vendite']);
 }
 
 // Creazione righe fantasma
@@ -45,7 +45,7 @@ echo '
         <tr>
             <td colspan="2" style="height:10mm;padding-top:2mm;">
                 <p class="small-bold">'.tr('IBAN').'</p>
-                <p>'.$banca['filiale'].'</p>
+                <p>'.$banca['iban'].'</p>
             </td>
             <td colspan="2" style="height:10mm;padding-top:2mm;">
                 <p class="small-bold">'.tr('BIC').'</p>
@@ -142,9 +142,9 @@ foreach ($righe as $riga) {
 
     
     if ($has_images) {
-        echo '<td>';
+        echo '<td class=\"text-center\" >';
             if (!empty($riga->articolo->immagine)) {
-                echo '<img src="files/articoli/'.$riga->articolo->immagine.'" width="95" height="95">';
+                echo '<img src="files/articoli/'.$riga->articolo->immagine.'" width="78">';
             }
     
         echo '</td>';

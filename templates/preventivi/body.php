@@ -2,8 +2,23 @@
 
 include_once __DIR__.'/../../core.php';
 
+$has_images = null;
+
+// Righe documento
+$righe = $documento->getRighe();
+
+foreach ($righe as $riga) {
+   if ($riga->articolo->immagine){
+        $has_images = 1;
+   }
+}
+$pagamento = $dbo->fetchOne('SELECT * FROM co_pagamenti WHERE id = '.$documento['idpagamento']);
+if (!empty($pagamento['idconto_vendite'])){
+    $banca = $dbo->fetchOne('SELECT co_banche.nome, co_banche.filiale, co_banche.bic FROM co_banche INNER JOIN co_pianodeiconti3 ON co_banche.id_pianodeiconti3 = co_pianodeiconti3.id WHERE co_pianodeiconti3.id = '.$pagamento['idconto_vendite']);
+}
+
 // Creazione righe fantasma
-$autofill = new \Util\Autofill($options['pricing'] ? 6 : 3);
+$autofill = new \Util\Autofill($options['pricing'] ? (($has_images) ? 7 : 6) : 3);
 $autofill->setRows(20, 10);
 
 echo '
@@ -15,6 +30,31 @@ echo '
                 '_DATE_' => Translator::dateToLocale($documento['data_bozza']),
             ], ['upper' => true]).'</b>
         </div>
+
+        <table>
+        <tr>
+            <td colspan="2" style="height:10mm;padding-top:2mm;">
+                <p class="small-bold">'.tr('Pagamento', [], ['upper' => true]).'</p>
+                <p>'.$pagamento['descrizione'].'</p>
+            </td>
+            <td colspan="2" style="height:10mm;padding-top:2mm;">
+                <p class="small-bold">'.tr('Banca di appoggio', [], ['upper' => true]).'</p>
+                <p><small>'.$banca['nome'].'</small></p>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" style="height:10mm;padding-top:2mm;">
+                <p class="small-bold">'.tr('IBAN').'</p>
+                <p>'.$banca['filiale'].'</p>
+            </td>
+            <td colspan="2" style="height:10mm;padding-top:2mm;">
+                <p class="small-bold">'.tr('BIC').'</p>
+                <p>'.$banca['bic'].'</p>
+            </td>
+        </tr>
+        </table>
+
+
     </div>
 
 	<div class="col-xs-6" style="margin-left: 10px">
@@ -61,7 +101,15 @@ echo "
 <table class='table table-striped table-bordered' id='contents'>
     <thead>
         <tr>
-            <th class='text-center'></th>
+            <th class='text-center'>#</th>";
+
+if ($has_images){
+echo "
+            <th class='text-center' width='95' >Foto</th>";
+
+}
+
+echo "
             <th class='text-center' style='width:50%'>".tr('Descrizione', [], ['upper' => true])."</th>
             <th class='text-center' style='width:10%'>".tr('Q.tà', [], ['upper' => true]).'</th>';
 
@@ -78,8 +126,7 @@ echo '
 
     <tbody>';
 
-// Righe documento
-$righe = $documento->getRighe();
+
 foreach ($righe as $riga) {
     $r = $riga->toArray();
 
@@ -88,11 +135,20 @@ foreach ($righe as $riga) {
     echo '
         <tr>';
 
-    echo '<td>';
-    if (!empty($riga->articolo->immagine)) {
-        echo '<img src="files/articoli/'.$riga->articolo->immagine.'" width="95" height="95">';
+
+    echo"
+        <td class=\"text-center\" >
+            ".($r['order'] + 1)."</td>";
+
+    
+    if ($has_images) {
+        echo '<td>';
+            if (!empty($riga->articolo->immagine)) {
+                echo '<img src="files/articoli/'.$riga->articolo->immagine.'" width="95" height="95">';
+            }
+    
+        echo '</td>';
     }
-    echo '</td>';
 
     echo '
             <td style="vertical-align: middle">
@@ -247,7 +303,7 @@ echo'
 </table>';
 
 // CONDIZIONI GENERALI DI FORNITURA
-$pagamento = $dbo->fetchOne('SELECT * FROM co_pagamenti WHERE id = '.$documento['idpagamento']);
+
 
 echo '
 <table class="table table-bordered">

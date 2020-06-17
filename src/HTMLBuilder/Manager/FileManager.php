@@ -169,23 +169,16 @@ class FileManager implements ManagerInterface
             $result .= '
     <b>'.$options['label'].'</b>
     <div id="upload-form" class="row">
-        <div class="col-md-4">
-            {[ "type": "text", "placeholder": "'.tr('Nome').'", "name": "nome_allegato", "class": "unblockable" ]}
-        </div>
-
-        <div class="col-md-3">
+        <div class="col-md-12">
             {[ "type": "text", "placeholder": "'.tr('Categoria').'", "name": "categoria", "class": "unblockable" ]}
         </div>
-
-        <div class="col-md-3">
-            {[ "type": "file", "placeholder": "'.tr('File').'", "name": "blob", "class": "unblockable" ]}
+        <div class="col-md-12">
+            <div class="dropzone dz-clickable" id="dragdrop">
+                <div class="dz-default dz-message" data-dz-message="">
+                <span>Trascina qui i file da caricare</span>
+                </div>
+            </div>
         </div>
-
-		<div class="col-md-2 text-right">
-			<button type="button" class="btn btn-success" id="upload">
-				<i class="fa fa-upload"></i> '.tr('Carica').'
-			</button>
-		</div>
     </div>';
         }
         // In caso di readonly, se non è stato caricato nessun allegato mostro almeno box informativo
@@ -210,6 +203,20 @@ class FileManager implements ManagerInterface
 <script>$(document).ready(init)</script>
 
 <script>
+
+Dropzone.autoDiscover = false;
+
+var dragdrop = new Dropzone("div#dragdrop", { url: "'.ROOTDIR.'/actions.php?op=link_file&id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id_plugin='.$options['id_plugin'].'"});
+
+dragdrop.on("sending", function(file, xhr, formData) { 
+    formData.append("categoria", $("#categoria").val());  
+});
+
+dragdrop.on("complete", function(file) {
+    dragdrop.removeFile(file);
+    reload_'.$attachment_id.'();
+});
+
 $(document).ready(function() {
     // Modifica categoria
     $("#'.$attachment_id.' .category-edit").click(function() {

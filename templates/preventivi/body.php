@@ -137,12 +137,12 @@ foreach ($righe as $riga) {
 
 
     echo"
-        <td class=\"text-center\" >
+        <td class=\"text-center\" style=\"vertical-align: middle\" >
             ".($r['order'] + 1)."</td>";
 
     
     if ($has_images) {
-        echo '<td class=\"text-center\" >';
+        echo '<td class=\"text-center\" style=\"vertical-align: middle\" >';
             if (!empty($riga->articolo->immagine)) {
                 echo '<img src="files/articoli/'.$riga->articolo->immagine.'" width="78">';
             }

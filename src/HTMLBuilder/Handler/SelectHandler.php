@@ -70,6 +70,8 @@ class SelectHandler implements HandlerInterface
         $values['placeholder'] = !empty($values['placeholder']) ? $values['placeholder'] : tr("Seleziona un'opzione");
         $values['data-placeholder'] = $values['placeholder'];
 
+        $values['data-maximum-selection-length'] = $values['maximum-selection-length'];
+
         unset($values['values']);
 
         $result .= '

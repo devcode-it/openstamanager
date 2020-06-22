@@ -2,6 +2,15 @@
 
 include_once __DIR__.'/../../core.php';
 
+
+if (!$record['predefined']) {
+    $attr = '';
+} else {
+    $attr = 'readonly';
+    echo '<div class="alert alert-warning">'.tr('Alcune impostazioni non possono essere modificate per questo stato template.').'</div>';
+}
+
+
 ?>
 <form action="" method="post" id="edit-form">
 	<input type="hidden" name="op" value="update">
@@ -16,7 +25,7 @@ include_once __DIR__.'/../../core.php';
 		<div class="panel-body">
             <div class="row">
                 <div class="col-md-8">
-                    {[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "name", "value": "$name$", "required": 1 ]}
+                    {[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "name", "value": "$name$", "required": 1, "extra": "<?php echo $attr; ?>" ]}
                 </div>
 
                 <div class="col-md-4">
@@ -124,7 +133,16 @@ echo '
     </div>
 
 </form>
+<?php
 
+if (!$record['predefined']) {
+
+?>
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>
+
+<?php
+
+}
+?>

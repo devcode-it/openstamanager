@@ -17,8 +17,6 @@ if (( $record['attempt'] >= 10) && empty($record['sent_at'])) {
             <i class="fa fa-envelope"></i> '.tr('Invia immeditamente').'
         </a>';
 
-
- 
 }else if (!empty($record['sent_at'])) {
 
     echo '

@@ -39,3 +39,9 @@ UPDATE `em_templates` SET `predefined` = '1' WHERE `em_templates`.`name` = 'Noti
 UPDATE `em_templates` SET `predefined` = '1' WHERE `em_templates`.`name` = 'Notifica rimozione intervento'; 
 UPDATE `em_templates` SET `predefined` = '1' WHERE `em_templates`.`name` = 'Reset password'; 
 UPDATE `em_templates` SET `predefined` = '1' WHERE `em_templates`.`name` = 'Rapportino intervento'; 
+
+
+
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Notifica al tecnico l\'assegnazione a nuove attività', '0', 'boolean', '1', 'Interventi', NULL, 'Notifica via email al tecnico nuove sessioni di lavoro che gli sono state assegnate (l\'indirizzo email deve essere specificato nella sua anagrafica)'); 
+
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Notifica al tecnico la rimozione da nuove attività', '0', 'boolean', '1', 'Interventi', NULL, 'Notifica via email al tecnico la rimozione da sessioni di lavoro (l\'indirizzo email deve essere specificato nella sua anagrafica)'); 

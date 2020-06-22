@@ -373,12 +373,16 @@ $riga = $intervento->getRiga($type, $id_riga);
         $dbo->query('DELETE FROM in_interventi_tecnici WHERE id='.prepare($id_sessione));
 
         // Notifica rimozione dell' intervento al tecnico
-        if (!empty($tecnico['email'])) {
-            $template = Template::get('Notifica rimozione intervento');
+        if (setting('Notifica al tecnico la rimozione da nuove attività')) {
+            if (!empty($tecnico['email'])) {
+                $template = Template::get('Notifica rimozione intervento');
 
-            $mail = Mail::build(auth()->getUser(), $template, $id_record);
-            $mail->addReceiver($tecnico['email']);
-            $mail->save();
+                if (!empty($template)){
+                    $mail = Mail::build(auth()->getUser(), $template, $id_record);
+                    $mail->addReceiver($tecnico['email']);
+                    $mail->save();
+                }
+            }
         }
 
         break;

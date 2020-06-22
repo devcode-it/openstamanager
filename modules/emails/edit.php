@@ -7,7 +7,7 @@ if (!$record['predefined']) {
     $attr = '';
 } else {
     $attr = 'readonly';
-    echo '<div class="alert alert-warning">'.tr('Alcune impostazioni non possono essere modificate per questo stato template.').'</div>';
+    echo '<div class="alert alert-warning">'.tr('Alcune impostazioni non possono essere modificate per questo template.').'</div>';
 }
 
 

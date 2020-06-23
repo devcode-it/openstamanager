@@ -235,7 +235,7 @@ $netto_a_pagare = $fattura->isNota() ? -$netto_a_pagare : $netto_a_pagare;
 // IMPONIBILE
 echo '
     <tr>
-        <td colspan="4" class="text-right">
+        <td colspan="5" class="text-right">
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
         <td align="right">

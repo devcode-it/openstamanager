@@ -51,3 +51,8 @@ UPDATE `zz_settings` SET `sezione` = 'Fatturazione Elettronica' WHERE `zz_settin
 
 -- Fix campo iva con prezzi fino a 6 decimali
 ALTER TABLE `co_righe_documenti` CHANGE `iva_unitaria` `iva_unitaria` DECIMAL(17,8) NOT NULL;
+ALTER TABLE `co_righe_preventivi` CHANGE `iva_unitaria` `iva_unitaria` DECIMAL(17,8) NOT NULL;
+ALTER TABLE `co_righe_contratti` CHANGE `iva_unitaria` `iva_unitaria` DECIMAL(17,8) NOT NULL;
+ALTER TABLE `dt_righe_ddt` CHANGE `iva_unitaria` `iva_unitaria` DECIMAL(17,8) NOT NULL;
+ALTER TABLE `or_righe_ordini` CHANGE `iva_unitaria` `iva_unitaria` DECIMAL(17,8) NOT NULL;
+ALTER TABLE `in_righe_interventi` CHANGE `iva_unitaria` `iva_unitaria` DECIMAL(17,8) NOT NULL;

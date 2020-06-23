@@ -56,3 +56,6 @@ ALTER TABLE `co_righe_contratti` CHANGE `iva_unitaria` `iva_unitaria` DECIMAL(17
 ALTER TABLE `dt_righe_ddt` CHANGE `iva_unitaria` `iva_unitaria` DECIMAL(17,8) NOT NULL;
 ALTER TABLE `or_righe_ordini` CHANGE `iva_unitaria` `iva_unitaria` DECIMAL(17,8) NOT NULL;
 ALTER TABLE `in_righe_interventi` CHANGE `iva_unitaria` `iva_unitaria` DECIMAL(17,8) NOT NULL;
+
+-- Aggiunta storno note di credito nel widget fatturato -- 
+UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS('' '', REPLACE(REPLACE(REPLACE(FORMAT((SELECT SUM(IF(co_tipidocumento.descrizione=''Nota di credito'', (-subtotale+sconto), (subtotale-sconto))) ), 2), '','', ''#''), ''.'', '',''), ''#'', ''.''), ''&euro;'') AS dato FROM (co_righe_documenti INNER JOIN co_documenti ON co_righe_documenti.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=''entrata'' |segment| AND data >= ''|period_start|'' AND data <= ''|period_end|'' AND 1=1' WHERE `zz_widgets`.`name` = 'Fatturato' 

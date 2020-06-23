@@ -62,7 +62,7 @@ function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto = n
     $sessione = Sessione::build($intervento, $anagrafica, $inizio, $fine);
 
     // Notifica nuovo intervento al tecnico
-    if (setting('Notifica al tecnico l\'assegnazione a nuove attività')) {
+    if (setting('Notifica al tecnico l\'assegnazione all\'attività')) {
         if (!empty($anagrafica['email'])) {
             $template = Template::get('Notifica intervento');
 

@@ -48,3 +48,6 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 
 
 UPDATE `zz_settings` SET `sezione` = 'Fatturazione Elettronica' WHERE `zz_settings`.`nome` = 'Riferimento dei documenti in Fattura Elettronica'; 
+
+-- Fix campo iva con prezzi fino a 6 decimali
+ALTER TABLE `co_righe_documenti` CHANGE `iva_unitaria` `iva_unitaria` DECIMAL(17,8) NOT NULL;

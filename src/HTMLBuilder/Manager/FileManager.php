@@ -98,7 +98,7 @@ class FileManager implements ManagerInterface
                     $file = Upload::find($r['id']);
 
                     $result .= '
-        <tr>
+        <tr id="row_'.$r['id'].'" >
             <td align="left">';
 
                     if ($file->user && $file->user->photo) {
@@ -210,35 +210,45 @@ class FileManager implements ManagerInterface
 
 <script>
 
+// Disabling autoDiscover, otherwise Dropzone will try to attach twice.
 Dropzone.autoDiscover = false;
 
-window.onload = function () {
-
+$(document).ready(function() {
+   
     var dropzoneOptions = {
         dictDefaultMessage: "'.tr('Clicca o trascina qui per caricare uno o più file.<br>(Max ulpload: '.$upload_max_filesize.' MB)').'",
         paramName: "file",
         maxFilesize: '.$upload_max_filesize.', // MB
+        uploadMultiple: false,
+        parallelUploads: 2,
         addRemoveLinks: false,
+        autoProcessQueue: true,
+        autoQueue: true,
         url: "'.ROOTDIR.'/actions.php?op=link_file&id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id_plugin='.$options['id_plugin'].'",
         init: function (file, xhr, formData) {
             this.on("sending", function(file, xhr, formData) {
                 formData.append("categoria", $("#categoria").val());  
-                formData.append("nome_allegato", $("#nome_allegato").val());  
+                formData.append("nome_allegato", $("#nome_allegato").val());
             }),
             this.on("success", function (file) {
                 //console.log("success > " + file.name);
                 dragdrop.removeFile(file);
             }),
             this.on("complete", function (file) {
-                reload_'.$attachment_id.'();
+              
+                //Ricarico solo quando ho finito
+                if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
+                    reload_'.$attachment_id.'();
+                }
+
+
             });
         }
     };
 
     var dragdrop = new Dropzone("div#dragdrop", dropzoneOptions);
-};
 
-$(document).ready(function() {
+
     // Modifica categoria
     $("#'.$attachment_id.' .category-edit").click(function() {
         var nome = $(this).parent().parent().find(".box-title");
@@ -354,7 +364,15 @@ function show_'.$attachment_id.'() {
 
 function reload_'.$attachment_id.'() {
     $("#'.$attachment_id.'").load(globals.rootdir + "/ajax.php?op=list_attachments&id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id_plugin='.$options['id_plugin'].'", function() {
+
         $("#loading_'.$attachment_id.'").addClass("hide");
+        
+      
+        var id = $("#'.$attachment_id.' table tr").eq(-1).attr("id");
+        if (id !== undefined)
+            $("#"+id).effect("highlight", {}, 1500);
+    
+           
     });
 }
 </script>';

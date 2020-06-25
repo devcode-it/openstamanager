@@ -23,7 +23,7 @@ class FileManager implements ManagerInterface
     {
         $options['readonly'] = !empty($options['readonly']) ? true : false;
         $options['showpanel'] = isset($options['showpanel']) ? $options['showpanel'] : true;
-        $options['label'] = isset($options['label']) ? $options['label'] : tr('Nuovo allegato').':';
+        $options['label'] = isset($options['label']) ? $options['label'] : tr('Allegato').':';
 
         $options['id_plugin'] = !empty($options['id_plugin']) ? $options['id_plugin'] : null;
 
@@ -169,14 +169,15 @@ class FileManager implements ManagerInterface
             $result .= '
     <b>'.$options['label'].'</b>
     <div id="upload-form" class="row">
-        <div class="col-md-12">
+        <div class="col-md-6">
+            {[ "type": "text", "placeholder": "'.tr('Nome file').'", "name": "nome_allegato", "class": "unblockable" ]}
+        </div>
+        <div class="col-md-6">
             {[ "type": "text", "placeholder": "'.tr('Categoria').'", "name": "categoria", "class": "unblockable" ]}
         </div>
         <div class="col-md-12">
             <div class="dropzone dz-clickable" id="dragdrop">
-                <div class="dz-default dz-message" data-dz-message="">
-                <span>Trascina qui i file da caricare</span>
-                </div>
+             
             </div>
         </div>
     </div>';
@@ -199,6 +200,11 @@ class FileManager implements ManagerInterface
 
         $source = array_clean(array_column($categories, 'category'));
 
+        
+        $upload_max_filesize = \Util\FileSystem::formatBytes(ini_get('upload_max_filesize'), 0);
+        //remove unit
+        $upload_max_filesize = substr($upload_max_filesize, 0, strrpos($upload_max_filesize, ' '));
+
         $result .= '
 <script>$(document).ready(init)</script>
 
@@ -206,16 +212,31 @@ class FileManager implements ManagerInterface
 
 Dropzone.autoDiscover = false;
 
-var dragdrop = new Dropzone("div#dragdrop", { url: "'.ROOTDIR.'/actions.php?op=link_file&id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id_plugin='.$options['id_plugin'].'"});
+window.onload = function () {
 
-dragdrop.on("sending", function(file, xhr, formData) { 
-    formData.append("categoria", $("#categoria").val());  
-});
+    var dropzoneOptions = {
+        dictDefaultMessage: "'.tr('Clicca o trascina qui per caricare uno o più file.<br>(Max ulpload: '.$upload_max_filesize.' MB)').'",
+        paramName: "file",
+        maxFilesize: '.$upload_max_filesize.', // MB
+        addRemoveLinks: false,
+        url: "'.ROOTDIR.'/actions.php?op=link_file&id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id_plugin='.$options['id_plugin'].'",
+        init: function (file, xhr, formData) {
+            this.on("sending", function(file, xhr, formData) {
+                formData.append("categoria", $("#categoria").val());  
+                formData.append("nome_allegato", $("#nome_allegato").val());  
+            }),
+            this.on("success", function (file) {
+                //console.log("success > " + file.name);
+                dragdrop.removeFile(file);
+            }),
+            this.on("complete", function (file) {
+                reload_'.$attachment_id.'();
+            });
+        }
+    };
 
-dragdrop.on("complete", function(file) {
-    dragdrop.removeFile(file);
-    reload_'.$attachment_id.'();
-});
+    var dragdrop = new Dropzone("div#dragdrop", dropzoneOptions);
+};
 
 $(document).ready(function() {
     // Modifica categoria

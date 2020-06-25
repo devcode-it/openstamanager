@@ -11,6 +11,8 @@ echo '
 echo '
 <script>
 
+function formatBytes(a,b=2){if(0===a)return"0 Bytes";const c=0>b?0:b,d=Math.floor(Math.log(a)/Math.log(1024));return parseFloat((a/Math.pow(1024,d)).toFixed(c))+" "+["Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"][d]}
+
 $(document).ready(function() {
     $.ajax({
         url: globals.rootdir + "/actions.php",
@@ -35,7 +37,30 @@ function crea_grafico(values){
 	values.forEach(function(element) {
         $data.push(element.size);
         
-        $labels.push(element.description + " (" + element.formattedSize + ")")
+        //Segnalazione se sul server sembrano mancare file rispetto a quanto previsto a DB
+        if (element.dbSize!==""){
+           if (element.size<element.dbSize){
+                var diff = (element.dbSize-element.size);
+
+                if (diff>1000){
+                    $("#message").append("<div class=\"label label-warning\" ><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i> "+formatBytes(diff)+" di file mancanti per allegati.</div>");
+                }
+            }
+        }
+
+        //Segnalazione se sul server sembrano mancare file rispetto a quanto previsto a DB
+        if (element.dbCount!==""){
+           if (element.count<element.dbCount){
+                var diff = (element.dbCount-element.count);
+
+                $("#message").append("<div class=\"label label-warning\" ><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i> "+diff+" di file mancanti per allegati.</div>");
+               
+            }
+        }
+
+        $labels.push(element.description + " (" + element.formattedSize + ")" + " [" + element.count + "]" )
+
+      
     });
 	
 	options = {
@@ -83,4 +108,4 @@ function crea_grafico(values){
 
 <div class="chart-container" style="width:25em;">
     <canvas id="chart"></canvas>
-</div>';
+</div><div id="message" ></div>';

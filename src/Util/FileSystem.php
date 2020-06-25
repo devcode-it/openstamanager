@@ -59,6 +59,31 @@ class FileSystem
         return $total;
     }
 
+
+    /**
+     * Restituisce il numero di file contenuti in una cartella indicata.
+     *
+     * @param string $path
+     *
+     * @return int
+     */
+    public static function folderCount($path)
+    {
+        $total = 0;
+        $path = realpath($path);
+
+        if ($path !== false && $path != '' && file_exists($path)) {
+            foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS)) as $object) {
+                $count += 1;
+            }
+        }
+
+        return $count;
+    }
+
+
+
+
     /**
      * Individua la dimensione del file indicato.
      *

@@ -154,6 +154,9 @@ switch (filter('op')) {
                 'description' => $description,
                 'size' => $size,
                 'formattedSize' => FileSystem::formatBytes($size),
+                'count' => (FileSystem::folderCount($dir)? : 0),
+                'dbSize' => (($description == "Allegati") ? $dbo->fetchOne("SELECT SUM(`size`) AS dbsize FROM zz_files")["dbsize"] : ""),
+                'dbCount' => (($description == "Allegati") ? $dbo->fetchOne("SELECT COUNT(`id`) AS dbcount FROM zz_files")["dbcount"] : ""),
             ];
         }
 

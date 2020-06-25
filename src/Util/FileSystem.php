@@ -61,7 +61,7 @@ class FileSystem
 
 
     /**
-     * Restituisce il numero di file contenuti in una cartella indicata.
+     * Restituisce il numero di file contenuti nella cartella indicata.
      *
      * @param string $path
      *
@@ -74,11 +74,11 @@ class FileSystem
 
         if ($path !== false && $path != '' && file_exists($path)) {
             foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS)) as $object) {
-                $count += 1;
+                $total += 1;
             }
         }
 
-        return $count;
+        return $total;
     }
 
 

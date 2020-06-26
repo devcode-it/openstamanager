@@ -148,7 +148,7 @@ switch (filter('op')) {
         ];
 
         foreach ($dirs as $dir => $description) {
-            $size = FileSystem::folderSize($dir);
+            $size = FileSystem::folderSize($dir, ['htaccess']);
 
             $results[] = [
                 'description' => $description,

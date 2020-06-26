@@ -43,7 +43,7 @@ function crea_grafico(values){
                 var diff = (element.dbSize-element.size);
 
                 if (diff>1000){
-                    $("#message").append("<div class=\"label label-warning\" ><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i> "+formatBytes(diff)+" di file mancanti per allegati.</div>");
+                    $("#message").append("<div class=\"label label-warning\" ><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i> "+formatBytes(diff)+" di file mancanti per allegati.</div><br>");
                 }
             }
         }
@@ -53,10 +53,25 @@ function crea_grafico(values){
            if (element.count<element.dbCount){
                 var diff = (element.dbCount-element.count);
 
-                $("#message").append("<div class=\"label label-warning\" ><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i> "+diff+" di file mancanti per allegati.</div>");
+                $("#message").append("<div class=\"label label-warning\" ><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i> "+diff+" di file mancanti per allegati.</div><br>");
                
             }
         }
+
+        //Numero di file in Allegati per estensione
+        if (element.dbExtensions.length > 0){
+
+            $("#message").append("<p><b>Top 10 allegati:</b></p>");
+
+            element.dbExtensions.forEach(function(extension) {
+               
+                $("#message").append("<div class=\"label label-info\" ><i class=\"fa fa-file\" aria-hidden=\"true\"></i> <b>"+extension["NUM"]+"</b> file con estensione <b>"+extension["EXTENSION"]+"</b>.</div><br>");
+
+            });
+
+        }
+
+
 
         $labels.push(element.description + " (" + element.formattedSize + ")" + " [" + element.count + "]" )
 
@@ -71,7 +86,31 @@ function crea_grafico(values){
 		animation:{
 			animateScale: true,
 			animateRotate: true,
-		},
+        },
+        tooltips: {
+            callbacks: {
+              title: function(tooltipItem, data) {
+                return data["labels"][tooltipItem[0]["index"]];
+              },
+              label: function(tooltipItem, data) {
+                //return data["datasets"][0]["data"][tooltipItem["index"]];
+                var dataset = data["datasets"][0];
+                var percent = Math.round((dataset["data"][tooltipItem["index"]] / dataset["_meta"][0]["total"]) * 100)
+                return "(" + percent + "%)";
+              },
+              afterLabel: function(tooltipItem, data) {
+                //var dataset = data["datasets"][0];
+                //var percent = Math.round((dataset["data"][tooltipItem["index"]] / dataset["_meta"][0]["total"]) * 100)
+                //return "(" + percent + "%)";
+              }
+            },
+            backgroundColor: "#fbfbfb",
+            titleFontSize: 12,
+            titleFontColor: "#000",
+            bodyFontColor: "#444",
+            bodyFontSize: 10,
+            displayColors: true
+          }
 	};
 	
 	data = {
@@ -105,7 +144,7 @@ function crea_grafico(values){
 	});
 }
 </script>
-
-<div class="chart-container" style="width:25em;">
+<div id="message" class="pull-right"></div>
+<div class="chart-container" style="width:35em;">
     <canvas id="chart"></canvas>
-</div><div id="message" ></div>';
+</div>';

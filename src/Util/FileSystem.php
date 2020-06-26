@@ -67,14 +67,17 @@ class FileSystem
      *
      * @return int
      */
-    public static function folderCount($path)
+    public static function fileCount($path, $exclusions = array())
     {
+        
+       
         $total = 0;
         $path = realpath($path);
 
         if ($path !== false && $path != '' && file_exists($path)) {
             foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS)) as $object) {
-                $total += 1;
+                if (!in_array($object->getExtension(), $exclusions))
+                    $total += 1;
             }
         }
 

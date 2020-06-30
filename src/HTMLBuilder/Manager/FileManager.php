@@ -61,9 +61,9 @@ class FileManager implements ManagerInterface
 <div class="box box-success">
     <div class="box-header with-border">
         <h3 class="box-title">'.(!empty($category) ? $category : tr('Generale')).'</h3>
-        
+
         {[ "type": "text", "class": "hide category-name", "value": "'.$category.'" ]}
-        
+
         <div class="box-tools pull-right">';
 
                 if (!empty($category)) {
@@ -71,7 +71,7 @@ class FileManager implements ManagerInterface
             <button type="button" class="btn btn-box-tool category-save hide">
                 <i class="fa fa-check"></i>
             </button>
-            
+
             <button type="button" class="btn btn-box-tool category-edit">
                 <i class="fa fa-edit"></i>
             </button>';
@@ -106,7 +106,7 @@ class FileManager implements ManagerInterface
                 <img class="attachment-img tip" src="'.$file->user->photo.'" title="'.$file->user->nome_completo.'">';
                     } else {
                         $result .= '
-        
+
                 <i class="fa fa-user-circle-o attachment-img tip" title="'.tr('OpenSTAManager').'"></i>';
                     }
 
@@ -115,12 +115,12 @@ class FileManager implements ManagerInterface
                 <a href="'.ROOTDIR.'/view.php?file_id='.$r['id'].'" target="_blank">
                     <i class="fa fa-external-link"></i> '.$r['name'].'
                 </a>
-                
+
                 <small> ('.$file->extension.')'.((!empty($file->size)) ? ' ('.\Util\FileSystem::formatBytes($file->size).')' : '').' '.(($r['name'] == 'Logo stampe' or $r['name'] == 'Filigrana stampe') ? '<i class="fa fa-file-text-o"></i>' : '').'</small>'.'
             </td>
-            
+
             <td>'.\Translator::timestampToLocale($r['created_at']).'</td>
-            
+
             <td class="text-center">
                 <a class="btn btn-xs btn-primary" href="'.ROOTDIR.'/actions.php?id_module='.$options['id_module'].'&op=download_file&id='.$r['id'].'&filename='.$r['filename'].'" target="_blank">
                     <i class="fa fa-download"></i>
@@ -177,7 +177,7 @@ class FileManager implements ManagerInterface
         </div>
         <div class="col-md-12">
             <div class="dropzone dz-clickable" id="dragdrop">
-             
+
             </div>
         </div>
     </div>';
@@ -200,7 +200,7 @@ class FileManager implements ManagerInterface
 
         $source = array_clean(array_column($categories, 'category'));
 
-        
+
         $upload_max_filesize = \Util\FileSystem::formatBytes(ini_get('upload_max_filesize'), 0);
         //remove unit
         $upload_max_filesize = substr($upload_max_filesize, 0, strrpos($upload_max_filesize, ' '));
@@ -214,9 +214,10 @@ class FileManager implements ManagerInterface
 Dropzone.autoDiscover = false;
 
 $(document).ready(function() {
-   
-    var dropzoneOptions = {
-        dictDefaultMessage: "'.tr('Clicca o trascina qui per caricare uno o più file.<br>(Max ulpload: '.$upload_max_filesize.' MB)').'",
+    var dragdrop = new Dropzone("#'.$attachment_id.' .dropzone", {
+        dictDefaultMessage: "'.tr('Clicca o trascina qui per caricare uno o più file').'.<br>('.tr('Max upload: _SIZE_', [
+            '_SIZE_' => $upload_max_filesize.' MB'
+        ]).')",
         paramName: "file",
         maxFilesize: '.$upload_max_filesize.', // MB
         uploadMultiple: false,
@@ -227,45 +228,40 @@ $(document).ready(function() {
         url: "'.ROOTDIR.'/actions.php?op=link_file&id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id_plugin='.$options['id_plugin'].'",
         init: function (file, xhr, formData) {
             this.on("sending", function(file, xhr, formData) {
-                formData.append("categoria", $("#categoria").val());  
+                formData.append("categoria", $("#categoria").val());
                 formData.append("nome_allegato", $("#nome_allegato").val());
-            }),
+            });
+
             this.on("success", function (file) {
-                //console.log("success > " + file.name);
                 dragdrop.removeFile(file);
-            }),
+            });
+
             this.on("complete", function (file) {
-              
-                //Ricarico solo quando ho finito
+                // Ricarico solo quando ho finito
                 if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
                     reload_'.$attachment_id.'();
                 }
-
-
             });
         }
-    };
-
-    var dragdrop = new Dropzone("div#dragdrop", dropzoneOptions);
-
+    });
 
     // Modifica categoria
     $("#'.$attachment_id.' .category-edit").click(function() {
         var nome = $(this).parent().parent().find(".box-title");
         var save_button = $(this).parent().find(".category-save");
         var input = $(this).parent().parent().find(".category-name");
-        
+
         nome.hide();
         $(this).hide();
-        
+
         input.removeClass("hide");
         save_button.removeClass("hide");
     });
-    
+
     $("#'.$attachment_id.' .category-save").click(function() {
         var nome = $(this).parent().parent().find(".box-title");
         var input = $(this).parent().parent().find(".category-name");
-        
+
         show_'.$attachment_id.'();
 
         $.ajax({
@@ -288,30 +284,30 @@ $(document).ready(function() {
             }
         });
     });
-    
+
     function getFilenameAndExtension(pathfilename){
 
         var filenameextension = pathfilename.replace(/^.*[\\\/]/, \'\');
         var filename = filenameextension.substring(0, filenameextension.lastIndexOf(\'.\'));
         var ext = filenameextension.split(\'.\').pop();
-      
+
         return [filename, ext];
-      
+
     }
 
     // Autocompletamento nome
     $("#'.$attachment_id.' #blob").change(function(){
         var nome = $("#'.$attachment_id.' #nome_allegato");
-        
+
         if (!nome.val()) {
             var fullPath = $(this).val();
-            
+
             var filename = getFilenameAndExtension(fullPath);
-            
+
             nome.val(filename[0]);
         }
     });
-    
+
     // Autocompletamento categoria
     $("#'.$attachment_id.' #categoria").autocomplete({
         source: '.json_encode($source).',
@@ -366,13 +362,13 @@ function reload_'.$attachment_id.'() {
     $("#'.$attachment_id.'").load(globals.rootdir + "/ajax.php?op=list_attachments&id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id_plugin='.$options['id_plugin'].'", function() {
 
         $("#loading_'.$attachment_id.'").addClass("hide");
-        
-      
+
+
         var id = $("#'.$attachment_id.' table tr").eq(-1).attr("id");
         if (id !== undefined)
             $("#"+id).effect("highlight", {}, 1500);
-    
-           
+
+
     });
 }
 </script>';

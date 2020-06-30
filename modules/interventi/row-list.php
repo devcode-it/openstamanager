@@ -21,8 +21,8 @@ if (!$righe->isEmpty()) {
         echo '
             <th class="text-center" width="15%">'.tr('Prezzo di acquisto').'</th>
             <th class="text-center" width="15%">'.tr('Prezzo di vendita').'</th>
-            <th class="text-center" width="10%">'.tr('Iva').'</th>
-            <th class="text-center" width="15%">'.tr('Imponibile').'</th>';
+            <th class="text-center" width="10%">'.tr('Iva unitaria').'</th>
+            <th class="text-center" width="15%">'.tr('Importo').'</th>';
     }
 
     if (!$record['flag_completato']) {
@@ -71,7 +71,7 @@ if (!$righe->isEmpty()) {
         // Quantità
         echo '
             <td class="text-right">
-                '.Translator::numberToLocale($r['qta'], 'qta').' '.$r['um'].'
+                '.Translator::numberToLocale($riga->qta, 'qta').' '.$riga->um.'
             </td>';
 
         if ($show_prezzi) {
@@ -86,14 +86,11 @@ if (!$righe->isEmpty()) {
             <td class="text-right">
                 '.moneyFormat($riga->prezzo_unitario);
 
-            if (abs($r['sconto_unitario']) > 0) {
-                $text = $r['sconto_unitario'] > 0 ? tr('sconto _TOT_ _TYPE_') : tr('maggiorazione _TOT_ _TYPE_');
+            if (abs($riga->sconto_unitario) > 0) {
+                $text = discountInfo($riga);
 
                 echo '
-                <br><small class="label label-danger">'.replace($text, [
-                    '_TOT_' => Translator::numberToLocale(abs($r['sconto_unitario'])),
-                    '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : currency()),
-                ]).'</small>';
+                <br><small class="label label-danger">'.$text.'</small>';
             }
 
             echo '
@@ -101,13 +98,14 @@ if (!$righe->isEmpty()) {
 
             echo '
             <td class="text-right">
-                '.moneyFormat($r['iva']).'
+                '.moneyFormat($riga->iva_unitaria).'
+            <br><small class="'.(($riga->aliquota->deleted_at) ? 'text-red' : '').' help-block">'.$riga->aliquota->descrizione.(($riga->aliquota->esente) ? ' ('.$riga->aliquota->codice_natura_fe.')' : null).'</small>
             </td>';
 
             // Prezzo di vendita
             echo '
             <td class="text-right">
-                '.moneyFormat($riga->imponibile).'
+                '.moneyFormat($riga->importo).'
             </td>';
         }
 

@@ -153,13 +153,11 @@ if (!$righe->isEmpty()) {
     <tbody>';
 
     foreach ($righe as $riga) {
-        $r = $riga->toArray();
-
         // Articolo
         echo '
     <tr>
         <td>
-            '.nl2br($r['descrizione']);
+            '.nl2br($riga->descrizione);
 
         if ($riga->isArticolo()) {
             // Codice articolo
@@ -184,7 +182,7 @@ if (!$righe->isEmpty()) {
         // Quantità
         echo '
         <td class="text-center">
-            '.Translator::numberToLocale($r['qta'], 'qta').' '.$r['um'].'
+            '.Translator::numberToLocale($riga->qta, 'qta').' '.$riga->um.'
         </td>';
 
         // Prezzo unitario
@@ -192,12 +190,11 @@ if (!$righe->isEmpty()) {
         <td class="text-center">
             '.($options['pricing'] ? moneyFormat($riga->prezzo_unitario) : '-');
 
-        if ($options['pricing'] && $r['sconto'] > 0) {
-            echo "
-            <br><small class='text-muted'>".tr('sconto _TOT_ _TYPE_', [
-                '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
-                '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : currency()),
-            ]).'</small>';
+        if ($options['pricing'] && $riga->sconto > 0) {
+            $text = discountInfo($riga, false);
+
+            echo '
+            <br><small class="text-muted">'.$text.'</small>';
         }
 
         echo '

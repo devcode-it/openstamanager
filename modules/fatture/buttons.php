@@ -14,8 +14,7 @@ echo '
 </button>';
 
 if ($module->name == 'Fatture di vendita') {
-  
-    $attributi_visibili = $record['dati_aggiuntivi_fe'] != null ||  $record['stato'] == 'Bozza';
+    $attributi_visibili = $record['dati_aggiuntivi_fe'] != null || $record['stato'] == 'Bozza';
 
     echo '
 <a class="btn btn-info '.($attributi_visibili ? '' : 'disabled').'" data-toggle="modal" data-title="'.tr('Dati Fattura Elettronica').'" data-href="'.$structure->fileurl('fe/document-fe.php').'?id_module='.$id_module.'&id_record='.$id_record.'" '.($attributi_visibili ? '' : 'disabled').'>

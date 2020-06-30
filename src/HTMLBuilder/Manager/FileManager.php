@@ -200,7 +200,6 @@ class FileManager implements ManagerInterface
 
         $source = array_clean(array_column($categories, 'category'));
 
-
         $upload_max_filesize = \Util\FileSystem::formatBytes(ini_get('upload_max_filesize'), 0);
         //remove unit
         $upload_max_filesize = substr($upload_max_filesize, 0, strrpos($upload_max_filesize, ' '));
@@ -216,7 +215,7 @@ Dropzone.autoDiscover = false;
 $(document).ready(function() {
     var dragdrop = new Dropzone("#'.$attachment_id.' .dropzone", {
         dictDefaultMessage: "'.tr('Clicca o trascina qui per caricare uno o più file').'.<br>('.tr('Max upload: _SIZE_', [
-            '_SIZE_' => $upload_max_filesize.' MB'
+            '_SIZE_' => $upload_max_filesize.' MB',
         ]).')",
         paramName: "file",
         maxFilesize: '.$upload_max_filesize.', // MB

@@ -158,7 +158,7 @@ if (!$anagrafiche->isEmpty()) {
         }
 
         echo '
-                <tr '.((empty($anagrafica->email) || empty($anagrafica->enable_newsletter))  ? 'class="bg-danger"' : '').'>
+                <tr '.((empty($anagrafica->email) || empty($anagrafica->enable_newsletter)) ? 'class="bg-danger"' : '').'>
                     <td>'.Modules::link('Anagrafiche', $anagrafica->id, $anagrafica->ragione_sociale).'</td>
                     <td class="text-center">'.$anagrafica->email.'</td>
                     <td class="text-center">'.$data.'</td>

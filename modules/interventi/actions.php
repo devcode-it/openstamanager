@@ -377,7 +377,7 @@ $riga = $intervento->getRiga($type, $id_riga);
             if (!empty($tecnico['email'])) {
                 $template = Template::get('Notifica rimozione intervento');
 
-                if (!empty($template)){
+                if (!empty($template)) {
                     $mail = Mail::build(auth()->getUser(), $template, $id_record);
                     $mail->addReceiver($tecnico['email']);
                     $mail->save();

@@ -57,7 +57,6 @@ function customStructure()
             }
         }
 
-
         $files = glob(DOCROOT.'/'.$dir.'/*/custom/ajax/*.{php,html}', GLOB_BRACE);
         foreach ($files as $file) {
             $file = str_replace(DOCROOT.'/', '', $file);
@@ -77,7 +76,6 @@ function customStructure()
                 $results[] = $result;
             }
         }
-
     }
 
     return $results;

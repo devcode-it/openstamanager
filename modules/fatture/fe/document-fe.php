@@ -213,7 +213,7 @@ function add_riferimento(btn, nome, key) {
 <script>$(document).ready(init)</script>';
 
 $attributi_editabili = $documento['stato'] != 'Emessa' && $documento['stato'] != 'Parzialmente pagato' && $documento['stato'] != 'Pagato';
-if (!$attributi_editabili){
+if (!$attributi_editabili) {
     echo '<script>
     $( document ).ready(function() {
         $(\'.modal-body > form button\').attr(\'disabled\', \'disabled\');

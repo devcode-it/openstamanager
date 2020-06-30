@@ -6,12 +6,12 @@ use API\Interfaces\CreateInterface;
 use API\Interfaces\RetrieveInterface;
 use API\Interfaces\UpdateInterface;
 use API\Resource;
+use Auth;
 use Modules;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\Intervento;
 use Modules\Interventi\Stato;
 use Modules\TipiIntervento\Tipo as TipoSessione;
-use Auth;
 
 class Interventi extends Resource implements RetrieveInterface, CreateInterface, UpdateInterface
 {
@@ -53,7 +53,7 @@ class Interventi extends Resource implements RetrieveInterface, CreateInterface,
         $query .= '
         HAVING 2=2
         ORDER BY `in_interventi`.`data_richiesta` DESC';
-       
+
         $parameters = [
             ':period_end' => $period_end,
             ':period_start' => $period_start,
@@ -62,9 +62,8 @@ class Interventi extends Resource implements RetrieveInterface, CreateInterface,
 
         $module = Modules::get('Interventi');
 
-       
         $query = Modules::replaceAdditionals($module->id, $query);
-     
+
         return [
             'query' => $query,
             'parameters' => $parameters,

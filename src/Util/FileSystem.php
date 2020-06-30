@@ -45,21 +45,21 @@ class FileSystem
      *
      * @return int
      */
-    public static function folderSize($path, $exclusions = array())
+    public static function folderSize($path, $exclusions = [])
     {
         $total = 0;
         $path = realpath($path);
 
         if ($path !== false && $path != '' && file_exists($path)) {
             foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS)) as $object) {
-                if (!in_array($object->getExtension(), $exclusions))
+                if (!in_array($object->getExtension(), $exclusions)) {
                     $total += $object->getSize();
+                }
             }
         }
 
         return $total;
     }
-
 
     /**
      * Restituisce il numero di file contenuti nella cartella indicata.
@@ -68,25 +68,21 @@ class FileSystem
      *
      * @return int
      */
-    public static function fileCount($path, $exclusions = array())
+    public static function fileCount($path, $exclusions = [])
     {
-        
-       
         $total = 0;
         $path = realpath($path);
 
         if ($path !== false && $path != '' && file_exists($path)) {
             foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS)) as $object) {
-                if (!in_array($object->getExtension(), $exclusions))
-                    $total += 1;
+                if (!in_array($object->getExtension(), $exclusions)) {
+                    ++$total;
+                }
             }
         }
 
         return $total;
     }
-
-
-
 
     /**
      * Individua la dimensione del file indicato.

@@ -250,7 +250,7 @@ class Uploads
      */
     public static function delete($filename, $data)
     {
-        if (!empty($filename)){
+        if (!empty($filename)) {
             $database = database();
 
             $name = $database->selectOne('zz_files', ['name'], [
@@ -281,6 +281,7 @@ class Uploads
                 return $name;
             }
         }
+
         return null;
     }
 

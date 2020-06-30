@@ -66,7 +66,7 @@ function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto = n
         if (!empty($anagrafica['email'])) {
             $template = Template::get('Notifica intervento');
 
-            if (!empty($template)){
+            if (!empty($template)) {
                 $mail = Mail::build(auth()->getUser(), $template, $idintervento);
                 $mail->addReceiver($anagrafica['email']);
                 $mail->save();

@@ -9,11 +9,11 @@ switch (post('op')) {
         $email = EmailNotification::build($mail);
 
         // Invio mail
-        if ($email->send()){
-            $mail->sent_at = date("Y-m-d H:i:s");
+        if ($email->send()) {
+            $mail->sent_at = date('Y-m-d H:i:s');
             $mail->save();
             flash()->info(tr('Email inviata.'));
-        }else{
+        } else {
             flash()->error(tr('Errore durante invio email.'));
         }
 

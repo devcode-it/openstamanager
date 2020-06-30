@@ -8,12 +8,12 @@ $has_images = null;
 $righe = $documento->getRighe();
 
 foreach ($righe as $riga) {
-   if ($riga->articolo->immagine){
+    if ($riga->articolo->immagine) {
         $has_images = 1;
-   }
+    }
 }
 $pagamento = $dbo->fetchOne('SELECT * FROM co_pagamenti WHERE id = '.$documento['idpagamento']);
-if (!empty($pagamento['idconto_vendite'])){
+if (!empty($pagamento['idconto_vendite'])) {
     $banca = $dbo->fetchOne('SELECT co_banche.nome, co_banche.iban, co_banche.bic FROM co_banche INNER JOIN co_pianodeiconti3 ON co_banche.id_pianodeiconti3 = co_pianodeiconti3.id WHERE co_pianodeiconti3.id = '.$pagamento['idconto_vendite']);
 }
 
@@ -103,10 +103,9 @@ echo "
         <tr>
             <th class='text-center'>#</th>";
 
-if ($has_images){
-echo "
+if ($has_images) {
+    echo "
             <th class='text-center' width='95' >Foto</th>";
-
 }
 
 echo "
@@ -126,7 +125,6 @@ echo '
 
     <tbody>';
 
-
 foreach ($righe as $riga) {
     $r = $riga->toArray();
 
@@ -135,18 +133,16 @@ foreach ($righe as $riga) {
     echo '
         <tr>';
 
+    echo'
+        <td class="text-center" style="vertical-align: middle" >
+            '.($r['order'] + 1).'</td>';
 
-    echo"
-        <td class=\"text-center\" style=\"vertical-align: middle\" >
-            ".($r['order'] + 1)."</td>";
-
-    
     if ($has_images) {
         echo '<td class=\"text-center\" style=\"vertical-align: middle\" >';
-            if (!empty($riga->articolo->immagine)) {
-                echo '<img src="files/articoli/'.$riga->articolo->immagine.'" width="78">';
-            }
-    
+        if (!empty($riga->articolo->immagine)) {
+            echo '<img src="files/articoli/'.$riga->articolo->immagine.'" width="78">';
+        }
+
         echo '</td>';
     }
 
@@ -303,7 +299,6 @@ echo'
 </table>';
 
 // CONDIZIONI GENERALI DI FORNITURA
-
 
 echo '
 <table class="table table-bordered">

@@ -159,7 +159,7 @@ if (empty($record['is_fiscale'])) {
     echo '<script>$("#link-tab_'.$plugin[0]['id'].'").addClass("disabled");</script>';
 }
 //Forzo il passaggio della fattura da Bozza ad Emessa per il corretto calcolo del numero.
-else if ($record['stato']=='Bozza') {
+elseif ($record['stato'] == 'Bozza') {
     $query .= " WHERE descrizione IN ('Emessa', 'Bozza')";
 }
 

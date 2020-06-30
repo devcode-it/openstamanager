@@ -279,7 +279,7 @@ function phpDebugBar() {
 }
 
 // Operazioni per la release
-function release() {
+function release(done) {
     var archiver = require('archiver');
     var fs = require('fs');
 
@@ -366,6 +366,8 @@ function release() {
 
         // Completamento dello zip
         archive.finalize();
+
+        done();
     });
 }
 

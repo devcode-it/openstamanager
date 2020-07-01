@@ -15,7 +15,7 @@ echo '
 
 	<div class="row">
 		<div class="col-md-4">
-			{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_sezionale", "required": "1", "values": "query=SELECT id AS id, name AS descrizione FROM zz_segments WHERE id_module = (SELECT id FROM zz_modules WHERE name = \''.(($dir == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto').'\') AND is_fiscale = 1 UNION SELECT  0 AS id, \'Tutti i sezionali\' AS descrizione", "value": "'.$_SESSION['stampe_contabili']['id_sezionale'].'" ]}
+			{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_sezionale", "required": "1", "values": "query=SELECT id AS id, name AS descrizione FROM zz_segments WHERE id_module = (SELECT id FROM zz_modules WHERE name = \''.(($dir == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto').'\') AND is_fiscale = 1 UNION SELECT  0 AS id, \'Tutti i sezionali\' AS descrizione" ]}
 		</div>
 		
 		<div class="col-md-2">
@@ -42,13 +42,9 @@ echo '
 echo '
 <script>
 function stampa_registro_iva (){
-	window.open("'.$link.'&dir='.$dir.'");
+	window.open("'.$link.'&dir='.$dir.'&id_sezionale="+$("#id_sezionale").val());
 	return false;
 }
-
-$("#id_sezionale").change(function() {
-	session_set("stampe_contabili,id_sezionale", $(this).val(), 0, 0);
-});
 
 $("#format").change(function() {
 	session_set("stampe_contabili,format", $(this).val(), 0, 0);

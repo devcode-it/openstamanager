@@ -29,7 +29,7 @@ FROM co_documenti
     INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = co_documenti.idanagrafica
 WHERE dir = '.prepare($dir).' AND idstatodocumento NOT IN (SELECT id FROM co_statidocumento WHERE descrizione="Bozza" OR descrizione="Annullata") AND is_descrizione = 0 AND co_documenti.data >= '.prepare($date_start).' AND co_documenti.data <= '.prepare($date_end).' AND '.((!empty($id_sezionale)) ? 'co_documenti.id_segment = '.prepare($id_sezionale).'' : '1=1').'
 GROUP BY co_documenti.id, co_righe_documenti.idiva
-ORDER BY co_documenti.'.(($dir == 'entrata') ? 'data' : 'numero').', co_documenti.'.(($dir == 'entrata') ? 'numero_esterno' : 'data_competenza');
+ORDER BY CAST(co_documenti.'.(($dir == 'entrata') ? 'data' : 'numero').' AS '.(($dir == 'entrata') ? 'DATE' : 'UNSIGNED').'), co_documenti.'.(($dir == 'entrata') ? 'numero_esterno' : 'data_competenza');
 $records = $dbo->fetchArray($query);
 
 // Sostituzioni specifiche

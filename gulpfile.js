@@ -184,7 +184,8 @@ function srcFonts() {
 
 function ckeditor() {
     return gulp.src([
-        config.main.bowerDirectory + '/@ckeditor/ckeditor5-build-classic/build/**/*.{js,json,css,png}',
+        config.main.bowerDirectory + '/ckeditor/{adapters,lang,skins,plugins}/**/*.{js,json,css,png}',
+        config.main.bowerDirectory + '/ckeditor/*.{js,css}',
     ])
         .pipe(gulp.dest(config.production + '/' + config.paths.js + '/ckeditor'));
 }

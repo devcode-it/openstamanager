@@ -271,14 +271,14 @@ abstract class Row extends Description
      */
     public function setSconto($value, $type)
     {
-        $percentuale_iva = floatval($this->aliquota->percentuale) / 100;
+        $incorpora_iva = $this->incorporaIVA();
 
         if ($type == 'PRC') {
             $this->attributes['sconto_percentuale'] = $value;
 
             $sconto = calcola_sconto([
                 'sconto' => $value,
-                'prezzo' => $this->prezzo_unitario,
+                'prezzo' => $incorpora_iva ? $this->prezzo_unitario_ivato : $this->prezzo_unitario,
                 'tipo' => 'PRC',
                 'qta' => 1,
             ]);
@@ -288,7 +288,7 @@ abstract class Row extends Description
         }
 
         // Gestione IVA incorporata
-        if ($this->incorporaIVA()) {
+        if ($incorpora_iva) {
             $this->sconto_unitario_ivato = $sconto;
         } else {
             $this->sconto_unitario = $sconto;

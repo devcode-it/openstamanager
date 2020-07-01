@@ -32,7 +32,8 @@ echo '<h4><b>'.$titolo.'</b></h4>
         <tr bgcolor="'.$color.'">
             <th>'.tr('Prot.').'</th>
             <th>'.tr('N<sup>o</sup>&nbsp;doc.').'</th>
-            <th>'.tr('Data').'</th>
+            <th>'.tr('Data doc.').'</th>
+            <th>'.tr('Data comp.').'</th>
             <th>'.tr('Tipo').'</th>
             <th>'.$tipo.'</th>
             <th>'.tr('Tot.&nbsp;doc.').'</th>

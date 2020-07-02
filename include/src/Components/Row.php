@@ -160,7 +160,7 @@ abstract class Row extends Description
     }
 
     /**
-     * Imposta il prezzo unitario corrente (unitario oppure unitario ivato a seconda dell'impostazione 'Utilizza prezzi di vendita comprensivi di IVA') per la riga.
+     * Restituisce il prezzo unitario corrente (unitario oppure unitario ivato a seconda dell'impostazione 'Utilizza prezzi di vendita comprensivi di IVA') per la riga.
      *
      * @return float
      */
@@ -175,7 +175,7 @@ abstract class Row extends Description
     }
 
     /**
-     * Imposta lo sconto unitario corrente (unitario oppure unitario ivato a seconda dell'impostazione 'Utilizza prezzi di vendita comprensivi di IVA') per la riga.
+     * Restituisce lo sconto unitario corrente (unitario oppure unitario ivato a seconda dell'impostazione 'Utilizza prezzi di vendita comprensivi di IVA') per la riga.
      *
      * @return float
      */

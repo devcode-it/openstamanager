@@ -3,6 +3,7 @@
 namespace Plugins\ExportFE;
 
 use API\Services;
+use UnexpectedValueException;
 
 /**
  * Classe per l'interazione con API esterne.
@@ -39,6 +40,30 @@ class Interaction extends Services
             return [
                 'code' => $body['status'],
                 'message' => $body['message'],
+            ];
+        } catch (UnexpectedValueException $e) {
+        }
+
+        return [
+            'code' => 400,
+            'message' => tr('Fattura non generata correttamente'),
+        ];
+    }
+
+    public static function getInvoiceRecepits($id_record)
+    {
+        try {
+            $fattura = new FatturaElettronica($id_record);
+            $filename = $fattura->getFilename();
+
+            $response = static::request('POST', 'notifiche_fattura', [
+                'name' => $filename,
+            ]);
+            $body = static::responseBody($response);
+
+            return [
+                'code' => $body['status'],
+                'results' => $body['results'],
             ];
         } catch (UnexpectedValueException $e) {
         }

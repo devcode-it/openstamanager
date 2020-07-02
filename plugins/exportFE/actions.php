@@ -30,4 +30,11 @@ switch (filter('op')) {
         echo json_encode($result);
 
         break;
+
+    case 'verify':
+        $result = Interaction::getInvoiceRecepits($id_record);
+
+        echo json_encode($result);
+
+        break;
 }

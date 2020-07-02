@@ -89,7 +89,17 @@ echo '
 
     <button onclick="if( confirm(\''.tr('Inviare la fattura al SDI?').'\') ){ send(this); }" class="btn btn-success btn-lg '.($send ? '' : 'disabled').'" target="_blank" '.($send ? '' : 'disabled').'>
         <i class="fa fa-paper-plane"></i> '.tr('Invia').'
-    </button><br><br>';
+    </button>';
+
+$verify = Interaction::isEnabled() && $generated;
+echo '
+    <i class="fa fa-arrow-right fa-fw text-muted"></i>
+
+    <button class="btn btn-warning btn-lg '.($verify ? '' : 'disabled').'" target="_blank" '.($verify ? '' : 'disabled').' onclick="verify(this)">
+        <i class="fa fa-question-circle"></i> '.tr('Verifica notifiche').'
+    </button>';
+
+echo '<br><br>';
 
 // Messaggio esito invio
 if (!empty($record['codice_stato_fe'])) {
@@ -110,7 +120,7 @@ if (!empty($record['codice_stato_fe'])) {
 
         echo '
 		<div class="alert text-left alert-'.$class.'">
-		    <big><i class="'.$stato_fe['icon'].'" style="color:#fff;"></i> 
+		    <big><i class="'.$stato_fe['icon'].'" style="color:#fff;"></i>
 		    <b>'.$stato_fe['codice'].'</b> - '.$stato_fe['descrizione'].'</big> '.(!empty($record['descrizione_ricevuta_fe']) ? '<br><b>NOTE:</b> '.$record['descrizione_ricevuta_fe'] : '').'
 		    <div class="pull-right">
 		        <i class="fa fa-clock-o tip" title="'.tr('Data e ora ricezione').'" ></i> '.Translator::timestampToLocale($record['data_stato_fe']).'
@@ -121,53 +131,82 @@ if (!empty($record['codice_stato_fe'])) {
 }
 
 echo '
-    <script>
-        function send(btn) {
-            var restore = buttonLoading(btn);
-
-            $.ajax({
-                url: globals.rootdir + "/actions.php",
-                type: "post",
-                data: {
-                    op: "send",
-                    id_module: "'.$id_module.'",
-                    id_plugin: "'.$id_plugin.'",
-                    id_record: "'.$id_record.'",
-                },
-                success: function(data) {
-                    data = JSON.parse(data);
-                    buttonRestore(btn, restore);
-
-                    if (data.code == "200") {
-                        swal("'.tr('Fattura inviata!').'", data.message, "success");
-
-                        $(btn).attr("disabled", true).addClass("disabled");
-                    } else {
-                        swal("'.tr('Invio fallito').'", data.code + " - " + data.message, "error");
-                    }
-                },
-                error: function(data) {
-                    swal("'.tr('Errore').'", "'.tr('Errore durante il salvataggio').'", "error");
-
-                    buttonRestore(btn, restore);
-                }
-            });
-        }
-    </script>';
-
-echo '
-
 </div>';
 
 echo '
 <script>
+    function send(btn) {
+        var restore = buttonLoading(btn);
+
+        $.ajax({
+            url: globals.rootdir + "/actions.php",
+            type: "post",
+            data: {
+                op: "send",
+                id_module: "'.$id_module.'",
+                id_plugin: "'.$id_plugin.'",
+                id_record: "'.$id_record.'",
+            },
+            success: function(data) {
+                data = JSON.parse(data);
+                buttonRestore(btn, restore);
+
+                if (data.code == "200") {
+                    swal("'.tr('Fattura inviata!').'", data.message, "success");
+
+                    $(btn).attr("disabled", true).addClass("disabled");
+                } else {
+                    swal("'.tr('Invio fallito').'", data.code + " - " + data.message, "error");
+                }
+            },
+            error: function(data) {
+                swal("'.tr('Errore').'", "'.tr('Errore durante il salvataggio').'", "error");
+
+                buttonRestore(btn, restore);
+            }
+        });
+    }
+
+    function verify(btn) {
+        var restore = buttonLoading(btn);
+
+        $.ajax({
+            url: globals.rootdir + "/actions.php",
+            type: "post",
+            data: {
+                op: "verify",
+                id_module: "'.$id_module.'",
+                id_plugin: "'.$id_plugin.'",
+                id_record: "'.$id_record.'",
+            },
+            success: function(data) {
+                data = JSON.parse(data);
+                buttonRestore(btn, restore);
+
+                if (data.code == "200") {
+                    swal("'.tr('Fattura inviata!').'", data.message, "success");
+
+                    $(btn).attr("disabled", true).addClass("disabled");
+                    location.reload(); // Ricaricamento pagina
+                } else {
+                    swal("'.tr('Verifica fallita').'", data.code + " - " + data.message, "error");
+                }
+            },
+            error: function(data) {
+                swal("'.tr('Errore').'", "'.tr('Errore durante la verifica').'", "error");
+
+                buttonRestore(btn, restore);
+            }
+        });
+    }
+
     $("#genera").click(function(event){
         event.preventDefault();
 
         var form = $("#edit-form");
         form.find("*").prop("disabled", false);
         valid = submitAjax(form);
-        
+
         if (valid) {';
 
 if ($generated) {
@@ -187,7 +226,7 @@ if ($generated) {
             });';
 } else {
     echo '
-    
+
             $("#form-xml").submit();';
 }
 echo '

@@ -7,8 +7,8 @@ $dir = $_GET['dir'];
 $id_sezionale = filter('id_sezionale');
 $sezionale = $dbo->fetchOne("SELECT name FROM zz_segments WHERE id = ".$id_sezionale)['name'];
 
-$date_start = $_SESSION['period_start'];
-$date_end = $_SESSION['period_end'];
+$date_start = filter('date_start');
+$date_end = filter('date_end');
 
 $tipo = $dir == 'entrata' ? 'vendite' : 'acquisti';
 

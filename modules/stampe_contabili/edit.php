@@ -12,20 +12,17 @@ echo '
     <div class="col-md-4">
         <div class="panel panel-primary">
             <div class="panel-heading">
-                <h3 class="panel-title">'.tr('Registri iva<br> dal _START_ al _END_', [
-                    '_START_' => Translator::dateToLocale($_SESSION['period_start']),
-                    '_END_' => Translator::dateToLocale($_SESSION['period_end']),
-                ]).'</h3>
+                <h3 class="panel-title">'.tr('Registri IVA').'</h3>
             </div>
 
             <div class="panel-body">';
 
 echo '
-    <button type="button" class="btn btn-primary col-md-5" data-toggle="modal" data-title="'.tr('Stampa registro').'..." data-href="'.ROOTDIR.'/modules/stampe_contabili/stampa_registro_iva.php?dir=entrata&id_record='.$id_record.'" ><i class="fa fa-print fa-2x"></i><br>'.tr('Stampa registro').'<br>'.tr('IVA vendite').'</button>';
+    <button type="button" class="btn btn-primary col-md-5" data-toggle="modal" data-title="'.tr('Stampa registro').'..." data-href="'.ROOTDIR.'/modules/stampe_contabili/stampe_contabili.php?dir=entrata&nome_stampa=Registro IVA&id_record='.$id_record.'" ><i class="fa fa-print fa-2x"></i><br>'.tr('Stampa registro').'<br>'.tr('IVA vendite').'</button>';
 
 
 echo '
-    <button type="button" class="btn btn-primary col-md-5 col-md-push-2" data-toggle="modal" data-title="'.tr('Stampa registro').'..." data-href="'.ROOTDIR.'/modules/stampe_contabili/stampa_registro_iva.php?dir=uscita&id_record='.$id_record.'" ><i class="fa fa-print fa-2x"></i><br>'.tr('Stampa registro').'<br>'.tr('IVA acquisti').'</button>';
+    <button type="button" class="btn btn-primary col-md-5 col-md-push-2" data-toggle="modal" data-title="'.tr('Stampa registro').'..." data-href="'.ROOTDIR.'/modules/stampe_contabili/stampe_contabili.php?dir=uscita&nome_stampa=Registro IVA&id_record='.$id_record.'" ><i class="fa fa-print fa-2x"></i><br>'.tr('Stampa registro').'<br>'.tr('IVA acquisti').'</button>';
 
 echo '
             </div>

@@ -148,8 +148,8 @@ echo '
                 id_record: "'.$id_record.'",
             },
             success: function(data) {
-                data = JSON.parse(data);
                 buttonRestore(btn, restore);
+                data = JSON.parse(data);
 
                 if (data.code == "200") {
                     swal("'.tr('Fattura inviata!').'", data.message, "success");
@@ -180,14 +180,13 @@ echo '
                 id_record: "'.$id_record.'",
             },
             success: function(data) {
-                data = JSON.parse(data);
                 buttonRestore(btn, restore);
+                data = JSON.parse(data);
 
-                if (data.code == "200") {
-                    swal("'.tr('Fattura inviata!').'", data.message, "success");
-
-                    $(btn).attr("disabled", true).addClass("disabled");
-                    location.reload(); // Ricaricamento pagina
+                if (data.file) {
+                    swal("'.tr('Verifica completata con successo!').'", "'.tr('Lo stato della Fattura Elettronica è stato aggiornato in base all\'ultima notifica disponibile nel sistema!').'", "success").then(function() {
+                        location.reload(); // Ricaricamento pagina
+                    });
                 } else {
                     swal("'.tr('Verifica fallita').'", data.code + " - " + data.message, "error");
                 }

@@ -24,4 +24,14 @@ class Articolo extends Article
 
         return $model;
     }
+
+    public function movimenta($qta)
+    {
+        parent::movimenta($qta);
+
+        // Movimentazione forzata per Note di credito/debito
+        if ($this->parent->isNota()) {
+            $this->movimentaMagazzino($qta);
+        }
+    }
 }

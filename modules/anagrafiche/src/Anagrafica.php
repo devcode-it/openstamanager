@@ -252,8 +252,6 @@ class Anagrafica extends Model
     {
         if (!empty($this->sedeLegale->nazione) && $this->sedeLegale->nazione->iso2 != 'IT') {
             $value = '';
-            dump('tes');
-            exit();
         }
 
         $this->attributes['codice_destinatario'] = trim(strtoupper($value));

@@ -418,7 +418,7 @@ if (!empty($id_intervento)) {
 		if ($(this).selectData() && (($(this).selectData().tempo_standard)>0) && ('<?php echo filter('orario_fine'); ?>' == '')){
 
             orario_inizio = moment($('#modals > div #orario_inizio').val(), globals.timestamp_format, globals.locale).isValid() ? $('#modals > div #orario_inizio').val() : false;
-            //console.log(orario_inizio);
+
             //da sistemare
             if (orario_inizio){
                 tempo_standard = ($(this).selectData().tempo_standard)*60;

@@ -12,6 +12,9 @@ if (get('documento') == 'fattura') {
 } elseif (get('documento') == 'ordine') {
     $final_module = 'Ordini cliente';
     $op = 'add_preventivo';
+} elseif (get('documento') == 'ddt') {
+    $final_module = 'Ddt di vendita';
+    $op = 'add_documento';
 } else {
     $final_module = 'Contratti';
     $op = 'add_preventivo';

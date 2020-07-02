@@ -34,7 +34,8 @@ echo '
     <input type="hidden" name="backto" value="record-edit">
 
     <input type="hidden" name="id_documento" value="'.$documento->id.'">
-    <input type="hidden" name="type" value="'.$options['type'].'">';
+    <input type="hidden" name="type" value="'.$options['type'].'">
+    <input type="hidden" name="class" value="'.get_class($documento).'">';
 
 // Creazione fattura dal documento
 if (!empty($options['create_document'])) {

@@ -121,7 +121,7 @@ function discountInfo(\Common\Components\Row $riga, $mostra_maggiorazione = true
 function reference($document)
 {
     if (!empty($document) && !($document instanceof \Common\ReferenceInterface)) {
-        return;
+        return null;
     }
 
     $extra = '';
@@ -129,14 +129,18 @@ function reference($document)
     $document_id = null;
 
     if (empty($document)) {
-        $description = tr('Documento di riferimento non disponibile');
+        $content = tr('non disponibile');
         $extra = 'class="disabled"';
     } else {
         $module_id = $document->module;
         $document_id = $document->id;
 
-        $description = $document->getReference();
+        $content = $document->getReference();
     }
+
+    $description = tr('Rif. _DOCUMENT_', [
+        '_DOCUMENT_' => strtolower($content),
+    ]);
 
     return Modules::link($module_id, $document_id, $description, $description, $extra);
 }

@@ -55,7 +55,8 @@ echo '
         }
 
         function aggiorna_sconto_unitario(){
-            var msg = sconto_unitario.val().toEnglish() >= 0 ? "'.tr('Sconto unitario').'" : "'.tr('Maggiorazione unitaria').'";
+            var sconto = sconto_unitario.val().toEnglish();
+            var msg = sconto >= 0 ? "'.tr('Sconto unitario').'" : "'.tr('Maggiorazione unitaria').'";
 
             sconto_percentuale.val(0);
 

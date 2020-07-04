@@ -102,6 +102,7 @@ switch ($resource) {
             'id' => 'id',
             'codice' => 'codice',
             'descrizione' => 'descrizione',
+            'servizio' => 'servizio',
             'qta' => 'qta',
             'um' => 'um',
             'categoria' => 'categoria',
@@ -181,7 +182,7 @@ switch ($resource) {
 
             $results[count($results) - 1]['children'][] = [
                 'id' => $r['id'],
-                'text' => $r['codice'].' - '.$r['descrizione'].' S = '.$r['servizio'].' ('.Translator::numberToLocale($qta).(!empty($r['um']) ? ' '.$r['um'] : '').')',
+                'text' => $r['codice'].' - '.$r['descrizione'].' '.(!$r['servizio'] ? '('.Translator::numberToLocale($qta).(!empty($r['um']) ? ' '.$r['um'] : '').')' : ''),
                 'codice' => $r['codice'],
                 'descrizione' => $r['descrizione'],
                 'barcode' => $r['barcode'],

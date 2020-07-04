@@ -13,7 +13,7 @@ echo '
             <th class="text-center" width="150">'.tr('Prezzo unitario').'</th>
             <th class="text-center" width="150">'.tr('Iva unitaria').'</th>
             <th class="text-center" width="150">'.tr('Importo').'</th>
-            <th width="60"></th>
+            <th width="120"></th>
         </tr>
     </thead>
     <tbody class="sortable">';
@@ -132,7 +132,7 @@ foreach ($righe as $riga) {
 
         if ($dir == 'entrata' && $riga->costo_unitario != 0) {
             echo '
-            <br><small>
+            <br><small class="text-muted">
                 '.tr('Acquisto').': '.moneyFormat($riga->costo_unitario).'
             </small>';
         }
@@ -151,7 +151,7 @@ foreach ($righe as $riga) {
         echo '
         <td class="text-right">
             '.moneyFormat($riga->iva_unitaria).'
-            <br><small class="'.(($riga->aliquota->deleted_at) ? 'text-red' : '').' help-block">'.$riga->aliquota->descrizione.(($riga->aliquota->esente) ? ' ('.$riga->aliquota->codice_natura_fe.')' : null).'</small>
+            <br><small class="'.(($riga->aliquota->deleted_at) ? 'text-red' : '').' text-muted">'.$riga->aliquota->descrizione.(($riga->aliquota->esente) ? ' ('.$riga->aliquota->codice_natura_fe.')' : null).'</small>
         </td>';
 
         // Importo
@@ -198,14 +198,13 @@ foreach ($righe as $riga) {
                     <a class='btn btn-xs btn-danger' title='".tr('Rimuovi questa riga...')."' onclick=\"if( confirm('".tr('Rimuovere questa riga dalla fattura?')."') ){ $('#delete-form-".$riga->id."').submit(); }\">
                         <i class='fa fa-trash'></i>
                     </a>
+
+                    <a class='btn btn-xs btn-default handle' title='Modifica ordine...'>
+                        <i class='fa fa-sort'></i>
+                    </a>
                 </div>
             </form>";
     }
-
-    echo '
-            <div class="handle clickable" style="padding:10px">
-                <i class="fa fa-sort"></i>
-            </div>';
 
     echo '
         </td>

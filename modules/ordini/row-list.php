@@ -168,7 +168,7 @@ foreach ($righe as $riga) {
         
                     <a class='btn btn-xs btn-danger' title='Rimuovi questa riga...' onclick=\"if( confirm('Rimuovere questa riga dall\\'ordine?') ){ $('#delete-form-".$riga->id."').submit(); }\"><i class='fa fa-trash'></i></a>
                     
-                    <a class='btn btn-xs btn-inverse handle' title='Modifica ordine...'><i class='fa fa-sort'></i></a>
+                    <a class='btn btn-xs btn-default handle' title='Modifica ordine...'><i class='fa fa-sort'></i></a>
 
                 </div>
             </form>";
@@ -194,7 +194,7 @@ $totale = abs($ordine->totale);
 // IMPONIBILE
 echo '
     <tr>
-        <td colspan="5" class="text-right">
+        <td colspan="6" class="text-right">
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
@@ -207,7 +207,7 @@ echo '
 if (!empty($sconto)) {
     echo '
     <tr>
-        <td colspan="5" class="text-right">
+        <td colspan="6" class="text-right">
             <b><span class="tip" title="'.tr('Un importo positivo indica uno sconto, mentre uno negativo indica una maggiorazione').'"> <i class="fa fa-question-circle-o"></i> '.tr('Sconto/maggiorazione', [], ['upper' => true]).':</span></b>
         </td>
         <td align="right">
@@ -219,7 +219,7 @@ if (!empty($sconto)) {
     // TOTALE IMPONIBILE
     echo '
     <tr>
-        <td colspan="5" class="text-right">
+        <td colspan="6" class="text-right">
             <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
@@ -232,7 +232,7 @@ if (!empty($sconto)) {
 // IVA
 echo '
     <tr>
-        <td colspan="5" class="text-right">
+        <td colspan="6" class="text-right">
             <b>'.tr('Iva', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
@@ -244,7 +244,7 @@ echo '
 // TOTALE
 echo '
     <tr>
-        <td colspan="5" class="text-right">
+        <td colspan="6" class="text-right">
             <b>'.tr('Totale', [], ['upper' => true]).':</b>
         </td>
         <td align="right">

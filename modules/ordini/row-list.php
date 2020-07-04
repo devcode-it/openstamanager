@@ -8,7 +8,8 @@ echo '
         <tr>
             <th width="35" class="text-center" >'.tr('#').'</th>
 			<th>'.tr('Descrizione').'</th>
-			<th class="text-center tip" width="150" title="'.tr('da evadere').' / '.tr('totale').'">'.tr('Q.tà').' <i class="fa fa-question-circle-o"></i></th>
+            <th class="text-center" width="150">'.tr('Q.tà disponibile').'</th>
+            <th class="text-center tip" width="150" title="'.tr('da evadere').' / '.tr('totale').'">'.tr('Q.tà richiesta').' <i class="fa fa-question-circle-o"></i></th>
 			<th class="text-center" width="150">'.tr('Prezzo unitario').'</th>
             <th class="text-center" width="150">'.tr('Iva unitaria').'</th>
             <th class="text-center" width="150">'.tr('Importo').'</th>
@@ -42,10 +43,9 @@ foreach ($righe as $riga) {
     echo '
     <td class="text-center">
         '.(($riga->order) + 1).'
-    </td>';
-
-    echo '
-        <td>';
+    </td>
+    
+    <td>';
 
     if ($riga->isArticolo()) {
         echo '
@@ -66,6 +66,21 @@ foreach ($righe as $riga) {
             <br>'.tr('SN').': '.implode(', ', $serials);
         }
     }
+
+    // Disponibilità articolo
+    $disponibile = $riga->articolo->qta >= ($riga->qta - $riga->qta_evasa);
+    echo '
+            <td class="text-center '.( $disponibile ? 'bg-success' : 'bg-danger' ).'">';
+
+    if ($riga->isArticolo()) {
+        echo ( $disponibile ? '<i class="fa fa-check text-success"></i> ' : '<i class="fa fa-warning text-danger"></i> ').numberFormat($riga->articolo->qta).' '.$riga->um;
+    } else {
+        echo '-';
+    }
+
+    echo '
+        </td>';
+        
 
     // Aggiunta dei riferimenti ai documenti
     if ($riga->hasOriginal()) {
@@ -96,7 +111,7 @@ foreach ($righe as $riga) {
 
         if ($dir == 'entrata' && $riga->costo_unitario != 0) {
             echo '
-            <br><small>
+            <br><small class="text-muted">
                 '.tr('Acquisto').': '.moneyFormat($riga->costo_unitario).'
             </small>';
         }
@@ -115,7 +130,7 @@ foreach ($righe as $riga) {
         echo '
         <td class="text-right">
             '.moneyFormat($riga->iva_unitaria).'
-            <br><small class="'.(($riga->aliquota->deleted_at) ? 'text-red' : '').' help-block">'.$riga->aliquota->descrizione.(($riga->aliquota->esente) ? ' ('.$riga->aliquota->codice_natura_fe.')' : null).'</small>
+            <br><small class="'.(($riga->aliquota->deleted_at) ? 'text-red' : '').' text-muted">'.$riga->aliquota->descrizione.(($riga->aliquota->esente) ? ' ('.$riga->aliquota->codice_natura_fe.')' : null).'</small>
         </td>';
 
         // Importo
@@ -148,17 +163,17 @@ foreach ($righe as $riga) {
         }
 
         echo "
+        
                     <a class='btn btn-xs btn-warning' title='Modifica questa riga...' onclick=\"launch_modal( 'Modifica riga', '".$rootdir.'/modules/ordini/row-edit.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga->id.'&type='.urlencode(get_class($riga))."');\"><i class='fa fa-edit'></i></a>
-
+        
                     <a class='btn btn-xs btn-danger' title='Rimuovi questa riga...' onclick=\"if( confirm('Rimuovere questa riga dall\\'ordine?') ){ $('#delete-form-".$riga->id."').submit(); }\"><i class='fa fa-trash'></i></a>
+                    
+                    <a class='btn btn-xs btn-inverse handle' title='Modifica ordine...'><i class='fa fa-sort'></i></a>
+
                 </div>
             </form>";
     }
 
-    echo '
-		<div class="handle clickable" style="padding:10px">
-			<i class="fa fa-sort"></i>
-		</div>';
 
     echo '
         </td>

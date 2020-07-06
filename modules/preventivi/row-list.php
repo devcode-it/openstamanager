@@ -94,15 +94,15 @@ foreach ($righe as $riga) {
     if (empty($record['is_completato'])) {
         echo '
                 <div class="btn-group">
-                    <a class="btn btn-xs btn-warning" title="'.tr('Modifica riga...').'"  onclick="modificaRiga(this)">
+                    <a class="btn btn-xs btn-warning" title="'.tr('Modifica riga').'" onclick="modificaRiga(this)">
                         <i class="fa fa-edit"></i>
                     </a>
 
-                    <a class="btn btn-xs btn-danger" title="'.tr('Rimuovi riga...').'" onclick="rimuoviRiga(this)">
+                    <a class="btn btn-xs btn-danger" title="'.tr('Rimuovi riga').'" onclick="rimuoviRiga(this)">
                         <i class="fa fa-trash"></i>
                     </a>
 
-                    <a class="btn btn-xs btn-default handle" title="Modifica ordine...">
+                    <a class="btn btn-xs btn-default handle" title="'.tr('Modifica ordine delle righe').'">
                         <i class="fa fa-sort"></i>
                     </a>
                 </div>';
@@ -115,24 +115,6 @@ foreach ($righe as $riga) {
 
 echo '
     </tbody>';
-
-echo '
-<script>
-function editRow(type, id){
-    launch_modal("'.tr('Modifica riga').'", "'.$module->fileurl('row-edit.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&idriga=" + id + "&type=" + encodeURIComponent(type));
-}
-
-function deleteRow(type, id){
-    if(confirm("'.tr('Rimuovere questa riga dal documento?').'")){
-        redirect("", {
-            backto: "record-edit",
-            op: "delete_riga",
-            idriga: id,
-            type: type,
-        }, "post");
-    }
-}
-</script>';
 
 // Calcoli
 $imponibile = abs($preventivo->imponibile);

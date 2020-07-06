@@ -95,15 +95,15 @@ foreach ($righe as $riga) {
     if (empty($record['is_completato'])) {
         echo '
                 <div class="btn-group">
-                    <a class="btn btn-xs btn-warning" title="'.tr('Modifica riga...').'"  onclick="modificaRiga(this)">
+                    <a class="btn btn-xs btn-warning" title="'.tr('Modifica riga').'" onclick="modificaRiga(this)">
                         <i class="fa fa-edit"></i>
                     </a>
 
-                    <a class="btn btn-xs btn-danger" title="'.tr('Rimuovi riga...').'" onclick="rimuoviRiga(this)">
+                    <a class="btn btn-xs btn-danger" title="'.tr('Rimuovi riga').'" onclick="rimuoviRiga(this)">
                         <i class="fa fa-trash"></i>
                     </a>
 
-                    <a class="btn btn-xs btn-default handle" title="Modifica ordine...">
+                    <a class="btn btn-xs btn-default handle" title="'.tr('Modifica ordine delle righe').'">
                         <i class="fa fa-sort"></i>
                     </a>
                 </div>';

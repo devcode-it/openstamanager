@@ -169,28 +169,28 @@ foreach ($righe as $riga) {
 
         if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
             echo '
-                <a class="btn btn-primary btn-xs" title="'.tr('Modifica seriali della riga...').'"  onclick="modificaSeriali(this)">
+                <a class="btn btn-primary btn-xs" title="'.tr('Modifica seriali della riga').'" onclick="modificaSeriali(this)">
                     <i class="fa fa-barcode"></i>
                 </a>';
         }
 
         echo '
-                <a class="btn btn-xs btn-info" title="'.tr('Aggiungi informazioni FE per questa riga...').'" onclick="apriInformazioniFE(this)">
+                <a class="btn btn-xs btn-info" title="'.tr('Aggiungi informazioni FE per questa riga').'" onclick="apriInformazioniFE(this)">
                     <i class="fa fa-file-code-o"></i>
                 </a>
 
-                <a class="btn btn-xs btn-warning" title="'.tr('Modifica riga...').'"  onclick="modificaRiga(this)">
+                <a class="btn btn-xs btn-warning" title="'.tr('Modifica riga').'" onclick="modificaRiga(this)">
                     <i class="fa fa-edit"></i>
                 </a>
 
-                <a class="btn btn-xs btn-danger" title="'.tr('Rimuovi riga...').'" onclick="rimuoviRiga(this)">
+                <a class="btn btn-xs btn-danger" title="'.tr('Rimuovi riga').'" onclick="rimuoviRiga(this)">
                     <i class="fa fa-trash"></i>
                 </a>
-    
-                <a class='btn btn-xs btn-default handle' title='Modifica ordine...'>
-                    <i class='fa fa-sort'></i>
+
+                <a class="btn btn-xs btn-default handle" title="'.tr('Modifica ordine delle righe').'">
+                    <i class="fa fa-sort"></i>
                 </a>
-            </div>";
+            </div>';
     }
 
     echo '

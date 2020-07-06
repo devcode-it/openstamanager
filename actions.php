@@ -36,8 +36,8 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
     // Gestione delle operazioni
     else {
         // UPLOAD
-        if (filter('op') == 'link_file' && !empty($_FILES) && !empty($_FILES['blob']['name'])) {
-            $upload = Uploads::upload($_FILES['blob'], [
+        if (filter('op') == 'link_file' && !empty($_FILES) && !empty($_FILES['file']['name'])) {
+            $upload = Uploads::upload($_FILES['file'], [
                 'name' => filter('nome_allegato'),
                 'category' => filter('categoria'),
                 'id_module' => $id_module,

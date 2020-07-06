@@ -443,7 +443,6 @@ class Prints
 
         // Instanziamento dell'oggetto mPDF
         $mpdf = new \Mpdf\Mpdf([
-            'mode' => 'c',
             'format' => $settings['format'],
             'orientation' => strtoupper($settings['orientation']) == 'L' ? 'L' : 'P',
             'font-size' => $settings['font-size'],
@@ -451,7 +450,7 @@ class Prints
             'margin_right' => $settings['margins']['right'],
             'setAutoBottomMargin' => 'stretch',
             'setAutoTopMargin' => 'stretch',
-            'default_font' => 'helvetica',
+            'default_font' => 'dejavusanscondensed',
 
             // Abilitazione per lo standard PDF/A
             //'PDFA' => true,

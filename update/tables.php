@@ -25,6 +25,7 @@ return [
     'co_pianodeiconti2',
     'co_pianodeiconti3',
     'co_preventivi',
+    'co_riferimenti_righe',
     'co_righe_contratti',
     'co_righe_promemoria',
     'co_righe_documenti',

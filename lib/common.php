@@ -102,10 +102,11 @@ function discountInfo(\Common\Components\Row $riga, $mostra_maggiorazione = true
         return null;
     }
 
-    $text = $riga->sconto_unitario > 0 ? tr('sconto _TOT_ _TYPE_') : tr('maggiorazione _TOT_ _TYPE_');
+    $text = $riga->sconto_unitario > 0 ? tr('sconto _TOT_ _TYPE_') : tr('maggiorazione _TOT__TYPE_');
+    $total = !empty($riga->sconto_percentuale) ? $riga->sconto_percentuale : $riga->sconto_unitario;
 
     return replace($text, [
-        '_TOT_' => Translator::numberToLocale(!empty($riga->sconto_percentuale) ? $riga->sconto_percentuale : $riga->sconto_unitario),
+        '_TOT_' => Translator::numberToLocale(abs($total)),
         '_TYPE_' => (!empty($riga->sconto_percentuale) ? '%' : currency()),
     ]);
 }
@@ -139,7 +140,7 @@ function reference($document, $text = null)
     }
 
     $description = tr('Rif. _DOCUMENT_', [
-        '_DOCUMENT_' => $content,
+        '_DOCUMENT_' => strtolower($content),
     ]);
 
     return Modules::link($module_id, $document_id, $description, $description, $extra);

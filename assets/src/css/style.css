@@ -893,3 +893,21 @@ input.small-width {
 .direct-chat-text img {
     max-width: 100%;
 }
+
+.dropzone {
+    border: 2px dashed #337ab7;
+    border-radius: 5px;
+    background: white; 
+    margin-top:10px;
+}
+
+.dropzone .dz-message {
+    font-weight: 400; 
+}
+
+.dropzone .dz-message .note {
+    font-size: 0.8em;
+    font-weight: 200;
+    display: block;
+    margin-top: 1.4rem;
+}

@@ -6,6 +6,7 @@ $link_id = Modules::get('Articoli')['id'];
 
 $fields = [
     'Codice' => 'codice',
+    'Barcode' => 'barcode',
     'Descrizione' => 'descrizione',
     'Categoria' => '(SELECT nome FROM mg_categorie WHERE mg_categorie.id =  mg_articoli.id_categoria)',
     'Subcategoria' => '(SELECT nome FROM mg_categorie WHERE mg_categorie.id =  mg_articoli.id_sottocategoria)',

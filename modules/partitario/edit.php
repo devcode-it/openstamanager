@@ -20,7 +20,7 @@ if ($bilancio_gia_aperto) {
 
 <?php
 // Livello 1
-$query1 = 'SELECT * FROM `co_pianodeiconti1` ORDER BY id DESC';
+$query1 = 'SELECT * FROM `co_pianodeiconti1` ORDER BY id ASC';
 $primo_livello = $dbo->fetchArray($query1);
 
 foreach ($primo_livello as $conto_primo) {

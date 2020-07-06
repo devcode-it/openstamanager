@@ -17,7 +17,7 @@ $total = Util\Query::readQuery($structure);
 // Ricerca
 $search = [];
 for ($i = 0; $i < count($columns); ++$i) {
-    if (!empty($columns[$i]['search']['value'])) {
+    if (!empty($columns[$i]['search']['value']) || $columns[$i]['search']['value'] == '0') {
         $search[$total['fields'][$i]] = $columns[$i]['search']['value'];
     }
 }

@@ -43,7 +43,7 @@ class FatturaSemplificata extends FatturaElettronica
                 'capitale_sociale' => $rea['CapitaleSociale'],
             ],
             'sede' => [
-                'indirizzo' => $sede['Indirizzo'],
+                'indirizzo' => $sede['Indirizzo'].' '.$sede['NumeroCivico'],
                 'cap' => $sede['CAP'],
                 'citta' => $sede['Comune'],
                 'provincia' => $sede['Provincia'],

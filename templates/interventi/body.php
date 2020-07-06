@@ -8,14 +8,14 @@ include_once __DIR__.'/../../core.php';
 echo '
 <table class="table table-bordered">
     <tr>
-        <th colspan="4" style="font-size:13pt;" class="text-center">'.tr('Rapporto operazioni e interventi', [], ['upper' => true]).'</th>
+        <th colspan="4" style="font-size:13pt;" class="text-center">'.tr('Rapporto attività e interventi', [], ['upper' => true]).'</th>
     </tr>
 
     <tr>
-        <td class="text-left" style="width:30%">'.tr('Intervento num.').': <b>'.$documento['codice'].'</b></td>
-        <td class="text-left" style="width:20%">'.tr('Data').': <b>'.Translator::dateToLocale($documento['data_richiesta']).'</b></td>
-        <td class="text-left" style="width:25%">'.tr('Preventivo num.').': <b>'.(!empty($preventivo) ? $preventivo['numero'] : '').'</b></td>
-        <td class="text-left" style="width:25%">'.tr('Contratto num.').': <b>'.(!empty($contratto) ? $contratto['numero'] : '').'</b></td>
+        <td class="text-left" style="width:30%">'.tr('Intervento n.').': <b>'.$documento['codice'].'</b></td>
+        <td class="text-left" style="width:20%">'.tr('Data richiesta').': <b>'.Translator::dateToLocale($documento['data_richiesta']).'</b></td>
+        <td class="text-left" style="width:25%">'.tr('Preventivo n.').': <b>'.(!empty($preventivo) ? $preventivo['numero'] : '').'</b></td>
+        <td class="text-left" style="width:25%">'.tr('Contratto n.').': <b>'.(!empty($contratto) ? $contratto['numero'] : '').'</b></td>
     </tr>';
 
     // Dati cliente
@@ -153,13 +153,11 @@ if (!$righe->isEmpty()) {
     <tbody>';
 
     foreach ($righe as $riga) {
-        $r = $riga->toArray();
-
         // Articolo
         echo '
     <tr>
         <td>
-            '.nl2br($r['descrizione']);
+            '.nl2br($riga->descrizione);
 
         if ($riga->isArticolo()) {
             // Codice articolo
@@ -184,7 +182,7 @@ if (!$righe->isEmpty()) {
         // Quantità
         echo '
         <td class="text-center">
-            '.Translator::numberToLocale($r['qta'], 'qta').' '.$r['um'].'
+            '.Translator::numberToLocale($riga->qta, 'qta').' '.$riga->um.'
         </td>';
 
         // Prezzo unitario
@@ -192,12 +190,11 @@ if (!$righe->isEmpty()) {
         <td class="text-center">
             '.($options['pricing'] ? moneyFormat($riga->prezzo_unitario) : '-');
 
-        if ($options['pricing'] && $r['sconto'] > 0) {
-            echo "
-            <br><small class='text-muted'>".tr('sconto _TOT_ _TYPE_', [
-                '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
-                '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : currency()),
-            ]).'</small>';
+        if ($options['pricing'] && $riga->sconto > 0) {
+            $text = discountInfo($riga, false);
+
+            echo '
+            <br><small class="text-muted">'.$text.'</small>';
         }
 
         echo '
@@ -300,8 +297,8 @@ foreach ($sessioni as $i => $sessione) {
     // Spazio aggiuntivo
     if ($i == 0) {
         echo '
-    	<td class="text-center" style="font-size:8pt;">
-            '.tr('Si dichiara che i lavori sono stati eseguiti ed i materiali installati').'
+    	<td class="text-center" style="font-size:6pt;">
+            '.tr('Si dichiara che i lavori sono stati eseguiti ed i materiali installati nel rispetto delle vigenti normative tecniche').'
         </td>';
     } else {
         echo '

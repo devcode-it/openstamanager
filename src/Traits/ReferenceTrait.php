@@ -2,8 +2,6 @@
 
 namespace Traits;
 
-use Stringy\Stringy;
-
 trait ReferenceTrait
 {
     abstract public function getReferenceName();

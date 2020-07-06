@@ -23,8 +23,13 @@ switch (post('op')) {
 }
 
 if (App::debug()) {
-    $operations = [
-        'delete-bulk' => tr('Elimina selezionati'),
+    $operations['delete-bulk'] = [
+        'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span>',
+        'data' => [
+            'msg' => tr('Vuoi davvero eliminare le anagrafiche selezionate?'),
+            'button' => tr('Procedi'),
+            'class' => 'btn btn-lg btn-danger',
+        ],
     ];
 }
 

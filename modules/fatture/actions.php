@@ -270,6 +270,7 @@ switch (post('op')) {
             $new->numero_esterno = Fattura::getNextNumeroSecondario($new->data, $new->direzione, $new->id_segment);
         }
 
+        $new->codice_stato_fe = null;
         $new->stato()->associate($stato);
         $new->save();
 
@@ -593,12 +594,10 @@ switch (post('op')) {
 
     // Aggiunta di un documento esterno
     case 'add_documento':
-        $type = post('type');
         $class = post('class');
         $id_documento = post('id_documento');
-        $is_evasione = post('is_evasione');
 
-        // Individuazione documento originale
+        // Individuazione del documento originale
         if (!is_subclass_of($class, \Common\Document::class)) {
             return;
         }
@@ -615,13 +614,8 @@ switch (post('op')) {
             $tipo = Tipo::where('descrizione', $descrizione)->first();
 
             $fattura = Fattura::build($documento->anagrafica, $tipo, post('data'), post('id_segment'));
-
-            // Informazioni da copiare nel caso di evasione documento
-            if ($is_evasione) {
-                $fattura->idpagamento = $documento->idpagamento;
-                $fattura->idsede_destinazione = $id_sede;
-            }
-
+            $fattura->idpagamento = $documento->idpagamento;
+            $fattura->idsede_destinazione = $documento->idsede;
             $fattura->id_ritenuta_contributi = post('id_ritenuta_contributi') ?: null;
             $fattura->save();
 
@@ -648,7 +642,7 @@ switch (post('op')) {
                 $copia->ritenuta_contributi = $ritenuta_contributi;
 
                 // Aggiornamento seriali dalla riga dell'ordine
-                if ($copia->isArticolo() && $is_evasione) {
+                if ($copia->isArticolo()) {
                     $serials = is_array(post('serial')[$riga->id]) ? post('serial')[$riga->id] : [];
 
                     $copia->serials = $serials;
@@ -660,25 +654,10 @@ switch (post('op')) {
 
         ricalcola_costiagg_fattura($id_record);
 
-        $message = '';
-        if ($type == 'ordine') {
-            $message = tr('Ordine _NUM_ aggiunto!', [
-                '_NUM_' => $documento->numero,
-            ]);
-        } elseif ($type == 'ddt') {
-            $message = tr('DDT _NUM_ aggiunto!', [
-                '_NUM_' => $documento->numero,
-            ]);
-        } elseif ($type == 'preventivo') {
-            $message = tr('Preventivo _NUM_ aggiunto!', [
-                '_NUM_' => $documento->numero,
-            ]);
-        } elseif ($type == 'contratto') {
-            $message = tr('Contratto _NUM_ aggiunto!', [
-                '_NUM_' => $documento->numero,
-            ]);
-        }
-
+        // Messaggio informativo
+        $message = tr('_DOC_ aggiunto!', [
+            '_DOC_' => $documento->getReference(),
+        ]);
         flash()->info($message);
 
         break;
@@ -701,6 +680,7 @@ switch (post('op')) {
         $nota->idbanca = $fattura->idbanca;
         $nota->idsede_partenza = $fattura->idsede_partenza;
         $nota->idsede_destinazione = $fattura->idsede_destinazione;
+        $nota->split_payment = $fattura->split_payment;
         $nota->save();
 
         $righe = $fattura->getRighe();

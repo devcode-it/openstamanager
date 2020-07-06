@@ -188,8 +188,6 @@ class WidgetManager implements ManagerInterface
         if (!empty($widget['more_link'])) {
             $result .= '
             </a>';
-
-         
         }
 
         return $result;

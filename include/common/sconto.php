@@ -34,32 +34,33 @@ echo '
 echo '
     <script>
         var descrizione = $("#descrizione_riga");
-        
+
         var form = descrizione.closest("form");
         var sconto_percentuale = form.find("#sconto_percentuale");
         var sconto_unitario = form.find("#sconto_unitario");
 
         var totale = '.($options['totale_imponibile'] ?: 0).';
-        
+
         function aggiorna_sconto_percentuale() {
             var sconto = sconto_percentuale.val().toEnglish();
             var unitario = sconto / 100 * totale;
-            
-            msg = sconto >= 0 ? "'.tr('Sconto percentuale').'" : "'.tr('Maggiorazione percentuale').'";
-            
+
+            var msg = sconto >= 0 ? "'.tr('Sconto percentuale').'" : "'.tr('Maggiorazione percentuale').'";
+
             sconto_unitario.val(unitario.toLocale());
-            
-            if (!descrizione.val()) {
+
+            if (!descrizione.val() && sconto !== 0) {
                 descrizione.val(msg + " " + Math.abs(sconto).toLocale() + "%");
             }
         }
-        
+
         function aggiorna_sconto_unitario(){
-            msg = sconto_unitario.val().toEnglish() >= 0 ? "'.tr('Sconto unitario').'" : "'.tr('Maggiorazione unitaria').'";
+            var sconto = sconto_unitario.val().toEnglish();
+            var msg = sconto >= 0 ? "'.tr('Sconto unitario').'" : "'.tr('Maggiorazione unitaria').'";
 
             sconto_percentuale.val(0);
-            
-            if (!descrizione.val()) {
+
+            if (!descrizione.val() && sconto !== 0) {
                 descrizione.val(msg);
             }
         }

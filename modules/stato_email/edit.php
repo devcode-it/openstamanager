@@ -148,16 +148,10 @@ echo '
     '.$mail->content.'
 </div>';
 
+//Posso eliminare l'email solo se questa non è già stata inviata
 if (empty($mail->sent_at)) {
     echo '
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> '.tr('Elimina').'
 </a>';
-
-    if ($mail->attempt >= 10) {
-        echo '
-<a class="btn btn-warning ask pull-right" data-backto="record-edit" data-msg="'.tr("Rimettere in coda l'email?").'" data-op="retry" data-button="'.tr('Rimetti in coda').'" data-class="btn btn-lg btn-warning" >
-    <i class="fa fa-refresh"></i> '.tr('Rimetti in coda').'
-</a>';
-    }
 }

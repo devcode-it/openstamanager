@@ -3,7 +3,7 @@
 include_once __DIR__.'/../../core.php';
 
 // Creazione righe fantasma
-$autofill = new \Util\Autofill($options['pricing'] ? 5 : 2);
+$autofill = new \Util\Autofill($options['pricing'] ? 6 : 3);
 $rows_per_page = 16;
 if (!empty($options['last-page-footer'])) {
     $rows_per_page += 10;
@@ -15,6 +15,7 @@ echo "
 <table class='table table-striped table-bordered' id='contents'>
     <thead>
         <tr>
+            <th class='text-center' style='width:5%'>".tr('#', [], ['upper' => true])."</th>
             <th class='text-center'>".tr('Descrizione', [], ['upper' => true])."</th>
             <th class='text-center' style='width:10%'>".tr('Q.tà', [], ['upper' => true]).'</th>';
 
@@ -39,7 +40,13 @@ foreach ($righe as $riga) {
     $autofill->count($r['descrizione']);
 
     echo '
-    <tr>
+    <tr>';
+
+    echo'
+        <td class=\'text-center\' >
+            '.($r['order'] + 1).'</td>';
+
+    echo'
         <td>
             '.nl2br($r['descrizione']);
 

@@ -2,6 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Carbon\Carbon;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Preventivi\Components\Articolo;
@@ -68,7 +69,9 @@ switch (post('op')) {
     case 'copy':
         // Copia del preventivo
         $new = $preventivo->replicate();
-        $new->numero = Preventivo::getNextNumero($new->data_bozza);
+        $new->numero = Preventivo::getNextNumero(Carbon::now());
+        $new->data_bozza = Carbon::now();
+        $new->data_conclusione = Carbon::now()->addMonth();
         $new->stato = 'Bozza';
         $new->save();
 

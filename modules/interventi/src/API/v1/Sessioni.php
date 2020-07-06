@@ -13,7 +13,7 @@ class Sessioni extends Resource implements RetrieveInterface, CreateInterface, D
     {
         $user = $this->getUser();
 
-        $query = 'SELECT id, idtecnico AS id_tecnico, idintervento AS id_intervento, orario_inizio, orario_fine FROM in_interventi_tecnici WHERE `idintervento` = :id_intervento';
+        $query = 'SELECT id, idtecnico AS id_tecnico, idintervento AS id_intervento, orario_inizio, orario_fine, ragione_sociale AS tecnico FROM in_interventi_tecnici INNER JOIN an_anagrafiche ON idanagrafica = idtecnico  WHERE `idintervento` = :id_intervento';
 
         $parameters = [
             ':id_intervento' => $request['id_intervento'],

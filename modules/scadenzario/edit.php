@@ -181,6 +181,8 @@ echo '
 	</div>
 </form>
 
+{( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$" )}
+
 {( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
 <?php

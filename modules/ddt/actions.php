@@ -81,7 +81,7 @@ switch (post('op')) {
             'idsede_partenza' => post('idsede_partenza'),
             'idsede_destinazione' => post('idsede_destinazione'),
             'idvettore' => post('idvettore'),
-            'data_ora_trasporto' => post('data_ora_trasporto'),
+            'data_ora_trasporto' => post('data_ora_trasporto') ?: null,
             'idporto' => post('idporto'),
             'idaspettobeni' => post('idaspettobeni'),
             'idrivalsainps' => $idrivalsainps,
@@ -239,34 +239,30 @@ switch (post('op')) {
 
         break;
 
-    // Aggiunta di un ordine in ddt
-    case 'add_documento':
+    // Aggiunta di un documento in ddt
     case 'add_ordine':
-        $type = post('type');
+    case 'add_documento':
         $class = post('class');
         $id_documento = post('id_documento');
-        $is_evasione = post('is_evasione');
 
-        // Individuazione documento originale
+        // Individuazione del documento originale
         if (!is_subclass_of($class, \Common\Document::class)) {
             return;
         }
         $documento = $class::find($id_documento);
-
-        // Individuazione sede
-        $id_sede = ($documento->direzione == 'entrata') ? $documento->idsede_destinazione : $documento->idsede_partenza;
-        $id_sede = $id_sede ?: $documento->idsede;
-        $id_sede = $id_sede ?: 0;
 
         // Creazione del ddt al volo
         if (post('create_document') == 'on') {
             $tipo = Tipo::where('dir', $documento->direzione)->first();
 
             $ddt = DDT::build($documento->anagrafica, $tipo, post('data'));
+            $ddt->idpagamento = $documento->idpagamento;
 
-            // Informazioni da copiare nel caso di evasione documento
-            if ($is_evasione) {
-                $ddt->idpagamento = $documento->idpagamento;
+            $ddt->id_documento_fe = $documento->id_documento_fe;
+            $ddt->codice_cup = $documento->codice_cup;
+            $ddt->codice_cig = $documento->codice_cig;
+            $ddt->num_item = $documento->num_item;
+            $ddt->idsede_destinazione = $documento->idsede;
 
                 $ddt->id_documento_fe = $documento->id_documento_fe;
                 $ddt->codice_cup = $documento->codice_cup;
@@ -287,8 +283,8 @@ switch (post('op')) {
 
                 $copia = $riga->copiaIn($ddt, $qta, $is_evasione);
 
-                // Aggiornamento seriali dalla riga copiata
-                if ($copia->isArticolo() && $is_evasione) {
+                // Aggiornamento seriali dalla riga dell'ordine
+                if ($copia->isArticolo()) {
                     $serials = is_array(post('serial')[$riga->id]) ? post('serial')[$riga->id] : [];
 
                     $copia->serials = $serials;
@@ -300,9 +296,11 @@ switch (post('op')) {
 
         ricalcola_costiagg_ddt($id_record);
 
-        flash()->info(tr('Ordine _NUM_ aggiunto!', [
-            '_NUM_' => $documento->numero,
-        ]));
+        // Messaggio informativo
+        $message = tr('_DOC_ aggiunto!', [
+            '_DOC_' => $documento->getReference(),
+        ]);
+        flash()->info($message);
 
         break;
 

@@ -19,6 +19,7 @@ $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione']
 $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 $_SESSION['superselect']['ddt'] = $dir;
 $_SESSION['superselect']['split_payment'] = $record['split_payment'];
+$_SESSION['superselect']['permetti_movimento_a_zero'] = ($dir == 'uscita' ? true : false);
 
 if ($dir == 'entrata') {
     $conto = 'vendite';
@@ -156,6 +157,10 @@ if (empty($record['is_fiscale'])) {
 
     $plugin = $dbo->fetchArray("SELECT id FROM zz_plugins WHERE name='Fatturazione Elettronica' AND idmodule_to = ".prepare($id_module));
     echo '<script>$("#link-tab_'.$plugin[0]['id'].'").addClass("disabled");</script>';
+}
+//Forzo il passaggio della fattura da Bozza ad Emessa per il corretto calcolo del numero.
+elseif ($record['stato'] == 'Bozza') {
+    $query .= " WHERE descrizione IN ('Emessa', 'Bozza')";
 }
 
 ?>
@@ -372,7 +377,7 @@ if (empty($record['is_fiscale'])) {
 
 			<div class="row">
 				<div class="col-md-12">
-					{[ "type": "textarea", "label": "<?php echo tr('Note aggiuntive'); ?>", "name": "note_aggiuntive", "help": "<?php echo tr('Note interne.'); ?>", "value": "$note_aggiuntive$", "class": "unblockable" ]}
+					{[ "type": "textarea", "label": "<?php echo tr('Note interne'); ?>", "name": "note_aggiuntive", "help": "<?php echo tr('Note interne.'); ?>", "value": "$note_aggiuntive$", "class": "unblockable" ]}
 				</div>
 			</div>
 		</div>

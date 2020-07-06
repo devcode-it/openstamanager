@@ -90,7 +90,7 @@ var chart_options = {
                 ticks: {
                     // Include a dollar sign in the ticks
                     callback: function(value, index, values) {
-                        return \'€ \' + value;
+                        return \''.html_entity_decode(currency()).' \' + value;
                     }
                 }
             }]
@@ -261,7 +261,7 @@ echo '
     <canvas class="box-body collapse in" id="interventi" height="100"></canvas>
 </div>';
 
-// Script per il grafico del fatturato
+// Script per il grafico degli interventi per tipologia
 echo '
 <script>
 $(document).ready(function() {

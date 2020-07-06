@@ -21,12 +21,10 @@ echo '
 $righe = $contratto->getRighe();
 foreach ($righe as $riga) {
     echo '
-        <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'">';
-
-    echo '
-        <td class="text-center">
-            '.(($riga->order) + 1).'
-        </td>';
+        <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'">
+            <td class="text-center">
+                '.(($riga->order) + 1).'
+            </td>';
 
     // Descrizione
     $descrizione = nl2br($riga->descrizione);

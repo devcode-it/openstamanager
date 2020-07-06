@@ -62,7 +62,7 @@ foreach ($righe as $riga) {
         if ($riga->isArticolo()) {
             echo '
             <td align="center">
-                <img src="'.$riga->articolo->image.'" style="max-height: 80px">
+                <img src="'.$riga->articolo->image.'" style="max-height: 80px; max-width:120px">
             </td>';
 
             $autofill->set(5);

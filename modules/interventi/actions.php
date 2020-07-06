@@ -294,17 +294,10 @@ $riga = $intervento->getRiga($type, $id_riga);
         break;
 
     case 'add_serial':
-        $idriga = post('idriga');
-        $idarticolo = post('idarticolo');
+        $articolo = Articolo::find(post('idriga'));
 
-        $serials = (array) post('serial');
-        foreach ($serials as $key => $value) {
-            if (empty($value)) {
-                unset($serials[$key]);
-            }
-        }
+        $articolo->serials = post('serial');
 
-        $dbo->sync('mg_prodotti', ['id_riga_intervento' => $idriga, 'dir' => 'entrata', 'id_articolo' => $idarticolo], ['serial' => $serials]);
         aggiorna_sedi_movimenti('interventi', $id_record);
         break;
 

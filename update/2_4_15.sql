@@ -11,41 +11,6 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM (`in_interventi` INNER
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), 'Rif. fattura', 'fattura.info', 17, 1, 0, 0, 1);
 
--- Aggiunta relazione tra articoli e fornitori
-CREATE TABLE IF NOT EXISTS `mg_fornitore_articolo` (
-    `id` int(11) NOT NULL AUTO_INCREMENT,
-    `id_articolo` int(11) NOT NULL,
-    `id_fornitore` int(11) NOT NULL,
-    `codice_fornitore` varchar(255) NOT NULL,
-    `descrizione` varchar(255) NOT NULL,
-    `prezzo_acquisto` decimal(15, 6) NOT NULL,
-    `qta_minima` decimal(15, 6) NOT NULL,
-    `giorni_consegna` int(11) NOT NULL,
-    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
-    PRIMARY KEY (`id`),
-    FOREIGN KEY (`id_articolo`) REFERENCES `mg_articoli`(`id`) ON DELETE CASCADE,
-    FOREIGN KEY (`id_fornitore`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE CASCADE
-);
-
-INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`, `position`, `directory`, `options`) VALUES
-(NULL, 'Fornitori Articolo', 'Fornitori', (SELECT `id` FROM `zz_modules` WHERE `name`='Articoli'), (SELECT `id` FROM `zz_modules` WHERE `name`='Articoli'), 'tab', 'fornitori_articolo', 'custom');
-
-ALTER TABLE `or_righe_ordini` ADD `id_dettaglio_fornitore` int(11) NULL,
-    ADD FOREIGN KEY (`id_dettaglio_fornitore`) REFERENCES `mg_fornitore_articolo`(`id`) ON DELETE SET NULL;
-ALTER TABLE `dt_righe_ddt` ADD `id_dettaglio_fornitore` int(11) NULL,
-    ADD FOREIGN KEY (`id_dettaglio_fornitore`) REFERENCES `mg_fornitore_articolo`(`id`) ON DELETE SET NULL;
-ALTER TABLE `co_righe_preventivi` ADD `id_dettaglio_fornitore` int(11) NULL,
-    ADD FOREIGN KEY (`id_dettaglio_fornitore`) REFERENCES `mg_fornitore_articolo`(`id`) ON DELETE SET NULL;
-ALTER TABLE `co_righe_contratti` ADD `id_dettaglio_fornitore` int(11) NULL,
-    ADD FOREIGN KEY (`id_dettaglio_fornitore`) REFERENCES `mg_fornitore_articolo`(`id`) ON DELETE SET NULL;
-ALTER TABLE `co_righe_documenti` ADD `id_dettaglio_fornitore` int(11) NULL,
-    ADD FOREIGN KEY (`id_dettaglio_fornitore`) REFERENCES `mg_fornitore_articolo`(`id`) ON DELETE SET NULL;
-ALTER TABLE `in_righe_interventi` ADD `id_dettaglio_fornitore` int(11) NULL,
-    ADD FOREIGN KEY (`id_dettaglio_fornitore`) REFERENCES `mg_fornitore_articolo`(`id`) ON DELETE SET NULL;
-ALTER TABLE `co_righe_promemoria` ADD `id_dettaglio_fornitore` int(11) NULL,
-    ADD FOREIGN KEY (`id_dettaglio_fornitore`) REFERENCES `mg_fornitore_articolo`(`id`) ON DELETE SET NULL;
-
-
 -- Aggiunta indice per idintervento in co_righe_documenti
 ALTER TABLE `co_righe_documenti` ADD INDEX(`idintervento`);
 

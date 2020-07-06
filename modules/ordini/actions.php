@@ -358,11 +358,20 @@ switch (post('op')) {
                 $copia = $riga->replicate();
                 $copia->setParent($ordine);
 
-                $riga->original_id = null;
-                $riga->original_type = null;
-                $riga->qta_evasa = 0;
+                // Ripristino dei valori di default per campi potenzialmente impostati
+                $copia->original_id = null;
+                $copia->original_type = null;
+                $copia->qta = $qta;
+                $copia->qta_evasa = 0;
+                $copia->costo_unitario = 0;
+                $copia->setSconto(0, 'EUR');
 
-                $riga->qta = $qta;
+                // Impostazione al prezzo di acquisto per Articoli
+                if ($copia->isArticolo()) {
+                    $articolo = $copia->articolo;
+                    $fornitore = $articolo->dettaglioFornitore($anagrafica->id); // Informazioni del fornitore
+                    $copia->setPrezzoUnitario($fornitore ? $fornitore->prezzo_acquisto : $articolo->prezzo_acquisto, $copia->aliquota->id);
+                }
 
                 $copia->save();
             }

@@ -71,17 +71,16 @@ foreach ($righe as $riga) {
     // Disponibilità articolo
     $disponibile = $riga->articolo->qta >= ($riga->qta - $riga->qta_evasa);
     echo '
-            <td class="text-center '.( $disponibile ? 'bg-success' : 'bg-danger' ).'">';
+            <td class="text-center '.($disponibile ? 'bg-success' : 'bg-danger').'">';
 
     if ($riga->isArticolo()) {
-        echo ( $disponibile ? '<i class="fa fa-check text-success"></i> ' : '<i class="fa fa-warning text-danger"></i> ').numberFormat($riga->articolo->qta).' '.$riga->um;
+        echo($disponibile ? '<i class="fa fa-check text-success"></i> ' : '<i class="fa fa-warning text-danger"></i> ').numberFormat($riga->articolo->qta).' '.$riga->um;
     } else {
         echo '-';
     }
 
     echo '
         </td>';
-
 
     // Aggiunta dei riferimenti ai documenti
     if ($riga->hasOriginal()) {

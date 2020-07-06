@@ -57,7 +57,7 @@ if ($options['dir'] == 'entrata') {
 
             margine = isNaN(margine) || !isFinite(margine) ? 0: margine; // Fix per magine NaN
 
-            div.html("<small>' . tr('Guadagno') . ': " + guadagno.toLocale() + " " + globals.currency + " &nbsp; ' . tr('Margine') . ': " + margine.toLocale() + " %</small>");
+            div.html("<small>'.tr('Guadagno').': " + guadagno.toLocale() + " " + globals.currency + " &nbsp; '.tr('Margine').': " + margine.toLocale() + " %</small>");
             if (guadagno < 0) {
                 parent.addClass("has-error");
                 div.addClass("text-danger").removeClass("text-success");

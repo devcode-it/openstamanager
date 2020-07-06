@@ -38,8 +38,9 @@ switch (filter('op')) {
         $last_recepit = $result['results'][0];
 
         // Messaggi relativi
-        if (empty($last_recepit)){
+        if (empty($last_recepit)) {
             echo json_encode($result);
+
             return;
         }
 

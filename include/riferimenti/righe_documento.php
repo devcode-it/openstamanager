@@ -1,6 +1,6 @@
 <?php
 
-include_once __DIR__ . '/../../core.php';
+include_once __DIR__.'/../../core.php';
 
 // Generazione della tabella per l'aggiunta dei riferimenti
 $id_documento = filter('id_documento');
@@ -29,15 +29,15 @@ echo '
     foreach ($righe as $riga) {
         $riga_class = get_class($riga);
 
-        $riferimento_locale =  $riga_class .'|'.$riga->id;
+        $riferimento_locale = $riga_class.'|'.$riga->id;
         $presente = in_array($riferimento_locale, $riferimenti);
 
-    echo '
+        echo '
     <tr data-id="'.$riga->id.'" data-type="'.$riga_class.'">
         <td>'.$riga->descrizione.'</td>
         <td>'.numberFormat($riga->qta_rimanente, 'qta').' / '.numberFormat($riga->qta, 'qta').'</td>
         <td class="text-center">
-            <button type="button" class="btn btn-'.($presente ? 'success' : 'info').' btn-xs" '.($presente ? '':'onclick="salvaRiferimento(this, \''.addslashes($source_type).'\',\''.$source_id.'\')"' ).'>
+            <button type="button" class="btn btn-'.($presente ? 'success' : 'info').' btn-xs" '.($presente ? '' : 'onclick="salvaRiferimento(this, \''.addslashes($source_type).'\',\''.$source_id.'\')"').'>
                 <i class="fa fa-check"></i>
             </button>
         </td>

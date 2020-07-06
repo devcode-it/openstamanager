@@ -9,7 +9,6 @@ $nome_stampa = filter('nome_stampa');
 // Trovo id_print della stampa
 $link = Prints::getHref($nome_stampa, $id_record);
 
-
 echo '
 <form action="" method="post" onsubmit="if($(this).parsley().validate()) { return stampa_registro_iva(); }" >
 

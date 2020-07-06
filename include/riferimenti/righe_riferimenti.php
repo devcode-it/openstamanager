@@ -1,11 +1,11 @@
 <?php
 
-include_once __DIR__ . '/../../core.php';
+include_once __DIR__.'/../../core.php';
 
 // Informazioni generali sulla riga
 $source_type = $source_type ?: filter('source_type');
 $source_id = $source_id ?: filter('source_id');
-if (empty($source_type) || empty($source_id)){
+if (empty($source_type) || empty($source_id)) {
     return;
 }
 

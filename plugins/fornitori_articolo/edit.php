@@ -51,7 +51,7 @@ if (!$fornitori->isEmpty()) {
         $anagrafica = $fornitore->anagrafica;
 
         echo '
-            <tr '.( ($anagrafica->id == $articolo->id_fornitore) ? 'class="success"' : '' ).'>
+            <tr '.(($anagrafica->id == $articolo->id_fornitore) ? 'class="success"' : '').'>
             <td>
                 '.Modules::link('Anagrafiche', $anagrafica->id, $anagrafica->ragione_sociale).'
             </td>

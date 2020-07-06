@@ -1,6 +1,6 @@
 <?php
 
-include_once __DIR__ . '/../../core.php';
+include_once __DIR__.'/../../core.php';
 
 use Modules\DDT\DDT;
 use Modules\Ordini\Ordine;
@@ -8,7 +8,7 @@ use Modules\Ordini\Ordine;
 // Informazioni generali sulla riga
 $source_type = filter('riga_type');
 $source_id = filter('riga_id');
-if (empty($source_type) || empty($source_id)){
+if (empty($source_type) || empty($source_id)) {
     return;
 }
 
@@ -31,12 +31,12 @@ echo '
 </div>';
 
 $documenti_disponibili = collect();
-$direzione_richiesta = $source->parent->direzione == 'entrata' ? 'uscita': 'entrata';
+$direzione_richiesta = $source->parent->direzione == 'entrata' ? 'uscita' : 'entrata';
 
 // Individuazione DDT disponibili
 $ddt = DDT::whereHas('stato', function ($query) {
     $query->where('descrizione', '!=', 'Bozza');
-})->whereHas('tipo', function ($query) use($direzione_richiesta){
+})->whereHas('tipo', function ($query) use ($direzione_richiesta) {
     $query->where('dir', '=', $direzione_richiesta);
 })->get();
 foreach ($ddt as $elemento) {
@@ -50,7 +50,7 @@ foreach ($ddt as $elemento) {
 // Individuazione ordini disponibili
 $ordini = Ordine::whereHas('stato', function ($query) {
     $query->where('descrizione', '!=', 'Bozza');
-})->whereHas('tipo', function ($query) use($direzione_richiesta){
+})->whereHas('tipo', function ($query) use ($direzione_richiesta) {
     $query->where('dir', '=', $direzione_richiesta);
 })->get();
 foreach ($ordini as $elemento) {

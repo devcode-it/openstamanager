@@ -13,13 +13,13 @@ if ('entrata' == $dir) {
     $titolo = tr('Registro iva vendita dal _START_ al _END_ _SEZIONALE_', [
         '_START_' => Translator::dateToLocale($date_start),
         '_END_' => Translator::dateToLocale($date_end),
-        '_SEZIONALE_' => (!empty($sezionale)) ? ' - '.$sezionale: '' ,
+        '_SEZIONALE_' => (!empty($sezionale)) ? ' - '.$sezionale : '',
     ], ['upper' => true]);
 } elseif ('uscita' == $dir) {
     $titolo = tr('Registro iva acquisto dal _START_ al _END_ _SEZIONALE_', [
         '_START_' => Translator::dateToLocale($date_start),
         '_END_' => Translator::dateToLocale($date_end),
-        '_SEZIONALE_' => (!empty($sezionale)) ? ' - '.$sezionale: '' ,
+        '_SEZIONALE_' => (!empty($sezionale)) ? ' - '.$sezionale : '',
     ], ['upper' => true]);
 }
 

@@ -20,7 +20,6 @@ echo '
 echo '
     <button type="button" class="btn btn-primary col-md-5" data-toggle="modal" data-title="'.tr('Stampa registro').'..." data-href="'.ROOTDIR.'/modules/stampe_contabili/stampe_contabili.php?dir=entrata&nome_stampa=Registro IVA&id_record='.$id_record.'" ><i class="fa fa-print fa-2x"></i><br>'.tr('Stampa registro').'<br>'.tr('IVA vendite').'</button>';
 
-
 echo '
     <button type="button" class="btn btn-primary col-md-5 col-md-push-2" data-toggle="modal" data-title="'.tr('Stampa registro').'..." data-href="'.ROOTDIR.'/modules/stampe_contabili/stampe_contabili.php?dir=uscita&nome_stampa=Registro IVA&id_record='.$id_record.'" ><i class="fa fa-print fa-2x"></i><br>'.tr('Stampa registro').'<br>'.tr('IVA acquisti').'</button>';
 

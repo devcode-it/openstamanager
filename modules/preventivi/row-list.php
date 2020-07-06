@@ -31,7 +31,7 @@ foreach ($righe as $riga) {
     // Descrizione
     $descrizione = nl2br($riga->descrizione);
     if ($riga->isArticolo()) {
-        $descrizione = Modules::link('Articoli', $riga->idarticolo, $riga->articolo->codice.' - '.$descrizione);
+        $descrizione = Modules::link('Articoli', $riga->idarticolo, $riga->codice.' - '.$descrizione);
     }
     echo '
             <td>

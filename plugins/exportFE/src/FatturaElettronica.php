@@ -1155,7 +1155,7 @@ class FatturaElettronica
 
                 $codice_articolo = [
                     'CodiceTipo' => 'COD',
-                    'CodiceValore' => $riga->articolo->codice,
+                    'CodiceValore' => $riga->codice,
                 ];
 
                 $dettaglio['CodiceArticolo'] = $codice_articolo;

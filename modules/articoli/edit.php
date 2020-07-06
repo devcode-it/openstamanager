@@ -42,11 +42,13 @@ $_SESSION['superselect']['id_categoria'] = $record['id_categoria'];
                     </div>
                 </div>
 			</div>
+
 			<div class="row">
 				<div class="col-md-12">
 					{[ "type": "textarea", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$" ]}
 				</div>
 			</div>
+
             <div class="row">
                 <div class="col-md-4">
 					{[ "type": "checkbox", "label": "<?php echo tr('Abilita serial number'); ?>", "name": "abilita_serial", "value": "$abilita_serial$", "help": "<?php echo tr('Abilita serial number in fase di aggiunta articolo in fattura o ddt'); ?>", "placeholder": "<?php echo tr('Serial number'); ?>", "extra": "<?php echo ($record['serial'] > 0) ? 'readonly' : ''; ?>" ]}
@@ -129,7 +131,7 @@ $_SESSION['superselect']['id_categoria'] = $record['id_categoria'];
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-md-6">
-                            {[ "type": "number", "label": "<?php echo tr('Prezzo di acquisto'); ?>", "name": "prezzo_acquisto", "value": "$prezzo_acquisto$", "icon-after": "<?php echo currency(); ?>" ]}
+                            {[ "type": "number", "label": "<?php echo tr('Prezzo di acquisto'); ?>", "name": "prezzo_acquisto", "value": "$prezzo_acquisto$", "icon-after": "<?php echo currency(); ?>", "help": "<?php echo tr('Prezzo di acquisto previsto per i fornitori i cui dati non sono stati inseriti nel plugin Fornitori'); ?>." ]}
                         </div>
 
                         <div class="col-md-6">
@@ -139,7 +141,7 @@ $_SESSION['superselect']['id_categoria'] = $record['id_categoria'];
 
                     <div class="row">
                         <div class="col-md-12">
-                            {[ "type": "select", "label": "<?php echo tr('Fornitore predefinito'); ?>", "name": "id_fornitore", "value": "$id_fornitore$", "ajax-source": "fornitori", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Fornitore&readonly_tipo=1" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Fornitore predefinito'); ?>", "name": "id_fornitore", "value": "$id_fornitore$", "ajax-source": "fornitori", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Fornitore&readonly_tipo=1", "help": "<?php echo tr('Fornitore predefinito, utilizzato dal gestionale per funzioni più avanzate della gestione magazzino'); ?>." ]}
                         </div>
                     </div>
 

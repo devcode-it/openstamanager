@@ -76,6 +76,7 @@ return [
     'in_tipiintervento',
     'in_vociservizio',
     'mg_articoli',
+    'mg_fornitore_articolo',
     'mg_categorie',
     'mg_causali_movimenti',
     'mg_listini',

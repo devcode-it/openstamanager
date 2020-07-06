@@ -44,7 +44,7 @@ if (!$righe->isEmpty()) {
         if ($mancanti > 0) {
             $extra = 'class="warning"';
         }
-        $descrizione = (!empty($riga->articolo) ? $riga->articolo->codice.' - ' : '').$riga['descrizione'];
+        $descrizione = (!empty($riga->articolo) ? $riga->codice.' - ' : '').$riga['descrizione'];
 
         echo '
         <tr '.$extra.'>

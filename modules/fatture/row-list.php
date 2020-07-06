@@ -80,7 +80,7 @@ foreach ($righe as $riga) {
 
     if ($riga->isArticolo()) {
         echo '
-            '.Modules::link('Articoli', $riga->idarticolo, $riga->articolo->codice.' - '.$riga->descrizione);
+            '.Modules::link('Articoli', $riga->idarticolo, $riga->codice.' - '.$riga->descrizione);
     } else {
         echo nl2br($riga->descrizione);
     }

@@ -39,4 +39,5 @@ return [
     'plugins/pianificazione_interventi' => 'Plugins\PianificazioneInterventi',
     'plugins/pianificazione_fatturazione' => 'Plugins\PianificazioneFatturazione',
     'plugins/statistiche_articoli' => 'Plugins\StatisticheArticoli',
+    'plugins/fornitori_articolo' => 'Plugins\FornitoriArticolo',
 ];

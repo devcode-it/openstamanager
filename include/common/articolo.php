@@ -6,6 +6,8 @@ $_SESSION['superselect']['dir'] = $options['dir'];
 $_SESSION['superselect']['idanagrafica'] = $options['idanagrafica'];
 $_SESSION['superselect']['idarticolo'] = $options['idarticolo'];
 
+$qta_minima = 0;
+
 // Articolo
 if (empty($result['idarticolo'])) {
     echo '
@@ -13,15 +15,29 @@ if (empty($result['idarticolo'])) {
         <div class="col-md-12">
             {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "required": 1, "value": "'.$result['idarticolo'].'", "ajax-source": "articoli", "icon-after": "add|'.Modules::get('Articoli')['id'].'" ]}
         </div>
-    </div>';
+    </div>
+
+    <input type="hidden" name="id_dettaglio_fornitore" id="id_dettaglio_fornitore" value="">';
 } else {
     $database = database();
-    $articolo = $database->fetchArray('SELECT id, codice, descrizione FROM mg_articoli WHERE id = '.prepare($result['idarticolo']))[0];
+    $articolo = $database->fetchOne('SELECT mg_articoli.id,
+        mg_fornitore_articolo.id AS id_dettaglio_fornitore,
+        IFNULL(mg_fornitore_articolo.codice_fornitore, mg_articoli.codice) AS codice,
+        IFNULL(mg_fornitore_articolo.descrizione, mg_articoli.descrizione) AS descrizione,
+        IFNULL(mg_fornitore_articolo.qta_minima, 0) AS qta_minima
+    FROM mg_articoli
+        LEFT JOIN mg_fornitore_articolo ON mg_fornitore_articolo.id_articolo = mg_articoli.id AND mg_fornitore_articolo.id = '.prepare($result['id_dettaglio_fornitore']).'
+    WHERE mg_articoli.id = '.prepare($result['idarticolo']));
+
+    $qta_minima = $articolo['qta_minima'];
 
     echo '
     <p><strong>'.tr('Articolo').':</strong> '.$articolo['codice'].' - '.$articolo['descrizione'].'.</p>
     <input type="hidden" name="idarticolo" id="idarticolo" value="'.$articolo['id'].'">';
 }
+
+echo '
+    <input type="hidden" name="qta_minima" id="qta_minima" value="'.$qta_minima.'">';
 
 // Selezione impianto per gli Interventi
 if ($module['name'] == 'Interventi') {
@@ -68,7 +84,7 @@ if ($module['name'] != 'Contratti' && $module['name'] != 'Preventivi') {
 echo '
 <script>
 $(document).ready(function () {
-    $("#idarticolo").on("change", function(){
+    $("#idarticolo").on("change", function() {
         // Autoimpostazione dei valori relativi
         if ($(this).val()) {
             session_set("superselect,idarticolo", $(this).val(), 0);
@@ -77,25 +93,29 @@ $(document).ready(function () {
 
             $data = $(this).selectData();
 
-            var id_conto = $data.idconto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').';
-
             $("#prezzo_unitario").val($data.prezzo_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').');
-
             $("#costo_unitario").val($data.prezzo_acquisto);
-
             $("#descrizione_riga").val($data.descrizione);';
 
 if ($options['dir'] == 'entrata') {
     echo '
-            if( $data.idiva_vendita ){
+            if($data.idiva_vendita) {
                 $("#idiva").selectSetNew($data.idiva_vendita, $data.iva_vendita);
             }';
+} else {
+    echo '
+            $("#id_dettaglio_fornitore").val($data.id_dettaglio_fornitore);
+            $("#qta_minima").val($data.qta_minima);
+            aggiorna_qta_minima();';
 }
 
 echo '
+
+            var id_conto = $data.idconto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').';
             if(id_conto) {
                 $("#idconto").selectSetNew(id_conto, $data.idconto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').'_title);
             }
+
             $("#um").selectSetNew($data.um, $data.um);
         }';
 
@@ -117,6 +137,41 @@ if ($module['name'] != 'Contratti' && $module['name'] != 'Preventivi') {
 }
 
 echo '
-    });
-});
+    });';
+
+if ($options['dir'] == 'uscita') {
+    echo '
+
+    aggiorna_qta_minima();
+    $("#qta").keyup(aggiorna_qta_minima);';
+}
+
+echo '
+});';
+
+if ($options['dir'] == 'uscita') {
+    echo '
+// Funzione per l\'aggiornamento in tempo reale del guadagno
+function aggiorna_qta_minima() {
+    var qta_minima = parseFloat($("#qta_minima").val());
+    var qta = $("#qta").val().toEnglish();
+
+    if (qta_minima == 0) {
+        return;
+    }
+
+    var parent = $("#qta").closest("div").parent();
+    var div = parent.find("div[id*=\"errors\"]");
+
+    div.html("<small>'.tr('Quantità minima').': " + qta_minima.toLocale() + "</small>");
+    if (qta < qta_minima) {
+        parent.addClass("has-error");
+        div.addClass("text-danger").removeClass("text-success");
+    } else {
+        parent.removeClass("has-error");
+        div.removeClass("text-danger").addClass("text-success");
+    }
+}';
+}
+echo '
 </script>';

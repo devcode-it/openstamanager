@@ -162,7 +162,7 @@ if (!$righe->isEmpty()) {
         if ($riga->isArticolo()) {
             // Codice articolo
             $text = tr('COD. _COD_', [
-                '_COD_' => $riga->articolo->codice,
+                '_COD_' => $riga->codice,
             ]);
             echo '
                 <br><small>'.$text.'</small>';

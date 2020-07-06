@@ -55,6 +55,8 @@ if ($options['dir'] == 'entrata') {
             var parent = $("#costo_unitario").closest("div").parent();
             var div = parent.find("div[id*=\"errors\"]");
 
+            margine = isNaN(margine) || !isFinite(margine) ? 0: margine; // Fix per magine NaN
+
             div.html("<small>' . tr('Guadagno') . ': " + guadagno.toLocale() + " " + globals.currency + " &nbsp; ' . tr('Margine') . ': " + margine.toLocale() + " %</small>");
             if (guadagno < 0) {
                 parent.addClass("has-error");

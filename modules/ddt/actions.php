@@ -265,13 +265,6 @@ switch (post('op')) {
             $ddt->num_item = $documento->num_item;
             $ddt->idsede_destinazione = $documento->idsede;
 
-                $ddt->id_documento_fe = $documento->id_documento_fe;
-                $ddt->codice_cup = $documento->codice_cup;
-                $ddt->codice_cig = $documento->codice_cig;
-                $ddt->num_item = $documento->num_item;
-                $ddt->idsede_destinazione = $id_sede;
-            }
-
             $ddt->save();
 
             $id_record = $ddt->id;

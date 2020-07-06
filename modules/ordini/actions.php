@@ -304,12 +304,6 @@ switch (post('op')) {
             $ordine->codice_cig = $documento->codice_cig;
             $ordine->num_item = $documento->num_item;
 
-                $ordine->id_documento_fe = $documento->id_documento_fe;
-                $ordine->codice_cup = $documento->codice_cup;
-                $ordine->codice_cig = $documento->codice_cig;
-                $ordine->num_item = $documento->num_item;
-            }
-
             $ordine->save();
 
             $id_record = $ordine->id;

@@ -5,6 +5,7 @@ include_once __DIR__.'/../../../core.php';
 switch ($resource) {
     case 'articoli':
         $sedi_non_impostate = !isset($superselect['idsede_partenza']) && !isset($superselect['idsede_destinazione']);
+        $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
         $query = 'SELECT
             mg_articoli.id,
@@ -12,6 +13,7 @@ switch ($resource) {
             IFNULL(mg_fornitore_articolo.codice_fornitore, mg_articoli.codice) AS codice,
             IFNULL(mg_fornitore_articolo.descrizione, mg_articoli.descrizione) AS descrizione,
             IFNULL(mg_fornitore_articolo.prezzo_acquisto, mg_articoli.prezzo_acquisto) AS prezzo_acquisto,
+            mg_articoli.'.($prezzi_ivati ? 'prezzo_vendita_ivato' : 'prezzo_vendita').' AS prezzo_vendita,
             IFNULL(mg_fornitore_articolo.qta_minima, 0) AS qta_minima,
             mg_fornitore_articolo.id AS id_dettaglio_fornitore,
             round(mg_articoli.qta,'.setting('Cifre decimali per quantità').') AS qta,
@@ -20,7 +22,6 @@ switch ($resource) {
             mg_articoli.idiva_vendita,
             mg_articoli.idconto_vendita,
             mg_articoli.idconto_acquisto,
-            mg_articoli.prezzo_vendita,
             categoria.`nome` AS categoria,
             sottocategoria.`nome` AS sottocategoria,
             co_iva.descrizione AS iva_vendita,

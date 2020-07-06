@@ -97,3 +97,7 @@ ALTER TABLE `in_righe_interventi` ADD `id_dettaglio_fornitore` int(11) NULL,
   ADD FOREIGN KEY (`id_dettaglio_fornitore`) REFERENCES `mg_fornitore_articolo`(`id`) ON DELETE SET NULL;
 ALTER TABLE `co_righe_promemoria` ADD `id_dettaglio_fornitore` int(11) NULL,
   ADD FOREIGN KEY (`id_dettaglio_fornitore`) REFERENCES `mg_fornitore_articolo`(`id`) ON DELETE SET NULL;
+
+-- Aggiunta campo prezzo_vendita_ivato per gli Articoli
+ALTER TABLE `mg_articoli` ADD `prezzo_vendita_ivato` decimal(15,6) NOT NULL AFTER `prezzo_vendita`;
+UPDATE `mg_articoli` SET `prezzo_vendita_ivato` = `prezzo_vendita`;

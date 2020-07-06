@@ -6,6 +6,7 @@ use Common\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules;
 use Modules\Interventi\Components\Articolo as ArticoloIntervento;
+use Modules\Iva\Aliquota;
 use Plugins\FornitoriArticolo\Dettaglio;
 use Traits\RecordTrait;
 use Uploads;
@@ -39,9 +40,9 @@ class Articolo extends Model
      * Funzione per inserire i movimenti di magazzino.
      *
      * @param $qta
-     * @param null  $descrizone
-     * @param null  $data
-     * @param bool  $manuale
+     * @param null $descrizone
+     * @param null $data
+     * @param bool $manuale
      * @param array $array
      *
      * @return bool
@@ -63,9 +64,9 @@ class Articolo extends Model
      * Funzione per registrare i movimenti di magazzino.
      *
      * @param $qta
-     * @param null  $descrizone
-     * @param null  $data
-     * @param bool  $manuale
+     * @param null $descrizone
+     * @param null $data
+     * @param bool $manuale
      * @param array $array
      *
      * @return bool
@@ -94,6 +95,22 @@ class Articolo extends Model
         return $id;
     }
 
+    public function setPrezzoVendita($prezzo_vendita, $id_iva)
+    {
+        $this->idiva_vendita = $id_iva;
+
+        // Calcolo prezzo di vendita ivato e non ivato
+        $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
+        $percentuale_aliquota = floatval(Aliquota::find($id_iva)->percentuale);
+        if ($prezzi_ivati) {
+            $this->prezzo_vendita_ivato = $prezzo_vendita;
+            $this->prezzo_vendita = $prezzo_vendita / (1 + $percentuale_aliquota / 100);
+        } else {
+            $this->prezzo_vendita = $prezzo_vendita;
+            $this->prezzo_vendita_ivato = $prezzo_vendita * (1 + $percentuale_aliquota / 100);
+        }
+    }
+
     // Attributi Eloquent
 
     public function getImmagineUploadAttribute()
@@ -114,11 +131,11 @@ class Articolo extends Model
         $module = Modules::get($this->module);
         $fileinfo = Uploads::fileInfo($this->immagine);
 
-        $directory = '/'.$module->upload_directory.'/';
-        $image = $directory.$this->immagine;
-        $image_thumbnail = $directory.$fileinfo['filename'].'_thumb600.'.$fileinfo['extension'];
+        $directory = '/' . $module->upload_directory . '/';
+        $image = $directory . $this->immagine;
+        $image_thumbnail = $directory . $fileinfo['filename'] . '_thumb600.' . $fileinfo['extension'];
 
-        $url = file_exists(DOCROOT.$image_thumbnail) ? ROOTDIR.$image_thumbnail : ROOTDIR.$image;
+        $url = file_exists(DOCROOT . $image_thumbnail) ? ROOTDIR . $image_thumbnail : ROOTDIR . $image;
 
         return $url;
     }

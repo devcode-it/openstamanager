@@ -253,7 +253,7 @@ switch (post('op')) {
 
         // Creazione del ddt al volo
         if (post('create_document') == 'on') {
-            $tipo = Tipo::where('dir', $dir)->first();
+            $tipo = Tipo::where('dir', $documento->direzione)->first();
 
             $ddt = DDT::build($documento->anagrafica, $tipo, post('data'));
             $ddt->idpagamento = $documento->idpagamento;
@@ -263,6 +263,13 @@ switch (post('op')) {
             $ddt->codice_cig = $documento->codice_cig;
             $ddt->num_item = $documento->num_item;
             $ddt->idsede_destinazione = $documento->idsede;
+
+                $ddt->id_documento_fe = $documento->id_documento_fe;
+                $ddt->codice_cup = $documento->codice_cup;
+                $ddt->codice_cig = $documento->codice_cig;
+                $ddt->num_item = $documento->num_item;
+                $ddt->idsede_destinazione = $id_sede;
+            }
 
             $ddt->save();
 
@@ -274,7 +281,7 @@ switch (post('op')) {
             if (post('evadere')[$riga->id] == 'on' and !empty(post('qta_da_evadere')[$riga->id])) {
                 $qta = post('qta_da_evadere')[$riga->id];
 
-                $copia = $riga->copiaIn($ddt, $qta);
+                $copia = $riga->copiaIn($ddt, $qta, $is_evasione);
 
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
@@ -299,8 +306,8 @@ switch (post('op')) {
 
     // Scollegamento riga generica da ddt
     case 'delete_riga':
-        $id_riga = post('idriga');
-        $type = post('type');
+        $id_riga = post('riga_id');
+        $type = post('riga_type');
 
         $riga = $ddt->getRiga($type, $id_riga);
 

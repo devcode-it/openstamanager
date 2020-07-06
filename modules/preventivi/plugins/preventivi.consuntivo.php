@@ -176,32 +176,32 @@ if (!empty($interventi)) {
     // Totali
     echo '
     <tr>
-        <td align="right">
+        <td class="text-right">
             <b><big>'.tr('Totale').'</big></b>
         </td>';
 
     echo '
-        <td align="right">
+        <td class="text-right">
             <big><b>'.numberFormat($totale_ore).'</b></big>
         </td>';
 
     echo '
-        <td align="right">
+        <td class="text-right">
             <big><b>'.numberFormat($totale_km).'</b></big>
         </td>';
 
     echo '
-        <td align="right">
+        <td class="text-right">
             <big><b>'.moneyFormat($totale_costo).'</b></big>
         </td>';
 
     echo '
-        <td align="right">
+        <td class="text-right">
             <big><b>'.moneyFormat($totale_addebito).'</b></big>
         </td>';
 
     echo '
-        <td align="right">
+        <td class="text-right">
             <big><b>'.moneyFormat($totale).'</b></big>
         </td>
     </tr>';
@@ -223,11 +223,11 @@ if (!empty($interventi)) {
     <tr>
         <td colspan="3"></td>
 
-        <td align="right" colspan="2" style="background:'.$stato->colore.';">
+        <td class="text-right" colspan="2" style="background:'.$stato->colore.';">
             <big><b>'.$stato->descrizione.':</b></big>
         </td>
 
-        <td align="right">
+        <td class="text-right">
             <big><b>'.moneyFormat($totale_stato).'</b></big>
         </td>
     </tr>';

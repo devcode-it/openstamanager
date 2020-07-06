@@ -246,8 +246,8 @@ switch (post('op')) {
 
     // Eliminazione riga
     case 'delete_riga':
-        $id_riga = post('idriga');
-        $type = post('type');
+        $id_riga = post('riga_id');
+        $type = post('riga_type');
 
         $riga = $preventivo->getRiga($type, $id_riga);
 

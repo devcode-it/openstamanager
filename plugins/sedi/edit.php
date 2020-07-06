@@ -108,7 +108,7 @@ if (!empty($google)) {
         echo '
 			<div  class="btn-group col-md-2"  >
 				<label>&nbsp;</label><br>
-				<a class="btn btn-info" title="'.tr('Mostra la sede su Google Maps').'"  onclick="window.open(\'https://maps.google.com/maps/search/\'+encodeURI( $(\'#indirizzo_\').val() )+\', \'+encodeURI( $(\'#citta_\').val() ) );">&nbsp;<i class="fa fa-map-marker">&nbsp;</i></a>
+				<a class="btn btn-info" title="'.tr('Mostra la sede su Google Maps').'" onclick="window.open(\'https://maps.google.com/maps/search/\'+encodeURI( $(\'#indirizzo_\').val() )+\', \'+encodeURI( $(\'#citta_\').val() ) );">&nbsp;<i class="fa fa-map-marker">&nbsp;</i></a>
 			';
 
         echo '

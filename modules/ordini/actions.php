@@ -222,9 +222,9 @@ switch (post('op')) {
 
     // Scollegamento riga generica da ordine
     case 'delete_riga':
-        $id_riga = post('idriga');
-        $type = post('type');
-$riga = $ordine->getRiga($type, $id_riga);
+        $id_riga = post('riga_id');
+        $type = post('riga_type');
+        $riga = $ordine->getRiga($type, $id_riga);
 
         if (!empty($riga)) {
             try {
@@ -292,7 +292,7 @@ $riga = $ordine->getRiga($type, $id_riga);
 
         // Creazione dell' ordine al volo
         if (post('create_document') == 'on') {
-            $tipo = Tipo::where('dir', $dir)->first();
+            $tipo = Tipo::where('dir', $documento->direzione)->first();
 
             $ordine = Ordine::build($documento->anagrafica, $tipo, post('data'));
             $ordine->idpagamento = $documento->idpagamento;
@@ -302,6 +302,12 @@ $riga = $ordine->getRiga($type, $id_riga);
             $ordine->codice_cup = $documento->codice_cup;
             $ordine->codice_cig = $documento->codice_cig;
             $ordine->num_item = $documento->num_item;
+
+                $ordine->id_documento_fe = $documento->id_documento_fe;
+                $ordine->codice_cup = $documento->codice_cup;
+                $ordine->codice_cig = $documento->codice_cig;
+                $ordine->num_item = $documento->num_item;
+            }
 
             $ordine->save();
 

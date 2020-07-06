@@ -28,7 +28,7 @@ while (!empty($id_contratto_precedente)) {
                     '_NUM_' => $rs[0]['numero'],
                 ]).'<br><small class="text-muted">'.$rs[0]['nome'].'</small>').'
             </td>
-            <td align="right">'.moneyFormat($rs[0]['budget']).'</td>
+            <td class="text-right">'.moneyFormat($rs[0]['budget']).'</td>
             <td align="center">'.Translator::dateToLocale($rs[0]['data_accettazione']).'</td>
             <td align="center">'.Translator::dateToLocale($rs[0]['data_conclusione']).'</td>
         </tr>';

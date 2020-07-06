@@ -553,8 +553,8 @@ switch (post('op')) {
 
     // Scollegamento riga generica da documento
     case 'delete_riga':
-        $id_riga = post('idriga');
-        $type = post('type');
+        $id_riga = post('riga_id');
+        $type = post('riga_type');
         $riga = $fattura->getRiga($type, $id_riga);
 
         if (!empty($riga)) {
@@ -592,7 +592,7 @@ switch (post('op')) {
 
         break;
 
-    // Aggiunta di un documento in fattura
+    // Aggiunta di un documento esterno
     case 'add_documento':
         $class = post('class');
         $id_documento = post('id_documento');
@@ -603,9 +603,14 @@ switch (post('op')) {
         }
         $documento = $class::find($id_documento);
 
+        // Individuazione sede
+        $id_sede = ($documento->direzione == 'entrata') ? $documento->idsede_destinazione : $documento->idsede_partenza;
+        $id_sede = $id_sede ?: $documento->idsede;
+        $id_sede = $id_sede ?: 0;
+
         // Creazione della fattura al volo
         if (post('create_document') == 'on') {
-            $descrizione = ($dir == 'entrata') ? 'Fattura immediata di vendita' : 'Fattura immediata di acquisto';
+            $descrizione = ($documento->direzione == 'entrata') ? 'Fattura immediata di vendita' : 'Fattura immediata di acquisto';
             $tipo = Tipo::where('descrizione', $descrizione)->first();
 
             $fattura = Fattura::build($documento->anagrafica, $tipo, post('data'), post('id_segment'));
@@ -628,7 +633,7 @@ switch (post('op')) {
             if (post('evadere')[$riga->id] == 'on') {
                 $qta = post('qta_da_evadere')[$riga->id];
 
-                $copia = $riga->copiaIn($fattura, $qta);
+                $copia = $riga->copiaIn($fattura, $qta, $is_evasione);
                 $copia->id_conto = $id_conto;
 
                 $copia->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
@@ -688,8 +693,6 @@ switch (post('op')) {
 
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
-                    //$copia->movimenta($copia->qta);
-
                     $serials = is_array(post('serial')[$riga->id]) ? post('serial')[$riga->id] : [];
 
                     $copia->serials = $serials;

@@ -21,7 +21,7 @@ echo '
 $righe = $preventivo->getRighe();
 foreach ($righe as $riga) {
     echo '
-        <tr data-id="'.$riga->id.'">';
+        <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'">';
 
     echo '
         <td class="text-center">
@@ -94,15 +94,15 @@ foreach ($righe as $riga) {
     if (empty($record['is_completato'])) {
         echo '
                 <div class="btn-group">
-                    <a class="btn btn-xs btn-warning" onclick="editRow(\''.addslashes(get_class($riga)).'\', '.$riga->id.')">
+                    <a class="btn btn-xs btn-warning" title="'.tr('Modifica riga').'" onclick="modificaRiga(this)">
                         <i class="fa fa-edit"></i>
                     </a>
 
-                    <a class="btn btn-xs btn-danger" onclick="deleteRow(\''.addslashes(get_class($riga)).'\', '.$riga->id.')">
+                    <a class="btn btn-xs btn-danger" title="'.tr('Rimuovi riga').'" onclick="rimuoviRiga(this)">
                         <i class="fa fa-trash"></i>
                     </a>
 
-                    <a class="btn btn-xs btn-default handle" title="Modifica ordine...">
+                    <a class="btn btn-xs btn-default handle" title="'.tr('Modifica ordine delle righe').'">
                         <i class="fa fa-sort"></i>
                     </a>
                 </div>';
@@ -115,24 +115,6 @@ foreach ($righe as $riga) {
 
 echo '
     </tbody>';
-
-echo '
-<script>
-function editRow(type, id){
-    launch_modal("'.tr('Modifica riga').'", "'.$module->fileurl('row-edit.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&idriga=" + id + "&type=" + encodeURIComponent(type));
-}
-
-function deleteRow(type, id){
-    if(confirm("'.tr('Rimuovere questa riga dal documento?').'")){
-        redirect("", {
-            backto: "record-edit",
-            op: "delete_riga",
-            idriga: id,
-            type: type,
-        }, "post");
-    }
-}
-</script>';
 
 // Calcoli
 $imponibile = abs($preventivo->imponibile);
@@ -172,7 +154,7 @@ if (!empty($sconto)) {
         <td colspan="5" class="text-right">
             <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
         </td>
-        <td align="right">
+        <td class="text-right">
             '.moneyFormat($totale_imponibile, 2).'
         </td>
         <td></td>
@@ -213,7 +195,7 @@ echo '
     <td colspan="5" class="text-right">
         '.tr('Costi').':
     </td>
-    <td align="right">
+    <td class="text-right">
         '.moneyFormat($preventivo->spesa).'
     </td>
     <td></td>
@@ -225,7 +207,7 @@ echo '
             '_PRC_' => numberFormat($preventivo->margine_percentuale),
     ]).':
     </td>
-    <td align="right" class="'.$margine_class.'">
+    <td class="text-right" class="'.$margine_class.'">
         <i class="fa fa-'.$margine_icon.' text-'.$margine_class.'"></i> '.moneyFormat($preventivo->margine).'
     </td>
     <td></td>
@@ -236,6 +218,48 @@ echo '
 
 echo '
 <script>
+
+function modificaRiga(button) {
+    var riga = $(button).closest("tr");
+    var id = riga.data("id");
+    var type = riga.data("type");
+
+    openModal("'.tr('Modifica riga').'", "'.$module->fileurl('row-edit.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&riga_id=" + id + "&riga_type=" + type)
+}
+
+function rimuoviRiga(button) {
+    swal({
+        title: "'.tr('Rimuovere questa riga?').'",
+        html: "'.tr('Sei sicuro di volere rimuovere questa riga dal documento?').' '.tr("L'operazione è irreversibile").'.",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonText: "'.tr('Sì').'"
+    }).then(function () {
+        var riga = $(button).closest("tr");
+        var id = riga.data("id");
+        var type = riga.data("type");
+
+        $.ajax({
+            url: globals.rootdir + "/actions.php",
+            type: "POST",
+            dataType: "json",
+            data: {
+                id_module: globals.id_module,
+                id_record: globals.id_record,
+                op: "delete_riga",
+                riga_type: type,
+                riga_id: id,
+            },
+            success: function (response) {
+                location.reload();
+            },
+            error: function() {
+                location.reload();
+            }
+        });
+    }).catch(swal.noop);
+}
+
 $(document).ready(function(){
 	$(".sortable").each(function() {
         $(this).sortable({

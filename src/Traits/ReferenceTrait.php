@@ -14,6 +14,7 @@ trait ReferenceTrait
     {
         // Informazioni disponibili
         $name = $this->getReferenceName();
+
         $number = $this->getReferenceNumber();
         $date = $this->getReferenceDate();
 

@@ -131,11 +131,11 @@ foreach ($rs as $i => $scadenza) {
                                 {[ "type": "date", "name": "scadenza['.$i.']", "value": "'.$scadenza['scadenza'].'" ]}
                             </td>
 
-                            <td align="right">
+                            <td class="text-right">
                                 {[ "type": "number", "name": "da_pagare['.$i.']", "decimals": 2, "value": "'.Translator::numberToLocale($scadenza['da_pagare'], 2).'", "onchange": "controlloTotale()" ]}
                             </td>
 
-                            <td align="right">
+                            <td class="text-right">
                                 {[ "type": "number", "name": "pagato['.$i.']", "decimals": 2, "value": "'.Translator::numberToLocale($scadenza['pagato']).'"  ]}
                             </td>
 
@@ -149,9 +149,9 @@ echo '
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td align="right"><b>'.tr('Totale').'</b></td>
-                                <td align="right" id="totale_utente">'.Translator::numberToLocale($totale_da_pagare).'</td>
-                                <td align="right"></td>
+                                <td class="text-right"><b>'.tr('Totale').'</b></td>
+                                <td class="text-right" id="totale_utente">'.Translator::numberToLocale($totale_da_pagare).'</td>
+                                <td class="text-right"></td>
                             </tr>
                         </tfoot>';
 
@@ -203,11 +203,11 @@ echo '
                 {[ "type": "date", "name": "scadenza[-id-]" ]}
             </td>
 
-            <td align="right">
+            <td class="text-right">
                 {[ "type": "number", "name": "da_pagare[-id-]", "decimals": 2, "onchange": "controlloTotale()" ]}
             </td>
 
-            <td align="right">
+            <td class="text-right">
                 {[ "type": "number", "name": "pagato[-id-]", "decimals": 2 ]}
             </td>
 

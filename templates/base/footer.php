@@ -16,7 +16,7 @@ return '
         '.tr('Stampato con OpenSTAManager').'
     </td>
 
-    <td align="right" style="width:97mm;">
+    <td class="text-right" style="width:97mm;">
         '.tr('Pagina _PAGE_ di _TOTAL_', [
             '_PAGE_' => '{PAGENO}',
             '_TOTAL_' => '{nb}',

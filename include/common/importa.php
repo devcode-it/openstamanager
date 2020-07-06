@@ -35,7 +35,8 @@ echo '
 
     <input type="hidden" name="id_documento" value="'.$documento->id.'">
     <input type="hidden" name="type" value="'.$options['type'].'">
-    <input type="hidden" name="class" value="'.get_class($documento).'">';
+    <input type="hidden" name="class" value="'.get_class($documento).'">
+    <input type="hidden" name="is_evasione" value="1">';
 
 // Creazione fattura dal documento
 if (!empty($options['create_document'])) {
@@ -263,7 +264,7 @@ foreach ($righe as $i => $r) {
 // Totale
 echo '
             <tr>
-                <td colspan="'.(!empty($options['serials']) ? 4 : 3).'" align="right" class="text-right">
+                <td colspan="'.(!empty($options['serials']) ? 4 : 3).'" class="text-right">
                     <b>'.tr('Totale').':</b>
                 </td>
                 <td class="text-right" colspan="2">

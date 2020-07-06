@@ -61,10 +61,14 @@ switch (post('op')) {
         $qta = post('qta');
 
         // Inserisco l'articolo e avviso se esiste un altro articolo con stesso codice.
-        if ($n = $dbo->fetchNum('SELECT * FROM mg_articoli WHERE codice='.prepare(post('codice')).' AND id != '.prepare($id_record)) > 0) {
+        $numero_codice = Articolo::where([
+            ['codice', $value],
+            ['id', '<>', $id_record],
+        ])->count();
+        if ($numero_codice > 0) {
             flash()->warning(tr('Attenzione: il codice _CODICE_ è già stato utilizzato _N_ volta', [
                 '_CODICE_' => post('codice'),
-                '_N_' => $n,
+                '_N_' => $numero_codice,
             ]));
         }
 

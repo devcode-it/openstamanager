@@ -36,8 +36,8 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
     // Gestione delle operazioni
     else {
         // UPLOAD
-        if (filter('op') == 'link_file' && !empty($_FILES) && !empty($_FILES['blob']['name'])) {
-            $upload = Uploads::upload($_FILES['blob'], [
+        if (filter('op') == 'link_file' && !empty($_FILES) && !empty($_FILES['file']['name'])) {
+            $upload = Uploads::upload($_FILES['file'], [
                 'name' => filter('nome_allegato'),
                 'category' => filter('categoria'),
                 'id_module' => $id_module,
@@ -255,6 +255,26 @@ elseif (post('op') == 'send-email') {
         $mail->delete();
         flash()->error(tr('Errore durante l\'invio email! Verifica i parametri dell\'account SMTP utilizzato.'));
     }
+} elseif (filter('op') == 'visualizza_riferimenti') {
+    include_once DOCROOT.'/include/riferimenti/riferimenti.php';
+} elseif (filter('op') == 'visualizza_righe_riferimenti') {
+    include_once DOCROOT.'/include/riferimenti/righe_riferimenti.php';
+} elseif (filter('op') == 'visualizza_righe_documento') {
+    include_once DOCROOT.'/include/riferimenti/righe_documento.php';
+} elseif (filter('op') == 'salva_riferimento_riga') {
+    $database->insert('co_riferimenti_righe', [
+        'source_type' => filter('source_type'),
+        'source_id' => filter('source_id'),
+        'target_type' => filter('target_type'),
+        'target_id' => filter('target_id'),
+    ]);
+} elseif (filter('op') == 'rimuovi_riferimento_riga') {
+    $database->delete('co_riferimenti_righe', [
+        'source_type' => filter('source_type'),
+        'source_id' => filter('source_id'),
+        'target_type' => filter('target_type'),
+        'target_id' => filter('target_id'),
+    ]);
 }
 
 // Inclusione di eventuale plugin personalizzato

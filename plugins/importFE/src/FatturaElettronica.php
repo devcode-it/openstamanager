@@ -256,7 +256,7 @@ class FatturaElettronica
 
         $sede->indirizzo = $info['sede']['indirizzo'];
         $sede->cap = $info['sede']['cap'];
-        $sede->citta = $info['sede']['comune'];
+        $sede->citta = $info['sede']['citta'];
         if (!empty($info['sede']['provincia'])) {
             $sede->provincia = $info['sede']['provincia'];
         }

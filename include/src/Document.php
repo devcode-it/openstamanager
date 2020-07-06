@@ -172,7 +172,7 @@ abstract class Document extends Model implements ReferenceInterface
 
     /**
      * Metodo richiamato a seguito di modifiche sull'evasione generale delle righe del documento.
-     * Utilizzabile per limpostazione automatica degli stati.
+     * Utilizzabile per l'impostazione automatica degli stati.
      */
     public function triggerEvasione(Description $trigger)
     {

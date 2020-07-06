@@ -16,6 +16,7 @@ switch ($resource) {
             mg_fornitore_articolo.id AS id_dettaglio_fornitore,
             round(mg_articoli.qta,'.setting('Cifre decimali per quantità').') AS qta,
             mg_articoli.um,
+            mg_articoli.servizio,
             mg_articoli.idiva_vendita,
             mg_articoli.idconto_vendita,
             mg_articoli.idconto_acquisto,
@@ -84,6 +85,7 @@ switch ($resource) {
             'descrizione' => 'descrizione',
             'qta_minima' => 'qta_minima',
             'id_dettaglio_fornitore' => 'id_dettaglio_fornitore',
+            'servizio' => 'servizio',
             'qta' => 'qta',
             'um' => 'um',
             'categoria' => 'categoria',
@@ -163,7 +165,7 @@ switch ($resource) {
 
             $results[count($results) - 1]['children'][] = [
                 'id' => $r['id'],
-                'text' => $r['codice'].' - '.$r['descrizione'].' ('.Translator::numberToLocale($qta).(!empty($r['um']) ? ' '.$r['um'] : '').')',
+                'text' => $r['codice'].' - '.$r['descrizione'].' '.(!$r['servizio'] ? '('.Translator::numberToLocale($qta).(!empty($r['um']) ? ' '.$r['um'] : '').')' : ''),
                 'codice' => $r['codice'],
                 'descrizione' => $r['descrizione'],
                 'qta_minima' => $r['qta_minima'],
@@ -179,6 +181,7 @@ switch ($resource) {
                 'idconto_acquisto_title' => $r['idconto_acquisto_title'],
                 'prezzo_acquisto' => $r['prezzo_acquisto'],
                 'prezzo_vendita' => $prezzo_vendita,
+                'disabled' => ($r['qta'] <= 0 && !$superselect['permetti_movimento_a_zero'] && !$r['servizio'] ? true : false),
             ];
         }
 

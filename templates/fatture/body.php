@@ -6,7 +6,7 @@ $v_iva = [];
 $v_totale = [];
 
 // Creazione righe fantasma
-$autofill = new \Util\Autofill(5, 40);
+$autofill = new \Util\Autofill(6, 40);
 $rows_per_page = $fattura_accompagnatoria ? 15 : 20;
 if (!empty($options['last-page-footer'])) {
     $rows_per_page += 7;
@@ -18,6 +18,7 @@ echo "
 <table class='table table-striped table-bordered' id='contents'>
     <thead>
         <tr>
+            <th class='text-center' style='width:5%'>".tr('#', [], ['upper' => true])."</th>
             <th class='text-center' style='width:50%'>".tr('Descrizione', [], ['upper' => true])."</th>
             <th class='text-center' style='width:14%'>".tr('Q.tà', [], ['upper' => true])."</th>
             <th class='text-center' style='width:16%'>".tr('Prezzo unitario', [], ['upper' => true])."</th>
@@ -39,7 +40,13 @@ foreach ($righe as $riga) {
     $v_totale[$r['desc_iva']] = sum($v_totale[$r['desc_iva']], $riga->totale_imponibile);
 
     echo '
-        <tr>
+        <tr>';
+
+    echo'
+        <td class=\'text-center\' >
+            '.($r['order'] + 1).'</td>';
+
+    echo '
             <td>
                 '.nl2br($r['descrizione']);
 

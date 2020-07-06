@@ -18,7 +18,7 @@ if (in_array($id_cliente, $tipi_anagrafica) or in_array($id_fornitore, $tipi_ana
 
     if (in_array($id_cliente, $tipi_anagrafica)) {
         echo '
-        <li><a data-toggle="modal" data-title="'.tr('Aggiungi intervento').'" data-href="add.php?id_module='.Modules::get('Interventi')['id'].'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-wrench"></i>'.tr('Nuovo intervento').'
+        <li><a data-toggle="modal" data-title="'.tr('Aggiungi attività').'" data-href="add.php?id_module='.Modules::get('Interventi')['id'].'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-wrench"></i>'.tr('Nuova attività').'
         </a></li>
 
         <li><a data-toggle="modal" data-title="'.tr('Aggiungi preventivo').'" data-href="add.php?id_module='.Modules::get('Preventivi')['id'].'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-file-text"></i>'.tr('Nuovo preventivo').'

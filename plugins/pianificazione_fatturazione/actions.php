@@ -87,11 +87,6 @@ switch ($operazione) {
         $righe = $pianificazione->getRighe();
         foreach ($righe as $riga) {
             $copia = $riga->copiaIn($fattura, $riga->qta);
-
-            // Aggiornamento movimentazioni
-            if ($copia->isArticolo()) {
-                //$copia->movimenta($copia->qta);
-            }
         }
 
         // Salvataggio fattura nella pianificazione

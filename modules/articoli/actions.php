@@ -42,6 +42,9 @@ switch (post('op')) {
                 'text' => post('descrizione'),
                 'data' => [
                     'descrizione' => post('descrizione'),
+                    'prezzo_acquisto' => post('prezzo_acquisto'),
+                    'prezzo_vendita' => post('prezzo_vendita'),
+                    'idiva_vendita' => post('idiva_vendita'),
                 ],
             ]);
         }

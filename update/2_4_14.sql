@@ -9,7 +9,7 @@ UPDATE `zz_settings` SET `sezione` = 'API' WHERE `zz_settings`.`nome` = 'apilaye
 UPDATE `zz_settings` SET `sezione` = 'API' WHERE `zz_settings`.`nome` = 'Google Maps API key';
 
 -- Abilita la possibilità di ripristinare backup da archivi esterni al gestionale
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `created_at`, `updated_at`, `order`, `help`) VALUES (NULL, 'Permetti il ripristino di backup da file esterni', '1', 'boolean', '0', 'Backup', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, NULL, 'Abilita la possibilità di ripristinare backup da archivi esterni al gestionale.');
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `created_at`, `order`, `help`) VALUES (NULL, 'Permetti il ripristino di backup da file esterni', '1', 'boolean', '0', 'Backup', CURRENT_TIMESTAMP, NULL, 'Abilita la possibilità di ripristinare backup da archivi esterni al gestionale.');
 
 
 UPDATE `zz_settings` SET `help` = 'Esegue automaticamente un backup completo del gestionale al primo accesso della giornata.' WHERE `zz_settings`.`nome` = 'Backup automatico';
@@ -41,7 +41,7 @@ ALTER TABLE `in_righe_interventi` ADD `idimpianto` int(11);
 ALTER TABLE `in_righe_interventi` ADD `old_id` int(11);
 
 -- Agli articoli utilizzati negli interventi che fanno riferimento ad articoli eliminati assegno l'articolo fittizio DELETED
-INSERT INTO `mg_articoli` (`id`, `codice`, `descrizione`, `um`, `abilita_serial`, `immagine`, `note`, `qta`, `threshold_qta`, `ubicazione`, `prezzo_acquisto`, `prezzo_vendita`, `idiva_vendita`, `gg_garanzia`, `peso_lordo`, `volume`, `componente_filename`, `contenuto`, `attivo`, `created_at`, `updated_at`, `id_categoria`, `id_sottocategoria`, `servizio`, `idconto_vendita`, `idconto_acquisto`, `deleted_at`, `barcode`, `id_fornitore`) VALUES (NULL, 'DELETED', 'ARTICOLO RIMOSSO', '', '0', NULL, '', '0', '0', '', '0', '0', '0', '0', '0', '0', '', '', '0', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0, NULL, '1', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `mg_articoli` (`id`, `codice`, `descrizione`, `um`, `abilita_serial`, `immagine`, `note`, `qta`, `threshold_qta`, `ubicazione`, `prezzo_acquisto`, `prezzo_vendita`, `idiva_vendita`, `gg_garanzia`, `peso_lordo`, `volume`, `componente_filename`, `contenuto`, `attivo`, `created_at`, `id_categoria`, `id_sottocategoria`, `servizio`, `idconto_vendita`, `idconto_acquisto`, `deleted_at`, `barcode`, `id_fornitore`) VALUES (NULL, 'DELETED', 'ARTICOLO RIMOSSO', '', '0', NULL, '', '0', '0', '', '0', '0', '0', '0', '0', '0', '', '', '0', CURRENT_TIMESTAMP, 0, NULL, '1', NULL, NULL, NULL, NULL, NULL);
 
 UPDATE `mg_articoli_interventi` SET `idarticolo` = (SELECT `id` FROM `mg_articoli` WHERE `codice` = 'DELETED' )  WHERE `idarticolo` NOT IN (SELECT `id` FROM `mg_articoli`);
 
@@ -164,7 +164,7 @@ ALTER TABLE `co_righe_promemoria` ADD `original_id` int(11), ADD `original_type`
 ALTER TABLE `in_righe_interventi` ADD `original_id` int(11), ADD `original_type` varchar(255);
 
 -- Aggiunta supporto a prezzi ivati
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `created_at`, `updated_at`, `order`, `help`) VALUES (NULL, 'Utilizza prezzi di vendita comprensivi di IVA', '0', 'boolean', '1', 'Fatturazione', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, NULL, 'Abilita la gestione con importi ivati per i prezzi di vendita.');
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `created_at`, `order`, `help`) VALUES (NULL, 'Utilizza prezzi di vendita comprensivi di IVA', '0', 'boolean', '1', 'Fatturazione', CURRENT_TIMESTAMP, NULL, 'Abilita la gestione con importi ivati per i prezzi di vendita.');
 
 -- Fix plugin "Pianificazione fatturazione"
 UPDATE `zz_plugins` SET `options` = 'custom', `script` = '', `directory` = 'pianificazione_fatturazione' WHERE `name` = 'Pianificazione fatturazione';

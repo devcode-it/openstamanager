@@ -65,10 +65,6 @@ class Promemoria extends Document
         $righe = $this->getRighe();
         foreach ($righe as $riga) {
             $copia = $riga->copiaIn($intervento, $riga->qta);
-
-            if ($copia->isArticolo()) {
-                //$copia->movimenta($copia->qta);
-            }
         }
 
         // Copia degli allegati

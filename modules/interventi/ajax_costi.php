@@ -73,7 +73,7 @@ if ($show_prezzi) {
         <td colspan="3" class="text-right">
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
-        <td align="right">
+        <td class="text-right">
             '.moneyFormat($imponibile, 2).'
         </td>
     </tr>';
@@ -85,7 +85,7 @@ if ($show_prezzi) {
         <td colspan="3" class="text-right">
             <b><span class="tip" title="'.tr('Un importo positivo indica uno sconto, mentre uno negativo indica una maggiorazione').'"> <i class="fa fa-question-circle-o"></i> '.tr('Sconto/maggiorazione', [], ['upper' => true]).':</span></b>
         </td>
-        <td align="right">
+        <td class="text-right">
             '.moneyFormat($sconto, 2).'
         </td>
     </tr>';
@@ -96,7 +96,7 @@ if ($show_prezzi) {
         <td colspan="3" class="text-right">
             <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
         </td>
-        <td align="right">
+        <td class="text-right">
             '.moneyFormat($totale_imponibile, 2).'
         </td>
     </tr>';
@@ -108,7 +108,7 @@ if ($show_prezzi) {
         <td colspan="3" class="text-right">
             <b><i class="fa fa-question-circle-o tip" title="'.tr("Il valore dell'IVA totale è esclusivamente indicativo e basato sulle impostazioni dei default del gestionale").'. '.tr("In particolare, l'IVA delle sessioni di lavoro sarà personalizzabile durante la procedura di importazione dell'Attività in Fattura").'."></i> '.tr('IVA', [], ['upper' => true]).':</b>
         </td>
-        <td align="right">
+        <td class="text-right">
             '.moneyFormat($iva, 2).'
         </td>
     </tr>';
@@ -119,7 +119,7 @@ if ($show_prezzi) {
         <td colspan="3" class="text-right">
             <b>'.tr('Totale', [], ['upper' => true]).':</b>
         </td>
-        <td align="right">
+        <td class="text-right">
             '.moneyFormat($totale, 2).'
         </td>
     </tr>';

@@ -20,7 +20,7 @@ if ($bilancio_gia_aperto) {
 
 <?php
 // Livello 1
-$query1 = 'SELECT * FROM `co_pianodeiconti1` ORDER BY id DESC';
+$query1 = 'SELECT * FROM `co_pianodeiconti1` ORDER BY id ASC';
 $primo_livello = $dbo->fetchArray($query1);
 
 foreach ($primo_livello as $conto_primo) {
@@ -142,7 +142,7 @@ foreach ($primo_livello as $conto_primo) {
                         <div id="conto_'.$conto_terzo['id'].'" style="display:none;"></div>
                     </td>
 
-                    <td width="100" align="right" valign="top"  style="'.(!empty($movimenti) ? '' : 'opacity: 0.5;').'">
+                    <td width="100" class="text-right" valign="top"  style="'.(!empty($movimenti) ? '' : 'opacity: 0.5;').'">
                         '.moneyFormat(sum($totale_conto), 2).'
                     </td>
                 </tr>';

@@ -79,7 +79,7 @@ function directory($path)
 /**
  * Copy a file, or recursively copy a folder and its contents.
  *
- * @param string       $source  Source path
+ * @param array|string $source  Source path
  * @param string       $dest    Destination path
  * @param array|string $ignores Paths to ingore
  *

@@ -223,9 +223,9 @@ switch (post('op')) {
 
     // Scollegamento riga generica da ordine
     case 'delete_riga':
-        $id_riga = post('idriga');
-        $type = post('type');
-$riga = $ordine->getRiga($type, $id_riga);
+        $id_riga = post('riga_id');
+        $type = post('riga_type');
+        $riga = $ordine->getRiga($type, $id_riga);
 
         if (!empty($riga)) {
             try {
@@ -279,54 +279,59 @@ $riga = $ordine->getRiga($type, $id_riga);
 
             break;
 
-    // Aggiunta di un preventivo in ordine
+    // Aggiunta di un documento in ordine
     case 'add_preventivo':
-        $preventivo = \Modules\Preventivi\Preventivo::find(post('id_documento'));
+    case 'add_documento':
+        $class = post('class');
+        $id_documento = post('id_documento');
+
+        // Individuazione del documento originale
+        if (!is_subclass_of($class, \Common\Document::class)) {
+            return;
+        }
+        $documento = $class::find($id_documento);
 
         // Creazione dell' ordine al volo
         if (post('create_document') == 'on') {
-            $tipo = Tipo::where('dir', $dir)->first();
+            $tipo = Tipo::where('dir', $documento->direzione)->first();
 
-            $ordine = Ordine::build($preventivo->anagrafica, $tipo, post('data'));
-            $ordine->idpagamento = $preventivo->idpagamento;
-            $ordine->idsede = $preventivo->idsede;
+            $ordine = Ordine::build($documento->anagrafica, $tipo, post('data'));
+            $ordine->idpagamento = $documento->idpagamento;
+            $ordine->idsede = $documento->idsede;
 
-            $ordine->id_documento_fe = $preventivo->id_documento_fe;
-            $ordine->codice_cup = $preventivo->codice_cup;
-            $ordine->codice_cig = $preventivo->codice_cig;
-            $ordine->num_item = $preventivo->num_item;
+            $ordine->id_documento_fe = $documento->id_documento_fe;
+            $ordine->codice_cup = $documento->codice_cup;
+            $ordine->codice_cig = $documento->codice_cig;
+            $ordine->num_item = $documento->num_item;
+
+                $ordine->id_documento_fe = $documento->id_documento_fe;
+                $ordine->codice_cup = $documento->codice_cup;
+                $ordine->codice_cig = $documento->codice_cig;
+                $ordine->num_item = $documento->num_item;
+            }
 
             $ordine->save();
 
             $id_record = $ordine->id;
         }
 
-        $parziale = false;
-        $righe = $preventivo->getRighe();
+        $righe = $documento->getRighe();
         foreach ($righe as $riga) {
             if (post('evadere')[$riga->id] == 'on' and !empty(post('qta_da_evadere')[$riga->id])) {
                 $qta = post('qta_da_evadere')[$riga->id];
 
                 $copia = $riga->copiaIn($ordine, $qta);
-
-                // Aggiornamento seriali dalla riga dell'ordine
-                if ($copia->isArticolo()) {
-                    //$copia->movimenta($copia->qta);
-                }
-
                 $copia->save();
-            }
-
-            if ($riga->qta != $riga->qta_evasa) {
-                $parziale = true;
             }
         }
 
         ricalcola_costiagg_ordine($id_record);
 
-        flash()->info(tr('Preventivo _NUM_ aggiunto!', [
-            '_NUM_' => $preventivo->numero,
-        ]));
+        // Messaggio informativo
+        $message = tr('_DOC_ aggiunto!', [
+            '_DOC_' => $documento->getReference(),
+        ]);
+        flash()->info($message);
 
         break;
 

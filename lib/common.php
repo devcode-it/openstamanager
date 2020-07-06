@@ -102,10 +102,11 @@ function discountInfo(\Common\Components\Row $riga, $mostra_maggiorazione = true
         return null;
     }
 
-    $text = $riga->sconto_unitario > 0 ? tr('sconto _TOT_ _TYPE_') : tr('maggiorazione _TOT_ _TYPE_');
+    $text = $riga->sconto_unitario > 0 ? tr('sconto _TOT_ _TYPE_') : tr('maggiorazione _TOT__TYPE_');
+    $total = !empty($riga->sconto_percentuale) ? $riga->sconto_percentuale : $riga->sconto_unitario;
 
     return replace($text, [
-        '_TOT_' => Translator::numberToLocale(!empty($riga->sconto_percentuale) ? $riga->sconto_percentuale : $riga->sconto_unitario),
+        '_TOT_' => Translator::numberToLocale(abs($total)),
         '_TYPE_' => (!empty($riga->sconto_percentuale) ? '%' : currency()),
     ]);
 }
@@ -114,13 +115,14 @@ function discountInfo(\Common\Components\Row $riga, $mostra_maggiorazione = true
  * Genera i riferimenti ai documenti del gestionale, attraverso l'interfaccia Common\ReferenceInterface.
  *
  * @param $document
+ * @param string $text Formato "Contenuto descrittivo _DOCUMENT_"
  *
  * @return string
  */
-function reference($document)
+function reference($document, $text = null)
 {
     if (!empty($document) && !($document instanceof \Common\ReferenceInterface)) {
-        return;
+        return null;
     }
 
     $extra = '';
@@ -128,14 +130,18 @@ function reference($document)
     $document_id = null;
 
     if (empty($document)) {
-        $description = tr('Documento di riferimento non disponibile');
+        $content = tr('non disponibile');
         $extra = 'class="disabled"';
     } else {
         $module_id = $document->module;
         $document_id = $document->id;
 
-        $description = $document->getReference();
+        $content = $document->getReference();
     }
+
+    $description = tr('Rif. _DOCUMENT_', [
+        '_DOCUMENT_' => strtolower($content),
+    ]);
 
     return Modules::link($module_id, $document_id, $description, $description, $extra);
 }

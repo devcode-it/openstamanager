@@ -400,13 +400,9 @@ if (!empty($elementi)) {
 <div class="alert alert-error">
     '.tr('Eliminando questo documento si potrebbero verificare problemi nelle altre sezioni del gestionale').'.
 </div>';
-} else {
-    ?>
+}
+?>
 
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>
-
-<?php
-}
-?>

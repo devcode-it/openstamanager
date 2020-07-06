@@ -35,22 +35,24 @@ $(document).ready(function () {
     };
 
     // Imposta lo standard per la conversione dei numeri
-    numeral.register('locale', 'current', {
-        delimiters: {
-            thousands: globals.thousands,
-            decimal: globals.decimals,
-        },
-        abbreviations: {
-            thousand: 'k',
-            million: 'm',
-            billion: 'b',
-            trillion: 't'
-        },
-        currency: {
-            symbol: '€'
-        }
-    });
-    numeral.locale('current');
+    if (numeral.locales['current_locale'] === undefined) {
+        numeral.register('locale', 'current_locale', {
+            delimiters: {
+                thousands: globals.thousands,
+                decimal: globals.decimals,
+            },
+            abbreviations: {
+                thousand: 'k',
+                million: 'm',
+                billion: 'b',
+                trillion: 't'
+            },
+            currency: {
+                symbol: '€'
+            }
+        });
+    }
+    numeral.locale('current_locale');
     numeral.defaultFormat('0,0.' + ('0').repeat(globals.cifre_decimali));
 
     // Richiamo alla generazione di Datatables

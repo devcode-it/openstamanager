@@ -364,6 +364,16 @@ class Sessione extends Model
     }
 
     /**
+     * Restituisce lo sconto della riga corrente in euro.
+     *
+     * @return float
+     */
+    public function getScontoAttribute()
+    {
+        return $this->sconto_totale_manodopera + $this->sconto_totale_viaggio;
+    }
+
+    /**
      * Restituisce il margine percentuale relativo all'elemento.
      *
      * @return float

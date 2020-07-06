@@ -54,7 +54,7 @@ La documentazione ufficiale è disponibile all'indirizzo <https://docs.openstama
 
 ## Requisiti
 
-L'installazione del gestionale richiede la presenza di un server web con abilitato il [DBMS MySQL](https://www.mysql.com)  e il linguaggio di programmazione [PHP](http://php.net).
+L'installazione del gestionale richiede la presenza di un server web con abilitato il [DBMS MySQL](https://www.mysql.com)  e il linguaggio di programmazione [PHP](https://php.net).
 
 - PHP >= 5.6
 - MySQL >= 5.6.5
@@ -82,11 +82,11 @@ Per procedere all'installazione è necessario seguire i seguenti punti:
 
 ### Versioni
 
-Per mantenere un elevato grado di trasparenza riguardo al ciclo delle release, seguiamo le linee guida [Semantic Versioning (SemVer)](http://semver.org/) per definire le versioni del progetto.
+Per mantenere un elevato grado di trasparenza riguardo al ciclo delle release, seguiamo le linee guida [Semantic Versioning (SemVer)](https://semver.org/) per definire le versioni del progetto.
 Per vedere tutte le versioni disponibili al download, visitare la [pagina relativa](https://github.com/devcode-it/openstamanager/releases) su GitHub (per versioni precedenti alla 2.3, visitare [SourceForge](https://sourceforge.net/projects/openstamanager/files)).
 
-Nel caso utilizziate il programma per uso commerciale, si consiglia di scaricare le release disponibili nel sito ufficiale del progetto (<http://www.openstamanager.com>), evitando di utilizzare direttamente il codice della repository.
-Se siete inoltre interessati a supporto e assistenza professionali, li potete richiedere nella [sezione dedicata](http://www.openstamanager.com/per-le-aziende/).
+Nel caso utilizziate il programma per uso commerciale, si consiglia di scaricare le release disponibili nel sito ufficiale del progetto (<https://www.openstamanager.com>), evitando di utilizzare direttamente il codice della repository.
+Se siete inoltre interessati a supporto e assistenza professionali, li potete richiedere nella [sezione dedicata](https://www.openstamanager.com/per-le-aziende/).
 
 ### GitHub
 
@@ -117,13 +117,13 @@ In questo modo è possibile ottenere un'ulteriore garanzia sul funzionamento del
 
 La community è una componente importante in un progetto open-source, perché mette in contatto utenti e programmatori tra di loro e permette pertanto l'individuazione di soluzioni innovative e migliori.
 
-Siamo presenti su [Facebook](https://www.facebook.com/openstamanager), e il nostro forum ufficiale è disponibile all'indirizzo <http://www.openstamanager.com/forum>, dove potete segnalare i vostri problemi e soddisfare le vostre curiosità nelle sezioni più adeguate:
+Siamo presenti su [Facebook](https://www.facebook.com/openstamanager), e il nostro forum ufficiale è disponibile all'indirizzo <https://forum.openstamanager.com>, dove potete segnalare i vostri problemi e soddisfare le vostre curiosità nelle sezioni più adeguate:
 
-- [Idee, suggerimenti e consigli](http://www.openstamanager.com/forum/viewforum.php?f=1)
-- [Problemi con la prima installazione](http://www.openstamanager.com/forum/viewforum.php?f=2)
-- [Sicurezza](http://www.openstamanager.com/forum/viewforum.php?f=3)
-- [Altro tipo di assistenza](http://www.openstamanager.com/forum/viewforum.php?f=4)
-- [Tutorial](http://www.openstamanager.com/forum/viewforum.php?f=5)
+- [Idee, suggerimenti e consigli](https://forum.openstamanager.com/viewforum.php?f=1)
+- [Problemi con la prima installazione](https://forum.openstamanager.com/viewforum.php?f=2)
+- [Sicurezza](https://forum.openstamanager.com/viewforum.php?f=3)
+- [Altro tipo di assistenza](https://forum.openstamanager.com/viewforum.php?f=4)
+- [Tutorial](https://forum.openstamanager.com/viewforum.php?f=5)
 
 **Attenzione**: vi ricordiamo che non vi è nessuna garanzia che qualcuno risponda in tempo alle vostre richieste o problemi.
 

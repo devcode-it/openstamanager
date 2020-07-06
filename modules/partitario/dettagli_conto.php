@@ -16,7 +16,7 @@ WHERE co_movimenti.idconto='.prepare($id_conto).' AND
     co_movimenti.data >= '.prepare($_SESSION['period_start']).' AND
     co_movimenti.data <= '.prepare($_SESSION['period_end']).'
 GROUP BY co_movimenti.idmastrino
-ORDER BY co_movimenti.data ASC';
+ORDER BY co_movimenti.descrizione, co_movimenti.data ASC';
 $movimenti = $dbo->fetchArray($query);
 
 if (!empty($movimenti)) {

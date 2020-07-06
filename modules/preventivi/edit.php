@@ -7,6 +7,7 @@ unset($_SESSION['superselect']['idsede_partenza']);
 unset($_SESSION['superselect']['idsede_destinazione']);
 unset($_SESSION['superselect']['idanagrafica']);
 $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
+$_SESSION['superselect']['permetti_movimento_a_zero'] = true;
 
 // Mostro un avviso se ci sono più revisioni del preventivo
 if (count($preventivo->revisioni) > 1) {

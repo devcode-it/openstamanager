@@ -2,6 +2,8 @@
 
 namespace Common\Components;
 
+use Common\RowReference;
+
 trait MorphTrait
 {
     protected $original_model = null;
@@ -20,5 +22,21 @@ trait MorphTrait
         }
 
         return $this->original_model;
+    }
+
+    public function referenceSources()
+    {
+        $class = get_class($this);
+
+        return $this->hasMany(RowReference::class, 'target_id')
+            ->where('target_type', $class);
+    }
+
+    public function referenceTargets()
+    {
+        $class = get_class($this);
+
+        return $this->hasMany(RowReference::class, 'source_id')
+            ->where('source_type', $class);
     }
 }

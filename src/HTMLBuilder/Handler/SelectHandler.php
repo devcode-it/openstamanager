@@ -70,6 +70,8 @@ class SelectHandler implements HandlerInterface
         $values['placeholder'] = !empty($values['placeholder']) ? $values['placeholder'] : tr("Seleziona un'opzione");
         $values['data-placeholder'] = $values['placeholder'];
 
+        $values['data-maximum-selection-length'] = $values['maximum-selection-length'];
+
         unset($values['values']);
 
         $result .= '
@@ -143,7 +145,7 @@ class SelectHandler implements HandlerInterface
             }
 
             $html .= '
-        <option value="'.prepareToField($element['id']).'" '.implode(' ', $attributes).'>'.$element['text'].'</option>';
+        <option value="'.prepareToField($element['id']).'" '.implode(' ', $attributes).($element['disabled'] ? 'disabled' : '').'>'.$element['text'].'</option>';
         }
 
         return $html;

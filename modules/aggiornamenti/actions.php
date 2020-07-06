@@ -11,9 +11,9 @@ switch (filter('op')) {
     case 'check':
         $result = UpdateHook::isAvailable();
 
-        Cache::get('Ultima versione di OpenSTAManager disponibile')->set($result);
+        Cache::get('Ultima versione di OpenSTAManager disponibile')->set($result[0].' ('.$result[1].')');
 
-        echo $result;
+        echo $result[0];
 
         break;
 

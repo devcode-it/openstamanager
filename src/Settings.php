@@ -157,7 +157,7 @@ class Settings
         }
 
         // Lista multipla
-        else if (preg_match("/multiple\[(.+?)\]/", $setting->tipo, $m)) {
+        elseif (preg_match("/multiple\[(.+?)\]/", $setting->tipo, $m)) {
             $values = explode(',', $m[1]);
 
             $list = [];

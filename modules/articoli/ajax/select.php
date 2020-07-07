@@ -14,6 +14,7 @@ switch ($resource) {
             IFNULL(mg_fornitore_articolo.descrizione, mg_articoli.descrizione) AS descrizione,
             IFNULL(mg_fornitore_articolo.prezzo_acquisto, mg_articoli.prezzo_acquisto) AS prezzo_acquisto,
             mg_articoli.'.($prezzi_ivati ? 'prezzo_vendita_ivato' : 'prezzo_vendita').' AS prezzo_vendita,
+            mg_articoli.prezzo_vendita_ivato AS prezzo_vendita_ivato,
             IFNULL(mg_fornitore_articolo.qta_minima, 0) AS qta_minima,
             mg_fornitore_articolo.id AS id_dettaglio_fornitore,
             round(mg_articoli.qta,'.setting('Cifre decimali per quantità').') AS qta,
@@ -99,6 +100,7 @@ switch ($resource) {
             'idconto_acquisto_title' => 'idconto_acquisto_title',
             'prezzo_acquisto' => 'prezzo_acquisto',
             'prezzo_vendita' => 'prezzo_vendita',
+            'prezzo_vendita_ivato' => 'prezzo_vendita_ivato',
             'barcode' => 'barcode',
         ];
 
@@ -182,6 +184,7 @@ switch ($resource) {
                 'idconto_acquisto_title' => $r['idconto_acquisto_title'],
                 'prezzo_acquisto' => $r['prezzo_acquisto'],
                 'prezzo_vendita' => $prezzo_vendita,
+                'prezzo_vendita_ivato' => $r['prezzo_vendita_ivato'],
                 'disabled' => ($r['qta'] <= 0 && !$superselect['permetti_movimento_a_zero'] && !$r['servizio'] ? true : false),
             ];
         }

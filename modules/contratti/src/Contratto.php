@@ -98,6 +98,21 @@ class Contratto extends Document
         }
     }
 
+    public function setTipoValiditaAttribute($value)
+    {
+        $this->attributes['tipo_validita'] = $value == 'manual' ? null : $value;
+    }
+
+    /**
+     * Controlla se la data di conclusione del documento deve essere calcolata in modo automatico.
+     *
+     * @return bool
+     */
+    public function isDataConclusioneAutomatica()
+    {
+        return !empty($this->validita) && !empty($this->tipo_validita) && !empty($this->data_accettazione);
+    }
+
     /**
      * Restituisce il nome del modulo a cui l'oggetto è collegato.
      *
@@ -166,7 +181,7 @@ class Contratto extends Document
     public function fixDataConclusione()
     {
         // Calcolo della data di conclusione in base alla validità
-        if (!empty($this->validita) && !empty($this->data_accettazione)) {
+        if ($this->isDataConclusioneAutomatica()) {
             $intervallo = CarbonInterval::make($this->validita.' '.$this->tipo_validita);
             $this->data_conclusione = Carbon::make($this->data_accettazione)->add($intervallo);
         }

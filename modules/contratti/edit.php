@@ -36,7 +36,7 @@ $_SESSION['superselect']['permetti_movimento_a_zero'] = true;
                 </div>
 
                 <div class="col-md-2">
-                    {[ "type": "date", "label": "<?php echo tr('Data conclusione'); ?>", "name": "data_conclusione", "value": "$data_conclusione$", "disabled": "<?php echo !empty($record['validita']) ? '1", "help": "'.tr('La data di conclusione è calcolata in automatico in base al valore del campo Validità') : 0; ?>" ]}
+                    {[ "type": "date", "label": "<?php echo tr('Data conclusione'); ?>", "name": "data_conclusione", "value": "$data_conclusione$", "disabled": "<?php echo $contratto->isDataConclusioneAutomatica() ? '1", "help": "'.tr('La Data di conclusione è calcolata in automatico in base al valore del campo Validità') : '0'; ?>" ]}
                 </div>
 
                 <div class="col-md-2">
@@ -93,7 +93,7 @@ $_SESSION['superselect']['permetti_movimento_a_zero'] = true;
 			<div class="row">
 
 				<div class="col-md-3">
-					{[ "type": "number", "label": "<?php echo tr('Validità offerta'); ?>", "name": "validita", "decimals": "0", "value": "$validita$", "icon-after": "choice|period|<?php echo $record['tipo_validita']; ?>", "help": "<?php echo tr('Il campo validità viene utilizzato solo nelle stampe, non è incluso nel calcolo della fine del contratto. Si può inserire questo valore nel campo Data conclusione'); ?>" ]}
+					{[ "type": "number", "label": "<?php echo tr('Validità offerta'); ?>", "name": "validita", "decimals": "0", "value": "$validita$", "icon-after": "choice|period|<?php echo $record['tipo_validita']; ?>", "help": "<?php echo tr('Il campo Validità viene utilizzato in modo esclusivamente indicativo se impostato secondo l\'opzione manuale, mentre viene utilizzato per il calcolo della Data di conclusione del documento in caso alternativo'); ?>" ]}
 				</div>
 
 				<div class="col-md-3">

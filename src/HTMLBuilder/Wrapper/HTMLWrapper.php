@@ -236,6 +236,10 @@ class HTMLWrapper implements WrapperInterface
         } elseif ($type == 'period') {
             $choices = [
                 [
+                    'id' => 'manual',
+                    'descrizione' => tr('giorno/i (manuale)'),
+                ],
+                [
                     'id' => 'days',
                     'descrizione' => tr('giorno/i'),
                 ],

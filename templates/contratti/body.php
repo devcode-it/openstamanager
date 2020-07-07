@@ -1,5 +1,7 @@
 <?php
 
+use Carbon\CarbonInterval;
+
 include_once __DIR__.'/../../core.php';
 
 // Creazione righe fantasma
@@ -271,26 +273,14 @@ echo '
 
         <td>';
 
-        if (!empty($documento['validita'])) {
-            $periodi = [
-                'd' => [
-                    'singular' => tr('giorno'),
-                    'plural' => tr('giorni'),
-                ],
-                'm' => [
-                    'singular' => tr('mese'),
-                    'plural' => tr('mesi'),
-                ],
-                'y' => [
-                    'singular' => tr('anno'),
-                    'plural' => tr('anni'),
-                ],
-            ];
-            echo'
-            '.tr('_TOT_ _PERIOD_', [
-                    '_TOT_' => $documento['validita'],
-                    '_PERIOD_' => $periodi[$documento['tipo_validita']][$documento['validita'] == 1 ? 'singular' : 'plural'],
-                ]);
+        if (!empty($documento->validita) && !empty($documento->tipo_validita)) {
+            $intervallo = CarbonInterval::make($documento->validita.' '.$documento->tipo_validita);
+
+            echo $intervallo->forHumans();
+        } elseif (!empty($documento->validita)) {
+            echo tr('_TOT_ giorni', [
+                '_TOT_' => $documento->validita,
+            ]);
         } else {
             echo '-';
         }

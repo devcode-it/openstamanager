@@ -1,6 +1,7 @@
 <?php
 
 use Carbon\Carbon;
+use Carbon\CarbonInterval;
 
 /**
  * Classe per gestire le traduzioni del progetto.
@@ -90,8 +91,10 @@ class Translator extends Util\Singleton
                 Carbon::setUtf8(true);
             }
 
+            $reduced = explode('_', $locale)[0];
+            CarbonInterval::setLocale($reduced);
+
             if (empty($result)) {
-                $reduced = explode('_', $locale)[0];
                 $result = setlocale(LC_TIME, $reduced);
             }
 

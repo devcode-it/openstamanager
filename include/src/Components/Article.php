@@ -234,6 +234,10 @@ abstract class Article extends Row
         $partenza = $documento->direzione == 'uscita' ? $documento->idsede_destinazione : $documento->idsede_partenza;
         $arrivo = $documento->direzione == 'uscita' ? $documento->idsede_partenza : $documento->idsede_destinazione;
 
+        // Fix per valori di sede a NULL
+        $partenza = $partenza ?: 0;
+        $arrivo = $arrivo ?: 0;
+
         $this->articolo->movimenta($qta_movimento, $movimento, $data, false, [
             'reference_type' => get_class($documento),
             'reference_id' => $documento->id,

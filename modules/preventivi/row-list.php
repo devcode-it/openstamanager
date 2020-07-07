@@ -124,7 +124,7 @@ $totale = abs($preventivo->totale);
 // Totale imponibile scontato
 echo '
     <tr>
-        <td colspan="4" class="text-right">
+        <td colspan="5" class="text-right">
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">

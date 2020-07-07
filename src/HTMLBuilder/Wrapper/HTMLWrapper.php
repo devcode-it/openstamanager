@@ -95,18 +95,18 @@ class HTMLWrapper implements WrapperInterface
             $result .= '
     <script>
         var container = $("#'.$pseudo_id.'_validation");
-        
+
         container.closest(".input-group").find("input").on("change, blur", function(e){
             var input = $(this);
             var value = input.val();
- 
+
             var container = $("#'.$pseudo_id.'_validation");
             var parent = container.closest(".input-group");
             var message = container.find("span");
             var icon = container.find("i");
-        
+
             icon.attr("class", "fa fa-spinner fa-spin");
-            
+
             $.ajax({
                 url: globals.rootdir + "/actions.php",
                 type: "post",
@@ -119,7 +119,7 @@ class HTMLWrapper implements WrapperInterface
                 },
                 success: function(data) {
                     data = JSON.parse(data);
-                    
+
                     if (value == "") {
                         parent.removeClass("has-success").removeClass("has-error");
                         icon.attr("class", "fa fa-question-circle");
@@ -132,13 +132,13 @@ class HTMLWrapper implements WrapperInterface
                             icon.attr("class", "fa fa-close");
                             parent.addClass("has-error").removeClass("has-success");
                         }
-                        
+
                         message.tooltipster("content", data.message);
                         input.attr("valid", +(data.result));
-                    
+
                         if (data.fields) {
                             var fields = data.fields;
-                
+
                             var form = input.closest("form");
                             Object.keys(fields).forEach(function(element) {
                                 var single_input = form.find("[name=" + element + "]");
@@ -236,17 +236,17 @@ class HTMLWrapper implements WrapperInterface
         } elseif ($type == 'period') {
             $choices = [
                 [
-                    'id' => 'd',
-                    'descrizione' => tr('giorno/i')
+                    'id' => 'days',
+                    'descrizione' => tr('giorno/i'),
                 ],
                 [
-                    'id' => 'm',
-                    'descrizione' => tr('mese/i')
+                    'id' => 'months',
+                    'descrizione' => tr('mese/i'),
                 ],
                 [
-                    'id' => 'y',
-                    'descrizione' => tr('anno/i')
-                ]
+                    'id' => 'years',
+                    'descrizione' => tr('anno/i'),
+                ],
             ];
         }
 

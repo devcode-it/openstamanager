@@ -3,6 +3,7 @@
 namespace Modules\Preventivi;
 
 use Carbon\Carbon;
+use Carbon\CarbonInterval;
 use Common\Components\Description;
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
@@ -164,9 +165,19 @@ class Preventivo extends Document
         $this->budget = $this->totale_imponibile ?: 0;
     }
 
+    public function fixDataConclusione()
+    {
+        // Calcolo della data di conclusione in base alla validità
+        if (!empty($this->validita) && !empty($this->data_accettazione)) {
+            $intervallo = CarbonInterval::make($this->validita.' '.$this->tipo_validita);
+            $this->data_conclusione = Carbon::make($this->data_accettazione)->add($intervallo);
+        }
+    }
+
     public function save(array $options = [])
     {
         $this->fixBudget();
+        $this->fixDataConclusione();
 
         return parent::save($options);
     }

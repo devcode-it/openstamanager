@@ -34,17 +34,6 @@ switch (post('op')) {
 
     case 'update':
         if (isset($id_record)) {
-            // Calcolo della data di conclusione in base alla validità
-            $validita = post('validita');
-            $validita_periodo = post('tipo_validita');
-            $data_accettazione = post('data_accettazione');
-            $data_conclusione = post('data_conclusione');
-            if (!empty($validita) and !empty($data_accettazione)) {
-                $nuova_data = new DateTime($data_accettazione);
-                $nuova_data->add(new DateInterval(sprintf("P%d%s", $validita, strtoupper($validita_periodo))));
-                $data_conclusione = $nuova_data->format('Y-m-d');
-            }
-
             $preventivo->idstato = post('idstato');
             $preventivo->nome = post('nome');
             $preventivo->idanagrafica = post('idanagrafica');
@@ -55,18 +44,23 @@ switch (post('op')) {
             $preventivo->idporto = post('idporto');
             $preventivo->tempi_consegna = post('tempi_consegna');
             $preventivo->numero = post('numero');
+
+            // Informazioni sulle date del documento
             $preventivo->data_bozza = post('data_bozza');
-            $preventivo->data_accettazione = $data_accettazione;
             $preventivo->data_rifiuto = post('data_rifiuto');
-            $preventivo->data_conclusione = $data_conclusione;
+
+            // Dati relativi alla validità del documento
+            $preventivo->validita = post('validita');
+            $preventivo->tipo_validita = post('tipo_validita');
+            $preventivo->data_accettazione = post('data_accettazione');
+            $preventivo->data_conclusione = post('data_conclusione');
+
             $preventivo->esclusioni = post('esclusioni');
             $preventivo->descrizione = post('descrizione');
             $preventivo->id_documento_fe = post('id_documento_fe');
             $preventivo->num_item = post('num_item');
             $preventivo->codice_cig = post('codice_cig');
             $preventivo->codice_cup = post('codice_cup');
-            $preventivo->validita = $validita;
-            $preventivo->validita_periodo = $validita_periodo;
             $preventivo->idtipointervento = post('idtipointervento');
             $preventivo->idiva = post('idiva');
 

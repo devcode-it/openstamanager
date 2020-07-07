@@ -108,6 +108,6 @@ UPDATE mg_prodotti SET mg_prodotti.id_riga_intervento = NULL WHERE mg_prodotti.i
 UPDATE mg_prodotti SET mg_prodotti.id_riga_intervento = (SELECT id FROM in_righe_interventi WHERE mg_prodotti.id_riga_intervento = in_righe_interventi.old_id);
 ALTER TABLE `mg_prodotti` ADD FOREIGN KEY (`id_riga_intervento`) REFERENCES `in_righe_interventi`(`id`) ON DELETE CASCADE;
 
--- Periodi di validità (Contratti e preventivi)
-ALTER TABLE `co_contratti` ADD COLUMN `validita_periodo` ENUM('d','m','y') NOT NULL DEFAULT 'd' AFTER `validita`;
-ALTER TABLE `co_preventivi` ADD COLUMN `validita_periodo` ENUM('d','m','y') NOT NULL DEFAULT 'd' AFTER `validita`;
+-- Periodi di validità (Contratti e Preventivi)
+ALTER TABLE `co_contratti` ADD COLUMN `tipo_validita` ENUM('days', 'months', 'years') NOT NULL DEFAULT 'days' AFTER `validita`;
+ALTER TABLE `co_preventivi` ADD COLUMN `tipo_validita` ENUM('days', 'months', 'years') NOT NULL DEFAULT 'days' AFTER `validita`;

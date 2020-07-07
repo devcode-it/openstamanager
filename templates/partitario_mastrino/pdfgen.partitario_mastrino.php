@@ -141,7 +141,9 @@ elseif ($_GET['lev'] == '2') {
         }
 
         // Mostro il saldo finale del conto di livello 3
-        $body .= "		<tr><td class='br bb padded'></td><td class='br bb padded'>".$rs3[$z]['numero'].' '.$rs3[$z]['descrizione']."</td><td class='br bb padded text-right'>".$dare."</td><td class='bb padded text-right'>".$avere."</td></tr>\n";
+        if (sizeof($rs) > 0) {
+            $body .= "		<tr><td class='br bb padded'></td><td class='br bb padded'>".$rs3[$z]['numero'].' '.$rs3[$z]['descrizione']."</td><td class='br bb padded text-right'>".$dare."</td><td class='bb padded text-right'>".$avere."</td></tr>\n";
+        }
     }
 
     $body .= "		</tbody>

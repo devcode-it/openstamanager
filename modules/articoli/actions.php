@@ -16,10 +16,14 @@ switch (post('op')) {
         }
 
         // Inserisco l'articolo e avviso se esiste un altro articolo con stesso codice.
-        if ($n = $dbo->fetchNum('SELECT * FROM mg_articoli WHERE codice = '.prepare($codice)) > 0) {
+        $numero_codice = Articolo::where([
+            ['codice', $value],
+            ['id', '<>', $id_record],
+        ])->count();
+        if ($numero_codice > 0) {
             flash()->warning(tr('Attenzione: il codice _CODICE_ è già stato utilizzato _N_ volta', [
                 '_CODICE_' => $codice,
-                '_N_' => $n,
+                '_N_' => $numero_codice,
             ]));
         }
 
@@ -29,9 +33,8 @@ switch (post('op')) {
 
         $articolo->barcode = post('barcode');
         $articolo->threshold_qta = post('threshold_qta');
-        $articolo->prezzo_vendita = post('prezzo_vendita');
         $articolo->prezzo_acquisto = post('prezzo_acquisto');
-        $articolo->idiva_vendita = post('idiva_vendita');
+        $articolo->setPrezzoVendita(post('prezzo_vendita'), post('idiva_vendita'));
         $articolo->save();
 
         $id_record = $articolo->id;
@@ -42,6 +45,9 @@ switch (post('op')) {
                 'text' => post('descrizione'),
                 'data' => [
                     'descrizione' => post('descrizione'),
+                    'prezzo_acquisto' => post('prezzo_acquisto'),
+                    'prezzo_vendita' => post('prezzo_vendita'),
+                    'idiva_vendita' => post('idiva_vendita'),
                 ],
             ]);
         }
@@ -55,10 +61,14 @@ switch (post('op')) {
         $qta = post('qta');
 
         // Inserisco l'articolo e avviso se esiste un altro articolo con stesso codice.
-        if ($n = $dbo->fetchNum('SELECT * FROM mg_articoli WHERE codice='.prepare(post('codice')).' AND id != '.prepare($id_record)) > 0) {
+        $numero_codice = Articolo::where([
+            ['codice', $value],
+            ['id', '<>', $id_record],
+        ])->count();
+        if ($numero_codice > 0) {
             flash()->warning(tr('Attenzione: il codice _CODICE_ è già stato utilizzato _N_ volta', [
                 '_CODICE_' => post('codice'),
-                '_N_' => $n,
+                '_N_' => $numero_codice,
             ]));
         }
 
@@ -71,9 +81,7 @@ switch (post('op')) {
         $articolo->abilita_serial = post('abilita_serial');
         $articolo->ubicazione = post('ubicazione');
         $articolo->threshold_qta = post('threshold_qta');
-        $articolo->prezzo_vendita = post('prezzo_vendita');
         $articolo->prezzo_acquisto = post('prezzo_acquisto');
-        $articolo->idiva_vendita = post('idiva_vendita');
         $articolo->idconto_vendita = post('idconto_vendita');
         $articolo->idconto_acquisto = post('idconto_acquisto');
         $articolo->id_fornitore = post('id_fornitore');
@@ -81,6 +89,8 @@ switch (post('op')) {
         $articolo->servizio = post('servizio');
         $articolo->volume = post('volume');
         $articolo->peso_lordo = post('peso_lordo');
+
+        $articolo->setPrezzoVendita(post('prezzo_vendita'), post('idiva_vendita'));
 
         $componente = post('componente_filename');
         $articolo->componente_filename = $componente;

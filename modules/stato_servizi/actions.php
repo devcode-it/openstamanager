@@ -148,12 +148,16 @@ switch (filter('op')) {
         ];
 
         foreach ($dirs as $dir => $description) {
-            $size = FileSystem::folderSize($dir);
+            $size = FileSystem::folderSize($dir, ['htaccess']);
 
             $results[] = [
                 'description' => $description,
                 'size' => $size,
                 'formattedSize' => FileSystem::formatBytes($size),
+                'count' => (FileSystem::fileCount($dir, ['htaccess']) ?: 0),
+                'dbSize' => (($description == 'Allegati') ? $dbo->fetchOne('SELECT SUM(`size`) AS dbsize FROM zz_files')['dbsize'] : ''),
+                'dbCount' => (($description == 'Allegati') ? $dbo->fetchOne('SELECT COUNT(`id`) AS dbcount FROM zz_files')['dbcount'] : ''),
+                'dbExtensions' => (($description == 'Allegati') ? $dbo->fetchArray("SELECT SUBSTRING_INDEX(FILENAME, '.', -1) AS EXTENSION, COUNT(*) AS NUM FROM ZZ_FILES GROUP BY EXTENSION ORDER BY NUM DESC LIMIT 10") : ''),
             ];
         }
 

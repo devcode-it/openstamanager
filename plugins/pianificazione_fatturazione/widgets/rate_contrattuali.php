@@ -4,7 +4,7 @@ use Plugins\PianificazioneFatturazione\Pianificazione;
 
 include_once __DIR__.'/../../../core.php';
 
-$pianificazioni = Pianificazione::doesntHave('fattura')->get();
+$pianificazioni = Pianificazione::doesntHave('fattura')->orderBy('data_scadenza', 'asc')->get();
 if ($pianificazioni->isEmpty()) {
     echo '
 <p>'.tr('Non ci sono fatture da emettere').'.</p>';
@@ -55,7 +55,8 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
         $contratto = $pianificazione->contratto;
         $anagrafica = $contratto->anagrafica;
 
-        echo '
+        if (strtolower($pianificazione->data_scadenza->formatLocalized('%B %Y')) == strtolower($mese)) {
+            echo '
             <tr>
                 <td>
                     '.dateFormat($pianificazione->data_scadenza).'
@@ -74,14 +75,15 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
                     ]).'</small>
                 </td>';
 
-        // Pulsanti
-        echo '
+            // Pulsanti
+            echo '
                 <td class="text-center">
                     <button type="button" class="btn btn-primary btn-sm" onclick="crea_fattura('.$contratto->id.', '.$pianificazione->id.')">
                         <i class="fa fa-euro"></i> '.tr('Crea fattura').'
                     </button>
                 </td>
             </tr>';
+        }
     }
 
     echo '

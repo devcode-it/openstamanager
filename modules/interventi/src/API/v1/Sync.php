@@ -8,7 +8,6 @@ use API\Resource;
 use Carbon\Carbon;
 use DateTime;
 use iCalEasyReader;
-use Update;
 
 class Sync extends Resource implements RetrieveInterface, UpdateInterface
 {
@@ -47,12 +46,16 @@ class Sync extends Resource implements RetrieveInterface, UpdateInterface
 
             $r['summary'] = str_replace("\r\n", "\n", $r['summary']);
 
+            $now = new Carbon();
+            $inizio = new Carbon($r['orario_inizio']);
+            $fine = new Carbon($r['orario_fine']);
+
             $result .= "BEGIN:VEVENT\n";
             $result .= 'UID:'.$r['idriga']."\n";
-            $result .= 'DTSTAMP:'.date('Ymd').'T'.date('His')."\n";
+            $result .= 'DTSTAMP:'.$now->toIso8601String()."\n";
             //$result .= 'ORGANIZER;CN='.$azienda.':MAILTO:'.$email."\n";
-            $result .= 'DTSTART:'.date('Ymd', strtotime($r['orario_inizio'])).'T'.date('His', strtotime($r['orario_inizio']))."\n";
-            $result .= 'DTEND:'.date('Ymd', strtotime($r['orario_fine'])).'T'.date('His', strtotime($r['orario_fine']))."\n";
+            $result .= 'DTSTART:'.$inizio->toIso8601String()."\n";
+            $result .= 'DTEND:'.$fine->toIso8601String()."\n";
             $result .= 'SUMMARY:'.html_entity_decode($r['summary'])."\n";
             $result .= 'DESCRIPTION:'.html_entity_decode($richiesta, ENT_QUOTES, 'UTF-8')."\n";
             $result .= "END:VEVENT\n";

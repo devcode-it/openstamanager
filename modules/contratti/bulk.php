@@ -79,8 +79,6 @@ switch (post('op')) {
 
                         // Aggiornamento seriali dalla riga dell'ordine
                         if ($copia->isArticolo()) {
-                            //$copia->movimenta($copia->qta);
-
                             $copia->serials = $riga->serials;
                         }
                     }

@@ -56,10 +56,10 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
         echo '
             <tr id="int_'.$r['id'].'">
 				<td><a target="_blank" >'.Modules::link(Modules::get('Interventi')['id'], $r['id'], $r['codice']).'</a></td>
-                <td>'.$r['ragione_sociale'].'</td>
+                <td><a target="_blank" >'.Modules::link(Modules::get('Anagrafiche')['id'], $r['idanagrafica'], $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica='.prepare($r['idanagrafica']))['ragione_sociale']).'</td>
                 <td>'.Translator::dateToLocale($r['data_richiesta']).'</td>
                 <td>'.((empty($r['data_scadenza'])) ? ' - ' : Translator::dateToLocale($r['data_scadenza'])).'</td>
-                <td>'.$r['tipointervento'].'</td>
+                <td>'.$dbo->fetchOne("SELECT CONCAT_WS(' - ', codice,descrizione) AS descrizione FROM in_tipiintervento WHERE idtipointervento=".prepare($r['idtipointervento']))['descrizione'].'</td>
                 <td>'.nl2br($r['richiesta']).'</td>
 				';
 

@@ -23,7 +23,7 @@ class FileManager implements ManagerInterface
     {
         $options['readonly'] = !empty($options['readonly']) ? true : false;
         $options['showpanel'] = isset($options['showpanel']) ? $options['showpanel'] : true;
-        $options['label'] = isset($options['label']) ? $options['label'] : tr('Nuovo allegato').':';
+        $options['label'] = isset($options['label']) ? $options['label'] : tr('Allegato').':';
 
         $options['id_plugin'] = !empty($options['id_plugin']) ? $options['id_plugin'] : null;
 
@@ -61,9 +61,9 @@ class FileManager implements ManagerInterface
 <div class="box box-success">
     <div class="box-header with-border">
         <h3 class="box-title">'.(!empty($category) ? $category : tr('Generale')).'</h3>
-        
+
         {[ "type": "text", "class": "hide category-name", "value": "'.$category.'" ]}
-        
+
         <div class="box-tools pull-right">';
 
                 if (!empty($category)) {
@@ -71,7 +71,7 @@ class FileManager implements ManagerInterface
             <button type="button" class="btn btn-box-tool category-save hide">
                 <i class="fa fa-check"></i>
             </button>
-            
+
             <button type="button" class="btn btn-box-tool category-edit">
                 <i class="fa fa-edit"></i>
             </button>';
@@ -98,7 +98,7 @@ class FileManager implements ManagerInterface
                     $file = Upload::find($r['id']);
 
                     $result .= '
-        <tr>
+        <tr id="row_'.$r['id'].'" >
             <td align="left">';
 
                     if ($file->user && $file->user->photo) {
@@ -106,7 +106,7 @@ class FileManager implements ManagerInterface
                 <img class="attachment-img tip" src="'.$file->user->photo.'" title="'.$file->user->nome_completo.'">';
                     } else {
                         $result .= '
-        
+
                 <i class="fa fa-user-circle-o attachment-img tip" title="'.tr('OpenSTAManager').'"></i>';
                     }
 
@@ -115,12 +115,12 @@ class FileManager implements ManagerInterface
                 <a href="'.ROOTDIR.'/view.php?file_id='.$r['id'].'" target="_blank">
                     <i class="fa fa-external-link"></i> '.$r['name'].'
                 </a>
-                
+
                 <small> ('.$file->extension.')'.((!empty($file->size)) ? ' ('.\Util\FileSystem::formatBytes($file->size).')' : '').' '.(($r['name'] == 'Logo stampe' or $r['name'] == 'Filigrana stampe') ? '<i class="fa fa-file-text-o"></i>' : '').'</small>'.'
             </td>
-            
+
             <td>'.\Translator::timestampToLocale($r['created_at']).'</td>
-            
+
             <td class="text-center">
                 <a class="btn btn-xs btn-primary" href="'.ROOTDIR.'/actions.php?id_module='.$options['id_module'].'&op=download_file&id='.$r['id'].'&filename='.$r['filename'].'" target="_blank">
                     <i class="fa fa-download"></i>
@@ -169,23 +169,17 @@ class FileManager implements ManagerInterface
             $result .= '
     <b>'.$options['label'].'</b>
     <div id="upload-form" class="row">
-        <div class="col-md-4">
-            {[ "type": "text", "placeholder": "'.tr('Nome').'", "name": "nome_allegato", "class": "unblockable" ]}
+        <div class="col-md-6">
+            {[ "type": "text", "placeholder": "'.tr('Nome file').'", "name": "nome_allegato", "class": "unblockable" ]}
         </div>
-
-        <div class="col-md-3">
+        <div class="col-md-6">
             {[ "type": "text", "placeholder": "'.tr('Categoria').'", "name": "categoria", "class": "unblockable" ]}
         </div>
+        <div class="col-md-12">
+            <div class="dropzone dz-clickable" id="dragdrop">
 
-        <div class="col-md-3">
-            {[ "type": "file", "placeholder": "'.tr('File').'", "name": "blob", "class": "unblockable" ]}
+            </div>
         </div>
-
-		<div class="col-md-2 text-right">
-			<button type="button" class="btn btn-success" id="upload">
-				<i class="fa fa-upload"></i> '.tr('Carica').'
-			</button>
-		</div>
     </div>';
         }
         // In caso di readonly, se non è stato caricato nessun allegato mostro almeno box informativo
@@ -206,28 +200,67 @@ class FileManager implements ManagerInterface
 
         $source = array_clean(array_column($categories, 'category'));
 
+        $upload_max_filesize = \Util\FileSystem::formatBytes(ini_get('upload_max_filesize'), 0);
+        //remove unit
+        $upload_max_filesize = substr($upload_max_filesize, 0, strrpos($upload_max_filesize, ' '));
+
         $result .= '
 <script>$(document).ready(init)</script>
 
 <script>
+
+// Disabling autoDiscover, otherwise Dropzone will try to attach twice.
+Dropzone.autoDiscover = false;
+
 $(document).ready(function() {
+    var dragdrop = new Dropzone("#'.$attachment_id.' .dropzone", {
+        dictDefaultMessage: "'.tr('Clicca o trascina qui per caricare uno o più file').'.<br>('.tr('Max upload: _SIZE_', [
+            '_SIZE_' => $upload_max_filesize.' MB',
+        ]).')",
+        paramName: "file",
+        maxFilesize: '.$upload_max_filesize.', // MB
+        uploadMultiple: false,
+        parallelUploads: 2,
+        addRemoveLinks: false,
+        autoProcessQueue: true,
+        autoQueue: true,
+        url: "'.ROOTDIR.'/actions.php?op=link_file&id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id_plugin='.$options['id_plugin'].'",
+        init: function (file, xhr, formData) {
+            this.on("sending", function(file, xhr, formData) {
+                formData.append("categoria", $("#categoria").val());
+                formData.append("nome_allegato", $("#nome_allegato").val());
+            });
+
+            this.on("success", function (file) {
+                dragdrop.removeFile(file);
+            });
+
+            this.on("complete", function (file) {
+                // Ricarico solo quando ho finito
+                if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
+                    reload_'.$attachment_id.'();
+                }
+            });
+        }
+    });
+
     // Modifica categoria
     $("#'.$attachment_id.' .category-edit").click(function() {
         var nome = $(this).parent().parent().find(".box-title");
         var save_button = $(this).parent().find(".category-save");
         var input = $(this).parent().parent().find(".category-name");
-        
+
         nome.hide();
         $(this).hide();
-        
+
         input.removeClass("hide");
         save_button.removeClass("hide");
     });
-    
+
     $("#'.$attachment_id.' .category-save").click(function() {
         var nome = $(this).parent().parent().find(".box-title");
         var input = $(this).parent().parent().find(".category-name");
-        
+
         show_'.$attachment_id.'();
 
         $.ajax({
@@ -250,30 +283,30 @@ $(document).ready(function() {
             }
         });
     });
-    
+
     function getFilenameAndExtension(pathfilename){
 
         var filenameextension = pathfilename.replace(/^.*[\\\/]/, \'\');
         var filename = filenameextension.substring(0, filenameextension.lastIndexOf(\'.\'));
         var ext = filenameextension.split(\'.\').pop();
-      
+
         return [filename, ext];
-      
+
     }
 
     // Autocompletamento nome
     $("#'.$attachment_id.' #blob").change(function(){
         var nome = $("#'.$attachment_id.' #nome_allegato");
-        
+
         if (!nome.val()) {
             var fullPath = $(this).val();
-            
+
             var filename = getFilenameAndExtension(fullPath);
-            
+
             nome.val(filename[0]);
         }
     });
-    
+
     // Autocompletamento categoria
     $("#'.$attachment_id.' #categoria").autocomplete({
         source: '.json_encode($source).',
@@ -326,7 +359,15 @@ function show_'.$attachment_id.'() {
 
 function reload_'.$attachment_id.'() {
     $("#'.$attachment_id.'").load(globals.rootdir + "/ajax.php?op=list_attachments&id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id_plugin='.$options['id_plugin'].'", function() {
+
         $("#loading_'.$attachment_id.'").addClass("hide");
+
+
+        var id = $("#'.$attachment_id.' table tr").eq(-1).attr("id");
+        if (id !== undefined)
+            $("#"+id).effect("highlight", {}, 1500);
+
+
     });
 }
 </script>';

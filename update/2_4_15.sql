@@ -28,6 +28,6 @@ UPDATE `mg_articoli` SET `id_sottocategoria` = NULL WHERE `mg_articoli`.`id_sott
 UPDATE `zz_prints` SET `title` = 'Ddt in uscita (senza prezzi)' WHERE `zz_prints`.`name` = 'Ddt di vendita (senza costi)';
 UPDATE `zz_prints` SET `title` = 'Ddt in uscita' WHERE `zz_prints`.`name` = 'Ddt di vendita';
 
--- Rimozione stampe ordini di servizio a db
+-- Rimozione stampe ordini di servizio a database
 DELETE FROM `zz_prints` WHERE `zz_prints`.`name` = 'Ordine di servizio (senza costi)';
 DELETE FROM `zz_prints` WHERE `zz_prints`.`name` = 'Ordine di servizio';

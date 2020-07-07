@@ -22,5 +22,8 @@ switch ($resource) {
             $search_fields[] = 'descrizione LIKE '.prepare('%'.$search.'%');
         }
 
+        $custom['id_banca_vendite'] = 'id_banca_vendite';
+        $custom['id_banca_acquisti'] = 'id_banca_acquisti';
+
         break;
 }

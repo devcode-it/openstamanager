@@ -28,7 +28,7 @@ switch (post('op')) {
 
             $template = Template::get('Reset password');
 
-            $mail = Mail::build($user, $template, $utente->id);
+            $mail = Mail::build($utente, $template, $utente->id);
             $mail->addReceiver($utente->email);
             $mail->save();
 

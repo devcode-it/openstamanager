@@ -10,7 +10,7 @@ function renderRiga($id, $riga)
     echo '
     <tr>
         <input type="hidden" name="id_scadenza['.$id.']" value="'.$riga['id_scadenza'].'">
-        
+
         <td>
             {[ "type": "select", "name": "idconto['.$id.']", "id": "conto'.$id.'", "value": "'.($riga['id_conto'] ?: '').'", "ajax-source": "conti" ]}
         </td>';
@@ -38,9 +38,9 @@ function renderTabella($nome, $righe, $id_scadenza_default = null)
     <button class="btn btn-info btn-xs pull-right" type="button" onclick="addRiga(this)">
         <i class="fa fa-plus"></i> '.tr('Aggiungi riga').'
     </button>
-    
+
     <h4>'.$nome.'</h4>
-   
+
     <table class="table table-striped table-condensed table-hover table-bordered scadenze">
         <thead>
             <tr>
@@ -49,7 +49,7 @@ function renderTabella($nome, $righe, $id_scadenza_default = null)
                 <th width="20%">'.tr('Avere').'</th>
             </tr>
         </thead>
-        
+
         <tbody>';
 
     foreach ($righe as $riga) {
@@ -59,20 +59,20 @@ function renderTabella($nome, $righe, $id_scadenza_default = null)
     // Totale per controllare sbilancio
     echo '
         </tbody>
-        
+
         <tfoot>
             <tr>
-                <td align="right"><b>'.tr('Totale').':</b></td>';
+                <td class="text-right"><b>'.tr('Totale').':</b></td>';
 
     // Totale dare
     echo '
-                <td align="right">
+                <td class="text-right">
                     <span class="totale_dare"></span> '.currency().'
                 </td>';
 
     // Totale avere
     echo '
-                <td align="right">
+                <td class="text-right">
                     <span class="totale_avere"></span> '.currency().'
                 </td>
             </tr>';
@@ -154,21 +154,21 @@ var n = '.$counter.';
 function addRiga(btn) {
     var raggruppamento = $(btn).parent();
     cleanup_inputs();
-    
+
     var tabella = raggruppamento.find("tbody");
     var content = $("#template").html();
     content = content.replace("-id_scadenza-", raggruppamento.data("id_scadenza"));
-    
+
     var text = replaceAll(content, "-id-", "" + n);
     tabella.append(text);
-    
+
     restart_inputs();
     n++;
 }
 
 /**
 * Funzione per controllare lo stato dei conti della prima nota.
-* 
+*
 * @returns {boolean}
 */
 function controllaConti() {
@@ -177,18 +177,18 @@ function controllaConti() {
     // Controlli sullo stato dei raggruppamenti
     $(".raggruppamento_primanota").each(function() {
         var bilancio = calcolaBilancio(this);
-        
+
         continuare &= bilancio == 0;
     });
-    
+
     // Blocco degli input con valore non impostato
     $("input[id*=dare], input[id*=avere]").each(function() {
         var conto_relativo = $(this).parent().parent().find("select").val();
-        
+
         if (!conto_relativo) {
             $(this).prop("disabled", true);
-        } 
-        
+        }
+
         if ($(this).val().toEnglish()){
             continuare &= conto_relativo ? true : false;
         }
@@ -197,7 +197,7 @@ function controllaConti() {
     if (continuare) {
         $("#add-submit").removeClass("hide");
         $("#btn_crea_modello").removeClass("hide");
-    } else {    
+    } else {
         $("#add-submit").addClass("hide");
         $("#btn_crea_modello").addClass("hide");
     }
@@ -208,13 +208,13 @@ function controllaConti() {
 /**
 * Ad ogni modifica dell\'importo verifica che siano stati selezionati: il conto, la causale, la data.
 * Inoltre aggiorna lo sbilancio.
-* 
+*
 * @param gruppo
 * @returns {number}
 */
 function calcolaBilancio(gruppo) {
     var raggruppamento = $(gruppo);
-    
+
     var totale_dare = 0.00;
     var totale_avere = 0.00;
 
@@ -224,7 +224,7 @@ function calcolaBilancio(gruppo) {
 
         totale_dare += valore;
     });
-    
+
     // Calcolo il totale avere
     raggruppamento.find("input[id*=avere]").each(function() {
         valore = $(this).val() ? $(this).val().toEnglish() : 0;
@@ -238,7 +238,7 @@ function calcolaBilancio(gruppo) {
 
     // Calcolo il bilancio
     var bilancio = totale_dare.toFixed(2) - totale_avere.toFixed(2);
-    
+
     // Visualizzazione dello sbilancio eventuale
     var sbilancio = raggruppamento.find(".sbilancio");
     var valore_sbilancio = sbilancio.find(".money");
@@ -255,8 +255,8 @@ function calcolaBilancio(gruppo) {
 
 $(document).ready(function() {
     controllaConti();
-    
-    // Fix per l\'inizializzazione degli input 
+
+    // Fix per l\'inizializzazione degli input
     $("input[id*=dare], input[id*=avere]").each(function() {
         if ($(this).val() == formatted_zero) {
             $(this).prop("disabled", true);
@@ -264,7 +264,7 @@ $(document).ready(function() {
             $(this).prop("disabled", false);
         }
     });
-    
+
     // Trigger dell\'evento keyup() per la prima volta, per eseguire i dovuti controlli nel caso siano predisposte delle righe in prima nota
     $("input[id*=dare][value!=\'\'], input[id*=avere][value!=\'\']").keyup();
 
@@ -279,7 +279,7 @@ $(document).on("change", "select", function() {
     if ($(this).parent().parent().find("input[disabled]").length != 1) {
         row.find("input").prop("disabled", $(this).val() ? false : true);
     }
-    
+
     controllaConti();
 });
 
@@ -295,7 +295,7 @@ $(document).on("keyup change", "input[id*=dare]", function() {
 
 $(document).on("keyup change", "input[id*=avere]", function() {
     var row = $(this).parent().parent();
-    
+
     if (!$(this).prop("disabled")) {
         row.find("input[id*=dare]").prop("disabled", $(this).val() ? true : false);
 

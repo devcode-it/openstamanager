@@ -619,9 +619,11 @@ class Database extends Util\Singleton
         $sync = array_unique((array) current($list));
 
         if (!empty($field) && !empty($sync)) {
-            $conditions[$field] = $sync;
+            foreach ($sync as $element) {
+                $conditions[$field] = $element;
 
-            $this->delete($table, $conditions);
+                $this->delete($table, $conditions);
+            }
         }
     }
 

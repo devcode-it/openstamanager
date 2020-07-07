@@ -42,11 +42,13 @@ $_SESSION['superselect']['id_categoria'] = $record['id_categoria'];
                     </div>
                 </div>
 			</div>
+
 			<div class="row">
 				<div class="col-md-12">
 					{[ "type": "textarea", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$" ]}
 				</div>
 			</div>
+
             <div class="row">
                 <div class="col-md-4">
 					{[ "type": "checkbox", "label": "<?php echo tr('Abilita serial number'); ?>", "name": "abilita_serial", "value": "$abilita_serial$", "help": "<?php echo tr('Abilita serial number in fase di aggiunta articolo in fattura o ddt'); ?>", "placeholder": "<?php echo tr('Serial number'); ?>", "extra": "<?php echo ($record['serial'] > 0) ? 'readonly' : ''; ?>" ]}
@@ -129,7 +131,7 @@ $_SESSION['superselect']['id_categoria'] = $record['id_categoria'];
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-md-6">
-                            {[ "type": "number", "label": "<?php echo tr('Prezzo di acquisto'); ?>", "name": "prezzo_acquisto", "value": "$prezzo_acquisto$", "icon-after": "<?php echo currency(); ?>" ]}
+                            {[ "type": "number", "label": "<?php echo tr('Prezzo di acquisto'); ?>", "name": "prezzo_acquisto", "value": "$prezzo_acquisto$", "icon-after": "<?php echo currency(); ?>", "help": "<?php echo tr('Prezzo di acquisto previsto per i fornitori i cui dati non sono stati inseriti nel plugin Fornitori'); ?>." ]}
                         </div>
 
                         <div class="col-md-6">
@@ -139,7 +141,7 @@ $_SESSION['superselect']['id_categoria'] = $record['id_categoria'];
 
                     <div class="row">
                         <div class="col-md-12">
-                            {[ "type": "select", "label": "<?php echo tr('Fornitore predefinito'); ?>", "name": "id_fornitore", "value": "$id_fornitore$", "ajax-source": "fornitori", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Fornitore&readonly_tipo=1" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Fornitore predefinito'); ?>", "name": "id_fornitore", "value": "$id_fornitore$", "ajax-source": "fornitori", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Fornitore&readonly_tipo=1", "help": "<?php echo tr('Fornitore predefinito, utilizzato dal gestionale per funzioni più avanzate della gestione magazzino'); ?>." ]}
                         </div>
                     </div>
 
@@ -166,14 +168,17 @@ $_SESSION['superselect']['id_categoria'] = $record['id_categoria'];
                     <div class="row">
                         <div class="col-md-6">
 <?php
-if (!setting('Utilizza prezzi di vendita comprensivi di IVA')) {
+$prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
+if (empty($prezzi_ivati)) {
     echo '
                             <button type="button" class="btn btn-info btn-xs pull-right tip pull-right" title="'.tr('Scorpora iva dal prezzo di vendita.').'" id="scorpora_iva"><i class="fa fa-calculator" aria-hidden="true"></i></button>';
 }
-?>
 
-                            {[ "type": "number", "label": "<?php echo tr('Prezzo di vendita'); ?>", "name": "prezzo_vendita", "value": "$prezzo_vendita$", "icon-after": "<?php echo currency(); ?>", "help": "<?php echo setting('Utilizza prezzi di vendita comprensivi di IVA') ? tr('Importo IVA inclusa') : ''; ?>" ]}
-                        </div>
+echo '
+                            {[ "type": "number", "label": "'.tr('Prezzo di vendita').'", "name": "prezzo_vendita", "value": "'.($prezzi_ivati ? $articolo->prezzo_vendita_ivato : $articolo->prezzo_vendita).'", "icon-after": "'.currency().'", "help": "'.($prezzi_ivati ? tr('Importo IVA inclusa') : '').'" ]}
+                        </div>';
+
+?>
 
                         <div class="col-md-6">
                             {[ "type": "select", "label": "<?php echo tr('Iva di vendita'); ?>", "name": "idiva_vendita", "ajax-source": "iva", "value": "$idiva_vendita$", "valore_predefinito": "Iva predefinita", "help": "<?php echo tr('Se non specificata, verrà utilizzata l\'iva di default delle impostazioni'); ?>" ]}
@@ -398,13 +403,9 @@ if (!empty($elementi)) {
 <div class="alert alert-error">
     '.tr('Eliminando questo documento si potrebbero verificare problemi nelle altre sezioni del gestionale').'.
 </div>';
-} else {
-    ?>
+}
+?>
 
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>
-
-<?php
-}
-?>

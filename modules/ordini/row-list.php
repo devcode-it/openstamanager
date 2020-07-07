@@ -5,9 +5,11 @@ include_once __DIR__.'/../../core.php';
 echo '
 <table class="table table-striped table-hover table-condensed table-bordered">
     <thead>
-		<tr>
+        <tr>
+            <th width="35" class="text-center" >'.tr('#').'</th>
 			<th>'.tr('Descrizione').'</th>
-			<th class="text-center tip" width="150" title="'.tr('da evadere').' / '.tr('totale').'">'.tr('Q.tà').' <i class="fa fa-question-circle-o"></i></th>
+            <th class="text-center" width="150">'.tr('Q.tà disponibile').'</th>
+            <th class="text-center tip" width="150" title="'.tr('da evadere').' / '.tr('totale').'">'.tr('Q.tà richiesta').' <i class="fa fa-question-circle-o"></i></th>
 			<th class="text-center" width="150">'.tr('Prezzo unitario').'</th>
             <th class="text-center" width="150">'.tr('Iva unitaria').'</th>
             <th class="text-center" width="150">'.tr('Importo').'</th>
@@ -36,12 +38,16 @@ foreach ($righe as $riga) {
     }
 
     echo '
-    <tr data-id="'.$riga->id.'" '.$extra.'>
+    <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'" '.$extra.'>
+        <td class="text-center">
+            '.(($riga->order) + 1).'
+        </td>
+
         <td>';
 
     if ($riga->isArticolo()) {
         echo '
-            '.Modules::link('Articoli', $riga->idarticolo, $riga->articolo->codice.' - '.$riga->descrizione);
+            '.Modules::link('Articoli', $riga->idarticolo, $riga->codice.' - '.$riga->descrizione);
     } else {
         echo nl2br($riga->descrizione);
     }
@@ -58,6 +64,20 @@ foreach ($righe as $riga) {
             <br>'.tr('SN').': '.implode(', ', $serials);
         }
     }
+
+    // Disponibilità articolo
+    $disponibile = $riga->articolo->qta >= ($riga->qta - $riga->qta_evasa);
+    echo '
+            <td class="text-center '.($disponibile ? 'bg-success' : 'bg-danger').'">';
+
+    if ($riga->isArticolo()) {
+        echo($disponibile ? '<i class="fa fa-check text-success"></i> ' : '<i class="fa fa-warning text-danger"></i> ').numberFormat($riga->articolo->qta).' '.$riga->um;
+    } else {
+        echo '-';
+    }
+
+    echo '
+        </td>';
 
     // Aggiunta dei riferimenti ai documenti
     if ($riga->hasOriginal()) {
@@ -88,7 +108,7 @@ foreach ($righe as $riga) {
 
         if ($dir == 'entrata' && $riga->costo_unitario != 0) {
             echo '
-            <br><small>
+            <br><small class="text-muted">
                 '.tr('Acquisto').': '.moneyFormat($riga->costo_unitario).'
             </small>';
         }
@@ -107,7 +127,7 @@ foreach ($righe as $riga) {
         echo '
         <td class="text-right">
             '.moneyFormat($riga->iva_unitaria).'
-            <br><small class="'.(($riga->aliquota->deleted_at) ? 'text-red' : '').' help-block">'.$riga->aliquota->descrizione.(($riga->aliquota->esente) ? ' ('.$riga->aliquota->codice_natura_fe.')' : null).'</small>
+            <br><small class="'.(($riga->aliquota->deleted_at) ? 'text-red' : '').' text-muted">'.$riga->aliquota->descrizione.(($riga->aliquota->esente) ? ' ('.$riga->aliquota->codice_natura_fe.')' : null).'</small>
         </td>';
 
         // Importo
@@ -122,35 +142,30 @@ foreach ($righe as $riga) {
         <td class="text-center">';
 
     if ($record['flag_completato'] == 0) {
-        echo "
-            <form action='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record."' method='post' id='delete-form-".$riga->id."' role='form'>
-                <input type='hidden' name='backto' value='record-edit'>
-                <input type='hidden' name='id_record' value='".$id_record."'>
-                <input type='hidden' name='idriga' value='".$riga->id."'>
-                <input type='hidden' name='type' value='".get_class($riga)."'>
-                <input type='hidden' name='op' value='delete_riga'>";
-
-        echo "
-
-                <div class='input-group-btn'>";
+        echo '
+            <div class="input-group-btn">';
 
         if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
-            echo "
-                    <a class='btn btn-primary btn-xs'data-toggle='tooltip' title='Aggiorna SN...' onclick=\"launch_modal( 'Aggiorna SN', '".$rootdir.'/modules/fatture/add_serial.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga->id.'&idarticolo='.$riga->idarticolo."');\"><i class='fa fa-barcode' aria-hidden='true'></i></a>";
+            echo '
+                <a class="btn btn-primary btn-xs" title="'.tr('Modifica seriali della riga').'" onclick="modificaSeriali(this)">
+                    <i class="fa fa-barcode"></i>
+                </a>';
         }
 
-        echo "
-                    <a class='btn btn-xs btn-warning' title='Modifica questa riga...' onclick=\"launch_modal( 'Modifica riga', '".$rootdir.'/modules/ordini/row-edit.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga->id.'&type='.urlencode(get_class($riga))."');\"><i class='fa fa-edit'></i></a>
+        echo '
+                <a class="btn btn-xs btn-warning" title="'.tr('Modifica riga').'" onclick="modificaRiga(this)">
+                    <i class="fa fa-edit"></i>
+                </a>
 
-                    <a class='btn btn-xs btn-danger' title='Rimuovi questa riga...' onclick=\"if( confirm('Rimuovere questa riga dall\\'ordine?') ){ $('#delete-form-".$riga->id."').submit(); }\"><i class='fa fa-trash'></i></a>
-                </div>
-            </form>";
+                <a class="btn btn-xs btn-danger" title="'.tr('Rimuovi riga').'" onclick="rimuoviRiga(this)">
+                    <i class="fa fa-trash"></i>
+                </a>
+
+                <a class="btn btn-xs btn-default handle" title="'.tr('Modifica ordine delle righe').'">
+                    <i class="fa fa-sort"></i>
+                </a>
+            </div>';
     }
-
-    echo '
-		<div class="handle clickable" style="padding:10px">
-			<i class="fa fa-sort"></i>
-		</div>';
 
     echo '
         </td>
@@ -171,10 +186,10 @@ $totale = abs($ordine->totale);
 // IMPONIBILE
 echo '
     <tr>
-        <td colspan="4"  class="text-right">
+        <td colspan="6" class="text-right">
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
-        <td align="right">
+        <td class="text-right">
             '.moneyFormat($imponibile, 2).'
         </td>
         <td></td>
@@ -184,10 +199,10 @@ echo '
 if (!empty($sconto)) {
     echo '
     <tr>
-        <td colspan="4"  class="text-right">
+        <td colspan="6" class="text-right">
             <b><span class="tip" title="'.tr('Un importo positivo indica uno sconto, mentre uno negativo indica una maggiorazione').'"> <i class="fa fa-question-circle-o"></i> '.tr('Sconto/maggiorazione', [], ['upper' => true]).':</span></b>
         </td>
-        <td align="right">
+        <td class="text-right">
             '.moneyFormat($sconto, 2).'
         </td>
         <td></td>
@@ -196,10 +211,10 @@ if (!empty($sconto)) {
     // TOTALE IMPONIBILE
     echo '
     <tr>
-        <td colspan="4"  class="text-right">
+        <td colspan="6" class="text-right">
             <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
         </td>
-        <td align="right">
+        <td class="text-right">
             '.moneyFormat($totale_imponibile, 2).'
         </td>
         <td></td>
@@ -209,10 +224,10 @@ if (!empty($sconto)) {
 // IVA
 echo '
     <tr>
-        <td colspan="4"  class="text-right">
+        <td colspan="6" class="text-right">
             <b>'.tr('Iva', [], ['upper' => true]).':</b>
         </td>
-        <td align="right">
+        <td class="text-right">
             '.moneyFormat($iva, 2).'
         </td>
         <td></td>
@@ -221,10 +236,10 @@ echo '
 // TOTALE
 echo '
     <tr>
-        <td colspan="4"  class="text-right">
+        <td colspan="6" class="text-right">
             <b>'.tr('Totale', [], ['upper' => true]).':</b>
         </td>
-        <td align="right">
+        <td class="text-right">
             '.moneyFormat($totale, 2).'
         </td>
         <td></td>
@@ -235,6 +250,56 @@ echo '
 
 echo '
 <script>
+
+function modificaRiga(button) {
+    var riga = $(button).closest("tr");
+    var id = riga.data("id");
+    var type = riga.data("type");
+
+    openModal("'.tr('Modifica riga').'", "'.$module->fileurl('row-edit.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&riga_id=" + id + "&riga_type=" + type)
+}
+
+function rimuoviRiga(button) {
+    swal({
+        title: "'.tr('Rimuovere questa riga?').'",
+        html: "'.tr('Sei sicuro di volere rimuovere questa riga dal documento?').' '.tr("L'operazione è irreversibile").'.",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonText: "'.tr('Sì').'"
+    }).then(function () {
+        var riga = $(button).closest("tr");
+        var id = riga.data("id");
+        var type = riga.data("type");
+
+        $.ajax({
+            url: globals.rootdir + "/actions.php",
+            type: "POST",
+            dataType: "json",
+            data: {
+                id_module: globals.id_module,
+                id_record: globals.id_record,
+                op: "delete_riga",
+                riga_type: type,
+                riga_id: id,
+            },
+            success: function (response) {
+                location.reload();
+            },
+            error: function() {
+                location.reload();
+            }
+        });
+    }).catch(swal.noop);
+}
+
+function modificaSeriali(button) {
+    var riga = $(button).closest("tr");
+    var id = riga.data("id");
+    var type = riga.data("type");
+
+    openModal("'.tr('Aggiorna SN').'", globals.rootdir + "/modules/fatture/add_serial.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&riga_id=" + id + "&riga_type=" + type);
+}
+
 $(document).ready(function(){
 	$(".sortable").each(function() {
         $(this).sortable({

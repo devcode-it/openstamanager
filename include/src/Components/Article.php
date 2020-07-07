@@ -6,6 +6,7 @@ use Common\Document;
 use Illuminate\Database\Eloquent\Builder;
 use Modules\Articoli\Articolo as Original;
 use Modules\Articoli\Movimento;
+use Plugins\FornitoriArticolo\Dettaglio;
 use UnexpectedValueException;
 
 abstract class Article extends Row
@@ -53,6 +54,14 @@ abstract class Article extends Row
     public function getDirection()
     {
         return $this->parent->direzione;
+    }
+
+    /**
+     * Restituisce il codice impostato per l'articolo corrente.
+     */
+    public function getCodiceAttribute()
+    {
+        return $this->dettaglioFornitore->codice_fornitore ?: $this->articolo->codice;
     }
 
     /**
@@ -161,6 +170,11 @@ abstract class Article extends Row
         return $this->belongsTo(Original::class, 'idarticolo');
     }
 
+    public function dettaglioFornitore()
+    {
+        return $this->belongsTo(Dettaglio::class, 'id_dettaglio_fornitore')->withTrashed();
+    }
+
     public function movimentazione($value = true)
     {
         $this->abilita_movimentazione = $value;
@@ -220,6 +234,10 @@ abstract class Article extends Row
         $partenza = $documento->direzione == 'uscita' ? $documento->idsede_destinazione : $documento->idsede_partenza;
         $arrivo = $documento->direzione == 'uscita' ? $documento->idsede_partenza : $documento->idsede_destinazione;
 
+        // Fix per valori di sede a NULL
+        $partenza = $partenza ?: 0;
+        $arrivo = $arrivo ?: 0;
+
         $this->articolo->movimenta($qta_movimento, $movimento, $data, false, [
             'reference_type' => get_class($documento),
             'reference_id' => $documento->id,
@@ -232,7 +250,7 @@ abstract class Article extends Row
     {
         // Precaricamento Articolo
         static::addGlobalScope('articolo', function (Builder $builder) {
-            $builder->with('articolo');
+            $builder->with('articolo', 'dettaglioFornitore');
         });
 
         parent::boot(true);

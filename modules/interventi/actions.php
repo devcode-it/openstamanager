@@ -211,6 +211,7 @@ $riga = $intervento->getRiga($type, $id_riga);
         } else {
             $originale = ArticoloOriginale::find(post('idarticolo'));
             $articolo = Articolo::build($intervento, $originale);
+            $articolo->id_dettaglio_fornitore = post('id_dettaglio_fornitore') ?: null;
         }
 
         $qta = post('qta');
@@ -293,17 +294,10 @@ $riga = $intervento->getRiga($type, $id_riga);
         break;
 
     case 'add_serial':
-        $idriga = post('idriga');
-        $idarticolo = post('idarticolo');
+        $articolo = Articolo::find(post('idriga'));
 
-        $serials = (array) post('serial');
-        foreach ($serials as $key => $value) {
-            if (empty($value)) {
-                unset($serials[$key]);
-            }
-        }
+        $articolo->serials = post('serial');
 
-        $dbo->sync('mg_prodotti', ['id_riga_intervento' => $idriga, 'dir' => 'entrata', 'id_articolo' => $idarticolo], ['serial' => $serials]);
         aggiorna_sedi_movimenti('interventi', $id_record);
         break;
 
@@ -373,12 +367,16 @@ $riga = $intervento->getRiga($type, $id_riga);
         $dbo->query('DELETE FROM in_interventi_tecnici WHERE id='.prepare($id_sessione));
 
         // Notifica rimozione dell' intervento al tecnico
-        if (!empty($tecnico['email'])) {
-            $template = Template::get('Notifica rimozione intervento');
+        if (setting('Notifica al tecnico la rimozione dall\'attività')) {
+            if (!empty($tecnico['email'])) {
+                $template = Template::get('Notifica rimozione intervento');
 
-            $mail = Mail::build(auth()->getUser(), $template, $id_record);
-            $mail->addReceiver($tecnico['email']);
-            $mail->save();
+                if (!empty($template)) {
+                    $mail = Mail::build(auth()->getUser(), $template, $id_record);
+                    $mail->addReceiver($tecnico['email']);
+                    $mail->save();
+                }
+            }
         }
 
         break;
@@ -408,6 +406,75 @@ $riga = $intervento->getRiga($type, $id_riga);
         $sessione->tipo_scontokm = post('tipo_sconto_km');
 
         $sessione->save();
+
+        break;
+
+    // Duplica intervento
+    case 'copy':
+
+        $idstatointervento = post('idstatointervento');
+        $data_richiesta = post('data_richiesta');
+        $copia_sessioni = post('sessioni');
+        $copia_righe = post('righe');
+
+        $new = $intervento->replicate();
+        $new->idstatointervento = $idstatointervento;
+
+        //calcolo il nuovo codice
+        $new->codice = Intervento::getNextCodice($data_richiesta);
+
+        $new->save();
+
+        $id_record = $new->id;
+
+        $righe = $intervento->getRighe();
+        foreach ($righe as $riga) {
+            $new_riga = $riga->replicate();
+            $new_riga->setParent($new);
+
+            //Copio le righe
+            if ($copia_righe == 1) {
+                $righe = $intervento->getRighe();
+                foreach ($righe as $riga) {
+                    $new_riga = $riga->replicate();
+                    $new_riga->setParent($new);
+
+                    $new_riga->qta_evasa = 0;
+                    $new_riga->save();
+                }
+            }
+        }
+
+        $i = 0;
+
+        //Copio le sessioni
+        if ($copia_sessioni == 1) {
+            $sessioni = $intervento->sessioni;
+            foreach ($sessioni as $sessione) {
+                //Se è la prima sessione che copio importo la data con quella della richiesta
+                if ($i == 0) {
+                    $orario_inizio = date('Y-m-d', strtotime($data_richiesta)).' '.date('H:i:s', strtotime($sessione->orario_inizio));
+                } else {
+                    $diff = strtotime($sessione->orario_inizio) - strtotime($inizio_old);
+                    $orario_inizio = date('Y-m-d H:i:s', (strtotime($orario_inizio) + $diff));
+                }
+
+                $diff_fine = strtotime($sessione->orario_fine) - strtotime($sessione->orario_inizio);
+                $orario_fine = date('Y-m-d H:i:s', (strtotime($orario_inizio) + $diff_fine));
+
+                $new_sessione = $sessione->replicate();
+                $new_sessione->idintervento = $new->id;
+
+                $new_sessione->orario_inizio = $orario_inizio;
+                $new_sessione->orario_fine = $orario_fine;
+                $new_sessione->save();
+
+                ++$i;
+                $inizio_old = $sessione->orario_inizio;
+            }
+        }
+
+        flash()->info(tr('Attività duplicata correttamente!'));
 
         break;
 }

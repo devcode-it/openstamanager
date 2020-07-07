@@ -6,6 +6,7 @@ use Modules\Interventi\Intervento;
 
 // Tabella con riepilogo interventi
 $interventi = Intervento::where('id_contratto', $id_record)->get();
+$totale_ore_completate = 0;
 if (!empty($interventi)) {
     echo '
 <table class="table table-bordered table-condensed">
@@ -20,6 +21,8 @@ if (!empty($interventi)) {
 
     // Tabella con i dati
     foreach ($interventi as $intervento) {
+        $totale_ore_completate += !empty($intervento->stato->is_completato) ? $intervento->ore_totali : 0;
+
         // Riga per il singolo intervento
         echo '
     <tr style="background:'.$intervento->stato->colore.';">
@@ -165,41 +168,41 @@ if (!empty($interventi)) {
     }
 
     $array_interventi = $interventi->toArray();
-    $totale_ore = sum(array_column($array_interventi, 'ore_totali'));
     $totale_km = sum(array_column($array_interventi, 'km_totali'));
     $totale_costo = sum(array_column($array_interventi, 'spesa'));
     $totale_addebito = sum(array_column($array_interventi, 'imponibile'));
     $totale = sum(array_column($array_interventi, 'totale_imponibile'));
+    $totale_ore = sum(array_column($array_interventi, 'ore_totali'));
 
     // Totali
     echo '
     <tr>
-        <td align="right">
+        <td class="text-right">
             <b><big>'.tr('Totale').'</big></b>
         </td>';
 
     echo '
-        <td align="right">
+        <td class="text-right">
             <big><b>'.numberFormat($totale_ore).'</b></big>
         </td>';
 
     echo '
-        <td align="right">
+        <td class="text-right">
             <big><b>'.numberFormat($totale_km).'</b></big>
         </td>';
 
     echo '
-        <td align="right">
+        <td class="text-right">
             <big><b>'.moneyFormat($totale_costo).'</b></big>
         </td>';
 
     echo '
-        <td align="right">
+        <td class="text-right">
             <big><b>'.moneyFormat($totale_addebito).'</b></big>
         </td>';
 
     echo '
-        <td align="right">
+        <td class="text-right">
             <big><b>'.moneyFormat($totale).'</b></big>
         </td>
     </tr>';
@@ -221,11 +224,11 @@ if (!empty($interventi)) {
     <tr>
         <td colspan="3"></td>
 
-        <td align="right" colspan="2" style="background:'.$stato->colore.';">
+        <td class="text-right" colspan="2" style="background:'.$stato->colore.';">
             <big><b>'.$stato->descrizione.':</b></big>
         </td>
 
-        <td align="right">
+        <td class="text-right">
             <big><b>'.moneyFormat($totale_stato).'</b></big>
         </td>
     </tr>';
@@ -274,10 +277,10 @@ if (!empty($totale_ore_contratto)) {
 
                 <tr>
                     <td>'.tr('Ore erogate totali').':</td>
-                    <td class="text-right">'.Translator::numberToLocale($totale_ore_interventi).'</td>
+                    <td class="text-right">'.Translator::numberToLocale($totale_ore).'</td>
 
                     <td>'.tr('Ore residue totali').':</td>
-                    <td class="text-right">'.Translator::numberToLocale(floatval($totale_ore_contratto) - floatval($totale_ore_interventi)).'</td>
+                    <td class="text-right">'.Translator::numberToLocale(floatval($totale_ore_contratto) - floatval($totale_ore)).'</td>
                 </tr>
 
                 <tr>

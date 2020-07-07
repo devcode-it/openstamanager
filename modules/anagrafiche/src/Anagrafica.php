@@ -250,7 +250,7 @@ class Anagrafica extends Model
 
     public function setCodiceDestinatarioAttribute($value)
     {
-        if ($this->sedeLegale->nazione->iso2 != 'IT') {
+        if (!empty($this->sedeLegale->nazione) && $this->sedeLegale->nazione->iso2 != 'IT') {
             $value = '';
         }
 

@@ -6,6 +6,8 @@ use Common\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules;
 use Modules\Interventi\Components\Articolo as ArticoloIntervento;
+use Modules\Iva\Aliquota;
+use Plugins\FornitoriArticolo\Dettaglio;
 use Traits\RecordTrait;
 use Uploads;
 
@@ -93,6 +95,22 @@ class Articolo extends Model
         return $id;
     }
 
+    public function setPrezzoVendita($prezzo_vendita, $id_iva)
+    {
+        $this->idiva_vendita = $id_iva;
+
+        // Calcolo prezzo di vendita ivato e non ivato
+        $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
+        $percentuale_aliquota = floatval(Aliquota::find($id_iva)->percentuale);
+        if ($prezzi_ivati) {
+            $this->prezzo_vendita_ivato = $prezzo_vendita;
+            $this->prezzo_vendita = $prezzo_vendita / (1 + $percentuale_aliquota / 100);
+        } else {
+            $this->prezzo_vendita = $prezzo_vendita;
+            $this->prezzo_vendita_ivato = $prezzo_vendita * (1 + $percentuale_aliquota / 100);
+        }
+    }
+
     // Attributi Eloquent
 
     public function getImmagineUploadAttribute()
@@ -169,5 +187,17 @@ class Articolo extends Model
     public function sottocategoria()
     {
         return $this->belongsTo(Categoria::class, 'id_sottocategoria');
+    }
+
+    public function dettaglioFornitori()
+    {
+        return $this->hasMany(Dettaglio::class, 'id_articolo');
+    }
+
+    public function dettaglioFornitore($id_fornitore)
+    {
+        return $this->dettaglioFornitori()
+            ->where('id_fornitore', $id_fornitore)
+            ->first();
     }
 }

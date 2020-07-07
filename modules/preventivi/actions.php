@@ -2,6 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Carbon\Carbon;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Preventivi\Components\Articolo;
@@ -80,7 +81,9 @@ switch (post('op')) {
     case 'copy':
         // Copia del preventivo
         $new = $preventivo->replicate();
-        $new->numero = Preventivo::getNextNumero($new->data_bozza);
+        $new->numero = Preventivo::getNextNumero(Carbon::now());
+        $new->data_bozza = Carbon::now();
+        $new->data_conclusione = Carbon::now()->addMonth();
         $new->stato = 'Bozza';
         $new->save();
 
@@ -156,6 +159,7 @@ switch (post('op')) {
         } else {
             $originale = ArticoloOriginale::find(post('idarticolo'));
             $articolo = Articolo::build($preventivo, $originale);
+            $articolo->id_dettaglio_fornitore = post('id_dettaglio_fornitore') ?: null;
         }
 
         $qta = post('qta');
@@ -255,8 +259,8 @@ switch (post('op')) {
 
     // Eliminazione riga
     case 'delete_riga':
-        $id_riga = post('idriga');
-        $type = post('type');
+        $id_riga = post('riga_id');
+        $type = post('riga_type');
 
         $riga = $preventivo->getRiga($type, $id_riga);
 

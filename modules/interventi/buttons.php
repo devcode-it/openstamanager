@@ -14,6 +14,12 @@ if (empty($record['firma_file'])) {
     ]).'</span>';
 }
 
+// Duplica intervento
+echo'
+<button type="button" class="btn btn-primary " onclick="launch_modal( \''.tr('Duplica attività').'\', globals.rootdir + \'/modules/interventi/copia_attivita.php?id_module='.$id_module.'&id_record='.$id_record.'\');" >
+    <i class="fa fa-copy"></i> '.tr('Duplica attività').'...
+</button>';
+
 // Disabilito il tasto di firma per gli interventi completati
 echo '
 

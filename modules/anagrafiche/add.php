@@ -14,7 +14,7 @@ echo '
 
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "text", "label": "'.tr('Denominazione').'", "name": "ragione_sociale", "required": 1 ]}
+			{[ "type": "text", "label": "'.tr('Denominazione').'", "name": "ragione_sociale", "id": "ragione_sociale_add", "required": 1 ]}
 		</div>
 
 		<div class="col-md-6">
@@ -25,11 +25,11 @@ echo '
 	<div class="row">
 
 		<div class="col-md-6">
-			{[ "type": "text", "label": "'.tr('Cognome').'", "name": "cognome", "required": 0 ]}
+			{[ "type": "text", "label": "'.tr('Cognome').'", "name": "cognome", "id": "cognome_add", "required": 0 ]}
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "text", "label": "'.tr('Nome').'", "name": "nome", "id": "nome_", "required": 0 ]}
+			{[ "type": "text", "label": "'.tr('Nome').'", "name": "nome", "id": "nome_add", "required": 0 ]}
 		</div>
 
 	</div>';
@@ -124,31 +124,40 @@ echo '
 ?>
 
 <script>
+    var nome = $('#nome_add', '#modals > div');
+    var cognome = $('#cognome_add', '#modals > div');
+    var ragione_sociale = $('#ragione_sociale_add', '#modals > div');
+
     // Abilito solo ragione sociale oppure solo nome-cognome in base a cosa compilo
-    $('#nome_, #cognome', '#modals > div').blur(function(){
-        if ($('#nome_', '#modals > div').val() == '' && $('#cognome', '#modals > div').val() == '' ){
-            $('#nome_, #cognome', '#modals > div').prop('disabled', true).prop('required', false);
-            $('#ragione_sociale', '#modals > div').prop('disabled', false).prop('required', true);
-        }else{
-            $('#nome_, #cognome', '#modals > div').prop('disabled', false).prop('required', true);
-            $('#ragione_sociale', '#modals > div').prop('disabled', true).prop('required', false);
+    nome.keyup(function () {
+        if ($(this).val()) {
+            ragione_sociale.prop('disabled', true).prop('required', false);
+        } else if (!cognome.val()) {
+            ragione_sociale.prop('disabled', false).prop('required', true);
         }
     });
 
-    $('#ragione_sociale', '#modals > div').blur(function(){
-        if ($('#ragione_sociale', '#modals > div').val() == '' ){
-            $('#nome_, #cognome', '#modals > div').prop('disabled', false).prop('required', true);
-            $('#ragione_sociale', '#modals > div').prop('disabled', true).prop('required', false);
-        }else{
-            $('#nome_, #cognome', '#modals > div').prop('disabled', true).prop('required', false);
-            $('#ragione_sociale', '#modals > div').prop('disabled', false).prop('required', true);
+    cognome.keyup(function () {
+        if ($(this).val()) {
+            ragione_sociale.prop('disabled', true).prop('required', false);
+        } else if (!nome.val()) {
+            ragione_sociale.prop('disabled', false).prop('required', true);
+        }
+    });
+
+    ragione_sociale.keyup(function () {
+        if ($(this).val()) {
+            nome.prop('disabled', true).prop('required', false);
+            cognome.prop('disabled', true).prop('required', false);
+        } else {
+            nome.prop('disabled', false).prop('required', true);
+            cognome.prop('disabled', false).prop('required', true);
         }
     });
 
 	$('#id_nazione', '#modals > div').change(function(){
-		if ($(this).find('option:selected').data('text')=='IT - Italia'){
+		if ($(this).find('option:selected').data('text') === 'IT - Italia'){
 			$('#codice_destinatario',  '#modals > div').removeAttr('readonly');
 		}
 	});
-
 </script>

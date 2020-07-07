@@ -126,6 +126,7 @@ switch (post('op')) {
         } else {
             $originale = ArticoloOriginale::find(post('idarticolo'));
             $articolo = Articolo::build($contratto, $originale);
+            $articolo->id_dettaglio_fornitore = post('id_dettaglio_fornitore') ?: null;
         }
 
         $qta = post('qta');
@@ -227,8 +228,8 @@ switch (post('op')) {
 
     // Eliminazione riga
     case 'delete_riga':
-        $id_riga = post('idriga');
-        $type = post('type');
+        $id_riga = post('riga_id');
+        $type = post('riga_type');
 $riga = $contratto->getRiga($type, $id_riga);
 
         if (!empty($riga)) {
@@ -394,6 +395,59 @@ $riga = $contratto->getRiga($type, $id_riga);
                 flash()->error(tr("Errore durante l'importazione tariffe!"));
             }
         }
+
+        break;
+
+    // Aggiunta di un documento in contratto
+    case 'add_preventivo':
+    case 'add_documento':
+        $class = post('class');
+        $id_documento = post('id_documento');
+
+        // Individuazione del documento originale
+        if (!is_subclass_of($class, \Common\Document::class)) {
+            return;
+        }
+        $documento = $class::find($id_documento);
+
+        // Creazione del contratto al volo
+        if (post('create_document') == 'on') {
+            $contratto = Contratto::build($documento->anagrafica, $documento->nome);
+
+            $contratto->idpagamento = $documento->idpagamento;
+            $contratto->idsede = $documento->idsede;
+
+            $contratto->id_documento_fe = $documento->id_documento_fe;
+            $contratto->codice_cup = $documento->codice_cup;
+            $contratto->codice_cig = $documento->codice_cig;
+            $contratto->num_item = $documento->num_item;
+
+            $contratto->descrizione = $documento->descrizione;
+            $contratto->esclusioni = $documento->esclusioni;
+
+            $contratto->save();
+
+            $id_record = $contratto->id;
+        }
+
+        $righe = $documento->getRighe();
+        foreach ($righe as $riga) {
+            if (post('evadere')[$riga->id] == 'on' and !empty(post('qta_da_evadere')[$riga->id])) {
+                $qta = post('qta_da_evadere')[$riga->id];
+
+                $copia = $riga->copiaIn($contratto, $qta);
+
+                $copia->save();
+            }
+        }
+
+        ricalcola_costiagg_ordine($id_record);
+
+        // Messaggio informativo
+        $message = tr('_DOC_ aggiunto!', [
+            '_DOC_' => $documento->getReference(),
+        ]);
+        flash()->info($message);
 
         break;
 }

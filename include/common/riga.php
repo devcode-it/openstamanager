@@ -51,10 +51,13 @@ if ($options['dir'] == 'entrata') {
             }
 
             var guadagno = prezzo - sconto - costo_unitario;
+            var margine = (((prezzo - sconto) * 100) / costo_unitario) - 100;
             var parent = $("#costo_unitario").closest("div").parent();
             var div = parent.find("div[id*=\"errors\"]");
 
-            div.html("<small>'.tr('Guadagno').': " + guadagno.toLocale() + " " + globals.currency + "</small>");
+            margine = isNaN(margine) || !isFinite(margine) ? 0: margine; // Fix per magine NaN
+
+            div.html("<small>'.tr('Guadagno').': " + guadagno.toLocale() + " " + globals.currency + " &nbsp; '.tr('Margine').': " + margine.toLocale() + " %</small>");
             if (guadagno < 0) {
                 parent.addClass("has-error");
                 div.addClass("text-danger").removeClass("text-success");

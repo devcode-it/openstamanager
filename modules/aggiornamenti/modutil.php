@@ -26,6 +26,56 @@ function customStructure()
                 $results[] = $result;
             }
         }
+
+        $files = glob(DOCROOT.'/'.$dir.'/*/custom/src/*.{php,html}', GLOB_BRACE);
+        foreach ($files as $file) {
+            $file = str_replace(DOCROOT.'/', '', $file);
+            $result = explode('/custom/', $file)[0];
+
+            if (!in_array($result, $results)) {
+                $results[] = $result;
+            }
+        }
+
+        $files = glob(DOCROOT.'/'.$dir.'/*/custom/src/Components/*.{php,html}', GLOB_BRACE);
+        foreach ($files as $file) {
+            $file = str_replace(DOCROOT.'/', '', $file);
+            $result = explode('/custom/', $file)[0];
+
+            if (!in_array($result, $results)) {
+                $results[] = $result;
+            }
+        }
+
+        $files = glob(DOCROOT.'/'.$dir.'/*/custom/src/API/*.{php,html}', GLOB_BRACE);
+        foreach ($files as $file) {
+            $file = str_replace(DOCROOT.'/', '', $file);
+            $result = explode('/custom/', $file)[0];
+
+            if (!in_array($result, $results)) {
+                $results[] = $result;
+            }
+        }
+
+        $files = glob(DOCROOT.'/'.$dir.'/*/custom/ajax/*.{php,html}', GLOB_BRACE);
+        foreach ($files as $file) {
+            $file = str_replace(DOCROOT.'/', '', $file);
+            $result = explode('/custom/', $file)[0];
+
+            if (!in_array($result, $results)) {
+                $results[] = $result;
+            }
+        }
+
+        $files = glob(DOCROOT.'/'.$dir.'/*/custom/widgets/*.{php,html}', GLOB_BRACE);
+        foreach ($files as $file) {
+            $file = str_replace(DOCROOT.'/', '', $file);
+            $result = explode('/custom/', $file)[0];
+
+            if (!in_array($result, $results)) {
+                $results[] = $result;
+            }
+        }
     }
 
     return $results;

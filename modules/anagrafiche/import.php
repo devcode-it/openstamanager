@@ -30,9 +30,9 @@ switch (post('op')) {
 
     case 'import':
         $sede_fields = [
-            'piva',
-            'codice_fiscale',
-            'codice_destinatario',
+            //'piva',
+            //'codice_fiscale',
+            //'codice_destinatario',
             'indirizzo',
             'indirizzo2',
             'citta',
@@ -139,6 +139,7 @@ return [
             'Citt_',
             'Citt&agrave;',
             'Città',
+            'Citta',
         ],
     ],
     [
@@ -208,6 +209,7 @@ return [
             'P.IVA',
             'P.IVA/TAX ID',
             'TAX ID',
+            'Partita IVA',
         ],
     ],
     [

@@ -14,6 +14,7 @@ if ($module['name'] == 'Ordini cliente') {
 
 unset($_SESSION['superselect']['codice_modalita_pagamento_fe']);
 $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
+$_SESSION['superselect']['permetti_movimento_a_zero'] = true;
 
 ?><form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
@@ -50,7 +51,7 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
                     <?php
                         } else {
                             ?>
-                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT * FROM or_statiordine WHERE descrizione IN('Bozza', 'Accettato', 'In attesa di conferma')", "value": "$idstatoordine$", "class": "unblockable" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT * FROM or_statiordine WHERE descrizione IN('Bozza', 'Accettato', 'In attesa di conferma', 'Annullato')", "value": "$idstatoordine$", "class": "unblockable" ]}
                     <?php
                         }
                     } else {

@@ -45,14 +45,39 @@ class FileSystem
      *
      * @return int
      */
-    public static function folderSize($path)
+    public static function folderSize($path, $exclusions = [])
     {
         $total = 0;
         $path = realpath($path);
 
         if ($path !== false && $path != '' && file_exists($path)) {
             foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS)) as $object) {
-                $total += $object->getSize();
+                if (!in_array($object->getExtension(), $exclusions)) {
+                    $total += $object->getSize();
+                }
+            }
+        }
+
+        return $total;
+    }
+
+    /**
+     * Restituisce il numero di file contenuti nella cartella indicata.
+     *
+     * @param string $path
+     *
+     * @return int
+     */
+    public static function fileCount($path, $exclusions = [])
+    {
+        $total = 0;
+        $path = realpath($path);
+
+        if ($path !== false && $path != '' && file_exists($path)) {
+            foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS)) as $object) {
+                if (!in_array($object->getExtension(), $exclusions)) {
+                    ++$total;
+                }
             }
         }
 

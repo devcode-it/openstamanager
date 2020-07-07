@@ -45,7 +45,7 @@ switch (filter('op')) {
         $uploads = $newsletter->uploads()->pluck('id');
 
         foreach ($anagrafiche as $anagrafica) {
-            if (empty($anagrafica['email'])) {
+            if (empty($anagrafica['email']) || empty($anagrafica['enable_newsletter'])) {
                 continue;
             }
 

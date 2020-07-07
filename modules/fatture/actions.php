@@ -270,6 +270,7 @@ switch (post('op')) {
             $new->numero_esterno = Fattura::getNextNumeroSecondario($new->data, $new->direzione, $new->id_segment);
         }
 
+        $new->codice_stato_fe = null;
         $new->stato()->associate($stato);
         $new->save();
 
@@ -394,6 +395,7 @@ switch (post('op')) {
         } else {
             $originale = ArticoloOriginale::find(post('idarticolo'));
             $articolo = Articolo::build($fattura, $originale);
+            $articolo->id_dettaglio_fornitore = post('id_dettaglio_fornitore') ?: null;
         }
 
         $qta = post('qta');
@@ -552,8 +554,8 @@ switch (post('op')) {
 
     // Scollegamento riga generica da documento
     case 'delete_riga':
-        $id_riga = post('idriga');
-        $type = post('type');
+        $id_riga = post('riga_id');
+        $type = post('riga_type');
         $riga = $fattura->getRiga($type, $id_riga);
 
         if (!empty($riga)) {
@@ -591,37 +593,30 @@ switch (post('op')) {
 
         break;
 
-    // Aggiunta di un documento in fattura
+    // Aggiunta di un documento esterno
     case 'add_documento':
+        $class = post('class');
         $id_documento = post('id_documento');
-        $type = post('type');
 
-        $movimenta = true;
-        $idsede = 0;
-
-        if ($type == 'ordine') {
-            $documento = \Modules\Ordini\Ordine::find($id_documento);
-            $idsede = $documento->idsede;
-        } elseif ($type == 'ddt') {
-            $documento = \Modules\DDT\DDT::find($id_documento);
-            $idsede = ($documento->direzione == 'entrata') ? $documento->idsede_destinazione : $documento->idsede_partenza;
-            $movimenta = false;
-        } elseif ($type == 'preventivo') {
-            $documento = \Modules\Preventivi\Preventivo::find($id_documento);
-            $idsede = $documento->idsede;
-        } elseif ($type == 'contratto') {
-            $documento = \Modules\Contratti\Contratto::find($id_documento);
-            $idsede = $documento->idsede;
+        // Individuazione del documento originale
+        if (!is_subclass_of($class, \Common\Document::class)) {
+            return;
         }
+        $documento = $class::find($id_documento);
+
+        // Individuazione sede
+        $id_sede = ($documento->direzione == 'entrata') ? $documento->idsede_destinazione : $documento->idsede_partenza;
+        $id_sede = $id_sede ?: $documento->idsede;
+        $id_sede = $id_sede ?: 0;
 
         // Creazione della fattura al volo
         if (post('create_document') == 'on') {
-            $descrizione = ($dir == 'entrata') ? 'Fattura immediata di vendita' : 'Fattura immediata di acquisto';
+            $descrizione = ($documento->direzione == 'entrata') ? 'Fattura immediata di vendita' : 'Fattura immediata di acquisto';
             $tipo = Tipo::where('descrizione', $descrizione)->first();
 
             $fattura = Fattura::build($documento->anagrafica, $tipo, post('data'), post('id_segment'));
             $fattura->idpagamento = $documento->idpagamento;
-            $fattura->idsede_destinazione = $idsede;
+            $fattura->idsede_destinazione = $documento->idsede;
             $fattura->id_ritenuta_contributi = post('id_ritenuta_contributi') ?: null;
             $fattura->save();
 
@@ -639,7 +634,7 @@ switch (post('op')) {
             if (post('evadere')[$riga->id] == 'on') {
                 $qta = post('qta_da_evadere')[$riga->id];
 
-                $copia = $riga->copiaIn($fattura, $qta);
+                $copia = $riga->copiaIn($fattura, $qta, $is_evasione);
                 $copia->id_conto = $id_conto;
 
                 $copia->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
@@ -649,10 +644,6 @@ switch (post('op')) {
 
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
-                    if ($movimenta) {
-                        //$copia->movimenta($copia->qta);
-                    }
-
                     $serials = is_array(post('serial')[$riga->id]) ? post('serial')[$riga->id] : [];
 
                     $copia->serials = $serials;
@@ -664,25 +655,10 @@ switch (post('op')) {
 
         ricalcola_costiagg_fattura($id_record);
 
-        $message = '';
-        if ($type == 'ordine') {
-            $message = tr('Ordine _NUM_ aggiunto!', [
-                '_NUM_' => $ordine->numero,
-            ]);
-        } elseif ($type == 'ddt') {
-            $message = tr('DDT _NUM_ aggiunto!', [
-                '_NUM_' => $ordine->numero,
-            ]);
-        } elseif ($type == 'preventivo') {
-            $message = tr('Preventivo _NUM_ aggiunto!', [
-                '_NUM_' => $ordine->numero,
-            ]);
-        } elseif ($type == 'contratto') {
-            $message = tr('Contratto _NUM_ aggiunto!', [
-                '_NUM_' => $ordine->numero,
-            ]);
-        }
-
+        // Messaggio informativo
+        $message = tr('_DOC_ aggiunto!', [
+            '_DOC_' => $documento->getReference(),
+        ]);
         flash()->info($message);
 
         break;
@@ -705,6 +681,7 @@ switch (post('op')) {
         $nota->idbanca = $fattura->idbanca;
         $nota->idsede_partenza = $fattura->idsede_partenza;
         $nota->idsede_destinazione = $fattura->idsede_destinazione;
+        $nota->split_payment = $fattura->split_payment;
         $nota->save();
 
         $righe = $fattura->getRighe();
@@ -717,8 +694,6 @@ switch (post('op')) {
 
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
-                    //$copia->movimenta($copia->qta);
-
                     $serials = is_array(post('serial')[$riga->id]) ? post('serial')[$riga->id] : [];
 
                     $copia->serials = $serials;

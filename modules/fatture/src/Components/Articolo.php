@@ -24,4 +24,24 @@ class Articolo extends Article
 
         return $model;
     }
+
+    public function movimenta($qta)
+    {
+        if (!$this->movimenta_magazzino) {
+            return;
+        }
+
+        $movimenta = true;
+
+        // Movimenta il magazzino solo se l'articolo non è già stato movimentato da un documento precedente
+        // Movimentazione forzata per Note di credito/debito
+        if ($this->hasOriginal() && !$this->parent->isNota()) {
+            $original = $this->getOriginal();
+            $movimenta = !$original->movimenta_magazzino;
+        }
+
+        if ($movimenta) {
+            $this->movimentaMagazzino($qta);
+        }
+    }
 }

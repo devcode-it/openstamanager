@@ -20,13 +20,14 @@ class Login extends Resource implements CreateInterface
             $token = auth()->getToken();
 
             // Informazioni da restituire tramite l'API
-            $response['user'] = $database->fetchOne('SELECT `ragione_sociale`, `codice`, `piva`, `codice_fiscale`, `indirizzo`, `citta`, `provincia`, (SELECT `nome` FROM `an_nazioni` WHERE `an_nazioni`.`id` = `an_anagrafiche`.`id_nazione`) AS nazione, `telefono`, `fax`, `cellulare`, `an_anagrafiche`.`email` FROM `zz_users` LEFT JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `zz_users`.`idanagrafica` WHERE `id` = :id', [
+            $response['user'] = $database->fetchOne('SELECT `an_anagrafiche`.`idanagrafica` AS idanagrafica, `ragione_sociale`, `codice`, `piva`, `codice_fiscale`, `indirizzo`, `citta`, `provincia`, (SELECT `nome` FROM `an_nazioni` WHERE `an_nazioni`.`id` = `an_anagrafiche`.`id_nazione`) AS nazione, `telefono`, `fax`, `cellulare`, `an_anagrafiche`.`email` FROM `zz_users` LEFT JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `zz_users`.`idanagrafica` WHERE `id` = :id', [
                 ':id' => $user['id'],
             ]);
 
             $response['token'] = $token;
             $response['group'] = $user['gruppo'];
             $response['google_maps_token'] = setting('Google Maps API key');
+            $response['prezzi_al_tecnico'] = setting('Mostra i prezzi al tecnico');
 
             $response['version'] = Update::getVersion();
         } else {

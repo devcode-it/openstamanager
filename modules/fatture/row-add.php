@@ -29,6 +29,7 @@ $result = [
     'qta' => 1,
     'um' => '',
     'prezzo' => 0,
+    'prezzo_acquisto' => 0,
     'sconto_unitario' => 0,
     'tipo_sconto' => '',
     'idiva' => '',

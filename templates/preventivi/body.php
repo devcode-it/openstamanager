@@ -326,9 +326,24 @@ echo '
         <td>';
 
         if (!empty($documento['validita'])) {
+            $periodi = [
+                'd' => [
+                    'singular' => tr('giorno'),
+                    'plural' => tr('giorni')
+                ],
+                'm' => [
+                    'singular' => tr('mese'),
+                    'plural' => tr('mesi')
+                ],
+                'y' => [
+                    'singular' => tr('anno'),
+                    'plural' => tr('anni')
+                ],
+            ];
             echo'
-            '.tr('_TOT_ giorni', [
+            '.tr('_TOT_ _PERIOD_', [
                 '_TOT_' => $documento['validita'],
+                '_PERIOD_' => $periodi[$documento['validita_periodo']][$documento['validita'] == 1 ? 'singular' : 'plural']
             ]);
         } else {
             echo '-';

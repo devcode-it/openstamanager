@@ -38,6 +38,17 @@ switch (post('op')) {
                 $budget = $rs[0]['budget'];
             }
 
+            // Calcolo della data di conclusione in base alla validità
+            $validita = post('validita');
+            $validita_periodo = post('tipo_validita');
+            $data_accettazione = post('data_accettazione');
+            $data_conclusione = post('data_conclusione');
+            if (!empty($validita) and !empty($data_accettazione)) {
+                $nuova_data = new DateTime($data_accettazione);
+                $nuova_data->add(new DateInterval(sprintf("P%d%s", $validita, strtoupper($validita_periodo))));
+                $data_conclusione = $nuova_data->format('Y-m-d');
+            }
+
             $contratto->idanagrafica = post('idanagrafica');
             $contratto->idsede = post('idsede');
             $contratto->idstato = post('idstato');
@@ -47,11 +58,12 @@ switch (post('op')) {
             $contratto->numero = post('numero');
             $contratto->budget = $budget;
             $contratto->idreferente = post('idreferente');
-            $contratto->validita = post('validita');
+            $contratto->validita = $validita;
+            $contratto->validita_periodo = $validita_periodo;
             $contratto->data_bozza = post('data_bozza');
-            $contratto->data_accettazione = post('data_accettazione');
+            $contratto->data_accettazione = $data_accettazione;
             $contratto->data_rifiuto = post('data_rifiuto');
-            $contratto->data_conclusione = post('data_conclusione');
+            $contratto->data_conclusione = $data_conclusione;
             $contratto->rinnovabile = post('rinnovabile');
             $contratto->giorni_preavviso_rinnovo = post('giorni_preavviso_rinnovo');
             $contratto->ore_preavviso_rinnovo = post('ore_preavviso_rinnovo');

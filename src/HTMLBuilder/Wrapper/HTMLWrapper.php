@@ -233,6 +233,21 @@ class HTMLWrapper implements WrapperInterface
                     'descrizione' => tr('CCN'),
                 ],
             ];
+        } elseif ($type == 'period') {
+            $choices = [
+                [
+                    'id' => 'd',
+                    'descrizione' => tr('giorno/i')
+                ],
+                [
+                    'id' => 'm',
+                    'descrizione' => tr('mese/i')
+                ],
+                [
+                    'id' => 'y',
+                    'descrizione' => tr('anno/i')
+                ]
+            ];
         }
 
         $value = (empty($pieces[2]) || !in_array($pieces[2], array_column($choices, 'id'))) ? $choices[0]['id'] : $pieces[2];

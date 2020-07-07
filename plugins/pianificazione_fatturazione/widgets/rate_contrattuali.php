@@ -4,7 +4,7 @@ use Plugins\PianificazioneFatturazione\Pianificazione;
 
 include_once __DIR__.'/../../../core.php';
 
-$pianificazioni = Pianificazione::doesntHave('fattura')->get();
+$pianificazioni = Pianificazione::doesntHave('fattura')->orderBy('data_scadenza', 'asc')->get();
 if ($pianificazioni->isEmpty()) {
     echo '
 <p>'.tr('Non ci sono fatture da emettere').'.</p>';

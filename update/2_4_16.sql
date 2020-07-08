@@ -111,3 +111,7 @@ ALTER TABLE `mg_prodotti` ADD FOREIGN KEY (`id_riga_intervento`) REFERENCES `in_
 -- Periodi di validità (Contratti e Preventivi)
 ALTER TABLE `co_contratti` ADD COLUMN `tipo_validita` ENUM('days', 'months', 'years') NULL DEFAULT NULL AFTER `validita`;
 ALTER TABLE `co_preventivi` ADD COLUMN `tipo_validita` ENUM('days', 'months', 'years') NULL DEFAULT NULL AFTER `validita`;
+
+-- Aggiunta campi Peso e Volume in DDT e Fatture accompagnatorie
+ALTER TABLE `dt_ddt` ADD COLUMN `peso` decimal(12, 4) AFTER `n_colli`, ADD COLUMN `volume` decimal(12, 4) AFTER `peso`;
+ALTER TABLE `co_documenti` ADD COLUMN `peso` decimal(12, 4) AFTER `n_colli`, ADD COLUMN `volume` decimal(12, 4) AFTER `peso`;

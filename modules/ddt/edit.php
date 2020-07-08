@@ -173,7 +173,7 @@ $_SESSION['superselect']['permetti_movimento_a_zero'] = ($dir == 'uscita' ? true
                 <div class="col-md-3">
 					{[ "type": "timestamp", "label": "<?php echo tr('Data ora trasporto'); ?>", "name": "data_ora_trasporto", "required": 0, "value": "$data_ora_trasporto$" ]}
 				</div>
-                
+
                  <script>
                     $("#idspedizione").change( function(){
                         //Per tutti tipi di spedizione, a parte "Espressa" o "Vettore", il campo vettore non deve essere richiesto
@@ -190,7 +190,7 @@ $_SESSION['superselect']['permetti_movimento_a_zero'] = ($dir == 'uscita' ? true
                             $("label[for=idvettore]").text("<?php echo tr('Vettore'); ?>*");
                             $(".btn_idvettore").prop("disabled", false);
                             $(".btn_idvettore").removeClass("disabled");
-                            
+
                         }
                     });
 
@@ -203,6 +203,46 @@ $_SESSION['superselect']['permetti_movimento_a_zero'] = ($dir == 'uscita' ? true
                     });
                 </script>
 			</div>
+<?php
+
+if ($dir == 'entrata') {
+    echo '
+        <div class="row">
+            <div class="col-md-3">
+                {[ "type": "number", "label": "'.tr('Peso').'", "name": "peso", "value": "$peso$", "readonly": "'.intval(empty($record['peso'])).'", "help": "'.tr('Il valore del campo Peso viene calcolato in automatico sulla base degli articoli inseriti nel documento, a meno dell\'impostazione di un valore manuale in questo punto').'" ]}
+            </div>
+
+            <div class="col-md-3">
+                {[ "type": "checkbox", "label": "'.tr('Modifica peso').'", "name": "peso_manuale", "value": '.intval(!empty($record['peso'])).', "help": "'.tr('Seleziona per modificare manualmente il campo Peso').'", "placeholder": "'.tr('Modifica peso').'" ]}
+
+                <script type="text/javascript">
+                    $(document).ready(function() {
+                        $("#peso_manuale").click(function(){
+                            $("#peso").prop("readonly", !$("#peso_manuale").is(":checked"));
+                        });
+                    });
+                </script>
+            </div>
+
+            <div class="col-md-3">
+                {[ "type": "number", "label": "'.tr('Volume').'", "name": "volume", "value": "$volume$", "readonly": "'.intval(empty($record['volume'])).'", "help": "'.tr('Il valore del campo Volume viene calcolato in automatico sulla base degli articoli inseriti nel documento, a meno dell\'impostazione di un valore manuale in questo punto').'" ]}
+            </div>
+
+            <div class="col-md-3">
+                {[ "type": "checkbox", "label": "'.tr('Modifica volume').'", "name": "volume_manuale", "value": '.intval(!empty($record['volume'])).', "help": "'.tr('Seleziona per modificare manualmente il campo Volume').'", "placeholder": "'.tr('Modifica volume').'" ]}
+
+                <script type="text/javascript">
+                    $(document).ready(function() {
+                        $("#volume_manuale").click(function(){
+                            $("#volume").prop("readonly", !$("#volume_manuale").is(":checked"));
+                        });
+                    });
+                </script>
+            </div>
+        </div>';
+}
+
+?>
 
 			<div class="row">
 				<div class="col-md-12">

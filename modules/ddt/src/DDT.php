@@ -17,6 +17,12 @@ class DDT extends Document
 
     protected $table = 'dt_ddt';
 
+    protected $casts = [
+        'bollo' => 'float',
+        'peso' => 'float',
+        'volume' => 'float',
+    ];
+
     protected $with = [
         'tipo',
     ];
@@ -98,6 +104,38 @@ class DDT extends Document
     public function getDirezioneAttribute()
     {
         return $this->tipo->dir;
+    }
+
+    /**
+     * Restituisce il peso calcolato sulla base degli articoli del documento.
+     *
+     * @return float
+     */
+    public function getPesoCalcolatoAttribute()
+    {
+        $righe = $this->getRighe();
+
+        $peso_lordo = $righe->sum(function ($item) {
+            return $item->isArticolo() ? $item->articolo->peso_lordo * $item->qta : 0;
+        });
+
+        return $peso_lordo;
+    }
+
+    /**
+     * Restituisce il volume calcolato sulla base degli articoli del documento.
+     *
+     * @return float
+     */
+    public function getVolumeCalcolatoAttribute()
+    {
+        $righe = $this->getRighe();
+
+        $volume = $righe->sum(function ($item) {
+            return $item->isArticolo() ? $item->articolo->volume * $item->qta : 0;
+        });
+
+        return $volume;
     }
 
     public function anagrafica()

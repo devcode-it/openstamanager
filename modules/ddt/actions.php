@@ -88,6 +88,8 @@ switch (post('op')) {
             'idritenutaacconto' => $idritenutaacconto,
 
             'n_colli' => post('n_colli'),
+            'peso' => post('peso'),
+            'volume' => post('volume'),
             'bollo' => 0,
             'rivalsainps' => 0,
             'ritenutaacconto' => 0,

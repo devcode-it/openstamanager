@@ -14,12 +14,8 @@ $netto_a_pagare = abs($documento->netto);
 
 $show_sconto = $sconto > 0;
 
-$volume = $righe->sum(function ($item) {
-    return $item->isArticolo() ? $item->articolo->volume * $item->qta : 0;
-});
-$peso_lordo = $righe->sum(function ($item) {
-    return $item->isArticolo() ? $item->articolo->peso_lordo * $item->qta : 0;
-});
+$volume = $documento->volume ?: $documento->volume_calcolato;
+$peso_lordo = $documento->peso ?: $documento->peso_calcolato;
 
 $width = round(100 / ($show_sconto ? 5 : 3), 2);
 

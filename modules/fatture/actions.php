@@ -85,6 +85,9 @@ switch (post('op')) {
         $fattura->n_colli = post('n_colli');
         $fattura->tipo_resa = post('tipo_resa');
 
+        $fattura->peso = post('peso');
+        $fattura->volume = post('volume');
+
         $fattura->rivalsainps = 0;
         $fattura->ritenutaacconto = 0;
         $fattura->iva_rivalsainps = 0;

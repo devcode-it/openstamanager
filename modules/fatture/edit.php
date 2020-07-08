@@ -534,9 +534,43 @@ if ($tipodoc == 'Fattura accompagnatoria di vendita') {
 
     echo '
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Tipo Resa').'", "name": "tipo_resa", "value":"$tipo_resa$", "values": '.json_encode($tipo_resa).', "readonly": '.intval($record['causale_desc'] != 'Reso').' ]}
+                    {[ "type": "select", "label": "'.tr('Tipo Resa').'", "name": "tipo_resa", "value": "$tipo_resa$", "values": '.json_encode($tipo_resa).', "readonly": '.intval($record['causale_desc'] != 'Reso').' ]}
                 </div>
+            </div>
+        </div>';
 
+    echo '
+        <div class="row">
+            <div class="col-md-3">
+                {[ "type": "number", "label": "'.tr('Peso').'", "name": "peso", "value": "$peso$", "readonly": "'.intval(empty($record['peso'])).'", "help": "'.tr('Il valore del campo Peso viene calcolato in automatico sulla base degli articoli inseriti nel documento, a meno dell\'impostazione di un valore manuale in questo punto').'" ]}
+            </div>
+
+            <div class="col-md-3">
+                {[ "type": "checkbox", "label": "'.tr('Modifica peso').'", "name": "peso_manuale", "value": '.intval(!empty($record['peso'])).', "help": "'.tr('Seleziona per modificare manualmente il campo Peso').'", "placeholder": "'.tr('Modifica peso').'" ]}
+
+                <script type="text/javascript">
+                    $(document).ready(function() {
+                        $("#peso_manuale").click(function(){
+                            $("#peso").prop("readonly", !$("#peso_manuale").is(":checked"));
+                        });
+                    });
+                </script>
+            </div>
+
+            <div class="col-md-3">
+                {[ "type": "number", "label": "'.tr('Volume').'", "name": "volume", "value": "$volume$", "readonly": "'.intval(empty($record['volume'])).'", "help": "'.tr('Il valore del campo Volume viene calcolato in automatico sulla base degli articoli inseriti nel documento, a meno dell\'impostazione di un valore manuale in questo punto').'" ]}
+            </div>
+
+            <div class="col-md-3">
+                {[ "type": "checkbox", "label": "'.tr('Modifica volume').'", "name": "volume_manuale", "value": '.intval(!empty($record['volume'])).', "help": "'.tr('Seleziona per modificare manualmente il campo Volume').'", "placeholder": "'.tr('Modifica volume').'" ]}
+
+                <script type="text/javascript">
+                    $(document).ready(function() {
+                        $("#volume_manuale").click(function(){
+                            $("#volume").prop("readonly", !$("#volume_manuale").is(":checked"));
+                        });
+                    });
+                </script>
             </div>
         </div>
     </div>';

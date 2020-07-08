@@ -137,8 +137,8 @@ $_SESSION['superselect']['permetti_movimento_a_zero'] = true;
                 <h4 class="panel-title">
                     <?php echo tr('Dati appalto'); ?>
 
-                    <div class="box-tools pull-right">    
-                        <a data-toggle="collapse" href="#dati_appalto"><i class="fa fa-plus" style='color:white;margin-top:2px;'></i></a>           
+                    <div class="box-tools pull-right">
+                        <a data-toggle="collapse" href="#dati_appalto"><i class="fa fa-plus" style='color:white;margin-top:2px;'></i></a>
                     </div>
                 </h4>
             </div>
@@ -168,18 +168,20 @@ $_SESSION['superselect']['permetti_movimento_a_zero'] = true;
     </div>
 </form>
 
+<?php
+
+echo '
 <!-- RIGHE -->
 <div class="panel panel-primary">
 	<div class="panel-heading">
-		<h3 class="panel-title">Righe</h3>
+		<h3 class="panel-title">'.tr('Righe').'</h3>
 	</div>
 
-	<div class="panel-body">
-		<div class="pull-left">
-<?php
+	<div class="panel-body">';
 
 if (!$block_edit) {
     echo '
+		<div class="pull-left">
             <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_articolo" data-toggle="tooltip" data-title="'.tr('Aggiungi articolo').'">
                 <i class="fa fa-plus"></i> '.tr('Articolo').'
             </a>';
@@ -198,17 +200,31 @@ if (!$block_edit) {
             <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_sconto" data-toggle="tooltip" data-title="'.tr('Aggiungi sconto/maggiorazione').'">
                 <i class="fa fa-plus"></i> '.tr('Sconto/maggiorazione').'
             </a>';
+
+    echo '
+        </div>';
+
+    if ($dir == 'entrata') {
+        echo '
+        <div class="pull-right">
+            <a class="btn btn-sm btn-info" data-href="'.$structure->fileurl('quantita_impegnate.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="'.tr('Controllo sulle quantità impegnate').'">
+                <i class="fa fa-check"></i> '.tr('Quantità impegnate').'
+            </a>
+        </div>';
+    }
+
+    echo '
+		<div class="clearfix"></div>
+		<br>';
 }
 
-?>
-		</div>
-		<div class="clearfix"></div>
-		<br>
-
-
+echo '
 		<div class="row">
-			<div class="col-md-12">
-				<?php include $docroot.'/modules/ordini/row-list.php'; ?>
+			<div class="col-md-12">';
+
+include $module->filepath('row-list.php');
+
+echo '
 			</div>
 		</div>
 	</div>
@@ -216,9 +232,8 @@ if (!$block_edit) {
 
 {( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
-{( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}
+{( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}';
 
-<?php
 // Collegamenti diretti
 // Fatture o ddt collegati a questo ordine
 $elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idordine` = '.prepare($id_record).')

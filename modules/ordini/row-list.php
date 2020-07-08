@@ -8,8 +8,7 @@ echo '
         <tr>
             <th width="35" class="text-center" >'.tr('#').'</th>
 			<th>'.tr('Descrizione').'</th>
-            <th class="text-center" width="150">'.tr('Q.tà disponibile').'</th>
-            <th class="text-center tip" width="150" title="'.tr('da evadere').' / '.tr('totale').'">'.tr('Q.tà richiesta').' <i class="fa fa-question-circle-o"></i></th>
+            <th class="text-center tip" width="150" title="'.tr('da evadere').' / '.tr('totale').'">'.tr('Q.tà').' <i class="fa fa-question-circle-o"></i></th>
 			<th class="text-center" width="150">'.tr('Prezzo unitario').'</th>
             <th class="text-center" width="150">'.tr('Iva unitaria').'</th>
             <th class="text-center" width="150">'.tr('Importo').'</th>
@@ -64,20 +63,6 @@ foreach ($righe as $riga) {
             <br>'.tr('SN').': '.implode(', ', $serials);
         }
     }
-
-    // Disponibilità articolo
-    $disponibile = $riga->articolo->qta >= ($riga->qta - $riga->qta_evasa);
-    echo '
-            <td class="text-center '.($disponibile ? 'bg-success' : 'bg-danger').'">';
-
-    if ($riga->isArticolo()) {
-        echo($disponibile ? '<i class="fa fa-check text-success"></i> ' : '<i class="fa fa-warning text-danger"></i> ').numberFormat($riga->articolo->qta).' '.$riga->um;
-    } else {
-        echo '-';
-    }
-
-    echo '
-        </td>';
 
     // Aggiunta dei riferimenti ai documenti
     if ($riga->hasOriginal()) {
@@ -186,7 +171,7 @@ $totale = abs($ordine->totale);
 // IMPONIBILE
 echo '
     <tr>
-        <td colspan="6" class="text-right">
+        <td colspan="5" class="text-right">
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">
@@ -199,7 +184,7 @@ echo '
 if (!empty($sconto)) {
     echo '
     <tr>
-        <td colspan="6" class="text-right">
+        <td colspan="5" class="text-right">
             <b><span class="tip" title="'.tr('Un importo positivo indica uno sconto, mentre uno negativo indica una maggiorazione').'"> <i class="fa fa-question-circle-o"></i> '.tr('Sconto/maggiorazione', [], ['upper' => true]).':</span></b>
         </td>
         <td class="text-right">
@@ -211,7 +196,7 @@ if (!empty($sconto)) {
     // TOTALE IMPONIBILE
     echo '
     <tr>
-        <td colspan="6" class="text-right">
+        <td colspan="5" class="text-right">
             <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">
@@ -224,7 +209,7 @@ if (!empty($sconto)) {
 // IVA
 echo '
     <tr>
-        <td colspan="6" class="text-right">
+        <td colspan="5" class="text-right">
             <b>'.tr('Iva', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">
@@ -236,7 +221,7 @@ echo '
 // TOTALE
 echo '
     <tr>
-        <td colspan="6" class="text-right">
+        <td colspan="5" class="text-right">
             <b>'.tr('Totale', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">

@@ -1,14 +1,11 @@
 <?php
 
+use Modules\Ordini\Ordine;
+
 include_once __DIR__.'/../../core.php';
 
 if (isset($id_record)) {
-    $ordine = Modules\Ordini\Ordine::with('tipo', 'stato')->find($id_record);
-
-    // Aggiornamento stato di questo ordine (?)
-    //if (!empty(get_stato_ordine($id_record)) && setting('Cambia automaticamente stato ordini fatturati')) {
-    //    $dbo->query('UPDATE or_ordini SET idstatoordine=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($id_record).'") WHERE id='.prepare($id_record));
-    //}
+    $ordine = Ordine::with('tipo', 'stato')->find($id_record);
 
     $record = $dbo->fetchOne('SELECT *,
         or_ordini.note,

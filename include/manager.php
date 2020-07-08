@@ -71,9 +71,13 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
     </script>';
     }
 
+    // Reset della selezione precedente
+    $_SESSION['module_'.$id_module]['selected'] = [];
+    $selezione = array_keys($_SESSION['module_'.$id_module]['selected']);
+
     $table_id = 'main_'.rand(0, 99);
     echo '
-    <table data-idmodule="'.$id_module.'" data-idplugin="'.$id_plugin.'" data-idparent="'.$id_record.'" id="'.$table_id.'" width="100%" class="main-records table table-condensed table-bordered">
+    <table data-idmodule="'.$id_module.'" data-selected="'.implode(';', $selezione).'" data-idplugin="'.$id_plugin.'" data-idparent="'.$id_record.'"  id="'.$table_id.'" width="100%" class="main-records table table-condensed table-bordered">
         <thead>
             <tr>
                 <th id="th_selector"></th>';

@@ -380,6 +380,10 @@ function clean() {
 // Operazioni di default per la generazione degli assets
 const bower = gulp.series(clean, gulp.parallel(JS, CSS, images, fonts, phpDebugBar, ckeditor, colorpicker, i18n, pdfjs, hotkeys, chartjs, password_strength, csrf));
 
+// Debug su CSS e JS
+exports.srcJS = srcJS;
+exports.srcCSS = srcCSS;
+
 exports.bower = bower;
 exports.release = release;
 exports.default = bower;

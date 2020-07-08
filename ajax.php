@@ -4,7 +4,7 @@ include_once __DIR__.'/core.php';
 
 use Models\Hook;
 
-switch (get('op')) {
+switch (filter('op')) {
     // Imposta un valore ad un array di $_SESSION
     // esempio: push di un valore in $_SESSION['dashboard']['idtecnici']
     // iversed: specifica se rimuovere dall'array il valore trovato e applicare quindi una deselezione (valori 0 o 1, default 1)
@@ -139,6 +139,31 @@ switch (get('op')) {
         $response = flash()->getMessages();
 
         echo json_encode($response);
+
+        break;
+
+    // Impostazione di selezione di tutti le righe della tabella
+    case 'table-row-selection':
+        $row_ids = filter('row_ids');
+        $type = filter('type');
+        $selected = &$_SESSION['module_'.$id_module]['selected'];
+
+        if (isset($row_ids)) {
+            foreach ($row_ids as $row_id) {
+                if (!isset($row_id)) {
+                    continue;
+                }
+
+                // Toggle per la riga indicata
+                if ($type == 'deselect' && isset($selected[$row_id])) {
+                    unset($selected[$row_id]);
+                } elseif ($type == 'select') {
+                    $selected[$row_id] = true;
+                }
+            }
+        }
+
+        echo json_encode(array_keys($selected));
 
         break;
 }

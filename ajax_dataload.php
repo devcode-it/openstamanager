@@ -77,6 +77,7 @@ if (!empty($query)) {
     // Creazione della tabella
     foreach ($rows as $i => $r) {
         $result = [
+            'id' => $r['id'],
             '<span class="hide" data-id="'.$r['id'].'"></span>', // Colonna ID
         ];
 

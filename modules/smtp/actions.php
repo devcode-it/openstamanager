@@ -1,7 +1,5 @@
 <?php
 
-use Notifications\EmailNotification;
-
 include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
@@ -68,16 +66,16 @@ switch (post('op')) {
         break;
 
     case 'test':
-        $mail = new EmailNotification($id_record);
+        $result = $account->testConnection();
 
         echo json_encode([
-            'test' => $mail->testSMTP(),
+            'test' => $result,
         ]);
 
         break;
 
     case 'delete':
-        $dbo->query('UPDATE em_accounts SET deleted_at = NOW() WHERE id='.prepare($id_record));
+        $account->delete();
 
         flash()->info(tr('Account email eliminato!'));
 

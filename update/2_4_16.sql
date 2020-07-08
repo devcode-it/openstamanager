@@ -115,3 +115,7 @@ ALTER TABLE `co_preventivi` ADD COLUMN `tipo_validita` ENUM('days', 'months', 'y
 -- Aggiunta campi Peso e Volume in DDT e Fatture accompagnatorie
 ALTER TABLE `dt_ddt` ADD COLUMN `peso` decimal(12, 4) AFTER `n_colli`, ADD COLUMN `volume` decimal(12, 4) AFTER `peso`;
 ALTER TABLE `co_documenti` ADD COLUMN `peso` decimal(12, 4) AFTER `n_colli`, ADD COLUMN `volume` decimal(12, 4) AFTER `peso`;
+
+-- Aggiunta data di connessione agli account SMTP
+ALTER TABLE `em_accounts` ADD `connected_at` TIMESTAMP NULL DEFAULT NULL AFTER `timeout`;
+UPDATE `em_accounts` SET `connected_at` = NOW();

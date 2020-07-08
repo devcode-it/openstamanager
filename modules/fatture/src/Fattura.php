@@ -411,6 +411,20 @@ class Fattura extends Document
     }
 
     /**
+     * Restituisce le ricevute della fattura elettronica relativa al documento.
+     *
+     * @return iterable
+     */
+    public function getRicevute()
+    {
+        $nome = 'Ricevuta';
+
+        return $this->uploads()->filter(function ($item) use ($nome) {
+            return false !== strstr($item->name, $nome);
+        })->sortBy('created_at');
+    }
+
+    /**
      * Controlla se la fattura di acquisto è elettronica.
      *
      * @return bool

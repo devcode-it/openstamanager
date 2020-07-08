@@ -130,17 +130,24 @@ class Ricevuta
         $name = basename($this->file);
         $filename = explode('.', $name)[0];
         $pieces = explode('_', $filename);
-        $codice = $pieces[2];
+        $codice_stato = $pieces[2];
 
-        $this->saveAllegato($codice);
-
-        //In caso di Notifica Esito il codice è definito dal nodo <Esito> della ricevuta
-        if ($codice == 'NE') {
-            $this->xml = XML::readFile($this->file);
-            $codice = $this->xml['EsitoCommittente']['Esito'];
+        // Individuazione codice per il nome dell'allegato
+        $codice_nome = $codice_stato;
+        if ($codice_nome == 'NS') {
+            $lista_errori = $this->xml['ListaErrori'];
+            $errore = $lista_errori[0] ?: $lista_errori;
+            $codice_nome = $codice_nome.' - '.$errore['Errore']['Codice'];
         }
 
-        $this->saveStato($codice);
+        $this->saveAllegato($codice_nome);
+
+        // In caso di Notifica Esito il codice è definito dal nodo <Esito> della ricevuta
+        if ($codice_stato == 'NE') {
+            $codice_stato = $this->xml['EsitoCommittente']['Esito'];
+        }
+
+        $this->saveStato($codice_stato);
     }
 
     public function getFattura()

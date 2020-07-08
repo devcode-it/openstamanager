@@ -1,5 +1,7 @@
 <?php
 
+use Modules\Fatture\Fattura;
+
 include_once __DIR__.'/../../core.php';
 
 if ($module['name'] == 'Fatture di vendita') {
@@ -9,7 +11,7 @@ if ($module['name'] == 'Fatture di vendita') {
 }
 
 if (isset($id_record)) {
-    $fattura = Modules\Fatture\Fattura::with('tipo', 'stato')->find($id_record);
+    $fattura = Fattura::with('tipo', 'stato')->find($id_record);
 
     $is_fiscale = false;
     if (!empty($fattura)) {

@@ -126,6 +126,16 @@ class Upload extends Model
     }
 
     /**
+     * Restituisce i contenuti del file.
+     *
+     * @return false|string
+     */
+    public function getContent()
+    {
+        return file_get_contents($this->filepath);
+    }
+
+    /**
      * @return bool
      */
     public function isImage()

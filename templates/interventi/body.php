@@ -145,7 +145,7 @@ if (!$righe->isEmpty()) {
             </th>
 
             <th style="font-size:8pt;width:20%" class="text-center">
-                <b>'.tr('Imponibile').'</b>
+                <b>'.tr('Importo').'</b>
             </th>
         </tr>
     </thead>
@@ -188,7 +188,7 @@ if (!$righe->isEmpty()) {
         // Prezzo unitario
         echo '
         <td class="text-center">
-            '.($options['pricing'] ? moneyFormat($riga->prezzo_unitario) : '-');
+            '.($options['pricing'] ? moneyFormat($riga->prezzo_unitario_corrente) : '-');
 
         if ($options['pricing'] && $riga->sconto > 0) {
             $text = discountInfo($riga, false);
@@ -203,7 +203,7 @@ if (!$righe->isEmpty()) {
         // Prezzo totale
         echo '
         <td class="text-center">
-            '.($options['pricing'] ? Translator::numberToLocale($riga->totale_imponibile) : '-').'
+            '.($options['pricing'] ? Translator::numberToLocale($riga->importo) : '-').'
         </td>
     </tr>';
     }
@@ -220,7 +220,7 @@ if (!$righe->isEmpty()) {
         </td>
 
         <th class="text-center">
-            <b>'.moneyFormat($righe->sum('totale_imponibile'), 2).'</b>
+            <b>'.moneyFormat($righe->sum('importo'), 2).'</b>
         </th>
     </tr>';
     }
@@ -279,19 +279,19 @@ foreach ($sessioni as $i => $sessione) {
     // Data
     echo '
     	<td class="text-center">
-            '.Translator::dateToLocale($sessione['orario_inizio'], '-').'
+            '.Translator::dateToLocale($sessione['orario_inizio']).'
     	</td>';
 
     // Ora inizio
     echo '
     	<td class="text-center">
-            '.Translator::timeToLocale($sessione['orario_inizio'], '-').'
+            '.Translator::timeToLocale($sessione['orario_inizio']).'
     	</td>';
 
     // Ora fine
     echo '
     	<td class="text-center">
-            '.Translator::timeToLocale($sessione['orario_fine'], '-').'
+            '.Translator::timeToLocale($sessione['orario_fine']).'
         </td>';
 
     // Spazio aggiuntivo
@@ -375,10 +375,24 @@ $netto_a_pagare = abs($documento->netto);
 
 $show_sconto = $sconto > 0;
 
+$incorpora_iva = setting('Utilizza prezzi di vendita comprensivi di IVA');
+
 // TOTALE COSTI FINALI
 if ($options['pricing']) {
-    // Totale imponibile
-    echo '
+    if ($incorpora_iva) {
+        // TOTALE INTERVENTO
+        echo '
+    <tr>
+    	<td colspan="4" class="text-right">
+            <b>'.tr('Totale intervento', [], ['upper' => true]).':</b>
+    	</td>
+    	<th class="text-center">
+    		<b>'.moneyFormat($totale, 2).'</b>
+    	</th>
+    </tr>';
+    } else {
+        // Totale imponibile
+        echo '
     <tr>
         <td colspan="4" class="text-right">
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
@@ -389,9 +403,9 @@ if ($options['pricing']) {
         </th>
     </tr>';
 
-    // Eventuale sconto totale
-    if ($show_sconto) {
-        echo '
+        // Eventuale sconto totale
+        if ($show_sconto) {
+            echo '
         <tr>
             <td colspan="4" class="text-right">
             <b>'.tr('Sconto', [], ['upper' => true]).':</b>
@@ -402,8 +416,8 @@ if ($options['pricing']) {
             </th>
         </tr>';
 
-        // Totale imponibile
-        echo '
+            // Totale imponibile
+            echo '
         <tr>
             <td colspan="4" class="text-right">
                 <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
@@ -413,11 +427,11 @@ if ($options['pricing']) {
                 <b>'.moneyFormat($totale_imponibile, 2).'</b>
             </th>
         </tr>';
-    }
+        }
 
-    // IVA
-    // Totale intervento
-    echo '
+        // IVA
+        // Totale intervento
+        echo '
     <tr>
         <td colspan="4" class="text-right">
             <b>'.tr('Iva', [], ['upper' => true]).':</b>
@@ -428,8 +442,8 @@ if ($options['pricing']) {
         </th>
     </tr>';
 
-    // TOTALE INTERVENTO
-    echo '
+        // TOTALE INTERVENTO
+        echo '
     <tr>
     	<td colspan="4" class="text-right">
             <b>'.tr('Totale intervento', [], ['upper' => true]).':</b>
@@ -438,6 +452,7 @@ if ($options['pricing']) {
     		<b>'.moneyFormat($totale, 2).'</b>
     	</th>
     </tr>';
+    }
 }
 
 echo '

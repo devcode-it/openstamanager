@@ -218,7 +218,7 @@ switch (post('op')) {
 
 return [
     'export-bulk' => [
-        'text' => tr('Esporta stampe'),
+        'text' => '<span><i class="fa fa-file-archive-o"></i> '.tr('Esporta stampe'),
         'data' => [
             'title' => tr('Vuoi davvero esportare queste stampe in un archivio?'),
             'msg' => '',
@@ -229,7 +229,7 @@ return [
     ],
 
     'crea_fattura' => [
-        'text' => tr('Fattura documenti'),
+        'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Fattura documenti'),
         'data' => [
             'title' => tr('Vuoi davvero generare le fatture per questi interventi?'),
             'msg' => tr('Verranno fatturati gli interventi completati non inseriti in preventivi e contratti').'.<br>{[ "type": "checkbox", "placeholder": "'.tr('Aggiungere alle fatture esistenti non ancora emesse?').'", "name": "accodare" ]}
@@ -241,7 +241,7 @@ return [
     ],
 
     'cambia_stato' => [
-        'text' => tr('Cambia stato'),
+        'text' => '<span><i class="fa fa-refresh"></i> '.tr('Cambia stato'),
         'data' => [
             'title' => tr('Vuoi davvero cambinare le stato per questi interventi?'),
             'msg' => tr('Seleziona lo stato in cui spostare tutti gli interventi non completati').'.<br>
@@ -253,7 +253,7 @@ return [
     ],
 
     'copy' => [
-        'text' => tr('Duplica attività'),
+        'text' => '<span><i class="fa fa-clone"></i> '.tr('Duplica attività'),
         'data' => [
             'title' => tr('Vuoi davvero fare una copia degli interventi selezionati?'),
             'msg' => '<br>{[ "type": "timestamp", "label": "'.tr('Data/ora richiesta').'", "name": "data_richiesta", "required": 0, "value": "-now-", "required":1 ]}

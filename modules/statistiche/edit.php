@@ -85,8 +85,35 @@ var chart_options = {
                 }
             }
         },
+        annotation: {
+            annotations: [{
+                type: "line",
+                mode: "horizontal",
+                scaleID: "y-axis-0",
+                value: 0,
+                label: {
+                    enabled: false,
+                }
+            }]
+        },
+        hover: {
+            mode: "nearest",
+            intersect: false
+        },
         scales: {
+            xAxes: [{
+                display: true,
+                scaleLabel: {
+                    display: true,
+                    labelString: "'.tr("Periodo").'"
+                }
+            }],
             yAxes: [{
+                display: true,
+                scaleLabel: {
+                    display: true,
+                    labelString: "'.tr("Andamento").'"
+                },
                 ticks: {
                     // Include a dollar sign in the ticks
                     callback: function(value, index, values) {

@@ -51,7 +51,7 @@ const JS = gulp.parallel(() => {
         debugging: config.debug,
     }))
         .pipe(concat('app.min.js'))
-        //.pipe(minifyJS())
+        .pipe(minifyJS())
         .pipe(gulp.dest(config.production + '/' + config.paths.js));
 }, srcJS);
 
@@ -68,7 +68,7 @@ function srcJS() {
         config.development + '/' + config.paths.js + '/functions/*.js',
     ])
         .pipe(concat('functions.min.js'))
-        .pipe(minifyJS())
+        //.pipe(minifyJS())
         .pipe(gulp.dest(config.production + '/' + config.paths.js));
 
     return merge(js, indip);

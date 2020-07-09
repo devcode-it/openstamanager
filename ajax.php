@@ -141,29 +141,4 @@ switch (filter('op')) {
         echo json_encode($response);
 
         break;
-
-    // Impostazione di selezione di tutti le righe della tabella
-    case 'table-row-selection':
-        $row_ids = filter('row_ids');
-        $type = filter('type');
-        $selected = &$_SESSION['module_'.$id_module]['selected'];
-
-        if (isset($row_ids)) {
-            foreach ($row_ids as $row_id) {
-                if (!isset($row_id)) {
-                    continue;
-                }
-
-                // Toggle per la riga indicata
-                if ($type == 'deselect' && isset($selected[$row_id])) {
-                    unset($selected[$row_id]);
-                } elseif ($type == 'select') {
-                    $selected[$row_id] = true;
-                }
-            }
-        }
-
-        echo json_encode(array_keys($selected));
-
-        break;
 }

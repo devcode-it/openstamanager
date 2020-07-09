@@ -1,30 +1,30 @@
 $(document).ready(function () {
     // Pulsanti di Datatables
-    $(".btn-csv").click(function (e) {
+    $(".btn-csv").off("click").on("click", function (e) {
         var table = $(document).find("#" + $(this).closest("[data-target]").data("target")).DataTable();
 
         table.buttons(0).trigger();
     });
 
-    $(".btn-excel").click(function (e) {
+    $(".btn-excel").off("click").on("click", function (e) {
         var table = $(document).find("#" + $(this).closest("[data-target]").data("target")).DataTable();
 
         table.buttons(3).trigger();
     });
 
-    $(".btn-pdf").click(function (e) {
+    $(".btn-pdf").off("click").on("click", function (e) {
         var table = $(document).find("#" + $(this).closest("[data-target]").data("target")).DataTable();
 
         table.buttons(4).trigger();
     });
 
-    $(".btn-copy").click(function (e) {
+    $(".btn-copy").off("click").on("click", function (e) {
         var table = $(document).find("#" + $(this).closest("[data-target]").data("target")).DataTable();
 
         table.buttons(1).trigger();
     });
 
-    $(".btn-print").click(function (e) {
+    $(".btn-print").off("click").on("click", function (e) {
         var table = $(document).find("#" + $(this).closest("[data-target]").data("target")).DataTable();
 
         table.buttons(2).trigger();
@@ -51,14 +51,12 @@ $(document).ready(function () {
                 var row_ids = response.data.map(function(a) {return a.id;});
 
                 // Chiamata di selezione completa
-                rowSelection(wrapper, "select", row_ids).then(function () {
-                    table.clear().draw();
+                wrapper.addSelectedRows(row_ids);
+                table.clear().draw();
 
-                    $("#main_loading").hide();
-                })
+                $("#main_loading").hide();
             }
         })
-
     });
 
     $(".btn-select-none").click(function () {
@@ -68,27 +66,24 @@ $(document).ready(function () {
 
         // Chiamata di deselezione completa
         var row_ids = wrapper.getSelectedRows();
-        rowSelection(wrapper, "deselect", row_ids).then(function () {
-            table.clear().draw();
-        })
+        wrapper.removeSelectedRows(row_ids);
+        table.clear().draw();
     });
 
     $(document).on("click", ".select-checkbox", function () {
         var row = $(this).parent();
         var row_id = row.attr("id");
+
         var table_selector = $(this).closest(".dataTable");
         var wrapper = getTable(table_selector);
 
-        var type;
         if (row.hasClass("selected")) {
             //table.datatable.rows("#" + row_id).select();
-            type = "select";
+            wrapper.addSelectedRows(row_id);
         } else {
             //table.datatable.rows("#" + row_id).deselect();
-            type = "deselect";
+            wrapper.removeSelectedRows(row_id);
         }
-
-        rowSelection(wrapper, type, row_id);
     });
 
     $(".bulk-action").click(function () {

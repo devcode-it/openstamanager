@@ -77,7 +77,7 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
 
     $table_id = 'main_'.rand(0, 99);
     echo '
-    <table data-idmodule="'.$id_module.'" data-selected="'.implode(';', $selezione).'" data-idplugin="'.$id_plugin.'" data-idparent="'.$id_record.'"  id="'.$table_id.'" width="100%" class="main-records table table-condensed table-bordered">
+    <table data-idmodule="'.$id_module.'" data-idplugin="'.$id_plugin.'" data-idparent="'.$id_record.'" data-selected="'.implode(';', $selezione).'" id="'.$table_id.'" width="100%" class="main-records table table-condensed table-bordered">
         <thead>
             <tr>
                 <th id="th_selector"></th>';
@@ -177,6 +177,7 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
         </div>
 
         <div class="col-md-5 text-right">
+            <i class="fa fa-question-circle tip" title="'.tr('Le operazioni di esportazione, copia e stampa sono limitate alle righe selezionate e visibili della tabella').'. '.tr('Per azioni su tutti i contenuti selezionati, utilizzare le Azioni di gruppo').'."></i>
             <div class="btn-group" role="group">';
 
     if (setting('Abilita esportazione Excel e PDF')) {

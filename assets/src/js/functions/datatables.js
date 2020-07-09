@@ -44,9 +44,7 @@ function start_datatables() {
             var tempo_attesa_ricerche = (globals.tempo_attesa_ricerche * 1000);
 
             $this.on('preInit.dt', function (ev, settings) {
-                if ($(ev.target).hasClass("main-records")) {
-                    $('#mini-loader').show();
-                }
+                $('#mini-loader').show();
             });
 
             var table = $this.DataTable({
@@ -255,15 +253,6 @@ function start_datatables() {
                         $(this).parent().addClass("clickable");
                     });
 
-                    var container = $(document).find('[data-target=' + $this.attr('id') + ']');
-                    if (api.rows({
-                        selected: true
-                    }).count() > 0) {
-                        container.find('.table-btn').removeClass('disabled').attr('disabled', false);
-                    } else {
-                        container.find('.table-btn').addClass('disabled').attr('disabled', true);
-                    }
-
                     // Reimposto il flag sulle righe ricaricate selezionate in precedenza
                     var selected = $this.data('selected') ? $this.data('selected').split(';') : [];
                     table.rows().every(function (rowIdx) {
@@ -343,43 +332,12 @@ function getTableSearch() {
     var search = getUrlVars();
 
     globals.search.forEach(function (value, index, array) {
-        if (search[array[index]] == undefined) {
+        if (search[array[index]] === undefined) {
             search[array[index]] = array[value];
         }
     });
 
     return search;
-}
-
-/**
- * Invia una richiesta di selezione per un insieme di righe delle tabelle Datatables.
- */
-function rowSelection(wrapper, type, row_ids) {
-    return $.ajax({
-        url: globals.rootdir + "/ajax.php",
-        type: "POST",
-        dataType: "json",
-        data: {
-            id_module: wrapper.id_module,
-            id_plugin: wrapper.id_plugin,
-            op: "table-row-selection",
-            type: type,
-            row_ids: row_ids,
-        },
-        success: function (selected) {
-            wrapper.table.data('selected', selected.join(';'));
-
-            var bulk_container = wrapper.getActionsContainer();
-            var btn_container = wrapper.getButtonsContainer();
-            if (selected.length > 0) {
-                bulk_container.removeClass('disabled').attr('disabled', false);
-                btn_container.removeClass('disabled').attr('disabled', false);
-            } else {
-                bulk_container.addClass('disabled').attr('disabled', true);
-                btn_container.addClass('disabled').attr('disabled', true);
-            }
-        }
-    });
 }
 
 /**
@@ -390,36 +348,73 @@ function rowSelection(wrapper, type, row_ids) {
 function getTable(selector) {
     var table = $(selector);
 
-    if (!$.fn.DataTable.isDataTable(table)) {
-        if(table.hasClass('datatables')){
-            start_local_datatables();
-        } else {
-            start_datatables();
-        }
-    }
-
-    var id_module = table.data('idmodule');
-    var id_plugin = table.data('idplugin');
-
-    var datatable = table.DataTable();
+    var selected = new Map();
+    var selected_ids = table.data('selected') ? table.data('selected').split(';') : [];
+    selected_ids.forEach(function(item, index) {
+        selected.set(item, true);
+    });
 
     return {
         table: table,
-        id_module: id_module,
-        id_plugin: id_plugin,
-        datatable: datatable,
-        getSelectedRows: function () {
-            var list = table.data('selected');
-            return list ? list.split(';') : [];
+
+        id_module: table.data('idmodule'),
+        id_plugin: table.data('idplugin'),
+
+        initDatatable: function() {
+            if (table.hasClass('datatables')) {
+                start_local_datatables();
+            } else {
+                start_datatables();
+            }
         },
-        setSelectedRows: function (list) {
-            return table.data('selected', list.join(';'));
-        },
+        datatable: table.DataTable(),
+
+        // Funzioni per i contenitori relativi alla tabella
         getButtonsContainer: function () {
             return $('.row[data-target="' + table.attr('id') + '"]').find('.table-btn');
         },
         getActionsContainer: function () {
             return $('.row[data-target="' + table.attr('id') + '"]').find('.bulk-container');
-        }
+        },
+
+        // Gestione delle righe selezionate
+        selected: selected,
+        getSelectedRows: function () {
+            return Array.from(selected.keys());
+        },
+        saveSelectedRows: function () {
+            var selected_rows = this.getSelectedRows();
+            table.data('selected', selected_rows.join(';'));
+
+            var bulk_container = this.getActionsContainer();
+            var btn_container = this.getButtonsContainer();
+            if (selected_rows.length > 0) {
+                bulk_container.removeClass('disabled').attr('disabled', false);
+                btn_container.removeClass('disabled').attr('disabled', false);
+            } else {
+                bulk_container.addClass('disabled').attr('disabled', true);
+                btn_container.addClass('disabled').attr('disabled', true);
+            }
+        },
+        addSelectedRows: function (row_ids) {
+            row_ids = Array.isArray(row_ids) ? row_ids : [row_ids];
+            row_ids.forEach(function(item, index) {
+                selected.set(item, true);
+            });
+
+            this.saveSelectedRows();
+        },
+        removeSelectedRows: function (row_ids) {
+            row_ids = Array.isArray(row_ids) ? row_ids : [row_ids];
+            row_ids.forEach(function(item, index) {
+                selected.delete(item);
+            });
+
+            this.saveSelectedRows();
+        },
+        clearSelectedRows: function () {
+            selected.clear();
+            this.saveSelectedRows();
+        },
     };
 }

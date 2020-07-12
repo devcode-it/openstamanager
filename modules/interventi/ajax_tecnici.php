@@ -31,10 +31,10 @@ if (!empty($sessioni)) {
     <table class="table table-striped table-hover table-condensed">
         <tr>
             <th><i class="fa fa-user"></i> '.$sessione['ragione_sociale'].' '.(($sessione['anagrafica_deleted_at']) ? '<small class="text-danger"><em>('.tr('Eliminato').')</em></small>' : '').'</th>
-            <th width="20%">'.tr('Orario inizio').'</th>
-            <th width="20%">'.tr('Orario fine').'</th>
-            <th width="5%">'.tr('Ore').'</th>
-            <th width="5%">'.tr('Km').'</th>';
+            <th width="15%">'.tr('Orario inizio').'</th>
+            <th width="15%">'.tr('Orario fine').'</th>
+            <th width="12%">'.tr('Ore').'</th>
+            <th width="12%">'.tr('Km').'</th>';
 
             if ($show_costi) {
                 echo '
@@ -44,7 +44,7 @@ if (!empty($sessioni)) {
 
             if (!$is_completato) {
                 echo '
-            <th width="120" class="text-center">#</th>';
+            <th width="100" class="text-center">#</th>';
             }
 
             echo '

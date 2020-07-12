@@ -5,9 +5,11 @@ include_once __DIR__.'/../../core.php';
 echo'
 <button type="button" class="btn btn-primary" onclick="if( confirm(\'Duplicare questo preventivo?\') ){ $(\'#copia-preventivo\').submit(); }"> <i class="fa fa-copy"></i> '.tr('Duplica preventivo').'</button>';
 
+$stati_abilitati = $dbo->fetchOne('SELECT GROUP_CONCAT(`descrizione` SEPARATOR ", ") AS stati_abilitati FROM `co_statipreventivi` WHERE `is_revisionabile` = 1 ')['stati_abilitati'];
+
 // Crea revisione
 echo '
-<button type="button" class="btn btn-warning" onclick="if(confirm(\'Vuoi creare un nuova revisione?\')){$(\'#crea-revisione\').submit();}" '.(!$record['is_revisionabile'] ? 'disabled' : '').'><i class="fa fa-edit"></i> '.tr('Crea nuova revisione...').'</button>';
+<button type="button" class="btn btn-warning '.($record['is_revisionabile'] ? '' : 'disabled tip').'" onclick="if(confirm(\'Vuoi creare un nuova revisione?\')){$(\'#crea-revisione\').submit();}" '.($record['is_revisionabile'] ? '' : 'disabled').' title="'.($record['is_revisionabile'] ? '' : tr('Per creare una nuova revisione lo stato del preventivo deve essere tra: ').$stati_abilitati).'" ><i class="fa fa-edit"></i> '.tr('Crea nuova revisione...').'</button>';
 
 $rs_documento = $dbo->fetchArray('SELECT * FROM co_righe_preventivi WHERE idpreventivo='.prepare($id_record));
 

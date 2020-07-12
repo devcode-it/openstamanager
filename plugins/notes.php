@@ -68,7 +68,7 @@ if (count($notes) > 0) {
         </div>';
 } else {
     echo '
-        <div class="alert alert-info" ><i class="fa fa-info-circle" ></i> '.tr('Non sono presenti note interne.').'</div>';
+        <div class="alert alert-info" ><i class="fa fa-info-circle" ></i> <b>'.tr('Informazione:').'</b> '.tr('Non sono presenti note interne.').'</div>';
 }
 
 if ($structure->permission == 'rw') {

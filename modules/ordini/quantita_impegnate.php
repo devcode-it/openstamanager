@@ -10,6 +10,7 @@ $articoli = $ordine->articoli->groupBy('idarticolo');
 if ($articoli->isEmpty()) {
     echo '
 <p>'.tr('Il documento non contiene articoli').'.</p>';
+	return;
 }
 
 echo '

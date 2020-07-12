@@ -52,10 +52,10 @@ class Sync extends Resource implements RetrieveInterface, UpdateInterface
 
             $result .= "BEGIN:VEVENT\n";
             $result .= 'UID:'.$r['idriga']."\n";
-            $result .= 'DTSTAMP:'.$now->toIso8601String()."\n";
+            $result .= 'DTSTAMP:'.$now->format('Ymd\THis')."\n";
             //$result .= 'ORGANIZER;CN='.$azienda.':MAILTO:'.$email."\n";
-            $result .= 'DTSTART:'.$inizio->toIso8601String()."\n";
-            $result .= 'DTEND:'.$fine->toIso8601String()."\n";
+            $result .= 'DTSTART:'.$inizio->format('Ymd\THis')."\n";
+            $result .= 'DTEND:'.$fine->format('Ymd\THis')."\n";
             $result .= 'SUMMARY:'.html_entity_decode($r['summary'])."\n";
             $result .= 'DESCRIPTION:'.html_entity_decode($richiesta, ENT_QUOTES, 'UTF-8')."\n";
             $result .= "END:VEVENT\n";

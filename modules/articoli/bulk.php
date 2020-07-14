@@ -1,8 +1,23 @@
 <?php
 
 include_once __DIR__.'/../../core.php';
+use Modules\Articoli\Articolo;
 
 switch (post('op')) {
+    case 'change_acquisto':
+        foreach ($id_records as $id) {
+            $articolo = Articolo::find($id);
+            $percentuale = post('percentuale');
+
+            $new_prezzo_acquisto = $articolo->prezzo_acquisto+($articolo->prezzo_acquisto*$percentuale/100);
+            $articolo->prezzo_acquisto = $new_prezzo_acquisto;
+            $articolo->save();
+        }
+
+        flash()->info(tr('Prezzi di acquisto aggiornati!'));
+        
+        break;
+
     case 'delete-bulk':
 
         foreach ($id_records as $id) {
@@ -34,5 +49,16 @@ if (App::debug()) {
         ],
     ];
 }
+
+$operations['change_acquisto'] = [
+    'text' => tr('Aggiorna prezzo di acquisto'),
+    'data' => [
+        'title' => tr('Aggiornare il prezzo di acquisto per gli articoli selezionati?'),
+        'msg' => 'Per indicare uno sconto inserire la percentuale con il segno meno, al contrario per un rincaro inserire la percentuale senza segno.<br><br>{[ "type": "number", "label": "'.tr('Percentuale sconto/rincaro').'", "name": "percentuale", "required": 1, "icon-after": "%" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => false,
+    ],
+];
 
 return $operations;

@@ -15,6 +15,7 @@ switch (filter('op')) {
 
                 $dbo->update('dt_causalet', [
                     'descrizione' => $descrizione,
+                    'is_importabile' => filter('is_importabile'),
                     'predefined' => $predefined,
                 ], ['id' => $id_record]);
 
@@ -37,6 +38,7 @@ switch (filter('op')) {
             if ($dbo->fetchNum('SELECT * FROM `dt_causalet` WHERE `descrizione`='.prepare($descrizione)) == 0) {
                 $dbo->insert('dt_causalet', [
                     'descrizione' => $descrizione,
+                    'is_importabile' => 1,
                 ]);
                 $id_record = $dbo->lastInsertedID();
 

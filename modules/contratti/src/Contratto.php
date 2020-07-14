@@ -201,7 +201,7 @@ class Contratto extends Document
 
     /**
      * Effettua un controllo sui campi del documento.
-     * Viene richiamatp dalle modifiche alle righe del documento.
+     * Viene richiamato dalle modifiche alle righe del documento.
      */
     public function triggerEvasione(Description $trigger)
     {

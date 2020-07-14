@@ -106,6 +106,16 @@ class DDT extends Document
         return $this->tipo->dir;
     }
 
+    public function isImportabile()
+    {
+        $stati_non_importabili = ['Bozza', 'Fatturato'];
+
+        $database = database();
+        $causale = $database->fetchOne('SELECT * FROM `dt_causalet` WHERE `id` = '.prepare($this->idcausalet));
+
+        return $causale['is_importabile'] && !in_array($this->stato->descrizione, $stati_non_importabili);
+    }
+
     /**
      * Restituisce il peso calcolato sulla base degli articoli del documento.
      *
@@ -175,7 +185,7 @@ class DDT extends Document
 
     /**
      * Effettua un controllo sui campi del documento.
-     * Viene richiamatp dalle modifiche alle righe del documento.
+     * Viene richiamato dalle modifiche alle righe del documento.
      */
     public function triggerEvasione(Description $trigger)
     {
@@ -208,7 +218,6 @@ class DDT extends Document
      *
      * @param string $data
      * @param string $direzione
-     * @param int    $id_segment
      *
      * @return string
      */

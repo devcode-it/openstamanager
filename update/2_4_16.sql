@@ -119,3 +119,6 @@ ALTER TABLE `co_documenti` ADD COLUMN `peso` decimal(12, 4) AFTER `n_colli`, ADD
 -- Aggiunta data di connessione agli account SMTP
 ALTER TABLE `em_accounts` ADD `connected_at` TIMESTAMP NULL DEFAULT NULL AFTER `timeout`;
 UPDATE `em_accounts` SET `connected_at` = NOW();
+
+-- Aggiunta del flag is_importabile sulle causali per permettere/bloccare l'importazione dei DDT
+ALTER TABLE `dt_causalet` ADD `is_importabile` BOOLEAN DEFAULT TRUE AFTER `descrizione`;

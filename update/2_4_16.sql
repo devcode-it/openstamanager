@@ -122,3 +122,27 @@ UPDATE `em_accounts` SET `connected_at` = NOW();
 
 -- Aggiunta del flag is_importabile sulle causali per permettere/bloccare l'importazione dei DDT
 ALTER TABLE `dt_causalet` ADD `is_importabile` BOOLEAN DEFAULT TRUE AFTER `descrizione`;
+
+-- Aggiunta risorse dedicate all'applicazione
+INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES
+(NULL, 'app-v1', 'retrieve', 'anagrafiche', 'Modules\\Anagrafiche\\API\\AppV1\\Anagrafiche', '1'),
+(NULL, 'app-v1', 'retrieve', 'anagrafiche-cleanup', 'Modules\\Anagrafiche\\API\\AppV1\\Anagrafiche', '1'),
+(NULL, 'app-v1', 'retrieve', 'anagrafica', 'Modules\\Anagrafiche\\API\\AppV1\\Anagrafiche', '1'),
+(NULL, 'app-v1', 'retrieve', 'sedi', 'Modules\\Anagrafiche\\API\\AppV1\\Sedi', '1'),
+(NULL, 'app-v1', 'retrieve', 'sedi-cleanup', 'Modules\\Anagrafiche\\API\\AppV1\\Sedi', '1'),
+(NULL, 'app-v1', 'retrieve', 'sede', 'Modules\\Anagrafiche\\API\\AppV1\\Sedi', '1'),
+(NULL, 'app-v1', 'retrieve', 'referenti', 'Modules\\Anagrafiche\\API\\AppV1\\Referenti', '1'),
+(NULL, 'app-v1', 'retrieve', 'referenti-cleanup', 'Modules\\Anagrafiche\\API\\AppV1\\Referenti', '1'),
+(NULL, 'app-v1', 'retrieve', 'referente', 'Modules\\Anagrafiche\\API\\AppV1\\Referenti', '1'),
+(NULL, 'app-v1', 'retrieve', 'impianti', 'Modules\\Impianti\\API\\AppV1\\Impianti', '1'),
+(NULL, 'app-v1', 'retrieve', 'impianti-cleanup', 'Modules\\Impianti\\API\\AppV1\\Impianti', '1'),
+(NULL, 'app-v1', 'retrieve', 'impianto', 'Modules\\Impianti\\API\\AppV1\\Impianti', '1'),
+(NULL, 'app-v1', 'retrieve', 'stati-intervento', 'Modules\\StatiIntervento\\API\\AppV1\\StatiIntervento', '1'),
+(NULL, 'app-v1', 'retrieve', 'stati-intervento-cleanup', 'Modules\\StatiIntervento\\API\\AppV1\\StatiIntervento', '1'),
+(NULL, 'app-v1', 'retrieve', 'stato-intervento', 'Modules\\StatiIntervento\\API\\AppV1\\StatiIntervento', '1'),
+(NULL, 'app-v1', 'retrieve', 'tipi-intervento', 'Modules\\TipiIntervento\\API\\AppV1\\TipiIntervento', '1'),
+(NULL, 'app-v1', 'retrieve', 'tipi-intervento-cleanup', 'Modules\\TipiIntervento\\API\\AppV1\\TipiIntervento', '1'),
+(NULL, 'app-v1', 'retrieve', 'tipo-intervento', 'Modules\\TipiIntervento\\API\\AppV1\\TipiIntervento', '1'),
+(NULL, 'app-v1', 'retrieve', 'articoli', 'Modules\\Articoli\\API\\AppV1\\Articoli', '1'),
+(NULL, 'app-v1', 'retrieve', 'articoli-cleanup', 'Modules\\Articoli\\API\\AppV1\\Articoli', '1'),
+(NULL, 'app-v1', 'retrieve', 'articolo', 'Modules\\Articoli\\API\\AppV1\\Articoli', '1');

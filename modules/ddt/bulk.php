@@ -50,8 +50,7 @@ switch (post('op')) {
             $id_anagrafica = $anagrafica->id;
 
             // Proseguo solo se i documenti scelti sono fatturabili
-            if( $documento_import->isImportabile() ){
-
+            if ($documento_import->isImportabile()) {
                 $righe = $documento_import->getRighe();
                 if (!empty($righe)) {
                     ++$numero_totale;

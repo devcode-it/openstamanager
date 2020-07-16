@@ -9,13 +9,13 @@ switch (post('op')) {
             $articolo = Articolo::find($id);
             $percentuale = post('percentuale');
 
-            $new_prezzo_acquisto = $articolo->prezzo_acquisto+($articolo->prezzo_acquisto*$percentuale/100);
+            $new_prezzo_acquisto = $articolo->prezzo_acquisto + ($articolo->prezzo_acquisto * $percentuale / 100);
             $articolo->prezzo_acquisto = $new_prezzo_acquisto;
             $articolo->save();
         }
 
         flash()->info(tr('Prezzi di acquisto aggiornati!'));
-        
+
         break;
 
     case 'delete-bulk':

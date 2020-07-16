@@ -14,12 +14,12 @@ class Articoli extends AppResource
 
     protected function getData($last_sync_at)
     {
-        $query = 'SELECT mg_articoli.id FROM mg_articoli';
+        $query = 'SELECT mg_articoli.id FROM mg_articoli WHERE deleted_at IS NULL';
 
         // Filtro per data
         if ($last_sync_at) {
             $last_sync = new Carbon($last_sync_at);
-            $query .= ' WHERE mg_articoli.updated_at > '.prepare($last_sync);
+            $query .= ' AND mg_articoli.updated_at > '.prepare($last_sync);
         }
 
         $records = database()->fetchArray($query);

@@ -125,6 +125,7 @@ ALTER TABLE `dt_causalet` ADD `is_importabile` BOOLEAN DEFAULT TRUE AFTER `descr
 
 -- Aggiunta risorse dedicate all'applicazione
 INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES
+(NULL, 'app-v1', 'create', 'login', 'Modules\\Utenti\\API\\AppV1\\Login', '1'),
 (NULL, 'app-v1', 'retrieve', 'anagrafiche', 'Modules\\Anagrafiche\\API\\AppV1\\Anagrafiche', '1'),
 (NULL, 'app-v1', 'retrieve', 'anagrafiche-cleanup', 'Modules\\Anagrafiche\\API\\AppV1\\Anagrafiche', '1'),
 (NULL, 'app-v1', 'retrieve', 'anagrafica', 'Modules\\Anagrafiche\\API\\AppV1\\Anagrafiche', '1'),

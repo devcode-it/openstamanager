@@ -128,3 +128,7 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 
 -- Ottimizzazione caricamento lista fatture
 ALTER TABLE `co_righe_documenti` ADD INDEX(`iddocumento`);
+
+-- Aggiunta colonna data negli ordini
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore'), 'Data', 'or_ordini.data', 3, 1, 0, 0, 1);

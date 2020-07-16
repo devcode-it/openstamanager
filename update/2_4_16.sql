@@ -125,3 +125,6 @@ ALTER TABLE `dt_causalet` ADD `is_importabile` BOOLEAN DEFAULT TRUE AFTER `descr
 
 -- Impostazione "Totali delle tabelle ristretti alla selezione"
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Totali delle tabelle ristretti alla selezione', '0', 'boolean', '1', 'Generali', 119);
+
+-- Ottimizzazione caricamento lista fatture
+ALTER TABLE `co_righe_documenti` ADD INDEX(`iddocumento`);

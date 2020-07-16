@@ -208,7 +208,7 @@ if (!$block_edit) {
         echo '
         <div class="pull-right">
             <a class="btn btn-sm btn-info" data-href="'.$structure->fileurl('quantita_impegnate.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="'.tr('Controllo sulle quantità impegnate').'">
-                <i class="fa fa-check"></i> '.tr('Quantità impegnate').'
+                <i class="fa fa-question-circle"></i> '.tr('Verifica disponibilità').'
             </a>
         </div>';
     }

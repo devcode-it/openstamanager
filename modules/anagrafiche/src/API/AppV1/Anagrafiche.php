@@ -16,7 +16,7 @@ class Anagrafiche extends AppResource
 
     protected function getData($last_sync_at)
     {
-        $statement = Anagrafica::withTrashed()->select('idanagrafica')
+        $statement = Anagrafica::select('idanagrafica')
             ->whereHas('tipi', function (Builder $query) {
                 $query->where('descrizione', '=', 'Cliente');
             });

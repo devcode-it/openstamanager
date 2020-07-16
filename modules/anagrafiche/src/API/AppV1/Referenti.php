@@ -19,7 +19,7 @@ class Referenti extends AppResource implements RetrieveInterface
             INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = an_referenti.idanagrafica
             INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche_anagrafiche.idanagrafica = an_anagrafiche.idanagrafica
             INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica = an_tipianagrafiche.idtipoanagrafica
-        WHERE an_tipianagrafiche.descrizione = 'Cliente'";
+        WHERE an_tipianagrafiche.descrizione = 'Cliente' AND an_anagrafiche.deleted_at IS NULL";
 
         // Filtro per data
         if ($last_sync_at) {
@@ -35,11 +35,13 @@ class Referenti extends AppResource implements RetrieveInterface
     protected function getDetails($id)
     {
         // Gestione della visualizzazione dei dettagli del record
-        $query = 'SELECT an_referenti.id,
-            an_referenti.nome,
-            an_referenti.mansione,
-            an_referenti.telefono,
-            an_referenti.email
+        $query = 'SELECT id,
+            idanagrafica AS id_anagrafica,
+            IF(idsede = 0, NULL, idsede) AS id_sede,
+            nome,
+            mansione,
+            telefono,
+            email
         FROM an_referenti
         WHERE an_referenti.id = '.prepare($id);
 

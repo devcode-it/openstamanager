@@ -146,4 +146,10 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 (NULL, 'app-v1', 'retrieve', 'tipo-intervento', 'Modules\\TipiIntervento\\API\\AppV1\\TipiIntervento', '1'),
 (NULL, 'app-v1', 'retrieve', 'articoli', 'Modules\\Articoli\\API\\AppV1\\Articoli', '1'),
 (NULL, 'app-v1', 'retrieve', 'articoli-cleanup', 'Modules\\Articoli\\API\\AppV1\\Articoli', '1'),
-(NULL, 'app-v1', 'retrieve', 'articolo', 'Modules\\Articoli\\API\\AppV1\\Articoli', '1');
+(NULL, 'app-v1', 'retrieve', 'articolo', 'Modules\\Articoli\\API\\AppV1\\Articoli', '1'),
+(NULL, 'app-v1', 'retrieve', 'interventi', 'Modules\\Interventi\\API\\AppV1\\Interventi', '1'),
+(NULL, 'app-v1', 'retrieve', 'interventi-cleanup', 'Modules\\Interventi\\API\\AppV1\\Interventi', '1'),
+(NULL, 'app-v1', 'retrieve', 'intervento', 'Modules\\Interventi\\API\\AppV1\\Interventi', '1'),
+(NULL, 'app-v1', 'retrieve', 'sessioni', 'Modules\\Interventi\\API\\AppV1\\Sessioni', '1'),
+(NULL, 'app-v1', 'retrieve', 'sessioni-cleanup', 'Modules\\Interventi\\API\\AppV1\\Sessioni', '1'),
+(NULL, 'app-v1', 'retrieve', 'sessione', 'Modules\\Interventi\\API\\AppV1\\Sessioni', '1');

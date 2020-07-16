@@ -122,3 +122,6 @@ UPDATE `em_accounts` SET `connected_at` = NOW();
 
 -- Aggiunta del flag is_importabile sulle causali per permettere/bloccare l'importazione dei DDT
 ALTER TABLE `dt_causalet` ADD `is_importabile` BOOLEAN DEFAULT TRUE AFTER `descrizione`;
+
+-- Impostazione "Totali delle tabelle ristretti alla selezione"
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Totali delle tabelle ristretti alla selezione', '0', 'boolean', '1', 'Generali', 119);

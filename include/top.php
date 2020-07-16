@@ -174,6 +174,7 @@ if (Auth::check()) {
                 order_manager_id: "'.($dbo->isInstalled() ? Modules::get('Stato dei servizi')['id'] : '').'",
                 dataload_page_buffer: '.setting('Lunghezza in pagine del buffer Datatables').',
                 tempo_attesa_ricerche: '.setting('Tempo di attesa ricerche in secondi').',
+                restrict_summables_to_selected: '.setting('Totali delle tabelle ristretti alla selezione').',
             };
 		</script>';
 } else {

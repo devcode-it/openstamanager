@@ -15,7 +15,7 @@ register_shutdown_function('serverError');
 
 include_once __DIR__.'/../core.php';
 
-// Disabilta la sessione per l'API
+// Disabilita la sessione per l'API
 session_write_close();
 
 // Permesso di accesso all'API da ogni dispositivo

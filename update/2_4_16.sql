@@ -152,4 +152,12 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 (NULL, 'app-v1', 'retrieve', 'intervento', 'Modules\\Interventi\\API\\AppV1\\Interventi', '1'),
 (NULL, 'app-v1', 'retrieve', 'sessioni', 'Modules\\Interventi\\API\\AppV1\\Sessioni', '1'),
 (NULL, 'app-v1', 'retrieve', 'sessioni-cleanup', 'Modules\\Interventi\\API\\AppV1\\Sessioni', '1'),
-(NULL, 'app-v1', 'retrieve', 'sessione', 'Modules\\Interventi\\API\\AppV1\\Sessioni', '1');
+(NULL, 'app-v1', 'retrieve', 'sessione', 'Modules\\Interventi\\API\\AppV1\\Sessioni', '1'),
+(NULL, 'app-v1', 'retrieve', 'impostazioni', 'Modules\\Impostazioni\\API\\AppV1\\Impostazioni', '1'),
+(NULL, 'app-v1', 'retrieve', 'impostazioni-cleanup', 'Modules\\Impostazioni\\API\\AppV1\\Impostazioni', '1'),
+(NULL, 'app-v1', 'retrieve', 'impostazione', 'Modules\\Impostazioni\\API\\AppV1\\Impostazioni', '1');
+
+-- Impostazioni relative all'applicazione
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES
+(NULL, 'Google Maps API key', '', 'string', '1', 'Applicazione', 1),
+(NULL, 'Mostra prezzi', '1', 'boolean', '1', 'Applicazione', 1);

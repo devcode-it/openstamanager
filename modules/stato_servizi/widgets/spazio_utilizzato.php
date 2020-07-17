@@ -53,7 +53,7 @@ function crea_grafico(values){
            if (element.count<element.dbCount){
                 var diff = (element.dbCount-element.count);
 
-                $("#message").append("<div class=\"label label-warning\" ><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i> "+diff+" di file mancanti per allegati.</div><br>");
+                $("#message").append("<div class=\"label label-warning\" ><i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i> "+diff+" file non trovati sul disco.</div><br>");
                
             }
         }
@@ -61,7 +61,7 @@ function crea_grafico(values){
         //Numero di file in Allegati per estensione
         if (element.dbExtensions.length > 0){
 
-            $("#message").append("<p><b>Top 10 allegati:</b></p>");
+            $("#message").append("<br><p><b>Top 10 allegati:</b></p>");
 
             element.dbExtensions.forEach(function(extension) {
                

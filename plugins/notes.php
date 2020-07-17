@@ -87,10 +87,25 @@ if ($structure->permission == 'rw') {
             <!-- PULSANTI -->
             <div class="row">
                 <div class="col-md-12 text-right">
-                    <button type="sumbit" class="btn btn-primary">
+                    <button type="submit"  class="btn btn-primary" disabled id="aggiungi_nota" >
                         <i class="fa fa-plus"></i> '.tr('Aggiungi').'
                     </button>
                 </div>
             </div>
         </form>';
 }
+
+
+echo '
+<script>
+    $(document).ready(function(){
+        CKEDITOR.instances["contenuto"].on("key", function() {
+            setTimeout(function(){
+                if(CKEDITOR.instances["contenuto"].getData() == ""){
+                    $("#aggiungi_nota").prop("disabled", true);
+                }
+                else $("#aggiungi_nota").prop("disabled", false);
+            }, 10);
+        });
+    });
+</script>';

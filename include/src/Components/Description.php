@@ -151,7 +151,7 @@ abstract class Description extends Model
      *
      * @return self
      */
-    public function copiaIn(Document $document, $qta = null, $is_evasione = true)
+    public function copiaIn(Document $document, $qta = null)
     {
         // Individuazione classe di destinazione
         $class = get_class($document);
@@ -183,6 +183,7 @@ abstract class Description extends Model
         unset($attributes[$model->getParentID()]);
 
         // Riferimento di origine per l'evasione automatica della riga
+        $is_evasione = true;
         if ($is_evasione) {
             $model->original_id = $this->id;
             $model->original_type = $current;
@@ -191,7 +192,7 @@ abstract class Description extends Model
         // Impostazione del genitore
         $model->setParent($document);
 
-        // Azioni specifiche di inizalizzazione
+        // Azioni specifiche di inizializzazione
         $model->customInitCopiaIn($this);
 
         $model->save();

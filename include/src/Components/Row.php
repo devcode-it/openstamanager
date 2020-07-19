@@ -23,6 +23,7 @@ abstract class Row extends Description
     protected $appends = [
         'prezzo_unitario_corrente',
         'sconto_unitario_corrente',
+        'max_qta',
     ];
 
     public static function build(Document $document, $bypass = false)

@@ -7,7 +7,7 @@ $v_totale = [];
 
 // Creazione righe fantasma
 $autofill = new \Util\Autofill(6, 40);
-$rows_per_page = $fattura_accompagnatoria ? 15 : 20;
+$rows_per_page = $fattura_accompagnatoria ? 13 : 18;
 if (!empty($options['last-page-footer'])) {
     $rows_per_page += 7;
 }
@@ -185,8 +185,8 @@ $dicitura = $dbo->fetchOne('SELECT diciturafissafattura AS dicitura FROM an_anag
 
 if (!empty($dicitura['dicitura'])) {
     echo '
-<p class="text-center">
-    <b>'.nl2br($dicitura['dicitura']).'</b>
+<p class="text-left">
+    <span>'.nl2br($dicitura['dicitura']).'</span>
 </p>';
 }
 

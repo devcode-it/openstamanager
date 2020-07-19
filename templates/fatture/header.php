@@ -58,7 +58,7 @@ echo '
                 </td>
             </tr>
             <tr>
-                <td colspan="2" style="height:10mm;padding-top:2mm;">
+                <td colspan="2" style="height:10mm;padding-top:2mm;white-space: nowrap;">
                     <p class="small-bold">'.tr('IBAN').'</p>
                     <p>$codiceiban$</p>
                 </td>

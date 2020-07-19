@@ -383,8 +383,8 @@ if ($fattura_accompagnatoria) {
 }
 
 echo '
-<div style="font-size: 7pt; color: #999; text-align: center">
-    <p>$dicitura_fissa_fattura$</p>
+<div style="font-size: 6pt; color: #999; text-align: left;">
+    <span>$dicitura_fissa_fattura$</span>
 </div>';
 
 if (empty($options['last-page-footer'])) {

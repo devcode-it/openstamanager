@@ -637,7 +637,7 @@ switch (post('op')) {
             if (post('evadere')[$riga->id] == 'on') {
                 $qta = post('qta_da_evadere')[$riga->id];
 
-                $copia = $riga->copiaIn($fattura, $qta, $is_evasione);
+                $copia = $riga->copiaIn($fattura, $qta);
                 $copia->id_conto = $id_conto;
 
                 $copia->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;

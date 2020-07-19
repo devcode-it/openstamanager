@@ -277,7 +277,7 @@ switch (post('op')) {
             if (post('evadere')[$riga->id] == 'on' and !empty(post('qta_da_evadere')[$riga->id])) {
                 $qta = post('qta_da_evadere')[$riga->id];
 
-                $copia = $riga->copiaIn($ddt, $qta, $is_evasione);
+                $copia = $riga->copiaIn($ddt, $qta);
 
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {

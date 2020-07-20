@@ -249,12 +249,9 @@ switch (post('op')) {
 }
 
 if (App::debug()) {
-   
     $operations['delete-bulk'] = [
-        'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span>'
+        'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span>',
     ];
-
-
 }
 
 $operations['copy-bulk'] = [

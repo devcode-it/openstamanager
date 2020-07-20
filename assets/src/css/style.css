@@ -897,12 +897,12 @@ input.small-width {
 .dropzone {
     border: 2px dashed #337ab7;
     border-radius: 5px;
-    background: white; 
-    margin-top:10px;
+    background: white;
+    margin-top: 10px;
 }
 
 .dropzone .dz-message {
-    font-weight: 400; 
+    font-weight: 400;
 }
 
 .dropzone .dz-message .note {
@@ -910,4 +910,13 @@ input.small-width {
     font-weight: 200;
     display: block;
     margin-top: 1.4rem;
+}
+
+/** Fix tooltip per elementi disabilitati. */
+div.tip {
+    display: inline-block !important;
+}
+
+.disabled {
+    pointer-events: none
 }

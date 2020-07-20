@@ -105,14 +105,14 @@ var chart_options = {
                 display: true,
                 scaleLabel: {
                     display: true,
-                    labelString: "'.tr("Periodo").'"
+                    labelString: "'.tr('Periodo').'"
                 }
             }],
             yAxes: [{
                 display: true,
                 scaleLabel: {
                     display: true,
-                    labelString: "'.tr("Andamento").'"
+                    labelString: "'.tr('Andamento').'"
                 },
                 ticks: {
                     // Include a dollar sign in the ticks

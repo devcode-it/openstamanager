@@ -383,7 +383,7 @@ if ($fattura_accompagnatoria) {
 }
 
 echo '
-<div style="font-size: 6pt; color: #999; text-align: left;">
+<div style="font-size: 6pt; text-align: left;" class="text-muted">
     <span>$dicitura_fissa_fattura$</span>
 </div>';
 

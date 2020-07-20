@@ -123,6 +123,8 @@ table#contents tbody td {
 }
 
 .fake-footer p,
+.fake-footer span,
+.fake-footer div,
 .fake-footer table,
 .fake-footer table.table-bordered th,
 .fake-footer table.table-striped tbody tr td,

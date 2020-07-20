@@ -85,6 +85,11 @@ var chart_options = {
                 }
             }
         },
+        elements: {
+            line: {
+                tension: 0
+            }
+        },
         annotation: {
             annotations: [{
                 type: "line",

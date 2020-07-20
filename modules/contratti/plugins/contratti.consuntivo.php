@@ -208,8 +208,7 @@ if (!empty($interventi)) {
     </tr>';
 
     $stati = $interventi->groupBy('idstatointervento');
-    if (count($stati)>0){
-
+    if (count($stati) > 0) {
         // Totali per stato
         echo '
         <tr>
@@ -235,7 +234,6 @@ if (!empty($interventi)) {
             </td>
         </tr>';
         }
-
     }
 
     echo '

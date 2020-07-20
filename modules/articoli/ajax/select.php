@@ -255,4 +255,45 @@ switch ($resource) {
         }
 
         break;
+
+    case 'articoli_barcode':
+        $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
+
+        $query = 'SELECT mg_articoli.*,
+            IFNULL(mg_fornitore_articolo.codice_fornitore, mg_articoli.codice) AS codice,
+            IFNULL(mg_fornitore_articolo.descrizione, mg_articoli.descrizione) AS descrizione,
+            IFNULL(mg_fornitore_articolo.prezzo_acquisto, mg_articoli.prezzo_acquisto) AS prezzo_acquisto,
+            mg_articoli.'.($prezzi_ivati ? 'prezzo_vendita_ivato' : 'prezzo_vendita').' AS prezzo_vendita,
+            mg_articoli.prezzo_vendita_ivato AS prezzo_vendita_ivato,
+            IFNULL(mg_fornitore_articolo.qta_minima, 0) AS qta_minima,
+            mg_fornitore_articolo.id AS id_dettaglio_fornitore
+        FROM mg_articoli
+            LEFT JOIN mg_fornitore_articolo ON mg_fornitore_articolo.id_articolo = mg_articoli.id AND mg_fornitore_articolo.deleted_at IS NULL AND mg_fornitore_articolo.id_fornitore = '.prepare($superselect['idanagrafica']).'
+        |where|';
+
+        $where[] = 'barcode='.prepare(get('barcode'));
+        $where[] = 'mg_articoli.attivo = 1';
+        $where[] = 'mg_articoli.deleted_at IS NULL';
+
+        $custom = [
+            'id' => 'id',
+            'codice' => 'codice',
+            'descrizione' => 'descrizione',
+            'qta' => 'qta',
+            'um' => 'um',
+            'categoria' => 'categoria',
+            'sottocategoria' => 'sottocategoria',
+            'idiva_vendita' => 'idiva_vendita',
+            'iva_vendita' => 'iva_vendita',
+            'idconto_vendita' => 'idconto_vendita',
+            'idconto_vendita_title' => 'idconto_vendita_title',
+            'idconto_acquisto' => 'idconto_acquisto',
+            'idconto_acquisto_title' => 'idconto_acquisto_title',
+            'prezzo_acquisto' => 'prezzo_acquisto',
+            'prezzo_vendita' => 'prezzo_vendita',
+            'id_dettaglio_fornitore' => 'id_dettaglio_fornitore',
+            'barcode' => 'barcode',
+        ];
+
+        break;
 }

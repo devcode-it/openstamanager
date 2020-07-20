@@ -34,7 +34,7 @@ $_SESSION['superselect']['permetti_movimento_a_zero'] = true;
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo ( $dir == 'entrata' ) ? tr('Numero ordine') : tr('Numero ordine fornitore'); ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$" ]}
+					{[ "type": "text", "label": "<?php echo ($dir == 'entrata') ? tr('Numero ordine') : tr('Numero ordine fornitore'); ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -184,6 +184,11 @@ if (!$block_edit) {
 		<div class="pull-left">
             <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_articolo" data-toggle="tooltip" data-title="'.tr('Aggiungi articolo').'">
                 <i class="fa fa-plus"></i> '.tr('Articolo').'
+            </a>';
+
+    echo '
+            <a class="btn btn-sm btn-primary"data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_barcode" data-toggle="tooltip" data-title="'.tr('Aggiungi articoli tramite barcode').'">
+                <i class="fa fa-plus"></i> '.tr('Barcode').'
             </a>';
 
     echo '

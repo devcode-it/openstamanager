@@ -95,7 +95,6 @@ if ($structure->permission == 'rw') {
         </form>';
 }
 
-
 echo '
 <script>
     $(document).ready(function(){

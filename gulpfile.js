@@ -122,6 +122,7 @@ function srcCSS() {
 
     var themes = gulp.src([
         config.development + '/' + config.paths.css + '/themes/*.{css,scss,less,styl}',
+        config.main.bowerDirectory + '/admin-lte/dist/css/skins/_all-skins.min.css',
     ])
         .pipe(gulpIf('*.scss', sass(), gulpIf('*.less', less(), gulpIf('*.styl', stylus()))))
         .pipe(autoprefixer())

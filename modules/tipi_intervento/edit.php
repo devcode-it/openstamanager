@@ -72,24 +72,65 @@ include_once __DIR__.'/../../core.php';
 //Permetto eliminazione tipo intervento solo se questo non è utilizzado da nessun'altra parte nel gestionale
 //UNION SELECT `in_tariffe`.`idtipointervento` FROM `in_tariffe` WHERE `in_tariffe`.`idtipointervento` = '.prepare($id_record).'
 //UNION SELECT `co_contratti_tipiintervento`.`idtipointervento` FROM `co_contratti_tipiintervento` WHERE `co_contratti_tipiintervento`.`idtipointervento` = '.prepare($id_record).'
-$elementi = $dbo->fetchArray('SELECT `in_interventi`.`idtipointervento`  FROM `in_interventi` WHERE `in_interventi`.`idtipointervento` = '.prepare($id_record).'
+$elementi = $dbo->fetchArray('SELECT `in_interventi`.`idtipointervento`, id, codice AS numero, data_richiesta AS data, "Intervento" AS tipo_documento FROM `in_interventi` WHERE `in_interventi`.`idtipointervento` = '.prepare($id_record).'
 UNION
-SELECT `an_anagrafiche`.`idtipointervento_default` AS `idtipointervento` FROM `an_anagrafiche` WHERE `an_anagrafiche`.`idtipointervento_default` = '.prepare($id_record).'
+SELECT `in_interventi_tecnici`.`idtipointervento`, idintervento AS id, codice AS numero, orario_inizio AS data, "Sessione intervento" AS tipo_documento FROM `in_interventi_tecnici` LEFT JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id WHERE `in_interventi_tecnici`.`idtipointervento` = '.prepare($id_record).'
 UNION
-SELECT `co_preventivi`.`idtipointervento` FROM `co_preventivi` WHERE `co_preventivi`.`idtipointervento` = '.prepare($id_record).'
+SELECT `an_anagrafiche`.`idtipointervento_default` AS `idtipointervento`, idanagrafica AS id, codice, "0000-00-00" AS data, "Anagrafica" AS tipo_documento FROM `an_anagrafiche` WHERE `an_anagrafiche`.`idtipointervento_default` = '.prepare($id_record).'
 UNION
-SELECT `co_promemoria`.`idtipointervento` FROM `co_promemoria` WHERE `co_promemoria`.`idtipointervento` = '.prepare($id_record).'
+SELECT `co_preventivi`.`idtipointervento`, id, numero, data_bozza AS data, "Preventivo" AS tipo_documento FROM `co_preventivi` WHERE `co_preventivi`.`idtipointervento` = '.prepare($id_record).'
 UNION
-SELECT `in_interventi_tecnici`.`idtipointervento` FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idtipointervento` = '.prepare($id_record).'
+SELECT `co_promemoria`.`idtipointervento`, idcontratto AS id, numero, data_richiesta AS data, "Promemoria contratto" AS tipo_documento FROM `co_promemoria` LEFT JOIN co_contratti ON co_promemoria.idcontratto=co_contratti.id WHERE `co_promemoria`.`idtipointervento` = '.prepare($id_record).'
 ORDER BY `idtipointervento`');
+
+
 
 if (!empty($elementi)) {
     echo '
-    <div class="alert alert-danger">
-        '.tr('Ci sono _NUM_ records collegati', [
+<div class="box box-warning collapsable collapsed-box">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Documenti collegati: _NUM_', [
             '_NUM_' => count($elementi),
-        ]).'.
-    </div>';
+        ]).'</h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+        </div>
+    </div>
+    <div class="box-body">
+        <ul>';
+
+    foreach ($elementi as $elemento) {
+        $descrizione = tr('_DOC_ num. _NUM_ del _DATE_', [
+            '_DOC_' => $elemento['tipo_documento'],
+            '_NUM_' => $elemento['numero'],
+            '_DATE_' => Translator::dateToLocale($elemento['data']),
+        ]);
+
+        if (in_array($elemento['tipo_documento'], ['Intervento'])) {
+            $modulo = 'Interventi';
+		}
+		if (in_array($elemento['tipo_documento'], ['Sessione intervento'])) {
+            $modulo = 'Interventi';
+		}
+        if (in_array($elemento['tipo_documento'], ['Anagrafica'])) {
+            $modulo = 'Anagrafiche';
+		}
+        if (in_array($elemento['tipo_documento'], ['Preventivo'])) {
+            $modulo = 'Preventivi';
+		}
+		if (in_array($elemento['tipo_documento'], ['Promemoria contratto'])) {
+            $modulo = 'Contratti';
+        }
+        $id = $elemento['id'];
+
+        echo '
+            <li>'.Modules::link($modulo, $id, $descrizione).'</li>';
+    }
+
+    echo '
+        </ul>
+    </div>
+</div>';
 } else {
     echo '
 <a class="btn btn-danger ask" data-backto="record-list">

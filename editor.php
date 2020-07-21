@@ -69,6 +69,70 @@ if (empty($record) || !$has_access) {
 		</div>';
     }
 
+    // Menu laterale per la visualizzazione dei plugin
+    echo '
+    <aside class="control-sidebar control-sidebar-light">
+        <button class="btn btn-info btn-block" data-toggle="control-sidebar">
+            <i class="fa fa-list"></i> Chiudi
+        </button>
+
+        <h4 class="text-center">'.tr('Plugin disponibili').'</h4>
+        <ul class="nav nav-pills nav-stacked">
+            <li class="active">
+                <a data-toggle="tab" href="#tab_0">
+                    <i class="'.$structure['icon'].'"></i> '.$structure['title'].'
+                </a>
+            </li>';
+
+    // Tab dei plugin
+    $plugins = $dbo->fetchArray('SELECT id, title FROM zz_plugins WHERE idmodule_to='.prepare($id_module)." AND position='tab' AND enabled = 1 ORDER BY zz_plugins.order DESC");
+    foreach ($plugins as $plugin) {
+        echo '
+            <li>
+                <a data-toggle="tab" href="#tab_'.$plugin['id'].'" id="link-tab_'.$plugin['id'].'">
+                    '.$plugin['title'].'
+                </a>
+            </li>';
+    }
+
+    // Tab per le note interne
+    if ($structure->permission != '-' && $structure->use_notes) {
+        $notes = $structure->recordNotes($id_record);
+
+        echo '
+            <li class="bg-info">
+                <a data-toggle="tab" href="#tab_note" id="link-tab_note">
+                    '.tr('Note interne').'
+                    <span class="badge">'.($notes->count() ?: '').'</span>
+                </a>
+            </li>';
+    }
+
+    // Tab per le checklist
+    if ($structure->permission != '-' && $structure->use_checklists) {
+        echo '
+            <li class="bg-success">
+                <a data-toggle="tab" href="#tab_checks" id="link-tab_checks">'.tr('Checklist').'</a>
+            </li>';
+    }
+
+    // Tab per le informazioni sulle operazioni
+    if (Auth::admin()) {
+        echo '
+            <li class="bg-warning">
+                <a data-toggle="tab" href="#tab_info" id="link-tab_info">
+                    '.tr('Info').'
+                </a>
+            </li>';
+    }
+
+    echo '
+        </ul>
+    </aside>
+    <!-- The sidebar\'s background -->
+    <!-- This div must placed right after the sidebar for it to work-->
+    <div class="control-sidebar-bg"></div>';
+
     echo '
 		<div class="nav-tabs-custom">
 			<ul class="nav nav-tabs pull-right" id="tabs" role="tablist">
@@ -84,48 +148,13 @@ if (empty($record) || !$has_access) {
 
     echo '
 					</a>
-				</li>';
+				</li>
 
-    // Tab per le informazioni sulle operazioni
-    if (Auth::admin()) {
-        echo '
-				<li class="bg-warning">
-					<a data-toggle="tab" href="#tab_info" id="link-tab_info">'.tr('Info').'</a>
-				</li>';
-    }
-
-    // Tab per le note interne
-    if ($structure->permission != '-' && $structure->use_notes) {
-        $notes = $structure->recordNotes($id_record);
-
-        echo '
-				<li class="bg-info">
-					<a data-toggle="tab" href="#tab_note" id="link-tab_note">
-					    '.tr('Note interne').'
-					    <span class="badge">'.($notes->count() ?: '').'</span>
-                    </a>
-				</li>';
-    }
-
-    // Tab per le checklist
-    if ($structure->permission != '-' && $structure->use_checklists) {
-        echo '
-				<li class="bg-success">
-					<a data-toggle="tab" href="#tab_checks" id="link-tab_checks">'.tr('Checklist').'</a>
-				</li>';
-    }
-
-    $plugins = $dbo->fetchArray('SELECT id, title FROM zz_plugins WHERE idmodule_to='.prepare($id_module)." AND position='tab' AND enabled = 1 ORDER BY zz_plugins.order DESC");
-
-    // Tab dei plugin
-    foreach ($plugins as $plugin) {
-        echo '
 				<li>
-					<a data-toggle="tab" href="#tab_'.$plugin['id'].'" id="link-tab_'.$plugin['id'].'">'.$plugin['title'].'</a>
-				</li>';
-    }
-
-    echo '
+				    <button class="btn btn-info" data-toggle="control-sidebar">
+				        <i class="fa fa-list"></i>
+                    </button>
+                </li>
 			</ul>
 
 			<div class="tab-content">

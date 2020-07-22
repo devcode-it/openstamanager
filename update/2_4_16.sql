@@ -153,6 +153,12 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 (NULL, 'app-v1', 'retrieve', 'sessioni', 'Modules\\Interventi\\API\\AppV1\\Sessioni', '1'),
 (NULL, 'app-v1', 'retrieve', 'sessioni-cleanup', 'Modules\\Interventi\\API\\AppV1\\Sessioni', '1'),
 (NULL, 'app-v1', 'retrieve', 'sessione', 'Modules\\Interventi\\API\\AppV1\\Sessioni', '1'),
+(NULL, 'app-v1', 'retrieve', 'righe-intervento', 'Modules\\Interventi\\API\\AppV1\\Righe', '1'),
+(NULL, 'app-v1', 'retrieve', 'righe-intervento-cleanup', 'Modules\\Interventi\\API\\AppV1\\Righe', '1'),
+(NULL, 'app-v1', 'retrieve', 'riga-intervento', 'Modules\\Interventi\\API\\AppV1\\Righe', '1'),
+(NULL, 'app-v1', 'retrieve', 'aliquote-iva', 'Modules\\Iva\\API\\AppV1\\AliquoteIva', '1'),
+(NULL, 'app-v1', 'retrieve', 'aliquote-iva-cleanup', 'Modules\\Iva\\API\\AppV1\\AliquoteIva', '1'),
+(NULL, 'app-v1', 'retrieve', 'aliquota-iva', 'Modules\\Iva\\API\\AppV1\\AliquoteIva', '1'),
 (NULL, 'app-v1', 'retrieve', 'impostazioni', 'Modules\\Impostazioni\\API\\AppV1\\Impostazioni', '1'),
 (NULL, 'app-v1', 'retrieve', 'impostazioni-cleanup', 'Modules\\Impostazioni\\API\\AppV1\\Impostazioni', '1'),
 (NULL, 'app-v1', 'retrieve', 'impostazione', 'Modules\\Impostazioni\\API\\AppV1\\Impostazioni', '1');

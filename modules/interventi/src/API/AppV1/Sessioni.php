@@ -29,8 +29,12 @@ class Sessioni extends AppResource
             ':period_start' => $start,
             ':id_tecnico' => $id_tecnico,
         ]);
+        $da_interventi = array_column($records, 'id');
+        $mancanti = $this->getMissingIDs('in_interventi_tecnici', 'id');
 
-        return array_column($records, 'id');
+        $results = array_unique(array_merge($da_interventi, $mancanti));
+
+        return $results;
     }
 
     protected function getData($last_sync_at)

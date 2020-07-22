@@ -35,6 +35,13 @@ abstract class AppResource extends Resource implements RetrieveInterface
         // Gestione della visualizzazione dei dettagli del record
         $details = $this->getDetails($id);
 
+        // Fix per la gestione dei contenuti numerici
+        foreach ($details as $key => $value) {
+            if (is_numeric($value)) {
+                $details[$key] = (string) $value;
+            }
+        }
+
         return [
             'record' => $details,
         ];

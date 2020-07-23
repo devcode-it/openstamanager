@@ -74,7 +74,20 @@ class Sessioni extends AppResource
         $query = 'SELECT id,
             idintervento AS id_intervento,
             orario_inizio,
-            orario_fine
+            orario_fine,
+            km,
+
+            prezzo_ore_unitario AS prezzo_orario,
+            IF(tipo_sconto = "UNT", sconto_unitario, sconto_unitario * prezzo_ore_unitario / 100) AS sconto_orario,
+            IF(tipo_sconto = "PRC", sconto_unitario, 0) AS sconto_orario_percentuale,
+            tipo_sconto AS tipo_sconto_orario,
+
+            prezzo_km_unitario AS prezzo_chilometrico,
+            IF(tipo_scontokm = "UNT", scontokm_unitario, scontokm_unitario * prezzo_km_unitario / 100) AS sconto_chilometrico,
+            IF(tipo_scontokm = "PRC", scontokm_unitario, 0) AS sconto_chilometrico_percentuale,
+            tipo_sconto AS tipo_sconto_chilometrico,
+
+            prezzo_dirittochiamata AS prezzo_diritto_chiamata
         FROM in_interventi_tecnici
         WHERE in_interventi_tecnici.id = '.prepare($id);
 

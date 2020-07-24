@@ -1,8 +1,8 @@
 <?php
 
-namespace Modules\Anagrafiche\API\AppV1;
+namespace API\App\v1;
 
-use API\AppResource;
+use API\App\AppResource;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Modules\Anagrafiche\Anagrafica;
@@ -33,7 +33,7 @@ class Anagrafiche extends AppResource
         return $results;
     }
 
-    protected function getDetails($id)
+    protected function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT an_anagrafiche.idanagrafica AS id,

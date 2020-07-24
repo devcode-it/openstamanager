@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Utenti\API\AppV1;
+namespace API\App\v1;
 
 use API\Interfaces\CreateInterface;
 use API\Resource;

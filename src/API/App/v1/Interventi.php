@@ -1,12 +1,18 @@
 <?php
 
-namespace Modules\Interventi\API\AppV1;
+namespace API\App\v1;
 
-use API\AppResource;
+use API\App\AppResource;
+use API\Interfaces\CreateInterface;
+use API\Interfaces\UpdateInterface;
 use Auth;
 use Carbon\Carbon;
+use Modules\Anagrafiche\Anagrafica;
+use Modules\Interventi\Intervento;
+use Modules\Interventi\Stato;
+use Modules\TipiIntervento\Tipo as TipoSessione;
 
-class Interventi extends AppResource
+class Interventi extends AppResource implements CreateInterface, UpdateInterface
 {
     protected function getCleanupData()
     {
@@ -70,7 +76,7 @@ class Interventi extends AppResource
         return array_column($records, 'id');
     }
 
-    protected function getDetails($id)
+    protected function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
         $query = "SELECT id,
@@ -92,5 +98,37 @@ class Interventi extends AppResource
         $record = database()->fetchOne($query);
 
         return $record;
+    }
+
+    protected function createRecord($data)
+    {
+        $anagrafica = Anagrafica::find($data['id_anagrafica']);
+        $tipo = TipoSessione::find($data['id_tipo_intervento']);
+        $stato = Stato::find($data['id_stato_intervento']);
+
+        $data_richiesta = new Carbon($data['data_richiesta']);
+        $intervento = Intervento::build($anagrafica, $tipo, $stato, $data_richiesta);
+
+        $intervento->richiesta = $data['richiesta'];
+        $intervento->descrizione = $data['descrizione'];
+        $intervento->informazioniaggiuntive = $data['informazioni_aggiuntive'];
+        $intervento->save();
+
+        return [
+            'id' => $intervento->id,
+            'codice' => $intervento->codice,
+        ];
+    }
+
+    protected function updateRecord($data)
+    {
+        $intervento = Intervento::find($data['id']);
+
+        $intervento->idstatointervento = $data['id_stato_intervento'];
+        $intervento->descrizione = $data['descrizione'];
+        $intervento->informazioniaggiuntive = $data['informazioni_aggiuntive'];
+        $intervento->save();
+
+        return [];
     }
 }

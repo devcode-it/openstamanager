@@ -1,26 +1,25 @@
 <?php
 
-namespace Modules\Iva\API\AppV1;
+namespace API\App\v1;
 
-use API\AppResource;
-use Auth;
+use API\App\AppResource;
 use Carbon\Carbon;
 
-class AliquoteIva extends AppResource
+class Impostazioni extends AppResource
 {
     protected function getCleanupData()
     {
-        return $this->getDeleted('co_iva', 'id');
+        return [];
     }
 
     protected function getData($last_sync_at)
     {
-        $query = 'SELECT co_iva.id FROM co_iva';
+        $query = 'SELECT zz_settings.id FROM zz_settings WHERE sezione = "Applicazione"';
 
         // Filtro per data
         if ($last_sync_at) {
             $last_sync = new Carbon($last_sync_at);
-            $query .= ' WHERE co_iva.updated_at > '.prepare($last_sync);
+            $query .= ' AND zz_settings.updated_at > '.prepare($last_sync);
         }
 
         $records = database()->fetchArray($query);
@@ -28,14 +27,15 @@ class AliquoteIva extends AppResource
         return array_column($records, 'id');
     }
 
-    protected function getDetails($id)
+    protected function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
-        $query = 'SELECT co_iva.id,
-            co_iva.descrizione,
-            co_iva.percentuale
-        FROM co_iva
-        WHERE co_iva.id = '.prepare($id);
+        $query = 'SELECT id AS id,
+            nome,
+            valore AS contenuto,
+            tipo
+        FROM zz_settings
+        WHERE zz_settings.id = '.prepare($id);
 
         $record = database()->fetchOne($query);
 

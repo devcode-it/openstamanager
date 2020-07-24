@@ -1,8 +1,8 @@
 <?php
 
-namespace Modules\Articoli\API\AppV1;
+namespace API\App\v1;
 
-use API\AppResource;
+use API\App\AppResource;
 use Carbon\Carbon;
 
 class Articoli extends AppResource
@@ -27,7 +27,7 @@ class Articoli extends AppResource
         return array_column($records, 'id');
     }
 
-    protected function getDetails($id)
+    protected function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT mg_articoli.id AS id,

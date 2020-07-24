@@ -1,8 +1,8 @@
 <?php
 
-namespace Modules\StatiIntervento\API\AppV1;
+namespace API\App\v1;
 
-use API\AppResource;
+use API\App\AppResource;
 use Carbon\Carbon;
 
 class StatiIntervento extends AppResource
@@ -27,7 +27,7 @@ class StatiIntervento extends AppResource
         return array_column($records, 'id');
     }
 
-    protected function getDetails($id)
+    protected function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT in_statiintervento.idstatointervento AS id,

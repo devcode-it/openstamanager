@@ -1,13 +1,17 @@
 <?php
 
-namespace API;
+namespace API\App;
 
+use API\Interfaces\CreateInterface;
+use API\Interfaces\DeleteInterface;
 use API\Interfaces\RetrieveInterface;
+use API\Interfaces\UpdateInterface;
+use API\Resource;
 
 /**
  * Risorsa di base per la gestione delle operazioni standard di comunicazione con l'applicazione.
  */
-abstract class AppResource extends Resource implements RetrieveInterface
+abstract class AppResource extends Resource implements RetrieveInterface, CreateInterface, UpdateInterface, DeleteInterface
 {
     public function retrieve($request)
     {
@@ -33,7 +37,7 @@ abstract class AppResource extends Resource implements RetrieveInterface
         }
 
         // Gestione della visualizzazione dei dettagli del record
-        $details = $this->getDetails($id);
+        $details = $this->retrieveRecord($id);
 
         // Fix per la gestione dei contenuti numerici
         foreach ($details as $key => $value) {
@@ -45,6 +49,33 @@ abstract class AppResource extends Resource implements RetrieveInterface
         return [
             'record' => $details,
         ];
+    }
+
+    public function create($request)
+    {
+        $data = $request['data'];
+        $response_data = $this->createRecord($data);
+
+        return [
+            'id' => $response_data['id'],
+            'data' => $response_data,
+        ];
+    }
+
+    public function update($request)
+    {
+        $data = $request['data'];
+        $response_data = $this->updateRecord($data);
+
+        return [
+            'data' => $response_data,
+        ];
+    }
+
+    public function delete($request)
+    {
+        $id = $request['id'];
+        $this->deleteRecord($id);
     }
 
     /**
@@ -121,5 +152,40 @@ abstract class AppResource extends Resource implements RetrieveInterface
      *
      * @return array
      */
-    abstract protected function getDetails($id);
+    abstract protected function retrieveRecord($id);
+
+    /**
+     * Crea un nuovo record relativo alla risorsa, restituendo l'ID relativo ed eventuali campi da aggiornare in remoto.
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    protected function createRecord($data)
+    {
+        return [];
+    }
+
+    /**
+     * Aggiorna un record relativo alla risorsa, restituendo eventuali campi da aggiornare in remoto.
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    protected function updateRecord($data)
+    {
+        return [];
+    }
+
+    /**
+     * Elimina un record relativo alla risorsa.
+     *
+     * @param string $id
+     *
+     * @return void
+     */
+    protected function deleteRecord($id)
+    {
+    }
 }

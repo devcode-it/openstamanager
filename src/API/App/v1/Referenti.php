@@ -1,8 +1,8 @@
 <?php
 
-namespace Modules\Anagrafiche\API\AppV1;
+namespace API\App\v1;
 
-use API\AppResource;
+use API\App\AppResource;
 use API\Interfaces\RetrieveInterface;
 use Carbon\Carbon;
 
@@ -32,7 +32,7 @@ class Referenti extends AppResource implements RetrieveInterface
         return array_column($records, 'id');
     }
 
-    protected function getDetails($id)
+    protected function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT id,

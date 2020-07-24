@@ -1,14 +1,17 @@
 <?php
 
-namespace Modules\Interventi\API\AppV1;
+namespace API\App\v1;
 
-use API\AppResource;
+use API\App\AppResource;
+use API\Exceptions\InternalError;
 use Auth;
 use Carbon\Carbon;
+use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Interventi\Components\Articolo;
 use Modules\Interventi\Components\Riga;
 use Modules\Interventi\Components\Sconto;
 use Modules\Interventi\Intervento;
+use UnexpectedValueException;
 
 class Righe extends AppResource
 {
@@ -83,25 +86,10 @@ class Righe extends AppResource
         return array_column($records, 'id');
     }
 
-    protected function getDetails($id)
+    protected function retrieveRecord($id)
     {
-        // Gestione della visualizzazione dei dettagli del record
-        $dati = database()->fetchOne('SELECT idintervento AS id_intervento,
-           idarticolo AS id_articolo,
-           is_descrizione,
-           is_sconto
-        FROM in_righe_interventi WHERE in_righe_interventi.id = '.prepare($id));
-
         // Individuazione riga tramite classi
-        if (!empty($dati['is_sconto'])) {
-            $type = Sconto::class;
-        } elseif (!empty($dati['id_articolo'])) {
-            $type = Articolo::class;
-        } else {
-            $type = Riga::class;
-        }
-        $intervento = Intervento::find($dati['id_intervento']);
-        $riga = $intervento->getRiga($type, $id);
+        $riga = $this->getRecord($id);
 
         // Generazione del record ristretto ai campi di interesse
         $record = [
@@ -140,5 +128,86 @@ class Righe extends AppResource
         ];
 
         return $record;
+    }
+
+    protected function getRecord($id)
+    {
+        // Individuazione delle caratteristiche del record
+        $data = database()->fetchOne('SELECT idintervento AS id_intervento,
+           IF(idarticolo IS NULL OR idarticolo = 0, 0, 1) AS is_articolo,
+           is_descrizione,
+           is_sconto
+        FROM in_righe_interventi WHERE in_righe_interventi.id = '.prepare($id));
+
+        // Individuazione riga tramite classi
+        $type = $this->getType($data);
+        $intervento = Intervento::find($data['id_intervento']);
+
+        return $intervento->getRiga($type, $id);
+    }
+
+    protected function getType($data)
+    {
+        if (!empty($data['is_sconto'])) {
+            $type = Sconto::class;
+        } elseif (!empty($data['is_articolo'])) {
+            $type = Articolo::class;
+        } else {
+            $type = Riga::class;
+        }
+
+        return $type;
+    }
+
+    protected function createRecord($data)
+    {
+        $intervento = Intervento::find($data['id_intervento']);
+        if ($data['is_articolo']) {
+            $originale = ArticoloOriginale::find($data['id_articolo']);
+            $riga = Articolo::build($intervento, $originale);
+        } elseif ($data['is_sconto']) {
+            // TODO: sconti
+        } else {
+            $riga = Riga::build($intervento);
+        }
+
+        $this->aggiornaRecord($riga, $data);
+        $riga->save();
+
+        return [
+            'id' => $riga->id,
+        ];
+    }
+
+    protected function updateRecord($data)
+    {
+        $riga = $this->getRecord($data['id']);
+
+        $this->aggiornaRecord($riga, $data);
+        $riga->save();
+
+        return [];
+    }
+
+    protected function deleteRecord($id)
+    {
+        $riga = $this->getRecord($id);
+        $riga->delete();
+    }
+
+    protected function aggiornaRecord($record, $data)
+    {
+        $record->descrizione = $data['descrizione'];
+        $record->um = $data['um'] ?: null;
+
+        //$record->costo_unitario = $data['costo_unitario'] ?: 0;
+        $record->setPrezzoUnitario($data['prezzo_unitario'], $data['id_iva']);
+        $record->setSconto($data['sconto_percentuale'] ?: $data['sconto_unitario'], $data['tipo_sconto']);
+
+        try {
+            $record->qta = $data['qta'];
+        } catch (UnexpectedValueException $e) {
+            throw new InternalError();
+        }
     }
 }

@@ -1,10 +1,13 @@
 <?php
 
-namespace Modules\Interventi\API\AppV1;
+namespace API\App\v1;
 
-use API\AppResource;
+use API\App\AppResource;
 use Auth;
 use Carbon\Carbon;
+use Modules\Anagrafiche\Anagrafica;
+use Modules\Interventi\Components\Sessione;
+use Modules\Interventi\Intervento;
 
 class Sessioni extends AppResource
 {
@@ -68,7 +71,7 @@ class Sessioni extends AppResource
         return array_column($records, 'id');
     }
 
-    protected function getDetails($id)
+    protected function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT id,
@@ -94,5 +97,73 @@ class Sessioni extends AppResource
         $record = database()->fetchOne($query);
 
         return $record;
+    }
+
+    protected function createRecord($data)
+    {
+        // Informazioni sull'utente
+        $user = Auth::user();
+        $id_tecnico = $user->id_anagrafica;
+
+        // Informazioni di base
+        $intervento = Intervento::find($data['id_intervento']);
+        $anagrafica = Anagrafica::find($id_tecnico);
+
+        // Creazione della sessione
+        $sessione = Sessione::build($intervento, $anagrafica, $data['orario_inizio'], $data['orario_fine']);
+
+        $this->aggiornaSessione($sessione, $data);
+        $sessione->save();
+
+        return [
+            'id' => $sessione->id,
+        ];
+    }
+
+    protected function updateRecord($data)
+    {
+        $sessione = Sessione::find($data['id']);
+
+        $sessione->orario_inizio = $data['orario_inizio'];
+        $sessione->orario_fine = $data['orario_fine'];
+        $sessione->km = $data['km'];
+
+        $id_tipo = $data['id_tipo_intervento'];
+        $sessione->setTipo($id_tipo);
+
+        $this->aggiornaSessione($sessione, $data);
+        $sessione->save();
+
+        return [];
+    }
+
+    /**
+     * Aggiorna i dati della sessione sulla base dei dati caricati dall'applicazione.
+     *
+     * @param $sessione
+     * @param $data
+     */
+    protected function aggiornaSessione($sessione, $data)
+    {
+        // Prezzi
+        $sessione->prezzo_ore_unitario = $data['prezzo_orario'];
+        $sessione->prezzo_km_unitario = $data['prezzo_chilometrico'];
+        $sessione->prezzo_dirittochiamata = $data['prezzo_diritto_chiamata'];
+
+        // Sconto orario
+        $sessione->sconto_unitario = $data['sconto_orario_percentuale'] ?: $data['sconto_orario'];
+        $sessione->tipo_sconto = $data['tipo_sconto_orario'];
+
+        // Sconto chilometrico
+        $sessione->scontokm_unitario = $data['sconto_chilometrico_percentuale'] ?: $data['sconto_chilometrico'];
+        $sessione->tipo_scontokm = $data['tipo_sconto_chilometrico'];
+
+        return [];
+    }
+
+    protected function deleteRecord($id)
+    {
+        $sessione = Sessione::find($id);
+        $sessione->delete();
     }
 }

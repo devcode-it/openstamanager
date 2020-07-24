@@ -3,16 +3,15 @@
 namespace API\App\v1;
 
 use API\App\AppResource;
-use API\Interfaces\CreateInterface;
-use API\Interfaces\UpdateInterface;
 use Auth;
 use Carbon\Carbon;
+use Intervention\Image\ImageManagerStatic;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\Intervento;
 use Modules\Interventi\Stato;
 use Modules\TipiIntervento\Tipo as TipoSessione;
 
-class Interventi extends AppResource implements CreateInterface, UpdateInterface
+class Interventi extends AppResource
 {
     protected function getCleanupData()
     {
@@ -143,6 +142,16 @@ class Interventi extends AppResource implements CreateInterface, UpdateInterface
         $record->descrizione = $data['descrizione'];
         $record->informazioniaggiuntive = $data['informazioni_aggiuntive'];
 
+        // Salvataggio firma eventuale
+        if (empty($record->firma_nome) && !empty($data['firma_nome'])) {
+            $record->firma_nome = $data['firma_nome'];
+            $record->firma_data = $data['firma_data'];
+
+            // Salvataggio fisico
+            $firma_file = $this->salvaFirma($data['firma_contenuto']);
+            $record->firma_file = $firma_file;
+        }
+
         // Aggiornamento impianti collegati
         $database->query('DELETE FROM my_impianti_interventi WHERE idintervento = '.prepare($record->id));
         foreach ($data['impianti'] as $id_impianto) {
@@ -151,5 +160,22 @@ class Interventi extends AppResource implements CreateInterface, UpdateInterface
                 'idintervento' => $record->id,
             ]);
         }
+    }
+
+    protected function salvaFirma($firma_base64)
+    {
+        // Salvataggio firma
+        $firma_file = 'firma_'.time().'.png';
+
+        $data = explode(',', $firma_base64);
+
+        $img = ImageManagerStatic::make(base64_decode($data[1]));
+        $img->resize(680, 202, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+
+        $img->save(DOCROOT.'/files/interventi/'.$firma_file);
+
+        return $firma_file;
     }
 }

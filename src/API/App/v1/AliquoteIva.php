@@ -14,12 +14,12 @@ class AliquoteIva extends AppResource
 
     protected function getData($last_sync_at)
     {
-        $query = 'SELECT co_iva.id FROM co_iva';
+        $query = 'SELECT co_iva.id FROM co_iva WHERE deleted_at IS NULL';
 
         // Filtro per data
         if ($last_sync_at) {
             $last_sync = new Carbon($last_sync_at);
-            $query .= ' WHERE co_iva.updated_at > '.prepare($last_sync);
+            $query .= ' AND co_iva.updated_at > '.prepare($last_sync);
         }
 
         $records = database()->fetchArray($query);

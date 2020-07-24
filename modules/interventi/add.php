@@ -370,6 +370,9 @@ if (!empty($id_intervento)) {
 			}
 			// session_set('superselect,idzona', $(this).selectData().idzona, 0);
 		}
+
+        // Settaggio tipo intervento da anagrafica
+        $('#modals > div #idtipointervento').selectSetNew($(this).selectData().idtipointervento, $(this).selectData().idtipointervento_descrizione);
 	});
 
 	$('#modals > div #idsede_destinazione').change( function(){
@@ -392,7 +395,6 @@ if (!empty($id_intervento)) {
         }
 
         if($(this).val()){
-            //TODO: disattivato perché genera problemi con il change successivo di iditpointervento per il tempo standard*
 			$('#modals > div #idtipointervento').selectSetNew($(this).selectData().idtipointervento, $(this).selectData().idtipointervento_descrizione);
         }
 	});

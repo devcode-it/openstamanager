@@ -21,6 +21,7 @@ abstract class AppResource extends Resource implements RetrieveInterface, Create
         // Gestione delle operazioni di cleanup
         if (strpos($request['resource'], 'cleanup') !== false) {
             $list = $this->getCleanupData();
+            $list = $this->forceToString($list);
 
             return [
                 'records' => $list,
@@ -30,6 +31,7 @@ abstract class AppResource extends Resource implements RetrieveInterface, Create
         // Gestione dell'enumerazione dei record modificati
         if (!isset($id)) {
             $list = $this->getData($last_sync_at);
+            $list = $this->forceToString($list);
 
             return [
                 'records' => $list,
@@ -38,13 +40,7 @@ abstract class AppResource extends Resource implements RetrieveInterface, Create
 
         // Gestione della visualizzazione dei dettagli del record
         $details = $this->retrieveRecord($id);
-
-        // Fix per la gestione dei contenuti numerici
-        foreach ($details as $key => $value) {
-            if (is_numeric($value)) {
-                $details[$key] = (string) $value;
-            }
-        }
+        $details = $this->forceToString($details);
 
         return [
             'record' => $details,
@@ -76,6 +72,21 @@ abstract class AppResource extends Resource implements RetrieveInterface, Create
     {
         $id = $request['id'];
         $this->deleteRecord($id);
+    }
+
+    protected function forceToString($list)
+    {
+        $result = [];
+        // Fix per la gestione dei contenuti numerici
+        foreach ($list as $key => $value) {
+            if (is_numeric($value)) {
+                $result[$key] = (string) $value;
+            } else {
+                $result[$key] = $value;
+            }
+        }
+
+        return $result;
     }
 
     /**

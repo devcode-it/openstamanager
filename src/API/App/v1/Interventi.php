@@ -78,6 +78,8 @@ class Interventi extends AppResource implements CreateInterface, UpdateInterface
 
     protected function retrieveRecord($id)
     {
+        $database = database();
+
         // Gestione della visualizzazione dei dettagli del record
         $query = "SELECT id,
             codice,
@@ -95,7 +97,11 @@ class Interventi extends AppResource implements CreateInterface, UpdateInterface
         FROM in_interventi
         WHERE in_interventi.id = ".prepare($id);
 
-        $record = database()->fetchOne($query);
+        $record = $database->fetchOne($query);
+
+        // Individuazione impianti collegati
+        $impianti = $database->fetchArray('SELECT idimpianto AS id FROM my_impianti_interventi WHERE idintervento = '.prepare($id));
+        $record['impianti'] = array_column($impianti, 'id');
 
         return $record;
     }
@@ -109,9 +115,7 @@ class Interventi extends AppResource implements CreateInterface, UpdateInterface
         $data_richiesta = new Carbon($data['data_richiesta']);
         $intervento = Intervento::build($anagrafica, $tipo, $stato, $data_richiesta);
 
-        $intervento->richiesta = $data['richiesta'];
-        $intervento->descrizione = $data['descrizione'];
-        $intervento->informazioniaggiuntive = $data['informazioni_aggiuntive'];
+        $this->aggiornaRecord($intervento, $data);
         $intervento->save();
 
         return [
@@ -124,11 +128,28 @@ class Interventi extends AppResource implements CreateInterface, UpdateInterface
     {
         $intervento = Intervento::find($data['id']);
 
-        $intervento->idstatointervento = $data['id_stato_intervento'];
-        $intervento->descrizione = $data['descrizione'];
-        $intervento->informazioniaggiuntive = $data['informazioni_aggiuntive'];
+        $this->aggiornaRecord($intervento, $data);
         $intervento->save();
 
         return [];
+    }
+
+    protected function aggiornaRecord($record, $data)
+    {
+        $database = database();
+
+        // Aggiornamento intervento
+        $record->idstatointervento = $data['id_stato_intervento'];
+        $record->descrizione = $data['descrizione'];
+        $record->informazioniaggiuntive = $data['informazioni_aggiuntive'];
+
+        // Aggiornamento impianti collegati
+        $database->query('DELETE FROM my_impianti_interventi WHERE idintervento = '.prepare($record->id));
+        foreach ($data['impianti'] as $id_impianto) {
+            $database->insert('my_impianti_interventi', [
+                'idimpianto' => $id_impianto,
+                'idintervento' => $record->id,
+            ]);
+        }
     }
 }

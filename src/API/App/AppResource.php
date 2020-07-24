@@ -51,6 +51,7 @@ abstract class AppResource extends Resource implements RetrieveInterface, Create
     {
         $data = $request['data'];
         $response_data = $this->createRecord($data);
+        $response_data = $this->forceToString($response_data);
 
         return [
             'id' => $response_data['id'],
@@ -62,6 +63,7 @@ abstract class AppResource extends Resource implements RetrieveInterface, Create
     {
         $data = $request['data'];
         $response_data = $this->updateRecord($data);
+        $response_data = $this->forceToString($response_data);
 
         return [
             'data' => $response_data,
@@ -81,6 +83,8 @@ abstract class AppResource extends Resource implements RetrieveInterface, Create
         foreach ($list as $key => $value) {
             if (is_numeric($value)) {
                 $result[$key] = (string) $value;
+            } elseif (is_array($value)) {
+                $result[$key] = $this->forceToString($value);
             } else {
                 $result[$key] = $value;
             }

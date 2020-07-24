@@ -172,7 +172,10 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 (NULL, 'app-v1', 'update', 'sessione', 'API\\App\\v1\\Sessioni', '1'),
 (NULL, 'app-v1', 'create', 'riga-intervento', 'API\\App\\v1\\Righe', '1'),
 (NULL, 'app-v1', 'update', 'riga-intervento', 'API\\App\\v1\\Righe', '1'),
-(NULL, 'app-v1', 'delete', 'riga-intervento', 'API\\App\\v1\\Righe', '1');
+(NULL, 'app-v1', 'delete', 'riga-intervento', 'API\\App\\v1\\Righe', '1'),
+
+(NULL, 'app-v1', 'retrieve', 'email-rapportino', 'API\\App\\v1\\RapportinoIntervento', '1'),
+(NULL, 'app-v1', 'create', 'email-rapportino', 'API\\App\\v1\\RapportinoIntervento', '1');
 
 -- Impostazioni relative all'applicazione
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES

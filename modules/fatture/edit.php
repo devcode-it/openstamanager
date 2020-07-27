@@ -672,6 +672,10 @@ if (!$block_edit) {
                         <a class="btn btn-sm btn-primary'.(!empty($articoli) ? '' : ' disabled').'" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_articolo" data-toggle="tooltip" data-title="'.tr('Aggiungi articolo').'">
                             <i class="fa fa-plus"></i> '.tr('Articolo').'
                         </a>';
+    echo '
+            <a class="btn btn-sm btn-primary"data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_barcode" data-toggle="tooltip" data-title="'.tr('Aggiungi articoli tramite barcode').'">
+                <i class="fa fa-plus"></i> '.tr('Barcode').'
+            </a>';
 
     echo '
                         <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_riga" data-toggle="tooltip" data-title="'.tr('Aggiungi riga').'">

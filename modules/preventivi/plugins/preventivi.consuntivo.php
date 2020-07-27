@@ -206,31 +206,33 @@ if (!empty($interventi)) {
         </td>
     </tr>';
 
-    // Totali per stato
-    echo '
-    <tr>
-        <td colspan="6">
-            <br><b>'.tr('Totale interventi per stato', [], ['upper' => true]).'</b>
-        </td>
-    </tr>';
-
     $stati = $interventi->groupBy('idstatointervento');
-    foreach ($stati as $interventi_collegati) {
-        $stato = $interventi_collegati->first()->stato;
-        $totale_stato = sum(array_column($interventi_collegati->toArray(), 'totale_imponibile'));
-
+    if (count($stati) > 0) {
+        // Totali per stato
         echo '
-    <tr>
-        <td colspan="3"></td>
+        <tr>
+            <td colspan="6">
+                <br><b>'.tr('Totale interventi per stato', [], ['upper' => true]).'</b>
+            </td>
+        </tr>';
 
-        <td class="text-right" colspan="2" style="background:'.$stato->colore.';">
-            <big><b>'.$stato->descrizione.':</b></big>
-        </td>
+        foreach ($stati as $interventi_collegati) {
+            $stato = $interventi_collegati->first()->stato;
+            $totale_stato = sum(array_column($interventi_collegati->toArray(), 'totale_imponibile'));
 
-        <td class="text-right">
-            <big><b>'.moneyFormat($totale_stato).'</b></big>
-        </td>
-    </tr>';
+            echo '
+        <tr>
+            <td colspan="3"></td>
+
+            <td class="text-right" colspan="2" style="background:'.$stato->colore.';">
+                <big><b>'.$stato->descrizione.':</b></big>
+            </td>
+
+            <td class="text-right">
+                <big><b>'.moneyFormat($totale_stato).'</b></big>
+            </td>
+        </tr>';
+        }
     }
 
     echo '

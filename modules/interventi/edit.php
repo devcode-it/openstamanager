@@ -7,9 +7,11 @@ $block_edit = $record['flag_completato'];
 unset($_SESSION['superselect']['idanagrafica']);
 unset($_SESSION['superselect']['idsede_partenza']);
 unset($_SESSION['superselect']['idsede_destinazione']);
+unset($_SESSION['superselect']['idintervento']);
 $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 $_SESSION['superselect']['idsede_partenza'] = $record['idsede_partenza'];
 $_SESSION['superselect']['idsede_partenza'];
+$_SESSION['superselect']['idintervento'] = $id_record;
 $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione'];
 $_SESSION['superselect']['permetti_movimento_a_zero'] = false;
 
@@ -234,6 +236,11 @@ if (!$block_edit) {
             </a>';
 
     echo '
+            <a class="btn btn-sm btn-primary"data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_barcode" data-toggle="tooltip" data-title="'.tr('Aggiungi articoli tramite barcode').'">
+                <i class="fa fa-plus"></i> '.tr('Barcode').'
+            </a>';
+
+    echo '
             <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_riga" data-toggle="tooltip" data-title="'.tr('Aggiungi riga').'">
                 <i class="fa fa-plus"></i> '.tr('Riga').'
             </a>';
@@ -257,7 +264,7 @@ $articoli = $intervento->articoli;
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza",  "ajax-source": "sedi_azienda",  "value": "$idsede_partenza$", "readonly": "<?php echo ($record['flag_completato'] || !empty($articoli)) ? 1 : 0; ?>" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza",  "ajax-source": "sedi_azienda",  "value": "$idsede_partenza$", "readonly": "<?php echo ($record['flag_completato'] || !$articoli->isEmpty()) ? 1 : 0; ?>" ]}
                 </div>
             </div>
 

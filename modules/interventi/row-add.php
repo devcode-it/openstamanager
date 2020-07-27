@@ -56,6 +56,10 @@ if (get('is_descrizione') !== null) {
     $file = 'sconto';
 
     $options['op'] = 'manage_sconto';
+} elseif (get('is_barcode') !== null) {
+    $file = 'barcode';
+
+    $options['op'] = 'manage_barcode';
 }
 
 echo App::load($file.'.php', $result, $options);

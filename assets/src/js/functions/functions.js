@@ -478,6 +478,7 @@ function replaceAll(str, find, replace) {
 }
 
 function cleanup_inputs() {
+    $('.bound').removeClass("bound");
     $('.superselect, .superselectajax').select2().select2("destroy");
 }
 

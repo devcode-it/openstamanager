@@ -59,7 +59,7 @@ if ($pricing || !empty($totale_ore)) {
         <th colspan="2" class="text-center">
             <b>'.Translator::numberToLocale($totale_ore - $totale_ore_impiegate).'</b><br>
             <p>'.tr('Ore erogate').': '.Translator::numberToLocale($totale_ore_impiegate).'</p>
-            <p>'.tr('Ore in contratto').': '.Translator::numberToLocale($totale_ore).'</p>
+            <p>'.tr('Ore a contratto').': '.Translator::numberToLocale($totale_ore).'</p>
         </th>
     </tr>';
     }

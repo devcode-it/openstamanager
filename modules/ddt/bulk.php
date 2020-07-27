@@ -50,43 +50,45 @@ switch (post('op')) {
             $id_anagrafica = $anagrafica->id;
 
             // Proseguo solo se i documenti scelti sono fatturabili
-            $righe = $documento_import->getRighe();
-            if (!empty($righe)) {
-                ++$numero_totale;
+            if ($documento_import->isImportabile()) {
+                $righe = $documento_import->getRighe();
+                if (!empty($righe)) {
+                    ++$numero_totale;
 
-                // Ricerca fattura per anagrafica tra le registrate
-                $fattura = $documenti->first(function ($item, $key) use ($id_anagrafica) {
-                    return $item->anagrafica->id == $id_anagrafica;
-                });
+                    // Ricerca fattura per anagrafica tra le registrate
+                    $fattura = $documenti->first(function ($item, $key) use ($id_anagrafica) {
+                        return $item->anagrafica->id == $id_anagrafica;
+                    });
 
-                // Ricerca fattura per anagrafica se l'impostazione di accodamento è selezionata
-                if (!empty($accodare) && empty($fattura)) {
-                    $fattura = Fattura::where('idanagrafica', $id_anagrafica)
-                        ->where('idstatodocumento', $stato_documenti_accodabili->id)
-                        ->where('idtipodocumento', $tipo_documento->id)
-                        ->first();
+                    // Ricerca fattura per anagrafica se l'impostazione di accodamento è selezionata
+                    if (!empty($accodare) && empty($fattura)) {
+                        $fattura = Fattura::where('idanagrafica', $id_anagrafica)
+                            ->where('idstatodocumento', $stato_documenti_accodabili->id)
+                            ->where('idtipodocumento', $tipo_documento->id)
+                            ->first();
 
-                    if (!empty($fattura)) {
+                        if (!empty($fattura)) {
+                            $documenti->push($fattura);
+                        }
+                    }
+
+                    // Creazione fattura per anagrafica
+                    if (empty($fattura)) {
+                        $fattura = Fattura::build($anagrafica, $tipo_documento, $data, $id_segment);
                         $documenti->push($fattura);
                     }
-                }
 
-                // Creazione fattura per anagrafica
-                if (empty($fattura)) {
-                    $fattura = Fattura::build($anagrafica, $tipo_documento, $data, $id_segment);
-                    $documenti->push($fattura);
-                }
+                    // Inserimento righe
+                    foreach ($righe as $riga) {
+                        $qta = $riga->qta_rimanente;
 
-                // Inserimento righe
-                foreach ($righe as $riga) {
-                    $qta = $riga->qta_rimanente;
+                        if ($qta > 0) {
+                            $copia = $riga->copiaIn($fattura, $qta);
 
-                    if ($qta > 0) {
-                        $copia = $riga->copiaIn($fattura, $qta);
-
-                        // Aggiornamento seriali dalla riga dell'ordine
-                        if ($copia->isArticolo()) {
-                            $copia->serials = $riga->serials;
+                            // Aggiornamento seriali dalla riga dell'ordine
+                            if ($copia->isArticolo()) {
+                                $copia->serials = $riga->serials;
+                            }
                         }
                     }
                 }

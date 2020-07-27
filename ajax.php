@@ -141,4 +141,14 @@ switch (filter('op')) {
         echo json_encode($response);
 
         break;
+
+    case 'summable-results':
+        $ids = post('ids') ?: [];
+        $results = Util\Query::getSums($structure, [
+            'id' => $ids,
+        ]);
+
+        echo json_encode($results);
+
+        break;
 }

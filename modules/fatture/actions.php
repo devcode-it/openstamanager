@@ -392,6 +392,43 @@ switch (post('op')) {
 
         break;
 
+    case 'manage_barcode':
+        foreach (post('qta') as $id_articolo => $qta) {
+            if ($id_articolo == '-id-') {
+                continue;
+            }
+
+            // Dati di input
+            $sconto = post('sconto')[$id_articolo];
+            $tipo_sconto = post('tipo_sconto')[$id_articolo];
+            $prezzo_unitario = post('prezzo_unitario')[$id_articolo];
+            $id_dettaglio_fornitore = post('id_dettaglio_fornitore')[$id_articolo];
+            $id_iva = $originale->idiva_vendita ? $originale->idiva_vendita : setting('Iva predefinita');
+
+            // Inversione quantità per Note
+            if (!empty($record['is_reversed'])) {
+                $qta = -$qta;
+            }
+
+            // Creazione articolo
+            $originale = ArticoloOriginale::find($id_articolo);
+            $articolo = Articolo::build($fattura, $originale);
+            $articolo->id_dettaglio_fornitore = $id_dettaglio_fornitore ?: null;
+
+            $articolo->setPrezzoUnitario($prezzo_unitario, $id_iva);
+            if ($dir == 'entrata') {
+                $articolo->costo_unitario = $originale->prezzo_acquisto;
+            }
+            $articolo->setSconto($sconto, $tipo_sconto);
+            $articolo->qta = $qta;
+
+            $articolo->save();
+        }
+
+        flash()->info(tr('Articoli aggiunti!'));
+
+        break;
+
     case 'manage_articolo':
         if (post('idriga') != null) {
             $articolo = Articolo::find(post('idriga'));
@@ -402,6 +439,7 @@ switch (post('op')) {
         }
 
         $qta = post('qta');
+        // Inversione quantità per Note
         if (!empty($record['is_reversed'])) {
             $qta = -$qta;
         }
@@ -637,7 +675,7 @@ switch (post('op')) {
             if (post('evadere')[$riga->id] == 'on') {
                 $qta = post('qta_da_evadere')[$riga->id];
 
-                $copia = $riga->copiaIn($fattura, $qta, $is_evasione);
+                $copia = $riga->copiaIn($fattura, $qta);
                 $copia->id_conto = $id_conto;
 
                 $copia->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;

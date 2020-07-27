@@ -140,11 +140,11 @@ class Query
             return '';
         }
 
-        // Filtri di ricerica
+        // Filtri di ricerca
         $search_filters = [];
-        foreach ($search as $field => $value) {
+        foreach ($search as $field => $original_value) {
             $pos = array_search($field, $total['fields']);
-            $value = trim($value);
+            $value = trim($original_value);
 
             if (isset($value) && $pos !== false) {
                 $search_query = $total['search_inside'][$pos];
@@ -201,7 +201,14 @@ class Query
 
             // Campo id: ricerca tramite comparazione
             elseif ($field == 'id') {
-                $search_filters[] = $field.' = '.prepare($value);
+                // Filtro per una serie di ID
+                if (is_array($original_value)) {
+                    if (!empty($original_value)) {
+                        $search_filters[] = $field.' IN ('.implode(', ', $original_value).')';
+                    }
+                } else {
+                    $search_filters[] = $field.' = '.prepare($value);
+                }
             }
 
             // Ricerca
@@ -264,7 +271,7 @@ class Query
      */
     public static function getSums($structure, $search = [])
     {
-        $total = self::readQuery($structure, $search);
+        $total = self::readQuery($structure);
 
         // Calcolo di eventuali somme
         if (empty($total['summable'])) {

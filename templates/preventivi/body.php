@@ -33,30 +33,28 @@ echo '
             ], ['upper' => true]).'</b>
         </div>
 
-        <table>
-        <tr>
-            <td colspan="2" style="height:10mm;padding-top:2mm;">
-                <p class="small-bold">'.tr('Pagamento', [], ['upper' => true]).'</p>
-                <p>'.$pagamento['descrizione'].'</p>
-            </td>
-            <td colspan="2" style="height:10mm;padding-top:2mm;">
-                <p class="small-bold">'.tr('Banca di appoggio', [], ['upper' => true]).'</p>
-                <p><small>'.$banca['nome'].'</small></p>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2" style="height:10mm;padding-top:2mm;">
-                <p class="small-bold">'.tr('IBAN').'</p>
-                <p>'.$banca['iban'].'</p>
-            </td>
-            <td colspan="2" style="height:10mm;padding-top:2mm;">
-                <p class="small-bold">'.tr('BIC').'</p>
-                <p>'.$banca['bic'].'</p>
-            </td>
-        </tr>
+        <table class="table">
+            <tr>
+                <td colspan="2" style="height:10mm;padding-top:2mm;">
+                    <p class="small-bold">'.tr('Pagamento', [], ['upper' => true]).'</p>
+                    <p>'.$pagamento['descrizione'].'</p>
+                </td>
+                <td colspan="2" style="height:10mm;padding-top:2mm;">
+                    <p class="small-bold">'.tr('Banca di appoggio', [], ['upper' => true]).'</p>
+                    <p><small>'.$banca['nome'].'</small></p>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="height:10mm;padding-top:2mm;white-space: nowrap;">
+                    <p class="small-bold">'.tr('IBAN').'</p>
+                    <p>'.$banca['iban'].'</p>
+                </td>
+                <td colspan="2" style="height:10mm;padding-top:2mm;">
+                    <p class="small-bold">'.tr('BIC').'</p>
+                    <p>'.$banca['bic'].'</p>
+                </td>
+            </tr>
         </table>
-
-
     </div>
 
 	<div class="col-xs-6" style="margin-left: 10px">

@@ -350,7 +350,7 @@ function getTable(selector) {
 
     var selected = new Map();
     var selected_ids = table.data('selected') ? table.data('selected').split(';') : [];
-    selected_ids.forEach(function(item, index) {
+    selected_ids.forEach(function (item, index) {
         selected.set(item, true);
     });
 
@@ -360,7 +360,7 @@ function getTable(selector) {
         id_module: table.data('idmodule'),
         id_plugin: table.data('idplugin'),
 
-        initDatatable: function() {
+        initDatatable: function () {
             if (table.hasClass('datatables')) {
                 start_local_datatables();
             } else {
@@ -395,10 +395,15 @@ function getTable(selector) {
                 bulk_container.addClass('disabled').attr('disabled', true);
                 btn_container.addClass('disabled').attr('disabled', true);
             }
+
+            // Aggiornamento del footer nel caso sia richiesto
+            if (globals.restrict_summables_to_selected){
+                this.updateSelectedFooter();
+            }
         },
         addSelectedRows: function (row_ids) {
             row_ids = Array.isArray(row_ids) ? row_ids : [row_ids];
-            row_ids.forEach(function(item, index) {
+            row_ids.forEach(function (item, index) {
                 selected.set(item, true);
             });
 
@@ -406,7 +411,7 @@ function getTable(selector) {
         },
         removeSelectedRows: function (row_ids) {
             row_ids = Array.isArray(row_ids) ? row_ids : [row_ids];
-            row_ids.forEach(function(item, index) {
+            row_ids.forEach(function (item, index) {
                 selected.delete(item);
             });
 
@@ -415,6 +420,33 @@ function getTable(selector) {
         clearSelectedRows: function () {
             selected.clear();
             this.saveSelectedRows();
+        },
+
+        // Aggiornamento dei campi summable
+        updateSelectedFooter: function () {
+            let datatable = this.datatable;
+            let ids = this.getSelectedRows();
+
+            $.ajax({
+                url: globals.rootdir + "/ajax.php",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    id_module: this.id_module,
+                    id_plugin: this.id_plugin,
+                    op: "summable-results",
+                    ids: ids,
+                },
+                success: function (response) {
+                    for (let [column, value] of Object.entries(response)) {
+                        let index = parseInt(column) + 1;
+                        let sel = datatable.column(index).footer();
+                        $(sel).addClass("text-right")
+                            .attr("id", "summable")
+                            .html(value);
+                    }
+                }
+            });
         },
     };
 }

@@ -7,7 +7,7 @@ $v_totale = [];
 
 // Creazione righe fantasma
 $autofill = new \Util\Autofill(6, 40);
-$rows_per_page = $fattura_accompagnatoria ? 15 : 20;
+$rows_per_page = $fattura_accompagnatoria ? 13 : 18;
 if (!empty($options['last-page-footer'])) {
     $rows_per_page += 7;
 }
@@ -90,7 +90,7 @@ foreach ($righe as $riga) {
     if (setting('Riferimento dei documenti nelle stampe') && $riga->hasOriginal()) {
         $ref = $riga->getOriginal()->parent->getReference();
         if (!empty($riga->getOriginal()->parent->numero_cliente)) {
-            $ref .= tr('<br>_DOC_ num. _NUM_ del _DATE_', [
+            $ref .= '<br>'.tr('_DOC_ num. _NUM_ del _DATE_', [
                 '_DOC_' => 'Rif. Vs. ordine cliente',
                 '_NUM_' => $riga->getOriginal()->parent->numero_cliente,
                 '_DATE_' => dateFormat($riga->getOriginal()->parent->data_cliente),
@@ -113,7 +113,7 @@ foreach ($righe as $riga) {
         $codice_cup = $documento_originale['codice_cup'];
         $id_documento_fe = $documento_originale['id_documento_fe'];
 
-        $extra_riga = tr('_ID_DOCUMENTO__NUMERO_RIGA__CODICE_CIG__CODICE_CUP_', [
+        $extra_riga = replace('_ID_DOCUMENTO__NUMERO_RIGA__CODICE_CIG__CODICE_CUP_', [
             '_ID_DOCUMENTO_' => $id_documento_fe ? 'DOC: '.$id_documento_fe : null,
             '_NUMERO_RIGA_' => $num_item ? ', NRI: '.$num_item : null,
             '_CODICE_CIG_' => $codice_cig ? ', CIG: '.$codice_cig : null,
@@ -185,8 +185,8 @@ $dicitura = $dbo->fetchOne('SELECT diciturafissafattura AS dicitura FROM an_anag
 
 if (!empty($dicitura['dicitura'])) {
     echo '
-<p class="text-center">
-    <b>'.nl2br($dicitura['dicitura']).'</b>
+<p class="text-left">
+    <span>'.nl2br($dicitura['dicitura']).'</span>
 </p>';
 }
 

@@ -29,12 +29,12 @@ $_SESSION['superselect']['permetti_movimento_a_zero'] = true;
 		<div class="panel-body">
 			<div class="row">
 
-				<div class="col-md-3">
+				<div class="col-md-3" <?php echo ($dir == 'entrata') ? 'hidden' : ''; ?>>
 					{[ "type": "text", "label": "<?php echo tr('Numero ordine'); ?>", "name": "numero", "required": 1, "class": "text-center", "value": "$numero$" ]}
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo tr('Numero secondario'); ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$" ]}
+					{[ "type": "text", "label": "<?php echo ($dir == 'entrata') ? tr('Numero ordine') : tr('Numero ordine fornitore'); ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -116,7 +116,7 @@ $_SESSION['superselect']['permetti_movimento_a_zero'] = true;
 
             <div class="row">
                 <div class="col-md-12">
-					{[ "type": "textarea", "label": "<?php echo tr('Note aggiuntive'); ?>", "name": "note_aggiuntive", "help": "<?php echo tr('Note interne'); ?>", "value": "$note_aggiuntive$" ]}
+					{[ "type": "textarea", "label": "<?php echo tr('Note interne'); ?>", "name": "note_aggiuntive", "value": "$note_aggiuntive$" ]}
 				</div>
 			</div>
 		</div>
@@ -187,6 +187,11 @@ if (!$block_edit) {
             </a>';
 
     echo '
+            <a class="btn btn-sm btn-primary"data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_barcode" data-toggle="tooltip" data-title="'.tr('Aggiungi articoli tramite barcode').'">
+                <i class="fa fa-plus"></i> '.tr('Barcode').'
+            </a>';
+
+    echo '
             <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_riga" data-toggle="tooltip" data-title="'.tr('Aggiungi riga').'">
                 <i class="fa fa-plus"></i> '.tr('Riga').'
             </a>';
@@ -208,7 +213,7 @@ if (!$block_edit) {
         echo '
         <div class="pull-right">
             <a class="btn btn-sm btn-info" data-href="'.$structure->fileurl('quantita_impegnate.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="'.tr('Controllo sulle quantità impegnate').'">
-                <i class="fa fa-check"></i> '.tr('Quantità impegnate').'
+                <i class="fa fa-question-circle"></i> '.tr('Verifica disponibilità').'
             </a>
         </div>';
     }

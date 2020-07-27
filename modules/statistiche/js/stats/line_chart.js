@@ -33,11 +33,11 @@ class LineChart extends Stat {
             chart.data.datasets.push({
                 calendar_id: calendar_id,
                 label: label,
-                backgroundColor: color,
+                backgroundColor: color + '55',
                 borderColor: color,
                 data: dataset,
                 labels: labels,
-                fill: false,
+                fill: true,
             });
 
             chart.update();

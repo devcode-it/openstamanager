@@ -207,31 +207,33 @@ if (!empty($interventi)) {
         </td>
     </tr>';
 
-    // Totali per stato
-    echo '
-    <tr>
-        <td colspan="6">
-            <br><b>'.tr('Totale interventi per stato', [], ['upper' => true]).'</b>
-        </td>
-    </tr>';
-
     $stati = $interventi->groupBy('idstatointervento');
-    foreach ($stati as $interventi_collegati) {
-        $stato = $interventi_collegati->first()->stato;
-        $totale_stato = sum(array_column($interventi_collegati->toArray(), 'totale_imponibile'));
-
+    if (count($stati) > 0) {
+        // Totali per stato
         echo '
-    <tr>
-        <td colspan="3"></td>
+        <tr>
+            <td colspan="6">
+                <br><b>'.tr('Totale interventi per stato', [], ['upper' => true]).'</b>
+            </td>
+        </tr>';
 
-        <td class="text-right" colspan="2" style="background:'.$stato->colore.';">
-            <big><b>'.$stato->descrizione.':</b></big>
-        </td>
+        foreach ($stati as $interventi_collegati) {
+            $stato = $interventi_collegati->first()->stato;
+            $totale_stato = sum(array_column($interventi_collegati->toArray(), 'totale_imponibile'));
 
-        <td class="text-right">
-            <big><b>'.moneyFormat($totale_stato).'</b></big>
-        </td>
-    </tr>';
+            echo '
+        <tr>
+            <td colspan="3"></td>
+
+            <td class="text-right" colspan="2" style="background:'.$stato->colore.';">
+                <big><b>'.$stato->descrizione.':</b></big>
+            </td>
+
+            <td class="text-right">
+                <big><b>'.moneyFormat($totale_stato).'</b></big>
+            </td>
+        </tr>';
+        }
     }
 
     echo '
@@ -269,16 +271,16 @@ if (!empty($totale_ore_contratto)) {
     echo '
     <div class="row">
         <big class="col-md-4 col-md-offset-4 text-center">
-            <table class="table text-left">
+            <table class="table text-left table-striped table-bordered">
                 <tr>
-                    <td colspan="2">'.tr('Ore in contratto').':</td>
-                    <td  colspan="2" class="text-right">'.Translator::numberToLocale($totale_ore_contratto).'</td>
+                    <td>'.tr('Ore a contratto').':</td>
+                    <td class="text-right">'.Translator::numberToLocale($totale_ore_contratto).'</td>
                 </tr>
-
                 <tr>
                     <td>'.tr('Ore erogate totali').':</td>
                     <td class="text-right">'.Translator::numberToLocale($totale_ore).'</td>
-
+                </tr>
+                <tr>
                     <td>'.tr('Ore residue totali').':</td>
                     <td class="text-right">'.Translator::numberToLocale(floatval($totale_ore_contratto) - floatval($totale_ore)).'</td>
                 </tr>
@@ -286,8 +288,9 @@ if (!empty($totale_ore_contratto)) {
                 <tr>
                     <td>'.tr('Ore erogate concluse').':</td>
                     <td class="text-right">'.Translator::numberToLocale($totale_ore_completate).'</td>
-
-                    <td>'.tr('Ore residue').':</td>
+                </tr>
+                <tr>
+                    <td>'.tr('Ore residue concluse').':</td>
                     <td class="text-right">'.Translator::numberToLocale(floatval($totale_ore_contratto) - floatval($totale_ore_completate)).'</td>
                 </tr>
             </table>

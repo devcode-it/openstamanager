@@ -170,16 +170,16 @@ switch (get('op')) {
             foreach ($rsp as $r) {
                 if ($r['mese'] == $mese) {
                     if (date('Ymd', strtotime($r['data_richiesta'])) < date('Ymd')) {
-                        $class = 'fc-event-danger';
+                        $class = 'danger';
                     } else {
-                        $class = 'fc-event-primary';
+                        $class = 'primary';
                     }
 
                     echo '
-                    <div class="fc-event '.$class.'" data-id="'.$r['id'].'" data-idcontratto="'.$r['idcontratto'].'" data-ref="'.$r['ref'].'">'.(($r['ref'] == 'intervento') ? '<i class=\'fa fa-wrench pull-right\'></i>' : '<i class=\'fa fa-file-text-o pull-right\'></i>').'
+                    <div class="fc-event fc-event-'.$class.'" data-id="'.$r['id'].'" data-idcontratto="'.$r['idcontratto'].'" data-ref="'.$r['ref'].'">'.(($r['ref'] == 'intervento') ? '<i class=\'fa fa-wrench pull-right\'></i>' : '<i class=\'fa fa-file-text-o pull-right\'></i>').'
                         <b>'.$r['ragione_sociale'].'</b><br>'.Translator::dateToLocale($r['data_richiesta']).' ('.$r['tipointervento'].')<div class="request" >'.(!empty($r['richiesta']) ? ' - '.$r['richiesta'] : '').'</div>'.(!empty($r['nomecontratto']) ? '<br><b>Contratto:</b> '.$r['nomecontratto'] : '').
                         (!empty($r['data_scadenza'] and $r['data_scadenza'] != '0000-00-00 00:00:00') ? '<br><small>'.tr('entro il: ').Translator::dateToLocale($r['data_scadenza']).'</small>' : '').
-                        (($r['ref'] == 'intervento') ? (Modules::link('Interventi', $r['id'], '<i class="fa fa-eye"></i>', null, 'title="'.tr('Visualizza scheda').'" class="btn btn-primary btn-xs pull-right"')).'<br>' : (Modules::link('Contratti', $r['idcontratto'], '<i class="fa fa-eye"></i>', null, 'title="'.tr('Visualizza scheda').'" class="btn btn-primary btn-xs pull-right"')).'<br>').
+                        (($r['ref'] == 'intervento') ? (Modules::link('Interventi', $r['id'], '<i class="fa fa-eye"></i>', null, 'title="'.tr('Visualizza scheda').'" class="btn btn-'.$class.' btn-xs pull-right"')).'<br>' : (Modules::link('Contratti', $r['idcontratto'], '<i class="fa fa-eye"></i>', null, 'title="'.tr('Visualizza scheda').'" class="btn btn-'.$class.' btn-xs pull-right"')).'<br>').
                     '</div>';
                 }
             } ?>

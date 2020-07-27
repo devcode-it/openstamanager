@@ -7,9 +7,11 @@ $block_edit = $record['flag_completato'];
 unset($_SESSION['superselect']['idanagrafica']);
 unset($_SESSION['superselect']['idsede_partenza']);
 unset($_SESSION['superselect']['idsede_destinazione']);
+unset($_SESSION['superselect']['idintervento']);
 $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 $_SESSION['superselect']['idsede_partenza'] = $record['idsede_partenza'];
 $_SESSION['superselect']['idsede_partenza'];
+$_SESSION['superselect']['idintervento'] = $id_record;
 $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione'];
 $_SESSION['superselect']['permetti_movimento_a_zero'] = false;
 

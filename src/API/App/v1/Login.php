@@ -27,7 +27,7 @@ class Login extends Resource implements CreateInterface
                 INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `zz_users`.`idanagrafica`
                 INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche_anagrafiche.idanagrafica = an_anagrafiche.idanagrafica
                 INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica = an_tipianagrafiche.idtipoanagrafica
-            WHERE an_tipianagrafiche.descrizione = 'Tecnico' AND `id` = :id", [
+            WHERE an_tipianagrafiche.descrizione = 'Tecnico' AND `an_anagrafiche`.`deleted_at` IS NULL AND `id` = :id", [
                 ':id' => $user['id'],
             ]);
 

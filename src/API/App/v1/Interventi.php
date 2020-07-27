@@ -139,6 +139,7 @@ class Interventi extends AppResource
 
         // Aggiornamento intervento
         $record->idstatointervento = $data['id_stato_intervento'];
+        $record->richiesta = $data['richiesta'];
         $record->descrizione = $data['descrizione'];
         $record->informazioniaggiuntive = $data['informazioni_aggiuntive'];
 

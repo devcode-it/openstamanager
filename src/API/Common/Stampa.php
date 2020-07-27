@@ -1,6 +1,6 @@
 <?php
 
-namespace Api\Common;
+namespace API\Common;
 
 use API\Interfaces\RetrieveInterface;
 use API\Resource;

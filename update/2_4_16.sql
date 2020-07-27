@@ -161,3 +161,7 @@ UPDATE `in_righe_interventi` INNER JOIN `co_iva` ON `co_iva`.`id` = `in_righe_in
 UPDATE `co_righe_promemoria` INNER JOIN `co_iva` ON `co_iva`.`id` = `co_righe_promemoria`.`idiva` SET
     `sconto_iva_unitario` = (`co_iva`.`percentuale` * `sconto_unitario` / 100),
     `sconto_unitario_ivato` = `sconto_unitario` + `sconto_iva_unitario`;
+
+-- Fix namespace classi Stampa e Allegato per API
+UPDATE `zz_api_resources` SET `class` = 'API\\Common\\Stampa' WHERE `class` = 'Api\\Common\\Stampa';
+UPDATE `zz_api_resources` SET `class` = 'API\\Common\\Allegato' WHERE `class` = 'Api\\Common\\Allegato';

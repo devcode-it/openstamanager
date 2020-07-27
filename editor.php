@@ -359,10 +359,7 @@ if (empty($record) || !$has_access) {
                                         </div>
                                         <div class="col-md-4 text-right">
                                             <p><small class="label label-default tip" title="'.Translator::timestampToLocale($operation['created_at']).'"><i class="fa fa-clock-o"></i> '.Carbon::parse($operation['created_at'])->diffForHumans().'</small></p>
-                                            <p><small class="label label-default"><i class="fa fa-user"></i> '.tr('_USER_', [
-                                                '_USER_' => $operation['username'],
-                                            ]).
-                                            '</small></p>
+                                            <p><small class="label label-default"><i class="fa fa-user"></i> '.$operation['username'].'</small></p>
                                         </div>
                                     </div>
                                 </div>

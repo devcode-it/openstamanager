@@ -21,24 +21,26 @@ switch (post('op')) {
             'stato' => Auth::getStatus()['failed']['code'],
         ]);
 
-        $utente = User::where('username', $username)->where('email', $email)->first();
-        if (!empty($utente)) {
-            $utente->reset_token = secure_random_string();
-            $utente->save();
+        try {
+            $utente = User::where('username', $username)->where('email', $email)->first();
+            if (!empty($utente)) {
+                $utente->reset_token = secure_random_string();
+                $utente->save();
 
-            $template = Template::get('Reset password');
+                $template = Template::get('Reset password');
 
-            $mail = Mail::build($utente, $template, $utente->id);
-            $mail->addReceiver($utente->email);
-            $mail->save();
+                $mail = Mail::build($utente, $template, $utente->id);
+                $mail->addReceiver($utente->email);
+                $mail->save();
 
-            $email = EmailNotification::build($mail);
-            $email->send();
+                $email = EmailNotification::build($mail);
+                $email->send();
+            }
+
+            flash()->info(tr("Se le informazioni inserite corrispondono ai dati di un utente, riceverai a breve un'email all'indirizzo collegato").'.');
+        } catch (Exception $e) {
+            flash()->error(tr("Errore durante la gestione della richiesta: si prega di contattare l'amministratore").'.');
         }
-
-        //$message_email = substr($email, 0, 2).str_repeat('*', strlen($email)-8).substr($email, -6);
-
-        flash()->info(tr("Se le informazioni inserite corrispondono ai dati di un utente, riceverai a breve un'email all'indirizzo collegato").'.');
 
         redirect(ROOTDIR.'/index.php');
         exit();

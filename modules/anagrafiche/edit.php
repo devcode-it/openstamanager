@@ -332,28 +332,6 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                             <div class="col-md-6">
                                 {[ "type": "select", "label": "'.tr('Indirizzo di fatturazione').'", "name": "idsede_fatturazione", "values": "query=SELECT id, IF(citta = \'\', nomesede, CONCAT_WS(\', \', nomesede, citta)) AS descrizione FROM an_sedi WHERE idanagrafica='.prepare($id_record).' UNION SELECT \'0\' AS id, \'Sede legale\' AS descrizione ORDER BY descrizione", "value": "$idsede_fatturazione$"  ]}
                             </div>
-                        </div>';
-
-    // Collegamento con il conto
-    $conto = $dbo->fetchOne('SELECT co_pianodeiconti3.id, co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione as descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_cliente']));
-
-    echo '
-                        <div class="row">
-                            <div class="col-md-6">
-                ';
-
-    if (!empty($conto['numero_conto'])) {
-        $piano_dei_conti_cliente = tr('_NAME_', [
-                                    '_NAME_' => $conto['numero'].'.'.$conto['numero_conto'].' '.htmlentities($conto['descrizione']),
-                                ]);
-        echo Modules::link('Piano dei conti', null, null, null, 'class="pull-right"', 1, 'movimenti-'.$conto['id']);
-    } else {
-        $piano_dei_conti_cliente = tr('Nessuno');
-    }
-
-    echo '
-                                {[ "type": "select", "label": "'.tr('Piano dei conti cliente').'", "name": "piano_dei_conti_cliente", "values": "list=\"\": \"'.$piano_dei_conti_cliente.'\"", "readonly": 1 ]}
-                            </div>
                         </div>
 
                         <div class="row">
@@ -365,6 +343,26 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                                 {[ "type": "select", "label": "'.tr('Agenti secondari').'", "multiple": "1", "name": "idagenti[]", "values": "query=SELECT an_anagrafiche.idanagrafica AS id, IF(deleted_at IS NOT NULL, CONCAT(ragione_sociale, \' (Eliminato)\'), ragione_sociale ) AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE (descrizione=\'Agente\' AND deleted_at IS NULL AND an_anagrafiche.idanagrafica NOT IN (SELECT idagente FROM an_anagrafiche WHERE  idanagrafica = '.prepare($record['idanagrafica']).')) OR (an_anagrafiche.idanagrafica IN (SELECT idagente FROM an_anagrafiche_agenti WHERE idanagrafica = '.prepare($record['idanagrafica']).') ) ORDER BY ragione_sociale", "value": "$idagenti$" ]}
                             </div>
                         </div>';
+
+    // Collegamento con il conto
+    $conto = $dbo->fetchOne('SELECT co_pianodeiconti3.id, co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione as descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_cliente']));
+
+    echo '
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><b>'.tr('Piano dei conti cliente').'</b></p>';
+
+    if (!empty($conto['numero_conto'])) {
+        $piano_dei_conti_cliente = $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'];
+        echo Modules::link('Piano dei conti', null, $piano_dei_conti_cliente, null, '', 1, 'movimenti-'.$conto['id']);
+    } else {
+        $piano_dei_conti_cliente = tr('Nessuno');
+    }
+
+    echo '
+                            </div>
+                        </div>
+                    </div>';
 
     echo '
                     <div class="tab-pane '.(!$is_fornitore ? 'hide' : (!$is_cliente ? 'active' : '')).'" id="fornitore">
@@ -393,28 +391,21 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                                 {[ "type": "select", "label": "'.tr('Listino articoli').'", "name": "idlistino_acquisti", "values": "query=SELECT id, nome AS descrizione FROM mg_listini ORDER BY nome ASC", "value": "$idlistino_acquisti$" ]}
                             </div>';
 
-    echo '
-                            <div class="col-md-6">';
-
-    /*echo '
-    <p>'.tr('Piano dei conti collegato: _NAME_', [
-        '_NAME_' => $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'],
-    ]).Modules::link('Piano dei conti', null, '').'</p>';*/
-
     // Collegamento con il conto
-    $conto = $dbo->fetchOne('SELECT co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione as descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_fornitore']));
+    $conto = $dbo->fetchOne('SELECT co_pianodeiconti3.id, co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione as descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_fornitore']));
+
+    echo '
+                            <div class="col-md-6">
+                                <p><b>'.tr('Piano dei conti fornitore').'</b></p>';
 
     if (!empty($conto['numero_conto'])) {
-        $piano_dei_conti_fornitore = tr('_NAME_', [
-                                    '_NAME_' => $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'],
-                                ]);
-        echo Modules::link('Piano dei conti', null, null, null, 'class="pull-right"');
+        $piano_dei_conti_fornitore = $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'];
+        echo Modules::link('Piano dei conti', null, $piano_dei_conti_fornitore, null, '', 1, 'movimenti-'.$conto['id']);
     } else {
         $piano_dei_conti_fornitore = tr('Nessuno');
     }
 
     echo '
-                                {[ "type": "select", "label": "'.tr('Piano dei conti fornitore').'", "name": "piano_dei_conti_fornitore", "values": "list=\"\": \"'.$piano_dei_conti_fornitore.'\"", "readonly": 1 ]}
                             </div>
                         </div>
                     </div>';
@@ -443,7 +434,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
 
 			<div class="panel-body">
 				<div class="row">
-					
+
                     <div class="col-md-3">
 						{[ "type": "text", "label": "<?php echo tr('Numero d\'iscrizione registro imprese'); ?>", "name": "codiceri", "value": "$codiceri$", "help": "<?php echo tr('Il numero registro imprese è il numero di iscrizione attribuito dal Registro Imprese della Camera di Commercio.'); ?>" ]}
                     </div>
@@ -453,7 +444,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                             '_PATTERN_' => 'RM-123456',
                         ]); ?>" ]}
                     </div>
-                    
+
 
                     <!-- campi già specificati in Codice R.E.A., da eliminare nelle prossime release -->
                     <!--div class="col-md-3">
@@ -463,7 +454,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
 					<div class="col-md-3">
 						{[ "type": "text", "label": "<?php echo tr('Città iscr. C.C.I.A.A.'); ?>", "name": "cciaa_citta", "value": "$cciaa_citta$" ]}
                     </div-->
-                    
+
 				</div>
 				<div class="row">
 					<div class="col-md-3">
@@ -507,7 +498,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
 						<?php
                         if (in_array($id_azienda, $tipi_anagrafica)) {
                             echo '
-						<p class=\'badge badge-info\' >'.tr('Questa anagrafica &egrave; di tipo "Azienda"').'.</p>';
+						<p class="badge badge-info">'.tr('Questa anagrafica è di tipo "Azienda"').'.</p>';
                         }
                         ?>
 					</div>

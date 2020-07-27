@@ -206,6 +206,12 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 (NULL, 'app-v1', 'retrieve', 'impostazioni', 'API\\App\\v1\\Impostazioni', '1'),
 (NULL, 'app-v1', 'retrieve', 'impostazioni-cleanup', 'API\\App\\v1\\Impostazioni', '1'),
 (NULL, 'app-v1', 'retrieve', 'impostazione', 'API\\App\\v1\\Impostazioni', '1'),
+(NULL, 'app-v1', 'retrieve', 'contratti', 'API\\App\\v1\\Contratti', '1'),
+(NULL, 'app-v1', 'retrieve', 'contratti-cleanup', 'API\\App\\v1\\Contratti', '1'),
+(NULL, 'app-v1', 'retrieve', 'contratto', 'API\\App\\v1\\Contratti', '1'),
+(NULL, 'app-v1', 'retrieve', 'preventivi', 'API\\App\\v1\\Preventivi', '1'),
+(NULL, 'app-v1', 'retrieve', 'preventivi-cleanup', 'API\\App\\v1\\Preventivi', '1'),
+(NULL, 'app-v1', 'retrieve', 'preventivo', 'API\\App\\v1\\Preventivi', '1'),
 
 (NULL, 'app-v1', 'create', 'intervento', 'API\\App\\v1\\Interventi', '1'),
 (NULL, 'app-v1', 'update', 'intervento', 'API\\App\\v1\\Interventi', '1'),
@@ -216,7 +222,6 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 (NULL, 'app-v1', 'create', 'riga-intervento', 'API\\App\\v1\\Righe', '1'),
 (NULL, 'app-v1', 'update', 'riga-intervento', 'API\\App\\v1\\Righe', '1'),
 (NULL, 'app-v1', 'delete', 'riga-intervento', 'API\\App\\v1\\Righe', '1'),
-
 (NULL, 'app-v1', 'retrieve', 'email-rapportino', 'API\\App\\v1\\RapportinoIntervento', '1'),
 (NULL, 'app-v1', 'create', 'email-rapportino', 'API\\App\\v1\\RapportinoIntervento', '1');
 

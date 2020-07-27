@@ -46,12 +46,12 @@ class Preventivi extends AppResource implements RetrieveInterface
     protected function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
-        $query = 'SELECT id,
-            idanagrafica AS id_cliente,
-            IF(idsede = 0, NULL, idsede) AS id_sede,
-            nome,
-            numero,
-            data,
+        $query = 'SELECT co_preventivi.id,
+            co_preventivi.idanagrafica AS id_cliente,
+            IF(co_preventivi.idsede = 0, NULL, co_preventivi.idsede) AS id_sede,
+            co_preventivi.nome,
+            co_preventivi.numero,
+            co_preventivi.data_bozza
         FROM co_preventivi
             INNER JOIN co_statipreventivi ON co_statipreventivi.id = co_preventivi.idstato
         WHERE co_preventivi.id = '.prepare($id);

@@ -46,12 +46,12 @@ class Contratti extends AppResource implements RetrieveInterface
     protected function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
-        $query = 'SELECT id,
-            idanagrafica AS id_cliente,
-            IF(idsede = 0, NULL, idsede) AS id_sede,
-            nome,
-            numero,
-            data,
+        $query = 'SELECT co_contratti.id,
+            co_contratti.idanagrafica AS id_cliente,
+            IF(co_contratti.idsede = 0, NULL, co_contratti.idsede) AS id_sede,
+            co_contratti.nome,
+            co_contratti.numero,
+            co_contratti.data_bozza
         FROM co_contratti
             INNER JOIN co_staticontratti ON co_staticontratti.id = co_contratti.idstato
         WHERE co_contratti.id = '.prepare($id);

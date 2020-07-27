@@ -42,7 +42,7 @@ class Impianti extends AppResource
             my_impianti.matricola,
             my_impianti.nome,
             my_impianti.descrizione,
-            my_impianti.data AD data_installazione,
+            my_impianti.data AS data_installazione,
             my_impianti.proprietario,
             my_impianti.ubicazione,
             my_impianti.palazzo,
@@ -50,7 +50,7 @@ class Impianti extends AppResource
             my_impianti.piano,
             my_impianti.interno,
             my_impianti.occupante,
-            my_impianti_categorie.descrizione AS categoria
+            my_impianti_categorie.nome AS categoria
         FROM my_impianti
             LEFT JOIN my_impianti_categorie ON my_impianti_categorie.id = my_impianti.id_categoria
         WHERE my_impianti.id = '.prepare($id);

@@ -7,7 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Modules\Anagrafiche\Anagrafica;
 
-class Anagrafiche extends AppResource
+class Clienti extends AppResource
 {
     protected function getCleanupData()
     {

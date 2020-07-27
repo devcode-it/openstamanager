@@ -76,6 +76,7 @@ class Sessioni extends AppResource
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT id,
             idintervento AS id_intervento,
+            idtipointervento AS id_tipo_intervento,
             orario_inizio,
             orario_fine,
             km,
@@ -124,13 +125,6 @@ class Sessioni extends AppResource
     {
         $sessione = Sessione::find($data['id']);
 
-        $sessione->orario_inizio = $data['orario_inizio'];
-        $sessione->orario_fine = $data['orario_fine'];
-        $sessione->km = $data['km'];
-
-        $id_tipo = $data['id_tipo_intervento'];
-        $sessione->setTipo($id_tipo);
-
         $this->aggiornaSessione($sessione, $data);
         $sessione->save();
 
@@ -142,9 +136,19 @@ class Sessioni extends AppResource
      *
      * @param $sessione
      * @param $data
+     *
+     * @return array
      */
     protected function aggiornaSessione($sessione, $data)
     {
+        $id_tipo = $data['id_tipo_intervento'];
+        $sessione->setTipo($id_tipo);
+
+        // Campi di base
+        $sessione->orario_inizio = $data['orario_inizio'];
+        $sessione->orario_fine = $data['orario_fine'];
+        $sessione->km = $data['km'];
+
         // Prezzi
         $sessione->prezzo_ore_unitario = $data['prezzo_orario'];
         $sessione->prezzo_km_unitario = $data['prezzo_chilometrico'];

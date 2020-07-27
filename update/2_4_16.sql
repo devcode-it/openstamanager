@@ -127,9 +127,9 @@ ALTER TABLE `dt_causalet` ADD `is_importabile` BOOLEAN DEFAULT TRUE AFTER `descr
 DELETE FROM `zz_api_resources` WHERE `version` = 'app-v1';
 INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES
 (NULL, 'app-v1', 'create', 'login', 'API\\App\\v1\\Login', '1'),
-(NULL, 'app-v1', 'retrieve', 'anagrafiche', 'API\\App\\v1\\Anagrafiche', '1'),
-(NULL, 'app-v1', 'retrieve', 'anagrafiche-cleanup', 'API\\App\\v1\\Anagrafiche', '1'),
-(NULL, 'app-v1', 'retrieve', 'anagrafica', 'API\\App\\v1\\Anagrafiche', '1'),
+(NULL, 'app-v1', 'retrieve', 'clienti', 'API\\App\\v1\\Clienti', '1'),
+(NULL, 'app-v1', 'retrieve', 'clienti-cleanup', 'API\\App\\v1\\Clienti', '1'),
+(NULL, 'app-v1', 'retrieve', 'cliente', 'API\\App\\v1\\Clienti', '1'),
 (NULL, 'app-v1', 'retrieve', 'sedi', 'API\\App\\v1\\Sedi', '1'),
 (NULL, 'app-v1', 'retrieve', 'sedi-cleanup', 'API\\App\\v1\\Sedi', '1'),
 (NULL, 'app-v1', 'retrieve', 'sede', 'API\\App\\v1\\Sedi', '1'),

@@ -26,12 +26,17 @@ class Interventi extends AppResource
 
         $query = 'SELECT in_interventi.id FROM in_interventi WHERE
             deleted_at IS NOT NULL
-            OR EXISTS(
-                SELECT orario_fine FROM in_interventi_tecnici WHERE
-                    in_interventi_tecnici.idintervento = in_interventi.id
-                    AND orario_fine NOT BETWEEN :period_start AND :period_end
-                    AND idtecnico = :id_tecnico
-                )';
+            OR (
+                in_interventi.id NOT IN (
+                    SELECT idintervento FROM in_interventi_tecnici
+                    WHERE in_interventi_tecnici.idintervento = in_interventi.id
+                        AND in_interventi_tecnici.orario_fine BETWEEN :period_start AND :period_end
+                        AND in_interventi_tecnici.idtecnico = :id_tecnico
+                )
+                AND in_interventi.id NOT IN (
+                    SELECT idintervento FROM in_interventi_tecnici
+                )
+            )';
         $records = database()->fetchArray($query, [
             ':period_end' => $end,
             ':period_start' => $start,
@@ -53,13 +58,17 @@ class Interventi extends AppResource
         $id_tecnico = $user->id_anagrafica;
 
         $query = 'SELECT in_interventi.id FROM in_interventi WHERE
-            in_interventi.id IN (
-                SELECT idintervento FROM in_interventi_tecnici
-                WHERE in_interventi_tecnici.idintervento = in_interventi.id
-                    AND in_interventi_tecnici.orario_fine BETWEEN :period_start AND :period_end
-                    AND in_interventi_tecnici.idtecnico = :id_tecnico
-            )
-            AND deleted_at IS NULL';
+            deleted_at IS NULL AND (
+                in_interventi.id IN (
+                    SELECT idintervento FROM in_interventi_tecnici
+                    WHERE in_interventi_tecnici.idintervento = in_interventi.id
+                        AND in_interventi_tecnici.orario_fine BETWEEN :period_start AND :period_end
+                        AND in_interventi_tecnici.idtecnico = :id_tecnico
+                )
+                OR in_interventi.id NOT IN (
+                    SELECT idintervento FROM in_interventi_tecnici
+                )
+            )';
 
         // Filtro per data
         if ($last_sync_at) {

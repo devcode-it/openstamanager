@@ -94,7 +94,7 @@ class Interventi extends AppResource
             richiesta,
             data_richiesta,
             descrizione,
-            idanagrafica AS id_anagrafica,
+            idanagrafica AS id_cliente,
             idtipointervento AS id_tipo_intervento,
             idstatointervento AS id_stato_intervento,
             informazioniaggiuntive AS informazioni_aggiuntive,

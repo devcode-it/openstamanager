@@ -21,7 +21,7 @@ class Login extends Resource implements CreateInterface
 
             // Informazioni sull'utente, strettamente collegato ad una anagrafica di tipo Tecnico
             $utente = $database->fetchOne("SELECT
-                `an_anagrafiche`.`idanagrafica` AS id_anagrafica,
+                `an_anagrafiche`.`idanagrafica` AS id_cliente,
                 `an_anagrafiche`.`ragione_sociale`
             FROM `zz_users`
                 INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `zz_users`.`idanagrafica`

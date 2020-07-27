@@ -37,11 +37,22 @@ class Impianti extends AppResource
     {
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT my_impianti.id,
-            my_impianti.idanagrafica AS id_anagrafica,
+            my_impianti.idanagrafica AS id_cliente,
+            my_impianti.idsede AS id_sede,
             my_impianti.matricola,
             my_impianti.nome,
-            my_impianti.descrizione
+            my_impianti.descrizione,
+            my_impianti.data AD data_installazione,
+            my_impianti.proprietario,
+            my_impianti.ubicazione,
+            my_impianti.palazzo,
+            my_impianti.scala,
+            my_impianti.piano,
+            my_impianti.interno,
+            my_impianti.occupante,
+            my_impianti_categorie.descrizione AS categoria
         FROM my_impianti
+            LEFT JOIN my_impianti_categorie ON my_impianti_categorie.id = my_impianti.id_categoria
         WHERE my_impianti.id = '.prepare($id);
 
         $record = database()->fetchOne($query);

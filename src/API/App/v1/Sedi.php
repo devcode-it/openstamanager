@@ -35,7 +35,7 @@ class Sedi extends AppResource
     {
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT an_sedi.id,
-            an_sedi.idanagrafica AS id_anagrafica,
+            an_sedi.idanagrafica AS id_cliente,
             an_sedi.nomesede AS nome,
             an_sedi.piva AS partita_iva,
             an_sedi.codice_fiscale,

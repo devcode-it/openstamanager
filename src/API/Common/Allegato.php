@@ -3,11 +3,12 @@
 namespace API\Common;
 
 use API\Interfaces\CreateInterface;
+use API\Interfaces\RetrieveInterface;
 use API\Resource;
 use Models\Upload;
 use Modules;
 
-class Allegato extends Resource implements CreateInterface
+class Allegato extends Resource implements RetrieveInterface, CreateInterface
 {
     public function create($request)
     {
@@ -21,9 +22,24 @@ class Allegato extends Resource implements CreateInterface
             'id_record' => $request['id'],
         ], $name, $category);
 
-        return[
+        return [
             'id' => $upload->id,
             'filename' => $upload->filename,
+        ];
+    }
+
+    public function retrieve($request)
+    {
+        $upload = Upload::where('name', $request['name'])
+            ->where('id', $request['id'])
+            ->where('id_record', $request['id_record'])
+            ->first();
+        if (!empty($upload)) {
+            download(DOCROOT.'/'.$upload->filepath);
+        }
+
+        return [
+            'custom' => '',
         ];
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+use API\Response;
+
 function serverError()
 {
     $error = error_get_last();
@@ -21,8 +23,6 @@ session_write_close();
 // Permesso di accesso all'API da ogni dispositivo
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, GET, PUT, DELETE, OPTIONS');
-
-use API\Response;
 
 try {
     $response = Response::manage();

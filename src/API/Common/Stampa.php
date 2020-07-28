@@ -11,8 +11,6 @@ class Stampa extends Resource implements RetrieveInterface
 {
     public function retrieve($request)
     {
-        $content = '';
-
         $print = PrintTemplate::where('name', $request['name'])->first();
         if (!empty($print)) {
             $directory = DOCROOT.'/files/api';

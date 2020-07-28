@@ -3,6 +3,7 @@
 namespace API\App\v1;
 
 use API\App\AppResource;
+use API\Exceptions\InternalError;
 use Models\Upload;
 use Modules;
 
@@ -72,9 +73,14 @@ class AllegatiInterventi extends AppResource
         $module = Modules::get('Interventi');
 
         // Creazione del file temporaneo
+        $content = explode(',', $data['contenuto']);
+        if (count($content) < 1) {
+            throw new InternalError();
+        }
+
         $file = tmpfile();
         $path = stream_get_meta_data($file)['uri'];
-        fwrite($file, $data['contenuto']);
+        fwrite($file, base64_decode($content[1]));
 
         // Salvataggio del file come allegato
         $upload = Upload::build($path, [
@@ -85,9 +91,11 @@ class AllegatiInterventi extends AppResource
         // Chiusura e rimozione del file temporaneo
         fclose($file);
 
-        return[
+        return [
             'id' => $upload->id,
-            'filename' => $upload->filename,
+            'tipo' => $upload->extension,
+            'size' => $upload->size,
+            'contenuto' => '',
         ];
     }
 

@@ -265,3 +265,6 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES
 (NULL, 'Google Maps API key', '', 'string', '1', 'Applicazione', 1),
 (NULL, 'Mostra prezzi', '1', 'boolean', '1', 'Applicazione', 1);
+
+-- Aggiunta risorsa per il download degli allegati
+INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES (NULL, 'v1', 'retrieve', 'allegato', 'API\\Common\\Allegato', '1');

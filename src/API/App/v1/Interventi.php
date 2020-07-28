@@ -20,6 +20,9 @@ class Interventi extends AppResource
         $start = $today->copy()->subMonths(2);
         $end = $today->copy()->addMonth(1);
 
+        $remove_end = $start->copy();
+        $remove_start = $remove_end->copy()->subMonths(2);
+
         // Informazioni sull'utente
         $user = Auth::user();
         $id_tecnico = $user->id_anagrafica;
@@ -31,16 +34,22 @@ class Interventi extends AppResource
                     SELECT idintervento FROM in_interventi_tecnici
                     WHERE in_interventi_tecnici.idintervento = in_interventi.id
                         AND in_interventi_tecnici.orario_fine BETWEEN :period_start AND :period_end
-                        AND in_interventi_tecnici.idtecnico = :id_tecnico
+                        AND in_interventi_tecnici.idtecnico = :id_tecnico_q1
                 )
                 AND in_interventi.id IN (
                     SELECT idintervento FROM in_interventi_tecnici
+                    WHERE in_interventi_tecnici.idintervento = in_interventi.id
+                        AND in_interventi_tecnici.orario_fine BETWEEN :remove_period_start AND :remove_period_end
+                        AND in_interventi_tecnici.idtecnico = :id_tecnico_q2
                 )
             )';
         $records = database()->fetchArray($query, [
             ':period_end' => $end,
             ':period_start' => $start,
-            ':id_tecnico' => $id_tecnico,
+            ':remove_period_end' => $remove_end,
+            ':remove_period_start' => $remove_start,
+            ':id_tecnico_q1' => $id_tecnico,
+            ':id_tecnico_q2' => $id_tecnico,
         ]);
 
         return array_column($records, 'id');

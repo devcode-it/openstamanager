@@ -18,11 +18,11 @@ class TariffeContratti extends AppResource
         }
         $records = database()->fetchArray($query);
 
-        $da_stati = array_column($records, 'id');
+        $da_contratti = array_column($records, 'id');
 
         // Le associazioni Contratti - Tariffe per tipi non sono cancellabili a database
         // Per le ultime versioni, sono anzi sempre presenti!
-        return [];
+        return $da_contratti;
     }
 
     public function getModifiedRecords($last_sync_at)

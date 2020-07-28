@@ -103,6 +103,8 @@ class Interventi extends AppResource
             data_richiesta,
             descrizione,
             idanagrafica AS id_cliente,
+            id_contratto,
+            id_preventivo,
             idtipointervento AS id_tipo_intervento,
             idstatointervento AS id_stato_intervento,
             informazioniaggiuntive AS informazioni_aggiuntive,
@@ -124,7 +126,7 @@ class Interventi extends AppResource
 
     public function createRecord($data)
     {
-        $anagrafica = Anagrafica::find($data['id_anagrafica']);
+        $anagrafica = Anagrafica::find($data['id_cliente']);
         $tipo = TipoSessione::find($data['id_tipo_intervento']);
         $stato = Stato::find($data['id_stato_intervento']);
 
@@ -156,6 +158,8 @@ class Interventi extends AppResource
 
         // Aggiornamento intervento
         $record->idstatointervento = $data['id_stato_intervento'];
+        $record->id_contratto = $data['id_contratto'];
+        $record->id_preventivo = $data['id_preventivo'];
         $record->richiesta = $data['richiesta'];
         $record->descrizione = $data['descrizione'];
         $record->informazioniaggiuntive = $data['informazioni_aggiuntive'];

@@ -86,6 +86,7 @@ class AllegatiInterventi extends AppResource
         $upload = Upload::build($path, [
             'id_module' => $module['id'],
             'id_record' => $data['id_intervento'],
+            'original_name' => $data['nome'],
         ], $data['nome'], $data['categoria']);
 
         // Chiusura e rimozione del file temporaneo

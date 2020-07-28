@@ -3,16 +3,15 @@
 namespace API\App\v1;
 
 use API\App\AppResource;
-use Carbon\Carbon;
 
 class Sedi extends AppResource
 {
-    protected function getCleanupData()
+    protected function getCleanupData($last_sync_at)
     {
-        return $this->getMissingIDs('an_sedi', 'id');
+        return $this->getMissingIDs('an_sedi', 'id', $last_sync_at);
     }
 
-    protected function getData($last_sync_at)
+    protected function getModifiedRecords($last_sync_at)
     {
         $query = "SELECT DISTINCT(an_sedi.id) AS id FROM an_sedi
             INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = an_sedi.idanagrafica
@@ -22,8 +21,7 @@ class Sedi extends AppResource
 
         // Filtro per data
         if ($last_sync_at) {
-            $last_sync = new Carbon($last_sync_at);
-            $query .= ' AND an_sedi.updated_at > '.prepare($last_sync);
+            $query .= ' AND an_sedi.updated_at > '.prepare($last_sync_at);
         }
 
         $records = database()->fetchArray($query);

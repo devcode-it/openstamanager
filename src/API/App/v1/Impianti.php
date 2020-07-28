@@ -3,18 +3,17 @@
 namespace API\App\v1;
 
 use API\App\AppResource;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Modules\Impianti\Impianto;
 
 class Impianti extends AppResource
 {
-    protected function getCleanupData()
+    protected function getCleanupData($last_sync_at)
     {
-        return $this->getMissingIDs('my_impianti', 'id');
+        return $this->getMissingIDs('my_impianti', 'id', $last_sync_at);
     }
 
-    protected function getData($last_sync_at)
+    protected function getModifiedRecords($last_sync_at)
     {
         $statement = Impianto::select('id')
             ->whereHas('anagrafica.tipi', function (Builder $query) {
@@ -23,8 +22,7 @@ class Impianti extends AppResource
 
         // Filtro per data
         if ($last_sync_at) {
-            $last_sync = new Carbon($last_sync_at);
-            $statement = $statement->where('updated_at', '>', $last_sync);
+            $statement = $statement->where('updated_at', '>', $last_sync_at);
         }
 
         $results = $statement->get()

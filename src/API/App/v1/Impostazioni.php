@@ -3,23 +3,21 @@
 namespace API\App\v1;
 
 use API\App\AppResource;
-use Carbon\Carbon;
 
 class Impostazioni extends AppResource
 {
-    protected function getCleanupData()
+    protected function getCleanupData($last_sync_at)
     {
         return [];
     }
 
-    protected function getData($last_sync_at)
+    protected function getModifiedRecords($last_sync_at)
     {
         $query = 'SELECT zz_settings.id FROM zz_settings WHERE sezione = "Applicazione"';
 
         // Filtro per data
         if ($last_sync_at) {
-            $last_sync = new Carbon($last_sync_at);
-            $query .= ' AND zz_settings.updated_at > '.prepare($last_sync);
+            $query .= ' AND zz_settings.updated_at > '.prepare($last_sync_at);
         }
 
         $records = database()->fetchArray($query);

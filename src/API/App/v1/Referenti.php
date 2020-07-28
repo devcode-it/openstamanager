@@ -4,16 +4,15 @@ namespace API\App\v1;
 
 use API\App\AppResource;
 use API\Interfaces\RetrieveInterface;
-use Carbon\Carbon;
 
 class Referenti extends AppResource implements RetrieveInterface
 {
-    protected function getCleanupData()
+    protected function getCleanupData($last_sync_at)
     {
-        return $this->getMissingIDs('an_referenti', 'id');
+        return $this->getMissingIDs('an_referenti', 'id', $last_sync_at);
     }
 
-    protected function getData($last_sync_at)
+    protected function getModifiedRecords($last_sync_at)
     {
         $query = "SELECT DISTINCT(an_referenti.id) AS id FROM an_referenti
             INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = an_referenti.idanagrafica
@@ -23,8 +22,7 @@ class Referenti extends AppResource implements RetrieveInterface
 
         // Filtro per data
         if ($last_sync_at) {
-            $last_sync = new Carbon($last_sync_at);
-            $query .= ' AND an_referenti.updated_at > '.prepare($last_sync);
+            $query .= ' AND an_referenti.updated_at > '.prepare($last_sync_at);
         }
 
         $records = database()->fetchArray($query);

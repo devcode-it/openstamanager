@@ -3,23 +3,21 @@
 namespace API\App\v1;
 
 use API\App\AppResource;
-use Carbon\Carbon;
 
 class Articoli extends AppResource
 {
-    protected function getCleanupData()
+    protected function getCleanupData($last_sync_at)
     {
-        return $this->getDeleted('mg_articoli', 'id');
+        return $this->getDeleted('mg_articoli', 'id', $last_sync_at);
     }
 
-    protected function getData($last_sync_at)
+    protected function getModifiedRecords($last_sync_at)
     {
         $query = 'SELECT mg_articoli.id FROM mg_articoli WHERE deleted_at IS NULL';
 
         // Filtro per data
         if ($last_sync_at) {
-            $last_sync = new Carbon($last_sync_at);
-            $query .= ' AND mg_articoli.updated_at > '.prepare($last_sync);
+            $query .= ' AND mg_articoli.updated_at > '.prepare($last_sync_at);
         }
 
         $records = database()->fetchArray($query);

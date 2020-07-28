@@ -3,23 +3,21 @@
 namespace API\App\v1;
 
 use API\App\AppResource;
-use Carbon\Carbon;
 
 class TipiIntervento extends AppResource
 {
-    protected function getCleanupData()
+    protected function getCleanupData($last_sync_at)
     {
-        return $this->getMissingIDs('in_tipiintervento', 'idtipointervento');
+        return $this->getMissingIDs('in_tipiintervento', 'idtipointervento', $last_sync_at);
     }
 
-    protected function getData($last_sync_at)
+    protected function getModifiedRecords($last_sync_at)
     {
         $query = 'SELECT in_tipiintervento.idtipointervento AS id FROM in_tipiintervento';
 
         // Filtro per data
         if ($last_sync_at) {
-            $last_sync = new Carbon($last_sync_at);
-            $query .= ' WHERE in_tipiintervento.updated_at > '.prepare($last_sync);
+            $query .= ' WHERE in_tipiintervento.updated_at > '.prepare($last_sync_at);
         }
 
         $records = database()->fetchArray($query);
@@ -31,7 +29,10 @@ class TipiIntervento extends AppResource
     {
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT in_tipiintervento.idtipointervento AS id,
-            in_tipiintervento.descrizione
+            in_tipiintervento.descrizione,
+            costo_orario AS prezzo_orario,
+            costo_km AS prezzo_chilometrico,
+            costo_diritto_chiamata AS prezzo_diritto_chiamata
         FROM in_tipiintervento
         WHERE in_tipiintervento.idtipointervento = '.prepare($id);
 

@@ -13,9 +13,9 @@ use Modules\Interventi\Components\Sconto;
 use Modules\Interventi\Intervento;
 use UnexpectedValueException;
 
-class Righe extends AppResource
+class RigheInterventi extends AppResource
 {
-    protected function getCleanupData()
+    protected function getCleanupData($last_sync_at)
     {
         // Periodo per selezionare interventi
         $today = new Carbon();
@@ -43,14 +43,14 @@ class Righe extends AppResource
         ]);
 
         $da_interventi = array_column($records, 'id');
-        $mancanti = $this->getMissingIDs('in_righe_interventi', 'id');
+        $mancanti = $this->getMissingIDs('in_righe_interventi', 'id', $last_sync_at);
 
         $results = array_unique(array_merge($da_interventi, $mancanti));
 
         return $results;
     }
 
-    protected function getData($last_sync_at)
+    protected function getModifiedRecords($last_sync_at)
     {
         // Periodo per selezionare interventi
         $today = new Carbon();
@@ -74,8 +74,7 @@ class Righe extends AppResource
 
         // Filtro per data
         if ($last_sync_at) {
-            $last_sync = new Carbon($last_sync_at);
-            $query .= ' AND in_righe_interventi.updated_at > '.prepare($last_sync);
+            $query .= ' AND in_righe_interventi.updated_at > '.prepare($last_sync_at);
         }
         $records = database()->fetchArray($query, [
             ':period_start' => $start,

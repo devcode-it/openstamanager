@@ -3,23 +3,21 @@
 namespace API\App\v1;
 
 use API\App\AppResource;
-use Carbon\Carbon;
 
 class StatiIntervento extends AppResource
 {
-    protected function getCleanupData()
+    protected function getCleanupData($last_sync_at)
     {
-        return $this->getDeleted('in_statiintervento', 'idstatointervento');
+        return $this->getDeleted('in_statiintervento', 'idstatointervento', $last_sync_at);
     }
 
-    protected function getData($last_sync_at)
+    protected function getModifiedRecords($last_sync_at)
     {
         $query = 'SELECT in_statiintervento.idstatointervento AS id FROM in_statiintervento';
 
         // Filtro per data
         if ($last_sync_at) {
-            $last_sync = new Carbon($last_sync_at);
-            $query .= ' WHERE in_statiintervento.updated_at > '.prepare($last_sync);
+            $query .= ' WHERE in_statiintervento.updated_at > '.prepare($last_sync_at);
         }
 
         $records = database()->fetchArray($query);

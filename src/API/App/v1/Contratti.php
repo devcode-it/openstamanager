@@ -4,11 +4,10 @@ namespace API\App\v1;
 
 use API\App\AppResource;
 use API\Interfaces\RetrieveInterface;
-use Carbon\Carbon;
 
 class Contratti extends AppResource implements RetrieveInterface
 {
-    protected function getCleanupData()
+    protected function getCleanupData($last_sync_at)
     {
         $query = 'SELECT DISTINCT(co_contratti.id) AS id FROM co_contratti
             INNER JOIN co_staticontratti ON co_staticontratti.id = co_contratti.idstato
@@ -16,14 +15,14 @@ class Contratti extends AppResource implements RetrieveInterface
         $records = database()->fetchArray($query);
 
         $da_stati = array_column($records, 'id');
-        $mancanti = $this->getMissingIDs('co_contratti', 'id');
+        $mancanti = $this->getMissingIDs('co_contratti', 'id', $last_sync_at);
 
         $results = array_unique(array_merge($da_stati, $mancanti));
 
         return $results;
     }
 
-    protected function getData($last_sync_at)
+    protected function getModifiedRecords($last_sync_at)
     {
         $query = "SELECT DISTINCT(co_contratti.id) AS id FROM co_contratti
             INNER JOIN co_staticontratti ON co_staticontratti.id = co_contratti.idstato
@@ -34,8 +33,7 @@ class Contratti extends AppResource implements RetrieveInterface
 
         // Filtro per data
         if ($last_sync_at) {
-            $last_sync = new Carbon($last_sync_at);
-            $query .= ' AND co_contratti.updated_at > '.prepare($last_sync);
+            $query .= ' AND co_contratti.updated_at > '.prepare($last_sync_at);
         }
 
         $records = database()->fetchArray($query);

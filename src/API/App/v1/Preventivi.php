@@ -4,26 +4,28 @@ namespace API\App\v1;
 
 use API\App\AppResource;
 use API\Interfaces\RetrieveInterface;
-use Carbon\Carbon;
 
 class Preventivi extends AppResource implements RetrieveInterface
 {
-    protected function getCleanupData()
+    protected function getCleanupData($last_sync_at)
     {
         $query = 'SELECT DISTINCT(co_preventivi.id) AS id FROM co_preventivi
             INNER JOIN co_statipreventivi ON co_statipreventivi.id = co_preventivi.idstato
         WHERE co_statipreventivi.is_pianificabile = 0';
+        if ($last_sync_at) {
+            $query .= ' AND (co_preventivi.updated_at > '.prepare($last_sync_at).' OR co_statipreventivi.updated_at > '.prepare($last_sync_at).')';
+        }
         $records = database()->fetchArray($query);
 
         $da_stati = array_column($records, 'id');
-        $mancanti = $this->getMissingIDs('co_preventivi', 'id');
+        $mancanti = $this->getMissingIDs('co_preventivi', 'id', $last_sync_at);
 
         $results = array_unique(array_merge($da_stati, $mancanti));
 
         return $results;
     }
 
-    protected function getData($last_sync_at)
+    protected function getModifiedRecords($last_sync_at)
     {
         $query = "SELECT DISTINCT(co_preventivi.id) AS id FROM co_preventivi
             INNER JOIN co_statipreventivi ON co_statipreventivi.id = co_preventivi.idstato
@@ -34,8 +36,7 @@ class Preventivi extends AppResource implements RetrieveInterface
 
         // Filtro per data
         if ($last_sync_at) {
-            $last_sync = new Carbon($last_sync_at);
-            $query .= ' AND co_preventivi.updated_at > '.prepare($last_sync);
+            $query .= ' AND co_preventivi.updated_at > '.prepare($last_sync_at);
         }
 
         $records = database()->fetchArray($query);

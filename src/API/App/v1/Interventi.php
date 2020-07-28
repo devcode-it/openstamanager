@@ -13,7 +13,7 @@ use Modules\TipiIntervento\Tipo as TipoSessione;
 
 class Interventi extends AppResource
 {
-    protected function getCleanupData()
+    protected function getCleanupData($last_sync_at)
     {
         // Periodo per selezionare interventi
         $today = new Carbon();
@@ -46,7 +46,7 @@ class Interventi extends AppResource
         return array_column($records, 'id');
     }
 
-    protected function getData($last_sync_at)
+    protected function getModifiedRecords($last_sync_at)
     {
         // Periodo per selezionare interventi
         $today = new Carbon();
@@ -72,8 +72,7 @@ class Interventi extends AppResource
 
         // Filtro per data
         if ($last_sync_at) {
-            $last_sync = new Carbon($last_sync_at);
-            $query .= ' AND in_interventi.updated_at > '.prepare($last_sync);
+            $query .= ' AND in_interventi.updated_at > '.prepare($last_sync_at);
         }
         $records = database()->fetchArray($query, [
             ':period_start' => $start,

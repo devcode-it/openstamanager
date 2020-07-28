@@ -7,12 +7,12 @@ use API\Interfaces\RetrieveInterface;
 
 class Referenti extends AppResource implements RetrieveInterface
 {
-    protected function getCleanupData($last_sync_at)
+    public function getCleanupData($last_sync_at)
     {
         return $this->getMissingIDs('an_referenti', 'id', $last_sync_at);
     }
 
-    protected function getModifiedRecords($last_sync_at)
+    public function getModifiedRecords($last_sync_at)
     {
         $query = "SELECT DISTINCT(an_referenti.id) AS id FROM an_referenti
             INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = an_referenti.idanagrafica
@@ -30,7 +30,7 @@ class Referenti extends AppResource implements RetrieveInterface
         return array_column($records, 'id');
     }
 
-    protected function retrieveRecord($id)
+    public function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT id,

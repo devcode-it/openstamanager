@@ -6,12 +6,12 @@ use API\App\AppResource;
 
 class Sedi extends AppResource
 {
-    protected function getCleanupData($last_sync_at)
+    public function getCleanupData($last_sync_at)
     {
         return $this->getMissingIDs('an_sedi', 'id', $last_sync_at);
     }
 
-    protected function getModifiedRecords($last_sync_at)
+    public function getModifiedRecords($last_sync_at)
     {
         $query = "SELECT DISTINCT(an_sedi.id) AS id FROM an_sedi
             INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = an_sedi.idanagrafica
@@ -29,7 +29,7 @@ class Sedi extends AppResource
         return array_column($records, 'id');
     }
 
-    protected function retrieveRecord($id)
+    public function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT an_sedi.id,

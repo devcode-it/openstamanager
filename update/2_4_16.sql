@@ -253,9 +253,10 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 (NULL, 'app-v1', 'retrieve', 'tariffe-contratti-cleanup', 'API\\App\\v1\\TariffeContratti', '1'),
 (NULL, 'app-v1', 'retrieve', 'tariffa-contratto', 'API\\App\\v1\\TariffeContratti', '1'),
 -- Allegati
-(NULL, 'app-v1', 'retrieve', 'allegati', 'API\\App\\v1\\Allegati', '1'),
-(NULL, 'app-v1', 'retrieve', 'allegati-cleanup', 'API\\App\\v1\\Allegati', '1'),
-(NULL, 'app-v1', 'retrieve', 'allegato', 'API\\App\\v1\\Allegati', '1'),
+(NULL, 'app-v1', 'retrieve', 'allegati-interventi', 'API\\App\\v1\\AllegatiInterventi', '1'),
+(NULL, 'app-v1', 'retrieve', 'allegati-interventi-cleanup', 'API\\App\\v1\\AllegatiInterventi', '1'),
+(NULL, 'app-v1', 'retrieve', 'allegato-intervento', 'API\\App\\v1\\AllegatiInterventi', '1'),
+(NULL, 'app-v1', 'create', 'allegato-intervento', 'API\\App\\v1\\AllegatiInterventi', '1'),
 -- Email di rapportino intervento
 (NULL, 'app-v1', 'retrieve', 'email-rapportino', 'API\\App\\v1\\RapportinoIntervento', '1'),
 (NULL, 'app-v1', 'create', 'email-rapportino', 'API\\App\\v1\\RapportinoIntervento', '1');

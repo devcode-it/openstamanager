@@ -11,7 +11,7 @@ use Modules\Interventi\Intervento;
 
 class SessioniInterventi extends AppResource
 {
-    protected function getCleanupData($last_sync_at)
+    public function getCleanupData($last_sync_at)
     {
         // Periodo per selezionare interventi
         $today = new Carbon();
@@ -40,7 +40,7 @@ class SessioniInterventi extends AppResource
         return $results;
     }
 
-    protected function getModifiedRecords($last_sync_at)
+    public function getModifiedRecords($last_sync_at)
     {
         // Periodo per selezionare interventi
         $today = new Carbon();
@@ -70,7 +70,7 @@ class SessioniInterventi extends AppResource
         return array_column($records, 'id');
     }
 
-    protected function retrieveRecord($id)
+    public function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT id,
@@ -99,7 +99,7 @@ class SessioniInterventi extends AppResource
         return $record;
     }
 
-    protected function createRecord($data)
+    public function createRecord($data)
     {
         // Informazioni sull'utente
         $user = Auth::user();
@@ -120,7 +120,7 @@ class SessioniInterventi extends AppResource
         ];
     }
 
-    protected function updateRecord($data)
+    public function updateRecord($data)
     {
         $sessione = Sessione::find($data['id']);
 
@@ -128,6 +128,12 @@ class SessioniInterventi extends AppResource
         $sessione->save();
 
         return [];
+    }
+
+    public function deleteRecord($id)
+    {
+        $sessione = Sessione::find($id);
+        $sessione->delete();
     }
 
     /**
@@ -162,11 +168,5 @@ class SessioniInterventi extends AppResource
         $sessione->tipo_scontokm = $data['tipo_sconto_chilometrico'];
 
         return [];
-    }
-
-    protected function deleteRecord($id)
-    {
-        $sessione = Sessione::find($id);
-        $sessione->delete();
     }
 }

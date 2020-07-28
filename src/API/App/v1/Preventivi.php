@@ -7,7 +7,7 @@ use API\Interfaces\RetrieveInterface;
 
 class Preventivi extends AppResource implements RetrieveInterface
 {
-    protected function getCleanupData($last_sync_at)
+    public function getCleanupData($last_sync_at)
     {
         $query = 'SELECT DISTINCT(co_preventivi.id) AS id FROM co_preventivi
             INNER JOIN co_statipreventivi ON co_statipreventivi.id = co_preventivi.idstato
@@ -25,7 +25,7 @@ class Preventivi extends AppResource implements RetrieveInterface
         return $results;
     }
 
-    protected function getModifiedRecords($last_sync_at)
+    public function getModifiedRecords($last_sync_at)
     {
         $query = "SELECT DISTINCT(co_preventivi.id) AS id FROM co_preventivi
             INNER JOIN co_statipreventivi ON co_statipreventivi.id = co_preventivi.idstato
@@ -44,7 +44,7 @@ class Preventivi extends AppResource implements RetrieveInterface
         return array_column($records, 'id');
     }
 
-    protected function retrieveRecord($id)
+    public function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT co_preventivi.id,

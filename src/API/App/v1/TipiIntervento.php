@@ -6,12 +6,12 @@ use API\App\AppResource;
 
 class TipiIntervento extends AppResource
 {
-    protected function getCleanupData($last_sync_at)
+    public function getCleanupData($last_sync_at)
     {
         return $this->getMissingIDs('in_tipiintervento', 'idtipointervento', $last_sync_at);
     }
 
-    protected function getModifiedRecords($last_sync_at)
+    public function getModifiedRecords($last_sync_at)
     {
         $query = 'SELECT in_tipiintervento.idtipointervento AS id FROM in_tipiintervento';
 
@@ -25,7 +25,7 @@ class TipiIntervento extends AppResource
         return array_column($records, 'id');
     }
 
-    protected function retrieveRecord($id)
+    public function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT in_tipiintervento.idtipointervento AS id,

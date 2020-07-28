@@ -8,12 +8,12 @@ use Modules\Anagrafiche\Anagrafica;
 
 class Tecnici extends AppResource
 {
-    protected function getCleanupData($last_sync_at)
+    public function getCleanupData($last_sync_at)
     {
         return $this->getDeleted('an_anagrafiche', 'idanagrafica', $last_sync_at);
     }
 
-    protected function getModifiedRecords($last_sync_at)
+    public function getModifiedRecords($last_sync_at)
     {
         $statement = Anagrafica::select('idanagrafica')
             ->whereHas('tipi', function (Builder $query) {
@@ -31,7 +31,7 @@ class Tecnici extends AppResource
         return $results;
     }
 
-    protected function retrieveRecord($id)
+    public function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT an_anagrafiche.idanagrafica AS id,

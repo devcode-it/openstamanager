@@ -3,17 +3,15 @@
 namespace API\App\v1;
 
 use API\App\AppResource;
-use Illuminate\Database\Eloquent\Builder;
-use Modules\Anagrafiche\Anagrafica;
 
 class TariffeTecnici extends AppResource
 {
-    protected function getCleanupData($last_sync_at)
+    public function getCleanupData($last_sync_at)
     {
         return $this->getMissingIDs('in_tariffe', 'id', $last_sync_at);
     }
 
-    protected function getModifiedRecords($last_sync_at)
+    public function getModifiedRecords($last_sync_at)
     {
         $query = 'SELECT id FROM in_tariffe';
 
@@ -27,7 +25,7 @@ class TariffeTecnici extends AppResource
         return array_column($records, 'id');
     }
 
-    protected function retrieveRecord($id)
+    public function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT id,

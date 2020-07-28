@@ -33,7 +33,10 @@ abstract class AppResource extends Resource implements RetrieveInterface, Create
 
         // Gestione delle operazioni di cleanup
         if (strpos($request['resource'], 'cleanup') !== false) {
-            $list = $this->getCleanupData($last_sync_at);
+            $list = [];
+            if (!empty($last_sync_at)) {
+                $list = $this->getCleanupData($last_sync_at);
+            }
             $list = $this->forceToString($list);
 
             return [
@@ -106,6 +109,68 @@ abstract class AppResource extends Resource implements RetrieveInterface, Create
     {
         $id = $request['id'];
         $this->deleteRecord($id);
+    }
+
+    /**
+     * Restituisce un array contenente gli ID dei record eliminati.
+     *
+     * @param $last_sync
+     *
+     * @return array
+     */
+    abstract public function getCleanupData($last_sync);
+
+    /**
+     * Restituisce un array contenente gli ID dei record modificati e da sincronizzare.
+     *
+     * @param string $last_sync_at
+     *
+     * @return array
+     */
+    abstract public function getModifiedRecords($last_sync_at);
+
+    /**
+     * Restituisce i dettagli relativi a un singolo record identificato tramite ID.
+     *
+     * @param string $id
+     *
+     * @return array
+     */
+    abstract public function retrieveRecord($id);
+
+    /**
+     * Crea un nuovo record relativo alla risorsa, restituendo l'ID relativo ed eventuali campi da aggiornare in remoto.
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    public function createRecord($data)
+    {
+        return [];
+    }
+
+    /**
+     * Aggiorna un record relativo alla risorsa, restituendo eventuali campi da aggiornare in remoto.
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    public function updateRecord($data)
+    {
+        return [];
+    }
+
+    /**
+     * Elimina un record relativo alla risorsa.
+     *
+     * @param string $id
+     *
+     * @return void
+     */
+    public function deleteRecord($id)
+    {
     }
 
     /**
@@ -203,67 +268,5 @@ abstract class AppResource extends Resource implements RetrieveInterface, Create
         $results = database()->fetchArray($query);
 
         return array_column($results, 'id');
-    }
-
-    /**
-     * Restituisce un array contenente gli ID dei record eliminati.
-     *
-     * @param $last_sync
-     *
-     * @return array
-     */
-    abstract protected function getCleanupData($last_sync);
-
-    /**
-     * Restituisce un array contenente gli ID dei record modificati e da sincronizzare.
-     *
-     * @param string $last_sync_at
-     *
-     * @return array
-     */
-    abstract protected function getModifiedRecords($last_sync_at);
-
-    /**
-     * Restituisce i dettagli relativi a un singolo record identificato tramite ID.
-     *
-     * @param string $id
-     *
-     * @return array
-     */
-    abstract protected function retrieveRecord($id);
-
-    /**
-     * Crea un nuovo record relativo alla risorsa, restituendo l'ID relativo ed eventuali campi da aggiornare in remoto.
-     *
-     * @param array $data
-     *
-     * @return array
-     */
-    protected function createRecord($data)
-    {
-        return [];
-    }
-
-    /**
-     * Aggiorna un record relativo alla risorsa, restituendo eventuali campi da aggiornare in remoto.
-     *
-     * @param array $data
-     *
-     * @return array
-     */
-    protected function updateRecord($data)
-    {
-        return [];
-    }
-
-    /**
-     * Elimina un record relativo alla risorsa.
-     *
-     * @param string $id
-     *
-     * @return void
-     */
-    protected function deleteRecord($id)
-    {
     }
 }

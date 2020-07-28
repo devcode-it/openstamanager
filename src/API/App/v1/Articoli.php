@@ -6,12 +6,12 @@ use API\App\AppResource;
 
 class Articoli extends AppResource
 {
-    protected function getCleanupData($last_sync_at)
+    public function getCleanupData($last_sync_at)
     {
         return $this->getDeleted('mg_articoli', 'id', $last_sync_at);
     }
 
-    protected function getModifiedRecords($last_sync_at)
+    public function getModifiedRecords($last_sync_at)
     {
         $query = 'SELECT mg_articoli.id FROM mg_articoli WHERE deleted_at IS NULL';
 
@@ -25,7 +25,7 @@ class Articoli extends AppResource
         return array_column($records, 'id');
     }
 
-    protected function retrieveRecord($id)
+    public function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT mg_articoli.id AS id,

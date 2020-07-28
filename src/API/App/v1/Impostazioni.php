@@ -6,12 +6,12 @@ use API\App\AppResource;
 
 class Impostazioni extends AppResource
 {
-    protected function getCleanupData($last_sync_at)
+    public function getCleanupData($last_sync_at)
     {
         return [];
     }
 
-    protected function getModifiedRecords($last_sync_at)
+    public function getModifiedRecords($last_sync_at)
     {
         $query = 'SELECT zz_settings.id FROM zz_settings WHERE sezione = "Applicazione"';
 
@@ -25,7 +25,7 @@ class Impostazioni extends AppResource
         return array_column($records, 'id');
     }
 
-    protected function retrieveRecord($id)
+    public function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT id AS id,

@@ -13,7 +13,7 @@ use Modules\TipiIntervento\Tipo as TipoSessione;
 
 class Interventi extends AppResource
 {
-    protected function getCleanupData($last_sync_at)
+    public function getCleanupData($last_sync_at)
     {
         // Periodo per selezionare interventi
         $today = new Carbon();
@@ -33,7 +33,7 @@ class Interventi extends AppResource
                         AND in_interventi_tecnici.orario_fine BETWEEN :period_start AND :period_end
                         AND in_interventi_tecnici.idtecnico = :id_tecnico
                 )
-                AND in_interventi.id NOT IN (
+                AND in_interventi.id IN (
                     SELECT idintervento FROM in_interventi_tecnici
                 )
             )';
@@ -46,7 +46,7 @@ class Interventi extends AppResource
         return array_column($records, 'id');
     }
 
-    protected function getModifiedRecords($last_sync_at)
+    public function getModifiedRecords($last_sync_at)
     {
         // Periodo per selezionare interventi
         $today = new Carbon();
@@ -83,7 +83,7 @@ class Interventi extends AppResource
         return array_column($records, 'id');
     }
 
-    protected function retrieveRecord($id)
+    public function retrieveRecord($id)
     {
         $database = database();
 
@@ -106,14 +106,14 @@ class Interventi extends AppResource
 
         $record = $database->fetchOne($query);
 
-        // Individuazione impianti collegati
+        // Individuazione degli impianti collegati
         $impianti = $database->fetchArray('SELECT idimpianto AS id FROM my_impianti_interventi WHERE idintervento = '.prepare($id));
         $record['impianti'] = array_column($impianti, 'id');
 
         return $record;
     }
 
-    protected function createRecord($data)
+    public function createRecord($data)
     {
         $anagrafica = Anagrafica::find($data['id_anagrafica']);
         $tipo = TipoSessione::find($data['id_tipo_intervento']);
@@ -131,7 +131,7 @@ class Interventi extends AppResource
         ];
     }
 
-    protected function updateRecord($data)
+    public function updateRecord($data)
     {
         $intervento = Intervento::find($data['id']);
 

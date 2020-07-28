@@ -7,11 +7,14 @@ use API\Interfaces\RetrieveInterface;
 
 class Contratti extends AppResource implements RetrieveInterface
 {
-    protected function getCleanupData($last_sync_at)
+    public function getCleanupData($last_sync_at)
     {
         $query = 'SELECT DISTINCT(co_contratti.id) AS id FROM co_contratti
             INNER JOIN co_staticontratti ON co_staticontratti.id = co_contratti.idstato
         WHERE co_staticontratti.is_pianificabile = 0';
+        if ($last_sync_at) {
+            $query .= ' AND (co_contratti.updated_at > '.prepare($last_sync_at).' OR co_staticontratti.updated_at > '.prepare($last_sync_at).')';
+        }
         $records = database()->fetchArray($query);
 
         $da_stati = array_column($records, 'id');
@@ -22,7 +25,7 @@ class Contratti extends AppResource implements RetrieveInterface
         return $results;
     }
 
-    protected function getModifiedRecords($last_sync_at)
+    public function getModifiedRecords($last_sync_at)
     {
         $query = "SELECT DISTINCT(co_contratti.id) AS id FROM co_contratti
             INNER JOIN co_staticontratti ON co_staticontratti.id = co_contratti.idstato
@@ -41,7 +44,7 @@ class Contratti extends AppResource implements RetrieveInterface
         return array_column($records, 'id');
     }
 
-    protected function retrieveRecord($id)
+    public function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT co_contratti.id,

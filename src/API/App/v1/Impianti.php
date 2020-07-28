@@ -8,12 +8,12 @@ use Modules\Impianti\Impianto;
 
 class Impianti extends AppResource
 {
-    protected function getCleanupData($last_sync_at)
+    public function getCleanupData($last_sync_at)
     {
         return $this->getMissingIDs('my_impianti', 'id', $last_sync_at);
     }
 
-    protected function getModifiedRecords($last_sync_at)
+    public function getModifiedRecords($last_sync_at)
     {
         $statement = Impianto::select('id')
             ->whereHas('anagrafica.tipi', function (Builder $query) {
@@ -31,7 +31,7 @@ class Impianti extends AppResource
         return $results;
     }
 
-    protected function retrieveRecord($id)
+    public function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT my_impianti.id,

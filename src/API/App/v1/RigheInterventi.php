@@ -15,7 +15,7 @@ use UnexpectedValueException;
 
 class RigheInterventi extends AppResource
 {
-    protected function getCleanupData($last_sync_at)
+    public function getCleanupData($last_sync_at)
     {
         // Periodo per selezionare interventi
         $today = new Carbon();
@@ -50,7 +50,7 @@ class RigheInterventi extends AppResource
         return $results;
     }
 
-    protected function getModifiedRecords($last_sync_at)
+    public function getModifiedRecords($last_sync_at)
     {
         // Periodo per selezionare interventi
         $today = new Carbon();
@@ -85,7 +85,7 @@ class RigheInterventi extends AppResource
         return array_column($records, 'id');
     }
 
-    protected function retrieveRecord($id)
+    public function retrieveRecord($id)
     {
         // Individuazione riga tramite classi
         $riga = $this->getRecord($id);
@@ -129,6 +129,42 @@ class RigheInterventi extends AppResource
         return $record;
     }
 
+    public function createRecord($data)
+    {
+        $intervento = Intervento::find($data['id_intervento']);
+        if ($data['is_articolo']) {
+            $originale = ArticoloOriginale::find($data['id_articolo']);
+            $riga = Articolo::build($intervento, $originale);
+        } elseif ($data['is_sconto']) {
+            // TODO: sconti
+        } else {
+            $riga = Riga::build($intervento);
+        }
+
+        $this->aggiornaRecord($riga, $data);
+        $riga->save();
+
+        return [
+            'id' => $riga->id,
+        ];
+    }
+
+    public function updateRecord($data)
+    {
+        $riga = $this->getRecord($data['id']);
+
+        $this->aggiornaRecord($riga, $data);
+        $riga->save();
+
+        return [];
+    }
+
+    public function deleteRecord($id)
+    {
+        $riga = $this->getRecord($id);
+        $riga->delete();
+    }
+
     protected function getRecord($id)
     {
         // Individuazione delle caratteristiche del record
@@ -156,42 +192,6 @@ class RigheInterventi extends AppResource
         }
 
         return $type;
-    }
-
-    protected function createRecord($data)
-    {
-        $intervento = Intervento::find($data['id_intervento']);
-        if ($data['is_articolo']) {
-            $originale = ArticoloOriginale::find($data['id_articolo']);
-            $riga = Articolo::build($intervento, $originale);
-        } elseif ($data['is_sconto']) {
-            // TODO: sconti
-        } else {
-            $riga = Riga::build($intervento);
-        }
-
-        $this->aggiornaRecord($riga, $data);
-        $riga->save();
-
-        return [
-            'id' => $riga->id,
-        ];
-    }
-
-    protected function updateRecord($data)
-    {
-        $riga = $this->getRecord($data['id']);
-
-        $this->aggiornaRecord($riga, $data);
-        $riga->save();
-
-        return [];
-    }
-
-    protected function deleteRecord($id)
-    {
-        $riga = $this->getRecord($id);
-        $riga->delete();
     }
 
     protected function aggiornaRecord($record, $data)

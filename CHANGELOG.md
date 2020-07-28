@@ -51,7 +51,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 
 
 ### Modificato (Changed)
- - Allineamento modifiche a versione XML 1.2.1
+ - Allineamento Fattura Elettronica a versione schema XML 1.2.1
  - Aggiornamento foglio di stile FE Asso Invoice
  - Migliorato caricamento files con Dropzone
  - Aggiornamento a Gulp4

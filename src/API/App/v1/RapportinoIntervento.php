@@ -29,6 +29,7 @@ class RapportinoIntervento extends Resource implements RetrieveInterface, Create
             'subject' => $subject,
             'body' => $body,
             'prints' => $prints,
+            'read_notify' => $template->read_notify,
         ];
     }
 
@@ -52,6 +53,7 @@ class RapportinoIntervento extends Resource implements RetrieveInterface, Create
         // Contenuti
         $mail->subject = $data['subject'];
         $mail->content = $data['body'];
+        $mail->read_notify = $data['read_notify'];
 
         // Stampe da allegare
         $prints = $data['prints'];

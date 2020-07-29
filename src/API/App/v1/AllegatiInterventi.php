@@ -63,6 +63,7 @@ class AllegatiInterventi extends AppResource
             'categoria' => $upload->category,
             'size' => $upload->size,
             'id_intervento' => $upload->id_record,
+            'data_creazione' => $upload->created_at,
         ];
 
         return $record;

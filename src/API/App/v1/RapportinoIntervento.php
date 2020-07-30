@@ -7,6 +7,7 @@ use API\Interfaces\RetrieveInterface;
 use API\Resource;
 use Modules\Emails\Mail;
 use Modules\Emails\Template;
+use Notifications\EmailNotification;
 
 class RapportinoIntervento extends Resource implements RetrieveInterface, CreateInterface
 {
@@ -63,7 +64,15 @@ class RapportinoIntervento extends Resource implements RetrieveInterface, Create
 
         $mail->save();
 
+        $email = EmailNotification::build($mail);
+        try {
+            $email_success = $email->send();
+        } catch (\PHPMailer\PHPMailer\Exception $e) {
+            $email_success = false;
+        }
+
         return [
+            'sent' => $email_success,
         ];
     }
 }

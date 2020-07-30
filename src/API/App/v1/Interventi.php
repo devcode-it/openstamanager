@@ -74,8 +74,11 @@ class Interventi extends AppResource
                         AND in_interventi_tecnici.orario_fine BETWEEN :period_start AND :period_end
                         AND in_interventi_tecnici.idtecnico = :id_tecnico
                 )
-                OR in_interventi.id NOT IN (
-                    SELECT idintervento FROM in_interventi_tecnici
+                OR (
+                    in_interventi.id NOT IN (
+                        SELECT idintervento FROM in_interventi_tecnici
+                    )
+                    AND in_interventi.idstatointervento IN (SELECT idstatointervento FROM in_statiintervento WHERE is_completato = 0)
                 )
             )';
 

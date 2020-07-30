@@ -14,7 +14,7 @@ if (!empty($google)) {
 }
 
 if (!$is_cliente && !$is_fornitore && $is_tecnico) {
-    $ignore = $dbo->fetchArray("SELECT id FROM zz_plugins WHERE name='Sedi' OR name='Referenti' OR  name='Dichiarazioni d\'intento'");
+    $ignore = $dbo->fetchArray("SELECT id FROM zz_plugins WHERE name='Sedi' OR name='Referenti' OR name='Dichiarazioni d\'intento'");
 
     foreach ($ignore as $plugin) {
         echo '
@@ -232,7 +232,7 @@ if (!empty($google)) {
 } else {
     echo '
             <div class="alert alert-info">
-                '.Modules::link('Impostazioni', $dbo->fetchOne("SELECT `id` FROM `zz_settings` WHERE sezione='Generali'")['id'], tr('Per abilitare la visualizzazione delle anagrafiche nella mappa, inserire la Google Maps API Key nella scheda Impostazioni')).'.
+                '.Modules::link('Impostazioni', $dbo->fetchOne("SELECT `id` FROM `zz_settings` WHERE nome='Google Maps API key'")['id'], tr('Per abilitare la visualizzazione delle anagrafiche nella mappa, inserire la Google Maps API Key nella scheda Impostazioni')).'.
             </div>';
 }
 

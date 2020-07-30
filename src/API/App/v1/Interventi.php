@@ -161,8 +161,8 @@ class Interventi extends AppResource
 
         // Aggiornamento intervento
         $record->idstatointervento = $data['id_stato_intervento'];
-        $record->id_contratto = $data['id_contratto'];
-        $record->id_preventivo = $data['id_preventivo'];
+        $record->id_contratto = $data['id_contratto'] ?: null;
+        $record->id_preventivo = $data['id_preventivo'] ?: null;
         $record->richiesta = $data['richiesta'];
         $record->descrizione = $data['descrizione'];
         $record->informazioniaggiuntive = $data['informazioni_aggiuntive'];

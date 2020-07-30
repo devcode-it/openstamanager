@@ -174,7 +174,7 @@ switch (post('op')) {
         break;
 
     case 'copy-bulk':
-        $list = array();
+        $list = [];
         foreach ($id_records as $id) {
             $fattura = Fattura::find($id);
             array_push($list, $fattura->numero_esterno);

@@ -10,10 +10,12 @@ $id = post('id');
 switch (filter('op')) {
     case 'check':
         $result = UpdateHook::isAvailable();
+        $versione = $result[0].' ('.$result[1].')';
 
-        Cache::get('Ultima versione di OpenSTAManager disponibile')->set($result[0].' ('.$result[1].')');
+        // Salvataggio della versione nella cache
+        Cache::get('Ultima versione di OpenSTAManager disponibile')->set($versione);
 
-        echo $result[0];
+        echo $versione;
 
         break;
 

@@ -49,13 +49,19 @@ class ChoicesHandler implements HandlerInterface
         // Generazione del codice HTML
         // "+ this.checked" rende il valore booleano un numero
         $result = '
-    <div class="input-group">
-        <span class="input-group-addon before">
-            <input |attr| onchange="$(this).parent().find(\'[type=hidden]\').val( + this.checked)">
+        <div class="form-group">
             <input type="hidden" name="|name|" value="|value|">
-        </span>
-        <input type="text" class="form-control" placeholder="|placeholder|" disabled>
-    </div>';
+            <input type="checkbox" id="|id|" value="|value|" autocomplete="off" class="hidden" |attr| onchange="$(this).parent().find(\'[type = hidden]\').val(+this.checked)"/>
+            <div class="btn-group">
+                <label for="|id|" class="btn btn-default">
+                    <span class="fa fa-check"></span>
+                    <span class="fa fa-close"></span>
+                </label>
+                <label for="|id|" class="btn btn-default active">
+                    |placeholder|
+                </label>
+            </div>
+        </div>';
 
         return $result;
     }

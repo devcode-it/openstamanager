@@ -173,8 +173,8 @@ echo '
 ?>
 
 <script>
-$(document).ready(function(){
-	$(document).on('click', '#add', function(){
+$(document).ready(function() {
+	$(document).on('click', '#add', function() {
         cleanup_inputs();
 
 	    $(this).parent().parent().find('.data').append($('#template').html());
@@ -182,7 +182,7 @@ $(document).ready(function(){
         restart_inputs();
 	});
 
-	$(document).on('change', '[id*=scadenza]', function(){
+	$(document).on('change', '[id*=scadenza]', function() {
         if($(this).val() == 1 || $(this).val() == 2){
             $(this).parentsUntil('.box').find('[id*=giorno]').prop('disabled', true);
         }else{
@@ -190,14 +190,14 @@ $(document).ready(function(){
         }
     });
 
-	$(document).on('change', '[id*=percentuale]', function(){
+	$(document).on('change', '[id*=percentuale]', function() {
 		$('button[type=submit]').prop( 'disabled', false ).removeClass('disabled');
 	});
 
 	$('#edit-form').submit( function(event) {
 		var tot = 0;
 
-		$(this).find('[id*=percentuale]').each(function(){
+		$(this).find('[id*=percentuale]').each(function() {
             prc = $(this).val().toEnglish();
             prc = !isNaN(prc) ? prc : 0;
 

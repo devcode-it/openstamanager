@@ -53,9 +53,14 @@ $_SESSION['superselect']['permetti_movimento_a_zero'] = true;
                     {[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "id": "idanagrafica_c", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti" ]}
                 </div>
 
+                <?php
+
+                echo '
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "value": "$idsede$", "ajax-source": "sedi", "placeholder": "Sede legale" ]}
-                </div>
+                    {[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede", "value": "$idsede$", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "placeholder": "Sede legale" ]}
+                </div>';
+
+                ?>
 
 				<div class="col-md-3">
                     <?php
@@ -351,8 +356,8 @@ include $docroot.'/modules/contratti/row-list.php';
 {( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
 <script type="text/javascript">
-    $(document).ready(function(){
-        $('#data_accettazione').on("dp.change", function(){
+    $(document).ready(function() {
+        $('#data_accettazione').on("dp.change", function() {
             if($(this).val()){
                 $('#data_rifiuto').attr('disabled', true);
             }else{
@@ -360,7 +365,7 @@ include $docroot.'/modules/contratti/row-list.php';
             }
         });
 
-        $('#data_rifiuto').on("dp.change", function(){
+        $('#data_rifiuto').on("dp.change", function() {
             if($(this).val()){
                 $('#data_accettazione').attr('disabled', true);
             }else{
@@ -372,7 +377,8 @@ include $docroot.'/modules/contratti/row-list.php';
         $("#data_rifiuto").trigger("dp.change");
     });
 
-	$('#idanagrafica_c').change( function(){
+	$('#idanagrafica_c').change(function() {
+        updateSelectOption("idanagrafica", $(this).val());
         session_set('superselect,idanagrafica', $(this).val(), 0);
 
 		$("#idsede").selectReset();
@@ -461,7 +467,7 @@ if (!empty($elementi)) {
 ?>
 
 <script>
-$('#rinnovabile').on('change', function(){
+$('#rinnovabile').on('change', function() {
     if ($(this).is(':checked')) {
         $('#giorni_preavviso_rinnovo').prop('disabled', false);
     } else {

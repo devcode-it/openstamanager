@@ -27,8 +27,8 @@ include_once __DIR__.'/../../core.php';
 </form>
 
 <script type="text/javascript">
-	$(document).ready( function(){
-		$('#modals > div #default').click( function(){
+	$(document).ready( function() {
+		$('#modals > div #default').click( function() {
 			if (confirm ('Generare un componente di default?')){
 
 				var ini = '[Nome]\ntipo = span\nvalore = "Componente di esempio"\n\n[Marca]\ntipo = input\nvalore =\n\n[Tipo]\ntipo = select\nvalore =\nopzioni = "Tipo 1", "Tipo 2"\n\n[Data di installazione]\ntipo = date\nvalore =\n\n[Note]\ntipo = textarea\nvalore =\n';

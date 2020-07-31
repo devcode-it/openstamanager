@@ -411,7 +411,7 @@ function apriInformazioniFE(button) {
     openModal("'.tr('Dati Fattura Elettronica').'", "'.$module->fileurl('fe/row-fe.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&riga_id=" + id + "&riga_type=" + type)
 }
 
-$(document).ready(function(){
+$(document).ready(function() {
 	$(".sortable").each(function() {
         $(this).sortable({
             axis: "y",
@@ -421,7 +421,7 @@ $(document).ready(function(){
 			scroll: true,
 			update: function(event, ui) {
                 var order = "";
-                $(".table tr[data-id]").each( function(){
+                $(".table tr[data-id]").each( function() {
                     order += ","+$(this).data("id");
                 });
                 order = order.replace(/^,/, "");

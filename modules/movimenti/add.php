@@ -65,7 +65,7 @@ $_SESSION['superselect']['idsede_destinazione'] = 0;
 <div id="messages"></div>
 
 <script>
-    $('#modals > div').on('shown.bs.modal', function(){
+    $('#modals > div').on('shown.bs.modal', function() {
         $('#causale').on('change', function() {
             var data = $(this).selectData();
             if (data) {
@@ -118,7 +118,7 @@ $_SESSION['superselect']['idsede_destinazione'] = 0;
     });
 
     // Reload pagina appena chiudo il modal
-    $('#modals > div').on('hidden.bs.modal', function(){
+    $('#modals > div').on('hidden.bs.modal', function() {
         location.reload();
     });
 
@@ -129,7 +129,7 @@ $_SESSION['superselect']['idsede_destinazione'] = 0;
                 $('#add-form'),
                 {},
                 function() {},
-                function(){}
+                function() {}
             );
 
             $('#messages').html('');

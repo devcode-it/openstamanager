@@ -37,8 +37,8 @@ if (isset($id_record)) {
 </form>
 
 <script>
-		$(document).ready( function(){
-			$('.colorpicker').colorpicker().on('changeColor', function(){
+		$(document).ready( function() {
+			$('.colorpicker').colorpicker().on('changeColor', function() {
 				$('#modals > div #colore_').parent().find('.square').css('background', $('#modals > div #colore_').val());
 			});
 

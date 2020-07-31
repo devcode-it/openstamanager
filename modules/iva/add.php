@@ -45,8 +45,8 @@ include_once __DIR__.'/../../core.php';
 </form>
 
 <script>
-$(document).ready(function(){
-    $('#modals > div #esente-add').change(function(){
+$(document).ready(function() {
+    $('#modals > div #esente-add').change(function() {
         var checkbox = $(this).parent().find('[type=hidden]');
 
         if (checkbox.val() == 1) {

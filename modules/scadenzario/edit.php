@@ -220,7 +220,7 @@ echo '
 
 <script>
     var i = '.$i.';
-	$(document).on("click", "#add-scadenza", function(){
+	$(document).on("click", "#add-scadenza", function() {
         cleanup_inputs();
 
         i++;
@@ -237,7 +237,7 @@ if (!empty($documento)) {
 <script>
     globals.cifre_decimali = 2;
 
-	$(document).ready(function(){
+	$(document).ready(function() {
         controlloTotale();';
 
     if ($dir == 'uscita') {

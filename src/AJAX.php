@@ -45,7 +45,7 @@ class AJAX
             $results = self::getSelectResults($file, $resource, $elements, [
                 'offset' => $page * $length,
                 'length' => $length,
-            ], $search);
+            ], $search, $options);
 
             if (isset($results)) {
                 break;

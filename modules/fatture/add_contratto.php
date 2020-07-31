@@ -38,7 +38,7 @@ echo '
 </div>
 
 <div id="righe_documento">
-    
+
 </div>
 
 <div class="alert alert-info" id="box-loading">
@@ -48,20 +48,20 @@ echo '
 $file = basename(__FILE__);
 echo '
 <script>$(document).ready(init)</script>
-    
+
 <script>
     var content = $("#righe_documento");
     var loader = $("#box-loading");
-    
-    $(document).ready(function(){
+
+    $(document).ready(function() {
         loader.hide();
     });
-    
-    $("#id_documento").on("change", function(){
+
+    $("#id_documento").on("change", function() {
         loader.show();
 
         var id = $(this).selectData() ? $(this).selectData().id  : "";
-    
+
         content.html("");
         content.load("'.$structure->fileurl($file).'?id_module='.$id_module.'&id_record='.$id_record.'&id_documento=" + id, function() {
             loader.hide();

@@ -79,19 +79,18 @@ $_SESSION['superselect']['permetti_movimento_a_zero'] = true;
 						{[ "type": "select", "label": "<?php echo tr('Fornitore'); ?>", "name": "idanagrafica", "required": 1, "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione='Fornitore' AND deleted_at IS NULL ORDER BY ragione_sociale", "value": "$idanagrafica$" ]}
 					<?php
                     }
-                    ?>
+                echo '
 				</div>
 
                 <div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "required": 1, "ajax-source": "sedi", "value": "<?php echo $record['idsede']; ?>" ]}
+					{[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede", "required": 1, "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "'.$record['idsede'].'" ]}
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 0, "ajax-source": "pagamenti", "value": "$idpagamento$" ]}
+					{[ "type": "select", "label": "'.tr('Pagamento').'", "name": "idpagamento", "required": 0, "ajax-source": "pagamenti", "value": "$idpagamento$" ]}
 				</div>
-			</div>
+			</div>';
 
-            <?php
             if ($dir == 'entrata') {
                 ?>
             <div class="row">
@@ -298,13 +297,14 @@ if (!empty($elementi)) {
 </a>
 
 <script>
-$('#idanagrafica').change( function(){
-	session_set('superselect,idanagrafica', $(this).val(), 0);
+$('#idanagrafica').change(function() {
+    updateSelectOption("idanagrafica", $(this).val());
+    session_set('superselect,idanagrafica', $(this).val(), 0);
 
 	$("#idsede").selectReset();
 });
 
-$(document).ready( function(){
+$(document).ready(function() {
 
 	$('#codice_cig, #codice_cup').bind("keyup change", function(e) {
 

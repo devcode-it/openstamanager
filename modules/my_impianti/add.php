@@ -44,39 +44,16 @@ if ($source == 'Attività') {
 	</div>
 </form>
 
-
 <script type="text/javascript">
-$(document).ready(function(){
-
-	$('#modals > div #idanagrafica').change( function(){
-
+$(document).ready(function() {
+	$('#modals > div #idanagrafica').change(function() {
+        updateSelectOption("idanagrafica", $(this).val());
 		session_set('superselect,idanagrafica', $(this).val(), 0);
 
-        var value = !$(this).val() ? true : false;
+        var value = !$(this).val();
 
-		$("#modals > div #idsede").prop("disabled", value);
-		$("#modals > div #idsede").selectReset();
-
+		$("#modals > div #idsede").prop("disabled", value)
+            .selectReset();
 	});
-
-	$('#modals > div #idsede').change( function(){
-		//session_set('superselect,idsede', $(this).val(), 0);
-	});
-
-    $('#modals > div #idanagrafica').change( function(){
-
-        session_set('superselect,idanagrafica', $(this).val(), 0);
-
-        var value = !$(this).val() ? true : false;
-
-        $("#modals > div #idsede").prop("disabled", value);
-        $("#modals > div #idsede").selectReset();
-
-    });
-
-    $('#modals > div #idsede').change( function(){
-        //session_set('superselect,idsede', $(this).val(), 0);
-    });
-
 });
 </script>

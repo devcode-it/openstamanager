@@ -102,41 +102,38 @@ $_SESSION['superselect']['permetti_movimento_a_zero'] = ($dir == 'uscita' ? true
 				</div>
 			</div>
 
+            <div class="row">
+                <div class="col-md-3">
+                    <?php echo Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"'); ?>
+                    {[ "type": "select", "label": "<?php echo ($dir == 'uscita') ? tr('Mittente') : tr('Destinatario'); ?>", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti_fornitori" ]}
+                </div>
+
                 <?php
                 // Conteggio numero articoli ddt in uscita
                 $articolo = $dbo->fetchArray('SELECT mg_articoli.id FROM ((mg_articoli INNER JOIN dt_righe_ddt ON mg_articoli.id=dt_righe_ddt.idarticolo) INNER JOIN dt_ddt ON dt_ddt.id=dt_righe_ddt.idddt) WHERE dt_ddt.id='.prepare($id_record));
-                ?>
-                <div class="row">
-                    <div class="col-md-3">
-                        <?php echo Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"'); ?>
-                        {[ "type": "select", "label": "<?php echo ($dir == 'uscita') ? tr('Mittente') : tr('Destinatario'); ?>", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti_fornitori" ]}
-                    </div>
-
-                    <?php
-                        if ($dir == 'entrata') {
-                            ?>
-                    <div class="col-md-3">
-                        {[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza", "ajax-source": "sedi_azienda",  "value": "$idsede_partenza$", "readonly": "<?php echo sizeof($articolo) ? 1 : 0; ?>", "help": "<?php echo tr('Sedi di partenza dalla mia azienda'); ?>" ]}
-                    </div>
-
-                    <div class="col-md-3">
-                        {[ "type": "select", "label": "<?php echo tr('Destinazione merce'); ?>", "name": "idsede_destinazione", "ajax-source": "sedi",  "value": "$idsede_destinazione$", "help": "<?php echo tr('Sedi del destinatario'); ?>" ]}
-                    </div>
-                    <?php
-                        } else {
-                            ?>
-                    <div class="col-md-3">
-                        {[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza", "ajax-source": "sedi",  "value": "$idsede_partenza$", "help": "<?php echo tr('Sedi del mittente'); ?>" ]}
-                    </div>
-
-                    <div class="col-md-3">
-                        {[ "type": "select", "label": "<?php echo tr('Destinazione merce'); ?>", "name": "idsede_destinazione", "ajax-source": "sedi_azienda",  "value": "$idsede_destinazione$", "help": "<?php echo tr('Sedi di arrivo nella mia azienda'); ?>" ]}
-                    </div>
-
-                    <?php
-                        }
-                    ?>
+                $id_modulo_anagrafiche = Modules::get('Anagrafiche')['id'];
+                $id_plugin_sedi = Plugins::get('Sedi')['id'];
+                if ($dir == 'entrata') {
+                    echo '
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "readonly": "'.(sizeof($articolo) ? 1 : 0).'", "help": "'.tr("Sedi di partenza dell'azienda").'" ]}
                 </div>
+
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "'.tr('Destinazione merce').'", "name": "idsede_destinazione", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idsede_destinazione$", "help": "'.tr('Sedi del destinatario').'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.$id_plugin_sedi.'&id_parent='.$record['idanagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
+                </div>';
+                } else {
+                    echo '
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'},  "value": "$idsede_partenza$", "help": "'.tr('Sedi del mittente').'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.$id_plugin_sedi.'&id_parent='.$record['idanagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
+                </div>
+
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "'.tr('Destinazione merce').'", "name": "idsede_destinazione", "ajax-source": "sedi_azienda", "value": "$idsede_destinazione$", "help": "'.tr("Sedi di arrivo dell'azienda").'" ]}
+                </div>';
+                }
+                ?>
+            </div>
             <hr>
 
 			<div class="row">
@@ -175,7 +172,7 @@ $_SESSION['superselect']['permetti_movimento_a_zero'] = ($dir == 'uscita' ? true
 				</div>
 
                  <script>
-                    $("#idspedizione").change( function(){
+                    $("#idspedizione").change(function() {
                         //Per tutti tipi di spedizione, a parte "Espressa" o "Vettore", il campo vettore non deve essere richiesto
                         if ($(this).val() != 1 && $(this).val() != 2 ) {
                             $("#idvettore").attr("required", false);
@@ -194,7 +191,7 @@ $_SESSION['superselect']['permetti_movimento_a_zero'] = ($dir == 'uscita' ? true
                         }
                     });
 
-                    $("#idcausalet").change( function(){
+                    $("#idcausalet").change(function() {
                         if ($(this).val() == 3) {
                             $("#tipo_resa").attr("disabled", false);
                         }else{
@@ -217,7 +214,7 @@ if ($dir == 'entrata') {
 
                 <script type="text/javascript">
                     $(document).ready(function() {
-                        $("#peso_manuale").click(function(){
+                        $("#peso_manuale").click(function() {
                             $("#peso").prop("readonly", !$("#peso_manuale").is(":checked"));
                         });
                     });
@@ -233,7 +230,7 @@ if ($dir == 'entrata') {
 
                 <script type="text/javascript">
                     $(document).ready(function() {
-                        $("#volume_manuale").click(function(){
+                        $("#volume_manuale").click(function() {
                             $("#volume").prop("readonly", !$("#volume_manuale").is(":checked"));
                         });
                     });
@@ -370,13 +367,11 @@ include $docroot.'/modules/ddt/row-list.php';
 {( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
 <script>
-	$('#idanagrafica').change( function(){
+	$('#idanagrafica').change(function() {
+        updateSelectOption("idanagrafica", $(this).val());
 		session_set('superselect,idanagrafica', $(this).val(), 0);
-        if('<?php echo $dir; ?>' == 'uscita'){
-		    $("#idsede_partenza").selectReset();
-        }else{
-            $("#idsede_destinazione").selectReset();
-        }
+
+        $("#idsede_<?php echo $dir == 'uscita' ? 'partenza' : 'destinazione'; ?>").selectReset();
 	});
 </script>
 

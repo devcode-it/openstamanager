@@ -66,8 +66,8 @@ echo '
 
 
 	<script type="text/javascript">
-		$(document).ready( function(){
-			$('select').on('change', function(){
+		$(document).ready( function() {
+			$('select').on('change', function() {
                 if($(this).parent().parent().find('input[disabled]').length != 1){
                     if($(this).val()) {
                         $(this).parent().parent().find('input').prop("disabled", false);
@@ -122,7 +122,7 @@ echo '
 
 <script>
 
-$('select[name=idconto]').each(function(){
+$('select[name=idconto]').each(function() {
     this.selectAdd([{
         'value': -1,
         'text': "Conto cliente fattura",

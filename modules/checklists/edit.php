@@ -22,7 +22,7 @@ echo '
                 <div class="col-md-3">
                     {[ "type": "select", "label": "'.tr('Modulo del template').'", "name": "module", "values": "query=SELECT id, title AS descrizione FROM zz_modules WHERE enabled = 1", "value": "'.$record['id_module'].'", "disabled": "'.!empty($record['id_plugin']).'" ]}
                 </div>
-                
+
                 <div class="col-md-3">
                     {[ "type": "select", "label": "'.tr('Plugin del template').'", "name": "plugin", "values": "query=SELECT id, title AS descrizione, (SELECT name FROM zz_modules WHERE zz_modules.id = zz_plugins.idmodule_from) AS optgroup FROM zz_plugins WHERE enabled = 1", "value": "'.$record['id_plugin'].'", "disabled": "'.!empty($record['id_module']).'" ]}
                 </div>
@@ -40,7 +40,7 @@ $(document).ready(function() {
             $("#plugin").val("").attr("disabled", false);
         }
     });
-    
+
     $("#plugin").change(function() {
         if ($(this).val()){
             $("#module").val("").attr("disabled", true);
@@ -72,15 +72,15 @@ echo '
         <form action="" method="post" id="checklist-form" class="row">
             <input type="hidden" name="op" value="add_item">
             <input type="hidden" name="backto" value="record-edit">
-            
+
             <div class="col-md-6">
                 {[ "type": "text", "placeholder": "'.tr('Contenuto').'", "name": "content", "class": "unblockable", "required": 1 ]}
             </div>
-    
+
             <div class="col-md-4">
                 {[ "type": "select", "placeholder": "'.tr('Genitore').'", "name": "parent", "class": "unblockable", "values": '.json_encode($list).' ]}
             </div>
-            
+
             <div class="col-md-1 text-right">
                 <button type="submit" class="btn btn-success">
                     <i class="fa fa-upload"></i> '.tr('Crea').'
@@ -88,7 +88,7 @@ echo '
             </div>
         </form>
         <hr>
-        
+
         <ul class="todo-list checklist">';
 
     $checks = $record->mainChecks();
@@ -111,7 +111,7 @@ $(document).ready(function() {
         zIndex: 999999,
         update: function(event, ui) {
             var order = [];
-            $(".checklist > li").each( function(){
+            $(".checklist > li").each( function() {
                 order.push($(this).data("id"));
             });
 
@@ -127,7 +127,7 @@ $(document).ready(function() {
     $(".check-delete").click(function(event){
         var li = $(this).closest("li");
         var id = li.attr("id").replace("check_", "");
-        
+
         $.ajax({
             url: globals.rootdir + "/actions.php",
             cache: false,
@@ -141,8 +141,8 @@ $(document).ready(function() {
                 location.reload();
             }
         });
-        
-        event.stopPropagation();  
+
+        event.stopPropagation();
     });
 });
 </script>';

@@ -155,7 +155,7 @@ echo '
         }
     });
 
-	$('#id_nazione', '#modals > div').change(function(){
+	$('#id_nazione', '#modals > div').change(function() {
 		if ($(this).find('option:selected').data('text') === 'IT - Italia'){
 			$('#codice_destinatario',  '#modals > div').removeAttr('readonly');
 		}

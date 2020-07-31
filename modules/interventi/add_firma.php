@@ -66,8 +66,8 @@ if (get('anteprima') !== null) {
 <div class="clearfix"></div>
 
 <script type="text/javascript">
-    $(document).ready( function(){
-        $('#firma').on('click', function(){
+    $(document).ready( function() {
+        $('#firma').on('click', function() {
             $('#preview').addClass('hide');
 
             $('#form-firma').removeClass('hide');

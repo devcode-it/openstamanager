@@ -86,8 +86,8 @@ if ($res) {
 
 
 <script>
-$(document).ready(function(){
-    $('#esente-edit').change(function(){
+$(document).ready(function() {
+    $('#esente-edit').change(function() {
         var checkbox = $(this).parent().find('[type=hidden]');
 
         if (checkbox.val() == 1) {

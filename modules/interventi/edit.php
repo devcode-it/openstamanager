@@ -35,10 +35,13 @@ $_SESSION['superselect']['permetti_movimento_a_zero'] = false;
                     ?>
 					{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione='Cliente' AND deleted_at IS NULL ORDER BY ragione_sociale", "value": "$idanagrafica$", "ajax-source": "clienti", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
 				</div>
+<?php
 
+                echo '
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Sede destinazione'); ?>", "name": "idsede_destinazione","value": "$idsede_destinazione$", "ajax-source": "sedi", "placeholder": "Sede legale", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
-				</div>
+					{[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione","value": "$idsede_destinazione$", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "placeholder": "'.tr('Sede legale').'", "readonly": "'.$record['flag_completato'].'" ]}
+				</div>';
+                ?>
 
 				<div class="col-md-3">
 					<?php
@@ -324,63 +327,59 @@ include $structure->filepath('row-list.php');
 </div>
 
 <script>
-	$('#idanagrafica').change( function(){
-		session_set('superselect,idanagrafica', $(this).val(), 0);
+    $('#idanagrafica').change(function () {
+        updateSelectOption("idanagrafica", $(this).val());
+        session_set('superselect,idanagrafica', $(this).val(), 0);
 
-		$("#idsede_destinazione").selectReset();
-		$("#idpreventivo").selectReset();
-		$("#idcontratto").selectReset();
+        $("#idsede_destinazione").selectReset();
+        $("#idpreventivo").selectReset();
+        $("#idcontratto").selectReset();
 
-		if (($(this).val())) {
-			if (($(this).selectData().idzona)){
-				$('#idzona').val($(this).selectData().idzona).change();
+        if (($(this).val())) {
+            if (($(this).selectData().idzona)) {
+                $('#idzona').val($(this).selectData().idzona).change();
 
-			}else{
-				$('#idzona').val('').change();
-			}
-			//session_set('superselect,idzona', $(this).selectData().idzona, 0);
-		}
+            } else {
+                $('#idzona').val('').change();
+            }
+        }
+    });
 
-	});
+    $('#idpreventivo').change(function () {
+        if ($('#idcontratto').val() && $(this).val()) {
+            $('#idcontratto').val('').trigger('change');
+        }
+    });
 
-	$('#idpreventivo').change( function(){
-		if($('#idcontratto').val() && $(this).val()){
-			$('#idcontratto').val('').trigger('change');
-		}
-	});
+    $('#idcontratto').change(function () {
+        if ($('#idpreventivo').val() && $(this).val()) {
+            $('#idpreventivo').val('').trigger('change');
+            $('input[name=idcontratto_riga]').val('');
+        }
+    });
 
-	$('#idcontratto').change( function(){
-		if($('#idpreventivo').val() && $(this).val()){
-			$('#idpreventivo').val('').trigger('change');
-			$('input[name=idcontratto_riga]').val('');
-		}
-	});
+    $('#matricola').change(function () {
+        session_set('superselect,marticola', $(this).val(), 0);
+    });
 
-	$('#matricola').change( function(){
-		session_set('superselect,marticola', $(this).val(), 0);
-	});
+    $('#idsede').change(function () {
+        if (($(this).val())) {
+            if (($(this).selectData().idzona)) {
+                $('#idzona').val($(this).selectData().idzona).change();
+            } else {
+                $('#idzona').val('').change();
+            }
+            //session_set('superselect,idzona', $(this).selectData().idzona, 0);
+        }
+    });
 
-	$('#idsede').change( function(){
-		if (($(this).val())) {
-			if (($(this).selectData().idzona)){
-				$('#idzona').val($(this).selectData().idzona).change();
-			}else{
-				$('#idzona').val('').change();
-			}
-			//session_set('superselect,idzona', $(this).selectData().idzona, 0);
-		}
-	});
-
-	$('#codice_cig, #codice_cup').bind("keyup change", function(e) {
-
-		if ($('#codice_cig').val() == '' && $('#codice_cup').val() == '' ){
-			$('#id_documento_fe').prop('required', false);
-		}else{
-			$('#id_documento_fe').prop('required', true);
-		}
-
-	});
-
+    $('#codice_cig, #codice_cup').bind("keyup change", function (e) {
+        if ($('#codice_cig').val() == '' && $('#codice_cup').val() == '') {
+            $('#id_documento_fe').prop('required', false);
+        } else {
+            $('#id_documento_fe').prop('required', true);
+        }
+    });
 </script>
 
 {( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}

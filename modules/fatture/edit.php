@@ -211,57 +211,41 @@ elseif ($record['stato'] == 'Bozza') {
                         ?>
 						{[ "type": "select", "label": "<?php echo tr('Fornitore'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "fornitori", "value": "$idanagrafica$" ]}
 					<?php
-                    } ?>
-                </div>
+                    }
 
+                    echo '
+                </div>';
 
-				<?php if ($dir == 'entrata') { ?>
+                    if ($dir == 'entrata') {
+                        echo '
 				<div class="col-md-6">
-					{[ "type": "select", "label": "<?php echo tr('Agente di riferimento'); ?>", "name": "idagente", "ajax-source": "agenti", "value": "$idagente_fattura$" ]}
-				</div>
-				<?php } ?>
+					{[ "type": "select", "label": "'.tr('Agente di riferimento').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente_fattura$" ]}
+				</div>';
+                    }
 
-
-                <?php
                 // Conteggio numero articoli fatture
                 $articolo = $dbo->fetchArray('SELECT mg_articoli.id FROM ((mg_articoli INNER JOIN co_righe_documenti ON mg_articoli.id=co_righe_documenti.idarticolo) INNER JOIN co_documenti ON co_documenti.id=co_righe_documenti.iddocumento) WHERE co_documenti.id='.prepare($id_record));
-                if ($dir == 'uscita') {
-                    ?>
-                    <div class="col-md-6">
+                    $id_modulo_anagrafiche = Modules::get('Anagrafiche')['id'];
+                    $id_plugin_sedi = Plugins::get('Sedi')['id'];
+                    if ($dir == 'entrata') {
+                        echo '
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "readonly": "'.(sizeof($articolo) ? 1 : 0).'", "help": "'.tr("Sedi di partenza dell'azienda").'" ]}
+                </div>
 
-                        <?php
-                        echo Plugins::link('Sedi', $record['idsede_partenza'], null, null, 'class="pull-right"'); ?>
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "'.tr('Destinazione merce').'", "name": "idsede_destinazione", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idsede_destinazione$", "help": "'.tr('Sedi del destinatario').'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.$id_plugin_sedi.'&id_parent='.$record['idanagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
+                </div>';
+                    } else {
+                        echo '
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'},  "value": "$idsede_partenza$", "help": "'.tr('Sedi del mittente').'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.$id_plugin_sedi.'&id_parent='.$record['idanagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
+                </div>
 
-                        {[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza", "ajax-source": "sedi", "placeholder": "Sede legale", "value": "$idsede_partenza$", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|id_plugin=<?php echo Plugins::get('Sedi')['id']; ?>&id_parent=<?php echo $record['idanagrafica']; ?>||<?php echo (intval($block_edit)) ? 'disabled' : ''; ?>" ]}
-                    </div>
-
-                    <div class="col-md-6">
-
-                        <?php
-                        echo Plugins::link('Sedi', $record['idsede_destinazione'], null, null, 'class="pull-right"'); ?>
-
-                        {[ "type": "select", "label": "<?php echo tr('Destinazione merce'); ?>", "name": "idsede_destinazione", "ajax-source": "sedi_azienda",  "value": "$idsede_destinazione$", "readonly": "<?php echo (sizeof($articolo)) ? 1 : 0; ?>" ]}
-                    </div>
-                <?php
-                } else {
-                    ?>
-                    <div class="col-md-6">
-
-                        <?php
-                        echo Plugins::link('Sedi', $record['idsede_partenza'], null, null, 'class="pull-right"'); ?>
-
-                        {[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "placeholder": "Sede legale", "value": "$idsede_partenza$", "readonly": "<?php echo (sizeof($articolo)) ? 1 : 0; ?>"  ]}
-                    </div>
-
-                    <div class="col-md-6">
-
-                        <?php
-                        echo Plugins::link('Sedi', $record['idsede_destinazione'], null, null, 'class="pull-right"'); ?>
-
-                        {[ "type": "select", "label": "<?php echo tr('Destinazione merce'); ?>", "name": "idsede_destinazione", "ajax-source": "sedi",  "value": "$idsede_destinazione$", "readonly": "", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|id_plugin=<?php echo Plugins::get('Sedi')['id']; ?>&id_parent=<?php echo $record['idanagrafica']; ?>||<?php echo (intval($block_edit)) ? 'disabled' : ''; ?>" ]}
-                    </div>
-                <?php
-                }
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "'.tr('Destinazione merce').'", "name": "idsede_destinazione", "ajax-source": "sedi_azienda", "value": "$idsede_destinazione$", "help": "'.tr("Sedi di arrivo dell'azienda").'" ]}
+                </div>';
+                    }
                 ?>
 			</div>
 			<hr>
@@ -408,7 +392,7 @@ echo '
 
                 <script type="text/javascript">
                     $(document).ready(function() {
-                        $("#bollo_automatico").click(function(){
+                        $("#bollo_automatico").click(function() {
                             $("#bollo").attr("disabled", $(this).is(":checked"));
                         });
                     });
@@ -453,7 +437,7 @@ if ($tipodoc == 'Fattura accompagnatoria di vendita') {
                 </div>
 
                 <script>
-                    $("#idspedizione").change( function(){
+                    $("#idspedizione").change(function() {
                         if ($(this).val() == 3) {
                             $("#idvettore").attr("required", false);
                             $("#idvettore").attr("disabled", true);
@@ -468,7 +452,7 @@ if ($tipodoc == 'Fattura accompagnatoria di vendita') {
                         }
                     });
 
-					$("#idcausalet").change( function(){
+					$("#idcausalet").change(function() {
                         if ($(this).val() == 3) {
                             $("#tipo_resa").attr("disabled", false);
                         }else{
@@ -550,7 +534,7 @@ if ($tipodoc == 'Fattura accompagnatoria di vendita') {
 
                 <script type="text/javascript">
                     $(document).ready(function() {
-                        $("#peso_manuale").click(function(){
+                        $("#peso_manuale").click(function() {
                             $("#peso").prop("readonly", !$("#peso_manuale").is(":checked"));
                         });
                     });
@@ -566,7 +550,7 @@ if ($tipodoc == 'Fattura accompagnatoria di vendita') {
 
                 <script type="text/javascript">
                     $(document).ready(function() {
-                        $("#volume_manuale").click(function(){
+                        $("#volume_manuale").click(function() {
                             $("#volume").prop("readonly", !$("#volume_manuale").is(":checked"));
                         });
                     });
@@ -775,7 +759,8 @@ if ($dir == 'entrata') {
 
 echo '
 <script type="text/javascript">
-	$("#idanagrafica").change(function(){
+	$("#idanagrafica").change(function() {
+        updateSelectOption("idanagrafica", $(this).val());
         session_set("superselect,idanagrafica", $(this).val(), 0);
 
         $("#id_dichiarazione_intento").selectReset();';
@@ -789,7 +774,7 @@ echo '
 echo '
 	});
 
-    $("#ricalcola_scadenze").click(function(){
+    $("#ricalcola_scadenze").click(function() {
         swal({
             title: "'.tr('Desideri ricalcolare le scadenze?').'",
             type: "warning",

@@ -56,20 +56,20 @@ if (count($preventivo->revisioni) > 1) {
                 </div>
 			</div>
 
+<?php
+echo '
 			<div class="row">
                 <div class="col-md-3">
-                    <?php
-                    echo Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"');
-                    ?>
-                    {[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti" ]}
+                    '.Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"').'
+                    {[ "type": "select", "label": "'.tr('Cliente').'", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti" ]}
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "value": "$idsede$", "ajax-source": "sedi", "placeholder": "Sede legale" ]}
+                    {[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede", "value": "$idsede$", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "placeholder": "Sede legale" ]}
                 </div>
 
-				<div class="col-md-3">
-                    <?php
+				<div class="col-md-3">';
+
                     if (!empty($record['idreferente'])) {
                         echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
                     }
@@ -252,14 +252,15 @@ include $docroot.'/modules/preventivi/row-list.php';
 </div>
 
 <script type="text/javascript">
-    $(document).ready(function(){
-        $('#idanagrafica').change( function(){
+    $(document).ready(function() {
+        $('#idanagrafica').change(function() {
+            updateSelectOption("idanagrafica", $(this).val());
             session_set('superselect,idanagrafica', $(this).val(), 0);
 
             $("#idsede").selectReset();
         });
 
-        $('#data_accettazione').on("dp.change", function(){
+        $('#data_accettazione').on("dp.change", function() {
             if($(this).val()){
                 $('#data_rifiuto').attr('disabled', true);
             }else{
@@ -267,7 +268,7 @@ include $docroot.'/modules/preventivi/row-list.php';
             }
         });
 
-        $('#data_rifiuto').on("dp.change", function(){
+        $('#data_rifiuto').on("dp.change", function() {
             if($(this).val()){
                 $('#data_accettazione').attr('disabled', true);
             }else{

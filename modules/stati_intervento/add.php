@@ -29,8 +29,8 @@ include_once __DIR__.'/../../core.php';
 </form>
 
 <script>
-	$(document).ready( function(){
-		$('.colorpicker').colorpicker().on('changeColor', function(){
+	$(document).ready( function() {
+		$('.colorpicker').colorpicker().on('changeColor', function() {
 			$('#modals > div #colore_').parent().find('.square').css( 'background', $('#modals > div #colore_').val() );
 		});
 

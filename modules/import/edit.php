@@ -108,7 +108,7 @@ if (empty($id_record)) {
 
     echo '
 <script>
-$(document).ready(function(){';
+$(document).ready(function() {';
 
     if ($exclude_first_row) {
         echo '
@@ -117,7 +117,7 @@ $(document).ready(function(){';
 
     echo '
     $("#save").html("<i class=\"fa fa-flag-checkered\"></i> '.tr('Avvia importazione').'");
-    
+
     $("#save").unbind("click");
     $("#save").on("click", function() {
         importPage(0);
@@ -134,16 +134,16 @@ function importPage(page){
         id_record: "'.$id_record.'",
         page: page,
     };
-    
+
     $("#edit-form").ajaxSubmit({
         url: globals.rootdir + "/actions.php",
         data: data,
         type: "post",
         success: function(data) {
             data = JSON.parse(data);
-            
+
             count += data.count;
-            
+
             if(data.more) {
                 importPage(page + 1);
             } else {

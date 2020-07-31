@@ -400,7 +400,7 @@ if ($vista == 'mese') {
 		});
 
 	}
-    $('#select-intreventi-pianificare').change(function(){
+    $('#select-intreventi-pianificare').change(function() {
         var mese = $(this).val();
         load_interventi_da_pianificare(mese);
 
@@ -531,7 +531,7 @@ if ($vista == 'mese') {
 		create_calendar();
 
         // Data di default
-        $('.fc-prev-button, .fc-next-button, .fc-today-button').click(function(){
+        $('.fc-prev-button, .fc-next-button, .fc-today-button').click(function() {
             var date_start = $('#calendar').fullCalendar('getView').start.format('YYYY-MM-DD');
             date_start = moment(date_start);
 

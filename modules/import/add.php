@@ -36,7 +36,7 @@ foreach ($imports as $key => $value) {
 </form>
 
 <script>
-$('#id_record').change( function(){
+$('#id_record').change(function() {
 	 if ($(this).val()>0){
 		 $( "#example" ).removeClass('hide');
 	 }else{

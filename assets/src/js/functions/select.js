@@ -70,37 +70,23 @@ function start_superselect() {
                 dataType: 'json',
                 delay: 250,
                 data: function (params) {
-                    const data = {
+                    return {
                         search: params.term,
                         page: params.page || 0,
                         length: params.length || 100,
-                        options: {}, // Dati aggiuntivi
+                        options: this.data('select-options'), // Dati aggiuntivi
                     };
-
-                    // Lettura dei dati aggiuntivi
-                    $(this).each(function () {
-                        $.each(this.attributes, function () {
-                            if (this.specified && this.name.startsWith('data-select-')) {
-                                const name = this.name.replace('data-select-', '');
-                                data.options[name] = this.value;
-                            }
-                        });
-                    });
-
-                    return data;
                 },
                 processResults: function (data, params) {
                     params.page = params.page || 0;
                     params.length = params.length || 100;
 
-                    var response = {
+                    return {
                         results: data.results,
                         pagination: {
                             more: (params.page + 1) * params.length < data.recordsFiltered,
                         }
                     };
-
-                    return response;
                 },
                 cache: false
             },
@@ -125,7 +111,7 @@ jQuery.fn.selectReset = function (placeholder) {
     this.selectClear();
     this.empty();
 
-    if (placeholder != undefined) {
+    if (placeholder !== undefined) {
         this.next().find('.select2-selection__placeholder').text(placeholder);
         this.next().find('input.select2-search__field').attr('placeholder', placeholder);
     }
@@ -199,10 +185,10 @@ jQuery.fn.selectData = function () {
 
     $select_obj = obj.select2('data');
 
-    if ($select_obj[0] == undefined) {
+    if ($select_obj[0] === undefined) {
         return undefined;
     } else {
-        if ($select_obj[0].selected == false) {
+        if ($select_obj[0].selected === false) {
             return $select_obj[0];
         } else {
             return $select_obj[0].element.dataset;
@@ -211,10 +197,29 @@ jQuery.fn.selectData = function () {
 };
 
 /**
- * Imposta le informazioni aggiuntive di un <select> creato con select2.
+ * Imposta il valore di un'opzione di un <select> creato con select2.
  */
-jQuery.fn.selectInfo = function (name, value) {
-    this.attr('data-select-' + name, value);
+jQuery.fn.setSelectOption = function (name, value) {
+    this.data('select-options')[name] = value;
 
     return this;
 };
+
+/**
+ * Restituisce il valore impostato per un'opzione di un <select> creato con select2.
+ */
+jQuery.fn.getSelectOption = function (name) {
+    return this.data('select-options')[name];
+};
+
+/**
+ * Imposta il valore di un opzioni per tutti i select attivi della pagina.
+ *
+ * @param name
+ * @param value
+ */
+function updateSelectOption(name, value){
+    $(".superselectajax").each(function (){
+        $(this).setSelectOption(name, value);
+    })
+}

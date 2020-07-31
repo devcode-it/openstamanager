@@ -25,9 +25,9 @@ echo '
             </button>
         </div>
     </div>
-    
+
     <div class="box-body collapse in" id="calendars">
-        
+
     </div>
 </div>';
 
@@ -78,9 +78,9 @@ var chart_options = {
                     if (label) {
                         label += ": ";
                     }
-                    
+
                     label += tooltipItem.yLabel;
-                    
+
                     return label;
                 }
             }
@@ -141,13 +141,13 @@ var info = {
 var manager = new Manager(info);
 
 var chart_fatturato, chart_acquisti;
-$(document).ready(function(){
+$(document).ready(function() {
     var fatturato_canvas = document.getElementById("fatturato").getContext("2d");
     //var acquisti_canvas = document.getElementById("acquisti").getContext("2d");
-    
+
     chart_fatturato = new Chart(fatturato_canvas, chart_options);
     //chart_acquisti = new Chart(fatturato_canvas, chart_options);
-    
+
     add_calendar();
 });
 

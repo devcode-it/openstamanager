@@ -72,9 +72,9 @@ function backup(){
         confirmButtonClass: "btn btn-lg btn-success",
         confirmButtonText: "'.tr('Crea').'",
     }).then(
-    function(){
+    function() {
         location.href = globals.rootdir + "/editor.php?id_module='.$id_module.'&op=backup";
-    }, function(){});
+    }, function() {});
 }
 
 // Caricamento

@@ -282,7 +282,7 @@ if (!empty($id_intervento)) {
 <script>$(document).ready(init)</script>
 
 <script type="text/javascript">
-	$(document).ready(function(){
+	$(document).ready(function() {
         if(!$("#modals > div #idanagrafica").val()){
             $("#modals > div #idsede_destinazione").prop("disabled", true);
             $("#modals > div #idpreventivo").prop("disabled", true);
@@ -336,14 +336,15 @@ if (!empty($id_intervento)) {
         // da pianificare, altrimenti il promemoria non si vede più nella lista a destra
 		// TODO: da gestire via ajax
         if( $('input[name=idcontratto_riga]').val() != undefined ){
-            $('#modals > div button.close').on('click', function(){
+            $('#modals > div button.close').on('click', function() {
                 location.reload();
             });
         }
     });
 
-	$('#modals > div #idanagrafica').change( function(){
-		session_set('superselect,idanagrafica', $(this).val(), 0);
+	$('#modals > div #idanagrafica').change(function() {
+        updateSelectOption("idanagrafica", $(this).val());
+        session_set('superselect,idanagrafica', $(this).val(), 0);
 
         var value = !$(this).val() ? true : false;
         var placeholder = !$(this).val() ? "<?php echo tr('Seleziona prima un cliente...'); ?>" : "<?php echo tr("Seleziona un'opzione"); ?>";
@@ -375,7 +376,7 @@ if (!empty($id_intervento)) {
         $('#modals > div #idtipointervento').selectSetNew($(this).selectData().idtipointervento, $(this).selectData().idtipointervento_descrizione);
 	});
 
-	$('#modals > div #idsede_destinazione').change( function(){
+	$('#modals > div #idsede_destinazione').change(function() {
 		session_set('superselect,idsede_destinazione', $(this).val(), 0);
 		$("#modals > div #idimpianti").selectReset();
 
@@ -389,7 +390,7 @@ if (!empty($id_intervento)) {
 		}
 	});
 
-	$('#modals > div #idpreventivo').change( function(){
+	$('#modals > div #idpreventivo').change(function() {
 		if($('#modals > div #idcontratto').val() && $(this).val()){
             $("#modals > div #idcontratto").selectReset();
         }
@@ -399,14 +400,14 @@ if (!empty($id_intervento)) {
         }
 	});
 
-	$('#modals > div #idcontratto').change( function(){
+	$('#modals > div #idcontratto').change(function() {
 		if($('#modals > div #idpreventivo').val() && $(this).val()){
             $("#modals > div #idpreventivo").selectReset();
 			$('input[name=idcontratto_riga]').val('');
 		}
 	});
 
-	$('#modals > div #idimpianti').change( function(){
+	$('#modals > div #idimpianti').change(function() {
 		session_set('superselect,marticola', $(this).val(), 0);
 
         $("#modals > div #componenti").prop("disabled", !$(this).val() ? true : false);
@@ -415,7 +416,7 @@ if (!empty($id_intervento)) {
 
 	// tempo standard
     // TODO: tempo_standard da preventivo e contratto attraverso selectData() relativi
-	$('#modals > div #idtipointervento').change( function(){
+	$('#modals > div #idtipointervento').change(function() {
 
 		if ($(this).selectData() && (($(this).selectData().tempo_standard)>0) && ('<?php echo filter('orario_fine'); ?>' == '')){
 
@@ -431,7 +432,7 @@ if (!empty($id_intervento)) {
 
 	});
 
-	$('#modals > div #idtecnico').change( function(){
+	$('#modals > div #idtecnico').change(function() {
 		<?php if (!get('ref')) {
     ?>
 	   var value = ($(this).val()>0) ? true : false;

@@ -63,9 +63,12 @@ if (!empty($record['immagine'])) {
 					{[ "type": "date", "label": "<?php echo tr('Data installazione'); ?>", "name": "data", "value": "$data$" ]}
 				</div>
 
+                <?php
+                echo '
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "value": "$idsede$", "required": "1", "ajax-source": "sedi", "placeholder": "Sede legale" ]}
-				</div>
+					{[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede", "value": "$idsede$", "required": "1", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "placeholder": "'.tr('Sede legale').'" ]}
+				</div>';
+                ?>
 			</div>
 
 			<div class="row">
@@ -121,22 +124,15 @@ if (!empty($record['immagine'])) {
 
 
 <script type="text/javascript">
-$(document).ready(function(){
-
-	$('#idanagrafica').change( function(){
-
+$(document).ready(function() {
+	$('#idanagrafica').change(function() {
+        updateSelectOption("idanagrafica", $(this).val());
 		session_set('superselect,idanagrafica', $(this).val(), 0);
 
-        var value = !$(this).val() ? true : false;
+        var value = !$(this).val();
 
-		$("#idsede").prop("disabled", value);
-		$("#idsede").selectReset();
-
+		$("#idsede").prop("disabled", value)
+            .selectReset();
 	});
-
-	$('#idsede').change( function(){
-		//session_set('superselect,idsede', $(this).val(), 0);
-	});
-
 });
 </script>

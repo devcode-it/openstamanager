@@ -13,11 +13,10 @@ class SelectHandler implements HandlerInterface
 {
     public function handle(&$values, &$extras)
     {
-        // Individuazione della classe per la corretta gestione JavaScript
-        $values['class'][] = !empty($values['ajax-source']) ? 'superselectajax' : 'superselect';
+        $source = $values['ajax-source'] ?: $values['select-source'];
 
-        // Individuazione della richiesta AJAX (se presente)
-        $values['data-source'] = !empty($values['ajax-source']) ? $values['ajax-source'] : '';
+        // Individuazione della classe per la corretta gestione JavaScript
+        $values['class'][] = !empty($source) ? 'superselectajax' : 'superselect';
 
         // Individuazione e gestione dei valori tramite array
         $values['value'] = explode(',', $values['value']);
@@ -30,21 +29,7 @@ class SelectHandler implements HandlerInterface
             $values['value'] = setting($values['valore_predefinito']);
         }
 
-        // Informazioni aggiuntive per il select
-        $infos = [];
-        if (!empty($values['ajax-info'])) {
-            $list = explode(',', $values['ajax-info']);
-
-            foreach ($list as $element) {
-                list($name, $value) = explode('=', $element);
-
-                $values['data-select-'.$name] = $value;
-                $infos[$name] = $value;
-            }
-
-            unset($values['ajax-info']);
-        }
-
+        // Cast del valore impostato in array
         $values['value'] = (array) $values['value'];
 
         // Inizializzazione del codice HTML
@@ -53,9 +38,19 @@ class SelectHandler implements HandlerInterface
 
         // Delega della generazione del codice HTML in base alle caratteristiche del formato
         // Gestione delle richieste AJAX (se il campo "ajax-source" è impostato)
-        if (!empty($values['ajax-source'])) {
+        if (!empty($source)) {
+            // Impostazione della risorsa da consultare (AJAX)
+            $values['data-source'] = $source;
+            unset($values['ajax-source']);
+            unset($values['select-source']);
+
+            // Informazioni aggiuntive per il select
+            $infos = $values['select-options'] ?: [];
+            $values['data-select-options'] = json_encode($infos);
+            unset($values['select-options']);
+
             if (!empty($values['value']) || is_numeric($values['value'])) {
-                $result .= $this->select2($values['ajax-source'], $values['value'], $infos);
+                $result .= $this->select2($source, $values['value'], $infos);
             }
         } else {
             if (!in_array('multiple', $extras)) {
@@ -101,7 +96,7 @@ class SelectHandler implements HandlerInterface
         }
 
         // Ulteriore gestione della proprietà "readonly" (per rendere il select utilizzabile dopo il submit)
-        if (in_array('readonly', $extras) && empty($values['ajax-source'])) {
+        if (in_array('readonly', $extras) && empty($source)) {
             $result .= '
 	<select class="hide" name="'.prepareToField($values['name']).'"'.((in_array('multiple', $extras)) ? ' multiple' : '').'>';
 
@@ -119,7 +114,7 @@ class SelectHandler implements HandlerInterface
 
     /**
      * Gestione dell'input di tipo "select" con richieste AJAX (nome della richiesta indicato tramite attributo "ajax-source").
-     * Esempio: {[ "type": "select", "label": "Select di test", "name": "test", "ajax-source": "test", "ajax-info": "id_test=1,test=si" ]}.
+     * Esempio: {[ "type": "select", "label": "Select di test", "name": "test", "ajax-source": "test", "select-options": "id_test=1,test=si" ]}.
      *
      * @param string $op
      * @param array  $elements
@@ -226,8 +221,6 @@ class SelectHandler implements HandlerInterface
      */
     protected function selectQuery($query, $values)
     {
-        $result = '';
-
         $database = database();
 
         $array = $database->fetchArray($query);

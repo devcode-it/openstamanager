@@ -16,7 +16,7 @@ if (!empty($record['default'])) {
     // Disabilito il pulsante di salvataggio
     echo '
     <script>
-    $(document).ready(function(){
+    $(document).ready(function() {
         $("#save").prop("disabled", true).addClass("disabled");
     });
     </script>

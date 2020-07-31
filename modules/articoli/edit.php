@@ -72,11 +72,11 @@ $_SESSION['superselect']['id_categoria'] = $record['id_categoria'];
 					{[ "type": "checkbox", "label": "<?php echo tr('Modifica quantità'); ?>", "name": "qta_manuale", "value": 0, "help": "<?php echo tr('Seleziona per modificare manualmente la quantità'); ?>", "placeholder": "<?php echo tr('Quantità manuale'); ?>", "extra": "<?php echo ($record['servizio']) ? 'disabled' : ''; ?>" ]}
 					<script type="text/javascript">
                         $(document).ready(function() {
-                            $('#servizio').click(function(){
+                            $('#servizio').click(function() {
                                 $("#qta_manuale").attr("disabled", $('#servizio').is(":checked"));
                             });
 
-    				        $('#qta_manuale').click(function(){
+    				        $('#qta_manuale').click(function() {
     							$("#qta").attr("readonly", !$('#qta_manuale').is(":checked"));
 								if($('#qta_manuale').is(":checked")){
 									$("#div_modifica_manuale").show();
@@ -313,7 +313,7 @@ echo '
 {( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
 <script>
-$("#categoria").change( function(){
+$("#categoria").change(function() {
 	session_set("superselect,id_categoria", $(this).val(), 0);
 	$("#subcategoria").val(null).trigger("change");
 });
@@ -334,7 +334,7 @@ function scorpora_iva() {
 	}
 }
 
-$("#scorpora_iva").click( function(){
+$("#scorpora_iva").click( function() {
 	scorpora_iva();
 });
 

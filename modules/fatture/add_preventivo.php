@@ -53,11 +53,11 @@ echo '
     var content = $("#righe_documento");
     var loader = $("#box-loading");
 
-    $(document).ready(function(){
+    $(document).ready(function() {
         loader.hide();
     });
 
-    $("#id_documento").on("change", function(){
+    $("#id_documento").on("change", function() {
         loader.show();
 
         var id = $(this).selectData() ? $(this).selectData().id  : "";

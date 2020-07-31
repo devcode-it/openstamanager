@@ -299,7 +299,7 @@ if ($bilancio_gia_chiuso) {
 
 <script>
 var tr = '';
-$(document).ready(function(){
+$(document).ready(function() {
     $("tr").each(function() {
         $(this).on("mouseover", function() {
             $(this).find(".tools").removeClass("hide");

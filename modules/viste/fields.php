@@ -213,7 +213,7 @@ echo '
 echo '
 <script>
     var n = '.$key.';
-    $(document).on("click", "#add", function(){
+    $(document).on("click", "#add", function() {
         cleanup_inputs();
 
         n++;
@@ -223,7 +223,7 @@ echo '
         restart_inputs();
     });
 
-    $(document).ready(function(){
+    $(document).ready(function() {
         $("#save").addClass("hide");
 
         $(".sortable" ).disableSelection();
@@ -236,7 +236,7 @@ echo '
                 update: function(event, ui) {
 
                     var order = "";
-                    $("div.panel-body.sortable  p[data-id]").each( function(){
+                    $("div.panel-body.sortable  p[data-id]").each( function() {
                         order += ","+$(this).data("id");
                     });
 

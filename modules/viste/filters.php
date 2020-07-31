@@ -4,7 +4,7 @@ echo '
 <form action="" method="post" role="form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="filters">
-	
+
     <div class="data">';
 
 $num = 0;
@@ -132,13 +132,13 @@ echo '
 echo '
 <script>
     var i = '.$num.';
-	$(document).on("click", "#add_filter", function(){
+	$(document).on("click", "#add_filter", function() {
 	    cleanup_inputs();
-	    
+
 		i++;
 		var text = replaceAll($("#template_filter").html(), "-id-", "" + i);
 		$(this).parent().parent().parent().find(".data").append(text);
-		
+
 		restart_inputs();
 	});
 </script>';

@@ -67,14 +67,14 @@ if ($record['can_delete']) {
 }
 ?>
 <script>
-	$(document).ready( function(){
-		$('.colorpicker').colorpicker().on('changeColor', function(){
+	$(document).ready( function() {
+		$('.colorpicker').colorpicker().on('changeColor', function() {
 			$('#colore').parent().find('.square').css( 'background', $('#colore').val() );
 		});
 		$('#colore').parent().find('.square').css( 'background', $('#colore').val() );
-	
 
-	$("#notifica").change( function(){
+
+	$("#notifica").change(function() {
 		if ($(this).is(":checked")) {
 			$("#email").attr("required", true);
 			$("#email").attr("disabled", false);

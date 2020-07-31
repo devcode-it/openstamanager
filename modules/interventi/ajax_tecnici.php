@@ -220,7 +220,7 @@ echo '
 <script>$(document).ready(init)</script>
 
 <script type="text/javascript">
-    $(document).ready(function(){';
+    $(document).ready(function() {';
 
 if (empty($sessioni)) {
     echo '
@@ -253,7 +253,7 @@ echo '
                 id_tecnico: id_tecnico,
             },
             type: "post",
-            success: function(){
+            success: function() {
                 $("#tecnici").load("'.$module->fileurl('ajax_tecnici.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record);
                 $("#costi").load("'.$module->fileurl('ajax_costi.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record);
             }
@@ -274,7 +274,7 @@ echo '
                     id_sessione: id_sessione,
                 },
                 type: "post",
-                success: function(){
+                success: function() {
                     $("#tecnici").load("'.$module->fileurl('ajax_tecnici.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record);
                     $("#costi").load("'.$module->fileurl('ajax_costi.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record);
                 }

@@ -242,26 +242,24 @@ switch ($resource) {
         break;
 
     case 'sedi_azienda':
-        if (isset($superselect['idanagrafica'])) {
-            $user = Auth::user();
-            $id_azienda = setting('Azienda predefinita');
+        $user = Auth::user();
+        $id_azienda = setting('Azienda predefinita');
 
-            $query = "SELECT * FROM (SELECT '0' AS id, CONCAT_WS(' - ', 'Sede legale' , (SELECT CONCAT (citta, ' (', ragione_sociale,')') FROM an_anagrafiche |where|)) AS descrizione UNION SELECT id, CONCAT_WS(' - ', nomesede, citta) FROM an_sedi |where|) AS tab |filter| ORDER BY descrizione";
+        $query = "SELECT * FROM (SELECT '0' AS id, CONCAT_WS(' - ', 'Sede legale' , (SELECT CONCAT (citta, ' (', ragione_sociale,')') FROM an_anagrafiche |where|)) AS descrizione UNION SELECT id, CONCAT_WS(' - ', nomesede, citta) FROM an_sedi |where|) AS tab |filter| ORDER BY descrizione";
 
-            foreach ($elements as $element) {
-                $filter[] = 'id='.prepare($element);
-            }
+        foreach ($elements as $element) {
+            $filter[] = 'id='.prepare($element);
+        }
 
-            $where[] = 'idanagrafica='.prepare($id_azienda);
-            //admin o utente senza una sede prefissata, avrà accesso a tutte le sedi
-            if (!empty($user->sedi) and !$user->is_admin) {
-                $where[] = 'id IN('.implode(',', $user->sedi).')';
-            }
+        $where[] = 'idanagrafica='.prepare($id_azienda);
+        //admin o utente senza una sede prefissata, avrà accesso a tutte le sedi
+        if (!empty($user->sedi) and !$user->is_admin) {
+            $where[] = 'id IN('.implode(',', $user->sedi).')';
+        }
 
-            if (!empty($search)) {
-                $search_fields[] = 'nomesede LIKE '.prepare('%'.$search.'%');
-                $search_fields[] = 'citta LIKE '.prepare('%'.$search.'%');
-            }
+        if (!empty($search)) {
+            $search_fields[] = 'nomesede LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = 'citta LIKE '.prepare('%'.$search.'%');
         }
 
         break;

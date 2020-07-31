@@ -70,11 +70,24 @@ function start_superselect() {
                 dataType: 'json',
                 delay: 250,
                 data: function (params) {
-                    return {
+                    const data = {
                         search: params.term,
                         page: params.page || 0,
                         length: params.length || 100,
-                    }
+                        options: {}, // Dati aggiuntivi
+                    };
+
+                    // Lettura dei dati aggiuntivi
+                    $(this).each(function () {
+                        $.each(this.attributes, function () {
+                            if (this.specified && this.name.startsWith('data-select-')) {
+                                const name = this.name.replace('data-select-', '');
+                                data.options[name] = this.value;
+                            }
+                        });
+                    });
+
+                    return data;
                 },
                 processResults: function (data, params) {
                     params.page = params.page || 0;
@@ -163,7 +176,7 @@ jQuery.fn.selectAdd = function (values) {
 
     values.forEach(function (item) {
         if (item.data) {
-            Object.keys(item.data).forEach(function(element) {
+            Object.keys(item.data).forEach(function (element) {
                 item['data-' + element] = item.data[element];
             });
         }
@@ -195,4 +208,13 @@ jQuery.fn.selectData = function () {
             return $select_obj[0].element.dataset;
         }
     }
+};
+
+/**
+ * Imposta le informazioni aggiuntive di un <select> creato con select2.
+ */
+jQuery.fn.selectInfo = function (name, value) {
+    this.attr('data-select-' + name, value);
+
+    return this;
 };

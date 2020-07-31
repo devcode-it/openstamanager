@@ -40,6 +40,7 @@ class Upload extends Model
         foreach ($data as $key => $value) {
             $model->{$key} = $value;
         }
+        $original_name = $model->original_name; // Fix per "original_name" variato in modo dinamico
 
         // Nome fisico del file
         $directory = DOCROOT.'/'.$model->directory;

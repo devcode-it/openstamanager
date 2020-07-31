@@ -165,3 +165,106 @@ UPDATE `co_righe_promemoria` INNER JOIN `co_iva` ON `co_iva`.`id` = `co_righe_pr
 -- Fix namespace classi Stampa e Allegato per API
 UPDATE `zz_api_resources` SET `class` = 'API\\Common\\Stampa' WHERE `class` = 'Api\\Common\\Stampa';
 UPDATE `zz_api_resources` SET `class` = 'API\\Common\\Allegato' WHERE `class` = 'Api\\Common\\Allegato';
+
+-- Aggiunta risorse API dedicate all'applicazione
+DELETE FROM `zz_api_resources` WHERE `version` = 'app-v1';
+INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES
+-- Login
+(NULL, 'app-v1', 'create', 'login', 'API\\App\\v1\\Login', '1'),
+-- Clienti
+(NULL, 'app-v1', 'retrieve', 'clienti', 'API\\App\\v1\\Clienti', '1'),
+(NULL, 'app-v1', 'retrieve', 'clienti-cleanup', 'API\\App\\v1\\Clienti', '1'),
+(NULL, 'app-v1', 'retrieve', 'cliente', 'API\\App\\v1\\Clienti', '1'),
+-- Tecnici
+(NULL, 'app-v1', 'retrieve', 'tecnici', 'API\\App\\v1\\Tecnici', '1'),
+(NULL, 'app-v1', 'retrieve', 'tecnici-cleanup', 'API\\App\\v1\\Tecnici', '1'),
+(NULL, 'app-v1', 'retrieve', 'tecnico', 'API\\App\\v1\\Tecnici', '1'),
+-- Sedi
+(NULL, 'app-v1', 'retrieve', 'sedi', 'API\\App\\v1\\Sedi', '1'),
+(NULL, 'app-v1', 'retrieve', 'sedi-cleanup', 'API\\App\\v1\\Sedi', '1'),
+(NULL, 'app-v1', 'retrieve', 'sede', 'API\\App\\v1\\Sedi', '1'),
+-- Referenti
+(NULL, 'app-v1', 'retrieve', 'referenti', 'API\\App\\v1\\Referenti', '1'),
+(NULL, 'app-v1', 'retrieve', 'referenti-cleanup', 'API\\App\\v1\\Referenti', '1'),
+(NULL, 'app-v1', 'retrieve', 'referente', 'API\\App\\v1\\Referenti', '1'),
+-- Impianti
+(NULL, 'app-v1', 'retrieve', 'impianti', 'API\\App\\v1\\Impianti', '1'),
+(NULL, 'app-v1', 'retrieve', 'impianti-cleanup', 'API\\App\\v1\\Impianti', '1'),
+(NULL, 'app-v1', 'retrieve', 'impianto', 'API\\App\\v1\\Impianti', '1'),
+-- Stati degli interventi
+(NULL, 'app-v1', 'retrieve', 'stati-intervento', 'API\\App\\v1\\StatiIntervento', '1'),
+(NULL, 'app-v1', 'retrieve', 'stati-intervento-cleanup', 'API\\App\\v1\\StatiIntervento', '1'),
+(NULL, 'app-v1', 'retrieve', 'stato-intervento', 'API\\App\\v1\\StatiIntervento', '1'),
+-- Tipi degli interventi
+(NULL, 'app-v1', 'retrieve', 'tipi-intervento', 'API\\App\\v1\\TipiIntervento', '1'),
+(NULL, 'app-v1', 'retrieve', 'tipi-intervento-cleanup', 'API\\App\\v1\\TipiIntervento', '1'),
+(NULL, 'app-v1', 'retrieve', 'tipo-intervento', 'API\\App\\v1\\TipiIntervento', '1'),
+-- Articoli
+(NULL, 'app-v1', 'retrieve', 'articoli', 'API\\App\\v1\\Articoli', '1'),
+(NULL, 'app-v1', 'retrieve', 'articoli-cleanup', 'API\\App\\v1\\Articoli', '1'),
+(NULL, 'app-v1', 'retrieve', 'articolo', 'API\\App\\v1\\Articoli', '1'),
+-- Interventi
+(NULL, 'app-v1', 'retrieve', 'interventi', 'API\\App\\v1\\Interventi', '1'),
+(NULL, 'app-v1', 'retrieve', 'interventi-cleanup', 'API\\App\\v1\\Interventi', '1'),
+(NULL, 'app-v1', 'retrieve', 'intervento', 'API\\App\\v1\\Interventi', '1'),
+(NULL, 'app-v1', 'create', 'intervento', 'API\\App\\v1\\Interventi', '1'),
+(NULL, 'app-v1', 'update', 'intervento', 'API\\App\\v1\\Interventi', '1'),
+(NULL, 'app-v1', 'delete', 'intervento', 'API\\App\\v1\\Interventi', '1'),
+-- Sessioni degli interventi
+(NULL, 'app-v1', 'retrieve', 'sessioni', 'API\\App\\v1\\SessioniInterventi', '1'),
+(NULL, 'app-v1', 'retrieve', 'sessioni-cleanup', 'API\\App\\v1\\SessioniInterventi', '1'),
+(NULL, 'app-v1', 'retrieve', 'sessione', 'API\\App\\v1\\SessioniInterventi', '1'),
+(NULL, 'app-v1', 'delete', 'sessione', 'API\\App\\v1\\SessioniInterventi', '1'),
+(NULL, 'app-v1', 'create', 'sessione', 'API\\App\\v1\\SessioniInterventi', '1'),
+(NULL, 'app-v1', 'update', 'sessione', 'API\\App\\v1\\SessioniInterventi', '1'),
+-- Righe degli interventi
+(NULL, 'app-v1', 'retrieve', 'righe-interventi', 'API\\App\\v1\\RigheInterventi', '1'),
+(NULL, 'app-v1', 'retrieve', 'righe-interventi-cleanup', 'API\\App\\v1\\RigheInterventi', '1'),
+(NULL, 'app-v1', 'retrieve', 'riga-intervento', 'API\\App\\v1\\RigheInterventi', '1'),
+(NULL, 'app-v1', 'create', 'riga-intervento', 'API\\App\\v1\\RigheInterventi', '1'),
+(NULL, 'app-v1', 'update', 'riga-intervento', 'API\\App\\v1\\RigheInterventi', '1'),
+(NULL, 'app-v1', 'delete', 'riga-intervento', 'API\\App\\v1\\RigheInterventi', '1'),
+-- Aliquote IVA
+(NULL, 'app-v1', 'retrieve', 'aliquote-iva', 'API\\App\\v1\\AliquoteIva', '1'),
+(NULL, 'app-v1', 'retrieve', 'aliquote-iva-cleanup', 'API\\App\\v1\\AliquoteIva', '1'),
+(NULL, 'app-v1', 'retrieve', 'aliquota-iva', 'API\\App\\v1\\AliquoteIva', '1'),
+-- Impostazioni (non modificabili)
+(NULL, 'app-v1', 'retrieve', 'impostazioni', 'API\\App\\v1\\Impostazioni', '1'),
+(NULL, 'app-v1', 'retrieve', 'impostazioni-cleanup', 'API\\App\\v1\\Impostazioni', '1'),
+(NULL, 'app-v1', 'retrieve', 'impostazione', 'API\\App\\v1\\Impostazioni', '1'),
+-- Contratti
+(NULL, 'app-v1', 'retrieve', 'contratti', 'API\\App\\v1\\Contratti', '1'),
+(NULL, 'app-v1', 'retrieve', 'contratti-cleanup', 'API\\App\\v1\\Contratti', '1'),
+(NULL, 'app-v1', 'retrieve', 'contratto', 'API\\App\\v1\\Contratti', '1'),
+-- Preventivi
+(NULL, 'app-v1', 'retrieve', 'preventivi', 'API\\App\\v1\\Preventivi', '1'),
+(NULL, 'app-v1', 'retrieve', 'preventivi-cleanup', 'API\\App\\v1\\Preventivi', '1'),
+(NULL, 'app-v1', 'retrieve', 'preventivo', 'API\\App\\v1\\Preventivi', '1'),
+-- Sedi
+(NULL, 'app-v1', 'retrieve', 'preventivi', 'API\\App\\v1\\Preventivi', '1'),
+(NULL, 'app-v1', 'retrieve', 'preventivi-cleanup', 'API\\App\\v1\\Preventivi', '1'),
+(NULL, 'app-v1', 'retrieve', 'preventivo', 'API\\App\\v1\\Preventivi', '1'),
+-- Tariffe dei tecnici
+(NULL, 'app-v1', 'retrieve', 'tariffe-tecnici', 'API\\App\\v1\\TariffeTecnici', '1'),
+(NULL, 'app-v1', 'retrieve', 'tariffe-tecnici-cleanup', 'API\\App\\v1\\TariffeTecnici', '1'),
+(NULL, 'app-v1', 'retrieve', 'tariffa-tecnico', 'API\\App\\v1\\TariffeTecnici', '1'),
+-- Tariffe relative ai contratti
+(NULL, 'app-v1', 'retrieve', 'tariffe-contratti', 'API\\App\\v1\\TariffeContratti', '1'),
+(NULL, 'app-v1', 'retrieve', 'tariffe-contratti-cleanup', 'API\\App\\v1\\TariffeContratti', '1'),
+(NULL, 'app-v1', 'retrieve', 'tariffa-contratto', 'API\\App\\v1\\TariffeContratti', '1'),
+-- Allegati
+(NULL, 'app-v1', 'retrieve', 'allegati-interventi', 'API\\App\\v1\\AllegatiInterventi', '1'),
+(NULL, 'app-v1', 'retrieve', 'allegati-interventi-cleanup', 'API\\App\\v1\\AllegatiInterventi', '1'),
+(NULL, 'app-v1', 'retrieve', 'allegato-intervento', 'API\\App\\v1\\AllegatiInterventi', '1'),
+(NULL, 'app-v1', 'create', 'allegato-intervento', 'API\\App\\v1\\AllegatiInterventi', '1'),
+-- Email di rapportino intervento
+(NULL, 'app-v1', 'retrieve', 'email-rapportino', 'API\\App\\v1\\RapportinoIntervento', '1'),
+(NULL, 'app-v1', 'create', 'email-rapportino', 'API\\App\\v1\\RapportinoIntervento', '1');
+
+-- Impostazioni relative all'applicazione
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES
+(NULL, 'Google Maps API key', '', 'string', '1', 'Applicazione', 1),
+(NULL, 'Mostra prezzi', '1', 'boolean', '1', 'Applicazione', 1);
+
+-- Aggiunta risorsa per il download degli allegati
+INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES (NULL, 'v1', 'retrieve', 'allegato', 'API\\Common\\Allegato', '1');

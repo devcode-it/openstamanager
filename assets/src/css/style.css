@@ -912,6 +912,15 @@ input.small-width {
     margin-top: 1.4rem;
 }
 
+/** Fix tooltip per elementi disabilitati. */
+div.tip {
+    display: inline-block !important;
+}
+
+.disabled {
+    pointer-events: none
+}
+
 /* Fancy checkbox: https://bootsnipp.com/snippets/M2bda */
 .form-group input[type="checkbox"] {
     display: none;

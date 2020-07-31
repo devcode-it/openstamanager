@@ -11,9 +11,13 @@ $stati_abilitati = $dbo->fetchOne('SELECT GROUP_CONCAT(`descrizione` SEPARATOR "
 
 // Crea revisione
 echo '
-<button type="button" class="btn btn-warning '.($record['is_revisionabile'] ? '' : 'disabled tip').'" onclick="if(confirm(\'Vuoi creare un nuova revisione?\')){$(\'#crea-revisione\').submit();}" '.($record['is_revisionabile'] ? '' : 'disabled').' title="'.($record['is_revisionabile'] ? '' : tr('Per creare una nuova revisione lo stato del preventivo deve essere tra: ').$stati_abilitati).'">
-    <i class="fa fa-edit"></i> '.tr('Crea nuova revisione...').'
-</button>';
+<div class="tip" data-toggle="tooltip" title="'.tr('Per creare una nuova revisione lo stato del preventivo deve essere tra: _STATE_LIST_', [
+        '_STATE_LIST_' => $stati_abilitati,
+    ]).'">
+    <button type="button" class="btn btn-warning '.($record['is_revisionabile'] ? '' : 'disabled').'" onclick="if(confirm(\'Vuoi creare un nuova revisione?\')){$(\'#crea-revisione\').submit();}">
+        <i class="fa fa-edit"></i> '.tr('Crea nuova revisione...').'
+    </button>
+</div>';
 
 $rs_documento = $dbo->fetchArray('SELECT * FROM co_righe_preventivi WHERE idpreventivo='.prepare($id_record));
 
@@ -23,11 +27,11 @@ $stati_abilitati = $dbo->fetchOne('SELECT GROUP_CONCAT(`descrizione` SEPARATOR "
 
 // Creazione altri documenti
 echo '
-<div class="btn-group">
-    <button class="btn btn-info dropdown-toggle '.($disabled ? '' : 'disabled tip').'" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" '.($disabled ? '' : 'disabled').'  title="'.($disabled ? '' : tr('Per creare un documento deve essere inserita almeno una riga e lo stato del preventivo deve essere tra: _STATE_LIST_', [
-            '_STATE_LIST_' => $stati_abilitati,
-        ])).'" >
-        <i class="fa fa-magic"></i> '.tr('Crea').'
+<div style="margin-left: 4px" class="dropdown pull-right tip" data-toggle="tooltip" title="'.tr('Per creare un documento deve essere inserita almeno una riga e lo stato del preventivo deve essere tra: _STATE_LIST_', [
+        '_STATE_LIST_' => $stati_abilitati,
+    ]).'">
+    <button class="btn btn-info dropdown-toggle '.($disabled ? '' : 'disabled').'" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        <i class="fa fa-magic"></i>&nbsp;'.tr('Crea').'...
         <span class="caret"></span>
     </button>
     <ul class="dropdown-menu dropdown-menu-right">

@@ -2,6 +2,8 @@
 
 namespace HTMLBuilder\Handler;
 
+use AJAX;
+
 /**
  * Gestione dell'input di tipo "select".
  *
@@ -117,17 +119,18 @@ class SelectHandler implements HandlerInterface
 
     /**
      * Gestione dell'input di tipo "select" con richieste AJAX (nome della richiesta indicato tramite attributo "ajax-source").
-     * Esempio: {[ "type": "select", "label": "Select di test", "name": "test", "ajax-source": "test" ]}.
+     * Esempio: {[ "type": "select", "label": "Select di test", "name": "test", "ajax-source": "test", "ajax-info": "id_test=1,test=si" ]}.
      *
      * @param string $op
-     * @param array  $elements
+     * @param array $elements
+     * @param array $info
      *
      * @return string
      */
     protected function select2($op, $elements, $info)
     {
         // Richiamo del file dedicato alle richieste AJAX per ottenere il valore iniziale del select
-        $response = \AJAX::select($op, $elements, null, 0, 100, $info);
+        $response = AJAX::select($op, $elements, null, 0, 100, $info);
 
         $html = '';
         $results = $response['results'];

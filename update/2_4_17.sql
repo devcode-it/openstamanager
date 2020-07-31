@@ -154,3 +154,7 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 
 -- Modifica di MyImpianti in Impianti
 UPDATE `zz_modules` SET `name` = 'Impianti', `title` = IF(`title` = 'MyImpianti', 'Impianti', `title`), `directory` = 'impianti' WHERE `zz_modules`.`name` = 'MyImpianti';
+
+-- Rimozione stato di Interventi "Chiamata" se inutilizzato
+DELETE FROM `in_statiintervento` WHERE `codice` = 'CALL' AND `descrizione` = 'Chiamata' AND
+   NOT EXISTS(SELECT `idstatointervento` FROM `in_interventi` WHERE `in_interventi`.`idstatointervento` = `in_statiintervento`.`idstatointervento`) ;

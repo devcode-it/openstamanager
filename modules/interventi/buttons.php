@@ -36,3 +36,19 @@ function anteprimaFirma() {
     openModal("'.tr('Anteprima e firma').'", "'.$module->fileurl('add_firma.php').'?id_module='.$id_module.'&id_record='.$id_record.'&anteprima=1");
 }
 </script>';
+
+// Creazione altri documenti
+echo '
+<div class="btn-group">
+	<button class="btn btn-info dropdown-toggle '.(!$record['flag_completato'] ? 'disabled' : '').'" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+		<i class="fa fa-magic"></i> '.tr('Crea').'
+		<span class="caret"></span>
+	</button>
+	<ul class="dropdown-menu dropdown-menu-right">
+        <li>
+            <a data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=fattura" data-toggle="modal" data-title="'.tr('Crea fattura').'">
+                <i class="fa fa-file"></i> '.tr('Fattura').'
+            </a>
+        </li>
+    </ul>
+</div>';

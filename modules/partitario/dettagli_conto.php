@@ -85,5 +85,5 @@ function open_movimento(id_mastrino, id_module){
 </script>';
 } else {
     echo '
-<span>&nbsp;'.tr('Nessun movimento presente').'</span>';
+<span>'.tr('Nessun movimento presente').'</span>';
 }

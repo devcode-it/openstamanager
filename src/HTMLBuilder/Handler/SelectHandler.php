@@ -122,8 +122,8 @@ class SelectHandler implements HandlerInterface
      * Esempio: {[ "type": "select", "label": "Select di test", "name": "test", "ajax-source": "test", "ajax-info": "id_test=1,test=si" ]}.
      *
      * @param string $op
-     * @param array $elements
-     * @param array $info
+     * @param array  $elements
+     * @param array  $info
      *
      * @return string
      */

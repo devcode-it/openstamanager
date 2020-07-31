@@ -924,6 +924,7 @@ input.small-width {
 .form-group input[type="checkbox"] + .btn-group {
     width: 100%;
     display: flex;
+    overflow: auto;
 }
 
 .form-group input[type="checkbox"] + .btn-group label:last-child {

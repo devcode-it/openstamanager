@@ -3,28 +3,30 @@
 include_once __DIR__.'/../../core.php';
 
 echo '
-<table class="table table-striped table-hover table-condensed table-bordered">
-    <thead>
-        <tr>
-            <th width="35" class="text-center" >'.tr('#').'</th>
-			<th>'.tr('Descrizione').'</th>
-			<th class="text-center tip" width="150" title="'.tr('da evadere').' / '.tr('totale').'">'.tr('Q.tà').' <i class="fa fa-question-circle-o"></i></th>
-			<th class="text-center" width="150">'.tr('Prezzo unitario').'</th>
-            <th class="text-center" width="150">'.tr('Iva unitaria').'</th>
-            <th class="text-center" width="150">'.tr('Importo').'</th>
-			<th width="100"></th>
-		</tr>
-	</thead>
-    <tbody class="sortable">';
+<div class="table-responsive">
+    <table class="table table-striped table-hover table-condensed table-bordered">
+        <thead>
+            <tr>
+                <th width="35" class="text-center" >'.tr('#').'</th>
+                <th>'.tr('Descrizione').'</th>
+                <th class="text-center tip" width="150" title="'.tr('da evadere').' / '.tr('totale').'">'.tr('Q.tà').' <i class="fa fa-question-circle-o"></i></th>
+                <th class="text-center" width="150">'.tr('Prezzo unitario').'</th>
+                <th class="text-center" width="150">'.tr('Iva unitaria').'</th>
+                <th class="text-center" width="150">'.tr('Importo').'</th>
+                <th width="100"></th>
+            </tr>
+        </thead>
+
+        <tbody class="sortable">';
 
 // Righe documento
 $righe = $contratto->getRighe();
 foreach ($righe as $riga) {
     echo '
-        <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'">
-            <td class="text-center">
-                '.(($riga->order) + 1).'
-            </td>';
+            <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'">
+                <td class="text-center">
+                    '.(($riga->order) + 1).'
+                </td>';
 
     // Descrizione
     $descrizione = nl2br($riga->descrizione);
@@ -33,87 +35,87 @@ foreach ($righe as $riga) {
     }
 
     echo '
-            <td>
-                '.$descrizione.'
-            </td>';
+                <td>
+                    '.$descrizione.'
+                </td>';
 
     if ($riga->isDescrizione()) {
         echo '
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>';
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>';
     } else {
         // Quantità e unità di misura
         echo '
-        <td class="text-center">
-            '.numberFormat($riga->qta_rimanente, 'qta').' / '.numberFormat($riga->qta, 'qta').' '.$r['um'].'
-        </td>';
+                <td class="text-center">
+                    '.numberFormat($riga->qta_rimanente, 'qta').' / '.numberFormat($riga->qta, 'qta').' '.$riga->um.'
+                </td>';
 
         // Prezzi unitari
         echo '
-        <td class="text-right">
-            '.moneyFormat($riga->prezzo_unitario_corrente);
+                <td class="text-right">
+                    '.moneyFormat($riga->prezzo_unitario_corrente);
 
         if ($dir == 'entrata' && $riga->costo_unitario != 0) {
             echo '
-            <br><small class="text-muted">
-                '.tr('Acquisto').': '.moneyFormat($riga->costo_unitario).'
-            </small>';
+                    <br><small class="text-muted">
+                        '.tr('Acquisto').': '.moneyFormat($riga->costo_unitario).'
+                    </small>';
         }
 
         if (abs($riga->sconto_unitario) > 0) {
             $text = discountInfo($riga);
 
             echo '
-            <br><small class="label label-danger">'.$text.'</small>';
+                    <br><small class="label label-danger">'.$text.'</small>';
         }
 
         echo '
-        </td>';
+                </td>';
 
         // Iva
         echo '
-        <td class="text-right">
-            '.moneyFormat($riga->iva_unitaria).'
-            <br><small class="'.(($riga->aliquota->deleted_at) ? 'text-red' : '').' text-muted">'.$riga->aliquota->descrizione.(($riga->aliquota->esente) ? ' ('.$riga->aliquota->codice_natura_fe.')' : null).'</small>
-        </td>';
+                <td class="text-right">
+                    '.moneyFormat($riga->iva_unitaria).'
+                    <br><small class="'.(($riga->aliquota->deleted_at) ? 'text-red' : '').' text-muted">'.$riga->aliquota->descrizione.(($riga->aliquota->esente) ? ' ('.$riga->aliquota->codice_natura_fe.')' : null).'</small>
+                </td>';
 
         // Importo
         echo '
-        <td class="text-right">
-            '.moneyFormat($riga->importo).'
-        </td>';
+                <td class="text-right">
+                    '.moneyFormat($riga->importo).'
+                </td>';
     }
 
     // Possibilità di rimuovere una riga solo se il preventivo non è stato pagato
     echo '
-            <td class="text-center">';
+                <td class="text-center">';
 
     if (empty($record['is_completato'])) {
         echo '
-                <div class="btn-group">
-                    <a class="btn btn-xs btn-warning" title="'.tr('Modifica riga').'" onclick="modificaRiga(this)">
-                        <i class="fa fa-edit"></i>
-                    </a>
+                    <div class="btn-group">
+                        <a class="btn btn-xs btn-warning" title="'.tr('Modifica riga').'" onclick="modificaRiga(this)">
+                            <i class="fa fa-edit"></i>
+                        </a>
 
-                    <a class="btn btn-xs btn-danger" title="'.tr('Rimuovi riga').'" onclick="rimuoviRiga(this)">
-                        <i class="fa fa-trash"></i>
-                    </a>
+                        <a class="btn btn-xs btn-danger" title="'.tr('Rimuovi riga').'" onclick="rimuoviRiga(this)">
+                            <i class="fa fa-trash"></i>
+                        </a>
 
-                    <a class="btn btn-xs btn-default handle" title="'.tr('Modifica ordine delle righe').'">
-                        <i class="fa fa-sort"></i>
-                    </a>
-                </div>';
+                        <a class="btn btn-xs btn-default handle" title="'.tr('Modifica ordine delle righe').'">
+                            <i class="fa fa-sort"></i>
+                        </a>
+                    </div>';
     }
 
     echo '
-            </td>
-        </tr>';
+                </td>
+            </tr>';
 }
 
 echo '
-    </tbody>';
+        </tbody>';
 
 // Calcoli
 $imponibile = abs($contratto->imponibile);
@@ -124,68 +126,69 @@ $totale = abs($contratto->totale);
 
 // Totale totale imponibile
 echo '
-    <tr>
-        <td colspan="5" class="text-right">
-            <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
-        </td>
-        <td class="text-right">
-            '.moneyFormat($contratto->imponibile, 2).'
-        </td>
-        <td></td>
-    </tr>';
+        <tr>
+            <td colspan="5" class="text-right">
+                <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
+            </td>
+            <td class="text-right">
+                '.moneyFormat($contratto->imponibile, 2).'
+            </td>
+            <td></td>
+        </tr>';
 
 // SCONTO
 if (!empty($sconto)) {
     echo '
-    <tr>
-        <td colspan="5" class="text-right">
-            <b><span class="tip" title="'.tr('Un importo positivo indica uno sconto, mentre uno negativo indica una maggiorazione').'"> <i class="fa fa-question-circle-o"></i> '.tr('Sconto/maggiorazione', [], ['upper' => true]).':</span></b>
-        </td>
-        <td class="text-right">
-            '.moneyFormat($contratto->sconto, 2).'
-        </td>
-        <td></td>
-    </tr>';
+        <tr>
+            <td colspan="5" class="text-right">
+                <b><span class="tip" title="'.tr('Un importo positivo indica uno sconto, mentre uno negativo indica una maggiorazione').'"> <i class="fa fa-question-circle-o"></i> '.tr('Sconto/maggiorazione', [], ['upper' => true]).':</span></b>
+            </td>
+            <td class="text-right">
+                '.moneyFormat($contratto->sconto, 2).'
+            </td>
+            <td></td>
+        </tr>';
 
     // Totale totale imponibile
     echo '
-    <tr>
-        <td colspan="5" class="text-right">
-            <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
-        </td>
-        <td class="text-right">
-            '.moneyFormat($totale_imponibile, 2).'
-        </td>
-        <td></td>
-    </tr>';
+        <tr>
+            <td colspan="5" class="text-right">
+                <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
+            </td>
+            <td class="text-right">
+                '.moneyFormat($totale_imponibile, 2).'
+            </td>
+            <td></td>
+        </tr>';
 }
 
 // Totale iva
 echo '
-    <tr>
-        <td colspan="5" class="text-right">
-            <b>'.tr('Iva', [], ['upper' => true]).':</b>
-        </td>
-        <td class="text-right">
-            '.moneyFormat($contratto->iva, 2).'
-        </td>
-        <td></td>
-    </tr>';
+        <tr>
+            <td colspan="5" class="text-right">
+                <b>'.tr('Iva', [], ['upper' => true]).':</b>
+            </td>
+            <td class="text-right">
+                '.moneyFormat($contratto->iva, 2).'
+            </td>
+            <td></td>
+        </tr>';
 
 // Totale contratto
 echo '
-    <tr>
-        <td colspan="5" class="text-right">
-            <b>'.tr('Totale', [], ['upper' => true]).':</b>
-        </td>
-        <td class="text-right">
-            '.moneyFormat($contratto->totale, 2).'
-        </td>
-        <td></td>
-    </tr>';
+        <tr>
+            <td colspan="5" class="text-right">
+                <b>'.tr('Totale', [], ['upper' => true]).':</b>
+            </td>
+            <td class="text-right">
+                '.moneyFormat($contratto->totale, 2).'
+            </td>
+            <td></td>
+        </tr>';
 
 echo '
-</table>';
+    </table>
+</div>';
 
 echo '
 <script>

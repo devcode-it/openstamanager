@@ -195,7 +195,7 @@ if (!empty($id_intervento)) {
 
 			<div class="row">
                 <div class="col-md-6" id='impianti'>
-                    {[ "type": "select", "label": "<?php echo tr('Impianto'); ?>", "multiple": 1, "name": "idimpianti[]", "value": "<?php echo $idimpianto; ?>"<?php echo !empty($idanagrafica) ? '' : ', "placeholder": "'.tr('Seleziona prima un cliente').'..."'; ?>, "ajax-source": "impianti-cliente", "icon-after": "add|<?php echo Modules::get('MyImpianti')['id']; ?>|source=Attività||<?php echo (intval($idimpianto)) ? '' : 'disabled'; ?>", "data-heavy": 0 ]}
+                    {[ "type": "select", "label": "<?php echo tr('Impianto'); ?>", "multiple": 1, "name": "idimpianti[]", "value": "<?php echo $idimpianto; ?>"<?php echo !empty($idanagrafica) ? '' : ', "placeholder": "'.tr('Seleziona prima un cliente').'..."'; ?>, "ajax-source": "impianti-cliente", "icon-after": "add|<?php echo Modules::get('Impianti')['id']; ?>|source=Attività||<?php echo (intval($idimpianto)) ? '' : 'disabled'; ?>", "data-heavy": 0 ]}
                 </div>
 
                 <div class="col-md-6">

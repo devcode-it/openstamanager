@@ -5,7 +5,7 @@ include_once __DIR__.'/../../../core.php';
 $matricole = (array) post('matricole');
 
 // Salvo gli impianti selezionati
-if (filter('op') == 'link_myimpianti') {
+if (filter('op') == 'link_Impianti') {
     $matricole_old = $dbo->fetchArray('SELECT * FROM my_impianti_interventi WHERE idintervento='.prepare($id_record));
     $matricole_old = array_column($matricole_old, 'idimpianto');
 
@@ -87,7 +87,7 @@ foreach ($rs as $r) {
                     <tr>
                         <td class="text-right">'.tr('Nome').':</td>
                         <td valign="top">
-                            '.Modules::link('MyImpianti', $r['id'], $r['nome']).'
+                            '.Modules::link('Impianti', $r['id'], $r['nome']).'
                         </td>
                     </tr>';
 
@@ -143,7 +143,7 @@ $sedi = $dbo->fetchArray('SELECT id, nomesede, citta FROM an_sedi WHERE idanagra
 
 echo '
         <p><strong>'.tr('Impianti disponibili').'</strong></p>
-        <form action="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=link_myimpianti" method="post">
+        <form action="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=link_Impianti" method="post">
             <input type="hidden" name="backto" value="record-edit">
             <div class="row">
                 <div class="col-xs-12 col-md-6">
@@ -153,7 +153,7 @@ echo '
             <br><br>
             <button type="submit" class="btn btn-success" '.$disabled.'><i class="fa fa-check"></i> '.tr('Salva impianti').'</button>
 
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-title="'.tr('Aggiungi impianto').'" data-href="'.$rootdir.'/add.php?id_module='.Modules::get('MyImpianti')['id'].'&source=Attività&select=idimpianti&ajax=yes"><i class="fa fa-plus"></i> '.tr('Aggiungi impianto').'</button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-title="'.tr('Aggiungi impianto').'" data-href="'.$rootdir.'/add.php?id_module='.Modules::get('Impianti')['id'].'&source=Attività&select=idimpianti&ajax=yes"><i class="fa fa-plus"></i> '.tr('Aggiungi impianto').'</button>
 
         </form>';
 

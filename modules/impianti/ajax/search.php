@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../../core.php';
 
-$link_id = Modules::get('MyImpianti')['id'];
+$link_id = Modules::get('Impianti')['id'];
 
 $fields = [
     'Matricola' => 'matricola',
@@ -25,7 +25,7 @@ foreach ($fields as $name => $value) {
     $query .= ' OR '.$value.' LIKE "%'.$term.'%"';
 }
 
-$query .= Modules::getAdditionalsQuery('MyImpianti');
+$query .= Modules::getAdditionalsQuery('Impianti');
 
 $rs = $dbo->fetchArray($query);
 
@@ -34,7 +34,7 @@ foreach ($rs as $r) {
 
     $result['link'] = ROOTDIR.'/editor.php?id_module='.$link_id.'&id_record='.$r['id'];
     $result['title'] = $r['matricola'].' - '.$r['nome'];
-    $result['category'] = 'MyImpianti';
+    $result['category'] = 'Impianti';
 
     // Campi da evidenziare
     $result['labels'] = [];

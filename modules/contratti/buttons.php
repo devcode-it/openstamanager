@@ -25,7 +25,9 @@ echo '
 
 // Duplica contratto
 echo'
-<button type="button" class="btn btn-primary" onclick="if( confirm(\''.tr('Duplicare questo contratto?').'\') ){ $(\'#copia-contratto\').submit(); }"> <i class="fa fa-copy"></i> '.tr('Duplica contratto').'</button>';
+<button type="button" class="btn btn-primary" onclick="if( confirm(\''.tr('Duplicare questo contratto?').'\') ){ $(\'#copia-contratto\').submit(); }">
+    <i class="fa fa-copy"></i> '.tr('Duplica contratto').'
+</button>';
 
 echo '
 <form action="" method="post" id="copia-contratto">

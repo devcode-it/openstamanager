@@ -28,7 +28,7 @@ $info = $dbo->fetchOne($query);
         </div>
 
         <div class="col-md-8">
-            {[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "<?php echo $info['descrizione']; ?>" ]}
+            {[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": <?php echo json_encode($info['descrizione']); ?> ]}
         </div>
     </div>
     <br>

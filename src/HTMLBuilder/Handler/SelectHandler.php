@@ -2,6 +2,8 @@
 
 namespace HTMLBuilder\Handler;
 
+use AJAX;
+
 /**
  * Gestione dell'input di tipo "select".
  *
@@ -28,6 +30,21 @@ class SelectHandler implements HandlerInterface
             $values['value'] = setting($values['valore_predefinito']);
         }
 
+        // Informazioni aggiuntive per il select
+        $infos = [];
+        if (!empty($values['ajax-info'])) {
+            $list = explode(',', $values['ajax-info']);
+
+            foreach ($list as $element) {
+                list($name, $value) = explode('=', $element);
+
+                $values['data-select-'.$name] = $value;
+                $infos[$name] = $value;
+            }
+
+            unset($values['ajax-info']);
+        }
+
         $values['value'] = (array) $values['value'];
 
         // Inizializzazione del codice HTML
@@ -38,7 +55,7 @@ class SelectHandler implements HandlerInterface
         // Gestione delle richieste AJAX (se il campo "ajax-source" è impostato)
         if (!empty($values['ajax-source'])) {
             if (!empty($values['value']) || is_numeric($values['value'])) {
-                $result .= $this->select2($values['ajax-source'], $values['value']);
+                $result .= $this->select2($values['ajax-source'], $values['value'], $infos);
             }
         } else {
             if (!in_array('multiple', $extras)) {
@@ -102,24 +119,20 @@ class SelectHandler implements HandlerInterface
 
     /**
      * Gestione dell'input di tipo "select" con richieste AJAX (nome della richiesta indicato tramite attributo "ajax-source").
-     * Esempio: {[ "type": "select", "label": "Select di test", "name": "test", "ajax-source": "test" ]}.
+     * Esempio: {[ "type": "select", "label": "Select di test", "name": "test", "ajax-source": "test", "ajax-info": "id_test=1,test=si" ]}.
      *
      * @param string $op
-     * @param array  $elements
+     * @param array $elements
+     * @param array $info
      *
      * @return string
      */
-    protected function select2($op, $elements)
+    protected function select2($op, $elements, $info)
     {
         // Richiamo del file dedicato alle richieste AJAX per ottenere il valore iniziale del select
-        ob_start();
-        $dbo = database();
-        include DOCROOT.'/ajax_select.php';
-        $text = ob_get_clean();
+        $response = AJAX::select($op, $elements, null, 0, 100, $info);
 
         $html = '';
-
-        $response = (array) json_decode($text, true);
         $results = $response['results'];
         foreach ($results as $element) {
             $element = (array) $element;

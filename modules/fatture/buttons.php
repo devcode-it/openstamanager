@@ -3,13 +3,7 @@
 include_once __DIR__.'/../../core.php';
 
 echo '
-
-<form action="" class="text-right" method="post" id="form-copy">
-    <input type="hidden" name="backto" value="record-edit">
-    <input type="hidden" name="op" value="copy">
-</form>
-
-<button type="button" class="btn btn-primary" '.(empty($record['reversed']) ? '' : 'disabled').' onclick="if( confirm(\'Duplicare questa fattura?\') ){ $(\'#form-copy\').submit(); }">
+<button type="button" class="btn btn-primary ask btn-primary" '.(empty($record['is_reversed']) ? '' : 'disabled').' data-msg="'.tr('Duplicare questa fattura?').'"  data-op="copy" data-button="'.tr('Duplica').'" data-class="btn btn-lg btn-warning" data-backto="record-edit" >
     <i class="fa fa-copy"></i> '.tr('Duplica fattura').'
 </button>';
 
@@ -25,7 +19,7 @@ if ($module->name == 'Fatture di vendita') {
 if ($dir == 'entrata') {
     echo '
 <div class="btn-group">
-    <button type="button" class="btn btn-primary unblockable dropdown-toggle '.(((!empty($record['ref_documento']) || $record['stato'] != 'Bozza') and empty($record['reversed'])) ? '' : 'disabled').'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <button type="button" class="btn btn-primary unblockable dropdown-toggle '.(((!empty($record['ref_documento']) || $record['stato'] != 'Bozza') and empty($record['is_reversed'])) ? '' : 'disabled').'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <i class="fa fa-magic"></i> '.tr('Crea').' <span class="caret"></span>
         <span class="sr-only">Toggle Dropdown</span>
     </button>

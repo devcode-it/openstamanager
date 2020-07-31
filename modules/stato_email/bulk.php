@@ -18,16 +18,16 @@ switch (post('op')) {
         }
 
         if ($i > 0) {
-            flash()->info(tr($i.' email rimosse dalla coda di invio.'));
+            flash()->info(tr('Email rimosse dalla coda di invio'));
         } else {
-            flash()->warning(tr('Nessuna email rimossa dalla coda di invio.'));
+            flash()->warning(tr('Nessuna email rimossa dalla coda di invio'));
         }
 
         break;
 }
 
 $operations['delete-bulk'] = [
-    'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span>',
+    'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina email selezionate e non ancora inviate').'</span>',
     'data' => [
         'msg' => tr('Vuoi davvero eliminare dalla coda di invio le email selezionate?'),
         'button' => tr('Procedi'),

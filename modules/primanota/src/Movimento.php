@@ -30,7 +30,6 @@ class Movimento extends Model
 
         $documento = $scadenza ? $scadenza->documento : null;
         if (!empty($documento)) {
-            $model->data_documento = $documento->data;
             $model->iddocumento = $documento->id;
             $model->idanagrafica = $documento->idanagrafica;
         }

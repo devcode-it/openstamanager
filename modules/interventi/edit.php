@@ -7,9 +7,11 @@ $block_edit = $record['flag_completato'];
 unset($_SESSION['superselect']['idanagrafica']);
 unset($_SESSION['superselect']['idsede_partenza']);
 unset($_SESSION['superselect']['idsede_destinazione']);
+unset($_SESSION['superselect']['idintervento']);
 $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 $_SESSION['superselect']['idsede_partenza'] = $record['idsede_partenza'];
 $_SESSION['superselect']['idsede_partenza'];
+$_SESSION['superselect']['idintervento'] = $id_record;
 $_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione'];
 $_SESSION['superselect']['permetti_movimento_a_zero'] = false;
 
@@ -118,7 +120,6 @@ $_SESSION['superselect']['permetti_movimento_a_zero'] = false;
 					{[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL", "value": "$idstatointervento$", "class": "unblockable" ]}
 				</div>
 			</div>
-
 
 			<!-- RIGA 5 -->
 			<div class="row">
@@ -262,7 +263,7 @@ $articoli = $intervento->articoli;
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza",  "ajax-source": "sedi_azienda",  "value": "$idsede_partenza$", "readonly": "<?php echo ($record['flag_completato'] || !empty($articoli)) ? 1 : 0; ?>" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza",  "ajax-source": "sedi_azienda",  "value": "$idsede_partenza$", "readonly": "<?php echo ($record['flag_completato'] || !$articoli->isEmpty()) ? 1 : 0; ?>" ]}
                 </div>
             </div>
 

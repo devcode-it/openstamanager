@@ -3,6 +3,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Fatture\Fattura;
+use Modules\Fatture\Stato;
 use Plugins\ExportFE\FatturaElettronica;
 use Plugins\ExportFE\Interaction;
 use Util\Zip;
@@ -173,8 +174,10 @@ switch (post('op')) {
         break;
 
     case 'copy-bulk':
+        $list = [];
         foreach ($id_records as $id) {
             $fattura = Fattura::find($id);
+            array_push($list, $fattura->numero_esterno);
 
             $id_segment = (post('id_segment') ? post('id_segment') : $fattura->id_segment);
             $dir = $dbo->fetchOne('SELECT dir FROM co_tipidocumento WHERE id='.prepare($fattura->idtipodocumento))['dir'];
@@ -199,11 +202,16 @@ switch (post('op')) {
                 $data = date('Y-m-d', strtotime('+1 year', strtotime($fattura->data)));
             }
 
+            $stato = Stato::where('descrizione', 'Bozza')->first();
+
             $new = $fattura->replicate();
+            $new->codice_stato_fe = null;
             $new->id_segment = $id_segment;
-            $new->numero_esterno = Fattura::getNextNumeroSecondario($data, $dir, $id_segment);
             $new->numero = Fattura::getNextNumero($data, $dir, $id_segment);
-            $new->idstatodocumento = 2;
+            if (!empty($fattura->numero_esterno)) {
+                $new->numero_esterno = Fattura::getNextNumeroSecondario($data, $dir, $id_segment);
+            }
+            $new->stato()->associate($stato);
             $new->data = $data;
             $new->save();
 
@@ -231,7 +239,9 @@ switch (post('op')) {
             }
         }
 
-        flash()->info(tr('Fatture duplicate correttamente!'));
+        flash()->info(tr('Fatture _LIST_ duplicate correttamente!', [
+            '_LIST_' => implode(',', $list),
+        ]));
 
         break;
 
@@ -257,7 +267,7 @@ if (App::debug()) {
 $operations['copy-bulk'] = [
     'text' => '<span><i class="fa fa-copy"></i> '.tr('Duplica selezionati').'</span>',
     'data' => [
-        'msg' => tr('Vuoi davvero duplicare le righe selezionate?').'<br><br>{[ "type": "select", "label": "", "name": "skip_time", "required": 1, "values": "list=\"Giorno\":\"'.tr('Giorno').'\", \"Settimana\":\"'.tr('Settimana').'\", \"Mese\":\"'.tr('Mese').'\", \"Anno\":\"'.tr('Anno').'\" ", "value": "Giorno" ]}<br>{[ "type": "select", "label": "", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.$id_module.' ORDER BY name", "value": "Giorno" ]}<br>{[ "type": "checkbox", "placeholder": "'.tr('Aggiungere i riferimenti ai documenti esterni?').'", "name": "riferimenti" ]}',
+        'msg' => tr('Vuoi davvero duplicare le righe selezionate?').'<br><br>{[ "type": "select", "label": "'.tr('Fattura in avanti di').'", "name": "skip_time", "required": 1, "values": "list=\"Giorno\":\"'.tr('Un giorno').'\", \"Settimana\":\"'.tr('Una settimana').'\", \"Mese\":\"'.tr('Un mese').'\", \"Anno\":\"'.tr('Un anno').'\" ", "value": "Giorno" ]}<br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.$id_module.' ORDER BY name", "value": "'.$_SESSION['module_'.$id_module]['id_segment'].'" ]}<br>{[ "type": "checkbox", "placeholder": "'.tr('Aggiungere i riferimenti ai documenti esterni?').'", "name": "riferimenti" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
     ],

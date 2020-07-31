@@ -117,6 +117,8 @@ echo '
             }
 
             $("#um").selectSetNew($data.um, $data.um);
+            // Aggiornamento automatico di guadagno e margine
+            aggiorna_guadagno();
         }';
 
 if ($module['name'] != 'Contratti' && $module['name'] != 'Preventivi') {

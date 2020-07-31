@@ -125,10 +125,11 @@ function search(button) {
             op: "check",
         },
         success: function(data){
-            if (data == "none" || data == "" ) {
+            if (data === "none" || !data) {
                 $("#update-search").html("'.tr('Nessun aggiornamento disponibile').'.");
             } else {
-                $("#update-search").html("'.tr("E' stato individuato un nuovo aggiornamento").': " + data + ".<br>'.tr('Scaricalo ora: _LINK_', [
+                let beta_warning = data.includes("beta") ? "<br><b>'.tr('Attenzione: la versione individuata è in fase sperimentale, e pertanto può presentare diversi bug e malfunzionamenti').'.</b>" : "";
+                $("#update-search").html("'.tr("E' stato individuato un nuovo aggiornamento").': " + data + "." + beta_warning + "<br>'.tr('Scaricalo ora: _LINK_', [
                     '_LINK_' => "<a target='_blank' href='https://github.com/devcode-it/openstamanager/releases'>https://github.com/devcode-it/openstamanager/releases</a>",
                 ]).'");
             }

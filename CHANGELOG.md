@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.16 (2020-07-28)](#2416-2020-07-28)
 - [2.4.15 (2020-05-01)](#2415-2020-05-01)
 - [2.4.14 (2020-04-23)](#2414-2020-04-23)
 - [2.4.13 (2020-02-05)](#2413-2020-02-05)
@@ -25,7 +26,63 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
-## 2.4.15 (2020-05-01)
+## 2.4.16 (2020-07-28)
+
+### Aggiunto (Added)
+ - Aggiunta possibilità di creare un contratto dalla scheda del preventivo
+ - Aggiunta in supersearch la ricerca articoli per barcode
+ - Aggiunta rivalsa INPS e relativa IVA per il calcolo del totale ivato del documento
+ - Aggiunta colonna immagine per stampa preventivi
+ - Aggiunto pulsante visualizza la scheda del promemoria
+ - Aggiunta gestione allegati nello scadenzario
+ - Aggiunto ID per righe documenti
+ - Aggiunto avviso se ci sono fatture in elaborazione da più di 7 giorni per le quali non ho ancora ricevuto in feedback
+ - Aggiunta possibilità di duplicare l'attività (anche in bulk)
+ - Aggiunte operazioni di verifica notifica FE
+ - Aggiunta scelta del sezionale prima della stampa del registro IVA
+ - Aggiunta visualizzazione quantità disponibile in ordine
+ - Agginata possibilità di specificare riferimenti tra i documenti (#822)
+ - Aggiunti dettagli Fornitori per gli Articoli (#810)
+ - Aggiunto prezzo vendita ivato per gli Articoli
+ - Aggiunti periodi temporali per campo “Validità” (#806)
+ - Aggiunto supporto alle Causali DDT non fatturabili
+ - Aggiunti totali delle tabelle ristretti alla selezione
+ - Aggiunta articoli in sequenza tramite barcode
+
+
+### Modificato (Changed)
+ - Allineamento Fattura Elettronica a versione schema XML 1.2.1
+ - Aggiornamento foglio di stile FE Asso Invoice
+ - Migliorato caricamento files con Dropzone
+ - Aggiornamento a Gulp4
+ - Migliorata stampa registro IVA
+ - Compattazione grafica righe documenti
+ - Ottimizzazione caricamento lista fatture
+
+
+### Fixed
+ - Fix pulsante compilazione automatica campi in fase di import Fattura Elettronica passiva
+ - Fix statistiche per anagrafiche eliminate
+ - Fix creazione sottocategoria articoli
+ - Fix riporto sconti da attività a fattura (#817)
+ - Fix calcolo numero progressivo in fase di duplicazione dei preventivi (#825)
+ - Fix stampa preventivo per descrizioni lunghe con testo troppo piccolo (#759)
+ - Ripristino TD01 per fatture differite
+ - Fix widget "Contratti in scadenza"
+ - Fix IVA con prezzi fino a 6 decimali
+ - Fix valorizzazione campi anagrafica fornitore creata in fase di import Fattura Elettronica passiva (#840)
+ - Fix sconto attività (#841)
+ - Fix filtro articoli con caratteri speciali (#838)
+ - Fix lunghezza campo PrezzoUnitario per problemi di arrotondamento e calcolo FE
+ - Fix calcolo sconto su riga per prezzi ivati
+ - Fix calcolo ore Consuntivo Contratti
+ - Fix movimentazioni per Note di credito/debito
+ - Fix Validazione codice articolo (#854)
+ - Fix dicitura footer stampa fattura
+ - Fix calcolo quantità per inventario
+ - Fix stato dei Preventivi selezionabili
+ 
+ ## 2.4.15 (2020-05-01)
 
 ### Aggiunto (Added)
  - Aggiunta impostazione per abilitare la notifica di nuove pre-release oltre a release stabili

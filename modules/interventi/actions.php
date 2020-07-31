@@ -333,6 +333,58 @@ $riga = $intervento->getRiga($type, $id_riga);
         aggiorna_sedi_movimenti('interventi', $id_record);
         break;
 
+    // Aggiunta di un documento in ordine
+    case 'add_documento':
+        $class = post('class');
+        $id_documento = post('id_documento');
+
+        // Individuazione del documento originale
+        if (!is_subclass_of($class, \Common\Document::class)) {
+            return;
+        }
+        $documento = $class::find($id_documento);
+
+        // Individuazione sede
+        $id_sede = ($documento->direzione == 'entrata') ? $documento->idsede_destinazione : $documento->idsede_partenza;
+        $id_sede = $id_sede ?: $documento->idsede;
+        $id_sede = $id_sede ?: 0;
+
+        // Creazione dell' ordine al volo
+        if (post('create_document') == 'on') {
+            $stato = Stato::find(post('id_stato_intervento'));
+            $tipo = TipoSessione::find(post('id_tipo_intervento'));
+
+            $intervento = Intervento::build($documento->anagrafica, $tipo, $stato, post('data'));
+            $intervento->idsede_destinazione = $id_sede;
+
+            $intervento->id_documento_fe = $documento->id_documento_fe;
+            $intervento->codice_cup = $documento->codice_cup;
+            $intervento->codice_cig = $documento->codice_cig;
+            $intervento->num_item = $documento->num_item;
+
+            $intervento->save();
+
+            $id_record = $intervento->id;
+        }
+
+        $righe = $documento->getRighe();
+        foreach ($righe as $riga) {
+            if (post('evadere')[$riga->id] == 'on' and !empty(post('qta_da_evadere')[$riga->id])) {
+                $qta = post('qta_da_evadere')[$riga->id];
+
+                $copia = $riga->copiaIn($intervento, $qta);
+                $copia->save();
+            }
+        }
+
+        // Messaggio informativo
+        $message = tr('_DOC_ aggiunto!', [
+            '_DOC_' => $documento->getReference(),
+        ]);
+        flash()->info($message);
+
+        break;
+
     case 'firma':
         if (directory($docroot.'/files/interventi')) {
             if (post('firma_base64') != '') {

@@ -898,7 +898,7 @@ input.small-width {
     border: 2px dashed #337ab7;
     border-radius: 5px;
     background: white;
-    margin-top:10px;
+    margin-top: 10px;
 }
 
 .dropzone .dz-message {
@@ -910,6 +910,40 @@ input.small-width {
     font-weight: 200;
     display: block;
     margin-top: 1.4rem;
+}
+
+/* Fancy checkbox: https://bootsnipp.com/snippets/M2bda */
+.form-group input[type="checkbox"] {
+    display: none;
+}
+
+.form-group input[type="checkbox"] + .btn-group > label span {
+    width: 20px;
+}
+
+.form-group input[type="checkbox"] + .btn-group {
+    width: 100%;
+    display: flex;
+}
+
+.form-group input[type="checkbox"] + .btn-group label:last-child {
+    flex-grow: 100;
+}
+
+.form-group input[type="checkbox"] + .btn-group > label span:first-child {
+    display: none;
+}
+
+.form-group input[type="checkbox"] + .btn-group > label span:last-child {
+    display: inline-block;
+}
+
+.form-group input[type="checkbox"]:checked + .btn-group > label span:first-child {
+    display: inline-block;
+}
+
+.form-group input[type="checkbox"]:checked + .btn-group > label span:last-child {
+    display: none;
 }
 
 .control-sidebar-bg {

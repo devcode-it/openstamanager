@@ -38,7 +38,7 @@ echo '<h4><b>'.$titolo.'</b></h4>
             <th>'.tr('Data comp.').'</th>
             <th>'.tr('Tipo').'</th>
             <th>'.$tipo.'</th>
-            <th>'.tr('Tot.&nbsp;doc.').'</th>
+            <th>'.tr('Tot. doc.').'</th>
             <th>'.tr('Imponibile').'</th>
             <th>%</th>
             <th>'.tr('Iva').'</th>

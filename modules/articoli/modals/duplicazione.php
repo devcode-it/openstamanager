@@ -17,14 +17,15 @@ echo '
         </div>
     </div>
 
-
     <!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
 			<button type="submit" class="btn btn-primary">
-                <i class="fa fa-copy"></i>
-                '.tr('Duplica').'
+                <i class="fa fa-copy"></i> '.tr('Duplica').'
             </button>
 		</div>
 	</div>
- </form>';
+</form>';
+
+echo '
+<script>$(document).ready(init)</script>';

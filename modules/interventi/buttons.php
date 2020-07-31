@@ -16,16 +16,23 @@ if (empty($record['firma_file'])) {
 
 // Duplica intervento
 echo'
-<button type="button" class="btn btn-primary " onclick="launch_modal( \''.tr('Duplica attività').'\', globals.rootdir + \'/modules/interventi/copia_attivita.php?id_module='.$id_module.'&id_record='.$id_record.'\');" >
-    <i class="fa fa-copy"></i> '.tr('Duplica attività').'...
-</button>';
-
-// Disabilito il tasto di firma per gli interventi completati
-echo '
+<button type="button" class="btn btn-primary " onclick="duplicaIntervento()">
+    <i class="fa fa-copy"></i> '.tr('Duplica attività').'
+</button>
 
 <!-- EVENTUALE FIRMA GIA\' EFFETTUATA -->
 '.$info_firma.'
 
-<button type="button" class="btn btn-primary " onclick="launch_modal( \''.tr('Anteprima e firma').'\', globals.rootdir + \'/modules/interventi/add_firma.php?id_module='.$id_module.'&id_record='.$id_record.'&anteprima=1\');" '.($record['flag_completato'] ? 'disabled' : '').'>
+<button type="button" class="btn btn-primary" onclick="anteprimaFirma()" '.($record['flag_completato'] ? 'disabled' : '').'>
     <i class="fa fa-desktop"></i> '.$frase.'...
-</button>';
+</button>
+
+<script>
+function duplicaIntervento() {
+    openModal("'.tr('Duplica attività').'", "'.$module->fileurl('modals/duplicazione.php').'?id_module='.$id_module.'&id_record='.$id_record.'");
+}
+
+function anteprimaFirma() {
+    openModal("'.tr('Anteprima e firma').'", "'.$module->fileurl('add_firma.php').'?id_module='.$id_module.'&id_record='.$id_record.'&anteprima=1");
+}
+</script>';

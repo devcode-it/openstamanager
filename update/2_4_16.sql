@@ -83,19 +83,19 @@ CREATE TABLE IF NOT EXISTS `mg_fornitore_articolo` (
 INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`, `position`, `directory`, `options`) VALUES
 (NULL, 'Fornitori Articolo', 'Fornitori', (SELECT `id` FROM `zz_modules` WHERE `name`='Articoli'), (SELECT `id` FROM `zz_modules` WHERE `name`='Articoli'), 'tab', 'fornitori_articolo', 'custom');
 
-ALTER TABLE `or_righe_ordini` ADD `id_dettaglio_fornitore` int(11) NULL,
+ALTER TABLE `or_righe_ordini` ADD `id_dettaglio_fornitore`int(11) NULL DEFAULT NULL,
   ADD FOREIGN KEY (`id_dettaglio_fornitore`) REFERENCES `mg_fornitore_articolo`(`id`) ON DELETE SET NULL;
-ALTER TABLE `dt_righe_ddt` ADD `id_dettaglio_fornitore` int(11) NULL,
+ALTER TABLE `dt_righe_ddt` ADD `id_dettaglio_fornitore`int(11) NULL DEFAULT NULL,
 ADD FOREIGN KEY (`id_dettaglio_fornitore`) REFERENCES `mg_fornitore_articolo`(`id`) ON DELETE SET NULL;
-ALTER TABLE `co_righe_preventivi` ADD `id_dettaglio_fornitore` int(11) NULL,
+ALTER TABLE `co_righe_preventivi` ADD `id_dettaglio_fornitore`int(11) NULL DEFAULT NULL,
   ADD FOREIGN KEY (`id_dettaglio_fornitore`) REFERENCES `mg_fornitore_articolo`(`id`) ON DELETE SET NULL;
-ALTER TABLE `co_righe_contratti` ADD `id_dettaglio_fornitore` int(11) NULL,
+ALTER TABLE `co_righe_contratti` ADD `id_dettaglio_fornitore`int(11) NULL DEFAULT NULL,
  ADD FOREIGN KEY (`id_dettaglio_fornitore`) REFERENCES `mg_fornitore_articolo`(`id`) ON DELETE SET NULL;
-ALTER TABLE `co_righe_documenti` ADD `id_dettaglio_fornitore` int(11) NULL,
+ALTER TABLE `co_righe_documenti` ADD `id_dettaglio_fornitore`int(11) NULL DEFAULT NULL,
  ADD FOREIGN KEY (`id_dettaglio_fornitore`) REFERENCES `mg_fornitore_articolo`(`id`) ON DELETE SET NULL;
-ALTER TABLE `in_righe_interventi` ADD `id_dettaglio_fornitore` int(11) NULL,
+ALTER TABLE `in_righe_interventi` ADD `id_dettaglio_fornitore`int(11) NULL DEFAULT NULL,
   ADD FOREIGN KEY (`id_dettaglio_fornitore`) REFERENCES `mg_fornitore_articolo`(`id`) ON DELETE SET NULL;
-ALTER TABLE `co_righe_promemoria` ADD `id_dettaglio_fornitore` int(11) NULL,
+ALTER TABLE `co_righe_promemoria` ADD `id_dettaglio_fornitore`int(11) NULL DEFAULT NULL,
   ADD FOREIGN KEY (`id_dettaglio_fornitore`) REFERENCES `mg_fornitore_articolo`(`id`) ON DELETE SET NULL;
 
 -- Aggiunta campo prezzo_vendita_ivato per gli Articoli

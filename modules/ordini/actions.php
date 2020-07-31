@@ -323,13 +323,18 @@ switch (post('op')) {
         }
         $documento = $class::find($id_documento);
 
+        // Individuazione sede
+        $id_sede = ($documento->direzione == 'entrata') ? $documento->idsede_destinazione : $documento->idsede_partenza;
+        $id_sede = $id_sede ?: $documento->idsede;
+        $id_sede = $id_sede ?: 0;
+
         // Creazione dell' ordine al volo
         if (post('create_document') == 'on') {
             $tipo = Tipo::where('dir', $documento->direzione)->first();
 
             $ordine = Ordine::build($documento->anagrafica, $tipo, post('data'));
             $ordine->idpagamento = $documento->idpagamento;
-            $ordine->idsede = $documento->idsede;
+            $ordine->idsede = $id_sede;
 
             $ordine->id_documento_fe = $documento->id_documento_fe;
             $ordine->codice_cup = $documento->codice_cup;

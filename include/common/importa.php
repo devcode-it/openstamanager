@@ -64,14 +64,27 @@ if (!empty($options['create_document'])) {
         }
 
         echo '
-            <div class="col-md-6">
+                <div class="col-md-6">
                     {[ "type": "select", "label": "'.tr('Ritenuta contributi').'", "name": "id_ritenuta_contributi", "value": "$id_ritenuta_contributi$", "values": "query=SELECT * FROM co_ritenuta_contributi" ]}
                 </div>
 
                 <div class="col-md-12">
                     {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.prepare($final_module['id']).' ORDER BY name", "value": "'.$id_segment.'" ]}
                 </div>';
-    } elseif ($options['op'] == 'add_ordine_cliente') {
+    }
+    // Opzioni aggiuntive per gli Interventi
+    elseif ($final_module['name'] == 'Interventi') {
+        echo '
+            <div class="col-md-6">
+                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato_intervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL" ]}
+            </div>
+
+            <div class="col-md-6">
+                {[ "type": "select", "label": "'.tr('Tipo').'", "name": "id_tipo_intervento", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento" ]}
+            </div>';
+    }
+    // Selezione fornitore per Ordine fornitore
+    elseif ($options['op'] == 'add_ordine_cliente') {
         $tipo_anagrafica = tr('Fornitore');
         $ajax = 'fornitori';
 
@@ -87,7 +100,7 @@ if (!empty($options['create_document'])) {
     </div>';
 }
 
-    // Conto, rivalsa INPS, ritenuta d'acconto e ritenuta contributi
+// Conto, rivalsa INPS, ritenuta d'acconto e ritenuta contributi
 if (in_array($final_module['name'], ['Fatture di vendita', 'Fatture di acquisto']) && !in_array($original_module['name'], ['Fatture di vendita', 'Fatture di acquisto'])) {
     $id_rivalsa_inps = setting('Percentuale rivalsa');
     if ($dir == 'uscita') {

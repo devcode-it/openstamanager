@@ -121,7 +121,6 @@ $_SESSION['superselect']['permetti_movimento_a_zero'] = false;
 				</div>
 			</div>
 
-
 			<!-- RIGA 5 -->
 			<div class="row">
 				<div class="col-md-12">

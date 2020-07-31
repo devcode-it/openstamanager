@@ -14,7 +14,7 @@ if (get('documento') == 'fattura') {
 } elseif (get('documento') == 'ordine_fornitore') {
     $final_module = 'Ordini fornitore';
     $op = 'add_ordine_cliente';
-}  elseif (get('documento') == 'ordine') {
+} elseif (get('documento') == 'ordine') {
     $final_module = 'Ordini cliente';
     $op = 'add_documento';
 } else {

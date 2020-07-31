@@ -58,20 +58,15 @@ $_SESSION['superselect']['permetti_movimento_a_zero'] = true;
                 echo '
                 <div class="col-md-3">
                     {[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede", "value": "$idsede$", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "placeholder": "Sede legale" ]}
-                </div>';
-
-                ?>
+                </div>
 
 				<div class="col-md-3">
-                    <?php
-                    echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
-                    ?>
-
-					{[ "type": "select", "label": "<?php echo tr('Referente'); ?>", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti" ]}
+				    '.Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"').'
+					{[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'} ]}
 				</div>
 
-				<div class="col-md-3">
-                    <?php
+				<div class="col-md-3">';
+
                         if ($record['idagente'] != 0) {
                             echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
                         }

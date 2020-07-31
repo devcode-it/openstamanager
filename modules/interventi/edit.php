@@ -50,9 +50,12 @@ $_SESSION['superselect']['permetti_movimento_a_zero'] = false;
 					{[ "type": "select", "label": "<?php echo tr('Per conto di'); ?>", "name": "idclientefinale", "value": "$idclientefinale$", "ajax-source": "clienti", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
 				</div>
 
+                <?php
+                echo '
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Referente'); ?>", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
-				</div>
+					{[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "readonly": "'.intval($record['flag_completato']).'" ]}
+				</div>';
+                ?>
 			</div>
 
 			<!-- RIGA 2 -->

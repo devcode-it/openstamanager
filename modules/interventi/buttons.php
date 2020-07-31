@@ -38,6 +38,8 @@ function anteprimaFirma() {
 </script>';
 
 // Creazione altri documenti
+// TODO: trasformazione delle sessioni in righe relative
+/*
 echo '
 <div class="btn-group">
 	<button class="btn btn-info dropdown-toggle '.(!$record['flag_completato'] ? 'disabled' : '').'" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -52,3 +54,4 @@ echo '
         </li>
     </ul>
 </div>';
+*/

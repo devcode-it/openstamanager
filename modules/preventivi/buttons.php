@@ -27,7 +27,7 @@ $stati_abilitati = $dbo->fetchOne('SELECT GROUP_CONCAT(`descrizione` SEPARATOR "
 
 // Creazione altri documenti
 echo '
-<div style="margin-left: 4px" class="dropdown pull-right tip" data-toggle="tooltip" title="'.tr('Per creare un documento deve essere inserita almeno una riga e lo stato del preventivo deve essere tra: _STATE_LIST_', [
+<div class="btn-group tip" data-toggle="tooltip" title="'.tr('Per creare un documento deve essere inserita almeno una riga e lo stato del preventivo deve essere tra: _STATE_LIST_', [
         '_STATE_LIST_' => $stati_abilitati,
     ]).'">
     <button class="btn btn-info dropdown-toggle '.($disabled ? '' : 'disabled').'" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">

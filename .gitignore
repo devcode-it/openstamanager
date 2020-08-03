@@ -89,6 +89,7 @@ VERSION
 REVISION
 .php_cs.cache
 manifest.json
+checksum.json
 
 /tests/_log/*
 /tests/_temp/*

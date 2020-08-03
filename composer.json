@@ -46,7 +46,7 @@
         "league/csv": "^8.2",
         "maximebf/debugbar": "^1.15",
         "monolog/monolog": "^1.22",
-        "mpdf/mpdf": "^7.1",
+        "mpdf/mpdf": "^v8.0.7",
         "mpociot/vat-calculator": "^2.3",
         "owasp/csrf-protector-php": "^1.0",
         "phpmailer/phpmailer": "^6.0",

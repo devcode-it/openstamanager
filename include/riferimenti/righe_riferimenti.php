@@ -52,6 +52,6 @@ if (!$riferimenti->isEmpty()) {
 } else {
     echo '
 <div class="alert alert-info">
-    <i class="fa fa-info-circle"></i>'.tr('Nessun riferimento presente').'.
+    <i class="fa fa-info-circle"></i> '.tr('Nessun riferimento presente').'.
 </div>';
 }

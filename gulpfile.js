@@ -3,7 +3,6 @@ var gulp = require('gulp');
 var merge = require('merge-stream');
 var del = require('del');
 var debug = require('gulp-debug');
-var shell = require('shelljs');
 
 var mainBowerFiles = require('main-bower-files');
 var gulpIf = require('gulp-if');
@@ -25,6 +24,13 @@ var concat = require('gulp-concat');
 // Altro
 var flatten = require('gulp-flatten');
 var rename = require('gulp-rename');
+
+// Release
+var glob = require('globby');
+var md5File = require('md5-file')
+var fs = require('fs');
+var archiver = require('archiver');
+var shell = require('shelljs');
 var inquirer = require('inquirer');
 
 // Configurazione
@@ -282,24 +288,9 @@ function phpDebugBar() {
 
 // Operazioni per la release
 function release(done) {
-    var archiver = require('archiver');
-    var fs = require('fs');
-
-    // Rimozione file indesiderati
-    del([
-        './vendor/tecnickcom/tcpdf/fonts/*',
-        '!./vendor/tecnickcom/tcpdf/fonts/*helvetica*',
-        './vendor/mpdf/mpdf/tmp/*',
-        './vendor/mpdf/mpdf/ttfonts/*',
-        '!./vendor/mpdf/mpdf/ttfonts/DejaVuinfo.txt',
-        '!./vendor/mpdf/mpdf/ttfonts/DejaVu*Condensed*',
-        './vendor/maximebf/debugbar/src/DebugBar/Resources/vendor/*',
-        './vendor/respect/validation/tests/*',
-    ]);
-
     // Impostazione dello zip
-    var output = fs.createWriteStream('./release.zip');
-    var archive = archiver('zip');
+    let output = fs.createWriteStream('./release.zip', {flags: 'w'});
+    let archive = archiver('zip');
 
     output.on('close', function () {
         console.log('ZIP completato!');
@@ -311,65 +302,90 @@ function release(done) {
 
     archive.pipe(output);
 
-    // Aggiunta dei file
-    archive.glob('**/*', {
+    // Individuazione dei file da aggiungere
+    glob([
+        '**/*',
+        '!checksum.json',
+        '!.idea/**',
+        '!.git/**',
+        '!node_modules/**',
+        '!backup/**',
+        '!files/**',
+        '!logs/**',
+        '!config.inc.php',
+        '!**/*.(lock|phar|log|zip|bak|jar|txt)',
+        '!**/~*',
+        '!vendor/tecnickcom/tcpdf/examples/*',
+        '!vendor/tecnickcom/tcpdf/fonts/*',
+        'vendor/tecnickcom/tcpdf/fonts/*helvetica*',
+        '!vendor/mpdf/mpdf/tmp/*',
+        '!vendor/mpdf/mpdf/ttfonts/*',
+        'vendor/mpdf/mpdf/ttfonts/DejaVuinfo.txt',
+        'vendor/mpdf/mpdf/ttfonts/DejaVu*Condensed*',
+        '!vendor/maximebf/debugbar/src/DebugBar/Resources/vendor/*',
+        '!vendor/respect/validation/tests/*',
+    ], {
         dot: true,
-        ignore: [
-            '.git/**',
-            'node_modules/**',
-            'backup/**',
-            'files/**',
-            'logs/**',
-            'config.inc.php',
-            '**/*.lock',
-            '**/*.phar',
-            '**/*.log',
-            '**/*.zip',
-            '**/*.bak',
-            '**/*.jar',
-            '**/*.txt',
-            '**/~*',
-        ]
-    });
+    }).then(function (files){
+        // Aggiunta dei file con i relativi checksum
+        let checksum = {};
+        for (const file of files) {
+            if (fs.lstatSync(file).isDirectory()) {
+                archive.directory(file, file);
+            } else {
+                archive.file(file);
 
-    // Eccezioni
-    archive.file('backup/.htaccess');
-    archive.file('files/.htaccess');
-    archive.file('files/my_impianti/componente.ini');
-    archive.file('logs/.htaccess');
-
-    // Aggiunta del commit corrente nel file REVISION
-    archive.append(shell.exec('git rev-parse --short HEAD', {
-        silent: true
-    }).stdout, {
-        name: 'REVISION'
-    });
-
-    // Opzioni sulla release
-    inquirer.prompt([{
-        type: 'input',
-        name: 'version',
-        message: 'Numero di versione:',
-    }, {
-        type: 'confirm',
-        name: 'beta',
-        message: 'Versione beta?',
-        default: false,
-    }]).then(function (result) {
-        version = result.version;
-
-        if (result.beta) {
-            version += 'beta';
+                if (!file.startsWith('vendor')) {
+                    checksum[file] = md5File.sync(file);
+                }
+            }
         }
 
-        archive.append(version, {
-            name: 'VERSION'
+        // Eccezioni
+        archive.file('backup/.htaccess', {});
+        archive.file('files/.htaccess', {});
+        archive.file('files/my_impianti/componente.ini', {});
+        archive.file('logs/.htaccess', {});
+
+        // Aggiunta del file dei checksum
+        let checksumFile = fs.createWriteStream('./checksum.json', {flags: 'w'});
+        checksumFile.write(JSON.stringify(checksum));
+        checksumFile.close();
+        archive.file('checksum.json', {});
+
+        // Aggiunta del commit corrente nel file REVISION
+        archive.append(shell.exec('git rev-parse --short HEAD', {
+            silent: true
+        }).stdout, {
+            name: 'REVISION'
         });
 
-        // Completamento dello zip
-        archive.finalize();
+        // Opzioni sulla release
+        inquirer.prompt([{
+            type: 'input',
+            name: 'version',
+            message: 'Numero di versione:',
+        }, {
+            type: 'confirm',
+            name: 'beta',
+            message: 'Versione beta?',
+            default: false,
+        }]).then(function (result) {
+            let version = result.version;
 
-        done();
+            if (result.beta) {
+                version += 'beta';
+            }
+
+            archive.append(version, {
+                name: 'VERSION'
+            });
+
+            // Completamento dello zip
+            archive.finalize();
+
+            done();
+        });
     });
 }
 

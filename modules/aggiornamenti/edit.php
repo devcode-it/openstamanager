@@ -47,7 +47,9 @@ if (function_exists(custom)) {
             echo '
 			<div class="alert alert-warning">
 				<i class="fa fa-warning"></i>
-				<b>Attenzione!</b> Ci sono delle tabelle non previste nella versione standard del gestionale: '.implode(', ', $tables).'.
+				<b>'.tr('Attenzione!').'</b> '.tr('Ci sono delle tabelle non previste nella versione standard del gestionale: _LIST_', [
+                    '_LIST_' => implode(', ', $tables),
+                ]).'.
 			</div>';
         }
 
@@ -114,8 +116,12 @@ function update() {
     }
 }
 
+function checksum(button) {
+    openModal("'.tr('Controllo di integrità').'", "'.$module->fileurl('checksum.php').'?id_module='.$id_module.'");
+}
+
 function search(button) {
-    buttonLoading(button);
+    let restore = buttonLoading(button);
 
     $.ajax({
         url: globals.rootdir + "/actions.php",
@@ -136,11 +142,10 @@ function search(button) {
         }
     });
 }
-</script>';
+</script>
 
-    echo '
 <div class="row">
-    <div class="col-md-8">
+    <div class="col-md-4">
         <div class="box box-success">
             <div class="box-header with-border">
                 <h3 class="box-title">
@@ -159,9 +164,22 @@ function search(button) {
                 </form>
             </div>
         </div>
-    </div>';
+    </div>
 
-    echo '
+    <div class="col-md-4">
+        <div class="box box-warning">
+            <div class="box-header with-border">
+                <h3 class="box-title">
+                    '.tr("Verifica l'integrità dell'intallazione").' <span class="tip" title="'.tr("Verifica l'integrità della tua installazione attraverso un controllo sui checksum dei file").'."><i class="fa fa-question-circle-o"></i></span>
+                </h3>
+            </div>
+            <div class="box-body">
+                <button type="button" class="btn btn-primary btn-block" onclick="checksum(this)">
+                    <i class="fa fa-list-alt"></i> '.tr('Controlla').'
+                </button>
+            </div>
+        </div>
+    </div>
 
     <div class="col-md-4">
         <div class="box box-info">

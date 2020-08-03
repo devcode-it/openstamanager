@@ -73,7 +73,7 @@ if (!empty($sessioni)) {
 
         // Tipologia
         echo '
-        <tr>
+        <tr data-id="'.$sessione['id'].'">
             <td>
                 '.$sessione['descrizione_tipo'].'
             </td>';
@@ -178,7 +178,9 @@ if (!empty($sessioni)) {
         if (!$is_completato) {
             echo '
             <td class="text-center">
-                <button type="button" class="btn btn-sm btn-warning" onclick="launch_modal(\''.tr('Modifica sessione').'\', \''.$module->fileurl('manage_sessione.php').'?id_module='.$id_module.'&id_record='.$id_record.'&id_sessione='.$sessione['id'].'\');" title="'.tr('Modifica sessione').'"><i class="fa fa-edit"></i></button>
+                <button type="button" class="btn btn-sm btn-warning tip" title="'.tr('Modifica sessione').'" onclick="modificaSessione(this)">
+                    <i class="fa fa-edit"></i>
+                </button>
 
 				<button type="button" class="btn btn-sm btn-danger" id="delbtn_'.$sessione['id'].'" onclick="elimina_sessione(\''.$sessione['id'].'\');" title="Elimina riga" class="only_rw"><i class="fa fa-trash"></i></button>
             </td>';
@@ -220,6 +222,23 @@ echo '
 <script>$(document).ready(init)</script>
 
 <script type="text/javascript">
+async function modificaSessione(button) {
+    var riga = $(button).closest("tr");
+    var id = riga.data("id");
+
+    // Salvataggio via AJAX
+    let valid = await salvaForm(button, $("#edit-form"));
+
+    if (valid) {
+        // Chiusura tooltip
+        if ($(button).hasClass("tooltipstered"))
+            $(button).tooltipster("close");
+
+        // Apertura modal
+        openModal("'.tr('Modifica riga').'", "'.$module->fileurl('manage_sessione.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&id_sessione=" + id);
+    }
+}
+
     $(document).ready(function() {';
 
 if (empty($sessioni)) {

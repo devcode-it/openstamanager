@@ -59,7 +59,7 @@ switch (post('op')) {
             $mail->save();
         }
         aggiorna_sedi_movimenti('interventi', $id_record);
-        flash()->info(tr('Informazioni salvate correttamente!'));
+        flash()->info(tr('Attività modificata correttamente!'));
 
         break;
 
@@ -187,9 +187,9 @@ switch (post('op')) {
         break;
 
     case 'delete_riga':
-        $id_riga = post('idriga');
-        $type = post('type');
-$riga = $intervento->getRiga($type, $id_riga);
+        $id_riga = post('riga_id');
+        $type = post('riga_type');
+        $riga = $intervento->getRiga($type, $id_riga);
 
         if (!empty($riga)) {
             try {

@@ -18,8 +18,8 @@ $options = [
 ];
 
 // Dati della riga
-$id_riga = get('idriga');
-$type = get('type');
+$id_riga = get('riga_id');
+$type = get('riga_type');
 $riga = $documento->getRiga($type, $id_riga);
 
 $result = $riga->toArray();

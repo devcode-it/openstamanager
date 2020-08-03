@@ -200,8 +200,12 @@ async function modificaRiga(button) {
     // Salvataggio via AJAX
     let valid = await salvaForm(button, $("#edit-form"));
 
-    // Apertura modal
     if (valid) {
+        // Chiusura tooltip
+        if ($(button).hasClass("tooltipstered"))
+            $(button).tooltipster("close");
+
+        // Apertura modal
         openModal("'.tr('Modifica riga').'", "'.$module->fileurl('row-edit.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&riga_id=" + id + "&riga_type=" + type);
     }
 }

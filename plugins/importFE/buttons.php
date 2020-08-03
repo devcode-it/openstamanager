@@ -30,6 +30,7 @@ function compile(btn) {
         success: function(response) {
             var data = JSON.parse(response);
             if (data.length == 0){
+                buttonRestore(btn, restore);
                 return;
             }
 

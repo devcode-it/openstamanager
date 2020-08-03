@@ -101,6 +101,16 @@ if (Auth::check()) {
                 '.$key.': "'.addslashes($value).'",';
     }
     echo '
+                ajax: {
+                    "missing": {
+                        "title": "'.tr('Errore').'",
+                        "text": "'.tr('Alcuni campi obbligatori non sono stati compilati correttamente').'",
+                    },
+                    "error": {
+                        "title": "'.tr('Errore').'",
+                        "text": "'.tr('Errore durante il salvataggio del record').'",
+                    }
+                },
                 password: {
                     "wordMinLength": "'.tr('La password è troppo corta').'",
                     "wordMaxLength": "'.tr('La password è troppo lunga').'",

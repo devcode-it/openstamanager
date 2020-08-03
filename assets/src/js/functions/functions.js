@@ -12,9 +12,9 @@ function openModal(title, href) {
     // Generazione dinamica modal
     do {
         id = '#bs-popup-' + Math.floor(Math.random() * 100);
-    } while ($(id).length != 0);
+    } while ($(id).length !== 0);
 
-    if ($(id).length == 0) {
+    if ($(id).length === 0) {
         $('#modals').append('<div class="modal fade" id="' + id.replace("#", "") + '" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="true"></div>');
     }
 
@@ -40,14 +40,14 @@ function openModal(title, href) {
 </div>';
 
     // Lettura contenuto div
-    if (href.substr(0, 1) == '#') {
+    if (href.substr(0, 1) === '#') {
         var data = $(href).html();
 
         $(id).html(content.replace("|data|", data));
         $(id).modal('show');
     } else {
         $.get(href, function (data, response) {
-            if (response == 'success') {
+            if (response === 'success') {
                 $(id).html(content.replace("|data|", data));
                 $(id).modal('show');
             }
@@ -65,7 +65,7 @@ function openLink(event, link) {
 
 /**
  * Funzione per far scrollare la pagina fino a un offset
- * @param integer offset
+ * @param offset
  */
 function scrollToOffset(offset) {
     $('html,body').animate({
@@ -80,11 +80,9 @@ function getUrlVars() {
     var search = window.location.search.substring(1);
     if (!search) return {};
 
-    var results = JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g, '":"') + '"}', function (key, value) {
+    return JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g, '":"') + '"}', function (key, value) {
         return key === "" ? value : decodeURIComponent(value)
     });
-
-    return results;
 }
 
 // Data e ora (orologio)
@@ -108,19 +106,18 @@ function session_set_array(session_array, value, inversed) {
  * Funzione per impostare un valore ad una sessione
  */
 function session_set(session_array, value, clear, reload) {
-    if (clear == undefined) {
+    if (clear === undefined) {
         clear = 1;
     }
 
-    if (reload == undefined) {
+    if (reload === undefined) {
         reload = 0;
     }
 
     return $.get(globals.rootdir + "/ajax.php?op=session_set&session=" + session_array + "&value=" + value + "&clear=" + clear, function (data, status) {
-
-        if (reload == 1)
+        if (reload === 1) {
             location.reload();
-
+        }
     });
 }
 
@@ -377,49 +374,52 @@ function buttonRestore(button, loadingResult) {
 }
 
 function submitAjax(form, data, callback, errorCallback) {
-    var valid = $(form).parsley().validate();
+    let valid = $(form).parsley().validate();
+    if (!valid) {
+        return valid;
+    }
 
     if (!data) data = {};
 
-    if (valid) {
-        $("#main_loading").show();
+    $("#main_loading").show();
+    content_was_modified = false;
 
-        content_was_modified = false;
+    // Fix per gli id di default
+    data.id_module = data.id_module ? data.id_module : globals.id_module;
+    data.id_record = data.id_record ? data.id_record : globals.id_record;
+    data.id_plugin = data.id_plugin ? data.id_plugin : globals.id_plugin;
+    data.ajax = 1;
 
-        // Fix per gli id di default
-        data.id_module = data.id_module ? data.id_module : globals.id_module;
-        data.id_record = data.id_record ? data.id_record : globals.id_record;
-        data.id_plugin = data.id_plugin ? data.id_plugin : globals.id_plugin;
-        data.ajax = 1;
+    prepareForm(form);
 
-        prepareForm(form);
+    // Invio dei dati
+    $(form).ajaxSubmit({
+        url: globals.rootdir + "/actions.php",
+        data: data,
+        type: "post",
+        success: function (data) {
+            let response = data.trim();
 
-        // Invio dei dati
-        $(form).ajaxSubmit({
-            url: globals.rootdir + "/actions.php",
-            data: data,
-            type: "post",
-            success: function (data) {
-                data = data.trim();
-
-                if (data) {
-                    response = JSON.parse(data);
-                    if (callback) callback(response);
-                }
-
-                $("#main_loading").fadeOut();
-
-                renderMessages();
-            },
-            error: function (data) {
-                $("#main_loading").fadeOut();
-
-                toastr["error"](data);
-
-                if (errorCallback) errorCallback(data);
+            // Tentativo di conversione da JSON
+            try {
+                response = JSON.parse(response);
+            } catch (e) {
             }
-        });
-    }
+
+            callback(response);
+
+            $("#main_loading").fadeOut();
+
+            renderMessages();
+        },
+        error: function (data) {
+            $("#main_loading").fadeOut();
+
+            toastr["error"](data);
+
+            if (errorCallback) errorCallback(data);
+        }
+    });
 
     return valid;
 }
@@ -519,6 +519,39 @@ function alertPush() {
         $(this).stop().animate({
             'top': -100,
             'opacity': 0
+        });
+    });
+}
+
+function salvaForm(button, form) {
+    return new Promise(function (resolve, reject) {
+        // Caricamento visibile nel pulsante
+        let restore = buttonLoading(button);
+
+        // Messaggio in caso di eventuali errori
+        let valid = $(form).parsley().validate();
+        if (!valid) {
+            swal({
+                type: "error",
+                title: globals.translations.ajax.missing.title,
+                text: globals.translations.ajax.missing.text,
+            });
+
+            resolve(false);
+        }
+
+        submitAjax(form, {}, function (response) {
+            buttonRestore(button, restore);
+            resolve(true);
+        }, function (data) {
+            swal({
+                type: "error",
+                title: globals.translations.ajax.error.title,
+                text: globals.translations.ajax.error.text,
+            });
+
+            buttonRestore(button, restore);
+            resolve(false);
         });
     });
 }

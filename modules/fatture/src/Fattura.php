@@ -677,7 +677,6 @@ class Fattura extends Document
      */
     public function getBanca()
     {
-        $result = [];
         $riba = database()->fetchOne('SELECT riba FROM co_pagamenti WHERE id ='.prepare($this->idpagamento));
 
         if ($riba['riba'] == 1) {

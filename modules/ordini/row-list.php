@@ -235,13 +235,18 @@ echo '
 
 echo '
 <script>
-
-function modificaRiga(button) {
+async function modificaRiga(button) {
     var riga = $(button).closest("tr");
     var id = riga.data("id");
     var type = riga.data("type");
 
-    openModal("'.tr('Modifica riga').'", "'.$module->fileurl('row-edit.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&riga_id=" + id + "&riga_type=" + type)
+    // Salvataggio via AJAX
+    let valid = await salvaForm(button, $("#edit-form"));
+
+    // Apertura modal
+    if (valid) {
+        openModal("'.tr('Modifica riga').'", "'.$module->fileurl('row-edit.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&riga_id=" + id + "&riga_type=" + type);
+    }
 }
 
 function rimuoviRiga(button) {

@@ -33,8 +33,6 @@ $_SESSION['superselect']['permetti_movimento_a_zero'] = ($dir == 'uscita' ? true
 		</div>
 
 		<div class="panel-body">
-
-
 			<?php
                 if ($dir == 'entrata') {
                     $rs2 = $dbo->fetchArray('SELECT piva, codice_fiscale, citta, indirizzo, cap, provincia FROM an_anagrafiche WHERE idanagrafica='.prepare($record['idanagrafica']));
@@ -322,29 +320,29 @@ if (!$block_edit) {
             </a>';
 
     echo '
-            <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_articolo" data-toggle="tooltip" data-title="'.tr('Aggiungi articolo').'">
+            <button class="btn btn-sm btn-primary tip" title="'.tr('Aggiungi articolo').'" onclick="gestioneArticolo(this)">
                 <i class="fa fa-plus"></i> '.tr('Articolo').'
-            </a>';
+            </button>';
 
     echo '
-            <a class="btn btn-sm btn-primary"data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_barcode" data-toggle="tooltip" data-title="'.tr('Aggiungi articoli tramite barcode').'">
+            <button class="btn btn-sm btn-primary tip" title="'.tr('Aggiungi articoli tramite barcode').'" onclick="gestioneBarcode(this)">
                 <i class="fa fa-plus"></i> '.tr('Barcode').'
-            </a>';
+            </button>';
 
     echo '
-            <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_riga" data-toggle="tooltip" data-title="'.tr('Aggiungi riga').'">
+            <button class="btn btn-sm btn-primary tip" title="'.tr('Aggiungi riga').'" onclick="gestioneRiga(this)">
                 <i class="fa fa-plus"></i> '.tr('Riga').'
-            </a>';
+            </button>';
 
     echo '
-            <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_descrizione" data-toggle="tooltip" data-title="'.tr('Aggiungi descrizione').'">
+            <button class="btn btn-sm btn-primary tip" title="'.tr('Aggiungi descrizione').'" onclick="gestioneDescrizione(this)">
                 <i class="fa fa-plus"></i> '.tr('Descrizione').'
-            </a>';
+            </button>';
 
     echo '
-            <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&is_sconto" data-toggle="tooltip" data-title="'.tr('Aggiungi sconto/maggiorazione').'">
+            <button class="btn btn-sm btn-primary tip" title="'.tr('Aggiungi sconto/maggiorazione').'" onclick="gestioneSconto(this)">
                 <i class="fa fa-plus"></i> '.tr('Sconto/maggiorazione').'
-            </a>';
+            </button>';
 }
 ?>
 		</div>
@@ -355,8 +353,9 @@ if (!$block_edit) {
 			<div class="col-md-12">
 
 <?php
-include $docroot.'/modules/ddt/row-list.php';
-?>
+include $structure->filepath('row-list.php');
+
+echo '
 			</div>
 		</div>
 	</div>
@@ -367,15 +366,46 @@ include $docroot.'/modules/ddt/row-list.php';
 {( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
 <script>
-	$('#idanagrafica').change(function() {
-        updateSelectOption("idanagrafica", $(this).val());
-		session_set('superselect,idanagrafica', $(this).val(), 0);
+function gestioneArticolo(button) {
+    gestioneRiga(button, "is_articolo");
+}
 
-        $("#idsede_<?php echo $dir == 'uscita' ? 'partenza' : 'destinazione'; ?>").selectReset();
-	});
-</script>
+function gestioneBarcode(button) {
+    gestioneRiga(button, "is_barcode");
+}
 
-<?php
+function gestioneSconto(button) {
+    gestioneRiga(button, "is_sconto");
+}
+
+function gestioneDescrizione(button) {
+    gestioneRiga(button, "is_descrizione");
+}
+
+async function gestioneRiga(button, options) {
+    // Salvataggio via AJAX
+    let valid = await salvaForm(button, $("#edit-form"));
+
+    // Apertura modal
+    if (valid) {
+        // Lettura titolo e chiusura tooltip
+        let title = $(button).tooltipster("content");
+        $(button).tooltipster("close")
+
+        // Apertura modal
+        options = options ? options : "is_riga";
+        openModal(title, "'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&" + options);
+    }
+}
+
+$("#idanagrafica").change(function() {
+    updateSelectOption("idanagrafica", $(this).val());
+    session_set("superselect,idanagrafica", $(this).val(), 0);
+
+    $("#idsede_'.($dir == 'uscita' ? 'partenza' : 'destinazione').'").selectReset();
+});
+</script>';
+
 // Collegamenti diretti
 // Fatture collegate a questo ddt
 $elementi = $dbo->fetchArray('SELECT `co_documenti`.*, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idddt` = '.prepare($id_record).') ORDER BY `data`');

@@ -54,8 +54,8 @@ class ChoicesHandler implements HandlerInterface
             <input type="checkbox" id="|id|" value="|value|" autocomplete="off" class="hidden" |attr| onchange="$(this).parent().find(\'[type = hidden]\').val(+this.checked)"/>
             <div class="btn-group">
                 <label for="|id|" class="btn btn-default">
-                    <span class="fa fa-check"></span>
-                    <span class="fa fa-close"></span>
+                    <span class="fa fa-check text-success"></span>
+                    <span class="fa fa-close text-danger"></span>
                 </label>
                 <label for="|id|" class="btn btn-default active">
                     |placeholder|

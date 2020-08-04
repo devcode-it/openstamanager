@@ -6,32 +6,44 @@ use Modules\Articoli\Articolo;
 
 switch (post('op')) {
     case 'add':
+        $articolo = Articolo::find(post('idarticolo'));
+        $tipo_movimento = post('tipo_movimento');
+        $descrizione = post('movimento');
+        $data = post('data');
+        $qta = post('qta');
+
         $idsede_partenza = post('idsede_partenza');
         $idsede_destinazione = post('idsede_destinazione');
-        $direzione = post('direzione');
 
-        $qta = !empty($direzione) ? post('qta') : -post('qta');
-        if (!empty($direzione)) {
-            if ($idsede_partenza == 0 && $idsede_destinazione != 0) {
-                $qta = -post('qta');
-            } elseif ($idsede_partenza != 0 && $idsede_destinazione == 0) {
-                $qta = post('qta');
-                $idsede_partenza = post('idsede_destinazione');
-                $idsede_destinazione = post('idsede_partenza');
+        if ($tipo_movimento == 'carico' || $tipo_movimento == 'scarico') {
+            if ($tipo_movimento == 'carico') {
+                $id_sede_azienda = $idsede_destinazione;
+                $id_sede_controparte = 0;
+            } elseif ($tipo_movimento == 'scarico') {
+                $id_sede_controparte = $idsede_partenza;
+                $id_sede_azienda = 0;
+
+                $qta = -$qta;
             }
-        } else {
-            if ($idsede_partenza != 0 && $idsede_destinazione == 0) {
-                $qta = -post('qta');
-                $idsede_partenza = post('idsede_destinazione');
-                $idsede_destinazione = post('idsede_partenza');
-            } elseif ($idsede_partenza == 0 && $idsede_destinazione != 0) {
-                $qta = post('qta');
-            }
+
+            // Registrazione del movimento con variazione della quantità
+            $articolo->movimenta($qta, $descrizione, $data, 1, [
+                'idsede_controparte' => $id_sede_controparte,
+                'idsede_azienda' => $id_sede_azienda,
+            ]);
+        } elseif ($tipo_movimento == 'spostamento') {
+            // Registrazione del movimento verso la sede di destinazione
+            $articolo->registra($qta, $descrizione, $data, 1, [
+                'idsede_controparte' => 0,
+                'idsede_azienda' => $idsede_destinazione,
+            ]);
+
+            // Registrazione del movimento dalla sede di origine
+            $articolo->registra(-$qta, $descrizione, $data, 1, [
+                'idsede_controparte' => 0,
+                'idsede_azienda' => $idsede_partenza,
+            ]);
         }
-
-        $articolo = Articolo::find(post('idarticolo'));
-        $idmovimento = $articolo->movimenta($qta, post('movimento'), post('data'), 1);
-        $dbo->query('UPDATE mg_movimenti SET idsede_azienda='.prepare($idsede_partenza).', idsede_controparte='.prepare($idsede_destinazione).' WHERE id='.prepare($idmovimento));
 
         break;
 }

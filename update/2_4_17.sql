@@ -167,4 +167,13 @@ DELETE FROM `in_statiintervento` WHERE `codice` = 'CALL' AND `descrizione` = 'Ch
    NOT EXISTS(SELECT `idstatointervento` FROM `in_interventi` WHERE `in_interventi`.`idstatointervento` = `in_statiintervento`.`idstatointervento`) ;
 
 -- Rimozione aliquote iva non usate
-UPDATE `co_iva` SET deleted_at=NOW() WHERE `descrizione` LIKE 'Scorporo%';
+UPDATE `co_iva` SET deleted_at = NOW() WHERE `descrizione` LIKE 'Scorporo%';
+
+-- Modifica mg_causali_movimenti
+ALTER TABLE `mg_causali_movimenti` ADD `tipo_movimento` ENUM('carico', 'scarico', 'spostamento') NOT NULL DEFAULT 'spostamento';
+UPDATE `mg_causali_movimenti` SET `tipo_movimento` = 'carico' WHERE `movimento_carico` = 1;
+UPDATE `mg_causali_movimenti` SET `tipo_movimento` = 'scarico' WHERE `movimento_carico` = 0;
+ALTER TABLE `mg_causali_movimenti` DROP `movimento_carico`;
+
+INSERT INTO `mg_causali_movimenti` (`id`, `nome`, `descrizione`, `tipo_movimento`) VALUES
+(NULL, 'Spostamento', 'Spostamento manuale', 'spostamento');

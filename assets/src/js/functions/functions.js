@@ -536,6 +536,7 @@ function salvaForm(button, form) {
                 title: globals.translations.ajax.missing.title,
                 text: globals.translations.ajax.missing.text,
             });
+            buttonRestore(button, restore);
 
             resolve(false);
         }

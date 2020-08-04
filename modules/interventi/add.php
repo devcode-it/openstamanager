@@ -223,8 +223,10 @@ echo '
 				</div>
 			</div>
 		</div>
-	</div>
+	</div>';
 
+if (empty($id_intervento)) {
+    echo '
 	<!-- ASSEGNAZIONE TECNICI -->
     <div class="box box-info collapsable collapsed-box">
         <div class="box-header with-border">
@@ -243,8 +245,10 @@ echo '
 				</div>
 			</div>
         </div>
-    </div>
+    </div>';
+}
 
+echo '
 	<!-- ORE DI LAVORO -->
     <div class="box box-primary collapsable '.($origine_dashboard ? '' : 'collapsed-box').'">
         <div class="box-header with-border">

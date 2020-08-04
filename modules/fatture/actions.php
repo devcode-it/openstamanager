@@ -274,6 +274,8 @@ switch (post('op')) {
         }
 
         $new->codice_stato_fe = null;
+        $new->progressivo_invio = null;
+        $new->data_stato_fe = null;
         $new->stato()->associate($stato);
         $new->save();
 

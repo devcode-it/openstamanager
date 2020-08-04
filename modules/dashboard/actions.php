@@ -166,6 +166,12 @@ switch (filter('op')) {
     case 'carica_interventi':
         $mese = filter('mese');
 
+        $solo_promemoria_assegnati = setting('Mostra promemoria attività ai soli Tecnici assegnati');
+        $id_tecnico = null;
+        if ($user['gruppo'] == 'Tecnici' && !empty($user['idanagrafica'])) {
+            $id_tecnico = $user['idanagrafica'];
+        }
+
         // Righe inserite
         $qp = "SELECT
             co_promemoria.id,
@@ -184,7 +190,18 @@ switch (filter('op')) {
         ORDER BY data_richiesta ASC";
         $promemoria_contratti = $dbo->fetchArray($qp);
 
-        $promemoria_interventi = $dbo->fetchArray("SELECT id, richiesta, id_contratto AS idcontratto, DATE_FORMAT(IF(data_scadenza IS NULL, data_richiesta, data_scadenza),'%m%Y') AS mese, IF(data_scadenza IS NULL, data_richiesta, data_scadenza)AS data_richiesta, data_scadenza, an_anagrafiche.ragione_sociale, 'intervento' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE in_tipiintervento.idtipointervento=in_interventi.idtipointervento) AS tipointervento FROM in_interventi INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE (SELECT COUNT(*) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento = in_interventi.id) = 0 ORDER BY data_richiesta ASC");
+        $query_interventi = "SELECT id, richiesta, id_contratto AS idcontratto, DATE_FORMAT(IF(data_scadenza IS NULL, data_richiesta, data_scadenza),'%m%Y') AS mese, IF(data_scadenza IS NULL, data_richiesta, data_scadenza)AS data_richiesta, data_scadenza, an_anagrafiche.ragione_sociale, 'intervento' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE in_tipiintervento.idtipointervento=in_interventi.idtipointervento) AS tipointervento
+    FROM in_interventi
+        INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica";
+
+    if (!empty($id_tecnico) && !empty($solo_promemoria_assegnati)) {
+        $query_interventi .= '
+        INNER JOIN in_interventi_tecnici_assegnati ON in_interventi.id = in_interventi_tecnici_assegnati.id_intervento AND id_tecnico = '.prepare($id_tecnico);
+    }
+
+    $query_interventi .= '
+        WHERE (SELECT COUNT(*) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento = in_interventi.id) = 0 ORDER BY data_richiesta ASC';
+        $promemoria_interventi = $dbo->fetchArray($query_interventi);
 
         $promemoria = array_merge($promemoria_contratti, $promemoria_interventi);
         if (!empty($promemoria)) {

@@ -14,7 +14,6 @@ WHERE 1=1 AND `dir` = \'uscita\' |segment(`co_documenti`.`id_segment`)||date_per
 HAVING 2=2
 ORDER BY `co_documenti`.`data` DESC, CAST(IF(`co_documenti`.`numero` = \'\', `co_documenti`.`numero_esterno`, `co_documenti`.`numero`) AS UNSIGNED) DESC' WHERE `name` = 'Fatture di acquisto';
 
-
 -- Allineo per i movimenti relativi alle fatture di vendita, la data del movimento con la data del documento
 UPDATE `co_movimenti` SET `co_movimenti`.`data` = `co_movimenti`.`data_documento` WHERE `iddocumento` IN (SELECT `co_documenti`.`id` FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id` WHERE `co_tipidocumento`.`dir` = 'entrata' );
 
@@ -155,7 +154,7 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 UPDATE `zz_settings` SET `sezione` = 'Attività' WHERE `sezione` = 'Interventi';
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES
 (NULL, 'Stato dell''attività alla chiusura', '1', 'query=SELECT idstatointervento AS id, descrizione AS text FROM in_statiintervento WHERE is_completato = 1', (SELECT idstatointervento AS id FROM in_statiintervento WHERE codice = 'OK'), 'Attività', 1, 'Stato in cui spostare l''attitivà a seguito della chiusura'),
-(NULL, 'Stato dell''attività dopo la firma', '1', 'query=SELECT idstatointervento AS id, descrizione AS text FROM in_statiintervento WHERE is_completato = 1', (SELECT idstatointervento AS id FROM in_statiintervento WHERE codice = 'OK'), 'Attività', 2, 'Stato in cui spostare l''attitivà dopo la firma del cliente');;
+(NULL, 'Stato dell''attività dopo la firma', '1', 'query=SELECT idstatointervento AS id, descrizione AS text FROM in_statiintervento WHERE is_completato = 1', (SELECT idstatointervento AS id FROM in_statiintervento WHERE codice = 'OK'), 'Attività', 2, 'Stato in cui spostare l''attitivà dopo la firma del cliente');
 
 -- Aggiunta risorsa per il download degli allegati
 INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES (NULL, 'v1', 'retrieve', 'allegato', 'API\\Common\\Allegato', '1');

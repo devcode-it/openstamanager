@@ -240,42 +240,40 @@ echo '
         });
     }
 
-    $("#genera").click(function(event){
+    $("#genera").click(function(event) {
         event.preventDefault();
 
-        var form = $("#edit-form");
-        form.find("*").prop("disabled", false);
-        valid = submitAjax(form);
-
-        if (valid) {';
+        salvaForm(this, "#edit-form").then(function(valid) {
+            if (valid) {';
 
 if ($generated) {
     echo '
-            swal({
-                title: "'.tr('Sei sicuro di rigenerare la fattura?').'",
-                html: "<p>'.tr('Attenzione: sarà generato un nuovo progressivo invio').'.</p><p class=\"text-danger\">'.tr('Se stai attendendo una ricevuta dal sistema SdI, rigenerando la fattura elettronica non sarà possibile corrispondere la ricevuta una volta emessa').'.</p>",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#30d64b",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Genera"
-            }).then((result) => {
-                if (result) {
-                    $("#form-xml").submit();
-                }
-            });';
+                swal({
+                    title: "'.tr('Sei sicuro di rigenerare la fattura?').'",
+                    html: "<p>'.tr('Attenzione: sarà generato un nuovo progressivo invio').'.</p><p class=\"text-danger\">'.tr('Se stai attendendo una ricevuta dal sistema SdI, rigenerando la fattura elettronica non sarà possibile corrispondere la ricevuta una volta emessa').'.</p>",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#30d64b",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Genera"
+                }).then((result) => {
+                    if (result) {
+                        $("#form-xml").submit();
+                    }
+                });';
 } else {
     echo '
 
-            $("#form-xml").submit();';
+                $("#form-xml").submit();';
 }
 echo '
-        } else {
-            swal({
-                type: "error",
-                title: "'.tr('Errore').'",
-                text:  "'.tr('Alcuni campi obbligatori non sono stati compilati correttamente').'.",
-            });
-        }
+            } else {
+                swal({
+                    type: "error",
+                    title: "'.tr('Errore').'",
+                    text:  "'.tr('Alcuni campi obbligatori non sono stati compilati correttamente').'.",
+                });
+            }
+        });
     });
 </script>';

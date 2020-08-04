@@ -1,205 +1,197 @@
 <?php
 
+use Modules\Interventi\Intervento;
+
 include_once __DIR__.'/../../core.php';
 
 // Rimuovo session usate sui select combinati (sedi, preventivi, contratti, impianti)
 unset($_SESSION['superselect']['idanagrafica']);
 unset($_SESSION['superselect']['idsede']);
 
-// Calcolo del nuovo codice
-$new_codice = \Modules\Interventi\Intervento::getNextCodice($data);
-
 // Se ho passato l'idanagrafica, carico il tipo di intervento di default
-$idanagrafica = filter('idanagrafica');
-$idsede = filter('idsede');
-
-$idimpianto = null;
-$idzona = null;
-$idtipointervento = null;
-$idstatointervento = null;
-$richiesta = null;
+$id_anagrafica = filter('idanagrafica');
+$id_sede = filter('idsede');
+$richiesta = filter('richiesta');
 $impianti = [];
 
-// Come tecnico posso aprire attività solo a mio nome
-if ($user['gruppo'] == 'Tecnici' && !empty($user['idanagrafica'])) {
-    $idtecnico = $user['idanagrafica'];
-} else {
-    $idtecnico = null;
-}
+$origine_dashboard = get('ref') !== null;
+$module_anagrafiche = Modules::get('Anagrafiche');
 
-if (!empty($idanagrafica)) {
-    $rs = $dbo->fetchArray('SELECT idtipointervento_default, idzona FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
-    $idtipointervento = $rs[0]['idtipointervento_default'];
-    $idzona = $rs[0]['idzona'];
-
-    $stato = $dbo->fetchArray("SELECT * FROM in_statiintervento WHERE descrizione = 'In programmazione'");
-    $idstatointervento = $stato['idstatointervento'];
-
-    $richiesta = filter('richiesta');
-}
-
-// Calcolo orario di inizio e fine di default
-if (null !== filter('orario_inizio') && '00:00:00' != filter('orario_inizio')) {
-    $orario_inizio = filter('orario_inizio');
-    $orario_fine = filter('orario_fine');
-} else {
+// Calcolo dell'orario di inizio e di fine sulla base delle informazioni fornite
+$orario_inizio = filter('orario_inizio');
+$orario_fine = filter('orario_fine');
+if (null == $orario_inizio || '00:00:00' == $orario_inizio) {
     $orario_inizio = date('H').':00:00';
     $orario_fine = date('H', time() + 60 * 60).':00:00';
 }
 
+// Un utente del gruppo Tecnici può aprire attività solo a proprio nome
+$id_tecnico = null;
+if ($user['gruppo'] == 'Tecnici' && !empty($user['idanagrafica'])) {
+    $id_tecnico = $user['idanagrafica'];
+}
+
+// Stato di default associato all'attivitò
+$stato = $dbo->fetchArray("SELECT * FROM in_statiintervento WHERE descrizione = 'In programmazione'");
+$id_stato = $stato['idstatointervento'];
+
+// Se è indicata un'anagrafica relativa, si carica il tipo di intervento di default impostato
+if (!empty($id_anagrafica)) {
+    $anagrafica = $dbo->fetchOne('SELECT idtipointervento_default, idzona FROM an_anagrafiche WHERE idanagrafica='.prepare($id_anagrafica));
+    $id_tipo = $anagrafica['idtipointervento_default'];
+    $id_zona = $anagrafica['idzona'];
+}
+
+// Gestione dell'impostazione dei Contratti
 $id_intervento = filter('id_intervento');
-$idcontratto = filter('idcontratto');
-$idcontratto_riga = filter('idcontratto_riga');
+$id_contratto = filter('idcontratto');
+$id_promemoria_contratto = filter('idcontratto_riga');
 
-// Se sto pianificando un contratto, leggo tutti i dati del contratto per predisporre l'aggiunta intervento
-if (!empty($idcontratto) && !empty($idcontratto_riga)) {
-    $rs = $dbo->fetchArray('SELECT *, (SELECT idzona FROM an_anagrafiche WHERE idanagrafica = co_contratti.idanagrafica) AS idzona FROM co_contratti WHERE id='.prepare($idcontratto));
-    $idanagrafica = $rs[0]['idanagrafica'];
-    $idzona = $rs[0]['idzona'];
+// Trasformazione di un Promemoria dei Contratti in Intervento
+if (!empty($id_contratto) && !empty($id_promemoria_contratto)) {
+    $contratto = $dbo->fetchOne('SELECT *, (SELECT idzona FROM an_anagrafiche WHERE idanagrafica = co_contratti.idanagrafica) AS idzona FROM co_contratti WHERE id = '.prepare($id_contratto));
+    $id_anagrafica = $contratto['idanagrafica'];
+    $id_zona = $contratto['idzona'];
 
-    // Info riga pianificata
-    $rs = $dbo->fetchArray('SELECT *, (SELECT tempo_standard FROM in_tipiintervento WHERE idtipointervento = co_promemoria.idtipointervento) AS tempo_standard  FROM co_promemoria WHERE idcontratto='.prepare($idcontratto).' AND id='.prepare($idcontratto_riga));
-    $idtipointervento = $rs[0]['idtipointervento'];
-    $data = (null !== filter('data')) ? filter('data') : $rs[0]['data_richiesta'];
-    $richiesta = $rs[0]['richiesta'];
-    $idsede = $rs[0]['idsede'];
-    $idimpianti = $rs[0]['idimpianti'];
+    // Informazioni del Promemoria
+    $promemoria = $dbo->fetchOne('SELECT *, (SELECT tempo_standard FROM in_tipiintervento WHERE idtipointervento = co_promemoria.idtipointervento) AS tempo_standard FROM co_promemoria WHERE idcontratto='.prepare($id_contratto).' AND id = '.prepare($id_promemoria_contratto));
+    $id_tipo = $promemoria['idtipointervento'];
+    $data = (null !== filter('data')) ? filter('data') : $promemoria['data_richiesta'];
+    $richiesta = $promemoria['richiesta'];
+    $id_sede = $promemoria['idsede'];
+    $impianti_collegati = $promemoria['idimpianti'];
 
-    // aumento orario inizio del tempo standard definito dalla tipologia dell'intervento (PRESO DAL PROMEMORIA)
-    if (!empty($rs[0]['tempo_standard'])) {
-        $orario_fine = date('H:i:s', strtotime($orario_inizio) + ((60 * 60) * $rs[0]['tempo_standard']));
+    // Generazione dell'orario di fine sulla base del tempo standard definito dal Promemoria
+    if (!empty($promemoria['tempo_standard'])) {
+        $orario_fine = date('H:i:s', strtotime($orario_inizio) + ((60 * 60) * $promemoria['tempo_standard']));
     }
 
-    // se gli impianti non sono stati definiti nel promemoria, carico tutti gli impianti a contratto
-    if (empty($idimpianti)) {
-        $rs = $dbo->fetchArray('SELECT idimpianto FROM my_impianti_contratti WHERE idcontratto='.prepare($idcontratto));
-        $idimpianto = implode(',', array_column($rs, 'idimpianto'));
-    } else {
-        $idimpianto = $idimpianti;
-        // Spunto il tecnico di default assegnato all'impianto
-        $rs = $dbo->fetchArray('SELECT idtecnico FROM my_impianti WHERE id='.prepare($idimpianto));
-        $idtecnico = $rs[0]['idtecnico'] ?: '';
+    // Caricamento degli impianti a Contratto se non definiti in Promemoria
+    if (empty($impianti_collegati)) {
+        $rs = $dbo->fetchArray('SELECT idimpianto FROM my_impianti_contratti WHERE idcontratto = '.prepare($id_contratto));
+        $impianti_collegati = implode(',', array_column($rs, 'idimpianto'));
     }
-
-    // Seleziono "In programmazione" come stato
-    $rs = $dbo->fetchArray("SELECT * FROM in_statiintervento WHERE descrizione = 'In programmazione'");
-    $idstatointervento = $rs[0]['idstatointervento'];
 }
 
-// Intervento senza sessioni
+// Gestione dell'aggiunta di una sessione a un Intervento senza sessioni (Promemoria intervento) da Dashboard
 elseif (!empty($id_intervento)) {
-    // Info riga pianificata
-    $rs = $dbo->fetchArray('SELECT *, (SELECT idcontratto FROM co_promemoria WHERE idintervento=in_interventi.id LIMIT 0,1) AS idcontratto, in_interventi.id_preventivo as idpreventivo, (SELECT tempo_standard FROM in_tipiintervento WHERE idtipointervento = in_interventi.idtipointervento) AS tempo_standard  FROM in_interventi WHERE id='.prepare($id_intervento));
-    $idtipointervento = $rs[0]['idtipointervento'];
-    $data = (null !== filter('data')) ? filter('data') : $rs[0]['data_richiesta'];
-    $data_richiesta = $rs[0]['data_richiesta'];
-    $data_scadenza = $rs[0]['data_scadenza'];
-    $richiesta = $rs[0]['richiesta'];
-    $idsede = $rs[0]['idsede'];
-    $idanagrafica = $rs[0]['idanagrafica'];
-    $idclientefinale = $rs[0]['idclientefinale'];
-    $idstatointervento = $rs[0]['idstatointervento'];
-    $idcontratto = $rs[0]['idcontratto'];
-    $idpreventivo = $rs[0]['idpreventivo'];
-    $idzona = $rs[0]['idzona'];
+    $intervento = $dbo->fetchOne('SELECT *, (SELECT idcontratto FROM co_promemoria WHERE idintervento = in_interventi.id LIMIT 0,1) AS idcontratto, in_interventi.id_preventivo as idpreventivo, (SELECT tempo_standard FROM in_tipiintervento WHERE idtipointervento = in_interventi.idtipointervento) AS tempo_standard FROM in_interventi WHERE id = '.prepare($id_intervento));
 
-    // Aumento orario inizio del tempo standard definito dalla tipologia dell'intervento (PRESO DAL PROMEMORIA)
-    if (!empty($rs[0]['tempo_standard'])) {
-        $orario_fine = date('H:i:s', strtotime($orario_inizio) + ((60 * 60) * $rs[0]['tempo_standard']));
+    $id_tipo = $intervento['idtipointervento'];
+    $data = (null !== filter('data')) ? filter('data') : $intervento['data_richiesta'];
+    $data_richiesta = $intervento['data_richiesta'];
+    $data_scadenza = $intervento['data_scadenza'];
+    $richiesta = $intervento['richiesta'];
+    $id_sede = $intervento['idsede'];
+    $id_anagrafica = $intervento['idanagrafica'];
+    $id_cliente_finale = $intervento['idclientefinale'];
+    $id_stato = $intervento['idstatointervento'];
+    $id_contratto = $intervento['idcontratto'];
+    $id_preventivo = $intervento['idpreventivo'];
+    $id_zona = $intervento['idzona'];
+
+    // Generazione dell'orario di fine sulla base del tempo standard definito dall'Intervento
+    if (!empty($intervento['tempo_standard'])) {
+        $orario_fine = date('H:i:s', strtotime($orario_inizio) + ((60 * 60) * $intervento['tempo_standard']));
     }
 
-    $rs = $dbo->fetchArray('SELECT idimpianto FROM my_impianti_interventi WHERE idintervento='.prepare($id_intervento));
-    $idimpianto = implode(',', array_column($rs, 'idimpianto'));
+    $rs = $dbo->fetchArray('SELECT idimpianto FROM my_impianti_interventi WHERE idintervento = '.prepare($id_intervento));
+    $impianti_collegati = implode(',', array_column($rs, 'idimpianto'));
 }
 
-if (empty($data_fine)) {
-    if (null !== filter('data_fine')) {
-        $data_fine = filter('data_fine');
-    } else {
-        $data_fine = date('Y-m-d');
-    }
+// Selezione dei tecnici assegnati agli impianti selezionati
+if (!empty($impianti_collegati)) {
+    $tecnici_impianti = $dbo->fetchArray('SELECT idtecnico FROM my_impianti WHERE id IN ('.prepare($impianti_collegati).')');
+    $id_tecnico = array_unique(array_column($tecnici_impianti, 'idtecnico'));
 }
 
+// Impostazione della data se mancante
 if (empty($data)) {
-    if (null !== filter('data')) {
-        $data = filter('data');
-    } else {
+    $data = filter('data');
+    if (null == $data) {
         $data = date('Y-m-d');
     }
 }
 
+// Impostazione della data di fine da Dashboard
+if (empty($data_fine)) {
+    $data_fine = filter('data_fine');
+    if (null == $data_fine) {
+        $data_fine = date('Y-m-d');
+    }
+}
 $data_fine = $data_fine ?: $data;
 
-$_SESSION['superselect']['idanagrafica'] = $idanagrafica;
+$inizio_sessione = $data.' '.$orario_inizio;
+$fine_sessione = $data_fine.' '.$orario_fine;
 
-$orario_inizio = $data.' '.$orario_inizio;
-$orario_fine = $data_fine.' '.$orario_fine;
+// Calcolo del nuovo codice
+$new_codice = Intervento::getNextCodice($data);
 
-?>
+$_SESSION['superselect']['idanagrafica'] = $id_anagrafica;
 
-<form action="" method="post" id="add-form" onsubmit="if($(this).parsley().validate()) { return add_intervento(); }">
+echo '
+<form action="" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
-	<input type="hidden" name="ref" value="<?php echo get('ref'); ?>">
+	<input type="hidden" name="ref" value="'.get('ref').'">
 	<input type="hidden" name="backto" value="record-edit">
 
     <!-- Fix creazione da Anagrafica -->
-    <input type="hidden" name="id_record" value="">
+    <input type="hidden" name="id_record" value="">';
 
-<?php
-if (!empty($idcontratto_riga)) {
-    echo '<input type="hidden" name="idcontratto_riga" value="'.$idcontratto_riga.'">';
+if (!empty($id_promemoria_contratto)) {
+    echo '<input type="hidden" name="idcontratto_riga" value="'.$id_promemoria_contratto.'">';
 }
 
 if (!empty($id_intervento)) {
     echo '<input type="hidden" name="id_intervento" value="'.$id_intervento.'">';
 }
-?>
 
+echo '
 	<!-- DATI CLIENTE -->
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo tr('Dati cliente'); ?></h3>
+			<h3 class="panel-title">'.tr('Dati cliente').'</h3>
 		</div>
 
 		<div class="panel-body">
-
 			<!-- RIGA 1 -->
 			<div class="row">
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "value": "<?php echo $idanagrafica; ?>", "ajax-source": "clienti", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Cliente&readonly_tipo=1||<?php echo (empty($idanagrafica)) ? '' : 'disabled'; ?>", "data-heavy": 0, "readonly": "<?php echo (empty($idanagrafica)) ? 0 : 1; ?>" ]}
+					{[ "type": "select", "label": "'.tr('Cliente').'", "name": "idanagrafica", "required": 1, "value": "'.$id_anagrafica.'", "ajax-source": "clienti", "icon-after": "add|'.$module_anagrafiche['id'].'|tipoanagrafica=Cliente&readonly_tipo=1", "readonly": "'.(empty($id_anagrafica) ? 0 : 1).'" ]}
 				</div>
 
 				<div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Sede destinazione'); ?>", "name": "idsede_destinazione", "value": "<?php echo $idsede; ?>", "placheholder": "<?php echo tr('Seleziona prima un cliente'); ?>...", "ajax-source": "sedi" ]}
+                    {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione", "value": "'.$id_sede.'", "ajax-source": "sedi" ]}
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Per conto di'); ?>", "name": "idclientefinale", "value": "<?php echo $idclientefinale; ?>", "ajax-source": "clienti" ]}
+					{[ "type": "select", "label": "'.tr('Per conto di').'", "name": "idclientefinale", "value": "'.$id_cliente_finale.'", "ajax-source": "clienti" ]}
 				</div>
 			</div>
 
 			<!-- RIGA 2 -->
 			<div class="row">
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Zona'); ?>", "name": "idzona", "values": "query=SELECT id, CONCAT_WS( ' - ', nome, descrizione) AS descrizione FROM an_zone ORDER BY nome", "value": "<?php echo $idzona; ?>", "placeholder": "<?php echo tr('Nessuna zona'); ?>", "help":"<?php echo 'La zona viene definita automaticamente in base al cliente selezionato'; ?>.", "extra": "readonly", "value": "<?php echo $idzona; ?>" ]}
+                    {[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "values": "query=SELECT id, CONCAT_WS(\' - \', nome, descrizione) AS descrizione FROM an_zone ORDER BY nome", "value": "'.$id_zona.'", "placeholder": "'.tr('Nessuna zona').'", "help":"'.tr('La zona viene definita automaticamente in base al cliente selezionato').'.", "extra": "readonly", "value": "'.$id_zona.'" ]}
                 </div>
 
 				<div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Preventivo'); ?>", "name": "idpreventivo", "value": "<?php echo $idpreventivo; ?>"<?php echo !empty($idanagrafica) ? '' : ', "placeholder": "'.tr('Seleziona prima un cliente').'..."'; ?>, "ajax-source": "preventivi", "readonly": "<?php echo (empty($idcontratto)) ? 0 : 1; ?>" ]}
+                    {[ "type": "select", "label": "'.tr('Preventivo').'", "name": "idpreventivo", "value": "'.$id_preventivo.'", "ajax-source": "preventivi", "readonly": "'.(empty($id_contratto) ? 0 : 1).'" ]}
 				</div>
 
 				<div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Contratto'); ?>", "name": "idcontratto", "value": "<?php echo $idcontratto; ?>"<?php echo !empty($idanagrafica) ? '' : ', "placeholder": "'.tr('Seleziona prima un cliente').'..."'; ?>, "ajax-source": "contratti", "readonly": "<?php echo (empty($idcontratto)) ? 0 : 1; ?>" ]}
+                    {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "value": "'.$id_contratto.'", "ajax-source": "contratti", "readonly": "'.(empty($id_contratto) ? 0 : 1).'" ]}
 				</div>
 			</div>
 
 			<div class="row">
-                <div class="col-md-6" id='impianti'>
-                    {[ "type": "select", "label": "<?php echo tr('Impianto'); ?>", "multiple": 1, "name": "idimpianti[]", "value": "<?php echo $idimpianto; ?>"<?php echo !empty($idanagrafica) ? '' : ', "placeholder": "'.tr('Seleziona prima un cliente').'..."'; ?>, "ajax-source": "impianti-cliente", "icon-after": "add|<?php echo Modules::get('Impianti')['id']; ?>|source=Attività||<?php echo (intval($idimpianto)) ? '' : 'disabled'; ?>", "data-heavy": 0 ]}
+                <div class="col-md-6">
+                    {[ "type": "select", "label": "'.tr('Impianto').'", "multiple": 1, "name": "idimpianti[]", "value": "'.$impianti_collegati.'", "ajax-source": "impianti-cliente", "icon-after": "add|'.Modules::get('Impianti')['id'].'|source=Attività" ]}
                 </div>
 
                 <div class="col-md-6">
-                    {[ "type": "select", "label": "<?php echo tr('Componenti'); ?>", "multiple": 1, "name": "componenti[]", "placeholder": "<?php echo tr('Seleziona prima un impianto'); ?>...", "ajax-source": "componenti" ]}
+                    {[ "type": "select", "label": "'.tr('Componenti').'", "multiple": 1, "name": "componenti[]", "placeholder": "'.tr('Seleziona prima un impianto').'", "ajax-source": "componenti" ]}
 				</div>
 			</div>
 		</div>
@@ -208,45 +200,45 @@ if (!empty($id_intervento)) {
 	<!-- DATI INTERVENTO -->
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo tr('Dati intervento'); ?></h3>
+			<h3 class="panel-title">'.tr('Dati intervento').'</h3>
 		</div>
 
 		<div class="panel-body">
 			<!-- RIGA 3 -->
 			<div class="row">
                 <div class="col-md-3">
-                    {[ "type": "timestamp", "label": "<?php echo tr('Data/ora richiesta'); ?>", "name": "data_richiesta", "required": 1, "value": "<?php echo $data_richiesta ?: '-now-'; ?>" ]}
+                    {[ "type": "timestamp", "label": "'.tr('Data/ora richiesta').'", "name": "data_richiesta", "required": 1, "value": "'.($data_richiesta ?: '-now-').'" ]}
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "timestamp", "label": "<?php echo tr('Data/ora scadenza'); ?>", "name": "data_scadenza", "required": 0, "value": "<?php echo $data_scadenza; ?>" ]}
+                    {[ "type": "timestamp", "label": "'.tr('Data/ora scadenza').'", "name": "data_scadenza", "required": 0, "value": "'.$data_scadenza.'" ]}
                 </div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Tipo attività'); ?>", "name": "idtipointervento", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "<?php echo $idtipointervento; ?>", "ajax-source": "tipiintervento" ]}
+					{[ "type": "select", "label": "'.tr('Tipo attività').'", "name": "idtipointervento", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "'.$id_tipo.'", "ajax-source": "tipiintervento" ]}
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL", "value": "<?php echo $idstatointervento; ?>" ]}
+					{[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL", "value": "'.$id_stato.'" ]}
 				</div>
 			</div>
 
 			<!-- RIGA 5 -->
 			<div class="row">
 				<div class="col-md-12">
-					{[ "type": "textarea", "label": "<?php echo tr('Richiesta'); ?>", "name": "richiesta", "required": 1, "value": "<?php echo $richiesta; ?>", "extra": "style='max-height:80px; ' " ]}
+					{[ "type": "textarea", "label": "'.tr('Richiesta').'", "name": "richiesta", "required": 1, "value": "'.$richiesta.'", "extra": "style=\'max-height:80px;\'" ]}
 				</div>
 			</div>
 		</div>
 	</div>
 
 	<!-- DATI INTERVENTO -->
-    <div class="box box-primary collapsable <?php echo get('ref') ? '' : 'collapsed-box'; ?>">
+    <div class="box box-primary collapsable '.($origine_dashboard ? '' : 'collapsed-box').'">
         <div class="box-header with-border">
-			<h3 class="box-title"><?php echo tr('Ore di lavoro'); ?></h3>
+			<h3 class="box-title">'.tr('Ore di lavoro').'</h3>
             <div class="box-tools pull-right">
                 <button type="button" class="btn btn-box-tool" data-widget="collapse">
-                    <i class="fa fa-<?php echo get('ref') ? 'minus' : 'plus'; ?>"></i>
+                    <i class="fa fa-'.($origine_dashboard ? 'minus' : 'plus').'"></i>
                 </button>
             </div>
 		</div>
@@ -254,227 +246,230 @@ if (!empty($id_intervento)) {
 		<div class="box-body">
 			<div class="row">
 				<div class="col-md-6">
-					{[ "type": "timestamp", "label": "<?php echo tr('Inizio attività'); ?>", "name": "orario_inizio", "required": <?php echo get('ref') ? 1 : 0; ?>, "value": "<?php echo $orario_inizio; ?>" ]}
+					{[ "type": "timestamp", "label": "'.tr('Inizio attività').'", "name": "orario_inizio", "required": '.($origine_dashboard ? 1 : 0).', "value": "'.$inizio_sessione.'" ]}
 				</div>
 
                 <div class="col-md-6">
-					{[ "type": "timestamp", "label": "<?php echo tr('Fine attività'); ?>", "name": "orario_fine", "required": <?php echo get('ref') ? 1 : 0; ?>, "value": "<?php echo $orario_fine; ?>" ]}
+					{[ "type": "timestamp", "label": "'.tr('Fine attività').'", "name": "orario_fine", "required": '.($origine_dashboard ? 1 : 0).', "value": "'.$fine_sessione.'" ]}
 				</div>
 			</div>
 
 			<div class="row">
 				<div class="col-md-12">
-					{[ "type": "select", "label": "<?php echo tr('Tecnici'); ?>", "multiple": "1", "name": "idtecnico[]", "required": <?php echo get('ref') ? 1 : 0; ?>, "ajax-source": "tecnici", "value": "<?php echo $idtecnico; ?>", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Tecnico||<?php echo (empty($idtecnico)) ? '' : 'disabled'; ?>" ]}
+					{[ "type": "select", "label": "'.tr('Tecnici').'", "multiple": "1", "name": "idtecnico[]", "required": '.($origine_dashboard ? 1 : 0).', "ajax-source": "tecnici", "value": "'.$id_tecnico.'", "icon-after": "add|'.$module_anagrafiche['id'].'|tipoanagrafica=Tecnico||'.(empty($id_tecnico) ? '' : 'disabled').'" ]}
 				</div>
 			</div>
 		</div>
 	</div>
 
-
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></button>
+			<button type="button" class="btn btn-primary" onclick="salva(this)">
+                <i class="fa fa-plus"></i> '.tr('Aggiungi').'
+            </button>
 		</div>
 	</div>
 </form>
 
-<script>$(document).ready(init)</script>
-
-<script type="text/javascript">
-	$(document).ready(function() {
-        if(!$("#modals > div #idanagrafica").val()){
-            $("#modals > div #idsede_destinazione").prop("disabled", true);
-            $("#modals > div #idpreventivo").prop("disabled", true);
-            $("#modals > div #idcontratto").prop("disabled", true);
-            $("#modals > div #idimpianti").prop("disabled", true);
-            $("#modals > div #componenti").prop("disabled", true);
-
-        <?php
-        if (!empty($idcontratto) && (!empty($idordineservizio) || !empty($idcontratto_riga))) {
-            // Disabilito i campi che non devono essere modificati per poter collegare l'intervento all'ordine di servizio
-
-            echo '
-            $("#modals > div #idanagrafica").prop("disabled", true);
-            $("#modals > div #idclientefinale").prop("disabled", true);
-            $("#modals > div #idzona").prop("disabled", true);
-            $("#modals > div #idtipointervento").prop("disabled", true);
-            $("#modals > div #impianti").find("button").prop("disabled", true);';
-        }
-?>
-        }
-
-<?php
+<script>$(document).ready(init)</script>';
 
 if (!empty($id_intervento)) {
     echo '
-        $("#modals > div #idsede_destinazione").prop("disabled", true);
-        $("#modals > div #idpreventivo").prop("disabled", true);
-        $("#modals > div #idcontratto").prop("disabled", true);
-        $("#modals > div #idimpianti").prop("disabled", true);
-        $("#modals > div #componenti").prop("disabled", true);
-        $("#modals > div #idanagrafica").prop("disabled", true);
-        $("#modals > div #idanagrafica").find("button").prop("disabled", true);
-        $("#modals > div #idclientefinale").prop("disabled", true);
-        $("#modals > div #idzona").prop("disabled", true);
-        $("#modals > div #idtipointervento").prop("disabled", true);
-        $("#modals > div #idstatointervento").prop("disabled", true);
-        $("#modals > div #richiesta").prop("disabled", true);
-        $("#modals > div #data_richiesta").prop("disabled", true);
-        $("#modals > div #impianti").find("button").prop("disabled", true);
-    ';
+<script type="text/javascript">
+    $(document).ready(function() {
+       input("idsede_destinazione").disable();
+       input("idpreventivo").disable();
+       input("idcontratto").disable();
+       input("idimpianti").disable();
+       input("componenti").disable();
+       input("idanagrafica").disable();
+       input("idanagrafica").find("button").disable();
+       input("idclientefinale").disable();
+       input("idzona").disable();
+       input("idtipointervento").disable();
+       input("idstatointervento").disable();
+       input("richiesta").disable();
+       input("data_richiesta").disable();
+       input("impianti").find("button").disable();
+    });
+</script>';
 }
-?>
 
-		// Quando modifico orario inizio, allineo anche l'orario fine
-        $("#modals > div #orario_inizio").on("dp.change", function (e) {
-            $("#modals > div #orario_fine").data("DateTimePicker").minDate(e.date);
-            $("#modals > div #orario_fine").change();
+// Disabilito i campi che non devono essere modificati per poter collegare l'Intervento al Promemoria del Contratto
+if (!empty($id_contratto) && !empty($id_promemoria_contratto)) {
+    echo '
+<script type="text/javascript">
+    $(document).ready(function() {
+       input("idanagrafica").disable();
+       input("idclientefinale").disable();
+       input("idzona").disable();
+       input("idtipointervento").disable();
+       input("impianti").find("button").disable();
+    });
+</script>';
+}
+
+echo '
+<script type="text/javascript">
+    var anagrafica = input("idanagrafica");
+    var sede = input("idsede_destinazione");
+    var contratto = input("idcontratto");
+    var preventivo = input("idpreventivo");
+
+	$(document).ready(function() {
+        if(!anagrafica.get()){
+           sede.disable();
+           input("idpreventivo").disable();
+           input("idcontratto").disable();
+           input("idimpianti").disable();
+           input("componenti").disable();
+        }
+
+		// Quando modifico orario inizio, allineo anche l\'orario fine
+		let orario_inizio = input("orario_inizio").getElement();
+		let orario_fine = input("orario_fine").getElement();
+        orario_inizio.on("dp.change", function (e) {
+            orario_fine.data("DateTimePicker").minDate(e.date);
+            orario_fine.change();
         });
 
         // Refresh modulo dopo la chiusura di una pianificazione attività derivante dalle attività
         // da pianificare, altrimenti il promemoria non si vede più nella lista a destra
 		// TODO: da gestire via ajax
-        if( $('input[name=idcontratto_riga]').val() != undefined ){
-            $('#modals > div button.close').on('click', function() {
+        if($("input[name=idcontratto_riga]").val()) {
+            $("#modals > div button.close").on("click", function() {
                 location.reload();
             });
         }
     });
 
-	$('#modals > div #idanagrafica').change(function() {
+    // Gestione della modifica dell\'anagrafica
+	anagrafica.change(function() {
         updateSelectOption("idanagrafica", $(this).val());
-        session_set('superselect,idanagrafica', $(this).val(), 0);
+        session_set("superselect,idanagrafica", $(this).val(), 0);
 
-        var value = !$(this).val() ? true : false;
-        var placeholder = !$(this).val() ? "<?php echo tr('Seleziona prima un cliente...'); ?>" : "<?php echo tr("Seleziona un'opzione"); ?>";
+        var value = !$(this).val();
+        var placeholder = value ? "'.tr('Seleziona prima un cliente').'" : "'.tr("Seleziona un'opzione").'";
 
-		$("#modals > div #idsede_destinazione").prop("disabled", value);
-		$("#modals > div #idsede_destinazione").selectReset(placeholder);
+        sede.setDisabled(value)
+            .getElement().selectReset(placeholder);
 
-		$("#modals > div #idpreventivo").prop("disabled", value);
-		$("#modals > div #idpreventivo").selectReset(placeholder);
+        input("idpreventivo").setDisabled(value)
+            .getElement().selectReset(placeholder);
 
-		$("#modals > div #idcontratto").prop("disabled", value);
-		$("#modals > div #idcontratto").selectReset(placeholder);
+        input("idcontratto").setDisabled(value)
+            .getElement().selectReset(placeholder);
 
-		$("#modals > div #idimpianti").prop("disabled", value);
-        $("#modals > div #impianti").find("button").prop("disabled", value);
-		$("#modals > div #idimpianti").selectReset(placeholder);
+        input("idimpianti").setDisabled(value);
 
-		if (($(this).val())) {
-			if (($(this).selectData().idzona)){
-				$('#modals > div #idzona').val($(this).selectData().idzona).change();
+        let data = anagrafica.getData();
+		if (data) {
+		    input("idzona").set(data.idzona ? data.idzona : "");
+			// session_set("superselect,idzona", $(this).selectData().idzona, 0);
 
-			}else{
-				$('#modals > div #idzona').val('').change();
-			}
-			// session_set('superselect,idzona', $(this).selectData().idzona, 0);
-		}
-
-        // Settaggio tipo intervento da anagrafica
-        $('#modals > div #idtipointervento').selectSetNew($(this).selectData().idtipointervento, $(this).selectData().idtipointervento_descrizione);
-	});
-
-	$('#modals > div #idsede_destinazione').change(function() {
-		session_set('superselect,idsede_destinazione', $(this).val(), 0);
-		$("#modals > div #idimpianti").selectReset();
-
-		if (($(this).val())) {
-			if (($(this).selectData().idzona)){
-				$('#modals > div #idzona').val($(this).selectData().idzona).change();
-			}else{
-				$('#modals > div #idzona').val('').change();
-			}
-			// session_set('superselect,idzona', $(this).selectData().idzona, 0);
+            // Impostazione del tipo intervento da anagrafica
+            input("idtipointervento").getElement()
+                .selectSetNew($(this).selectData().idtipointervento, $(this).selectData().idtipointervento_descrizione);
 		}
 	});
 
-	$('#modals > div #idpreventivo').change(function() {
-		if($('#modals > div #idcontratto').val() && $(this).val()){
-            $("#modals > div #idcontratto").selectReset();
+    // Gestione della modifica della sede selezionato
+	sede.change(function() {
+		session_set("superselect,idsede_destinazione", $(this).val(), 0);
+        input("idimpianti").getElement().selectReset();
+
+        let data = sede.getData();
+		if (data) {
+		    input("idzona").set(data.idzona ? data.idzona : "");
+			// session_set("superselect,idzona", $(this).selectData().idzona, 0);
+		}
+	});
+
+    // Gestione della modifica del preventivo selezionato
+	preventivo.change(function() {
+		if (contratto.get() && preventivo.get()){
+            contratto.getElement().selectReset();
         }
 
-        if($(this).val()){
-			$('#modals > div #idtipointervento').selectSetNew($(this).selectData().idtipointervento, $(this).selectData().idtipointervento_descrizione);
+        if (preventivo.get()) {
+            input("idtipointervento").getElement()
+                .selectSetNew($(this).selectData().idtipointervento, $(this).selectData().idtipointervento_descrizione);
         }
 	});
 
-	$('#modals > div #idcontratto').change(function() {
-		if($('#modals > div #idpreventivo').val() && $(this).val()){
-            $("#modals > div #idpreventivo").selectReset();
-			$('input[name=idcontratto_riga]').val('');
-		}
+    // Gestione della modifica del contratto selezionato
+	contratto.change(function() {
+		if (contratto.get() && preventivo.get()){
+            preventivo.getElement().selectReset();
+            $("input[name=idcontratto_riga]").val("");
+        }
 	});
 
-	$('#modals > div #idimpianti').change(function() {
-		session_set('superselect,marticola', $(this).val(), 0);
+    // Gestione delle modifiche agli impianti selezionati
+	input("idimpianti").change(function() {
+		session_set("superselect,marticola", $(this).val(), 0);
 
-        $("#modals > div #componenti").prop("disabled", !$(this).val() ? true : false);
-        $("#modals > div #componenti").selectReset();
-	});
+        input("componenti").setDisabled(!$(this).val())
+            .getElement().selectReset();
+	});';
 
-	// tempo standard
-    // TODO: tempo_standard da preventivo e contratto attraverso selectData() relativi
-	$('#modals > div #idtipointervento').change(function() {
+if (filter('orario_fine') !== null) {
+    echo '
+	// Automatismo del tempo standard
+    input("idtipointervento").change(function() {
+        let data = $(this).selectData();
+		if (data && data.tempo_standard > 0) {
+            let orario_inizio = input("orario_inizio").get();
 
-		if ($(this).selectData() && (($(this).selectData().tempo_standard)>0) && ('<?php echo filter('orario_fine'); ?>' == '')){
-
-            orario_inizio = moment($('#modals > div #orario_inizio').val(), globals.timestamp_format, globals.locale).isValid() ? $('#modals > div #orario_inizio').val() : false;
-
-            //da sistemare
-            if (orario_inizio){
-                tempo_standard = ($(this).selectData().tempo_standard)*60;
-                orario_fine = moment(orario_inizio).add(tempo_standard, 'm');
-                $('#modals > div #orario_fine').val(moment(orario_fine).format(globals.timestamp_format));
+            if (moment(orario_inizio, globals.timestamp_format, globals.locale).isValid()) {
+                let tempo_standard = data.tempo_standard * 60;
+                let nuovo_orario_fine = moment(orario_inizio).add(tempo_standard, "m");
+                input("orario_fine").set(moment(nuovo_orario_fine).format(globals.timestamp_format));
             }
 		}
+	});';
+}
 
-	});
-
-	$('#modals > div #idtecnico').change(function() {
-		<?php if (!get('ref')) {
-    ?>
-	   var value = ($(this).val()>0) ? true : false;
-		$('#modals > div #orario_inizio').prop("required", value);
-		$('#modals > div #orario_fine').prop("required", value);
-		$('#modals > div #data').prop("required", value);
-		<?php
-} ?>
-	});
-
-	var ref = "<?php echo get('ref'); ?>";
-
-	function add_intervento(){
-        // Se l'aggiunta intervento proviene dal calendario, faccio il submit via ajax e ricarico gli eventi...
-        if(ref){
-            $('#add-form').find('[type=submit]').prop("disabled", true).addClass("disabled");
-            $('#add-form').find('input:disabled, select:disabled, textarea:disabled').removeAttr('disabled');
-
-            $.post(globals.rootdir + '/actions.php?id_module=<?php echo Modules::get('Interventi')['id']; ?>', $('#add-form').serialize(), function(data,response){
-                if(response=="success"){
-                    // Se l'aggiunta intervento proviene dalla scheda di pianificazione ordini di servizio della dashboard, la ricarico
-                    if(ref == "dashboard"){
-                        $("#modals > div").modal('hide');
-
-                        // Aggiornamento elenco interventi da pianificare
-                        $('#calendar').fullCalendar('refetchEvents');
-                        $('#calendar').fullCalendar('render');
-                    }
-
-                    // Se l'aggiunta intervento proviene dai contratti, faccio il submit via ajax e ricarico la tabella dei contratti
-                    else if(ref == "interventi_contratti"){
-
-						$("#modals > div").modal('hide');
-						parent.window.location.reload();
-						//TODO: da gestire via ajax
-						//$('#elenco_interventi > tbody').load(globals.rootdir + '/modules/contratti/plugins/contratti.pianificazioneinterventi.php?op=get_interventi_pianificati&idcontratto=<?php echo $idcontratto; ?>');
-
-                    }
-                }
-            });
-
-            return false;
+        if (!$origine_dashboard) {
+            echo '
+	input("idtecnico").change(function() {
+	    var value = $(this).val() > 0 ? true : false;
+	    input("orario_inizio").setRequired(value);
+	    input("orario_fine").setRequired(value);
+	    input("data").setRequired(value);
+	});';
         }
-	}
-</script>
+
+        echo '
+	var ref = "'.get('ref').'";
+
+	async function salva(button) {
+	    // Submit attraverso ricaricamento della pagina
+	    if (!ref) {
+            $("#add-form").submit();
+            return;
+	    }
+
+	    // Submit dinamico tramite AJAX
+        let valid = await salvaForm(button, "#add-form");
+        if (!valid) return;
+
+        // Se l\'aggiunta intervento proviene dalla scheda di pianificazione ordini di servizio della dashboard, la ricarico
+        if (ref == "dashboard") {
+            $("#modals > div").modal("hide");
+
+            // Aggiornamento elenco interventi da pianificare
+            $("#calendar").fullCalendar("refetchEvents");
+            $("#calendar").fullCalendar("render");
+        }
+
+        // Se l\'aggiunta intervento proviene dai contratti, faccio il submit via ajax e ricarico la tabella dei contratti
+        else if (ref == "interventi_contratti") {
+            $("#modals > div").modal("hide");
+            parent.window.location.reload();
+            //TODO: da gestire via ajax
+            //$("#elenco_interventi > tbody").load(globals.rootdir + "/modules/contratti/plugins/contratti.pianificazioneinterventi.php?op=get_interventi_pianificati&idcontratto='.$id_contratto.'");
+        }
+    }
+</script>';

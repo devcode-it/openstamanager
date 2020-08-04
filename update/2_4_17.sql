@@ -177,3 +177,48 @@ ALTER TABLE `mg_causali_movimenti` DROP `movimento_carico`;
 
 INSERT INTO `mg_causali_movimenti` (`id`, `nome`, `descrizione`, `tipo_movimento`) VALUES
 (NULL, 'Spostamento', 'Spostamento manuale', 'spostamento');
+
+-- Aggiunta tabella in_interventi_tecnici_assegnati per la gestione dei tecnici assegnati alle attività
+CREATE TABLE IF NOT EXISTS `in_interventi_tecnici_assegnati` (
+    `id_intervento` int(11) NOT NULL,
+    `id_tecnico` int(11) NOT NULL,
+    FOREIGN KEY (`id_intervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`id_tecnico`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- Fix contenuti delle date (NULL al posto di 0000-00-00)
+ALTER TABLE `mg_movimenti` CHANGE `data` `data` date;
+ALTER TABLE `my_impianti` CHANGE `data` `data` date;
+ALTER TABLE `an_anagrafiche` CHANGE `data_nascita` `data_nascita` date;
+ALTER TABLE `in_interventi` CHANGE `data_richiesta` `data_richiesta` DATETIME;
+ALTER TABLE `in_interventi` CHANGE `firma_data` `firma_data` DATETIME;
+
+UPDATE `mg_movimenti` SET `data` = NULL WHERE `data` = '0000-00-00' OR `data` = '0000-00-00 00:00:00';
+UPDATE `my_impianti` SET `data` = NULL WHERE `data` = '0000-00-00' OR `data` = '0000-00-00 00:00:00';
+UPDATE `an_anagrafiche` SET `data_nascita` = NULL WHERE `data_nascita` = '0000-00-00' OR `data_nascita` = '0000-00-00 00:00:00';
+UPDATE `in_interventi` SET `data_richiesta` = NULL WHERE `data_richiesta` = '0000-00-00' OR `data_richiesta` = '0000-00-00 00:00:00';
+UPDATE `in_interventi` SET `firma_data` = NULL WHERE `firma_data` = '0000-00-00' OR `firma_data` = '0000-00-00 00:00:00';
+UPDATE `updates` SET `id` = NULL WHERE `id` = '0000-00-00' OR `id` = '0000-00-00 00:00:00';
+UPDATE `in_interventi_tecnici` SET `orario_fine` = NULL WHERE `orario_fine` = '0000-00-00' OR `orario_fine` = '0000-00-00 00:00:00';
+UPDATE `in_interventi_tecnici` SET `orario_inizio` = NULL WHERE `orario_inizio` = '0000-00-00' OR `orario_inizio` = '0000-00-00 00:00:00';
+UPDATE `or_ordini` SET `data` = NULL WHERE `data` = '0000-00-00' OR `data` = '0000-00-00 00:00:00';
+UPDATE `co_documenti` SET `data` = NULL WHERE `data` = '0000-00-00' OR `data` = '0000-00-00 00:00:00';
+UPDATE `do_documenti` SET `data` = NULL WHERE `data` = '0000-00-00' OR `data` = '0000-00-00 00:00:00';
+UPDATE `co_movimenti` SET `data` = NULL WHERE `data` = '0000-00-00' OR `data` = '0000-00-00 00:00:00';
+UPDATE `my_impianto_componenti` SET `data` = NULL WHERE `data` = '0000-00-00' OR `data` = '0000-00-00 00:00:00';
+UPDATE `dt_ddt` SET `data` = NULL WHERE `data` = '0000-00-00' OR `data` = '0000-00-00 00:00:00';
+UPDATE `co_preventivi` SET `data_accettazione` = NULL WHERE `data_accettazione` = '0000-00-00' OR `data_accettazione` = '0000-00-00 00:00:00';
+UPDATE `co_contratti` SET `data_accettazione` = NULL WHERE `data_accettazione` = '0000-00-00' OR `data_accettazione` = '0000-00-00 00:00:00';
+UPDATE `co_contratti` SET `data_bozza` = NULL WHERE `data_bozza` = '0000-00-00' OR `data_bozza` = '0000-00-00 00:00:00';
+UPDATE `co_preventivi` SET `data_bozza` = NULL WHERE `data_bozza` = '0000-00-00' OR `data_bozza` = '0000-00-00 00:00:00';
+UPDATE `co_preventivi` SET `data_conclusione` = NULL WHERE `data_conclusione` = '0000-00-00' OR `data_conclusione` = '0000-00-00 00:00:00';
+UPDATE `co_contratti` SET `data_conclusione` = NULL WHERE `data_conclusione` = '0000-00-00' OR `data_conclusione` = '0000-00-00 00:00:00';
+UPDATE `co_scadenziario` SET `data_emissione` = NULL WHERE `data_emissione` = '0000-00-00' OR `data_emissione` = '0000-00-00 00:00:00';
+UPDATE `or_righe_ordini` SET `data_evasione` = NULL WHERE `data_evasione` = '0000-00-00' OR `data_evasione` = '0000-00-00 00:00:00';
+UPDATE `in_interventi` SET `data_invio` = NULL WHERE `data_invio` = '0000-00-00' OR `data_invio` = '0000-00-00 00:00:00';
+UPDATE `co_preventivi` SET `data_pagamento` = NULL WHERE `data_pagamento` = '0000-00-00' OR `data_pagamento` = '0000-00-00 00:00:00';
+UPDATE `co_scadenziario` SET `data_pagamento` = NULL WHERE `data_pagamento` = '0000-00-00' OR `data_pagamento` = '0000-00-00 00:00:00';
+UPDATE `co_promemoria` SET `data_richiesta` = NULL WHERE `data_richiesta` = '0000-00-00' OR `data_richiesta` = '0000-00-00 00:00:00';
+UPDATE `co_preventivi` SET `data_rifiuto` = NULL WHERE `data_rifiuto` = '0000-00-00' OR `data_rifiuto` = '0000-00-00 00:00:00';
+UPDATE `co_contratti` SET `data_rifiuto` = NULL WHERE `data_rifiuto` = '0000-00-00' OR `data_rifiuto` = '0000-00-00 00:00:00';
+UPDATE `my_impianto_componenti` SET `data_sostituzione` = NULL WHERE `data_sostituzione` = '0000-00-00' OR `data_sostituzione` = '0000-00-00 00:00:00';

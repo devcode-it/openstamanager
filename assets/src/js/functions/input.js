@@ -1,79 +1,94 @@
-// Inputmask
-function start_inputmask(element) {
-    if (element == undefined) {
-        element = '';
-    } else {
-        element = element + ' ';
+function input(name) {
+    return new Input(name);
+}
+
+function Input(name) {
+    this.element = $("[name=" + name + "]").last();
+
+    // Fix per select multipli
+    if (this.element.length === 0) {
+        this.element = $("[name='" + name + "[]']").last();
     }
 
-    var date = dateFormatMoment(globals.date_format).toLowerCase();
-
-    $(element + ".date-mask").not('.bound').inputmask(date, {
-        placeholder: date
-    }).addClass('bound');
-
-    $(element + '.email-mask').not('.bound').inputmask('Regex', {
-        regex: "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^-]+(?:\\.[a-zA-Z0-9_!#$%&'*+/=?`{|}~^-]+)*@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$",
-    }).addClass('bound');
-
-    $(element + '.rea-mask').not('.bound').inputmask( {
-        mask: "AA-999999{1,15}",
-        casing: "upper",
-    }).addClass('bound');
-
-    $(element + '.provincia-mask').not('.bound').inputmask( {
-        mask: "AA",
-        casing: "upper",
-    }).addClass('bound');
-
-    $(element + '.alphanumeric-mask').not('.bound').inputmask('Regex', {
-        regex: "[A-Za-z0-9#_|\/\\-.]*",
-    }).addClass('bound');
-
-    $(element + '.math-mask').not('.bound').inputmask('Regex', {
-        regex: "[0-9,.+\-]*",
-    }).addClass('bound');
-
-    if (globals.is_mobile) {
-        $(element + '.inputmask-decimal, ' + element + '.date-mask, ' + element + '.timestamp-mask').each(function () {
-            $(this).attr('type', 'tel');
-        }).addClass('bound');
-    } else {
-        $(element + '.inputmask-decimal').not('.bound').each(function () {
-            var $this = $(this);
-
-            var min = $this.attr('min-value');
-            if (min == 'undefined') {
-                min = false;
-            }
-
-            var max = $this.attr('max-value');
-            if (max == 'undefined') {
-                max = false;
-            }
-
-            $this.inputmask("decimal", {
-                min: min ? min : undefined,
-                allowMinus: !min || min < 0 ? true : false,
-                max: max ? max : undefined,
-                allowPlus: !max || max < 0 ? true : false,
-                digits: $this.attr('decimals') ? $this.attr('decimals') : globals.cifre_decimali,
-                digitsOptional: true, // Necessario per un problema di inputmask con i numeri negativi durante l'init
-                enforceDigitsOnBlur: true,
-                rightAlign: true,
-                autoGroup: true,
-                radixPoint: globals.decimals,
-                groupSeparator: globals.thousands,
-                onUnMask: function (maskedValue, unmaskedValue) {
-                    return maskedValue.toEnglish();
-                },
-            });
-
-            $this.on('keyup', function () {
-                if (min && $(this).val().toEnglish() < min) {
-                    $(this).val(min);
-                }
-            });
-        }).addClass('bound');
+    // Controllo sulla gestione precedente
+    if (!this.element.data("input-set")) {
+        this.element.data("input-set", 1);
+        this.element.data("required", this.element.attr("required"));
     }
+}
+
+Input.prototype.getElement = function () {
+    return this.element;
+}
+
+Input.prototype.setDisabled = function (value) {
+    if (value) {
+        return this.disable();
+    } else {
+        return this.enable();
+    }
+}
+
+Input.prototype.disable = function () {
+    this.element.addClass("disabled")
+        .attr("disabled", true)
+        .attr("required", false);
+
+    // Disabilitazione eventuali pulsanti relativi
+    this.element.closest(".form-group").find("button")
+        .addClass("disabled");
+
+    return this;
+}
+
+Input.prototype.enable = function () {
+    this.element.removeClass("disabled")
+        .attr("disabled", false)
+        .attr("required", this.element.data("required"));
+
+    // Abilitazione eventuali pulsanti relativi
+    this.element.closest(".form-group").find("button")
+        .removeClass("disabled");
+
+    return this;
+}
+
+Input.prototype.getData = function () {
+    if (this.element.is('select')) {
+        return this.element.selectData();
+    }
+
+    return {
+        value: this.element.val()
+    };
+}
+
+Input.prototype.get = function () {
+    return this.element.val();
+}
+
+Input.prototype.set = function (value) {
+    this.element.val(value).trigger("change");
+
+    return this;
+}
+
+Input.prototype.setRequired = function (value) {
+    this.element.attr("required", value)
+        .data("required", value);
+
+    return this;
+}
+
+// Eventi permessi
+Input.prototype.change = function (event) {
+    return this.element.change(event);
+}
+
+Input.prototype.on = function (event, action) {
+    return this.element.on(event, action(event));
+}
+
+Input.prototype.off = function (event) {
+    return this.element.off(event);
 }

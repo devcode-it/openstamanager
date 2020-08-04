@@ -183,7 +183,7 @@ echo '
         var restore = buttonLoading("#add_promemoria");
         $.post(globals.rootdir + "/actions.php?id_plugin='.$structure['id'].'&id_parent='.$id_record.'", {
             op: "add-promemoria",
-            data_richiesta: "'.$contratto['data_accettazione'].'",
+            data_richiesta: "'.$contratto->data_accettazione.'",
             idtipointervento: id_tipo,
         }).done(function(data) {
             launch_modal("Nuovo promemoria", globals.rootdir + "/plugins/'.$structure['directory'].'/pianificazione.php?id_plugin='.$structure['id'].'&id_parent='.$id_record.'&id_record=" + data + "&add=1");

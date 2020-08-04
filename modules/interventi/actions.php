@@ -405,7 +405,8 @@ switch (post('op')) {
                     flash()->info(tr('Firma salvata correttamente!'));
                     flash()->info(tr('Attività completata!'));
 
-                    $stato = $dbo->selectOne('in_statiintervento', '*', ['codice' => 'OK']);
+                    $id_stato = setting("Stato dell'attività dopo la firma");
+                    $stato = $dbo->selectOne('in_statiintervento', '*', ['idstatointervento' => $id_stato]);
                     // Notifica chiusura intervento
                     if (!empty($stato['notifica']) && !empty($stato['destinatari'])) {
                         $template = Template::find($stato['id_email']);

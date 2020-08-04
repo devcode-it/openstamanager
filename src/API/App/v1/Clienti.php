@@ -3,8 +3,7 @@
 namespace API\App\v1;
 
 use API\App\AppResource;
-use Illuminate\Database\Eloquent\Builder;
-use Modules\Anagrafiche\Anagrafica;
+use Auth;
 
 class Clienti extends AppResource
 {
@@ -15,20 +14,43 @@ class Clienti extends AppResource
 
     public function getModifiedRecords($last_sync_at)
     {
-        $statement = Anagrafica::select('idanagrafica')
-            ->whereHas('tipi', function (Builder $query) {
-                $query->where('descrizione', '=', 'Cliente');
-            });
+        $query = "SELECT an_anagrafiche.idanagrafica AS id FROM an_anagrafiche
+            INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche_anagrafiche.idanagrafica = an_anagrafiche.idanagrafica
+            INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica = an_tipianagrafiche.idtipoanagrafica
+        WHERE an_tipianagrafiche.descrizione = 'Cliente' AND an_anagrafiche.deleted_at IS NULL";
+
+        $sincronizza_lavorati = setting('Sincronizza Clienti per cui il Tecnico ha lavorato in passato');
+        if (!empty($sincronizza_lavorati)) {
+            $query .= '
+                AND an_anagrafiche.idanagrafica IN (
+                    SELECT idanagrafica FROM in_interventi
+                        INNER JOIN in_interventi_tecnici ON in_interventi_tecnici.idintervento = in_interventi.id
+                    WHERE in_interventi_tecnici.orario_fine BETWEEN :period_start AND :period_end
+                        AND in_interventi_tecnici.idtecnico = :id_tecnico
+
+                    UNION
+
+                    SELECT idanagrafica FROM in_interventi
+                        WHERE in_interventi.id NOT IN (
+                            SELECT idintervento FROM in_interventi_tecnici
+                        )
+                )';
+        }
 
         // Filtro per data
         if ($last_sync_at) {
-            $statement = $statement->where('updated_at', '>', $last_sync_at);
+            $query .= ' AND an_anagrafiche.updated_at > '.prepare($last_sync_at);
         }
 
-        $results = $statement->get()
-            ->pluck('idanagrafica');
+        $date = (new Interventi())->getDateDiInteresse();
+        $id_tecnico = Auth::user()->id_anagrafica;
+        $records = database()->fetchArray($query, [
+            ':period_start' => $date['start'],
+            ':period_end' => $date['end'],
+            ':id_tecnico' => $id_tecnico,
+        ]);
 
-        return $results;
+        return array_column($records, 'id');
     }
 
     public function retrieveRecord($id)

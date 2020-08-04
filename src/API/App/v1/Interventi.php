@@ -13,19 +13,33 @@ use Modules\TipiIntervento\Tipo as TipoSessione;
 
 class Interventi extends AppResource
 {
+    public function getDateDiInteresse()
+    {
+        // Periodo per selezionare gli interventi
+        $today = new Carbon();
+        $mesi_precedenti = intval(setting('Mesi per lo storico delle Attività'));
+        $start = $today->copy()->subMonths($mesi_precedenti);
+        $end = $today->copy()->addMonth(1);
+
+        return [
+            'today' => $today,
+            'start' => $start,
+            'end' => $end,
+        ];
+    }
+
     public function getCleanupData($last_sync_at)
     {
         // Periodo per selezionare interventi
-        $today = new Carbon();
-        $start = $today->copy()->subMonths(2);
-        $end = $today->copy()->addMonth(1);
+        $date = $this->getDateDiInteresse();
+        $start = $date['start'];
+        $end = $date['end'];
 
         $remove_end = $start->copy();
         $remove_start = $remove_end->copy()->subMonths(2);
 
         // Informazioni sull'utente
-        $user = Auth::user();
-        $id_tecnico = $user->id_anagrafica;
+        $id_tecnico = Auth::user()->id_anagrafica;
 
         $query = 'SELECT in_interventi.id FROM in_interventi WHERE
             deleted_at IS NOT NULL
@@ -58,13 +72,12 @@ class Interventi extends AppResource
     public function getModifiedRecords($last_sync_at)
     {
         // Periodo per selezionare interventi
-        $today = new Carbon();
-        $start = $today->copy()->subMonths(2);
-        $end = $today->copy()->addMonth(1);
+        $date = $this->getDateDiInteresse();
+        $start = $date['start'];
+        $end = $date['end'];
 
         // Informazioni sull'utente
-        $user = Auth::user();
-        $id_tecnico = $user->id_anagrafica;
+        $id_tecnico = Auth::user()->id_anagrafica;
 
         $query = 'SELECT in_interventi.id FROM in_interventi WHERE
             deleted_at IS NULL AND (
@@ -86,6 +99,7 @@ class Interventi extends AppResource
         if ($last_sync_at) {
             $query .= ' AND in_interventi.updated_at > '.prepare($last_sync_at);
         }
+
         $records = database()->fetchArray($query, [
             ':period_start' => $start,
             ':period_end' => $end,

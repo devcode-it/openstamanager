@@ -31,7 +31,7 @@ return [
     'modules/tipi_intervento' => 'Modules\TipiIntervento',
     'modules/categorie_documenti' => 'Modules\CategorieDocumentali',
     'modules/listini' => 'Modules\Listini',
-    'modules/my_impianti' => 'Modules\Impianti',
+    'modules/impianti' => 'Modules\Impianti',
     'modules/impostazioni' => 'Modules\Impostazioni',
     'plugins/exportFE' => 'Plugins\ExportFE',
     'plugins/importFE' => 'Plugins\ImportFE',

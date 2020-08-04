@@ -145,9 +145,17 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 (NULL, 'app-v1', 'create', 'email-rapportino', 'API\\App\\v1\\RapportinoIntervento', '1');
 
 -- Impostazioni relative all'applicazione
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES
-(NULL, 'Google Maps API key', '', 'string', '1', 'Applicazione', 1),
-(NULL, 'Mostra prezzi', '1', 'boolean', '1', 'Applicazione', 1);
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES
+(NULL, 'Google Maps API key', '', 'string', '1', 'Applicazione', 1, ''),
+(NULL, 'Mostra prezzi', '1', 'boolean', '1', 'Applicazione', 2, ''),
+(NULL, 'Sincronizza Clienti per cui il Tecnico ha lavorato in passato', '1', 'boolean', '1', 'Applicazione', 3, ''),
+(NULL, 'Mesi per lo storico delle Attività', '6', 'integer', '1', 'Applicazione', 3, '');
+
+-- Impostazioni relative gli stati delle Attività
+UPDATE `zz_settings` SET `sezione` = 'Attività' WHERE `sezione` = 'Interventi';
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES
+(NULL, 'Stato dell''attività alla chiusura', '1', 'query=SELECT idstatointervento AS id, descrizione AS text FROM in_statiintervento WHERE is_completato = 1', (SELECT idstatointervento AS id FROM in_statiintervento WHERE codice = 'OK'), 'Attività', 1, 'Stato in cui spostare l''attitivà a seguito della chiusura'),
+(NULL, 'Stato dell''attività dopo la firma', '1', 'query=SELECT idstatointervento AS id, descrizione AS text FROM in_statiintervento WHERE is_completato = 1', (SELECT idstatointervento AS id FROM in_statiintervento WHERE codice = 'OK'), 'Attività', 2, 'Stato in cui spostare l''attitivà dopo la firma del cliente');;
 
 -- Aggiunta risorsa per il download degli allegati
 INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES (NULL, 'v1', 'retrieve', 'allegato', 'API\\Common\\Allegato', '1');

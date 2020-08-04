@@ -153,8 +153,8 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 -- Impostazioni relative gli stati delle Attività
 UPDATE `zz_settings` SET `sezione` = 'Attività' WHERE `sezione` = 'Interventi';
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES
-(NULL, 'Stato dell''attività alla chiusura', '1', 'query=SELECT idstatointervento AS id, descrizione AS text FROM in_statiintervento WHERE is_completato = 1', (SELECT idstatointervento AS id FROM in_statiintervento WHERE codice = 'OK'), 'Attività', 1, 'Stato in cui spostare l''attitivà a seguito della chiusura'),
-(NULL, 'Stato dell''attività dopo la firma', '1', 'query=SELECT idstatointervento AS id, descrizione AS text FROM in_statiintervento WHERE is_completato = 1', (SELECT idstatointervento AS id FROM in_statiintervento WHERE codice = 'OK'), 'Attività', 2, 'Stato in cui spostare l''attitivà dopo la firma del cliente');
+(NULL, 'Stato dell''attività alla chiusura', (SELECT idstatointervento AS id FROM in_statiintervento WHERE codice = 'OK'), 'query=SELECT idstatointervento AS id, descrizione AS text FROM in_statiintervento WHERE is_completato = 1', '1', 'Attività', 1, 'Stato in cui spostare l''attitivà a seguito della chiusura'),
+(NULL, 'Stato dell''attività dopo la firma', (SELECT idstatointervento AS id FROM in_statiintervento WHERE codice = 'OK'), 'query=SELECT idstatointervento AS id, descrizione AS text FROM in_statiintervento WHERE is_completato = 1', '1', 'Attività', 2, 'Stato in cui spostare l''attitivà dopo la firma del cliente');
 
 -- Aggiunta risorsa per il download degli allegati
 INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES (NULL, 'v1', 'retrieve', 'allegato', 'API\\Common\\Allegato', '1');
@@ -222,3 +222,7 @@ UPDATE `co_promemoria` SET `data_richiesta` = NULL WHERE `data_richiesta` = '000
 UPDATE `co_preventivi` SET `data_rifiuto` = NULL WHERE `data_rifiuto` = '0000-00-00' OR `data_rifiuto` = '0000-00-00 00:00:00';
 UPDATE `co_contratti` SET `data_rifiuto` = NULL WHERE `data_rifiuto` = '0000-00-00' OR `data_rifiuto` = '0000-00-00 00:00:00';
 UPDATE `my_impianto_componenti` SET `data_sostituzione` = NULL WHERE `data_sostituzione` = '0000-00-00' OR `data_sostituzione` = '0000-00-00 00:00:00';
+
+-- Impostazioni per i tecnici assegnati delle Attività
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES
+(NULL, 'Mostra promemoria attività ai soli Tecnici assegnati', '1', 'boolean', '1', 'Attività', 14);

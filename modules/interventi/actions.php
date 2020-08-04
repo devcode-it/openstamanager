@@ -49,6 +49,14 @@ switch (post('op')) {
         $intervento->codice_cig = post('codice_cig');
         $intervento->save();
 
+        // Assegnazione dei tecnici all'intervento
+        $tecnici_assegnati = (array) post('tecnici_assegnati');
+        $dbo->sync('in_interventi_tecnici_assegnati', [
+            'id_intervento' => $id_record,
+        ], [
+            'id_tecnico' => $tecnici_assegnati,
+        ]);
+
         // Notifica chiusura intervento
         $stato = $dbo->selectOne('in_statiintervento', '*', ['idstatointervento' => post('idstatointervento')]);
         if (!empty($stato['notifica']) && !empty($stato['destinatari']) && $stato['idstatointervento'] != $record['idstatointervento']) {
@@ -147,6 +155,14 @@ switch (post('op')) {
                 add_tecnico($id_record, $idtecnico, post('orario_inizio'), post('orario_fine'), $idcontratto);
             }
         }
+
+        // Assegnazione dei tecnici all'intervento
+        $tecnici_assegnati = (array) post('tecnici_assegnati');
+        $dbo->sync('in_interventi_tecnici_assegnati', [
+            'id_intervento' => $id_record,
+        ], [
+            'id_tecnico' => $tecnici_assegnati,
+        ]);
 
         if (post('ref') == 'dashboard') {
             flash()->clearMessage('info');

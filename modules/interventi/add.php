@@ -4,15 +4,14 @@ use Modules\Interventi\Intervento;
 
 include_once __DIR__.'/../../core.php';
 
-// Rimuovo session usate sui select combinati (sedi, preventivi, contratti, impianti)
+// Rimozione dei parametri di sessione usati sui select combinati (sedi, preventivi, contratti, impianti)
 unset($_SESSION['superselect']['idanagrafica']);
 unset($_SESSION['superselect']['idsede']);
 
-// Se ho passato l'idanagrafica, carico il tipo di intervento di default
+// Lettura dei parametri di interesse
 $id_anagrafica = filter('idanagrafica');
 $id_sede = filter('idsede');
 $richiesta = filter('richiesta');
-$impianti = [];
 
 $origine_dashboard = get('ref') !== null;
 $module_anagrafiche = Modules::get('Anagrafiche');
@@ -148,18 +147,56 @@ if (!empty($id_intervento)) {
 }
 
 echo '
-	<!-- DATI CLIENTE -->
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h3 class="panel-title">'.tr('Dati cliente').'</h3>
-		</div>
+    <div class="row">
+        <div class="col-md-4">
+            {[ "type": "select", "label": "'.tr('Cliente').'", "name": "idanagrafica", "required": 1, "value": "'.$id_anagrafica.'", "ajax-source": "clienti", "icon-after": "add|'.$module_anagrafiche['id'].'|tipoanagrafica=Cliente&readonly_tipo=1", "readonly": "'.(empty($id_anagrafica) ? 0 : 1).'" ]}
+        </div>
 
-		<div class="panel-body">
-			<!-- RIGA 1 -->
+        <div class="col-md-4">
+            {[ "type": "select", "label": "'.tr('Preventivo').'", "name": "idpreventivo", "value": "'.$id_preventivo.'", "ajax-source": "preventivi", "readonly": "'.(empty($id_contratto) ? 0 : 1).'" ]}
+        </div>
+
+        <div class="col-md-4">
+            {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "value": "'.$id_contratto.'", "ajax-source": "contratti", "readonly": "'.(empty($id_contratto) ? 0 : 1).'" ]}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            {[ "type": "timestamp", "label": "'.tr('Data/ora richiesta').'", "name": "data_richiesta", "required": 1, "value": "'.($data_richiesta ?: '-now-').'" ]}
+        </div>
+
+        <div class="col-md-4">
+            {[ "type": "select", "label": "'.tr('Tipo').'", "name": "idtipointervento", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "'.$id_tipo.'", "ajax-source": "tipiintervento" ]}
+        </div>
+
+        <div class="col-md-4">
+            {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL", "value": "'.$id_stato.'" ]}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            {[ "type": "textarea", "label": "'.tr('Richiesta').'", "name": "richiesta", "required": 1, "value": "'.$richiesta.'", "extra": "style=\'max-height:80px;\'" ]}
+        </div>
+    </div>
+
+    <!-- DATI AGGIUNTIVI -->
+    <div class="box box-warning collapsable collapsed-box">
+        <div class="box-header with-border">
+            <h3 class="box-title">'.tr('Dettagli aggiuntivi').'</h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                    <i class="fa fa-plus"></i>
+                </button>
+            </div>
+        </div>
+
+		<div class="box-body">
 			<div class="row">
-				<div class="col-md-4">
-					{[ "type": "select", "label": "'.tr('Cliente').'", "name": "idanagrafica", "required": 1, "value": "'.$id_anagrafica.'", "ajax-source": "clienti", "icon-after": "add|'.$module_anagrafiche['id'].'|tipoanagrafica=Cliente&readonly_tipo=1", "readonly": "'.(empty($id_anagrafica) ? 0 : 1).'" ]}
-				</div>
+                <div class="col-md-4">
+                    {[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "values": "query=SELECT id, CONCAT_WS(\' - \', nome, descrizione) AS descrizione FROM an_zone ORDER BY nome", "value": "'.$id_zona.'", "placeholder": "'.tr('Nessuna zona').'", "help":"'.tr('La zona viene definita automaticamente in base al cliente selezionato').'.", "extra": "readonly", "value": "'.$id_zona.'" ]}
+                </div>
 
 				<div class="col-md-4">
                     {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione", "value": "'.$id_sede.'", "ajax-source": "sedi" ]}
@@ -170,69 +207,43 @@ echo '
 				</div>
 			</div>
 
-			<!-- RIGA 2 -->
 			<div class="row">
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "values": "query=SELECT id, CONCAT_WS(\' - \', nome, descrizione) AS descrizione FROM an_zone ORDER BY nome", "value": "'.$id_zona.'", "placeholder": "'.tr('Nessuna zona').'", "help":"'.tr('La zona viene definita automaticamente in base al cliente selezionato').'.", "extra": "readonly", "value": "'.$id_zona.'" ]}
+                    {[ "type": "timestamp", "label": "'.tr('Data/ora scadenza').'", "name": "data_scadenza", "required": 0, "value": "'.$data_scadenza.'" ]}
                 </div>
 
-				<div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Preventivo').'", "name": "idpreventivo", "value": "'.$id_preventivo.'", "ajax-source": "preventivi", "readonly": "'.(empty($id_contratto) ? 0 : 1).'" ]}
-				</div>
-
-				<div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "value": "'.$id_contratto.'", "ajax-source": "contratti", "readonly": "'.(empty($id_contratto) ? 0 : 1).'" ]}
-				</div>
-			</div>
-
-			<div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     {[ "type": "select", "label": "'.tr('Impianto').'", "multiple": 1, "name": "idimpianti[]", "value": "'.$impianti_collegati.'", "ajax-source": "impianti-cliente", "icon-after": "add|'.Modules::get('Impianti')['id'].'|source=Attività" ]}
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-4">
                     {[ "type": "select", "label": "'.tr('Componenti').'", "multiple": 1, "name": "componenti[]", "placeholder": "'.tr('Seleziona prima un impianto').'", "ajax-source": "componenti" ]}
 				</div>
 			</div>
 		</div>
 	</div>
 
-	<!-- DATI INTERVENTO -->
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h3 class="panel-title">'.tr('Dati intervento').'</h3>
+	<!-- ASSEGNAZIONE TECNICI -->
+    <div class="box box-info collapsable collapsed-box">
+        <div class="box-header with-border">
+			<h3 class="box-title">'.tr('Assegnazione tecnici').'</h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                    <i class="fa fa-plus"></i>
+                </button>
+            </div>
 		</div>
 
-		<div class="panel-body">
-			<!-- RIGA 3 -->
-			<div class="row">
-                <div class="col-md-3">
-                    {[ "type": "timestamp", "label": "'.tr('Data/ora richiesta').'", "name": "data_richiesta", "required": 1, "value": "'.($data_richiesta ?: '-now-').'" ]}
-                </div>
-
-                <div class="col-md-3">
-                    {[ "type": "timestamp", "label": "'.tr('Data/ora scadenza').'", "name": "data_scadenza", "required": 0, "value": "'.$data_scadenza.'" ]}
-                </div>
-
-				<div class="col-md-3">
-					{[ "type": "select", "label": "'.tr('Tipo attività').'", "name": "idtipointervento", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "'.$id_tipo.'", "ajax-source": "tipiintervento" ]}
-				</div>
-
-				<div class="col-md-3">
-					{[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL", "value": "'.$id_stato.'" ]}
-				</div>
-			</div>
-
-			<!-- RIGA 5 -->
-			<div class="row">
+		<div class="box-body">
+	        <div class="row">
 				<div class="col-md-12">
-					{[ "type": "textarea", "label": "'.tr('Richiesta').'", "name": "richiesta", "required": 1, "value": "'.$richiesta.'", "extra": "style=\'max-height:80px;\'" ]}
+					{[ "type": "select", "label": "'.tr('Tecnici assegnati').'", "multiple": "1", "name": "tecnici_assegnati[]", "ajax-source": "tecnici", "value": "", "icon-after": "add|'.$module_anagrafiche['id'].'|tipoanagrafica=Tecnico" ]}
 				</div>
 			</div>
-		</div>
-	</div>
+        </div>
+    </div>
 
-	<!-- DATI INTERVENTO -->
+	<!-- ORE DI LAVORO -->
     <div class="box box-primary collapsable '.($origine_dashboard ? '' : 'collapsed-box').'">
         <div class="box-header with-border">
 			<h3 class="box-title">'.tr('Ore di lavoro').'</h3>
@@ -284,14 +295,12 @@ if (!empty($id_intervento)) {
        input("idimpianti").disable();
        input("componenti").disable();
        input("idanagrafica").disable();
-       input("idanagrafica").find("button").disable();
        input("idclientefinale").disable();
        input("idzona").disable();
        input("idtipointervento").disable();
        input("idstatointervento").disable();
        input("richiesta").disable();
        input("data_richiesta").disable();
-       input("impianti").find("button").disable();
     });
 </script>';
 }
@@ -305,7 +314,6 @@ if (!empty($id_contratto) && !empty($id_promemoria_contratto)) {
        input("idclientefinale").disable();
        input("idzona").disable();
        input("idtipointervento").disable();
-       input("impianti").find("button").disable();
     });
 </script>';
 }
@@ -349,8 +357,8 @@ echo '
         updateSelectOption("idanagrafica", $(this).val());
         session_set("superselect,idanagrafica", $(this).val(), 0);
 
-        var value = !$(this).val();
-        var placeholder = value ? "'.tr('Seleziona prima un cliente').'" : "'.tr("Seleziona un'opzione").'";
+        let value = !$(this).val();
+        let placeholder = value ? "'.tr('Seleziona prima un cliente').'" : "'.tr("Seleziona un'opzione").'";
 
         sede.setDisabled(value)
             .getElement().selectReset(placeholder);
@@ -370,7 +378,7 @@ echo '
 
             // Impostazione del tipo intervento da anagrafica
             input("idtipointervento").getElement()
-                .selectSetNew($(this).selectData().idtipointervento, $(this).selectData().idtipointervento_descrizione);
+                .selectSetNew(data.idtipointervento, data.idtipointervento_descrizione);
 		}
 	});
 
@@ -452,7 +460,9 @@ if (filter('orario_fine') !== null) {
 	    }
 
 	    // Submit dinamico tramite AJAX
-        let valid = await salvaForm(button, "#add-form");
+        let valid = await salvaForm(button, "#add-form", {
+            id_module: "'.$id_module.'", // Fix creazione da Dashboard
+        });
         if (!valid) return;
 
         // Se l\'aggiunta intervento proviene dalla scheda di pianificazione ordini di servizio della dashboard, la ricarico

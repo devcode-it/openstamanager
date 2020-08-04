@@ -523,7 +523,7 @@ function alertPush() {
     });
 }
 
-function salvaForm(button, form) {
+function salvaForm(button, form, data = {}) {
     return new Promise(function (resolve, reject) {
         // Caricamento visibile nel pulsante
         let restore = buttonLoading(button);
@@ -541,7 +541,7 @@ function salvaForm(button, form) {
             resolve(false);
         }
 
-        submitAjax(form, {}, function (response) {
+        submitAjax(form, data, function (response) {
             buttonRestore(button, restore);
             resolve(true);
         }, function (data) {

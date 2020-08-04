@@ -3,6 +3,7 @@
 include_once __DIR__.'/../../core.php';
 
 $block_edit = $record['flag_completato'];
+$module_anagrafiche = Modules::get('Anagrafiche');
 
 unset($_SESSION['superselect']['idanagrafica']);
 unset($_SESSION['superselect']['idsede_partenza']);
@@ -125,6 +126,16 @@ $_SESSION['superselect']['permetti_movimento_a_zero'] = false;
 				<div class="col-md-4">
 					{[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL", "value": "$idstatointervento$", "class": "unblockable" ]}
 				</div>
+<?php
+
+$tecnici_assegnati = $database->fetchArray('SELECT id_tecnico FROM in_interventi_tecnici_assegnati WHERE id_intervento = '.prepare($id_record));
+$tecnici_assegnati = array_column($tecnici_assegnati, 'id_tecnico');
+echo '
+                <div class="col-md-4">
+                    {[ "type": "select", "label": "'.tr('Tecnici assegnati').'", "multiple": "1", "name": "tecnici_assegnati[]", "ajax-source": "tecnici", "value": "'.implode(',', $tecnici_assegnati).'", "icon-after": "add|'.$module_anagrafiche['id'].'|tipoanagrafica=Tecnico" ]}
+                </div>';
+
+?>
 			</div>
 
 			<!-- RIGA 5 -->

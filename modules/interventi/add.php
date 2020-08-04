@@ -179,15 +179,17 @@ echo '
         <div class="col-md-12">
             {[ "type": "textarea", "label": "'.tr('Richiesta').'", "name": "richiesta", "required": 1, "value": "'.$richiesta.'", "extra": "style=\'max-height:80px;\'" ]}
         </div>
-    </div>
+    </div>';
 
+$espandi_dettagli = setting('Espandi automaticamente la sezione "Dettagli aggiuntivi"');
+echo '
     <!-- DATI AGGIUNTIVI -->
-    <div class="box box-warning collapsable collapsed-box">
+    <div class="box box-warning collapsable '.(empty($espandi_dettagli) ? 'collapsed-box' : '').'">
         <div class="box-header with-border">
             <h3 class="box-title">'.tr('Dettagli aggiuntivi').'</h3>
             <div class="box-tools pull-right">
                 <button type="button" class="btn btn-box-tool" data-widget="collapse">
-                    <i class="fa fa-plus"></i>
+                    <i class="fa fa-'.(empty($espandi_dettagli) ? 'plus' : 'minus').'"></i>
                 </button>
             </div>
         </div>

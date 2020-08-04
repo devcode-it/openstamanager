@@ -225,4 +225,5 @@ UPDATE `my_impianto_componenti` SET `data_sostituzione` = NULL WHERE `data_sosti
 
 -- Impostazioni per i tecnici assegnati delle Attività
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES
-(NULL, 'Mostra promemoria attività ai soli Tecnici assegnati', '1', 'boolean', '1', 'Attività', 14);
+(NULL, 'Mostra promemoria attività ai soli Tecnici assegnati', '1', 'boolean', '1', 'Attività', 14),
+(NULL, 'Espandi automaticamente la sezione "Dettagli aggiuntivi"', '0', 'boolean', '1', 'Attività', 15);

@@ -153,7 +153,7 @@ class Settings
             }
 
             $result = '
-    {[ "type": "select", "multiple": 0, "label": "'.$setting->nome.'", "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "values": '.json_encode($list).', "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'" ]}';
+    {[ "type": "select", "multiple": 0, "label": '.json_encode($setting->nome).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "values": '.json_encode($list).', "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'" ]}';
         }
 
         // Lista multipla
@@ -169,25 +169,25 @@ class Settings
             }
 
             $result = '
-    {[ "type": "select", "multiple": 1, "label": "'.$setting->nome.'", "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.'][]", "values": '.json_encode($list).', "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'" ]}';
+    {[ "type": "select", "multiple": 1, "label": '.json_encode($setting->nome).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.'][]", "values": '.json_encode($list).', "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'" ]}';
         }
 
         // Lista da query
         elseif (preg_match('/^query=(.+?)$/', $setting->tipo, $m)) {
             $result = '
-    {[ "type": "select", "label": "'.$setting->nome.'", "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "values": "'.str_replace('"', '\"', $setting->tipo).'", "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'"   ]}';
+    {[ "type": "select", "label": '.json_encode($setting->nome).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "values": "'.str_replace('"', '\"', $setting->tipo).'", "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'"   ]}';
         }
 
         // Boolean (checkbox)
         elseif ($setting->tipo == 'boolean') {
             $result = '
-    {[ "type": "checkbox", "label": "'.$setting->nome.'", "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "placeholder": "'.tr('Attivo').'", "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'"  ]}';
+    {[ "type": "checkbox", "label": '.json_encode($setting->nome).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "placeholder": "'.tr('Attivo').'", "value": "'.$setting->valore.'", "required": "'.intval($required).'", "help": "'.$setting->help.'"  ]}';
         }
 
         // Campi di default
         elseif (in_array($setting->tipo, ['textarea', 'ckeditor', 'timestamp', 'date', 'time'])) {
             $result = '
-    {[ "type": "'.$setting->tipo.'", "label": "'.$setting->nome.'", "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "value": '.json_encode($setting->valore).', "required": "'.intval($required).'", "help": "'.$setting->help.'"  ]}';
+    {[ "type": "'.$setting->tipo.'", "label": '.json_encode($setting->nome).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "value": '.json_encode($setting->valore).', "required": "'.intval($required).'", "help": "'.$setting->help.'"  ]}';
         }
 
         // Campo di testo
@@ -198,7 +198,7 @@ class Settings
             $tipo = $numerico ? 'number' : 'text';
 
             $result = '
-    {[ "type": "'.$tipo.'", "label": "'.$setting->nome.'", "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "value": "'.$setting->valore.'"'.($numerico && $setting->tipo == 'integer' ? ', "decimals": 0' : '').', "required": "'.intval($required).'", "help": "'.$setting->help.'"  ]}';
+    {[ "type": "'.$tipo.'", "label": '.json_encode($setting->nome).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "value": "'.$setting->valore.'"'.($numerico && $setting->tipo == 'integer' ? ', "decimals": 0' : '').', "required": "'.intval($required).'", "help": "'.$setting->help.'"  ]}';
         }
 
         return $result;

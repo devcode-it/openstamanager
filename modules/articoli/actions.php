@@ -103,7 +103,7 @@ switch (post('op')) {
         $old_qta = $record['qta'];
         $movimento = $qta - $old_qta;
 
-        if ($movimento != 0) {
+        if (post('qta_manuale') == 1) {
             $descrizione_movimento = post('descrizione_movimento');
             $data_movimento = post('data_movimento');
 

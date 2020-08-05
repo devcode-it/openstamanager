@@ -231,3 +231,5 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 -- Modifica per introdurre il totale reddito per i Movimenti, sulla base del Conto relativo
 ALTER TABLE `co_movimenti` ADD `totale_reddito` decimal(12, 6) NOT NULL DEFAULT 0;
 ALTER TABLE `co_pianodeiconti3` ADD `percentuale_deducibile` decimal(5,2) NOT NULL DEFAULT 0;
+UPDATE `co_movimenti` SET `totale_reddito` = `totale`;
+UPDATE `co_pianodeiconti3` SET `percentuale_deducibile` = 100;

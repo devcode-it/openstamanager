@@ -23,11 +23,16 @@ $info = $dbo->fetchOne($query);
     <input type="hidden" name="idconto" value="<?php echo $info['id']; ?>">
 
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-6">
             {[ "type": "text", "label": "<?php echo tr('Numero'); ?>", "name": "numero", "required": 1, "class": "text-center", "value": "<?php echo $info['numero']; ?>", "extra": "maxlength=\"6\"" ]}
         </div>
 
-        <div class="col-md-8">
+        <div class="col-md-6">
+            {[ "type": "number", "label": "<?php echo tr('Percentuale deducibile'); ?>", "name": "percentuale_deducibile", "value": "<?php echo $info['percentuale_deducibile']; ?>", "disabled": <?php echo intval($lvl == 2); ?>, "icon-after": "<i class=\"fa fa-percent\"></i>", "max-value": "100", "min-value": "0" ]}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
             {[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": <?php echo json_encode($info['descrizione']); ?> ]}
         </div>
     </div>
@@ -40,4 +45,6 @@ $info = $dbo->fetchOne($query);
     </div>
     <div class="clearfix"></div>
 </form>
+
+<script>$(document).ready(init)</script>
 

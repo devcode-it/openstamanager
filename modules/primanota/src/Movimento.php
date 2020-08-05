@@ -26,8 +26,13 @@ class Movimento extends Model
         $model->primanota = $mastrino->primanota;
         $model->is_insoluto = $mastrino->is_insoluto;
 
-        $model->id_scadenza = $scadenza ? $scadenza->id : null;
+        // Associazione al documento del mastrino
+        if (!empty($mastrino->iddocumento)) {
+            $model->iddocumento = $mastrino->iddocumento;
+        }
 
+        // Associazione alla scadenza indicata
+        $model->id_scadenza = $scadenza ? $scadenza->id : null;
         $documento = $scadenza ? $scadenza->documento : null;
         if (!empty($documento)) {
             $model->iddocumento = $documento->id;
@@ -50,6 +55,16 @@ class Movimento extends Model
         }
 
         $this->totale = $totale;
+    }
+
+    public function save(array $options = [])
+    {
+        // Aggiornamento automatico di totale_reddito
+        $conto = database()->fetchOne('SELECT * FROM co_pianodeiconti3 WHERE id = '.prepare($this->id_conto));
+        $percentuale = floatval($conto['percentuale_deducibile']);
+        $this->totale_reddito = $this->totale * $percentuale / 100;
+
+        return parent::save($options);
     }
 
     // Attributi

@@ -8,7 +8,9 @@ use Common\Components\Description;
 use Common\Document;
 use Illuminate\Database\Eloquent\Builder;
 use Modules\Anagrafiche\Anagrafica;
-use Modules\Fatture\Components\Riga;
+use Modules\Fatture\Gestori\Bollo as GestoreBollo;
+use Modules\Fatture\Gestori\Movimenti as GestoreMovimenti;
+use Modules\Fatture\Gestori\Scadenze as GestoreScadenze;
 use Modules\Pagamenti\Pagamento;
 use Modules\PrimaNota\Movimento;
 use Modules\RitenuteContributi\RitenutaContributi;
@@ -39,6 +41,23 @@ class Fattura extends Document
     protected $dates = [
         'data',
     ];
+
+    /** @var GestoreScadenze */
+    protected $gestoreScadenze;
+    /** @var GestoreMovimenti */
+    protected $gestoreMovimenti;
+    /** @var GestoreBollo */
+    private $gestoreBollo;
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        // Inizializzazione gestori relativi
+        $this->gestoreScadenze = new GestoreScadenze($this);
+        $this->gestoreMovimenti = new GestoreMovimenti($this);
+        $this->gestoreBollo = new GestoreBollo($this);
+    }
 
     /**
      * Crea una nuova fattura.
@@ -137,12 +156,12 @@ class Fattura extends Document
             $model->dichiarazione()->associate($dichiarazione);
 
             $model->note = tr("Operazione non imponibile come da vostra dichiarazione d'intento nr _PROT_ del _PROT_DATE_ emessa in data _RELEASE_DATE_, da noi registrata al nr _ID_ del _DATE_", [
-                '_PROT_' => $dichiarazione->numero_protocollo,
-                '_PROT_DATE_' => $dichiarazione->data_protocollo,
-                '_RELEASE_DATE_' => $dichiarazione->data_emissione,
-                '_ID_' => $dichiarazione->id,
-                '_DATE_' => $dichiarazione->data,
-            ]).'.';
+                    '_PROT_' => $dichiarazione->numero_protocollo,
+                    '_PROT_DATE_' => $dichiarazione->data_protocollo,
+                    '_RELEASE_DATE_' => $dichiarazione->data_emissione,
+                    '_ID_' => $dichiarazione->id,
+                    '_DATE_' => $dichiarazione->data,
+                ]).'.';
         }
 
         $model->save();
@@ -437,71 +456,6 @@ class Fattura extends Document
     }
 
     /**
-     * Registra le scadenze della fattura elettronica collegata al documento.
-     *
-     * @param bool $is_pagato
-     *
-     * @return bool
-     */
-    public function registraScadenzeFE($is_pagato = false)
-    {
-        $xml = \Util\XML::read($this->getXML());
-
-        $pagamenti = $xml['FatturaElettronicaBody']['DatiPagamento']['DettaglioPagamento'];
-        if (!empty($pagamenti)) {
-            $rate = isset($pagamenti[0]) ? $pagamenti : [$pagamenti];
-
-            foreach ($rate as $rata) {
-                $scadenza = $rata['DataScadenzaPagamento'] ?: $this->data;
-                $importo = ($this->isNota()) ? $rata['ImportoPagamento'] : -$rata['ImportoPagamento'];
-
-                self::registraScadenza($this, $importo, $scadenza, $is_pagato);
-            }
-        }
-
-        return !empty($pagamenti);
-    }
-
-    /**
-     * Registra le scadenze tradizionali del gestionale.
-     *
-     * @param bool $is_pagato
-     */
-    public function registraScadenzeTradizionali($is_pagato = false)
-    {
-        $rate = $this->pagamento->calcola($this->netto, $this->data);
-        $direzione = $this->tipo->dir;
-
-        foreach ($rate as $rata) {
-            $scadenza = $rata['scadenza'];
-            $importo = $direzione == 'uscita' ? -$rata['importo'] : $rata['importo'];
-
-            self::registraScadenza($this, $importo, $scadenza, $is_pagato);
-        }
-    }
-
-    /**
-     * Registra una specifica scadenza nel database.
-     *
-     * @param float  $importo
-     * @param string $data_scadenza
-     * @param bool   $is_pagato
-     * @param string $type
-     */
-    public static function registraScadenza(Fattura $fattura, $importo, $data_scadenza, $is_pagato, $type = 'fattura')
-    {
-        $numero = $fattura->numero_esterno ?: $fattura->numero;
-        $descrizione = $fattura->tipo->descrizione.' numero '.$numero;
-
-        $scadenza = Scadenza::build($descrizione, $importo, $data_scadenza, $type, $is_pagato);
-
-        $scadenza->documento()->associate($fattura);
-        $scadenza->data_emissione = $fattura->data;
-
-        $scadenza->save();
-    }
-
-    /**
      * Registra le scadenze della fattura.
      *
      * @param bool $is_pagato
@@ -509,29 +463,7 @@ class Fattura extends Document
      */
     public function registraScadenze($is_pagato = false, $ignora_fe = false)
     {
-        $this->rimuoviScadenze();
-
-        if (!$ignora_fe && $this->module == 'Fatture di acquisto' && $this->isFE()) {
-            $scadenze_fe = $this->registraScadenzeFE($is_pagato);
-        }
-
-        if (empty($scadenze_fe)) {
-            $this->registraScadenzeTradizionali($is_pagato);
-        }
-
-        $direzione = $this->tipo->dir;
-        $ritenuta_acconto = $this->ritenuta_acconto;
-
-        // Se c'è una ritenuta d'acconto, la aggiungo allo scadenzario al 15 del mese dopo l'ultima scadenza di pagamento
-        if ($direzione == 'uscita' && $ritenuta_acconto > 0) {
-            $ultima_scadenza = $this->scadenze->last();
-            $scadenza = $ultima_scadenza->scadenza->copy()->startOfMonth()->addMonth();
-            $scadenza->setDate($scadenza->year, $scadenza->month, 15);
-
-            $importo = -$ritenuta_acconto;
-
-            self::registraScadenza($this, $importo, $scadenza, $is_pagato, 'ritenutaacconto');
-        }
+        $this->gestoreScadenze->registra($is_pagato, $ignora_fe);
     }
 
     /**
@@ -539,7 +471,7 @@ class Fattura extends Document
      */
     public function rimuoviScadenze()
     {
-        database()->delete('co_scadenziario', ['iddocumento' => $this->id]);
+        $this->gestoreScadenze->rimuovi();
     }
 
     /**
@@ -550,7 +482,7 @@ class Fattura extends Document
     public function save(array $options = [])
     {
         // Fix dei campi statici
-        $this->manageRigaMarcaDaBollo();
+        $this->id_riga_bollo = $this->gestoreBollo->manageRigaMarcaDaBollo();
 
         $this->attributes['ritenutaacconto'] = $this->ritenuta_acconto;
         $this->attributes['iva_rivalsainps'] = $this->iva_rivalsa_inps;
@@ -562,7 +494,7 @@ class Fattura extends Document
         $dichiarazione_precedente = Dichiarazione::find($this->original['id_dichiarazione_intento']);
         $is_fiscale = $this->isFiscale();
 
-        // Generazione numero fattura se non presente
+        // Generazione numero fattura se non presente (Bozza -> Emessa)
         if ((($stato_precedente->descrizione == 'Bozza' && $this->stato['descrizione'] == 'Emessa') or (!$is_fiscale)) && empty($this->numero_esterno)) {
             $this->numero_esterno = self::getNextNumeroSecondario($this->data, $this->direzione, $this->id_segment);
         }
@@ -571,6 +503,7 @@ class Fattura extends Document
         $result = parent::save($options);
 
         // Operazioni al cambiamento di stato
+        // Bozza o Annullato -> Stato diverso da Bozza o Annullato
         if (
             in_array($stato_precedente->descrizione, ['Bozza', 'Annullata'])
             && !in_array($this->stato['descrizione'], ['Bozza', 'Annullata'])
@@ -579,12 +512,17 @@ class Fattura extends Document
             $this->registraScadenze($this->stato['descrizione'] == 'Pagato');
 
             // Registrazione movimenti
-            aggiungi_movimento($this->id, $this->direzione);
-        } elseif (in_array($this->stato['descrizione'], ['Bozza', 'Annullata'])) {
+            $this->gestoreMovimenti->registra();
+        } // Stato qualunque -> Bozza o Annullato
+        elseif (in_array($this->stato['descrizione'], ['Bozza', 'Annullata'])) {
+            // Rimozione delle scadenza
             $this->rimuoviScadenze();
 
-            elimina_movimenti($this->id, 1);
-            elimina_movimenti($this->id);
+            // Rimozione dei movimenti
+            $this->gestoreMovimenti->rimuovi();
+
+            // Rimozione dei movimenti contabili (Prima nota)
+            $this->movimentiContabili()->delete();
         }
 
         // Operazioni sulla dichiarazione d'intento
@@ -608,8 +546,14 @@ class Fattura extends Document
     {
         $result = parent::delete();
 
+        // Rimozione delle scadenza
         $this->rimuoviScadenze();
-        elimina_movimenti($this->id);
+
+        // Rimozione dei movimenti
+        $this->gestoreMovimenti->rimuovi();
+
+        // Rimozione dei movimenti contabili (Prima nota)
+        $this->movimentiContabili()->delete();
 
         return $result;
     }
@@ -686,74 +630,6 @@ class Fattura extends Document
         }
 
         return $result;
-    }
-
-    /**
-     * Metodo per calcolare automaticamente il bollo da applicare al documento.
-     *
-     * @return float
-     */
-    public function getBollo()
-    {
-        if (isset($this->bollo)) {
-            return $this->bollo;
-        }
-
-        $righe_bollo = $this->getRighe()->filter(function ($item, $key) {
-            return $item->aliquota != null && in_array($item->aliquota->codice_natura_fe, ['N1', 'N2', 'N3', 'N4']);
-        });
-        $importo_righe_bollo = $righe_bollo->sum('netto');
-
-        // Leggo la marca da bollo se c'è e se il netto a pagare supera la soglia
-        $bollo = ($this->direzione == 'uscita') ? $this->bollo : setting('Importo marca da bollo');
-
-        $marca_da_bollo = 0;
-        if (abs($bollo) > 0 && abs($importo_righe_bollo) > setting("Soglia minima per l'applicazione della marca da bollo")) {
-            $marca_da_bollo = $bollo;
-        }
-
-        // Se l'importo è negativo può essere una nota di credito, quindi cambio segno alla marca da bollo
-        $marca_da_bollo = abs($marca_da_bollo);
-
-        return $marca_da_bollo;
-    }
-
-    /**
-     * Metodo per aggiornare ed eventualemente aggiungere la marca da bollo al documento.
-     */
-    public function manageRigaMarcaDaBollo()
-    {
-        $riga = $this->rigaBollo;
-
-        $addebita_bollo = $this->addebita_bollo;
-        $marca_da_bollo = $this->getBollo();
-
-        // Rimozione riga bollo se nullo
-        if (empty($addebita_bollo) || empty($marca_da_bollo)) {
-            if (!empty($riga)) {
-                $this->id_riga_bollo = null;
-
-                $riga->delete();
-            }
-
-            return;
-        }
-
-        // Creazione riga bollo se non presente
-        if (empty($riga)) {
-            $riga = Components\Riga::build($this);
-            $riga->save();
-
-            $this->id_riga_bollo = $riga->id;
-        }
-
-        $riga->prezzo_unitario = $marca_da_bollo;
-        $riga->qta = 1;
-        $riga->descrizione = setting('Descrizione addebito bollo');
-        $riga->id_iva = setting('Iva da applicare su marca da bollo');
-        $riga->idconto = setting('Conto predefinito per la marca da bollo');
-
-        $riga->save();
     }
 
     // Metodi statici

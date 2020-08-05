@@ -227,3 +227,7 @@ UPDATE `my_impianto_componenti` SET `data_sostituzione` = NULL WHERE `data_sosti
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES
 (NULL, 'Mostra promemoria attività ai soli Tecnici assegnati', '1', 'boolean', '1', 'Attività', 14),
 (NULL, 'Espandi automaticamente la sezione "Dettagli aggiuntivi"', '0', 'boolean', '1', 'Attività', 15);
+
+-- Modifica per introdurre il totale reddito per i Movimenti, sulla base del Conto relativo
+ALTER TABLE `co_movimenti` ADD `totale_reddito` decimal(12, 6) NOT NULL DEFAULT 0;
+ALTER TABLE `co_pianodeiconti3` ADD `percentuale_deducibile` decimal(5,2) NOT NULL DEFAULT 0;

@@ -91,6 +91,8 @@ function get_ivaindetraibile_fattura($iddocumento)
 
 /**
  * Elimina una scadenza in base al codice documento.
+ *
+ * @deprecated 2.4.17
  */
 function elimina_scadenze($iddocumento)
 {
@@ -104,6 +106,8 @@ function elimina_scadenze($iddocumento)
  * $iddocumento	string		E' l'id del documento di cui ricalcolare lo scadenzario
  * $pagamento		string		Nome del tipo di pagamento. Se è vuoto lo leggo da co_pagamenti_documenti, perché significa che devo solo aggiornare gli importi.
  * $pagato boolean Indica se devo segnare l'importo come pagato.
+ *
+ * @deprecated 2.4.17
  */
 function aggiungi_scadenza($iddocumento, $pagamento = '', $pagato = false)
 {
@@ -118,6 +122,8 @@ function aggiungi_scadenza($iddocumento, $pagamento = '', $pagato = false)
  *
  * @param $iddocumento
  * @param int $prima_nota
+ *
+ * @deprecated 2.4.17
  */
 function elimina_movimenti($id_documento, $prima_nota = 0)
 {
@@ -134,6 +140,8 @@ function elimina_movimenti($id_documento, $prima_nota = 0)
  * $iddocumento	string		E' l'id del documento da collegare alla prima nota
  * $dir			string		Direzione dell'importo (entrata, uscita)
  * $primanota		boolean		Indica se il movimento è un movimento di prima nota o un movimento normale (di default movimento normale).
+ *
+ * @deprecated 2.4.17
  */
 function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
 {
@@ -331,6 +339,8 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
 
 /**
  * Funzione per generare un nuovo codice per il mastrino.
+ *
+ * @deprecated 2.4.17
  */
 function get_new_idmastrino($table = 'co_movimenti')
 {
@@ -346,6 +356,8 @@ function get_new_idmastrino($table = 'co_movimenti')
  * Ricalcola i costi aggiuntivi in fattura (rivalsa inps, ritenuta d'acconto, marca da bollo)
  * Deve essere eseguito ogni volta che si aggiunge o toglie una riga
  * $iddocumento		int		ID della fattura.
+ *
+ * @deprecated 2.4.17
  */
 function ricalcola_costiagg_fattura($iddocumento)
 {

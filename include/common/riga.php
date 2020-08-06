@@ -91,11 +91,22 @@ echo '
 
 // Data prevista evasione (per ordini)
 
-if ( in_array($module['name'], ['Ordini cliente', 'Ordini fornitore'])) {
+if (in_array($module['name'], ['Ordini cliente', 'Ordini fornitore'])) {
     echo '
-    <div class="row">
-        <div class="col-md-'.$width.'">
-            {[ "type": "date", "label": "'.tr('Data prevista evasione').'", "name": "data_evasione", "value": "'.$result['data_evasione'].'" ]}
+<div class="box box-warning collapsable collapsed-box">
+    <div class="box-header with-border">
+        <h3 class="box-title">'.tr('Informazioni aggiuntive').'</h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
         </div>
-    </div>';
+    </div>
+
+    <div class="box-body">
+        <div class="row">
+            <div class="col-md-12">
+                {[ "type": "date", "label": "'.tr('Data prevista evasione').'", "name": "data_evasione", "value": "'.$result['data_evasione'].'" ]}
+            </div>
+        </div>
+    </div>
+</div>';
 }

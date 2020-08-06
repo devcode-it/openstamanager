@@ -157,7 +157,7 @@ switch (post('op')) {
         $articolo->um = post('um') ?: null;
 
         $articolo->costo_unitario = post('costo_unitario') ?: 0;
-        $articolo->data_evasione = post('data_evasione');
+        $articolo->data_evasione = post('data_evasione') ?: null;
         $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
         $articolo->setSconto(post('sconto'), post('tipo_sconto'));
 
@@ -217,7 +217,7 @@ switch (post('op')) {
         $riga->um = post('um') ?: null;
 
         $riga->costo_unitario = post('costo_unitario') ?: 0;
-        $riga->data_evasione = post('data_evasione');
+        $riga->data_evasione = post('data_evasione') ?: null;
         $riga->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
         $riga->setSconto(post('sconto'), post('tipo_sconto'));
 
@@ -302,14 +302,14 @@ switch (post('op')) {
 
         break;
 
-        case 'update_position':
-            $order = explode(',', post('order', true));
+    case 'update_position':
+        $order = explode(',', post('order', true));
 
-            foreach ($order as $i => $id_riga) {
-                $dbo->query('UPDATE `or_righe_ordini` SET `order` = '.prepare($i).' WHERE id='.prepare($id_riga));
-            }
+        foreach ($order as $i => $id_riga) {
+            $dbo->query('UPDATE `or_righe_ordini` SET `order` = '.prepare($i).' WHERE id='.prepare($id_riga));
+        }
 
-            break;
+        break;
 
     // Aggiunta di un documento in ordine
     case 'add_preventivo':

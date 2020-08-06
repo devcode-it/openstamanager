@@ -53,10 +53,10 @@ class AJAX
         }
 
         $total = $results['recordsFiltered'] ?: count($results);
-        $list = $results['results'] ? $results['results'] : $results;
+        $list = isset($results['results']) ? $results['results'] : $results;
 
         return [
-            'results' => $list,
+            'results' => $list ?: [],
             'recordsFiltered' => $total,
         ];
     }

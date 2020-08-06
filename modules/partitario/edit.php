@@ -34,16 +34,18 @@ foreach ($primo_livello as $conto_primo) {
 
     echo '
 <hr>
-<h2>'.$titolo.'</h2>
-    <div class="pull-right">
-        <br>'.Prints::getLink('Mastrino', $conto_primo['id'], null, tr('Stampa'), null, 'lev=1').'
+<div class="box">
+    <div class="box-header">
+        <h3 class="box-title">'.$titolo.'</h3>
+        <div class="pull-right">
+           '.Prints::getLink('Mastrino', $conto_primo['id'], null, tr('Stampa'), null, 'lev=1').'
+        </div>
     </div>
-    <div class="clearfix"></div>
 
-    <div style="padding-left:10px;">';
+    <div class="box-body">';
 
     // Livello 2
-    $query2 = "SELECT * FROM `co_pianodeiconti2` WHERE idpianodeiconti1='".$conto_primo['id']."' ORDER BY numero ASC";
+    $query2 = 'SELECT * FROM `co_pianodeiconti2` WHERE idpianodeiconti1 = '.prepare($conto_primo['id']).' ORDER BY numero ASC';
     $secondo_livello = $dbo->fetchArray($query2);
 
     foreach ($secondo_livello as $conto_secondo) {
@@ -52,26 +54,55 @@ foreach ($primo_livello as $conto_primo) {
         <div class="pull-right">
             '.Prints::getLink('Mastrino', $conto_secondo['id'], 'btn-info btn-xs', '', null, 'lev=2').'
 
-            <button type="button" class="btn btn-warning btn-xs" data-toggle="tooltip" title="Modifica questo conto..." onclick="launch_modal(\'Modifica conto\', \''.$structure->fileurl('edit_conto.php').'?id='.$conto_secondo['id'].'&lvl=2\');">
+            <button type="button" class="btn btn-warning btn-xs" onclick="modificaConto('.$conto_secondo['id'].', 2)">
                 <i class="fa fa-edit"></i>
             </button>
         </div>
 
         <h5><b>'.$conto_secondo['numero'].' '.$conto_secondo['descrizione'].'</b></h5>
 
-        <div style="padding-left:10px;">
-            <table class="table table-striped table-hover table-condensed" style="margin-bottom:0;">';
+        <div class="table-responsive">
+            <table class="table table-striped table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th>'.tr('Descrizione').'</th>
+                        <th style="width: 10%" class="text-center">'.tr('Importo').'</th>
+                        <th style="width: 10%" class="text-center">'.tr('Importo reddito').'</th>
+                    </tr>
+                </thead>
+
+                <tbody>';
 
         // Livello 3
-        $query3 = 'SELECT `co_pianodeiconti3`.*, movimenti.numero_movimenti, movimenti.totale, anagrafica.idanagrafica, anagrafica.deleted_at FROM `co_pianodeiconti3` LEFT OUTER JOIN (SELECT idanagrafica, idconto_cliente, idconto_fornitore, deleted_at FROM an_anagrafiche) AS anagrafica ON co_pianodeiconti3.id IN (anagrafica.idconto_cliente, idconto_fornitore) LEFT OUTER JOIN (SELECT COUNT(idconto) AS numero_movimenti, idconto, SUM( ROUND(totale,2)) AS totale FROM co_movimenti  WHERE data BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']).' GROUP BY idconto) movimenti ON co_pianodeiconti3.id=movimenti.idconto WHERE `idpianodeiconti2` = '.prepare($conto_secondo['id']).' ORDER BY numero ASC';
+        $query3 = 'SELECT `co_pianodeiconti3`.*, movimenti.numero_movimenti, movimenti.totale, movimenti.totale_reddito, anagrafica.idanagrafica, anagrafica.deleted_at
+            FROM `co_pianodeiconti3`
+                LEFT OUTER JOIN (
+                    SELECT idanagrafica,
+                           idconto_cliente,
+                           idconto_fornitore,
+                           deleted_at
+                    FROM an_anagrafiche
+                ) AS anagrafica ON co_pianodeiconti3.id IN (anagrafica.idconto_cliente, anagrafica.idconto_fornitore)
+                LEFT OUTER JOIN (
+                    SELECT COUNT(idconto) AS numero_movimenti,
+                       idconto,
+                       SUM(ROUND(totale, 2)) AS totale,
+                       SUM(ROUND(totale_reddito, 2)) AS totale_reddito
+                    FROM co_movimenti
+                    WHERE data BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']).' GROUP BY idconto
+                ) movimenti ON co_pianodeiconti3.id=movimenti.idconto
+            WHERE `idpianodeiconti2` = '.prepare($conto_secondo['id']).' ORDER BY numero ASC';
         $terzo_livello = $dbo->fetchArray($query3);
-
         foreach ($terzo_livello as $conto_terzo) {
             // Se il conto non ha documenti collegati posso eliminarlo
             $numero_movimenti = $conto_terzo['numero_movimenti'];
 
             $totale_conto = $conto_terzo['totale'];
-            $totale_conto = ($conto_primo['descrizione'] == 'Patrimoniale') ? $totale_conto : -$totale_conto;
+            $totale_reddito = $conto_terzo['totale_reddito'];
+            if ($conto_primo['descrizione'] == 'Patrimoniale'){
+                $totale_conto = -$totale_conto;
+                $totale_reddito = -$totale_reddito;
+            }
 
             // Somma dei totali
             if ($conto_primo['descrizione'] == 'Patrimoniale') {
@@ -89,7 +120,7 @@ foreach ($primo_livello as $conto_primo) {
             }
 
             echo '
-                <tr>
+                <tr style="'.(!empty($numero_movimenti) ? '' : 'opacity: 0.5;').'">
                     <td>';
 
             // Possibilità di esplodere i movimenti del conto
@@ -123,7 +154,7 @@ foreach ($primo_livello as $conto_primo) {
 
             // Pulsante per modificare il nome del conto di livello 3
             echo '
-                            <button type="button" class="btn btn-warning btn-xs" data-toggle="tooltip" title="Modifica questo conto..." onclick="launch_modal(\'Modifica conto\', \''.$structure->fileurl('edit_conto.php').'?id='.$conto_terzo['id'].'\');">
+                            <button type="button" class="btn btn-warning btn-xs" onclick="modificaConto('.$conto_terzo['id'].')">
                                 <i class="fa fa-edit"></i>
                             </button>';
 
@@ -140,19 +171,31 @@ foreach ($primo_livello as $conto_primo) {
 
             // Span con info del conto
             echo '
-                        <span style="'.(!empty($numero_movimenti) ? '' : 'opacity: 0.5;').'" class="clickable" id="movimenti-'.$conto_terzo['id'].'">
+                        <span class="clickable" id="movimenti-'.$conto_terzo['id'].'">
                             &nbsp;'.$conto_secondo['numero'].'.'.$conto_terzo['numero'].' '.$conto_terzo['descrizione'].'
                         </span>
                         <div id="conto_'.$conto_terzo['id'].'" style="display:none;"></div>
                     </td>
 
-                    <td width="100" class="text-right" valign="top"  style="'.(!empty($numero_movimenti) ? '' : 'opacity: 0.5;').'">
-                        '.moneyFormat(sum($totale_conto), 2).'
+                    <td class="text-right">
+                        '.moneyFormat($totale_conto, 2).'
+                    </td>
+                    <td class="text-right">
+                        '.moneyFormat($totale_reddito, 2).'
                     </td>
                 </tr>';
         }
 
         echo '
+                </tbody>
+
+                <tfoot>
+                    <tr>
+                        <th>'.tr('Descrizione').'</th>
+                        <th class="text-center">'.tr('Importo').'</th>
+                        <th class="text-center">'.tr('Importo reddito').'</th>
+                    </tr>
+                </tfoot>
             </table>';
 
         // Possibilità di inserire un nuovo conto
@@ -168,8 +211,8 @@ foreach ($primo_livello as $conto_primo) {
     echo '
     </div>
 
-    <table class="table table-condensed table-hover">'
-    ;
+        <table class="table table-condensed table-hover">';
+
     // Riepiloghi
     if ($conto_primo['descrizione'] == 'Patrimoniale') {
         $attivita = abs(sum($totale_attivita));
@@ -185,104 +228,106 @@ foreach ($primo_livello as $conto_primo) {
 
         // Attività
         echo '
-        <tr>
-            <th class="text-right">
-                <big>'.tr('Totale attività').':</big>
-            </th>
-            <td class="text-right" width="150">
-                <big>'.moneyFormat($attivita, 2).'</big>
-            </td>
-            <td width="50"></td>';
+            <tr>
+                <th class="text-right">
+                    <big>'.tr('Totale attività').':</big>
+                </th>
+                <td class="text-right" width="150">
+                    <big>'.moneyFormat($attivita, 2).'</big>
+                </td>
+                <td width="50"></td>';
 
         // Passività
         echo '
-            <th class="text-right">
-                <big>'.tr('Passività').':</big>
-            </th>
-            <td class="text-right" width="150">
-                <big>'.moneyFormat($passivita, 2).'</big>
-            </td>
-        </tr>';
+                <th class="text-right">
+                    <big>'.tr('Passività').':</big>
+                </th>
+                <td class="text-right" width="150">
+                    <big>'.moneyFormat($passivita, 2).'</big>
+                </td>
+            </tr>';
 
         // Perdita d'esercizio
         if ($utile_perdita < 0) {
             echo '
-        <tr>
-            <th class="text-right">
-                <big>'.tr("Perdita d'esercizio").':</big>
-            </th>
-            <td class="text-right">
-                <big>'.moneyFormat(sum($utile_perdita), 2).'</big>
-            </td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>';
+            <tr>
+                <th class="text-right">
+                    <big>'.tr("Perdita d'esercizio").':</big>
+                </th>
+                <td class="text-right">
+                    <big>'.moneyFormat(sum($utile_perdita), 2).'</big>
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>';
         } else {
             echo '
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <th class="text-right">
-                <big>'.tr('Utile').':</big>
-            </th>
-            <td class="text-right">
-                <big>'.moneyFormat(sum($utile_perdita), 2).'</big>
-            </td>
-        </tr>';
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <th class="text-right">
+                    <big>'.tr('Utile').':</big>
+                </th>
+                <td class="text-right">
+                    <big>'.moneyFormat(sum($utile_perdita), 2).'</big>
+                </td>
+            </tr>';
         }
 
         // Totale a pareggio
         echo '
-        <tr>
-            <th class="text-right">
-                <big>'.tr('Totale a pareggio').':</big>
-            </th>
-            <td class="text-right" width="150">
-                <big>'.moneyFormat(sum($pareggio1), 2).'</big>
-            </td>
-            <td width="50"></td>
+            <tr>
+                <th class="text-right">
+                    <big>'.tr('Totale a pareggio').':</big>
+                </th>
+                <td class="text-right" width="150">
+                    <big>'.moneyFormat(sum($pareggio1), 2).'</big>
+                </td>
+                <td width="50"></td>
 
-            <th class="text-right">
-                <big>'.tr('Totale a pareggio').':</big>
-            </th>
-            <td class="text-right" width="150">
-                <big>'.moneyFormat(sum($pareggio2), 2).'</big>
-            </td>
-        </tr>';
+                <th class="text-right">
+                    <big>'.tr('Totale a pareggio').':</big>
+                </th>
+                <td class="text-right" width="150">
+                    <big>'.moneyFormat(sum($pareggio2), 2).'</big>
+                </td>
+            </tr>';
     } else {
         echo '
-        <tr>
-            <th class="text-right">
-                <big>'.tr('Ricavi').':</big>
-            </th>
-            <td class="text-right" width="150">
-                <big>'.moneyFormat(sum($totale_ricavi), 2).'</big>
-            </td>
-        </tr>
+            <tr>
+                <th class="text-right">
+                    <big>'.tr('Ricavi').':</big>
+                </th>
+                <td class="text-right" width="150">
+                    <big>'.moneyFormat(sum($totale_ricavi), 2).'</big>
+                </td>
+            </tr>
 
-        <tr>
-            <th class="text-right">
-                <big>'.tr('Costi').':</big>
-            </th>
-            <td class="text-right" width="150">
-                <big>'.moneyFormat(sum($totale_costi), 2).'</big>
-            </td>
-        </tr>
+            <tr>
+                <th class="text-right">
+                    <big>'.tr('Costi').':</big>
+                </th>
+                <td class="text-right" width="150">
+                    <big>'.moneyFormat(sum($totale_costi), 2).'</big>
+                </td>
+            </tr>
 
-        <tr>
-            <th class="text-right">
-                <big>'.tr('Utile/perdita').':</big>
-            </th>
-            <td class="text-right" width="150">
-                <big>'.moneyFormat(sum($totale_ricavi) - abs(sum($totale_costi)), 2).'</big>
-            </td>
-        </tr>';
+            <tr>
+                <th class="text-right">
+                    <big>'.tr('Utile/perdita').':</big>
+                </th>
+                <td class="text-right" width="150">
+                    <big>'.moneyFormat(sum($totale_ricavi) - abs(sum($totale_costi)), 2).'</big>
+                </td>
+            </tr>';
     }
 
     echo '
-    </table>';
+        </table>
+    </div>
+</div>';
 }
 
 // Verifico se è già stata eseguita l'apertura bilancio
@@ -302,6 +347,9 @@ echo '
         <i class="fa fa-folder"></i> '.tr('Chiusura bilancio').'
     </button>
 </div>
+
+<div class="clearfix"></div>
+<hr>
 
 <script>
     $(document).ready(function() {
@@ -334,6 +382,10 @@ echo '
 
     function aggiungiConto(id_conto_lvl2) {
         openModal("'.tr('Nuovo conto').'", "'.$structure->fileurl('add_conto.php').'?id=" + id_conto_lvl2);
+    }
+
+    function modificaConto(id_conto, level = 3) {
+        launch_modal("'.tr('Modifica conto').'", "'.$structure->fileurl('edit_conto.php').'?id=" + id_conto + "&lvl=" + level);
     }
 
     function caricaMovimenti(selector, id_conto) {

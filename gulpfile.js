@@ -239,16 +239,16 @@ function csrf() {
 
 function pdfjs() {
     const web = gulp.src([
-        config.main.bowerDirectory + '/pdf/web/**/*',
-        '!' + config.main.bowerDirectory + '/pdf/web/cmaps/*',
-        '!' + config.main.bowerDirectory + '/pdf/web/*.map',
-        '!' + config.main.bowerDirectory + '/pdf/web/*.pdf',
+        config.main.bowerDirectory + '/pdf.js/web/**/*',
+        '!' + config.main.bowerDirectory + '/pdf.js/web/cmaps/*',
+        '!' + config.main.bowerDirectory + '/pdf.js/web/*.map',
+        '!' + config.main.bowerDirectory + '/pdf.js/web/*.pdf',
     ])
         .pipe(gulp.dest(config.production + '/pdfjs/web'));
 
     const build = gulp.src([
-        config.main.bowerDirectory + '/pdf/build/*',
-        '!' + config.main.bowerDirectory + '/pdf/build/*.map',
+        config.main.bowerDirectory + '/pdf.js/build/*',
+        '!' + config.main.bowerDirectory + '/pdf.js/build/*.map',
     ])
         .pipe(gulp.dest(config.production + '/pdfjs/build'));
 

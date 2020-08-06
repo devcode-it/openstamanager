@@ -479,7 +479,14 @@ function replaceAll(str, find, replace) {
 
 function cleanup_inputs() {
     $('.bound').removeClass("bound");
-    $('.superselect, .superselectajax').select2().select2("destroy");
+
+    $('.superselect, .superselectajax').each(function () {
+        let $this = $(this);
+
+        if ($this.data('select2')) {
+            $this.select2().select2("destroy")
+        }
+    });
 }
 
 function restart_inputs() {

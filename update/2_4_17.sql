@@ -193,6 +193,7 @@ ALTER TABLE `an_anagrafiche` CHANGE `data_nascita` `data_nascita` date;
 ALTER TABLE `in_interventi` CHANGE `data_richiesta` `data_richiesta` DATETIME;
 ALTER TABLE `in_interventi` CHANGE `firma_data` `firma_data` DATETIME;
 
+-- SET sql_mode = ''; 
 UPDATE `mg_movimenti` SET `data` = NULL WHERE `data` = '0000-00-00' OR `data` = '0000-00-00 00:00:00';
 UPDATE `my_impianti` SET `data` = NULL WHERE `data` = '0000-00-00' OR `data` = '0000-00-00 00:00:00';
 UPDATE `an_anagrafiche` SET `data_nascita` = NULL WHERE `data_nascita` = '0000-00-00' OR `data_nascita` = '0000-00-00 00:00:00';
@@ -233,3 +234,9 @@ ALTER TABLE `co_movimenti` ADD `totale_reddito` decimal(12, 6) NOT NULL DEFAULT 
 ALTER TABLE `co_pianodeiconti3` ADD `percentuale_deducibile` decimal(5,2) NOT NULL DEFAULT 0;
 UPDATE `co_movimenti` SET `totale_reddito` = `totale`;
 UPDATE `co_pianodeiconti3` SET `percentuale_deducibile` = 100;
+
+-- Evita di caricare impostazioni doppie
+ALTER TABLE `zz_settings` ADD UNIQUE(`nome`); 
+
+-- Evita di caricare username doppi
+ALTER TABLE `zz_users` ADD UNIQUE(`username`); 

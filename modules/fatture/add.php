@@ -85,7 +85,7 @@ if ($dir == 'entrata') {
 $(document).ready(function () {
     $("#idanagrafica_add").change(function () {
         var data = $(this).selectData();
-        
+
         if (data !== undefined) {
             if (!data.id){
                 $("#info").addClass("hidden");

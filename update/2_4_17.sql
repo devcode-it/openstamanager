@@ -147,7 +147,7 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES
 (NULL, 'Google Maps API key', '', 'string', '1', 'Applicazione', 1, ''),
 (NULL, 'Mostra prezzi', '1', 'boolean', '1', 'Applicazione', 2, ''),
-(NULL, 'Sincronizza Clienti per cui il Tecnico ha lavorato in passato', '1', 'boolean', '1', 'Applicazione', 3, ''),
+(NULL, 'Sincronizza solo i Clienti per cui il Tecnico ha lavorato in passato', '1', 'boolean', '1', 'Applicazione', 3, ''),
 (NULL, 'Mesi per lo storico delle Attività', '6', 'integer', '1', 'Applicazione', 3, '');
 
 -- Impostazioni relative gli stati delle Attività

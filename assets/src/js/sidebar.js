@@ -26,7 +26,7 @@ $(document).ready(function () {
         cursor: 'move',
 
         stop: function (event, ui) {
-            var order = $(this).sortable('toArray').toString();
+            let order = $(this).sortable('toArray').toString();
 
             $.post(globals.rootdir + "/actions.php?id_module=" + globals.order_manager_id, {
                 op: 'sort_modules',
@@ -53,5 +53,5 @@ $(document).ready(function () {
             session_set("settings,sidebar-collapse",1,0,0);
         }
     });
- 
+
 });

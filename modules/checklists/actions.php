@@ -55,12 +55,10 @@ switch (post('op')) {
         break;
 
     case 'update_position':
-        $ids = explode(',', $_POST['order']);
-        $order = 0;
+        $order = explode(',', post('order', true));
 
-        foreach ($ids as $id) {
-            $dbo->query('UPDATE `zz_checklist_items` SET `order` = '.prepare($order).' WHERE id = '.prepare($id));
-            ++$order;
+        foreach ($order as $i => $id_riga) {
+            $dbo->query('UPDATE `zz_checklist_items` SET `order` = '.prepare($i).' WHERE id='.prepare($id_riga));
         }
 
         break;

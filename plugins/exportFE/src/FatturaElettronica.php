@@ -818,11 +818,11 @@ class FatturaElettronica
         }
 
         // Bollo (2.1.1.6)
-        $bollo = $documento->getBollo();
-        if (!empty($bollo)) {
+        $riga_bollo = $documento->rigaBollo;
+        if (!empty($riga_bollo)) {
             $result['DatiBollo'] = [
                 'BolloVirtuale' => 'SI',
-                'ImportoBollo' => $bollo,
+                'ImportoBollo' => $riga_bollo->totale,
             ];
         }
 

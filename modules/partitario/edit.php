@@ -12,17 +12,17 @@ if ($bilancio_gia_aperto) {
     $msg .= ' '.tr('I movimenti di apertura già esistenti verranno annullati e ricreati').'.';
     $btn_class = 'btn-default';
 }
-?>
 
+echo '
 <div class="text-right">
-    <button type="button" class="btn btn-lg <?php echo $btn_class; ?>" data-op="apri-bilancio" data-title="<?php echo tr('Apertura bilancio'); ?>" data-backto="record-list" data-msg="<?php echo $msg; ?>" data-button="<?php echo tr('Riprendi saldi'); ?>" data-class="btn btn-lg btn-warning" onclick="message( this );"><i class="fa fa-folder-open"></i> <?php echo tr('Apertura bilancio'); ?></button>
-</div>
+    <button type="button" class="btn btn-lg '.$btn_class.'" data-op="apri-bilancio" data-title="'.tr('Apertura bilancio').'" data-backto="record-list" data-msg="'.$msg.'" data-button="'.tr('Riprendi saldi').'" data-class="btn btn-lg btn-warning" onclick="message( this );">
+        <i class="fa fa-folder-open"></i> '.tr('Apertura bilancio').'
+    </button>
+</div>';
 
-<?php
 // Livello 1
 $query1 = 'SELECT * FROM `co_pianodeiconti1` ORDER BY id ASC';
 $primo_livello = $dbo->fetchArray($query1);
-
 foreach ($primo_livello as $conto_primo) {
     $totale_attivita = [];
     $totale_passivita = [];
@@ -68,7 +68,7 @@ foreach ($primo_livello as $conto_primo) {
 
         foreach ($terzo_livello as $conto_terzo) {
             // Se il conto non ha documenti collegati posso eliminarlo
-            $movimenti = $conto_terzo['numero_movimenti'];
+            $numero_movimenti = $conto_terzo['numero_movimenti'];
 
             $totale_conto = $conto_terzo['totale'];
             $totale_conto = ($conto_primo['descrizione'] == 'Patrimoniale') ? $totale_conto : -$totale_conto;
@@ -93,56 +93,60 @@ foreach ($primo_livello as $conto_primo) {
                     <td>';
 
             // Possibilità di esplodere i movimenti del conto
-            if (!empty($movimenti)) {
+            if (!empty($numero_movimenti)) {
                 echo '
-                    <a href="javascript:;" class="btn btn-primary btn-xs plus-btn"><i class="fa fa-plus"></i></a>';
+                        <a href="javascript:;" class="btn btn-primary btn-xs plus-btn"><i class="fa fa-plus"></i></a>';
             }
 
             // Span con i pulsanti
             echo '
-                    <span class="hide tools pull-right">';
+                        <span class="hide tools pull-right">';
 
             //  Possibilità di visionare l'anagrafica
             $id_anagrafica = $conto_terzo['idanagrafica'];
             $anagrafica_deleted = $conto_terzo['deleted_at'];
-            echo    isset($id_anagrafica) ? Modules::link('Anagrafiche', $id_anagrafica, ' <i title="'.(isset($anagrafica_deleted) ? 'Anagrafica eliminata' : 'Visualizza anagrafica').'" class="btn btn-'.(isset($anagrafica_deleted) ? 'danger' : 'primary').' btn-xs fa fa-user" ></i>', null) : '';
-
-            // Stampa mastrino
-            if (!empty($movimenti)) {
-                echo '
-                        '.Prints::getLink('Mastrino', $conto_terzo['id'], 'btn-info btn-xs', '', null, 'lev=3');
+            if (isset($id_anagrafica)) {
+                echo Modules::link('Anagrafiche', $id_anagrafica, ' <i title="'.(isset($anagrafica_deleted) ? 'Anagrafica eliminata' : 'Visualizza anagrafica').'" class="btn btn-'.(isset($anagrafica_deleted) ? 'danger' : 'primary').' btn-xs fa fa-user" ></i>');
             }
 
-            // Possibilità di modificare il nome del conto livello3
+            // Stampa mastrino
+            if (!empty($numero_movimenti)) {
+                echo '
+                            '.Prints::getLink('Mastrino', $conto_terzo['id'], 'btn-info btn-xs', '', null, 'lev=3');
+            }
+
+            // Pulsante per aggiornare il totale reddito del conto di livello 3
             echo '
-                        <button type="button" class="btn btn-warning btn-xs" data-toggle="tooltip" title="Modifica questo conto..." onclick="launch_modal(\'Modifica conto\', \''.$structure->fileurl('edit_conto.php').'?id='.$conto_terzo['id'].'\');">
-                            <i class="fa fa-edit"></i>
-                        </button>';
+                            <button type="button" class="btn btn-info btn-xs" onclick="aggiornaReddito('.$conto_terzo['id'].')">
+                                <i class="fa fa-refresh"></i>
+                            </button>';
+
+            // Pulsante per modificare il nome del conto di livello 3
+            echo '
+                            <button type="button" class="btn btn-warning btn-xs" data-toggle="tooltip" title="Modifica questo conto..." onclick="launch_modal(\'Modifica conto\', \''.$structure->fileurl('edit_conto.php').'?id='.$conto_terzo['id'].'\');">
+                                <i class="fa fa-edit"></i>
+                            </button>';
 
             // Possibilità di eliminare il conto se non ci sono movimenti collegati
             if ($numero_movimenti <= 0) {
                 echo '
-                        <a class="btn btn-danger btn-xs ask" data-toggle="tooltip" title="'.tr('Elimina').'" data-backto="record-list" data-op="del" data-idconto="'.$conto_terzo['id'].'">
-                            <i class="fa fa-trash"></i>
-                        </a>';
+                            <a class="btn btn-danger btn-xs ask" data-toggle="tooltip" title="'.tr('Elimina').'" data-backto="record-list" data-op="del" data-idconto="'.$conto_terzo['id'].'">
+                                <i class="fa fa-trash"></i>
+                            </a>';
             }
 
-            echo  ' </span>';
+            echo  '
+                        </span>';
 
             // Span con info del conto
             echo '
-                    <span  style="'.(!empty($movimenti) ? '' : 'opacity: 0.5;').'" class="clickable" id="movimenti-'.$conto_terzo['id'].'">';
-
-            echo  '
-                            &nbsp;'.$conto_secondo['numero'].'.'.$conto_terzo['numero'].' '.$conto_terzo['descrizione'];
-
-            echo '  </span>';
-
-            echo '
+                        <span style="'.(!empty($numero_movimenti) ? '' : 'opacity: 0.5;').'" class="clickable" id="movimenti-'.$conto_terzo['id'].'">
+                            &nbsp;'.$conto_secondo['numero'].'.'.$conto_terzo['numero'].' '.$conto_terzo['descrizione'].'
+                        </span>
                         <div id="conto_'.$conto_terzo['id'].'" style="display:none;"></div>
                     </td>
 
-                    <td width="100" class="text-right" valign="top"  style="'.(!empty($movimenti) ? '' : 'opacity: 0.5;').'">
+                    <td width="100" class="text-right" valign="top"  style="'.(!empty($numero_movimenti) ? '' : 'opacity: 0.5;').'">
                         '.moneyFormat(sum($totale_conto), 2).'
                     </td>
                 </tr>';
@@ -153,7 +157,7 @@ foreach ($primo_livello as $conto_primo) {
 
         // Possibilità di inserire un nuovo conto
         echo '
-            <button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" title="'.tr('Aggiungi un nuovo conto...').'" onclick="add_conto('.$conto_secondo['id'].')">
+            <button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" title="'.tr('Aggiungi un nuovo conto...').'" onclick="aggiungiConto('.$conto_secondo['id'].')">
                 <i class="fa fa-plus-circle"></i>
             </button>
 
@@ -291,62 +295,67 @@ if ($bilancio_gia_chiuso) {
     $msg .= ' '.tr('I movimenti di apertura già esistenti verranno annullati e ricreati').'.';
     $btn_class = 'btn-default';
 }
-?>
 
+echo '
 <div class="text-right">
-    <button type="button" class="btn btn-lg <?php echo $btn_class; ?>" data-op="chiudi-bilancio" data-title="<?php echo tr('Chiusura bilancio'); ?>" data-backto="record-list" data-msg="<?php echo $msg; ?>" data-button="<?php echo tr('Chiudi bilancio'); ?>" data-class="btn btn-lg btn-primary" onclick="message( this );"><i class="fa fa-folder"></i> <?php echo tr('Chiusura bilancio'); ?></button>
+    <button type="button" class="btn btn-lg '.$btn_class.'" data-op="chiudi-bilancio" data-title="'.tr('Chiusura bilancio').'" data-backto="record-list" data-msg="'.$msg.'" data-button="'.tr('Chiudi bilancio').'" data-class="btn btn-lg btn-primary" onclick="message( this );">
+        <i class="fa fa-folder"></i> '.tr('Chiusura bilancio').'
+    </button>
 </div>
 
 <script>
-var tr = '';
-$(document).ready(function() {
-    $("tr").each(function() {
-        $(this).on("mouseover", function() {
-            $(this).find(".tools").removeClass("hide");
+    $(document).ready(function() {
+        $("tr").each(function() {
+            $(this).on("mouseover", function() {
+                $(this).find(".tools").removeClass("hide");
+            });
+
+            $(this).on("mouseleave", function() {
+                $(this).find(".tools").addClass("hide");
+            });
         });
 
-        $(this).on("mouseleave", function() {
-            $(this).find(".tools").addClass("hide");
-        });
+        $("span[id^=movimenti-]").each(function() {
+            $(this).on("click", function() {
+                let movimenti = $(this).parent().find("div[id^=conto_]");
+
+                if(!movimenti.html()) {
+                    let id_conto = $(this).attr("id").split("-").pop();
+
+                    caricaMovimenti(movimenti.attr("id"), id_conto);
+                } else {
+                    movimenti.slideToggle();
+                }
+
+                $(this).find(".plus-btn i").toggleClass("fa-plus").toggleClass("fa-minus");
+            });
+        })
     });
 
-    $("span[id^=movimenti-]").each(function() {
-        $(this).on("click", function() {
-            var movimenti = $(this).parent().find("div[id^=conto_]");
+    function aggiungiConto(id_conto_lvl2) {
+        openModal("'.tr('Nuovo conto').'", "'.$structure->fileurl('add_conto.php').'?id=" + id_conto_lvl2);
+    }
 
-            if(!movimenti.html()) {
-                var id_conto = $(this).attr("id").split("-").pop();
+    function caricaMovimenti(selector, id_conto) {
+        $("#main_loading").show();
 
-                load_movimenti(movimenti.attr("id"), id_conto);
-            } else {
-                movimenti.slideToggle();
+        $.ajax({
+            url: "'.$structure->fileurl('dettagli_conto.php').'",
+            type: "get",
+            data: {
+                id_module: globals.id_module,
+                id_conto: id_conto,
+            },
+            success: function(data){
+               $("#" + selector).html(data)
+                    .slideToggle();
+
+               $("#main_loading").fadeOut();
             }
-
-            $(this).find(".plus-btn i").toggleClass("fa-plus").toggleClass("fa-minus");
         });
-    })
-});
+    }
 
-function add_conto(id) {
-    launch_modal("<?php echo tr('Nuovo conto'); ?>",  "<?php echo $structure->fileurl('add_conto.php'); ?>?id=" + id);
-}
-
-function load_movimenti(selector, id_conto) {
-	$("#main_loading").show();
-
-    $.ajax({
-        url: "<?php echo $structure->fileurl('dettagli_conto.php'); ?>",
-        type: "get",
-        data: {
-            id_module: globals.id_module,
-            id_conto: id_conto,
-        },
-        success: function(data){
-           $("#" + selector).html(data);
-           $("#" + selector).slideToggle();
-
-           $("#main_loading").fadeOut();
-        }
-	});
-}
-</script>
+    function aggiornaReddito(id_conto){
+        openModal("'.tr('Aggiorna totale reddito').'", "'.$structure->fileurl('aggiorna_reddito.php').'?id=" + id_conto)
+    }
+</script>';

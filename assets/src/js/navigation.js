@@ -36,11 +36,10 @@ $(document).ready(function () {
     $('.nav-tabs a').click(function (e) {
         $(this).tab('show');
 
-        var scrollmem = $('body').scrollTop() || $('html').scrollTop();
-
+        let scroll = $('body').scrollTop() || $('html').scrollTop();
         window.location.hash = this.hash;
 
-        $('html,body').scrollTop(scrollmem);
+        $('html,body').scrollTop(scroll);
     });
 
     // Fix per la visualizzazione di Datatables all'interno dei tab Bootstrap

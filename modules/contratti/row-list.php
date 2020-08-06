@@ -25,7 +25,7 @@ foreach ($righe as $riga) {
     echo '
             <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'">
                 <td class="text-center">
-                    '.(($riga->order) + 1).'
+                    '.($riga->order + 1).'
                 </td>';
 
     // Descrizione
@@ -252,18 +252,14 @@ $(document).ready(function() {
 			dropOnEmpty: true,
 			scroll: true,
 			update: function(event, ui) {
-                var order = "";
-                $(".table tr[data-id]").each( function() {
-                    order += ","+$(this).data("id");
-                });
-                order = order.replace(/^,/, "");
+                let order = $(".table tr[data-id]").toArray().map(a => $(a).data("id"))
 
-				$.post("'.$rootdir.'/actions.php", {
+				$.post(globals.rootdir + "/actions.php", {
 					id: ui.item.data("id"),
 					id_module: '.$id_module.',
 					id_record: '.$id_record.',
 					op: "update_position",
-                    order: order,
+                    order: order.join(","),
 				});
 			}
 		});

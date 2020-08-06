@@ -615,7 +615,14 @@ class Validator
                     "'" => '&apos;',
                     '<' => '&lt;',
                     '>' => '&gt;',
+
+                    // Caratteri personalizzati
+                    '€' => 'euro',
+                    '—' => '-',
+                    '…' => '...',
                 ]);
+
+                $output = preg_replace('/[[:^print:]]/', ' ', $output);
             }
 
             // Riduzione delle dimensioni

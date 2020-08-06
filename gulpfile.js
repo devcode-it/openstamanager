@@ -1,40 +1,40 @@
 // Librerie NPM richieste per l'esecuzione
-var gulp = require('gulp');
-var merge = require('merge-stream');
-var del = require('del');
-var debug = require('gulp-debug');
+const gulp = require('gulp');
+const merge = require('merge-stream');
+const del = require('del');
+const debug = require('gulp-debug');
 
-var mainBowerFiles = require('main-bower-files');
-var gulpIf = require('gulp-if');
+const mainBowerFiles = require('main-bower-files');
+const gulpIf = require('gulp-if');
 
 // Minificatori
-var minifyJS = require('gulp-uglify');
-var minifyCSS = require('gulp-clean-css');
-var minifyJSON = require('gulp-json-minify');
+const minifyJS = require('gulp-uglify');
+const minifyCSS = require('gulp-clean-css');
+const minifyJSON = require('gulp-json-minify');
 
 // Interpretatori CSS
-var sass = require('gulp-sass');
-var less = require('gulp-less');
-var stylus = require('gulp-stylus');
-var autoprefixer = require('gulp-autoprefixer');
+const sass = require('gulp-sass');
+const less = require('gulp-less');
+const stylus = require('gulp-stylus');
+const autoprefixer = require('gulp-autoprefixer');
 
 // Concatenatore
-var concat = require('gulp-concat');
+const concat = require('gulp-concat');
 
 // Altro
-var flatten = require('gulp-flatten');
-var rename = require('gulp-rename');
+const flatten = require('gulp-flatten');
+const rename = require('gulp-rename');
 
 // Release
-var glob = require('globby');
-var md5File = require('md5-file')
-var fs = require('fs');
-var archiver = require('archiver');
-var shell = require('shelljs');
-var inquirer = require('inquirer');
+const glob = require('globby');
+const md5File = require('md5-file')
+const fs = require('fs');
+const archiver = require('archiver');
+const shell = require('shelljs');
+const inquirer = require('inquirer');
 
 // Configurazione
-var config = {
+const config = {
     production: 'assets/dist', // Cartella di destinazione
     development: 'assets/src', // Cartella dei file di personalizzazione
     debug: false,
@@ -63,14 +63,14 @@ const JS = gulp.parallel(() => {
 
 // Elaborazione e minificazione di JS personalizzati
 function srcJS() {
-    var js = gulp.src([
+    const js = gulp.src([
         config.development + '/' + config.paths.js + '/*.js',
     ])
         .pipe(concat('custom.min.js'))
-        .pipe(minifyJS())
+        //.pipe(minifyJS())
         .pipe(gulp.dest(config.production + '/' + config.paths.js));
 
-    var indip = gulp.src([
+    const indip = gulp.src([
         config.development + '/' + config.paths.js + '/functions/*.js',
     ])
         .pipe(concat('functions.min.js'))
@@ -79,7 +79,6 @@ function srcJS() {
 
     return merge(js, indip);
 }
-
 
 // Elaborazione e minificazione di CSS
 const CSS = gulp.parallel(() => {
@@ -99,7 +98,7 @@ const CSS = gulp.parallel(() => {
 
 // Elaborazione e minificazione di CSS personalizzati
 function srcCSS() {
-    var css = gulp.src([
+    const css = gulp.src([
         config.development + '/' + config.paths.css + '/*.{css,scss,less,styl}',
     ])
         .pipe(gulpIf('*.scss', sass(), gulpIf('*.less', less(), gulpIf('*.styl', stylus()))))
@@ -111,7 +110,7 @@ function srcCSS() {
         .pipe(flatten())
         .pipe(gulp.dest(config.production + '/' + config.paths.css));
 
-    var print = gulp.src([
+    const print = gulp.src([
         config.development + '/' + config.paths.css + '/print/*.{css,scss,less,styl}',
         config.bowerDirectory + '/fullcalendar/fullcalendar.print.css',
     ], {
@@ -126,7 +125,7 @@ function srcCSS() {
         .pipe(flatten())
         .pipe(gulp.dest(config.production + '/' + config.paths.css));
 
-    var themes = gulp.src([
+    const themes = gulp.src([
         config.development + '/' + config.paths.css + '/themes/*.{css,scss,less,styl}',
         config.main.bowerDirectory + '/admin-lte/dist/css/skins/_all-skins.min.css',
     ])
@@ -147,7 +146,7 @@ function srcCSS() {
 const images = srcImages;
 /*
 gulp.parallel(() => {*/
-//var src = mainBowerFiles('**/*.{jpg,png,jpeg,gif}', {
+//const src = mainBowerFiles('**/*.{jpg,png,jpeg,gif}', {
 /*
 paths: config.main,
     debugging: config.debug,
@@ -191,8 +190,8 @@ function srcFonts() {
 
 function ckeditor() {
     return gulp.src([
-        config.main.bowerDirectory + '/ckeditor/{adapters,lang,skins,plugins}/**/*.{js,json,css,png}',
-        config.main.bowerDirectory + '/ckeditor/*.{js,css}',
+        config.main.bowerDirectory + '/ckeditor4/{adapters,lang,skins,plugins}/**/*.{js,json,css,png}',
+        config.main.bowerDirectory + '/ckeditor4/*.{js,css}',
     ])
         .pipe(gulp.dest(config.production + '/' + config.paths.js + '/ckeditor'));
 }
@@ -239,7 +238,7 @@ function csrf() {
 }
 
 function pdfjs() {
-    var web = gulp.src([
+    const web = gulp.src([
         config.main.bowerDirectory + '/pdf/web/**/*',
         '!' + config.main.bowerDirectory + '/pdf/web/cmaps/*',
         '!' + config.main.bowerDirectory + '/pdf/web/*.map',
@@ -247,7 +246,7 @@ function pdfjs() {
     ])
         .pipe(gulp.dest(config.production + '/pdfjs/web'));
 
-    var build = gulp.src([
+    const build = gulp.src([
         config.main.bowerDirectory + '/pdf/build/*',
         '!' + config.main.bowerDirectory + '/pdf/build/*.map',
     ])
@@ -262,7 +261,7 @@ function i18n() {
         config.main.bowerDirectory + '/**/{i18n,lang,locale,locales}/*.{js,json}',
         config.development + '/' + config.paths.js + '/i18n/**/*.{js,json}',
         '!' + config.main.bowerDirectory + '/**/{src,plugins}/**',
-        '!' + config.main.bowerDirectory + '/ckeditor/**',
+        '!' + config.main.bowerDirectory + '/ckeditor4/**',
         '!' + config.main.bowerDirectory + '/summernote/**',
         '!' + config.main.bowerDirectory + '/jquery-ui/**',
     ])

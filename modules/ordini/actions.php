@@ -303,12 +303,10 @@ switch (post('op')) {
         break;
 
         case 'update_position':
-            $orders = explode(',', $_POST['order']);
-            $order = 0;
+            $order = explode(',', post('order', true));
 
-            foreach ($orders as $idriga) {
-                $dbo->query('UPDATE `or_righe_ordini` SET `order`='.prepare($order).' WHERE id='.prepare($idriga));
-                ++$order;
+            foreach ($order as $i => $id_riga) {
+                $dbo->query('UPDATE `or_righe_ordini` SET `order` = '.prepare($i).' WHERE id='.prepare($id_riga));
             }
 
             break;

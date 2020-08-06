@@ -182,4 +182,17 @@ switch (post('op')) {
         flash()->info(tr('Chiusura bilancio completata!'));
 
         break;
+
+    case 'aggiorna_reddito':
+        $start = post('start');
+        $end = post('end');
+        $id_conto = post('id_conto');
+
+        $dbo->query('UPDATE co_movimenti
+            INNER JOIN co_pianodeiconti3 ON co_pianodeiconti3.id = co_movimenti.idconto
+        SET co_movimenti.totale_reddito = (co_movimenti.totale * co_pianodeiconti3.percentuale_deducibile / 100)
+        WHERE co_pianodeiconti3.id = '.prepare($id_conto).' AND
+            co_movimenti.data BETWEEN '.prepare($start).' AND '.prepare($end));
+
+        break;
 }

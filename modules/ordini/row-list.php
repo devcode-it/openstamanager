@@ -9,7 +9,7 @@ echo '
             <tr>
                 <th width="35" class="text-center" >'.tr('#').'</th>
                 <th>'.tr('Descrizione').'</th>
-                <th width="150">'.tr('Data prev. evasione').'</th>
+                <th width="120">'.tr('Prev. evasione').'</th>
                 <th class="text-center tip" width="150" title="'.tr('da evadere').' / '.tr('totale').'">'.tr('Q.tà').' <i class="fa fa-question-circle-o"></i></th>
                 <th class="text-center" width="150">'.tr('Prezzo unitario').'</th>
                 <th class="text-center" width="150">'.tr('Iva unitaria').'</th>
@@ -205,7 +205,7 @@ $totale = abs($ordine->totale);
 // IMPONIBILE
 echo '
         <tr>
-            <td colspan="5" class="text-right">
+            <td colspan="6" class="text-right">
                 <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
@@ -218,7 +218,7 @@ echo '
 if (!empty($sconto)) {
     echo '
         <tr>
-            <td colspan="5" class="text-right">
+            <td colspan="6" class="text-right">
                 <b><span class="tip" title="'.tr('Un importo positivo indica uno sconto, mentre uno negativo indica una maggiorazione').'"> <i class="fa fa-question-circle-o"></i> '.tr('Sconto/maggiorazione', [], ['upper' => true]).':</span></b>
             </td>
             <td class="text-right">
@@ -230,7 +230,7 @@ if (!empty($sconto)) {
     // TOTALE IMPONIBILE
     echo '
         <tr>
-            <td colspan="5" class="text-right">
+            <td colspan="6" class="text-right">
                 <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
@@ -243,7 +243,7 @@ if (!empty($sconto)) {
 // IVA
 echo '
         <tr>
-            <td colspan="5" class="text-right">
+            <td colspan="6" class="text-right">
                 <b>'.tr('Iva', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
@@ -255,7 +255,7 @@ echo '
 // TOTALE
 echo '
         <tr>
-            <td colspan="5" class="text-right">
+            <td colspan="6" class="text-right">
                 <b>'.tr('Totale', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">

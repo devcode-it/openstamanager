@@ -19,7 +19,7 @@ class Clienti extends AppResource
             INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica = an_tipianagrafiche.idtipoanagrafica
         WHERE an_tipianagrafiche.descrizione = 'Cliente' AND an_anagrafiche.deleted_at IS NULL";
 
-        $sincronizza_lavorati = setting('Sincronizza Clienti per cui il Tecnico ha lavorato in passato');
+        $sincronizza_lavorati = setting('Sincronizza solo i Clienti per cui il Tecnico ha lavorato in passato');
         if (!empty($sincronizza_lavorati)) {
             $query .= '
                 AND an_anagrafiche.idanagrafica IN (

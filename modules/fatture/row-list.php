@@ -71,7 +71,7 @@ foreach ($righe as $riga) {
     echo '
         <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'" '.$extra.'>
             <td class="text-center">
-                '.(($riga->order) + 1).'
+                '.($riga->order + 1).'
             </td>
 
             <td>';

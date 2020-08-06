@@ -25,7 +25,7 @@ foreach ($righe as $riga) {
     echo '
             <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'">
                 <td class="text-center">
-                    '.(($riga->order) + 1).'
+                    '.($riga->order + 1).'
                 </td>';
 
     // Descrizione

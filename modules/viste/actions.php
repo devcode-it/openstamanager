@@ -150,13 +150,10 @@ switch (filter('op')) {
         break;
 
     case 'update_position':
+        $order = explode(',', post('order', true));
 
-        $orders = explode(',', $_POST['order']);
-        $order = 0;
-
-        foreach ($orders as $idriga) {
-            $dbo->query('UPDATE `zz_views` SET `order`='.prepare($order).' WHERE id='.prepare($idriga));
-            ++$order;
+        foreach ($order as $i => $id_riga) {
+            $dbo->query('UPDATE `zz_views` SET `order` = '.prepare($i).' WHERE id='.prepare($id_riga));
         }
 
         break;

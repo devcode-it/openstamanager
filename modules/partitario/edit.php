@@ -99,7 +99,7 @@ foreach ($primo_livello as $conto_primo) {
 
             $totale_conto = $conto_terzo['totale'];
             $totale_reddito = $conto_terzo['totale_reddito'];
-            if ($conto_primo['descrizione'] == 'Patrimoniale'){
+            if ($conto_primo['descrizione'] == 'Patrimoniale') {
                 $totale_conto = -$totale_conto;
                 $totale_reddito = -$totale_reddito;
             }

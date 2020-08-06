@@ -52,7 +52,8 @@ class Contratti extends AppResource implements RetrieveInterface
             IF(co_contratti.idsede = 0, NULL, co_contratti.idsede) AS id_sede,
             co_contratti.nome,
             co_contratti.numero,
-            co_contratti.data_bozza
+            co_contratti.data_bozza,
+            co_staticontratti.descrizione AS stato
         FROM co_contratti
             INNER JOIN co_staticontratti ON co_staticontratti.id = co_contratti.idstato
         WHERE co_contratti.id = '.prepare($id);

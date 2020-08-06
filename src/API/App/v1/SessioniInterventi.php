@@ -75,6 +75,7 @@ class SessioniInterventi extends AppResource
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT id,
             idintervento AS id_intervento,
+            idtecnico AS id_tecnico,
             idtipointervento AS id_tipo_intervento,
             orario_inizio,
             orario_fine,

@@ -14,6 +14,7 @@ class Clienti extends AppResource
 
     public function getModifiedRecords($last_sync_at)
     {
+        $parameters = [];
         $query = "SELECT an_anagrafiche.idanagrafica AS id FROM an_anagrafiche
             INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche_anagrafiche.idanagrafica = an_anagrafiche.idanagrafica
             INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica = an_tipianagrafiche.idtipoanagrafica
@@ -35,6 +36,14 @@ class Clienti extends AppResource
                             SELECT idintervento FROM in_interventi_tecnici
                         )
                 )';
+
+            $date = (new Interventi())->getDateDiInteresse();
+            $id_tecnico = Auth::user()->id_anagrafica;
+            $parameters = [
+                ':period_start' => $date['start'],
+                ':period_end' => $date['end'],
+                ':id_tecnico' => $id_tecnico,
+            ];
         }
 
         // Filtro per data
@@ -42,13 +51,7 @@ class Clienti extends AppResource
             $query .= ' AND an_anagrafiche.updated_at > '.prepare($last_sync_at);
         }
 
-        $date = (new Interventi())->getDateDiInteresse();
-        $id_tecnico = Auth::user()->id_anagrafica;
-        $records = database()->fetchArray($query, [
-            ':period_start' => $date['start'],
-            ':period_end' => $date['end'],
-            ':id_tecnico' => $id_tecnico,
-        ]);
+        $records = database()->fetchArray($query, $parameters);
 
         return array_column($records, 'id');
     }

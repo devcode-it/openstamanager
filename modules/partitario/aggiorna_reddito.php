@@ -9,7 +9,7 @@ $query = 'SELECT *, idpianodeiconti2 AS idpianodeiconti FROM co_pianodeiconti3 W
 $conto = $dbo->fetchOne($query);
 
 echo '
-<p>'.tr('Seleziona il periodo temporale per cui aggiornare il totale reddito del Conto "_DESC_" secondo la percentuale deducibile _PERC_%',[
+<p>'.tr('Seleziona il periodo temporale per cui aggiornare il totale reddito del Conto "_DESC_" secondo la percentuale deducibile _PERC_%', [
         '_DESC_' => $conto['descrizione'],
         '_PERC_' => numberFormat($conto['percentuale_deducibile']),
     ]).'.</p>

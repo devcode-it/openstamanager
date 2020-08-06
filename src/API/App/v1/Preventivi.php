@@ -52,7 +52,8 @@ class Preventivi extends AppResource implements RetrieveInterface
             IF(co_preventivi.idsede = 0, NULL, co_preventivi.idsede) AS id_sede,
             co_preventivi.nome,
             co_preventivi.numero,
-            co_preventivi.data_bozza
+            co_preventivi.data_bozza,
+            co_statipreventivi.descrizione AS stato
         FROM co_preventivi
             INNER JOIN co_statipreventivi ON co_statipreventivi.id = co_preventivi.idstato
         WHERE co_preventivi.id = '.prepare($id);

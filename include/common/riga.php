@@ -103,7 +103,7 @@ if (in_array($module['name'], ['Ordini cliente', 'Ordini fornitore'])) {
 
     <div class="box-body">
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-'.$width.'">
                 {[ "type": "date", "label": "'.tr('Data prevista evasione').'", "name": "data_evasione", "value": "'.$result['data_evasione'].'" ]}
             </div>
         </div>

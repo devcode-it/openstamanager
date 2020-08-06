@@ -216,20 +216,34 @@ abstract class AppResource extends Resource implements RetrieveInterface, Create
         // Ottiene il valore successivo della colonna di tipo AUTO_INCREMENT
         $next_autoincrement = $database->fetchOne('SELECT AUTO_INCREMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '.prepare($table_name).' AND TABLE_SCHEMA = '.prepare($db_name))['AUTO_INCREMENT'];
 
+        /*
         // Ottiene l'ultimo record con data precedente a quella impostata
         $last_id = null;
         if ($last_sync_at) {
             $last_record = $database->fetchOne('SELECT '.$column.' AS id FROM '.$table_name.' WHERE created_at <= '.prepare($last_sync_at).' ORDER BY '.$column.' DESC');
             $last_id = $last_record['id'];
         }
+        */
 
         // Ottiene i vuoti all'interno della sequenza AUTO_INCREMENT
         $query = 'SELECT (t1.'.$column.' + 1) AS start, (SELECT MIN(t3.'.$column.') - 1 FROM '.$table_name.' t3 WHERE t3.'.$column.' > t1.'.$column.') AS end FROM '.$table_name.' t1 WHERE NOT EXISTS (SELECT t2.'.$column.' FROM '.$table_name.' t2 WHERE t2.'.$column.' = t1.'.$column.' + 1)';
+        /*
         if ($last_id) {
             $query .= ' AND t1.'.$column.' >= '.prepare($last_id);
         }
+        */
         $query .= ' ORDER BY start';
         $steps = $database->fetchArray($query);
+
+        // Gestione dell'eliminazione dei primi record della tabella
+        $exists_first = $database->fetchNum('SELECT * FROM '.$table_name.' WHERE '.$column.' = 1');
+        if (!$exists_first) {
+            $first = $database->fetchOne('SELECT MIN('.$column.') AS min FROM '.$table_name);
+            $steps[] = [
+                'start' => 1,
+                'end' => $first['min'] - 1,
+            ];
+        }
 
         $total = [];
         foreach ($steps as $step) {

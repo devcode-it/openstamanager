@@ -66,7 +66,10 @@ class Interventi extends AppResource
             ':id_tecnico_q2' => $id_tecnico,
         ]);
 
-        return array_column($records, 'id');
+        $interventi = array_column($records, 'id');
+        $mancanti = $this->getMissingIDs('in_interventi', 'id', $last_sync_at);
+
+        return array_merge($mancanti, $interventi);
     }
 
     public function getModifiedRecords($last_sync_at)

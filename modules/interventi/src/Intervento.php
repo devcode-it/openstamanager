@@ -3,6 +3,7 @@
 namespace Modules\Interventi;
 
 use Common\Document;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Contratti\Contratto;
 use Modules\Preventivi\Preventivo;
@@ -14,6 +15,7 @@ use Util\Generator;
 class Intervento extends Document
 {
     use ReferenceTrait;
+    //use SoftDeletes;
 
     use RecordTrait;
 

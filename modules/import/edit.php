@@ -2,24 +2,26 @@
 
 include_once __DIR__.'/../../core.php';
 
+// Gestione del redirect in caso di caricamento del file
+if (filter('op')) {
+    return;
+}
+
 if (empty($id_record)) {
-    require $docroot.'/add.php';
+    require DOCROOT.'/add.php';
 } else {
-    // Inclusione del file del modulo per eventuale HTML personalizzato
-    include $imports[$id_record]['import'];
+    $modulo_selezionato = Modules::get($id_record);
+    $import_selezionato = $moduli_disponibili[$modulo_selezionato->name];
 
-    $fields = Import::getFields($id_record);
+    // Inizializzazione del lettore CSV
+    $csv = new $import_selezionato($record->filepath);
+    $fields = $csv->getAvailableFields();
 
-    $select = [];
-    $select2 = [];
+    // Generazione della base per i campi da selezionare
+    $campi_disponibili = [];
     foreach ($fields as $key => $value) {
-        $select[] = [
+        $campi_disponibili[] = [
             'id' => $key,
-            'text' => $value['label'],
-        ];
-
-        $select2[] = [
-            'id' => $value['field'],
             'text' => $value['label'],
         ];
 
@@ -38,19 +40,29 @@ if (empty($id_record)) {
             {[ "type": "checkbox", "label": "'.tr('Importa prima riga').'", "name": "include_first_row", "extra":"", "value": "1"  ]}
         </div>
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Chiave primaria').'", "name": "primary_key", "values": '.json_encode($select2).', "value": "'.$primary_key.'" ]}
+            {[ "type": "select", "label": "'.tr('Chiave primaria').'", "name": "primary_key", "values": '.json_encode($campi_disponibili).', "value": "'.$primary_key.'" ]}
         </div>
     </div>';
 
-    $csv = Import::getCSV($id_record, $record['id']);
-    $rows = $csv->setLimit(10)->fetchAll();
+    // Lettura delle prime righe disponibili
+    $righe = $csv->get(0, 10);
+    $prima_riga = $righe[0];
+    $numero_colonne = count($prima_riga);
 
-    $count = count($rows[0]);
+    // Trasformazione dei nomi indicati per i campi in lowercase
+    $nomi_disponibili = [];
+    foreach ($fields as $key => $value) {
+        $nomi_disponibili[$key] = [];
+        $names = isset($value['names']) ? $value['names'] : [$value['label']];
+        foreach ($names as $name) {
+            $nomi_disponibili[$key][] = trim(str_to_lower($name));
+        }
+    }
 
     echo '
     <div class="row">';
 
-    for ($column = 0; $column < $count; ++$column) {
+    for ($column = 0; $column < $numero_colonne; ++$column) {
         echo '
     <div class="col-sm-6 col-lg-4">
         <div class="panel panel-primary">
@@ -63,17 +75,19 @@ if (empty($id_record)) {
             <div class="panel-body">';
 
         // Individuazione delle corrispondenze
-        $selected = null;
+        $selezionato = null;
         foreach ($fields as $key => $value) {
-            if (in_array(str_to_lower($rows[0][$column]), $value['names'])) {
-                $exclude_first_row = 1;
-                $selected = $key;
+            // Confronto per l'individuazione della relativa colonna
+            $nome = trim(str_to_lower($prima_riga[$column]));
+            if (in_array($nome, $nomi_disponibili[$key])) {
+                $escludi_prima_riga = 1;
+                $selezionato = $key;
                 break;
             }
         }
 
         echo '
-                {[ "type": "select", "label": "'.tr('Campo').'", "name": "fields[]", "values": '.json_encode($select).', "value": "'.$selected.'" ]}
+                {[ "type": "select", "label": "'.tr('Campo').'", "name": "fields['.$column.']", "values": '.json_encode($campi_disponibili).', "value": "'.$selezionato.'" ]}
 
                 <table class="table table-striped">
                     <thead>
@@ -84,7 +98,7 @@ if (empty($id_record)) {
                     </thead>
                     <tbody>';
 
-        foreach ($rows as $key => $row) {
+        foreach ($righe as $key => $row) {
             echo '
                         <tr>
                             <td>'.($key + 1).'</td>
@@ -108,9 +122,10 @@ if (empty($id_record)) {
 
     echo '
 <script>
+var count = 0;
 $(document).ready(function() {';
 
-    if ($exclude_first_row) {
+    if ($escludi_prima_riga) {
         echo '
     $("#include_first_row").prop("checked", false).trigger("change");';
     }
@@ -120,12 +135,12 @@ $(document).ready(function() {';
 
     $("#save").unbind("click");
     $("#save").on("click", function() {
+        count = 0;
         importPage(0);
     });
 });
 
-var count = 0;
-function importPage(page){
+function importPage(page) {
     $("#main_loading").show();
 
     data = {

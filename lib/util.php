@@ -135,11 +135,11 @@ if (!function_exists('str_to_lower')) {
      *
      * @param string $string
      *
-     * @return bool
+     * @return string
      */
     function str_to_lower($string)
     {
-        return S::create($string)->toLowerCase();
+        return S::create($string)->toLowerCase()->__toString();
     }
 }
 
@@ -149,11 +149,11 @@ if (!function_exists('str_to_upper')) {
      *
      * @param string $string
      *
-     * @return bool
+     * @return string
      */
     function str_to_upper($string)
     {
-        return S::create($string)->toUpperCase();
+        return S::create($string)->toUpperCase()->__toString();
     }
 }
 

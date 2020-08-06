@@ -1,0 +1,130 @@
+<?php
+
+namespace Imports;
+
+use Filter;
+use League\Csv\Reader;
+
+abstract class CSVImport
+{
+    protected $csv;
+
+    protected $column_associations;
+    protected $primary_key;
+
+    public function __construct($file)
+    {
+        // Impostazione automatica per i caratteri di fine riga
+        if (!ini_get('auto_detect_line_endings')) {
+            ini_set('auto_detect_line_endings', '1');
+        }
+
+        // Gestione del file CSV
+        $this->csv = Reader::createFromPath($file, 'r');
+        $this->csv->setDelimiter(';');
+
+        $this->column_associations = [];
+    }
+
+    public function getColumnAssociations()
+    {
+        return $this->column_associations;
+    }
+
+    public function setColumnAssociation($column_key, $field_key)
+    {
+        $this->column_associations[$column_key] = $this->getAvailableFields()[$field_key]['field'];
+    }
+
+    abstract public function getAvailableFields();
+
+    /**
+     * @param $offset
+     * @param $length
+     *
+     * @return array
+     */
+    public function get($offset, $length)
+    {
+        $rows = [];
+        for ($i = 0; $i < $length; ++$i) {
+            // Lettura di una singola riga alla volta
+            $row = $this->csv->fetchOne($offset + $i);
+            if (empty($row)) {
+                break;
+            }
+
+            // Aggiunta all'insieme dei record
+            $rows[] = Filter::parse($row);
+        }
+
+        return $rows;
+    }
+
+    /**
+     * @param $offset
+     * @param $length
+     *
+     * @return int
+     */
+    public function importSet($offset, $length)
+    {
+        $associations = $this->getColumnAssociations();
+
+        $rows = $this->get($offset, $length);
+        foreach ($rows as $row) {
+            // Interpretazione della riga come record
+            $record = [];
+            foreach ($row as $key => $value) {
+                $field = isset($associations[$key]) ? $associations[$key] : null;
+                if (!empty($field)) {
+                    $record[$field] = $value;
+                }
+            }
+
+            // Importazione del record
+            $this->import($record);
+        }
+
+        return count($rows);
+    }
+
+    /**
+     * @param $record
+     *
+     * @return bool
+     */
+    abstract public function import($record);
+
+    /**
+     * @return mixed
+     */
+    public function getPrimaryKey()
+    {
+        return $this->primary_key;
+    }
+
+    /**
+     * @param $field_key
+     */
+    public function setPrimaryKey($field_key)
+    {
+        $this->primary_key = $this->getAvailableFields()[$field_key]['field'];
+    }
+
+    abstract public static function getExample();
+
+    public static function createExample($filepath)
+    {
+        $content = static::getExample();
+
+        $file = fopen($filepath, 'w');
+        fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+
+        foreach ($content as $row) {
+            fputcsv($file, $row, ';');
+        }
+
+        fclose($file);
+    }
+}

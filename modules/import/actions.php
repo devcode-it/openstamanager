@@ -2,25 +2,54 @@
 
 include_once __DIR__.'/../../core.php';
 
-switch (post('op')) {
+switch (filter('op')) {
+    case 'add':
+        $modulo_selezionato = Modules::get(filter('module'));
+        $id_record = $modulo_selezionato->id;
+
+        $upload = Uploads::upload($_FILES['file'], [
+            'id_module' => $modulo_import->id,
+            'id_record' => $id_record,
+        ]);
+        break;
+
+    case 'example':
+        $module = filter('module');
+        $modulo_selezionato = Modules::get(filter('module'));
+        $import_selezionato = $moduli_disponibili[$module];
+
+        if (!empty($import_selezionato)) {
+            // Generazione percorso
+            $file = $modulo_selezionato->upload_directory.'/example-'.strtolower($modulo_selezionato->title).'.csv';
+            $filepath = DOCROOT.'/'.$file;
+
+            // Generazione del file
+            $import_selezionato::createExample($filepath);
+
+            echo ROOTDIR.'/'.$file;
+        }
+
+        break;
+
     case 'import':
+        // Individuazione del modulo
+        $modulo_selezionato = Modules::get($id_record);
+        $import_selezionato = $moduli_disponibili[$modulo_selezionato->name];
+
+        // Dati indicati
         $include_first_row = post('include_first_row');
-        $selected_fields = post('fields');
+        $fields = (array) post('fields');
         $page = post('page');
 
         $limit = 500;
 
-        // Pulizia dei campi inutilizzati
-        foreach ($selected as $key => $value) {
-            if (!is_numeric($value)) {
-                unset($selected[$key]);
-            }
+        // Inizializzazione del lettore CSV
+        $csv = new $import_selezionato($record->filepath);
+        foreach ($fields as $key => $value) {
+            $csv->setColumnAssociation($key, $value);
         }
 
-        $fields = Import::getFields($id_record);
-
-        $csv = Import::getCSV($id_record, $record['id']);
-
+        // Generazione offset sulla base della pagina
         $offset = isset($page) ? $page * $limit : 0;
 
         // Ignora la prima riga se composta da header
@@ -28,56 +57,11 @@ switch (post('op')) {
             ++$offset;
         }
 
-        $csv = $csv->setOffset($offset)
-            ->setLimit($limit);
-
-        // Chiavi per la lettura CSV
-        $keys = [];
-        foreach ($selected_fields as $id => $field_id) {
-            if (is_numeric($field_id)) {
-                $value = $fields[$field_id]['field'];
-            } else {
-                $value = -($id + 1);
-            }
-
-            $keys[] = $value;
-        }
-
-        // Query dei campi selezionati
-        $queries = [];
-        foreach ($fields as $key => $field) {
-            if (!empty($field['query'])) {
-                $queries[$field['field']] = $field['query'];
-            }
-        }
-
-        // Lettura dei record
-        $rows = $csv->fetchAssoc($keys, function ($row) use ($queries, $dbo) {
-            foreach ($row as $key => $value) {
-                if (is_int($key)) {
-                    unset($row[$key]);
-                } elseif (isset($queries[$key])) {
-                    $query = str_replace('|value|', prepare($value), $queries[$key]);
-
-                    $value = $dbo->fetchOne($query)['result'];
-
-                    $row[$key] = $value;
-                }
-            }
-
-            return $row;
-        });
-
         // Gestione automatica dei valori convertiti
-        $rows = iterator_to_array($rows);
-        $data = Filter::parse($rows);
-
         $primary_key = post('primary_key');
+        $csv->setPrimaryKey($primary_key);
 
-        // Richiamo delle operazioni specifiche
-        include $imports[$id_record]['import'];
-
-        $count = count($rows);
+        $count = $csv->importSet($offset, $limit);
         $more = $count == $limit;
 
         echo json_encode([

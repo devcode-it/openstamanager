@@ -157,6 +157,7 @@ switch (post('op')) {
         $articolo->um = post('um') ?: null;
 
         $articolo->costo_unitario = post('costo_unitario') ?: 0;
+        $articolo->data_evasione = post('data_evasione');
         $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
         $articolo->setSconto(post('sconto'), post('tipo_sconto'));
 
@@ -216,6 +217,7 @@ switch (post('op')) {
         $riga->um = post('um') ?: null;
 
         $riga->costo_unitario = post('costo_unitario') ?: 0;
+        $riga->data_evasione = post('data_evasione');
         $riga->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
         $riga->setSconto(post('sconto'), post('tipo_sconto'));
 

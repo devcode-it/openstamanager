@@ -88,3 +88,14 @@ echo '
             {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.($result['sconto_percentuale'] ?: $result['sconto_unitario_corrente']).'", "icon-after": "choice|untprc|'.$result['tipo_sconto'].'", "help": "'.tr('Il valore positivo indica uno sconto. Per applicare una maggiorazione inserire un valore negativo.').'" ]}
         </div>
     </div>';
+
+// Data prevista evasione (per ordini)
+
+if ( in_array($module['name'], ['Ordini cliente', 'Ordini fornitore'])) {
+    echo '
+    <div class="row">
+        <div class="col-md-'.$width.'">
+            {[ "type": "date", "label": "'.tr('Data prevista evasione').'", "name": "data_evasione", "value": "'.$result['data_evasione'].'" ]}
+        </div>
+    </div>';
+}

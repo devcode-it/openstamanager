@@ -9,6 +9,7 @@ echo '
             <tr>
                 <th width="35" class="text-center" >'.tr('#').'</th>
                 <th>'.tr('Descrizione').'</th>
+                <th width="150">'.tr('Data prev. evasione').'</th>
                 <th class="text-center tip" width="150" title="'.tr('da evadere').' / '.tr('totale').'">'.tr('Q.tà').' <i class="fa fa-question-circle-o"></i></th>
                 <th class="text-center" width="150">'.tr('Prezzo unitario').'</th>
                 <th class="text-center" width="150">'.tr('Iva unitaria').'</th>
@@ -20,6 +21,8 @@ echo '
         <tbody class="sortable">';
 
 // Righe documento
+$today = new Carbon\Carbon();
+$today = $today->startOfDay();
 $righe = $ordine->getRighe();
 foreach ($righe as $riga) {
     $extra = '';
@@ -50,6 +53,38 @@ foreach ($righe as $riga) {
     } else {
         echo nl2br($riga->descrizione);
     }
+
+    // Data prevista evasione
+    $info_evasione = '';
+    if( !empty($riga->data_evasione) ){
+        $evasione = new Carbon\Carbon($riga->data_evasione);
+        if( $today->diffInDays($evasione, false) < 0 ){
+            $evasione_icon = 'fa fa-warning text-danger';
+            $evasione_help = tr('Da consegnare _NUM_ giorni fa',
+                [
+                    '_NUM_' => $today->diffInDays($evasione)
+                ]
+            );
+        }
+        elseif( $today->diffInDays($evasione, false) == 0 ){
+            $evasione_icon = 'fa fa-clock-o text-warning';
+            $evasione_help = tr('Da consegnare oggi');
+        } else {
+            $evasione_icon = 'fa fa-check text-success';
+            $evasione_help = tr('Da consegnare fra _NUM_ giorni',
+                [
+                    '_NUM_' => $today->diffInDays($evasione)
+                ]
+            );
+        }
+
+        $info_evasione = '<span class="tip" title="'.$evasione_help.'"><i class="'.$evasione_icon.'"></i> '.Translator::dateToLocale($riga->data_evasione).'</span>';
+    }
+
+    echo '
+        <td class="text-center">
+            '.$info_evasione.'
+        </td>';
 
     if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
         if (!empty($mancanti)) {

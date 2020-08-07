@@ -190,7 +190,7 @@ class CSV extends CSVImporter
             $tipi_selezionati = explode(',', $record['idtipoanagrafica']);
 
             foreach ($tipi_selezionati as $tipo) {
-                $tipo_anagrafica = $database->fetchOne('SELECT idtipoanagrafica AS id an_tipianagrafiche WHERE descrizione = '.prepare($tipo).' OR idtipoanagrafica = '.prepare($tipo));
+                $tipo_anagrafica = $database->fetchOne('SELECT idtipoanagrafica AS id FROM an_tipianagrafiche WHERE descrizione = '.prepare($tipo).' OR idtipoanagrafica = '.prepare($tipo));
 
                 if (!empty($tipo_anagrafica)) {
                     $tipologie[] = $tipo_anagrafica['id'];

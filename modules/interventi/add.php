@@ -153,7 +153,7 @@ echo '
         </div>
 
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Preventivo').'", "name": "idpreventivo", "value": "'.$id_preventivo.'", "ajax-source": "preventivi", "readonly": "'.(empty($id_contratto) ? 0 : 1).'" ]}
+            {[ "type": "select", "label": "'.tr('Preventivo').'", "name": "idpreventivo", "value": "'.$id_preventivo.'", "ajax-source": "preventivi", "readonly": "'.(empty($id_preventivo) ? 0 : 1).'" ]}
         </div>
 
         <div class="col-md-4">
@@ -197,7 +197,7 @@ echo '
 		<div class="box-body">
 			<div class="row">
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "values": "query=SELECT id, CONCAT_WS(\' - \', nome, descrizione) AS descrizione FROM an_zone ORDER BY nome", "value": "'.$id_zona.'", "placeholder": "'.tr('Nessuna zona').'", "help":"'.tr('La zona viene definita automaticamente in base al cliente selezionato').'.", "extra": "readonly", "value": "'.$id_zona.'" ]}
+                    {[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "values": "query=SELECT id, CONCAT_WS(\' - \', nome, descrizione) AS descrizione FROM an_zone ORDER BY nome", "placeholder": "'.tr('Nessuna zona').'", "help":"'.tr('La zona viene definita automaticamente in base al cliente selezionato').'.",  "readonly": "0", "value": "'.$id_zona.'" ]}
                 </div>
 
 				<div class="col-md-4">
@@ -394,6 +394,7 @@ echo '
         input("idimpianti").getElement().selectReset();
 
         let data = sede.getData();
+        console.log(data);
 		if (data) {
 		    input("idzona").set(data.idzona ? data.idzona : "");
 			// session_set("superselect,idzona", $(this).selectData().idzona, 0);

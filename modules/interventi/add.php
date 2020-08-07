@@ -394,7 +394,6 @@ echo '
         input("idimpianti").getElement().selectReset();
 
         let data = sede.getData();
-        console.log(data);
 		if (data) {
 		    input("idzona").set(data.idzona ? data.idzona : "");
 			// session_set("superselect,idzona", $(this).selectData().idzona, 0);

@@ -433,7 +433,9 @@ if ($read_only || !empty($block_edit)) {
     echo '
 			$(document).ready(function(){
 				$("input, textarea, select", "section.content")'.$not.'.attr("readonly", "true");
-                $("select, input[type=checkbox]", "section.content")'.$not.'.prop("disabled", true);';
+                $("select, input[type=checkbox]", "section.content")'.$not.'.prop("disabled", true);
+                $(".checkbox-buttons label", "section.content")'.$not.'.addClass("disabled");
+                ';
 
     if ($read_only) {
         echo '
@@ -450,7 +452,7 @@ if ($read_only || !empty($block_edit)) {
 
             //controllo se digito qualche valore o cambio qualche select
             $("input, textarea, select").bind("change paste keyup", function(event) {
-                if( event.keyCode >= 32 ){
+                if (event.keyCode >= 32) {
                     content_was_modified = true;
                 }
             });
@@ -459,18 +461,17 @@ if ($read_only || !empty($block_edit)) {
                 content_was_modified = true;
             });
 
-
             //tolgo il controllo se sto salvando
             $(".btn-success, button[type=submit]").bind("click", function() {
                 content_was_modified = false;
             });
 
-			$( "form" ).bind( "submit", function() {
+			$("form").bind("submit", function() {
 				content_was_modified = false;
-			})
+			});
 
 			// questo controllo blocca il modulo vendita al banco, dopo la lettura con barcode, appare il messaggio di conferma
-            window.onbeforeunload = function(e){
+            window.onbeforeunload = function(e) {
                 if(content_was_modified) {
 					var dialogText = "Uscire senza salvare?";
 					e.returnValue = dialogText;

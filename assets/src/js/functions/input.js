@@ -32,10 +32,21 @@ Input.prototype.setDisabled = function (value) {
 Input.prototype.disable = function () {
     this.element.addClass("disabled")
         .attr("disabled", true)
+        .attr("readonly", false)
         .attr("required", false);
 
+    let group = this.element.closest(".form-group");
+
     // Disabilitazione eventuali pulsanti relativi
-    this.element.closest(".form-group").find("button")
+    group.find("button")
+        .addClass("disabled");
+
+    // Disabilitazione per checkbox
+    group.find(".btn-group label")
+        .addClass("disabled");
+    group.find("input[type=checkbox]")
+        .attr("disabled", true)
+        .attr("readonly", false)
         .addClass("disabled");
 
     return this;
@@ -44,10 +55,21 @@ Input.prototype.disable = function () {
 Input.prototype.enable = function () {
     this.element.removeClass("disabled")
         .attr("disabled", false)
+        .attr("readonly", false)
         .attr("required", this.element.data("required"));
 
+    let group = this.element.closest(".form-group");
+
     // Abilitazione eventuali pulsanti relativi
-    this.element.closest(".form-group").find("button")
+    group.find("button")
+        .removeClass("disabled");
+
+    // Abilitazione per checkbox
+    group.find(".btn-group label")
+        .removeClass("disabled");
+    group.find("input[type=checkbox]")
+        .attr("disabled", false)
+        .attr("readonly", false)
         .removeClass("disabled");
 
     return this;

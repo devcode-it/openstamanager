@@ -18,6 +18,7 @@ class RapportinoIntervento extends Resource implements RetrieveInterface, Create
 
         $template = Template::where('name', 'Rapportino intervento')->first();
         $module = $template->module;
+        $account = $template->account;
 
         $body = $module->replacePlaceholders($id_record, $template['body']);
         $subject = $module->replacePlaceholders($id_record, $template['subject']);
@@ -26,6 +27,7 @@ class RapportinoIntervento extends Resource implements RetrieveInterface, Create
         $prints = $database->fetchArray('SELECT id, title, EXISTS(SELECT id_print FROM em_print_template WHERE id_template = '.prepare($template['id']).' AND em_print_template.id_print = zz_prints.id) AS selected FROM zz_prints WHERE id_module = '.prepare($module->id).' AND enabled = 1');
 
         return [
+            'sender' => $account['from_name'].'<'.$account['from_address'].'>',
             'email' => $email,
             'subject' => $subject,
             'body' => $body,

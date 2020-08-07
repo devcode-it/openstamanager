@@ -7,6 +7,9 @@ use Hooks\CachedManager;
 use Modules;
 use Update;
 
+/**
+ * Hook dedicato all'individuazione di nuove versioni del gestionale, pubblicate sulla repository ufficiale di GitHub.
+ */
 class UpdateHook extends CachedManager
 {
     protected static $client = null;

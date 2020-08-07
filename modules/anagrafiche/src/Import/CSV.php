@@ -5,6 +5,11 @@ namespace Modules\Anagrafiche\Import;
 use Importer\CSVImporter;
 use Modules\Anagrafiche\Anagrafica;
 
+/**
+ * Struttura per la gestione delle operazioni di importazione (da CSV) delle Anagrafiche.
+ *
+ * @since 2.4.17
+ */
 class CSV extends CSVImporter
 {
     public function getAvailableFields()

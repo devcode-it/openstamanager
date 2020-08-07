@@ -7,6 +7,11 @@ use Modules\Articoli\Articolo;
 use Modules\Articoli\Categoria;
 use Modules\Iva\Aliquota;
 
+/**
+ * Struttura per la gestione delle operazioni di importazione (da CSV) degli Articoli.
+ *
+ * @since 2.4.17
+ */
 class CSV extends CSVImporter
 {
     public function getAvailableFields()

@@ -5,6 +5,9 @@ namespace Modules\Backups;
 use Backup;
 use Hooks\Manager;
 
+/**
+ * Hook dedicato alla gestione del backup giornaliero automatico, se abilitato da Impostazioni.
+ */
 class BackupHook extends Manager
 {
     public function isSingleton()

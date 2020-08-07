@@ -240,7 +240,6 @@ switch ($resource) {
                 $search_fields[] = 'citta LIKE '.prepare('%'.$search.'%');
             }
 
-
             $custom['idzona'] = 'idzona';
         }
         break;

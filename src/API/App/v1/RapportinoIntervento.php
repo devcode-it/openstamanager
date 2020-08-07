@@ -64,11 +64,13 @@ class RapportinoIntervento extends Resource implements RetrieveInterface, Create
 
         $mail->save();
 
+        // Tentativo di invio diretto
         $email = EmailNotification::build($mail);
-        try {
-            $email_success = $email->send();
-        } catch (\PHPMailer\PHPMailer\Exception $e) {
-            $email_success = false;
+        $email_success = $email->send();
+
+        // Rimozione email in casi di errore
+        if (!$email_success) {
+            $mail->delete();
         }
 
         return [

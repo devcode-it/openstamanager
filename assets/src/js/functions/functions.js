@@ -563,3 +563,60 @@ function salvaForm(button, form, data = {}) {
         });
     });
 }
+
+/**
+ * Nasconde una specifica colonna di una tabella indicata.
+ *
+ * @param table
+ * @param column
+ */
+function hideTableColumn(table, column) {
+    column = "" + column; // Cast a stringa
+
+    // Verifica sulle colonne nascoste in precedenza
+    let hiddenColumns = table.getAttribute("hidden-columns");
+    hiddenColumns = hiddenColumns ? hiddenColumns.split(",") : [];
+    if (hiddenColumns.includes(column)) {
+        return;
+    }
+
+    // Salvataggio delle colonne nascoste
+    hiddenColumns.push(column);
+    table.setAttribute("hidden-columns", hiddenColumns.join(","));
+
+    let rows = table.rows;
+    for (let row of rows) {
+        let currentColumn = 1;
+        for (let i = 0; i < row.cells.length; i++) {
+            let cell = row.cells[i];
+
+            // Individuazione del colspan
+            let colspan = parseInt(cell.getAttribute("colspan"));
+            let hiddenColspan = cell.getAttribute("colspan-hidden");
+            hiddenColspan = parseInt(hiddenColspan ? hiddenColspan : 0);
+            let totalColspan = colspan + hiddenColspan;
+
+            // Gestione dell'operazione nel caso di cella multipla
+            if (totalColspan && totalColspan > 1) {
+                if (column >= currentColumn && column <= currentColumn + totalColspan - 1) {
+                    cell.setAttribute("colspan", colspan - 1);
+                    cell.setAttribute("colspan-hidden", hiddenColspan + 1);
+
+                    // Cella nascosta nel caso colspan sia nullo
+                    if (colspan - 1 === 0) {
+                        cell.classList.add("hidden");
+                    }
+                }
+
+                currentColumn += totalColspan;
+            }
+            // Gestione di una cella normale
+            else {
+                if (column === "" + currentColumn) {
+                    cell.classList.add("hidden");
+                }
+                currentColumn++;
+            }
+        }
+    }
+}

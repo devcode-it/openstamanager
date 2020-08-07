@@ -117,7 +117,7 @@ foreach ($righe as $riga) {
         // Quantità e unità di misura
         echo '
             <td class="text-center">
-                '.numberFormat($riga->qta, 'qta').' '.$riga->um.'
+                '.numberFormat($fattura->isNota() ? -$riga->qta : $riga->qta, 'qta').' '.$riga->um.'
             </td>';
 
         // Prezzi unitari
@@ -152,7 +152,7 @@ foreach ($righe as $riga) {
         // Importo
         echo '
             <td class="text-right">
-                '.moneyFormat($riga->importo).'
+                '.moneyFormat($fattura->isNota() ? -$riga->importo : $riga->importo).'
             </td>';
     }
 
@@ -205,6 +205,9 @@ $totale_imponibile = $fattura->totale_imponibile;
 $iva = $fattura->iva;
 $totale = $fattura->totale;
 $netto_a_pagare = $fattura->netto;
+$rivalsa_inps = $fattura->rivalsa_inps;
+$ritenuta_acconto = $fattura->ritenuta_acconto;
+$ritenuta_contributi = $fattura->totale_ritenuta_contributi;
 
 // Inversione dei valori per le Note
 $imponibile = $fattura->isNota() ? -$imponibile : $imponibile;
@@ -213,6 +216,9 @@ $totale_imponibile = $fattura->isNota() ? -$totale_imponibile : $totale_imponibi
 $iva = $fattura->isNota() ? -$iva : $iva;
 $totale = $fattura->isNota() ? -$totale : $totale;
 $netto_a_pagare = $fattura->isNota() ? -$netto_a_pagare : $netto_a_pagare;
+$rivalsa_inps = $fattura->isNota() ? -$rivalsa_inps : $rivalsa_inps;
+$ritenuta_acconto = $fattura->isNota() ? -$ritenuta_acconto : $ritenuta_acconto;
+$ritenuta_contributi = $fattura->isNota() ? -$ritenuta_contributi : $ritenuta_contributi;
 
 // IMPONIBILE
 echo '
@@ -253,21 +259,24 @@ if (!empty($sconto)) {
 }
 
 // RIVALSA INPS
-if (!empty($fattura->rivalsa_inps)) {
+if (!empty($rivalsa_inps)) {
     echo '
         <tr>
             <td colspan="5" class="text-right">';
 
     if ($dir == 'entrata') {
+        $descrizione_rivalsa = $database->fetchOne('SELECT CONCAT_WS(\' - \', codice, descrizione) AS descrizione FROM fe_tipo_cassa WHERE codice = '.prepare(setting('Tipo Cassa Previdenziale')));
         echo '
-				<span class="tip" title="'.$database->fetchOne('SELECT CONCAT_WS(\' - \', codice, descrizione) AS descrizione FROM fe_tipo_cassa WHERE codice = '.prepare(setting('Tipo Cassa Previdenziale')))['descrizione'].'"  > <i class="fa fa-question-circle-o"></i></span> ';
+				<span class="tip" title="'.$descrizione_rivalsa['descrizione'].'">
+				    <i class="fa fa-question-circle-o"></i>
+                </span> ';
     }
 
     echo '
                 <b>'.tr('Rivalsa', [], ['upper' => true]).' :</b>
             </td>
             <td class="text-right">
-                '.moneyFormat($fattura->rivalsa_inps, 2).'
+                '.moneyFormat($rivalsa_inps, 2).'
             </td>
             <td></td>
         </tr>';
@@ -306,28 +315,28 @@ echo '
         </tr>';
 
 // RITENUTA D'ACCONTO
-if (!empty($fattura->ritenuta_acconto)) {
+if (!empty($ritenuta_acconto)) {
     echo '
         <tr>
             <td colspan="5" class="text-right">
                 <b>'.tr("Ritenuta d'acconto", [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
-                '.moneyFormat(abs($fattura->ritenuta_acconto), 2).'
+                '.moneyFormat($ritenuta_acconto, 2).'
             </td>
             <td></td>
         </tr>';
 }
 
 // RITENUTA CONTRIBUTI
-if (!empty($fattura->totale_ritenuta_contributi)) {
+if (!empty($ritenuta_contributi)) {
     echo '
         <tr>
             <td colspan="5" class="text-right">
                 <b>'.tr('Ritenuta contributi', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
-                '.moneyFormat(abs($fattura->totale_ritenuta_contributi), 2).'
+                '.moneyFormat($ritenuta_contributi, 2).'
             </td>
             <td></td>
         </tr>';

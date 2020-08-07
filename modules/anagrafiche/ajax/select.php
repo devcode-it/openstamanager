@@ -4,7 +4,7 @@ include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
     case 'clienti':
-        $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')')), IF(deleted_at IS NULL, '', ' (".tr('eliminata').")')) AS descrizione, idtipointervento_default, in_tipiintervento.descrizione AS idtipointervento_descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica LEFT JOIN in_tipiintervento ON an_anagrafiche.idtipointervento_default=in_tipiintervento.idtipointervento |where| ORDER BY ragione_sociale";
+        $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')')), IF(deleted_at IS NULL, '', ' (".tr('eliminata').")')) AS descrizione, idtipointervento_default, in_tipiintervento.descrizione AS idtipointervento_descrizione, an_anagrafiche.idzona FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica LEFT JOIN in_tipiintervento ON an_anagrafiche.idtipointervento_default=in_tipiintervento.idtipointervento |where| ORDER BY ragione_sociale";
 
         foreach ($elements as $element) {
             $filter[] = 'an_anagrafiche.idanagrafica='.prepare($element);
@@ -23,6 +23,7 @@ switch ($resource) {
 
         $custom['idtipointervento'] = 'idtipointervento_default';
         $custom['idtipointervento_descrizione'] = 'idtipointervento_descrizione';
+        $custom['idzona'] = 'idzona';
 
         break;
 
@@ -227,7 +228,7 @@ switch ($resource) {
 
     case 'sedi':
         if (isset($superselect['idanagrafica'])) {
-            $query = "SELECT * FROM (SELECT '0' AS id, CONCAT_WS(' - ', 'Sede legale' , (SELECT CONCAT (citta, ' (', ragione_sociale,')') FROM an_anagrafiche |where|)) AS descrizione UNION SELECT id, CONCAT_WS(' - ', nomesede, citta) FROM an_sedi |where|) AS tab HAVING descrizione LIKE ".prepare('%'.$search.'%').' ORDER BY descrizione';
+            $query = "SELECT * FROM (SELECT '0' AS id, (SELECT idzona FROM an_anagrafiche |where|) AS idzona, CONCAT_WS(' - ', 'Sede legale' , (SELECT CONCAT (citta, ' (', ragione_sociale,')') FROM an_anagrafiche |where|)) AS descrizione UNION SELECT id, idzona, CONCAT_WS(' - ', nomesede, citta) FROM an_sedi |where|) AS tab HAVING descrizione LIKE ".prepare('%'.$search.'%').' ORDER BY descrizione';
 
             foreach ($elements as $element) {
                 $filter[] = 'id='.prepare($element);
@@ -238,6 +239,9 @@ switch ($resource) {
             if (!empty($search)) {
                 $search_fields[] = 'citta LIKE '.prepare('%'.$search.'%');
             }
+
+
+            $custom['idzona'] = 'idzona';
         }
         break;
 

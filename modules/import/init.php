@@ -9,5 +9,5 @@ $moduli_disponibili = [
 ];
 
 if (!empty($id_record)) {
-    $records = $modulo_import->uploads($id_record)->reverse();
+    $record = $modulo_import->uploads($id_record)->last();
 }

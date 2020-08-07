@@ -16,6 +16,10 @@ class Articolo extends Model
     use SoftDeletes;
     use RecordTrait;
 
+    protected $guarded = [
+        'qta',
+    ];
+
     protected $table = 'mg_articoli';
 
     public static function build($codice, $nome, Categoria $categoria = null, Categoria $sottocategoria = null)

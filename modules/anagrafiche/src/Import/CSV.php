@@ -2,10 +2,10 @@
 
 namespace Modules\Anagrafiche\Import;
 
-use Imports\CSVImport;
+use Importer\CSVImporter;
 use Modules\Anagrafiche\Anagrafica;
 
-class CSV extends CSVImport
+class CSV extends CSVImporter
 {
     public function getAvailableFields()
     {
@@ -247,11 +247,6 @@ class CSV extends CSVImport
         // Impedisco di aggiornare l'anagrafica Azienda
         if ($anagrafica->id == $id_azienda) {
             return;
-        }
-
-        // se non imposto nessun codice evito di resettare quello calcolato automaticamente o già presente
-        if (empty($record['codice'])) {
-            unset($record['codice']);
         }
 
         $anagrafica->fill($record);

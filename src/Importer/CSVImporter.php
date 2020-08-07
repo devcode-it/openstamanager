@@ -1,11 +1,11 @@
 <?php
 
-namespace Imports;
+namespace Importer;
 
 use Filter;
 use League\Csv\Reader;
 
-abstract class CSVImport
+abstract class CSVImporter implements ImporterInterface
 {
     protected $csv;
 
@@ -38,13 +38,14 @@ abstract class CSVImport
 
     abstract public function getAvailableFields();
 
-    /**
-     * @param $offset
-     * @param $length
-     *
-     * @return array
-     */
-    public function get($offset, $length)
+    public function getHeader()
+    {
+        $first_row = $this->getRows(0, 1);
+
+        return array_shift($first_row);
+    }
+
+    public function getRows($offset, $length)
     {
         $rows = [];
         for ($i = 0; $i < $length; ++$i) {
@@ -61,17 +62,11 @@ abstract class CSVImport
         return $rows;
     }
 
-    /**
-     * @param $offset
-     * @param $length
-     *
-     * @return int
-     */
-    public function importSet($offset, $length)
+    public function importRows($offset, $length)
     {
         $associations = $this->getColumnAssociations();
 
-        $rows = $this->get($offset, $length);
+        $rows = $this->getRows($offset, $length);
         foreach ($rows as $row) {
             // Interpretazione della riga come record
             $record = [];
@@ -89,30 +84,17 @@ abstract class CSVImport
         return count($rows);
     }
 
-    /**
-     * @param $record
-     *
-     * @return bool
-     */
     abstract public function import($record);
 
-    /**
-     * @return mixed
-     */
     public function getPrimaryKey()
     {
         return $this->primary_key;
     }
 
-    /**
-     * @param $field_key
-     */
     public function setPrimaryKey($field_key)
     {
         $this->primary_key = $this->getAvailableFields()[$field_key]['field'];
     }
-
-    abstract public static function getExample();
 
     public static function createExample($filepath)
     {

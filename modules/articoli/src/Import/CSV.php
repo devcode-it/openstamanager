@@ -2,10 +2,12 @@
 
 namespace Modules\Articoli\Import;
 
-use Imports\CSVImport;
-use Modules\Anagrafiche\Anagrafica;
+use Importer\CSVImporter;
+use Modules\Articoli\Articolo;
+use Modules\Articoli\Categoria;
+use Modules\Iva\Aliquota;
 
-class CSV extends CSVImport
+class CSV extends CSVImporter
 {
     public function getAvailableFields()
     {
@@ -58,20 +60,20 @@ class CSV extends CSVImport
                 ],
             ],
             [
-                'field' => 'id_categoria',
+                'field' => 'categoria',
                 'label' => 'Categoria',
                 'names' => [
                     'Categoria',
-                    'id_categoria',
+                    'categoria',
                     'idcategoria',
                 ],
             ],
             [
-                'field' => 'id_sottocategoria',
+                'field' => 'sottocategoria',
                 'label' => 'Sottocategoria',
                 'names' => [
                     'Sottocategoria',
-                    'id_sottocategoria',
+                    'sottocategoria',
                     'idsottocategoria',
                 ],
             ],
@@ -94,11 +96,11 @@ class CSV extends CSVImport
                 ],
             ],
             [
-                'field' => 'idiva_vendita',
+                'field' => 'codice_iva_vendita',
                 'label' => 'Codice IVA vendita',
                 'names' => [
                     'Codice IVA vendita',
-                    'idiva_vendita',
+                    'codice_iva_vendita',
                 ],
             ],
             [
@@ -117,100 +119,60 @@ class CSV extends CSVImport
         $database = database();
         $primary_key = $this->getPrimaryKey();
 
+        // Fix per campi con contenuti derivati da query implicite
+        if (!empty($record['id_fornitore'])) {
+            $record['id_fornitore'] = $database->fetchOne('SELECT idanagrafica AS id FROM an_anagrafiche WHERE LOWER(ragione_sociale) = LOWER('.prepare($record['id_fornitore']).')')['id'];
+        }
+
+        // Gestione categoria e sottocategoria
+        if (!empty($record['categoria'])) {
+            // Categoria
+            $categoria = Categoria::where('nome', $record['categoria'])->first();
+            if (empty($categoria)) {
+                $categoria = Categoria::build($record['categoria']);
+            }
+
+            // Sotto-categoria
+            $sottocategoria = null;
+            if (!empty($record['sottocategoria'])) {
+                $sottocategoria = Categoria::where('nome', $record['sottocategoria'])
+                    ->where('parent', $categoria->id)
+                    ->first();
+
+                if (empty($sottocategoria)) {
+                    $sottocategoria = Categoria::build($record['categoria']);
+                    $sottocategoria->parent()->associate($categoria);
+                    $sottocategoria->save();
+                }
+            }
+        }
+
+        // Individuazione dell'IVA di vendita tramite il relativo Codice
+        $aliquota = null;
+        if (!empty($record['codice_iva_vendita'])) {
+            $aliquota = Aliquota::where('codice', $record['codice_iva_vendita'])->first();
+        }
+        unset($record['codice_iva_vendita']);
+
+        // Individuazione articolo e generazione
+        $articolo = Articolo::where($primary_key, $record[$primary_key])->first();
+        if (empty($articolo)) {
+            $articolo = Articolo::build($record['codice'], $record['descrizione'], $categoria, $sottocategoria);
+        }
+
+        $articolo->idiva_vendita = $aliquota->id;
+        $articolo->attivo = 1;
+
+        // Esportazione della quantità indicata
         $qta = $record['qta'];
         unset($record['qta']);
 
-        $record['attivo'] = 1;
+        // Salvataggio delle informazioni generali
+        $articolo->fill($record);
+        $articolo->save();
 
-        // Fix per campi con contenuti derivati da query implicite
-        if (!empty($record['id_fornitore'])) {
-            $record['id_fornitore'] = $database->fetchOne('SELECT idanagrafica AS id FROM an_anagrafiche WHERE LOWER(ragione_sociale) = LOWER('.prepare($record['v']).')')['id'];
-        }
-
-        // Categorie
-        if (!empty($record['id_categoria'])) {
-            $rs_cat = $database->select('mg_categorie', 'id', [
-                'nome' => $record['id_categoria'],
-            ]);
-
-            if (empty($rs_cat[0]['id'])) {
-                $database->insert('mg_categorie', [
-                    'nome' => $record['id_categoria'],
-                ]);
-                $record['id_categoria'] = $database->lastInsertedID();
-            } else {
-                $record['id_categoria'] = $rs_cat[0]['id'];
-            }
-        }
-
-        // Sottocategorie
-        if (!empty($record['id_sottocategoria'])) {
-            $rs_cat2 = $database->select('mg_categorie', 'id', [
-                'nome' => $record['id_sottocategoria'],
-                'parent' => $record['id_categoria'],
-            ]);
-
-            if (empty($rs_cat2[0]['id'])) {
-                $database->insert('mg_categorie', [
-                    'nome' => $record['id_sottocategoria'],
-                    'parent' => $record['id_categoria'],
-                ]);
-                $record['id_sottocategoria'] = $database->lastInsertedID();
-            } else {
-                $record['id_sottocategoria'] = $rs_cat2[0]['id'];
-            }
-        }
-
-        // Um
-        if (!empty($record['um'])) {
-            $rs_um = $database->select('mg_unitamisura', 'id', [
-                'valore' => $record['um'],
-            ]);
-
-            if (empty($rs_um[0]['id'])) {
-                $database->insert('mg_unitamisura', [
-                    'valore' => $record['um'],
-                ]);
-            }
-        }
-
-        // Codice --> ID IVA vendita
-        if (!empty($record['idiva_vendita'])) {
-            $rs_iva = $database->select('co_iva', 'id', [
-                'codice' => $record['idiva_vendita'],
-            ]);
-
-            if (!empty($rs_iva[0]['id'])) {
-                $record['idiva_vendita'] = $rs_iva[0]['id'];
-            }
-        }
-
-        // Insert o update
-        $insert = true;
-        if (!empty($primary_key)) {
-            $rs = $database->select('mg_articoli', $primary_key, [
-                $primary_key => $record[$primary_key],
-            ]);
-
-            $insert = !in_array($record[$primary_key], $rs[0]);
-        }
-
-        // Insert
-        if ($insert) {
-            $record['id_categoria'] = (empty($record['id_categoria'])) ? 0 : $record['id_categoria'];
-            $database->insert('mg_articoli', $record);
-            add_movimento_magazzino($database->lastInsertedID(), $qta, [], 'Movimento da import', date());
-        }
-        // Update
-        else {
-            $database->update('mg_articoli', $record, [$primary_key => $record[$primary_key]]);
-
-            $rs = $database->select('mg_articoli', 'id', [
-                $primary_key => $record[$primary_key],
-            ]);
-
-            add_movimento_magazzino($rs[0]['id'], $qta, [], 'Movimento da import', date());
-        }
+        // Movimentazione della quantità registrata
+        $articolo->movimenta($qta, tr('Movimento da importazione'));
     }
 
     public static function getExample()

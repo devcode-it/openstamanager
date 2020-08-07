@@ -45,8 +45,8 @@ if (empty($id_record)) {
     </div>';
 
     // Lettura delle prime righe disponibili
-    $righe = $csv->get(0, 10);
-    $prima_riga = $righe[0];
+    $righe = $csv->getRows(0, 10);
+    $prima_riga = $csv->getHeader();
     $numero_colonne = count($prima_riga);
 
     // Trasformazione dei nomi indicati per i campi in lowercase

@@ -61,7 +61,7 @@ switch (filter('op')) {
         $primary_key = post('primary_key');
         $csv->setPrimaryKey($primary_key);
 
-        $count = $csv->importSet($offset, $limit);
+        $count = $csv->importRows($offset, $limit);
         $more = $count == $limit;
 
         echo json_encode([

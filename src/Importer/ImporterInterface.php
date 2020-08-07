@@ -4,6 +4,8 @@ namespace Importer;
 
 /**
  * Interfaccia che definisce la struttura di base per la gestione delle importazioni di documenti come dati del gestionale.
+ *
+ * @since 2.4.17
  */
 interface ImporterInterface
 {

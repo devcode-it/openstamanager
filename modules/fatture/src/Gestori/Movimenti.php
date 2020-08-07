@@ -6,6 +6,11 @@ use Modules\Fatture\Fattura;
 use Modules\PrimaNota\Mastrino;
 use Modules\PrimaNota\Movimento;
 
+/**
+ * Classe indirizzata alla gestione dei Movimenti automatici (non contabili, ovvero non di Prima Nota) associati a una Fattura.
+ *
+ * @since 2.4.17
+ */
 class Movimenti
 {
     protected $fattura;

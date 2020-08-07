@@ -41,13 +41,13 @@ class Articolo extends Model
     }
 
     /**
-     * Funzione per inserire i movimenti di magazzino.
+     * Funzione per registrare un movimento del magazzino in relazione all'articolo corrente, modificando di conseguenza la quantità dell'articolo stesso.
      *
      * @param $qta
-     * @param null  $descrizone
-     * @param null  $data
-     * @param bool  $manuale
-     * @param array $array
+     * @param string $descrizone
+     * @param string $data
+     * @param bool   $manuale
+     * @param array  $array
      *
      * @return bool
      */
@@ -65,13 +65,13 @@ class Articolo extends Model
     }
 
     /**
-     * Funzione per registrare i movimenti di magazzino.
+     * Funzione per registrare un movimento del magazzino in relazione all'articolo corrente, senza movimentare la quantità dell'articolo stesso.
      *
      * @param $qta
-     * @param null  $descrizone
-     * @param null  $data
-     * @param bool  $manuale
-     * @param array $array
+     * @param string $descrizone
+     * @param string $data
+     * @param bool   $manuale
+     * @param array  $array
      *
      * @return bool
      */
@@ -97,6 +97,12 @@ class Articolo extends Model
         return $id;
     }
 
+    /**
+     * Imposta il prezzo di vendita sulla base dell'impstazione per l'utilizzo dei prezzi comprensivi di IVA.
+     *
+     * @param $prezzo_vendita
+     * @param $id_iva
+     */
     public function setPrezzoVendita($prezzo_vendita, $id_iva)
     {
         $this->idiva_vendita = $id_iva;

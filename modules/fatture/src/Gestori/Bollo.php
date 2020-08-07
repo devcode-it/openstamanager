@@ -5,6 +5,11 @@ namespace Modules\Fatture\Gestori;
 use Modules\Fatture\Components;
 use Modules\Fatture\Fattura;
 
+/**
+ * Classe dedicata alla gestione del Bollo per la Fattura, compreso il calcolo del relativo valore e la generazione dinamica della riga associata.
+ *
+ * @since 2.4.17
+ */
 class Bollo
 {
     private $fattura;

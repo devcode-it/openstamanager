@@ -44,7 +44,7 @@ class ChoicesHandler implements HandlerInterface
         }
 
         $class = '';
-        if (in_array('disabled', $extras)){
+        if (in_array('disabled', $extras)) {
             $class = ' disabled';
         }
 

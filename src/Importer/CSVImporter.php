@@ -5,6 +5,11 @@ namespace Importer;
 use Filter;
 use League\Csv\Reader;
 
+/**
+ * Classe dedicata alla gestione dell'importazione da file CSV.
+ *
+ * @since 2.4.17
+ */
 abstract class CSVImporter implements ImporterInterface
 {
     protected $csv;

@@ -5,6 +5,11 @@ namespace Modules\Fatture\Gestori;
 use Modules\Fatture\Fattura;
 use Modules\Scadenzario\Scadenza;
 
+/**
+ * Classe dedicata alla gestione delle procedure di registrazione delle Scadenze di pagamento per una Fattura, con relativo supporto alla Fatturazione Elettronica per permettere l'importazione delle scadenze eventualmente registrate.
+ *
+ * @since 2.4.17
+ */
 class Scadenze
 {
     private $fattura;

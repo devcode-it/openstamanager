@@ -143,7 +143,7 @@ switch (post('op')) {
 
         break;
 
-    case 'copy':
+    case 'copy-bulk':
 
         $idstatointervento = post('idstatointervento');
         $data_richiesta = post('data_richiesta');
@@ -252,7 +252,7 @@ return [
         ],
     ],
 
-    'copy' => [
+    'copy-bulk' => [
         'text' => '<span><i class="fa fa-clone"></i> '.tr('Duplica attività'),
         'data' => [
             'title' => tr('Vuoi davvero fare una copia degli interventi selezionati?'),

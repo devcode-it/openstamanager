@@ -43,6 +43,11 @@ class ChoicesHandler implements HandlerInterface
             $extras[] = 'disabled';
         }
 
+        $class = '';
+        if (in_array('disabled', $extras)){
+            $class = ' disabled';
+        }
+
         // Gestione dei placeholder
         $values['placeholder'] = isset($values['placeholder']) ? $values['placeholder'] : $values['label'];
 
@@ -53,12 +58,13 @@ class ChoicesHandler implements HandlerInterface
             <input type="hidden" name="|name|" value="|value|">
             <input type="checkbox" id="|id|" value="|value|" autocomplete="off" class="hidden" |attr| onchange="$(this).parent().find(\'[type = hidden]\').val(+this.checked)"/>
             <div class="btn-group">
-                <label for="|id|" class="btn btn-default">
+                <label for="|id|" class="btn btn-default'.$class.'">
                     <span class="fa fa-check text-success"></span>
                     <span class="fa fa-close text-danger"></span>
                 </label>
-                <label for="|id|" class="btn btn-default active">
-                    |placeholder|
+                <label for="|id|" class="btn btn-default active'.$class.'">
+                    <span class="text-success">'.tr('Attivato').'</span>
+                    <span class="text-danger">'.tr('Disattivato').'</span>
                 </label>
             </div>
         </div>';

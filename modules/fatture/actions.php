@@ -619,9 +619,7 @@ switch (post('op')) {
         $articolo = Articolo::find(post('idriga'));
 
         $serials = (array) post('serial');
-
         $articolo->serials = $serials;
-        $articolo->save();
 
         break;
 

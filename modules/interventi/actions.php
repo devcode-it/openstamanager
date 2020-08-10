@@ -344,7 +344,8 @@ switch (post('op')) {
     case 'add_serial':
         $articolo = Articolo::find(post('idriga'));
 
-        $articolo->serials = post('serial');
+        $serials = (array) post('serial');
+        $articolo->serials = $serials;
 
         aggiorna_sedi_movimenti('interventi', $id_record);
         break;

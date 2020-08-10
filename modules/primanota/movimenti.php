@@ -9,6 +9,7 @@ function renderRiga($id, $riga)
     // Conto
     echo '
     <tr>
+        <input type="hidden" name="id_documento['.$id.']" value="'.$riga['iddocumento'].'">
         <input type="hidden" name="id_scadenza['.$id.']" value="'.$riga['id_scadenza'].'">
 
         <td>
@@ -29,12 +30,16 @@ function renderRiga($id, $riga)
     </tr>';
 }
 
-function renderTabella($nome, $righe, $id_scadenza_default = null)
+function renderTabella($nome, $righe)
 {
     global $counter;
 
+    $prima_riga = $righe->first();
+    $id_documento = $prima_riga ? $prima_riga['iddocumento'] : null;
+    $id_scadenza = $prima_riga ? $prima_riga['id_scadenza'] : null;
+
     echo '
-<div class="raggruppamento_primanota" data-id_scadenza="'.$id_scadenza_default.'">
+<div class="raggruppamento_primanota" data-id_scadenza="'.$id_scadenza.'" data-id_documento="'.$id_documento.'">
     <button class="btn btn-info btn-xs pull-right" type="button" onclick="addRiga(this)">
         <i class="fa fa-plus"></i> '.tr('Aggiungi riga').'
     </button>
@@ -105,7 +110,7 @@ foreach ($scadenze as $id_documento => $righe) {
         '_NUM_' => $documento['numero_esterno'] ?: $documento['numero'],
     ]);
 
-    renderTabella($nome, $righe, $righe->first()['id_scadenza']);
+    renderTabella($nome, $righe);
 }
 
 // Elenco per scadenze
@@ -118,7 +123,7 @@ foreach ($scadenze as $id_scadenza => $righe) {
         '_ID_' => $id_scadenza,
     ]);
 
-    renderTabella($nome, $righe, $righe->first()['id_scadenza']);
+    renderTabella($nome, $righe);
 }
 
 // Elenco generale
@@ -139,6 +144,7 @@ echo '
     <tbody id="template">';
 
 renderRiga('-id-', [
+    'iddocumento' => '-id_documento-',
     'id_scadenza' => '-id_scadenza-',
 ]);
 
@@ -157,7 +163,8 @@ function addRiga(btn) {
 
     var tabella = raggruppamento.find("tbody");
     var content = $("#template").html();
-    content = content.replace("-id_scadenza-", raggruppamento.data("id_scadenza"));
+    content = content.replace("-id_scadenza-", raggruppamento.data("id_scadenza"))
+        .replace("-id_documento-", raggruppamento.data("id_documento"));
 
     var text = replaceAll(content, "-id-", "" + n);
     tabella.append(text);

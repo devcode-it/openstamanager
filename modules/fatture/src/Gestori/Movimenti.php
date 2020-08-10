@@ -38,8 +38,6 @@ class Movimenti
         $data = $this->fattura->data_competenza;
 
         $mastrino = Mastrino::build($descrizione, $data, false, false);
-        $mastrino->iddocumento = $this->fattura->id;
-
         $this->mastrino = $mastrino;
 
         return $this->mastrino;
@@ -194,7 +192,7 @@ class Movimenti
         // Registrazione dei singoli Movimenti nel relativo Mastrino
         $mastrino = $this->generateMastrino();
         foreach ($movimenti as $element) {
-            $movimento = Movimento::build($mastrino, $element['id_conto']);
+            $movimento = Movimento::build($mastrino, $element['id_conto'], $this->fattura);
             $movimento->setTotale($element['avere'] ?: 0, $element['dare'] ?: 0);
             $movimento->save();
         }

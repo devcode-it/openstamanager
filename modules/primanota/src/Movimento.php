@@ -16,30 +16,30 @@ class Movimento extends Model
         'dare',
     ];
 
-    public static function build(Mastrino $mastrino, $id_conto, Scadenza $scadenza = null)
+    public static function build(Mastrino $mastrino, $id_conto, Fattura $documento = null, Scadenza $scadenza = null)
     {
         $model = parent::build();
 
+        // Informazioni dipendenti dal mastrino
         $model->idmastrino = $mastrino->idmastrino;
         $model->data = $mastrino->data;
         $model->descrizione = $mastrino->descrizione;
         $model->primanota = $mastrino->primanota;
         $model->is_insoluto = $mastrino->is_insoluto;
 
-        // Associazione al documento del mastrino
-        if (!empty($mastrino->iddocumento)) {
-            $model->iddocumento = $mastrino->iddocumento;
+        // Conto associato
+        $model->idconto = $id_conto;
+
+        // Associazione al documento indicato
+        $documento_scadenza = $scadenza ? $scadenza->documento : null;
+        $documento = $documento ?: $documento_scadenza;
+        if (!empty($documento)) {
+            $model->idanagrafica = $documento->idanagrafica;
+            $model->iddocumento = $documento->id;
         }
 
         // Associazione alla scadenza indicata
         $model->id_scadenza = $scadenza ? $scadenza->id : null;
-        $documento = $scadenza ? $scadenza->documento : null;
-        if (!empty($documento)) {
-            $model->iddocumento = $documento->id;
-            $model->idanagrafica = $documento->idanagrafica;
-        }
-
-        $model->idconto = $id_conto;
 
         $model->save();
 

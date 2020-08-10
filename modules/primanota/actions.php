@@ -2,6 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Fatture\Fattura;
 use Modules\PrimaNota\Mastrino;
 use Modules\PrimaNota\Movimento;
 use Modules\Scadenzario\Scadenza;
@@ -17,12 +18,14 @@ switch (post('op')) {
         $conti = post('idconto');
         foreach ($conti as $i => $id_conto) {
             $id_scadenza = post('id_scadenza')[$i];
+            $id_documento = post('id_documento')[$i];
             $dare = post('dare')[$i];
             $avere = post('avere')[$i];
 
             $scadenza = Scadenza::find($id_scadenza);
+            $fattura = Fattura::find($id_documento);
 
-            $movimento = Movimento::build($mastrino, $id_conto, $scadenza);
+            $movimento = Movimento::build($mastrino, $id_conto, $fattura, $scadenza);
             $movimento->setTotale($avere, $dare);
             $movimento->save();
         }
@@ -63,12 +66,14 @@ switch (post('op')) {
         $conti = post('idconto');
         foreach ($conti as $i => $id_conto) {
             $id_scadenza = post('id_scadenza')[$i];
+            $id_documento = post('id_documento')[$i];
             $dare = post('dare')[$i];
             $avere = post('avere')[$i];
 
             $scadenza = Scadenza::find($id_scadenza);
+            $fattura = Fattura::find($id_documento);
 
-            $movimento = Movimento::build($mastrino, $id_conto, $scadenza);
+            $movimento = Movimento::build($mastrino, $id_conto, $fattura, $scadenza);
             $movimento->setTotale($avere, $dare);
             $movimento->save();
         }

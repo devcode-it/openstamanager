@@ -35,6 +35,7 @@ class Articoli extends AppResource
             mg_articoli.prezzo_acquisto,
             mg_articoli.qta,
             mg_articoli.um,
+            mg_articoli.idiva_vendita AS id_iva,
             (SELECT nome FROM mg_categorie WHERE id = mg_articoli.id_categoria) AS categoria,
             (SELECT nome FROM mg_categorie WHERE id = mg_articoli.id_sottocategoria) AS sottocategoria
         FROM mg_articoli

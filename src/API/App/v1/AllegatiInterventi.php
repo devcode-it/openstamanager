@@ -69,6 +69,13 @@ class AllegatiInterventi extends AppResource
         return $record;
     }
 
+    public static function getTempDirectory()
+    {
+        return DIRECTORY_SEPARATOR.
+        trim(sys_get_temp_dir(), DIRECTORY_SEPARATOR).
+        DIRECTORY_SEPARATOR;
+    }
+
     public function createRecord($data)
     {
         $module = Modules::get('Interventi');
@@ -79,19 +86,18 @@ class AllegatiInterventi extends AppResource
             throw new InternalError();
         }
 
-        $file = tmpfile();
-        $path = stream_get_meta_data($file)['uri'];
-        fwrite($file, base64_decode($content[1]));
+        $file = self::getTempDirectory().$data['nome'];
+        //$path = stream_get_meta_data($file)['uri'];
+        file_put_contents($file, base64_decode($content[1]));
 
         // Salvataggio del file come allegato
-        $upload = Upload::build($path, [
+        $upload = Upload::build($file, [
             'id_module' => $module['id'],
             'id_record' => $data['id_intervento'],
-            'original_name' => $data['nome'],
         ], $data['nome'], $data['categoria']);
 
         // Chiusura e rimozione del file temporaneo
-        fclose($file);
+        delete($file);
 
         return [
             'id' => $upload->id,

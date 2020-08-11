@@ -285,10 +285,7 @@ elseif ($record['stato'] == 'Bozza') {
                     </button>';
                     }
                     echo '
-                        </div>
-                    ';
-
-                    echo '
+                    </div>
                     <div class="clearfix"></div>';
 
                     foreach ($scadenze as $scadenza) {

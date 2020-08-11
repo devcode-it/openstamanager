@@ -145,7 +145,7 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 
 -- Impostazioni relative all'applicazione
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES
-(NULL, 'Google Maps API key', '', 'string', '1', 'Applicazione', 1, ''),
+(NULL, 'Google Maps API key per Tecnici', '', 'string', '1', 'Applicazione', 1, ''),
 (NULL, 'Mostra prezzi', '1', 'boolean', '1', 'Applicazione', 2, ''),
 (NULL, 'Sincronizza solo i Clienti per cui il Tecnico ha lavorato in passato', '1', 'boolean', '1', 'Applicazione', 3, ''),
 (NULL, 'Mesi per lo storico delle Attività', '6', 'integer', '1', 'Applicazione', 3, '');
@@ -193,7 +193,7 @@ ALTER TABLE `an_anagrafiche` CHANGE `data_nascita` `data_nascita` date;
 ALTER TABLE `in_interventi` CHANGE `data_richiesta` `data_richiesta` DATETIME;
 ALTER TABLE `in_interventi` CHANGE `firma_data` `firma_data` DATETIME;
 
--- SET sql_mode = ''; 
+-- SET sql_mode = '';
 UPDATE `mg_movimenti` SET `data` = NULL WHERE `data` = '0000-00-00' OR `data` = '0000-00-00 00:00:00';
 UPDATE `my_impianti` SET `data` = NULL WHERE `data` = '0000-00-00' OR `data` = '0000-00-00 00:00:00';
 UPDATE `an_anagrafiche` SET `data_nascita` = NULL WHERE `data_nascita` = '0000-00-00' OR `data_nascita` = '0000-00-00 00:00:00';
@@ -236,7 +236,7 @@ UPDATE `co_movimenti` SET `totale_reddito` = `totale`;
 UPDATE `co_pianodeiconti3` SET `percentuale_deducibile` = 100;
 
 -- Evita di caricare impostazioni doppie
-ALTER TABLE `zz_settings` ADD UNIQUE(`nome`); 
+ALTER TABLE `zz_settings` ADD UNIQUE(`nome`);
 
 -- Evita di caricare username doppi
-ALTER TABLE `zz_users` ADD UNIQUE(`username`); 
+ALTER TABLE `zz_users` ADD UNIQUE(`username`);

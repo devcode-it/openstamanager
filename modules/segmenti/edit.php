@@ -37,7 +37,7 @@ include_once __DIR__.'/../../core.php';
 				</div>
 
 				<div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Posizione'); ?>", "name": "position",  "required": 1, "values":"list=\"WHR\": \"WHERE\", \"HVN\": \"HAVING\"", "value": "$position$" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Posizione'); ?>", "name": "position", "required": 1, "values":"list=\"WHR\": \"WHERE\", \"HVN\": \"HAVING\"", "value": "$position$" ]}
 				</div>
 
 			</div>

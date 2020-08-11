@@ -48,7 +48,7 @@ unset($_SESSION['superselect']['id_categoria']);
                 </div>
 
                 <div class="col-md-6">
-                    {[ "type": "number", "label": "<?php echo tr('Soglia minima quantità'); ?>", "name": "threshold_qta",  "decimals": "qta", "min-value": "undefined" ]}
+                    {[ "type": "number", "label": "<?php echo tr('Soglia minima quantità'); ?>", "name": "threshold_qta", "decimals": "qta", "min-value": "undefined" ]}
                 </div>
             </div>
 

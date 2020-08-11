@@ -280,7 +280,7 @@ $articoli = $intervento->articoli;
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza",  "ajax-source": "sedi_azienda",  "value": "$idsede_partenza$", "readonly": "<?php echo ($record['flag_completato'] || !$articoli->isEmpty()) ? 1 : 0; ?>" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Partenza merce'); ?>", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "readonly": "<?php echo ($record['flag_completato'] || !$articoli->isEmpty()) ? 1 : 0; ?>" ]}
                 </div>
             </div>
 

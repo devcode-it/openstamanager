@@ -31,7 +31,7 @@ if ($record['doc_associati'] > 0) {
 
 			<div class="row">
 				<div class="col-md-6">
-					{[ "type": "number", "label": "<?php echo tr('Percentuale'); ?>", "name": "percentuale",  "min-value": "1", "max-value": "100", "value": "$percentuale$", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
+					{[ "type": "number", "label": "<?php echo tr('Percentuale'); ?>", "name": "percentuale", "min-value": "1", "max-value": "100", "value": "$percentuale$", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
 				</div>
 
 				<div class="col-md-6">

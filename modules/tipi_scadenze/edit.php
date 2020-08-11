@@ -25,7 +25,7 @@ if ($record['can_delete'] and empty($scadenze)) {
 			<div class="row">
 
 				<div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$nome$",  "extra": "<?php echo $attr; ?>"  ]}
+					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$nome$", "extra": "<?php echo $attr; ?>"  ]}
 				</div>
 
 				<div class="col-md-6">
@@ -53,7 +53,7 @@ if ($record['can_delete']) {
 	<a class="btn btn-danger ask" data-backto="record-list">
 		<i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 	</a>
-	
+
 <?php
 }
 ?>

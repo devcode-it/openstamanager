@@ -38,7 +38,7 @@ include_once __DIR__.'/../../core.php';
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "number", "label": "<?php echo tr('Addebito diritto ch.'); ?>", "name": "costo_diritto_chiamata", "required": 1, "value": "$costo_diritto_chiamata$", "icon-after": "<i class='fa fa-euro'></i>",  "help": "<?php echo tr('Addebito al Cliente per il diritto di chiamata'); ?>" ]}
+					{[ "type": "number", "label": "<?php echo tr('Addebito diritto ch.'); ?>", "name": "costo_diritto_chiamata", "required": 1, "value": "$costo_diritto_chiamata$", "icon-after": "<i class='fa fa-euro'></i>", "help": "<?php echo tr('Addebito al Cliente per il diritto di chiamata'); ?>" ]}
 				</div>
 			</div>
 		</div>
@@ -61,7 +61,7 @@ include_once __DIR__.'/../../core.php';
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "number", "label": "<?php echo tr('Costo diritto ch.'); ?>", "name": "costo_diritto_chiamata_tecnico", "required": 1, "value": "$costo_diritto_chiamata_tecnico$", "icon-after": "<i class='fa fa-euro'></i>",  "help": "<?php echo tr('Costo interno per il diritto di chiamata'); ?>" ]}
+					{[ "type": "number", "label": "<?php echo tr('Costo diritto ch.'); ?>", "name": "costo_diritto_chiamata_tecnico", "required": 1, "value": "$costo_diritto_chiamata_tecnico$", "icon-after": "<i class='fa fa-euro'></i>", "help": "<?php echo tr('Costo interno per il diritto di chiamata'); ?>" ]}
 				</div>
 			</div>
 		</div>

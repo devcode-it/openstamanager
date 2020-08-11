@@ -174,7 +174,7 @@ foreach ($primo_livello as $conto_primo) {
             // Span con info del conto
             echo '
                         <span class="clickable" id="movimenti-'.$conto_terzo['id'].'">
-                            &nbsp;'.$conto_secondo['numero'].'.'.$conto_terzo['numero'].' '.$conto_terzo['descrizione'].'
+                            &nbsp;'.$conto_secondo['numero'].'.'.$conto_terzo['numero'].' '.$conto_terzo['descrizione'].($conto_terzo['percentuale_deducibile']<100 ? ' <span class="text-muted">('.tr('deducibile al _PERC_%', ['_PERC_' => Translator::numberToLocale($conto_terzo['percentuale_deducibile'],0)]).')</span>' : '').'
                         </span>
                         <div id="conto_'.$conto_terzo['id'].'" style="display:none;"></div>
                     </td>

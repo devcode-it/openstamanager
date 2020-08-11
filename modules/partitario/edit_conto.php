@@ -33,7 +33,7 @@ $info = $dbo->fetchOne($query);
     </div>
     <div class="row">
         <div class="col-md-4 <?php echo intval($lvl != 3 || $info['dir'] != 'uscita') ? 'hidden': ''; ?>">
-            {[ "type": "number", "label": "<?php echo tr('Percentuale deducibile'); ?>", "name": "percentuale_deducibile", "value": "<?php echo $info['percentuale_deducibile']; ?>", "icon-after": "<i class=\"fa fa-percent\"></i>", "max-value": "100", "min-value": "0" ]}
+            {[ "type": "number", "decimals": 0, "label": "<?php echo tr('Percentuale deducibile'); ?>", "name": "percentuale_deducibile", "value": "<?php echo $info['percentuale_deducibile']; ?>", "icon-after": "<i class=\"fa fa-percent\"></i>", "max-value": "100", "min-value": "0" ]}
         </div>
 
         <div class="col-md-4 <?php echo intval($lvl != 2) ? 'hidden': ''; ?>">

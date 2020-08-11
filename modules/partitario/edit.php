@@ -147,10 +147,12 @@ foreach ($primo_livello as $conto_primo) {
             }
 
             // Pulsante per aggiornare il totale reddito del conto di livello 3
-            echo '
-                            <button type="button" class="btn btn-info btn-xs" onclick="aggiornaReddito('.$conto_terzo['id'].')">
-                                <i class="fa fa-refresh"></i>
-                            </button>';
+            if ($conto_secondo['dir'] == 'uscita'){
+                echo '
+                                <button type="button" class="btn btn-info btn-xs" onclick="aggiornaReddito('.$conto_terzo['id'].')">
+                                    <i class="fa fa-refresh"></i>
+                                </button>';
+            }
 
             // Pulsante per modificare il nome del conto di livello 3
             echo '
@@ -408,6 +410,6 @@ echo '
     }
 
     function aggiornaReddito(id_conto){
-        openModal("'.tr('Aggiorna totale reddito').'", "'.$structure->fileurl('aggiorna_reddito.php').'?id=" + id_conto)
+        openModal("'.tr('Ricalcola importo deducibile').'", "'.$structure->fileurl('aggiorna_reddito.php').'?id=" + id_conto)
     }
 </script>';

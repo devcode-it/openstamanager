@@ -21,7 +21,7 @@ echo '
 </div>';
 
 // Livello 1
-$query1 = 'SELECT * FROM `co_pianodeiconti1` ORDER BY id ASC';
+$query1 = 'SELECT * FROM `co_pianodeiconti1` ORDER BY id DESC';
 $primo_livello = $dbo->fetchArray($query1);
 foreach ($primo_livello as $conto_primo) {
     $totale_attivita = [];

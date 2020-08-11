@@ -4,7 +4,7 @@ include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
     case 'conti':
-        $query = 'SELECT co_pianodeiconti2.* FROM co_pianodeiconti2 LEFT JOIN co_pianodeiconti3 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id |where| GROUP BY co_pianodeiconti2.id';
+        $query = 'SELECT co_pianodeiconti2.* FROM co_pianodeiconti2 LEFT JOIN co_pianodeiconti3 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id |where| GROUP BY co_pianodeiconti2.id ORDER BY co_pianodeiconti2.numero ASC, co_pianodeiconti3.numero ASC';
 
         if ($search != '') {
             $wh = 'WHERE (co_pianodeiconti3.descrizione LIKE '.prepare('%'.$search.'%')." OR CONCAT( co_pianodeiconti2.numero, '.', co_pianodeiconti3.numero ) LIKE ".prepare('%'.$search.'%').')';
@@ -54,7 +54,7 @@ switch ($resource) {
         break;
 
     case 'conti-vendite':
-        $query = "SELECT co_pianodeiconti3.id, CONCAT( co_pianodeiconti2.numero, '.', co_pianodeiconti3.numero, ' ', co_pianodeiconti3.descrizione ) AS descrizione FROM co_pianodeiconti3 INNER JOIN (co_pianodeiconti2 INNER JOIN co_pianodeiconti1 ON co_pianodeiconti2.idpianodeiconti1=co_pianodeiconti1.id) ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id |where| ORDER BY co_pianodeiconti3.numero ASC";
+        $query = "SELECT co_pianodeiconti3.id, CONCAT( co_pianodeiconti2.numero, '.', co_pianodeiconti3.numero, ' ', co_pianodeiconti3.descrizione ) AS descrizione FROM co_pianodeiconti3 INNER JOIN (co_pianodeiconti2 INNER JOIN co_pianodeiconti1 ON co_pianodeiconti2.idpianodeiconti1=co_pianodeiconti1.id) ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id |where| ORDER BY co_pianodeiconti2.numero ASC, co_pianodeiconti3.numero ASC";
 
         foreach ($elements as $element) {
             $filter[] = 'co_pianodeiconti3.id='.prepare($element);
@@ -70,7 +70,7 @@ switch ($resource) {
         break;
 
     case 'conti-acquisti':
-        $query = "SELECT co_pianodeiconti3.id, CONCAT( co_pianodeiconti2.numero, '.', co_pianodeiconti3.numero, ' ', co_pianodeiconti3.descrizione ) AS descrizione FROM co_pianodeiconti3 INNER JOIN (co_pianodeiconti2 INNER JOIN co_pianodeiconti1 ON co_pianodeiconti2.idpianodeiconti1=co_pianodeiconti1.id) ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id |where| ORDER BY co_pianodeiconti3.numero ASC";
+        $query = "SELECT co_pianodeiconti3.id, CONCAT( co_pianodeiconti2.numero, '.', co_pianodeiconti3.numero, ' ', co_pianodeiconti3.descrizione ) AS descrizione FROM co_pianodeiconti3 INNER JOIN (co_pianodeiconti2 INNER JOIN co_pianodeiconti1 ON co_pianodeiconti2.idpianodeiconti1=co_pianodeiconti1.id) ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id |where| ORDER BY co_pianodeiconti2.numero ASC, co_pianodeiconti3.numero ASC";
 
         foreach ($elements as $element) {
             $filter[] = 'co_pianodeiconti3.id='.prepare($element);

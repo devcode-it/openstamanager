@@ -16,22 +16,31 @@ use Tasks\CronExpression;
 use Tasks\Task;
 
 // Rimozione delle limitazioni sull'esecuzione
-//set_time_limit(0);
-//ignore_user_abort(true);
+set_time_limit(0);
+ignore_user_abort(true);
 
 // Chiusura della richiesta alla pagina
-//flush();
+flush();
 
 $skip_permissions = true;
 include_once __DIR__.'/core.php';
+
+// Controllo su possibili aggiornamenti per bloccare il sistema
+$database_online = $database->isInstalled() && !Update::isUpdateAvailable();
+if (!$database_online) {
+    return;
+}
 
 // Disabilita della sessione
 session_write_close();
 
 // Aggiunta di un logger specifico
+$pattern = '[%datetime%] %level_name%: %message% %context%'.PHP_EOL;
+$formatter = new Monolog\Formatter\LineFormatter($pattern);
+
 $logger = new Logger('Tasks');
-$handler = new RotatingFileHandler(DOCROOT.'/logs/cron_Test.log', 0);
-$handler->setFormatter($monologFormatter);
+$handler = new RotatingFileHandler(DOCROOT.'/logs/cron.log', 0);
+$handler->setFormatter($formatter);
 $logger->pushHandler($handler);
 
 // Lettura della cache
@@ -48,6 +57,10 @@ if (!empty($data) && $data->greaterThanOrEqualTo($minimo_esecuzione)) {
     return;
 }
 
+// Registrazione dell'esecuzione
+$adesso = new Carbon();
+$ultima_esecuzione->set($adesso->__toString());
+
 // Calcolo del primo slot disponibile
 $adesso = new Carbon();
 $slot = (new Carbon())->startOfHour();
@@ -61,6 +74,12 @@ while (true) {
     // Risveglio programmato tramite slot
     $timestamp = $slot->getTimestamp();
     time_sleep_until($timestamp);
+
+    // Controllo su possibili aggiornamenti per bloccare il sistema
+    $database_online = $database->isInstalled() && !Update::isUpdateAvailable();
+    if (!$database_online) {
+        return;
+    }
 
     // Registrazione nei log
     $logger->info('Cron #'.$number.' (slot timestamp: '.$timestamp.')');

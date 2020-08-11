@@ -56,12 +56,15 @@ if (Auth::check()) {
         $(document).ready(function() {
             // Toast
             alertPush();
-                    
+
             // Orologio
             clock();
-            
+
             // Hooks
             startHooks();
+
+            // Abilitazione del cron autonoma
+            $.get(globals.rootdir + "/cron.php");
         });
         </script>';
 }

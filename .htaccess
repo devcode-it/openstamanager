@@ -25,6 +25,7 @@
 ServerSignature Off
 <IfModule mod_headers.c>
     Header set X-Robots-Tag: "noindex,nofollow"
+    Header set X-Content-Type-Options nosniff
 </IfModule>
 
 <IfModule mod_rewrite.c>

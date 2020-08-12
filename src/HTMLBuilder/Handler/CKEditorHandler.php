@@ -16,6 +16,8 @@ class CKEditorHandler implements HandlerInterface
     <textarea |attr|>|value|</textarea>
     <script src="'.ROOTDIR.'/assets/dist/js/ckeditor/ckeditor.js"></script>
     <script>
+        CKEDITOR.addCss(".cke_editable img { max-width: 100% !important; height: auto !important; }");
+
         CKEDITOR.replace("'.prepareToField($values['id']).'", {
             toolbar: globals.ckeditorToolbar,
             language: globals.locale,

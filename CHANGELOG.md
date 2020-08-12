@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.17 (2020-08-12)](#2417-2020-08-12)
 - [2.4.16 (2020-07-28)](#2416-2020-07-28)
 - [2.4.15 (2020-05-01)](#2415-2020-05-01)
 - [2.4.14 (2020-04-23)](#2414-2020-04-23)
@@ -25,6 +26,38 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.3 (2018-02-16)](#23-2018-02-16)
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
+
+## 2.4.17 (2020-08-12)
+
+### Aggiunto (Added)
+ - Versione API per l'interazione con l'applicazione ufficiale (v3)
+ - Modal intermedio per la duplicazione **Articoli**
+ - Aggiunto controllo aggiuntivo sui checksum dei file (#705)
+ - Sistema per l'assegnazione di specifici Tecnici ad **Attività senza sessioni di lavoro** (**Promemoria di attività**), con nuove impostazioni per la gestione della **Dashboard**
+ - Funzioni JavaScript di utility per la gestione degli input
+ - Introduzione del *Totale reddito* per i *Movimenti* della **Prima Nota** e del **Piano dei conti**, con relativa revisione della generazione dei *Movimenti*
+ - Introduzione della sostituzione automatica per i caratteri speciali in Fattura Elettronica
+ - Aggiunta la *Data prevista evasione* sulle righe degli **Ordini**
+ - Aggiunto nome del firmatario nella stampa del **Rapportino attività**
+ - Aggiunta procedura per il salvataggio dinamico delle modifiche dei documenti alla creazione/modifica delle righe (#636)
+
+### Modificato (Changed)
+ - Miglioramento dello stile delle checkbox
+ - Sistema di gestione dei parametri per la generazione AJAX delle opzioni select (*select-options*)
+ - Tabelle *responsive* per le righe di tutti i documenti
+ - Modifica del modulo **MyImpianti** in **Impianti**
+ - Miglioramento della struttura JavaScript della **Dashboard**
+ - Aggiornamento del modal di aggiunta **Attività**
+ - Separazione della gestione del *Bollo* e delle *Scadenze* dal codice delle *Fatture*
+ - Aggiornamento della struttura dedicata all'importazione dei file CSV
+ - Rimozione dello stato intervento "Chiamata" se inutilizzato
+
+### Fixed
+ - Fix della duplicazione di Fattura, che in alcuni casi non rimuoveva lo stato FE originale
+ - Fix della procedura di duplicazione di gruppo per le **Attività**
+ - Risoluzione bug nella modifica manuale della **Prima Note** risalente a versioni <= 2.4.11 (#864)
+ - Fix dell'ordinamento per i conti primari del **Piano dei conti**, con correzione dei totali di riepilogo relativi
+ - Correzione sui tooltip bloccati sui pulsanti disabilitati
 
 ## 2.4.16 (2020-07-28)
 
@@ -49,7 +82,6 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Aggiunti totali delle tabelle ristretti alla selezione
  - Aggiunta articoli in sequenza tramite barcode
 
-
 ### Modificato (Changed)
  - Allineamento Fattura Elettronica a versione schema XML 1.2.1
  - Aggiornamento foglio di stile FE Asso Invoice
@@ -58,7 +90,6 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Migliorata stampa registro IVA
  - Compattazione grafica righe documenti
  - Ottimizzazione caricamento lista fatture
-
 
 ### Fixed
  - Fix pulsante compilazione automatica campi in fase di import Fattura Elettronica passiva
@@ -81,8 +112,8 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Fix dicitura footer stampa fattura
  - Fix calcolo quantità per inventario
  - Fix stato dei Preventivi selezionabili
- 
- ## 2.4.15 (2020-05-01)
+
+## 2.4.15 (2020-05-01)
 
 ### Aggiunto (Added)
  - Aggiunta impostazione per abilitare la notifica di nuove pre-release oltre a release stabili
@@ -93,7 +124,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 
 ### Fixed
  - Bugfix Dashboard su vista settimanale e giornaliera (causato dalla nuova versione di JQuery)
- - Fix importazione Fattura Elettronica 
+ - Fix importazione Fattura Elettronica
  - Fix eliminazione campi dal Modulo Viste (#794)
  - Fix permessi API sync calendario per aggiungere il filtro cliente
  - Fix esportazione dati in CSV per leggere correttamente importi con le migliaia

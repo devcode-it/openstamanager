@@ -200,7 +200,7 @@ function importAll(btn) {
                         type: "info",
                     });
 
-                    buttonRestore(button, restore);
+                    buttonRestore(btn, restore);
                     $("#main_loading").fadeOut();
                 });
 

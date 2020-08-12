@@ -329,10 +329,18 @@ if ($options['pricing']) {
 
 // Timbro e firma
 $firma = !empty($documento['firma_file']) ? '<img src="'.DOCROOT.'/files/interventi/'.$documento['firma_file'].'" style="width:70mm;">' : '';
+
 echo '
         <td rowspan="2" class="text-center" style="font-size:8pt;height:30mm;vertical-align:bottom">
-            '.$firma.'<br>
-            <i>('.tr('Timbro e firma leggibile').'.)</i>
+            '.$firma.'<br>';
+
+if (empty($documento['firma_file'])) {
+    echo '      <i>('.tr('Timbro e firma leggibile').'.)</i>';
+} else {
+    echo '      <i>'.$documento['firma_nome'].'</i>';
+}
+
+echo  '
         </td>
     </tr>';
 

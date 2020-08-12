@@ -21,7 +21,7 @@ echo '
 </div>';
 
 // Livello 1
-$query1 = 'SELECT * FROM `co_pianodeiconti1` ORDER BY id ASC';
+$query1 = 'SELECT * FROM `co_pianodeiconti1` ORDER BY id DESC';
 $primo_livello = $dbo->fetchArray($query1);
 foreach ($primo_livello as $conto_primo) {
     $totale_attivita = [];
@@ -99,7 +99,7 @@ foreach ($primo_livello as $conto_primo) {
 
             $totale_conto = $conto_terzo['totale'];
             $totale_reddito = $conto_terzo['totale_reddito'];
-            if ($conto_primo['descrizione'] == 'Patrimoniale') {
+            if ($conto_primo['descrizione'] != 'Patrimoniale') {
                 $totale_conto = -$totale_conto;
                 $totale_reddito = -$totale_reddito;
             }
@@ -147,10 +147,12 @@ foreach ($primo_livello as $conto_primo) {
             }
 
             // Pulsante per aggiornare il totale reddito del conto di livello 3
-            echo '
-                            <button type="button" class="btn btn-info btn-xs" onclick="aggiornaReddito('.$conto_terzo['id'].')">
-                                <i class="fa fa-refresh"></i>
-                            </button>';
+            if ($conto_secondo['dir'] == 'uscita') {
+                echo '
+                                <button type="button" class="btn btn-info btn-xs" onclick="aggiornaReddito('.$conto_terzo['id'].')">
+                                    <i class="fa fa-refresh"></i>
+                                </button>';
+            }
 
             // Pulsante per modificare il nome del conto di livello 3
             echo '
@@ -172,7 +174,7 @@ foreach ($primo_livello as $conto_primo) {
             // Span con info del conto
             echo '
                         <span class="clickable" id="movimenti-'.$conto_terzo['id'].'">
-                            &nbsp;'.$conto_secondo['numero'].'.'.$conto_terzo['numero'].' '.$conto_terzo['descrizione'].'
+                            &nbsp;'.$conto_secondo['numero'].'.'.$conto_terzo['numero'].' '.$conto_terzo['descrizione'].($conto_terzo['percentuale_deducibile'] < 100 ? ' <span class="text-muted">('.tr('deducibile al _PERC_%', ['_PERC_' => Translator::numberToLocale($conto_terzo['percentuale_deducibile'], 0)]).')</span>' : '').'
                         </span>
                         <div id="conto_'.$conto_terzo['id'].'" style="display:none;"></div>
                     </td>
@@ -408,6 +410,6 @@ echo '
     }
 
     function aggiornaReddito(id_conto){
-        openModal("'.tr('Aggiorna totale reddito').'", "'.$structure->fileurl('aggiorna_reddito.php').'?id=" + id_conto)
+        openModal("'.tr('Ricalcola importo deducibile').'", "'.$structure->fileurl('aggiorna_reddito.php').'?id=" + id_conto)
     }
 </script>';

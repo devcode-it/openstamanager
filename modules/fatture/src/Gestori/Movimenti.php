@@ -182,10 +182,9 @@ class Movimenti
 
         // Inversione contabile per i documenti di acquisto
         if ($is_acquisto) {
-            foreach ($movimenti as $movimento) {
-                $temp = $movimento['avere'];
-                $movimento['avere'] = $movimento['dare'];
-                $movimento['dare'] = $temp;
+            foreach ($movimenti as $key => $movimento) {
+                $movimenti[$key]['avere'] = $movimento['dare'];
+                $movimenti[$key]['dare'] = $movimento['avere'];
             }
         }
 

@@ -219,6 +219,7 @@ if (!$is_completato) {
 }
 
 echo '
+<script src="'.$rootdir.'/assets/src/js/functions/functions.js"></script>
 <script>$(document).ready(init)</script>
 
 <script type="text/javascript">
@@ -235,7 +236,7 @@ async function modificaSessione(button) {
             $(button).tooltipster("close");
 
         // Apertura modal
-        openModal("'.tr('Modifica riga').'", "'.$module->fileurl('manage_sessione.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&id_sessione=" + id);
+        openModal("'.tr('Modifica sessione').'", "'.$module->fileurl('manage_sessione.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&id_sessione=" + id);
     }
 }
 

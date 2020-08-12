@@ -147,7 +147,7 @@ foreach ($primo_livello as $conto_primo) {
             }
 
             // Pulsante per aggiornare il totale reddito del conto di livello 3
-            if ($conto_secondo['dir'] == 'uscita'){
+            if ($conto_secondo['dir'] == 'uscita') {
                 echo '
                                 <button type="button" class="btn btn-info btn-xs" onclick="aggiornaReddito('.$conto_terzo['id'].')">
                                     <i class="fa fa-refresh"></i>

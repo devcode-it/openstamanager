@@ -9,10 +9,10 @@
 // Schema crontab: "*/5 * * * * php <percorso_root>/cron.php"
 
 use Carbon\Carbon;
+use Cron\CronExpression;
 use Models\Cache;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
-use Tasks\CronExpression;
 use Tasks\Task;
 
 // Rimozione delle limitazioni sull'esecuzione
@@ -39,7 +39,7 @@ $pattern = '[%datetime%] %level_name%: %message% %context%'.PHP_EOL;
 $formatter = new Monolog\Formatter\LineFormatter($pattern);
 
 $logger = new Logger('Tasks');
-$handler = new RotatingFileHandler(DOCROOT.'/logs/cron.log', 0);
+$handler = new RotatingFileHandler(DOCROOT.'/logs/cron.log', 7);
 $handler->setFormatter($formatter);
 $logger->pushHandler($handler);
 
@@ -47,13 +47,19 @@ $logger->pushHandler($handler);
 $ultima_esecuzione = Cache::get('Ultima esecuzione del cron');
 $data = $ultima_esecuzione->content;
 
+$riavvia = Cache::get('Riavvia cron');
+$disattiva = Cache::get('Disabilita cron');
+if (!empty($disattiva->content)) {
+    return;
+}
+
 // Impostazioni sugli slot di esecuzione
 $slot_duration = 5;
 
 // Controllo sull'ultima esecuzione
 $data = $data ? new Carbon($data) : null;
 $minimo_esecuzione = (new Carbon())->addMinutes($slot_duration * 5);
-if (!empty($data) && $data->greaterThanOrEqualTo($minimo_esecuzione)) {
+if (!empty($data) && $minimo_esecuzione->greaterThanOrEqualTo($data)) {
     return;
 }
 
@@ -61,47 +67,69 @@ if (!empty($data) && $data->greaterThanOrEqualTo($minimo_esecuzione)) {
 $adesso = new Carbon();
 $ultima_esecuzione->set($adesso->__toString());
 
-// Calcolo del primo slot disponibile
-$adesso = new Carbon();
-$slot = (new Carbon())->startOfHour();
-while ($adesso->greaterThanOrEqualTo($slot)) {
-    $slot->addMinutes($slot_duration);
-}
+// Prima esecuzione immediata
+$slot_minimo = $adesso->copy();
 
 // Esecuzione ricorrente
 $number = 1;
 while (true) {
-    // Risveglio programmato tramite slot
-    $timestamp = $slot->getTimestamp();
-    time_sleep_until($timestamp);
+    $riavvia->refresh();
+    $disattiva->refresh();
 
     // Controllo su possibili aggiornamenti per bloccare il sistema
     $database_online = $database->isInstalled() && !Update::isUpdateAvailable();
-    if (!$database_online) {
+    if (!$database_online || !empty($disattiva->content) || !empty($riavvia->content)) {
         return;
     }
 
-    // Registrazione nei log
-    $logger->info('Cron #'.$number.' (slot timestamp: '.$timestamp.')');
+    // Risveglio programmato tramite slot
+    $timestamp = $slot_minimo->getTimestamp();
+    time_sleep_until($timestamp);
+
+    // Registrazione dell'iterazione nei log
+    $logger->info('Cron #'.$number.' iniziato', [
+        'slot' => $slot_minimo->toDateTimeString(),
+        'slot-unix' => $timestamp,
+    ]);
+
+    // Calcolo del primo slot disponibile per l'esecuzione successiva
+    $inizio_iterazione = new Carbon();
+    $slot_minimo = $inizio_iterazione->copy()->startOfHour();
+    while ($inizio_iterazione->greaterThanOrEqualTo($slot_minimo)) {
+        $slot_minimo->addMinutes($slot_duration);
+    }
 
     // Aggiornamento dei cron disponibili
     $tasks = Task::all();
     foreach ($tasks as $task) {
+        $adesso = new Carbon();
+
+        // Individuazione delle informazioni previste dalla relativa espressione
         $cron = CronExpression::factory($task->expression);
+        $data_successiva = Carbon::instance($cron->getNextRunDate($adesso));
 
         // Esecuzione diretta solo nel caso in cui sia prevista
-        if ($cron->isDue()) {
+        if ($cron->isDue($inizio_iterazione) || $cron->isDue($adesso)) {
+            // Registrazione dell'esecuzione nei log
+            $logger->info($task->name.': '.$task->expression);
+
             $task->execute();
         }
+
+        // Calcolo dello successivo slot
+        if ($data_successiva->lessThan($slot_minimo)) {
+            $slot_minimo = $data_successiva;
+        }
     }
+
+    // Registrazione dello slot successivo nei log
+    $logger->info('Cron #'.$number.' concluso', [
+        'next-slot' => $slot_minimo->toDateTimeString(),
+        'next-slot-unix' => $timestamp,
+    ]);
 
     // Registrazione dell'esecuzione
     $adesso = new Carbon();
     $ultima_esecuzione->set($adesso->__toString());
-
-    // Individuazione dello slot di 5 minuti per l'esecuzione successiva
-    while ($adesso->greaterThanOrEqualTo($slot)) {
-        $slot->addMinutes($slot_duration);
-    }
     ++$number;
 }

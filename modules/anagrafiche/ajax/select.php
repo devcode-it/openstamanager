@@ -71,6 +71,10 @@ switch ($resource) {
 
         break;
 
+    /*
+     * Opzioni utilizzate:
+     * - idanagrafica
+     */
     case 'agenti':
         $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')')), IF(deleted_at IS NULL, '', ' (".tr('eliminata').")')) AS descrizione, idtipointervento_default FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY ragione_sociale";
 
@@ -226,6 +230,10 @@ switch ($resource) {
         }
         break;
 
+    /*
+    * Opzioni utilizzate:
+     * - idanagrafica
+     */
     case 'sedi':
         if (isset($superselect['idanagrafica'])) {
             $query = "SELECT * FROM (SELECT '0' AS id, (SELECT idzona FROM an_anagrafiche |where|) AS idzona, CONCAT_WS(' - ', 'Sede legale' , (SELECT CONCAT (citta, ' (', ragione_sociale,')') FROM an_anagrafiche |where|)) AS descrizione UNION SELECT id, idzona, CONCAT_WS(' - ', nomesede, citta) FROM an_sedi |where|) AS tab HAVING descrizione LIKE ".prepare('%'.$search.'%').' ORDER BY descrizione';
@@ -267,6 +275,10 @@ switch ($resource) {
 
         break;
 
+    /*
+ * Opzioni utilizzate:
+ * - idanagrafica
+ */
     case 'referenti':
         if (isset($superselect['idanagrafica'])) {
             $query = 'SELECT id, nome AS descrizione FROM an_referenti |where| ORDER BY nome';
@@ -311,7 +323,11 @@ switch ($resource) {
 
         break;
 
-    case 'dichiarazioni_intento':
+    /*
+     * Opzioni utilizzate:
+     * - idanagrafica
+     */
+    case 'dichiarazioni$superselect_intento':
         $query = "SELECT id, CONCAT_WS(' - ', numero_protocollo, numero_progressivo) as descrizione FROM co_dichiarazioni_intento |where| ORDER BY data";
 
         foreach ($elements as $element) {

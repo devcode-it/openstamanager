@@ -27,6 +27,9 @@ class UpdateHook extends CachedManager
     public function response()
     {
         $update = $this->getCache()->content;
+        if ($update == Update::getVersion()) {
+            $update = null;
+        }
 
         $module = Modules::get('Aggiornamenti');
         $link = ROOTDIR.'/controller.php?id_module='.$module->id;

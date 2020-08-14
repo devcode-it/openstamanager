@@ -3,6 +3,10 @@
 include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
+    /*
+ * Opzioni utilizzate:
+ * - matricola
+ */
     case 'componenti':
         if (isset($superselect['marticola'])) {
             $query = 'SELECT id, nome AS descrizione, contenuto FROM my_impianto_componenti |where| ORDER BY id';

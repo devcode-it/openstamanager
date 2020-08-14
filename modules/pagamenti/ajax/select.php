@@ -3,6 +3,10 @@
 include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
+    /*
+     * Opzioni utilizzate:
+     * - codice_modalita_pagamento_fe
+     */
     case 'pagamenti':
         $query = "SELECT id,
            CONCAT_WS(' - ', codice_modalita_pagamento_fe, descrizione) AS descrizione,

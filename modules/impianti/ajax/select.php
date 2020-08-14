@@ -16,6 +16,10 @@ switch ($resource) {
             }
         break;
 
+    /*
+* Opzioni utilizzate:
+* - idanagrafica
+*/
     case 'impianti-cliente':
         if (isset($superselect['idanagrafica'])) {
             $query = 'SELECT id, CONCAT(matricola, " - ", nome) AS descrizione FROM my_impianti |where| ORDER BY idsede';
@@ -36,6 +40,10 @@ switch ($resource) {
         }
         break;
 
+    /*
+ * Opzioni utilizzate:
+ * - idintervento
+ */
     case 'impianti-intervento':
         if (isset($superselect['idintervento'])) {
             $query = 'SELECT id, CONCAT(matricola, " - ", nome) AS descrizione FROM my_impianti INNER JOIN my_impianti_interventi ON my_impianti.id=my_impianti_interventi.idimpianto |where| ORDER BY idsede';

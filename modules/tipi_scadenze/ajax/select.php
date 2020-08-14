@@ -9,6 +9,7 @@ switch ($resource) {
         foreach ($elements as $element) {
             $filter[] = 'id='.prepare($element);
         }
+
         if (!empty($search)) {
             $search_fields[] = 'nome LIKE '.prepare('%'.$search.'%');
             $search_fields[] = 'descrizione LIKE '.prepare('%'.$search.'%');

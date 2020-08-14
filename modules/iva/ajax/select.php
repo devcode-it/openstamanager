@@ -3,6 +3,10 @@
 include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
+    /*
+     * Opzioni utilizzate:
+     * - split_payment
+     */
     case 'iva':
         $query = 'SELECT id, IF( codice_natura_fe IS NULL, IF(codice IS NULL, descrizione, CONCAT(codice, " - ", descrizione)), CONCAT( IF(codice IS NULL, descrizione, CONCAT(codice, " - ", descrizione)), " (", codice_natura_fe, ")" ) ) AS descrizione, percentuale FROM co_iva |where| ORDER BY descrizione ASC';
 

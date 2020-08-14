@@ -69,11 +69,69 @@ if (empty($record) || !$has_access) {
 		</div>';
     }
 
+    // Menu laterale per la visualizzazione dei plugin
     echo '
-		<div class="nav-tabs-custom">
-			<ul class="nav nav-tabs pull-right" id="tabs" role="tablist">
-				<li class="pull-left active header">
-					<a data-toggle="tab" href="#tab_0">
+        <aside class="control-sidebar control-sidebar-light">
+            <h4 class="text-center">'.tr('Plugin disponibili').'</h4>
+            <ul class="nav nav-pills nav-stacked">
+                <li data-toggle="control-sidebar" class="active">
+                    <a data-toggle="tab" href="#tab_0">
+                        <i class="'.$structure['icon'].'"></i> '.$structure['title'].'
+                    </a>
+                </li>';
+
+    // Tab dei plugin
+    $plugins = $dbo->fetchArray('SELECT id, title FROM zz_plugins WHERE idmodule_to='.prepare($id_module)." AND position='tab' AND enabled = 1 ORDER BY zz_plugins.order DESC");
+    foreach ($plugins as $plugin) {
+        echo '
+                <li data-toggle="control-sidebar">
+                    <a data-toggle="tab" href="#tab_'.$plugin['id'].'" id="link-tab_'.$plugin['id'].'">
+                        '.$plugin['title'].'
+                    </a>
+                </li>';
+    }
+
+    // Tab per le note interne
+    if ($structure->permission != '-' && $structure->use_notes) {
+        $notes = $structure->recordNotes($id_record);
+
+        echo '
+                <li data-toggle="control-sidebar" class="bg-info">
+                    <a data-toggle="tab" href="#tab_note" id="link-tab_note">
+                        '.tr('Note interne').'
+                        <span class="badge">'.($notes->count() ?: '').'</span>
+                    </a>
+                </li>';
+    }
+
+    // Tab per le checklist
+    if ($structure->permission != '-' && $structure->use_checklists) {
+        echo '
+                <li data-toggle="control-sidebar" class="bg-success">
+                    <a data-toggle="tab" href="#tab_checks" id="link-tab_checks">'.tr('Checklist').'</a>
+                </li>';
+    }
+
+    // Tab per le informazioni sulle operazioni
+    if (Auth::admin()) {
+        echo '
+                <li data-toggle="control-sidebar" class="bg-warning">
+                    <a data-toggle="tab" href="#tab_info" id="link-tab_info">
+                        '.tr('Info').'
+                    </a>
+                </li>';
+    }
+
+    echo '
+            </ul>
+        </aside>
+
+        <div class="control-sidebar-bg"></div>
+
+        <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs pull-right" id="tabs" role="tablist">
+                <li class="pull-left active header">
+                    <a data-toggle="tab" href="#tab_0">
                         <i class="'.$structure['icon'].'"></i> '.$structure['title'];
 
     // Pulsante "Aggiungi" solo se il modulo è di tipo "table" e se esiste il template per la popup
@@ -84,48 +142,11 @@ if (empty($record) || !$has_access) {
 
     echo '
 					</a>
-				</li>';
+				</li>
 
-    // Tab per le informazioni sulle operazioni
-    if (Auth::admin()) {
-        echo '
-				<li class="bg-warning">
-					<a data-toggle="tab" href="#tab_info" id="link-tab_info">'.tr('Info').'</a>
-				</li>';
-    }
-
-    // Tab per le note interne
-    if ($structure->permission != '-' && $structure->use_notes) {
-        $notes = $structure->recordNotes($id_record);
-
-        echo '
-				<li class="bg-info">
-					<a data-toggle="tab" href="#tab_note" id="link-tab_note">
-					    '.tr('Note interne').'
-					    <span class="badge">'.($notes->count() ?: '').'</span>
-                    </a>
-				</li>';
-    }
-
-    // Tab per le checklist
-    if ($structure->permission != '-' && $structure->use_checklists) {
-        echo '
-				<li class="bg-success">
-					<a data-toggle="tab" href="#tab_checks" id="link-tab_checks">'.tr('Checklist').'</a>
-				</li>';
-    }
-
-    $plugins = $dbo->fetchArray('SELECT id, title FROM zz_plugins WHERE idmodule_to='.prepare($id_module)." AND position='tab' AND enabled = 1 ORDER BY zz_plugins.order DESC");
-
-    // Tab dei plugin
-    foreach ($plugins as $plugin) {
-        echo '
 				<li>
-					<a data-toggle="tab" href="#tab_'.$plugin['id'].'" id="link-tab_'.$plugin['id'].'">'.$plugin['title'].'</a>
-				</li>';
-    }
-
-    echo '
+                    <a data-toggle="control-sidebar" style="cursor: pointer">'.tr('Plugin').'</a>
+                </li>
 			</ul>
 
 			<div class="tab-content">

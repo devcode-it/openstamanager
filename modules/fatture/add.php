@@ -84,7 +84,7 @@ if ($dir == 'entrata') {
 <script>
 $(document).ready(function () {
     $("#idanagrafica_add").change(function () {
-        var data = $(this).selectData();
+        let data = $(this).selectData();
 
         if (data !== undefined) {
             if (!data.id){
@@ -107,7 +107,7 @@ $(document).ready(function () {
                     if (results.length === 0){
                         $("#info-content").html("<p>'.tr('Nessuna fattura in stato Bozza presente per il cliente corrente').'</p>")
                     } else {
-                        var content = "";
+                        let content = "";
 
                         results.forEach(function(item) {
                             content += "<li>" + item + "</li>";

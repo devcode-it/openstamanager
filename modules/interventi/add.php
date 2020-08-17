@@ -276,6 +276,9 @@ echo '
 					{[ "type": "select", "label": "'.tr('Tecnici').'", "multiple": "1", "name": "idtecnico[]", "required": '.($origine_dashboard ? 1 : 0).', "ajax-source": "tecnici", "value": "'.$id_tecnico.'", "icon-after": "add|'.$module_anagrafiche['id'].'|tipoanagrafica=Tecnico||'.(empty($id_tecnico) ? '' : 'disabled').'" ]}
 				</div>
 			</div>
+
+            <div id="info-conflitti"></div>
+
 		</div>
 	</div>
 
@@ -357,6 +360,10 @@ echo '
             });
         }
     });
+
+	input("idtecnico").change(function() {
+	    calcolaConflittiTecnici();
+	});
 
     // Gestione della modifica dell\'anagrafica
 	anagrafica.change(function() {
@@ -487,5 +494,16 @@ if (filter('orario_fine') !== null) {
             //TODO: da gestire via ajax
             //$("#elenco_interventi > tbody").load(globals.rootdir + "/modules/contratti/plugins/contratti.pianificazioneinterventi.php?op=get_interventi_pianificati&idcontratto='.$id_contratto.'");
         }
+    }
+
+    function calcolaConflittiTecnici() {
+        let tecnici = input("idtecnico").get();
+
+        return $("#info-conflitti").load("'.$module->fileurl('occupazione_tecnici.php').'", {
+            "id_module": globals.id_module,
+            "tecnici[]": tecnici,
+            "inizio": input("orario_inizio").get(),
+            "fine": input("orario_fine").get(),
+        });
     }
 </script>';

@@ -198,8 +198,13 @@ if (!empty($sessioni)) {
     }
 } else {
     echo '
-<div class=\'alert alert-info\' ><i class=\'fa fa-info-circle\'></i> '.tr('Nessun tecnico assegnato').'.</div>';
+<div class="alert alert-info">
+    <i class="fa fa-info-circle"></i> '.tr('Nessun tecnico assegnato').'.
+</div>';
 }
+
+echo '
+<div id="info-conflitti"></div>';
 
 if (!$is_completato) {
     echo '
@@ -236,69 +241,99 @@ async function modificaSessione(button) {
             $(button).tooltipster("close");
 
         // Apertura modal
-        openModal("'.tr('Modifica sessione').'", "'.$module->fileurl('manage_sessione.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&id_sessione=" + id);
+        openModal("'.tr('Modifica sessione').'", "'.$module->fileurl('modals/manage_sessione.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&id_sessione=" + id);
     }
 }
 
-    $(document).ready(function() {';
+function caricaTecnici() {
+    return $("#tecnici").load("'.$module->fileurl('ajax_tecnici.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record);
+}
 
+function calcolaConflittiTecnici() {
+    let tecnici = [input("nuovotecnico").get()];
+    let inizio = moment().startOf("hour");
+
+    return $("#info-conflitti").load("'.$module->fileurl('occupazione_tecnici.php').'", {
+        "id_module": globals.id_module,
+        "id_record": globals.id_record,
+        "tecnici[]": tecnici,
+        "inizio": inizio.format("YYYY-MM-DD HH:mm:ss"),
+        "fine": inizio.add(1, "hours").format("YYYY-MM-DD HH:mm:ss"),
+    });
+}
+
+function calcolaCosti() {
+    return $("#costi").load("'.$module->fileurl('ajax_costi.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record);
+}
+
+input("nuovotecnico").change(function() {
+    calcolaConflittiTecnici();
+});
+
+$(document).ready(function() {
+    calcolaConflittiTecnici();
+    ';
 if (empty($sessioni)) {
     echo '
-        $(".btn-details").attr("disabled", true);
-        $(".btn-details").addClass("disabled");
-        $("#showall_dettagli").removeClass("hide");
-        $("#dontshowall_dettagli").addClass("hide");';
+    $(".btn-details").attr("disabled", true);
+    $(".btn-details").addClass("disabled");
+    $("#showall_dettagli").removeClass("hide");
+    $("#dontshowall_dettagli").addClass("hide");';
 } else {
     echo '
-        $(".btn-details").attr("disabled", false);
-        $(".btn-details").removeClass("disabled");';
+    $(".btn-details").attr("disabled", false);
+    $(".btn-details").removeClass("disabled");';
 }
 
 echo '
-    });
+});
 
-    /*
-    * Aggiunge una nuova riga per la sessione di lavoro in base al tecnico selezionato.
-    */
-    function add_tecnici(id_tecnico) {
+/*
+* Aggiunge una nuova riga per la sessione di lavoro in base al tecnico selezionato.
+*/
+function add_tecnici(id_tecnico) {
+    $.ajax({
+        url: globals.rootdir + "/actions.php",
+        beforeSubmit: function(arr, $form, options) {
+            return $form.parsley().validate();
+        },
+        data: {
+            id_module: globals.id_module,
+            id_record: globals.id_record,
+            op: "add_sessione",
+            id_tecnico: id_tecnico,
+        },
+        type: "post",
+        success: function() {
+            caricaTecnici();
+            calcolaCosti();
+
+            calcolaConflittiTecnici();
+        }
+    });
+}
+
+/*
+* Rimuove la sessione di lavoro dall\'intervento.
+*/
+function elimina_sessione(id_sessione) {
+    if (confirm("Eliminare sessione di lavoro?")) {
         $.ajax({
             url: globals.rootdir + "/actions.php",
-            beforeSubmit: function(arr, $form, options) {
-                return $form.parsley().validate();
-            },
             data: {
                 id_module: globals.id_module,
                 id_record: globals.id_record,
-                op: "add_sessione",
-                id_tecnico: id_tecnico,
+                op: "delete_sessione",
+                id_sessione: id_sessione,
             },
             type: "post",
             success: function() {
-                $("#tecnici").load("'.$module->fileurl('ajax_tecnici.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record);
-                $("#costi").load("'.$module->fileurl('ajax_costi.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record);
+                caricaTecnici();
+                calcolaCosti();
+
+                calcolaConflittiTecnici();
             }
         });
     }
-
-    /*
-    * Rimuove la sessione di lavoro dall\'intervento.
-    */
-    function elimina_sessione(id_sessione) {
-        if (confirm("Eliminare sessione di lavoro?")) {
-            $.ajax({
-                url: globals.rootdir + "/actions.php",
-                data: {
-                    id_module: globals.id_module,
-                    id_record: globals.id_record,
-                    op: "delete_sessione",
-                    id_sessione: id_sessione,
-                },
-                type: "post",
-                success: function() {
-                    $("#tecnici").load("'.$module->fileurl('ajax_tecnici.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record);
-                    $("#costi").load("'.$module->fileurl('ajax_costi.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record);
-                }
-            });
-        }
-    }
+}
 </script>';

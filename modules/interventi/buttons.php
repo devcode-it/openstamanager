@@ -33,7 +33,7 @@ function duplicaIntervento() {
 }
 
 function anteprimaFirma() {
-    openModal("'.tr('Anteprima e firma').'", "'.$module->fileurl('add_firma.php').'?id_module='.$id_module.'&id_record='.$id_record.'&anteprima=1");
+    openModal("'.tr('Anteprima e firma').'", "'.$module->fileurl('modals/anteprima_firma.php').'?id_module='.$id_module.'&id_record='.$id_record.'&anteprima=1");
 }
 </script>';
 

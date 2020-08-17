@@ -403,7 +403,7 @@ switch (post('op')) {
         break;
 
     case 'firma':
-        if (directory($docroot.'/files/interventi')) {
+        if (directory(DOCROOT.'/files/interventi')) {
             if (post('firma_base64') != '') {
                 // Salvataggio firma
                 $firma_file = 'firma_'.time().'.jpg';
@@ -416,7 +416,7 @@ switch (post('op')) {
                     $constraint->aspectRatio();
                 });
 
-                if (!$img->save($docroot.'/files/interventi/'.$firma_file)) {
+                if (!$img->save(DOCROOT.'/files/interventi/'.$firma_file)) {
                     flash()->error(tr('Impossibile creare il file!'));
                 } elseif ($dbo->query('UPDATE in_interventi SET firma_file='.prepare($firma_file).', firma_data=NOW(), firma_nome = '.prepare($firma_nome).', idstatointervento = (SELECT idstatointervento FROM in_statiintervento WHERE codice = \'OK\') WHERE id='.prepare($id_record))) {
                     flash()->info(tr('Firma salvata correttamente!'));

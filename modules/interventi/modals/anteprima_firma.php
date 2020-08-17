@@ -1,6 +1,6 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
+include_once __DIR__.'/../../../core.php';
 
 if (get('anteprima') !== null) {
     // Lettura dati intervento
@@ -13,7 +13,7 @@ if (get('anteprima') !== null) {
     }
 
     // Gestione della stampa
-    $directory = $docroot.'/files/interventi/';
+    $directory = DOCROOT.'/files/interventi/';
     $id_print = setting('Stampa per anteprima e firma');
 
     // HTML per la visualizzazione

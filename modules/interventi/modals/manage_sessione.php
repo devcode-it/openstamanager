@@ -1,7 +1,7 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
 include_once __DIR__.'/../../../core.php';
+include_once __DIR__.'/../../../../core.php';
 
 $show_costi = true;
 // Limitazione delle azioni dei tecnici

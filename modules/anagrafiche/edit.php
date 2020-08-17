@@ -326,7 +326,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
 
                         <div class="row">
                             <div class="col-md-6">
-                                {[ "type": "select", "label": "'.tr('Listino articoli').'", "name": "idlistino_vendite", "values": "query=SELECT id, nome AS descrizione FROM mg_listini ORDER BY nome ASC", "value": "$idlistino_vendite$" ]}
+                                {[ "type": "select", "label": "'.tr('Piano di sconto/rincaro su articoli').'", "name": "idlistino_vendite", "values": "query=SELECT id, nome AS descrizione FROM mg_listini ORDER BY nome ASC", "value": "$idlistino_vendite$" ]}
                             </div>
 
                             <div class="col-md-6">
@@ -388,7 +388,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
 
                         <div class="row">
                             <div class="col-md-6">
-                                {[ "type": "select", "label": "'.tr('Listino articoli').'", "name": "idlistino_acquisti", "values": "query=SELECT id, nome AS descrizione FROM mg_listini ORDER BY nome ASC", "value": "$idlistino_acquisti$" ]}
+                                {[ "type": "select", "label": "'.tr('Piano di sconto/rincaro su articoli').'", "name": "idlistino_acquisti", "values": "query=SELECT id, nome AS descrizione FROM mg_listini ORDER BY nome ASC", "value": "$idlistino_acquisti$" ]}
                             </div>';
 
     // Collegamento con il conto

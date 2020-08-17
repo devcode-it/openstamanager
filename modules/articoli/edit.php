@@ -260,53 +260,48 @@ echo '
 
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title">'.tr('Prezzo articolo per listino').'</h3>
+			<h3 class="panel-title">'.tr('Prezzo articolo secondo i piani di sconto/rincaro').'</h3>
 		</div>
 
 		<div class="panel-body">';
 
-        $rsl = $dbo->fetchArray('SELECT * FROM mg_listini ORDER BY id ASC');
+        $listini = $dbo->fetchArray('SELECT * FROM mg_listini ORDER BY id ASC');
 
-        $rsart = $dbo->fetchArray('SELECT id, prezzo_vendita FROM mg_articoli WHERE id='.prepare($id_record));
-
-        if (count($rsl) > 0) {
+        if (!empty($listini)) {
             echo '
-            <div class="row">
-                <div class="col-md-12 col-lg-6">
-                    <table class="table table-striped table-condensed table-bordered">
-                        <tr>
-                            <th>'.tr('Listino').'</th>
-                            <th>'.tr('Prezzo di vendita finale').'</th>
-                        </tr>';
+            <table class="table table-striped table-condensed table-bordered">
+                <tr>
+                    <th>'.tr('Piano di sconto/rincaro').'</th>
+                    <th>'.tr('Prezzo di vendita finale').'</th>
+                </tr>';
 
             // listino base
             echo '
-                        <tr>
-                            <td>'.tr('Base').'</td>
-                            <td>'.moneyFormat($rsart[0]['prezzo_vendita']).'</td>
-                        </tr>';
+                <tr>
+                    <td>'.tr('Base').'</td>
+                    <td>'.moneyFormat($articolo->prezzo_vendita).'</td>
+                </tr>';
 
-            for ($i = 0; $i < count($rsl); ++$i) {
+            foreach ($listini as $listino) {
+                $prezzo_vendita = $articolo->prezzo_vendita - $articolo->prezzo_vendita * $listino['prc_guadagno'] / 100;
                 echo '
-                        <tr>
-                            <td>'.$rsl[$i]['nome'].'</td>
-                            <td>'.moneyFormat($rsart[0]['prezzo_vendita'] - $rsart[0]['prezzo_vendita'] / 100 * $rsl[$i]['prc_guadagno']).'</td>
-                        </tr>';
+                <tr>
+                    <td>'.$listino['nome'].'</td>
+                    <td>'.moneyFormat($prezzo_vendita).'</td>
+                </tr>';
             }
 
             echo '
-                    </table>
-                </div>
-            </div>';
+            </table>';
         } else {
             echo '
-            <div class="alert alert-info">
-                '.tr('Non ci sono listini caricati').'... '.Modules::link('Listini', null, tr('Crea il primo listino')).'
-            </div>';
+    <div class="alert alert-info">
+        '.tr('Non ci sono piani di sconto/rincaro caricati').'... '.Modules::link('Listini', null, tr('Crea')).'
+    </div>';
         }
 echo '
-		</div>
-	</div>';
+        </div>
+    </div>';
 ?>
 </form>
 

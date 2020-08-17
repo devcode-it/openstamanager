@@ -17,3 +17,6 @@ INSERT INTO `zz_tasks` (`id`, `name`, `class`, `expression`, `last_executed_at`)
 (NULL, 'Backup automatico', 'Modules\\Backups\\BackupTask', '0 0 * * *', NULL);
 
 DELETE FROM `zz_hooks` WHERE `class` = 'Modules\\Backups\\BackupHook';
+
+-- Modifica dei Listini in Piani di sconto/rincaro
+UPDATE `zz_modules` SET `title` = 'Piani di sconto/rincaro' WHERE `name` = 'Listini';

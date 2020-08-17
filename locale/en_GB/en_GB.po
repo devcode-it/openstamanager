@@ -6872,7 +6872,7 @@ msgstr "List eliminated!"
 
 #: modules/listini/add.php:15 modules/listini/edit.php:22
 #, fuzzy
-msgid "Rincaro/sconto combinato"
+msgid "Sconto/rincaro combinato"
 msgstr "Inflation/discount"
 
 #: modules/listini/add.php:15 modules/listini/edit.php:22
@@ -6887,7 +6887,7 @@ msgstr ""
 
 #: modules/listini/add.php:19 modules/listini/edit.php:26
 #, fuzzy
-msgid "Rincaro/sconto"
+msgid "Sconto/rincaro"
 msgstr "Inflation/discount"
 
 #: modules/misure/actions.php:14 modules/misure/actions.php:41

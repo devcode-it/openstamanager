@@ -5,17 +5,6 @@ include_once __DIR__.'/../../core.php';
 $block_edit = $record['flag_completato'];
 $module_anagrafiche = Modules::get('Anagrafiche');
 
-unset($_SESSION['superselect']['idanagrafica']);
-unset($_SESSION['superselect']['idsede_partenza']);
-unset($_SESSION['superselect']['idsede_destinazione']);
-unset($_SESSION['superselect']['idintervento']);
-$_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
-$_SESSION['superselect']['idsede_partenza'] = $record['idsede_partenza'];
-$_SESSION['superselect']['idsede_partenza'];
-$_SESSION['superselect']['idintervento'] = $id_record;
-$_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione'];
-$_SESSION['superselect']['permetti_movimento_a_zero'] = false;
-
 ?><form action="" method="post" id="edit-form">
 	<input type="hidden" name="op" value="update">
 	<input type="hidden" name="backto" value="record-edit">
@@ -34,7 +23,7 @@ $_SESSION['superselect']['permetti_movimento_a_zero'] = false;
                     <?php
                         echo Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"');
                     ?>
-					{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione='Cliente' AND deleted_at IS NULL ORDER BY ragione_sociale", "value": "$idanagrafica$", "ajax-source": "clienti", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
 				</div>
 <?php
 
@@ -408,7 +397,7 @@ $("#idcontratto").change(function () {
 });
 
 $("#matricola").change(function () {
-    session_set("superselect,marticola", $(this).val(), 0);
+    session_set("superselect,matricola", $(this).val(), 0);
 });
 
 $("#idsede").change(function () {

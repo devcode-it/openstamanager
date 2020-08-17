@@ -11,14 +11,6 @@ if ($module['name'] == 'Ddt di vendita') {
 } else {
     $dir = 'uscita';
 }
-unset($_SESSION['superselect']['idanagrafica']);
-unset($_SESSION['superselect']['idsede_partenza']);
-unset($_SESSION['superselect']['idsede_destinazione']);
-unset($_SESSION['superselect']['codice_modalita_pagamento_fe']);
-$_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
-$_SESSION['superselect']['idsede_partenza'] = $record['idsede_partenza'];
-$_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione'];
-$_SESSION['superselect']['permetti_movimento_a_zero'] = ($dir == 'uscita' ? true : false);
 
 ?>
 <form action="" method="post" id="edit-form">

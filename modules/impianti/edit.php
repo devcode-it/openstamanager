@@ -2,8 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-$_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
-
 $img = null;
 if (!empty($record['immagine'])) {
     $fileinfo = Uploads::fileInfo($record['immagine']);

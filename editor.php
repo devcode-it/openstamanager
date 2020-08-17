@@ -73,7 +73,7 @@ if (empty($record) || !$has_access) {
     echo '
         <aside class="control-sidebar control-sidebar-light">
             <h4 class="text-center">'.tr('Plugin disponibili').'</h4>
-            <ul class="nav nav-pills nav-stacked">
+            <ul class="nav nav-tabs nav-pills nav-stacked">
                 <li data-toggle="control-sidebar" class="active">
                     <a data-toggle="tab" href="#tab_0">
                         <i class="'.$structure['icon'].'"></i> '.$structure['title'].'

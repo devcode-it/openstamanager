@@ -227,10 +227,6 @@ if (!empty($anagrafica)) {
 echo '
     </div>';
 
-if (!empty($codice_modalita_pagamento)) {
-    $_SESSION['superselect']['codice_modalita_pagamento_fe'] = $codice_modalita_pagamento;
-}
-
 // Pagamento
 echo '
     <div class="row" >

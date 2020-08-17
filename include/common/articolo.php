@@ -8,7 +8,7 @@ if (empty($result['idarticolo'])) {
     echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "required": 1, "value": "'.$result['idarticolo'].'", "ajax-source": "articoli", "select-options": {"idanagrafica": '.$options['idanagrafica'].', "dir": "'.$options['dir'].'"}, "icon-after": "add|'.Modules::get('Articoli')['id'].'" ]}
+            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "required": 1, "value": "'.$result['idarticolo'].'", "ajax-source": "articoli", "select-options": '.json_encode($options['select-options']['articoli']).', "icon-after": "add|'.Modules::get('Articoli')['id'].'" ]}
         </div>
     </div>
 
@@ -39,7 +39,7 @@ if ($module['name'] == 'Interventi') {
     echo '
 <div class="row">
     <div class="col-md-12">
-        {[ "type": "select", "label": "'.tr('Impianto su cui installare').'", "name": "idimpianto", "value": "'.$idimpianto.'", "ajax-source": "impianti-intervento" ]}
+        {[ "type": "select", "label": "'.tr('Impianto su cui installare').'", "name": "idimpianto", "value": "'.$idimpianto.'", "ajax-source": "impianti-intervento", "select-options": '.json_encode($options['select-options']['impianti']).' ]}
     </div>
 </div>';
 }

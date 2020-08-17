@@ -10,17 +10,6 @@ $rs = $dbo->fetchArray('SELECT co_tipidocumento.descrizione, dir FROM co_tipidoc
 $dir = $rs[0]['dir'];
 $tipodoc = $rs[0]['descrizione'];
 
-unset($_SESSION['superselect']['idanagrafica']);
-unset($_SESSION['superselect']['idsede_partenza']);
-unset($_SESSION['superselect']['idsede_destinazione']);
-unset($_SESSION['superselect']['codice_modalita_pagamento_fe']);
-$_SESSION['superselect']['idsede_partenza'] = $record['idsede_partenza'];
-$_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione'];
-$_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
-$_SESSION['superselect']['ddt'] = $dir;
-$_SESSION['superselect']['split_payment'] = $record['split_payment'];
-$_SESSION['superselect']['permetti_movimento_a_zero'] = ($dir == 'uscita' ? true : false);
-
 if ($dir == 'entrata') {
     $conto = 'vendite';
 } else {

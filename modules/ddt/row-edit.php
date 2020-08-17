@@ -14,6 +14,15 @@ $options = [
     'dir' => $documento->direzione,
     'idanagrafica' => $documento['idanagrafica'],
     'totale_imponibile' => $documento->totale_imponibile,
+    'select-options' => [
+        'articoli' => [
+            'idanagrafica' => $documento->idanagrafica,
+            'dir' => $documento->direzione,
+            'idsede_partenza' => $documento->idsede_partenza,
+            'idsede_destinazione' => $documento->idsede_destinazione,
+            'permetti_movimento_a_zero' => $documento->direzione == 'uscita',
+        ],
+    ],
 ];
 
 // Dati della riga

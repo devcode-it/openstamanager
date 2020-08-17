@@ -4,10 +4,6 @@ use Modules\Interventi\Intervento;
 
 include_once __DIR__.'/../../core.php';
 
-// Rimozione dei parametri di sessione usati sui select combinati (sedi, preventivi, contratti, impianti)
-unset($_SESSION['superselect']['idanagrafica']);
-unset($_SESSION['superselect']['idsede']);
-
 // Lettura dei parametri di interesse
 $id_anagrafica = filter('idanagrafica');
 $id_sede = filter('idsede');
@@ -127,8 +123,6 @@ $fine_sessione = $data_fine.' '.$orario_fine;
 // Calcolo del nuovo codice
 $new_codice = Intervento::getNextCodice($data);
 
-$_SESSION['superselect']['idanagrafica'] = $id_anagrafica;
-
 echo '
 <form action="" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
@@ -215,7 +209,7 @@ echo '
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Impianto').'", "multiple": 1, "name": "idimpianti[]", "value": "'.$impianti_collegati.'", "ajax-source": "impianti-cliente", "icon-after": "add|'.Modules::get('Impianti')['id'].'|source=Attività" ]}
+                    {[ "type": "select", "label": "'.tr('Impianto').'", "multiple": 1, "name": "idimpianti[]", "value": "'.$impianti_collegati.'", "ajax-source": "impianti-cliente", "select-options": {"idanagrafica": '.$id_anagrafica.'}, "icon-after": "add|'.Modules::get('Impianti')['id'].'|id_anagrafica='.$id_anagrafica.'" ]}
                 </div>
 
                 <div class="col-md-4">
@@ -430,8 +424,8 @@ echo '
 
     // Gestione delle modifiche agli impianti selezionati
 	input("idimpianti").change(function() {
-        updateSelectOption("marticola", $(this).val());
-		session_set("superselect,marticola", $(this).val(), 0);
+        updateSelectOption("matricola", $(this).val());
+		session_set("superselect,matricola", $(this).val(), 0);
 
         input("componenti").setDisabled(!$(this).val())
             .getElement().selectReset();

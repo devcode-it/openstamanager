@@ -8,7 +8,7 @@ switch ($resource) {
      * - matricola
      */
     case 'componenti':
-        if (isset($superselect['marticola'])) {
+        if (isset($superselect['matricola'])) {
             $query = 'SELECT id, nome AS descrizione, contenuto FROM my_impianto_componenti |where| ORDER BY id';
 
             foreach ($elements as $element) {
@@ -16,7 +16,7 @@ switch ($resource) {
             }
 
             $temp = [];
-            $impianti = explode(',', $superselect['marticola']);
+            $impianti = explode(',', $superselect['matricola']);
             foreach ($impianti as $key => $idimpianto) {
                 $temp[] = 'idimpianto='.prepare($idimpianto);
             }

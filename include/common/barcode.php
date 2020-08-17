@@ -2,8 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-$_SESSION['superselect']['idanagrafica'] = $options['idanagrafica'];
-
 $incorpora_iva = setting('Utilizza prezzi di vendita comprensivi di IVA');
 $intestazione_prezzo = ($options['dir'] == 'uscita' ? tr('Prezzo di acquisto') : ($incorpora_iva ? tr('Prezzo vendita ivato') : tr('Prezzo vendita imponibile')));
 

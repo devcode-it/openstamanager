@@ -231,7 +231,7 @@ switch ($resource) {
         break;
 
     /*
-    * Opzioni utilizzate:
+     * Opzioni utilizzate:
      * - idanagrafica
      */
     case 'sedi':
@@ -276,9 +276,9 @@ switch ($resource) {
         break;
 
     /*
- * Opzioni utilizzate:
- * - idanagrafica
- */
+     * Opzioni utilizzate:
+     * - idanagrafica
+     */
     case 'referenti':
         if (isset($superselect['idanagrafica'])) {
             $query = 'SELECT id, nome AS descrizione FROM an_referenti |where| ORDER BY nome';
@@ -327,7 +327,7 @@ switch ($resource) {
      * Opzioni utilizzate:
      * - idanagrafica
      */
-    case 'dichiarazioni$superselect_intento':
+    case 'dichiarazioni_intento':
         $query = "SELECT id, CONCAT_WS(' - ', numero_protocollo, numero_progressivo) as descrizione FROM co_dichiarazioni_intento |where| ORDER BY data";
 
         foreach ($elements as $element) {

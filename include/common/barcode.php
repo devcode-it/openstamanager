@@ -2,7 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-$_SESSION['superselect']['dir'] = $options['dir'];
 $_SESSION['superselect']['idanagrafica'] = $options['idanagrafica'];
 
 $incorpora_iva = setting('Utilizza prezzi di vendita comprensivi di IVA');
@@ -77,7 +76,7 @@ echo '
             return;
         }
 
-        $.getJSON(globals.rootdir + "/ajax_select.php?op=articoli_barcode&barcode=" + barcode,
+        $.getJSON(globals.rootdir + "/ajax_select.php?op=articoli_barcode&barcode=" + barcode + "&id_anagrafica='.$options['idanagrafica'].'",
         function(response) {
             let result = response.results[0];
             if(!result){

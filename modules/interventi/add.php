@@ -397,6 +397,7 @@ echo '
 
     // Gestione della modifica della sede selezionato
 	sede.change(function() {
+        updateSelectOption("idsede_destinazione", $(this).val());
 		session_set("superselect,idsede_destinazione", $(this).val(), 0);
         input("idimpianti").getElement().selectReset();
 
@@ -429,6 +430,7 @@ echo '
 
     // Gestione delle modifiche agli impianti selezionati
 	input("idimpianti").change(function() {
+        updateSelectOption("marticola", $(this).val());
 		session_set("superselect,marticola", $(this).val(), 0);
 
         input("componenti").setDisabled(!$(this).val())

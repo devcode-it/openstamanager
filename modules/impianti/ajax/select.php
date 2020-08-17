@@ -17,7 +17,7 @@ switch ($resource) {
         break;
 
     /*
-* Opzioni utilizzate:
+     * Opzioni utilizzate:
 * - idanagrafica
 */
     case 'impianti-cliente':
@@ -41,7 +41,7 @@ switch ($resource) {
         break;
 
     /*
- * Opzioni utilizzate:
+     * Opzioni utilizzate:
  * - idintervento
  */
     case 'impianti-intervento':

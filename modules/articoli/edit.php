@@ -2,8 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-$_SESSION['superselect']['id_categoria'] = $record['id_categoria'];
-
 ?><form action="" method="post" id="edit-form" enctype="multipart/form-data">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
@@ -37,7 +35,7 @@ $_SESSION['superselect']['id_categoria'] = $record['id_categoria'];
                         </div>
 
                         <div class="col-md-6">
-                            {[ "type": "select", "label": "<?php echo tr('Sottocategoria'); ?>", "name": "subcategoria", "value": "$id_sottocategoria$", "ajax-source": "sottocategorie" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Sottocategoria'); ?>", "name": "subcategoria", "value": "$id_sottocategoria$", "ajax-source": "sottocategorie", "select-options": {"id_categoria": <?php echo $record['id_categoria']; ?>} ]}
                         </div>
                     </div>
                 </div>
@@ -309,7 +307,8 @@ echo '
 
 <script>
 $("#categoria").change(function() {
-	session_set("superselect,id_categoria", $(this).val(), 0);
+    updateSelectOption("id_categoria", $(this).val());
+
 	$("#subcategoria").val(null).trigger("change");
 });
 

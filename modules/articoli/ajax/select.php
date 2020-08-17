@@ -277,6 +277,7 @@ switch ($resource) {
      * - idanagrafica
      */
     case 'articoli_barcode':
+        $id_anagrafica = filter('id_anagrafica'); // ID passato via URL in modo fisso
         $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
         $query = 'SELECT mg_articoli.*,
@@ -288,7 +289,7 @@ switch ($resource) {
             IFNULL(mg_fornitore_articolo.qta_minima, 0) AS qta_minima,
             mg_fornitore_articolo.id AS id_dettaglio_fornitore
         FROM mg_articoli
-            LEFT JOIN mg_fornitore_articolo ON mg_fornitore_articolo.id_articolo = mg_articoli.id AND mg_fornitore_articolo.deleted_at IS NULL AND mg_fornitore_articolo.id_fornitore = '.prepare($superselect['idanagrafica']).'
+            LEFT JOIN mg_fornitore_articolo ON mg_fornitore_articolo.id_articolo = mg_articoli.id AND mg_fornitore_articolo.deleted_at IS NULL AND mg_fornitore_articolo.id_fornitore = '.prepare($id_anagrafica).'
         |where|';
 
         $where[] = 'barcode='.prepare(get('barcode'));

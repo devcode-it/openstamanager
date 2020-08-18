@@ -19,7 +19,7 @@ $options = [
         'articoli' => [
             'idanagrafica' => $documento->idanagrafica,
             'dir' => $documento->direzione,
-            'permetti_movimento_a_zero' => true,
+            'permetti_movimento_a_zero' => 1,
         ],
     ],
 ];

@@ -20,8 +20,8 @@ $options = [
             'dir' => $documento->direzione,
             'idsede_partenza' => $documento->idsede_partenza,
             'idsede_destinazione' => $documento->idsede_destinazione,
-            'permetti_movimento_a_zero' => $documento->direzione == 'uscita',
-        ],
+            'permetti_movimento_a_zero' => intval($documento->direzione == 'uscita'),
+],
     ],
 ];
 

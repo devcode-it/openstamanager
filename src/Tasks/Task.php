@@ -13,6 +13,7 @@ class Task extends Model
     protected $table = 'zz_tasks';
 
     protected $dates = [
+        'next_execution_at',
         'last_executed_at',
     ];
 

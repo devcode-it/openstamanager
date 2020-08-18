@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS `zz_tasks` (
     `name` VARCHAR(255) NOT NULL,
     `class` TEXT NOT NULL,
     `expression` VARCHAR(255) NOT NULL,
+    `next_execution_at` timestamp NULL,
     `last_executed_at` timestamp NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;

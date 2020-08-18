@@ -59,7 +59,7 @@ $slot_duration = 5;
 // Controllo sull'ultima esecuzione
 $data = $data ? new Carbon($data) : null;
 $minimo_esecuzione = (new Carbon())->addMinutes($slot_duration * 5);
-if (!empty($data) && $minimo_esecuzione->greaterThanOrEqualTo($data)) {
+if (!empty($data) && $minimo_esecuzione->lessThan($data)) {
     return;
 }
 
@@ -94,6 +94,7 @@ while (true) {
 
     // Calcolo del primo slot disponibile per l'esecuzione successiva
     $inizio_iterazione = new Carbon();
+    $inizio_programmato_iterazione = $slot_minimo->copy();
     $slot_minimo = $inizio_iterazione->copy()->startOfHour();
     while ($inizio_iterazione->greaterThanOrEqualTo($slot_minimo)) {
         $slot_minimo->addMinutes($slot_duration);
@@ -109,12 +110,16 @@ while (true) {
         $data_successiva = Carbon::instance($cron->getNextRunDate($adesso));
 
         // Esecuzione diretta solo nel caso in cui sia prevista
-        if ($cron->isDue($inizio_iterazione) || $cron->isDue($adesso)) {
+        if (!empty($task->next_execution_at) && $task->next_execution_at->greaterThanOrEqualTo($inizio_iterazione) && $task->next_execution_at->lessThanOrEqualTo($adesso)) {
             // Registrazione dell'esecuzione nei log
             $logger->info($task->name.': '.$task->expression);
 
             $task->execute();
         }
+
+        // Salvataggio della data per l'esecuzione susccessiva
+        $task->next_execution_at = $data_successiva;
+        $task->save();
 
         // Calcolo dello successivo slot
         if ($data_successiva->lessThan($slot_minimo)) {

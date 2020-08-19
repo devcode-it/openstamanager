@@ -39,12 +39,15 @@
         "tooltipster": "^4.2.5"
     },
     "devDependencies": {
+        "@babel/core": "^7.11.1",
+        "@babel/preset-env": "^7.11.0",
         "archiver": "^3.0.0",
         "cwd": "^0.10.0",
         "del": "^4.0.0",
         "globby": "^11.0.1",
-        "gulp": "^4.0.0",
+        "gulp": "^4.0.2",
         "gulp-autoprefixer": "^7.0.0",
+        "gulp-babel": "^8.0.0",
         "gulp-clean-css": "^4.0.0",
         "gulp-concat": "^2.6.0",
         "gulp-debug": "^4.0.0",
@@ -71,129 +74,5 @@
         "build-OSM": "gulp",
         "dump-OSM": "php composer.phar dump-autoload",
         "windows-fix": "yarn global add windows-build-tools"
-    },
-    "overrides": {
-        "almond": {
-            "ignore": true
-        },
-        "ckeditor4": {
-            "ignore": true
-        },
-        "chart.js": {
-            "ignore": true
-        },
-        "hotkeys-js": {
-            "ignore": true
-        },
-        "pwstrength-bootstrap": {
-            "ignore": true
-        },
-        "admin-lte": {
-            "main": [
-                "dist/css/AdminLTE.css",
-                "dist/js/adminlte.js"
-            ],
-            "dependencies": {
-                "jquery": ">=1.9.1"
-            }
-        },
-        "bootstrap": {
-            "main": [
-                "dist/js/bootstrap.min.js",
-                "dist/css/bootstrap.min.css",
-                "dist/fonts/*"
-            ],
-            "dependencies": {
-                "jquery": ">=1.9.1",
-                "admin-lte": "*"
-            }
-        },
-        "datatables.net-bs": {
-            "main": [
-                "js/dataTables.bootstrap.js",
-                "css/dataTables.bootstrap.css"
-            ]
-        },
-        "datatables.net-buttons": {
-            "main": [
-                "js/dataTables.buttons.js",
-                "js/buttons.colVis.js",
-                "js/buttons.flash.js",
-                "js/buttons.html5.js",
-                "js/buttons.print.js"
-            ]
-        },
-        "datatables.net-buttons-bs": {
-            "main": [
-                "js/buttons.bootstrap.js",
-                "css/buttons.bootstrap.css"
-            ]
-        },
-        "datatables.net-scroller-bs": {
-            "main": "css/scroller.bootstrap.css"
-        },
-        "datatables.net-select-bs": {
-            "main": "css/select.bootstrap.css"
-        },
-        "dropzone": {
-            "main": [
-                "dist/dropzone.css",
-                "dist/dropzone.js"
-            ]
-        },
-        "font-awesome": {
-            "main": [
-                "css/font-awesome.min.css",
-                "fonts/*"
-            ]
-        },
-        "fullcalendar": {
-            "main": [
-                "dist/fullcalendar.js",
-                "dist/fullcalendar.css"
-            ]
-        },
-        "inputmask": {
-            "main": "dist/min/jquery.inputmask.bundle.min.js"
-        },
-        "parsleyjs": {
-            "main": [
-                "dist/parsley.js",
-                "src/parsley.css"
-            ]
-        },
-        "select2": {
-            "main": [
-                "dist/js/select2.min.js",
-                "dist/css/select2.min.css"
-            ]
-        },
-        "select2-bootstrap-theme": {
-            "main": "dist/select2-bootstrap.css"
-        },
-        "smartwizard": {
-            "main": [
-                "dist/css/smart_wizard.min.css",
-                "dist/css/smart_wizard_theme_arrows.min.css",
-                "dist/js/jquery.smartWizard.min.js"
-            ]
-        },
-        "sweetalert2": {
-            "main": [
-                "dist/sweetalert2.js",
-                "dist/sweetalert2.css"
-            ]
-        },
-        "jquery.shorten": {
-            "main": [
-                "src/jquery.shorten.js"
-            ]
-        },
-        "toastr": {
-            "main": [
-                "build/toastr.min.js",
-                "build/toastr.min.css"
-            ]
-        }
     }
 }

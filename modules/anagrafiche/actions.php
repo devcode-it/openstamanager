@@ -284,6 +284,16 @@ switch (post('op')) {
 
         break;
 
+    // Informazioni sulla posizione della sede
+    case 'posizione':
+        $sede = $anagrafica->sedeLegale;
+        $sede->gaddress = post('gaddress');
+        $sede->lat = post('lat');
+        $sede->lng = post('lng');
+
+        $sede->save();
+        break;
+
     case 'delete':
         // Se l'anagrafica non è l'azienda principale, la disattivo
         if (!$anagrafica->isAzienda()) {

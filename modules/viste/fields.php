@@ -128,7 +128,7 @@ echo '
 foreach ($fields as $field) {
     echo '
                     <p class="clickable" data-id="'.$field['id'].'">
-                        <i class="fa fa-sort" ></i>
+                        <i class="fa fa-sort"></i>
                         ';
 
     if ($field['visible']) {
@@ -226,7 +226,7 @@ echo '
     $(document).ready(function() {
         $("#save").addClass("hide");
 
-        $(".sortable" ).disableSelection();
+        $(".sortable").disableSelection();
         $(".sortable").each(function() {
             $(this).sortable({
                 axis: "y",

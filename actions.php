@@ -255,6 +255,8 @@ elseif (post('op') == 'send-email') {
         $mail->delete();
         flash()->error(tr('Errore durante l\'invio email! Verifica i parametri dell\'account SMTP utilizzato.'));
     }
+} elseif (filter('op') == 'aggiorna_colonne') {
+    include_once DOCROOT.'/include/colonne.php';
 } elseif (filter('op') == 'visualizza_riferimenti') {
     include_once DOCROOT.'/include/riferimenti/riferimenti.php';
 } elseif (filter('op') == 'visualizza_righe_riferimenti') {

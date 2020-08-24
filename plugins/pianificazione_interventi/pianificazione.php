@@ -240,47 +240,48 @@ echo '
             }
         });
 
-
 		$("#pianifica_promemoria").click(function() {
             if ($(this).is(":checked")){
-                $("#intervallo").removeAttr("disabled");
-                $("#data_inizio").removeAttr("disabled");
-				$("#pianifica_intervento").removeAttr("disabled");
+                $("#intervallo").removeAttr("disabled")
+                    .prop("disabled", false);
+                $("#data_inizio").removeAttr("disabled")
+                    .prop("disabled", false);
+				input("pianifica_intervento").setDisabled(false);
 
 				$("#modals > div .btn-primary").removeAttr("disabled");
             } else {
                 $("#intervallo").prop("disabled", true);
                 $("#data_inizio").prop("disabled", true);
+
+                input("pianifica_intervento").setDisabled(true);
 				$("#pianifica_intervento").prop("checked", false);
-				$("#pianifica_intervento").prop("disabled", true);
+
 				$("#modals > div .btn-primary").prop("disabled", true);
 
-				$("#idtecnico").prop("disabled", true);
-                $("#idtecnico").removeAttr("required");
-                $("#orario_inizio").prop("disabled", true);
-                $("#orario_fine").prop("disabled", true);
-                $("#orario_inizio").removeAttr("required");
-                $("#orario_fine").removeAttr("required");
-
+				$("#idtecnico").prop("disabled", true)
+				    .removeAttr("required");
+                $("#orario_inizio").prop("disabled", true)
+                    .removeAttr("required");
+                $("#orario_fine").prop("disabled", true)
+                    .removeAttr("required");
             }
         });
 
-
         $("#pianifica_intervento").click(function() {
             if ($(this).is(":checked")){
-                $("#idtecnico").removeAttr("disabled");
-                $("#idtecnico").prop("required", true);
-                $("#orario_inizio").removeAttr("disabled");
-                $("#orario_fine").removeAttr("disabled");
-                $("#orario_inizio").prop("required", true);
-                $("#orario_fine").prop("required", true);
+                $("#idtecnico").removeAttr("disabled")
+                    .prop("required", true);
+                $("#orario_inizio").removeAttr("disabled")
+                    .prop("required", true);
+                $("#orario_fine").removeAttr("disabled")
+                    .prop("required", true);
             } else {
-                $("#idtecnico").prop("disabled", true);
-                $("#idtecnico").removeAttr("required");
-                $("#orario_inizio").prop("disabled", true);
-                $("#orario_fine").prop("disabled", true);
-                $("#orario_inizio").removeAttr("required");
-                $("#orario_fine").removeAttr("required");
+                $("#idtecnico").prop("disabled", true)
+                    .removeAttr("required");
+                $("#orario_inizio").prop("disabled", true)
+                    .removeAttr("required");
+                $("#orario_fine").removeAttr("required")
+                    .prop("disabled", true);
             }
         });
 

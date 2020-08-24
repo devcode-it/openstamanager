@@ -271,7 +271,7 @@ echo '
 				</div>
 			</div>
 
-            <div id="info-conflitti"></div>
+            <div id="info-conflitti-add"></div>
 
 		</div>
 	</div>
@@ -495,7 +495,7 @@ if (filter('orario_fine') !== null) {
     function calcolaConflittiTecnici() {
         let tecnici = input("idtecnico").get();
 
-        return $("#info-conflitti").load("'.$module->fileurl('occupazione_tecnici.php').'", {
+        return $("#info-conflitti-add").load("'.$module->fileurl('occupazione_tecnici.php').'", {
             "id_module": globals.id_module,
             "tecnici[]": tecnici,
             "inizio": input("orario_inizio").get(),

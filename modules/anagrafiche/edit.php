@@ -221,22 +221,28 @@ if (empty($google)) {
                         <div class="clearfix"></div>
                         <br>';
 
-    // Navigazione diretta verso l'indirizzo
-    echo '
-                        <a class="btn btn-info btn-block" onclick="calcolaPercorso()">
-                            <i class="fa fa-map-signs"></i> '.tr('Calcola percorso').'
-                        </a>';
-
     // Modifica manuale delle informazioni
     echo '
                         <a class="btn btn-primary btn-block" onclick="modificaPosizione()">
                             <i class="fa fa-map"></i> '.tr('Modifica posizione').'
+                        </a>';
+
+    // Navigazione diretta verso l'indirizzo
+    echo '
+                        <a class="btn btn-info btn-block" onclick="calcolaPercorso()">
+                            <i class="fa fa-map-signs"></i> '.tr('Calcola percorso').'
                         </a>';
 } else {
     // Modifica manuale delle informazioni
     echo '
                         <a class="btn btn-primary btn-block" onclick="modificaPosizione()">
                             <i class="fa fa-map"></i> '.tr('Modifica posizione').'
+                        </a>';
+
+    // Navigazione diretta verso l'indirizzo
+    echo '
+                        <a class="btn btn-info btn-block" onclick="calcolaPercorso()">
+                            <i class="fa fa-map-signs"></i> '.tr('Calcola percorso').'
                         </a>';
 
     // Ricerca diretta su Google Maps

@@ -47,4 +47,9 @@ $("#geocomplete input").geocomplete({
     $("#lat").val(result.geometry.location.lat());
     $("#lng").val(result.geometry.location.lng());
 });
+
+// Ricaricamento della pagina alla chiusura
+$("#modals > div button.close").on("click", function() {
+    location.reload();
+});
 </script>';

@@ -1,17 +1,12 @@
 <?php
 
+use Modules\Anagrafiche\Anagrafica;
+
 include_once __DIR__.'/../../core.php';
 
 $is_fornitore = in_array($id_fornitore, $tipi_anagrafica);
 $is_cliente = in_array($id_cliente, $tipi_anagrafica);
 $is_tecnico = in_array($id_tecnico, $tipi_anagrafica);
-
-$google = setting('Google Maps API key');
-
-if (!empty($google)) {
-    echo '
-<script src="//maps.googleapis.com/maps/api/js?libraries=places&key='.$google.'"></script>';
-}
 
 if (!$is_cliente && !$is_fornitore && $is_tecnico) {
     $ignore = $dbo->fetchArray("SELECT id FROM zz_plugins WHERE name='Sedi' OR name='Referenti' OR name='Dichiarazioni d\'intento'");
@@ -200,6 +195,16 @@ if (!$is_cliente) {
             </div>
 
 <?php
+$sede_cliente = $anagrafica->sedeLegale;
+
+$anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
+$sede_azienda = $anagrafica_azienda->sedeLegale;
+
+$google = setting('Google Maps API key');
+if (!empty($google)) {
+    echo '
+<script src="//maps.googleapis.com/maps/api/js?libraries=places&key='.$google.'"></script>';
+}
 
 echo '
             <div class="col-md-4">
@@ -214,7 +219,7 @@ if (empty($google)) {
                         <div class="alert alert-info">
                             '.Modules::link('Impostazioni', $dbo->fetchOne("SELECT `id` FROM `zz_settings` WHERE nome='Google Maps API key'")['id'], tr('Per abilitare la visualizzazione delle anagrafiche nella mappa, inserire la Google Maps API Key nella scheda Impostazioni')).'.
                         </div>';
-} elseif (!empty($record['gaddress']) || (!empty($record['lat']) && !empty($record['lng']))) {
+} elseif (!empty($sede_cliente->gaddress) || (!empty($sede_cliente->lat) && !empty($sede_cliente->lng))) {
     echo '
                         <div id="map-edit" style="height:200px; width:100%"></div>
 
@@ -264,17 +269,46 @@ echo '
             }
 
             function cercaGoogleMaps() {
-                window.open("https://maps.google.com/maps/search/" + encodeURI( $("#indirizzo").val() )+", "+encodeURI( $("#citta").val() ) );
+                const indirizzo = getIndirizzoAnagrafica();
+                window.open("https://maps.google.com/maps/search/" + indirizzo);
             }
 
             function calcolaPercorso() {
-                window.open("https://maps.google.com/maps/dir/" + encodeURI( $("#indirizzo").val() )+", "+encodeURI( $("#citta").val() ) );
+                const indirizzo_partenza = getIndirizzoAzienda();
+                const indirizzo_destinazione = getIndirizzoAnagrafica();
+                window.open("https://maps.google.com/maps/dir/" + indirizzo_partenza + "/" + indirizzo_destinazione);
+            }
+
+            function getIndirizzoAzienda() {
+                const indirizzo = "'.$sede_azienda->indirizzo.'";
+                const citta = "'.$sede_azienda->citta.'";
+
+                const lat = parseFloat("'.$sede_azienda->lat.'");
+                const lng = parseFloat("'.$sede_azienda->lng.'");
+
+                const indirizzo_default = encodeURI(indirizzo) + "," + encodeURI(citta);
+                if (!lat || !lng) return indirizzo_default;
+
+                return lat + "," + lng;
+            }
+
+            function getIndirizzoAnagrafica() {
+                const indirizzo = $("#indirizzo").val();
+                const citta = $("#citta").val();
+
+                const lat = parseFloat("'.$sede_cliente->lat.'");
+                const lng = parseFloat("'.$sede_cliente->lng.'");
+
+                const indirizzo_default = encodeURI(indirizzo) + "," + encodeURI(citta);
+                if (!lat || !lng) return indirizzo_default;
+
+                return lat + "," + lng;
             }
 
             $(document).ready(function() {
                 const map_element = $("#map-edit")[0];
-                const lat = "'.$record['lat'].'";
-                const lng = "'.$record['lng'].'";
+                const lat = parseFloat("'.$sede_cliente->lat.'");
+                const lng = parseFloat("'.$sede_cliente->lng.'");
 
                 if (!lat || !lng) return;
                 const position = new google.maps.LatLng(lat, lng);
@@ -290,7 +324,6 @@ echo '
                         mapTypeIds: ["roadmap", "terrain"],
                     }
                 });
-
 
                 map.setCenter(position);
                 const marker = new google.maps.Marker({

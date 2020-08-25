@@ -274,6 +274,11 @@ class Anagrafica extends Model
         return $this->belongsToMany(Tipo::class, 'an_tipianagrafiche_anagrafiche', 'idanagrafica', 'idtipoanagrafica');
     }
 
+    public function sedi()
+    {
+        return $this->hasMany(Sede::class, 'idanagrafica');
+    }
+
     public function nazione()
     {
         return $this->belongsTo(Nazione::class, 'id_nazione');

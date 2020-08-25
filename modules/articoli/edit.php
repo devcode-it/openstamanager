@@ -247,7 +247,7 @@ echo '
     echo '
             <div id="info_componente">';
 
-    genera_form_componente($record['contenuto']);
+    crea_form_componente($record['contenuto']);
 
     echo '
             </div>';

@@ -111,7 +111,7 @@ switch ($op) {
             $contenuto = file_get_contents($docroot.'/files/my_impianti/'.$filename);
         }
 
-        genera_form_componente($contenuto);
+        crea_form_componente($contenuto);
 
         break;
 

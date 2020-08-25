@@ -30,7 +30,7 @@ $files = [
 ];
 
 foreach ($files as $key => $value) {
-    $files[$key] = realpath($docroot.'/'.$value);
+    $files[$key] = realpath(DOCROOT.'/'.$value);
 }
 
 delete($files);

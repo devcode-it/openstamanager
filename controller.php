@@ -78,7 +78,8 @@ echo '
 
 redirectOperation($id_module, isset($id_parent) ? $id_parent : $id_record);
 
-if ($user->is_admin && str_contains($structure['option'], '|select|')) {
+// Interfaccia per la modifica dell'ordine e della visibilità delle colonne (Amministratore)
+if ($user->is_admin && str_contains($module['option'], '|select|')) {
     echo '
 <button type="button" class="btn btn-xs btn-primary pull-right" onclick="modificaColonne(this)">
     <i class="fa fa-th-list"></i> '.tr('Modifica colonne').'

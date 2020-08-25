@@ -157,4 +157,12 @@ switch (filter('op')) {
         }
 
         break;
+
+    case 'update_visible':
+        $visible = filter('visible');
+        $id_riga = filter('id_vista');
+
+        $dbo->query('UPDATE `zz_views` SET `visible` = '.prepare($visible).' WHERE id = '.prepare($id_riga));
+
+        break;
 }

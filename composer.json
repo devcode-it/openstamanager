@@ -24,6 +24,7 @@
         "php": ">=5.6",
         "ext-curl": "*",
         "ext-dom": "*",
+        "ext-fileinfo": "*",
         "ext-intl": "*",
         "ext-json": "*",
         "ext-libxml": "*",
@@ -33,10 +34,10 @@
         "ext-simplexml": "*",
         "ext-xsl": "*",
         "ext-zip": "*",
-        "ext-fileinfo": "*",
         "aluguest/ical-easy-reader": "^1.5",
         "danielstjules/stringy": "^3.1",
         "davidepastore/codice-fiscale": "^0.4.0",
+        "dragonmantank/cron-expression": "^3.0",
         "ezyang/htmlpurifier": "^4.8",
         "filp/whoops": "^2.1",
         "guzzlehttp/guzzle": "^6.3",
@@ -82,9 +83,6 @@
         "sort-packages": true,
         "optimize-autoloader": true,
         "apcu-autoloader": true,
-        "prefer-stable": true,
-        "platform": {
-            "php": "5.6.4"
-        }
+        "prefer-stable": true
     }
 }

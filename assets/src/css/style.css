@@ -955,3 +955,11 @@ div.tip {
 .form-group input[type="checkbox"]:checked + .btn-group > label span:last-child {
     display: none;
 }
+
+.control-sidebar-bg {
+    top: 50px;
+}
+
+.control-sidebar{
+    padding-top: 0;
+}

@@ -6,36 +6,25 @@ include_once __DIR__.'/../../core.php';
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
 
-	<!-- DATI ARTICOLO -->
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo tr('Listino'); ?></h3>
-		</div>
+    <div class="row">
+        <div class="col-md-4">
+            {[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$nome$" ]}
+        </div>
 
-		<div class="panel-body">
-			<div class="row">
-				<div class="col-md-4">
-					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$nome$" ]}
-				</div>
+        <div class="col-md-4">
+            {[ "type": "text", "label": "<?php echo tr('Sconto/rincaro combinato'); ?>", "name": "prc_combinato", "value": "$prc_combinato$", "icon-after": "%", "class": "math-mask text-right", "help": "<?php echo tr('Esempio: 50+10-20 viene convertito in 50% di sconto con 10% aggiuntivo sul totale scontato e 20% di maggiorazione sul totale finale (54% di sconto finale)').'. '.tr('Sono ammessi i segni + e -').'.'; ?>", "disabled": "<?php echo intval(empty($record['prc_combinato']) && !empty($record['prc_guadagno'])); ?>" ]}
+        </div>
 
-                <div class="col-md-4">
-                    {[ "type": "text", "label": "<?php echo tr('Rincaro/sconto combinato'); ?>", "name": "prc_combinato", "value": "$prc_combinato$", "icon-after": "%", "class": "math-mask text-right", "help": "<?php echo tr('Esempio: 50+10-20 viene convertito in 50% di sconto con 10% aggiuntivo sul totale scontato e 20% di maggiorazione sul totale finale (54% di sconto finale)').'. '.tr('Sono ammessi i segni + e -').'.'; ?>", "disabled": "<?php echo intval(empty($record['prc_combinato']) && !empty($record['prc_guadagno'])); ?>" ]}
-                </div>
+        <div class="col-md-4">
+            {[ "type": "number", "label": "<?php echo tr('Sconto/rincaro'); ?>", "name": "prc_guadagno", "required": 1, "value": "$prc_guadagno$", "icon-after": "%", "help": "<?php echo tr('Il valore positivo indica uno sconto: per applicare una maggiorazione inserire un valore negativo').'.'; ?>", "disabled": "<?php echo intval(!empty($record['prc_combinato'])); ?>" ]}
+        </div>
+    </div>
 
-				<div class="col-md-4">
-					{[ "type": "number", "label": "<?php echo tr('Rincaro/sconto'); ?>", "name": "prc_guadagno", "required": 1, "value": "$prc_guadagno$", "icon-after": "%", "help": "<?php echo tr('Il valore positivo indica uno sconto: per applicare una maggiorazione inserire un valore negativo').'.'; ?>", "disabled": "<?php echo intval(!empty($record['prc_combinato'])); ?>" ]}
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-md-12">
-					{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$" ]}
-				</div>
-			</div>
-
-		</div>
-	</div>
-
+    <div class="row">
+        <div class="col-md-12">
+            {[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$" ]}
+        </div>
+    </div>
 </form>
 
 <a class="btn btn-danger ask" data-backto="record-list">

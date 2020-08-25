@@ -2,8 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-unset($_SESSION['superselect']['id_categoria']);
-
 ?><form action="" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-edit">
@@ -85,6 +83,7 @@ $(document).ready(function () {
     var original = sub.parent().find(".input-group-addon button").data("href");
 
     $('#add-form').find('#categoria').change(function() {
+        updateSelectOption("id_categoria", $(this).val());
         session_set('superselect,id_categoria', $(this).val(), 0);
 
         sub.selectReset();

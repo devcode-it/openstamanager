@@ -1,11 +1,6 @@
 <?php
 
 $result['idarticolo'] = isset($result['idarticolo']) ? $result['idarticolo'] : null;
-
-$_SESSION['superselect']['dir'] = $options['dir'];
-$_SESSION['superselect']['idanagrafica'] = $options['idanagrafica'];
-$_SESSION['superselect']['idarticolo'] = $options['idarticolo'];
-
 $qta_minima = 0;
 
 // Articolo
@@ -13,7 +8,7 @@ if (empty($result['idarticolo'])) {
     echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "required": 1, "value": "'.$result['idarticolo'].'", "ajax-source": "articoli", "icon-after": "add|'.Modules::get('Articoli')['id'].'" ]}
+            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "required": 1, "value": "'.$result['idarticolo'].'", "ajax-source": "articoli", "select-options": '.json_encode($options['select-options']['articoli']).', "icon-after": "add|'.Modules::get('Articoli')['id'].'" ]}
         </div>
     </div>
 
@@ -44,7 +39,7 @@ if ($module['name'] == 'Interventi') {
     echo '
 <div class="row">
     <div class="col-md-12">
-        {[ "type": "select", "label": "'.tr('Impianto su cui installare').'", "name": "idimpianto", "value": "'.$idimpianto.'", "ajax-source": "impianti-intervento" ]}
+        {[ "type": "select", "label": "'.tr('Impianto su cui installare').'", "name": "idimpianto", "value": "'.$idimpianto.'", "ajax-source": "impianti-intervento", "select-options": '.json_encode($options['select-options']['impianti']).' ]}
     </div>
 </div>';
 }
@@ -87,10 +82,6 @@ $(document).ready(function () {
     $("#idarticolo").on("change", function() {
         // Autoimpostazione dei valori relativi
         if ($(this).val()) {
-            session_set("superselect,idarticolo", $(this).val(), 0);
-            session_set("superselect,idanagrafica", "'.$options['idanagrafica'].'", 0);
-            session_set("superselect,dir", "'.$options['dir'].'", 0);
-
             $data = $(this).selectData();
 
             $("#prezzo_unitario").val($data.prezzo_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').');

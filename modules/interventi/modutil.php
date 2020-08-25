@@ -15,6 +15,8 @@ use Modules\Interventi\Intervento;
  * Recupera il totale delle ore spese per un intervento.
  *
  * @param int $id_intervento
+ *
+ * @deprecated
  */
 function get_ore_intervento($id_intervento)
 {
@@ -84,6 +86,8 @@ function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto = n
  * @param string $orario_fine
  *
  * @return float
+ *
+ * @deprecated
  */
 function calcola_ore_intervento($orario_inizio, $orario_fine)
 {

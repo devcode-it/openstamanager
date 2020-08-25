@@ -16,6 +16,18 @@ $options = [
     'idanagrafica' => $documento['idanagrafica'],
     'show-ritenuta-contributi' => !empty($documento['id_ritenuta_contributi']),
     'totale_imponibile' => $documento->totale_imponibile,
+    'select-options' => [
+        'articoli' => [
+            'idanagrafica' => $documento->idanagrafica,
+            'dir' => $documento->direzione,
+            'idsede_partenza' => $documento->idsede_partenza,
+            'idsede_destinazione' => $documento->idsede_destinazione,
+            'permetti_movimento_a_zero' => intval($documento->direzione == 'uscita'),
+        ],
+        'iva' => [
+            'split_payment' => $documento['split_payment'],
+        ],
+    ],
 ];
 
 // Conto dalle impostazioni

@@ -3,6 +3,13 @@
 include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
+    /*
+     * Opzioni utilizzate:
+     * - permetti_movimento_a_zero
+     * - idsede_partenza e idsede_destinazione
+     * - dir
+     * - idanagrafica
+     */
     case 'articoli':
         $sedi_non_impostate = !isset($superselect['idsede_partenza']) && !isset($superselect['idsede_destinazione']);
         $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
@@ -218,23 +225,6 @@ switch ($resource) {
 
         break;
 
-    case 'prodotti_serial':
-        $query = 'SELECT DISTINCT serial AS descrizione FROM mg_prodotti |where|';
-
-        $where[] = 'id_articolo='.prepare($superselect['idarticolo']);
-        $where[] = 'lotto='.prepare($superselect['lotto']);
-
-        foreach ($elements as $element) {
-            $filter[] = 'serial='.prepare($element);
-        }
-        if (!empty($search)) {
-            $search_fields[] = 'serial LIKE '.prepare('%'.$search.'%');
-        }
-
-        $custom['id'] = 'descrizione';
-
-        break;
-
     case 'categorie':
         $query = 'SELECT id, nome AS descrizione FROM mg_categorie |where| ORDER BY nome';
 
@@ -250,6 +240,10 @@ switch ($resource) {
 
         break;
 
+    /*
+     * Opzioni utilizzate:
+     * - id_categoria
+     */
     case 'sottocategorie':
         if (isset($superselect['id_categoria'])) {
             $query = 'SELECT id, nome AS descrizione FROM mg_categorie |where| ORDER BY nome';
@@ -278,7 +272,12 @@ switch ($resource) {
 
         break;
 
+    /*
+     * Opzioni utilizzate:
+     * - idanagrafica
+     */
     case 'articoli_barcode':
+        $id_anagrafica = filter('id_anagrafica'); // ID passato via URL in modo fisso
         $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
         $query = 'SELECT mg_articoli.*,
@@ -290,7 +289,7 @@ switch ($resource) {
             IFNULL(mg_fornitore_articolo.qta_minima, 0) AS qta_minima,
             mg_fornitore_articolo.id AS id_dettaglio_fornitore
         FROM mg_articoli
-            LEFT JOIN mg_fornitore_articolo ON mg_fornitore_articolo.id_articolo = mg_articoli.id AND mg_fornitore_articolo.deleted_at IS NULL AND mg_fornitore_articolo.id_fornitore = '.prepare($superselect['idanagrafica']).'
+            LEFT JOIN mg_fornitore_articolo ON mg_fornitore_articolo.id_articolo = mg_articoli.id AND mg_fornitore_articolo.deleted_at IS NULL AND mg_fornitore_articolo.id_fornitore = '.prepare($id_anagrafica).'
         |where|';
 
         $where[] = 'barcode='.prepare(get('barcode'));

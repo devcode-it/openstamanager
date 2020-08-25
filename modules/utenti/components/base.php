@@ -6,8 +6,6 @@ if (!empty(filter('idanagrafica'))) {
     $utente['id_anagrafica'] = filter('idanagrafica');
 }
 
-$_SESSION['superselect']['idanagrafica'] = $utente['id_anagrafica'];
-
 echo '
 	<div class="row">
 		<div class="col-md-12">

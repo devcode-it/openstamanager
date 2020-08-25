@@ -5897,7 +5897,7 @@ msgid "Listino eliminato!"
 msgstr ""
 
 #: modules/listini/add.php:15 modules/listini/edit.php:22
-msgid "Rincaro/sconto combinato"
+msgid "Sconto/rincaro combinato"
 msgstr ""
 
 #: modules/listini/add.php:15 modules/listini/edit.php:22
@@ -5911,7 +5911,7 @@ msgid "Sono ammessi i segni + e -"
 msgstr ""
 
 #: modules/listini/add.php:19 modules/listini/edit.php:26
-msgid "Rincaro/sconto"
+msgid "Sconto/rincaro"
 msgstr ""
 
 #: modules/misure/actions.php:14 modules/misure/actions.php:41

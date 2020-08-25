@@ -131,114 +131,174 @@ if (!$is_cliente) {
             </div>
         </div>
 
-    <div class="panel  panel-primary">
-        <div class="panel-heading">
-            <h3 class="panel-title"><i class="fa fa-building"></i> <?php echo tr('Sede legale'); ?></h3>
-        </div>
-        <div class="panel-body">
-            <div class="row">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><i class="fa fa-building"></i> <?php echo tr('Sede legale'); ?></h3>
+                    </div>
+                    <div class="panel-body">
 
-                <div class="col-md-<?php echo (empty($record['indirizzo2'])) ? '6' : '4'; ?>">
-                    {[ "type": "text", "label": "<?php echo tr('Indirizzo'); ?>", "name": "indirizzo", "value": "$indirizzo$" ]}
-                </div>
+                        <div class="row">
+                            <div class="col-md-<?php echo (empty($record['indirizzo2'])) ? '10' : '8'; ?>">
+                                {[ "type": "text", "label": "<?php echo tr('Indirizzo'); ?>", "name": "indirizzo", "value": "$indirizzo$" ]}
+                            </div>
 
-                <div class="col-md-2<?php echo (empty($record['indirizzo2'])) ? ' hide' : ''; ?>">
-                    {[ "type": "text", "label": "<?php echo tr('Civico'); ?>", "name": "indirizzo2", "value": "$indirizzo2$" ]}
-                </div>
+                            <div class="col-md-2<?php echo (empty($record['indirizzo2'])) ? ' hide' : ''; ?>">
+                                {[ "type": "text", "label": "<?php echo tr('Civico'); ?>", "name": "indirizzo2", "value": "$indirizzo2$" ]}
+                            </div>
 
-				<div class="col-md-2">
-                    {[ "type": "text", "label": "<?php echo tr('C.A.P.'); ?>", "name": "cap", "maxlength": 5, "class": "text-center", "value": "$cap$" ]}
-                </div>
+                            <div class="col-md-2">
+                                {[ "type": "text", "label": "<?php echo tr('C.A.P.'); ?>", "name": "cap", "maxlength": 5, "class": "text-center", "value": "$cap$" ]}
+                            </div>
 
-                <div class="col-md-4">
-                    {[ "type": "text", "label": "<?php echo tr('Città'); ?>", "name": "citta", "class": "text-center", "value": "$citta$" ]}
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                {[ "type": "text", "label": "<?php echo tr('Città'); ?>", "name": "citta", "class": "text-center", "value": "$citta$" ]}
+                            </div>
+
+                            <div class="col-md-4">
+                                {[ "type": "text", "label": "<?php echo tr('Provincia'); ?>", "name": "provincia", "maxlength": 2, "class": "text-center provincia-mask text-uppercase", "value": "$provincia$", "extra": "onkeyup=\"this.value = this.value.toUpperCase();\"" ]}
+                            </div>
+
+                            <div class="col-md-4">
+                                {[ "type": "select", "label": "<?php echo tr('Nazione'); ?>", "name": "id_nazione", "value": "$id_nazione$", "ajax-source": "nazioni" ]}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                {[ "type": "text", "label": "<?php echo tr('Telefono'); ?>", "name": "telefono", "class": "text-center", "value": "$telefono$", "icon-before": "<i class='fa fa-phone'></i>" ]}
+                            </div>
+
+                            <div class="col-md-4">
+                                {[ "type": "text", "label": "<?php echo tr('Cellulare'); ?>", "name": "cellulare", "class": "text-center", "value": "$cellulare$", "icon-before": "<i class='fa fa-mobile'></i>" ]}
+                            </div>
+
+                            <div class="col-md-4">
+                                {[ "type": "text", "label": "<?php echo tr('Email'); ?>", "name": "email", "class": "email-mask", "placeholder": "casella@dominio.ext", "value": "$email$", "icon-before": "<i class='fa fa-envelope'></i>", "validation": "email" ]}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                {[ "type": "text", "label": "<?php echo tr('Fax'); ?>", "name": "fax", "class": "text-center", "value": "$fax$", "icon-before": "<i class='fa fa-fax'></i>" ]}
+                            </div>
+
+                            <div class="col-md-4">
+                                {[ "type": "select", "label": "<?php echo tr('Zona'); ?>", "name": "idzona", "values": "query=SELECT id, CONCAT_WS( ' - ', nome, descrizione) AS descrizione FROM an_zone ORDER BY descrizione ASC", "value": "$idzona$", "placeholder": "<?php echo tr('Nessuna zona'); ?>", "icon-after": "add|<?php echo Modules::get('Zone')['id']; ?>" ]}
+                            </div>
+
+                            <div class="col-md-4">
+                                {[ "type": "number", "label": "<?php echo tr('Distanza'); ?>", "name": "km", "decimals":"1", "class": "text-center", "value": "$km$", "icon-after": "Km" ]}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <div class="row">
-                <div class="col-md-3">
-                    {[ "type": "text", "label": "<?php echo tr('Provincia'); ?>", "name": "provincia", "maxlength": 2, "class": "text-center provincia-mask text-uppercase", "value": "$provincia$", "extra": "onkeyup=\"this.value = this.value.toUpperCase();\"" ]}
-                </div>
-
-				<div class="col-md-3">
-                    {[ "type": "select", "label": "<?php echo tr('Nazione'); ?>", "name": "id_nazione", "value": "$id_nazione$", "ajax-source": "nazioni" ]}
-                </div>
-
-                <div class="col-md-3">
-                    {[ "type": "select", "label": "<?php echo tr('Zona'); ?>", "name": "idzona", "values": "query=SELECT id, CONCAT_WS( ' - ', nome, descrizione) AS descrizione FROM an_zone ORDER BY descrizione ASC", "value": "$idzona$", "placeholder": "<?php echo tr('Nessuna zona'); ?>", "icon-after": "add|<?php echo Modules::get('Zone')['id']; ?>" ]}
-                </div>
-
-                <div class="col-md-3">
-                    {[ "type": "number", "label": "<?php echo tr('Distanza'); ?>", "name": "km", "decimals":"1", "class": "text-center", "value": "$km$", "icon-after": "Km" ]}
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-3">
-                    {[ "type": "text", "label": "<?php echo tr('Telefono'); ?>", "name": "telefono", "class": "text-center", "value": "$telefono$", "icon-before": "<i class='fa fa-phone'></i>" ]}
-                </div>
-
-                <div class="col-md-3">
-                    {[ "type": "text", "label": "<?php echo tr('Fax'); ?>", "name": "fax", "class": "text-center", "value": "$fax$", "icon-before": "<i class='fa fa-fax'></i>" ]}
-                </div>
-
-                <div class="col-md-3">
-                    {[ "type": "text", "label": "<?php echo tr('Cellulare'); ?>", "name": "cellulare", "class": "text-center", "value": "$cellulare$", "icon-before": "<i class='fa fa-mobile'></i>" ]}
-                </div>
-
-                <div class="col-md-3">
-                    {[ "type": "text", "label": "<?php echo tr('Email'); ?>", "name": "email", "class": "email-mask", "placeholder": "casella@dominio.ext", "value": "$email$", "icon-before": "<i class='fa fa-envelope'></i>", "validation": "email" ]}
-                </div>
-            </div>
-
 
 <?php
 
-if (!empty($google)) {
-    echo '
-            <div class="row">
-				<div class="col-md-9">
-					<div class="row">
-                        <div class="col-md-4" id="geocomplete">
-                            {[ "type": "text", "label": "'.tr('Indirizzo Google').'", "name": "gaddress", "value": "$gaddress$", "extra": "data-geo=\'formatted_address\'" ]}
-                        </div>
-
-                        <div class="col-md-4">
-                            {[ "type": "text", "label": "'.tr('Latitudine').'", "name": "lat", "value": "$lat$", "extra": "data-geo=\'lat\'", "class": "text-right" ]}
-                        </div>
-
-                        <div class="col-md-4">
-                            {[ "type": "text", "label": "'.tr('Longitudine').'", "name": "lng", "value": "$lng$", "extra": "data-geo=\'lng\'", "class": "text-right" ]}
-                        </div>
+echo '
+            <div class="col-md-4">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><i class="fa fa-map"></i> '.tr('Geolocalizzazione').'</h3>
                     </div>
-                </div>';
+                    <div class="panel-body">';
 
-    // Calcola percorso
-    if (empty($record['gaddress']) || (empty($record['lat']) && empty($record['lng']))) {
-        echo '
-                <div class="col-md-3">
-                    <label>&nbsp;</label><br>
-                    <a class="btn btn-info" onclick="window.open(\'https://maps.google.com/maps/search/\'+encodeURI( $(\'#indirizzo\').val() )+\', \'+encodeURI( $(\'#citta\').val() ) );"><i class="fa fa-map-marker"></i> Cerca su Google Maps...</a>
-                </div>';
-    }
-
+if (empty($google)) {
     echo '
-            </div>';
+                        <div class="alert alert-info">
+                            '.Modules::link('Impostazioni', $dbo->fetchOne("SELECT `id` FROM `zz_settings` WHERE nome='Google Maps API key'")['id'], tr('Per abilitare la visualizzazione delle anagrafiche nella mappa, inserire la Google Maps API Key nella scheda Impostazioni')).'.
+                        </div>';
+} elseif (!empty($record['gaddress']) || (!empty($record['lat']) && !empty($record['lng']))) {
+    echo '
+                        <div id="map-edit" style="height:200px; width:100%"></div>
 
-    if (!empty($record['gaddress']) || (!empty($record['lat']) && !empty($record['lng']))) {
-        echo '
-            <div id="map" style="height:400px; width:100%"></div>';
-    }
+                        <div class="clearfix"></div>
+                        <br>';
+
+    // Modifica manuale delle informazioni
+    echo '
+                        <a class="btn btn-primary btn-block" onclick="modificaPosizione()">
+                            <i class="fa fa-map"></i> '.tr('Modifica posizione').'
+                        </a>';
+
+    // Navigazione diretta verso l'indirizzo
+    echo '
+                        <a class="btn btn-info btn-block" onclick="calcolaPercorso()">
+                            <i class="fa fa-map-signs"></i> '.tr('Calcola percorso').'
+                        </a>';
 } else {
+    // Modifica manuale delle informazioni
     echo '
-            <div class="alert alert-info">
-                '.Modules::link('Impostazioni', $dbo->fetchOne("SELECT `id` FROM `zz_settings` WHERE nome='Google Maps API key'")['id'], tr('Per abilitare la visualizzazione delle anagrafiche nella mappa, inserire la Google Maps API Key nella scheda Impostazioni')).'.
-            </div>';
+                        <a class="btn btn-primary btn-block" onclick="modificaPosizione()">
+                            <i class="fa fa-map"></i> '.tr('Modifica posizione').'
+                        </a>';
+
+    // Navigazione diretta verso l'indirizzo
+    echo '
+                        <a class="btn btn-info btn-block" onclick="calcolaPercorso()">
+                            <i class="fa fa-map-signs"></i> '.tr('Calcola percorso').'
+                        </a>';
+
+    // Ricerca diretta su Google Maps
+    echo '
+                        <a class="btn btn-info btn-block" onclick="cercaGoogleMaps()">
+                            <i class="fa fa-map-marker"></i> '.tr('Cerca su Google Maps').'
+                        </a>';
 }
 
 echo '
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>';
+
+        <script>
+            function modificaPosizione() {
+                openModal("'.tr('Modifica posizione').'", "'.$module->fileurl('modals/posizione.php').'?id_module='.$id_module.'&id_record='.$id_record.'");
+            }
+
+            function cercaGoogleMaps() {
+                window.open("https://maps.google.com/maps/search/" + encodeURI( $("#indirizzo").val() )+", "+encodeURI( $("#citta").val() ) );
+            }
+
+            function calcolaPercorso() {
+                window.open("https://maps.google.com/maps/dir/" + encodeURI( $("#indirizzo").val() )+", "+encodeURI( $("#citta").val() ) );
+            }
+
+            $(document).ready(function() {
+                const map_element = $("#map-edit")[0];
+                const lat = "'.$record['lat'].'";
+                const lng = "'.$record['lng'].'";
+
+                if (!lat || !lng) return;
+                const position = new google.maps.LatLng(lat, lng);
+
+                // Create a Google Maps native view under the map_canvas div.
+                const map = new google.maps.Map(map_element, {
+                    zoom: 14,
+                    scrollwheel: false,
+                    mapTypeControl: true,
+                    mapTypeId: "roadmap",
+                    mapTypeControlOptions: {
+                        style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
+                        mapTypeIds: ["roadmap", "terrain"],
+                    }
+                });
+
+
+                map.setCenter(position);
+                const marker = new google.maps.Marker({
+                    position: position,
+                    map: map,
+                });
+            });
+        </script>';
 
 if ($is_cliente or $is_fornitore or $is_tecnico) {
     echo '
@@ -326,7 +386,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
 
                         <div class="row">
                             <div class="col-md-6">
-                                {[ "type": "select", "label": "'.tr('Listino articoli').'", "name": "idlistino_vendite", "values": "query=SELECT id, nome AS descrizione FROM mg_listini ORDER BY nome ASC", "value": "$idlistino_vendite$" ]}
+                                {[ "type": "select", "label": "'.tr('Piano di sconto/rincaro su articoli').'", "name": "idlistino_vendite", "values": "query=SELECT id, nome AS descrizione FROM mg_listini ORDER BY nome ASC", "value": "$idlistino_vendite$" ]}
                             </div>
 
                             <div class="col-md-6">
@@ -388,7 +448,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
 
                         <div class="row">
                             <div class="col-md-6">
-                                {[ "type": "select", "label": "'.tr('Listino articoli').'", "name": "idlistino_acquisti", "values": "query=SELECT id, nome AS descrizione FROM mg_listini ORDER BY nome ASC", "value": "$idlistino_acquisti$" ]}
+                                {[ "type": "select", "label": "'.tr('Piano di sconto/rincaro su articoli').'", "name": "idlistino_acquisti", "values": "query=SELECT id, nome AS descrizione FROM mg_listini ORDER BY nome ASC", "value": "$idlistino_acquisti$" ]}
                             </div>';
 
     // Collegamento con il conto
@@ -636,16 +696,6 @@ if (empty($record['deleted_at'])) {
 		});
 
 		$("#colore").parent().find(".square").css("background", $("#colore").val());
-
-        $("#geocomplete input").geocomplete({
-            map: $("#map").length ? "#map" : false,
-            location: $("#gaddress").val() ? $("#gaddress").val() : [$("#lat").val(), $("#lng").val()],
-            details: ".details",
-            detailsAttribute: "data-geo"
-        }).bind("geocode:result", function (event, result) {
-			$("#lat").val(result.geometry.location.lat());
-			$("#lng").val(result.geometry.location.lng());
-        });
 
 		// Abilito solo ragione sociale oppure solo cognome-nome in base a cosa compilo
 		$('#nome, #cognome').bind("keyup change", function(e) {

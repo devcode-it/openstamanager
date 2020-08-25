@@ -15,6 +15,18 @@ $options = [
     'idanagrafica' => $documento['idanagrafica'],
     'totale_imponibile' => $documento->totale_imponibile,
     'nascondi_prezzi' => !$show_prezzi,
+    'select-options' => [
+        'articoli' => [
+            'idanagrafica' => $documento->idanagrafica,
+            'dir' => $documento->direzione,
+            'idsede_partenza' => $documento->idsede_partenza,
+            'idsede_destinazione' => $documento->idsede_destinazione,
+            'permetti_movimento_a_zero' => 0,
+        ],
+        'impianti' => [
+            'idintervento' => $documento->id,
+        ],
+    ],
 ];
 
 // Dati di default

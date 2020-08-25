@@ -4,11 +4,6 @@ include_once __DIR__.'/../../core.php';
 
 $block_edit = $record['is_completato'];
 
-unset($_SESSION['superselect']['idsede_destinazione']);
-unset($_SESSION['superselect']['idanagrafica']);
-$_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
-$_SESSION['superselect']['permetti_movimento_a_zero'] = true;
-
 ?>
 <form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">

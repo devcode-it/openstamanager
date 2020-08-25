@@ -4,10 +4,6 @@ use Modules\Interventi\Intervento;
 
 include_once __DIR__.'/../../core.php';
 
-// Rimozione dei parametri di sessione usati sui select combinati (sedi, preventivi, contratti, impianti)
-unset($_SESSION['superselect']['idanagrafica']);
-unset($_SESSION['superselect']['idsede']);
-
 // Lettura dei parametri di interesse
 $id_anagrafica = filter('idanagrafica');
 $id_sede = filter('idsede');
@@ -127,8 +123,6 @@ $fine_sessione = $data_fine.' '.$orario_fine;
 // Calcolo del nuovo codice
 $new_codice = Intervento::getNextCodice($data);
 
-$_SESSION['superselect']['idanagrafica'] = $id_anagrafica;
-
 echo '
 <form action="" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
@@ -215,7 +209,7 @@ echo '
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Impianto').'", "multiple": 1, "name": "idimpianti[]", "value": "'.$impianti_collegati.'", "ajax-source": "impianti-cliente", "icon-after": "add|'.Modules::get('Impianti')['id'].'|source=Attività" ]}
+                    {[ "type": "select", "label": "'.tr('Impianto').'", "multiple": 1, "name": "idimpianti[]", "value": "'.$impianti_collegati.'", "ajax-source": "impianti-cliente", "select-options": {"idanagrafica": '.($id_anagrafica ?: '""').'}, "icon-after": "add|'.Modules::get('Impianti')['id'].'|id_anagrafica='.$id_anagrafica.'" ]}
                 </div>
 
                 <div class="col-md-4">
@@ -276,6 +270,9 @@ echo '
 					{[ "type": "select", "label": "'.tr('Tecnici').'", "multiple": "1", "name": "idtecnico[]", "required": '.($origine_dashboard ? 1 : 0).', "ajax-source": "tecnici", "value": "'.$id_tecnico.'", "icon-after": "add|'.$module_anagrafiche['id'].'|tipoanagrafica=Tecnico||'.(empty($id_tecnico) ? '' : 'disabled').'" ]}
 				</div>
 			</div>
+
+            <div id="info-conflitti-add"></div>
+
 		</div>
 	</div>
 
@@ -358,6 +355,10 @@ echo '
         }
     });
 
+	input("idtecnico").change(function() {
+	    calcolaConflittiTecnici();
+	});
+
     // Gestione della modifica dell\'anagrafica
 	anagrafica.change(function() {
         updateSelectOption("idanagrafica", $(this).val());
@@ -390,6 +391,7 @@ echo '
 
     // Gestione della modifica della sede selezionato
 	sede.change(function() {
+        updateSelectOption("idsede_destinazione", $(this).val());
 		session_set("superselect,idsede_destinazione", $(this).val(), 0);
         input("idimpianti").getElement().selectReset();
 
@@ -422,7 +424,8 @@ echo '
 
     // Gestione delle modifiche agli impianti selezionati
 	input("idimpianti").change(function() {
-		session_set("superselect,marticola", $(this).val(), 0);
+        updateSelectOption("matricola", $(this).val());
+		session_set("superselect,matricola", $(this).val(), 0);
 
         input("componenti").setDisabled(!$(this).val())
             .getElement().selectReset();
@@ -487,5 +490,16 @@ if (filter('orario_fine') !== null) {
             //TODO: da gestire via ajax
             //$("#elenco_interventi > tbody").load(globals.rootdir + "/modules/contratti/plugins/contratti.pianificazioneinterventi.php?op=get_interventi_pianificati&idcontratto='.$id_contratto.'");
         }
+    }
+
+    function calcolaConflittiTecnici() {
+        let tecnici = input("idtecnico").get();
+
+        return $("#info-conflitti-add").load("'.$module->fileurl('occupazione_tecnici.php').'", {
+            "id_module": globals.id_module,
+            "tecnici[]": tecnici,
+            "inizio": input("orario_inizio").get(),
+            "fine": input("orario_fine").get(),
+        });
     }
 </script>';

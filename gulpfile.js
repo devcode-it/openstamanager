@@ -2,10 +2,8 @@
 const gulp = require('gulp');
 const merge = require('merge-stream');
 const del = require('del');
-const debug = require('gulp-debug');
-
-const mainBowerFiles = require('main-bower-files');
 const gulpIf = require('gulp-if');
+const babel = require('gulp-babel');
 
 // Minificatori
 const minifyJS = require('gulp-uglify');
@@ -38,24 +36,74 @@ const config = {
     production: 'assets/dist', // Cartella di destinazione
     development: 'assets/src', // Cartella dei file di personalizzazione
     debug: false,
-    main: {
-        bowerDirectory: './node_modules',
-        bowerJson: './package.json',
-    },
+    nodeDirectory: './node_modules', // Percorso per node_modules
     paths: {
         js: 'js',
         css: 'css',
         images: 'img',
         fonts: 'fonts'
+    },
+    babelOptions: {
+        compact: true,
+        presets: [
+            ['@babel/env', {
+                modules: false
+            }],
+        ],
+    },
+    minifiers: {
+        css: {
+            rebase: false,
+        }
     }
 };
+config.babelOptions.compact = !config.debug;
 
 // Elaborazione e minificazione di JS
 const JS = gulp.parallel(() => {
-    return gulp.src(mainBowerFiles('**/*.js', {
-        paths: config.main,
-        debugging: config.debug,
-    }))
+    const vendor = [
+        'jquery/dist/jquery.js',
+        'autosize/dist/autosize.js',
+        'bootstrap-colorpicker/dist/js/bootstrap-colorpicker.js',
+        'moment/moment.js',
+        'components-jqueryui/jquery-ui.js',
+        'datatables.net/js/jquery.dataTables.js',
+        'datatables.net-buttons/js/dataTables.buttons.js',
+        'datatables.net-buttons/js/buttons.colVis.js',
+        'datatables.net-buttons/js/buttons.flash.js',
+        'datatables.net-buttons/js/buttons.html5.js',
+        'datatables.net-buttons/js/buttons.print.js',
+        'datatables.net-scroller/js/dataTables.scroller.js',
+        'datatables.net-select/js/dataTables.select.js',
+        'dropzone/dist/dropzone.js',
+        'eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
+        'fullcalendar/dist/fullcalendar.js',
+        'geocomplete/jquery.geocomplete.js',
+        'inputmask/dist/min/jquery.inputmask.bundle.min.js',
+        'jquery-form/src/jquery.form.js',
+        'jquery-ui-touch-punch/jquery.ui.touch-punch.js',
+        'jquery.shorten/src/jquery.shorten.js',
+        'numeral/numeral.js',
+        'parsleyjs/dist/parsley.js',
+        'select2/dist/js/select2.min.js',
+        'signature_pad/dist/signature_pad.js',
+        'sweetalert2/dist/sweetalert2.js',
+        'toastr/build/toastr.min.js',
+        'tooltipster/dist/js/tooltipster.bundle.js',
+        'admin-lte/dist/js/adminlte.js',
+        'bootstrap/dist/js/bootstrap.min.js',
+        'bootstrap-daterangepicker/daterangepicker.js',
+        'datatables.net-bs/js/dataTables.bootstrap.js',
+        'datatables.net-buttons-bs/js/buttons.bootstrap.js',
+        'smartwizard/dist/js/jquery.smartWizard.min.js',
+    ];
+
+    for (const i in vendor) {
+        vendor[i] = config.nodeDirectory + '/' + vendor[i];
+    }
+
+    return gulp.src(vendor)
+        .pipe(babel(config.babelOptions))
         .pipe(concat('app.min.js'))
         .pipe(minifyJS())
         .pipe(gulp.dest(config.production + '/' + config.paths.js));
@@ -64,35 +112,60 @@ const JS = gulp.parallel(() => {
 // Elaborazione e minificazione di JS personalizzati
 function srcJS() {
     const js = gulp.src([
-        config.development + '/' + config.paths.js + '/*.js',
+        config.development + '/' + config.paths.js + '/base/*.js',
     ])
+        .pipe(babel(config.babelOptions))
         .pipe(concat('custom.min.js'))
-        //.pipe(minifyJS())
+        .pipe(gulpIf(!config.debug, minifyJS()))
         .pipe(gulp.dest(config.production + '/' + config.paths.js));
 
-    const indip = gulp.src([
+    const functions = gulp.src([
         config.development + '/' + config.paths.js + '/functions/*.js',
     ])
+        .pipe(babel(config.babelOptions))
         .pipe(concat('functions.min.js'))
-        //.pipe(minifyJS())
+        .pipe(gulpIf(!config.debug, minifyJS()))
         .pipe(gulp.dest(config.production + '/' + config.paths.js));
 
-    return merge(js, indip);
+    return merge(js, functions);
 }
 
 // Elaborazione e minificazione di CSS
 const CSS = gulp.parallel(() => {
-    return gulp.src(mainBowerFiles('**/*.{css,scss,less,styl}', {
-        paths: config.main,
-        debugging: config.debug,
-    }))
+    const vendor = [
+        'bootstrap-colorpicker/dist/css/bootstrap-colorpicker.css',
+        'dropzone/dist/dropzone.css',
+        'eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
+        'font-awesome/css/font-awesome.min.css',
+        'fullcalendar/dist/fullcalendar.css',
+        'parsleyjs/src/parsley.css',
+        'select2/dist/css/select2.min.css',
+        'sweetalert2/dist/sweetalert2.css',
+        'toastr/build/toastr.min.css',
+        'tooltipster/dist/css/tooltipster.bundle.css',
+        'admin-lte/dist/css/AdminLTE.css',
+        'bootstrap/dist/css/bootstrap.min.css',
+        'bootstrap-daterangepicker/daterangepicker.css',
+        'datatables.net-bs/css/dataTables.bootstrap.css',
+        'datatables.net-buttons-bs/css/buttons.bootstrap.css',
+        'datatables.net-scroller-bs/css/scroller.bootstrap.css',
+        'datatables.net-select-bs/css/select.bootstrap.css',
+        'select2-bootstrap-theme/dist/select2-bootstrap.css',
+        'smartwizard/dist/css/smart_wizard.min.css',
+        'smartwizard/dist/css/smart_wizard_theme_arrows.min.css',
+    ];
+
+    for (const i in vendor) {
+        vendor[i] = config.nodeDirectory + '/' + vendor[i];
+    }
+
+    return gulp.src(vendor)
         .pipe(gulpIf('*.scss', sass(), gulpIf('*.less', less(), gulpIf('*.styl', stylus()))))
         .pipe(autoprefixer())
         .pipe(minifyCSS({
             rebase: false,
         }))
         .pipe(concat('app.min.css'))
-        .pipe(flatten())
         .pipe(gulp.dest(config.production + '/' + config.paths.css));
 }, srcCSS);
 
@@ -103,37 +176,29 @@ function srcCSS() {
     ])
         .pipe(gulpIf('*.scss', sass(), gulpIf('*.less', less(), gulpIf('*.styl', stylus()))))
         .pipe(autoprefixer())
-        .pipe(minifyCSS({
-            rebase: false,
-        }))
+        .pipe(gulpIf(!config.debug, minifyCSS(config.minifiers.css)))
         .pipe(concat('style.min.css'))
-        .pipe(flatten())
         .pipe(gulp.dest(config.production + '/' + config.paths.css));
 
     const print = gulp.src([
         config.development + '/' + config.paths.css + '/print/*.{css,scss,less,styl}',
-        config.bowerDirectory + '/fullcalendar/fullcalendar.print.css',
+        config.nodeDirectory + '/fullcalendar/fullcalendar.print.css',
     ], {
         allowEmpty: true
     })
         .pipe(gulpIf('*.scss', sass(), gulpIf('*.less', less(), gulpIf('*.styl', stylus()))))
         .pipe(autoprefixer())
-        .pipe(minifyCSS({
-            rebase: false,
-        }))
+        .pipe(gulpIf(!config.debug, minifyCSS(config.minifiers.css)))
         .pipe(concat('print.min.css'))
-        .pipe(flatten())
         .pipe(gulp.dest(config.production + '/' + config.paths.css));
 
     const themes = gulp.src([
         config.development + '/' + config.paths.css + '/themes/*.{css,scss,less,styl}',
-        config.main.bowerDirectory + '/admin-lte/dist/css/skins/_all-skins.min.css',
+        config.nodeDirectory + '/admin-lte/dist/css/skins/_all-skins.min.css',
     ])
         .pipe(gulpIf('*.scss', sass(), gulpIf('*.less', less(), gulpIf('*.styl', stylus()))))
         .pipe(autoprefixer())
-        .pipe(minifyCSS({
-            rebase: false,
-        }))
+        .pipe(gulpIf(!config.debug, minifyCSS(config.minifiers.css)))
         .pipe(concat('themes.min.css'))
         .pipe(flatten())
         .pipe(gulp.dest(config.production + '/' + config.paths.css));
@@ -144,21 +209,6 @@ function srcCSS() {
 
 // Elaborazione delle immagini
 const images = srcImages;
-/*
-gulp.parallel(() => {*/
-//const src = mainBowerFiles('**/*.{jpg,png,jpeg,gif}', {
-/*
-paths: config.main,
-    debugging: config.debug,
-});
-
-return gulp.src(src, {
-    allowEmpty: true
-})
-    .pipe(flatten())
-    .pipe(gulp.dest(config.production + '/' + config.paths.images));
-}, srcImages);
-*/
 
 // Elaborazione delle immagini personalizzate
 function srcImages() {
@@ -170,11 +220,26 @@ function srcImages() {
 
 
 // Elaborazione dei fonts
-const fonts =  gulp.parallel(() => {
-    return gulp.src(mainBowerFiles('**/*.{otf,eot,svg,ttf,woff,woff2}', {
-        paths: config.main,
-        debugging: config.debug,
-    }))
+const fonts = gulp.parallel(() => {
+    const vendor = [
+        'font-awesome/fonts/fontawesome-webfont.eot',
+        'font-awesome/fonts/fontawesome-webfont.svg',
+        'font-awesome/fonts/fontawesome-webfont.ttf',
+        'font-awesome/fonts/fontawesome-webfont.woff',
+        'font-awesome/fonts/fontawesome-webfont.woff2',
+        'font-awesome/fonts/FontAwesome.otf',
+        'bootstrap/dist/fonts/glyphicons-halflings-regular.eot',
+        'bootstrap/dist/fonts/glyphicons-halflings-regular.svg',
+        'bootstrap/dist/fonts/glyphicons-halflings-regular.ttf',
+        'bootstrap/dist/fonts/glyphicons-halflings-regular.woff',
+        'bootstrap/dist/fonts/glyphicons-halflings-regular.woff2',
+    ];
+
+    for (const i in vendor) {
+        vendor[i] = config.nodeDirectory + '/' + vendor[i];
+    }
+
+    return gulp.src(vendor)
         .pipe(flatten())
         .pipe(gulp.dest(config.production + '/' + config.paths.fonts));
 }, srcFonts);
@@ -190,23 +255,23 @@ function srcFonts() {
 
 function ckeditor() {
     return gulp.src([
-        config.main.bowerDirectory + '/ckeditor4/{adapters,lang,skins,plugins}/**/*.{js,json,css,png}',
-        config.main.bowerDirectory + '/ckeditor4/*.{js,css}',
+        config.nodeDirectory + '/ckeditor4/{adapters,lang,skins,plugins}/**/*.{js,json,css,png}',
+        config.nodeDirectory + '/ckeditor4/*.{js,css}',
     ])
         .pipe(gulp.dest(config.production + '/' + config.paths.js + '/ckeditor'));
 }
 
 function colorpicker() {
     return gulp.src([
-        config.main.bowerDirectory + '/bootstrap-colorpicker/dist/**/*.{jpg,png,jpeg}',
+        config.nodeDirectory + '/bootstrap-colorpicker/dist/**/*.{jpg,png,jpeg}',
     ])
         .pipe(flatten())
         .pipe(gulp.dest(config.production + '/' + config.paths.images + '/bootstrap-colorpicker'));
 }
 
-function password_strength(){
+function password_strength() {
     return gulp.src([
-        config.main.bowerDirectory + '/pwstrength-bootstrap/dist/*.js',
+        config.nodeDirectory + '/pwstrength-bootstrap/dist/*.js',
     ])
         .pipe(concat('password.min.js'))
         .pipe(minifyJS())
@@ -215,7 +280,7 @@ function password_strength(){
 
 function hotkeys() {
     return gulp.src([
-        config.main.bowerDirectory + '/hotkeys-js/dist/hotkeys.min.js',
+        config.nodeDirectory + '/hotkeys-js/dist/hotkeys.min.js',
     ])
         .pipe(flatten())
         .pipe(gulp.dest(config.production + '/' + config.paths.js + '/hotkeys-js'));
@@ -223,7 +288,7 @@ function hotkeys() {
 
 function chartjs() {
     return gulp.src([
-        config.main.bowerDirectory + '/chart.js/dist/Chart.min.js',
+        config.nodeDirectory + '/chart.js/dist/Chart.min.js',
     ])
         .pipe(flatten())
         .pipe(gulp.dest(config.production + '/' + config.paths.js + '/chartjs'));
@@ -239,16 +304,16 @@ function csrf() {
 
 function pdfjs() {
     const web = gulp.src([
-        config.main.bowerDirectory + '/pdf.js/web/**/*',
-        '!' + config.main.bowerDirectory + '/pdf.js/web/cmaps/*',
-        '!' + config.main.bowerDirectory + '/pdf.js/web/*.map',
-        '!' + config.main.bowerDirectory + '/pdf.js/web/*.pdf',
+        config.nodeDirectory + '/pdf.js/web/**/*',
+        '!' + config.nodeDirectory + '/pdf.js/web/cmaps/*',
+        '!' + config.nodeDirectory + '/pdf.js/web/*.map',
+        '!' + config.nodeDirectory + '/pdf.js/web/*.pdf',
     ])
         .pipe(gulp.dest(config.production + '/pdfjs/web'));
 
     const build = gulp.src([
-        config.main.bowerDirectory + '/pdf.js/build/*',
-        '!' + config.main.bowerDirectory + '/pdf.js/build/*.map',
+        config.nodeDirectory + '/pdf.js/build/*',
+        '!' + config.nodeDirectory + '/pdf.js/build/*.map',
     ])
         .pipe(gulp.dest(config.production + '/pdfjs/build'));
 
@@ -258,12 +323,12 @@ function pdfjs() {
 // Elaborazione e minificazione delle informazioni sull'internazionalizzazione
 function i18n() {
     return gulp.src([
-        config.main.bowerDirectory + '/**/{i18n,lang,locale,locales}/*.{js,json}',
+        config.nodeDirectory + '/**/{i18n,lang,locale,locales}/*.{js,json}',
         config.development + '/' + config.paths.js + '/i18n/**/*.{js,json}',
-        '!' + config.main.bowerDirectory + '/**/{src,plugins}/**',
-        '!' + config.main.bowerDirectory + '/ckeditor4/**',
-        '!' + config.main.bowerDirectory + '/summernote/**',
-        '!' + config.main.bowerDirectory + '/jquery-ui/**',
+        '!' + config.nodeDirectory + '/**/{src,plugins}/**',
+        '!' + config.nodeDirectory + '/ckeditor4/**',
+        '!' + config.nodeDirectory + '/summernote/**',
+        '!' + config.nodeDirectory + '/jquery-ui/**',
     ])
         //.pipe(gulpIf('*.js', minifyJS(), gulpIf('*.json', minifyJSON())))
         .pipe(gulpIf('!*.min.*', rename({
@@ -325,7 +390,7 @@ function release(done) {
         '!vendor/respect/validation/tests/*',
     ], {
         dot: true,
-    }).then(function (files){
+    }).then(function (files) {
         // Aggiunta dei file con i relativi checksum
         let checksum = {};
         for (const file of files) {

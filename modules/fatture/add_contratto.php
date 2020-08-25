@@ -27,13 +27,10 @@ if (!empty($id_documento)) {
 
 $id_anagrafica = $documento_finale->idanagrafica;
 
-$_SESSION['superselect']['idanagrafica'] = $id_anagrafica;
-$_SESSION['superselect']['stato'] = 'is_fatturabile';
-
 echo '
 <div class="row">
     <div class="col-md-12">
-        {[ "type": "select", "label": "'.tr('Contratto').'", "name": "id_documento", "ajax-source": "contratti" ]}
+        {[ "type": "select", "label": "'.tr('Contratto').'", "name": "id_documento", "ajax-source": "contratti", "select-options": {"idanagrafica": '.$id_anagrafica.', "stato": "is_fatturabile"} ]}
     </div>
 </div>
 

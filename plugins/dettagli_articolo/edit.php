@@ -1,6 +1,6 @@
 <?php
 
-use Plugins\FornitoriArticolo\Dettaglio;
+use Plugins\DettagliArticolo\DettaglioFornitore;
 
 include_once __DIR__.'/../../core.php';
 
@@ -28,7 +28,7 @@ echo '
     </div>
 </div>';
 
-$fornitori = Dettaglio::where('id_articolo', $id_record)->get();
+$fornitori = DettaglioFornitore::where('id_articolo', $id_record)->get();
 if (!$fornitori->isEmpty()) {
     echo '
 <h4>'.tr('Elenco fornitori').'</h4>

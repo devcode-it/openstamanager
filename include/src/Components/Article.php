@@ -6,7 +6,7 @@ use Common\Document;
 use Illuminate\Database\Eloquent\Builder;
 use Modules\Articoli\Articolo as Original;
 use Modules\Articoli\Movimento;
-use Plugins\FornitoriArticolo\Dettaglio;
+use Plugins\DettagliArticolo\DettaglioFornitore;
 use UnexpectedValueException;
 
 abstract class Article extends Row
@@ -172,7 +172,7 @@ abstract class Article extends Row
 
     public function dettaglioFornitore()
     {
-        return $this->belongsTo(Dettaglio::class, 'id_dettaglio_fornitore')->withTrashed();
+        return $this->belongsTo(DettaglioFornitore::class, 'id_dettaglio_fornitore')->withTrashed();
     }
 
     public function movimentazione($value = true)

@@ -2,7 +2,7 @@
 
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo;
-use Plugins\FornitoriArticolo\Dettaglio;
+use Plugins\DettagliArticolo\DettaglioFornitore;
 
 include_once __DIR__.'/../../core.php';
 
@@ -15,7 +15,7 @@ $anagrafica = Anagrafica::find($id_anagrafica);
 $id_riga = get('id_riga');
 $fornitore = [];
 if (!empty($id_riga)) {
-    $fornitore = Dettaglio::find($id_riga);
+    $fornitore = DettaglioFornitore::find($id_riga);
 } else {
     $fornitore = $articolo->dettaglioFornitore($id_anagrafica);
 }

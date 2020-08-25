@@ -1,6 +1,6 @@
 <?php
 
-namespace Plugins\FornitoriArticolo;
+namespace Plugins\DettagliArticolo;
 
 use Common\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -8,15 +8,15 @@ use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo;
 
 /**
- * Classe per la gestione delle relazioni tra articolo e fornitore.
+ * Classe per la gestione delle relazioni articolo-prezzo sulla base di un range di quantità e di una specifica anagrafica.
  *
- * @since 2.4.15
+ * @since 2.4.18
  */
-class Dettaglio extends Model
+class DettaglioPrezzo extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'mg_fornitore_articolo';
+    protected $table = 'mg_prezzi_articoli';
 
     /**
      * Crea una nuova relazione tra Articolo e Fornitore.

@@ -2,7 +2,7 @@
 
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo;
-use Plugins\FornitoriArticolo\Dettaglio;
+use Plugins\DettagliArticolo\DettaglioFornitore;
 
 include_once __DIR__.'/../../core.php';
 
@@ -12,14 +12,14 @@ switch (filter('op')) {
         $articolo = Articolo::find($id_articolo);
 
         $id_anagrafica = filter('id_anagrafica');
-        $precedente = Dettaglio::where('id_articolo', $id_record)
+        $precedente = DettaglioFornitore::where('id_articolo', $id_record)
             ->where('id_fornitore', $id_anagrafica)
             ->first();
 
         if (empty($precedente)) {
             $anagrafica = Anagrafica::find($id_anagrafica);
 
-            $fornitore = Dettaglio::build($anagrafica, $articolo);
+            $fornitore = DettaglioFornitore::build($anagrafica, $articolo);
         } else {
             $fornitore = $precedente->replicate();
             $precedente->delete();
@@ -39,7 +39,7 @@ switch (filter('op')) {
     case 'delete_fornitore':
         $id_riga = post('id_riga');
 
-        $fornitore = Dettaglio::find($id_riga);
+        $fornitore = DettaglioFornitore::find($id_riga);
         $fornitore->delete();
 
         flash()->info(tr('Relazione articolo-fornitore rimossa correttamente!'));

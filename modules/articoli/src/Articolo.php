@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules;
 use Modules\Interventi\Components\Articolo as ArticoloIntervento;
 use Modules\Iva\Aliquota;
-use Plugins\FornitoriArticolo\Dettaglio;
+use Plugins\DettagliArticolo\DettaglioFornitore;
 use Traits\RecordTrait;
 use Uploads;
 
@@ -199,7 +199,7 @@ class Articolo extends Model
 
     public function dettaglioFornitori()
     {
-        return $this->hasMany(Dettaglio::class, 'id_articolo');
+        return $this->hasMany(DettaglioFornitore::class, 'id_articolo');
     }
 
     public function dettaglioFornitore($id_fornitore)

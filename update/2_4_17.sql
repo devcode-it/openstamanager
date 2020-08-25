@@ -235,14 +235,10 @@ ALTER TABLE `co_pianodeiconti3` ADD `percentuale_deducibile` decimal(5,2) NOT NU
 UPDATE `co_movimenti` SET `totale_reddito` = `totale`;
 UPDATE `co_pianodeiconti3` SET `percentuale_deducibile` = 100;
 
--- Riduzione lunghezza campo nome zz_settings per problema compatibilità mysql 5.6 con UNIQUE
-ALTER TABLE `zz_settings` CHANGE `nome` `nome` VARCHAR(150) NOT NULL; 
-
--- Riduzione lunghezza campo username zz_users per problema compatibilità mysql 5.6 con UNIQUE
-ALTER TABLE `zz_users` CHANGE `username` `username` VARCHAR(150) NOT NULL;
-
 -- Evita di caricare impostazioni doppie
-ALTER TABLE `zz_settings` ADD UNIQUE(`nome`);
+-- Disabilitato per problemi con versioni di MySQL < 5.7
+-- ALTER TABLE `zz_settings` ADD UNIQUE(`nome`);
 
 -- Evita di caricare username doppi
-ALTER TABLE `zz_users` ADD UNIQUE(`username`);
+-- Disabilitato per problemi con versioni di MySQL < 5.7
+-- ALTER TABLE `zz_users` ADD UNIQUE(`username`);

@@ -19,9 +19,20 @@ foreach ($impostazioni as $impostazione) {
 
     $database->query('DELETE FROM `zz_settings` WHERE `nome` = '.prepare($impostazione['nome']).' LIMIT '.$limit);
 }
+
+// Rimozione dell'indice precedente
+try {
+    $database->query('ALTER TABLE `zz_settings` DROP INDEX `nome`');
+} catch (PDOException $e) {
+}
 $database->query('ALTER TABLE `zz_settings` CHANGE `nome` `nome` VARCHAR(150) NOT NULL');
 $database->query('ALTER TABLE `zz_settings` ADD UNIQUE(`nome`)');
 
 // Riduzione lunghezza campo username zz_users per problema compatibilità mysql 5.6 con UNIQUE
+// Rimozione dell'indice precedente
+try {
+    $database->query('ALTER TABLE `zz_users` DROP INDEX `username`');
+} catch (PDOException $e) {
+}
 $database->query('ALTER TABLE `zz_users` CHANGE `username` `username` VARCHAR(150) NOT NULL');
 $database->query('ALTER TABLE `zz_users` ADD UNIQUE(`username`)');

@@ -75,7 +75,7 @@ class Bollo
         }
 
         $riga->prezzo_unitario = $marca_da_bollo;
-        $riga->qta = 1;
+        $riga->qta = $this->fattura->isNota() ? -1 : 1;
         $riga->descrizione = setting('Descrizione addebito bollo');
         $riga->id_iva = setting('Iva da applicare su marca da bollo');
         $riga->idconto = setting('Conto predefinito per la marca da bollo');

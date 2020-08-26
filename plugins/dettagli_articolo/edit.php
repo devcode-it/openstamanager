@@ -1,8 +1,11 @@
 <?php
 
 use Plugins\DettagliArticolo\DettaglioFornitore;
+use Plugins\DettagliArticolo\DettaglioPrezzo;
 
 include_once __DIR__.'/../../core.php';
+
+$id_articolo = $id_record;
 
 echo '
 <p>'.tr("In questa sezione è possibile definire dei dettagli aggiuntivi per l'articolo in relazione ad una specifica anagrafica del gestionale").'.</p>
@@ -37,6 +40,94 @@ echo '
                     </div>
                 </div>
             </div>
+
+            <h4>'.tr('Elenco clienti').'</h4>';
+
+$clienti = DettaglioPrezzo::where('id_articolo', $id_articolo)
+    ->where('dir', 'entrata')
+    ->get()
+    ->groupBy('id_anagrafica');
+if (!$clienti->isEmpty()) {
+    echo '
+            <table class="table table-condensed table-bordered">
+                <thead>
+                    <tr>
+                        <th>'.tr('Cliente').'</th>
+                        <th class="text-center" width="210">'.tr('Q.tà minima').'</th>
+                        <th class="text-center" width="210">'.tr('Q.tà massima').'</th>
+                        <th class="text-center" width="150">'.tr('Prezzo unitario').'</th>
+                        <th class="text-center" width="70">#</th>
+                    </tr>
+                </thead>
+
+                <tbody>';
+
+    foreach ($clienti as $id_cliente => $dettagli) {
+        $anagrafica = $dettagli->first()->anagrafica;
+
+        echo '
+                    <tr data-id_anagrafica="'.$id_cliente.'" data-dir="entrata">
+                        <td colspan="4">
+                            '.Modules::link('Anagrafiche', $anagrafica->id, $anagrafica->ragione_sociale).'
+                        </td>
+
+                        <td class="text-center">
+                            <button type="button" class="btn btn-xs btn-warning" onclick="modificaPrezzi(this)">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                        </td>
+                    </tr>';
+
+        /*
+        $dettaglio_predefinito = $dettagli->whereStrict('minimo', null)
+            ->whereStrict('massimo', null)
+            ->first();
+
+        $dettagli = $dettagli->reject(function ($item, $key) use ($dettaglio_predefinito) {
+            return $item->id == $dettaglio_predefinito->id;
+        });
+        */
+        foreach ($dettagli as $key => $dettaglio) {
+            echo '
+                    <tr>
+                        <td></td>
+
+                        <td class="text-right">
+                            '.numberFormat($dettaglio->minimo).'
+                        </td>
+
+                        <td class="text-right">
+                            '.numberFormat($dettaglio->massimo).'
+                        </td>
+
+                        <td class="text-right">
+                            '.moneyFormat($dettaglio->prezzo_unitario).'
+                        </td>
+
+                        <td>';
+
+            if (!isset($dettaglio->minimo) && !isset($dettaglio->massimo)) {
+                echo '
+                            <span class="badge badge-primary">'.tr('Prezzo predefinito').'</span>';
+            }
+
+            echo '
+                        </td>
+                    </tr>';
+        }
+    }
+
+    echo '
+                </tbody>
+            </table>';
+} else {
+    echo '
+            <div class="alert alert-info">
+                <i class="fa fa-info-circle"></i> '.tr('Nessuna informazione disponibile').'...
+            </div>';
+}
+
+echo '
         </div>
 
         <div class="tab-pane" id="fornitori">
@@ -161,7 +252,11 @@ function apriTab(link) {
     parent.find(".tab-pane#" + tab).addClass("active");
 }
 
-function modificaPrezzi(id_anagrafica, direzione) {
+function modificaPrezzi(button) {
+    let tr = $(button).closest("tr");
+    let id_anagrafica = tr.data("id_anagrafica");
+    let direzione = tr.data("direzione");
+
     openModal("Modifica dettagli prezzi", "'.$structure->fileurl('dettaglio_prezzi.php').'?id_plugin='.$id_plugin.'&id_module='.$id_module.'&id_parent='.$id_record.'&id_articolo='.$id_record.'&id_anagrafica=" + id_anagrafica + "&direzione=" + direzione);
 }
 

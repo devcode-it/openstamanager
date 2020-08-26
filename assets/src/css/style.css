@@ -956,10 +956,29 @@ div.tip {
     display: none;
 }
 
-.control-sidebar-bg {
+.control-sidebar-bg, .control-sidebar {
     top: 50px;
 }
 
-.control-sidebar{
-    padding-top: 0;
+.control-sidebar {
+    padding-top: 10px;
+}
+
+@media screen and (min-width: 1140px) {
+    .with-control-sidebar {
+        margin-right: 230px;
+    }
+
+    .control-sidebar-shown {
+        right: 0;
+        display: block !important;
+    }
+
+    .control-sidebar.control-sidebar-shown, .control-sidebar.control-sidebar-shown + .control-sidebar-bg {
+        right: 0;
+    }
+
+    .control-sidebar-toggle {
+        display: none !important;
+    }
 }

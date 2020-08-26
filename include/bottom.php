@@ -9,7 +9,7 @@ if (Auth::check()) {
                 </section><!-- /.content -->
             </aside><!-- /.content-wrapper -->
 
-			<footer class="main-footer">
+			<footer class="main-footer '.(str_contains($_SERVER['SCRIPT_FILENAME'], 'editor.php') ? 'with-control-sidebar' : '').'">
                 <a class="hidden-xs" href="'.tr('https://www.openstamanager.com').'" title="'.tr("Il gestionale open source per l'assistenza tecnica e la fatturazione").'." target="_blank"><strong>'.tr('OpenSTAManager').'</strong></a>
 				<span class="pull-right hidden-xs">
                     <strong>'.tr('Versione').'</strong> '.$version.'

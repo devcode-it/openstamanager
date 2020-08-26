@@ -421,10 +421,72 @@ if (Auth::check()) {
                     </ul>
                 </section>
                 <!-- /.sidebar -->
-            </aside>
+            </aside>';
 
+    if (str_contains($_SERVER['SCRIPT_FILENAME'], 'editor.php')) {
+        // Menu laterale per la visualizzazione dei plugin
+        echo '
+        <aside class="control-sidebar control-sidebar-light control-sidebar-shown">
+            <h4 class="text-center">'.tr('Plugin disponibili').'</h4>
+            <ul class="nav nav-tabs nav-pills nav-stacked">
+                <li data-toggle="control-sidebar" class="active">
+                    <a data-toggle="tab" href="#tab_0">
+                        <i class="'.$structure['icon'].'"></i> '.$structure['title'].'
+                    </a>
+                </li>';
+
+        // Tab dei plugin
+        $plugins = $dbo->fetchArray('SELECT id, title FROM zz_plugins WHERE idmodule_to='.prepare($id_module)." AND position='tab' AND enabled = 1 ORDER BY zz_plugins.order DESC");
+        foreach ($plugins as $plugin) {
+            echo '
+                <li data-toggle="control-sidebar">
+                    <a data-toggle="tab" href="#tab_'.$plugin['id'].'" id="link-tab_'.$plugin['id'].'">
+                        '.$plugin['title'].'
+                    </a>
+                </li>';
+        }
+
+        // Tab per le note interne
+        if ($structure->permission != '-' && $structure->use_notes) {
+            $notes = $structure->recordNotes($id_record);
+
+            echo '
+                <li data-toggle="control-sidebar" class="bg-info">
+                    <a data-toggle="tab" href="#tab_note" id="link-tab_note">
+                        '.tr('Note interne').'
+                        <span class="badge">'.($notes->count() ?: '').'</span>
+                    </a>
+                </li>';
+        }
+
+        // Tab per le checklist
+        if ($structure->permission != '-' && $structure->use_checklists) {
+            echo '
+                <li data-toggle="control-sidebar" class="bg-success">
+                    <a data-toggle="tab" href="#tab_checks" id="link-tab_checks">'.tr('Checklist').'</a>
+                </li>';
+        }
+
+        // Tab per le informazioni sulle operazioni
+        if (Auth::admin()) {
+            echo '
+                <li data-toggle="control-sidebar" class="bg-warning">
+                    <a data-toggle="tab" href="#tab_info" id="link-tab_info">
+                        '.tr('Info').'
+                    </a>
+                </li>';
+        }
+
+        echo '
+            </ul>
+        </aside>
+
+        <div class="control-sidebar-bg"></div>';
+    }
+
+    echo '
             <!-- Right side column. Contains the navbar and content of the page -->
-            <aside class="content-wrapper">
+            <aside class="content-wrapper '.(str_contains($_SERVER['SCRIPT_FILENAME'], 'editor.php') ? 'with-control-sidebar' : '').'">
 
                 <!-- Main content -->
                 <section class="content">

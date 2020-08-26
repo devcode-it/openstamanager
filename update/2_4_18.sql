@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS `mg_prezzi_articoli` (
     `massimo` DECIMAL(15,6),
     `prezzo_unitario` DECIMAL(15,6) NOT NULL,
     `prezzo_unitario_ivato` DECIMAL(15,6) NOT NULL,
-    `direzione` VARCHAR(255) NOT NULL,
+    `dir` VARCHAR(255) NOT NULL,
     PRIMARY KEY (`id`),
     FOREIGN KEY (`id_articolo`) REFERENCES `mg_articoli`(`id`),
     FOREIGN KEY (`id_anagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`)

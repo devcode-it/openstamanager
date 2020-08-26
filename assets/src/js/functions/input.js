@@ -86,7 +86,15 @@ Input.prototype.getData = function () {
 }
 
 Input.prototype.get = function () {
-    return this.element.val();
+    let value = this.element.val();
+
+    // Conversione del valore per le checkbox
+    let group = this.element.closest(".form-group");
+    if (group.find("input[type=checkbox]").length){
+        value = parseInt(value);
+    }
+
+    return value;
 }
 
 Input.prototype.set = function (value) {

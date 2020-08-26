@@ -81,6 +81,7 @@ return [
     'mg_categorie',
     'mg_causali_movimenti',
     'mg_listini',
+    'mg_prezzi_articoli',
     'mg_movimenti',
     'mg_prodotti',
     'mg_unitamisura',

@@ -142,7 +142,7 @@ echo '
 
 foreach ($documenti as $nome => $info) {
     echo '
-<table class="hide" id="'.$nome.'-templace">';
+<table class="hide" id="'.$nome.'-template">';
     $dato = [];
     $key = '-id-';
 
@@ -152,7 +152,7 @@ foreach ($documenti as $nome => $info) {
 </table>
 
 <table class="hide">
-    <tbody id="riferimento_'.$nome.'-templace">
+    <tbody id="riferimento_'.$nome.'-template">
         <tr class="fifth-level" title="RiferimentoNumeroLinea-'.$nome.'--id-">
             <td style="vertical-align: middle;">
                 '.str_repeat($space, 4).$info['code'].'.1 RiferimentoNumeroLinea - '.tr('Riga _NUM_', [
@@ -184,27 +184,27 @@ echo '
 <script>
 function add_blocco(btn, nome){
     cleanup_inputs();
-    
+
     var last = $(btn).closest("table").find("tr[id^=last-" + nome + "]").parent().last();
 
     keys[nome]++;
-    var text = replaceAll($("#" + nome + "-templace").html(), "-id-", "" + keys[nome]);
-    
+    var text = replaceAll($("#" + nome + "-template").html(), "-id-", "" + keys[nome]);
+
     ref_keys[nome + keys[nome]] = 1;
-    
+
     last.after(text);
     restart_inputs();
 }
 
 function add_riferimento(btn, nome, key) {
     cleanup_inputs();
-    
+
     var last = $(btn).closest("table").find("tr[title=RiferimentoNumeroLinea-" + nome + "-" + key + "]").last();
 
     ref_keys[nome + key]++;
-    var text = replaceAll($("#riferimento_" + nome + "-templace").html(), "-id-", "" + key);
+    var text = replaceAll($("#riferimento_" + nome + "-template").html(), "-id-", "" + key);
     text = replaceAll(text, "-num-", "" + ref_keys[nome + key]);
-    
+
     last.after(text);
     restart_inputs();
 }

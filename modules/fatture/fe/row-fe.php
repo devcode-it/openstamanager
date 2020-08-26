@@ -125,14 +125,14 @@ function add_altri_dati(btn){
     var last = $(btn).closest("table").find("tr[id^=last-altri_dati]").parent().last();
 
     n++;
-    var text = replaceAll($("#altri_dati-templace").html(), "-id-", "" + n);
+    var text = replaceAll($("#altri_dati-template").html(), "-id-", "" + n);
 
     last.after(text);
     restart_inputs();
 };
 </script>
 
-<table class="hide" id="altri_dati-templace">';
+<table class="hide" id="altri_dati-template">';
 $dato = [];
 $key = '-id-';
 

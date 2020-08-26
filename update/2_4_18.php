@@ -23,7 +23,7 @@ foreach ($impostazioni as $impostazione) {
 // Rimozione dell'indice precedente
 try {
     $database->query('ALTER TABLE `zz_settings` DROP INDEX `nome`');
-} catch (PDOException $e) {
+} catch (\PDOException $e) {
 }
 $database->query('ALTER TABLE `zz_settings` CHANGE `nome` `nome` VARCHAR(150) NOT NULL');
 $database->query('ALTER TABLE `zz_settings` ADD UNIQUE(`nome`)');
@@ -32,7 +32,7 @@ $database->query('ALTER TABLE `zz_settings` ADD UNIQUE(`nome`)');
 // Rimozione dell'indice precedente
 try {
     $database->query('ALTER TABLE `zz_users` DROP INDEX `username`');
-} catch (PDOException $e) {
+} catch (\PDOException $e) {
 }
 $database->query('ALTER TABLE `zz_users` CHANGE `username` `username` VARCHAR(150) NOT NULL');
 $database->query('ALTER TABLE `zz_users` ADD UNIQUE(`username`)');

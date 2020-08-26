@@ -7,6 +7,9 @@ include_once __DIR__.'/../../../core.php';
 // Interventi da pianificare
 $interventi_da_pianificare = Intervento::doesntHave('sessioni')
     ->orderByRaw('IF(data_scadenza IS NULL, data_richiesta, data_scadenza)')
+    ->whereHas('stato', function ($query) {
+        return $query->where('is_completato', '=', 0);
+    })
     ->get();
 $raggruppamenti = $interventi_da_pianificare->groupBy(function ($item, $key) {
     $data = $item->data_scadenza ?: $item->data_richiesta;

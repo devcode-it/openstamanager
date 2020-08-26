@@ -235,7 +235,7 @@ echo '
 		        <i class="fa fa-refresh"></i> '.tr('Visualizza tutte le modalità').'
             </button>
 
-            {[ "type": "select", "label": "'.tr('Pagamento').'", "name": "pagamento", "required": 1, "ajax-source": "pagamenti", "select-options": {'.(!empty($codice_modalita_pagamento) ? '"codice_modalita_pagamento_fe": '.$codice_modalita_pagamento : '').'} ]}
+            {[ "type": "select", "label": "'.tr('Pagamento').'", "name": "pagamento", "required": 1, "ajax-source": "pagamenti", "select-options": '.json_encode(['codice_modalita_pagamento_fe' => $codice_modalita_pagamento]).' ]}
         </div>';
 
 // Movimentazioni
@@ -318,7 +318,7 @@ if (!empty($righe)) {
                 {[ "type": "select", "name": "conto['.$key.']", "ajax-source": "conti-acquisti", "required": 1, "placeholder": "Conto acquisti" ]}
             </td>
             <td>
-                {[ "type": "select", "name": "articoli['.$key.']", "ajax-source": "articoli", "select-options": {"permetti_movimento_a_zero": 1, "dir": "entrata", "idanagrafica": '.($anagrafica ? $anagrafica->id : '""').'}, "icon-after": "add|'.Modules::get('Articoli')['id'].'|codice='.htmlentities($codice_principale).'&descrizione='.htmlentities($riga['Descrizione']).'", "value": "'.$id_articolo.'" ]}
+                {[ "type": "select", "name": "articoli['.$key.']", "ajax-source": "articoli", "select-options": '.json_encode(['permetti_movimento_a_zero' => 1, 'dir' => 'entrata', 'idanagrafica' => $anagrafica ? $anagrafica->id : '']).', "icon-after": "add|'.Modules::get('Articoli')['id'].'|codice='.htmlentities($codice_principale).'&descrizione='.htmlentities($riga['Descrizione']).'", "value": "'.$id_articolo.'" ]}
 
                 <br>
                 <span id="riferimento_'.$key.'"></span>

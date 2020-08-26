@@ -10,7 +10,7 @@ $id_articolo = $id_record;
 echo '
 <p>'.tr("In questa sezione è possibile definire dei dettagli aggiuntivi per l'articolo in relazione ad una specifica anagrafica del gestionale").'.</p>
 <p>'.tr("Per i Clienti è possibile definire un prezzo personalizzato per la vendita dell'articolo, fisso oppure in relazione a una specifica quantità").'. '.tr("Per i Fornitori sono disponibili maggiori informazioni relative a codice, descrizione e quantità minime richieste per l'acquisto").'.</p>
-<p>'.tr("Queste informazioni sono integrate con il resto del gestionale per garantire una maggiore flessibilità all'utente finale").'</p>
+<p>'.tr("Queste informazioni sono integrate con il resto del gestionale per garantire una maggiore flessibilità all'utente finale").'.</p>
 
 <div class="nav-tabs-custom">
     <ul class="nav-tabs-li nav nav-tabs nav-justified">
@@ -257,6 +257,10 @@ function modificaPrezzi(button) {
     let id_anagrafica = tr.data("id_anagrafica");
     let direzione = tr.data("direzione");
 
+    gestionePrezzi(id_anagrafica, direzione);
+}
+
+function gestionePrezzi(id_anagrafica, direzione) {
     openModal("Modifica dettagli prezzi", "'.$structure->fileurl('dettaglio_prezzi.php').'?id_plugin='.$id_plugin.'&id_module='.$id_module.'&id_parent='.$id_record.'&id_articolo='.$id_record.'&id_anagrafica=" + id_anagrafica + "&direzione=" + direzione);
 }
 
@@ -268,7 +272,7 @@ function aggiungiPrezzi(button) {
     let id_anagrafica = panel.find("select").val();
 
     if (id_anagrafica) {
-        modificaPrezzi(id_anagrafica, direzione);
+        gestionePrezzi(id_anagrafica, direzione);
     } else {
         swal("'.tr('Errore').'", "'.tr('Nessuna anagrafica selezionato').'", "error");
     }

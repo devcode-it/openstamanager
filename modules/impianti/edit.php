@@ -64,7 +64,7 @@ if (!empty($record['immagine'])) {
                 <?php
                 echo '
 				<div class="col-md-4">
-					{[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede", "value": "$idsede$", "required": "1", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "placeholder": "'.tr('Sede legale').'" ]}
+					{[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede", "value": "$idsede$", "required": "1", "ajax-source": "sedi", "select-options": '.json_encode(["idanagrafica" => $record['idanagrafica']]).', "placeholder": "'.tr('Sede legale').'" ]}
 				</div>';
                 ?>
 			</div>

@@ -26,9 +26,5 @@ switch ($resource) {
             $search_fields[] = 'co_contratti.nome LIKE '.prepare('%'.$search.'%');
         }
 
-        $custom['totale'] = 'totale';
-        $custom['sconto'] = 'sconto';
-        $custom['n_righe'] = 'n_righe';
-
         break;
 }

@@ -27,12 +27,6 @@ switch ($resource) {
             if (!empty($search)) {
                 $search_fields[] = 'nome LIKE '.prepare('%'.$search.'%');
             }
-
-            $custom['idtipointervento'] = 'idtipointervento';
-            $custom['tempo_standard'] = 'tempo_standard';
-            $custom['idtipointervento_descrizione'] = 'idtipointervento_descrizione';
-            $custom['totale'] = 'totale';
-            $custom['sconto'] = 'sconto';
         }
 
         break;

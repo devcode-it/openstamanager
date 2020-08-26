@@ -1,5 +1,7 @@
 <?php
 
+use Util\Query;
+
 /**
  * Classe per la gestione delle funzioni AJAX richiamabili del progetto.
  *
@@ -88,12 +90,12 @@ class AJAX
         $query = str_replace('|where|', !empty($where) ? 'WHERE '.implode(' AND ', $where) : '', $query);
         $query .= ' LIMIT '.$limit['offset'].', '.$limit['length'];
 
-        $data = \Util\Query::executeAndCount($query);
+        $data = Query::executeAndCount($query);
         $rows = $data['results'];
 
         $results = [];
         foreach ($rows as $row) {
-            $result = [];
+            $result = $row;
             foreach ($custom as $key => $value) {
                 $result[$key] = $row[$value];
             }

@@ -28,7 +28,5 @@ switch ($resource) {
             }
         }
 
-        $custom['percentuale'] = 'percentuale';
-
         break;
 }

@@ -110,29 +110,6 @@ switch ($resource) {
             }
         }
 
-        $custom = [
-            'id' => 'id',
-            'codice' => 'codice',
-            'descrizione' => 'descrizione',
-            'qta_minima' => 'qta_minima',
-            'id_dettaglio_fornitore' => 'id_dettaglio_fornitore',
-            'servizio' => 'servizio',
-            'qta' => 'qta',
-            'um' => 'um',
-            'categoria' => 'categoria',
-            'sottocategoria' => 'sottocategoria',
-            'idiva_vendita' => 'idiva_vendita',
-            'iva_vendita' => 'iva_vendita',
-            'idconto_vendita' => 'idconto_vendita',
-            'idconto_vendita_title' => 'idconto_vendita_title',
-            'idconto_acquisto' => 'idconto_acquisto',
-            'idconto_acquisto_title' => 'idconto_acquisto_title',
-            'prezzo_acquisto' => 'prezzo_acquisto',
-            'prezzo_vendita' => 'prezzo_vendita',
-            'prezzo_vendita_ivato' => 'prezzo_vendita_ivato',
-            'barcode' => 'barcode',
-        ];
-
         $data = AJAX::selectResults($query, $where, $filter, $search_fields, $limit, $custom);
         $rs = $data['results'];
 
@@ -214,7 +191,7 @@ switch ($resource) {
                 'prezzo_acquisto' => $r['prezzo_acquisto'],
                 'prezzo_vendita' => $prezzo_vendita,
                 'prezzo_vendita_ivato' => $r['prezzo_vendita_ivato'],
-                'disabled' => ($r['qta'] <= 0 && !$superselect['permetti_movimento_a_zero'] && !$r['servizio'] ? true : false),
+                'disabled' => $r['qta'] <= 0 && !$superselect['permetti_movimento_a_zero'] && !$r['servizio'],
             ];
         }
 
@@ -281,6 +258,11 @@ switch ($resource) {
         $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
         $query = 'SELECT mg_articoli.*,
+            mg_articoli.id,
+            mg_articoli.qta,
+            mg_articoli.um,
+            mg_articoli.id,
+            mg_articoli.id,
             IFNULL(mg_fornitore_articolo.codice_fornitore, mg_articoli.codice) AS codice,
             IFNULL(mg_fornitore_articolo.descrizione, mg_articoli.descrizione) AS descrizione,
             IFNULL(mg_fornitore_articolo.prezzo_acquisto, mg_articoli.prezzo_acquisto) AS prezzo_acquisto,
@@ -295,26 +277,6 @@ switch ($resource) {
         $where[] = 'barcode='.prepare(get('barcode'));
         $where[] = 'mg_articoli.attivo = 1';
         $where[] = 'mg_articoli.deleted_at IS NULL';
-
-        $custom = [
-            'id' => 'id',
-            'codice' => 'codice',
-            'descrizione' => 'descrizione',
-            'qta' => 'qta',
-            'um' => 'um',
-            'categoria' => 'categoria',
-            'sottocategoria' => 'sottocategoria',
-            'idiva_vendita' => 'idiva_vendita',
-            'iva_vendita' => 'iva_vendita',
-            'idconto_vendita' => 'idconto_vendita',
-            'idconto_vendita_title' => 'idconto_vendita_title',
-            'idconto_acquisto' => 'idconto_acquisto',
-            'idconto_acquisto_title' => 'idconto_acquisto_title',
-            'prezzo_acquisto' => 'prezzo_acquisto',
-            'prezzo_vendita' => 'prezzo_vendita',
-            'id_dettaglio_fornitore' => 'id_dettaglio_fornitore',
-            'barcode' => 'barcode',
-        ];
 
         break;
 }

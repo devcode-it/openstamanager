@@ -22,7 +22,7 @@ $id_anagrafica = filter('id_anagrafica');
 		</div>
 
 		<div class="col-md-4">
-			{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "value": "$idsede$", "ajax-source": "sedi", "select-options": {"idanagrafica": <?php echo $id_anagrafica; ?>}, "placeholder": "Sede legale" ]}
+			{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "value": "$idsede$", "ajax-source": "sedi", "select-options": <?php echo json_encode(["idanagrafica" => $id_anagrafica]); ?>, "placeholder": "Sede legale" ]}
 		</div>
 
 		<div class="col-md-4">

@@ -13,7 +13,5 @@ switch ($resource) {
             $search_fields[] = 'descrizione LIKE '.prepare('%'.$search.'%');
         }
 
-        $custom['tempo_standard'] = 'tempo_standard';
-
         break;
 }

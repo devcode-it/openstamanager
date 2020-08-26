@@ -493,6 +493,11 @@ echo '
                 let orario_inizio = moment(start).format("HH:mm");
                 let orario_fine = moment(end).format("HH:mm");
 
+                // Fix selezione di un giorno avanti per vista mensile
+                if (globals.dashboard.calendar.fullCalendar("getView").name == "month") {
+                    data_fine = moment(end).subtract(1, "days").format("YYYY-MM-DD");
+                }
+
                 openModal(globals.dashboard.select.title, globals.dashboard.select.url + "&ref=dashboard&data=" + data + "&data_fine=" + data_fine + "&orario_inizio=" + orario_inizio + "&orario_fine=" + orario_fine);
             },
 

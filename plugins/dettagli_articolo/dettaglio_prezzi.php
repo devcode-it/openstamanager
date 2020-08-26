@@ -209,11 +209,11 @@ function cambioImpostazioni() {
     }
 }
 
-input("modifica_prezzi").change(function (){
+input("modifica_prezzi").change(function () {
     cambioImpostazioni();
 })
 
-input("prezzo_fisso").change(function (){
+input("prezzo_fisso").change(function () {
     cambioImpostazioni();
 })
 

@@ -33,7 +33,7 @@ echo '
                         </div>
 
                         <div class="col-md-3">
-                            <button type="button" class="btn btn-primary btn-block" style="margin-top:25px;" onclick="aggiungiPrezzi(this)">
+                            <button type="button" class="btn btn-info btn-block" style="margin-top:25px;" onclick="aggiungiPrezzi(this)">
                                 <i class="fa fa-money"></i> '.tr('Prezzi').'
                             </button>
                         </div>
@@ -56,48 +56,48 @@ if (!$clienti->isEmpty()) {
                         <th class="text-center" width="210">'.tr('Q.tà minima').'</th>
                         <th class="text-center" width="210">'.tr('Q.tà massima').'</th>
                         <th class="text-center" width="150">'.tr('Prezzo unitario').'</th>
-                        <th class="text-center" width="70">#</th>
+                        <th class="text-center" width="150">#</th>
                     </tr>
                 </thead>
 
                 <tbody>';
 
-    foreach ($clienti as $id_cliente => $dettagli) {
-        $anagrafica = $dettagli->first()->anagrafica;
+    foreach ($clienti as $id_cliente => $prezzi) {
+        $anagrafica = $prezzi->first()->anagrafica;
 
         echo '
-                    <tr data-id_anagrafica="'.$id_cliente.'" data-dir="entrata">
+                    <tr data-id_anagrafica="'.$id_cliente.'" data-direzione="entrata">
                         <td colspan="4">
                             '.Modules::link('Anagrafiche', $anagrafica->id, $anagrafica->ragione_sociale).'
                         </td>
 
                         <td class="text-center">
                             <button type="button" class="btn btn-xs btn-warning" onclick="modificaPrezzi(this)">
-                                <i class="fa fa-edit"></i>
+                                <i class="fa fa-money"></i>
                             </button>
                         </td>
                     </tr>';
 
         /*
-        $dettaglio_predefinito = $dettagli->whereStrict('minimo', null)
+        $dettaglio_predefinito = $prezzi->whereStrict('minimo', null)
             ->whereStrict('massimo', null)
             ->first();
 
-        $dettagli = $dettagli->reject(function ($item, $key) use ($dettaglio_predefinito) {
+        $prezzi = $prezzi->reject(function ($item, $key) use ($dettaglio_predefinito) {
             return $item->id == $dettaglio_predefinito->id;
         });
         */
-        foreach ($dettagli as $key => $dettaglio) {
+        foreach ($prezzi as $key => $dettaglio) {
             echo '
                     <tr>
                         <td></td>
 
                         <td class="text-right">
-                            '.numberFormat($dettaglio->minimo).'
+                            '.($dettaglio->minimo ? numberFormat($dettaglio->minimo) : '-').'
                         </td>
 
                         <td class="text-right">
-                            '.numberFormat($dettaglio->massimo).'
+                            '.($dettaglio->massimo ? numberFormat($dettaglio->massimo) : '-').'
                         </td>
 
                         <td class="text-right">
@@ -132,7 +132,6 @@ echo '
 
         <div class="tab-pane" id="fornitori">
             <p>'.tr("In questa sezione è possibile definire le caratteristiche di base dell'articolo in relazione fornitore di origine, come codice e prezzo di acquisto predefinito").'. '.tr("Queste informazioni saranno utilizzate in automatico per la compilazione dell'articolo al momento dell'inserimento in un documento di acquisto relativo al fornitore indicato, sovrascrivendo le impostazioni predefinite della sezione Acquisto per l'articolo").'.</p>
-            <p>'.tr("Ogni fornitore, tra cui si evidenzia quello predefinito per l'articolo, può essere descritto una sola volta con le informazioni aggiuntive").'.</p>
 
             <div class="box">
                 <div class="box-header">
@@ -146,22 +145,37 @@ echo '
                         </div>
 
                         <div class="col-md-3">
-                            <button type="button" class="btn btn-primary btn-block" style="margin-top:25px;" onclick="aggiungiPrezzi(this)">
-                                <i class="fa fa-money"></i> '.tr('Prezzi').'
-                            </button>
+                            <div class="btn-group btn-group-flex">
+                                <button type="button" class="btn btn-info" style="margin-top:25px;" onclick="aggiungiPrezzi(this)">
+                                    <i class="fa fa-money"></i> '.tr('Prezzi').'
+                                </button>
 
-                            <button type="button" class="btn btn-primary btn-block" style="margin-top:25px;" onclick="aggiungiFornitore()">
-                                <i class="fa fa-inbox"></i> '.tr('Dettagli').'
-                            </button>
+                                <button type="button" class="btn btn-primary" style="margin-top:25px;" onclick="aggiungiFornitore()">
+                                    <i class="fa fa-inbox"></i> '.tr('Dettagli').'
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>';
+            </div>
 
-$fornitori = DettaglioFornitore::where('id_articolo', $id_record)->get();
-if (!$fornitori->isEmpty()) {
+            <h4>'.tr('Elenco fornitori').'</h4>';
+
+$dettagli_fornitori = DettaglioFornitore::where('id_articolo', $id_record)->get()
+    ->mapToGroups(function ($item, $key) {
+        return [$item->id_fornitore => $item];
+    });
+$prezzi_fornitori = DettaglioPrezzo::where('id_articolo', $id_articolo)
+    ->where('dir', 'uscita')
+    ->get()
+    ->groupBy('id_anagrafica');
+
+$fornitori_disponibili = $dettagli_fornitori->keys()
+    ->merge($prezzi_fornitori->keys())
+    ->unique();
+
+if (!$fornitori_disponibili->isEmpty()) {
     echo '
-            <h4>'.tr('Elenco fornitori').'</h4>
             <table class="table table-striped table-condensed table-bordered">
                 <thead>
                     <tr>
@@ -170,54 +184,123 @@ if (!$fornitori->isEmpty()) {
                         <th>'.tr('Descrizione').'</th>
                         <th class="text-center" width="210">'.tr('Q.tà minima ordinabile').'</th>
                         <th class="text-center" width="150">'.tr('Tempi di consegna').'</th>
-                        <th class="text-center" width="150">'.tr('Prezzo acquisto').'</th>
-                        <th class="text-center" width="70"></th>
+                        <th class="text-center" width="150">#</th>
                     </tr>
                 </thead>
 
                 <tbody>';
 
-    foreach ($fornitori as $fornitore) {
-        $anagrafica = $fornitore->anagrafica;
+    foreach ($fornitori_disponibili as $id_fornitore) {
+        $dettaglio = $dettagli_fornitori[$id_fornitore] ? $dettagli_fornitori[$id_fornitore]->first() : null;
+        $prezzi = $prezzi_fornitori[$id_fornitore];
+
+        $anagrafica = $dettaglio ? $dettaglio->anagrafica : $prezzi->first()->anagrafica;
 
         echo '
-                    <tr '.(($anagrafica->id == $articolo->id_fornitore) ? 'class="success"' : '').'>
+                    <tr data-id_anagrafica="'.$anagrafica->id.'" data-direzione="uscita" '.(($anagrafica->id == $articolo->id_fornitore) ? 'class="success"' : '').'>
                         <td>
                             '.Modules::link('Anagrafiche', $anagrafica->id, $anagrafica->ragione_sociale).'
-                        </td>
+                        </td>';
 
+        if (!empty($dettaglio)) {
+            echo '
                         <td class="text-center">
-                            '.$fornitore['codice_fornitore'].'
+                            '.$dettaglio['codice_fornitore'].'
                         </td>
 
                         <td>
-                            '.$fornitore['descrizione'].'
+                            '.$dettaglio['descrizione'].'
                         </td>
 
                         <td class="text-right">
-                            '.numberFormat($fornitore['qta_minima']).' '.$fornitore->articolo->um.'
+                            '.numberFormat($dettaglio['qta_minima']).' '.$articolo->um.'
                         </td>
 
                         <td class="text-right">
                             '.tr('_NUM_ gg', [
-                                '_NUM_' => numberFormat($fornitore['giorni_consegna'], 0),
+                                '_NUM_' => numberFormat($dettaglio['giorni_consegna'], 0),
                             ]).'
-                        </td>
+                        </td>';
+        } else {
+            echo '
+                        <td class="text-center">-</td>
+                        <td>-</td>
+                        <td class="text-right">-</td>
+                        <td class="text-right">-</td>';
+        }
 
-                        <td class="text-right">
-                            <span>'.moneyFormat($fornitore['prezzo_acquisto']).'</span>
-                        </td>
-
+        echo '
                         <td class="text-center">
-                            <a class="btn btn-secondary btn-xs btn-warning" onclick="modificaFornitore('.$fornitore['id'].', '.$anagrafica->id.')">
+                            <button type="button" class="btn btn-xs btn-warning" onclick="modificaPrezzi(this)">
+                                <i class="fa fa-money"></i>
+                            </button>';
+
+        if (!empty($dettaglio)) {
+            echo '
+
+                            <a class="btn btn-secondary btn-xs btn-warning" onclick="modificaFornitore('.$dettaglio['id'].', '.$anagrafica->id.')">
                                 <i class="fa fa-edit"></i>
                             </a>
 
-                            <a class="btn btn-secondary btn-xs btn-danger ask" data-op="delete_fornitore" data-id_riga="'.$fornitore['id'].'" data-id_plugin="'.$id_plugin.'" data-backto="record-edit">
+                            <a class="btn btn-secondary btn-xs btn-danger ask" data-op="delete_fornitore" data-id_riga="'.$dettaglio['id'].'" data-id_plugin="'.$id_plugin.'" data-backto="record-edit">
                                 <i class="fa fa-trash-o"></i>
-                            </a>
+                            </a>';
+        }
+
+        echo '
                         </td>
                     </tr>';
+
+        /*
+        $dettaglio_predefinito = $prezzi->whereStrict('minimo', null)
+            ->whereStrict('massimo', null)
+            ->first();
+
+        $prezzi = $prezzi->reject(function ($item, $key) use ($dettaglio_predefinito) {
+            return $item->id == $dettaglio_predefinito->id;
+        });
+        */
+        if (!$prezzi->isEmpty()) {
+            echo '
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <th class="text-center">'.tr('Q.tà minima').'</th>
+                        <th class="text-center">'.tr('Q.tà massima').'</th>
+                        <th class="text-center">'.tr('Prezzo unitario').'</th>
+                        <td></td>
+                    </tr>';
+
+            foreach ($prezzi as $key => $dettaglio) {
+                echo '
+                    <tr>
+                        <td></td>
+                        <td></td>
+
+                        <td class="text-right">
+                            '.($dettaglio->minimo ? numberFormat($dettaglio->minimo) : '-').'
+                        </td>
+
+                        <td class="text-right">
+                            '.($dettaglio->massimo ? numberFormat($dettaglio->massimo) : '-').'
+                        </td>
+
+                        <td class="text-right">
+                            '.moneyFormat($dettaglio->prezzo_unitario).'
+                        </td>
+
+                        <td>';
+
+                if (!isset($dettaglio->minimo) && !isset($dettaglio->massimo)) {
+                    echo '
+                            <span class="badge badge-primary">'.tr('Prezzo predefinito').'</span>';
+                }
+
+                echo '
+                        </td>
+                    </tr>';
+            }
+        }
     }
 
     echo '

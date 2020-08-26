@@ -41,7 +41,7 @@ switch (filter('op')) {
         // Informazioni di base
         $id_articolo = filter('id_articolo');
         $id_anagrafica = filter('id_anagrafica');
-        $direzione = filter('direzione') == 'uscita' ? 'uscita' : 'entrata';
+        $direzione = filter('dir') == 'uscita' ? 'uscita' : 'entrata';
 
         $articolo = Articolo::find($id_articolo);
         $anagrafica = Anagrafica::find($id_anagrafica);

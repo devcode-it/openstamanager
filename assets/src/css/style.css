@@ -982,3 +982,11 @@ div.tip {
         display: none !important;
     }
 }
+
+ .btn-group-flex {
+     display: flex;
+ }
+
+.btn-group-flex .btn {
+    flex: 1
+}

@@ -54,6 +54,7 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
     foreach ($pianificazioni as $pianificazione) {
         $contratto = $pianificazione->contratto;
         $anagrafica = $contratto->anagrafica;
+        $numero_pianificazioni = $contratto->pianificazioni()->count();
 
         if (strtolower($pianificazione->data_scadenza->formatLocalized('%B %Y')) == strtolower($mese)) {
             echo '
@@ -69,10 +70,11 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
 
                 <td>
                     '.moneyFormat($pianificazione->totale).'<br>
-                    <small>'.tr('_TOT_ / _NUM_ rate', [
-                        '_TOT_' => moneyFormat($contratto->totale),
-                        '_NUM_' => numberFormat($contratto->pianificazioni()->count(), 0),
-                    ]).'</small>
+                    <small>'.tr('Rata _IND_/_NUM_ (totale: _TOT_)', [
+                        '_IND_' => numberFormat($pianificazione->getNumeroPianificazione(), 0),
+                        '_NUM_' => numberFormat($numero_pianificazioni, 0),
+                    '_TOT_' => moneyFormat($contratto->totale),
+                ]).'</small>
                 </td>';
 
             // Pulsanti

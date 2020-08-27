@@ -65,6 +65,17 @@ class Pianificazione extends Document
         return $this->belongsTo(Fattura::class, 'iddocumento');
     }
 
+    public function getNumeroPianificazione()
+    {
+        $pianificazioni = $this->contratto->pianificazioni;
+
+        $p = $this;
+
+        return $pianificazioni->search(function ($item) use ($p) {
+            return $item->id == $p->id;
+        }) + 1;
+    }
+
     public function getRighe()
     {
         $righe = $this->contratto->getRighe();

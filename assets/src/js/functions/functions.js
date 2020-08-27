@@ -510,7 +510,7 @@ function alertPush() {
 
             $(this).css({
                 'position': 'fixed',
-                'z-index': 3,
+                'z-index': 3000,
                 'right': '10px',
                 'top': -100,
             }).delay(1000).animate({

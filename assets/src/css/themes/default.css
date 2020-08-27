@@ -200,3 +200,7 @@
 .skin-default .panel-primary .panel-heading {
     border-bottom: 2px solid #57a;
 }
+
+.skin-default .nav-button {
+    background-color: #333;
+}

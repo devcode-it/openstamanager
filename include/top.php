@@ -332,7 +332,7 @@ if (Auth::check()) {
                      <!-- Navbar Right Menu -->
                      <div class="navbar-custom-menu">
                         <ul class="nav navbar-nav">
-                            <li class="dropdown notifications-menu" >
+                            <li class="dropdown notifications-menu nav-button">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                     <i class="fa fa-bell-o"></i>
                                     <span id="hooks-label" class="label label-warning">
@@ -350,19 +350,19 @@ if (Auth::check()) {
                                 </ul>
                             </li>
 
-                            <li><a href="#" onclick="window.print()" class="tip" title="'.tr('Stampa').'">
+                            <li><a href="#" onclick="window.print()" class="tip nav-button" title="'.tr('Stampa').'">
                                 <i class="fa fa-print"></i>
                             </a></li>
 
-                            <li><a href="'.$rootdir.'/bug.php" class="tip" title="'.tr('Segnalazione bug').'">
+                            <li><a href="'.$rootdir.'/bug.php" class="tip nav-button" title="'.tr('Segnalazione bug').'">
                                 <i class="fa fa-bug"></i>
                             </a></li>
 
-                            <li><a href="'.$rootdir.'/log.php" class="tip" title="'.tr('Log accessi').'">
+                            <li><a href="'.$rootdir.'/log.php" class="tip nav-button" title="'.tr('Log accessi').'">
                                 <i class="fa fa-book"></i>
                             </a></li>
 
-                            <li><a href="'.$rootdir.'/info.php" class="tip" title="'.tr('Informazioni').'">
+                            <li><a href="'.$rootdir.'/info.php" class="tip nav-button" title="'.tr('Informazioni').'">
                                 <i class="fa fa-info"></i>
                             </a></li>
 

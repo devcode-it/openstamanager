@@ -123,7 +123,7 @@ $("#idarticolo").on("change", function() {
         } else {
             verificaPrezzoArticolo();
         }
-    })
+    });
 
     $("#costo_unitario").val($data.prezzo_acquisto);
     $("#descrizione_riga").val($data.descrizione);
@@ -153,7 +153,7 @@ $("#idarticolo").on("change", function() {
     }
 });
 
-$("#qta").on("change", function() {
+$(document).on("change", "input[name^=qta], input[name^=prezzo_unitario]", function() {
     verificaPrezzoArticolo();
 });
 
@@ -225,7 +225,7 @@ function aggiornaPrezzoArticolo() {
     let qta = $("#qta").val().toEnglish();
     let prezzo_previsto = getPrezzoPerQuantita(qta);
 
-    $("#prezzo_unitario").val(prezzo_previsto);
+    $("#prezzo_unitario").val(prezzo_previsto).trigger("change");
 }
 
 /**

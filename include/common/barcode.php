@@ -37,128 +37,217 @@ echo '
 
 echo '
 <script>
-    $(document).ready(function(){
-        init();
+var direzione = "'.$options['dir'].'";
 
-        setTimeout(function(){
-            $("#barcode").focus();
-        }, 300);
+$(document).ready(function(){
+    init();
 
-        $(".modal-body button").attr("disabled", true);
-    });
+    setTimeout(function(){
+        $("#barcode").focus();
+    }, 300);
 
-    // Gestione dell\'invio da tastiera
-    $(document).keypress(function(event){
-        let key = window.event ? event.keyCode : event.which; // IE vs Netscape/Firefox/Opera
-        if (key == "13") {
-            event.preventDefault();
-            $("#barcode").blur()
-                .focus();
-        }
-    });
+    $(".modal-body button").attr("disabled", true);
+});
 
-    var dir = "'.$options['dir'].'";
-    $("#barcode").off("keyup").on("keyup", function (event) {
-        let key = window.event ? event.keyCode : event.which; // IE vs Netscape/Firefox/Opera
-        $("#articolo-missing").addClass("hidden");
-        $("#articolo-qta").addClass("hidden");
+// Gestione dell\'invio da tastiera
+$(document).keypress(function(event){
+    let key = window.event ? event.keyCode : event.which; // IE vs Netscape/Firefox/Opera
+    if (key == "13") {
+        event.preventDefault();
+        $("#barcode").blur()
+            .focus();
+    }
+});
 
-        if (key !== 13) {
+$("#barcode").off("keyup").on("keyup", function (event) {
+    let key = window.event ? event.keyCode : event.which; // IE vs Netscape/Firefox/Opera
+    $("#articolo-missing").addClass("hidden");
+    $("#articolo-qta").addClass("hidden");
+
+    if (key !== 13) {
+        return;
+    }
+
+    $("#barcode").attr("disabled", true);
+    var barcode = $("#barcode").val();
+    if (!barcode){
+        barcodeReset();
+        return;
+    }
+
+    $.getJSON(globals.rootdir + "/ajax_select.php?op=articoli_barcode&barcode=" + barcode + "&id_anagrafica='.$options['idanagrafica'].'",
+    function(response) {
+        let result = response.results[0];
+        if(!result){
+            $("#articolo-missing").removeClass("hidden");
+            barcodeReset();
+
             return;
         }
 
-        $("#barcode").attr("disabled", true);
-        var barcode = $("#barcode").val();
-        if (!barcode){
+        let qta_input = $("#riga_barcode_" + result.id).find("[name^=qta]");
+        if (result.qta == 0) {
+            $("#articolo-qta").removeClass("hidden");
             barcodeReset();
             return;
         }
 
-        $.getJSON(globals.rootdir + "/ajax_select.php?op=articoli_barcode&barcode=" + barcode + "&id_anagrafica='.$options['idanagrafica'].'",
-        function(response) {
-            let result = response.results[0];
-            if(!result){
-                $("#articolo-missing").removeClass("hidden");
-                barcodeReset();
+        // Controllo se è già presente l\'articolo, in tal caso incremento la quantità, altrimenti inserisco la riga nuova
+        if (qta_input.length) {
+            let qta = qta_input.val().toEnglish();
+            let nuova_qta = qta + 1;
 
-                return;
-            }
-
-            let qta_input = $("#riga_barcode_" + result.id).find("[name^=qta]");
-            if (result.qta == 0) {
+            if (result.qta < nuova_qta) {
                 $("#articolo-qta").removeClass("hidden");
                 barcodeReset();
                 return;
             }
 
-            // Controllo se è già presente l\'articolo, in tal caso incremento la quantità, altrimenti inserisco la riga nuova
-            if (qta_input.length) {
-                let qta = qta_input.val().toEnglish();
-                let nuova_qta = qta + 1;
+            qta_input.val(nuova_qta).trigger("change");
+        } else {
+            let prezzo_unitario = (direzione === "uscita") ? result.prezzo_acquisto : result.prezzo_vendita;
 
-                if (result.qta < nuova_qta) {
-                    $("#articolo-qta").removeClass("hidden");
-                    barcodeReset();
-                    return;
-                }
-
-                qta_input.val(nuova_qta).trigger("change");
-            } else {
-                let prezzo_unitario = (dir === "uscita") ? result.prezzo_acquisto : result.prezzo_vendita;
-
-                let info_prezzi;
-                if(dir == "entrata") {
-                    info_prezzi = "Acquisto: " + result.prezzo_acquisto + " &euro;";
-                }else{
-                    info_prezzi = "Vendita: " + result.prezzo_vendita + " &euro;";
-                }
-
-                $("#articoli_barcode").removeClass("hide");
-                cleanup_inputs();
-
-                var text = replaceAll($("#barcode-template").html(), "-id-", result.id);
-                text = text.replace("|prezzo_unitario|", prezzo_unitario)
-                    .replace("|info_prezzi|", info_prezzi)
-                    .replace("|descrizione|", result.descrizione)
-                    .replace("|codice|", result.codice)
-                    .replace("|qta|", 1)
-                    .replace("|sconto_unitario|", 0)
-                    .replace("|tipo_sconto|", "")
-                    .replace("|id_dettaglio_fornitore|", result.id_dettaglio_fornitore ? result.id_dettaglio_fornitore : "")
-
-                $("#articoli_barcode tr:last").after(text);
-                restart_inputs();
-
-                $(".modal-body button").attr("disabled", false);
+            let info_prezzi;
+            if(direzione == "entrata") {
+                info_prezzi = "Acquisto: " + result.prezzo_acquisto + " &euro;";
+            }else{
+                info_prezzi = "Vendita: " + result.prezzo_vendita + " &euro;";
             }
 
-            barcodeReset();
-            $("#barcode").val("");
-        }, function(){
-            $("#articolo-missing").removeClass("hidden");
-            barcodeReset();
-        });
+            $("#articoli_barcode").removeClass("hide");
+            cleanup_inputs();
+
+            var text = replaceAll($("#barcode-template").html(), "-id-", result.id);
+            text = text.replace("|prezzo_unitario|", prezzo_unitario)
+                .replace("|info_prezzi|", info_prezzi)
+                .replace("|descrizione|", result.descrizione)
+                .replace("|codice|", result.codice)
+                .replace("|qta|", 1)
+                .replace("|sconto_unitario|", 0)
+                .replace("|tipo_sconto|", "")
+                .replace("|id_dettaglio_fornitore|", result.id_dettaglio_fornitore ? result.id_dettaglio_fornitore : "")
+
+            $("#articoli_barcode tr:last").after(text);
+            restart_inputs();
+
+            $(".modal-body button").attr("disabled", false);
+
+            // Gestione dinamica dei prezzi
+            let tr = $("#riga_barcode_" + result.id);
+            ottieniPrezziArticolo(result.id, tr).then(function() {
+                if ($(tr).find("input[name^=prezzo_unitario]").val().toEnglish() === 0){
+                    aggiornaPrezzoArticolo(tr);
+                } else {
+                    verificaPrezzoArticolo(tr);
+                }
+            });
+        }
+
+        barcodeReset();
+        $("#barcode").val("");
+    }, function(){
+        $("#articolo-missing").removeClass("hidden");
+        barcodeReset();
     });
+});
 
-    function barcodeReset() {
-        setTimeout(function(){
-            $("#barcode")
-                .attr("disabled",false)
-                .focus();
-        },200);
-    }
+$(document).on("change", "input[name^=qta], input[name^=prezzo_unitario]", function() {
+    let tr = $(this).closest("tr");
+    verificaPrezzoArticolo(tr);
+});
 
-    function rimuoviRigaBarcode(id) {
-        if (confirm("'.tr('Eliminare questo articolo?').'")) {
-            $("#riga_barcode_" + id).remove();
+function barcodeReset() {
+    setTimeout(function(){
+        $("#barcode")
+            .attr("disabled",false)
+            .focus();
+    },200);
+}
 
-            // Disabilito il pulsante di aggiunta se non ci sono articoli inseriti
-            if ($(".inputmask-decimal").length === 0) {
-                $(".modal-body button").attr("disabled", true);
-                $("#articoli_barcode").addClass("hide");
-            }
+function rimuoviRigaBarcode(id) {
+    if (confirm("'.tr('Eliminare questo articolo?').'")) {
+        $("#riga_barcode_" + id).remove();
+
+        // Disabilito il pulsante di aggiunta se non ci sono articoli inseriti
+        if ($(".inputmask-decimal").length === 0) {
+            $(".modal-body button").attr("disabled", true);
+            $("#articoli_barcode").addClass("hide");
         }
     }
+}
+
+/**
+* Restituisce il prezzo registrato per una specifica quantità dell\'articolo.
+*/
+function getPrezzoPerQuantita(qta, tr) {
+    const data = $(tr).find("input[name^=prezzo_unitario]").data("prezzi");
+    if (!data) return 0;
+
+    let prezzo_predefinito = null;
+    let prezzo_selezionato = null;
+    for (const prezzo of data) {
+        if (prezzo.minimo == null && prezzo.massimo == null) {
+            prezzo_predefinito = prezzo.prezzo_unitario;
+            continue;
+        }
+
+        if (qta >= prezzo.minimo && qta <= prezzo.massimo) {
+            prezzo_selezionato = prezzo.prezzo_unitario;
+        }
+    }
+
+    if (prezzo_selezionato == null) {
+        prezzo_selezionato = prezzo_predefinito;
+    }
+
+    return parseFloat(prezzo_selezionato);
+}
+
+/**
+* Funzione per registrare localmente i prezzi definiti per l\'articolo in relazione ad una specifica anagrafica.
+*/
+function ottieniPrezziArticolo(id_articolo, tr) {
+    return $.get(globals.rootdir + "/ajax_complete.php?module=Articoli&op=prezzi_articolo&id_anagrafica='.$options['idanagrafica'].'&id_articolo=" + id_articolo + "&dir=" + direzione, function(response) {
+        const data = JSON.parse(response);
+
+        $(tr).find("input[name^=prezzo_unitario]").data("prezzi", data);
+    });
+}
+
+/**
+* Funzione per verificare se il prezzo unitario corrisponde a quello registrato per l\'articolo, e proporre in automatico una correzione.
+*/
+function verificaPrezzoArticolo(tr) {
+    let qta = $(tr).find("input[name^=qta]").val().toEnglish();
+    let prezzo_previsto = getPrezzoPerQuantita(qta, tr);
+
+    let prezzo_unitario_input = $(tr).find("input[name^=prezzo_unitario]");
+    let prezzo_unitario = prezzo_unitario_input.val().toEnglish();
+
+    let div = prezzo_unitario_input.closest("div").parent().find("div[id*=errors]");
+
+    if (prezzo_previsto === prezzo_unitario) {
+        div.css("padding-top", "0");
+        div.html("");
+
+        return;
+    }
+
+    div.css("padding-top", "5px");
+    div.html(`<small>'.tr('Prezzo registrato').': ` + prezzo_previsto.toLocale() + globals.currency + `<button type="button" class="btn btn-xs btn-info pull-right" onclick="aggiornaPrezzoArticolo(this)"><i class="fa fa-refresh"></i> '.tr('Aggiorna').'</button></small>`);
+}
+
+/**
+* Funzione per aggiornare il prezzo unitario sulla base dei valori automatici.
+*/
+function aggiornaPrezzoArticolo(button) {
+    let tr = $(button).closest("tr");
+    let qta = tr.find("input[name^=qta]").val().toEnglish();
+    let prezzo_previsto = getPrezzoPerQuantita(qta, tr);
+
+    tr.find("input[name^=prezzo_unitario]").val(prezzo_previsto).trigger("change");
+}
+
 </script>
 
 <table class="hidden">

@@ -9,13 +9,24 @@ CREATE TABLE IF NOT EXISTS `zz_tasks` (
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS `zz_tasks_logs` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `id_task` int(11),
+    `level` VARCHAR(255) NOT NULL,
+    `message` TEXT NOT NULL,
+    `context` TEXT NOT NULL,
+    PRIMARY KEY (`id`),
+    FOREIGN KEY (`id_task`) REFERENCES `zz_tasks`(`id`)
+) ENGINE=InnoDB;
+
 INSERT INTO `zz_cache` (`id`, `name`, `content`, `valid_time`, `expire_at`) VALUES
 (NULL, 'Ultima esecuzione del cron', '', '1 month', NULL),
+(NULL, 'ID del cron', '', '1 month', NULL),
 (NULL, 'Riavvia cron', '', '1 month', NULL),
 (NULL, 'Disabilita cron', '', '1 month', NULL);
 
 INSERT INTO `zz_tasks` (`id`, `name`, `class`, `expression`, `last_executed_at`) VALUES
-(NULL, 'Backup automatico', 'Modules\\Backups\\BackupTask', '0 0 * * *', NULL);
+(NULL, 'Backup automatico', 'Modules\\Backups\\BackupTask', '0 1 * * *', NULL);
 
 DELETE FROM `zz_hooks` WHERE `class` = 'Modules\\Backups\\BackupHook';
 

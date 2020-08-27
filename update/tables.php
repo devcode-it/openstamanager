@@ -122,6 +122,7 @@ return [
     'zz_semaphores',
     'zz_settings',
     'zz_tasks',
+    'zz_tasks_logs',
     'zz_tokens',
     'zz_users',
     'zz_user_sedi',

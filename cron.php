@@ -9,7 +9,6 @@
 // Schema crontab: "*/5 * * * * php <percorso_root>/cron.php"
 
 use Carbon\Carbon;
-use Cron\CronExpression;
 use Models\Cache;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
@@ -47,6 +46,8 @@ $logger->pushHandler($handler);
 $ultima_esecuzione = Cache::get('Ultima esecuzione del cron');
 $data = $ultima_esecuzione->content;
 
+$cron_id = Cache::get('ID del cron');
+
 $riavvia = Cache::get('Riavvia cron');
 $disattiva = Cache::get('Disabilita cron');
 if (!empty($disattiva->content)) {
@@ -58,10 +59,14 @@ $slot_duration = 5;
 
 // Controllo sull'ultima esecuzione
 $data = $data ? new Carbon($data) : null;
-$minimo_esecuzione = (new Carbon())->addMinutes($slot_duration * 5);
+$minimo_esecuzione = (new Carbon())->subMinutes($slot_duration * 5);
 if (!empty($data) && $minimo_esecuzione->lessThan($data)) {
     return;
 }
+
+// Generazione e registrazione del cron
+$current_id = random_string();
+$cron_id->set($current_id);
 
 // Registrazione dell'esecuzione
 $adesso = new Carbon();
@@ -75,10 +80,11 @@ $number = 1;
 while (true) {
     $riavvia->refresh();
     $disattiva->refresh();
+    $cron_id->refresh();
 
     // Controllo su possibili aggiornamenti per bloccare il sistema
     $database_online = $database->isInstalled() && !Update::isUpdateAvailable();
-    if (!$database_online || !empty($disattiva->content) || !empty($riavvia->content)) {
+    if (!$database_online || !empty($disattiva->content) || !empty($riavvia->content) || $cron_id->content != $current_id) {
         return;
     }
 
@@ -93,8 +99,7 @@ while (true) {
     ]);
 
     // Calcolo del primo slot disponibile per l'esecuzione successiva
-    $inizio_iterazione = new Carbon();
-    $inizio_programmato_iterazione = $slot_minimo->copy();
+    $inizio_iterazione = $slot_minimo->copy();
     $slot_minimo = $inizio_iterazione->copy()->startOfHour();
     while ($inizio_iterazione->greaterThanOrEqualTo($slot_minimo)) {
         $slot_minimo->addMinutes($slot_duration);
@@ -105,25 +110,40 @@ while (true) {
     foreach ($tasks as $task) {
         $adesso = new Carbon();
 
-        // Individuazione delle informazioni previste dalla relativa espressione
-        $cron = CronExpression::factory($task->expression);
-        $data_successiva = Carbon::instance($cron->getNextRunDate($adesso));
-
-        // Esecuzione diretta solo nel caso in cui sia prevista
-        if (!empty($task->next_execution_at) && $task->next_execution_at->greaterThanOrEqualTo($inizio_iterazione) && $task->next_execution_at->lessThanOrEqualTo($adesso)) {
-            // Registrazione dell'esecuzione nei log
-            $logger->info($task->name.': '.$task->expression);
-
-            $task->execute();
+        // Registrazione della data per l'esecuzione se non indicata
+        if (empty($task->next_execution_at)) {
+            dd($task->next_execution_at);
+            $task->registerNextExecution($inizio_iterazione);
+            $task->save();
         }
 
-        // Salvataggio della data per l'esecuzione susccessiva
-        $task->next_execution_at = $data_successiva;
-        $task->save();
+        // Esecuzione diretta solo nel caso in cui sia prevista
+        if ($task->next_execution_at->greaterThanOrEqualTo($inizio_iterazione) && $task->next_execution_at->lessThanOrEqualTo($adesso)) {
+            // Registrazione dell'esecuzione nei log
+            $logger->info($task->name.': '.$task->expression);
+            try {
+                $task->execute();
+            } catch (Exception $e) {
+                // Registrazione del completamento nei log
+                $this->log('error', 'Errore di esecuzione', [
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString(),
+                ]);
+            }
+        }
+        // Esecuzione mancata
+        elseif ($task->next_execution_at->lessThan($inizio_iterazione)) {
+            $logger->info($task->name.': mancata', [
+                'timestamp' => $task->next_execution_at->toDateTimeString(),
+            ]);
+
+            $task->registerMissedExecution($inizio_iterazione);
+        }
 
         // Calcolo dello successivo slot
-        if ($data_successiva->lessThan($slot_minimo)) {
-            $slot_minimo = $data_successiva;
+        if ($task->next_execution_at->lessThan($slot_minimo)) {
+            $slot_minimo = $task->next_execution_at;
         }
     }
 

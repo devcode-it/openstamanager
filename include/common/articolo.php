@@ -28,7 +28,15 @@ if (empty($result['idarticolo'])) {
 
     echo '
     <p><strong>'.tr('Articolo').':</strong> '.$articolo['codice'].' - '.$articolo['descrizione'].'.</p>
-    <input type="hidden" name="idarticolo" id="idarticolo" value="'.$articolo['id'].'">';
+    <input type="hidden" name="idarticolo" id="idarticolo" value="'.$articolo['id'].'">
+
+    <script>
+        $(document).ready(function (){
+            ottieniPrezziArticolo("'.$articolo['id'].'").then(function (){
+                verificaPrezzoArticolo();
+            });
+        });
+    </script>';
 }
 
 echo '
@@ -78,83 +86,161 @@ if ($module['name'] != 'Contratti' && $module['name'] != 'Preventivi') {
 
 echo '
 <script>
+var direzione = "'.$options['dir'].'";
 $(document).ready(function () {
-    $("#idarticolo").on("change", function() {
-        // Autoimpostazione dei valori relativi
-        if ($(this).val()) {
-            $data = $(this).selectData();
+    if (direzione === "uscita") {
+        aggiorna_qta_minima();
+        $("#qta").keyup(aggiorna_qta_minima);
+    }
+});
 
-            $("#prezzo_unitario").val($data.prezzo_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').');
-            $("#costo_unitario").val($data.prezzo_acquisto);
-            $("#descrizione_riga").val($data.descrizione);';
-
-if ($options['dir'] == 'entrata') {
-    echo '
-            if($data.idiva_vendita) {
-                $("#idiva").selectSetNew($data.idiva_vendita, $data.iva_vendita);
-            }';
-} else {
-    echo '
-            $("#id_dettaglio_fornitore").val($data.id_dettaglio_fornitore);
-            $("#qta_minima").val($data.qta_minima);
-            aggiorna_qta_minima();';
-}
-
-echo '
-
-            var id_conto = $data.idconto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').';
-            if(id_conto) {
-                $("#idconto").selectSetNew(id_conto, $data.idconto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').'_title);
-            }
-
-            $("#um").selectSetNew($data.um, $data.um);
-            // Aggiornamento automatico di guadagno e margine
-            aggiorna_guadagno();
-        }';
-
-if ($module['name'] != 'Contratti' && $module['name'] != 'Preventivi') {
-    echo '
-
-        // Operazioni sui prezzi in fondo alla pagina
-        $("#prezzi_articolo button").attr("disabled", !$(this).val());
+$("#idarticolo").on("change", function() {
+    // Operazioni sui prezzi in fondo alla pagina
+    let prezzi_precedenti = $("#prezzi_articolo button");
+    if (prezzi_precedenti.length) {
+        prezzi_precedenti.attr("disabled", !$(this).val());
 
         if ($(this).val()) {
-            $("#prezzi_articolo button").removeClass("disabled");
+            prezzi_precedenti.removeClass("disabled");
         } else {
-            $("#prezzi_articolo button").addClass("disabled");
+           prezzi_precedenti.addClass("disabled");
         }
 
         $("#prezzi").html("");
         $("#prezzivendita").html("");
-        $("#prezziacquisto").html("");';
-}
+        $("#prezziacquisto").html("");
+    }
 
-echo '
-    });';
-
-if ($options['dir'] == 'uscita') {
-    echo '
-
-    aggiorna_qta_minima();
-    $("#qta").keyup(aggiorna_qta_minima);';
-}
-
-echo '
-});';
-
-if ($options['dir'] == 'uscita') {
-    echo '
-// Funzione per l\'aggiornamento in tempo reale del guadagno
-function aggiorna_qta_minima() {
-    var qta_minima = parseFloat($("#qta_minima").val());
-    var qta = $("#qta").val().toEnglish();
-
-    if (qta_minima == 0) {
+    if (!$(this).val()) {
         return;
     }
 
-    var parent = $("#qta").closest("div").parent();
-    var div = parent.find("div[id*=\"errors\"]");
+    // Autoimpostazione dei campi relativi all\'articolo
+    let $data = $(this).selectData();
+    ottieniPrezziArticolo($data.id).then(function() {
+        if ($("#prezzo_unitario").val().toEnglish() === 0){
+            aggiornaPrezzoArticolo();
+        } else {
+            verificaPrezzoArticolo();
+        }
+    })
+
+    $("#costo_unitario").val($data.prezzo_acquisto);
+    $("#descrizione_riga").val($data.descrizione);
+
+    if (direzione === "entrata") {
+        if($data.idiva_vendita) {
+            $("#idiva").selectSetNew($data.idiva_vendita, $data.iva_vendita);
+        }
+    }
+
+    else {
+        $("#id_dettaglio_fornitore").val($data.id_dettaglio_fornitore);
+        $("#qta_minima").val($data.qta_minima);
+        aggiorna_qta_minima();
+    }
+
+    let id_conto = $data.idconto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').';
+    let id_conto_title = $data.idconto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').'_title;
+    if(id_conto) {
+        $("#idconto").selectSetNew(id_conto, id_conto_title);
+    }
+
+    $("#um").selectSetNew($data.um, $data.um);
+    // Aggiornamento automatico di guadagno e margine
+    if (direzione === "entrata") {
+        aggiorna_guadagno();
+    }
+});
+
+$("#qta").on("change", function() {
+    verificaPrezzoArticolo();
+});
+
+/**
+* Restituisce il prezzo registrato per una specifica quantità dell\'articolo.
+*/
+function getPrezzoPerQuantita(qta) {
+    const data = $("#prezzo_unitario").data("prezzi");
+    if (!data) return 0;
+
+    let prezzo_predefinito = null;
+    let prezzo_selezionato = null;
+    for (const prezzo of data) {
+        if (prezzo.minimo == null && prezzo.massimo == null) {
+            prezzo_predefinito = prezzo.prezzo_unitario;
+            continue;
+        }
+
+        if (qta >= prezzo.minimo && qta <= prezzo.massimo) {
+            prezzo_selezionato = prezzo.prezzo_unitario;
+        }
+    }
+
+    if (prezzo_selezionato == null) {
+        prezzo_selezionato = prezzo_predefinito;
+    }
+
+    return parseFloat(prezzo_selezionato);
+}
+
+/**
+* Funzione per registrare localmente i prezzi definiti per l\'articolo in relazione ad una specifica anagrafica.
+*/
+function ottieniPrezziArticolo(id_articolo) {
+    return $.get(globals.rootdir + "/ajax_complete.php?module=Articoli&op=prezzi_articolo&id_anagrafica='.$options['idanagrafica'].'&id_articolo=" + id_articolo + "&dir=" + direzione, function(response) {
+        const data = JSON.parse(response);
+
+        $("#prezzo_unitario").data("prezzi", data);
+    });
+}
+
+/**
+* Funzione per verificare se il prezzo unitario corrisponde a quello registrato per l\'articolo, e proporre in automatico una correzione.
+*/
+function verificaPrezzoArticolo() {
+    let qta = $("#qta").val().toEnglish();
+    let prezzo_previsto = getPrezzoPerQuantita(qta);
+
+    let prezzo_unitario_input = $("#prezzo_unitario");
+    let prezzo_unitario = prezzo_unitario_input.val().toEnglish();
+
+    let div = prezzo_unitario_input.closest("div").parent().find("div[id*=errors]");
+
+    if (prezzo_previsto === prezzo_unitario) {
+        div.css("padding-top", "0");
+        div.html("");
+
+        return;
+    }
+
+    div.css("padding-top", "5px");
+    div.html(`<small>'.tr('Prezzo registrato').': ` + prezzo_previsto.toLocale() + globals.currency + `<button type="button" class="btn btn-xs btn-info pull-right" onclick="aggiornaPrezzoArticolo()"><i class="fa fa-refresh"></i> '.tr('Aggiorna').'</button></small>`);
+}
+
+/**
+* Funzione per aggiornare il prezzo unitario sulla base dei valori automatici.
+*/
+function aggiornaPrezzoArticolo() {
+    let qta = $("#qta").val().toEnglish();
+    let prezzo_previsto = getPrezzoPerQuantita(qta);
+
+    $("#prezzo_unitario").val(prezzo_previsto);
+}
+
+/**
+* Funzione per l\'aggiornamento dinamico della quantità minima per l\'articolo.
+*/
+function aggiorna_qta_minima() {
+    let qta_minima = parseFloat($("#qta_minima").val());
+    let qta = $("#qta").val().toEnglish();
+
+    if (qta_minima === 0) {
+        return;
+    }
+
+    let parent = $("#qta").closest("div").parent();
+    let div = parent.find("div[id*=errors]");
 
     div.html("<small>'.tr('Quantità minima').': " + qta_minima.toLocale() + "</small>");
     if (qta < qta_minima) {
@@ -164,7 +250,5 @@ function aggiorna_qta_minima() {
         parent.removeClass("has-error");
         div.removeClass("text-danger").addClass("text-success");
     }
-}';
 }
-echo '
 </script>';

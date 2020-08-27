@@ -93,4 +93,57 @@ switch ($resource) {
         }
 
         break;
+
+    /*
+     * Opzioni utilizzate:
+     * - id_articolo
+     * - id_anagrafica
+     */
+    case 'prezzi_articolo':
+        $id_articolo = get('id_articolo');
+        $id_anagrafica = get('id_anagrafica');
+        $direzione = get('dir') == 'uscita' ? 'uscita' : 'entrata';
+
+        if (empty($id_articolo) || empty($id_anagrafica)) {
+            return;
+        }
+
+        $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
+
+        $query = 'SELECT minimo, massimo,
+            '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario
+        FROM mg_prezzi_articoli
+        WHERE id_articolo = '.prepare($id_articolo).' AND dir = '.prepare($direzione).' |where|
+        ORDER BY minimo ASC, massimo DESC';
+
+        // Lettura dei prezzi relativi all'anagrafica
+        $query_anagrafica = replace($query, [
+            '|where|' => ' AND id_anagrafica = '.prepare($id_anagrafica),
+        ]);
+        $results = $database->fetchArray($query_anagrafica);
+
+        // Lettura dei prezzi relativi all'articolo, senza anagrafica collegata
+        if (empty($results)) {
+            $query_predefinito = replace($query, [
+                '|where|' => '',
+            ]);
+            $results = $database->fetchArray($query_predefinito);
+        }
+
+        // Lettura dei prezzi registrati direttamente sull'articolo, per compatibilità con il formato standard
+        if (empty($results)) {
+            $result = $database->fetchOne('SELECT prezzo_acquisto, '.($prezzi_ivati ? 'prezzo_vendita_ivato' : 'prezzo_vendita').' AS prezzo_vendita FROM mg_articoli WHERE id = '.prepare($id_articolo));
+
+            $results = [
+                [
+                    'minimo' => null,
+                    'massino' => null,
+                    'prezzo_unitario' => $direzione == 'uscita' ? $result['prezzo_acquisto'] : $result['prezzo_vendita'],
+                ],
+            ];
+        }
+
+        echo json_encode($results);
+
+        break;
 }

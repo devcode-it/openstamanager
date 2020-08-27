@@ -139,8 +139,9 @@ if (!empty($query)) {
             if ($field != '_print_') {
                 $id_record = $r['id'];
                 $hash = '';
+
+                $id_module = $r['_link_module_'] ?: $id_module;
                 if (!empty($r['_link_record_'])) {
-                    $id_module = $r['_link_module_'];
                     $id_record = $r['_link_record_'];
                     $hash = !empty($r['_link_hash_']) ? '#'.$r['_link_hash_'] : '';
                     unset($id_plugin);

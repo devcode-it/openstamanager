@@ -102,6 +102,9 @@ class Query
 
             // Segmenti
             '|'.$segment_filter.'|' => !empty($segment) ? ' AND '.$segment_name.' = '.prepare($segment) : '',
+
+            // Filtro dinamico per il modulo Giacenze sedi
+            '|giacenze_sedi_idsede|' => prepare($_SESSION['giacenze_sedi']['idsede']),
         ];
 
         // Sostituzione dei formati

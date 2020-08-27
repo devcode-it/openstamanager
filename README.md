@@ -23,7 +23,7 @@
 [![license](https://img.shields.io/github/license/devcode-it/openstamanager.svg)](https://github.com/devcode-it/openstamanager/blob/master/LICENSE)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](http://sourceforge.net/donate/index.php?group_id=236538)
 
-Il gestionale OpenSTAManager è un software open-source e web based, sviluppato dall'azienda informatica DevCode di Este per gestire ed archiviare il servizio di assistenza tecnica e la relativa fatturazione.
+Il gestionale OpenSTAManager è un software open-source e web based, sviluppato dall'azienda informatica [DevCode](https://www.devcode.it/) di Este per gestire ed archiviare il servizio di assistenza tecnica e la relativa fatturazione.
 Il nome del progetto deriva dalla parziale traduzione in inglese degli elementi principali che lo compongono: la natura open-source e il suo obiettivo quale Gestore del Servizio Tecnico di Assistenza.
 
 Un software gestionale, identificato nell'insieme degli applicativi che automatizzano i processi di gestione all'interno delle aziende, appartiene solitamente a una specifica categoria del settore, specializzata negli ambiti di:
@@ -130,14 +130,6 @@ Siamo presenti su [Facebook](https://www.facebook.com/openstamanager), e il nost
 ## Contribuire
 
 Per poter contribuire ed eseguire i test automatici, si consiglia di seguire le indicazioni descritte all'interno della [documentazione ufficiale](https://github.com/devcode-it/openstamanager/blob/master/.github/CONTRIBUTING.md).
-
-## Sviluppatori
-
-- **Fabio Lovato**, il fondatore ([loviuz](https://github.com/loviuz))
-- **Fabio Piovan** ([fpsoftware](https://github.com/fpsoftware))
-- **Luca Salvà** ([lucasalva87](https://github.com/lucasalva87))
-- **Matteo Baccarin** ([Bacca1997](https://github.com/Bacca1997))
-- **Thomas Zilio** ([Dasc3er](https://github.com/Dasc3er))
 
 ## Licenza
 

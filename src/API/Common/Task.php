@@ -5,6 +5,7 @@ namespace API\Common;
 use API\Interfaces\CreateInterface;
 use API\Interfaces\RetrieveInterface;
 use API\Resource;
+use Carbon\Carbon;
 use Models\Cache;
 use Tasks\Log;
 
@@ -23,6 +24,8 @@ class Task extends Resource implements RetrieveInterface, CreateInterface
 
     public function create($request)
     {
+        $database = database();
+
         // Rimozione della registrazione del cron attuale
         $ultima_esecuzione = Cache::get('Ultima esecuzione del cron');
         $ultima_esecuzione->set(null);
@@ -35,8 +38,23 @@ class Task extends Resource implements RetrieveInterface, CreateInterface
         $disattiva = Cache::get('Disabilita cron');
         $disattiva->set(null);
 
+        // Salvataggio delle modifiche
+        $database->commitTransaction();
+
+        // Attesa della conclusione per il cron precedente
+        $in_esecuzione = Cache::get('Cron in esecuzione');
+        while ($in_esecuzione->content) {
+            $timestamp = (new Carbon())->addMinutes(1)->getTimestamp();
+            time_sleep_until($timestamp);
+
+            $in_esecuzione->refresh();
+        }
+
         // Chiamata al cron per l'avvio
         $this->request();
+
+        // Riavvio transazione
+        $database->beginTransaction();
     }
 
     /**

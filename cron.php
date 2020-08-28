@@ -46,6 +46,7 @@ $logger->pushHandler($handler);
 $ultima_esecuzione = Cache::get('Ultima esecuzione del cron');
 $data = $ultima_esecuzione->content;
 
+$in_esecuzione = Cache::get('Cron in esecuzione');
 $cron_id = Cache::get('ID del cron');
 
 $disattiva = Cache::get('Disabilita cron');
@@ -79,6 +80,7 @@ $number = 1;
 while (true) {
     $disattiva->refresh();
     $cron_id->refresh();
+    $in_esecuzione->refresh();
 
     // Controllo su possibili aggiornamenti per bloccare il sistema
     $database_online = $database->isInstalled() && !Update::isUpdateAvailable();
@@ -94,6 +96,7 @@ while (true) {
     // Risveglio programmato tramite slot
     $timestamp = $slot_minimo->getTimestamp();
     time_sleep_until($timestamp);
+    $in_esecuzione->set(true);
 
     // Registrazione dell'iterazione nei log
     $logger->info('Cron #'.$number.' iniziato', [
@@ -160,6 +163,7 @@ while (true) {
         'next-slot' => $slot_minimo->toDateTimeString(),
         'next-slot-unix' => $timestamp,
     ]);
+    $in_esecuzione->set(false);
 
     // Registrazione dell'esecuzione
     $adesso = new Carbon();

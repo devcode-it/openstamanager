@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS `zz_tasks_logs` (
 INSERT INTO `zz_cache` (`id`, `name`, `content`, `valid_time`, `expire_at`) VALUES
 (NULL, 'Ultima esecuzione del cron', '', '1 month', NULL),
 (NULL, 'ID del cron', '', '1 month', NULL),
-(NULL, 'Riavvia cron', '', '1 month', NULL),
+(NULL, 'Cron in esecuzione', '', '1 month', NULL),
 (NULL, 'Disabilita cron', '', '1 month', NULL);
 
 INSERT INTO `zz_tasks` (`id`, `name`, `class`, `expression`, `last_executed_at`) VALUES

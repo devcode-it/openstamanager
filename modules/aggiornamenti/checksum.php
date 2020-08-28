@@ -58,7 +58,7 @@ foreach ($checksum as $file => $md5) {
 // Schermata di visualizzazione degli errori
 if (!empty($errors)) {
     echo '
-<p>'.tr("Segue l'elenco dei file che presentano checksum diverso rispetto a quello regitrato nella versione ufficiale").'.</p>
+<p>'.tr("Segue l'elenco dei file che presentano checksum diverso rispetto a quello registrato nella versione ufficiale").'.</p>
 <div class="alert alert-warning">
     <i class="fa fa-warning"></i>
     '.tr('Attenzione: questa funzionalità può presentare dei risultati falsamente positivi, sulla base del contenuto del file _FILE_', [

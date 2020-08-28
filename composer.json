@@ -10,13 +10,7 @@
     ],
     "homepage": "https://www.openstamanager.com/",
     "authors": [{
-        "name": "Fabio Lovato",
-        "email": "info@openstamanager.com"
-    }, {
-        "name": "Fabio Piovan",
-        "email": "info@openstamanager.com"
-    }, {
-        "name": "Luca Salvà",
+        "name": "DevCode s.n.c",
         "email": "info@openstamanager.com"
     }],
     "type": "project",

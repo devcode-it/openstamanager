@@ -117,7 +117,11 @@ function update() {
 }
 
 function checksum(button) {
-    openModal("'.tr('Controllo di integrità').'", "'.$module->fileurl('checksum.php').'?id_module='.$id_module.'");
+    openModal("'.tr('Controllo dei file').'", "'.$module->fileurl('checksum.php').'?id_module='.$id_module.'");
+}
+
+function database(button) {
+    openModal("'.tr('Controllo del database').'", "'.$module->fileurl('database.php').'?id_module='.$id_module.'");
 }
 
 function search(button) {
@@ -170,12 +174,16 @@ function search(button) {
         <div class="box box-warning">
             <div class="box-header with-border">
                 <h3 class="box-title">
-                    '.tr("Verifica l'integrità dell'intallazione").' <span class="tip" title="'.tr("Verifica l'integrità della tua installazione attraverso un controllo sui checksum dei file").'."><i class="fa fa-question-circle-o"></i></span>
+                    '.tr("Verifica l'integrità dell'intallazione").' <span class="tip" title="'.tr("Verifica l'integrità della tua installazione attraverso un controllo sui checksum dei file e sulla struttura del database").'."><i class="fa fa-question-circle-o"></i></span>
                 </h3>
             </div>
             <div class="box-body">
                 <button type="button" class="btn btn-primary btn-block" onclick="checksum(this)">
-                    <i class="fa fa-list-alt"></i> '.tr('Controlla').'
+                    <i class="fa fa-list-alt"></i> '.tr('Controlla file').'
+                </button>
+
+                <button type="button" class="btn btn-info btn-block" onclick="database(this)">
+                    <i class="fa fa-database"></i> '.tr('Controlla database').'
                 </button>
             </div>
         </div>

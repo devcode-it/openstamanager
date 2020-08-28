@@ -90,6 +90,7 @@ REVISION
 .php_cs.cache
 manifest.json
 checksum.json
+database.json
 
 /tests/_log/*
 /tests/_temp/*

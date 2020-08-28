@@ -370,6 +370,7 @@ function release(done) {
     glob([
         '**/*',
         '!checksum.json',
+        '!database.json',
         '!.idea/**',
         '!.git/**',
         '!node_modules/**',
@@ -416,6 +417,20 @@ function release(done) {
         checksumFile.write(JSON.stringify(checksum));
         checksumFile.close();
         archive.file('checksum.json', {});
+
+        // Aggiunta del file per il controllo di integrità del database
+        archive.append(shell.exec(`php -r '
+        error_reporting(0);
+        $skip_permissions = true;
+        include_once __DIR__."/core.php";
+        $info = Update::getDatabaseStructure();
+        $response = json_encode($info);
+        echo $response;
+        '`, {
+            silent: true
+        }).stdout, {
+            name: 'database.json'
+        });
 
         // Aggiunta del commit corrente nel file REVISION
         archive.append(shell.exec('git rev-parse --short HEAD', {

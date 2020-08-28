@@ -302,6 +302,71 @@ class Update
 
             return false;
         }
+
+        return true;
+    }
+
+    /**
+     * Restituisce un riepilogo sulla struttura delle tabelle del gestionale.
+     *
+     * @throws Exception
+     *
+     * @return array
+     */
+    public static function getDatabaseStructure()
+    {
+        // Tabelle registrate per il gestionale
+        $tables = include DOCROOT.'/update/tables.php';
+
+        $database = database();
+        $database_name = $database->getDatabaseName();
+
+        $info = [];
+        foreach ($tables as $table) {
+            if ($database->tableExists($table)) {
+                // Individuazione delle colonne per la tabella
+                $query = 'SHOW COLUMNS FROM `'.$table.'` IN `'.$database_name.'`';
+                $columns_found = $database->fetchArray($query);
+
+                // Organizzazione delle colonne per nome
+                $columns = [];
+                foreach ($columns_found as $column) {
+                    $column = array_change_key_case($column);
+                    $name = $column['field'];
+                    unset($column['field']);
+
+                    $columns[$name] = $column;
+                }
+
+                // Individuazione delle chiavi esterne della tabella
+                $fk_query = 'SELECT
+                    CONSTRAINT_NAME AS `name`,
+                    COLUMN_NAME AS `column`,
+                    REFERENCED_TABLE_NAME AS `referenced_table`,
+                    REFERENCED_COLUMN_NAME AS `referenced_column`
+                FROM information_schema.KEY_COLUMN_USAGE
+                WHERE TABLE_NAME = '.prepare($table).'
+                    AND TABLE_SCHEMA = '.prepare($database_name).'
+                    AND REFERENCED_TABLE_SCHEMA = '.prepare($database_name);
+                $fks_found = $database->fetchArray($fk_query);
+
+                // Organizzazione delle chiavi esterne per nome
+                $fks = [];
+                foreach ($fks_found as $fk) {
+                    $fk = array_change_key_case($fk);
+                    $name = $fk['name'];
+                    unset($fk['name']);
+
+                    $fks[$name] = $fk;
+                }
+
+                $info[$table] = array_merge($columns, [
+                    'foreign_keys' => $fks,
+                ]);
+            }
+        }
+
+        return $info;
     }
 
     /**

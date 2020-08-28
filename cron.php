@@ -48,7 +48,6 @@ $data = $ultima_esecuzione->content;
 
 $cron_id = Cache::get('ID del cron');
 
-$riavvia = Cache::get('Riavvia cron');
 $disattiva = Cache::get('Disabilita cron');
 if (!empty($disattiva->content)) {
     return;
@@ -78,13 +77,12 @@ $slot_minimo = $adesso->copy();
 // Esecuzione ricorrente
 $number = 1;
 while (true) {
-    $riavvia->refresh();
     $disattiva->refresh();
     $cron_id->refresh();
 
     // Controllo su possibili aggiornamenti per bloccare il sistema
     $database_online = $database->isInstalled() && !Update::isUpdateAvailable();
-    if (!$database_online || !empty($disattiva->content) || !empty($riavvia->content) || $cron_id->content != $current_id) {
+    if (!$database_online || !empty($disattiva->content) || $cron_id->content != $current_id) {
         return;
     }
 
@@ -112,9 +110,12 @@ while (true) {
 
         // Registrazione della data per l'esecuzione se non indicata
         if (empty($task->next_execution_at)) {
-            dd($task->next_execution_at);
             $task->registerNextExecution($inizio_iterazione);
             $task->save();
+
+            $logger->info($task->name.': data mancante', [
+                'timestamp' => $task->next_execution_at->toDateTimeString(),
+            ]);
         }
 
         // Esecuzione diretta solo nel caso in cui sia prevista
@@ -125,16 +126,18 @@ while (true) {
                 $task->execute();
             } catch (Exception $e) {
                 // Registrazione del completamento nei log
-                $this->log('error', 'Errore di esecuzione', [
+                $task->log('error', 'Errore di esecuzione', [
                     'code' => $e->getCode(),
                     'message' => $e->getMessage(),
                     'trace' => $e->getTraceAsString(),
                 ]);
+
+                $logger->error($task->name.': errore');
             }
         }
         // Esecuzione mancata
         elseif ($task->next_execution_at->lessThan($inizio_iterazione)) {
-            $logger->info($task->name.': mancata', [
+            $logger->warning($task->name.': mancata', [
                 'timestamp' => $task->next_execution_at->toDateTimeString(),
             ]);
 

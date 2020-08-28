@@ -76,3 +76,8 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `
  (NULL, (SELECT  `id` FROM `zz_modules` WHERE `name` = 'Giacenze sedi'), 'Prezzo di vendita', 'prezzo_vendita', '6', '1', '0', '1', NULL, NULL, '1', '1', '1'),
  (NULL, (SELECT  `id` FROM `zz_modules` WHERE `name` = 'Giacenze sedi'), 'Prezzo vendita ivato', 'IF( co_iva.percentuale IS NOT NULL, (mg_articoli.prezzo_vendita + mg_articoli.prezzo_vendita * co_iva.percentuale / 100), mg_articoli.prezzo_vendita + mg_articoli.prezzo_vendita*(SELECT co_iva.percentuale FROM co_iva INNER JOIN zz_settings ON co_iva.id=zz_settings.valore AND nome=\'Iva predefinita\')/100 )', '8', '1', '0', '1', '', '', '0', '0', '1'),
  (NULL, (SELECT  `id` FROM `zz_modules` WHERE `name` = 'Giacenze sedi'), 'Barcode', 'mg_articoli.barcode', '2', '1', '0', '0', '', '', '1', '0', '1');
+
+-- Aggiunta risorse API dedicate alle task in cron
+INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES
+(NULL, 'v1', 'retrieve', 'cron-logs', 'API\\Common\\Task', '1'),
+(NULL, 'v1', 'create', 'cron-restart', 'API\\Common\\Task', '1');

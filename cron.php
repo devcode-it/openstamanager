@@ -86,6 +86,11 @@ while (true) {
         return;
     }
 
+    // Rimozione dei log più vecchi
+    $database->query('DELETE FROM zz_tasks_logs WHERE DATE_ADD(created_at, INTERVAL :interval DAY) <= NOW()', [
+        ':interval' => 7,
+    ]);
+
     // Risveglio programmato tramite slot
     $timestamp = $slot_minimo->getTimestamp();
     time_sleep_until($timestamp);

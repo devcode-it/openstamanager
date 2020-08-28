@@ -15,6 +15,10 @@ class Log extends Model
         'context' => 'array',
     ];
 
+    protected $hidden = [
+        'task',
+    ];
+
     public function task()
     {
         return $this->belongsTo(Task::class, 'id_task');

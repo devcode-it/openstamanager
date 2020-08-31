@@ -91,7 +91,7 @@ Input.prototype.get = function () {
     // Conversione del valore per le checkbox
     let group = this.element.closest(".form-group");
     if (group.find("input[type=checkbox]").length){
-        value = parseInt(value);
+        value = parseInt(value) ? 1 : 0;
     }
 
     return value;

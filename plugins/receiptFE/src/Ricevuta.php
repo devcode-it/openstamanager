@@ -2,6 +2,7 @@
 
 namespace Plugins\ReceiptFE;
 
+use Carbon\Carbon;
 use Modules;
 use Modules\Fatture\Fattura;
 use Plugins;
@@ -109,7 +110,7 @@ class Ricevuta
 
         // Modifica lo stato solo se la fattura non è già stata consegnata (per evitare problemi da doppi invii)
         // In realtà per le PA potrebbe esserci lo stato NE (che può contenere un esito positivo EC01 o negativo EC02) successivo alla RC,
-        // quindi aggiungo eccezzione nel caso il nuovo codice della ricevuta sia NE.
+        // quindi aggiungo eccezione nel caso il nuovo codice della ricevuta sia NE.
         if ($fattura->codice_stato_fe == 'RC' && ($codice != 'EC01' || $codice != 'EC02')) {
             return;
         }
@@ -118,7 +119,7 @@ class Ricevuta
         $descrizione = $this->xml['Destinatario']['Descrizione'];
         $data = $this->xml['DataOraRicezione'];
 
-        $fattura->data_stato_fe = date('Y-m-d H:i:s', strtotime($data));
+        $fattura->data_stato_fe = $data ? date('Y-m-d H:i:s', strtotime($data)) : '';
         $fattura->codice_stato_fe = $codice;
         $fattura->descrizione_ricevuta_fe = $descrizione;
 

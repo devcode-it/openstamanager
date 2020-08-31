@@ -107,8 +107,7 @@ $ultima_ricevuta = $fattura->getRicevute()->last();
 if (!empty($record['codice_stato_fe'])) {
     if ($record['codice_stato_fe'] == 'GEN') {
         echo '
-		<div class="alert alert-info"><i class="fa fa-info-circle"></i> '.tr("La fattura è stata generata ed è pronta per l'invio").'.</div>
-		';
+		<div class="alert alert-info"><i class="fa fa-info-circle"></i> '.tr("La fattura è stata generata ed è pronta per l'invio").'.</div>';
     } else {
         $stato_fe = database()->fetchOne('SELECT codice, descrizione, icon FROM fe_stati_documento WHERE codice='.prepare($record['codice_stato_fe']));
 
@@ -123,7 +122,7 @@ if (!empty($record['codice_stato_fe'])) {
         echo '
 <div class="alert alert-'.$class.'">
     <div class="pull-right">
-        <i class="fa fa-clock-o tip" title="'.tr('Data e ora ricezione').'" ></i> '.Translator::timestampToLocale($record['data_stato_fe']).'';
+        <i class="fa fa-clock-o tip" title="'.tr('Data e ora ricezione').'"></i> '.Translator::timestampToLocale($record['data_stato_fe']);
 
         if (!empty($ultima_ricevuta)) {
             echo '

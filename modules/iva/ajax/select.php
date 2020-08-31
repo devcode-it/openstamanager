@@ -17,6 +17,7 @@ switch ($resource) {
         if (!empty($search)) {
             $search_fields[] = 'descrizione LIKE '.prepare('%'.$search.'%');
             $search_fields[] = 'codice LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = 'codice_natura_fe LIKE '.prepare('%'.$search.'%');
         }
 
         if (empty($filter)) {

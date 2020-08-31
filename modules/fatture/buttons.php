@@ -70,7 +70,7 @@ if (!empty($record['is_fiscale'])) {
     }
 
     echo '
-        <a class="btn btn-primary '.(!empty($modulo_prima_nota) && empty($registrazione_contabile)) ? '' : 'disabled'.'" data-href="'.ROOTDIR.'/add.php?id_module='.$modulo_prima_nota['id'].'&id_documenti='.$id_record.'&single=1" data-title="'.tr('Registra contabile').'">
+        <a class="btn btn-primary '.(!empty($modulo_prima_nota) && empty($registrazione_contabile) ? '' : 'disabled').'" data-href="'.ROOTDIR.'/add.php?id_module='.$modulo_prima_nota['id'].'&id_documenti='.$id_record.'&single=1" data-title="'.tr('Registra contabile').'">
             <i class="fa fa-euro"></i> '.tr('Registra contabile').'
         </a>';
 

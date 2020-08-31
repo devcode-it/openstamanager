@@ -30,7 +30,7 @@
         "ext-zip": "*",
         "aluguest/ical-easy-reader": "^1.5",
         "danielstjules/stringy": "^3.1",
-        "davidepastore/codice-fiscale": "^0.4.0",
+        "davidepastore/codice-fiscale": "^0.6.0",
         "dragonmantank/cron-expression": "^1.0",
         "ezyang/htmlpurifier": "^4.8",
         "filp/whoops": "^2.1",

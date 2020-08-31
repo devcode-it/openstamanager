@@ -122,10 +122,6 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 (NULL, 'app-v1', 'retrieve', 'preventivi', 'API\\App\\v1\\Preventivi', '1'),
 (NULL, 'app-v1', 'retrieve', 'preventivi-cleanup', 'API\\App\\v1\\Preventivi', '1'),
 (NULL, 'app-v1', 'retrieve', 'preventivo', 'API\\App\\v1\\Preventivi', '1'),
--- Sedi
-(NULL, 'app-v1', 'retrieve', 'preventivi', 'API\\App\\v1\\Preventivi', '1'),
-(NULL, 'app-v1', 'retrieve', 'preventivi-cleanup', 'API\\App\\v1\\Preventivi', '1'),
-(NULL, 'app-v1', 'retrieve', 'preventivo', 'API\\App\\v1\\Preventivi', '1'),
 -- Tariffe dei tecnici
 (NULL, 'app-v1', 'retrieve', 'tariffe-tecnici', 'API\\App\\v1\\TariffeTecnici', '1'),
 (NULL, 'app-v1', 'retrieve', 'tariffe-tecnici-cleanup', 'API\\App\\v1\\TariffeTecnici', '1'),

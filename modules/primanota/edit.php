@@ -9,7 +9,6 @@ include_once __DIR__.'/../../core.php';
 	<input type="hidden" name="idmastrino" value="<?php echo $record['idmastrino']; ?>">
 	<input type="hidden" name="iddocumento" value="<?php echo $record['iddocumento']; ?>">
 
-
     <div class="row">
 	<?php
 

@@ -25,11 +25,11 @@ if ($dir == 'entrata') {
     </button>
 
     <ul class="dropdown-menu dropdown-menu-right">
-        <li><a href="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=nota_addebito&backto=record-edit">
+        <li><a href="'.ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=nota_addebito&backto=record-edit">
             '.tr('Nota di debito').'
         </a></li>
 
-        <li><a data-href="'.$rootdir.'/modules/fatture/crea_documento.php?id_module='.$id_module.'&id_record='.$id_record.'&iddocumento='.$id_record.'" data-title="Aggiungi nota di credito">
+        <li><a data-href="'.ROOTDIR.'/modules/fatture/crea_documento.php?id_module='.$id_module.'&id_record='.$id_record.'&iddocumento='.$id_record.'" data-title="Aggiungi nota di credito">
             '.tr('Nota di credito').'
         </a></li>
     </ul>
@@ -46,33 +46,33 @@ if (empty($record['is_fiscale'])) {
     </button>';
 }
 
-?>
-
-<?php
-
+$modulo_prima_nota = Modules::get('Prima nota');
 if (!empty($record['is_fiscale'])) {
-    $disabled1 = 1;
-    //Aggiunta insoluto
-    if (!empty($record['riba']) && ($record['stato'] == 'Emessa' || $record['stato'] == 'Parzialmente pagato' || $record['stato'] == 'Pagato') && $dir == 'entrata') {
-        $disabled1 = 0;
-    } ?>
-        <a class="btn btn-primary <?php echo (empty($disabled1)) ? '' : 'disabled'; ?>" data-href="<?php echo $rootdir; ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>&id_documenti=<?php echo $id_record; ?>&single=1&is_insoluto=1" data-title="<?php echo tr('Registra insoluto'); ?>" ><i class="fa fa-ban fa-inverse"></i> <?php echo tr('Registra insoluto'); ?></a>
-    <?php
+    // Aggiunta insoluto
+    $registrazione_insoluto = 1;
+    if (!empty($record['riba']) && $dir == 'entrata' && in_array($record['stato'], ['Emessa', 'Parzialmente pagato', 'Pagato'])) {
+        $registrazione_insoluto = 0;
+    }
+
+    echo '
+        <a class="btn btn-primary '.(!empty($modulo_prima_nota) && empty($registrazione_insoluto) ? '' : 'disabled').'" data-href="'.ROOTDIR.'/add.php?id_module='.$modulo_prima_nota['id'].'&id_documenti='.$id_record.'&single=1&is_insoluto=1" data-title="'.tr('Registra insoluto').'">
+            <i class="fa fa-ban fa-inverse"></i> '.tr('Registra insoluto').'
+        </a>';
 
     // Aggiunta prima nota solo se non c'è già, se non si è in bozza o se il pagamento non è completo
-    $n2 = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE iddocumento='.prepare($id_record).' AND primanota=1');
+    $prima_nota_presente = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE iddocumento = '.prepare($id_record).' AND primanota = 1');
 
-    $rs3 = $dbo->fetchArray('SELECT SUM(da_pagare-pagato) AS differenza, SUM(da_pagare) FROM co_scadenziario GROUP BY iddocumento HAVING iddocumento='.prepare($id_record));
-    $differenza = isset($rs3[0]) ? $rs3[0]['differenza'] : null;
-    $da_pagare = isset($rs3[0]) ? $rs3[0]['da_pagare'] : null;
-    $disabled2 = 1;
-    if (($n2 <= 0 && $record['stato'] == 'Emessa') || $differenza != 0) {
-        $disabled2 = 0;
-    } ?>
+    $totale_scadenze = $dbo->fetchOne('SELECT SUM(da_pagare - pagato) AS differenza, SUM(da_pagare) AS da_pagare FROM co_scadenziario WHERE iddocumento = '.prepare($id_record));
+    $differenza = isset($totale_scadenze) ? $totale_scadenze['differenza'] : 0;
+    $registrazione_contabile = 1;
+    if ($differenza != 0 || (!$prima_nota_presente && $record['stato'] == 'Emessa')) {
+        $registrazione_contabile = 0;
+    }
 
-        <a class="btn btn-primary <?php echo (!empty(Modules::get('Prima nota')) and empty($disabled2)) ? '' : 'disabled'; ?>" data-href="<?php echo $rootdir; ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>&id_documenti=<?php echo $id_record; ?>&single=1"  data-title="<?php echo tr('Registra contabile'); ?>" > <i class="fa fa-euro"></i> <?php echo tr('Registra contabile'); ?></a>
-
-    <?php
+    echo '
+        <a class="btn btn-primary '.(!empty($modulo_prima_nota) && empty($registrazione_contabile)) ? '' : 'disabled'.'" data-href="'.ROOTDIR.'/add.php?id_module='.$modulo_prima_nota['id'].'&id_documenti='.$id_record.'&single=1" data-title="'.tr('Registra contabile').'">
+            <i class="fa fa-euro"></i> '.tr('Registra contabile').'
+        </a>';
 
     if ($record['stato'] == 'Pagato') {
         echo '

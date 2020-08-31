@@ -407,6 +407,13 @@ switch (post('op')) {
             $id_dettaglio_fornitore = post('id_dettaglio_fornitore')[$id_articolo];
             $id_iva = $originale->idiva_vendita ? $originale->idiva_vendita : setting('Iva predefinita');
 
+            $id_conto = ($fattura->direzione == 'entrata') ? setting('Conto predefinito fatture di vendita') : setting('Conto predefinito fatture di acquisto');
+            if ($fattura->direzione == 'entrata' && !empty($originale->idconto_vendita)) {
+                $id_conto = $originale->idconto_vendita;
+            } elseif ($fattura->direzione == 'uscita' && !empty($originale->idconto_acquisto)) {
+                $id_conto = $originale->idconto_acquisto;
+            }
+
             // Inversione quantità per Note
             if (!empty($record['is_reversed'])) {
                 $qta = -$qta;
@@ -423,6 +430,7 @@ switch (post('op')) {
             }
             $articolo->setSconto($sconto, $tipo_sconto);
             $articolo->qta = $qta;
+            $articolo->idconto = $id_conto;
 
             $articolo->save();
         }

@@ -185,6 +185,17 @@ function setContrast(backgroundcolor) {
     }
 }
 
+function confirmDelete(button, title, message) {
+    return swal({
+        title: title ? title : globals.translations.deleteTitle,
+        html: message ? message : globals.translations.deleteMessage,
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonText: globals.translations.delete,
+        confirmButtonClass: "btn btn-lg btn-danger",
+    })
+}
+
 function message(element) {
     data = $.extend({}, $(element).data());
 

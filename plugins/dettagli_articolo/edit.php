@@ -260,7 +260,7 @@ if (!$fornitori_disponibili->isEmpty()) {
             return $item->id == $dettaglio_predefinito->id;
         });
         */
-        if (!$prezzi->isEmpty()) {
+        if (!empty($prezzi) && !$prezzi->isEmpty()) {
             echo '
                     <tr>
                         <td></td>

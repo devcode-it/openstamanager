@@ -58,7 +58,7 @@ echo '
 
     <div class="row">
         <div class="col-md-6">
-                {[ "type": "number", "label": "'.tr('Prezzo unitario').'", "name": "prezzo_unitario_fisso", "value": "'.($prezzi_ivati ? $dettaglio_predefinito->prezzo_unitario_ivato : $dettaglio_predefinito->prezzo_unitario).'", "icon-after": "'.currency().'", "help": "'.($prezzi_ivati ? tr('Importo IVA inclusa') : '').'" ]}
+                {[ "type": "number", "label": "'.tr('Prezzo unitario predefinito').'", "name": "prezzo_unitario_fisso", "value": "'.($prezzi_ivati ? $dettaglio_predefinito->prezzo_unitario_ivato : $dettaglio_predefinito->prezzo_unitario).'", "icon-after": "'.currency().'", "help": "'.($prezzi_ivati ? tr('Importo IVA inclusa') : '').'" ]}
         </div>
 
         <div class="col-md-6">

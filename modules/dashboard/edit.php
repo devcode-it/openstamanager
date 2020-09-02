@@ -430,6 +430,7 @@ echo '
             /* plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin], */
             /* locales: allLocales, */
             locale: globals.locale,
+            slotEventOverlap: false,
             hiddenDays: globals.dashboard.show_sunday ? [] : [0],
             header: {
                 left: "prev,next today",

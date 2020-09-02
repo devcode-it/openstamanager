@@ -10,10 +10,10 @@ $has_image = $righe->search(function ($item) {
 });
 
 if ($has_image) {
-    $columns = 6;
+    $columns = 7;
     $char_number = $options['pricing'] ? 26 : 63;
 } else {
-    $columns = 5;
+    $columns = 6;
     $char_number = $options['pricing'] ? 45 : 82;
 }
 $columns = $options['pricing'] ? $columns : $columns - 3;
@@ -26,8 +26,8 @@ $autofill->setRows(30);
 echo "
 <table class='table table-striped table-bordered' id='contents'>
     <thead>
-        <tr>";
-
+        <tr>
+            <th class='text-center' style='width:5%'>".tr('#', [], ['upper' => true])."</th>";
             if ($has_image) {
                 echo "
             <th class='text-center' style='width:20%'>".tr('Immagine', [], ['upper' => true]).'</th>';
@@ -57,6 +57,10 @@ foreach ($righe as $riga) {
 
     echo '
         <tr>';
+
+    echo'
+        <td class=\'text-center\' >
+            '.($r['order'] + 1).'</td>';
 
     if ($has_image) {
         if ($riga->isArticolo()) {
@@ -172,7 +176,7 @@ if ($options['pricing']) {
     // Totale imponibile
     echo '
     <tr>
-        <td colspan="'.($has_image ? 4 : 3).'" class="text-right border-top">
+        <td colspan="'.($has_image ? 5 : 4).'" class="text-right border-top">
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
 
@@ -185,7 +189,7 @@ if ($options['pricing']) {
     if ($show_sconto) {
         echo '
     <tr>
-        <td colspan="'.($has_image ? 4 : 3).'" class="text-right border-top">
+        <td colspan="'.($has_image ? 5 : 4).'" class="text-right border-top">
             <b>'.tr('Sconto', [], ['upper' => true]).':</b>
         </td>
 
@@ -197,7 +201,7 @@ if ($options['pricing']) {
         // Totale imponibile
         echo '
     <tr>
-        <td colspan="'.($has_image ? 4 : 3).'" class="text-right border-top">
+        <td colspan="'.($has_image ? 5 : 4).'" class="text-right border-top">
             <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
         </td>
 
@@ -210,7 +214,7 @@ if ($options['pricing']) {
     // IVA
     echo '
     <tr>
-        <td colspan="'.($has_image ? 4 : 3).'" class="text-right border-top">
+        <td colspan="'.($has_image ? 5 : 4).'" class="text-right border-top">
             <b>'.tr('Totale IVA', [], ['upper' => true]).':</b>
         </td>
 
@@ -222,7 +226,7 @@ if ($options['pricing']) {
     // TOTALE
     echo '
     <tr>
-    	<td colspan="'.($has_image ? 4 : 3).'" class="text-right border-top">
+    	<td colspan="'.($has_image ? 5 : 4).'" class="text-right border-top">
             <b>'.tr('Totale documento', [], ['upper' => true]).':</b>
     	</td>
     	<th colspan="2" class="text-right">

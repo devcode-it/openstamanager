@@ -103,11 +103,11 @@ function discountInfo(\Common\Components\Row $riga, $mostra_maggiorazione = true
     }
 
     $text = $riga->sconto_unitario > 0 ? tr('sconto _TOT_ _TYPE_') : tr('maggiorazione _TOT__TYPE_');
-    $total = !empty($riga->sconto_percentuale) ? $riga->sconto_percentuale : $riga->sconto_unitario;
+    $totale = !empty($riga->sconto_percentuale) ? $riga->sconto_percentuale : $riga->sconto_unitario_corrente;
 
     return replace($text, [
-        '_TOT_' => Translator::numberToLocale(abs($total)),
-        '_TYPE_' => (!empty($riga->sconto_percentuale) ? '%' : currency()),
+        '_TOT_' => Translator::numberToLocale(abs($totale)),
+        '_TYPE_' => !empty($riga->sconto_percentuale) ? '%' : currency(),
     ]);
 }
 

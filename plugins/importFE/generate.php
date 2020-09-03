@@ -303,13 +303,13 @@ if (!empty($righe)) {
         $prezzo_unitario = $riga['PrezzoUnitario'];
 
         echo '
-        <tr data-id="'.$key.'" data-qta="'.$qta.'">
+        <tr data-id="'.$key.'" data-qta="'.$qta.'" data-prezzo_unitario="'.$prezzo_unitario.'" data-iva_percentuale="'.$riga['AliquotaIVA'].'">
             <td>
                 '.$riga['Descrizione'].'<br>
 
 				'.(!empty($codici_articoli) ? '<small>'.implode(', ', $codici_articoli).'</small><br>' : '').'
                 <span id="riferimento_'.$key.'_descrizione"></span>
-                <span id="riferimento_'.$key.'"></span>
+                <b id="riferimento_'.$key.'"></b>
             </td>
 
             <td class="text-center">
@@ -327,6 +327,7 @@ if (!empty($righe)) {
                     '_VALUE_' => empty($riga['Natura']) ? numberFormat($riga['AliquotaIVA']).'%' : $riga['Natura'],
                     '_DESC_' => $riga['RiferimentoNormativo'] ? ' - '.$riga['RiferimentoNormativo'] : '',
                 ]).'
+                <span id="riferimento_'.$key.'_iva"></span>
             </td>
         </tr>
 
@@ -367,34 +368,41 @@ if (!empty($righe)) {
     echo '
     <script>
     function copy() {
-        let first_iva = null;
-        let first_conto = null;
+        let aliquote = $("select[name^=iva");
+        let conti = $("select[name^=conto");
 
-        $("select[name^=iva").each(function() {
-            if ($(this).val() != "" && first_iva == null){
-                first_iva = $(this);
+        // Individuazione della prima IVA selezionata
+        let iva_selezionata = null;
+        for (const aliquota of aliquote) {
+            const data = $(aliquota).selectData();
+            if (data) {
+                iva_selezionata = data;
+                break;
             }
-        });
+        }
 
-        $("select[name^=conto").each(function() {
-            if ($(this).val() != "" && first_conto == null) {
-                first_conto = $(this);
+        // Individuazione del primo conto selezionato
+        let conto_selezionato = null;
+        for (const conto of conti) {
+            const data = $(conto).selectData();
+            if (data) {
+                conto_selezionato = data;
+                break;
             }
-        });
+        }
 
-        if(first_iva) {
-            $iva = first_iva.selectData();
-
-            $("select[name^=iva").each(function() {
-                $(this).selectSet($iva.id);
+        // Selezione generale per l\'IVA
+        if (iva_selezionata) {
+            aliquote.each(function() {
+                $(this).selectSet(iva_selezionata.id);
             });
         }
 
-        if(first_conto) {
-            $conto = first_conto.selectData();
-
-            $("select[name^=conto").each(function() {
-                $(this).selectSetNew($conto.id, $conto.text);
+        // Selezione generale per il conto
+        if (conto_selezionato) {
+            console.log(conto_selezionato);
+            conti.each(function() {
+                $(this).selectSetNew(conto_selezionato.id, conto_selezionato.text, conto_selezionato);
             });
         }
     }
@@ -456,9 +464,7 @@ function selezionaRiferimento(riga, tipo_documento, id_documento) {
         righe_ordini: riferimenti.ordini,
     };
 
-    let url = "'.$structure->fileurl('riferimento.php').'?" + Object.keys(query).map(function(k) {
-        return encodeURIComponent(k) + "=" + encodeURIComponent(query[k])
-    }).join("&")
+    let url = "'.$structure->fileurl('riferimento.php').'?" + $.param(query);
 
     openModal("'.tr('Selezione riferimento').'", url);
 }
@@ -495,15 +501,46 @@ function getRiferimenti() {
 * @param riga = {tipo, id, descrizione, qta, prezzo_unitario}
 */
 function impostaRiferimento(id_riga, documento, riga) {
+    // Informazioni interne per il riferimento
     $("#tipo_riferimento_" + id_riga).val(documento.tipo);
     $("#id_riferimento_" + id_riga).val(documento.id);
-
     $("#tipo_riga_riferimento_" + id_riga).val(riga.tipo);
     $("#id_riga_riferimento_" + id_riga).val(riga.id);
 
-    $("#riferimento_" + id_riga).html(documento.descrizione ? documento.descrizione : "");
-
+    // Gestione della selezione
     input("selezione_riferimento[" + id_riga + "]").disable();
     $("#rimuovi_riferimento_" + id_riga).removeClass("disabled");
+
+    let riga_fe = $("#id_riga_riferimento_" + id_riga).closest("tr").prev();
+
+    // Informazioni visibili
+    let qta = parseFloat(riga.qta);
+    let riferimento_qta = $("#riferimento_" + id_riga + "_qta");
+    riferimento_qta.html("<br>" + qta.toLocale());
+    if (qta === riga_fe.data("qta")){
+        riferimento_qta.addClass("text-success").removeClass("text-danger");
+    } else {
+        riferimento_qta.removeClass("text-success").addClass("text-danger");
+    }
+
+    let prezzo_unitario = parseFloat(riga.prezzo_unitario);
+    let riferimento_prezzo = $("#riferimento_" + id_riga + "_prezzo");
+    riferimento_prezzo.html("<br>" + prezzo_unitario.toLocale() + " " + globals.currency)
+    if (prezzo_unitario === riga_fe.data("prezzo_unitario")){
+        riferimento_prezzo.addClass("text-success").removeClass("text-danger");
+    } else {
+        riferimento_prezzo.removeClass("text-success").addClass("text-danger");
+    }
+
+    let iva_percentuale = parseFloat(riga.iva_percentuale);
+    let riferimento_iva = $("#riferimento_" + id_riga + "_iva");
+    riferimento_iva.html("<br>" + iva_percentuale.toLocale() + "%");
+    if (prezzo_unitario === riga_fe.data("iva_percentuale")){
+        riferimento_iva.addClass("text-success").removeClass("text-danger");
+    } else {
+        riferimento_iva.removeClass("text-success").addClass("text-danger");
+    }
+
+    $("#riferimento_" + id_riga).html(documento.descrizione ? documento.descrizione : "");
 }
 </script>';

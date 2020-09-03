@@ -35,8 +35,17 @@ $righe = $documento->getRighe();
 foreach ($righe as $riga) {
     $qta_rimanente = $riga->qta_rimanente - $righe_utilizzate[$riga->id];
 
+    $dettagli = [
+        'tipo' => get_class($riga),
+        'id' => $riga->id,
+        'qta' => $riga->qta,
+        'prezzo_unitario' => $riga->prezzo_unitario,
+        'id_iva' => $riga->id_iva,
+        'iva_percentuale' => $riga->aliquota->percentuale,
+    ];
+
     echo '
-        <tr '.($id_riferimento == $riga->id ? 'class="success"' : '').' data-type="'.get_class($riga).'" data-id="'.$riga->id.'" data-qta="'.$riga->qta.'" data-prezzo_unitario="'.$riga->prezzo_unitario.'">
+        <tr '.($id_riferimento == $riga->id ? 'class="success"' : '').' data-dettagli='.json_encode($dettagli).'>
             <td>'.$riga->descrizione.'</td>
             <td>'.numberFormat($qta_rimanente, 'qta').' / '.numberFormat($riga->qta, 'qta').'</td>
             <td class="text-center">';
@@ -67,11 +76,8 @@ var documento_importazione = {
 function selezionaRiga(button) {
     let riga = $(button).closest("tr");
 
-    let dati_riga = {
-        tipo: riga.data("type"),
-        id: riga.data("id"),
-    };
-    impostaRiferimento("'.$id_riga.'", documento_importazione, dati_riga);
+    let dettagli_riga = riga.data("dettagli");
+    impostaRiferimento("'.$id_riga.'", documento_importazione, dettagli_riga);
 
     $(button).closest(".modal").modal("hide");
 }

@@ -24,7 +24,7 @@ echo '
 $today = new Carbon\Carbon();
 $today = $today->startOfDay();
 $righe = $ordine->getRighe();
-foreach ($righe as $riga) {
+foreach ($righe as $key => $riga) {
     $extra = '';
     $mancanti = 0;
 
@@ -43,7 +43,7 @@ foreach ($righe as $riga) {
     echo '
         <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'" '.$extra.'>
             <td class="text-center">
-                '.($riga->order + 1).'
+                '.($key + 1).'
             </td>
 
             <td>';
@@ -106,7 +106,7 @@ foreach ($righe as $riga) {
         <td class="text-center">
             '.$info_evasione.'
         </td>';
-    
+
     if ($riga->isDescrizione()) {
         echo '
                 <td></td>

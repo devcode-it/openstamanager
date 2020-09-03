@@ -20,7 +20,7 @@ echo '
 
 // Righe documento
 $righe = $fattura->getRighe();
-foreach ($righe as $riga) {
+foreach ($righe as $key => $riga) {
     $extra = '';
     $mancanti = 0;
     $delete = 'delete_riga';
@@ -71,7 +71,7 @@ foreach ($righe as $riga) {
     echo '
         <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'" '.$extra.'>
             <td class="text-center">
-                '.($riga->order + 1).'
+                '.($key + 1).'
             </td>
 
             <td>';

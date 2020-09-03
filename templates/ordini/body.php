@@ -50,7 +50,7 @@ if ($options['pricing']) {
 
     <tbody>';
 
-foreach ($righe as $riga) {
+foreach ($righe as $key => $riga) {
     $r = $riga->toArray();
 
     $autofill->count($r['descrizione']);
@@ -58,9 +58,10 @@ foreach ($righe as $riga) {
     echo '
         <tr>';
 
-    echo'
-        <td class=\'text-center\' >
-            '.($r['order'] + 1).'</td>';
+    echo '
+        <td class="text-center" style="vertical-align: middle">
+            '.($key + 1).'
+        </td>';
 
     if ($has_image) {
         if ($riga->isArticolo()) {

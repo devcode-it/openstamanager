@@ -21,11 +21,11 @@ echo '
 
 // Righe documento
 $righe = $contratto->getRighe();
-foreach ($righe as $riga) {
+foreach ($righe as $key => $riga) {
     echo '
             <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'">
                 <td class="text-center">
-                    '.($riga->order + 1).'
+                    '.($key + 1).'
                 </td>';
 
     // Descrizione

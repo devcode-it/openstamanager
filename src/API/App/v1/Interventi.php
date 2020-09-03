@@ -121,6 +121,7 @@ class Interventi extends AppResource
             codice,
             richiesta,
             data_richiesta,
+            (SELECT MIN(`orario_inizio`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`) AS `data`,
             descrizione,
             idanagrafica AS id_cliente,
             id_contratto,

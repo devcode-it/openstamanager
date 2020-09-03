@@ -2,7 +2,6 @@
 
 namespace Plugins\ReceiptFE;
 
-use Carbon\Carbon;
 use Modules;
 use Modules\Fatture\Fattura;
 use Plugins;

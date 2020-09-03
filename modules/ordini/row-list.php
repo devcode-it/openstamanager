@@ -54,6 +54,28 @@ foreach ($righe as $riga) {
         echo nl2br($riga->descrizione);
     }
 
+    if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
+        if (!empty($mancanti)) {
+            echo '
+                <br><b><small class="text-danger">'.tr('_NUM_ serial mancanti', [
+                    '_NUM_' => $mancanti,
+                ]).'</small></b>';
+        }
+        if (!empty($serials)) {
+            echo '
+                <br>'.tr('SN').': '.implode(', ', $serials);
+        }
+    }
+
+    // Aggiunta dei riferimenti ai documenti
+    if ($riga->hasOriginal()) {
+        echo '
+                <br>'.reference($riga->getOriginal()->parent);
+    }
+
+    echo '
+            </td>';
+
     // Data prevista evasione
     $info_evasione = '';
     if (!empty($riga->data_evasione)) {
@@ -84,29 +106,7 @@ foreach ($righe as $riga) {
         <td class="text-center">
             '.$info_evasione.'
         </td>';
-
-    if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
-        if (!empty($mancanti)) {
-            echo '
-                <br><b><small class="text-danger">'.tr('_NUM_ serial mancanti', [
-                    '_NUM_' => $mancanti,
-                ]).'</small></b>';
-        }
-        if (!empty($serials)) {
-            echo '
-                <br>'.tr('SN').': '.implode(', ', $serials);
-        }
-    }
-
-    // Aggiunta dei riferimenti ai documenti
-    if ($riga->hasOriginal()) {
-        echo '
-                <br>'.reference($riga->getOriginal()->parent);
-    }
-
-    echo '
-            </td>';
-
+    
     if ($riga->isDescrizione()) {
         echo '
                 <td></td>

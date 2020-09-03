@@ -183,7 +183,7 @@ class Articolo extends Model
     public function movimentiComposti()
     {
         return $this->movimenti()
-            ->selectRaw('*, sum(qta) as qta_documento, IFNULL(reference_type, UUID()) as tipo_gruppo')
+            ->selectRaw('*, sum(qta) as qta_documento, IFNULL(reference_type, id) as tipo_gruppo')
             ->groupBy('tipo_gruppo', 'reference_id');
     }
 

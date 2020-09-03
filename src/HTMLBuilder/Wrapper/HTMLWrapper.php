@@ -168,6 +168,10 @@ class HTMLWrapper implements WrapperInterface
             $values['icon-custom'] = 'no-padding';
         }
 
+        if (str_contains($string, '<button')) {
+            $values['icon-custom'] = 'no-padding';
+        }
+
         return $result;
     }
 

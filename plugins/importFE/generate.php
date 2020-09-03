@@ -353,7 +353,7 @@ if (!empty($righe)) {
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "name": "selezione_riferimento['.$key.']", "ajax-source": "riferimenti-fe", "select-options": '.json_encode(['id_anagrafica' => $anagrafica ? $anagrafica->id : '']).', "required": 1, "label": "'.tr('Riferimento').'" ]}
+                    {[ "type": "select", "name": "selezione_riferimento['.$key.']", "ajax-source": "riferimenti-fe", "select-options": '.json_encode(['id_anagrafica' => $anagrafica ? $anagrafica->id : '']).', "required": 1, "label": "'.tr('Riferimento').'", "icon-after": '.json_encode('<button type="button" onclick="rimuoviRiferimento(this)" class="btn btn-primary disabled" id="rimuovi_riferimento_'.$key.'"><i class="fa fa-close"></i></button>').' ]}
                 </div>
             </td>
         </tr>';
@@ -429,6 +429,17 @@ echo '
     }
 });
 
+function rimuoviRiferimento(button) {
+    let riga = $(button).closest("tr").prev();
+    let id_riga = riga.data("id");
+
+    impostaRiferimento(id_riga, {}, {});
+
+    input("selezione_riferimento[" + id_riga + "]").enable()
+        .getElement().selectReset();
+    $(button).addClass("disabled");
+}
+
 function selezionaRiferimento(riga, tipo_documento, id_documento) {
     let id_riga = riga.data("id");
     let qta = riga.data("qta");
@@ -484,13 +495,15 @@ function getRiferimenti() {
 * @param riga = {tipo, id, descrizione, qta, prezzo_unitario}
 */
 function impostaRiferimento(id_riga, documento, riga) {
-    console.log(id_riga);
     $("#tipo_riferimento_" + id_riga).val(documento.tipo);
     $("#id_riferimento_" + id_riga).val(documento.id);
 
     $("#tipo_riga_riferimento_" + id_riga).val(riga.tipo);
     $("#id_riga_riferimento_" + id_riga).val(riga.id);
 
-    $("#riferimento_" + id_riga).html(documento.descrizione);
+    $("#riferimento_" + id_riga).html(documento.descrizione ? documento.descrizione : "");
+
+    input("selezione_riferimento[" + id_riga + "]").disable();
+    $("#rimuovi_riferimento_" + id_riga).removeClass("disabled");
 }
 </script>';

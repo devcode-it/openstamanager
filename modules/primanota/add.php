@@ -110,8 +110,12 @@ foreach ($id_documenti as $id_documento) {
     $conto_field = 'idconto_'.($dir == 'entrata' ? 'cliente' : 'fornitore');
     $id_conto_controparte = $fattura->anagrafica[$conto_field];
 
-    // Lettura delle scadenza della fattura
-    $scadenze = $dbo->fetchArray('SELECT id, ABS(da_pagare - pagato) AS rata, iddocumento FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) > ABS(pagato) ORDER BY YEAR(scadenza) ASC, MONTH(scadenza) ASC');
+    // Se sto registrando un insoluto, leggo l'ultima scadenza pagata altrimenti leggo la scadenza della fattura
+    if ($is_insoluto) {
+        $scadenze = $dbo->fetchArray('SELECT id, ABS(da_pagare) AS rata, iddocumento FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) = ABS(pagato) ORDER BY updated_at DESC LIMIT 0, 1');
+    } else {
+        $scadenze = $dbo->fetchArray('SELECT id, ABS(da_pagare - pagato) AS rata, iddocumento FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) > ABS(pagato) ORDER BY YEAR(scadenza) ASC, MONTH(scadenza) ASC');
+    }
 
     // Selezione prima scadenza
     if ($singola_scadenza && !empty($scadenze)) {
@@ -134,21 +138,13 @@ foreach ($id_documenti as $id_documento) {
     // Riga aziendale
     $totale = sum(array_column($scadenze, 'rata'));
 
-    if ($totale != 0) {
-        if ($nota_credito) {
-            $totale_rata = -$totale;
-        } else {
-            $totale_rata = $totale;
-        }
-
-        $righe_documento[] = [
-            'iddocumento' => $scadenze[0]['iddocumento'],
-            'id_scadenza' => $scadenze[0]['id'],
-            'id_conto' => $id_conto_aziendale,
-            'dare' => ($dir == 'entrata') ? $totale_rata : 0,
-            'avere' => ($dir == 'entrata') ? 0 : $totale_rata,
-        ];
-    }
+    $righe_documento[] = [
+        'iddocumento' => $scadenze[0]['iddocumento'],
+        'id_scadenza' => $scadenze[0]['id'],
+        'id_conto' => $id_conto_aziendale,
+        'dare' => (($dir == 'entrata' && !$nota_credito && !$is_insoluto) || ($dir == 'uscita' && ($nota_credito || $is_insoluto))) ? $totale : 0,
+        'avere' => (($dir == 'entrata' && !$nota_credito && !$is_insoluto) || ($dir == 'uscita' && ($nota_credito || $is_insoluto))) ? 0 : $totale,
+    ];
 
     $movimenti = array_merge($movimenti, $righe_documento);
 }

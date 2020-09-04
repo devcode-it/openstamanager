@@ -2,8 +2,8 @@ function initNumbers() {
     $('.decimal-number').not('.bound').each(function () {
         let $this = $(this);
 
-        let min = $this.attr('min-value') ? $this.attr('min-value') : "-10000000000000";
-        let max = $this.attr('max-value') ? $this.attr('max-value') : "10000000000000";
+        let min = $this.attr('min-value') && $this.attr('min-value') !== "undefined" ? $this.attr('min-value') : "-10000000000000";
+        let max = $this.attr('max-value') && $this.attr('max-value') !== "undefined" ? $this.attr('max-value') : "10000000000000";
 
         let decimals = $this.attr('decimals') ? $this.attr('decimals') : globals.cifre_decimali;
 

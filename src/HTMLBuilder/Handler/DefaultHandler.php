@@ -100,7 +100,7 @@ class DefaultHandler implements HandlerInterface
                 button.attr("title", "'.tr('Visualizza password').'");
             }
         }
-        
+
         $(document).ready(function(){
             togglePassword_'.$values['id'].'();
         });
@@ -109,7 +109,7 @@ class DefaultHandler implements HandlerInterface
         if (!empty($values['strength'])) {
             $result .= '
     <div id="'.$values['id'].'_viewport_progress"></div>
-    
+
     <script src="'.ROOTDIR.'/assets/dist/password-strength/password.min.js"></script>
        <script>
         $(document).ready(function(){
@@ -135,7 +135,7 @@ class DefaultHandler implements HandlerInterface
                 i18n: {
                     t: function (key) {
                         var result = globals.translations.password[key];
-            
+
                         return result === key ? \'\' : result;
                     }
                 },
@@ -143,7 +143,7 @@ class DefaultHandler implements HandlerInterface
                     minChar: 6,
                     onKeyUp: function(event, data) {
                         var len = $("#'.$values['id'].'").val().length;
-                        
+
                         if(len < 6) {
                             $("'.$values['strength'].'").attr("disabled", true).addClass("disabled");
                         } else {
@@ -152,7 +152,7 @@ class DefaultHandler implements HandlerInterface
                     }
                 },
             });
-            
+
             $("#'.$values['id'].'_viewport_progress").insertAfter($("#'.$values['id'].'").closest(".form-group").find("div[id$=-errors]")).css("margin-top", "5px");
         });
     </script>';
@@ -218,7 +218,7 @@ class DefaultHandler implements HandlerInterface
      */
     protected function number(&$values, &$extras)
     {
-        $values['class'][] = 'inputmask-decimal';
+        $values['class'][] = 'decimal-number';
 
         $values['value'] = !empty($values['value']) ? $values['value'] : 0;
 

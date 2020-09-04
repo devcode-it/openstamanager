@@ -1022,3 +1022,7 @@ div.tip {
 .skin-default .nav.navbar-nav li a:hover {
     background: #222222;
 }
+
+.decimal-number {
+    text-align: right;
+}

@@ -1,9 +1,18 @@
-// Modal
+/**
+ * Modal gestito da versioni precedenti.
+ * @param title
+ * @param href
+ * @param init_modal
+ */
 function launch_modal(title, href, init_modal) {
     openModal(title, href);
 }
 
-// Modal
+/**
+ * Modal.
+ * @param title
+ * @param href
+ */
 function openModal(title, href) {
     // Fix - Select2 does not function properly when I use it inside a Bootstrap modal.
     $.fn.modal.Constructor.prototype.enforceFocus = function () {
@@ -55,6 +64,11 @@ function openModal(title, href) {
     }
 }
 
+/**
+ *
+ * @param event
+ * @param link
+ */
 function openLink(event, link) {
     if (event.ctrlKey) {
         window.open(link);
@@ -85,7 +99,9 @@ function getUrlVars() {
     });
 }
 
-// Data e ora (orologio)
+/**
+ * Data e ora (orologio)
+ */
 function clock() {
     $('#datetime').html(moment().formatPHP(globals.timestamp_format));
     setTimeout('clock()', 1000);
@@ -123,33 +139,6 @@ function session_set(session_array, value, clear, reload) {
 
 function session_keep_alive() {
     $.get(globals.rootdir + '/core.php');
-}
-
-/**
- * Funzione per gestire i contatori testuali nel formato x/total.
- * Viene dato un id del campo da verificare come input, viene letto il testo nella forma [0-9]/[0-9] e viene fatto
- * il replate del primo numero in base a quanti elementi sono stati trovati (valore passato per parametro)
- */
-function update_counter(id, new_value) {
-    new_text = $('#' + id).html();
-
-    // Estraggo parte numerica (formato x/total)
-    pattern = /([^0-9]+)([0-9]+)\/([0-9]+)([^0-9]+)/;
-    new_text = new_text.replace(pattern, "$1" + new_value + "/$3$4");
-
-    // Estraggo totale (parte numerica dopo lo slash /)
-    matches = pattern.exec(new_text);
-    total = matches[3];
-
-    $('#' + id).html(new_text);
-
-    if (new_value == total) {
-        $('#' + id).removeClass('btn-warning').removeClass('btn-danger').addClass('btn-success');
-    } else if (new_value == 0) {
-        $('#' + id).removeClass('btn-warning').removeClass('btn-success').addClass('btn-danger');
-    } else {
-        $('#' + id).removeClass('btn-success').removeClass('btn-danger').addClass('btn-warning');
-    }
 }
 
 function setContrast(backgroundcolor) {
@@ -219,9 +208,7 @@ function message(element) {
         confirmButtonText: button,
         confirmButtonClass: btn_class,
         onOpen: function () {
-            start_superselect();
-            start_inputmask();
-            start_datepickers();
+            restart_inputs();
         },
         preConfirm: function () {
             $form = $('#swal-form');
@@ -450,8 +437,10 @@ function prepareForm(form) {
     }
 }
 
+/**
+ * Visualizzazione dei messaggi attivi tramite toastr.
+ */
 function renderMessages() {
-    // Visualizzazione messaggi
     $.ajax({
         url: globals.rootdir + '/ajax.php',
         type: 'get',
@@ -504,14 +493,17 @@ function restart_inputs() {
     start_datepickers();
     start_inputmask();
 
+    initNumbers();
     start_superselect();
 
     // Autosize per le textarea
     autosize($('.autosize'));
 }
 
+/**
+ * Messaggio di avviso salvataggio a comparsa sulla destra solo nella versione a desktop intero
+ */
 function alertPush() {
-    // Messaggio di avviso salvataggio a comparsa sulla destra solo nella versione a desktop intero
     if ($(window).width() > 1023) {
         var i = 0;
 
@@ -541,6 +533,13 @@ function alertPush() {
     });
 }
 
+/**
+ * 
+ * @param button
+ * @param form
+ * @param data
+ * @returns {Promise<unknown>}
+ */
 function salvaForm(button, form, data = {}) {
     return new Promise(function (resolve, reject) {
         // Caricamento visibile nel pulsante

@@ -949,37 +949,37 @@ div.tip {
 
 /* Fancy checkbox: https://bootsnipp.com/snippets/M2bda */
 
-.form-group input[type="checkbox"] {
+.checkbox-group input[type="checkbox"] {
     display: none;
 }
 
-.form-group input[type="checkbox"] + .btn-group > label span {
+.checkbox-group input[type="checkbox"] + .btn-group > label span {
     width: 20px;
 }
 
-.form-group input[type="checkbox"] + .btn-group {
+.checkbox-group input[type="checkbox"] + .btn-group {
     width: 100%;
     display: flex;
     overflow: auto;
 }
 
-.form-group input[type="checkbox"] + .btn-group label:last-child {
+.checkbox-group input[type="checkbox"] + .btn-group label:last-child {
     flex-grow: 100;
 }
 
-.form-group input[type="checkbox"] + .btn-group > label span:first-child {
+.checkbox-group input[type="checkbox"] + .btn-group > label span:first-child {
     display: none;
 }
 
-.form-group input[type="checkbox"] + .btn-group > label span:last-child {
+.checkbox-group input[type="checkbox"] + .btn-group > label span:last-child {
     display: inline-block;
 }
 
-.form-group input[type="checkbox"]:checked + .btn-group > label span:first-child {
+.checkbox-group input[type="checkbox"]:checked + .btn-group > label span:first-child {
     display: inline-block;
 }
 
-.form-group input[type="checkbox"]:checked + .btn-group > label span:last-child {
+.checkbox-group input[type="checkbox"]:checked + .btn-group > label span:last-child {
     display: none;
 }
 

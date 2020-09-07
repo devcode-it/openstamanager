@@ -14,7 +14,6 @@ echo '
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="id_record" value="'.$id_record.'">
 
-
     <div class="row">
         <div class="col-md-8">
             <!-- DATI CLIENTE -->
@@ -85,10 +84,6 @@ $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
 $sede_azienda = $anagrafica_azienda->sedeLegale;
 
 $google = setting('Google Maps API key');
-if (!empty($google)) {
-    echo '
-<script src="//maps.googleapis.com/maps/api/js?libraries=places&key='.$google.'"></script>';
-}
 
 echo '
             <div class="col-md-4">
@@ -98,6 +93,7 @@ echo '
                     </div>
                     <div class="panel-body">';
 
+$map_load_message = '<p>'.tr('Clicca per visualizzare').'</p>';
 if (empty($google)) {
     echo '
                         <div class="alert alert-info">
@@ -105,7 +101,9 @@ if (empty($google)) {
                         </div>';
 } elseif (!empty($sede_cliente->gaddress) || (!empty($sede_cliente->lat) && !empty($sede_cliente->lng))) {
     echo '
-                        <div id="map-edit" style="height:200px; width:100%"></div>
+                        <div id="map-edit" style="height: 200px;width: 100%;display: flex;align-items: center;justify-content: center;" onclick="caricaMappa()">
+                            '.$map_load_message.'
+                        </div>
 
                         <div class="clearfix"></div>
                         <br>';
@@ -177,32 +175,39 @@ echo '
                 return lat + "," + lng;
             }
 
-            $(document).ready(function() {
-                const map_element = $("#map-edit")[0];
-                const lat = parseFloat("'.$sede_cliente->lat.'");
-                const lng = parseFloat("'.$sede_cliente->lng.'");
+            function caricaMappa() {
+                const map_div = $("#map-edit");
+                if (map_div.html().trim() !== "'.$map_load_message.'"){
+                    return;
+                }
 
-                if (!lat || !lng) return;
-                const position = new google.maps.LatLng(lat, lng);
+                $.getScript("//maps.googleapis.com/maps/api/js?libraries=places&key='.$google.'", function() {
+                    const map_element = map_div[0];
+                    const lat = parseFloat("'.$sede_cliente->lat.'");
+                    const lng = parseFloat("'.$sede_cliente->lng.'");
 
-                // Create a Google Maps native view under the map_canvas div.
-                const map = new google.maps.Map(map_element, {
-                    zoom: 14,
-                    scrollwheel: false,
-                    mapTypeControl: true,
-                    mapTypeId: "roadmap",
-                    mapTypeControlOptions: {
-                        style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
-                        mapTypeIds: ["roadmap", "terrain"],
-                    }
-                });
+                    if (!lat || !lng) return;
+                    const position = new google.maps.LatLng(lat, lng);
 
-                map.setCenter(position);
-                const marker = new google.maps.Marker({
-                    position: position,
-                    map: map,
-                });
-            });
+                    // Create a Google Maps native view under the map_canvas div.
+                    const map = new google.maps.Map(map_element, {
+                        zoom: 14,
+                        scrollwheel: false,
+                        mapTypeControl: true,
+                        mapTypeId: "roadmap",
+                        mapTypeControlOptions: {
+                            style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
+                            mapTypeIds: ["roadmap", "terrain"],
+                        }
+                    });
+
+                    map.setCenter(position);
+                    const marker = new google.maps.Marker({
+                        position: position,
+                        map: map,
+                    });
+               });
+            }
         </script>';
 
 ?>

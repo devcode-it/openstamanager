@@ -27,7 +27,7 @@ echo "
 <table class='table table-striped table-bordered' id='contents'>
     <thead>
         <tr>
-            <th class='text-center' style='width:5%'>".tr('#', [], ['upper' => true])."</th>";
+            <th class='text-center' style='width:5%'>".tr('#', [], ['upper' => true]).'</th>';
             if ($has_image) {
                 echo "
             <th class='text-center' style='width:20%'>".tr('Immagine', [], ['upper' => true]).'</th>';

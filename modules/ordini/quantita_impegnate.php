@@ -40,8 +40,8 @@ foreach ($articoli as $elenco) {
         WHERE or_ordini.id != '.prepare($ordine->id).'
               AND idstatoordine = (SELECT id FROM or_statiordine WHERE descrizione = 'Bozza')
               AND idtipoordine IN (SELECT id FROM or_tipiordine WHERE dir = 'entrata')
-              AND idarticolo=".prepare($articolo->id)."
-        GROUP BY idarticolo")['qta'];
+              AND idarticolo=".prepare($articolo->id).'
+        GROUP BY idarticolo')['qta'];
     $qta_impegnata = floatval($qta_impegnata);
 
     $class = $qta_impegnata + $qta > $articolo->qta ? 'danger' : 'success';

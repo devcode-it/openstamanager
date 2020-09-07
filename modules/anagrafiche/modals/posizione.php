@@ -3,6 +3,8 @@
 include_once __DIR__.'/../../../core.php';
 include_once __DIR__.'/../init.php';
 
+$google = setting('Google Maps API key');
+
 echo '
 <form action="" method="post" id="form-posizione">
     <input type="hidden" name="backto" value="record-edit">
@@ -38,15 +40,25 @@ echo '
 <script>$(document).ready(init)</script>
 
 <script>
-$("#geocomplete input").geocomplete({
-    map: $("#map").length ? "#map" : false,
-    location: $("#gaddress").val() ? $("#gaddress").val() : [$("#lat").val(), $("#lng").val()],
-    details: ".details",
-    detailsAttribute: "data-geo"
-}).bind("geocode:result", function (event, result) {
-    $("#lat").val(result.geometry.location.lat());
-    $("#lng").val(result.geometry.location.lng());
-});
+if(window.google){
+    initGeocomplete();
+} else {
+    $.getScript("//maps.googleapis.com/maps/api/js?libraries=places&key='.$google.'", function() {
+        initGeocomplete();
+    });
+}
+
+function initGeocomplete() {
+    $("#geocomplete input").geocomplete({
+        map: $("#map").length ? "#map" : false,
+        location: $("#gaddress").val() ? $("#gaddress").val() : [$("#lat").val(), $("#lng").val()],
+        details: ".details",
+        detailsAttribute: "data-geo"
+    }).bind("geocode:result", function (event, result) {
+        $("#lat").val(result.geometry.location.lat());
+        $("#lng").val(result.geometry.location.lng());
+    });
+}
 
 // Ricaricamento della pagina alla chiusura
 $("#modals > div button.close").on("click", function() {

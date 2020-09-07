@@ -34,12 +34,10 @@ class Interaction extends Services
         $list = self::getRemoteList();
 
         // Ricerca fisica
-        $files = self::getFileList($list);
-
-        $list = array_merge($list, $files);
+        $result = self::getFileList($list);
 
         // Aggiornamento cache hook
-        Cache::get('Ricevute Elettroniche')->set($list);
+        Cache::get('Ricevute Elettroniche')->set($result);
 
         return $list;
     }

@@ -2,9 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\Fatture\Fattura;
-
-$documento = Fattura::find($record['iddocumento']);
 $dir = $documento->direzione;
 $numero = $documento->numero_esterno ?: $documento->numero;
 
@@ -75,7 +72,7 @@ if (!empty($documento)) {
 
                     '.Modules::link($documento->module, $record['iddocumento'], '<i class="fa fa-folder-open"></i> '.tr('Apri documento'), null, 'class="btn btn-primary"');
 } else {
-    $scadenza = $dbo->fetchOne('SELECT * FROM co_scadenziario WHERE id='.prepare($id_record));
+    $scadenza = $dbo->fetchOne('SELECT * FROM co_scadenziario WHERE id = '.prepare($id_record));
 
     echo input([
         'type' => 'textarea',
@@ -103,16 +100,7 @@ echo '
 
                         <tbody id="scadenze">';
 
-// Scelgo la query in base alla scadenza
-if (!empty($documento)) {
-    $rs = $dbo->fetchArray('SELECT * FROM co_scadenziario WHERE iddocumento = '.prepare($documento->id).' ORDER BY scadenza ASC');
-    $totale_da_pagare = $documento->netto;
-} else {
-    $rs = $dbo->fetchArray('SELECT * FROM co_scadenziario WHERE id = '.prepare($id_record).' ORDER BY scadenza ASC');
-    $totale_da_pagare = sum(array_column($rs, 'da_pagare'));
-}
-
-foreach ($rs as $i => $scadenza) {
+foreach ($scadenze as $i => $scadenza) {
     if ($scadenza['da_pagare'] == $scadenza['pagato']) {
         $class = 'success';
     } elseif (abs($scadenza['pagato']) == 0) {

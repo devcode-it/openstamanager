@@ -257,16 +257,21 @@ elseif ($record['stato'] == 'Bozza') {
 
                 <?php
                 if ($record['stato'] != 'Bozza' && $record['stato'] != 'Annullata') {
-                    $ricalcola = true;
+                    $scadenze = $fattura->scadenze;
 
-                    $scadenze = $dbo->fetchArray('SELECT * FROM co_scadenziario WHERE iddocumento = '.prepare($id_record));
+                    $ricalcola = true;
+                    foreach ($scadenze as $scadenza) {
+                        $ricalcola = empty(floatval($scadenza->pagato)) && $ricalcola;
+                    }
+
                     echo '
                 <div class="col-md-3">
                     <p class="pull-left"><strong>'.tr('Scadenze').'</strong></p>
 
                     <div class="btn-group pull-right">
                         '.Modules::link('Scadenzario', $scadenze[0]['id'], tr('<i class="fa fa-edit tip" title="'.tr('Modifica scadenze').'"></i>'), '', 'class="btn btn-xs btn-primary"');
-                    //Ricalcola scadenze disponibile solo per fatture di acquisto
+
+                    // Ricalcola scadenze disponibile solo per fatture di acquisto
                     if ($fattura->isFE() && $ricalcola && $module['name'] == 'Fatture di acquisto') {
                         echo '
                     <button type="button" class="btn btn-info btn-xs pull-right tip" title="'.tr('Ricalcola le scadenze').'. '.tr('Per ricalcolare correttamente le scadenze, imposta la fattura di acquisto nello stato \'\'Bozza\'\' e correggi il documento come desiderato, poi re-imposta lo stato \'\'Emessa\'\' e utilizza questa funzione').'." id="ricalcola_scadenze">
@@ -278,25 +283,29 @@ elseif ($record['stato'] == 'Bozza') {
                     <div class="clearfix"></div>';
 
                     foreach ($scadenze as $scadenza) {
-                        echo '
-                    <p>'.Translator::dateToLocale($scadenza['scadenza']).': ';
+                        $pagamento_iniziato = !empty(floatval($scadenza->pagato));
 
-                        if ($scadenza['pagato'] == $scadenza['da_pagare']) {
+                        echo '
+                    <p>'.dateFormat($scadenza['scadenza']).': ';
+
+                        if ($pagamento_iniziato) {
                             echo '
                         <strike>';
                         }
 
-                        echo(empty($scadenza['da_pagare']) ? '<i class="fa fa-exclamation-triangle"></i> ' : '').moneyFormat($scadenza['da_pagare']);
+                        echo (empty($scadenza->da_pagare) ? '<i class="fa fa-exclamation-triangle"></i>' : '').moneyFormat($scadenza->da_pagare);
 
-                        if ($scadenza['pagato'] == $scadenza['da_pagare']) {
+                        if ($pagamento_iniziato) {
                             echo '
                         </strike>';
                         }
 
+                        if ($pagamento_iniziato && $scadenza->pagato != $scadenza->da_pagare) {
+                            echo ' ('.moneyFormat($scadenza->da_pagare - $scadenza->pagato).')';
+                        }
+
                         echo '
                     </p>';
-
-                        $ricalcola = empty(floatval($scadenza['pagato'])) && $ricalcola;
                     }
 
                     echo '

@@ -70,7 +70,7 @@ echo '
 var documento_importazione = {
     tipo: "'.$tipo_documento.'",
     id: "'.$id_documento.'",
-    descrizione: "Rif. '.$tipo_documento.' num. '.$documento->numero.'",
+    descrizione: "'.$documento->getReference().'",
 };
 
 function selezionaRiga(button) {

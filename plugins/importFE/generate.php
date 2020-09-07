@@ -513,37 +513,38 @@ function impostaRiferimento(id_riga, documento, riga) {
 
     let riga_fe = $("#id_riga_riferimento_" + id_riga).closest("tr").prev();
 
-    // Informazioni visibili
-    let qta = parseFloat(riga.qta);
-    let riferimento_qta = $("#riferimento_" + id_riga + "_qta");
-    let contenuto_qta = qta.toLocale();
-    if (qta === riga_fe.data("qta")) {
-        riferimento_qta.addClass("text-success").removeClass("text-warning");
-    } else {
-        riferimento_qta.removeClass("text-success").addClass("text-warning");
-    }
-    riferimento_qta.html("<br>" + contenuto_qta);
+    // Informazioni visibili sulla quantità
+    impostaContenuto(riga_fe.data("qta"), riga.qta, "#riferimento_" + id_riga + "_qta");
 
-    let prezzo_unitario = parseFloat(riga.prezzo_unitario);
-    let riferimento_prezzo = $("#riferimento_" + id_riga + "_prezzo");
-    let contenuto_prezzo = prezzo_unitario.toLocale() + " " + globals.currency;
-    if (prezzo_unitario === riga_fe.data("prezzo_unitario")) {
-        riferimento_prezzo.addClass("text-success").removeClass("text-warning");
-    } else {
-        riferimento_prezzo.removeClass("text-success").addClass("text-warning");
-    }
-    riferimento_prezzo.html("<br>" + contenuto_prezzo)
+    // Informazioni visibili sul prezzo unitario
+    impostaContenuto(riga_fe.data("prezzo_unitario"), riga.prezzo_unitario, "#riferimento_" + id_riga + "_prezzo");
 
-    let iva_percentuale = parseFloat(riga.iva_percentuale);
-    let riferimento_iva = $("#riferimento_" + id_riga + "_iva");
-    let contenuto_iva = iva_percentuale.toLocale() + "%";
-    if (iva_percentuale === riga_fe.data("iva_percentuale")) {
-        riferimento_iva.addClass("text-success").removeClass("text-warning");
-    } else {
-        riferimento_iva.removeClass("text-success").addClass("text-warning");
-    }
-    riferimento_iva.html("<br>" + contenuto_iva)
+    // Informazioni visibili sull\'aliquota IVA
+    impostaContenuto(riga_fe.data("iva_percentuale"), riga.iva_percentuale, "#riferimento_" + id_riga + "_iva");
 
     $("#riferimento_" + id_riga).html(documento.descrizione ? documento.descrizione : "");
+}
+
+// Informazioni visibili sull\'aliquota IVA
+function impostaContenuto(valore_riga, valore_riferimento, id_elemento) {
+    let elemento = $(id_elemento);
+    if (valore_riferimento === undefined){
+        elemento.html("");
+        return;
+    }
+
+    valore_riga = parseFloat(valore_riga);
+    valore_riferimento = parseFloat(valore_riferimento);
+
+    let contenuto = valore_riferimento.toLocale() + "%";
+    if (valore_riferimento === valore_riga) {
+        contenuto = `<i class="fa fa-warning"></i> ` + contenuto;
+        elemento.addClass("text-success").removeClass("text-warning");
+    } else {
+        contenuto = `<i class="fa fa-check"></i> ` + contenuto;
+        elemento.removeClass("text-success").addClass("text-warning");
+    }
+
+    elemento.html("<br>" + contenuto);
 }
 </script>';

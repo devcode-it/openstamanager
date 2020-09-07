@@ -191,7 +191,7 @@ class HTMLWrapper implements WrapperInterface
 
         if (in_array($module->permission, ['r', 'rw'])) {
             $result = '
-<button '.$btn_extras.' data-href="'.ROOTDIR.'/add.php?id_module='.$module->id.$get.'&select='.$values['id'].'&ajax=yes" data-toggle="modal" data-title="'.tr('Aggiungi').'" type="button" class="btn'.$classes.'">
+<button type="button" class="btn'.$classes.'" '.$btn_extras.' onclick="openModal(\''.tr('Aggiungi').'\', \''.ROOTDIR.'/add.php?id_module='.$module->id.$get.'&select='.$values['id'].'&ajax=yes\')">
     <i class="fa fa-plus"></i>
 </button>';
         }

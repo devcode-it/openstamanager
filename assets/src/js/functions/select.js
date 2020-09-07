@@ -20,41 +20,25 @@
 function start_superselect() {
     // Statico
     $('.superselect').each(function () {
-        $this = $(this);
+        let $this = $(this);
+
         $(this).select2({
             theme: "bootstrap",
             language: "it",
             width: '100%',
             maximumSelectionLength: $this.data('maximum') ? $this.data('maximum') : -1,
             minimumResultsForSearch: $this.hasClass('no-search') ? -1 : 0,
-            allowClear: $this.hasClass('no-search') ? false : true,
-            templateResult: function (data, container) {
-                var bg; // templateSelection
-
-                if (data._bgcolor_) {
-                    bg = data._bgcolor_;
-                } else if ($(data.element).attr("_bgcolor_")) {
-                    bg = $(data.element).attr("_bgcolor_");
-                } else if ($(data.element).data("_bgcolor_")) {
-                    bg = $(data.element).data("_bgcolor_");
-                }
-
-                if (bg) {
-                    $(container).css("background-color", bg);
-                    $(container).css("color", setContrast(bg));
-                }
-
-                return data.text;
-            },
+            allowClear: !$this.hasClass('no-search'),
             escapeMarkup: function (text) {
                 return text;
-            }
+            },
+            templateResult: selectBackground,
         });
     });
 
     // Dinamico (AJAX, per tabelle con molti record)
     $('.superselectajax').each(function () {
-        $this = $(this);
+        let $this = $(this);
 
         $(this).select2({
             theme: "bootstrap",
@@ -65,24 +49,7 @@ function start_superselect() {
             escapeMarkup: function (text) {
                 return text;
             },
-            templateResult: function (data, container) {
-                var bg; // templateSelection
-
-                if (data._bgcolor_) {
-                    bg = data._bgcolor_;
-                } else if ($(data.element).attr("_bgcolor_")) {
-                    bg = $(data.element).attr("_bgcolor_");
-                } else if ($(data.element).data("_bgcolor_")) {
-                    bg = $(data.element).data("_bgcolor_");
-                }
-
-                if (bg && !$("head").find('#' + data._resultId + '_style').length) {
-                    $(container).css("background-color", bg);
-                    $(container).css("color", setContrast(bg));
-                }
-
-                return data.text;
-            },
+            templateResult: selectBackground,
             ajax: {
                 url: globals.rootdir + "/ajax_select.php?op=" + $this.data('source'),
                 dataType: 'json',
@@ -133,6 +100,24 @@ function start_superselect() {
     });
 }
 
+function selectBackground(data, container) {
+    let bg;
+
+    if (data._bgcolor_) {
+        bg = data._bgcolor_;
+    } else if ($(data.element).attr("_bgcolor_")) {
+        bg = $(data.element).attr("_bgcolor_");
+    } else if ($(data.element).data("_bgcolor_")) {
+        bg = $(data.element).data("_bgcolor_");
+    }
+
+    if (bg && !$("head").find('#' + data._resultId + '_style').length) {
+        $(container).css("background-color", bg);
+        $(container).css("color", setContrast(bg));
+    }
+
+    return data.text;
+}
 /**
  * Reimposta i contenuti di un <select> creato con select2.
  */
@@ -163,7 +148,7 @@ jQuery.fn.selectReset = function (placeholder) {
  */
 jQuery.fn.selectSetNew = function (value, label, data) {
     // Fix selezione per valori multipli
-    var values = this.val();
+    let values = this.val();
     if (this.prop("multiple")) {
         values.push(value);
     } else {
@@ -196,7 +181,7 @@ jQuery.fn.selectSet = function (value) {
  * Aggiorna un <select> creato con select2 impostando un valore di default
  */
 jQuery.fn.selectAdd = function (values) {
-    $this = this;
+    let $this = this;
 
     values.forEach(function (item) {
         if (item.data) {
@@ -207,8 +192,7 @@ jQuery.fn.selectAdd = function (values) {
 
         delete item.data;
 
-        var option = $('<option/>', item);
-
+        const option = $('<option/>', item);
         $this.append(option);
     });
 
@@ -219,18 +203,14 @@ jQuery.fn.selectAdd = function (values) {
  * Restituisce l'oggetto contenente gli attributi di una <option> generata da select2.
  */
 jQuery.fn.selectData = function () {
-    var obj = $(this[0]);
+    let selectData = this.select2('data');
 
-    $select_obj = obj.select2('data');
-
-    if ($select_obj[0] === undefined) {
+    if (this.prop('multiple')) {
+        return selectData;
+    } else if (selectData.length === 0) {
         return undefined;
     } else {
-        if ($select_obj[0].selected === false) {
-            return $select_obj[0];
-        } else {
-            return $select_obj[0].element.dataset;
-        }
+        return selectData[0];
     }
 };
 

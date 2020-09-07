@@ -1,4 +1,21 @@
 <?php
+/*
+ * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
+ * Copyright (C) DevCode s.n.c.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 
 include_once __DIR__.'/../core.php';
 
@@ -30,7 +47,7 @@ if (count($notes) > 0) {
                         <img class="direct-chat-img" src="'.$photo.'">';
         } else {
             echo '
-                
+
                         <i class="fa fa-user-circle-o direct-chat-img fa-3x" alt="'.tr('OpenSTAManager').'"></i>';
         }
 
@@ -43,7 +60,7 @@ if (count($notes) > 0) {
                                 <span class="label label-default tip" title="'.tr('Data di notifica').'" style="margin-right: 5px">
                                     <i class="fa fa-bell"></i> '.dateFormat($nota->notification_date).'
                                 </span>
-                                
+
                                 <button type="button" class="btn btn-info btn-xs ask" data-op="notification_nota" data-id_nota="'.$nota->id.'" data-msg="'.tr('Rimuovere la data di notifica da questa nota?').'" data-backto="record-edit" data-button="'.tr('Rimuovi').'" data-class="btn btn-lg btn-warning">
                                     <i class="fa fa-eye"></i>
                                 </button>';

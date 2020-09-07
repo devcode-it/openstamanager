@@ -1,10 +1,24 @@
 <?php
+/*
+ * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
+ * Copyright (C) DevCode s.n.c.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\Fatture\Fattura;
-
-$documento = Fattura::find($record['iddocumento']);
 $dir = $documento->direzione;
 $numero = $documento->numero_esterno ?: $documento->numero;
 
@@ -75,7 +89,7 @@ if (!empty($documento)) {
 
                     '.Modules::link($documento->module, $record['iddocumento'], '<i class="fa fa-folder-open"></i> '.tr('Apri documento'), null, 'class="btn btn-primary"');
 } else {
-    $scadenza = $dbo->fetchOne('SELECT * FROM co_scadenziario WHERE id='.prepare($id_record));
+    $scadenza = $dbo->fetchOne('SELECT * FROM co_scadenziario WHERE id = '.prepare($id_record));
 
     echo input([
         'type' => 'textarea',
@@ -103,16 +117,7 @@ echo '
 
                         <tbody id="scadenze">';
 
-// Scelgo la query in base alla scadenza
-if (!empty($documento)) {
-    $rs = $dbo->fetchArray('SELECT * FROM co_scadenziario WHERE iddocumento = '.prepare($documento->id).' ORDER BY scadenza ASC');
-    $totale_da_pagare = $documento->netto;
-} else {
-    $rs = $dbo->fetchArray('SELECT * FROM co_scadenziario WHERE id = '.prepare($id_record).' ORDER BY scadenza ASC');
-    $totale_da_pagare = sum(array_column($rs, 'da_pagare'));
-}
-
-foreach ($rs as $i => $scadenza) {
+foreach ($scadenze as $i => $scadenza) {
     if ($scadenza['da_pagare'] == $scadenza['pagato']) {
         $class = 'success';
     } elseif (abs($scadenza['pagato']) == 0) {

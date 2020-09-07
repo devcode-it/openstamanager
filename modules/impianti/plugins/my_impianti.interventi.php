@@ -1,4 +1,21 @@
 <?php
+/*
+ * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
+ * Copyright (C) DevCode s.n.c.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 
 include_once __DIR__.'/../../../core.php';
 
@@ -43,11 +60,11 @@ if (filter('op') == 'link_impianti') {
     flash()->info(tr('Informazioni componenti salvate!'));
 }
 
-//Blocco della modifica impianti se l'intervento è completato
-$rss = $dbo->fetchArray('SELECT in_statiintervento.is_completato FROM in_statiintervento INNER JOIN in_interventi ON in_statiintervento.idstatointervento=in_interventi.idstatointervento WHERE in_interventi.id='.prepare($id_record));
-$flg_completato = $rss[0]['is_completato'];
+// Blocco della modifica impianti se l'intervento è completato
+$dati_intervento = $dbo->fetchArray('SELECT in_statiintervento.is_completato FROM in_statiintervento INNER JOIN in_interventi ON in_statiintervento.idstatointervento = in_interventi.idstatointervento WHERE in_interventi.id='.prepare($id_record));
+$is_completato = $dati_intervento[0]['is_completato'];
 
-if ($flg_completato) {
+if ($is_completato) {
     $readonly = 'readonly';
     $disabled = 'disabled';
 } else {
@@ -64,13 +81,11 @@ echo '
     <div class="box-body">
         <p>'.tr("Impianti su cui è stato effettuato l'intervento").'</p>';
 
-$query = 'SELECT * FROM my_impianti_interventi INNER JOIN my_impianti ON my_impianti_interventi.idimpianto=my_impianti.id WHERE idintervento='.prepare($id_record);
-$rs = $dbo->fetchArray($query);
+$impianti_collegati = $dbo->fetchArray('SELECT * FROM my_impianti_interventi INNER JOIN my_impianti ON my_impianti_interventi.idimpianto = my_impianti.id WHERE idintervento = '.prepare($id_record));
 
 echo '
         <div class="row">';
-
-foreach ($rs as $r) {
+foreach ($impianti_collegati as $impianto) {
     echo '
             <div class="col-md-3">
                 <table class="table table-hover table-condensed table-striped">';
@@ -79,7 +94,7 @@ foreach ($rs as $r) {
     echo '
                     <tr>
                         <td class="text-right">'.tr('Matricola').':</td>
-                        <td valign="top">'.$r['matricola'].'</td>
+                        <td valign="top">'.$impianto['matricola'].'</td>
                     </tr>';
 
     // NOME
@@ -87,7 +102,7 @@ foreach ($rs as $r) {
                     <tr>
                         <td class="text-right">'.tr('Nome').':</td>
                         <td valign="top">
-                            '.Modules::link('Impianti', $r['id'], $r['nome']).'
+                            '.Modules::link('Impianti', $impianto['id'], $impianto['nome']).'
                         </td>
                     </tr>';
 
@@ -95,30 +110,30 @@ foreach ($rs as $r) {
     echo '
                     <tr>
                         <td class="text-right">'.tr('Data').':</td>
-                        <td valign="top">'.Translator::dateToLocale($r['data']).'</td>
+                        <td valign="top">'.dateFormat($impianto['data']).'</td>
                     </tr>';
 
     // DESCRIZIONE
     echo '
                     <tr>
                         <td class="text-right">'.tr('Descrizione').':</td>
-                        <td valign="top">'.$r['descrizione'].'</td>
+                        <td valign="top">'.$impianto['descrizione'].'</td>
                     </tr>';
 
     echo '
                     <tr>
                         <td valign="top" class="text-right">'.tr("Componenti soggetti all'intervento").'</td>
                         <td valign="top">
-                            <form action="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=link_componenti&matricola='.$r['id'].'" method="post">
+                            <form action="'.ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=link_componenti&matricola='.$impianto['id'].'" method="post">
                                 <input type="hidden" name="backto" value="record-edit">
-                                <input type="hidden" name="id_impianto" value="'.$r['id'].'">';
+                                <input type="hidden" name="id_impianto" value="'.$impianto['id'].'">';
 
-    $inseriti = $dbo->fetchArray('SELECT * FROM my_componenti_interventi WHERE id_intervento='.prepare($id_record));
+    $inseriti = $dbo->fetchArray('SELECT * FROM my_componenti_interventi WHERE id_intervento = '.prepare($id_record));
     $ids = array_column($inseriti, 'id_componente');
 
     echo '
 
-                                {[ "type": "select", "label": "'.tr('Componenti').'", "multiple": 1, "name": "componenti[]", "ajax-source": "componenti", "select-options": {"matricola": '.$r['id'].'}, "value": "'.implode(',', $ids).'", "readonly": "'.!empty($readonly).'", "disabled": "'.!empty($disabled).'" ]}
+                                {[ "type": "select", "label": "'.tr('Componenti').'", "multiple": 1, "name": "componenti[]", "id": "componenti_'.$impianto['id'].'", "ajax-source": "componenti", "select-options": {"matricola": '.$impianto['id'].'}, "value": "'.implode(',', $ids).'", "readonly": "'.!empty($readonly).'", "disabled": "'.!empty($disabled).'" ]}
 
                                 <button type="submit" class="btn btn-success" '.$disabled.'><i class="fa fa-check"></i> '.tr('Salva componenti').'</button>
                             </form>

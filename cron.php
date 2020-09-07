@@ -1,11 +1,29 @@
 <?php
+/*
+ * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
+ * Copyright (C) DevCode s.n.c.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 /**
  * Script dedicato alla gestione delle operazioni di cron ricorrenti del gestionale.
  * Una volta attivato, questo script rimane attivo in background per gestire l'esecuzione delle diverse operazioni come pianificate nella tabella zz_tasks.
  *
  * Il file viene richiamato in automatico al login di un utente.
  * Per garantire che lo script resti attivo in ogni situazione, si consiglia di introdurre una chiamata nel relativo crontab di sistema secondo il seguente schema:
-*/
+ */
 // Schema crontab: "*/5 * * * * php <percorso_root>/cron.php"
 
 use Carbon\Carbon;

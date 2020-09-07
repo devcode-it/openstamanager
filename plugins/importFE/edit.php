@@ -1,4 +1,21 @@
 <?php
+/*
+ * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
+ * Copyright (C) DevCode s.n.c.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 
 include_once __DIR__.'/../../core.php';
 
@@ -40,10 +57,10 @@ echo '
                                 title: "'.tr('Fattura già importata').'.",
                                 type: "info",
                             });
-							
+
 							$("#blob").val("");
                         }
-                        
+
 						buttonRestore(btn, restore);
                     },
                     error: function(xhr) {
@@ -94,7 +111,7 @@ echo '
         <h3 class="box-title">
             '.tr('Fatture da importare').'</span>
         </h3>
-        
+
         <div class="pull-right">
             <button type="button" class="btn btn-warning" onclick="importAll(this)">
                 <i class="fa fa-cloud-download"></i> '.tr('Importa in sequenza').'
@@ -156,7 +173,7 @@ function importAll(btn) {
             type: "post",
             success: function(data){
                 data = JSON.parse(data);
-        
+
                 count = data.length;
                 counter = 0;
                 data.forEach(function(element) {
@@ -171,22 +188,22 @@ function importAll(btn) {
                         },
                         success: function(data) {
                             counter ++;
-                            
+
                             importComplete(count, counter, btn, restore);
                         },
                         error: function(data) {
                             counter ++;
-                            
+
                             importComplete(count, counter, btn, restore);
                         }
                     });
                 });
-                
+
                 importComplete(count, counter, btn, restore);
             },
             error: function(data) {
                 alert("'.tr('Errore').': " + data);
-                
+
 				$("#main_loading").fadeOut();
                 buttonRestore(btn, restore);
             }
@@ -194,11 +211,11 @@ function importAll(btn) {
     });
 }
 
-function importComplete(count, counter, btn, restore) {        
+function importComplete(count, counter, btn, restore) {
     if(counter == count){
         $("#main_loading").fadeOut();
         buttonRestore(btn, restore);
-        
+
         redirect(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=1&sequence=1");
     }
 }';

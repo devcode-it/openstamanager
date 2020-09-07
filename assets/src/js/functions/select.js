@@ -1,42 +1,44 @@
+/*
+ * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
+ * Copyright (C) DevCode s.n.c.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 // Select
 function start_superselect() {
     // Statico
     $('.superselect').each(function () {
-        $this = $(this);
+        let $this = $(this);
+
         $(this).select2({
             theme: "bootstrap",
             language: "it",
             width: '100%',
             maximumSelectionLength: $this.data('maximum') ? $this.data('maximum') : -1,
             minimumResultsForSearch: $this.hasClass('no-search') ? -1 : 0,
-            allowClear: $this.hasClass('no-search') ? false : true,
-            templateResult: function (data, container) {
-                var bg; // templateSelection
-
-                if (data._bgcolor_) {
-                    bg = data._bgcolor_;
-                } else if ($(data.element).attr("_bgcolor_")) {
-                    bg = $(data.element).attr("_bgcolor_");
-                } else if ($(data.element).data("_bgcolor_")) {
-                    bg = $(data.element).data("_bgcolor_");
-                }
-
-                if (bg) {
-                    $(container).css("background-color", bg);
-                    $(container).css("color", setContrast(bg));
-                }
-
-                return data.text;
-            },
+            allowClear: !$this.hasClass('no-search'),
             escapeMarkup: function (text) {
                 return text;
-            }
+            },
+            templateResult: selectBackground,
         });
     });
 
     // Dinamico (AJAX, per tabelle con molti record)
     $('.superselectajax').each(function () {
-        $this = $(this);
+        let $this = $(this);
 
         $(this).select2({
             theme: "bootstrap",
@@ -47,24 +49,7 @@ function start_superselect() {
             escapeMarkup: function (text) {
                 return text;
             },
-            templateResult: function (data, container) {
-                var bg; // templateSelection
-
-                if (data._bgcolor_) {
-                    bg = data._bgcolor_;
-                } else if ($(data.element).attr("_bgcolor_")) {
-                    bg = $(data.element).attr("_bgcolor_");
-                } else if ($(data.element).data("_bgcolor_")) {
-                    bg = $(data.element).data("_bgcolor_");
-                }
-
-                if (bg && !$("head").find('#' + data._resultId + '_style').length) {
-                    $(container).css("background-color", bg);
-                    $(container).css("color", setContrast(bg));
-                }
-
-                return data.text;
-            },
+            templateResult: selectBackground,
             ajax: {
                 url: globals.rootdir + "/ajax_select.php?op=" + $this.data('source'),
                 dataType: 'json',
@@ -81,8 +66,28 @@ function start_superselect() {
                     params.page = params.page || 0;
                     params.length = params.length || 100;
 
+                    let results = data.results;
+
+                    // Interpretazione forzata per campi optgroup
+                    if (results[0]['optgroup']) {
+                        let groups = results.reduce(function (r, a) {
+                            r[a.optgroup] = r[a.optgroup] || [];
+                            r[a.optgroup].push(a);
+                            return r;
+                        }, {});
+
+                        let results_groups = [];
+                        for (const key in groups) {
+                            results_groups.push({
+                                text: key,
+                                children: groups[key],
+                            });
+                        }
+                        results = results_groups;
+                    }
+
                     return {
-                        results: data.results,
+                        results: results,
                         pagination: {
                             more: (params.page + 1) * params.length < data.recordsFiltered,
                         }
@@ -95,6 +100,24 @@ function start_superselect() {
     });
 }
 
+function selectBackground(data, container) {
+    let bg;
+
+    if (data._bgcolor_) {
+        bg = data._bgcolor_;
+    } else if ($(data.element).attr("_bgcolor_")) {
+        bg = $(data.element).attr("_bgcolor_");
+    } else if ($(data.element).data("_bgcolor_")) {
+        bg = $(data.element).data("_bgcolor_");
+    }
+
+    if (bg && !$("head").find('#' + data._resultId + '_style').length) {
+        $(container).css("background-color", bg);
+        $(container).css("color", setContrast(bg));
+    }
+
+    return data.text;
+}
 /**
  * Reimposta i contenuti di un <select> creato con select2.
  */
@@ -125,7 +148,7 @@ jQuery.fn.selectReset = function (placeholder) {
  */
 jQuery.fn.selectSetNew = function (value, label, data) {
     // Fix selezione per valori multipli
-    var values = this.val();
+    let values = this.val();
     if (this.prop("multiple")) {
         values.push(value);
     } else {
@@ -158,7 +181,7 @@ jQuery.fn.selectSet = function (value) {
  * Aggiorna un <select> creato con select2 impostando un valore di default
  */
 jQuery.fn.selectAdd = function (values) {
-    $this = this;
+    let $this = this;
 
     values.forEach(function (item) {
         if (item.data) {
@@ -169,8 +192,7 @@ jQuery.fn.selectAdd = function (values) {
 
         delete item.data;
 
-        var option = $('<option/>', item);
-
+        const option = $('<option/>', item);
         $this.append(option);
     });
 
@@ -181,18 +203,14 @@ jQuery.fn.selectAdd = function (values) {
  * Restituisce l'oggetto contenente gli attributi di una <option> generata da select2.
  */
 jQuery.fn.selectData = function () {
-    var obj = $(this[0]);
+    let selectData = this.select2('data');
 
-    $select_obj = obj.select2('data');
-
-    if ($select_obj[0] === undefined) {
+    if (this.prop('multiple')) {
+        return selectData;
+    } else if (selectData.length === 0) {
         return undefined;
     } else {
-        if ($select_obj[0].selected === false) {
-            return $select_obj[0];
-        } else {
-            return $select_obj[0].element.dataset;
-        }
+        return selectData[0];
     }
 };
 
@@ -218,8 +236,8 @@ jQuery.fn.getSelectOption = function (name) {
  * @param name
  * @param value
  */
-function updateSelectOption(name, value){
-    $(".superselectajax").each(function (){
+function updateSelectOption(name, value) {
+    $(".superselectajax").each(function () {
         $(this).setSelectOption(name, value);
     })
 }

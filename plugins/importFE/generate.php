@@ -516,30 +516,33 @@ function impostaRiferimento(id_riga, documento, riga) {
     // Informazioni visibili
     let qta = parseFloat(riga.qta);
     let riferimento_qta = $("#riferimento_" + id_riga + "_qta");
-    riferimento_qta.html("<br>" + qta.toLocale());
-    if (qta === riga_fe.data("qta")){
-        riferimento_qta.addClass("text-success").removeClass("text-danger");
+    let contenuto_qta = qta.toLocale();
+    if (qta === riga_fe.data("qta")) {
+        riferimento_qta.addClass("text-success").removeClass("text-warning");
     } else {
-        riferimento_qta.removeClass("text-success").addClass("text-danger");
+        riferimento_qta.removeClass("text-success").addClass("text-warning");
     }
+    riferimento_qta.html("<br>" + contenuto_qta);
 
     let prezzo_unitario = parseFloat(riga.prezzo_unitario);
     let riferimento_prezzo = $("#riferimento_" + id_riga + "_prezzo");
-    riferimento_prezzo.html("<br>" + prezzo_unitario.toLocale() + " " + globals.currency)
-    if (prezzo_unitario === riga_fe.data("prezzo_unitario")){
-        riferimento_prezzo.addClass("text-success").removeClass("text-danger");
+    let contenuto_prezzo = prezzo_unitario.toLocale() + " " + globals.currency;
+    if (prezzo_unitario === riga_fe.data("prezzo_unitario")) {
+        riferimento_prezzo.addClass("text-success").removeClass("text-warning");
     } else {
-        riferimento_prezzo.removeClass("text-success").addClass("text-danger");
+        riferimento_prezzo.removeClass("text-success").addClass("text-warning");
     }
+    riferimento_prezzo.html("<br>" + contenuto_prezzo)
 
     let iva_percentuale = parseFloat(riga.iva_percentuale);
     let riferimento_iva = $("#riferimento_" + id_riga + "_iva");
-    riferimento_iva.html("<br>" + iva_percentuale.toLocale() + "%");
-    if (prezzo_unitario === riga_fe.data("iva_percentuale")){
-        riferimento_iva.addClass("text-success").removeClass("text-danger");
+    let contenuto_iva = iva_percentuale.toLocale() + "%";
+    if (iva_percentuale === riga_fe.data("iva_percentuale")) {
+        riferimento_iva.addClass("text-success").removeClass("text-warning");
     } else {
-        riferimento_iva.removeClass("text-success").addClass("text-danger");
+        riferimento_iva.removeClass("text-success").addClass("text-warning");
     }
+    riferimento_iva.html("<br>" + contenuto_iva)
 
     $("#riferimento_" + id_riga).html(documento.descrizione ? documento.descrizione : "");
 }

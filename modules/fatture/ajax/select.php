@@ -21,7 +21,7 @@ switch ($resource) {
         FROM or_ordini
         WHERE idanagrafica = ".prepare($id_anagrafica)." AND
             idstatoordine IN (
-                SELECT id FROM or_statiordine WHERE descrizione IN('Bozza', 'Accettato', 'Parzialmente evaso')
+                SELECT id FROM or_statiordine WHERE descrizione IN ('Bozza', 'Accettato', 'Parzialmente evaso', 'Parzialmente fatturato')
             ) AND
             idtipoordine IN (
                 SELECT id FROM or_tipiordine WHERE dir = ".prepare($direzione).'
@@ -35,7 +35,7 @@ switch ($resource) {
         FROM dt_ddt
         WHERE idanagrafica = ".prepare($id_anagrafica)." AND
             idstatoddt IN (
-                SELECT id FROM dt_statiddt WHERE descrizione IN('Bozza', 'Parzialmente evaso')
+                SELECT id FROM dt_statiddt WHERE descrizione IN ('Bozza', 'Parzialmente evaso', 'Parzialmente fatturato')
             ) AND
             idtipoddt IN (
                 SELECT id FROM dt_tipiddt WHERE dir=".prepare($direzione).'

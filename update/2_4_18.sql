@@ -81,3 +81,6 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `
 INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES
 (NULL, 'v1', 'retrieve', 'cron-logs', 'API\\Common\\Task', '1'),
 (NULL, 'v1', 'create', 'cron-restart', 'API\\Common\\Task', '1');
+
+-- Fix visualizzazione modulo Causali movimenti
+UPDATE `zz_views` SET `query` = 'CONCAT(UCASE(LEFT(tipo_movimento, 1)), SUBSTRING(tipo_movimento, 2))', `name` = 'Tipo' WHERE `zz_views`.`name` = 'Movimento di carico' AND id_module = (SELECT id FROM zz_modules WHERE name = 'Causali movimenti');

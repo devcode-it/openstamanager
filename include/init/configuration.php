@@ -1,4 +1,21 @@
 <?php
+/*
+ * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
+ * Copyright (C) DevCode s.n.c.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 
 include_once __DIR__.'/../../core.php';
 
@@ -355,41 +372,41 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                             timeout: 500
                         });
                     });
-                    
+
                     function initLanguage(flag) {
                         $("#language").removeClass("hide");
-                        
+
                         $("#language").select2({
                             theme: "bootstrap",
                             templateResult: function(item) {
                                 if (!item.id || !flag) {
                                     return item.text;
                                 }
-    
+
                                 var element = $(item.element);
                                 var img = $("<img>", {
                                     class: "img-flag",
                                     width: 26,
                                     src: flag_link.replace("|flag|", element.data("country").toLowerCase()),
                                 });
-    
+
                                 var span = $("<span>", {
                                     text: " " + item.text
                                 });
                                 span.prepend(img);
-    
+
                                 return span;
                             }
                         });
-    
+
                         $("#language").on("change", function(){
                             if ($(this).val()) {
                                 var location = window.location;
                                 var url = location.protocol + "//" + location.host + "" + location.pathname;
-                                
+
                                 var parameters = getUrlVars();
                                 parameters.lang = $(this).val();
-                                
+
                                 redirect(url, parameters);
                             }
                         });
@@ -471,33 +488,33 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                         <p><small class="help-block">'.tr('Configura correttamente il software con i seguenti parametri (modificabili successivamente dal file _FILE_)', [
                             '_FILE_' => '<b>config.inc.php</b>',
                         ]).'</small></p>
-                        
+
                         <hr>';
 
     // Form dei parametri
     echo '
                         <form action="?action=updateconfig&firstuse=true" method="post" id="config-form">
                             <input type="hidden" name="lang" value="'.trans()->getCurrentLocale().'">
-                            
+
                             <h4>'.tr('Formato date').'</h4>
                             <div class="row">
                                 <div class="col-md-4">
                                     {[ "type": "text", "label": "'.tr('Formato data lunga').'", "name": "timestamp_format", "value": "d/m/Y H:i", "required": 1 ]}
                                 </div>
-                                
+
                                 <div class="col-md-4">
                                     {[ "type": "text", "label": "'.tr('Formato data corta').'", "name": "date_format", "value": "d/m/Y", "required": 1 ]}
                                 </div>
-                                
+
                                 <div class="col-md-4">
                                     {[ "type": "text", "label": "'.tr('Formato orario').'", "name": "time_format", "value": "H:i", "required": 1 ]}
                                 </div>
                             </div>
-                            
+
                             <small>'.tr('I formati sono impostabili attraverso lo standard previsto da PHP: _LINK_', [
                                 '_LINK_' => '<a href="https://www.php.net/manual/en/function.date.php#refsect1-function.date-parameters">https://www.php.net/manual/en/function.date.php#refsect1-function.date-parameters</a>',
                             ]).'.</small>
-                            
+
                             <hr>';
 
     if (!extension_loaded('intl')) {
@@ -519,16 +536,16 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                                 <div class="col-md-6">
                                     {[ "type": "select", "label": "'.tr('Separatore dei decimali').'", "name": "decimal_separator", "value": "comma", "values": '.json_encode($list).', "required": 1 ]}
                                 </div>
-                                
+
                                 <div class="col-md-6">
                                     {[ "type": "select", "label": "'.tr('Separatore delle migliaia').'", "name": "thousand_separator", "value": "dot", "values": '.json_encode($list).' ]}
                                 </div>
                             </div>
-                            
+
                             <small>'.tr("Si consiglia l'abilitazione dell'estensione _EXT_ di PHP", [
                                 '_EXT_' => 'intl',
                             ]).'.</small>
-                            
+
                             <hr>';
     }
 

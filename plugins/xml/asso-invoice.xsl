@@ -1,4 +1,22 @@
 <?xml version="1.0"?>
+<!--
+  ~ OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
+  ~ Copyright (C) DevCode s.n.c.
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program. If not, see <https://www.gnu.org/licenses/>.
+  -->
+
 <xsl:stylesheet
 	version="1.1"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -143,9 +161,9 @@
     </xsl:if>
   </xsl:template>
 
-  <xsl:template match="DatiDDT"> 
+  <xsl:template match="DatiDDT">
 	  <xsl:variable name="descri_DAO" >
-		
+
 		  <xsl:text>DDT </xsl:text>
 		  <xsl:value-of select="NumeroDDT" />
 		  <xsl:if test="DataDDT">
@@ -154,7 +172,7 @@
 			  <xsl:with-param name="DateTime" select="DataDDT" />
 			</xsl:call-template>
 		  </xsl:if>
-	  
+
 	  </xsl:variable>
 
 	  <xsl:if test="$descri_DAO">
@@ -163,7 +181,7 @@
 		</xsl:call-template>
 	  </xsl:if>
   </xsl:template>
-    
+
   <xsl:template match="DettaglioLinee">
     <xsl:param name="r" />
     <xsl:param name="posASWRELSTD" />
@@ -174,9 +192,9 @@
     <xsl:variable name="valNumeroLinea" >
       <xsl:value-of select="number(NumeroLinea)" />
     </xsl:variable>
- 
+
     <!--Pre LINEA OpzPreLineaDatiDDT -->
-		
+
     <xsl:choose>
 
       <xsl:when test="OpzPreLineaDatiDDT">
@@ -186,15 +204,15 @@
             <xsl:with-param name="textDescrizione" select = "." />
           </xsl:call-template>
         </xsl:for-each>
-        
+
       </xsl:when>
-	    <xsl:otherwise>	 
-	  
-	   <xsl:for-each select="$TipoFattura/FatturaElettronicaBody[$IndiceBody]/DatiGenerali/DatiDDT[ number(./RiferimentoNumeroLinea) = $valNumeroLinea] ">		
+	    <xsl:otherwise>
+
+	   <xsl:for-each select="$TipoFattura/FatturaElettronicaBody[$IndiceBody]/DatiGenerali/DatiDDT[ number(./RiferimentoNumeroLinea) = $valNumeroLinea] ">
 				<xsl:apply-templates select="."/>	<!-- apply DatiDDT template -->
-        </xsl:for-each>    
-		
-      </xsl:otherwise>	  
+        </xsl:for-each>
+
+      </xsl:otherwise>
     </xsl:choose>
 
 
@@ -208,10 +226,10 @@
           </xsl:call-template>
         </xsl:for-each>
       </xsl:when>
-     
+
       <xsl:otherwise>
-	  
-	  <xsl:for-each select="$TipoFattura/FatturaElettronicaBody[$IndiceBody]/DatiGenerali/DatiOrdineAcquisto[ number(./RiferimentoNumeroLinea) = $valNumeroLinea] ">		
+
+	  <xsl:for-each select="$TipoFattura/FatturaElettronicaBody[$IndiceBody]/DatiGenerali/DatiOrdineAcquisto[ number(./RiferimentoNumeroLinea) = $valNumeroLinea] ">
 			<xsl:call-template name="DatiCorrelati" >
             <xsl:with-param name="Prefix"   select='"Vs.Ord. "'/>
             <xsl:with-param name="IdDocumento" select="IdDocumento"/>
@@ -219,9 +237,9 @@
             <xsl:with-param name="CodiceCUP" select="CodiceCUP"/>
             <xsl:with-param name="CodiceCIG" select="CodiceCIG"/>
           </xsl:call-template >
-        </xsl:for-each>   
-	  
-	  
+        </xsl:for-each>
+
+
 	  </xsl:otherwise>
     </xsl:choose>
 
@@ -235,9 +253,9 @@
           </xsl:call-template>
         </xsl:for-each>
       </xsl:when>
-     
+
       <xsl:otherwise>
-		<xsl:for-each select="$TipoFattura/FatturaElettronicaBody[$IndiceBody]/DatiGenerali/DatiContratto[ number(./RiferimentoNumeroLinea) = $valNumeroLinea] ">		
+		<xsl:for-each select="$TipoFattura/FatturaElettronicaBody[$IndiceBody]/DatiGenerali/DatiContratto[ number(./RiferimentoNumeroLinea) = $valNumeroLinea] ">
 	    <xsl:call-template name="DatiCorrelati" >
             <xsl:with-param name="Prefix"  select='"Contratto "'/>
             <xsl:with-param name="IdDocumento" select="IdDocumento"/>
@@ -245,8 +263,8 @@
             <xsl:with-param name="CodiceCUP" select="CodiceCUP"/>
             <xsl:with-param name="CodiceCIG" select="CodiceCIG"/>
           </xsl:call-template >
-	    </xsl:for-each>   
-	  
+	    </xsl:for-each>
+
 	  </xsl:otherwise>
     </xsl:choose>
 
@@ -260,10 +278,10 @@
           </xsl:call-template>
         </xsl:for-each>
       </xsl:when>
-     
+
       <xsl:otherwise>
-	  
-	  <xsl:for-each select="$TipoFattura/FatturaElettronicaBody[$IndiceBody]/DatiGenerali/DatiConvenzione[ number(./RiferimentoNumeroLinea) = $valNumeroLinea] ">		
+
+	  <xsl:for-each select="$TipoFattura/FatturaElettronicaBody[$IndiceBody]/DatiGenerali/DatiConvenzione[ number(./RiferimentoNumeroLinea) = $valNumeroLinea] ">
           <xsl:call-template name="DatiCorrelati" >
             <xsl:with-param name="Prefix"  select='"Convenzione "'/>
             <xsl:with-param name="IdDocumento" select="IdDocumento"/>
@@ -272,7 +290,7 @@
             <xsl:with-param name="CodiceCIG" select="CodiceCIG"/>
           </xsl:call-template >
         </xsl:for-each>
-	  
+
 	  </xsl:otherwise>
     </xsl:choose>
 
@@ -286,9 +304,9 @@
           </xsl:call-template>
         </xsl:for-each>
       </xsl:when>
-     
+
       <xsl:otherwise>
-	  
+
 	 <xsl:for-each select="$TipoFattura/FatturaElettronicaBody[$IndiceBody]/DatiGenerali/DatiRicezione[ number(./RiferimentoNumeroLinea) = $valNumeroLinea] ">
           <xsl:call-template name="DatiCorrelati" >
             <xsl:with-param name="Prefix"  select='"Ricezione "'/>
@@ -298,7 +316,7 @@
             <xsl:with-param name="CodiceCIG" select="CodiceCIG"/>
           </xsl:call-template >
         </xsl:for-each>
-	  
+
 	  </xsl:otherwise>
     </xsl:choose>
 
@@ -311,9 +329,9 @@
             <xsl:with-param name="textDescrizione" select = "." />
           </xsl:call-template>
         </xsl:for-each>
-      </xsl:when>    
+      </xsl:when>
       <xsl:otherwise>
-	  
+
      <xsl:for-each select="$TipoFattura/FatturaElettronicaBody[$IndiceBody]/DatiGenerali/DatiFattureCollegate[ number(./RiferimentoNumeroLinea) = $valNumeroLinea] ">
           <xsl:call-template name="DatiCorrelati" >
             <xsl:with-param name="Prefix"  select='"Fatt.coll. "'/>
@@ -323,7 +341,7 @@
             <xsl:with-param name="CodiceCIG" select="CodiceCIG"/>
           </xsl:call-template >
         </xsl:for-each>
-	  
+
 	  </xsl:otherwise>
     </xsl:choose>
 
@@ -385,8 +403,8 @@
               <xsl:if test=" translate( TipoDato,
                                      'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
                                      'abcdefghijklmnopqrstuvwxyz'
-                                    ) != 'aswrelstd' 
-									and 									
+                                    ) != 'aswrelstd'
+									and
 									translate( TipoDato,
                                      'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
                                      'abcdefghijklmnopqrstuvwxyz'
@@ -582,8 +600,8 @@
           <xsl:if test=" translate( TipoDato,
 														 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
 														 'abcdefghijklmnopqrstuvwxyz'
-														) != 'aswrelstd' 
-														and 									
+														) != 'aswrelstd'
+														and
 														translate( TipoDato,
 														 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
 														 'abcdefghijklmnopqrstuvwxyz'
@@ -653,7 +671,7 @@
 
   <xsl:template match="DatiRitenuta">
 
-   
+
         <tr>
           <td >
 
@@ -726,7 +744,7 @@
           </td>
 
         </tr>
-     
+
   </xsl:template>
 
   <xsl:template match="DettaglioPagamento">
@@ -836,10 +854,10 @@
       </xsl:variable>
 
       <div id="fattura-elettronica" class="page">
-	  
+
         <!-- FatturaElettronicaHeader -->
         <xsl:if test="$TipoFattura/FatturaElettronicaHeader">
-			
+
 			  <xsl:if test="$TipoFattura/FatturaElettronicaHeader/NomeDocumento">
 			      <table class="tbNoBorder">
 				  <tr >
@@ -849,7 +867,7 @@
 				  </tr>
 				  </table>
                 </xsl:if>
-		
+
           <table id="tbHeader" class="tbHeader">
 
             <tr >
@@ -1156,7 +1174,7 @@
 
                               </div>
 
-                              <xsl:if test="Denominazione">                              
+                              <xsl:if test="Denominazione">
                                 <div class="headContent">
 
                                   Denominazione:
@@ -1335,7 +1353,7 @@
                           </xsl:choose>
 
                         </xsl:for-each>
-                        
+
                         <!--INIZIO TerzoIntermediarioOSoggettoEmittente-->
                         <xsl:if test="$TipoFattura/FatturaElettronicaHeader/TerzoIntermediarioOSoggettoEmittente">
                           <br/>
@@ -1418,12 +1436,12 @@
 
 
                              </xsl:for-each>
-                          
-                        
+
+
 
                         </xsl:if>
                         <!--FINE TerzoIntermediarioOSoggettoEmittente-->
-                        
+
                       </div>
                       <!--FINE CEDENTE PRESTATORE-->
 
@@ -1441,7 +1459,7 @@
                 <table class="tableHead">
                   <tr>
                     <td >
-                     
+
                       <div class="headBorder" >
                         <label class= "headerLabel"  >Cessionario/committente (cliente) </label>
                         <xsl:for-each select="$TipoFattura/FatturaElettronicaHeader/CessionarioCommittente">
@@ -1753,7 +1771,7 @@
               </td>
             </tr>
 
-        
+
           </table>
 
 
@@ -1768,12 +1786,12 @@
 
 
           <xsl:variable name="BodyIndex" select="position()"/>
-          
+
           <!-- Conforme Standard AssoSoftware se altridatigestionali presenta ASWRELSTD   -->
           <xsl:variable name="posASWRELSTD" >
             <xsl:for-each select="DatiBeniServizi/DettaglioLinee">
               <xsl:variable name="DettaglioLinee" select="."/>
-              
+
               <xsl:variable name="posDettaglioLinee" select="position()"/>
               <xsl:for-each select="AltriDatiGestionali">
 
@@ -1802,11 +1820,11 @@
 				<xsl:if test="$IsFPRS='0'">
 					<th class="perc">Art. 73</th>
 				</xsl:if>
-				
+
 				<xsl:if test="$IsFPRS='1'">
                   <th class="perc">Imposta bollo</th>
                 </xsl:if>
-				
+
                 <th >Numero documento</th>
                 <th class="data">Data documento</th>
                 <th >Codice destinatario</th>
@@ -1879,7 +1897,7 @@
 						<xsl:when test="$TD='TD27'">
 							fattura per autoconsumo o per cessioni gratuite senza rivalsa
 						</xsl:when>
-						
+
                       <!--FPRS-->
                       <xsl:when test="$TD='TD07'">
                         fattura semplificata
@@ -1907,7 +1925,7 @@
 					  </xsl:if>
 					</td>
 				</xsl:if>
-				
+
 				 <xsl:if test="$IsFPRS='1'">
                   <td class="textCenter">
                     <xsl:if test="DatiGenerali/DatiGeneraliDocumento/BolloVirtuale">
@@ -2068,7 +2086,7 @@
                 <tbody>
 
 
-                  <xsl:if test="count(DatiGenerali/DatiOrdineAcquisto[not(./RiferimentoNumeroLinea) or normalize-space(./RiferimentoNumeroLinea)='']) + 
+                  <xsl:if test="count(DatiGenerali/DatiOrdineAcquisto[not(./RiferimentoNumeroLinea) or normalize-space(./RiferimentoNumeroLinea)='']) +
 				  count(DatiGenerali/DatiContratto[not(./RiferimentoNumeroLinea) or normalize-space(./RiferimentoNumeroLinea)='']) +
 				  count(DatiGenerali/DatiDDT[not(./RiferimentoNumeroLinea) or normalize-space(./RiferimentoNumeroLinea)='']) +
 				  count(DatiGenerali/DatiFattureCollegate[not(./RiferimentoNumeroLinea) or  normalize-space(./RiferimentoNumeroLinea)='']) +
@@ -2491,7 +2509,7 @@
                       Sconto/Maggiorazione
                     </th>
 
-                
+
 
 					 <th class="perc">Arr.</th>
                     <th colspan="4" >
@@ -2503,7 +2521,7 @@
 
                   <tr >
                     <td colspan="2" class="import" >
-					
+
 					 <xsl:if test="DatiGenerali/DatiGeneraliDocumento/DatiBollo">
                         <xsl:choose>
 						<xsl:when test="DatiGenerali/DatiGeneraliDocumento/DatiBollo/ImportoBollo">
@@ -2513,9 +2531,9 @@
 							<xsl:value-of select="DatiGenerali/DatiGeneraliDocumento/DatiBollo/BolloVirtuale" />
 						</xsl:when>
 						<xsl:otherwise></xsl:otherwise>
-					  </xsl:choose>						
-                      </xsl:if>					
-                    
+					  </xsl:choose>
+                      </xsl:if>
+
                     </td>
                     <td colspan="3" class="import">
                       <xsl:for-each select="DatiGenerali/DatiGeneraliDocumento/ScontoMaggiorazione"  >
@@ -2531,8 +2549,8 @@
                     </td>
 
 
-                    
-					
+
+
 					<td class="import">
 
                       <xsl:if test="DatiGenerali/DatiGeneraliDocumento/Arrotondamento">
@@ -2562,7 +2580,7 @@
               <!--   Dati Ritenuta Acconto   -->
               <xsl:if test="DatiGenerali/DatiGeneraliDocumento/DatiRitenuta">
                 <div class="separa"> </div>
-				
+
 				   <table class="tbFoglio">
 
 					  <thead>
@@ -2574,13 +2592,13 @@
 						</tr>
 					  </thead>
 					  <tbody>
-					  
+
 					   <xsl:for-each select="DatiGenerali/DatiGeneraliDocumento/DatiRitenuta"  >
 							<xsl:apply-templates select="." />
 						</xsl:for-each>
 					  </tbody>
-					</table>				
-                
+					</table>
+
               </xsl:if>
               <!--  Fine Dati Ritenuta   -->
 
@@ -2701,7 +2719,7 @@
                           </xsl:if>
 
                         </td>
-                  
+
 
                           <td>
                             <xsl:apply-templates select="."/>
@@ -2714,7 +2732,7 @@
                             </xsl:if>
 
                           </td>
-                       
+
                         <td>
 
                           <xsl:if test="DataRiferimentoTerminiPagamento or GiorniTerminiPagamento">
@@ -2868,7 +2886,7 @@
           .headBorder
           {
           <!--border: 2px solid black;
-			width:100%; 
+			width:100%;
 			height: 210px;
 			border-bottom-left-radius:30px;
 			border-bottom-right-radius:30px; -->
@@ -2932,7 +2950,7 @@
           border-collapse: collapse;
           word-wrap:break-word;
           }
-		  
+
           table.tbFoglio th {
           padding-left: 5px;
           padding-right: 5px;
@@ -3065,13 +3083,13 @@
 
 		  table.tbNoBorder
           {
-			  border-collapse: collapse;			
-			  margin-bottom: 5px;			  
+			  border-collapse: collapse;
+			  margin-bottom: 5px;
 			  font-size:small;
 			  text-align:center;
 			  width:800px;
           }
-		  
+
         </style>
       </head>
       <body>

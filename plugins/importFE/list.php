@@ -1,4 +1,21 @@
 <?php
+/*
+ * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
+ * Copyright (C) DevCode s.n.c.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 
 include_once __DIR__.'/../../core.php';
 
@@ -34,11 +51,11 @@ if (!empty($list)) {
             <td>
                 <p>'.$name.'</p>
             </td>
-            
+
             <td class="text-center">-</td>
             <td class="text-center">-</td>
             <td class="text-center">-</td>
-            
+
             <td class="text-center">
                 <button type="button" class="btn btn-danger" onclick="delete_fe(this, \''.$element['id'].'\')">
                     <i class="fa fa-trash"></i>
@@ -74,12 +91,12 @@ if (!empty($list)) {
             <td>
                 '.$descrizione.' <small>['.$name.']</small>
             </td>
-            
+
             <td>'.$element['sender'].'</td>
             <td>'.dateFormat($element['date_sent']).'</td>
             <td class="text-right">'.moneyFormat($element['amount']).'</td>
 
-            <td class="text-center">                
+            <td class="text-center">
                 <button type="button" class="btn btn-info tip" onclick="process_fe(this, \''.$name.'\')" title="'.tr('Segna la fattura come processata').'">
                     <i class="fa fa-upload"></i>
                 </button>';
@@ -93,7 +110,7 @@ if (!empty($list)) {
         }
 
         echo '
-        
+
                 <button type="button" class="btn btn-warning tip" '.((!extension_loaded('openssl') && substr(strtolower($name), -4) == '.p7m') ? 'disabled' : '').' onclick="import_fe(this, \''.$name.'\', \''.$data.'\')" title="'.tr('Importa la fattura nel gestionale').'">
                     <i class="fa fa-cloud-download"></i> '.tr('Importa').'
                 </button>
@@ -133,10 +150,10 @@ function import_fe(button, file, data_registrazione) {
                     title: "'.tr('Fattura già importata.').'",
                     type: "info",
                 });
-                
+
 				$(button).prop("disabled", true);
             }
-            
+
             buttonRestore(button, restore);
         },
         error: function(xhr) {
@@ -156,7 +173,7 @@ function process_fe(button, file) {
         confirmButtonText: "'.tr('Sì').'"
     }).then(function (result) {
         var restore = buttonLoading(button);
-    
+
         $.ajax({
             url: globals.rootdir + "/actions.php",
             type: "get",
@@ -184,7 +201,7 @@ function delete_fe(button, file_id) {
         confirmButtonText: "'.tr('Sì').'"
     }).then(function (result) {
         var restore = buttonLoading(button);
-    
+
         $.ajax({
             url: globals.rootdir + "/actions.php",
             type: "get",

@@ -1,4 +1,21 @@
 <?php
+/*
+ * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
+ * Copyright (C) DevCode s.n.c.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 
 include_once __DIR__.'/../../core.php';
 
@@ -18,9 +35,9 @@ echo '
             </button>
         </div>
     </div>
-    
+
     <div class="box-body collapse in" id="calendars">
-        
+
     </div>
 </div>
 
@@ -28,7 +45,7 @@ echo '
     <div class="panel-heading">
         <h3 class="panel-title">'.tr('Prezzo medio acquisto').'</h3>
     </div>
-    
+
     <div class="panel-body">
         <table class="table table-striped table-condensed table-bordered">
             <thead>
@@ -44,7 +61,7 @@ echo '
                 </tr>
             </thead>
             <tbody id="prezzi_acquisto">
-                
+
             </tbody>
         </table>
     </div>
@@ -54,7 +71,7 @@ echo '
     <div class="panel-heading">
         <h3 class="panel-title">'.tr('Prezzo medio vendita').'</h3>
     </div>
-    
+
     <div class="panel-body">
         <table class="table table-striped table-condensed table-bordered">
             <thead>
@@ -70,7 +87,7 @@ echo '
                 </tr>
             </thead>
             <tbody id="prezzi_vendita">
-                
+
             </tbody>
         </table>
     </div>
@@ -97,7 +114,7 @@ var local_url = "'.str_replace('edit.php', '', $structure->fileurl('edit.php')).
 function init_calendar(calendar) {
     var prezzo_acquisto = new Prezzo(calendar, "#prezzi_acquisto", "uscita");
     var prezzo_vendita = new Prezzo(calendar, "#prezzi_vendita", "entrata");
-    
+
     calendar.addElement(prezzo_acquisto);
     calendar.addElement(prezzo_vendita);
 }

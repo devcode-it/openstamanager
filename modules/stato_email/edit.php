@@ -1,4 +1,21 @@
 <?php
+/*
+ * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
+ * Copyright (C) DevCode s.n.c.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 
 include_once __DIR__.'/../../core.php';
 
@@ -8,15 +25,15 @@ echo '
     <div class="panel-heading">
         <h3 class="panel-title">'.tr('Informazioni').'</h3>
     </div>
-    
+
     <div class="panel-body">
-        
+
         <div class="row">
             <div class="col-md-3">
                 <h4>'.tr('Template').'</h4>
                 '.Modules::link('Template email', $mail->template->id, $mail->template->name).'
             </div>
-            
+
             <div class="col-md-3">
                 <h4>'.tr('Utente').'</h4>
                 '.Modules::link('Anagrafiche', $mail->user->anagrafica->id, $mail->user->nome_completo).'
@@ -26,7 +43,7 @@ echo '
                 <h4>'.tr('Data di invio').'</h4>
                 '.($mail->sent_at ? timestampFormat($mail->sent_at) : '-').'
             </div>
-            
+
             <div class="col-md-3">
                 <h4>'.tr('Ultimo tentativo').'</h4>
                 '.($mail->processing_at ? timestampFormat($mail->processing_at) : '-').' ('.tr('totale: _TOT_', [
@@ -63,7 +80,7 @@ echo '
                     <th>'.tr('Indirizzo').'</th>
                 </tr>
             </thead>
-            
+
             <tbody>';
 
 foreach ($receivers as $receiver) {
@@ -91,7 +108,7 @@ echo '
                     <th>'.tr('Nome').'</th>
                 </tr>
             </thead>
-            
+
             <tbody>';
 
 foreach ($prints as $print) {
@@ -121,7 +138,7 @@ echo '
                     <th>'.tr('Nome').'</th>
                 </tr>
             </thead>
-            
+
             <tbody>';
 
 foreach ($uploads as $upload) {

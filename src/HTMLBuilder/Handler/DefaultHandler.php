@@ -1,4 +1,21 @@
 <?php
+/*
+ * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
+ * Copyright (C) DevCode s.n.c.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 
 namespace HTMLBuilder\Handler;
 
@@ -100,7 +117,7 @@ class DefaultHandler implements HandlerInterface
                 button.attr("title", "'.tr('Visualizza password').'");
             }
         }
-        
+
         $(document).ready(function(){
             togglePassword_'.$values['id'].'();
         });
@@ -109,7 +126,7 @@ class DefaultHandler implements HandlerInterface
         if (!empty($values['strength'])) {
             $result .= '
     <div id="'.$values['id'].'_viewport_progress"></div>
-    
+
     <script src="'.ROOTDIR.'/assets/dist/password-strength/password.min.js"></script>
        <script>
         $(document).ready(function(){
@@ -135,7 +152,7 @@ class DefaultHandler implements HandlerInterface
                 i18n: {
                     t: function (key) {
                         var result = globals.translations.password[key];
-            
+
                         return result === key ? \'\' : result;
                     }
                 },
@@ -143,7 +160,7 @@ class DefaultHandler implements HandlerInterface
                     minChar: 6,
                     onKeyUp: function(event, data) {
                         var len = $("#'.$values['id'].'").val().length;
-                        
+
                         if(len < 6) {
                             $("'.$values['strength'].'").attr("disabled", true).addClass("disabled");
                         } else {
@@ -152,7 +169,7 @@ class DefaultHandler implements HandlerInterface
                     }
                 },
             });
-            
+
             $("#'.$values['id'].'_viewport_progress").insertAfter($("#'.$values['id'].'").closest(".form-group").find("div[id$=-errors]")).css("margin-top", "5px");
         });
     </script>';

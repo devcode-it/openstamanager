@@ -1,4 +1,21 @@
 <?php
+/*
+ * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
+ * Copyright (C) DevCode s.n.c.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 
 include_once __DIR__.'/../../../core.php';
 
@@ -15,7 +32,7 @@ echo '
 		<div class="col-md-4">
 			{[ "type": "text", "label": "'.tr('Mese e anno').'", "name": "date", "required": "1" ]}
 		</div>
-		
+
 		<div class="col-md-2">
 			{[ "type": "select", "label": "'.tr('Formato').'", "name": "format", "required": "1", "values": "list=\"A4\": \"'.tr('A4').'\", \"A3\": \"'.tr('A3').'\"", "value": "'.$_SESSION['dashboard']['format'].'" ]}
 		</div>
@@ -27,7 +44,7 @@ echo '
 
 		<div class="col-md-2">
 			<p style="line-height:14px;">&nbsp;</p>
-			
+
 			<button type="submit" class="btn btn-primary btn-block">
 			<i class="fa fa-print"></i> '.tr('Stampa').'
 			</button>

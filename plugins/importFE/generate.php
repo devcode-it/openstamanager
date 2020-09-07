@@ -341,7 +341,7 @@ if (!empty($righe)) {
 
             <td class="text-right">
                 '.replace('_VALUE_ _DESC_', [
-                    '_VALUE_' => empty($riga['Natura']) ? numberFormat($riga['AliquotaIVA']).'%' : $riga['Natura'],
+                    '_VALUE_' => empty($riga['Natura']) ? numberFormat($riga['AliquotaIVA'], 0).'%' : $riga['Natura'],
                     '_DESC_' => $riga['RiferimentoNormativo'] ? ' - '.$riga['RiferimentoNormativo'] : '',
                 ]).'
                 <span id="riferimento_'.$key.'_iva"></span>
@@ -392,7 +392,7 @@ if (!empty($righe)) {
         let iva_selezionata = null;
         for (const aliquota of aliquote) {
             const data = $(aliquota).selectData();
-            if (data) {
+            if (data && data.id) {
                 iva_selezionata = data;
                 break;
             }
@@ -402,7 +402,7 @@ if (!empty($righe)) {
         let conto_selezionato = null;
         for (const conto of conti) {
             const data = $(conto).selectData();
-            if (data) {
+            if (data && data.id) {
                 conto_selezionato = data;
                 break;
             }

@@ -478,7 +478,7 @@ class Formatter
      *
      * @return string
      */
-    public function getDatePattern($type = null)
+    public function getDatePattern()
     {
         return $this->datePattern;
     }

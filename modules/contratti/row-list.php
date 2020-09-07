@@ -210,9 +210,9 @@ echo '
 echo '
 <script>
 async function modificaRiga(button) {
-    var riga = $(button).closest("tr");
-    var id = riga.data("id");
-    var type = riga.data("type");
+    let riga = $(button).closest("tr");
+    let id = riga.data("id");
+    let type = riga.data("type");
 
     // Salvataggio via AJAX
     let valid = await salvaForm(button, $("#edit-form"));
@@ -235,9 +235,9 @@ function rimuoviRiga(button) {
         showCancelButton: true,
         confirmButtonText: "'.tr('Sì').'"
     }).then(function () {
-        var riga = $(button).closest("tr");
-        var id = riga.data("id");
-        var type = riga.data("type");
+        let riga = $(button).closest("tr");
+        let id = riga.data("id");
+        let type = riga.data("type");
 
         $.ajax({
             url: globals.rootdir + "/actions.php",

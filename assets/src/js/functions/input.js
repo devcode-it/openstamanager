@@ -21,7 +21,7 @@ function input(name) {
 }
 
 function Input(name) {
-    this.element = $("[name=" + name + "]").last();
+    this.element = $("[name='" + name + "']").last();
 
     // Fix per select multipli
     if (this.element.length === 0) {

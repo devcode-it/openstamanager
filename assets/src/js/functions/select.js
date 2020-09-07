@@ -99,8 +99,28 @@ function start_superselect() {
                     params.page = params.page || 0;
                     params.length = params.length || 100;
 
+                    let results = data.results;
+
+                    // Interpretazione forzata per campi optgroup
+                    if (results[0]['optgroup']) {
+                        let groups = results.reduce(function (r, a) {
+                            r[a.optgroup] = r[a.optgroup] || [];
+                            r[a.optgroup].push(a);
+                            return r;
+                        }, {});
+
+                        let results_groups = [];
+                        for (const key in groups) {
+                            results_groups.push({
+                                text: key,
+                                children: groups[key],
+                            });
+                        }
+                        results = results_groups;
+                    }
+
                     return {
-                        results: data.results,
+                        results: results,
                         pagination: {
                             more: (params.page + 1) * params.length < data.recordsFiltered,
                         }
@@ -236,8 +256,8 @@ jQuery.fn.getSelectOption = function (name) {
  * @param name
  * @param value
  */
-function updateSelectOption(name, value){
-    $(".superselectajax").each(function (){
+function updateSelectOption(name, value) {
+    $(".superselectajax").each(function () {
         $(this).setSelectOption(name, value);
     })
 }

@@ -19,11 +19,14 @@
 
 include_once __DIR__.'/init.php';
 
+use Models\Upload;
 use Plugins\ExportFE\FatturaElettronica;
 use Plugins\ExportFE\Interaction;
+use Util\XML;
 
-/* per le PA EC02 e EC01 sono dei stati successivi a NE il quale a sua volta è successivo a RC. EC01 e EC02 sono definiti all'interno della ricevuta di NE che di fatto indica il rifiuto o l'accettazione.*/
+/* Per le PA EC02 e EC01 sono dei stati successivi a NE il quale a sua volta è successivo a RC. EC01 e EC02 sono definiti all'interno della ricevuta di NE che di fatto indica il rifiuto o l'accettazione. */
 $abilita_genera = empty($fattura->codice_stato_fe) || in_array($fattura->codice_stato_fe, ['GEN', 'NS', 'EC02', 'ERR']);
+$ricevuta_principale = $fattura->getRicevutaPrincipale();
 
 if (!empty($fattura_pa)) {
     $disabled = false;
@@ -80,7 +83,9 @@ echo '
         </button>
     </form>';
 
-    $file = $generated ? Models\Upload::where('filename', $fattura_pa->getFilename())->where('id_record', $id_record)->first() : null;
+    $file = $generated ? Upload::where('filename', $fattura_pa->getFilename())
+        ->where('id_record', $id_record)
+        ->first() : null;
 
 echo '
 
@@ -120,7 +125,6 @@ echo '
 echo '<br><br>';
 
 // Messaggio informativo sulla ricevuta principale impostata
-$ricevuta_principale = $fattura->getRicevutaPrincipale();
 if (!empty($record['codice_stato_fe'])) {
     if ($record['codice_stato_fe'] == 'GEN') {
         echo '
@@ -156,8 +160,8 @@ if (!empty($record['codice_stato_fe'])) {
 </div>';
 
         // Lettura della ricevuta
-        if (!empty($ricevuta_principale) && $stato_fe['codice'] == 'NS') {
-            $contenuto_ricevuta = \Util\XML::readFile($ricevuta_principale->filepath);
+        if (!empty($ricevuta_principale)) {
+            $contenuto_ricevuta = XML::readFile($ricevuta_principale->filepath);
             $lista_errori = $contenuto_ricevuta['ListaErrori'];
 
             if (!empty($lista_errori)) {

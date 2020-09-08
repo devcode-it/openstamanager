@@ -42,6 +42,9 @@ foreach ($recepits as $nome) {
     $pieces = explode('_', $filename);
     $codice_stato = $pieces[2];
 
+    // Informazioni sullo stato indicato
+    $stato_fe = $database->fetchOne('SELECT * FROM fe_stati_documento WHERE codice = '.prepare($codice_stato));
+
     echo '
         <tr data-name="'.$nome.'">
             <td>'.$nome.'</td>
@@ -67,10 +70,17 @@ foreach ($recepits as $nome) {
                 </button>';
     }
 
-    echo '
-                <button type="button" class="btn btn-success btn-sm" onclick="impostaRicevuta(this)">
+    if (empty($upload) || $upload->id != $documento->id_ricevuta_principale) {
+        echo '
+                <button type="button" class="btn btn-warning btn-sm" onclick="impostaRicevuta(this)">
                     <i class="fa fa-check-circle"></i>
                 </button>';
+    } elseif ($upload->id == $documento->id_ricevuta_principale) {
+        echo '
+                <button type="button" class="btn btn-success btn-sm disabled">
+                    <i class="fa fa-check-circle"></i>
+                </button>';
+    }
 
     echo '
             </td>

@@ -252,9 +252,10 @@ class DefaultHandler implements HandlerInterface
                 $values['min-value'] = isset($values['min-value']) ? $values['min-value'] : '0.'.str_repeat('0', $decimals - 1).'1';
             }
         }
-        
+
         // Delega al metodo "text", per la generazione del codice HTML
         $values['type'] = 'text';
+
         return $this->text($values, $extras);
     }
 

@@ -186,7 +186,7 @@ elseif ($record['stato'] == 'Bozza') {
                         ?>
 
                 <div class="col-md-2" <?php echo ($is_fiscale) ? '' : 'hidden'; ?> >
-                    {[ "type": "select", "label": "<?php echo tr('Stato FE'); ?>", "name": "codice_stato_fe", "required": 0, "values": "query=SELECT codice as id, CONCAT_WS(' - ',codice,descrizione) as text FROM fe_stati_documento", "value": "$codice_stato_fe$", "disabled": <?php echo intval(API\Services::isEnabled() || $record['stato'] == 'Bozza'); ?>, "class": "unblockable", "help": "<?php echo (!empty($record['data_stato_fe'])) ? Translator::timestampToLocale($record['data_stato_fe']) : ''; ?>" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Stato FE'); ?>", "name": "codice_stato_fe", "required": 0, "values": "query=SELECT codice as id, CONCAT_WS(' - ',codice,descrizione) as text FROM fe_stati_documento", "value": "$codice_stato_fe$", "disabled": <?php echo intval(API\Services::isEnabled() || ($record['stato'] == 'Bozza' && $abilita_genera)); ?>, "class": "unblockable", "help": "<?php echo (!empty($record['data_stato_fe'])) ? Translator::timestampToLocale($record['data_stato_fe']) : ''; ?>" ]}
                 </div>
 
                         <?php
@@ -882,7 +882,7 @@ $(document).ready(function () {
 function cambiaStato() {
     let testo = $("#idstatodocumento option:selected").text();
 
-    if (testo == "Pagato" || testo == "Parzialmente pagato") {
+    if (testo === "Pagato" || testo === "Parzialmente pagato") {
         if(confirm("'.tr('Sicuro di voler impostare manualmente la fattura come pagata senza aggiungere il movimento in prima nota?').'")) {
             return true;
         } else {

@@ -98,3 +98,18 @@ UPDATE `co_documenti` SET `co_documenti`.`id_ricevuta_principale` = (
     ORDER BY `zz_files`.`created_at`
     LIMIT 1
 );
+
+ALTER TABLE `fe_stati_documento` ADD `is_generabile` BOOLEAN DEFAULT FALSE,
+    ADD `is_inviabile` BOOLEAN DEFAULT FALSE,
+    ADD `tipo` varchar(255) NOT NULL;
+
+UPDATE `fe_stati_documento` SET `is_generabile` = '1', `is_inviabile` = '1' WHERE `codice` = 'ERVAL';
+UPDATE `fe_stati_documento` SET `is_generabile` = '1', `is_inviabile` = '1' WHERE `codice` = 'ERR';
+UPDATE `fe_stati_documento` SET `is_generabile` = '1', `is_inviabile` = '1' WHERE `codice` = 'GEN';
+UPDATE `fe_stati_documento` SET `is_generabile` = '1' WHERE `codice` = 'NS';
+UPDATE `fe_stati_documento` SET `is_generabile` = '1' WHERE `codice` = 'EC02';
+
+UPDATE `fe_stati_documento` SET `tipo` = 'danger';
+UPDATE `fe_stati_documento` SET `tipo` = 'warning' WHERE `codice` IN ('ERVAL', 'MC', 'WAIT', 'NE');
+UPDATE `fe_stati_documento` SET `tipo` = 'success' WHERE `codice` IN ('EC01', 'RC');
+UPDATE `fe_stati_documento` SET `tipo` = 'info' WHERE `codice` IN ('GEN');

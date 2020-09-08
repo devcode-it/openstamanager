@@ -21,11 +21,7 @@ use Modules\Iva\Aliquota;
 
 include_once __DIR__.'/../../core.php';
 
-$block_edit = !empty($note_accredito) || $record['stato'] == 'Emessa' || $record['stato'] == 'Pagato' || $record['stato'] == 'Parzialmente pagato';
-
-$rs = $dbo->fetchArray('SELECT co_tipidocumento.descrizione, dir FROM co_tipidocumento INNER JOIN co_documenti ON co_tipidocumento.id=co_documenti.idtipodocumento WHERE co_documenti.id='.prepare($id_record));
-$dir = $rs[0]['dir'];
-$tipodoc = $rs[0]['descrizione'];
+$block_edit = !empty($note_accredito) || in_array($record['stato'], ['Emessa', 'Pagato', 'Parzialmente pagato']) || !$abilita_genera;
 
 if ($dir == 'entrata') {
     $conto = 'vendite';
@@ -164,7 +160,7 @@ if (empty($record['is_fiscale'])) {
     $plugin = $dbo->fetchArray("SELECT id FROM zz_plugins WHERE name='Fatturazione Elettronica' AND idmodule_to = ".prepare($id_module));
     echo '<script>$("#link-tab_'.$plugin[0]['id'].'").addClass("disabled");</script>';
 }
-//Forzo il passaggio della fattura da Bozza ad Emessa per il corretto calcolo del numero.
+// Forzo il passaggio della fattura da Bozza ad Emessa per il corretto calcolo del numero.
 elseif ($record['stato'] == 'Bozza') {
     $query .= " WHERE descrizione IN ('Emessa', 'Bozza')";
 }
@@ -195,19 +191,17 @@ elseif ($record['stato'] == 'Bozza') {
 
                         <?php
                     }
-                    ?>
 
-                <div class="col-md-<?php echo ($is_fiscale) ? 2 : 6; ?>">
-                    <!-- TODO: Rimuovere possibilità di selezionare lo stato pagato obbligando l'utente ad aggiungere il movimento in prima nota -->
-                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatodocumento", "required": 1, "values": "query=<?php echo $query; ?>", "value": "$idstatodocumento$", "class": "unblockable", "extra": " onchange = \"if ($('#idstatodocumento option:selected').text()=='Pagato' || $('#idstatodocumento option:selected').text()=='Parzialmente pagato' ){if( confirm('<?php echo tr('Sicuro di voler impostare manualmente la fattura come pagata senza aggiungere il movimento in prima nota?'); ?>') ){ return true; }else{ $('#idstatodocumento').selectSet(<?php echo $record['idstatodocumento']; ?>); }}\" " ]}
+                echo '
+                <div class="col-md-'.($is_fiscale ? 2 : 6).'">
+                    <!-- TODO: Rimuovere possibilità di selezionare lo stato pagato obbligando l\'utente ad aggiungere il movimento in prima nota -->
+                    {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatodocumento", "required": 1, "values": "query='.$query.'", "value": "$idstatodocumento$", "class": "'.(!$abilita_genera ? '' : 'unblockable').'", "extra": "onchange=\"return cambiaStato()\"" ]}
                 </div>
 			</div>
 
 			<div class="row">
 				<div class="col-md-6">
-					<?php
-
-                    echo Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"');
+				    '.Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"');
 
                     if ($dir == 'entrata') {
                         ?>
@@ -337,7 +331,7 @@ elseif ($record['stato'] == 'Bozza') {
 				</div>
 
 				<?php
-                //TODO: Fattura per conto del fornitore (es. cooperative agricole che emettono la fattura per conto dei propri soci produttori agricoli conferenti)
+                // TODO: Fattura per conto del fornitore (es. cooperative agricole che emettono la fattura per conto dei propri soci produttori agricoli conferenti)
                 if ($dir == 'entrata') {
                     ?>
 					<div class="col-md-3">
@@ -410,7 +404,7 @@ echo '
         </div>
     </div>';
 
-if ($tipodoc == 'Fattura accompagnatoria di vendita') {
+if ($record['descrizione_tipo'] == 'Fattura accompagnatoria di vendita') {
     echo '
     <div class="box box-info">
         <div class="box-header with-border">
@@ -884,4 +878,16 @@ $(document).ready(function () {
         }
     });
 });
+
+function cambiaStato() {
+    let testo = $("#idstatodocumento option:selected").text();
+
+    if (testo == "Pagato" || testo == "Parzialmente pagato") {
+        if(confirm("'.tr('Sicuro di voler impostare manualmente la fattura come pagata senza aggiungere il movimento in prima nota?').'")) {
+            return true;
+        } else {
+            $("#idstatodocumento").selectSet('.$record['idstatodocumento'].');
+        }
+    }
+}
 </script>';

@@ -29,24 +29,12 @@ switch (filter('op')) {
         $results = [];
         foreach ($list as $element) {
             $name = $element['name'];
-            Interaction::getReceipt($name);
+            $fattura = Ricevuta::process($name);
 
-            $fattura = null;
-            try {
-                $receipt = new Ricevuta($name);
-                $receipt->save();
-
-                $fattura = $receipt->getFattura()->numero_esterno;
-
-                $receipt->delete();
-
-                Interaction::processReceipt($name);
-            } catch (UnexpectedValueException $e) {
-            }
-
+            $numero_esterno = $fattura ? $fattura->numero_esterno : null;
             $results[] = [
                 'file' => $name,
-                'fattura' => $fattura,
+                'fattura' => $numero_esterno,
             ];
         }
 
@@ -63,20 +51,9 @@ switch (filter('op')) {
         // no break
     case 'prepare':
         $name = $name ?: get('name');
-        Interaction::getReceipt($name);
+        $fattura = Ricevuta::process($name);
 
-        $fattura = null;
-        try {
-            $receipt = new Ricevuta($name);
-            $receipt->save();
-
-            $fattura = $receipt->getFattura()->numero_esterno;
-
-            $receipt->delete();
-
-            Interaction::processReceipt($name);
-        } catch (UnexpectedValueException $e) {
-        }
+        $numero_esterno = $fattura ? $fattura->numero_esterno : null;
 
         echo json_encode([
             'file' => $name,

@@ -24,6 +24,7 @@ use Carbon\Carbon;
 use Common\Components\Description;
 use Common\Document;
 use Illuminate\Database\Eloquent\Builder;
+use Models\Upload;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Fatture\Gestori\Bollo as GestoreBollo;
 use Modules\Fatture\Gestori\Movimenti as GestoreMovimenti;
@@ -458,6 +459,23 @@ class Fattura extends Document
         return $this->uploads()->filter(function ($item) use ($nome) {
             return false !== strstr($item->name, $nome);
         })->sortBy('created_at');
+    }
+
+    /**
+     * Restituisce la ricevuta principale, impostata attraverso il campo aggiuntivo id_ricevuta_principale.
+     *
+     * @return Upload|null
+     */
+    public function getRicevutaPrincipale()
+    {
+        if (empty($this->id_ricevuta_principale)) {
+            return null;
+        }
+
+        return $this->getModule()
+            ->uploads($this->id)
+            ->where('id', $this->id_ricevuta_principale)
+            ->first();
     }
 
     /**

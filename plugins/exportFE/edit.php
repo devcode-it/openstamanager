@@ -119,8 +119,8 @@ echo '
 
 echo '<br><br>';
 
-// Messaggio esito invio
-$ultima_ricevuta = $fattura->getRicevute()->last();
+// Messaggio informativo sulla ricevuta principale impostata
+$ricevuta_principale = $fattura->getRicevutaPrincipale();
 if (!empty($record['codice_stato_fe'])) {
     if ($record['codice_stato_fe'] == 'GEN') {
         echo '
@@ -141,9 +141,9 @@ if (!empty($record['codice_stato_fe'])) {
     <div class="pull-right">
         <i class="fa fa-clock-o tip" title="'.tr('Data e ora ricezione').'"></i> '.Translator::timestampToLocale($record['data_stato_fe']);
 
-        if (!empty($ultima_ricevuta)) {
+        if (!empty($ricevuta_principale)) {
             echo '
-        <a href="'.ROOTDIR.'/view.php?file_id='.$ultima_ricevuta->id.'" target="_blank" class="btn btn-info btn-xs">
+        <a href="'.ROOTDIR.'/view.php?file_id='.$ricevuta_principale->id.'" target="_blank" class="btn btn-info btn-xs">
             <i class="fa fa-external-link"></i> '.tr('Visualizza ricevuta').'
         </a>';
         }
@@ -156,8 +156,8 @@ if (!empty($record['codice_stato_fe'])) {
 </div>';
 
         // Lettura della ricevuta
-        if (!empty($ultima_ricevuta) && $stato_fe['codice'] == 'NS') {
-            $contenuto_ricevuta = \Util\XML::readFile($ultima_ricevuta->filepath);
+        if (!empty($ricevuta_principale) && $stato_fe['codice'] == 'NS') {
+            $contenuto_ricevuta = \Util\XML::readFile($ricevuta_principale->filepath);
             $lista_errori = $contenuto_ricevuta['ListaErrori'];
 
             if (!empty($lista_errori)) {
@@ -193,7 +193,7 @@ if (!empty($record['codice_stato_fe'])) {
 echo '
 <script>
     function send(btn) {
-        var restore = buttonLoading(btn);
+        let restore = buttonLoading(btn);
 
         $.ajax({
             url: globals.rootdir + "/actions.php",
@@ -225,7 +225,10 @@ echo '
     }
 
     function verify(btn) {
-        var restore = buttonLoading(btn);
+        openModal("'.tr('Gestione ricevute').'", "'.$structure->fileurl('notifiche.php').'");
+
+    /*
+        let restore = buttonLoading(btn);
 
         $.ajax({
             url: globals.rootdir + "/actions.php",
@@ -253,7 +256,7 @@ echo '
 
                 buttonRestore(btn, restore);
             }
-        });
+        });*/
     }
 
     $("#genera").click(function(event) {

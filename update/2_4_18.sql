@@ -88,3 +88,13 @@ UPDATE `zz_views` SET `query` = 'CONCAT(UCASE(LEFT(tipo_movimento, 1)), SUBSTRIN
 -- Aggiornamento versione API services
 UPDATE `zz_settings` SET `valore` = 'v3' WHERE `nome` = 'OSMCloud Services API Version';
 
+-- Aggiunto collegamento con allegato per impostare la ricevuta principale
+ALTER TABLE `co_documenti` ADD `id_ricevuta_principale` INT(11);
+UPDATE `co_documenti` SET `co_documenti`.`id_ricevuta_principale` = (
+    SELECT `zz_files`.`id` FROM `zz_files` WHERE `zz_files`.`id_module` = (
+        SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Fatture di vendita'
+    ) AND `zz_files`.`id_record` = `co_documenti`.`id`
+    AND `zz_files`.`name` LIKE 'Ricevuta%'
+    ORDER BY `zz_files`.`created_at`
+    LIMIT 1
+);

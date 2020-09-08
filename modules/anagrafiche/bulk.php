@@ -49,9 +49,16 @@ switch (post('op')) {
         foreach ($id_records as $id) {
             $anagrafica = Anagrafica::find($id);
             if (empty($anagrafica->lat) && empty($anagrafica->lng) && !empty($anagrafica->sedeLegale->citta) && !empty($anagrafica->sedeLegale->cap)) {
-                $address = $geocoder->geocode($anagrafica->sedeLegale->citta.' '.$anagrafica->sedeLegale->cap)->first();
+                $indirizzo = $anagrafica->sedeLegale->citta.' '.$anagrafica->sedeLegale->cap;
+
+                // Ricerca indirizzo
+                $address = $geocoder->geocode($indirizzo)->first();
                 $coordinates = $address->getCoordinates();
-                dd($coordinates);
+
+                // Salvataggio informazioni
+                $anagrafica->lat = $coordinates->getLatitude();
+                $anagrafica->lng = $coordinates->getLongitude();
+                $anagrafica->save();
             }
         }
 

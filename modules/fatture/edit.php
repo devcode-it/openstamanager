@@ -174,6 +174,7 @@ elseif ($record['stato'] == 'Bozza') {
 				<div class="col-md-2" <?php echo ($dir == 'entrata') ? 'hidden' : ''; ?>>
                     {[ "type": "date", "label": "<?php echo tr('Data registrazione'); ?>", <?php echo $readonly; ?> "name": "data_registrazione", "required": 0, "value": "$data_registrazione$", "help": "<?php echo tr('Data in cui si è effettuata la registrazione della fattura in contabilità'); ?>" ]}
 				</div>
+
                 <!-- TODO: da nascondere per le fatture di vendita in quanto questa data sarà sempre uguale alla data di emissione -->
                 <div class="col-md-2" <?php echo ($is_fiscale) ? '' : 'hidden'; ?>>
                     {[ "type": "date", "class":"<?php echo (dateFormat($fattura->data_competenza) < dateFormat($fattura->data)) ? 'unblockable' : ''; ?>", "label": "<?php echo tr('Data competenza'); ?>", "name": "data_competenza", "required": 1, "value": "$data_competenza$", "min-date": "$data_registrazione$", "help": "<?php echo tr('Data nella quale considerare il movimento contabile, che può essere posticipato rispetto la data della fattura'); ?>" ]}

@@ -201,6 +201,7 @@ echo '
             $.ajax({
                 url: globals.rootdir + "/actions.php",
                 type: "post",
+                dataType: "json",
                 data: {
                     op: "send",
                     id_module: "'.$id_module.'",
@@ -209,12 +210,13 @@ echo '
                 },
                 success: function(data) {
                     buttonRestore(button, restore);
-                    data = JSON.parse(data);
 
-                    if (data.code === "200") {
+                    if (data.code === 200) {
                         swal("'.tr('Fattura inviata!').'", data.message, "success");
 
                         $(button).attr("disabled", true).addClass("disabled");
+                    } else if (data.code === 301) {
+                        swal("'.tr('Invio già effettuato').'", data.code + " - " + data.message, "error");
                     } else {
                         swal("'.tr('Invio fallito').'", data.code + " - " + data.message, "error");
                     }

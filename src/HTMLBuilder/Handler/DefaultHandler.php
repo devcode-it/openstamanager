@@ -245,20 +245,16 @@ class DefaultHandler implements HandlerInterface
             if (is_numeric($values['decimals'])) {
                 $decimals = $values['decimals'];
             } elseif (starts_with($values['decimals'], 'qta')) {
-                // Se non è previsto un valore minimo, lo imposta a 1
-                $values['min-value'] = isset($values['min-value']) ? $values['min-value'] : 0;
-
                 $decimals = setting('Cifre decimali per quantità');
                 $values['decimals'] = $decimals;
+
+                // Se non è previsto un valore minimo, lo imposta a 1
+                $values['min-value'] = isset($values['min-value']) ? $values['min-value'] : '0.'.str_repeat('0', $decimals - 1).'1';
             }
         }
-
-        // Controllo sulla correttezza sintattica del valore impostato
-        $values['value'] = (formatter()->isStandardNumber($values['value'])) ? \Translator::numberToLocale($values['value'], $decimals) : $values['value'];
-
-        $values['type'] = 'text';
-
+        
         // Delega al metodo "text", per la generazione del codice HTML
+        $values['type'] = 'text';
         return $this->text($values, $extras);
     }
 

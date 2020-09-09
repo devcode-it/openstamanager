@@ -366,6 +366,12 @@ switch (post('op')) {
             }
         }
 
+        // Modifica finale dello stato
+        if (post('create_document') == 'on') {
+            $ordine->idstatoordine = post('id_stato');
+            $ordine->save();
+        }
+
         ricalcola_costiagg_ordine($id_record);
 
         // Messaggio informativo

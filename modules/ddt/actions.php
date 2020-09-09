@@ -303,7 +303,7 @@ switch (post('op')) {
         }
         $documento = $class::find($id_documento);
 
-    // Individuazione sede
+        // Individuazione sede
         $id_sede = ($documento->direzione == 'entrata') ? $documento->idsede_destinazione : $documento->idsede_partenza;
         $id_sede = $id_sede ?: $documento->idsede;
         $id_sede = $id_sede ?: 0;
@@ -320,6 +320,8 @@ switch (post('op')) {
             $ddt->codice_cig = $documento->codice_cig;
             $ddt->num_item = $documento->num_item;
             $ddt->idsede_destinazione = $id_sede;
+
+            $ddt->idcausalet = post('id_causale_trasporto');
 
             $ddt->save();
 
@@ -342,6 +344,12 @@ switch (post('op')) {
 
                 $copia->save();
             }
+        }
+
+        // Modifica finale dello stato
+        if (post('create_document') == 'on') {
+            $ddt->idstatoddt = post('id_stato');
+            $ddt->save();
         }
 
         ricalcola_costiagg_ddt($id_record);

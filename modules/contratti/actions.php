@@ -487,6 +487,12 @@ $riga = $contratto->getRiga($type, $id_riga);
             }
         }
 
+        // Modifica finale dello stato
+        if (post('create_document') == 'on') {
+            $contratto->idstato = post('id_stato');
+            $contratto->save();
+        }
+
         ricalcola_costiagg_ordine($id_record);
 
         // Messaggio informativo

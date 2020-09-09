@@ -679,9 +679,11 @@ switch (post('op')) {
             $tipo = Tipo::where('descrizione', $descrizione)->first();
 
             $fattura = Fattura::build($documento->anagrafica, $tipo, post('data'), post('id_segment'));
+
             $fattura->idpagamento = $documento->idpagamento;
             $fattura->idsede_destinazione = $documento->idsede;
             $fattura->id_ritenuta_contributi = post('id_ritenuta_contributi') ?: null;
+
             $fattura->save();
 
             $id_record = $fattura->id;
@@ -715,6 +717,12 @@ switch (post('op')) {
 
                 $copia->save();
             }
+        }
+
+        // Modifica finale dello stato
+        if (post('create_document') == 'on') {
+            $fattura->idstatodocumento = post('id_stato');
+            $fattura->save();
         }
 
         ricalcola_costiagg_fattura($id_record);

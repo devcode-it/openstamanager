@@ -69,7 +69,7 @@ function start_superselect() {
                     let results = data.results;
 
                     // Interpretazione forzata per campi optgroup
-                    if (results[0]['optgroup']) {
+                    if (results && results[0] && [0]['optgroup']) {
                         let groups = results.reduce(function (r, a) {
                             r[a.optgroup] = r[a.optgroup] || [];
                             r[a.optgroup].push(a);

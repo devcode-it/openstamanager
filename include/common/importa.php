@@ -24,14 +24,14 @@ if (empty($documento) || (!empty($documento_finale) && $documento_finale->direzi
     return;
 }
 
-// Informazioi utili
+// Informazioni utili
 $dir = $documento->direzione;
 $original_module = Modules::get($documento->module);
 
 $name = !empty($documento_finale) ? $documento_finale->module : $options['module'];
 $final_module = Modules::get($name);
 
-// IVA predefinta
+// IVA predefinita
 $id_iva = $id_iva ?: setting('Iva predefinita');
 
 $righe = $documento->getRighe()->where('qta_rimanente', '>', 0);
@@ -45,7 +45,6 @@ if (empty($righe)) {
 $link = !empty($documento_finale) ? ROOTDIR.'/editor.php?id_module='.$final_module['id'].'&id_record='.$documento_finale->id : ROOTDIR.'/controller.php?id_module='.$final_module['id'];
 
 echo '
-
 <form action="'.$link.'" method="post">
     <input type="hidden" name="op" value="'.$options['op'].'">
     <input type="hidden" name="backto" value="record-edit">
@@ -71,24 +70,32 @@ if (!empty($options['create_document'])) {
                     {[ "type": "date", "label": "'.tr('Data del documento').'", "name": "data", "required": 1, "value": "-now-" ]}
                 </div>';
 
+    // Opzioni aggiuntive per le Fatture
     if (in_array($final_module['name'], ['Fatture di vendita', 'Fatture di acquisto'])) {
         if ($options['op'] == 'nota_accredito' && !empty($segmenti)) {
-            $segmento = $dbo->fetchOne("SELECT * FROM zz_segments WHERE predefined_accredito='1'");
+            $segmento = $database->fetchOne("SELECT * FROM zz_segments WHERE predefined_accredito='1'");
 
             $id_segment = $segmento['id'];
         } else {
             $id_segment = $_SESSION['module_'.$final_module['id']]['id_segment'];
         }
 
-        echo '
-                <div class="col-md-6">
-                    {[ "type": "select", "label": "'.tr('Ritenuta contributi').'", "name": "id_ritenuta_contributi", "value": "$id_ritenuta_contributi$", "values": "query=SELECT * FROM co_ritenuta_contributi" ]}
-                </div>
+        $stato_predefinito = $database->fetchOne("SELECT * FROM co_statidocumento WHERE descrizione = 'Bozza'");
 
-                <div class="col-md-12">
-                    {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.prepare($final_module['id']).' ORDER BY name", "value": "'.$id_segment.'" ]}
-                </div>';
+        echo '
+            <div class="col-md-6">
+                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT * FROM co_statidocumento WHERE descrizione IN (\'Emessa\', \'Bozza\')", "value": "'.$stato_predefinito['id'].'"]}
+            </div>
+
+            <div class="col-md-6">
+                {[ "type": "select", "label": "'.tr('Ritenuta contributi').'", "name": "id_ritenuta_contributi", "value": "$id_ritenuta_contributi$", "values": "query=SELECT * FROM co_ritenuta_contributi" ]}
+            </div>
+
+            <div class="col-md-6">
+                {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.prepare($final_module['id']).' ORDER BY name", "value": "'.$id_segment.'" ]}
+            </div>';
     }
+
     // Opzioni aggiuntive per gli Interventi
     elseif ($final_module['name'] == 'Interventi') {
         echo '
@@ -100,14 +107,49 @@ if (!empty($options['create_document'])) {
                 {[ "type": "select", "label": "'.tr('Tipo').'", "name": "id_tipo_intervento", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento" ]}
             </div>';
     }
+
+    // Opzioni aggiuntive per i Contratti
+    elseif ($final_module['name'] == 'Contratti') {
+        $stato_predefinito = $database->fetchOne("SELECT * FROM co_staticontratti WHERE descrizione = 'Bozza'");
+
+        echo '
+            <div class="col-md-6">
+                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT id, descrizione FROM co_staticontratti", "value": "'.$stato_predefinito['id'].'" ]}
+            </div>';
+    }
+
+    // Opzioni aggiuntive per i DDT
+    elseif (in_array($final_module['name'], ['Ddt di vendita', 'Ddt di acquisto'])) {
+        $stato_predefinito = $database->fetchOne("SELECT * FROM dt_statiddt WHERE descrizione = 'Bozza'");
+
+        echo '
+            <div class="col-md-6">
+                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT * FROM dt_statiddt", "value": "'.$stato_predefinito['id'].'" ]}
+            </div>
+
+            <div class="col-md-6">
+                {[ "type": "select", "label": "'.tr('Causale trasporto').'", "name": "id_causale_trasporto", "required": 1, "ajax-source": "causali", "icon-after": "add|'.Modules::get('Causali')['id'].'", "help": "'.tr('Definisce la causale del trasporto').'" ]}
+            </div>';
+    }
+
+    // Opzioni aggiuntive per gli Ordini
+    elseif (in_array($final_module['name'], ['Ordini cliente', 'Ordini fornitore'])) {
+        $stato_predefinito = $database->fetchOne("SELECT * FROM or_statiordine WHERE descrizione = 'Bozza'");
+
+        echo '
+            <div class="col-md-6">
+                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT * FROM or_statiordine WHERE descrizione IN(\'Bozza\', \'Accettato\', \'In attesa di conferma\', \'Annullato\')", "value": "'.$stato_predefinito['id'].'" ]}
+            </div>';
+    }
+
     // Selezione fornitore per Ordine fornitore
-    elseif ($options['op'] == 'add_ordine_cliente') {
+    if ($options['op'] == 'add_ordine_cliente') {
         $tipo_anagrafica = tr('Fornitore');
         $ajax = 'fornitori';
 
         echo '
             <div class="col-md-6">
-                {[ "type": "select", "label": "'.$tipo_anagrafica.'", "name": "idanagrafica", "required": 1, "ajax-source": "'.$ajax.'", "icon-after": "add|<'.Modules::get('Anagrafiche')['id'].'|tipoanagrafica='.$tipo_anagrafica.'" ]}
+                {[ "type": "select", "label": "'.$tipo_anagrafica.'", "name": "idanagrafica", "required": 1, "ajax-source": "'.$ajax.'", "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|tipoanagrafica='.$tipo_anagrafica.'" ]}
             </div>';
     }
 
@@ -133,7 +175,7 @@ if (in_array($final_module['name'], ['Fatture di vendita', 'Fatture di acquisto'
 
     $id_conto = $documento_finale['idconto'];
     if (empty($id_conto)) {
-        $id_conto = ($dir == 'entrata') ? setting('Conto predefinito fatture di vendita') : setting('Conto predefinito fatture di acquisto');
+        $id_conto = $dir == 'entrata' ? setting('Conto predefinito fatture di vendita') : setting('Conto predefinito fatture di acquisto');
     }
 
     echo '
@@ -151,7 +193,7 @@ if (in_array($final_module['name'], ['Fatture di vendita', 'Fatture di acquisto'
         if ($show_rivalsa) {
             echo '
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Rivalsa').'", "name": "id_rivalsa_inps", "value": "'.$id_rivalsa_inps.'", "values": "query=SELECT * FROM co_rivalse", "help": "'.(($options['dir'] == 'entrata') ? setting('Tipo Cassa Previdenziale') : null).'" ]}
+                    {[ "type": "select", "label": "'.tr('Rivalsa').'", "name": "id_rivalsa_inps", "value": "'.$id_rivalsa_inps.'", "values": "query=SELECT * FROM co_rivalse", "help": "'.($options['dir'] == 'entrata' ? setting('Tipo Cassa Previdenziale') : null).'" ]}
                 </div>';
         }
 
@@ -196,7 +238,8 @@ if (in_array($final_module['name'], ['Fatture di vendita', 'Fatture di acquisto'
     </div>';
 }
 
-    echo '
+// Righe del documento
+echo '
     <div class="box box-success">
         <div class="box-header with-border">
             <h3 class="box-title">'.tr('Righe da importare').'</h3>
@@ -217,21 +260,21 @@ if (!empty($options['serials'])) {
 echo '
             </tr>';
 
-foreach ($righe as $i => $r) {
+foreach ($righe as $i => $riga) {
     // Descrizione
     echo '
             <tr>
                 <td>
-                    <input type="hidden" id="prezzo_unitario_'.$i.'" name="subtot['.$r['id'].']" value="'.$r['prezzo_unitario'].'" />
-                    <input type="hidden" id="sconto_unitario_'.$i.'" name="sconto['.$r['id'].']" value="'.$r['sconto_unitario'].'" />
-                    <input type="hidden" id="iva_unitaria_'.$i.'" name="iva['.$r['id'].']" value="'.$r['iva_unitaria'].'" />
-                    <input type="hidden" id="qta_max_'.$i.'" value="'.($r['qta_rimanente']).'" />';
+                    <input type="hidden" id="prezzo_unitario_'.$i.'" name="subtot['.$riga['id'].']" value="'.$riga['prezzo_unitario'].'" />
+                    <input type="hidden" id="sconto_unitario_'.$i.'" name="sconto['.$riga['id'].']" value="'.$riga['sconto_unitario'].'" />
+                    <input type="hidden" id="iva_unitaria_'.$i.'" name="iva['.$riga['id'].']" value="'.$riga['iva_unitaria'].'" />
+                    <input type="hidden" id="qta_max_'.$i.'" value="'.($riga['qta_rimanente']).'" />';
 
     // Checkbox - da evadere?
     echo '
-                    <input type="checkbox" checked="checked" id="checked_'.$i.'" name="evadere['.$r['id'].']" value="on" onclick="ricalcola_subtotale_riga('.$i.');" />';
+                    <input type="checkbox" checked="checked" id="checked_'.$i.'" name="evadere['.$riga['id'].']" value="on" onclick="ricalcola_subtotale_riga('.$i.');" />';
 
-    $descrizione = ($r->isArticolo() ? $r->articolo->codice.' - ' : '').$r['descrizione'];
+    $descrizione = ($riga->isArticolo() ? $riga->articolo->codice.' - ' : '').$riga['descrizione'];
 
     echo '&nbsp;'.nl2br($descrizione);
 
@@ -241,20 +284,20 @@ foreach ($righe as $i => $r) {
     // Q.tà rimanente
     echo '
                 <td class="text-center">
-                    '.Translator::numberToLocale($r['qta_rimanente']).'
+                    '.numberFormat($riga['qta_rimanente']).'
                 </td>';
 
     // Q.tà da evadere
     echo '
                 <td>
-                    {[ "type": "number", "name": "qta_da_evadere['.$r['id'].']", "id": "qta_'.$i.'", "required": 1, "value": "'.$r['qta_rimanente'].'", "decimals": "qta", "min-value": "0", "extra": "'.(($r['is_descrizione']) ? 'readonly' : '').' onkeyup=\"ricalcola_subtotale_riga('.$i.');\"" ]}
+                    {[ "type": "number", "name": "qta_da_evadere['.$riga['id'].']", "id": "qta_'.$i.'", "required": 1, "value": "'.$riga['qta_rimanente'].'", "decimals": "qta", "min-value": "0", "extra": "'.(($riga['is_descrizione']) ? 'readonly' : '').' onkeyup=\"ricalcola_subtotale_riga('.$i.');\"" ]}
                 </td>';
 
     echo '
                 <td>
-                    <big id="subtotale_'.$i.'">'.moneyFormat($r->totale).'</big><br/>
+                    <big id="subtotale_'.$i.'">'.moneyFormat($riga->totale).'</big><br/>
 
-                    <small style="color:#777;" id="subtotaledettagli_'.$i.'">'.Translator::numberToLocale($r->totale_imponibile).' + '.Translator::numberToLocale($r->iva).'</small>
+                    <small style="color:#777;" id="subtotaledettagli_'.$i.'">'.numberFormat($riga->totale_imponibile).' + '.numberFormat($riga->iva).'</small>
                 </td>';
 
     // Seriali
@@ -262,8 +305,8 @@ foreach ($righe as $i => $r) {
         echo '
                 <td>';
 
-        if (!empty($r['abilita_serial'])) {
-            $serials = $r->serials;
+        if (!empty($riga['abilita_serial'])) {
+            $serials = $riga->serials;
 
             $list = [];
             foreach ($serials as $serial) {
@@ -275,11 +318,11 @@ foreach ($righe as $i => $r) {
 
             if (!empty($serials)) {
                 echo '
-                    {[ "type": "select", "name": "serial['.$r['id'].'][]", "id": "serial_'.$i.'", "multiple": 1, "values": '.json_encode($list).', "value": "'.implode(',', $serials).'", "extra": "data-maximum=\"'.intval($r['qta_rimanente']).'\"" ]}';
+                    {[ "type": "select", "name": "serial['.$riga['id'].'][]", "id": "serial_'.$i.'", "multiple": 1, "values": '.json_encode($list).', "value": "'.implode(',', $serials).'", "extra": "data-maximum=\"'.intval($riga['qta_rimanente']).'\"" ]}';
             }
         }
 
-        if (empty($r['abilita_serial']) || empty($serials)) {
+        if (empty($riga['abilita_serial']) || empty($serials)) {
             echo '-';
         }
 

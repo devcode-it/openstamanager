@@ -17,12 +17,31 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Modules\Banche\Banca;
+include_once __DIR__.'/../../../core.php';
 
-include_once __DIR__.'/../../core.php';
+switch ($resource) {
+    /*
+     * Opzioni utilizzate:
+     * - id_anagrafica
+     */
+    case 'banche':
+        $query = "SELECT id, CONCAT (nome, ' - ' , iban) AS descrizione FROM co_banche |where| ORDER BY nome";
 
-if (isset($id_record)) {
-    $banca = Banca::find($id_record);
+        foreach ($elements as $element) {
+            $filter[] = 'id = '.prepare($element);
+        }
 
-    $record = $banca->toArray();
+        if (empty($filter)) {
+            $where[] = 'deleted_at IS NULL';
+        }
+
+        $where[] = 'id_anagrafica='.prepare($superselect['id_anagrafica']);
+
+        if (!empty($search)) {
+            $search_fields[] = 'nome LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = 'filiale LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = 'iban LIKE '.prepare('%'.$search.'%');
+        }
+
+        break;
 }

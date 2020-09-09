@@ -88,3 +88,33 @@ UPDATE `zz_views` SET `query` = 'CONCAT(UCASE(LEFT(tipo_movimento, 1)), SUBSTRIN
 -- Aggiornamento versione API services
 UPDATE `zz_settings` SET `valore` = 'v3' WHERE `nome` = 'OSMCloud Services API Version';
 
+-- Aggiornamento del modulo Banche per il supporto completo alle Anagrafiche
+ALTER TABLE `co_banche` ADD `id_anagrafica` INT(11) NOT NULL, CHANGE `note` `note` TEXT, CHANGE `filiale` `filiale` varchar(255);
+UPDATE `co_banche` SET  `id_anagrafica` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = 'Azienda predefinita');
+ALTER TABLE `co_banche` ADD FOREIGN KEY (`id_anagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE CASCADE;
+
+-- Collegamento sulla base dei campi aggiuntivi per le Anagrafiche
+UPDATE `co_banche`
+    INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idbanca_acquisti` = `co_banche`.`id`
+SET `co_banche`.`id_anagrafica` = `an_anagrafiche`.`idanagrafica`
+WHERE `an_anagrafiche`.`idbanca_acquisti` != 0;
+UPDATE `co_banche`
+    INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idbanca_vendite` = `co_banche`.`id`
+SET `co_banche`.`id_anagrafica` = `an_anagrafiche`.`idanagrafica`
+WHERE `an_anagrafiche`.`idbanca_vendite` != 0;
+
+-- Aggiornamento ID relativo sulle Anagrafiche
+ALTER TABLE `an_anagrafiche` CHANGE `idbanca_acquisti` `idbanca_acquisti` INT(11),
+    CHANGE `idbanca_vendite` `idbanca_vendite` INT(11);
+UPDATE `an_anagrafiche` SET `idbanca_acquisti` = NULL WHERE `idbanca_vendite` = 0;
+UPDATE `an_anagrafiche` SET `idbanca_vendite` = NULL WHERE `idbanca_vendite` = 0;
+
+INSERT INTO `co_banche` (`id_anagrafica`, `nome`, `iban`, `bic`, `filiale`) SELECT idanagrafica, IF(appoggiobancario != '', appoggiobancario, CONCAT('Banca predefinita di ', ragione_sociale)), codiceiban, bic, filiale FROM an_anagrafiche WHERE codiceiban IS NOT  NULL AND codiceiban != '';
+
+UPDATE `an_anagrafiche` SET `idbanca_acquisti` = (SELECT `id` FROM `co_banche` WHERE `co_banche`.`id_anagrafica` = `an_anagrafiche`.`idanagrafica` LIMIT 1) WHERE `idbanca_acquisti` IS NULL;
+UPDATE `an_anagrafiche` SET `idbanca_vendite` = (SELECT `id` FROM `co_banche` WHERE `co_banche`.`id_anagrafica` = `an_anagrafiche`.`idanagrafica` LIMIT 1) WHERE `idbanca_vendite` IS NULL;
+
+-- Aggiornamento tabella principale per Banche
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_banche` INNER JOIN an_anagrafiche ON `an_anagrafiche`.`idanagrafica` = `co_banche`.`id_anagrafica` WHERE 1=1 AND `co_banche`.`deleted_at` IS NULL AND `an_anagrafiche`.`deleted_at` IS NULL HAVING 2=2' WHERE `name` = 'Banche';
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `visible`, `summable`, `default`) VALUES
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche'), 'Anagrafica', 'an_anagrafiche.ragione_sociale', 0, 1, 0, 0, 1, 0, 1);

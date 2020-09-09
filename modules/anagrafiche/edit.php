@@ -378,7 +378,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
 
                 <div class="tab-content '.(!$is_cliente && !$is_fornitore && !$is_tecnico ? 'hide' : '').'">
                     <div class="tab-pane '.(!$is_cliente && !$is_fornitore ? ' hide' : '').'" id="cliente_fornitore">
-                        <div class="row">
+                        <!--div class="row">
                              <div class="col-md-6">
                                  {[ "type": "text", "label": "'.tr('Appoggio bancario').'", "name": "appoggiobancario", "value": "$appoggiobancario$" ]}
                              </div>
@@ -387,6 +387,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                                  {[ "type": "text", "label": "'.tr('Filiale banca').'", "name": "filiale", "value": "$filiale$" ]}
                              </div>
                         </div>
+
                         <div class="row">
                              <div class="col-md-6">
                                  {[ "type": "text", "label": "'.tr('Codice IBAN').'", "name": "codiceiban", "value": "$codiceiban$" ]}
@@ -395,7 +396,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                              <div class="col-md-6">
                                  {[ "type": "text", "label": "'.tr('Codice BIC').'", "name": "bic", "value": "$bic$" ]}
                              </div>
-                         </div>
+                        </div-->
 
                         <div class="row">
                             <div class="col-md-3">
@@ -426,7 +427,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                             </div>
 
                             <div class="col-md-6">
-                                {[ "type": "select", "label": "'.tr('Banca predefinita').'", "name": "idbanca_vendite", "values": "query=SELECT id, nome AS descrizione FROM co_banche WHERE deleted_at IS NULL ORDER BY nome ASC", "value": "$idbanca_vendite$", "icon-after": "add|'.Modules::get('Banche')['id'].'", "help": "'.tr('Banca predefinita su cui accreditare i pagamenti.').'" ]}
+                                {[ "type": "select", "label": "'.tr('Banca predefinita').'", "name": "idbanca_vendite", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica->id]).', "value": "$idbanca_vendite$", "icon-after": "add|'.Modules::get('Banche')['id'].'|id_anagrafica='.$anagrafica->id.'", "help": "'.tr('Banca predefinita su cui accreditare i pagamenti').'" ]}
                             </div>
                         </div>
 
@@ -461,7 +462,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                         </div>';
 
     // Collegamento con il conto
-    $conto = $dbo->fetchOne('SELECT co_pianodeiconti3.id, co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione as descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_cliente']));
+    $conto = $dbo->fetchOne('SELECT co_pianodeiconti3.id, co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione AS descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_cliente']));
 
     echo '
                         <div class="row">
@@ -488,7 +489,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                             </div>
 
                             <div class="col-md-6">
-                                {[ "type": "select", "label": "'.tr('Banca predefinita').'", "name": "idbanca_acquisti", "values": "query=SELECT id, nome AS descrizione FROM co_banche ORDER BY nome ASC", "value": "$idbanca_acquisti$", "icon-after": "add|'.Modules::get('Banche')['id'].'" ]}
+                                {[ "type": "select", "label": "'.tr('Banca predefinita').'", "name": "idbanca_acquisti", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica->id]).', "value": "$idbanca_acquisti$", "icon-after": "add|'.Modules::get('Banche')['id'].'|id_anagrafica='.$anagrafica->id.'" ]}
                             </div>
                         </div>
 
@@ -508,7 +509,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                             </div>';
 
     // Collegamento con il conto
-    $conto = $dbo->fetchOne('SELECT co_pianodeiconti3.id, co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione as descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_fornitore']));
+    $conto = $dbo->fetchOne('SELECT co_pianodeiconti3.id, co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione AS descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_fornitore']));
 
     echo '
                             <div class="col-md-6">

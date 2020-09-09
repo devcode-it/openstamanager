@@ -3985,7 +3985,7 @@ msgid "Ci sono stati alcuni errori durante il salvataggio!"
 msgstr "There were some errors during the saving!"
 
 #: modules/banche/actions.php:43
-msgid "Aggiunta nuova  _TYPE_"
+msgid "Aggiunta nuova _TYPE_"
 msgstr "Added new _TYPE_"
 
 #: modules/banche/actions.php:57

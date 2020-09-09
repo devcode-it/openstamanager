@@ -22,6 +22,7 @@ return [
     'modules/aggiornamenti' => 'Modules\Aggiornamenti',
     'modules/anagrafiche' => 'Modules\Anagrafiche',
     'modules/backups' => 'Modules\Backups',
+    'modules/banche' => 'Modules\Banche',
     'modules/emails' => 'Modules\Emails',
     'modules/articoli' => 'Modules\Articoli',
     'modules/checklists' => 'Modules\Checklists',

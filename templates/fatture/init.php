@@ -43,9 +43,9 @@ $record['rivalsainps'] = floatval($record['rivalsainps']);
 $record['ritenutaacconto'] = floatval($record['ritenutaacconto']);
 $record['bollo'] = floatval($record['bollo']);
 
-$nome_banca = $banca['appoggiobancario'];
-$iban_banca = $banca['codiceiban'];
-$bic_banca = $banca['bic'];
+$nome_banca = $banca->nome;
+$iban_banca = $banca->iban;
+$bic_banca = $banca->bic;
 
 $module_name = ($record['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
 

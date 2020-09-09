@@ -25,6 +25,7 @@ use Common\Components\Description;
 use Common\Document;
 use Illuminate\Database\Eloquent\Builder;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Banche\Banca;
 use Modules\Fatture\Gestori\Bollo as GestoreBollo;
 use Modules\Fatture\Gestori\Movimenti as GestoreMovimenti;
 use Modules\Fatture\Gestori\Scadenze as GestoreScadenze;
@@ -133,9 +134,9 @@ class Fattura extends Document
 
         // Tipo di pagamento e banca predefinite dall'anagrafica
         $id_pagamento = $database->fetchOne('SELECT id FROM co_pagamenti WHERE id = :id_pagamento', [
-            ':id_pagamento' => $anagrafica['idpagamento_'.$conto],
+            ':id_pagamento' => $anagrafica->{'idpagamento_'.$conto},
         ])['id'];
-        $id_banca = $anagrafica['idbanca_'.$conto];
+        $id_banca = $anagrafica->{'idbanca_'.$conto};
 
         // Se la fattura è di vendita e non è stato associato un pagamento predefinito al cliente leggo il pagamento dalle impostazioni
         if ($direzione == 'entrata' && empty($id_pagamento)) {
@@ -641,10 +642,12 @@ class Fattura extends Document
         $riba = database()->fetchOne('SELECT riba FROM co_pagamenti WHERE id ='.prepare($this->idpagamento));
 
         if ($riba['riba'] == 1) {
-            $result = database()->fetchOne('SELECT codiceiban, appoggiobancario, bic FROM an_anagrafiche WHERE idanagrafica ='.prepare($this->idanagrafica));
+            $id_banca = $this->anagrafica->idbanca_vendite;
         } else {
-            $result = database()->fetchOne('SELECT iban AS codiceiban, nome AS appoggiobancario, bic FROM co_banche WHERE id='.prepare($this->idbanca));
+            $id_banca = $this->idbanca;
         }
+
+        $result = Banca::find($id_banca);
 
         return $result;
     }

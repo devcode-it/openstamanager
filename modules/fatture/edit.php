@@ -17,9 +17,12 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Modules\Anagrafiche\Anagrafica;
 use Modules\Iva\Aliquota;
 
 include_once __DIR__.'/../../core.php';
+
+$anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
 
 $block_edit = !empty($note_accredito) || $record['stato'] == 'Emessa' || $record['stato'] == 'Pagato' || $record['stato'] == 'Parzialmente pagato';
 
@@ -269,7 +272,7 @@ elseif ($record['stato'] == 'Bozza') {
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Banca'); ?>", "name": "idbanca", "values": "query=SELECT id, CONCAT (nome, ' - ' , iban) AS descrizione FROM co_banche WHERE deleted_at IS NULL ORDER BY nome ASC", "value": "$idbanca$", "icon-after": "add|<?php echo Modules::get('Banche')['id']; ?>||", "extra": " <?php echo (intval($block_edit)) ? 'disabled' : ''; ?> " ]}
+					{[ "type": "select", "label": "<?php echo tr('Banca'); ?>", "name": "idbanca", "ajax-source": "banche", "select-options": <?php echo json_encode(['id_anagrafica' => $anagrafica_azienda->id]); ?>, "value": "$idbanca$", "icon-after": "add|<?php echo Modules::get('Banche')['id']; ?>||", "extra": " <?php echo (intval($block_edit)) ? 'disabled' : ''; ?> " ]}
 				</div>
 
                 <?php

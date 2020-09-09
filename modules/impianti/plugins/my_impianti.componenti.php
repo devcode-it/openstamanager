@@ -17,10 +17,13 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Modules\Interventi\Intervento;
+use Util\Ini;
+
 include_once __DIR__.'/../../../core.php';
 
 switch (filter('op')) {
-    case 'updatecomponente':
+    case 'modifica_componente':
         $idcomponente = get('id');
         $data = post('data_componente');
 
@@ -29,7 +32,7 @@ switch (filter('op')) {
         $rs = $dbo->fetchArray($query);
         $contenuto = $rs[0]['contenuto'];
 
-        $contenuto = \Util\Ini::write($contenuto, $post);
+        $contenuto = Ini::write($contenuto, $post);
 
         $query = 'UPDATE my_impianto_componenti SET data='.prepare($data).', contenuto='.prepare($contenuto).' WHERE idimpianto='.prepare($id_record).' AND id='.prepare($idcomponente);
         $dbo->query($query);
@@ -39,12 +42,12 @@ switch (filter('op')) {
         $_SESSION['idcomponente'] = $idcomponente;
     break;
 
-    case 'linkcomponente':
+    case 'aggiunta_componente':
         $filename = get('filename');
 
         if (!empty($filename)) {
-            $contenuto = file_get_contents($docroot.'/files/my_impianti/'.$filename);
-            $nome = \Util\Ini::getValue(\Util\Ini::readFile($docroot.'/files/my_impianti/'.$filename), 'Nome');
+            $contenuto = file_get_contents(DOCROOT.'/files/my_impianti/'.$filename);
+            $nome = Ini::getValue(Ini::readFile(DOCROOT.'/files/my_impianti/'.$filename), 'Nome');
 
             $query = 'INSERT INTO my_impianto_componenti(filename, idimpianto, contenuto, nome, data) VALUES('.prepare($filename).', '.prepare($id_record).', '.prepare($contenuto).', '.prepare($nome).', NOW())';
             $dbo->query($query);
@@ -56,12 +59,12 @@ switch (filter('op')) {
         }
     break;
 
-    case 'sostituiscicomponente':
+    case 'sostituzione_componente':
         $filename = get('filename');
         $id = get('id');
 
-        $nome = \Util\Ini::getValue(\Util\Ini::readFile($docroot.'/files/my_impianti/'.$filename), 'Nome');
-        $contenuto = file_get_contents($docroot.'/files/my_impianti/'.$filename);
+        $nome = Ini::getValue(Ini::readFile(DOCROOT.'/files/my_impianti/'.$filename), 'Nome');
+        $contenuto = file_get_contents(DOCROOT.'/files/my_impianti/'.$filename);
 
         // Verifico che questo componente non sia già stato sostituito
         $query = 'SELECT * FROM my_impianto_componenti WHERE idsostituto = '.prepare($id);
@@ -85,7 +88,7 @@ switch (filter('op')) {
         }
     break;
 
-    case 'unlinkcomponente':
+    case 'unaggiunta_componente':
         $idcomponente = filter('id');
 
         $query = 'DELETE FROM my_impianto_componenti WHERE id='.prepare($idcomponente).' AND idimpianto='.prepare($id_record);
@@ -108,19 +111,18 @@ echo '
     <div class="box-body">';
 
 // Elenca i componenti disponibili
-$cmp = \Util\Ini::getList($docroot.'/files/my_impianti/', $id_list);
-
+$componenti_disponibili = Ini::getList(DOCROOT.'/files/my_impianti/', $id_list);
 echo '
         <div class="row">
             <div class="col-md-9">
                 <select class="superselect" id="filename" name="filename">';
 
-if (count($cmp) > 0) {
+if (!empty($componenti_disponibili)) {
     echo '
                     <option value="0">- '.tr('Aggiungi un componente').' -</option>';
-    for ($c = 0; $c < count($cmp); ++$c) {
+    foreach ($componenti_disponibili as $componente) {
         echo '
-                    <option value="'.$cmp[$c][0].'">'.$cmp[$c][1].'</option>';
+                    <option value="'.$componente[0].'">'.$componente[1].'</option>';
     }
 } else {
     echo '
@@ -131,10 +133,10 @@ echo '
                 </select>
             </div>
 
-            <div class="col-md-3">';
-echo "
-                <a class=\"btn btn-primary btn-block\" id=\"addta\" href=\"javascript:;\" onclick=\"if ( $('#filename').val()!='0' ){ redirect('".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record."&op=linkcomponente&backto=record-edit&filename='+$('#filename').val() + '&hash=tab_".$id_plugin."');}else{ alert('".tr('Seleziona prima un componente')."'); $('#filename').focus(); }\"><i class='fa fa-plus'></i> ".tr('Aggiungi').'</a>';
-echo '
+            <div class="col-md-3">
+                <button type="button" class="btn btn-primary btn-block" onclick="aggiungiComponente()">
+                    <i class="fa fa-plus"></i> '.tr('Aggiungi').'
+                </button>
             </div>
         </div>
 
@@ -142,30 +144,29 @@ echo '
         <br>';
 
 // Mostro tutti i componenti utilizzati elencando quelli attualmente installati per primi.
-$q2 = 'SELECT *, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id WHERE in_interventi.id=my_impianto_componenti.idintervento) AS data_intervento FROM my_impianto_componenti WHERE idimpianto = '.prepare($id_record).' ORDER by nome ASC, data_intervento DESC, idsostituto DESC';
-$rs2 = $dbo->fetchArray($q2);
-$n2 = count($rs2);
+$q2 = 'SELECT * FROM my_impianto_componenti WHERE idimpianto = '.prepare($id_record).' ORDER by nome ASC, idsostituto DESC';
+$componenti_installati = $dbo->fetchArray($q2);
 
-if (!empty($rs2)) {
+if (!empty($componenti_installati)) {
     $prev_componente = '';
 
     echo '
         <div class="panel-group" id="accordion">';
 
     // Ciclo tra tutti i componenti
-    for ($j = 0; $j < $n2; ++$j) {
-        $contenuto = $rs2[$j]['contenuto'];
+    foreach ($componenti_installati as $componente) {
+        $contenuto = $componente['contenuto'];
 
-        $nome_componente = $rs2[$j]['nome'];
-        $filename = $rs2[$j]['filename'];
+        $nome_componente = $componente['nome'];
+        $filename = $componente['filename'];
 
-        if (empty($rs2[$j]['data_sostituzione'])) {
-            $statocomponente = tr('INSTALLATO in data _DATE_', [
-                '_DATE_' => Translator::dateToLocale($rs2[$j]['data']),
+        if (empty($componente['data_sostituzione'])) {
+            $stato_componente = tr('INSTALLATO in data _DATE_', [
+                '_DATE_' => dateFormat($componente['data']),
             ]);
         } else {
-            $statocomponente = tr('SOSTITUITO in data _DATE_', [
-                '_DATE_' => Translator::dateToLocale($rs2[$j]['data_sostituzione']),
+            $stato_componente = tr('SOSTITUITO in data _DATE_', [
+                '_DATE_' => dateFormat($componente['data_sostituzione']),
             ]);
         }
 
@@ -173,10 +174,10 @@ if (!empty($rs2)) {
         // per non confonderlo come componente in uso in questo momento
         $same = ($prev_componente == $nome_componente);
 
-        if (get('id') == $rs2[$j]['id']) {
+        if (get('id') == $componente['id']) {
             $collapsed = '';
             $icon = 'minus';
-        } elseif ($_SESSION['idcomponente'] == $rs2[$j]['id']) {
+        } elseif ($_SESSION['idcomponente'] == $componente['id']) {
             unset($_SESSION['idcomponente']);
             $collapsed = '';
             $icon = 'minus';
@@ -189,7 +190,7 @@ if (!empty($rs2)) {
             <div class="box '.$collapsed.' box-'.($same ? 'default' : 'primary').'">
                 <div class="box-header with-border'.($same ? ' mini' : '').'">
                     <h3 class="box-title'.($same ? ' mini' : '').'">'.
-                        ($same ? '<small>' : '').$nome_componente.' ('.$statocomponente.')'.($same ? '</small>' : '').'
+                        ($same ? '<small>' : '').$nome_componente.' ('.$stato_componente.')'.($same ? '</small>' : '').'
                     </h3>
 
                     <div class="box-tools pull-right">
@@ -201,26 +202,24 @@ if (!empty($rs2)) {
 
         echo '
                 <div id="collapse_'.$j.'" class="box-body">
-                    <div class="row">';
-        // FORM COMPONENTE
-        echo '
-                        <form method="post" action="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=updatecomponente&id='.$rs2[$j]['id'].'">
+                    <div class="row">
+                        <form method="post" action="'.ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=modifica_componente&id='.$componente['id'].'">
                             <input type="hidden" name="backto" value="record-edit">';
 
         // Nome
         echo '
                             <div class="col-md-6">
-                                {[ "type": "span", "label": "'.tr('Nome').':", "name": "nome", "value": "'.$rs2[$j]['nome'].'" ]}
+                                {[ "type": "span", "label": "'.tr('Nome').':", "name": "nome", "value": "'.$componente['nome'].'" ]}
                             </div>';
 
         // Data
         echo '
                             <div class="col-md-6">
-                                {[ "type": "date", "label": "'.tr('Data').':", "name": "data_componente", "id": "data_componente'.$j.'", "value": "'.$rs2[$j]['data'].'" ]}
+                                {[ "type": "date", "label": "'.tr('Data').':", "name": "data_componente", "id": "data_componente'.$j.'", "value": "'.$componente['data'].'" ]}
                             </div>';
 
-        $fields = \Util\Ini::getFields($contenuto);
-
+        // Campi previsti dal componente
+        $fields = Ini::getFields($contenuto);
         array_shift($fields);
         foreach ($fields as $field) {
             echo '
@@ -229,9 +228,11 @@ if (!empty($rs2)) {
                             </div>';
         }
 
-        $interventi = $dbo->fetchArray('SELECT *, DATE_FORMAT(data_richiesta,"%d/%m/%Y") AS data_richiesta, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=in_interventi.idtipointervento) AS tipo, (SELECT descrizione FROM in_statiintervento WHERE idstatointervento=in_interventi.idstatointervento) AS stato, (SELECT colore FROM in_statiintervento WHERE idstatointervento=in_interventi.idstatointervento) AS colore FROM in_interventi INNER JOIN my_componenti_interventi ON my_componenti_interventi.id_intervento=in_interventi.id WHERE id_componente='.prepare($rs2[$j]['id']).' ORDER BY id_intervento');
-        if ($interventi != null) {
-            // Collegamento a intervento se c'è
+        // Interventi collegati al componente
+        $interventi_collegati = Intervento::join('my_componenti_interventi', 'my_componenti_interventi.id_intervento', '=', 'in_interventi.id')
+            ->where('id_componente', $componente['id'])
+            ->get();
+        if (!$interventi_collegati->isEmpty()) {
             echo '
                             <div class="col-md-12">
                                 <b>'.tr('Interventi collegati').':</b>
@@ -244,14 +245,14 @@ if (!empty($rs2)) {
                                         <th>'.tr('Dettagli').'</th>
                                     </tr>';
 
-            foreach ($interventi as $intervento) {
+            foreach ($interventi_collegati as $intervento) {
                 echo '
-                                    <tr bgcolor="'.$intervento['colore'].'">
-                                        <td>'.$intervento['codice'].'</td>
-                                        <td>'.$intervento['tipo'].'</td>
-                                        <td>'.$intervento['stato'].'</td>
-                                        <td>'.$intervento['data_richiesta'].'</td>
-                                        <td>'.Modules::link('Interventi', $intervento['id_intervento'], null, '-').'</td>
+                                    <tr bgcolor="'.$intervento->stato->colore.'">
+                                        <td>'.$intervento->codice.'</td>
+                                        <td>'.$intervento->tipo->descrizione.'</td>
+                                        <td>'.$intervento->stato->descrizione.'</td>
+                                        <td>'.dateFormat($intervento->data_richiesta).'</td>
+                                        <td>'.Modules::link('Interventi', $intervento->id, null, '-').'</td>
                                     </tr>';
             }
 
@@ -262,16 +263,18 @@ if (!empty($rs2)) {
             echo '
                             <div class="clearfix"></div>
                             <div class="col-md-12">
-                                <div class="alert alert-info"><i class=\'fa fa-info-circle\'></i> '.tr('Nessun intervento collegato a questo componente!').'</div>
+                                <div class="alert alert-info">
+                                    <i class="fa fa-info-circle"></i> '.tr('Nessuna attività collegato a questo componente!').'
+                                </div>
                             </div>';
         }
 
-        if (!empty($rs2[$j]['idintervento'])) {
+        // Intervento di installazione del componente
+        if (!empty($componente['idintervento'])) {
+            $intervento_origine = Intervento::find($componente['idintervento']);
+
             echo '
-                            '.Modules::link('Interventi', $rs2[$j]['idintervento'], tr('Intervento num. _NUM_ del _DATE_', [
-                                '_NUM_' => $rs2[$j]['codice'],
-                                '_DATE_' => Translator::dateToLocale($rs2[$j]['data_intervento']),
-                            ])).'<br>';
+                            '.Modules::link('Interventi', $componente['idintervento'], $intervento_origine->getReference()).'<br>';
         }
 
         echo '
@@ -281,15 +284,19 @@ if (!empty($rs2)) {
         // Pulsante Salva/Elimina
         echo '
                             <div class="col-md-12">
-								<a class="btn btn-danger ask" data-backto="record-edit" data-op="unlinkcomponente" data-id="'.$rs2[$j]['id'].'"><i class="fa fa-trash"></i> '.tr('Elimina').'</a>';
+								<a class="btn btn-danger ask" data-backto="record-edit" data-op="unaggiunta_componente" data-id="'.$componente['id'].'"><i class="fa fa-trash"></i> '.tr('Elimina').'</a>';
 
         // Sostituisci componente con un altro dello stesso tipo, posso sostituire solo i componenti installati
-        if (empty($rs2[$j]['data_sostituzione'])) {
-            echo "
-								<button  class=\"btn btn-warning\" onclick=\"if(confirm('".tr('Vuoi sostituire questo componente con un altro dello stesso tipo?')."')){ location.href='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=sostituiscicomponente&backto=record-edit&filename='.$filename.'&id='.$rs2[$j]['id']."'; }else{ return false} \"><i class='fa fa-refresh'></i> ".tr('Sostituisci questo componente').'</button>';
+        if (empty($componente['data_sostituzione'])) {
+            echo '
+								<button type="button" class="btn btn-warning" onclick="sostituisciComponente()">
+								    <i class="fa fa-refresh"></i> '.tr('Sostituisci questo componente').'
+                                </button>';
         } else {
             echo '
-								<button class="btn btn-warning disabled" disabled>'.tr('Componente già sostituito').'</button>';
+								<button type="button" class="btn btn-warning disabled">
+								    '.tr('Componente già sostituito').'
+                                </button>';
         }
 
         echo '
@@ -312,4 +319,22 @@ if (!empty($rs2)) {
 
 echo '
     </div>
-</div>';
+</div>
+
+<script>
+function aggiungiComponente() {
+    if ($("#filename").val() != "0") {
+        redirect("'.ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=aggiunta_componente&backto=record-edit&filename=" + $("#filename").val() + "&hash=tab_'.$id_plugin.'");
+    } else {
+        alert("'.tr('Seleziona prima un componente').'");
+        $("#filename").focus();
+    }
+}
+
+function sostituisciComponente() {
+    if(confirm("'.tr('Vuoi sostituire questo componente con un altro dello stesso tipo?').'")){
+        redirect("'.ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=sostituzione_componente&backto=record-edit&filename='.$filename.'&id='.$componente['id'].'");
+    }
+}
+
+</script>';

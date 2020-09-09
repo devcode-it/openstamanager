@@ -17,11 +17,13 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Util\Ini;
+
 include_once __DIR__.'/../../core.php';
 
 function crea_form_componente($contenuto)
 {
-    $fields = \Util\Ini::getFields($contenuto);
+    $fields = Ini::getFields($contenuto);
     $title = array_shift($fields);
 
     foreach ($fields as $key => $value) {

@@ -132,18 +132,18 @@ class Ini
     /**
      * Predispone il form dedicato alla modifica dei contenuti della struttura INI.
      *
-     * @param string $contenut
+     * @param string $contenuto
      *
      * @return array
      */
-    public static function getFields($contenut)
+    public static function getFields($contenuto)
     {
         $result = [];
 
         // Caricamento campi dell'eventuale componente selezionato
-        if (!empty($contenut)) {
+        if (!empty($contenuto)) {
             $random = rand();
-            $array = self::read($contenut);
+            $array = self::read($contenuto);
 
             if (is_array($array)) {
                 $result[] = '
@@ -164,8 +164,15 @@ class Ini
                             $values[] = '\"'.addslashes(addslashes($o)).'\": \"'.addslashes(addslashes($o)).'\"';
                         }
 
-                        $result[] = '
+                        $input = '
                     {[ "type": "'.$tipo.'", "label": "'.$nome.':", "name": "'.$nome.'", "value": '.json_encode($valore).', "id": "'.$nome.'_'.$random.'" '.(!empty($values) ? ', "values": "list='.implode(', ', $values).'"' : '').' ]}';
+
+                        if ($tipo == 'span') {
+                            $input .= '
+                    <input type="hidden" name="'.$nome.'" value="'.$valore.'">';
+                        }
+
+                        $result[] = $input;
                     }
                 }
             }

@@ -17,6 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Util\Ini;
+
 include_once __DIR__.'/../../core.php';
 
 ?><form action="" method="post" id="edit-form" enctype="multipart/form-data">
@@ -245,7 +247,7 @@ echo '
     echo '
                             <option value="0">'.tr('Nessuno').'</option>';
 
-    $cmp = \Util\Ini::getList($docroot.'/files/my_impianti/');
+    $cmp = Ini::getList($docroot.'/files/my_impianti/');
 
     if (count($cmp) > 0) {
         for ($c = 0; $c < count($cmp); ++$c) {

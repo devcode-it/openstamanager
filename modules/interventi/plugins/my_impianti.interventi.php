@@ -17,6 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Modules\Interventi\Intervento;
+
 include_once __DIR__.'/../../../core.php';
 
 // INTERVENTI ESEGUITI SU QUESTO IMPIANTO
@@ -40,30 +42,27 @@ if (!empty($results)) {
             </tr>';
 
     foreach ($results as $result) {
-        $intervento = \Modules\Interventi\Intervento::find($result['id']);
+        $intervento = Intervento::find($result['id']);
         $totale_interventi += $intervento->totale;
 
         echo '
             <tr>
                 <td>
-                    '.Modules::link('Interventi', $result['id'], tr('Intervento num. _NUM_ del _DATE_', [
-                        '_NUM_' => $result['codice'],
-                        '_DATE_' => Translator::dateToLocale($result['data']),
-                    ])).'
+                    '.Modules::link('Interventi', $result['id'], $intervento->getReference()).'
                 </td>
                 <td>'.nl2br($result['descrizione']).'</td>
                 <td class="text-right">'.moneyFormat($intervento->totale).'</td>
             </tr>';
     }
 
-    echo '  <tr>';
-    echo '      <td colspan="2" class="text-right">';
-    echo '          <b>Totale:</b>';
-    echo '      </td>';
-    echo '      <td class="text-right">';
-    echo            '<b>'.moneyFormat($totale_interventi).'</b>';
-    echo '      </td>';
-    echo '  </tr>';
+    echo '  <tr>
+                <td colspan="2" class="text-right">
+                    <b>'.tr('Totale').':</b>
+                </td>
+                <td class="text-right">
+                    <b>'.moneyFormat($totale_interventi).'</b>
+                </td>
+            </tr>';
 
     echo '
         </table>';

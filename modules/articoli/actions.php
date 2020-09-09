@@ -19,6 +19,7 @@
 
 use Modules\Articoli\Articolo;
 use Modules\Articoli\Categoria;
+use Util\Ini;
 
 include_once __DIR__.'/../../core.php';
 
@@ -129,8 +130,21 @@ switch (post('op')) {
 
         // Salvataggio info componente (campo `contenuto`)
         if (!empty($componente)) {
-            $contenuto = \Util\Ini::write(file_get_contents(DOCROOT.'/files/my_impianti/'.$componente), $post);
+            $contenuto_precedente_esistente = !empty($articolo->contenuto);
+            $contenuto = file_get_contents(DOCROOT.'/files/my_impianti/'.$componente);
+            $contenuto_componente = Ini::read($contenuto);
 
+            // Lettura dei campi esistenti per preservarne il valore
+            // Se non è presente un componente, copia i valori dal file di origine
+            $campi_componente = [];
+            foreach ($contenuto_componente as $key => $value) {
+                $valore = $contenuto_precedente_esistente ? filter($key) : $value['valore'];
+
+                $campi_componente[$key] = $valore;
+            }
+            $contenuto = Ini::write($contenuto, $campi_componente);
+
+            // Salvataggio dei dati
             $dbo->query('UPDATE mg_articoli SET contenuto='.prepare($contenuto).' WHERE id='.prepare($id_record));
         } else {
             $dbo->query('UPDATE mg_articoli SET contenuto = \'\' WHERE id='.prepare($id_record));

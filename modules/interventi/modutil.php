@@ -27,6 +27,7 @@ use Modules\Fatture\Components\Riga;
 use Modules\Fatture\Fattura;
 use Modules\Interventi\Components\Sessione;
 use Modules\Interventi\Intervento;
+use Util\Ini;
 
 /**
  * Recupera il totale delle ore spese per un intervento.
@@ -45,37 +46,48 @@ function get_ore_intervento($id_intervento)
 /**
  * Funzione per collegare gli articoli, usati in un intervento, ai rispettivi impianti.
  *
- * @param int $idintervento
- * @param int $idimpianto
- * @param int $idarticolo
+ * @param int $id_intervento
+ * @param int $id_impianto
+ * @param int $id_articolo
  * @param int $qta
  */
-function link_componente_to_articolo($idintervento, $idimpianto, $idarticolo, $qta)
+function link_componente_to_articolo($id_intervento, $id_impianto, $id_articolo, $qta)
 {
+    if (empty($id_impianto) || empty($id_intervento)) {
+        return;
+    }
+
     $dbo = database();
+    $intervento = Intervento::find($id_intervento);
 
-    if (!empty($idimpianto) && !empty($idintervento)) {
-        //Leggo la data dell'intervento
-        $rs = $dbo->fetchArray("SELECT DATE_FORMAT(MIN(orario_inizio),'%Y-%m-%d') AS data FROM in_interventi_tecnici WHERE idintervento=".prepare($idintervento));
-        $data = $rs[0]['data'];
+    // Data di inizio dell'intervento (data_richiesta in caso di assenza di sessioni)
+    $data = $intervento->inizio ?: $intervento->data_richiesta;
 
-        $rs = $dbo->fetchArray('SELECT componente_filename, contenuto FROM mg_articoli WHERE id='.prepare($idarticolo));
+    // Se l'articolo aggiunto è collegato a un componente, aggiungo il componente all'impianto selezionato
+    $componente_articolo = $dbo->fetchOne('SELECT componente_filename, contenuto FROM mg_articoli WHERE id = '.prepare($id_articolo));
+    if (!empty($componente_articolo) && !empty($componente_articolo['componente_filename'])) {
+        $contenuto_ini = Ini::read($componente_articolo['contenuto']);
+        $nome_componente = Ini::getValue($contenuto_ini, 'Nome');
 
-        //Se l'articolo aggiunto è collegato a un file .ini, aggiungo il componente all'impianto selezionato
-        if (count($rs) == 1 && $rs[0]['componente_filename'] != '') {
-            //Inserisco il componente tante volte quante la quantità degli articoli inseriti
-            for ($q = 0; $q < $qta; ++$q) {
-                $dbo->query('INSERT INTO my_impianto_componenti(idimpianto, idintervento, nome, data, filename, contenuto) VALUES ('.prepare($idimpianto).', '.prepare($idintervento).', '.prepare(\Util\Ini::getValue($rs[0]['componente_filename'], 'Nome')).', '.prepare($data).', '.prepare($rs[0]['componente_filename']).', '.prepare($rs[0]['contenuto']).')');
-            }
+        $dati = [
+            'idimpianto' => $id_impianto,
+            'idintervento' => $id_intervento,
+            'nome' => $nome_componente,
+            'data' => $data,
+            'filename' => $componente_articolo['componente_filename'],
+            'contenuto' => $componente_articolo['contenuto'],
+        ];
+
+        // Inserisco il componente tante volte quante la quantità degli articoli inseriti
+        for ($q = 0; $q < $qta; ++$q) {
+            $dbo->insert('my_impianto_componenti', $dati);
         }
     }
 }
 
-function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto = null)
+function add_tecnico($id_intervento, $idtecnico, $inizio, $fine, $idcontratto = null)
 {
-    $dbo = database();
-
-    $intervento = Intervento::find($idintervento);
+    $intervento = Intervento::find($id_intervento);
     $anagrafica = Anagrafica::find($idtecnico);
 
     $sessione = Sessione::build($intervento, $anagrafica, $inizio, $fine);
@@ -86,7 +98,7 @@ function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto = n
             $template = Template::get('Notifica intervento');
 
             if (!empty($template)) {
-                $mail = Mail::build(auth()->getUser(), $template, $idintervento);
+                $mail = Mail::build(auth()->getUser(), $template, $id_intervento);
                 $mail->addReceiver($anagrafica['email']);
                 $mail->save();
             }

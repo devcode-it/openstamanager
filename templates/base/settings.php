@@ -22,8 +22,8 @@ $settings = [
     'format' => 'A4',
     'font-size' => 10,
     'margins' => [
-        'top' => 10,
-        'bottom' => 10,
+        'top' => 'auto',
+        'bottom' => 'auto',
         'left' => 12,
         'right' => 12,
     ],

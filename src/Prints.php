@@ -17,6 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Mpdf\Mpdf;
+
 /**
  * Classe per la gestione delle informazioni relative alle stampe installate.
  *
@@ -459,14 +461,19 @@ class Prints
         include DOCROOT.'/templates/info.php';
 
         // Instanziamento dell'oggetto mPDF
-        $mpdf = new \Mpdf\Mpdf([
+        $mpdf = new Mpdf([
             'format' => $settings['format'],
             'orientation' => strtoupper($settings['orientation']) == 'L' ? 'L' : 'P',
             'font-size' => $settings['font-size'],
             'margin_left' => $settings['margins']['left'],
             'margin_right' => $settings['margins']['right'],
-            'setAutoBottomMargin' => 'stretch',
-            'setAutoTopMargin' => 'stretch',
+
+            'setAutoTopMargin' => $settings['margins']['top'] === 'auto' ? 'stretch' : false,
+            'margin_top' => $settings['margins']['top'] === 'auto' ? 0 : $settings['margins']['top'], // Disabilitato se setAutoTopMargin impostato
+
+            'setAutoBottomMargin' => $settings['margins']['bottom'] === 'auto' ? 'stretch' : false,
+            'margin_bottom' => $settings['margins']['bottom'] === 'auto' ? 0 : $settings['margins']['bottom'], // Disabilitato se setAutoBottomMargin impostato
+
             'default_font' => 'dejavusanscondensed',
 
             // Abilitazione per lo standard PDF/A

@@ -142,18 +142,18 @@ echo '
 
     <tbody>';
 
-foreach ($righe as $key => $riga) {
+$num = 0;
+foreach ($righe as $riga) {
+    ++$num;
     $r = $riga->toArray();
 
     $autofill->count($r['descrizione']);
 
     echo '
-        <tr>';
-
-    echo '
-        <td class="text-center" style="vertical-align: middle" width="25">
-            '.($key + 1).'
-        </td>';
+        <tr>
+            <td class="text-center" style="vertical-align: middle" width="25">
+                '.$num.'
+            </td>';
 
     if ($has_images) {
         echo '<td class=\"text-center\" style=\"vertical-align: middle\" >';

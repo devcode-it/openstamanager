@@ -37,11 +37,14 @@ echo '
 
 // Righe documento
 $righe = $preventivo->getRighe();
-foreach ($righe as $key => $riga) {
+$num = 0;
+foreach ($righe as $riga) {
+    ++$num;
+
     echo '
             <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'">
                 <td class="text-center">
-                    '.($key + 1).'
+                    '.$num.'
                 </td>';
 
     // Descrizione

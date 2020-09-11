@@ -38,7 +38,10 @@ echo '
 
 // Righe documento
 $righe = $ddt->getRighe();
-foreach ($righe as $key => $riga) {
+$num = 0;
+foreach ($righe as $riga) {
+    ++$num;
+
     $extra = '';
     $mancanti = 0;
 
@@ -57,7 +60,7 @@ foreach ($righe as $key => $riga) {
     echo '
         <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'" '.$extra.'>
             <td class="text-center">
-                '.($key + 1).'
+                '.$num.'
             </td>
 
             <td>';

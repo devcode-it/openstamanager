@@ -51,12 +51,14 @@ $id_riferimento = get('id_riferimento');
 $righe = $documento->getRighe();
 foreach ($righe as $riga) {
     $qta_rimanente = $riga->qta_rimanente - $righe_utilizzate[$riga->id];
+    $riga_origine = $riga->getOriginal();
 
     $dettagli = [
         'tipo' => get_class($riga),
         'id' => $riga->id,
         'qta' => $riga->qta,
-        'prezzo_unitario' => $riga->prezzo_unitario,
+        'um' => $riga->um,
+        'prezzo_unitario' => $riga->prezzo_unitario ?: $riga_origine->prezzo_unitario,
         'id_iva' => $riga->id_iva,
         'iva_percentuale' => $riga->aliquota->percentuale,
     ];

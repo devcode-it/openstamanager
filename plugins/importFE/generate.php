@@ -531,21 +531,21 @@ function impostaRiferimento(id_riga, documento, riga) {
     let riga_fe = $("#id_riga_riferimento_" + id_riga).closest("tr").prev();
 
     // Informazioni visibili sulla quantità
-    impostaContenuto(riga_fe.data("qta"), riga.qta, "#riferimento_" + id_riga + "_qta");
+    impostaContenuto(riga_fe.data("qta"), riga.qta, (riga.um ? " " + riga.um : ""), "#riferimento_" + id_riga + "_qta");
 
     // Informazioni visibili sul prezzo unitario
-    impostaContenuto(riga_fe.data("prezzo_unitario"), riga.prezzo_unitario, "#riferimento_" + id_riga + "_prezzo");
+    impostaContenuto(riga_fe.data("prezzo_unitario"), riga.prezzo_unitario, " " + globals.currency, "#riferimento_" + id_riga + "_prezzo");
 
     // Informazioni visibili sull\'aliquota IVA
-    impostaContenuto(riga_fe.data("iva_percentuale"), riga.iva_percentuale, "#riferimento_" + id_riga + "_iva");
+    impostaContenuto(riga_fe.data("iva_percentuale"), riga.iva_percentuale, "%", "#riferimento_" + id_riga + "_iva");
 
     $("#riferimento_" + id_riga).html(documento.descrizione ? documento.descrizione : "");
 }
 
 // Informazioni visibili sull\'aliquota IVA
-function impostaContenuto(valore_riga, valore_riferimento, id_elemento) {
+function impostaContenuto(valore_riga, valore_riferimento, contenuto_successivo, id_elemento) {
     let elemento = $(id_elemento);
-    if (valore_riferimento === undefined){
+    if (valore_riferimento === undefined) {
         elemento.html("");
         return;
     }
@@ -553,12 +553,12 @@ function impostaContenuto(valore_riga, valore_riferimento, id_elemento) {
     valore_riga = parseFloat(valore_riga);
     valore_riferimento = parseFloat(valore_riferimento);
 
-    let contenuto = valore_riferimento.toLocale() + "%";
+    let contenuto = valore_riferimento.toLocale() + contenuto_successivo;
     if (valore_riferimento === valore_riga) {
-        contenuto = `<i class="fa fa-warning"></i> ` + contenuto;
+        contenuto = `<i class="fa fa-check"></i> ` + contenuto;
         elemento.addClass("text-success").removeClass("text-warning");
     } else {
-        contenuto = `<i class="fa fa-check"></i> ` + contenuto;
+        contenuto = `<i class="fa fa-warning"></i> ` + contenuto;
         elemento.removeClass("text-success").addClass("text-warning");
     }
 

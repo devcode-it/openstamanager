@@ -65,7 +65,7 @@ foreach ($righe as $riga) {
 
     echo '
         <tr '.($id_riferimento == $riga->id ? 'class="success"' : '').' data-dettagli='.json_encode($dettagli).'>
-            <td>'.$riga->descrizione.'</td>
+            <td>'.( !empty($riga->codice) ? $riga->codice.' - ' : '' ).$riga->descrizione.'</td>
             <td>'.numberFormat($qta_rimanente, 'qta').' / '.numberFormat($riga->qta, 'qta').'</td>
             <td class="text-center">';
 

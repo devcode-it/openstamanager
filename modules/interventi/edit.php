@@ -496,7 +496,8 @@ function caricaRighe() {
     let container = $("#righe");
 
     localLoading(container, true);
-    return container.load("'.$structure->fileurl('row-list.php').'?id_module='.$id_module.'&id_record='.$id_record.'", function() {
+    return $.get("'.$structure->fileurl('row-list.php').'?id_module='.$id_module.'&id_record='.$id_record.'", function(data) {
+        container.html(data);
         localLoading(container, false);
     });
 }
@@ -508,7 +509,8 @@ function caricaTecnici() {
     let container = $("#tecnici");
 
     localLoading(container, true);
-    return container.load("'.$structure->fileurl('ajax_tecnici.php').'?id_module='.$id_module.'&id_record='.$id_record.'", function() {
+    return $.get("'.$structure->fileurl('ajax_tecnici.php').'?id_module='.$id_module.'&id_record='.$id_record.'", function(data) {
+        container.html(data);
         localLoading(container, false);
     });
 }
@@ -520,7 +522,8 @@ function caricaCosti() {
     let container = $("#costi");
 
     localLoading(container, true);
-    return container.load("'.$structure->fileurl('ajax_costi.php').'?id_module='.$id_module.'&id_record='.$id_record.'", function() {
+    return $.get("'.$structure->fileurl('ajax_costi.php').'?id_module='.$id_module.'&id_record='.$id_record.'", function(data) {
+        container.html(data);
         localLoading(container, false);
     });
 }

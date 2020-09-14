@@ -90,3 +90,10 @@ UPDATE `zz_settings` SET `valore` = 'v3' WHERE `nome` = 'OSMCloud Services API V
 
 -- Aggiornamento margini stampa barbcode
 UPDATE `zz_prints` SET `options` = '{"width": 54, "height": 20, "format": [64, 55], "margins": {"top": 5,"bottom": 0,"left": 0,"right": 0}}' WHERE `zz_prints`.`name` = 'Barcode';
+
+-- Aggiunta riferimenti testuali su descrizione righe dei documenti
+UPDATE `co_righe_documenti`
+    INNER JOIN `co_righe_contratti` on `co_righe_documenti`.`original_id` = `co_righe_contratti`.`id`
+    INNER JOIN `co_contratti` on `co_contratti`.`id` = `co_righe_contratti`.`idcontratto`
+SET `co_righe_documenti`.`descrizione` = CONCAT(`co_righe_documenti`.`descrizione`, '\nRif. contratto num. ', `co_contratti`.`numero`, ' del ', DATE_FORMAT(`co_contratti`.`data_bozza`, '%d/%m/%Y'))
+WHERE `co_righe_documenti`.`original_type` LIKE '%Contratti%';

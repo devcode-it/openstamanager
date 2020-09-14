@@ -68,6 +68,12 @@ foreach ($righe as $riga) {
 
             <td>';
 
+    // Aggiunta dei riferimenti ai documenti
+    if ($riga->hasOriginal()) {
+        echo '
+                <small class="pull-right text-right text-muted">'.reference($riga->getOriginal()->parent, tr('Origine')).'</small>';
+    }
+
     if ($riga->isArticolo()) {
         echo Modules::link('Articoli', $riga->idarticolo, $riga->codice.' - '.$riga->descrizione);
     } else {
@@ -85,12 +91,6 @@ foreach ($righe as $riga) {
             echo '
                 <br>'.tr('SN').': '.implode(', ', $serials);
         }
-    }
-
-    // Aggiunta dei riferimenti ai documenti
-    if ($riga->hasOriginal()) {
-        echo '
-                <br>'.reference($riga->getOriginal()->parent);
     }
 
     echo '

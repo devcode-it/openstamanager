@@ -96,14 +96,25 @@ foreach ($righe as $riga) {
 
             <td>';
 
+    // Informazioni aggiuntive sulla destra
+    echo '
+                <small class="pull-right text-right text-muted">
+                    '.$extra_riga;
+
+    // Aggiunta dei riferimenti ai documenti
+    if ($riga->hasOriginal()) {
+        echo '
+                    <br>'.reference($riga->getOriginal()->parent, tr('Origine'));
+    }
+
+    echo '
+                </small>';
+
     if ($riga->isArticolo()) {
         echo Modules::link('Articoli', $riga->idarticolo, $riga->codice.' - '.$riga->descrizione);
     } else {
         echo nl2br($riga->descrizione);
     }
-
-    echo '
-                <small class="pull-right text-right text-muted">'.$extra_riga.'</small>';
 
     if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
         if (!empty($mancanti)) {
@@ -116,12 +127,6 @@ foreach ($righe as $riga) {
             echo '
                 <br>'.tr('SN').': '.implode(', ', $serials);
         }
-    }
-
-    // Aggiunta dei riferimenti ai documenti
-    if ($riga->hasOriginal()) {
-        echo '
-                <br>'.reference($riga->getOriginal()->parent);
     }
 
     echo '

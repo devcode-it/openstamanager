@@ -355,19 +355,7 @@ echo '
 			<br>
 
 			<div class="row">
-				<div class="col-md-12" id="tecnici">
-					<?php
-                        if (file_exists($docroot.'/modules/interventi/custom/ajax_tecnici.php')) {
-                            ?>
-						<script>$('#tecnici').load('<?php echo $rootdir; ?>/modules/interventi/custom/ajax_tecnici.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');</script>
-					<?php
-                        } else {
-                            ?>
-						<script>$('#tecnici').load('<?php echo $rootdir; ?>/modules/interventi/ajax_tecnici.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');</script>
-					<?php
-                        }
-                    ?>
-				</div>
+				<div class="col-md-12" id="tecnici"></div>
 			</div>
 		</div>
 	</div>
@@ -423,10 +411,8 @@ $articoli = $intervento->articoli;
                 </div>
             </div>
 
-            <div id="righe">
-<?php
-include $structure->filepath('row-list.php');
-?>
+            <div class="row">
+                <div class="col-md-12" id="righe"></div>
             </div>
         </div>
     </div>
@@ -439,19 +425,7 @@ include $structure->filepath('row-list.php');
 
 		<div class="panel-body">
 			<div class="row">
-				<div class="col-md-12" id="costi">
-					<?php
-                        if (file_exists($docroot.'/modules/interventi/custom/ajax_costi.php')) {
-                            ?>
-						<script>$('#costi').load('<?php echo $rootdir; ?>/modules/interventi/custom/ajax_costi.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');</script>
-					<?php
-                        } else {
-                            ?>
-						<script>$('#costi').load('<?php echo $rootdir; ?>/modules/interventi/ajax_costi.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');</script>
-					<?php
-                        }
-                    ?>
-				</div>
+				<div class="col-md-12" id="costi"></div>
 			</div>
 		</div>
 	</div>
@@ -514,6 +488,48 @@ async function gestioneRiga(button, options) {
         openModal(title, "'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&" + options);
     }
 }
+
+/**
+ * Funzione dedicata al caricamento dinamico via AJAX delle righe del documento.
+ */
+function caricaRighe() {
+    let container = $("#righe");
+
+    localLoading(container, true);
+    return container.load("'.$structure->fileurl('row-list.php').'?id_module='.$id_module.'&id_record='.$id_record.'", function() {
+        localLoading(container, false);
+    });
+}
+
+/**
+ * Funzione dedicata al caricamento dinamico via AJAX delle sessioni dei tecnici per l\'Attività.
+ */
+function caricaTecnici() {
+    let container = $("#tecnici");
+
+    localLoading(container, true);
+    return container.load("'.$structure->fileurl('ajax_tecnici.php').'?id_module='.$id_module.'&id_record='.$id_record.'", function() {
+        localLoading(container, false);
+    });
+}
+
+/**
+ * Funzione dedicata al caricamento dinamico via AJAX delle sessioni dei tecnici per l\'Attività.
+ */
+function caricaCosti() {
+    let container = $("#costi");
+
+    localLoading(container, true);
+    return container.load("'.$structure->fileurl('ajax_costi.php').'?id_module='.$id_module.'&id_record='.$id_record.'", function() {
+        localLoading(container, false);
+    });
+}
+
+$(document).ready(function() {
+    caricaRighe();
+    caricaTecnici();
+    caricaCosti();
+});
 
 $("#idanagrafica").change(function () {
     updateSelectOption("idanagrafica", $(this).val());

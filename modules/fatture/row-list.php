@@ -17,7 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-include_once __DIR__.'/../../core.php';
+include_once __DIR__.'/init.php';
 
 echo '
 <div class="table-responsive">

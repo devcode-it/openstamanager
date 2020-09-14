@@ -17,15 +17,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Modules\Interventi\Intervento;
-
-include_once __DIR__.'/../../core.php';
+include_once __DIR__.'/init.php';
 
 $show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
 
-$intervento = $intervento ?: Intervento::find($id_record);
 $righe = $intervento->getRighe();
-
 if (!$righe->isEmpty()) {
     echo '
 <div class="table-responsive">

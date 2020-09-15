@@ -252,7 +252,7 @@ switch (filter('op')) {
                     }
 
                     $link = null;
-                    if ($sessione['ref'] == 'intervento'){
+                    if ($sessione['ref'] == 'intervento') {
                         $modulo_riferimento = 'Interventi';
                         $id_riferimento = $sessione['id'];
                     } else {

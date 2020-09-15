@@ -204,6 +204,18 @@ abstract class Description extends Model
         if ($is_evasione) {
             $model->original_id = $this->id;
             $model->original_type = $current;
+
+            // Rimozione del riferimento precedente dalla descrizione
+            if ($this->hasOriginal()) {
+                $riferimento = $this->getOriginal()->parent->getReference();
+                $attributes['descrizione'] = str_replace('
+Rif. '.strtolower($riferimento), '', $attributes['descrizione']);
+            }
+
+            // Aggiunta del riferimento nella descrizione
+            $riferimento = $this->parent->getReference();
+            $attributes['descrizione'] .= '
+Rif. '.strtolower($riferimento);
         }
 
         // Impostazione del genitore

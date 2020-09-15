@@ -168,6 +168,8 @@ class CSV extends CSVImporter
                 }
             }
         }
+        unset($record['categoria']);
+        unset($record['sottocategoria']);
 
         // Individuazione dell'IVA di vendita tramite il relativo Codice
         $aliquota = null;

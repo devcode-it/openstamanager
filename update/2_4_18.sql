@@ -166,3 +166,5 @@ UPDATE `dt_righe_ddt`
 SET `dt_righe_ddt`.`descrizione` = CONCAT(`dt_righe_ddt`.`descrizione`, '\nRif. attività num. ', `in_interventi`.`codice`, ' del ', DATE_FORMAT(`in_interventi`.`data_richiesta`, '%d/%m/%Y'))
 WHERE `dt_righe_ddt`.`original_type` LIKE '%Interventi%';
 
+-- Aggiunta campi per i riferimenti in Preventivi
+ALTER TABLE `co_righe_preventivi` ADD `original_id` int(11), ADD `original_type` varchar(255);

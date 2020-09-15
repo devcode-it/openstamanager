@@ -45,7 +45,15 @@ foreach ($righe as $riga) {
             <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'">
                 <td class="text-center">
                     '.$num.'
-                </td>';
+                </td>
+
+                <td>';
+
+    // Aggiunta dei riferimenti ai documenti
+    if ($riga->hasOriginal()) {
+        echo '
+                    <small class="pull-right text-right text-muted">'.reference($riga->getOriginal()->parent, tr('Origine')).'</small>';
+    }
 
     // Descrizione
     $descrizione = nl2br($riga->descrizione);
@@ -53,7 +61,6 @@ foreach ($righe as $riga) {
         $descrizione = Modules::link('Articoli', $riga->idarticolo, $riga->codice.' - '.$descrizione);
     }
     echo '
-                <td>
                     '.$descrizione.'
                 </td>';
 

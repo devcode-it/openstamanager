@@ -156,7 +156,7 @@ function reference($document, $text = null)
         $content = $document->getReference();
     }
 
-    $description = tr('Rif. _DOCUMENT_', [
+    $description = $text ?: tr('Rif. _DOCUMENT_', [
         '_DOCUMENT_' => strtolower($content),
     ]);
 

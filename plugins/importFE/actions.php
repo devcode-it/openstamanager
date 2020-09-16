@@ -19,6 +19,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\DDT\DDT;
+use Modules\Ordini\Ordine;
 use Plugins\ImportFE\FatturaElettronica;
 use Plugins\ImportFE\Interaction;
 
@@ -141,12 +143,12 @@ switch (filter('op')) {
         $fattura_pa->delete();
 
         // Aggiorno la tipologia di anagrafica fornitore
-        $anagrafica = $dbo->fetchOne('SELECT idanagrafica FROM co_documenti WHERE co_documenti.id='.prepare($id_fattura));
-        $rs_t = $dbo->fetchOne("SELECT * FROM an_tipianagrafiche_anagrafiche WHERE idtipoanagrafica=(SELECT an_tipianagrafiche.idtipoanagrafica FROM an_tipianagrafiche WHERE an_tipianagrafiche.descrizione='Fornitore') AND idanagrafica=".prepare($anagrafica['idanagrafica']));
+        $anagrafica = $database->fetchOne('SELECT idanagrafica FROM co_documenti WHERE co_documenti.id='.prepare($id_fattura));
+        $rs_t = $database->fetchOne("SELECT * FROM an_tipianagrafiche_anagrafiche WHERE idtipoanagrafica=(SELECT an_tipianagrafiche.idtipoanagrafica FROM an_tipianagrafiche WHERE an_tipianagrafiche.descrizione='Fornitore') AND idanagrafica=".prepare($anagrafica['idanagrafica']));
 
         // Se non trovo corrispondenza aggiungo all'anagrafica la tipologia fornitore
         if (empty($rs_t)) {
-            $dbo->query("INSERT INTO an_tipianagrafiche_anagrafiche (idtipoanagrafica, idanagrafica) VALUES ((SELECT an_tipianagrafiche.idtipoanagrafica FROM an_tipianagrafiche WHERE an_tipianagrafiche.descrizione='Fornitore'), ".prepare($anagrafica['idanagrafica']).')');
+            $database->query("INSERT INTO an_tipianagrafiche_anagrafiche (idtipoanagrafica, idanagrafica) VALUES ((SELECT an_tipianagrafiche.idtipoanagrafica FROM an_tipianagrafiche WHERE an_tipianagrafiche.descrizione='Fornitore'), ".prepare($anagrafica['idanagrafica']).')');
         }
 
         // Processo il file ricevuto
@@ -230,7 +232,7 @@ switch (filter('op')) {
             return $item->count();
         });
         $id_conto = $conti->sort()->keys()->last();
-        $conto = $dbo->fetchOne('SELECT * FROM co_pianodeiconti3 WHERE id = '.prepare($id_conto));
+        $conto = $database->fetchOne('SELECT * FROM co_pianodeiconti3 WHERE id = '.prepare($id_conto));
 
         // Ricerca dell'IVA più utilizzata secondo percentuali
         $iva = [];
@@ -264,5 +266,127 @@ switch (filter('op')) {
             ],
             'iva' => $iva,
         ]);
+        break;
+
+    case 'riferimenti-automatici':
+        if (empty($anagrafica)) {
+            echo json_encode([]);
+
+            return;
+        }
+
+        $results = [];
+
+        // Iterazione sulle singole righe
+        $righe = $fattura_pa->getRighe();
+        foreach ($righe as $key => $riga) {
+            $collegamento = null;
+
+            // Visualizzazione codici articoli
+            $codici = $riga['CodiceArticolo'] ?: [];
+            $codici = !empty($codici) && !isset($codici[0]) ? [$codici] : $codici;
+
+            // Ricerca dell'articolo collegato al codice
+            $id_articolo = null;
+            foreach ($codici as $codice) {
+                if (!empty($anagrafica) && empty($id_articolo)) {
+                    $id_articolo = $database->fetchOne('SELECT id_articolo AS id FROM mg_fornitore_articolo WHERE codice_fornitore = '.prepare($codice['CodiceValore']).' AND id_fornitore = '.prepare($anagrafica->id))['id'];
+                }
+
+                if (empty($id_articolo)) {
+                    $id_articolo = $database->fetchOne('SELECT id FROM mg_articoli WHERE codice = '.prepare($codice['CodiceValore']))['id'];
+                }
+
+                if (!empty($id_articolo)) {
+                    break;
+                }
+            }
+
+            $query = "SELECT dt_righe_ddt.id, dt_righe_ddt.idddt AS id_documento, dt_righe_ddt.is_descrizione, dt_righe_ddt.idarticolo, dt_righe_ddt.is_sconto, 'ddt' AS ref,
+            CONCAT('DDT num. ', IF(numero_esterno != '', numero_esterno, numero), ' del ', DATE_FORMAT(data, '%d/%m/%Y'), ' [', (SELECT descrizione FROM dt_statiddt WHERE id = idstatoddt)  , ']') AS opzione
+        FROM dt_righe_ddt
+            INNER JOIN dt_ddt ON dt_ddt.id = dt_righe_ddt.idddt
+        WHERE dt_ddt.idanagrafica = ".prepare($anagrafica->id)." AND |where_ddt|
+
+        UNION SELECT or_righe_ordini.id, or_righe_ordini.idordine AS id_documento, or_righe_ordini.is_descrizione, or_righe_ordini.idarticolo, or_righe_ordini.is_sconto, 'ordine' AS ref,
+            CONCAT('Ordine num. ', IF(numero_esterno != '', numero_esterno, numero), ' del ', DATE_FORMAT(data, '%d/%m/%Y'), ' [', (SELECT descrizione FROM or_statiordine WHERE id = idstatoordine)  , ']') AS opzione
+        FROM or_righe_ordini
+            INNER JOIN or_ordini ON or_ordini.id = or_righe_ordini.idordine
+        WHERE or_ordini.idanagrafica = ".prepare($anagrafica->id).' AND |where_ordini|';
+
+            // Ricerca di righe DDT/Ordine con stesso Articolo
+            if (!empty($id_articolo)) {
+                $query_articolo = replace($query, [
+                    '|where_ddt|' => 'dt_righe_ddt.idarticolo = '.prepare($id_articolo),
+                    '|where_ordini|' => 'or_righe_ordini.idarticolo = '.prepare($id_articolo),
+                ]);
+
+                $collegamento = $database->fetchOne($query_articolo);
+            }
+
+            // Ricerca di righe DDT/Ordine per stessa descrizione
+            if (empty($collegamento)) {
+                $query_descrizione = replace($query, [
+                    '|where_ddt|' => 'dt_righe_ddt.descrizione = '.prepare($riga['Descrizione']),
+                    '|where_ordini|' => 'or_righe_ordini.descrizione = '.prepare($riga['Descrizione']),
+                ]);
+
+                $collegamento = $database->fetchOne($query_descrizione);
+            }
+
+            // Ricerca di righe DDT/Ordine per stesso importo
+            if (empty($collegamento)) {
+                $query_descrizione = replace($query, [
+                    '|where_ddt|' => 'dt_righe_ddt.prezzo_unitario = '.prepare($riga['PrezzoUnitario']),
+                    '|where_ordini|' => 'or_righe_ordini.prezzo_unitario = '.prepare($riga['PrezzoUnitario']),
+                ]);
+
+                $collegamento = $database->fetchOne($query_descrizione);
+            }
+
+            if (!empty($collegamento)) {
+                // Individuazione del documento
+                $documento = $collegamento['ref'] == 'ddt' ? DDT::find($collegamento['id_documento']) : Ordine::find($collegamento['id_documento']);
+
+                // Individuazione della classe di gestione per la riga
+                $namespace = $collegamento['ref'] == 'ddt' ? 'Modules\\DDT\\Components\\' : 'Modules\\Ordini\\Components\\';
+                if (!empty($collegamento['idarticolo'])) {
+                    $type = 'Articolo';
+                } elseif (!empty($collegamento['is_sconto'])) {
+                    $type = 'Sconto';
+                } elseif (!empty($collegamento['is_descrizione'])) {
+                    $type = 'Descrizione';
+                } else {
+                    $type = 'Riga';
+                }
+
+                // Ricerca della riga
+                $riga = $documento->getRiga($namespace.$type, $collegamento['id']);
+                $riga_origine = $riga->getOriginal();
+
+                // Compilazione dei dati
+                $results[$key] = [
+                    'documento' => [
+                        'tipo' => $collegamento['ref'],
+                        'id' => $collegamento['id_documento'],
+                        'descrizione' => reference($documento, tr('Origine')),
+                        'opzione' => $collegamento['opzione'],
+                    ],
+                    'riga' => [
+                        'tipo' => get_class($riga),
+                        'id' => $riga->id,
+                        'descrizione' => $riga->descrizione,
+                        'qta' => $riga->qta,
+                        'um' => $riga->um,
+                        'prezzo_unitario' => $riga->prezzo_unitario ?: $riga_origine->prezzo_unitario,
+                        'id_iva' => $riga->id_iva,
+                        'iva_percentuale' => $riga->aliquota->percentuale,
+                    ],
+                ];
+            }
+        }
+
+        echo json_encode($results);
+
         break;
 }

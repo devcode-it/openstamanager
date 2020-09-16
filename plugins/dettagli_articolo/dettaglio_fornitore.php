@@ -64,15 +64,11 @@ echo '
     </div>
 
     <div class="row">
-        <div class="col-md-4">
-            {[ "type": "number", "label": "'.tr('Prezzo acquisto').'", "name": "prezzo_acquisto", "required": 1, "value": "'.$fornitore['prezzo_acquisto'].'", "icon-after": "&euro;" ]}
-        </div>
-
-        <div class="col-md-4">
+        <div class="col-md-6">
             {[ "type": "number", "label": "'.tr('Qta minima ordinabile').'", "name": "qta_minima", "required": 0, "value": "'.$fornitore['qta_minima'].'", "icon-after": "'.$articolo->um.'" ]}
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-6">
             {[ "type": "text", "label": "'.tr('Tempi di consegna').'", "name": "giorni_consegna", "class": "text-right", "required": 0, "value": "'.$fornitore['giorni_consegna'].'", "icon-after": "'.tr('gg').'" ]}
         </div>
     </div>

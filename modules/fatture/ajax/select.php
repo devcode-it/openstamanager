@@ -29,6 +29,7 @@ switch ($resource) {
             'Ordini' AS optgroup,
             'ordine' AS tipo
         FROM or_ordini
+            INNER JOIN or_righe_ordini ON or_righe_ordini.idordine = or_ordini.id
         WHERE idanagrafica = ".prepare($id_anagrafica)." AND
             idstatoordine IN (
                 SELECT id FROM or_statiordine WHERE descrizione != 'Fatturato'
@@ -36,6 +37,8 @@ switch ($resource) {
             idtipoordine IN (
                 SELECT id FROM or_tipiordine WHERE dir = ".prepare($direzione).'
             ) AND |where|
+        GROUP BY or_ordini.id
+        HAVING SUM(or_righe_ordini.qta - or_righe_ordini.qta_evasa) > 0
         ORDER BY data DESC, numero DESC';
 
         $query_ddt = "SELECT dt_ddt.id,
@@ -43,6 +46,7 @@ switch ($resource) {
             'DDT' AS optgroup,
            'ddt' AS tipo
         FROM dt_ddt
+            INNER JOIN dt_righe_ddt ON dt_righe_ddt.idddt = dt_ddt.id
         WHERE idanagrafica = ".prepare($id_anagrafica)." AND
             idstatoddt IN (
                 SELECT id FROM dt_statiddt WHERE descrizione != 'Fatturato'
@@ -50,6 +54,8 @@ switch ($resource) {
             idtipoddt IN (
                 SELECT id FROM dt_tipiddt WHERE dir=".prepare($direzione).'
             ) AND |where|
+         GROUP BY dt_ddt.id
+        HAVING SUM(dt_righe_ddt.qta - dt_righe_ddt.qta_evasa) > 0
         ORDER BY data DESC, numero DESC';
 
         // Sostituzione per la ricerca

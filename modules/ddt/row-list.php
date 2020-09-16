@@ -63,28 +63,31 @@ foreach ($righe as $riga) {
                 '.$num.'
             </td>
 
-            <td>';
-
-    // Aggiunta dei riferimenti ai documenti
-    if ($riga->hasOriginal()) {
-        echo '
-                <small class="pull-right text-right text-muted">'.reference($riga->getOriginal()->parent, tr('Origine')).'</small>';
-    }
-
-    if ($riga->isArticolo()) {
-        echo Modules::link('Articoli', $riga->idarticolo, $riga->codice.' - '.$riga->descrizione);
-    } else {
-        echo nl2br($riga->descrizione);
-    }
+            <td>
+                 <small class="pull-right text-right text-muted">';
 
     $numero_riferimenti_riga = $riga->referenceTargets()->count();
     $numero_riferimenti_collegati = $riga->referenceSources()->count();
     $riferimenti_presenti = $numero_riferimenti_riga;
     $testo_aggiuntivo = $riferimenti_presenti ? $numero_riferimenti_riga : '';
     echo '
-                <button type="button" class="btn btn-xs btn-'.($riferimenti_presenti ? 'primary' : 'info').' pull-right" onclick="apriRiferimenti(this)">
-                    <i class="fa fa-chevron-right"></i> '.tr('Riferimenti').' '.$testo_aggiuntivo.'
-                </button>';
+                    <button type="button" class="btn btn-xs btn-'.($riferimenti_presenti ? 'primary' : 'info').'" onclick="apriRiferimenti(this)">
+                        <i class="fa fa-chevron-right"></i> '.tr('Riferimenti').' '.$testo_aggiuntivo.'
+                    </button>';
+
+    // Aggiunta dei riferimenti ai documenti
+    if ($riga->hasOriginal()) {
+        echo '
+                    <br>'.reference($riga->getOriginal()->parent, tr('Origine'));
+    }
+    echo '
+                </small>';
+
+    if ($riga->isArticolo()) {
+        echo Modules::link('Articoli', $riga->idarticolo, $riga->codice.' - '.$riga->descrizione);
+    } else {
+        echo nl2br($riga->descrizione);
+    }
 
     if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
         if (!empty($mancanti)) {

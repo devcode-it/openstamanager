@@ -152,17 +152,17 @@ class FatturaOrdinaria extends FatturaElettronica
                 $obj = Riga::build($fattura);
             }
 
+            $obj->descrizione = $riga['Descrizione'];
+
             // Collegamento al documento di riferimento
             if (!empty($tipi_riferimenti[$key])) {
-                $obj->original_id = $id_riferimenti[$key];
-                $obj->original_type = $tipi_riferimenti[$key];
+                list($riferimento_precedente, $nuovo_riferimento) = $obj->impostaOrigine($tipi_riferimenti[$key], $id_riferimenti[$key]);
 
-                // Riferimenti deprecati
-                //$id_rif = strpos($tipi_riferimenti[$key], 'Ordini') === false ? 'idddt' : 'idordine';
-                //$obj->{$id_rif} = $obj->original_id;
+                // Correzione della descrizione
+                $obj->descrizione = str_replace($riferimento_precedente, '', $obj->descrizione);
+                $obj->descrizione .= $nuovo_riferimento;
             }
 
-            $obj->descrizione = $riga['Descrizione'];
             $obj->id_iva = $iva[$key];
             $obj->idconto = $conto[$key];
 

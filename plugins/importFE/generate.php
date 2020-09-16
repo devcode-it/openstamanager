@@ -322,11 +322,13 @@ if (!empty($righe)) {
         echo '
         <tr data-id="'.$key.'" data-qta="'.$qta.'" data-prezzo_unitario="'.$prezzo_unitario.'" data-iva_percentuale="'.$riga['AliquotaIVA'].'">
             <td>
+                <small class="pull-right text-muted" id="riferimento_'.$key.'"></small>
+
                 '.$riga['Descrizione'].'<br>
 
 				'.(!empty($codici_articoli) ? '<small>'.implode(', ', $codici_articoli).'</small><br>' : '').'
-                <span id="riferimento_'.$key.'_descrizione"></span>
-                <b id="riferimento_'.$key.'"></b>
+
+                <b id="riferimento_'.$key.'_descrizione"></b>
             </td>
 
             <td class="text-center">
@@ -417,7 +419,6 @@ if (!empty($righe)) {
 
         // Selezione generale per il conto
         if (conto_selezionato) {
-            console.log(conto_selezionato);
             conti.each(function() {
                 $(this).selectSetNew(conto_selezionato.id, conto_selezionato.text, conto_selezionato);
             });
@@ -463,6 +464,7 @@ function rimuoviRiferimento(button) {
     input("selezione_riferimento[" + id_riga + "]").enable()
         .getElement().selectReset();
     $(button).addClass("disabled");
+    riga.removeClass("success").removeClass("warning");
 }
 
 function selezionaRiferimento(riga, tipo_documento, id_documento) {
@@ -540,6 +542,15 @@ function impostaRiferimento(id_riga, documento, riga) {
     impostaContenuto(riga_fe.data("iva_percentuale"), riga.iva_percentuale, "%", "#riferimento_" + id_riga + "_iva");
 
     $("#riferimento_" + id_riga).html(documento.descrizione ? documento.descrizione : "");
+    $("#riferimento_" + id_riga + "_descrizione").html(riga.descrizione ? riga.descrizione : "");
+
+    // Colorazione dell\'intera riga
+    let warnings = riga_fe.find(".text-warning");
+    if (warnings.length === 0) {
+        riga_fe.addClass("success").removeClass("warning");
+    } else {
+        riga_fe.removeClass("success").addClass("warning");
+    }
 }
 
 // Informazioni visibili sull\'aliquota IVA

@@ -201,3 +201,18 @@ UPDATE `an_anagrafiche` SET `idbanca_vendite` = (SELECT `id` FROM `co_banche` WH
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_banche` INNER JOIN an_anagrafiche ON `an_anagrafiche`.`idanagrafica` = `co_banche`.`id_anagrafica` WHERE 1=1 AND `co_banche`.`deleted_at` IS NULL AND `an_anagrafiche`.`deleted_at` IS NULL HAVING 2=2' WHERE `name` = 'Banche';
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `visible`, `summable`, `default`) VALUES
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche'), 'Anagrafica', 'an_anagrafiche.ragione_sociale', 0, 1, 0, 0, 1, 0, 1);
+
+-- Campo id_banca_controparte e id_banca_azienda per i Documenti
+ALTER TABLE `co_documenti` ADD `id_banca_controparte` INT(11) AFTER `idpagamento`;
+ALTER TABLE `co_preventivi` ADD `id_banca_controparte` INT(11) AFTER `idpagamento`;
+ALTER TABLE `co_contratti` ADD `id_banca_controparte` INT(11) AFTER `idpagamento`;
+ALTER TABLE `dt_ddt` ADD `id_banca_controparte` INT(11) AFTER `idpagamento`;
+ALTER TABLE `or_ordini` ADD `id_banca_controparte` INT(11) NOT NULL AFTER `idpagamento`;
+
+ALTER TABLE `co_documenti` CHANGE `idbanca` `id_banca_azienda` INT(11) AFTER `idpagamento`;
+ALTER TABLE `co_preventivi` ADD `id_banca_azienda` INT(11) AFTER `idpagamento`;
+ALTER TABLE `co_contratti` ADD `id_banca_azienda` INT(11) AFTER `idpagamento`;
+ALTER TABLE `dt_ddt` ADD `id_banca_azienda` INT(11) AFTER `idpagamento`;
+ALTER TABLE `or_ordini` ADD `id_banca_azienda` INT(11) AFTER `idpagamento`;
+
+UPDATE `co_documenti` SET `id_banca_azienda` = NULL WHERE `id_banca_azienda` = 0;

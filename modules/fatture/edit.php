@@ -268,11 +268,11 @@ elseif ($record['stato'] == 'Bozza') {
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 1, "ajax-source": "pagamenti", "value": "$idpagamento$", "extra": "onchange=\"$('#idbanca').val($(this).selectData().id_banca_<?php echo $conto; ?>).change(); \" " ]}
+					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 1, "ajax-source": "pagamenti", "value": "$idpagamento$", "extra": "onchange=\"$('#id_banca_azienda').val($(this).selectData().id_banca_<?php echo $conto; ?>).change(); \" " ]}
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Banca'); ?>", "name": "idbanca", "ajax-source": "banche", "select-options": <?php echo json_encode(['id_anagrafica' => $anagrafica_azienda->id]); ?>, "value": "$idbanca$", "icon-after": "add|<?php echo Modules::get('Banche')['id']; ?>||", "extra": " <?php echo (intval($block_edit)) ? 'disabled' : ''; ?> " ]}
+					{[ "type": "select", "label": "<?php echo tr('Banca'); ?>", "name": "id_banca_azienda", "ajax-source": "banche", "select-options": <?php echo json_encode(['id_anagrafica' => $anagrafica_azienda->id]); ?>, "value": "$id_banca_azienda$", "icon-after": "add|<?php echo Modules::get('Banche')['id']; ?>||", "extra": " <?php echo (intval($block_edit)) ? 'disabled' : ''; ?> " ]}
 				</div>
 
                 <?php
@@ -340,7 +340,7 @@ elseif ($record['stato'] == 'Bozza') {
 				</div>
 
 				<?php
-                //TODO: Fattura per conto del fornitore (es. cooperative agricole che emettono la fattura per conto dei propri soci produttori agricoli conferenti)
+                // TODO: Fattura per conto del fornitore (es. cooperative agricole che emettono la fattura per conto dei propri soci produttori agricoli conferenti)
                 if ($dir == 'entrata') {
                     ?>
 					<div class="col-md-3">

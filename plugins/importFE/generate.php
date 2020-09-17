@@ -17,6 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Carbon\Carbon;
+
 include_once __DIR__.'/../../core.php';
 
 echo '
@@ -207,7 +209,7 @@ echo '
 
 // Data di registrazione
 $data_registrazione = get('data_registrazione');
-$data_registrazione = new \Carbon\Carbon($data_registrazione);
+$data_registrazione = new Carbon($data_registrazione);
 echo '
         <div class="col-md-3">
             {[ "type": "date", "label": "'.tr('Data di registrazione').'", "name": "data_registrazione", "required": 1, "value": "'.($data_registrazione ?: $dati_generali['Data']).'", "max-date": "-now-", "min-date": "'.$dati_generali['Data'].'" ]}
@@ -268,7 +270,6 @@ echo '
 
 // Righe
 $righe = $fattura_pa->getRighe();
-
 if (!empty($righe)) {
     echo '
     <h4>
@@ -291,7 +292,7 @@ if (!empty($righe)) {
             <tbody>';
 
     foreach ($righe as $key => $riga) {
-        $query = 'SELECT id, IF(codice IS NULL, descrizione, CONCAT(codice, " - ", descrizione)) AS descrizione FROM co_iva WHERE percentuale = '.prepare($riga['AliquotaIVA']);
+        $query = "SELECT id, IF(codice IS NULL, descrizione, CONCAT(codice, ' - ', descrizione)) AS descrizione FROM co_iva WHERE percentuale = ".prepare($riga['AliquotaIVA']);
 
         if (!empty($riga['Natura'])) {
             $query .= ' AND codice_natura_fe = '.prepare($riga['Natura']);
@@ -312,7 +313,13 @@ if (!empty($righe)) {
         $id_articolo = null;
         $codice_principale = $codici[0]['CodiceValore'];
         if (!empty($codice_principale)) {
-            $id_articolo = $database->fetchOne('SELECT id FROM mg_articoli WHERE codice = '.prepare($codice_principale))['id'];
+            if (!empty($anagrafica) && empty($id_articolo)) {
+                $id_articolo = $database->fetchOne('SELECT id_articolo AS id FROM mg_fornitore_articolo WHERE codice_fornitore = '.prepare($codice_principale).' AND id_fornitore = '.prepare($anagrafica->id))['id'];
+            }
+
+            if (empty($id_articolo)) {
+                $id_articolo = $database->fetchOne('SELECT id FROM mg_articoli WHERE codice = '.prepare($codice_principale))['id'];
+            }
         }
 
         $qta = $riga['Quantita'];
@@ -322,11 +329,13 @@ if (!empty($righe)) {
         echo '
         <tr data-id="'.$key.'" data-qta="'.$qta.'" data-prezzo_unitario="'.$prezzo_unitario.'" data-iva_percentuale="'.$riga['AliquotaIVA'].'">
             <td>
+                <small class="pull-right text-muted" id="riferimento_'.$key.'"></small>
+
                 '.$riga['Descrizione'].'<br>
 
 				'.(!empty($codici_articoli) ? '<small>'.implode(', ', $codici_articoli).'</small><br>' : '').'
-                <span id="riferimento_'.$key.'_descrizione"></span>
-                <b id="riferimento_'.$key.'"></b>
+
+                <b id="riferimento_'.$key.'_descrizione"></b>
             </td>
 
             <td class="text-center">
@@ -371,7 +380,7 @@ if (!empty($righe)) {
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "name": "selezione_riferimento['.$key.']", "ajax-source": "riferimenti-fe", "select-options": '.json_encode(['id_anagrafica' => $anagrafica ? $anagrafica->id : '']).', "required": 1, "label": "'.tr('Riferimento').'", "icon-after": '.json_encode('<button type="button" onclick="rimuoviRiferimento(this)" class="btn btn-primary disabled" id="rimuovi_riferimento_'.$key.'"><i class="fa fa-close"></i></button>').' ]}
+                    {[ "type": "select", "name": "selezione_riferimento['.$key.']", "ajax-source": "riferimenti-fe", "select-options": '.json_encode(['id_anagrafica' => $anagrafica ? $anagrafica->id : '']).', "required": 0, "label": "'.tr('Riferimento').'", "icon-after": '.json_encode('<button type="button" onclick="rimuoviRiferimento(this)" class="btn btn-primary disabled" id="rimuovi_riferimento_'.$key.'"><i class="fa fa-close"></i></button>').' ]}
                 </div>
             </td>
         </tr>';
@@ -417,7 +426,6 @@ if (!empty($righe)) {
 
         // Selezione generale per il conto
         if (conto_selezionato) {
-            console.log(conto_selezionato);
             conti.each(function() {
                 $(this).selectSetNew(conto_selezionato.id, conto_selezionato.text, conto_selezionato);
             });
@@ -463,6 +471,7 @@ function rimuoviRiferimento(button) {
     input("selezione_riferimento[" + id_riga + "]").enable()
         .getElement().selectReset();
     $(button).addClass("disabled");
+    riga.removeClass("success").removeClass("warning");
 }
 
 function selezionaRiferimento(riga, tipo_documento, id_documento) {
@@ -531,21 +540,30 @@ function impostaRiferimento(id_riga, documento, riga) {
     let riga_fe = $("#id_riga_riferimento_" + id_riga).closest("tr").prev();
 
     // Informazioni visibili sulla quantità
-    impostaContenuto(riga_fe.data("qta"), riga.qta, "#riferimento_" + id_riga + "_qta");
+    impostaContenuto(riga_fe.data("qta"), riga.qta, (riga.um ? " " + riga.um : ""), "#riferimento_" + id_riga + "_qta");
 
     // Informazioni visibili sul prezzo unitario
-    impostaContenuto(riga_fe.data("prezzo_unitario"), riga.prezzo_unitario, "#riferimento_" + id_riga + "_prezzo");
+    impostaContenuto(riga_fe.data("prezzo_unitario"), riga.prezzo_unitario, " " + globals.currency, "#riferimento_" + id_riga + "_prezzo");
 
     // Informazioni visibili sull\'aliquota IVA
-    impostaContenuto(riga_fe.data("iva_percentuale"), riga.iva_percentuale, "#riferimento_" + id_riga + "_iva");
+    impostaContenuto(riga_fe.data("iva_percentuale"), riga.iva_percentuale, "%", "#riferimento_" + id_riga + "_iva");
 
     $("#riferimento_" + id_riga).html(documento.descrizione ? documento.descrizione : "");
+    $("#riferimento_" + id_riga + "_descrizione").html(riga.descrizione ? riga.descrizione : "");
+
+    // Colorazione dell\'intera riga
+    let warnings = riga_fe.find(".text-warning");
+    if (warnings.length === 0) {
+        riga_fe.addClass("success").removeClass("warning");
+    } else {
+        riga_fe.removeClass("success").addClass("warning");
+    }
 }
 
 // Informazioni visibili sull\'aliquota IVA
-function impostaContenuto(valore_riga, valore_riferimento, id_elemento) {
+function impostaContenuto(valore_riga, valore_riferimento, contenuto_successivo, id_elemento) {
     let elemento = $(id_elemento);
-    if (valore_riferimento === undefined){
+    if (valore_riferimento === undefined) {
         elemento.html("");
         return;
     }
@@ -553,12 +571,12 @@ function impostaContenuto(valore_riga, valore_riferimento, id_elemento) {
     valore_riga = parseFloat(valore_riga);
     valore_riferimento = parseFloat(valore_riferimento);
 
-    let contenuto = valore_riferimento.toLocale() + "%";
+    let contenuto = valore_riferimento.toLocale() + contenuto_successivo;
     if (valore_riferimento === valore_riga) {
-        contenuto = `<i class="fa fa-warning"></i> ` + contenuto;
+        contenuto = `<i class="fa fa-check"></i> ` + contenuto;
         elemento.addClass("text-success").removeClass("text-warning");
     } else {
-        contenuto = `<i class="fa fa-check"></i> ` + contenuto;
+        contenuto = `<i class="fa fa-warning"></i> ` + contenuto;
         elemento.removeClass("text-success").addClass("text-warning");
     }
 

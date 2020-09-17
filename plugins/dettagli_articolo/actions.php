@@ -45,7 +45,6 @@ switch (filter('op')) {
 
         $fornitore->codice_fornitore = post('codice_fornitore');
         $fornitore->descrizione = post('descrizione');
-        $fornitore->prezzo_acquisto = post('prezzo_acquisto');
         $fornitore->qta_minima = post('qta_minima');
         $fornitore->giorni_consegna = post('giorni_consegna');
 

@@ -183,8 +183,6 @@ abstract class Description extends Model
         // Attributi dell'oggetto da copiare
         $attributes = $this->getAttributes();
         unset($attributes['id']);
-        unset($attributes['original_id']);
-        unset($attributes['original_type']);
         unset($attributes['order']);
 
         if ($qta !== null) {
@@ -202,9 +200,19 @@ abstract class Description extends Model
         // Riferimento di origine per l'evasione automatica della riga
         $is_evasione = true;
         if ($is_evasione) {
-            $model->original_id = $this->id;
-            $model->original_type = $current;
+            // Mantenimento dell'origine della riga precedente
+            $model->original_id = $attributes['original_id'];
+            $model->original_type = $attributes['original_type'];
+
+            // Aggiornamento dei riferimenti
+            list($riferimento_precedente, $nuovo_riferimento) = $model->impostaOrigine($current, $this->id);
+
+            // Correzione della descrizione
+            $attributes['descrizione'] = str_replace($riferimento_precedente, '', $attributes['descrizione']);
+            $attributes['descrizione'] .= $nuovo_riferimento;
         }
+        unset($attributes['original_id']);
+        unset($attributes['original_type']);
 
         // Impostazione del genitore
         $model->setParent($document);
@@ -230,6 +238,36 @@ abstract class Description extends Model
         $model->save();
 
         return $model;
+    }
+
+    /**
+     * Imposta l'origine dell'elemento, restituendo un array contenente i replace da effettuare per modificare la descrizione in modo coerente.
+     *
+     * @param $type
+     * @param $id
+     */
+    public function impostaOrigine($type, $id)
+    {
+        $riferimento_precedente = null;
+        $nuovo_riferimento = null;
+
+        // Rimozione del riferimento precedente dalla descrizione
+        if ($this->hasOriginal()) {
+            $riferimento = $this->getOriginal()->parent->getReference();
+            $riferimento_precedente = "\nRif. ".strtolower($riferimento);
+        }
+
+        $this->original_id = $id;
+        $this->original_type = $type;
+
+        // Aggiunta del riferimento nella descrizione
+        $origine = $type::find($id);
+        if (!empty($origine)) {
+            $riferimento = $origine->parent->getReference();
+            $nuovo_riferimento = "\nRif. ".strtolower($riferimento);
+        }
+
+        return [$riferimento_precedente, $nuovo_riferimento];
     }
 
     abstract public function parent();

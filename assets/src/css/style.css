@@ -1040,3 +1040,22 @@ div.tip {
 .skin-default .nav.navbar-nav li a:hover {
     background: #222222;
 }
+
+/* Loading specificato per un div */
+.local-loader {
+    position: relative;
+    width: 100%;
+    height: 0
+}
+
+.local-loader > div {
+    position: absolute;
+    top: 100px;
+    z-index: 2;
+    opacity: 0.5;
+    width: 100%
+}
+
+.div-loading {
+    opacity: 0.5;
+}

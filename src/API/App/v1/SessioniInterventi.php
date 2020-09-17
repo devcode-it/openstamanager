@@ -31,8 +31,9 @@ class SessioniInterventi extends AppResource
     public function getCleanupData($last_sync_at)
     {
         // Periodo per selezionare interventi
+        $mesi_precedenti = intval(setting('Mesi per lo storico delle Attività'));
         $today = new Carbon();
-        $start = $today->copy()->subMonths(2);
+        $start = $today->copy()->subMonths($mesi_precedenti);
         $end = $today->copy()->addMonth(1);
 
         // Informazioni sull'utente
@@ -60,8 +61,9 @@ class SessioniInterventi extends AppResource
     public function getModifiedRecords($last_sync_at)
     {
         // Periodo per selezionare interventi
+        $mesi_precedenti = intval(setting('Mesi per lo storico delle Attività'));
         $today = new Carbon();
-        $start = $today->copy()->subMonths(2);
+        $start = $today->copy()->subMonths($mesi_precedenti);
         $end = $today->copy()->addMonth(1);
 
         // Informazioni sull'utente

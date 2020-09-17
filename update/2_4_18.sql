@@ -88,10 +88,93 @@ UPDATE `zz_views` SET `query` = 'CONCAT(UCASE(LEFT(tipo_movimento, 1)), SUBSTRIN
 -- Aggiornamento versione API services
 UPDATE `zz_settings` SET `valore` = 'v3' WHERE `nome` = 'OSMCloud Services API Version';
 
+-- Aggiornamento margini stampa barbcode
+UPDATE `zz_prints` SET `options` = '{"width": 54, "height": 20, "format": [64, 55], "margins": {"top": 5,"bottom": 0,"left": 0,"right": 0}}' WHERE `zz_prints`.`name` = 'Barcode';
 -- Aggiornamento del modulo Banche per il supporto completo alle Anagrafiche
 ALTER TABLE `co_banche` ADD `id_anagrafica` INT(11) NOT NULL, CHANGE `note` `note` TEXT, CHANGE `filiale` `filiale` varchar(255);
 UPDATE `co_banche` SET  `id_anagrafica` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = 'Azienda predefinita');
 ALTER TABLE `co_banche` ADD FOREIGN KEY (`id_anagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE CASCADE;
+
+-- Aggiunta riferimenti testuali su descrizione righe per Fatture
+UPDATE `co_righe_documenti`
+    INNER JOIN `co_righe_contratti` ON `co_righe_documenti`.`original_id` = `co_righe_contratti`.`id`
+    INNER JOIN `co_contratti` ON `co_contratti`.`id` = `co_righe_contratti`.`idcontratto`
+SET `co_righe_documenti`.`descrizione` = CONCAT(`co_righe_documenti`.`descrizione`, '\nRif. contratto num. ', `co_contratti`.`numero`, ' del ', DATE_FORMAT(`co_contratti`.`data_bozza`, '%d/%m/%Y'))
+WHERE `co_righe_documenti`.`original_type` LIKE '%Contratti%';
+UPDATE `co_righe_documenti`
+    INNER JOIN `co_righe_preventivi` ON `co_righe_documenti`.`original_id` = `co_righe_preventivi`.`id`
+    INNER JOIN `co_preventivi` ON `co_preventivi`.`id` = `co_righe_preventivi`.`idpreventivo`
+SET `co_righe_documenti`.`descrizione` = CONCAT(`co_righe_documenti`.`descrizione`, '\nRif. preventivo num. ', `co_preventivi`.`numero`, ' del ', DATE_FORMAT(`co_preventivi`.`data_bozza`, '%d/%m/%Y'))
+WHERE `co_righe_documenti`.`original_type` LIKE '%Preventivi%';
+UPDATE `co_righe_documenti`
+    INNER JOIN `or_righe_ordini` ON `co_righe_documenti`.`original_id` = `or_righe_ordini`.`id`
+    INNER JOIN `or_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`idordine`
+    INNER JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine`
+SET `co_righe_documenti`.`descrizione` = CONCAT(`co_righe_documenti`.`descrizione`, '\nRif. ', LOWER(`or_tipiordine`.`descrizione`), ' num. ', `or_ordini`.`numero`, ' del ', DATE_FORMAT(`or_ordini`.`data`, '%d/%m/%Y'))
+WHERE `co_righe_documenti`.`original_type` LIKE '%Ordini%';
+UPDATE `co_righe_documenti`
+    INNER JOIN `dt_righe_ddt` ON `co_righe_documenti`.`original_id` = `dt_righe_ddt`.`id`
+    INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idordine`
+    INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt`
+SET `co_righe_documenti`.`descrizione` = CONCAT(`co_righe_documenti`.`descrizione`, '\nRif. ', LOWER(`dt_tipiddt`.`descrizione`), ' num. ', `dt_ddt`.`numero`, ' del ', DATE_FORMAT(`dt_ddt`.`data`, '%d/%m/%Y'))
+WHERE `co_righe_documenti`.`original_type` LIKE '%DDT%';
+UPDATE `co_righe_documenti`
+    INNER JOIN `in_righe_interventi` ON `co_righe_documenti`.`original_id` = `in_righe_interventi`.`id`
+    INNER JOIN `in_interventi` ON `in_interventi`.`id` = `in_righe_interventi`.`idintervento`
+SET `co_righe_documenti`.`descrizione` = CONCAT(`co_righe_documenti`.`descrizione`, '\nRif. attività num. ', `in_interventi`.`codice`, ' del ', DATE_FORMAT(`in_interventi`.`data_richiesta`, '%d/%m/%Y'))
+WHERE `co_righe_documenti`.`original_type` LIKE '%Interventi%';
+
+-- Aggiunta riferimenti testuali su descrizione righe per Ordini
+UPDATE `or_righe_ordini`
+    INNER JOIN `co_righe_contratti` ON `or_righe_ordini`.`original_id` = `co_righe_contratti`.`id`
+    INNER JOIN `co_contratti` ON `co_contratti`.`id` = `co_righe_contratti`.`idcontratto`
+SET `or_righe_ordini`.`descrizione` = CONCAT(`or_righe_ordini`.`descrizione`, '\nRif. contratto num. ', `co_contratti`.`numero`, ' del ', DATE_FORMAT(`co_contratti`.`data_bozza`, '%d/%m/%Y'))
+WHERE `or_righe_ordini`.`original_type` LIKE '%Contratti%';
+UPDATE `or_righe_ordini`
+    INNER JOIN `co_righe_preventivi` ON `or_righe_ordini`.`original_id` = `co_righe_preventivi`.`id`
+    INNER JOIN `co_preventivi` ON `co_preventivi`.`id` = `co_righe_preventivi`.`idpreventivo`
+SET `or_righe_ordini`.`descrizione` = CONCAT(`or_righe_ordini`.`descrizione`, '\nRif. preventivo num. ', `co_preventivi`.`numero`, ' del ', DATE_FORMAT(`co_preventivi`.`data_bozza`, '%d/%m/%Y'))
+WHERE `or_righe_ordini`.`original_type` LIKE '%Preventivi%';
+UPDATE `or_righe_ordini`
+    INNER JOIN `dt_righe_ddt` ON `or_righe_ordini`.`original_id` = `dt_righe_ddt`.`id`
+    INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idordine`
+    INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt`
+SET `or_righe_ordini`.`descrizione` = CONCAT(`or_righe_ordini`.`descrizione`, '\nRif. ', LOWER(`dt_tipiddt`.`descrizione`), ' num. ', `dt_ddt`.`numero`, ' del ', DATE_FORMAT(`dt_ddt`.`data`, '%d/%m/%Y'))
+WHERE `or_righe_ordini`.`original_type` LIKE '%DDT%';
+UPDATE `or_righe_ordini`
+    INNER JOIN `in_righe_interventi` ON `or_righe_ordini`.`original_id` = `in_righe_interventi`.`id`
+    INNER JOIN `in_interventi` ON `in_interventi`.`id` = `in_righe_interventi`.`idintervento`
+SET `or_righe_ordini`.`descrizione` = CONCAT(`or_righe_ordini`.`descrizione`, '\nRif. attività num. ', `in_interventi`.`codice`, ' del ', DATE_FORMAT(`in_interventi`.`data_richiesta`, '%d/%m/%Y'))
+WHERE `or_righe_ordini`.`original_type` LIKE '%Interventi%';
+
+-- Aggiunta riferimenti testuali su descrizione righe per DDT
+UPDATE `dt_righe_ddt`
+    INNER JOIN `co_righe_contratti` ON `dt_righe_ddt`.`original_id` = `co_righe_contratti`.`id`
+    INNER JOIN `co_contratti` ON `co_contratti`.`id` = `co_righe_contratti`.`idcontratto`
+SET `dt_righe_ddt`.`descrizione` = CONCAT(`dt_righe_ddt`.`descrizione`, '\nRif. contratto num. ', `co_contratti`.`numero`, ' del ', DATE_FORMAT(`co_contratti`.`data_bozza`, '%d/%m/%Y'))
+WHERE `dt_righe_ddt`.`original_type` LIKE '%Contratti%';
+UPDATE `dt_righe_ddt`
+    INNER JOIN `co_righe_preventivi` ON `dt_righe_ddt`.`original_id` = `co_righe_preventivi`.`id`
+    INNER JOIN `co_preventivi` ON `co_preventivi`.`id` = `co_righe_preventivi`.`idpreventivo`
+SET `dt_righe_ddt`.`descrizione` = CONCAT(`dt_righe_ddt`.`descrizione`, '\nRif. preventivo num. ', `co_preventivi`.`numero`, ' del ', DATE_FORMAT(`co_preventivi`.`data_bozza`, '%d/%m/%Y'))
+WHERE `dt_righe_ddt`.`original_type` LIKE '%Preventivi%';
+UPDATE `dt_righe_ddt`
+    INNER JOIN `or_righe_ordini` ON `dt_righe_ddt`.`original_id` = `or_righe_ordini`.`id`
+    INNER JOIN `or_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`idordine`
+    INNER JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine`
+SET `dt_righe_ddt`.`descrizione` = CONCAT(`dt_righe_ddt`.`descrizione`, '\nRif. ', LOWER(`or_tipiordine`.`descrizione`), ' num. ', `or_ordini`.`numero`, ' del ', DATE_FORMAT(`or_ordini`.`data`, '%d/%m/%Y'))
+WHERE `dt_righe_ddt`.`original_type` LIKE '%Ordini%';
+UPDATE `dt_righe_ddt`
+    INNER JOIN `in_righe_interventi` ON `dt_righe_ddt`.`original_id` = `in_righe_interventi`.`id`
+    INNER JOIN `in_interventi` ON `in_interventi`.`id` = `in_righe_interventi`.`idintervento`
+SET `dt_righe_ddt`.`descrizione` = CONCAT(`dt_righe_ddt`.`descrizione`, '\nRif. attività num. ', `in_interventi`.`codice`, ' del ', DATE_FORMAT(`in_interventi`.`data_richiesta`, '%d/%m/%Y'))
+WHERE `dt_righe_ddt`.`original_type` LIKE '%Interventi%';
+
+-- Aggiunta campi per i riferimenti in Preventivi
+ALTER TABLE `co_righe_preventivi` ADD `original_id` int(11), ADD `original_type` varchar(255);
+
+-- Fix qtà impegnata: aggiunto filtro per ricerca solo su ordini cliente e non tutti gli ordini
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `mg_articoli` LEFT JOIN an_anagrafiche ON mg_articoli.id_fornitore=an_anagrafiche.idanagrafica LEFT JOIN co_iva ON mg_articoli.idiva_vendita=co_iva.id LEFT JOIN (SELECT SUM(qta-qta_evasa) AS qta_impegnata, idarticolo FROM or_righe_ordini INNER JOIN or_ordini ON or_righe_ordini.idordine=or_ordini.id INNER JOIN or_tipiordine ON or_ordini.idtipoordine=or_tipiordine.id WHERE idstatoordine IN(SELECT id FROM or_statiordine WHERE completato=0) AND or_tipiordine.dir=''entrata'' GROUP BY idarticolo) a ON a.idarticolo=mg_articoli.id LEFT JOIN mg_categorie ON mg_articoli.id_categoria=mg_categorie.id LEFT JOIN mg_categorie AS sottocategorie ON mg_articoli.id_sottocategoria=sottocategorie.id WHERE 1=1 AND (`mg_articoli`.`deleted_at`) IS NULL HAVING 2=2 ORDER BY `mg_articoli`.`descrizione`' WHERE `zz_modules`.`name` = 'Articoli';
 
 -- Collegamento sulla base dei campi aggiuntivi per le Anagrafiche
 UPDATE `co_banche`

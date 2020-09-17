@@ -18,9 +18,17 @@
  */
 
 echo '
-<button type="button" class="btn btn-primary tip" '.(!empty($anagrafica) ? '' : 'disabled').' id="compilazione_automatica" onclick="compile(this)" title="'.tr('Tenta la compilazione automatica delle informazioni delle fattura elettronica sulla base delle precedenti fatture del Fornitore').'.">
-    <i class="fa fa-address-book"></i> '.tr('Compila automaticamente').'
-</button>
+<div class="tip" data-toggle="tooltip" title="'.tr('Tenta la compilazione automatica delle informazioni delle fattura elettronica sulla base delle precedenti fatture del Fornitore').'.">
+    <button type="button" class="btn btn-primary" '.(!empty($anagrafica) ? '' : 'disabled').' id="compilazione_automatica" onclick="compile(this)" >
+        <i class="fa fa-address-book"></i> '.tr('Compila automaticamente').'
+    </button>
+</div>
+
+<div class="tip" data-toggle="tooltip" title="'.tr('Tenta il completamento automatico dei riferimenti per le righe delle fattura elettronica sulla base di Ordini e DDT registrati nel gestionale per il Fornitore').'.">
+    <button type="button" class="btn btn-primary" '.(!empty($anagrafica) ? '' : 'disabled').' onclick="compilaRiferimenti(this)" >
+        <i class="fa fa-list"></i> '.tr('Cerca riferimenti').'
+    </button>
+</div>
 
 <script>
 $(document).ready(function() {
@@ -32,12 +40,13 @@ $(document).ready(function() {
 });
 
 function compile(btn) {
-    var restore = buttonLoading(btn);
+    let restore = buttonLoading(btn);
 
     $.ajax({
         url: globals.rootdir + "/actions.php",
         cache: false,
         type: "GET",
+        dataType: "json",
         data: {
             id_module: "'.$id_module.'",
             id_plugin: "'.$id_plugin.'",
@@ -45,30 +54,63 @@ function compile(btn) {
             op: "compile",
         },
         success: function(response) {
-            var data = JSON.parse(response);
-            if (data.length == 0){
-                buttonRestore(btn, restore);
+            buttonRestore(btn, restore);
+            if (response.length === 0){
                 return;
             }
 
-            $("#id_tipo").selectSet(data.id_tipo);
-            $("#pagamento").selectSetNew(data.pagamento.id, data.pagamento.descrizione);
+            $("#id_tipo").selectSet(response.id_tipo);
+            $("#pagamento").selectSetNew(response.pagamento.id, response.pagamento.descrizione);
 
             $("select[name^=iva]").each(function(){
                 var aliquota = $(this).closest("tr").find("[id^=aliquota]").text();
-                if (data.iva[aliquota] !== undefined){
-                    $(this).selectSet(data.iva[aliquota].id);
+                if (response.iva[aliquota] !== undefined){
+                    $(this).selectSet(response.iva[aliquota].id);
                 }
             });
 
             $("select[name^=conto]").each(function(){
-                $(this).selectSetNew(data.conto.id, data.conto.descrizione);
+                $(this).selectSetNew(response.conto.id, response.conto.descrizione);
             });
-
-            buttonRestore(btn, restore);
         },
         error: function(data) {
             swal("'.tr('Errore').'", "'.tr('La compilazione automatica dei campi non è andata a buon fine').'.", "error");
+
+            buttonRestore(btn, restore);
+        }
+    });
+}
+
+function compilaRiferimenti(btn) {
+    let restore = buttonLoading(btn);
+
+    $.ajax({
+        url: globals.rootdir + "/actions.php",
+        cache: false,
+        type: "GET",
+        dataType: "json",
+        data: {
+            id_module: "'.$id_module.'",
+            id_plugin: "'.$id_plugin.'",
+            id_record: "'.$id_record.'",
+            op: "riferimenti-automatici",
+        },
+        success: function(response) {
+            buttonRestore(btn, restore);
+            if (response.length === 0){
+                return;
+            }
+
+            for (const [id_riga, data] of response.entries()) {
+                // Selezione dinamica
+                $("#selezione_riferimento" + id_riga).selectSetNew(data.documento.id, data.documento.opzione);
+
+                // Impostazione del riferiment
+                impostaRiferimento(id_riga, data.documento, data.riga);
+            }
+        },
+        error: function(data) {
+            swal("'.tr('Errore').'", "'.tr('La ricerca automatica dei riferimenti per le righe non è andata a buon fine').'.", "error");
 
             buttonRestore(btn, restore);
         }

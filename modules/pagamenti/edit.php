@@ -90,7 +90,7 @@ foreach ($results as $result) {
 
 						<div class="row">
 							<div class="col-md-6">
-								{[ "type": "number", "label": "'.tr('Percentuale').'", "name": "percentuale[]", "value": "'.$result['prc'].'", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
+								{[ "type": "number", "label": "'.tr('Percentuale').'", "name": "percentuale[]", "decimals": "2", "min-value": "0", "value": "'.$result['prc'].'", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
 							</div>
 
 							<div class="col-md-6">
@@ -124,7 +124,7 @@ foreach ($results as $result) {
 							</div>
 
 							<div class="col-md-6">
-								{[ "type": "number", "label": "'.tr('Distanza in giorni').'", "name": "distanza[]", "decimals": "0", "value": "'.$result['num_giorni'].'" ]}
+								{[ "type": "number", "label": "'.tr('Distanza in giorni').'", "name": "distanza[]", "decimals": "0", "min-value": "0", "value": "'.$result['num_giorni'].'" ]}
 							</div>
 						</div>
 					</div>

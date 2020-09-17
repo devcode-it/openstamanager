@@ -41,7 +41,10 @@ echo '
 <table class="table table-striped table-hover table-condensed table-bordered">
     <tr>
         <th>'.tr('Descrizione').'</th>
-        <th width="120">'.tr('Q.tà').' <i title="'.tr('da evadere').' / '.tr('totale').'" class="tip fa fa-question-circle-o"></i></th>
+        <th class="text-center" width="120">
+            '.tr('Q.tà').' <i title="'.tr('da evadere').' / '.tr('totale').'" class="tip fa fa-question-circle-o"></i>
+        </th>
+        <th class="text-center" width="120">'.tr('Prezzo unitario').'</th>
         <th class="text-center" width="60">#</th>
     </tr>
 
@@ -51,20 +54,24 @@ $id_riferimento = get('id_riferimento');
 $righe = $documento->getRighe();
 foreach ($righe as $riga) {
     $qta_rimanente = $riga->qta_rimanente - $righe_utilizzate[$riga->id];
+    $riga_origine = $riga->getOriginal();
 
     $dettagli = [
         'tipo' => get_class($riga),
         'id' => $riga->id,
+        'descrizione' => $riga->descrizione,
         'qta' => $riga->qta,
-        'prezzo_unitario' => $riga->prezzo_unitario,
+        'um' => $riga->um,
+        'prezzo_unitario' => $riga->prezzo_unitario ?: $riga_origine->prezzo_unitario,
         'id_iva' => $riga->id_iva,
         'iva_percentuale' => $riga->aliquota->percentuale,
     ];
 
     echo '
         <tr '.($id_riferimento == $riga->id ? 'class="success"' : '').' data-dettagli='.json_encode($dettagli).'>
-            <td>'.$riga->descrizione.'</td>
-            <td>'.numberFormat($qta_rimanente, 'qta').' / '.numberFormat($riga->qta, 'qta').'</td>
+            <td>'.(!empty($riga->codice) ? $riga->codice.' - ' : '').$riga->descrizione.'</td>
+            <td>'.numberFormat($qta_rimanente, 'qta').' / '.numberFormat($riga->qta, 'qta').' '.$riga->um.'</td>
+            <td class="text-right">'.moneyFormat($riga->prezzo_unitario_corrente).'</td>
             <td class="text-center">';
 
     if ($qta_rimanente >= $qta) {
@@ -83,11 +90,13 @@ echo '
     </tbody>
 </table>
 
+<script>$(document).ready(init)</script>
+
 <script>
 var documento_importazione = {
     tipo: "'.$tipo_documento.'",
     id: "'.$id_documento.'",
-    descrizione: "'.$documento->getReference().'",
+    descrizione: '.json_encode(reference($documento, tr('Origine'))).',
 };
 
 function selezionaRiga(button) {
@@ -98,4 +107,12 @@ function selezionaRiga(button) {
 
     $(button).closest(".modal").modal("hide");
 }
+
+// Deselezione del riferimento in caso di selezione riga non effettuata
+$("#modals > div").on("hidden.bs.modal", function () {
+    if(!$("#id_riferimento_'.$id_riga.'").val()) {
+        input("selezione_riferimento['.$id_riga.']").enable()
+            .getElement().selectReset();
+    }
+});
 </script>';

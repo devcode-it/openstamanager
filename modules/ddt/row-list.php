@@ -17,7 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-include_once __DIR__.'/../../core.php';
+include_once __DIR__.'/init.php';
 
 echo '
 <div class="table-responsive">
@@ -38,7 +38,10 @@ echo '
 
 // Righe documento
 $righe = $ddt->getRighe();
-foreach ($righe as $key => $riga) {
+$num = 0;
+foreach ($righe as $riga) {
+    ++$num;
+
     $extra = '';
     $mancanti = 0;
 
@@ -57,25 +60,34 @@ foreach ($righe as $key => $riga) {
     echo '
         <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'" '.$extra.'>
             <td class="text-center">
-                '.($key + 1).'
+                '.$num.'
             </td>
 
-            <td>';
-
-    if ($riga->isArticolo()) {
-        echo Modules::link('Articoli', $riga->idarticolo, $riga->codice.' - '.$riga->descrizione);
-    } else {
-        echo nl2br($riga->descrizione);
-    }
+            <td>
+                 <small class="pull-right text-right text-muted">';
 
     $numero_riferimenti_riga = $riga->referenceTargets()->count();
     $numero_riferimenti_collegati = $riga->referenceSources()->count();
     $riferimenti_presenti = $numero_riferimenti_riga;
     $testo_aggiuntivo = $riferimenti_presenti ? $numero_riferimenti_riga : '';
     echo '
-                <button type="button" class="btn btn-xs btn-'.($riferimenti_presenti ? 'primary' : 'info').' pull-right" onclick="apriRiferimenti(this)">
-                    <i class="fa fa-chevron-right"></i> '.tr('Riferimenti').' '.$testo_aggiuntivo.'
-                </button>';
+                    <button type="button" class="btn btn-xs btn-'.($riferimenti_presenti ? 'primary' : 'info').'" onclick="apriRiferimenti(this)">
+                        <i class="fa fa-chevron-right"></i> '.tr('Riferimenti').' '.$testo_aggiuntivo.'
+                    </button>';
+
+    // Aggiunta dei riferimenti ai documenti
+    if ($riga->hasOriginal()) {
+        echo '
+                    <br>'.reference($riga->getOriginal()->parent, tr('Origine'));
+    }
+    echo '
+                </small>';
+
+    if ($riga->isArticolo()) {
+        echo Modules::link('Articoli', $riga->idarticolo, $riga->codice.' - '.$riga->descrizione);
+    } else {
+        echo nl2br($riga->descrizione);
+    }
 
     if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
         if (!empty($mancanti)) {
@@ -88,12 +100,6 @@ foreach ($righe as $key => $riga) {
             echo '
                 <br>'.tr('SN').': '.implode(', ', $serials);
         }
-    }
-
-    // Aggiunta dei riferimenti ai documenti
-    if ($riga->hasOriginal()) {
-        echo '
-                <br>'.reference($riga->getOriginal()->parent);
     }
 
     echo '

@@ -104,6 +104,7 @@ if (Auth::check()) {
         'filter' => tr('Filtra'),
         'long' => tr('La ricerca potrebbe richiedere del tempo'),
         'details' => tr('Dettagli'),
+        'loading' => tr('Caricamento'),
         'waiting' => tr('Impossibile procedere'),
         'waiting_msg' => tr('Prima di proseguire devi selezionare alcuni elementi!'),
         'hooksExecuting' => tr('Hooks in esecuzione'),

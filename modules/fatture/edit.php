@@ -709,14 +709,8 @@ if ($dir == 'entrata') {
 		<div class="clearfix"></div>
 		<br>
 
-		<div class="row">
-			<div class="col-md-12">
-<?php
-
-include $structure->filepath('row-list.php');
-
-?>
-			</div>
+        <div class="row">
+			<div class="col-md-12" id="righe"></div>
 		</div>
 	</div>
 </div>
@@ -868,18 +862,33 @@ async function gestioneRiga(button, options) {
     }
 }
 
-$(document).ready(function () {
-    $("#data_registrazione").on("dp.change", function (e) {
-        var data = $("#data_competenza");
-        data.data("DateTimePicker").minDate(e.date);
+/**
+ * Funzione dedicata al caricamento dinamico via AJAX delle righe del documento.
+ */
+function caricaRighe() {
+    let container = $("#righe");
 
-        if(data.data("DateTimePicker").date() < e.date){
-            data.data("DateTimePicker").date(e.date);
+    localLoading(container, true);
+    return $.get("'.$structure->fileurl('row-list.php').'?id_module='.$id_module.'&id_record='.$id_record.'", function(data) {
+        container.html(data);
+        localLoading(container, false);
+    });
+}
+
+$(document).ready(function () {
+    caricaRighe();
+
+    $("#data_registrazione").on("dp.change", function (e) {
+        let data_competenza = $("#data_competenza");
+        data_competenza.data("DateTimePicker").minDate(e.date);
+
+        if(data_competenza.data("DateTimePicker").date() < e.date){
+            data_competenza.data("DateTimePicker").date(e.date);
         }
     });
 
     $("#data").on("dp.change", function (e) {
-        var data_competenza = $("#data_competenza");
+        let data_competenza = $("#data_competenza");
         data_competenza.data("DateTimePicker").minDate(e.date);
 
         if(data_competenza.data("DateTimePicker").date() < e.date){

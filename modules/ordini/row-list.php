@@ -17,7 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-include_once __DIR__.'/../../core.php';
+include_once __DIR__.'/init.php';
 
 echo '
 <div class="table-responsive">
@@ -41,7 +41,10 @@ echo '
 $today = new Carbon\Carbon();
 $today = $today->startOfDay();
 $righe = $ordine->getRighe();
-foreach ($righe as $key => $riga) {
+$num = 0;
+foreach ($righe as $riga) {
+    ++$num;
+
     $extra = '';
     $mancanti = 0;
 
@@ -60,10 +63,16 @@ foreach ($righe as $key => $riga) {
     echo '
         <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'" '.$extra.'>
             <td class="text-center">
-                '.($key + 1).'
+                '.$num.'
             </td>
 
             <td>';
+
+    // Aggiunta dei riferimenti ai documenti
+    if ($riga->hasOriginal()) {
+        echo '
+                <small class="pull-right text-right text-muted">'.reference($riga->getOriginal()->parent, tr('Origine')).'</small>';
+    }
 
     if ($riga->isArticolo()) {
         echo Modules::link('Articoli', $riga->idarticolo, $riga->codice.' - '.$riga->descrizione);
@@ -82,12 +91,6 @@ foreach ($righe as $key => $riga) {
             echo '
                 <br>'.tr('SN').': '.implode(', ', $serials);
         }
-    }
-
-    // Aggiunta dei riferimenti ai documenti
-    if ($riga->hasOriginal()) {
-        echo '
-                <br>'.reference($riga->getOriginal()->parent);
     }
 
     echo '

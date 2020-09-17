@@ -48,7 +48,9 @@ echo "
 
 // Righe documento
 $righe = $documento->getRighe();
-foreach ($righe as $key => $riga) {
+$num = 0;
+foreach ($righe as $riga) {
+    ++$num;
     $r = $riga->toArray();
 
     $autofill->count($r['descrizione']);
@@ -61,7 +63,7 @@ foreach ($righe as $key => $riga) {
 
     echo '
         <td class="text-center" style="vertical-align: middle">
-            '.($key + 1).'
+            '.$num.'
         </td>';
 
     echo '

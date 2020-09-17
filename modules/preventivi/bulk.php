@@ -92,6 +92,8 @@ switch (post('op')) {
                     $qta = $riga->qta_rimanente;
 
                     if ($qta > 0) {
+                        //Fix per idconto righe fattura
+                        $riga->idconto = $fattura->idconto;
                         $copia = $riga->copiaIn($fattura, $qta);
 
                         // Aggiornamento seriali dalla riga dell'ordine
@@ -117,7 +119,7 @@ $operations['crea_fattura'] = [
     'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Fattura documenti'),
     'data' => [
         'title' => tr('Vuoi davvero fatturare questi documenti?'),
-        'msg' => '{[ "type": "checkbox", "placeholder": "'.tr('Aggiungere alle fatture di vendita nello stato bozza?').'", "name": "accodare" ]}<br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module=\''.$id_fatture.'\' AND is_fiscale = 1 ORDER BY name", "value": "'.$id_segment.'" ]}',
+        'msg' => '{[ "type": "checkbox", "label": "'.tr('Aggiungere alle fatture esistenti non ancora emesse?').'", "placeholder": "'.tr('Aggiungere alle fatture di vendita nello stato bozza?').'", "name": "accodare" ]}<br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module=\''.$id_fatture.'\' AND is_fiscale = 1 ORDER BY name", "value": "'.$id_segment.'" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,

@@ -228,12 +228,12 @@ if (!$is_completato) {
 <!-- AGGIUNTA TECNICO -->
 <div class="row">
     <div class="col-md-offset-6 col-md-4">
-        {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "nuovotecnico", "placeholder": "'.tr('Seleziona un tecnico').'", "ajax-source": "tecnici", "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|tipoanagrafica=Tecnico" ]}
+        {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "nuovo_tecnico", "placeholder": "'.tr('Seleziona un tecnico').'", "ajax-source": "tecnici", "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|tipoanagrafica=Tecnico" ]}
     </div>
 
     <div class="col-md-2">
         <label>&nbsp;</label>
-        <button type="button" class="btn btn-primary btn-block" onclick="if($(\'#nuovotecnico\').val()){ add_tecnici($(\'#nuovotecnico\').val()); }else{ swal(\''.tr('Attenzione').'\', \''.tr('Seleziona il tecnico da aggiungere').'.\', \'warning\'); $(\'#nuovotecnico\').focus(); }">
+        <button type="button" class="btn btn-primary btn-block" onclick="if($(\'#nuovo_tecnico\').val()){ add_tecnici($(\'#nuovo_tecnico\').val()); }else{ swal(\''.tr('Attenzione').'\', \''.tr('Seleziona il tecnico da aggiungere').'.\', \'warning\'); $(\'#nuovo_tecnico\').focus(); }">
             <i class="fa fa-plus"></i> '.tr('Aggiungi').'
         </button>
     </div>
@@ -262,12 +262,8 @@ async function modificaSessione(button) {
     }
 }
 
-function caricaTecnici() {
-    return $("#tecnici").load("'.$module->fileurl('ajax_tecnici.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record);
-}
-
 function calcolaConflittiTecnici() {
-    let tecnici = [input("nuovotecnico").get()];
+    let tecnici = [input("nuovo_tecnico").get()];
     let inizio = moment().startOf("hour");
 
     return $("#info-conflitti").load("'.$module->fileurl('occupazione_tecnici.php').'", {
@@ -279,11 +275,7 @@ function calcolaConflittiTecnici() {
     });
 }
 
-function calcolaCosti() {
-    return $("#costi").load("'.$module->fileurl('ajax_costi.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record);
-}
-
-input("nuovotecnico").change(function() {
+input("nuovo_tecnico").change(function() {
     calcolaConflittiTecnici();
 });
 
@@ -323,7 +315,7 @@ function add_tecnici(id_tecnico) {
         type: "post",
         success: function() {
             caricaTecnici();
-            calcolaCosti();
+            caricaCosti();
 
             calcolaConflittiTecnici();
         }
@@ -346,7 +338,7 @@ function elimina_sessione(id_sessione) {
             type: "post",
             success: function() {
                 caricaTecnici();
-                calcolaCosti();
+                caricaCosti();
 
                 calcolaConflittiTecnici();
             }

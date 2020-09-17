@@ -29,6 +29,7 @@ use Modules\Fatture\Fattura;
 use Modules\Fatture\Stato;
 use Modules\Fatture\Tipo;
 use Plugins\ExportFE\FatturaElettronica;
+use Util\XML;
 
 $module = Modules::get($id_module);
 
@@ -209,14 +210,14 @@ switch (post('op')) {
     // Ricalcolo scadenze
     case 'controlla_totali':
         try {
-            $xml = \Util\XML::read($fattura->getXML());
+            $xml = XML::read($fattura->getXML());
 
             // Totale basato sul campo ImportoTotaleDocumento
-            //$dati_generali = $xml['FatturaElettronicaBody']['DatiGenerali']['DatiGeneraliDocumento'];
-            //$totale_documento = abs(floatval($dati_generali['ImportoTotaleDocumento']));
+            $dati_generali = $xml['FatturaElettronicaBody']['DatiGenerali']['DatiGeneraliDocumento'];
+            $totale_documento_indicato = abs(floatval($dati_generali['ImportoTotaleDocumento']));
 
             // Calcolo del totale basato sui DatiRiepilogo
-            if (empty($totale_documento)) {
+            if (empty($totale_documento) && empty($dati_generali['ScontoMaggiorazione'])) {
                 $totale_documento = 0;
 
                 $riepiloghi = $xml['FatturaElettronicaBody']['DatiBeniServizi']['DatiRiepilogo'];
@@ -229,6 +230,8 @@ switch (post('op')) {
                 }
 
                 $totale_documento = abs($totale_documento);
+            } else {
+                $totale_documento = $totale_documento_indicato;
             }
 
             $totale_documento = $fattura->isNota() ? -$totale_documento : $totale_documento;

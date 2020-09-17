@@ -17,7 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-include_once __DIR__.'/../../core.php';
+include_once __DIR__.'/init.php';
 
 echo '
 <div class="table-responsive">
@@ -38,12 +38,23 @@ echo '
 
 // Righe documento
 $righe = $contratto->getRighe();
-foreach ($righe as $key => $riga) {
+$num = 0;
+foreach ($righe as $riga) {
+    ++$num;
+
     echo '
             <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'">
                 <td class="text-center">
-                    '.($key + 1).'
-                </td>';
+                    '.$num.'
+                </td>
+
+                <td>';
+
+    // Aggiunta dei riferimenti ai documenti
+    if ($riga->hasOriginal()) {
+        echo '
+                    <small class="pull-right text-right text-muted">'.reference($riga->getOriginal()->parent, tr('Origine')).'</small>';
+    }
 
     // Descrizione
     $descrizione = nl2br($riga->descrizione);
@@ -52,7 +63,6 @@ foreach ($righe as $key => $riga) {
     }
 
     echo '
-                <td>
                     '.$descrizione.'
                 </td>';
 

@@ -353,19 +353,14 @@ if (!$block_edit) {
                 <i class="fa fa-plus"></i> '.tr('Sconto/maggiorazione').'
             </button>';
 }
-?>
+
+echo '
 		</div>
 		<div class="clearfix"></div>
 		<br>
 
 		<div class="row">
-			<div class="col-md-12">
-
-<?php
-include $structure->filepath('row-list.php');
-
-echo '
-			</div>
+			<div class="col-md-12" id="righe"></div>
 		</div>
 	</div>
 </div>
@@ -406,6 +401,23 @@ async function gestioneRiga(button, options) {
         openModal(title, "'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&" + options);
     }
 }
+
+/**
+ * Funzione dedicata al caricamento dinamico via AJAX delle righe del documento.
+ */
+function caricaRighe() {
+    let container = $("#righe");
+
+    localLoading(container, true);
+    return $.get("'.$structure->fileurl('row-list.php').'?id_module='.$id_module.'&id_record='.$id_record.'", function(data) {
+        container.html(data);
+        localLoading(container, false);
+    });
+}
+
+$(document).ready(function() {
+    caricaRighe();
+});
 
 $("#idanagrafica").change(function() {
     updateSelectOption("idanagrafica", $(this).val());

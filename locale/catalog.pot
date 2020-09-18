@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenSTAManager\n"
-"POT-Creation-Date: 2020-09-10 16:13+0200\n"
+"POT-Creation-Date: 2020-09-18 18:38+0200\n"
 "PO-Revision-Date: 2017-09-06 09:35+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -114,7 +114,7 @@ msgstr ""
 msgid "Correggi account"
 msgstr ""
 
-#: bug.php:112 include/custom/top.php:346 include/top.php:374
+#: bug.php:112 include/custom/top.php:346 include/top.php:375
 msgid "Segnalazione bug"
 msgstr ""
 
@@ -266,7 +266,7 @@ msgstr ""
 
 #: editor.php:310 include/common/form.php:36 modules/interventi/modals/manage_sessione.php:32
 #: modules/partitario/edit_conto.php:64 modules/utenti/self.php:43 modules/utenti/user.php:100
-#: plugins/dettagli_articolo/dettaglio_fornitore.php:85 plugins/dichiarazioni_intento/edit.php:78
+#: plugins/dettagli_articolo/dettaglio_fornitore.php:81 plugins/dichiarazioni_intento/edit.php:78
 #: plugins/pianificazione_interventi/row-list.php:146 plugins/sedi/edit.php:175
 msgid "Modifica"
 msgstr ""
@@ -287,16 +287,16 @@ msgstr ""
 msgid "Nessun log disponibile per questa scheda"
 msgstr ""
 
-#: include/bottom.php:30 include/custom/top.php:291 include/top.php:319
+#: include/bottom.php:30 include/custom/top.php:291 include/top.php:320
 msgid "https://www.openstamanager.com"
 msgstr ""
 
-#: include/bottom.php:30 include/custom/top.php:291 include/top.php:319
+#: include/bottom.php:30 include/custom/top.php:291 include/top.php:320
 msgid "Il gestionale open source per l'assistenza tecnica e la fatturazione"
 msgstr ""
 
 #: include/bottom.php:30 include/custom/top.php:16 include/custom/top.php:295 include/custom/top.php:387
-#: include/init/configuration.php:333 include/init/init.php:128 include/top.php:33 include/top.php:323 include/top.php:415
+#: include/init/configuration.php:333 include/init/init.php:128 include/top.php:33 include/top.php:324 include/top.php:416
 #: index.php:137 info.php:32 modules/utenti/info.php:58 plugins/notes.php:51 src/HTMLBuilder/Manager/FileManager.php:127
 msgid "OpenSTAManager"
 msgstr ""
@@ -313,9 +313,9 @@ msgstr ""
 
 #: include/common/articolo.php:28 include/common/articolo.php:47 include/common/barcode.php:45 modules/articoli/edit.php:31
 #: modules/articoli/widgets/articoli.dashboard.php:28 modules/contratti/edit.php:322 modules/ddt/edit.php:333
-#: modules/fatture/add_serial.php:76 modules/fatture/edit.php:665 modules/interventi/edit.php:390 modules/movimenti/add.php:38
+#: modules/fatture/add_serial.php:76 modules/fatture/edit.php:665 modules/interventi/edit.php:378 modules/movimenti/add.php:38
 #: modules/ordini/edit.php:200 modules/ordini/quantita_impegnate.php:38 modules/preventivi/edit.php:219
-#: modules/statistiche/edit.php:251 plugins/importFE/generate.php:362 plugins/pianificazione_interventi/pianificazione.php:139
+#: modules/statistiche/edit.php:251 plugins/importFE/generate.php:371 plugins/pianificazione_interventi/pianificazione.php:139
 msgid "Articolo"
 msgstr ""
 
@@ -350,7 +350,7 @@ msgstr ""
 
 #: include/common/barcode.php:23 modules/articoli/add.php:62 modules/articoli/edit.php:147
 #: modules/contratti/plugins/contratti.consuntivo.php:130 modules/contratti/plugins/contratti.consuntivo.php:160
-#: modules/interventi/row-list.php:40 modules/preventivi/plugins/preventivi.consuntivo.php:129
+#: modules/interventi/row-list.php:36 modules/preventivi/plugins/preventivi.consuntivo.php:129
 #: modules/preventivi/plugins/preventivi.consuntivo.php:159 plugins/pianificazione_interventi/row-list.php:37
 #: templates/magazzino_inventario/body.php:72
 msgid "Prezzo di acquisto"
@@ -365,7 +365,7 @@ msgid "Prezzo vendita imponibile"
 msgstr ""
 
 #: include/common/barcode.php:29 modules/articoli/add.php:32 modules/articoli/edit.php:47 modules/contratti/edit.php:327
-#: modules/ddt/edit.php:338 modules/fatture/edit.php:670 modules/interventi/edit.php:395 modules/movimenti/add.php:32
+#: modules/ddt/edit.php:338 modules/fatture/edit.php:670 modules/interventi/edit.php:383 modules/movimenti/add.php:32
 #: modules/ordini/edit.php:205 modules/preventivi/edit.php:224
 msgid "Barcode"
 msgstr ""
@@ -390,9 +390,9 @@ msgstr ""
 #: modules/articoli/plugins/articoli.movimenti.php:76 modules/articoli/widgets/articoli.dashboard.php:29
 #: modules/contratti/plugins/contratti.consuntivo.php:129 modules/contratti/plugins/contratti.consuntivo.php:159
 #: modules/contratti/row-list.php:29 modules/ddt/row-list.php:29 modules/fatture/row-list.php:29
-#: modules/interventi/row-list.php:36 modules/ordini/quantita_impegnate.php:39 modules/ordini/row-list.php:30
+#: modules/interventi/row-list.php:32 modules/ordini/quantita_impegnate.php:39 modules/ordini/row-list.php:30
 #: modules/preventivi/plugins/preventivi.consuntivo.php:128 modules/preventivi/plugins/preventivi.consuntivo.php:158
-#: modules/preventivi/row-list.php:29 modules/statistiche/edit.php:252 plugins/importFE/riferimento.php:44
+#: modules/preventivi/row-list.php:29 modules/statistiche/edit.php:252 plugins/importFE/riferimento.php:45
 #: plugins/pianificazione_fatturazione/crea_fattura.php:90 plugins/pianificazione_interventi/row-list.php:36
 #: templates/contratti/body.php:99 templates/ddt/body.php:37 templates/fatture/body.php:40 templates/interventi/body.php:159
 #: templates/magazzino_inventario/body.php:71 templates/ordini/body.php:55 templates/preventivi/body.php:130
@@ -407,11 +407,11 @@ msgstr ""
 msgid "Il valore positivo indica uno sconto. Per applicare una maggiorazione inserire un valore negativo."
 msgstr ""
 
-#: include/common/conti.php:65 include/common/importa.php:196 modules/fatture/row-list.php:293
+#: include/common/conti.php:65 include/common/importa.php:196 modules/fatture/row-list.php:301
 msgid "Rivalsa"
 msgstr ""
 
-#: include/common/conti.php:73 include/common/importa.php:204 modules/fatture/row-list.php:339
+#: include/common/conti.php:73 include/common/importa.php:204 modules/fatture/row-list.php:347
 msgid "Ritenuta d'acconto"
 msgstr ""
 
@@ -420,7 +420,7 @@ msgid "Calcola ritenuta d'acconto su"
 msgstr ""
 
 #: include/common/conti.php:99 include/common/importa.php:91 include/common/importa.php:227 modules/fatture/edit.php:352
-#: modules/fatture/row-list.php:353
+#: modules/fatture/row-list.php:361
 msgid "Ritenuta contributi"
 msgstr ""
 
@@ -438,7 +438,7 @@ msgstr ""
 #: modules/dashboard/actions.php:172 modules/ddt/edit.php:348 modules/ddt/row-list.php:28
 #: modules/fatture/add_intervento.php:92 modules/fatture/edit.php:680 modules/fatture/row-list.php:28
 #: modules/impianti/edit.php:91 modules/impianti/plugins/my_impianti.interventi.php:119 modules/interventi/edit.php:286
-#: modules/interventi/plugins/my_impianti.interventi.php:40 modules/interventi/row-list.php:35
+#: modules/interventi/plugins/my_impianti.interventi.php:40 modules/interventi/row-list.php:31
 #: modules/interventi/widgets/interventi_da_pianificare.php:67 modules/iva/add.php:28 modules/iva/edit.php:62
 #: modules/liste_newsletter/edit.php:42 modules/movimenti/add.php:262 modules/ordini/edit.php:215
 #: modules/ordini/row-list.php:28 modules/pagamenti/add.php:28 modules/pagamenti/edit.php:35
@@ -454,7 +454,7 @@ msgstr ""
 #: modules/tipi_intervento/add.php:32 modules/tipi_intervento/edit.php:33 modules/tipi_scadenze/add.php:31
 #: modules/tipi_scadenze/edit.php:50 modules/voci_servizio/add.php:32 modules/voci_servizio/edit.php:33
 #: modules/zone/add.php:32 modules/zone/edit.php:34 plugins/dettagli_articolo/dettaglio_fornitore.php:62
-#: plugins/dettagli_articolo/edit.php:201 plugins/exportFE/edit.php:170 plugins/importFE/generate.php:284
+#: plugins/dettagli_articolo/edit.php:201 plugins/exportFE/edit.php:170 plugins/importFE/generate.php:285
 #: plugins/importFE/list.php:33 plugins/importFE/riferimento.php:43
 #: plugins/pianificazione_fatturazione/add_pianificazione.php:98 plugins/pianificazione_fatturazione/crea_fattura.php:89
 #: plugins/pianificazione_interventi/edit.php:68 plugins/pianificazione_interventi/pianificazione.php:119
@@ -488,9 +488,9 @@ msgstr ""
 msgid "Stato"
 msgstr ""
 
-#: include/common/importa.php:95 modules/contratti/bulk.php:120 modules/ddt/bulk.php:148 modules/fatture/add.php:72
-#: modules/fatture/bulk.php:292 modules/fatture/buttons.php:57 modules/interventi/bulk.php:253 modules/preventivi/bulk.php:120
-#: modules/segmenti/edit.php:95 modules/stampe_contabili/stampe_contabili.php:34 plugins/importFE/generate.php:205
+#: include/common/importa.php:95 modules/contratti/bulk.php:122 modules/ddt/bulk.php:150 modules/fatture/add.php:72
+#: modules/fatture/bulk.php:292 modules/fatture/buttons.php:57 modules/interventi/bulk.php:253 modules/preventivi/bulk.php:122
+#: modules/segmenti/edit.php:95 modules/stampe_contabili/stampe_contabili.php:34 plugins/importFE/generate.php:207
 #: plugins/pianificazione_fatturazione/crea_fattura.php:60
 msgid "Sezionale"
 msgstr ""
@@ -538,10 +538,10 @@ msgstr ""
 
 #: include/common/importa.php:341 modules/articoli/plugins/articoli.giacenze.php:89
 #: modules/articoli/plugins/articoli.giacenze.php:154 modules/articoli/plugins/articoli.lotti.php:120
-#: modules/contratti/plugins/contratti.consuntivo.php:198 modules/contratti/row-list.php:198 modules/ddt/row-list.php:258
-#: modules/fatture/row-list.php:326 modules/interventi/ajax_costi.php:137
-#: modules/interventi/plugins/my_impianti.interventi.php:60 modules/ordini/row-list.php:275
-#: modules/preventivi/plugins/preventivi.consuntivo.php:197 modules/preventivi/row-list.php:196
+#: modules/contratti/plugins/contratti.consuntivo.php:198 modules/contratti/row-list.php:208 modules/ddt/row-list.php:264
+#: modules/fatture/row-list.php:334 modules/interventi/ajax_costi.php:137
+#: modules/interventi/plugins/my_impianti.interventi.php:60 modules/ordini/row-list.php:278
+#: modules/preventivi/plugins/preventivi.consuntivo.php:197 modules/preventivi/row-list.php:206
 #: modules/primanota/movimenti.php:87 modules/scadenzario/edit.php:157 modules/statistiche/edit.php:205
 #: modules/statistiche/edit.php:254 plugins/pianificazione_fatturazione/add_pianificazione.php:108
 #: plugins/rinnovi_contratti/edit.php:33 templates/fatturato/body.php:45 templates/fatturato/body.php:82
@@ -551,9 +551,9 @@ msgstr ""
 msgid "Totale"
 msgstr ""
 
-#: include/common/riga.php:30 include/common/sconto.php:46 modules/contratti/row-list.php:186
-#: modules/fatture/add_intervento.php:115 modules/fatture/row-list.php:311 modules/ordini/row-list.php:263
-#: modules/preventivi/row-list.php:184 plugins/pianificazione_interventi/row-list.php:42 templates/interventi/body.php:451
+#: include/common/riga.php:30 include/common/sconto.php:46 modules/contratti/row-list.php:196
+#: modules/fatture/add_intervento.php:115 modules/fatture/row-list.php:319 modules/ordini/row-list.php:266
+#: modules/preventivi/row-list.php:194 plugins/pianificazione_interventi/row-list.php:42 templates/interventi/body.php:451
 #: templates/registro_iva/bottom.php:35 templates/registro_iva/top.php:61
 msgid "Iva"
 msgstr ""
@@ -574,10 +574,10 @@ msgstr ""
 
 #: include/common/riga.php:50 modules/contratti/row-list.php:30 modules/ddt/row-list.php:30 modules/fatture/row-list.php:30
 #: modules/ordini/row-list.php:31 modules/preventivi/row-list.php:30 plugins/dettagli_articolo/dettaglio_prezzi.php:107
-#: plugins/dettagli_articolo/edit.php:75 plugins/dettagli_articolo/edit.php:287 plugins/importFE/generate.php:286
-#: plugins/pianificazione_fatturazione/crea_fattura.php:91 templates/contratti/body.php:103 templates/ddt/body.php:41
-#: templates/fatture/body.php:41 templates/interventi/body.php:163 templates/ordini/body.php:59
-#: templates/preventivi/body.php:134 templates/riepilogo_interventi/piece.php:96
+#: plugins/dettagli_articolo/edit.php:75 plugins/dettagli_articolo/edit.php:287 plugins/importFE/generate.php:287
+#: plugins/importFE/riferimento.php:47 plugins/pianificazione_fatturazione/crea_fattura.php:91
+#: templates/contratti/body.php:103 templates/ddt/body.php:41 templates/fatture/body.php:41 templates/interventi/body.php:163
+#: templates/ordini/body.php:59 templates/preventivi/body.php:134 templates/riepilogo_interventi/piece.php:96
 msgid "Prezzo unitario"
 msgstr ""
 
@@ -694,7 +694,7 @@ msgstr ""
 msgid "Applica"
 msgstr ""
 
-#: include/custom/top.php:77 include/custom/top.php:229 include/top.php:94 include/top.php:257
+#: include/custom/top.php:77 include/custom/top.php:229 include/top.php:94 include/top.php:258
 msgid "Annulla"
 msgstr ""
 
@@ -705,14 +705,14 @@ msgstr ""
 #: include/custom/top.php:81 include/top.php:98 modules/anagrafiche/edit.php:735 modules/articoli/edit.php:419
 #: modules/banche/edit.php:80 modules/beni/edit.php:61 modules/categorie_articoli/edit.php:129
 #: modules/categorie_documenti/edit.php:51 modules/categorie_impianti/edit.php:75 modules/causali/edit.php:71
-#: modules/causali_movimenti/edit.php:53 modules/checklists/edit.php:169 modules/contratti/edit.php:499
-#: modules/custom_fields/edit.php:74 modules/ddt/edit.php:471 modules/emails/edit.php:156 modules/fatture/edit.php:829
+#: modules/causali_movimenti/edit.php:53 modules/checklists/edit.php:169 modules/contratti/edit.php:511
+#: modules/custom_fields/edit.php:74 modules/ddt/edit.php:483 modules/emails/edit.php:156 modules/fatture/edit.php:823
 #: modules/gestione_componenti/edit.php:75 modules/gestione_documentale/edit.php:60 modules/impianti/edit.php:137
-#: modules/impianti/plugins/my_impianti.componenti.php:287 modules/interventi/edit.php:622 modules/iva/edit.php:135
+#: modules/impianti/plugins/my_impianti.componenti.php:287 modules/interventi/edit.php:641 modules/iva/edit.php:135
 #: modules/liste_newsletter/edit.php:138 modules/listini/edit.php:48 modules/misure/edit.php:62
-#: modules/modelli_primanota/edit.php:136 modules/newsletter/edit.php:205 modules/ordini/edit.php:362
+#: modules/modelli_primanota/edit.php:136 modules/newsletter/edit.php:205 modules/ordini/edit.php:374
 #: modules/pagamenti/edit.php:86 modules/pagamenti/edit.php:155 modules/partitario/edit.php:183 modules/porti/edit.php:64
-#: modules/preventivi/edit.php:393 modules/primanota/edit.php:92 modules/relazioni_anagrafiche/edit.php:62
+#: modules/preventivi/edit.php:404 modules/primanota/edit.php:92 modules/relazioni_anagrafiche/edit.php:62
 #: modules/ritenute/edit.php:69 modules/ritenute_contributi/edit.php:69 modules/rivalse/edit.php:54
 #: modules/scadenzario/edit.php:197 modules/segmenti/edit.php:186 modules/smtp/edit.php:134 modules/spedizioni/edit.php:63
 #: modules/stati_contratto/edit.php:75 modules/stati_intervento/edit.php:82 modules/stati_preventivo/edit.php:77
@@ -731,14 +731,15 @@ msgstr ""
 msgid "Eliminare questo elemento?"
 msgstr ""
 
-#: include/custom/top.php:84 include/init/configuration.php:321 include/top.php:101 include/top.php:123 include/top.php:127
+#: include/custom/top.php:84 include/init/configuration.php:321 include/top.php:101 include/top.php:124 include/top.php:128
 #: modules/articoli/plugins/articoli.lotti.php:291 modules/checklists/components/add-check.php:117
 #: modules/checklists/components/add-checklist.php:99 modules/import/edit.php:195 modules/smtp/buttons.php:50
 #: modules/utenti/edit.php:226 modules/viste/edit.php:149 plugins/dettagli_articolo/edit.php:377
 #: plugins/dettagli_articolo/edit.php:390 plugins/exportFE/edit.php:220 plugins/exportFE/edit.php:252
-#: plugins/exportFE/edit.php:289 plugins/importFE/buttons.php:71 plugins/importFE/edit.php:67 plugins/importFE/edit.php:205
-#: plugins/importFE/list.php:160 plugins/receiptFE/edit.php:137 plugins/receiptFE/edit.php:226 plugins/receiptFE/list.php:97
-#: src/HTMLBuilder/Manager/FileManager.php:349 src/HTMLBuilder/Manager/FileManager.php:367 src/Util/Zip.php:151
+#: plugins/exportFE/edit.php:289 plugins/importFE/buttons.php:77 plugins/importFE/buttons.php:113 plugins/importFE/edit.php:67
+#: plugins/importFE/edit.php:205 plugins/importFE/list.php:160 plugins/receiptFE/edit.php:137 plugins/receiptFE/edit.php:226
+#: plugins/receiptFE/list.php:97 src/HTMLBuilder/Manager/FileManager.php:347 src/HTMLBuilder/Manager/FileManager.php:365
+#: src/Util/Zip.php:151
 msgid "Errore"
 msgstr ""
 
@@ -763,203 +764,203 @@ msgstr ""
 msgid "Dettagli"
 msgstr ""
 
-#: include/custom/top.php:90 include/init/configuration.php:270 include/top.php:107
+#: include/custom/top.php:90 include/init/configuration.php:270 include/top.php:108
 msgid "Impossibile procedere"
 msgstr ""
 
-#: include/custom/top.php:91 include/top.php:108
+#: include/custom/top.php:91 include/top.php:109
 msgid "Prima di proseguire devi selezionare alcuni elementi!"
 msgstr ""
 
-#: include/custom/top.php:92 include/top.php:109
+#: include/custom/top.php:92 include/top.php:110
 msgid "Hooks in esecuzione"
 msgstr ""
 
-#: include/custom/top.php:93 include/top.php:110
+#: include/custom/top.php:93 include/top.php:111
 msgid "Hook \"_NAME_\" in esecuzione"
 msgstr ""
 
-#: include/custom/top.php:94 include/top.php:111
+#: include/custom/top.php:94 include/top.php:112
 msgid "Hai _NUM_ notifiche"
 msgstr ""
 
-#: include/custom/top.php:95 include/top.php:112
+#: include/custom/top.php:95 include/top.php:113
 msgid "Hai 1 notifica"
 msgstr ""
 
-#: include/custom/top.php:96 include/top.php:113
+#: include/custom/top.php:96 include/top.php:114
 msgid "Nessuna notifica"
 msgstr ""
 
-#: include/custom/top.php:97 include/top.php:114
+#: include/custom/top.php:97 include/top.php:115
 msgid "E' presente un solo periodo!"
 msgstr ""
 
-#: include/custom/top.php:105 include/top.php:132
+#: include/custom/top.php:105 include/top.php:133
 msgid "La password è troppo corta"
 msgstr ""
 
-#: include/custom/top.php:106 include/top.php:133
+#: include/custom/top.php:106 include/top.php:134
 msgid "La password è troppo lunga"
 msgstr ""
 
-#: include/custom/top.php:107 include/top.php:134
+#: include/custom/top.php:107 include/top.php:135
 msgid "La password contiene un carattere non valido"
 msgstr ""
 
-#: include/custom/top.php:108 include/custom/top.php:191 include/top.php:135 include/top.php:219
+#: include/custom/top.php:108 include/custom/top.php:191 include/top.php:136 include/top.php:220
 msgid "Non usare la tua e-mail come password"
 msgstr ""
 
-#: include/custom/top.php:109 include/top.php:136
+#: include/custom/top.php:109 include/top.php:137
 msgid "La password non può contenere il tuo nome"
 msgstr ""
 
-#: include/custom/top.php:110 include/custom/top.php:193 include/top.php:137 include/top.php:221
+#: include/custom/top.php:110 include/custom/top.php:193 include/top.php:138 include/top.php:222
 msgid "Usa classi di caratteri diversi"
 msgstr ""
 
-#: include/custom/top.php:111 include/top.php:138
+#: include/custom/top.php:111 include/top.php:139
 msgid "La password contiene ripetizioni"
 msgstr ""
 
-#: include/custom/top.php:112 include/top.php:139
+#: include/custom/top.php:112 include/top.php:140
 msgid "La password contiene sequenze"
 msgstr ""
 
-#: include/custom/top.php:113 include/top.php:140 index.php:96 modules/anagrafiche/validation.php:93
+#: include/custom/top.php:113 include/top.php:141 index.php:96 modules/anagrafiche/validation.php:93
 #: modules/anagrafiche/validation.php:132 modules/articoli/add.php:134 modules/articoli/edit.php:346
 #: modules/interventi/ajax_tecnici.php:236 modules/stampe_contabili/edit.php:25 reset.php:93
 msgid "Attenzione"
 msgstr ""
 
-#: include/custom/top.php:114 include/custom/top.php:197 include/top.php:141 include/top.php:225
+#: include/custom/top.php:114 include/custom/top.php:197 include/top.php:142 include/top.php:226
 msgid "Molto debole"
 msgstr ""
 
-#: include/custom/top.php:115 include/custom/top.php:198 include/top.php:142 include/top.php:226
+#: include/custom/top.php:115 include/custom/top.php:198 include/top.php:143 include/top.php:227
 msgid "Debole"
 msgstr ""
 
-#: include/custom/top.php:116 include/custom/top.php:199 include/top.php:143 include/top.php:227
+#: include/custom/top.php:116 include/custom/top.php:199 include/top.php:144 include/top.php:228
 msgid "Normale"
 msgstr ""
 
-#: include/custom/top.php:117 include/custom/top.php:200 include/top.php:144 include/top.php:228
+#: include/custom/top.php:117 include/custom/top.php:200 include/top.php:145 include/top.php:229
 msgid "Media"
 msgstr ""
 
-#: include/custom/top.php:118 include/custom/top.php:201 include/top.php:145 include/top.php:229
+#: include/custom/top.php:118 include/custom/top.php:201 include/top.php:146 include/top.php:230
 msgid "Forte"
 msgstr ""
 
-#: include/custom/top.php:119 include/custom/top.php:202 include/top.php:146 include/top.php:230
+#: include/custom/top.php:119 include/custom/top.php:202 include/top.php:147 include/top.php:231
 msgid "Molto forte"
 msgstr ""
 
-#: include/custom/top.php:122 include/top.php:149
+#: include/custom/top.php:122 include/top.php:150
 msgid "Nessun dato presente nella tabella"
 msgstr ""
 
-#: include/custom/top.php:123 include/top.php:150
+#: include/custom/top.php:123 include/top.php:151
 msgid "Vista da _START_ a _END_ di _TOTAL_ elementi"
 msgstr ""
 
-#: include/custom/top.php:124 include/top.php:151
+#: include/custom/top.php:124 include/top.php:152
 msgid "Vista da 0 a 0 di 0 elementi"
 msgstr ""
 
-#: include/custom/top.php:125 include/top.php:152
+#: include/custom/top.php:125 include/top.php:153
 msgid "filtrati da _MAX_ elementi totali"
 msgstr ""
 
-#: include/custom/top.php:127 include/top.php:154
+#: include/custom/top.php:127 include/top.php:155
 msgid "Visualizza _MENU_ elementi"
 msgstr ""
 
-#: include/custom/top.php:129 include/top.php:156
+#: include/custom/top.php:129 include/top.php:157
 msgid "Elaborazione"
 msgstr ""
 
-#: include/custom/top.php:130 include/custom/top.php:397 include/top.php:157 include/top.php:425
+#: include/custom/top.php:130 include/custom/top.php:397 include/top.php:158 include/top.php:426
 msgid "Cerca"
 msgstr ""
 
-#: include/custom/top.php:131 include/top.php:158
+#: include/custom/top.php:131 include/top.php:159
 msgid "La ricerca non ha portato alcun risultato"
 msgstr ""
 
-#: include/custom/top.php:133 include/top.php:160 modules/articoli/plugins/articoli.lotti.php:50
+#: include/custom/top.php:133 include/top.php:161 modules/articoli/plugins/articoli.lotti.php:50
 #: templates/riepilogo_interventi/piece.php:72
 msgid "Inizio"
 msgstr ""
 
-#: include/custom/top.php:134 include/init/configuration.php:259 include/top.php:161
+#: include/custom/top.php:134 include/init/configuration.php:259 include/top.php:162
 msgid "Precedente"
 msgstr ""
 
-#: include/custom/top.php:135 include/init/configuration.php:258 include/top.php:162
+#: include/custom/top.php:135 include/init/configuration.php:258 include/top.php:163
 msgid "Successivo"
 msgstr ""
 
-#: include/custom/top.php:136 include/top.php:163 modules/articoli/plugins/articoli.lotti.php:58
+#: include/custom/top.php:136 include/top.php:164 modules/articoli/plugins/articoli.lotti.php:58
 #: templates/riepilogo_interventi/piece.php:73
 msgid "Fine"
 msgstr ""
 
-#: include/custom/top.php:188 include/top.php:216
+#: include/custom/top.php:188 include/top.php:217
 msgid "La tua password è troppo corta"
 msgstr ""
 
-#: include/custom/top.php:189 include/top.php:217
+#: include/custom/top.php:189 include/top.php:218
 msgid "La tua password è troppo lunga"
 msgstr ""
 
-#: include/custom/top.php:190 include/top.php:218
+#: include/custom/top.php:190 include/top.php:219
 msgid "La tua password contiene un carattere non valido"
 msgstr ""
 
-#: include/custom/top.php:192 include/top.php:220
+#: include/custom/top.php:192 include/top.php:221
 msgid "La tua password non può contenere il tuo nome"
 msgstr ""
 
-#: include/custom/top.php:194 include/top.php:222
+#: include/custom/top.php:194 include/top.php:223
 msgid "Troppe ripetizioni"
 msgstr ""
 
-#: include/custom/top.php:195 include/top.php:223
+#: include/custom/top.php:195 include/top.php:224
 msgid "La tua password contiene sequenze"
 msgstr ""
 
-#: include/custom/top.php:196 include/top.php:224
+#: include/custom/top.php:196 include/top.php:225
 msgid "Errori"
 msgstr ""
 
-#: include/custom/top.php:293 include/top.php:321
+#: include/custom/top.php:293 include/top.php:322
 msgid "OSM"
 msgstr ""
 
-#: include/custom/top.php:302 include/top.php:330
+#: include/custom/top.php:302 include/top.php:331
 msgid "Mostra/nascondi menu"
 msgstr ""
 
-#: include/custom/top.php:342 include/manager.php:225 include/top.php:370 modules/articoli/widgets/stampa_inventario.php:38
+#: include/custom/top.php:342 include/manager.php:225 include/top.php:371 modules/articoli/widgets/stampa_inventario.php:38
 #: modules/dashboard/widgets/stampa_calendario.dashboard.php:49 modules/partitario/edit.php:58
 #: modules/stampe_contabili/stampe_contabili.php:60 modules/stato_email/edit.php:107
 #: src/HTMLBuilder/Manager/ButtonManager.php:54 src/HTMLBuilder/Manager/ButtonManager.php:182
 msgid "Stampa"
 msgstr ""
 
-#: include/custom/top.php:350 include/top.php:378
+#: include/custom/top.php:350 include/top.php:379
 msgid "Log accessi"
 msgstr ""
 
-#: include/custom/top.php:354 include/custom/top.php:441 include/top.php:382 include/top.php:531 info.php:22 info.php:34
+#: include/custom/top.php:354 include/custom/top.php:441 include/top.php:383 include/top.php:532 info.php:22 info.php:34
 #: modules/stato_email/edit.php:26
 msgid "Informazioni"
 msgstr ""
 
-#: include/custom/top.php:358 include/top.php:386
+#: include/custom/top.php:358 include/top.php:387
 msgid "Esci"
 msgstr ""
 
@@ -1380,7 +1381,7 @@ msgstr ""
 msgid "E' fortemente consigliato rimuovere i permessi di scrittura dal file _FILE_"
 msgstr ""
 
-#: include/init/update.php:108 modules/articoli/plugins/articoli.lotti.php:286 plugins/importFE/generate.php:440
+#: include/init/update.php:108 modules/articoli/plugins/articoli.lotti.php:286 plugins/importFE/generate.php:448
 msgid "Continua"
 msgstr ""
 
@@ -1443,9 +1444,9 @@ msgid "Procedere l'aggiornamento?"
 msgstr ""
 
 #: include/init/update.php:171 modules/anagrafiche/bulk.php:73 modules/anagrafiche/bulk.php:84 modules/articoli/bulk.php:64
-#: modules/articoli/bulk.php:75 modules/contratti/bulk.php:121 modules/ddt/bulk.php:149 modules/fatture/bulk.php:293
+#: modules/articoli/bulk.php:75 modules/contratti/bulk.php:123 modules/ddt/bulk.php:151 modules/fatture/bulk.php:293
 #: modules/fatture/bulk.php:314 modules/fatture/bulk.php:325 modules/fatture/bulk.php:337 modules/fatture/bulk.php:349
-#: modules/preventivi/bulk.php:121 modules/stato_email/bulk.php:50 plugins/checks.php:129 plugins/importFE/edit.php:160
+#: modules/preventivi/bulk.php:123 modules/stato_email/bulk.php:50 plugins/checks.php:129 plugins/importFE/edit.php:160
 #: plugins/pianificazione_fatturazione/add_pianificazione.php:121 plugins/receiptFE/edit.php:175
 msgid "Procedi"
 msgstr ""
@@ -1524,16 +1525,16 @@ msgid "Documento"
 msgstr ""
 
 #: include/riferimenti/righe_documento.php:39 modules/contratti/row-list.php:29 modules/ddt/row-list.php:29
-#: modules/ordini/row-list.php:30 modules/preventivi/row-list.php:29 plugins/importFE/riferimento.php:44
+#: modules/ordini/row-list.php:30 modules/preventivi/row-list.php:29 plugins/importFE/riferimento.php:45
 msgid "da evadere"
 msgstr ""
 
 #: include/riferimenti/righe_documento.php:39 modules/contratti/row-list.php:29 modules/ddt/row-list.php:29
-#: modules/ordini/row-list.php:30 modules/preventivi/row-list.php:29 plugins/importFE/riferimento.php:44
+#: modules/ordini/row-list.php:30 modules/preventivi/row-list.php:29 plugins/importFE/riferimento.php:45
 msgid "totale"
 msgstr ""
 
-#: include/riferimenti/righe_riferimenti.php:38 plugins/importFE/generate.php:374
+#: include/riferimenti/righe_riferimenti.php:38 plugins/importFE/generate.php:383
 msgid "Riferimento"
 msgstr ""
 
@@ -1541,29 +1542,33 @@ msgstr ""
 msgid "Nessun riferimento presente"
 msgstr ""
 
-#: include/top.php:124 plugins/exportFE/edit.php:290
+#: include/top.php:107
+msgid "Caricamento"
+msgstr ""
+
+#: include/top.php:125 plugins/exportFE/edit.php:290
 msgid "Alcuni campi obbligatori non sono stati compilati correttamente"
 msgstr ""
 
-#: include/top.php:128
+#: include/top.php:129
 msgid "Errore durante il salvataggio del record"
 msgstr ""
 
-#: include/top.php:447
+#: include/top.php:448
 msgid "Plugin disponibili"
 msgstr ""
 
-#: include/top.php:473 modules/fatture/edit.php:373 modules/interventi/edit.php:290 modules/ordini/edit.php:131
+#: include/top.php:474 modules/fatture/edit.php:373 modules/interventi/edit.php:290 modules/ordini/edit.php:131
 #: plugins/notes.php:26
 msgid "Note interne"
 msgstr ""
 
-#: include/top.php:483 modules/checklists/components/add-checklist.php:37 modules/checklists/edit.php:85 plugins/checks.php:29
+#: include/top.php:484 modules/checklists/components/add-checklist.php:37 modules/checklists/edit.php:85 plugins/checks.php:29
 #: plugins/checks.php:49
 msgid "Checklist"
 msgstr ""
 
-#: include/top.php:492
+#: include/top.php:493
 msgid "Info"
 msgstr ""
 
@@ -2021,9 +2026,9 @@ msgstr ""
 msgid "Avviare la procedura?"
 msgstr ""
 
-#: modules/aggiornamenti/edit.php:124 modules/backups/edit.php:70 modules/contratti/row-list.php:236
-#: modules/ddt/row-list.php:298 modules/fatture/edit.php:791 modules/fatture/row-list.php:406
-#: modules/interventi/row-list.php:194 modules/ordini/row-list.php:313 modules/preventivi/row-list.php:262
+#: modules/aggiornamenti/edit.php:124 modules/backups/edit.php:70 modules/contratti/row-list.php:246
+#: modules/ddt/row-list.php:304 modules/fatture/edit.php:785 modules/fatture/row-list.php:414
+#: modules/interventi/row-list.php:190 modules/ordini/row-list.php:316 modules/preventivi/row-list.php:272
 #: plugins/importFE/edit.php:38 plugins/importFE/list.php:173 plugins/importFE/list.php:201 plugins/receiptFE/list.php:110
 #: plugins/receiptFE/list.php:138
 msgid "Sì"
@@ -2201,7 +2206,7 @@ msgstr ""
 msgid "Dati anagrafici"
 msgstr ""
 
-#: modules/anagrafiche/add.php:67 modules/anagrafiche/edit.php:70 plugins/importFE/generate.php:134
+#: modules/anagrafiche/add.php:67 modules/anagrafiche/edit.php:70 plugins/importFE/generate.php:136
 #: templates/contratti/body.php:67 templates/contratti_cons/top.php:46 templates/ddt/header.php:63
 #: templates/fatture/header.php:103 templates/preventivi/body.php:90 templates/preventivi_cons/top.php:46
 msgid "Partita IVA"
@@ -2302,7 +2307,7 @@ msgstr ""
 msgid "Anagrafiche eliminate!"
 msgstr ""
 
-#: modules/anagrafiche/bulk.php:70 modules/articoli/bulk.php:61 modules/ddt/bulk.php:139 modules/fatture/bulk.php:285
+#: modules/anagrafiche/bulk.php:70 modules/articoli/bulk.php:61 modules/ddt/bulk.php:141 modules/fatture/bulk.php:285
 #: modules/iva/bulk.php:53
 msgid "Elimina selezionati"
 msgstr ""
@@ -2523,7 +2528,7 @@ msgstr ""
 msgid "Cliente e fornitore"
 msgstr ""
 
-#: modules/anagrafiche/edit.php:376 modules/contratti/plugins/contratti.consuntivo.php:86
+#: modules/anagrafiche/edit.php:376 modules/contratti/plugins/contratti.consuntivo.php:86 modules/dashboard/actions.php:265
 #: modules/interventi/ajax_tecnici.php:231 modules/interventi/modals/manage_sessione.php:45
 #: modules/preventivi/plugins/preventivi.consuntivo.php:85 templates/interventi/body.php:262
 msgid "Tecnico"
@@ -2697,7 +2702,7 @@ msgstr ""
 #: modules/anagrafiche/edit.php:625 modules/articoli/edit.php:130 modules/banche/edit.php:55 modules/dashboard/actions.php:154
 #: modules/ddt/edit.php:253 modules/fatture/edit.php:367 modules/listini/edit.php:42 modules/ordini/edit.php:125
 #: modules/scadenzario/edit.php:82 modules/segmenti/edit.php:82 modules/smtp/edit.php:94 plugins/exportFE/edit.php:155
-#: plugins/sedi/edit.php:104 templates/ddt/footer.php:43 templates/ddt/footer.php:91 templates/fatture/body.php:230
+#: plugins/sedi/edit.php:104 templates/ddt/footer.php:43 templates/ddt/footer.php:91 templates/fatture/body.php:232
 #: templates/ordini/body.php:262
 msgid "Note"
 msgstr ""
@@ -2713,8 +2718,8 @@ msgid ""
 "\"<b>Filigrana stampe</b>\""
 msgstr ""
 
-#: modules/anagrafiche/edit.php:676 modules/articoli/edit.php:371 modules/contratti/edit.php:446 modules/ddt/edit.php:426
-#: modules/interventi/edit.php:581 modules/ordini/edit.php:317 modules/preventivi/edit.php:349
+#: modules/anagrafiche/edit.php:676 modules/articoli/edit.php:371 modules/contratti/edit.php:458 modules/ddt/edit.php:438
+#: modules/interventi/edit.php:600 modules/ordini/edit.php:329 modules/preventivi/edit.php:360
 #: modules/tipi_intervento/edit.php:107
 msgid "Documenti collegati: _NUM_"
 msgstr ""
@@ -2727,8 +2732,8 @@ msgstr ""
 msgid "_DOC_  _NUM_ del _DATE_ _DELETED_AT_"
 msgstr ""
 
-#: modules/anagrafiche/edit.php:729 modules/articoli/edit.php:413 modules/contratti/edit.php:493 modules/ddt/edit.php:459
-#: modules/interventi/edit.php:615 modules/ordini/edit.php:355 modules/preventivi/edit.php:386
+#: modules/anagrafiche/edit.php:729 modules/articoli/edit.php:413 modules/contratti/edit.php:505 modules/ddt/edit.php:471
+#: modules/interventi/edit.php:634 modules/ordini/edit.php:367 modules/preventivi/edit.php:397
 msgid "Eliminando questo documento si potrebbero verificare problemi nelle altre sezioni del gestionale"
 msgstr ""
 
@@ -2820,7 +2825,7 @@ msgstr ""
 #: modules/emails/actions.php:52 modules/gestione_componenti/actions.php:32 modules/gestione_documentale/actions.php:42
 #: modules/impianti/actions.php:50 modules/listini/actions.php:34 modules/smtp/actions.php:58
 #: modules/tecnici_tariffe/actions.php:43 modules/tipi_anagrafiche/actions.php:32 modules/voci_servizio/actions.php:29
-#: modules/zone/actions.php:38 plugins/dettagli_articolo/actions.php:54
+#: modules/zone/actions.php:38 plugins/dettagli_articolo/actions.php:53
 msgid "Informazioni salvate correttamente!"
 msgstr ""
 
@@ -2886,7 +2891,7 @@ msgid "Scorpora iva dal prezzo di vendita."
 msgstr ""
 
 #: modules/articoli/add.php:79 modules/articoli/edit.php:191 modules/contratti/plugins/contratti.consuntivo.php:131
-#: modules/contratti/plugins/contratti.consuntivo.php:161 modules/interventi/row-list.php:41
+#: modules/contratti/plugins/contratti.consuntivo.php:161 modules/interventi/row-list.php:37
 #: modules/preventivi/plugins/preventivi.consuntivo.php:130 modules/preventivi/plugins/preventivi.consuntivo.php:160
 #: plugins/pianificazione_interventi/row-list.php:41 templates/magazzino_inventario/body.php:70
 msgid "Prezzo di vendita"
@@ -2980,7 +2985,7 @@ msgstr ""
 msgid "Ubicazione"
 msgstr ""
 
-#: modules/articoli/edit.php:84 modules/movimenti/add.php:42 plugins/importFE/generate.php:285
+#: modules/articoli/edit.php:84 modules/movimenti/add.php:42 plugins/importFE/generate.php:286
 msgid "Quantità"
 msgstr ""
 
@@ -3004,8 +3009,8 @@ msgstr ""
 msgid "Data movimento"
 msgstr ""
 
-#: modules/articoli/edit.php:141 modules/contratti/row-list.php:80 modules/ddt/row-list.php:123
-#: modules/fatture/row-list.php:148 modules/ordini/row-list.php:148 modules/preventivi/row-list.php:78
+#: modules/articoli/edit.php:141 modules/contratti/row-list.php:90 modules/ddt/row-list.php:129
+#: modules/fatture/row-list.php:156 modules/ordini/row-list.php:151 modules/preventivi/row-list.php:88
 msgid "Acquisto"
 msgstr ""
 
@@ -3086,9 +3091,9 @@ msgstr ""
 msgid "Non ci sono piani di sconto/rincaro caricati"
 msgstr ""
 
-#: modules/articoli/edit.php:382 modules/articoli/plugins/articoli.lotti.php:201 modules/contratti/edit.php:459
-#: modules/ddt/edit.php:437 modules/ordini/edit.php:328 modules/preventivi/edit.php:360 modules/tipi_intervento/edit.php:118
-#: src/Traits/ReferenceTrait.php:40 templates/fatture/body.php:111 templates/spesometro/body.php:81
+#: modules/articoli/edit.php:382 modules/articoli/plugins/articoli.lotti.php:201 modules/contratti/edit.php:471
+#: modules/ddt/edit.php:449 modules/ordini/edit.php:340 modules/preventivi/edit.php:371 modules/tipi_intervento/edit.php:118
+#: src/Traits/ReferenceTrait.php:40 templates/fatture/body.php:113 templates/spesometro/body.php:81
 msgid "_DOC_ num. _NUM_ del _DATE_"
 msgstr ""
 
@@ -3295,7 +3300,7 @@ msgstr ""
 msgid "Questo articolo non è ancora stato movimentato"
 msgstr ""
 
-#: modules/articoli/src/Import/CSV.php:197
+#: modules/articoli/src/Import/CSV.php:199
 msgid "Movimento da importazione"
 msgstr ""
 
@@ -3599,7 +3604,7 @@ msgid "Sottocategorie"
 msgstr ""
 
 #: modules/categorie_articoli/edit.php:60 modules/contratti/edit.php:331 modules/ddt/edit.php:342 modules/fatture/edit.php:674
-#: modules/interventi/edit.php:399 modules/ordini/edit.php:209 modules/preventivi/edit.php:228
+#: modules/interventi/edit.php:387 modules/ordini/edit.php:209 modules/preventivi/edit.php:228
 #: modules/primanota/movimenti.php:61 plugins/pianificazione_interventi/pianificazione.php:143
 msgid "Aggiungi riga"
 msgstr ""
@@ -3733,7 +3738,7 @@ msgid "Gruppo"
 msgstr ""
 
 #: modules/checklists/components/add-check.php:118 modules/checklists/components/add-checklist.php:100
-#: src/HTMLBuilder/Manager/FileManager.php:350
+#: src/HTMLBuilder/Manager/FileManager.php:348
 msgid "Alcuni campi obbligatori non sono stati compilati correttamente."
 msgstr ""
 
@@ -3749,58 +3754,58 @@ msgstr ""
 msgid "Contratto duplicato correttamente!"
 msgstr ""
 
-#: modules/contratti/actions.php:162 modules/ddt/actions.php:181 modules/fatture/actions.php:455
+#: modules/contratti/actions.php:162 modules/ddt/actions.php:181 modules/fatture/actions.php:458
 #: modules/interventi/actions.php:269 modules/ordini/actions.php:160 modules/preventivi/actions.php:195
 msgid "Articoli aggiunti!"
 msgstr ""
 
-#: modules/contratti/actions.php:187 modules/ddt/actions.php:204 modules/ddt/actions.php:378 modules/fatture/actions.php:492
-#: modules/fatture/actions.php:638 modules/interventi/actions.php:233 modules/interventi/actions.php:294
+#: modules/contratti/actions.php:187 modules/ddt/actions.php:204 modules/ddt/actions.php:378 modules/fatture/actions.php:495
+#: modules/fatture/actions.php:641 modules/interventi/actions.php:233 modules/interventi/actions.php:294
 #: modules/ordini/actions.php:184 modules/ordini/actions.php:287 modules/preventivi/actions.php:220
 #: plugins/pianificazione_interventi/actions.php:227 plugins/pianificazione_interventi/actions.php:279
 msgid "Alcuni serial number sono già stati utilizzati!"
 msgstr ""
 
-#: modules/contratti/actions.php:193 modules/ddt/actions.php:210 modules/fatture/actions.php:498
+#: modules/contratti/actions.php:193 modules/ddt/actions.php:210 modules/fatture/actions.php:501
 #: modules/interventi/actions.php:300 modules/ordini/actions.php:190 modules/preventivi/actions.php:226
 #: plugins/pianificazione_interventi/actions.php:233
 msgid "Articolo modificato!"
 msgstr ""
 
-#: modules/contratti/actions.php:195 modules/ddt/actions.php:212 modules/fatture/actions.php:500
+#: modules/contratti/actions.php:195 modules/ddt/actions.php:212 modules/fatture/actions.php:503
 #: modules/interventi/actions.php:302 modules/ordini/actions.php:192 modules/preventivi/actions.php:228
 #: plugins/pianificazione_interventi/actions.php:235
 msgid "Articolo aggiunto!"
 msgstr ""
 
-#: modules/contratti/actions.php:216 modules/ddt/actions.php:236 modules/fatture/actions.php:531
+#: modules/contratti/actions.php:216 modules/ddt/actions.php:236 modules/fatture/actions.php:534
 #: modules/interventi/actions.php:326 modules/ordini/actions.php:216 modules/preventivi/actions.php:249
 msgid "Sconto/maggiorazione modificato!"
 msgstr ""
 
-#: modules/contratti/actions.php:218 modules/ddt/actions.php:238 modules/fatture/actions.php:533
+#: modules/contratti/actions.php:218 modules/ddt/actions.php:238 modules/fatture/actions.php:536
 #: modules/interventi/actions.php:328 modules/ordini/actions.php:218 modules/preventivi/actions.php:251
 msgid "Sconto/maggiorazione aggiunto!"
 msgstr ""
 
-#: modules/contratti/actions.php:246 modules/ddt/actions.php:265 modules/fatture/actions.php:573
+#: modules/contratti/actions.php:246 modules/ddt/actions.php:265 modules/fatture/actions.php:576
 #: modules/interventi/actions.php:354 modules/ordini/actions.php:246 modules/preventivi/actions.php:277
 #: plugins/pianificazione_interventi/actions.php:261
 msgid "Riga modificata!"
 msgstr ""
 
-#: modules/contratti/actions.php:248 modules/ddt/actions.php:267 modules/fatture/actions.php:575
+#: modules/contratti/actions.php:248 modules/ddt/actions.php:267 modules/fatture/actions.php:578
 #: modules/interventi/actions.php:356 modules/ordini/actions.php:248 modules/preventivi/actions.php:279
 #: plugins/pianificazione_interventi/actions.php:263
 msgid "Riga aggiunta!"
 msgstr ""
 
-#: modules/contratti/actions.php:265 modules/ddt/actions.php:287 modules/fatture/actions.php:595
+#: modules/contratti/actions.php:265 modules/ddt/actions.php:287 modules/fatture/actions.php:598
 #: modules/ordini/actions.php:268 modules/preventivi/actions.php:296
 msgid "Riga descrittiva modificata!"
 msgstr ""
 
-#: modules/contratti/actions.php:267 modules/ddt/actions.php:289 modules/fatture/actions.php:597
+#: modules/contratti/actions.php:267 modules/ddt/actions.php:289 modules/fatture/actions.php:600
 #: modules/ordini/actions.php:270 modules/preventivi/actions.php:298
 msgid "Riga descrittiva aggiunta!"
 msgstr ""
@@ -3809,7 +3814,7 @@ msgstr ""
 msgid "Riga eliminata!"
 msgstr ""
 
-#: modules/contratti/actions.php:295 modules/fatture/actions.php:613 modules/preventivi/actions.php:149
+#: modules/contratti/actions.php:295 modules/fatture/actions.php:616 modules/preventivi/actions.php:149
 msgid "Intervento _NUM_ rimosso!"
 msgstr ""
 
@@ -3817,7 +3822,7 @@ msgstr ""
 msgid "Contratto eliminato!"
 msgstr ""
 
-#: modules/contratti/actions.php:328 modules/ddt/actions.php:393 modules/fatture/actions.php:278
+#: modules/contratti/actions.php:328 modules/ddt/actions.php:393 modules/fatture/actions.php:281
 #: modules/interventi/actions.php:217 modules/ordini/actions.php:302 modules/preventivi/actions.php:162
 msgid "Sono stati utilizzati alcuni serial number nel documento: impossibile procedere!"
 msgstr ""
@@ -3834,28 +3839,28 @@ msgstr ""
 msgid "Errore durante l'importazione tariffe!"
 msgstr ""
 
-#: modules/contratti/actions.php:499 modules/ddt/actions.php:358 modules/fatture/actions.php:731
+#: modules/contratti/actions.php:499 modules/ddt/actions.php:358 modules/fatture/actions.php:734
 #: modules/interventi/actions.php:415 modules/ordini/actions.php:378
 msgid "_DOC_ aggiunto!"
 msgstr ""
 
-#: modules/contratti/bulk.php:107
+#: modules/contratti/bulk.php:109
 msgid "_NUM_ contratto fatturati!"
 msgstr ""
 
-#: modules/contratti/bulk.php:111
+#: modules/contratti/bulk.php:113
 msgid "Nessun contratto fatturato!"
 msgstr ""
 
-#: modules/contratti/bulk.php:117 modules/ddt/bulk.php:144 modules/interventi/bulk.php:249 modules/preventivi/bulk.php:117
+#: modules/contratti/bulk.php:119 modules/ddt/bulk.php:146 modules/interventi/bulk.php:249 modules/preventivi/bulk.php:119
 msgid "Fattura documenti"
 msgstr ""
 
-#: modules/contratti/bulk.php:119 modules/ddt/bulk.php:146 modules/preventivi/bulk.php:119
+#: modules/contratti/bulk.php:121 modules/ddt/bulk.php:148 modules/preventivi/bulk.php:121
 msgid "Vuoi davvero fatturare questi documenti?"
 msgstr ""
 
-#: modules/contratti/bulk.php:120 modules/ddt/bulk.php:147 modules/interventi/bulk.php:252
+#: modules/contratti/bulk.php:122 modules/ddt/bulk.php:149 modules/interventi/bulk.php:252 modules/preventivi/bulk.php:122
 msgid "Aggiungere alle fatture esistenti non ancora emesse?"
 msgstr ""
 
@@ -3932,8 +3937,8 @@ msgid "Agente"
 msgstr ""
 
 #: modules/contratti/edit.php:97 modules/ddt/edit.php:166 modules/fatture/edit.php:268 modules/ordini/edit.php:103
-#: modules/preventivi/edit.php:108 plugins/exportFE/src/FatturaElettronica.php:452 plugins/importFE/generate.php:160
-#: plugins/importFE/generate.php:255 templates/contratti/body.php:278 templates/ddt/header.php:56
+#: modules/preventivi/edit.php:108 plugins/exportFE/src/FatturaElettronica.php:452 plugins/importFE/generate.php:162
+#: plugins/importFE/generate.php:257 templates/contratti/body.php:278 templates/ddt/header.php:56
 #: templates/fatture/header.php:69 templates/ordini/header.php:56 templates/preventivi/body.php:56
 #: templates/preventivi/body.php:331
 msgid "Pagamento"
@@ -4049,23 +4054,23 @@ msgstr ""
 msgid "Mostra tipi di attività non modificati"
 msgstr ""
 
-#: modules/contratti/edit.php:314 modules/ddt/edit.php:314 modules/fatture/edit.php:578 modules/interventi/edit.php:378
-#: modules/ordini/edit.php:189 modules/preventivi/edit.php:211 plugins/importFE/generate.php:275
+#: modules/contratti/edit.php:314 modules/ddt/edit.php:314 modules/fatture/edit.php:578 modules/interventi/edit.php:366
+#: modules/ordini/edit.php:189 modules/preventivi/edit.php:211 plugins/importFE/generate.php:276
 #: plugins/pianificazione_fatturazione/add_pianificazione.php:38 plugins/pianificazione_interventi/pianificazione.php:129
 msgid "Righe"
 msgstr ""
 
-#: modules/contratti/edit.php:321 modules/ddt/edit.php:332 modules/fatture/edit.php:664 modules/interventi/edit.php:389
+#: modules/contratti/edit.php:321 modules/ddt/edit.php:332 modules/fatture/edit.php:664 modules/interventi/edit.php:377
 #: modules/ordini/edit.php:199 modules/preventivi/edit.php:218 plugins/pianificazione_interventi/pianificazione.php:138
 msgid "Aggiungi articolo"
 msgstr ""
 
-#: modules/contratti/edit.php:326 modules/ddt/edit.php:337 modules/fatture/edit.php:669 modules/interventi/edit.php:394
+#: modules/contratti/edit.php:326 modules/ddt/edit.php:337 modules/fatture/edit.php:669 modules/interventi/edit.php:382
 #: modules/ordini/edit.php:204 modules/preventivi/edit.php:223
 msgid "Aggiungi articoli tramite barcode"
 msgstr ""
 
-#: modules/contratti/edit.php:332 modules/ddt/edit.php:343 modules/fatture/edit.php:675 modules/interventi/edit.php:400
+#: modules/contratti/edit.php:332 modules/ddt/edit.php:343 modules/fatture/edit.php:675 modules/interventi/edit.php:388
 #: modules/ordini/edit.php:210 modules/preventivi/edit.php:229 plugins/pianificazione_interventi/pianificazione.php:144
 msgid "Riga"
 msgstr ""
@@ -4075,19 +4080,19 @@ msgstr ""
 msgid "Aggiungi descrizione"
 msgstr ""
 
-#: modules/contratti/edit.php:341 modules/ddt/edit.php:352 modules/fatture/edit.php:684 modules/interventi/edit.php:410
+#: modules/contratti/edit.php:341 modules/ddt/edit.php:352 modules/fatture/edit.php:684 modules/interventi/edit.php:398
 #: modules/ordini/edit.php:219 modules/preventivi/edit.php:238
 msgid "Aggiungi sconto/maggiorazione"
 msgstr ""
 
-#: modules/contratti/edit.php:342 modules/contratti/row-list.php:161 modules/ddt/edit.php:353 modules/ddt/row-list.php:215
-#: modules/fatture/edit.php:685 modules/fatture/row-list.php:257 modules/interventi/ajax_costi.php:103
-#: modules/interventi/edit.php:411 modules/ordini/edit.php:220 modules/ordini/row-list.php:238 modules/preventivi/edit.php:239
-#: modules/preventivi/row-list.php:159
+#: modules/contratti/edit.php:342 modules/contratti/row-list.php:171 modules/ddt/edit.php:353 modules/ddt/row-list.php:221
+#: modules/fatture/edit.php:685 modules/fatture/row-list.php:265 modules/interventi/ajax_costi.php:103
+#: modules/interventi/edit.php:399 modules/ordini/edit.php:220 modules/ordini/row-list.php:241 modules/preventivi/edit.php:239
+#: modules/preventivi/row-list.php:169
 msgid "Sconto/maggiorazione"
 msgstr ""
 
-#: modules/contratti/edit.php:471 modules/contratti/plugins/contratti.consuntivo.php:48
+#: modules/contratti/edit.php:483 modules/contratti/plugins/contratti.consuntivo.php:48
 #: modules/preventivi/plugins/preventivi.consuntivo.php:47 plugins/pianificazione_interventi/edit.php:93
 msgid "Intervento num. _NUM_ del _DATE_"
 msgstr ""
@@ -4195,19 +4200,19 @@ msgid "Stampa consuntivo"
 msgstr ""
 
 #: modules/contratti/row-list.php:27 modules/ddt/row-list.php:27 modules/fatture/row-list.php:27 modules/import/edit.php:112
-#: modules/interventi/row-list.php:48 modules/ordini/row-list.php:27 modules/preventivi/row-list.php:27
+#: modules/interventi/row-list.php:44 modules/ordini/row-list.php:27 modules/preventivi/row-list.php:27
 #: plugins/pianificazione_interventi/row-list.php:48 templates/ddt/body.php:35 templates/fatture/body.php:38
 #: templates/ordini/body.php:47
 msgid "#"
 msgstr ""
 
 #: modules/contratti/row-list.php:31 modules/ddt/row-list.php:31 modules/fatture/row-list.php:31
-#: modules/interventi/row-list.php:42 modules/ordini/row-list.php:32 modules/preventivi/row-list.php:31
+#: modules/interventi/row-list.php:38 modules/ordini/row-list.php:32 modules/preventivi/row-list.php:31
 msgid "Iva unitaria"
 msgstr ""
 
 #: modules/contratti/row-list.php:32 modules/ddt/row-list.php:32 modules/fatture/row-list.php:32
-#: modules/interventi/row-list.php:43 modules/ordini/row-list.php:33 modules/partitario/edit.php:86
+#: modules/interventi/row-list.php:39 modules/ordini/row-list.php:33 modules/partitario/edit.php:86
 #: modules/partitario/edit.php:214 modules/preventivi/row-list.php:32 modules/scadenzario/add.php:40
 #: modules/scadenzario/edit.php:112 plugins/pianificazione_fatturazione/edit.php:54
 #: plugins/pianificazione_fatturazione/widgets/rate_contrattuali.php:63 templates/ddt/body.php:42
@@ -4216,25 +4221,31 @@ msgstr ""
 msgid "Importo"
 msgstr ""
 
-#: modules/contratti/row-list.php:115 modules/contratti/row-list.php:226 modules/ddt/row-list.php:167
-#: modules/ddt/row-list.php:288 modules/fatture/row-list.php:196 modules/fatture/row-list.php:396
-#: modules/interventi/row-list.php:143 modules/ordini/row-list.php:192 modules/ordini/row-list.php:303
-#: modules/preventivi/row-list.php:113 modules/preventivi/row-list.php:252
+#: modules/contratti/row-list.php:56 modules/ddt/row-list.php:81 modules/fatture/row-list.php:107
+#: modules/ordini/row-list.php:74 modules/preventivi/row-list.php:55 plugins/importFE/actions.php:372
+#: plugins/importFE/riferimento.php:99
+msgid "Origine"
+msgstr ""
+
+#: modules/contratti/row-list.php:125 modules/contratti/row-list.php:236 modules/ddt/row-list.php:173
+#: modules/ddt/row-list.php:294 modules/fatture/row-list.php:204 modules/fatture/row-list.php:404
+#: modules/interventi/row-list.php:139 modules/ordini/row-list.php:195 modules/ordini/row-list.php:306
+#: modules/preventivi/row-list.php:123 modules/preventivi/row-list.php:262
 msgid "Modifica riga"
 msgstr ""
 
-#: modules/contratti/row-list.php:119 modules/ddt/row-list.php:171 modules/fatture/row-list.php:200
-#: modules/interventi/row-list.php:147 modules/ordini/row-list.php:196 modules/preventivi/row-list.php:117
+#: modules/contratti/row-list.php:129 modules/ddt/row-list.php:177 modules/fatture/row-list.php:208
+#: modules/interventi/row-list.php:143 modules/ordini/row-list.php:199 modules/preventivi/row-list.php:127
 msgid "Rimuovi riga"
 msgstr ""
 
-#: modules/contratti/row-list.php:123 modules/ddt/row-list.php:175 modules/fatture/row-list.php:204
-#: modules/ordini/row-list.php:200 modules/preventivi/row-list.php:121
+#: modules/contratti/row-list.php:133 modules/ddt/row-list.php:181 modules/fatture/row-list.php:212
+#: modules/ordini/row-list.php:203 modules/preventivi/row-list.php:131
 msgid "Modifica ordine delle righe"
 msgstr ""
 
-#: modules/contratti/row-list.php:148 modules/ddt/row-list.php:200 modules/fatture/row-list.php:244
-#: modules/interventi/ajax_costi.php:91 modules/ordini/row-list.php:225 modules/preventivi/row-list.php:146
+#: modules/contratti/row-list.php:158 modules/ddt/row-list.php:206 modules/fatture/row-list.php:252
+#: modules/interventi/ajax_costi.php:91 modules/ordini/row-list.php:228 modules/preventivi/row-list.php:156
 #: plugins/pianificazione_fatturazione/add_pianificazione.php:106 plugins/pianificazione_interventi/row-list.php:43
 #: templates/contratti/body.php:104 templates/contratti/body.php:205 templates/contratti_cons/top.php:77
 #: templates/fatturato/body.php:43 templates/fatture/footer.php:144 templates/interventi/body.php:412
@@ -4245,13 +4256,13 @@ msgstr ""
 msgid "Imponibile"
 msgstr ""
 
-#: modules/contratti/row-list.php:161 modules/ddt/row-list.php:215 modules/fatture/row-list.php:257
-#: modules/interventi/ajax_costi.php:103 modules/ordini/row-list.php:238 modules/preventivi/row-list.php:159
+#: modules/contratti/row-list.php:171 modules/ddt/row-list.php:221 modules/fatture/row-list.php:265
+#: modules/interventi/ajax_costi.php:103 modules/ordini/row-list.php:241 modules/preventivi/row-list.php:169
 msgid "Un importo positivo indica uno sconto, mentre uno negativo indica una maggiorazione"
 msgstr ""
 
-#: modules/contratti/row-list.php:173 modules/ddt/row-list.php:229 modules/fatture/row-list.php:269
-#: modules/interventi/ajax_costi.php:114 modules/ordini/row-list.php:250 modules/preventivi/row-list.php:171
+#: modules/contratti/row-list.php:183 modules/ddt/row-list.php:235 modules/fatture/row-list.php:277
+#: modules/interventi/ajax_costi.php:114 modules/ordini/row-list.php:253 modules/preventivi/row-list.php:181
 #: plugins/importFE/list.php:36 templates/contratti/body.php:230 templates/contratti_cons/top.php:79
 #: templates/ddt/footer.php:47 templates/fatture/footer.php:154 templates/interventi/body.php:437
 #: templates/ordini/body.php:223 templates/preventivi/body.php:283 templates/preventivi_cons/top.php:79
@@ -4259,18 +4270,18 @@ msgstr ""
 msgid "Totale imponibile"
 msgstr ""
 
-#: modules/contratti/row-list.php:232 modules/ddt/row-list.php:294 modules/fatture/row-list.php:402
-#: modules/interventi/row-list.php:190 modules/ordini/row-list.php:309 modules/preventivi/row-list.php:258
+#: modules/contratti/row-list.php:242 modules/ddt/row-list.php:300 modules/fatture/row-list.php:410
+#: modules/interventi/row-list.php:186 modules/ordini/row-list.php:312 modules/preventivi/row-list.php:268
 msgid "Rimuovere questa riga?"
 msgstr ""
 
-#: modules/contratti/row-list.php:233 modules/ddt/row-list.php:295 modules/fatture/row-list.php:403
-#: modules/interventi/row-list.php:191 modules/ordini/row-list.php:310 modules/preventivi/row-list.php:259
+#: modules/contratti/row-list.php:243 modules/ddt/row-list.php:301 modules/fatture/row-list.php:411
+#: modules/interventi/row-list.php:187 modules/ordini/row-list.php:313 modules/preventivi/row-list.php:269
 msgid "Sei sicuro di volere rimuovere questa riga dal documento?"
 msgstr ""
 
-#: modules/contratti/row-list.php:233 modules/ddt/row-list.php:295 modules/fatture/row-list.php:403
-#: modules/interventi/row-list.php:191 modules/ordini/row-list.php:310 modules/preventivi/row-list.php:259
+#: modules/contratti/row-list.php:243 modules/ddt/row-list.php:301 modules/fatture/row-list.php:411
+#: modules/interventi/row-list.php:187 modules/ordini/row-list.php:313 modules/preventivi/row-list.php:269
 msgid "L'operazione è irreversibile"
 msgstr ""
 
@@ -4379,23 +4390,23 @@ msgstr ""
 msgid "Richiesta"
 msgstr ""
 
-#: modules/dashboard/actions.php:239
+#: modules/dashboard/actions.php:269
 msgid "entro il: "
 msgstr ""
 
-#: modules/dashboard/actions.php:240 src/Modules.php:278
+#: modules/dashboard/actions.php:270 src/Modules.php:278
 msgid "Visualizza scheda"
 msgstr ""
 
-#: modules/dashboard/actions.php:248
+#: modules/dashboard/actions.php:278
 msgid "Mostra tutto"
 msgstr ""
 
-#: modules/dashboard/actions.php:249
+#: modules/dashboard/actions.php:279
 msgid "Comprimi"
 msgstr ""
 
-#: modules/dashboard/actions.php:254
+#: modules/dashboard/actions.php:284
 msgid "Non ci sono interventi da pianificare per questo mese"
 msgstr ""
 
@@ -4431,7 +4442,7 @@ msgstr ""
 msgid "Errore durante la creazione degli eventi"
 msgstr ""
 
-#: modules/dashboard/edit.php:571 plugins/checks.php:35 src/HTMLBuilder/Manager/FileManager.php:62
+#: modules/dashboard/edit.php:571 plugins/checks.php:35
 msgid "Caricamento..."
 msgstr ""
 
@@ -4491,7 +4502,7 @@ msgstr ""
 msgid "Ddt modificato correttamente!"
 msgstr ""
 
-#: modules/ddt/actions.php:376 modules/fatture/actions.php:636 modules/interventi/actions.php:231
+#: modules/ddt/actions.php:376 modules/fatture/actions.php:639 modules/interventi/actions.php:231
 #: modules/ordini/actions.php:285 plugins/pianificazione_interventi/actions.php:277
 msgid "Riga rimossa!"
 msgstr ""
@@ -4512,15 +4523,15 @@ msgstr ""
 msgid "Termine presente nelle righe del documento"
 msgstr ""
 
-#: modules/ddt/bulk.php:116
+#: modules/ddt/bulk.php:118
 msgid "_NUM_ ddt fatturati!"
 msgstr ""
 
-#: modules/ddt/bulk.php:120
+#: modules/ddt/bulk.php:122
 msgid "Nessun ddt fatturato!"
 msgstr ""
 
-#: modules/ddt/bulk.php:133
+#: modules/ddt/bulk.php:135
 msgid "Ddt eliminati!"
 msgstr ""
 
@@ -4543,7 +4554,7 @@ msgid "Numero secondario"
 msgstr ""
 
 #: modules/ddt/edit.php:126 modules/ddt/edit.php:135 modules/fatture/edit.php:239 modules/fatture/edit.php:248
-#: modules/interventi/edit.php:422 modules/movimenti/add.php:63
+#: modules/interventi/edit.php:410 modules/movimenti/add.php:63
 msgid "Partenza merce"
 msgstr ""
 
@@ -4643,39 +4654,39 @@ msgstr ""
 msgid "Note interne."
 msgstr ""
 
-#: modules/ddt/row-list.php:77
+#: modules/ddt/row-list.php:75
 msgid "Riferimenti"
 msgstr ""
 
-#: modules/ddt/row-list.php:83 modules/fatture/row-list.php:108 modules/interventi/row-list.php:72
-#: modules/ordini/row-list.php:77 plugins/pianificazione_interventi/row-list.php:74
+#: modules/ddt/row-list.php:95 modules/fatture/row-list.php:122 modules/interventi/row-list.php:68
+#: modules/ordini/row-list.php:86 plugins/pianificazione_interventi/row-list.php:74
 msgid "_NUM_ serial mancanti"
 msgstr ""
 
-#: modules/ddt/row-list.php:89 modules/fatture/row-list.php:114 modules/interventi/row-list.php:80
-#: modules/ordini/row-list.php:83 plugins/pianificazione_interventi/row-list.php:82 templates/ddt/body.php:84
-#: templates/fatture/body.php:84 templates/interventi/body.php:192 templates/ordini/body.php:114
+#: modules/ddt/row-list.php:101 modules/fatture/row-list.php:128 modules/interventi/row-list.php:76
+#: modules/ordini/row-list.php:92 plugins/pianificazione_interventi/row-list.php:82 templates/ddt/body.php:84
+#: templates/fatture/body.php:86 templates/interventi/body.php:192 templates/ordini/body.php:114
 msgid "SN"
 msgstr ""
 
-#: modules/ddt/row-list.php:161 modules/fatture/row-list.php:186 modules/interventi/row-list.php:137
-#: modules/ordini/row-list.php:186
+#: modules/ddt/row-list.php:167 modules/fatture/row-list.php:194 modules/interventi/row-list.php:133
+#: modules/ordini/row-list.php:189
 msgid "Modifica seriali della riga"
 msgstr ""
 
-#: modules/ddt/row-list.php:244 modules/interventi/ajax_costi.php:126
+#: modules/ddt/row-list.php:250 modules/interventi/ajax_costi.php:126
 #: plugins/pianificazione_fatturazione/add_pianificazione.php:107 plugins/pianificazione_fatturazione/crea_fattura.php:92
 #: templates/ddt/body.php:43 templates/fatturato/body.php:44 templates/fatture/body.php:43 templates/ordini/body.php:61
 #: templates/preventivi/body.php:136 templates/spesometro/body.php:40
 msgid "IVA"
 msgstr ""
 
-#: modules/ddt/row-list.php:330 modules/fatture/row-list.php:438 modules/interventi/row-list.php:226
-#: modules/ordini/row-list.php:345
+#: modules/ddt/row-list.php:336 modules/fatture/row-list.php:446 modules/interventi/row-list.php:222
+#: modules/ordini/row-list.php:348
 msgid "Aggiorna SN"
 msgstr ""
 
-#: modules/ddt/row-list.php:338
+#: modules/ddt/row-list.php:344
 msgid "Riferimenti riga"
 msgstr ""
 
@@ -4738,55 +4749,55 @@ msgstr ""
 msgid "Nessuna email presente..."
 msgstr ""
 
-#: modules/fatture/actions.php:59
+#: modules/fatture/actions.php:60
 msgid "Aggiunta fattura numero _NUM_!"
 msgstr ""
 
-#: modules/fatture/actions.php:147 plugins/exportFE/actions.php:31
+#: modules/fatture/actions.php:148 plugins/exportFE/actions.php:31
 msgid "Fattura elettronica generata correttamente!"
 msgstr ""
 
-#: modules/fatture/actions.php:152 plugins/exportFE/actions.php:36
+#: modules/fatture/actions.php:153 plugins/exportFE/actions.php:36
 msgid "La fattura elettronica potrebbe avere delle irregolarità!"
 msgstr ""
 
-#: modules/fatture/actions.php:152 plugins/exportFE/actions.php:36
+#: modules/fatture/actions.php:153 plugins/exportFE/actions.php:36
 msgid "Controllare i seguenti campi: _LIST_"
 msgstr ""
 
-#: modules/fatture/actions.php:159
+#: modules/fatture/actions.php:160
 msgid "La fattura elettronica non è stata generata a causa di alcune informazioni mancanti"
 msgstr ""
 
-#: modules/fatture/actions.php:195
+#: modules/fatture/actions.php:196
 msgid "Esiste già una fattura con lo stesso numero secondario e la stessa anagrafica collegata!"
 msgstr ""
 
-#: modules/fatture/actions.php:199
+#: modules/fatture/actions.php:200
 msgid "Fattura modificata correttamente!"
 msgstr ""
 
-#: modules/fatture/actions.php:276
+#: modules/fatture/actions.php:279
 msgid "Fattura eliminata!"
 msgstr ""
 
-#: modules/fatture/actions.php:323
+#: modules/fatture/actions.php:326
 msgid "Fattura duplicata correttamente!"
 msgstr ""
 
-#: modules/fatture/actions.php:333
+#: modules/fatture/actions.php:336
 msgid "Fattura riaperta!"
 msgstr ""
 
-#: modules/fatture/actions.php:353 modules/preventivi/actions.php:134
+#: modules/fatture/actions.php:356 modules/preventivi/actions.php:134
 msgid "Intervento _NUM_ aggiunto!"
 msgstr ""
 
-#: modules/fatture/actions.php:379 modules/fatture/actions.php:409
+#: modules/fatture/actions.php:382 modules/fatture/actions.php:412
 msgid "Dati FE aggiornati correttamente!"
 msgstr ""
 
-#: modules/fatture/actions.php:617
+#: modules/fatture/actions.php:620
 msgid "Errore durante l'eliminazione della riga!"
 msgstr ""
 
@@ -4794,7 +4805,7 @@ msgstr ""
 msgid "N. fattura del fornitore"
 msgstr ""
 
-#: modules/fatture/add.php:68 modules/fatture/edit.php:264 plugins/importFE/generate.php:199
+#: modules/fatture/add.php:68 modules/fatture/edit.php:264 plugins/importFE/generate.php:201
 msgid "Tipo fattura"
 msgstr ""
 
@@ -4946,7 +4957,7 @@ msgstr ""
 msgid "Duplica fattura"
 msgstr ""
 
-#: modules/fatture/buttons.php:31 modules/fatture/row-list.php:446
+#: modules/fatture/buttons.php:31 modules/fatture/row-list.php:454
 msgid "Dati Fattura Elettronica"
 msgstr ""
 
@@ -5168,37 +5179,37 @@ msgstr ""
 msgid "Attività completate non collegate a preventivi o contratti e che non siano già state fatturate."
 msgstr ""
 
-#: modules/fatture/edit.php:725
+#: modules/fatture/edit.php:719
 msgid "Controllo sui totali del documento e della fattura elettronica in corso"
 msgstr ""
 
-#: modules/fatture/edit.php:744
+#: modules/fatture/edit.php:738
 msgid "Il file XML non contiene il nodo ''ImportoTotaleDocumento'': impossibile controllare corrispondenza dei totali"
 msgstr ""
 
-#: modules/fatture/edit.php:746
+#: modules/fatture/edit.php:740
 msgid "Il totale del file XML corrisponde a quello calcolato dal gestionale"
 msgstr ""
 
-#: modules/fatture/edit.php:748
+#: modules/fatture/edit.php:742
 msgid "Il totale del file XML non corrisponde a quello calcolato dal gestionale: previsto _XML_, calcolato _CALC_"
 msgstr ""
 
-#: modules/fatture/edit.php:766
+#: modules/fatture/edit.php:760
 msgid ""
 "Per allegare un documento alla fattura elettronica caricare il file PDF specificando come categoria \"Allegati Fattura "
 "Elettronica\""
 msgstr ""
 
-#: modules/fatture/edit.php:788
+#: modules/fatture/edit.php:782
 msgid "Desideri ricalcolare le scadenze?"
 msgstr ""
 
-#: modules/fatture/edit.php:805
+#: modules/fatture/edit.php:799
 msgid "Note di credito collegate"
 msgstr ""
 
-#: modules/fatture/edit.php:807 templates/fatture/body.php:96
+#: modules/fatture/edit.php:801 templates/fatture/body.php:98
 msgid "Rif. fattura _NUM_ del _DATE_"
 msgstr ""
 
@@ -5223,15 +5234,15 @@ msgstr ""
 msgid "Spesa accessoria"
 msgstr ""
 
-#: modules/fatture/row-list.php:192
+#: modules/fatture/row-list.php:200
 msgid "Aggiungi informazioni FE per questa riga"
 msgstr ""
 
-#: modules/fatture/row-list.php:309
+#: modules/fatture/row-list.php:317
 msgid "Iva a carico del destinatario"
 msgstr ""
 
-#: modules/fatture/row-list.php:367 modules/scadenzario/edit.php:77 templates/fatture/footer.php:266
+#: modules/fatture/row-list.php:375 modules/scadenzario/edit.php:77 templates/fatture/footer.php:266
 #: templates/fatture/footer.php:301
 msgid "Netto a pagare"
 msgstr ""
@@ -5663,7 +5674,7 @@ msgstr ""
 msgid "_TOT_ _TYPE_"
 msgstr ""
 
-#: modules/interventi/ajax_tecnici.php:198 modules/interventi/ajax_tecnici.php:261 modules/interventi/row-list.php:184
+#: modules/interventi/ajax_tecnici.php:198 modules/interventi/ajax_tecnici.php:261 modules/interventi/row-list.php:180
 msgid "Modifica sessione"
 msgstr ""
 
@@ -5764,7 +5775,7 @@ msgstr ""
 msgid "Nuova anteprima e firma"
 msgstr ""
 
-#: modules/interventi/buttons.php:27 modules/interventi/edit.php:472
+#: modules/interventi/buttons.php:27 modules/interventi/edit.php:446
 msgid "Firmato il _DATE_ alle _TIME_ da _PERSON_"
 msgstr ""
 
@@ -5786,15 +5797,15 @@ msgstr ""
 msgid "Visualizza dettaglio costi"
 msgstr ""
 
-#: modules/interventi/edit.php:437
+#: modules/interventi/edit.php:423
 msgid "Costi totali"
 msgstr ""
 
-#: modules/interventi/edit.php:468
+#: modules/interventi/edit.php:442
 msgid "Questo intervento non è ancora stato firmato dal cliente"
 msgstr ""
 
-#: modules/interventi/edit.php:592
+#: modules/interventi/edit.php:611
 msgid "_DOC_ num. _NUM_ del _DATE_ [_STATE_]"
 msgstr ""
 
@@ -5866,7 +5877,7 @@ msgstr ""
 msgid "Nessun intervento su questo impianto"
 msgstr ""
 
-#: modules/interventi/row-list.php:165 plugins/pianificazione_interventi/row-list.php:164
+#: modules/interventi/row-list.php:161 plugins/pianificazione_interventi/row-list.php:164
 msgid "Nessuna riga presente"
 msgstr ""
 
@@ -6043,7 +6054,7 @@ msgstr ""
 msgid "Aggiungi e chiudi"
 msgstr ""
 
-#: modules/movimenti/add.php:263 plugins/dettagli_articolo/dettaglio_fornitore.php:68
+#: modules/movimenti/add.php:263
 msgid "Prezzo acquisto"
 msgstr ""
 
@@ -6220,15 +6231,15 @@ msgstr ""
 msgid "Prev. evasione"
 msgstr ""
 
-#: modules/ordini/row-list.php:102
+#: modules/ordini/row-list.php:105
 msgid "Da consegnare _NUM_ giorni fa"
 msgstr ""
 
-#: modules/ordini/row-list.php:109
+#: modules/ordini/row-list.php:112
 msgid "Da consegnare oggi"
 msgstr ""
 
-#: modules/ordini/row-list.php:112
+#: modules/ordini/row-list.php:115
 msgid "Da consegnare fra _NUM_ giorni"
 msgstr ""
 
@@ -6418,7 +6429,7 @@ msgstr ""
 msgid "Ricavi"
 msgstr ""
 
-#: modules/partitario/edit.php:329 modules/preventivi/row-list.php:212
+#: modules/partitario/edit.php:329 modules/preventivi/row-list.php:222
 msgid "Costi"
 msgstr ""
 
@@ -6494,15 +6505,15 @@ msgstr ""
 msgid "Tipo di Attività"
 msgstr ""
 
-#: modules/preventivi/bulk.php:107
+#: modules/preventivi/bulk.php:109
 msgid "_NUM_ preventivi fatturati!"
 msgstr ""
 
-#: modules/preventivi/bulk.php:111
+#: modules/preventivi/bulk.php:113
 msgid "Nessun preventivi fatturato!"
 msgstr ""
 
-#: modules/preventivi/bulk.php:120
+#: modules/preventivi/bulk.php:122
 msgid "Aggiungere alle fatture di vendita nello stato bozza?"
 msgstr ""
 
@@ -6554,7 +6565,7 @@ msgstr ""
 msgid "Resa materiale"
 msgstr ""
 
-#: modules/preventivi/edit.php:132 plugins/dettagli_articolo/dettaglio_fornitore.php:76 plugins/dettagli_articolo/edit.php:203
+#: modules/preventivi/edit.php:132 plugins/dettagli_articolo/dettaglio_fornitore.php:72 plugins/dettagli_articolo/edit.php:203
 msgid "Tempi di consegna"
 msgstr ""
 
@@ -6562,7 +6573,7 @@ msgstr ""
 msgid "Aggiungi un altro intervento a questo preventivo"
 msgstr ""
 
-#: modules/preventivi/row-list.php:222
+#: modules/preventivi/row-list.php:232
 msgid "Margine (_PRC_%)"
 msgstr ""
 
@@ -8037,7 +8048,7 @@ msgstr ""
 msgid "Tutti gli elementi figli saranno rimossi di conseguenza. Continuare?"
 msgstr ""
 
-#: plugins/dettagli_articolo/actions.php:118
+#: plugins/dettagli_articolo/actions.php:117
 msgid "Relazione articolo-fornitore rimossa correttamente!"
 msgstr ""
 
@@ -8049,11 +8060,11 @@ msgstr ""
 msgid "Codice fornitore"
 msgstr ""
 
-#: plugins/dettagli_articolo/dettaglio_fornitore.php:72
+#: plugins/dettagli_articolo/dettaglio_fornitore.php:68
 msgid "Qta minima ordinabile"
 msgstr ""
 
-#: plugins/dettagli_articolo/dettaglio_fornitore.php:76
+#: plugins/dettagli_articolo/dettaglio_fornitore.php:72
 msgid "gg"
 msgstr ""
 
@@ -8259,7 +8270,7 @@ msgstr ""
 msgid "Genera"
 msgstr ""
 
-#: plugins/exportFE/edit.php:90 plugins/importFE/generate.php:145 plugins/statistiche_anagrafiche/info.php:110
+#: plugins/exportFE/edit.php:90 plugins/importFE/generate.php:147 plugins/statistiche_anagrafiche/info.php:110
 #: plugins/statistiche_anagrafiche/info.php:125 plugins/statistiche_anagrafiche/info.php:140
 #: plugins/statistiche_anagrafiche/info.php:157 plugins/statistiche_anagrafiche/info.php:172
 #: plugins/statistiche_anagrafiche/info.php:187
@@ -8369,7 +8380,7 @@ msgstr ""
 msgid "Invio fatture elettroniche completato con errori"
 msgstr ""
 
-#: plugins/importFE/actions.php:171
+#: plugins/importFE/actions.php:173
 msgid "Tutte le fatture salvate sono state importate!"
 msgstr ""
 
@@ -8379,12 +8390,26 @@ msgid ""
 "Fornitore"
 msgstr ""
 
-#: plugins/importFE/buttons.php:22
+#: plugins/importFE/buttons.php:23
 msgid "Compila automaticamente"
 msgstr ""
 
-#: plugins/importFE/buttons.php:71
+#: plugins/importFE/buttons.php:27
+msgid ""
+"Tenta il completamento automatico dei riferimenti per le righe delle fattura elettronica sulla base di Ordini e DDT "
+"registrati nel gestionale per il Fornitore"
+msgstr ""
+
+#: plugins/importFE/buttons.php:29
+msgid "Cerca riferimenti"
+msgstr ""
+
+#: plugins/importFE/buttons.php:77
 msgid "La compilazione automatica dei campi non è andata a buon fine"
+msgstr ""
+
+#: plugins/importFE/buttons.php:113
+msgid "La ricerca automatica dei riferimenti per le righe non è andata a buon fine"
 msgstr ""
 
 #: plugins/importFE/edit.php:57
@@ -8429,85 +8454,85 @@ msgid ""
 "per le fatture che non verranno importate completamente. Continuare?"
 msgstr ""
 
-#: plugins/importFE/generate.php:34
+#: plugins/importFE/generate.php:36
 msgid "Errore durante l'apertura della fattura elettronica _NAME_"
 msgstr ""
 
-#: plugins/importFE/generate.php:39
+#: plugins/importFE/generate.php:41
 msgid "La fattura elettrnica _NAME_ è già stata importata in passato"
 msgstr ""
 
-#: plugins/importFE/generate.php:51
+#: plugins/importFE/generate.php:53
 msgid "Processa e rimuovi"
 msgstr ""
 
-#: plugins/importFE/generate.php:57 plugins/importFE/generate.php:436
+#: plugins/importFE/generate.php:59 plugins/importFE/generate.php:444
 msgid "Salta fattura"
 msgstr ""
 
-#: plugins/importFE/generate.php:130
+#: plugins/importFE/generate.php:132
 msgid "Nuova anagrafica"
 msgstr ""
 
-#: plugins/importFE/generate.php:133
+#: plugins/importFE/generate.php:135
 msgid "Codice Fiscale"
 msgstr ""
 
-#: plugins/importFE/generate.php:162
+#: plugins/importFE/generate.php:164
 msgid "La fattura importata presenta _NUM_ rat_E_ di pagamento con le seguenti scadenze"
 msgstr ""
 
-#: plugins/importFE/generate.php:213 plugins/importFE/list.php:35
+#: plugins/importFE/generate.php:215 plugins/importFE/list.php:35
 msgid "Data di registrazione"
 msgstr ""
 
-#: plugins/importFE/generate.php:232
+#: plugins/importFE/generate.php:234
 msgid "Fattura collegata"
 msgstr ""
 
-#: plugins/importFE/generate.php:239
+#: plugins/importFE/generate.php:241
 msgid "Fattura pro-forma"
 msgstr ""
 
-#: plugins/importFE/generate.php:252
+#: plugins/importFE/generate.php:254
 msgid "Visualizza tutte le modalità"
 msgstr ""
 
-#: plugins/importFE/generate.php:261
+#: plugins/importFE/generate.php:263
 msgid "Movimenta gli articoli"
 msgstr ""
 
-#: plugins/importFE/generate.php:265
+#: plugins/importFE/generate.php:267
 msgid "Creazione automatica articoli"
 msgstr ""
 
-#: plugins/importFE/generate.php:265
+#: plugins/importFE/generate.php:267
 msgid ""
 "Nel caso di righe con tag CodiceArticolo, il gestionale procede alla creazione dell'articolo se la riga non risulta "
 "assegnata manualmente"
 msgstr ""
 
-#: plugins/importFE/generate.php:276
+#: plugins/importFE/generate.php:277
 msgid "Copia dati contabili dalla prima riga valorizzata"
 msgstr ""
 
-#: plugins/importFE/generate.php:287 templates/spesometro/body.php:38
+#: plugins/importFE/generate.php:288 templates/spesometro/body.php:38
 msgid "Aliquota"
 msgstr ""
 
-#: plugins/importFE/generate.php:366
+#: plugins/importFE/generate.php:375
 msgid "Conto acquisti"
 msgstr ""
 
-#: plugins/importFE/generate.php:370 templates/fatture/footer.php:93
+#: plugins/importFE/generate.php:379 templates/fatture/footer.php:93
 msgid "Aliquota IVA"
 msgstr ""
 
-#: plugins/importFE/generate.php:429
+#: plugins/importFE/generate.php:437
 msgid "Non ci sono righe nella fattura"
 msgstr ""
 
-#: plugins/importFE/generate.php:486
+#: plugins/importFE/generate.php:495
 msgid "Selezione riferimento"
 msgstr ""
 
@@ -9287,7 +9312,7 @@ msgstr ""
 msgid "anno/i"
 msgstr ""
 
-#: src/Prints.php:171
+#: src/Prints.php:173
 msgid "Non hai i permessi per creare directory e files in _DIRECTORY_"
 msgstr ""
 
@@ -9448,7 +9473,7 @@ msgstr ""
 msgid "Spett.le"
 msgstr ""
 
-#: templates/contratti/body.php:127 templates/ddt/body.php:73 templates/fatture/body.php:73 templates/interventi/body.php:183
+#: templates/contratti/body.php:127 templates/ddt/body.php:73 templates/fatture/body.php:75 templates/interventi/body.php:183
 #: templates/ordini/body.php:103 templates/preventivi/body.php:173
 msgid "COD. _COD_"
 msgstr ""

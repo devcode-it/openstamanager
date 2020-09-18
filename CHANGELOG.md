@@ -39,6 +39,8 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Fix Api per recupero delle sessioni di lavoro delle Attività in funzione dei mesi i mesi definiti nello storico
  - Fix allegati **Impianti** non trovati
  - Fix creazione / modifica componenti e componenti **Impianti** non trovati
+ - Fix su calcolo movimenti in caso di insoluto
+ - Fix raggruppamento movimenti composti
 
 
 ## 2.4.17 (2020-08-24)

@@ -84,7 +84,6 @@ switch ($op) {
 
             $id_record = $dbo->lastInsertedID();
 
-            //&& post('source') != ''
             if (isAjaxRequest()) {
                 echo json_encode(['id' => $id_record, 'text' => $matricola.' - '.$nome]);
             }
@@ -112,7 +111,7 @@ switch ($op) {
             $contenuto = file_get_contents($docroot.'/files/my_impianti/'.$filename);
         }
 
-        genera_form_componente($contenuto);
+        crea_form_componente($contenuto);
 
         break;
 

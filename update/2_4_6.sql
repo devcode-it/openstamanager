@@ -22,7 +22,7 @@ UPDATE `zz_settings` SET `nome` = 'Percentuale rivalsa', `tipo` = 'query=SELECT 
 UPDATE `zz_settings` SET `tipo` = 'query=SELECT ''IMP'' AS id, ''Imponibile'' AS descrizione UNION SELECT ''IMP+RIV'' AS id, ''Imponibile + rivalsa'' AS descrizione' WHERE `zz_settings`.`nome` = 'Metodologia calcolo ritenuta d\'acconto predefinito';
 
 -- Aggiunto modulo per gestire le rivalse
-INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Rivalse', 'Rivalse', 'rivalse', 'SELECT |select| FROM `co_rivalse` WHERE 1=1 HAVING 2=2', '', 'fa fa-percent', '2.4.6', '2.4.6', '1', (SELECT id FROM zz_modules t WHERE t.name = 'Tabelle' ), '1', '1');
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Rivalse', 'Rivalse', 'rivalse', 'SELECT |select| FROM `co_rivalse` WHERE 1=1 HAVING 2=2', '', 'fa fa-percent', '2.4.6', '2.4.6', '1', (SELECT id FROM zz_modules t WHERE t.name = 'Tabelle'), '1', '1');
 
 -- Colonne per modulo 'Rivalse'
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default` ) VALUES

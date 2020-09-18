@@ -2,17 +2,17 @@
 
 // File e cartelle deprecate
 $files = [
-    'templates\fatturato\pdfgen.fatturato.php',
-    'templates\fatturato\fatturato_body.html',
-    'templates\fatturato\fatturato.html',
-    'modules\interventi\widgets\interventi.pianificazionedashboard.interventi.php',
-    'modules\contratti\widgets\contratti.pianificazionedashboard.php',
-    'modules\contratti\widgets\contratti.pianificazionedashboard.interventi.php',
-    'modules\contratti\widgets\contratti.ratecontrattuali.php',
+    'templates/fatturato/pdfgen.fatturato.php',
+    'templates/fatturato/fatturato_body.html',
+    'templates/fatturato/fatturato.html',
+    'modules/interventi/widgets/interventi.pianificazionedashboard.interventi.php',
+    'modules/contratti/widgets/contratti.pianificazionedashboard.php',
+    'modules/contratti/widgets/contratti.pianificazionedashboard.interventi.php',
+    'modules/contratti/widgets/contratti.ratecontrattuali.php',
 ];
 
 foreach ($files as $key => $value) {
-    $files[$key] = realpath(DOCROOT.'\\'.$value);
+    $files[$key] = realpath(DOCROOT.'/'.$value);
 }
 
 delete($files);

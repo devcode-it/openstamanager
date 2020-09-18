@@ -15,7 +15,7 @@ HAVING 2=2
 ORDER BY `co_documenti`.`data` DESC, CAST(IF(`co_documenti`.`numero` = \'\', `co_documenti`.`numero_esterno`, `co_documenti`.`numero`) AS UNSIGNED) DESC' WHERE `name` = 'Fatture di acquisto';
 
 -- Allineo per i movimenti relativi alle fatture di vendita, la data del movimento con la data del documento
-UPDATE `co_movimenti` SET `co_movimenti`.`data` = `co_movimenti`.`data_documento` WHERE `iddocumento` IN (SELECT `co_documenti`.`id` FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id` WHERE `co_tipidocumento`.`dir` = 'entrata' );
+UPDATE `co_movimenti` SET `co_movimenti`.`data` = `co_movimenti`.`data_documento` WHERE `iddocumento` IN (SELECT `co_documenti`.`id` FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id` WHERE `co_tipidocumento`.`dir` = 'entrata' ) AND `primanota` = 0;
 
 -- Allineo per le fatture di vendita, la data_competenza con data emissione del documento
 UPDATE `co_documenti` SET `co_documenti`.`data_competenza` = `co_documenti`.`data`  WHERE `co_documenti`.`idtipodocumento` IN (SELECT `co_tipidocumento`.`id` FROM `co_tipidocumento` WHERE `co_tipidocumento`.`dir` = 'entrata');
@@ -119,10 +119,6 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 (NULL, 'app-v1', 'retrieve', 'contratti-cleanup', 'API\\App\\v1\\Contratti', '1'),
 (NULL, 'app-v1', 'retrieve', 'contratto', 'API\\App\\v1\\Contratti', '1'),
 -- Preventivi
-(NULL, 'app-v1', 'retrieve', 'preventivi', 'API\\App\\v1\\Preventivi', '1'),
-(NULL, 'app-v1', 'retrieve', 'preventivi-cleanup', 'API\\App\\v1\\Preventivi', '1'),
-(NULL, 'app-v1', 'retrieve', 'preventivo', 'API\\App\\v1\\Preventivi', '1'),
--- Sedi
 (NULL, 'app-v1', 'retrieve', 'preventivi', 'API\\App\\v1\\Preventivi', '1'),
 (NULL, 'app-v1', 'retrieve', 'preventivi-cleanup', 'API\\App\\v1\\Preventivi', '1'),
 (NULL, 'app-v1', 'retrieve', 'preventivo', 'API\\App\\v1\\Preventivi', '1'),
@@ -236,7 +232,9 @@ UPDATE `co_movimenti` SET `totale_reddito` = `totale`;
 UPDATE `co_pianodeiconti3` SET `percentuale_deducibile` = 100;
 
 -- Evita di caricare impostazioni doppie
-ALTER TABLE `zz_settings` ADD UNIQUE(`nome`);
+-- Disabilitato per problemi con versioni di MySQL < 5.7
+-- ALTER TABLE `zz_settings` ADD UNIQUE(`nome`);
 
 -- Evita di caricare username doppi
-ALTER TABLE `zz_users` ADD UNIQUE(`username`);
+-- Disabilitato per problemi con versioni di MySQL < 5.7
+-- ALTER TABLE `zz_users` ADD UNIQUE(`username`);

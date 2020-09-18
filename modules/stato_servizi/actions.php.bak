@@ -1,21 +1,4 @@
 <?php
-/*
- * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
- * Copyright (C) DevCode s.n.c.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
- */
 
 include_once __DIR__.'/../../core.php';
 
@@ -171,10 +154,10 @@ switch (filter('op')) {
                 'description' => $description,
                 'size' => $size,
                 'formattedSize' => FileSystem::formatBytes($size),
-                'count' => FileSystem::fileCount($dir, ['htaccess']) ?: 0,
-                'dbSize' => ($description == 'Allegati') ? $dbo->fetchOne('SELECT SUM(`size`) AS dbsize FROM zz_files')['dbsize'] : '',
-                'dbCount' => ($description == 'Allegati') ? $dbo->fetchOne('SELECT COUNT(`id`) AS dbcount FROM zz_files')['dbcount'] : '',
-                'dbExtensions' => ($description == 'Allegati') ? $dbo->fetchArray("SELECT SUBSTRING_INDEX(filename, '.', -1) AS extension, COUNT(*) AS num FROM zz_files GROUP BY extension ORDER BY num DESC LIMIT 10") : '',
+                'count' => (FileSystem::fileCount($dir, ['htaccess']) ?: 0),
+                'dbSize' => (($description == 'Allegati') ? $dbo->fetchOne('SELECT SUM(`size`) AS dbsize FROM zz_files')['dbsize'] : ''),
+                'dbCount' => (($description == 'Allegati') ? $dbo->fetchOne('SELECT COUNT(`id`) AS dbcount FROM zz_files')['dbcount'] : ''),
+                'dbExtensions' => (($description == 'Allegati') ? $dbo->fetchArray("SELECT SUBSTRING_INDEX(FILENAME, '.', -1) AS EXTENSION, COUNT(*) AS NUM FROM ZZ_FILES GROUP BY EXTENSION ORDER BY NUM DESC LIMIT 10") : ''),
             ];
         }
 

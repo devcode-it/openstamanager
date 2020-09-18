@@ -1,4 +1,21 @@
 <?php
+/*
+ * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
+ * Copyright (C) DevCode s.n.c.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 
 include_once __DIR__.'/../../core.php';
 
@@ -83,6 +100,8 @@ switch (post('op')) {
                         $qta = $riga->qta_rimanente;
 
                         if ($qta > 0) {
+                            //Fix per idconto righe fattura
+                            $riga->idconto = $fattura->idconto;
                             $copia = $riga->copiaIn($fattura, $qta);
 
                             // Aggiornamento seriali dalla riga dell'ordine
@@ -127,7 +146,7 @@ $operations['crea_fattura'] = [
         'text' => tr('Fattura documenti'),
         'data' => [
             'title' => tr('Vuoi davvero fatturare questi documenti?'),
-            'msg' => '<br>{[ "type": "checkbox", "placeholder": "'.tr('Aggiungere alle fatture esistenti non ancora emesse?').'", "name": "accodare" ]}
+            'msg' => '{[ "type": "checkbox", "label": "'.tr('Aggiungere alle fatture esistenti non ancora emesse?').'", "placeholder": "'.tr('Aggiungere alle fatture esistenti non ancora emesse?').'", "name": "accodare" ]}
             <br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module=\''.$id_fatture.'\' AND is_fiscale = 1 ORDER BY name", "value": "'.$id_segment.'" ]}',
             'button' => tr('Procedi'),
             'class' => 'btn btn-lg btn-warning',

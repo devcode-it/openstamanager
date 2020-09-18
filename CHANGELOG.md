@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.17.1 (2020-09-18)](#24171-2020-09-18)
 - [2.4.17 (2020-08-24)](#2417-2020-08-24)
 - [2.4.16 (2020-07-28)](#2416-2020-07-28)
 - [2.4.15 (2020-05-01)](#2415-2020-05-01)
@@ -26,6 +27,18 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.3 (2018-02-16)](#23-2018-02-16)
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
+
+## 2.4.17.1 (2020-09-18)
+
+### Fixed
+ - Fix query aggiornamento data movimento per registrazioni in **Prima Nota**
+ - Fix apretura pop-up di inserimento / modifica righe nelle varie schermate
+ - Fix per idconto righe fattura da fatturazione in bulk
+ - Fix calcolo quantità impegnata
+ - Fix nome funzione duplicata durante aggiornamento 2.4.17
+ - Fix Api per recupero delle sessioni di lavoro delle Attività in funzione dei mesi i mesi definiti nello storico
+
+ 
 
 ## 2.4.17 (2020-08-24)
 
@@ -55,7 +68,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 ### Fixed
  - Fix della duplicazione di Fattura, che in alcuni casi non rimuoveva lo stato FE originale
  - Fix della procedura di duplicazione di gruppo per le **Attività**
- - Risoluzione bug nella modifica manuale della **Prima Note** risalente a versioni <= 2.4.11 (#864)
+ - Risoluzione bug nella modifica manuale della **Prima Nota** risalente a versioni <= 2.4.11 (#864)
  - Fix dell'ordinamento per i conti primari del **Piano dei conti**, con correzione dei totali di riepilogo relativi
  - Correzione sui tooltip bloccati sui pulsanti disabilitati
 

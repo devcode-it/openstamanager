@@ -92,6 +92,8 @@ switch (post('op')) {
                     $qta = $riga->qta_rimanente;
 
                     if ($qta > 0) {
+                        //Fix per idconto righe fattura
+                        $riga->idconto = $fattura->idconto;
                         $copia = $riga->copiaIn($fattura, $qta);
 
                         // Aggiornamento seriali dalla riga dell'ordine

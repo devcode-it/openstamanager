@@ -37,8 +37,9 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Fix calcolo quantità impegnata
  - Fix nome funzione duplicata durante aggiornamento 2.4.17
  - Fix Api per recupero delle sessioni di lavoro delle Attività in funzione dei mesi i mesi definiti nello storico
+ - Fix allegati **Impianti** non trovati
+ - Fix creazione / modifica componenti e componenti **Impianti** non trovati
 
- 
 
 ## 2.4.17 (2020-08-24)
 

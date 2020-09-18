@@ -46,8 +46,8 @@ switch (filter('op')) {
         $filename = get('filename');
 
         if (!empty($filename)) {
-            $contenuto = file_get_contents(DOCROOT.'/files/my_impianti/'.$filename);
-            $nome = Ini::getValue(Ini::readFile(DOCROOT.'/files/my_impianti/'.$filename), 'Nome');
+            $contenuto = file_get_contents(DOCROOT.'/files/impianti/'.$filename);
+            $nome = Ini::getValue(Ini::readFile(DOCROOT.'/files/impianti/'.$filename), 'Nome');
 
             $query = 'INSERT INTO my_impianto_componenti(filename, idimpianto, contenuto, nome, data) VALUES('.prepare($filename).', '.prepare($id_record).', '.prepare($contenuto).', '.prepare($nome).', NOW())';
             $dbo->query($query);
@@ -63,8 +63,8 @@ switch (filter('op')) {
         $filename = get('filename');
         $id = get('id');
 
-        $nome = Ini::getValue(Ini::readFile(DOCROOT.'/files/my_impianti/'.$filename), 'Nome');
-        $contenuto = file_get_contents(DOCROOT.'/files/my_impianti/'.$filename);
+        $nome = Ini::getValue(Ini::readFile(DOCROOT.'/files/impianti/'.$filename), 'Nome');
+        $contenuto = file_get_contents(DOCROOT.'/files/impianti/'.$filename);
 
         // Verifico che questo componente non sia già stato sostituito
         $query = 'SELECT * FROM my_impianto_componenti WHERE idsostituto = '.prepare($id);

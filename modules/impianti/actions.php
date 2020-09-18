@@ -124,8 +124,8 @@ switch ($op) {
         }
 
         // ...altrimenti carico dal file .ini
-        elseif (file_exists($docroot.'/files/my_impianti/'.$filename)) {
-            $contenuto = file_get_contents($docroot.'/files/my_impianti/'.$filename);
+        elseif (file_exists($docroot.'/files/impianti/'.$filename)) {
+            $contenuto = file_get_contents($docroot.'/files/impianti/'.$filename);
         }
 
         crea_form_componente($contenuto);

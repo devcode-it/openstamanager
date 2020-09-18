@@ -17,6 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Carbon\Carbon;
+
 include_once __DIR__.'/../../core.php';
 
 echo '
@@ -207,7 +209,7 @@ echo '
 
 // Data di registrazione
 $data_registrazione = get('data_registrazione');
-$data_registrazione = new \Carbon\Carbon($data_registrazione);
+$data_registrazione = new Carbon($data_registrazione);
 echo '
         <div class="col-md-3">
             {[ "type": "date", "label": "'.tr('Data di registrazione').'", "name": "data_registrazione", "required": 1, "value": "'.($data_registrazione ?: $dati_generali['Data']).'", "max-date": "-now-", "min-date": "'.$dati_generali['Data'].'" ]}
@@ -268,7 +270,6 @@ echo '
 
 // Righe
 $righe = $fattura_pa->getRighe();
-
 if (!empty($righe)) {
     echo '
     <h4>
@@ -291,7 +292,7 @@ if (!empty($righe)) {
             <tbody>';
 
     foreach ($righe as $key => $riga) {
-        $query = 'SELECT id, IF(codice IS NULL, descrizione, CONCAT(codice, " - ", descrizione)) AS descrizione FROM co_iva WHERE percentuale = '.prepare($riga['AliquotaIVA']);
+        $query = "SELECT id, IF(codice IS NULL, descrizione, CONCAT(codice, ' - ', descrizione)) AS descrizione FROM co_iva WHERE percentuale = ".prepare($riga['AliquotaIVA']);
 
         if (!empty($riga['Natura'])) {
             $query .= ' AND codice_natura_fe = '.prepare($riga['Natura']);
@@ -312,7 +313,13 @@ if (!empty($righe)) {
         $id_articolo = null;
         $codice_principale = $codici[0]['CodiceValore'];
         if (!empty($codice_principale)) {
-            $id_articolo = $database->fetchOne('SELECT id FROM mg_articoli WHERE codice = '.prepare($codice_principale))['id'];
+            if (!empty($anagrafica) && empty($id_articolo)) {
+                $id_articolo = $database->fetchOne('SELECT id_articolo AS id FROM mg_fornitore_articolo WHERE codice_fornitore = '.prepare($codice_principale).' AND id_fornitore = '.prepare($anagrafica->id))['id'];
+            }
+
+            if (empty($id_articolo)) {
+                $id_articolo = $database->fetchOne('SELECT id FROM mg_articoli WHERE codice = '.prepare($codice_principale))['id'];
+            }
         }
 
         $qta = $riga['Quantita'];

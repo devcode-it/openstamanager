@@ -24,37 +24,57 @@ ignore_user_abort(true);
 $skip_permissions = true;
 include_once __DIR__.'/../../core.php';
 
-$last_backup = null; // Cartella di backup specifica
+$backup = null; // Cartella di backup specifica
 $file = null; // File di backup del database
 
 // Ricerca dell'ultimo backup (idealmente versione 2.4.16)
-if (empty($file) && empty($last_backup)) {
+if (empty($file) && empty($backup)) {
     $backups = Backup::getList();
-    $last_backup = end($backups);
 }
 
 if (empty($file)) {
-    // Individuazione del database nel backup
-    if (ends_with($last_backup, '.zip')) {
-        $zip = new ZipArchive();
-        $zip->open($last_backup);
+    $count = count($backups);
+    for ($i = 0; $i < $count; ++$i) {
+        $backup = $backups[$i];
 
-        $contents = $zip->getFromName('database.sql');
+        // Individuazione del database nel backup
+        if (ends_with($backup, '.zip')) {
+            $zip = new ZipArchive();
+            $zip->open($backup);
 
-        // File temporaneo
-        $file = DIRECTORY_SEPARATOR.
-            trim(sys_get_temp_dir(), DIRECTORY_SEPARATOR).
-            DIRECTORY_SEPARATOR.
-            ltrim('database.sql', DIRECTORY_SEPARATOR);
+            $version = $zip->getFromName('VERSION');
+            if ($version == '2.4.17') {
+                continue;
+            }
 
-        file_put_contents($file, $contents);
+            $contents = $zip->getFromName('database.sql');
 
-        register_shutdown_function(function () use ($file) {
-            unlink($file);
-        });
-    } else {
-        $file = $last_backup.'/database.sql';
+            // File temporaneo
+            $file = DIRECTORY_SEPARATOR.
+                trim(sys_get_temp_dir(), DIRECTORY_SEPARATOR).
+                DIRECTORY_SEPARATOR.
+                ltrim('database.sql', DIRECTORY_SEPARATOR);
+
+            file_put_contents($file, $contents);
+
+            register_shutdown_function(function () use ($file) {
+                unlink($file);
+            });
+        } else {
+            $version = file_get_contents($backup.'/VERSION');
+            if ($version == '2.4.17') {
+                continue;
+            }
+
+            $file = $backup.'/database.sql';
+        }
     }
+}
+
+if (empty($file)) {
+    echo 'Impossibile procedere';
+
+    return;
 }
 
 // Lettura delle query
@@ -79,7 +99,7 @@ if (empty($query)) {
 $values = explode('VALUES', $query, 2)[1];
 $values = explode('),', $values);
 
-// Generazione delle query per il recupero delle date
+// Generazione delle query per il recupero delle date per la Prima Nota
 $results = [];
 foreach ($values as $row) {
     $row = substr(trim($row), 1);
@@ -87,8 +107,11 @@ foreach ($values as $row) {
     $campi = explode(',', $row);
     $id = $campi[0];
     $data = $campi[2];
+    $is_primanota = $campi[12];
 
-    $results[] = 'UPDATE `co_movimenti` SET `data` = '.$data.' WHERE `id` = '.prepare($id).";";
+    if (!empty($is_primanota)) {
+        $results[] = 'UPDATE `co_movimenti` SET `data` = '.$data.' WHERE `id` = '.prepare($id).';';
+    }
 }
 
 echo implode("\n", $results);

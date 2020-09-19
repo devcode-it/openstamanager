@@ -18,6 +18,7 @@
  */
 
 use Ifsnop\Mysqldump\Mysqldump;
+use Util\Generator;
 use Util\Zip;
 
 /**
@@ -96,7 +97,7 @@ class Backup
      */
     public static function readName($string)
     {
-        return Util\Generator::read(self::PATTERN, basename($string));
+        return Generator::read(self::PATTERN, basename($string));
     }
 
     /**
@@ -296,7 +297,7 @@ class Backup
      */
     protected static function getReplaces()
     {
-        return Util\Generator::getReplaces();
+        return Generator::getReplaces();
     }
 
     /**
@@ -306,6 +307,6 @@ class Backup
      */
     protected static function getNextName()
     {
-        return Util\Generator::generate(self::PATTERN);
+        return Generator::generate(self::PATTERN);
     }
 }

@@ -88,7 +88,7 @@ foreach ($values as $row) {
     $id = $campi[0];
     $data = $campi[2];
 
-    $results[] = 'UPDATE `co_movimenti` SET `data` = '.$data.' WWHERE `id` = '.prepare($id);
+    $results[] = 'UPDATE `co_movimenti` SET `data` = '.$data.' WHERE `id` = '.prepare($id).";";
 }
 
-echo implode(';', $results);
+echo implode("\n", $results);

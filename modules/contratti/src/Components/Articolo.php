@@ -27,8 +27,6 @@ class Articolo extends Article
 {
     use RelationTrait;
 
-    public $movimenta_magazzino = false;
-
     protected $table = 'co_righe_contratti';
 
     /**

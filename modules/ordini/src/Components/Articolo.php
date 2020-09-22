@@ -27,8 +27,6 @@ class Articolo extends Article
 {
     use RelationTrait;
 
-    public $movimenta_magazzino = false;
-
     protected $table = 'or_righe_ordini';
     protected $serialRowID = 'ordine';
 

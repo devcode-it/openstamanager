@@ -29,6 +29,11 @@ class Promemoria extends Document
 {
     use RecordTrait;
 
+    /**
+     * @var bool Disabilita movimentazione automatica
+     */
+    public static $movimenta_magazzino = false;
+
     protected $table = 'co_promemoria';
 
     /**

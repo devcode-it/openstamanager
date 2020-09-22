@@ -418,6 +418,12 @@ if ($read_only || !empty($block_edit)) {
                 $(".checkbox-buttons label", "section.content")'.$not.'.addClass("disabled");
                 ';
 
+    //Nascondo il plugin note interne ai clienti
+    if( $user->gruppo=="Clienti" ){
+        echo '
+                $("#link-tab_note").hide();';
+    }
+
     if ($read_only) {
         echo '
 				$("a.btn, button, input[type=button], input[type=submit]", "section.content").hide();

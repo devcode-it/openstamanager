@@ -30,6 +30,7 @@ $file = null; // File di backup del database
 // Ricerca dell'ultimo backup (idealmente versione 2.4.16)
 if (empty($file) && empty($backup)) {
     $backups = Backup::getList();
+    $backups = array_reverse($backups);
 }
 
 if (empty($file)) {

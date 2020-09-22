@@ -19,12 +19,15 @@
 
 namespace Models;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 use Intervention\Image\ImageManagerStatic;
 use Modules\Anagrafiche\Anagrafica;
 
 class User extends Model
 {
+    use SimpleModelTrait;
+
     protected $table = 'zz_users';
 
     protected $appends = [
@@ -65,7 +68,7 @@ class User extends Model
      */
     public static function build(Group $gruppo, $username, $email, $password)
     {
-        $model = parent::build();
+        $model = new static();
 
         $model->group()->associate($gruppo);
 

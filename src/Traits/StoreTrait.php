@@ -55,7 +55,7 @@ trait StoreTrait
      *
      * @param string|int $identifier
      *
-     * @return StoreTrait
+     * @return static
      */
     public static function get($identifier)
     {

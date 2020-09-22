@@ -19,11 +19,14 @@
 
 namespace Models;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 use Util\Query;
 
 class Clause extends Model
 {
+    use SimpleModelTrait;
+
     protected $table = 'zz_group_module';
 
     /* Relazioni Eloquent */

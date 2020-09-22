@@ -289,7 +289,8 @@ if (Auth::check()) {
     }
 }
 
-$hide_sidebar = Auth::check() && (setting('Nascondere la barra sinistra di default') or $_SESSION['settings']['sidebar-collapse']);
+$settings_collapse = session('settings.sidebar-collapse') ? 1 : 0;
+$hide_sidebar = Auth::check() && (setting('Nascondere la barra sinistra di default') || $settings_collapse);
 echo '
 
     </head>
@@ -520,10 +521,16 @@ if (Auth::check()) {
                         <div class="col-md-12">';
 
     // Eventuale messaggio personalizzato per l'installazione corrente
-    include_once App::filepath('include/custom/extra', 'extra.php');
+    $extra_file = App::filepath('include/custom/extra', 'extra.php');
+    if ($extra_file) {
+        include_once $extra_file;
+    }
 } else {
     // Eventuale messaggio personalizzato per l'installazione corrente
-    include_once App::filepath('include/custom/extra', 'login.php');
+    $extra_file = App::filepath('include/custom/extra', 'login.php');
+    if ($extra_file) {
+        include_once $extra_file;
+    }
 
     if (!empty($messages['info']) || !empty($messages['warning']) || !empty($messages['error'])) {
         echo '

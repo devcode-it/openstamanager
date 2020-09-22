@@ -19,17 +19,20 @@
 
 namespace Modules\Emails;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 
 class Receiver extends Model
 {
+    use SimpleModelTrait;
+
     protected $table = 'em_email_receiver';
 
     /* Relazioni Eloquent */
 
     public static function build(Mail $mail, $address, $type = null)
     {
-        $model = parent::build();
+        $model = new static();
 
         $model->email()->associate($mail);
 

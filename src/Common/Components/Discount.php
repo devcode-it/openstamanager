@@ -20,20 +20,44 @@
 namespace Common\Components;
 
 use Common\Document;
+use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Builder;
 
-abstract class Discount extends Row
+abstract class Discount extends Accounting
 {
+    use SimpleModelTrait;
+
     protected $guarded = [];
 
     public static function build(Document $document)
     {
-        $model = parent::build($document, true);
+        $model = new static();
+        $model->setDocument($document);
 
         $model->is_sconto = 1;
         $model->qta = 1;
 
         return $model;
+    }
+
+    public function isDescrizione()
+    {
+        return false;
+    }
+
+    public function isSconto()
+    {
+        return true;
+    }
+
+    public function isRiga()
+    {
+        return false;
+    }
+
+    public function isArticolo()
+    {
+        return false;
     }
 
     public function getIvaAttribute()
@@ -61,12 +85,16 @@ abstract class Discount extends Row
         $this->fixIvaIndetraibile();
     }
 
+    protected function customInitCopiaIn($original)
+    {
+        $this->is_sconto = $original->is_sconto;
+    }
+
     protected static function boot($bypass = false)
     {
-        parent::boot(true);
+        parent::boot();
 
-        $table = parent::getTableName();
-
+        $table = static::getTableName();
         static::addGlobalScope('discounts', function (Builder $builder) use ($table) {
             $builder->where($table.'.is_sconto', '=', 1);
         });

@@ -19,11 +19,14 @@
 
 namespace Models;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 use Intervention\Image\ImageManagerStatic;
 
 class Upload extends Model
 {
+    use SimpleModelTrait;
+
     protected $table = 'zz_files';
 
     protected $file_info;
@@ -43,7 +46,7 @@ class Upload extends Model
      */
     public static function build($source, $data, $name = null, $category = null)
     {
-        $model = parent::build();
+        $model = new static();
 
         // Informazioni di base
         $original_name = isset($source['name']) ? $source['name'] : basename($source);

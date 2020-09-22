@@ -19,7 +19,7 @@
 
 namespace Modules\Ordini;
 
-use Common\Components\Description;
+use Common\Components\Component;
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\DDT\DDT;
@@ -47,7 +47,7 @@ class Ordine extends Document
      */
     public static function build(Anagrafica $anagrafica, Tipo $tipo_documento, $data)
     {
-        $model = parent::build();
+        $model = new static();
 
         $stato_documento = Stato::where('descrizione', 'Bozza')->first();
 
@@ -147,7 +147,7 @@ class Ordine extends Document
      * Effettua un controllo sui campi del documento.
      * Viene richiamato dalle modifiche alle righe del documento.
      */
-    public function triggerEvasione(Description $trigger)
+    public function triggerEvasione(Component $trigger)
     {
         parent::triggerEvasione($trigger);
 
@@ -163,7 +163,7 @@ class Ordine extends Document
             // Impostazione del nuovo stato
             if ($qta_evasa == 0) {
                 $descrizione = 'Bozza';
-            } elseif (!in_array($stato_attuale->descrizione, ['Parzialmente fatturato', 'Fatturato']) && $trigger->parent instanceof DDT) {
+            } elseif (!in_array($stato_attuale->descrizione, ['Parzialmente fatturato', 'Fatturato']) && $trigger->getDocument() instanceof DDT) {
                 $descrizione = $parziale ? 'Parzialmente evaso' : 'Evaso';
             } else {
                 $descrizione = $parziale ? 'Parzialmente fatturato' : 'Fatturato';

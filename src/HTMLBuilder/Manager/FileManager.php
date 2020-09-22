@@ -217,9 +217,8 @@ class FileManager implements ManagerInterface
 
         $source = array_clean(array_column($categories, 'category'));
 
-        $upload_max_filesize = \Util\FileSystem::formatBytes(ini_get('upload_max_filesize'), 0);
-        //remove unit
-        $upload_max_filesize = substr($upload_max_filesize, 0, strrpos($upload_max_filesize, ' '));
+        $upload_max_filesize = ini_get('upload_max_filesize');
+        $upload_max_filesize = substr($upload_max_filesize, 0, -1);
 
         $result .= '
 <script>$(document).ready(init)</script>

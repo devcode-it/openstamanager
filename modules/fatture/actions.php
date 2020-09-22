@@ -304,7 +304,7 @@ switch (post('op')) {
         $righe = $fattura->getRighe();
         foreach ($righe as $riga) {
             $new_riga = $riga->replicate();
-            $new_riga->setParent($new);
+            $new_riga->setDocument($new);
 
             // Rimozione riferimenti (deorecati)
             $new_riga->idpreventivo = 0;

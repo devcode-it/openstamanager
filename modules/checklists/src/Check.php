@@ -19,7 +19,8 @@
 
 namespace Modules\Checklists;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 use Models\Group;
 use Models\Module;
 use Models\Plugin;
@@ -29,6 +30,7 @@ use Traits\HierarchyTrait;
 
 class Check extends Model
 {
+    use SimpleModelTrait;
     use HierarchyTrait;
 
     protected static $parent_identifier = 'id_parent';
@@ -46,7 +48,7 @@ class Check extends Model
      */
     public static function build(User $user, $structure, $id_record, $content, $parent_id = null)
     {
-        $model = parent::build();
+        $model = new static();
 
         $model->user()->associate($user);
         $model->id_parent = $parent_id;

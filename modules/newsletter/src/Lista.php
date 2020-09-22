@@ -19,13 +19,15 @@
 
 namespace Modules\Newsletter;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Anagrafiche\Anagrafica;
 use Traits\RecordTrait;
 
 class Lista extends Model
 {
+    use SimpleModelTrait;
     use SoftDeletes;
     use RecordTrait;
 
@@ -33,7 +35,7 @@ class Lista extends Model
 
     public static function build($name)
     {
-        $model = parent::build();
+        $model = new static();
         $model->name = $name;
 
         $model->save();

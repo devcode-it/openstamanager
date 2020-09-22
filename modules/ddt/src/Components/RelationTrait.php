@@ -23,18 +23,18 @@ use Modules\DDT\DDT;
 
 trait RelationTrait
 {
-    public function getParentID()
+    public function getDocumentID()
     {
         return 'idddt';
     }
 
-    public function parent()
+    public function document()
     {
-        return $this->belongsTo(DDT::class, $this->getParentID());
+        return $this->belongsTo(DDT::class, $this->getDocumentID());
     }
 
     public function ddt()
     {
-        return $this->parent();
+        return $this->document();
     }
 }

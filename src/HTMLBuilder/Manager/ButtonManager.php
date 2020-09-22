@@ -132,6 +132,7 @@ class ButtonManager implements ManagerInterface
                     'id_record' => $options['id_record'],
                     'class' => $options['class'],
                     'parameters' => $options['parameters'],
+                    'html_id' => $options['html_id'].'_p',
                 ]);
 
                 unset($list[$predefined]);
@@ -144,7 +145,7 @@ class ButtonManager implements ManagerInterface
     </button>
     <ul class="dropdown-menu dropdown-menu-right">';
 
-            foreach ($list as $element) {
+            foreach ($list as $i => $element) {
                 $result .= '
         <li>'.$this->link([
             'type' => $options['type'],
@@ -153,6 +154,7 @@ class ButtonManager implements ManagerInterface
             'id_record' => $options['id_record'],
             'class' => false,
             'parameters' => $options['parameters'],
+            'html_id' => $options['html_id'].'_'.$i,
         ]).'</li>';
             }
 

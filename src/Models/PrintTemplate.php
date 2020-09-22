@@ -19,13 +19,15 @@
 
 namespace Models;
 
-use Common\Model;
+use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Traits\PathTrait;
 use Traits\StoreTrait;
 
 class PrintTemplate extends Model
 {
+    use SimpleModelTrait;
     use PathTrait;
     use StoreTrait;
 

@@ -19,18 +19,21 @@
 
 namespace Plugins\DettagliArticolo;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo;
 use Modules\Iva\Aliquota;
 
-/**
+/*
  * Classe per la gestione delle relazioni articolo-prezzo sulla base di un range di quantità e di una specifica anagrafica.
  *
  * @since 2.4.18
  */
 class DettaglioPrezzo extends Model
 {
+    use SimpleModelTrait;
+
     protected $table = 'mg_prezzi_articoli';
 
     /**
@@ -40,7 +43,7 @@ class DettaglioPrezzo extends Model
      */
     public static function build(Articolo $articolo, Anagrafica $anagrafica, $direzione = 'uscita')
     {
-        $model = parent::build();
+        $model = new static();
 
         $model->anagrafica()->associate($anagrafica);
         $model->articolo()->associate($articolo);

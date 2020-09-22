@@ -19,10 +19,13 @@
 
 namespace Modules\Fatture;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 
 class Tipo extends Model
 {
+    use SimpleModelTrait;
+
     protected $table = 'co_tipidocumento';
 
     public function fatture()

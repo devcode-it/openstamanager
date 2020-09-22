@@ -19,10 +19,13 @@
 
 namespace Modules\Interventi;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 
 class Stato extends Model
 {
+    use SimpleModelTrait;
+
     protected $primaryKey = 'idstatointervento';
     protected $table = 'in_statiintervento';
 

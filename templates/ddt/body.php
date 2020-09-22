@@ -90,8 +90,8 @@ foreach ($righe as $riga) {
     }
 
     // Aggiunta dei riferimenti ai documenti
-    if (setting('Riferimento dei documenti nelle stampe') && $riga->hasOriginal()) {
-        $ref = $riga->getOriginal()->parent->getReference();
+    if (setting('Riferimento dei documenti nelle stampe') && $riga->hasOriginalComponent()) {
+        $ref = $riga->getOriginalComponent()->getDocument()->getReference();
 
         if (!empty($ref)) {
             echo '

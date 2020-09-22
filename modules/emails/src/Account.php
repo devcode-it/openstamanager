@@ -20,13 +20,15 @@
 namespace Modules\Emails;
 
 use Carbon\Carbon;
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Notifications\EmailNotification;
 use Traits\StoreTrait;
 
 class Account extends Model
 {
+    use SimpleModelTrait;
     use StoreTrait;
     use SoftDeletes;
 

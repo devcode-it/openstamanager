@@ -362,7 +362,7 @@ switch (filter('op')) {
 
                 // Ricerca della riga
                 $riga = $documento->getRiga($namespace.$type, $collegamento['id']);
-                $riga_origine = $riga->getOriginal();
+                $riga_origine = $riga->getOriginalComponent();
 
                 // Compilazione dei dati
                 $results[$key] = [

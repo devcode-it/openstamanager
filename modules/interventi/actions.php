@@ -552,7 +552,7 @@ switch (post('op')) {
             $righe = $intervento->getRighe();
             foreach ($righe as $riga) {
                 $new_riga = $riga->replicate();
-                $new_riga->setParent($new);
+                $new_riga->setDocument($new);
 
                 $new_riga->qta_evasa = 0;
                 $new_riga->save();

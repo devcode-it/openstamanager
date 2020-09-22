@@ -19,18 +19,20 @@
 
 namespace Modules\CategorieDocumentali;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Categoria extends Model
 {
+    use SimpleModelTrait;
     use SoftDeletes;
 
     protected $table = 'do_categorie';
 
     public static function build($descrizione)
     {
-        $model = parent::build();
+        $model = new static();
         $model->descrizione = $descrizione;
 
         $model->save();

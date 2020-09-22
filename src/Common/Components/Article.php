@@ -20,14 +20,17 @@
 namespace Common\Components;
 
 use Common\Document;
+use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Modules\Articoli\Articolo as Original;
 use Modules\Articoli\Movimento;
 use Plugins\DettagliArticolo\DettaglioFornitore;
 use UnexpectedValueException;
 
-abstract class Article extends Row
+abstract class Article extends Accounting
 {
+    use SimpleModelTrait;
+
     public $movimenta_magazzino = true;
     protected $abilita_movimentazione = true;
 
@@ -38,7 +41,8 @@ abstract class Article extends Row
 
     public static function build(Document $document, Original $articolo)
     {
-        $model = parent::build($document, true);
+        $model = new static();
+        $model->setDocument($document);
 
         $model->articolo()->associate($articolo);
 
@@ -49,6 +53,31 @@ abstract class Article extends Row
         return $model;
     }
 
+    public function isDescrizione()
+    {
+        return false;
+    }
+
+    public function isSconto()
+    {
+        return false;
+    }
+
+    public function isRiga()
+    {
+        return false;
+    }
+
+    public function isArticolo()
+    {
+        return true;
+    }
+
+    /**
+     * Metodo dedicato a gestire in automatico la movimentazione del magazzino in relazione all'articolo di riferimento sulla base delle caratteristiche del movimento (magazzino abilitato o meno).
+     *
+     * @param $qta
+     */
     public function movimenta($qta)
     {
         if (!$this->movimenta_magazzino) {
@@ -58,8 +87,8 @@ abstract class Article extends Row
         $movimenta = true;
 
         // Movimenta il magazzino solo se l'articolo non è già stato movimentato da un documento precedente
-        if ($this->hasOriginal()) {
-            $original = $this->getOriginal();
+        if ($this->hasOriginalComponent()) {
+            $original = $this->getOriginalComponent();
             $movimenta = !$original->movimenta_magazzino;
         }
 
@@ -70,7 +99,7 @@ abstract class Article extends Row
 
     public function getDirection()
     {
-        return $this->parent->direzione;
+        return $this->getDocument()->direzione;
     }
 
     /**
@@ -242,7 +271,7 @@ abstract class Article extends Row
 
     protected function movimentaMagazzino($qta)
     {
-        $documento = $this->parent;
+        $documento = $this->getDocument();
         $data = $documento->getReferenceDate();
 
         $qta_movimento = $documento->direzione == 'uscita' ? $qta : -$qta;
@@ -265,15 +294,14 @@ abstract class Article extends Row
 
     protected static function boot()
     {
-        // Precaricamento Articolo
+        parent::boot();
+
+        // Pre-caricamento Articolo
         static::addGlobalScope('articolo', function (Builder $builder) {
             $builder->with('articolo', 'dettaglioFornitore');
         });
 
-        parent::boot(true);
-
-        $table = parent::getTableName();
-
+        $table = static::getTableName();
         static::addGlobalScope('articles', function (Builder $builder) use ($table) {
             $builder->whereNotNull($table.'.idarticolo')->where($table.'.idarticolo', '<>', 0);
         });
@@ -340,19 +368,5 @@ abstract class Article extends Row
     protected function customInitCopiaIn($original)
     {
         $this->articolo()->associate($original->articolo);
-    }
-
-    protected function customBeforeDataCopiaIn($original)
-    {
-        //$this->movimentazione(false);
-
-        parent::customBeforeDataCopiaIn($original);
-    }
-
-    protected function customAfterDataCopiaIn($original)
-    {
-        //        $this->movimentazione(true);
-
-        parent::customAfterDataCopiaIn($original);
     }
 }

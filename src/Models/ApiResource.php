@@ -19,10 +19,13 @@
 
 namespace Models;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 
 class ApiResource extends Model
 {
+    use SimpleModelTrait;
+
     protected $table = 'zz_api_resources';
 
     /* Relazioni Eloquent */

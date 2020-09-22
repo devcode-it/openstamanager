@@ -21,13 +21,15 @@ namespace Models;
 
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
-use Common\Model;
+use Common\SimpleModelTrait;
 use Hooks\Manager;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Traits\StoreTrait;
 
 class Hook extends Model
 {
+    use SimpleModelTrait;
     use StoreTrait;
 
     protected $table = 'zz_hooks';

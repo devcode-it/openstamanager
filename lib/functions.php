@@ -17,11 +17,13 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Funzioni fondamentali per il corretto funzionamento del nucleo del progetto.
  *
  * @since 2.3
  */
+
+use HTMLBuilder\HTMLBuilder;
 use Models\OperationLog;
 
 /**
@@ -213,8 +215,10 @@ function translateTemplate()
     $id_record = filter('id_record');
     $id_parent = filter('id_parent');
 
-    $id_module = Modules::getCurrent()['id'];
-    $id_plugin = Plugins::getCurrent()['id'];
+    $module = Modules::getCurrent();
+    $plugin = Plugins::getCurrent();
+    $id_module = $module ? $module['id'] : null;
+    $id_plugin = $plugin ? $plugin['id'] : null;
 
     $template = ob_get_clean();
 
@@ -225,7 +229,7 @@ function translateTemplate()
     ];
 
     $template = replace($template, $replaces);
-    $template = \HTMLBuilder\HTMLBuilder::replace($template);
+    $template = HTMLBuilder::replace($template);
     $template = replace($template, $replaces);
 
     // Informazioni estese sulle azioni dell'utente
@@ -405,4 +409,23 @@ function check_query($query)
     }
 
     return true;
+}
+
+function session($name = '')
+{
+    $session = &$_SESSION;
+    if (empty($name)) {
+        return $session;
+    }
+
+    $pieces = explode('.', $name);
+    foreach ($pieces as $piece) {
+        if (!isset($session[$piece])) {
+            return null;
+        }
+
+        $session = &$session[$piece];
+    }
+
+    return $session;
 }

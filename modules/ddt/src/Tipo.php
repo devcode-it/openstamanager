@@ -19,10 +19,13 @@
 
 namespace Modules\DDT;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 
 class Tipo extends Model
 {
+    use SimpleModelTrait;
+
     protected $table = 'dt_tipiddt';
 
     public function ddt()

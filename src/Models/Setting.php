@@ -19,11 +19,13 @@
 
 namespace Models;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 use Traits\StoreTrait;
 
 class Setting extends Model
 {
+    use SimpleModelTrait;
     use StoreTrait;
 
     protected $table = 'zz_settings';

@@ -52,8 +52,8 @@ class Articolo extends Article
 
         // Movimenta il magazzino solo se l'articolo non è già stato movimentato da un documento precedente
         // Movimentazione forzata per Note di credito/debito
-        if ($this->hasOriginal() && !$this->parent->isNota()) {
-            $original = $this->getOriginal();
+        if ($this->hasOriginalComponent() && !$this->getDocument()->isNota()) {
+            $original = $this->getOriginalComponent();
             $movimenta = !$original->movimenta_magazzino;
         }
 

@@ -21,7 +21,8 @@ namespace Models;
 
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 use Traits\StoreTrait;
 
 /**
@@ -30,6 +31,7 @@ use Traits\StoreTrait;
  */
 class Cache extends Model
 {
+    use SimpleModelTrait;
     use StoreTrait;
 
     protected $table = 'zz_cache';

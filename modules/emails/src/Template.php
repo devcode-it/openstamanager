@@ -19,7 +19,8 @@
 
 namespace Modules\Emails;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Models\Module;
 use Models\PrintTemplate;
@@ -27,6 +28,7 @@ use Traits\StoreTrait;
 
 class Template extends Model
 {
+    use SimpleModelTrait;
     use StoreTrait;
     use SoftDeletes;
 

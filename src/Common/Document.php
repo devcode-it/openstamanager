@@ -19,7 +19,8 @@
 
 namespace Common;
 
-use Common\Components\Description;
+use Common\Components\Component;
+use Illuminate\Database\Eloquent\Model as Model;
 
 abstract class Document extends Model implements ReferenceInterface
 {
@@ -65,11 +66,11 @@ abstract class Document extends Model implements ReferenceInterface
         $righe = $this->getRighe();
 
         $groups = $righe->groupBy(function ($item, $key) {
-            if (!$item->hasOriginal()) {
+            if (!$item->hasOriginalComponent()) {
                 return null;
             }
 
-            $parent = $item->getOriginal()->parent;
+            $parent = $item->getOriginalComponent()->getDocument();
 
             return serialize($parent);
         });
@@ -191,7 +192,7 @@ abstract class Document extends Model implements ReferenceInterface
      * Metodo richiamato a seguito di modifiche sull'evasione generale delle righe del documento.
      * Utilizzabile per l'impostazione automatica degli stati.
      */
-    public function triggerEvasione(Description $trigger)
+    public function triggerEvasione(Component $trigger)
     {
         $this->setRelations([]);
     }
@@ -200,7 +201,7 @@ abstract class Document extends Model implements ReferenceInterface
      * Metodo richiamato a seguito della modifica o creazione di una riga del documento.
      * Utilizzabile per limpostazione automatica di campi statici del documento.
      */
-    public function triggerComponent(Description $trigger)
+    public function triggerComponent(Component $trigger)
     {
         $this->setRelations([]);
     }

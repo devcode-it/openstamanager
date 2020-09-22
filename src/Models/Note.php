@@ -19,11 +19,14 @@
 
 namespace Models;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 use Traits\NoteTrait;
 
 class Note extends Model
 {
+    use SimpleModelTrait;
+
     protected $table = 'zz_notes';
 
     /**
@@ -38,7 +41,7 @@ class Note extends Model
      */
     public static function build(User $user, $structure, $id_record, $contenuto, $data_notifica = null)
     {
-        $model = parent::build();
+        $model = new static();
 
         $model->user()->associate($user);
 

@@ -19,10 +19,13 @@
 
 namespace Modules\Ordini;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 
 class Tipo extends Model
 {
+    use SimpleModelTrait;
+
     protected $table = 'or_tipiordine';
 
     public function ordini()

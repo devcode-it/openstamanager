@@ -76,9 +76,9 @@ foreach ($righe as $riga) {
                     </button>';
 
     // Aggiunta dei riferimenti ai documenti
-    if ($riga->hasOriginal()) {
+    if ($riga->hasOriginalComponent()) {
         echo '
-                    <br>'.reference($riga->getOriginal()->parent, tr('Origine'));
+                    <br>'.reference($riga->getOriginalComponent()->getDocument(), tr('Origine'));
     }
     echo '
                 </small>';

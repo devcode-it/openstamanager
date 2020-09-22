@@ -17,21 +17,28 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace Modules\Fatture;
+namespace Common;
 
-use Common\SimpleModelTrait;
-use Illuminate\Database\Eloquent\Model;
-
-class StatoFE extends Model
+trait SimpleModelTrait
 {
-    use SimpleModelTrait;
-
-    public $incrementing = false;
-    protected $table = 'fe_stati_documento';
-    protected $primaryKey = 'codice';
-
-    public function fatture()
+    // Retrocompatibilità MySQL
+    public function setUpdatedAtAttribute($value)
     {
-        return $this->hasMany(Fattura::class, 'codice_stato_fe');
+        // to Disable updated_at
+    }
+
+    public static function getTableName()
+    {
+        return with(new static())->getTable();
+    }
+
+    /**
+     * Crea una nuova istanza del modello.
+     *
+     * @return static
+     */
+    public static function build()
+    {
+        return new static();
     }
 }

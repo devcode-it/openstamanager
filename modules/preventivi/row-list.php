@@ -50,9 +50,9 @@ foreach ($righe as $riga) {
                 <td>';
 
     // Aggiunta dei riferimenti ai documenti
-    if ($riga->hasOriginal()) {
+    if ($riga->hasOriginalComponent()) {
         echo '
-                    <small class="pull-right text-right text-muted">'.reference($riga->getOriginal()->parent, tr('Origine')).'</small>';
+                    <small class="pull-right text-right text-muted">'.reference($riga->getOriginalComponent()->getDocument(), tr('Origine')).'</small>';
     }
 
     // Descrizione

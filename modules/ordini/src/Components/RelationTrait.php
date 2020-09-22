@@ -23,18 +23,18 @@ use Modules\Ordini\Ordine;
 
 trait RelationTrait
 {
-    public function getParentID()
+    public function getDocumentID()
     {
         return 'idordine';
     }
 
-    public function parent()
+    public function document()
     {
-        return $this->belongsTo(Ordine::class, $this->getParentID());
+        return $this->belongsTo(Ordine::class, $this->getDocumentID());
     }
 
     public function ordine()
     {
-        return $this->parent();
+        return $this->document();
     }
 }

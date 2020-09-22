@@ -53,7 +53,7 @@ class DDT extends Document
      */
     public static function build(Anagrafica $anagrafica, Tipo $tipo_documento, $data)
     {
-        $model = parent::build();
+        $model = new static();
 
         $user = Auth::user();
 

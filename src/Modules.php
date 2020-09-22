@@ -114,7 +114,9 @@ class Modules
      */
     public static function getPermission($module)
     {
-        return self::get($module)->permission;
+        $result = self::get($module);
+
+        return $result ? $result->permission : null;
     }
 
     /**
@@ -147,7 +149,7 @@ class Modules
             // Aggiunta dei segmenti
             if ($include_segments) {
                 $segments = self::getSegments($module['id']);
-                $id_segment = $_SESSION['module_'.$module['id']]['id_segment'];
+                $id_segment = isset($_SESSION['module_'.$module['id']]) ? $_SESSION['module_'.$module['id']]['id_segment'] : null;
                 foreach ($segments as $result) {
                     if (!empty($result['clause']) && $result['id'] == $id_segment) {
                         $result['clause'] = Query::replacePlaceholder($result['clause']);

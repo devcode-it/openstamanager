@@ -20,8 +20,9 @@
 namespace Models;
 
 use App;
-use Common\Model;
+use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Modules\Checklists\Traits\ChecklistTrait;
 use Traits\Components\NoteTrait;
 use Traits\Components\UploadTrait;
@@ -30,6 +31,7 @@ use Traits\StoreTrait;
 
 class Plugin extends Model
 {
+    use SimpleModelTrait;
     use ManagerTrait;
     use StoreTrait;
     use UploadTrait {

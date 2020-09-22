@@ -20,6 +20,7 @@
 namespace Models;
 
 use Common\Model;
+use Util\Query;
 
 class View extends Model
 {
@@ -27,7 +28,7 @@ class View extends Model
 
     public function getQueryAttribute($value)
     {
-        return Util\Query::replacePlaceholder($value);
+        return Query::replacePlaceholder($value);
     }
 
     /* Relazioni Eloquent */

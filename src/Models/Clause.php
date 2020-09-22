@@ -20,6 +20,7 @@
 namespace Models;
 
 use Common\Model;
+use Util\Query;
 
 class Clause extends Model
 {
@@ -39,6 +40,6 @@ class Clause extends Model
 
     public function getClauseAttribute($value)
     {
-        return Util\Query::replacePlaceholder($value);
+        return Query::replacePlaceholder($value);
     }
 }

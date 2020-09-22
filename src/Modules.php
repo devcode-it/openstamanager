@@ -18,6 +18,7 @@
  */
 
 use Models\Module;
+use Util\Query;
 
 /**
  * Classe per la gestione delle informazioni relative ai moduli installati.
@@ -137,7 +138,7 @@ class Modules
             $results = $database->fetchArray('SELECT * FROM `zz_group_module` WHERE `idgruppo` = (SELECT `idgruppo` FROM `zz_users` WHERE `id` = '.prepare($user['id']).') AND `enabled` = 1 AND `idmodule` = '.prepare($module['id']));
             foreach ($results as $result) {
                 if (!empty($result['clause'])) {
-                    $result['clause'] = Util\Query::replacePlaceholder($result['clause']);
+                    $result['clause'] = Query::replacePlaceholder($result['clause']);
 
                     $additionals[$result['position']][] = $result['clause'];
                 }
@@ -149,7 +150,7 @@ class Modules
                 $id_segment = $_SESSION['module_'.$module['id']]['id_segment'];
                 foreach ($segments as $result) {
                     if (!empty($result['clause']) && $result['id'] == $id_segment) {
-                        $result['clause'] = Util\Query::replacePlaceholder($result['clause']);
+                        $result['clause'] = Query::replacePlaceholder($result['clause']);
 
                         $additionals[$result['position']][] = $result['clause'];
                     }
@@ -263,13 +264,13 @@ class Modules
     /**
      * Costruisce un link HTML per il modulo e il record indicati.
      *
-     * @param string|int $modulo
-     * @param int        $id_record
-     * @param string     $testo
-     * @param string     $alternativo
-     * @param string     $extra
-     * @param bool       $blank
-     * @param string     $anchor
+     * @param string|int  $modulo
+     * @param int         $id_record
+     * @param string      $testo
+     * @param bool|string $alternativo
+     * @param string      $extra
+     * @param bool        $blank
+     * @param string      $anchor
      *
      * @return string
      */

@@ -18,6 +18,7 @@
  */
 
 use Mpdf\Mpdf;
+use Util\Query;
 
 /**
  * Classe per la gestione delle informazioni relative alle stampe installate.
@@ -152,11 +153,11 @@ class Prints
             if (!empty($infos['is_record'])) {
                 $module = Modules::get($infos['id_module']);
 
-                Util\Query::setSegments(false);
-                $query = Util\Query::getQuery($module, [
+                Query::setSegments(false);
+                $query = Query::getQuery($module, [
                     'id' => $id_record,
                 ]);
-                Util\Query::setSegments(true);
+                Query::setSegments(true);
 
                 $has_access = !empty($query) ? $dbo->fetchNum($query) !== 0 : true;
             }

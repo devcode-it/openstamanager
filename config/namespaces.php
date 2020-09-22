@@ -18,7 +18,6 @@
  */
 
 return [
-    'include' => 'Common',
     'modules/aggiornamenti' => 'Modules\Aggiornamenti',
     'modules/anagrafiche' => 'Modules\Anagrafiche',
     'modules/backups' => 'Modules\Backups',

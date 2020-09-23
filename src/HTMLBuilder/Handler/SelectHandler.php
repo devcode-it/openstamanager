@@ -30,7 +30,7 @@ class SelectHandler implements HandlerInterface
 {
     public function handle(&$values, &$extras)
     {
-        $source = $values['ajax-source'] ?: $values['select-source'];
+        $source = isset($values['ajax-source']) ? $values['ajax-source'] : (isset($values['select-source']) ? $values['select-source'] : null);
 
         // Individuazione della classe per la corretta gestione JavaScript
         $values['class'][] = !empty($source) ? 'superselectajax' : 'superselect';
@@ -97,9 +97,9 @@ class SelectHandler implements HandlerInterface
 
         // Impostazione del placeholder
         $values['placeholder'] = !empty($values['placeholder']) ? $values['placeholder'] : tr("Seleziona un'opzione");
-        $values['data-placeholder'] = $values['placeholder'];
+        $values['data-placeholder'] = isset($values['placeholder']) ? $values['placeholder'] : null;
 
-        $values['data-maximum-selection-length'] = $values['maximum-selection-length'];
+        $values['data-maximum-selection-length'] = isset($values['maximum-selection-length']) ? $values['maximum-selection-length'] : null;
 
         unset($values['values']);
 

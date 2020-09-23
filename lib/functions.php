@@ -64,7 +64,7 @@ function sanitizeFilename($filename)
 /**
  * Elimina i file indicati.
  *
- * @param array $files
+ * @param array|string $files
  *
  * @return bool
  */

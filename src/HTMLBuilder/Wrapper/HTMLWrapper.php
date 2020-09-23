@@ -106,8 +106,8 @@ class HTMLWrapper implements WrapperInterface
 
             $value = explode('|', $values['validation']);
             $name = $value[0];
-            $id_module = $value[1] ?: '$id_module$';
-            $id_record = $value[2] ?: '$id_record$';
+            $id_module = isset($value[1]) ? $value[1] : '$id_module$';
+            $id_record = isset($value[2]) ? $value[2] : '$id_record$';
 
             $result .= '
     <script>

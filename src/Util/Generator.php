@@ -209,7 +209,7 @@ class Generator
 
         $result = $query->first();
 
-        return $result->{$field};
+        return isset($result->{$field}) ? $result->{$field} : null;
     }
 
     /**

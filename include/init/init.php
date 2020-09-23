@@ -143,15 +143,15 @@ if (!$has_user) {
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-md-6">
-                            {[ "type": "text", "label": "'.tr('Username').'", "name": "admin_username", "value": "'.$osm_password.'", "placeholder": "'.tr("Digita l'username dell'amministratore").'", "required": 1 ]}
+                            {[ "type": "text", "label": "'.tr('Username').'", "name": "admin_username", "value": "", "placeholder": "'.tr("Digita l'username dell'amministratore").'", "required": 1 ]}
                         </div>
 
                         <div class="col-md-6">
-                            {[ "type": "password", "label": "'.tr('Password').'", "id": "password", "name": "admin_password", "value": "'.$osm_password.'", "placeholder": "'.tr("Digita la password dell'amministratore").'", "required": 1, "strength": "#config" ]}
+                            {[ "type": "password", "label": "'.tr('Password').'", "id": "password", "name": "admin_password", "value": "", "placeholder": "'.tr("Digita la password dell'amministratore").'", "required": 1, "strength": "#config" ]}
                         </div>
 
                         <div class="col-md-6">
-                            {[ "type": "email", "label": "'.tr('Email').'", "name": "admin_email", "value": "'.$osm_email.'", "placeholder": "'.tr("Digita l'indirizzo email dell'amministratore").'", "required": 1 ]}
+                            {[ "type": "email", "label": "'.tr('Email').'", "name": "admin_email", "value": "", "placeholder": "'.tr("Digita l'indirizzo email dell'amministratore").'", "required": 1 ]}
                         </div>
                     </div>
                 </div>

@@ -62,7 +62,7 @@ class SelectHandler implements HandlerInterface
             unset($values['select-source']);
 
             // Informazioni aggiuntive per il select
-            $infos = $values['select-options'] ?: [];
+            $infos = isset($values['select-options']) ? $values['select-options'] : [];
             $values['data-select-options'] = json_encode($infos);
             unset($values['select-options']);
 
@@ -170,7 +170,7 @@ class SelectHandler implements HandlerInterface
             }
 
             $html .= '
-        <option value="'.prepareToField($element['id']).'" '.implode(' ', $attributes).($element['disabled'] ? 'disabled' : '').'>'.$element['text'].'</option>';
+        <option value="'.prepareToField($element['id']).'" '.implode(' ', $attributes).(!empty($element['disabled']) ? 'disabled' : '').'>'.$element['text'].'</option>';
         }
 
         return $html;

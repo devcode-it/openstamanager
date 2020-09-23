@@ -399,7 +399,7 @@ class Sessione extends Model
      */
     public function getMarginePercentualeAttribute()
     {
-        return (1 - ($this->spesa / $this->imponibile)) * 100;
+        return $this->imponibile ? (1 - ($this->spesa / $this->imponibile)) * 100 : 100;
     }
 
     public function getIvaIndetraibileAttribute()

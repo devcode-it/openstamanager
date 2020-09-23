@@ -20,7 +20,7 @@
 namespace Modules\DDT;
 
 use Auth;
-use Common\Components\Description;
+use Common\Components\Component;
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
 use Traits\RecordTrait;
@@ -204,7 +204,7 @@ class DDT extends Document
      * Effettua un controllo sui campi del documento.
      * Viene richiamato dalle modifiche alle righe del documento.
      */
-    public function triggerEvasione(Description $trigger)
+    public function triggerEvasione(Component $trigger)
     {
         parent::triggerEvasione($trigger);
 

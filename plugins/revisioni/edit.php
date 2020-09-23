@@ -17,7 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-include_once __DIR__.'/../../../core.php';
+include_once __DIR__.'/../../core.php';
 
 $revisione_principale = $dbo->fetchOne('SELECT master_revision FROM co_preventivi WHERE id = '.prepare($id_record));
 

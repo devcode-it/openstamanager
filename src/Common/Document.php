@@ -22,13 +22,8 @@ namespace Common;
 use Common\Components\Component;
 use Illuminate\Database\Eloquent\Model as Model;
 
-abstract class Document extends Model implements ReferenceInterface
+abstract class Document extends Model implements ReferenceInterface, DocumentInterface
 {
-    /**
-     * Restituisce la collezione di righe e articoli con valori rilevanti per i conti.
-     *
-     * @return iterable
-     */
     public function getRighe()
     {
         $results = $this->mergeCollections($this->descrizioni, $this->righe, $this->articoli, $this->sconti);
@@ -38,14 +33,6 @@ abstract class Document extends Model implements ReferenceInterface
         });
     }
 
-    /**
-     * Restituisce la riga identificata dall'ID indicato.
-     *
-     * @param $type
-     * @param $id
-     *
-     * @return mixed
-     */
     public function getRiga($type, $id)
     {
         $righe = $this->getRighe();
@@ -55,12 +42,6 @@ abstract class Document extends Model implements ReferenceInterface
         });
     }
 
-    /**
-     * Restituisce la collezione di righe e articoli con valori rilevanti per i conti, raggruppate sulla base dei documenti di provenienza.
-     * La chiave è la serializzazione del documento di origine, oppure null in caso non esista.
-     *
-     * @return iterable
-     */
     public function getRigheRaggruppate()
     {
         $righe = $this->getRighe();
@@ -87,6 +68,16 @@ abstract class Document extends Model implements ReferenceInterface
     abstract public function sconti();
 
     abstract public function getDirezioneAttribute();
+
+    public function triggerEvasione(Component $trigger)
+    {
+        $this->setRelations([]);
+    }
+
+    public function triggerComponent(Component $trigger)
+    {
+        $this->setRelations([]);
+    }
 
     /**
      * Calcola l'imponibile del documento.
@@ -165,7 +156,7 @@ abstract class Document extends Model implements ReferenceInterface
      */
     public function getMarginePercentualeAttribute()
     {
-        return (1 - ($this->spesa / ($this->totale_imponibile))) * 100;
+        return $this->imponibile ? (1 - ($this->spesa / $this->totale_imponibile)) * 100 : 100;
     }
 
     public function delete()
@@ -186,24 +177,6 @@ abstract class Document extends Model implements ReferenceInterface
         }
 
         return parent::delete();
-    }
-
-    /**
-     * Metodo richiamato a seguito di modifiche sull'evasione generale delle righe del documento.
-     * Utilizzabile per l'impostazione automatica degli stati.
-     */
-    public function triggerEvasione(Component $trigger)
-    {
-        $this->setRelations([]);
-    }
-
-    /**
-     * Metodo richiamato a seguito della modifica o creazione di una riga del documento.
-     * Utilizzabile per limpostazione automatica di campi statici del documento.
-     */
-    public function triggerComponent(Component $trigger)
-    {
-        $this->setRelations([]);
     }
 
     public function toArray()

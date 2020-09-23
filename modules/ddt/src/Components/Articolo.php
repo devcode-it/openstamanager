@@ -29,16 +29,4 @@ class Articolo extends Article
 
     protected $table = 'dt_righe_ddt';
     protected $serialRowID = 'ddt';
-
-    /**
-     * Crea un nuovo articolo collegato ad una ddt.
-     *
-     * @return self
-     */
-    public static function build(DDT $ddt, Original $articolo)
-    {
-        $model = parent::build($ddt, $articolo);
-
-        return $model;
-    }
 }

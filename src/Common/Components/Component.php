@@ -35,6 +35,8 @@ use InvalidArgumentException;
  * @property string original_type
  * @property string original_id
  *
+ * @template T
+ *
  * @since 2.4.18
  */
 abstract class Component extends Model
@@ -285,6 +287,8 @@ abstract class Component extends Model
      *
      * @param string $type
      * @param string $id
+     *
+     * @return array
      */
     public function impostaOrigine($type, $id)
     {
@@ -314,6 +318,7 @@ abstract class Component extends Model
      * Imposta il proprietario dell'oggetto e l'ordine relativo all'interno delle righe.
      *
      * @param Document $document Documento di riferimento
+     * @psalm-param T $document
      */
     public function setDocument(Document $document)
     {
@@ -327,6 +332,7 @@ abstract class Component extends Model
 
     /**
      * @return Document
+     * @psalm-return T
      */
     public function getDocument()
     {
@@ -335,6 +341,9 @@ abstract class Component extends Model
 
     abstract public function document();
 
+    /**
+     * @return string
+     */
     abstract public function getDocumentID();
 
     public function save(array $options = [])

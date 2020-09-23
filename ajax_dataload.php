@@ -78,7 +78,7 @@ if (!empty($query)) {
 
     // Allineamento delle righe
     $align = [];
-    $row = $rows[0] ?: [];
+    $row = isset($rows[0]) ? $rows[0] : [];
     foreach ($row as $field => $value) {
         $value = trim($value);
 

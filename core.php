@@ -20,8 +20,6 @@
 // Rimozione header X-Powered-By
 header_remove('X-Powered-By');
 
-ini_set('session.cookie_samesite', 'strict');
-
 // Impostazioni di configurazione PHP
 date_default_timezone_set('Europe/Rome');
 
@@ -121,6 +119,14 @@ if (!API\Response::isAPIRequest()) {
     $handlers[] = new StreamHandler($docroot.'/logs/api.log', Monolog\Logger::ERROR);
 }
 
+// Sicurezza della sessioni
+ini_set('session.cookie_samesite', 'strict');
+ini_set('session.use_trans_sid', '0');
+ini_set('session.use_only_cookies', '1');
+
+session_set_cookie_params(0, $rootdir, null, isHTTPS(true));
+session_start();
+
 // Disabilita i messaggi nativi di PHP
 ini_set('display_errors', 0);
 // Ignora gli avvertimenti e le informazioni relative alla deprecazione di componenti
@@ -144,13 +150,6 @@ $dbo = $database = database();
 
 /* SESSIONE */
 if (!API\Response::isAPIRequest()) {
-    // Sicurezza della sessioni
-    ini_set('session.use_trans_sid', '0');
-    ini_set('session.use_only_cookies', '1');
-
-    session_set_cookie_params(0, $rootdir, null, isHTTPS(true));
-    session_start();
-
     // Barra di debug (necessario per loggare tutte le query)
     if (App::debug()) {
         $debugbar = new DebugBar\DebugBar();

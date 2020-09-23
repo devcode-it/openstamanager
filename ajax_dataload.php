@@ -22,11 +22,13 @@ include_once __DIR__.'/core.php';
 use Util\Query;
 
 // Informazioni fondamentali
-$columns = filter('columns');
-$order = filter('order')[0];
+$columns = (array) filter('columns');
+$order = filter('order') ? filter('order')[0] : [];
 $draw_numer = intval(filter('draw'));
 
-$order['column'] = $order['column'] - 1;
+if (!empty(filter('order'))) {
+    $order['column'] = $order['column'] - 1;
+}
 array_shift($columns);
 
 $total = Util\Query::readQuery($structure);
@@ -157,7 +159,7 @@ if (!empty($query)) {
                 $id_record = $r['id'];
                 $hash = '';
 
-                $id_module = $r['_link_module_'] ?: $id_module;
+                $id_module = !empty($r['_link_module_']) ? $r['_link_module_'] : $id_module;
                 if (!empty($r['_link_record_'])) {
                     $id_record = $r['_link_record_'];
                     $hash = !empty($r['_link_hash_']) ? '#'.$r['_link_hash_'] : '';

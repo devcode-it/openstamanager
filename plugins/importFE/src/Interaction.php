@@ -44,6 +44,8 @@ class Interaction extends Services
 
     public static function getRemoteList()
     {
+        $list = [];
+
         // Ricerca da remoto
         if (self::isEnabled()) {
             $response = static::request('POST', 'fatture_da_importare');
@@ -54,7 +56,7 @@ class Interaction extends Services
             }
         }
 
-        return $list ?: [];
+        return $list;
     }
 
     public static function getFileList($list = [])

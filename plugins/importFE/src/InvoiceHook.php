@@ -36,7 +36,7 @@ class InvoiceHook extends CachedManager
 
     public function response()
     {
-        $results = $this->getCache()->content;
+        $results = (array) $this->getCache()->content;
 
         $count = count($results);
         $notify = false;

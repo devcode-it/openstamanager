@@ -118,12 +118,12 @@ class Plugins
     /**
      * Costruisce un link HTML per il modulo e il record indicati.
      *
-     * @param string|int $plugin
-     * @param int        $id_record
-     * @param string     $testo
-     * @param string     $alternativo
-     * @param string     $extra
-     * @param bool       $blank
+     * @param string|int  $plugin
+     * @param int         $id_record
+     * @param string      $testo
+     * @param bool|string $alternativo
+     * @param string      $extra
+     * @param bool        $blank
      *
      * @return string
      */

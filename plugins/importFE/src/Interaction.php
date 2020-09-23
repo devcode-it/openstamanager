@@ -37,7 +37,7 @@ class Interaction extends Services
         $result = self::getFileList($list);
 
         // Aggiornamento cache hook
-        Cache::get('Fatture Elettroniche')->set($result);
+        Cache::pool('Fatture Elettroniche')->set($result);
 
         return $result;
     }

@@ -82,7 +82,7 @@ foreach ($results as $result) {
                             '_NUMBER_' => $cont,
                         ]).'</h3>
 						<a class="btn btn-danger pull-right" onclick="';
-    echo "if(confirm('".tr('Eliminare questo elemento?')."')){ location.href='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=delete_rata&id='.$result['id']."'; }";
+    echo "if(confirm('".tr('Eliminare questo elemento?')."')){ location.href='".base_link().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=delete_rata&id='.$result['id']."'; }";
     echo '"><i class="fa fa-trash"></i> '.tr('Elimina').'</a>
 					</div>
 					<div class="box-body">

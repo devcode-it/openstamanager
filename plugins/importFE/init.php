@@ -43,6 +43,6 @@ if (isset($id_record)) {
     if (empty($record)) {
         flash()->warning(tr('Nessuna fattura da importare!'));
 
-        redirect(ROOTDIR.'/controller.php?id_module='.$id_module);
+        redirect(base_link().'/controller.php?id_module='.$id_module);
     }
 }

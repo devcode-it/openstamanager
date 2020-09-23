@@ -66,7 +66,7 @@ if (post('action') == 'init') {
     if (!$has_azienda) {
         Filter::set('post', 'op', 'add');
         $id_module = Modules::get('Anagrafiche')['id'];
-        include DOCROOT.'/modules/anagrafiche/actions.php';
+        include base_dir().'/modules/anagrafiche/actions.php';
 
         // Logo stampe
         if (!empty($_FILES) && !empty($_FILES['blob']['name'])) {
@@ -114,7 +114,7 @@ if (post('action') == 'init') {
         }
     }
 
-    redirect(ROOTDIR, 'js');
+    redirect(base_link(), 'js');
     exit();
 }
 
@@ -172,7 +172,7 @@ if (!$has_azienda) {
     $readonly_tipo = true;
 
     ob_start();
-    include DOCROOT.'/modules/anagrafiche/add.php';
+    include base_dir().'/modules/anagrafiche/add.php';
     $anagrafica = ob_get_clean();
 
     echo str_replace('</form>', '', $anagrafica);
@@ -258,7 +258,7 @@ echo '
         $("button[type=submit]").not("#config").remove();
     });
 </script>
-<script src="'.$rootdir.'/lib/functions.js"></script>
+<script src="'.base_link().'/lib/functions.js"></script>
 <script>$(document).ready(init)</script>';
 
 include_once App::filepath('include|custom|', 'bottom.php');

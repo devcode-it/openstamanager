@@ -127,7 +127,7 @@ class DefaultHandler implements HandlerInterface
             $result .= '
     <div id="'.$values['id'].'_viewport_progress"></div>
 
-    <script src="'.ROOTDIR.'/assets/dist/password-strength/password.min.js"></script>
+    <script src="'.base_link().'/assets/dist/password-strength/password.min.js"></script>
        <script>
         $(document).ready(function(){
             $("#'.$values['id'].'").pwstrength({

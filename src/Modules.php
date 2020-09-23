@@ -82,7 +82,7 @@ class Modules
     {
         self::getModules();
 
-        return Module::get($module);
+        return Module::pool($module);
     }
 
     /**
@@ -293,7 +293,7 @@ class Modules
         if (!empty($module) && in_array($module->permission, ['r', 'rw'])) {
             $link = !empty($id_record) ? 'editor.php?id_module='.$module['id'].'&id_record='.$id_record : 'controller.php?id_module='.$module['id'];
 
-            return '<a href="'.ROOTDIR.'/'.$link.'#'.$anchor.'" '.$extra.'>'.$testo.'</a>';
+            return '<a href="'.base_link().'/'.$link.'#'.$anchor.'" '.$extra.'>'.$testo.'</a>';
         } else {
             return $alternativo;
         }
@@ -330,7 +330,7 @@ class Modules
             return '';
         }
 
-        $link = (!empty($element['option']) && $element['option'] != 'menu') ? ROOTDIR.'/controller.php?id_module='.$element['id'] : 'javascript:;';
+        $link = (!empty($element['option']) && $element['option'] != 'menu') ? base_link().'/controller.php?id_module='.$element['id'] : 'javascript:;';
         $title = $element['title'];
         $target = '_self'; // $target = ($element['new'] == 1) ? '_blank' : '_self';
         $active = ($actual == $element['name']);

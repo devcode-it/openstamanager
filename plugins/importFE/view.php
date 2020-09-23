@@ -30,7 +30,7 @@ $xml->loadXML($content);
 
 // XSL
 $xsl = new DOMDocument();
-$xsl->load(DOCROOT.'/plugins/xml/asso-invoice.xsl');
+$xsl->load(base_dir().'/plugins/xml/asso-invoice.xsl');
 
 // XSLT
 $xslt = new XSLTProcessor();

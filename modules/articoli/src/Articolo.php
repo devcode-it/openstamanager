@@ -162,7 +162,7 @@ class Articolo extends Model
         $image = $directory.$this->immagine;
         $image_thumbnail = $directory.$fileinfo['filename'].'_thumb600.'.$fileinfo['extension'];
 
-        $url = file_exists(DOCROOT.$image_thumbnail) ? ROOTDIR.$image_thumbnail : ROOTDIR.$image;
+        $url = file_exists(base_dir().$image_thumbnail) ? base_link().$image_thumbnail : base_link().$image;
 
         return $url;
     }

@@ -25,7 +25,7 @@ if (filter('op')) {
 }
 
 if (empty($id_record)) {
-    require DOCROOT.'/add.php';
+    require base_dir().'/add.php';
 } else {
     $modulo_selezionato = Modules::get($id_record);
     $import_selezionato = $moduli_disponibili[$modulo_selezionato->name];

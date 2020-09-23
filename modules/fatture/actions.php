@@ -143,7 +143,7 @@ switch (post('op')) {
             if ($stato_fe && empty($checks)) {
                 try {
                     $fattura_pa = new FatturaElettronica($id_record);
-                    $file = $fattura_pa->save(DOCROOT.'/'.FatturaElettronica::getDirectory());
+                    $file = $fattura_pa->save(base_dir().'/'.FatturaElettronica::getDirectory());
 
                     flash()->info(tr('Fattura elettronica generata correttamente!'));
 

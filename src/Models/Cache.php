@@ -23,7 +23,7 @@ use Carbon\Carbon;
 use Carbon\CarbonInterval;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
-use Traits\StoreTrait;
+use Traits\LocalPoolTrait;
 
 /**
  * Risorsa di cache per la gestione delle informazioni temporanee del gestionale.
@@ -32,7 +32,7 @@ use Traits\StoreTrait;
 class Cache extends Model
 {
     use SimpleModelTrait;
-    use StoreTrait;
+    use LocalPoolTrait;
 
     protected $table = 'zz_cache';
 

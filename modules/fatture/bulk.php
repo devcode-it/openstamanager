@@ -27,7 +27,7 @@ use Util\Zip;
 
 switch (post('op')) {
     case 'export-bulk':
-        $dir = DOCROOT.'/files/export_fatture/';
+        $dir = base_dir().'/files/export_fatture/';
         directory($dir.'tmp/');
 
         $dir = slashes($dir);
@@ -113,7 +113,7 @@ switch (post('op')) {
         break;
 
     case 'export-xml-bulk':
-        $dir = DOCROOT.'/files/export_fatture/';
+        $dir = base_dir().'/files/export_fatture/';
         directory($dir.'tmp/');
 
         $dir = slashes($dir);
@@ -301,7 +301,7 @@ $operations['registrazione-contabile'] = [
         'title' => tr('Registrazione contabile'),
         'type' => 'modal',
         'origine' => 'fatture',
-        'url' => $rootdir.'/add.php?id_module='.Modules::get('Prima nota')['id'],
+        'url' => base_link().'/add.php?id_module='.Modules::get('Prima nota')['id'],
     ],
 ];
 

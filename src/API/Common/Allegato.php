@@ -52,7 +52,7 @@ class Allegato extends Resource implements RetrieveInterface, CreateInterface
             ->where('id_record', $request['id_record'])
             ->first();
         if (!empty($upload)) {
-            download(DOCROOT.'/'.$upload->filepath, $upload->original_name);
+            download(base_dir().'/'.$upload->filepath, $upload->original_name);
         }
 
         return [

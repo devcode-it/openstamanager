@@ -46,8 +46,8 @@ switch (filter('op')) {
         $filename = get('filename');
 
         if (!empty($filename)) {
-            $contenuto = file_get_contents(DOCROOT.'/files/impianti/'.$filename);
-            $nome = Ini::getValue(Ini::readFile(DOCROOT.'/files/impianti/'.$filename), 'Nome');
+            $contenuto = file_get_contents(base_dir().'/files/impianti/'.$filename);
+            $nome = Ini::getValue(Ini::readFile(base_dir().'/files/impianti/'.$filename), 'Nome');
 
             $query = 'INSERT INTO my_impianto_componenti(filename, idimpianto, contenuto, nome, data) VALUES('.prepare($filename).', '.prepare($id_record).', '.prepare($contenuto).', '.prepare($nome).', NOW())';
             $dbo->query($query);
@@ -63,8 +63,8 @@ switch (filter('op')) {
         $filename = get('filename');
         $id = get('id');
 
-        $nome = Ini::getValue(Ini::readFile(DOCROOT.'/files/impianti/'.$filename), 'Nome');
-        $contenuto = file_get_contents(DOCROOT.'/files/impianti/'.$filename);
+        $nome = Ini::getValue(Ini::readFile(base_dir().'/files/impianti/'.$filename), 'Nome');
+        $contenuto = file_get_contents(base_dir().'/files/impianti/'.$filename);
 
         // Verifico che questo componente non sia già stato sostituito
         $query = 'SELECT * FROM my_impianto_componenti WHERE idsostituto = '.prepare($id);
@@ -111,7 +111,7 @@ echo '
     <div class="box-body">';
 
 // Elenca i componenti disponibili
-$componenti_disponibili = Ini::getList(DOCROOT.'/files/my_impianti/', $id_list);
+$componenti_disponibili = Ini::getList(base_dir().'/files/my_impianti/', $id_list);
 echo '
         <div class="row">
             <div class="col-md-9">
@@ -203,7 +203,7 @@ if (!empty($componenti_installati)) {
         echo '
                 <div id="collapse_'.$j.'" class="box-body">
                     <div class="row">
-                        <form method="post" action="'.ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=modifica_componente&id='.$componente['id'].'">
+                        <form method="post" action="'.base_link().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=modifica_componente&id='.$componente['id'].'">
                             <input type="hidden" name="backto" value="record-edit">';
 
         // Nome
@@ -324,7 +324,7 @@ echo '
 <script>
 function aggiungiComponente() {
     if ($("#filename").val() != "0") {
-        redirect("'.ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=aggiunta_componente&backto=record-edit&filename=" + $("#filename").val() + "&hash=tab_'.$id_plugin.'");
+        redirect("'.base_link().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=aggiunta_componente&backto=record-edit&filename=" + $("#filename").val() + "&hash=tab_'.$id_plugin.'");
     } else {
         alert("'.tr('Seleziona prima un componente').'");
         $("#filename").focus();
@@ -333,7 +333,7 @@ function aggiungiComponente() {
 
 function sostituisciComponente() {
     if(confirm("'.tr('Vuoi sostituire questo componente con un altro dello stesso tipo?').'")){
-        redirect("'.ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=sostituzione_componente&backto=record-edit&filename='.$filename.'&id='.$componente['id'].'");
+        redirect("'.base_link().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=sostituzione_componente&backto=record-edit&filename='.$filename.'&id='.$componente['id'].'");
     }
 }
 

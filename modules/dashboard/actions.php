@@ -74,7 +74,7 @@ switch (filter('op')) {
                 'title' => '<b>Int. '.$sessione['codice'].'</b> '.$sessione['cliente'].'<br><b>'.tr('Tecnici').':</b> '.$sessione['nome_tecnico'].' '.(($sessione['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : ''),
                 'start' => $sessione['orario_inizio'],
                 'end' => $sessione['orario_fine'],
-                'url' => ROOTDIR.'/editor.php?id_module='.$modulo_interventi->id.'&id_record='.$sessione['idintervento'],
+                'url' => base_link().'/editor.php?id_module='.$modulo_interventi->id.'&id_record='.$sessione['idintervento'],
                 'backgroundColor' => $sessione['colore'],
                 'textColor' => color_inverse($sessione['colore']),
                 'borderColor' => ($sessione['colore_tecnico'] == '#FFFFFF') ? color_darken($sessione['colore_tecnico'], 100) : $sessione['colore_tecnico'],

@@ -36,7 +36,7 @@ $id_segment = $_SESSION['module_'.$id_fatture]['id_segment'];
 
 switch (post('op')) {
     case 'export-bulk':
-        $dir = DOCROOT.'/files/export_interventi/';
+        $dir = base_dir().'/files/export_interventi/';
         directory($dir.'tmp/');
 
         // Rimozione dei contenuti precedenti

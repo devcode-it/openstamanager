@@ -21,6 +21,7 @@ namespace Models;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
+use Modules\Emails\Mail;
 
 class OperationLog extends Model
 {

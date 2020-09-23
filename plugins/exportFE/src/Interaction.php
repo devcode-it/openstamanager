@@ -33,7 +33,7 @@ class Interaction extends Services
     {
         try {
             $fattura = new FatturaElettronica($id_record);
-            $file = DOCROOT.'/'.FatturaElettronica::getDirectory().'/'.$fattura->getFilename();
+            $file = base_dir().'/'.FatturaElettronica::getDirectory().'/'.$fattura->getFilename();
 
             $response = static::request('POST', 'invio_fattura_xml', [
                 'xml' => file_get_contents($file),

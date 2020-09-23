@@ -21,7 +21,6 @@ namespace Models;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
-use Traits\NoteTrait;
 
 class Note extends Model
 {
@@ -32,10 +31,10 @@ class Note extends Model
     /**
      * Crea una nuova nota.
      *
-     * @param NoteTrait $structure
-     * @param int       $id_record
-     * @param string    $contenuto
-     * @param string    $data_scadenza
+     * @param Module|Plugin $structure
+     * @param int           $id_record
+     * @param string        $contenuto
+     * @param string|null   $data_notifica
      *
      * @return self
      */

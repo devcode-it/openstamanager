@@ -25,12 +25,12 @@ use Common\SimpleModelTrait;
 use Hooks\Manager;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Traits\StoreTrait;
+use Traits\LocalPoolTrait;
 
 class Hook extends Model
 {
     use SimpleModelTrait;
-    use StoreTrait;
+    use LocalPoolTrait;
 
     protected $table = 'zz_hooks';
 

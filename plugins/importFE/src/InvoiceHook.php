@@ -51,7 +51,7 @@ class InvoiceHook extends CachedManager
                 return $value->name == 'Fatturazione Elettronica';
             });
 
-            $link = ROOTDIR.'/controller.php?id_module='.$module->id.'#tab_'.$plugin->id;
+            $link = base_link().'/controller.php?id_module='.$module->id.'#tab_'.$plugin->id;
         }
 
         $message = tr('Ci sono _NUM_ fatture passive da importare', [

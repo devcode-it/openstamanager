@@ -37,7 +37,7 @@ if (!empty($rs)) {
     $anagrafica = $rs[0];
 }
 
-$api = BASEURL.'/api/?token='.$token;
+$api = base_url().'/api/?token='.$token;
 $module = Modules::get('Utenti e permessi');
 
 echo '

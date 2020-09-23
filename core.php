@@ -79,16 +79,16 @@ use Monolog\Handler\StreamHandler;
 $handlers = [];
 if (!API\Response::isAPIRequest()) {
     // File di log di base (logs/error.log, logs/setup.log)
-    $handlers[] = new StreamHandler($docroot.'/logs/error.log', Monolog\Logger::ERROR);
-    $handlers[] = new StreamHandler($docroot.'/logs/setup.log', Monolog\Logger::EMERGENCY);
+    $handlers[] = new StreamHandler(base_dir().'/logs/error.log', Monolog\Logger::ERROR);
+    $handlers[] = new StreamHandler(base_dir().'/logs/setup.log', Monolog\Logger::EMERGENCY);
 
     // Messaggi grafici per l'utente
     $handlers[] = new Extensions\MessageHandler(Monolog\Logger::ERROR);
 
     // File di log ordinati in base alla data
     if (App::debug()) {
-        $handlers[] = new RotatingFileHandler($docroot.'/logs/error.log', 0, Monolog\Logger::ERROR);
-        $handlers[] = new RotatingFileHandler($docroot.'/logs/setup.log', 0, Monolog\Logger::EMERGENCY);
+        $handlers[] = new RotatingFileHandler(base_dir().'/logs/error.log', 0, Monolog\Logger::ERROR);
+        $handlers[] = new RotatingFileHandler(base_dir().'/logs/setup.log', 0, Monolog\Logger::EMERGENCY);
     }
 
     // Inizializzazione Whoops
@@ -116,7 +116,7 @@ if (!API\Response::isAPIRequest()) {
         ]);
     });
 } else {
-    $handlers[] = new StreamHandler($docroot.'/logs/api.log', Monolog\Logger::ERROR);
+    $handlers[] = new StreamHandler(base_dir().'/logs/api.log', Monolog\Logger::ERROR);
 }
 
 // Sicurezza della sessioni
@@ -124,7 +124,7 @@ ini_set('session.cookie_samesite', 'strict');
 ini_set('session.use_trans_sid', '0');
 ini_set('session.use_only_cookies', '1');
 
-session_set_cookie_params(0, $rootdir, null, isHTTPS(true));
+session_set_cookie_params(0, base_link(), null, isHTTPS(true));
 session_start();
 
 // Disabilita i messaggi nativi di PHP
@@ -170,8 +170,8 @@ if (!API\Response::isAPIRequest()) {
 $lang = !empty($config['lang']) ? $config['lang'] : (isset($_GET['lang']) ? $_GET['lang'] : null);
 $formatter = !empty($config['formatter']) ? $config['formatter'] : [];
 $translator = trans();
-$translator->addLocalePath($docroot.'/locale');
-$translator->addLocalePath($docroot.'/modules/*/locale');
+$translator->addLocalePath(base_dir().'/locale');
+$translator->addLocalePath(base_dir().'/modules/*/locale');
 $translator->setLocale($lang, $formatter);
 
 // Individuazione di versione e revisione del progetto
@@ -186,12 +186,12 @@ if (!empty($skip_permissions)) {
     Permissions::skip();
 }
 
-if (!$continue && getURLPath() != slashes(ROOTDIR.'/index.php') && !Permissions::getSkip()) {
+if (!$continue && getURLPath() != slashes(base_link().'/index.php') && !Permissions::getSkip()) {
     if (Auth::check()) {
         Auth::logout();
     }
 
-    redirect(ROOTDIR.'/index.php');
+    redirect(base_link().'/index.php');
     exit();
 }
 

@@ -156,7 +156,7 @@ switch (filter('op')) {
             $process_result = Interaction::processInvoice($filename);
             if ($process_result != '') {
                 flash()->error($process_result);
-                redirect(ROOTDIR.'/controller.php?id_module='.$id_module);
+                redirect(base_link().'/controller.php?id_module='.$id_module);
 
                 return;
             }
@@ -166,12 +166,12 @@ switch (filter('op')) {
         $file = $files[$id_record - 1];
 
         if (get('sequence') == null) {
-            redirect(ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$id_fattura);
+            redirect(base_link().'/editor.php?id_module='.$id_module.'&id_record='.$id_fattura);
         } elseif (!empty($file)) {
-            redirect(ROOTDIR.'/editor.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'&sequence=1');
+            redirect(base_link().'/editor.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'&sequence=1');
         } else {
             flash()->info(tr('Tutte le fatture salvate sono state importate!'));
-            redirect(ROOTDIR.'/controller.php?id_module='.$id_module);
+            redirect(base_link().'/controller.php?id_module='.$id_module);
         }
         break;
 

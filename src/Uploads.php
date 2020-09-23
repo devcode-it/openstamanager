@@ -189,7 +189,7 @@ class Uploads
         $extension = strtolower(self::fileInfo($source)['extension']);
         $ok = self::isSupportedType($extension);
 
-        $directory = DOCROOT.'/'.self::getDirectory($data['id_module'], $data['id_plugin']);
+        $directory = base_dir().'/'.self::getDirectory($data['id_module'], $data['id_plugin']);
 
         do {
             $filename = random_string().'.'.$extension;
@@ -212,7 +212,7 @@ class Uploads
         $original = isset($source['name']) ? $source['name'] : basename($source);
 
         $filename = self::getName($original, $data);
-        $directory = DOCROOT.'/'.self::getDirectory($data['id_module'], $data['id_plugin']);
+        $directory = base_dir().'/'.self::getDirectory($data['id_module'], $data['id_plugin']);
 
         // Creazione file fisico
         if (
@@ -278,7 +278,7 @@ class Uploads
             ])['name'];
 
             $fileinfo = self::fileInfo($filename);
-            $directory = DOCROOT.'/'.self::getDirectory($data['id_module'], $data['id_plugin']);
+            $directory = base_dir().'/'.self::getDirectory($data['id_module'], $data['id_plugin']);
 
             $files = [
                 $directory.'/'.$fileinfo['basename'],
@@ -368,8 +368,8 @@ class Uploads
     {
         $attachments = self::get($from);
 
-        $directory = DOCROOT.'/'.self::getDirectory($to['id_module'], $to['id_plugin']);
-        $directory_from = DOCROOT.'/'.self::getDirectory($from['id_module'], $from['id_plugin']);
+        $directory = base_dir().'/'.self::getDirectory($to['id_module'], $to['id_plugin']);
+        $directory_from = base_dir().'/'.self::getDirectory($from['id_module'], $from['id_plugin']);
 
         foreach ($attachments as $attachment) {
             $data = array_merge($attachment, $to);
@@ -395,7 +395,7 @@ class Uploads
 
     protected static function processOptions($data, $options)
     {
-        $directory = DOCROOT.'/'.self::getDirectory($data['id_module'], $data['id_plugin']);
+        $directory = base_dir().'/'.self::getDirectory($data['id_module'], $data['id_plugin']);
 
         if (!empty($options['thumbnails'])) {
             self::thumbnails($directory.'/'.$data['filename'], $directory);

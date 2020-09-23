@@ -139,7 +139,7 @@ class User extends Model
 
         $image = Upload::find($this->image_file_id);
 
-        return ROOTDIR.'/'.$image->filepath;
+        return base_link().'/'.$image->filepath;
     }
 
     public function setPhotoAttribute($value)
@@ -157,7 +157,7 @@ class User extends Model
         // Informazioni sull'immagine
         $filepath = is_array($value) ? $value['tmp_name'] : $value;
         $info = Upload::getInfo(is_array($value) ? $value['name'] : $value);
-        $file = DOCROOT.'/files/temp_photo.'.$info['extension'];
+        $file = base_dir().'/files/temp_photo.'.$info['extension'];
 
         // Ridimensionamento
         $driver = extension_loaded('gd') ? 'gd' : 'imagick';

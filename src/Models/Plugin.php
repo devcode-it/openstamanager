@@ -26,14 +26,14 @@ use Illuminate\Database\Eloquent\Model;
 use Modules\Checklists\Traits\ChecklistTrait;
 use Traits\Components\NoteTrait;
 use Traits\Components\UploadTrait;
+use Traits\LocalPoolTrait;
 use Traits\ManagerTrait;
-use Traits\StoreTrait;
 
 class Plugin extends Model
 {
     use SimpleModelTrait;
     use ManagerTrait;
-    use StoreTrait;
+    use LocalPoolTrait;
     use UploadTrait {
         getUploadDirectoryAttribute as protected defaultUploadDirectory;
     }

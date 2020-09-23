@@ -312,9 +312,9 @@ function redirectOperation($id_module, $id_record)
         $hash = $hash == '#tab_0' ? '' : $hash;
 
         if ($backto == 'record-edit') {
-            redirect(ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.$hash);
+            redirect(base_link().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.$hash);
         } elseif ($backto == 'record-list') {
-            redirect(ROOTDIR.'/controller.php?id_module='.$id_module.$hash);
+            redirect(base_link().'/controller.php?id_module='.$id_module.$hash);
         }
 
         exit();
@@ -362,7 +362,7 @@ function getURLPath()
     if (substr($path, 0, strlen($prefix)) == $prefix) {
         $path = substr($path, strlen($prefix));
     } else {
-        $path = str_replace(DOCROOT, ROOTDIR, $path);
+        $path = str_replace(base_dir(), base_link(), $path);
     }
 
     return slashes($path);
@@ -428,4 +428,28 @@ function session($name = '')
     }
 
     return $session;
+}
+
+/**
+ * @return string
+ */
+function base_url()
+{
+    return App::$baseurl;
+}
+
+/**
+ * @return string
+ */
+function base_link()
+{
+    return App::$rootdir;
+}
+
+/**
+ * @return string
+ */
+function base_dir()
+{
+    return App::$docroot;
 }

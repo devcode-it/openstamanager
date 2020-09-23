@@ -38,9 +38,9 @@ echo '<!DOCTYPE html>
 
 		<link href="'.$paths['img'].'/favicon.png" rel="icon" type="image/x-icon" />';
 
-if (file_exists(DOCROOT.'/manifest.json')) {
+if (file_exists(base_dir().'/manifest.json')) {
     echo '
-        <link rel="manifest" href="'.ROOTDIR.'/manifest.json">';
+        <link rel="manifest" href="'.base_link().'/manifest.json">';
 }
 
 // CSS
@@ -166,7 +166,7 @@ if (Auth::check()) {
                 },
             };
 			globals = {
-                rootdir: "'.$rootdir.'",
+                rootdir: "'.base_link().'",
                 js: "'.$paths['js'].'",
                 css: "'.$paths['css'].'",
                 img: "'.$paths['img'].'",
@@ -209,7 +209,7 @@ if (Auth::check()) {
     echo '
         <script>
             globals = {
-                rootdir: "'.$rootdir.'",
+                rootdir: "'.base_link().'",
 
                 search: {},
                 translations: {
@@ -373,19 +373,19 @@ if (Auth::check()) {
                                 <i class="fa fa-print"></i>
                             </a></li>
 
-                            <li><a href="'.$rootdir.'/bug.php" class="tip nav-button" title="'.tr('Segnalazione bug').'">
+                            <li><a href="'.base_link().'/bug.php" class="tip nav-button" title="'.tr('Segnalazione bug').'">
                                 <i class="fa fa-bug"></i>
                             </a></li>
 
-                            <li><a href="'.$rootdir.'/log.php" class="tip nav-button" title="'.tr('Log accessi').'">
+                            <li><a href="'.base_link().'/log.php" class="tip nav-button" title="'.tr('Log accessi').'">
                                 <i class="fa fa-book"></i>
                             </a></li>
 
-                            <li><a href="'.$rootdir.'/info.php" class="tip nav-button" title="'.tr('Informazioni').'">
+                            <li><a href="'.base_link().'/info.php" class="tip nav-button" title="'.tr('Informazioni').'">
                                 <i class="fa fa-info"></i>
                             </a></li>
 
-                            <li><a href="'.$rootdir.'/index.php?op=logout" onclick="sessionStorage.clear()" class="bg-red tip" title="'.tr('Esci').'">
+                            <li><a href="'.base_link().'/index.php?op=logout" onclick="sessionStorage.clear()" class="bg-red tip" title="'.tr('Esci').'">
                                 <i class="fa fa-power-off"></i>
                             </a></li>
                         </ul>
@@ -400,13 +400,13 @@ if (Auth::check()) {
                     <!-- Sidebar user panel -->
                     <div class="user-panel text-center info" style="height: 60px">
                         <div class="info">
-                            <p><a href="'.$rootdir.'/modules/utenti/info.php">
+                            <p><a href="'.base_link().'/modules/utenti/info.php">
                                 '.$user['username'].'
                             </a></p>
                             <p id="datetime"></p>
                         </div>
 
-                        <a class="image" href="'.$rootdir.'/modules/utenti/info.php">';
+                        <a class="image" href="'.base_link().'/modules/utenti/info.php">';
 
     $user_photo = $user->photo;
     if ($user_photo) {

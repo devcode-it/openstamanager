@@ -1,3 +1,3 @@
 <?php
 
-delete(DOCROOT.'/files/my_impianti');
+delete(base_dir().'/files/my_impianti');

@@ -1041,6 +1041,10 @@ div.tip {
     background: #222222;
 }
 
+.decimal-number {
+    text-align: right;
+}
+
 /* Loading specificato per un div */
 .local-loader {
     position: relative;

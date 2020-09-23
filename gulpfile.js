@@ -94,6 +94,7 @@ const JS = gulp.parallel(() => {
         'datatables.net-scroller/js/dataTables.scroller.js',
         'datatables.net-select/js/dataTables.select.js',
         'dropzone/dist/dropzone.js',
+        'autonumeric/dist/autoNumeric.min.js',
         'eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
         'fullcalendar/dist/fullcalendar.js',
         'geocomplete/jquery.geocomplete.js',

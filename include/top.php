@@ -298,7 +298,7 @@ echo '
 		<div class="'.(!Auth::check() ? '' : 'wrapper').'">';
 
 if (Auth::check()) {
-    $calendar = ($_SESSION['period_start'] != date('Y').'-01-01' || $_SESSION['period_end'] != date('Y').'-12-31') ? 'red' : 'white';
+    $calendar_color_label = ($_SESSION['period_start'] != date('Y').'-01-01' || $_SESSION['period_end'] != date('Y').'-12-31') ? 'danger' : 'default';
 
     echo '
             <!-- Loader principale -->
@@ -337,11 +337,11 @@ if (Auth::check()) {
                     <!-- Navbar Left Menu -->
                      <div class="navbar-left hidden-xs">
                         <ul class="nav navbar-nav hidden-xs">
-                            <li><a  href="#" id="daterange" style="color:'.$calendar.';" role="button" >
+                            <li><a href="#" id="daterange" role="button" >
                                 <i class="fa fa-calendar" style="color:inherit"></i> <i class="fa fa-caret-down" style="color:inherit"></i>
                             </a></li>
 
-                            <li><a style="color:'.$calendar.';background:inherit;cursor:default;">
+                            <li><a style="cursor:default;padding:0px;padding-right:5px;padding-left:5px;margin-top:15px;" class="label label-'.$calendar_color_label.'">
                                 '.Translator::dateToLocale($_SESSION['period_start']).' - '.Translator::dateToLocale($_SESSION['period_end']).'
                             </a></li>
                         </ul>

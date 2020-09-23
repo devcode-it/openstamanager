@@ -59,7 +59,7 @@ switch (post('op')) {
             flash()->error(tr("Errore durante la gestione della richiesta: si prega di contattare l'amministratore").'.');
         }
 
-        redirect(base_link().'/index.php');
+        redirect(base_path().'/index.php');
         exit();
         break;
 
@@ -76,7 +76,7 @@ switch (post('op')) {
 
         flash()->info(tr('Password cambiata!'));
 
-        redirect(base_link().'/index.php');
+        redirect(base_path().'/index.php');
         exit();
         break;
 }
@@ -121,7 +121,7 @@ if (Auth::isBrute()) {
 echo '
     <form action="" method="post" class="box box-center-large box-warning" id="reset">
         <div class="box-header with-border text-center">
-            <a href="'.base_link().'/index.php"><i  class="fa fa-arrow-left btn btn-xs btn-warning pull-left tip" title="'.tr('Torna indietro').'" ></i></a>
+            <a href="'.base_path().'/index.php"><i  class="fa fa-arrow-left btn btn-xs btn-warning pull-left tip" title="'.tr('Torna indietro').'" ></i></a>
             <h3 class="box-title">'.$pageTitle.'</h3>
         </div>
 

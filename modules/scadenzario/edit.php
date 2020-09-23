@@ -165,7 +165,7 @@ echo '
 					</table>
 
                     <div class='pull-right'>
-                        <a onclick="launch_modal( 'Registra contabile pagamento', '<?php echo base_link(); ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>&<?php echo !empty($record['iddocumento']) ? 'id_documenti='.$record['iddocumento'].'&single=1' : 'id_scadenze='.$id_record; ?>');" class="btn btn-sm btn-primary"><i class="fa fa-euro"></i> <?php echo tr('Registra contabile pagamento...'); ?></a>
+                        <a onclick="launch_modal( 'Registra contabile pagamento', '<?php echo base_path(); ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>&<?php echo !empty($record['iddocumento']) ? 'id_documenti='.$record['iddocumento'].'&single=1' : 'id_scadenze='.$id_record; ?>');" class="btn btn-sm btn-primary"><i class="fa fa-euro"></i> <?php echo tr('Registra contabile pagamento...'); ?></a>
                     </div>
 
 					<div class="clearfix"></div>

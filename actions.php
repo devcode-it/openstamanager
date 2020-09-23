@@ -87,7 +87,7 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
             }
         }
 
-        redirect(base_link().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.((!empty($options['id_plugin'])) ? '#tab_'.$options['id_plugin'] : ''));
+        redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.((!empty($options['id_plugin'])) ? '#tab_'.$options['id_plugin'] : ''));
     }
 }
 
@@ -336,7 +336,7 @@ if ($structure->permission == 'rw') {
     $bulk = empty($bulk) ? [] : $bulk;
 
     if (in_array(post('op'), array_keys($bulk))) {
-        redirect(base_link().'/controller.php?id_module='.$id_module, 'js');
+        redirect(base_path().'/controller.php?id_module='.$id_module, 'js');
     } else {
         // Esecuzione delle operazioni del modulo
         include $structure->filepath('actions.php');

@@ -38,7 +38,7 @@ switch ($op) {
 
             flash()->error(Auth::getStatus()[$status]['message']);
 
-            redirect(base_link().'/index.php');
+            redirect(base_path().'/index.php');
             exit();
         }
 
@@ -47,7 +47,7 @@ switch ($op) {
     case 'logout':
         Auth::logout();
 
-        redirect(base_link().'/index.php');
+        redirect(base_path().'/index.php');
         exit();
 
         break;
@@ -57,9 +57,9 @@ if (Auth::check() && isset($dbo) && $dbo->isConnected() && $dbo->isInstalled()) 
     $module = Auth::firstModule();
 
     if (!empty($module)) {
-        redirect(base_link().'/controller.php?id_module='.$module);
+        redirect(base_path().'/controller.php?id_module='.$module);
     } else {
-        redirect(base_link().'/index.php?op=logout');
+        redirect(base_path().'/index.php?op=logout');
     }
     exit();
 }
@@ -150,7 +150,7 @@ echo' required>
 					{[ "type": "password", "name": "password", "autocomplete": "current-password", "placeholder": "'.tr('Password').'", "icon-before": "<i class=\"fa fa-lock\"></i>" ]}
 
                     <div class="text-right">
-                        <small><a href="'.base_link().'/reset.php">'.tr('Password dimenticata?').'</a></small>
+                        <small><a href="'.base_path().'/reset.php">'.tr('Password dimenticata?').'</a></small>
                     </div>
 				</div>
 

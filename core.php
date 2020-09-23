@@ -124,7 +124,7 @@ ini_set('session.cookie_samesite', 'strict');
 ini_set('session.use_trans_sid', '0');
 ini_set('session.use_only_cookies', '1');
 
-session_set_cookie_params(0, base_link(), null, isHTTPS(true));
+session_set_cookie_params(0, base_path(), null, isHTTPS(true));
 session_start();
 
 // Disabilita i messaggi nativi di PHP
@@ -186,12 +186,12 @@ if (!empty($skip_permissions)) {
     Permissions::skip();
 }
 
-if (!$continue && getURLPath() != slashes(base_link().'/index.php') && !Permissions::getSkip()) {
+if (!$continue && getURLPath() != slashes(base_path().'/index.php') && !Permissions::getSkip()) {
     if (Auth::check()) {
         Auth::logout();
     }
 
-    redirect(base_link().'/index.php');
+    redirect(base_path().'/index.php');
     exit();
 }
 

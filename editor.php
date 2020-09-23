@@ -25,9 +25,9 @@ use Carbon\Carbon;
 $read_only = $structure->permission == 'r';
 
 if (empty($id_record) && !empty($id_module) && empty($id_plugin)) {
-    redirect(base_link().'/controller.php?id_module='.$id_module);
+    redirect(base_path().'/controller.php?id_module='.$id_module);
 } elseif (empty($id_record) && empty($id_module) && empty($id_plugin)) {
-    redirect(base_link().'/index.php');
+    redirect(base_path().'/index.php');
 }
 
 include_once App::filepath('include|custom|', 'top.php');
@@ -58,7 +58,7 @@ if (empty($record) || !$has_access) {
             </h3>
             <br>
 
-            <a class="btn btn-default" href="'.base_link().'/controller.php?id_module='.$id_module.'">
+            <a class="btn btn-default" href="'.base_path().'/controller.php?id_module='.$id_module.'">
                 <i class="fa fa-chevron-left"></i> '.tr('Indietro').'
             </a>
         </div>';
@@ -142,7 +142,7 @@ if (empty($record) || !$has_access) {
     // Pulsanti di default
     echo '
                     <div id="pulsanti">
-                        <a class="btn btn-warning" href="'.base_link().'/controller.php?id_module='.$id_module.'">
+                        <a class="btn btn-warning" href="'.base_path().'/controller.php?id_module='.$id_module.'">
                             <i class="fa fa-chevron-left"></i> '.tr("Torna all'elenco").'
                         </a>
 
@@ -399,7 +399,7 @@ echo '{( "name": "widgets", "id_module": "'.$id_module.'", "id_record": "'.$id_r
 if (!empty($record)) {
     echo '
     		<hr>
-            <a class="btn btn-default" href="'.base_link().'/controller.php?id_module='.$id_module.'">
+            <a class="btn btn-default" href="'.base_path().'/controller.php?id_module='.$id_module.'">
                 <i class="fa fa-chevron-left"></i> '.tr('Indietro').'
             </a>';
 }
@@ -471,7 +471,7 @@ if (!empty($advanced_sessions)) {
     ?>
 
             function getActiveUsers(){
-                $.getJSON('<?php echo base_link(); ?>/ajax.php?op=active_users', {
+                $.getJSON('<?php echo base_path(); ?>/ajax.php?op=active_users', {
                     id_module: <?php echo $id_module; ?>,
                     id_record: <?php echo $id_record; ?>
                 },

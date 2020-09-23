@@ -139,7 +139,7 @@ class User extends Model
 
         $image = Upload::find($this->image_file_id);
 
-        return base_link().'/'.$image->filepath;
+        return base_path().'/'.$image->filepath;
     }
 
     public function setPhotoAttribute($value)

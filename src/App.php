@@ -172,7 +172,7 @@ class App
      */
     public static function getPaths()
     {
-        $assets = base_link().'/assets/dist';
+        $assets = base_path().'/assets/dist';
 
         return [
             'assets' => $assets,
@@ -226,7 +226,7 @@ class App
                 foreach ($lang_replace as $replace) {
                     $name = str_replace('|lang|', $replace, $element);
 
-                    if (file_exists(base_dir().str_replace(base_link(), '', $name))) {
+                    if (file_exists(base_dir().str_replace(base_path(), '', $name))) {
                         $assets_element = $name;
                         break;
                     }

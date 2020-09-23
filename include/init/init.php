@@ -114,7 +114,7 @@ if (post('action') == 'init') {
         }
     }
 
-    redirect(base_link(), 'js');
+    redirect(base_path(), 'js');
     exit();
 }
 
@@ -258,7 +258,7 @@ echo '
         $("button[type=submit]").not("#config").remove();
     });
 </script>
-<script src="'.base_link().'/lib/functions.js"></script>
+<script src="'.base_path().'/lib/functions.js"></script>
 <script>$(document).ready(init)</script>';
 
 include_once App::filepath('include|custom|', 'bottom.php');

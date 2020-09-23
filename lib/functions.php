@@ -312,9 +312,9 @@ function redirectOperation($id_module, $id_record)
         $hash = $hash == '#tab_0' ? '' : $hash;
 
         if ($backto == 'record-edit') {
-            redirect(base_link().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.$hash);
+            redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.$hash);
         } elseif ($backto == 'record-list') {
-            redirect(base_link().'/controller.php?id_module='.$id_module.$hash);
+            redirect(base_path().'/controller.php?id_module='.$id_module.$hash);
         }
 
         exit();
@@ -362,7 +362,7 @@ function getURLPath()
     if (substr($path, 0, strlen($prefix)) == $prefix) {
         $path = substr($path, strlen($prefix));
     } else {
-        $path = str_replace(base_dir(), base_link(), $path);
+        $path = str_replace(base_dir(), base_path(), $path);
     }
 
     return slashes($path);
@@ -411,26 +411,62 @@ function check_query($query)
     return true;
 }
 
-function session($name = '')
+/**
+ * Restituisce il valore corrente di un parametro della sessione.
+ *
+ * @param string     $name    Nome del parametro in dot-notation
+ * @param mixed|null $default
+ *
+ * @return array|mixed|null
+ */
+function session_get($name, $default = null)
 {
     $session = &$_SESSION;
     if (empty($name)) {
-        return $session;
+        return $default;
     }
 
     $pieces = explode('.', $name);
     foreach ($pieces as $piece) {
         if (!isset($session[$piece])) {
-            return null;
+            return $default;
         }
 
         $session = &$session[$piece];
     }
 
-    return $session;
+    return isset($session) ? $session : $default;
 }
 
 /**
+ * Imposta un parametro nella sessione secondo un nome indicato.
+ *
+ * @param string $name  Nome del parametro in dot-notation
+ * @param mixed  $value Valore da impostare
+ *
+ * @return void
+ */
+function session_set($name, $value)
+{
+    $session = &$_SESSION;
+
+    if (!empty($name)) {
+        $pieces = explode('.', $name);
+        foreach ($pieces as $piece) {
+            if (!isset($session[$piece])) {
+                $session[$piece] = [];
+            }
+
+            $session = &$session[$piece];
+        }
+    }
+
+    $session = $value;
+}
+
+/**
+ * Restituisce l'URL completo per il gestionale.
+ *
  * @return string
  */
 function base_url()
@@ -439,14 +475,18 @@ function base_url()
 }
 
 /**
+ * Restituisce l'URL parziale per il gestionale.
+ *
  * @return string
  */
-function base_link()
+function base_path()
 {
     return App::$rootdir;
 }
 
 /**
+ * Restituisce il percorso per la cartella principale del gestionale.
+ *
  * @return string
  */
 function base_dir()

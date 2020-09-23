@@ -40,7 +40,7 @@ echo '<!DOCTYPE html>
 
 if (file_exists(base_dir().'/manifest.json')) {
     echo '
-        <link rel="manifest" href="'.base_link().'/manifest.json">';
+        <link rel="manifest" href="'.base_path().'/manifest.json">';
 }
 
 // CSS
@@ -166,7 +166,7 @@ if (Auth::check()) {
                 },
             };
 			globals = {
-                rootdir: "'.base_link().'",
+                rootdir: "'.base_path().'",
                 js: "'.$paths['js'].'",
                 css: "'.$paths['css'].'",
                 img: "'.$paths['img'].'",
@@ -209,7 +209,7 @@ if (Auth::check()) {
     echo '
         <script>
             globals = {
-                rootdir: "'.base_link().'",
+                rootdir: "'.base_path().'",
 
                 search: {},
                 translations: {
@@ -289,7 +289,7 @@ if (Auth::check()) {
     }
 }
 
-$settings_collapse = session('settings.sidebar-collapse') ? 1 : 0;
+$settings_collapse = session_get('settings.sidebar-collapse') ? 1 : 0;
 $hide_sidebar = Auth::check() && (setting('Nascondere la barra sinistra di default') || $settings_collapse);
 echo '
 
@@ -373,19 +373,19 @@ if (Auth::check()) {
                                 <i class="fa fa-print"></i>
                             </a></li>
 
-                            <li><a href="'.base_link().'/bug.php" class="tip nav-button" title="'.tr('Segnalazione bug').'">
+                            <li><a href="'.base_path().'/bug.php" class="tip nav-button" title="'.tr('Segnalazione bug').'">
                                 <i class="fa fa-bug"></i>
                             </a></li>
 
-                            <li><a href="'.base_link().'/log.php" class="tip nav-button" title="'.tr('Log accessi').'">
+                            <li><a href="'.base_path().'/log.php" class="tip nav-button" title="'.tr('Log accessi').'">
                                 <i class="fa fa-book"></i>
                             </a></li>
 
-                            <li><a href="'.base_link().'/info.php" class="tip nav-button" title="'.tr('Informazioni').'">
+                            <li><a href="'.base_path().'/info.php" class="tip nav-button" title="'.tr('Informazioni').'">
                                 <i class="fa fa-info"></i>
                             </a></li>
 
-                            <li><a href="'.base_link().'/index.php?op=logout" onclick="sessionStorage.clear()" class="bg-red tip" title="'.tr('Esci').'">
+                            <li><a href="'.base_path().'/index.php?op=logout" onclick="sessionStorage.clear()" class="bg-red tip" title="'.tr('Esci').'">
                                 <i class="fa fa-power-off"></i>
                             </a></li>
                         </ul>
@@ -400,13 +400,13 @@ if (Auth::check()) {
                     <!-- Sidebar user panel -->
                     <div class="user-panel text-center info" style="height: 60px">
                         <div class="info">
-                            <p><a href="'.base_link().'/modules/utenti/info.php">
+                            <p><a href="'.base_path().'/modules/utenti/info.php">
                                 '.$user['username'].'
                             </a></p>
                             <p id="datetime"></p>
                         </div>
 
-                        <a class="image" href="'.base_link().'/modules/utenti/info.php">';
+                        <a class="image" href="'.base_path().'/modules/utenti/info.php">';
 
     $user_photo = $user->photo;
     if ($user_photo) {

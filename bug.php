@@ -87,7 +87,7 @@ if (filter('op') == 'send') {
         delete($backup_file);
     }
 
-    redirect(base_link().'/bug.php');
+    redirect(base_path().'/bug.php');
     exit();
 }
 

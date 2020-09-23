@@ -110,4 +110,4 @@ if (file_exists($extraction_dir.'/VERSION')) {
 delete($extraction_dir);
 
 // Redirect
-redirect(base_link().'/editor.php?id_module='.$id_module);
+redirect(base_path().'/editor.php?id_module='.$id_module);

@@ -43,7 +43,7 @@ switch (filter('op')) {
             // Generazione del file
             $import_selezionato::createExample($filepath);
 
-            echo base_link().'/'.$file;
+            echo base_path().'/'.$file;
         }
 
         break;

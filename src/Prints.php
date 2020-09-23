@@ -207,7 +207,7 @@ class Prints
             return false;
         }
 
-        $link = base_link().'/pdfgen.php?';
+        $link = base_path().'/pdfgen.php?';
 
         if (self::isOldStandard($infos['id'])) {
             $link .= 'ptype='.$infos['directory'];
@@ -268,7 +268,7 @@ class Prints
      */
     public static function getPDFLink($path)
     {
-        return base_link().'/assets/dist/pdfjs/web/viewer.html?file='.base_url().'/'.ltrim(str_replace(base_dir(), '', $path), '/');
+        return base_path().'/assets/dist/pdfjs/web/viewer.html?file='.base_url().'/'.ltrim(str_replace(base_dir(), '', $path), '/');
     }
 
     /**

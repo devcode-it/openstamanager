@@ -27,7 +27,7 @@ if (empty($file)) {
     return;
 }
 
-$link = base_link().'/'.$file->filepath;
+$link = base_path().'/'.$file->filepath;
 
 if ($file->isFatturaElettronica()) {
     $content = file_get_contents(base_dir().'/'.$file->filepath);

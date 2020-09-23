@@ -84,8 +84,8 @@ class Permissions
         $result = true;
 
         if (!self::getSkip()) {
-            if (!Auth::check() && getURLPath() == slashes(base_link().'/index.php')) {
-                redirect(base_link().'/index.php');
+            if (!Auth::check() && getURLPath() == slashes(base_path().'/index.php')) {
+                redirect(base_path().'/index.php');
                 $result = false;
                 exit();
             } else {

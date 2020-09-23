@@ -174,7 +174,7 @@ function search(button) {
                 </h3>
             </div>
             <div class="box-body">
-                <form action="'.base_link().'/controller.php?id_module='.$id_module.'" method="post" enctype="multipart/form-data" id="update">
+                <form action="'.base_path().'/controller.php?id_module='.$id_module.'" method="post" enctype="multipart/form-data" id="update">
                     <input type="hidden" name="op" value="upload">
 
 			        {[ "type": "file", "name": "blob", "required": 1, "accept": ".zip" ]}

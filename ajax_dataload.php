@@ -91,6 +91,13 @@ if (!empty($query)) {
         }
     }
 
+    //Rimuovo risultati con id a null
+    foreach ( $rows as $i => $r ) {
+        if ( empty($r['id'] ) ) {
+            unset($rows[$i]);
+        }
+    }
+    
     // Creazione della tabella
     foreach ($rows as $i => $r) {
         $result = [

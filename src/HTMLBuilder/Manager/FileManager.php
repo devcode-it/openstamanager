@@ -190,7 +190,7 @@ class FileManager implements ManagerInterface
             {[ "type": "text", "placeholder": "'.tr('Nome file').'", "name": "nome_allegato", "class": "unblockable" ]}
         </div>
         <div class="col-md-6">
-            {[ "type": "text", "placeholder": "'.tr('Categoria').'", "name": "categoria", "class": "unblockable" ]}
+            {[ "type": "text", "placeholder": "'.tr('Categoria').'", "name": "categoria_allegato", "id": "categoria_allegato", "class": "unblockable" ]}
         </div>
         <div class="col-md-12">
             <div class="dropzone dz-clickable" id="dragdrop">
@@ -244,7 +244,7 @@ $(document).ready(function() {
         url: "'.ROOTDIR.'/actions.php?op=link_file&id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id_plugin='.$options['id_plugin'].'",
         init: function (file, xhr, formData) {
             this.on("sending", function(file, xhr, formData) {
-                formData.append("categoria", $("#categoria").val());
+                formData.append("categoria", $("#categoria_allegato").val());
                 formData.append("nome_allegato", $("#nome_allegato").val());
             });
 
@@ -323,7 +323,7 @@ $(document).ready(function() {
     });
 
     // Autocompletamento categoria
-    $("#'.$attachment_id.' #categoria").autocomplete({
+    $("#'.$attachment_id.' #categoria_allegato").autocomplete({
         source: '.json_encode($source).',
         minLength: 0
     }).focus(function() {

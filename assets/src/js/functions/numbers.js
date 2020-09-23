@@ -1,13 +1,19 @@
 function initNumbers() {
-    $('.decimal-number').not('.bound').each(function () {
-        let $this = $(this);
+    let inputs = $('.decimal-number').not('.bound');
 
-        let min = $this.attr('min-value') && $this.attr('min-value') !== "undefined" ? $this.attr('min-value') : null;
-        let max = $this.attr('max-value') && $this.attr('max-value') !== "undefined" ? $this.attr('max-value') : null;
+    for (const input of inputs) {
+        let $input = $(input);
 
-        let decimals = $this.attr('decimals') ? $this.attr('decimals') : globals.cifre_decimali;
+        if (AutoNumeric.isManagedByAutoNumeric(input)) {
+            continue;
+        }
 
-        let autonumeric = new AutoNumeric(this, {
+        let min = $input.attr('min-value') && $input.attr('min-value') !== "undefined" ? $input.attr('min-value') : null;
+        let max = $input.attr('max-value') && $input.attr('max-value') !== "undefined" ? $input.attr('max-value') : null;
+
+        let decimals = $input.attr('decimals') ? $input.attr('decimals') : globals.cifre_decimali;
+
+        let autonumeric = new AutoNumeric(input, {
             caretPositionOnFocus: "decimalLeft",
             allowDecimalPadding: true,
             currencySymbolPlacement: "s",
@@ -26,6 +32,7 @@ function initNumbers() {
             decimalPlaces: decimals,
         });
 
-        $this.data("autonumeric", autonumeric);
-    }).addClass('bound');
+        $input.data("autonumeric", autonumeric)
+            .addClass('bound');
+    }
 }

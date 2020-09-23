@@ -107,6 +107,7 @@ foreach ($righe as $riga) {
     }
 
     // Aggiunta dei riferimenti ai documenti
+    /*
     if (setting('Riferimento dei documenti nelle stampe') && $riga->hasOriginal()) {
         $ref = $riga->getOriginal()->parent->getReference();
         if (!empty($riga->getOriginal()->parent->numero_cliente)) {
@@ -122,7 +123,7 @@ foreach ($righe as $riga) {
 
             $autofill->count($ref, true);
         }
-    }
+    }*/
 
     // Informazioni su CIG, CUP, ...
     if ($riga->hasOriginal()) {

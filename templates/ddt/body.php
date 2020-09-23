@@ -90,6 +90,7 @@ foreach ($righe as $riga) {
     }
 
     // Aggiunta dei riferimenti ai documenti
+    /*
     if (setting('Riferimento dei documenti nelle stampe') && $riga->hasOriginal()) {
         $ref = $riga->getOriginal()->parent->getReference();
 
@@ -100,6 +101,7 @@ foreach ($righe as $riga) {
             $autofill->count($ref, true);
         }
     }
+    */
 
     echo '
         </td>';

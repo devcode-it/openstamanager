@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenSTAManager\n"
-"POT-Creation-Date: 2020-09-18 18:38+0200\n"
+"POT-Creation-Date: 2020-09-23 17:02+0200\n"
 "PO-Revision-Date: 2017-09-06 09:35+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -114,15 +114,15 @@ msgstr ""
 msgid "Correggi account"
 msgstr ""
 
-#: bug.php:112 include/custom/top.php:346 include/top.php:375
+#: bug.php:112 include/top.php:375
 msgid "Segnalazione bug"
 msgstr ""
 
-#: bug.php:121 include/custom/top.php:78 include/top.php:95
+#: bug.php:121 include/top.php:95
 msgid "Da"
 msgstr ""
 
-#: bug.php:127 include/custom/top.php:79 include/top.php:96 src/HTMLBuilder/Wrapper/HTMLWrapper.php:246
+#: bug.php:127 include/top.php:96 src/HTMLBuilder/Wrapper/HTMLWrapper.php:246
 msgid "A"
 msgstr ""
 
@@ -287,17 +287,17 @@ msgstr ""
 msgid "Nessun log disponibile per questa scheda"
 msgstr ""
 
-#: include/bottom.php:30 include/custom/top.php:291 include/top.php:320
+#: include/bottom.php:30 include/top.php:320
 msgid "https://www.openstamanager.com"
 msgstr ""
 
-#: include/bottom.php:30 include/custom/top.php:291 include/top.php:320
+#: include/bottom.php:30 include/top.php:320
 msgid "Il gestionale open source per l'assistenza tecnica e la fatturazione"
 msgstr ""
 
-#: include/bottom.php:30 include/custom/top.php:16 include/custom/top.php:295 include/custom/top.php:387
-#: include/init/configuration.php:333 include/init/init.php:128 include/top.php:33 include/top.php:324 include/top.php:416
-#: index.php:137 info.php:32 modules/utenti/info.php:58 plugins/notes.php:51 src/HTMLBuilder/Manager/FileManager.php:127
+#: include/bottom.php:30 include/init/configuration.php:333 include/init/init.php:128 include/top.php:33 include/top.php:324
+#: include/top.php:416 index.php:137 info.php:32 modules/utenti/info.php:58 plugins/notes.php:51
+#: src/HTMLBuilder/Manager/FileManager.php:127
 msgid "OpenSTAManager"
 msgstr ""
 
@@ -311,11 +311,12 @@ msgid ""
 "visibili o meno"
 msgstr ""
 
-#: include/common/articolo.php:28 include/common/articolo.php:47 include/common/barcode.php:45 modules/articoli/edit.php:31
-#: modules/articoli/widgets/articoli.dashboard.php:28 modules/contratti/edit.php:322 modules/ddt/edit.php:333
-#: modules/fatture/add_serial.php:76 modules/fatture/edit.php:665 modules/interventi/edit.php:378 modules/movimenti/add.php:38
-#: modules/ordini/edit.php:200 modules/ordini/quantita_impegnate.php:38 modules/preventivi/edit.php:219
-#: modules/statistiche/edit.php:251 plugins/importFE/generate.php:371 plugins/pianificazione_interventi/pianificazione.php:139
+#: include/common/articolo.php:28 include/common/articolo.php:47 include/common/barcode.php:45 include/common/importa.php:362
+#: modules/articoli/edit.php:31 modules/articoli/widgets/articoli.dashboard.php:28 modules/contratti/edit.php:322
+#: modules/ddt/edit.php:333 modules/fatture/add_serial.php:76 modules/fatture/edit.php:665 modules/interventi/edit.php:378
+#: modules/movimenti/add.php:38 modules/ordini/edit.php:200 modules/ordini/quantita_impegnate.php:38
+#: modules/preventivi/edit.php:219 modules/statistiche/edit.php:251 plugins/importFE/generate.php:371
+#: plugins/pianificazione_interventi/pianificazione.php:139
 msgid "Articolo"
 msgstr ""
 
@@ -385,7 +386,7 @@ msgstr ""
 msgid "Sconto"
 msgstr ""
 
-#: include/common/barcode.php:48 include/common/importa.php:251 include/common/riga.php:36
+#: include/common/barcode.php:48 include/common/importa.php:252 include/common/importa.php:363 include/common/riga.php:36
 #: include/riferimenti/righe_documento.php:39 modules/articoli/plugins/articoli.giacenze.php:235
 #: modules/articoli/plugins/articoli.movimenti.php:76 modules/articoli/widgets/articoli.dashboard.php:29
 #: modules/contratti/plugins/contratti.consuntivo.php:129 modules/contratti/plugins/contratti.consuntivo.php:159
@@ -429,7 +430,7 @@ msgstr ""
 msgid "Conto"
 msgstr ""
 
-#: include/common/descrizione.php:23 include/common/importa.php:250 include/riferimenti/righe_documento.php:38
+#: include/common/descrizione.php:23 include/common/importa.php:251 include/riferimenti/righe_documento.php:38
 #: modules/articoli/add.php:38 modules/articoli/edit.php:65 modules/articoli/plugins/articoli.giacenze.php:60
 #: modules/articoli/plugins/articoli.giacenze.php:125 modules/beni/add.php:28 modules/beni/edit.php:37
 #: modules/categorie_documenti/add.php:29 modules/categorie_documenti/edit.php:36 modules/causali/add.php:28
@@ -524,19 +525,19 @@ msgstr ""
 msgid "Righe da importare"
 msgstr ""
 
-#: include/common/importa.php:252
+#: include/common/importa.php:253
 msgid "Q.tà da evadere"
 msgstr ""
 
-#: include/common/importa.php:253
+#: include/common/importa.php:254
 msgid "Subtot."
 msgstr ""
 
-#: include/common/importa.php:257
+#: include/common/importa.php:258
 msgid "Seriali"
 msgstr ""
 
-#: include/common/importa.php:341 modules/articoli/plugins/articoli.giacenze.php:89
+#: include/common/importa.php:348 modules/articoli/plugins/articoli.giacenze.php:89
 #: modules/articoli/plugins/articoli.giacenze.php:154 modules/articoli/plugins/articoli.lotti.php:120
 #: modules/contratti/plugins/contratti.consuntivo.php:198 modules/contratti/row-list.php:208 modules/ddt/row-list.php:264
 #: modules/fatture/row-list.php:334 modules/interventi/ajax_costi.php:137
@@ -549,6 +550,18 @@ msgstr ""
 #: templates/registro_iva/bottom.php:69 templates/riepilogo_interventi/bottom.php:30 templates/scadenzario/bottom.php:28
 #: templates/spesometro/body.php:41 templates/spesometro/body.php:188
 msgid "Totale"
+msgstr ""
+
+#: include/common/importa.php:363
+msgid "Quantità richiesta"
+msgstr ""
+
+#: include/common/importa.php:364
+msgid "Quantità disponibile nel magazzino del gestionale"
+msgstr ""
+
+#: include/common/importa.php:364 modules/ordini/quantita_impegnate.php:40
+msgid "Q.tà magazzino"
 msgstr ""
 
 #: include/common/riga.php:30 include/common/sconto.php:46 modules/contratti/row-list.php:196
@@ -634,336 +647,6 @@ msgstr ""
 msgid "Maggiorazione unitaria"
 msgstr ""
 
-#: include/custom/top.php:62 include/top.php:79 modules/pagamenti/edit.php:115 modules/pagamenti/edit.php:179
-msgid "Giorno"
-msgstr ""
-
-#: include/custom/top.php:63 include/top.php:80
-msgid "Settimana"
-msgstr ""
-
-#: include/custom/top.php:64 include/top.php:81 templates/fatturato/body.php:42
-msgid "Mese"
-msgstr ""
-
-#: include/custom/top.php:65 include/top.php:82
-msgid "Oggi"
-msgstr ""
-
-#: include/custom/top.php:66 include/top.php:83
-msgid "I trimestre"
-msgstr ""
-
-#: include/custom/top.php:67 include/top.php:84
-msgid "II trimestre"
-msgstr ""
-
-#: include/custom/top.php:68 include/top.php:85
-msgid "III trimestre"
-msgstr ""
-
-#: include/custom/top.php:69 include/top.php:86
-msgid "IV trimestre"
-msgstr ""
-
-#: include/custom/top.php:70 include/top.php:87
-msgid "I semestre"
-msgstr ""
-
-#: include/custom/top.php:71 include/top.php:88
-msgid "II semestre"
-msgstr ""
-
-#: include/custom/top.php:72 include/top.php:89
-msgid "Questo mese"
-msgstr ""
-
-#: include/custom/top.php:73 include/top.php:90
-msgid "Mese scorso"
-msgstr ""
-
-#: include/custom/top.php:74 include/top.php:91
-msgid "Quest'anno"
-msgstr ""
-
-#: include/custom/top.php:75 include/top.php:92
-msgid "Anno scorso"
-msgstr ""
-
-#: include/custom/top.php:76 include/top.php:93 modules/tipi_intervento/buttons.php:21
-msgid "Applica"
-msgstr ""
-
-#: include/custom/top.php:77 include/custom/top.php:229 include/top.php:94 include/top.php:258
-msgid "Annulla"
-msgstr ""
-
-#: include/custom/top.php:80 include/top.php:97
-msgid "Personalizzato"
-msgstr ""
-
-#: include/custom/top.php:81 include/top.php:98 modules/anagrafiche/edit.php:735 modules/articoli/edit.php:419
-#: modules/banche/edit.php:80 modules/beni/edit.php:61 modules/categorie_articoli/edit.php:129
-#: modules/categorie_documenti/edit.php:51 modules/categorie_impianti/edit.php:75 modules/causali/edit.php:71
-#: modules/causali_movimenti/edit.php:53 modules/checklists/edit.php:169 modules/contratti/edit.php:511
-#: modules/custom_fields/edit.php:74 modules/ddt/edit.php:483 modules/emails/edit.php:156 modules/fatture/edit.php:823
-#: modules/gestione_componenti/edit.php:75 modules/gestione_documentale/edit.php:60 modules/impianti/edit.php:137
-#: modules/impianti/plugins/my_impianti.componenti.php:287 modules/interventi/edit.php:641 modules/iva/edit.php:135
-#: modules/liste_newsletter/edit.php:138 modules/listini/edit.php:48 modules/misure/edit.php:62
-#: modules/modelli_primanota/edit.php:136 modules/newsletter/edit.php:205 modules/ordini/edit.php:374
-#: modules/pagamenti/edit.php:86 modules/pagamenti/edit.php:155 modules/partitario/edit.php:183 modules/porti/edit.php:64
-#: modules/preventivi/edit.php:404 modules/primanota/edit.php:92 modules/relazioni_anagrafiche/edit.php:62
-#: modules/ritenute/edit.php:69 modules/ritenute_contributi/edit.php:69 modules/rivalse/edit.php:54
-#: modules/scadenzario/edit.php:197 modules/segmenti/edit.php:186 modules/smtp/edit.php:134 modules/spedizioni/edit.php:63
-#: modules/stati_contratto/edit.php:75 modules/stati_intervento/edit.php:82 modules/stati_preventivo/edit.php:77
-#: modules/stato_email/edit.php:172 modules/tipi_anagrafiche/edit.php:66 modules/tipi_intervento/edit.php:152
-#: modules/tipi_scadenze/edit.php:72 modules/utenti/edit.php:203 modules/viste/fields.php:53 modules/viste/filters.php:51
-#: modules/voci_servizio/edit.php:39 modules/zone/edit.php:40 plugins/dichiarazioni_intento/edit.php:74
-#: plugins/referenti/edit.php:60 plugins/sedi/edit.php:172 src/HTMLBuilder/Handler/MediaHandler.php:69
-msgid "Elimina"
-msgstr ""
-
-#: include/custom/top.php:82 include/top.php:99
-msgid "Sei sicuro?"
-msgstr ""
-
-#: include/custom/top.php:83 include/top.php:100 modules/pagamenti/edit.php:85
-msgid "Eliminare questo elemento?"
-msgstr ""
-
-#: include/custom/top.php:84 include/init/configuration.php:321 include/top.php:101 include/top.php:124 include/top.php:128
-#: modules/articoli/plugins/articoli.lotti.php:291 modules/checklists/components/add-check.php:117
-#: modules/checklists/components/add-checklist.php:99 modules/import/edit.php:195 modules/smtp/buttons.php:50
-#: modules/utenti/edit.php:226 modules/viste/edit.php:149 plugins/dettagli_articolo/edit.php:377
-#: plugins/dettagli_articolo/edit.php:390 plugins/exportFE/edit.php:220 plugins/exportFE/edit.php:252
-#: plugins/exportFE/edit.php:289 plugins/importFE/buttons.php:77 plugins/importFE/buttons.php:113 plugins/importFE/edit.php:67
-#: plugins/importFE/edit.php:205 plugins/importFE/list.php:160 plugins/receiptFE/edit.php:137 plugins/receiptFE/edit.php:226
-#: plugins/receiptFE/list.php:97 src/HTMLBuilder/Manager/FileManager.php:347 src/HTMLBuilder/Manager/FileManager.php:365
-#: src/Util/Zip.php:151
-msgid "Errore"
-msgstr ""
-
-#: include/custom/top.php:85 include/top.php:102
-msgid "Si è verificato un errore nell'esecuzione dell'operazione richiesta"
-msgstr ""
-
-#: include/custom/top.php:86 include/top.php:103 src/HTMLBuilder/Manager/WidgetManager.php:145
-msgid "Chiudi"
-msgstr ""
-
-#: include/custom/top.php:87 include/top.php:104
-msgid "Filtra"
-msgstr ""
-
-#: include/custom/top.php:88 include/top.php:105
-msgid "La ricerca potrebbe richiedere del tempo"
-msgstr ""
-
-#: include/custom/top.php:89 include/top.php:106 modules/impianti/plugins/my_impianti.componenti.php:245
-#: plugins/dettagli_articolo/edit.php:171
-msgid "Dettagli"
-msgstr ""
-
-#: include/custom/top.php:90 include/init/configuration.php:270 include/top.php:108
-msgid "Impossibile procedere"
-msgstr ""
-
-#: include/custom/top.php:91 include/top.php:109
-msgid "Prima di proseguire devi selezionare alcuni elementi!"
-msgstr ""
-
-#: include/custom/top.php:92 include/top.php:110
-msgid "Hooks in esecuzione"
-msgstr ""
-
-#: include/custom/top.php:93 include/top.php:111
-msgid "Hook \"_NAME_\" in esecuzione"
-msgstr ""
-
-#: include/custom/top.php:94 include/top.php:112
-msgid "Hai _NUM_ notifiche"
-msgstr ""
-
-#: include/custom/top.php:95 include/top.php:113
-msgid "Hai 1 notifica"
-msgstr ""
-
-#: include/custom/top.php:96 include/top.php:114
-msgid "Nessuna notifica"
-msgstr ""
-
-#: include/custom/top.php:97 include/top.php:115
-msgid "E' presente un solo periodo!"
-msgstr ""
-
-#: include/custom/top.php:105 include/top.php:133
-msgid "La password è troppo corta"
-msgstr ""
-
-#: include/custom/top.php:106 include/top.php:134
-msgid "La password è troppo lunga"
-msgstr ""
-
-#: include/custom/top.php:107 include/top.php:135
-msgid "La password contiene un carattere non valido"
-msgstr ""
-
-#: include/custom/top.php:108 include/custom/top.php:191 include/top.php:136 include/top.php:220
-msgid "Non usare la tua e-mail come password"
-msgstr ""
-
-#: include/custom/top.php:109 include/top.php:137
-msgid "La password non può contenere il tuo nome"
-msgstr ""
-
-#: include/custom/top.php:110 include/custom/top.php:193 include/top.php:138 include/top.php:222
-msgid "Usa classi di caratteri diversi"
-msgstr ""
-
-#: include/custom/top.php:111 include/top.php:139
-msgid "La password contiene ripetizioni"
-msgstr ""
-
-#: include/custom/top.php:112 include/top.php:140
-msgid "La password contiene sequenze"
-msgstr ""
-
-#: include/custom/top.php:113 include/top.php:141 index.php:96 modules/anagrafiche/validation.php:93
-#: modules/anagrafiche/validation.php:132 modules/articoli/add.php:134 modules/articoli/edit.php:346
-#: modules/interventi/ajax_tecnici.php:236 modules/stampe_contabili/edit.php:25 reset.php:93
-msgid "Attenzione"
-msgstr ""
-
-#: include/custom/top.php:114 include/custom/top.php:197 include/top.php:142 include/top.php:226
-msgid "Molto debole"
-msgstr ""
-
-#: include/custom/top.php:115 include/custom/top.php:198 include/top.php:143 include/top.php:227
-msgid "Debole"
-msgstr ""
-
-#: include/custom/top.php:116 include/custom/top.php:199 include/top.php:144 include/top.php:228
-msgid "Normale"
-msgstr ""
-
-#: include/custom/top.php:117 include/custom/top.php:200 include/top.php:145 include/top.php:229
-msgid "Media"
-msgstr ""
-
-#: include/custom/top.php:118 include/custom/top.php:201 include/top.php:146 include/top.php:230
-msgid "Forte"
-msgstr ""
-
-#: include/custom/top.php:119 include/custom/top.php:202 include/top.php:147 include/top.php:231
-msgid "Molto forte"
-msgstr ""
-
-#: include/custom/top.php:122 include/top.php:150
-msgid "Nessun dato presente nella tabella"
-msgstr ""
-
-#: include/custom/top.php:123 include/top.php:151
-msgid "Vista da _START_ a _END_ di _TOTAL_ elementi"
-msgstr ""
-
-#: include/custom/top.php:124 include/top.php:152
-msgid "Vista da 0 a 0 di 0 elementi"
-msgstr ""
-
-#: include/custom/top.php:125 include/top.php:153
-msgid "filtrati da _MAX_ elementi totali"
-msgstr ""
-
-#: include/custom/top.php:127 include/top.php:155
-msgid "Visualizza _MENU_ elementi"
-msgstr ""
-
-#: include/custom/top.php:129 include/top.php:157
-msgid "Elaborazione"
-msgstr ""
-
-#: include/custom/top.php:130 include/custom/top.php:397 include/top.php:158 include/top.php:426
-msgid "Cerca"
-msgstr ""
-
-#: include/custom/top.php:131 include/top.php:159
-msgid "La ricerca non ha portato alcun risultato"
-msgstr ""
-
-#: include/custom/top.php:133 include/top.php:161 modules/articoli/plugins/articoli.lotti.php:50
-#: templates/riepilogo_interventi/piece.php:72
-msgid "Inizio"
-msgstr ""
-
-#: include/custom/top.php:134 include/init/configuration.php:259 include/top.php:162
-msgid "Precedente"
-msgstr ""
-
-#: include/custom/top.php:135 include/init/configuration.php:258 include/top.php:163
-msgid "Successivo"
-msgstr ""
-
-#: include/custom/top.php:136 include/top.php:164 modules/articoli/plugins/articoli.lotti.php:58
-#: templates/riepilogo_interventi/piece.php:73
-msgid "Fine"
-msgstr ""
-
-#: include/custom/top.php:188 include/top.php:217
-msgid "La tua password è troppo corta"
-msgstr ""
-
-#: include/custom/top.php:189 include/top.php:218
-msgid "La tua password è troppo lunga"
-msgstr ""
-
-#: include/custom/top.php:190 include/top.php:219
-msgid "La tua password contiene un carattere non valido"
-msgstr ""
-
-#: include/custom/top.php:192 include/top.php:221
-msgid "La tua password non può contenere il tuo nome"
-msgstr ""
-
-#: include/custom/top.php:194 include/top.php:223
-msgid "Troppe ripetizioni"
-msgstr ""
-
-#: include/custom/top.php:195 include/top.php:224
-msgid "La tua password contiene sequenze"
-msgstr ""
-
-#: include/custom/top.php:196 include/top.php:225
-msgid "Errori"
-msgstr ""
-
-#: include/custom/top.php:293 include/top.php:322
-msgid "OSM"
-msgstr ""
-
-#: include/custom/top.php:302 include/top.php:331
-msgid "Mostra/nascondi menu"
-msgstr ""
-
-#: include/custom/top.php:342 include/manager.php:225 include/top.php:371 modules/articoli/widgets/stampa_inventario.php:38
-#: modules/dashboard/widgets/stampa_calendario.dashboard.php:49 modules/partitario/edit.php:58
-#: modules/stampe_contabili/stampe_contabili.php:60 modules/stato_email/edit.php:107
-#: src/HTMLBuilder/Manager/ButtonManager.php:54 src/HTMLBuilder/Manager/ButtonManager.php:182
-msgid "Stampa"
-msgstr ""
-
-#: include/custom/top.php:350 include/top.php:379
-msgid "Log accessi"
-msgstr ""
-
-#: include/custom/top.php:354 include/custom/top.php:441 include/top.php:383 include/top.php:532 info.php:22 info.php:34
-#: modules/stato_email/edit.php:26
-msgid "Informazioni"
-msgstr ""
-
-#: include/custom/top.php:358 include/top.php:387
-msgid "Esci"
-msgstr ""
-
 #: include/init/configuration.php:29 include/init/configuration.php:427 modules/utenti/info.php:125
 msgid "Configurazione"
 msgstr ""
@@ -1025,6 +708,18 @@ msgstr ""
 msgid "Nel caso il problema persista, rivolgersi all'assistenza ufficiale"
 msgstr ""
 
+#: include/init/configuration.php:258 include/top.php:163
+msgid "Successivo"
+msgstr ""
+
+#: include/init/configuration.php:259 include/top.php:162
+msgid "Precedente"
+msgstr ""
+
+#: include/init/configuration.php:270 include/top.php:108
+msgid "Impossibile procedere"
+msgstr ""
+
 #: include/init/configuration.php:270
 msgid "Prima di proseguire devi completare i campi obbligatori!"
 msgstr ""
@@ -1065,6 +760,18 @@ msgstr ""
 
 #: include/init/configuration.php:315
 msgid "Clicca su _BTN_ per proseguire"
+msgstr ""
+
+#: include/init/configuration.php:321 include/top.php:101 include/top.php:124 include/top.php:128
+#: modules/articoli/plugins/articoli.lotti.php:291 modules/checklists/components/add-check.php:117
+#: modules/checklists/components/add-checklist.php:99 modules/import/edit.php:195 modules/smtp/buttons.php:50
+#: modules/utenti/edit.php:226 modules/viste/edit.php:149 plugins/dettagli_articolo/edit.php:377
+#: plugins/dettagli_articolo/edit.php:390 plugins/exportFE/edit.php:220 plugins/exportFE/edit.php:252
+#: plugins/exportFE/edit.php:289 plugins/importFE/buttons.php:77 plugins/importFE/buttons.php:113 plugins/importFE/edit.php:67
+#: plugins/importFE/edit.php:205 plugins/importFE/list.php:160 plugins/receiptFE/edit.php:137 plugins/receiptFE/edit.php:226
+#: plugins/receiptFE/list.php:97 src/HTMLBuilder/Manager/FileManager.php:347 src/HTMLBuilder/Manager/FileManager.php:365
+#: src/Util/Zip.php:151
+msgid "Errore"
 msgstr ""
 
 #: include/init/configuration.php:332 include/init/init.php:127 index.php:136 info.php:31
@@ -1495,6 +1202,13 @@ msgstr ""
 msgid "Copia"
 msgstr ""
 
+#: include/manager.php:225 include/top.php:371 modules/articoli/widgets/stampa_inventario.php:38
+#: modules/dashboard/widgets/stampa_calendario.dashboard.php:49 modules/partitario/edit.php:58
+#: modules/stampe_contabili/stampe_contabili.php:60 modules/stato_email/edit.php:107
+#: src/HTMLBuilder/Manager/ButtonManager.php:54 src/HTMLBuilder/Manager/ButtonManager.php:182
+msgid "Stampa"
+msgstr ""
+
 #: include/riferimenti/riferimenti.php:35
 msgid "Informazioni per i riferimenti di: _DESC_"
 msgstr ""
@@ -1502,7 +1216,7 @@ msgstr ""
 #: include/riferimenti/riferimenti.php:47 include/riferimenti/riferimenti.php:97 modules/aggiornamenti/checksum.php:33
 #: modules/aggiornamenti/database.php:56 modules/contratti/add_preventivo.php:58 modules/ddt/add_ordine.php:59
 #: modules/fatture/add_contratto.php:59 modules/fatture/add_ddt.php:60 modules/fatture/add_ordine.php:60
-#: modules/fatture/add_preventivo.php:59
+#: modules/fatture/add_preventivo.php:60
 msgid "Caricamento in corso"
 msgstr ""
 
@@ -1542,8 +1256,153 @@ msgstr ""
 msgid "Nessun riferimento presente"
 msgstr ""
 
+#: include/top.php:79 modules/pagamenti/edit.php:115 modules/pagamenti/edit.php:179
+msgid "Giorno"
+msgstr ""
+
+#: include/top.php:80
+msgid "Settimana"
+msgstr ""
+
+#: include/top.php:81 templates/fatturato/body.php:42
+msgid "Mese"
+msgstr ""
+
+#: include/top.php:82
+msgid "Oggi"
+msgstr ""
+
+#: include/top.php:83
+msgid "I trimestre"
+msgstr ""
+
+#: include/top.php:84
+msgid "II trimestre"
+msgstr ""
+
+#: include/top.php:85
+msgid "III trimestre"
+msgstr ""
+
+#: include/top.php:86
+msgid "IV trimestre"
+msgstr ""
+
+#: include/top.php:87
+msgid "I semestre"
+msgstr ""
+
+#: include/top.php:88
+msgid "II semestre"
+msgstr ""
+
+#: include/top.php:89
+msgid "Questo mese"
+msgstr ""
+
+#: include/top.php:90
+msgid "Mese scorso"
+msgstr ""
+
+#: include/top.php:91
+msgid "Quest'anno"
+msgstr ""
+
+#: include/top.php:92
+msgid "Anno scorso"
+msgstr ""
+
+#: include/top.php:93 modules/tipi_intervento/buttons.php:21
+msgid "Applica"
+msgstr ""
+
+#: include/top.php:94 include/top.php:258
+msgid "Annulla"
+msgstr ""
+
+#: include/top.php:97
+msgid "Personalizzato"
+msgstr ""
+
+#: include/top.php:98 modules/anagrafiche/edit.php:735 modules/articoli/edit.php:419 modules/banche/edit.php:80
+#: modules/beni/edit.php:61 modules/categorie_articoli/edit.php:129 modules/categorie_documenti/edit.php:51
+#: modules/categorie_impianti/edit.php:75 modules/causali/edit.php:71 modules/causali_movimenti/edit.php:53
+#: modules/checklists/edit.php:169 modules/contratti/edit.php:511 modules/custom_fields/edit.php:74 modules/ddt/edit.php:483
+#: modules/emails/edit.php:156 modules/fatture/edit.php:823 modules/gestione_componenti/edit.php:75
+#: modules/gestione_documentale/edit.php:60 modules/impianti/edit.php:137
+#: modules/impianti/plugins/my_impianti.componenti.php:287 modules/interventi/edit.php:641 modules/iva/edit.php:135
+#: modules/liste_newsletter/edit.php:138 modules/listini/edit.php:48 modules/misure/edit.php:62
+#: modules/modelli_primanota/edit.php:136 modules/newsletter/edit.php:205 modules/ordini/edit.php:374
+#: modules/pagamenti/edit.php:86 modules/pagamenti/edit.php:155 modules/partitario/edit.php:183 modules/porti/edit.php:64
+#: modules/preventivi/edit.php:404 modules/primanota/edit.php:92 modules/relazioni_anagrafiche/edit.php:62
+#: modules/ritenute/edit.php:69 modules/ritenute_contributi/edit.php:69 modules/rivalse/edit.php:54
+#: modules/scadenzario/edit.php:197 modules/segmenti/edit.php:186 modules/smtp/edit.php:134 modules/spedizioni/edit.php:63
+#: modules/stati_contratto/edit.php:75 modules/stati_intervento/edit.php:82 modules/stati_preventivo/edit.php:77
+#: modules/stato_email/edit.php:172 modules/tipi_anagrafiche/edit.php:66 modules/tipi_intervento/edit.php:152
+#: modules/tipi_scadenze/edit.php:72 modules/utenti/edit.php:203 modules/viste/fields.php:53 modules/viste/filters.php:51
+#: modules/voci_servizio/edit.php:39 modules/zone/edit.php:40 plugins/dichiarazioni_intento/edit.php:74
+#: plugins/referenti/edit.php:60 plugins/sedi/edit.php:172 src/HTMLBuilder/Handler/MediaHandler.php:69
+msgid "Elimina"
+msgstr ""
+
+#: include/top.php:99
+msgid "Sei sicuro?"
+msgstr ""
+
+#: include/top.php:100 modules/pagamenti/edit.php:85
+msgid "Eliminare questo elemento?"
+msgstr ""
+
+#: include/top.php:102
+msgid "Si è verificato un errore nell'esecuzione dell'operazione richiesta"
+msgstr ""
+
+#: include/top.php:103 src/HTMLBuilder/Manager/WidgetManager.php:145
+msgid "Chiudi"
+msgstr ""
+
+#: include/top.php:104
+msgid "Filtra"
+msgstr ""
+
+#: include/top.php:105
+msgid "La ricerca potrebbe richiedere del tempo"
+msgstr ""
+
+#: include/top.php:106 modules/impianti/plugins/my_impianti.componenti.php:245 plugins/dettagli_articolo/edit.php:171
+msgid "Dettagli"
+msgstr ""
+
 #: include/top.php:107
 msgid "Caricamento"
+msgstr ""
+
+#: include/top.php:109
+msgid "Prima di proseguire devi selezionare alcuni elementi!"
+msgstr ""
+
+#: include/top.php:110
+msgid "Hooks in esecuzione"
+msgstr ""
+
+#: include/top.php:111
+msgid "Hook \"_NAME_\" in esecuzione"
+msgstr ""
+
+#: include/top.php:112
+msgid "Hai _NUM_ notifiche"
+msgstr ""
+
+#: include/top.php:113
+msgid "Hai 1 notifica"
+msgstr ""
+
+#: include/top.php:114
+msgid "Nessuna notifica"
+msgstr ""
+
+#: include/top.php:115
+msgid "E' presente un solo periodo!"
 msgstr ""
 
 #: include/top.php:125 plugins/exportFE/edit.php:290
@@ -1552,6 +1411,156 @@ msgstr ""
 
 #: include/top.php:129
 msgid "Errore durante il salvataggio del record"
+msgstr ""
+
+#: include/top.php:133
+msgid "La password è troppo corta"
+msgstr ""
+
+#: include/top.php:134
+msgid "La password è troppo lunga"
+msgstr ""
+
+#: include/top.php:135
+msgid "La password contiene un carattere non valido"
+msgstr ""
+
+#: include/top.php:136 include/top.php:220
+msgid "Non usare la tua e-mail come password"
+msgstr ""
+
+#: include/top.php:137
+msgid "La password non può contenere il tuo nome"
+msgstr ""
+
+#: include/top.php:138 include/top.php:222
+msgid "Usa classi di caratteri diversi"
+msgstr ""
+
+#: include/top.php:139
+msgid "La password contiene ripetizioni"
+msgstr ""
+
+#: include/top.php:140
+msgid "La password contiene sequenze"
+msgstr ""
+
+#: include/top.php:141 index.php:96 modules/anagrafiche/validation.php:93 modules/anagrafiche/validation.php:132
+#: modules/articoli/add.php:134 modules/articoli/edit.php:346 modules/interventi/ajax_tecnici.php:236
+#: modules/stampe_contabili/edit.php:25 reset.php:93
+msgid "Attenzione"
+msgstr ""
+
+#: include/top.php:142 include/top.php:226
+msgid "Molto debole"
+msgstr ""
+
+#: include/top.php:143 include/top.php:227
+msgid "Debole"
+msgstr ""
+
+#: include/top.php:144 include/top.php:228
+msgid "Normale"
+msgstr ""
+
+#: include/top.php:145 include/top.php:229
+msgid "Media"
+msgstr ""
+
+#: include/top.php:146 include/top.php:230
+msgid "Forte"
+msgstr ""
+
+#: include/top.php:147 include/top.php:231
+msgid "Molto forte"
+msgstr ""
+
+#: include/top.php:150
+msgid "Nessun dato presente nella tabella"
+msgstr ""
+
+#: include/top.php:151
+msgid "Vista da _START_ a _END_ di _TOTAL_ elementi"
+msgstr ""
+
+#: include/top.php:152
+msgid "Vista da 0 a 0 di 0 elementi"
+msgstr ""
+
+#: include/top.php:153
+msgid "filtrati da _MAX_ elementi totali"
+msgstr ""
+
+#: include/top.php:155
+msgid "Visualizza _MENU_ elementi"
+msgstr ""
+
+#: include/top.php:157
+msgid "Elaborazione"
+msgstr ""
+
+#: include/top.php:158 include/top.php:426
+msgid "Cerca"
+msgstr ""
+
+#: include/top.php:159
+msgid "La ricerca non ha portato alcun risultato"
+msgstr ""
+
+#: include/top.php:161 modules/articoli/plugins/articoli.lotti.php:50 templates/riepilogo_interventi/piece.php:72
+msgid "Inizio"
+msgstr ""
+
+#: include/top.php:164 modules/articoli/plugins/articoli.lotti.php:58 templates/riepilogo_interventi/piece.php:73
+msgid "Fine"
+msgstr ""
+
+#: include/top.php:217
+msgid "La tua password è troppo corta"
+msgstr ""
+
+#: include/top.php:218
+msgid "La tua password è troppo lunga"
+msgstr ""
+
+#: include/top.php:219
+msgid "La tua password contiene un carattere non valido"
+msgstr ""
+
+#: include/top.php:221
+msgid "La tua password non può contenere il tuo nome"
+msgstr ""
+
+#: include/top.php:223
+msgid "Troppe ripetizioni"
+msgstr ""
+
+#: include/top.php:224
+msgid "La tua password contiene sequenze"
+msgstr ""
+
+#: include/top.php:225
+msgid "Errori"
+msgstr ""
+
+#: include/top.php:322
+msgid "OSM"
+msgstr ""
+
+#: include/top.php:331
+msgid "Mostra/nascondi menu"
+msgstr ""
+
+#: include/top.php:379
+msgid "Log accessi"
+msgstr ""
+
+#: include/top.php:383 include/top.php:532 info.php:22 info.php:34 modules/stato_email/edit.php:26
+msgid "Informazioni"
+msgstr ""
+
+#: include/top.php:387
+msgid "Esci"
 msgstr ""
 
 #: include/top.php:448
@@ -1760,7 +1769,7 @@ msgstr ""
 msgid "Ordine"
 msgstr ""
 
-#: lib/deprecated.php:328 modules/contratti/add_preventivo.php:49 modules/fatture/add_preventivo.php:50
+#: lib/deprecated.php:328 modules/contratti/add_preventivo.php:49 modules/fatture/add_preventivo.php:51
 #: modules/interventi/add.php:167 modules/interventi/edit.php:72
 msgid "Preventivo"
 msgstr ""
@@ -6209,10 +6218,6 @@ msgstr ""
 
 #: modules/ordini/quantita_impegnate.php:40
 msgid "Quantità presente nel magazzino del gestionale"
-msgstr ""
-
-#: modules/ordini/quantita_impegnate.php:40
-msgid "Q.tà magazzino"
 msgstr ""
 
 #: modules/ordini/quantita_impegnate.php:41

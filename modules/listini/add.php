@@ -47,7 +47,7 @@ include_once __DIR__.'/../../core.php';
 
 <script>
     $("#prc_guadagno").change(function () {
-        if ($(this).val() && $(this).val() != (0).toLocale()) {
+        if ($(this).val() && $(this).val() !== "0" && $(this).val() !== (0).toLocale()) {
             $("#prc_combinato").attr("disabled", true).addClass("disabled");
         } else {
             $("#prc_combinato").attr("disabled", false).removeClass("disabled");

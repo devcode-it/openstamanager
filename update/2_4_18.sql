@@ -192,7 +192,7 @@ ALTER TABLE `an_anagrafiche` CHANGE `idbanca_acquisti` `idbanca_acquisti` INT(11
 UPDATE `an_anagrafiche` SET `idbanca_acquisti` = NULL WHERE `idbanca_vendite` = 0;
 UPDATE `an_anagrafiche` SET `idbanca_vendite` = NULL WHERE `idbanca_vendite` = 0;
 
-INSERT INTO `co_banche` (`id_anagrafica`, `nome`, `iban`, `bic`, `filiale`) SELECT idanagrafica, IF(appoggiobancario != '', appoggiobancario, CONCAT('Banca predefinita di ', ragione_sociale)), codiceiban, bic, filiale FROM an_anagrafiche WHERE codiceiban IS NOT  NULL AND codiceiban != '';
+INSERT INTO `co_banche` (`id_anagrafica`, `nome`, `iban`, `bic`, `filiale`, `predefined`) SELECT idanagrafica, IF(appoggiobancario != '', appoggiobancario, CONCAT('Banca predefinita di ', ragione_sociale)), codiceiban, bic, filiale, 1 FROM an_anagrafiche WHERE codiceiban IS NOT  NULL AND codiceiban != '';
 
 UPDATE `an_anagrafiche` SET `idbanca_acquisti` = (SELECT `id` FROM `co_banche` WHERE `co_banche`.`id_anagrafica` = `an_anagrafiche`.`idanagrafica` LIMIT 1) WHERE `idbanca_acquisti` IS NULL;
 UPDATE `an_anagrafiche` SET `idbanca_vendite` = (SELECT `id` FROM `co_banche` WHERE `co_banche`.`id_anagrafica` = `an_anagrafiche`.`idanagrafica` LIMIT 1) WHERE `idbanca_vendite` IS NULL;

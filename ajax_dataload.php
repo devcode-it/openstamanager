@@ -93,10 +93,12 @@ if (!empty($query)) {
 
     // Creazione della tabella
     foreach ($rows as $i => $r) {
-        // Evitare risultati con id a null
+        // Evitare risultati con ID a null
+        // Codice non applicabile in ogni caso: sulla base dei permessi, ID può non essere impostato
+        /*
         if (empty($r['id'])) {
             continue;
-        }
+        }*/
 
         $result = [
             'id' => $r['id'],

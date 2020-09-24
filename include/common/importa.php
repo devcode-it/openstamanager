@@ -418,14 +418,13 @@ function controllaMagazzino() {
     for(const r of righe) {
         let riga = $(r);
         let id = $(riga).data("local_id");
+        let id_articolo = riga.find("[id^=id_articolo_]").text();
 
-        if (!$("#checked_" + id).is(":checked")) {
+        if (!$("#checked_" + id).is(":checked") || !id_articolo) {
             continue;
         }
 
-        let id_articolo = riga.find("[id^=id_articolo_]").text();
         let qta = parseFloat(riga.find("input[id^=qta_]").val());
-
         richieste[id_articolo] = richieste[id_articolo] ? richieste[id_articolo] + qta : qta;
     }
 

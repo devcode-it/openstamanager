@@ -19,7 +19,10 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\DDT\DDT;
+use Modules\Fatture\Fattura;
 use Modules\Interventi\Intervento;
+use Modules\Ordini\Ordine;
 
 $documento = Intervento::find($id_record);
 
@@ -28,15 +31,19 @@ $module = Modules::get($documento->module);
 if (get('documento') == 'fattura') {
     $final_module = 'Fatture di vendita';
     $op = 'add_documento';
+    $tipo_documento_finale = Fattura::class;
 } elseif (get('documento') == 'ordine_fornitore') {
     $final_module = 'Ordini fornitore';
     $op = 'add_ordine_cliente';
+    $tipo_documento_finale = Ordine::class;
 } elseif (get('documento') == 'ordine') {
     $final_module = 'Ordini cliente';
     $op = 'add_documento';
+    $tipo_documento_finale = Ordine::class;
 } else {
     $final_module = 'Ddt di vendita';
     $op = 'add_documento';
+    $tipo_documento_finale = DDT::class;
 }
 
 $options = [
@@ -47,6 +54,7 @@ $options = [
     'create_document' => true,
     'serials' => true,
     'documento' => $documento,
+    'tipo_documento_finale' => $tipo_documento_finale,
 ];
 
 echo App::load('importa.php', [], $options, true);

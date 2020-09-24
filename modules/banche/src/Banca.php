@@ -79,7 +79,7 @@ class Banca extends Model
         if (empty($predefined) && empty($count)) {
             $predefined = true;
         }
-        
+
         if (!empty($predefined)) {
             self::where('id_anagrafica', $this->id_anagrafica)
                 ->where('id', '!=', $this->id)

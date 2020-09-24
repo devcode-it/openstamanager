@@ -37,8 +37,8 @@ echo '
 
     <div class="box-body">';
 
-if (file_exists($docroot.'/assistenza.php')) {
-    include $docroot.'/assistenza.php';
+if (file_exists(base_dir().'/assistenza.php')) {
+    include base_dir().'/assistenza.php';
 } else {
     echo '
         <div class="row">

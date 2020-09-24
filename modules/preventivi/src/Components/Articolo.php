@@ -28,16 +28,4 @@ class Articolo extends Article
     use RelationTrait;
 
     protected $table = 'co_righe_preventivi';
-
-    /**
-     * Crea un nuovo articolo collegato ad una preventivo.
-     *
-     * @return self
-     */
-    public static function build(Preventivo $preventivo, Original $articolo)
-    {
-        $model = parent::build($preventivo, $articolo);
-
-        return $model;
-    }
 }

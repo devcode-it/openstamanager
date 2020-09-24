@@ -75,7 +75,7 @@ $rs = $dbo->fetchArray('SELECT mg_articoli.id AS idarticolo, mg_articoli.codice,
 echo '
 <p>'.tr('Articolo').': '.$rs[0]['codice'].' - '.$rs[0]['descrizione'].'</p>
 
-<form action="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'" method="post">
+<form action="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'" method="post">
     <input type="hidden" name="op" value="add_serial">
     <input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="idriga" value="'.$idriga.'">

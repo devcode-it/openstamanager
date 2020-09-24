@@ -21,7 +21,7 @@ namespace Modules\Contratti;
 
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
-use Common\Components\Description;
+use Common\Components\Component;
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\Intervento;
@@ -63,7 +63,7 @@ class Contratto extends Document
      */
     public static function build(Anagrafica $anagrafica, $nome)
     {
-        $model = parent::build();
+        $model = new static();
 
         $stato_documento = Stato::where('descrizione', 'Bozza')->first();
 
@@ -225,7 +225,7 @@ class Contratto extends Document
      * Effettua un controllo sui campi del documento.
      * Viene richiamato dalle modifiche alle righe del documento.
      */
-    public function triggerEvasione(Description $trigger)
+    public function triggerEvasione(Component $trigger)
     {
         parent::triggerEvasione($trigger);
 

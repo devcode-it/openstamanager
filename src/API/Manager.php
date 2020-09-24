@@ -36,7 +36,7 @@ class Manager
     protected $type;
 
     /**
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function __construct($resource, $type, $version)
     {
@@ -46,7 +46,7 @@ class Manager
             ->first();
 
         if (empty($object)) {
-            throw  new ResourceNotFound();
+            throw new ResourceNotFound();
         }
 
         $this->resource = $object;

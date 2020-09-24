@@ -116,7 +116,7 @@ switch (filter('op')) {
 
         $utente->save();
 
-        redirect(ROOTDIR.'/modules/utenti/info.php');
+        redirect(base_path().'/modules/utenti/info.php');
 
         break;
 

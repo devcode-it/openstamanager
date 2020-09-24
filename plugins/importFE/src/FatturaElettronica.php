@@ -92,7 +92,7 @@ class FatturaElettronica
                     return $value->name == 'Fatturazione Elettronica';
                 });
 
-                self::$directory = DOCROOT.'/'.$plugin->upload_directory;
+                self::$directory = base_dir().'/'.$plugin->upload_directory;
             }
         }
 

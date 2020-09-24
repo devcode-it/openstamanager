@@ -20,14 +20,17 @@
 namespace Tasks;
 
 use Carbon\Carbon;
-use Common\Model;
+use Common\SimpleModelTrait;
 use Cron\CronExpression;
+use Illuminate\Database\Eloquent\Model;
 
-/**
+/*
  * Risorsa per la gestione delle task ricorrenti del gestionale.
  */
 class Task extends Model
 {
+    use SimpleModelTrait;
+
     protected $table = 'zz_tasks';
 
     protected $dates = [
@@ -37,7 +40,7 @@ class Task extends Model
 
     public function log($level, $message, $context = [])
     {
-        $log = Log::build();
+        $log = new static();
 
         $log->level = $level;
         $log->message = $message;

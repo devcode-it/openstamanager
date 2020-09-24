@@ -19,10 +19,13 @@
 
 namespace Models;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 
 class Group extends Model
 {
+    use SimpleModelTrait;
+
     protected $table = 'zz_groups';
 
     /* Relazioni Eloquent */

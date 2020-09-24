@@ -19,15 +19,17 @@
 
 namespace Models;
 
-use Common\Model;
+use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Traits\LocalPoolTrait;
 use Traits\PathTrait;
-use Traits\StoreTrait;
 
 class PrintTemplate extends Model
 {
+    use SimpleModelTrait;
     use PathTrait;
-    use StoreTrait;
+    use LocalPoolTrait;
 
     protected $table = 'zz_prints';
     protected $main_folder = 'templates';

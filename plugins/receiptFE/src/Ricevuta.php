@@ -95,7 +95,7 @@ class Ricevuta
         if (!isset(self::$directory)) {
             $plugin = Plugins::get('Ricevute FE');
 
-            self::$directory = DOCROOT.'/'.$plugin->upload_directory;
+            self::$directory = base_dir().'/'.$plugin->upload_directory;
         }
 
         return self::$directory;

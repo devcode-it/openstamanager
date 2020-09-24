@@ -19,11 +19,13 @@
 
 namespace Modules\Articoli;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 use Traits\HierarchyTrait;
 
 class Categoria extends Model
 {
+    use SimpleModelTrait;
     use HierarchyTrait;
 
     protected $table = 'mg_categorie';
@@ -31,7 +33,7 @@ class Categoria extends Model
 
     public static function build($nome)
     {
-        $model = parent::build();
+        $model = new static();
 
         $model->nome = $nome;
         $model->save();

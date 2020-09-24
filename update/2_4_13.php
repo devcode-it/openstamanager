@@ -53,7 +53,7 @@ $files = [
 ];
 
 foreach ($files as $key => $value) {
-    $files[$key] = realpath(DOCROOT.'\\'.$value);
+    $files[$key] = realpath(base_dir().'\\'.$value);
 }
 
 delete($files);

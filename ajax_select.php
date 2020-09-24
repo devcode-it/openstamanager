@@ -27,7 +27,7 @@ if (!isset($resource)) {
 
     // Opzioni di selezione sugli elementi
     $options = filter('options') ?: [];
-    $options_compatibility = $_SESSION['superselect'] ?: [];
+    $options_compatibility = session_get('superselect', []);
     $options = array_merge($options_compatibility, $options);
 
     // Preselezione su $elements dichiarato da file precedente

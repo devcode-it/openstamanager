@@ -19,7 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-$path = $docroot.'/files/impianti/';
+$path = base_dir().'/files/impianti/';
 
 switch (post('op')) {
     case 'update':

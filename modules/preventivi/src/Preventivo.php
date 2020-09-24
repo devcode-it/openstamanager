@@ -21,7 +21,7 @@ namespace Modules\Preventivi;
 
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
-use Common\Components\Description;
+use Common\Components\Component;
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\Intervento;
@@ -52,7 +52,7 @@ class Preventivo extends Document
      */
     public static function build(Anagrafica $anagrafica, TipoSessione $tipo_sessione, $nome, $data_bozza, $id_sede)
     {
-        $model = parent::build();
+        $model = new static();
 
         $stato_documento = Stato::where('descrizione', 'Bozza')->first();
 
@@ -235,7 +235,7 @@ class Preventivo extends Document
      * Effettua un controllo sui campi del documento.
      * Viene richiamato dalle modifiche alle righe del documento.
      */
-    public function triggerEvasione(Description $trigger)
+    public function triggerEvasione(Component $trigger)
     {
         parent::triggerEvasione($trigger);
 
@@ -251,7 +251,7 @@ class Preventivo extends Document
         if ($qta_evasa == 0) {
             $descrizione = 'In lavorazione';
             $codice_intervento = 'OK';
-        } elseif (!in_array($stato_attuale->descrizione, ['Parzialmente fatturato', 'Fatturato']) && $trigger->parent instanceof Ordine) {
+        } elseif (!in_array($stato_attuale->descrizione, ['Parzialmente fatturato', 'Fatturato']) && $trigger->getDocument() instanceof Ordine) {
             $descrizione = $this->stato->descrizione;
             $codice_intervento = 'OK';
         } else {

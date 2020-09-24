@@ -21,7 +21,7 @@ namespace Modules\Fatture;
 
 use Auth;
 use Carbon\Carbon;
-use Common\Components\Description;
+use Common\Components\Component;
 use Common\Document;
 use Illuminate\Database\Eloquent\Builder;
 use Modules\Anagrafiche\Anagrafica;
@@ -86,7 +86,7 @@ class Fattura extends Document
      */
     public static function build(Anagrafica $anagrafica, Tipo $tipo_documento, $data, $id_segment, $numero_esterno = null)
     {
-        $model = parent::build();
+        $model = new static();
 
         $user = Auth::user();
 
@@ -416,7 +416,7 @@ class Fattura extends Document
 
     // Metodi generali
 
-    public function triggerComponent(Description $trigger)
+    public function triggerComponent(Component $trigger)
     {
         parent::triggerComponent($trigger);
 

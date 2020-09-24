@@ -35,6 +35,6 @@ if (isset($id_record)) {
     }
 
     if ($scadenze[0]['id'] != $id_record) {
-        redirect(ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$scadenze[0]['id']);
+        redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.$scadenze[0]['id']);
     }
 }

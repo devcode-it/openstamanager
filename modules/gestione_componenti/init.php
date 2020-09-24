@@ -19,9 +19,9 @@
 
 include_once __DIR__.'/../../core.php';
 
-$cmp = \Util\Ini::getList($docroot.'/files/impianti/');
+$cmp = \Util\Ini::getList(base_dir().'/files/impianti/');
 
 if (!empty($id_record) && isset($cmp[$id_record - 1])) {
     $record['nomefile'] = $cmp[$id_record - 1][0];
-    $record['contenuto'] = file_get_contents($docroot.'/files/impianti/'.$record['nomefile']);
+    $record['contenuto'] = file_get_contents(base_dir().'/files/impianti/'.$record['nomefile']);
 }

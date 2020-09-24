@@ -19,10 +19,13 @@
 
 namespace Modules\Anagrafiche;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 
 class Tipo extends Model
 {
+    use SimpleModelTrait;
+
     protected $table = 'an_tipianagrafiche';
     protected $primaryKey = 'idtipoanagrafica';
 

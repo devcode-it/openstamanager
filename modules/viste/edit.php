@@ -132,7 +132,7 @@ function testQuery(){
     $("#main_loading").fadeIn();
 
     $.ajax({
-        url: "'.ROOTDIR.'/actions.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&op=test",
+        url: "'.base_path().'/actions.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&op=test",
         cache: false,
         type: "post",
         processData: false,

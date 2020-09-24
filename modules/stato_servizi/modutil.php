@@ -41,9 +41,9 @@ function submodules($list, $depth = 0)
         // Possibilità di disabilitare o abilitare i moduli tranne quello degli aggiornamenti
         if (!$locked) {
             if ($sub['enabled']) {
-                $stato = "<a href='javascript:;' onclick=\"if( confirm('".tr('Disabilitare questo modulo?')."') ){ $.post( '".ROOTDIR.'/actions.php?id_module='.$id_module."', { op: 'disable', id: '".$sub['id']."' }, function(response){ location.href='".ROOTDIR.'/controller.php?id_module='.$id_module."'; }); }\">".$stato."</a>\n";
+                $stato = "<a href='javascript:;' onclick=\"if( confirm('".tr('Disabilitare questo modulo?')."') ){ $.post( '".base_path().'/actions.php?id_module='.$id_module."', { op: 'disable', id: '".$sub['id']."' }, function(response){ location.href='".base_path().'/controller.php?id_module='.$id_module."'; }); }\">".$stato."</a>\n";
             } else {
-                $stato = "<a href='javascript:;' onclick=\"if( confirm('".tr('Abilitare questo modulo?')."') ){ $.post( '".ROOTDIR.'/actions.php?id_module='.$id_module."', { op: 'enable', id: '".$sub['id']."' }, function(response){ location.href='".ROOTDIR.'/controller.php?id_module='.$id_module."'; }); }\"\">".$stato."</a>\n";
+                $stato = "<a href='javascript:;' onclick=\"if( confirm('".tr('Abilitare questo modulo?')."') ){ $.post( '".base_path().'/actions.php?id_module='.$id_module."', { op: 'enable', id: '".$sub['id']."' }, function(response){ location.href='".base_path().'/controller.php?id_module='.$id_module."'; }); }\"\">".$stato."</a>\n";
             }
         }
 
@@ -77,7 +77,7 @@ function submodules($list, $depth = 0)
         // Possibilità di disinstallare solo se il modulo non è tra quelli predefiniti
         if (empty($sub['default'])) {
             $result .= '
-                <a href="javascript:;" class="tip"  title="'.tr('Disinstalla')."...\" onclick=\"if( confirm('".tr('Vuoi disinstallare questo modulo?').' '.tr('Tutti i dati salvati andranno persi!')."') ){ if( confirm('".tr('Sei veramente sicuro?')."') ){ $.post( '".ROOTDIR.'/actions.php?id_module='.$id_module."', { op: 'uninstall', id: '".$sub['id']."' }, function(response){ location.href='".ROOTDIR.'/controller.php?id_module='.$id_module."'; }); } }\">
+                <a href="javascript:;" class="tip"  title="'.tr('Disinstalla')."...\" onclick=\"if( confirm('".tr('Vuoi disinstallare questo modulo?').' '.tr('Tutti i dati salvati andranno persi!')."') ){ if( confirm('".tr('Sei veramente sicuro?')."') ){ $.post( '".base_path().'/actions.php?id_module='.$id_module."', { op: 'uninstall', id: '".$sub['id']."' }, function(response){ location.href='".base_path().'/controller.php?id_module='.$id_module."'; }); } }\">
                     <i class='fa fa-trash'></i>
                 </a>";
         } else {

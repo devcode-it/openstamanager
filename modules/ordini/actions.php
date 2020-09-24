@@ -403,7 +403,7 @@ switch (post('op')) {
                 $qta = post('qta_da_evadere')[$riga->id];
 
                 $copia = $riga->replicate();
-                $copia->setParent($ordine);
+                $copia->setDocument($ordine);
 
                 // Ripristino dei valori di default per campi potenzialmente impostati
                 $copia->original_id = null;

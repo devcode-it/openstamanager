@@ -19,6 +19,9 @@
 
 namespace Extensions;
 
+use Illuminate\Database\Capsule\Manager;
+use PDO;
+
 class EloquentCollector extends \DebugBar\DataCollector\PDO\PDOCollector
 {
     protected $capsule;
@@ -54,7 +57,7 @@ class EloquentCollector extends \DebugBar\DataCollector\PDO\PDOCollector
     }
 
     /**
-     * @return Illuminate\Database\Capsule\Manager;
+     * @return Manager;
      */
     protected function getEloquentCapsule()
     {

@@ -35,13 +35,13 @@ switch (filter('op')) {
                 // Elimino il modulo dal menu
                 $dbo->query('DELETE FROM zz_modules WHERE id='.prepare($id).' OR parent='.prepare($id));
 
-                $uninstall_script = DOCROOT.'/modules/'.$module_dir.'/update/uninstall.php';
+                $uninstall_script = base_dir().'/modules/'.$module_dir.'/update/uninstall.php';
 
                 if (file_exists($uninstall_script)) {
                     include_once $uninstall_script;
                 }
 
-                delete(DOCROOT.'/modules/'.$module_dir.'/');
+                delete(base_dir().'/modules/'.$module_dir.'/');
 
                 flash()->info(tr('Modulo "_MODULE_" disinstallato!', [
                     '_MODULE_' => $modulo,
@@ -160,8 +160,8 @@ switch (filter('op')) {
 
         $dirs = [
             $backup_dir => tr('Backup'),
-            DOCROOT.'/files' => tr('Allegati'),
-            DOCROOT.'/logs' => tr('Logs'),
+            base_dir().'/files' => tr('Allegati'),
+            base_dir().'/logs' => tr('Logs'),
         ];
 
         foreach ($dirs as $dir => $description) {

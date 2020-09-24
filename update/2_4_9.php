@@ -1,6 +1,6 @@
 <?php
 
-include_once DOCROOT.'/modules/fatture/modutil.php';
+include_once base_dir().'/modules/fatture/modutil.php';
 
 function get_costi_intervento_fix($id_intervento)
 {
@@ -214,7 +214,7 @@ $files = [
 ];
 
 foreach ($files as $key => $value) {
-    $files[$key] = realpath(DOCROOT.'/'.$value);
+    $files[$key] = realpath(base_dir().'/'.$value);
 }
 
 delete($files);

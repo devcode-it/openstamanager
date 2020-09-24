@@ -19,10 +19,13 @@
 
 namespace Modules\Anagrafiche;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 
 class Sede extends Model
 {
+    use SimpleModelTrait;
+
     protected $table = 'an_sedi';
 
     /**

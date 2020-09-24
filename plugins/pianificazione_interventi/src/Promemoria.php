@@ -54,7 +54,7 @@ class Promemoria extends Document
      */
     public static function build(Contratto $contratto, TipoSessione $tipo, $data_richiesta)
     {
-        $model = parent::build();
+        $model = new static();
 
         $model->contratto()->associate($contratto);
         $model->tipo()->associate($tipo);

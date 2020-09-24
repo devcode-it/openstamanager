@@ -106,8 +106,8 @@ class HTMLWrapper implements WrapperInterface
 
             $value = explode('|', $values['validation']);
             $name = $value[0];
-            $id_module = $value[1] ?: '$id_module$';
-            $id_record = $value[2] ?: '$id_record$';
+            $id_module = isset($value[1]) ? $value[1] : '$id_module$';
+            $id_record = isset($value[2]) ? $value[2] : '$id_record$';
 
             $result .= '
     <script>
@@ -212,7 +212,7 @@ class HTMLWrapper implements WrapperInterface
 
         if (in_array($module->permission, ['r', 'rw'])) {
             $result = '
-<button type="button" class="btn'.$classes.'" '.$btn_extras.' onclick="openModal(\''.tr('Aggiungi').'\', \''.ROOTDIR.'/add.php?id_module='.$module->id.$get.'&select='.$values['id'].'&ajax=yes\')">
+<button type="button" class="btn'.$classes.'" '.$btn_extras.' onclick="openModal(\''.tr('Aggiungi').'\', \''.base_path().'/add.php?id_module='.$module->id.$get.'&select='.$values['id'].'&ajax=yes\')">
     <i class="fa fa-plus"></i>
 </button>';
         }

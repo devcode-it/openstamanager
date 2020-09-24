@@ -169,14 +169,14 @@ class Backup
             ],
         ];
 
-        if (starts_with($backup_dir, slashes(DOCROOT))) {
+        if (starts_with($backup_dir, slashes(base_dir()))) {
             $ignores['dirs'][] = basename($backup_dir);
         }
 
         // Creazione backup in formato ZIP
         if (extension_loaded('zip')) {
             $result = Zip::create([
-                DOCROOT,
+                base_dir(),
                 self::getDatabaseDirectory(),
             ], $backup_dir.'/'.$backup_name.'.zip', $ignores);
         }
@@ -184,7 +184,7 @@ class Backup
         // Creazione backup attraverso la copia dei file
         else {
             $result = copyr([
-                DOCROOT,
+                base_dir(),
                 self::getDatabaseDirectory(),
             ], $backup_dir.'/'.$backup_name.'.zip', $ignores);
         }
@@ -244,7 +244,7 @@ class Backup
         // fino a ripristino ultimato
 
         // Rimozione del database
-        $tables = include DOCROOT.'/update/tables.php';
+        $tables = include base_dir().'/update/tables.php';
 
         // Ripristino del database
         $database_file = $extraction_dir.'/database.sql';
@@ -261,19 +261,19 @@ class Backup
         }
 
         // Salva il file di configurazione
-        $config = file_get_contents(DOCROOT.'/config.inc.php');
+        $config = file_get_contents(base_dir().'/config.inc.php');
 
         // Copia i file dalla cartella temporanea alla root
-        copyr($extraction_dir, DOCROOT);
+        copyr($extraction_dir, base_dir());
 
         // Ripristina il file di configurazione dell'installazione
-        file_put_contents(DOCROOT.'/config.inc.php', $config);
+        file_put_contents(base_dir().'/config.inc.php', $config);
 
         // Pulizia
         if (!empty($cleanup)) {
             delete($extraction_dir);
         }
-        delete(DOCROOT.'/database.sql');
+        delete(base_dir().'/database.sql');
     }
 
     /**

@@ -19,11 +19,14 @@
 
 namespace Modules\RitenuteContributi;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 use Modules\Fatture\Fattura;
 
 class RitenutaContributi extends Model
 {
+    use SimpleModelTrait;
+
     protected $table = 'co_ritenuta_contributi';
 
     public function fatture()

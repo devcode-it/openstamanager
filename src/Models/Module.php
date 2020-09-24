@@ -20,19 +20,22 @@
 namespace Models;
 
 use Auth;
-use Common\Model;
+use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Modules\Checklists\Traits\ChecklistTrait;
+use Modules\Emails\Template;
 use Traits\Components\NoteTrait;
 use Traits\Components\UploadTrait;
+use Traits\LocalPoolTrait;
 use Traits\ManagerTrait;
-use Traits\StoreTrait;
 
 class Module extends Model
 {
+    use SimpleModelTrait;
     use ManagerTrait;
     use UploadTrait;
-    use StoreTrait;
+    use LocalPoolTrait;
     use NoteTrait;
     use ChecklistTrait;
 
@@ -63,7 +66,7 @@ class Module extends Model
 
     public function getPlaceholders($id_record)
     {
-        if (!isset($variables[$id_record])) {
+        if (!isset($this->variables[$id_record])) {
             $dbo = $database = database();
 
             // Lettura delle variabili nei singoli moduli

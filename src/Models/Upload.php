@@ -19,11 +19,14 @@
 
 namespace Models;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 use Intervention\Image\ImageManagerStatic;
 
 class Upload extends Model
 {
+    use SimpleModelTrait;
+
     protected $table = 'zz_files';
 
     protected $file_info;
@@ -43,7 +46,7 @@ class Upload extends Model
      */
     public static function build($source, $data, $name = null, $category = null)
     {
-        $model = parent::build();
+        $model = new static();
 
         // Informazioni di base
         $original_name = isset($source['name']) ? $source['name'] : basename($source);
@@ -60,7 +63,7 @@ class Upload extends Model
         $original_name = $model->original_name; // Fix per "original_name" variato in modo dinamico
 
         // Nome fisico del file
-        $directory = DOCROOT.'/'.$model->directory;
+        $directory = base_dir().'/'.$model->directory;
         $filename = self::getNextName($original_name, $directory);
         $model->filename = $filename;
 
@@ -190,7 +193,7 @@ class Upload extends Model
     public function delete()
     {
         $info = $this->info;
-        $directory = DOCROOT.'/'.$this->directory;
+        $directory = base_dir().'/'.$this->directory;
 
         $files = [
             $directory.'/'.$info['basename'],
@@ -215,7 +218,7 @@ class Upload extends Model
 
     public function copia($data)
     {
-        $result = self::build(DOCROOT.'/'.$this->filepath, $data, $this->name, $this->category);
+        $result = self::build(base_dir().'/'.$this->filepath, $data, $this->name, $this->category);
 
         return $result;
     }

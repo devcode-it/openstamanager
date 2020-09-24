@@ -82,7 +82,7 @@ class Ini
      */
     public static function readFile($filename)
     {
-        $filename = (file_exists($filename)) ? $filename : DOCROOT.'/files/impianti/'.$filename;
+        $filename = (file_exists($filename)) ? $filename : base_dir().'/files/impianti/'.$filename;
 
         $contents = file_get_contents($filename);
 

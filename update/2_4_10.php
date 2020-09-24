@@ -3,6 +3,8 @@
 use Update\v2_4_10\Anagrafica;
 use Update\v2_4_10\Fattura;
 
+error_reporting(E_ALL & ~E_WARNING & ~E_CORE_WARNING & ~E_NOTICE & ~E_USER_DEPRECATED & ~E_STRICT);
+
 // Fix del calcolo del bollo
 $fatture = Fattura::all();
 foreach ($fatture as $fattura) {
@@ -77,7 +79,7 @@ $files = [
 ];
 
 foreach ($files as $key => $value) {
-    $files[$key] = realpath(DOCROOT.'/'.$value);
+    $files[$key] = realpath(base_dir().'/'.$value);
 }
 
 delete($files);

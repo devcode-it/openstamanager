@@ -36,7 +36,7 @@ $id_segment = $_SESSION['module_'.$id_fatture]['id_segment'];
 
 switch (post('op')) {
     case 'export-bulk':
-        $dir = DOCROOT.'/files/export_interventi/';
+        $dir = base_dir().'/files/export_interventi/';
         directory($dir.'tmp/');
 
         // Rimozione dei contenuti precedenti
@@ -184,7 +184,7 @@ switch (post('op')) {
                 $righe = $intervento->getRighe();
                 foreach ($righe as $riga) {
                     $new_riga = $riga->replicate();
-                    $new_riga->setParent($new);
+                    $new_riga->setDocument($new);
 
                     $new_riga->qta_evasa = 0;
                     $new_riga->save();

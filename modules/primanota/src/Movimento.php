@@ -19,12 +19,15 @@
 
 namespace Modules\PrimaNota;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 use Modules\Fatture\Fattura;
 use Modules\Scadenzario\Scadenza;
 
 class Movimento extends Model
 {
+    use SimpleModelTrait;
+
     protected $table = 'co_movimenti';
 
     protected $appends = [
@@ -35,7 +38,7 @@ class Movimento extends Model
 
     public static function build(Mastrino $mastrino, $id_conto, Fattura $documento = null, Scadenza $scadenza = null)
     {
-        $model = parent::build();
+        $model = new static();
 
         // Informazioni dipendenti dal mastrino
         $model->idmastrino = $mastrino->idmastrino;

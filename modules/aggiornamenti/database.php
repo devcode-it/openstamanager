@@ -72,7 +72,7 @@ $(document).ready(function () {
     return;
 }
 
-$contents = file_get_contents(DOCROOT.'/database.json');
+$contents = file_get_contents(base_dir().'/database.json');
 $data = json_decode($contents, true);
 
 if (empty($data)) {

@@ -22,7 +22,7 @@ include_once __DIR__.'/../../../core.php';
 $module = Modules::get('Stato dei servizi');
 
 echo '
-<script src="'.ROOTDIR.'/assets/dist/js/chartjs/Chart.min.js"></script>';
+<script src="'.base_path().'/assets/dist/js/chartjs/Chart.min.js"></script>';
 
 // Operazioni JavaScript
 echo '

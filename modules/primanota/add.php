@@ -244,7 +244,7 @@ if (!empty($id_records) && get('origine') == 'fatture' && !empty($counter)) {
 }
 
 echo '
-<form action="'.ROOTDIR.'/controller.php?id_module='.$module->id.'" method="post" id="add-form">
+<form action="'.base_path().'/controller.php?id_module='.$module->id.'" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="crea_modello" id="crea_modello" value="0">

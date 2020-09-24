@@ -115,7 +115,7 @@ if (post('db_host') !== null) {
 
     // Creazione della configurazione
     if ($dbo->isConnected()) {
-        $new_config = file_get_contents(DOCROOT.'/config.example.php');
+        $new_config = file_get_contents(base_dir().'/config.example.php');
 
         $decimals = post('decimal_separator');
         $thousands = post('thousand_separator');
@@ -149,14 +149,14 @@ if (post('db_host') !== null) {
 				<p>'.tr('Sembra che non ci siano i permessi di scrittura sul file _FILE_', [
                     '_FILE_' => '<b>config.inc.php</b>',
                 ]).'</p>
-				<form action="'.$rootdir.'/index.php?action=updateconfig&firstuse=true" method="post">
+				<form action="'.base_path().'/index.php?action=updateconfig&firstuse=true" method="post">
 					<div class="hide">
 						<input type="hidden" name="db_name" value="'.$db_name.'">
 						<input type="hidden" name="db_password" value="'.$db_password.'">
 						<input type="hidden" name="db_username" value="'.$db_username.'">;
 						<input type="hidden" name="db_host" value="'.$db_host.'">
 					</div>
-					<a class="btn btn-warning" href="'.$rootdir.'/index.php"><i class="fa fa-arrow-left"></i> '.tr('Torna indietro').'</a>
+					<a class="btn btn-warning" href="'.base_path().'/index.php"><i class="fa fa-arrow-left"></i> '.tr('Torna indietro').'</a>
 					<button class="btn btn-info"><i class="fa fa-repeat"></i> '.tr('Riprova').'</button>
 				</form>
 				<hr>
@@ -184,9 +184,9 @@ if (post('db_host') !== null) {
     "dir" : "ltr",
     "lang" : "it-IT",
     "name" : "OpenSTAManager",
-    "scope" : "'.ROOTDIR.'",
+    "scope" : "'.base_path().'",
     "display" : "fullscreen",
-    "start_url" : "'.ROOTDIR.'",
+    "start_url" : "'.base_path().'",
     "short_name" : "OSM",
     "theme_color" : "transparent",
     "description" : "OpenSTAManager",
@@ -203,7 +203,7 @@ if (post('db_host') !== null) {
 }';
             file_put_contents('manifest.json', $manifest);
 
-            redirect(ROOTDIR.'/index.php');
+            redirect(base_path().'/index.php');
             exit();
         }
     }
@@ -219,7 +219,7 @@ if ((file_exists('config.inc.php') || $valid_config) && !$dbo->isConnected()) {
         <div class="box-body">
             <p>'.tr("Si è verificato un'errore durante la connessione al database").'.</p>
             <p>'.tr('Controllare di aver inserito correttamente i dati di accesso, e che il database atto ad ospitare i dati del gestionale sia esistente').'.</p>
-            <a class="btn btn-info" href="'.$rootdir.'/index.php"><i class="fa fa-repeat"></i> '.tr('Riprova').'</a>
+            <a class="btn btn-info" href="'.base_path().'/index.php"><i class="fa fa-repeat"></i> '.tr('Riprova').'</a>
             </div>
     </div>';
 }
@@ -240,7 +240,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                     '_FILE_' => '<b>config.inc.php</b>',
                 ]).'.</p>
 				<p>'.tr("Nel caso il problema persista, rivolgersi all'assistenza ufficiale").'.</p>
-				<a class="btn btn-info" href="'.$rootdir.'/index.php"><i class="fa fa-repeat"></i> '.tr('Riprova').'</a>
+				<a class="btn btn-info" href="'.base_path().'/index.php"><i class="fa fa-repeat"></i> '.tr('Riprova').'</a>
             </div>
 		</div>';
     }
@@ -295,7 +295,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                     $("#test").prop("disabled", true);
                     $("#install").prop("disabled", true);
                     $(this).closest("form").ajaxSubmit({
-                        url: "'.$rootdir.'/index.php",
+                        url: "'.base_path().'/index.php",
                         data: {
                             test: 1,
                         },

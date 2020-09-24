@@ -25,19 +25,19 @@ trait RelationTrait
 {
     protected $disableOrder = true;
 
-    public function getParentID()
+    public function getDocumentID()
     {
         return 'idintervento';
     }
 
-    public function parent()
+    public function document()
     {
-        return $this->belongsTo(Intervento::class, $this->getParentID());
+        return $this->belongsTo(Intervento::class, $this->getDocumentID());
     }
 
     public function intervento()
     {
-        return $this->parent();
+        return $this->document();
     }
 
     public function fixIvaIndetraibile()

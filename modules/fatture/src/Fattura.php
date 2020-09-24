@@ -655,14 +655,14 @@ class Fattura extends Document
         $riba = database()->fetchOne('SELECT riba FROM co_pagamenti WHERE id ='.prepare($this->idpagamento));
 
         if ($riba['riba'] == 1) {
-            $id_banca = $this->anagrafica->idbanca_vendite;
+            $banca = Banca::where('id_anagrafica', $this->idanagrafica)
+                 ->where('predefined', 1)
+                 ->first();
         } else {
-            $id_banca = $this->id_banca_azienda;
+            $banca = Banca::find($this->id_banca_azienda);
         }
 
-        $result = Banca::find($id_banca);
-
-        return $result;
+        return $banca;
     }
 
     // Metodi statici

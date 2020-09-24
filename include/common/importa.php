@@ -362,6 +362,7 @@ echo '
                 <th>'.tr('Articolo').'</th>
                 <th class="text-center tip" width="150" title="'.tr('Quantità richiesta').'">'.tr('Q.tà').'</th>
                 <th class="text-center tip" width="150" title="'.tr('Quantità disponibile nel magazzino del gestionale').'">'.tr('Q.tà magazzino').'</th>
+                <th class="text-center" width="150">'.tr('Scarto').'</th>
             </tr>
         </thead>
 
@@ -394,7 +395,7 @@ foreach ($articoli as $elenco) {
     $qta = $elenco->sum('qta');
     $articolo = $elenco->first()->articolo;
 
-    $descrizione_riga = $codice.' - '.$descrizione;
+    $descrizione_riga = $articolo->codice.' - '.$articolo->descrizione;
     $text = $articolo ? Modules::link('Articoli', $articolo->id, $descrizione_riga) : $descrizione_riga;
 
     $scorte[$articolo->id] = [
@@ -405,7 +406,7 @@ foreach ($articoli as $elenco) {
 
 echo '
 var scorte = '.json_encode($scorte).';
-var abilita_scorte = '.intval(!empty($options['tipo_documento_finale']) && $options['tipo_documento_finale']::$movimenta_magazzino).';
+var abilita_scorte = '.intval(!$documento::$movimenta_magazzino && !empty($options['tipo_documento_finale']) && $options['tipo_documento_finale']::$movimenta_magazzino).';
 
 function controllaMagazzino() {
     if(!abilita_scorte) return;
@@ -441,6 +442,7 @@ function controllaMagazzino() {
         <td>` + scorte[id_articolo]["descrizione"] + `</td>
         <td class="text-right">` + qta_richiesta.toLocale() + `</td>
         <td class="text-right">` + qta_scorta.toLocale() + `</td>
+        <td class="text-right">` + (qta_richiesta - qta_scorta).toLocale() + `</td>
     </tr>`);
         }
     }

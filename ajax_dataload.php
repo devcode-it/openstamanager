@@ -91,15 +91,13 @@ if (!empty($query)) {
         }
     }
 
-    //Rimuovo risultati con id a null
-    foreach ( $rows as $i => $r ) {
-        if ( empty($r['id'] ) ) {
-            unset($rows[$i]);
-        }
-    }
-    
     // Creazione della tabella
     foreach ($rows as $i => $r) {
+        // Evitare risultati con id a null
+        if (empty($r['id'])) {
+            continue;
+        }
+
         $result = [
             'id' => $r['id'],
             '<span class="hide" data-id="'.$r['id'].'"></span>', // Colonna ID

@@ -287,7 +287,7 @@ echo '
                 </div>
 <?php
                 //Nascondo le note interne ai clienti
-                if( $user->gruppo!="Clienti" ){
+                if ($user->gruppo != 'Clienti') {
                     echo '
                     <div class="col-md-12">
                         {[ "type": "textarea", "label": "'.tr('Note interne').'", "name": "informazioniaggiuntive", "class": "autosize", "value": "$informazioniaggiuntive$", "extra": "rows=\'5\'" ]}

@@ -419,7 +419,7 @@ if ($read_only || !empty($block_edit)) {
                 ';
 
     //Nascondo il plugin note interne ai clienti
-    if( $user->gruppo=="Clienti" ){
+    if ($user->gruppo == 'Clienti') {
         echo '
                 $("#link-tab_note").hide();';
     }

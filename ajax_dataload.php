@@ -22,11 +22,13 @@ include_once __DIR__.'/core.php';
 use Util\Query;
 
 // Informazioni fondamentali
-$columns = filter('columns');
-$order = filter('order')[0];
+$columns = (array) filter('columns');
+$order = filter('order') ? filter('order')[0] : [];
 $draw_numer = intval(filter('draw'));
 
-$order['column'] = $order['column'] - 1;
+if (!empty(filter('order'))) {
+    $order['column'] = $order['column'] - 1;
+}
 array_shift($columns);
 
 $total = Util\Query::readQuery($structure);
@@ -76,7 +78,7 @@ if (!empty($query)) {
 
     // Allineamento delle righe
     $align = [];
-    $row = $rows[0] ?: [];
+    $row = isset($rows[0]) ? $rows[0] : [];
     foreach ($row as $field => $value) {
         $value = trim($value);
 
@@ -93,6 +95,13 @@ if (!empty($query)) {
 
     // Creazione della tabella
     foreach ($rows as $i => $r) {
+        // Evitare risultati con ID a null
+        // Codice non applicabile in ogni caso: sulla base dei permessi, ID può non essere impostato
+        /*
+        if (empty($r['id'])) {
+            continue;
+        }*/
+
         $result = [
             'id' => $r['id'],
             '<span class="hide" data-id="'.$r['id'].'"></span>', // Colonna ID
@@ -157,7 +166,7 @@ if (!empty($query)) {
                 $id_record = $r['id'];
                 $hash = '';
 
-                $id_module = $r['_link_module_'] ?: $id_module;
+                $id_module = !empty($r['_link_module_']) ? $r['_link_module_'] : $id_module;
                 if (!empty($r['_link_record_'])) {
                     $id_record = $r['_link_record_'];
                     $hash = !empty($r['_link_hash_']) ? '#'.$r['_link_hash_'] : '';
@@ -166,11 +175,11 @@ if (!empty($query)) {
 
                 // Link per i moduli
                 if (empty($id_plugin)) {
-                    $column['data-link'] = $rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.$hash;
+                    $column['data-link'] = base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.$hash;
                 }
                 // Link per i plugin
                 else {
-                    $column['data-link'] = $rootdir.'/add.php?id_module='.$id_module.'&id_record='.$id_record.'&id_plugin='.$id_plugin.'&id_parent='.$id_parent.'&edit=1'.$hash;
+                    $column['data-link'] = base_path().'/add.php?id_module='.$id_module.'&id_record='.$id_record.'&id_plugin='.$id_plugin.'&id_parent='.$id_parent.'&edit=1'.$hash;
 
                     $column['data-type'] = 'dialog';
                 }
@@ -182,8 +191,8 @@ if (!empty($query)) {
                 $attributes[] = $key.'="'.$val.'"';
             }
 
-            // Replace rootdir per le query
-            $value = str_replace('ROOTDIR', ROOTDIR, $value);
+            // Replace base_link() per le query
+            $value = str_replace('base_link()', base_path(), $value);
             $result[] = str_replace('|attr|', implode(' ', $attributes), '<div |attr|>'.$value.'</div>');
         }
 

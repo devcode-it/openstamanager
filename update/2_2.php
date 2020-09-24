@@ -88,8 +88,8 @@ for ($i = 0; $i < sizeof($rs); ++$i) {
 
 // Eliminazione vecchi file
 $files = [
-    DOCROOT.'/share/themes/default/css/font-awesome.css',
-    DOCROOT.'/modules/preventivi/js/',
+    base_dir().'/share/themes/default/css/font-awesome.css',
+    base_dir().'/modules/preventivi/js/',
 ];
 delete($files);
 

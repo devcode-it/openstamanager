@@ -19,14 +19,17 @@
 
 namespace Common;
 
-use Illuminate\Database\Eloquent\Model as Original;
-
-abstract class Model extends Original
+trait SimpleModelTrait
 {
     // Retrocompatibilità MySQL
     public function setUpdatedAtAttribute($value)
     {
         // to Disable updated_at
+    }
+
+    public static function getTableName()
+    {
+        return with(new static())->getTable();
     }
 
     /**
@@ -37,10 +40,5 @@ abstract class Model extends Original
     public static function build()
     {
         return new static();
-    }
-
-    public static function getTableName()
-    {
-        return with(new static())->getTable();
     }
 }

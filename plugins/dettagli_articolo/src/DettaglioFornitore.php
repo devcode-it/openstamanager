@@ -19,18 +19,20 @@
 
 namespace Plugins\DettagliArticolo;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo;
 
-/**
+/*
  * Classe per la gestione delle relazioni tra articolo e fornitore.
  *
  * @since 2.4.15
  */
 class DettaglioFornitore extends Model
 {
+    use SimpleModelTrait;
     use SoftDeletes;
 
     protected $table = 'mg_fornitore_articolo';
@@ -42,7 +44,7 @@ class DettaglioFornitore extends Model
      */
     public static function build(Anagrafica $fornitore, Articolo $articolo)
     {
-        $model = parent::build();
+        $model = new static();
 
         $model->anagrafica()->associate($fornitore);
         $model->articolo()->associate($articolo);

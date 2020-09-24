@@ -19,15 +19,18 @@
 
 namespace Modules\Listini;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 
 class Listino extends Model
 {
+    use SimpleModelTrait;
+
     protected $table = 'mg_listini';
 
     public static function build($nome, $percentuale)
     {
-        $model = parent::build();
+        $model = new static();
 
         $model->nome = $nome;
         $model->percentuale = $percentuale;

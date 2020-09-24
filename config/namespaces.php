@@ -18,7 +18,7 @@
  */
 
 return [
-    'include' => 'Common',
+    /*
     'modules/aggiornamenti' => 'Modules\Aggiornamenti',
     'modules/anagrafiche' => 'Modules\Anagrafiche',
     'modules/backups' => 'Modules\Backups',
@@ -59,4 +59,5 @@ return [
     'plugins/pianificazione_fatturazione' => 'Plugins\PianificazioneFatturazione',
     'plugins/statistiche_articoli' => 'Plugins\StatisticheArticoli',
     'plugins/dettagli_articolo' => 'Plugins\DettagliArticolo',
+    */
 ];

@@ -85,7 +85,7 @@ class FatturaElettronica
     {
         $documento = $this->getDocumento();
 
-        return !empty($documento['progressivo_invio']) && file_exists(DOCROOT.'/'.static::getDirectory().'/'.$this->getFilename());
+        return !empty($documento['progressivo_invio']) && file_exists(base_dir().'/'.static::getDirectory().'/'.$this->getFilename());
     }
 
     /**
@@ -1185,8 +1185,8 @@ class FatturaElettronica
             $descrizione = str_replace('’', ' ', $descrizione);
 
             // Aggiunta dei riferimenti ai documenti
-            if (setting('Riferimento dei documenti in Fattura Elettronica') && $riga->hasOriginal()) {
-                $descrizione .= "\n".$riga->getOriginal()->parent->getReference();
+            if (setting('Riferimento dei documenti in Fattura Elettronica') && $riga->hasOriginalComponent()) {
+                $descrizione .= "\n".$riga->getOriginalComponent()->getDocument()->getReference();
             }
 
             $dettaglio['Descrizione'] = $descrizione;
@@ -1454,7 +1454,7 @@ class FatturaElettronica
         // Inclusione
         foreach ($allegati as $allegato) {
             if ($allegato['category'] == 'Allegati Fattura Elettronica') {
-                $file = DOCROOT.'/'.$directory.'/'.$allegato['filename'];
+                $file = base_dir().'/'.$directory.'/'.$allegato['filename'];
 
                 $attachments[] = [
                     'NomeAttachment' => $allegato['name'],
@@ -1482,7 +1482,7 @@ class FatturaElettronica
         $dir = static::getDirectory();
 
         $print = Prints::getModulePredefinedPrint($id_module);
-        $info = Prints::render($print['id'], $documento['id'], DOCROOT.'/'.$dir);
+        $info = Prints::render($print['id'], $documento['id'], base_dir().'/'.$dir);
 
         $name = 'Stampa allegata';
         $is_presente = database()->fetchNum('SELECT id FROM zz_files WHERE id_module = '.prepare($id_module).' AND id_record = '.prepare($documento['id']).' AND name = '.prepare($name));

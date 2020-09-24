@@ -19,10 +19,14 @@
 
 namespace Models;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
+use Modules\Emails\Mail;
 
 class OperationLog extends Model
 {
+    use SimpleModelTrait;
+
     protected $table = 'zz_operations';
 
     protected static $info = [];
@@ -43,7 +47,7 @@ class OperationLog extends Model
             return null;
         }
 
-        $model = parent::build();
+        $model = new static();
 
         foreach (self::$info as $key => $value) {
             $model->{$key} = $value;

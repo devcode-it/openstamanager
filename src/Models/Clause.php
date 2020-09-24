@@ -19,10 +19,14 @@
 
 namespace Models;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
+use Util\Query;
 
 class Clause extends Model
 {
+    use SimpleModelTrait;
+
     protected $table = 'zz_group_module';
 
     /* Relazioni Eloquent */
@@ -39,6 +43,6 @@ class Clause extends Model
 
     public function getClauseAttribute($value)
     {
-        return Util\Query::replacePlaceholder($value);
+        return Query::replacePlaceholder($value);
     }
 }

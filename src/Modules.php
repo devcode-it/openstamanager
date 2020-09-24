@@ -18,6 +18,7 @@
  */
 
 use Models\Module;
+use Util\Query;
 
 /**
  * Classe per la gestione delle informazioni relative ai moduli installati.
@@ -81,7 +82,7 @@ class Modules
     {
         self::getModules();
 
-        return Module::get($module);
+        return Module::pool($module);
     }
 
     /**
@@ -113,7 +114,9 @@ class Modules
      */
     public static function getPermission($module)
     {
-        return self::get($module)->permission;
+        $result = self::get($module);
+
+        return $result ? $result->permission : null;
     }
 
     /**
@@ -137,7 +140,7 @@ class Modules
             $results = $database->fetchArray('SELECT * FROM `zz_group_module` WHERE `idgruppo` = (SELECT `idgruppo` FROM `zz_users` WHERE `id` = '.prepare($user['id']).') AND `enabled` = 1 AND `idmodule` = '.prepare($module['id']));
             foreach ($results as $result) {
                 if (!empty($result['clause'])) {
-                    $result['clause'] = Util\Query::replacePlaceholder($result['clause']);
+                    $result['clause'] = Query::replacePlaceholder($result['clause']);
 
                     $additionals[$result['position']][] = $result['clause'];
                 }
@@ -146,10 +149,10 @@ class Modules
             // Aggiunta dei segmenti
             if ($include_segments) {
                 $segments = self::getSegments($module['id']);
-                $id_segment = $_SESSION['module_'.$module['id']]['id_segment'];
+                $id_segment = isset($_SESSION['module_'.$module['id']]) ? $_SESSION['module_'.$module['id']]['id_segment'] : null;
                 foreach ($segments as $result) {
                     if (!empty($result['clause']) && $result['id'] == $id_segment) {
-                        $result['clause'] = Util\Query::replacePlaceholder($result['clause']);
+                        $result['clause'] = Query::replacePlaceholder($result['clause']);
 
                         $additionals[$result['position']][] = $result['clause'];
                     }
@@ -263,13 +266,13 @@ class Modules
     /**
      * Costruisce un link HTML per il modulo e il record indicati.
      *
-     * @param string|int $modulo
-     * @param int        $id_record
-     * @param string     $testo
-     * @param string     $alternativo
-     * @param string     $extra
-     * @param bool       $blank
-     * @param string     $anchor
+     * @param string|int  $modulo
+     * @param int         $id_record
+     * @param string      $testo
+     * @param bool|string $alternativo
+     * @param string      $extra
+     * @param bool        $blank
+     * @param string      $anchor
      *
      * @return string
      */
@@ -290,7 +293,7 @@ class Modules
         if (!empty($module) && in_array($module->permission, ['r', 'rw'])) {
             $link = !empty($id_record) ? 'editor.php?id_module='.$module['id'].'&id_record='.$id_record : 'controller.php?id_module='.$module['id'];
 
-            return '<a href="'.ROOTDIR.'/'.$link.'#'.$anchor.'" '.$extra.'>'.$testo.'</a>';
+            return '<a href="'.base_path().'/'.$link.'#'.$anchor.'" '.$extra.'>'.$testo.'</a>';
         } else {
             return $alternativo;
         }
@@ -327,7 +330,7 @@ class Modules
             return '';
         }
 
-        $link = (!empty($element['option']) && $element['option'] != 'menu') ? ROOTDIR.'/controller.php?id_module='.$element['id'] : 'javascript:;';
+        $link = (!empty($element['option']) && $element['option'] != 'menu') ? base_path().'/controller.php?id_module='.$element['id'] : 'javascript:;';
         $title = $element['title'];
         $target = '_self'; // $target = ($element['new'] == 1) ? '_blank' : '_self';
         $active = ($actual == $element['name']);

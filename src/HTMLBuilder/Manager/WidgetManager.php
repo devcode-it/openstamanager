@@ -19,6 +19,8 @@
 
 namespace HTMLBuilder\Manager;
 
+use Util\Query;
+
 /**
  * @since 2.4
  */
@@ -96,7 +98,7 @@ class WidgetManager implements ManagerInterface
             $query = str_replace('1=1', '1=1 '.$additionals, $query);
         }
 
-        $query = \Util\Query::replacePlaceholder($query);
+        $query = Query::replacePlaceholder($query);
 
         // Individuazione del risultato della query
         $database = database();
@@ -118,7 +120,7 @@ class WidgetManager implements ManagerInterface
             $is_title_request = true;
 
             ob_start();
-            include DOCROOT.'/'.$widget['php_include'];
+            include base_dir().'/'.$widget['php_include'];
             $content = ob_get_clean();
         }
 
@@ -131,7 +133,7 @@ class WidgetManager implements ManagerInterface
         if (!empty($widget['php_include'])) {
             $is_number_request = true;
             ob_start();
-            include DOCROOT.'/'.$widget['php_include'];
+            include base_dir().'/'.$widget['php_include'];
             $content = ob_get_clean();
         }
 
@@ -141,7 +143,7 @@ class WidgetManager implements ManagerInterface
     protected function render($widget, $title, $number = null)
     {
         $result = '
-        <button type="button" class="close" onclick="if(confirm(\'Disabilitare questo widget?\')) { $.post( \''.ROOTDIR.'/actions.php?id_module='.self::getModule()->id.'\', { op: \'disable_widget\', id: \''.$widget['id'].'\' }, function(response){ location.reload(); }); };" >
+        <button type="button" class="close" onclick="if(confirm(\'Disabilitare questo widget?\')) { $.post( \''.base_path().'/actions.php?id_module='.self::getModule()->id.'\', { op: \'disable_widget\', id: \''.$widget['id'].'\' }, function(response){ location.reload(); }); };" >
             <span aria-hidden="true">&times;</span><span class="sr-only">'.tr('Chiudi').'</span>
         </button>';
 
@@ -163,7 +165,7 @@ class WidgetManager implements ManagerInterface
             elseif ($widget['more_link_type'] == 'javascript') {
                 $link = $widget['more_link'];
 
-                $link = \Util\Query::replacePlaceholder($link);
+                $link = Query::replacePlaceholder($link);
 
                 $result .= 'onclick="'.$link.'"';
             }

@@ -66,7 +66,7 @@ if (post('action') == 'init') {
     if (!$has_azienda) {
         Filter::set('post', 'op', 'add');
         $id_module = Modules::get('Anagrafiche')['id'];
-        include DOCROOT.'/modules/anagrafiche/actions.php';
+        include base_dir().'/modules/anagrafiche/actions.php';
 
         // Logo stampe
         if (!empty($_FILES) && !empty($_FILES['blob']['name'])) {
@@ -114,7 +114,7 @@ if (post('action') == 'init') {
         }
     }
 
-    redirect(ROOTDIR, 'js');
+    redirect(base_path(), 'js');
     exit();
 }
 
@@ -143,15 +143,15 @@ if (!$has_user) {
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-md-6">
-                            {[ "type": "text", "label": "'.tr('Username').'", "name": "admin_username", "value": "'.$osm_password.'", "placeholder": "'.tr("Digita l'username dell'amministratore").'", "required": 1 ]}
+                            {[ "type": "text", "label": "'.tr('Username').'", "name": "admin_username", "value": "", "placeholder": "'.tr("Digita l'username dell'amministratore").'", "required": 1 ]}
                         </div>
 
                         <div class="col-md-6">
-                            {[ "type": "password", "label": "'.tr('Password').'", "id": "password", "name": "admin_password", "value": "'.$osm_password.'", "placeholder": "'.tr("Digita la password dell'amministratore").'", "required": 1, "strength": "#config" ]}
+                            {[ "type": "password", "label": "'.tr('Password').'", "id": "password", "name": "admin_password", "value": "", "placeholder": "'.tr("Digita la password dell'amministratore").'", "required": 1, "strength": "#config" ]}
                         </div>
 
                         <div class="col-md-6">
-                            {[ "type": "email", "label": "'.tr('Email').'", "name": "admin_email", "value": "'.$osm_email.'", "placeholder": "'.tr("Digita l'indirizzo email dell'amministratore").'", "required": 1 ]}
+                            {[ "type": "email", "label": "'.tr('Email').'", "name": "admin_email", "value": "", "placeholder": "'.tr("Digita l'indirizzo email dell'amministratore").'", "required": 1 ]}
                         </div>
                     </div>
                 </div>
@@ -172,7 +172,7 @@ if (!$has_azienda) {
     $readonly_tipo = true;
 
     ob_start();
-    include DOCROOT.'/modules/anagrafiche/add.php';
+    include base_dir().'/modules/anagrafiche/add.php';
     $anagrafica = ob_get_clean();
 
     echo str_replace('</form>', '', $anagrafica);
@@ -258,7 +258,7 @@ echo '
         $("button[type=submit]").not("#config").remove();
     });
 </script>
-<script src="'.$rootdir.'/lib/functions.js"></script>
+<script src="'.base_path().'/lib/functions.js"></script>
 <script>$(document).ready(init)</script>';
 
 include_once App::filepath('include|custom|', 'bottom.php');

@@ -72,7 +72,7 @@ switch (filter('op')) {
         break;
 
     case 'checklists':
-        include DOCROOT.'/plugins/checks.php';
+        include base_dir().'/plugins/checks.php';
 
         break;
 

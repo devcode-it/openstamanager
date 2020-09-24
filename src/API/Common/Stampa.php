@@ -30,7 +30,7 @@ class Stampa extends Resource implements RetrieveInterface
     {
         $print = PrintTemplate::where('name', $request['name'])->first();
         if (!empty($print)) {
-            $directory = DOCROOT.'/files/api';
+            $directory = base_dir().'/files/api';
             $data = Prints::render($print->id, $request['id_record'], $directory);
 
             download($data['path']);

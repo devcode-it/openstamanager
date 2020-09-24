@@ -79,9 +79,9 @@ backup/*
 custom/
 files/*
 !files/.htaccess
-!files/my_impianti/
-files/my_impianti/*
-!files/my_impianti/componente.ini
+!files/impianti/
+files/impianti/*
+!files/impianti/componente.ini
 tmp/
 config.inc.php
 database.sql

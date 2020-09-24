@@ -21,15 +21,15 @@
  * Configuration file for CSRF Protector.
  */
 return [
-    'logDirectory' => DOCROOT.'/logs',
+    'logDirectory' => base_dir().'/logs',
     'failedAuthAction' => [
         'GET' => 0,
         'POST' => 0,
     ],
-    'jsUrl' => ROOTDIR.'/assets/dist/js/csrf/csrfprotector.js',
+    'jsUrl' => base_path().'/assets/dist/js/csrf/csrfprotector.js',
     'tokenLength' => 10,
     'cookieConfig' => [
-        'path' => ROOTDIR,
+        'path' => base_path(),
         'secure' => isHTTPS(true),
     ],
     'verifyGetFor' => [],

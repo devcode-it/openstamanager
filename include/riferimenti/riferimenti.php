@@ -48,7 +48,7 @@ echo '
 </div>';
 
 $documenti_disponibili = collect();
-$direzione_richiesta = $source->parent->direzione == 'entrata' ? 'uscita' : 'entrata';
+$direzione_richiesta = $source->getDocument()->direzione == 'entrata' ? 'uscita' : 'entrata';
 
 // Individuazione DDT disponibili
 $ddt = DDT::whereHas('stato', function ($query) {

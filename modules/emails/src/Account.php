@@ -20,14 +20,16 @@
 namespace Modules\Emails;
 
 use Carbon\Carbon;
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Notifications\EmailNotification;
-use Traits\StoreTrait;
+use Traits\LocalPoolTrait;
 
 class Account extends Model
 {
-    use StoreTrait;
+    use SimpleModelTrait;
+    use LocalPoolTrait;
     use SoftDeletes;
 
     protected $table = 'em_accounts';

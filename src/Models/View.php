@@ -19,15 +19,19 @@
 
 namespace Models;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
+use Util\Query;
 
 class View extends Model
 {
+    use SimpleModelTrait;
+
     protected $table = 'zz_views';
 
     public function getQueryAttribute($value)
     {
-        return Util\Query::replacePlaceholder($value);
+        return Query::replacePlaceholder($value);
     }
 
     /* Relazioni Eloquent */

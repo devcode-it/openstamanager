@@ -19,9 +19,12 @@
 
 namespace Modules\Ritenute;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 
 class RitenutaAcconto extends Model
 {
+    use SimpleModelTrait;
+
     protected $table = 'co_ritenutaacconto';
 }

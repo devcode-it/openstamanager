@@ -27,20 +27,20 @@ echo '
         <div class="pull-right">';
 if (empty($_GET['movimentazione_completa'])) {
     echo '
-        <a class="btn btn-info btn-xs" href="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&movimentazione_completa=1#tab_'.$id_plugin.'">
+        <a class="btn btn-info btn-xs" href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&movimentazione_completa=1#tab_'.$id_plugin.'">
             <i class="fa fa-eye"></i>
             '.tr('Mostra tutti i movimenti').'
         </a>';
 } else {
     echo '
-        <a class="btn btn-info btn-xs" href="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&movimentazione_completa=0#tab_'.$id_plugin.'">
+        <a class="btn btn-info btn-xs" href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&movimentazione_completa=0#tab_'.$id_plugin.'">
             <i class="fa fa-eye-slash"></i>
             '.tr('Mostra gli ultimi 20 movimenti').'
         </a>';
 }
 
 echo '
-        <a class="btn btn-warning btn-xs" href="'.$rootdir.'/controller.php?id_module='.Modules::get('Movimenti')->id.'&search_Articolo='.($articolo->codice.' - '.$articolo->descrizione).'">
+        <a class="btn btn-warning btn-xs" href="'.base_path().'/controller.php?id_module='.Modules::get('Movimenti')->id.'&search_Articolo='.($articolo->codice.' - '.$articolo->descrizione).'">
             <i class="fa fa-external-link"></i>
             '.tr('Visualizza dettagli').'
         </a>';

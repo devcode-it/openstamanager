@@ -20,55 +20,63 @@
 namespace Common\Components;
 
 use Common\Document;
+use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Builder;
 
-abstract class Discount extends Row
+abstract class Description extends Component
 {
-    protected $guarded = [];
+    use SimpleModelTrait;
 
     public static function build(Document $document)
     {
-        $model = parent::build($document, true);
+        $model = new static();
 
-        $model->is_sconto = 1;
+        $model->is_descrizione = 1;
         $model->qta = 1;
+
+        $model->setDocument($document);
 
         return $model;
     }
 
-    public function getIvaAttribute()
+    public function isDescrizione()
     {
-        return $this->attributes['iva'];
+        return true;
     }
 
-    public function isMaggiorazione()
+    public function isSconto()
     {
-        return $this->totale_imponibile < 0;
+        return false;
+    }
+
+    public function isRiga()
+    {
+        return false;
+    }
+
+    public function isArticolo()
+    {
+        return false;
     }
 
     /**
-     * Effettua i conti per l'IVA.
+     * Azione personalizzata per la copia dell'oggetto (inizializzazione della copia).
+     *
+     * @param $original
      */
-    protected function fixIva()
+    protected function customInitCopiaIn($original)
     {
-        $this->attributes['iva'] = parent::getIvaAttribute();
-
-        $descrizione = $this->aliquota->descrizione;
-        if (!empty($descrizione)) {
-            $this->attributes['desc_iva'] = $descrizione;
-        }
-
-        $this->fixIvaIndetraibile();
+        $this->is_descrizione = $original->is_descrizione;
     }
 
     protected static function boot($bypass = false)
     {
-        parent::boot(true);
+        // Pre-caricamento Documento
+        parent::boot();
 
-        $table = parent::getTableName();
-
-        static::addGlobalScope('discounts', function (Builder $builder) use ($table) {
-            $builder->where($table.'.is_sconto', '=', 1);
+        $table = static::getTableName();
+        static::addGlobalScope('descriptions', function (Builder $builder) use ($table) {
+            $builder->where($table.'.is_descrizione', '=', 1);
         });
     }
 }

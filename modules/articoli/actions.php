@@ -131,7 +131,7 @@ switch (post('op')) {
         // Salvataggio info componente (campo `contenuto`)
         if (!empty($componente)) {
             $contenuto_precedente_esistente = !empty($articolo->contenuto);
-            $contenuto = file_get_contents(DOCROOT.'/files/my_impianti/'.$componente);
+            $contenuto = file_get_contents(base_dir().'/files/impianti/'.$componente);
             $contenuto_componente = Ini::read($contenuto);
 
             // Lettura dei campi esistenti per preservarne il valore

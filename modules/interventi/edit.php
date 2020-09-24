@@ -285,10 +285,15 @@ echo '
                 <div class="col-md-12">
                     {[ "type": "ckeditor", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "class": "autosize", "value": "$descrizione$", "extra": "rows='10'", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
                 </div>
-
-                <div class="col-md-12">
-                    {[ "type": "textarea", "label": "<?php echo tr('Note interne'); ?>", "name": "informazioniaggiuntive", "class": "autosize", "value": "$informazioniaggiuntive$", "extra": "rows='5'" ]}
-                </div>
+<?php
+                // Nascondo le note interne ai clienti
+                if ($user->gruppo != 'Clienti') {
+                    echo '
+                    <div class="col-md-12">
+                        {[ "type": "textarea", "label": "'.tr('Note interne').'", "name": "informazioniaggiuntive", "class": "autosize", "value": "$informazioniaggiuntive$", "extra": "rows=\'5\'" ]}
+                    </div>';
+                }
+?>
             </div>
         </div>
     </div>
@@ -442,7 +447,7 @@ $articoli = $intervento->articoli;
 	    <div class="alert alert-warning"><i class="fa fa-warning"></i> '.tr('Questo intervento non è ancora stato firmato dal cliente').'.</div>';
         } else {
             echo '
-	    <img src="'.$rootdir.'/files/interventi/'.$record['firma_file'].'" class="img-thumbnail"><div>&nbsp;</div>
+	    <img src="'.base_path().'/files/interventi/'.$record['firma_file'].'" class="img-thumbnail"><div>&nbsp;</div>
 	   	<div class="col-md-6 col-md-offset-3 alert alert-success"><i class="fa fa-check"></i> '.tr('Firmato il _DATE_ alle _TIME_ da _PERSON_', [
             '_DATE_' => Translator::dateToLocale($record['firma_data']),
             '_TIME_' => Translator::timeToLocale($record['firma_data']),

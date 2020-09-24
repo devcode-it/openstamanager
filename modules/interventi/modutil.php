@@ -95,7 +95,7 @@ function add_tecnico($id_intervento, $idtecnico, $inizio, $fine, $idcontratto = 
     // Notifica nuovo intervento al tecnico
     if (setting('Notifica al tecnico l\'assegnazione all\'attività')) {
         if (!empty($anagrafica['email'])) {
-            $template = Template::get('Notifica intervento');
+            $template = Template::pool('Notifica intervento');
 
             if (!empty($template)) {
                 $mail = Mail::build(auth()->getUser(), $template, $id_intervento);

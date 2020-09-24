@@ -19,7 +19,8 @@
 
 namespace Modules\Articoli;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules;
 use Modules\Interventi\Components\Articolo as ArticoloIntervento;
@@ -30,6 +31,7 @@ use Uploads;
 
 class Articolo extends Model
 {
+    use SimpleModelTrait;
     use SoftDeletes;
     use RecordTrait;
 
@@ -41,7 +43,7 @@ class Articolo extends Model
 
     public static function build($codice, $nome, Categoria $categoria = null, Categoria $sottocategoria = null)
     {
-        $model = parent::build();
+        $model = new static();
 
         $model->codice = $codice;
         $model->descrizione = $nome;
@@ -160,7 +162,7 @@ class Articolo extends Model
         $image = $directory.$this->immagine;
         $image_thumbnail = $directory.$fileinfo['filename'].'_thumb600.'.$fileinfo['extension'];
 
-        $url = file_exists(DOCROOT.$image_thumbnail) ? ROOTDIR.$image_thumbnail : ROOTDIR.$image;
+        $url = file_exists(base_dir().$image_thumbnail) ? base_path().$image_thumbnail : base_path().$image;
 
         return $url;
     }

@@ -205,7 +205,7 @@ class Update
             self::normalizeDatabase($database->getDatabaseName());
 
             if (class_exists('\Models\Cache')) {
-                \Models\Cache::get('Ultima versione di OpenSTAManager disponibile')->set(null);
+                \Models\Cache::pool('Ultima versione di OpenSTAManager disponibile')->set(null);
             }
 
             return true;
@@ -230,7 +230,7 @@ class Update
         if (!self::isUpdateCompleted()) {
             $update = self::getCurrentUpdate();
 
-            $file = DOCROOT.'/'.$update['directory'].$update['filename'];
+            $file = base_dir().'/'.$update['directory'].$update['filename'];
 
             $database = database();
 
@@ -295,7 +295,7 @@ class Update
                 self::normalizeDatabase($database->getDatabaseName());
 
                 // Normalizzazione dei campi per l'API
-                self::executeScript(DOCROOT.'/update/api.php');
+                self::executeScript(base_dir().'/update/api.php');
 
                 // Esecuzione dello script
                 if (!empty($update['script']) && file_exists($file.'.php')) {
@@ -333,7 +333,7 @@ class Update
     public static function getDatabaseStructure()
     {
         // Tabelle registrate per il gestionale
-        $tables = include DOCROOT.'/update/tables.php';
+        $tables = include base_dir().'/update/tables.php';
 
         $database = database();
         $database_name = $database->getDatabaseName();
@@ -417,7 +417,7 @@ class Update
         // Memorizzazione degli aggiornamenti
         if ($reset && $database->isConnected()) {
             // Reimpostazione della tabella degli aggiornamenti
-            $create = DOCROOT.'/update/create_updates.sql';
+            $create = base_dir().'/update/create_updates.sql';
             if (file_exists($create)) {
                 $database->query('DROP TABLE IF EXISTS `updates`');
                 $database->multiQuery($create);
@@ -455,7 +455,7 @@ class Update
      */
     protected static function getCoreUpdates()
     {
-        return self::getUpdates(DOCROOT.'/update');
+        return self::getUpdates(base_dir().'/update');
     }
 
     /**
@@ -477,7 +477,7 @@ class Update
             $version = str_replace('_', '.', $infos['filename']);
 
             if (array_search($version, $previous) === false && self::isVersion($version)) {
-                $path = str_replace(DOCROOT, '', $infos['dirname'].'/'.$infos['filename']);
+                $path = str_replace(base_dir(), '', $infos['dirname'].'/'.$infos['filename']);
                 $path = ltrim($path, '/');
 
                 $results[] = [
@@ -503,7 +503,7 @@ class Update
         $results = [];
 
         foreach (self::$directories as $dir) {
-            $folders = glob(DOCROOT.'/'.$dir.'/*/update', GLOB_ONLYDIR);
+            $folders = glob(base_dir().'/'.$dir.'/*/update', GLOB_ONLYDIR);
 
             foreach ($folders as $folder) {
                 $results = array_merge($results, self::getUpdates($folder));
@@ -544,7 +544,7 @@ class Update
      */
     protected static function getFile($file)
     {
-        $file = (str_contains($file, DOCROOT.DIRECTORY_SEPARATOR)) ? $file : DOCROOT.DIRECTORY_SEPARATOR.$file;
+        $file = (str_contains($file, base_dir().DIRECTORY_SEPARATOR)) ? $file : base_dir().DIRECTORY_SEPARATOR.$file;
 
         $result = '';
 

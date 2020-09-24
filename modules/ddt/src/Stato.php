@@ -19,10 +19,13 @@
 
 namespace Modules\DDT;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 
 class Stato extends Model
 {
+    use SimpleModelTrait;
+
     protected $table = 'dt_statiddt';
 
     public function ddt()

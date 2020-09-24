@@ -19,7 +19,8 @@
 
 namespace Modules\Emails;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 use Models\PrintTemplate;
 use Models\Upload;
 use Models\User;
@@ -27,13 +28,15 @@ use Modules\Newsletter\Newsletter;
 
 class Mail extends Model
 {
+    use SimpleModelTrait;
+
     protected $table = 'em_emails';
 
     protected $options = null;
 
     public static function build(User $user, $template = null, $id_record = null, $account = null)
     {
-        $model = parent::build();
+        $model = new static();
 
         $model->created_by = $user->id;
 

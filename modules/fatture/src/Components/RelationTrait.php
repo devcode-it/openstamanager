@@ -26,26 +26,26 @@ use Modules\Rivalse\RivalsaINPS;
 
 trait RelationTrait
 {
-    public function getParentID()
+    public function getDocumentID()
     {
         return 'iddocumento';
     }
 
-    public function parent()
+    public function document()
     {
-        return $this->belongsTo(Fattura::class, $this->getParentID());
+        return $this->belongsTo(Fattura::class, $this->getDocumentID());
     }
 
     public function fattura()
     {
-        return $this->parent();
+        return $this->document();
     }
 
     public function getNettoAttribute()
     {
         $result = $this->totale - $this->ritenuta_acconto - $this->ritenuta_contributi;
 
-        if ($this->parent->split_payment) {
+        if ($this->getDocument()->split_payment) {
             $result = $result - $this->iva;
         }
 
@@ -113,7 +113,7 @@ trait RelationTrait
     {
         if ($this->attributes['ritenuta_contributi']) {
             $result = $this->totale_imponibile;
-            $ritenuta = $this->parent->ritenutaContributi;
+            $ritenuta = $this->getDocument()->ritenutaContributi;
 
             $result = $result * $ritenuta->percentuale_imponibile / 100;
 

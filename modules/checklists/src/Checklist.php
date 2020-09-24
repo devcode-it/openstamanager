@@ -19,13 +19,16 @@
 
 namespace Modules\Checklists;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 use Models\Module;
 use Models\Plugin;
 use Models\User;
 
 class Checklist extends Model
 {
+    use SimpleModelTrait;
+
     protected $table = 'zz_checklists';
 
     /**
@@ -37,7 +40,7 @@ class Checklist extends Model
      */
     public static function build($nome)
     {
-        $model = parent::build();
+        $model = new static();
 
         $model->name = $nome;
         $model->save();

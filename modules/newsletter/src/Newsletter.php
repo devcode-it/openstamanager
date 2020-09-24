@@ -19,7 +19,8 @@
 
 namespace Modules\Newsletter;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Models\User;
 use Modules\Anagrafiche\Anagrafica;
@@ -30,6 +31,7 @@ use Traits\RecordTrait;
 
 class Newsletter extends Model
 {
+    use SimpleModelTrait;
     use SoftDeletes;
     use RecordTrait;
 
@@ -37,7 +39,7 @@ class Newsletter extends Model
 
     public static function build(User $user, Template $template, $name)
     {
-        $model = parent::build();
+        $model = new static();
 
         $model->user()->associate($user);
         $model->template()->associate($template);

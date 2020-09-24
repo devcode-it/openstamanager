@@ -35,14 +35,14 @@ class FolderSize extends Resource implements RetrieveInterface
 
             $dirs = [
                 $backup_dir => tr('Backup'),
-                DOCROOT.'/files' => tr('Allegati'),
-                DOCROOT.'/logs' => tr('Logs'),
+                base_dir().'/files' => tr('Allegati'),
+                base_dir().'/logs' => tr('Logs'),
             ];
         } else {
             $array = explode(',', $dirs);
             foreach ($array as $key => $value) {
                 $dirs = [
-                    DOCROOT.'/'.$value => $key,
+                    base_dir().'/'.$value => $key,
                 ];
             }
         }

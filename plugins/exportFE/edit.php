@@ -86,7 +86,7 @@ echo '
 
     <i class="fa fa-arrow-right fa-fw text-muted"></i>
 
-    <a href="'.ROOTDIR.'/view.php?file_id='.($file ? $file->id : null).'" class="btn btn-info btn-lg '.($generated ? '' : 'disabled').'" target="_blank" '.($generated ? '' : 'disabled').'>
+    <a href="'.base_path().'/view.php?file_id='.($file ? $file->id : null).'" class="btn btn-info btn-lg '.($generated ? '' : 'disabled').'" target="_blank" '.($generated ? '' : 'disabled').'>
         <i class="fa fa-eye"></i> '.tr('Visualizza').'
     </a>';
 
@@ -143,7 +143,7 @@ if (!empty($record['codice_stato_fe'])) {
 
         if (!empty($ultima_ricevuta)) {
             echo '
-        <a href="'.ROOTDIR.'/view.php?file_id='.$ultima_ricevuta->id.'" target="_blank" class="btn btn-info btn-xs">
+        <a href="'.base_path().'/view.php?file_id='.$ultima_ricevuta->id.'" target="_blank" class="btn btn-info btn-xs">
             <i class="fa fa-external-link"></i> '.tr('Visualizza ricevuta').'
         </a>';
         }

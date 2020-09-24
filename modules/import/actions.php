@@ -38,12 +38,12 @@ switch (filter('op')) {
         if (!empty($import_selezionato)) {
             // Generazione percorso
             $file = $modulo_selezionato->upload_directory.'/example-'.strtolower($modulo_selezionato->title).'.csv';
-            $filepath = DOCROOT.'/'.$file;
+            $filepath = base_dir().'/'.$file;
 
             // Generazione del file
             $import_selezionato::createExample($filepath);
 
-            echo ROOTDIR.'/'.$file;
+            echo base_path().'/'.$file;
         }
 
         break;

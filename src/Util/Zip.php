@@ -58,7 +58,7 @@ class Zip
         }
 
         // Percorso di estrazione
-        $extraction_dir = !empty($destination) ? $destination : DOCROOT.'/tmp';
+        $extraction_dir = !empty($destination) ? $destination : base_dir().'/tmp';
         directory($extraction_dir);
 
         // Estrazione dell'archivio

@@ -27,10 +27,10 @@ if (empty($file)) {
     return;
 }
 
-$link = ROOTDIR.'/'.$file->filepath;
+$link = base_path().'/'.$file->filepath;
 
 if ($file->isFatturaElettronica()) {
-    $content = file_get_contents(DOCROOT.'/'.$file->filepath);
+    $content = file_get_contents(base_dir().'/'.$file->filepath);
 
     // Individuazione stylesheet
     $default_stylesheet = 'asso-invoice';
@@ -40,8 +40,8 @@ if ($file->isFatturaElettronica()) {
     $pieces = explode('_', $filename);
     $stylesheet = $pieces[2];
 
-    $stylesheet = DOCROOT.'/plugins/xml/'.$stylesheet.'.xsl';
-    $stylesheet = file_exists($stylesheet) ? $stylesheet : DOCROOT.'/plugins/xml/'.$default_stylesheet.'.xsl';
+    $stylesheet = base_dir().'/plugins/xml/'.$stylesheet.'.xsl';
+    $stylesheet = file_exists($stylesheet) ? $stylesheet : base_dir().'/plugins/xml/'.$default_stylesheet.'.xsl';
 
     // XML
     $xml = new DOMDocument();

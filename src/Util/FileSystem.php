@@ -28,6 +28,8 @@ use RecursiveIteratorIterator;
  */
 class FileSystem
 {
+    protected static $units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+
     /**
      * Controlla l'esistenza e i permessi di scrittura sul percorso indicato.
      *
@@ -141,7 +143,7 @@ class FileSystem
      */
     public static function formatBytes($bytes, $precision = 2)
     {
-        $units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+        $units = self::$units;
 
         $bytes = max($bytes, 0);
         $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
@@ -152,5 +154,32 @@ class FileSystem
         // $bytes /= (1 << (10 * $pow));
 
         return round($bytes, $precision).' '.$units[$pow];
+    }
+
+    /**
+     * Converte l'unità di misura relativa in byte.
+     *
+     * @param string $bytes
+     *
+     * @return string
+     */
+    public static function convertBytes($bytes)
+    {
+        $units = self::$units;
+
+        $result = 0;
+        $count = count($units);
+        for ($i = $count - 1; $i >= 0; --$i) {
+            $pos = strpos($bytes, $units[$i]);
+            if ($pos !== false) {
+                $value = substr($bytes, 0, $pos);
+
+                $result = floatval($value) * pow(1024, $i);
+
+                break;
+            }
+        }
+
+        return $result;
     }
 }

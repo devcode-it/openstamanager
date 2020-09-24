@@ -19,11 +19,14 @@
 
 namespace Modules\TipiIntervento;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 use Modules\Anagrafiche\Anagrafica;
 
 class Tipo extends Model
 {
+    use SimpleModelTrait;
+
     protected $table = 'in_tipiintervento';
     protected $primaryKey = 'idtipointervento';
 
@@ -38,7 +41,7 @@ class Tipo extends Model
      */
     public static function build($codice, $descrizione)
     {
-        $model = parent::build();
+        $model = new static();
 
         $model->codice = $codice;
         $model->descrizione = $descrizione;

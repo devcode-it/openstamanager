@@ -17,14 +17,14 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-include_once __DIR__.'/../../../core.php';
+include_once __DIR__.'/../../core.php';
 
 $revisione_principale = $dbo->fetchOne('SELECT master_revision FROM co_preventivi WHERE id = '.prepare($id_record));
 
 $revisioni = $dbo->fetchArray('SELECT * FROM co_preventivi WHERE master_revision = '.prepare($revisione_principale['master_revision']).' OR id = '.prepare($revisione_principale['master_revision']).' ORDER BY created_at');
 
 echo "
-<form action='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record."' method='post'>
+<form action='".base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record."' method='post'>
     <input type='hidden' name='backto' value='record-edit'>
     <input type='hidden' name='op' value='edit_revision'>
     <input type='hidden' name='id_plugin' value='".$id_plugin."'>
@@ -89,7 +89,7 @@ echo "
 </form>';
 
 echo "
-<form action='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record."' method='post' id='form_deleterevision'>
+<form action='".base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record."' method='post' id='form_deleterevision'>
     <input type='hidden' name='backto' value='record-edit'>
     <input type='hidden' name='op' value='delete_revision'>
     <input type='hidden' name='id_plugin' value='".$id_plugin."'>

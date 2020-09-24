@@ -25,9 +25,9 @@ use Carbon\Carbon;
 $read_only = $structure->permission == 'r';
 
 if (empty($id_record) && !empty($id_module) && empty($id_plugin)) {
-    redirect(ROOTDIR.'/controller.php?id_module='.$id_module);
+    redirect(base_path().'/controller.php?id_module='.$id_module);
 } elseif (empty($id_record) && empty($id_module) && empty($id_plugin)) {
-    redirect(ROOTDIR.'/index.php');
+    redirect(base_path().'/index.php');
 }
 
 include_once App::filepath('include|custom|', 'top.php');
@@ -48,7 +48,7 @@ $has_access = !empty($query) ? $dbo->fetchNum($query) !== 0 : true;
 
 if ($has_access) {
     // Inclusione gli elementi fondamentali
-    include_once DOCROOT.'/actions.php';
+    include_once base_dir().'/actions.php';
 }
 
 if (empty($record) || !$has_access) {
@@ -61,7 +61,7 @@ if (empty($record) || !$has_access) {
             </h3>
             <br>
 
-            <a class="btn btn-default" href="'.ROOTDIR.'/controller.php?id_module='.$id_module.'">
+            <a class="btn btn-default" href="'.base_path().'/controller.php?id_module='.$id_module.'">
                 <i class="fa fa-chevron-left"></i> '.tr('Indietro').'
             </a>
         </div>';
@@ -145,7 +145,7 @@ if (empty($record) || !$has_access) {
     // Pulsanti di default
     echo '
                     <div id="pulsanti">
-                        <a class="btn btn-warning" href="'.ROOTDIR.'/controller.php?id_module='.$id_module.'">
+                        <a class="btn btn-warning" href="'.base_path().'/controller.php?id_module='.$id_module.'">
                             <i class="fa fa-chevron-left"></i> '.tr("Torna all'elenco").'
                         </a>
 
@@ -265,11 +265,11 @@ if (empty($record) || !$has_access) {
                 });
                 </script>';
 
-    if ($structure->permission != '-' && $structure->use_notes) {
+    if ($structure->permission != '-' && $structure->use_notes && $user->gruppo != 'Clienti') {
         echo '
                 <div id="tab_note" class="tab-pane">';
 
-        include DOCROOT.'/plugins/notes.php';
+        include base_dir().'/plugins/notes.php';
 
         echo '
                 </div>';
@@ -279,7 +279,7 @@ if (empty($record) || !$has_access) {
         echo '
                 <div id="tab_checks" class="tab-pane">';
 
-        include DOCROOT.'/plugins/checks.php';
+        include base_dir().'/plugins/checks.php';
 
         echo '
                 </div>';
@@ -381,7 +381,7 @@ if (empty($record) || !$has_access) {
 
         $id_plugin = $plugin['id'];
 
-        include DOCROOT.'/include/manager.php';
+        include base_dir().'/include/manager.php';
 
         echo '
 				</div>';
@@ -402,7 +402,7 @@ echo '{( "name": "widgets", "id_module": "'.$id_module.'", "id_record": "'.$id_r
 if (!empty($record)) {
     echo '
     		<hr>
-            <a class="btn btn-default" href="'.ROOTDIR.'/controller.php?id_module='.$id_module.'">
+            <a class="btn btn-default" href="'.base_path().'/controller.php?id_module='.$id_module.'">
                 <i class="fa fa-chevron-left"></i> '.tr('Indietro').'
             </a>';
 }
@@ -420,6 +420,12 @@ if ($read_only || !empty($block_edit)) {
                 $("select, input[type=checkbox]", "section.content")'.$not.'.prop("disabled", true);
                 $(".checkbox-buttons label", "section.content")'.$not.'.addClass("disabled");
                 ';
+
+    // Nascondo il plugin Note interne ai clienti
+    if ($user->gruppo == 'Clienti') {
+        echo '
+                $("#link-tab_note").hide();';
+    }
 
     if ($read_only) {
         echo '
@@ -474,7 +480,7 @@ if (!empty($advanced_sessions)) {
     ?>
 
             function getActiveUsers(){
-                $.getJSON('<?php echo ROOTDIR; ?>/ajax.php?op=active_users', {
+                $.getJSON('<?php echo base_path(); ?>/ajax.php?op=active_users', {
                     id_module: <?php echo $id_module; ?>,
                     id_record: <?php echo $id_record; ?>
                 },

@@ -18,6 +18,7 @@
  */
 
 use Mpdf\Mpdf;
+use Util\Query;
 
 /**
  * Classe per la gestione delle informazioni relative alle stampe installate.
@@ -52,7 +53,7 @@ class Prints
             }
 
             foreach ($results as $result) {
-                $result['full_directory'] = DOCROOT.'/templates/'.$result['directory'];
+                $result['full_directory'] = base_dir().'/templates/'.$result['directory'];
 
                 $prints[$result['id']] = $result;
                 $prints[$result['name']] = $result['id'];
@@ -152,11 +153,11 @@ class Prints
             if (!empty($infos['is_record'])) {
                 $module = Modules::get($infos['id_module']);
 
-                Util\Query::setSegments(false);
-                $query = Util\Query::getQuery($module, [
+                Query::setSegments(false);
+                $query = Query::getQuery($module, [
                     'id' => $id_record,
                 ]);
-                Util\Query::setSegments(true);
+                Query::setSegments(true);
 
                 $has_access = !empty($query) ? $dbo->fetchNum($query) !== 0 : true;
             }
@@ -206,7 +207,7 @@ class Prints
             return false;
         }
 
-        $link = ROOTDIR.'/pdfgen.php?';
+        $link = base_path().'/pdfgen.php?';
 
         if (self::isOldStandard($infos['id'])) {
             $link .= 'ptype='.$infos['directory'];
@@ -267,7 +268,7 @@ class Prints
      */
     public static function getPDFLink($path)
     {
-        return ROOTDIR.'/assets/dist/pdfjs/web/viewer.html?file='.BASEURL.'/'.ltrim(str_replace(DOCROOT, '', $path), '/');
+        return base_path().'/assets/dist/pdfjs/web/viewer.html?file='.base_url().'/'.ltrim(str_replace(base_dir(), '', $path), '/');
     }
 
     /**
@@ -341,9 +342,13 @@ class Prints
     {
         $format = 'A4';
 
+        $body = '';
+        $report = '';
+        $footer = '';
+
         $infos = self::get($id_print);
         $options = self::readOptions($infos['options']);
-        $docroot = DOCROOT;
+        $docroot = base_dir();
 
         $dbo = $database = database();
 
@@ -379,7 +384,7 @@ class Prints
         }
 
         // Operazioni di sostituzione
-        include DOCROOT.'/templates/replace.php';
+        include base_dir().'/templates/replace.php';
 
         $mode = !empty($directory) ? 'F' : 'I';
         $mode = !empty($return_string) ? 'S' : $mode;
@@ -458,7 +463,7 @@ class Prints
         include self::filepath($id_print, 'init.php');
 
         // Individuazione delle variabili per la sostituzione
-        include DOCROOT.'/templates/info.php';
+        include base_dir().'/templates/info.php';
 
         // Instanziamento dell'oggetto mPDF
         $mpdf = new Mpdf([
@@ -483,7 +488,7 @@ class Prints
 
         if (setting('Filigrana stampe')) {
             $mpdf->SetWatermarkImage(
-                DOCROOT.'/files/anagrafiche/'.setting('Filigrana stampe'),
+                base_dir().'/files/anagrafiche/'.setting('Filigrana stampe'),
                 0.5,
                 'F',
                 'F'
@@ -504,7 +509,7 @@ class Prints
         ];
 
         foreach ($styles as $value) {
-            $mpdf->WriteHTML(file_get_contents(DOCROOT.'/'.$value), 1);
+            $mpdf->WriteHTML(file_get_contents(base_dir().'/'.$value), 1);
         }
 
         // Impostazione del font-size
@@ -540,7 +545,7 @@ class Prints
         $foot = !empty($foot) ? $foot : '$default_footer$';
 
         // Operazioni di sostituzione
-        include DOCROOT.'/templates/replace.php';
+        include base_dir().'/templates/replace.php';
 
         // Impostazione di header e footer
         $mpdf->SetHTMLHeader($head);
@@ -587,7 +592,7 @@ class Prints
         }
 
         // Operazioni di sostituzione
-        include DOCROOT.'/templates/replace.php';
+        include base_dir().'/templates/replace.php';
 
         $mode = !empty($directory) ? 'F' : 'I';
         $mode = !empty($return_string) ? 'S' : $mode;

@@ -19,11 +19,14 @@
 
 namespace Modules\Impianti;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 use Modules\Anagrafiche\Anagrafica;
 
 class Impianto extends Model
 {
+    use SimpleModelTrait;
+
     protected $table = 'my_impianti';
 
     // Relazioni Eloquent

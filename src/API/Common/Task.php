@@ -44,22 +44,22 @@ class Task extends Resource implements RetrieveInterface, CreateInterface
         $database = database();
 
         // Rimozione della registrazione del cron attuale
-        $ultima_esecuzione = Cache::get('Ultima esecuzione del cron');
+        $ultima_esecuzione = Cache::pool('Ultima esecuzione del cron');
         $ultima_esecuzione->set(null);
 
         // Segnalazione della chiusura al cron attuale
-        $cron_id = Cache::get('ID del cron');
+        $cron_id = Cache::pool('ID del cron');
         $cron_id->set(null);
 
         // Rimozione dell'eventuale blocco sul cron
-        $disattiva = Cache::get('Disabilita cron');
+        $disattiva = Cache::pool('Disabilita cron');
         $disattiva->set(null);
 
         // Salvataggio delle modifiche
         $database->commitTransaction();
 
         // Attesa della conclusione per il cron precedente
-        $in_esecuzione = Cache::get('Cron in esecuzione');
+        $in_esecuzione = Cache::pool('Cron in esecuzione');
         while ($in_esecuzione->content) {
             $timestamp = (new Carbon())->addMinutes(1)->getTimestamp();
             time_sleep_until($timestamp);
@@ -81,7 +81,7 @@ class Task extends Resource implements RetrieveInterface, CreateInterface
      */
     protected function request()
     {
-        $endpoint = BASEURL.'/cron.php';
+        $endpoint = base_url().'/cron.php';
         $postData = json_encode([]);
 
         $endpointParts = parse_url($endpoint);

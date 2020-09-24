@@ -20,27 +20,31 @@
 include_once __DIR__.'/../../../core.php';
 
 echo '
-<form action="" method="post" id="form-copy">
+<form action="" method="post" id="copia-intervento">
     <input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="op" value="copy">
 
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "timestamp", "label": "'.tr('Data/ora richiesta').'", "name": "data_richiesta", "required": 0, "value": "-now-", "required":1 ]}
+            {[ "type": "timestamp", "label": "'.tr('Data/ora richiesta').'", "name": "data_richiesta", "value": "-now-", "required":1 ]}
         </div>
 
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL", "value": "" ]}
+            {[ "type": "timestamp", "label": "'.tr('Data/ora scadenza').'", "name": "data_scadenza" ]}
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-6">
-            {["type":"checkbox", "label":"'.tr('Duplica righe').'", "name":"righe", "value":"", "help":"'.tr('Selezione per riportare anche le righe nella nuova attività').'" ]}
+            {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL", "value": "" ]}
         </div>
 
-        <div class="col-md-6">
-            {["type":"checkbox", "label":"'.tr('Duplica sessioni').'", "name":"sessioni", "value":"", "help":"'.tr('Selezione per riportare anche le sessioni di lavoro nella nuova attività').'" ]}
+        <div class="col-md-3">
+            {["type": "checkbox", "label": "'.tr('Duplica righe').'", "name": "copia_righe", "help": "'.tr('Selezione per riportare anche le righe nella nuova attività').'", "value": 1 ]}
+        </div>
+
+        <div class="col-md-3">
+            {["type": "checkbox", "label": "'.tr('Duplica sessioni').'", "name": "copia_sessioni", "help": "'.tr('Selezione per riportare anche le sessioni di lavoro nella nuova attività').'", "value": 1 ]}
         </div>
     </div>
 

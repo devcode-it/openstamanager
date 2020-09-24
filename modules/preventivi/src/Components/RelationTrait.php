@@ -23,18 +23,18 @@ use Modules\Preventivi\Preventivo;
 
 trait RelationTrait
 {
-    public function getParentID()
+    public function getDocumentID()
     {
         return 'idpreventivo';
     }
 
-    public function parent()
+    public function document()
     {
-        return $this->belongsTo(Preventivo::class, $this->getParentID());
+        return $this->belongsTo(Preventivo::class, $this->getDocumentID());
     }
 
     public function preventivo()
     {
-        return $this->parent();
+        return $this->document();
     }
 }

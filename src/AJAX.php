@@ -58,7 +58,7 @@ class AJAX
         $files = self::find('ajax/select.php', false);
 
         // File di gestione predefinita
-        array_unshift($files, DOCROOT.'/ajax_select.php');
+        array_unshift($files, base_dir().'/ajax_select.php');
 
         foreach ($files as $file) {
             $results = self::getSelectResults($file, $resource, $elements, [
@@ -142,7 +142,7 @@ class AJAX
         $files = self::find('ajax/search.php');
 
         // File di gestione predefinita
-        array_unshift($files, DOCROOT.'/ajax_search.php');
+        array_unshift($files, base_dir().'/ajax_search.php');
 
         $results = [];
         foreach ($files as $file) {
@@ -166,7 +166,7 @@ class AJAX
         $files = self::find('ajax/complete.php');
 
         // File di gestione predefinita
-        array_unshift($files, DOCROOT.'/ajax_complete.php');
+        array_unshift($files, base_dir().'/ajax_complete.php');
 
         foreach ($files as $file) {
             $result = self::getCompleteResults($file, $resource);
@@ -206,10 +206,10 @@ class AJAX
         $list = [];
         foreach ($pieces as $piece) {
             // File nativi
-            $files = glob(DOCROOT.'/modules/{'.implode(',', $piece).'}/'.$file, GLOB_BRACE);
+            $files = glob(base_dir().'/modules/{'.implode(',', $piece).'}/'.$file, GLOB_BRACE);
 
             // File personalizzati
-            $custom_files = glob(DOCROOT.'/modules/{'.implode(',', $piece).'}/custom/'.$file, GLOB_BRACE);
+            $custom_files = glob(base_dir().'/modules/{'.implode(',', $piece).'}/custom/'.$file, GLOB_BRACE);
 
             // Pulizia dei file nativi che sono stati personalizzati
             foreach ($custom_files as $key => $value) {

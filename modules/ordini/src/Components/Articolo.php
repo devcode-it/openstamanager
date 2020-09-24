@@ -27,20 +27,6 @@ class Articolo extends Article
 {
     use RelationTrait;
 
-    public $movimenta_magazzino = false;
-
     protected $table = 'or_righe_ordini';
     protected $serialRowID = 'ordine';
-
-    /**
-     * Crea un nuovo articolo collegato ad una ordine.
-     *
-     * @return self
-     */
-    public static function build(Ordine $ordine, Original $articolo)
-    {
-        $model = parent::build($ordine, $articolo);
-
-        return $model;
-    }
 }

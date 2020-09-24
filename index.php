@@ -38,7 +38,7 @@ switch ($op) {
 
             flash()->error(Auth::getStatus()[$status]['message']);
 
-            redirect(ROOTDIR.'/index.php');
+            redirect(base_path().'/index.php');
             exit();
         }
 
@@ -47,7 +47,7 @@ switch ($op) {
     case 'logout':
         Auth::logout();
 
-        redirect(ROOTDIR.'/index.php');
+        redirect(base_path().'/index.php');
         exit();
 
         break;
@@ -57,21 +57,21 @@ if (Auth::check() && isset($dbo) && $dbo->isConnected() && $dbo->isInstalled()) 
     $module = Auth::firstModule();
 
     if (!empty($module)) {
-        redirect(ROOTDIR.'/controller.php?id_module='.$module);
+        redirect(base_path().'/controller.php?id_module='.$module);
     } else {
-        redirect(ROOTDIR.'/index.php?op=logout');
+        redirect(base_path().'/index.php?op=logout');
     }
     exit();
 }
 
 // Procedura di installazione
-include_once $docroot.'/include/init/configuration.php';
+include_once base_dir().'/include/init/configuration.php';
 
 // Procedura di aggiornamento
-include_once $docroot.'/include/init/update.php';
+include_once base_dir().'/include/init/update.php';
 
 // Procedura di inizializzazione
-include_once $docroot.'/include/init/init.php';
+include_once base_dir().'/include/init/init.php';
 
 $pageTitle = tr('Login');
 
@@ -150,7 +150,7 @@ echo' required>
 					{[ "type": "password", "name": "password", "autocomplete": "current-password", "placeholder": "'.tr('Password').'", "icon-before": "<i class=\"fa fa-lock\"></i>" ]}
 
                     <div class="text-right">
-                        <small><a href="'.ROOTDIR.'/reset.php">'.tr('Password dimenticata?').'</a></small>
+                        <small><a href="'.base_path().'/reset.php">'.tr('Password dimenticata?').'</a></small>
                     </div>
 				</div>
 

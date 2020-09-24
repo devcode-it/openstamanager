@@ -23,18 +23,18 @@ use Modules\Contratti\Contratto;
 
 trait RelationTrait
 {
-    public function getParentID()
+    public function getDocumentID()
     {
         return 'idcontratto';
     }
 
-    public function parent()
+    public function document()
     {
-        return $this->belongsTo(Contratto::class, $this->getParentID());
+        return $this->belongsTo(Contratto::class, $this->getDocumentID());
     }
 
     public function contratto()
     {
-        return $this->parent();
+        return $this->document();
     }
 }

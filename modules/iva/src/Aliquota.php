@@ -19,9 +19,12 @@
 
 namespace Modules\Iva;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 
 class Aliquota extends Model
 {
+    use SimpleModelTrait;
+
     protected $table = 'co_iva';
 }

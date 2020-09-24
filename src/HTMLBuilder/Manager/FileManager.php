@@ -129,7 +129,7 @@ class FileManager implements ManagerInterface
 
                     $result .= '
 
-                <a href="'.ROOTDIR.'/view.php?file_id='.$r['id'].'" target="_blank">
+                <a href="'.base_path().'/view.php?file_id='.$r['id'].'" target="_blank">
                     <i class="fa fa-external-link"></i> '.$r['name'].'
                 </a>
 
@@ -139,14 +139,14 @@ class FileManager implements ManagerInterface
             <td>'.\Translator::timestampToLocale($r['created_at']).'</td>
 
             <td class="text-center">
-                <a class="btn btn-xs btn-primary" href="'.ROOTDIR.'/actions.php?id_module='.$options['id_module'].'&op=download_file&id='.$r['id'].'&filename='.$r['filename'].'" target="_blank">
+                <a class="btn btn-xs btn-primary" href="'.base_path().'/actions.php?id_module='.$options['id_module'].'&op=download_file&id='.$r['id'].'&filename='.$r['filename'].'" target="_blank">
                     <i class="fa fa-download"></i>
                 </a>';
 
                     // Anteprime supportate dal browser
                     if ($file->hasPreview()) {
                         $result .= '
-                <button class="btn btn-xs btn-info" type="button" data-title="'.prepareToField($r['name']).' <small style=\'color:white\'><i>('.$r['filename'].')</i></small>" data-href="'.ROOTDIR.'/view.php?file_id='.$r['id'].'">
+                <button class="btn btn-xs btn-info" type="button" data-title="'.prepareToField($r['name']).' <small style=\'color:white\'><i>('.$r['filename'].')</i></small>" data-href="'.base_path().'/view.php?file_id='.$r['id'].'">
                     <i class="fa fa-eye"></i>
                 </button>';
                     } else {
@@ -190,7 +190,7 @@ class FileManager implements ManagerInterface
             {[ "type": "text", "placeholder": "'.tr('Nome file').'", "name": "nome_allegato", "class": "unblockable" ]}
         </div>
         <div class="col-md-6">
-            {[ "type": "text", "placeholder": "'.tr('Categoria').'", "name": "categoria", "class": "unblockable" ]}
+            {[ "type": "text", "placeholder": "'.tr('Categoria').'", "name": "categoria_allegato", "id": "categoria_allegato", "class": "unblockable" ]}
         </div>
         <div class="col-md-12">
             <div class="dropzone dz-clickable" id="dragdrop">
@@ -217,9 +217,8 @@ class FileManager implements ManagerInterface
 
         $source = array_clean(array_column($categories, 'category'));
 
-        $upload_max_filesize = \Util\FileSystem::formatBytes(ini_get('upload_max_filesize'), 0);
-        //remove unit
-        $upload_max_filesize = substr($upload_max_filesize, 0, strrpos($upload_max_filesize, ' '));
+        $upload_max_filesize = ini_get('upload_max_filesize');
+        $upload_max_filesize = substr($upload_max_filesize, 0, -1);
 
         $result .= '
 <script>$(document).ready(init)</script>
@@ -241,10 +240,10 @@ $(document).ready(function() {
         addRemoveLinks: false,
         autoProcessQueue: true,
         autoQueue: true,
-        url: "'.ROOTDIR.'/actions.php?op=link_file&id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id_plugin='.$options['id_plugin'].'",
+        url: "'.base_path().'/actions.php?op=link_file&id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id_plugin='.$options['id_plugin'].'",
         init: function (file, xhr, formData) {
             this.on("sending", function(file, xhr, formData) {
-                formData.append("categoria", $("#categoria").val());
+                formData.append("categoria", $("#categoria_allegato").val());
                 formData.append("nome_allegato", $("#nome_allegato").val());
             });
 
@@ -323,7 +322,7 @@ $(document).ready(function() {
     });
 
     // Autocompletamento categoria
-    $("#'.$attachment_id.' #categoria").autocomplete({
+    $("#'.$attachment_id.' #categoria_allegato").autocomplete({
         source: '.json_encode($source).',
         minLength: 0
     }).focus(function() {

@@ -144,7 +144,7 @@ switch (post('op')) {
             if ($stato_fe && empty($checks)) {
                 try {
                     $fattura_pa = new FatturaElettronica($id_record);
-                    $file = $fattura_pa->save(DOCROOT.'/'.FatturaElettronica::getDirectory());
+                    $file = $fattura_pa->save(base_dir().'/'.FatturaElettronica::getDirectory());
 
                     flash()->info(tr('Fattura elettronica generata correttamente!'));
 
@@ -305,7 +305,7 @@ switch (post('op')) {
         $righe = $fattura->getRighe();
         foreach ($righe as $riga) {
             $new_riga = $riga->replicate();
-            $new_riga->setParent($new);
+            $new_riga->setDocument($new);
 
             // Rimozione riferimenti (deorecati)
             $new_riga->idpreventivo = 0;

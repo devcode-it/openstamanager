@@ -19,15 +19,17 @@
 
 namespace Modules\Emails;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Models\Module;
 use Models\PrintTemplate;
-use Traits\StoreTrait;
+use Traits\LocalPoolTrait;
 
 class Template extends Model
 {
-    use StoreTrait;
+    use SimpleModelTrait;
+    use LocalPoolTrait;
     use SoftDeletes;
 
     protected $table = 'em_templates';

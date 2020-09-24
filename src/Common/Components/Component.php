@@ -20,12 +20,33 @@
 namespace Common\Components;
 
 use Common\Document;
-use Common\Model;
+use Common\RowReference;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use InvalidArgumentException;
 
-abstract class Description extends Model
+/**
+ * Classe dedicata alla gestione delle informazioni di base dei componenti dei Documenti, e in particolare di:
+ * - Collegamento con il Documento do origine
+ * - Riferimento di origine
+ * - Riferimenti informativi tra righe di altri documenti
+ * - Importazione tra documenti distinti di un componente.
+ *
+ * @property string original_type
+ * @property string original_id
+ *
+ * @template T
+ *
+ * @since 2.4.18
+ */
+abstract class Component extends Model
 {
-    use MorphTrait;
+    /**
+     * Componente di origine da cui il compontente corrente deriva.
+     *
+     * @var Component|null
+     */
+    protected $original_model = null;
 
     protected $guarded = [];
 
@@ -37,33 +58,56 @@ abstract class Description extends Model
         'parent',
     ];
 
-    public static function build(Document $document, $bypass = false)
+    public function hasOriginalComponent()
     {
-        $model = parent::build();
-
-        if (!$bypass) {
-            $model->is_descrizione = 1;
-            $model->qta = 1;
-        }
-
-        $model->setParent($document);
-
-        return $model;
+        return !empty($this->original_type) && !empty($this->getOriginalComponent());
     }
 
+    public function getOriginalComponent()
+    {
+        if (!isset($this->original_model) && !empty($this->original_type)) {
+            $class = $this->original_type;
+
+            $this->original_model = $class::find($this->original_id);
+        }
+
+        return $this->original_model;
+    }
+
+    public function referenceSources()
+    {
+        $class = get_class($this);
+
+        return $this->hasMany(RowReference::class, 'target_id')
+            ->where('target_type', $class);
+    }
+
+    public function referenceTargets()
+    {
+        $class = get_class($this);
+
+        return $this->hasMany(RowReference::class, 'source_id')
+            ->where('source_type', $class);
+    }
+
+    /**
+     * Restituisce l'eventuale limite sulla quantità massima derivato dal componente di origine.
+     *
+     * @return mixed|null
+     */
     public function getMaxQtaAttribute()
     {
-        if (!$this->hasOriginal()) {
+        if (!$this->hasOriginalComponent()) {
             return null;
         }
 
-        $original = $this->getOriginal();
+        $original = $this->getOriginalComponent();
 
         return $original->qta_rimanente + $this->qta;
     }
 
     /**
-     * Modifica la quantità dell'elemento.
+     * Modifica la quantità del componente.
      *
      * @param float $value
      *
@@ -74,8 +118,8 @@ abstract class Description extends Model
         $previous = $this->qta;
         $diff = $value - $previous;
 
-        if ($this->hasOriginal()) {
-            $original = $this->getOriginal();
+        if ($this->hasOriginalComponent()) {
+            $original = $this->getOriginalComponent();
 
             if ($original->qta_rimanente < $diff) {
                 $diff = $original->qta_rimanente;
@@ -85,8 +129,8 @@ abstract class Description extends Model
 
         $this->attributes['qta'] = $value;
 
-        if ($this->hasOriginal()) {
-            $original = $this->getOriginal();
+        if ($this->hasOriginalComponent()) {
+            $original = $this->getOriginalComponent();
 
             $original->qta_evasa += $diff;
             $original->save();
@@ -96,7 +140,7 @@ abstract class Description extends Model
     }
 
     /**
-     * Restituisce la quantità rimanente dell'elemento.
+     * Restituisce la quantità rimanente del componente.
      *
      * @return float
      */
@@ -105,6 +149,11 @@ abstract class Description extends Model
         return $this->qta - $this->qta_evasa;
     }
 
+    /**
+     * Gestisce la possibilità di eliminare il componente.
+     *
+     * @return bool
+     */
     public function canDelete()
     {
         return true;
@@ -113,22 +162,22 @@ abstract class Description extends Model
     public function delete()
     {
         if (!$this->canDelete()) {
-            throw new \InvalidArgumentException();
+            throw new InvalidArgumentException();
         }
 
-        if ($this->hasOriginal()) {
-            $original = $this->getOriginal();
+        if ($this->hasOriginalComponent()) {
+            $original = $this->getOriginalComponent();
         }
 
         $this->qta = 0;
         $result = parent::delete();
 
         // Trigger per la modifica delle righe
-        $this->parent->triggerComponent($this);
+        $this->getDocument()->triggerComponent($this);
 
         // Trigger per l'evasione delle quantità
-        if ($this->hasOriginal()) {
-            $original->parent->triggerEvasione($this);
+        if ($this->hasOriginalComponent()) {
+            $original->getDocument()->triggerEvasione($this);
         }
 
         return $result;
@@ -151,20 +200,10 @@ abstract class Description extends Model
     }
 
     /**
-     * Imposta il proprietario dell'oggetto e l'ordine relativo all'interno delle righe.
-     */
-    public function setParent(Document $document)
-    {
-        $this->parent()->associate($document);
-
-        // Ordine delle righe
-        if (empty($this->disableOrder)) {
-            $this->order = orderValue($this->table, $this->getParentID(), $document->id);
-        }
-    }
-
-    /**
      * Copia l'oggetto (articolo, riga, descrizione) nel corrispettivo per il documento indicato.
+     *
+     * @param Document   $document Documento di destinazione
+     * @param float|null $qta      Quantità da riportare
      *
      * @return self
      */
@@ -195,7 +234,7 @@ abstract class Description extends Model
         $model = new $object();
 
         // Rimozione attributo in conflitto
-        unset($attributes[$model->getParentID()]);
+        unset($attributes[$model->getDocumentID()]);
 
         // Riferimento di origine per l'evasione automatica della riga
         $is_evasione = true;
@@ -215,7 +254,7 @@ abstract class Description extends Model
         unset($attributes['original_type']);
 
         // Impostazione del genitore
-        $model->setParent($document);
+        $model->setDocument($document);
 
         // Azioni specifiche di inizializzazione
         $model->customInitCopiaIn($this);
@@ -224,6 +263,9 @@ abstract class Description extends Model
 
         // Impostazione degli attributi
         $model = $object::find($model->id);
+        if (empty($model)) {
+            dd($model, $attributes, $object);
+        }
         $accepted = $model->getAttributes();
 
         // Azioni specifiche precedenti
@@ -241,10 +283,12 @@ abstract class Description extends Model
     }
 
     /**
-     * Imposta l'origine dell'elemento, restituendo un array contenente i replace da effettuare per modificare la descrizione in modo coerente.
+     * Imposta l'origine del componente, restituendo un array contenente i replace da effettuare per modificare la descrizione in modo coerente.
      *
-     * @param $type
-     * @param $id
+     * @param string $type
+     * @param string $id
+     *
+     * @return array
      */
     public function impostaOrigine($type, $id)
     {
@@ -252,8 +296,8 @@ abstract class Description extends Model
         $nuovo_riferimento = null;
 
         // Rimozione del riferimento precedente dalla descrizione
-        if ($this->hasOriginal()) {
-            $riferimento = $this->getOriginal()->parent->getReference();
+        if ($this->hasOriginalComponent()) {
+            $riferimento = $this->getOriginalComponent()->getDocument()->getReference();
             $riferimento_precedente = "\nRif. ".strtolower($riferimento);
         }
 
@@ -263,49 +307,57 @@ abstract class Description extends Model
         // Aggiunta del riferimento nella descrizione
         $origine = $type::find($id);
         if (!empty($origine)) {
-            $riferimento = $origine->parent->getReference();
+            $riferimento = $origine->getDocument()->getReference();
             $nuovo_riferimento = "\nRif. ".strtolower($riferimento);
         }
 
         return [$riferimento_precedente, $nuovo_riferimento];
     }
 
-    abstract public function parent();
-
-    abstract public function getParentID();
-
-    public function isDescrizione()
+    /**
+     * Imposta il proprietario dell'oggetto e l'ordine relativo all'interno delle righe.
+     *
+     * @param Document $document Documento di riferimento
+     * @psalm-param T $document
+     */
+    public function setDocument(Document $document)
     {
-        return !$this->isArticolo() && !$this->isSconto() && !$this->isRiga() && $this instanceof Description;
+        $this->document()->associate($document);
+
+        // Ordine delle righe
+        if (empty($this->disableOrder)) {
+            $this->order = orderValue($this->table, $this->getDocumentID(), $document->id);
+        }
     }
 
-    public function isSconto()
+    /**
+     * @return Document
+     * @psalm-return T
+     */
+    public function getDocument()
     {
-        return $this instanceof Discount;
+        return $this->document;
     }
 
-    public function isRiga()
-    {
-        return !$this->isArticolo() && !$this->isSconto() && $this instanceof Row;
-    }
+    abstract public function document();
 
-    public function isArticolo()
-    {
-        return $this instanceof Article;
-    }
+    /**
+     * @return string
+     */
+    abstract public function getDocumentID();
 
     public function save(array $options = [])
     {
         $result = parent::save($options);
 
         // Trigger per la modifica delle righe
-        $this->parent->triggerComponent($this);
+        $this->getDocument()->triggerComponent($this);
 
         // Trigger per l'evasione delle quantità
-        if ($this->hasOriginal()) {
-            $original = $this->getOriginal();
+        if ($this->hasOriginalComponent()) {
+            $original = $this->getOriginalComponent();
 
-            $original->parent->triggerEvasione($this);
+            $original->getDocument()->triggerEvasione($this);
         }
 
         return $result;
@@ -318,8 +370,6 @@ abstract class Description extends Model
      */
     protected function customInitCopiaIn($original)
     {
-        $this->is_descrizione = $original->is_descrizione;
-        $this->is_sconto = $original->is_sconto;
     }
 
     /**
@@ -340,25 +390,13 @@ abstract class Description extends Model
     {
     }
 
-    protected static function boot($bypass = false)
+    protected static function boot()
     {
-        // Precaricamento Documento
-        static::addGlobalScope('parent', function (Builder $builder) {
-            $builder->with('parent');
+        // Pre-caricamento Documento
+        static::addGlobalScope('document', function (Builder $builder) {
+            $builder->with('document');
         });
 
         parent::boot();
-
-        $table = parent::getTableName();
-
-        if (!$bypass) {
-            static::addGlobalScope('descriptions', function (Builder $builder) use ($table) {
-                $builder->where($table.'.is_descrizione', '=', 1);
-            });
-        } else {
-            static::addGlobalScope('not_descriptions', function (Builder $builder) use ($table) {
-                $builder->where($table.'.is_descrizione', '=', 0);
-            });
-        }
     }
 }

@@ -65,8 +65,8 @@ foreach ($righe as $riga) {
     $extra_riga = '';
     if (!$riga->isDescrizione()) {
         // Informazioni su CIG, CUP, ...
-        if ($riga->hasOriginal()) {
-            $documento_originale = $riga->getOriginal()->parent;
+        if ($riga->hasOriginalComponent()) {
+            $documento_originale = $riga->getOriginalComponent()->getDocument();
 
             $num_item = $documento_originale['num_item'];
             $codice_cig = $documento_originale['codice_cig'];
@@ -102,9 +102,9 @@ foreach ($righe as $riga) {
                     '.$extra_riga;
 
     // Aggiunta dei riferimenti ai documenti
-    if ($riga->hasOriginal()) {
+    if ($riga->hasOriginalComponent()) {
         echo '
-                    <br>'.reference($riga->getOriginal()->parent, tr('Origine'));
+                    <br>'.reference($riga->getOriginalComponent()->getDocument(), tr('Origine'));
     }
 
     echo '

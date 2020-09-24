@@ -58,7 +58,7 @@ class ButtonManager implements ManagerInterface
             $template = Template::find($options['id']);
 
             $result = [
-                'link' => ROOTDIR.'/mail.php?id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id='.$options['id'].$options['parameters'],
+                'link' => base_path().'/mail.php?id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id='.$options['id'].$options['parameters'],
                 'title' => tr('Invia').' '.((strtoupper($template['name']) == $template['name']) ? $template['name'] : lcfirst($template['name'])),
                 'icon' => $template['icon'],
                 'type' => 'modal',
@@ -132,6 +132,7 @@ class ButtonManager implements ManagerInterface
                     'id_record' => $options['id_record'],
                     'class' => $options['class'],
                     'parameters' => $options['parameters'],
+                    'html_id' => $options['html_id'].'_p',
                 ]);
 
                 unset($list[$predefined]);
@@ -144,7 +145,7 @@ class ButtonManager implements ManagerInterface
     </button>
     <ul class="dropdown-menu dropdown-menu-right">';
 
-            foreach ($list as $element) {
+            foreach ($list as $i => $element) {
                 $result .= '
         <li>'.$this->link([
             'type' => $options['type'],
@@ -153,6 +154,7 @@ class ButtonManager implements ManagerInterface
             'id_record' => $options['id_record'],
             'class' => false,
             'parameters' => $options['parameters'],
+            'html_id' => $options['html_id'].'_'.$i,
         ]).'</li>';
             }
 

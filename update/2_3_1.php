@@ -53,7 +53,7 @@ $files = [
 ];
 
 foreach ($files as $key => $value) {
-    $files[$key] = realpath(DOCROOT.'/'.$value);
+    $files[$key] = realpath(base_dir().'/'.$value);
 }
 
 delete($files);
@@ -100,7 +100,7 @@ $dirs = [
 $pieces = array_chunk($dirs, 5);
 
 foreach ($pieces as $piece) {
-    $files = glob(DOCROOT.'/modules/{'.implode(',', $piece).'}/*.html', GLOB_BRACE);
+    $files = glob(base_dir().'/modules/{'.implode(',', $piece).'}/*.html', GLOB_BRACE);
     delete($files);
 }
 
@@ -122,7 +122,7 @@ $files = [
 ];
 
 foreach ($files as $key => $value) {
-    $files[$key] = realpath(DOCROOT.'/'.$value);
+    $files[$key] = realpath(base_dir().'/'.$value);
 }
 
 delete($files);

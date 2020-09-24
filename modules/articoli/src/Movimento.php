@@ -19,9 +19,10 @@
 
 namespace Modules\Articoli;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 
-/**
+/*
  * Classe dedicata alla gestione dei movimenti di magazzino degli articoli.
  *
  * Alcuni appunti sull'utilizzo dei campi *idsede_azienda* e *idsede_controparte*
@@ -32,12 +33,14 @@ use Common\Model;
  */
 class Movimento extends Model
 {
+    use SimpleModelTrait;
+
     protected $document;
     protected $table = 'mg_movimenti';
 
     public static function build(Articolo $articolo, $qta, $descrizone, $data, $document = null)
     {
-        $model = parent::build();
+        $model = new static();
 
         $model->articolo()->associate($articolo);
 

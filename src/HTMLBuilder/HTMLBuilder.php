@@ -93,7 +93,7 @@ class HTMLBuilder
         'list' => [
             'filelist_and_upload' => Manager\FileManager::class,
             'button' => Manager\ButtonManager::class,
-            'csrf' => Manager\CSRFManager::class,
+            //'csrf' => Manager\CSRFManager::class,
             'custom_fields' => Manager\FieldManager::class,
             'widgets' => Manager\WidgetManager::class,
             'log_email' => Manager\EmailManager::class,
@@ -195,9 +195,7 @@ class HTMLBuilder
         }
 
         // Ricorsione
-        if ($depth < self::$max_recursion) {
-            $result = self::replace($result, $depth + 1);
-        }
+        $result = self::replace($result);
 
         return !empty($result) ? $result : json_encode($json);
     }
@@ -318,7 +316,7 @@ class HTMLBuilder
 
         $class = is_object($class) ? $class : new $class();
 
-        if ($class instanceof Handler\ManagerInterface) {
+        if ($class instanceof Manager\ManagerInterface) {
             self::$managers['list'][$input] = $original;
             self::$managers['instances'][$original] = $class;
         }
@@ -327,8 +325,7 @@ class HTMLBuilder
     /**
      * Imposta l'oggetto responsabile per la costruzione del codice HTML per il tag personalizzato.
      *
-     * @param string       $input
-     * @param string|mixed $class
+     * @param array $record
      */
     public static function setRecord($record)
     {

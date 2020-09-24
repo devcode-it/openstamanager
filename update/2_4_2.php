@@ -27,9 +27,10 @@ foreach ($movimenti as $movimento) {
 $dbo->query("UPDATE mg_movimenti SET data = created_at WHERE data = '0000-00-00'");
 
 // Fix Partite IVA
+/*
 foreach ($it as $key => $value) {
     $dbo->query("UPDATE `an_anagrafiche` SET `piva` = SUBSTRING(`piva`, 2) WHERE `piva` LIKE '".$key."%'");
-}
+}*/
 
 // File e cartelle deprecate
 $files = [
@@ -38,7 +39,7 @@ $files = [
 ];
 
 foreach ($files as $key => $value) {
-    $files[$key] = realpath(DOCROOT.'/'.$value);
+    $files[$key] = realpath(base_dir().'/'.$value);
 }
 
 delete($files);

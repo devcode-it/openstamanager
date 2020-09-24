@@ -36,6 +36,7 @@ if (!empty($id_documento)) {
         'button' => tr('Aggiungi'),
         'documento' => $documento,
         'documento_finale' => $documento_finale,
+        'tipo_documento_finale' => Fattura::class,
     ];
 
     echo App::load('importa.php', [], $options, true);

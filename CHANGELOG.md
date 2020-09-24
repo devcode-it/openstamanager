@@ -4,6 +4,8 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.18 ()](#2418-)
+- [2.4.17.1 (2020-09-18)](#24171-2020-09-18)
 - [2.4.17 (2020-08-24)](#2417-2020-08-24)
 - [2.4.16 (2020-07-28)](#2416-2020-07-28)
 - [2.4.15 (2020-05-01)](#2415-2020-05-01)
@@ -26,6 +28,63 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.3 (2018-02-16)](#23-2018-02-16)
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
+
+## 2.4.18 ()
+
+### Aggiunto (Added)
+ - Sidebar per la gestione grafica dei Plugin all'interno dei record per i Moduli
+ - Sistema di cron di base per la gestione di operazioni ricorrenti (`cron.php`)
+ - Avviso su conflitti di occupazione per i Tecnici in **Attività**
+ - Plugin *Dettagli* per il modulo **Articoli**, finalizzato alla gestione dei prezzi di acquisto e vendita per *Anagrafica* e *Quantità* del Documento
+ - Modulo **Giacenze sedi** per visualizzare le giacenze in specifiche *Sedi* dell'*Anagrafica* Azienda
+ - Sistema di controllo sull'integrità strutturale del database, per utilizzo da parte di tecnici dedicati
+ - Numerazione righe nella stampa **Ordini**
+ - Azione di gruppo sul modulo **Anagrafiche** per calcolare la posizione geografica sulla base della Sede legale (richiede Google Maps abilitato)
+ - *Copyright notice* su tutti i file del progetto
+ - Possibilità di indicare lo stato alla creazione dei Documenti nella procedura di importazione
+ - Traduzione di base per il Tedesco (Germania)
+ - Supporto interno all'importazione verso **Preventivi** e **Contratti**
+
+### Modificato (Changed)
+ - Integrazione completa del nuovo sistema per la gestione delle impostazioni dei select (`select-options`)
+ - Miglioramento della grafica di integrazione con Google Maps per **Attività** e **Anagrafiche**
+ - Miglioramento del sistema di importazione FE in relazione alla gestione dei riferimenti a **Ordini** e **DDT**, con introduzione di una ricerca di base per l'autocompletamento
+ - Caricamento AJAX delle righe dei Documenti
+ - Introduzione numero rata in Rate contrattuali
+ - Visualizzazione completa delle date di lavorazione nella stampa delle **Attività** (#828)
+ - Modifica sovrapposizione eventi in **Dashboard**
+ - Modifica della gestione JS dei campi numerici, ora basata sulla libreria [AutoNumeric](http://autonumeric.org/)
+ - Modifica del sistema di riferimenti tra Documenti per includere il codice relativo nella Descrizione delle righe relative (con deprecazione dell'Impostazione "Riferimento dei documenti nelle stampe") {
+ - Modifica del sistema di riferimenti tra Documenti per includere il codice relativo nella *Descrizione* delle righe relative (con deprecazione dell'*Impostazione* "Riferimento dei documenti nelle stampe")
+ - Miglioramento elenco *Promemoria* in **Dashboard**, per visualizzare il *Tecnico* relativo
+
+### Fixed
+ - Correzione del numero delle righe sui Documenti a seguito di un riordinamento
+ - Fix segno marca da bollo su *Nota di credito*
+ - Fix selezione data sbagliata per vista mensile in Dashboard
+ - Fix per aggiornamento indicato negli Hook anche a seguito del completamento
+ - Correzione per l'eliminazione delle *Sedi*
+ - Fix problema delle statistiche in **Stato dei servizi**
+ - Fix visualizzazione sconto ivato sulla base dell'utilizzo dei Prezzi ivati
+ - Fix visibilità per i checkbox standard del browser
+ - Fix creazione di articoli duplicati da importazione FE (#870)
+ - Correzioni per l'impostazione di *Categoria* e *Sottocategoria* dalla procedura di importazione CSV **Articoli**
+ - Fix link interno al plugin *Impianti del cliente*
+ - Correzioni sulla procedura di duplicazione **Attività**
+
+## 2.4.17.1 (2020-09-18)
+
+### Fixed
+ - Fix query aggiornamento data movimento per registrazioni in **Prima Nota**
+ - Fix apretura pop-up di inserimento / modifica righe nelle varie schermate
+ - Fix per idconto righe fattura da fatturazione in bulk
+ - Fix calcolo quantità impegnata
+ - Fix nome funzione duplicata durante aggiornamento 2.4.17
+ - Fix Api per recupero delle sessioni di lavoro delle Attività in funzione dei mesi i mesi definiti nello storico
+ - Fix allegati **Impianti** non trovati
+ - Fix creazione / modifica componenti e componenti **Impianti** non trovati
+ - Fix su calcolo movimenti in caso di insoluto
+ - Fix raggruppamento movimenti composti
 
 ## 2.4.17 (2020-08-24)
 
@@ -55,7 +114,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 ### Fixed
  - Fix della duplicazione di Fattura, che in alcuni casi non rimuoveva lo stato FE originale
  - Fix della procedura di duplicazione di gruppo per le **Attività**
- - Risoluzione bug nella modifica manuale della **Prima Note** risalente a versioni <= 2.4.11 (#864)
+ - Risoluzione bug nella modifica manuale della **Prima Nota** risalente a versioni <= 2.4.11 (#864)
  - Fix dell'ordinamento per i conti primari del **Piano dei conti**, con correzione dei totali di riepilogo relativi
  - Correzione sui tooltip bloccati sui pulsanti disabilitati
 

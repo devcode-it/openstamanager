@@ -45,7 +45,7 @@ class Pianificazione extends Document
      */
     public static function build(Contratto $contratto, $data_scadenza)
     {
-        $model = parent::build();
+        $model = new static();
 
         $model->contratto()->associate($contratto);
 

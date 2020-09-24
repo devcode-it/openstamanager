@@ -127,7 +127,7 @@ switch ($operazione) {
                     $righe = $promemoria_originale->getRighe();
                     foreach ($righe as $riga) {
                         $copia = $riga->replicate();
-                        $copia->setParent($promemoria_corrente);
+                        $copia->setDocument($promemoria_corrente);
                         $copia->save();
                     }
 

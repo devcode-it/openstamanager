@@ -19,17 +19,12 @@
 
 namespace Common;
 
-class RowReference extends Model
+use Illuminate\Database\Eloquent\Model as Original;
+
+/**
+ * @deprecated 2.4.18
+ */
+abstract class Model extends Original
 {
-    protected $table = 'co_riferimenti_righe';
-
-    public function source()
-    {
-        return $this->morphTo();
-    }
-
-    public function target()
-    {
-        return $this->morphTo();
-    }
+    use SimpleModelTrait;
 }

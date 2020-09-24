@@ -29,6 +29,11 @@ class Promemoria extends Document
 {
     use RecordTrait;
 
+    /**
+     * @var bool Disabilita movimentazione automatica
+     */
+    public static $movimenta_magazzino = false;
+
     protected $table = 'co_promemoria';
 
     /**
@@ -49,7 +54,7 @@ class Promemoria extends Document
      */
     public static function build(Contratto $contratto, TipoSessione $tipo, $data_richiesta)
     {
-        $model = parent::build();
+        $model = new static();
 
         $model->contratto()->associate($contratto);
         $model->tipo()->associate($tipo);

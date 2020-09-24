@@ -49,7 +49,7 @@ $(document).ready(function () {
     return;
 }
 
-$contents = file_get_contents(DOCROOT.'/checksum.json');
+$contents = file_get_contents(base_dir().'/checksum.json');
 $checksum = json_decode($contents);
 
 if (empty($checksum)) {
@@ -66,7 +66,7 @@ if (empty($checksum)) {
 // Controllo degli errori
 $errors = [];
 foreach ($checksum as $file => $md5) {
-    $verifica = md5_file(DOCROOT.'/'.$file);
+    $verifica = md5_file(base_dir().'/'.$file);
     if ($verifica != $md5) {
         $errors[] = $file;
     }

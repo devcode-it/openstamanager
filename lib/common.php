@@ -22,6 +22,7 @@
  *
  * @since 2.4.2
  */
+use Common\Components\Accounting;
 
 /**
  * Esegue una somma precisa tra due interi/array.
@@ -113,7 +114,7 @@ function orderValue($table, $field, $id)
  *
  * @return string|null
  */
-function discountInfo(\Common\Components\Row $riga, $mostra_maggiorazione = true)
+function discountInfo(Accounting $riga, $mostra_maggiorazione = true)
 {
     if (empty($riga->sconto_unitario) || (!$mostra_maggiorazione && $riga->sconto_unitario < 0)) {
         return null;

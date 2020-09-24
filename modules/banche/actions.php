@@ -57,6 +57,7 @@ switch (filter('op')) {
         $banca->note = post('note');
         $banca->id_pianodeiconti3 = post('id_pianodeiconti3');
         $banca->filiale = post('filiale');
+        $banca->creditor_id = post('creditor_id');
 
         $banca->predefined = post('predefined');
 

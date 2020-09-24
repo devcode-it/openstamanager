@@ -62,6 +62,10 @@ include_once __DIR__.'/../../core.php';
 				<div class="col-md-4">
 					{[ "type": "text", "label": "<?php echo tr('BIC'); ?>", "name": "bic", "required": "1", "class": "alphanumeric-mask", "maxlength": 11, "value": "$bic$" ]}
                 </div>
+
+                <div class="col-md-12">
+                    {[ "type": "text", "label": "<?php echo tr('ID Creditore SEPA'); ?>", "name": "creditor_id", "class": "alphanumeric-mask", "value": "$creditor_id$", "help": "<?php echo tr("Codice identificativo per l'azienda nell'area SEPA. Nel caso di aziende aderenti alla procedura Allineamento Elettronico Archivio per le quali non risulta reperibile in CF/PIVA viene generato un codice identificativo non significativo (NOTPROVIDEDXXXXXXXXXXXX)."); ?>" ]}
+                </div>
 			</div>
 
 			<div class="row">

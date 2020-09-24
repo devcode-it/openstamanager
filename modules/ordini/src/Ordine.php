@@ -32,6 +32,11 @@ class Ordine extends Document
     use ReferenceTrait;
     use RecordTrait;
 
+    /**
+     * @var bool Disabilita movimentazione automatica
+     */
+    public static $movimenta_magazzino = false;
+
     protected $table = 'or_ordini';
 
     protected $with = [

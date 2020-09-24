@@ -270,6 +270,9 @@ abstract class Description extends Model
         return [$riferimento_precedente, $nuovo_riferimento];
     }
 
+    /**
+     * @return Document
+     */
     abstract public function parent();
 
     abstract public function getParentID();

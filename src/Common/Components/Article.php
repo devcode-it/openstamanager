@@ -28,7 +28,6 @@ use UnexpectedValueException;
 
 abstract class Article extends Row
 {
-    public $movimenta_magazzino = true;
     protected $abilita_movimentazione = true;
 
     protected $serialRowID = null;
@@ -51,7 +50,7 @@ abstract class Article extends Row
 
     public function movimenta($qta)
     {
-        if (!$this->movimenta_magazzino) {
+        if (!$this->parent->movimenta_magazzino) {
             return;
         }
 
@@ -60,7 +59,7 @@ abstract class Article extends Row
         // Movimenta il magazzino solo se l'articolo non è già stato movimentato da un documento precedente
         if ($this->hasOriginal()) {
             $original = $this->getOriginal();
-            $movimenta = !$original->movimenta_magazzino;
+            $movimenta = !$original->parent->movimenta_magazzino;
         }
 
         if ($movimenta) {

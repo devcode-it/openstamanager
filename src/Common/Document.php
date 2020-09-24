@@ -24,6 +24,23 @@ use Common\Components\Description;
 abstract class Document extends Model implements ReferenceInterface
 {
     /**
+     * Abilita la movimentazione automatica degli Articoli, finalizzata alla gestione interna del magazzino.
+     *
+     * @var bool
+     */
+    public static $movimenta_magazzino = true;
+
+    /**
+     * Restituisce il valore della variabile statica $movimenta_magazzino per il documento.
+     *
+     * @return bool
+     */
+    public function getMovimentaMagazzinoAttribute()
+    {
+        return static::$movimenta_magazzino;
+    }
+
+    /**
      * Restituisce la collezione di righe e articoli con valori rilevanti per i conti.
      *
      * @return iterable

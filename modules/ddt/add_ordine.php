@@ -35,6 +35,7 @@ if (!empty($id_documento)) {
         'serials' => true,
         'documento' => $documento,
         'documento_finale' => $documento_finale,
+        'tipo_documento_finale' => DDT::class,
     ];
 
     echo App::load('importa.php', [], $options, true);

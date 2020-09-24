@@ -44,7 +44,7 @@ class Articolo extends Article
 
     public function movimenta($qta)
     {
-        if (!$this->movimenta_magazzino) {
+        if (!$this->parent->movimenta_magazzino) {
             return;
         }
 
@@ -54,7 +54,7 @@ class Articolo extends Article
         // Movimentazione forzata per Note di credito/debito
         if ($this->hasOriginal() && !$this->parent->isNota()) {
             $original = $this->getOriginal();
-            $movimenta = !$original->movimenta_magazzino;
+            $movimenta = !$original->parent->movimenta_magazzino;
         }
 
         if ($movimenta) {

@@ -20,8 +20,10 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Contratti\Contratto;
+use Modules\Fatture\Fattura;
 
 $documento = Contratto::find($id_record);
+$tipo_documento_finale = Fattura::class;
 
 $options = [
     'op' => 'add_documento',
@@ -30,6 +32,7 @@ $options = [
     'button' => tr('Aggiungi'),
     'create_document' => true,
     'documento' => $documento,
+    'tipo_documento_finale' => $tipo_documento_finale,
 ];
 
 echo App::load('importa.php', [], $options, true);

@@ -138,7 +138,7 @@ class Fattura extends Document
         $model->id_ritenuta_contributi = $id_ritenuta_contributi ?: null;
 
         // Banca predefinita per l'anagrafica controparte
-        $model->id_banca_controparte = $anagrafica->{'idbanca_'.$conto};
+        //$model->id_banca_controparte = ;
 
         // Tipo di pagamento dall'anagrafica controparte
         $id_pagamento = $database->fetchOne('SELECT id FROM co_pagamenti WHERE id = :id_pagamento', [
@@ -156,15 +156,18 @@ class Fattura extends Document
         }
 
         // Banca predefinita per l'azienda, con ricerca della banca impostata per il pagamento
-        $azienda = Anagrafica::find(setting('Azienda predefinita'));
-        $id_banca_azienda = $database->fetchOne('SELECT id FROM co_banche WHERE id_pianodeiconti3 = (SELECT idconto_'.$conto.' FROM co_pagamenti WHERE id = :id_pagamento) AND id_anagrafica = :id_anagrafica', [
-            ':id_pagamento' => $id_pagamento,
-            ':id_anagrafica' => $azienda->id,
-        ])['id'];
+        $id_banca_azienda = $anagrafica->{'idbanca_'.$conto};
         if (empty($id_banca_azienda)) {
-            $id_banca_azienda = $azienda->{'idbanca_'.$conto};
+            $azienda = Anagrafica::find(setting('Azienda predefinita'));
+            $id_banca_azienda = $database->fetchOne('SELECT id FROM co_banche WHERE id_pianodeiconti3 = (SELECT idconto_'.$conto.' FROM co_pagamenti WHERE id = :id_pagamento) AND id_anagrafica = :id_anagrafica', [
+                ':id_pagamento' => $id_pagamento,
+                ':id_anagrafica' => $azienda->id,
+            ])['id'];
+            if (empty($id_banca_azienda)) {
+                $id_banca_azienda = $azienda->{'idbanca_'.$conto};
+            }
+            $model->id_banca_azienda = $id_banca_azienda;
         }
-        $model->id_banca_azienda = $id_banca_azienda;
 
         // Gestione dello Split Payment sulla base dell'anagrafica Controparte
         $split_payment = $anagrafica->split_payment;

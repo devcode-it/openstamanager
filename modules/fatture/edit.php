@@ -270,7 +270,7 @@ elseif ($record['stato'] == 'Bozza') {
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Banca'); ?>", "name": "id_banca_azienda", "ajax-source": "banche", "select-options": <?php echo json_encode(['id_anagrafica' => $anagrafica_azienda->id]); ?>, "value": "$id_banca_azienda$", "icon-after": "add|<?php echo Modules::get('Banche')['id']; ?>||", "extra": " <?php echo (intval($block_edit)) ? 'disabled' : ''; ?> " ]}
+					{[ "type": "select", "label": "<?php echo tr('Banca azienda'); ?>", "name": "id_banca_azienda", "ajax-source": "banche", "select-options": <?php echo json_encode(['id_anagrafica' => $anagrafica_azienda->id]); ?>, "value": "$id_banca_azienda$", "icon-after": "add|<?php echo Modules::get('Banche')['id']; ?>||", "extra": " <?php echo (intval($block_edit)) ? 'disabled' : ''; ?> " ]}
 				</div>
 
                 <?php

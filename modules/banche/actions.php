@@ -41,11 +41,6 @@ switch (filter('op')) {
             ]);
         }
 
-        // Imposizione della banca come predefinita per l'Anagrafica se non impostato altrimenti
-        $anagrafica->idbanca_vendite = $anagrafica->idbanca_vendite ?: $id_record;
-        $anagrafica->idbanca_acquisti = $anagrafica->idbanca_acquisti ?: $id_record;
-        $anagrafica->save();
-
         flash()->info(tr('Aggiunta nuova _TYPE_', [
             '_TYPE_' => 'banca',
         ]));
@@ -62,6 +57,8 @@ switch (filter('op')) {
         $banca->note = post('note');
         $banca->id_pianodeiconti3 = post('id_pianodeiconti3');
         $banca->filiale = post('filiale');
+
+        $banca->predefined = post('predefined');
 
         $banca->save();
 

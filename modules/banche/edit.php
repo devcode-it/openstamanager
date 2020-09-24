@@ -31,8 +31,12 @@ include_once __DIR__.'/../../core.php';
 
 		<div class="panel-body">
 			<div class="row">
-                <div class="col-md-6">
+                <div class="col-md-3">
                     {[ "type": "select", "label": "<?php echo tr('Anagrafica'); ?>", "name": "id_anagrafica", "required": "1", "value": "$id_anagrafica$", "ajax-source": "anagrafiche", "disabled": 1 ]}
+                </div>
+
+                <div class="col-md-3">
+                    {[ "type": "checkbox", "label": "<?php echo tr('Predefinito'); ?>", "name": "predefined", "value": "$predefined$", "disabled": "<?php echo intval($record['predefined']); ?>" ]}
                 </div>
 
                 <div class="col-md-6">

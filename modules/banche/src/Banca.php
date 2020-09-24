@@ -60,4 +60,34 @@ class Banca extends Model
     {
         return $this->belongsTo(Anagrafica::class, 'id_anagrafica');
     }
+
+    public function save(array $options = [])
+    {
+        $this->fixPredefined();
+
+        return parent::save($options);
+    }
+
+    protected function fixPredefined()
+    {
+        $predefined = $this->predefined;
+
+        // Selezione automatica per primo record
+        $count = self::where('id_anagrafica', $this->id_anagrafica)
+            ->where('id', '!=', $this->id)
+            ->count();
+        if (empty($predefined) && empty($count)) {
+            $predefined = true;
+        }
+
+        if (!empty($predefined)) {
+            self::where('id_anagrafica', $this->id_anagrafica)
+                ->where('id', '!=', $this->id)
+                ->update([
+                    'predefined' => 0,
+                ]);
+
+            $this->attributes['predefined'] = $predefined;
+        }
+    }
 }

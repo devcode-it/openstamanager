@@ -17,13 +17,31 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace Modules\Preventivi\Components;
+include_once __DIR__.'/../../../core.php';
 
-use Common\Components\Description;
+switch ($resource) {
+    /*
+     * Opzioni utilizzate:
+     * - id_anagrafica
+     */
+    case 'banche':
+        $query = "SELECT id, CONCAT (nome, ' - ' , iban) AS descrizione FROM co_banche |where| ORDER BY nome";
 
-class Descrizione extends Description
-{
-    use RelationTrait;
+        foreach ($elements as $element) {
+            $filter[] = 'id = '.prepare($element);
+        }
 
-    protected $table = 'co_righe_preventivi';
+        if (empty($filter)) {
+            $where[] = 'deleted_at IS NULL';
+        }
+
+        $where[] = 'id_anagrafica='.prepare($superselect['id_anagrafica']);
+
+        if (!empty($search)) {
+            $search_fields[] = 'nome LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = 'filiale LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = 'iban LIKE '.prepare('%'.$search.'%');
+        }
+
+        break;
 }

@@ -89,7 +89,8 @@ switch (post('op')) {
         $fattura->idanagrafica = post('idanagrafica');
         $fattura->idagente = post('idagente');
         $fattura->idpagamento = post('idpagamento');
-        $fattura->idbanca = post('idbanca');
+        $fattura->id_banca_azienda = post('id_banca_azienda');
+        $fattura->id_banca_controparte = post('id_banca_controparte');
         $fattura->idcausalet = post('idcausalet');
         $fattura->idspedizione = post('idspedizione');
         $fattura->idporto = post('idporto');
@@ -753,7 +754,8 @@ switch (post('op')) {
         $nota->ref_documento = $fattura->id;
         $nota->idconto = $fattura->idconto;
         $nota->idpagamento = $fattura->idpagamento;
-        $nota->idbanca = $fattura->idbanca;
+        $nota->id_banca_azienda = $fattura->id_banca_azienda;
+        $nota->id_banca_controparte = $fattura->id_banca_controparte;
         $nota->idsede_partenza = $fattura->idsede_partenza;
         $nota->idsede_destinazione = $fattura->idsede_destinazione;
         $nota->split_payment = $fattura->split_payment;
@@ -809,7 +811,8 @@ if (get('op') == 'nota_addebito') {
     $nota->ref_documento = $fattura->id;
     $nota->idconto = $fattura->idconto;
     $nota->idpagamento = $fattura->idpagamento;
-    $nota->idbanca = $fattura->idbanca;
+    $nota->id_banca_azienda = $fattura->id_banca_azienda;
+    $nota->id_banca_controparte = $fattura->id_banca_controparte;
     $nota->idsede_partenza = $fattura->idsede_partenza;
     $nota->idsede_destinazione = $fattura->idsede_destinazione;
     $nota->save();

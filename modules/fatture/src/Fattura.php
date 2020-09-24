@@ -25,6 +25,7 @@ use Common\Components\Component;
 use Common\Document;
 use Illuminate\Database\Eloquent\Builder;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Banche\Banca;
 use Modules\Fatture\Gestori\Bollo as GestoreBollo;
 use Modules\Fatture\Gestori\Movimenti as GestoreMovimenti;
 use Modules\Fatture\Gestori\Scadenze as GestoreScadenze;
@@ -89,12 +90,13 @@ class Fattura extends Document
         $model = new static();
 
         $user = Auth::user();
+        $database = database();
 
+        // Individuazione dello stato predefinito per il documento
         $stato_documento = Stato::where('descrizione', 'Bozza')->first();
         $direzione = $tipo_documento->dir;
 
-        $database = database();
-
+        // Conto predefinito sulla base del flusso di denaro
         if ($direzione == 'entrata') {
             $id_conto = setting('Conto predefinito fatture di vendita');
             $conto = 'vendite';
@@ -103,6 +105,7 @@ class Fattura extends Document
             $conto = 'acquisti';
         }
 
+        // Informazioni di base
         $model->anagrafica()->associate($anagrafica);
         $model->tipo()->associate($tipo_documento);
         $model->stato()->associate($stato_documento);
@@ -114,55 +117,65 @@ class Fattura extends Document
         $model->data_registrazione = $data;
         $model->data_competenza = $data;
         $model->id_segment = $id_segment;
+        $model->idconto = $id_conto;
         if ($numero_esterno) {
             $model->numero_esterno = $numero_esterno;
         }
 
-        $model->idconto = $id_conto;
-
-        // Imposto, come sede aziendale, la prima sede disponibile come utente
+        // Sede aziendale scelta tra le sedi disponibili per l'utente
+        $id_sede = $user->sedi[0];
         if ($direzione == 'entrata') {
-            $model->idsede_destinazione = $user->sedi[0];
+            $model->idsede_destinazione = $id_sede;
         } else {
-            $model->idsede_partenza = $user->sedi[0];
+            $model->idsede_partenza = $id_sede;
         }
+
+        // Gestione della marca da bollo predefinita
         $model->addebita_bollo = setting('Addebita marca da bollo al cliente');
 
+        // Ritenuta contributi predefinita
         $id_ritenuta_contributi = ($tipo_documento->dir == 'entrata') ? setting('Ritenuta contributi') : null;
         $model->id_ritenuta_contributi = $id_ritenuta_contributi ?: null;
 
-        // Tipo di pagamento e banca predefinite dall'anagrafica
-        $id_pagamento = $database->fetchOne('SELECT id FROM co_pagamenti WHERE id = :id_pagamento', [
-            ':id_pagamento' => $anagrafica['idpagamento_'.$conto],
-        ])['id'];
-        $id_banca = $anagrafica['idbanca_'.$conto];
+        // Banca predefinita per l'anagrafica controparte
+        //$model->id_banca_controparte = ;
 
-        // Se la fattura è di vendita e non è stato associato un pagamento predefinito al cliente leggo il pagamento dalle impostazioni
+        // Tipo di pagamento dall'anagrafica controparte
+        $id_pagamento = $database->fetchOne('SELECT id FROM co_pagamenti WHERE id = :id_pagamento', [
+            ':id_pagamento' => $anagrafica->{'idpagamento_'.$conto},
+        ])['id'];
+
+        // Per Fatture di Vendita senza pagamento predefinito per il Cliente, si utilizza il pagamento predefinito dalle Impostazioni
         if ($direzione == 'entrata' && empty($id_pagamento)) {
             $id_pagamento = setting('Tipo di pagamento predefinito');
         }
 
-        // Se non è impostata la banca dell'anagrafica, uso quella del pagamento.
-        if (empty($id_banca)) {
-            $id_banca = $database->fetchOne('SELECT id FROM co_banche WHERE id_pianodeiconti3 = (SELECT idconto_'.$conto.' FROM co_pagamenti WHERE id = :id_pagamento)', [
-                ':id_pagamento' => $id_pagamento,
-            ])['id'];
-        }
-
+        // Salvataggio del pagamento
         if (!empty($id_pagamento)) {
             $model->idpagamento = $id_pagamento;
         }
-        if (!empty($id_banca)) {
-            $model->idbanca = $id_banca;
+
+        // Banca predefinita per l'azienda, con ricerca della banca impostata per il pagamento
+        $id_banca_azienda = $anagrafica->{'idbanca_'.$conto};
+        if (empty($id_banca_azienda)) {
+            $azienda = Anagrafica::find(setting('Azienda predefinita'));
+            $id_banca_azienda = $database->fetchOne('SELECT id FROM co_banche WHERE id_pianodeiconti3 = (SELECT idconto_'.$conto.' FROM co_pagamenti WHERE id = :id_pagamento) AND id_anagrafica = :id_anagrafica', [
+                ':id_pagamento' => $id_pagamento,
+                ':id_anagrafica' => $azienda->id,
+            ])['id'];
+            if (empty($id_banca_azienda)) {
+                $id_banca_azienda = $azienda->{'idbanca_'.$conto};
+            }
+            $model->id_banca_azienda = $id_banca_azienda;
         }
 
-        // Split Payment
+        // Gestione dello Split Payment sulla base dell'anagrafica Controparte
         $split_payment = $anagrafica->split_payment;
         if (!empty($split_payment)) {
             $model->split_payment = $split_payment;
         }
 
-        // Dichiarazione d'Intento
+        // Gestione della Dichiarazione d'Intento associata all'anargafica Controparte
         $now = new Carbon();
         $dichiarazione = $anagrafica->dichiarazioni()
             ->where('massimale', '>', 'totale')
@@ -172,6 +185,7 @@ class Fattura extends Document
         if (!empty($dichiarazione)) {
             $model->dichiarazione()->associate($dichiarazione);
 
+            // Registrazione dell'operazione nelle note
             $model->note = tr("Operazione non imponibile come da vostra dichiarazione d'intento nr _PROT_ del _PROT_DATE_ emessa in data _RELEASE_DATE_, da noi registrata al nr _ID_ del _DATE_", [
                     '_PROT_' => $dichiarazione->numero_protocollo,
                     '_PROT_DATE_' => $dichiarazione->data_protocollo,
@@ -641,12 +655,14 @@ class Fattura extends Document
         $riba = database()->fetchOne('SELECT riba FROM co_pagamenti WHERE id ='.prepare($this->idpagamento));
 
         if ($riba['riba'] == 1) {
-            $result = database()->fetchOne('SELECT codiceiban, appoggiobancario, bic FROM an_anagrafiche WHERE idanagrafica ='.prepare($this->idanagrafica));
+            $banca = Banca::where('id_anagrafica', $this->idanagrafica)
+                 ->where('predefined', 1)
+                 ->first();
         } else {
-            $result = database()->fetchOne('SELECT iban AS codiceiban, nome AS appoggiobancario, bic FROM co_banche WHERE id='.prepare($this->idbanca));
+            $banca = Banca::find($this->id_banca_azienda);
         }
 
-        return $result;
+        return $banca;
     }
 
     // Metodi statici

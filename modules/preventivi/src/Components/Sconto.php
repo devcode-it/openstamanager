@@ -20,7 +20,6 @@
 namespace Modules\Preventivi\Components;
 
 use Common\Components\Discount;
-use Modules\Preventivi\Preventivo;
 
 class Sconto extends Discount
 {

@@ -20,7 +20,6 @@
 namespace Modules\Ordini\Components;
 
 use Common\Components\Discount;
-use Modules\Ordini\Ordine;
 
 class Sconto extends Discount
 {

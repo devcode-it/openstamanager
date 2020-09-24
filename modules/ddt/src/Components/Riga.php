@@ -20,7 +20,6 @@
 namespace Modules\DDT\Components;
 
 use Common\Components\Row;
-use Modules\DDT\DDT;
 
 class Riga extends Row
 {

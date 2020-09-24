@@ -17,59 +17,57 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Modules\Anagrafiche\Anagrafica;
+use Modules\Banche\Banca;
+
 include_once __DIR__.'/../../core.php';
 
 switch (filter('op')) {
-    case 'update':
+    case 'add':
+        $id_anagrafica = filter('id_anagrafica');
+        $anagrafica = Anagrafica::find($id_anagrafica);
+
         $nome = filter('nome');
+        $iban = filter('iban');
+        $bic = filter('bic');
 
-        if (isset($nome)) {
-            $array = [
-                'nome' => $nome,
-                'filiale' => post('filiale'),
-                'iban' => post('iban'),
-                'bic' => post('bic'),
-                'id_pianodeiconti3' => post('id_pianodeiconti3'),
-                'note' => post('note'),
-            ];
+        $banca = Banca::build($anagrafica, $nome, $iban, $bic);
+        $id_record = $banca->id;
 
-            if (!empty($id_record)) {
-                $dbo->update('co_banche', $array, ['id' => $id_record]);
-            }
-
-            flash()->info(tr('Salvataggio completato.'));
-        } else {
-            flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
+        if (isAjaxRequest()) {
+            echo json_encode([
+                'id' => $id_record,
+                'text' => $nome,
+            ]);
         }
+
+        flash()->info(tr('Aggiunta nuova _TYPE_', [
+            '_TYPE_' => 'banca',
+        ]));
 
         break;
 
-    case 'add':
+    case 'update':
         $nome = filter('nome');
-        $bic = filter('bic');
-        $iban = filter('iban');
 
-        if (isset($nome)) {
-            $dbo->query('INSERT INTO `co_banche` (`nome`, `bic`, `iban`) VALUES ('.prepare($nome).', '.prepare($bic).', '.prepare($iban).')');
-            $id_record = $dbo->lastInsertedID();
+        $banca->nome = post('nome');
+        $banca->iban = post('iban');
+        $banca->bic = post('bic');
 
-            if (isAjaxRequest()) {
-                echo json_encode(['id' => $id_record, 'text' => $nome]);
-            }
+        $banca->note = post('note');
+        $banca->id_pianodeiconti3 = post('id_pianodeiconti3');
+        $banca->filiale = post('filiale');
 
-            flash()->info(tr('Aggiunta nuova  _TYPE_', [
-                '_TYPE_' => 'banca',
-            ]));
-        } else {
-            flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
-        }
+        $banca->predefined = post('predefined');
+
+        $banca->save();
+
+        flash()->info(tr('Salvataggio completato'));
 
         break;
 
     case 'delete':
-        $dbo->update('co_banche', [
-            'deleted_at' => date('Y-m-d H:i:s'),
-        ], ['id' => $id_record]);
+        $banca->delete();
 
         flash()->info(tr('_TYPE_ eliminata con successo!', [
             '_TYPE_' => 'Banca',

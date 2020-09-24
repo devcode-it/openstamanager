@@ -20,8 +20,6 @@
 namespace Modules\DDT\Components;
 
 use Common\Components\Article;
-use Modules\Articoli\Articolo as Original;
-use Modules\DDT\DDT;
 
 class Articolo extends Article
 {

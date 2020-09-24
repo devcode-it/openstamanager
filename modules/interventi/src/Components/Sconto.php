@@ -20,7 +20,6 @@
 namespace Modules\Interventi\Components;
 
 use Common\Components\Discount;
-use Modules\Interventi\Intervento;
 
 class Sconto extends Discount
 {

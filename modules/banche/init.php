@@ -17,8 +17,12 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Modules\Banche\Banca;
+
 include_once __DIR__.'/../../core.php';
 
 if (isset($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM `co_banche` WHERE id='.prepare($id_record));
+    $banca = Banca::find($id_record);
+
+    $record = $banca->toArray();
 }

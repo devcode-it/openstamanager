@@ -1414,14 +1414,14 @@ class FatturaElettronica
                 'ImportoPagamento' => abs($scadenza['da_pagare']),
             ];
 
-            if (!empty($banca['appoggiobancario'])) {
-                $pagamento['IstitutoFinanziario'] = $banca['appoggiobancario'];
+            if (!empty($banca->nome)) {
+                $pagamento['IstitutoFinanziario'] = $banca->nome;
             }
-            if (!empty($banca['codiceiban'])) {
-                $pagamento['IBAN'] = clean($banca['codiceiban']);
+            if (!empty($banca->iban)) {
+                $pagamento['IBAN'] = clean($banca->iban);
             }
-            if (!empty($banca['bic'])) {
-                $pagamento['BIC'] = $banca['bic'];
+            if (!empty($banca->bic)) {
+                $pagamento['BIC'] = $banca->bic;
             }
 
             $result[]['DettaglioPagamento'] = $pagamento;

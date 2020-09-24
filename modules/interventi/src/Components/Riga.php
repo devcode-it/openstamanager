@@ -20,7 +20,6 @@
 namespace Modules\Interventi\Components;
 
 use Common\Components\Row;
-use Modules\Interventi\Intervento;
 
 class Riga extends Row
 {

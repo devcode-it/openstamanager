@@ -20,8 +20,6 @@
 namespace Modules\Ordini\Components;
 
 use Common\Components\Article;
-use Modules\Articoli\Articolo as Original;
-use Modules\Ordini\Ordine;
 
 class Articolo extends Article
 {

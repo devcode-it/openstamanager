@@ -56,7 +56,7 @@ include_once __DIR__.'/../../core.php';
                 </div>
 
 				<div class="col-md-4">
-					{[ "type": "text", "label": "<?php echo tr('BIC'); ?>", "name": "bic", "class": "alphanumeric-mask", "maxlength": 11, "value": "$bic$" ]}
+					{[ "type": "text", "label": "<?php echo tr('BIC'); ?>", "name": "bic", "required": "1", "class": "alphanumeric-mask", "maxlength": 11, "value": "$bic$" ]}
                 </div>
 			</div>
 
@@ -72,15 +72,15 @@ include_once __DIR__.'/../../core.php';
 
 <?php
 // Collegamenti diretti (numerici)
-$documenti = $dbo->fetchNum('SELECT idanagrafica FROM an_anagrafiche WHERE idbanca_vendite='.prepare($id_record).'
+$numero_documenti = $dbo->fetchNum('SELECT idanagrafica FROM an_anagrafiche WHERE idbanca_vendite='.prepare($id_record).'
 UNION SELECT idanagrafica FROM an_anagrafiche WHERE idbanca_acquisti='.prepare($id_record).'
 UNION SELECT idanagrafica FROM co_documenti WHERE idbanca='.prepare($id_record));
 
-if (!empty($documenti)) {
+if (!empty($numero_documenti)) {
     echo '
 <div class="alert alert-danger">
     '.tr('Ci sono _NUM_ documenti collegati', [
-        '_NUM_' => count($documenti),
+        '_NUM_' => $numero_documenti,
     ]).'.
 </div>';
 }

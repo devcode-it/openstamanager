@@ -20,7 +20,6 @@
 namespace Modules\DDT\Components;
 
 use Common\Components\Description;
-use Modules\DDT\DDT;
 
 class Descrizione extends Description
 {

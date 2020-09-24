@@ -90,10 +90,6 @@ UPDATE `zz_settings` SET `valore` = 'v3' WHERE `nome` = 'OSMCloud Services API V
 
 -- Aggiornamento margini stampa barbcode
 UPDATE `zz_prints` SET `options` = '{"width": 54, "height": 20, "format": [64, 55], "margins": {"top": 5,"bottom": 0,"left": 0,"right": 0}}' WHERE `zz_prints`.`name` = 'Barcode';
--- Aggiornamento del modulo Banche per il supporto completo alle Anagrafiche
-ALTER TABLE `co_banche` ADD `id_anagrafica` INT(11) NOT NULL, CHANGE `note` `note` TEXT, CHANGE `filiale` `filiale` varchar(255);
-UPDATE `co_banche` SET  `id_anagrafica` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = 'Azienda predefinita');
-ALTER TABLE `co_banche` ADD FOREIGN KEY (`id_anagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE CASCADE;
 
 -- Aggiunta riferimenti testuali su descrizione righe per Fatture
 UPDATE `co_righe_documenti`
@@ -180,7 +176,12 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `mg_articoli` LEFT JOI
 UPDATE `zz_plugins` SET `options` = ' { "main_query": [ { "type": "table", "fields": "Matricola, Nome, Data, Descrizione", "query": "SELECT id, (SELECT `id` FROM `zz_modules` WHERE `name` = ''Impianti'') AS _link_module_, id AS _link_record_, matricola AS Matricola, nome AS Nome, DATE_FORMAT(data, ''%d/%m/%Y'') AS Data, descrizione AS Descrizione FROM my_impianti WHERE idanagrafica=|id_parent| HAVING 2=2 ORDER BY id DESC"} ]}' WHERE `zz_plugins`.`name` = 'Impianti del cliente';
 
 -- Fix per plugin Storico attività
-UPDATE `zz_plugins` SET `options` = '{"main_query": [{"type": "table", "fields": "Numero, Data inizio, Data fine, Tipo", "query": "SELECT in_interventi.id, in_interventi.codice AS Numero, DATE_FORMAT(MAX(orario_inizio),''%d/%m/%Y'') AS ''Data inizio'', DATE_FORMAT(MAX(orario_fine),''%d/%m/%Y'') AS ''Data fine'', (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=in_interventi.idtipointervento) AS ''Tipo'', (SELECT `id` FROM `zz_modules` WHERE `name` = ''Interventi'') AS _link_module_, in_interventi.id AS _link_record_ FROM in_interventi LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` LEFT JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`idstatointervento` WHERE 1=1 AND in_interventi.deleted_at IS NULL AND idanagrafica = |id_parent| GROUP BY `in_interventi`.`id` HAVING 2=2 ORDER BY in_interventi.id DESC"}]}'
+UPDATE `zz_plugins` SET `options` = '{"main_query": [{"type": "table", "fields": "Numero, Data inizio, Data fine, Tipo", "query": "SELECT in_interventi.id, in_interventi.codice AS Numero, DATE_FORMAT(MAX(orario_inizio),''%d/%m/%Y'') AS ''Data inizio'', DATE_FORMAT(MAX(orario_fine),''%d/%m/%Y'') AS ''Data fine'', (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=in_interventi.idtipointervento) AS ''Tipo'', (SELECT `id` FROM `zz_modules` WHERE `name` = ''Interventi'') AS _link_module_, in_interventi.id AS _link_record_ FROM in_interventi LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` LEFT JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`idstatointervento` WHERE 1=1 AND in_interventi.deleted_at IS NULL AND idanagrafica = |id_parent| GROUP BY `in_interventi`.`id` HAVING 2=2 ORDER BY in_interventi.id DESC"}]}';
+
+-- Aggiornamento del modulo Banche per il supporto completo alle Anagrafiche
+ALTER TABLE `co_banche` ADD `id_anagrafica` INT(11) NOT NULL, CHANGE `note` `note` TEXT, CHANGE `filiale` `filiale` varchar(255);
+UPDATE `co_banche` SET  `id_anagrafica` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = 'Azienda predefinita');
+ALTER TABLE `co_banche` ADD FOREIGN KEY (`id_anagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE CASCADE;
 
 -- Collegamento sulla base dei campi aggiuntivi per le Anagrafiche
 UPDATE `co_banche`
@@ -197,6 +198,8 @@ ALTER TABLE `an_anagrafiche` CHANGE `idbanca_acquisti` `idbanca_acquisti` INT(11
     CHANGE `idbanca_vendite` `idbanca_vendite` INT(11);
 UPDATE `an_anagrafiche` SET `idbanca_acquisti` = NULL WHERE `idbanca_vendite` = 0;
 UPDATE `an_anagrafiche` SET `idbanca_vendite` = NULL WHERE `idbanca_vendite` = 0;
+
+ALTER TABLE `co_banche` CHANGE `filiale` `filiale` varchar(255), CHANGE `note` `note` TEXT;
 
 INSERT INTO `co_banche` (`id_anagrafica`, `nome`, `iban`, `bic`, `filiale`) SELECT idanagrafica, IF(appoggiobancario != '', appoggiobancario, CONCAT('Banca predefinita di ', ragione_sociale)), codiceiban, bic, filiale FROM an_anagrafiche WHERE codiceiban IS NOT  NULL AND codiceiban != '';
 

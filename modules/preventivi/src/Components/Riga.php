@@ -20,7 +20,6 @@
 namespace Modules\Preventivi\Components;
 
 use Common\Components\Row;
-use Modules\Preventivi\Preventivo;
 
 class Riga extends Row
 {

@@ -20,7 +20,6 @@
 namespace Modules\DDT\Components;
 
 use Common\Components\Discount;
-use Modules\DDT\DDT;
 
 class Sconto extends Discount
 {

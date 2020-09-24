@@ -20,7 +20,6 @@
 namespace Modules\Ordini\Components;
 
 use Common\Components\Description;
-use Modules\Ordini\Ordine;
 
 class Descrizione extends Description
 {

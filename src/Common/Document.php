@@ -40,7 +40,7 @@ abstract class Document extends Model implements ReferenceInterface, DocumentInt
     {
         return static::$movimenta_magazzino;
     }
-    
+
     public function getRighe()
     {
         $results = $this->mergeCollections($this->descrizioni, $this->righe, $this->articoli, $this->sconti);

@@ -20,8 +20,6 @@
 namespace Modules\Preventivi\Components;
 
 use Common\Components\Article;
-use Modules\Articoli\Articolo as Original;
-use Modules\Preventivi\Preventivo;
 
 class Articolo extends Article
 {

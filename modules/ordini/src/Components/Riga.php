@@ -20,7 +20,6 @@
 namespace Modules\Ordini\Components;
 
 use Common\Components\Row;
-use Modules\Ordini\Ordine;
 
 class Riga extends Row
 {

@@ -19,12 +19,14 @@
 
 namespace Modules\Banche;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Anagrafiche\Anagrafica;
 
 class Banca extends Model
 {
+    use SimpleModelTrait;
     use SoftDeletes;
 
     protected $table = 'co_banche';
@@ -40,7 +42,7 @@ class Banca extends Model
      */
     public static function build(Anagrafica $anagrafica, $nome, $iban, $bic)
     {
-        $model = parent::build();
+        $model = new static();
 
         // Informazioni di base
         $model->anagrafica()->associate($anagrafica);

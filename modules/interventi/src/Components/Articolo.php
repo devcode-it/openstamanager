@@ -20,8 +20,6 @@
 namespace Modules\Interventi\Components;
 
 use Common\Components\Article;
-use Modules\Articoli\Articolo as Original;
-use Modules\Interventi\Intervento;
 
 class Articolo extends Article
 {

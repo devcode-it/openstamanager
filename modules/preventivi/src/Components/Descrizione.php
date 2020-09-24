@@ -20,7 +20,6 @@
 namespace Modules\Preventivi\Components;
 
 use Common\Components\Description;
-use Modules\Preventivi\Preventivo;
 
 class Descrizione extends Description
 {

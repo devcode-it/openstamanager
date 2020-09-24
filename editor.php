@@ -262,7 +262,7 @@ if (empty($record) || !$has_access) {
                 });
                 </script>';
 
-    if ($structure->permission != '-' && $structure->use_notes) {
+    if ($structure->permission != '-' && $structure->use_notes && $user->gruppo != 'Clienti') {
         echo '
                 <div id="tab_note" class="tab-pane">';
 
@@ -418,7 +418,7 @@ if ($read_only || !empty($block_edit)) {
                 $(".checkbox-buttons label", "section.content")'.$not.'.addClass("disabled");
                 ';
 
-    //Nascondo il plugin note interne ai clienti
+    // Nascondo il plugin Note interne ai clienti
     if ($user->gruppo == 'Clienti') {
         echo '
                 $("#link-tab_note").hide();';

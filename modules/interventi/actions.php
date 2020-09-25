@@ -135,12 +135,13 @@ switch (post('op')) {
             // Sincronizzazione con il promemoria indicato
             if (!empty($id_promemoria)) {
                 $promemoria = Promemoria::find($id_promemoria);
-                $promemoria->pianifica($intervento);
+                $promemoria->pianifica($intervento, false);
             }
 
             // Collegamenti intervento/impianti
             $impianti = (array) post('idimpianti');
             if (!empty($impianti)) {
+                $impianti = array_unique($impianti);
                 foreach ($impianti as $impianto) {
                     $dbo->insert('my_impianti_interventi', [
                         'idintervento' => $id_record,
@@ -192,10 +193,10 @@ switch (post('op')) {
     // Eliminazione intervento
     case 'delete':
         try {
-            $intervento->delete();
-
             // Eliminazione associazioni tra interventi e contratti
             $dbo->query('UPDATE co_promemoria SET idintervento = NULL WHERE idintervento='.prepare($id_record));
+
+            $intervento->delete();
 
             // Elimino il collegamento al componente
             $dbo->query('DELETE FROM my_impianto_componenti WHERE idintervento='.prepare($id_record));

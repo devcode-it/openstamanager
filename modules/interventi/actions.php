@@ -166,8 +166,8 @@ switch (post('op')) {
         }
 
         // Collegamenti tecnici/interventi
-        $idtecnici = post('idtecnico');
         if (!empty(post('orario_inizio')) && !empty(post('orario_fine'))) {
+            $idtecnici = post('idtecnico');
             foreach ($idtecnici as $idtecnico) {
                 add_tecnico($id_record, $idtecnico, post('orario_inizio'), post('orario_fine'), $idcontratto);
             }
@@ -410,6 +410,13 @@ switch (post('op')) {
                 $copia->save();
             }
         }
+
+        // Modifica finale dello stato
+    /*
+        if (post('create_document') == 'on') {
+            $intervento->idstatointervento = post('id_stato_intervento');
+            $intervento->save();
+        }*/
 
         // Messaggio informativo
         $message = tr('_DOC_ aggiunto!', [

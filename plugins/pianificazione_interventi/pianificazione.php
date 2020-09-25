@@ -110,7 +110,7 @@ echo '
 			   </div>
 
 				<div class="col-md-6">
-                    {[ "type": "select", "multiple": "1", "label": "'.tr('Impianti a contratto').'", "name": "idimpianti[]", "help": "'.tr('Impianti sede selezionata').'", "values": "query=SELECT my_impianti.id AS id, my_impianti.nome AS descrizione FROM my_impianti_contratti INNER JOIN my_impianti ON my_impianti_contratti.idimpianto = my_impianti.id  WHERE my_impianti_contratti.idcontratto = '.$id_parent.' ORDER BY descrizione", "value": "'.implode(',', $id_impianti).'", "readonly": '.intval($block_edit).' ]}
+                    {[ "type": "select", "multiple": "1", "label": "'.tr('Impianti a contratto').'", "name": "idimpianti[]", "help": "'.tr('Impianti della sede selezionata per il Contratto').'", "values": "query=SELECT my_impianti.id AS id, my_impianti.nome AS descrizione FROM my_impianti_contratti INNER JOIN my_impianti ON my_impianti_contratti.idimpianto = my_impianti.id  WHERE my_impianti_contratti.idcontratto = '.$id_parent.' ORDER BY descrizione", "value": "'.implode(',', $id_impianti).'", "readonly": '.intval($block_edit).' ]}
 				</div>
 			</div>
 
@@ -144,11 +144,15 @@ echo '
                         <i class="fa fa-plus"></i> '.tr('Riga').'
                     </a>';
             }
+
             echo '
                 </div>
             </div>
 
-            <div id="righe">';
+            <div class="clearfix"></div>
+            <br>
+
+            <div id="righe_promemoria">';
 
 include $structure->filepath('row-list.php');
 
@@ -304,7 +308,7 @@ echo '
 
     });
 
-    function refreshRighe(id){
-        $("#righe").load("'.$plugin->fileurl('row-list.php').'?id_plugin='.$id_plugin.'&id_record=" + id + "&add='.$block_edit.'");
+    function refreshRighe(id) {
+        $("#righe_promemoria").load("'.$plugin->fileurl('row-list.php').'?id_plugin='.$id_plugin.'&id_record=" + id + "&add='.$block_edit.'");
     }
 </script>';

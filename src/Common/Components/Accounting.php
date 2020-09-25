@@ -27,6 +27,7 @@ use Modules\Iva\Aliquota;
  *
  * Prevede i seguenti campi nel database:
  *
+ * @property float costo_unitario
  * @property float prezzo_unitario
  * @property float iva_unitaria = prezzo_unitario * percentuale_iva
  * @property float prezzo_unitario_ivato = prezzo_unitario + iva_unitaria
@@ -41,6 +42,7 @@ use Modules\Iva\Aliquota;
  * @property float iva = (iva_unitaria - sconto_iva_unitario) * qta
  * @property float totale = (prezzo_unitario_ivato - sconto_unitario_ivato) * qta [Totale imponibile con IVA]
  * @property float importo = se incorpora_iva: totale, altrimenti: totale_imponibile
+ * @property float spesa = costo_unitario * qta
  *
  * Per una estensione del sistema dei totali (Rivalsa, Ritenuta, ...), si consiglia di introdurre un relativo Netto a pagare. [Fatture]
  *
@@ -64,6 +66,17 @@ abstract class Accounting extends Component
         'prezzo_unitario_corrente',
         'sconto_unitario_corrente',
         'max_qta',
+        'spesa',
+        'imponibile',
+        'sconto',
+        'totale_imponibile',
+        'iva',
+        'totale',
+    ];
+
+    protected $hidden = [
+        'document',
+        'aliquota',
     ];
 
     public function getIvaIndetraibileAttribute()

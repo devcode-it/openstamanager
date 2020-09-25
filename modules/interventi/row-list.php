@@ -87,7 +87,7 @@ if (!$righe->isEmpty()) {
                 </td>';
 
         if ($show_prezzi) {
-            //Costo unitario
+            // Costo unitario
             echo '
                 <td class="text-right">
                     '.moneyFormat($riga->costo_unitario).'

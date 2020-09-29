@@ -151,6 +151,8 @@ if (!empty($google)) {
 $elementi = $dbo->fetchArray('SELECT `zz_user_sedi`.`id_user` AS `id` FROM `zz_user_sedi` WHERE `zz_user_sedi`.`idsede` = '.prepare($id_record).'
 UNION
 SELECT `an_referenti`.`id` AS `id` FROM `an_referenti` WHERE `an_referenti`.`idsede` = '.prepare($id_record).'
+UNION
+SELECT `co_documenti`.`id` AS `id` FROM `co_documenti` WHERE `co_documenti`.`idsede_destinazione` = '.prepare($id_record).'
 ORDER BY `id`');
 
 if (!empty($elementi)) {
@@ -168,7 +170,7 @@ echo '
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12">
-            <button type="button" class="btn btn-danger '.$disabled.'" onclick="rimuoviSede(this)">
+            <button type="button" class="btn btn-danger ask '.$disabled.'" data-backto="record-edit" data-op="deletesede" data-id="'.$record['id'].'" data-id_record="'.$record['id'].'" data-id_plugin="'.$id_plugin.'" data-id_module="'.$id_module.'" data-id_parent="'.$id_parent.'" >
                 <i class="fa fa-trash"></i> '.tr('Elimina').'
             </button>
 
@@ -179,22 +181,6 @@ echo '
 
 echo '
 <script>
-function rimuoviSede(button) {
-    let href = window.location.href.split("#")[0];
-
-    confirmDelete(button).then(function () {
-        redirect(globals.rootdir + "/editor.php", {
-            backto: "record-edit",
-            href: href,
-            op: "deletesede",
-            id: "'.$record['id'].'",
-            id_plugin: "'.$id_plugin.'",
-            id_module: "'.$id_module.'",
-            id_parent: "'.$id_parent.'",
-        });
-    }).catch(swal.noop);
-}
-
 $(document).ready( function(){
     $("#form_sedi #geocomplete input").geocomplete({
         map: $("#form_sedi #map").length ? "#form_sedi #map" : false,

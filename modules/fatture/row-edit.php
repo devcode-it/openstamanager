@@ -31,7 +31,8 @@ $options = [
     'conti' => $documento->direzione == 'entrata' ? 'conti-vendite' : 'conti-acquisti',
     'idanagrafica' => $documento['idanagrafica'],
     'show-ritenuta-contributi' => !empty($documento['id_ritenuta_contributi']),
-    'totale_imponibile' => $documento->totale_imponibile,
+    'totale_imponibile_documento' => $documento->totale_imponibile,
+    'totale_documento' => $documento->totale,
     'select-options' => [
         'articoli' => [
             'idanagrafica' => $documento->idanagrafica,

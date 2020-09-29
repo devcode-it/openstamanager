@@ -57,6 +57,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Modifica del sistema di riferimenti tra Documenti per includere il codice relativo nella Descrizione delle righe relative (con deprecazione dell'Impostazione "Riferimento dei documenti nelle stampe") {
  - Modifica del sistema di riferimenti tra Documenti per includere il codice relativo nella *Descrizione* delle righe relative (con deprecazione dell'*Impostazione* "Riferimento dei documenti nelle stampe")
  - Miglioramento elenco *Promemoria* in **Dashboard**, per visualizzare il *Tecnico* relativo
+ - Corretta l'impostazione degli Sconti generici nei Documenti per l'utilizzo dell'importo ivato nel caso dell'impostazione "Utilizza prezzi di vendita comprensivi di IVA"
 
 ### Fixed
  - Correzione del numero delle righe sui Documenti a seguito di un riordinamento

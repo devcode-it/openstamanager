@@ -71,6 +71,34 @@ abstract class Discount extends Accounting
     }
 
     /**
+     * Imposta lo sconto unitario secondo le informazioni indicate per valore e tipologia (UNT o PRC).
+     *
+     * @param float $valore_unitario
+     * @param int   $id_iva
+     */
+    public function setScontoUnitario($valore_unitario, $id_iva)
+    {
+        $this->id_iva = $id_iva;
+
+        // Gestione IVA incorporata
+        if ($this->incorporaIVA()) {
+            $this->sconto_unitario_ivato = $valore_unitario;
+        } else {
+            $this->sconto_unitario = $valore_unitario;
+        }
+    }
+
+    public function setPrezzoUnitario($prezzo_unitario, $id_iva)
+    {
+        throw new \InvalidArgumentException();
+    }
+
+    public function setSconto($value, $type)
+    {
+        throw new \InvalidArgumentException();
+    }
+
+    /**
      * Effettua i conti per l'IVA.
      */
     protected function fixIva()

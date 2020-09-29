@@ -516,9 +516,6 @@ switch (post('op')) {
             $sconto = Sconto::build($fattura);
         }
 
-        $sconto->descrizione = post('descrizione');
-
-        $sconto->id_iva = post('idiva');
         $sconto->idconto = post('idconto');
 
         $sconto->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto') ?: null;
@@ -526,8 +523,8 @@ switch (post('op')) {
         $sconto->ritenuta_contributi = boolval(post('ritenuta_contributi'));
         $sconto->id_rivalsa_inps = post('id_rivalsa_inps') ?: null;
 
-        $sconto->sconto_unitario = post('sconto_unitario');
-        $sconto->tipo_sconto = 'UNT';
+        $sconto->descrizione = post('descrizione');
+        $sconto->setScontoUnitario(post('sconto_unitario'), post('idiva'));
 
         $sconto->save();
 

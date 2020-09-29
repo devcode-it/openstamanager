@@ -50,7 +50,8 @@ include_once __DIR__.'/../../core.php';
 
                     <div class="row">
                         <div class="col-md-6">
-                            {[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie" ]}
+                            <?php echo Modules::link('Categorie articoli', $record['id_categoria'], null, null, 'class="pull-right"'); ?>
+                            {[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie", "icon-after": "add|<?php echo Modules::get('Categorie articoli')['id']; ?>" ]}
                         </div>
 
                         <div class="col-md-6">

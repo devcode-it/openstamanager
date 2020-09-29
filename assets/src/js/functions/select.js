@@ -207,17 +207,12 @@ jQuery.fn.selectData = function () {
     let selectData = this.select2('data');
 
     if (this.prop('multiple')) {
-        let results = [];
-        for (const option of selectData) {
-            results.push(option.element.dataset);
-        }
-
-        return results;
-    } else if (selectData.length === 0) {
-        return undefined;
-    } else {
-        return selectData[0].element.dataset;
+        return selectData;
+    } else if (selectData.length !== 0 && selectData[0].id) {
+        return selectData[0];
     }
+
+    return undefined;
 };
 
 /**

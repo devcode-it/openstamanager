@@ -170,7 +170,7 @@ echo '
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12">
-            <button type="button" class="btn btn-danger ask '.$disabled.'" data-backto="record-edit" data-op="deletesede" data-id="'.$record['id'].'" data-id_record="'.$record['id'].'" data-id_plugin="'.$id_plugin.'" data-id_module="'.$id_module.'" data-id_parent="'.$id_parent.'" >
+            <button type="button" class="btn btn-danger '.$disabled.'" onclick="rimuoviSede(this)">
                 <i class="fa fa-trash"></i> '.tr('Elimina').'
             </button>
 
@@ -181,6 +181,22 @@ echo '
 
 echo '
 <script>
+function rimuoviSede(button) {
+    let hash = window.location.href.split("#")[1];
+
+    confirmDelete(button).then(function () {
+        redirect(globals.rootdir + "/editor.php", {
+            backto: "record-edit",
+            hash: hash,
+            op: "deletesede",
+            id: "'.$record['id'].'",
+            id_plugin: "'.$id_plugin.'",
+            id_module: "'.$id_module.'",
+            id_parent: "'.$id_parent.'",
+        });
+    }).catch(swal.noop);
+}
+
 $(document).ready( function(){
     $("#form_sedi #geocomplete input").geocomplete({
         map: $("#form_sedi #map").length ? "#form_sedi #map" : false,

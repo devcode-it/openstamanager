@@ -191,6 +191,10 @@ class CSV extends CSVImporter
         $qta = $record['qta'];
         unset($record['qta']);
 
+        //Prezzo di vendita
+        $articolo->setPrezzoVendita($record['prezzo_vendita'], ($aliquota->id ? $aliquota->id : setting('Iva predefinita')));
+        unset($record['prezzo_vendita']);
+
         // Salvataggio delle informazioni generali
         $articolo->fill($record);
         $articolo->save();

@@ -82,7 +82,7 @@ class CSV extends CSVImporter
                 ],
             ],
             [
-                'field' => 'categoria',
+                'field' => 'id_categoria',
                 'label' => 'Categoria',
                 'names' => [
                     'Categoria',
@@ -91,7 +91,7 @@ class CSV extends CSVImporter
                 ],
             ],
             [
-                'field' => 'sottocategoria',
+                'field' => 'id_sottocategoria',
                 'label' => 'Sottocategoria',
                 'names' => [
                     'Sottocategoria',
@@ -147,29 +147,29 @@ class CSV extends CSVImporter
         }
 
         // Gestione categoria e sottocategoria
-        if (!empty($record['categoria'])) {
+        if (!empty($record['id_categoria'])) {
             // Categoria
-            $categoria = Categoria::where('nome', $record['categoria'])->first();
+            $categoria = Categoria::where('nome', $record['id_categoria'])->first();
             if (empty($categoria)) {
-                $categoria = Categoria::build($record['categoria']);
+                $categoria = Categoria::build($record['id_categoria']);
             }
 
             // Sotto-categoria
             $sottocategoria = null;
-            if (!empty($record['sottocategoria'])) {
-                $sottocategoria = Categoria::where('nome', $record['sottocategoria'])
+            if (!empty($record['id_sottocategoria'])) {
+                $sottocategoria = Categoria::where('nome', $record['id_sottocategoria'])
                     ->where('parent', $categoria->id)
                     ->first();
 
                 if (empty($sottocategoria)) {
-                    $sottocategoria = Categoria::build($record['categoria']);
+                    $sottocategoria = Categoria::build($record['id_categoria']);
                     $sottocategoria->parent()->associate($categoria);
                     $sottocategoria->save();
                 }
             }
         }
-        unset($record['categoria']);
-        unset($record['sottocategoria']);
+        unset($record['id_categoria']);
+        unset($record['id_sottocategoria']);
 
         // Individuazione dell'IVA di vendita tramite il relativo Codice
         $aliquota = null;
@@ -190,6 +190,10 @@ class CSV extends CSVImporter
         // Esportazione della quantità indicata
         $qta = $record['qta'];
         unset($record['qta']);
+
+        //Prezzo di vendita
+        $articolo->setPrezzoVendita($record['prezzo_vendita'], ($aliquota->id ? $aliquota->id : setting('Iva predefinita')));
+        unset($record['prezzo_vendita']);
 
         // Salvataggio delle informazioni generali
         $articolo->fill($record);

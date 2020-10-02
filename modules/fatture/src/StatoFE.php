@@ -19,10 +19,13 @@
 
 namespace Modules\Fatture;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 
 class StatoFE extends Model
 {
+    use SimpleModelTrait;
+
     public $incrementing = false;
     protected $table = 'fe_stati_documento';
     protected $primaryKey = 'codice';

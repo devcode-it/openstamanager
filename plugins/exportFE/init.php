@@ -26,4 +26,4 @@ try {
 } catch (UnexpectedValueException $e) {
 }
 
-$upload_dir = DOCROOT.'/'.FatturaElettronica::getDirectory();
+$upload_dir = base_dir().'/'.FatturaElettronica::getDirectory();

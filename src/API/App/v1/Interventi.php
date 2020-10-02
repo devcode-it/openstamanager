@@ -233,7 +233,7 @@ class Interventi extends AppResource
             $constraint->aspectRatio();
         });
 
-        $img->save(DOCROOT.'/files/interventi/'.$firma_file);
+        $img->save(base_dir().'/files/interventi/'.$firma_file);
 
         return $firma_file;
     }

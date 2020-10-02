@@ -19,21 +19,23 @@
 
 namespace Modules\Interventi\Components;
 
-use Common\Model;
+use Common\SimpleModelTrait;
 use DateTime;
+use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\Intervento;
-use Modules\Iva\Aliquota;
-use Modules\TipiIntervento\Tipo as TipoSessione;
-
-/**
+/*
  * Notazione: i costi sono rivolti all'azienda, i prezzi al cliente.
  *
  * @since 2.4.9
  */
+use Modules\Iva\Aliquota;
+use Modules\TipiIntervento\Tipo as TipoSessione;
+
 class Sessione extends Model
 {
+    use SimpleModelTrait;
     use RelationTrait;
 
     protected $table = 'in_interventi_tecnici';
@@ -54,9 +56,9 @@ class Sessione extends Model
             throw new InvalidArgumentException();
         }
 
-        $model = parent::build();
+        $model = new static();
 
-        $model->parent()->associate($intervento);
+        $model->document()->associate($intervento);
         $model->anagrafica()->associate($anagrafica);
 
         $id_tipo = $intervento['idtipointervento'];
@@ -152,7 +154,7 @@ class Sessione extends Model
         return parent::save($options);
     }
 
-    public function getParentID()
+    public function getDocumentID()
     {
         return 'idintervento';
     }
@@ -171,7 +173,7 @@ class Sessione extends Model
 
     public function parent()
     {
-        return $this->belongsTo(Intervento::class, $this->getParentID());
+        return $this->belongsTo(Intervento::class, $this->getDocumentID());
     }
 
     // Costi per l'azienda
@@ -397,7 +399,7 @@ class Sessione extends Model
      */
     public function getMarginePercentualeAttribute()
     {
-        return (1 - ($this->spesa / $this->imponibile)) * 100;
+        return $this->imponibile ? (1 - ($this->spesa / $this->imponibile)) * 100 : 100;
     }
 
     public function getIvaIndetraibileAttribute()

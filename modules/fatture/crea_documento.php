@@ -22,12 +22,14 @@ include_once __DIR__.'/../../core.php';
 use Modules\Fatture\Fattura;
 
 $documento = Fattura::find($id_record);
+$tipo_documento_finale = Fattura::class;
 
 $options = [
     'type' => 'nota_credito',
     'op' => 'nota_credito',
     'module' => 'Fatture di vendita',
     'documento' => $documento,
+    'tipo_documento_finale' => $tipo_documento_finale,
     'button' => tr('Aggiungi'),
     'create_document' => true,
     'allow-empty' => true,

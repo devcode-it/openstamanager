@@ -143,9 +143,8 @@ class Translator extends Util\Singleton
      * Restituisce la traduzione richiesta.
      *
      * @param string $string
-     * @param string $parameters
-     * @param string $domain
-     * @param string $locale
+     * @param array  $parameters
+     * @param array  $operations
      *
      * @return string
      */

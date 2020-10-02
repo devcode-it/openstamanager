@@ -32,7 +32,7 @@ if (empty($id_record)) {
 
     for ($c = 1; $c <= count($cmp); ++$c) {
         echo '
-            <tr class="clickable" onclick="openLink(event, \''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$c.'\')">
+            <tr class="clickable" onclick="openLink(event, \''.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$c.'\')">
                 <td>'.$c.'</td>
                 <td>'.$cmp[$c - 1][0].'</td>
 			</tr>';

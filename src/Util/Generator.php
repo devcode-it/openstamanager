@@ -209,7 +209,7 @@ class Generator
 
         $result = $query->first();
 
-        return $result->{$field};
+        return isset($result->{$field}) ? $result->{$field} : null;
     }
 
     /**
@@ -229,11 +229,13 @@ class Generator
         $query = $field.' DESC';
 
         // Estraggo blocchi di caratteri standard
-        preg_match('/[#]+/', $maschera, $m1);
+        preg_match('/[#]+/', $maschera, $matches);
 
-        $pos1 = strpos($maschera, (string) $m1[0]);
-        if ($pos1 == 0) {
-            $query = 'CAST('.$field.' AS UNSIGNED) DESC';
+        if (!empty($matches)) {
+            $pos1 = strpos($maschera, (string) $matches[0]);
+            if ($pos1 == 0) {
+                $query = 'CAST('.$field.' AS UNSIGNED) DESC';
+            }
         }
 
         return $query;

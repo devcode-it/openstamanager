@@ -19,11 +19,14 @@
 
 namespace Modules\Scadenzario;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 use Modules\Fatture\Fattura;
 
 class Scadenza extends Model
 {
+    use SimpleModelTrait;
+
     protected $table = 'co_scadenziario';
 
     protected $dates = [
@@ -33,7 +36,7 @@ class Scadenza extends Model
 
     public static function build($descrizione, $importo, $data_scadenza, $type = 'fattura', $is_pagato = false)
     {
-        $model = parent::build();
+        $model = new static();
 
         $model->descrizione = $descrizione;
         $model->scadenza = $data_scadenza;

@@ -51,7 +51,7 @@ class AllegatiInterventi extends AppResource
     {
         // Elenco di interventi di interesse
         $risorsa_interventi = $this->getRisorsaInterventi();
-        $interventi = $risorsa_interventi->getModifiedRecords($last_sync_at);
+        $interventi = $risorsa_interventi->getModifiedRecords(null);
         if (empty($interventi)) {
             return [];
         }

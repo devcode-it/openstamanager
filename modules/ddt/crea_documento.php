@@ -20,6 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\DDT\DDT;
+use Modules\Fatture\Fattura;
 
 $documento = DDT::find($id_record);
 
@@ -27,6 +28,7 @@ $module = Modules::get($id_module);
 
 $final_module = $module['name'] == 'Ddt di vendita' ? 'Fatture di vendita' : 'Fatture di acquisto';
 $dir = $module['name'] == 'Ddt di vendita' ? 'entrata' : 'uscita';
+$tipo_documento_finale = Fattura::class;
 
 $options = [
     'op' => 'add_documento',
@@ -37,6 +39,7 @@ $options = [
     'dir' => $dir,
     'create_document' => true,
     'documento' => $documento,
+    'tipo_documento_finale' => $tipo_documento_finale,
 ];
 
 echo App::load('importa.php', [], $options, true);

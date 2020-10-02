@@ -18,6 +18,7 @@
  */
 
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Banche\Banca;
 
 include_once __DIR__.'/../../core.php';
 
@@ -47,6 +48,7 @@ if (!$is_cliente) {
     }
 }
 
+$nazione_anagrafica = $anagrafica->sedeLegale->nazione;
 ?>
 
 <form action="" method="post" id="edit-form"  autocomplete="<?php echo setting('Autocompletamento form'); ?>" >
@@ -129,7 +131,7 @@ if (!$is_cliente) {
                                 $help_codice_destinatario .= ' <b>'.tr("Non è necessario comunicare il proprio codice destinatario ai fornitori in quanto è sufficiente che questo sia registrato nel portale del Sistema Di Interscambio dell'Agenzia Entrate (SDI)").'.</b>';
                             }
                         ?>
-						{[ "type": "text", "label": "<?php echo ($record['tipo'] == 'Ente pubblico') ? tr('Codice unico ufficio') : tr('Codice destinatario'); ?>", "name": "codice_destinatario", "required": 0, "class": "text-center text-uppercase alphanumeric-mask", "value": "$codice_destinatario$", "maxlength": <?php echo ($record['tipo'] == 'Ente pubblico') ? '6' : '7'; ?>, "help": "<?php echo tr($help_codice_destinatario); ?>", "readonly": "<?php echo intval($anagrafica->sedeLegale->nazione->iso2 != 'IT'); ?>" ]}
+						{[ "type": "text", "label": "<?php echo ($record['tipo'] == 'Ente pubblico') ? tr('Codice unico ufficio') : tr('Codice destinatario'); ?>", "name": "codice_destinatario", "required": 0, "class": "text-center text-uppercase alphanumeric-mask", "value": "$codice_destinatario$", "maxlength": <?php echo ($record['tipo'] == 'Ente pubblico') ? '6' : '7'; ?>, "help": "<?php echo tr($help_codice_destinatario); ?>", "readonly": "<?php echo intval($nazione_anagrafica ? $nazione_anagrafica->iso2 != 'IT' : 0); ?>" ]}
 					</div>
 
                     <div class="col-md-4">
@@ -378,7 +380,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
 
                 <div class="tab-content '.(!$is_cliente && !$is_fornitore && !$is_tecnico ? 'hide' : '').'">
                     <div class="tab-pane '.(!$is_cliente && !$is_fornitore ? ' hide' : '').'" id="cliente_fornitore">
-                        <div class="row">
+                        <!--div class="row">
                              <div class="col-md-6">
                                  {[ "type": "text", "label": "'.tr('Appoggio bancario').'", "name": "appoggiobancario", "value": "$appoggiobancario$" ]}
                              </div>
@@ -387,6 +389,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                                  {[ "type": "text", "label": "'.tr('Filiale banca').'", "name": "filiale", "value": "$filiale$" ]}
                              </div>
                         </div>
+
                         <div class="row">
                              <div class="col-md-6">
                                  {[ "type": "text", "label": "'.tr('Codice IBAN').'", "name": "codiceiban", "value": "$codiceiban$" ]}
@@ -395,7 +398,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                              <div class="col-md-6">
                                  {[ "type": "text", "label": "'.tr('Codice BIC').'", "name": "bic", "value": "$bic$" ]}
                              </div>
-                         </div>
+                        </div-->
 
                         <div class="row">
                             <div class="col-md-3">
@@ -405,10 +408,36 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                             <div class="col-md-9">
                                 {[ "type": "text", "label": "'.tr('Dicitura fissa in fattura').'", "name": "diciturafissafattura", "value": "$diciturafissafattura$" ]}
                             </div>
-                        </div>
-                    </div>';
+                        </div>';
+
+    $banche = Banca::where('id_anagrafica', $anagrafica->id)->get();
+    $banca_predefinita = $banche->first(function ($item) {
+        return !empty($item['predefined']);
+    });
+    $modulo_banche = Modules::get('Banche');
+    if (!$banche->isEmpty()) {
+        echo '
+                        <div class="row">
+                            <div class="col-md-6">
+                                <a href="'.base_path().'/editor.php?id_module='.$modulo_banche['id'].'&id_record='.$banca_predefinita->id.'">
+                                    '.tr("Visualizza la banca predefinita per l'Anagrafica").' <i class="fa fa-external-link"></i>
+                                </a>
+                            </div>
+
+                            <div class="col-md-6">
+                                <a href="'.base_path().'/controller.php?id_module='.$modulo_banche['id'].'&search_Anagrafica='.rawurlencode($anagrafica['ragione_sociale']).'">
+                                    '.tr("Visualizza le banche disponibili per l'Anagrafica").' <i class="fa fa-external-link"></i>
+                                </a>
+                            </div>
+                        </div>';
+    } else {
+        echo '
+                        <p>'.tr("Nessuna banca disponibile per l'Anagrafica").'</p>';
+    }
 
     echo '
+                    </div>
+
                     <div class="tab-pane '.(!$is_cliente ? 'hide' : 'active').'" id="cliente">
                         <div class="row">
                             <div class="col-md-6">
@@ -426,7 +455,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                             </div>
 
                             <div class="col-md-6">
-                                {[ "type": "select", "label": "'.tr('Banca predefinita').'", "name": "idbanca_vendite", "values": "query=SELECT id, nome AS descrizione FROM co_banche WHERE deleted_at IS NULL ORDER BY nome ASC", "value": "$idbanca_vendite$", "icon-after": "add|'.Modules::get('Banche')['id'].'", "help": "'.tr('Banca predefinita su cui accreditare i pagamenti.').'" ]}
+                                {[ "type": "select", "label": "'.tr('Banca predefinita per accrediti').'", "name": "idbanca_vendite", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "$idbanca_vendite$", "help": "'.tr("Banca predefinita dell'Azienda su cui accreditare i pagamenti").'" ]}
                             </div>
                         </div>
 
@@ -461,7 +490,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                         </div>';
 
     // Collegamento con il conto
-    $conto = $dbo->fetchOne('SELECT co_pianodeiconti3.id, co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione as descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_cliente']));
+    $conto = $dbo->fetchOne('SELECT co_pianodeiconti3.id, co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione AS descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_cliente']));
 
     echo '
                         <div class="row">
@@ -488,7 +517,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                             </div>
 
                             <div class="col-md-6">
-                                {[ "type": "select", "label": "'.tr('Banca predefinita').'", "name": "idbanca_acquisti", "values": "query=SELECT id, nome AS descrizione FROM co_banche ORDER BY nome ASC", "value": "$idbanca_acquisti$", "icon-after": "add|'.Modules::get('Banche')['id'].'" ]}
+                                {[ "type": "select", "label": "'.tr('Banca predefinita per addebiti').'", "name": "idbanca_acquisti", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "$idbanca_acquisti$", "help": "'.tr("Banca predefinita dell'Azienda da cui addebitare i pagamenti").'" ]}
                             </div>
                         </div>
 
@@ -508,7 +537,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                             </div>';
 
     // Collegamento con il conto
-    $conto = $dbo->fetchOne('SELECT co_pianodeiconti3.id, co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione as descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_fornitore']));
+    $conto = $dbo->fetchOne('SELECT co_pianodeiconti3.id, co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione AS descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_fornitore']));
 
     echo '
                             <div class="col-md-6">
@@ -561,7 +590,6 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                         ]); ?>" ]}
                     </div>
 
-
                     <!-- campi già specificati in Codice R.E.A., da eliminare nelle prossime release -->
                     <!--div class="col-md-3">
 						{[ "type": "text", "label": "<?php echo tr('Num. iscr. C.C.I.A.A.'); ?>", "name": "cciaa", "value": "$cciaa$" ]}
@@ -570,8 +598,8 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
 					<div class="col-md-3">
 						{[ "type": "text", "label": "<?php echo tr('Città iscr. C.C.I.A.A.'); ?>", "name": "cciaa_citta", "value": "$cciaa_citta$" ]}
                     </div-->
-
 				</div>
+
 				<div class="row">
 					<div class="col-md-3">
 						{[ "type": "text", "label": "<?php echo tr('Num. iscr. tribunale'); ?>", "name": "iscrizione_tribunale", "value": "$iscrizione_tribunale$" ]}

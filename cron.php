@@ -56,18 +56,18 @@ $pattern = '[%datetime%] %level_name%: %message% %context%'.PHP_EOL;
 $formatter = new Monolog\Formatter\LineFormatter($pattern);
 
 $logger = new Logger('Tasks');
-$handler = new RotatingFileHandler(DOCROOT.'/logs/cron.log', 7);
+$handler = new RotatingFileHandler(base_dir().'/logs/cron.log', 7);
 $handler->setFormatter($formatter);
 $logger->pushHandler($handler);
 
 // Lettura della cache
-$ultima_esecuzione = Cache::get('Ultima esecuzione del cron');
+$ultima_esecuzione = Cache::pool('Ultima esecuzione del cron');
 $data = $ultima_esecuzione->content;
 
-$in_esecuzione = Cache::get('Cron in esecuzione');
-$cron_id = Cache::get('ID del cron');
+$in_esecuzione = Cache::pool('Cron in esecuzione');
+$cron_id = Cache::pool('ID del cron');
 
-$disattiva = Cache::get('Disabilita cron');
+$disattiva = Cache::pool('Disabilita cron');
 if (!empty($disattiva->content)) {
     return;
 }

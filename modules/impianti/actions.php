@@ -21,7 +21,7 @@ include_once __DIR__.'/../../core.php';
 
 $op = post('op');
 
-$upload_dir = $docroot.'/files/'.Modules::get('Impianti')['directory'];
+$upload_dir = base_dir().'/files/'.Modules::get('Impianti')['directory'];
 
 switch ($op) {
     // Aggiorno informazioni di base impianto
@@ -124,8 +124,8 @@ switch ($op) {
         }
 
         // ...altrimenti carico dal file .ini
-        elseif (file_exists($docroot.'/files/impianti/'.$filename)) {
-            $contenuto = file_get_contents($docroot.'/files/impianti/'.$filename);
+        elseif (file_exists(base_dir().'/files/impianti/'.$filename)) {
+            $contenuto = file_get_contents(base_dir().'/files/impianti/'.$filename);
         }
 
         crea_form_componente($contenuto);

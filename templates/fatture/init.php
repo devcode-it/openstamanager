@@ -35,7 +35,7 @@ $record = $dbo->fetchOne('SELECT *,
     (SELECT descrizione FROM dt_aspettobeni WHERE id=idaspettobeni) AS aspettobeni,
     (SELECT descrizione FROM dt_spedizione WHERE id=idspedizione) AS spedizione,
     (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idvettore) AS vettore,
-    (SELECT id FROM co_banche WHERE id=idbanca) AS id_banca,
+    (SELECT id FROM co_banche WHERE id = id_banca_azienda) AS id_banca,
     (SELECT is_fiscale FROM zz_segments WHERE id = id_segment) AS is_fiscale
 FROM co_documenti WHERE id='.prepare($id_record));
 
@@ -43,9 +43,9 @@ $record['rivalsainps'] = floatval($record['rivalsainps']);
 $record['ritenutaacconto'] = floatval($record['ritenutaacconto']);
 $record['bollo'] = floatval($record['bollo']);
 
-$nome_banca = $banca['appoggiobancario'];
-$iban_banca = $banca['codiceiban'];
-$bic_banca = $banca['bic'];
+$nome_banca = $banca->nome;
+$iban_banca = $banca->iban;
+$bic_banca = $banca->bic;
 
 $module_name = ($record['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
 

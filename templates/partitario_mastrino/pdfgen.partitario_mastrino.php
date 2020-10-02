@@ -26,9 +26,9 @@ $date_start = $_SESSION['period_start'];
 $date_end = $_SESSION['period_end'];
 
 // carica report html
-$report = file_get_contents($docroot.'/templates/partitario_mastrino/partitario.html');
-$body = file_get_contents($docroot.'/templates/partitario_mastrino/partitario_body.html');
-include_once $docroot.'/templates/pdfgen_variables.php';
+$report = file_get_contents(base_dir().'/templates/partitario_mastrino/partitario.html');
+$body = file_get_contents(base_dir().'/templates/partitario_mastrino/partitario_body.html');
+include_once base_dir().'/templates/pdfgen_variables.php';
 
 // Calcolo il percorso piano dei conti
 if ($_GET['lev'] == '3') {

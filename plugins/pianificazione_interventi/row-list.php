@@ -54,8 +54,6 @@ if (!$righe->isEmpty()) {
     <tbody>';
 
     foreach ($righe as $riga) {
-        $r = $riga->toArray();
-
         $extra = '';
         $mancanti = $riga->isArticolo() ? $riga->missing_serials_number : 0;
         if ($mancanti > 0) {
@@ -88,45 +86,43 @@ if (!$righe->isEmpty()) {
 
         // Quantità
         echo '
-            <td class="text-right">
-                '.Translator::numberToLocale($r['qta'], 'qta').' '.$r['um'].'
-            </td>';
-
-        //Costo unitario
-        echo '
-            <td class="text-right">
-                '.moneyFormat($riga->costo_unitario).'
-            </td>';
+                <td class="text-right">
+                    '.Translator::numberToLocale($riga->qta, 'qta').' '.$riga->um.'
+                </td>';
 
         if ($show_prezzi) {
+            // Costo unitario
+            echo '
+                <td class="text-right">
+                    '.moneyFormat($riga->costo_unitario).'
+                </td>';
+
             // Prezzo unitario
             echo '
-            <td class="text-right">
-                '.moneyFormat($riga->prezzo_unitario);
+                <td class="text-right">
+                    '.moneyFormat($riga->prezzo_unitario);
 
-            if (abs($r['sconto_unitario']) > 0) {
-                $text = $r['sconto_unitario'] > 0 ? tr('sconto _TOT_ _TYPE_') : tr('maggiorazione _TOT_ _TYPE_');
+            if (abs($riga->sconto_unitario) > 0) {
+                $text = discountInfo($riga);
 
                 echo '
-                <br><small class="label label-danger">'.replace($text, [
-                    '_TOT_' => Translator::numberToLocale(abs($r['sconto_unitario'])),
-                    '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : currency()),
-                ]).'</small>';
+                    <br><small class="label label-danger">'.$text.'</small>';
             }
 
             echo '
-            </td>';
+                </td>';
 
             echo '
-            <td class="text-right">
-                '.moneyFormat($r['iva']).'
-            </td>';
+                <td class="text-right">
+                    '.moneyFormat($riga->iva_unitaria).'
+                    <br><small class="'.(($riga->aliquota->deleted_at) ? 'text-red' : '').' text-muted">'.$riga->aliquota->descrizione.(($riga->aliquota->esente) ? ' ('.$riga->aliquota->codice_natura_fe.')' : null).'</small>
+                </td>';
 
             // Prezzo di vendita
             echo '
-            <td class="text-right">
-                '.moneyFormat($riga->imponibile).'
-            </td>';
+                <td class="text-right">
+                    '.moneyFormat($riga->importo).'
+                </td>';
         }
 
         // Pulsante per riportare nel magazzino centrale.
@@ -135,15 +131,15 @@ if (!$righe->isEmpty()) {
             echo '
             <td class="text-center">';
 
-            if ($r['abilita_serial']) {
+            if ($riga->abilita_serial) {
                 echo '
-                <button type="button" class="btn btn-info btn-xs" data-toggle="tooltip" onclick="launch_modal(\''.tr('Modifica articoli').'\', \''.$rootdir.'/modules/fatture/add_serial.php?id_module='.$id_module.'&id_record='.$id_record.'&idarticolo='.$r['idriga'].'&idriga='.$r['id'].'\');">
+                <button type="button" class="btn btn-info btn-xs" data-toggle="tooltip" onclick="launch_modal(\''.tr('Modifica articoli').'\', \''.base_path().'/modules/fatture/add_serial.php?id_module='.$id_module.'&id_record='.$id_record.'&idarticolo='.$riga->id.'&idriga='.$riga->id.'\');">
                     <i class="fa fa-barcode"></i>
                 </button>';
             }
 
             echo '
-                <button type="button" class="btn btn-warning btn-xs" data-toggle="tooltip" onclick="launch_modal(\''.tr('Modifica').'\', \''.$structure->fileurl('row-edit.php').'?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'&type='.urlencode(get_class($riga)).'\');">
+                <button type="button" class="btn btn-warning btn-xs" data-toggle="tooltip" onclick="launch_modal(\''.tr('Modifica').'\', \''.$structure->fileurl('row-edit.php').'?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga->id.'&type='.urlencode(get_class($riga)).'\');">
                     <i class="fa fa-edit"></i>
                 </button>
 

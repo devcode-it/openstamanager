@@ -38,13 +38,13 @@ if (filter('op') == 'send') {
     $mail->Subject = 'Segnalazione bug OSM '.$version;
 
     // Aggiunta dei file di log (facoltativo)
-    if (!empty(post('log')) && file_exists($docroot.'/logs/error.log')) {
-        $mail->AddAttachment($docroot.'/logs/error.log');
+    if (!empty(post('log')) && file_exists(base_dir().'/logs/error.log')) {
+        $mail->AddAttachment(base_dir().'/logs/error.log');
     }
 
     // Aggiunta della copia del database (facoltativo)
     if (!empty(post('sql'))) {
-        $backup_file = $docroot.'/Backup OSM '.date('Y-m-d').' '.date('H_i_s').'.sql';
+        $backup_file = base_dir().'/Backup OSM '.date('Y-m-d').' '.date('H_i_s').'.sql';
         Backup::database($backup_file);
 
         $mail->AddAttachment($backup_file);
@@ -87,7 +87,7 @@ if (filter('op') == 'send') {
         delete($backup_file);
     }
 
-    redirect($rootdir.'/bug.php');
+    redirect(base_path().'/bug.php');
     exit();
 }
 

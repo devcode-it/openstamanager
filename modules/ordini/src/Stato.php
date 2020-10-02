@@ -19,10 +19,13 @@
 
 namespace Modules\Ordini;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 
 class Stato extends Model
 {
+    use SimpleModelTrait;
+
     protected $table = 'or_statiordine';
 
     public function ordini()

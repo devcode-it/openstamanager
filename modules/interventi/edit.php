@@ -286,8 +286,8 @@ echo '
                     {[ "type": "ckeditor", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "class": "autosize", "value": "$descrizione$", "extra": "rows='10'", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
                 </div>
 <?php
-                //Nascondo le note interne ai clienti
-                if( $user->gruppo!="Clienti" ){
+                // Nascondo le note interne ai clienti
+                if ($user->gruppo != 'Clienti') {
                     echo '
                     <div class="col-md-12">
                         {[ "type": "textarea", "label": "'.tr('Note interne').'", "name": "informazioniaggiuntive", "class": "autosize", "value": "$informazioniaggiuntive$", "extra": "rows=\'5\'" ]}
@@ -378,6 +378,22 @@ echo '
 <?php
 
 if (!$block_edit) {
+    // Lettura ddt (entrata o uscita)
+    $ddt_query = 'SELECT COUNT(*) AS tot FROM dt_ddt
+            LEFT JOIN `dt_causalet` ON `dt_causalet`.`id` = `dt_ddt`.`idcausalet`
+            LEFT JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`idstatoddt`
+            LEFT JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt`
+            WHERE idanagrafica='.prepare($record['idanagrafica']).'
+                AND `dt_statiddt`.`descrizione` IN (\'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')
+                AND `dt_tipiddt`.`dir` = '.prepare($intervento->direzione).'
+                AND `dt_causalet`.`is_importabile` = 1
+                AND dt_ddt.id IN (SELECT idddt FROM dt_righe_ddt WHERE dt_righe_ddt.idddt = dt_ddt.id AND (qta - qta_evasa) > 0)';
+    $ddt = $dbo->fetchArray($ddt_query)[0]['tot'];
+    echo '
+            <button type="button" class="btn btn-sm btn-primary'.(!empty($ddt) ? '' : ' disabled').'" data-href="'.base_path().'/modules/interventi/add_ddt.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="'.tr('Aggiungi ddt').'">
+                <i class="fa fa-plus"></i> '.tr('Ddt').'
+            </button>';
+
     echo '
             <button type="button" class="btn btn-sm btn-primary tip" title="'.tr('Aggiungi articolo').'" onclick="gestioneArticolo(this)">
                 <i class="fa fa-plus"></i> '.tr('Articolo').'
@@ -447,7 +463,7 @@ $articoli = $intervento->articoli;
 	    <div class="alert alert-warning"><i class="fa fa-warning"></i> '.tr('Questo intervento non è ancora stato firmato dal cliente').'.</div>';
         } else {
             echo '
-	    <img src="'.$rootdir.'/files/interventi/'.$record['firma_file'].'" class="img-thumbnail"><div>&nbsp;</div>
+	    <img src="'.base_path().'/files/interventi/'.$record['firma_file'].'" class="img-thumbnail"><div>&nbsp;</div>
 	   	<div class="col-md-6 col-md-offset-3 alert alert-success"><i class="fa fa-check"></i> '.tr('Firmato il _DATE_ alle _TIME_ da _PERSON_', [
             '_DATE_' => Translator::dateToLocale($record['firma_data']),
             '_TIME_' => Translator::timeToLocale($record['firma_data']),

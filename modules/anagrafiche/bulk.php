@@ -65,6 +65,8 @@ switch (post('op')) {
         break;
 }
 
+$operations = [];
+
 if (App::debug()) {
     $operations['delete-bulk'] = [
         'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span>',

@@ -29,7 +29,8 @@ $options = [
     'action' => 'edit',
     'dir' => $documento->direzione,
     'idanagrafica' => $documento['idanagrafica'],
-    'totale_imponibile' => $documento->totale_imponibile,
+    'totale_imponibile_documento' => $documento->totale_imponibile,
+    'totale_documento' => $documento->totale,
     'id_plugin' => $id_plugin, // Modificato
 ];
 

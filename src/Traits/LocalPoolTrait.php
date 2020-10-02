@@ -19,9 +19,11 @@
 
 namespace Traits;
 
-trait StoreTrait
+use Illuminate\Support\Collection;
+
+trait LocalPoolTrait
 {
-    /** @var Illuminate\Support\Collection Collezione degli oggetti disponibili */
+    /** @var Collection Collezione degli oggetti disponibili */
     protected static $collection = null;
     /** @var bool Controllo sul salvataggio globale */
     protected static $all = false;
@@ -37,7 +39,7 @@ trait StoreTrait
     /**
      * Restituisce tutti gli oggetti.
      *
-     * @return array
+     * @return Collection
      */
     public static function getAll()
     {
@@ -55,9 +57,9 @@ trait StoreTrait
      *
      * @param string|int $identifier
      *
-     * @return StoreTrait
+     * @return static
      */
-    public static function get($identifier)
+    public static function pool($identifier)
     {
         // Inizializzazione
         if (!isset(self::$collection)) {
@@ -88,7 +90,7 @@ trait StoreTrait
     /**
      * Restituisce l'oggetto attualmente impostato.
      *
-     * @return StoreTrait
+     * @return static
      */
     public static function getCurrent()
     {
@@ -96,7 +98,7 @@ trait StoreTrait
             return null;
         }
 
-        return self::get(self::$current);
+        return self::pool(self::$current);
     }
 
     /**

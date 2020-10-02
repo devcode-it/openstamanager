@@ -21,6 +21,8 @@ namespace Common;
 
 class RowReference extends Model
 {
+    use SimpleModelTrait;
+
     protected $table = 'co_riferimenti_righe';
 
     public function source()

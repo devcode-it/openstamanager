@@ -19,10 +19,13 @@
 
 namespace Modules\Preventivi;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 
 class Stato extends Model
 {
+    use SimpleModelTrait;
+
     protected $table = 'co_statipreventivi';
 
     public function preventivi()

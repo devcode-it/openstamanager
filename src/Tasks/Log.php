@@ -19,13 +19,16 @@
 
 namespace Tasks;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 
-/**
+/*
  * Risorsa per la gestione dei log per le task ricorrenti del gestionale.
  */
 class Log extends Model
 {
+    use SimpleModelTrait;
+
     protected $table = 'zz_tasks_logs';
 
     protected $casts = [

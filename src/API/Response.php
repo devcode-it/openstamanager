@@ -211,7 +211,7 @@ class Response
      */
     public static function isAPIRequest()
     {
-        return getURLPath() == slashes(ROOTDIR.'/api/index.php');
+        return getURLPath() == slashes(base_path().'/api/index.php');
     }
 
     /**
@@ -221,7 +221,7 @@ class Response
      *
      * @return array
      */
-    public function getRequest($raw = false)
+    public static function getRequest($raw = false)
     {
         $request = [];
 

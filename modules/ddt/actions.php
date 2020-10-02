@@ -225,10 +225,7 @@ switch (post('op')) {
         }
 
         $sconto->descrizione = post('descrizione');
-        $sconto->id_iva = post('idiva');
-
-        $sconto->sconto_unitario = post('sconto_unitario');
-        $sconto->tipo_sconto = 'UNT';
+        $sconto->setScontoUnitario(post('sconto_unitario'), post('idiva'));
 
         $sconto->save();
 

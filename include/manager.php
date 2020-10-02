@@ -176,7 +176,7 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
         foreach ($bulk as $key => $value) {
             $text = is_array($value) ? $value['text'] : $value;
 
-            $data = is_array($value) ? $value['data'] : [];
+            $data = is_array($value['data']) ? $value['data'] : [];
             $extra = [];
             foreach ($data as $k => $v) {
                 $extra[] = 'data-'.$k.'="'.prepareToField(\HTMLBuilder\HTMLBuilder::replace($v)).'"';

@@ -229,7 +229,7 @@ class EmailNotification extends PHPMailer implements NotificationInterface
     {
         $attachment = database()->fetchOne('SELECT * FROM zz_files WHERE id = '.prepare($file_id));
 
-        $this->addAttachment(DOCROOT.'/'.Uploads::getDirectory($attachment['id_module'], $attachment['id_plugin']).'/'.$attachment['filename']);
+        $this->addAttachment(base_dir().'/'.Uploads::getDirectory($attachment['id_module'], $attachment['id_plugin']).'/'.$attachment['filename']);
     }
 
     /**
@@ -282,7 +282,7 @@ class EmailNotification extends PHPMailer implements NotificationInterface
     protected function getTempDirectory()
     {
         if (!isset($this->directory)) {
-            $this->directory = DOCROOT.'/files/notifications/'.rand(0, 999);
+            $this->directory = base_dir().'/files/notifications/'.rand(0, 999);
 
             directory($this->directory);
         }

@@ -107,7 +107,7 @@ switch (post('op')) {
         $righe = $preventivo->getRighe();
         foreach ($righe as $riga) {
             $new_riga = $riga->replicate();
-            $new_riga->setParent($new);
+            $new_riga->setDocument($new);
 
             $new_riga->qta_evasa = 0;
             $new_riga->save();
@@ -238,10 +238,7 @@ switch (post('op')) {
         }
 
         $sconto->descrizione = post('descrizione');
-        $sconto->id_iva = post('idiva');
-
-        $sconto->sconto_unitario = post('sconto_unitario');
-        $sconto->tipo_sconto = 'UNT';
+        $sconto->setScontoUnitario(post('sconto_unitario'), post('idiva'));
 
         $sconto->save();
 
@@ -334,7 +331,7 @@ switch (post('op')) {
         $righe = $preventivo->getRighe();
         foreach ($righe as $riga) {
             $new_riga = $riga->replicate();
-            $new_riga->setParent($new);
+            $new_riga->setDocument($new);
 
             $new_riga->qta_evasa = 0;
             $new_riga->save();

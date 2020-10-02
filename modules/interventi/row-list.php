@@ -59,7 +59,22 @@ if (!$righe->isEmpty()) {
 
         echo '
             <tr data-id="'.$riga->id.'" data-type="'.get_class($riga).'" '.$extra.'>
-                <td>
+                <td>';
+
+        // Informazioni aggiuntive sulla destra
+        echo '
+                <small class="pull-right text-right text-muted">';
+
+        // Aggiunta dei riferimenti ai documenti
+        if ($riga->hasOriginalComponent()) {
+            echo '
+                    '.reference($riga->getOriginalComponent()->getDocument(), tr('Origine'));
+        }
+
+        echo '
+                </small>';
+
+        echo '
                     '.Modules::link($riga->isArticolo() ? Modules::get('Articoli')['id'] : null, $riga->isArticolo() ? $riga['idarticolo'] : null, $descrizione);
 
         if ($riga->isArticolo()) {
@@ -87,7 +102,7 @@ if (!$righe->isEmpty()) {
                 </td>';
 
         if ($show_prezzi) {
-            //Costo unitario
+            // Costo unitario
             echo '
                 <td class="text-right">
                     '.moneyFormat($riga->costo_unitario).'

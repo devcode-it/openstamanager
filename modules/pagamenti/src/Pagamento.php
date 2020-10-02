@@ -19,11 +19,14 @@
 
 namespace Modules\Pagamenti;
 
-use Common\Model;
+use Common\SimpleModelTrait;
 use DateTime;
+use Illuminate\Database\Eloquent\Model;
 
 class Pagamento extends Model
 {
+    use SimpleModelTrait;
+
     protected $table = 'co_pagamenti';
 
     public function fatture()

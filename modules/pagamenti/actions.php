@@ -104,10 +104,10 @@ switch (filter('op')) {
             if ($id_record == $id) {
                 $res = $dbo->fetchArray('SELECT * FROM `co_pagamenti` WHERE `id`!='.prepare($id).' AND `descrizione`='.prepare($record['descrizione']));
                 if (count($res) != 0) {
-                    redirect($rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$res[0]['id']);
+                    redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.$res[0]['id']);
                 } else {
                     // $_POST['backto'] = 'record-list';
-                    redirect($rootdir.'/controller.php?id_module='.$id_module);
+                    redirect(base_path().'/controller.php?id_module='.$id_module);
                 }
             }
         }

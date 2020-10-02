@@ -55,7 +55,7 @@ if (!$riferimenti->isEmpty()) {
                 '.$riferimento->target->descrizione.'
 
                 <br>
-                <small>'.reference($riferimento->target->parent).'</small>
+                <small>'.reference($riferimento->target->getDocument()).'</small>
             </td>
         </tr>';
 

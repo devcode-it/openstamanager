@@ -118,6 +118,7 @@ function selectBackground(data, container) {
 
     return data.text;
 }
+
 /**
  * Reimposta i contenuti di un <select> creato con select2.
  */
@@ -207,11 +208,11 @@ jQuery.fn.selectData = function () {
 
     if (this.prop('multiple')) {
         return selectData;
-    } else if (selectData.length === 0) {
-        return undefined;
-    } else {
+    } else if (selectData.length !== 0 && selectData[0].id) {
         return selectData[0];
     }
+
+    return undefined;
 };
 
 /**

@@ -82,7 +82,7 @@ class Modules
     {
         self::getModules();
 
-        return Module::get($module);
+        return Module::pool($module);
     }
 
     /**
@@ -114,7 +114,9 @@ class Modules
      */
     public static function getPermission($module)
     {
-        return self::get($module)->permission;
+        $result = self::get($module);
+
+        return $result ? $result->permission : null;
     }
 
     /**
@@ -147,7 +149,7 @@ class Modules
             // Aggiunta dei segmenti
             if ($include_segments) {
                 $segments = self::getSegments($module['id']);
-                $id_segment = $_SESSION['module_'.$module['id']]['id_segment'];
+                $id_segment = isset($_SESSION['module_'.$module['id']]) ? $_SESSION['module_'.$module['id']]['id_segment'] : null;
                 foreach ($segments as $result) {
                     if (!empty($result['clause']) && $result['id'] == $id_segment) {
                         $result['clause'] = Query::replacePlaceholder($result['clause']);
@@ -291,7 +293,7 @@ class Modules
         if (!empty($module) && in_array($module->permission, ['r', 'rw'])) {
             $link = !empty($id_record) ? 'editor.php?id_module='.$module['id'].'&id_record='.$id_record : 'controller.php?id_module='.$module['id'];
 
-            return '<a href="'.ROOTDIR.'/'.$link.'#'.$anchor.'" '.$extra.'>'.$testo.'</a>';
+            return '<a href="'.base_path().'/'.$link.'#'.$anchor.'" '.$extra.'>'.$testo.'</a>';
         } else {
             return $alternativo;
         }
@@ -328,7 +330,7 @@ class Modules
             return '';
         }
 
-        $link = (!empty($element['option']) && $element['option'] != 'menu') ? ROOTDIR.'/controller.php?id_module='.$element['id'] : 'javascript:;';
+        $link = (!empty($element['option']) && $element['option'] != 'menu') ? base_path().'/controller.php?id_module='.$element['id'] : 'javascript:;';
         $title = $element['title'];
         $target = '_self'; // $target = ($element['new'] == 1) ? '_blank' : '_self';
         $active = ($actual == $element['name']);

@@ -50,7 +50,7 @@ if (!is_writable($backup_dir) || !is_readable($backup_dir)) {
 
 echo '<p>'.tr('Il backup è molto importante perché permette di creare una copia della propria installazione e relativi dati per poterla poi ripristinare in seguito a errori, cancellazioni accidentali o guasti hardware').'.</p>';
 
-if (starts_with($backup_dir, DOCROOT)) {
+if (starts_with($backup_dir, base_dir())) {
     echo '
     <div class="alert alert-warning">
         <i class="fa fa-warning"></i> '.tr('Per motivi di sicurezza si consiglia di modificare il percorso della cartella di backup al di fuori della cartella di OSM, possibilmente in una unità esterna').'.
@@ -212,7 +212,7 @@ if (file_exists($backup_dir)) {
                 loadSize("'.$id.'", "c-'.$id.'");
             </script>
 
-            <a class="btn btn-primary" href="'.$rootdir.'/modules/backups/actions.php?op=getfile&number='.$id.'" target="_blank"><i class="fa fa-download"></i> '.tr('Scarica').'</a>
+            <a class="btn btn-primary" href="'.base_path().'/modules/backups/actions.php?op=getfile&number='.$id.'" target="_blank"><i class="fa fa-download"></i> '.tr('Scarica').'</a>
 
             <div class="pull-right">
                 <a class="btn btn-warning ask" data-backto="record-edit" data-method="post" data-op="restore" data-number="'.$id.'" data-msg="'.tr('Vuoi ripristinare questo backup?').'" data-button="Ripristina" data-class="btn btn-lg btn-warning">

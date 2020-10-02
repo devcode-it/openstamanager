@@ -19,10 +19,13 @@
 
 namespace Modules\Anagrafiche;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 
 class Nazione extends Model
 {
+    use SimpleModelTrait;
+
     protected $table = 'an_nazioni';
 
     public function anagrafiche()

@@ -33,14 +33,14 @@ switch (filter('op')) {
         }
 
         // Salvataggio della versione nella cache
-        Cache::get('Ultima versione di OpenSTAManager disponibile')->set($versione);
+        Cache::pool('Ultima versione di OpenSTAManager disponibile')->set($versione);
 
         echo $versione;
 
         break;
 
     case 'upload':
-        include DOCROOT.'/modules/aggiornamenti/upload_modules.php';
+        include base_dir().'/modules/aggiornamenti/upload_modules.php';
 
         break;
 }

@@ -44,7 +44,7 @@ switch (post('op')) {
                 $utente->reset_token = secure_random_string();
                 $utente->save();
 
-                $template = Template::get('Reset password');
+                $template = Template::pool('Reset password');
 
                 $mail = Mail::build($utente, $template, $utente->id);
                 $mail->addReceiver($utente->email);
@@ -59,7 +59,7 @@ switch (post('op')) {
             flash()->error(tr("Errore durante la gestione della richiesta: si prega di contattare l'amministratore").'.');
         }
 
-        redirect(ROOTDIR.'/index.php');
+        redirect(base_path().'/index.php');
         exit();
         break;
 
@@ -76,7 +76,7 @@ switch (post('op')) {
 
         flash()->info(tr('Password cambiata!'));
 
-        redirect(ROOTDIR.'/index.php');
+        redirect(base_path().'/index.php');
         exit();
         break;
 }
@@ -121,7 +121,7 @@ if (Auth::isBrute()) {
 echo '
     <form action="" method="post" class="box box-center-large box-warning" id="reset">
         <div class="box-header with-border text-center">
-            <a href="'.ROOTDIR.'/index.php"><i  class="fa fa-arrow-left btn btn-xs btn-warning pull-left tip" title="'.tr('Torna indietro').'" ></i></a>
+            <a href="'.base_path().'/index.php"><i  class="fa fa-arrow-left btn btn-xs btn-warning pull-left tip" title="'.tr('Torna indietro').'" ></i></a>
             <h3 class="box-title">'.$pageTitle.'</h3>
         </div>
 

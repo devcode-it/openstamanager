@@ -19,18 +19,20 @@
 
 namespace Plugins\DichiarazioniIntento;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Fatture\Fattura;
 
-/**
+/*
  * Classe per la gestione delle dichiarazione d'intento.
  *
  * @since 2.4.11
  */
 class Dichiarazione extends Model
 {
+    use SimpleModelTrait;
     use SoftDeletes;
 
     protected $table = 'co_dichiarazioni_intento';
@@ -48,7 +50,7 @@ class Dichiarazione extends Model
      */
     public static function build(Anagrafica $anagrafica, $data, $numero_protocollo, $numero_progressivo, $data_inizio, $data_fine)
     {
-        $model = parent::build();
+        $model = new static();
 
         $model->anagrafica()->associate($anagrafica);
 

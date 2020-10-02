@@ -3,6 +3,7 @@
     "main": "gulpfile.js",
     "dependencies": {
         "admin-lte": "^2.4.0",
+        "autonumeric": "^4.6.0",
         "autosize": "^3.0.21",
         "bootstrap": "^3.3.7",
         "bootstrap-colorpicker": "2.5.1",

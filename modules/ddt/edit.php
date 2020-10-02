@@ -324,7 +324,7 @@ if (!$block_edit) {
     $ordini = $dbo->fetchArray($ordini_query)[0]['tot'];
 
     echo '
-            <a class="btn btn-sm btn-primary'.(!empty($ordini) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/ddt/add_ordine.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="Aggiungi ordine">
+            <a class="btn btn-sm btn-primary'.(!empty($ordini) ? '' : ' disabled').'" data-href="'.base_path().'/modules/ddt/add_ordine.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="Aggiungi ordine">
                 <i class="fa fa-plus"></i> '.tr('Ordine').'
             </a>';
 

@@ -67,7 +67,7 @@ $rs = $dbo->fetchArray($query);
 foreach ($rs as $r) {
     $result = [];
 
-    $result['link'] = ROOTDIR.'/editor.php?id_module='.$link_id.'&id_record='.$r['id'];
+    $result['link'] = base_path().'/editor.php?id_module='.$link_id.'&id_record='.$r['id'];
     $result['title'] = $r['ragione_sociale'];
     $result['title'] .= !empty($r['deleted_at']) ? ' <small class="text-danger"><em>('.tr('eliminata').')</em></small>' : '';
     $result['category'] = 'Anagrafiche';
@@ -114,7 +114,7 @@ $plugin = $dbo->fetchArray("SELECT id FROM zz_plugins WHERE name='Referenti'");
 foreach ($rs as $r) {
     $result = [];
 
-    $result['link'] = ROOTDIR.'/editor.php?id_module='.$link_id.'&id_record='.$r['id'].'#tab_'.$plugin[0]['id'];
+    $result['link'] = base_path().'/editor.php?id_module='.$link_id.'&id_record='.$r['id'].'#tab_'.$plugin[0]['id'];
     $result['title'] = $r['nome'];
     $result['category'] = 'Referenti';
 

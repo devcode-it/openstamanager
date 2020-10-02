@@ -17,6 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Util\Messages;
+
 /**
  * Classe per la gestione delle utenze.
  *
@@ -24,12 +26,16 @@
  */
 class App
 {
+    public static $docroot;
+    public static $rootdir;
+    public static $baseurl;
+
     /** @var array Identificativo del modulo corrente */
     protected static $current_module;
     /** @var int Identificativo dell'elemento corrente */
     protected static $current_element;
 
-    /** @var \Util\Messages Gestione dei messaggi flash */
+    /** @var Messages Gestione dei messaggi flash */
     protected static $flash = null;
 
     /** @var bool Stato di debug */
@@ -71,8 +77,8 @@ class App
     public static function getConfig()
     {
         if (empty(self::$config['db_host'])) {
-            if (file_exists(DOCROOT.'/config.inc.php')) {
-                include DOCROOT.'/config.inc.php';
+            if (file_exists(base_dir().'/config.inc.php')) {
+                include base_dir().'/config.inc.php';
 
                 $config = get_defined_vars();
             } else {
@@ -116,13 +122,13 @@ class App
     /**
      * Restituisce l'oggetto dedicato alla gestione dei messaggi per l'utente.
      *
-     * @return \Util\Messages
+     * @return Messages
      */
     public static function flash()
     {
         if (empty(self::$flash)) {
             $storage = null;
-            self::$flash = new \Util\Messages($storage, 'messages');
+            self::$flash = new Messages($storage, 'messages');
         }
 
         return self::$flash;
@@ -131,8 +137,6 @@ class App
     /**
      * Individua i percorsi di base necessari per il funzionamento del gestionale.
      * <b>Attenzione<b>: questo metodo deve essere eseguito all'interno di un file nella cartella principale del progetto per permettere il corretto funzionamento degli URL.
-     *
-     * @return array
      */
     public static function definePaths($docroot)
     {
@@ -154,6 +158,10 @@ class App
             define('DOCROOT', $docroot);
             define('ROOTDIR', $rootdir);
             define('BASEURL', $baseurl);
+
+            self::$docroot = $docroot;
+            self::$rootdir = $rootdir;
+            self::$baseurl = $baseurl;
         }
     }
 
@@ -164,7 +172,7 @@ class App
      */
     public static function getPaths()
     {
-        $assets = ROOTDIR.'/assets/dist';
+        $assets = base_path().'/assets/dist';
 
         return [
             'assets' => $assets,
@@ -218,7 +226,7 @@ class App
                 foreach ($lang_replace as $replace) {
                     $name = str_replace('|lang|', $replace, $element);
 
-                    if (file_exists(DOCROOT.str_replace(ROOTDIR, '', $name))) {
+                    if (file_exists(base_dir().str_replace(base_path(), '', $name))) {
                         $assets_element = $name;
                         break;
                     }
@@ -293,7 +301,7 @@ class App
      */
     public static function filepath($path, $file = null)
     {
-        $path = str_contains($path, DOCROOT) ? $path : DOCROOT.'/'.ltrim($path, '/');
+        $path = str_contains($path, base_dir()) ? $path : base_dir().'/'.ltrim($path, '/');
         $path = empty($file) ? $path : rtrim($path, '/').'/'.$file;
 
         $original_file = str_replace('|custom|', '', $path);
@@ -316,8 +324,8 @@ class App
      */
     protected static function getDefaultConfig()
     {
-        if (file_exists(DOCROOT.'/config.example.php')) {
-            include DOCROOT.'/config.example.php';
+        if (file_exists(base_dir().'/config.example.php')) {
+            include base_dir().'/config.example.php';
         }
 
         $db_host = '';

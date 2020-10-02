@@ -50,7 +50,8 @@ include_once __DIR__.'/../../core.php';
 
                     <div class="row">
                         <div class="col-md-6">
-                            {[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie" ]}
+                            <?php echo Modules::link('Categorie articoli', $record['id_categoria'], null, null, 'class="pull-right"'); ?>
+                            {[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie", "icon-after": "add|<?php echo Modules::get('Categorie articoli')['id']; ?>" ]}
                         </div>
 
                         <div class="col-md-6">
@@ -184,7 +185,9 @@ include_once __DIR__.'/../../core.php';
 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 if (empty($prezzi_ivati)) {
     echo '
-                            <button type="button" class="btn btn-info btn-xs pull-right tip pull-right" title="'.tr('Scorpora iva dal prezzo di vendita.').'" id="scorpora_iva"><i class="fa fa-calculator" aria-hidden="true"></i></button>';
+                            <button type="button" class="btn btn-info btn-xs pull-right tip pull-right" title="'.tr('Scorpora iva dal prezzo di vendita.').'" id="scorporaIva">
+                                <i class="fa fa-calculator"></i>
+                            </button>';
 }
 
 echo '
@@ -243,11 +246,11 @@ echo '
                     <div class="form-group">
                         <label for="componente_filename">'.tr('Seleziona un componente').':</label>';
     echo "
-                        <select class=\"form-control superselect\" id=\"componente_filename\" name=\"componente_filename\" onchange=\"$.post('".$rootdir."/modules/impianti/actions.php', {op: 'load_componente', idarticolo: '".$id_record."', filename: $(this).find('option:selected').val() }, function(response){ $('#info_componente').html( response ); start_superselect();    $('.datepicker').datetimepicker({  locale: globals.locale, format: 'L' } ); } );\">\n";
+                        <select class=\"form-control superselect\" id=\"componente_filename\" name=\"componente_filename\" onchange=\"$.post('".base_path()."/modules/impianti/actions.php', {op: 'load_componente', idarticolo: '".$id_record."', filename: $(this).find('option:selected').val() }, function(response){ $('#info_componente').html( response ); start_superselect();    $('.datepicker').datetimepicker({  locale: globals.locale, format: 'L' } ); } );\">\n";
     echo '
                             <option value="0">'.tr('Nessuno').'</option>';
 
-    $cmp = Ini::getList($docroot.'/files/impianti/');
+    $cmp = Ini::getList(base_dir().'/files/impianti/');
 
     if (count($cmp) > 0) {
         for ($c = 0; $c < count($cmp); ++$c) {
@@ -331,15 +334,17 @@ $("#categoria").change(function() {
 	$("#subcategoria").val(null).trigger("change");
 });
 
-function scorpora_iva() {
-	if ($("#idiva_vendita").val()!=''){
-		var percentuale = parseFloat($("#idiva_vendita").selectData().percentuale);
+function scorporaIva() {
+    let iva_vendita = $("#idiva_vendita");
+
+	if (iva_vendita.val()) {
+		let percentuale = parseFloat(iva_vendita.selectData().percentuale);
 		if(!percentuale) return;
 
-		var input = $("#prezzo_vendita");
-		var prezzo = input.val().toEnglish();
+		let input = $("#prezzo_vendita");
+        let prezzo = input.val().toEnglish();
 
-		var scorporato = prezzo * 100 / (100 + percentuale);
+        let scorporato = prezzo * 100 / (100 + percentuale);
 
 		input.val(scorporato);
 	}else{
@@ -347,8 +352,8 @@ function scorpora_iva() {
 	}
 }
 
-$("#scorpora_iva").click( function() {
-	scorpora_iva();
+$("#scorporaIva").click( function() {
+	scorporaIva();
 });
 
 </script>

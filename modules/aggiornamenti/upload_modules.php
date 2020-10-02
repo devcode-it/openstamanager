@@ -38,13 +38,13 @@ $extraction_dir = Zip::extract($_FILES['blob']['tmp_name']);
 // Aggiornamento del progetto
 if (file_exists($extraction_dir.'/VERSION')) {
     // Salva il file di configurazione
-    $config = file_get_contents($docroot.'/config.inc.php');
+    $config = file_get_contents(base_dir().'/config.inc.php');
 
     // Copia i file dalla cartella temporanea alla root
-    copyr($extraction_dir, $docroot);
+    copyr($extraction_dir, base_dir());
 
     // Ripristina il file di configurazione dell'installazione
-    file_put_contents($docroot.'/config.inc.php', $config);
+    file_put_contents(base_dir().'/config.inc.php', $config);
 } else {
     $finder = Symfony\Component\Finder\Finder::create()
         ->files()
@@ -83,7 +83,7 @@ if (file_exists($extraction_dir.'/VERSION')) {
         }
 
         // Copia dei file nella cartella relativa
-        copyr(dirname($file->getRealPath()), $docroot.'/'.$directory.'/'.$info['directory']);
+        copyr(dirname($file->getRealPath()), base_dir().'/'.$directory.'/'.$info['directory']);
 
         // Eventuale registrazione nel database
         if (empty($installed)) {
@@ -110,4 +110,4 @@ if (file_exists($extraction_dir.'/VERSION')) {
 delete($extraction_dir);
 
 // Redirect
-redirect(ROOTDIR.'/editor.php?id_module='.$id_module);
+redirect(base_path().'/editor.php?id_module='.$id_module);

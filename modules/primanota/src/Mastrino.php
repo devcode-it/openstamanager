@@ -19,18 +19,21 @@
 
 namespace Modules\PrimaNota;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 use Modules\Fatture\Fattura;
-use Modules\Scadenzario\Scadenza;
-
-/**
+/*
  * Struttura ausiliaria dedicata alla raggruppamento e alla gestione di un insieme di Movimenti, unificati attraverso il numero di mastrino.
  *
  * Questa classe non è utilizzabile come normale modello Eloquent poichè non prevede operazioni di modifica a livello di database.
  * La creazione di un record può essere utilizzata per la gestione di un insieme di Movimenti, mentre l'eliminazione provoca la rimozione in cascata dei Movimenti associati al Mastrino.
  */
+use Modules\Scadenzario\Scadenza;
+
 class Mastrino extends Model
 {
+    use SimpleModelTrait;
+
     public $incrementing = false;
     protected $table = 'co_movimenti';
     protected $primaryKey = 'idmastrino';
@@ -44,7 +47,7 @@ class Mastrino extends Model
 
     public static function build($descrizione, $data, $is_insoluto = false, $contabile = false)
     {
-        $model = parent::build();
+        $model = new static();
 
         $model->idmastrino = self::getNextMastrino();
         $model->data = $data;

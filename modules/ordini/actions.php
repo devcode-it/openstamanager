@@ -205,10 +205,7 @@ switch (post('op')) {
         }
 
         $sconto->descrizione = post('descrizione');
-        $sconto->id_iva = post('idiva');
-
-        $sconto->sconto_unitario = post('sconto_unitario');
-        $sconto->tipo_sconto = 'UNT';
+        $sconto->setScontoUnitario(post('sconto_unitario'), post('idiva'));
 
         $sconto->save();
 
@@ -403,7 +400,7 @@ switch (post('op')) {
                 $qta = post('qta_da_evadere')[$riga->id];
 
                 $copia = $riga->replicate();
-                $copia->setParent($ordine);
+                $copia->setDocument($ordine);
 
                 // Ripristino dei valori di default per campi potenzialmente impostati
                 $copia->original_id = null;

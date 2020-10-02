@@ -151,6 +151,8 @@ if (!empty($google)) {
 $elementi = $dbo->fetchArray('SELECT `zz_user_sedi`.`id_user` AS `id` FROM `zz_user_sedi` WHERE `zz_user_sedi`.`idsede` = '.prepare($id_record).'
 UNION
 SELECT `an_referenti`.`id` AS `id` FROM `an_referenti` WHERE `an_referenti`.`idsede` = '.prepare($id_record).'
+UNION
+SELECT `co_documenti`.`id` AS `id` FROM `co_documenti` WHERE `co_documenti`.`idsede_destinazione` = '.prepare($id_record).'
 ORDER BY `id`');
 
 if (!empty($elementi)) {
@@ -180,12 +182,12 @@ echo '
 echo '
 <script>
 function rimuoviSede(button) {
-    let href = window.location.href.split("#")[0];
+    let hash = window.location.href.split("#")[1];
 
     confirmDelete(button).then(function () {
         redirect(globals.rootdir + "/editor.php", {
             backto: "record-edit",
-            href: href,
+            hash: hash,
             op: "deletesede",
             id: "'.$record['id'].'",
             id_plugin: "'.$id_plugin.'",

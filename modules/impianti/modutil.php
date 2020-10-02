@@ -30,8 +30,9 @@ function crea_form_componente($contenuto)
         $fields[$key] = '<div class="col-md-4">'.$value.'</div>';
     }
 
-    echo $title;
-    echo '<div class="row">';
-    echo PHP_EOL.implode(PHP_EOL, $fields).PHP_EOL.'<script>start_inputmask( "#info_componente" );</script>';
-    echo '</div>';
+    echo $title.'
+    <div class="row">
+        '.implode(PHP_EOL, $fields).'
+        <script>restart_inputs()</script>
+    </div>';
 }

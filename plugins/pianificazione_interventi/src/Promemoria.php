@@ -29,6 +29,11 @@ class Promemoria extends Document
 {
     use RecordTrait;
 
+    /**
+     * @var bool Disabilita movimentazione automatica
+     */
+    public static $movimenta_magazzino = false;
+
     protected $table = 'co_promemoria';
 
     /**
@@ -49,7 +54,7 @@ class Promemoria extends Document
      */
     public static function build(Contratto $contratto, TipoSessione $tipo, $data_richiesta)
     {
-        $model = parent::build();
+        $model = new static();
 
         $model->contratto()->associate($contratto);
         $model->tipo()->associate($tipo);
@@ -73,7 +78,7 @@ class Promemoria extends Document
         return 'entrata';
     }
 
-    public function pianifica(Intervento $intervento)
+    public function pianifica(Intervento $intervento, $copia_impianti = true)
     {
         $this->intervento()->associate($intervento); // Collego l'intervento ai promemoria
         $this->save();
@@ -95,10 +100,14 @@ class Promemoria extends Document
 
         // Collego gli impianti del promemoria all'intervento
         $database = database();
-        if (!empty($this->idimpianti)) {
+        if ($copia_impianti && !empty($this->idimpianti)) {
             $impianti = explode(',', $this->idimpianti);
+            $impianti = array_unique($impianti);
             foreach ($impianti as $impianto) {
-                $database->query('INSERT INTO my_impianti_interventi (idintervento, idimpianto) VALUES ('.prepare($intervento->id).', '.prepare($impianto).' )');
+                $database->insert('my_impianti_interventi', [
+                    'idintervento' => $intervento->id,
+                    'idimpianto' => $impianto,
+                ]);
             }
         }
     }

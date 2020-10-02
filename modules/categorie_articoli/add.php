@@ -27,7 +27,7 @@ if (isset($id_record)) {
 
 ?><form action="<?php
 if (isset($id_original)) {
-    echo ROOTDIR.'/controller.php?id_module='.$id_module;
+    echo base_path().'/controller.php?id_module='.$id_module;
 
     if (isset($id_record)) {
         echo '&id_record='.$id_record;

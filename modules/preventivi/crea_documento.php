@@ -19,6 +19,10 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Contratti\Contratto;
+use Modules\DDT\DDT;
+use Modules\Fatture\Fattura;
+use Modules\Ordini\Ordine;
 use Modules\Preventivi\Preventivo;
 
 $documento = Preventivo::find($id_record);
@@ -26,15 +30,19 @@ $documento = Preventivo::find($id_record);
 if (get('documento') == 'fattura') {
     $final_module = 'Fatture di vendita';
     $op = 'add_documento';
+    $tipo_documento_finale = Fattura::class;
 } elseif (get('documento') == 'ordine') {
     $final_module = 'Ordini cliente';
     $op = 'add_preventivo';
+    $tipo_documento_finale = Ordine::class;
 } elseif (get('documento') == 'ddt') {
     $final_module = 'Ddt di vendita';
     $op = 'add_documento';
+    $tipo_documento_finale = DDT::class;
 } else {
     $final_module = 'Contratti';
     $op = 'add_preventivo';
+    $tipo_documento_finale = Contratto::class;
 }
 
 $options = [
@@ -45,6 +53,7 @@ $options = [
     'dir' => 'entrata',
     'create_document' => true,
     'documento' => $documento,
+    'tipo_documento_finale' => $tipo_documento_finale,
 ];
 
 echo App::load('importa.php', [], $options, true);

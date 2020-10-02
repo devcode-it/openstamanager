@@ -145,7 +145,7 @@ foreach ($uploads as $upload) {
     echo '
                 <tr>
                     <td>
-                        <a href="'.ROOTDIR.'/view.php?file_id='.$upload->id.'" target="_blank">'.$upload->name.'</a>
+                        <a href="'.base_path().'/view.php?file_id='.$upload->id.'" target="_blank">'.$upload->name.'</a>
                     </td>
                     <td>'.$upload->pivot->name.'</td>
                 </tr>';

@@ -54,7 +54,7 @@ $id_riferimento = get('id_riferimento');
 $righe = $documento->getRighe();
 foreach ($righe as $riga) {
     $qta_rimanente = $riga->qta_rimanente - $righe_utilizzate[$riga->id];
-    $riga_origine = $riga->getOriginal();
+    $riga_origine = $riga->getOriginalComponent();
 
     $dettagli = [
         'tipo' => get_class($riga),

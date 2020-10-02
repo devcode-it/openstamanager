@@ -80,23 +80,26 @@ class Query
 
         // Sostituzione periodi temporali
         preg_match('|date_period\((.+?)\)|', $query, $matches);
-        $dates = explode(',', $matches[1]);
-        $date_filter = $matches[0];
+        $date_query = $date_filter = null;
+        if (!empty($matches)) {
+            $dates = explode(',', $matches[1]);
+            $date_filter = $matches[0];
 
-        $filters = [];
-        if ($dates[0] != 'custom') {
-            foreach ($dates as $date) {
-                $filters[] = $date." BETWEEN '|period_start|' AND '|period_end|'";
-            }
-        } else {
-            foreach ($dates as $k => $v) {
-                if ($k < 1) {
-                    continue;
+            $filters = [];
+            if ($dates[0] != 'custom') {
+                foreach ($dates as $date) {
+                    $filters[] = $date." BETWEEN '|period_start|' AND '|period_end|'";
                 }
-                $filters[] = $v;
+            } else {
+                foreach ($dates as $k => $v) {
+                    if ($k < 1) {
+                        continue;
+                    }
+                    $filters[] = $v;
+                }
             }
+            $date_query = !empty($filters) && !empty(self::$segments) ? ' AND ('.implode(' OR ', $filters).')' : '';
         }
-        $date_query = !empty($filters) && !empty(self::$segments) ? ' AND ('.implode(' OR ', $filters).')' : '';
 
         // Sostituzione periodi temporali
         preg_match('|segment\((.+?)\)|', $query, $matches);
@@ -121,7 +124,7 @@ class Query
             '|'.$segment_filter.'|' => !empty($segment) ? ' AND '.$segment_name.' = '.prepare($segment) : '',
 
             // Filtro dinamico per il modulo Giacenze sedi
-            '|giacenze_sedi_idsede|' => prepare($_SESSION['giacenze_sedi']['idsede']),
+            '|giacenze_sedi_idsede|' => prepare(isset($_SESSION['giacenze_sedi']) ? $_SESSION['giacenze_sedi']['idsede'] : null),
         ];
 
         // Sostituzione dei formati

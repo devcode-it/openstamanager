@@ -19,11 +19,13 @@
 
 namespace Modules\Checklists;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 use Traits\HierarchyTrait;
 
 class ChecklistItem extends Model
 {
+    use SimpleModelTrait;
     use HierarchyTrait;
 
     protected static $parent_identifier = 'id_parent';
@@ -39,7 +41,7 @@ class ChecklistItem extends Model
      */
     public static function build(Checklist $checklist, $contenuto, $id_parent = null)
     {
-        $model = parent::build();
+        $model = new static();
 
         $model->checklist()->associate($checklist);
         $model->id_parent = $id_parent;

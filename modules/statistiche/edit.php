@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 use Modules\Statistiche\Stats;
 
 echo '
-<script src="'.$rootdir.'/assets/dist/js/chartjs/Chart.min.js"></script>';
+<script src="'.base_path().'/assets/dist/js/chartjs/Chart.min.js"></script>';
 
 $start = $_SESSION['period_start'];
 $end = $_SESSION['period_end'];

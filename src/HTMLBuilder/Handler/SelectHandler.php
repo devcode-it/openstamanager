@@ -30,7 +30,7 @@ class SelectHandler implements HandlerInterface
 {
     public function handle(&$values, &$extras)
     {
-        $source = $values['ajax-source'] ?: $values['select-source'];
+        $source = isset($values['ajax-source']) ? $values['ajax-source'] : (isset($values['select-source']) ? $values['select-source'] : null);
 
         // Individuazione della classe per la corretta gestione JavaScript
         $values['class'][] = !empty($source) ? 'superselectajax' : 'superselect';
@@ -62,7 +62,7 @@ class SelectHandler implements HandlerInterface
             unset($values['select-source']);
 
             // Informazioni aggiuntive per il select
-            $infos = $values['select-options'] ?: [];
+            $infos = isset($values['select-options']) ? $values['select-options'] : [];
             $values['data-select-options'] = json_encode($infos);
             unset($values['select-options']);
 
@@ -97,9 +97,9 @@ class SelectHandler implements HandlerInterface
 
         // Impostazione del placeholder
         $values['placeholder'] = !empty($values['placeholder']) ? $values['placeholder'] : tr("Seleziona un'opzione");
-        $values['data-placeholder'] = $values['placeholder'];
+        $values['data-placeholder'] = isset($values['placeholder']) ? $values['placeholder'] : null;
 
-        $values['data-maximum-selection-length'] = $values['maximum-selection-length'];
+        $values['data-maximum-selection-length'] = isset($values['maximum-selection-length']) ? $values['maximum-selection-length'] : null;
 
         unset($values['values']);
 
@@ -170,7 +170,7 @@ class SelectHandler implements HandlerInterface
             }
 
             $html .= '
-        <option value="'.prepareToField($element['id']).'" '.implode(' ', $attributes).($element['disabled'] ? 'disabled' : '').'>'.$element['text'].'</option>';
+        <option value="'.prepareToField($element['id']).'" '.implode(' ', $attributes).(!empty($element['disabled']) ? 'disabled' : '').'>'.$element['text'].'</option>';
         }
 
         return $html;

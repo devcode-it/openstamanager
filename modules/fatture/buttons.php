@@ -42,11 +42,11 @@ if ($dir == 'entrata') {
     </button>
 
     <ul class="dropdown-menu dropdown-menu-right">
-        <li><a href="'.ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=nota_addebito&backto=record-edit">
+        <li><a href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=nota_addebito&backto=record-edit">
             '.tr('Nota di debito').'
         </a></li>
 
-        <li><a data-href="'.ROOTDIR.'/modules/fatture/crea_documento.php?id_module='.$id_module.'&id_record='.$id_record.'&iddocumento='.$id_record.'" data-title="Aggiungi nota di credito">
+        <li><a data-href="'.base_path().'/modules/fatture/crea_documento.php?id_module='.$id_module.'&id_record='.$id_record.'&iddocumento='.$id_record.'" data-title="Aggiungi nota di credito">
             '.tr('Nota di credito').'
         </a></li>
     </ul>
@@ -72,7 +72,7 @@ if (!empty($record['is_fiscale'])) {
     }
 
     echo '
-        <a class="btn btn-primary '.(!empty($modulo_prima_nota) && empty($registrazione_insoluto) ? '' : 'disabled').'" data-href="'.ROOTDIR.'/add.php?id_module='.$modulo_prima_nota['id'].'&id_documenti='.$id_record.'&single=1&is_insoluto=1" data-title="'.tr('Registra insoluto').'">
+        <a class="btn btn-primary '.(!empty($modulo_prima_nota) && empty($registrazione_insoluto) ? '' : 'disabled').'" data-href="'.base_path().'/add.php?id_module='.$modulo_prima_nota['id'].'&id_documenti='.$id_record.'&single=1&is_insoluto=1" data-title="'.tr('Registra insoluto').'">
             <i class="fa fa-ban fa-inverse"></i> '.tr('Registra insoluto').'
         </a>';
 
@@ -87,7 +87,7 @@ if (!empty($record['is_fiscale'])) {
     }
 
     echo '
-        <a class="btn btn-primary '.(!empty($modulo_prima_nota) && empty($registrazione_contabile) ? '' : 'disabled').'" data-href="'.ROOTDIR.'/add.php?id_module='.$modulo_prima_nota['id'].'&id_documenti='.$id_record.'&single=1" data-title="'.tr('Registra contabile').'">
+        <a class="btn btn-primary '.(!empty($modulo_prima_nota) && empty($registrazione_contabile) ? '' : 'disabled').'" data-href="'.base_path().'/add.php?id_module='.$modulo_prima_nota['id'].'&id_documenti='.$id_record.'&single=1" data-title="'.tr('Registra contabile').'">
             <i class="fa fa-euro"></i> '.tr('Registra contabile').'
         </a>';
 

@@ -46,15 +46,15 @@ include_once __DIR__.'/../../core.php';
 
 <?php
 // Collegamenti diretti (numerici)
-$documenti = $dbo->fetchNum('SELECT id FROM dt_ddt WHERE idporto='.prepare($id_record).'
+$numero_documenti = $dbo->fetchNum('SELECT id FROM dt_ddt WHERE idporto='.prepare($id_record).'
 UNION SELECT id FROM co_documenti WHERE idporto='.prepare($id_record).'
 UNION SELECT id FROM co_preventivi WHERE idporto='.prepare($id_record));
 
-if (!empty($documenti)) {
+if (!empty($numero_documenti)) {
     echo '
 <div class="alert alert-danger">
     '.tr('Ci sono _NUM_ documenti collegati', [
-        '_NUM_' => count($documenti),
+        '_NUM_' => $numero_documenti,
     ]).'.
 </div>';
 }

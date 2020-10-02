@@ -1,3 +1,4 @@
 <?php
 
-rename(DOCROOT.'/files/my_impianti', DOCROOT.'/files/impianti');
+copyr(base_dir().'/files/my_impianti', base_dir().'/files/impianti');
+delete(base_dir().'/files/my_impianti');

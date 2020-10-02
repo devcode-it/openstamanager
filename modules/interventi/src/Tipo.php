@@ -19,10 +19,13 @@
 
 namespace Modules\Interventi;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 
 class Tipo extends Model
 {
+    use SimpleModelTrait;
+
     protected $primaryKey = 'idtipointervento';
     protected $table = 'in_tipiintervento';
 

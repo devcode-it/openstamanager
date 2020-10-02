@@ -19,7 +19,8 @@
 
 namespace Modules\Anagrafiche;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Contratti\Contratto;
 use Modules\DDT\DDT;
@@ -34,6 +35,7 @@ use Util\Generator;
 
 class Anagrafica extends Model
 {
+    use SimpleModelTrait;
     use RecordTrait;
     use SoftDeletes;
 
@@ -62,7 +64,7 @@ class Anagrafica extends Model
      */
     public static function build($ragione_sociale, $nome = '', $cognome = '', array $tipologie = [])
     {
-        $model = parent::build();
+        $model = new static();
 
         $model->ragione_sociale = $ragione_sociale;
 

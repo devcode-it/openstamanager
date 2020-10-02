@@ -42,7 +42,7 @@ if (!empty($rs)) {
             $attr = '';
         }
 
-        echo '<tr '.$attr.'><td><a href="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$preventivo['id'].'">'.$preventivo['nome']."</a><br><small class='help-block'>".$preventivo['ragione_sociale'].'</small></td>';
+        echo '<tr '.$attr.'><td><a href="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$preventivo['id'].'">'.$preventivo['nome']."</a><br><small class='help-block'>".$preventivo['ragione_sociale'].'</small></td>';
         echo '<td '.$attr.'>'.$data_accettazione.'</td>';
         echo '<td '.$attr.'>'.$data_conclusione.'</td></tr>';
     }

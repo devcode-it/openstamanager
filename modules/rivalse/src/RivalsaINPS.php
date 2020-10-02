@@ -19,9 +19,12 @@
 
 namespace Modules\Rivalse;
 
-use Common\Model;
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 
 class RivalsaINPS extends Model
 {
+    use SimpleModelTrait;
+
     protected $table = 'co_rivalse';
 }

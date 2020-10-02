@@ -145,7 +145,7 @@ $dirs = [
 
 $directories = [];
 foreach ($dirs as $name => $description) {
-    $status = is_writable($docroot.DIRECTORY_SEPARATOR.$name);
+    $status = is_writable(base_dir().DIRECTORY_SEPARATOR.$name);
 
     $directories[] = [
         'name' => $name,

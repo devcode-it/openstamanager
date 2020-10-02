@@ -217,3 +217,6 @@ ALTER TABLE `dt_ddt` ADD `id_banca_azienda` INT(11) AFTER `idpagamento`;
 ALTER TABLE `or_ordini` ADD `id_banca_azienda` INT(11) AFTER `idpagamento`;
 
 UPDATE `co_documenti` SET `id_banca_azienda` = NULL WHERE `id_banca_azienda` = 0;
+
+-- Aggiunta unità di misura secondaria per le stampe documenti di vendita
+ALTER TABLE `mg_articoli` ADD `um_secondaria` varchar(255), ADD `fattore_um_secondaria` DECIMAL(15, 6);

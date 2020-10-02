@@ -108,6 +108,9 @@ switch (post('op')) {
         $articolo->volume = post('volume');
         $articolo->peso_lordo = post('peso_lordo');
 
+        $articolo->um_secondaria = post('um_secondaria');
+        $articolo->fattore_um_secondaria = post('fattore_um_secondaria');
+
         $articolo->setPrezzoVendita(post('prezzo_vendita'), post('idiva_vendita'));
 
         $componente = post('componente_filename');

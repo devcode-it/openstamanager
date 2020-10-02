@@ -123,9 +123,17 @@ foreach ($righe as $riga) {
             </td>';
 
     if (!$riga->isDescrizione()) {
+        $qta = $riga->qta;
+        $um = $r['um'];
+
+        if ($riga->isArticolo() && $documento->direzione == 'uscita' && !empty($riga->articolo->um_secondaria)) {
+            $um = $riga->articolo->um_secondaria;
+            $qta *= $riga->articolo->fattore_um_secondaria;
+        }
+
         echo '
             <td class="text-center">
-                '.Translator::numberToLocale(abs($riga->qta), 'qta').' '.$r['um'].'
+                '.Translator::numberToLocale(abs($qta), 'qta').' '.$um.'
             </td>';
 
         if ($options['pricing']) {

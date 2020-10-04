@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 // Creazione righe fantasma
-$autofill = new \Util\Autofill($options['pricing'] ? 6 : 3);
+$autofill = new \Util\Autofill($options['pricing'] ? 7 : 4);
 $rows_per_page = 16;
 if (!empty($options['last-page-footer'])) {
     $rows_per_page += 10;
@@ -33,6 +33,7 @@ echo "
     <thead>
         <tr>
             <th class='text-center' style='width:5%'>".tr('#', [], ['upper' => true])."</th>
+            <th class='text-center' style='width:7%'>".tr('Cod.', [], ['upper' => true])."</th>
             <th class='text-center'>".tr('Descrizione', [], ['upper' => true])."</th>
             <th class='text-center' style='width:10%'>".tr('Q.tà', [], ['upper' => true]).'</th>';
 
@@ -62,9 +63,19 @@ foreach ($righe as $riga) {
     <tr>
         <td class="text-center" style="vertical-align: middle">
             '.$num.'
-        </td>';
+        </td>
+
+        <td class="text-center" style="vertical-align: middle">';
+
+        if ($riga->isArticolo()) {
+            echo $riga->codice;
+        }else{
+            echo '-';
+        }
 
     echo'
+        </td>
+        
         <td>
             '.nl2br($r['descrizione']);
 

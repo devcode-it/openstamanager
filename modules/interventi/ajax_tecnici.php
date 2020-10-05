@@ -1,4 +1,21 @@
 <?php
+/*
+ * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
+ * Copyright (C) DevCode s.n.c.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 
 include_once __DIR__.'/../../core.php';
 
@@ -42,7 +59,7 @@ if (!empty($sessioni)) {
             <th width="10%">'.tr('Sconto km').'</th>';
             }
 
-            if (!$is_completato && $user['gruppo'] != 'Clienti' ) {
+            if (!$is_completato) {
                 echo '
             <th width="100" class="text-center">#</th>';
             }
@@ -175,7 +192,7 @@ if (!empty($sessioni)) {
         }
 
         // Pulsante per la sessione
-        if (!$is_completato && $user['gruppo'] != 'Clienti' ) {
+        if (!$is_completato) {
             echo '
             <td class="text-center">
                 <button type="button" class="btn btn-sm btn-warning tip" title="'.tr('Modifica sessione').'" onclick="modificaSessione(this)">
@@ -198,20 +215,25 @@ if (!empty($sessioni)) {
     }
 } else {
     echo '
-<div class=\'alert alert-info\' ><i class=\'fa fa-info-circle\'></i> '.tr('Nessun tecnico assegnato').'.</div>';
+<div class="alert alert-info">
+    <i class="fa fa-info-circle"></i> '.tr('Nessun tecnico assegnato').'.
+</div>';
 }
 
-if (!$is_completato && $user['gruppo'] != 'Clienti' ) {
+echo '
+<div id="info-conflitti"></div>';
+
+if (!$is_completato) {
     echo '
 <!-- AGGIUNTA TECNICO -->
 <div class="row">
     <div class="col-md-offset-6 col-md-4">
-        {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "nuovotecnico", "placeholder": "'.tr('Seleziona un tecnico').'", "ajax-source": "tecnici", "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|tipoanagrafica=Tecnico" ]}
+        {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "nuovo_tecnico", "placeholder": "'.tr('Seleziona un tecnico').'", "ajax-source": "tecnici", "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|tipoanagrafica=Tecnico" ]}
     </div>
 
     <div class="col-md-2">
         <label>&nbsp;</label>
-        <button type="button" class="btn btn-primary btn-block" onclick="if($(\'#nuovotecnico\').val()){ add_tecnici($(\'#nuovotecnico\').val()); }else{ swal(\''.tr('Attenzione').'\', \''.tr('Seleziona il tecnico da aggiungere').'.\', \'warning\'); $(\'#nuovotecnico\').focus(); }">
+        <button type="button" class="btn btn-primary btn-block" onclick="if($(\'#nuovo_tecnico\').val()){ add_tecnici($(\'#nuovo_tecnico\').val()); }else{ swal(\''.tr('Attenzione').'\', \''.tr('Seleziona il tecnico da aggiungere').'.\', \'warning\'); $(\'#nuovo_tecnico\').focus(); }">
             <i class="fa fa-plus"></i> '.tr('Aggiungi').'
         </button>
     </div>
@@ -219,7 +241,7 @@ if (!$is_completato && $user['gruppo'] != 'Clienti' ) {
 }
 
 echo '
-<script src="'.$rootdir.'/assets/src/js/functions/functions.js"></script>
+<script src="'.base_path().'/assets/src/js/functions/functions.js"></script>
 <script>$(document).ready(init)</script>
 
 <script type="text/javascript">
@@ -236,69 +258,91 @@ async function modificaSessione(button) {
             $(button).tooltipster("close");
 
         // Apertura modal
-        openModal("'.tr('Modifica sessione').'", "'.$module->fileurl('manage_sessione.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&id_sessione=" + id);
+        openModal("'.tr('Modifica sessione').'", "'.$module->fileurl('modals/manage_sessione.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&id_sessione=" + id);
     }
 }
 
-    $(document).ready(function() {';
+function calcolaConflittiTecnici() {
+    let tecnici = [input("nuovo_tecnico").get()];
+    let inizio = moment().startOf("hour");
 
+    return $("#info-conflitti").load("'.$module->fileurl('occupazione_tecnici.php').'", {
+        "id_module": globals.id_module,
+        "id_record": globals.id_record,
+        "tecnici[]": tecnici,
+        "inizio": inizio.format("YYYY-MM-DD HH:mm:ss"),
+        "fine": inizio.add(1, "hours").format("YYYY-MM-DD HH:mm:ss"),
+    });
+}
+
+input("nuovo_tecnico").change(function() {
+    calcolaConflittiTecnici();
+});
+
+$(document).ready(function() {
+    calcolaConflittiTecnici();
+    ';
 if (empty($sessioni)) {
     echo '
-        $(".btn-details").attr("disabled", true);
-        $(".btn-details").addClass("disabled");
-        $("#showall_dettagli").removeClass("hide");
-        $("#dontshowall_dettagli").addClass("hide");';
+    $(".btn-details").attr("disabled", true);
+    $(".btn-details").addClass("disabled");
+    $("#showall_dettagli").removeClass("hide");
+    $("#dontshowall_dettagli").addClass("hide");';
 } else {
     echo '
-        $(".btn-details").attr("disabled", false);
-        $(".btn-details").removeClass("disabled");';
+    $(".btn-details").attr("disabled", false);
+    $(".btn-details").removeClass("disabled");';
 }
 
 echo '
-    });
+});
 
-    /*
-    * Aggiunge una nuova riga per la sessione di lavoro in base al tecnico selezionato.
-    */
-    function add_tecnici(id_tecnico) {
+/*
+* Aggiunge una nuova riga per la sessione di lavoro in base al tecnico selezionato.
+*/
+function add_tecnici(id_tecnico) {
+    $.ajax({
+        url: globals.rootdir + "/actions.php",
+        beforeSubmit: function(arr, $form, options) {
+            return $form.parsley().validate();
+        },
+        data: {
+            id_module: globals.id_module,
+            id_record: globals.id_record,
+            op: "add_sessione",
+            id_tecnico: id_tecnico,
+        },
+        type: "post",
+        success: function() {
+            caricaTecnici();
+            caricaCosti();
+
+            calcolaConflittiTecnici();
+        }
+    });
+}
+
+/*
+* Rimuove la sessione di lavoro dall\'intervento.
+*/
+function elimina_sessione(id_sessione) {
+    if (confirm("Eliminare sessione di lavoro?")) {
         $.ajax({
             url: globals.rootdir + "/actions.php",
-            beforeSubmit: function(arr, $form, options) {
-                return $form.parsley().validate();
-            },
             data: {
                 id_module: globals.id_module,
                 id_record: globals.id_record,
-                op: "add_sessione",
-                id_tecnico: id_tecnico,
+                op: "delete_sessione",
+                id_sessione: id_sessione,
             },
             type: "post",
             success: function() {
-                $("#tecnici").load("'.$module->fileurl('ajax_tecnici.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record);
-                $("#costi").load("'.$module->fileurl('ajax_costi.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record);
+                caricaTecnici();
+                caricaCosti();
+
+                calcolaConflittiTecnici();
             }
         });
     }
-
-    /*
-    * Rimuove la sessione di lavoro dall\'intervento.
-    */
-    function elimina_sessione(id_sessione) {
-        if (confirm("Eliminare sessione di lavoro?")) {
-            $.ajax({
-                url: globals.rootdir + "/actions.php",
-                data: {
-                    id_module: globals.id_module,
-                    id_record: globals.id_record,
-                    op: "delete_sessione",
-                    id_sessione: id_sessione,
-                },
-                type: "post",
-                success: function() {
-                    $("#tecnici").load("'.$module->fileurl('ajax_tecnici.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record);
-                    $("#costi").load("'.$module->fileurl('ajax_costi.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record);
-                }
-            });
-        }
-    }
+}
 </script>';

@@ -1,305 +1,165 @@
 <?php
-/*
- * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
- * Copyright (C) DevCode s.n.c.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
- */
-
-use Modules\Anagrafiche\Anagrafica;
-use Modules\Anagrafiche\Sede;
 
 include_once __DIR__.'/../../core.php';
 
 $block_edit = $record['flag_completato'];
 $module_anagrafiche = Modules::get('Anagrafiche');
 
-echo '
-<form action="" method="post" id="edit-form">
+unset($_SESSION['superselect']['idanagrafica']);
+unset($_SESSION['superselect']['idsede_partenza']);
+unset($_SESSION['superselect']['idsede_destinazione']);
+unset($_SESSION['superselect']['idintervento']);
+$_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
+$_SESSION['superselect']['idsede_partenza'] = $record['idsede_partenza'];
+$_SESSION['superselect']['idsede_partenza'];
+$_SESSION['superselect']['idintervento'] = $id_record;
+$_SESSION['superselect']['idsede_destinazione'] = $record['idsede_destinazione'];
+$_SESSION['superselect']['permetti_movimento_a_zero'] = false;
+
+?><form action="" method="post" id="edit-form">
 	<input type="hidden" name="op" value="update">
 	<input type="hidden" name="backto" value="record-edit">
-	<input type="hidden" name="id_record" value="'.$id_record.'">
+	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
 
-    <div class="row">
-        <div class="col-md-8">
-            <!-- DATI CLIENTE -->
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <h3 class="panel-title">'.tr('Dati cliente').'</h3>
-                </div>
+	<!-- DATI CLIENTE -->
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<h3 class="panel-title"><?php echo tr('Dati cliente'); ?></h3>
+		</div>
 
-                <div class="panel-body">
-                    <!-- RIGA 1 -->
-                    <div class="row">
-                        <div class="col-md-6">
-                            '.Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"').'
-                            {[ "type": "select", "label": "'.tr('Cliente').'", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti", "readonly": "'.$record['flag_completato'].'" ]}
-                        </div>
+		<div class="panel-body">
+			<!-- RIGA 1 -->
+			<div class="row">
+				<div class="col-md-3">
+                    <?php
+                        echo Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"');
+                    ?>
+					{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione='Cliente' AND deleted_at IS NULL ORDER BY ragione_sociale", "value": "$idanagrafica$", "ajax-source": "clienti", "readonly": "<?php echo ($user['gruppo'] == 'Clienti' ? '1' : $record['flag_completato']); ?>" ]}
+				</div>
+<?php
 
-                        <div class="col-md-6">
-                            {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione","value": "$idsede_destinazione$", "ajax-source": "sedi", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "placeholder": "'.tr('Sede legale').'", "readonly": "'.$record['flag_completato'].'" ]}
-                        </div>
+                echo '
+				<div class="col-md-3">
+					{[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione","value": "$idsede_destinazione$", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "placeholder": "'.tr('Sede legale').'", "readonly": "'.$record['flag_completato'].'" ]}
+				</div>';
+                ?>
 
-                        <div class="col-md-6">
-                            '.Modules::link('Anagrafiche', $record['idclientefinale'], null, null, 'class="pull-right"').'
-                            {[ "type": "select", "label": "'.tr('Per conto di').'", "name": "idclientefinale", "value": "$idclientefinale$", "ajax-source": "clienti", "readonly": "'.$record['flag_completato'].'" ]}
-                        </div>
+				<div class="col-md-3">
+					<?php
+                        echo Modules::link('Anagrafiche', $record['idclientefinale'], null, null, 'class="pull-right"');
+                    ?>
+					{[ "type": "select", "label": "<?php echo tr('Per conto di'); ?>", "name": "idclientefinale", "value": "$idclientefinale$", "ajax-source": "clienti", "readonly": "<?php echo ($user['gruppo'] == 'Clienti' ? '1' : $record['flag_completato']); ?>" ]}
+				</div>
 
-                        <div class="col-md-6">
-                            {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "readonly": "'.intval($record['flag_completato']).'" ]}
-                        </div>
-                    </div>
+                <?php
+                echo '
+				<div class="col-md-3">
+					{[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "readonly": "'.($user['gruppo'] == 'Clienti' ? '1' : $record['flag_completato']).'" ]}
+				</div>';
+                ?>
+			</div>
 
-                    <!-- RIGA 2 -->
-                    <div class="row">
-                        <div class="col-md-6">';
-if (!empty($record['idpreventivo'])) {
-    echo '
-                            '.Modules::link('Preventivi', $record['idpreventivo'], null, null, 'class="pull-right"');
-}
-echo '
-                            {[ "type": "select", "label": "'.tr('Preventivo').'", "name": "idpreventivo", "value": "'.$record['id_preventivo'].'", "ajax-source": "preventivi", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "readonly": "'.$record['flag_completato'].'" ]}
-                        </div>
+			<!-- RIGA 2 -->
+			<div class="row">
+				<div class="col-md-6">
+					<?php
+                    if (!empty($record['idpreventivo'])) {
+                        echo '
+                        '.Modules::link('Preventivi', $record['idpreventivo'], null, null, 'class="pull-right"');
+                    }
+                    ?>
 
-                        <div class="col-md-6">';
+					{[ "type": "select", "label": "<?php echo tr('Preventivo'); ?>", "name": "idpreventivo", "value": "$idpreventivo$", "ajax-source": "preventivi", "readonly": "<?php echo ($user['gruppo'] == 'Clienti' ? '1' : $record['flag_completato']); ?>" ]}
+				</div>
 
-$idcontratto_riga = $dbo->fetchOne('SELECT id FROM co_promemoria WHERE idintervento='.prepare($id_record))['id'];
+				<div class="col-md-6">
+					<?php
+                        $idcontratto_riga = $dbo->fetchOne('SELECT id FROM co_promemoria WHERE idintervento='.prepare($id_record))['id'];
 
-if (!empty($record['idcontratto'])) {
-    echo '
-                                    '.Modules::link('Contratti', $record['idcontratto'], null, null, 'class="pull-right"');
-}
-echo '
-
-                            {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "value": "'.$record['id_contratto'].'", "ajax-source": "contratti", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "readonly": "'.$record['flag_completato'].'" ]}
-
-                            <input type="hidden" name="idcontratto_riga" value="'.$idcontratto_riga.'">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>';
-
-$anagrafica_cliente = $intervento->anagrafica;
-$sede_cliente = $anagrafica_cliente->sedeLegale;
-if (!empty($intervento->idsede_destinazione)) {
-    $sede_cliente = Sede::find($intervento->idsede_destinazione);
-}
-
-$anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
-$sede_azienda = $anagrafica_azienda->sedeLegale;
-
-$google = setting('Google Maps API key');
-
-echo '
-            <div class="col-md-4">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <h3 class="panel-title"><i class="fa fa-map"></i> '.tr('Geolocalizzazione').'</h3>
-                    </div>
-                    <div class="panel-body">';
-
-$map_load_message = '<p>'.tr('Clicca per visualizzare').'</p>';
-if (empty($google)) {
-    echo '
-                        <div class="alert alert-info">
-                            '.Modules::link('Impostazioni', $dbo->fetchOne("SELECT `id` FROM `zz_settings` WHERE nome='Google Maps API key'")['id'], tr('Per abilitare la visualizzazione delle anagrafiche nella mappa, inserire la Google Maps API Key nella scheda Impostazioni')).'.
-                        </div>';
-} elseif (!empty($sede_cliente->gaddress) || (!empty($sede_cliente->lat) && !empty($sede_cliente->lng))) {
-    echo '
-                        <div id="map-edit" style="height: 200px;width: 100%;display: flex;align-items: center;justify-content: center;" onclick="caricaMappa()">
-                            '.$map_load_message.'
-                        </div>
-
-                        <div class="clearfix"></div>
-                        <br>';
-
-    // Navigazione diretta verso l'indirizzo
-    echo '
-                        <a class="btn btn-info btn-block" onclick="calcolaPercorso()">
-                            <i class="fa fa-map-signs"></i> '.tr('Calcola percorso').'
-                        </a>';
-} else {
-    // Navigazione diretta verso l'indirizzo
-    echo '
-                        <a class="btn btn-info btn-block" onclick="calcolaPercorso()">
-                            <i class="fa fa-map-signs"></i> '.tr('Calcola percorso').'
-                        </a>';
-
-    // Ricerca diretta su Google Maps
-    echo '
-                        <a class="btn btn-info btn-block" onclick="cercaGoogleMaps()">
-                            <i class="fa fa-map-marker"></i> '.tr('Cerca su Google Maps').'
-                        </a>';
-}
-
-echo '
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <script>
-            function modificaPosizione() {
-                openModal("'.tr('Modifica posizione').'", "'.$module->fileurl('modals/posizione.php').'?id_module='.$id_module.'&id_record='.$id_record.'");
-            }
-
-            function cercaGoogleMaps() {
-                const indirizzo = getIndirizzoAnagrafica();
-                window.open("https://maps.google.com/maps/search/" + indirizzo);
-            }
-
-            function calcolaPercorso() {
-                const indirizzo_partenza = getIndirizzoAzienda();
-                const indirizzo_destinazione = getIndirizzoAnagrafica();
-                window.open("https://maps.google.com/maps/dir/" + indirizzo_partenza + "/" + indirizzo_destinazione);
-            }
-
-            function getIndirizzoAzienda() {
-                const indirizzo = "'.$sede_azienda->indirizzo.'";
-                const citta = "'.$sede_azienda->citta.'";
-
-                const lat = parseFloat("'.$sede_azienda->lat.'");
-                const lng = parseFloat("'.$sede_azienda->lng.'");
-
-                const indirizzo_default = encodeURI(indirizzo) + "," + encodeURI(citta);
-                if (!lat || !lng) return indirizzo_default;
-
-                return lat + "," + lng;
-            }
-
-            function getIndirizzoAnagrafica() {
-                const indirizzo = "'.$sede_cliente->indirizzo.'";
-                const citta = "'.$sede_cliente->citta.'";
-
-                const lat = parseFloat("'.$sede_cliente->lat.'");
-                const lng = parseFloat("'.$sede_cliente->lng.'");
-
-                const indirizzo_default = encodeURI(indirizzo) + "," + encodeURI(citta);
-                if (!lat || !lng) return indirizzo_default;
-
-                return lat + "," + lng;
-            }
-
-            function caricaMappa() {
-                const map_div = $("#map-edit");
-                if (map_div.html().trim() !== "'.$map_load_message.'"){
-                    return;
-                }
-
-                $.getScript("//maps.googleapis.com/maps/api/js?libraries=places&key='.$google.'", function() {
-                    const map_element = map_div[0];
-                    const lat = parseFloat("'.$sede_cliente->lat.'");
-                    const lng = parseFloat("'.$sede_cliente->lng.'");
-
-                    if (!lat || !lng) return;
-                    const position = new google.maps.LatLng(lat, lng);
-
-                    // Create a Google Maps native view under the map_canvas div.
-                    const map = new google.maps.Map(map_element, {
-                        zoom: 14,
-                        scrollwheel: false,
-                        mapTypeControl: true,
-                        mapTypeId: "roadmap",
-                        mapTypeControlOptions: {
-                            style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
-                            mapTypeIds: ["roadmap", "terrain"],
+                        if (!empty($record['idcontratto'])) {
+                            echo '
+                            '.Modules::link('Contratti', $record['idcontratto'], null, null, 'class="pull-right"');
                         }
-                    });
+                    ?>
 
-                    map.setCenter(position);
-                    const marker = new google.maps.Marker({
-                        position: position,
-                        map: map,
-                    });
-               });
-            }
-        </script>';
+					{[ "type": "select", "label": "<?php echo tr('Contratto'); ?>", "name": "idcontratto", "value": "<?php echo $record['id_contratto']; ?>", "ajax-source": "contratti", "readonly": "<?php echo ($user['gruppo'] != 'Clienti' ? $record['flag_completato'] : '1'); ?>" ]}
 
-?>
-    <!-- DATI INTERVENTO -->
-    <div class="panel panel-primary">
-        <div class="panel-heading">
-            <h3 class="panel-title"><?php echo tr('Dati intervento'); ?></h3>
-        </div>
+					<input type='hidden' name='idcontratto_riga' value='<?php echo $idcontratto_riga; ?>'>
+				</div>
+			</div>
+		</div>
+	</div>
 
-        <div class="panel-body">
-            <!-- RIGA 3 -->
-            <div class="row">
-                <div class="col-md-3">
-                    {[ "type": "span", "label": "<?php echo tr('Numero'); ?>", "name": "codice", "value": "$codice$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
-                </div>
+	<!-- DATI INTERVENTO -->
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<h3 class="panel-title"><?php echo tr('Dati intervento'); ?></h3>
+		</div>
 
-                <div class="col-md-3">
-                    {[ "type": "timestamp", "label": "<?php echo tr('Data/ora richiesta'); ?>", "name": "data_richiesta", "required": 1, "value": "$data_richiesta$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
-                </div>
+		<div class="panel-body">
+			<!-- RIGA 3 -->
+			<div class="row">
+				<div class="col-md-3">
+					{[ "type": "span", "label": "<?php echo tr('Numero'); ?>", "name": "codice", "value": "$codice$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+				</div>
 
-                <div class="col-md-3">
-                    {[ "type": "timestamp", "label": "<?php echo tr('Data/ora scadenza'); ?>", "name": "data_scadenza", "required": 0, "value": "$data_scadenza$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
-                </div>
+				<div class="col-md-3">
+					{[ "type": "timestamp", "label": "<?php echo tr('Data/ora richiesta'); ?>", "name": "data_richiesta", "required": 1, "value": "$data_richiesta$", "readonly": "<?php echo ($user['gruppo'] == 'Clienti' ? '1' : $record['flag_completato']); ?>" ]}
+				</div>
 
-                <div class="col-md-3">
-                    {[ "type": "select", "label": "<?php echo tr('Zona'); ?>", "name": "idzona", "values": "query=SELECT id, CONCAT_WS( ' - ', nome, descrizione) AS descrizione FROM an_zone ORDER BY nome", "value": "$idzona$" , "placeholder": "<?php echo tr('Nessuna zona'); ?>", "extra": "readonly", "help":"<?php echo 'La zona viene definita automaticamente in base al cliente selezionato'; ?>." ]}
-                </div>
+				<div class="col-md-3">
+					{[ "type": "timestamp", "label": "<?php echo tr('Data/ora scadenza'); ?>", "name": "data_scadenza", "required": 0, "value": "$data_scadenza$", "readonly": "<?php echo ($user['gruppo'] == 'Clienti' ? '1' : $record['flag_completato']); ?>" ]}
+				</div>
 
-            </div>
+				<div class="col-md-3">
+					{[ "type": "select", "label": "<?php echo tr('Zona'); ?>", "name": "idzona", "values": "query=SELECT id, CONCAT_WS( ' - ', nome, descrizione) AS descrizione FROM an_zone ORDER BY nome", "value": "$idzona$" , "placeholder": "<?php echo tr('Nessuna zona'); ?>", "extra": "readonly", "help":"<?php echo 'La zona viene definita automaticamente in base al cliente selezionato'; ?>." ]}
+				</div>
 
-            <!-- RIGA 4 -->
-            <div class="row">
-                <div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Tipo attività'); ?>", "name": "idtipointervento", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento", "value": "$idtipointervento$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
-                </div>
+			</div>
 
-                <div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL", "value": "$idstatointervento$", "class": "unblockable" ]}
-                </div>
+			<!-- RIGA 4 -->
+			<div class="row">
+				<div class="col-md-4">
+					{[ "type": "select", "label": "<?php echo tr('Tipo attività'); ?>", "name": "idtipointervento", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento", "value": "$idtipointervento$", "readonly": "<?php echo ($user['gruppo'] == 'Clienti' ? '1' : $record['flag_completato']); ?>" ]}
+				</div>
+
+				<div class="col-md-4">
+					{[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL", "value": "$idstatointervento$", <?php echo ($user['gruppo'] == 'Clienti' ? '"readonly":1' : '"class": "unblockable"');?> ]}
+				</div>
 <?php
 
 $tecnici_assegnati = $database->fetchArray('SELECT id_tecnico FROM in_interventi_tecnici_assegnati WHERE id_intervento = '.prepare($id_record));
 $tecnici_assegnati = array_column($tecnici_assegnati, 'id_tecnico');
 echo '
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Tecnici assegnati').'", "multiple": "1", "name": "tecnici_assegnati[]", "ajax-source": "tecnici", "value": "'.implode(',', $tecnici_assegnati).'", "icon-after": "add|'.$module_anagrafiche['id'].'|tipoanagrafica=Tecnico" ]}
+                    {[ "type": "select", "label": "'.tr('Tecnici assegnati').'", "multiple": "1", "name": "tecnici_assegnati[]", "ajax-source": "tecnici", "value": "'.implode(',', $tecnici_assegnati).'", "icon-after": "add|'.$module_anagrafiche['id'].'|tipoanagrafica=Tecnico" '.($user['gruppo'] != 'Clienti' ? '' : ', "readonly":"1"').' ]}
                 </div>';
 
 ?>
-            </div>
+			</div>
 
-            <!-- RIGA 5 -->
-            <div class="row">
-                <div class="col-md-12">
-                    {[ "type": "textarea", "label": "<?php echo tr('Richiesta'); ?>", "name": "richiesta", "required": 1, "class": "autosize", "value": "$richiesta$", "extra": "rows='5'", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
-                </div>
+			<!-- RIGA 5 -->
+			<div class="row">
+				<div class="col-md-12">
+					{[ "type": "textarea", "label": "<?php echo tr('Richiesta'); ?>", "name": "richiesta", "required": 1, "class": "autosize", "value": "$richiesta$", "extra": "rows='5'", "readonly": "<?php echo ($user['gruppo'] == 'Clienti' ? '1' : $record['flag_completato']); ?>" ]}
+				</div>
 
-                <div class="col-md-12">
-                    {[ "type": "ckeditor", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "class": "autosize", "value": "$descrizione$", "extra": "rows='10'", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
-                </div>
+				<div class="col-md-12">
+					{[ "type": "ckeditor", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "class": "autosize", "value": "$descrizione$", "extra": "rows='10'", "readonly": "<?php echo ($user['gruppo'] == 'Clienti' ? '1' : $record['flag_completato']); ?>" ]}
+				</div>
 <?php
-                // Nascondo le note interne ai clienti
-                if ($user->gruppo != 'Clienti') {
+                if( $user['gruppo'] != 'Clienti' ){
                     echo '
                     <div class="col-md-12">
-                        {[ "type": "textarea", "label": "'.tr('Note interne').'", "name": "informazioniaggiuntive", "class": "autosize", "value": "$informazioniaggiuntive$", "extra": "rows=\'5\'" ]}
-                    </div>';
+					    {[ "type": "textarea", "label": "'.tr('Note interne').'", "name": "informazioniaggiuntive", "class": "autosize", "value": "$informazioniaggiuntive$", "extra": "rows=\'5\'" ]}
+				    </div>';
                 }
 ?>
-            </div>
-        </div>
-    </div>
+			</div>
+		</div>
+	</div>
 
 <?php
-
     // Visualizzo solo se l'anagrafica cliente è un ente pubblico
     if (!empty($record['idcontratto'])) {
         $contratto = $dbo->fetchOne('SELECT num_item,codice_cig,codice_cup,id_documento_fe FROM co_contratti WHERE id = '.prepare($record['idcontratto']));
@@ -360,7 +220,19 @@ echo '
 			<br>
 
 			<div class="row">
-				<div class="col-md-12" id="tecnici"></div>
+				<div class="col-md-12" id="tecnici">
+					<?php
+                        if (file_exists($docroot.'/modules/interventi/custom/ajax_tecnici.php')) {
+                            ?>
+						<script>$('#tecnici').load('<?php echo $rootdir; ?>/modules/interventi/custom/ajax_tecnici.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');</script>
+					<?php
+                        } else {
+                            ?>
+						<script>$('#tecnici').load('<?php echo $rootdir; ?>/modules/interventi/ajax_tecnici.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');</script>
+					<?php
+                        }
+                    ?>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -377,23 +249,7 @@ echo '
 
 <?php
 
-if (!$block_edit) {
-    // Lettura ddt (entrata o uscita)
-    $ddt_query = 'SELECT COUNT(*) AS tot FROM dt_ddt
-            LEFT JOIN `dt_causalet` ON `dt_causalet`.`id` = `dt_ddt`.`idcausalet`
-            LEFT JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`idstatoddt`
-            LEFT JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt`
-            WHERE idanagrafica='.prepare($record['idanagrafica']).'
-                AND `dt_statiddt`.`descrizione` IN (\'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')
-                AND `dt_tipiddt`.`dir` = '.prepare($intervento->direzione).'
-                AND `dt_causalet`.`is_importabile` = 1
-                AND dt_ddt.id IN (SELECT idddt FROM dt_righe_ddt WHERE dt_righe_ddt.idddt = dt_ddt.id AND (qta - qta_evasa) > 0)';
-    $ddt = $dbo->fetchArray($ddt_query)[0]['tot'];
-    echo '
-            <button type="button" class="btn btn-sm btn-primary'.(!empty($ddt) ? '' : ' disabled').'" data-href="'.base_path().'/modules/interventi/add_ddt.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="'.tr('Aggiungi ddt').'">
-                <i class="fa fa-plus"></i> '.tr('Ddt').'
-            </button>';
-
+if (!$block_edit && $user['gruppo'] != 'Clienti' ){
     echo '
             <button type="button" class="btn btn-sm btn-primary tip" title="'.tr('Aggiungi articolo').'" onclick="gestioneArticolo(this)">
                 <i class="fa fa-plus"></i> '.tr('Articolo').'
@@ -432,8 +288,10 @@ $articoli = $intervento->articoli;
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-md-12" id="righe"></div>
+            <div id="righe">
+<?php
+include $structure->filepath('row-list.php');
+?>
             </div>
         </div>
     </div>
@@ -446,7 +304,19 @@ $articoli = $intervento->articoli;
 
 		<div class="panel-body">
 			<div class="row">
-				<div class="col-md-12" id="costi"></div>
+				<div class="col-md-12" id="costi">
+					<?php
+                        if (file_exists($docroot.'/modules/interventi/custom/ajax_costi.php')) {
+                            ?>
+						<script>$('#costi').load('<?php echo $rootdir; ?>/modules/interventi/custom/ajax_costi.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');</script>
+					<?php
+                        } else {
+                            ?>
+						<script>$('#costi').load('<?php echo $rootdir; ?>/modules/interventi/ajax_costi.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');</script>
+					<?php
+                        }
+                    ?>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -463,7 +333,7 @@ $articoli = $intervento->articoli;
 	    <div class="alert alert-warning"><i class="fa fa-warning"></i> '.tr('Questo intervento non è ancora stato firmato dal cliente').'.</div>';
         } else {
             echo '
-	    <img src="'.base_path().'/files/interventi/'.$record['firma_file'].'" class="img-thumbnail"><div>&nbsp;</div>
+	    <img src="'.$rootdir.'/files/interventi/'.$record['firma_file'].'" class="img-thumbnail"><div>&nbsp;</div>
 	   	<div class="col-md-6 col-md-offset-3 alert alert-success"><i class="fa fa-check"></i> '.tr('Firmato il _DATE_ alle _TIME_ da _PERSON_', [
             '_DATE_' => Translator::dateToLocale($record['firma_data']),
             '_TIME_' => Translator::timeToLocale($record['firma_data']),
@@ -510,51 +380,6 @@ async function gestioneRiga(button, options) {
     }
 }
 
-/**
- * Funzione dedicata al caricamento dinamico via AJAX delle righe del documento.
- */
-function caricaRighe() {
-    let container = $("#righe");
-
-    localLoading(container, true);
-    return $.get("'.$structure->fileurl('row-list.php').'?id_module='.$id_module.'&id_record='.$id_record.'", function(data) {
-        container.html(data);
-        localLoading(container, false);
-    });
-}
-
-/**
- * Funzione dedicata al caricamento dinamico via AJAX delle sessioni dei tecnici per l\'Attività.
- */
-function caricaTecnici() {
-    let container = $("#tecnici");
-
-    localLoading(container, true);
-    return $.get("'.$structure->fileurl('ajax_tecnici.php').'?id_module='.$id_module.'&id_record='.$id_record.'", function(data) {
-        container.html(data);
-        localLoading(container, false);
-    });
-}
-
-/**
- * Funzione dedicata al caricamento dinamico via AJAX delle sessioni dei tecnici per l\'Attività.
- */
-function caricaCosti() {
-    let container = $("#costi");
-
-    localLoading(container, true);
-    return $.get("'.$structure->fileurl('ajax_costi.php').'?id_module='.$id_module.'&id_record='.$id_record.'", function(data) {
-        container.html(data);
-        localLoading(container, false);
-    });
-}
-
-$(document).ready(function() {
-    caricaRighe();
-    caricaTecnici();
-    caricaCosti();
-});
-
 $("#idanagrafica").change(function () {
     updateSelectOption("idanagrafica", $(this).val());
     session_set("superselect,idanagrafica", $(this).val(), 0);
@@ -587,7 +412,7 @@ $("#idcontratto").change(function () {
 });
 
 $("#matricola").change(function () {
-    session_set("superselect,matricola", $(this).val(), 0);
+    session_set("superselect,marticola", $(this).val(), 0);
 });
 
 $("#idsede").change(function () {

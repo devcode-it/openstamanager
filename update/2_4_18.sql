@@ -220,3 +220,7 @@ UPDATE `co_documenti` SET `id_banca_azienda` = NULL WHERE `id_banca_azienda` = 0
 
 -- Aggiunta unità di misura secondaria per le stampe documenti di vendita
 ALTER TABLE `mg_articoli` ADD `um_secondaria` varchar(255), ADD `fattore_um_secondaria` DECIMAL(15, 6);
+
+
+-- Aggiunte note prima nota
+ALTER TABLE `co_movimenti` ADD `note` TEXT NOT NULL AFTER `descrizione`; 

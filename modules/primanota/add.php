@@ -196,9 +196,9 @@ if ($numero_documenti + $numero_scadenze > 1) {
     if (!empty($id_anagrafica_movimenti)) {
         $an = Anagrafica::find($id_anagrafica_movimenti);
 
-        $descrizione = 'Pag. fatture '.$an->ragione_sociale.' num. '.implode(', ', $numeri);
+        $descrizione = ((($dir == 'entrata' && !$nota_credito && !$is_insoluto) || ($dir == 'uscita' && ($nota_credito || $is_insoluto))) ?  tr('Inc.') : tr('Pag.')).' fatture '.$an->ragione_sociale.' num. '.implode(', ', $numeri);
     } else {
-        $descrizione = 'Pag. fatture num. '.implode(', ', $numeri);
+        $descrizione = ((($dir == 'entrata' && !$nota_credito && !$is_insoluto) || ($dir == 'uscita' && ($nota_credito || $is_insoluto))) ?  tr('Inc.') : tr('Pag.')).' fatture num. '.implode(', ', $numeri);
     }
 } elseif ($numero_documenti == 1) {
     $numero_fattura = !empty($fattura['numero_esterno']) ? $fattura['numero_esterno'] : $fattura['numero'];
@@ -208,7 +208,7 @@ if ($numero_documenti + $numero_scadenze > 1) {
     if (!empty($is_insoluto)) {
         $operation = tr('Registrazione insoluto');
     } else {
-        $operation = tr('Pag.');
+        $operation = ((($dir == 'entrata' && !$nota_credito && !$is_insoluto) || ($dir == 'uscita' && ($nota_credito || $is_insoluto))) ? tr('Inc.') : tr('Pag.'));
     }
 
     $descrizione = tr('_OP_ _DOC_ num. _NUM_ del _DATE_ (_NAME_)', [

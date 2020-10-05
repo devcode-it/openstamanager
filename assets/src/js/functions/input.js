@@ -21,11 +21,19 @@ function input(name) {
 }
 
 function Input(name) {
-    this.element = $("[name='" + name + "']").last();
+    // Selezione tramite jQuery
+    if (name instanceof jQuery) {
+        this.element = name.last();
+    }
 
-    // Fix per select multipli
-    if (this.element.length === 0) {
-        this.element = $("[name='" + name + "[]']").last();
+    // Selezione per nome
+    else {
+        this.element = $("[name='" + name + "']").last();
+
+        // Fix per select multipli
+        if (this.element.length === 0) {
+            this.element = $("[name='" + name + "[]']").last();
+        }
     }
 
     // Controllo sulla gestione precedente
@@ -99,7 +107,7 @@ Input.prototype.getData = function () {
     }
 
     return {
-        value: this.element.val()
+        value: this.get()
     };
 }
 
@@ -108,8 +116,14 @@ Input.prototype.get = function () {
 
     // Conversione del valore per le checkbox
     let group = this.element.closest(".form-group");
-    if (group.find("input[type=checkbox]").length){
+    if (group.find("input[type=checkbox]").length) {
         value = parseInt(value) ? 1 : 0;
+    }
+
+    // Gestione dei valori numerici
+    const autonumeric = this.element.data("autonumeric");
+    if (autonumeric) {
+        value = parseFloat(autonumeric.rawValue);
     }
 
     return value;

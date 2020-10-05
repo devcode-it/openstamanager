@@ -26,7 +26,7 @@ $id_cliente = $id_cliente ?: $idcliente;
 if (empty($id_sede) || $id_sede == '-1') {
     $queryc = 'SELECT * FROM an_anagrafiche WHERE idanagrafica='.prepare($id_cliente);
 } else {
-    $queryc = 'SELECT an_anagrafiche.*, an_sedi.*, if(an_sedi.codice_fiscale != "", an_sedi.codice_fiscale, an_anagrafiche.codice_fiscale) AS codice_fiscale, if(an_sedi.piva != "", an_sedi.piva, an_anagrafiche.piva) AS piva FROM an_sedi JOIN an_anagrafiche ON an_anagrafiche.idanagrafica=an_sedi.idanagrafica WHERE an_sedi.idanagrafica='.prepare($id_cliente).' AND an_sedi.id='.prepare($id_sede);
+    $queryc = 'SELECT an_anagrafiche.*, an_sedi.*, if(an_sedi.codice_fiscale != "", an_sedi.codice_fiscale, an_anagrafiche.codice_fiscale) AS codice_fiscale, if(an_sedi.piva != "", an_sedi.piva, an_anagrafiche.piva) AS piva, if(an_sedi.id_nazione != "", an_sedi.id_nazione, an_anagrafiche.id_nazione) AS id_nazione FROM an_sedi JOIN an_anagrafiche ON an_anagrafiche.idanagrafica=an_sedi.idanagrafica WHERE an_sedi.idanagrafica='.prepare($id_cliente).' AND an_sedi.id='.prepare($id_sede);
 }
 /**
  * @deprecated
@@ -83,6 +83,12 @@ foreach ($replace as $prefix => $values) {
     }
     if (!empty($values['provincia'])) {
         $citta .= ' ('.$values['provincia'].')';
+    }
+    if (!empty($values['id_nazione'])) {
+        $nazione = $database->fetchOne("SELECT * FROM an_nazioni WHERE id = ".prepare($values['id_nazione']));
+        if ($nazione['iso2']!='IT'){
+            $citta .= ' - '.$nazione['name'];
+        }
     }
 
     $values['citta_full'] = $citta;
@@ -145,7 +151,7 @@ $replaces = array_merge($replaces, [
     'base_link()' => base_path(),
     'directory' => Prints::get($id_print)['full_directory'],
     'footer' => !empty($footer) ? $footer : '',
-    'dicitura_fissa_fattura' => setting('Dicitura fissa fattura').((!empty(setting('OSMCloud Services API Token'))) ? tr('Documento privo di valenza fiscale (art 21 dpr 633/72).') : ''),
+    'dicitura_fissa_fattura' => setting('Dicitura fissa fattura').((setting('Regime Fiscale')!='RF02' && setting('Regime Fiscale')!='RF19' && setting('Regime Fiscale')!='RF18') ? tr('Documento privo di valenza fiscale (art 21 dpr 633/72).') : ''),
 ]);
 
 unset($replace);

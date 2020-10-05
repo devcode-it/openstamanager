@@ -164,6 +164,17 @@ include_once __DIR__.'/../../core.php';
                             {[ "type": "select", "label": "<?php echo tr('Conto predefinito di acquisto'); ?>", "name": "idconto_acquisto", "value": "$idconto_acquisto$", "ajax-source": "conti-acquisti" ]}
                         </div>
                     </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            {[ "type": "select", "label": "<?php echo tr('Unità di misura secondaria'); ?>", "name": "um_secondaria", "value": "$um_secondaria$", "ajax-source": "misure", "help": "<?php echo tr("Unità di misura da utilizzare nelle stampe di Ordini fornitori in relazione all'articolo"); ?>" ]}
+                        </div>
+
+                        <div class="col-md-6">
+                            {[ "type": "number", "label": "<?php echo tr('Fattore moltiplicativo'); ?>", "name": "fattore_um_secondaria", "value": "$fattore_um_secondaria$", "help": "<?php echo tr("Fattore moltiplicativo per l'unità di misura da utilizzare nelle stampe di Ordini fornitori"); ?>" ]}
+                        </div>
+
+                    </div>
                 </div>
             </div>
         </div>

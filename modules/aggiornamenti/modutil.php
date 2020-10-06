@@ -30,6 +30,7 @@ function customStructure()
         'modules',
         'templates',
         'plugins',
+        'include',
     ];
 
     // Controlli di personalizzazione fisica

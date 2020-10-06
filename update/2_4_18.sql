@@ -235,3 +235,20 @@ ALTER TABLE `co_movimenti` ADD `note` TEXT AFTER `descrizione`;
 -- Aggiunta risorse API dedicate alle Stampe in binary formato
 INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES
 (NULL, 'v1', 'retrieve', 'stampa-binary', 'API\\Common\\Stampa', '1');
+
+-- Fix <CausalePagamento> tracciato 1.2.1 FE (che potrà essere utilizzata a partire dal 01/10/2020 e sarà obbligatoria dal 01/01/2021)
+INSERT INTO `fe_causali_pagamento_ritenuta` (`codice`, `descrizione`) VALUES ('M2', 'Prestazioni di lavoro autonomo non esercitate abitualmente per le quali sussiste l’obbligo di iscrizione alla Gestione Separata ENPAPI');
+
+INSERT INTO `fe_causali_pagamento_ritenuta` (`codice`, `descrizione`) VALUES ('M1', 'Redditi derivanti dall’assunzione di obblighi di fare, di non fare o permettere');
+
+INSERT INTO `fe_causali_pagamento_ritenuta` (`codice`, `descrizione`) VALUES ('L1', 'Redditi derivanti dall’utilizzazione economica di opere dell’ingegno, di brevetti industriali e di processi, che sono percepiti da soggetti che abbiano acquistato a titolo oneroso i diritti alla loro utilizzazione');
+
+INSERT INTO `fe_causali_pagamento_ritenuta` (`codice`, `descrizione`) VALUES ('O1', 'Redditi derivanti dall’assunzione di obblighi di fare, di non fare o permettere, per le quali non sussiste l’obbligo di iscrizione alla gestione separata (Circ. INPS n. 104/2001)');
+
+INSERT INTO `fe_causali_pagamento_ritenuta` (`codice`, `descrizione`) VALUES ('V1', 'Redditi derivanti da attività commerciali non esercitate abitualmente (ad esempio, provvigioni corrisposte per prestazioni occasionali ad agente o rappresentante di commercio, mediatore, procacciatore d’affari)');
+
+INSERT INTO `fe_causali_pagamento_ritenuta` (`codice`, `descrizione`) VALUES ('V2', 'Redditi derivanti dalle prestazioni non esercitate abitualmente rese dagli incaricati alla vendita diretta a domicilio');
+
+UPDATE `fe_causali_pagamento_ritenuta` SET `codice` = 'ZO' WHERE `fe_causali_pagamento_ritenuta`.`codice` = 'Z';
+
+UPDATE `zz_settings` SET `valore` = 'ZO' WHERE `zz_settings`.`nome` = "Causale ritenuta d'acconto" AND `zz_settings`.`valore` = 'Z';

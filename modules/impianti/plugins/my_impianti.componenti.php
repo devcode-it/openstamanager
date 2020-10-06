@@ -111,7 +111,7 @@ echo '
     <div class="box-body">';
 
 // Elenca i componenti disponibili
-$componenti_disponibili = Ini::getList(base_dir().'/files/my_impianti/', $id_list);
+$componenti_disponibili = Ini::getList(base_dir().'/files/impianti/', $id_list);
 echo '
         <div class="row">
             <div class="col-md-9">

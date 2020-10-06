@@ -31,7 +31,6 @@ include_once __DIR__.'/../../core.php';
     {[ "type": "select", "label": "<?php echo tr('Tipo'); ?>", "name": "tipo", "required": 1, "ajax-source": "tipi_scadenze", "icon-after": "add|<?php echo Modules::get('Tipi scadenze')['id']; ?>" ]}
     </div>
 
-
     <div class="col-md-4">
     {[ "type": "date", "label": "<?php echo tr('Data scadenza'); ?>", "name": "data", "required": 1, "value": "-now-" ]}
     </div>
@@ -52,5 +51,4 @@ include_once __DIR__.'/../../core.php';
   </div>
 
   <div class='clearfix'></div>
-
 </form>

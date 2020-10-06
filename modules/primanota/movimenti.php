@@ -171,7 +171,7 @@ echo '
 
 echo '
 <script>
-var formatted_zero = "'.Translator::numberToLocale(0).'";
+var formatted_zero = "'.numberFormat(0).'";
 var n = '.$counter.';
 
 function addRiga(btn) {
@@ -196,25 +196,25 @@ function addRiga(btn) {
 * @returns {boolean}
 */
 function controllaConti() {
-    var continuare = true;
+    let continuare = true;
 
     // Controlli sullo stato dei raggruppamenti
     $(".raggruppamento_primanota").each(function() {
-        var bilancio = calcolaBilancio(this);
+        let bilancio = calcolaBilancio(this);
 
-        continuare &= bilancio == 0;
+        continuare &= bilancio === 0;
     });
 
     // Blocco degli input con valore non impostato
     $("input[id*=dare], input[id*=avere]").each(function() {
-        var conto_relativo = $(this).parent().parent().find("select").val();
+        let conto_relativo = $(this).parent().parent().find("select").val();
 
         if (!conto_relativo) {
             $(this).prop("disabled", true);
         }
 
         if ($(this).val().toEnglish()){
-            continuare &= conto_relativo ? true : false;
+            continuare &= !!conto_relativo;
         }
     });
 
@@ -237,38 +237,37 @@ function controllaConti() {
 * @returns {number}
 */
 function calcolaBilancio(gruppo) {
-    var raggruppamento = $(gruppo);
+    let raggruppamento = $(gruppo);
 
-    var totale_dare = 0.00;
-    var totale_avere = 0.00;
+    let totale_dare = 0.00;
+    let totale_avere = 0.00;
 
     // Calcolo il totale dare
     raggruppamento.find("input[id*=dare]").each(function() {
-        valore = $(this).val() ? $(this).val().toEnglish() : 0;
-
-        totale_dare += valore;
+        totale_dare += input(this).get();
     });
 
     // Calcolo il totale avere
     raggruppamento.find("input[id*=avere]").each(function() {
-        valore = $(this).val() ? $(this).val().toEnglish() : 0;
-
-        totale_avere += valore;
+        totale_avere += input(this).get();
     });
+
+    totale_dare =  parseFloat(totale_dare);
+    totale_avere =  parseFloat(totale_avere);
 
     // Visualizzazione dei totali
     raggruppamento.find(".totale_dare").text(totale_dare.toLocale());
     raggruppamento.find(".totale_avere").text(totale_avere.toLocale());
 
     // Calcolo il bilancio
-    var bilancio = totale_dare.toFixed(2) - totale_avere.toFixed(2);
+    let bilancio = totale_dare.toFixed(2) - totale_avere.toFixed(2);
 
     // Visualizzazione dello sbilancio eventuale
-    var sbilancio = raggruppamento.find(".sbilancio");
-    var valore_sbilancio = sbilancio.find(".money");
+    let sbilancio = raggruppamento.find(".sbilancio");
+    let valore_sbilancio = sbilancio.find(".money");
     valore_sbilancio.text(bilancio.toLocale());
 
-    if (bilancio == 0) {
+    if (bilancio === 0) {
         sbilancio.addClass("hide");
     } else {
         sbilancio.removeClass("hide");
@@ -282,7 +281,7 @@ $(document).ready(function() {
 
     // Fix per l\'inizializzazione degli input
     $("input[id*=dare], input[id*=avere]").each(function() {
-        if ($(this).val() == formatted_zero) {
+        if (input(this).get() === 0) {
             $(this).prop("disabled", true);
         } else {
             $(this).prop("disabled", false);
@@ -298,30 +297,30 @@ $(document).ready(function() {
 });
 
 $(document).on("change", "select", function() {
-    var row = $(this).parent().parent();
+    let row = $(this).parent().parent();
 
-    if ($(this).parent().parent().find("input[disabled]").length != 1) {
-        row.find("input").prop("disabled", $(this).val() ? false : true);
+    if (row.find("input[disabled]").length > 1) {
+        row.find("input").prop("disabled", !$(this).val());
     }
 
     controllaConti();
 });
 
 $(document).on("keyup change", "input[id*=dare]", function() {
-    var row = $(this).parent().parent();
+    let row = $(this).parent().parent();
 
     if (!$(this).prop("disabled")) {
-        row.find("input[id*=avere]").prop("disabled", $(this).val() ? true : false);
+        row.find("input[id*=avere]").prop("disabled", !!$(this).val());
 
         controllaConti();
     }
 });
 
 $(document).on("keyup change", "input[id*=avere]", function() {
-    var row = $(this).parent().parent();
+    let row = $(this).parent().parent();
 
     if (!$(this).prop("disabled")) {
-        row.find("input[id*=dare]").prop("disabled", $(this).val() ? true : false);
+        row.find("input[id*=dare]").prop("disabled", !!$(this).val());
 
         controllaConti();
     }

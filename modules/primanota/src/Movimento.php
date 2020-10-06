@@ -44,6 +44,7 @@ class Movimento extends Model
         $model->idmastrino = $mastrino->idmastrino;
         $model->data = $mastrino->data;
         $model->descrizione = $mastrino->descrizione;
+        $model->note = $mastrino->note;
         $model->primanota = $mastrino->primanota;
         $model->is_insoluto = $mastrino->is_insoluto;
 

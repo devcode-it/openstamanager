@@ -16,8 +16,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-function start_datepickers() {
-    var icons = {
+function getCalendarIcons(){
+   return {
         time: 'fa fa-clock-o',
         date: 'fa fa-calendar',
         up: 'fa fa-chevron-up',
@@ -28,64 +28,79 @@ function start_datepickers() {
         clear: 'fa fa-trash',
         close: 'fa fa-times'
     };
+}
 
-    var date_format = dateFormatMoment(globals.date_format);
-    var timestamp_format = dateFormatMoment(globals.timestamp_format);
-    var time_format = dateFormatMoment(globals.time_format);
+function initDateInput(input) {
+    let date_format = dateFormatMoment(globals.date_format);
+    let calendar_icons = getCalendarIcons();
 
-    $('.timestamp-picker').each(function () {
-        $this = $(this);
-        $this.datetimepicker({
-            format: timestamp_format,
-            locale: globals.locale,
-            icons: icons,
-            collapse: false,
-            sideBySide: true,
-            useCurrent: false,
-            stepping: 5,
-            widgetPositioning: {
-                horizontal: 'left',
-                vertical: 'auto'
-            },
-            minDate: moment($this.attr('min-date')).isValid() ? $this.attr('min-date') : false,
-            maxDate: moment($this.attr('max-date')).isValid() ? $this.attr('max-date') : false,
-        });
+    $(input).datetimepicker({
+        format: date_format,
+        locale: globals.locale,
+        icons: calendar_icons,
+        useCurrent: false,
+        minDate: moment($this.attr('min-date')).isValid() ? $this.attr('min-date') : false,
+        maxDate: moment($this.attr('max-date')).isValid() ? $this.attr('max-date') : false,
+    });
+}
+
+function initTimestampInput(input) {
+    let $this = $(input);
+    let timestamp_format = dateFormatMoment(globals.timestamp_format);
+    let calendar_icons = getCalendarIcons();
+
+    $this.datetimepicker({
+        format: timestamp_format,
+        locale: globals.locale,
+        icons: calendar_icons,
+        collapse: false,
+        sideBySide: true,
+        useCurrent: false,
+        stepping: 5,
+        widgetPositioning: {
+            horizontal: 'left',
+            vertical: 'auto'
+        },
+        minDate: moment($this.attr('min-date')).isValid() ? $this.attr('min-date') : false,
+        maxDate: moment($this.attr('max-date')).isValid() ? $this.attr('max-date') : false,
     });
 
-    //fix per timestamp-picker non visibile con la classe table-responsive
+    // fix per timestamp-picker non visibile con la classe table-responsive
+    $this.on("dp.show", function (e) {
+        $('#tecnici > div').removeClass('table-responsive');
+    });
+
+    $this.on("dp.hide", function (e) {
+        $('#tecnici > div').addClass('table-responsive');
+    })
+}
+
+function initTimeInput(input) {
+    let time_format = dateFormatMoment(globals.time_format);
+    let calendar_icons = getCalendarIcons();
+
+    $(input).datetimepicker({
+        format: time_format,
+        locale: globals.locale,
+        icons: calendar_icons,
+        useCurrent: false,
+        stepping: 5,
+        minDate: moment($this.attr('min-date')).isValid() ? $this.attr('min-date') : false,
+        maxDate: moment($this.attr('max-date')).isValid() ? $this.attr('max-date') : false,
+    });
+}
+
+function start_datepickers() {
     $('.timestamp-picker').each(function () {
-        $this = $(this);
-        $this.on("dp.show", function (e) {
-            $('#tecnici > div').removeClass('table-responsive');
-        });
-        $this.on("dp.hide", function (e) {
-            $('#tecnici > div').addClass('table-responsive');
-        })
+        initTimestampInput(this);
     });
 
     $('.datepicker').each(function () {
-        $this = $(this);
-        $this.datetimepicker({
-            format: date_format,
-            locale: globals.locale,
-            icons: icons,
-            useCurrent: false,
-            minDate: moment($this.attr('min-date')).isValid() ? $this.attr('min-date') : false,
-            maxDate: moment($this.attr('max-date')).isValid() ? $this.attr('max-date') : false,
-        });
+        initDateInput(this);
     });
 
     $('.timepicker').each(function () {
-        $this = $(this);
-        $this.datetimepicker({
-            format: time_format,
-            locale: globals.locale,
-            icons: icons,
-            useCurrent: false,
-            stepping: 5,
-            minDate: moment($this.attr('min-date')).isValid() ? $this.attr('min-date') : false,
-            maxDate: moment($this.attr('max-date')).isValid() ? $this.attr('max-date') : false,
-        });
+        initTimeInput(this);
     });
 }
 

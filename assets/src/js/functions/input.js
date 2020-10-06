@@ -17,21 +17,79 @@
  */
 
 function input(name) {
-    return new Input(name);
+    let element;
+
+    // Selezione tramite jQuery
+    if (name instanceof jQuery) {
+        element = name.last();
+    }
+
+    // Selezione tramite JS diretto
+    else if (isElement(name)) {
+        element = $(name);
+    }
+
+    // Selezione per nome
+    else {
+        element = $("[name='" + name + "']").last();
+
+        // Fix per select multipli
+        if (element.length === 0) {
+            element = $("[name='" + name + "[]']").last();
+        }
+    }
+
+    if (!element.data("input-controller")) {
+        return new Input(element);
+    } else {
+        return element.data("input-controller");
+    }
 }
 
-function Input(name) {
-    this.element = $("[name='" + name + "']").last();
-
-    // Fix per select multipli
-    if (this.element.length === 0) {
-        this.element = $("[name='" + name + "[]']").last();
-    }
+/**
+ *
+ * @constructor
+ * @param {jQuery} element
+ */
+function Input(element) {
+    this.element = element;
 
     // Controllo sulla gestione precedente
     if (!this.element.data("input-set")) {
-        this.element.data("input-set", 1);
-        this.element.data("required", this.element.attr("required"));
+        return;
+    }
+
+    this.element.data("input-set", 1);
+    this.element.data("required", this.element.attr("required"));
+
+    // Operazioni di inizializzazione per input specifici
+    // Inizializzazione per date
+    if (this.element.hasClass('timestamp-picker')) {
+        initTimestampInput(this.element);
+    } else if (this.element.hasClass('datepicker')) {
+        initDateInput(this.element);
+    } else if (this.element.hasClass('timepicker')) {
+        initTimeInput(this.element);
+    }
+
+    // Inizializzazione per campi numerici
+    else if (this.element.hasClass('decimal-number')) {
+        initNumberInput(this.element);
+    }
+
+    // Inizializzazione per textarea
+    else if (this.element.hasClass('autosize')) {
+        initTextareaInput(this.element);
+    }
+
+    // Inizializzazione per select
+    else if (this.element.hasClass('superselect') || this.element.hasClass('superselectajax')) {
+        initSelectInput(this.element);
+    }
+
+    // Inizializzazione alternativa per maschere
+    else {
+        initMaskInput(this.element);
     }
 }
 
@@ -99,22 +157,46 @@ Input.prototype.getData = function () {
     }
 
     return {
-        value: this.element.val()
+        value: this.get()
     };
 }
 
+/**
+ * Restituisce il valore corrente dell'input.
+ *
+ * @returns {string|number}
+ */
 Input.prototype.get = function () {
     let value = this.element.val();
 
     // Conversione del valore per le checkbox
     let group = this.element.closest(".form-group");
-    if (group.find("input[type=checkbox]").length){
-        value = parseInt(value) ? 1 : 0;
+    if (group.find("input[type=checkbox]").length) {
+        return parseInt(value) ? 1 : 0;
+    }
+
+    // Gestione dei valori numerici
+    if (this.element.hasClass("decimal-number")) {
+        const autonumeric = this.element.data("autonumeric");
+
+        if (autonumeric) {
+            return parseFloat(autonumeric.rawValue);
+        }
+        // In attesa dell'inizializzazione per autonumeric, il valore registrato è interpretabile
+        else {
+            return parseFloat(value);
+        }
     }
 
     return value;
 }
 
+/**
+ * Imposta il valore per l'input.
+ *
+ * @param value
+ * @returns {Input}
+ */
 Input.prototype.set = function (value) {
     this.element.val(value).trigger("change");
 
@@ -139,4 +221,34 @@ Input.prototype.on = function (event, action) {
 
 Input.prototype.off = function (event) {
     return this.element.off(event);
+}
+
+/**
+ * Returns true if it is a DOM node.
+ *
+ * @param o
+ * @returns boolean
+ *
+ * @source https://stackoverflow.com/a/384380
+ */
+function isNode(o) {
+    return (
+        typeof Node === "object" ? o instanceof Node :
+            o && typeof o === "object" && typeof o.nodeType === "number" && typeof o.nodeName === "string"
+    );
+}
+
+/**
+ * Returns true if it is a DOM element.
+ *
+ * @param o
+ * @returns boolean
+ *
+ * @source https://stackoverflow.com/a/384380
+ */
+function isElement(o) {
+    return (
+        typeof HTMLElement === "object" ? o instanceof HTMLElement : // DOM2
+            o && typeof o === "object" && o.nodeType === 1 && typeof o.nodeName === "string"
+    );
 }

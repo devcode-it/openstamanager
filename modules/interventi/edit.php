@@ -44,7 +44,7 @@ echo '
                     <div class="row">
                         <div class="col-md-6">
                             '.Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"').'
-                            {[ "type": "select", "label": "'.tr('Cliente').'", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti", "readonly": "'.$record['flag_completato'].'" ]}
+                            {[ "type": "select", "label": "'.tr('Cliente').'", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti", "readonly": "'.($user['gruppo'] == 'Clienti' ? '1' : $record['flag_completato']).'" ]}
                         </div>
 
                         <div class="col-md-6">

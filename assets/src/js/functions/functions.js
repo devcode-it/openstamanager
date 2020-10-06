@@ -515,7 +515,7 @@ function restart_inputs() {
     start_superselect();
 
     // Autosize per le textarea
-    autosize($('.autosize'));
+    initTextareaInput($('.autosize'));
 }
 
 /**
@@ -552,7 +552,7 @@ function alertPush() {
 }
 
 /**
- * 
+ *
  * @param button
  * @param form
  * @param data
@@ -647,4 +647,8 @@ function hideTableColumn(table, column) {
             }
         }
     }
+}
+
+function initTextareaInput(input){
+    autosize($(input));
 }

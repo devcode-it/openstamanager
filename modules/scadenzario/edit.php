@@ -137,11 +137,11 @@ foreach ($scadenze as $i => $scadenza) {
                             </td>
 
                             <td class="text-right">
-                                {[ "type": "number", "name": "da_pagare['.$i.']", "decimals": 2, "value": "'.Translator::numberToLocale($scadenza['da_pagare'], 2).'", "onchange": "controlloTotale()" ]}
+                                {[ "type": "number", "name": "da_pagare['.$i.']", "decimals": 2, "value": "'.numberFormat($scadenza['da_pagare'], 2).'", "onchange": "controlloTotale()" ]}
                             </td>
 
                             <td class="text-right">
-                                {[ "type": "number", "name": "pagato['.$i.']", "decimals": 2, "value": "'.Translator::numberToLocale($scadenza['pagato']).'"  ]}
+                                {[ "type": "number", "name": "pagato['.$i.']", "decimals": 2, "value": "'.numberFormat($scadenza['pagato']).'"  ]}
                             </td>
 
                             <td align="center">
@@ -155,7 +155,7 @@ echo '
                         <tfoot>
                             <tr>
                                 <td class="text-right"><b>'.tr('Totale').'</b></td>
-                                <td class="text-right" id="totale_utente">'.Translator::numberToLocale($totale_da_pagare).'</td>
+                                <td class="text-right" id="totale_utente">'.numberFormat($totale_da_pagare).'</td>
                                 <td class="text-right"></td>
                             </tr>
                         </tfoot>';
@@ -179,7 +179,7 @@ echo '
                         ]); ?>.
 					</div>
 
-					<input type="hidden" id="totale_da_pagare" value="<?php echo Translator::numberToLocale($totale_da_pagare, 2); ?>">
+					<input type="hidden" id="totale_da_pagare" value="<?php echo round($totale_da_pagare, 2); ?>">
 				</div>
 			</div>
 		</div>
@@ -253,13 +253,11 @@ if (!empty($documento)) {
 	});
 
     function controlloTotale() {
-        totale_da_pagare = $("#totale_da_pagare").val().toEnglish();
-        totale_utente = 0;
+        let totale_da_pagare = parseFloat($("#totale_da_pagare").val());
+        let totale_utente = 0;
 
         $("input[name*=da_pagare]").each(function() {
-
-            totale_utente += $(this).val().toEnglish();
-
+            totale_utente += input(this).get();
         });
 
         if (isNaN(totale_utente)) {
@@ -269,7 +267,7 @@ if (!empty($documento)) {
         totale_utente = Math.round(totale_utente * 100) / 100;
         totale_da_pagare = Math.round(totale_da_pagare * 100) / 100;
 
-        diff = Math.abs(totale_da_pagare) - Math.abs(totale_utente);
+        let diff = Math.abs(totale_da_pagare) - Math.abs(totale_utente);
 
         if (diff == 0) {
             $("#save").removeClass("hide");

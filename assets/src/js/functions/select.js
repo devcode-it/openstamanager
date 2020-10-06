@@ -16,87 +16,12 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-// Select
+/**
+ * Select.
+ */
 function start_superselect() {
-    // Statico
-    $('.superselect').each(function () {
-        let $this = $(this);
-
-        $(this).select2({
-            theme: "bootstrap",
-            language: "it",
-            width: '100%',
-            maximumSelectionLength: $this.data('maximum') ? $this.data('maximum') : -1,
-            minimumResultsForSearch: $this.hasClass('no-search') ? -1 : 0,
-            allowClear: !$this.hasClass('no-search'),
-            escapeMarkup: function (text) {
-                return text;
-            },
-            templateResult: selectBackground,
-        });
-    });
-
-    // Dinamico (AJAX, per tabelle con molti record)
-    $('.superselectajax').each(function () {
-        let $this = $(this);
-
-        $(this).select2({
-            theme: "bootstrap",
-            language: "it",
-            maximumSelectionLength: $this.data('maximum') ? $this.data('maximum') : -1,
-            minimumInputLength: $this.data('heavy') ? 3 : 0,
-            allowClear: true,
-            escapeMarkup: function (text) {
-                return text;
-            },
-            templateResult: selectBackground,
-            ajax: {
-                url: globals.rootdir + "/ajax_select.php?op=" + $this.data('source'),
-                dataType: 'json',
-                delay: 250,
-                data: function (params) {
-                    return {
-                        search: params.term,
-                        page: params.page || 0,
-                        length: params.length || 100,
-                        options: this.data('select-options'), // Dati aggiuntivi
-                    };
-                },
-                processResults: function (data, params) {
-                    params.page = params.page || 0;
-                    params.length = params.length || 100;
-
-                    let results = data.results;
-
-                    // Interpretazione forzata per campi optgroup
-                    if (results && results[0] && [0]['optgroup']) {
-                        let groups = results.reduce(function (r, a) {
-                            r[a.optgroup] = r[a.optgroup] || [];
-                            r[a.optgroup].push(a);
-                            return r;
-                        }, {});
-
-                        let results_groups = [];
-                        for (const key in groups) {
-                            results_groups.push({
-                                text: key,
-                                children: groups[key],
-                            });
-                        }
-                        results = results_groups;
-                    }
-
-                    return {
-                        results: results,
-                        pagination: {
-                            more: (params.page + 1) * params.length < data.recordsFiltered,
-                        }
-                    };
-                },
-                cache: false
-            },
-            width: '100%'
-        });
+    $('.superselect, .superselectajax').each(function () {
+       initSelectInput(this);
     });
 }
 
@@ -242,3 +167,99 @@ function updateSelectOption(name, value) {
         $(this).setSelectOption(name, value);
     })
 }
+
+function initSelectInput(input){
+    if ($(input).hasClass('superselect')){
+        initStaticSelectInput(input);
+    } else {
+        initDynamicSelectInput(input);
+    }
+}
+
+/**
+ * Statico.
+ * @param input
+ */
+function initStaticSelectInput(input){
+    let $input = $(input);
+
+    $input.select2({
+        theme: "bootstrap",
+        language: "it",
+        width: '100%',
+        maximumSelectionLength: $input.data('maximum') ? $input.data('maximum') : -1,
+        minimumResultsForSearch: $input.hasClass('no-search') ? -1 : 0,
+        allowClear: !$input.hasClass('no-search'),
+        escapeMarkup: function (text) {
+            return text;
+        },
+        templateResult: selectBackground,
+    });
+}
+
+/**
+ * Dinamico.
+ * @param input
+ */
+function initDynamicSelectInput(input){
+    let $input = $(input);
+
+    $input.select2({
+        theme: "bootstrap",
+        language: "it",
+        maximumSelectionLength: $input.data('maximum') ? $input.data('maximum') : -1,
+        minimumInputLength: $input.data('heavy') ? 3 : 0,
+        allowClear: true,
+        escapeMarkup: function (text) {
+            return text;
+        },
+        templateResult: selectBackground,
+        ajax: {
+            url: globals.rootdir + "/ajax_select.php?op=" + $input.data('source'),
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return {
+                    search: params.term,
+                    page: params.page || 0,
+                    length: params.length || 100,
+                    options: this.data('select-options'), // Dati aggiuntivi
+                };
+            },
+            processResults: function (data, params) {
+                params.page = params.page || 0;
+                params.length = params.length || 100;
+
+                let results = data.results;
+
+                // Interpretazione forzata per campi optgroup
+                if (results && results[0] && [0]['optgroup']) {
+                    let groups = results.reduce(function (r, a) {
+                        r[a.optgroup] = r[a.optgroup] || [];
+                        r[a.optgroup].push(a);
+                        return r;
+                    }, {});
+
+                    let results_groups = [];
+                    for (const key in groups) {
+                        results_groups.push({
+                            text: key,
+                            children: groups[key],
+                        });
+                    }
+                    results = results_groups;
+                }
+
+                return {
+                    results: results,
+                    pagination: {
+                        more: (params.page + 1) * params.length < data.recordsFiltered,
+                    }
+                };
+            },
+            cache: false
+        },
+        width: '100%'
+    });
+}
+

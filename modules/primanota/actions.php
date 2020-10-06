@@ -74,9 +74,11 @@ switch (post('op')) {
     case 'update':
         $data = post('data');
         $descrizione = post('descrizione');
+        $note = post('note');
 
         $mastrino->descrizione = $descrizione;
         $mastrino->data = $data;
+        $mastrino->note = $note;
 
         $mastrino->cleanup();
 

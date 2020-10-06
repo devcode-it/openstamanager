@@ -123,6 +123,9 @@ if (in_array($module['name'], ['Ordini cliente', 'Ordini fornitore'])) {
             <div class="col-md-'.$width.'">
                 {[ "type": "date", "label": "'.tr('Data prevista evasione').'", "name": "data_evasione", "value": "'.$result['data_evasione'].'" ]}
             </div>
+            <div class="col-md-'.$width.'">
+                {[ "type": "checkbox", "label": "'.tr('Articolo confermato').'", "name": "confermato", "value": "'.($options['action'] == 'add' ? setting("Conferma automaticamente le quantità negli ordini cliente") : $result['confermato']).'"  ]}
+            </div>
         </div>
     </div>
 </div>';

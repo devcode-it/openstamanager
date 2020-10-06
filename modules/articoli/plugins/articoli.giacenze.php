@@ -34,6 +34,7 @@ FROM or_ordini
 WHERE idarticolo = '.prepare($articolo->id)."
      AND (SELECT dir FROM or_tipiordine WHERE or_tipiordine.id=or_ordini.idtipoordine) = '|dir|'
      AND (or_righe_ordini.qta - or_righe_ordini.qta_evasa) > 0
+     AND or_righe_ordini.confermato = 1
 GROUP BY or_ordini.id
 HAVING qta_ordinata > 0";
 

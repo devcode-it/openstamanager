@@ -175,6 +175,7 @@ switch (post('op')) {
 
         $articolo->costo_unitario = post('costo_unitario') ?: 0;
         $articolo->data_evasione = post('data_evasione') ?: null;
+        $articolo->confermato = post('confermato') ?: 0;
         $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
         $articolo->setSconto(post('sconto'), post('tipo_sconto'));
 

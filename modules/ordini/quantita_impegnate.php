@@ -54,9 +54,9 @@ foreach ($articoli as $elenco) {
     $qta_impegnata = $database->fetchOne("SELECT SUM(qta) as qta
         FROM or_righe_ordini
             JOIN or_ordini ON or_ordini.id = or_righe_ordini.idordine
-        WHERE or_ordini.id != '.prepare($ordine->id).'
-              AND idstatoordine = (SELECT id FROM or_statiordine WHERE descrizione = 'Bozza')
+        WHERE idstatoordine = (SELECT id FROM or_statiordine WHERE descrizione = 'Bozza')
               AND idtipoordine IN (SELECT id FROM or_tipiordine WHERE dir = 'entrata')
+              AND confermato = 1
               AND idarticolo=".prepare($articolo->id).'
         GROUP BY idarticolo')['qta'];
     $qta_impegnata = floatval($qta_impegnata);

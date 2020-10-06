@@ -137,6 +137,7 @@ foreach ($righe as $riga) {
         // Quantità e unità di misura
         echo '
             <td class="text-center">
+                <i class="'.($riga->confermato ? 'fa fa-check text-success' : 'fa fa-clock-o text-warning').'"></i> 
                 '.numberFormat($riga->qta_rimanente, 'qta').' / '.numberFormat($riga->qta, 'qta').' '.$riga->um.'
             </td>';
 

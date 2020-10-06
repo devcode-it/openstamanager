@@ -825,7 +825,7 @@ class FatturaElettronica
 
         if (!empty($id_ritenuta)) {
             $percentuale = database()->fetchOne('SELECT percentuale FROM co_ritenutaacconto WHERE id = '.prepare($id_ritenuta))['percentuale'];
-
+            // Con la nuova versione in vigore dal 01/01/2021, questo nodo diventa ripetibile.
             $result['DatiRitenuta'] = [
                 'TipoRitenuta' => (Validate::isValidTaxCode($azienda['codice_fiscale']) and $cliente['tipo'] == 'Privato') ? 'RT01' : 'RT02',
                 'ImportoRitenuta' => $totale_ritenutaacconto,

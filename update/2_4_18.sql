@@ -252,3 +252,19 @@ INSERT INTO `fe_causali_pagamento_ritenuta` (`codice`, `descrizione`) VALUES ('V
 UPDATE `fe_causali_pagamento_ritenuta` SET `codice` = 'ZO' WHERE `fe_causali_pagamento_ritenuta`.`codice` = 'Z';
 
 UPDATE `zz_settings` SET `valore` = 'ZO' WHERE `zz_settings`.`nome` = "Causale ritenuta d'acconto" AND `zz_settings`.`valore` = 'Z';
+
+-- Introduzione tabella di supporto per nodo <TipoRitenuta> tracciato 1.2.1 FE
+CREATE TABLE IF NOT EXISTS `fe_tipi_ritenuta` (
+  `codice` varchar(4) NOT NULL,
+  `descrizione` varchar(255) NOT NULL,
+  PRIMARY KEY (`codice`)
+) ENGINE=InnoDB;
+
+
+INSERT INTO `fe_tipi_ritenuta` (`codice`, `descrizione`) VALUES
+('RT01', 'Ritenuta persone fisiche'),
+('RT02', 'Ritenuta persone giuridiche'),
+('RT03', 'Contributo INPS'),
+('RT04', 'Contributo ENASARCO'),
+('RT05', 'Contributo ENPAM'),
+('RT06', 'Altro contributo previdenziale');

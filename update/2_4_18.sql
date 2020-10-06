@@ -268,3 +268,8 @@ INSERT INTO `fe_tipi_ritenuta` (`codice`, `descrizione`) VALUES
 ('RT04', 'Contributo ENASARCO'),
 ('RT05', 'Contributo ENPAM'),
 ('RT06', 'Altro contributo previdenziale');
+
+
+-- Disattivazione aliquote IVA con NATURA non più supportata dal tracciato 1.2.1 FE
+-- andrà doverosamente specificato il sotto codice (esempio N3.1, N3.2 etc)
+UPDATE `co_iva` SET `deleted_at` = now() WHERE `co_iva`.`codice_natura_fe` IN ('N2','N3','N6');

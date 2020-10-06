@@ -835,11 +835,13 @@ class FatturaElettronica
         }
 
         // Bollo (2.1.1.6)
+        // ImportoBollo --> con la nuova versione in vigore dal 01/01/2021, la compilazione di questo nodo è diventata facoltativa.
+        // considerato che l'importo è noto e può essere solo di 2,00 Euro.
         $riga_bollo = $documento->rigaBollo;
         if (!empty($riga_bollo)) {
             $result['DatiBollo'] = [
                 'BolloVirtuale' => 'SI',
-                'ImportoBollo' => $riga_bollo->totale,
+                //'ImportoBollo' => $riga_bollo->totale,
             ];
         }
 

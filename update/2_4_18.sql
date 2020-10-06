@@ -225,13 +225,12 @@ ALTER TABLE `mg_articoli` ADD `um_secondaria` varchar(255), ADD `fattore_um_seco
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Conferma automaticamente le quantità negli ordini cliente', '1', 'boolean', '1', 'Ordini', NULL, NULL);
 
 ALTER TABLE `or_righe_ordini` ADD `confermato` BOOLEAN NOT NULL AFTER `id_dettaglio_fornitore`;
-UPDATE `or_righe_ordini` SET `confermato`=1;
-
+UPDATE `or_righe_ordini` SET `confermato` = 1;
 
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `mg_articoli` LEFT JOIN an_anagrafiche ON mg_articoli.id_fornitore=an_anagrafiche.idanagrafica LEFT JOIN co_iva ON mg_articoli.idiva_vendita=co_iva.id LEFT JOIN (SELECT SUM(qta-qta_evasa) AS qta_impegnata, idarticolo FROM or_righe_ordini INNER JOIN or_ordini ON or_righe_ordini.idordine=or_ordini.id INNER JOIN or_tipiordine ON or_ordini.idtipoordine=or_tipiordine.id WHERE idstatoordine IN(SELECT id FROM or_statiordine WHERE completato=0) AND or_tipiordine.dir=\'entrata\' AND or_righe_ordini.confermato = 1 GROUP BY idarticolo) a ON a.idarticolo=mg_articoli.id LEFT JOIN mg_categorie ON mg_articoli.id_categoria=mg_categorie.id LEFT JOIN mg_categorie AS sottocategorie ON mg_articoli.id_sottocategoria=sottocategorie.id WHERE 1=1 AND (`mg_articoli`.`deleted_at`) IS NULL HAVING 2=2 ORDER BY `mg_articoli`.`descrizione`' WHERE `zz_modules`.`name` = 'Articoli';
 
 -- Aggiunte note prima nota
-ALTER TABLE `co_movimenti` ADD `note` TEXT NOT NULL AFTER `descrizione`; 
+ALTER TABLE `co_movimenti` ADD `note` TEXT NOT NULL AFTER `descrizione`;
 
 -- Aggiunta risorse API dedicate alle Stampe in binary formato
 INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES

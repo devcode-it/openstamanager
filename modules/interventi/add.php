@@ -41,6 +41,8 @@ if (null == $orario_inizio || '00:00:00' == $orario_inizio) {
 $id_tecnico = filter('id_tecnico');
 if ($user['gruppo'] == 'Tecnici' && !empty($user['idanagrafica'])) {
     $id_tecnico = $user['idanagrafica'];
+}elseif ($user['gruppo'] == 'Clienti' && !empty($user['idanagrafica'])) {
+    $id_cliente = $user['idanagrafica'];
 }
 
 // Stato di default associato all'attivitò
@@ -160,7 +162,7 @@ if (!empty($id_intervento)) {
 echo '
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Cliente').'", "name": "idanagrafica", "required": 1, "value": "'.$id_anagrafica.'", "ajax-source": "clienti", "icon-after": "add|'.$module_anagrafiche['id'].'|tipoanagrafica=Cliente&readonly_tipo=1", "readonly": "'.(empty($id_anagrafica) ? 0 : 1).'" ]}
+            {[ "type": "select", "label": "'.tr('Cliente').'", "name": "idanagrafica", "required": 1, "value": "'.(!$id_cliente ? $id_anagrafica : $id_cliente).'", "ajax-source": "clienti", "icon-after": "add|'.$module_anagrafiche['id'].'|tipoanagrafica=Cliente&readonly_tipo=1", "readonly": "'.( (empty($id_anagrafica) && empty($id_cliente)) ? 0 : 1).'" ]}
         </div>
 
         <div class="col-md-4">

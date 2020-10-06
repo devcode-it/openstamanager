@@ -232,3 +232,6 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `mg_articoli` LEFT JOI
 
 -- Aggiunte note prima nota
 ALTER TABLE `co_movimenti` ADD `note` TEXT NOT NULL AFTER `descrizione`; 
+
+-- Aggiunte note prima nota
+ALTER TABLE `co_movimenti` ADD `note` TEXT NOT NULL AFTER `descrizione`; 

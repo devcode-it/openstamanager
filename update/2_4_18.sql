@@ -232,3 +232,7 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `mg_articoli` LEFT JOI
 
 -- Aggiunte note prima nota
 ALTER TABLE `co_movimenti` ADD `note` TEXT NOT NULL AFTER `descrizione`; 
+
+-- Aggiunta risorse API dedicate alle Stampe in binary formato
+INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES
+(NULL, 'v1', 'retrieve', 'stampa-binary', 'API\\Common\\Stampa', '1');

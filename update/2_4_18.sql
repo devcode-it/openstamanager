@@ -221,7 +221,7 @@ UPDATE `co_documenti` SET `id_banca_azienda` = NULL WHERE `id_banca_azienda` = 0
 -- Aggiunta unità di misura secondaria per le stampe documenti di vendita
 ALTER TABLE `mg_articoli` ADD `um_secondaria` varchar(255), ADD `fattore_um_secondaria` DECIMAL(15, 6);
 
--- Aggiunta impostazione per impegnare o meno automaticamente le quantità negli ordini
+-- Aggiunta impostazione per impegnare o meno automaticamente le quantità negli ordini clienti
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Conferma automaticamente le quantità negli ordini cliente', '1', 'boolean', '1', 'Ordini', NULL, NULL);
 
 ALTER TABLE `or_righe_ordini` ADD `confermato` BOOLEAN NOT NULL AFTER `id_dettaglio_fornitore`;
@@ -232,3 +232,6 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `mg_articoli` LEFT JOI
 
 -- Aggiunte note prima nota
 ALTER TABLE `co_movimenti` ADD `note` TEXT NOT NULL AFTER `descrizione`; 
+
+-- Aggiunta impostazione per impegnare o meno automaticamente le quantità negli ordini fornitori
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Conferma automaticamente le quantità negli ordini fornitore', '1', 'boolean', '1', 'Ordini', NULL, NULL);

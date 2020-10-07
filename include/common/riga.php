@@ -109,6 +109,17 @@ echo '
 // Data prevista evasione (per ordini)
 
 if (in_array($module['name'], ['Ordini cliente', 'Ordini fornitore'])) {
+    if($options['action'] == 'add'){
+        if($options['dir'] == 'entrata'){
+            $confermato = setting("Conferma automaticamente le quantità negli ordini cliente");
+        }
+        else{
+            $confermato = setting("Conferma automaticamente le quantità negli ordini fornitore");
+        }
+    }
+    else{
+        $confermato = $result['confermato'];
+    }
     echo '
 <div class="box box-warning collapsable collapsed-box">
     <div class="box-header with-border">
@@ -120,11 +131,11 @@ if (in_array($module['name'], ['Ordini cliente', 'Ordini fornitore'])) {
 
     <div class="box-body">
         <div class="row">
-            <div class="col-md-'.$width.'">
+            <div class="col-md-4">
                 {[ "type": "date", "label": "'.tr('Data prevista evasione').'", "name": "data_evasione", "value": "'.$result['data_evasione'].'" ]}
             </div>
-            <div class="col-md-'.$width.'">
-                {[ "type": "checkbox", "label": "'.tr('Articolo confermato').'", "name": "confermato", "value": "'.($options['action'] == 'add' ? setting("Conferma automaticamente le quantità negli ordini cliente") : $result['confermato']).'"  ]}
+            <div class="col-md-4">
+                {[ "type": "checkbox", "label": "'.tr('Articolo confermato').'", "name": "confermato", "value": "'.$confermato.'" ]}
             </div>
         </div>
     </div>

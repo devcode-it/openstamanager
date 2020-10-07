@@ -314,6 +314,11 @@ class FatturaElettronica
     {
         $dati_generali = $this->getBody()['DatiGenerali']['DatiGeneraliDocumento'];
         $data = $dati_generali['Data'];
+        
+        //Se rilevo che la data contine anche l'orario la formatto togliendo l'orario
+        if(strpos($data, '+')){
+            $data = date('Y-m-d', strtotime($data));
+        }
 
         $fattura = $this->prepareFattura($id_tipo, $data, $id_sezionale, $ref_fattura);
         $this->fattura = $fattura;

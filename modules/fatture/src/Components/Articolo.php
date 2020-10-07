@@ -33,7 +33,7 @@ class Articolo extends Article
 
     public function movimenta($qta)
     {
-        if (!$this->parent->movimenta_magazzino) {
+        if (!$this->getDocument()->movimenta_magazzino) {
             return;
         }
 

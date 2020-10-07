@@ -393,6 +393,7 @@ function release(done) {
         '!.idea/**',
         '!.git/**',
         '!node_modules/**',
+        '!include/custom/**',
         '!backup/**',
         '!files/**',
         '!logs/**',

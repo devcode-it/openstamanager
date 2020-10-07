@@ -225,13 +225,54 @@ ALTER TABLE `mg_articoli` ADD `um_secondaria` varchar(255), ADD `fattore_um_seco
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Conferma automaticamente le quantità negli ordini cliente', '1', 'boolean', '1', 'Ordini', NULL, NULL);
 
 ALTER TABLE `or_righe_ordini` ADD `confermato` BOOLEAN NOT NULL AFTER `id_dettaglio_fornitore`;
-UPDATE `or_righe_ordini` SET `confermato`=1;
+UPDATE `or_righe_ordini` SET `confermato` = 1;
 
-
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `mg_articoli` LEFT JOIN an_anagrafiche ON mg_articoli.id_fornitore=an_anagrafiche.idanagrafica LEFT JOIN co_iva ON mg_articoli.idiva_vendita=co_iva.id LEFT JOIN (SELECT SUM(qta-qta_evasa) AS qta_impegnata, idarticolo FROM or_righe_ordini INNER JOIN or_ordini ON or_righe_ordini.idordine=or_ordini.id INNER JOIN or_tipiordine ON or_ordini.idtipoordine=or_tipiordine.id WHERE idstatoordine IN(SELECT id FROM or_statiordine WHERE completato=0) AND or_tipiordine.dir=\'entrata\' AND or_righe_ordini.confermato = 1 GROUP BY idarticolo) a ON a.idarticolo=mg_articoli.id LEFT JOIN mg_categorie ON mg_articoli.id_categoria=mg_categorie.id LEFT JOIN mg_categorie AS sottocategorie ON mg_articoli.id_sottocategoria=sottocategorie.id WHERE 1=1 AND (`mg_articoli`.`deleted_at`) IS NULL HAVING 2=2 ORDER BY `mg_articoli`.`descrizione`' WHERE `zz_modules`.`name` = 'Articoli';
-
--- Aggiunte note prima nota
-ALTER TABLE `co_movimenti` ADD `note` TEXT NOT NULL AFTER `descrizione`; 
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `mg_articoli` LEFT JOIN an_anagrafiche ON mg_articoli.id_fornitore=an_anagrafiche.idanagrafica LEFT JOIN co_iva ON mg_articoli.idiva_vendita=co_iva.id LEFT JOIN (SELECT SUM(qta-qta_evasa) AS qta_impegnata, idarticolo FROM or_righe_ordini INNER JOIN or_ordini ON or_righe_ordini.idordine=or_ordini.id INNER JOIN or_tipiordine ON or_ordini.idtipoordine=or_tipiordine.id WHERE idstatoordine IN(SELECT id FROM or_statiordine WHERE completato=0) AND or_tipiordine.dir=\'entrata\' AND or_righe_ordini.confermato = 1 GROUP BY idarticolo) a ON a.idarticolo=mg_articoli.id LEFT JOIN mg_categorie ON mg_articoli.id_categoria=mg_categorie.id LEFT JOIN mg_categorie AS sottocategorie ON mg_articoli.id_sottocategoria=sottocategorie.id WHERE 1=1 AND (`mg_articoli`.`deleted_at`) IS NULL HAVING 2=2 ORDER BY `mg_articoli`.`descrizione`' WHERE `zz_modules`.`name` = 'Articoli'; 
 
 -- Aggiunta impostazione per impegnare o meno automaticamente le quantità negli ordini fornitori
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Conferma automaticamente le quantità negli ordini fornitore', '1', 'boolean', '1', 'Ordini', NULL, NULL);
+
+-- Aggiunte note prima nota
+ALTER TABLE `co_movimenti` ADD `note` TEXT AFTER `descrizione`;
+
+-- Aggiunta risorse API dedicate alle Stampe in binary formato
+INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES
+(NULL, 'v1', 'retrieve', 'stampa-binary', 'API\\Common\\Stampa', '1');
+
+-- Fix <CausalePagamento> tracciato 1.2.1 FE (che potrà essere utilizzata a partire dal 01/10/2020 e sarà obbligatoria dal 01/01/2021)
+INSERT INTO `fe_causali_pagamento_ritenuta` (`codice`, `descrizione`) VALUES ('M2', 'Prestazioni di lavoro autonomo non esercitate abitualmente per le quali sussiste l’obbligo di iscrizione alla Gestione Separata ENPAPI');
+
+INSERT INTO `fe_causali_pagamento_ritenuta` (`codice`, `descrizione`) VALUES ('M1', 'Redditi derivanti dall’assunzione di obblighi di fare, di non fare o permettere');
+
+INSERT INTO `fe_causali_pagamento_ritenuta` (`codice`, `descrizione`) VALUES ('L1', 'Redditi derivanti dall’utilizzazione economica di opere dell’ingegno, di brevetti industriali e di processi, che sono percepiti da soggetti che abbiano acquistato a titolo oneroso i diritti alla loro utilizzazione');
+
+INSERT INTO `fe_causali_pagamento_ritenuta` (`codice`, `descrizione`) VALUES ('O1', 'Redditi derivanti dall’assunzione di obblighi di fare, di non fare o permettere, per le quali non sussiste l’obbligo di iscrizione alla gestione separata (Circ. INPS n. 104/2001)');
+
+INSERT INTO `fe_causali_pagamento_ritenuta` (`codice`, `descrizione`) VALUES ('V1', 'Redditi derivanti da attività commerciali non esercitate abitualmente (ad esempio, provvigioni corrisposte per prestazioni occasionali ad agente o rappresentante di commercio, mediatore, procacciatore d’affari)');
+
+INSERT INTO `fe_causali_pagamento_ritenuta` (`codice`, `descrizione`) VALUES ('V2', 'Redditi derivanti dalle prestazioni non esercitate abitualmente rese dagli incaricati alla vendita diretta a domicilio');
+
+UPDATE `fe_causali_pagamento_ritenuta` SET `codice` = 'ZO' WHERE `fe_causali_pagamento_ritenuta`.`codice` = 'Z';
+
+UPDATE `zz_settings` SET `valore` = 'ZO' WHERE `zz_settings`.`nome` = "Causale ritenuta d'acconto" AND `zz_settings`.`valore` = 'Z';
+
+-- Introduzione tabella di supporto per nodo <TipoRitenuta> tracciato 1.2.1 FE
+CREATE TABLE IF NOT EXISTS `fe_tipi_ritenuta` (
+  `codice` varchar(4) NOT NULL,
+  `descrizione` varchar(255) NOT NULL,
+  PRIMARY KEY (`codice`)
+) ENGINE=InnoDB;
+
+
+INSERT INTO `fe_tipi_ritenuta` (`codice`, `descrizione`) VALUES
+('RT01', 'Ritenuta persone fisiche'),
+('RT02', 'Ritenuta persone giuridiche'),
+('RT03', 'Contributo INPS'),
+('RT04', 'Contributo ENASARCO'),
+('RT05', 'Contributo ENPAM'),
+('RT06', 'Altro contributo previdenziale');
+
+
+-- Disattivazione aliquote IVA con NATURA non più supportata dal tracciato 1.2.1 FE
+-- andrà doverosamente specificato il sotto codice (esempio N3.1, N3.2 etc)
+UPDATE `co_iva` SET `deleted_at` = now() WHERE `co_iva`.`codice_natura_fe` IN ('N2','N3','N6');

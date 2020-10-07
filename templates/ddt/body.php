@@ -33,7 +33,7 @@ echo "
     <thead>
         <tr>
             <th class='text-center' style='width:5%'>".tr('#', [], ['upper' => true])."</th>
-            <th class='text-center' style='width:7%'>".tr('Cod.', [], ['upper' => true])."</th>
+            <th class='text-center'>".tr('Cod.', [], ['upper' => true])."</th>
             <th class='text-center'>".tr('Descrizione', [], ['upper' => true])."</th>
             <th class='text-center' style='width:10%'>".tr('Q.tà', [], ['upper' => true]).'</th>';
 
@@ -65,7 +65,7 @@ foreach ($righe as $riga) {
             '.$num.'
         </td>
 
-        <td class="text-center" style="vertical-align: middle">';
+        <td class="text-center" nowrap="nowrap" style="vertical-align: middle">';
 
         if ($riga->isArticolo()) {
             echo $riga->codice;

@@ -28,17 +28,26 @@ class Stampa extends Resource implements RetrieveInterface
 {
     public function retrieve($request)
     {
+        $content = '';
+
         $print = PrintTemplate::where('name', $request['name'])->first();
         if (!empty($print)) {
             $directory = base_dir().'/files/api';
-            $data = Prints::render($print->id, $request['id_record'], $directory);
 
-            download($data['path']);
+            $string = strpos($request['resource'], 'binary') !== false;
+            $data = Prints::render($print->id, $request['id_record'], $directory, $string);
+
+            if (!$string) {
+                download($data['path']);
+            } else {
+                $content = $data['pdf'];
+            }
             delete($data['path']);
         }
 
         return [
-            'custom' => '',
+            'content' => base64_encode($content),
+            'filename' => $data['name'],
         ];
     }
 }

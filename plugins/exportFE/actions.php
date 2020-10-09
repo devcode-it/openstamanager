@@ -20,7 +20,6 @@
 include_once __DIR__.'/init.php';
 
 use Plugins\ExportFE\Interaction;
-use Plugins\ReceiptFE\Interaction as RecepitInteraction;
 use Plugins\ReceiptFE\Ricevuta;
 
 switch (filter('op')) {
@@ -62,23 +61,27 @@ switch (filter('op')) {
         }
 
         // Importazione ultima ricevuta individuata
-        RecepitInteraction::getReceipt($last_recepit);
-
-        $fattura = null;
-        try {
-            $receipt = new Ricevuta($last_recepit);
-            $receipt->save();
-
-            $fattura = $receipt->getFattura()->numero_esterno;
-
-            $receipt->delete();
-
-            RecepitInteraction::processReceipt($name);
-        } catch (UnexpectedValueException $e) {
-        }
+        $fattura = Ricevuta::process($last_recepit);
+        $numero_esterno = $fattura ? $fattura->numero_esterno : null;
 
         echo json_encode([
             'file' => $last_recepit,
+            'fattura' => $numero_esterno,
+        ]);
+
+        break;
+
+    case 'gestione_ricevuta':
+        $name = filter('name');
+        $type = filter('type');
+
+        $cambia_stato = $type != 'download';
+        $fattura = Ricevuta::process($name, false);
+
+        $numero_esterno = $fattura ? $fattura->numero_esterno : null;
+
+        echo json_encode([
+            'file' => $name,
             'fattura' => $fattura,
         ]);
 

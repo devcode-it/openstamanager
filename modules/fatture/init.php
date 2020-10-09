@@ -29,6 +29,7 @@ if ($module['name'] == 'Fatture di vendita') {
 
 if (isset($id_record)) {
     $fattura = Fattura::with('tipo', 'stato')->find($id_record);
+    $dir = $fattura->direzione;
 
     $is_fiscale = false;
     if (!empty($fattura)) {
@@ -44,7 +45,7 @@ if (isset($id_record)) {
         co_documenti.id AS iddocumento,
 		co_documenti.split_payment AS split_payment,
         co_statidocumento.descrizione AS `stato`,
-        co_tipidocumento.descrizione AS `descrizione_tipodoc`,
+        co_tipidocumento.descrizione AS `descrizione_tipo`,
         co_pagamenti.riba AS `riba`,
         (SELECT is_fiscale FROM zz_segments WHERE id = id_segment) AS is_fiscale,
         (SELECT descrizione FROM co_ritenutaacconto WHERE id=idritenutaacconto) AS ritenutaacconto_desc,
@@ -57,5 +58,10 @@ if (isset($id_record)) {
         LEFT JOIN co_pagamenti ON co_documenti.idpagamento=co_pagamenti.id
     WHERE co_tipidocumento.dir = '.prepare($dir).' AND co_documenti.id='.prepare($id_record));
 
+    // Note di credito collegate
     $note_accredito = $dbo->fetchArray("SELECT co_documenti.id, IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM co_documenti JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE reversed = 1 AND ref_documento=".prepare($id_record));
+
+    // Blocco gestito dallo stato della Fattura Elettronica
+    $stato_fe = $database->fetchOne('SELECT * FROM fe_stati_documento WHERE codice = '.prepare($fattura->codice_stato_fe));
+    $abilita_genera = empty($fattura->codice_stato_fe) || intval($stato_fe['is_generabile']);
 }

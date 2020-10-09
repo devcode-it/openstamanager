@@ -69,18 +69,11 @@ class ReceiptHook extends Manager
 
             // Importazione ricevuta
             $name = $element['name'];
-            Interaction::getReceiptList($name);
+            $fattura = Ricevuta::process($name);
 
-            try {
-                $receipt = new Ricevuta($name);
-                $receipt->save();
-
-                $receipt->delete();
-                Interaction::processReceipt($name);
-
+            if (!empty($fattura)) {
                 $completed[] = $element;
                 unset($todo[$i]);
-            } catch (UnexpectedValueException $e) {
             }
         }
 

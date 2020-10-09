@@ -19,11 +19,10 @@
 
 namespace Plugins\ReceiptFE;
 
-use Modules;
+use Models\Upload;
 use Modules\Fatture\Fattura;
 use Plugins;
 use UnexpectedValueException;
-use Uploads;
 use Util\XML;
 use Util\Zip;
 
@@ -48,6 +47,7 @@ class Ricevuta
     {
         $file = static::getImportDirectory().'/'.$name;
 
+        // Estrazione implicita per il formato ZIP
         if (ends_with($name, '.zip')) {
             $original_file = $file;
 
@@ -79,6 +79,42 @@ class Ricevuta
         }
     }
 
+    /**
+     * Funzione per gestire in modo autonomo il download, l'importazione e il salvataggio di una specifica ricevuta identificata tramite nome.
+     *
+     * @param string $name
+     * @param bool   $cambia_stato
+     *
+     * @return Fattura|null
+     */
+    public static function process($name, $cambia_stato = true)
+    {
+        Interaction::getReceipt($name);
+
+        $fattura = null;
+        try {
+            $receipt = new Ricevuta($name);
+            $receipt->save($cambia_stato);
+
+            $fattura = $receipt->getFattura();
+
+            $receipt->cleanup();
+
+            Interaction::processReceipt($name);
+        } catch (UnexpectedValueException $e) {
+        }
+
+        return $fattura;
+    }
+
+    /**
+     * Salva il file indicato nella cartella temporanea per una futura elaborazione.
+     *
+     * @param string $filename
+     * @param string $content
+     *
+     * @return string
+     */
     public static function store($filename, $content)
     {
         $directory = static::getImportDirectory();
@@ -90,6 +126,11 @@ class Ricevuta
         return $filename;
     }
 
+    /**
+     * Restituisce la cartella temporanea utilizzabile per il salvataggio della ricevuta.
+     *
+     * @return string|null
+     */
     public static function getImportDirectory()
     {
         if (!isset(self::$directory)) {
@@ -101,32 +142,51 @@ class Ricevuta
         return self::$directory;
     }
 
+    /**
+     * @param string $codice
+     *
+     * @return Upload|null
+     */
     public function saveAllegato($codice)
     {
-        $module = Modules::get('Fatture di vendita');
+        $filename = basename($this->file);
+        $fattura = $this->getFattura();
 
-        $info = [
+        // Controllo sulla presenza della stessa ricevuta
+        $upload_esistente = $fattura->getModule()
+            ->uploads($fattura->id)
+            ->where('original', $filename)
+            ->first();
+        if (!empty($upload_esistente)) {
+            return $upload_esistente;
+        }
+
+        // Registrazione del file XML come allegato
+        $upload = Upload::build($this->file, [
             'category' => tr('Fattura Elettronica'),
             'id_module' => $module->id,
-            'id_record' => $this->fattura->id,
-        ];
-
-        // Registrazione XML come allegato
-        Uploads::upload($this->file, array_merge($info, [
+            'id_record' => $fattura->id,
             'name' => tr('Ricevuta _TYPE_', [
                 '_TYPE_' => $codice,
             ]),
-            'original' => basename($this->file),
-        ]));
+            'original' => $filename,
+        ]);
+
+        return $upload;
     }
 
-    public function saveStato($codice)
+    /**
+     * Aggiorna lo stato della fattura relativa alla ricevuta in modo tale da rispecchiare i dati richiesti.
+     *
+     * @param $codice
+     * @param $id_allegato
+     */
+    public function saveStato($codice, $id_allegato)
     {
         $fattura = $this->getFattura();
 
         // Modifica lo stato solo se la fattura non è già stata consegnata (per evitare problemi da doppi invii)
-        // In realtà per le PA potrebbe esserci lo stato NE (che può contenere un esito positivo EC01 o negativo EC02) successivo alla RC,
-        // quindi aggiungo eccezione nel caso il nuovo codice della ricevuta sia NE.
+        // In realtà per le PA potrebbe esserci lo stato NE (che può contenere un esito positivo EC01 o negativo EC02) successivo alla RC, quindi aggiungo eccezione nel caso il nuovo codice della ricevuta sia NE.
         if ($fattura->codice_stato_fe == 'RC' && ($codice != 'EC01' || $codice != 'EC02')) {
             return;
         }
@@ -138,11 +198,15 @@ class Ricevuta
         $fattura->data_stato_fe = $data ? date('Y-m-d H:i:s', strtotime($data)) : '';
         $fattura->codice_stato_fe = $codice;
         $fattura->descrizione_ricevuta_fe = $descrizione;
+        $fattura->id_ricevuta_principale = $id_allegato;
 
         $fattura->save();
     }
 
-    public function save()
+    /**
+     * Effettua le operazioni di salvataggio della ricevuta nella fattura relativa.
+     */
+    public function save($cambia_stato = true)
     {
         $name = basename($this->file);
         $filename = explode('.', $name)[0];
@@ -157,22 +221,32 @@ class Ricevuta
             $codice_nome = $codice_nome.' - '.$errore['Errore']['Codice'];
         }
 
-        $this->saveAllegato($codice_nome);
+        $upload = $this->saveAllegato($codice_nome);
 
-        // In caso di Notifica Esito il codice è definito dal nodo <Esito> della ricevuta
-        if ($codice_stato == 'NE') {
-            $codice_stato = $this->xml['EsitoCommittente']['Esito'];
+        if ($cambia_stato) {
+            // In caso di Notifica Esito il codice è definito dal nodo <Esito> della ricevuta
+            if ($codice_stato == 'NE') {
+                $codice_stato = $this->xml['EsitoCommittente']['Esito'];
+            }
+
+            $this->saveStato($codice_stato, $upload->id);
         }
-
-        $this->saveStato($codice_stato);
     }
 
+    /**
+     * Restituisce la fattura identificata per la ricevuta.
+     *
+     * @return Fattura|null
+     */
     public function getFattura()
     {
         return $this->fattura;
     }
 
-    public function delete()
+    /**
+     * Rimuove i file temporanei relativi alla ricevuta.
+     */
+    public function cleanup()
     {
         delete($this->file);
     }

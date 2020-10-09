@@ -90,6 +90,16 @@ UPDATE `zz_settings` SET `valore` = 'v3' WHERE `nome` = 'OSMCloud Services API V
 
 -- Aggiornamento margini stampa barbcode
 UPDATE `zz_prints` SET `options` = '{"width": 54, "height": 20, "format": [64, 55], "margins": {"top": 5,"bottom": 0,"left": 0,"right": 0}}' WHERE `zz_prints`.`name` = 'Barcode';
+-- Aggiunto collegamento con allegato per impostare la ricevuta principale
+ALTER TABLE `co_documenti` ADD `id_ricevuta_principale` INT(11);
+UPDATE `co_documenti` SET `co_documenti`.`id_ricevuta_principale` = (
+    SELECT `zz_files`.`id` FROM `zz_files` WHERE `zz_files`.`id_module` = (
+        SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Fatture di vendita'
+    ) AND `zz_files`.`id_record` = `co_documenti`.`id`
+    AND `zz_files`.`name` LIKE 'Ricevuta%'
+    ORDER BY `zz_files`.`created_at`
+    LIMIT 1
+);
 
 -- Aggiunta riferimenti testuali su descrizione righe per Fatture
 UPDATE `co_righe_documenti`
@@ -282,3 +292,18 @@ UPDATE `co_iva` SET `deleted_at` = now() WHERE `co_iva`.`codice_natura_fe` IN ('
 
 -- Impostazione percentuale deducibile di default al 100%
 ALTER TABLE `co_pianodeiconti3` CHANGE `percentuale_deducibile` `percentuale_deducibile` DECIMAL(5,2) NOT NULL DEFAULT '100';
+
+ALTER TABLE `fe_stati_documento` ADD `is_generabile` BOOLEAN DEFAULT FALSE,
+    ADD `is_inviabile` BOOLEAN DEFAULT FALSE,
+    ADD `tipo` varchar(255) NOT NULL;
+
+UPDATE `fe_stati_documento` SET `is_generabile` = '1', `is_inviabile` = '1' WHERE `codice` = 'ERVAL';
+UPDATE `fe_stati_documento` SET `is_generabile` = '1', `is_inviabile` = '1' WHERE `codice` = 'ERR';
+UPDATE `fe_stati_documento` SET `is_generabile` = '1', `is_inviabile` = '1' WHERE `codice` = 'GEN';
+UPDATE `fe_stati_documento` SET `is_generabile` = '1' WHERE `codice` = 'NS';
+UPDATE `fe_stati_documento` SET `is_generabile` = '1' WHERE `codice` = 'EC02';
+
+UPDATE `fe_stati_documento` SET `tipo` = 'danger';
+UPDATE `fe_stati_documento` SET `tipo` = 'warning' WHERE `codice` IN ('ERVAL', 'MC', 'WAIT', 'NE');
+UPDATE `fe_stati_documento` SET `tipo` = 'success' WHERE `codice` IN ('EC01', 'RC');
+UPDATE `fe_stati_documento` SET `tipo` = 'info' WHERE `codice` IN ('GEN');

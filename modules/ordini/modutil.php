@@ -206,7 +206,7 @@ function ricalcola_costiagg_ordine($idordine, $idrivalsainps = '', $idritenutaac
             }
         }
 
-        $query = 'SELECT percentuale FROM co_rivalse WHERE id='.prepare($idrivalsainps);
+        $query = 'SELECT percentuale FROM co_casse_previdenziali WHERE id='.prepare($idrivalsainps);
         $rs = $dbo->fetchArray($query);
         $rivalsainps = $totale_imponibile / 100 * $rs[0]['percentuale'];
 
@@ -223,7 +223,7 @@ function ricalcola_costiagg_ordine($idordine, $idrivalsainps = '', $idritenutaac
             }
         }
 
-        $query = 'SELECT percentuale FROM co_ritenutaacconto WHERE id='.prepare($idritenutaacconto);
+        $query = 'SELECT percentuale FROM co_ritenute_acconto WHERE id='.prepare($idritenutaacconto);
         $rs = $dbo->fetchArray($query);
         $ritenutaacconto = $totale_ordine / 100 * $rs[0]['percentuale'];
         $netto_a_pagare = $totale_ordine - $ritenutaacconto;

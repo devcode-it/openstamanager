@@ -26,5 +26,5 @@ class RivalsaINPS extends Model
 {
     use SimpleModelTrait;
 
-    protected $table = 'co_rivalse';
+    protected $table = 'co_casse_previdenziali';
 }

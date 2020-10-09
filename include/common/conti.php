@@ -62,7 +62,7 @@ if ($show_rivalsa == 1 || $show_ritenuta_acconto == 1) {
     if ($show_rivalsa == 1) {
         echo '
     <div class="col-md-4">
-        {[ "type": "select", "label": "'.tr('Rivalsa').'", "name": "id_rivalsa_inps", "value": "'.$id_rivalsa_inps.'", "values": "query=SELECT * FROM co_rivalse", "help": "'.(($options['dir'] == 'entrata') ? setting('Tipo Cassa Previdenziale') : null).'" ]}
+        {[ "type": "select", "label": "'.tr('Rivalsa').'", "name": "id_rivalsa_inps", "value": "'.$id_rivalsa_inps.'", "values": "query=SELECT * FROM co_casse_previdenziali", "help": "'.(($options['dir'] == 'entrata') ? setting('Tipo Cassa Previdenziale') : null).'" ]}
     </div>';
     }
 
@@ -70,7 +70,7 @@ if ($show_rivalsa == 1 || $show_ritenuta_acconto == 1) {
     if ($show_ritenuta_acconto == 1) {
         echo '
     <div class="col-md-4">
-        {[ "type": "select", "label": "'.tr("Ritenuta d'acconto").'", "name": "id_ritenuta_acconto", "value": "'.$id_ritenuta_acconto.'", "values": "query=SELECT * FROM co_ritenutaacconto" ]}
+        {[ "type": "select", "label": "'.tr("Ritenuta d'acconto").'", "name": "id_ritenuta_acconto", "value": "'.$id_ritenuta_acconto.'", "values": "query=SELECT * FROM co_ritenute_acconto" ]}
     </div>';
     }
 

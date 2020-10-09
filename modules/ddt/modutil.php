@@ -207,7 +207,7 @@ function ricalcola_costiagg_ddt($idddt, $idrivalsainps = '', $idritenutaacconto 
             }
         }
 
-        $query = "SELECT percentuale FROM co_rivalse WHERE id='".$idrivalsainps."'";
+        $query = "SELECT percentuale FROM co_casse_previdenziali WHERE id='".$idrivalsainps."'";
         $rs = $dbo->fetchArray($query);
         $rivalsainps = $totale_imponibile / 100 * $rs[0]['percentuale'];
 
@@ -228,7 +228,7 @@ function ricalcola_costiagg_ddt($idddt, $idrivalsainps = '', $idritenutaacconto 
             }
         }
 
-        $query = "SELECT percentuale FROM co_ritenutaacconto WHERE id='".$idritenutaacconto."'";
+        $query = "SELECT percentuale FROM co_ritenute_acconto WHERE id='".$idritenutaacconto."'";
         $rs = $dbo->fetchArray($query);
         $ritenutaacconto = $totale_ddt / 100 * $rs[0]['percentuale'];
         $netto_a_pagare = $totale_ddt - $ritenutaacconto;

@@ -433,13 +433,13 @@ function add_articolo_infattura($iddocumento, $idarticolo, $descrizione, $idiva,
 
     if (!empty($idrivalsainps)) {
         // Calcolo rivalsa inps
-        $rs = $dbo->fetchArray('SELECT * FROM co_rivalse WHERE id='.prepare($idrivalsainps));
+        $rs = $dbo->fetchArray('SELECT * FROM co_casse_previdenziali WHERE id='.prepare($idrivalsainps));
         $rivalsainps = ($prezzo - $sconto) / 100 * $rs[0]['percentuale'];
     }
 
     if (!empty($idritenutaacconto)) {
         // Calcolo ritenuta d'acconto
-        $query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare($idritenutaacconto);
+        $query = 'SELECT * FROM co_ritenute_acconto WHERE id='.prepare($idritenutaacconto);
         $rs = $dbo->fetchArray($query);
         if ($calcolo_ritenuta_acconto == 'IMP') {
             $ritenutaacconto = ($prezzo - $sconto) / 100 * $rs[0]['percentuale'];

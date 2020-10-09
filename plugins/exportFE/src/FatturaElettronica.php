@@ -827,7 +827,7 @@ class FatturaElettronica
         }
 
         if (!empty($id_ritenuta)) {
-            $percentuale = database()->fetchOne('SELECT percentuale FROM co_ritenutaacconto WHERE id = '.prepare($id_ritenuta))['percentuale'];
+            $percentuale = database()->fetchOne('SELECT percentuale FROM co_ritenute_acconto WHERE id = '.prepare($id_ritenuta))['percentuale'];
             // Con la nuova versione in vigore dal 01/01/2021, questo nodo diventa ripetibile.
             $result['DatiRitenuta'] = [
                 'TipoRitenuta' => (Validate::isValidTaxCode($azienda['codice_fiscale']) and $cliente['tipo'] == 'Privato') ? 'RT01' : 'RT02',
@@ -851,7 +851,7 @@ class FatturaElettronica
         // Cassa Previdenziale (Rivalsa) (2.1.1.7)
         if (!empty($id_rivalsainps)) {
             $iva = database()->fetchOne('SELECT `percentuale`, `codice_natura_fe` FROM `co_iva` WHERE `id` = '.prepare($aliquota_iva_rivalsainps));
-            $percentuale = database()->fetchOne('SELECT percentuale FROM co_rivalse WHERE id = '.prepare($id_rivalsainps))['percentuale'];
+            $percentuale = database()->fetchOne('SELECT percentuale FROM co_casse_previdenziali WHERE id = '.prepare($id_rivalsainps))['percentuale'];
 
             $dati_cassa = [
                 'TipoCassa' => setting('Tipo Cassa Previdenziale'),
@@ -1263,7 +1263,7 @@ class FatturaElettronica
                 ];
             }
 
-            $rs_ritenuta = $database->fetchOne('SELECT percentuale_imponibile FROM co_ritenutaacconto WHERE id='.prepare($riga['idritenutaacconto']));
+            $rs_ritenuta = $database->fetchOne('SELECT percentuale_imponibile FROM co_ritenute_acconto WHERE id='.prepare($riga['idritenutaacconto']));
             if (!empty($rs_ritenuta['percentuale_imponibile'])) {
                 $dettaglio[]['AltriDatiGestionali'] = [
                     'TipoDato' => 'IMPON-RACC',

@@ -26,5 +26,5 @@ class RitenutaAcconto extends Model
 {
     use SimpleModelTrait;
 
-    protected $table = 'co_ritenutaacconto';
+    protected $table = 'co_ritenute_acconto';
 }

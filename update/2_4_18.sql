@@ -275,10 +275,30 @@ INSERT INTO `fe_tipi_ritenuta` (`codice`, `descrizione`) VALUES
 ('RT05', 'Contributo ENPAM'),
 ('RT06', 'Altro contributo previdenziale');
 
+-- Correzioni per Ritenuta acconto e Ritenute contributi (ENASARCO, ECC..)
+ALTER TABLE `co_ritenuta_contributi` RENAME `co_ritenute_contributi`;
+ALTER TABLE `co_ritenute_contributi` ADD `codice_tipo_ritenuta_fe` varchar(4) NOT NULL;
+UPDATE `co_ritenute_contributi` SET `codice_tipo_ritenuta_fe` = 'RT04';
+ALTER TABLE `co_ritenute_contributi` ADD FOREIGN KEY (`codice_tipo_ritenuta_fe`) REFERENCES `fe_tipi_ritenuta`(`codice`) ON DELETE CASCADE;
 
--- Disattivazione aliquote IVA con NATURA non più supportata dal tracciato 1.2.1 FE
--- andrà doverosamente specificato il sotto codice (esempio N3.1, N3.2 etc)
-UPDATE `co_iva` SET `deleted_at` = now() WHERE `co_iva`.`codice_natura_fe` IN ('N2','N3','N6');
+ALTER TABLE `co_ritenutaacconto` RENAME `co_ritenute_acconto`;
+
+ALTER TABLE `co_rivalse` RENAME `co_casse_previdenziali`;
+ALTER TABLE `co_casse_previdenziali` ADD `ritenuta_applicata` BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE `co_casse_previdenziali` ADD `codice_tipo_cassa_fe` varchar(4) NOT NULL;
+UPDATE `co_casse_previdenziali` SET `codice_tipo_cassa_fe` = 'TC22';
+ALTER TABLE `co_casse_previdenziali` ADD FOREIGN KEY (`codice_tipo_cassa_fe`) REFERENCES `fe_tipo_cassa`(`codice`) ON DELETE CASCADE;
+
+CREATE TABLE IF NOT EXISTS `co_ritenuta_documento` (
+  `id_ritenuta_contributi` int(11) NOT NULL,
+  `id_ritenuta_acconto` int(11) NOT NULL,
+  `id_documento` int(11) NOT NULL,
+  `importo` decimal(15,6) NOT NULL,
+  PRIMARY KEY (`id_ritenuta_contributi`, `id_ritenuta_acconto`, `id_documento`),
+  FOREIGN KEY (`id_ritenuta_contributi`) REFERENCES `co_ritenute_acconto` (`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`id_ritenuta_acconto`) REFERENCES `co_ritenute_acconto`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`id_documento`) REFERENCES `co_documenti`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
 
 -- Impostazione percentuale deducibile di default al 100%
 ALTER TABLE `co_pianodeiconti3` CHANGE `percentuale_deducibile` `percentuale_deducibile` DECIMAL(5,2) NOT NULL DEFAULT '100';

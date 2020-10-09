@@ -27,7 +27,7 @@ class RitenutaContributi extends Model
 {
     use SimpleModelTrait;
 
-    protected $table = 'co_ritenuta_contributi';
+    protected $table = 'co_ritenute_contributi';
 
     public function fatture()
     {

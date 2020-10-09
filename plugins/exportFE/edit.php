@@ -141,9 +141,9 @@ if (!empty($fattura->codice_stato_fe)) {
         <a href="'.ROOTDIR.'/view.php?file_id='.$ultima_ricevuta->id.'" target="_blank" class="btn btn-info btn-xs">
             <i class="fa fa-external-link"></i> '.tr('Visualizza ricevuta').'
         </a>';
-    }
+        }
 
-    echo '
+        echo '
     </div>
 
     <big>
@@ -151,26 +151,26 @@ if (!empty($fattura->codice_stato_fe)) {
         <b>'.$stato_fe['codice'].'</b> - '.$stato_fe['descrizione'].'
     </big>';
 
-    if (!empty($record['descrizione_ricevuta_fe'])) {
-        echo '
+        if (!empty($record['descrizione_ricevuta_fe'])) {
+            echo '
     <br><b>'.tr('Note', [], ['upper' => true]).':</b> '.$record['descrizione_ricevuta_fe'];
-    }
+        }
 
-    if ($fattura->codice_stato_fe == 'GEN') {
-        echo '
+        if ($fattura->codice_stato_fe == 'GEN') {
+            echo '
     <br><i class="fa fa-info-circle"></i> '.tr("La fattura è stata generata ed è pronta per l'invio").'.';
-    }
+        }
 
-    echo '
+        echo '
 </div>';
 
-    // Lettura della ricevuta
-    if (!empty($ricevuta_principale)) {
-        $contenuto_ricevuta = XML::readFile($ricevuta_principale->filepath);
-        $lista_errori = $contenuto_ricevuta['ListaErrori'];
+        // Lettura della ricevuta
+        if (!empty($ricevuta_principale)) {
+            $contenuto_ricevuta = XML::readFile($ricevuta_principale->filepath);
+            $lista_errori = $contenuto_ricevuta['ListaErrori'];
 
-        if (!empty($lista_errori)) {
-            echo '
+            if (!empty($lista_errori)) {
+                echo '
 <h4>'.tr('Elenco degli errori').'</h4>
 <table class="table table-striped">
     <thead>
@@ -181,19 +181,20 @@ if (!empty($fattura->codice_stato_fe)) {
     </thead>
     <tbody>';
 
-            $lista_errori = $lista_errori[0] ? $lista_errori : [$lista_errori];
-            foreach ($lista_errori as $errore) {
-                $errore = $errore['Errore'];
-                echo '
+                $lista_errori = $lista_errori[0] ? $lista_errori : [$lista_errori];
+                foreach ($lista_errori as $errore) {
+                    $errore = $errore['Errore'];
+                    echo '
         <tr>
             <td>'.$errore['Codice'].'</td>
             <td>'.$errore['Descrizione'].'</td>
         </tr>';
-            }
+                }
 
-            echo '
+                echo '
     </tbody>
 </table>';
+            }
         }
     }
 }
@@ -275,8 +276,8 @@ echo '
         salvaForm(button, "#edit-form").then(function(valid) {
             if (valid) {';
 
-if ($generata) {
-    echo '
+    if ($generata) {
+        echo '
                 /*<p class=\"text-danger\">'.tr('Se stai attendendo una ricevuta dal sistema SdI, rigenerando la fattura elettronica non sarà possibile corrispondere la ricevuta una volta emessa').'.</p>*/
                 swal({
                     title: "'.tr('Sei sicuro di rigenerare la fattura?').'",
@@ -291,12 +292,12 @@ if ($generata) {
                         $("#form-xml").submit();
                     }
                 });';
-} else {
-    echo '
+    } else {
+        echo '
 
                 $("#form-xml").submit();';
-}
-echo '
+    }
+    echo '
             } else {
                 swal({
                     type: "error",

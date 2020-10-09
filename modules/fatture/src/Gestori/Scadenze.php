@@ -21,6 +21,8 @@ namespace Modules\Fatture\Gestori;
 
 use Modules\Fatture\Fattura;
 use Modules\Scadenzario\Scadenza;
+use Plugins\ImportFE\FatturaElettronica as FatturaElettronicaImport;
+use Util\XML;
 
 /**
  * Classe dedicata alla gestione delle procedure di registrazione delle Scadenze di pagamento per una Fattura, con relativo supporto alla Fatturazione Elettronica per permettere l'importazione delle scadenze eventualmente registrate.
@@ -108,14 +110,14 @@ class Scadenze
      */
     protected function registraScadenzeFE($is_pagato = false)
     {
-        $xml = \Util\XML::read($this->fattura->getXML());
+        $xml = XML::read($this->fattura->getXML());
 
         $pagamenti = $xml['FatturaElettronicaBody']['DatiPagamento']['DettaglioPagamento'];
         if (!empty($pagamenti)) {
             $rate = isset($pagamenti[0]) ? $pagamenti : [$pagamenti];
 
             foreach ($rate as $rata) {
-                $scadenza = $rata['DataScadenzaPagamento'] ?: $this->fattura->data;
+                $scadenza = !empty($rata['DataScadenzaPagamento']) ? FatturaElettronicaImport::parseDate($rata['DataScadenzaPagamento']) : $this->fattura->data;
                 $importo = ($this->fattura->isNota()) ? $rata['ImportoPagamento'] : -$rata['ImportoPagamento'];
 
                 self::registraScadenza($this->fattura, $importo, $scadenza, $is_pagato);

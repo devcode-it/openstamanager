@@ -18,6 +18,7 @@
  */
 
 use Carbon\Carbon;
+use Plugins\ImportFE\FatturaElettronica;
 
 include_once __DIR__.'/../../core.php';
 
@@ -170,11 +171,11 @@ if (!empty($pagamenti)) {
     // Scadenze di pagamento
     foreach ($metodi as $metodo) {
         $descrizione = !empty($metodo['ModalitaPagamento']) ? $database->fetchOne('SELECT descrizione FROM fe_modalita_pagamento WHERE codice = '.prepare($metodo['ModalitaPagamento']))['descrizione'] : '';
-        $data = !empty($metodo['DataScadenzaPagamento']) ? Translator::dateToLocale($metodo['DataScadenzaPagamento']).' ' : '';
+        $data = !empty($metodo['DataScadenzaPagamento']) ? FatturaElettronica::parseDate($metodo['DataScadenzaPagamento']) : '';
 
         echo '
 				<li>
-				    '.$data.'
+				    '.dateFormat($data).'
 				    '.moneyFormat($metodo['ImportoPagamento']).'
                     ('.$descrizione.')
                 </li>';

@@ -362,6 +362,9 @@ class FatturaElettronica
                 'xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#',
                 'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
                 'xsi:schemaLocation' => 'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2.1 http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2.1/Schema_del_file_xml_FatturaPA_versione_1.2.1.xsd',
+
+                // Attributo SistemaEmittente
+                'SistemaEmittente' => 'OpenSTAManager',
             ];
             foreach ($attributes as $key => $value) {
                 $rootNode->setAttribute($key, $value);

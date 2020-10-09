@@ -452,6 +452,7 @@ echo '
             /* locales: allLocales, */
             locale: globals.locale,
             slotEventOverlap: false,
+            schedulerLicenseKey: "GPL-My-Project-Is-Open-Source",
             hiddenDays: globals.dashboard.show_sunday ? [] : [0],
             header: {
                 left: "prev,next today",

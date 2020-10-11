@@ -495,6 +495,9 @@ function replaceAll(str, find, replace) {
     return str.replace(new RegExp(find, "g"), replace);
 }
 
+/**
+ * @deprecated
+ */
 function cleanup_inputs() {
     $('.bound').removeClass("bound");
 
@@ -507,7 +510,15 @@ function cleanup_inputs() {
     });
 }
 
+/**
+ * @deprecated
+ */
 function restart_inputs() {
+    // Generazione degli input
+    $('.openstamanager-input').each(function () {
+        input(this);
+    });
+    /*
     start_datepickers();
     start_inputmask();
 
@@ -516,6 +527,7 @@ function restart_inputs() {
 
     // Autosize per le textarea
     initTextareaInput($('.autosize'));
+     */
 }
 
 /**
@@ -649,6 +661,76 @@ function hideTableColumn(table, column) {
     }
 }
 
-function initTextareaInput(input){
-    autosize($(input));
+/**
+ * Loads a JavaScript file and returns a Promise for when it is loaded
+ */
+function loadScript(src, async = true, defer = true) {
+    if (!globals.dynamicScripts) {
+        globals.dynamicScripts = {};
+    }
+
+    return new Promise((resolve, reject) => {
+        // Caricamento già completato
+        if (globals.dynamicScripts[src] && globals.dynamicScripts[src] === "done") {
+            resolve();
+            return;
+        }
+
+        // Aggiunta del resolve all'elenco per lo script
+        if (!globals.dynamicScripts[src]) {
+            globals.dynamicScripts[src] = [];
+        }
+        globals.dynamicScripts[src].push(resolve);
+
+        // Ricerca dello script esistente
+        let found = Array.prototype.slice.call(document.scripts).find(el => el.getAttribute("src") === src);
+        if (found) {
+            return;
+        }
+
+        // Caricamento dinamico dello script
+        const script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.async = async;
+        script.defer = defer;
+
+        script.onload = function () {
+            for (resolve of globals.dynamicScripts[src]) {
+                resolve();
+            }
+
+            globals.dynamicScripts[src] = "done";
+        }
+
+        script.onerror = reject;
+        script.src = src;
+        document.head.append(script);
+    })
+}
+
+function aggiungiContenuto(endpoint_selector, template_selector, replaces = {}) {
+    let template = $(template_selector);
+    let endpoint = $(endpoint_selector);
+
+    // Distruzione degli input interni
+    template.find('.openstamanager-input').each(function () {
+        input(this).destroy();
+    });
+
+    // Contenuto da sostituire
+    let content = template.html();
+    for ([key, value] of Object.entries(replaces)) {
+        content = replaceAll(content, key, value);
+    }
+
+    // Aggiunta del contenuto
+    let element = $(content);
+    endpoint.append(element);
+
+    // Rigenerazione degli input interni
+    element.find('.openstamanager-input').each(function () {
+        input(this).trigger("change");
+    });
+
+    return element;
 }

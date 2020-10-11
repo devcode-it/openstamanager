@@ -30,6 +30,8 @@ class SelectHandler implements HandlerInterface
 {
     public function handle(&$values, &$extras)
     {
+        $values['class'][] = 'openstamanager-input';
+
         $source = isset($values['ajax-source']) ? $values['ajax-source'] : (isset($values['select-source']) ? $values['select-source'] : null);
 
         // Individuazione della classe per la corretta gestione JavaScript

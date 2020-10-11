@@ -28,9 +28,13 @@ class CKEditorHandler implements HandlerInterface
 {
     public function handle(&$values, &$extras)
     {
+        $values['class'][] = 'openstamanager-input';
+        $values['class'][] = 'editor-input';
+
         // Generazione del codice HTML
         return '
-    <textarea |attr|>|value|</textarea>
+    <textarea |attr|>|value|</textarea>';
+        /*
     <script src="'.base_path().'/assets/dist/js/ckeditor/ckeditor.js"></script>
     <script>
         CKEDITOR.addCss(".cke_editable img { max-width: 100% !important; height: auto !important; }");
@@ -42,6 +46,6 @@ class CKEditorHandler implements HandlerInterface
             scayt_sLang: globals.full_locale,
             disableNativeSpellChecker: false,
         });
-    </script>';
+    </script>*/
     }
 }

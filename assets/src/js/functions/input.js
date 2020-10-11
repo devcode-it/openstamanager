@@ -55,41 +55,47 @@ function Input(element) {
     this.element = element;
 
     // Controllo sulla gestione precedente
-    if (!this.element.data("input-set")) {
-        return;
+    if (this.element.data("input-controller")) {
+        return this.element.data("input-controller");
     }
 
-    this.element.data("input-set", 1);
+    this.element.data("input-controller", this);
     this.element.data("required", this.element.attr("required"));
 
+    let htmlElement = element[0];
     // Operazioni di inizializzazione per input specifici
     // Inizializzazione per date
     if (this.element.hasClass('timestamp-picker')) {
-        initTimestampInput(this.element);
+        initTimestampInput(htmlElement);
     } else if (this.element.hasClass('datepicker')) {
-        initDateInput(this.element);
+        initDateInput(htmlElement);
     } else if (this.element.hasClass('timepicker')) {
-        initTimeInput(this.element);
+        initTimeInput(htmlElement);
     }
 
     // Inizializzazione per campi numerici
     else if (this.element.hasClass('decimal-number')) {
-        initNumberInput(this.element);
+        initNumberInput(htmlElement);
+    }
+
+    // Inizializzazione per textarea
+    else if (this.element.hasClass('editor-input')) {
+        initEditorInput(htmlElement);
     }
 
     // Inizializzazione per textarea
     else if (this.element.hasClass('autosize')) {
-        initTextareaInput(this.element);
+        initTextareaInput(htmlElement);
     }
 
     // Inizializzazione per select
     else if (this.element.hasClass('superselect') || this.element.hasClass('superselectajax')) {
-        initSelectInput(this.element);
+        initSelectInput(htmlElement);
     }
 
     // Inizializzazione alternativa per maschere
     else {
-        initMaskInput(this.element);
+        initMaskInput(htmlElement);
     }
 }
 
@@ -125,6 +131,12 @@ Input.prototype.disable = function () {
         .attr("readonly", false)
         .addClass("disabled");
 
+    // Gestione dell'editor
+    if (this.element.hasClass("editor-input")) {
+        const name = this.element.attr("id");
+        CKEDITOR.instances[name].setReadOnly(true);
+    }
+
     return this;
 }
 
@@ -148,6 +160,12 @@ Input.prototype.enable = function () {
         .attr("readonly", false)
         .removeClass("disabled");
 
+    // Gestione dell'editor
+    if (this.element.hasClass("editor-input")) {
+        const name = this.element.attr("id");
+        CKEDITOR.instances[name].setReadOnly(false);
+    }
+
     return this;
 }
 
@@ -168,6 +186,12 @@ Input.prototype.getData = function () {
  */
 Input.prototype.get = function () {
     let value = this.element.val();
+
+    // Gestione dei valori per l'editor
+    if (this.element.hasClass("editor-input")) {
+        const name = this.element.attr("id");
+        value = typeof CKEDITOR !== 'undefined' ? CKEDITOR.instances[name].getData() : value;
+    }
 
     // Conversione del valore per le checkbox
     let group = this.element.closest(".form-group");
@@ -211,16 +235,34 @@ Input.prototype.setRequired = function (value) {
 }
 
 // Eventi permessi
-Input.prototype.change = function (event) {
-    return this.element.change(event);
+Input.prototype.change = function (callable) {
+    return this.on("change", callable);
 }
 
-Input.prototype.on = function (event, action) {
-    return this.element.on(event, action(event));
+Input.prototype.on = function (event, callable) {
+    return this.element.on(event, callable);
 }
 
 Input.prototype.off = function (event) {
     return this.element.off(event);
+}
+
+Input.prototype.trigger = function (event, callable) {
+    return this.element.trigger(event, callable);
+}
+
+Input.prototype.destroy = function () {
+    if (this.element.data('select2')) {
+        this.element.select2().select2("destroy")
+    }
+
+    // Gestione della distruzione per l'editor
+    if (this.element.hasClass("editor-input")) {
+        const name = this.element.attr("id");
+        CKEDITOR.instances[name].destroy();
+    }
+
+    this.element.data("input-controller", null);
 }
 
 /**

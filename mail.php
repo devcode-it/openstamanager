@@ -152,7 +152,7 @@ echo '
 <script>
     var emails = [];
 
-    $(document).ready(function(){';
+    $(document).ready(function() {';
 
         // Autocompletamento destinatario
         if (!empty($id_anagrafica)) {
@@ -180,13 +180,13 @@ echo '
 
     });
 
-    function send(){
+    function send() {
         if($("#email-form").parsley().validate() && confirm("Inviare e-mail?")) {
             $("#email-form").submit();
         }
     }
 
-    function aggiungi_destinatario(){
+    function aggiungi_destinatario() {
         var last = $("#lista-destinatari input").last();
 
         if (last.val()) {

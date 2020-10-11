@@ -18,18 +18,16 @@
 
 /**
  * Funzione per inizializzare i campi di input numerici per la gestione integrata del formato impostato per il gestionale.
+ *
+ * @deprecated
  */
 function initNumbers() {
-    let inputs = $('.decimal-number').not('.bound');
-
-    for (const input of inputs) {
-        initNumberInput(input);
-
-        $(input).addClass('bound');
-    }
+    $('.decimal-number').each(function () {
+        input(this);
+    });
 }
 
-function initNumberInput(input){
+function initNumberInput(input) {
     let $input = $(input);
     if (AutoNumeric.isManagedByAutoNumeric(input)) {
         return;

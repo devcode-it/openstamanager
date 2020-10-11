@@ -28,6 +28,8 @@ class MediaHandler implements HandlerInterface
 {
     public function handle(&$values, &$extras)
     {
+        $values['class'][] = 'openstamanager-input';
+
         // Delega della gestione al metodo specifico per il tipo di input richiesto
         $result = $this->{$values['type']}($values, $extras);
 

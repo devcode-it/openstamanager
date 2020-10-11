@@ -18,10 +18,12 @@
 
 /**
  * Select.
+ *
+ * @deprecated
  */
 function start_superselect() {
     $('.superselect, .superselectajax').each(function () {
-       initSelectInput(this);
+       input(this);
     });
 }
 

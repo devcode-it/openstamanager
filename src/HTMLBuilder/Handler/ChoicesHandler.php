@@ -72,7 +72,7 @@ class ChoicesHandler implements HandlerInterface
         // "+ this.checked" rende il valore booleano un numero
         $result = '
         <div class="form-group checkbox-group">
-            <input type="hidden" name="|name|" value="|value|">
+            <input type="hidden" name="|name|" value="|value|" class="openstamanager-input">
             <input type="checkbox" id="|id|" value="|value|" autocomplete="off" class="hidden" |attr| onchange="$(this).parent().find(\'[type = hidden]\').val(+this.checked).trigger(\'change\')"/>
             <div class="btn-group checkbox-buttons">
                 <label for="|id|" class="btn btn-default'.$class.'">

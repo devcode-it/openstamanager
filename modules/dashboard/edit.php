@@ -253,7 +253,7 @@ WHERE (SELECT COUNT(*) FROM in_interventi_tecnici WHERE in_interventi_tecnici.id
         ->sortBy('data');
 
     echo '
-    <select class="superselect" id="mese-promemoria">';
+    <select class="superselect openstamanager-input" id="mese-promemoria">';
 
     foreach ($mesi as $mese) {
         $data = new Carbon\Carbon($mese['data']);

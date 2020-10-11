@@ -104,7 +104,7 @@ if ($structure->permission == 'rw') {
             <!-- PULSANTI -->
             <div class="row">
                 <div class="col-md-12 text-right">
-                    <button type="submit"  class="btn btn-primary" disabled id="aggiungi_nota" >
+                    <button type="submit" class="btn btn-primary" disabled id="aggiungi_nota" >
                         <i class="fa fa-plus"></i> '.tr('Aggiungi').'
                     </button>
                 </div>
@@ -114,14 +114,12 @@ if ($structure->permission == 'rw') {
 
 echo '
 <script>
-    $(document).ready(function(){
-        CKEDITOR.instances["contenuto"].on("key", function() {
-            setTimeout(function(){
-                if(CKEDITOR.instances["contenuto"].getData() == ""){
-                    $("#aggiungi_nota").prop("disabled", true);
-                }
-                else $("#aggiungi_nota").prop("disabled", false);
-            }, 10);
-        });
-    });
+var contenuto_nota = input("contenuto");
+contenuto_nota.on("change", function() {
+    if (contenuto_nota.get() === "") {
+        $("#aggiungi_nota").prop("disabled", true);
+    } else {
+        $("#aggiungi_nota").prop("disabled", false);
+    }
+});
 </script>';

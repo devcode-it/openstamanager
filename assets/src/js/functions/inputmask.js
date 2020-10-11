@@ -18,11 +18,6 @@
 
 function initMaskInput(input) {
     let $input = $(input);
-    if ($input.hasClass('bound')){
-        return;
-    }
-
-    $input.addClass('bound');
 
     if ($input.hasClass('email-mask')){
         $input.inputmask('Regex', {
@@ -64,6 +59,6 @@ function start_inputmask(element) {
 
     let selector = element + '.' + masks.join(', ' + element + '.')
     $(selector).each(function () {
-        initMaskInput(this);
+        input(this);
     });
 }

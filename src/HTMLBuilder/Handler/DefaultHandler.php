@@ -28,6 +28,8 @@ class DefaultHandler implements HandlerInterface
 {
     public function handle(&$values, &$extras)
     {
+        $values['class'][] = 'openstamanager-input';
+
         // Delega della gestione al metodo specifico per il tipo di input richiesto
         if (in_array($values['type'], get_class_methods($this))) {
             $result = $this->{$values['type']}($values, $extras);

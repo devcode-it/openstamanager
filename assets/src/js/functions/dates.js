@@ -90,17 +90,20 @@ function initTimeInput(input) {
     });
 }
 
+/**
+ * @deprecated
+ */
 function start_datepickers() {
     $('.timestamp-picker').each(function () {
-        initTimestampInput(this);
+        input(this);
     });
 
     $('.datepicker').each(function () {
-        initDateInput(this);
+        input(this);
     });
 
     $('.timepicker').each(function () {
-        initTimeInput(this);
+        input(this);
     });
 }
 

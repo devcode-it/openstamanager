@@ -62,61 +62,78 @@ include_once __DIR__.'/../../core.php';
 		</div>
 
 		<div class="panel-body">
-			<div class="data">
+			<div id="elenco-rate">
 <?php
-$values = '';
+$giorni_pagamento = [];
 for ($i = 1; $i <= 31; ++$i) {
-    $values .= '\"'.$i.'\": \"'.$i.'\"';
-    if ($i != 31) {
-        $values .= ',';
-    }
+    $giorni_pagamento[] = [
+        'id' => $i,
+        'text' => $i,
+    ];
 }
 
+$tipi_scadenza_pagamento = [
+    [
+        'id' => 1,
+        'text' => tr('Data fatturazione'),
+    ],
+    [
+        'id' => 2,
+        'text' => tr('Data fatturazione fine mese'),
+    ],
+    [
+        'id' => 3,
+        'text' => tr('Data fatturazione giorno fisso'),
+    ],
+    [
+        'id' => 4,
+        'text' => tr('Data fatturazione fine mese (giorno fisso)'),
+    ],
+];
+
 $results = $dbo->fetchArray('SELECT * FROM `co_pagamenti` WHERE descrizione='.prepare($record['descrizione']).' ORDER BY `num_giorni` ASC');
-$cont = 1;
+$numero_rata = 1;
 foreach ($results as $result) {
+    $tipo_scadenza_pagamento = 3;
+    if ($result['giorno'] == 0) {
+        $tipo_scadenza_pagamento = 1;
+    } elseif ($result['giorno'] == -1) {
+        $tipo_scadenza_pagamento = 2;
+    } elseif ($result['giorno'] < -1) {
+        $tipo_scadenza_pagamento = 4;
+    }
+
+    $giorno_pagamento = null;
+    if ($result['giorno'] != 0 && $result['giorno'] != -1) {
+        $giorno_pagamento = ($result['giorno'] < -1) ? -$result['giorno'] - 1 : $result['giorno'];
+    }
+
     echo '
 				<div class="box box-success">
 					<div class="box-header with-border">
 						<h3 class="box-title">'.tr('Rata _NUMBER_', [
-                            '_NUMBER_' => $cont,
+                            '_NUMBER_' => $numero_rata,
                         ]).'</h3>
-						<a class="btn btn-danger pull-right" onclick="';
-    echo "if(confirm('".tr('Eliminare questo elemento?')."')){ location.href='".base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=delete_rata&id='.$result['id']."'; }";
-    echo '"><i class="fa fa-trash"></i> '.tr('Elimina').'</a>
+						<button type="button" class="btn btn-danger pull-right" onclick="rimuoviRata('.$result['id'].')">
+						    <i class="fa fa-trash"></i> '.tr('Elimina').'
+						</button>
 					</div>
 					<div class="box-body">
-						<input type="hidden" value="'.$result['id'].'" name="id[]">
+						<input type="hidden" value="'.$result['id'].'" name="id['.$numero_rata.']">
 
 						<div class="row">
 							<div class="col-md-6">
-								{[ "type": "number", "label": "'.tr('Percentuale').'", "name": "percentuale[]", "decimals": "2", "min-value": "0", "value": "'.$result['prc'].'", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
+								{[ "type": "number", "label": "'.tr('Percentuale').'", "name": "percentuale['.$numero_rata.']", "decimals": "2", "min-value": "0", "value": "'.$result['prc'].'", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
 							</div>
 
 							<div class="col-md-6">
-								{[ "type": "select", "label": "'.tr('Scadenza').'", "name": "scadenza[]", "values": "list=\"1\":\"'.tr('Data fatturazione').'\",\"2\":\"'.tr('Data fatturazione fine mese').'\",\"3\":\"'.tr('Data fatturazione giorno fisso').'\",\"4\":\"'.tr('Data fatturazione fine mese (giorno fisso)').'\"", "value": "';
-
-    if ($result['giorno'] == 0) {
-        $select = 1;
-    } elseif ($result['giorno'] == -1) {
-        $select = 2;
-    } elseif ($result['giorno'] < -1) {
-        $select = 4;
-    } elseif ($result['giorno'] > 0) {
-        $select = 3;
-    }
-    echo $select;
-    echo '" ]}
+								{[ "type": "select", "label": "'.tr('Scadenza').'", "name": "scadenza['.$numero_rata.']", "values": '.json_encode($tipi_scadenza_pagamento).', "value": "'.$tipo_scadenza_pagamento.'" ]}
 							</div>
                         </div>
 
                         <div class="row">
 							<div class="col-md-6">
-								{[ "type": "select", "label": "'.tr('Giorno').'", "name": "giorno[]", "values": "list='.$values.'", "value": "';
-    if ($result['giorno'] != 0 && $result['giorno'] != -1) {
-        echo ($result['giorno'] < -1) ? -$result['giorno'] - 1 : $result['giorno'];
-    }
-    echo '", "extra": "';
+								{[ "type": "select", "label": "'.tr('Giorno').'", "name": "giorno['.$numero_rata.']", "values": '.json_encode($giorni_pagamento).', "value": "'.$giorno_pagamento.'", "extra": "';
     if ($result['giorno'] == 0 || $result['giorno'] == -1) {
         echo ' disabled';
     }
@@ -124,27 +141,34 @@ foreach ($results as $result) {
 							</div>
 
 							<div class="col-md-6">
-								{[ "type": "number", "label": "'.tr('Distanza in giorni').'", "name": "distanza[]", "decimals": "0", "min-value": "0", "value": "'.$result['num_giorni'].'" ]}
+								{[ "type": "number", "label": "'.tr('Distanza in giorni').'", "name": "distanza['.$numero_rata.']", "decimals": "0", "min-value": "0", "value": "'.$result['num_giorni'].'" ]}
 							</div>
 						</div>
 					</div>
 				</div>';
-    ++$cont;
+    ++$numero_rata;
 }
 ?>
 			</div>
+
 			<div class="pull-right">
-				<button type="button" class="btn btn-info" id="add"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></button>
-				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva'); ?></button>
+				<button type="button" class="btn btn-info" onclick="aggiungiRata()">
+                    <i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?>
+                </button>
+
+				<button type="submit" class="btn btn-success">
+                    <i class="fa fa-check"></i> <?php echo tr('Salva'); ?>
+                </button>
 			</div>
 		</div>
 	</div>
-
 </form>
 
 <div class="box box-warning box-solid text-center hide" id="wait">
 	<div class="box-header with-border">
-		<h3 class="box-title"><i class="fa fa-warning"></i> <?php echo tr('Attenzione!'); ?></h3>
+		<h3 class="box-title">
+            <i class="fa fa-warning"></i> <?php echo tr('Attenzione!'); ?>
+        </h3>
 	</div>
 	<div class="box-body">
 		<p><?php echo tr('Prima di poter continuare con il salvataggio è necessario che i valori percentuali raggiungano in totale il 100%'); ?>.</p>
@@ -162,25 +186,25 @@ echo '
             <h3 class="box-title">'.tr('Nuova rata').'</h3>
         </div>
         <div class="box-body">
-            <input type="hidden" value="" name="id[]">
+            <input type="hidden" value="" name="id[-id-]">
 
             <div class="row">
                 <div class="col-md-6">
-                    {[ "type": "number", "label": "'.tr('Percentuale').'", "name": "percentuale[]", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
+                    {[ "type": "number", "label": "'.tr('Percentuale').'", "name": "percentuale[-id-]", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
                 </div>
 
                 <div class="col-md-6">
-                    {[ "type": "select", "label": "'.tr('Scadenza').'", "name": "scadenza[]", "values": "list=\"1\":\"'.tr('Data fatturazione').'\",\"2\":\"'.tr('Data fatturazione fine mese').'\",\"3\":\"'.tr('Data fatturazione giorno fisso').'\",\"4\":\"'.tr('Data fatturazione fine mese (giorno fisso)').'\"", "value": 1 ]}
+                    {[ "type": "select", "label": "'.tr('Scadenza').'", "name": "scadenza[-id-]", "values": '.json_encode($tipi_scadenza_pagamento).', "value": 1 ]}
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-md-6">
-                    {[ "type": "select", "label": "'.tr('Giorno').'", "name": "giorno[]", "values": "list='.$values.'" ]}
+                    {[ "type": "select", "label": "'.tr('Giorno').'", "name": "giorno[-id-]", "values": '.json_encode($giorni_pagamento).' ]}
                 </div>
 
                 <div class="col-md-6">
-                    {[ "type": "number", "label": "'.tr('Distanza in giorni').'", "name": "distanza[]", "decimals": "0" ]}
+                    {[ "type": "number", "label": "'.tr('Distanza in giorni').'", "name": "distanza[-id-]", "decimals": "0" ]}
                 </div>
             </div>
         </div>
@@ -190,44 +214,54 @@ echo '
 ?>
 
 <script>
+var indice_rata = "<?php echo $numero_rata; ?>";
 $(document).ready(function() {
-	$(document).on('click', '#add', function() {
-        cleanup_inputs();
+	$(document).on("change", "[id^=scadenza]", function() {
+        const giorno = $(this).parentsUntil(".box").find("[id*=giorno]");
+        const giorno_input = input(giorno[0]);
 
-	    $(this).parent().parent().find('.data').append($('#template').html());
+        const tipo_scadenza = parseInt(input(this).get());
 
-        restart_inputs();
-	});
-
-	$(document).on('change', '[id*=scadenza]', function() {
-        if($(this).val() == 1 || $(this).val() == 2){
-            $(this).parentsUntil('.box').find('[id*=giorno]').prop('disabled', true);
-        }else{
-            $(this).parentsUntil('.box').find('[id*=giorno]').prop('disabled', false);
-        }
+        giorno_input.setDisabled(tipo_scadenza === 1 || tipo_scadenza === 2);
     });
 
-	$(document).on('change', '[id*=percentuale]', function() {
-		$('button[type=submit]').prop( 'disabled', false ).removeClass('disabled');
+	$(document).on("change", "input[id^=percentuale]", function() {
+        controllaRate();
 	});
 
-	$('#edit-form').submit( function(event) {
-		var tot = 0;
-
-		$(this).find('[id*=percentuale]').each(function() {
-            prc = $(this).val().toEnglish();
-            prc = !isNaN(prc) ? prc : 0;
-
-			tot += prc;
-		});
-
-		if( tot != 100) {
-			$('#wait').removeClass("hide");
-			event.preventDefault();
-		} else {
-			$('#wait').addClass("hide");
-			$(this).unbind('submit').submit();
-		}
+	$("#edit-form").submit(function(event) {
+	    const result = controllaRate();
+	    if (!result) {
+            event.preventDefault();
+            return false;
+        }
 	});
 });
+
+function aggiungiRata() {
+    aggiungiContenuto("#elenco-rate", "#template", {"-id-": indice_rata});
+    indice_rata++;
+}
+
+function controllaRate() {
+    let totale = 0;
+
+    $("#elenco-rate").find("input[id^=percentuale]").each(function() {
+        totale += input(this).get();
+    });
+
+    if(totale !== 100) {
+        $("#wait").removeClass("hide");
+    } else {
+        $("#wait").addClass("hide");
+    }
+
+    return totale === 100;
+}
+
+function rimuoviRata(id) {
+    if(confirm("<?php echo tr('Eliminare questo elemento?'); ?>")){
+        location.href = "<?php echo base_path(); ?>/editor.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&op=delete_rata&id=" + id;
+    }
+}
 </script>

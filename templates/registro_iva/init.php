@@ -33,13 +33,15 @@ $v_iva = [];
 $v_totale = [];
 
 $query = 'SELECT *,
-       co_documenti.id AS id,
-       IF(numero = "", numero_esterno, numero) AS numero,
-       SUM(subtotale - sconto) AS subtotale,
-       (SELECT SUM(subtotale - sconto + iva + rivalsainps - ritenutaacconto) FROM co_righe_documenti WHERE co_righe_documenti.iddocumento=co_documenti.id GROUP BY iddocumento) + co_documenti.iva_rivalsainps AS totale,
-       SUM(iva) AS iva, an_anagrafiche.ragione_sociale,
-       an_anagrafiche.codice AS codice_anagrafica
-FROM co_documenti
+    co_movimenti.id AS idmovimenti, co_documenti.id AS id,
+    IF(numero = "", numero_esterno, numero) AS numero,
+    (SELECT SUM(subtotale - sconto) FROM co_righe_documenti WHERE co_righe_documenti.iddocumento=co_documenti.id GROUP BY iddocumento) AS subtotale,
+    (SELECT SUM(subtotale - sconto + iva + rivalsainps - ritenutaacconto) FROM co_righe_documenti WHERE co_righe_documenti.iddocumento=co_documenti.id GROUP BY iddocumento) + co_documenti.iva_rivalsainps AS totale,
+    (SELECT SUM(iva) FROM co_righe_documenti WHERE co_righe_documenti.iddocumento=co_documenti.id GROUP BY iddocumento) + co_documenti.iva_rivalsainps AS iva,
+    an_anagrafiche.ragione_sociale,
+    an_anagrafiche.codice AS codice_anagrafica
+FROM co_movimenti
+    INNER JOIN co_documenti ON co_movimenti.iddocumento=co_documenti.id
     INNER JOIN co_righe_documenti ON co_documenti.id=co_righe_documenti.iddocumento
     INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id
     INNER JOIN co_iva ON co_righe_documenti.idiva=co_iva.id

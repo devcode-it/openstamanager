@@ -42,17 +42,16 @@ if ('entrata' == $dir) {
 
 $tipo = $dir == 'entrata' ? tr('Cliente') : tr('Fornitore');
 $i = 0;
-$color = '#dddddd';
 
 echo '<h4><b>'.$titolo.'</b></h4>
 
-<table class="table table-condensed" border="0">
+<table class="table table-condensed table-striped" border="0">
     <thead>
-        <tr bgcolor="'.$color.'">
+        <tr>
             <th>'.tr('Prot.').'</th>
+            <th>'.tr('Data comp.').'</th>
             <th>'.tr('N<sup>o</sup>&nbsp;doc.').'</th>
             <th>'.tr('Data doc.').'</th>
-            <th>'.tr('Data comp.').'</th>
             <th>'.tr('Tipo').'</th>
             <th>'.$tipo.'</th>
             <th>'.tr('Tot. doc.').'</th>

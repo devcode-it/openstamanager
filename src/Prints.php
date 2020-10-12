@@ -453,14 +453,20 @@ class Prints
         $default = include App::filepath('templates/base|custom|', 'settings.php');
 
         // Impostazioni personalizzate della stampa
-        $custom = include self::filepath($id_print, 'settings.php');
+        $print_settings = self::filepath($id_print, 'settings.php');
+        if (!empty($print_settings)) {
+            $custom = include $print_settings;
+        }
 
         // Individuazione delle impostazioni finali
         $settings = array_merge($default, (array) $custom);
         $settings = array_merge($settings, (array) $options);
 
         // Individuazione delle variabili fondamentali per la sostituzione dei contenuti
-        include self::filepath($id_print, 'init.php');
+        $print_init = self::filepath($id_print, 'init.php');
+        if (!empty($print_init)) {
+            include $print_init;
+        }
 
         // Individuazione delle variabili per la sostituzione
         include base_dir().'/templates/info.php';
@@ -518,7 +524,10 @@ class Prints
         // Generazione totale
         if (empty($single_pieces)) {
             ob_start();
-            include self::filepath($id_print, 'body.php');
+            $print_body = self::filepath($id_print, 'body.php');
+            if (!empty($print_body)) {
+                include $print_body;
+            }
             $report = ob_get_clean();
 
             if (!empty($autofill)) {
@@ -530,7 +539,10 @@ class Prints
 
         // Generazione dei contenuti dell'header
         ob_start();
-        include self::filepath($id_print, 'header.php');
+        $print_header = self::filepath($id_print, 'header.php');
+        if (!empty($print_header)) {
+            include $print_header;
+        }
         $head = ob_get_clean();
 
         // Header di default
@@ -538,7 +550,10 @@ class Prints
 
         // Generazione dei contenuti del footer
         ob_start();
-        include self::filepath($id_print, 'footer.php');
+        $print_footer = self::filepath($id_print, 'footer.php');
+        if (!empty($print_footer)) {
+            include $print_footer;
+        }
         $foot = ob_get_clean();
 
         // Footer di default
@@ -555,23 +570,32 @@ class Prints
 
         if (!empty($single_pieces)) {
             ob_start();
-            include self::filepath($id_print, 'top.php');
+            $print_top = self::filepath($id_print, 'top.php');
+            if (!empty($print_top)) {
+                include $print_top;
+            }
             $top = ob_get_clean();
 
             $top = str_replace(array_keys($replaces), array_values($replaces), $top);
 
             $mpdf->WriteHTML($top);
 
+            $print_piece = self::filepath($id_print, 'piece.php');
             foreach ($records as $record) {
                 ob_start();
-                include self::filepath($id_print, 'piece.php');
+                if (!empty($print_piece)) {
+                    include $print_piece;
+                }
                 $piece = ob_get_clean();
 
                 $mpdf->WriteHTML($piece);
             }
 
             ob_start();
-            include self::filepath($id_print, 'bottom.php');
+            $print_bottom = self::filepath($id_print, 'bottom.php');
+            if (!empty($print_bottom)) {
+                include $print_bottom;
+            }
             $bottom = ob_get_clean();
 
             $bottom = str_replace(array_keys($replaces), array_values($replaces), $bottom);
@@ -587,7 +611,10 @@ class Prints
 
             // Generazione dei contenuti del footer
             ob_start();
-            include self::filepath($id_print, 'footer.php');
+            $print_footer = self::filepath($id_print, 'footer.php');
+            if (!empty($print_footer)) {
+                include $print_footer;
+            }
             $foot = ob_get_clean();
         }
 

@@ -260,15 +260,6 @@ echo '
         </script>';
 
 if (Auth::check()) {
-    // Barra di debug
-    if (App::debug()) {
-        $debugbarRenderer = $debugbar->getJavascriptRenderer();
-        $debugbarRenderer->setIncludeVendors(false);
-        $debugbarRenderer->setBaseUrl($paths['assets'].'/php-debugbar');
-
-        echo $debugbarRenderer->renderHead();
-    }
-
     if (setting('Abilita esportazione Excel e PDF')) {
         echo '
         <script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>

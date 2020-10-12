@@ -144,7 +144,7 @@ class Formatter
         }
 
         if (is_object($this->numberFormatter)) {
-            $result = $this->numberFormatter->format($value);
+            $result = $this->numberFormatter->format(floatval($value));
         } else {
             $number = number_format($value, $this->getPrecision(), self::getStandardFormats()['number']['decimals'], self::getStandardFormats()['number']['thousands']);
 

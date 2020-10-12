@@ -23,7 +23,7 @@
  */
 function start_superselect() {
     $('.superselect, .superselectajax').each(function () {
-       input(this);
+        input(this);
     });
 }
 
@@ -170,19 +170,26 @@ function updateSelectOption(name, value) {
     })
 }
 
-function initSelectInput(input){
-    if ($(input).hasClass('superselect')){
+/**
+ * @param input
+ */
+function initSelectInput(input) {
+    let $input = $(input);
+
+    if ($input.hasClass('superselect')) {
         initStaticSelectInput(input);
     } else {
         initDynamicSelectInput(input);
     }
+
+    return $input.data('select');
 }
 
 /**
  * Statico.
  * @param input
  */
-function initStaticSelectInput(input){
+function initStaticSelectInput(input) {
     let $input = $(input);
 
     $input.select2({
@@ -203,7 +210,7 @@ function initStaticSelectInput(input){
  * Dinamico.
  * @param input
  */
-function initDynamicSelectInput(input){
+function initDynamicSelectInput(input) {
     let $input = $(input);
 
     $input.select2({

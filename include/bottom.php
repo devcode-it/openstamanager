@@ -58,7 +58,6 @@ if (Auth::check()) {
             window.onbeforeunload = null;
         </script>';
 
-        echo $debugbarRenderer->render();
     }
 
     $custom_css = setting('CSS Personalizzato');

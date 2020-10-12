@@ -42,7 +42,13 @@ function input(name) {
     if (!element.data("input-controller")) {
         return new Input(element);
     } else {
-        return element.data("input-controller");
+        const controller = element.data("input-controller");
+
+        if (!element.data("input-init")) {
+            controller.init();
+        }
+
+        return controller;
     }
 }
 
@@ -54,49 +60,53 @@ function input(name) {
 function Input(element) {
     this.element = element;
 
-    // Controllo sulla gestione precedente
-    if (this.element.data("input-controller")) {
-        return this.element.data("input-controller");
-    }
-
     this.element.data("input-controller", this);
     this.element.data("required", this.element.attr("required"));
 
-    let htmlElement = element[0];
+    this.init();
+}
+
+
+Input.prototype.init = function () {
+    let initCompleted = false;
+    let htmlElement = this.element[0];
+
     // Operazioni di inizializzazione per input specifici
     // Inizializzazione per date
     if (this.element.hasClass('timestamp-picker')) {
-        initTimestampInput(htmlElement);
+        initCompleted = initTimestampInput(htmlElement);
     } else if (this.element.hasClass('datepicker')) {
-        initDateInput(htmlElement);
+        initCompleted = initDateInput(htmlElement);
     } else if (this.element.hasClass('timepicker')) {
-        initTimeInput(htmlElement);
+        initCompleted = initTimeInput(htmlElement);
     }
 
     // Inizializzazione per campi numerici
-    else if (this.element.hasClass('decimal-number')) {
-        initNumberInput(htmlElement);
+    else if (this.element.hasClass('number-input')) {
+        initCompleted = initNumberInput(htmlElement);
     }
 
     // Inizializzazione per textarea
     else if (this.element.hasClass('editor-input')) {
-        initEditorInput(htmlElement);
+        initCompleted = initEditorInput(htmlElement);
     }
 
     // Inizializzazione per textarea
     else if (this.element.hasClass('autosize')) {
-        initTextareaInput(htmlElement);
+        initCompleted = initTextareaInput(htmlElement);
     }
 
     // Inizializzazione per select
-    else if (this.element.hasClass('superselect') || this.element.hasClass('superselectajax')) {
-        initSelectInput(htmlElement);
+    else if (this.element.hasClass('select-input')) {
+        initCompleted = initSelectInput(htmlElement);
     }
 
     // Inizializzazione alternativa per maschere
     else {
-        initMaskInput(htmlElement);
+        initCompleted = initMaskInput(htmlElement);
     }
+
+    this.element.data("input-init", initCompleted);
 }
 
 Input.prototype.getElement = function () {
@@ -200,7 +210,7 @@ Input.prototype.get = function () {
     }
 
     // Gestione dei valori numerici
-    if (this.element.hasClass("decimal-number")) {
+    if (this.element.hasClass("number-input")) {
         const autonumeric = this.element.data("autonumeric");
 
         if (autonumeric) {

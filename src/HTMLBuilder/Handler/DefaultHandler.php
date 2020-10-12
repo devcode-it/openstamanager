@@ -237,7 +237,7 @@ class DefaultHandler implements HandlerInterface
      */
     protected function number(&$values, &$extras)
     {
-        $values['class'][] = 'decimal-number';
+        $values['class'][] = 'number-input';
 
         $values['value'] = !empty($values['value']) ? $values['value'] : 0;
 

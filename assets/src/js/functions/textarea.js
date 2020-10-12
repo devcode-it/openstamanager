@@ -18,6 +18,8 @@
 
 function initTextareaInput(input) {
     autosize($(input));
+
+    return true;
 }
 
 function initEditorInput(input) {
@@ -45,4 +47,6 @@ function initEditorInput(input) {
                 $input.trigger("change", event);
             });
         });
+
+    return true;
 }

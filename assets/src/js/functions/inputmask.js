@@ -42,6 +42,8 @@ function initMaskInput(input) {
             regex: "[0-9,.+\-]*",
         });
     }
+
+    return true;
 }
 
 /**

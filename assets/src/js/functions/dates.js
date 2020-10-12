@@ -42,6 +42,8 @@ function initDateInput(input) {
         minDate: moment($this.attr('min-date')).isValid() ? $this.attr('min-date') : false,
         maxDate: moment($this.attr('max-date')).isValid() ? $this.attr('max-date') : false,
     });
+
+    return true;
 }
 
 function initTimestampInput(input) {
@@ -72,7 +74,9 @@ function initTimestampInput(input) {
 
     $this.on("dp.hide", function (e) {
         $('#tecnici > div').addClass('table-responsive');
-    })
+    });
+
+    return true;
 }
 
 function initTimeInput(input) {
@@ -88,6 +92,8 @@ function initTimeInput(input) {
         minDate: moment($this.attr('min-date')).isValid() ? $this.attr('min-date') : false,
         maxDate: moment($this.attr('max-date')).isValid() ? $this.attr('max-date') : false,
     });
+
+    return true;
 }
 
 /**

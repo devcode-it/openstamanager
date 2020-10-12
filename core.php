@@ -148,23 +148,6 @@ Monolog\ErrorHandler::register($logger, [], Monolog\Logger::ERROR, Monolog\Logge
 // Database
 $dbo = $database = database();
 
-/* SESSIONE */
-if (!API\Response::isAPIRequest()) {
-    // Barra di debug (necessario per loggare tutte le query)
-    if (App::debug()) {
-        $debugbar = new DebugBar\DebugBar();
-
-        $debugbar->addCollector(new DebugBar\DataCollector\MemoryCollector());
-        $debugbar->addCollector(new DebugBar\DataCollector\PhpInfoCollector());
-
-        $debugbar->addCollector(new DebugBar\DataCollector\RequestDataCollector());
-        $debugbar->addCollector(new DebugBar\DataCollector\TimeDataCollector());
-
-        $debugbar->addCollector(new DebugBar\Bridge\MonologCollector($logger));
-        $debugbar->addCollector(new Extensions\EloquentCollector($dbo->getCapsule()));
-    }
-}
-
 /* INTERNAZIONALIZZAZIONE */
 // Istanziamento del gestore delle traduzioni del progetto
 $lang = !empty($config['lang']) ? $config['lang'] : (isset($_GET['lang']) ? $_GET['lang'] : null);

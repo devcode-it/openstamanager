@@ -22,7 +22,7 @@
  * @deprecated
  */
 function initNumbers() {
-    $('.decimal-number').each(function () {
+    $('.number-input').each(function () {
         input(this);
     });
 }
@@ -30,7 +30,7 @@ function initNumbers() {
 function initNumberInput(input) {
     let $input = $(input);
     if (AutoNumeric.isManagedByAutoNumeric(input)) {
-        return;
+        return true;
     }
 
     let min = $input.attr('min-value') && $input.attr('min-value') !== "undefined" ? $input.attr('min-value') : null;
@@ -58,4 +58,6 @@ function initNumberInput(input) {
     });
 
     $input.data("autonumeric", autonumeric);
+
+    return true;
 }

@@ -20,8 +20,8 @@
 include_once __DIR__.'/../../core.php';
 
 // Personalizzazioni di codice
-if (function_exists(custom)) {
-    $custom = custom();
+if (function_exists('customComponents')) {
+    $custom = customComponents();
     $tables = customTables();
     if (!empty($custom) || !empty($tables)) {
         echo '

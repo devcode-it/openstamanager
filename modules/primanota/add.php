@@ -22,9 +22,22 @@ include_once __DIR__.'/../../core.php';
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Fatture\Fattura;
 
+/**
+ * Questo file gestisce la lettura delle informazioni di Scadenze e Fatture indicate per la generazione della Prima Nota. Per maggiori informazioni sulla grafica inerente alla visualizzazione delle diverse righe, consulare il file `movimenti.php`.
+ *
+ * Questo file prevede diverse operazioni per la generazione di un singolo array `$movimenti` contenente tutti i movimenti da presentare nella Prima Nota. In particolare:
+ *  - Individua Scadenze e Fatture per ID da URL
+ *  - Legge le informazioni relative alle Scadenze per presentare i movimenti in Dare e Avere
+ *  - Legge le informazioni relative alla Scadenze le Fatture indicate (sola della prima Scadenza insoluta se `is_insoluto` impostato):
+ *      - Per Fatture di vendita, il totale è Avere (a meno di Note di credito oppure insoluto)
+ *      - Per Fatture di acquisto, il totale è Dare (a meno di Note di credito oppure insoluto)
+ *  - Inverte Dare e Avere se l'importo indicato è negativo [TODO: documentare la casistica]
+ *  - Genera la causale predefinita per la Prima Nota sulla base delle Scadenze indicate
+ *
+ * Nel caso in cui sia indicato una singola Scadenza (con o senza Fattura associata) viene permessa la gestione attraverso un Modello di Prima Nota, che prevede una compilazione di base per alcuni movimenti specificati nel relativo modulo.
+ * Nota: questo comportamento viene abilitato dalla variabile `$permetti_modelli`.
+ */
 $module = Modules::get('Prima nota');
-
-$variables = Modules::get('Fatture di vendita')->getPlaceholders($id_documento);
 $movimenti = [];
 
 // Registrazione da remoto
@@ -49,9 +62,12 @@ $id_documenti = $id_documenti ? explode(',', $id_documenti) : [];
 $id_scadenze = $id_scadenze ?: get('id_scadenze');
 $id_scadenze = $id_scadenze ? explode(',', $id_scadenze) : [];
 
+// Controllo per l'utilizzo dei modelli di Prima Nota (per singolo documento o singola scadenza)
+$permetti_modelli = (count($id_documenti) + count($id_scadenze)) <= 1;
+
 // Scadenze
 foreach ($id_scadenze as $id_scadenza) {
-    $scadenza = $dbo->fetchOne('SELECT *, SUM(da_pagare - pagato) AS rata FROM co_scadenziario WHERE id='.prepare($id_scadenza));
+    $scadenza = $database->fetchOne('SELECT *, SUM(da_pagare - pagato) AS rata FROM co_scadenziario WHERE id='.prepare($id_scadenza));
     if (!empty($scadenza['iddocumento'])) {
         $id_documenti[] = $scadenza['iddocumento'];
         continue;
@@ -60,7 +76,7 @@ foreach ($id_scadenze as $id_scadenza) {
     $scadenza['rata'] = abs($scadenza['rata']);
 
     $descrizione_conto = ($dir == 'entrata') ? 'Riepilogativo clienti' : 'Riepilogativo fornitori';
-    $conto = $dbo->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE descrizione = '.prepare($descrizione_conto));
+    $conto = $database->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE descrizione = '.prepare($descrizione_conto));
     $id_conto_controparte = $conto['id'];
 
     $righe_documento = [];
@@ -95,6 +111,7 @@ foreach ($id_scadenze as $id_scadenza) {
 // Fatture
 $numeri = [];
 $counter = 0;
+$is_ultimo_importo_avere = false;
 
 $id_documenti = array_unique($id_documenti);
 $id_anagrafica_movimenti = null;
@@ -117,7 +134,8 @@ foreach ($id_documenti as $id_documento) {
 
     $numeri[] = !empty($fattura['numero_esterno']) ? $fattura['numero_esterno'] : $fattura['numero'];
 
-    $nota_credito = $tipo->reversed;
+    $is_nota_credito = $tipo->reversed;
+    $is_importo_avere = ($dir == 'entrata' && !$is_nota_credito && !$is_insoluto) || ($dir == 'uscita' && ($is_nota_credito || $is_insoluto));
 
     // Predisposizione prima riga
     $conto_field = 'idconto_'.($dir == 'entrata' ? 'vendite' : 'acquisti');
@@ -129,9 +147,9 @@ foreach ($id_documenti as $id_documento) {
 
     // Se sto registrando un insoluto, leggo l'ultima scadenza pagata altrimenti leggo la scadenza della fattura
     if ($is_insoluto) {
-        $scadenze = $dbo->fetchArray('SELECT id, ABS(da_pagare) AS rata, iddocumento FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) = ABS(pagato) ORDER BY updated_at DESC LIMIT 0, 1');
+        $scadenze = $database->fetchArray('SELECT id, ABS(da_pagare) AS rata, iddocumento FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) = ABS(pagato) ORDER BY updated_at DESC LIMIT 0, 1');
     } else {
-        $scadenze = $dbo->fetchArray('SELECT id, ABS(da_pagare - pagato) AS rata, iddocumento FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) > ABS(pagato) ORDER BY YEAR(scadenza) ASC, MONTH(scadenza) ASC');
+        $scadenze = $database->fetchArray('SELECT id, ABS(da_pagare - pagato) AS rata, iddocumento FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) > ABS(pagato) ORDER BY YEAR(scadenza) ASC, MONTH(scadenza) ASC');
     }
 
     // Selezione prima scadenza
@@ -147,8 +165,8 @@ foreach ($id_documenti as $id_documento) {
             'iddocumento' => $scadenza['iddocumento'],
             'id_scadenza' => $scadenza['id'],
             'id_conto' => $id_conto_controparte,
-            'dare' => (($dir == 'entrata' && !$nota_credito && !$is_insoluto) || ($dir == 'uscita' && ($nota_credito || $is_insoluto))) ? 0 : $scadenza['rata'],
-            'avere' => (($dir == 'entrata' && !$nota_credito && !$is_insoluto) || ($dir == 'uscita' && ($nota_credito || $is_insoluto))) ? $scadenza['rata'] : 0,
+            'dare' => $is_importo_avere ? 0 : $scadenza['rata'],
+            'avere' => $is_importo_avere ? $scadenza['rata'] : 0,
         ];
     }
 
@@ -159,26 +177,13 @@ foreach ($id_documenti as $id_documento) {
         'iddocumento' => $scadenze[0]['iddocumento'],
         'id_scadenza' => $scadenze[0]['id'],
         'id_conto' => $id_conto_aziendale,
-        'dare' => (($dir == 'entrata' && !$nota_credito && !$is_insoluto) || ($dir == 'uscita' && ($nota_credito || $is_insoluto))) ? $totale : 0,
-        'avere' => (($dir == 'entrata' && !$nota_credito && !$is_insoluto) || ($dir == 'uscita' && ($nota_credito || $is_insoluto))) ? 0 : $totale,
+        'dare' => $is_importo_avere ? $totale : 0,
+        'avere' => $is_importo_avere ? 0 : $totale,
     ];
 
+    $is_ultimo_importo_avere = $is_importo_avere;
     $movimenti = array_merge($movimenti, $righe_documento);
 }
-/*
-$k = 0;
-foreach ($righe_azienda as $key => $riga_azienda) {
-    if ($righe_azienda[$key]['id_conto'] != $righe_azienda[$key - 1]['id_conto']) {
-        ++$k;
-    }
-
-    $riga_documento[$k]['iddocumento'] = $riga_azienda['iddocumento'];
-    $riga_documento[$k]['id_scadenza'] = $riga_azienda['id_scadenza'];
-    $riga_documento[$k]['id_conto'] = $riga_azienda['id_conto'];
-    $riga_documento[$k]['dare'] += $riga_azienda['dare'];
-    $riga_documento[$k]['avere'] += $riga_azienda['avere'];
-$righe = array_merge($righe, $righe_azienda);
-}*/
 
 // Inverto dare e avere per importi negativi
 foreach ($movimenti as $key => $value) {
@@ -194,21 +199,27 @@ $numero_scadenze = count($id_scadenze);
 $numero_documenti = count($id_documenti);
 if ($numero_documenti + $numero_scadenze > 1) {
     if (!empty($id_anagrafica_movimenti)) {
-        $an = Anagrafica::find($id_anagrafica_movimenti);
+        $anagrafica_movimenti = Anagrafica::find($id_anagrafica_movimenti);
 
-        $descrizione = ((($dir == 'entrata' && !$nota_credito && !$is_insoluto) || ($dir == 'uscita' && ($nota_credito || $is_insoluto))) ?  tr('Inc.') : tr('Pag.')).' fatture '.$an->ragione_sociale.' num. '.implode(', ', $numeri);
+        $descrizione = $is_ultimo_importo_avere ? tr('Inc. fatture _NAME_ num. _LIST_') : tr('Pag. fatture _NAME_ num. _LIST_');
+        $descrizione = replace($descrizione, [
+            '_NAME_' => $anagrafica_movimenti->ragione_sociale,
+            '_LIST_' => implode(', ', $numeri),
+        ]);
     } else {
-        $descrizione = ((($dir == 'entrata' && !$nota_credito && !$is_insoluto) || ($dir == 'uscita' && ($nota_credito || $is_insoluto))) ?  tr('Inc.') : tr('Pag.')).' fatture num. '.implode(', ', $numeri);
+        $descrizione = $is_ultimo_importo_avere ? tr('Inc. fatture num. _LIST_') : tr('Pag. fatture _NAME_ num. _LIST_');
+        $descrizione = replace($descrizione, [
+            '_LIST_' => implode(', ', $numeri),
+        ]);
     }
 } elseif ($numero_documenti == 1) {
     $numero_fattura = !empty($fattura['numero_esterno']) ? $fattura['numero_esterno'] : $fattura['numero'];
-
     $tipo_fattura = $fattura->isNota() ? $tipo->descrizione : tr('Fattura');
 
     if (!empty($is_insoluto)) {
         $operation = tr('Registrazione insoluto');
     } else {
-        $operation = ((($dir == 'entrata' && !$nota_credito && !$is_insoluto) || ($dir == 'uscita' && ($nota_credito || $is_insoluto))) ? tr('Inc.') : tr('Pag.'));
+        $operation = $is_ultimo_importo_avere ? tr('Inc.') : tr('Pag.');
     }
 
     $descrizione = tr('_OP_ _DOC_ num. _NUM_ del _DATE_ (_NAME_)', [
@@ -251,13 +262,16 @@ echo '
 	<input type="hidden" name="idmastrino" id="idmastrino" value="0">
     <input type="hidden" name="is_insoluto" value="'.$is_insoluto.'">';
 
+if ($permetti_modelli) {
     echo '
 	<div class="row">
 		<div class="col-md-12">
-			{[ "type": "select", "label": "'.tr('Modello prima nota').'", "id": "modello_primanota", "values": "query=SELECT idmastrino AS id, nome AS descrizione, descrizione as causale FROM co_movimenti_modelli GROUP BY idmastrino" ]}
+			{[ "type": "select", "label": "'.tr('Modello prima nota').'", "name": "modello_primanota", "values": "query=SELECT idmastrino AS id, nome AS descrizione, descrizione as causale FROM co_movimenti_modelli GROUP BY idmastrino" ]}
 		</div>
-	</div>
+	</div>';
+}
 
+    echo '
 	<div class="row">
 		<div class="col-md-4">
 			{[ "type": "date", "label": "'.tr('Data movimento').'", "name": "data", "required": 1, "value": "-now-" ]}
@@ -274,105 +288,106 @@ include $structure->filepath('movimenti.php');
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type="button" class="btn btn-default" id="btn_crea_modello">
+			<button type="button" class="btn btn-default hidden" id="modello-button">
 			    <i class="fa fa-plus"></i> '.tr('Aggiungi e crea modello').'
             </button>
+
 			<button type="submit" class="btn btn-primary" id="add-submit">
 			    <i class="fa fa-plus"></i> '.tr('Aggiungi').'
             </button>
 		</div>
 	</div>
 </form>';
-?>
 
+echo '
 <script type="text/javascript">
-    var variables = <?php echo json_encode($variables); ?>;
-    var nuovo_modello = "<?php echo tr('Aggiungi e crea modello'); ?>";
-    var modifica_modello = "<?php echo tr('Aggiungi e modifica modello'); ?>";
+$("#modals > div #add-form").on("submit", function(e) {
+    return controllaConti();
+});
+</script>';
 
-    $(document).ready(function(e) {
-        $("#modals > div #add-form").on("submit", function(e) {
-            return controllaConti();
-        });
+if ($permetti_modelli) {
+    $variables = Modules::get('Fatture di vendita')->getPlaceholders($id_documenti[0]);
 
-        $('#modals > div #modello_primanota').change(function() {
-            if ($(this).val() != '') {
-                $('#btn_crea_modello').html('<i class="fa fa-edit"></i> ' + modifica_modello);
-                $('#modals > div #idmastrino').val($(this).val());
-            } else {
-                $('#btn_crea_modello').html('<i class="fa fa-plus"></i> ' + nuovo_modello);
-                $('#modals > div #idmastrino').val(0);
+    echo '
+<script type="text/javascript">
+    globals.prima_nota = {
+        variables: '.json_encode($variables).',
+        id_documento: "'.$id_documenti[0].'",
+        translations: {
+            nuovoModello: "'.tr('Aggiungi e crea modello').'",
+            modificaModello: "'.tr('Aggiungi e modifica modello').'",
+        },
+        id_mastrino_input: input("idmastrino"),
+        modello_input: input("modello_primanota"),
+        modello_button: $("#modello-button"),
+    };
+
+    var modello_input = globals.prima_nota.modello_input;
+    var id_mastrino_input = globals.prima_nota.id_mastrino_input;
+    var modello_button = globals.prima_nota.modello_button;
+    modello_button.removeClass("hidden");
+
+    modello_input.change(function() {
+        let id_mastrino = modello_input.get();
+        if (id_mastrino) {
+            $("#modello-button").html(`<i class="fa fa-edit"></i> ` + globals.prima_nota.translations.modificaModello);
+            id_mastrino_input.set(id_mastrino);
+        } else {
+            $("#modello-button").html(`<i class="fa fa-plus"></i> ` + globals.prima_nota.translations.nuovoModello);
+            id_mastrino_input.set(0);
+            return;
+        }
+
+        // Aggiornamento della causale nel caso di Fattura
+        let causale = modello_input.getData().causale;
+        if (globals.prima_nota.id_documento !== "") {
+            for (variable of variables) {
+                causale = causale.replace("{" + variable + "}", variables[i]);
             }
 
-            var idmastrino = $(this).val();
-            var replaced = 0;
+            $("#modals > div #desc").val(causale);
+        }
 
-            if (idmastrino != '') {
-                var causale = $(this).find('option:selected').data('causale');
+        $.get(globals.rootdir + "/ajax_complete.php?op=get_conti&idmastrino=" + id_mastrino, function(data) {
+            let conti = data.split(",");
+            let table = $("table.scadenze").first();
+            let button = table.parent().find("button").first();
 
-                if ($('#iddocumento').val() != '') {
-                    for (i in variables) {
-                        if (causale.includes('{' + i + '}')) {
-                            replaced++;
-                            causale = causale.replace('{' + i + '}', variables[i]);
-                        }
-                    }
-                } else {
-                    for (i in variables) {
-                        causale = causale.replace('{' + i + '}', '_');
-                    }
+            // Creazione delle eventuali righe aggiuntive
+            let row_needed = conti.length;
+            let row_count = table.find("tr").length - 2;
+            while (row_count < row_needed) {
+                button.click();
+                row_count = table.find("tr").length - 2;
+            }
+
+            // Iterazione su tutti i conti del Modello
+            let righe = table.find("tr");
+            for (let i = 0; i < conti.length; i++) {
+                const dati_conto = conti[i].split(";");
+
+                let id_conto = parseInt(dati_conto[0]);
+                let descrizione_conto = dati_conto[1];
+
+                // Sostituzione del conto dell\'Anagrafica
+                if (id_conto === -1 && globals.prima_nota.id_documento !== ""){
+                    id_conto = parseInt(variables["conto"]);
+                    descrizione_conto = variables["conto_descrizione"];
                 }
 
-                // aggiornava erroneamente anche la causale ed eventuale numero di fattura e data
-                if (replaced > 0 || $('#iddocumento').val() == '') {
-                    $('#modals > div #desc').val(causale);
-                }
-
-                $.get(globals.rootdir + '/ajax_complete.php?op=get_conti&idmastrino=' + idmastrino, function(data) {
-                    var conti = data.split(',');
-
-                    // Reinizializzazione di tutti i superselect nel caso di modelli con più di 2 conti
-                    $('.select2-container').remove();
-
-                    for (i = 0; i < conti.length; i++) {
-                        var conto = conti[i].split(';');
-                        // Sostituzione conto cliente/fornitore
-                        if (conto[0] == -1) {
-                            if ($('#iddocumento').val() != '') {
-                                var option = $("<option selected></option>").val(variables['conto']).text(variables['conto_descrizione']);
-
-                                // Creazione riga aggiuntiva da modello se le 2 iniziali non sono abbastanza
-                                if ($('#modals > div #conto' + i).length == 0 ) {
-                                    $new_tr = $('#modals > div table.scadenze > tbody tr').last().html();
-                                    $('#modals > div table.scadenze > tbody').append( '<tr>' + $new_tr + '</tr>' );
-                                    $('#modals > div table.scadenze > tbody tr').last().find('select').attr('id', 'conto' + i).attr('name', 'idconto[' + i + ']');
-                                }
-
-                                $('#modals > div #conto' + i).append(option);
-                            }
-                        } else {
-                            var option = $("<option selected></option>").val(conto[0]).text(conto[1]);
-
-                            // Creazione riga aggiuntiva da modello se le 2 iniziali non sono abbastanza
-                            if ($('#modals > div #conto' + i).length == 0 ) {
-                                $new_tr = $('#modals > div table.scadenze > tbody tr').last().html();
-                                $('#modals > div table.scadenze > tbody').append( '<tr>' + $new_tr + '</tr>' );
-                                $('#modals > div table.scadenze > tbody tr').last().find('select').attr('id', 'conto' + i).attr('name', 'idconto[' + i + ']');
-                            }
-
-                            $('#modals > div #conto' + i).append(option);
-                        }
-                    }
-
-                    start_superselect();
-                    $('#modals > div select.superselectajax').trigger('change');
-                });
+                // Selezione del conto
+                let select = $(righe[i + 1]).find("select");
+                input(select).getElement()
+                    .selectSetNew(id_conto, descrizione_conto);
             }
         });
 
-        $('#modals > div #btn_crea_modello').click(function() {
-            $('#modals > div #crea_modello').val("1");
-            $('#modals > div #add-form').submit();
-        });
     });
-</script>
+
+    $("#modals > div #modello-button").click(function() {
+        $("#modals > div #crea_modello").val("1");
+        $("#modals > div #add-form").submit();
+    });
+</script>';
+}

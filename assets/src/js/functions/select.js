@@ -43,6 +43,14 @@ function selectBackground(data, container) {
         $(container).css("color", setContrast(bg));
     }
 
+    // Aggiunta degli attributi impostati staticamente
+    let attributes = $(data.element).data("select-attributes");
+    if (attributes) {
+        for ([key, value] of Object.entries(attributes)) {
+            data[key] = value;
+        }
+    }
+
     return data.text;
 }
 

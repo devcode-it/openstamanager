@@ -79,12 +79,12 @@ include $structure->filepath('movimenti.php');
 
 ?>
 
-<!-- Note -->
-<div class="row">
-    <div class="col-md-12">
-        {[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "required": 0, "value": "$note$" ]}
+    <!-- Note -->
+    <div class="row">
+        <div class="col-md-12">
+            {[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "required": 0, "value": "$note$" ]}
+        </div>
     </div>
-</div>
 
 </form>
 
@@ -95,9 +95,6 @@ include $structure->filepath('movimenti.php');
         return controllaConti();
     });
 </script>
-
-
-
 
 <a class="btn btn-danger ask" data-backto="record-list" data-idmastrino="<?php echo $record['idmastrino']; ?>">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>

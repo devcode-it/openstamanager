@@ -307,3 +307,9 @@ UPDATE `fe_stati_documento` SET `tipo` = 'danger';
 UPDATE `fe_stati_documento` SET `tipo` = 'warning' WHERE `codice` IN ('ERVAL', 'MC', 'WAIT', 'NE');
 UPDATE `fe_stati_documento` SET `tipo` = 'success' WHERE `codice` IN ('EC01', 'RC');
 UPDATE `fe_stati_documento` SET `tipo` = 'info' WHERE `codice` IN ('GEN');
+
+-- Aggiunta stampa liquidazione IVA
+INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `filename`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `default`, `enabled`) VALUES (NULL,(SELECT id FROM zz_modules WHERE name='Stampe contabili'), '1', 'Liquidazione IVA', 'Liquidazione IVA', 'Liquidazione IVA', 'liquidazione_iva', '', '', 'fa fa-print', '', '', '0', '0', '1', '1');
+
+-- Aggiunta impostazione per Liquidazione IVA
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Liquidazione iva', 'Mensile', 'list[Mensile,Trimestrale]', '1', 'Fatturazione', '16', NULL);

@@ -27,13 +27,17 @@ $nome_stampa = filter('nome_stampa');
 $link = Prints::getHref($nome_stampa, $id_record);
 
 echo '
-<form action="" method="post" onsubmit="if($(this).parsley().validate()) { return stampa_registro_iva(); }" >
+<form action="" method="post" onsubmit="if($(this).parsley().validate()) { return avvia_stampa(); }" >
 
-	<div class="row">
+	<div class="row">';
+
+		if($nome_stampa != 'Liquidazione IVA'){
+		echo'
 		<div class="col-md-4">
 			{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_sezionale", "required": "1", "values": "query=SELECT id AS id, name AS descrizione FROM zz_segments WHERE id_module = (SELECT id FROM zz_modules WHERE name = \''.(($dir == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto').'\') AND is_fiscale = 1 UNION SELECT  0 AS id, \'Tutti i sezionali\' AS descrizione" ]}
-		</div>
-
+		</div>';
+		}
+		echo'
 		<div class="col-md-4">
 			{[ "type": "date", "label": "'.tr('Data inizio').'", "required": "1", "name": "date_start", "value": "'.Translator::dateToLocale($_SESSION['period_start']).'" ]}
 		</div>
@@ -68,11 +72,10 @@ echo '
 
 echo '
 <script>
-function stampa_registro_iva (){
-	window.open("'.$link.'&dir='.$dir.'&id_sezionale="+$("#id_sezionale").val()+"&date_start="+$("#date_start").val()+"&date_end="+$("#date_end").val()+"");
+	function avvia_stampa (){
+		window.open("'.$link.'&dir='.$dir.'&id_sezionale="+$("#id_sezionale").val()+"&date_start="+$("#date_start").val()+"&date_end="+$("#date_end").val()+"");
 	return false;
-}
-
+	}
 $("#format").change(function() {
 	session_set("stampe_contabili,format", $(this).val(), 0, 0);
 });

@@ -288,11 +288,11 @@ include $structure->filepath('movimenti.php');
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type="button" class="btn btn-default hidden" id="modello-button">
+			<button type="button" class="btn btn-info" disabled id="modello-button">
 			    <i class="fa fa-plus"></i> '.tr('Aggiungi e crea modello').'
             </button>
 
-			<button type="submit" class="btn btn-primary" id="add-submit">
+			<button type="submit" class="btn btn-primary" disabled id="add-submit">
 			    <i class="fa fa-plus"></i> '.tr('Aggiungi').'
             </button>
 		</div>
@@ -326,7 +326,7 @@ if ($permetti_modelli) {
     var modello_input = globals.prima_nota.modello_input;
     var id_mastrino_input = globals.prima_nota.id_mastrino_input;
     var modello_button = globals.prima_nota.modello_button;
-    modello_button.removeClass("hidden");
+    modello_button.prop("disabled", false);
 
     modello_input.change(function() {
         let id_mastrino = modello_input.get();

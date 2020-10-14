@@ -135,7 +135,15 @@ if (in_array($module['name'], ['Ordini cliente', 'Ordini fornitore'])) {
                 {[ "type": "date", "label": "'.tr('Data prevista evasione').'", "name": "data_evasione", "value": "'.$result['data_evasione'].'" ]}
             </div>
             <div class="col-md-4">
+                {[ "type": "checkbox", "label": "'.tr('Applica a tutte le righe').'", "name": "data_evasione_all", "value": "" ]}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
                 {[ "type": "checkbox", "label": "'.tr('Articolo confermato').'", "name": "confermato", "value": "'.$confermato.'" ]}
+            </div>
+            <div class="col-md-4">
+                {[ "type": "checkbox", "label": "'.tr('Applica a tutte le righe').'", "name": "confermato_all", "value": "" ]}
             </div>
         </div>
     </div>

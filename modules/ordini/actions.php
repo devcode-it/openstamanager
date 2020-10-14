@@ -186,6 +186,25 @@ switch (post('op')) {
         }
 
         $articolo->save();
+        
+        // Impostare data evasione su tutte le righe
+        if(post('data_evasione_all') == 1){
+            $righe = $ordine->getRighe();
+
+            foreach($righe as $riga){
+                $riga->data_evasione = post('data_evasione') ?: null;
+                $riga->save();
+            }
+        }
+        // Impostare confermato su tutte le righe
+        if(post('confermato_all') == 1){
+            $righe = $ordine->getRighe();
+
+            foreach($righe as $riga){
+                $riga->confermato = post('confermato') ?: 0;
+                $riga->save();
+            }
+        }
 
         if (post('idriga') != null) {
             flash()->info(tr('Articolo modificato!'));

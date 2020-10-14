@@ -219,11 +219,13 @@ function controllaConti() {
     });
 
     if (continuare) {
-        $("#add-submit").removeClass("hide");
-        $("#btn_crea_modello").removeClass("hide");
+        $("#add-submit").prop("disabled", false);
+        $("#modello-button").prop("disabled", false);
+        $("#save").removeAttr("disabled");
     } else {
-        $("#add-submit").addClass("hide");
-        $("#btn_crea_modello").addClass("hide");
+        $("#add-submit").prop("disabled", true);
+        $("#modello-button").prop("disabled", true);
+        $("#save").attr("disabled", "true");
     }
 
     return continuare;

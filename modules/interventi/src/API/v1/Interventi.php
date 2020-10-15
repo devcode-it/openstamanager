@@ -67,6 +67,12 @@ class Interventi extends Resource implements RetrieveInterface, CreateInterface,
             LEFT JOIN `an_sedi` ON `in_interventi`.`idsede_destinazione` = `an_sedi`.`id`
         WHERE EXISTS(SELECT `orario_fine` FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` AND `orario_fine` BETWEEN :period_start AND :period_end AND idtecnico LIKE :idtecnico)";
 
+
+        //Se sono l'admin posso vedere tutte le attività
+        if ($user->is_admin){
+            $user->idanagrafica = '%';
+        }
+
         $query .= '
         HAVING 2=2
         ORDER BY `in_interventi`.`data_richiesta` DESC';

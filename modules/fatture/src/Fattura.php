@@ -783,4 +783,10 @@ class Fattura extends Document
     {
         return $this->data;
     }
+
+    public function getReferenceRagioneSociale()
+    {
+        return $this->anagrafica->ragione_sociale;
+    }
+
 }

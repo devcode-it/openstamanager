@@ -313,6 +313,12 @@ class Preventivo extends Document
         return $this->data_bozza;
     }
 
+    public function getReferenceRagioneSociale()
+    {
+        return $this->anagrafica->ragione_sociale;
+    }
+
+
     public function getRevisioniAttribute()
     {
         $revisioni = Preventivo::where('master_revision', '=', $this->master_revision)->get()->pluck('id')->toArray();

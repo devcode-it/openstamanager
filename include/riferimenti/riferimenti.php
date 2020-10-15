@@ -59,12 +59,13 @@ $ddt = DDT::whereHas('stato', function ($query) {
 foreach ($ddt as $elemento) {
     $documenti_disponibili->push([
         'id' => get_class($elemento).'|'.$elemento->id,
-        'text' => $elemento->getReference(),
-        'optgroup' => tr('DDT'),
+        'text' => $elemento->getReference(1),
+        'optgroup' => tr('Ddt in ').$source->getDocument()->direzione,
     ]);
 }
 
 // Individuazione ordini disponibili
+$tipo_ordini = $direzione_richiesta == 'entrata' ? 'cliente' : 'fornitore';
 $ordini = Ordine::whereHas('stato', function ($query) {
     $query->where('descrizione', '!=', 'Bozza');
 })->whereHas('tipo', function ($query) use ($direzione_richiesta) {
@@ -73,8 +74,8 @@ $ordini = Ordine::whereHas('stato', function ($query) {
 foreach ($ordini as $elemento) {
     $documenti_disponibili->push([
         'id' => get_class($elemento).'|'.$elemento->id,
-        'text' => $elemento->getReference(),
-        'optgroup' => tr('Ordini'),
+        'text' => $elemento->getReference(1),
+        'optgroup' => tr('Ordini ').$tipo_ordini,
     ]);
 }
 

@@ -44,6 +44,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Possibilità di indicare lo stato alla creazione dei Documenti nella procedura di importazione
  - Traduzione di base per il Tedesco (Germania)
  - Supporto interno all'importazione verso **Preventivi** e **Contratti**
+ - Base per gestione listini METEL
 
 ### Modificato (Changed)
  - Integrazione completa del nuovo sistema per la gestione delle impostazioni dei select (`select-options`)

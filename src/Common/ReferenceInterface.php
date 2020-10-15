@@ -27,5 +27,7 @@ interface ReferenceInterface
 
     public function getReferenceDate();
 
+    public function getReferenceRagioneSociale();
+
     public function getReference();
 }

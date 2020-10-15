@@ -247,4 +247,10 @@ class Intervento extends Document
     {
         return $this->data_richiesta;
     }
+
+    public function getReferenceRagioneSociale()
+    {
+        return $this->anagrafica->ragione_sociale;
+    }
+
 }

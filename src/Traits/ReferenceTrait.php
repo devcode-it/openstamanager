@@ -27,7 +27,9 @@ trait ReferenceTrait
 
     abstract public function getReferenceDate();
 
-    public function getReference()
+    abstract public function getReferenceRagioneSociale();
+
+    public function getReference($show_ragione_sociale = NULL)
     {
         // Informazioni disponibili
         $name = $this->getReferenceName();
@@ -35,8 +37,13 @@ trait ReferenceTrait
         $number = $this->getReferenceNumber();
         $date = $this->getReferenceDate();
 
+        $idanagrafica = $this->getReferenceRagioneSociale();
+
         // Testi predefiniti
-        if (!empty($date) && !empty($number)) {
+        if (!empty($date) && !empty($number) && !empty($idanagrafica) && !empty($show_ragione_sociale) ) {
+            $description = tr('_DOC_ num. _NUM_ del _DATE_ (_RAGIONE_SOCIALE_)');
+        }
+        elseif (!empty($date) && !empty($number)) {
             $description = tr('_DOC_ num. _NUM_ del _DATE_');
         } elseif (!empty($number)) {
             $description = tr('_DOC_ num. _NUM_');
@@ -50,6 +57,7 @@ trait ReferenceTrait
         $description = replace($description, [
             '_DOC_' => $name,
             '_NUM_' => $number,
+            '_RAGIONE_SOCIALE_' => $idanagrafica,
             '_DATE_' => dateFormat($date),
         ]);
 

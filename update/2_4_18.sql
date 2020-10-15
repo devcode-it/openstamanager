@@ -65,7 +65,6 @@ WHERE 1=1 AND `mg_articoli`.`deleted_at` IS NULL HAVING 2=2 AND `Q.tà` > 0 ORDE
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
 (NULL, (SELECT  `id` FROM `zz_modules` WHERE `name` = 'Giacenze sedi'), '_link_module_', (SELECT  `id` FROM `zz_modules` WHERE `name` = 'Articoli'), '1', '1', '0', '0', NULL, NULL, '0', '0', '1'),
 (NULL, (SELECT  `id` FROM `zz_modules` WHERE `name` = 'Giacenze sedi'), 'id', 'mg_articoli.id', '1', '1', '0', '0', NULL, NULL, '0', '0', '1'),
-(NULL, (SELECT  `id` FROM `zz_modules` WHERE `name` = 'Giacenze sedi'), 'id', 'mg_articoli.id', '1', '1', '0', '0', NULL, NULL, '0', '0', '1'),
  (NULL, (SELECT  `id` FROM `zz_modules` WHERE `name` = 'Giacenze sedi'), 'Codice', 'mg_articoli.codice', '2', '1', '0', '0', NULL, NULL, '1', '0', '1'),
  (NULL, (SELECT  `id` FROM `zz_modules` WHERE `name` = 'Giacenze sedi'), 'Categoria', '(SELECT `nome` FROM `mg_categorie` WHERE `id` = `id_categoria`)', '4', '1', '0', '0', NULL, NULL, '1', '0', '1'),
  (NULL, (SELECT  `id` FROM `zz_modules` WHERE `name` = 'Giacenze sedi'), 'Sottocategoria', '(SELECT `nome` FROM `mg_categorie` WHERE `id` = `id_sottocategoria`)', '5', '1', '0', '0', NULL, NULL, '1', '0', '1'),

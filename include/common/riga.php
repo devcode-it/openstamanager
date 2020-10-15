@@ -74,13 +74,13 @@ if ($options['dir'] == 'entrata') {
 
             margine = isNaN(margine) || !isFinite(margine) ? 0: margine; // Fix per magine NaN
 
-            div.html("<small>'.tr('Guadagno').': " + guadagno.toLocale() + " " + globals.currency + " &nbsp; '.tr('Margine').': " + margine.toLocale() + " %</small>");
+            div.html("<small>&nbsp;'.tr('Guadagno').': " + guadagno.toLocale() + " " + globals.currency + " &nbsp; '.tr('Margine').': " + margine.toLocale() + " %</small>");
             if (guadagno < 0) {
                 parent.addClass("has-error");
-                div.addClass("text-danger").removeClass("text-success");
+                div.addClass("label-danger").removeClass("label-success");
             } else {
                 parent.removeClass("has-error");
-                div.removeClass("text-danger").addClass("text-success");
+                div.removeClass("label-danger").addClass("label-success");
             }
         }
 

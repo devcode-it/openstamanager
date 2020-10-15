@@ -35,13 +35,13 @@ echo "
             <th class='text-center' style='width:5%'>".tr('#', [], ['upper' => true])."</th>
             <th class='text-center'>".tr('Cod.', [], ['upper' => true])."</th>
             <th class='text-center'>".tr('Descrizione', [], ['upper' => true])."</th>
-            <th class='text-center' style='width:10%'>".tr('Q.tà', [], ['upper' => true]).'</th>';
+            <th class='text-center'>".tr('Q.tà', [], ['upper' => true]).'</th>';
 
 if ($options['pricing']) {
     echo "
-            <th class='text-center' style='width:15%'>".tr('Prezzo unitario', [], ['upper' => true])."</th>
-            <th class='text-center' style='width:15%'>".tr('Importo', [], ['upper' => true])."</th>
-            <th class='text-center' style='width:10%'>".tr('IVA', [], ['upper' => true]).' (%)</th>';
+            <th class='text-center'>".tr('Prezzo unitario', [], ['upper' => true])."</th>
+            <th class='text-center'>".tr('Importo', [], ['upper' => true])."</th>
+            <th class='text-center'>".tr('IVA', [], ['upper' => true]).' (%)</th>';
 }
 
             echo '
@@ -69,8 +69,10 @@ foreach ($righe as $riga) {
 
         if ($riga->isArticolo()) {
             echo $riga->codice;
+            $source_type = 'Modules\DDT\Components\Articolo';
         }else{
             echo '-';
+            $source_type = 'Modules\DDT\Components\Riga';
         }
 
     echo'
@@ -78,6 +80,19 @@ foreach ($righe as $riga) {
         
         <td>
             '.nl2br($r['descrizione']);
+    
+    //Riferimenti odrini/ddt righe
+    if (  $riga->referenceTargets()->count() ){
+       
+        $source = $source_type::find($riga->id);
+        $riferimenti = $source->referenceTargets;
+        
+        foreach ($riferimenti as $riferimento) {
+        
+            echo '
+            <br><small>'.$riferimento->target->descrizione.'<br>'.reference($riferimento->target->getDocument()).'</small>';
+        }
+    }
 
     if ($riga->isArticolo()) {
         // Codice articolo
@@ -119,14 +134,14 @@ foreach ($righe as $riga) {
 
     if (!$riga->isDescrizione()) {
         echo '
-            <td class="text-center">
+            <td class="text-center" nowrap="nowrap">
                 '.Translator::numberToLocale(abs($riga->qta), 'qta').' '.$r['um'].'
             </td>';
 
         if ($options['pricing']) {
             // Prezzo unitario
             echo '
-            <td class="text-right">
+            <td class="text-right" nowrap="nowrap">
 				'.moneyFormat($riga->prezzo_unitario);
 
             if ($riga->sconto > 0) {
@@ -143,13 +158,13 @@ foreach ($righe as $riga) {
 
             // Imponibile
             echo '
-            <td class="text-right">
+            <td class="text-right" nowrap="nowrap">
 				'.moneyFormat($riga->totale_imponibile).'
             </td>';
 
             // Iva
             echo '
-            <td class="text-center">
+            <td class="text-center" nowrap="nowrap">
                 '.Translator::numberToLocale($riga->aliquota->percentuale, 0).'
             </td>';
         }

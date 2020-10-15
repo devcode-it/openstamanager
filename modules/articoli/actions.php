@@ -55,6 +55,11 @@ switch (post('op')) {
         $articolo->setPrezzoVendita(post('prezzo_vendita'), post('idiva_vendita'));
         $articolo->save();
 
+        if( !empty(post('qta')) ){
+            $data_movimento = new Carbon();
+            $articolo->movimenta(post('qta'), tr('Carico manuale'), $data_movimento->format('Y-m-d'), true);
+        }
+
         $id_record = $articolo->id;
 
         if (isAjaxRequest()) {

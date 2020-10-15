@@ -58,11 +58,15 @@ include_once __DIR__.'/../../core.php';
         </div>
         <div class="box-body">
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     {[ "type": "number", "label": "<?php echo tr('Prezzo di acquisto'); ?>", "name": "prezzo_acquisto", "icon-after": "<?php echo currency(); ?>" ]}
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-4">
+                    {[ "type": "number", "label": "<?php echo tr('Quantità iniziale'); ?>", "name": "qta", "decimals": "qta" ]}
+                </div>
+
+                <div class="col-md-4">
                     {[ "type": "number", "label": "<?php echo tr('Soglia minima quantità'); ?>", "name": "threshold_qta", "decimals": "qta", "min-value": "undefined" ]}
                 </div>
             </div>

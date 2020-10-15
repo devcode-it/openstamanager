@@ -37,10 +37,10 @@ trait ReferenceTrait
         $number = $this->getReferenceNumber();
         $date = $this->getReferenceDate();
 
-        $idanagrafica = $this->getReferenceRagioneSociale();
+        $ragione_sociale = $this->getReferenceRagioneSociale();
 
         // Testi predefiniti
-        if (!empty($date) && !empty($number) && !empty($idanagrafica) && !empty($show_ragione_sociale) ) {
+        if (!empty($date) && !empty($number) && !empty($ragione_sociale) && !empty($show_ragione_sociale) ) {
             $description = tr('_DOC_ num. _NUM_ del _DATE_ (_RAGIONE_SOCIALE_)');
         }
         elseif (!empty($date) && !empty($number)) {
@@ -57,7 +57,7 @@ trait ReferenceTrait
         $description = replace($description, [
             '_DOC_' => $name,
             '_NUM_' => $number,
-            '_RAGIONE_SOCIALE_' => $idanagrafica,
+            '_RAGIONE_SOCIALE_' => $ragione_sociale,
             '_DATE_' => dateFormat($date),
         ]);
 

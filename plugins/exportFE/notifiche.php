@@ -12,7 +12,9 @@ $documento = Fattura::find($id_record);
 
 if (empty($recepits)) {
     echo '
-<p>'.tr('Il documento non ha notifiche disponibili').'.</p>';
+<p>'.tr('Il documento non ha notifiche disponibili').'.</p>
+
+<p class="text-small">'.tr("Nota: se la fattura in questione è stata inviata molto tempo fa, il servizio utilizzato non ha reso disponibile l'associazione diretta tra la fattura e le notifiche").'. '.tr("L'importazione delle notifiche in questione procedere comunque regolarmente").'.</p>';
 
     return;
 }
@@ -20,6 +22,9 @@ if (empty($recepits)) {
 echo '
 <p>'.tr("Segue l'elenco completo delle notifiche/ricevute relative alla fatture elettronica di questo documento").'.</p>
 <p>'.tr('La procedura di importazione prevede di impostare in modo autonomo la notifica più recente come principale, ma si verificano alcune situazioni in cui il comportamento richiesto deve essere distinto').'. '.tr('Qui si può procedere a scaricare una specifica notifica e a impostarla manualmente come principale per il documento').'.</p>
+
+<p class="text-small">'.tr('Nota: in caso di fattura scartata per duplicazione, se non sono disponibili notifiche contattare i fornitori del servizio').'.</p>
+
 <table class="table">
     <thead>
         <tr>
@@ -33,7 +38,6 @@ echo '
 
 foreach ($recepits as $nome) {
     $upload = $documento->uploads()
-        ->where('name', 'Fattura Elettronica')
         ->where('original', $nome)
         ->first();
 

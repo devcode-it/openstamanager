@@ -153,7 +153,8 @@ class Ricevuta
         $fattura = $this->getFattura();
 
         // Controllo sulla presenza della stessa ricevuta
-        $upload_esistente = $fattura->getModule()
+        $module = $fattura->getModule();
+        $upload_esistente = $module
             ->uploads($fattura->id)
             ->where('original', $filename)
             ->first();

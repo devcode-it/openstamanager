@@ -46,9 +46,11 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Supporto interno all'importazione verso **Preventivi** e **Contratti**
  - Base per gestione listini METEL
  - Possibilità di definire uno stato per le righe ordini (confermato/non confermato) per la gestione dell'impegno quantità
+ - Movimento di carico per gli **Articoli** in fase di creazione
+ - Miglioramento del sistema di gestione delle **Banche**, che ora permette la registrazione di informazioni contabili per tutte le **Anagrafiche**
 
 ### Modificato (Changed)
- - Integrazione completa del nuovo sistema per la gestione delle impostazioni dei select (`select-options`)
+ - Integrazione completa del nuovo sistema per la gestione delle impostazioni dei select (`select-options`) e del nuovo metodo di inizializzazione e utilizzo degli input
  - Miglioramento della grafica di integrazione con Google Maps per **Attività** e **Anagrafiche**
  - Miglioramento del sistema di importazione FE in relazione alla gestione dei riferimenti a **Ordini** e **DDT**, con introduzione di una ricerca di base per l'autocompletamento
  - Caricamento AJAX delle righe dei Documenti
@@ -60,6 +62,9 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Modifica del sistema di riferimenti tra Documenti per includere il codice relativo nella *Descrizione* delle righe relative (con deprecazione dell'*Impostazione* "Riferimento dei documenti nelle stampe")
  - Miglioramento elenco *Promemoria* in **Dashboard**, per visualizzare il *Tecnico* relativo
  - Corretta l'impostazione degli Sconti generici nei Documenti per l'utilizzo dell'importo ivato nel caso dell'impostazione "Utilizza prezzi di vendita comprensivi di IVA"
+ - Corretta la gestione dei *Modelli di Prima Nota* e aggiunta integrazione con il sistema aggiornato
+ - Aggiornato il modulo **Impostazioni** per permettere una navigazione agevole e semplificata
+ - Modifica del sistema di gestione delle Ricevute FE, che ora permette la visualizzazione delle ricevute remote (con alcuni limiti) e la definizione di una ricevuta quale principale per la fattura
 
 ### Fixed
  - Correzione del numero delle righe sui Documenti a seguito di un riordinamento
@@ -74,6 +79,9 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Correzioni per l'impostazione di *Categoria* e *Sottocategoria* dalla procedura di importazione CSV **Articoli**
  - Fix link interno al plugin *Impianti del cliente*
  - Correzioni sulla procedura di duplicazione **Attività**
+ - Correzione del modulo **Pagamenti**
+ - Fix varie in vista di PHP 8
+ - Gestione del formato data FE con timezone
 
 ## 2.4.17.1 (2020-09-18)
 

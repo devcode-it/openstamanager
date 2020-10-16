@@ -312,3 +312,8 @@ INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `filen
 
 -- Aggiunta impostazione per Liquidazione IVA
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Liquidazione iva', 'Mensile', 'list[Mensile,Trimestrale]', '1', 'Fatturazione', '16', NULL);
+
+-- Aggiornamento causali DDT in caso di assenza
+UPDATE `dt_ddt` SET `idcausalet` = (SELECT `id` FROM `dt_causalet` WHERE `predefined` = 1 LIMIT 1) WHERE EXISTS(SELECT `id` FROM `dt_causalet` WHERE `predefined` = 1) AND (idcausalet = 0 OR idcausalet IS NULL);
+UPDATE `dt_ddt` SET `idcausalet` = (SELECT `id` FROM `dt_causalet` WHERE `descrizione` = 'Vendita' LIMIT 1) WHERE EXISTS(SELECT `id` FROM `dt_causalet` WHERE `descrizione` = 'Vendita') AND (idcausalet = 0 OR idcausalet IS NULL);
+UPDATE `dt_ddt` SET `idcausalet` = (SELECT `id` FROM `dt_causalet`) WHERE EXISTS(SELECT `id` FROM `dt_causalet`) AND (idcausalet = 0 OR idcausalet IS NULL);

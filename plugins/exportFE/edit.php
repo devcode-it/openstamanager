@@ -165,7 +165,7 @@ if (!empty($fattura->codice_stato_fe)) {
 </div>';
 
         // Lettura della ricevuta
-        if (!empty($ricevuta_principale)) {
+        if (!empty($ricevuta_principale) && file_exists($ricevuta_principale->filepath)) {
             $contenuto_ricevuta = XML::readFile($ricevuta_principale->filepath);
             $lista_errori = $contenuto_ricevuta['ListaErrori'];
 

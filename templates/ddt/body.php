@@ -67,17 +67,16 @@ foreach ($righe as $riga) {
 
         <td class="text-center" nowrap="nowrap" style="vertical-align: middle">';
 
+    $source_type = get_class($riga);
     if ($riga->isArticolo()) {
         echo $riga->codice;
-        $source_type = 'Modules\DDT\Components\Articolo';
     } else {
         echo '-';
-        $source_type = 'Modules\DDT\Components\Riga';
     }
 
     echo'
         </td>
-        
+
         <td>
             '.nl2br($r['descrizione']);
 
@@ -87,8 +86,11 @@ foreach ($righe as $riga) {
         $riferimenti = $source->referenceTargets;
 
         foreach ($riferimenti as $riferimento) {
+            $documento_riferimento = $riferimento->target->getDocument();
             echo '
-            <br><small>'.$riferimento->target->descrizione.'<br>'.reference($riferimento->target->getDocument()).'</small>';
+            <br><small>'.$riferimento->target->descrizione.'<br>'.tr('Rif. _DOCUMENT_', [
+                '_DOCUMENT_' => strtolower($documento_riferimento->getReference()),
+            ]).'</small>';
         }
     }
 

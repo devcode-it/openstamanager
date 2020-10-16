@@ -38,7 +38,7 @@ echo '
 
 foreach ($recepits as $nome) {
     $upload = $documento->uploads()
-        ->where('original', $nome)
+        ->where('original_name', $nome)
         ->first();
 
     // Individuazione codice ricevuta

@@ -124,26 +124,20 @@ echo '
 echo '<br><br>';
 
 // Messaggio informativo sulla ricevuta principale impostata
-if (!empty($fattura->codice_stato_fe)) {
+if (!empty($ricevuta_principale)) {
     echo '
 <div class="alert alert-'.$stato_fe['tipo'].'">
     <div class="pull-right">
         <i class="fa fa-clock-o tip" title="'.tr('Data e ora').'"></i> '.timestampFormat($record['data_stato_fe']);
 
-    if (!empty($ricevuta_principale)) {
+    if (!empty($ultima_ricevuta)) {
         echo '
-<div class="alert alert-'.$class.'">
-    <div class="pull-right">
-        <i class="fa fa-clock-o tip" title="'.tr('Data e ora ricezione').'"></i> '.Translator::timestampToLocale($record['data_stato_fe']);
-
-        if (!empty($ultima_ricevuta)) {
-            echo '
         <a href="'.ROOTDIR.'/view.php?file_id='.$ultima_ricevuta->id.'" target="_blank" class="btn btn-info btn-xs">
             <i class="fa fa-external-link"></i> '.tr('Visualizza ricevuta').'
         </a>';
-        }
+    }
 
-        echo '
+    echo '
     </div>
 
     <big>
@@ -151,26 +145,26 @@ if (!empty($fattura->codice_stato_fe)) {
         <b>'.$stato_fe['codice'].'</b> - '.$stato_fe['descrizione'].'
     </big>';
 
-        if (!empty($record['descrizione_ricevuta_fe'])) {
-            echo '
-    <br><b>'.tr('Note', [], ['upper' => true]).':</b> '.$record['descrizione_ricevuta_fe'];
-        }
-
-        if ($fattura->codice_stato_fe == 'GEN') {
-            echo '
-    <br><i class="fa fa-info-circle"></i> '.tr("La fattura è stata generata ed è pronta per l'invio").'.';
-        }
-
+    if (!empty($record['descrizione_ricevuta_fe'])) {
         echo '
+    <br><b>'.tr('Note', [], ['upper' => true]).':</b> '.$record['descrizione_ricevuta_fe'];
+    }
+
+    if ($fattura->codice_stato_fe == 'GEN') {
+        echo '
+    <br><i class="fa fa-info-circle"></i> '.tr("La fattura è stata generata ed è pronta per l'invio").'.';
+    }
+
+    echo '
 </div>';
 
-        // Lettura della ricevuta
-        if (!empty($ricevuta_principale) && file_exists($ricevuta_principale->filepath)) {
-            $contenuto_ricevuta = XML::readFile($ricevuta_principale->filepath);
-            $lista_errori = $contenuto_ricevuta['ListaErrori'];
+    // Lettura della ricevuta
+    if (!empty($ricevuta_principale) && file_exists($ricevuta_principale->filepath)) {
+        $contenuto_ricevuta = XML::readFile($ricevuta_principale->filepath);
+        $lista_errori = $contenuto_ricevuta['ListaErrori'];
 
-            if (!empty($lista_errori)) {
-                echo '
+        if (!empty($lista_errori)) {
+            echo '
 <h4>'.tr('Elenco degli errori').'</h4>
 <table class="table table-striped">
     <thead>
@@ -181,20 +175,19 @@ if (!empty($fattura->codice_stato_fe)) {
     </thead>
     <tbody>';
 
-                $lista_errori = $lista_errori[0] ? $lista_errori : [$lista_errori];
-                foreach ($lista_errori as $errore) {
-                    $errore = $errore['Errore'];
-                    echo '
+            $lista_errori = $lista_errori[0] ? $lista_errori : [$lista_errori];
+            foreach ($lista_errori as $errore) {
+                $errore = $errore['Errore'];
+                echo '
         <tr>
             <td>'.$errore['Codice'].'</td>
             <td>'.$errore['Descrizione'].'</td>
         </tr>';
-                }
+            }
 
-                echo '
+            echo '
     </tbody>
 </table>';
-            }
         }
     }
 }
@@ -238,7 +231,7 @@ echo '
     }
 
     function verificaNotificheFE(button) {
-        openModal("'.tr('Gestione ricevute').'", "'.$structure->fileurl('notifiche.php').'");
+        openModal("'.tr('Gestione ricevute').'", "'.$structure->fileurl('notifiche.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'");
 
     /*
         let restore = buttonLoading(button);

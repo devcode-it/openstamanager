@@ -311,6 +311,7 @@ class FatturaElettronica
     /**
      * Restituisce il nome del file XML per la fattura elettronica.
      *
+     * @param bool $new
      * @return string
      */
     public function getFilename($new = false)

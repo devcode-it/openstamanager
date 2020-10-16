@@ -45,6 +45,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Traduzione di base per il Tedesco (Germania)
  - Supporto interno all'importazione verso **Preventivi** e **Contratti**
  - Base per gestione listini METEL
+ - Possibilità di definire uno stato per le righe ordini (confermato/non confermato) per la gestione dell'impegno quantità
 
 ### Modificato (Changed)
  - Integrazione completa del nuovo sistema per la gestione delle impostazioni dei select (`select-options`)

@@ -17,6 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use HTMLBuilder\HTMLBuilder;
+
 include_once __DIR__.'/../core.php';
 
 // Compatibilità per controller ed editor
@@ -176,10 +178,10 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
         foreach ($bulk as $key => $value) {
             $text = is_array($value) ? $value['text'] : $value;
 
-            $data = is_array($value['data']) ? $value['data'] : [];
+            $data = isset($value['data']) && is_array($value['data']) ? $value['data'] : [];
             $extra = [];
             foreach ($data as $k => $v) {
-                $extra[] = 'data-'.$k.'="'.prepareToField(\HTMLBuilder\HTMLBuilder::replace($v)).'"';
+                $extra[] = 'data-'.$k.'="'.prepareToField(HTMLBuilder::replace($v)).'"';
             }
 
             echo '

@@ -115,19 +115,19 @@ echo '
     var source_id = "'.$source_id.'";
 
     $("#documento_riferimento").on("change", function(){
-        var value = $(this).val();
+        let value = $(this).val();
         if (value) {
-            var pieces = value.split("|");
+            let pieces = value.split("|");
 
-            var type = pieces[0];
-            var id = pieces[1];
+            let type = pieces[0];
+            let id = pieces[1];
             caricaRighe(type, id);
         }
     });
 
     function caricaRiferimenti() {
-        var loader = $("#box-loading-riferimenti");
-        var content = $("#righe_riferimenti");
+        let loader = $("#box-loading-riferimenti");
+        let content = $("#righe_riferimenti");
 
         loader.show();
 
@@ -153,8 +153,8 @@ echo '
     }
 
     function caricaRighe(tipo_documento, id_documento){
-        var content = $("#righe_documento");
-        var loader = $("#box-loading");
+        let content = $("#righe_documento");
+        let loader = $("#box-loading");
 
         loader.show();
         content.html("");
@@ -183,9 +183,9 @@ echo '
     function salvaRiferimento(btn, source_type, source_id) {
         $("#main_loading").show();
 
-        var row = $(btn).closest("tr");
-        var target_type = row.data("type");
-        var target_id = row.data("id");
+        let row = $(btn).closest("tr");
+        let target_type = row.data("type");
+        let target_id = row.data("id");
 
         $.ajax({
             url: globals.rootdir + "/actions.php",
@@ -204,7 +204,7 @@ echo '
                 $("#main_loading").fadeOut();
 
                 // Aggiunta del riferimento in memoria
-                var riferimento_locale = target_type + "|" + target_id;
+                let riferimento_locale = target_type + "|" + target_id;
                 riferimenti.push(riferimento_locale);
 
                 $(btn).removeClass("btn-info").addClass("btn-success");
@@ -217,9 +217,9 @@ echo '
     function rimuoviRiferimento(btn, source_type, source_id) {
         $("#main_loading").show();
 
-        var row = $(btn).closest("tr");
-        var target_type = row.data("type");
-        var target_id = row.data("id");
+        let row = $(btn).closest("tr");
+        let target_type = row.data("type");
+        let target_id = row.data("id");
 
         $.ajax({
             url: globals.rootdir + "/actions.php",
@@ -238,10 +238,10 @@ echo '
                 $("#main_loading").fadeOut();
 
                 // Rimozione del riferimento dalla memoria
-                var riferimento_locale = target_type + "|" + target_id;
-                var index = riferimenti.indexOf(riferimento_locale);
+                let riferimento_locale = target_type + "|" + target_id;
+                let index = riferimenti.indexOf(riferimento_locale);
                 if (index > -1) {
-                  riferimenti.splice(index, 1);
+                    riferimenti.splice(index, 1);
                 }
 
                 caricaRiferimenti();

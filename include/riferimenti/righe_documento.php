@@ -30,7 +30,7 @@ $documento = $tipo_documento::find($id_documento);
 // Informazioni sulla riga
 $source_type = filter('source_type');
 $source_id = filter('source_id');
-$riferimenti = filter('riferimenti');
+$riferimenti = (array) filter('riferimenti');
 
 echo '
 <table class="table table-striped table-hover table-condensed table-bordered">

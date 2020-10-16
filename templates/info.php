@@ -85,8 +85,8 @@ foreach ($replace as $prefix => $values) {
         $citta .= ' ('.$values['provincia'].')';
     }
     if (!empty($values['id_nazione'])) {
-        $nazione = $database->fetchOne("SELECT * FROM an_nazioni WHERE id = ".prepare($values['id_nazione']));
-        if ($nazione['iso2']!='IT'){
+        $nazione = $database->fetchOne('SELECT * FROM an_nazioni WHERE id = '.prepare($values['id_nazione']));
+        if ($nazione['iso2'] != 'IT') {
             $citta .= ' - '.$nazione['name'];
         }
     }
@@ -151,7 +151,7 @@ $replaces = array_merge($replaces, [
     'base_link()' => base_path(),
     'directory' => Prints::get($id_print)['full_directory'],
     'footer' => !empty($footer) ? $footer : '',
-    'dicitura_fissa_fattura' => setting('Dicitura fissa fattura').((setting('Regime Fiscale')!='RF02' && setting('Regime Fiscale')!='RF19' && setting('Regime Fiscale')!='RF18') ? tr('Documento privo di valenza fiscale (art 21 dpr 633/72).') : ''),
+    'dicitura_fissa_fattura' => setting('Dicitura fissa fattura').((setting('Regime Fiscale') != 'RF02' && setting('Regime Fiscale') != 'RF19' && setting('Regime Fiscale') != 'RF18') ? tr('Documento privo di valenza fiscale (art 21 dpr 633/72).') : ''),
 ]);
 
 unset($replace);

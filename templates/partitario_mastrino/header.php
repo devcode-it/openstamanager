@@ -25,7 +25,6 @@
  *
  * La personalizzazione specifica dell'header deve comunque seguire lo standard della cartella custom: anche se il file header.php non esiste nella stampa originaria, se si vuole personalizzare l'header bisogna crearlo all'interno della cartella custom.
  */
-
 echo'
 <h5 style="border-bottom:1px solid #777; display:block;">
     <div class="col-xs-5">STAMPA MASTRINO <small>'.Translator::dateToLocale($date_start).' - '.Translator::dateTolocale($date_end).'</small></div>

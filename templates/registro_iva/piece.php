@@ -23,7 +23,7 @@ echo '
 <tr>';
 
 echo '
-    <td>'.str_pad($record['idmovimenti'], 8, "0", STR_PAD_LEFT).'</td>
+    <td>'.str_pad($record['idmovimenti'], 8, '0', STR_PAD_LEFT).'</td>
     <td>'.Translator::datetoLocale($record['data_competenza']).'</td>
     <td>'.$record['numero_esterno'].'</td>
     <td>'.Translator::datetoLocale($record['data']).'</td>

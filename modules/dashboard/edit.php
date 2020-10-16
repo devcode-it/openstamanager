@@ -289,7 +289,7 @@ echo '
         style: "'.$def.'",
         show_sunday: "'.setting('Visualizzare la domenica sul calendario').'",
         start_time: "'.setting('Ora inizio sul calendario').'",
-        end_time: "'.((setting('Ora fine sul calendario') != '00:00:00' && !empty(setting('Ora fine sul calendario')) )? setting('Ora fine sul calendario'): '23:59:59').'",
+        end_time: "'.((setting('Ora fine sul calendario') != '00:00:00' && !empty(setting('Ora fine sul calendario'))) ? setting('Ora fine sul calendario') : '23:59:59').'",
         write_permission: "'.intval($modulo_interventi->permission == 'rw').'",
         tooltip: "'.setting('Utilizzare i tooltip sul calendario').'",
         calendar: null,

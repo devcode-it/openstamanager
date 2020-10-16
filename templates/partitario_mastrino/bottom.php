@@ -28,7 +28,6 @@ for ($i = 0; $i < sizeof($records); ++$i) {
     }
 }
 
-
 if (get('lev') == '2' || get('lev') == '3') {
     echo '
     <tr>
@@ -37,7 +36,7 @@ if (get('lev') == '2' || get('lev') == '3') {
         <th class="text-right">'.moneyFormat(abs($dare)).'</th>
         <th class="text-right">'.moneyFormat(abs($avere)).'</th>
     </tr>';
-} elseif(get('lev') == '1'){
+} elseif (get('lev') == '1') {
     $pareggio_dare = abs($dare);
     $pareggio_avere = abs($avere);
     echo '</table>
@@ -50,7 +49,7 @@ if (get('lev') == '2' || get('lev') == '3') {
     </tr>
     <tr>';
 
-    if($risultato['totale'] <= 0){
+    if ($risultato['totale'] <= 0) {
         echo '  
             <th></th>
             <th></th>
@@ -58,7 +57,7 @@ if (get('lev') == '2' || get('lev') == '3') {
             <th class="text-right">'.moneyFormat(abs($risultato['totale'])).'</th>
         </tr>';
         $pareggio_avere += abs($risultato['totale']);
-    } else{
+    } else {
         echo '  
             <th>PERDITA</th>
             <th class="text-right">'.moneyFormat(abs($risultato['totale'])).'</th>

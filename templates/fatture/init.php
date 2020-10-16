@@ -88,8 +88,8 @@ if (!empty($record['idsede_destinazione'])) {
         $destinazione .= ' ('.$rsd[0]['provincia'].')';
     }
     if (!empty($rsd[0]['id_nazione'])) {
-        $nazione = $database->fetchOne("SELECT * FROM an_nazioni WHERE id = ".prepare($rsd[0]['id_nazione']));
-        if ($nazione['iso2']!='IT'){
+        $nazione = $database->fetchOne('SELECT * FROM an_nazioni WHERE id = '.prepare($rsd[0]['id_nazione']));
+        if ($nazione['iso2'] != 'IT') {
             $destinazione .= ' - '.$nazione['name'];
         }
     }

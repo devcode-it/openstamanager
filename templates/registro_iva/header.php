@@ -25,7 +25,6 @@
  *
  * La personalizzazione specifica dell'header deve comunque seguire lo standard della cartella custom: anche se il file header.php non esiste nella stampa originaria, se si vuole personalizzare l'header bisogna crearlo all'interno della cartella custom.
  */
-
 echo '
     <div class="col-xs-12 text-right" >
         <p><b>'.$f_ragionesociale.'</p>

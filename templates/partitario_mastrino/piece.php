@@ -19,29 +19,24 @@
 
 include_once __DIR__.'/../../core.php';
 
-if($record['titolo'] != $prev_titolo && get('lev') == 1){
+if ($record['titolo'] != $prev_titolo && get('lev') == 1) {
     echo '
     <tr>
         <th colspan="4">'.$record['titolo'].'</th>
     </tr>';
 }
 
-    
 echo '
     <tr>
         <td>'.Translator::dateToLocale($record['data']).'</td>
         <td>'.$record['descrizione'].'</td>';
-        
-        if($record['totale']>=0){
+
+        if ($record['totale'] >= 0) {
             echo '<td class="text-right">'.moneyFormat(abs($record['totale']), 2).'</td>
             <td></td>';
-        }   
-        else{
+        } else {
             echo ' <td></td>
             <td class="text-right">'.moneyFormat(abs($record['totale']), 2).'</td>';
         }
 echo '</tr>';
 $prev_titolo = $record['titolo'];
-
-       
-        

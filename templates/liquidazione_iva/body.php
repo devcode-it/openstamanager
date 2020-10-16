@@ -44,9 +44,7 @@ $totale_iva_periodo_precedente = $totale_iva_vendite_periodo_precedente - $total
 
 $totale_iva = $totale_iva_esigibile - $totale_iva_detraibile;
 
-
-
-if($periodo == 'Trimestrale' && $totale_iva > 0){
+if ($periodo == 'Trimestrale' && $totale_iva > 0) {
     $maggiorazione = $totale_iva * 0.01;
     $totale_iva_maggiorata = $totale_iva + $maggiorazione;
 }
@@ -67,7 +65,7 @@ echo'
     </tr>
 </thead> 
 <tbody>';
-foreach($iva_vendite_esigibile as $record){
+foreach ($iva_vendite_esigibile as $record) {
     echo '
     <tr>
         <td>'.round($record['aliquota']).'%</td>
@@ -89,7 +87,7 @@ echo'
     <th class="text-center" colspan="5">IVA NON ESIGIBILE DEL PERIODO</th>
 </tr>';
 
-foreach($iva_vendite_nonesigibile as $record){
+foreach ($iva_vendite_nonesigibile as $record) {
     echo'
     <tr>
         <td>'.round($record['aliquota']).'%</td>
@@ -110,7 +108,7 @@ echo'
 <tr>
     <th class="text-center" colspan="5">RIEPILOGO GENERALE IVA VENDITE</th>
 </tr>';
-foreach($iva_vendite as $record){
+foreach ($iva_vendite as $record) {
     echo'
     <tr>
         <td>'.round($record['aliquota']).'%</td>
@@ -147,7 +145,7 @@ echo'
 </thead> 
 <tbody>';
 
-foreach($iva_acquisti_detraibile as $record){
+foreach ($iva_acquisti_detraibile as $record) {
     echo '
     <tr>
         <td>'.round($record['aliquota']).'%</td>
@@ -170,7 +168,7 @@ echo'
     <th class="text-center" colspan="5">IVA NON DETRAIBILE DEL PERIODO</th>
 </tr>';
 
-foreach($iva_acquisti_nondetraibile as $record){
+foreach ($iva_acquisti_nondetraibile as $record) {
     echo'
     <tr>
         <td>'.round($record['aliquota']).'%</td>
@@ -192,7 +190,7 @@ echo'
 <tr>
     <th class="text-center" colspan="5">RIEPILOGO GENERALE IVA ACQUISTI</th>
 </tr>';
-foreach($iva_acquisti as $record){
+foreach ($iva_acquisti as $record) {
     echo'
     <tr>
         <td>'.round($record['aliquota']).'%</td>
@@ -226,17 +224,17 @@ echo'
 </thead>
 <tbody>
     <tr>';
-        if($totale_iva_anno_precedente >=0){
+        if ($totale_iva_anno_precedente >= 0) {
             echo' <td>DEBITO ANNO PRECEDENTE</td>';
-        }else{
+        } else {
             echo' <td>CREDITO ANNO PRECEDENTE</td>';
         }
         echo'<td class=text-right>'.moneyFormat(abs($totale_iva_anno_precedente)).'</td>
     </tr>
     <tr>';
-        if($totale_iva_periodo_precedente >=0){
+        if ($totale_iva_periodo_precedente >= 0) {
             echo' <td>DEBITO PERIODO PRECEDENTE</td>';
-        }else{
+        } else {
             echo' <td>CREDITO PERIODO PRECEDENTE</td>';
         }
         echo' <td class=text-right>'.moneyFormat(abs($totale_iva_periodo_precedente)).'</td>
@@ -278,9 +276,9 @@ echo'
         <td class=text-right></td>
     </tr>
     <tr>';
-        if($totale_iva >=0){
+        if ($totale_iva >= 0) {
             echo' <td>IVA A DEBITO</td>';
-        }else{
+        } else {
             echo' <td>IVA A CREDITO</td>';
         }
         echo' <td class=text-right>'.moneyFormat(abs($totale_iva)).'</td>

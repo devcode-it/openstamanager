@@ -177,7 +177,6 @@ class Promemoria extends Document
         return $this->anagrafica->ragione_sociale;
     }
 
-
     public function getReference()
     {
         // TODO: Implement getReference() method.

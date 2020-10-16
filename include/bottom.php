@@ -57,7 +57,6 @@ if (Auth::check()) {
         <script>
             window.onbeforeunload = null;
         </script>';
-
     }
 
     $custom_css = setting('CSS Personalizzato');

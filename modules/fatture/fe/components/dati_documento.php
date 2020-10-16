@@ -82,7 +82,7 @@ echo '
         <tr class="fifth-level">
             <td style="vertical-align: middle;">'.str_repeat($space, 4).$info['code'].'.3 Data</td>
             <td>
-                {[ "type": "date", "name": "'.$nome.'['.$key.'][data]", "value": "'.$dato['data'].'", "readonly": '.(empty($dato['id_documento']) ? 1:0 ).' ]}
+                {[ "type": "date", "name": "'.$nome.'['.$key.'][data]", "value": "'.$dato['data'].'", "readonly": '.(empty($dato['id_documento']) ? 1 : 0).' ]}
             </td>
         </tr>';
 
@@ -91,7 +91,7 @@ echo '
         <tr class="fifth-level">
             <td style="vertical-align: middle;">'.str_repeat($space, 4).$info['code'].'.4 NumItem</td>
             <td>
-                {[ "type": "text", "name": "'.$nome.'['.$key.'][num_item]", "value": "'.$dato['num_item'].'", "maxlength": 20, "readonly": '.(empty($dato['id_documento']) ? 1:0 ).' ]}
+                {[ "type": "text", "name": "'.$nome.'['.$key.'][num_item]", "value": "'.$dato['num_item'].'", "maxlength": 20, "readonly": '.(empty($dato['id_documento']) ? 1 : 0).' ]}
             </td>
         </tr>';
 
@@ -100,7 +100,7 @@ echo '
         <tr class="fifth-level">
             <td style="vertical-align: middle;">'.str_repeat($space, 4).$info['code'].'.5 CodiceCommessaConvenzione</td>
             <td>
-                {[ "type": "text", "name": "'.$nome.'['.$key.'][codice_commessa]", "value": "'.$dato['codice_commessa'].'", "maxlength": 100, "readonly": '.(empty($dato['id_documento']) ? 1:0 ).' ]}
+                {[ "type": "text", "name": "'.$nome.'['.$key.'][codice_commessa]", "value": "'.$dato['codice_commessa'].'", "maxlength": 100, "readonly": '.(empty($dato['id_documento']) ? 1 : 0).' ]}
             </td>
         </tr>';
 
@@ -109,7 +109,7 @@ echo '
         <tr class="fifth-level">
             <td style="vertical-align: middle;">'.str_repeat($space, 4).$info['code'].'.6 CodiceCUP</td>
             <td>
-                {[ "type": "text", "name": "'.$nome.'['.$key.'][codice_cup]", "value": "'.$dato['codice_cup'].'", "maxlength": 15, "readonly": '.(empty($dato['id_documento']) ? 1:0 ).' ]}
+                {[ "type": "text", "name": "'.$nome.'['.$key.'][codice_cup]", "value": "'.$dato['codice_cup'].'", "maxlength": 15, "readonly": '.(empty($dato['id_documento']) ? 1 : 0).' ]}
             </td>
         </tr>';
 
@@ -118,7 +118,7 @@ echo '
         <tr class="fifth-level" id="last-'.$nome.'-'.$key.'">
             <td style="vertical-align: middle;">'.str_repeat($space, 4).$info['code'].'.7 CodiceCIG</td>
             <td>
-                {[ "type": "text", "name": "'.$nome.'['.$key.'][codice_cig]", "value": "'.$dato['codice_cig'].'", "maxlength": 15, "readonly": '.(empty($dato['id_documento']) ? 1:0 ).' ]}
+                {[ "type": "text", "name": "'.$nome.'['.$key.'][codice_cig]", "value": "'.$dato['codice_cig'].'", "maxlength": 15, "readonly": '.(empty($dato['id_documento']) ? 1 : 0).' ]}
             </td>
         </tr>
     </tbody>';

@@ -29,7 +29,7 @@ trait ReferenceTrait
 
     abstract public function getReferenceRagioneSociale();
 
-    public function getReference($show_ragione_sociale = NULL)
+    public function getReference($show_ragione_sociale = null)
     {
         // Informazioni disponibili
         $name = $this->getReferenceName();
@@ -40,10 +40,9 @@ trait ReferenceTrait
         $ragione_sociale = $this->getReferenceRagioneSociale();
 
         // Testi predefiniti
-        if (!empty($date) && !empty($number) && !empty($ragione_sociale) && !empty($show_ragione_sociale) ) {
+        if (!empty($date) && !empty($number) && !empty($ragione_sociale) && !empty($show_ragione_sociale)) {
             $description = tr('_DOC_ num. _NUM_ del _DATE_ (_RAGIONE_SOCIALE_)');
-        }
-        elseif (!empty($date) && !empty($number)) {
+        } elseif (!empty($date) && !empty($number)) {
             $description = tr('_DOC_ num. _NUM_ del _DATE_');
         } elseif (!empty($number)) {
             $description = tr('_DOC_ num. _NUM_');

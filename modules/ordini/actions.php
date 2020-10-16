@@ -186,21 +186,21 @@ switch (post('op')) {
         }
 
         $articolo->save();
-        
+
         // Impostare data evasione su tutte le righe
-        if(post('data_evasione_all') == 1){
+        if (post('data_evasione_all') == 1) {
             $righe = $ordine->getRighe();
 
-            foreach($righe as $riga){
+            foreach ($righe as $riga) {
                 $riga->data_evasione = post('data_evasione') ?: null;
                 $riga->save();
             }
         }
         // Impostare confermato su tutte le righe
-        if(post('confermato_all') == 1){
+        if (post('confermato_all') == 1) {
             $righe = $ordine->getRighe();
 
-            foreach($righe as $riga){
+            foreach ($righe as $riga) {
                 $riga->confermato = post('confermato') ?: 0;
                 $riga->save();
             }

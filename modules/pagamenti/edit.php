@@ -190,7 +190,7 @@ echo '
 
             <div class="row">
                 <div class="col-md-6">
-                    {[ "type": "number", "label": "'.tr('Percentuale').'", "name": "percentuale[-id-]", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
+                    {[ "type": "number", "label": "'.tr('Percentuale').'", "decimals": "2", "name": "percentuale[-id-]", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
                 </div>
 
                 <div class="col-md-6">

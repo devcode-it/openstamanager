@@ -342,8 +342,8 @@ if ($permetti_modelli) {
         // Aggiornamento della causale nel caso di Fattura
         let causale = modello_input.getData().causale;
         if (globals.prima_nota.id_documento !== "") {
-            for (variable of variables) {
-                causale = causale.replace("{" + variable + "}", variables[i]);
+            for ([key, value] of Object.entries(globals.prima_nota.variables)) {
+                causale = causale.replace(key, value);
             }
 
             $("#modals > div #desc").val(causale);
@@ -372,8 +372,8 @@ if ($permetti_modelli) {
 
                 // Sostituzione del conto dell\'Anagrafica
                 if (id_conto === -1 && globals.prima_nota.id_documento !== ""){
-                    id_conto = parseInt(variables["conto"]);
-                    descrizione_conto = variables["conto_descrizione"];
+                    id_conto = parseInt(globals.prima_nota.variables["conto"]);
+                    descrizione_conto = globals.prima_nota.variables["conto_descrizione"];
                 }
 
                 // Selezione del conto

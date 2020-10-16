@@ -17,9 +17,49 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Models\Setting;
+
 include_once __DIR__.'/../../core.php';
 
 switch (filter('op')) {
+    case 'salva':
+        $id = filter('id');
+        $valore = filter('valore');
+
+        $impostazione = Setting::find($id);
+        if (!$impostazione->editable) {
+            echo json_encode([
+                'result' => true,
+            ]);
+
+            return;
+        }
+
+        $result = Settings::setValue($impostazione->id, $valore);
+        echo json_encode([
+            'result' => $result,
+        ]);
+
+        if ($result) {
+            flash()->info('Impostazione modificata con successo!');
+        } else {
+            flash()->error('Errore durante il salvataggio!');
+        }
+
+        break;
+
+    case 'ricerca':
+        $search = filter('search');
+        $sezioni = Setting::select('sezione')
+            ->where('sezione', 'like', '%'.$search.'%')
+            ->orWhere('nome', 'like', '%'.$search.'%')
+            ->groupBy(['sezione'])
+            ->get()->pluck('sezione');
+
+        echo json_encode($sezioni);
+
+        break;
+
     case 'update':
         $is_all_valid = true;
 

@@ -317,3 +317,6 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 UPDATE `dt_ddt` SET `idcausalet` = (SELECT `id` FROM `dt_causalet` WHERE `predefined` = 1 LIMIT 1) WHERE EXISTS(SELECT `id` FROM `dt_causalet` WHERE `predefined` = 1) AND (idcausalet = 0 OR idcausalet IS NULL);
 UPDATE `dt_ddt` SET `idcausalet` = (SELECT `id` FROM `dt_causalet` WHERE `descrizione` = 'Vendita' LIMIT 1) WHERE EXISTS(SELECT `id` FROM `dt_causalet` WHERE `descrizione` = 'Vendita') AND (idcausalet = 0 OR idcausalet IS NULL);
 UPDATE `dt_ddt` SET `idcausalet` = (SELECT `id` FROM `dt_causalet`) WHERE EXISTS(SELECT `id` FROM `dt_causalet`) AND (idcausalet = 0 OR idcausalet IS NULL);
+
+-- Aggiornamento del modulo Impostazioni
+UPDATE `zz_modules` SET `options` = 'custom' WHERE `name` = 'Impostazioni';

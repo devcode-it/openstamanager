@@ -142,7 +142,7 @@ class Settings
             return true;
         }
 
-        return  false;
+        return false;
     }
 
     /**

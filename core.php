@@ -54,6 +54,15 @@ $docroot = DOCROOT;
 $rootdir = ROOTDIR;
 $baseurl = BASEURL;
 
+// Sicurezza della sessioni
+ini_set('session.cookie_samesite', 'strict');
+ini_set('session.use_trans_sid', '0');
+ini_set('session.use_only_cookies', '1');
+
+session_set_cookie_params(0, base_path(), null, isHTTPS(true));
+session_start();
+
+// Lettura della configurazione
 $config = App::getConfig();
 
 // Redirect al percorso HTTPS se impostato nella configurazione
@@ -118,14 +127,6 @@ if (!API\Response::isAPIRequest()) {
 } else {
     $handlers[] = new StreamHandler(base_dir().'/logs/api.log', Monolog\Logger::ERROR);
 }
-
-// Sicurezza della sessioni
-ini_set('session.cookie_samesite', 'strict');
-ini_set('session.use_trans_sid', '0');
-ini_set('session.use_only_cookies', '1');
-
-session_set_cookie_params(0, base_path(), null, isHTTPS(true));
-session_start();
 
 // Disabilita i messaggi nativi di PHP
 ini_set('display_errors', 0);

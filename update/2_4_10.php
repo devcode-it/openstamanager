@@ -5,14 +5,30 @@ $database = database();
 error_reporting(E_ALL & ~E_WARNING & ~E_CORE_WARNING & ~E_NOTICE & ~E_USER_DEPRECATED & ~E_STRICT);
 
 // Fix del calcolo del bollo
-$fatture = $database->fetchArray('SELECT id, bollo FROM co_documenti');
+$fatture = $database->fetchArray('SELECT id, bollo, split_payment FROM co_documenti');
 foreach ($fatture as $fattura) {
-    $bollo = floatval($fattura['bollo']);
+    $bollo = $fattura['bollo'];
 
+    if (empty($bollo)) {
+        if (empty($fattura['split_payment'])) {
+            $totale = 'subtotale - sconto + iva + rivalsainps';
+        } else {
+            $totale = 'subtotale - sconto + rivalsainps';
+        }
+
+        $righe = $database->fetchArray('SELECT ('.$totale.') AS netto FROM co_righe_documenti INNER JOIN co_iva ON co_iva.id = co_righe_documenti.idiva WHERE iddocumento = '.prepare($fattura['id'])." AND codice_natura_fe IN ('N1', 'N2', 'N3', 'N4')");
+        $totale = sum(array_column($righe, 'netto'));
+        $importo_bollo = setting('Importo marca da bollo');
+        if (abs($importo_bollo) > 0 && abs($totale) > setting("Soglia minima per l'applicazione della marca da bollo")) {
+            $bollo = $importo_bollo;
+        }
+    }
+
+    $bollo = floatval($bollo);
     if ($bollo > 0) {
         $fatture = $database->query(
         'insert into `co_righe_documenti` (`iddocumento`, `order`, `descrizione`, `um`, `idiva`, `idconto`, `calcolo_ritenuta_acconto`, `idritenutaacconto`, `ritenuta_contributi`, `idrivalsainps`, `prezzo_unitario_acquisto`, `sconto_unitario`, `tipo_sconto`, `qta`, `data_inizio_periodo`, `data_fine_periodo`, `riferimento_amministrazione`, `tipo_cessione_prestazione`, `ritenutaacconto`, `rivalsainps`, `subtotale`, `sconto`, `iva`, `desc_iva`, `iva_indetraibile`, `created_at`) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
-            0 => 1,
+            0 => $fattura['id'],
             1 => 0,
             2 => 'Marca da bollo',
             3 => null,
@@ -41,7 +57,7 @@ foreach ($fatture as $fattura) {
         ]);
         $id_riga_bollo = $database->lastInsertedId();
 
-        $database->query('UPDATE co_documenti SET $id_riga_bollo = '.prepare($id_riga_bollo).' WHERE id = '.prepare($fattura['id']));
+        $database->query('UPDATE co_documenti SET id_riga_bollo = '.prepare($id_riga_bollo).' WHERE id = '.prepare($fattura['id']));
     }
 }
 

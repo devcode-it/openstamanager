@@ -109,12 +109,19 @@ function scrollToOffset(offset) {
  * Ritorna un array associativo con i parametri passati via GET
  */
 function getUrlVars() {
-    var search = window.location.search.substring(1);
-    if (!search) return {};
+    let params = {};
 
-    return JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g, '":"') + '"}', function (key, value) {
-        return key === "" ? value : decodeURIComponent(value)
-    });
+    let query = window.location.search.substring(1);
+    let parameterArray = query.split('&');
+    if (parameterArray && parameterArray.length) {
+        parameterArray.map(param => {
+            let keyValuePair = param.split('=')
+            let key = keyValuePair[0];
+            params[key] = keyValuePair[1] ? decodeURIComponent(keyValuePair[1]) : null;
+        })
+    }
+
+    return params;
 }
 
 /**

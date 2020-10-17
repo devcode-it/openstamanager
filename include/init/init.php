@@ -258,7 +258,7 @@ echo '
         $("button[type=submit]").not("#config").remove();
     });
 </script>
-<script src="'.base_path().'/lib/functions.js"></script>
+
 <script>$(document).ready(init)</script>';
 
 include_once App::filepath('include|custom|', 'bottom.php');

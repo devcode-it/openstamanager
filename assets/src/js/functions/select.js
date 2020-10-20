@@ -27,7 +27,7 @@ function start_superselect() {
     });
 }
 
-function selectBackground(data, container) {
+function selectOptionRender(data, container) {
     let bg;
 
     if (data._bgcolor_) {
@@ -210,7 +210,7 @@ function initStaticSelectInput(input) {
         escapeMarkup: function (text) {
             return text;
         },
-        templateResult: selectBackground,
+        templateResult: selectOptionRender,
     });
 }
 
@@ -230,7 +230,7 @@ function initDynamicSelectInput(input) {
         escapeMarkup: function (text) {
             return text;
         },
-        templateResult: selectBackground,
+        templateResult: selectOptionRender,
         ajax: {
             url: globals.rootdir + "/ajax_select.php?op=" + $input.data('source'),
             dataType: 'json',
@@ -250,7 +250,7 @@ function initDynamicSelectInput(input) {
                 let results = data.results;
 
                 // Interpretazione forzata per campi optgroup
-                if (results && results[0] && [0]['optgroup']) {
+                if (results && results[0] && results[0]['optgroup']) {
                     let groups = results.reduce(function (r, a) {
                         r[a.optgroup] = r[a.optgroup] || [];
                         r[a.optgroup].push(a);
@@ -258,7 +258,7 @@ function initDynamicSelectInput(input) {
                     }, {});
 
                     let results_groups = [];
-                    for (const key in groups) {
+                    for ([key, results] of Object.entries(groups)) {
                         results_groups.push({
                             text: key,
                             children: groups[key],

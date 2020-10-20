@@ -57,13 +57,13 @@ $id_anagrafica = filter('id_anagrafica');
 
 <script type="text/javascript">
 $(document).ready(function() {
-	$('#modals > div #idanagrafica').change(function() {
+	input('idanagrafica').change(function() {
         updateSelectOption("idanagrafica", $(this).val());
 		session_set('superselect,idanagrafica', $(this).val(), 0);
 
-        var value = !$(this).val();
+        let value = !input('idanagrafica').get();
 
-		$("#modals > div #idsede").prop("disabled", value)
+        input('idsede').setDisabled(value)
             .selectReset();
 	});
 });

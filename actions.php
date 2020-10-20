@@ -339,7 +339,7 @@ if ($structure->permission == 'rw') {
         redirect(base_path().'/controller.php?id_module='.$id_module, 'js');
     } else {
         // Esecuzione delle operazioni del modulo
-        include $structure->filepath('actions.php');
+        ($include_file = $structure->filepath('actions.php')) ? include $include_file : null;
 
         // Operazioni generiche per i campi personalizzati
         if (post('op') != null) {

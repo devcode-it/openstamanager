@@ -71,8 +71,8 @@ class AJAX
             }
         }
 
-        $total = $results['recordsFiltered'] ?: count($results);
-        $list = isset($results['results']) ? $results['results'] : $results;
+        $total = array_key_exists('recordsFiltered', $results) ? $results['recordsFiltered'] : count($results);
+        $list = array_key_exists('results', $results) ? $results['results'] : $results;
 
         return [
             'results' => $list ?: [],

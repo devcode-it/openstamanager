@@ -182,7 +182,7 @@ echo '
 
     async function salva(button) {
         $("#messages").html("");
-        var qta_input = $("#qta");
+        var qta_input = input("qta");
         var tipo_movimento = $("#tipo_movimento").val();
 
         let valid = await salvaForm(button, "#add-form");
@@ -192,7 +192,7 @@ echo '
             let prezzo_acquisto = parseFloat(articolo.prezzo_acquisto);
             let prezzo_vendita = parseFloat(articolo.prezzo_vendita);
 
-            let qta_movimento = parseFloat(qta_input.val());
+            let qta_movimento = qta_input.get();
 
             let alert_type, icon, text, qta_rimanente;
             if (tipo_movimento === "carico") {
@@ -230,7 +230,7 @@ echo '
                 $("#messages").html(testo);
             }
 
-            qta_input.val(1);
+            qta_input.set(1);
             $("#causale").trigger("change");
         }
     }

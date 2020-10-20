@@ -64,7 +64,7 @@ $(document).ready(function() {
         let value = !input('idanagrafica').get();
 
         input('idsede').setDisabled(value)
-            .selectReset();
+            .getElement().selectReset();
 	});
 });
 </script>

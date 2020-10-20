@@ -134,11 +134,6 @@ switch ($resource) {
         $where[] = 'mg_articoli.attivo = 1';
         $where[] = 'mg_articoli.deleted_at IS NULL';
 
-        // Filtro articolo solo per documenti di vendita
-        if ($superselect['dir'] == 'entrata' && isset($superselect['idsede_partenza'])) {
-            $where[] = '((idsede_azienda='.prepare($superselect['idsede_partenza']).' OR idsede_azienda IS NULL) OR (idsede_controparte='.prepare($superselect['idsede_partenza']).' OR idsede_controparte IS NULL))';
-        }
-
         if (!empty($search)) {
             $search_fields[] = 'mg_articoli.descrizione LIKE '.prepare('%'.$search.'%');
             $search_fields[] = 'mg_articoli.codice LIKE '.prepare('%'.$search.'%');

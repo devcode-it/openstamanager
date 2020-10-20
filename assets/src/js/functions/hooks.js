@@ -144,7 +144,7 @@ function updateHook(hook) {
                 $("#hooks-notified").html('<i class="fa fa-check" aria-hidden="true"></i>');
                 $("#hooks-label").removeClass();
                 $("#hooks-label").addClass('label').addClass('label-success');
-            }else{
+            } else {
                 $("#hooks-notified").text(number);
                 $("#hooks-label").removeClass();
                 $("#hooks-label").addClass('label').addClass('label-danger');

@@ -27,6 +27,10 @@ function initNumbers() {
     });
 }
 
+/**
+ * Funzione per l'inizializzazione dei campi numerici.
+ * @param input
+ */
 function initNumberInput(input) {
     let $input = $(input);
     if (AutoNumeric.isManagedByAutoNumeric(input)) {

@@ -16,12 +16,20 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * Funzione per l'inizializzazione dei campi textarea.
+ * @param input
+ */
 function initTextareaInput(input) {
     autosize($(input));
 
     return true;
 }
 
+/**
+ * Funzione per l'inizializzazione dei campi editor.
+ * @param input
+ */
 function initEditorInput(input) {
     let $input = $(input);
     let name = input.getAttribute("id");

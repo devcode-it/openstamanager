@@ -16,28 +16,32 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * Funzione per l'inizializzazione delle maschere sui campi impostati.
+ * @param input
+ */
 function initMaskInput(input) {
     let $input = $(input);
 
-    if ($input.hasClass('email-mask')){
+    if ($input.hasClass('email-mask')) {
         $input.inputmask('Regex', {
             regex: "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^-]+(?:\\.[a-zA-Z0-9_!#$%&'*+/=?`{|}~^-]+)*@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$",
         });
-    } else if ($input.hasClass('rea-mask')){
+    } else if ($input.hasClass('rea-mask')) {
         $input.inputmask({
             mask: "AA-999999{1,15}",
             casing: "upper",
         });
-    } else if ($input.hasClass('provincia-mask')){
+    } else if ($input.hasClass('provincia-mask')) {
         $input.inputmask({
             mask: "AA",
             casing: "upper",
         });
-    } else if ($input.hasClass('alphanumeric-mask')){
+    } else if ($input.hasClass('alphanumeric-mask')) {
         $input.inputmask('Regex', {
             regex: "[A-Za-z0-9#_|\/\\-.]*",
         });
-    } else if ($input.hasClass('math-mask')){
+    } else if ($input.hasClass('math-mask')) {
         $input.inputmask('Regex', {
             regex: "[0-9,.+\-]*",
         });
@@ -47,7 +51,8 @@ function initMaskInput(input) {
 }
 
 /**
- * Inputmask
+ * Inputmask.
+ *
  * @param element
  */
 function start_inputmask(element) {
@@ -57,7 +62,7 @@ function start_inputmask(element) {
         element = element + ' ';
     }
 
-    let masks = ['math-mask','alphanumeric-mask', 'provincia-mask','rea-mask', 'email-mask'];
+    let masks = ['math-mask', 'alphanumeric-mask', 'provincia-mask', 'rea-mask', 'email-mask'];
 
     let selector = element + '.' + masks.join(', ' + element + '.')
     $(selector).each(function () {

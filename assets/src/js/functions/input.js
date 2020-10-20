@@ -16,6 +16,15 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * Funzione semplificata per accedere ad uno specifico input.
+ * Accetta un oggetto jQuery, oppure un elemento JS HTMLElement, oppure il nome dell'input di interesse.
+ *
+ * Attenzione: in caso di molteplici input individuati, viene restituito l'ultimo individuato.
+ *
+ * @param {string|jQuery|HTMLElement} name
+ * @returns {Input|*}
+ */
 function input(name) {
     let element;
 
@@ -66,7 +75,9 @@ function Input(element) {
     this.init();
 }
 
-
+/**
+ * Effettua le operazioni di inizializzazione sull'input in base alla relativa tipologia.
+ */
 Input.prototype.init = function () {
     let initCompleted = false;
     let htmlElement = this.element[0];
@@ -106,13 +117,24 @@ Input.prototype.init = function () {
         initCompleted = initMaskInput(htmlElement);
     }
 
-    this.element.data("input-init", initCompleted);
+    this.element.data("input-init", !!initCompleted);
 }
 
+/**
+ * Restituisce l'elemento jQuery che rappresenta l'input.
+ *
+ * @returns {jQuery}
+ */
 Input.prototype.getElement = function () {
     return this.element;
 }
 
+/**
+ * Gestisce l'abilitazione e la disibilitazione dell'input sulla base del valore indicato.
+ *
+ * @param {bool} value
+ * @returns {Input}
+ */
 Input.prototype.setDisabled = function (value) {
     if (value) {
         return this.disable();
@@ -121,6 +143,11 @@ Input.prototype.setDisabled = function (value) {
     }
 }
 
+/**
+ * Disabilita l'input all'utilizzo grafico.
+ *
+ * @returns {Input}
+ */
 Input.prototype.disable = function () {
     this.element.addClass("disabled")
         .attr("disabled", true)
@@ -150,6 +177,11 @@ Input.prototype.disable = function () {
     return this;
 }
 
+/**
+ * Abilita l'input all'utilizzo grafico.
+ *
+ * @returns {Input}
+ */
 Input.prototype.enable = function () {
     this.element.removeClass("disabled")
         .attr("disabled", false)
@@ -179,6 +211,11 @@ Input.prototype.enable = function () {
     return this;
 }
 
+/**
+ * Restituisce un oggetto cotentente le caratteristiche dell'input.
+ *
+ * @returns {{value: (string|number)}|jQuery|any}
+ */
 Input.prototype.getData = function () {
     if (this.element.is('select')) {
         return this.element.selectData();
@@ -237,6 +274,11 @@ Input.prototype.set = function (value) {
     return this;
 }
 
+/**
+ * Imposta l'input per essere obbligatorio o meno.
+ * @param {bool} value
+ * @returns {Input}
+ */
 Input.prototype.setRequired = function (value) {
     this.element.attr("required", value)
         .data("required", value);
@@ -245,22 +287,60 @@ Input.prototype.setRequired = function (value) {
 }
 
 // Eventi permessi
+/**
+ * Gestisce gli eventi di tipologia "change".
+ *
+ * @param callable
+ * @returns {Input}
+ */
 Input.prototype.change = function (callable) {
-    return this.on("change", callable);
+    this.on("change", callable)
+
+    return this;
 }
 
+/**
+ * Gestisce l'ascolto a uno specifico evento sulla base dell'oggetto jQuery.
+ *
+ * @param {string} event
+ * @param callable
+ *
+ * @returns {Input}
+ */
 Input.prototype.on = function (event, callable) {
-    return this.element.on(event, callable);
+    this.element.on(event, callable);
+
+    return this;
 }
 
+/**
+ * Gestisce la rimozione degli ascoltatori attivi per uno specifico evento sulla base dell'oggetto jQuery.
+ *
+ * @param {string} event
+ *
+ * @returns {Input}
+ */
 Input.prototype.off = function (event) {
-    return this.element.off(event);
+    this.element.off(event);
+
+    return this;
 }
 
+/**
+ * Effettua il trigger di uno specifico evento sull'input.
+ * @param {string} event
+ * @param callable
+ * @returns {Input}
+ */
 Input.prototype.trigger = function (event, callable) {
-    return this.element.trigger(event, callable);
+    this.element.trigger(event, callable);
+
+    return this;
 }
 
+/**
+ * Distrugge il gestore attuale per l'input e ne disabilita le funzionalità previste.
+ */
 Input.prototype.destroy = function () {
     if (this.element.data('select2')) {
         this.element.select2().select2("destroy")
@@ -273,6 +353,7 @@ Input.prototype.destroy = function () {
     }
 
     this.element.data("input-controller", null);
+    this.element.data("input-init", false);
 }
 
 /**

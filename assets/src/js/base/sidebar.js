@@ -64,11 +64,11 @@ $(document).ready(function () {
     });
 
     // Mostra/nasconde sidebar sx
-    $(".sidebar-toggle").on("click", function(){
-        if ($( "body" ).hasClass( "sidebar-collapse" )){
-            session_set("settings,sidebar-collapse",0,1,0);
-        }else{
-            session_set("settings,sidebar-collapse",1,0,0);
+    $(".sidebar-toggle").on("click", function () {
+        if ($("body").hasClass("sidebar-collapse")) {
+            session_set("settings,sidebar-collapse", 0, 1, 0);
+        } else {
+            session_set("settings,sidebar-collapse", 1, 0, 0);
         }
     });
 

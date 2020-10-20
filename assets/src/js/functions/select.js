@@ -27,6 +27,13 @@ function start_superselect() {
     });
 }
 
+/**
+ * Gestisce le operazioni di rendering per una singola opzione del select.
+ *
+ * @param data
+ * @param container
+ * @returns {*}
+ */
 function selectOptionRender(data, container) {
     let bg;
 
@@ -179,6 +186,8 @@ function updateSelectOption(name, value) {
 }
 
 /**
+ * Funzione per l'inizializzazione automatica del select.
+ *
  * @param input
  */
 function initSelectInput(input) {
@@ -190,11 +199,12 @@ function initSelectInput(input) {
         initDynamicSelectInput(input);
     }
 
-    return $input.data('select');
+    return $input.data('select2');
 }
 
 /**
- * Statico.
+ * Funzione per l'inizializzazione del select statico.
+ *
  * @param input
  */
 function initStaticSelectInput(input) {
@@ -215,7 +225,8 @@ function initStaticSelectInput(input) {
 }
 
 /**
- * Dinamico.
+ * Funzione per l'inizializzazione del select dinamico.
+ *
  * @param input
  */
 function initDynamicSelectInput(input) {

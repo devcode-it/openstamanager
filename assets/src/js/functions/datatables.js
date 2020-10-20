@@ -415,7 +415,7 @@ function getTable(selector) {
             }
 
             // Aggiornamento del footer nel caso sia richiesto
-            if (globals.restrict_summables_to_selected){
+            if (globals.restrict_summables_to_selected) {
                 this.updateSelectedFooter();
             }
         },

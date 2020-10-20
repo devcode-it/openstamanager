@@ -303,9 +303,8 @@ echo '
             </button>
 		</div>
 	</div>
-</form>
+</form>';
 
-<script>$(document).ready(init)</script>';
 
 if (!empty($id_intervento)) {
     echo '

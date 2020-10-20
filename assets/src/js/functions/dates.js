@@ -16,8 +16,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-function getCalendarIcons(){
-   return {
+function getCalendarIcons() {
+    return {
         time: 'fa fa-clock-o',
         date: 'fa fa-calendar',
         up: 'fa fa-chevron-up',

@@ -66,7 +66,9 @@ $(document).ready(function () {
             type: 'GET',
             dataType: "json",
             success: function (response) {
-                var row_ids = response.data.map(function(a) {return a.id;});
+                var row_ids = response.data.map(function (a) {
+                    return a.id;
+                });
 
                 // Chiamata di selezione completa
                 wrapper.addSelectedRows(row_ids);

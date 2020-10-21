@@ -1,4 +1,4 @@
-UPDATE `in_interventi` SET `id_contratto` = (SELECT `idcontratto` FROM `co_promemoria` WHERE `idintervento` = `in_interventi`.`id`);
+UPDATE `in_interventi` SET `id_contratto` = (SELECT `idcontratto` FROM `co_promemoria` WHERE `idintervento` = `in_interventi`.`id` LIMIT 1);
 
 ALTER TABLE `co_righe_contratti` ADD `qta_evasa` DECIMAL(12, 4) NOT NULL;
 ALTER TABLE `co_righe_preventivi` ADD `qta_evasa` DECIMAL(12, 4) NOT NULL;

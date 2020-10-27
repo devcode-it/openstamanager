@@ -320,3 +320,6 @@ UPDATE `dt_ddt` SET `idcausalet` = (SELECT `id` FROM `dt_causalet`) WHERE EXISTS
 
 -- Aggiornamento del modulo Impostazioni
 UPDATE `zz_modules` SET `options` = 'custom' WHERE `name` = 'Impostazioni';
+
+-- Fix logica query Scadenzario
+UPDATE `zz_modules` SET `options2` = 'SELECT |select| FROM `co_scadenziario`\r\n   LEFT JOIN `co_documenti`  ON `co_scadenziario`.`iddocumento` = `co_documenti`.`id`\r\n   LEFT JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`\r\n   LEFT JOIN `co_pagamenti` ON `co_documenti`.`idpagamento` = `co_pagamenti`.`id`\r\n   LEFT JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`\r\n   LEFT JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`\r\nWHERE 1=1 AND\r\n    (`co_scadenziario`.`scadenza` BETWEEN \'|period_start|\' AND \'|period_end|\' OR ABS(`co_scadenziario`.`pagato`) < ABS(`co_scadenziario`.`da_pagare`)) AND\r\n    (`co_statidocumento`.`descrizione` IS NULL OR `co_statidocumento`.`descrizione` IN(\'Emessa\',\'Parzialmente pagato\',\'Pagato\'))\r\nHAVING 2=2\r\nORDER BY `scadenza` ASC' WHERE `zz_modules`.`name` = 'Scadenzario';

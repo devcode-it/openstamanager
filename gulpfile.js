@@ -369,6 +369,18 @@ function phpDebugBar() {
         .pipe(gulp.dest(config.production + '/php-debugbar'));
 }
 
+function formatPHPExec(exec) {
+    let php_exec;
+    let is_windows = process.platform === "win32";
+    if (is_windows) {
+        php_exec = `php -r "` + exec.split("\n").join("") + `"`;
+    } else {
+        php_exec = `php -r '` + exec.split("'").join('"') + `'`;
+    }
+
+    return php_exec;
+}
+
 // Operazioni per la release
 function release(done) {
     // Impostazione dello zip
@@ -439,14 +451,16 @@ function release(done) {
         archive.file('checksum.json', {});
 
         // Aggiunta del file per il controllo di integrità del database
-        archive.append(shell.exec(`php -r '
+        let exec = `
         error_reporting(0);
         $skip_permissions = true;
-        include_once __DIR__."/core.php";
+        include_once __DIR__.DIRECTORY_SEPARATOR.'core.php';
         $info = Update::getDatabaseStructure();
         $response = json_encode($info);
-        echo $response;
-        '`, {
+        echo $response;`;
+        let php_exec = formatPHPExec(exec);
+
+        archive.append(shell.exec(php_exec, {
             silent: true
         }).stdout, {
             name: 'database.json'

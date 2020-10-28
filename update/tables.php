@@ -68,6 +68,7 @@ return [
     'fe_stati_documento',
     'fe_tipi_documento',
     'fe_tipo_cassa',
+    'fe_tipi_ritenuta',
     'in_interventi',
     'in_interventi_tecnici',
     'in_interventi_tecnici_assegnati',

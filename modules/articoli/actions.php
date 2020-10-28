@@ -146,6 +146,9 @@ switch (post('op')) {
             // Se non è presente un componente, copia i valori dal file di origine
             $campi_componente = [];
             foreach ($contenuto_componente as $key => $value) {
+                //Fix per nomi con spazi che vengono tradotti con "_" (es. Data_di_installazione)
+                $key = preg_replace('/\s+/', '_', $key);
+                
                 $valore = $contenuto_precedente_esistente ? filter($key) : $value['valore'];
 
                 $campi_componente[$key] = $valore;

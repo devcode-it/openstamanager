@@ -40,14 +40,14 @@ switch (filter('op')) {
         break;
 
     // Abilita utente
-    case 'enable':
+    case 'enable_user':
         if ($dbo->query('UPDATE zz_users SET enabled=1 WHERE id='.prepare($id_utente))) {
             flash()->info(tr('Utente abilitato!'));
         }
         break;
 
     // Disabilita utente
-    case 'disable':
+    case 'disable_user':
         if ($dbo->query('UPDATE zz_users SET enabled=0 WHERE id='.prepare($id_utente))) {
             flash()->info(tr('Utente disabilitato!'));
         }
@@ -126,7 +126,7 @@ switch (filter('op')) {
             flash()->info(tr('Utente eliminato!'));
 
             if ($dbo->query('UPDATE zz_tokens SET enabled = 0 WHERE id_utente = '.prepare($id_utente))) {
-                flash()->info(tr('Token disabilitato!'));
+                flash()->info(tr('Token eliminato!'));
             }
         }
         break;
@@ -134,13 +134,24 @@ switch (filter('op')) {
     // Abilita API utente
     case 'token_enable':
         $utente = User::find($id_utente);
-        $tokens = $utente->getApiTokens();
 
-        foreach ($tokens as $token) {
-            $dbo->query('UPDATE zz_tokens SET enabled = 1 WHERE id = '.prepare($token['id']));
+        $already_token = $dbo->fetchOne('SELECT `id` FROM `zz_tokens` WHERE `id_utente` = '.prepare($id_utente))['id'];
+
+        if (empty($already_token)){
+
+            //Quando richiamo getApiTokens,  non trovando nessun token abilitato ne crea uno nuovo
+            $tokens = $utente->getApiTokens();
+
+            foreach ($tokens as $token) {
+                $dbo->query('UPDATE zz_tokens SET enabled = 1 WHERE id = '.prepare($token['id']));
+                flash()->info(tr('Token creato!'));
+            }
+
+        }else if ($dbo->query('UPDATE zz_tokens SET enabled = 1 WHERE id_utente = '.prepare($id_utente))) {
+            flash()->info(tr('Token abilitato!'));
         }
 
-        flash()->info(tr('Token abilitato!'));
+       
         break;
 
     // Disabilita API utente
@@ -152,7 +163,7 @@ switch (filter('op')) {
             $dbo->query('UPDATE zz_tokens SET enabled = 0 WHERE id = '.prepare($token['id']));
         }
 
-        flash()->info(tr('Token abilitato!'));
+        flash()->info(tr('Token disabilitato!'));
         break;
 
     // Elimina gruppo

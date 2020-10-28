@@ -71,55 +71,55 @@ if (!empty($utenti)) {
         // Disabilitazione utente, se diverso da id_utente #1 (admin)
         if ($utente['id'] == '1') {
             echo '
-                <a title="'.tr("Non è possibile disabilitare l'utente admin").'" class="text-muted tip">
-                    <i class="fa fa-2x fa-eye-slash"></i>
-                </a>';
+            <div data-toggle="tooltip"  class="tip" title="'.tr("Non è possibile disabilitare l'utente admin").'" ><span class="btn btn-xs btn-default disabled">
+                    <i class="fa fa-eye-slash"></i>
+                </span></div>';
         } elseif ($utente['enabled'] == 1) {
             echo '
-                <a title="'.tr('Disabilita utente').'" class="text-danger clickable tip ask" data-msg="" data-backto="record-edit" data-title="'.tr('Disabilitare questo utente?').'" data-op="token_disable" data-id_utente="'.$utente['id'].'" data-button="'.tr('Disabilita').'">
-                    <i class="fa fa-2x fa-eye-slash"></i>
+                <a title="'.tr('Disabilita utente').'" class="btn btn-xs btn-danger tip ask" data-msg="" data-backto="record-edit" data-title="'.tr('Disabilitare questo utente?').'" data-op="disable_user" data-id_utente="'.$utente['id'].'" data-button="'.tr('Disabilita').'">
+                    <i class="fa fa-eye-slash"></i>
                 </a>';
         } else {
             echo '
-                <a title="'.tr('Abilita utente').'" class="text-success clickable tip ask" data-msg="" data-backto="record-edit" data-title="'.tr('Abiltare questo utente?').'" data-op="token_disable" data-id_utente="'.$utente['id'].'" data-button="'.tr('Abilita').'" data-class="btn btn-lg btn-warning">
-                    <i class="fa fa-2x fa-eye"></i>
+                <a title="'.tr('Abilita utente').'" class="btn btn-xs btn-success tip ask" data-msg="" data-backto="record-edit" data-title="'.tr('Abiltare questo utente?').'" data-op="enable_user" data-id_utente="'.$utente['id'].'" data-button="'.tr('Abilita').'" data-class="btn btn-lg btn-warning">
+                    <i class="fa fa-eye"></i>
                 </a>';
         }
 
         // Cambio password e nome utente
         echo '
-                <a href="" data-href="'.$structure->fileurl('user.php').'?id_module='.$id_module.'&id_record='.$id_record.'&id_utente='.$utente['id'].'" class="text-warning tip" data-toggle="modal" title="Aggiorna dati utente"  data-msg="" data-backto="record-edit" data-title="Aggiorna dati utente"><i class="fa fa-2x fa-unlock-alt"></i></a>';
+                <a href="" data-href="'.$structure->fileurl('user.php').'?id_module='.$id_module.'&id_record='.$id_record.'&id_utente='.$utente['id'].'" class="btn btn-xs btn-warning tip" data-toggle="modal" title="'.tr('Aggiorna dati utente').'"  data-msg="" data-backto="record-edit" data-title="'.tr('Aggiorna dati utente').'"><i class="fa fa-unlock-alt"></i></a>';
 
         // Disabilitazione token API, se diverso da id_utente #1 (admin)
         $token = $dbo->fetchOne('SELECT `enabled` FROM `zz_tokens` WHERE `id_utente` = '.prepare($utente['id']).'')['enabled'];
-
+        
         if ($utente['id'] == '1') {
             echo '
-                <span title="'.tr("Non è possibile gestire l'accesso API per l'utente admin").'" class="text-muted tip">
-                    <i class="fa fa-2x fa-key "></i>
-                </span>';
+                <div data-toggle="tooltip" class="tip" title="'.tr("Non è possibile gestire l'accesso API per l'utente admin").'" ><span  class="btn btn-xs btn-default disabled">
+                    <i class="fa fa-key "></i>
+                </span></div>';
         } elseif (!empty($token)) {
             echo '
-                <a title="'.tr('Disabilita API').'" class="text-danger clickable tip ask" data-msg="" data-backto="record-edit" data-title="'.tr("Disabilitare l'accesso API per questo utente?").'" data-op="token_disable" data-id_utente="'.$utente['id'].'" data-button="'.tr('Disabilita').'">
-                    <i class="fa fa-2x fa-key"></i>
+                <a title="'.tr('Disabilita API').'" class="btn btn-xs btn-danger tip ask" data-msg="" data-backto="record-edit" data-title="'.tr("Disabilitare l'accesso API per questo utente?").'" data-op="token_disable" data-id_utente="'.$utente['id'].'" data-button="'.tr('Disabilita').'">
+                    <i class="fa fa-key"></i>
                 </a>';
         } else {
             echo '
-                <a title="'.tr('Abilitare API').'" class="text-success clickable tip ask" data-msg="" data-backto="record-edit" data-title="'.tr("Abilitare l'accesso API per questo utente?").'" data-op="token_enable" data-id_utente="'.$utente['id'].'" data-button="'.tr('Abilita').'" data-class="btn btn-lg btn-warning">
-                    <i class="fa fa-2x fa-key"></i>
+                <a title="'.tr('Abilitare API').'" class="btn btn-xs btn-success tip ask" data-msg="" data-backto="record-edit" data-title="'.tr("Abilitare l'accesso API per questo utente?").'" data-op="token_enable" data-id_utente="'.$utente['id'].'" data-button="'.tr('Abilita').'" data-class="btn btn-lg btn-warning">
+                    <i class="fa fa-key"></i>
                 </a>';
         }
 
         // Eliminazione utente, se diverso da id_utente #1 (admin)
         if ($utente['id'] == '1') {
             echo '
-                <span title="'.tr("Non è possibile eliminare l'utente admin").'" class="text-muted tip">
-                    <i class="fa fa-2x fa-trash"></i>
-                </span>';
+            <div data-toggle="tooltip" class="tip"  title="'.tr("Non è possibile eliminare l'utente admin").'" ><span class="btn btn-xs btn-default disabled">
+                    <i class="fa fa-trash"></i>
+                </span></div>';
         } else {
             echo '
-                <a title="Elimina utente" class="text-danger clickable tip ask" data-msg="" data-backto="record-edit" data-title="'.tr('Eliminare questo utente?').'" data-op="delete_user" data-id_utente="'.$utente['id'].'">
-                    <i class="fa fa-2x fa-trash"></i>
+                <a title="Elimina utente" class="btn btn-xs btn-danger tip ask" data-msg="" data-backto="record-edit" data-title="'.tr('Eliminare questo utente?').'" data-op="delete_user" data-id_utente="'.$utente['id'].'">
+                    <i class="fa fa-trash"></i>
                 </a>';
         }
 

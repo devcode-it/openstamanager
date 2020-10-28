@@ -81,6 +81,10 @@ $settings = [
         'type' => 'ext',
         'description' => tr('Permette la comunicazione con servizi esterni, quali il database europeo delle Partite IVA (facoltativo)'),
     ],
+    'gd' => [
+        'type' => 'ext',
+        'description' => tr('Permette la creazione dell\'immagine della firma per il rapportino d\'intervento (facoltativo)'),
+    ],
 
     //'display_errors' => [
     //    'type' => 'value',

@@ -590,6 +590,10 @@ class Fattura extends Document
     {
     }
 
+    public function getReferenceRagioneSociale()
+    {
+    }
+
     public function getReference()
     {
     }

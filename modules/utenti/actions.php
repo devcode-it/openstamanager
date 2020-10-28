@@ -125,7 +125,7 @@ switch (filter('op')) {
         if ($dbo->query('DELETE FROM zz_users WHERE id='.prepare($id_utente))) {
             flash()->info(tr('Utente eliminato!'));
 
-            if ($dbo->query('UPDATE zz_tokens SET enabled = 0 WHERE id_utente = '.prepare($id_utente))) {
+            if ($dbo->query('DELETE FROM zz_tokens WHERE id_utente='.prepare($id_utente))) {
                 flash()->info(tr('Token eliminato!'));
             }
         }
@@ -175,8 +175,9 @@ switch (filter('op')) {
         if ($rs[0]['editable'] == 1) {
             if ($dbo->query('DELETE FROM zz_groups WHERE id='.prepare($id_record))) {
                 $dbo->query('DELETE FROM zz_users WHERE idgruppo='.prepare($id_record));
+                $dbo->query('DELETE FROM zz_tokens WHERE id_utente IN (SELECT id FROM zz_users WHERE idgruppo='.prepare($id_record).')');
                 $dbo->query('DELETE FROM zz_permissions WHERE idgruppo='.prepare($id_record));
-                flash()->info(tr('Gruppo eliminato!'));
+                flash()->info(tr('Gruppo e relativi utenti eliminati!'));
             }
         } else {
             flash()->error(tr('Questo gruppo non si può eliminare!'));

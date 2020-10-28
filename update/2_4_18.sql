@@ -26,7 +26,8 @@ INSERT INTO `zz_cache` (`id`, `name`, `content`, `valid_time`, `expire_at`) VALU
 (NULL, 'Disabilita cron', '', '1 month', NULL);
 
 INSERT INTO `zz_tasks` (`id`, `name`, `class`, `expression`, `last_executed_at`) VALUES
-(NULL, 'Backup automatico', 'Modules\\Backups\\BackupTask', '0 1 * * *', NULL);
+(NULL, 'Backup automatico', 'Modules\\Backups\\BackupTask', '0 1 * * *', NULL)
+(NULL, 'Importazione automatica Ricevute FE', 'Plugins\\ReceiptFE\\ReceiptTask', '0 */4 * * *', NULL);
 
 DELETE FROM `zz_hooks` WHERE `class` = 'Modules\\Backups\\BackupHook';
 

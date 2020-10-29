@@ -119,13 +119,14 @@ if (empty($record) || !$has_access) {
                 $( document ).ready(function() {';
 
                     if (!empty($hide_left_sidebar)){
-    echo '              $(".control-sidebar").removeClass("control-sidebar-shown");  $("aside.content-wrapper").toggleClass("with-control-sidebar");';
+    echo '              $(".control-sidebar").removeClass("control-sidebar-shown");  $("aside.content-wrapper, .main-footer").toggleClass("with-control-sidebar");';
                     }
 
     echo '
                     $(".control-sidebar-toggle").bind("click", function() {
-                        $("aside.content-wrapper").toggleClass("with-control-sidebar");
+                        $("aside.content-wrapper, .main-footer").toggleClass("with-control-sidebar");
                         $(".control-sidebar").toggleClass("control-sidebar-shown");
+                      
                     });
                    
                 });

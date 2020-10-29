@@ -327,3 +327,7 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_scadenziario`\r\n 
 
 -- Elimino token disabilitati
 DELETE FROM `zz_tokens` WHERE `zz_tokens`.`enabled` = 0;
+
+
+-- Aggiunta impostazione per mostrare o nascondere barra plugin
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Nascondere la barra dei plugin di default', '0', 'boolean', '1', 'Generali',  '2', NULL);

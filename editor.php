@@ -105,11 +105,31 @@ if (empty($record) || !$has_access) {
 
     echo '
 					</a>
-				</li>
+                </li>';
+    
+    $hide_left_sidebar = Auth::check() && (setting('Nascondere la barra dei plugin di default'));
+
+    echo '
 
 				<li class="control-sidebar-toggle">
                     <a data-toggle="control-sidebar" style="cursor: pointer">'.tr('Plugin').'</a>
                 </li>
+
+                <script>
+                $( document ).ready(function() {';
+
+                    if (!empty($hide_left_sidebar)){
+    echo '              $(".control-sidebar").removeClass("control-sidebar-shown");  $("aside.content-wrapper").toggleClass("with-control-sidebar");';
+                    }
+
+    echo '
+                    $(".control-sidebar-toggle").bind("click", function() {
+                        $("aside.content-wrapper").toggleClass("with-control-sidebar");
+                        $(".control-sidebar").toggleClass("control-sidebar-shown");
+                    });
+                   
+                });
+                </script>
 			</ul>
 
 			<div class="tab-content">

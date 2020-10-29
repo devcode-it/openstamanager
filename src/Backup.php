@@ -169,7 +169,7 @@ class Backup
             ],
         ];
 
-        if (starts_with($backup_dir, slashes(base_dir()))) {
+        if (string_starts_with($backup_dir, slashes(base_dir()))) {
             $ignores['dirs'][] = basename($backup_dir);
         }
 

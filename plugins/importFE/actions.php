@@ -37,7 +37,7 @@ switch (filter('op')) {
         $temp_name = $_FILES['blob']['tmp_name'];
         $name = $_FILES['blob']['name'];
 
-        if (ends_with($name, '.zip')) {
+        if (string_ends_with($name, '.zip')) {
             $directory = FatturaElettronica::getImportDirectory();
 
             Util\Zip::extract($temp_name, $directory);

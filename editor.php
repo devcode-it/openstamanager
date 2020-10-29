@@ -40,7 +40,7 @@ if (!empty($id_record)) {
     Util\Query::setSegments(true);
 }
 // Replace automatico del campo deleted_at se non specifico a una tabella
-if (!str_contains($query, '.`deleted_at`') && !str_contains($query, '.deleted_at')) {
+if (!string_contains($query, '.`deleted_at`') && !string_contains($query, '.deleted_at')) {
     $query = str_replace(['AND `deleted_at` IS NULL', '`deleted_at` IS NULL AND', '`deleted_at` IS NULL', 'AND deleted_at IS NULL', 'deleted_at IS NULL AND', 'deleted_at IS NULL'], '', $query);
 }
 
@@ -106,7 +106,7 @@ if (empty($record) || !$has_access) {
     echo '
 					</a>
                 </li>';
-    
+
     $hide_left_sidebar = Auth::check() && (setting('Nascondere la barra dei plugin di default'));
 
     echo '
@@ -126,9 +126,9 @@ if (empty($record) || !$has_access) {
                     $(".control-sidebar-toggle").bind("click", function() {
                         $("aside.content-wrapper, .main-footer").toggleClass("with-control-sidebar");
                         $(".control-sidebar").toggleClass("control-sidebar-shown");
-                      
+
                     });
-                   
+
                 });
                 </script>
 			</ul>

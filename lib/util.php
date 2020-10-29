@@ -98,7 +98,7 @@ if (!function_exists('array_deep_clean')) {
     }
 }
 
-if (!function_exists('starts_with')) {
+if (!function_exists('string_starts_with')) {
     /**
      * Check if a string starts with the given string.
      *
@@ -107,14 +107,14 @@ if (!function_exists('starts_with')) {
      *
      * @return bool
      */
-    function starts_with($string, $starts_with)
+    function string_starts_with($string, $starts_with)
     {
-        //return strpos($string, $starts_with) === 0;
+        //return strpos($string, $string_starts_with) === 0;
         return S::create($string)->startsWith($starts_with);
     }
 }
 
-if (!function_exists('ends_with')) {
+if (!function_exists('string_ends_with')) {
     /**
      * Check if a string ends with the given string.
      *
@@ -123,14 +123,14 @@ if (!function_exists('ends_with')) {
      *
      * @return bool
      */
-    function ends_with($string, $ends_with)
+    function string_ends_with($string, $ends_with)
     {
-        //return substr($string, -strlen($ends_with)) === $ends_with;
+        //return substr($string, -strlen($string_ends_with)) === $string_ends_with;
         return S::create($string)->endsWith($ends_with);
     }
 }
 
-if (!function_exists('str_contains')) {
+if (!function_exists('string_contains')) {
     /**
      * Check if a string contains the given string.
      *
@@ -139,14 +139,14 @@ if (!function_exists('str_contains')) {
      *
      * @return bool
      */
-    function str_contains($string, $contains)
+    function string_contains($string, $contains)
     {
         //return strpos($string, $contains) !== false;
         return S::create($string)->contains($contains);
     }
 }
 
-if (!function_exists('str_to_lower')) {
+if (!function_exists('string_lowercase')) {
     /**
      * Converts a string in the lower-case version.
      *
@@ -154,13 +154,13 @@ if (!function_exists('str_to_lower')) {
      *
      * @return string
      */
-    function str_to_lower($string)
+    function string_lowercase($string)
     {
         return S::create($string)->toLowerCase()->__toString();
     }
 }
 
-if (!function_exists('str_to_upper')) {
+if (!function_exists('string_uppercase')) {
     /**
      * Converts a string in the upper-case version.
      *
@@ -168,7 +168,7 @@ if (!function_exists('str_to_upper')) {
      *
      * @return string
      */
-    function str_to_upper($string)
+    function string_uppercase($string)
     {
         return S::create($string)->toUpperCase()->__toString();
     }

@@ -106,7 +106,7 @@ class Sync extends Resource implements RetrieveInterface, UpdateInterface
             $description = $event['DESCRIPTION'];
 
             // Individuazione idriga di in_interventi_tecnici
-            if (str_contains($event['UID'], '-')) {
+            if (string_contains($event['UID'], '-')) {
                 $idriga = 'NEW';
             } else {
                 $idriga = $event['UID'];

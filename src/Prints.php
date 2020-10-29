@@ -379,7 +379,7 @@ class Prints
         $report = str_replace('$table$', $table, $report);
 
         // Footer di default
-        if (!str_contains($report, '<page_footer>')) {
+        if (!string_contains($report, '<page_footer>')) {
             $report .= '<page_footer>$default_footer$</page_footer>';
         }
 

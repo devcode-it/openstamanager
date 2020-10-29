@@ -246,7 +246,7 @@ class DefaultHandler implements HandlerInterface
         if (isset($values['decimals'])) {
             if (is_numeric($values['decimals'])) {
                 $decimals = $values['decimals'];
-            } elseif (starts_with($values['decimals'], 'qta')) {
+            } elseif (string_starts_with($values['decimals'], 'qta')) {
                 $decimals = setting('Cifre decimali per quantità');
                 $values['decimals'] = $decimals;
 

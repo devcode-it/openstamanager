@@ -53,7 +53,7 @@ class Query
      */
     public static function readQuery($element)
     {
-        if (str_contains($element['option'], '|select|')) {
+        if (string_contains($element['option'], '|select|')) {
             $result = self::readNewQuery($element);
         } else {
             $result = self::readOldQuery($element);
@@ -173,7 +173,7 @@ class Query
                 $search_query = $total['search_inside'][$pos];
 
                 // Campo con ricerca personalizzata
-                if (str_contains($search_query, '|search|')) {
+                if (string_contains($search_query, '|search|')) {
                     $pieces = explode(',', $value);
                     foreach ($pieces as $piece) {
                         $piece = trim($piece);
@@ -195,12 +195,12 @@ class Query
 
                     // Gestione confronti
                     $real_value = trim(str_replace(['&lt;', '&gt;'], ['<', '>'], $value));
-                    $more = starts_with($real_value, '>=') || starts_with($real_value, '> =') || starts_with($real_value, '>');
-                    $minus = starts_with($real_value, '<=') || starts_with($real_value, '< =') || starts_with($real_value, '<');
-                    $equal = starts_with($real_value, '=');
+                    $more = string_starts_with($real_value, '>=') || string_starts_with($real_value, '> =') || string_starts_with($real_value, '>');
+                    $minus = string_starts_with($real_value, '<=') || string_starts_with($real_value, '< =') || string_starts_with($real_value, '<');
+                    $equal = string_starts_with($real_value, '=');
 
                     if ($minus || $more || $equal) {
-                        $sign = str_contains($real_value, '=') ? '=' : '';
+                        $sign = string_contains($real_value, '=') ? '=' : '';
                         if ($more) {
                             $sign = '>'.$sign;
                         } elseif ($minus) {
@@ -314,7 +314,7 @@ class Query
         $results = [];
         if (!empty($sums)) {
             foreach ($sums as $key => $sum) {
-                if (str_contains($key, 'sum_')) {
+                if (string_contains($key, 'sum_')) {
                     $results[str_replace('sum_', '', $key)] = Translator::numberToLocale($sum);
                 }
             }

@@ -177,15 +177,15 @@ class HTMLWrapper implements WrapperInterface
     {
         $result = $string;
 
-        if (starts_with($string, 'add|')) {
+        if (string_starts_with($string, 'add|')) {
             $result = $this->add($values, $extras, $string);
             $values['icon-custom'] = 'no-padding';
-        } elseif (starts_with($string, 'choice|')) {
+        } elseif (string_starts_with($string, 'choice|')) {
             $result = $this->choice($values, $extras, $string);
             $values['icon-custom'] = 'no-padding';
         }
 
-        if (str_contains($string, '<button')) {
+        if (string_contains($string, '<button')) {
             $values['icon-custom'] = 'no-padding';
         }
 

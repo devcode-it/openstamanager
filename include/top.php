@@ -63,7 +63,7 @@ if (Auth::check()) {
     $array = $_SESSION['module_'.$id_module];
     if (!empty($array)) {
         foreach ($array as $field => $value) {
-            if (!empty($value) && starts_with($field, 'search_')) {
+            if (!empty($value) && string_starts_with($field, 'search_')) {
                 $field_name = str_replace('search_', '', $field);
 
                 echo '
@@ -433,7 +433,7 @@ if (Auth::check()) {
                 <!-- /.sidebar -->
             </aside>';
 
-    if (str_contains($_SERVER['SCRIPT_FILENAME'], 'editor.php')) {
+    if (string_contains($_SERVER['SCRIPT_FILENAME'], 'editor.php')) {
         // Menu laterale per la visualizzazione dei plugin
         echo '
         <aside class="control-sidebar control-sidebar-light control-sidebar-shown">
@@ -496,15 +496,15 @@ if (Auth::check()) {
 
     echo '
             <!-- Right side column. Contains the navbar and content of the page -->
-            <aside class="content-wrapper '.(str_contains($_SERVER['SCRIPT_FILENAME'], 'editor.php') ? 'with-control-sidebar' : '').'">
+            <aside class="content-wrapper '.(string_contains($_SERVER['SCRIPT_FILENAME'], 'editor.php') ? 'with-control-sidebar' : '').'">
 
                 <!-- Main content -->
                 <section class="content">
                     <div class="row">';
 
-    if (str_contains($_SERVER['SCRIPT_FILENAME'], 'editor.php')) {
+    if (string_contains($_SERVER['SCRIPT_FILENAME'], 'editor.php')) {
         $location = 'editor_right';
-    } elseif (str_contains($_SERVER['SCRIPT_FILENAME'], 'controller.php')) {
+    } elseif (string_contains($_SERVER['SCRIPT_FILENAME'], 'controller.php')) {
         $location = 'controller_right';
     }
 

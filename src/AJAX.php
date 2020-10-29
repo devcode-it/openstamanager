@@ -94,7 +94,7 @@ class AJAX
      */
     public static function selectResults($query, $where, $filter = [], $search = [], $limit = [], $custom = [])
     {
-        if (str_contains($query, '|filter|')) {
+        if (string_contains($query, '|filter|')) {
             $query = str_replace('|filter|', !empty($filter) ? 'WHERE '.implode(' OR ', $filter) : '', $query);
         } elseif (!empty($filter)) {
             $where[] = '('.implode(' OR ', $filter).')';

@@ -301,7 +301,7 @@ class Formatter
                 $values = str_split(strrev($integer), 4);
 
                 foreach ($values as $key => $value) {
-                    if (strlen($value) == 4 && ends_with($value, $current['thousands'])) {
+                    if (strlen($value) == 4 && string_ends_with($value, $current['thousands'])) {
                         $values[$key] = substr($value, 0, -1);
                     }
                 }

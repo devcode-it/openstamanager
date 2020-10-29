@@ -308,7 +308,7 @@ function redirectOperation($id_module, $id_record)
     // Scelta del redirect dopo un submit
     if (!empty($backto)) {
         $hash = filter('hash');
-        $hash = !starts_with($hash, '#') ? '#'.$hash : $hash;
+        $hash = !string_starts_with($hash, '#') ? '#'.$hash : $hash;
         $hash = $hash == '#tab_0' ? '' : $hash;
 
         if ($backto == 'record-edit') {

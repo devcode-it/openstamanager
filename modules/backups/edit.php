@@ -50,7 +50,7 @@ if (!is_writable($backup_dir) || !is_readable($backup_dir)) {
 
 echo '<p>'.tr('Il backup è molto importante perché permette di creare una copia della propria installazione e relativi dati per poterla poi ripristinare in seguito a errori, cancellazioni accidentali o guasti hardware').'.</p>';
 
-if (starts_with($backup_dir, base_dir())) {
+if (string_starts_with($backup_dir, base_dir())) {
     echo '
     <div class="alert alert-warning">
         <i class="fa fa-warning"></i> '.tr('Per motivi di sicurezza si consiglia di modificare il percorso della cartella di backup al di fuori della cartella di OSM, possibilmente in una unità esterna').'.
@@ -170,7 +170,7 @@ if (file_exists($backup_dir)) {
     $backups_file = [];
 
     foreach ($backups as $key => $backup) {
-        if (ends_with($backup, '.zip')) {
+        if (string_ends_with($backup, '.zip')) {
             $backups_zip[$key] = $backup;
         } else {
             $backups_file[$key] = $backup;

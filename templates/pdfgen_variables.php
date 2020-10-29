@@ -50,7 +50,7 @@ foreach ($prefixes as $prefix) {
     $replaces[$prefix.'pec'] = !empty($replaces[$prefix.'pec']) ? 'PEC: '.$replaces[$prefix.'pec'] : '';
 
     foreach ($replaces as $key => $value) {
-        if (starts_with($key, $prefix)) {
+        if (string_starts_with($key, $prefix)) {
             $replaces[$key] = empty($value) ? $value : $value.'<br/>';
         }
     }

@@ -73,8 +73,8 @@ if (post('db_host') !== null) {
                 $privileges = current($result);
 
                 if (
-                    str_contains($privileges, ' ON `'.$db_name.'`.*') ||
-                    str_contains($privileges, ' ON *.*')
+                    string_contains($privileges, ' ON `'.$db_name.'`.*') ||
+                    string_contains($privileges, ' ON *.*')
                 ) {
                     $pieces = explode(', ', explode(' ON ', str_replace('GRANT ', '', $privileges))[0]);
 

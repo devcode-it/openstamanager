@@ -49,7 +49,7 @@ class Ricevuta
         $file = static::getImportDirectory().'/'.$name;
 
         // Estrazione implicita per il formato ZIP
-        if (ends_with($name, '.zip')) {
+        if (string_ends_with($name, '.zip')) {
             $original_file = $file;
 
             $extraction_dir = static::getImportDirectory().'/tmp';

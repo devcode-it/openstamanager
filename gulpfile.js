@@ -421,6 +421,7 @@ function release(done) {
         'vendor/mpdf/mpdf/ttfonts/DejaVu*Condensed*',
         '!vendor/maximebf/debugbar/src/DebugBar/Resources/vendor/*',
         '!vendor/respect/validation/tests/*',
+        '!vendor/willdurand/geocoder/tests/*',
     ], {
         dot: true,
     }).then(function (files) {

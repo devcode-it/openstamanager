@@ -92,7 +92,7 @@ if (!empty($utenti)) {
 
         // Disabilitazione token API, se diverso da id_utente #1 (admin)
         $token = $dbo->fetchOne('SELECT `enabled` FROM `zz_tokens` WHERE `id_utente` = '.prepare($utente['id']).'')['enabled'];
-        
+
         if ($utente['id'] == '1') {
             echo '
                 <div data-toggle="tooltip" class="tip" title="'.tr("Non è possibile gestire l'accesso API per l'utente admin").'" ><span  class="btn btn-xs btn-default disabled">
@@ -170,14 +170,14 @@ if ($record['nome'] != 'Amministratori') {
 
     $moduli = Modules::getHierarchy();
 
-    $permissions = [
+    $permessi_disponibili = [
         '-' => tr('Nessun permesso'),
         'r' => tr('Sola lettura'),
         'rw' => tr('Lettura e scrittura'),
     ];
 
     for ($m = 0; $m < count($moduli); ++$m) {
-        echo menuSelection($moduli[$m], $id_record, -1, array_keys($permissions), array_values($permissions));
+        echo menuSelection($moduli[$m], $id_record, -1, $permessi_disponibili);
     }
 
     echo '

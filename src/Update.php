@@ -175,7 +175,7 @@ class Update
     {
         $version = self::getVersion();
 
-        return str_contains($version, 'beta');
+        return string_contains($version, 'beta');
     }
 
     /**
@@ -517,7 +517,7 @@ class Update
     {
         $version = str_replace('.', '_', $update['version']);
 
-        $old_standard = str_contains($update['version'], '_');
+        $old_standard = string_contains($update['version'], '_');
         if (empty($update['directory']) && !$old_standard) {
             return 'update/'.$version;
         }
@@ -544,7 +544,7 @@ class Update
      */
     protected static function getFile($file)
     {
-        $file = (str_contains($file, base_dir().DIRECTORY_SEPARATOR)) ? $file : base_dir().DIRECTORY_SEPARATOR.$file;
+        $file = (string_contains($file, base_dir().DIRECTORY_SEPARATOR)) ? $file : base_dir().DIRECTORY_SEPARATOR.$file;
 
         $result = '';
 

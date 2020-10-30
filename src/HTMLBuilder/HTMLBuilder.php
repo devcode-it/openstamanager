@@ -486,7 +486,7 @@ class HTMLBuilder
         foreach ($values as $key => $value) {
             // Fix per la presenza di apici doppi
             $value = prepareToField(is_array($value) ? implode(' ', $value) : $value);
-            if (str_contains($result, '|'.$key.'|')) {
+            if (string_contains($result, '|'.$key.'|')) {
                 $result = str_replace('|'.$key.'|', $value, $result);
             } elseif (!empty($value) || is_numeric($value)) {
                 $attributes[] = $key.'="'.$value.'"';

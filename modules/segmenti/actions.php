@@ -21,7 +21,7 @@ include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
     case 'update':
-        $pattern = str_contains(post('pattern'), '#') ? post('pattern') : '####';
+        $pattern = string_contains(post('pattern'), '#') ? post('pattern') : '####';
         $predefined = post('predefined');
         $module = post('module');
 
@@ -61,7 +61,7 @@ switch (post('op')) {
         break;
 
     case 'add':
-        $pattern = str_contains(post('pattern'), '#') ? post('pattern') : '####';
+        $pattern = string_contains(post('pattern'), '#') ? post('pattern') : '####';
         $predefined = post('predefined');
         $module = post('module');
 

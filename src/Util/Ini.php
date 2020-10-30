@@ -158,7 +158,7 @@ class Ini
                         $tipo = ($array[$sezione]['tipo'] == 'input') ? 'text' : $array[$sezione]['tipo'];
                         $valore = $array[$sezione]['valore'];
 
-                        $opzioni = str_contains($array[$sezione]['opzioni'] ?: '', ',') ? explode(',', $array[$sezione]['opzioni']) : [];
+                        $opzioni = string_contains($array[$sezione]['opzioni'] ?: '', ',') ? explode(',', $array[$sezione]['opzioni']) : [];
                         $values = [];
                         foreach ($opzioni as $o) {
                             $values[] = '\"'.addslashes(addslashes($o)).'\": \"'.addslashes(addslashes($o)).'\"';

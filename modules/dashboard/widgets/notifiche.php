@@ -32,7 +32,7 @@ $notes = collect();
 
 $moduli = Module::getAll()->where('permission', '<>', '-');
 foreach ($moduli as $modulo) {
-    $note = $modulo->notes()->where('notification_date', '>=', date('Y-m-d'))->get();
+    $note = $modulo->notes()->whereNotNull('notification_date')->orderBy('notification_date', 'asc')->get();
     $notes = $notes->merge($note);
 }
 
@@ -42,7 +42,7 @@ if (!empty($is_number_request)) {
     return;
 }
 
-if (empty($notes)) {
+if ($notes->count() < 1) {
     echo '
 <p>'.tr('Non ci sono note da notificare').'.</p>';
 

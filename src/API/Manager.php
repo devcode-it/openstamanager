@@ -86,7 +86,7 @@ class Manager
             $value = substr($value, 1, -1);
 
             // Individuazione della tipologia (array o string)
-            $where[$key] = str_contains($value, ',') ? explode(',', $value) : $value;
+            $where[$key] = string_contains($value, ',') ? explode(',', $value) : $value;
         }
 
         // Ordinamento personalizzato

@@ -34,7 +34,7 @@ $search_filters = [];
 
 if (is_array($_SESSION['module_'.$id_module])) {
     foreach ($_SESSION['module_'.$id_module] as $field => $value) {
-        if (!empty($value) && starts_with($field, 'search_')) {
+        if (!empty($value) && string_starts_with($field, 'search_')) {
             $field_name = str_replace('search_', '', $field);
             $field_name = str_replace('__', ' ', $field_name);
             $field_name = str_replace('-', ' ', $field_name);

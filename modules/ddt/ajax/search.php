@@ -58,7 +58,7 @@ foreach ($rs as $r) {
     // Campi da evidenziare
     $result['labels'] = [];
     foreach ($fields as $name => $value) {
-        if (str_contains($r[$name], $term)) {
+        if (string_contains($r[$name], $term)) {
             if ($name == 'Righe') {
                 $result['labels'][] = tr('Termine presente nelle righe del documento').'<br/>';
             } else {

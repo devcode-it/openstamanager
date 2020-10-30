@@ -75,10 +75,10 @@ foreach ($tecnici as $id_tecnico => $ore) {
 
     // Conflitti ristretti per orario
     foreach ($ore as $orario) {
-        $query_conflitto = $query.' AND (orario_inizio > '.prepare($orario['inizio']).' AND orario_inizio < '.prepare($orario['fine']).') OR
+        $query_conflitto = $query.' AND ((orario_inizio > '.prepare($orario['inizio']).' AND orario_inizio < '.prepare($orario['fine']).') OR
         (orario_fine > '.prepare($orario['inizio']).' AND orario_fine < '.prepare($orario['fine']).') OR
         (orario_inizio < '.prepare($orario['inizio']).' AND orario_fine > '.prepare($orario['inizio']).') OR
-        (orario_inizio < '.prepare($orario['fine']).' AND orario_fine > '.prepare($orario['fine']).')';
+        (orario_inizio < '.prepare($orario['fine']).' AND orario_fine > '.prepare($orario['fine']).'))';
 
         $conflitto = $database->fetchArray($query_conflitto);
         if (!empty($conflitto)) {

@@ -301,7 +301,7 @@ class App
      */
     public static function filepath($path, $file = null)
     {
-        $path = str_contains($path, base_dir()) ? $path : base_dir().'/'.ltrim($path, '/');
+        $path = string_contains($path, base_dir()) ? $path : base_dir().'/'.ltrim($path, '/');
         $path = empty($file) ? $path : rtrim($path, '/').'/'.$file;
 
         $original_file = str_replace('|custom|', '', $path);

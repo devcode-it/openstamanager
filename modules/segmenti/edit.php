@@ -87,7 +87,7 @@ $_SESSION['module_'.$record['id_module']]['id_segment'] = $previous_module;
 
 <?php
 
-if (str_contains($current_module['option'], '|segment')) {
+if (string_contains($current_module['option'], '|segment')) {
     ?>
 	<!-- Campi extra -->
 	<div class="panel panel-primary">

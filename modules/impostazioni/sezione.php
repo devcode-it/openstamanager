@@ -31,9 +31,27 @@ foreach ($impostazioni as $impostazione) {
         '.Settings::input($impostazione['id']).'
     </div>
 
-    <script>
+    <script>';
+
+    if ($impostazione->tipo == 'time'){
+    echo '
+    input("setting['.$impostazione->id.']");
+    $(document).on("blur", "#setting'.$impostazione->id.'", function (e) {
+      salvaImpostazione('.$impostazione->id.', $("#setting'.$impostazione->id.'").val());
+    });
+    ';
+
+    }
+    else{
+
+    echo '
+
     input("setting['.$impostazione->id.']").change(function (){
         salvaImpostazione('.$impostazione->id.', input(this).get());
-    });
+    });';
+
+    }
+
+    echo '
     </script>';
 }

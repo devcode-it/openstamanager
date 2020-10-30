@@ -110,9 +110,9 @@ foreach ($settings as $name => $values) {
         $ini = str_replace(['k', 'M'], ['000', '000000'], ini_get($name));
         $real = str_replace(['k', 'M'], ['000', '000000'], $description);
 
-        if (starts_with($real, '>')) {
+        if (string_starts_with($real, '>')) {
             $status = $ini >= substr($real, 1);
-        } elseif (starts_with($real, '<')) {
+        } elseif (string_starts_with($real, '<')) {
             $status = $ini <= substr($real, 1);
         } else {
             $status = ($real == $ini);

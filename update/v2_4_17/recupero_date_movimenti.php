@@ -39,7 +39,7 @@ if (empty($file)) {
         $backup = $backups[$i];
 
         // Individuazione del database nel backup
-        if (ends_with($backup, '.zip')) {
+        if (string_ends_with($backup, '.zip')) {
             $zip = new ZipArchive();
             $zip->open($backup);
 
@@ -85,7 +85,7 @@ $count = count($queries);
 // Individuazione del dump di co_movimenti
 $query = null;
 for ($i = 0; $i < $count; ++$i) {
-    if (starts_with($queries[$i], 'INSERT INTO `co_movimenti`')) {
+    if (string_starts_with($queries[$i], 'INSERT INTO `co_movimenti`')) {
         $query = $queries[$i];
     }
 }

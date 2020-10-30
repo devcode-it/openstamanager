@@ -75,7 +75,7 @@ switch (filter('op')) {
         if (empty($dettaglio_predefinito)) {
             $dettaglio_predefinito = DettaglioPrezzo::build($articolo, $anagrafica, $direzione);
         }
-        $dettaglio_predefinito->sconto = $sconto;
+        $dettaglio_predefinito->sconto_percentuale = $sconto;
         $dettaglio_predefinito->setPrezzoUnitario($prezzo_unitario);
         $dettaglio_predefinito->save();
 
@@ -102,7 +102,7 @@ switch (filter('op')) {
 
                 $dettaglio->minimo = $minimi[$key];
                 $dettaglio->massimo = $massimi[$key];
-                $dettaglio->sconto = $sconti[$key];
+                $dettaglio->sconto_percentuale = $sconti[$key];
                 $dettaglio->setPrezzoUnitario($prezzo_unitario);
                 $dettaglio->save();
             }

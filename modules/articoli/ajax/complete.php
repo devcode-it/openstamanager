@@ -116,7 +116,7 @@ switch ($resource) {
      * - id_articolo
      * - id_anagrafica
      */
-    case 'prezzi_articolo':
+    case 'dettagli_articolo':
         $id_articolo = get('id_articolo');
         $id_anagrafica = get('id_anagrafica');
         $direzione = get('dir') == 'uscita' ? 'uscita' : 'entrata';
@@ -127,7 +127,8 @@ switch ($resource) {
 
         $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
-        $query = 'SELECT minimo, massimo, sconto,
+        $query = 'SELECT minimo, massimo,
+            sconto_percentuale,
             '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario
         FROM mg_prezzi_articoli
         WHERE id_articolo = '.prepare($id_articolo).' AND dir = '.prepare($direzione).' |where|

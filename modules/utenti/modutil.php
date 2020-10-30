@@ -39,7 +39,7 @@ function menuSelection($element, $group_id, $depth, $perms_values, $perms_names)
                 <tr>
 					<td>'.str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', $depth).$name.'</td>
                     <td>
-						<select name="permesso" class="form-control superselect" onchange="update_permissions('.$element['id'].', $(this).find(\'option:selected\').val())">';
+						<select name="permesso_'.$element['id'].'" id="permesso_'.$element['id'].'" class="form-control superselect openstamanager-input select-input" onchange="update_permissions('.$element['id'].', $(this).find(\'option:selected\').val())">';
     // Permessi
     $rsp = $dbo->fetchArray('SELECT permessi FROM zz_permissions WHERE idgruppo='.prepare($group_id).' AND idmodule='.prepare($element['id']));
 

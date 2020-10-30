@@ -327,3 +327,6 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_scadenziario`\r\n 
 
 -- Elimino token disabilitati
 DELETE FROM `zz_tokens` WHERE `zz_tokens`.`enabled` = 0;
+
+-- Aggiunto colonna sconto per le coppie anagrafica articolo
+ALTER TABLE `mg_prezzi_articoli` ADD `sconto` DECIMAL(15,6) NOT NULL AFTER `massimo`;

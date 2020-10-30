@@ -127,7 +127,7 @@ switch ($resource) {
 
         $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
-        $query = 'SELECT minimo, massimo,
+        $query = 'SELECT minimo, massimo, sconto,
             '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario
         FROM mg_prezzi_articoli
         WHERE id_articolo = '.prepare($id_articolo).' AND dir = '.prepare($direzione).' |where|

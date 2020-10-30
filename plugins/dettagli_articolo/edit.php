@@ -73,6 +73,7 @@ if (!$clienti->isEmpty()) {
                         <th class="text-center" width="210">'.tr('Q.tà minima').'</th>
                         <th class="text-center" width="210">'.tr('Q.tà massima').'</th>
                         <th class="text-center" width="150">'.tr('Prezzo unitario').'</th>
+                        <th class="text-center" width="150">'.tr('Sconto').'</th>
                         <th class="text-center" width="150">#</th>
                     </tr>
                 </thead>
@@ -84,7 +85,7 @@ if (!$clienti->isEmpty()) {
 
         echo '
                     <tr data-id_anagrafica="'.$id_cliente.'" data-direzione="entrata">
-                        <td colspan="4">
+                        <td colspan="5">
                             '.Modules::link('Anagrafiche', $anagrafica->id, $anagrafica->ragione_sociale).'
                         </td>
 
@@ -119,6 +120,10 @@ if (!$clienti->isEmpty()) {
 
                         <td class="text-right">
                             '.moneyFormat($dettaglio->prezzo_unitario).'
+                        </td>
+
+                        <td class="text-right">
+                            '.numberFormat($dettaglio->sconto).'%
                         </td>
 
                         <td>';
@@ -281,17 +286,16 @@ if (!$fornitori_disponibili->isEmpty()) {
             echo '
                     <tr>
                         <td></td>
-                        <td></td>
                         <th class="text-center">'.tr('Q.tà minima').'</th>
                         <th class="text-center">'.tr('Q.tà massima').'</th>
                         <th class="text-center">'.tr('Prezzo unitario').'</th>
+                        <th class="text-center">'.tr('Sconto').'</th>
                         <td></td>
                     </tr>';
 
             foreach ($prezzi as $key => $dettaglio) {
                 echo '
                     <tr>
-                        <td></td>
                         <td></td>
 
                         <td class="text-right">
@@ -305,7 +309,9 @@ if (!$fornitori_disponibili->isEmpty()) {
                         <td class="text-right">
                             '.moneyFormat($dettaglio->prezzo_unitario).'
                         </td>
-
+                        <td class="text-right">
+                            '.numberFormat($dettaglio->sconto).'%
+                        </td>
                         <td>';
 
                 if (!isset($dettaglio->minimo) && !isset($dettaglio->massimo)) {

@@ -52,6 +52,10 @@ if (empty($result['idarticolo'])) {
             ottieniPrezziArticolo("'.$articolo['id'].'").then(function (){
                 verificaPrezzoArticolo();
             });
+
+            ottieniScontiArticolo("'.$articolo['id'].'").then(function (){
+                verificaScontoArticolo();
+            });
         });
     </script>';
 }
@@ -111,6 +115,17 @@ $(document).ready(function () {
     }
 });
 
+$("#tipo_sconto").on("change", function() {
+    let $data = $("#idarticolo").selectData();
+    ottieniScontiArticolo($data.id).then(function() {
+        if ($("#sconto").val().toEnglish() === 0){
+            aggiornaScontoArticolo();
+        } else {
+            verificaScontoArticolo();
+        }
+    });
+});
+
 $("#idarticolo").on("change", function() {
     // Operazioni sui prezzi in fondo alla pagina
     let prezzi_precedenti = $("#prezzi_articolo button");
@@ -136,9 +151,17 @@ $("#idarticolo").on("change", function() {
     let $data = $(this).selectData();
     ottieniPrezziArticolo($data.id).then(function() {
         if ($("#prezzo_unitario").val().toEnglish() === 0){
-            aggiornaPrezzoArticolo();
+            aggiornaPrezzoArticolo()
         } else {
             verificaPrezzoArticolo();
+        }
+    });
+
+    ottieniScontiArticolo($data.id).then(function() {
+        if ($("#sconto").val().toEnglish() === 0){
+            aggiornaScontoArticolo();
+        } else {
+            verificaScontoArticolo();
         }
     });
 
@@ -170,8 +193,9 @@ $("#idarticolo").on("change", function() {
     }
 });
 
-$(document).on("change", "input[name^=qta], input[name^=prezzo_unitario]", function() {
+$(document).on("change", "input[name^=qta], input[name^=prezzo_unitario], input[name^=sconto]", function() {
     verificaPrezzoArticolo();
+    verificaScontoArticolo();
 });
 
 /**
@@ -202,6 +226,34 @@ function getPrezzoPerQuantita(qta) {
 }
 
 /**
+* Restituisce lo sconto registrato per una specifica quantità dell\'articolo.
+*/
+function getScontoPerQuantita(qta) {
+    const data = $("#sconto").data("sconti");
+    if (!data) return 0;
+
+    let sconto_predefinito = null;
+    let sconto_selezionato = null;
+    for (const prezzo of data) {
+        if (prezzo.minimo == null && prezzo.massimo == null) {
+            sconto_predefinito = prezzo.sconto;
+            continue;
+        }
+
+        if (qta >= prezzo.minimo && qta <= prezzo.massimo) {
+            sconto_selezionato = prezzo.sconto;
+        }
+    }
+
+    if (sconto_selezionato == null) {
+        sconto_selezionato = sconto_predefinito;
+    }
+
+    return parseFloat(sconto_selezionato);
+}
+
+
+/**
 * Funzione per registrare localmente i prezzi definiti per l\'articolo in relazione ad una specifica anagrafica.
 */
 function ottieniPrezziArticolo(id_articolo) {
@@ -209,6 +261,18 @@ function ottieniPrezziArticolo(id_articolo) {
         const data = JSON.parse(response);
 
         $("#prezzo_unitario").data("prezzi", data);
+    });
+}
+
+/**
+* Funzione per registrare localmente gli sconti definiti per l\'articolo in relazione ad una specifica anagrafica.
+*/
+
+function ottieniScontiArticolo(id_articolo) {
+    return $.get(globals.rootdir + "/ajax_complete.php?module=Articoli&op=prezzi_articolo&id_anagrafica='.$options['idanagrafica'].'&id_articolo=" + id_articolo + "&dir=" + direzione, function(response) {
+        const data = JSON.parse(response);
+
+        $("#sconto").data("sconti", data);
     });
 }
 
@@ -232,7 +296,29 @@ function verificaPrezzoArticolo() {
     }
 
     div.css("padding-top", "5px");
-    div.html(`<small class="label label-warning" >'.tr('Prezzo registrato').': ` + prezzo_previsto.toLocale() + globals.currency + `<button type="button" class="btn btn-xs btn-info pull-right" onclick="aggiornaPrezzoArticolo()"><i class="fa fa-refresh"></i> '.tr('Aggiorna').'</button></small>`);
+    div.html(`<small class="label label-warning" >'.tr('Prezzo suggerito').': ` + prezzo_previsto.toLocale() + globals.currency + `<button type="button" class="btn btn-xs btn-info pull-right" onclick="aggiornaPrezzoArticolo()"><i class="fa fa-refresh"></i> '.tr('Aggiorna').'</button></small>`);
+}
+
+/**
+* Funzione per verificare se lo sconto unitario corrisponde a quello registrato per l\'articolo, e proporre in automatico una correzione.
+*/
+function verificaScontoArticolo() {
+    let qta = $("#qta").val().toEnglish();
+    let sconto_previsto = getScontoPerQuantita(qta);
+    console.log(sconto_previsto);
+    let sconto_input = $("#sconto");
+    let sconto = sconto_input.val().toEnglish();
+
+    let div = sconto_input.parent().next();
+    if (sconto_previsto === sconto || $("#tipo_sconto").val() === "UNT") {
+        div.css("padding-top", "0");
+        div.html("");
+
+        return;
+    }
+
+    div.css("padding-top", "5px");
+    div.html(`<small class="label label-warning" >'.tr('Sconto suggerito').': ` + sconto_previsto.toLocale()  + `%<button type="button" class="btn btn-xs btn-info pull-right" onclick="aggiornaScontoArticolo()"><i class="fa fa-refresh"></i> '.tr('Aggiorna').'</button></small>`);
 }
 
 /**
@@ -243,6 +329,16 @@ function aggiornaPrezzoArticolo() {
     let prezzo_previsto = getPrezzoPerQuantita(qta);
 
     $("#prezzo_unitario").val(prezzo_previsto).trigger("change");
+}
+
+/**
+* Funzione per aggiornare lo sconto unitario sulla base dei valori automatici.
+*/
+function aggiornaScontoArticolo() {
+    let qta = $("#qta").val().toEnglish();
+    let sconto_previsto = getScontoPerQuantita(qta);
+
+    $("#sconto").val(sconto_previsto).trigger("change");
 }
 
 /**

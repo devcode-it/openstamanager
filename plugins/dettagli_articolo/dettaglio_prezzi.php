@@ -62,15 +62,18 @@ echo '
     <input type="hidden" name="id_articolo" value="'.$id_articolo.'">
 
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <p>'.tr('Prezzo unitario predefinito: _TOT_', [
                 '_TOT_' => moneyFormat($prezzo_predefinito),
             ]).'</p>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-4">
             {[ "type": "checkbox", "label": "'.tr("Modifica prezzo per l'anagrafica").'", "name": "modifica_prezzi", "value": "'.intval(!$dettagli->isEmpty() || !empty($dettaglio_predefinito)).'" ]}
         </div>
+        <div class="col-md-4">
+        {[ "type": "checkbox", "label": "'.tr('Imposta un prezzo unitario fisso').'", "name": "prezzo_fisso", "value": "'.intval($dettagli->count() == 0).'" ]}
+    </div>
     </div>
 
     <div class="row">
@@ -79,8 +82,10 @@ echo '
         </div>
 
         <div class="col-md-6">
-            {[ "type": "checkbox", "label": "'.tr('Imposta un prezzo unitario fisso').'", "name": "prezzo_fisso", "value": "'.intval($dettagli->count() == 0).'" ]}
+                {[ "type": "number", "label": "'.tr('Sconto predefinito').'", "name": "sconto_fisso", "value": "'.$dettaglio_predefinito->sconto.'", "icon-after": "%"]}
         </div>
+
+
     </div>
 
     <div class="box" id="prezzi">
@@ -106,6 +111,7 @@ echo '
                         <th class="text-center tip" title="'.($prezzi_ivati ? tr('Importo IVA inclusa') : '').'">
                             '.tr('Prezzo unitario').' <i class="fa fa-question-circle-o"></i>
                         </th>
+                        <th class="text-center">'.tr('Sconto').'</th>
                         <th>#</th>
                     </tr>
                 </thead>
@@ -127,7 +133,8 @@ foreach ($dettagli as $key => $dettaglio) {
                         <td>
                            {[ "type": "number", "name": "prezzo_unitario['.$key.']", "icon-after": "'.currency().'", "value": "'.($prezzi_ivati ? $dettaglio->prezzo_unitario_ivato : $dettaglio->prezzo_unitario).'" ]}
                         </td>
-
+                        <td>
+                           {[ "type": "number", "name": "sconto['.$key.']", "min-value": 0, "value": "'.$dettaglio->sconto.'", "icon-after":"%" ]}
                         <td>
                             <button type="button" class="btn btn-xs btn-danger" onclick="rimuoviPrezzo(this)">
                                 <i class="fa fa-trash"></i>
@@ -166,6 +173,10 @@ echo '
 
             <td>
                {[ "type": "number", "name": "prezzo_unitario[-id-]", "icon-after": "'.currency().'" ]}
+            </td>
+
+            <td>
+               {[ "type": "number", "name": "sconto[-id-]", "min-value": 0, "icon-after": "%" ]}
             </td>
 
             <td>

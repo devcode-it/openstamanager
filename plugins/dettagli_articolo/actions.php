@@ -69,11 +69,13 @@ switch (filter('op')) {
 
         // Salvataggio del prezzo predefinito
         $prezzo_unitario = filter('prezzo_unitario_fisso');
+        $sconto = filter('sconto_fisso');
         $dettaglio_predefinito = DettaglioPrezzo::dettaglioPredefinito($id_articolo, $id_anagrafica, $direzione)
             ->first();
         if (empty($dettaglio_predefinito)) {
             $dettaglio_predefinito = DettaglioPrezzo::build($articolo, $anagrafica, $direzione);
         }
+        $dettaglio_predefinito->sconto = $sconto;
         $dettaglio_predefinito->setPrezzoUnitario($prezzo_unitario);
         $dettaglio_predefinito->save();
 
@@ -84,6 +86,7 @@ switch (filter('op')) {
             $prezzi_unitari = (array) filter('prezzo_unitario');
             $minimi = filter('minimo');
             $massimi = filter('massimo');
+            $sconti = (array) filter('sconto');
 
             // Rimozione dei prezzi cancellati
             $registrati = filter('dettaglio');
@@ -99,6 +102,7 @@ switch (filter('op')) {
 
                 $dettaglio->minimo = $minimi[$key];
                 $dettaglio->massimo = $massimi[$key];
+                $dettaglio->sconto = $sconti[$key];
                 $dettaglio->setPrezzoUnitario($prezzo_unitario);
                 $dettaglio->save();
             }

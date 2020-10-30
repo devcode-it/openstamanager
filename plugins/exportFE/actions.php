@@ -76,7 +76,7 @@ switch (filter('op')) {
         $type = filter('type');
 
         $cambia_stato = $type != 'download';
-        $fattura = Ricevuta::process($name, false);
+        $fattura = Ricevuta::process($name, $cambia_stato);
 
         $numero_esterno = $fattura ? $fattura->numero_esterno : null;
 

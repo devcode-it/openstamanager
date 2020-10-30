@@ -19,28 +19,44 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Carbon\Carbon;
+use Modules\Fatture\Fattura;
 use Plugins\ReceiptFE\Interaction;
 
 echo '
 <p>'.tr('Le ricevute delle Fatture Elettroniche permettono di individuare se una determinata fattura tramessa è stata accettata dal Sistema Di Interscambio').'.</p>';
+
 if (Interaction::isEnabled()) {
     echo '
 <p>'.tr('Tramite il pulsante _BTN_ è possibile procedere al recupero delle ricevute, aggiornando automaticamente lo stato delle relative fatture e allegandole ad esse', [
     '_BTN_' => '<i class="fa fa-refresh"></i> <b>'.tr('Ricerca ricevute').'</b>',
 ]).'.</p>';
 
-    //controllo se ci sono fatture in elaborazione da più di 7 giorni per le quali non ho ancora una ricevuta
-    $fatture_generate = $dbo->fetchArray('SELECT `co_documenti`.`numero_esterno`, `co_documenti`.`data`, `co_documenti`.`data_stato_fe` FROM `co_documenti`  JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_tipidocumento`.`dir` = \'entrata\' AND `co_documenti`.`codice_stato_fe` = \'WAIT\' AND `co_documenti`.`data_stato_fe` >= "'.$_SESSION['period_start'].'"  AND `co_documenti`.`data_stato_fe`<(NOW() - INTERVAL 7 DAY) ORDER BY `co_documenti`.`data_stato_fe`');
+    // Controllo se ci sono fatture in elaborazione da più di 7 giorni per le quali non ho ancora una ricevuta
+    $data_limite = (new Carbon())->subDays(7);
+    $fatture_generate = Fattura::vendite()
+        ->where('codice_stato_fe', 'WAIT')
+        ->where('data_stato_fe', '>=', $_SESSION['period_start'])
+        ->where('data_stato_fe', '<', $data_limite)
+        ->orderBy('data_stato_fe')
+        ->get();
 
-    foreach ($fatture_generate as $fattura_generata) {
+    if (!empty($fatture_generate)){
         echo '
-    <div class="alert alert-warning"><i class="fa fa-warning" ></i> '.tr('Attenzione: la fattura _NUM_ del _DATA_ è in attesa di una ricevuta dal _DATA_STATO_FE.', [
-        '_NUM_' => $fattura_generata['numero_esterno'],
-        '_DATA_' => Translator::dateToLocale($fattura_generata['data']),
-        '_DATA_STATO_FE' => Translator::timestampToLocale($fattura_generata['data_stato_fe']),
-    ]).'</div>';
+    <div class="alert alert-warning">
+        <p><i class="fa fa-warning"></i> '.tr('Attenzione: le seguenti fatture sono in attesa di una ricevuta').'.</p>
+        <ul>';
+
+        foreach ($fatture_generate as $fattura_generata) {
+            echo '<li>'.reference($fattura_generata, $fattura_generata->getReference()).' ['.timestampFormat($fattura_generata['data_stato_fe']).']</li>';
+        }
+
+        echo '
+        </ul>
+    </div>';
     }
 }
+
 echo '
 <div class="box box-success">
     <div class="box-header with-border">

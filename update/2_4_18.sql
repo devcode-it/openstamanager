@@ -329,7 +329,7 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_scadenziario`\r\n 
 DELETE FROM `zz_tokens` WHERE `zz_tokens`.`enabled` = 0;
 
 -- Aggiunto colonna sconto per le coppie anagrafica articolo
-ALTER TABLE `mg_prezzi_articoli` ADD `sconto` DECIMAL(15,6) NOT NULL AFTER `massimo`;
+ALTER TABLE `mg_prezzi_articoli` ADD `sconto_percentuale` DECIMAL(15,6) NOT NULL AFTER `massimo`;
 
 -- Aggiunta impostazione per mostrare o nascondere barra plugin
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Nascondere la barra dei plugin di default', '0', 'boolean', '1', 'Generali',  '2', NULL);

@@ -252,6 +252,7 @@ switch (post('op')) {
 
         $riga->costo_unitario = post('costo_unitario') ?: 0;
         $riga->data_evasione = post('data_evasione') ?: null;
+        $riga->confermato = post('confermato') ?: 0;
         $riga->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
         $riga->setSconto(post('sconto'), post('tipo_sconto'));
 

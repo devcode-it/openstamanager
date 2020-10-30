@@ -279,7 +279,7 @@ function verificaScontoArticolo() {
     let sconto = sconto_input.val().toEnglish();
 
     let div = sconto_input.parent().next();
-    if (sconto_previsto === sconto || $("#tipo_sconto").val() === "UNT") {
+    if (sconto_previsto === 0 || sconto_previsto === sconto || $("#tipo_sconto").val() === "UNT") {
         div.css("padding-top", "0");
         div.html("");
 

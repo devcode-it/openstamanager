@@ -40,7 +40,7 @@ class Task extends Model
 
     public function log($level, $message, $context = [])
     {
-        $log = new static();
+        $log = new Log();
 
         $log->level = $level;
         $log->message = $message;

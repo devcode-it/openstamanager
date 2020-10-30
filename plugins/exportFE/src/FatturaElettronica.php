@@ -1453,11 +1453,14 @@ class FatturaElettronica
             if (!empty($banca->nome)) {
                 $pagamento['IstitutoFinanziario'] = $banca->nome;
             }
+
             if (!empty($banca->iban)) {
                 $pagamento['IBAN'] = clean($banca->iban);
             }
+
+            // BIC senza parte per filiale (causa errori di validazione)
             if (!empty($banca->bic)) {
-                $pagamento['BIC'] = $banca->bic;
+                $pagamento['BIC'] = substr($banca->bic, 0, 8);
             }
 
             $result[]['DettaglioPagamento'] = $pagamento;

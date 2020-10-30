@@ -116,14 +116,7 @@ $(document).ready(function () {
 });
 
 $("#tipo_sconto").on("change", function() {
-    let $data = $("#idarticolo").selectData();
-    ottieniScontiArticolo($data.id).then(function() {
-        if ($("#sconto").val().toEnglish() === 0){
-            aggiornaScontoArticolo();
-        } else {
-            verificaScontoArticolo();
-        }
-    });
+    verificaScontoArticolo();
 });
 
 $("#idarticolo").on("change", function() {

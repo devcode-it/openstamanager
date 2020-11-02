@@ -197,7 +197,7 @@ elseif ($record['stato'] == 'Bozza') {
                 echo '
                 <div class="col-md-'.($is_fiscale ? 2 : 6).'">
                     <!-- TODO: Rimuovere possibilità di selezionare lo stato pagato obbligando l\'utente ad aggiungere il movimento in prima nota -->
-                    {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatodocumento", "required": 1, "values": "query='.$query.'", "value": "$idstatodocumento$", "class": "'.(!$abilita_genera ? '' : 'unblockable').'", "extra": "onchange=\"return cambiaStato()\"" ]}
+                    {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatodocumento", "required": 1, "values": "query='.$query.'", "value": "$idstatodocumento$", "class": "'.(($record['stato'] != 'Bozza' && !$abilita_genera) ? '' : 'unblockable').'", "extra": "onchange=\"return cambiaStato()\"" ]}
                 </div>
 			</div>
 

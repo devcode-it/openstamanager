@@ -42,10 +42,10 @@ class Mastrino extends Model
         'idmastrino',
         'data_documento',
         'iddocumento',
-        'idanagrafica',
+        'id_anagrafica',
     ];
 
-    public static function build($descrizione, $data, $is_insoluto = false, $contabile = false, $id_anagrafica = 0)
+    public static function build($descrizione, $data, $is_insoluto = false, $contabile = false, $id_anagrafica = null)
     {
         $model = new static();
 
@@ -54,7 +54,7 @@ class Mastrino extends Model
         $model->descrizione = $descrizione;
         $model->is_insoluto = $is_insoluto;
         $model->primanota = $contabile;
-        $model->idanagrafica = $id_anagrafica;
+        $model->id_anagrafica = $id_anagrafica;
         return $model;
     }
 

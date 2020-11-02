@@ -53,7 +53,7 @@ if (in_array($id_cliente, $tipi_anagrafica) or in_array($id_fornitore, $tipi_ana
         <li><a data-toggle="modal" data-title="'.tr('Aggiungi fattura di vendita').'" data-href="add.php?id_module='.Modules::get('Fatture di vendita')['id'].'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-file"></i>'.tr('Nuova fattura di vendita').'
         </a></li>
 
-        <li><a data-toggle="modal" data-title="'.tr('Aggiungi registrazione contabile').'" data-href="add.php?id_module='.Modules::get('Prima nota')['id'].'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-euro"></i>'.tr('Nuova registrazione contabile').'
+        <li><a data-toggle="modal" data-title="'.tr('Aggiungi registrazione contabile').'" data-href="add.php?id_module='.Modules::get('Prima nota')['id'].'&id_anagrafica='.$record['idanagrafica'].'"><i class="fa fa-euro"></i>'.tr('Nuova registrazione contabile').'
         </a></li>';
     }
 
@@ -67,7 +67,7 @@ if (in_array($id_cliente, $tipi_anagrafica) or in_array($id_fornitore, $tipi_ana
     <li><a data-toggle="modal" data-title="'.tr('Aggiungi fattura di acquisto').'" data-href="add.php?id_module='.Modules::get('Fatture di acquisto')['id'].'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-file fa-flip-horizontal"></i>'.tr('Nuova fattura di acquisto').'
     </a></li>
 
-    <li><a data-toggle="modal" data-title="'.tr('Aggiungi registrazione contabile').'" data-href="add.php?id_module='.Modules::get('Prima nota')['id'].'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-euro"></i>'.tr('Nuova registrazione contabile').'
+    <li><a data-toggle="modal" data-title="'.tr('Aggiungi registrazione contabile').'" data-href="add.php?id_module='.Modules::get('Prima nota')['id'].'&id_anagrafica='.$record['idanagrafica'].'"><i class="fa fa-euro"></i>'.tr('Nuova registrazione contabile').'
     </a></li>';
     }
 

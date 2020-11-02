@@ -253,8 +253,8 @@ if (!empty($id_records) && get('origine') == 'fatture' && !empty($counter)) {
         ]).'.</b></p>
 </div>';
 }
-if(!empty(get('idanagrafica'))){
-    $id_anagrafica = get('idanagrafica');
+if(!empty(get('id_anagrafica'))){
+    $id_anagrafica = get('id_anagrafica');
 } else{
     $id_anagrafica = $dbo->fetchOne('SELECT idanagrafica FROM co_documenti WHERE id IN('.( get('id_documenti') ?: '0' ).')')['idanagrafica'];
 
@@ -292,9 +292,9 @@ if(!empty($id_anagrafica)){
     $id_conto_anticipo_fornitori = setting('Conto anticipo fornitori');
     $id_conto_anticipo_clienti = setting('Conto anticipo clienti');
 
-    $anticipo_cliente = $dbo->fetchOne('SELECT ABS(SUM(totale)) AS totale FROM co_movimenti WHERE  co_movimenti.idanagrafica='.prepare($id_anagrafica).' AND  co_movimenti.idconto='.prepare($id_conto_anticipo_clienti));
+    $anticipo_cliente = $dbo->fetchOne('SELECT ABS(SUM(totale)) AS totale FROM co_movimenti WHERE  co_movimenti.id_anagrafica='.prepare($id_anagrafica).' AND  co_movimenti.idconto='.prepare($id_conto_anticipo_clienti));
 
-    $anticipo_fornitore = $dbo->fetchOne('SELECT ABS(SUM(totale)) AS totale FROM co_movimenti WHERE  co_movimenti.idanagrafica='.prepare($id_anagrafica).' AND  co_movimenti.idconto='.prepare($id_conto_anticipo_fornitori));
+    $anticipo_fornitore = $dbo->fetchOne('SELECT ABS(SUM(totale)) AS totale FROM co_movimenti WHERE  co_movimenti.id_anagrafica='.prepare($id_anagrafica).' AND  co_movimenti.idconto='.prepare($id_conto_anticipo_fornitori));
 
 
     if($anticipo_fornitore['totale'] != 0){

@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.19](#2419)
 - [2.4.18 (2020-10-30)](#2418-2020-10-30)
 - [2.4.17.1 (2020-09-18)](#24171-2020-09-18)
 - [2.4.17 (2020-08-24)](#2417-2020-08-24)
@@ -28,6 +29,12 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.3 (2018-02-16)](#23-2018-02-16)
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
+
+## 2.4.19
+
+### Aggiunto (Added)
+ - Aggiunta gestione conto anticipi cliente e fornitore tramite prima nota
+
 
 ## 2.4.18 (2020-10-30)
 

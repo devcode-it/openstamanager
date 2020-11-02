@@ -1,24 +1,98 @@
 <?php
 
-use Update\v2_4_10\Anagrafica;
-use Update\v2_4_10\Fattura;
+$database = database();
 
 error_reporting(E_ALL & ~E_WARNING & ~E_CORE_WARNING & ~E_NOTICE & ~E_USER_DEPRECATED & ~E_STRICT);
 
 // Fix del calcolo del bollo
-$fatture = Fattura::all();
+$fatture = $database->fetchArray('SELECT id, bollo, split_payment FROM co_documenti');
 foreach ($fatture as $fattura) {
-    $fattura->manageRigaMarcaDaBollo();
+    $bollo = $fattura['bollo'];
+
+    if (empty($bollo)) {
+        if (empty($fattura['split_payment'])) {
+            $totale = 'subtotale - sconto + iva + rivalsainps';
+        } else {
+            $totale = 'subtotale - sconto + rivalsainps';
+        }
+
+        $righe = $database->fetchArray('SELECT ('.$totale.') AS netto FROM co_righe_documenti INNER JOIN co_iva ON co_iva.id = co_righe_documenti.idiva WHERE iddocumento = '.prepare($fattura['id'])." AND codice_natura_fe IN ('N1', 'N2', 'N3', 'N4')");
+        $totale = sum(array_column($righe, 'netto'));
+        $importo_bollo = setting('Importo marca da bollo');
+        if (abs($importo_bollo) > 0 && abs($totale) > setting("Soglia minima per l'applicazione della marca da bollo")) {
+            $bollo = $importo_bollo;
+        }
+    }
+
+    $bollo = floatval($bollo);
+    if ($bollo > 0) {
+        $fatture = $database->query(
+        'insert into `co_righe_documenti` (`iddocumento`, `order`, `descrizione`, `um`, `idiva`, `idconto`, `calcolo_ritenuta_acconto`, `idritenutaacconto`, `ritenuta_contributi`, `idrivalsainps`, `prezzo_unitario_acquisto`, `sconto_unitario`, `tipo_sconto`, `qta`, `data_inizio_periodo`, `data_fine_periodo`, `riferimento_amministrazione`, `tipo_cessione_prestazione`, `ritenutaacconto`, `rivalsainps`, `subtotale`, `sconto`, `iva`, `desc_iva`, `iva_indetraibile`, `created_at`) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
+            0 => $fattura['id'],
+            1 => 0,
+            2 => 'Marca da bollo',
+            3 => null,
+            4 => '110',
+            5 => '99',
+            6 => null,
+            7 => null,
+            8 => false,
+            9 => null,
+            10 => 0,
+            11 => 0.0,
+            12 => 'PRC',
+            13 => 1.0,
+            14 => null,
+            15 => null,
+            16 => '',
+            17 => '',
+            18 => 0.0,
+            19 => 0.0,
+            20 => $bollo,
+            21 => 0.0,
+            22 => 0.0,
+            23 => 'Escluso art. 15',
+            24 => 0.0,
+            25 => '2020-10-17 10:00:00',
+        ]);
+        $id_riga_bollo = $database->lastInsertedId();
+
+        $database->query('UPDATE co_documenti SET id_riga_bollo = '.prepare($id_riga_bollo).' WHERE id = '.prepare($fattura['id']));
+    }
 }
 
 // Fix per le relazioni tariffe-tecnici
-$tecnici = Anagrafica::fromTipo('Tecnico')->get();
+$tecnici = $database->fetchArray("SELECT DISTINCT(an_anagrafiche.idanagrafica) AS id FROM an_anagrafiche
+    INNER JOIN an_tipianagrafiche ON an_anagrafiche.idanagrafica = an_anagrafiche.idanagrafica
+    INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche.idtipoanagrafica = an_tipianagrafiche_anagrafiche.idtipoanagrafica
+WHERE an_tipianagrafiche.descrizione = 'Tecnico'");
 foreach ($tecnici as $tecnico) {
-    Anagrafica::fixTecnico($tecnico);
+    $presenti = $database->fetchArray('SELECT idtipointervento AS id FROM in_tariffe WHERE idtecnico = '.prepare($tecnico['id']));
+
+    // Aggiunta associazioni costi unitari al contratto
+    $query = 'SELECT * FROM in_tipiintervento';
+    $elenco_presenti = array_column($presenti, 'id');
+    if (!empty($elenco_presenti)) {
+        $query .= ' WHERE idtipointervento NOT IN ('.implode(', ', $elenco_presenti).')';
+    }
+    $tipi = $database->fetchArray($query);
+
+    foreach ($tipi as $tipo) {
+        $database->insert('in_tariffe', [
+            'idtecnico' => $tecnico['id'],
+            'idtipointervento' => $tipo['id'],
+            'costo_ore' => $tipo['costo_orario'],
+            'costo_km' => $tipo['costo_km'],
+            'costo_dirittochiamata' => $tipo['costo_diritto_chiamata'],
+            'costo_ore_tecnico' => $tipo['costo_orario_tecnico'],
+            'costo_km_tecnico' => $tipo['costo_km_tecnico'],
+            'costo_dirittochiamata_tecnico' => $tipo['costo_diritto_chiamata_tecnico'],
+        ]);
+    }
 }
 
 // Spostamento automezzi su sedi
-$automezzi = $dbo->fetchArray('SELECT * FROM dt_automezzi');
+$automezzi = $database->fetchArray('SELECT * FROM dt_automezzi');
 foreach ($automezzi as $automezzo) {
     $nomesede = [];
 
@@ -26,7 +100,7 @@ foreach ($automezzi as $automezzo) {
     (!empty($automezzo['descrizione'])) ? $nomesede[] = $automezzo['descrizione'] : null;
     (!empty($automezzo['targa'])) ? $nomesede[] = $automezzo['targa'] : null;
 
-    $dbo->insert(
+    $database->insert(
         'an_sedi',
         [
             'nomesede' => implode(' - ', $nomesede),
@@ -34,10 +108,10 @@ foreach ($automezzi as $automezzo) {
         ]
     );
 
-    $idsede = $dbo->lastInsertedId();
+    $idsede = $database->lastInsertedId();
 
     // Aggiornamento sede di partenza su
-    $dbo->update(
+    $database->update(
         'in_interventi',
         [
             'idsede_partenza' => $idsede,
@@ -48,23 +122,23 @@ foreach ($automezzi as $automezzo) {
 }
 
 // Aggiornamento della sede azienda nei movimenti degli interventi
-$dbo->query('UPDATE mg_movimenti SET idsede_azienda=(SELECT idsede_partenza FROM in_interventi WHERE in_interventi.id=mg_movimenti.idintervento) WHERE idintervento IS NOT NULL');
+$database->query('UPDATE mg_movimenti SET idsede_azienda=(SELECT idsede_partenza FROM in_interventi WHERE in_interventi.id=mg_movimenti.idintervento) WHERE idintervento IS NOT NULL');
 
 // Cancellazione idautomezzo da mg_movimenti e in_interventi
-$dbo->query('ALTER TABLE in_interventi DROP idautomezzo');
-$dbo->query('ALTER TABLE mg_movimenti DROP idautomezzo');
-$dbo->query('ALTER TABLE co_promemoria_articoli DROP idautomezzo');
-$dbo->query('ALTER TABLE co_righe_documenti DROP idautomezzo');
-$dbo->query('ALTER TABLE mg_articoli_interventi DROP idautomezzo');
+$database->query('ALTER TABLE in_interventi DROP idautomezzo');
+$database->query('ALTER TABLE mg_movimenti DROP idautomezzo');
+$database->query('ALTER TABLE co_promemoria_articoli DROP idautomezzo');
+$database->query('ALTER TABLE co_righe_documenti DROP idautomezzo');
+$database->query('ALTER TABLE mg_articoli_interventi DROP idautomezzo');
 
 // Eliminazione tabelle degli automezzi non più usate
-$dbo->query('DROP TABLE mg_articoli_automezzi');
-$dbo->query('DROP TABLE dt_automezzi');
-$dbo->query('DROP TABLE dt_automezzi_tecnici');
-$dbo->query('DELETE FROM zz_modules WHERE name="Automezzi"');
+$database->query('DROP TABLE mg_articoli_automezzi');
+$database->query('DROP TABLE dt_automezzi');
+$database->query('DROP TABLE dt_automezzi_tecnici');
+$database->query('DELETE FROM zz_modules WHERE name="Automezzi"');
 
 //Rimuovo il codice come indice per in_interventi
-$dbo->query('ALTER TABLE `in_interventi` DROP INDEX `codice`');
+$database->query('ALTER TABLE `in_interventi` DROP INDEX `codice`');
 
 // File e cartelle deprecate
 $files = [

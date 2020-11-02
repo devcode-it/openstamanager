@@ -123,7 +123,7 @@ if (!$clienti->isEmpty()) {
                         </td>
 
                         <td class="text-right">
-                            '.numberFormat($dettaglio->sconto).'%
+                            '.numberFormat($dettaglio->sconto_percentuale).'%
                         </td>
 
                         <td>';
@@ -309,9 +309,11 @@ if (!$fornitori_disponibili->isEmpty()) {
                         <td class="text-right">
                             '.moneyFormat($dettaglio->prezzo_unitario).'
                         </td>
+
                         <td class="text-right">
-                            '.numberFormat($dettaglio->sconto).'%
+                            '.numberFormat($dettaglio->sconto_percentuale).'%
                         </td>
+
                         <td>';
 
                 if (!isset($dettaglio->minimo) && !isset($dettaglio->massimo)) {

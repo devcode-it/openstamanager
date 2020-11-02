@@ -128,14 +128,14 @@ function gestioneRicevuta(button, name, type) {
         success: function(response) {
             buttonRestore(button, restore);
 
-            if(response.fattura) {
+            if (response.fattura) {
                 swal({
-                    title: "'.tr('Importazione completata!').'",
+                    title: type === "download" ? "'.tr('Ricevuta scaricata!').'" : "'.tr('Importazione della ricevuta completata!').'",
                     type: "success",
                 });
             } else {
                 swal({
-                    title: "'.tr('Importazione fallita!').'",
+                    title: "'.tr('Operazione fallita!').'",
                     type: "error",
                 });
             }

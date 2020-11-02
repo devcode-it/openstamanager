@@ -531,6 +531,34 @@ class FatturaElettronica
             ];
         }
 
+        // Campi obbligatori per l'anagrafica di tipo Vettore
+        $id_vettore = $fattura['idvettore'];
+        if (!empty($id_vettore)) {
+            $data = Anagrafica::find($id_vettore);
+            $fields = [
+                'piva' => 'Partita IVA',
+                'nazione' => 'Nazione',
+            ];
+
+            $missing = [];
+            if (!empty($data)) {
+                foreach ($fields as $key => $name) {
+                    if (empty($data[$key]) && !empty($name)) {
+                        $missing[] = $name;
+                    }
+                }
+            }
+
+            if (!empty($missing)) {
+                $link = Modules::link('Anagrafiche', $data['id']);
+                $errors[] = [
+                    'link' => $link,
+                    'name' => tr('Anagrafica Vettore'),
+                    'errors' => $missing,
+                ];
+            }
+        }
+
         return $errors;
     }
 
@@ -926,7 +954,7 @@ class FatturaElettronica
 
         $result = [];
 
-        //Se imposto il vettore deve essere indicata anche la p.iva nella sua anagrafica
+        // Se imposto il vettore deve essere indicata anche la p.iva nella sua anagrafica
         if ($documento['idvettore']) {
             $vettore = Anagrafica::find($documento['idvettore']);
             $result['DatiAnagraficiVettore'] = static::getDatiAnagrafici($vettore);
@@ -1425,11 +1453,14 @@ class FatturaElettronica
             if (!empty($banca->nome)) {
                 $pagamento['IstitutoFinanziario'] = $banca->nome;
             }
+
             if (!empty($banca->iban)) {
                 $pagamento['IBAN'] = clean($banca->iban);
             }
+
+            // BIC senza parte per filiale (causa errori di validazione)
             if (!empty($banca->bic)) {
-                $pagamento['BIC'] = $banca->bic;
+                $pagamento['BIC'] = substr($banca->bic, 0, 8);
             }
 
             $result[]['DettaglioPagamento'] = $pagamento;

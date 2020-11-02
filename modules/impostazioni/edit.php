@@ -53,7 +53,7 @@ foreach ($gruppi as $key => $gruppo) {
 <!-- Impostazioni della singola sezione -->
 <div class="box box-primary collapsed-box" title="'.$gruppo['nome'].'">
     <div class="box-header clickable" id="impostazioni-'.$key.'">
-        <div class="box-title">'.tr('Impostazioni _SEZIONE_', [
+        <div class="box-title">'.tr('_SEZIONE_', [
             '_SEZIONE_' => $gruppo['nome'],
         ]).'</div>
         <div class="box-tools pull-right">

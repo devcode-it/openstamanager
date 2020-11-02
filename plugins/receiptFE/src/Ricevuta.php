@@ -157,7 +157,7 @@ class Ricevuta
         $module = $fattura->getModule();
         $upload_esistente = $module
             ->uploads($fattura->id)
-            ->where('original', $filename)
+            ->where('original_name', $filename)
             ->first();
         if (!empty($upload_esistente)) {
             return $upload_esistente;

@@ -49,11 +49,8 @@ if (empty($result['idarticolo'])) {
 
     <script>
         $(document).ready(function (){
-            ottieniPrezziArticolo("'.$articolo['id'].'").then(function (){
+            ottieniDettagliArticolo("'.$articolo['id'].'").then(function (){
                 verificaPrezzoArticolo();
-            });
-
-            ottieniScontiArticolo("'.$articolo['id'].'").then(function (){
                 verificaScontoArticolo();
             });
         });
@@ -108,22 +105,18 @@ if ($module['name'] != 'Contratti' && $module['name'] != 'Preventivi') {
 echo '
 <script>
 var direzione = "'.$options['dir'].'";
+globals.aggiunta_articolo = {
+};
+
 $(document).ready(function () {
     if (direzione === "uscita") {
-        aggiorna_qta_minima();
-        $("#qta").keyup(aggiorna_qta_minima);
+        aggiornaQtaMinima();
+        $("#qta").keyup(aggiornaQtaMinima);
     }
 });
 
 $("#tipo_sconto").on("change", function() {
-    let $data = $("#idarticolo").selectData();
-    ottieniScontiArticolo($data.id).then(function() {
-        if ($("#sconto").val().toEnglish() === 0){
-            aggiornaScontoArticolo();
-        } else {
-            verificaScontoArticolo();
-        }
-    });
+    verificaScontoArticolo();
 });
 
 $("#idarticolo").on("change", function() {
@@ -149,15 +142,13 @@ $("#idarticolo").on("change", function() {
 
     // Autoimpostazione dei campi relativi all\'articolo
     let $data = $(this).selectData();
-    ottieniPrezziArticolo($data.id).then(function() {
+    ottieniDettagliArticolo($data.id).then(function() {
         if ($("#prezzo_unitario").val().toEnglish() === 0){
-            aggiornaPrezzoArticolo()
+            aggiornaPrezzoArticolo();
         } else {
             verificaPrezzoArticolo();
         }
-    });
 
-    ottieniScontiArticolo($data.id).then(function() {
         if ($("#sconto").val().toEnglish() === 0){
             aggiornaScontoArticolo();
         } else {
@@ -177,7 +168,7 @@ $("#idarticolo").on("change", function() {
     else {
         $("#id_dettaglio_fornitore").val($data.id_dettaglio_fornitore);
         $("#qta_minima").val($data.qta_minima);
-        aggiorna_qta_minima();
+        aggiornaQtaMinima();
     }
 
     let id_conto = $data.idconto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').';
@@ -199,80 +190,58 @@ $(document).on("change", "input[name^=qta], input[name^=prezzo_unitario], input[
 });
 
 /**
-* Restituisce il prezzo registrato per una specifica quantità dell\'articolo.
+* Restituisce il dettaglio registrato per una specifica quantità dell\'articolo.
 */
-function getPrezzoPerQuantita(qta) {
-    const data = $("#prezzo_unitario").data("prezzi");
-    if (!data) return 0;
+function getDettaglioPerQuantita(qta) {
+    const data = globals.aggiunta_articolo.dettagli;
+    if (!data) return null;
 
-    let prezzo_predefinito = null;
-    let prezzo_selezionato = null;
-    for (const prezzo of data) {
-        if (prezzo.minimo == null && prezzo.massimo == null) {
-            prezzo_predefinito = prezzo.prezzo_unitario;
+    let dettaglio_predefinito = null;
+    let dettaglio_selezionato = null;
+    for (const dettaglio of data) {
+        if (dettaglio.minimo == null && dettaglio.massimo == null) {
+            dettaglio_predefinito = dettaglio;
             continue;
         }
 
-        if (qta >= prezzo.minimo && qta <= prezzo.massimo) {
-            prezzo_selezionato = prezzo.prezzo_unitario;
+        if (qta >= dettaglio.minimo && qta <= dettaglio.massimo) {
+            dettaglio_selezionato = dettaglio;
         }
     }
 
-    if (prezzo_selezionato == null) {
-        prezzo_selezionato = prezzo_predefinito;
+    if (dettaglio_selezionato == null) {
+        dettaglio_selezionato = dettaglio_predefinito;
     }
 
-    return parseFloat(prezzo_selezionato);
+    return dettaglio_selezionato;
+}
+
+/**
+* Restituisce il prezzo registrato per una specifica quantità dell\'articolo.
+*/
+function getPrezzoPerQuantita(qta) {
+    const dettaglio = getDettaglioPerQuantita(qta);
+
+    return dettaglio ? parseFloat(dettaglio.prezzo_unitario) : 0;
 }
 
 /**
 * Restituisce lo sconto registrato per una specifica quantità dell\'articolo.
 */
 function getScontoPerQuantita(qta) {
-    const data = $("#sconto").data("sconti");
-    if (!data) return 0;
+    const dettaglio = getDettaglioPerQuantita(qta);
 
-    let sconto_predefinito = null;
-    let sconto_selezionato = null;
-    for (const prezzo of data) {
-        if (prezzo.minimo == null && prezzo.massimo == null) {
-            sconto_predefinito = prezzo.sconto;
-            continue;
-        }
-
-        if (qta >= prezzo.minimo && qta <= prezzo.massimo) {
-            sconto_selezionato = prezzo.sconto;
-        }
-    }
-
-    if (sconto_selezionato == null) {
-        sconto_selezionato = sconto_predefinito;
-    }
-
-    return parseFloat(sconto_selezionato);
-}
-
-
-/**
-* Funzione per registrare localmente i prezzi definiti per l\'articolo in relazione ad una specifica anagrafica.
-*/
-function ottieniPrezziArticolo(id_articolo) {
-    return $.get(globals.rootdir + "/ajax_complete.php?module=Articoli&op=prezzi_articolo&id_anagrafica='.$options['idanagrafica'].'&id_articolo=" + id_articolo + "&dir=" + direzione, function(response) {
-        const data = JSON.parse(response);
-
-        $("#prezzo_unitario").data("prezzi", data);
-    });
+    return dettaglio ? parseFloat(dettaglio.sconto_percentuale) : 0;
 }
 
 /**
-* Funzione per registrare localmente gli sconti definiti per l\'articolo in relazione ad una specifica anagrafica.
+* Funzione per registrare localmente i dettagli definiti per l\'articolo in relazione ad una specifica anagrafica.
 */
-
-function ottieniScontiArticolo(id_articolo) {
-    return $.get(globals.rootdir + "/ajax_complete.php?module=Articoli&op=prezzi_articolo&id_anagrafica='.$options['idanagrafica'].'&id_articolo=" + id_articolo + "&dir=" + direzione, function(response) {
+function ottieniDettagliArticolo(id_articolo) {
+    return $.get(globals.rootdir + "/ajax_complete.php?module=Articoli&op=dettagli_articolo&id_anagrafica='.$options['idanagrafica'].'&id_articolo=" + id_articolo + "&dir=" + direzione, function(response) {
         const data = JSON.parse(response);
 
-        $("#sconto").data("sconti", data);
+        globals.aggiunta_articolo.dettagli = data;
     });
 }
 
@@ -305,12 +274,12 @@ function verificaPrezzoArticolo() {
 function verificaScontoArticolo() {
     let qta = $("#qta").val().toEnglish();
     let sconto_previsto = getScontoPerQuantita(qta);
-    console.log(sconto_previsto);
+
     let sconto_input = $("#sconto");
     let sconto = sconto_input.val().toEnglish();
 
     let div = sconto_input.parent().next();
-    if (sconto_previsto === sconto || $("#tipo_sconto").val() === "UNT") {
+    if (sconto_previsto === 0 || sconto_previsto === sconto || $("#tipo_sconto").val() === "UNT") {
         div.css("padding-top", "0");
         div.html("");
 
@@ -344,7 +313,7 @@ function aggiornaScontoArticolo() {
 /**
 * Funzione per l\'aggiornamento dinamico della quantità minima per l\'articolo.
 */
-function aggiorna_qta_minima() {
+function aggiornaQtaMinima() {
     let qta_minima = parseFloat($("#qta_minima").val());
     let qta = $("#qta").val().toEnglish();
 

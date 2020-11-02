@@ -29,8 +29,8 @@ switch (post('op')) {
         $data = post('data');
         $descrizione = post('descrizione');
         $is_insoluto = post('is_insoluto');
-
-        $mastrino = Mastrino::build($descrizione, $data, $is_insoluto, true);
+        $id_anagrafica = post('id_anagrafica');
+        $mastrino = Mastrino::build($descrizione, $data, $is_insoluto, true, $id_anagrafica);
 
         $conti = post('idconto');
         foreach ($conti as $i => $id_conto) {
@@ -38,7 +38,6 @@ switch (post('op')) {
             $id_documento = post('id_documento')[$i];
             $dare = post('dare')[$i];
             $avere = post('avere')[$i];
-
             $scadenza = Scadenza::find($id_scadenza);
             $fattura = Fattura::find($id_documento);
 

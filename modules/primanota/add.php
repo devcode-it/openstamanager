@@ -253,14 +253,20 @@ if (!empty($id_records) && get('origine') == 'fatture' && !empty($counter)) {
         ]).'.</b></p>
 </div>';
 }
+if(!empty(get('idanagrafica'))){
+    $id_anagrafica = get('idanagrafica');
+} else{
+    $id_anagrafica = $dbo->fetchOne('SELECT idanagrafica FROM co_documenti WHERE id IN('.( get('id_documenti') ?: '0' ).')')['idanagrafica'];
 
+}
 echo '
 <form action="'.base_path().'/controller.php?id_module='.$module->id.'" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="crea_modello" id="crea_modello" value="0">
 	<input type="hidden" name="idmastrino" id="idmastrino" value="0">
-    <input type="hidden" name="is_insoluto" value="'.$is_insoluto.'">';
+    <input type="hidden" name="is_insoluto" value="'.$is_insoluto.'">
+    <input type="hidden" name="id_anagrafica" id="id_anagrafica" value="'.$id_anagrafica.'">';
 
 if ($permetti_modelli) {
     echo '
@@ -271,7 +277,7 @@ if ($permetti_modelli) {
 	</div>';
 }
 
-    echo '
+echo '
 	<div class="row">
 		<div class="col-md-4">
 			{[ "type": "date", "label": "'.tr('Data movimento').'", "name": "data", "required": 1, "value": "-now-" ]}
@@ -280,11 +286,43 @@ if ($permetti_modelli) {
 		<div class="col-md-8">
 			{[ "type": "text", "label": "'.tr('Causale').'", "name": "descrizione", "id": "desc", "required": 1, "value": '.json_encode($descrizione).' ]}
 		</div>
-	</div>';
+    </div>';
+
+if(!empty($id_anagrafica)){
+    $id_conto_anticipo_fornitori = setting('Conto anticipo fornitori');
+    $id_conto_anticipo_clienti = setting('Conto anticipo clienti');
+
+    $anticipo_cliente = $dbo->fetchOne('SELECT ABS(SUM(totale)) AS totale FROM co_movimenti WHERE  co_movimenti.idanagrafica='.prepare($id_anagrafica).' AND  co_movimenti.idconto='.prepare($id_conto_anticipo_clienti));
+
+    $anticipo_fornitore = $dbo->fetchOne('SELECT ABS(SUM(totale)) AS totale FROM co_movimenti WHERE  co_movimenti.idanagrafica='.prepare($id_anagrafica).' AND  co_movimenti.idconto='.prepare($id_conto_anticipo_fornitori));
+
+
+    if($anticipo_fornitore['totale'] != 0){
+        echo '
+        <div class="alert alert-warning">
+            '.tr('Attenzione: è stato anticipato al fornitore un importo di _TOTALE_',
+                [
+                    '_TOTALE_' => moneyFormat($anticipo_fornitore['totale'])
+                ]
+            ).'
+        </div>';
+    }
+
+    if($anticipo_cliente['totale'] != 0){
+        echo '
+        <div class="alert alert-warning">
+            '.tr('Attenzione: è stato ricevuto un anticipo dal cliente di _TOTALE_',
+                [
+                    '_TOTALE_' => moneyFormat($anticipo_cliente['totale'])
+                ]
+            ).'
+        </div>';
+    }
+}
 
 include $structure->filepath('movimenti.php');
 
-    echo '
+echo '
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">

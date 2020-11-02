@@ -47,7 +47,8 @@ class Movimento extends Model
         $model->note = $mastrino->note;
         $model->primanota = $mastrino->primanota;
         $model->is_insoluto = $mastrino->is_insoluto;
-
+        $model->idanagrafica = $mastrino->idanagrafica;
+        
         // Conto associato
         $model->idconto = $id_conto;
 

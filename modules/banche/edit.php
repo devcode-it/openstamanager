@@ -68,7 +68,7 @@ include_once __DIR__.'/../../core.php';
                 </div>
 
                 <div class="col-md-6">
-                    {[ "type": "text", "label": "<?php echo tr('Codice SIA'); ?>", "name": "codice_sia", "class": "alphanumeric-mask", "maxlength": 5, "value": "$codice_sia$" ]}
+                    {[ "type": "text", "label": "<?php echo tr('Codice SIA'); ?>", "name": "codice_sia", "class": "alphanumeric-mask", "maxlength": 5, "value": "$codice_sia$", "help":"<?php echo tr('Questo campo è necessario per la generazione delle Ri.Ba.');?>" ]}
                 </div>
             </div>
 

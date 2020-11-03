@@ -34,7 +34,7 @@ if (Interaction::isEnabled()) {
 
     // Controllo se ci sono fatture in elaborazione da più di 7 giorni per le quali non ho ancora una ricevuta
     $data_limite = (new Carbon())->subDays(7);
-    $fatture_generate = Fattura::vendite()
+    $fatture_generate = Fattura::vendita()
         ->where('codice_stato_fe', 'WAIT')
         ->where('data_stato_fe', '>=', $_SESSION['period_start'])
         ->where('data_stato_fe', '<', $data_limite)

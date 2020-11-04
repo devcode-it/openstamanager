@@ -27,6 +27,7 @@ use Modules\Fatture\Components\Riga;
 use Modules\Fatture\Fattura;
 use Modules\Interventi\Components\Sessione;
 use Modules\Interventi\Intervento;
+use Modules\Articoli\Articolo as ArticoloOriginale;
 use Util\Ini;
 
 /**
@@ -260,6 +261,8 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
         // Aggiornamento seriali dalla riga dell'ordine
         if ($copia->isArticolo()) {
             $copia->serials = $riga->serials;
+            $articolo = ArticoloOriginale::find($copia->idarticolo);
+            $copia->id_conto = ($articolo->idconto_vendita ? $articolo->idconto_vendita : $id_conto);
         }
 
         $copia->save();

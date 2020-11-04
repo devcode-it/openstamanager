@@ -140,6 +140,10 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
     $fattura = Fattura::find($id_fattura);
     $intervento = Intervento::find($id_intervento);
 
+    if( !empty($fattura->anagrafica->idiva_vendite) ){
+        $id_iva = $fattura->anagrafica->idiva_vendite;
+    }
+
     $data = $intervento->inizio;
     $codice = $intervento->codice;
 

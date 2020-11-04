@@ -40,7 +40,7 @@ include_once __DIR__.'/../../core.php';
 				</div>
 
 				<div class="col-md-2">
-					{[ "type": "checkbox", "label": "<?php echo tr('Pagamento di tipo Ri.Ba.'); ?>", "name": "riba", "value": "$riba$", "help": "<?php echo tr('Abilitando questa impostazione, nelle fatture verrà visualizzata la banca del cliente'); ?>" ]}
+					{[ "type": "checkbox", "label": "<?php echo tr('Pagamento di tipo Ri.Ba.'); ?>", "name": "riba", "value": "$riba$", "help": "<?php echo tr('Abilitando questa impostazione, nelle fatture verrà visualizzata la banca della controparte'); ?>" ]}
 				</div>
             </div>
 

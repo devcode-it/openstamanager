@@ -18,6 +18,7 @@
  */
 
 use Carbon\CarbonInterval;
+use Modules\Anagrafiche\Anagrafica;
 
 include_once __DIR__.'/../../core.php';
 
@@ -31,9 +32,16 @@ foreach ($righe as $riga) {
         $has_images = 1;
     }
 }
+
+$anagrafica = Anagrafica::find($documento['idanagrafica']);
 $pagamento = $dbo->fetchOne('SELECT * FROM co_pagamenti WHERE id = '.$documento['idpagamento']);
-if (!empty($pagamento['idconto_vendite'])) {
-    $banca = $dbo->fetchOne('SELECT co_banche.nome, co_banche.iban, co_banche.bic FROM co_banche INNER JOIN co_pianodeiconti3 ON co_banche.id_pianodeiconti3 = co_pianodeiconti3.id WHERE co_pianodeiconti3.id = '.$pagamento['idconto_vendite']);
+
+//Verifico se c'è una banca predefinita per il mio cliente
+if (!empty($anagrafica->idbanca_vendite)){
+    $banca = $dbo->fetchOne('SELECT co_banche.nome, co_banche.iban, co_banche.bic FROM co_banche INNER JOIN co_pianodeiconti3 ON co_banche.id_pianodeiconti3 = co_pianodeiconti3.id WHERE co_pianodeiconti3.id = '.$pagamento['idconto_vendite'].' AND co_banche.id ='.$anagrafica->idbanca_vendite);
+}else if (!empty($pagamento['idconto_vendite'])) {
+    //Altrimenti prendo quella associata la metodo di pagamento selezionato
+    $banca = $dbo->fetchOne('SELECT co_banche.nome, co_banche.iban, co_banche.bic FROM co_banche INNER JOIN co_pianodeiconti3 ON co_banche.id_pianodeiconti3 = co_pianodeiconti3.id WHERE co_pianodeiconti3.id = '.$pagamento['idconto_vendite'].' AND co_banche.deleted_at IS NULL');
 }
 
 // Creazione righe fantasma

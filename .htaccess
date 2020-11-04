@@ -32,7 +32,9 @@ ServerSignature Off
 	RewriteEngine On
 
 	# Tell PHP that the mod_rewrite module is ENABLED.
-    SetEnv HTTP_MOD_REWRITE On
+	<IfModule mod_env.c>
+        SetEnv HTTP_MOD_REWRITE On
+    </IfModule>
 
 	# Deny access to protected folders
     RewriteRule ^backup/ - [F,L]

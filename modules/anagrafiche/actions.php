@@ -154,7 +154,7 @@ switch (post('op')) {
                 ->get();
             if (!$anagrafiche_partita_iva->isEmpty()) {
                 $message = tr('Attenzione: la partita IVA _IVA_ è già stata censita', [
-                    '__IVA__' => $partita_iva,
+                    '_IVA_' => $partita_iva,
                 ]);
 
                 $links = [];
@@ -270,7 +270,7 @@ switch (post('op')) {
                 ->get();
             if (!$anagrafiche_partita_iva->isEmpty()) {
                 $message = tr('Attenzione: la partita IVA _IVA_ è già stata censita', [
-                    '__IVA__' => $partita_iva,
+                    '_IVA_' => $partita_iva,
                 ]);
 
                 $links = [];

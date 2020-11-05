@@ -15,3 +15,6 @@ UPDATE `co_movimenti` SET `id_anagrafica` = NULL WHERE `id_anagrafica` = 0;
 
 -- Spostamento conti transitori su stato patrimoniale
 UPDATE `co_pianodeiconti2` SET `idpianodeiconti1` = 1 WHERE `descrizione` = 'Conti transitori';
+
+-- Aggiunta quantità multipla
+ALTER TABLE `mg_articoli` ADD `qta_multipla` DECIMAL(15,6) NOT NULL DEFAULT '0' AFTER `threshold_qta`;

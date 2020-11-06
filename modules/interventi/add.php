@@ -253,12 +253,64 @@ if (empty($id_intervento)) {
 
 		<div class="box-body">
 	        <div class="row">
-				<div class="col-md-12">
-					{[ "type": "select", "label": "'.tr('Tecnici assegnati').'", "multiple": "1", "name": "tecnici_assegnati[]", "ajax-source": "tecnici", "value": "", "icon-after": "add|'.$module_anagrafiche['id'].'|tipoanagrafica=Tecnico" ]}
+                <div class="col-md-12">
+                    {[ "type": "select", "label": "'.tr('Tecnici assegnati').'", "multiple": "1", "name": "tecnici_assegnati[]", "ajax-source": "tecnici", "value": "", "icon-after": "add|'.$module_anagrafiche['id'].'|tipoanagrafica=Tecnico" ]}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-xs btn-primary" onclick="selezionaTutto()">
+                                    '.tr('Tutti').'
+                                </button>
+
+                                <button type="button" class="btn btn-xs btn-danger" onclick="deselezionaTutto()">
+                                <i class="fa fa-times"></i> 
+                                </button>
+                            </div>
+                        </div>
+                    </div>
 				</div>
 			</div>
         </div>
     </div>';
+
+
+    echo '
+    
+    <script>
+
+    function selezionaTutto(){
+
+        $.getJSON(globals.rootdir + "/ajax_select.php?op=tecnici",
+        function(response) {
+
+            input("tecnici_assegnati").getElement().selectReset();
+
+            $.each(response.results, function(key, result) {
+                id = result["id"];
+                descrizione = result["descrizione"];
+                $("#tecnici_assegnati").append("<option value=\""+id+"\">"+descrizione+"</option>");
+
+                $("#tecnici_assegnati option").prop("selected", true);
+            });
+
+            $("#tecnici_assegnati").trigger("change");
+
+        }, function(){
+
+           
+        });
+        
+    }
+
+    function deselezionaTutto(){
+
+        input("tecnici_assegnati").getElement().selectReset();
+
+
+    }
+
+    </script>';
+        
 }
 
 echo '

@@ -69,12 +69,12 @@ echo '
                 <div class="row">
                     <div class="col-md-12">
                         <div class="btn-group">
-                            <button type="button" class="btn btn-primary btn-xs" onclick="selezionaTutto()">
-                                <i class="fa fa-check"></i> '.tr('Seleziona tutto').'
+                            <button type="button" class="btn btn-sm btn-primary" onclick="selezionaTutto()">
+                                '.tr('Tutti').'
                             </button>
 
-                            <button type="button" class="btn btn-warning btn-xs" onclick="deselezionaTutto()">
-                                <i class="fa fa-close"></i> '.tr('Deseleziona tutto').'
+                            <button type="button" class="btn btn-sm btn-danger" onclick="deselezionaTutto()">
+                            <i class="fa fa-times"></i> 
                             </button>
                         </div>
                     </div>

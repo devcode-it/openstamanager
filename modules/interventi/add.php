@@ -305,7 +305,6 @@ echo '
 	</div>
 </form>';
 
-
 if (!empty($id_intervento)) {
     echo '
 <script type="text/javascript">

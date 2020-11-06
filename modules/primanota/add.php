@@ -253,11 +253,10 @@ if (!empty($id_records) && get('origine') == 'fatture' && !empty($counter)) {
         ]).'.</b></p>
 </div>';
 }
-if(!empty(get('id_anagrafica'))){
+if (!empty(get('id_anagrafica'))) {
     $id_anagrafica = get('id_anagrafica');
-} else{
-    $id_anagrafica = $dbo->fetchOne('SELECT idanagrafica FROM co_documenti WHERE id IN('.( get('id_documenti') ?: '0' ).')')['idanagrafica'];
-
+} else {
+    $id_anagrafica = $dbo->fetchOne('SELECT idanagrafica FROM co_documenti WHERE id IN('.(get('id_documenti') ?: '0').')')['idanagrafica'];
 }
 echo '
 <form action="'.base_path().'/controller.php?id_module='.$module->id.'" method="post" id="add-form">
@@ -288,7 +287,7 @@ echo '
 		</div>
     </div>';
 
-if(!empty($id_anagrafica)){
+if (!empty($id_anagrafica)) {
     $id_conto_anticipo_fornitori = setting('Conto anticipo fornitori');
     $id_conto_anticipo_clienti = setting('Conto anticipo clienti');
 
@@ -296,24 +295,23 @@ if(!empty($id_anagrafica)){
 
     $anticipo_fornitore = $dbo->fetchOne('SELECT ABS(SUM(totale)) AS totale FROM co_movimenti WHERE  co_movimenti.id_anagrafica='.prepare($id_anagrafica).' AND  co_movimenti.idconto='.prepare($id_conto_anticipo_fornitori));
 
-
-    if($anticipo_fornitore['totale'] != 0){
+    if ($anticipo_fornitore['totale'] != 0) {
         echo '
         <div class="alert alert-warning">
             '.tr('Attenzione: è stato anticipato al fornitore un importo di _TOTALE_',
                 [
-                    '_TOTALE_' => moneyFormat($anticipo_fornitore['totale'])
+                    '_TOTALE_' => moneyFormat($anticipo_fornitore['totale']),
                 ]
             ).'
         </div>';
     }
 
-    if($anticipo_cliente['totale'] != 0){
+    if ($anticipo_cliente['totale'] != 0) {
         echo '
         <div class="alert alert-warning">
             '.tr('Attenzione: è stato ricevuto un anticipo dal cliente di _TOTALE_',
                 [
-                    '_TOTALE_' => moneyFormat($anticipo_cliente['totale'])
+                    '_TOTALE_' => moneyFormat($anticipo_cliente['totale']),
                 ]
             ).'
         </div>';

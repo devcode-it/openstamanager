@@ -20,6 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Emails\Mail;
 use Modules\Emails\Template;
 use Modules\Fatture\Components\Descrizione;
@@ -27,7 +28,6 @@ use Modules\Fatture\Components\Riga;
 use Modules\Fatture\Fattura;
 use Modules\Interventi\Components\Sessione;
 use Modules\Interventi\Intervento;
-use Modules\Articoli\Articolo as ArticoloOriginale;
 use Util\Ini;
 
 /**
@@ -140,7 +140,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
     $fattura = Fattura::find($id_fattura);
     $intervento = Intervento::find($id_intervento);
 
-    if( !empty($fattura->anagrafica->idiva_vendite) ){
+    if (!empty($fattura->anagrafica->idiva_vendite)) {
         $id_iva = $fattura->anagrafica->idiva_vendite;
     }
 

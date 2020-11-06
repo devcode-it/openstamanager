@@ -17,7 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Funzioni di aiuto per la semplificazione del codice.
  *
  * @since 2.4.2

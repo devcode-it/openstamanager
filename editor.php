@@ -118,9 +118,9 @@ if (empty($record) || !$has_access) {
                 <script>
                 $( document ).ready(function() {';
 
-                    if (!empty($hide_left_sidebar)){
-    echo '              $(".control-sidebar").removeClass("control-sidebar-shown");  $("aside.content-wrapper, .main-footer").toggleClass("with-control-sidebar");';
-                    }
+    if (!empty($hide_left_sidebar)) {
+        echo '              $(".control-sidebar").removeClass("control-sidebar-shown");  $("aside.content-wrapper, .main-footer").toggleClass("with-control-sidebar");';
+    }
 
     echo '
                     $(".control-sidebar-toggle").bind("click", function() {

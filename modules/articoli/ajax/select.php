@@ -60,11 +60,11 @@ switch ($resource) {
             NULL AS id_dettaglio_fornitore,';
         }
 
-        if ($usare_iva_anagrafica){
+        if ($usare_iva_anagrafica) {
             $query .= '
             IFNULL(iva_anagrafica.id, IFNULL(iva_predefinita.id, iva_articolo.id)) AS idiva_vendita,
             IFNULL(iva_anagrafica.descrizione, IFNULL(iva_predefinita.descrizione, iva_articolo.descrizione)) AS iva_vendita,';
-        }else{
+        } else {
             $query .= '
             IFNULL(iva_predefinita.id, iva_articolo.id) AS idiva_vendita,
             IFNULL(iva_predefinita.descrizione, iva_articolo.descrizione) AS iva_vendita,';
@@ -95,9 +95,9 @@ switch ($resource) {
             LEFT JOIN co_iva AS iva_predefinita ON iva_predefinita.id = (SELECT valore FROM zz_settings WHERE nome = 'Iva predefinita')";
 
         if ($usare_iva_anagrafica) {
-            $query .= "
-            LEFT JOIN co_iva AS iva_anagrafica ON iva_anagrafica.id = (SELECT idiva_vendite FROM an_anagrafiche WHERE idanagrafica = ".prepare($superselect['idanagrafica']).')';
-            }
+            $query .= '
+            LEFT JOIN co_iva AS iva_anagrafica ON iva_anagrafica.id = (SELECT idiva_vendite FROM an_anagrafiche WHERE idanagrafica = '.prepare($superselect['idanagrafica']).')';
+        }
 
             $query .= '
 
@@ -151,13 +151,13 @@ switch ($resource) {
         // IVA da impostazioni
         foreach ($rs as $k => $r) {
             // Lettura movimenti delle mie sedi
-            $qta_azienda = $dbo->fetchOne("SELECT SUM(mg_movimenti.qta) AS qta FROM mg_movimenti LEFT JOIN an_sedi ON an_sedi.id = mg_movimenti.idsede_azienda WHERE mg_movimenti.idarticolo = ".prepare($r['id']).' AND idsede_azienda = '.prepare($superselect['idsede_partenza']));
+            $qta_azienda = $dbo->fetchOne('SELECT SUM(mg_movimenti.qta) AS qta FROM mg_movimenti LEFT JOIN an_sedi ON an_sedi.id = mg_movimenti.idsede_azienda WHERE mg_movimenti.idarticolo = '.prepare($r['id']).' AND idsede_azienda = '.prepare($superselect['idsede_partenza']));
 
             // Lettura eventuali movimenti ad una propria sede (nel caso di movimenti fra sedi della mia azienda) per il calcolo corretto delle quantità
             if ($superselect['idsede_partenza'] != 0) {
-                $qta_controparte = $dbo->fetchOne("SELECT SUM(mg_movimenti.qta) AS qta FROM mg_movimenti LEFT JOIN an_sedi ON an_sedi.id = mg_movimenti.idsede_controparte WHERE mg_movimenti.idarticolo = ".prepare($r['id']).' AND idsede_controparte = '.prepare($superselect['idsede_partenza']));
+                $qta_controparte = $dbo->fetchOne('SELECT SUM(mg_movimenti.qta) AS qta FROM mg_movimenti LEFT JOIN an_sedi ON an_sedi.id = mg_movimenti.idsede_controparte WHERE mg_movimenti.idarticolo = '.prepare($r['id']).' AND idsede_controparte = '.prepare($superselect['idsede_partenza']));
             } else {
-                $qta_controparte = $dbo->fetchOne("SELECT SUM(mg_movimenti.qta) AS qta FROM ((( mg_movimenti LEFT JOIN an_sedi ON an_sedi.id = mg_movimenti.idsede_controparte ) LEFT JOIN dt_ddt ON mg_movimenti.idddt = dt_ddt.id ) LEFT JOIN co_documenti ON mg_movimenti.iddocumento = co_documenti.id ) WHERE mg_movimenti.idarticolo = ".prepare($r['id']).' AND idsede_controparte = '.prepare($superselect['idsede_partenza']).' AND IFNULL(dt_ddt.idanagrafica, co_documenti.idanagrafica) = '.prepare(setting('Azienda predefinita')));
+                $qta_controparte = $dbo->fetchOne('SELECT SUM(mg_movimenti.qta) AS qta FROM ((( mg_movimenti LEFT JOIN an_sedi ON an_sedi.id = mg_movimenti.idsede_controparte ) LEFT JOIN dt_ddt ON mg_movimenti.idddt = dt_ddt.id ) LEFT JOIN co_documenti ON mg_movimenti.iddocumento = co_documenti.id ) WHERE mg_movimenti.idarticolo = '.prepare($r['id']).' AND idsede_controparte = '.prepare($superselect['idsede_partenza']).' AND IFNULL(dt_ddt.idanagrafica, co_documenti.idanagrafica) = '.prepare(setting('Azienda predefinita')));
             }
 
             $qta = $qta_azienda['qta'] - $qta_controparte['qta'];

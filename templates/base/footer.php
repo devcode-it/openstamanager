@@ -17,7 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Footer di default.
  * I contenuti di questo file vengono utilizzati per generare il footer delle stampe nel caso non esista un file footer.php all'interno della stampa.
  *

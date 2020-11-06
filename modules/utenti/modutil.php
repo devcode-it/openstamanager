@@ -33,7 +33,7 @@ function menuSelection($element, $group_id, $depth, $permessi_disponibili)
     // Permessi impostati per il gruppo
     $permesso_salvato = $dbo->fetchOne('SELECT permessi FROM zz_permissions WHERE idgruppo = '.prepare($group_id).' AND idmodule = '.prepare($element['id']));
     $permessi = $permesso_salvato ? $permesso_salvato['permessi'] : '-';
-    foreach ($permessi_disponibili as $id => $nome){
+    foreach ($permessi_disponibili as $id => $nome) {
         $attr = ($id == $permessi) ? ' selected="selected"' : '';
 
         $result .= '

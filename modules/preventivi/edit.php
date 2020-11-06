@@ -105,9 +105,10 @@ echo '
                 </div>
 
                 <div class="col-md-3">
-                    <?php 
-                        if (!empty($record['idpagamento']))
+                    <?php
+                        if (!empty($record['idpagamento'])) {
                             echo Modules::link('Pagamenti', $record['idpagamento'], null, null, 'class="pull-right"');
+                        }
                     ?>
 
                     {[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "values": "query=SELECT id, descrizione FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione", "value": "$idpagamento$" ]}

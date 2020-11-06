@@ -41,7 +41,7 @@ if (Interaction::isEnabled()) {
         ->orderBy('data_stato_fe')
         ->get();
 
-    if (!empty($fatture_generate)){
+    if (!empty($fatture_generate)) {
         echo '
     <div class="alert alert-warning">
         <p><i class="fa fa-warning"></i> '.tr('Attenzione: le seguenti fatture sono in attesa di una ricevuta').'.</p>

@@ -55,6 +55,7 @@ class Mastrino extends Model
         $model->is_insoluto = $is_insoluto;
         $model->primanota = $contabile;
         $model->id_anagrafica = $id_anagrafica;
+
         return $model;
     }
 

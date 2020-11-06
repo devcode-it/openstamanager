@@ -25,7 +25,7 @@ class ReceiptTask extends Manager
 {
     public function execute()
     {
-        if (!Interaction::isEnabled()){
+        if (!Interaction::isEnabled()) {
             return;
         }
 

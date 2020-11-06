@@ -137,8 +137,7 @@ switch (filter('op')) {
 
         $already_token = $dbo->fetchOne('SELECT `id` FROM `zz_tokens` WHERE `id_utente` = '.prepare($id_utente))['id'];
 
-        if (empty($already_token)){
-
+        if (empty($already_token)) {
             //Quando richiamo getApiTokens,  non trovando nessun token abilitato ne crea uno nuovo
             $tokens = $utente->getApiTokens();
 
@@ -146,12 +145,10 @@ switch (filter('op')) {
                 $dbo->query('UPDATE zz_tokens SET enabled = 1 WHERE id = '.prepare($token['id']));
                 flash()->info(tr('Token creato!'));
             }
-
-        }else if ($dbo->query('UPDATE zz_tokens SET enabled = 1 WHERE id_utente = '.prepare($id_utente))) {
+        } elseif ($dbo->query('UPDATE zz_tokens SET enabled = 1 WHERE id_utente = '.prepare($id_utente))) {
             flash()->info(tr('Token abilitato!'));
         }
 
-       
         break;
 
     // Disabilita API utente

@@ -422,8 +422,16 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stato email'), 'Utente', 'zz_users.username', 6, 1, 0, 1, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stato email'), '_bg_', 'IF(em_emails.sent_at IS NULL, IF(em_emails.failed_at IS NULL, ''#CC9837'', ''#CC4D37''), ''#38CD4E'')', 6, 1, 0, 0, 0, 0);
 
-ALTER TABLE `em_templates` CHANGE `id_smtp` `id_account` INT(11) NOT NULL;
-ALTER TABLE `em_print_template` CHANGE `id_email` `id_template` INT(11) NOT NULL;
+ALTER TABLE `em_templates` ADD `id_account` INT(11) NOT NULL;
+UPDATE `em_templates` SET `id_account` = `id_smtp`;
+ALTER TABLE `em_templates` DROP CONSTRAINT `em_templates_ibfk_2`, DROP `id_smtp`;
+ALTER TABLE `em_templates` ADD FOREIGN KEY (`id_account`) REFERENCES `em_accounts`(`id`) ON DELETE CASCADE;
+
+ALTER TABLE `em_print_template` ADD `id_template` INT(11) NOT NULL;
+UPDATE `em_print_template` SET `id_template` = `id_email`;
+ALTER TABLE `em_print_template` DROP CONSTRAINT `em_print_template_ibfk_1`, DROP `id_email`;
+ALTER TABLE `em_print_template` ADD FOREIGN KEY (`id_template`) REFERENCES `em_templates`(`id`) ON DELETE CASCADE;
+
 ALTER TABLE `em_accounts` ADD `timeout` INT(11) NOT NULL DEFAULT 1000;
 ALTER TABLE `an_anagrafiche` ADD `enable_newsletter` BOOLEAN DEFAULT TRUE;
 

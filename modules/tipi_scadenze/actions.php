@@ -36,7 +36,7 @@ switch (filter('op')) {
                 ], ['id' => $id_record]);
 
                 //aggiorno anche il segmento
-                $dbo->update('zz_segments', [
+                $dbo->update('co_sezionali', [
                     'clause' => 'co_scadenziario.tipo="'.$nome.'"',
                     'name' => 'Scadenzario '.$nome,
                 ], [
@@ -72,7 +72,7 @@ switch (filter('op')) {
                 $id_record = $dbo->lastInsertedID();
 
                 //Aggiungo anche il segmento
-                $dbo->insert('zz_segments', [
+                $dbo->insert('co_sezionali', [
                     'id_module' => Modules::get('Scadenzario')['id'],
                     'name' => 'Scadenzario '.$nome,
                     'clause' => 'co_scadenziario.tipo="'.$nome.'"',

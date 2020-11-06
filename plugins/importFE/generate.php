@@ -205,7 +205,7 @@ echo '
 // Sezionale
 echo '
         <div class="col-md-3">
-            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE is_fiscale = 1 AND id_module='.$id_module.' ORDER BY name", "value": "'.$_SESSION['module_'.$id_module]['id_segment'].'" ]}
+            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM co_sezionali WHERE is_fiscale = 1 AND id_module='.$id_module.' ORDER BY name", "value": "'.$_SESSION['module_'.$id_module]['id_segment'].'" ]}
         </div>';
 
 // Data di registrazione
@@ -235,7 +235,7 @@ if (!empty($anagrafica)) {
             {[ "type": "select", "label": "'.tr('Fattura collegata').'", "name": "ref_fattura", "required": 1, "values": "query='.$query.'" ]}
         </div>';
     } elseif ($dati_generali['TipoDocumento'] == 'TD06') {
-        $query .= "AND co_documenti.id_segment = (SELECT id FROM zz_segments WHERE name = 'Fatture pro-forma' AND id_module = ".prepare($id_module).')';
+        $query .= "AND co_documenti.id_segment = (SELECT id FROM co_sezionali WHERE name = 'Fatture pro-forma' AND id_module = ".prepare($id_module).')';
 
         echo '
         <div class="col-md-3">

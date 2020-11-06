@@ -54,7 +54,7 @@ if ($dir == 'entrata') {
 }
 
 if (empty($record['is_fiscale'])) {
-    $msg = '<br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module=\''.$id_module.'\' AND is_fiscale = 1 ORDER BY name" ]}
+    $msg = '<br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM co_sezionali WHERE id_module=\''.$id_module.'\' AND is_fiscale = 1 ORDER BY name" ]}
     {[ "type": "date", "label": "'.tr('Data').'", "name": "data", "required": 1, "value": "-now-" ]}';
 
     echo '

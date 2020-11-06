@@ -101,28 +101,47 @@ if (!empty($options) && $options != 'custom' && $options != 'menu') {
     echo '
 <div class="nav-tabs-custom">
     <ul class="nav nav-tabs nav-justified">
-        <li class="active"><a data-toggle="tab" href="#fields">'.tr('Campi').' <span class="badge">'.($dbo->fetchNum('SELECT * FROM zz_views WHERE id_module='.prepare($record['id']).' ORDER BY `order` ASC')).'</a></li>
-        <li><a data-toggle="tab" href="#filters">'.tr('Filtri').' <span class="badge">'.($dbo->fetchNum('SELECT * FROM zz_group_module WHERE idmodule='.prepare($record['id']).' ORDER BY `id` ASC')).'</span></a></li>
+        <li class="active"><a data-toggle="tab" href="#campi">
+            '.tr('Campi').'
+            <span class="badge">'.($dbo->fetchNum('SELECT * FROM zz_views WHERE id_module='.prepare($record['id']).' ORDER BY `order` ASC')).'</span>
+        </a></li>
+
+        <li><a data-toggle="tab" href="#filtri_gruppi">
+            '.tr('Filtri per gruppo').'
+            <span class="badge">'.($dbo->fetchNum('SELECT * FROM zz_group_module WHERE idmodule='.prepare($record['id']).' ORDER BY `id` ASC')).'</span>
+        </a></li>
+
+        <li><a data-toggle="tab" href="#filtri_dinamici">
+            '.tr('Filtri dinamici').'
+            <span class="badge">'.($dbo->fetchNum('SELECT * FROM zz_group_module WHERE idmodule='.prepare($record['id']).' ORDER BY `id` ASC')).'</span>
+        </a></li>
     </ul>
 
     <div class="tab-content">
 
         <!-- CAMPI -->
-        <div id="fields" class="tab-pane fade in active">';
+        <div id="campi" class="tab-pane fade in active">';
 
     include $module->filepath('fields.php');
 
     echo '
         </div>
 
-        <!-- FILTRI -->
-        <div id="filters" class="tab-pane fade">';
+        <!-- FILTRI STATICI PER GRUPPO -->
+        <div id="filtri_gruppi" class="tab-pane fade">';
 
     include $module->filepath('filters.php');
 
     echo '
         </div>
 
+        <!-- FILTRI DINAMICI -->
+        <div id="filtri_dinamici" class="tab-pane fade">';
+
+    include $module->filepath('filters.php');
+
+    echo '
+        </div>
     </div>
 </div>';
 

@@ -183,7 +183,7 @@ class Modules
         if (!isset(self::$segments[$module])) {
             $database = database();
 
-            self::$segments[$module] = $database->fetchArray('SELECT * FROM `zz_segments` WHERE `id_module` = '.prepare($module).' ORDER BY `predefined` DESC, `id` ASC');
+            self::$segments[$module] = $database->fetchArray('SELECT * FROM `co_sezionali` WHERE `id_module` = '.prepare($module).' ORDER BY `predefined` DESC, `id` ASC');
         }
 
         return (array) self::$segments[$module];

@@ -187,7 +187,7 @@ class Generator
     {
         $database = database();
 
-        $maschera = $database->fetchOne('SELECT pattern FROM zz_segments WHERE id = :id_segment', [
+        $maschera = $database->fetchOne('SELECT pattern FROM co_sezionali WHERE id = :id_segment', [
             ':id_segment' => $id_segment,
         ]);
 

@@ -73,7 +73,7 @@ if (!empty($options['create_document'])) {
     // Opzioni aggiuntive per le Fatture
     if (in_array($final_module['name'], ['Fatture di vendita', 'Fatture di acquisto'])) {
         if ($options['op'] == 'nota_accredito' && !empty($segmenti)) {
-            $segmento = $database->fetchOne("SELECT * FROM zz_segments WHERE predefined_accredito='1'");
+            $segmento = $database->fetchOne("SELECT * FROM co_sezionali WHERE predefined_accredito='1'");
 
             $id_segment = $segmento['id'];
         } else {
@@ -92,7 +92,7 @@ if (!empty($options['create_document'])) {
             </div>
 
             <div class="col-md-6">
-                {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.prepare($final_module['id']).' ORDER BY name", "value": "'.$id_segment.'" ]}
+                {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM co_sezionali WHERE id_module='.prepare($final_module['id']).' ORDER BY name", "value": "'.$id_segment.'" ]}
             </div>';
     }
 

@@ -793,7 +793,7 @@ switch (post('op')) {
 
 // Nota di debito
 if (get('op') == 'nota_addebito') {
-    $rs_segment = $dbo->fetchArray("SELECT * FROM zz_segments WHERE predefined_addebito='1'");
+    $rs_segment = $dbo->fetchArray("SELECT * FROM co_sezionali WHERE predefined_addebito='1'");
     if (!empty($rs_segment)) {
         $id_segment = $rs_segment[0]['id'];
     } else {

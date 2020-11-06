@@ -36,3 +36,30 @@ UPDATE `co_righe_documenti` INNER JOIN `in_righe_interventi` ON `co_righe_docume
 
 -- Collegamento Righe
 UPDATE `co_righe_documenti` INNER JOIN `in_righe_interventi` ON `co_righe_documenti`.`idintervento` = `in_righe_interventi`.`idintervento` AND `co_righe_documenti`.`descrizione` = `in_righe_interventi`.`descrizione` AND `co_righe_documenti`.`idarticolo` = `in_righe_interventi`.`idarticolo` SET `co_righe_documenti`.`original_id` = `in_righe_interventi`.`id`, `co_righe_documenti`.`original_type` = 'Modules\\Interventi\\Components\\Riga' WHERE `co_righe_documenti`.`original_id` IS NULL AND `co_righe_documenti`.`original_type` IS NULL;
+
+-- Gestione della separazione tra segmenti (filtri dinamici) e sezionali (caratteristiche delle Fatture)
+CREATE TABLE `zz_filters` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `id_module` int(11) NOT NULL,
+    `name` varchar(255) NOT NULL,
+    `clause` TEXT NOT NULL,
+    `position` enum('WHR','HVN') NOT NULL DEFAULT 'WHR',
+    `note` TEXT,
+    PRIMARY KEY (`id`),
+    FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+INSERT INTO `zz_filters` (`id_module`, `name`, `clause`, `position`) VALUES
+(18, 'Scadenzario totale', 'ABS(`co_scadenziario`.`pagato`) < ABS(`co_scadenziario`.`da_pagare`)', 'WHR'),
+(18, 'Scadenzario clienti', '((SELECT dir FROM co_tipidocumento WHERE co_tipidocumento.id=co_documenti.idtipodocumento)=''entrata'') AND ABS(`co_scadenziario`.`pagato`) < ABS(`co_scadenziario`.`da_pagare`)', 'WHR'),
+(18, 'Scadenzario fornitori', '((SELECT dir FROM co_tipidocumento WHERE co_tipidocumento.id=co_documenti.idtipodocumento)=''uscita'') AND ABS(`co_scadenziario`.`pagato`) < ABS(`co_scadenziario`.`da_pagare`)', 'WHR'),
+(18, 'Scadenzario Ri.Ba.', 'co_pagamenti.riba=1', 'WHR'),
+(18, 'Scadenzario generico', 'co_scadenziario.tipo=\"generico\"', 'WHR'),
+(18, 'Scadenzario F24', 'co_scadenziario.tipo=\"f24\"', 'WHR'),
+(18, 'Scadenziaro completo', '(`co_scadenziario`.`scadenza` BETWEEN ''|period_start|'' AND ''|period_end|'' )', 'WHR'),
+(3, 'Tutti', '1=1', 'WHR'),
+(3, 'Attività', 'orario_inizio BETWEEN ''|period_start|'' AND ''|period_end|'' OR orario_fine BETWEEN ''|period_start|'' AND ''|period_end|''', 'WHR'),
+(3, 'Promemoria', '((in_interventi_tecnici.orario_inizio=''0000-00-00 00:00:00'' AND in_interventi_tecnici.orario_fine=''0000-00-00 00:00:00'') OR in_interventi_tecnici.id IS NULL)', 'WHR');
+
+DELETE FROM `zz_segments` WHERE `id` IN (4, 5, 6, 7, 8, 9, 11, 12, 13, 14);
+ALTER TABLE `zz_segments` RENAME `co_sezionali`;

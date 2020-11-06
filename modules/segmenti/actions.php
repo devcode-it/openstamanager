@@ -30,20 +30,20 @@ switch (post('op')) {
         }
 
         if ($predefined) {
-            $dbo->query('UPDATE zz_segments SET predefined = 0 WHERE id_module = '.prepare($module));
+            $dbo->query('UPDATE co_sezionali SET predefined = 0 WHERE id_module = '.prepare($module));
         }
 
         $predefined_accredito = post('predefined_accredito');
         if ($predefined_accredito) {
-            $dbo->query('UPDATE zz_segments SET predefined_accredito = 0 WHERE id_module = '.prepare($module));
+            $dbo->query('UPDATE co_sezionali SET predefined_accredito = 0 WHERE id_module = '.prepare($module));
         }
 
         $predefined_addebito = post('predefined_addebito');
         if ($predefined_addebito) {
-            $dbo->query('UPDATE zz_segments SET predefined_addebito = 0 WHERE id_module = '.prepare($module));
+            $dbo->query('UPDATE co_sezionali SET predefined_addebito = 0 WHERE id_module = '.prepare($module));
         }
 
-        $dbo->update('zz_segments', [
+        $dbo->update('co_sezionali', [
             'id_module' => $module,
             'name' => post('name'),
             'clause' => $_POST['clause'],
@@ -70,10 +70,10 @@ switch (post('op')) {
         }
 
         if ($predefined) {
-            $dbo->query('UPDATE zz_segments SET predefined = 0 WHERE id_module = '.prepare($module));
+            $dbo->query('UPDATE co_sezionali SET predefined = 0 WHERE id_module = '.prepare($module));
         }
 
-        $dbo->insert('zz_segments', [
+        $dbo->insert('co_sezionali', [
             'id_module' => $module,
             'name' => post('name'),
             'clause' => '1=1',
@@ -89,7 +89,7 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        $dbo->query('DELETE FROM zz_segments WHERE id='.prepare($id_record));
+        $dbo->query('DELETE FROM co_sezionali WHERE id='.prepare($id_record));
 
         // TODO
         // eliminare riferimento sulle fatture eventuali collegate a questo segmento?

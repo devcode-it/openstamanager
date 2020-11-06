@@ -644,7 +644,7 @@ class Fattura extends Document
      */
     public function isFiscale()
     {
-        $result = database()->fetchOne('SELECT is_fiscale FROM zz_segments WHERE id ='.prepare($this->id_segment))['is_fiscale'];
+        $result = database()->fetchOne('SELECT is_fiscale FROM co_sezionali WHERE id ='.prepare($this->id_segment))['is_fiscale'];
 
         return $result;
     }

@@ -234,7 +234,7 @@ WHERE (SELECT COUNT(*) FROM in_interventi_tecnici WHERE in_interventi_tecnici.id
     $numero_mesi_precenti = $dbo->fetchNum($query_mesi_precenti);
 
     if ($numero_mesi_precenti > 0) {
-        echo '<div class="alert alert-warning alert-dismissible text-sm" role="alert"><i class="fa fa-exclamation-triangle"></i><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button> '.tr('Ci sono _NUM_ attività scadute', [
+        echo '<div class="alert alert-warning alert-dismissible text-sm" role="alert"><i class="fa fa-exclamation-triangle"></i><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button> '.tr('Ci sono _NUM_ promemoria scaduti', [
                 '_NUM_' => $numero_mesi_precenti,
         ]).'.</div>';
     }

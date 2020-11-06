@@ -198,7 +198,7 @@ switch (filter('op')) {
             $id_tecnico = $user['idanagrafica'];
         }
 
-        // Righe inserite
+        // Promemoria da contratti con stato pianificabile
         $query_promemoria_contratti = "SELECT
             co_promemoria.id,
             idcontratto,
@@ -216,7 +216,9 @@ switch (filter('op')) {
               idcontratto IN (SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE is_pianificabile = 1))
         ORDER BY data_richiesta ASC";
         $promemoria_contratti = $dbo->fetchArray($query_promemoria_contratti);
+        
 
+        // Promemoria da interventi con stato NON completato
         $query_interventi = "SELECT in_interventi.id,
             in_interventi.richiesta,
             in_interventi.id_contratto AS idcontratto,
@@ -230,18 +232,21 @@ switch (filter('op')) {
             (SELECT descrizione FROM in_tipiintervento WHERE in_tipiintervento.idtipointervento=in_interventi.idtipointervento) AS tipo_intervento
     FROM in_interventi
         INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica";
-
+    
+    // Visualizzo solo promemoria del tecnico loggato
     if (!empty($id_tecnico) && !empty($solo_promemoria_assegnati)) {
         $query_interventi .= '
         INNER JOIN in_interventi_tecnici_assegnati ON in_interventi.id = in_interventi_tecnici_assegnati.id_intervento AND id_tecnico = '.prepare($id_tecnico);
     } elseif ($user->is_admin) {
         $query_interventi .= '
-        INNER JOIN in_interventi_tecnici_assegnati ON in_interventi.id = in_interventi_tecnici_assegnati.id_intervento';
+        LEFT JOIN in_interventi_tecnici_assegnati ON in_interventi.id = in_interventi_tecnici_assegnati.id_intervento';
     }
 
     $query_interventi .= '
         LEFT JOIN in_interventi_tecnici ON in_interventi_tecnici.idintervento = in_interventi.id AND in_interventi_tecnici_assegnati.id_tecnico = in_interventi_tecnici.idtecnico
+        INNER JOIN in_statiintervento ON in_interventi.idstatointervento = in_statiintervento.idstatointervento
         LEFT JOIN an_anagrafiche AS tecnico ON in_interventi_tecnici_assegnati.id_tecnico = tecnico.idanagrafica
+        WHERE in_statiintervento.is_completato = 0
     GROUP BY in_interventi.id, in_interventi_tecnici_assegnati.id_tecnico
     HAVING COUNT(in_interventi_tecnici.id) = 0
     ORDER BY data_richiesta ASC';
@@ -254,7 +259,7 @@ switch (filter('op')) {
             // Elenco interventi da pianificare
             foreach ($promemoria as $sessione) {
                 if ($sessione['mese'] == $mese) {
-                    if (date('Ymd', strtotime($sessione['data_richiesta'])) < date('Ymd')) {
+                    if (date('Ymd', strtotime($sessione['data_scadenza'])) < date('Ymd') and !empty($sessione['data_scadenza'])) {
                         $class = 'danger';
                     } else {
                         $class = 'primary';

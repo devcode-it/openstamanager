@@ -73,7 +73,7 @@ $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : $user['idan
 		</div>
 	</div>
 
-    <div class="box box-warning hidden" id="info">
+    <div class="box hidden" id="info">
         <div class="box-header with-border">
             <h3 class="box-title"><?php echo tr('Fatture in stato Bozza del cliente'); ?></h3>
             <div class="box-tools pull-right">
@@ -120,17 +120,19 @@ $(document).ready(function () {
                 },
                 success: function (results) {
                     $("#info").removeClass("hidden");
-
+                    $("#info").removeClass("box-info");
+                    $("#info").removeClass("box-warning");
                     if (results.length === 0){
-                        $("#info-content").html("<p>'.tr('Nessuna fattura in stato Bozza presente per il cliente corrente').'</p>")
+                        $("#info").addClass("box-info");
+                        $("#info-content").html("<p>'.tr('Per il cliente selezionato non è presente alcuna fattura in stato di Bozza').'</p>")
                     } else {
                         let content = "";
 
                         results.forEach(function(item) {
                             content += "<li>" + item + "</li>";
                         });
-
-                        $("#info-content").html("<p>'.tr('Sono presenti le seguenti fatture in stato Bozza per il cliente corrente').':</p><ul>" + content + "</ul>")
+                        $("#info").addClass("box-warning");
+                        $("#info-content").html("<p>'.tr('Attenzione: per il cliente selezionato sono presenti le seguenti fatture in stato Bozza').':</p><ul>" + content + "</ul>")
                     }
                 }
             });

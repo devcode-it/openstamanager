@@ -31,10 +31,6 @@ ALTER TABLE `co_righe_contratti` ADD `abilita_serial` tinyint(1) NOT NULL DEFAUL
 ALTER TABLE `co_righe_preventivi` ADD `abilita_serial` tinyint(1) NOT NULL DEFAULT '0';
 
 --
--- Attenzione: da testare per il corretto aggiornamento dei dati.
---
-
---
 -- Fatture
 --
 -- Collegamento Articoli

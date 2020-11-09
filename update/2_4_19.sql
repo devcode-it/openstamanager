@@ -20,7 +20,7 @@ UPDATE `co_pianodeiconti2` SET `idpianodeiconti1` = 1 WHERE `descrizione` = 'Con
 ALTER TABLE `mg_articoli` ADD `qta_multipla` DECIMAL(15,6) NOT NULL DEFAULT '0' AFTER `threshold_qta`;
 
 -- Correzione riferimenti Articoli Interventi per Fatture
-UPDATE co_righe_documenti SET co_righe_documenti.original_id = (SELECT id FROM in_righe_interventi WHERE co_righe_documenti.original_id = in_righe_interventi.old_id) WHERE co_righe_documenti.original_type = 'Modules\\Interventi\\Components\\Articolo';
+UPDATE `co_righe_documenti` SET `co_righe_documenti`.`original_id` = (SELECT `id` FROM `in_righe_interventi` WHERE `co_righe_documenti`.`original_id` = `in_righe_interventi`.`old_id`) WHERE `co_righe_documenti`.`original_type` = 'Modules\\Interventi\\Components\\Articolo';
 
 --
 -- Aggiornamento dati Interventi per Fatture

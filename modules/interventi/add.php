@@ -297,16 +297,11 @@ if (empty($id_intervento)) {
 
         }, function(){
 
-           
-        });
-        
+        });        
     }
 
     function deselezionaTutto(){
-
         input("tecnici_assegnati").getElement().selectReset();
-
-
     }
 
     </script>';

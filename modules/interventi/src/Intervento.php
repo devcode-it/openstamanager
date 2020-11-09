@@ -235,7 +235,7 @@ class Intervento extends Document
 
     public function getReferenceName()
     {
-        return 'Attività';
+        return 'Attivit&agrave;';
     }
 
     public function getReferenceNumber()

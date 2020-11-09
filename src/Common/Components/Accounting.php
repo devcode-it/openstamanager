@@ -52,6 +52,7 @@ abstract class Accounting extends Component
 {
     protected $casts = [
         'qta' => 'float',
+        'qta_evasa' => 'float',
         'prezzo_unitario' => 'float',
         'prezzo_unitario_ivato' => 'float',
         'iva_unitaria' => 'float',

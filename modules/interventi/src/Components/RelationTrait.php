@@ -43,16 +43,7 @@ trait RelationTrait
     public function fixIvaIndetraibile()
     {
     }
-
-    public function getQtaEvasaAttribute()
-    {
-        return 0;
-    }
-
-    public function setQtaEvasaAttribute($value)
-    {
-    }
-
+    
     /**
      * Effettua i conti per il subtotale della riga.
      */

@@ -36,3 +36,6 @@ UPDATE `co_righe_documenti` INNER JOIN `in_righe_interventi` ON `co_righe_docume
 
 -- Collegamento Righe
 UPDATE `co_righe_documenti` INNER JOIN `in_righe_interventi` ON `co_righe_documenti`.`idintervento` = `in_righe_interventi`.`idintervento` AND `co_righe_documenti`.`descrizione` = `in_righe_interventi`.`descrizione` AND `co_righe_documenti`.`idarticolo` = `in_righe_interventi`.`idarticolo` SET `co_righe_documenti`.`original_id` = `in_righe_interventi`.`id`, `co_righe_documenti`.`original_type` = 'Modules\\Interventi\\Components\\Riga' WHERE `co_righe_documenti`.`original_id` IS NULL AND `co_righe_documenti`.`original_type` IS NULL;
+
+-- Aggiunta colonna qta_evasa per Interventi
+ALTER TABLE `in_righe_interventi` ADD `qta_evasa` decimal(15, 6) NOT NULL AFTER `qta`;

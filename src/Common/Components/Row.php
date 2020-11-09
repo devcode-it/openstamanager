@@ -76,6 +76,8 @@ abstract class Row extends Accounting
     /**
      * Azione personalizzata per la copia dell'oggetto (dopo la copia).
      *
+     * Forza il salvataggio del prezzo_unitario, per rendere compatibile il sistema con gli Interventi.
+     *
      * @param $original
      */
     protected function customAfterDataCopiaIn($original)

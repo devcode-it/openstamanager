@@ -364,6 +364,25 @@ abstract class Article extends Accounting
         return true;
     }
 
+    /**
+     * Azione personalizzata per la copia dell'oggetto (dopo la copia).
+     *
+     * Forza il salvataggio del prezzo_unitario, per rendere compatibile il sistema con gli Interventi.
+     *
+     * @param $original
+     */
+    protected function customAfterDataCopiaIn($original)
+    {
+        $this->prezzo_unitario = $original->prezzo_unitario;
+
+        parent::customAfterDataCopiaIn($original);
+    }
+
+    /**
+     * Azione personalizzata per la copia dell'oggetto (inizializzazione della copia).
+     *
+     * @param $original
+     */
     protected function customInitCopiaIn($original)
     {
         $this->articolo()->associate($original->articolo);

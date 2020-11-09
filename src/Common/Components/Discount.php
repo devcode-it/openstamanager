@@ -27,8 +27,6 @@ abstract class Discount extends Accounting
 {
     use SimpleModelTrait;
 
-    protected $guarded = [];
-
     public static function build(Document $document)
     {
         $model = new static();

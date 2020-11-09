@@ -247,9 +247,6 @@ abstract class Component extends Model
 
         // Impostazione degli attributi
         $model = $object::find($model->id);
-        if (empty($model)) {
-            dd($model, $attributes, $object);
-        }
         $accepted = $model->getAttributes();
 
         // Azioni specifiche precedenti

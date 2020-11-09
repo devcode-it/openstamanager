@@ -43,12 +43,8 @@ trait RelationTrait
     public function fixIvaIndetraibile()
     {
     }
-    
-    /**
-     * Effettua i conti per il subtotale della riga.
-     */
+
     protected function fixSubtotale()
     {
-        $this->fixIva();
     }
 }

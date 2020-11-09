@@ -41,7 +41,7 @@ class EmailManager implements ManagerInterface
     {
         // Visualizzo il log delle operazioni di invio email
         $emails = Mail::whereRaw('id IN (SELECT id_email FROM zz_operations WHERE id_record = '.prepare($options['id_record']).' AND id_module = '.prepare($options['id_module']).' AND id_email IS NOT NULL)')
-            ->orderByDesc('created_at')
+            ->orderBy('created_at', 'DESC')
             ->get();
 
         if ($emails->isEmpty()) {

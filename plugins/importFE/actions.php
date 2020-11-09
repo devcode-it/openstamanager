@@ -197,7 +197,7 @@ switch (filter('op')) {
 
         $fatture = $anagrafica->fattureAcquisto()
             ->contabile()
-            ->orderByDesc('created_at')
+            ->orderBy('created_at', 'DESC')
             ->take(10)
             ->get();
 

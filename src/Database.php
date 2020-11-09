@@ -474,7 +474,7 @@ class Database extends Util\Singleton
                 if ($order == 'ASC') {
                     $statement = $statement->orderBy($field);
                 } else {
-                    $statement = $statement->orderByDesc($field);
+                    $statement = $statement->orderBy($field, 'DESC');
                 }
             }
         }

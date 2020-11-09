@@ -32,9 +32,15 @@ echo '
 
     <tr>
         <td class="text-left" style="width:30%">'.tr('Intervento n.').': <b>'.$documento['codice'].'</b></td>
-        <td class="text-left" style="width:20%">'.tr('Data richiesta').': <b>'.Translator::dateToLocale($documento['data_richiesta']).'</b></td>
-        <td class="text-left" style="width:25%">'.tr('Preventivo n.').': <b>'.(!empty($preventivo) ? $preventivo['numero'] : '').'</b></td>
-        <td class="text-left" style="width:25%">'.tr('Contratto n.').': <b>'.(!empty($contratto) ? $contratto['numero'] : '').'</b></td>
+        <td class="text-left" colspan="'.(empty($preventivo) && empty($contratto)  ? '3' : '1').'" style="width:30%">'.tr('Data richiesta').': <b>'.Translator::dateToLocale($documento['data_richiesta']).'</b></td>';
+if (!empty($preventivo)){
+echo '
+        <td class="text-left" colspan="2" style="width:20%">'.tr('Preventivo n.').': <b>'.(!empty($preventivo) ? $preventivo['numero'].' del '.Translator::dateToLocale($preventivo['data_bozza']) : '').'</b></td>';
+}else if (!empty($contratto)){
+echo '
+        <td class="text-left" colspan="2" style="width:20%">'.tr('Contratto n.').': <b>'.(!empty($contratto) ? $contratto['numero'].' del '.Translator::dateToLocale($contratto['data_bozza']) : '').'</b></td>';
+}
+echo '
     </tr>';
 
 // Dati cliente
@@ -275,15 +281,15 @@ echo '
     <tbody>';
 
 // Sessioni di lavoro dei tecnici
-$sessioni = $documento->sessioni;
+$sessioni = $documento->sessioni->sortBy('orario_inizio');
 foreach ($sessioni as $i => $sessione) {
     echo '
     <tr>';
-
     // Nome tecnico
     echo '
     	<td>
-    	    '.$sessione->anagrafica->ragione_sociale.'
+            '.$sessione->anagrafica->ragione_sociale.'
+            ('.$sessione->tipo->descrizione.')
     	</td>';
 
     $inizio = new Carbon($sessione['orario_inizio']);
@@ -371,7 +377,7 @@ if ($options['pricing']) {
 // Diritto di chiamata
 if ($options['pricing']) {
     echo '
-        <td class="text-center" colspan="2">
+        <td class="text-center" colspan="2" width="120px" >
             <small>'.tr('Diritto di chiamata').':</small><br/><b>'.moneyFormat($sessioni->sum('prezzo_diritto_chiamata'), 2).'</b>
         </td>';
 } else {

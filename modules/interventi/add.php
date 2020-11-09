@@ -273,7 +273,6 @@ if (empty($id_intervento)) {
         </div>
     </div>';
 
-
     echo '
     
     <script>
@@ -305,7 +304,6 @@ if (empty($id_intervento)) {
     }
 
     </script>';
-        
 }
 
 echo '

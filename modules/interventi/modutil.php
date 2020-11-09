@@ -256,6 +256,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
         $qta = $riga->qta;
 
         $copia = $riga->copiaIn($fattura, $qta);
+
         $copia->id_conto = $id_conto;
 
         $copia->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;

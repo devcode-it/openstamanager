@@ -75,27 +75,25 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
         echo '
             <tr id="int_'.$r['id'].'">
 				<td><a target="_blank" >'.Modules::link(Modules::get('Interventi')['id'], $r['id'], $r['codice']).'</a></td>
-                <td><a target="_blank" >'.Modules::link(Modules::get('Anagrafiche')['id'], $r['idanagrafica'], $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica='.prepare($r['idanagrafica']))['ragione_sociale']).'<br><small>Presso: ';              
-                 // Sede promemoria
-                if ($r['idsede'] == '-1') {
-                    echo '- '.('Nessuna').' -';
-                } elseif (empty($r['idsede'])) {
-                    echo tr('Sede legale');
-                } else {
-                    $rsp2 = $dbo->fetchArray("SELECT id, CONCAT( CONCAT_WS( ' (', CONCAT_WS(', ', nomesede, citta), indirizzo ), ')') AS descrizione FROM an_sedi WHERE id=".prepare($r['idsede']));
+                <td><a target="_blank" >'.Modules::link(Modules::get('Anagrafiche')['id'], $r['idanagrafica'], $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica='.prepare($r['idanagrafica']))['ragione_sociale']).'<br><small>Presso: ';
+        // Sede promemoria
+        if ($r['idsede'] == '-1') {
+            echo '- '.('Nessuna').' -';
+        } elseif (empty($r['idsede'])) {
+            echo tr('Sede legale');
+        } else {
+            $rsp2 = $dbo->fetchArray("SELECT id, CONCAT( CONCAT_WS( ' (', CONCAT_WS(', ', nomesede, citta), indirizzo ), ')') AS descrizione FROM an_sedi WHERE id=".prepare($r['idsede']));
 
-                    echo $rsp2[0]['descrizione'];
-                }
+            echo $rsp2[0]['descrizione'];
+        }
         echo '
                 </small>
                 </td>
-                <td>'.Translator::dateToLocale($r['data_richiesta']).' '.((empty($r['data_scadenza'])) ? '' : '<br><small>Entro il '.Translator::dateToLocale($r['data_scadenza']).'</small>' ).'</td>
+                <td>'.Translator::dateToLocale($r['data_richiesta']).' '.((empty($r['data_scadenza'])) ? '' : '<br><small>Entro il '.Translator::dateToLocale($r['data_scadenza']).'</small>').'</td>
                 <td>'.$dbo->fetchOne("SELECT CONCAT_WS(' - ', codice,descrizione) AS descrizione FROM in_tipiintervento WHERE idtipointervento=".prepare($r['idtipointervento']))['descrizione'].'</td>
                 <td>'.$dbo->fetchOne("SELECT CONCAT_WS(' - ', codice,descrizione) AS descrizione FROM in_statiintervento WHERE idstatointervento=".prepare($r['idstatointervento']))['descrizione'].'</td>
                 <td>'.nl2br($r['richiesta']).'</td>
 				';
-
-      
 
         echo '
             </tr>';

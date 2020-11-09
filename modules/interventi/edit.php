@@ -51,8 +51,12 @@ echo '
                             {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione","value": "$idsede_destinazione$", "ajax-source": "sedi", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "placeholder": "'.tr('Sede legale').'", "readonly": "'.$record['flag_completato'].'" ]}
                         </div>
 
-                        <div class="col-md-6">
-                            '.Modules::link('Anagrafiche', $record['idclientefinale'], null, null, 'class="pull-right"').'
+                        <div class="col-md-6">';
+                            if (!empty($record['idclientefinale'])) {
+                                echo '
+                                                        '.Modules::link('Anagrafiche', $record['idclientefinale'], null, null, 'class="pull-right"');
+                            }
+echo '
                             {[ "type": "select", "label": "'.tr('Per conto di').'", "name": "idclientefinale", "value": "$idclientefinale$", "ajax-source": "clienti", "readonly": "'.$record['flag_completato'].'" ]}
                         </div>
 

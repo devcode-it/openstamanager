@@ -41,4 +41,6 @@ UPDATE `co_righe_documenti` INNER JOIN `in_righe_interventi` ON `co_righe_docume
 ALTER TABLE `in_righe_interventi` ADD `qta_evasa` decimal(15, 6) NOT NULL AFTER `qta`;
 
 -- Allineo campo qta_evasa (appena aggiunto) con la qta delle righe interventi inseriti in fattura
-UPDATE `in_righe_interventi` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idintervento` = `in_righe_interventi`.`idintervento` SET `in_righe_interventi`.`qta_evasa` = `co_righe_documenti`.`qta`;
+UPDATE `in_righe_interventi` SET `in_righe_interventi`.`qta_evasa` = `in_righe_interventi`.`qta` WHERE  `in_righe_interventi`.`idintervento` IN (
+    SELECT DISTINCT( `idintervento`) FROM `co_righe_documenti` WHERE `idintervento` IS NOT NULL
+);

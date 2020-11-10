@@ -39,7 +39,7 @@ if (Interaction::isEnabled()) {
         ->orderBy('data_stato_fe')
         ->get();
 
-        if (!empty($fatture_generate_errore)) {
+        if (!empty($fatture_generate_errore->count())) {
         echo '
         <div class="alert alert-warning alert-dismissible" role="alert"><button class="close" type="button" data-dismiss="alert" aria-hidden="true"><span aria-hidden="true">×</span><span class="sr-only">'.tr('Chiudi').'</span></button>
         <p><i class="fa fa-warning"></i> '.tr('Attenzione: le seguenti fatture hanno ricevuto uno scartato o hanno presentano errori in fase di trasmissione').'.</p>
@@ -64,7 +64,7 @@ if (Interaction::isEnabled()) {
         ->orderBy('data_stato_fe')
         ->get();
 
-    if (!empty($fatture_generate)) {
+    if (!empty($fatture_generate->count())) {
         echo '
     <div class="alert alert-info info-dismissible" role="alert"><button class="close" type="button" data-dismiss="alert" aria-hidden="true"><span aria-hidden="true">×</span><span class="sr-only">'.tr('Chiudi').'</span></button>
         <p><i class="fa fa-info"></i> '.tr('Informazione: le seguenti fatture sono in attesa di una ricevuta da più di 7 giorni').'.</p>

@@ -84,7 +84,9 @@ if ($options['dir'] == 'entrata') {
             }
         }
 
-        aggiorna_guadagno();
+        $("#modals > div").on("shown.bs.modal", function () {
+            aggiorna_guadagno();
+        });
 
         $("#prezzo_unitario").keyup(aggiorna_guadagno);
         $("#costo_unitario").keyup(aggiorna_guadagno);

@@ -32,6 +32,29 @@ if (Interaction::isEnabled()) {
     '_BTN_' => '<i class="fa fa-refresh"></i> <b>'.tr('Ricerca ricevute').'</b>',
 ]).'.</p>';
 
+    
+    $fatture_generate_errore = Fattura::vendita()
+        ->whereIn('codice_stato_fe', ['NS','ERR'])
+        ->where('data_stato_fe', '>=', $_SESSION['period_start'])
+        ->orderBy('data_stato_fe')
+        ->get();
+
+        if (!empty($fatture_generate_errore)) {
+        echo '
+        <div class="alert alert-warning">
+        <p><i class="fa fa-warning"></i> '.tr('Attenzione: le seguenti fatture sono state scartate o hanno presentano errori in fase di trasmissione').'.</p>
+        <ul>';
+
+        foreach ($fatture_generate_errore as $fattura_generata) {
+            echo '<li>'.reference($fattura_generata, $fattura_generata->getReference()).' ['.$fattura_generata['codice_stato_fe'].'] ['.timestampFormat($fattura_generata['data_stato_fe']).']</li>';
+        }
+
+        echo '
+        </ul>
+        </div>';
+    }
+
+
     // Controllo se ci sono fatture in elaborazione da più di 7 giorni per le quali non ho ancora una ricevuta
     $data_limite = (new Carbon())->subDays(7);
     $fatture_generate = Fattura::vendita()
@@ -43,8 +66,8 @@ if (Interaction::isEnabled()) {
 
     if (!empty($fatture_generate)) {
         echo '
-    <div class="alert alert-warning">
-        <p><i class="fa fa-warning"></i> '.tr('Attenzione: le seguenti fatture sono in attesa di una ricevuta').'.</p>
+    <div class="alert alert-info">
+        <p><i class="fa fa-info"></i> '.tr('Informazione: le seguenti fatture sono in attesa di una ricevuta da più di 7 giorni').'.</p>
         <ul>';
 
         foreach ($fatture_generate as $fattura_generata) {
@@ -54,7 +77,8 @@ if (Interaction::isEnabled()) {
         echo '
         </ul>
     </div>';
-    }
+    }    
+
 }
 
 echo '

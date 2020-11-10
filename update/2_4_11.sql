@@ -424,12 +424,12 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 
 ALTER TABLE `em_templates` ADD `id_account` INT(11) NOT NULL;
 UPDATE `em_templates` SET `id_account` = `id_smtp`;
-ALTER TABLE `em_templates` DROP CONSTRAINT `em_templates_ibfk_2`, DROP `id_smtp`;
+ALTER TABLE `em_templates` DROP FOREIGN KEY `em_templates_ibfk_2`, DROP `id_smtp`;
 ALTER TABLE `em_templates` ADD FOREIGN KEY (`id_account`) REFERENCES `em_accounts`(`id`) ON DELETE CASCADE;
 
 ALTER TABLE `em_print_template` ADD `id_template` INT(11) NOT NULL;
 UPDATE `em_print_template` SET `id_template` = `id_email`;
-ALTER TABLE `em_print_template` DROP CONSTRAINT `em_print_template_ibfk_1`, DROP `id_email`;
+ALTER TABLE `em_print_template` DROP FOREIGN KEY `em_print_template_ibfk_1`, DROP `id_email`;
 ALTER TABLE `em_print_template` ADD FOREIGN KEY (`id_template`) REFERENCES `em_templates`(`id`) ON DELETE CASCADE;
 
 ALTER TABLE `em_accounts` ADD `timeout` INT(11) NOT NULL DEFAULT 1000;

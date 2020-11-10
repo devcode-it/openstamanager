@@ -44,3 +44,6 @@ ALTER TABLE `in_righe_interventi` ADD `qta_evasa` decimal(15, 6) NOT NULL AFTER 
 UPDATE `in_righe_interventi` SET `in_righe_interventi`.`qta_evasa` = `in_righe_interventi`.`qta` WHERE  `in_righe_interventi`.`idintervento` IN (
     SELECT DISTINCT( `idintervento`) FROM `co_righe_documenti` WHERE `idintervento` IS NOT NULL
 );
+
+-- Aggiornamento date vuote su movimenti
+UPDATE `mg_movimenti` SET `data`=`created_at` WHERE `data` IS NULL;

@@ -41,8 +41,8 @@ if (Interaction::isEnabled()) {
 
         if (!empty($fatture_generate_errore)) {
         echo '
-        <div class="alert alert-warning">
-        <p><i class="fa fa-warning"></i> '.tr('Attenzione: le seguenti fatture sono state scartate o hanno presentano errori in fase di trasmissione').'.</p>
+        <div class="alert alert-warning alert-dismissible" role="alert"><button class="close" type="button" data-dismiss="alert" aria-hidden="true"><span aria-hidden="true">×</span><span class="sr-only">'.tr('Chiudi').'</span></button>
+        <p><i class="fa fa-warning"></i> '.tr('Attenzione: le seguenti fatture hanno ricevuto uno scartato o hanno presentano errori in fase di trasmissione').'.</p>
         <ul>';
 
         foreach ($fatture_generate_errore as $fattura_generata) {
@@ -66,7 +66,7 @@ if (Interaction::isEnabled()) {
 
     if (!empty($fatture_generate)) {
         echo '
-    <div class="alert alert-info">
+    <div class="alert alert-info info-dismissible" role="alert"><button class="close" type="button" data-dismiss="alert" aria-hidden="true"><span aria-hidden="true">×</span><span class="sr-only">'.tr('Chiudi').'</span></button>
         <p><i class="fa fa-info"></i> '.tr('Informazione: le seguenti fatture sono in attesa di una ricevuta da più di 7 giorni').'.</p>
         <ul>';
 

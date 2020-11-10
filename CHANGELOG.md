@@ -34,7 +34,8 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 
 ### Aggiunto (Added)
  - Aggiunta gestione conto anticipi cliente e fornitore tramite **Prima nota**
-
+ - Aggiunta colonna della sede nel modulo **Movimenti**
+ 
 ### Modificato (Changed)
  - Spostati i conti transitori (iva, ecc) su stato patrimoniale
 

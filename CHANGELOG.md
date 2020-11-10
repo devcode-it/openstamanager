@@ -35,11 +35,17 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 ### Aggiunto (Added)
  - Aggiunta gestione conto anticipi cliente e fornitore tramite **Prima nota**
 
+### Modificato (Changed)
+ - Spostati i conti transitori (iva, ecc) su stato patrimoniale
+
 ### Fixed
  - Selezione banca **Preventivi**
  - Riferimenti attività **Fatture di vendita**
  - Permesso cambio stato fatture in Bozza
  - Correzione aggiornamento 2.4.11 per MariaDB
+ - Correzione calcolo giacenze su plugin **Giacenze**
+ - Esclusione fatture pro-forma dal calcolo fatturato sul modulo **Statistiche**
+ - Gestito il conto articolo in fase di fatturazione attività se specificato nella scheda articolo
 
  
 ## 2.4.18 (2020-10-30)

@@ -36,8 +36,8 @@ echo '
 echo '
 <div class="nav-tabs-custom">
     <ul class="nav nav-tabs nav-justified">
-        <li class="active"><a href="#generazione" data-toggle="tab">'.tr('Generazione').'</a></li>
-        <li><a href="#inserimento" data-toggle="tab">'.tr('Inserimento').'</a></li>
+        <li class="active"><a href="#generazione" data-toggle="tab">'.tr('Generazione multipla').'</a></li>
+        <li><a href="#inserimento" data-toggle="tab">'.tr('Inserimento singolo').'</a></li>
     </ul>
 
     <div class="tab-content">

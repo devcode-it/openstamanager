@@ -47,3 +47,14 @@ UPDATE `in_righe_interventi` SET `in_righe_interventi`.`qta_evasa` = `in_righe_i
 
 -- Aggiornamento date vuote su movimenti
 UPDATE `mg_movimenti` SET `data`=`created_at` WHERE `data` IS NULL;
+
+-- Aggiunta colonna "Sede" nei movimenti
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `mg_movimenti` JOIN `mg_articoli` ON `mg_articoli`.id = `mg_movimenti`.`idarticolo` LEFT JOIN `an_sedi` ON `mg_movimenti`.`idsede_azienda` = `an_sedi`.`id` WHERE 1=1 HAVING 2=2 ORDER BY mg_movimenti.data DESC, mg_movimenti.created_at DESC' WHERE `name` = 'Movimenti';
+
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti'), 'Sede', 'IF( mg_movimenti.idsede_azienda=0, ''Sede legale'', an_sedi.nomesede )', '4', '1', '0', '0', NULL, NULL, '1', '0', '1');
+
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`summable` = 1 WHERE `zz_modules`.`name` = 'Movimenti' AND `zz_views`.`name` = 'Quantità';
+
+INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) (
+    SELECT `zz_groups`.`id`, `zz_views`.`id` FROM `zz_groups`, `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` WHERE `zz_modules`.`name` = 'Movimenti' AND `zz_views`.`name` = 'Sede'
+); 

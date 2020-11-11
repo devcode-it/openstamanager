@@ -247,9 +247,13 @@ switch ($resource) {
             LEFT JOIN mg_fornitore_articolo ON mg_fornitore_articolo.id_articolo = mg_articoli.id AND mg_fornitore_articolo.deleted_at IS NULL AND mg_fornitore_articolo.id_fornitore = '.prepare($id_anagrafica).'
         |where|';
 
-        $where[] = 'barcode='.prepare(get('barcode'));
         $where[] = 'mg_articoli.attivo = 1';
         $where[] = 'mg_articoli.deleted_at IS NULL';
+
+        if (!empty($search)) {
+            $search_fields[] = 'mg_articoli.codice LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = 'mg_articoli.barcode LIKE '.prepare('%'.$search.'%');
+        }
 
         break;
 }

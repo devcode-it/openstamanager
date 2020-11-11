@@ -27,12 +27,12 @@ include_once __DIR__.'/../../core.php';
     <input type="hidden" name="op" value="add">
     <input type="hidden" name="backto" value="record-edit">
 
-    <div class="row hidden" id="barcode-row">
-        <div class="col-md-12">
-            {["type": "text", "label": "<?php echo tr('Barcode'); ?>", "name": "barcode", "icon-before": "<i class=\"fa fa-barcode\"></i>" ]}
+    <div class="row">
+        <div class="col-md-offset-4 col-md-4">
+            {["type": "text", "label": "<?php echo tr('Ricerca con lettore');?>", "name": "barcode", "icon-before": "<i class=\"fa fa-barcode\"></i>" ]}
         </div>
     </div>
-
+    
     <div class="row">
         <div class="col-md-4">
             {["type": "select", "label": "<?php echo tr('Articolo'); ?>", "name": "idarticolo", "ajax-source": "articoli", "value": "", "required": 1, "select-options": {"permetti_movimento_a_zero": 1, "idanagrafica": <?php echo setting('Azienda predefinita'); ?>, "idsede_partenza": 0, "idsede_destinazione": 0} ]}
@@ -94,6 +94,9 @@ echo '
 <script>
     // Lettura codici da lettore barcode
     $(document).unbind("keyup");
+    $(document).ready(function(){
+        $("#barcode").focus();
+    });
     $(document).on("keyup", function (event) {
         if ($(":focus").is("input, textarea")) {
             return;
@@ -104,12 +107,11 @@ echo '
         let barcode = $("#barcode");
 
         if (key === 13) {
-            let search = barcode.val().replace(/\W/g, "");
+            let search = barcode.val().replace(/[^a-z0-9\s\-\.\/\\|]+/gmi, "");
             ricercaBarcode(search);
         } else if (key === 8) {
             barcode.val(barcode.val().substr(0, barcode.val().length - 1));
         } else if(key <= 90 && key >= 48) {
-            $("#barcode-row").removeClass("hidden");
             barcode.val(barcode.val() + String.fromCharCode(key));
         }
     });
@@ -166,7 +168,7 @@ echo '
                 if(data.results.length === 1) {
                     $("#barcode").val("");
 
-                    var record = data.results[0].children[0];
+                    var record = data.results[0];
                     $("#idarticolo").selectSetNew(record.id, record.text, record);
 
                     salva($("#aggiungi"));
@@ -189,6 +191,13 @@ echo '
 
         if (valid) {
             let articolo = $("#idarticolo").selectData();
+            if( articolo.descrizione==undefined ){
+                articolo.descrizione = $( $("#idarticolo").selectData()["element"] ).data("descrizione");
+                articolo.codice = $( $("#idarticolo").selectData()["element"] ).data("codice");
+                articolo.um = $( $("#idarticolo").selectData()["element"] ).data("um");
+                articolo.prezzo_acquisto = $( $("#idarticolo").selectData()["element"] ).data("prezzo_acquisto");
+                articolo.prezzo_vendita = $( $("#idarticolo").selectData()["element"] ).data("prezzo_vendita");
+            }
             let prezzo_acquisto = parseFloat(articolo.prezzo_acquisto);
             let prezzo_vendita = parseFloat(articolo.prezzo_vendita);
 
@@ -211,15 +220,14 @@ echo '
                 text = "Spostamento";
                 qta_rimanente = parseFloat(articolo.qta);
             }
-
+   
             if (articolo.descrizione) {
                 let testo = $("#info-articolo").html();
-
+   
                 testo = testo.replace("|alert-type|", alert_type)
                     .replace("|icon|", icon)
                     .replace("|descrizione|", articolo.descrizione)
                     .replace("|codice|", articolo.codice)
-                    .replace("|misura|", articolo.um)
                     .replace("|misura|", articolo.um)
                     .replace("|descrizione-movimento|", text)
                     .replace("|movimento|", qta_movimento.toLocale())

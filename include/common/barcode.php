@@ -26,7 +26,7 @@ $intestazione_prezzo = ($options['dir'] == 'uscita' ? tr('Prezzo di acquisto') :
 echo '
 <div class="row">
     <div class="col-md-offset-4 col-md-4">
-        {[ "type": "text", "label": "'.tr('Barcode').'", "name": "barcode", "value": "", "icon-before": "<i class=\"fa fa-barcode\"></i>" ]}
+        {[ "type": "text", "label": "", "name": "barcode", "value": "", "icon-before": "<i class=\"fa fa-barcode\"></i>" ]}
     </div>
 </div>
 
@@ -92,7 +92,7 @@ $("#barcode").off("keyup").on("keyup", function (event) {
         return;
     }
 
-    $.getJSON(globals.rootdir + "/ajax_select.php?op=articoli_barcode&barcode=" + barcode + "&id_anagrafica='.$options['idanagrafica'].'",
+    $.getJSON(globals.rootdir + "/ajax_select.php?op=articoli_barcode&search=" + barcode + "&id_anagrafica='.$options['idanagrafica'].'",
     function(response) {
         let result = response.results[0];
         if(!result){

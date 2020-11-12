@@ -116,9 +116,9 @@ switch (post('op')) {
 }
 
 $operations['crea_fattura'] = [
-    'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Fattura _TYPE_',  [ '_TYPE_' => strtolower($module['name'])]),
+    'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Fattura _TYPE_', ['_TYPE_' => strtolower($module['name'])]),
     'data' => [
-        'title' => tr('Fatturare i _TYPE_ selezionati?', [ '_TYPE_' => strtolower($module['name'])]),
+        'title' => tr('Fatturare i _TYPE_ selezionati?', ['_TYPE_' => strtolower($module['name'])]),
         'msg' => '{[ "type": "checkbox", "label": "<small>'.tr('Aggiungere alle fatture di vendita non ancora emesse?').'</small>", "placeholder": "'.tr('Aggiungere alle fatture di vendita nello stato bozza?').'", "name": "accodare" ]}<br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module=\''.$id_fatture.'\' AND is_fiscale = 1 ORDER BY name", "value": "'.$id_segment.'" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',

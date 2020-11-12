@@ -29,7 +29,7 @@ include_once __DIR__.'/../../core.php';
 
     <div class="row">
         <div class="col-md-offset-4 col-md-4">
-            {["type": "text", "label": "<?php echo tr('Ricerca con lettore');?>", "name": "barcode", "icon-before": "<i class=\"fa fa-barcode\"></i>" ]}
+            {["type": "text", "label": "<?php echo tr('Ricerca con lettore'); ?>", "name": "barcode", "icon-before": "<i class=\"fa fa-barcode\"></i>" ]}
         </div>
     </div>
     

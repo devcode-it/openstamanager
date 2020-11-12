@@ -43,7 +43,7 @@ switch (filter('op')) {
             ], ['id' => $id_record]);
 
             // Messaggio di avvertenza
-            if ((stripos("N6", $codice_natura) === 0) && $esigibilita == 'S') {
+            if ((stripos('N6', $codice_natura) === 0) && $esigibilita == 'S') {
                 flash()->warning(tr('Combinazione di natura IVA _TYPE_ ed esigibilità non compatibile', [
                     '_TYPE_' => $codice_natura,
                 ]));

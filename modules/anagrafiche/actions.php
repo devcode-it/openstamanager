@@ -331,10 +331,9 @@ switch (post('op')) {
 
 // Operazioni aggiuntive per il logo e filigrana stampe
 if (filter('op') == 'link_file') {
-
     $nome = filter('nome_allegato');
-   
-    $logo_stampe = array("logo stampe", "logo_stampe", "logo stampe.jpg", "logo stampe.png");
+
+    $logo_stampe = ['logo stampe', 'logo_stampe', 'logo stampe.jpg', 'logo stampe.png'];
     if (in_array(strtolower($nome), $logo_stampe)) {
         $nome = 'Logo stampe';
         $uploads = $structure->uploads($id_record)->where('filename', $upload);
@@ -344,7 +343,7 @@ if (filter('op') == 'link_file') {
         }
     }
 
-    $filigrana_stampe = array("filigrana stampe", "filigrana_stampe", "filigrana stampe.jpg", "filigrana stampe.png");
+    $filigrana_stampe = ['filigrana stampe', 'filigrana_stampe', 'filigrana stampe.jpg', 'filigrana stampe.png'];
     if (in_array(strtolower($nome), $filigrana_stampe)) {
         $nome = 'Filigrana stampe';
         $uploads = $structure->uploads($id_record)->where('filename', $upload);
@@ -354,8 +353,7 @@ if (filter('op') == 'link_file') {
         }
     }
 
-   
-    if (($nome == 'Logo stampe' || $nome = 'Filigrana stampe' ) && (setting('Azienda predefinita') == $id_record)) {
+    if (($nome == 'Logo stampe' || $nome = 'Filigrana stampe') && (setting('Azienda predefinita') == $id_record)) {
         Settings::setValue($nome, $upload);
     }
 }

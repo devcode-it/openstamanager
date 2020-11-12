@@ -32,14 +32,13 @@ if (Interaction::isEnabled()) {
     '_BTN_' => '<i class="fa fa-refresh"></i> <b>'.tr('Ricerca ricevute').'</b>',
 ]).'.</p>';
 
-    
     $fatture_generate_errore = Fattura::vendita()
-        ->whereIn('codice_stato_fe', ['NS','ERR'])
+        ->whereIn('codice_stato_fe', ['NS', 'ERR'])
         ->where('data_stato_fe', '>=', $_SESSION['period_start'])
         ->orderBy('data_stato_fe')
         ->get();
 
-        if (!empty($fatture_generate_errore->count())) {
+    if (!empty($fatture_generate_errore->count())) {
         echo '
         <div class="alert alert-warning alert-dismissible" role="alert"><button class="close" type="button" data-dismiss="alert" aria-hidden="true"><span aria-hidden="true">×</span><span class="sr-only">'.tr('Chiudi').'</span></button>
         <p><i class="fa fa-warning"></i> '.tr('Attenzione: le seguenti fatture hanno ricevuto uno scartato o hanno presentano errori in fase di trasmissione').'.</p>
@@ -53,7 +52,6 @@ if (Interaction::isEnabled()) {
         </ul>
         </div>';
     }
-
 
     // Controllo se ci sono fatture in elaborazione da più di 7 giorni per le quali non ho ancora una ricevuta
     $data_limite = (new Carbon())->subDays(7);
@@ -77,8 +75,7 @@ if (Interaction::isEnabled()) {
         echo '
         </ul>
     </div>';
-    }    
-
+    }
 }
 
 echo '

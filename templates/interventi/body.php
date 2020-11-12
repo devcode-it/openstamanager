@@ -32,12 +32,12 @@ echo '
 
     <tr>
         <td class="text-left" style="width:30%">'.tr('Intervento n.').': <b>'.$documento['codice'].'</b></td>
-        <td class="text-left" colspan="'.(empty($preventivo) && empty($contratto)  ? '3' : '1').'" style="width:30%">'.tr('Data richiesta').': <b>'.Translator::dateToLocale($documento['data_richiesta']).'</b></td>';
-if (!empty($preventivo)){
-echo '
+        <td class="text-left" colspan="'.(empty($preventivo) && empty($contratto) ? '3' : '1').'" style="width:30%">'.tr('Data richiesta').': <b>'.Translator::dateToLocale($documento['data_richiesta']).'</b></td>';
+if (!empty($preventivo)) {
+    echo '
         <td class="text-left" colspan="2" style="width:20%">'.tr('Preventivo n.').': <b>'.(!empty($preventivo) ? $preventivo['numero'].' del '.Translator::dateToLocale($preventivo['data_bozza']) : '').'</b></td>';
-}else if (!empty($contratto)){
-echo '
+} elseif (!empty($contratto)) {
+    echo '
         <td class="text-left" colspan="2" style="width:20%">'.tr('Contratto n.').': <b>'.(!empty($contratto) ? $contratto['numero'].' del '.Translator::dateToLocale($contratto['data_bozza']) : '').'</b></td>';
 }
 echo '

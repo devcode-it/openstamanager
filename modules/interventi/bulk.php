@@ -229,21 +229,21 @@ return [
     'export-bulk' => [
         'text' => '<span><i class="fa fa-file-archive-o"></i> '.tr('Esporta stampe'),
         'data' => [
-            'title' => tr('Vuoi davvero esportare queste stampe in un archivio?'),
+            'title' => tr('Vuoi davvero esportare queste stampe in un archivio ZIP?'),
             'msg' => '',
-            'button' => tr('Crea archivio'),
+            'button' => tr('Procedi'),
             'class' => 'btn btn-lg btn-warning',
             'blank' => true,
         ],
     ],
 
     'crea_fattura' => [
-        'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Fattura documenti'),
+        'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Fattura _TYPE_',  [ '_TYPE_' => strtolower($module['name'])]),
         'data' => [
-            'title' => tr('Vuoi davvero generare le fatture per questi interventi?'),
-            'msg' => tr('Verranno fatturati gli interventi completati non inseriti in preventivi e contratti').'.<br>{[ "type": "checkbox", "placeholder": "'.tr('Aggiungere alle fatture esistenti non ancora emesse?').'", "name": "accodare" ]}
-            <br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module=\''.$id_fatture.'\' AND is_fiscale = 1 ORDER BY name", "value": "'.$id_segment.'" ]}',
-            'button' => tr('Crea fatture'),
+           'title' => tr('Fatturare gli _TYPE_ selezionati?', [ '_TYPE_' => strtolower($module['name'])]).' <small class="tip" title="'.tr("Verranno fatturati solo gli interventi completati non collegati a contratti o preventivi").'."><i class="fa fa-question-circle-o"></i></small>',
+            'msg' =>'{[ "type": "checkbox", "label": "<small>'.tr('Aggiungere alle fatture di vendita non ancora emesse?').'</small>", "placeholder": "'.tr('Aggiungere alle fatture di vendita nello stato bozza?').'", "name": "accodare" ]}<br>
+            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module=\''.$id_fatture.'\' AND is_fiscale = 1 ORDER BY name", "value": "'.$id_segment.'" ]}',
+            'button' => tr('Procedi'),
             'class' => 'btn btn-lg btn-warning',
             'blank' => false,
         ],
@@ -255,7 +255,7 @@ return [
             'title' => tr('Vuoi davvero cambinare le stato per questi interventi?'),
             'msg' => tr('Seleziona lo stato in cui spostare tutti gli interventi non completati').'.<br>
             <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL" ]}',
-            'button' => tr('Sposta'),
+            'button' => tr('Procedi'),
             'class' => 'btn btn-lg btn-warning',
             'blank' => false,
         ],
@@ -269,7 +269,7 @@ return [
             <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL", "value": "" ]}
             <br>{[ "type":"checkbox", "label":"'.tr('Duplica righe').'", "name":"righe", "value":"" ]}
             <br>{[ "type":"checkbox", "label":"'.tr('Duplica sessioni').'", "name":"sessioni", "value":"" ]}',
-            'button' => tr('Duplica attività'),
+            'button' => tr('Procedi'),
             'class' => 'btn btn-lg btn-warning',
             'blank' => false,
         ],

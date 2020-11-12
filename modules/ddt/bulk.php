@@ -137,16 +137,21 @@ switch (post('op')) {
 }
 
 if (App::debug()) {
-    $operations = [
-        'delete-bulk' => tr('Elimina selezionati'),
+    $operations['delete-bulk'] = [
+        'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span>',
+        'data' => [
+            'msg' => tr('Vuoi davvero eliminare i ddt selezionati?'),
+            'button' => tr('Procedi'),
+            'class' => 'btn btn-lg btn-danger',
+        ],
     ];
 }
 
 $operations['crea_fattura'] = [
-        'text' => tr('Fattura documenti'),
+        'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Fattura _TYPE_',  [ '_TYPE_' => strtolower($module['name'])]),
         'data' => [
-            'title' => tr('Vuoi davvero fatturare questi documenti?'),
-            'msg' => '{[ "type": "checkbox", "label": "'.tr('Aggiungere alle fatture esistenti non ancora emesse?').'", "placeholder": "'.tr('Aggiungere alle fatture esistenti non ancora emesse?').'", "name": "accodare" ]}
+            'title' => tr('Fatturare i _TYPE_ selezionati?', [ '_TYPE_' => strtolower($module['name'])]),
+            'msg' => '{[ "type": "checkbox", "label": "<small>'.tr('Aggiungere alle _TYPE_ non ancora emesse?', [ '_TYPE_' => strtolower($module_fatture) ]).'", "placeholder": "'.tr('Aggiungere alle _TYPE_ nello stato bozza?', [ '_TYPE_' => strtolower($module_fatture) ]).'</small>", "name": "accodare" ]}
             <br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module=\''.$id_fatture.'\' AND is_fiscale = 1 ORDER BY name", "value": "'.$id_segment.'" ]}',
             'button' => tr('Procedi'),
             'class' => 'btn btn-lg btn-warning',

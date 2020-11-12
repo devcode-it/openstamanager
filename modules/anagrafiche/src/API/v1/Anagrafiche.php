@@ -63,8 +63,28 @@ class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface
 
             $filters[] = 'an_anagrafiche.idanagrafica IN (SELECT idanagrafica FROM an_tipianagrafiche_anagrafiche WHERE idtipoanagrafica = (SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione = '.prepare($type).'))';
         }
-        $query .= !empty($filters) ? ' AND ('.implode('OR ', $filters).')' : '';
 
+        //Aggiunta possibilità di interrogazione db da API per resource anagrafiche
+        $filter = (array) $request['filter'];
+        foreach ($filter as $key => $value) {
+            $value = substr($value, 1, -1);
+            $result = [];
+
+            if (str_contains($value, ',')) {
+                $temp = explode(',', $value);
+                foreach ($temp as $value) {
+                    $result = $key.'='.prepare($value);
+                }
+            } else { 
+                $result = $key.'='.prepare($value);
+            }
+
+            $filters[] = $result;
+        }
+
+
+        $query .= !empty($filters) ? ' AND ('.implode(' OR ', $filters).')' : '';
+        
         $query .= '
         HAVING 2=2
         ORDER BY an_anagrafiche.ragione_sociale';

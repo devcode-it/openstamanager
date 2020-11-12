@@ -196,7 +196,7 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
         </div>
 
         <div class="col-md-5 text-right">
-            <i class="fa fa-question-circle tip" title="'.tr('Le operazioni di esportazione, copia e stampa sono limitate alle righe selezionate e visibili della tabella').'. '.tr('Per azioni su tutti i contenuti selezionati, utilizzare le Azioni di gruppo').'."></i>
+            <i class="fa fa-question-circle-o tip" title="'.tr('Le operazioni di esportazione, copia e stampa sono limitate alle righe selezionate e visibili della tabella').'. '.tr('Per azioni su tutti i contenuti selezionati, utilizzare le Azioni di gruppo').'."></i>
             <div class="btn-group" role="group">';
 
     if (setting('Abilita esportazione Excel e PDF')) {

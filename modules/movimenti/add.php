@@ -1,4 +1,4 @@
- x<?php
+<?php
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.n.c.
@@ -72,10 +72,10 @@ include_once __DIR__.'/../../core.php';
     <div class="row" id="buttons">
         <div class="col-md-12 text-right">
             <button type="submit" class="btn btn-default">
-                <i class="fa fa-plus"></i> <?php echo tr('Aggiungi e chiudi'); ?>
+                <i class="fa fa-exchange"></i> <?php echo tr('Movimenta e chiudi'); ?>
             </button>
             <button type="button" class="btn btn-primary" onclick="salva(this);" id="aggiungi">
-                <i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?>
+                <i class="fa fa-exchange"></i> <?php echo tr('Movimenta'); ?>
             </button>
         </div>
     </div>

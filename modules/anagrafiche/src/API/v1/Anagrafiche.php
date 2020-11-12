@@ -31,69 +31,66 @@ class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface
 {
     public function retrieve($request)
     {
-        $query = 'SELECT an_anagrafiche.idanagrafica AS id,
-            an_anagrafiche.ragione_sociale,
-            an_anagrafiche.piva,
-            an_anagrafiche.codice_fiscale,
-            an_anagrafiche.indirizzo,
-            an_anagrafiche.indirizzo2,
-            an_anagrafiche.citta,
-            an_anagrafiche.cap,
-            an_anagrafiche.provincia,
-            an_anagrafiche.km,
-            IFNULL(an_anagrafiche.lat, 0.00) AS latitudine,
-            IFNULL(an_anagrafiche.lng, 0.00) AS longitudine,
-            an_nazioni.nome AS nazione,
-            an_anagrafiche.telefono,
-            an_anagrafiche.fax,
-            an_anagrafiche.cellulare,
-            an_anagrafiche.email,
-            an_anagrafiche.sitoweb,
-            an_anagrafiche.note,
-            an_anagrafiche.idzona,
-            an_anagrafiche.deleted_at
-        FROM an_anagrafiche
-            LEFT OUTER JOIN an_nazioni ON an_anagrafiche.id_nazione=an_nazioni.id
-        WHERE
-            1=1 AND an_anagrafiche.deleted_at IS NULL';
+        $database = database();
+
+        $query = $database->table('an_anagrafiche')
+        ->leftJoin('an_nazioni', 'an_anagrafiche.id_nazione', '=', 'an_nazioni.id')
+        ->select(
+    'an_anagrafiche.ragione_sociale',
+            'an_anagrafiche.piva',
+            'an_anagrafiche.codice_fiscale',
+            'an_anagrafiche.indirizzo',
+            'an_anagrafiche.indirizzo2',
+            'an_anagrafiche.citta',
+            'an_anagrafiche.cap',
+            'an_anagrafiche.provincia',
+            'an_anagrafiche.km',
+            $database->raw('IFNULL(an_anagrafiche.lat, 0.00) AS latitudine'),
+            $database->raw('IFNULL(an_anagrafiche.lng, 0.00) AS longitudine'),
+            $database->raw('an_nazioni.nome AS nazione'),
+            'an_anagrafiche.telefono',
+            'an_anagrafiche.fax',
+            'an_anagrafiche.cellulare',
+            'an_anagrafiche.email',
+            'an_anagrafiche.sitoweb',
+            'an_anagrafiche.note',
+            'an_anagrafiche.idzona',
+            'an_anagrafiche.deleted_at'
+        )->skip($request['page'] * $request['length'])
+        ->limit($request['length'])
+        ->orderBy('an_anagrafiche.ragione_sociale');
 
         $filters = [];
         if ($request['resource'] != 'anagrafiche') {
             $type = 'Cliente';
 
-            $filters[] = 'an_anagrafiche.idanagrafica IN (SELECT idanagrafica FROM an_tipianagrafiche_anagrafiche WHERE idtipoanagrafica = (SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione = '.prepare($type).'))';
+            $query = $query->whereRaw('an_anagrafiche.idanagrafica IN (SELECT idanagrafica FROM an_tipianagrafiche_anagrafiche WHERE idtipoanagrafica = (SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione = ?))', [$type]);
         }
 
-        //Aggiunta possibilità di interrogazione db da API per resource anagrafiche
-        $filter = (array) $request['filter'];
-        foreach ($filter as $key => $value) {
-            $value = substr($value, 1, -1);
-            $result = [];
+        // Filtri da richiesta API
+        $allow_list = [
+            'idanagrafica',
+        ];
+        $conditions = array_intersect_key((array) $request['where'], array_flip($allow_list));
 
-            if (str_contains($value, ',')) {
-                $temp = explode(',', $value);
-                foreach ($temp as $value) {
-                    $result = $key.'='.prepare($value);
-                }
-            } else { 
-                $result = $key.'='.prepare($value);
-            }
-
-            $filters[] = $result;
+        // Filtro per ID
+        if (!empty($conditions['idanagrafica'])) {
+            $query = $query->whereIn('an_anagrafiche.idanagrafica', (array) $conditions['idanagrafica']);
         }
 
-
-        $query .= !empty($filters) ? ' AND ('.implode(' OR ', $filters).')' : '';
-        
-        $query .= '
-        HAVING 2=2
-        ORDER BY an_anagrafiche.ragione_sociale';
-
+        // Filtri aggiuntivi predefiniti
         $module = Modules::get('Anagrafiche');
-        $query = Modules::replaceAdditionals($module->id, $query);
+        $additionals = Modules::getAdditionals($module->id, false);
+        foreach ($additionals['WHR'] as $where) {
+            $query = $query->whereRaw($where);
+        }
+
+        foreach ($additionals['HVN'] as $having) {
+            $query = $query->havingRaw($having);
+        }
 
         return [
-            'query' => $query,
+            'results' => $query->get()->toArray(),
         ];
     }
 

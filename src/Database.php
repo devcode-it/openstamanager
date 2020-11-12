@@ -660,6 +660,30 @@ class Database extends Util\Singleton
     }
 
     /**
+     * Get a new raw query expression.
+     *
+     * @param mixed $value
+     *
+     * @return \Illuminate\Database\Query\Expression
+     */
+    public function raw($value)
+    {
+        return$this->getCapsule()->getConnection()->raw($value);
+    }
+
+    /**
+     * Begin a fluent query against a database table.
+     *
+     * @param string $table
+     *
+     * @return \Illuminate\Database\Query\Builder
+     */
+    public function table($table)
+    {
+        return $this->getCapsule()->getConnection()->table($table);
+    }
+
+    /**
      * Esegue le query interne ad un file ".sql".
      *
      * @since 2.0

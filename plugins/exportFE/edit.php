@@ -217,6 +217,9 @@ echo '
                         $(button).attr("disabled", true).addClass("disabled");
                     } else if (data.code === 301) {
                         swal("'.tr('Invio già effettuato').'", data.code + " - " + data.message, "error");
+                        $(button).attr("disabled", true).addClass("disabled");
+                    } else if (data.code === 500) {
+                        swal("'.tr("Errore durante l'invio").'", "'.tr("Si è verificato un problema durante l'invio della fattura! Riprova tra qualche minuto oppure contatta l'assistenza se il problema persiste.").'", "error");
                     } else {
                         swal("'.tr('Invio fallito').'", data.code + " - " + data.message, "error");
                     }

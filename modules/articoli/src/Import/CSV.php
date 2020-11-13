@@ -21,6 +21,7 @@ namespace Modules\Articoli\Import;
 
 use Carbon\Carbon;
 use Importer\CSVImporter;
+use Modules\Anagrafiche\Sede;
 use Modules\Articoli\Articolo;
 use Modules\Articoli\Categoria;
 use Modules\Iva\Aliquota;
@@ -141,6 +142,7 @@ class CSV extends CSVImporter
     {
         $database = database();
         $primary_key = $this->getPrimaryKey();
+        $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
 
         // Fix per campi con contenuti derivati da query implicite
         if (!empty($record['id_fornitore'])) {
@@ -203,13 +205,20 @@ class CSV extends CSVImporter
         $articolo->save();
 
         // Movimentazione della quantità registrata
-        $qta_movimento = $qta_registrata - (float) ($articolo->qta);
+        $giacenze = $articolo->getGiacenze();
+        $id_sede = 0;
+        if (!empty($nome_sede)) {
+            $sede = Sede::where('nomesede', $nome_sede)
+                ->where('idanagrafica', $anagrafica_azienda->id)
+                ->first();
+            $id_sede = $sede->id;
+        }
+
+        $qta_movimento = $qta_registrata - $giacenze[$id_sede];
 
         $articolo->movimenta($qta_movimento, tr('Movimento da importazione'), new Carbon(), false, [
-            /*
-            'idsede_azienda' => $partenza,
-            'idsede_controparte' => $arrivo,
-            */
+            'idsede_azienda' => $id_sede,
+            'idsede_controparte' => 0,
         ]);
     }
 

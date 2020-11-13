@@ -37,8 +37,8 @@ switch (post('op')) {
                 $id_sede_azienda = $idsede_destinazione;
                 $id_sede_controparte = 0;
             } elseif ($tipo_movimento == 'scarico') {
-                $id_sede_controparte = 0;
                 $id_sede_azienda = $idsede_partenza;
+                $id_sede_controparte = 0;
 
                 $qta = -$qta;
             }

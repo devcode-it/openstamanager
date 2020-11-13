@@ -196,6 +196,26 @@ class Articolo extends Model
     }
 
     /**
+     * Restituisce le giacenze per sede dell'articolo.
+     *
+     * @return array
+     */
+    public function getGiacenze()
+    {
+        return $this->movimenti()
+            ->select(
+                'idsede_azienda',
+                database()->raw('SUM(qta) AS qta')
+            )->groupBy(['idsede_azienda'])
+            ->get()
+            ->mapToGroups(function ($item, $key) {
+                return [$item->idsede_azienda => (float) $item->attributes['qta']];
+            })
+            ->flatten()
+            ->toArray();
+    }
+
+    /**
      * Restituisce i movimenti di magazzino dell'articolo raggruppati per documento relativo.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany|\Illuminate\Database\Query\Builder

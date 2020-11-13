@@ -68,71 +68,91 @@ include_once __DIR__.'/../../core.php';
 			</div>
 
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-6">
 					{[ "type": "checkbox", "label": "<?php echo tr('Abilita serial number'); ?>", "name": "abilita_serial", "value": "$abilita_serial$", "help": "<?php echo tr('Abilita serial number in fase di aggiunta articolo in fattura o ddt'); ?>", "placeholder": "<?php echo tr('Serial number'); ?>", "extra": "<?php echo ($record['serial'] > 0) ? 'readonly' : ''; ?>" ]}
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-6">
                     {[ "type": "checkbox", "label": "<?php echo tr('Attivo'); ?>", "name": "attivo", "help": "<?php echo tr('Seleziona per rendere attivo l\'articolo'); ?>", "value": "$attivo$", "placeholder": "<?php echo tr('Articolo attivo'); ?>" ]}
                 </div>
 
-                <div class="col-md-4">
+            </div>
+
+			<div class="row">
+                <div class="col-md-8">
                     {[ "type": "text", "label": "<?php echo tr('Ubicazione'); ?>", "name": "ubicazione", "value": "$ubicazione$" ]}
                 </div>
-            </div>
-			<div class="row">
-				<div class="col-md-4">
-					{[ "type": "number", "label": "<?php echo tr('Quantità'); ?>", "name": "qta", "required": 1, "value": "$qta$", "readonly": 1, "decimals": "qta", "min-value": "undefined" ]}
-					<input type="hidden" id="old_qta" value="<?php echo $record['qta']; ?>">
-				</div>
 
-				<div class="col-md-4">
-					{[ "type": "checkbox", "label": "<?php echo tr('Modifica quantità'); ?>", "name": "qta_manuale", "value": 0, "help": "<?php echo tr('Seleziona per modificare manualmente la quantità'); ?>", "placeholder": "<?php echo tr('Quantità manuale'); ?>", "extra": "<?php echo ($record['servizio']) ? 'disabled' : ''; ?>" ]}
-					<script type="text/javascript">
-                        $(document).ready(function() {
-                            $('#servizio').click(function() {
-                                $("#qta_manuale").attr("disabled", $('#servizio').is(":checked"));
-                            });
-
-    				        $('#qta_manuale').click(function() {
-    							$("#qta").attr("readonly", !$('#qta_manuale').is(":checked"));
-								if($('#qta_manuale').is(":checked")){
-									$("#div_modifica_manuale").show();
-									$("#div_modifica_manuale").show();
-									$("#descrizione_movimento").attr('required', true);
-									$("#data_movimento").attr('required', true);
-								}else{
-									$("#div_modifica_manuale").hide();
-									$('#qta').val($('#old_qta').val());
-									$("#descrizione_movimento").attr('required', false);
-									$("#data_movimento").attr('required', false);
-								}
-    				        });
-
-                         });
-					</script>
-                </div>
-
-				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Unità di misura'); ?>", "name": "um", "value": "$um$", "ajax-source": "misure", "icon-after": "add|<?php echo Modules::get('Unità di misura')['id']; ?>" ]}
+                <div class="col-md-4">
+                    {[ "type": "select", "label": "<?php echo tr('Unità di misura'); ?>", "name": "um", "value": "$um$", "ajax-source": "misure", "icon-after": "add|<?php echo Modules::get('Unità di misura')['id']; ?>" ]}
                 </div>
             </div>
-			<div class='row' id="div_modifica_manuale" style="display:none;">
-				<div class='col-md-8'>
-					{[ "type": "text", "label": "<?php echo tr('Descrizione movimento'); ?>", "name": "descrizione_movimento" ]}
-				</div>
-				<div class='col-md-4'>
-					{[ "type": "date", "label": "<?php echo tr('Data movimento'); ?>", "name": "data_movimento", "value": "-now-" ]}
-				</div>
-			</div>
 
-			<div class="row">
+            <div class="row">
 				<div class="col-md-12">
 					{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$" ]}
 				</div>
 			</div>
 		</div>
 	</div>
+
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                <?php echo tr('Giacenza totale'); ?>
+            </h3>
+        </div>
+
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-6">
+                    {[ "type": "number", "label": "<?php echo tr('Quantità'); ?>", "name": "qta", "required": 1, "value": "$qta$", "readonly": 1, "decimals": "qta", "min-value": "undefined" ]}
+                    <input type="hidden" id="old_qta" value="<?php echo $record['qta']; ?>">
+                </div>
+
+                <div class="col-md-6">
+                    {[ "type": "checkbox", "label": "<?php echo tr('Modifica quantità'); ?>", "name": "qta_manuale", "value": 0, "help": "<?php echo tr('Seleziona per modificare manualmente la quantità'); ?>", "placeholder": "<?php echo tr('Quantità manuale'); ?>", "extra": "<?php echo ($record['servizio']) ? 'disabled' : ''; ?>" ]}
+                </div>
+            </div>
+
+            <div class='row' id="div_modifica_manuale" style="display:none;">
+                <div class='col-md-8'>
+                    {[ "type": "text", "label": "<?php echo tr('Descrizione movimento'); ?>", "name": "descrizione_movimento" ]}
+                </div>
+                <div class='col-md-4'>
+                    {[ "type": "date", "label": "<?php echo tr('Data movimento'); ?>", "name": "data_movimento", "value": "-now-" ]}
+                </div>
+            </div>
+
+            <div class="alert alert-info">
+                <p><?php echo tr('Le modifiche alle quantità in questa schermata prevedono la generazione di un movimento relativo per la Sede legale'); ?>. <?php echo tr('Per effettuare movimenti in altre Sedi, utilizzare il modulo Movimenti relativo'); ?>.</p>
+            </div>
+
+            <script type="text/javascript">
+                $(document).ready(function() {
+                    $('#servizio').click(function() {
+                        $("#qta_manuale").attr("disabled", $('#servizio').is(":checked"));
+                    });
+
+                    $('#qta_manuale').click(function() {
+                        $("#qta").attr("readonly", !$('#qta_manuale').is(":checked"));
+                        if($('#qta_manuale').is(":checked")){
+                            $("#div_modifica_manuale").show();
+                            $("#div_modifica_manuale").show();
+                            $("#descrizione_movimento").attr('required', true);
+                            $("#data_movimento").attr('required', true);
+                        }else{
+                            $("#div_modifica_manuale").hide();
+                            $('#qta').val($('#old_qta').val());
+                            $("#descrizione_movimento").attr('required', false);
+                            $("#data_movimento").attr('required', false);
+                        }
+                    });
+
+                });
+            </script>
+        </div>
+    </div>
 
     <!-- informazioni Acquisto/Vendita -->
     <div class="row">

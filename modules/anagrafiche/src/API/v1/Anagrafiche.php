@@ -93,11 +93,13 @@ class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface
             $query = $query->havingRaw($having);
         }
 
+        $total_count = $query->count();
+        
         return [
             'results' => $query->skip($request['page'] * $request['length'])
                 ->limit($request['length'])
                 ->get()->toArray(),
-            'total-count' => $query->count(),
+            'total-count' => $total_count,
         ];
     }
 

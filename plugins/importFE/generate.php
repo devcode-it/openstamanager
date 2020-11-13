@@ -325,7 +325,7 @@ if (!empty($righe)) {
 
         $qta = $riga['Quantita'];
         $um = $riga['UnitaMisura'];
-        $prezzo_unitario = $riga['PrezzoUnitario'];
+        $prezzo_unitario = $riga['PrezzoUnitario'] ?: $riga['Importo'];
 
         echo '
         <tr data-id="'.$key.'" data-qta="'.$qta.'" data-prezzo_unitario="'.$prezzo_unitario.'" data-iva_percentuale="'.$riga['AliquotaIVA'].'">

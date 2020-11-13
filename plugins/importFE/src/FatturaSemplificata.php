@@ -102,12 +102,17 @@ class FatturaSemplificata extends FatturaElettronica
 
         foreach ($righe as $key => $riga) {
             $articolo = ArticoloOriginale::find($articoli[$key]);
-
-            $imposta = floatval($riga['DatiIVA']['Imposta']);
             $importo = floatval($riga['Importo']);
 
-            $prezzo_non_ivato = $importo - $imposta;
-            $riga['Importo'] = !empty($prezzo_non_ivato) ? $prezzo_non_ivato : $importo;
+            $imposta_unitaria = floatval($riga['DatiIVA']['Imposta']);
+            $imposta_percentuale = floatval($riga['DatiIVA']['Aliquota']) / 100;
+            if (empty($imposta_percentuale)) {
+                $prezzo = $importo - $imposta_unitaria;
+            } else {
+                $prezzo = $importo / (1 + $imposta_percentuale);
+            }
+
+            $riga['Importo'] = $prezzo;
 
             if (!empty($articolo)) {
                 $obj = Articolo::build($fattura, $articolo);

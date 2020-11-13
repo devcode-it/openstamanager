@@ -82,10 +82,8 @@ echo '
         </div>
 
         <div class="col-md-6">
-                {[ "type": "number", "label": "'.tr('Sconto predefinito').'", "name": "sconto_fisso", "value": "'.$dettaglio_predefinito->sconto.'", "icon-after": "%"]}
+            {[ "type": "number", "label": "'.tr('Sconto predefinito').'", "name": "sconto_percentuale", "value": "'.$dettaglio_predefinito->sconto_percentuale.'", "icon-after": "%"]}
         </div>
-
-
     </div>
 
     <div class="box" id="prezzi">
@@ -109,7 +107,7 @@ echo '
                         <th class="text-center">'.tr('Quantità minima').'</th>
                         <th class="text-center">'.tr('Quantità massima').'</th>
                         <th class="text-center tip" title="'.($prezzi_ivati ? tr('Importo IVA inclusa') : '').'">
-                            '.tr('Prezzo unitario').' <i class="fa fa-question-circle-o"></i>
+                            '.tr('Prezzo unitario').($prezzi_ivati ? '<i class="fa fa-question-circle-o"></i>' : '').'
                         </th>
                         <th class="text-center">'.tr('Sconto').'</th>
                         <th>#</th>
@@ -216,18 +214,21 @@ function rimuoviPrezzo(button) {
 function cambioImpostazioni() {
     let modifica_prezzi = input("modifica_prezzi");
     let prezzo_fisso = input("prezzo_fisso");
-    let prezzo_fisso_input = input("prezzo_unitario_fisso");
+    let prezzo_unitario_fisso = input("prezzo_unitario_fisso");
+    let sconto_fisso = input("sconto_fisso");
 
     let prezzi_variabili = $("#prezzi");
 
     if (!modifica_prezzi.get()){
         prezzo_fisso.disable();
-        prezzo_fisso_input.disable();
+        prezzo_unitario_fisso.disable();
+        sconto_fisso.disable();
     } else {
         modifica_prezzi.disable();
 
         prezzo_fisso.enable();
-        prezzo_fisso_input.enable();
+        prezzo_unitario_fisso.enable();
+        sconto_fisso.enable();
     }
 
     if (!prezzo_fisso.get()) {

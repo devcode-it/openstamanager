@@ -19,7 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\Listini\Listino;
+use Modules\PianiSconto\PianoSconto;
 
 switch (post('op')) {
     case 'update':
@@ -35,7 +35,7 @@ switch (post('op')) {
         break;
 
     case 'add':
-        $listino = Listino::build(post('nome'), post('prc_guadagno'));
+        $listino = PianoSconto::build(post('nome'), post('prc_guadagno'));
 
         $listino->percentuale_combinato = post('prc_combinato');
 

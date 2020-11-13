@@ -17,12 +17,12 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace Modules\Listini;
+namespace Modules\PianiSconto;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 
-class Listino extends Model
+class PianoSconto extends Model
 {
     use SimpleModelTrait;
 

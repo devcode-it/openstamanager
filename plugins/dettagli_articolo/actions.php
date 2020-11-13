@@ -69,7 +69,7 @@ switch (filter('op')) {
 
         // Salvataggio del prezzo predefinito
         $prezzo_unitario = filter('prezzo_unitario_fisso');
-        $sconto = filter('sconto_fisso');
+        $sconto = filter('sconto_percentuale');
         $dettaglio_predefinito = DettaglioPrezzo::dettaglioPredefinito($id_articolo, $id_anagrafica, $direzione)
             ->first();
         if (empty($dettaglio_predefinito)) {

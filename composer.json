@@ -93,7 +93,7 @@
             "Modules\\StatiContratto\\": ["modules/stati_contratto/custom/src/", "modules/stati_contratto/src/"],
             "Modules\\TipiIntervento\\": ["modules/tipi_intervento/custom/src/", "modules/tipi_intervento/src/"],
             "Modules\\CategorieDocumentali\\": ["modules/categorie_documenti/custom/src/", "modules/categorie_documenti/src/"],
-            "Modules\\Listini\\": ["modules/listini/custom/src/", "modules/listini/src/"],
+            "Modules\\PianiSconto\\": ["modules/piano_sconto/custom/src/", "modules/piano_sconto/src/"],
             "Modules\\Impianti\\": ["modules/impianti/custom/src/", "modules/impianti/src/"],
             "Modules\\Impostazioni\\": ["modules/impostazioni/custom/src/", "modules/impostazioni/src/"],
             "Plugins\\ExportFE\\": ["plugins/exportFE/custom/src/", "plugins/exportFE/src/"],

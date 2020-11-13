@@ -350,7 +350,7 @@ echo '
         } else {
             echo '
     <div class="alert alert-info">
-        '.tr('Non ci sono piani di sconto/rincaro caricati').'... '.Modules::link('Listini', null, tr('Crea')).'
+        '.tr('Non ci sono piani di sconto/rincaro caricati').'... '.Modules::link('Piani di sconto/rincaro', null, tr('Crea')).'
     </div>';
         }
 echo '

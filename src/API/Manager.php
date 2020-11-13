@@ -146,7 +146,10 @@ class Manager
                 $count = $database->fetchNum($query, $parameters);
 
                 $response['total-count'] = $count;
-                $response['pages'] = intval(ceil($count / $length));
+            }
+
+            if (empty($response['pages'])) {
+                $response['pages'] = intval(ceil($response['total-count'] / $length));
             }
         } catch (PDOException $e) {
             // Log dell'errore

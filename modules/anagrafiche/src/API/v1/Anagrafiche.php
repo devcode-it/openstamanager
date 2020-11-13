@@ -56,9 +56,7 @@ class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface
             'an_anagrafiche.note',
             'an_anagrafiche.idzona',
             'an_anagrafiche.deleted_at'
-        )->skip($request['page'] * $request['length'])
-        ->limit($request['length'])
-        ->orderBy('an_anagrafiche.ragione_sociale');
+        )->orderBy('an_anagrafiche.ragione_sociale');
 
         $filters = [];
         if ($request['resource'] != 'anagrafiche') {
@@ -70,12 +68,18 @@ class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface
         // Filtri da richiesta API
         $allow_list = [
             'idanagrafica',
+            'ragione_sociale',
         ];
         $conditions = array_intersect_key((array) $request['where'], array_flip($allow_list));
 
         // Filtro per ID
         if (!empty($conditions['idanagrafica'])) {
             $query = $query->whereIn('an_anagrafiche.idanagrafica', (array) $conditions['idanagrafica']);
+        }
+
+        // Filtro per Ragione sociale
+        if (!empty($conditions['ragione_sociale'])) {
+            $query = $query->where('an_anagrafiche.ragione_sociale','like', '%'.$conditions['ragione_sociale'].'%');
         }
 
         // Filtri aggiuntivi predefiniti
@@ -90,7 +94,10 @@ class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface
         }
 
         return [
-            'results' => $query->get()->toArray(),
+            'results' => $query->skip($request['page'] * $request['length'])
+                ->limit($request['length'])
+                ->get()->toArray(),
+            'total-count' => $query->count(),
         ];
     }
 

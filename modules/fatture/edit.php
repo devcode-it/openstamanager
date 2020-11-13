@@ -296,7 +296,7 @@ elseif ($record['stato'] == 'Bozza') {
                     <div class="clearfix"></div>';
 
                     foreach ($scadenze as $scadenza) {
-                        $pagamento_iniziato = !empty(floatval($scadenza->pagato));
+                        $pagamento_iniziato = !empty(floatval($scadenza->pagato)) || $scadenza->da_pagare == 0;
 
                         echo '
                     <p>'.dateFormat($scadenza['scadenza']).': ';

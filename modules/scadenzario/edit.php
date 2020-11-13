@@ -157,19 +157,23 @@ echo '
                                 <td class="text-right"><b>'.tr('Totale').'</b></td>
                                 <td class="text-right" id="totale_utente">'.numberFormat($totale_da_pagare).'</td>
                                 <td class="text-right"></td>
+                                <td class="text-right"></td>
                             </tr>
-                        </tfoot>';
+                        </tfoot>
+					</table>';
 
-?>
-
-					</table>
-
-                    <div class='pull-right'>
-                        <a onclick="launch_modal( 'Registra contabile pagamento', '<?php echo base_path(); ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>&<?php echo !empty($record['iddocumento']) ? 'id_documenti='.$record['iddocumento'].'&single=1' : 'id_scadenze='.$id_record; ?>');" class="btn btn-sm btn-primary"><i class="fa fa-euro"></i> <?php echo tr('Registra contabile pagamento...'); ?></a>
+if ($totale_da_pagare != 0) {
+    echo '
+                    <div class="pull-right">
+                        <a onclick="launch_modal(\''.tr('Registra contabile pagamento').'\', \''.base_path().'/add.php?id_module='.Modules::get('Prima nota')['id'].'&'.(!empty($record['iddocumento']) ? 'id_documenti='.$record['iddocumento'].'&single=1' : 'id_scadenze='.$id_record).'\');" class="btn btn-sm btn-primary">
+                            <i class="fa fa-euro"></i> '.tr('Registra contabile pagamento...').'
+                        </a>
                     </div>
 
 					<div class="clearfix"></div>
-                    <br>
+                    <br>';
+}
+?>
 
 					<div class="alert alert-error hide" id="totale"><?php echo tr('Il totale da pagare deve essere pari a _MONEY_', [
                         '_MONEY_' => '<b>'.moneyFormat($totale_da_pagare).'</b>',

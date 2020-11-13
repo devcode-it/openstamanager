@@ -64,30 +64,38 @@ if (empty($record['is_fiscale'])) {
 }
 
 $modulo_prima_nota = Modules::get('Prima nota');
+$totale_scadenze = $dbo->fetchOne('SELECT SUM(da_pagare - pagato) AS differenza, SUM(da_pagare) AS da_pagare FROM co_scadenziario WHERE iddocumento = '.prepare($id_record));
 if (!empty($record['is_fiscale'])) {
     // Aggiunta insoluto
-    $registrazione_insoluto = 1;
+    $registrazione_insoluto = 0;
     if (!empty($record['riba']) && $dir == 'entrata' && in_array($record['stato'], ['Emessa', 'Parzialmente pagato', 'Pagato'])) {
+        $registrazione_insoluto = 1;
+    }
+
+    if (floatval($totale_scadenze['da_pagare']) == 0) {
         $registrazione_insoluto = 0;
     }
 
     echo '
-        <a class="btn btn-primary '.(!empty($modulo_prima_nota) && empty($registrazione_insoluto) ? '' : 'disabled').'" data-href="'.base_path().'/add.php?id_module='.$modulo_prima_nota['id'].'&id_documenti='.$id_record.'&single=1&is_insoluto=1" data-title="'.tr('Registra insoluto').'">
+        <a class="btn btn-primary '.(!empty($modulo_prima_nota) && !empty($registrazione_insoluto) ? '' : 'disabled').'" data-href="'.base_path().'/add.php?id_module='.$modulo_prima_nota['id'].'&id_documenti='.$id_record.'&single=1&is_insoluto=1" data-title="'.tr('Registra insoluto').'">
             <i class="fa fa-ban fa-inverse"></i> '.tr('Registra insoluto').'
         </a>';
 
     // Aggiunta prima nota solo se non c'è già, se non si è in bozza o se il pagamento non è completo
     $prima_nota_presente = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE iddocumento = '.prepare($id_record).' AND primanota = 1');
 
-    $totale_scadenze = $dbo->fetchOne('SELECT SUM(da_pagare - pagato) AS differenza, SUM(da_pagare) AS da_pagare FROM co_scadenziario WHERE iddocumento = '.prepare($id_record));
     $differenza = isset($totale_scadenze) ? $totale_scadenze['differenza'] : 0;
-    $registrazione_contabile = 1;
+    $registrazione_contabile = 0;
     if ($differenza != 0 || (!$prima_nota_presente && $record['stato'] == 'Emessa')) {
+        $registrazione_contabile = 1;
+    }
+
+    if (floatval($totale_scadenze['da_pagare']) == 0) {
         $registrazione_contabile = 0;
     }
 
     echo '
-        <a class="btn btn-primary '.(!empty($modulo_prima_nota) && empty($registrazione_contabile) ? '' : 'disabled').'" data-href="'.base_path().'/add.php?id_module='.$modulo_prima_nota['id'].'&id_documenti='.$id_record.'&single=1" data-title="'.tr('Registra contabile').'">
+        <a class="btn btn-primary '.(!empty($modulo_prima_nota) && !empty($registrazione_contabile) ? '' : 'disabled').'" data-href="'.base_path().'/add.php?id_module='.$modulo_prima_nota['id'].'&id_documenti='.$id_record.'&single=1" data-title="'.tr('Registra contabile').'">
             <i class="fa fa-euro"></i> '.tr('Registra contabile').'
         </a>';
 

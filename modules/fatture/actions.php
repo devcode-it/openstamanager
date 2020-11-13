@@ -210,34 +210,37 @@ switch (post('op')) {
 
     // Ricalcolo scadenze
     case 'controlla_totali':
+        $totale_documento = null;
+
         try {
             $xml = XML::read($fattura->getXML());
 
             // Totale basato sul campo ImportoTotaleDocumento
             $dati_generali = $xml['FatturaElettronicaBody']['DatiGenerali']['DatiGeneraliDocumento'];
-            $totale_documento_indicato = abs(floatval($dati_generali['ImportoTotaleDocumento']));
+            if (isset($dati_generali['ImportoTotaleDocumento'])) {
+                $totale_documento_indicato = abs(floatval($dati_generali['ImportoTotaleDocumento']));
 
-            // Calcolo del totale basato sui DatiRiepilogo
-            if (empty($totale_documento) && empty($dati_generali['ScontoMaggiorazione'])) {
-                $totale_documento = 0;
+                // Calcolo del totale basato sui DatiRiepilogo
+                if (empty($totale_documento) && empty($dati_generali['ScontoMaggiorazione'])) {
+                    $totale_documento = 0;
 
-                $riepiloghi = $xml['FatturaElettronicaBody']['DatiBeniServizi']['DatiRiepilogo'];
-                if (!empty($riepiloghi) && !isset($riepiloghi[0])) {
-                    $riepiloghi = [$riepiloghi];
+                    $riepiloghi = $xml['FatturaElettronicaBody']['DatiBeniServizi']['DatiRiepilogo'];
+                    if (!empty($riepiloghi) && !isset($riepiloghi[0])) {
+                        $riepiloghi = [$riepiloghi];
+                    }
+
+                    foreach ($riepiloghi as $riepilogo) {
+                        $totale_documento = sum([$totale_documento, $riepilogo['ImponibileImporto'], $riepilogo['Imposta']]);
+                    }
+
+                    $totale_documento = abs($totale_documento);
+                } else {
+                    $totale_documento = $totale_documento_indicato;
                 }
 
-                foreach ($riepiloghi as $riepilogo) {
-                    $totale_documento = sum([$totale_documento, $riepilogo['ImponibileImporto'], $riepilogo['Imposta']]);
-                }
-
-                $totale_documento = abs($totale_documento);
-            } else {
-                $totale_documento = $totale_documento_indicato;
+                $totale_documento = $fattura->isNota() ? -$totale_documento : $totale_documento;
             }
-
-            $totale_documento = $fattura->isNota() ? -$totale_documento : $totale_documento;
         } catch (Exception $e) {
-            $totale_documento = null;
         }
 
         echo json_encode([

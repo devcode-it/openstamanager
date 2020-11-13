@@ -112,8 +112,6 @@ class FatturaSemplificata extends FatturaElettronica
                 $prezzo = $importo / (1 + $imposta_percentuale);
             }
 
-            $riga['Importo'] = $prezzo;
-
             if (!empty($articolo)) {
                 $obj = Articolo::build($fattura, $articolo);
 
@@ -128,7 +126,6 @@ class FatturaSemplificata extends FatturaElettronica
 
             // Nel caso il prezzo sia negativo viene gestito attraverso l'inversione della quantità (come per le note di credito)
             // TODO: per migliorare la visualizzazione, sarebbe da lasciare negativo il prezzo e invertire gli sconti.
-            $prezzo = $riga['Importo'];
             $prezzo = $prezzo < 0 ? -$prezzo : $prezzo;
             $qta = 1;
             $qta = $riga['Importo'] < 0 ? -$qta : $qta;

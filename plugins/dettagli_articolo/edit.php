@@ -348,18 +348,6 @@ $(document).ready(function (){
     apriTab($("#clienti-tab")[0]);
 });
 
-function apriTab(link) {
-    let element = $(link).closest("li");
-    let parent = element.closest(".nav-tabs-custom");
-
-    parent.find("ul > li").removeClass("active");
-    element.addClass("active");
-
-    let tab = $(link).data("tab");
-    parent.find(".tab-pane").removeClass("active");
-    parent.find(".tab-pane#" + tab).addClass("active");
-}
-
 function modificaPrezzi(button) {
     let tr = $(button).closest("tr");
     let id_anagrafica = tr.data("id_anagrafica");

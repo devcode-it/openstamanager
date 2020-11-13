@@ -32,6 +32,8 @@ $numero_rata = $contratto->pianificazioni->search(function ($item) use ($id_pian
 
 $module_fattura = Modules::get('Fatture di vendita');
 
+$id_conto = setting('Conto predefinito fatture di vendita');
+
 echo '
 <form action="" method="post">
     <input type="hidden" name="op" value="add_fattura">
@@ -44,20 +46,28 @@ echo '
 // Data
 echo '
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-6">
             {[ "type": "date", "label": "'.tr('Data').'", "name": "data", "required": 1, "class": "text-center", "value": "-now-" ]}
         </div>';
 
 // Tipo di documento
 echo '
-        <div class="col-md-4">
+        <div class="col-md-6">
             {[ "type": "select", "label": "'.tr('Tipo di fattura').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT * FROM co_tipidocumento WHERE dir=\'entrata\'" ]}
-        </div>';
+        </div>
+    </div>';
 
 // Sezionale
 echo '
-        <div class="col-md-4">
+    <div class="row">
+        <div class="col-md-6">
             {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.$module_fattura['id'].' ORDER BY name", "value":"'.$_SESSION['module_'.$module_fattura['id']]['id_segment'].'" ]}
+        </div>';
+
+// Conto
+echo '
+        <div class="col-md-6">
+                {[ "type": "select", "label": "'.tr('Conto').'", "name": "id_conto", "required": 1, "value": "'.$id_conto.'", "ajax-source": "conti-vendite" ]}
         </div>
     </div>';
 

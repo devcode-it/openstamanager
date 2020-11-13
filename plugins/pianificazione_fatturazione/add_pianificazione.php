@@ -33,9 +33,9 @@ echo '
 
     <div class="nav-tabs-custom">
         <ul class="nav nav-tabs nav-justified">
-            <li class="active"><a href="#periodi" data-toggle="tab">'.tr('Periodi').'</a></li>
+            <li class="active"><a href="#periodi" data-tab="periodi" onclick="apriTab(this)" data-toggle="tab">'.tr('Periodi').'</a></li>
 
-            <li><a href="#righe" data-toggle="tab">'.tr('Righe').'</a></li>
+            <li><a href="#righe" data-tab="righe" onclick="apriTab(this)" data-toggle="tab">'.tr('Righe').'</a></li>
         </ul>
 
         <div class="tab-content">
@@ -74,7 +74,7 @@ echo '
                             </button>
 
                             <button type="button" class="btn btn-sm btn-danger" onclick="deselezionaTutto()">
-                            <i class="fa fa-times"></i> 
+                            <i class="fa fa-times"></i>
                             </button>
                         </div>
                     </div>

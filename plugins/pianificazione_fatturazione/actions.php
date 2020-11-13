@@ -100,10 +100,14 @@ switch ($operazione) {
         $fattura->note = post('note');
         $fattura->save();
 
+        $id_conto = post('id_conto');
+
         // Copia righe
         $righe = $pianificazione->getRighe();
         foreach ($righe as $riga) {
             $copia = $riga->copiaIn($fattura, $riga->qta);
+            $copia->id_conto = $id_conto;
+            $copia->save();
         }
 
         // Salvataggio fattura nella pianificazione

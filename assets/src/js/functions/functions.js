@@ -790,3 +790,20 @@ function aggiungiContenuto(endpoint_selector, template_selector, replaces = {}) 
 
     return element;
 }
+
+/**
+ * Funzione per forzare l'apertura di uno specifico tab senza un relativo cambiamento di URL.
+ *
+ * @param {HTMLElement} link
+ */
+function apriTab(link) {
+    let element = $(link).closest("li");
+    let parent = element.closest(".nav-tabs-custom");
+
+    parent.find("ul > li").removeClass("active");
+    element.addClass("active");
+
+    let tab = $(link).data("tab");
+    parent.find(".tab-pane").removeClass("active");
+    parent.find(".tab-pane#" + tab).addClass("active");
+}

@@ -19,6 +19,7 @@
 
 namespace Modules\Articoli\Import;
 
+use Carbon\Carbon;
 use Importer\CSVImporter;
 use Modules\Articoli\Articolo;
 use Modules\Articoli\Categoria;
@@ -187,20 +188,29 @@ class CSV extends CSVImporter
         $articolo->idiva_vendita = $aliquota->id;
         $articolo->attivo = 1;
 
-        // Esportazione della quantità indicata
-        $qta = $record['qta'];
-        unset($record['qta']);
-
-        //Prezzo di vendita
+        // Prezzo di vendita
         $articolo->setPrezzoVendita($record['prezzo_vendita'], ($aliquota->id ? $aliquota->id : setting('Iva predefinita')));
         unset($record['prezzo_vendita']);
+
+        // Esportazione della quantità indicata
+        $qta_registrata = (float) ($record['qta']);
+        $nome_sede = $record['$nome_sede'];
+        unset($record['qta']);
+        unset($record['nome_sede']);
 
         // Salvataggio delle informazioni generali
         $articolo->fill($record);
         $articolo->save();
 
         // Movimentazione della quantità registrata
-        $articolo->movimenta($qta, tr('Movimento da importazione'));
+        $qta_movimento = $qta_registrata - (float) ($articolo->qta);
+
+        $articolo->movimenta($qta_movimento, tr('Movimento da importazione'), new Carbon(), false, [
+            /*
+            'idsede_azienda' => $partenza,
+            'idsede_controparte' => $arrivo,
+            */
+        ]);
     }
 
     public static function getExample()

@@ -566,42 +566,39 @@ echo '
             eventAfterRender: function(event, element) {
                 // let event = info.event;
                 // let element = $(info.el);
-
-                if (!globals.dashboard.tooltip) {
-                    return;
-                }
-
+                
                 element.find(".fc-title").html(event.title);
                 let id_intervento = event.idintervento;
+                if (globals.dashboard.tooltip == 1) {
+                    element.tooltipster({
+                        content: "'.tr('Caricamento...').'",
+                        animation: "grow",
+                        updateAnimation: "grow",
+                        contentAsHTML: true,
+                        hideOnClick: true,
+                        speed: 200,
+                        delay: 300,
+                        maxWidth: 400,
+                        theme: "tooltipster-shadow",
+                        touchDevices: true,
+                        trigger: "hover",
+                        position: "left",
+                        functionBefore: function(instance, helper) {
+                            let $origin = $(helper.origin);
 
-                element.tooltipster({
-                    content: "'.tr('Caricamento...').'",
-                    animation: "grow",
-                    updateAnimation: "grow",
-                    contentAsHTML: true,
-                    hideOnClick: true,
-                    speed: 200,
-                    delay: 300,
-                    maxWidth: 400,
-                    theme: "tooltipster-shadow",
-                    touchDevices: true,
-                    trigger: "hover",
-                    position: "left",
-                    functionBefore: function(instance, helper) {
-                        let $origin = $(helper.origin);
+                            if ($origin.data("loaded") !== true) {
+                            $.post(globals.dashboard.load_url, {
+                                    op: "info_intervento",
+                                    id: id_intervento,
+                                }, function (data, response) {
+                                    instance.content(data);
 
-                        if ($origin.data("loaded") !== true) {
-                           $.post(globals.dashboard.load_url, {
-                                op: "info_intervento",
-                                id: id_intervento,
-                            }, function (data, response) {
-                                instance.content(data);
-
-                                $origin.data("loaded", true);
-                            });
+                                    $origin.data("loaded", true);
+                                });
+                            }
                         }
-                    }
-                });
+                    });
+                }
             },
             events: {
                 url: globals.dashboard.load_url + "&op=interventi_periodo",

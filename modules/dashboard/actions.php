@@ -204,6 +204,8 @@ switch (filter('op')) {
             idcontratto,
             richiesta,
             co_contratti.nome AS nome_contratto,
+            co_contratti.numero AS numero_contratto,
+            co_contratti.data_bozza AS data_contratto,
             DATE_FORMAT( data_richiesta, '%m%Y') AS mese,
             data_richiesta,
             an_anagrafiche.ragione_sociale,
@@ -243,7 +245,7 @@ switch (filter('op')) {
     }
 
     $query_interventi .= '
-        LEFT JOIN in_interventi_tecnici ON in_interventi_tecnici.idintervento = in_interventi.id AND in_interventi_tecnici_assegnati.id_tecnico = in_interventi_tecnici.idtecnico
+        LEFT JOIN in_interventi_tecnici ON in_interventi_tecnici.idintervento = in_interventi.id
         INNER JOIN in_statiintervento ON in_interventi.idstatointervento = in_statiintervento.idstatointervento
         LEFT JOIN an_anagrafiche AS tecnico ON in_interventi_tecnici_assegnati.id_tecnico = tecnico.idanagrafica
         WHERE in_statiintervento.is_completato = 0
@@ -280,7 +282,7 @@ switch (filter('op')) {
                         <b>'.$sessione['ragione_sociale'].'</b>
                         <br>'.dateFormat($sessione['data_richiesta']).' ('.$sessione['tipo_intervento'].')
                         <div class="request">'.(!empty($sessione['richiesta']) ? ' - '.$sessione['richiesta'] : '').'</div>
-                        '.(!empty($sessione['nome_contratto']) ? '<span class="label label-'.$class.'">'.tr('Contratto:').$sessione['nome_contratto'].'<span>' : '').' '.(!empty($sessione['data_scadenza'] && $sessione['data_scadenza'] != '0000-00-00 00:00:00') ? '<span class="label label-'.$class.'" >'.tr('Entro il: ').dateFormat($sessione['data_scadenza']).'</span>' : '').' '.(!empty($sessione['id_tecnico']) ? '<span class="label" style="color:'.color_inverse($sessione['colore']).';background-color:'.$sessione['colore'].';" >'.tr('Tecnico').': '.$sessione['ragione_sociale_tecnico'].'</span>' : '').'
+                        '.(!empty($sessione['numero_contratto']) ? '<span class="label label-'.$class.'">'.tr('Contratto numero: ').$sessione['numero_contratto'].tr(' del ').dateFormat($sessione['data_contratto']).'<span>' : '').' '.(!empty($sessione['data_scadenza'] && $sessione['data_scadenza'] != '0000-00-00 00:00:00') ? '<span class="label label-'.$class.'" >'.tr('Entro il: ').dateFormat($sessione['data_scadenza']).'</span>' : '').' '.(!empty($sessione['id_tecnico']) ? '<span class="label" style="color:'.color_inverse($sessione['colore']).';background-color:'.$sessione['colore'].';" >'.tr('Tecnico').': '.$sessione['ragione_sociale_tecnico'].'</span>' : '').'
                     </div>';
                 }
             }

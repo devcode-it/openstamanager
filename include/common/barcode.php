@@ -92,8 +92,7 @@ $("#barcode").off("keyup").on("keyup", function (event) {
         return;
     }
 
-    $.getJSON(globals.rootdir + "/ajax_select.php?op=articoli_barcode&search=" + barcode + "&id_anagrafica='.$options['idanagrafica'].'",
-    function(response) {
+    $.getJSON(globals.rootdir + "/ajax_select.php?op=articoli_barcode&search=" + barcode + "&id_anagrafica='.$options['idanagrafica'].'", function(response) {
         let result = response.results[0];
         if(!result){
             $("#articolo-missing").removeClass("hidden");

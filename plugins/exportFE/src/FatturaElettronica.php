@@ -773,6 +773,11 @@ class FatturaElettronica
             $result['Contatti']['Email'] = $azienda['email'];
         }
 
+        // Riferimento Amministrazione
+        if (!empty($azienda['riferimento_amministrazione'])) {
+            $result['RiferimentoAmministrazione'] = $azienda['riferimento_amministrazione'];
+        }
+
         return $result;
     }
 

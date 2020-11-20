@@ -95,6 +95,7 @@ switch (post('op')) {
         $anagrafica->cciaa_citta = post('cciaa_citta');
         $anagrafica->n_alboartigiani = post('n_alboartigiani');
         $anagrafica->foro_competenza = post('foro_competenza');
+        $anagrafica->riferimento_amministrazione = post('riferimento_amministrazione');
         $anagrafica->colore = post('colore');
         $anagrafica->idtipointervento_default = post('idtipointervento_default') ?: null;
         $anagrafica->id_ritenuta_acconto_acquisti = post('id_ritenuta_acconto_acquisti');

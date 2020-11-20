@@ -278,11 +278,10 @@ class FatturaElettronica
      */
     public function save($directory)
     {
-        $name = 'Fattura Elettronica';
-        $previous = $this->getFilename();
-        $data = $this->getUploadData();
+        $this->delete();
 
-        Uploads::delete($previous, $data);
+        $name = 'Fattura Elettronica';
+        $data = $this->getUploadData();
 
         // Generazione nome XML
         $filename = $this->getFilename(true);
@@ -306,6 +305,17 @@ class FatturaElettronica
         ], ['id' => $this->getDocumento()['id']]);
 
         return ($result === false) ? null : $filename;
+    }
+
+    /**
+     * Rimuove la fattura generata.
+     */
+    public function delete()
+    {
+        $previous = $this->getFilename();
+        $data = $this->getUploadData();
+
+        Uploads::delete($previous, $data);
     }
 
     /**

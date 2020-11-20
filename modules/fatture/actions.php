@@ -137,27 +137,36 @@ switch (post('op')) {
 
         $fattura->save();
 
+        // Operazioni automatiche per le Fatture Elettroniche
         if ($fattura->direzione == 'entrata' && $stato_precedente->descrizione == 'Bozza' && $stato['descrizione'] == 'Emessa') {
+            $stato_fe = $database->fetchOne('SELECT * FROM fe_stati_documento WHERE codice = '.prepare($fattura->codice_stato_fe));
+            $abilita_genera = empty($fattura->codice_stato_fe) || intval($stato_fe['is_generabile']);
+
             // Generazione automatica della Fattura Elettronica
-            $stato_fe = empty($fattura->codice_stato_fe) || in_array($fattura->codice_stato_fe, ['GEN', 'NS', 'EC02']);
             $checks = FatturaElettronica::controllaFattura($fattura);
-            if ($stato_fe && empty($checks)) {
-                try {
-                    $fattura_pa = new FatturaElettronica($id_record);
-                    $file = $fattura_pa->save(base_dir().'/'.FatturaElettronica::getDirectory());
+            $fattura_elettronica = new FatturaElettronica($id_record);
+            if ($abilita_genera && empty($checks)) {
+                $file = $fattura_elettronica->save(base_dir().'/'.FatturaElettronica::getDirectory());
 
-                    flash()->info(tr('Fattura elettronica generata correttamente!'));
+                flash()->info(tr('Fattura elettronica generata correttamente!'));
 
-                    if (!$fattura_pa->isValid()) {
-                        $errors = $fattura_pa->getErrors();
+                if (!$fattura_elettronica->isValid()) {
+                    $errors = $fattura_elettronica->getErrors();
 
-                        flash()->warning(tr('La fattura elettronica potrebbe avere delle irregolarità!').' '.tr('Controllare i seguenti campi: _LIST_', [
-                                '_LIST_' => implode(', ', $errors),
-                            ]).'.');
-                    }
-                } catch (UnexpectedValueException $e) {
+                    flash()->warning(tr('La fattura elettronica potrebbe avere delle irregolarità!').' '.tr('Controllare i seguenti campi: _LIST_', [
+                            '_LIST_' => implode(', ', $errors),
+                        ]).'.');
                 }
-            } elseif (!empty($checks)) {
+            }
+            // Visualizzazione degli errori
+            elseif (!empty($checks)) {
+                // Rimozione eventuale fattura generata erronamente
+                // Fix per la modifica di dati interni su fattura già generata
+                if ($abilita_genera) {
+                    $fattura_elettronica->delete();
+                }
+
+                // Messaggi informativi sulle problematiche
                 $message = tr('La fattura elettronica non è stata generata a causa di alcune informazioni mancanti').':';
 
                 foreach ($checks as $check) {

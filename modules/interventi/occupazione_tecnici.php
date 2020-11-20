@@ -64,7 +64,7 @@ if (!empty($tecnici_selezionati)) {
 }
 
 // Blocco dei controlli se non sono presenti tecnici
-if ( empty($tecnici) || setting('Alert occupazione tecnici')!=1 ) {
+if (empty($tecnici) || setting('Alert occupazione tecnici') != 1) {
     return;
 }
 

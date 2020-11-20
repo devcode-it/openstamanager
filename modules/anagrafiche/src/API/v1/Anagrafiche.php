@@ -79,7 +79,7 @@ class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface
 
         // Filtro per Ragione sociale
         if (!empty($conditions['ragione_sociale'])) {
-            $query = $query->where('an_anagrafiche.ragione_sociale','like', '%'.$conditions['ragione_sociale'].'%');
+            $query = $query->where('an_anagrafiche.ragione_sociale', 'like', '%'.$conditions['ragione_sociale'].'%');
         }
 
         // Filtri aggiuntivi predefiniti
@@ -94,7 +94,7 @@ class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface
         }
 
         $total_count = $query->count();
-        
+
         return [
             'results' => $query->skip($request['page'] * $request['length'])
                 ->limit($request['length'])

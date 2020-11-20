@@ -50,7 +50,7 @@ class InvoiceHook extends Manager
 
         $result = Interaction::sendInvoice($fattura->id);
 
-        if ($result['code'] == 200) {
+        if ($result['code'] == 200 || $result['code'] == 301) {
             $fattura->hook_send = false;
             $fattura->save();
         }

@@ -69,11 +69,12 @@ switch (post('op')) {
 
         foreach ($id_records as $id) {
             $fattura = Fattura::find($id);
-            try {
-                $fattura_pa = new FatturaElettronica($id);
 
-                if (!empty($fattura_pa) && !$fattura_pa->isGenerated()) {
-                    $file = $fattura_pa->save($upload_dir);
+            try {
+                $fattura_elettronica = new FatturaElettronica($id);
+
+                if (!empty($fattura_elettronica) && !$fattura_elettronica->isGenerated()) {
+                    $file = $fattura_elettronica->save($upload_dir);
                     $added[] = $fattura->numero_esterno;
                 }
             } catch (UnexpectedValueException $e) {
@@ -99,12 +100,19 @@ switch (post('op')) {
         foreach ($id_records as $id) {
             $fattura = Fattura::find($id);
 
-            $fe = new \Plugins\ExportFE\FatturaElettronica($fattura->id);
-            if ($fe->isGenerated() && $fattura->codice_stato_fe == 'GEN') {
-                $fattura->codice_stato_fe = 'QUEUE';
-                $fattura->data_stato_fe = date('Y-m-d H:i:s');
-                $fattura->hook_send = true;
-                $fattura->save();
+            try {
+                $fattura_elettronica = new FatturaElettronica($fattura->id);
+
+                if (!empty($fattura_elettronica) && $fattura_elettronica->isGenerated() && $fattura->codice_stato_fe == 'GEN') {
+                    $fattura->codice_stato_fe = 'QUEUE';
+                    $fattura->data_stato_fe = date('Y-m-d H:i:s');
+                    $fattura->hook_send = true;
+                    $fattura->save();
+
+                    $added[] = $fattura->numero_esterno;
+                }
+            } catch (UnexpectedValueException $e) {
+                $failed[] = $fattura->numero_esterno;
             }
         }
 
@@ -137,7 +145,7 @@ switch (post('op')) {
 
                 try {
                     if ($r['dir'] == 'entrata') {
-                        $fe = new \Plugins\ExportFE\FatturaElettronica($fattura->id);
+                        $fe = new FatturaElettronica($fattura->id);
                         $include = $fe->isGenerated();
                     } else {
                         $include = $fattura->isFE();

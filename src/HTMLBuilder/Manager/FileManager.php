@@ -229,7 +229,12 @@ class FileManager implements ManagerInterface
 Dropzone.autoDiscover = false;
 
 $(document).ready(function() {
-    var dragdrop = new Dropzone("#'.$attachment_id.' .dropzone", {
+    let dropzone_id = "#'.$attachment_id.' .dropzone";
+    if ($(dropzone_id).length == 0) {
+        return;
+    }
+
+    let dragdrop = new Dropzone(dropzone_id, {
         dictDefaultMessage: "'.tr('Clicca o trascina qui per caricare uno o più file').'.<br>('.tr('Max upload: _SIZE_', [
             '_SIZE_' => $upload_max_filesize.' MB',
         ]).')",

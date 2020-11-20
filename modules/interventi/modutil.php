@@ -224,6 +224,11 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
             return $item['prezzo_km_unitario'].'|'.$item['scontokm_unitario'].'|'.$item['tipo_scontokm'];
         });
         foreach ($viaggi as $gruppo) {
+            $qta_trasferta = $gruppo->sum('km');
+            if ($qta_trasferta == 0){
+                continue;
+            }
+
             $viaggio = $gruppo->first();
             $riga = Riga::build($fattura);
 
@@ -244,7 +249,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
             $riga->prezzo_unitario = $viaggio->prezzo_km_unitario;
             $riga->setSconto($viaggio->scontokm_unitario, $viaggio->tipo_scontokm);
 
-            $riga->qta = $gruppo->sum('km');
+            $riga->qta = $qta_trasferta;
 
             $riga->save();
         }

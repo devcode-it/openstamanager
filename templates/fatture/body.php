@@ -68,7 +68,7 @@ foreach ($righe as $riga) {
 
     echo '
             <td>
-                '.nl2br($r['descrizione']);
+                '.nl2br(strip_tags($riga->descrizione));
 
     if ($riga->isArticolo()) {
         // Codice articolo

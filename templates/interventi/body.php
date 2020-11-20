@@ -182,7 +182,7 @@ if (!$righe->isEmpty()) {
         echo '
     <tr>
         <td>
-            '.nl2br($riga->descrizione);
+            '.nl2br(strip_tags($riga->descrizione));
 
         if ($riga->isArticolo()) {
             // Codice articolo

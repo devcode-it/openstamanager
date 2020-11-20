@@ -17,6 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Modules\Interventi\Intervento;
+
 include_once __DIR__.'/init.php';
 
 echo '
@@ -44,11 +46,6 @@ foreach ($righe as $riga) {
     $extra = '';
     $mancanti = 0;
     $delete = 'delete_riga';
-
-    // Operazione di rimozione specializzata per gli Interventi
-    if (!empty($documento_originale) && $documento_originale instanceof \Modules\Interventi\Intervento) {
-        $delete = 'unlink_intervento';
-    }
 
     // Individuazione dei seriali
     if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
@@ -106,6 +103,11 @@ foreach ($righe as $riga) {
     if ($riga->hasOriginalComponent()) {
         echo '
                     <br>'.reference($riga->getOriginalComponent()->getDocument(), tr('Origine'));
+    }
+    // Fix per righe da altre componenti degli Interventi
+    elseif (!empty($riga->idintervento)) {
+        echo '
+                    <br>'.reference(Intervento::find($riga->idintervento), tr('Origine'));
     }
 
     echo '

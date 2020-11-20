@@ -30,12 +30,11 @@ function customStructure()
         'modules',
         'templates',
         'plugins',
-        'include',
     ];
 
     // Controlli di personalizzazione fisica
     foreach ($dirs as $dir) {
-        $files = glob(base_dir().'/'.$dir.'/*/custom/*.{php,html}', GLOB_BRACE);
+        $files = glob(base_dir().'/'.$dir.'/*/custom/**/*.{php,html}', GLOB_BRACE);
         foreach ($files as $file) {
             $file = str_replace(base_dir().'/', '', $file);
             $result = explode('/custom/', $file)[0];
@@ -44,55 +43,16 @@ function customStructure()
                 $results[] = $result;
             }
         }
+    }
 
-        $files = glob(base_dir().'/'.$dir.'/*/custom/src/*.{php,html}', GLOB_BRACE);
-        foreach ($files as $file) {
-            $file = str_replace(base_dir().'/', '', $file);
-            $result = explode('/custom/', $file)[0];
+    // Gestione cartella include
+    $files = glob(base_dir().'/include/custom/**/*.{php,html}', GLOB_BRACE);
+    foreach ($files as $file) {
+        $file = str_replace(base_dir().'/', '', $file);
+        $result = explode('/custom/', $file)[0];
 
-            if (!in_array($result, $results)) {
-                $results[] = $result;
-            }
-        }
-
-        $files = glob(base_dir().'/'.$dir.'/*/custom/src/Components/*.{php,html}', GLOB_BRACE);
-        foreach ($files as $file) {
-            $file = str_replace(base_dir().'/', '', $file);
-            $result = explode('/custom/', $file)[0];
-
-            if (!in_array($result, $results)) {
-                $results[] = $result;
-            }
-        }
-
-        $files = glob(base_dir().'/'.$dir.'/*/custom/src/API/*.{php,html}', GLOB_BRACE);
-        foreach ($files as $file) {
-            $file = str_replace(base_dir().'/', '', $file);
-            $result = explode('/custom/', $file)[0];
-
-            if (!in_array($result, $results)) {
-                $results[] = $result;
-            }
-        }
-
-        $files = glob(base_dir().'/'.$dir.'/*/custom/ajax/*.{php,html}', GLOB_BRACE);
-        foreach ($files as $file) {
-            $file = str_replace(base_dir().'/', '', $file);
-            $result = explode('/custom/', $file)[0];
-
-            if (!in_array($result, $results)) {
-                $results[] = $result;
-            }
-        }
-
-        $files = glob(base_dir().'/'.$dir.'/*/custom/widgets/*.{php,html}', GLOB_BRACE);
-        foreach ($files as $file) {
-            $file = str_replace(base_dir().'/', '', $file);
-            $result = explode('/custom/', $file)[0];
-
-            if (!in_array($result, $results)) {
-                $results[] = $result;
-            }
+        if (!in_array($result, $results)) {
+            $results[] = $result;
         }
     }
 

@@ -41,7 +41,7 @@ if (Interaction::isEnabled()) {
     if (!empty($fatture_generate_errore->count())) {
         echo '
         <div class="alert alert-warning alert-dismissible" role="alert"><button class="close" type="button" data-dismiss="alert" aria-hidden="true"><span aria-hidden="true">×</span><span class="sr-only">'.tr('Chiudi').'</span></button>
-        <p><i class="fa fa-warning"></i> '.tr('Attenzione: le seguenti fatture hanno ricevuto uno scartato o hanno presentano errori in fase di trasmissione').'.</p>
+        <p><i class="fa fa-warning"></i> '.tr('Attenzione: le seguenti fatture hanno ricevuto uno scarto o presentano errori in fase di trasmissione').'.</p>
         <ul>';
 
         foreach ($fatture_generate_errore as $fattura_generata) {

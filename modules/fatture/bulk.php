@@ -292,69 +292,70 @@ switch (post('op')) {
                 
                 $fattura_vendita = $fattura_vendita[0];
                
+                if (!empty($fattura_vendita)){
+                    try {
 
-                try {
+                        $xml = XML::read($fattura_vendita->getXML());
+                    
+                        $totale_documento_xml = null;
 
-                    $xml = XML::read($fattura_vendita->getXML());
-                
-                    $totale_documento_xml = null;
-
-                    // Totale basato sul campo ImportoTotaleDocumento
-                    $dati_generali = $xml['FatturaElettronicaBody']['DatiGenerali']['DatiGeneraliDocumento'];
-                    if (isset($dati_generali['ImportoTotaleDocumento'])) {
-                        $totale_documento_indicato = abs(floatval($dati_generali['ImportoTotaleDocumento']));
-        
-                        // Calcolo del totale basato sui DatiRiepilogo
-                        if (empty($totale_documento_xml) && empty($dati_generali['ScontoMaggiorazione'])) {
-                            $totale_documento_xml = 0;
-        
-                            $riepiloghi = $xml['FatturaElettronicaBody']['DatiBeniServizi']['DatiRiepilogo'];
-                            if (!empty($riepiloghi) && !isset($riepiloghi[0])) {
-                                $riepiloghi = [$riepiloghi];
+                        // Totale basato sul campo ImportoTotaleDocumento
+                        $dati_generali = $xml['FatturaElettronicaBody']['DatiGenerali']['DatiGeneraliDocumento'];
+                        if (isset($dati_generali['ImportoTotaleDocumento'])) {
+                            $totale_documento_indicato = abs(floatval($dati_generali['ImportoTotaleDocumento']));
+            
+                            // Calcolo del totale basato sui DatiRiepilogo
+                            if (empty($totale_documento_xml) && empty($dati_generali['ScontoMaggiorazione'])) {
+                                $totale_documento_xml = 0;
+            
+                                $riepiloghi = $xml['FatturaElettronicaBody']['DatiBeniServizi']['DatiRiepilogo'];
+                                if (!empty($riepiloghi) && !isset($riepiloghi[0])) {
+                                    $riepiloghi = [$riepiloghi];
+                                }
+            
+                                foreach ($riepiloghi as $riepilogo) {
+                                    $totale_documento_xml = sum([$totale_documento_xml, $riepilogo['ImponibileImporto'], $riepilogo['Imposta']]);
+                                }
+            
+                                $totale_documento_xml = abs($totale_documento_xml);
+                            } else {
+                                $totale_documento_xml = $totale_documento_indicato;
                             }
-        
-                            foreach ($riepiloghi as $riepilogo) {
-                                $totale_documento_xml = sum([$totale_documento_xml, $riepilogo['ImponibileImporto'], $riepilogo['Imposta']]);
-                            }
-        
-                            $totale_documento_xml = abs($totale_documento_xml);
-                        } else {
-                            $totale_documento_xml = $totale_documento_indicato;
+                                $totale_documento_xml = $fattura_vendita->isNota() ? -$totale_documento_xml : $totale_documento_xml;
                         }
-                            $totale_documento_xml = $fattura_vendita->isNota() ? -$totale_documento_xml : $totale_documento_xml;
-                    }
-    
-                    // Se riscontro un'anomalia
-                    if (  $fattura_vendita->anagrafica->piva != $xml['FatturaElettronicaHeader']['CessionarioCommittente']['DatiAnagrafici']['IdFiscaleIVA']['IdCodice'] || $fattura_vendita->anagrafica->codice_fiscale != $xml['FatturaElettronicaHeader']['CessionarioCommittente']['DatiAnagrafici']['CodiceFiscale'] || $fattura_vendita->totale != $totale_documento_xml  ){
-    
-                        /*echo json_encode([
-                            'totale_documento_xml' => $totale_documento_xml,
-                            'totale_documento' => $totale_documento,
-                        ]);*/
-                        
+        
+                        // Se riscontro un'anomalia
+                        if (  $fattura_vendita->anagrafica->piva != $xml['FatturaElettronicaHeader']['CessionarioCommittente']['DatiAnagrafici']['IdFiscaleIVA']['IdCodice'] || $fattura_vendita->anagrafica->codice_fiscale != $xml['FatturaElettronicaHeader']['CessionarioCommittente']['DatiAnagrafici']['CodiceFiscale'] || $fattura_vendita->totale != $totale_documento_xml  ){
+        
+                            /*echo json_encode([
+                                'totale_documento_xml' => $totale_documento_xml,
+                                'totale_documento' => $totale_documento,
+                            ]);*/
+                            
+                            $anomalie->push([
+                                'fattura_vendita' => $fattura_vendita,
+                                'codice_fiscale_xml' => !empty($xml['FatturaElettronicaHeader']['CessionarioCommittente']['DatiAnagrafici']['CodiceFiscale']) ? $xml['FatturaElettronicaHeader']['CessionarioCommittente']['DatiAnagrafici']['CodiceFiscale'] : null,
+                                'codice_fiscale' => $fattura_vendita->anagrafica->codice_fiscale,
+                                'piva_xml' => !empty($xml['FatturaElettronicaHeader']['CessionarioCommittente']['DatiAnagrafici']['IdFiscaleIVA']['IdCodice']) ? $xml['FatturaElettronicaHeader']['CessionarioCommittente']['DatiAnagrafici']['IdFiscaleIVA']['IdCodice'] : null,
+                                'piva' => $fattura_vendita->anagrafica->piva,
+                                'totale_documento_xml' => moneyFormat($totale_documento_xml,2),
+                                'totale_documento' => moneyFormat($fattura_vendita->totale,2),
+                                'have_xml' => 1,
+                                
+                            ]);
+                        }        
+                
+                    } catch (Exception $e) {
+
                         $anomalie->push([
                             'fattura_vendita' => $fattura_vendita,
-                            'codice_fiscale_xml' => !empty($xml['FatturaElettronicaHeader']['CessionarioCommittente']['DatiAnagrafici']['CodiceFiscale']) ? $xml['FatturaElettronicaHeader']['CessionarioCommittente']['DatiAnagrafici']['CodiceFiscale'] : null,
-                            'codice_fiscale' => $fattura_vendita->anagrafica->codice_fiscale,
-                            'piva_xml' => !empty($xml['FatturaElettronicaHeader']['CessionarioCommittente']['DatiAnagrafici']['IdFiscaleIVA']['IdCodice']) ? $xml['FatturaElettronicaHeader']['CessionarioCommittente']['DatiAnagrafici']['IdFiscaleIVA']['IdCodice'] : null,
-                            'piva' => $fattura_vendita->anagrafica->piva,
-                            'totale_documento_xml' => moneyFormat($totale_documento_xml,2),
-                            'totale_documento' => moneyFormat($fattura_vendita->totale,2),
-                            'have_xml' => 1,
-                            
+                            'have_xml' => 0,
                         ]);
-                    }        
-              
-                } catch (Exception $e) {
-
-                    $anomalie->push([
-                        'fattura_vendita' => $fattura_vendita,
-                        'have_xml' => 0,
-                    ]);
-    
+        
+                    }
+                    
+                    array_push($list, $fattura_vendita->numero_esterno);
                 }
-                
-                array_push($list, $fattura_vendita->numero_esterno);
             }
 
             // Messaggi di risposta

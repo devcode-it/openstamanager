@@ -24,5 +24,5 @@ include_once __DIR__.'/../../core.php';
 if (isset($id_record)) {
     $dichiarazione = Dichiarazione::find($id_record);
 
-    $record = $dichiarazione->toArray();
+    $record = $dichiarazione ? $dichiarazione->toArray() : [];
 }

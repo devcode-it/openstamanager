@@ -25,7 +25,10 @@ echo '
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="add">
 
-	<div class="row">
+    <!-- Fix creazione da Anagrafica -->
+    <input type="hidden" name="id_record" value="">
+
+    <div class="row">
 		<div class="col-md-4">
 			{[ "type": "date", "label": "'.tr('Data di ricezione').'", "name": "data", "required": 1, "value": "-now-" ]}
 		</div>

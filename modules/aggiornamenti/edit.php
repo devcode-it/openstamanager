@@ -84,6 +84,14 @@ if (!function_exists('base_path')) {
     }
 }
 
+if (!function_exists('base_dir')) {
+    function base_dir()
+    {
+        return DOCROOT;
+    }
+}
+
+
 // Aggiornamenti
 if (setting('Attiva aggiornamenti')) {
     $alerts = [];

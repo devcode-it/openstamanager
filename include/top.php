@@ -574,10 +574,11 @@ if (!Auth::check() && (!empty($messages['info']) || !empty($messages['warning'])
 }
 
 //Se la mia installazione supera una data dimensione visualizzo un messaggio
-if (!empty(setting('Soft quota'))){
+$osm_size = $dbo->fetchOne('SELECT content FROM zz_cache WHERE name = "Spazio utilizzato"')['content'];
+if (!empty(setting('Soft quota')) && !empty($osm_size)){
 
     // Controllo sullo spazio disponibile
-    $osm_size = disk_free_space('.');
+    //$osm_size = disk_free_space('.');
     //$osm_size = FileSystem::folderSize(base_dir(), ['htaccess']);
 
     $soft_quota = setting('Soft quota'); //MB

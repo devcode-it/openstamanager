@@ -436,7 +436,7 @@ switch (post('op')) {
 
                 }else{
 
-                    flash()->info(tr('Nessuna anomalia!',));
+                    flash()->info(tr('Nessuna anomalia!'));
 
                 }
             }

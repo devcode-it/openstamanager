@@ -25,3 +25,26 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 
 -- Aggiunta supporto riferimento_amministrazione per Anagrafiche
 ALTER TABLE `an_anagrafiche` ADD `riferimento_amministrazione` VARCHAR(255) AFTER `codicerea`;
+
+-- Fix dimensioni campi descrittivi
+ALTER TABLE `co_contratti` CHANGE `descrizione` `descrizione` TEXT NULL;
+ALTER TABLE `co_contratti` CHANGE `esclusioni` `esclusioni` TEXT NULL;
+ALTER TABLE `co_documenti` CHANGE `note` `note` TEXT NULL;
+ALTER TABLE `co_documenti` CHANGE `note_aggiuntive` `note_aggiuntive` TEXT NULL;
+ALTER TABLE `co_movimenti` CHANGE `descrizione` `descrizione` TEXT NULL;
+ALTER TABLE `co_preventivi` CHANGE `descrizione` `descrizione` TEXT NULL;
+ALTER TABLE `co_preventivi` CHANGE `esclusioni` `esclusioni` TEXT NULL;
+ALTER TABLE `co_righe_contratti` CHANGE `descrizione` `descrizione` TEXT NULL;
+ALTER TABLE `co_righe_documenti` CHANGE `descrizione` `descrizione` TEXT NULL;
+ALTER TABLE `co_righe_preventivi` CHANGE `descrizione` `descrizione` TEXT NULL;
+ALTER TABLE `dt_righe_ddt` CHANGE `descrizione` `descrizione` TEXT NULL;
+ALTER TABLE `in_interventi` CHANGE `richiesta` `richiesta` TEXT NULL;
+ALTER TABLE `in_interventi` CHANGE `descrizione` `descrizione` TEXT NULL;
+ALTER TABLE `in_interventi` CHANGE `informazioniaggiuntive` `informazioniaggiuntive` TEXT NULL;
+ALTER TABLE `mg_articoli` CHANGE `contenuto` `contenuto` TEXT NULL;
+ALTER TABLE `my_impianto_componenti` CHANGE `contenuto` `contenuto` TEXT NULL;
+ALTER TABLE `or_righe_ordini` CHANGE `descrizione` `descrizione` TEXT NULL;
+ALTER TABLE `zz_modules` CHANGE `options` `options` TEXT NULL;
+ALTER TABLE `zz_modules` CHANGE `options2` `options2` TEXT NULL;
+ALTER TABLE `zz_widgets` CHANGE `query` `query` TEXT NULL;
+ALTER TABLE `zz_widgets` CHANGE `text` `text` TEXT NULL;

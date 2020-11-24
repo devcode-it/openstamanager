@@ -573,19 +573,28 @@ if (!Auth::check() && (!empty($messages['info']) || !empty($messages['warning'])
             </div>';
 }
 
-// Controllo sullo spazio disponibile
-$free_space = disk_free_space('.');
-$space_limit = 200; // MB
-if ($free_space < ($space_limit * 1024 ^ 3)) {
-    echo '
-<div class="callout callout-warning">
-    <h4>
-        <i class="fa fa-warning"></i> '.tr('Spazio in esaurimento').'
-    </h4>
-    <p>'.tr('Lo spazio a disposizione del gestionale è in esaurimento: sono al momento disponibili _TOT_', [
-        '_TOT_' => FileSystem::formatBytes($free_space),
-        ]).'.</p>
-    <p>'.tr('Questo può risultare un serio problema per la continuità di funzionamento del software, poichè le operazioni più espansive riguardanti lo spazio di archiviazione possono provocare malfunzionamento imprevedibili').'. '.tr('Operazioni di backup, caricamento di allegati o anche il semplice utilizzo del gestionale possono rendere i dati inaffidabili, provocando pertanto una perdita irreversibile delle informazioni salvate').'.</p>
-    <p>'.tr("Contatta gli amministratori di sistema oppure l'assistenza tecnica per risolvere il problema").'.</p>
-</div>';
+//Se la mia installazione supera una data dimensione visualizzo un messaggio
+if (!empty(setting('Soft quota'))){
+
+    // Controllo sullo spazio disponibile
+    $osm_size = disk_free_space('.');
+    //$osm_size = FileSystem::folderSize(base_dir(), ['htaccess']);
+
+    $soft_quota = setting('Soft quota'); //MB
+    $space_limit = ($soft_quota / 100)*95; //MB
+
+    if ($osm_size > ($space_limit * 1048576)) {
+        echo '
+    <div class="callout callout-warning">
+        <h4>
+            <i class="fa fa-warning"></i> '.tr('Spazio in esaurimento').'
+        </h4>
+        <p>'.tr('Lo spazio a disposizione del gestionale è in esaurimento: il gestionale occupa _TOT_ dei _SOFTQUOTA_ previsti', [
+            '_TOT_' => FileSystem::formatBytes($osm_size),
+            '_SOFTQUOTA_' => FileSystem::formatBytes($soft_quota  * 1048576),
+            ]).'.</p>
+        <p>'.tr('Questo può risultare un serio problema per la continuità di funzionamento del software, poichè le operazioni più espansive riguardanti lo spazio di archiviazione possono provocare malfunzionamento imprevedibili').'. '.tr('Operazioni di backup, caricamento di allegati o anche il semplice utilizzo del gestionale possono rendere i dati inaffidabili, provocando pertanto una perdita irreversibile delle informazioni salvate').'.</p>
+        <p>'.tr("Contatta gli amministratori di sistema oppure l'assistenza tecnica per risolvere il problema").'.</p>
+    </div>';
+    }
 }

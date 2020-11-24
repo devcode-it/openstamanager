@@ -48,3 +48,7 @@ ALTER TABLE `zz_modules` CHANGE `options` `options` TEXT NULL;
 ALTER TABLE `zz_modules` CHANGE `options2` `options2` TEXT NULL;
 ALTER TABLE `zz_widgets` CHANGE `query` `query` TEXT NULL;
 ALTER TABLE `zz_widgets` CHANGE `text` `text` TEXT NULL;
+
+
+
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Soft quota', '', 'integer', '0', 'Generali', NULL, 'Soft quota in MB'); 

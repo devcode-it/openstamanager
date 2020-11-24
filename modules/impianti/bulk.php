@@ -18,32 +18,41 @@
  */
 
 include_once __DIR__.'/../../core.php';
+
 use Modules\Impianti\Impianto;
 
 switch (post('op')) {
    
+    case 'download-csv':
+        
+        $dir = base_dir().'/files/export_impianti/';
+        directory($dir.'tmp/');
+        $file = secure_random_string().'.csv';
+        $dir_csv = slashes($dir.'tmp/'.$file);
 
-    case 'export-bulk':
+        $filename = 'impianti.csv';
 
-        $t = new Modules\Impianti\Export\CSV(__DIR__.'\..\..\files\impianti\Impianti.csv');
-      
-        if($t->exportRecords())
-            flash()->info(tr('Esportazione riuscita!'));
+        $t = new Modules\Impianti\Export\CSV($dir_csv);
+
+        if($t->exportRecords()){
+            
+            download($dir_csv, $filename);
+            delete($dir.'tmp/');
+        }
 
         break;
 }
 
 if (App::debug()) {
-    $operations['export-bulk'] = [
-        'text' => '<span><i class="fa fa-upload"></i> '.tr('Esporta tutto').'</span>',
+    $operations['download-csv'] = [
+        'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta tutto').'</span> <span class="label label-danger" >beta</span>',
         'data' => [
-            'msg' => tr('Vuoi davvero esportare un CSV degli impianti?'),
+            'msg' => tr('Vuoi davvero esportare un CSV con tutti gli impianti?'),
             'button' => tr('Procedi'),
             'class' => 'btn btn-lg btn-danger',
+            'blank' => true,
         ],
     ];
 }
-
-
 
 return $operations;

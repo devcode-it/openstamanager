@@ -442,6 +442,24 @@ switch (post('op')) {
             }
         break;
 
+    case 'download-csv':
+        
+        $dir = base_dir().'/files/export_fatture/';
+        directory($dir.'tmp/');
+        $file = secure_random_string().'.csv';
+        $dir_csv = slashes($dir.'tmp/'.$file);
+
+        $filename = 'fatture.csv';
+
+        $t = new Modules\Fatture\Export\CSV($dir_csv);
+
+        if($t->exportRecords()){
+            
+            download($dir_csv, $filename);
+            delete($dir.'tmp/');
+        }
+
+        break;
 
     case 'delete-bulk':
         foreach ($id_records as $id) {
@@ -458,8 +476,19 @@ switch (post('op')) {
 
 if (App::debug()) {
     $operations['delete-bulk'] = [
-        'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span>',
+        'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span> <span class="label label-danger" >beta</span>',
     ];
+
+    $operations['download-csv'] = [
+        'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta tutto').'</span> <span class="label label-danger" >beta</span>',
+        'data' => [
+            'msg' => tr('Vuoi davvero esportare un CSV con tutte le fatture?'),
+            'button' => tr('Procedi'),
+            'class' => 'btn btn-lg btn-danger',
+            'blank' => true,
+        ],
+    ];
+
 }
 
 $operations['copy-bulk'] = [

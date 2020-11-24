@@ -17,13 +17,13 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace Modules\Impianti\Export;
+namespace Modules\Fatture\Export;
 
 use Exporter\CSVExporter;
-use Modules\Impianti\Impianto;
+use Modules\Fatture\Fattura;
 
 /**
- * Struttura per la gestione delle operazioni di esportazione (in CSV) degli impianti.
+ * Struttura per la gestione delle operazioni di esportazione (in CSV) delle Fatture.
  *
  * @since 2.4.18
  */
@@ -38,18 +38,39 @@ class CSV extends CSVExporter
                 'primary_key' => true,
             ],
             [
-                'field' => 'matricola',
-                'label' => 'Matricola',
+                'field' => 'numero_esterno',
+                'label' => 'Numero',
             ],
             [
-                'field' => 'nome',
-                'label' => 'Nome',
+                'field' => 'data',
+                'label' => 'Data',
+            ],
+            [
+                'field' => 'idanagrafica',
+                'label' => 'Ragione sociale',
+            ],
+            [
+                'field' => 'totale',
+                'label' => 'Totale',
+            ],
+            [
+                'field' => 'idstatodocumento',
+                'label' => 'Stato',
+            ],
+            [
+                'field' => 'codice_stato_fe',
+                'label' => 'Stato FE',
             ],
         ];
     }
 
     public function getRecords()
     {
-        return Impianto::all();
+
+       $id_module = filter('id_module');
+       $results = Fattura::all()->where('id_segment', $_SESSION['module_'.$id_module]['id_segment']);
+    
+       return $results;
+        
     }
 }

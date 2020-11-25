@@ -252,9 +252,11 @@ switch ($resource) {
 
             $where[] = 'idanagrafica='.prepare($superselect['idanagrafica']);
 
+            /*
             if (!empty($search)) {
                 $search_fields[] = 'citta LIKE '.prepare('%'.$search.'%');
             }
+            */
         }
         break;
 

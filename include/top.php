@@ -18,6 +18,7 @@
  */
 
 use Util\FileSystem;
+use Models\Cache;
 
 include_once __DIR__.'/../core.php';
 
@@ -574,10 +575,11 @@ if (!Auth::check() && (!empty($messages['info']) || !empty($messages['warning'])
 }
 
 //Se la mia installazione supera una data dimensione visualizzo un messaggio
-$osm_size = $dbo->fetchOne('SELECT content FROM zz_cache WHERE name = "Spazio utilizzato"')['content'];
+$osm_size = Cache::pool('Spazio utilizzato')->content;
+
 if (!empty(setting('Soft quota')) && !empty($osm_size)){
 
-    // Controllo sullo spazio disponibile
+    // Controllo lo spazio disponibile
     //$osm_size = disk_free_space('.');
     //$osm_size = FileSystem::folderSize(base_dir(), ['htaccess']);
 

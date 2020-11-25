@@ -21,7 +21,6 @@ namespace Modules\StatoServizi;
 
 use Util\FileSystem;
 use Hooks\CachedManager;
-use Modules;
 
 
 /**
@@ -43,8 +42,7 @@ class SpaceHook extends CachedManager
     public function response()
     {
         $osm_size = $this->getCache()->content;
-        
-        $osm_size = FileSystem::folderSize(base_dir(), ['htaccess']);
+
         $soft_quota = setting('Soft quota'); //MB
         $space_limit = ($soft_quota / 100)*95; //MB
 
@@ -57,15 +55,14 @@ class SpaceHook extends CachedManager
         return [
             'icon' => 'fa fa-database text-warning',
             'message' => $message,
-            'show' => ($osm_size > $space_limit),
+            'show' => ($osm_size > ($space_limit * 1048576)),
         ];
     }
-
 
      /**
      * Controlla se è disponibile un aggiornamento nella repository GitHub.
      *
-     * @return string|bool
+     * @return int|bool
      */
     public static function isAvailable()
     {
@@ -73,13 +70,9 @@ class SpaceHook extends CachedManager
         if (!empty(setting('Soft quota'))){
          
             $osm_size = FileSystem::folderSize(base_dir(), ['htaccess']);
-
-            $soft_quota = setting('Soft quota'); //MB
-            $space_limit = ($soft_quota / 100)*95; //MB
-        
-            if ($osm_size > ($space_limit * 1048576)) {
-                return $osm_size;
-            }
+          
+            return $osm_size;
+           
         }
 
         return false;

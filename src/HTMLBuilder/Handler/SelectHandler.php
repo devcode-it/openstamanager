@@ -109,24 +109,17 @@ class SelectHandler implements HandlerInterface
         $result .= '
 	</select>';
 
-        // Gestione delle proprietà "disabled" e "readonly"
-        if (in_array('disabled', $extras) || in_array('readonly', $extras)) {
-            $result .= '
-	<script>$("#'.$values['id'].'").prop("disabled", true);</script>';
+        // Rimozione proprietà "readonly" in favore di "disabled"
+        $pos = array_search('readonly', $extras);
+        if ($pos !== false) {
+            $extras[$pos] = 'disabled';
+            $extras = array_unique($extras);
         }
 
-        // Ulteriore gestione della proprietà "readonly" (per rendere il select utilizzabile dopo il submit)
-        if (in_array('readonly', $extras) && empty($source)) {
+        // Gestione delle proprietà "disabled"
+        if (in_array('disabled', $extras)) {
             $result .= '
-	<select class="hide" name="'.prepareToField($values['name']).'"'.((in_array('multiple', $extras)) ? ' multiple' : '').'>';
-
-            foreach ($values['value'] as $value) {
-                $result .= '
-		<option value="'.prepareToField($value).'" selected></option>';
-            }
-
-            $result .= '
-	</select>';
+	<script>$("#'.$values['id'].'").prop("disabled", true);</script>';
         }
 
         return $result;

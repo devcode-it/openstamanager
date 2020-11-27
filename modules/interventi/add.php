@@ -210,7 +210,7 @@ echo '
 		<div class="box-body">
 			<div class="row">
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "values": "query=SELECT id, CONCAT_WS(\' - \', nome, descrizione) AS descrizione FROM an_zone ORDER BY nome", "placeholder": "'.tr('Nessuna zona').'", "help":"'.tr('La zona viene definita automaticamente in base al cliente selezionato').'.", "readonly": "0", "value": "'.$id_zona.'" ]}
+                    {[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "values": "query=SELECT id, CONCAT_WS(\' - \', nome, descrizione) AS descrizione FROM an_zone ORDER BY nome", "placeholder": "'.tr('Nessuna zona').'", "help": "'.tr('La zona viene definita automaticamente in base al cliente selezionato').'.", "readonly": "1", "value": "'.$id_zona.'" ]}
                 </div>
 
 				<div class="col-md-4">

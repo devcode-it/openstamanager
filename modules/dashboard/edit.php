@@ -289,11 +289,11 @@ echo '
     globals.dashboard = {
         load_url: globals.rootdir + "/actions.php?id_module='.$id_module.'",
         style: "'.$def.'",
-        show_sunday: "'.setting('Visualizzare la domenica sul calendario').'",
+        show_sunday: '.intval(setting('Visualizzare la domenica sul calendario')).',
         start_time: "'.setting('Ora inizio sul calendario').'",
         end_time: "'.((setting('Ora fine sul calendario') != '00:00:00' && !empty(setting('Ora fine sul calendario'))) ? setting('Ora fine sul calendario') : '23:59:59').'",
-        write_permission: "'.intval($modulo_interventi->permission == 'rw').'",
-        tooltip: "'.setting('Utilizzare i tooltip sul calendario').'",
+        write_permission: '.intval($modulo_interventi->permission == 'rw').',
+        tooltip: '.intval(setting('Utilizzare i tooltip sul calendario')).',
         calendar: null,
         /* timeFormat: {
             hour: "2-digit",
@@ -313,16 +313,16 @@ echo '
     };
 
     function aggiorna_contatore(counter_id) {
-        var counter = $(counter_id);
+        let counter = $(counter_id);
 
-        var dropdown = counter.find(".dropdown-menu");
-        var selected = dropdown.find("input:checked").length;
-        var total = dropdown.find("input").length;
+        let dropdown = counter.find(".dropdown-menu");
+        let selected = dropdown.find("input:checked").length;
+        let total = dropdown.find("input").length;
 
         counter.find(".selected_counter").html(selected);
         counter.find(".total_counter").html(total);
 
-        var object = counter.find(".counter_object");
+        let object = counter.find(".counter_object");
 
         if (total === 0) {
             object.addClass("btn-primary disabled");
@@ -566,7 +566,7 @@ echo '
             eventAfterRender: function(event, element) {
                 // let event = info.event;
                 // let element = $(info.el);
-                
+
                 element.find(".fc-title").html(event.title);
                 let id_intervento = event.idintervento;
                 if (globals.dashboard.tooltip == 1) {

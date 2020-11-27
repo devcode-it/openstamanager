@@ -19,6 +19,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+use API\Services;
+use Models\Cache;
 use Util\FileSystem;
 
 $id = post('id');
@@ -180,5 +182,22 @@ switch (filter('op')) {
 
         echo json_encode($results);
 
+        break;
+
+    case 'informazioni-fe':
+        $info = Cache::pool('Informazioni su spazio FE');
+        if (!$info->isValid()) {
+            $response = Services::request('POST', 'informazioni_fe');
+            $response = Services::responseBody($response);
+
+            $info->set($response['result']);
+        }
+
+        $informazioni = $info->content;
+
+        echo json_encode([
+            'invoice_number' => $informazioni['invoice_number'],
+            'size' => Filesystem::formatBytes($informazioni['size']),
+        ]);
         break;
 }

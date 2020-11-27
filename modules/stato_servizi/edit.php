@@ -18,6 +18,7 @@
  */
 
 // Elenco moduli installati
+use API\Services;
 use Carbon\Carbon;
 use Models\Cache;
 
@@ -44,7 +45,7 @@ echo '
         </table>
     </div>';
 
-if (\API\Services::isEnabled()) {
+if (Services::isEnabled()) {
     // Informazioni su Services
     $servizi = Cache::pool('Informazioni su Services')->content;
 
@@ -55,12 +56,13 @@ if (\API\Services::isEnabled()) {
         // Gestione per data di scadenza
         $scadenza = new Carbon($servizio['expiration_at']);
         if (
-        (isset($servizio['expiration_at']) && $scadenza->lessThan($limite_scadenze))
+            (isset($servizio['expiration_at']) && $scadenza->lessThan($limite_scadenze))
         ) {
             $servizi_in_scadenza[] = $servizio['name'].' ('.$scadenza->diffForHumans().')';
-        } // Gestione per crediti
+        }
+        // Gestione per crediti
         elseif (
-        (isset($servizio['credits']) && $servizio['credits'] < 100)
+            (isset($servizio['credits']) && $servizio['credits'] < 100)
         ) {
             $servizi_in_scadenza[] = $servizio['name'].' ('.$servizio['credits'].' crediti)';
         }
@@ -80,21 +82,48 @@ if (\API\Services::isEnabled()) {
 
     if (empty($servizi_in_scadenza)) {
         echo '
-        <p>'.tr('Nessun servizio in scadenza').'</p>';
+            <p>'.tr('Nessun servizio in scadenza').'.</p>';
     } else {
         echo '
-        <p>'.tr('I seguenti servizi sono in scadenza:').'</p><ul>';
+            <p>'.tr('I seguenti servizi sono in scadenza:').'</p>
+            <ul>';
         foreach ($servizi_in_scadenza as $servizio) {
             echo '
                 <li>'.$servizio.'</li>';
         }
         echo '
-        </ul>';
+            </ul>';
     }
 
     echo '
+
+            <hr><br>
+
+            <h4>'.tr('Statistiche su Fatture Elettroniche').'</h4>
+            <ul>
+                <li>'.tr('Fatture transitate').': <span id="fe_numero"></span></li>
+                <li>'.tr('Spazio occupato').': <span id="fe_spazio"></span></li>
+            </ul>
         </div>
-    </div>';
+    </div>
+
+    <script>
+    $(document).ready(function (){
+        $.ajax({
+            url: globals.rootdir + "/actions.php",
+            type: "GET",
+            dataType: "json",
+            data: {
+                id_module: globals.id_module,
+                op: "informazioni-fe",
+            },
+            success: function (response) {
+                $("#fe_numero").html(response.invoice_number);
+                $("#fe_spazio").html(response.size);
+            }
+        });
+    });
+    </script>';
 }
 
 // Widgets

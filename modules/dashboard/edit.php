@@ -527,7 +527,7 @@ echo '
             },
 
             editable: globals.dashboard.write_permission,
-            eventDrop: function(event) {// info
+            eventDrop: function(event, delta, revertFunc ) {// info
                 // let event = info.event;
 
                 $.post(globals.dashboard.load_url, {
@@ -539,8 +539,8 @@ echo '
                 }, function (data, response) {
                     data = $.trim(data);
                     if (response !== "success" || data !== "ok") {
-                        alert(data);
-                        info.revert();
+                        swal("'.tr('Errore').'", data, "error");
+                        revertFunc(); // info.revert();
                     }
                 });
             },
@@ -556,7 +556,7 @@ echo '
                 }, function (data, response) {
                     data = $.trim(data);
                     if (response !== "success" || data !== "ok") {
-                        alert(data);
+                        swal("'.tr('Errore').'", data, "error");
                         revertFunc(); // info.revert();
                     }
                 });
@@ -604,7 +604,7 @@ echo '
                 url: globals.dashboard.load_url + "&op=interventi_periodo",
                 type: "GET",
                 error: function () {
-                    alert(globals.dashboard.error);
+                    swal("'.tr('Errore').'", globals.dashboard.error, "error");
                 }
             }
         });

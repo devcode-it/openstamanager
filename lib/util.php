@@ -528,3 +528,33 @@ if (!function_exists('readSQLFile')) {
         return $queryLine;
     }
 }
+
+if (!function_exists('temp_file')) {
+    /**
+     * Crea un file temporaneo e lo imposta per la rimozione alla fine dell'esecuzione.
+     *
+     * @param $name
+     * @param $content
+     *
+     * @return string
+     */
+    function temp_file($name = null, $content = null)
+    {
+        if (empty($name)) {
+            $name = secure_random_string();
+        }
+
+        $file = DIRECTORY_SEPARATOR.
+            trim(sys_get_temp_dir(), DIRECTORY_SEPARATOR).
+            DIRECTORY_SEPARATOR.
+            ltrim($name, DIRECTORY_SEPARATOR);
+
+        file_put_contents($file, $content);
+
+        register_shutdown_function(function () use ($file) {
+            unlink($file);
+        });
+
+        return $file;
+    }
+}

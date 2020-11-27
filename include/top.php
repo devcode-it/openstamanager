@@ -17,8 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Util\FileSystem;
 use Models\Cache;
+use Util\FileSystem;
 
 include_once __DIR__.'/../core.php';
 
@@ -577,14 +577,13 @@ if (!Auth::check() && (!empty($messages['info']) || !empty($messages['warning'])
 //Se la mia installazione supera una data dimensione visualizzo un messaggio
 $osm_size = Cache::pool('Spazio utilizzato')->content;
 
-if (!empty(setting('Soft quota')) && !empty($osm_size)){
-
+if (!empty(setting('Soft quota')) && !empty($osm_size)) {
     // Controllo lo spazio disponibile
     //$osm_size = disk_free_space('.');
     //$osm_size = FileSystem::folderSize(base_dir(), ['htaccess']);
 
     $soft_quota = setting('Soft quota'); //MB
-    $space_limit = ($soft_quota / 100)*95; //MB
+    $space_limit = ($soft_quota / 100) * 95; //MB
 
     if ($osm_size > ($space_limit * 1048576)) {
         echo '
@@ -594,7 +593,7 @@ if (!empty(setting('Soft quota')) && !empty($osm_size)){
         </h4>
         <p>'.tr('Lo spazio a disposizione del gestionale è in esaurimento: il gestionale occupa _TOT_ dei _SOFTQUOTA_ previsti', [
             '_TOT_' => FileSystem::formatBytes($osm_size),
-            '_SOFTQUOTA_' => FileSystem::formatBytes($soft_quota  * 1048576),
+            '_SOFTQUOTA_' => FileSystem::formatBytes($soft_quota * 1048576),
             ]).'.</p>
         <p>'.tr('Questo può risultare un serio problema per la continuità di funzionamento del software, poichè le operazioni più espansive riguardanti lo spazio di archiviazione possono provocare malfunzionamento imprevedibili').'. '.tr('Operazioni di backup, caricamento di allegati o anche il semplice utilizzo del gestionale possono rendere i dati inaffidabili, provocando pertanto una perdita irreversibile delle informazioni salvate').'.</p>
         <p>'.tr("Contatta gli amministratori di sistema oppure l'assistenza tecnica per risolvere il problema").'.</p>

@@ -19,16 +19,14 @@
 
 namespace Modules\StatoServizi;
 
-use Util\FileSystem;
 use Hooks\CachedManager;
-
+use Util\FileSystem;
 
 /**
  * Hook dedicato all'individuazione di nuove versioni del gestionale, pubblicate sulla repository ufficiale di GitHub.
  */
 class SpaceHook extends CachedManager
 {
-    
     public function getCacheName()
     {
         return 'Spazio utilizzato';
@@ -44,12 +42,11 @@ class SpaceHook extends CachedManager
         $osm_size = $this->getCache()->content;
 
         $soft_quota = setting('Soft quota'); //MB
-        $space_limit = ($soft_quota / 100)*95; //MB
+        $space_limit = ($soft_quota / 100) * 95; //MB
 
-        $message = tr("Attenzione: occupati _TOT_ dei _SOFTQUOTA_ previsti", [
+        $message = tr('Attenzione: occupati _TOT_ dei _SOFTQUOTA_ previsti', [
              '_TOT_' => FileSystem::formatBytes($osm_size),
-            '_SOFTQUOTA_' => FileSystem::formatBytes($soft_quota  * 1048576),
-            
+            '_SOFTQUOTA_' => FileSystem::formatBytes($soft_quota * 1048576),
         ]);
 
         return [
@@ -59,24 +56,19 @@ class SpaceHook extends CachedManager
         ];
     }
 
-     /**
+    /**
      * Controlla se è disponibile un aggiornamento nella repository GitHub.
      *
      * @return int|bool
      */
     public static function isAvailable()
     {
-        
-        if (!empty(setting('Soft quota'))){
-         
+        if (!empty(setting('Soft quota'))) {
             $osm_size = FileSystem::folderSize(base_dir(), ['htaccess']);
-          
+
             return $osm_size;
-           
         }
 
         return false;
     }
-
-    
 }

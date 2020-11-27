@@ -64,6 +64,10 @@ abstract class CSVExporter implements ExporterInterface
 
     public function exportRecords()
     {
+        // Esportazione header
+        $fields = $this->getAvailableFields();
+        $this->csv->insertOne(array_column($fields, 'label'));
+
         $records = $this->records ?: $this->getRecords();
         foreach ($records as $record) {
             // Esportazione del record
@@ -81,7 +85,14 @@ abstract class CSVExporter implements ExporterInterface
         foreach ($fields as $field) {
             $nome = $field['field'];
 
-            $row[] = $record[$nome];
+            // Navigazione secondo dot notation
+            $dot_notation = explode('.', $nome);
+            $contenuto = $record;
+            foreach ($dot_notation as $segment) {
+                $contenuto = isset($contenuto[$segment]) ? $contenuto[$segment] : null;
+            }
+
+            $row[] = $contenuto;
         }
 
         return $this->csv->insertOne($row);

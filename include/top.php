@@ -575,8 +575,8 @@ if (!Auth::check() && (!empty($messages['info']) || !empty($messages['warning'])
 
 // Messaggio informativo per l'esaurimento dello spazio totale disponibile nel server
 $free_space = disk_free_space('.');
-$space_limit = 200; // MB
-if ($free_space < ($space_limit * 1024 ^ 2)) {
+$space_limit = 1; // GB
+if ($free_space < ($space_limit * 1024 ^ 3)) {
     echo '
     <div class="callout callout-warning">
         <h4>

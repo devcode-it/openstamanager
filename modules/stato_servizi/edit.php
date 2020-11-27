@@ -18,6 +18,9 @@
  */
 
 // Elenco moduli installati
+use Carbon\Carbon;
+use Models\Cache;
+
 echo '
 <div class="row">
     <div class="col-md-12 col-lg-6">
@@ -40,6 +43,59 @@ echo submodules($modules);
 echo '
         </table>
     </div>';
+
+if (\API\Services::isEnabled()) {
+    // Informazioni su Services
+    $servizi = Cache::pool('Informazioni su Services')->content;
+
+    // Elaborazione dei servizi in scadenza
+    $limite_scadenze = (new Carbon())->addDays(60);
+    $servizi_in_scadenza = [];
+    foreach ($servizi as $servizio) {
+        // Gestione per data di scadenza
+        $scadenza = new Carbon($servizio['expiration_at']);
+        if (
+        (isset($servizio['expiration_at']) && $scadenza->lessThan($limite_scadenze))
+        ) {
+            $servizi_in_scadenza[] = $servizio['name'].' ('.$scadenza->diffForHumans().')';
+        } // Gestione per crediti
+        elseif (
+        (isset($servizio['credits']) && $servizio['credits'] < 100)
+        ) {
+            $servizi_in_scadenza[] = $servizio['name'].' ('.$servizio['credits'].' crediti)';
+        }
+    }
+
+    echo '
+    <div class="col-md-12 col-lg-6">
+        <div class="box box-info">
+            <div class="box-header">
+                <h3 class="box-title">
+                    '.tr('Informazioni su Services').'
+                </h3>
+            </div>
+        </div>
+
+        <div class="box-body">';
+
+    if (empty($servizi_in_scadenza)) {
+        echo '
+        <p>'.tr('Nessun servizio in scadenza').'</p>';
+    } else {
+        echo '
+        <p>'.tr('I seguenti servizi sono in scadenza:').'</p><ul>';
+        foreach ($servizi_in_scadenza as $servizio) {
+            echo '
+                <li>'.$servizio.'</li>';
+        }
+        echo '
+        </ul>';
+    }
+
+    echo '
+        </div>
+    </div>';
+}
 
 // Widgets
 echo '

@@ -22,9 +22,6 @@ namespace Modules\StatoServizi;
 use Hooks\CachedManager;
 use Util\FileSystem;
 
-/**
- * Hook dedicato all'individuazione di nuove versioni del gestionale, pubblicate sulla repository ufficiale di GitHub.
- */
 class SpaceHook extends CachedManager
 {
     public function getCacheName()
@@ -46,7 +43,7 @@ class SpaceHook extends CachedManager
         $osm_size = $this->getCache()->content;
 
         $soft_quota = setting('Soft quota'); // Impostazione in MB
-        $space_limit = ($soft_quota / 100) * 95; // 95% dello spazion indicato
+        $space_limit = ($soft_quota / 100) * 95; // 95% dello spazio indicato
         $space_limit = $space_limit * 1024 ^ 2; // Trasformazione in B
 
         $message = tr('Attenzione: occupati _TOT_ dei _QUOTA_ previsti', [

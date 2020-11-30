@@ -91,7 +91,6 @@ if (!function_exists('base_dir')) {
     }
 }
 
-
 // Aggiornamenti
 if (setting('Attiva aggiornamenti')) {
     $alerts = [];

@@ -17,35 +17,30 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-include_once __DIR__.'/../../core.php';
-
+use Modules\Impianti\Export\CSV;
 use Modules\Impianti\Impianto;
 
+include_once __DIR__.'/../../core.php';
+
 switch (post('op')) {
-   
-    case 'download-csv':
-        
-        $dir = base_dir().'/files/export_impianti/';
-        directory($dir.'tmp/');
-        $file = secure_random_string().'.csv';
-        $dir_csv = slashes($dir.'tmp/'.$file);
+    case 'export-csv':
+        $file = temp_file();
+        $exporter = new CSV($file);
 
-        $filename = 'impianti.csv';
+        // Esportazione dei record selezionati
+        $fatture = Impianto::whereIn('id', $id_records)->get();
+        $exporter->setRecords($fatture);
 
-        $t = new Modules\Impianti\Export\CSV($dir_csv);
+        $count = $exporter->exportRecords();
 
-        if($t->exportRecords()){
-            
-            download($dir_csv, $filename);
-            delete($dir.'tmp/');
-        }
+        download($file, 'impianti.csv');
 
         break;
 }
 
 if (App::debug()) {
-    $operations['download-csv'] = [
-        'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta tutto').'</span> <span class="label label-danger" >beta</span>',
+    $operations['export-csv'] = [
+        'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta selezionati').'</span> <span class="label label-danger" >beta</span>',
         'data' => [
             'msg' => tr('Vuoi davvero esportare un CSV con tutti gli impianti?'),
             'button' => tr('Procedi'),

@@ -20,6 +20,7 @@
 use Geocoder\Provider\GoogleMaps;
 use Ivory\HttpAdapter\CurlHttpAdapter;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Anagrafiche\Export\CSV;
 
 include_once __DIR__.'/../../core.php';
 $google = setting('Google Maps API key');
@@ -64,26 +65,18 @@ switch (post('op')) {
 
         break;
 
+    case 'export-csv':
+        $file = temp_file();
+        $exporter = new CSV($file);
 
-        case 'download-csv':
-        
-            $dir = base_dir().'/files/export_anagrafiche/';
-            directory($dir.'tmp/');
-            $file = secure_random_string().'.csv';
-            $dir_csv = slashes($dir.'tmp/'.$file);
-    
-            $filename = 'anagrafiche.csv';
-    
-            $t = new Modules\Anagrafiche\Export\CSV($dir_csv);
-    
-            if($t->exportRecords()){
-                
-                download($dir_csv, $filename);
-                delete($dir.'tmp/');
-            }
-    
+        // Esportazione dei record selezionati
+        $anagrafiche = Anagrafica::whereIn('id', $id_records)->get();
+        $exporter->setRecords($anagrafiche);
+
+        $count = $exporter->exportRecords();
+
+        download($file, 'anagrafiche.csv');
         break;
-    
 }
 
 $operations = [];
@@ -98,8 +91,8 @@ if (App::debug()) {
         ],
     ];
 
-    $operations['download-csv'] = [
-        'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta tutto').'</span> <span class="label label-danger" >beta</span>',
+    $operations['export-csv'] = [
+        'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta selezionati').'</span> <span class="label label-danger" >beta</span>',
         'data' => [
             'msg' => tr('Vuoi davvero esportare un CSV con tutte le anagrafiche?'),
             'button' => tr('Procedi'),
@@ -107,7 +100,6 @@ if (App::debug()) {
             'blank' => true,
         ],
     ];
-
 }
 
 if (App::debug() && $google) {

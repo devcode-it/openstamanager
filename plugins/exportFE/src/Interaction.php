@@ -40,7 +40,7 @@ class Interaction extends Services
                 'filename' => $fattura->getFilename(),
             ]);
             $body = static::responseBody($response);
-            
+
             // Aggiornamento dello stato
             if ($body['status'] == 200 || $body['status'] == 301) {
                 database()->update('co_documenti', [

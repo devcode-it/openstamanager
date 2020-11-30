@@ -107,9 +107,15 @@ echo '
 		<ul class="dropdown-menu" role="menu">';
 
 $tecnici_sessione = session_get('dashboard.idtecnici', []);
-$tecnici_disponibili = $dbo->fetchArray("SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale, colore FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica
-LEFT OUTER JOIN in_interventi_tecnici ON  in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica  INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id
-WHERE an_anagrafiche.deleted_at IS NULL AND an_tipianagrafiche.descrizione='Tecnico' ".Modules::getAdditionalsQuery('Interventi').' GROUP BY an_anagrafiche.idanagrafica ORDER BY ragione_sociale ASC');
+$tecnici_disponibili = $dbo->fetchArray("SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale, colore FROM an_anagrafiche
+    INNER JOIN
+    an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica
+    INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica
+    LEFT OUTER JOIN in_interventi_tecnici ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica
+    INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id
+WHERE an_anagrafiche.deleted_at IS NULL AND an_tipianagrafiche.descrizione='Tecnico' ".Modules::getAdditionalsQuery('Interventi').'
+GROUP BY an_anagrafiche.idanagrafica
+ORDER BY ragione_sociale ASC');
 foreach ($tecnici_disponibili as $tecnico) {
     $attr = '';
     if (in_array("'".$tecnico['id']."'", $tecnici_sessione)) {
@@ -289,11 +295,11 @@ echo '
     globals.dashboard = {
         load_url: globals.rootdir + "/actions.php?id_module='.$id_module.'",
         style: "'.$def.'",
-        show_sunday: "'.setting('Visualizzare la domenica sul calendario').'",
+        show_sunday: '.intval(setting('Visualizzare la domenica sul calendario')).',
         start_time: "'.setting('Ora inizio sul calendario').'",
         end_time: "'.((setting('Ora fine sul calendario') != '00:00:00' && !empty(setting('Ora fine sul calendario'))) ? setting('Ora fine sul calendario') : '23:59:59').'",
-        write_permission: "'.intval($modulo_interventi->permission == 'rw').'",
-        tooltip: "'.setting('Utilizzare i tooltip sul calendario').'",
+        write_permission: '.intval($modulo_interventi->permission == 'rw').',
+        tooltip: '.intval(setting('Utilizzare i tooltip sul calendario')).',
         calendar: null,
         /* timeFormat: {
             hour: "2-digit",
@@ -313,16 +319,16 @@ echo '
     };
 
     function aggiorna_contatore(counter_id) {
-        var counter = $(counter_id);
+        let counter = $(counter_id);
 
-        var dropdown = counter.find(".dropdown-menu");
-        var selected = dropdown.find("input:checked").length;
-        var total = dropdown.find("input").length;
+        let dropdown = counter.find(".dropdown-menu");
+        let selected = dropdown.find("input:checked").length;
+        let total = dropdown.find("input").length;
 
         counter.find(".selected_counter").html(selected);
         counter.find(".total_counter").html(total);
 
-        var object = counter.find(".counter_object");
+        let object = counter.find(".counter_object");
 
         if (total === 0) {
             object.addClass("btn-primary disabled");
@@ -527,7 +533,7 @@ echo '
             },
 
             editable: globals.dashboard.write_permission,
-            eventDrop: function(event) {// info
+            eventDrop: function(event, delta, revertFunc ) {// info
                 // let event = info.event;
 
                 $.post(globals.dashboard.load_url, {
@@ -539,8 +545,8 @@ echo '
                 }, function (data, response) {
                     data = $.trim(data);
                     if (response !== "success" || data !== "ok") {
-                        alert(data);
-                        info.revert();
+                        swal("'.tr('Errore').'", data, "error");
+                        revertFunc(); // info.revert();
                     }
                 });
             },
@@ -556,7 +562,7 @@ echo '
                 }, function (data, response) {
                     data = $.trim(data);
                     if (response !== "success" || data !== "ok") {
-                        alert(data);
+                        swal("'.tr('Errore').'", data, "error");
                         revertFunc(); // info.revert();
                     }
                 });
@@ -566,7 +572,7 @@ echo '
             eventAfterRender: function(event, element) {
                 // let event = info.event;
                 // let element = $(info.el);
-                
+
                 element.find(".fc-title").html(event.title);
                 let id_intervento = event.idintervento;
                 if (globals.dashboard.tooltip == 1) {
@@ -604,7 +610,7 @@ echo '
                 url: globals.dashboard.load_url + "&op=interventi_periodo",
                 type: "GET",
                 error: function () {
-                    alert(globals.dashboard.error);
+                    swal("'.tr('Errore').'", globals.dashboard.error, "error");
                 }
             }
         });

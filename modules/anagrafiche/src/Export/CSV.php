@@ -114,7 +114,7 @@ class CSV extends CSVExporter
                 'label' => 'Note',
             ],
             [
-                'field' => 'id_nazione',
+                'field' => 'nazione.nome',
                 'label' => 'Nazione',
             ],
             [

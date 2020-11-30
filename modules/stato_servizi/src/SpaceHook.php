@@ -19,16 +19,11 @@
 
 namespace Modules\StatoServizi;
 
-use Util\FileSystem;
 use Hooks\CachedManager;
+use Util\FileSystem;
 
-
-/**
- * Hook dedicato all'individuazione di nuove versioni del gestionale, pubblicate sulla repository ufficiale di GitHub.
- */
 class SpaceHook extends CachedManager
 {
-    
     public function getCacheName()
     {
         return 'Spazio utilizzato';
@@ -36,47 +31,30 @@ class SpaceHook extends CachedManager
 
     public function cacheData()
     {
-        return self::isAvailable();
+        if (!empty(setting('Soft quota'))) {
+            return FileSystem::folderSize(base_dir(), ['htaccess']);
+        }
+
+        return false;
     }
 
     public function response()
     {
         $osm_size = $this->getCache()->content;
 
-        $soft_quota = setting('Soft quota'); //MB
-        $space_limit = ($soft_quota / 100)*95; //MB
+        $soft_quota = setting('Soft quota'); // Impostazione in MB
+        $space_limit = ($soft_quota / 100) * 95; // 95% dello spazio indicato
+        $space_limit = $space_limit * 1024 ^ 2; // Trasformazione in B
 
-        $message = tr("Attenzione: occupati _TOT_ dei _SOFTQUOTA_ previsti", [
-             '_TOT_' => FileSystem::formatBytes($osm_size),
-            '_SOFTQUOTA_' => FileSystem::formatBytes($soft_quota  * 1048576),
-            
+        $message = tr('Attenzione: occupati _TOT_ dei _QUOTA_ previsti', [
+                '_TOT_' => FileSystem::formatBytes($osm_size),
+                '_QUOTA_' => FileSystem::formatBytes($space_limit),
         ]);
 
         return [
             'icon' => 'fa fa-database text-warning',
             'message' => $message,
-            'show' => ($osm_size > ($space_limit * 1048576)),
+            'show' => ($osm_size > $space_limit),
         ];
     }
-
-     /**
-     * Controlla se è disponibile un aggiornamento nella repository GitHub.
-     *
-     * @return int|bool
-     */
-    public static function isAvailable()
-    {
-        
-        if (!empty(setting('Soft quota'))){
-         
-            $osm_size = FileSystem::folderSize(base_dir(), ['htaccess']);
-          
-            return $osm_size;
-           
-        }
-
-        return false;
-    }
-
-    
 }

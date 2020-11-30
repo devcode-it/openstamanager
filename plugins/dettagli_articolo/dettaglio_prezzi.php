@@ -48,9 +48,9 @@ if (!empty($dettaglio_predefinito)) {
 }
 
 echo '
-<p>'.tr('Informazioni relative al fornitore _NAME_', [
+<p>'.tr('Informazioni relative al '.($direzione=='entrata' ? 'cliente:' : 'fornitore:').'<br><b><big> _NAME_', [
     '_NAME_' => $anagrafica->ragione_sociale,
-]).'.</p>
+]).'</big></b></p>
 
 <form action="" method="post">
     <input type="hidden" name="backto" value="record-edit">
@@ -63,7 +63,7 @@ echo '
 
     <div class="row">
         <div class="col-md-4">
-            <p>'.tr('Prezzo unitario predefinito: _TOT_', [
+            <p>'.tr('Prezzo predefinito: _TOT_', [
                 '_TOT_' => moneyFormat($prezzo_predefinito),
             ]).'</p>
         </div>
@@ -78,11 +78,11 @@ echo '
 
     <div class="row">
         <div class="col-md-6">
-                {[ "type": "number", "label": "'.tr('Prezzo unitario predefinito').'", "name": "prezzo_unitario_fisso", "value": "'.($prezzi_ivati ? $dettaglio_predefinito->prezzo_unitario_ivato : $dettaglio_predefinito->prezzo_unitario).'", "icon-after": "'.currency().'", "help": "'.($prezzi_ivati ? tr('Importo IVA inclusa') : '').'" ]}
+                {[ "type": "number", "label": "'.tr('Prezzo '.($direzione=='entrata' ? 'al cliente' : 'dal fornitore')).'", "name": "prezzo_unitario_fisso", "value": "'.($prezzi_ivati ? $dettaglio_predefinito->prezzo_unitario_ivato : $dettaglio_predefinito->prezzo_unitario).'", "icon-after": "'.currency().'", "help": "'.($prezzi_ivati ? tr('Importo IVA inclusa') : '').'" ]}
         </div>
 
         <div class="col-md-6">
-            {[ "type": "number", "label": "'.tr('Sconto predefinito').'", "name": "sconto_percentuale", "value": "'.$dettaglio_predefinito->sconto_percentuale.'", "icon-after": "%"]}
+            {[ "type": "number", "label": "'.tr('Sconto '.($direzione=='entrata' ? 'al cliente' : 'dal fornitore')).'", "name": "sconto_percentuale", "value": "'.$dettaglio_predefinito->sconto_percentuale.'", "icon-after": "%"]}
         </div>
     </div>
 

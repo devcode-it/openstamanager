@@ -40,7 +40,7 @@ echo '
         <div class="tab-pane active" id="clienti">
             <div class="box">
                 <div class="box-header">
-                    <h3 class="box-title">'.tr('Aggiungi informazioni per cliente').'</h3>
+                    <h3 class="box-title">'.tr('Informazioni specifiche per cliente').'</h3>
                 </div>
 
                 <div class="box-body">
@@ -157,7 +157,7 @@ echo '
 
             <div class="box">
                 <div class="box-header">
-                    <h3 class="box-title">'.tr('Aggiungi informazioni per fornitore').'</h3>
+                    <h3 class="box-title">'.tr('Informazioni specifiche per fornitore').'</h3>
                 </div>
 
                 <div class="box-body">
@@ -357,7 +357,7 @@ function modificaPrezzi(button) {
 }
 
 function gestionePrezzi(id_anagrafica, direzione) {
-    openModal("Modifica dettagli prezzi", "'.$structure->fileurl('dettaglio_prezzi.php').'?id_plugin='.$id_plugin.'&id_module='.$id_module.'&id_parent='.$id_record.'&id_articolo='.$id_record.'&id_anagrafica=" + id_anagrafica + "&direzione=" + direzione);
+    openModal("Gestisci prezzi specifici", "'.$structure->fileurl('dettaglio_prezzi.php').'?id_plugin='.$id_plugin.'&id_module='.$id_module.'&id_parent='.$id_record.'&id_articolo='.$id_record.'&id_anagrafica=" + id_anagrafica + "&direzione=" + direzione);
 }
 
 function aggiungiPrezzi(button) {

@@ -46,7 +46,7 @@ class CSV extends CSVExporter
                 'label' => 'Data',
             ],
             [
-                'field' => 'idanagrafica',
+                'field' => 'anagrafica.ragione_sociale',
                 'label' => 'Ragione sociale',
             ],
             [
@@ -54,7 +54,7 @@ class CSV extends CSVExporter
                 'label' => 'Totale',
             ],
             [
-                'field' => 'idstatodocumento',
+                'field' => 'stato.descrizione',
                 'label' => 'Stato',
             ],
             [
@@ -66,11 +66,6 @@ class CSV extends CSVExporter
 
     public function getRecords()
     {
-
-       $id_module = filter('id_module');
-       $results = Fattura::all()->where('id_segment', $_SESSION['module_'.$id_module]['id_segment']);
-    
-       return $results;
-        
+        return Fattura::all();
     }
 }

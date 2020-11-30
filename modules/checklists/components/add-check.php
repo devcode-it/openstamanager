@@ -38,17 +38,17 @@ echo '
         </div>
 
         <div class="col-md-3">
-            {[ "type": "select", "label": "'.tr('Genitore').'", "name": "parent", "values": '.json_encode($list).' ]}
+            {[ "type": "select", "label": "'.tr('Collega a').'", "name": "parent", "values": '.json_encode($list).' ]}
         </div>
     </div>
 
     <div class="row">
          <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Utente').'", "name": "assigned_users", "ajax-source": "utenti", "multiple": 1 ]}
+            {[ "type": "select", "label": "'.tr('Utente assegnato').'", "name": "assigned_users", "ajax-source": "utenti", "multiple": 1 ]}
         </div>
 
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Gruppo').'", "name": "group_id", "values": "query=SELECT id, nome AS text FROM zz_groups" ]}
+            {[ "type": "select", "label": "'.tr('Gruppo assegnato').'", "name": "group_id", "values": "query=SELECT id, nome AS text FROM zz_groups" ]}
         </div>
     </div>
 
@@ -83,7 +83,7 @@ $(document).ready(function() {
     });
 
     $("#assigned_users").change(function() {
-        if ($(this).selectData()) {
+        if ($(this).selectData() && $(this).val()!="") {
             $("#parent").val("").attr("disabled", true).attr("required", false);
             $("#group_id").val("").attr("disabled", true).attr("required", false);
         } else {

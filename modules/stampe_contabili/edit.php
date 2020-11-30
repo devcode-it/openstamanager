@@ -30,6 +30,7 @@ echo '
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <h3 class="panel-title">'.tr('Registri IVA').'</h3>
+                <br>
             </div>
 
             <div class="panel-body">';

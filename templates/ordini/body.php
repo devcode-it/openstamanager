@@ -24,7 +24,7 @@ $righe = $documento->getRighe();
 
 $has_image = $righe->search(function ($item) {
     return !empty($item->articolo->immagine);
-});
+}) !== false;
 
 if ($has_image) {
     $columns = 7;
@@ -81,7 +81,7 @@ foreach ($righe as $riga) {
             </td>';
 
     if ($has_image) {
-        if ($riga->isArticolo()) {
+        if ($riga->isArticolo() && !empty($riga->articolo->image)) {
             echo '
             <td align="center">
                 <img src="'.$riga->articolo->image.'" style="max-height: 80px; max-width:120px">

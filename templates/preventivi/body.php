@@ -34,14 +34,14 @@ foreach ($righe as $riga) {
 }
 
 $anagrafica = Anagrafica::find($documento['idanagrafica']);
-$pagamento = $dbo->fetchOne('SELECT * FROM co_pagamenti WHERE id = '.$documento['idpagamento']);
+$pagamento = $dbo->fetchOne('SELECT * FROM co_pagamenti WHERE id = '.prepare($documento['idpagamento']));
 
 //Verifico se c'è una banca predefinita per il mio cliente
 if (!empty($anagrafica->idbanca_vendite)) {
-    $banca = $dbo->fetchOne('SELECT co_banche.nome, co_banche.iban, co_banche.bic FROM co_banche INNER JOIN co_pianodeiconti3 ON co_banche.id_pianodeiconti3 = co_pianodeiconti3.id WHERE co_pianodeiconti3.id = '.$pagamento['idconto_vendite'].' AND co_banche.id ='.$anagrafica->idbanca_vendite);
+    $banca = $dbo->fetchOne('SELECT co_banche.nome, co_banche.iban, co_banche.bic FROM co_banche INNER JOIN co_pianodeiconti3 ON co_banche.id_pianodeiconti3 = co_pianodeiconti3.id WHERE co_pianodeiconti3.id = '.prepare($pagamento['idconto_vendite']).' AND co_banche.id ='.prepare($anagrafica->idbanca_vendite));
 } elseif (!empty($pagamento['idconto_vendite'])) {
     //Altrimenti prendo quella associata la metodo di pagamento selezionato
-    $banca = $dbo->fetchOne('SELECT co_banche.nome, co_banche.iban, co_banche.bic FROM co_banche INNER JOIN co_pianodeiconti3 ON co_banche.id_pianodeiconti3 = co_pianodeiconti3.id WHERE co_pianodeiconti3.id = '.$pagamento['idconto_vendite'].' AND co_banche.deleted_at IS NULL');
+    $banca = $dbo->fetchOne('SELECT co_banche.nome, co_banche.iban, co_banche.bic FROM co_banche INNER JOIN co_pianodeiconti3 ON co_banche.id_pianodeiconti3 = co_pianodeiconti3.id WHERE co_pianodeiconti3.id = '.prepare($pagamento['idconto_vendite']).' AND co_banche.deleted_at IS NULL');
 }
 
 // Creazione righe fantasma

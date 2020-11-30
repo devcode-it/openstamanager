@@ -42,11 +42,11 @@ if ($structure->permission == 'rw') {
             <div class="row">
                 <div class="col-md-12">
                     <a class="btn btn-sm btn-primary" data-href="'.$checklist_module->fileurl('components/add-check.php').'?id_module='.$id_module.'&id_record='.$id_record.'&id_plugin='.$id_plugin.'&manager_id='.$checks_id.'" data-toggle="tooltip" data-title="'.tr('Aggiungi check').'">
-                        <i class="fa fa-plus"></i> '.tr('Check').'
+                        <i class="fa fa-plus"></i> '.tr('Nuova').'
                     </a>
 
                     <a class="btn btn-sm btn-primary" data-href="'.$checklist_module->fileurl('components/add-checklist.php').'?id_module='.$id_module.'&id_record='.$id_record.'&id_plugin='.$id_plugin.'&manager_id='.$checks_id.'" data-toggle="tooltip" data-title="'.tr('Aggiungi check').'">
-                        <i class="fa fa-plus"></i> '.tr('Checklist').'
+                        <i class="fa fa-plus"></i> '.tr('Checklist predefinite').'
                     </a>
                 </div>
             </div>

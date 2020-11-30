@@ -48,3 +48,27 @@ ALTER TABLE `zz_modules` CHANGE `options` `options` TEXT NULL;
 ALTER TABLE `zz_modules` CHANGE `options2` `options2` TEXT NULL;
 ALTER TABLE `zz_widgets` CHANGE `query` `query` TEXT NULL;
 ALTER TABLE `zz_widgets` CHANGE `text` `text` TEXT NULL;
+
+
+
+-- Aggiunto HAVING 2=2 nel modulo listini
+UPDATE `zz_modules` SET `options` = 'SELECT |select|\r\nFROM mg_prezzi_articoli\r\n INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = mg_prezzi_articoli.id_anagrafica\r\n INNER JOIN mg_articoli ON mg_articoli.id = mg_prezzi_articoli.id_articolo\r\nWHERE 1=1 AND mg_articoli.deleted_at IS NULL AND an_anagrafiche.deleted_at IS NULL HAVING 2=2\r\nORDER BY an_anagrafiche.ragione_sociale' WHERE `zz_modules`.`id` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Listini');
+
+-- Aggiunti segmenti nel modulo listini
+INSERT INTO `zz_segments` (`id_module`, `name`, `clause`, `position`, `pattern`, `note`, `predefined`, `predefined_accredito`, `predefined_addebito`, `is_fiscale`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Listini'), 'Tutti', '1=1', 'WHR', '####', '', 1, 0, 0, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Listini'), 'Fornitori', 'mg_prezzi_articoli.dir=\"uscita\"', 'WHR', '####', '', 0, 0, 0, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Listini'), 'Clienti', 'mg_prezzi_articoli.dir=\"entrata\"', 'WHR', '####', '', 0, 0, 0, 0);
+
+-- Aggiunto formattabile nel modulo listini ai campi numerici
+UPDATE `zz_views` SET `format` = '1' WHERE `id` = (SELECT `id` FROM `zz_views` WHERE `name` = 'Prezzo unitario');
+UPDATE `zz_views` SET `format` = '1' WHERE `id` = (SELECT `id` FROM `zz_views` WHERE `name` = 'Sconto percentuale');
+UPDATE `zz_views` SET `format` = '1' WHERE `id` = (SELECT `id` FROM `zz_views` WHERE `name` = 'Minimo');
+UPDATE `zz_views` SET `format` = '1' WHERE `id` = (SELECT `id` FROM `zz_views` WHERE `name` = 'Massimo');
+
+
+-- Sostituito icona Listini con ">"
+UPDATE `zz_modules` SET `icon` = 'fa fa-angle-right' WHERE `zz_modules`.`id` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Listini');
+
+-- Modificato nome plugin dettagli in Prezzi specifici
+UPDATE `zz_plugins` SET `name` = 'Prezzi specifici articolo', `title` = 'Prezzi specifici' WHERE `zz_plugins`.`id` = (SELECT `id` FROM `zz_plugins` WHERE `name` = 'Dettagli articolo');

@@ -27,7 +27,7 @@ function renderChecklist($check, $level = 0)
     <input type="checkbox" value="'.(!empty($check->checked_at) ? '1' : '0').'" '.(!empty($check->checked_at) ? 'checked' : '').'>
 
     <span class="text">'.$check->content.'</span>
-    <span class="badge">'.(!empty($check->checked_at) ? timestampFormat($check->checked_at).' - '.$check->checkUser->username : '').'</span>';
+    <span class="badge pull-right">'.(!empty($check->checked_at) ? 'Verificato da '.$check->checkUser->username.' il '.timestampFormat($check->checked_at) : '').'</span>';
 
     if ($level == 0) {
         $result .= '

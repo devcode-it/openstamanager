@@ -48,7 +48,7 @@ $block_edit = $record['is_completato'];
                 </div>
 
                 <div class="col-md-2">
-                    {[ "type": "date", "label": "<?php echo tr('Data conclusione'); ?>", "name": "data_conclusione", "value": "$data_conclusione$", "disabled": "<?php echo $contratto->isDataConclusioneAutomatica() ? '1", "help": "'.tr('La Data di conclusione è calcolata in automatico in base al valore del campo Validità') : '0'; ?>" ]}
+                    {[ "type": "date", "label": "<?php echo tr('Data conclusione'); ?>", "name": "data_conclusione", "value": "$data_conclusione$", "disabled": "<?php echo $contratto->isDataConclusioneAutomatica() ? '1", "help": "'.tr('La Data di conclusione è calcolata in automatico in base al valore del campo Validità contratto, se definita') : '0'; ?>" ]}
                 </div>
 
                 <div class="col-md-2">
@@ -105,30 +105,40 @@ $block_edit = $record['is_completato'];
 			<div class="row">
 
 				<div class="col-md-3">
-					{[ "type": "number", "label": "<?php echo tr('Validità offerta'); ?>", "name": "validita", "decimals": "0", "value": "$validita$", "icon-after": "choice|period|<?php echo $record['tipo_validita']; ?>", "help": "<?php echo tr('Il campo Validità viene utilizzato in modo esclusivamente indicativo se impostato secondo l\'opzione manuale, mentre viene utilizzato per il calcolo della Data di conclusione del documento in caso alternativo'); ?>" ]}
+					{[ "type": "number", "label": "<?php echo tr('Validità contratto'); ?>", "name": "validita", "decimals": "0", "value": "$validita$", "icon-after": "choice|period|<?php echo $record['tipo_validita']; ?>", "help": "<?php echo tr('Il campo Validità contratto viene utilizzato per il calcolo della Data di conclusione del contratto'); ?>" ]}
 				</div>
 
 				<div class="col-md-3">
 					{[ "type": "checkbox", "label": "<?php echo tr('Rinnovabile'); ?>", "name": "rinnovabile", "help": "<?php echo tr('Il contratto è rinnovabile?'); ?>", "value": "$rinnovabile$" ]}
 				</div>
 
+                <div class="col-md-3">
+					{[ "type": "checkbox", "label": "<?php echo tr('Rinnovo automatico'); ?>", "name": "rinnovo_automatico", "help": "<?php echo tr('Il contratto è da rinnovare automaticamente alla scadenza'); ?>", "value": "$rinnovo_automatico$", "disabled": <?php echo $record['rinnovabile'] ? 0 : 1; ?> ]}
+				</div>
+
 				<div class="col-md-3">
 					{[ "type": "number", "label": "<?php echo tr('Preavviso per rinnovo'); ?>", "name": "giorni_preavviso_rinnovo", "decimals": "2", "value": "$giorni_preavviso_rinnovo$", "icon-after": "giorni", "disabled": <?php echo $record['rinnovabile'] ? 0 : 1; ?> ]}
 				</div>
 
+			</div>
+
+			<div class="row">
+
+			</div>
+
+			<div class="row">
+				
+
                 <div class="col-md-3">
 					{[ "type": "number", "label": "<?php echo tr('Ore rimanenti rinnovo'); ?>", "name": "ore_preavviso_rinnovo", "decimals": "2", "value": "$ore_preavviso_rinnovo$", "icon-after": "ore", "disabled": <?php echo $record['rinnovabile'] ? 0 : 1; ?>, "help": "<?php echo tr('Ore residue nel contratto prima di visualizzare una avviso per un eventuale rinnovo anticipato.'); ?>" ]}
 				</div>
-			</div>
 
-			<div class="row">
-
-			</div>
-
-			<div class="row">
-				<div class="col-md-12">
+                <div class="col-md-6">
 					{[ "type": "select", "multiple": "1", "label": "<?php echo tr('Impianti'); ?>", "name": "matricolaimpianto[]", "values": "query=SELECT idanagrafica, id AS id, IF(nome = '', matricola, CONCAT(matricola, ' - ', nome)) AS descrizione FROM my_impianti WHERE idanagrafica='$idanagrafica$' ORDER BY descrizione", "value": "$idimpianti$", "icon-after": "add|<?php echo Modules::get('Impianti')['id']; ?>|||<?php echo (empty($block_edit)) ? '' : 'disabled'; ?>" ]}
 				</div>
+
+
+
             </div>
 
 			<div class="row">
@@ -513,14 +523,20 @@ if (!empty($elementi)) {
 
 <?php
 }
-?>
 
-<script>
-$('#rinnovabile').on('change', function() {
-    if ($(this).is(':checked')) {
-        $('#giorni_preavviso_rinnovo').prop('disabled', false);
-    } else {
-        $('#giorni_preavviso_rinnovo').prop('disabled', true);
-    }
+echo '
+<script type="text/javascript">
+$(document).ready(function() {
+    $("#rinnovabile").click(function() {
+        if ($(this).is(":checked")){
+            input("giorni_preavviso_rinnovo").enable();
+            input("rinnovo_automatico").enable();
+
+        }else{
+            input("giorni_preavviso_rinnovo").disable();
+            input("rinnovo_automatico").disable();
+        }
+    });
 });
-</script>
+</script>';
+?>

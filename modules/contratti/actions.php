@@ -76,6 +76,7 @@ switch (post('op')) {
             $contratto->data_conclusione = post('data_conclusione');
 
             $contratto->rinnovabile = post('rinnovabile');
+            $contratto->rinnovo_automatico = post('rinnovo_automatico');
             $contratto->giorni_preavviso_rinnovo = post('giorni_preavviso_rinnovo');
             $contratto->ore_preavviso_rinnovo = post('ore_preavviso_rinnovo');
             $contratto->esclusioni = post('esclusioni');

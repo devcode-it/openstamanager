@@ -9,6 +9,17 @@ use Modules\Ordini\Components\Riga as RigaOrdine;
 use Modules\Preventivi\Components\Articolo as ArticoloPreventivo;
 use Modules\Preventivi\Components\Riga as RigaPreventivo;
 
+// File e cartelle deprecate
+$files = [
+    'modules/listini',
+];
+
+foreach ($files as $key => $value) {
+    $files[$key] = realpath(base_dir().'/'.$value);
+}
+
+delete($files);
+
 /**
  * Procedura per aggiustare alcuni campi di sconto ivato nei documenti prima della fattura
  * in quanto veniva calcolato lo sconto ivato erroneamente.

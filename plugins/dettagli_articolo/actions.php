@@ -64,12 +64,13 @@ switch (filter('op')) {
 
         $modifica_prezzi = filter('modifica_prezzi');
         if (empty($modifica_prezzi)) {
+            $dbo->query('DELETE FROM mg_prezzi_articoli WHERE id_articolo='.$id_articolo.' AND id_anagrafica='.$id_anagrafica);
             return;
         }
 
         // Salvataggio del prezzo predefinito
         $prezzo_unitario = filter('prezzo_unitario_fisso');
-        $sconto = filter('sconto_percentuale');
+        $sconto = filter('sconto_fisso');
         $dettaglio_predefinito = DettaglioPrezzo::dettaglioPredefinito($id_articolo, $id_anagrafica, $direzione)
             ->first();
         if (empty($dettaglio_predefinito)) {
@@ -82,7 +83,7 @@ switch (filter('op')) {
         // Salvataggio dei prezzi variabili
         $prezzo_fisso = filter('prezzo_fisso');
         $dettagli = DettaglioPrezzo::dettagli($id_articolo, $id_anagrafica, $direzione);
-        if (empty($prezzo_fisso)) {
+        if (!empty($prezzo_fisso)) {
             $prezzi_unitari = (array) filter('prezzo_unitario');
             $minimi = filter('minimo');
             $massimi = filter('massimo');

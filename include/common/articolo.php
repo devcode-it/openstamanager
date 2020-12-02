@@ -179,9 +179,7 @@ $("#idarticolo").on("change", function() {
 
     $("#um").selectSetNew($data.um, $data.um);
     // Aggiornamento automatico di guadagno e margine
-    if (direzione === "entrata") {
-        aggiorna_guadagno();
-    }
+    
 });
 
 $(document).on("change", "input[name^=qta], input[name^=prezzo_unitario], input[name^=sconto]", function() {
@@ -332,5 +330,8 @@ function aggiornaQtaMinima() {
         parent.removeClass("has-error");
         div.removeClass("text-danger").addClass("text-success");
     }
+}
+if (direzione === "entrata") {
+    aggiorna_guadagno();
 }
 </script>';

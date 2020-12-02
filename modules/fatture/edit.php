@@ -19,6 +19,7 @@
 
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Iva\Aliquota;
+use Modules\Fatture\Gestori\Bollo;
 
 include_once __DIR__.'/../../core.php';
 
@@ -355,9 +356,28 @@ elseif ($record['stato'] == 'Bozza') {
                         {[ "type": "select", "label": "'.tr("Dichiarazione d'intento").'", "name": "id_dichiarazione_intento", "ajax-source": "dichiarazioni_intento", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$id_dichiarazione_intento$" ]}
                     </div>';
                 }
-                ?>
-            </div>
+            echo ' 
+            </div>';
+        if($dir == 'entrata'){
+            echo '
+            <div class="row">
+                <div class="col-md-3">
+                    {[ "type": "checkbox", "label": "'.tr('Marca da bollo automatica').'", "name": "bollo_automatico", "value": "'.intval(!isset($record['bollo'])).'", "help": "'.tr("Seleziona per impostare automaticamente l'importo della marca da bollo").'. '.tr('Applicata solo se il totale della fattura è maggiore di _MONEY_', [
+                            '_MONEY_' => moneyFormat(setting("Soglia minima per l'applicazione della marca da bollo")),
+                        ]).'.", "placeholder": "'.tr('Bollo automatico').'" ]}
+                </div>
 
+                <div class="col-md-3 bollo">
+                    {[ "type": "checkbox", "label": "'.tr('Addebita marca da bollo').'", "name": "addebita_bollo", "value": "$addebita_bollo$" ]}
+                </div>
+
+                <div class="col-md-3 bollo">
+                    {[ "type": "number", "label": "'.tr('Importo marca da bollo').'", "name": "bollo", "value": "$bollo$"]}
+                </div>              
+            </div>';
+            $bollo = new Bollo($fattura); 
+        }        
+?>
 			<div class="row">
 				<div class="col-md-12">
 					{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "help": "<?php echo tr('Note visibili anche in fattura.'); ?>", "value": "$note$" ]}
@@ -373,39 +393,6 @@ elseif ($record['stato'] == 'Bozza') {
 	</div>
 
 <?php
-echo '
-    <div class="box box-info">
-        <div class="box-header with-border">
-            <h3 class="box-title"><i class="fa fa-certificate "></i> '.tr('Marca da bollo').'</h3>
-        </div>
-
-        <div class="box-body">
-            <div class="row">
-                <div class="col-md-4">
-                    {[ "type": "checkbox", "label": "'.tr('Addebita marca da bollo').'", "name": "addebita_bollo", "value": "$addebita_bollo$" ]}
-                </div>
-
-                <div class="col-md-4">
-                    {[ "type": "checkbox", "label": "'.tr('Marca da bollo automatica').'", "name": "bollo_automatico", "value": "'.intval(!isset($record['bollo'])).'", "help": "'.tr("Seleziona per impostare automaticamente l'importo della marca da bollo").'. '.tr('Applicata solo se il totale della fattura è maggiore di _MONEY_', [
-                            '_MONEY_' => moneyFormat(setting("Soglia minima per l'applicazione della marca da bollo")),
-                        ]).'.", "placeholder": "'.tr('Bollo automatico').'" ]}
-                </div>
-
-                <div class="col-md-4">
-                    {[ "type": "number", "label": "'.tr('Importo marca da bollo').'", "name": "bollo", "value": "$bollo$", "disabled": '.intval(!isset($record['bollo'])).' ]}
-                </div>
-
-                <script type="text/javascript">
-                    $(document).ready(function() {
-                        $("#bollo_automatico").click(function() {
-                            $("#bollo").attr("disabled", $(this).is(":checked"));
-                        });
-                    });
-                </script>
-            </div>
-        </div>
-    </div>';
-
 if ($record['descrizione_tipo'] == 'Fattura accompagnatoria di vendita') {
     echo '
     <div class="box box-info">
@@ -900,5 +887,30 @@ function cambiaStato() {
             $("#idstatodocumento").selectSet('.$record['idstatodocumento'].');
         }
     }
+}';
+if($dir=='entrata'){
+    echo '
+    function bolloAutomatico() {
+        let bollo_automatico = input("bollo_automatico");
+        let addebita_bollo = input("addebita_bollo");
+        let has_bollo ='.($bollo->getBollo()>0 ? "true" : "false").';
+        if(bollo_automatico.get()==0){
+            $(".bollo").show();
+            input("bollo").enable();        
+        } else if(!has_bollo) {
+            $(".bollo").hide();                              
+        } else {
+            $(".bollo").show();
+            input("bollo").disable();
+            $("#bollo").val('.setting("Importo marca da bollo").');
+        }
+    }
+    $(document).ready(function() {
+        bolloAutomatico();
+    });
+    input("bollo_automatico").change(function () {
+        bolloAutomatico();
+    });';
 }
+echo '
 </script>';

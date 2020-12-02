@@ -26,9 +26,16 @@ function renderChecklist($check, $level = 0)
 <li id="check_'.$check->id.'" class="check-item'.(!empty($check->checked_at) ? ' done' : '').'" '.(!$enabled ? 'style="opacity: 0.4"' : '').' data-id="'.$check->id.'">
     <input type="checkbox" value="'.(!empty($check->checked_at) ? '1' : '0').'" '.(!empty($check->checked_at) ? 'checked' : '').'>
 
-    <span class="text">'.$check->content.'</span>
-    <span class="badge pull-right">'.(!empty($check->checked_at) ? 'Verificato da '.$check->checkUser->username.' il '.timestampFormat($check->checked_at) : '').'</span>';
+    <span class="text">'.$check->content.'</span>';
 
+
+    if (empty($check->user) || $check->user->id == $user->id) {
+        $result .= '
+    <div class="tools">
+        <i class="fa fa-trash-o check-delete"></i>
+    </div>';
+    }
+   
     if ($level == 0) {
         $result .= '
     <span class="handle pull-right">
@@ -37,13 +44,12 @@ function renderChecklist($check, $level = 0)
     </span>';
     }
 
-    if (empty($check->user) || $check->user->id == $user->id) {
-        $result .= '
-    <div class="tools">
-        <i class="fa fa-trash-o check-delete"></i>
-    </div>';
-    }
-
+    $result .= '
+    <span class="badge pull-right" style="margin-right:5px">'.(!empty($check->checked_at) ? tr('Verificato da _NAME_ il _DATE_', [
+        '_NAME_' =>  $check->checkUser->username,
+        '_DATE_' => timestampFormat($check->checked_at), 
+    ]) : '').'</span>';
+    
     $result .= '
     <ul class="todo-list">';
 

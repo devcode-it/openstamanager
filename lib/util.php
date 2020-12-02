@@ -544,10 +544,12 @@ if (!function_exists('temp_file')) {
             $name = secure_random_string();
         }
 
-        $file = DIRECTORY_SEPARATOR.
+        /*$file = DIRECTORY_SEPARATOR.
             trim(sys_get_temp_dir(), DIRECTORY_SEPARATOR).
             DIRECTORY_SEPARATOR.
-            ltrim($name, DIRECTORY_SEPARATOR);
+            ltrim($name, DIRECTORY_SEPARATOR);*/
+
+        $file = implode(DIRECTORY_SEPARATOR, [base_dir(), 'files', 'temp', ltrim($name, DIRECTORY_SEPARATOR)]);
 
         file_put_contents($file, $content);
 

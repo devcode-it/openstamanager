@@ -49,6 +49,7 @@ ALTER TABLE `zz_modules` CHANGE `options2` `options2` TEXT NULL;
 ALTER TABLE `zz_widgets` CHANGE `query` `query` TEXT NULL;
 ALTER TABLE `zz_widgets` CHANGE `text` `text` TEXT NULL;
 
+ALTER TABLE `zz_views` CHANGE `format` `format` TINYINT(1) NOT NULL DEFAULT '0';
 
 
 -- Aggiunto HAVING 2=2 nel modulo listini
@@ -74,13 +75,13 @@ UPDATE `zz_modules` SET `icon` = 'fa fa-angle-right' WHERE `zz_modules`.`id` = (
 UPDATE `zz_plugins` SET `name` = 'Prezzi specifici articolo', `title` = 'Prezzi specifici' WHERE `zz_plugins`.`id` = (SELECT `id` FROM `zz_plugins` WHERE `name` = 'Dettagli articolo');
 
 -- Impostazione soft quota
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Soft quota', '', 'integer', '0', 'Generali', NULL, 'Soft quota in MB');
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Soft quota', '', 'integer', '0', 'Generali', NULL, 'Soft quota in GB');
 
 -- Relativo hook per il calcolo dello spazio utilizzato
 INSERT INTO `zz_hooks` (`id`, `name`, `class`,  `enabled`, `id_module`, `processing_at`, `processing_token`) VALUES (NULL, 'Spazio', 'Modules\\StatoServizi\\SpaceHook', '1', (SELECT `id` FROM `zz_modules` WHERE `name`='Stato dei servizi'), NULL, NULL);
 
 INSERT INTO `zz_cache` (`id`, `name`, `content`, `valid_time`, `expire_at`) VALUES
-(NULL, 'Spazio utilizzato', '', '15 minute', NOW());
+(NULL, 'Spazio utilizzato', '', '60 minute', NOW());
 
 -- Introduzione hook per informazioni su Services
 INSERT INTO `zz_hooks` (`id`, `name`, `class`,  `enabled`, `id_module`, `processing_at`, `processing_token`) VALUES (NULL, 'Informazioni su Services', 'Modules\\StatoServizi\\ServicesHook', '1', (SELECT `id` FROM `zz_modules` WHERE `name`='Stato dei servizi'), NULL, NULL);
@@ -112,3 +113,6 @@ UPDATE `zz_views` SET `default` = 1 WHERE `zz_views`.`id_module` = (SELECT `zz_m
 
 -- Modifica directory Piani di sconto/rincaro
 UPDATE `zz_modules` SET `directory` = 'piano_sconto' WHERE `zz_modules`.`id` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Piani di sconto/rincaro');
+
+-- Aggiunto flag rinnovo automatico in contratti
+ALTER TABLE `co_contratti` ADD `rinnovo_automatico` TINYINT(1) NOT NULL DEFAULT '0' AFTER `rinnovabile`; 

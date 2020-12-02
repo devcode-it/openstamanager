@@ -25,6 +25,7 @@ use Modules\Anagrafiche\Sede;
 use Modules\Articoli\Articolo;
 use Modules\Articoli\Categoria;
 use Modules\Iva\Aliquota;
+use Modules\Anagrafiche\Anagrafica;
 
 /**
  * Struttura per la gestione delle operazioni di importazione (da CSV) degli Articoli.

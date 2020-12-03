@@ -48,6 +48,14 @@ abstract class CSVImporter implements ImporterInterface
         $this->column_associations = [];
     }
 
+    public function init()
+    {
+    }
+
+    public function complete()
+    {
+    }
+
     public function getColumnAssociations()
     {
         return $this->column_associations;

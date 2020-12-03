@@ -27,6 +27,20 @@ namespace Importer;
 interface ImporterInterface
 {
     /**
+     * Esegue le operazioni di inizializzazione per la procedura di importazione.
+     *
+     * @return mixed
+     */
+    public function init();
+
+    /**
+     * Esegue le operazioni di finalizazione per la procedura di importazione.
+     *
+     * @return mixed
+     */
+    public function complete();
+
+    /**
      * Restituisce le associazioni impostate tra colonne e campi del documento.
      *
      * @return mixed

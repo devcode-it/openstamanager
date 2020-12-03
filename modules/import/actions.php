@@ -78,8 +78,18 @@ switch (filter('op')) {
         $primary_key = post('primary_key');
         $csv->setPrimaryKey($primary_key);
 
+        // Operazioni di inizializzazione per l'importazione
+        if (!isset($page) || $page == 0) {
+            $csv->init();
+        }
+
         $count = $csv->importRows($offset, $limit);
         $more = $count == $limit;
+
+        // Operazioni di finalizzazione per l'importazione
+        if (!$more) {
+            $csv->complete();
+        }
 
         echo json_encode([
             'more' => $more,

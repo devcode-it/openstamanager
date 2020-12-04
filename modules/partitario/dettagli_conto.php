@@ -52,13 +52,12 @@ if (!empty($movimenti)) {
     <tr>
         <td>';
 
-        if (!empty($movimento['primanota'])) {
-            $modulo_fattura = ($movimento['dir'] == 'entrata') ? Modules::get('Fatture di vendita')['id'] : Modules::get('Fatture di acquisto')['id'];
+        $modulo_fattura = ($movimento['dir'] == 'entrata') ? Modules::get('Fatture di vendita') : Modules::get('Fatture di acquisto');
 
+        if (!empty($movimento['primanota'])) {
             echo Modules::link($prima_nota->id, $movimento['idmastrino'], $movimento['descrizione']);
         } else {
-            echo '
-            <span>'.$movimento['descrizione'].'</span>';
+            echo Modules::link($modulo_fattura->id, $movimento['iddocumento'], $movimento['descrizione']);
         }
 
         echo '

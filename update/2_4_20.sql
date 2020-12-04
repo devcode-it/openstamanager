@@ -129,3 +129,6 @@ INSERT INTO `zz_segments` (`id_module`, `name`, `clause`, `position`, `pattern`,
 
 -- Aggiunta impostazione per disabilitare articoli con quantità <= 0
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita', '0', 'boolean', '1', 'Generali',  '20', NULL);
+
+-- Correzione per visualizzazione campi 'Dare' e 'Avere'
+UPDATE `zz_views` SET `summable` = 1 WHERE `name` IN ('Dare', 'Avere') AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima Nota');

@@ -86,14 +86,15 @@ class FatturaOrdinaria extends FatturaElettronica
         // Aggiunta degli arrotondamenti IVA come righe indipendenti
         $riepolighi = $this->getBody()['DatiBeniServizi']['DatiRiepilogo'];
         foreach ($riepolighi as $riepilogo) {
-            if (!empty($riepilogo['Arrotondamento'])) {
+            $valore = floatval($riepilogo['Arrotondamento']);
+            if (!empty($valore)) {
                 $descrizione = tr('Arrotondamento IVA _VALUE_', [
                     '_VALUE_' => empty($riepilogo['Natura']) ? numberFormat($riepilogo['AliquotaIVA']).'%' : $riepilogo['Natura'],
                 ]);
 
                 $result[] = [
                     'Descrizione' => $descrizione,
-                    'PrezzoUnitario' => $riepilogo['Arrotondamento'],
+                    'PrezzoUnitario' => $valore,
                     'Quantita' => 1,
                     'AliquotaIVA' => $riepilogo['AliquotaIVA'],
                     'Natura' => $riepilogo['Natura'],

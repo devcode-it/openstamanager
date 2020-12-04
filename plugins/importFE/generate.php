@@ -115,7 +115,8 @@ $dati_generali = $fattura_pa->getBody()['DatiGenerali']['DatiGeneraliDocumento']
 $tipo_documento = $database->fetchOne('SELECT CONCAT("(", codice, ") ", descrizione) AS descrizione FROM fe_tipi_documento WHERE codice = '.prepare($dati_generali['TipoDocumento']))['descrizione'];
 
 $pagamenti = $fattura_pa->getBody()['DatiPagamento'];
-$metodi = $pagamenti['DettaglioPagamento'];
+$pagamenti = isset($pagamenti[0]) ? $pagamenti : [$pagamenti];
+$metodi = $pagamenti[0]['DettaglioPagamento'];
 $metodi = isset($metodi[0]) ? $metodi : [$metodi];
 
 $codice_modalita_pagamento = $metodi[0]['ModalitaPagamento'];
@@ -163,22 +164,27 @@ if (!empty($pagamenti)) {
             <h4>'.tr('Pagamento').'</h4>
 
             <p>'.tr('La fattura importata presenta _NUM_ rat_E_ di pagamento con le seguenti scadenze', [
-                '_NUM_' => count($metodi),
-                '_E_' => ((count($metodi) > 1) ? 'e' : 'a'),
-            ]).':</p>
+            '_NUM_' => count($metodi),
+            '_E_' => ((count($metodi) > 1) ? 'e' : 'a'),
+        ]).':</p>
             <ol>';
 
-    // Scadenze di pagamento
-    foreach ($metodi as $metodo) {
-        $descrizione = !empty($metodo['ModalitaPagamento']) ? $database->fetchOne('SELECT descrizione FROM fe_modalita_pagamento WHERE codice = '.prepare($metodo['ModalitaPagamento']))['descrizione'] : '';
-        $data = !empty($metodo['DataScadenzaPagamento']) ? FatturaElettronica::parseDate($metodo['DataScadenzaPagamento']) : '';
+    foreach ($pagamenti as $pagamento) {
+        $rate = $pagamento['DettaglioPagamento'];
+        $rate = isset($rate[0]) ? $rate : [$rate];
 
-        echo '
+        // Scadenze di pagamento
+        foreach ($rate as $rata) {
+            $descrizione = !empty($rata['ModalitaPagamento']) ? $database->fetchOne('SELECT descrizione FROM fe_modalita_pagamento WHERE codice = '.prepare($rata['ModalitaPagamento']))['descrizione'] : '';
+            $data = !empty($rata['DataScadenzaPagamento']) ? FatturaElettronica::parseDate($rata['DataScadenzaPagamento']) : '';
+
+            echo '
 				<li>
 				    '.dateFormat($data).'
-				    '.moneyFormat($metodo['ImportoPagamento']).'
+				    '.moneyFormat($rata['ImportoPagamento']).'
                     ('.$descrizione.')
                 </li>';
+        }
     }
 
     echo '

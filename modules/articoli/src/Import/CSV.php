@@ -229,12 +229,11 @@ class CSV extends CSVImporter
         unset($record['qta']);
         unset($record['nome_sede']);
 
-
         $dettagli['anagrafica_listino'] = $record['anagrafica_listino'];
         $dettagli['qta_minima'] = $record['qta_minima'];
         $dettagli['qta_massima'] = $record['qta_massima'];
-        $dettagli['prezzo_listino'] = $record['prezzo_listino'];     
-        $dettagli['sconto_listino'] = $record['sconto_listino'];     
+        $dettagli['prezzo_listino'] = $record['prezzo_listino'];
+        $dettagli['sconto_listino'] = $record['sconto_listino'];
         $dettagli['dir'] = $record['dir'];
         unset($record['anagrafica_listino']);
         unset($record['qta_minima']);
@@ -251,16 +250,16 @@ class CSV extends CSVImporter
         $anagrafica = Anagrafica::where('ragione_sociale', $dettagli['anagrafica_listino'])->first();
 
         $dettagli['dir'] = strtolower($dettagli['dir']);
-        if($dettagli['dir']=='fornitore'){
-            $dettagli['dir']='uscita';
-        } else if($dettagli['dir']=='cliente'){
-            $dettagli['dir']='entrata';
-        } else{
-            $dettagli['dir']=null;
+        if ($dettagli['dir'] == 'fornitore') {
+            $dettagli['dir'] = 'uscita';
+        } elseif ($dettagli['dir'] == 'cliente') {
+            $dettagli['dir'] = 'entrata';
+        } else {
+            $dettagli['dir'] = null;
         }
 
-        if(!empty($anagrafica) && !empty($dettagli['dir'])){
-            if(!in_array($articolo->id, $this->$id_articoli_processati)){
+        if (!empty($anagrafica) && !empty($dettagli['dir'])) {
+            if (!in_array($articolo->id, $this->$id_articoli_processati)) {
                 $database->query('DELETE FROM mg_prezzi_articoli WHERE id_articolo='.prepare($articolo->id));
             }
             $this->$id_articoli_processati[] = $articolo->id;
@@ -268,15 +267,14 @@ class CSV extends CSVImporter
             $dettaglio_predefinito = DettaglioPrezzo::build($articolo, $anagrafica, $dettagli['dir']);
             $dettaglio_predefinito->sconto_percentuale = $dettagli['sconto_listino'];
             $dettaglio_predefinito->setPrezzoUnitario($dettagli['prezzo_listino']);
-            
-            if($dettagli['qta_minima']!==null && !empty($dettagli['qta_massima'])){
+
+            if ($dettagli['qta_minima'] !== null && !empty($dettagli['qta_massima'])) {
                 $dettaglio_predefinito->minimo = $dettagli['qta_minima'];
                 $dettaglio_predefinito->massimo = $dettagli['qta_massima'];
             }
-            
+
             $dettaglio_predefinito->save();
         }
-
 
         // Movimentazione della quantità registrata
         $giacenze = $articolo->getGiacenze();
@@ -294,8 +292,6 @@ class CSV extends CSVImporter
             'idsede_azienda' => $id_sede,
             'idsede_controparte' => 0,
         ]);
-
-
     }
 
     public static function getExample()
@@ -305,7 +301,7 @@ class CSV extends CSVImporter
             ['00004', '719376861871', 'Articolo', 'Mario Rossi', '10', 'Kg', '5.25', '12.72', '10.2', '500', 'Categoria4', 'Sottocategoria2', 'Scaffale 1', 'Articolo di prova', 'Mario Rossi', '', '', '10', '5', 'Fornitore'],
             ['00004', '719376861871', 'Articolo', 'Mario Rossi', '10', 'Kg', '5.25', '12.72', '10.2', '500', 'Categoria4', 'Sottocategoria2', 'Scaffale 1', 'Articolo di prova', 'Mario Rossi', '1', '10', '9', '', 'Fornitore'],
             ['00004', '719376861871', 'Articolo', 'Mario Rossi', '10', 'Kg', '5.25', '12.72', '10.2', '500', 'Categoria4', 'Sottocategoria2', 'Scaffale 1', 'Articolo di prova', 'Mario Rossi', '11', '20', '8', '5', 'Fornitore'],
-            ['00004', '719376861871', 'Articolo', 'Mario Rossi', '10', 'Kg', '5.25', '12.72', '10.2', '500', 'Categoria4', 'Sottocategoria2', 'Scaffale 1', 'Articolo di prova', 'Mario Verdi', '1', '10', '20', '10', 'Cliente']
+            ['00004', '719376861871', 'Articolo', 'Mario Rossi', '10', 'Kg', '5.25', '12.72', '10.2', '500', 'Categoria4', 'Sottocategoria2', 'Scaffale 1', 'Articolo di prova', 'Mario Verdi', '1', '10', '20', '10', 'Cliente'],
         ];
     }
 }

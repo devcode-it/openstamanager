@@ -289,5 +289,27 @@ function initDynamicSelectInput(input) {
         },
         width: '100%'
     });
+
+    // Rimozione delle option presenti nell'HTML per permettere l'aggiornamento dei dati via AJAX
+    // Rimozione per select multipli
+    if ($input.prop("multiple")) {
+        $input.on('select2:unselecting', function (e) {
+            let data = e.params ? e.params.data : null;
+            if (data) {
+                let option = $input.find('option[value="' + data.id + '"]');
+                option.remove();
+            }
+        });
+    }
+    // Rimozione per select singoli
+    else {
+        $input.on('select2:selecting', function (e) {
+            let data = $input.selectData();
+            if (data) {
+                let option = $input.find('option[value="' + data.id + '"]');
+                option.remove();
+            }
+        });
+    }
 }
 

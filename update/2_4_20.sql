@@ -115,7 +115,7 @@ UPDATE `zz_views` SET `default` = 1 WHERE `zz_views`.`id_module` = (SELECT `zz_m
 UPDATE `zz_modules` SET `directory` = 'piano_sconto' WHERE `zz_modules`.`id` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Piani di sconto/rincaro');
 
 -- Aggiunto flag rinnovo automatico in contratti
-ALTER TABLE `co_contratti` ADD `rinnovo_automatico` TINYINT(1) NOT NULL DEFAULT '0' AFTER `rinnovabile`; 
+ALTER TABLE `co_contratti` ADD `rinnovo_automatico` TINYINT(1) NOT NULL DEFAULT '0' AFTER `rinnovabile`;
 
 -- Aggiunto segmento per attività NON completate
 INSERT INTO `zz_segments` (`id`, `id_module`, `name`, `clause`, `position`, `pattern`, `note`, `predefined`, `predefined_accredito`, `predefined_addebito`, `is_fiscale`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), 'Non completate', 'in_interventi.idstatointervento NOT IN(SELECT in_statiintervento.idstatointervento FROM in_statiintervento WHERE is_completato=1)', 'WHR', '####', '', '0', '0', '0', '0');
@@ -126,3 +126,6 @@ DELETE FROM `zz_segments` WHERE name='Scadenzario Ri.Ba.';
 INSERT INTO `zz_segments` (`id_module`, `name`, `clause`, `position`, `pattern`, `note`, `predefined`, `predefined_accredito`, `predefined_addebito`, `is_fiscale`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario'), 'Scadenzario Ri.Ba. Clienti', 'co_pagamenti.riba=1 AND co_tipidocumento.dir=\"entrata\"', 'WHR', '####', '', 0, 0, 0, 0),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario'), 'Scadenzario Ri.Ba. Fornitori', 'co_pagamenti.riba=1 AND co_tipidocumento.dir=\"uscita\"', 'WHR', '####', '', 0, 0, 0, 0);
+
+-- Aggiunta impostazione per disabilitare articoli con quantità <= 0
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita', '0', 'boolean', '1', 'Generali',  '20', NULL);

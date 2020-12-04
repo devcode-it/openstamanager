@@ -148,6 +148,9 @@ switch ($resource) {
         $data = AJAX::selectResults($query, $where, $filter, $search_fields, $limit, $custom);
         $rs = $data['results'];
 
+        // Utilizzo dell'impostazione per disabilitare articoli con quantità <= 0
+        $permetti_movimenti_sotto_zero = setting('Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita') ? true : $superselect['permetti_movimento_a_zero'];
+
         // IVA da impostazioni
         foreach ($rs as $k => $r) {
             // Lettura movimenti delle mie sedi
@@ -164,7 +167,7 @@ switch ($resource) {
 
             $rs[$k] = array_merge($r, [
                 'text' => $r['codice'].' - '.$r['descrizione'].' '.(!$r['servizio'] ? '('.Translator::numberToLocale($qta).(!empty($r['um']) ? ' '.$r['um'] : '').')' : ''),
-                'disabled' => $r['qta'] <= 0 && !$superselect['permetti_movimento_a_zero'] && !$r['servizio'],
+                'disabled' => $r['qta'] <= 0 && !$permetti_movimenti_sotto_zero && !$r['servizio'],
             ]);
         }
 
@@ -256,14 +259,14 @@ switch ($resource) {
         }
 
         break;
-    
+
     case 'fornitori-articolo':
         $query = 'SELECT an_anagrafiche.idanagrafica AS id, an_anagrafiche.ragione_sociale AS descrizione, (mg_prezzi_articoli.prezzo_unitario-(mg_prezzi_articoli.prezzo_unitario*mg_prezzi_articoli.sconto_percentuale)/100) AS prezzo_unitario FROM mg_prezzi_articoli LEFT JOIN an_anagrafiche ON mg_prezzi_articoli.id_anagrafica=an_anagrafiche.idanagrafica |where| ORDER BY an_anagrafiche.ragione_sociale';
 
         foreach ($elements as $element) {
             $filter[] = 'an_anagrafiche.idanagrafica='.prepare($element);
         }
-        
+
         $where[] = 'dir="uscita"';
         $where[] = 'minimo IS NULL';
         $where[] = 'massimo IS NULL';

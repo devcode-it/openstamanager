@@ -58,7 +58,6 @@ class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface
             'an_anagrafiche.deleted_at'
         )->orderBy('an_anagrafiche.ragione_sociale');
 
-        $filters = [];
         if ($request['resource'] != 'anagrafiche') {
             $type = 'Cliente';
 

@@ -90,7 +90,7 @@ if (!$clienti->isEmpty()) {
                             </button>
                         </td>
                     </tr>';
-                    
+
         foreach ($prezzi as $key => $dettaglio) {
             echo '
                     <tr>

@@ -175,7 +175,7 @@ include_once __DIR__.'/../../core.php';
 
                     <div class="row">
                         <div class="col-md-12">
-                            {[ "type": "select", "label": "<?php echo tr('Fornitore predefinito'); ?>", "name": "id_fornitore", "ajax-source": "fornitori-articolo",  "select-options": <?php echo json_encode(['id_articolo' => $id_record]); ?>, "value":"$id_fornitore$", "help": "<?php echo tr('Fornitore predefinito, utilizzato dal gestionale per funzioni più avanzate della gestione magazzino'); ?>." ]}
+                            {[ "type": "select", "label": "<?php echo tr('Fornitore predefinito'); ?>", "name": "id_fornitore", "ajax-source": "fornitori-articolo", "select-options": <?php echo json_encode(['id_articolo' => $id_record]); ?>, "value":"$id_fornitore$", "help": "<?php echo tr('Fornitore predefinito, utilizzato dal gestionale per funzioni più avanzate della gestione magazzino'); ?>." ]}
                         </div>
                     </div>
 
@@ -460,7 +460,7 @@ if (!empty($elementi)) {
 
 <script>
 input('id_fornitore').change(function(){
-    let prezzo_unitario = $(this).selectData() ? $(this).selectData().prezzo_unitario  : ""; 
+    let prezzo_unitario = $(this).selectData() ? $(this).selectData().prezzo_unitario  : "";
     if(input('id_fornitore').get()){
         input('prezzo_acquisto').set(prezzo_unitario);
         input('prezzo_acquisto').disable();

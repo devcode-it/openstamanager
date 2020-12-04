@@ -70,7 +70,7 @@ switch (post('op')) {
         $exporter = new CSV($file);
 
         // Esportazione dei record selezionati
-        $anagrafiche = Anagrafica::whereIn('id', $id_records)->get();
+        $anagrafiche = Anagrafica::whereIn('idanagrafica', $id_records)->get();
         $exporter->setRecords($anagrafiche);
 
         $count = $exporter->exportRecords();

@@ -334,9 +334,13 @@ if (!function_exists('download')) {
             header('Content-Type: application/octet-stream');
             header('Content-Transfer-Encoding: binary');
 
-            header('Content-Length: '.filesize($file));
-
             $open = fopen($file, 'rb');
+
+            fseek($open, 0, SEEK_END);
+            $size = ftell($open);
+            header('Content-Length: '.$size);
+
+            fseek($open, 0);
             while (!feof($open)) {
                 echo fread($open, 1024 * 8);
                 ob_flush();
@@ -544,12 +548,15 @@ if (!function_exists('temp_file')) {
             $name = secure_random_string();
         }
 
-        /*$file = DIRECTORY_SEPARATOR.
-            trim(sys_get_temp_dir(), DIRECTORY_SEPARATOR).
+        // $base_directory = trim(sys_get_temp_dir(), DIRECTORY_SEPARATOR);
+        $base_directory = implode(DIRECTORY_SEPARATOR, [
+            trim(base_dir(), DIRECTORY_SEPARATOR),
+            'files',
+            'temp',
+        ]);
+        $file = trim($base_directory, DIRECTORY_SEPARATOR).
             DIRECTORY_SEPARATOR.
-            ltrim($name, DIRECTORY_SEPARATOR);*/
-
-        $file = implode(DIRECTORY_SEPARATOR, [base_dir(), 'files', 'temp', ltrim($name, DIRECTORY_SEPARATOR)]);
+            ltrim($name, DIRECTORY_SEPARATOR);
 
         file_put_contents($file, $content);
 

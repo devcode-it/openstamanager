@@ -82,6 +82,8 @@ files/*
 !files/impianti/
 files/impianti/*
 !files/impianti/componente.ini
+!files/temp/
+files/temp/*
 tmp/
 config.inc.php
 database.sql

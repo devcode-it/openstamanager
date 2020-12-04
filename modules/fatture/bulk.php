@@ -432,7 +432,7 @@ switch (post('op')) {
 
     case 'export-csv':
         $file = temp_file().'.csv';
-       
+
         $exporter = new CSV($file);
 
         // Esportazione dei record selezionati

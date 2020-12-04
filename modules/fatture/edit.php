@@ -18,8 +18,8 @@
  */
 
 use Modules\Anagrafiche\Anagrafica;
-use Modules\Iva\Aliquota;
 use Modules\Fatture\Gestori\Bollo;
+use Modules\Iva\Aliquota;
 
 include_once __DIR__.'/../../core.php';
 
@@ -358,7 +358,7 @@ elseif ($record['stato'] == 'Bozza') {
                 }
             echo ' 
             </div>';
-        if($dir == 'entrata'){
+        if ($dir == 'entrata') {
             echo '
             <div class="row">
                 <div class="col-md-3">
@@ -375,8 +375,8 @@ elseif ($record['stato'] == 'Bozza') {
                     {[ "type": "number", "label": "'.tr('Importo marca da bollo').'", "name": "bollo", "value": "$bollo$"]}
                 </div>              
             </div>';
-            $bollo = new Bollo($fattura); 
-        }        
+            $bollo = new Bollo($fattura);
+        }
 ?>
 			<div class="row">
 				<div class="col-md-12">
@@ -888,12 +888,12 @@ function cambiaStato() {
         }
     }
 }';
-if($dir=='entrata'){
+if ($dir == 'entrata') {
     echo '
     function bolloAutomatico() {
         let bollo_automatico = input("bollo_automatico");
         let addebita_bollo = input("addebita_bollo");
-        let has_bollo ='.($bollo->getBollo()>0 ? "true" : "false").';
+        let has_bollo ='.($bollo->getBollo() > 0 ? 'true' : 'false').';
         if(bollo_automatico.get()==0){
             $(".bollo").show();
             input("bollo").enable();        
@@ -902,7 +902,7 @@ if($dir=='entrata'){
         } else {
             $(".bollo").show();
             input("bollo").disable();
-            $("#bollo").val('.setting("Importo marca da bollo").');
+            $("#bollo").val('.setting('Importo marca da bollo').');
         }
     }
     $(document).ready(function() {

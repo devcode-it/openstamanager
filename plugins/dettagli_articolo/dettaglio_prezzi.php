@@ -34,9 +34,9 @@ $direzione = get('direzione') == 'uscita' ? 'uscita' : 'entrata';
 $articolo = Articolo::find($id_articolo);
 $anagrafica = Anagrafica::find($id_anagrafica);
 
-if($direzione=='entrata'){
+if ($direzione == 'entrata') {
     $prezzo_predefinito = $prezzi_ivati ? $articolo->prezzo_vendita_ivato : $articolo->prezzo_vendita;
-} else{
+} else {
     $prezzo_predefinito = $articolo->prezzo_acquisto;
 }
 // Individuazione dei prezzi registrati
@@ -45,23 +45,23 @@ $dettagli = DettaglioPrezzo::dettagli($id_articolo, $id_anagrafica, $direzione)
 
 $dettaglio_predefinito = DettaglioPrezzo::dettaglioPredefinito($id_articolo, $id_anagrafica, $direzione)
     ->first();
-if($articolo->id_fornitore==$anagrafica->idanagrafica){
-    $color='success';
-    $icon='check';
-    $text= tr('Sì');
+if ($articolo->id_fornitore == $anagrafica->idanagrafica) {
+    $color = 'success';
+    $icon = 'check';
+    $text = tr('Sì');
 } else {
-    $color='danger';
-    $icon='times';
-    $text= tr('No');
+    $color = 'danger';
+    $icon = 'times';
+    $text = tr('No');
 }
 echo '
 <table class="table table-striped table-condensed table-bordered">
     <tr>
-        <th class="text-center col-md-4">'.($direzione=='entrata' ? tr('Cliente') : tr('Fornitore')).'</th>
+        <th class="text-center col-md-4">'.($direzione == 'entrata' ? tr('Cliente') : tr('Fornitore')).'</th>
         <th class="text-center col-md-4">'.tr('Prezzo predefinito').'</th>';
-        if($direzione=='uscita'){
+        if ($direzione == 'uscita') {
             echo '<th class="text-center col-md-4">'.tr('Fornitore predefinito').'</th>';
-        } else{
+        } else {
             echo '<th class="text-center col-md-4"></th>';
         }
     echo '      
@@ -69,9 +69,9 @@ echo '
     <tr>
         <td class="text-center">'.$anagrafica->ragione_sociale.'</td>
         <td class="text-center">'.moneyFormat($prezzo_predefinito).'</td>';
-        if($direzione=='uscita'){
+        if ($direzione == 'uscita') {
             echo '<td class="text-center"><i class="fa fa-'.$icon.' text-'.$color.'"></i> '.$text.'</td>';
-        } else{
+        } else {
             echo '<td></td>';
         }
     echo '   
@@ -89,7 +89,7 @@ echo '
 
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "checkbox", "label": "'.tr("Imposta prezzo per questa anagrafica").'", "name": "modifica_prezzi", "value": "'.intval(!empty($dettaglio_predefinito)).'" ]}
+            {[ "type": "checkbox", "label": "'.tr('Imposta prezzo per questa anagrafica').'", "name": "modifica_prezzi", "value": "'.intval(!empty($dettaglio_predefinito)).'" ]}
         </div>
     </div>
 

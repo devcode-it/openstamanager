@@ -28,14 +28,13 @@ function renderChecklist($check, $level = 0)
 
     <span class="text">'.$check->content.'</span>';
 
-
     if (empty($check->user) || $check->user->id == $user->id) {
         $result .= '
     <div class="tools">
         <i class="fa fa-trash-o check-delete"></i>
     </div>';
     }
-   
+
     if ($level == 0) {
         $result .= '
     <span class="handle pull-right">
@@ -46,10 +45,10 @@ function renderChecklist($check, $level = 0)
 
     $result .= '
     <span class="badge pull-right" style="margin-right:5px">'.(!empty($check->checked_at) ? tr('Verificato da _NAME_ il _DATE_', [
-        '_NAME_' =>  $check->checkUser->username,
-        '_DATE_' => timestampFormat($check->checked_at), 
+        '_NAME_' => $check->checkUser->username,
+        '_DATE_' => timestampFormat($check->checked_at),
     ]) : '').'</span>';
-    
+
     $result .= '
     <ul class="todo-list">';
 

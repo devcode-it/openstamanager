@@ -119,3 +119,10 @@ ALTER TABLE `co_contratti` ADD `rinnovo_automatico` TINYINT(1) NOT NULL DEFAULT 
 
 -- Aggiunto segmento per attività NON completate
 INSERT INTO `zz_segments` (`id`, `id_module`, `name`, `clause`, `position`, `pattern`, `note`, `predefined`, `predefined_accredito`, `predefined_addebito`, `is_fiscale`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), 'Non completate', 'in_interventi.idstatointervento NOT IN(SELECT in_statiintervento.idstatointervento FROM in_statiintervento WHERE is_completato=1)', 'WHR', '####', '', '0', '0', '0', '0');
+
+-- Aggiunto segmenti Ri.Ba. Clienti/Fornitori su Scadenzario
+DELETE FROM `zz_segments` WHERE name='Scadenzario Ri.Ba.';
+
+INSERT INTO `zz_segments` (`id_module`, `name`, `clause`, `position`, `pattern`, `note`, `predefined`, `predefined_accredito`, `predefined_addebito`, `is_fiscale`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario'), 'Scadenzario Ri.Ba. Clienti', 'co_pagamenti.riba=1 AND co_tipidocumento.dir=\"entrata\"', 'WHR', '####', '', 0, 0, 0, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario'), 'Scadenzario Ri.Ba. Fornitori', 'co_pagamenti.riba=1 AND co_tipidocumento.dir=\"uscita\"', 'WHR', '####', '', 0, 0, 0, 0);

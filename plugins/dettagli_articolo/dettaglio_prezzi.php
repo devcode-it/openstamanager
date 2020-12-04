@@ -34,24 +34,49 @@ $direzione = get('direzione') == 'uscita' ? 'uscita' : 'entrata';
 $articolo = Articolo::find($id_articolo);
 $anagrafica = Anagrafica::find($id_anagrafica);
 
-$prezzo_predefinito = $prezzi_ivati ? $articolo->prezzo_vendita_ivato : $articolo->prezzo_vendita;
-
+if($direzione=='entrata'){
+    $prezzo_predefinito = $prezzi_ivati ? $articolo->prezzo_vendita_ivato : $articolo->prezzo_vendita;
+} else{
+    $prezzo_predefinito = $articolo->prezzo_acquisto;
+}
 // Individuazione dei prezzi registrati
 $dettagli = DettaglioPrezzo::dettagli($id_articolo, $id_anagrafica, $direzione)
     ->get();
 
 $dettaglio_predefinito = DettaglioPrezzo::dettaglioPredefinito($id_articolo, $id_anagrafica, $direzione)
     ->first();
-$prezzo_dettaglio_predefinito = $prezzo_predefinito;
-if (!empty($dettaglio_predefinito)) {
-    $prezzo_dettaglio_predefinito = $prezzi_ivati ? $dettaglio_predefinito->prezzo_unitario_ivato : $dettaglio_predefinito->prezzo_unitario;
+if($articolo->id_fornitore==$anagrafica->idanagrafica){
+    $color='success';
+    $icon='check';
+    $text= tr('Sì');
+} else {
+    $color='danger';
+    $icon='times';
+    $text= tr('No');
 }
-
 echo '
-<p>'.tr('Informazioni relative al _TIPO_', [
-    '_TIPO_' => $direzione=='entrata' ? 'cliente:' : 'fornitore:' ,
-    ]).' 
-    <br><b><big>'.$anagrafica->ragione_sociale.'</big></b></p>
+<table class="table table-striped table-condensed table-bordered">
+    <tr>
+        <th class="text-center col-md-4">'.($direzione=='entrata' ? tr('Cliente') : tr('Fornitore')).'</th>
+        <th class="text-center col-md-4">'.tr('Prezzo predefinito').'</th>';
+        if($direzione=='uscita'){
+            echo '<th class="text-center col-md-4">'.tr('Fornitore predefinito').'</th>';
+        } else{
+            echo '<th class="text-center col-md-4"></th>';
+        }
+    echo '      
+    </tr>
+    <tr>
+        <td class="text-center">'.$anagrafica->ragione_sociale.'</td>
+        <td class="text-center">'.moneyFormat($prezzo_predefinito).'</td>';
+        if($direzione=='uscita'){
+            echo '<td class="text-center"><i class="fa fa-'.$icon.' text-'.$color.'"></i> '.$text.'</td>';
+        } else{
+            echo '<td></td>';
+        }
+    echo '   
+    </tr>
+</table>
 
 <form action="" method="post">
     <input type="hidden" name="backto" value="record-edit">
@@ -64,23 +89,25 @@ echo '
 
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "checkbox", "label": "'.tr("Imposta prezzo per questa anagrafica").'", "name": "modifica_prezzi", "value": "'.intval(!$dettagli->isEmpty() || !empty($dettaglio_predefinito)).'" ]}
-        </div>
-        <div id="imposta_prezzo_qta" class="col-md-4">
-            {[ "type": "checkbox", "label": "'.tr('Imposta un prezzo in base alla quantità').'", "name": "prezzo_fisso", "value": "'.intval($dettagli->count() != 0).'" ]}
+            {[ "type": "checkbox", "label": "'.tr("Imposta prezzo per questa anagrafica").'", "name": "modifica_prezzi", "value": "'.intval(!empty($dettaglio_predefinito)).'" ]}
         </div>
     </div>
 
-    <div id="info_prezzi" class="row">
-        <div class="col-md-4">  
-            {[ "type": "number", "label": "'.tr('Prezzo predefinito').'", "name": "prezzo_predefinito", "value": "'.$prezzo_predefinito.'", "disabled":"1"]}
-        </div>
-        <div class="col-md-4">
-            {[ "type": "number", "label": "'.tr('Prezzo specifico').'", "name": "prezzo_unitario_fisso", "value": "'.($prezzi_ivati ? $dettaglio_predefinito->prezzo_unitario_ivato : $dettaglio_predefinito->prezzo_unitario).'", "icon-after": "'.currency().'", "help": "'.($prezzi_ivati ? tr('Importo IVA inclusa') : '').'" ]}
-        </div>
+    <div class="row">
+        <div class="info_prezzi">
+            <div class="col-md-4">
+                {[ "type": "number", "label": "'.tr('Prezzo specifico').'", "name": "prezzo_unitario_fisso", "value": "'.($prezzi_ivati ? $dettaglio_predefinito->prezzo_unitario_ivato : $dettaglio_predefinito->prezzo_unitario).'", "icon-after": "'.currency().'", "help": "'.($prezzi_ivati ? tr('Importo IVA inclusa') : '').'" ]}
+            </div>
 
-        <div class="col-md-4">
-            {[ "type": "number", "label": "'.tr('Sconto specifico').'", "name": "sconto_fisso", "value": "'.$dettaglio_predefinito->sconto_percentuale.'", "icon-after": "%"]}
+            <div class="col-md-4">
+                {[ "type": "number", "label": "'.tr('Sconto specifico').'", "name": "sconto_fisso", "value": "'.$dettaglio_predefinito->sconto_percentuale.'", "icon-after": "%"]}
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div id="imposta_prezzo_qta" class="col-md-4">
+            {[ "type": "checkbox", "label": "'.tr('Imposta un prezzo in base alla quantità').'", "name": "prezzo_qta", "value": "'.intval($dettagli->count() != 0).'" ]}
         </div>
     </div>
 
@@ -211,21 +238,19 @@ function rimuoviPrezzo(button) {
 
 function cambioImpostazioni() {
     let modifica_prezzi = input("modifica_prezzi");
-    let prezzo_fisso = input("prezzo_fisso");
+    let prezzo_qta = input("prezzo_qta");
     let prezzo_unitario_fisso = input("prezzo_unitario_fisso");
     let sconto_fisso = input("sconto_fisso");
 
     let prezzi_variabili = $("#prezzi");
 
-    if (!modifica_prezzi.get()){
-        $("#imposta_prezzo_qta").hide();
-        $("#info_prezzi").hide();
+    if (!modifica_prezzi.get()){     
+        $(".info_prezzi").hide();
     } else {
-        $("#imposta_prezzo_qta").show();
-        $("#info_prezzi").show();
+        $(".info_prezzi").show();
     }
 
-    if (prezzo_fisso.get() && modifica_prezzi.get()) {
+    if (prezzo_qta.get()) {
         prezzi_variabili.removeClass("hidden");
     } else {
         prezzi_variabili.addClass("hidden");
@@ -236,7 +261,7 @@ input("modifica_prezzi").change(function () {
     cambioImpostazioni();
 })
 
-input("prezzo_fisso").change(function () {
+input("prezzo_qta").change(function () {
     cambioImpostazioni();
 })
 

@@ -175,7 +175,7 @@ include_once __DIR__.'/../../core.php';
 
                     <div class="row">
                         <div class="col-md-12">
-                            {[ "type": "select", "label": "<?php echo tr('Fornitore predefinito'); ?>", "name": "id_fornitore", "value": "$id_fornitore$", "ajax-source": "fornitori", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Fornitore&readonly_tipo=1", "help": "<?php echo tr('Fornitore predefinito, utilizzato dal gestionale per funzioni più avanzate della gestione magazzino'); ?>." ]}
+                            {[ "type": "select", "label": "<?php echo tr('Fornitore predefinito'); ?>", "name": "id_fornitore", "ajax-source": "fornitori-articolo",  "select-options": <?php echo json_encode(['id_articolo' => $id_record]); ?>, "value":"$id_fornitore$", "help": "<?php echo tr('Fornitore predefinito, utilizzato dal gestionale per funzioni più avanzate della gestione magazzino'); ?>." ]}
                         </div>
                     </div>
 
@@ -457,3 +457,21 @@ if (!empty($elementi)) {
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>
+
+<script>
+input('id_fornitore').change(function(){
+    let prezzo_unitario = $(this).selectData() ? $(this).selectData().prezzo_unitario  : ""; 
+    if(input('id_fornitore').get()){
+        input('prezzo_acquisto').set(prezzo_unitario);
+        input('prezzo_acquisto').disable();
+    } else {
+        input('prezzo_acquisto').enable();
+        input('prezzo_acquisto').set('0');
+    }
+});
+$(document).ready(function(){
+    if(input('id_fornitore').get()){
+        input('prezzo_acquisto').disable();
+    }
+});
+</script>

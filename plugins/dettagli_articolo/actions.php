@@ -64,26 +64,30 @@ switch (filter('op')) {
 
         $modifica_prezzi = filter('modifica_prezzi');
         if (empty($modifica_prezzi)) {
-            $dbo->query('DELETE FROM mg_prezzi_articoli WHERE id_articolo='.$id_articolo.' AND id_anagrafica='.$id_anagrafica);
-            return;
+            $dbo->query('DELETE FROM mg_prezzi_articoli WHERE id_articolo='.prepare($id_articolo).' AND id_anagrafica='.prepare($id_anagrafica).' AND minimo IS NULL AND massimo IS NULL');
+        } else {
+            // Salvataggio del prezzo predefinito
+            $prezzo_unitario = filter('prezzo_unitario_fisso');
+            $sconto = filter('sconto_fisso');
+            $dettaglio_predefinito = DettaglioPrezzo::dettaglioPredefinito($id_articolo, $id_anagrafica, $direzione)
+                ->first();
+            if (empty($dettaglio_predefinito)) {
+                $dettaglio_predefinito = DettaglioPrezzo::build($articolo, $anagrafica, $direzione);
+            }
+            $dettaglio_predefinito->sconto_percentuale = $sconto;
+            $dettaglio_predefinito->setPrezzoUnitario($prezzo_unitario);
+            $dettaglio_predefinito->save();
+            if($articolo->id_fornitore==$anagrafica->idanagrafica && $direzione=='uscita'){
+                $prezzo_unitario = $prezzo_unitario-($prezzo_unitario*$sconto/100);
+                $articolo->prezzo_acquisto=$prezzo_unitario;
+                $articolo->save();
+            }
         }
-
-        // Salvataggio del prezzo predefinito
-        $prezzo_unitario = filter('prezzo_unitario_fisso');
-        $sconto = filter('sconto_fisso');
-        $dettaglio_predefinito = DettaglioPrezzo::dettaglioPredefinito($id_articolo, $id_anagrafica, $direzione)
-            ->first();
-        if (empty($dettaglio_predefinito)) {
-            $dettaglio_predefinito = DettaglioPrezzo::build($articolo, $anagrafica, $direzione);
-        }
-        $dettaglio_predefinito->sconto_percentuale = $sconto;
-        $dettaglio_predefinito->setPrezzoUnitario($prezzo_unitario);
-        $dettaglio_predefinito->save();
 
         // Salvataggio dei prezzi variabili
-        $prezzo_fisso = filter('prezzo_fisso');
+        $prezzo_qta = filter('prezzo_qta');
         $dettagli = DettaglioPrezzo::dettagli($id_articolo, $id_anagrafica, $direzione);
-        if (!empty($prezzo_fisso)) {
+        if (!empty($prezzo_qta)) {
             $prezzi_unitari = (array) filter('prezzo_unitario');
             $minimi = filter('minimo');
             $massimi = filter('massimo');

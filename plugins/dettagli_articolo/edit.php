@@ -23,12 +23,7 @@ use Plugins\DettagliArticolo\DettaglioPrezzo;
 include_once __DIR__.'/../../core.php';
 
 $id_articolo = $id_record;
-
 echo '
-<p>'.tr("In questa sezione è possibile definire dei dettagli aggiuntivi per l'articolo in relazione ad una specifica anagrafica del gestionale").'.</p>
-<p>'.tr("Per i Clienti è possibile definire un prezzo personalizzato per la vendita dell'articolo, fisso oppure in relazione a una specifica quantità").'. '.tr("Per i Fornitori sono disponibili maggiori informazioni relative a codice, descrizione e quantità minime richieste per l'acquisto").'.</p>
-<p>'.tr("Queste informazioni sono integrate con il resto del gestionale per garantire una maggiore flessibilità all'utente finale").'.</p>
-
 <div class="nav-tabs-custom">
     <ul class="nav-tabs-li nav nav-tabs nav-justified">
         <li class="active"><a href="#tab_'.$id_plugin.'" onclick="apriTab(this)" data-tab="clienti"  id="clienti-tab">'.tr('Clienti').'</a></li>
@@ -95,16 +90,7 @@ if (!$clienti->isEmpty()) {
                             </button>
                         </td>
                     </tr>';
-
-        /*
-        $dettaglio_predefinito = $prezzi->whereStrict('minimo', null)
-            ->whereStrict('massimo', null)
-            ->first();
-
-        $prezzi = $prezzi->reject(function ($item, $key) use ($dettaglio_predefinito) {
-            return $item->id == $dettaglio_predefinito->id;
-        });
-        */
+                    
         foreach ($prezzi as $key => $dettaglio) {
             echo '
                     <tr>
@@ -153,8 +139,6 @@ echo '
         </div>
 
         <div class="tab-pane" id="fornitori">
-            <p>'.tr("In questa sezione è possibile definire le caratteristiche di base dell'articolo in relazione fornitore di origine, come codice e prezzo di acquisto predefinito").'. '.tr("Queste informazioni saranno utilizzate in automatico per la compilazione dell'articolo al momento dell'inserimento in un documento di acquisto relativo al fornitore indicato, sovrascrivendo le impostazioni predefinite della sezione Acquisto per l'articolo").'.</p>
-
             <div class="box">
                 <div class="box-header">
                     <h3 class="box-title">'.tr('Informazioni specifiche per fornitore').'</h3>

@@ -256,4 +256,21 @@ switch ($resource) {
         }
 
         break;
+    
+    case 'fornitori-articolo':
+        $query = 'SELECT an_anagrafiche.idanagrafica AS id, an_anagrafiche.ragione_sociale AS descrizione, (mg_prezzi_articoli.prezzo_unitario-(mg_prezzi_articoli.prezzo_unitario*mg_prezzi_articoli.sconto_percentuale)/100) AS prezzo_unitario FROM mg_prezzi_articoli LEFT JOIN an_anagrafiche ON mg_prezzi_articoli.id_anagrafica=an_anagrafiche.idanagrafica |where| ORDER BY an_anagrafiche.ragione_sociale';
+
+        foreach ($elements as $element) {
+            $filter[] = 'an_anagrafiche.idanagrafica='.prepare($element);
+        }
+        
+        $where[] = 'dir="uscita"';
+        $where[] = 'minimo IS NULL';
+        $where[] = 'massimo IS NULL';
+        $where[] = 'id_articolo='.prepare($superselect['id_articolo']);
+
+        if (!empty($search)) {
+            $search_fields[] = 'an_anagrafiche.ragione_sociale LIKE '.prepare('%'.$search.'%');
+        }
+        break;
 }

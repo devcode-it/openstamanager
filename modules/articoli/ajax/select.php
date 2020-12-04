@@ -148,6 +148,9 @@ switch ($resource) {
         $data = AJAX::selectResults($query, $where, $filter, $search_fields, $limit, $custom);
         $rs = $data['results'];
 
+        // Utilizzo dell'impostazione per disabilitare articoli con quantità <= 0
+        $permetti_movimenti_sotto_zero = setting('Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita') ? true : $superselect['permetti_movimento_a_zero'];
+
         // IVA da impostazioni
         foreach ($rs as $k => $r) {
             // Lettura movimenti delle mie sedi
@@ -164,7 +167,7 @@ switch ($resource) {
 
             $rs[$k] = array_merge($r, [
                 'text' => $r['codice'].' - '.$r['descrizione'].' '.(!$r['servizio'] ? '('.Translator::numberToLocale($qta).(!empty($r['um']) ? ' '.$r['um'] : '').')' : ''),
-                'disabled' => $r['qta'] <= 0 && !$superselect['permetti_movimento_a_zero'] && !$r['servizio'],
+                'disabled' => $r['qta'] <= 0 && !$permetti_movimenti_sotto_zero && !$r['servizio'],
             ]);
         }
 

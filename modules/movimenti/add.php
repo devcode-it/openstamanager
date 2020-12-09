@@ -94,7 +94,7 @@ echo '
 <script>
     // Lettura codici da lettore barcode
     $(document).unbind("keyup");
-    $(document).ready(function(){
+    $("#modals > div").on( "shown.bs.modal", function(){
         $("#barcode").focus();
     });
     $(document).on("keyup", function (event) {
@@ -166,8 +166,6 @@ echo '
 
                 // Articolo trovato
                 if(data.results.length === 1) {
-                    $("#barcode").val("");
-
                     var record = data.results[0];
                     $("#idarticolo").selectSetNew(record.id, record.text, record);
 
@@ -230,6 +228,7 @@ echo '
                     .replace("|descrizione|", articolo.descrizione)
                     .replace("|codice|", articolo.codice)
                     .replace("|misura|", articolo.um)
+                    .replace("|misura|", articolo.um)
                     .replace("|descrizione-movimento|", text)
                     .replace("|movimento|", qta_movimento.toLocale())
                     .replace("|rimanente|", qta_rimanente.toLocale())
@@ -241,6 +240,12 @@ echo '
 
             qta_input.set(1);
             $("#causale").trigger("change");
+
+            if( input("barcode").get() !== "" ){
+                $("#idarticolo").selectReset();
+                input("barcode").set("");
+                $("#barcode").focus();
+            }
         }
     }
 </script>';

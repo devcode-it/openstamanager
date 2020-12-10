@@ -53,7 +53,13 @@ ALTER TABLE `zz_views` CHANGE `format` `format` TINYINT(1) NOT NULL DEFAULT '0';
 
 
 -- Aggiunto HAVING 2=2 nel modulo listini
-UPDATE `zz_modules` SET `options` = 'SELECT |select|\r\nFROM mg_prezzi_articoli\r\n INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = mg_prezzi_articoli.id_anagrafica\r\n INNER JOIN mg_articoli ON mg_articoli.id = mg_prezzi_articoli.id_articolo\r\nWHERE 1=1 AND mg_articoli.deleted_at IS NULL AND an_anagrafiche.deleted_at IS NULL HAVING 2=2\r\nORDER BY an_anagrafiche.ragione_sociale' WHERE `zz_modules`.`id` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Listini');
+UPDATE `zz_modules` SET `options` = 'SELECT |select|
+FROM mg_prezzi_articoli
+    INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = mg_prezzi_articoli.id_anagrafica
+    INNER JOIN mg_articoli ON mg_articoli.id = mg_prezzi_articoli.id_articolo
+WHERE 1=1 AND mg_articoli.deleted_at IS NULL AND an_anagrafiche.deleted_at IS NULL
+HAVING 2=2
+ORDER BY an_anagrafiche.ragione_sociale' WHERE `zz_modules`.`name` = 'Listini';
 
 -- Aggiunti segmenti nel modulo listini
 INSERT INTO `zz_segments` (`id_module`, `name`, `clause`, `position`, `pattern`, `note`, `predefined`, `predefined_accredito`, `predefined_addebito`, `is_fiscale`) VALUES
@@ -62,17 +68,17 @@ INSERT INTO `zz_segments` (`id_module`, `name`, `clause`, `position`, `pattern`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Listini'), 'Clienti', 'mg_prezzi_articoli.dir=\"entrata\"', 'WHR', '####', '', 0, 0, 0, 0);
 
 -- Aggiunto formattabile nel modulo listini ai campi numerici
-UPDATE `zz_views` SET `format` = '1' WHERE `id` = (SELECT `id` FROM `zz_views` WHERE `name` = 'Prezzo unitario');
-UPDATE `zz_views` SET `format` = '1' WHERE `id` = (SELECT `id` FROM `zz_views` WHERE `name` = 'Sconto percentuale');
-UPDATE `zz_views` SET `format` = '1' WHERE `id` = (SELECT `id` FROM `zz_views` WHERE `name` = 'Minimo');
-UPDATE `zz_views` SET `format` = '1' WHERE `id` = (SELECT `id` FROM `zz_views` WHERE `name` = 'Massimo');
+UPDATE `zz_views` SET `format` = '1' WHERE `name` = 'Prezzo unitario';
+UPDATE `zz_views` SET `format` = '1' WHERE `name` = 'Sconto percentuale';
+UPDATE `zz_views` SET `format` = '1' WHERE `name` = 'Minimo';
+UPDATE `zz_views` SET `format` = '1' WHERE `name` = 'Massimo';
 
 
 -- Sostituito icona Listini con ">"
-UPDATE `zz_modules` SET `icon` = 'fa fa-angle-right' WHERE `zz_modules`.`id` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Listini');
+UPDATE `zz_modules` SET `icon` = 'fa fa-angle-right' WHERE `zz_modules`.`name` = 'Listini';
 
 -- Modificato nome plugin dettagli in Prezzi specifici
-UPDATE `zz_plugins` SET `name` = 'Prezzi specifici articolo', `title` = 'Prezzi specifici' WHERE `zz_plugins`.`id` = (SELECT `id` FROM `zz_plugins` WHERE `name` = 'Dettagli articolo');
+UPDATE `zz_plugins` SET `name` = 'Prezzi specifici articolo', `title` = 'Prezzi specifici' WHERE `zz_plugins`.`name` = 'Dettagli articolo';
 
 -- Impostazione soft quota
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Soft quota', '', 'integer', '0', 'Generali', NULL, 'Soft quota in GB');
@@ -112,7 +118,7 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format
 UPDATE `zz_views` SET `default` = 1 WHERE `zz_views`.`id_module` = (SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Interventi') AND (`zz_views`.`name` = 'Tecnici' OR `zz_views`.`name` = 'Rif. fattura');
 
 -- Modifica directory Piani di sconto/rincaro
-UPDATE `zz_modules` SET `directory` = 'piano_sconto' WHERE `zz_modules`.`id` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Piani di sconto/rincaro');
+UPDATE `zz_modules` SET `directory` = 'piano_sconto' WHERE `zz_modules`.`name` = 'Piani di sconto/rincaro';
 
 -- Aggiunto flag rinnovo automatico in contratti
 ALTER TABLE `co_contratti` ADD `rinnovo_automatico` TINYINT(1) NOT NULL DEFAULT '0' AFTER `rinnovabile`;

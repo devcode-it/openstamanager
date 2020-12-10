@@ -19,9 +19,10 @@
 
 include_once __DIR__.'/../../core.php';
 use Modules\Articoli\Articolo;
+use Prints;
 
 switch (post('op')) {
-    case 'change_acquisto':
+    case 'change-acquisto':
         foreach ($id_records as $id) {
             $articolo = Articolo::find($id);
             $percentuale = post('percentuale');
@@ -53,6 +54,15 @@ switch (post('op')) {
         flash()->info(tr('Articoli eliminati!'));
 
         break;
+    
+    case 'stampa-etichette':
+        $_SESSION['superselect']['id_articolo_barcode'] = $id_records;
+        $id_print = Prints::getPrints()['Barcode'];
+
+        redirect( base_path().'/pdfgen.php?id_print='.$id_print.'&id_record='.Articolo::where('barcode', '!=', '' )->first()->id );
+        exit();
+
+        break;
 }
 
 if (App::debug()) {
@@ -66,14 +76,25 @@ if (App::debug()) {
     ];
 }
 
-$operations['change_acquisto'] = [
+$operations['change-acquisto'] = [
     'text' => '<span><i class="fa fa-refresh"></i> '.tr('Aggiorna prezzo di acquisto').'</span>',
     'data' => [
         'title' => tr('Aggiornare il prezzo di acquisto per gli articoli selezionati?'),
         'msg' => 'Per indicare uno sconto inserire la percentuale con il segno meno, al contrario per un rincaro inserire la percentuale senza segno.<br><br>{[ "type": "number", "label": "'.tr('Percentuale sconto/rincaro').'", "name": "percentuale", "required": 1, "icon-after": "%" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
-        'blank' => false,
+        'blank' => true,
+    ],
+];
+
+$operations['stampa-etichette'] = [
+    'text' => '<span><i class="fa fa-barcode"></i> '.tr('Stampa etichette').'</span>',
+    'data' => [
+        'title' => tr('Stampare le etichette?'),
+        'msg' => tr('Per ciascun articolo selezionato, se presente il barcode, verrà stampata un\'etichetta'),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => true,
     ],
 ];
 

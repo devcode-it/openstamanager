@@ -17,6 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Modules\Articoli\Articolo;
+
 include_once __DIR__.'/../../core.php';
 
 echo '<style>
@@ -31,11 +33,28 @@ echo '<style>
 }
 </style>';
 
-$number = 1; // 32
-for ($i = 0; $i < $number; ++$i) {
+
+if (!empty($_SESSION['superselect']['id_articolo_barcode']) ){
+    $articoli = Articolo::whereIn('id', $_SESSION['superselect']['id_articolo_barcode'])->get();
+    unset( $_SESSION['superselect']['id_articolo_barcode'] );
+} else {
+    $articoli = Articolo::where('id', '=', $id_record)->get();
+}
+
+$pages = count($articoli);
+$page = 0;
+
+foreach( $articoli as $articolo ){
     echo '
     <div class="barcode-cell">
         <barcode code="'.$articolo->barcode.'" type="C39" height="2" size="0.65" class="barcode" />
         <p><b>'.$articolo->barcode.'</b></p>
     </div>';
+
+    $page++;
+    
+    if ( $page < $pages ) {
+        echo '<pagebreak>';
+    }
+
 }

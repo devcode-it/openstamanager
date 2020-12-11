@@ -48,7 +48,7 @@ class Bollo
         }
 
         $righe_bollo = $this->fattura->getRighe()->filter(function ($item, $key) {
-            return $item->aliquota != null && in_array($item->aliquota->codice_natura_fe, ['N1', 'N2', 'N3', 'N4']);
+            return $item->aliquota != null && in_array($item->aliquota->codice_natura_fe, ['N1', 'N2.1', 'N2.2', 'N3.1', 'N3.2', 'N3.3', 'N3.4', 'N3.5', 'N3.6', 'N4']);
         });
         $importo_righe_bollo = $righe_bollo->sum('netto');
 

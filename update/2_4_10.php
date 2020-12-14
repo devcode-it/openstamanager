@@ -70,7 +70,7 @@ foreach ($tecnici as $tecnico) {
     $presenti = $database->fetchArray('SELECT idtipointervento AS id FROM in_tariffe WHERE idtecnico = '.prepare($tecnico['id']));
 
     // Aggiunta associazioni costi unitari al contratto
-    $query = 'SELECT * FROM in_tipiintervento';
+    $query = 'SELECT in_tipiintervento.*, in_tipiintervento.idtipointervento AS id FROM in_tipiintervento';
     $elenco_presenti = array_column($presenti, 'id');
     if (!empty($elenco_presenti)) {
         $query .= ' WHERE idtipointervento NOT IN ('.implode(', ', $elenco_presenti).')';

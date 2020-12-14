@@ -70,7 +70,7 @@ class Upload extends Model
         // Creazione file fisico
         directory($directory);
         if (
-            (is_uploaded_file($source['tmp_name']) && !move_uploaded_file($source['tmp_name'], $directory.'/'.$filename)) ||
+            (is_array($source) && is_uploaded_file($source['tmp_name']) && !move_uploaded_file($source['tmp_name'], $directory.'/'.$filename)) ||
             (is_string($source) && !copy($source, $directory.'/'.$filename))
         ) {
             return null;

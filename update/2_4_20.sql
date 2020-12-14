@@ -138,3 +138,6 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 
 -- Correzione per visualizzazione campi 'Dare' e 'Avere'
 UPDATE `zz_views` SET `summable` = 1 WHERE `name` IN ('Dare', 'Avere') AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima Nota');
+
+-- Fix query dichiarazione d'intento
+UPDATE `zz_plugins` SET `options` = '{ \"main_query\": [	{	\"type\": \"table\", \"fields\": \"Protocollo, Progressivo, Massimale, Totale, Data inizio, Data fine\", \"query\": \"SELECT id, numero_protocollo AS Protocollo, numero_progressivo AS Progressivo, DATE_FORMAT(data_inizio,\'%d/%m/%Y\') AS \'Data inizio\', DATE_FORMAT(data_fine,\'%d/%m/%Y\') AS \'Data fine\', ROUND(massimale, 2) AS Massimale, ROUND(totale, 2) AS Totale FROM co_dichiarazioni_intento WHERE 1=1 AND deleted_at IS NULL AND id_anagrafica = |id_parent| HAVING 2=2 ORDER BY co_dichiarazioni_intento.id DESC\"}	]}' WHERE `zz_plugins`.`name` = 'Dichiarazioni d\'Intento';

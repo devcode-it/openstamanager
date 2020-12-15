@@ -22,15 +22,27 @@ include_once __DIR__.'/../../core.php';
 // Righe documento
 $righe = $documento->getRighe();
 
-$has_image = $righe->search(function ($item) {
-    return !empty($item->articolo->immagine);
-}) !== false;
+$columns = 6;
 
-if ($has_image) {
-    $columns = 7;
+//Immagine solo per documenti di vendita
+if ($documento->direzione == 'entrata'){
+    $has_image = $righe->search(function ($item) {
+        return !empty($item->articolo->immagine);
+    }) !== false;
+
+    if ($has_image) {
+        $columns++;
+        $char_number = $options['pricing'] ? 26 : 63;
+    }
+}
+
+
+
+if ($documento->direzione == 'uscita'){
+    $columns++;
     $char_number = $options['pricing'] ? 26 : 63;
+   
 } else {
-    $columns = 6;
     $char_number = $options['pricing'] ? 45 : 82;
 }
 $columns = $options['pricing'] ? $columns : $columns - 3;
@@ -45,6 +57,12 @@ echo "
     <thead>
         <tr>
             <th class='text-center' style='width:5%'>".tr('#', [], ['upper' => true]).'</th>';
+
+            if ($documento->direzione == 'uscita'){
+                echo "
+            <th class='text-center' style='width:10%'>".tr('Codice', [], ['upper' => true]).'</th>';
+            }
+
             if ($has_image) {
                 echo "
             <th class='text-center' style='width:20%'>".tr('Immagine', [], ['upper' => true]).'</th>';
@@ -79,6 +97,17 @@ foreach ($righe as $riga) {
             <td class="text-center" style="vertical-align: middle">
                 '.$num.'
             </td>';
+
+
+    if ($documento->direzione == 'uscita'){
+
+        echo'
+            <td class="text-center" style="vertical-align: middle">
+                '.$riga->articolo->codice.'
+            </td>';
+
+    }
+
 
     if ($has_image) {
         if ($riga->isArticolo() && !empty($riga->articolo->image)) {
@@ -197,12 +226,16 @@ $totale = $documento->totale;
 
 $show_sconto = $sconto > 0;
 
+$colspan = 4;
+($documento->direzione == 'uscita' ? $colspan++ : $colspan);
+($has_image ? $colspan++ : $colspan);
+
 // TOTALE COSTI FINALI
 if ($options['pricing']) {
     // Totale imponibile
     echo '
     <tr>
-        <td colspan="'.($has_image ? 5 : 4).'" class="text-right border-top">
+        <td colspan="'.$colspan.'" class="text-right border-top">
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
 
@@ -215,7 +248,7 @@ if ($options['pricing']) {
     if ($show_sconto) {
         echo '
     <tr>
-        <td colspan="'.($has_image ? 5 : 4).'" class="text-right border-top">
+        <td colspan="'.$colspan.'" class="text-right border-top">
             <b>'.tr('Sconto', [], ['upper' => true]).':</b>
         </td>
 
@@ -227,7 +260,7 @@ if ($options['pricing']) {
         // Totale imponibile
         echo '
     <tr>
-        <td colspan="'.($has_image ? 5 : 4).'" class="text-right border-top">
+        <td colspan="'.$colspan.'" class="text-right border-top">
             <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
         </td>
 
@@ -240,7 +273,7 @@ if ($options['pricing']) {
     // IVA
     echo '
     <tr>
-        <td colspan="'.($has_image ? 5 : 4).'" class="text-right border-top">
+        <td colspan="'.$colspan.'" class="text-right border-top">
             <b>'.tr('Totale IVA', [], ['upper' => true]).':</b>
         </td>
 
@@ -252,7 +285,7 @@ if ($options['pricing']) {
     // TOTALE
     echo '
     <tr>
-    	<td colspan="'.($has_image ? 5 : 4).'" class="text-right border-top">
+    	<td colspan="'.$colspan.'" class="text-right border-top">
             <b>'.tr('Totale documento', [], ['upper' => true]).':</b>
     	</td>
     	<th colspan="2" class="text-right">

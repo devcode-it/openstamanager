@@ -331,3 +331,110 @@ $(document).ready(function() {
     });
 });
 </script>';
+
+
+// Interventi per tecnico
+$tecnici = $dbo->fetchArray("SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale, colore FROM an_anagrafiche
+INNER JOIN
+an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica
+INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica
+LEFT OUTER JOIN in_interventi_tecnici ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica
+INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id
+WHERE an_anagrafiche.deleted_at IS NULL AND an_tipianagrafiche.descrizione='Tecnico'
+GROUP BY an_anagrafiche.idanagrafica
+ORDER BY ragione_sociale ASC");
+
+$dataset = '';
+foreach ($tecnici as $tecnico) {
+
+    $sessioni = $dbo->fetchArray('SELECT SUM(in_interventi_tecnici.ore) AS result, CONCAT(CAST(SUM(in_interventi_tecnici.ore) AS char(20)),\' ore\') AS ore_lavorate, YEAR(in_interventi_tecnici.orario_inizio) AS year, MONTH(in_interventi_tecnici.orario_inizio) AS month FROM in_interventi_tecnici  INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` LEFT JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`idstatointervento` WHERE in_interventi_tecnici.idtecnico = '.prepare($tecnico['id']).' AND in_interventi_tecnici.orario_inizio BETWEEN '.prepare($start).' AND '.prepare($end).' AND `in_statiintervento`.`is_completato` = 1 GROUP BY YEAR(in_interventi_tecnici.orario_inizio), MONTH(in_interventi_tecnici.orario_inizio) ORDER BY YEAR(in_interventi_tecnici.orario_inizio) ASC, MONTH(in_interventi_tecnici.orario_inizio) ASC');
+    
+    $sessioni = Stats::monthly($sessioni, $start, $end);
+    
+    //Colore tecnico
+    $background = $tecnico['colore'];
+    if (empty( $background ) || $background == '#FFFFFF' ){
+        //Random color
+        $background = '#'.dechex(rand(256, 16777215));
+    }
+
+    $dataset .= '{
+        label: "'.$tecnico['ragione_sociale'].'",
+        backgroundColor: "'.$background.'",
+        data: [
+            '.implode(',', array_column($sessioni, 'result')).'
+        ],
+
+    },';
+
+
+}
+
+echo '
+<div class="box box-info">
+    <div class="box-header with-border">
+        <h3 class="box-title">'.tr('Ore di lavoro per tecnico').'</h3>
+
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <canvas class="box-body collapse in" id="sessioni" height="100"></canvas>
+</div>';
+
+// Script per il grafico ore interventi per tecnico
+echo '
+<script>
+$(document).ready(function() {
+    new Chart(document.getElementById("sessioni").getContext("2d"), {
+        type: "horizontalBar",
+        data: {
+            labels: months,
+            datasets: [
+                '.$dataset.'
+            ]
+        },
+        options: {
+            responsive: true,
+            legend: {
+                position: "bottom",
+            },
+            scales: {
+                xAxes: [{
+                    ticks: {
+                        // Include a dollar sign in the ticks
+                        callback: function(value, index, values) {
+                            var text = "";
+                            if (value<=1){
+                                text = " ora";
+                            }else{
+                                text = " ore";
+                            }
+                            return value + text;
+                        }
+                    }
+                }]
+            },
+
+            tooltips: {
+                callbacks: {
+                    label: function(tooltipItem, data) {
+                        var dataset = data.datasets[tooltipItem.datasetIndex];
+                        var label = dataset.labels ? dataset.labels[tooltipItem.index] : "";
+    
+                        if (label) {
+                            label += ": ";
+                        }
+    
+                        label += tooltipItem.xLabel+" ore (attività completate)";
+    
+                        return label;
+                    }
+                }
+            },
+        }
+    });
+});
+</script>';

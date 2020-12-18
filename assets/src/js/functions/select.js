@@ -34,9 +34,12 @@ function start_superselect() {
  * @param container
  * @returns {*}
  */
-function selectOptionRender(data, container) {
-    let bg;
+function optionRendering(data, container) {
+    // Aggiunta degli attributi impostati staticamente
+    selectOptionAttributes(data);
 
+    // Impostazione del colore dell'opzione
+    let bg;
     if (data._bgcolor_) {
         bg = data._bgcolor_;
     } else if ($(data.element).attr("_bgcolor_")) {
@@ -50,6 +53,29 @@ function selectOptionRender(data, container) {
         $(container).css("color", setContrast(bg));
     }
 
+    return data.text;
+}
+
+/**
+ * Gestisce le operazioni di rendering per le opzioni selezionate del select.
+ *
+ * @param data
+ * @returns {*}
+ */
+function selectionRendering(data) {
+    // Aggiunta degli attributi impostati staticamente
+    selectOptionAttributes(data);
+
+    return data.text;
+}
+
+/**
+ * Gestisce le operazioni per l'impostazione dinamica degli attributi per una singola opzione del select.
+ *
+ * @param data
+ * @returns {void}
+ */
+function selectOptionAttributes(data) {
     // Aggiunta degli attributi impostati staticamente
     let attributes = $(data.element).data("select-attributes");
     if (attributes) {
@@ -57,8 +83,6 @@ function selectOptionRender(data, container) {
             data[key] = value;
         }
     }
-
-    return data.text;
 }
 
 /**
@@ -128,6 +152,9 @@ jQuery.fn.selectAdd = function (values) {
 
     values.forEach(function (item) {
         if (item.data) {
+            item['data-select-attributes'] = JSON.stringify(item.data);
+
+            // Retrocompatibilità per l'uso del attributo data su selectData
             Object.keys(item.data).forEach(function (element) {
                 item['data-' + element] = item.data[element];
             });
@@ -220,7 +247,8 @@ function initStaticSelectInput(input) {
         escapeMarkup: function (text) {
             return text;
         },
-        templateResult: selectOptionRender,
+        templateResult: optionRendering,
+        templateSelection: selectionRendering,
     });
 }
 
@@ -241,7 +269,8 @@ function initDynamicSelectInput(input) {
         escapeMarkup: function (text) {
             return text;
         },
-        templateResult: selectOptionRender,
+        templateResult: optionRendering,
+        templateSelection: selectionRendering,
         ajax: {
             url: globals.rootdir + "/ajax_select.php?op=" + $input.data('source'),
             dataType: 'json',

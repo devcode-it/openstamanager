@@ -32,7 +32,7 @@ include_once __DIR__.'/../../core.php';
             {["type": "text", "label": "<?php echo tr('Ricerca con lettore'); ?>", "name": "barcode", "icon-before": "<i class=\"fa fa-barcode\"></i>" ]}
         </div>
     </div>
-    
+
     <div class="row">
         <div class="col-md-4">
             {["type": "select", "label": "<?php echo tr('Articolo'); ?>", "name": "idarticolo", "ajax-source": "articoli", "value": "", "required": 1, "select-options": {"permetti_movimento_a_zero": 1, "idanagrafica": <?php echo setting('Azienda predefinita'); ?>, "idsede_partenza": 0, "idsede_destinazione": 0} ]}
@@ -159,14 +159,13 @@ echo '
 
     function ricercaBarcode(barcode) {
         // Ricerca via ajax del barcode negli articoli
-        $.get(
-            globals.rootdir + "/ajax_select.php?op=articoli&search=" + barcode,
+        $.get(globals.rootdir + "/ajax_select.php?op=articoli&search=" + barcode,
             function(data){
                 data = JSON.parse(data);
 
                 // Articolo trovato
                 if(data.results.length === 1) {
-                    var record = data.results[0];
+                    let record = data.results[0];
                     $("#idarticolo").selectSetNew(record.id, record.text, record);
 
                     salva($("#aggiungi"));
@@ -183,20 +182,14 @@ echo '
 
     async function salva(button) {
         $("#messages").html("");
-        var qta_input = input("qta");
-        var tipo_movimento = $("#tipo_movimento").val();
+        let qta_input = input("qta");
+        let tipo_movimento = $("#tipo_movimento").val();
 
         let valid = await salvaForm(button, "#add-form");
 
         if (valid) {
             let articolo = $("#idarticolo").selectData();
-            if( articolo.descrizione==undefined ){
-                articolo.descrizione = $( $("#idarticolo").selectData()["element"] ).data("descrizione");
-                articolo.codice = $( $("#idarticolo").selectData()["element"] ).data("codice");
-                articolo.um = $( $("#idarticolo").selectData()["element"] ).data("um");
-                articolo.prezzo_acquisto = $( $("#idarticolo").selectData()["element"] ).data("prezzo_acquisto");
-                articolo.prezzo_vendita = $( $("#idarticolo").selectData()["element"] ).data("prezzo_vendita");
-            }
+
             let prezzo_acquisto = parseFloat(articolo.prezzo_acquisto);
             let prezzo_vendita = parseFloat(articolo.prezzo_vendita);
 
@@ -219,10 +212,10 @@ echo '
                 text = "Spostamento";
                 qta_rimanente = parseFloat(articolo.qta);
             }
-   
+
             if (articolo.descrizione) {
                 let testo = $("#info-articolo").html();
-   
+
                 testo = testo.replace("|alert-type|", alert_type)
                     .replace("|icon|", icon)
                     .replace("|descrizione|", articolo.descrizione)

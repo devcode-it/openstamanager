@@ -140,4 +140,25 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 UPDATE `zz_views` SET `summable` = 1 WHERE `name` IN ('Dare', 'Avere') AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima Nota');
 
 -- Fix query dichiarazione d'intento
-UPDATE `zz_plugins` SET `options` = '{ \"main_query\": [	{	\"type\": \"table\", \"fields\": \"Protocollo, Progressivo, Massimale, Totale, Data inizio, Data fine\", \"query\": \"SELECT id, numero_protocollo AS Protocollo, numero_progressivo AS Progressivo, DATE_FORMAT(data_inizio,\'%d/%m/%Y\') AS \'Data inizio\', DATE_FORMAT(data_fine,\'%d/%m/%Y\') AS \'Data fine\', ROUND(massimale, 2) AS Massimale, ROUND(totale, 2) AS Totale FROM co_dichiarazioni_intento WHERE 1=1 AND deleted_at IS NULL AND id_anagrafica = |id_parent| HAVING 2=2 ORDER BY co_dichiarazioni_intento.id DESC\"}	]}' WHERE `zz_plugins`.`name` = 'Dichiarazioni d\'Intento';
+UPDATE `zz_plugins` SET `options` = '{ \"main_query\": [	{	\"type\": \"table\", \"fields\": \"Protocollo, Progressivo, Massimale, Totale, Data inizio, Data fine\", \"query\": \"SELECT id, numero_protocollo AS Protocollo, numero_progressivo AS Progressivo, DATE_FORMAT(data_inizio,\'%d/%m/%Y\') AS \'Data inizio\', DATE_FORMAT(data_fine,\'%d/%m/%Y\') AS \'Data fine\', ROUND(massimale, 2) AS Massimale, ROUND(totale, 2) AS Totale FROM co_dichiarazioni_intento WHERE 1=1 AND deleted_at IS NULL AND id_anagrafica = |id_parent| HAVING 2=2 ORDER BY co_dichiarazioni_intento.id DESC\"}	]}' WHERE `zz_plugins`.`name` = "Dichiarazioni d\'Intento";
+
+-- Aggiunto colonne categoria e sottocategoria su listini
+UPDATE `zz_modules` SET `options` = 'SELECT |select|FROM mg_prezzi_articoli
+    INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = mg_prezzi_articoli.id_anagrafica
+    INNER JOIN mg_articoli ON mg_articoli.id = mg_prezzi_articoli.id_articolo
+    INNER JOIN 	mg_categorie AS categoria ON mg_articoli.id_categoria=categoria.id
+    INNER JOIN 	mg_categorie AS sottocategoria ON mg_articoli.id_sottocategoria=sottocategoria.id
+WHERE 1=1 AND mg_articoli.deleted_at IS NULL AND an_anagrafiche.deleted_at IS NULL
+HAVING 2=2
+ORDER BY an_anagrafiche.ragione_sociale';
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Listini'), 'Sottocategoria', 'sottocategoria.nome', 5, 1, 0, 0, '', '', 1, 0, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Listini'), 'Categoria', 'categoria.nome', 4, 1, 0, 0, '', '', 1, 0, 0);
+
+INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) (
+SELECT `zz_groups`.`id`, `zz_views`.`id` FROM `zz_groups`, `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` WHERE `zz_modules`.`name` = 'Listini' AND `zz_views`.`name` = 'Categoria'
+);
+INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) (
+SELECT `zz_groups`.`id`, `zz_views`.`id` FROM `zz_groups`, `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` WHERE `zz_modules`.`name` = 'Listini' AND `zz_views`.`name` = 'Sottocategoria'
+);

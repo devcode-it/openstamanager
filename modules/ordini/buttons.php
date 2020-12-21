@@ -25,7 +25,7 @@ echo '
 <div class="btn-group tip" data-toggle="tooltip" title="'.tr("Per creare un documento deve essere inserita almeno una riga e lo stato dell'ordine deve essere tra: _STATE_LIST_", [
         '_STATE_LIST_' => implode(', ', $stati_abilitati),
     ]).'">
-	<button class="btn btn-info dropdown-toggle '.(!in_array($record['stato'], ['Fatturato', 'Evaso', 'Bozza']) ? '' : 'disabled').'" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+	<button class="btn btn-info dropdown-toggle '.(!in_array($record['stato'], ['Fatturato', 'Evaso', 'Bozza', 'In attesa di conferma', 'Annullato']) ? '' : 'disabled').'" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 		<i class="fa fa-magic"></i> '.tr('Crea').'
 		<span class="caret"></span>
 	</button>

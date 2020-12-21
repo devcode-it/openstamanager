@@ -278,10 +278,10 @@ function get_stato_ordine($idordine)
     $qta_ddt_fattura = $rs_ddt_fattura[0]['qta'];
 
     if ($qta_ddt == 0) {
-        $stato = 'Bozza';
+        $stato = 'Accettato';
     }
     if ($qta_fattura == 0) {
-        $stato = 'Bozza';
+        $stato = 'Accettato';
     }
     if ($qta_ddt > 0 && $qta_ddt < $qta_ordine && $qta_ordine > 0) {
         $stato = 'Parzialmente evaso';

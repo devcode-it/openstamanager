@@ -274,8 +274,17 @@ elseif (post('op') == 'send-email') {
     }
 } elseif (filter('op') == 'aggiorna_colonne') {
     include_once base_dir().'/include/colonne.php';
-} elseif (filter('op') == 'visualizza_riferimenti') {
-    include_once base_dir().'/include/riferimenti/riferimenti.php';
+} elseif (filter('op') == 'toggle_colonna') {
+    $visible = filter('visible');
+    $id_riga = filter('id_vista');
+
+    $dbo->query('UPDATE `zz_views` SET `visible` = '.prepare($visible).' WHERE id = '.prepare($id_riga));
+} elseif (filter('op') == 'ordina_colonne') {
+    $order = explode(',', post('order', true));
+
+    foreach ($order as $i => $id_riga) {
+        $dbo->query('UPDATE `zz_views` SET `order` = '.prepare($i).' WHERE id='.prepare($id_riga));
+    }
 } elseif (filter('op') == 'visualizza_righe_riferimenti') {
     include_once base_dir().'/include/riferimenti/righe_riferimenti.php';
 } elseif (filter('op') == 'visualizza_righe_documento') {

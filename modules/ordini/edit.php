@@ -194,7 +194,17 @@ echo '
 if (!$block_edit) {
     echo '
 		<div class="pull-left">';
-
+    
+    $prev_query = 'SELECT COUNT(*) AS tot FROM co_preventivi WHERE idanagrafica='.prepare($record['idanagrafica']).' AND idstato IN(SELECT id FROM co_statipreventivi WHERE is_fatturabile = 1) AND default_revision=1 AND co_preventivi.id IN (SELECT idpreventivo FROM co_righe_preventivi WHERE co_righe_preventivi.idpreventivo = co_preventivi.id AND (qta - qta_evasa) > 0)';
+    $preventivi = $dbo->fetchArray($prev_query)[0]['tot'];
+    if($dir=='entrata'){
+    echo '
+        <div class="tip">
+            <a class="btn btn-sm btn-primary '.(!empty($preventivi) ? '' : ' disabled').'" data-href="'.base_path().'/modules/ordini/add_preventivo.php?id_module='.$id_module.'&id_record='.$id_record.'" data-title="'.tr('Aggiungi preventivo').'" data-toggle="tooltip">
+                <i class="fa fa-plus"></i> '.tr('Preventivo').'
+            </a>
+        </div>';
+    }
     echo '
             <button type="button" class="btn btn-sm btn-primary tip" title="'.tr('Aggiungi articolo').'" onclick="gestioneArticolo(this)">
                 <i class="fa fa-plus"></i> '.tr('Articolo').'

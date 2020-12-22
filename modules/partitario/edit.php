@@ -154,7 +154,7 @@ foreach ($primo_livello as $conto_primo) {
             $id_anagrafica = $conto_terzo['idanagrafica'];
             $anagrafica_deleted = $conto_terzo['deleted_at'];
             if (isset($id_anagrafica)) {
-                echo Modules::link('Anagrafiche', $id_anagrafica, ' <i title="'.(isset($anagrafica_deleted) ? 'Anagrafica eliminata' : 'Visualizza anagrafica').'" class="btn btn-'.(isset($anagrafica_deleted) ? 'danger' : 'primary').' btn-xs fa fa-user" ></i>');
+                echo Modules::link('Anagrafiche', $id_anagrafica, ' <i title="'.(isset($anagrafica_deleted) ? tr('Anagrafica eliminata') : tr('Visualizza anagrafica')).'" class="btn btn-'.(isset($anagrafica_deleted) ? 'danger' : 'primary').' btn-xs fa fa-user" ></i>');
             }
 
             // Stampa mastrino

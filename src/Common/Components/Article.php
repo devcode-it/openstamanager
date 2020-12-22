@@ -212,7 +212,8 @@ abstract class Article extends Accounting
 
     public function articolo()
     {
-        return $this->belongsTo(Original::class, 'idarticolo');
+        return $this->belongsTo(Original::class, 'idarticolo')
+            ->withTrashed();
     }
 
     public function dettaglioFornitore()

@@ -75,7 +75,7 @@ class Articolo extends Model
         $data = ($data ?: date('Y-m-d H:i:s'));
         $id = $this->registra($qta, $descrizone, $data, $manuale, $array);
 
-        if ($this->servizio == 0) {
+        if (empty($this->servizio)) {
             $this->qta += $qta;
 
             $this->save();

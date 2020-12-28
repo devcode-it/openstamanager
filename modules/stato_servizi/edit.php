@@ -49,81 +49,90 @@ if (Services::isEnabled()) {
     // Informazioni su Services
     $servizi = Cache::pool('Informazioni su Services')->content;
 
-    // Elaborazione dei servizi in scadenza
-    $limite_scadenze = (new Carbon())->addDays(60);
-    $servizi_in_scadenza = [];
-    foreach ($servizi as $servizio) {
-        // Gestione per data di scadenza
-        $scadenza = new Carbon($servizio['expiration_at']);
-        if (
-            (isset($servizio['expiration_at']) && $scadenza->lessThan($limite_scadenze))
-        ) {
-            $servizi_in_scadenza[] = $servizio['name'].' ('.$scadenza->diffForHumans().')';
-        }
-        // Gestione per crediti
-        elseif (
-            (isset($servizio['credits']) && $servizio['credits'] < 100)
-        ) {
-            $servizi_in_scadenza[] = $servizio['name'].' ('.$servizio['credits'].' crediti)';
-        }
-    }
+    if (!empty($servizi)){
 
-    echo '
-    <div class="col-md-12 col-lg-6">
-        <div class="box box-info">
-            <div class="box-header">
-                <h3 class="box-title">
-                    '.tr('Informazioni su Services').'
-                </h3>
+        // Elaborazione dei servizi in scadenza
+        $limite_scadenze = (new Carbon())->addDays(60);
+        $servizi_in_scadenza = [];
+        foreach ($servizi as $servizio) {
+            // Gestione per data di scadenza
+            $scadenza = new Carbon($servizio['expiration_at']);
+            if (
+                (isset($servizio['expiration_at']) && $scadenza->lessThan($limite_scadenze))
+            ) {
+                $servizi_in_scadenza[] = $servizio['name'].' ('.$scadenza->diffForHumans().')';
+            }
+            // Gestione per crediti
+            elseif (
+                (isset($servizio['credits']) && $servizio['credits'] < 100)
+            ) {
+                $servizi_in_scadenza[] = $servizio['name'].' ('.$servizio['credits'].' crediti)';
+            }
+        }
+
+        echo '
+        <div class="col-md-12 col-lg-6">
+            <div class="box box-info">
+                <div class="box-header">
+                    <h3 class="box-title">
+                        '.tr('Informazioni su Services').'
+                    </h3>
+                </div>
+            </div>
+
+            <div class="box-body">';
+
+        if (empty($servizi_in_scadenza)) {
+            echo '
+                <p>'.tr('Nessun servizio in scadenza').'.</p>';
+        } else {
+            echo '
+                <p>'.tr('I seguenti servizi sono in scadenza:').'</p>
+                <ul>';
+            foreach ($servizi_in_scadenza as $servizio) {
+                echo '
+                    <li>'.$servizio.'</li>';
+            }
+            echo '
+                </ul>';
+        }
+
+        echo '
+
+                <hr><br>
+
+                <h4>'.tr('Statistiche su Fatture Elettroniche').'</h4>
+                <ul>
+                    <li>'.tr('Fatture transitate').': <span id="fe_numero"></span></li>
+                    <li>'.tr('Spazio occupato').': <span id="fe_spazio"></span></li>
+                </ul>
             </div>
         </div>
 
-        <div class="box-body">';
-
-    if (empty($servizi_in_scadenza)) {
-        echo '
-            <p>'.tr('Nessun servizio in scadenza').'.</p>';
-    } else {
-        echo '
-            <p>'.tr('I seguenti servizi sono in scadenza:').'</p>
-            <ul>';
-        foreach ($servizi_in_scadenza as $servizio) {
-            echo '
-                <li>'.$servizio.'</li>';
-        }
-        echo '
-            </ul>';
-    }
-
-    echo '
-
-            <hr><br>
-
-            <h4>'.tr('Statistiche su Fatture Elettroniche').'</h4>
-            <ul>
-                <li>'.tr('Fatture transitate').': <span id="fe_numero"></span></li>
-                <li>'.tr('Spazio occupato').': <span id="fe_spazio"></span></li>
-            </ul>
-        </div>
-    </div>
-
-    <script>
-    $(document).ready(function (){
-        $.ajax({
-            url: globals.rootdir + "/actions.php",
-            type: "GET",
-            dataType: "json",
-            data: {
-                id_module: globals.id_module,
-                op: "informazioni-fe",
-            },
-            success: function (response) {
-                $("#fe_numero").html(response.invoice_number);
-                $("#fe_spazio").html(response.size);
-            }
+        <script>
+        $(document).ready(function (){
+            $.ajax({
+                url: globals.rootdir + "/actions.php",
+                type: "GET",
+                dataType: "json",
+                data: {
+                    id_module: globals.id_module,
+                    op: "informazioni-fe",
+                },
+                success: function (response) {
+                    $("#fe_numero").html(response.invoice_number);
+                    $("#fe_spazio").html(response.size);
+                }
+            });
         });
-    });
-    </script>';
+        </script>';
+
+    }else{
+
+        echo '
+        <div class="col-md-12 col-lg-6"><div class="alert alert-warning alert-dismissible" role="alert"><button class="close" type="button" data-dismiss="alert" aria-hidden="true"><span aria-hidden="true">×</span><span class="sr-only">'.tr('Chiudi').'</span></button><span><i class="fa fa-warning"></i> '.tr('Nessun servizio abilitato o "OSMCloud Services API Token" non valido').'.</span></div></div>';
+
+    }
 }
 
 // Widgets

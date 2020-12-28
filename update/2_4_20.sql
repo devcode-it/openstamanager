@@ -171,12 +171,12 @@ UPDATE `co_iva` SET `codice_natura_fe` = 'N6.9' WHERE `codice_natura_fe` = 'N6';
 -- Aumento testo descrizione per righe attività (da 255 caratteri)
 ALTER TABLE `in_righe_interventi` CHANGE `descrizione` `descrizione` TEXT NULL;
 
+ALTER TABLE `co_tipidocumento` CHANGE `descrizione` `descrizione` VARCHAR(125) NOT NULL; 
+
 -- Aggiunta tipologia documento TD 25
 INSERT INTO `co_tipidocumento` (`id`, `descrizione`, `dir`, `reversed`, `codice_tipo_documento_fe`) VALUES
-(NULL, "Fattura differita di cui all'art.21, comma 4, terzo periodo lett. b", 'entrata', '0', 'TD25'),
-(NULL, "Fattura differita di cui all'art.21, comma 4, terzo periodo lett. b", 'uscita', '0', 'TD25');
-
-ALTER TABLE `co_tipidocumento` CHANGE `descrizione` `descrizione` VARCHAR(125) NOT NULL; 
+(NULL, "Fattura differita di cui all'art.21, comma 4, terzo periodo lett. b (Dropshipping)", 'entrata', '0', 'TD25'),
+(NULL, "Fattura differita di cui all'art.21, comma 4, terzo periodo lett. b (Dropshipping)", 'uscita', '0', 'TD25');
 
 -- Metodi di pagamento speculari per fatture di acquisto
 INSERT INTO `co_tipidocumento` (`id`, `descrizione`, `dir`, `reversed`, `codice_tipo_documento_fe`) VALUES
@@ -193,4 +193,29 @@ INSERT INTO `co_tipidocumento` (`id`, `descrizione`, `dir`, `reversed`, `codice_
 (NULL, 'Fattura per autoconsumo o per cessioni gratuite senza rivalsa', 'uscita', '0', 'TD27');
 
 -- Setto 10 tentativi per email create più di una settimana fa che non sono state mai processate e non hanno ricevuto ne invio o fallimento
-UPDATE `em_emails` SET `attempt` = '10' WHERE `em_emails`.`attempt` = 0 AND `em_emails`.`failed_at` IS NULL AND `em_emails`.`sent_at` IS NULL AND `em_emails`.`processing_at` IS NULL AND `em_emails`.`created_at` <= DATE_SUB(NOW(), INTERVAL 7 DAY);
+UPDATE `em_emails` SET `attempt` = '10', `em_emails`.`failed_at` = NOW() WHERE `em_emails`.`attempt` = 0 AND `em_emails`.`failed_at` IS NULL AND `em_emails`.`sent_at` IS NULL AND `em_emails`.`processing_at` IS NULL AND `em_emails`.`created_at` <= DATE_SUB(NOW(), INTERVAL 7 DAY);
+
+-- Aggiunto deleted_at per tipi di documento
+ALTER TABLE `co_tipidocumento` ADD `deleted_at` DATETIME NULL DEFAULT NULL AFTER `codice_tipo_documento_fe`;
+-- Aggiunti campi predefined, enabled, help  per tipi di documento
+ALTER TABLE `co_tipidocumento` ADD `predefined` TINYINT NOT NULL DEFAULT '0' AFTER `codice_tipo_documento_fe`; 
+ALTER TABLE `co_tipidocumento` ADD `enabled` TINYINT NOT NULL DEFAULT '1' AFTER `predefined`;
+ALTER TABLE `co_tipidocumento` ADD `help` VARCHAR(255) NULL AFTER `enabled`; 
+UPDATE `co_tipidocumento` SET `predefined` = '1' WHERE `co_tipidocumento`.`descrizione` = 'Fattura immediata di vendita'; 
+UPDATE `co_tipidocumento` SET `predefined` = '1' WHERE `co_tipidocumento`.`descrizione` = 'Fattura immediata di acquisto'; 
+
+UPDATE `co_tipidocumento` SET `help` = 'Fattura emessa entro le ore 24 del giorno di effettuazione dell’operazione.' WHERE `co_tipidocumento`.`descrizione` = 'Fattura immediata di acquisto';
+UPDATE `co_tipidocumento` SET `help` = 'Fattura emessa entro le ore 24 del giorno di effettuazione dell’operazione.' WHERE `co_tipidocumento`.`descrizione` = 'Fattura immediata di vendita';
+UPDATE `co_tipidocumento` SET `help` = "Fattura emessa entro il giorno 15 del mese successivo a quello di effettuazione dell'operazione  (art. 21 comma 4 lett. a) del D.P.R. 633/1972)." WHERE `co_tipidocumento`.`descrizione` = 'Fattura differita di acquisto'; 
+UPDATE `co_tipidocumento` SET `help` = "Fattura emessa entro il giorno 15 del mese successivo a quello di effettuazione dell'operazione  (art. 21 comma 4 lett. a) del D.P.R. 633/1972)." WHERE `co_tipidocumento`.`descrizione` = 'Fattura differita di vendita'; 
+
+-- Innesto nuovo modulo Tipi documento
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`, `use_notes`, `use_checklists`) VALUES (NULL, 'Tipi documento', 'Tipi documento', 'tipi_documento', 'SELECT |select| FROM `co_tipidocumento` WHERE 1=1 AND deleted_at IS NULL  HAVING 2=2', '', 'fa fa-angle-right', '2.4.20', '2.4.20', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Tabelle'), '1', '1', '0', '0');
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `default`, `visible`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi documento'), 'Attivo', 'co_tipidocumento.enabled', 6, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi documento'), 'Predefinito', 'co_tipidocumento.predefined', 5, 1, 0, 0, 1),1
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi documento'), 'Codice FE', 'co_tipidocumento.codice_tipo_documento_fe', 4, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi documento'), 'Direzione', 'co_tipidocumento.dir', 3, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi documento'), 'Descrizione', 'co_tipidocumento.descrizione', 2, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi documento'), 'id', 'co_tipidocumento.id', 1, 1, 0, 0, 0);

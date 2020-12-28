@@ -170,3 +170,24 @@ UPDATE `co_iva` SET `codice_natura_fe` = 'N6.9' WHERE `codice_natura_fe` = 'N6';
 
 -- Aumento testo descrizione per righe attività (da 255 caratteri)
 ALTER TABLE `in_righe_interventi` CHANGE `descrizione` `descrizione` TEXT NULL;
+
+-- Aggiunta tipologia documento TD 25
+INSERT INTO `co_tipidocumento` (`id`, `descrizione`, `dir`, `reversed`, `codice_tipo_documento_fe`) VALUES
+(NULL, "Fattura differita di cui all'art.21, comma 4, terzo periodo lett. b", 'entrata', '0', 'TD25'),
+(NULL, "Fattura differita di cui all'art.21, comma 4, terzo periodo lett. b", 'uscita', '0', 'TD25');
+
+ALTER TABLE `co_tipidocumento` CHANGE `descrizione` `descrizione` VARCHAR(125) NOT NULL; 
+
+-- Metodi di pagamento speculari per fatture di acquisto
+INSERT INTO `co_tipidocumento` (`id`, `descrizione`, `dir`, `reversed`, `codice_tipo_documento_fe`) VALUES
+(NULL, 'Acconto/anticipo su fattura', 'uscita', '0', 'TD02'),
+(NULL, 'Integrazione fattura reverse charge interno', 'uscita', '0', 'TD16'),
+(NULL, "Integrazione/autofattura per acquisto servizi dall\'estero", 'uscita', '0', 'TD17'),
+(NULL, 'Integrazione per acquisto di beni intracomunitari', 'uscita', '0', 'TD18'),
+(NULL, 'Integrazione/autofattura per acquisto di beni ex art.17 c.2 DPR 633/72', 'uscita', '0', 'TD19'),
+(NULL, 'Autofattura per regolarizzazione e integrazione delle fatture (art.6 c.8 d.lgs. 471/97 o art.46 c.5 D.L. 331/93)', 'uscita', '0', 'TD20'),
+(NULL, 'Autofattura per splafonamento', 'uscita', '0', 'TD21'),
+(NULL, 'Estrazione beni da deposito IVA', 'uscita', '0', 'TD22'),
+(NULL, "Estrazione beni da deposito IVA con versamento dell\'IVA", 'uscita', '0', 'TD23'),
+(NULL, 'Cessione di beni ammortizzabili e per passaggi interni (ex art.36 DPR 633/72)', 'uscita', '0', 'TD26'),
+(NULL, 'Fattura per autoconsumo o per cessioni gratuite senza rivalsa', 'uscita', '0', 'TD27');

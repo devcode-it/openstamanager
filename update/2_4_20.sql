@@ -167,3 +167,6 @@ SELECT `zz_groups`.`id`, `zz_views`.`id` FROM `zz_groups`, `zz_views` INNER JOIN
 UPDATE `co_iva` SET `codice_natura_fe` = 'N2.2' WHERE `codice_natura_fe` = 'N2';
 UPDATE `co_iva` SET `codice_natura_fe` = 'N3.6' WHERE `codice_natura_fe` = 'N3';
 UPDATE `co_iva` SET `codice_natura_fe` = 'N6.9' WHERE `codice_natura_fe` = 'N6';
+
+-- Aumento testo descrizione per righe attività (da 255 caratteri)
+ALTER TABLE `in_righe_interventi` CHANGE `descrizione` `descrizione` TEXT NULL;

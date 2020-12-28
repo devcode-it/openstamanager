@@ -191,3 +191,6 @@ INSERT INTO `co_tipidocumento` (`id`, `descrizione`, `dir`, `reversed`, `codice_
 (NULL, "Estrazione beni da deposito IVA con versamento dell\'IVA", 'uscita', '0', 'TD23'),
 (NULL, 'Cessione di beni ammortizzabili e per passaggi interni (ex art.36 DPR 633/72)', 'uscita', '0', 'TD26'),
 (NULL, 'Fattura per autoconsumo o per cessioni gratuite senza rivalsa', 'uscita', '0', 'TD27');
+
+-- Setto 10 tentativi per email create più di una settimana fa che non sono state mai processate e non hanno ricevuto ne invio o fallimento
+UPDATE `em_emails` SET `attempt` = '10' WHERE `em_emails`.`attempt` = 0 AND `em_emails`.`failed_at` IS NULL AND `em_emails`.`sent_at` IS NULL AND `em_emails`.`processing_at` IS NULL AND `em_emails`.`created_at` <= DATE_SUB(NOW(), INTERVAL 7 DAY);

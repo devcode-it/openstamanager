@@ -30,12 +30,7 @@ switch (filter('op')) {
 
                 $predefined = post('predefined');
                 if (!empty($predefined)) {
-                    $dbo->query('UPDATE co_tipidocumento SET predefined = 0');
-                }
-
-                $enabled = post('enabled');
-                if (!empty($enabled)) {
-                    $dbo->query('UPDATE co_tipidocumento SET `enabled` = 0');
+                    $dbo->query('UPDATE co_tipidocumento SET predefined = 0 WHERE dir = '.prepare($dir));
                 }
 
                 $dbo->update('co_tipidocumento', [
@@ -44,7 +39,7 @@ switch (filter('op')) {
                     'codice_tipo_documento_fe' => $codice_tipo_documento_fe,
                     'help' => filter('help'),
                     'predefined' => $predefined,
-                    'enabled' => $enabled,
+                    'enabled' => post('enabled'),
                 ], ['id' => $id_record]);
 
                 flash()->info(tr('Salvataggio completato!'));
@@ -104,6 +99,8 @@ switch (filter('op')) {
 
             $dbo->update('co_tipidocumento', [
                 'deleted_at' => date(),
+                'predefined' => 0,
+                'enabled' => 0,
             ], ['id' => $id_record]);
 
             flash()->info(tr('Tipologia di _TYPE_ eliminata con successo.', [

@@ -26,15 +26,15 @@ include_once __DIR__.'/../../core.php';
 
    
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-6">
             {[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$" ]}
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
             {[ "type": "select", "label": "<?php echo tr('Direzione'); ?>", "name": "dir", "value": "$dir$", "values": "list=\"\": \"Non specificato\", \"entrata\": \"<?php echo tr('Entrata'); ?>\", \"uscita\": \"<?php echo tr('Uscita'); ?>\"", "required": 1 ]}
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
             {[ "type": "select", "label": "<?php echo tr('Codice tipo documento FE'); ?>", "name": "codice_tipo_documento_fe", "value": "$codice_tipo_documento_fe$", "values": "query=SELECT codice AS id, CONCAT_WS(' - ', codice, descrizione) AS descrizione FROM fe_tipi_documento", "required": 1 ]}
         </div>
 
@@ -44,6 +44,10 @@ include_once __DIR__.'/../../core.php';
 
         <div class="col-md-4">
             {[ "type": "checkbox", "label": "<?php echo tr('Attivo'); ?>", "name": "enabled", "value": "<?php echo intval($record['enabled']); ?>" ]}
+        </div>
+
+        <div class="col-md-4">
+            {[ "type": "checkbox", "label": "<?php echo tr('Reversed'); ?>", "name": "reversed", "value": "<?php echo intval($record['reversed']); ?>", "readonly": 1 ]}
         </div>
 
         <div class="col-md-12">

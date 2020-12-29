@@ -213,9 +213,10 @@ UPDATE `co_tipidocumento` SET `help` = "Fattura emessa entro il giorno 15 del me
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`, `use_notes`, `use_checklists`) VALUES (NULL, 'Tipi documento', 'Tipi documento', 'tipi_documento', 'SELECT |select| FROM `co_tipidocumento` WHERE 1=1 AND deleted_at IS NULL  HAVING 2=2', '', 'fa fa-angle-right', '2.4.20', '2.4.20', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Tabelle'), '1', '1', '0', '0');
 
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `default`, `visible`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi documento'), 'Attivo', 'co_tipidocumento.enabled', 6, 1, 0, 0, 1),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi documento'), 'Predefinito', 'co_tipidocumento.predefined', 5, 1, 0, 0, 1),1
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi documento'), 'Codice FE', 'co_tipidocumento.codice_tipo_documento_fe', 4, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi documento'), 'Attivo', 'co_tipidocumento.enabled', 7, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi documento'), 'Predefinito', 'co_tipidocumento.predefined', 6, 1, 0, 0, 1),1
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi documento'), 'Codice FE', 'co_tipidocumento.codice_tipo_documento_fe', 5, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi documento'), 'Reversed', 'co_tipidocumento.reversed', 4, 1, 0, 0, 1),1
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi documento'), 'Direzione', 'co_tipidocumento.dir', 3, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi documento'), 'Descrizione', 'co_tipidocumento.descrizione', 2, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi documento'), 'id', 'co_tipidocumento.id', 1, 1, 0, 0, 0);

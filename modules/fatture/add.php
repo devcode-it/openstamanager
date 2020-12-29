@@ -31,6 +31,12 @@ if ($module['name'] == 'Fatture di vendita') {
 
 $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : $user['idanagrafica'];
 
+$idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
+    'predefined' => 1,
+    'dir' => $dir,
+])['id'];
+
+
 ?>
 <form action="" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
@@ -65,7 +71,7 @@ $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : $user['idan
 
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Tipo fattura'); ?>", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, descrizione FROM co_tipidocumento WHERE dir='<?php echo $dir; ?>'" ]}
+			{[ "type": "select", "label": "<?php echo tr('Tipo fattura'); ?>", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, descrizione FROM co_tipidocumento WHERE enabled = 1 AND dir = '<?php echo $dir; ?>' ORDER BY descrizione", "value": "<?php echo $idtipodocumento; ?>" ]}
 		</div>
 
 		<div class="col-md-6">

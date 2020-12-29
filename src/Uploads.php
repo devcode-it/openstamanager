@@ -17,6 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Util\FileSystem;
+
 /**
  * Classe per la gestione degli upload del progetto.
  *
@@ -126,7 +128,7 @@ class Uploads
         // Registrazione del file
         $data['filename'] = $filename;
         $data['original'] = $original;
-        $data['size'] = $source['size'];
+        $data['size'] = FileSystem::fileSize($directory.'/'.$filename);
         self::register($data);
 
         // Operazioni finali

@@ -22,6 +22,7 @@ namespace Models;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Intervention\Image\ImageManagerStatic;
+use Util\FileSystem;
 
 class Upload extends Model
 {
@@ -76,7 +77,7 @@ class Upload extends Model
             return null;
         }
 
-        $model->size = \Util\FileSystem::fileSize($directory.'/'.$filename);
+        $model->size = FileSystem::fileSize($directory.'/'.$filename);
         $model->user()->associate(auth()->getUser());
 
         $model->save();

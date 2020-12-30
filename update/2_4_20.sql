@@ -222,14 +222,14 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi documento'), 'id', 'co_tipidocumento.id', 1, 1, 0, 0, 0);
 
 -- Aggiornate descrizioni aliquote IVA con codice natura 6.()
-UPDATE `co_iva` SET `descrizione`='Art. 74 co. 8 del DPR 633/72 - Cessione di rottami e di altri materiali di recupero' WHERE `descrizione` IN ('Inversione contabile - cessione di rottami e altri materiali di recupero');
-UPDATE `co_iva` SET `descrizione`='Art. 17 co. 5 del DPR 633/72 - Cessione di oro e argento puro' WHERE `descrizione` IN ('Inversione contabile - cessione di oro e argento pure');
-UPDATE `co_iva` SET `descrizione`='Art. 17 co. 6 lett. a) del DPR 633/72 - Subappalto nel settore edile' WHERE `descrizione` IN ('Inversione contabile - subappalto nel settore edile');
-UPDATE `co_iva` SET `descrizione`='Art. 17 co. 6 lett. a-bis) del DPR 633/72 - Cessione di fabbricati' WHERE `descrizione` IN ('Inversione contabile - cessione di fabbricati');
-UPDATE `co_iva` SET `descrizione`='Art. 17 co. 6 lett. b) del DPR 633/72 - Cessione di telefoni cellulari' WHERE `descrizione` IN ('Inversione contabile - cessione di telefoni cellulari');
-UPDATE `co_iva` SET `descrizione`='Art. 17 co. 6 lett. c) del DPR 633/72 - Cessione di prodotti elettronici' WHERE `descrizione` IN ('Inversione contabile - cessione di prodotti elettronici');
-UPDATE `co_iva` SET `descrizione`='Art. 17 co. 6 lett. a-ter) del DPR 633/72 - Prestazioni del comparto edile e settori connessi' WHERE `descrizione` IN ('Inversione contabile - prestazioni comparto edile e settori connessi');
-UPDATE `co_iva` SET `descrizione`='Art. 17 co. 6 lett. d-bis) del DPR 633/72 - Operazioni del settore energetico' WHERE `descrizione` IN ('Inversione contabile - operazioni settore energetico');
+UPDATE `co_iva` SET `descrizione`='Art. 74 co. 8 del DPR 633/72 - Cessione di rottami e di altri materiali di recupero' WHERE `descrizione`='Inversione contabile - cessione di rottami e altri materiali di recupero';
+UPDATE `co_iva` SET `descrizione`='Art. 17 co. 5 del DPR 633/72 - Cessione di oro e argento puro' WHERE `descrizione`='Inversione contabile - cessione di oro e argento pure';
+UPDATE `co_iva` SET `descrizione`='Art. 17 co. 6 lett. a) del DPR 633/72 - Subappalto nel settore edile' WHERE `descrizione`='Inversione contabile - subappalto nel settore edile';
+UPDATE `co_iva` SET `descrizione`='Art. 17 co. 6 lett. a-bis) del DPR 633/72 - Cessione di fabbricati' WHERE `descrizione`='Inversione contabile - cessione di fabbricati';
+UPDATE `co_iva` SET `descrizione`='Art. 17 co. 6 lett. b) del DPR 633/72 - Cessione di telefoni cellulari' WHERE `descrizione`='Inversione contabile - cessione di telefoni cellulari';
+UPDATE `co_iva` SET `descrizione`='Art. 17 co. 6 lett. c) del DPR 633/72 - Cessione di prodotti elettronici' WHERE `descrizione`='Inversione contabile - cessione di prodotti elettronici';
+UPDATE `co_iva` SET `descrizione`='Art. 17 co. 6 lett. a-ter) del DPR 633/72 - Prestazioni del comparto edile e settori connessi' WHERE `descrizione`='Inversione contabile - prestazioni comparto edile e settori connessi';
+UPDATE `co_iva` SET `descrizione`='Art. 17 co. 6 lett. d-bis) del DPR 633/72 - Operazioni del settore energetico' WHERE `descrizione`='Inversione contabile - operazioni settore energetico';
 
 INSERT INTO `co_iva` (`id`, `descrizione`, `percentuale`, `indetraibile`, `esente`, `dicitura`, `codice_natura_fe`, `deleted_at`, `codice`, `esigibilita`, `default`, `tipo_xon_xoff`, `sync_id`, `sync_upd`, `last_sync_at`) VALUES (NULL, 'Art. 17 co. 6 lett. d-ter) del DPR 633/72 - Operazioni del settore energetico', '0.00', '0.00', '1', NULL, 'N6.8', NULL, NULL, 'I', '1', '3R', NULL, NULL, NULL)
 

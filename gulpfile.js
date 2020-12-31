@@ -51,8 +51,8 @@ const inquirer = require('inquirer');
 
 // Configurazione
 const config = {
-    production: 'assets/dist', // Cartella di destinazione
-    development: 'assets/src', // Cartella dei file di personalizzazione
+    production: 'public/assets', // Cartella di destinazione
+    development: 'legacy/assets/src', // Cartella dei file di personalizzazione
     debug: false,
     nodeDirectory: './node_modules', // Percorso per node_modules
     paths: {

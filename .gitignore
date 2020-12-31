@@ -73,7 +73,7 @@ package-lock.json
 *.new
 *.old
 *.txt
-assets/dist/
+/public/assets/
 backup/*
 !backup/.htaccess
 custom/
@@ -98,3 +98,17 @@ database.json
 /tests/_temp/*
 codeception.yml
 !.gitkeep
+
+## Laravel
+/node_modules
+/public/hot
+/public/storage
+/storage/*.key
+/vendor
+.env
+.env.backup
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log

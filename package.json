@@ -64,16 +64,22 @@
         "inquirer": "^4.0.1",
         "main-bower-files": "^2.13.1",
         "md5-file": "^5.0.0",
-        "shelljs": "^0.7.7"
+        "shelljs": "^0.7.7",
+        "axios": "^0.19",
+        "cross-env": "^7.0",
+        "laravel-mix": "^5.0.1",
+        "lodash": "^4.17.19",
+        "resolve-url-loader": "^3.1.0"
     },
     "scripts": {
         "gulp": "gulp",
-        "release-OSM": "yarn run develop-OSM && php composer.phar install --no-dev && gulp release",
-        "develop-OSM": "yarn install && yarn run install-OSM && yarn run assets-OSM",
-        "install-OSM": "php composer.phar update",
-        "assets-OSM": "yarn upgrade && yarn run build-OSM",
-        "build-OSM": "gulp",
-        "dump-OSM": "php composer.phar dump-autoload",
-        "windows-fix": "yarn global add windows-build-tools"
+        "develop-OSM": "php composer.phar update && yarn install && npm run gulp",
+        "dev": "npm run development",
+        "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --config=node_modules/laravel-mix/setup/webpack.config.js",
+        "watch": "npm run development -- --watch",
+        "watch-poll": "npm run watch -- --watch-poll",
+        "hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --disable-host-check --config=node_modules/laravel-mix/setup/webpack.config.js",
+        "prod": "npm run production",
+        "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --config=node_modules/laravel-mix/setup/webpack.config.js"
     }
 }

@@ -15,7 +15,7 @@
     }],
     "type": "project",
     "require": {
-        "php": ">=5.6.4",
+        "php": "^7.3|^8.0",
         "ext-curl": "*",
         "ext-dom": "*",
         "ext-fileinfo": "*",
@@ -29,97 +29,122 @@
         "ext-xsl": "*",
         "ext-zip": "*",
         "aluguest/ical-easy-reader": "^1.5",
+        "barryvdh/laravel-debugbar": "^3.5",
         "danielstjules/stringy": "^3.1",
         "davidepastore/codice-fiscale": "^0.6.0",
-        "dragonmantank/cron-expression": "^1.0",
         "ezyang/htmlpurifier": "^4.8",
+        "fideloper/proxy": "^4.4",
         "filp/whoops": "^2.1",
-        "guzzlehttp/guzzle": "^6.3",
+        "fruitcake/laravel-cors": "^2.0",
+        "guzzlehttp/guzzle": "^7.0.1",
         "ifsnop/mysqldump-php": "^2.3",
-        "illuminate/database": "~5.4.0",
         "intervention/image": "^2.3",
+        "laravel/framework": "^8.12",
+        "laravel/tinker": "^2.5",
         "league/csv": "^8.2",
-        "maximebf/debugbar": "^1.15",
-        "monolog/monolog": "^1.22",
         "mpdf/mpdf": "^v8.0.7",
         "mpociot/vat-calculator": "^2.3",
         "owasp/csrf-protector-php": "^1.0",
         "phpmailer/phpmailer": "^6.0",
         "respect/validation": "^1.1",
         "servo/fluidxml": "^1.21",
-        "slim/flash": "^0.4.0",
         "spipu/html2pdf": "^5.0",
-        "symfony/filesystem": "^3.3",
-        "symfony/finder": "^3.3",
         "symfony/polyfill-ctype": "^1.8",
         "symfony/polyfill-php70": "^1.8",
-        "symfony/translation": "^3.3",
-        "symfony/var-dumper": "^3.3",
-        "willdurand/geocoder": "^3.3"
+        "willdurand/geocoder": "^3.3",
+        "zerospam/laravel-gettext": "^7.2"
     },
     "require-dev": {
-        "codeception/codeception": "^3.0",
-        "friendsofphp/php-cs-fixer": "^2.10"
+        "facade/ignition": "^2.5",
+        "fakerphp/faker": "^1.9.1",
+        "friendsofphp/php-cs-fixer": "^2.10",
+        "mockery/mockery": "^1.4.2",
+        "nunomaduro/collision": "^5.0",
+        "phpunit/phpunit": "^9.3.3"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": []
+        }
     },
     "autoload": {
         "psr-4": {
-            "": "src/",
-            "Update\\": "update/",
-            "Modules\\Aggiornamenti\\": ["modules/aggiornamenti/custom/src/", "modules/aggiornamenti/src/"],
-            "Modules\\Anagrafiche\\": ["modules/anagrafiche/custom/src/", "modules/anagrafiche/src/"],
-            "Modules\\Backups\\": ["modules/backups/custom/src/", "modules/backups/src/"],
-            "Modules\\Emails\\": ["modules/emails/custom/src/", "modules/emails/src/"],
-            "Modules\\Articoli\\": ["modules/articoli/custom/src/", "modules/articoli/src/"],
-            "Modules\\Checklists\\": ["modules/checklists/custom/src/", "modules/checklists/src/"],
-            "Modules\\Ritenute\\": ["modules/ritenute/custom/src/", "modules/ritenute/src/"],
-            "Modules\\RitenuteContributi\\": ["modules/ritenute_contributi/custom/src/", "modules/ritenute_contributi/src/"],
-            "Modules\\Rivalse\\": ["modules/rivalse/custom/src/", "modules/rivalse/src/"],
-            "Modules\\Newsletter\\": ["modules/newsletter/custom/src/", "modules/newsletter/src/"],
-            "Modules\\Iva\\": ["modules/iva/custom/src/", "modules/iva/src/"],
-            "Modules\\DDT\\": ["modules/ddt/custom/src/", "modules/ddt/src/"],
-            "Modules\\Fatture\\": ["modules/fatture/custom/src/", "modules/fatture/src/"],
-            "Modules\\Ordini\\": ["modules/ordini/custom/src/", "modules/ordini/src/"],
-            "Modules\\Preventivi\\": ["modules/preventivi/custom/src/", "modules/preventivi/src/"],
-            "Modules\\Contratti\\": ["modules/contratti/custom/src/", "modules/contratti/src/"],
-            "Modules\\Interventi\\": ["modules/interventi/custom/src/", "modules/interventi/src/"],
-            "Modules\\Pagamenti\\": ["modules/pagamenti/custom/src/", "modules/pagamenti/src/"],
-            "Modules\\Statistiche\\": ["modules/statistiche/custom/src/", "modules/statistiche/src/"],
-            "Modules\\Scadenzario\\": ["modules/scadenzario/custom/src/", "modules/scadenzario/src/"],
-            "Modules\\PrimaNota\\": ["modules/primanota/custom/src/", "modules/primanota/src/"],
-            "Modules\\Utenti\\": ["modules/utenti/custom/src/", "modules/utenti/src/"],
-            "Modules\\StatoServizi\\": ["modules/stato_servizi/custom/src/", "modules/stato_servizi/src/"],
-            "Modules\\StatiIntervento\\": ["modules/stati_intervento/custom/src/", "modules/stati_intervento/src/"],
-            "Modules\\StatiPreventivo\\": ["modules/stati_preventivo/custom/src/", "modules/stati_preventivo/src/"],
-            "Modules\\StatiContratto\\": ["modules/stati_contratto/custom/src/", "modules/stati_contratto/src/"],
-            "Modules\\TipiIntervento\\": ["modules/tipi_intervento/custom/src/", "modules/tipi_intervento/src/"],
-            "Modules\\CategorieDocumentali\\": ["modules/categorie_documenti/custom/src/", "modules/categorie_documenti/src/"],
-            "Modules\\PianiSconto\\": ["modules/piano_sconto/custom/src/", "modules/piano_sconto/src/"],
-            "Modules\\Impianti\\": ["modules/impianti/custom/src/", "modules/impianti/src/"],
-            "Modules\\Impostazioni\\": ["modules/impostazioni/custom/src/", "modules/impostazioni/src/"],
-            "Plugins\\ExportFE\\": ["plugins/exportFE/custom/src/", "plugins/exportFE/src/"],
-            "Plugins\\ImportFE\\": ["plugins/importFE/custom/src/", "plugins/importFE/src/"],
-            "Plugins\\ReceiptFE\\": ["plugins/receiptFE/custom/src/", "plugins/receiptFE/src/"],
-            "Plugins\\DichiarazioniIntento\\": ["plugins/dichiarazioni_intento/custom/src/", "plugins/dichiarazioni_intento/src/"],
-            "Plugins\\PianificazioneInterventi\\": ["plugins/pianificazione_interventi/custom/src/", "plugins/pianificazione_interventi/src/"],
-            "Plugins\\PianificazioneFatturazione\\": ["plugins/pianificazione_fatturazione/custom/src/", "plugins/pianificazione_fatturazione/src/"],
-            "Plugins\\StatisticheArticoli\\": ["plugins/statistiche_articoli/custom/src/", "plugins/statistiche_articoli/src/"],
-            "Plugins\\DettagliArticolo\\": ["plugins/dettagli_articolo/custom/src/", "plugins/dettagli_articolo/src/"]
+            "": "legacy/src/",
+            "Modules\\Aggiornamenti\\": ["legacy/modules/aggiornamenti/custom/src/", "legacy/modules/aggiornamenti/src/"],
+            "Modules\\Anagrafiche\\": ["legacy/modules/anagrafiche/custom/src/", "legacy/modules/anagrafiche/src/"],
+            "Modules\\Backups\\": ["legacy/modules/backups/custom/src/", "legacy/modules/backups/src/"],
+            "Modules\\Banche\\": ["legacy/modules/banche/custom/src/", "legacy/modules/banche/src/"],
+            "Modules\\Emails\\": ["legacy/modules/emails/custom/src/", "legacy/modules/emails/src/"],
+            "Modules\\Articoli\\": ["legacy/modules/articoli/custom/src/", "legacy/modules/articoli/src/"],
+            "Modules\\Checklists\\": ["legacy/modules/checklists/custom/src/", "legacy/modules/checklists/src/"],
+            "Modules\\Ritenute\\": ["legacy/modules/ritenute/custom/src/", "legacy/modules/ritenute/src/"],
+            "Modules\\RitenuteContributi\\": ["legacy/modules/ritenute_contributi/custom/src/", "legacy/modules/ritenute_contributi/src/"],
+            "Modules\\Rivalse\\": ["legacy/modules/rivalse/custom/src/", "legacy/modules/rivalse/src/"],
+            "Modules\\Newsletter\\": ["legacy/modules/newsletter/custom/src/", "legacy/modules/newsletter/src/"],
+            "Modules\\Iva\\": ["legacy/modules/iva/custom/src/", "legacy/modules/iva/src/"],
+            "Modules\\DDT\\": ["legacy/modules/ddt/custom/src/", "legacy/modules/ddt/src/"],
+            "Modules\\Fatture\\": ["legacy/modules/fatture/custom/src/", "legacy/modules/fatture/src/"],
+            "Modules\\Ordini\\": ["legacy/modules/ordini/custom/src/", "legacy/modules/ordini/src/"],
+            "Modules\\Preventivi\\": ["legacy/modules/preventivi/custom/src/", "legacy/modules/preventivi/src/"],
+            "Modules\\Contratti\\": ["legacy/modules/contratti/custom/src/", "legacy/modules/contratti/src/"],
+            "Modules\\Interventi\\": ["legacy/modules/interventi/custom/src/", "legacy/modules/interventi/src/"],
+            "Modules\\Pagamenti\\": ["legacy/modules/pagamenti/custom/src/", "legacy/modules/pagamenti/src/"],
+            "Modules\\Statistiche\\": ["legacy/modules/statistiche/custom/src/", "legacy/modules/statistiche/src/"],
+            "Modules\\Scadenzario\\": ["legacy/modules/scadenzario/custom/src/", "legacy/modules/scadenzario/src/"],
+            "Modules\\PrimaNota\\": ["legacy/modules/primanota/custom/src/", "legacy/modules/primanota/src/"],
+            "Modules\\Utenti\\": ["legacy/modules/utenti/custom/src/", "legacy/modules/utenti/src/"],
+            "Modules\\StatoServizi\\": ["legacy/modules/stato_servizi/custom/src/", "legacy/modules/stato_servizi/src/"],
+            "Modules\\StatiIntervento\\": ["legacy/modules/stati_intervento/custom/src/", "legacy/modules/stati_intervento/src/"],
+            "Modules\\StatiPreventivo\\": ["legacy/modules/stati_preventivo/custom/src/", "legacy/modules/stati_preventivo/src/"],
+            "Modules\\StatiContratto\\": ["legacy/modules/stati_contratto/custom/src/", "legacy/modules/stati_contratto/src/"],
+            "Modules\\TipiIntervento\\": ["legacy/modules/tipi_intervento/custom/src/", "legacy/modules/tipi_intervento/src/"],
+            "Modules\\CategorieDocumentali\\": ["legacy/modules/categorie_documenti/custom/src/", "legacy/modules/categorie_documenti/src/"],
+            "Modules\\PianiSconto\\": ["legacy/modules/piano_sconto/custom/src/", "legacy/modules/piano_sconto/src/"],
+            "Modules\\Impianti\\": ["legacy/modules/impianti/custom/src/", "legacy/modules/impianti/src/"],
+            "Modules\\Impostazioni\\": ["legacy/modules/impostazioni/custom/src/", "legacy/modules/impostazioni/src/"],
+            "Plugins\\ExportFE\\": ["legacy/plugins/exportFE/custom/src/", "legacy/plugins/exportFE/src/"],
+            "Plugins\\ImportFE\\": ["legacy/plugins/importFE/custom/src/", "legacy/plugins/importFE/src/"],
+            "Plugins\\ReceiptFE\\": ["legacy/plugins/receiptFE/custom/src/", "legacy/plugins/receiptFE/src/"],
+            "Plugins\\DichiarazioniIntento\\": ["legacy/plugins/dichiarazioni_intento/custom/src/", "legacy/plugins/dichiarazioni_intento/src/"],
+            "Plugins\\PianificazioneInterventi\\": ["legacy/plugins/pianificazione_interventi/custom/src/", "legacy/plugins/pianificazione_interventi/src/"],
+            "Plugins\\PianificazioneFatturazione\\": ["legacy/plugins/pianificazione_fatturazione/custom/src/", "legacy/plugins/pianificazione_fatturazione/src/"],
+            "Plugins\\StatisticheArticoli\\": ["legacy/plugins/statistiche_articoli/custom/src/", "legacy/plugins/statistiche_articoli/src/"],
+            "Plugins\\DettagliArticolo\\": ["legacy/plugins/dettagli_articolo/custom/src/", "legacy/plugins/dettagli_articolo/src/"],
+
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
         },
         "files": [
-            "lib/functions.php",
-            "lib/common.php",
-            "lib/helpers.php",
-            "lib/util.php",
-            "lib/deprecated.php"
+            "legacy/lib/functions.php",
+            "legacy/lib/common.php",
+            "legacy/lib/helpers.php",
+            "legacy/lib/util.php",
+            "legacy/lib/deprecated.php"
         ]
     },
-    "config": {
-        "sort-packages": true,
-        "optimize-autoloader": true,
-        "apcu-autoloader": true,
-        "prefer-stable": true,
-        "platform": {
-            "php": "5.6.4"
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
         }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "scripts": {
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ],
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-create-project-cmd": [
+            "@php artisan key:generate --ansi"
+        ]
     }
 }

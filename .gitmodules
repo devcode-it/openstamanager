@@ -1,0 +1,4 @@
+[submodule "legacy"]
+	path = legacy
+	url = https://github.com/devcode-it/openstamanager.git
+	branch = legacy

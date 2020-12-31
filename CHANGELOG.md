@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.20 (2020-12-31)](#2420-2020-12-31)
 - [2.4.19 (2020-11-10)](#2419-2020-11-10)
 - [2.4.18 (2020-10-30)](#2418-2020-10-30)
 - [2.4.17.1 (2020-09-18)](#24171-2020-09-18)
@@ -29,6 +30,40 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.3 (2018-02-16)](#23-2018-02-16)
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
+
+
+## 2.4.20 (2020-12-31)
+
+### Aggiunto (Added)
+ - Aggiunta alert sullo stato di **disponibilità dei tecnici**
+ - Aggiunta verifica massiva su correttezza fatture elettroniche
+ - Introduzione **nuovo sistema di esportazione CSV massivo** per impianti, anagrafiche e fatture
+ - Aggiunta alert per **spazio su disco in esaurimento**
+ - Aggiunta gestione **nomi e cognomi** durante l'importazione anagrafiche da **CSV**
+ - Aggiunta flag di **rinnovo automatico** per i contratti
+ - Aggiunta del segmento predefinito **Attività non completate**
+ - Aggiunta impostazione per definire se poter selezionare articoli con quantità minore o uguale a zero nelle vendite
+ - Aggiunta **importazione CSV articoli con prezzi specifici** (prezzo di acquisto/vendita per range, scontistica e prezzo per cliente/fornitore)
+ - Aggiunta modifica sconto massivo su listini articoli
+ - Aggiunta **stampa multipla per etichette articoli**
+ - Aggiunta grafico delle ore lavorate dai tecnici mensilmente
+ - Aggiunta nuova **azione massiva per fatturazione ordini cliente**
+ - Aggiunta nuovo modulo per la creazione dei tipi di documento
+ 
+### Modificato (Changed)
+ - Miglioramento messaggi di errore per servizi di **fatturazione elettronica**
+ - Miglioramento funzionalità **listini**
+ - Separazione scadenzario Ri.Ba. per clienti e fornitori
+ - Miglioramento movimentazione articoli tramite lettore barcode
+
+### Fixed
+ - Correzione impostazione conto economico in fase di fatturazione contratto
+ - Correzione dichiarazioni di intento
+ - Varie correzioni durante la creazione fatture
+ - Correzione calcolo bollo per nuove nature iva
+ - Correzione widget dei contratti da fatturare
+ - Correzione nazione mancante durante importazione CSV delle anagrafiche
+
 
 ## 2.4.19 (2020-11-10)
 

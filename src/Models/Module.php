@@ -94,11 +94,11 @@ class Module extends Model
      */
     public function getPermissionAttribute()
     {
-        if (Auth::user()->is_admin) {
+        if (auth()->user()->is_admin) {
             return 'rw';
         }
 
-        $group = Auth::user()->group->id;
+        $group = auth()->user()->group->id;
 
         $pivot = $this->pivot ?: $this->groups->first(function ($item) use ($group) {
             return $item->id == $group;
@@ -114,7 +114,7 @@ class Module extends Model
      */
     public function getViewsAttribute()
     {
-        $user = Auth::user();
+        $user = auth()->user();
 
         $views = database()->fetchArray('SELECT * FROM `zz_views` WHERE `id_module` = :module_id AND
         `id` IN (

@@ -19,7 +19,7 @@
 
 include_once __DIR__.'/init.php';
 
-$show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
+$show_prezzi = auth()->user()['gruppo'] != 'Tecnici' || (auth()->user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
 
 $righe = $intervento->getRighe();
 if (!$righe->isEmpty()) {

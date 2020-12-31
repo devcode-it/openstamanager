@@ -117,21 +117,21 @@ foreach ($replace as $prefix => $values) {
 }
 
 // Header di default
-$header_file = App::filepath('templates/base|custom|/header.php');
+$header_file = AppLegacy::filepath('templates/base|custom|/header.php');
 $default_header = include $header_file;
 $default_header = !empty($options['hide-header']) ? '' : $default_header;
 
 // Footer di default
-$footer_file = App::filepath('templates/base|custom|/footer.php');
+$footer_file = AppLegacy::filepath('templates/base|custom|/footer.php');
 $default_footer = include $footer_file;
 $default_footer = !empty($options['hide-footer']) ? '' : $default_footer;
 
 // Logo di default
-$default_logo = App::filepath('templates/base|custom|/logo_azienda.jpg');
+$default_logo = AppLegacy::filepath('templates/base|custom|/logo_azienda.jpg');
 
 // Logo generico
 if (!empty(setting('Logo stampe'))) {
-    $custom_logo = App::filepath('files/anagrafiche/'.setting('Logo stampe'));
+    $custom_logo = AppLegacy::filepath('files/anagrafiche/'.setting('Logo stampe'));
 }
 
 // Logo specifico della stampa
@@ -148,7 +148,7 @@ $replaces = array_merge($replaces, [
     'default_logo' => $default_logo,
     'logo' => $logo,
     'base_dir()' => base_dir(),
-    'base_link()' => base_path(),
+    'base_link()' => base_url(),
     'directory' => Prints::get($id_print)['full_directory'],
     'footer' => !empty($footer) ? $footer : '',
     'dicitura_fissa_fattura' => setting('Dicitura fissa fattura').((setting('Regime Fiscale') != 'RF02' && setting('Regime Fiscale') != 'RF19' && setting('Regime Fiscale') != 'RF18' && $tipo_cliente != 'Privato') ? tr('Documento privo di valenza fiscale (art 21 dpr 633/72).') : ''),

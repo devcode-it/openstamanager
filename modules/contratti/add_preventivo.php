@@ -37,7 +37,7 @@ if (!empty($id_documento)) {
         'tipo_documento_finale' => Contratto::class,
     ];
 
-    echo App::load('importa.php', [], $options, true);
+    echo AppLegacy::load('importa.php', [], $options, true);
 
     return;
 }

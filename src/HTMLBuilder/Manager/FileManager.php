@@ -129,7 +129,7 @@ class FileManager implements ManagerInterface
 
                     $result .= '
 
-                <a href="'.base_path().'/view.php?file_id='.$r['id'].'" target="_blank">
+                <a href="'.base_url().'/view.php?file_id='.$r['id'].'" target="_blank">
                     <i class="fa fa-external-link"></i> '.$r['name'].'
                 </a>
 
@@ -139,14 +139,14 @@ class FileManager implements ManagerInterface
             <td>'.\Translator::timestampToLocale($r['created_at']).'</td>
 
             <td class="text-center">
-                <a class="btn btn-xs btn-primary" href="'.base_path().'/actions.php?id_module='.$options['id_module'].'&op=download-allegato&id='.$r['id'].'&filename='.$r['filename'].'" target="_blank">
+                <a class="btn btn-xs btn-primary" href="'.base_url().'/actions.php?id_module='.$options['id_module'].'&op=download-allegato&id='.$r['id'].'&filename='.$r['filename'].'" target="_blank">
                     <i class="fa fa-download"></i>
                 </a>';
 
                     // Anteprime supportate dal browser
                     if ($file->hasPreview()) {
                         $result .= '
-                <button class="btn btn-xs btn-info" type="button" data-title="'.prepareToField($r['name']).' <small style=\'color:white\'><i>('.$r['filename'].')</i></small>" data-href="'.base_path().'/view.php?file_id='.$r['id'].'">
+                <button class="btn btn-xs btn-info" type="button" data-title="'.prepareToField($r['name']).' <small style=\'color:white\'><i>('.$r['filename'].')</i></small>" data-href="'.base_url().'/view.php?file_id='.$r['id'].'">
                     <i class="fa fa-eye"></i>
                 </button>';
                     } else {
@@ -242,7 +242,7 @@ $(document).ready(function() {
         addRemoveLinks: false,
         autoProcessQueue: true,
         autoQueue: true,
-        url: "'.base_path().'/actions.php?op=aggiungi-allegato&id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id_plugin='.$options['id_plugin'].'",
+        url: "'.base_url().'/actions.php?op=aggiungi-allegato&id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id_plugin='.$options['id_plugin'].'",
         init: function (file, xhr, formData) {
             this.on("success", function (file) {
                 dragdrop.removeFile(file);

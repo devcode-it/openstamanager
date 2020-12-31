@@ -231,8 +231,6 @@ class CSV extends CSVImporter
         // Fix per campi con contenuti derivati da query implicite
         if (!empty($record['id_nazione'])) {
             $record['id_nazione'] = $database->fetchOne('SELECT id FROM an_nazioni WHERE LOWER(nome) = LOWER('.prepare($record['id_nazione']).') OR LOWER(iso2) = LOWER('.prepare($record['id_nazione']).')')['id'];
-        } else {
-            unset($record['id_nazione']);
         }
 
         // Separazione dei campi relativi alla sede legale

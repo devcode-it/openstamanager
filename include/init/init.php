@@ -58,7 +58,7 @@ if ($has_azienda && $has_user && $has_settings) {
 
 $pageTitle = tr('Inizializzazione');
 
-include_once App::filepath('include|custom|', 'top.php');
+include_once AppLegacy::filepath('include|custom|', 'top.php');
 
 // Controllo sull'esistenza di nuovi parametri di configurazione
 if (post('action') == 'init') {
@@ -89,7 +89,7 @@ if (post('action') == 'init') {
         // Creazione utente Amministratore
         $dbo->insert('zz_users', [
             'username' => post('admin_username'),
-            'password' => Auth::hashPassword(post('admin_password')),
+            'password' => auth()->hashPassword(post('admin_password')),
             'email' => post('admin_email'),
             'idgruppo' => $admin['id'],
             'idanagrafica' => isset($id_record) ? $id_record : 0,
@@ -114,11 +114,12 @@ if (post('action') == 'init') {
         }
     }
 
-    redirect(base_path(), 'js');
-    exit();
+    redirect_legacy(base_url(), 'js');
+    throw new \App\Exceptions\LegacyExitException;
+
 }
 
-$img = App::getPaths()['img'];
+$img = AppLegacy::getPaths()['img'];
 
 // Visualizzazione dell'interfaccia di impostazione iniziale, nel caso il file di configurazione sia mancante oppure i paramentri non siano sufficienti
 echo '
@@ -260,6 +261,7 @@ echo '
 
 <script>$(document).ready(init)</script>';
 
-include_once App::filepath('include|custom|', 'bottom.php');
+include_once AppLegacy::filepath('include|custom|', 'bottom.php');
 
-exit();
+throw new \App\Exceptions\LegacyExitException;
+

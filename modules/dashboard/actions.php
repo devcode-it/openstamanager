@@ -32,12 +32,12 @@ switch (filter('op')) {
         $start = filter('start');
         $end = filter('end');
 
-        $stati = (array) $_SESSION['dashboard']['idstatiintervento'];
+        $stati = session('dashboard.idstatiintervento', ["'-1'"]);
         $stati[] = prepare('');
 
-        $tipi = (array) $_SESSION['dashboard']['idtipiintervento'];
-        $zone = (array) $_SESSION['dashboard']['idzone'];
-        $tecnici = (array) $_SESSION['dashboard']['idtecnici'];
+        $tipi =  session('dashboard.idtipiintervento', ["'-1'"]);
+        $zone =  session('dashboard.idzone', ["'-1'"]);
+        $tecnici =  session('dashboard.idtecnici', ["'-1'"]);
 
         $query = 'SELECT
             in_interventi_tecnici.id,
@@ -101,7 +101,7 @@ switch (filter('op')) {
                 'title' => '<div style=\'position:absolute; top:7%; right:3%;\' > '.(($sessione['is_completato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '').' '.(($sessione['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'</div>'.'<b>Int. '.$sessione['codice'].'</b> '.$sessione['cliente'].'<br><b>'.tr('Tecnici').':</b> '.$sessione['nome_tecnico'],
                 'start' => $sessione['orario_inizio'],
                 'end' => $sessione['orario_fine'],
-                'url' => base_path().'/editor.php?id_module='.$modulo_interventi->id.'&id_record='.$sessione['idintervento'],
+                'url' => base_url().'/editor.php?id_module='.$modulo_interventi->id.'&id_record='.$sessione['idintervento'],
                 'backgroundColor' => $sessione['colore'],
                 'textColor' => color_inverse($sessione['colore']),
                 'borderColor' => ($sessione['colore_tecnico'] == '#FFFFFF') ? color_darken($sessione['colore_tecnico'], 100) : $sessione['colore_tecnico'],

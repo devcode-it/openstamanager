@@ -175,11 +175,11 @@ if (!empty($query)) {
 
                 // Link per i moduli
                 if (empty($id_plugin)) {
-                    $column['data-link'] = base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.$hash;
+                    $column['data-link'] = base_url().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.$hash;
                 }
                 // Link per i plugin
                 else {
-                    $column['data-link'] = base_path().'/add.php?id_module='.$id_module.'&id_record='.$id_record.'&id_plugin='.$id_plugin.'&id_parent='.$id_parent.'&edit=1'.$hash;
+                    $column['data-link'] = base_url().'/add.php?id_module='.$id_module.'&id_record='.$id_record.'&id_plugin='.$id_plugin.'&id_parent='.$id_parent.'&edit=1'.$hash;
 
                     $column['data-type'] = 'dialog';
                 }
@@ -192,7 +192,7 @@ if (!empty($query)) {
             }
 
             // Replace base_link() per le query
-            $value = str_replace('base_link()', base_path(), $value);
+            $value = str_replace('base_link()', base_url(), $value);
             $result[] = str_replace('|attr|', implode(' ', $attributes), '<div |attr|>'.$value.'</div>');
         }
 

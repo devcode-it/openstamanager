@@ -133,7 +133,7 @@ switch ($resource) {
             if (setting('Permetti inserimento sessioni degli altri tecnici')) {
             } else {
                 //come tecnico posso aprire attività solo a mio nome
-                $user = Auth::user();
+                $user = auth()->user();
                 if ($user['gruppo'] == 'Tecnici' && !empty($user['idanagrafica'])) {
                     $where[] = 'an_anagrafiche.idanagrafica='.$user['idanagrafica'];
                 }
@@ -261,7 +261,7 @@ switch ($resource) {
         break;
 
     case 'sedi_azienda':
-        $user = Auth::user();
+        $user = auth()->user();
         $id_azienda = setting('Azienda predefinita');
 
         $query = "SELECT * FROM (SELECT '0' AS id, CONCAT_WS(' - ', \"".tr('Sede legale')."\" , (SELECT CONCAT (citta, IF(indirizzo!='',CONCAT(' (', indirizzo, ')'), ''),' (', ragione_sociale,')') FROM an_anagrafiche |where|)) AS descrizione UNION SELECT id, CONCAT_WS(' - ', nomesede, CONCAT(citta, IF(indirizzo!='',CONCAT(' (', indirizzo, ')'), '')) ) FROM an_sedi |where|) AS tab |filter| ORDER BY descrizione";

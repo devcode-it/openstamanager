@@ -34,7 +34,7 @@ WHERE co_documenti.id='.prepare($id_record));
 if (!empty(setting('Logo stampe'))) {
     $logo_azienda = base_url().'/'.Models\Upload::where('filename', setting('Logo stampe'))->first()->fileurl;
 } else {
-    $logo_azienda = str_replace(base_dir(), base_url(), App::filepath('templates/base|custom|/logo_azienda.jpg'));
+    $logo_azienda = str_replace(base_dir(), base_url(), AppLegacy::filepath('templates/base|custom|/logo_azienda.jpg'));
     $logo_azienda = str_replace('\\', '/', $logo_azienda);
 }
 
@@ -49,7 +49,7 @@ elseif ($r['idconto_fornitore'] != '') {
     $conto_descrizione = $dbo->fetchOne('SELECT CONCAT ((SELECT numero FROM co_pianodeiconti2 WHERE id=co_pianodeiconti3.idpianodeiconti2), ".", numero, " ", descrizione) AS descrizione FROM co_pianodeiconti3 WHERE id='.prepare($conto))['descrizione'];
 }
 
-$r_user = $dbo->fetchOne('SELECT * FROM an_anagrafiche WHERE idanagrafica='.prepare(Auth::user()['idanagrafica']));
+$r_user = $dbo->fetchOne('SELECT * FROM an_anagrafiche WHERE idanagrafica='.prepare(auth()->user()['idanagrafica']));
 $r_company = $dbo->fetchOne('SELECT * FROM an_anagrafiche WHERE idanagrafica='.prepare(setting('Azienda predefinita')));
 
 // Variabili da sostituire

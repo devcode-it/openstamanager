@@ -15,7 +15,12 @@
     }],
     "type": "project",
     "require": {
-        "php": ">=5.6.4",
+        "php": "^7.3|^8.0",
+        "fideloper/proxy": "^4.4",
+        "fruitcake/laravel-cors": "^2.0",
+        "guzzlehttp/guzzle": "^7.0.1",
+        "laravel/framework": "^8.12",
+        "laravel/tinker": "^2.5",
         "ext-curl": "*",
         "ext-dom": "*",
         "ext-fileinfo": "*",
@@ -34,7 +39,6 @@
         "dragonmantank/cron-expression": "^1.0",
         "ezyang/htmlpurifier": "^4.8",
         "filp/whoops": "^2.1",
-        "guzzlehttp/guzzle": "^6.3",
         "ifsnop/mysqldump-php": "^2.3",
         "illuminate/database": "~5.4.0",
         "intervention/image": "^2.3",
@@ -59,7 +63,12 @@
     },
     "require-dev": {
         "codeception/codeception": "^3.0",
-        "friendsofphp/php-cs-fixer": "^2.10"
+        "friendsofphp/php-cs-fixer": "^2.10",
+        "facade/ignition": "^2.5",
+        "fakerphp/faker": "^1.9.1",
+        "mockery/mockery": "^1.4.2",
+        "nunomaduro/collision": "^5.0",
+        "phpunit/phpunit": "^9.3.3"
     },
     "autoload": {
         "psr-4": {

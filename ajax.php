@@ -45,7 +45,7 @@ switch (filter('op')) {
         }
 
         if (!$found) {
-            array_push($_SESSION[$array[0]][$array[1]], $value);
+            $_SESSION[$array[0]][$array[1]][] =  $value;
         }
 
         // print_r($_SESSION[$array[0]][$array[1]]);
@@ -82,7 +82,7 @@ switch (filter('op')) {
             $posizione .= ', '.get('id_record');
         }
 
-        $user = Auth::user();
+        $user = auth()->user();
         $interval = setting('Timeout notifica di presenza (minuti)') * 60 * 2;
 
         $dbo->query('UPDATE zz_semaphores SET updated = NOW() WHERE id_utente = :user_id AND posizione = :position', [

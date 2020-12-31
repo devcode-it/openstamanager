@@ -106,7 +106,7 @@ switch (filter('op')) {
     case 'self_update':
         $password = filter('password');
 
-        $utente = Auth::user();
+        $utente = auth()->user();
 
         if (!empty($password)) {
             $utente->password = $password;
@@ -116,7 +116,7 @@ switch (filter('op')) {
 
         $utente->save();
 
-        redirect(base_path().'/modules/utenti/info.php');
+        redirect_legacy(base_url().'/modules/utenti/info.php');
 
         break;
 

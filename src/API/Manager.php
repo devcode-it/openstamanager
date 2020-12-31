@@ -71,7 +71,7 @@ class Manager
      */
     public function retrieve($request)
     {
-        $user = Auth::user();
+        $user = auth()->user();
 
         $where = [];
         $order = [];

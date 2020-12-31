@@ -34,11 +34,11 @@ echo '
             </div>
 
             <div class="panel-body">
-                <button type="button" class="btn btn-primary col-md-3" data-toggle="modal" data-title="'.tr('Stampa registro IVA vendite').'" data-href="'.base_path().'/modules/stampe_contabili/stampe_contabili.php?dir=entrata&nome_stampa=Registro IVA&id_record='.$id_record.'" ><i class="fa fa-print fa-2x"></i><br>'.tr('Stampa registro').'<br>'.tr('IVA vendite').'</button>
+                <button type="button" class="btn btn-primary col-md-3" data-toggle="modal" data-title="'.tr('Stampa registro IVA vendite').'" data-href="'.base_url().'/modules/stampe_contabili/stampe_contabili.php?dir=entrata&nome_stampa=Registro IVA&id_record='.$id_record.'" ><i class="fa fa-print fa-2x"></i><br>'.tr('Stampa registro').'<br>'.tr('IVA vendite').'</button>
 
-                <button type="button" class="btn btn-primary col-md-3 col-md-push-1" data-toggle="modal" data-title="'.tr('Stampa registro IVA acquisti').'" data-href="'.base_path().'/modules/stampe_contabili/stampe_contabili.php?dir=uscita&nome_stampa=Registro IVA&id_record='.$id_record.'" ><i class="fa fa-print fa-2x"></i><br>'.tr('Stampa registro').'<br>'.tr('IVA acquisti').'</button>
+                <button type="button" class="btn btn-primary col-md-3 col-md-push-1" data-toggle="modal" data-title="'.tr('Stampa registro IVA acquisti').'" data-href="'.base_url().'/modules/stampe_contabili/stampe_contabili.php?dir=uscita&nome_stampa=Registro IVA&id_record='.$id_record.'" ><i class="fa fa-print fa-2x"></i><br>'.tr('Stampa registro').'<br>'.tr('IVA acquisti').'</button>
 
-                <button type="button" class="btn btn-primary col-md-4 col-md-push-2" data-toggle="modal" data-title="'.tr('Stampa liquidazione IVA').'" data-href="'.base_path().'/modules/stampe_contabili/stampe_contabili.php?nome_stampa=Liquidazione IVA&id_record='.$id_record.'" ><i class="fa fa-print fa-2x"></i><br>'.tr('Stampa liquidazione').'<br>'.tr('IVA').'</button>
+                <button type="button" class="btn btn-primary col-md-4 col-md-push-2" data-toggle="modal" data-title="'.tr('Stampa liquidazione IVA').'" data-href="'.base_url().'/modules/stampe_contabili/stampe_contabili.php?nome_stampa=Liquidazione IVA&id_record='.$id_record.'" ><i class="fa fa-print fa-2x"></i><br>'.tr('Stampa liquidazione').'<br>'.tr('IVA').'</button>
             </div>
         </div>
     </div>
@@ -47,8 +47,8 @@ echo '
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <h3 class="panel-title">'.tr('Comunicazione dati fatture (ex-spesometro)<br> dal _START_ al _END_', [
-                    '_START_' => Translator::dateToLocale($_SESSION['period_start']),
-                    '_END_' => Translator::dateToLocale($_SESSION['period_end']),
+                    '_START_' => Translator::dateToLocale(session('period_start')),
+                    '_END_' => Translator::dateToLocale(session('period_end')),
                 ]).'</h3>
             </div>
 
@@ -62,8 +62,8 @@ echo '
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <h3 class="panel-title">'.tr('Fatturato<br> dal _START_ al _END_', [
-                    '_START_' => Translator::dateToLocale($_SESSION['period_start']),
-                    '_END_' => Translator::dateToLocale($_SESSION['period_end']),
+                    '_START_' => Translator::dateToLocale(session('period_start')),
+                    '_END_' => Translator::dateToLocale(session('period_end')),
                 ]).'</h3>
             </div>
 

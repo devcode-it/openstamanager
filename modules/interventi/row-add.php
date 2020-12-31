@@ -22,7 +22,7 @@ use Modules\Interventi\Intervento;
 include_once __DIR__.'/../../core.php';
 
 $documento = Intervento::find($id_record);
-$show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
+$show_prezzi = auth()->user()['gruppo'] != 'Tecnici' || (auth()->user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
 
 // Impostazioni per la gestione
 $options = [
@@ -93,4 +93,4 @@ if (get('is_descrizione') !== null) {
     $options['op'] = 'manage_barcode';
 }
 
-echo App::load($file.'.php', $result, $options);
+echo AppLegacy::load($file.'.php', $result, $options);

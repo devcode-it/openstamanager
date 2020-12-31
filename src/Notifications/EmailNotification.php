@@ -52,7 +52,7 @@ class EmailNotification extends PHPMailer implements NotificationInterface
             $this->IsSMTP(true);
 
             // Impostazioni di debug
-            $this->SMTPDebug = \App::debug() ? 2 : 0;
+            $this->SMTPDebug = \AppLegacy::debug() ? 2 : 0;
             $this->Debugoutput = function ($str, $level) {
                 $this->infos[] = $str;
             };

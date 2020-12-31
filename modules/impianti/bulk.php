@@ -38,7 +38,7 @@ switch (post('op')) {
         break;
 }
 
-if (App::debug()) {
+if (AppLegacy::debug()) {
     $operations['export-csv'] = [
         'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta selezionati').'</span> <span class="label label-danger" >beta</span>',
         'data' => [

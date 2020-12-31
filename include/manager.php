@@ -94,8 +94,8 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
     }
 
     // Reset della selezione precedente
-    $_SESSION['module_'.$id_module]['selected'] = [];
-    $selezione = array_keys($_SESSION['module_'.$id_module]['selected']);
+    session(['module_'.$id_module.'.selected' => []]);
+    $selezione = array_keys(session('module_'.$id_module.'.selected'));
 
     $table_id = 'main_'.rand(0, 99);
     echo '

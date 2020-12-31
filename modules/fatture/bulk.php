@@ -311,8 +311,8 @@ switch (post('op')) {
             foreach ($id_records as $id) {
                 $fattura_vendita = Fattura::vendita()
                     ->whereNotIn('codice_stato_fe', ['ERR', 'NS', 'EC02', 'ERVAL'])
-                    ->where('data', '>=', $_SESSION['period_start'])
-                    ->where('data', '<=', $_SESSION['period_end'])
+                    ->where('data', '>=', session('period_start'))
+                    ->where('data', '<=', session('period_end'))
                     ->where('id', '=', $id)
                     ->orderBy('data')
                     ->first();
@@ -379,7 +379,7 @@ switch (post('op')) {
         break;
 }
 
-if (App::debug()) {
+if (AppLegacy::debug()) {
     $operations['delete-bulk'] = [
         'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span> <span class="label label-danger" >beta</span>',
     ];
@@ -410,7 +410,7 @@ $operations['registrazione-contabile'] = [
         'title' => tr('Registrazione contabile'),
         'type' => 'modal',
         'origine' => 'fatture',
-        'url' => base_path().'/add.php?id_module='.Modules::get('Prima nota')['id'],
+        'url' => base_url().'/add.php?id_module='.Modules::get('Prima nota')['id'],
     ],
 ];
 

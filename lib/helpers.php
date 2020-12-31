@@ -119,31 +119,7 @@ function setting($name, $again = false)
  */
 function flash()
 {
-    return App::flash();
-}
-
-/**
- * Restituisce l'oggetto dedicato alla gestione dell'autenticazione degli utente.
- *
- * @since 2.4.2
- *
- * @return \Auth
- */
-function auth()
-{
-    return \Auth::getInstance();
-}
-
-/**
- * Restituisce l'oggetto dedicato alla gestione della traduzione del progetto.
- *
- * @since 2.4.2
- *
- * @return \Translator
- */
-function trans()
-{
-    return \Translator::getInstance();
+    return AppLegacy::flash();
 }
 
 /**
@@ -155,7 +131,7 @@ function trans()
  */
 function formatter()
 {
-    return \Translator::getFormatter();
+    return \AppLegacy::$formatter;
 }
 
 /**
@@ -171,28 +147,19 @@ function formatter()
  */
 function tr($string, $parameters = [], $operations = [])
 {
-    return \Translator::translate($string, $parameters, $operations);
+    $result = _i($string, $parameters);
+
+    return replace($result, $parameters);
 }
 
 // Retrocompatibilità (con la funzione gettext)
 if (!function_exists('_')) {
     function _($string, $parameters = [], $operations = [])
     {
-        return tr($string, $parameters, $operations);
+        return _i($string, $parameters);
     }
 }
 
-/**
- * Restituisce l'oggetto dedicato alla gestione dei log.
- *
- * @since 2.4.2
- *
- * @return \Monolog\Logger
- */
-function logger()
-{
-    return Monolog\Registry::getInstance('logs');
-}
 
 /**
  * Restituisce il numero indicato formattato secondo la configurazione del sistema.

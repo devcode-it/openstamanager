@@ -35,4 +35,4 @@ $options = [
     'tipo_documento_finale' => $tipo_documento_finale,
 ];
 
-echo App::load('importa.php', [], $options, true);
+echo AppLegacy::load('importa.php', [], $options, true);

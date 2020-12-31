@@ -53,4 +53,4 @@ $options = [
     'reversed' => $documento->reversed,
 ];
 
-echo App::load('importa.php', [], $options, true);
+echo AppLegacy::load('importa.php', [], $options, true);

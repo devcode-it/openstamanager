@@ -56,7 +56,7 @@ class Interventi extends AppResource
         $remove_start = $remove_end->copy()->subMonths(2);
 
         // Informazioni sull'utente
-        $id_tecnico = Auth::user()->id_anagrafica;
+        $id_tecnico = auth()->user()->id_anagrafica;
 
         $query = 'SELECT in_interventi.id FROM in_interventi WHERE
             deleted_at IS NOT NULL
@@ -97,7 +97,7 @@ class Interventi extends AppResource
         $end = $date['end'];
 
         // Informazioni sull'utente
-        $id_tecnico = Auth::user()->id_anagrafica;
+        $id_tecnico = auth()->user()->id_anagrafica;
 
         $query = 'SELECT
             in_interventi.id,

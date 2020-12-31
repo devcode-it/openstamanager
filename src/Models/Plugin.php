@@ -19,7 +19,7 @@
 
 namespace Models;
 
-use App;
+use AppLegacy;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -84,7 +84,7 @@ class Plugin extends Model
 
         $directory = 'modules/'.$this->originalModule->directory.'|custom|/plugins';
 
-        return App::filepath($directory, $this->script);
+        return AppLegacy::filepath($directory, $this->script);
     }
 
     /**

@@ -429,7 +429,7 @@ if (!$block_edit) {
     $ddt = $dbo->fetchArray($ddt_query)[0]['tot'];
     echo '
             <div class="tip" data-toggle="tooltip" title="'.tr('DDT in uscita per il Cliente che si trovano nello stato di Evaso o Parzialmente Evaso con una Causale importabile.').'">
-                <button type="button" class="btn btn-sm btn-primary'.(!empty($ddt) ? '' : ' disabled').'" data-href="'.base_path().'/modules/interventi/add_ddt.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="'.tr('Aggiungi DDT in uscita').'">
+                <button type="button" class="btn btn-sm btn-primary'.(!empty($ddt) ? '' : ' disabled').'" data-href="'.base_url().'/modules/interventi/add_ddt.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="'.tr('Aggiungi DDT in uscita').'">
                     <i class="fa fa-plus"></i> '.tr('Ddt').'
                 </button>
             </div>';
@@ -503,7 +503,7 @@ $articoli = $intervento->articoli;
 	    <div class="alert alert-warning"><i class="fa fa-warning"></i> '.tr('Questo intervento non è ancora stato firmato dal cliente').'.</div>';
         } else {
             echo '
-	    <img src="'.base_path().'/files/interventi/'.$record['firma_file'].'" class="img-thumbnail"><div>&nbsp;</div>
+	    <img src="'.base_url().'/files/interventi/'.$record['firma_file'].'" class="img-thumbnail"><div>&nbsp;</div>
 	   	<div class="col-md-6 col-md-offset-3 alert alert-success"><i class="fa fa-check"></i> '.tr('Firmato il _DATE_ alle _TIME_ da _PERSON_', [
             '_DATE_' => Translator::dateToLocale($record['firma_data']),
             '_TIME_' => Translator::timeToLocale($record['firma_data']),

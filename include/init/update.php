@@ -104,18 +104,19 @@ if (filter('action') == 'do_update') {
         }
 
         echo '
-        <a class="btn btn-success btn-block" href="'.base_path().'">
+        <a class="btn btn-success btn-block" href="'.base_url().'">
             <i class="fa fa-check"></i> '.tr('Continua').'
         </a>';
     }
 
-    exit();
+    throw new \App\Exceptions\LegacyExitException;
+
 } elseif (Update::isUpdateAvailable()) {
     // Controllo se l'aggiornamento è in esecuzione
     if (Update::isUpdateLocked() && filter('force') === null) {
         $pageTitle = tr('Aggiornamento in corso!');
 
-        include_once App::filepath('include|custom|', 'top.php');
+        include_once AppLegacy::filepath('include|custom|', 'top.php');
 
         echo '
         <div class="box box-center box-danger box-solid text-center">
@@ -125,13 +126,14 @@ if (filter('action') == 'do_update') {
             <div class="box-body">
                 <p>'.tr("E' attualmente in corso la procedura di aggiornamento del software, e pertanto siete pregati di attendere fino alla sua conclusione").'.</p>
                 <p>'.tr("Nel caso il problema persista, rivolgersi all'amministratore o all'assistenza ufficiale").'.</p>
-                <a class="btn btn-info" href="'.base_path().'/index.php"><i class="fa fa-repeat"></i> '.tr('Riprova').'</a>
+                <a class="btn btn-info" href="'.base_url().'/index.php"><i class="fa fa-repeat"></i> '.tr('Riprova').'</a>
             </div>
         </div>';
 
-        include_once App::filepath('include|custom|', 'bottom.php');
+        include_once AppLegacy::filepath('include|custom|', 'bottom.php');
 
-        exit();
+        throw new \App\Exceptions\LegacyExitException;
+
     }
 
     $firstuse = !$dbo->isInstalled() ? 'true' : 'false';
@@ -139,7 +141,7 @@ if (filter('action') == 'do_update') {
     $button = !$dbo->isInstalled() ? tr('Installa!') : tr('Aggiorna!');
     $pageTitle = !$dbo->isInstalled() ? tr('Installazione') : tr('Aggiornamento');
 
-    include_once App::filepath('include|custom|', 'top.php');
+    include_once AppLegacy::filepath('include|custom|', 'top.php');
 
     echo '
         <div class="box box-center-large box-warning text-center">

@@ -18,10 +18,10 @@
  */
 
 // Descrizione
-echo App::internalLoad('descrizione.php', $result, $options);
+echo AppLegacy::internalLoad('descrizione.php', $result, $options);
 
 // Conti, rivalsa INPS e ritenuta d'acconto
-echo App::internalLoad('conti.php', $result, $options);
+echo AppLegacy::internalLoad('conti.php', $result, $options);
 
 // Iva
 echo '

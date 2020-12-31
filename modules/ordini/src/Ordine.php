@@ -173,7 +173,7 @@ class Ordine extends Document
 
             // Impostazione del nuovo stato
             if ($qta_evasa == 0) {
-                $descrizione = 'Accettato';
+                $descrizione = 'Bozza';
             } elseif (!in_array($stato_attuale->descrizione, ['Parzialmente fatturato', 'Fatturato']) && $trigger->getDocument() instanceof DDT) {
                 $descrizione = $parziale ? 'Parzialmente evaso' : 'Evaso';
             } else {

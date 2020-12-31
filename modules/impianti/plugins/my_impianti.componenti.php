@@ -39,7 +39,7 @@ switch (filter('op')) {
 
         flash()->info(tr('Informazioni componente aggiornate correttamente!'));
 
-        $_SESSION['idcomponente'] = $idcomponente;
+        session(['idcomponente' => $idcomponente]);
     break;
 
     case 'aggiunta_componente':
@@ -53,7 +53,7 @@ switch (filter('op')) {
             $dbo->query($query);
 
             $idcomponente = $dbo->lastInsertedID();
-            $_SESSION['idcomponente'] = $idcomponente;
+            session(['idcomponente' => $idcomponente]);
 
             flash()->info(tr("Aggiunto un nuovo componente all'impianto!"));
         }
@@ -76,7 +76,7 @@ switch (filter('op')) {
             $dbo->query($query);
 
             $idcomponente = $dbo->lastInsertedID();
-            $_SESSION['idcomponente'] = $idcomponente;
+            session(['idcomponente' => $idcomponente]);
 
             // Aggiorno la data di sostituzione del componente precedente
             $query = 'UPDATE my_impianto_componenti SET data_sostituzione = NOW() WHERE idimpianto = '.prepare($id_record).' AND id = '.prepare($id);
@@ -203,7 +203,7 @@ if (!empty($componenti_installati)) {
         echo '
                 <div id="collapse_'.$j.'" class="box-body">
                     <div class="row">
-                        <form method="post" action="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=modifica_componente&id='.$componente['id'].'">
+                        <form method="post" action="'.base_url().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=modifica_componente&id='.$componente['id'].'">
                             <input type="hidden" name="backto" value="record-edit">';
 
         // Nome
@@ -324,7 +324,7 @@ echo '
 <script>
 function aggiungiComponente() {
     if ($("#filename").val() != "0") {
-        redirect("'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=aggiunta_componente&backto=record-edit&filename=" + $("#filename").val() + "&hash=tab_'.$id_plugin.'");
+        redirect_legacy("'.base_url().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=aggiunta_componente&backto=record-edit&filename=" + $("#filename").val() + "&hash=tab_'.$id_plugin.'");
     } else {
         alert("'.tr('Seleziona prima un componente').'");
         $("#filename").focus();
@@ -333,7 +333,7 @@ function aggiungiComponente() {
 
 function sostituisciComponente() {
     if(confirm("'.tr('Vuoi sostituire questo componente con un altro dello stesso tipo?').'")){
-        redirect("'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=sostituzione_componente&backto=record-edit&filename='.$filename.'&id='.$componente['id'].'");
+        redirect_legacy("'.base_url().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=sostituzione_componente&backto=record-edit&filename='.$filename.'&id='.$componente['id'].'");
     }
 }
 

@@ -85,7 +85,7 @@ echo '
 		<ul class="dropdown-menu" role="menu">';
 
 // Stati intervento
-$stati_sessione = session_get('dashboard.idstatiintervento', []);
+$stati_sessione = session('dashboard.idstatiintervento', []);
 foreach ($stati_intervento as $stato) {
     $attr = '';
     if (in_array("'".$stato['id']."'", $stati_sessione)) {
@@ -122,7 +122,7 @@ echo '
 		<ul class="dropdown-menu" role="menu">';
 
 // Tipi intervento
-$tipi_sessione = session_get('dashboard.idtipiintervento', []);
+$tipi_sessione = session('dashboard.idtipiintervento', []);
 foreach ($tipi_intervento as $tipo) {
     $attr = '';
     if (in_array("'".$tipo['id']."'", $tipi_sessione)) {
@@ -158,7 +158,7 @@ echo '
         </button>
 		<ul class="dropdown-menu" role="menu">';
 
-$tecnici_sessione = session_get('dashboard.idtecnici', []);
+$tecnici_sessione = session('dashboard.idtecnici', []);
 foreach ($tecnici_disponibili as $tecnico) {
     $attr = '';
     if (in_array("'".$tecnico['id']."'", $tecnici_sessione)) {
@@ -195,7 +195,7 @@ echo '
 		<ul class="dropdown-menu" role="menu">';
 
 // Zone
-$zone_sessione = session_get('dashboard.idzone', []);
+$zone_sessione = session('dashboard.idzone', []);
 foreach ($zone as $zona) {
     $attr = '';
     if (in_array("'".$zona['id']."'", $zone_sessione)) {

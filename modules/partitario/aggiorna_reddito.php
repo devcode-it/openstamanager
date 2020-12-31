@@ -37,11 +37,11 @@ echo '
 
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "date", "label": "'.tr('Inizio del periodo').'", "name": "start", "required": 1, "value": "'.$_SESSION['period_start'].'" ]}
+            {[ "type": "date", "label": "'.tr('Inizio del periodo').'", "name": "start", "required": 1, "value": "'.session('period_start').'" ]}
         </div>
 
         <div class="col-md-6">
-            {[ "type": "date", "label": "'.tr('Fine del periodo').'", "name": "end", "required": 1, "value": "'.$_SESSION['period_end'].'" ]}
+            {[ "type": "date", "label": "'.tr('Fine del periodo').'", "name": "end", "required": 1, "value": "'.session('period_end').'" ]}
         </div>
     </div>
 

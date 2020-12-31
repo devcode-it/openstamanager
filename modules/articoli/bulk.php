@@ -28,7 +28,7 @@ use Plugins\DettagliArticolo\DettaglioPrezzo;
 use Prints;
 
 switch (post('op')) {
-    case 'change-acquisto':
+    case 'change_acquisto':
         foreach ($id_records as $id) {
             $articolo = Articolo::find($id);
             $percentuale = post('percentuale');
@@ -156,7 +156,7 @@ switch (post('op')) {
         break;
 }
 
-if (App::debug()) {
+if (AppLegacy::debug()) {
     $operations['delete-bulk'] = [
         'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span>',
         'data' => [
@@ -167,7 +167,7 @@ if (App::debug()) {
     ];
 }
 
-$operations['change-acquisto'] = [
+$operations['change_acquisto'] = [
     'text' => '<span><i class="fa fa-refresh"></i> '.tr('Aggiorna prezzo di acquisto').'</span>',
     'data' => [
         'title' => tr('Aggiornare il prezzo di acquisto per gli articoli selezionati?'),

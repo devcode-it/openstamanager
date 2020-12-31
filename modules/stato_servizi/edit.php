@@ -68,37 +68,42 @@ if (Services::isEnabled()) {
                 $servizi_in_scadenza[] = $servizio['name'].' ('.$servizio['credits'].' crediti)';
             }
         }
-
-        echo '
-        <div class="col-md-12 col-lg-6">
-            <div class="box box-info">
-                <div class="box-header">
-                    <h3 class="box-title">
-                        '.tr('Informazioni su Services').'
-                    </h3>
-                </div>
-            </div>
-
-            <div class="box-body">';
-
-        if (empty($servizi_in_scadenza)) {
-            echo '
-                <p>'.tr('Nessun servizio in scadenza').'.</p>';
-        } else {
-            echo '
-                <p>'.tr('I seguenti servizi sono in scadenza:').'</p>
-                <ul>';
-            foreach ($servizi_in_scadenza as $servizio) {
-                echo '
-                    <li>'.$servizio.'</li>';
-            }
-            echo '
-                </ul>';
+        // Gestione per crediti
+        elseif (
+            (isset($servizio['credits']) && $servizio['credits'] < 100)
+        ) {
+            $servizi_in_scadenza[] = $servizio['name'].' ('.$servizio['credits'].' crediti)';
         }
+    }
 
+    echo '
+    <div class="col-md-12 col-lg-6">
+        <div class="box box-info">
+            <div class="box-header">
+                <h3 class="box-title">
+                    '.tr('Informazioni su Services').'
+                </h3>
+            </div>
+        </div>
+
+        <div class="box-body">';
+
+    if (empty($servizi_in_scadenza)) {
         echo '
+            <p>'.tr('Nessun servizio in scadenza').'.</p>';
+    } else {
+        echo '
+            <p>'.tr('I seguenti servizi sono in scadenza:').'</p>
+            <ul>';
+        foreach ($servizi_in_scadenza as $servizio) {
+            echo '
+                <li>'.$servizio.'</li>';
+        }
+        echo '
+            </ul>';
+    }
 
-                <hr><br>
+    echo '
 
                 <h4>'.tr('Statistiche su Fatture Elettroniche').'</h4>
                 <table class="table table-striped">
@@ -129,6 +134,7 @@ if (Services::isEnabled()) {
                 </table>
             </div>
         </div>
+    </div>
 
         <script>
         $(document).ready(function (){
@@ -201,9 +207,9 @@ foreach ($widgets as $widget) {
 
     // Possibilità di disabilitare o abilitare i moduli tranne quello degli aggiornamenti
     if ($widget['enabled']) {
-        $stato = "<a href='javascript:;' onclick=\"if( confirm('".tr('Disabilitare questo widget?')."') ){ $.post( '".base_path().'/actions.php?id_module='.$id_module."', { op: 'disable_widget', id: '".$widget['id']."' }, function(response){ location.href='".base_path().'/controller.php?id_module='.$id_module."'; }); }\">".$stato."</a>\n";
+        $stato = "<a href='javascript:;' onclick=\"if( confirm('".tr('Disabilitare questo widget?')."') ){ $.post( '".base_url().'/actions.php?id_module='.$id_module."', { op: 'disable_widget', id: '".$widget['id']."' }, function(response){ location.href='".base_url().'/controller.php?id_module='.$id_module."'; }); }\">".$stato."</a>\n";
     } else {
-        $stato = "<a href='javascript:;' onclick=\"if( confirm('".tr('Abilitare questo widget?')."') ){ $.post( '".base_path().'/actions.php?id_module='.$id_module."', { op: 'enable_widget', id: '".$widget['id']."' }, function(response){ location.href='".base_path().'/controller.php?id_module='.$id_module."'; }); }\"\">".$stato."</a>\n";
+        $stato = "<a href='javascript:;' onclick=\"if( confirm('".tr('Abilitare questo widget?')."') ){ $.post( '".base_url().'/actions.php?id_module='.$id_module."', { op: 'enable_widget', id: '".$widget['id']."' }, function(response){ location.href='".base_url().'/controller.php?id_module='.$id_module."'; }); }\"\">".$stato."</a>\n";
     }
 
     // POSIZIONE
@@ -215,10 +221,10 @@ foreach ($widgets as $widget) {
 
     if ($widget['location'] == 'controller_right') {
         $posizione = "<i class='fa fa-arrow-up text-warning tip' title=\"".tr('Clicca per cambiare la posizione...')."\"></i>&nbsp;<i class='fa fa-arrow-right text-success' ></i>";
-        $posizione = "<a href='javascript:;' onclick=\"if( confirm('".tr('Cambiare la posizione di questo widget?')."') ){ $.post( '".base_path().'/actions.php?id_module='.$id_module."', { op: 'change_position_widget_top', id: '".$widget['id']."' }, function(response){ location.href='".base_path().'/controller.php?id_module='.$id_module."'; }); }\"\">".$posizione."</a>\n";
+        $posizione = "<a href='javascript:;' onclick=\"if( confirm('".tr('Cambiare la posizione di questo widget?')."') ){ $.post( '".base_url().'/actions.php?id_module='.$id_module."', { op: 'change_position_widget_top', id: '".$widget['id']."' }, function(response){ location.href='".base_url().'/controller.php?id_module='.$id_module."'; }); }\"\">".$posizione."</a>\n";
     } elseif ($widget['location'] == 'controller_top') {
         $posizione = "<i class='fa fa-arrow-up text-success'></i>&nbsp;<i class='fa fa-arrow-right text-warning tip' title=\"".tr('Clicca per cambiare la posizione...').'"></i>';
-        $posizione = "<a href='javascript:;' onclick=\"if( confirm('".tr('Cambiare la posizione di questo widget?')."') ){ $.post( '".base_path().'/actions.php?id_module='.$id_module."', { op: 'change_position_widget_right', id: '".$widget['id']."' }, function(response){ location.href='".base_path().'/controller.php?id_module='.$id_module."'; }); }\"\">".$posizione."</a>\n";
+        $posizione = "<a href='javascript:;' onclick=\"if( confirm('".tr('Cambiare la posizione di questo widget?')."') ){ $.post( '".base_url().'/actions.php?id_module='.$id_module."', { op: 'change_position_widget_right', id: '".$widget['id']."' }, function(response){ location.href='".base_url().'/controller.php?id_module='.$id_module."'; }); }\"\">".$posizione."</a>\n";
     }
 
     echo '

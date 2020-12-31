@@ -632,7 +632,7 @@ if (!$block_edit) {
 
             echo '
                     <div class="tip" data-toggle="tooltip" title="'.tr('Attività completate non collegate a preventivi o contratti e che non siano già state fatturate.').'">
-                        <a class="btn btn-sm btn-primary '.(!empty($interventi) ? '' : ' disabled').'" data-href="'.base_path().'/modules/fatture/add_intervento.php?id_module='.$id_module.'&id_record='.$id_record.'" data-title="'.tr('Aggiungi attività').'">
+                        <a class="btn btn-sm btn-primary '.(!empty($interventi) ? '' : ' disabled').'" data-href="'.base_url().'/modules/fatture/add_intervento.php?id_module='.$id_module.'&id_record='.$id_record.'" data-title="'.tr('Aggiungi attività').'">
                             <i class="fa fa-plus"></i> '.tr('Attività').'
                         </a>
                     </div>';
@@ -642,7 +642,7 @@ if (!$block_edit) {
             $preventivi = $dbo->fetchArray($prev_query)[0]['tot'];
             echo '
                     <div class="tip">
-                        <a class="btn btn-sm btn-primary '.(!empty($preventivi) ? '' : ' disabled').'" data-href="'.base_path().'/modules/fatture/add_preventivo.php?id_module='.$id_module.'&id_record='.$id_record.'" data-title="'.tr('Aggiungi preventivo').'" data-toggle="tooltip">
+                        <a class="btn btn-sm btn-primary '.(!empty($preventivi) ? '' : ' disabled').'" data-href="'.base_url().'/modules/fatture/add_preventivo.php?id_module='.$id_module.'&id_record='.$id_record.'" data-title="'.tr('Aggiungi preventivo').'" data-toggle="tooltip">
                             <i class="fa fa-plus"></i> '.tr('Preventivo').'
                         </a>
                     </div>';
@@ -652,7 +652,7 @@ if (!$block_edit) {
             $contratti = $dbo->fetchArray($contr_query)[0]['tot'];
             echo '
                     <div class="tip">
-                        <a class="btn btn-sm btn-primary '.(!empty($contratti) ? '' : ' disabled').'"  data-href="'.base_path().'/modules/fatture/add_contratto.php?id_module='.$id_module.'&id_record='.$id_record.'" data-title="'.tr('Aggiungi contratto').'">
+                        <a class="btn btn-sm btn-primary '.(!empty($contratti) ? '' : ' disabled').'"  data-href="'.base_url().'/modules/fatture/add_contratto.php?id_module='.$id_module.'&id_record='.$id_record.'" data-title="'.tr('Aggiungi contratto').'">
                             <i class="fa fa-plus"></i> '.tr('Contratto').'
                         </a>
                     </div>';
@@ -670,7 +670,7 @@ if (!$block_edit) {
                 AND dt_ddt.id IN (SELECT idddt FROM dt_righe_ddt WHERE dt_righe_ddt.idddt = dt_ddt.id AND (qta - qta_evasa) > 0)';
         $ddt = $dbo->fetchArray($ddt_query)[0]['tot'];
         echo '
-					<a class="btn btn-sm btn-primary'.(!empty($ddt) ? '' : ' disabled').'" data-href="'.base_path().'/modules/fatture/add_ddt.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="'.tr('Aggiungi ddt').'">
+					<a class="btn btn-sm btn-primary'.(!empty($ddt) ? '' : ' disabled').'" data-href="'.base_url().'/modules/fatture/add_ddt.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="'.tr('Aggiungi ddt').'">
                         <i class="fa fa-plus"></i> '.tr('Ddt').'
 					</a>';
 
@@ -678,7 +678,7 @@ if (!$block_edit) {
         $ordini_query = 'SELECT COUNT(*) AS tot FROM or_ordini WHERE idanagrafica='.prepare($record['idanagrafica']).' AND idstatoordine IN (SELECT id FROM or_statiordine WHERE descrizione IN(\'Accettato\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoordine=(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).') AND or_ordini.id IN (SELECT idordine FROM or_righe_ordini WHERE or_righe_ordini.idordine = or_ordini.id AND (qta - qta_evasa) > 0)';
         $ordini = $dbo->fetchArray($ordini_query)[0]['tot'];
         echo '
-						<a class="btn btn-sm btn-primary'.(!empty($ordini) ? '' : ' disabled').'" data-href="'.base_path().'/modules/fatture/add_ordine.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="'.tr('Aggiungi ordine').'">
+						<a class="btn btn-sm btn-primary'.(!empty($ordini) ? '' : ' disabled').'" data-href="'.base_url().'/modules/fatture/add_ordine.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="'.tr('Aggiungi ordine').'">
 							<i class="fa fa-plus"></i> '.tr('Ordine').'
                         </a>';
     }
@@ -819,7 +819,7 @@ echo '
             showCancelButton: true,
             confirmButtonText: "'.tr('Sì').'"
         }).then(function (result) {
-            redirect(globals.rootdir + "/editor.php", {
+            redirect_legacy(globals.rootdir + "/editor.php", {
                 id_module: globals.id_module,
                 id_record: globals.id_record,
                 op: "ricalcola_scadenze",

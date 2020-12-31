@@ -25,7 +25,7 @@ include_once __DIR__.'/core.php';
 $account = Account::where('predefined', true)->first();
 $bug_email = 'info@openstamanager.com';
 
-$user = Auth::user();
+$user = auth()->user();
 
 if (filter('op') == 'send') {
     // Preparazione email
@@ -87,13 +87,14 @@ if (filter('op') == 'send') {
         delete($backup_file);
     }
 
-    redirect(base_path().'/bug.php');
-    exit();
+    redirect_legacy(base_url().'/bug.php');
+    throw new \App\Exceptions\LegacyExitException;
+
 }
 
 $pageTitle = tr('Bug');
 
-include_once App::filepath('include|custom|', 'top.php');
+include_once AppLegacy::filepath('include|custom|', 'top.php');
 
 if (empty($account['from_address']) || empty($account['server'])) {
     echo '
@@ -198,6 +199,6 @@ echo '
     });
 </script>
 
-<script type="text/javascript" charset="utf-8" src="'.App::getPaths()['js'].'/ckeditor/ckeditor.js'.'"></script>';
+<script type="text/javascript" charset="utf-8" src="'.AppLegacy::getPaths()['js'].'/ckeditor/ckeditor.js'.'"></script>';
 
-include_once App::filepath('include|custom|', 'bottom.php');
+include_once AppLegacy::filepath('include|custom|', 'bottom.php');

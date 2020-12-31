@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 // Verifico se è già stata eseguita l'apertura bilancio
-$bilancio_gia_aperto = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE is_apertura=1 AND data BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']));
+$bilancio_gia_aperto = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE is_apertura=1 AND data BETWEEN '.prepare(session('period_start')).' AND '.prepare(session('period_end')));
 
 $msg = tr('Sei sicuro di voler aprire il bilancio?');
 $btn_class = 'btn-info';
@@ -121,7 +121,7 @@ foreach ($primo_livello as $conto_primo) {
                        SUM(ROUND(totale, 2)) AS totale,
                        SUM(ROUND(totale_reddito, 2)) AS totale_reddito
                     FROM co_movimenti
-                    WHERE data BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']).' GROUP BY idconto
+                    WHERE data BETWEEN '.prepare(session('period_start')).' AND '.prepare(session('period_end')).' GROUP BY idconto
                 ) movimenti ON co_pianodeiconti3.id=movimenti.idconto
             WHERE `idpianodeiconti2` = '.prepare($conto_secondo['id']).' ORDER BY numero ASC';
         $terzo_livello = $dbo->fetchArray($query3);
@@ -157,7 +157,7 @@ foreach ($primo_livello as $conto_primo) {
             $id_anagrafica = $conto_terzo['idanagrafica'];
             $anagrafica_deleted = $conto_terzo['deleted_at'];
             if (isset($id_anagrafica)) {
-                echo Modules::link('Anagrafiche', $id_anagrafica, ' <i title="'.(isset($anagrafica_deleted) ? tr('Anagrafica eliminata') : tr('Visualizza anagrafica')).'" class="btn btn-'.(isset($anagrafica_deleted) ? 'danger' : 'primary').' btn-xs fa fa-user" ></i>');
+                echo Modules::link('Anagrafiche', $id_anagrafica, ' <i title="'.(isset($anagrafica_deleted) ? 'Anagrafica eliminata' : 'Visualizza anagrafica').'" class="btn btn-'.(isset($anagrafica_deleted) ? 'danger' : 'primary').' btn-xs fa fa-user" ></i>');
             }
 
             // Stampa mastrino
@@ -371,7 +371,7 @@ foreach ($primo_livello as $conto_primo) {
 }
 
 // Verifico se è già stata eseguita l'apertura bilancio
-$bilancio_gia_chiuso = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE is_chiusura=1 AND data BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']));
+$bilancio_gia_chiuso = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE is_chiusura=1 AND data BETWEEN '.prepare(session('period_start')).' AND '.prepare(session('period_end')));
 
 $msg = tr('Sei sicuro di voler aprire il bilancio?');
 $btn_class = 'btn-info';

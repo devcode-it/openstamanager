@@ -43,7 +43,7 @@ class OperationLog extends Model
 
     public static function build($operation)
     {
-        if (!\Auth::check()) {
+        if (!\auth()->check()) {
             return null;
         }
 
@@ -54,7 +54,7 @@ class OperationLog extends Model
         }
 
         $model->op = $operation;
-        $model->id_utente = \Auth::user()->id;
+        $model->id_utente = \auth()->user()->id;
 
         $model->save();
 

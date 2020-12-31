@@ -295,7 +295,7 @@ function message(element) {
                     },
                 });
             } else {
-                redirect(href, data, method, blank);
+                redirect_legacy(href, data, method, blank);
             }
         },
         function (dismiss) {
@@ -303,7 +303,7 @@ function message(element) {
     );
 }
 
-function redirect(href, data, method, blank) {
+function redirect_legacy(href, data, method, blank) {
     method = method ? method : "get";
     blank = blank ? blank : false;
 

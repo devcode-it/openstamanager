@@ -22,13 +22,13 @@ include_once __DIR__.'/../../core.php';
 
 $pageTitle = tr('Utente');
 
-include_once App::filepath('include|custom|', 'top.php');
+include_once AppLegacy::filepath('include|custom|', 'top.php');
 
 if (post('op') == 'self_update') {
     include_once __DIR__.'/actions.php';
 }
 
-$user = Auth::user();
+$user = auth()->user();
 $token = auth()->getToken();
 
 $rs = $dbo->fetchArray('SELECT * FROM an_anagrafiche WHERE idanagrafica = '.prepare($user['idanagrafica']));
@@ -144,4 +144,4 @@ echo '
 
 </div>';
 
-include_once App::filepath('include|custom|', 'bottom.php');
+include_once AppLegacy::filepath('include|custom|', 'bottom.php');

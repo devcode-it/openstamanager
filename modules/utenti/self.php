@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 
 $resource = filter('resource');
 
-$user = Auth::user();
+$user = auth()->user();
 $utente = $user->toArray();
 
 echo '

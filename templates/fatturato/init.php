@@ -20,8 +20,8 @@
 include_once __DIR__.'/../../core.php';
 
 $dir = get('dir');
-$date_start = $_SESSION['period_start'];
-$date_end = $_SESSION['period_end'];
+$date_start = session('period_start');
+$date_end = session('period_end');
 
 // Raggruppamento
 $query = "SELECT data,

@@ -36,4 +36,4 @@ $options = [
     'allow-empty' => true,
 ];
 
-echo App::load('importa.php', [], $options, true);
+echo AppLegacy::load('importa.php', [], $options, true);

@@ -64,4 +64,4 @@ if ($riga->isDescrizione()) {
 
     $options['op'] = 'manage_sconto';
 }
-echo App::load($file.'.php', $result, $options);
+echo AppLegacy::load($file.'.php', $result, $options);

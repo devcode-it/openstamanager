@@ -32,7 +32,7 @@ foreach ($_SESSION['module_'.$id_module] as $name => $value) {
     }
 }
 
-$period_end = $_SESSION['period_end'];
+$period_end = session('period_end');
 
 $structure = Modules::get($id_module);
 

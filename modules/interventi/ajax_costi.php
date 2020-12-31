@@ -25,7 +25,7 @@ $intervento = Intervento::find($id_record);
 $sessioni = $intervento->sessioni;
 $righe = $intervento->getRighe();
 
-$show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
+$show_prezzi = auth()->user()['gruppo'] != 'Tecnici' || (auth()->user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
 
 if ($show_prezzi) {
     $rss = $dbo->fetchArray('SELECT in_statiintervento.is_completato AS flag_completato FROM in_statiintervento INNER JOIN in_interventi ON in_statiintervento.idstatointervento=in_interventi.idstatointervento WHERE in_interventi.id='.prepare($id_record));

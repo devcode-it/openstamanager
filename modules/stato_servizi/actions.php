@@ -158,7 +158,7 @@ switch (filter('op')) {
     case 'sizes':
         $results = [];
 
-        $backup_dir = App::getConfig()['backup_dir'];
+        $backup_dir = AppLegacy::getConfig()['backup_dir'];
 
         $dirs = [
             $backup_dir => tr('Backup'),

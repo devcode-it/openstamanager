@@ -40,7 +40,7 @@ class RigheInterventi extends AppResource
         $end = $today->copy()->addMonth(1);
 
         // Informazioni sull'utente
-        $user = Auth::user();
+        $user = auth()->user();
         $id_tecnico = $user->id_anagrafica;
 
         // Elenco di interventi di interesse
@@ -74,7 +74,7 @@ class RigheInterventi extends AppResource
         $end = $today->copy()->addMonth(1);
 
         // Informazioni sull'utente
-        $user = Auth::user();
+        $user = auth()->user();
         $id_tecnico = $user->id_anagrafica;
 
         // Elenco di interventi di interesse

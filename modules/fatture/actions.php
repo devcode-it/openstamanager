@@ -208,8 +208,8 @@ switch (post('op')) {
             $count = Fattura::where('numero_esterno', $fattura->numero_esterno)
                 ->where('id', '!=', $id_record)
                 ->where('idanagrafica', '=', $fattura->anagrafica->id)
-                ->where('data', '>=', $_SESSION['period_start'])
-                ->where('data', '<=', $_SESSION['period_end'])
+                ->where('data', '>=', session('period_start'))
+                ->where('data', '<=', session('period_end'))
                 ->whereHas('tipo', function ($query) use ($direzione) {
                     $query->where('dir', '=', $direzione);
                 })->count();

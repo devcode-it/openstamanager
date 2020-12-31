@@ -27,7 +27,7 @@ if (empty($file)) {
     return;
 }
 
-$link = base_path().'/'.$file->filepath;
+$link = base_url().'/'.$file->filepath;
 
 // Force download of the file
 if (get('download') == '1') {

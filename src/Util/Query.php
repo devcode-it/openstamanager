@@ -76,7 +76,7 @@ class Query
         $id_module = Modules::getCurrent()['id'];
         $segment = !empty(self::$segments) ? $_SESSION['module_'.$id_module]['id_segment'] : null;
 
-        $user = Auth::user();
+        $user = auth()->user();
 
         // Sostituzione periodi temporali
         preg_match('|date_period\((.+?)\)|', $query, $matches);
@@ -117,8 +117,8 @@ class Query
             '|'.$date_filter.'|' => $date_query,
 
             // Date
-            '|period_start|' => $_SESSION['period_start'],
-            '|period_end|' => $_SESSION['period_end'].' 23:59:59',
+            '|period_start|' => session('period_start'),
+            '|period_end|' => session('period_end').' 23:59:59',
 
             // Segmenti
             '|'.$segment_filter.'|' => !empty($segment) ? ' AND '.$segment_name.' = '.prepare($segment) : '',
@@ -468,7 +468,7 @@ class Query
     {
         $database = database();
 
-        $user = Auth::user();
+        $user = auth()->user();
 
         $views = $database->fetchArray('SELECT * FROM `zz_views` WHERE `id_module`='.prepare($element['id']).' AND
         `id` IN (

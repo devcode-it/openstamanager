@@ -192,7 +192,7 @@ echo '
         if (last.val()) {
             cleanup_inputs();
 
-            aggiungiContenuto( "#lista-destinatari", "#lista-destinatari > div.col-md-12:last", { "id": parseInt( Math.random()*1000000 ), "value": "" } );
+            aggiungiContenuto( "#lista-destinatari", "#lista-destinatari > div.col-md-12:last", { "id": $("#lista-destinatari > div").length, "value": "" } );
             $("#lista-destinatari > div.input-group:last").wrap( "<div class=\"col-md-12\"></div>" );
 
             $(".destinatari").each(function(){

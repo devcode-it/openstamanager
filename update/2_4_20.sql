@@ -214,9 +214,9 @@ INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `option
 
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `default`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi documento'), 'Attivo', 'co_tipidocumento.enabled', 7, 1, 0, 0, 1),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi documento'), 'Predefinito', 'co_tipidocumento.predefined', 6, 1, 0, 0, 1),1
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi documento'), 'Predefinito', 'co_tipidocumento.predefined', 6, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi documento'), 'Codice FE', 'co_tipidocumento.codice_tipo_documento_fe', 5, 1, 0, 0, 1),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi documento'), 'Reversed', 'co_tipidocumento.reversed', 4, 1, 0, 0, 1),1
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi documento'), 'Reversed', 'co_tipidocumento.reversed', 4, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi documento'), 'Direzione', 'co_tipidocumento.dir', 3, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi documento'), 'Descrizione', 'co_tipidocumento.descrizione', 2, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi documento'), 'id', 'co_tipidocumento.id', 1, 1, 0, 0, 0);

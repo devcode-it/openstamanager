@@ -28,7 +28,7 @@ use Monolog\Handler\AbstractProcessingHandler;
  */
 class MessageHandler extends AbstractProcessingHandler
 {
-    protected function write(array $record)
+    protected function write(array $record): void
     {
         if (\Whoops\Util\Misc::isAjaxRequest()) {
             return;
@@ -42,7 +42,7 @@ class MessageHandler extends AbstractProcessingHandler
                 '_LINK_FORUM_' => '<a href="https://forum.openstamanager.com/">https://forum.openstamanager.com/</a>',
             ]).'.</a>';
 
-            if (auth()->isAdmin()) {
+            if (auth()->user()->isAdmin()) {
                 $message .= '
             <br><small>'.$record['message'].'</small>';
             }

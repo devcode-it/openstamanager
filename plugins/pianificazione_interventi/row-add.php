@@ -79,7 +79,7 @@ if (get('is_descrizione') !== null) {
 echo '
 <div id="riga-promemoria">';
 
-echo App::load($file.'.php', $result, $options);
+echo AppLegacy::load($file.'.php', $result, $options);
 
 echo '
 </div>

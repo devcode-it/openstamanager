@@ -18,6 +18,8 @@
  */
 
 use Illuminate\Database\Capsule\Manager as Capsule;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 /**
  * Classe per gestire la connessione al database.
@@ -52,63 +54,9 @@ class Database extends Util\Singleton
      *
      * @since 2.3
      *
-     * @return Database
      */
     protected function __construct($server, $username, $password, $database_name, $charset = null)
     {
-        if (is_array($server)) {
-            $host = $server['host'];
-            $port = !empty($server['port']) ? $server['port'] : null;
-        } else {
-            $temp = explode(':', $server);
-            $host = $temp[0];
-            $port = !empty($temp[1]) ? $temp[1] : null;
-        }
-
-        // Possibilità di specificare una porta per il servizio MySQL diversa dalla standard 3306
-        $port = !empty(App::getConfig()['port']) ? App::getConfig()['port'] : $port;
-
-        $this->database_name = $database_name;
-
-        if (!empty($host) && !empty($database_name)) {
-            try {
-                // Istanziamento di Eloquent
-                $this->capsule = new Capsule();
-                $this->capsule->addConnection([
-                    'driver' => 'mysql',
-                    'host' => $host,
-                    'database' => $database_name,
-                    'username' => $username,
-                    'password' => $password,
-                    'charset' => 'utf8',
-                    'prefix' => '',
-                    'port' => $port,
-                ]);
-
-                $this->is_connected = !empty($this->getPDO());
-
-                // Impostazione del charset della comunicazione
-                if (empty($charset) && version_compare($this->getMySQLVersion(), '5.5.3') >= 0) {
-                    $this->getPDO()->exec("SET NAMES 'utf8mb4'");
-                }
-
-                // Fix per problemi di compatibilità delle password MySQL 4.1+ (da versione precedente)
-                //$this->getPDO()->exec('SET SESSION old_passwords = 0');
-                //$this->getPDO()->exec('SET PASSWORD = PASSWORD('.$this->prepare($this->password).')');
-
-                // Reset della modalità di esecuzione MySQL per la sessione corrente
-                $this->getPDO()->exec("SET sql_mode = ''");
-
-                $this->capsule->setAsGlobal();
-                $this->capsule->bootEloquent();
-            } catch (PDOException $e) {
-                if ($e->getCode() == 1049 || $e->getCode() == 1044) {
-                    $e = new PDOException(($e->getCode() == 1049) ? tr('Database non esistente!') : tr('Credenziali di accesso invalide!'));
-                }
-
-                throw $e;
-            }
-        }
     }
 
     /**
@@ -123,7 +71,7 @@ class Database extends Util\Singleton
         $class = get_called_class();
 
         if (empty(parent::$instance[$class]) || !parent::$instance[$class]->isConnected() || $new) {
-            $config = App::getConfig();
+            $config = AppLegacy::getConfig();
 
             // Sostituzione degli eventuali valori aggiuntivi
             $config = array_merge($config, $data);
@@ -148,13 +96,9 @@ class Database extends Util\Singleton
      */
     public function getPDO()
     {
-        return $this->capsule->getConnection()->getPDO();
+        return DB::connection()->getPDO();
     }
 
-    public function getCapsule()
-    {
-        return $this->capsule;
-    }
 
     /**
      * Controlla se la connessione è valida e andata a buon fine.
@@ -165,7 +109,12 @@ class Database extends Util\Singleton
      */
     public function isConnected()
     {
-        return $this->is_connected;
+        try {
+            DB::connection()->getPdo();
+            return true;
+        } catch (\Exception $e) {
+           return false;
+        }
     }
 
     /**
@@ -339,7 +288,7 @@ class Database extends Util\Singleton
     public function tableExists($table)
     {
         if ($this->isConnected()) {
-            return $this->capsule->schema()->hasTable($table);
+            return Schema::hasTable($table);
         }
 
         return null;
@@ -409,7 +358,7 @@ class Database extends Util\Singleton
             $array = [$array];
         }
 
-        return Capsule::table($table)->insert($array);
+        return DB::table($table)->insert($array);
     }
 
     /**
@@ -429,7 +378,7 @@ class Database extends Util\Singleton
             throw new UnexpectedValueException();
         }
 
-        return Capsule::table($table)->where($conditions)->update($array);
+        return DB::table($table)->where($conditions)->update($array);
     }
 
     /**
@@ -463,7 +412,7 @@ class Database extends Util\Singleton
         }
         $select = !empty($select) ? $select : ['*'];
 
-        $statement = Capsule::table($table)->where($conditions)->select($select);
+        $statement = DB::table($table)->where($conditions)->select($select);
 
         // Impostazioni di ordinamento
         if (!empty($order)) {
@@ -543,7 +492,7 @@ class Database extends Util\Singleton
         }
 
         // Costruzione della query
-        return Capsule::table($table)->where($conditions)->delete();
+        return DB::table($table)->where($conditions)->delete();
     }
 
     /**
@@ -646,17 +595,17 @@ class Database extends Util\Singleton
 
     public function beginTransaction()
     {
-        Capsule::beginTransaction();
+        DB::beginTransaction();
     }
 
     public function commitTransaction()
     {
-        Capsule::commit();
+        DB::commit();
     }
 
     public function rollbackTransaction()
     {
-        Capsule::rollBack();
+        DB::rollBack();
     }
 
     /**
@@ -668,7 +617,7 @@ class Database extends Util\Singleton
      */
     public function raw($value)
     {
-        return $this->getCapsule()->getConnection()->raw($value);
+        return DB::raw($value);
     }
 
     /**
@@ -680,7 +629,7 @@ class Database extends Util\Singleton
      */
     public function table($table)
     {
-        return $this->getCapsule()->getConnection()->table($table);
+        return DB::table($table);
     }
 
     /**

@@ -44,7 +44,7 @@ class Backup
      */
     public static function getDirectory()
     {
-        $result = App::getConfig()['backup_dir'];
+        $result = AppLegacy::getConfig()['backup_dir'];
 
         $result = rtrim($result, '/');
         if (!directory($result) || !is_writable($result)) {
@@ -207,7 +207,7 @@ class Backup
      */
     public static function database($file)
     {
-        $config = App::getConfig();
+        $config = AppLegacy::getConfig();
 
         $dump = new Mysqldump('mysql:host='.$config['db_host'].';dbname='.$config['db_name'], $config['db_username'], $config['db_password'], [
             'add-drop-table' => true,

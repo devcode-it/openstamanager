@@ -29,7 +29,7 @@ use Plugins\ListinoClienti\DettaglioPrezzo;
 include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
-    case 'change-acquisto':
+    case 'change_acquisto':
         foreach ($id_records as $id) {
             $articolo = Articolo::find($id);
             $percentuale = post('percentuale');
@@ -111,7 +111,7 @@ switch (post('op')) {
         $_SESSION['superselect']['id_articolo_barcode'] = $id_records;
         $id_print = Prints::getPrints()['Barcode'];
 
-        redirect(base_path().'/pdfgen.php?id_print='.$id_print.'&id_record='.Articolo::where('barcode', '!=', '')->first()->id);
+        redirect(base_url().'/pdfgen.php?id_print='.$id_print.'&id_record='.Articolo::where('barcode', '!=', '')->first()->id);
         exit();
 
         break;
@@ -177,7 +177,7 @@ switch (post('op')) {
         }
 
         $database->commitTransaction();
-        redirect(base_path().'/editor.php?id_module='.Modules::get('Preventivi')['id'].'&id_record='.$id_preventivo);
+        redirect(base_url().'/editor.php?id_module='.Modules::get('Preventivi')['id'].'&id_record='.$id_preventivo);
         exit();
 
         break;
@@ -331,7 +331,7 @@ switch (post('op')) {
         break;
 }
 
-if (App::debug()) {
+if (AppLegacy::debug()) {
     $operations['delete-bulk'] = [
         'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span>',
         'data' => [

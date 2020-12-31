@@ -19,25 +19,44 @@
 
 namespace Util;
 
+use Illuminate\Support\Facades\Session;
+
 /**
  * Classe dedicata alla gestione dei messaggi per l'utente.
  *
  * @since 2.4.2
  */
-class Messages extends \Slim\Flash\Messages
+class Messages
 {
+    public function __contruct($name){
+    }
+
     public function info($message)
     {
-        return $this->addMessage('info', $message);
+        Session::push('messages.info', $message);
     }
 
     public function warning($message)
     {
-        return $this->addMessage('warning', $message);
+        Session::push('messages.info', $message);
     }
 
     public function error($message)
     {
-        return $this->addMessage('error', $message);
+        Session::push('messages.error', $message);
+    }
+
+    public function getMessage($type){
+        $messages = Session::get('messages.'.$type);
+        Session::remove('messages.'.$type);
+
+        return $messages;
+    }
+
+    public function getMessages(){
+        $messages = Session::get('messages');
+        Session::remove('messages');
+
+        return $messages;
     }
 }

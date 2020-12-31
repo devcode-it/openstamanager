@@ -128,7 +128,7 @@ class User extends Model
 
     public function setPasswordAttribute($value)
     {
-        $this->attributes['password'] = \Auth::hashPassword($value);
+        $this->attributes['password'] = \auth()->hashPassword($value);
     }
 
     public function getPhotoAttribute()
@@ -139,7 +139,7 @@ class User extends Model
 
         $image = Upload::find($this->image_file_id);
 
-        return base_path().'/'.$image->filepath;
+        return base_url().'/'.$image->filepath;
     }
 
     public function setPhotoAttribute($value)

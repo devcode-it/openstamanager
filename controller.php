@@ -20,12 +20,12 @@
 include_once __DIR__.'/core.php';
 
 if (!empty($id_record) && !empty($id_module)) {
-    redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record);
+    redirect_legacy(base_url().'/editor.php?id_module='.$id_module.'&id_record='.$id_record);
 } elseif (empty($id_module)) {
-    redirect(base_path().'/index.php');
+    redirect_legacy(base_url().'/index.php');
 }
 
-include_once App::filepath('include|custom|', 'top.php');
+include_once AppLegacy::filepath('include|custom|', 'top.php');
 
 // Inclusione gli elementi fondamentali
 include_once base_dir().'/actions.php';
@@ -112,4 +112,4 @@ function modificaColonne(button) {
 // Widget in basso
 echo '{( "name": "widgets", "id_module": "'.$id_module.'", "position": "right", "place": "controller" )}';
 
-include_once App::filepath('include|custom|', 'bottom.php');
+include_once AppLegacy::filepath('include|custom|', 'bottom.php');

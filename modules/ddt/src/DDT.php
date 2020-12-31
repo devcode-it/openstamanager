@@ -59,7 +59,7 @@ class DDT extends Document
     {
         $model = new static();
 
-        $user = Auth::user();
+        $user = auth()->user();
 
         $stato_documento = Stato::where('descrizione', 'Bozza')->first();
 

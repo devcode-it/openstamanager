@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 if (empty($_SESSION['giacenze_sedi']['idsede'])) {
-    $_SESSION['giacenze_sedi']['idsede'] = 0;
+    session(['giacenze_sedi']['idsede' => 0]);
 }
 $id_sede = $_SESSION['giacenze_sedi']['idsede'];
 

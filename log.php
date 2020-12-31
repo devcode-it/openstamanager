@@ -21,7 +21,7 @@ include_once __DIR__.'/core.php';
 
 $pageTitle = tr('Log');
 
-include_once App::filepath('include|custom|', 'top.php');
+include_once AppLegacy::filepath('include|custom|', 'top.php');
 
 echo '
     <div class="box">
@@ -45,10 +45,10 @@ echo '
 /*
     LEGGO DALLA TABELLA ZZ_LOG
 */
-if (Auth::admin()) {
+if (auth()->user()->isAdmin()) {
     $q = 'SELECT * FROM `zz_logs` ORDER BY `created_at` DESC LIMIT 0, 100';
 } else {
-    $q = 'SELECT * FROM `zz_logs` WHERE `id_utente`='.prepare(Auth::user()['id']).' ORDER BY `created_at` DESC LIMIT 0, 100';
+    $q = 'SELECT * FROM `zz_logs` WHERE `id_utente`='.prepare(auth()->user()['id']).' ORDER BY `created_at` DESC LIMIT 0, 100';
 }
 $rs = $dbo->fetchArray($q);
 $n = sizeof($rs);
@@ -61,7 +61,7 @@ for ($i = 0; $i < $n; ++$i) {
 
     $timestamp = Translator::timestampToLocale($rs[$i]['created_at']);
 
-    $status = Auth::getStatus();
+    $status = auth()->getStatus();
     if ($rs[$i]['stato'] == $status['success']['code']) {
         $type = 'success';
         $stato = $status['success']['message'];
@@ -94,4 +94,4 @@ echo '
     </div>
     <!-- /.box -->';
 
-include_once App::filepath('include|custom|', 'bottom.php');
+include_once AppLegacy::filepath('include|custom|', 'bottom.php');

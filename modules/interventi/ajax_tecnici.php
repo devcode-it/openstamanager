@@ -245,7 +245,7 @@ if (!$is_completato) {
 }
 
 echo '
-<script src="'.base_path().'/assets/src/js/functions/functions.js"></script>
+<script src="'.base_url().'/assets/src/js/functions/functions.js"></script>
 <script>$(document).ready(init)</script>
 
 <script type="text/javascript">

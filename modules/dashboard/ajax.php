@@ -32,12 +32,12 @@ switch (filter('op')) {
         $start = filter('start');
         $end = filter('end');
 
-        $stati = (array) $_SESSION['dashboard']['idstatiintervento'];
+        $stati = session('dashboard.idstatiintervento', ["'-1'"]);
         $stati[] = prepare('');
 
-        $tipi = (array) $_SESSION['dashboard']['idtipiintervento'];
-        $zone = (array) $_SESSION['dashboard']['idzone'];
-        $tecnici = (array) $_SESSION['dashboard']['idtecnici'];
+        $tipi =  session('dashboard.idtipiintervento', ["'-1'"]);
+        $zone =  session('dashboard.idzone', ["'-1'"]);
+        $tecnici =  session('dashboard.idtecnici', ["'-1'"]);
 
         $query = 'SELECT
             in_interventi_tecnici.id,
@@ -109,7 +109,7 @@ switch (filter('op')) {
                 'title' => '<div style=\'position:absolute; top:7%; right:3%;\' > '.(($sessione['is_completato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '').' '.(($sessione['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'</div>'.'<b>Int. '.$sessione['codice'].'</b> '.$sessione['cliente'].'<br><b>'.tr('Tecnici').':</b> '.$sessione['nome_tecnico'],
                 'start' => $sessione['orario_inizio'],
                 'end' => $sessione['orario_fine'],
-                'link' => base_path().'/editor.php?id_module='.$modulo_interventi->id.'&id_record='.$sessione['idintervento'],
+                'link' => base_url().'/editor.php?id_module='.$modulo_interventi->id.'&id_record='.$sessione['idintervento'],
                 'backgroundColor' => $backgroundcolor,
                 'textColor' => color_inverse($backgroundcolor),
                 'borderColor' => ($bordercolor == '#FFFFFF') ? color_darken($bordercolor, 100) : $bordercolor,
@@ -149,7 +149,7 @@ switch (filter('op')) {
                         'title' => '<div style=\'position:absolute; top:7%; right:3%;\' > '.(($preventivo['is_completato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '').' '.(($preventivo['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'</div>'.'<b>Accettazione prev. '.$preventivo['numero'].'</b> '.$preventivo['nome'].'<br><b>'.tr('Cliente').':</b> '.$preventivo['cliente'],
                         'start' => $preventivo['data_accettazione'],
                         'end' => $preventivo['data_accettazione'],
-                        'url' => base_path().'/editor.php?id_module='.$modulo_preventivi->id.'&id_record='.$preventivo['id'],
+                        'url' => base_url().'/editor.php?id_module='.$modulo_preventivi->id.'&id_record='.$preventivo['id'],
                         'backgroundColor' => '#ff7f50',
                         'textColor' => color_inverse('#ff7f50'),
                         'borderColor' => '#ff7f50',
@@ -166,7 +166,7 @@ switch (filter('op')) {
                         'title' => '<div style=\'position:absolute; top:7%; right:3%;\' > '.(($preventivo['is_completato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '').' '.(($preventivo['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'</div>'.'<b>Conclusione prev. '.$preventivo['numero'].'</b> '.$preventivo['nome'].'<br><b>'.tr('Cliente').':</b> '.$preventivo['cliente'],
                         'start' => $preventivo['data_conclusione'],
                         'end' => $preventivo['data_conclusione'],
-                        'url' => base_path().'/editor.php?id_module='.$modulo_preventivi->id.'&id_record='.$preventivo['id'],
+                        'url' => base_url().'/editor.php?id_module='.$modulo_preventivi->id.'&id_record='.$preventivo['id'],
                         'backgroundColor' => '#ff7f50',
                         'textColor' => color_inverse('#ff7f50'),
                         'borderColor' => '#ff7f50',

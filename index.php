@@ -17,6 +17,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+
 $skip_permissions = true;
 include_once __DIR__.'/core.php';
 
@@ -28,52 +31,44 @@ switch ($op) {
         $username = post('username');
         $password = post('password');
 
-        if ($dbo->isConnected() && $dbo->isInstalled() && auth()->attempt($username, $password)) {
-            $_SESSION['keep_alive'] = true;
-
-            if (intval(setting('Inizio periodo calendario'))) {
-                $_SESSION['period_start'] = setting('Inizio periodo calendario');
-            } else {
-                $_SESSION['period_start'] = date('Y').'-01-01';
-            }
-
-            if (intval(setting('Fine periodo calendario'))) {
-                $_SESSION['period_end'] = setting('Fine periodo calendario');
-            } else {
-                $_SESSION['period_end'] = date('Y').'-12-31';
-            }
+        $user = User::where('username', $username)->first();
+        if (!empty($user) && Hash::check($password, $user->getAuthPassword())){
+            auth()->loginUsingId($user->id, true);
 
             // Rimozione log vecchi
             //$dbo->query('DELETE FROM `zz_operations` WHERE DATE_ADD(`created_at`, INTERVAL 30*24*60*60 SECOND) <= NOW()');
         } else {
-            $status = auth()->getCurrentStatus();
+            $status = auth()->user();
 
-            flash()->error(Auth::getStatus()[$status]['message']);
+            //flash()->error(auth()->getStatus()[$status]['message']);
 
-            redirect(base_path().'/index.php');
-            exit();
+            redirect_legacy(base_url().'/index.php');
+            throw new \App\Exceptions\LegacyExitException;
+
         }
 
         break;
 
     case 'logout':
-        Auth::logout();
+        auth()->logout();
 
-        redirect(base_path().'/index.php');
-        exit();
+        redirect_legacy(base_url().'/index.php');
+        throw new \App\Exceptions\LegacyExitException;
+
 
         break;
 }
 
-if (Auth::check() && isset($dbo) && $dbo->isConnected() && $dbo->isInstalled()) {
-    $module = Auth::firstModule();
+if (auth()->check() && isset($dbo) && $dbo->isConnected() && $dbo->isInstalled()) {
+    $module = 1;
 
     if (!empty($module)) {
-        redirect(base_path().'/controller.php?id_module='.$module);
+        redirect_legacy(base_url().'/controller.php?id_module='.$module);
     } else {
-        redirect(base_path().'/index.php?op=logout');
+        redirect_legacy(base_url().'/index.php?op=logout');
     }
-    exit();
+    throw new \App\Exceptions\LegacyExitException;
+
 }
 
 // Procedura di installazione
@@ -87,7 +82,7 @@ include_once base_dir().'/include/init/init.php';
 
 $pageTitle = tr('Login');
 
-include_once App::filepath('include|custom|', 'top.php');
+include_once AppLegacy::filepath('include|custom|', 'top.php');
 
 // Controllo se è una beta e in caso mostro un warning
 if (Update::isBeta()) {
@@ -101,7 +96,7 @@ if (Update::isBeta()) {
 }
 
 // Controllo se è una beta e in caso mostro un warning
-if (Auth::isBrute()) {
+if (false) {
     echo '
             <div class="box box-danger box-center" id="brute">
                 <div class="box-header with-border text-center">
@@ -110,7 +105,7 @@ if (Auth::isBrute()) {
 
                 <div class="box-body text-center">
                 <p>'.tr('Sono stati effettuati troppi tentativi di accesso consecutivi!').'</p>
-                <p>'.tr('Tempo rimanente (in secondi)').': <span id="brute-timeout">'.(Auth::getBruteTimeout() + 1).'</span></p>
+                <p>'.tr('Tempo rimanente (in secondi)').': <span id="brute-timeout">'.(auth()->getBruteTimeout() + 1).'</span></p>
                 </div>
             </div>
             <script>
@@ -145,7 +140,7 @@ if (!empty(flash()->getMessage('error'))) {
 echo '
 			<form action="?op=login" method="post" class="login-box box" autocomplete="off" >
 				<div class="box-header with-border text-center">
-					<img src="'.App::getPaths()['img'].'/logo_completo.png" class="img-responsive" alt="'.tr('OSM Logo').'">
+					<img src="'.AppLegacy::getPaths()['img'].'/logo_completo.png" class="img-responsive" alt="'.tr('OSM Logo').'">
 				</div>
 
 				<div class="login-box-body box-body">
@@ -161,7 +156,7 @@ echo ' required>
 					{[ "type": "password", "name": "password", "autocomplete": "current-password", "placeholder": "'.tr('Password').'", "icon-before": "<i class=\"fa fa-lock\"></i>" ]}
 
                     <div class="text-right">
-                        <small><a href="'.base_path().'/reset.php">'.tr('Password dimenticata?').'</a></small>
+                        <small><a href="'.base_url().'/reset.php">'.tr('Password dimenticata?').'</a></small>
                     </div>
 				</div>
 
@@ -188,4 +183,4 @@ echo ' required>
             });
             </script>';
 
-include_once App::filepath('include|custom|', 'bottom.php');
+include_once AppLegacy::filepath('include|custom|', 'bottom.php');

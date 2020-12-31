@@ -113,14 +113,14 @@ echo '
                 echo '
                         <tr>
                             <td class="text-center">
-                                <a class="btn btn-xs btn-primary" href="'.base_path().'/actions.php?id_module='.$file->id_module.'&op=download-allegato&id='.$file->id.'&filename='.$file->filename.'" target="_blank">
+                                <a class="btn btn-xs btn-primary" href="'.base_url().'/actions.php?id_module='.$file->id_module.'&op=download-allegato&id='.$file->id.'&filename='.$file->filename.'" target="_blank">
                                     <i class="fa fa-download"></i>
                                 </a>';
 
                 // Anteprime supportate dal browser
                 if ($file->hasPreview()) {
                     echo '
-                                    <button class="btn btn-xs btn-info" type="button" data-title="'.prepareToField($file->name).' <small style=\'color:white\'><i>('.$file->filename.')</i></small>" data-href="'.base_path().'/view.php?file_id='.$file->id.'">
+                                    <button class="btn btn-xs btn-info" type="button" data-title="'.prepareToField($file->name).' <small style=\'color:white\'><i>('.$file->filename.')</i></small>" data-href="'.base_url().'/view.php?file_id='.$file->id.'">
                                         <i class="fa fa-eye"></i>
                                     </button>';
                 } else {
@@ -133,7 +133,7 @@ echo '
                 echo '
                             </td>
                             <td>
-                                <a href="'.base_path().'/view.php?file_id='.$file->id.'" target="_blank">
+                                <a href="'.base_url().'/view.php?file_id='.$file->id.'" target="_blank">
                                     <i class="fa fa-external-link"></i> '.$file->name.'
                                 </a>
                             </td>

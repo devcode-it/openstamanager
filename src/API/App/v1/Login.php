@@ -67,8 +67,8 @@ class Login extends Resource implements CreateInterface
             ];
 
             // Se è in corso un brute-force, aggiunge il timeout
-            if (Auth::isBrute()) {
-                $response['timeout'] = Auth::getBruteTimeout();
+            if (auth()->isBrute()) {
+                $response['timeout'] = auth()->getBruteTimeout();
             }
         }
 

@@ -67,6 +67,13 @@ if (Services::isEnabled()) {
                             </td>
                         </tr>';
         }
+        // Gestione per crediti
+        elseif (
+            (isset($servizio['credits']) && $servizio['credits'] < 100)
+        ) {
+            $servizi_in_scadenza[] = $servizio['name'].' ('.$servizio['credits'].' crediti)';
+        }
+    }
 
         
         $servizi_in_scadenza = Services::getServiziInScadenza($limite_scadenze);

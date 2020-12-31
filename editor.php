@@ -25,12 +25,12 @@ use Carbon\Carbon;
 $read_only = $structure->permission == 'r';
 
 if (empty($id_record) && !empty($id_module) && empty($id_plugin)) {
-    redirect(base_path().'/controller.php?id_module='.$id_module);
+    redirect_legacy(base_url().'/controller.php?id_module='.$id_module);
 } elseif (empty($id_record) && empty($id_module) && empty($id_plugin)) {
-    redirect(base_path().'/index.php');
+    redirect_legacy(base_url().'/index.php');
 }
 
-include_once App::filepath('include|custom|', 'top.php');
+include_once AppLegacy::filepath('include|custom|', 'top.php');
 
 if (!empty($id_record)) {
     Util\Query::setSegments(false);
@@ -73,7 +73,7 @@ if (empty($record) || !$has_access) {
             </h3>
             <br>
 
-            <a class="btn btn-default" href="'.base_path().'/controller.php?id_module='.$id_module.'">
+            <a class="btn btn-default" href="'.base_url().'/controller.php?id_module='.$id_module.'">
                 <i class="fa fa-chevron-left"></i> '.tr('Indietro').'
             </a>
         </div>';
@@ -83,9 +83,9 @@ if (empty($record) || !$has_access) {
 
     $advanced_sessions = setting('Attiva notifica di presenza utenti sul record');
     if (!empty($advanced_sessions)) {
-        $dbo->query('DELETE FROM zz_semaphores WHERE id_utente='.prepare(Auth::user()['id']).' AND posizione='.prepare($id_module.', '.$id_record));
+        $dbo->query('DELETE FROM zz_semaphores WHERE id_utente='.prepare(auth()->user()['id']).' AND posizione='.prepare($id_module.', '.$id_record));
 
-        $dbo->query('INSERT INTO zz_semaphores (id_utente, posizione, updated) VALUES ('.prepare(Auth::user()['id']).', '.prepare($id_module.', '.$id_record).', NOW())');
+        $dbo->query('INSERT INTO zz_semaphores (id_utente, posizione, updated) VALUES ('.prepare(auth()->user()['id']).', '.prepare($id_module.', '.$id_record).', NOW())');
 
         echo '
 		<div class="box box-warning box-solid text-center info-active hide">
@@ -159,7 +159,7 @@ if (empty($record) || !$has_access) {
     // Pulsanti di default
     echo '
                     <div id="pulsanti">
-                        <a class="btn btn-warning" id="back" href="'.base_path().'/controller.php?id_module='.$id_module.'">
+                        <a class="btn btn-warning" id="back" href="'.base_url().'/controller.php?id_module='.$id_module.'">
                             <i class="fa fa-chevron-left"></i> '.tr("Torna all'elenco").'
                         </a>
 
@@ -325,7 +325,7 @@ if (empty($record) || !$has_access) {
     }
 
     // Informazioni sulle operazioni
-    if (Auth::admin()) {
+    if (auth()->user()->isAdmin()) {
         echo '
                 <div id="tab_info" class="tab-pane">';
 
@@ -441,7 +441,7 @@ echo '{( "name": "widgets", "id_module": "'.$id_module.'", "id_record": "'.$id_r
 if (!empty($record)) {
     echo '
     		<hr>
-            <a class="btn btn-default" href="'.base_path().'/controller.php?id_module='.$id_module.'">
+            <a class="btn btn-default" href="'.base_url().'/controller.php?id_module='.$id_module.'">
                 <i class="fa fa-chevron-left"></i> '.tr('Indietro').'
             </a>';
 }
@@ -519,7 +519,7 @@ if (!empty($advanced_sessions)) {
     ?>
 
             function getActiveUsers(){
-                $.getJSON('<?php echo base_path(); ?>/ajax.php?op=active_users', {
+                $.getJSON('<?php echo base_url(); ?>/ajax.php?op=active_users', {
                     id_module: <?php echo $id_module; ?>,
                     id_record: <?php echo $id_record; ?>
                 },
@@ -544,4 +544,4 @@ if (!empty($advanced_sessions)) {
 	    </script>
 <?php
 
-include_once App::filepath('include|custom|', 'bottom.php');
+include_once AppLegacy::filepath('include|custom|', 'bottom.php');

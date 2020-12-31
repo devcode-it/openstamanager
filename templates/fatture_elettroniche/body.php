@@ -30,7 +30,7 @@ if (empty($file)) {
     return;
 }
 
-$link = base_path().'/'.$file->filepath;
+$link = base_url().'/'.$file->filepath;
 
 if ($file->isFatturaElettronica()) {
     $content = file_get_contents(base_dir().'/'.$file->filepath);

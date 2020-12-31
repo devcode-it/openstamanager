@@ -95,7 +95,7 @@ class Fattura extends Document
     {
         $model = new static();
 
-        $user = Auth::user();
+        $user = auth()->user();
         $database = database();
 
         // Individuazione dello stato predefinito per il documento
@@ -172,6 +172,7 @@ class Fattura extends Document
             if (empty($id_banca_azienda)) {
                 $id_banca_azienda = $azienda->{'idbanca_'.$conto};
             }
+            $model->id_banca_azienda = $id_banca_azienda;
         }
 
         $model->id_banca_azienda = $id_banca_azienda;

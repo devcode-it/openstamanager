@@ -180,7 +180,8 @@ class Prints
             echo '
                 <p align="center">'.$error.'</p>';
 
-            exit();
+            throw new \App\Exceptions\LegacyExitException;
+
         }
 
         if (self::isCompletelyCustom($print)) {
@@ -209,7 +210,7 @@ class Prints
             return false;
         }
 
-        $link = base_path().'/pdfgen.php?';
+        $link = base_url().'/pdfgen.php?';
 
         if (self::isOldStandard($infos['id'])) {
             $link .= 'ptype='.$infos['directory'];
@@ -270,7 +271,7 @@ class Prints
      */
     public static function getPDFLink($path)
     {
-        return base_path().'/assets/dist/pdfjs/web/viewer.html?file='.base_url().'/'.ltrim(str_replace(base_dir(), '', $path), '/');
+        return base_url().'/assets/dist/pdfjs/web/viewer.html?file='.base_url().'/'.ltrim(str_replace(base_dir(), '', $path), '/');
     }
 
     /**
@@ -286,7 +287,7 @@ class Prints
         $template = self::get($template);
         $directory = 'templates/'.$template['directory'].'|custom|';
 
-        return App::filepath($directory, $file);
+        return AppLegacy::filepath($directory, $file);
     }
 
     /**
@@ -368,7 +369,7 @@ class Prints
 
         $dbo = $database = database();
 
-        $user = Auth::user();
+        $user = auth()->user();
 
         $_GET[$infos['previous']] = $id_record;
         ${$infos['previous']} = $id_record;
@@ -479,13 +480,13 @@ class Prints
 
         $dbo = $database = database();
 
-        $user = Auth::user();
+        $user = auth()->user();
 
         // Generazione a singoli pezzi
         $single_pieces = self::filepath($id_print, 'piece.php');
 
         // Impostazioni di default
-        $default = include App::filepath('templates/base|custom|', 'settings.php');
+        $default = include AppLegacy::filepath('templates/base|custom|', 'settings.php');
 
         // Impostazioni personalizzate della stampa
         $print_settings = self::filepath($id_print, 'settings.php');

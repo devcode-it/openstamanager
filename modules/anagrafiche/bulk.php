@@ -81,7 +81,7 @@ switch (post('op')) {
 
 $operations = [];
 
-if (App::debug()) {
+if (AppLegacy::debug()) {
     $operations['delete-bulk'] = [
         'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span> <span class="label label-danger">beta</span>',
         'data' => [
@@ -102,7 +102,7 @@ $operations['export-csv'] = [
     ],
 ];
 
-if (App::debug() && $google) {
+if (AppLegacy::debug() && $google) {
     $operations['ricerca-coordinate'] = [
         'text' => '<span><i class="fa fa-map"></i> '.tr('Ricerca coordinate').'</span>',
         'data' => [

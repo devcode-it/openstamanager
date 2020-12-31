@@ -30,7 +30,8 @@ if (version_compare(phpversion(), $minimum) < 0) {
 <p>Stai utilizzando la versione PHP '.phpversion().', non compatibile con OpenSTAManager.</p>
 
 <p>Aggiorna PHP alla versione >= '.$minimum.'.</p>';
-    exit();
+    throw new \App\Exceptions\LegacyExitException;
+
 }
 
 // Caricamento delle impostazioni personalizzabili
@@ -38,38 +39,30 @@ if (file_exists(__DIR__.'/config.inc.php')) {
     include_once __DIR__.'/config.inc.php';
 }
 
-// Caricamento delle dipendenze e delle librerie del progetto
-$loader = require_once __DIR__.'/vendor/autoload.php';
-
-$namespaces = require_once __DIR__.'/config/namespaces.php';
-foreach ($namespaces as $path => $namespace) {
-    $loader->addPsr4($namespace.'\\', __DIR__.'/'.$path.'/custom/src');
-    $loader->addPsr4($namespace.'\\', __DIR__.'/'.$path.'/src');
-}
-
 // Individuazione dei percorsi di base
-App::definePaths(__DIR__);
+AppLegacy::definePaths(__DIR__);
 
 $docroot = DOCROOT;
 $rootdir = ROOTDIR;
 $baseurl = BASEURL;
-
+/*
 // Sicurezza della sessioni
 ini_set('session.cookie_samesite', 'strict');
 ini_set('session.use_trans_sid', '0');
 ini_set('session.use_only_cookies', '1');
 
-session_set_cookie_params(0, base_path(), null, isHTTPS(true));
-session_start();
+session_set_cookie_params(0, base_url(), null, isHTTPS(true));
+session_start();*/
 
 // Lettura della configurazione
-$config = App::getConfig();
+$config = AppLegacy::getConfig();
 
 // Redirect al percorso HTTPS se impostato nella configurazione
 if (!empty($config['redirectHTTPS']) && !isHTTPS(true)) {
     header('HTTP/1.1 301 Moved Permanently');
     header('Location: https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
-    exit();
+    throw new \App\Exceptions\LegacyExitException;
+
 }
 
 /* GESTIONE DEGLI ERRORI */
@@ -95,7 +88,7 @@ if (!API\Response::isAPIRequest()) {
     $handlers[] = new Extensions\MessageHandler(Monolog\Logger::ERROR);
 
     // File di log ordinati in base alla data
-    if (App::debug()) {
+    if (AppLegacy::debug()) {
         $handlers[] = new RotatingFileHandler(base_dir().'/logs/error.log', 0, Monolog\Logger::ERROR);
         $handlers[] = new RotatingFileHandler(base_dir().'/logs/setup.log', 0, Monolog\Logger::EMERGENCY);
     }
@@ -103,7 +96,7 @@ if (!API\Response::isAPIRequest()) {
     // Inizializzazione Whoops
     $whoops = new Whoops\Run();
 
-    if (App::debug()) {
+    if (AppLegacy::debug()) {
         $whoops->pushHandler(new Whoops\Handler\PrettyPageHandler());
     }
 
@@ -135,7 +128,7 @@ error_reporting(E_ALL & ~E_WARNING & ~E_CORE_WARNING & ~E_NOTICE & ~E_USER_DEPRE
 
 $pattern = '[%datetime%] %channel%.%level_name%: %message% %context%'.PHP_EOL.'%extra% '.PHP_EOL;
 $monologFormatter = new Monolog\Formatter\LineFormatter($pattern);
-$monologFormatter->includeStacktraces(App::debug());
+$monologFormatter->includeStacktraces(AppLegacy::debug());
 
 // Filtra gli errori per livello preciso del gestore dedicato
 foreach ($handlers as $handler) {
@@ -158,10 +151,10 @@ $dbo = $database = database();
 // Istanziamento del gestore delle traduzioni del progetto
 $lang = !empty($config['lang']) ? $config['lang'] : (isset($_GET['lang']) ? $_GET['lang'] : null);
 $formatter = !empty($config['formatter']) ? $config['formatter'] : [];
-$translator = trans();
-$translator->addLocalePath(base_dir().'/locale');
-$translator->addLocalePath(base_dir().'/modules/*/locale');
-$translator->setLocale($lang, $formatter);
+AppLegacy::setFormatter($lang, $formatter);
+//$translator->addLocalePath(base_dir().'/locale');
+//$translator->addLocalePath(base_dir().'/modules/*/locale');
+//$translator->setLocale($lang, $formatter);
 
 // Individuazione di versione e revisione del progetto
 $version = Update::getVersion();
@@ -169,19 +162,19 @@ $revision = Update::getRevision();
 
 /* ACCESSO E INSTALLAZIONE */
 // Controllo sulla presenza dei permessi di accesso basilari
-$continue = $dbo->isInstalled() && !Update::isUpdateAvailable() && (Auth::check() || API\Response::isAPIRequest());
+$continue = $dbo->isInstalled() && !Update::isUpdateAvailable() && (auth()->check() || API\Response::isAPIRequest());
 
 if (!empty($skip_permissions)) {
     Permissions::skip();
 }
 
-if (!$continue && getURLPath() != slashes(base_path().'/index.php') && !Permissions::getSkip()) {
-    if (Auth::check()) {
-        Auth::logout();
+if (!$continue && getURLPath() != slashes(base_url().'/index.php') && !Permissions::getSkip()) {
+    if (auth()->check()) {
+        auth()->logout();
     }
 
-    redirect(base_path().'/index.php');
-    exit();
+    redirect_legacy(base_url().'/index.php');
+    throw new \App\Exceptions\LegacyExitException;
 }
 
 /* INIZIALIZZAZIONE GENERALE */
@@ -192,7 +185,7 @@ if (!API\Response::isAPIRequest()) {
 
     // Controllo CSRF
     if (empty($config['disableCSRF'])) {
-        csrfProtector::init();
+        //csrfProtector::init();
     }
 
     // Aggiunta del wrapper personalizzato per la generazione degli input
@@ -211,13 +204,12 @@ if (!API\Response::isAPIRequest()) {
     }
 
     // Registrazione globale del template per gli input HTML
-    register_shutdown_function('translateTemplate');
     ob_start();
 
     // Retrocompatibilità
-    $_SESSION['infos'] = isset($_SESSION['infos']) ? array_unique($_SESSION['infos']) : [];
-    $_SESSION['warnings'] = isset($_SESSION['warnings']) ? array_unique($_SESSION['warnings']) : [];
-    $_SESSION['errors'] = isset($_SESSION['errors']) ? array_unique($_SESSION['errors']) : [];
+    session(['infos' => isset($_SESSION['infos']) ? array_unique($_SESSION['infos']) : []]);
+    session(['warnings' => isset($_SESSION['warnings']) ? array_unique($_SESSION['warnings']) : []]);
+    session(['errors' => isset($_SESSION['errors']) ? array_unique($_SESSION['errors']) : []]);
 
     // Impostazione del tema grafico di default
     $theme = !empty($config['theme']) ? $config['theme'] : 'default';
@@ -226,13 +218,13 @@ if (!API\Response::isAPIRequest()) {
         // Periodo di visualizzazione dei record
         // Personalizzato
         if (!empty($_GET['period_start'])) {
-            $_SESSION['period_start'] = $_GET['period_start'];
-            $_SESSION['period_end'] = $_GET['period_end'];
+            session(['period_start' => $_GET['period_start']]);
+            session(['period_end' => $_GET['period_end']]);
         }
         // Dal 01-01-yyy al 31-12-yyyy
-        elseif (!isset($_SESSION['period_start'])) {
-            $_SESSION['period_start'] = date('Y').'-01-01';
-            $_SESSION['period_end'] = date('Y').'-12-31';
+        elseif (session('period_start') == null) {
+            session(['period_start' => date('Y').'-01-01']);
+            session(['period_end' => date('Y').'-12-31']);
         }
 
         $id_record = filter('id_record');
@@ -249,13 +241,13 @@ if (!API\Response::isAPIRequest()) {
         $id_module = $module ? $module['id'] : null;
         $id_plugin = $plugin ? $plugin['id'] : null;
 
-        $user = Auth::user();
+        $user = auth()->user();
 
         if (!empty($id_module)) {
             // Segmenti
             if (!isset($_SESSION['module_'.$id_module]['id_segment'])) {
                 $segments = Modules::getSegments($id_module);
-                $_SESSION['module_'.$id_module]['id_segment'] = isset($segments[0]['id']) ? $segments[0]['id'] : null;
+                session(['module_'.$id_module.'.id_segment' => isset($segments[0]['id']) ? $segments[0]['id'] : null]);
             }
 
             Permissions::addModule($id_module);

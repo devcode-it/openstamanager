@@ -19,8 +19,8 @@
 
 include_once __DIR__.'/../../core.php';
 $azienda = $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica='.setting('Azienda predefinita'));
-$date_start = $_SESSION['period_start'];
-$date_end = $_SESSION['period_end'];
+$date_start = session('period_start');
+$date_end = session('period_end');
 
 if (get('lev') == '3') {
     $conto3 = $dbo->fetchOne('SELECT * FROM co_pianodeiconti3 WHERE id='.prepare($id_record));

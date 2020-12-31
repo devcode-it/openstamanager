@@ -37,7 +37,7 @@ if ($module['name'] == 'Ddt di vendita') {
 $id_fatture = Modules::get($module_fatture)['id'];
 if (!isset($_SESSION['module_'.$id_fatture]['id_segment'])) {
     $segments = Modules::getSegments($id_fatture);
-    $_SESSION['module_'.$id_fatture]['id_segment'] = isset($segments[0]['id']) ? $segments[0]['id'] : null;
+    session(['module_'.$id_fatture.'.id_segment' => isset($segments[0]['id']) ? $segments[0]['id'] : null]);
 }
 $id_segment = $_SESSION['module_'.$id_fatture]['id_segment'];
 $idconto = setting('Conto predefinito fatture di vendita');
@@ -163,7 +163,7 @@ switch (post('op')) {
     break;
 }
 
-if (App::debug()) {
+if (AppLegacy::debug()) {
     $operations['delete-bulk'] = [
         'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span>',
         'data' => [

@@ -1,7 +1,7 @@
 <?php
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
- * Copyright (C) DevCode s.r.l.
+ * Copyright (C) DevCode s.n.c.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Illuminate\Support\Facades\App;
 use Util\Messages;
 
 /**
@@ -24,7 +25,7 @@ use Util\Messages;
  *
  * @since 2.4
  */
-class App
+class AppLegacy
 {
     public static $docroot;
     public static $rootdir;
@@ -48,6 +49,7 @@ class App
             'app.min.css',
             'style.min.css',
             'themes.min.css',
+            'dropzone.min.css',
         ],
 
         // Print CSS
@@ -60,12 +62,17 @@ class App
             'app.min.js',
             'functions.min.js',
             'custom.min.js',
+            'dropzone.min.js',
             'i18n/parsleyjs/|lang|.min.js',
             'i18n/select2/|lang|.min.js',
             'i18n/moment/|lang|.min.js',
             'i18n/fullcalendar/|lang|.min.js',
         ],
     ];
+    /**
+     * @var \Intl\Formatter
+     */
+    public static $formatter;
 
     /**
      * Restituisce la configurazione dell'installazione in utilizzo del progetto.
@@ -111,7 +118,7 @@ class App
         }
 
         if (!isset(self::$config['debug'])) {
-            App::getConfig();
+            AppLegacy::getConfig();
         }
 
         return self::$config['debug'];
@@ -126,7 +133,7 @@ class App
     {
         if (empty(self::$flash)) {
             $storage = null;
-            self::$flash = new Messages($storage, 'messages');
+            self::$flash = new Messages('messages');
         }
 
         return self::$flash;
@@ -170,7 +177,7 @@ class App
      */
     public static function getPaths()
     {
-        $assets = base_url().'/assets/dist';
+        $assets = url('/').'/assets';
 
         return [
             'assets' => $assets,
@@ -178,6 +185,25 @@ class App
             'js' => $assets.'/js',
             'img' => $assets.'/img',
         ];
+    }
+
+    /**
+     * Imposta l'oggetto responsabile della localizzazione di date e numeri.
+     */
+    public static function setFormatter($locale, $options)
+    {
+        self::$formatter = new Intl\Formatter(
+            $locale,
+            empty($options['timestamp']) ? 'd/m/Y H:i' : $options['timestamp'],
+            empty($options['date']) ? 'd/m/Y' : $options['date'],
+            empty($options['time']) ? 'H:i' : $options['time'],
+            empty($options['number']) ? [
+                'decimals' => ',',
+                'thousands' => '.',
+            ] : $options['number']
+        );
+
+        self::$formatter->setPrecision(auth()->check() ? setting('Cifre decimali per importi') : 2);
     }
 
     /**
@@ -194,7 +220,7 @@ class App
 
         // Impostazione dei percorsi
         $paths = self::getPaths();
-        $lang = trans()->getCurrentLocale();
+        $lang = App::getLocale();;
 
         // Sezioni: nome - percorso
         $sections = [
@@ -216,23 +242,22 @@ class App
         $assets = [];
 
         foreach ($sections as $section => $dir) {
-            $result = array_unique(array_merge(self::$assets[$section], $config['assets'][$section]));
+            $result = array_unique(array_merge(
+                self::$assets[$section],
+                $config['assets'][$section] ?:[]
+            ));
 
             foreach ($result as $key => $element) {
-                $element = string_starts_with($element, 'http') ? $element : $paths[$dir].'/'.$element;
+                $base = str_replace(base_url(), '', $paths[$dir]);
+                $element = $base.'/'.$element;
 
-                if (string_contains($element, '|lang|')) {
-                    foreach ($lang_replace as $replace) {
-                        $name = str_replace('|lang|', $replace, $element);
+                foreach ($lang_replace as $replace) {
+                    $name = str_replace('|lang|', $replace, $element);
 
-                        if (file_exists(base_dir().str_replace(base_url(), '', $name))) {
-                            $element = $name;
-                            break;
-                        }
-                    }
+                    $assets_element = asset($name);
                 }
 
-                $result[$key] = $element.'?v='.$version;
+                $result[$key] = $assets_element.'?v='.$version;
             }
 
             $assets[$section] = $result;

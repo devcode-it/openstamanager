@@ -26,7 +26,7 @@ $op = 'add_sessione';
 $button = '<i class="fa fa-edit"></i> '.tr('Aggiungi');
 
 echo '
-<form id="add_form" action="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.get('id_record').'" method="post">
+<form id="add_form" action="'.base_url().'/editor.php?id_module='.$id_module.'&id_record='.get('id_record').'" method="post">
     <input type="hidden" name="op" value="'.$op.'">
     <input type="hidden" name="backto" value="record-edit">';
 

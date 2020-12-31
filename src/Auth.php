@@ -440,14 +440,14 @@ class Auth extends \Util\Singleton
         if (session_status() == PHP_SESSION_ACTIVE && $this->isAuthenticated()) {
             // Retrocompatibilità
             foreach ($this->user as $key => $value) {
-                $_SESSION[$key] = $value;
+                session([$key => $value]);
             }
-            $_SESSION['id_utente'] = $this->user->id;
+            session(['id_utente' => $this->user->id]);
 
             $identifier = md5($_SESSION['id_utente'].$_SERVER['HTTP_USER_AGENT']);
             if ((empty($_SESSION['last_active']) || time() < $_SESSION['last_active'] + (60 * 60)) && (empty($_SESSION['identifier']) || $_SESSION['identifier'] == $identifier)) {
-                $_SESSION['last_active'] = time();
-                $_SESSION['identifier'] = $identifier;
+                session(['last_active' => time()]);
+                session(['identifier' => $identifier]);
             }
         }
     }

@@ -21,8 +21,8 @@ use Util\FileSystem;
 $lang = '';
 include_once __DIR__.'/../core.php';
 
-$paths = App::getPaths();
-$user = Auth::user();
+$paths = AppLegacy::getPaths();
+$user = auth()->user();
 
 $pageTitle = !empty($pageTitle) ? $pageTitle : $structure->title;
 
@@ -42,22 +42,22 @@ echo '<!DOCTYPE html>
 
 if (file_exists(base_dir().'/manifest.json')) {
     echo '
-        <link rel="manifest" href="'.base_path().'/manifest.json">';
+        <link rel="manifest" href="'.base_url().'/manifest.json">';
 }
 
 // CSS
-foreach (App::getAssets()['css'] as $style) {
+foreach (AppLegacy::getAssets()['css'] as $style) {
     echo '
         <link rel="stylesheet" type="text/css" media="all" href="'.$style.'"/>';
 }
 
 // Print CSS
-foreach (App::getAssets()['print'] as $style) {
+foreach (AppLegacy::getAssets()['print'] as $style) {
     echo '
         <link rel="stylesheet" type="text/css" media="print" href="'.$style.'"/>';
 }
 
-if (Auth::check()) {
+if (auth()->check()) {
     echo '
 		<script>
             search = []';
@@ -179,7 +179,7 @@ if (Auth::check()) {
                 },
             };
 			globals = {
-                rootdir: "'.base_path().'",
+                rootdir: "'.base_url().'",
                 js: "'.$paths['js'].'",
                 css: "'.$paths['css'].'",
                 img: "'.$paths['img'].'",
@@ -203,10 +203,10 @@ if (Auth::check()) {
                 locale: "'.(explode('_', $lang)[0]).'",
 				full_locale: "'.$lang.'",
 
-                start_date: "'.$_SESSION['period_start'].'",
-                start_date_formatted: "'.Translator::dateToLocale($_SESSION['period_start']).'",
-                end_date: "'.$_SESSION['period_end'].'",
-                end_date_formatted: "'.Translator::dateToLocale($_SESSION['period_end']).'",
+                start_date: "'.session('period_start').'",
+                start_date_formatted: "'.Translator::dateToLocale(session('period_start')).'",
+                end_date: "'.session('period_end').'",
+                end_date_formatted: "'.Translator::dateToLocale(session('period_end')).'",
 
                 collapse_plugin_sidebar: '.intval(setting('Nascondere la barra dei plugin di default')).',
 
@@ -241,7 +241,7 @@ if (Auth::check()) {
     echo '
         <script>
             globals = {
-                rootdir: "'.base_path().'",
+                rootdir: "'.base_url().'",
 
                 search: {},
                 translations: {
@@ -275,7 +275,7 @@ if (Auth::check()) {
 }
 
 // JS
-foreach (App::getAssets()['js'] as $js) {
+foreach (AppLegacy::getAssets()['js'] as $js) {
     echo '
         <script type="text/javascript" charset="utf-8" src="'.$js.'"></script>';
 }
@@ -291,7 +291,7 @@ echo '
             });
         </script>';
 
-if (Auth::check()) {
+if (auth()->check()) {
     if (setting('Abilita esportazione Excel e PDF')) {
         echo '
         <script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
@@ -300,7 +300,7 @@ if (Auth::check()) {
     }
 
     if (setting('Attiva scorciatoie da tastiera')) {
-        echo '<script type="text/javascript" charset="utf-8" src="'.App::getPaths()['js'].'/hotkeys-js/hotkeys.min.js"></script>';
+        echo '<script type="text/javascript" charset="utf-8" src="'.url('/').'/assets/js/hotkeys-js/hotkeys.min.js"></script>';
         echo '
         <script>
 
@@ -330,17 +330,17 @@ if (Auth::check()) {
     }
 }
 
-$settings_collapse = session_get('settings.sidebar-collapse') ? 1 : 0;
-$hide_sidebar = Auth::check() && (setting('Nascondere la barra sinistra di default') || $settings_collapse);
+$settings_collapse = session('settings.sidebar-collapse') ? 1 : 0;
+$hide_sidebar = auth()->check() && (setting('Nascondere la barra sinistra di default') || $settings_collapse);
 echo '
 
     </head>
 
-	<body class="skin-'.$theme.(!empty($hide_sidebar) ? ' sidebar-collapse' : '').(!Auth::check() ? ' hold-transition login-page' : '').'">
-		<div class="'.(!Auth::check() ? '' : 'wrapper').'">';
+	<body class="skin-'.$theme.(!empty($hide_sidebar) ? ' sidebar-collapse' : '').(!auth()->check() ? ' hold-transition login-page' : '').'">
+		<div class="'.(!auth()->check() ? '' : 'wrapper').'">';
 
-if (Auth::check()) {
-    $calendar_color_label = ($_SESSION['period_start'] != date('Y').'-01-01' || $_SESSION['period_end'] != date('Y').'-12-31') ? 'danger' : 'default';
+if (auth()->check()) {
+    $calendar_color_label = (session('period_start') != date('Y').'-01-01' || session('period_end') != date('Y').'-12-31') ? 'danger' : 'default';
 
     echo '
             <!-- Loader principale -->
@@ -384,7 +384,7 @@ if (Auth::check()) {
                             </a></li>
 
                             <li><a style="cursor:default;padding:0px;padding-right:5px;padding-left:5px;margin-top:15px;" class="label label-'.$calendar_color_label.'">
-                                '.Translator::dateToLocale($_SESSION['period_start']).' - '.Translator::dateToLocale($_SESSION['period_end']).'
+                                '.Translator::dateToLocale(session('period_start')).' - '.Translator::dateToLocale(session('period_end')).'
                             </a></li>
                         </ul>
                      </div>
@@ -393,7 +393,7 @@ if (Auth::check()) {
                      <div class="navbar-custom-menu">
                         <ul class="nav navbar-nav">
 
-                            <li class="nav-button hide"><a href="'.base_path().'/bug.php" class="tip nav-button" title="'.tr('Segnalazione bug').'">
+                            <li class="nav-button hide"><a href="'.base_url().'/bug.php" class="tip nav-button" title="'.tr('Segnalazione bug').'">
                                 <i class="fa fa-bug"></i>
                             </a></li>
 
@@ -423,15 +423,19 @@ if (Auth::check()) {
                                 <i class="fa fa-print"></i>
                             </a></li>
 
-                            <li class="nav-button"><a href="'.base_path().'/log.php" class="tip nav-button" title="'.tr('Log accessi').'">
+                            <!---li class="nav-button"><a href="'.base_url().'/bug.php" class="tip nav-button" title="'.tr('Segnalazione bug').'">
+                                <i class="fa fa-bug"></i>
+                            </a></li--->
+
+                            <li class="nav-button"><a href="'.base_url().'/log.php" class="tip nav-button" title="'.tr('Log accessi').'">
                                 <i class="fa fa-book"></i>
                             </a></li>
 
-                            <li class="nav-button"><a href="'.base_path().'/info.php" class="tip nav-button" title="'.tr('Informazioni').'">
+                            <li class="nav-button"><a href="'.base_url().'/info.php" class="tip nav-button" title="'.tr('Informazioni').'">
                                 <i class="fa fa-info"></i>
                             </a></li>
 
-                            <li class="nav-button"><a href="'.base_path().'/index.php?op=logout" onclick="sessionStorage.clear()" class="bg-red tip" title="'.tr('Esci').'">
+                            <li class="nav-button"><a href="'.base_url().'/index.php?op=logout" onclick="sessionStorage.clear()" class="bg-red tip" title="'.tr('Esci').'">
                                 <i class="fa fa-power-off"></i>
                             </a></li>
                         </ul>
@@ -446,13 +450,13 @@ if (Auth::check()) {
                     <!-- Sidebar user panel -->
                     <div class="user-panel text-center info" style="height: 60px">
                         <div class="info">
-                            <p><a href="'.base_path().'/modules/utenti/info.php">
+                            <p><a href="'.base_url().'/modules/utenti/info.php">
                                 '.$user['username'].'
                             </a></p>
                             <p id="datetime"></p>
                         </div>
 
-                        <a class="image" href="'.base_path().'/modules/utenti/info.php">';
+                        <a class="image" href="'.base_url().'/modules/utenti/info.php">';
 
     $user_photo = $user->photo;
     if ($user_photo) {
@@ -534,7 +538,7 @@ if (Auth::check()) {
         }
 
         // Tab per le informazioni sulle operazioni
-        if (Auth::admin()) {
+        if (auth()->user()->isAdmin()) {
             echo '
                 <li data-toggle="control-sidebar" class="bg-warning">
                     <a data-toggle="tab" href="#tab_info" id="link-tab_info">
@@ -568,13 +572,13 @@ if (Auth::check()) {
                         <div class="col-md-12">';
 
     // Eventuale messaggio personalizzato per l'installazione corrente
-    $extra_file = App::filepath('include/custom/extra', 'extra.php');
+    $extra_file = AppLegacy::filepath('include/custom/extra', 'extra.php');
     if ($extra_file) {
         include_once $extra_file;
     }
 } else {
     // Eventuale messaggio personalizzato per l'installazione corrente
-    $extra_file = App::filepath('include/custom/extra', 'login.php');
+    $extra_file = AppLegacy::filepath('include/custom/extra', 'login.php');
     if ($extra_file) {
         include_once $extra_file;
     }
@@ -621,7 +625,7 @@ if (!empty($messages['warning'])) {
     }
 }
 
-if (!Auth::check() && (!empty($messages['info']) || !empty($messages['warning']) || !empty($messages['error']))) {
+if (!auth()->check() && (!empty($messages['info']) || !empty($messages['warning']) || !empty($messages['error']))) {
     echo '
                 </div>
             </div>';

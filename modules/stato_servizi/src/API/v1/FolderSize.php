@@ -21,7 +21,7 @@ namespace Modules\StatoServizi\API\v1;
 
 use API\Interfaces\RetrieveInterface;
 use API\Resource;
-use App;
+use AppLegacy;
 use Util\FileSystem;
 
 class FolderSize extends Resource implements RetrieveInterface
@@ -31,7 +31,7 @@ class FolderSize extends Resource implements RetrieveInterface
         $dirs = $request['dirs'];
 
         if (empty($dirs)) {
-            $backup_dir = App::getConfig()['backup_dir'];
+            $backup_dir = AppLegacy::getConfig()['backup_dir'];
 
             $dirs = [
                 $backup_dir => tr('Backup'),

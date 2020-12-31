@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 // Verifico se è già stata eseguita l'apertura bilancio
-$bilancio_gia_aperto = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE is_apertura=1 AND data BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']));
+$bilancio_gia_aperto = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE is_apertura=1 AND data BETWEEN '.prepare(session('period_start')).' AND '.prepare(session('period_end')));
 
 $msg = tr('Sei sicuro di voler aprire il bilancio?');
 $btn_class = 'btn-info';
@@ -373,7 +373,7 @@ foreach ($primo_livello as $conto_primo) {
 }
 
 // Verifico se è già stata eseguita l'apertura bilancio
-$bilancio_gia_chiuso = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE is_chiusura=1 AND data BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']));
+$bilancio_gia_chiuso = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE is_chiusura=1 AND data BETWEEN '.prepare(session('period_start')).' AND '.prepare(session('period_end')));
 
 $msg = tr('Sei sicuro di voler aprire il bilancio?');
 $btn_class = 'btn-info';

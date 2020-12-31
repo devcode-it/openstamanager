@@ -22,10 +22,10 @@ include_once __DIR__.'/../../core.php';
 use Modules\Statistiche\Stats;
 
 echo '
-<script src="'.base_path().'/assets/dist/js/chartjs/Chart.min.js"></script>';
+<script src="'.base_url().'/assets/dist/js/chartjs/Chart.min.js"></script>';
 
-$start = $_SESSION['period_start'];
-$end = $_SESSION['period_end'];
+$start = session('period_start');
+$end = session('period_end');
 
 echo '
 <div class="box box-warning">

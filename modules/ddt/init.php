@@ -53,7 +53,7 @@ if (isset($id_record)) {
 
     // Se la sede del ddt non è di mia competenza, blocco il ddt in modifica
     $field_name = ($dir == 'entrata') ? 'idsede_partenza' : 'idsede_destinazione';
-    if (!Auth::admin() && !in_array($record[$field_name], $user->sedi)) {
+    if (!auth()->user()->isAdmin() && !in_array($record[$field_name], $user->sedi)) {
         $record['flag_completato'] = 1;
     }
 }

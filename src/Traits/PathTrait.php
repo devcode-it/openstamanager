@@ -19,7 +19,7 @@
 
 namespace Traits;
 
-use App;
+use AppLegacy;
 
 trait PathTrait
 {
@@ -42,7 +42,7 @@ trait PathTrait
      */
     public function filepath($file)
     {
-        return App::filepath($this->path.'|custom|', $file);
+        return AppLegacy::filepath($this->path.'|custom|', $file);
     }
 
     /**
@@ -56,7 +56,7 @@ trait PathTrait
     {
         $filepath = $this->filepath($file);
 
-        $result = str_replace(base_dir(), base_path(), $filepath);
+        $result = str_replace(base_dir(), base_url(), $filepath);
         $result = str_replace('\\', '/', $result);
 
         return $result;

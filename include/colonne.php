@@ -21,6 +21,7 @@ include_once __DIR__.'/../core.php';
 
 // Compatibilità per controller ed editor
 $structure = Modules::get($id_module);
+$modulo_viste = Modules::get('Viste');
 
 echo '
 <p>'.tr('Trascina le colonne per ordinare la struttura della tabella principale, seleziona e deseleziona le colonne per renderle visibili o meno').'.</p>
@@ -52,8 +53,9 @@ echo '
 
         // Aggiornamento effettivo
         $.post(globals.rootdir + "/actions.php", {
-            id_module: "'.$id_module.'",
-            op: "toggle_colonna",
+            id_module: "'.$modulo_viste->id.'",
+            id_record: "'.$id_module.'",
+            op: "update_visible",
             id_vista: id,
             visible: $(this).is(":checked") ? 1 : 0,
         });

@@ -35,7 +35,7 @@ switch (post('op')) {
         $database->insert('zz_logs', [
             'username' => $username,
             'ip' => get_client_ip(),
-            'stato' => Auth::getStatus()['failed']['code'],
+            'stato' => auth()->getStatus()['failed']['code'],
         ]);
 
         try {
@@ -59,8 +59,9 @@ switch (post('op')) {
             flash()->error(tr("Errore durante la gestione della richiesta: si prega di contattare l'amministratore").'.');
         }
 
-        redirect(base_path().'/index.php');
-        exit();
+        redirect_legacy(base_url().'/index.php');
+        throw new \App\Exceptions\LegacyExitException;
+
         break;
 
     case 'update':
@@ -76,17 +77,18 @@ switch (post('op')) {
 
         flash()->info(tr('Password cambiata!'));
 
-        redirect(base_path().'/index.php');
-        exit();
+        redirect_legacy(base_url().'/index.php');
+        throw new \App\Exceptions\LegacyExitException;
+
         break;
 }
 
 $pageTitle = tr('Reimpostazione password');
 
-include_once App::filepath('include|custom|', 'top.php');
+include_once AppLegacy::filepath('include|custom|', 'top.php');
 
 // Controllo se è una beta e in caso mostro un warning
-if (Auth::isBrute()) {
+if (auth()->isBrute()) {
     echo '
     <div class="box box-danger box-center" id="brute">
         <div class="box-header with-border text-center">
@@ -95,7 +97,7 @@ if (Auth::isBrute()) {
 
         <div class="box-body text-center">
         <p>'.tr('Sono stati effettuati troppi tentativi di accesso consecutivi!').'</p>
-        <p>'.tr('Tempo rimanente (in secondi)').': <span id="brute-timeout">'.(Auth::getBruteTimeout() + 1).'</span></p>
+        <p>'.tr('Tempo rimanente (in secondi)').': <span id="brute-timeout">'.(auth()->getBruteTimeout() + 1).'</span></p>
         </div>
     </div>
     <script>
@@ -121,7 +123,7 @@ if (Auth::isBrute()) {
 echo '
     <form action="" method="post" class="box box-center-large box-warning" id="reset">
         <div class="box-header with-border text-center">
-            <a href="'.base_path().'/index.php"><i  class="fa fa-arrow-left btn btn-xs btn-warning pull-left tip" title="'.tr('Torna indietro').'" ></i></a>
+            <a href="'.base_url().'/index.php"><i  class="fa fa-arrow-left btn btn-xs btn-warning pull-left tip" title="'.tr('Torna indietro').'" ></i></a>
             <h3 class="box-title">'.$pageTitle.'</h3>
         </div>
 
@@ -156,4 +158,4 @@ echo '
         </div>
     </form>';
 
-include_once App::filepath('include|custom|', 'bottom.php');
+include_once AppLegacy::filepath('include|custom|', 'bottom.php');

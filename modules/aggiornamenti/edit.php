@@ -76,9 +76,9 @@ if (function_exists('customComponents')) {
     }
 }
 
-//Fix per funzione base_path non trovata in fase di aggiornamento da versione < 2.4.19
-if (!function_exists('base_path')) {
-    function base_path()
+//Fix per funzione base_url non trovata in fase di aggiornamento da versione < 2.4.19
+if (!function_exists('base_url')) {
+    function base_url()
     {
         return ROOTDIR;
     }
@@ -193,7 +193,7 @@ function search(button) {
                 </h3>
             </div>
             <div class="box-body">
-                <form action="'.base_path().'/controller.php?id_module='.$id_module.'" method="post" enctype="multipart/form-data" id="update">
+                <form action="'.base_url().'/controller.php?id_module='.$id_module.'" method="post" enctype="multipart/form-data" id="update">
                     <input type="hidden" name="op" value="upload">
 
 			        {[ "type": "file", "name": "blob", "required": 1, "accept": ".zip" ]}

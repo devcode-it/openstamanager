@@ -62,8 +62,8 @@ include_once __DIR__.'/../../core.php';
 
 $previous = $_SESSION['module_'.$record['id_module']]['id_segment'];
 $previous_module = $_SESSION['module_'.$record['id_module']]['id_segment'];
-$_SESSION['module_'.$id_module]['id_segment'] = $id_record;
-$_SESSION['module_'.$record['id_module']]['id_segment'] = $id_record;
+session(['module_'.$id_module.'.id_segment' => $id_record]);
+session(['module_'.$id_module.'.id_segment' => $id_record]);
 
 $current_module = Modules::get($record['id_module']);
 $total = Util\Query::readQuery($current_module);
@@ -73,8 +73,8 @@ echo '
             <p><strong>'.tr('Query risultante').':</strong></p>
             <p>'.htmlentities($module_query).'</p>';
 
-$_SESSION['module_'.$id_module]['id_segment'] = $previous;
-$_SESSION['module_'.$record['id_module']]['id_segment'] = $previous_module;
+session(['module_'.$id_module.'.id_segment' => $previous]);
+session(['module_'.$record['id_module'].'.id_segment' => $previous_module]);
 
 ?>
 			<div class="row">

@@ -123,7 +123,7 @@ foreach ($impianti_collegati as $impianto) {
                     <tr>
                         <td valign="top" class="text-right">'.tr("Componenti soggetti all'intervento").'</td>
                         <td valign="top">
-                            <form action="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=link_componenti&matricola='.$impianto['id'].'" method="post">
+                            <form action="'.base_url().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=link_componenti&matricola='.$impianto['id'].'" method="post">
                                 <input type="hidden" name="backto" value="record-edit">
                                 <input type="hidden" name="id_impianto" value="'.$impianto['id'].'">';
 
@@ -158,7 +158,8 @@ $impianti = !empty($impianti) ? array_column($impianti, 'idimpianto') : [];
 $sedi = $dbo->fetchArray('SELECT id, nomesede, citta FROM an_sedi WHERE idanagrafica='.prepare($record['idanagrafica'])." UNION SELECT 0, 'Sede legale', '' ORDER BY id");
 
 echo '
-        <form action="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=link_impianti" method="post">
+        <p><strong>'.tr('Impianti disponibili').'</strong></p>
+        <form action="'.base_url().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=link_impianti" method="post">
             <input type="hidden" name="backto" value="record-edit">
             <div class="row">
                 <div class="col-xs-12 col-md-6">
@@ -168,7 +169,7 @@ echo '
             <br><br>
             <button type="submit" class="btn btn-success pull-right" '.$disabled.'><i class="fa fa-check"></i> '.tr('Salva impianti').'</button>
 
-            <button type="button" class="btn btn-primary hide" data-toggle="modal" data-title="'.tr('Aggiungi impianto').'" data-href="'.base_path().'/add.php?id_module='.Modules::get('Impianti')['id'].'&source=Attività&select=idimpianti&id_anagrafica='.$record['idanagrafica'].'&ajax=yes"><i class="fa fa-plus"></i> '.tr('Aggiungi impianto').'</button>
+            <button type="button" class="btn btn-primary hide" data-toggle="modal" data-title="'.tr('Aggiungi impianto').'" data-href="'.base_url().'/add.php?id_module='.Modules::get('Impianti')['id'].'&source=Attività&select=idimpianti&id_anagrafica='.$record['idanagrafica'].'&ajax=yes"><i class="fa fa-plus"></i> '.tr('Aggiungi impianto').'</button>
 
         </form>';
 

@@ -17,8 +17,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Modules\Articoli\Articolo;
-
 include_once __DIR__.'/../../core.php';
 
 echo '<style>

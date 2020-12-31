@@ -85,4 +85,4 @@ if (get('is_descrizione') !== null) {
     $options['op'] = 'manage_barcode';
 }
 
-echo App::load($file.'.php', $result, $options);
+echo AppLegacy::load($file.'.php', $result, $options);

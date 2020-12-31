@@ -46,7 +46,7 @@ echo '
     '_NUM_' => $numero,
 ]).'</p>
 
-<form action="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'" method="post">
+<form action="'.base_url().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'" method="post">
     <input type="hidden" name="op" value="add_intervento">
     <input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="dir" value="'.$dir.'">';
@@ -107,7 +107,7 @@ $options = [
 $ritenuta_acconto = $dbo->fetchOne('SELECT id_ritenuta_acconto_'.($dir == 'uscita' ? 'acquisti' : 'vendite').' AS id_ritenuta_acconto FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
 $options['id_ritenuta_acconto_predefined'] = $ritenuta_acconto['id_ritenuta_acconto'];
 
-echo App::internalLoad('conti.php', [], $options);
+echo AppLegacy::internalLoad('conti.php', [], $options);
 
 // Leggo l'iva predefinita dall'articolo e se non c'è leggo quella predefinita generica
 $idiva = $fattura->anagrafica->idiva_vendite ?: setting('Iva predefinita');

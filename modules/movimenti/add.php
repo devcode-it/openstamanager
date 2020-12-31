@@ -42,7 +42,7 @@ if (setting('Attiva scorciatoie da tastiera')) {
             {["type": "text", "label": "<?php echo tr('Ricerca con lettore'); ?>", "name": "barcode", "icon-before": "<i class=\"fa fa-barcode\"></i>" ]}
         </div>
     </div>
-
+    
     <div class="row">
         <div class="col-md-4">
             {["type": "select", "label": "<?php echo tr('Articolo'); ?>", "name": "idarticolo", "ajax-source": "articoli", "value": "", "required": 1, "select-options": {"permetti_movimento_a_zero": 1, "idanagrafica": <?php echo setting('Azienda predefinita'); ?>, "idsede_partenza": 0, "idsede_destinazione": 0} ]}
@@ -177,13 +177,16 @@ echo '
 
     function ricercaBarcode(barcode) {
         // Ricerca via ajax del barcode negli articoli
-        $.get(globals.rootdir + "/ajax_select.php?op=articoli&search=" + barcode,
+        $.get(
+            globals.rootdir + "/ajax_select.php?op=articoli&search=" + barcode,
             function(data){
                 data = JSON.parse(data);
 
                 // Articolo trovato
                 if(data.results.length === 1) {
-                    let record = data.results[0];
+                    $("#barcode").val("");
+
+                    var record = data.results[0];
                     $("#idarticolo").selectSetNew(record.id, record.text, record);
 
                     salva($("#aggiungi"));
@@ -202,8 +205,8 @@ echo '
 
     async function salva(button) {
         $("#messages").html("");
-        let qta_input = input("qta");
-        let tipo_movimento = $("#tipo_movimento").val();
+        var qta_input = input("qta");
+        var tipo_movimento = $("#tipo_movimento").val();
 
         await salvaForm("#add-form", {}, button);
 

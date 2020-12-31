@@ -97,7 +97,7 @@ class Response
         $version = $request['version'];
 
         // Controllo sull'accesso
-        if (!Auth::check() && $request['resource'] != 'login') {
+        if (!auth()->check() && $request['resource'] != 'login') {
             return self::response([
                 'status' => self::$status['unauthorized']['code'],
             ]);
@@ -212,7 +212,7 @@ class Response
      */
     public static function isAPIRequest()
     {
-        return getURLPath() == slashes(base_path().'/api/index.php');
+        return getURLPath() == slashes(base_url().'/api/index.php');
     }
 
     /**

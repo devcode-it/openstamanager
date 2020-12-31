@@ -74,7 +74,7 @@ class NotificheRicevuteHook extends Manager
             'icon' => 'fa fa-ticket text-yellow',
             'message' => $message,
             'show' => $con_errore != 0 || $in_attesa != 0,
-            'link' => base_path().'/controller.php?id_module='.$module->id.'#tab_'.$plugin->id,
+            'link' => base_url().'/controller.php?id_module='.$module->id.'#tab_'.$plugin->id,
         ];
     }
 

@@ -257,7 +257,7 @@ function controllaRate() {
 
 function rimuoviRata(id) {
     if(confirm("<?php echo tr('Eliminare questo elemento?'); ?>")){
-        location.href = "<?php echo base_path(); ?>/editor.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&op=delete_rata&id=" + id;
+        location.href = "<?php echo base_url(); ?>/editor.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&op=delete_rata&id=" + id;
     }
 }
 </script>

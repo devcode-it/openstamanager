@@ -173,7 +173,7 @@ class Translator extends Util\Singleton
      */
     public static function getFormatter()
     {
-        return self::$formatter;
+        return formatter();
     }
 
     /**

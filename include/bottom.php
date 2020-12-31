@@ -19,7 +19,7 @@
 
 include_once __DIR__.'/../core.php';
 
-if (Auth::check()) {
+if (auth()->check()) {
     echo '
                         </div>
                     </div><!-- /.row -->
@@ -40,13 +40,13 @@ if (Auth::check()) {
 echo '
         </div><!-- ./wrapper -->';
 
-if (Auth::check()) {
+if (auth()->check()) {
     if (!empty($_SESSION['keep_alive'])) {
         echo '
 		<script> setInterval("session_keep_alive()", 5*60*1000); </script>';
     }
 
-    if (App::debug()) {
+    if (AppLegacy::debug()) {
         echo '
         <!-- Fix per le icone di debug -->
         <style>div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-copy-clipboard:before, div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-database:before, div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-duration:before, div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-memory:before, div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-row-count:before, div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-stmt-id:before {

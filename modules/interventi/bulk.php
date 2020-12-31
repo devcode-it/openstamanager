@@ -30,7 +30,7 @@ use Util\Zip;
 $id_fatture = Modules::get('Fatture di vendita')['id'];
 if (!isset($_SESSION['module_'.$id_fatture]['id_segment'])) {
     $segments = Modules::getSegments($id_fatture);
-    $_SESSION['module_'.$id_fatture]['id_segment'] = isset($segments[0]['id']) ? $segments[0]['id'] : null;
+    session(['module_'.$id_fatture.'.id_segment' => isset($segments[0]['id']) ? $segments[0]['id'] : null]);
 }
 $id_segment = $_SESSION['module_'.$id_fatture]['id_segment'];
 $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [

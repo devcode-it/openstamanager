@@ -40,6 +40,7 @@ if ($documento->direzione == 'uscita') {
     $columns += 2;
     $char_number = $options['pricing'] ? 26 : 63;
 } else {
+    $columns = 6;
     $char_number = $options['pricing'] ? 45 : 82;
 }
 $columns = $options['pricing'] ? $columns : $columns - 3;
@@ -242,7 +243,7 @@ if ($options['pricing']) {
     // Totale imponibile
     echo '
     <tr>
-        <td colspan="'.$colspan.'" class="text-right border-top">
+        <td colspan="'.($has_image ? 5 : 4).'" class="text-right border-top">
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
 
@@ -255,7 +256,7 @@ if ($options['pricing']) {
     if ($show_sconto) {
         echo '
     <tr>
-        <td colspan="'.$colspan.'" class="text-right border-top">
+        <td colspan="'.($has_image ? 5 : 4).'" class="text-right border-top">
             <b>'.tr('Sconto', [], ['upper' => true]).':</b>
         </td>
 
@@ -267,7 +268,7 @@ if ($options['pricing']) {
         // Totale imponibile
         echo '
     <tr>
-        <td colspan="'.$colspan.'" class="text-right border-top">
+        <td colspan="'.($has_image ? 5 : 4).'" class="text-right border-top">
             <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
         </td>
 
@@ -280,7 +281,7 @@ if ($options['pricing']) {
     // IVA
     echo '
     <tr>
-        <td colspan="'.$colspan.'" class="text-right border-top">
+        <td colspan="'.($has_image ? 5 : 4).'" class="text-right border-top">
             <b>'.tr('Totale IVA', [], ['upper' => true]).':</b>
         </td>
 
@@ -292,7 +293,7 @@ if ($options['pricing']) {
     // TOTALE
     echo '
     <tr>
-    	<td colspan="'.$colspan.'" class="text-right border-top">
+    	<td colspan="'.($has_image ? 5 : 4).'" class="text-right border-top">
             <b>'.tr('Totale documento', [], ['upper' => true]).':</b>
     	</td>
     	<th colspan="2" class="text-right">

@@ -26,7 +26,8 @@ if (get('anteprima') !== null) {
 
     if (empty($rs)) {
         echo tr('Intervento inesistente!');
-        exit();
+        throw new \App\Exceptions\LegacyExitException;
+
     }
 
     // Gestione della stampa
@@ -48,7 +49,7 @@ if (get('anteprima') !== null) {
 }
 
 ?>
-<form action="<?php echo base_path(); ?>/editor.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>" method="post" id="form-firma" class="hide">
+<form action="<?php echo base_url(); ?>/editor.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>" method="post" id="form-firma" class="hide">
     <input type="hidden" name="op" value="firma">
     <input type="hidden" name="backto" value="record-edit">
 

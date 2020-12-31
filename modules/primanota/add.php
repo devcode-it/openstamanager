@@ -260,7 +260,7 @@ if (!empty(get('id_anagrafica'))) {
     $id_anagrafica = $dbo->fetchOne('SELECT idanagrafica FROM co_documenti WHERE id IN('.(get('id_documenti') ?: '0').')')['idanagrafica'];
 }
 echo '
-<form action="'.base_path().'/controller.php?id_module='.$module->id.'" method="post" id="add-form">
+<form action="'.base_url().'/controller.php?id_module='.$module->id.'" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="crea_modello" id="crea_modello" value="0">

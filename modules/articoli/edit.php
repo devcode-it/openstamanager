@@ -429,8 +429,8 @@ $(document).ready(function(){
         input('prezzo_acquisto').disable();
     }
 
-    $("#prezziacquisto").load("<?php echo base_path(); ?>/ajax_complete.php?module=Articoli&op=getprezziacquisto&idarticolo="+ <?php echo $id_record; ?> + "&limit=20");
+    $("#prezziacquisto").load("<?php echo base_url(); ?>/ajax_complete.php?module=Articoli&op=getprezziacquisto&idarticolo="+ <?php echo $id_record; ?> + "&limit=20");
 
-    $("#prezzivendita").load("<?php echo base_path(); ?>/ajax_complete.php?module=Articoli&op=getprezzivendita&idarticolo="+ <?php echo $id_record; ?> + "&limit=20");
+    $("#prezzivendita").load("<?php echo base_url(); ?>/ajax_complete.php?module=Articoli&op=getprezzivendita&idarticolo="+ <?php echo $id_record; ?> + "&limit=20");
 });
 </script>

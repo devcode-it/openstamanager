@@ -88,7 +88,7 @@ if ($fattura !== null) {
 
         <i class="fa fa-arrow-right fa-fw text-muted"></i>
 
-        <a href="'.base_path().'/view.php?file_id='.($file ? $file->id : null).'" class="btn btn-info btn-lg '.($generata ? '' : 'disabled').'" target="_blank" '.($generata ? '' : 'disabled').'>
+        <a href="'.base_url().'/view.php?file_id='.($file ? $file->id : null).'" class="btn btn-info btn-lg '.($generata ? '' : 'disabled').'" target="_blank" '.($generata ? '' : 'disabled').'>
             <i class="fa fa-eye"></i> '.tr('Visualizza').'
         </a>';
 

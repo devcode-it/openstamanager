@@ -23,6 +23,7 @@
  * @since 2.3
  */
 
+use App\Exceptions\LegacyRedirectException;
 use HTMLBuilder\HTMLBuilder;
 use Models\OperationLog;
 use Symfony\Component\Filesystem\Exception\IOException;
@@ -35,14 +36,12 @@ use Util\FileSystem;
  *
  * @param string $url
  * @param string $type
- *
- * @return bool
  */
-function redirect($url, $type = 'php')
+function redirect_legacy($url, $type = 'php')
 {
     switch ($type) {
         case 'php':
-            header('Location: '.$url);
+            throw new LegacyRedirectException($url);
             break;
         case 'js':
             echo '<script type="text/javascript">location.href="'.$url.'";</script>';
@@ -219,7 +218,7 @@ function get_client_ip()
  *
  * @since 2.3
  */
-function translateTemplate()
+function translateTemplate($template)
 {
     $id_record = filter('id_record');
     $id_parent = filter('id_parent');
@@ -228,8 +227,6 @@ function translateTemplate()
     $plugin = Plugins::getCurrent();
     $id_module = $module ? $module['id'] : null;
     $id_plugin = $plugin ? $plugin['id'] : null;
-
-    $template = ob_get_clean();
 
     $replaces = [
         '$id_module$' => $id_module,
@@ -273,7 +270,7 @@ function translateTemplate()
         //flash()->clearMessage('info');
     }
 
-    echo $template;
+    return $template;
 }
 
 /**
@@ -321,12 +318,13 @@ function redirectOperation($id_module, $id_record)
         $hash = $hash == '#tab_0' ? '' : $hash;
 
         if ($backto == 'record-edit') {
-            redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.$hash);
+            redirect_legacy(base_url().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.$hash);
         } elseif ($backto == 'record-list') {
-            redirect(base_path().'/controller.php?id_module='.$id_module.$hash);
+            redirect_legacy(base_url().'/controller.php?id_module='.$id_module.$hash);
         }
 
-        exit();
+        throw new \App\Exceptions\LegacyExitException;
+
     }
 }
 
@@ -371,7 +369,7 @@ function getURLPath()
     if (substr($path, 0, strlen($prefix)) == $prefix) {
         $path = substr($path, strlen($prefix));
     } else {
-        $path = str_replace(base_dir(), base_path(), $path);
+        $path = str_replace(base_dir(), base_url(), $path);
     }
 
     return slashes($path);
@@ -421,76 +419,13 @@ function check_query($query)
 }
 
 /**
- * Restituisce il valore corrente di un parametro della sessione.
- *
- * @param string     $name    Nome del parametro in dot-notation
- * @param mixed|null $default
- *
- * @return array|mixed|null
- */
-function session_get($name, $default = null)
-{
-    $session = &$_SESSION;
-    if (empty($name)) {
-        return $default;
-    }
-
-    $pieces = explode('.', $name);
-    foreach ($pieces as $piece) {
-        if (!isset($session[$piece])) {
-            return $default;
-        }
-
-        $session = &$session[$piece];
-    }
-
-    return isset($session) ? $session : $default;
-}
-
-/**
- * Imposta un parametro nella sessione secondo un nome indicato.
- *
- * @param string $name  Nome del parametro in dot-notation
- * @param mixed  $value Valore da impostare
- *
- * @return void
- */
-function session_set($name, $value)
-{
-    $session = &$_SESSION;
-
-    if (!empty($name)) {
-        $pieces = explode('.', $name);
-        foreach ($pieces as $piece) {
-            if (!isset($session[$piece])) {
-                $session[$piece] = [];
-            }
-
-            $session = &$session[$piece];
-        }
-    }
-
-    $session = $value;
-}
-
-/**
  * Restituisce l'URL completo per il gestionale.
  *
  * @return string
  */
 function base_url()
 {
-    return App::$baseurl;
-}
-
-/**
- * Restituisce l'URL parziale per il gestionale.
- *
- * @return string
- */
-function base_path()
-{
-    return App::$rootdir;
+    return url('/');
 }
 
 /**
@@ -500,5 +435,5 @@ function base_path()
  */
 function base_dir()
 {
-    return App::$docroot;
+    return base_url().'/legacy/';
 }

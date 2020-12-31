@@ -40,7 +40,7 @@ if (!empty($id_documento)) {
         'superamento_soglia_qta' => setting('Permetti il superamento della soglia quantità dei documenti di origine'),
     ];
 
-    echo App::load('importa.php', [], $options, true);
+    echo AppLegacy::load('importa.php', [], $options, true);
 
     return;
 }

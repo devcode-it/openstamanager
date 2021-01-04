@@ -302,7 +302,7 @@ if (!empty($righe)) {
         $query = "SELECT id, IF(codice IS NULL, descrizione, CONCAT(codice, ' - ', descrizione)) AS descrizione FROM co_iva WHERE percentuale = ".prepare($riga['AliquotaIVA']);
 
         if (!empty($riga['Natura'])) {
-            $query .= ' AND codice_natura_fe = '.prepare($riga['Natura']);
+            $query .= ' AND deleted_at IS NULL AND codice_natura_fe = '.prepare($riga['Natura']);
         }
 
         $query .= ' ORDER BY descrizione ASC';

@@ -172,9 +172,11 @@ echo '
         }
     });
 
-	$('#id_nazione', '#modals > div').change(function() {
-		if ($(this).find('option:selected').data('text') === 'IT - Italia'){
-			$('#codice_destinatario',  '#modals > div').removeAttr('readonly');
+	input("id_nazione").change(function() {
+		if (input("id_nazione").getElement().selectData().descrizione === 'IT - Italia'){
+			input("codice_destinatario").enable();
+		}else{
+			input("codice_destinatario").disable();
 		}
 	});
 </script>

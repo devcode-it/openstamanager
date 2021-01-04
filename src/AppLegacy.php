@@ -244,7 +244,7 @@ class AppLegacy
         foreach ($sections as $section => $dir) {
             $result = array_unique(array_merge(
                 self::$assets[$section],
-                $config['assets'][$section] ?:[]
+                isset($config['assets']) ? ($config['assets'][$section] ?:[]) :[]
             ));
 
             foreach ($result as $key => $element) {

@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\Schema;
  *
  * @since 2.3
  */
-class Database extends Util\Singleton
+class Database
 {
     /** @var \Illuminate\Database\Capsule\Manager Gestore di connessione Laravel */
     protected $capsule;
@@ -43,48 +43,11 @@ class Database extends Util\Singleton
     protected $mysql_version;
 
     /**
-     * Costruisce la nuova connessione al database.
-     * Ispirato dal framework open-source Medoo.
-     *
-     * @param string|array $server
-     * @param string       $username
-     * @param string       $password
-     * @param string       $database_name
-     * @param string       $charset
      *
      * @since 2.3
-     *
      */
-    protected function __construct($server, $username, $password, $database_name, $charset = null)
+    public function __construct()
     {
-    }
-
-    /**
-     * Restituisce la connessione attiva al database, creandola nel caso non esista.
-     *
-     * @since 2.3
-     *
-     * @return Database
-     */
-    public static function getConnection($new = false, $data = [])
-    {
-        $class = get_called_class();
-
-        if (empty(parent::$instance[$class]) || !parent::$instance[$class]->isConnected() || $new) {
-            $config = AppLegacy::getConfig();
-
-            // Sostituzione degli eventuali valori aggiuntivi
-            $config = array_merge($config, $data);
-
-            parent::$instance[$class] = new self($config['db_host'], $config['db_username'], $config['db_password'], $config['db_name']);
-        }
-
-        return parent::$instance[$class];
-    }
-
-    public static function getInstance()
-    {
-        return self::getConnection();
     }
 
     /**

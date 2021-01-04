@@ -22,17 +22,16 @@
         <script type="text/javascript" charset="utf-8" src="{{ base_url() }}{{ asset('/js/app.js') }}"></script>
         <script type="text/javascript" charset="utf-8" src="{{ base_url() }}{{ asset('/js/base.js') }}"></script--->
 
-
         @foreach (AppLegacy::getAssets()['css'] as $css)
-            <link rel="stylesheet" type="text/css" media="all" href="{{ $css }}"/>
+        <link rel="stylesheet" type="text/css" media="all" href="{{ $css }}"/>
         @endforeach
 
         @foreach (AppLegacy::getAssets()['print'] as $css)
-            <link rel="stylesheet" type="text/css" media="print" href="{{ $css }}"/>
+        <link rel="stylesheet" type="text/css" media="print" href="{{ $css }}"/>
         @endforeach
 
         @foreach (AppLegacy::getAssets()['js'] as $script)
-            <script type="text/javascript" charset="utf-8" src="{{ $script }}"></script>
+        <script type="text/javascript" charset="utf-8" src="{{ $script }}"></script>
         @endforeach
 
         <script>

@@ -28,8 +28,6 @@ class LegacyController extends Controller
 
         $output = ob_get_clean();
 
-        $output = translateTemplate($output);
-
         return new Response($output);
     }
 }

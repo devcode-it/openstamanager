@@ -1,10 +1,17 @@
 @extends('layouts.base')
 
+@php
+    // Fix per inizializzazione variabili comuni
+    $module = \Models\Module::getCurrent();
+    $id_module = $module ? $module->id : null;
+    $id_record = isset($id_record) ? $id_record : null;
+@endphp
+
 @section('js')
 <script>
     search = [];
 
-    @foreach($search as $key => $value)
+    @foreach(getSessionSearch($id_module) as $key => $value)
     search.push("search_{{ $key }}");
     search["search_{{ $key }}"] = "{{ $value }}";
     @endforeach
@@ -12,8 +19,8 @@
     globals = {
         rootdir: '{{ base_url() }}',
 
-        id_module: '{{ id_module }}',
-        id_record: '{{ id_record }}',
+        id_module: '{{ $id_module }}',
+        id_record: '{{ $id_record }}',
 
         is_mobile: {{ intval(isMobile()) }},
         cifre_decimali: '{{ setting('Cifre decimali per importi') }}',
@@ -123,7 +130,7 @@
             ["Undo","Redo","-","Cut","Copy","Paste","PasteText","PasteFromWord","-","Scayt", "-","Link","Unlink","-","Bold","Italic","Underline","Superscript","SpecialChar","HorizontalRule","-","JustifyLeft","JustifyCenter","JustifyRight","JustifyBlock","-","NumberedList","BulletedList","Outdent","Indent","Blockquote","-","Styles","Format","Image","Table", "TextColor", "BGColor" ],
         ],
 
-        order_manager_id: '{{ module('Stato dei serivizi')['id'] }}',
+        order_manager_id: '{{ module('Stato dei servizi')['id'] }}',
         tempo_attesa_ricerche: {{ setting('Tempo di attesa ricerche in secondi') }},
         restrict_summables_to_selected: {{ setting('Totali delle tabelle ristretti alla selezione') }},
         select_url: "{{ route('ajax-select') }}",
@@ -208,10 +215,6 @@
                         <i class="fa fa-print"></i>
                     </a></li>
 
-                    <li><a href="{{ base_url() }}/{{ record_id ? __('editor.php?id_record=' ~ record_id ~ '&' : 'controller.php?' }}id_module={{ module_id }}" class="tip btn-warning" title="{{ 'Base') }}">
-                        <i class="fa fa-fast-backward"></i>
-                    </a></li>
-
                     <li><a href="{{ route('bug') }}" class="tip" title="{{ __('Segnalazione bug') }}">
                         <i class="fa fa-bug"></i>
                     </a></li>
@@ -263,7 +266,7 @@
             </div>
 
             <ul class="sidebar-menu"><!-- class="nav nav-pills nav-sidebar nav-sidebar nav-child-indent flex-column" data-widget="treeview" role="menu" data-accordion="true" -->
-                {{ main_menu|raw }}
+                {{ isset($main_menu) ? $main_menu : null }}
             </ul>
         </section>
         <!-- /.sidebar -->
@@ -274,7 +277,7 @@
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
-                @section('content')
+                @yield('content')
             </div>
         </section>
     </div>

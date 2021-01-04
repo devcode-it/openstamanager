@@ -23,6 +23,8 @@
  * @since 2.4.2
  */
 use HTMLBuilder\HTMLBuilder;
+use Intl\Formatter;
+use Models\Module;
 
 /**
  * Restituisce l'oggetto dedicato alla gestione della connessione con il database.
@@ -31,7 +33,11 @@ use HTMLBuilder\HTMLBuilder;
  */
 function database()
 {
-    return \Database::getConnection();
+    if (!app()->has(Database::class)){
+        app()->instance(Database::class, new Database());
+    }
+
+    return app()->get(Database::class);
 }
 
 /**
@@ -131,7 +137,25 @@ function flash()
  */
 function formatter()
 {
-    return \AppLegacy::$formatter;
+    if (!app()->has(Formatter::class)){
+        $formatter = new Formatter(
+            app()->getLocale(),
+            empty($options['timestamp']) ? 'd/m/Y H:i' : $options['timestamp'],
+            empty($options['date']) ? 'd/m/Y' : $options['date'],
+            empty($options['time']) ? 'H:i' : $options['time'],
+            empty($options['number']) ? [
+                'decimals' => ',',
+                'thousands' => '.',
+            ] : $options['number']
+        );
+
+        $formatter->setPrecision(auth()->check() ? setting('Cifre decimali per importi') : 2);
+
+        app()->instance(Formatter::class, $formatter);
+    }
+
+
+    return app()->get(Formatter::class);
 }
 
 /**
@@ -257,4 +281,16 @@ function moneyFormat($number, $decimals = null)
 function input(array $json)
 {
     return HTMLBuilder::parse($json);
+}
+
+/*
+ * Restituisce il modulo relativo all'identificativo.
+ *
+ * @since 2.5
+ *
+ * @return \Modules\Module
+ */
+function module($identifier)
+{
+    return Module::pool($identifier);
 }

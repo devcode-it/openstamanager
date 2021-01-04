@@ -401,6 +401,7 @@ foreach ($articoli as $elenco) {
     $scorte[$articolo->id] = [
         'qta' => $articolo->qta,
         'descrizione' => $text,
+        'servizio' => $articolo->servizio,
     ];
 }
 
@@ -435,8 +436,7 @@ function controllaMagazzino() {
     for(const id_articolo in richieste) {
         let qta_scorta = parseFloat(scorte[id_articolo]["qta"]);
         let qta_richiesta = parseFloat(richieste[id_articolo]);
-
-        if (qta_richiesta > qta_scorta) {
+        if ((qta_richiesta > qta_scorta) && (scorte[id_articolo]["servizio"] !== 1) ) {
             body.append(`<tr>
         <td>` + scorte[id_articolo]["descrizione"] + `</td>
         <td class="text-right">` + qta_richiesta.toLocale() + `</td>

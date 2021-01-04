@@ -28,7 +28,7 @@ if ($record['titolo'] != $prev_titolo && get('lev') == 1) {
 
 echo '
     <tr>
-        <td>'.Translator::dateToLocale($record['data']).'</td>
+        <td>'.dateFormat($record['data']).'</td>
         <td>'.$record['descrizione'].'</td>';
 
         if ($record['totale'] >= 0) {

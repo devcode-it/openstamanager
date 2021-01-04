@@ -222,8 +222,8 @@ if (file_exists($backup_dir)) {
                 echo '
         <div class="callout callout-info">
             <h4>'.tr('Backup del _DATE_ alle _TIME_', [
-                '_DATE_' => Translator::dateToLocale($data),
-                '_TIME_' => Translator::timeToLocale($ora),
+                '_DATE_' => dateFormat($data),
+                '_TIME_' => timeFormat($ora),
             ]).'</h4>
             <p><small>
                 '.tr('Nome del file').': '.$name.'<br>
@@ -272,8 +272,8 @@ if (file_exists($backup_dir)) {
                 echo '
         <div class="callout callout-warning">
             <h4>'.tr('Backup del _DATE_ alle _TIME_', [
-                '_DATE_' => Translator::dateToLocale($data),
-                '_TIME_' => Translator::timeToLocale($ora),
+                '_DATE_' => dateFormat($data),
+                '_TIME_' => timeFormat($ora),
             ]).'</h4>
             <p><small>
                 '.tr('Nome del file').': '.$name.'<br>

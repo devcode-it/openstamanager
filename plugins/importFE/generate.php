@@ -158,7 +158,7 @@ echo '
 
 				<br><small>
 					'.$tipo_documento.'
-					<br>'.Translator::dateToLocale($dati_generali['Data']).'
+					<br>'.dateFormat($dati_generali['Data']).'
 					<br>'.$dati_generali['Divisa'].'
 				</small>
 			</h4>

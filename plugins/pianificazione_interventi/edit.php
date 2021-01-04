@@ -122,7 +122,7 @@ if (!$elenco_promemoria->isEmpty()) {
         foreach ($righe as $riga) {
             $info_righe .= tr('_QTA_ _UM_ x _DESC_', [
                 '_DESC_' => ($riga->isArticolo() ? Modules::link('Articoli', $riga['idarticolo'], $riga['descrizione']) : $riga['descrizione']),
-                '_QTA_' => Translator::numberToLocale($riga['qta']),
+                '_QTA_' => numberFormat($riga['qta']),
                 '_UM_' => $riga['um'],
             ]).'<br>';
         }
@@ -139,7 +139,7 @@ if (!$elenco_promemoria->isEmpty()) {
 
         echo '
             <tr>
-                <td>'.Translator::dateToLocale($promemoria['data_richiesta']).'</td>
+                <td>'.dateFormat($promemoria['data_richiesta']).'</td>
                 <td>'.$promemoria->tipo->descrizione.'</td>
                 <td>'.nl2br($promemoria['richiesta']).'</td>
                 <td>'.$info_intervento.'</td>

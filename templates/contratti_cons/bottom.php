@@ -74,9 +74,9 @@ if ($pricing || !empty($totale_ore)) {
             <b>'.tr('Ore residue', [], ['upper' => true]).':</b>
         </td>
         <th colspan="2" class="text-center">
-            <b>'.Translator::numberToLocale($totale_ore - $totale_ore_impiegate).'</b><br>
-            <p>'.tr('Ore erogate').': '.Translator::numberToLocale($totale_ore_impiegate).'</p>
-            <p>'.tr('Ore a contratto').': '.Translator::numberToLocale($totale_ore).'</p>
+            <b>'.numberFormat($totale_ore - $totale_ore_impiegate).'</b><br>
+            <p>'.tr('Ore erogate').': '.numberFormat($totale_ore_impiegate).'</p>
+            <p>'.tr('Ore a contratto').': '.numberFormat($totale_ore).'</p>
         </th>
     </tr>';
     }

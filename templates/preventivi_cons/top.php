@@ -26,7 +26,7 @@ echo '
             <h4 class="text-bold">'.tr('Consuntivo', [], ['upper' => true]).'</h4>
             <b>'.tr('Preventivo num. _NUM_ del _DATE_', [
         '_NUM_' => $documento['numero'].(count($documento->revisioni) > 1 ? ' '.tr('rev.').' '.$documento->numero_revision : ''),
-        '_DATE_' => Translator::dateToLocale($documento['data_bozza']),
+        '_DATE_' => dateFormat($documento['data_bozza']),
     ], ['upper' => true]).'</b>
         </div>
     </div>

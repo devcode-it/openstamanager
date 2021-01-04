@@ -24,8 +24,8 @@ $tipo = post('tipo');
 
 echo '
 <h4><b>'.tr('Riepilogo interventi dal _START_ al _END_', [
-    '_START_' => Translator::dateToLocale($date_start),
-    '_END_' => Translator::dateToLocale($date_end),
+    '_START_' => dateFormat($date_start),
+    '_END_' => dateFormat($date_end),
     ], ['upper' => true]).'</b></h4>
 
 <table class="table table-bordered">

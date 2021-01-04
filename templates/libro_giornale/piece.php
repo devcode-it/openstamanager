@@ -35,7 +35,7 @@ if ($record['data']!=$last_data && !empty($last_data)) {
 
 echo '
 <tr>
-    <td class="text-center">'.Translator::dateToLocale($record['data']).'</td>
+    <td class="text-center">'.dateFormat($record['data']).'</td>
     <td class="text-center">'.$record['numero2'].'.'.$record['numero'].'</td>
     <td>'.$record['conto'].'</td>
     <td>'.$record['descrizione'].'</td>';

@@ -95,7 +95,7 @@ if (!$clienti->isEmpty()) {
 
             <td class="text-right">
                 '.moneyFormat($dettaglio->prezzo_unitario).'
-                <p><small class="label label-default tip" title="'.Translator::timestampToLocale($dettaglio['updated_at']).'"><i class="fa fa-clock-o"></i> '.Carbon::parse($dettaglio['updated_at'])->diffForHumans().'</small></p>
+                <p><small class="label label-default tip" title="'.timestampFormat($dettaglio['updated_at']).'"><i class="fa fa-clock-o"></i> '.Carbon::parse($dettaglio['updated_at'])->diffForHumans().'</small></p>
             </td>
 
             <td class="text-right">

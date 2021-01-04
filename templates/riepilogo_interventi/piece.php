@@ -70,7 +70,7 @@ echo '
     }
 echo '
     </td>
-    <td class="text-center">'.Translator::numberToLocale($ore).'</td>
+    <td class="text-center">'.numberFormat($ore).'</td>
     <td class="text-center">'.($pricing ? moneyFormat($imponibile, 2) : '-').'</td>
     <td class="text-center">'.($pricing && empty($options['dir']) ? moneyFormat($sconto, 2) : '-').'</td>
     <td class="text-center">'.($pricing ? moneyFormat($totale_imponibile, 2) : '-').'</td>

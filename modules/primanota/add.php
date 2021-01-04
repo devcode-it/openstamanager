@@ -227,13 +227,13 @@ if ($numero_documenti + $numero_scadenze > 1) {
         '_OP_' => $operation,
         '_DOC_' => strtolower($tipo_fattura),
         '_NUM_' => $numero_fattura,
-        '_DATE_' => Translator::dateToLocale($fattura['data']),
+        '_DATE_' => dateFormat($fattura['data']),
         '_NAME_' => $fattura->anagrafica['ragione_sociale'],
     ]);
 } elseif ($numero_scadenze == 1) {
     $descrizione = tr('Pag. _OP_ del _DATE_', [
         '_OP_' => $scadenza['descrizione'],
-        '_DATE_' => Translator::dateToLocale($scadenza['scadenza']),
+        '_DATE_' => dateFormat($scadenza['scadenza']),
     ]);
 }
 

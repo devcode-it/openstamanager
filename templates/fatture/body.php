@@ -116,7 +116,7 @@ foreach ($righe as $riga) {
 
         $text = tr('Rif. fattura _NUM_ del _DATE_', [
             '_NUM_' => $data[0]['numero'],
-            '_DATE_' => Translator::dateToLocale($data[0]['data']),
+            '_DATE_' => dateFormat($data[0]['data']),
         ]);
 
         echo '
@@ -172,7 +172,7 @@ foreach ($righe as $riga) {
     if (!$riga->isDescrizione()) {
         echo '
             <td class="text-center">
-                '.Translator::numberToLocale(abs($riga->qta), 'qta').' '.$r['um'].'
+                '.numberFormat(abs($riga->qta), 'qta').' '.$r['um'].'
             </td>';
 
         // Prezzo unitario
@@ -201,7 +201,7 @@ foreach ($righe as $riga) {
         // Iva
         echo '
             <td class="text-center">
-                '.Translator::numberToLocale($riga->aliquota->percentuale, 0).'
+                '.numberFormat($riga->aliquota->percentuale, 0).'
             </td>';
     } else {
         echo '

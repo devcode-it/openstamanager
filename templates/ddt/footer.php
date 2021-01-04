@@ -164,7 +164,7 @@ echo '
         </td>
 
         <td class="cell-padded">
-            '.Translator::TimestampToLocale($documento['data_ora_trasporto']).' &nbsp;
+            '.timestampFormat($documento['data_ora_trasporto']).' &nbsp;
         </td>
 
         <td class="cell-padded">
@@ -196,11 +196,11 @@ echo '
 
     <tr>
         <td class="cell-padded">
-        '.(!empty($peso_lordo) ? Translator::numberToLocale($peso_lordo).'&nbsp;KG' : '').'
+        '.(!empty($peso_lordo) ? numberFormat($peso_lordo).'&nbsp;KG' : '').'
         </td>
 
         <td class="cell-padded">
-            '.(!empty($volume) ? Translator::numberToLocale($volume).'&nbsp;M<sup>3</sup>' : '').'
+            '.(!empty($volume) ? numberFormat($volume).'&nbsp;M<sup>3</sup>' : '').'
         </td>
 
         <td class="cell-padded">

@@ -70,7 +70,7 @@ if (!empty($documento)) {
 
                         <tr>
                             <th>'.tr('Data').':</th>
-                            <td>'.Translator::dateToLocale($documento->data).'</td>
+                            <td>'.dateFormat($documento->data).'</td>
                         </tr>
 
                         <tr>
@@ -94,7 +94,7 @@ if (!empty($documento)) {
 
                         if( !empty($record['presentazioni_exported_at']) ){
                             $export_riba = '<i class="fa fa-check text-success"></i> '.tr('Esportata il _DATA_',[
-                                '_DATA_' => Translator::timestampToLocale($record['presentazioni_exported_at']),
+                                '_DATA_' => timestampFormat($record['presentazioni_exported_at']),
                             ]).'';
                         }else{
                             $export_riba = '<i class="fa fa-clock-o text-warning"></i> '.tr('Non ancora esportata');

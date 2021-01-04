@@ -71,7 +71,7 @@ $data = Query::executeAndCount($query);
 
 echo '
 <h3>'.tr('Inventario al _DATE_', [
-    '_DATE_' => Translator::dateToLocale($period_end),
+    '_DATE_' => dateFormat($period_end),
 ], ['upper' => true]).'</h3>
 
 <p style="color:#aaa; font-size:10px;" class="text-right">
@@ -107,7 +107,7 @@ foreach ($data['results'] as $r) {
             <td>'.$r['Categoria'].'</td>
             <td>'.$r['Descrizione'].'</td>
             <td class="text-right">'.moneyFormat($r['prezzo_vendita']).'</td>
-            <td class="text-right">'.Translator::numberToLocale($r['qta_totale']).' '.$r['um'].'</td>
+            <td class="text-right">'.numberFormat($r['qta_totale']).' '.$r['um'].'</td>
             <td class="text-right">'.moneyFormat($r['acquisto']).'</td>
             <td class="text-right">'.moneyFormat($valore_magazzino).'</td>
         </tr>';
@@ -124,7 +124,7 @@ echo '
     <tr>
         <td colspan="3" class="text-right border-top"><b>'.tr('Totale', [], ['upper' => true]).':</b></td>
         <td class="border-top"></td>
-        <td class="text-right border-top"><b>'.Translator::numberToLocale($totale_qta).'</b></td>
+        <td class="text-right border-top"><b>'.numberFormat($totale_qta).'</b></td>
         <td class="border-top"></td>
         <td class="text-right border-top"><b>'.moneyFormat($totale_acquisto).'</b></td>
     </tr>

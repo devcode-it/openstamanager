@@ -27,14 +27,8 @@ use Util\Messages;
  */
 class AppLegacy
 {
-    public static $docroot;
-    public static $rootdir;
-    public static $baseurl;
-
-    /** @var array Identificativo del modulo corrente */
-    protected static $current_module;
-    /** @var int Identificativo dell'elemento corrente */
-    protected static $current_element;
+    /** @var string Simbolo della valuta corrente */
+    protected static $currency;
 
     /** @var Messages Gestione dei messaggi flash */
     protected static $flash = null;
@@ -140,37 +134,6 @@ class AppLegacy
     }
 
     /**
-     * Individua i percorsi di base necessari per il funzionamento del gestionale.
-     * <b>Attenzione<b>: questo metodo deve essere eseguito all'interno di un file nella cartella principale del progetto per permettere il corretto funzionamento degli URL.
-     */
-    public static function definePaths($docroot)
-    {
-        if (!defined('DOCROOT')) {
-            // Individuazione di $rootdir
-            $rootdir = substr($_SERVER['SCRIPT_NAME'], 0, strrpos($_SERVER['SCRIPT_NAME'], '/')).'/';
-            if (strrpos($rootdir, '/'.basename($docroot).'/') !== false) {
-                $rootdir = substr($rootdir, 0, strrpos($rootdir, '/'.basename($docroot).'/')).'/'.basename($docroot);
-            } else {
-                $rootdir = '/';
-            }
-            $rootdir = rtrim($rootdir, '/');
-            $rootdir = str_replace('%2F', '/', rawurlencode($rootdir));
-
-            // Individuazione di $baseurl
-            $baseurl = (isHTTPS(true) ? 'https' : 'http').'://'.$_SERVER['HTTP_HOST'].$rootdir;
-
-            // Impostazione delle variabili globali
-            define('DOCROOT', $docroot);
-            define('ROOTDIR', $rootdir);
-            define('BASEURL', $baseurl);
-
-            self::$docroot = $docroot;
-            self::$rootdir = $rootdir;
-            self::$baseurl = $baseurl;
-        }
-    }
-
-    /**
      * Individua i percorsi principali del progetto.
      *
      * @return array
@@ -185,25 +148,6 @@ class AppLegacy
             'js' => $assets.'/js',
             'img' => $assets.'/img',
         ];
-    }
-
-    /**
-     * Imposta l'oggetto responsabile della localizzazione di date e numeri.
-     */
-    public static function setFormatter($locale, $options)
-    {
-        self::$formatter = new Intl\Formatter(
-            $locale,
-            empty($options['timestamp']) ? 'd/m/Y H:i' : $options['timestamp'],
-            empty($options['date']) ? 'd/m/Y' : $options['date'],
-            empty($options['time']) ? 'H:i' : $options['time'],
-            empty($options['number']) ? [
-                'decimals' => ',',
-                'thousands' => '.',
-            ] : $options['number']
-        );
-
-        self::$formatter->setPrecision(auth()->check() ? setting('Cifre decimali per importi') : 2);
     }
 
     /**
@@ -372,4 +316,24 @@ class AppLegacy
 
         return get_defined_vars();
     }
+
+    /**
+     * Restituisce il simbolo della valuta del gestione.
+     *
+     * @since 2.4.9
+     *
+     * @return string
+     */
+    public static function getCurrency()
+    {
+        if (!isset(self::$currency)) {
+            $id = setting('Valuta');
+            $valuta = database()->fetchOne('SELECT symbol FROM zz_currencies WHERE id = '.prepare($id));
+
+            self::$currency = $valuta['symbol'];
+        }
+
+        return self::$currency;
+    }
+
 }

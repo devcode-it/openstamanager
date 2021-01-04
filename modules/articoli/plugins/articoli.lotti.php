@@ -132,7 +132,7 @@ for ($i = 0; $i < count($rs2); ++$i) {
             <td>'.$rs2[$i]['serial'].'</td>';
 
     echo '
-            <td>'.Translator::timestampToLocale($rs2[$i]['created_at']).'</td>';
+            <td>'.timestampFormat($rs2[$i]['created_at']).'</td>';
 
     // Ricerca acquisti
     $acquisti = $dbo->fetchArray('SELECT * FROM mg_prodotti WHERE dir=\'uscita\' AND id_articolo='.prepare($id_record).' AND (id_riga_documento IS NOT NULL OR id_riga_ordine IS NOT NULL OR id_riga_ddt IS NOT NULL) AND serial='.prepare($rs2[$i]['serial']));
@@ -183,7 +183,7 @@ for ($i = 0; $i < count($rs2); ++$i) {
             $text = tr('_DOC_ num. _NUM_ del _DATE_', [
                 '_DOC_' => $data[0]['tipo_documento'],
                 '_NUM_' => $numero,
-                '_DATE_' => Translator::dateToLocale($data[0]['data']),
+                '_DATE_' => dateFormat($data[0]['data']),
             ]).(!empty($extra) ? ' '.$extra : '');
 
             echo 
@@ -202,7 +202,7 @@ for ($i = 0; $i < count($rs2); ++$i) {
                 <span>'.moneyFormat($subtotale + $iva).'</span>';
             if (!empty($subtotale) && !empty($iva)) {
                 echo '
-                <small style="color:#555;">('.Translator::numberToLocale($subtotale).' + '.Translator::numberToLocale($iva).')</small>';
+                <small style="color:#555;">('.numberFormat($subtotale).' + '.numberFormat($iva).')</small>';
             }
             echo '
                 <br>';
@@ -285,11 +285,11 @@ for ($i = 0; $i < count($rs2); ++$i) {
             $text = tr('_DOC_ num. _NUM_ del _DATE_', [
                 '_DOC_' => $data[0]['tipo_documento'],
                 '_NUM_' => $numero,
-                '_DATE_' => Translator::dateToLocale($data[0]['data']),
-            ]).(!empty($extra) ? ' '.$extra : '');  
-            
-            echo
-                Modules::link($module_id, $id, $text).'<br>';
+                '_DATE_' => dateFormat($data[0]['data']),
+            ]).(!empty($extra) ? ' '.$extra : '');
+
+            echo '
+            '.Modules::link($module_id, $id, $text).'<br>';
         }
 
         echo '
@@ -304,7 +304,7 @@ for ($i = 0; $i < count($rs2); ++$i) {
                 <span>'.moneyFormat($subtotale + $iva).'</span>';
             if (!empty($subtotale) && !empty($iva)) {
                 echo '
-                <small style="color:#555;">('.Translator::numberToLocale($subtotale).' + '.Translator::numberToLocale($iva).')</small>';
+                <small style="color:#555;">('.numberFormat($subtotale).' + '.numberFormat($iva).')</small>';
             }
             echo '
                 <br>';

@@ -25,8 +25,8 @@ if (empty($record['firma_file'])) {
 } else {
     $frase = tr('Nuova anteprima e firma');
     $info_firma = ''.tr('Firmato il _DATE_ alle _TIME_ da _PERSON_', [
-        '_DATE_' => Translator::dateToLocale($record['firma_data']),
-        '_TIME_' => Translator::timeToLocale($record['firma_data']),
+        '_DATE_' => dateFormat($record['firma_data']),
+        '_TIME_' => timeFormat($record['firma_data']),
         '_PERSON_' => '<b>'.$record['firma_nome'].'</b>',
     ]).'';
 }

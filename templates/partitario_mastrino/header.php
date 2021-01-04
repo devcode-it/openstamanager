@@ -27,7 +27,7 @@
  */
 echo '
 <h5 style="border-bottom:1px solid #777; display:block;">
-    <div class="col-xs-5">STAMPA MASTRINO <small>'.Translator::dateToLocale($date_start).' - '.Translator::dateTolocale($date_end).'</small></div>
+    <div class="col-xs-5">STAMPA MASTRINO <small>'.dateFormat($date_start).' - '.dateFormat($date_end).'</small></div>
     <div class="col-xs-7 text-right">'.$azienda['ragione_sociale'].'</div>
 </h5>
 '.$conto1['descrizione'].'<br>';

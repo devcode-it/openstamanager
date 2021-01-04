@@ -135,7 +135,7 @@ foreach ($righe as $riga) {
     if (!$riga->isDescrizione()) {
         echo '
             <td class="text-center" nowrap="nowrap">
-                '.Translator::numberToLocale(abs($riga->qta), 'qta').' '.$r['um'].'
+                '.numberFormat(abs($riga->qta), 'qta').' '.$r['um'].'
             </td>';
 
         if ($options['pricing']) {
@@ -165,7 +165,7 @@ foreach ($righe as $riga) {
             // Iva
             echo '
             <td class="text-center" nowrap="nowrap">
-                '.Translator::numberToLocale($riga->aliquota->percentuale, 0).'
+                '.numberFormat($riga->aliquota->percentuale, 0).'
             </td>';
         }
     } else {

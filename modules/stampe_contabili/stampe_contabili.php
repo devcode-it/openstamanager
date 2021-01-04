@@ -39,11 +39,11 @@ echo '
         }
         echo '
 		<div class="col-md-4">
-			{[ "type": "date", "label": "'.tr('Data inizio').'", "required": "1", "name": "date_start", "value": "'.Translator::dateToLocale(session('period_start')).'" ]}
+			{[ "type": "date", "label": "'.tr('Data inizio').'", "required": "1", "name": "date_start", "value": "'.dateFormat(session('period_start')).'" ]}
 		</div>
 
 		<div class="col-md-4">
-			{[ "type": "date", "label": "'.tr('Data fine').'", "required": "1", "name": "date_end", "value": "'.Translator::dateToLocale(session('period_end')).'" ]}
+			{[ "type": "date", "label": "'.tr('Data fine').'", "required": "1", "name": "date_end", "value": "'.dateFormat(session('period_end')).'" ]}
 		</div>
 
 	</div>';

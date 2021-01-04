@@ -175,7 +175,7 @@ foreach ($interventi as $intervento) {
 
     if ($intervento['tipo_sconto_globale'] == 'PRC') {
         $descrizione = $sconto_globale >= 0 ? tr('Sconto percentuale') : tr('Maggiorazione percentuale');
-        $descrizione .= ' '.Translator::numberToLocale($intervento['sconto_globale']).'%';
+        $descrizione .= ' '.numberFormat($intervento['sconto_globale']).'%';
     } else {
         $descrizione = $sconto_globale >= 0 ? tr('Sconto unitario') : tr('Maggiorazione unitaria');
     }

@@ -53,7 +53,7 @@ if (!empty($rs)) {
         echo '
                 </small>
                 </td>
-                <td>'.Translator::dateToLocale($r['data_richiesta']).' '.((empty($r['data_scadenza'])) ? '' : '<br><small>Entro il '.Translator::dateToLocale($r['data_scadenza']).'</small>').'</td>
+                <td>'.dateFormat($r['data_richiesta']).' '.((empty($r['data_scadenza'])) ? '' : '<br><small>Entro il '.dateFormat($r['data_scadenza']).'</small>').'</td>
                 <td>
                     '.$rs_tecnici[0]['tecnici'].'
                 </td>

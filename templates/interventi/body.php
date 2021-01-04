@@ -32,13 +32,13 @@ echo '
 
     <tr>
         <td class="text-left" style="width:30%">'.tr('Intervento n.').': <b>'.$documento['codice'].'</b></td>
-        <td class="text-left" colspan="'.(empty($preventivo) && empty($contratto) ? '3' : '1').'" style="width:30%">'.tr('Data richiesta').': <b>'.Translator::dateToLocale($documento['data_richiesta']).'</b></td>';
+        <td class="text-left" colspan="'.(empty($preventivo) && empty($contratto) ? '3' : '1').'" style="width:30%">'.tr('Data richiesta').': <b>'.dateFormat($documento['data_richiesta']).'</b></td>';
 if (!empty($preventivo)) {
     echo '
-        <td class="text-left" colspan="2" style="width:20%">'.tr('Preventivo n.').': <b>'.(!empty($preventivo) ? $preventivo['numero'].' del '.Translator::dateToLocale($preventivo['data_bozza']) : '').'</b></td>';
+        <td class="text-left" colspan="2" style="width:20%">'.tr('Preventivo n.').': <b>'.(!empty($preventivo) ? $preventivo['numero'].' del '.dateFormat($preventivo['data_bozza']) : '').'</b></td>';
 } elseif (!empty($contratto)) {
     echo '
-        <td class="text-left" colspan="2" style="width:20%">'.tr('Contratto n.').': <b>'.(!empty($contratto) ? $contratto['numero'].' del '.Translator::dateToLocale($contratto['data_bozza']) : '').'</b></td>';
+        <td class="text-left" colspan="2" style="width:20%">'.tr('Contratto n.').': <b>'.(!empty($contratto) ? $contratto['numero'].' del '.dateFormat($contratto['data_bozza']) : '').'</b></td>';
 }
 echo '
     </tr>';
@@ -183,10 +183,10 @@ if (!$righe->isEmpty()) {
             if ($riga->um == 'ore') {
                 $qta = Translator::numberToHours($riga->qta);
             } else {
-                $qta = Translator::numberToLocale($riga->qta, 'qta');
+                $qta = numberFormat($riga->qta, 'qta');
             }
         } else {
-            $qta = Translator::numberToLocale($riga->qta, 'qta');
+            $qta = numberFormat($riga->qta, 'qta');
         }
         // Articolo
         echo '
@@ -217,7 +217,7 @@ if (!$righe->isEmpty()) {
         // Quantità
         echo '
         <td class="text-center">
-            '.$qta.' '.$riga->um.'
+            '.numberFormat($riga->qta, 'qta').' '.$riga->um.'
         </td>';
 
         // Prezzo unitario
@@ -238,7 +238,7 @@ if (!$righe->isEmpty()) {
         // Prezzo totale
         echo '
         <td class="text-center">
-            '.($options['pricing'] ? Translator::numberToLocale($riga->importo) : '-').'
+            '.($options['pricing'] ? numberFormat($riga->importo) : '-').'
         </td>
     </tr>';
     }
@@ -335,13 +335,13 @@ foreach ($sessioni as $i => $sessione) {
 if (setting('Formato ore in stampa') == 'Sessantesimi') {
     $ore_totali = Translator::numberToHours($documento->ore_totali);
 } else {
-    $ore_totali = Translator::numberToLocale($documento->ore_totali, 2);
+    $ore_totali = numberFormat($documento->ore_totali, 2);
 }
 
 echo '
     <tr>
         <td class="text-center">
-            <small>'.tr('Ore lavorate').':</small><br/><b>'.$ore_totali.'</b>
+            <small>'.tr('Ore lavorate').':</small><br/><b>'.numberFormat($documento->ore_totali, 2).'</b>
         </td>';
 
 // Costo totale manodopera
@@ -376,7 +376,7 @@ echo '
 echo '
     <tr>
         <td class="text-center">
-            <small>'.tr('Km percorsi').':</small><br/><b>'.Translator::numberToLocale($documento->km_totali, 2).'</b>
+            <small>'.tr('Km percorsi').':</small><br/><b>'.numberFormat($documento->km_totali, 2).'</b>
         </td>';
 
 // Costo trasferta

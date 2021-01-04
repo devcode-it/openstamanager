@@ -30,7 +30,7 @@ if (!empty($rs)) {
     </tr>';
 
     foreach ($rs as $r) {
-        $data_richiesta = !empty($r['data_richiesta']) ? Translator::dateToLocale($r['data_richiesta']) : '';
+        $data_richiesta = !empty($r['data_richiesta']) ? dateFormat($r['data_richiesta']) : '';
 
         echo '
     <tr >

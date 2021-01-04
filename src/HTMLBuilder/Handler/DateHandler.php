@@ -45,17 +45,17 @@ class DateHandler implements HandlerInterface
         // Restrizione dei valori permessi
         // Timestamp
         if ($values['type'] == 'timestamp' && formatter()->isStandardTimestamp($values['value'])) {
-            $values['value'] = \Translator::timestampToLocale($values['value']);
+            $values['value'] = timestampFormat($values['value']);
         }
 
         // Data
         elseif ($values['type'] == 'date' && formatter()->isStandardDate($values['value'])) {
-            $values['value'] = \Translator::dateToLocale($values['value']);
+            $values['value'] = dateFormat($values['value']);
         }
 
         // Orario
         elseif ($values['type'] == 'time' && formatter()->isStandardTime($values['value'])) {
-            $values['value'] = \Translator::timeToLocale($values['value']);
+            $values['value'] = timeFormat($values['value']);
         }
 
         // Controllo sulla correttezza sintattica del valore impostato

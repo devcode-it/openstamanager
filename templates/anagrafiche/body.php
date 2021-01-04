@@ -115,7 +115,7 @@ if (!empty($impianti)) {
         echo '
             <tr>
                 <td colspan="2" class="text-left" >'.tr('Matricola').': <b>'.$impianti[$i]['matricola'].'</b></td>
-                <td colspan="2" class="text-left" >'.tr('Data').': <b>'.Translator::dateToLocale($impianti[$i]['data']).'</b></td>
+                <td colspan="2" class="text-left" >'.tr('Data').': <b>'.dateFormat($impianti[$i]['data']).'</b></td>
             </tr>
             <tr>
                 <td colspan="4" class="text-left" >'.tr('Nome').': <b>'.$impianti[$i]['nome'].'</b></td>
@@ -151,9 +151,9 @@ if (!empty($interventi)) {
         $intervento = Intervento::find($interventi[$i]['id']);
         echo '
             <tr>
-                <td class="text-left">'.tr('Data richiesta').': <b>'.Translator::dateToLocale($intervento->data_richiesta).'</b></td>
-                <td class="text-left" colspan="2" >'.tr('Data scadenza').': <b>'.Translator::dateToLocale($intervento->data_scadenza).'</b></td>
-                <td class="text-left" >'.tr('Data inizio').': <b>'.Translator::dateToLocale($interventi[$i]['inizio']).'</b></td>
+                <td class="text-left">'.tr('Data richiesta').': <b>'.dateFormat($intervento->data_richiesta).'</b></td>
+                <td class="text-left" colspan="2" >'.tr('Data scadenza').': <b>'.dateFormat($intervento->data_scadenza).'</b></td>
+                <td class="text-left" >'.tr('Data inizio').': <b>'.dateFormat($interventi[$i]['inizio']).'</b></td>
             </tr>
             <tr>
                 <td colspan="2" class="text-left" >'.tr('Tipo').': <b>'.$intervento->tipo->descrizione.'</b></td>

@@ -32,7 +32,7 @@ echo '
             <br><br>
             <b>'.tr('Contratto num. _NUM_ del _DATE_', [
                 '_NUM_' => $documento['numero'],
-                '_DATE_' => Translator::dateToLocale($documento['data_bozza']),
+                '_DATE_' => dateFormat($documento['data_bozza']),
             ], ['upper' => true]).'</b>
         </div>';
 
@@ -152,7 +152,7 @@ foreach ($righe as $riga) {
     if (!$riga->isDescrizione()) {
         echo '
             <td class="text-center">
-                '.Translator::numberToLocale(abs($riga->qta), 'qta').' '.$r['um'].'
+                '.numberFormat(abs($riga->qta), 'qta').' '.$r['um'].'
             </td>';
 
         if ($options['pricing']) {
@@ -355,8 +355,8 @@ echo '
         if (!empty($documento['data_accettazione']) && !empty($documento['data_conclusione'])) {
             echo '
             '.tr('dal _START_ al _END_', [
-                '_START_' => Translator::dateToLocale($documento['data_accettazione']),
-                '_END_' => Translator::dateToLocale($documento['data_conclusione']),
+                '_START_' => dateFormat($documento['data_accettazione']),
+                '_END_' => dateFormat($documento['data_conclusione']),
             ]);
         } else {
             echo '-';

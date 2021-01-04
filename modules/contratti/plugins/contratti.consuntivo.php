@@ -52,7 +52,7 @@ if (!empty($interventi)) {
             <a href="javascript:;" class="btn btn-primary btn-xs" onclick="$(\'#dettagli_'.$intervento->id.'\').toggleClass(\'hide\'); $(this).find(\'i\').toggleClass(\'fa-plus\').toggleClass(\'fa-minus\');"><i class="fa fa-plus"></i></a>
             '.Modules::link('Interventi', $intervento->id, tr('Intervento num. _NUM_ del _DATE_', [
                 '_NUM_' => $intervento->codice,
-                '_DATE_' => Translator::dateToLocale($intervento->inizio),
+                '_DATE_' => dateFormat($intervento->inizio),
             ])).'
         </td>
 
@@ -289,31 +289,31 @@ echo '
                 echo '
                 <tr>
                     <td>'.tr('Ore a contratto').':</td>
-                    <td class="text-right">'.Translator::numberToLocale($totale_ore_contratto).'</td>
+                    <td class="text-right">'.numberFormat($totale_ore_contratto).'</td>
                 </tr>';
             }
                 echo '
                 <tr>
                     <td>'.tr('Ore erogate totali').':</td>
-                    <td class="text-right">'.Translator::numberToLocale($totale_ore).'</td>
+                    <td class="text-right">'.numberFormat($totale_ore).'</td>
                 </tr>';
             if (!empty($totale_ore_contratto)) {
                 echo '
                 <tr>
                     <td>'.tr('Ore residue totali').':</td>
-                    <td class="text-right">'.Translator::numberToLocale(floatval($totale_ore_contratto) - floatval($totale_ore)).'</td>
+                    <td class="text-right">'.numberFormat(floatval($totale_ore_contratto) - floatval($totale_ore)).'</td>
                 </tr>';
             }
                 echo '
                 <tr>
                     <td>'.tr('Ore erogate concluse').':</td>
-                    <td class="text-right">'.Translator::numberToLocale($totale_ore_completate).'</td>
+                    <td class="text-right">'.numberFormat($totale_ore_completate).'</td>
                 </tr>';
             if (!empty($totale_ore_contratto)) {
                 echo '
                 <tr>
                     <td>'.tr('Ore residue concluse').':</td>
-                    <td class="text-right">'.Translator::numberToLocale(floatval($totale_ore_contratto) - floatval($totale_ore_completate)).'</td>
+                    <td class="text-right">'.numberFormat(floatval($totale_ore_contratto) - floatval($totale_ore_completate)).'</td>
                 </tr>';
             }
             echo '
@@ -345,10 +345,10 @@ if (empty($totale_ore_contratto)) {
                 echo '
                 <tr>
                     <td>'.$key.'</td>
-                    <td class="text-right">'.Translator::numberToLocale($tipologia['ore']).'</td>
-                    <td class="text-right">'.Translator::numberToLocale($tipologia['costo']).' €</td>
-                    <td class="text-right">'.Translator::numberToLocale($tipologia['ricavo']).' €</td>
-                    <td class="text-right '.($margine>0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$margine_prc.'%)</td>
+                    <td class="text-right">'.numberFormat($tipologia['ore']).'</td>
+                    <td class="text-right">'.numberFormat($tipologia['costo']).' €</td>
+                    <td class="text-right">'.numberFormat($tipologia['ricavo']).' €</td>
+                    <td class="text-right '.($margine>0 ? 'bg-success' : 'bg-danger').'">'.numberFormat($margine).' € ('.$margine_prc.'%)</td>
                 </tr>';
             }
             echo '
@@ -372,11 +372,11 @@ if (empty($totale_ore_contratto)) {
                 echo '
                 <tr>
                     <td>'.$key.'</td>
-                    <td class="text-right">'.Translator::numberToLocale($tecnico['ore']).'</td>
+                    <td class="text-right">'.numberFormat($tecnico['ore']).'</td>
                     <td class="text-right">'.(int)$tecnico['km'].'</td>
-                    <td class="text-right">'.Translator::numberToLocale($tecnico['costo']).' €</td>
-                    <td class="text-right">'.Translator::numberToLocale($tecnico['ricavo']).' €</td>
-                    <td class="text-right '.($margine>0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$margine_prc.'%)</td>
+                    <td class="text-right">'.numberFormat($tecnico['costo']).' €</td>
+                    <td class="text-right">'.numberFormat($tecnico['ricavo']).' €</td>
+                    <td class="text-right '.($margine>0 ? 'bg-success' : 'bg-danger').'">'.numberFormat($margine).' € ('.$margine_prc.'%)</td>
                 </tr>';
             }
             echo '
@@ -401,10 +401,10 @@ if (empty($totale_ore_contratto)) {
                 echo '
                 <tr>
                     <td><div class="img-circle" style="width:18px; height:18px; position:relative; bottom:-2px; background:'.$stato['colore'].'; float:left;"></div> '.$key.'</td>
-                    <td class="text-right">'.Translator::numberToLocale($stato['ore']).'</td>
-                    <td class="text-right">'.Translator::numberToLocale($stato['costo']).' €</td>
-                    <td class="text-right">'.Translator::numberToLocale($stato['ricavo']).' €</td>
-                    <td class="text-right '.($margine>0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$margine_prc.'%)</td>
+                    <td class="text-right">'.numberFormat($stato['ore']).'</td>
+                    <td class="text-right">'.numberFormat($stato['costo']).' €</td>
+                    <td class="text-right">'.numberFormat($stato['ricavo']).' €</td>
+                    <td class="text-right '.($margine>0 ? 'bg-success' : 'bg-danger').'">'.numberFormat($margine).' € ('.$margine_prc.'%)</td>
                 </tr>';
             }
             echo '
@@ -430,9 +430,9 @@ if (empty($totale_ore_contratto)) {
                 <tr>
                     <td>'.Modules::link('Articoli', $materiale['id'], $key).'</td>
                     <td class="text-center">'.$materiale['qta'].'</td>
-                    <td class="text-right">'.Translator::numberToLocale($materiale['costo']).' €</td>
-                    <td class="text-right">'.Translator::numberToLocale($materiale['ricavo']).' €</td>
-                    <td class="text-right '.($margine>0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$margine_prc.'%)</td>
+                    <td class="text-right">'.numberFormat($materiale['costo']).' €</td>
+                    <td class="text-right">'.numberFormat($materiale['ricavo']).' €</td>
+                    <td class="text-right '.($margine>0 ? 'bg-success' : 'bg-danger').'">'.numberFormat($margine).' € ('.$margine_prc.'%)</td>
                 </tr>';
                     }
                 }
@@ -446,9 +446,9 @@ if (empty($totale_ore_contratto)) {
                 <tr>
                     <td>'.$key.'</td>
                     <td class="text-center">'.$materiale['qta'].'</td>
-                    <td class="text-right">'.Translator::numberToLocale($materiale['costo']).' €</td>
-                    <td class="text-right">'.Translator::numberToLocale($materiale['ricavo']).' €</td>
-                    <td class="text-right '.($margine>0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$margine_prc.'%)</td>
+                    <td class="text-right">'.numberFormat($materiale['costo']).' €</td>
+                    <td class="text-right">'.numberFormat($materiale['ricavo']).' €</td>
+                    <td class="text-right '.($margine>0 ? 'bg-success' : 'bg-danger').'">'.numberFormat($margine).' € ('.$margine_prc.'%)</td>
                 </tr>';
             }
             echo '

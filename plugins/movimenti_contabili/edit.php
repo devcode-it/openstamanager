@@ -57,7 +57,7 @@ if (!empty($movimenti)) {
 
             echo '
                 <tr>
-                    <td class="text-center">'.Translator::dateToLocale($movimento['data']).'</td>
+                    <td class="text-center">'.dateFormat($movimento['data']).'</td>
                     <td>'.$descrizione.'<small class="pull-right text-right text-muted" style="font-size:8pt;">'.($documento ? $documento->getReference() : '').'</small></td>
                     <td class="text-right">'.($movimento['totale']>0 ? moneyFormat(abs($movimento['totale'])) : "").'</td>
                     <td class="text-right">'.($movimento['totale']<0 ? moneyFormat(abs($movimento['totale'])) : "").'</td>
@@ -82,7 +82,7 @@ if (!empty($movimenti)) {
 
                 echo '
                     <tr>
-                        <td class="text-center">'.Translator::dateToLocale($altro_movimento['data']).'</td>
+                        <td class="text-center">'.dateFormat($altro_movimento['data']).'</td>
                         <td>'.$descrizione.'<small class="pull-right text-right text-muted" style="font-size:8pt;">'.($documento ? $documento->getReference() : '').'</small></td>
                         <td class="text-right">'.($altro_movimento['totale']>0 ? moneyFormat(abs($altro_movimento['totale'])) : "").'</td>
                         <td class="text-right">'.($altro_movimento['totale']<0 ? moneyFormat(abs($altro_movimento['totale'])) : "").'</td>

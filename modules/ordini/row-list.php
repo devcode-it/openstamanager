@@ -130,12 +130,12 @@ foreach ($righe as $riga) {
         }
 
         if (!empty($riga->ora_evasione)) {
-            $ora_evasione = '<br>'.Translator::timeToLocale($riga->ora_evasione).'';
+            $ora_evasione = '<br>'.timeFormat($riga->ora_evasione).'';
         } else {
             $ora_evasione = '';
         }
 
-        $info_evasione = '<span class="tip" title="'.$evasione_help.'"><i class="'.$evasione_icon.'"></i> '.Translator::dateToLocale($riga->data_evasione).$ora_evasione.'</span>';
+        $info_evasione = '<span class="tip" title="'.$evasione_help.'"><i class="'.$evasione_icon.'"></i> '.dateFormat($riga->data_evasione).$ora_evasione.'</span>';
     }
 
     echo '

@@ -759,8 +759,8 @@ if (!empty($elementi)) {
         $descrizione = tr('_DOC_  _NUM_ del _DATE_ _DELETED_AT_', [
         '_DOC_' => $elemento['tipo_documento'],
         '_NUM_' => !empty($elemento['numero_esterno']) ? $elemento['numero_esterno'] : $elemento['numero'],
-        '_DATE_' => Translator::dateToLocale($elemento['data']),
-        '_DELETED_AT_' => (!empty($elemento['deleted_at']) ? tr('Eliminato il:').' '.Translator::dateToLocale($elemento['deleted_at']) : ''),
+        '_DATE_' => dateFormat($elemento['data']),
+        '_DELETED_AT_' => (!empty($elemento['deleted_at']) ? tr('Eliminato il:').' '.dateFormat($elemento['deleted_at']) : ''),
     ]);
 
         //se non è un preventivo è un ddt o una fattura

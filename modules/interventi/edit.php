@@ -534,8 +534,8 @@ $articoli = $intervento->articoli;
             echo '
 	    <img src="'.base_url().'/files/interventi/'.$record['firma_file'].'" class="img-thumbnail"><div>&nbsp;</div>
 	   	<div class="col-md-6 col-md-offset-3 alert alert-success"><i class="fa fa-check"></i> '.tr('Firmato il _DATE_ alle _TIME_ da _PERSON_', [
-            '_DATE_' => Translator::dateToLocale($record['firma_data']),
-            '_TIME_' => Translator::timeToLocale($record['firma_data']),
+            '_DATE_' => dateFormat($record['firma_data']),
+            '_TIME_' => timeFormat($record['firma_data']),
             '_PERSON_' => '<b>'.$record['firma_nome'].'</b>',
         ]).'</div>';
         }
@@ -763,7 +763,7 @@ if (!empty($elementi)) {
         $descrizione = tr('_DOC_ num. _NUM_ del _DATE_ [_STATE_]', [
             '_DOC_' => $fattura['tipo_documento'],
             '_NUM_' => !empty($fattura['numero_esterno']) ? $fattura['numero_esterno'] : $fattura['numero'],
-            '_DATE_' => Translator::dateToLocale($fattura['data']),
+            '_DATE_' => dateFormat($fattura['data']),
             '_STATE_' => $fattura['stato_documento'],
         ]);
 

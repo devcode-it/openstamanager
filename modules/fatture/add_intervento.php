@@ -71,7 +71,7 @@ foreach ($rs as $key => $value) {
     $intervento = \Modules\Interventi\Intervento::find($value['id']);
     $prezzo = $intervento->totale;
 
-    $rs[$key]['prezzo'] = Translator::numberToLocale($prezzo);
+    $rs[$key]['prezzo'] = numberFormat($prezzo);
     $rs[$key]['descrizione_intervento'] = strip_tags($rs[$key]['descrizione_intervento']);
 }
 

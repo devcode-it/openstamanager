@@ -27,5 +27,5 @@ return [
     'id_anagrafica' => $r['idanagrafica'],
     'numero' => empty($r['numero_esterno']) ? $r['numero'] : $r['numero_esterno'],
     'note' => $r['note'],
-    'data' => Translator::dateToLocale($r['data']),
+    'data' => dateFormat($r['data']),
 ];

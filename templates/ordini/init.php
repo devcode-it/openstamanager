@@ -63,6 +63,6 @@ $pagamento = $dbo->fetchOne('SELECT * FROM co_pagamenti WHERE id = '.prepare($do
 $custom = [
     'tipo_doc' => Stringy\Stringy::create($documento->tipo->descrizione)->toUpperCase(),
     'numero' => $numero,
-    'data' => Translator::dateToLocale($documento['data']),
+    'data' => dateFormat($documento['data']),
     'pagamento' => $pagamento['descrizione'],
 ];

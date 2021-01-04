@@ -21,7 +21,6 @@ namespace Util;
 
 use Auth;
 use Modules;
-use Translator;
 
 /**
  * Classe per la gestione delle interazione di base per le query dinamiche.
@@ -315,7 +314,7 @@ class Query
         if (!empty($sums)) {
             foreach ($sums as $key => $sum) {
                 if (string_contains($key, 'sum_')) {
-                    $results[str_replace('sum_', '', $key)] = Translator::numberToLocale($sum);
+                    $results[str_replace('sum_', '', $key)] = numberFormat($sum);
                 }
             }
         }

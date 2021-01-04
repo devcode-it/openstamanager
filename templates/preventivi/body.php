@@ -74,7 +74,7 @@ echo '
         <div class="text-center" style="height:5mm;">
             <b>'.tr('Preventivo num. _NUM_ del _DATE_', [
                 '_NUM_' => $documento['numero'].(count($documento->revisioni) > 1 ? ' '.tr('rev.').' '.$documento->numero_revision : ''),
-                '_DATE_' => Translator::dateToLocale($documento['data_bozza']),
+                '_DATE_' => dateFormat($documento['data_bozza']),
             ], ['upper' => true]).'</b>
         </div>
 
@@ -228,7 +228,7 @@ foreach ($righe as $riga) {
     if (!$riga->isDescrizione()) {
         echo '
             <td class="text-center" style="vertical-align: middle" >
-                '.Translator::numberToLocale(abs($riga->qta), 'qta').' '.$r['um'].'
+                '.numberFormat(abs($riga->qta), 'qta').' '.$r['um'].'
             </td>';
 
         if ($options['pricing']) {
@@ -258,7 +258,7 @@ foreach ($righe as $riga) {
             // Iva
             echo '
             <td class="text-center" style="vertical-align: middle">
-                '.Translator::numberToLocale($riga->aliquota->percentuale, 0).'
+                '.numberFormat($riga->aliquota->percentuale, 0).'
             </td>';
         }
     } else {

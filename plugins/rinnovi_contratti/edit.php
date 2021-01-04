@@ -85,8 +85,8 @@ while (!empty($id_contratto_precedente) && $counter < 50) {
                 ]).'<br><small class="text-muted">'.$rs[0]['nome'].'</small>').'
             </td>
             <td class="text-right">'.moneyFormat($rs[0]['budget']).'</td>
-            <td align="center">'.Translator::dateToLocale($rs[0]['data_accettazione']).'</td>
-            <td align="center">'.Translator::dateToLocale($rs[0]['data_conclusione']).'</td>
+            <td align="center">'.dateFormat($rs[0]['data_accettazione']).'</td>
+            <td align="center">'.dateFormat($rs[0]['data_conclusione']).'</td>
         </tr>';
 
     $id_contratto_precedente = $rs[0]['idcontratto_prev'];

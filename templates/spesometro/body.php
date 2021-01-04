@@ -25,8 +25,8 @@ $date_end = session('period_end');
 // Intestazione tabella per righe
 echo "
 <h3 class='text-bold'>".tr('Spesometro dal _START_ al _END_', [
-    '_START_' => Translator::dateToLocale($date_start),
-    '_END_' => Translator::dateToLocale($date_end),
+    '_START_' => dateFormat($date_start),
+    '_END_' => dateFormat($date_end),
 ], ['upper' => true])."</h3>
 
 <table class='table table-bordered'>
@@ -81,7 +81,7 @@ foreach ($anagrafiche as $i => $anagrafica) {
             $descrizione = tr('_DOC_ num. _NUM_ del _DATE_', [
                 '_DOC_' => $fattura['tipo_documento'],
                 '_NUM_' => !empty($fattura['numero_esterno']) ? $fattura['numero_esterno'] : $fattura['numero'],
-                '_DATE_' => Translator::dateToLocale($fattura['data']),
+                '_DATE_' => dateFormat($fattura['data']),
             ]);
 
             // Documenti replicati per IVA

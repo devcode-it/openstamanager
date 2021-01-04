@@ -26,7 +26,6 @@ use Modules\Anagrafiche\Anagrafica;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Gestori\Bollo;
 use Prints;
-use Translator;
 use UnexpectedValueException;
 use Uploads;
 use Validate;
@@ -1427,7 +1426,7 @@ class FatturaElettronica
             if (!empty($riga['ritenuta_contributi'])) {
                 $dettaglio[]['AltriDatiGestionali'] = [
                     'TipoDato' => 'CASSA-PREV',
-                    'RiferimentoTesto' => setting('Tipo Cassa Previdenziale').' - '.$ritenuta_contributi->descrizione.' ('.Translator::numberToLocale($ritenuta_contributi->percentuale).'%)',
+                    'RiferimentoTesto' => setting('Tipo Cassa Previdenziale').' - '.$ritenuta_contributi->descrizione.' ('.numberFormat($ritenuta_contributi->percentuale).'%)',
                     'RiferimentoNumero' => $riga->ritenuta_contributi,
                 ];
             }

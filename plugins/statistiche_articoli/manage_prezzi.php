@@ -52,6 +52,6 @@ echo '
     <td class="text-right">'.moneyFormat($prezzo_medio).'</td>
     <td class="text-right">'.moneyFormat($prezzo_max['prezzo']).'</td>
     <td class="text-right">'.moneyFormat($oscillazione).'</td>
-    <td class="text-right">'.Translator::numberToLocale($oscillazione_percentuale, '2').' %</td>
+    <td class="text-right">'.numberFormat($oscillazione_percentuale, '2').' %</td>
     <td>'.$andamento.'</td>
 </tr>';

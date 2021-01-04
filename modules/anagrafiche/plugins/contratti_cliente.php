@@ -48,7 +48,7 @@ if( !$contratti->isEmpty() ){
 
                     $descrizione = tr('Contratto num. _NUM_ del _DATA_',[
                         '_NUM_' => $contratto->numero,
-                        '_DATA_' => Translator::dateToLocale($contratto->data_bozza),
+                        '_DATA_' => dateFormat($contratto->data_bozza),
                     ]);
                     echo '
                     <tr>

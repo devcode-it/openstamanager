@@ -138,7 +138,7 @@ echo '
                                 </a>
                             </td>
                             <td>'.Modules::link(Modules::get($allegato['id_module'])['name'], $file->id_record, $documento['descrizione']).'</td>
-                            <td class="text-center">'.Translator::dateToLocale($file->created_at).'</td>
+                            <td class="text-center">'.dateFormat($file->created_at).'</td>
                         </tr>';
             }
         }

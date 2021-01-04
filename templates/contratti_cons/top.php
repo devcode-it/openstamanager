@@ -26,7 +26,7 @@ echo '
             <h4 class="text-bold">'.tr('Consuntivo', [], ['upper' => true]).'</h4>
             <b>'.tr('Contratto num. _NUM_ del _DATE_', [
         '_NUM_' => $documento['numero'],
-        '_DATE_' => Translator::dateToLocale($documento['data_bozza']),
+        '_DATE_' => dateFormat($documento['data_bozza']),
     ], ['upper' => true]).'</b>
         </div>
     </div>

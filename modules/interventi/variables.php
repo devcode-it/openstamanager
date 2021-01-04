@@ -29,9 +29,9 @@ return [
     'numero' => $r['codice'],
     'richiesta' => $r['richiesta'],
     'descrizione' => $r['descrizione'],
-    'data' => Translator::dateToLocale($r['data_richiesta']),
-    'data richiesta' => Translator::dateToLocale($r['data_richiesta']),
-    'data fine intervento' => empty($r['data_fine']) ? Translator::dateToLocale($r['data_richiesta']) : Translator::dateToLocale($r['data_fine']),
+    'data' => dateFormat($r['data_richiesta']),
+    'data richiesta' => dateFormat($r['data_richiesta']),
+    'data fine intervento' => empty($r['data_fine']) ? dateFormat($r['data_richiesta']) : dateFormat($r['data_fine']),
     'id_anagrafica' => $r['idanagrafica'],
     'stato' => $r['stato'],
 ];

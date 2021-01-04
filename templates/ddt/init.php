@@ -83,7 +83,7 @@ if (!empty($documento['idsede_destinazione'])) {
 $custom = [
     'tipo_doc' => $tipo_doc,
     'numero' => $numero,
-    'data' => Translator::dateToLocale($documento['data']),
+    'data' => dateFormat($documento['data']),
     'pagamento' => $pagamento['descrizione'],
     'c_destinazione' => $destinazione,
     'aspettobeni' => $aspetto_beni['descrizione'],

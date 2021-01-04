@@ -371,7 +371,7 @@ if (!empty($elementi)) {
         $descrizione = tr('_DOC_ num. _NUM_ del _DATE_', [
             '_DOC_' => $elemento['tipo_documento'],
             '_NUM_' => !empty($elemento['numero_esterno']) ? $elemento['numero_esterno'] : $elemento['numero'],
-            '_DATE_' => Translator::dateToLocale($elemento['data']),
+            '_DATE_' => dateFormat($elemento['data']),
         ]);
 
         //se non è un preventivo è un ddt o una fattura
@@ -389,7 +389,7 @@ if (!empty($elementi)) {
         echo '
             <tr>
                 <td>'.Modules::link($modulo, $id, $descrizione).'</td>
-                <td class="text-center">'.Translator::numberToLocale($elemento['qta_totale']).'</td>
+                <td class="text-center">'.numberFormat($elemento['qta_totale']).'</td>
                 <td class="text-right">'.moneyFormat($elemento['prezzo_unitario']).'</td>
                 <td class="text-right">'.moneyFormat($elemento['prezzo_totale']).'</td>
             <tr>';

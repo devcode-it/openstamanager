@@ -204,9 +204,9 @@ if (auth()->check()) {
 				full_locale: "'.$lang.'",
 
                 start_date: "'.session('period_start').'",
-                start_date_formatted: "'.Translator::dateToLocale(session('period_start')).'",
+                start_date_formatted: "'.dateFormat(session('period_start')).'",
                 end_date: "'.session('period_end').'",
-                end_date_formatted: "'.Translator::dateToLocale(session('period_end')).'",
+                end_date_formatted: "'.dateFormat(session('period_end')).'",
 
                 collapse_plugin_sidebar: '.intval(setting('Nascondere la barra dei plugin di default')).',
 
@@ -384,7 +384,7 @@ if (auth()->check()) {
                             </a></li>
 
                             <li><a style="cursor:default;padding:0px;padding-right:5px;padding-left:5px;margin-top:15px;" class="label label-'.$calendar_color_label.'">
-                                '.Translator::dateToLocale(session('period_start')).' - '.Translator::dateToLocale(session('period_end')).'
+                                '.dateFormat(session('period_start')).' - '.dateFormat(session('period_end')).'
                             </a></li>
                         </ul>
                      </div>

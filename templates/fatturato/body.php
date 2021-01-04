@@ -21,13 +21,13 @@ include_once __DIR__.'/../../core.php';
 
 if ($dir == 'entrata') {
     $title = tr('Fatturato mensile dal _START_ al _END_', [
-        '_START_' => Translator::dateToLocale($date_start),
-        '_END_' => Translator::dateToLocale($date_end),
+        '_START_' => dateFormat($date_start),
+        '_END_' => dateFormat($date_end),
     ], ['upper' => true]);
 } else {
     $title = tr('Acquisti mensili dal _START_ al _END_', [
-        '_START_' => Translator::dateToLocale($date_start),
-        '_END_' => Translator::dateToLocale($date_end),
+        '_START_' => dateFormat($date_start),
+        '_END_' => dateFormat($date_end),
     ], ['upper' => true]);
 }
 

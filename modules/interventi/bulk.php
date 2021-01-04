@@ -118,7 +118,7 @@ switch (post('op')) {
 
             $descrizione = tr('Attività numero _NUM_ del _DATE_ [_STATE_]', [
                 '_NUM_' => $intervento['codice_intervento'],
-                '_DATE_' => Translator::dateToLocale($intervento['data']),
+                '_DATE_' => dateFormat($intervento['data']),
                 '_STATE_' => $intervento['stato'],
             ]);
 

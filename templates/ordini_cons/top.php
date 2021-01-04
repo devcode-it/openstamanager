@@ -26,7 +26,7 @@ echo '
             <h4 class="text-bold">'.tr('Consuntivo', [], ['upper' => true]).'</h4>
             <b>'.tr('Ordine num. _NUM_ del _DATE_', [
         '_NUM_' => (!empty($documento['numero_esterno']) ? $documento['numero_esterno'] : $documento['numero']),
-        '_DATE_' => Translator::dateToLocale($documento['data']),
+        '_DATE_' => dateFormat($documento['data']),
     ], ['upper' => true]).'</b>
         </div>
     </div>

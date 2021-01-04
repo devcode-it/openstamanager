@@ -197,7 +197,7 @@ if (!function_exists('_')) {
  */
 function numberFormat($number, $decimals = null)
 {
-    return Translator::numberToLocale($number, $decimals);
+    return formatter()->formatNumber($number, $decimals);
 }
 
 /**
@@ -211,7 +211,7 @@ function numberFormat($number, $decimals = null)
  */
 function timestampFormat($timestamp)
 {
-    return Translator::timestampToLocale($timestamp);
+    return formatter()->formatTimestamp($timestamp);
 }
 
 /**
@@ -225,7 +225,7 @@ function timestampFormat($timestamp)
  */
 function dateFormat($date)
 {
-    return Translator::dateToLocale($date);
+    return formatter()->formatDate($date);
 }
 
 /**
@@ -239,7 +239,7 @@ function dateFormat($date)
  */
 function timeFormat($time)
 {
-    return Translator::timeToLocale($time);
+    return formatter()->formatTime($time);
 }
 
 /**
@@ -251,7 +251,7 @@ function timeFormat($time)
  */
 function currency()
 {
-    return \Translator::getCurrency();
+    return AppLegacy::getCurrency();
 }
 
 /**

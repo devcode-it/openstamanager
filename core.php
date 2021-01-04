@@ -39,12 +39,6 @@ if (file_exists(__DIR__.'/config.inc.php')) {
     include_once __DIR__.'/config.inc.php';
 }
 
-// Individuazione dei percorsi di base
-AppLegacy::definePaths(__DIR__);
-
-$docroot = DOCROOT;
-$rootdir = ROOTDIR;
-$baseurl = BASEURL;
 /*
 // Sicurezza della sessioni
 ini_set('session.cookie_samesite', 'strict');
@@ -151,7 +145,6 @@ $dbo = $database = database();
 // Istanziamento del gestore delle traduzioni del progetto
 $lang = !empty($config['lang']) ? $config['lang'] : (isset($_GET['lang']) ? $_GET['lang'] : null);
 $formatter = !empty($config['formatter']) ? $config['formatter'] : [];
-AppLegacy::setFormatter($lang, $formatter);
 //$translator->addLocalePath(base_dir().'/locale');
 //$translator->addLocalePath(base_dir().'/modules/*/locale');
 //$translator->setLocale($lang, $formatter);

@@ -157,7 +157,7 @@ switch ($resource) {
             $qta_sede = $dbo->fetchOne('SELECT SUM(mg_movimenti.qta) AS qta FROM mg_movimenti LEFT JOIN an_sedi ON an_sedi.id = mg_movimenti.idsede WHERE mg_movimenti.idarticolo = '.prepare($r['id']).' AND idsede = '.prepare($superselect['idsede_partenza']))['qta'];
 
             $rs[$k] = array_merge($r, [
-                'text' => $r['codice'].' - '.$r['descrizione'].' '.(!$r['servizio'] ? '('.Translator::numberToLocale($qta_sede).(!empty($r['um']) ? ' '.$r['um'] : '').')' : ''),
+                'text' => $r['codice'].' - '.$r['descrizione'].' '.(!$r['servizio'] ? '('.numberFormat($qta_sede).(!empty($r['um']) ? ' '.$r['um'] : '').')' : ''),
                 'disabled' => $qta_sede <= 0 && !$permetti_movimenti_sotto_zero && !$r['servizio'],
             ]);
         }

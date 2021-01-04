@@ -130,7 +130,7 @@ for ($i = 0; $i < count($rs2); ++$i) {
             <td>'.$rs2[$i]['serial'].'</td>';
 
     echo '
-            <td>'.Translator::timestampToLocale($rs2[$i]['created_at']).'</td>';
+            <td>'.timestampFormat($rs2[$i]['created_at']).'</td>';
 
     // Ricerca vendite
     $vendite = $dbo->fetchArray('SELECT * FROM mg_prodotti WHERE dir=\'entrata\' AND id_articolo='.prepare($id_record).' AND serial='.prepare($rs2[$i]['serial']));
@@ -201,7 +201,7 @@ for ($i = 0; $i < count($rs2); ++$i) {
             $text = tr('_DOC_ num. _NUM_ del _DATE_', [
                 '_DOC_' => $data[0]['tipo_documento'],
                 '_NUM_' => $numero,
-                '_DATE_' => Translator::dateToLocale($data[0]['data']),
+                '_DATE_' => dateFormat($data[0]['data']),
             ]).(!empty($extra) ? ' '.$extra : '');
 
             echo '
@@ -220,7 +220,7 @@ for ($i = 0; $i < count($rs2); ++$i) {
                 <span>'.moneyFormat($subtotale + $iva).'</span>';
             if (!empty($subtotale) && !empty($iva)) {
                 echo '
-                <small style="color:#555;">('.Translator::numberToLocale($subtotale).' + '.Translator::numberToLocale($iva).')</small>';
+                <small style="color:#555;">('.numberFormat($subtotale).' + '.numberFormat($iva).')</small>';
             }
             echo '
                 <br>';

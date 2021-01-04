@@ -428,3 +428,30 @@ function base_dir()
 {
     return base_path().'/legacy/';
 }
+
+/**
+ * Argomenti di ricerca dalla sessione.
+ *
+ * @param $module_id
+ *
+ * @since 2.5
+ *
+ * @return array
+ */
+function getSessionSearch($module_id)
+{
+    $search = [];
+
+    $array = session('module_'.$module_id);
+    if (!empty($array)) {
+        foreach ($array as $field => $value) {
+            if (!empty($value) && string_starts_with($field, 'search_')) {
+                $field_name = str_replace('search_', '', $field);
+
+                $search[$field_name] = $value;
+            }
+        }
+    }
+
+    return $search;
+}

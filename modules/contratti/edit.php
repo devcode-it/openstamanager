@@ -460,7 +460,7 @@ if (!empty($elementi)) {
             $descrizione = tr('_DOC_ num. _NUM_ del _DATE_', [
                 '_DOC_' => $riga['tipo_documento'],
                 '_NUM_' => !empty($riga['numero_esterno']) ? $riga['numero_esterno'] : $riga['numero'],
-                '_DATE_' => Translator::dateToLocale($riga['data']),
+                '_DATE_' => dateFormat($riga['data']),
             ]);
 
             $modulo = ($riga['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
@@ -471,7 +471,7 @@ if (!empty($elementi)) {
         } else {
             $descrizione = tr('Intervento num. _NUM_ del _DATE_', [
                 '_NUM_' => $riga['codice'],
-                '_DATE_' => Translator::dateToLocale($riga['data']),
+                '_DATE_' => dateFormat($riga['data']),
             ]);
 
             $modulo = 'Interventi';

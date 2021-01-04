@@ -60,7 +60,7 @@ return [
     'numero' => empty($r['numero_esterno']) ? $r['numero'] : $r['numero_esterno'],
     'tipo_documento' => $r['tipo_documento'],
     'note' => $r['note'],
-    'data' => Translator::dateToLocale($r['data']),
+    'data' => dateFormat($r['data']),
     'logo_azienda' => !empty($logo_azienda) ? '<img src="'.$logo_azienda.'" />' : '',
     'conto' => $conto,
     'conto_descrizione' => $conto_descrizione,

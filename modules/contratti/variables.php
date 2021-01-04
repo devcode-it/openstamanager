@@ -28,6 +28,6 @@ return [
     'ragione_sociale' => $r['ragione_sociale'],
     'numero' => $r['numero'],
     'descrizione' => $r['descrizione'],
-    'data' => Translator::dateToLocale($r['data_bozza']),
+    'data' => dateFormat($r['data_bozza']),
     'id_anagrafica' => $r['idanagrafica'],
 ];

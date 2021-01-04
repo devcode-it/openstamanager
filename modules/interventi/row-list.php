@@ -98,7 +98,7 @@ if (!$righe->isEmpty()) {
         // Quantità
         echo '
                 <td class="text-right">
-                    '.Translator::numberToLocale($riga->qta, 'qta').' '.$riga->um.'
+                    '.numberFormat($riga->qta, 'qta').' '.$riga->um.'
                 </td>';
 
         if ($show_prezzi) {

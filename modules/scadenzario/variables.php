@@ -39,8 +39,8 @@ return [
     'numero' => empty($r['numero_esterno']) ? $r['numero'] : $r['numero_esterno'],
     'note' => $r['note'],
     'pagamento' => $r['pagamento'],
-    'totale' => Translator::numberToLocale(abs($r['totale'])),
-    'data_scadenza' => Translator::dateToLocale($r['scadenza']),
-    'data' => Translator::dateToLocale($r['data']),
+    'totale' => numberFormat(abs($r['totale'])),
+    'data_scadenza' => dateFormat($r['scadenza']),
+    'data' => dateFormat($r['data']),
     'logo_azienda' => !empty($logo_azienda) ? '<img src="'.$logo_azienda.'" />' : '',
 ];

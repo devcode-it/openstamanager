@@ -98,39 +98,39 @@ if (!empty($sessioni)) {
         // Orario di inizio
         echo '
             <td>
-                '.Translator::timestampToLocale($sessione['orario_inizio']).'
+                '.timestampFormat($sessione['orario_inizio']).'
             </td>';
 
         // Orario di fine
         echo '
             <td>
-                '.Translator::timestampToLocale($sessione['orario_fine']).'
+                '.timestampFormat($sessione['orario_fine']).'
             </td>';
 
         // ORE
         echo '
             <td style="border-right:1px solid #aaa;">
-                '.Translator::numberToLocale($ore).'
+                '.numberFormat($ore).'
 
                 <div class="extra hide">
                     <table class="table table-condensed table-bordered">
                         <tr>
                             <th class="text-danger">'.tr('Costo').':</th>
                             <td class="text-right">
-                                '.Translator::numberToLocale($costo_ore_consuntivo_tecnico)."
-                                <small class='help-block'>".Translator::numberToLocale($costo_ore_unitario_tecnico).'x'.Translator::numberToLocale($ore).'<br>+'.Translator::numberToLocale($costo_dirittochiamata_tecnico).'</small>
+                                '.numberFormat($costo_ore_consuntivo_tecnico)."
+                                <small class='help-block'>".numberFormat($costo_ore_unitario_tecnico).'x'.numberFormat($ore).'<br>+'.numberFormat($costo_dirittochiamata_tecnico).'</small>
                             </td>
                         </tr>
                         <tr>
                             <th>'.tr('Addebito').':</th>
                             <td class="text-right">
-                                '.Translator::numberToLocale($costo_ore_consuntivo).'
-                                <small class="help-block">'.Translator::numberToLocale($costo_ore_unitario).'x'.Translator::numberToLocale($ore).'<br>+'.Translator::numberToLocale($costo_dirittochiamata).'</small>
+                                '.numberFormat($costo_ore_consuntivo).'
+                                <small class="help-block">'.numberFormat($costo_ore_unitario).'x'.numberFormat($ore).'<br>+'.numberFormat($costo_dirittochiamata).'</small>
                             </td>
                         </tr>
                         <tr>
                             <th>'.tr('Scontato').':</th>
-                            <td class="text-right">'.Translator::numberToLocale($costo_ore_consuntivo - $sconto).'</td>
+                            <td class="text-right">'.numberFormat($costo_ore_consuntivo - $sconto).'</td>
                         </tr>
                     </table>
                 </div>
@@ -139,31 +139,31 @@ if (!empty($sessioni)) {
         // KM
         echo '
             <td style="border-right:1px solid #aaa;">
-                '.Translator::numberToLocale($km).'
+                '.numberFormat($km).'
 
                 <div class="extra hide">
                     <table class="table table-condensed table-bordered">
                     <tr>
                         <th class="text-danger">'.tr('Costo').':</th>
                         <td class="text-right">
-                            '.Translator::numberToLocale($costo_km_consuntivo_tecnico).'
+                            '.numberFormat($costo_km_consuntivo_tecnico).'
                             <small class="help-block">
-                                '.Translator::numberToLocale($costo_km_unitario_tecnico).'x'.Translator::numberToLocale($km).'
+                                '.numberFormat($costo_km_unitario_tecnico).'x'.numberFormat($km).'
                             </small><br>
                         </td>
                     </tr>
                     <tr>
                         <th>'.tr('Addebito').':</th>
                         <td class="text-right">
-                            '.Translator::numberToLocale($costo_km_consuntivo).'
+                            '.numberFormat($costo_km_consuntivo).'
                             <small class="help-block">
-                                '.Translator::numberToLocale($costo_km_unitario).'x'.Translator::numberToLocale($km).'
+                                '.numberFormat($costo_km_unitario).'x'.numberFormat($km).'
                             </small><br>
                         </td>
                     </tr>
                     <tr>
                         <th>'.tr('Scontato').':</th>
-                        <td class="text-right">'.Translator::numberToLocale($costo_km_consuntivo - $scontokm).'</td>
+                        <td class="text-right">'.numberFormat($costo_km_consuntivo - $scontokm).'</td>
                     </tr>
                     </table>
                 </div>
@@ -174,7 +174,7 @@ if (!empty($sessioni)) {
             echo '
             <td style="border-right:1px solid #aaa;">
                 '.tr('_TOT_ _TYPE_', [
-                    '_TOT_' => Translator::numberToLocale($sessione['sconto_unitario']),
+                    '_TOT_' => numberFormat($sessione['sconto_unitario']),
                     '_TYPE_' => ($sessione['tipo_sconto'] == 'PRC' ? '%' : currency()),
                 ]).'
             </td>';
@@ -185,7 +185,7 @@ if (!empty($sessioni)) {
             echo '
             <td style="border-right:1px solid #aaa;">
                 '.tr('_TOT_ _TYPE_', [
-                    '_TOT_' => Translator::numberToLocale($sessione['scontokm_unitario']),
+                    '_TOT_' => numberFormat($sessione['scontokm_unitario']),
                     '_TYPE_' => ($sessione['tipo_sconto_km'] == 'PRC' ? '%' : currency()),
                 ]).'
             </td>';

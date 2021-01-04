@@ -37,7 +37,7 @@ if (!empty($rs)) {
             <br><small>'.$r['codice'].'</small>
         </td>
         <td>
-            '.Translator::numberToLocale($r['qta'], 'qta').' '.$r['unitamisura'].'
+            '.numberFormat($r['qta'], 'qta').' '.$r['unitamisura'].'
         </td>
     </tr>';
     }

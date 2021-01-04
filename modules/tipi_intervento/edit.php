@@ -118,7 +118,7 @@ if (!empty($elementi)) {
         $descrizione = tr('_DOC_ num. _NUM_ del _DATE_', [
             '_DOC_' => $elemento['tipo_documento'],
             '_NUM_' => $elemento['numero'],
-            '_DATE_' => Translator::dateToLocale($elemento['data']),
+            '_DATE_' => dateFormat($elemento['data']),
         ]);
 
         if (in_array($elemento['tipo_documento'], ['Intervento'])) {

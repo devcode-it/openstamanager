@@ -142,7 +142,7 @@ function discountInfo(Accounting $riga, $mostra_maggiorazione = true)
     $totale = !empty($riga->sconto_percentuale) ? $riga->sconto_percentuale : $riga->sconto_unitario_corrente;
 
     return replace($text, [
-        '_TOT_' => Translator::numberToLocale(abs($totale)),
+        '_TOT_' => numberFormat(abs($totale)),
         '_TYPE_' => !empty($riga->sconto_percentuale) ? '%' : currency(),
     ]);
 }

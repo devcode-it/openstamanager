@@ -24,16 +24,16 @@ echo '
 
 echo '
     <td>'.str_pad($record['idmovimenti'], 8, '0', STR_PAD_LEFT).'</td>
-    <td>'.Translator::datetoLocale($record['data_competenza']).'</td>
+    <td>'.dateFormat($record['data_competenza']).'</td>
     <td>'.$record['numero_esterno'].'</td>
-    <td>'.Translator::datetoLocale($record['data']).'</td>
+    <td>'.dateFormat($record['data']).'</td>
     <td>'.$record['codice_tipo_documento_fe'].'</td>
     <td>'.$record['codice_anagrafica'].' / '.safe_truncate(mb_strtoupper(html_entity_decode($record['ragione_sociale']), 'UTF-8'), 50).'</td>
     <td class="text-right">'.moneyFormat($record['totale']).'</td>';
 
 echo '
     <td class="text-right">'.moneyFormat($record['subtotale']).'</td>
-    <td class="text-left">'.Translator::numberToLocale($record['percentuale'], 0).'</td>
+    <td class="text-left">'.numberFormat($record['percentuale'], 0).'</td>
     <td class="text-left">'.$record['desc_iva'].'</td>
     <td class="text-right">'.moneyFormat($record['iva']).'</td>
     </tr>';

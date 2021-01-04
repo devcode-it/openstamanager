@@ -152,7 +152,7 @@ if (empty($record) || !$has_access) {
         $operation = $dbo->fetchOne("SELECT zz_operations.created_at, username FROM zz_operations INNER JOIN zz_users ON zz_operations.id_utente =  zz_users.id  WHERE op='delete' AND id_module=".prepare($id_module).' AND id_record='.prepare($id_record).' ORDER BY zz_operations.created_at DESC');
 
         $info = tr('Il record è stato eliminato il <b>_DATE_</b> da <b>_USER_</b>', [
-            '_DATE_' => (($operation['created_at']) ? Translator::timestampToLocale($operation['created_at']) : Translator::timestampToLocale($record['deleted_at'])),
+            '_DATE_' => (($operation['created_at']) ? timestampFormat($operation['created_at']) : timestampFormat($record['deleted_at'])),
             '_USER_' => ((!empty($operation['username'])) ? $operation['username'] : 'N.D.'),
         ]).'. ';
 
@@ -393,7 +393,7 @@ if (empty($record) || !$has_access) {
                                             <h4 class="timeline-title">'.$description.'</h4>
                                         </div>
                                         <div class="col-md-4 text-right">
-                                            <p><small class="label label-default tip" title="'.Translator::timestampToLocale($operation['created_at']).'"><i class="fa fa-clock-o"></i> '.Carbon::parse($operation['created_at'])->diffForHumans().'</small></p>
+                                            <p><small class="label label-default tip" title="'.timestampFormat($operation['created_at']).'"><i class="fa fa-clock-o"></i> '.Carbon::parse($operation['created_at'])->diffForHumans().'</small></p>
                                             <p><small class="label label-default"><i class="fa fa-user"></i> '.$operation['username'].'</small></p>
                                         </div>
                                     </div>

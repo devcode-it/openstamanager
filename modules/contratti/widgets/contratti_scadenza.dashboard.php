@@ -45,9 +45,9 @@ if (!empty($rs)) {
     </tr>';
 
     foreach ($rs as $r) {
-        $data_accettazione = !empty($r['data_accettazione']) ? Translator::dateToLocale($r['data_accettazione']) : '';
+        $data_accettazione = !empty($r['data_accettazione']) ? dateFormat($r['data_accettazione']) : '';
 
-        $data_conclusione = !empty($r['data_conclusione']) ? Translator::dateToLocale($r['data_conclusione']) : '';
+        $data_conclusione = !empty($r['data_conclusione']) ? dateFormat($r['data_conclusione']) : '';
 
         // Se scaduto, segna la riga in rosso
         $class = (strtotime($r['data_conclusione']) < strtotime(date('Y-m-d')) && !empty($data_conclusione)) ? 'danger' : '';

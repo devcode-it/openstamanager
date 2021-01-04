@@ -110,7 +110,7 @@ if (!empty($elementi)) {
     foreach ($elementi as $elemento) {
         $descrizione = tr('Articolo _CODICE_ _DELETED_AT_', [
         '_CODICE_' => !empty($elemento['codice']) ? $elemento['codice'] : $elemento['barcode'],
-        '_DELETED_AT_' => (!empty($elemento['deleted_at']) ? tr('Eliminato il:').' '.Translator::dateToLocale($elemento['deleted_at']) : ''),
+        '_DELETED_AT_' => (!empty($elemento['deleted_at']) ? tr('Eliminato il:').' '.dateFormat($elemento['deleted_at']) : ''),
     ]);
         $modulo = 'Articoli';
         $id = $elemento['id'];

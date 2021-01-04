@@ -54,7 +54,7 @@ foreach ($rs as $r) {
     $result = [];
 
     $result['link'] = base_url().'/editor.php?id_module='.$link_id.'&id_record='.$r['id'];
-    $result['title'] = 'Intervento '.$r['codice'].' del '.Translator::dateToLocale($r['data']);
+    $result['title'] = 'Intervento '.$r['codice'].' del '.dateFormat($r['data']);
     $result['category'] = 'Interventi';
 
     // Campi da evidenziare

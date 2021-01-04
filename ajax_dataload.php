@@ -124,13 +124,13 @@ if (!empty($query)) {
             // Formattazione automatica
             if (!empty($total['format'][$pos]) && !empty($value)) {
                 if (formatter()->isStandardTimestamp($value)) {
-                    $value = Translator::timestampToLocale($value);
+                    $value = timestampFormat($value);
                 } elseif (formatter()->isStandardDate($value)) {
-                    $value = Translator::dateToLocale($value);
+                    $value = dateFormat($value);
                 } elseif (formatter()->isStandardTime($value)) {
-                    $value = Translator::timeToLocale($value);
+                    $value = timeFormat($value);
                 } elseif (formatter()->isStandardNumber($value)) {
-                    $value = Translator::numberToLocale($value);
+                    $value = numberFormat($value);
                 }
             }
 

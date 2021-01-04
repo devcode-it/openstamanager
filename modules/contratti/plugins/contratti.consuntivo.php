@@ -47,7 +47,7 @@ if (!empty($interventi)) {
             <a href="javascript:;" class="btn btn-primary btn-xs" onclick="$(\'#dettagli_'.$intervento->id.'\').toggleClass(\'hide\'); $(this).find(\'i\').toggleClass(\'fa-plus\').toggleClass(\'fa-minus\');"><i class="fa fa-plus"></i></a>
             '.Modules::link('Interventi', $intervento->id, tr('Intervento num. _NUM_ del _DATE_', [
                 '_NUM_' => $intervento->codice,
-                '_DATE_' => Translator::dateToLocale($intervento->inizio),
+                '_DATE_' => dateFormat($intervento->inizio),
             ])).'
         </td>
 
@@ -291,24 +291,24 @@ if (!empty($totale_ore_contratto)) {
             <table class="table text-left table-striped table-bordered">
                 <tr>
                     <td>'.tr('Ore a contratto').':</td>
-                    <td class="text-right">'.Translator::numberToLocale($totale_ore_contratto).'</td>
+                    <td class="text-right">'.numberFormat($totale_ore_contratto).'</td>
                 </tr>
                 <tr>
                     <td>'.tr('Ore erogate totali').':</td>
-                    <td class="text-right">'.Translator::numberToLocale($totale_ore).'</td>
+                    <td class="text-right">'.numberFormat($totale_ore).'</td>
                 </tr>
                 <tr>
                     <td>'.tr('Ore residue totali').':</td>
-                    <td class="text-right">'.Translator::numberToLocale(floatval($totale_ore_contratto) - floatval($totale_ore)).'</td>
+                    <td class="text-right">'.numberFormat(floatval($totale_ore_contratto) - floatval($totale_ore)).'</td>
                 </tr>
 
                 <tr>
                     <td>'.tr('Ore erogate concluse').':</td>
-                    <td class="text-right">'.Translator::numberToLocale($totale_ore_completate).'</td>
+                    <td class="text-right">'.numberFormat($totale_ore_completate).'</td>
                 </tr>
                 <tr>
                     <td>'.tr('Ore residue concluse').':</td>
-                    <td class="text-right">'.Translator::numberToLocale(floatval($totale_ore_contratto) - floatval($totale_ore_completate)).'</td>
+                    <td class="text-right">'.numberFormat(floatval($totale_ore_contratto) - floatval($totale_ore_completate)).'</td>
                 </tr>
             </table>
         </big>

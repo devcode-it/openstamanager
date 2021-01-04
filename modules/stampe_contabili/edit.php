@@ -47,8 +47,8 @@ echo '
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <h3 class="panel-title">'.tr('Comunicazione dati fatture (ex-spesometro)<br> dal _START_ al _END_', [
-                    '_START_' => Translator::dateToLocale(session('period_start')),
-                    '_END_' => Translator::dateToLocale(session('period_end')),
+                    '_START_' => dateFormat(session('period_start')),
+                    '_END_' => dateFormat(session('period_end')),
                 ]).'</h3>
             </div>
 
@@ -62,8 +62,8 @@ echo '
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <h3 class="panel-title">'.tr('Fatturato<br> dal _START_ al _END_', [
-                    '_START_' => Translator::dateToLocale(session('period_start')),
-                    '_END_' => Translator::dateToLocale(session('period_end')),
+                    '_START_' => dateFormat(session('period_start')),
+                    '_END_' => dateFormat(session('period_end')),
                 ]).'</h3>
             </div>
 

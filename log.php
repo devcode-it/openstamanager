@@ -59,7 +59,7 @@ for ($i = 0; $i < $n; ++$i) {
     $username = $rs[$i]['username'];
     $ip = $rs[$i]['ip'];
 
-    $timestamp = Translator::timestampToLocale($rs[$i]['created_at']);
+    $timestamp = timestampFormat($rs[$i]['created_at']);
 
     $status = auth()->getStatus();
     if ($rs[$i]['stato'] == $status['success']['code']) {

@@ -70,7 +70,7 @@ if (!empty($documento)) {
 
                         <tr>
                             <th>'.tr('Data').':</th>
-                            <td>'.Translator::dateToLocale($documento->data).'</td>
+                            <td>'.dateFormat($documento->data).'</td>
                         </tr>
 
                         <tr>

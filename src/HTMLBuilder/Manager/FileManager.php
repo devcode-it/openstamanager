@@ -136,7 +136,7 @@ class FileManager implements ManagerInterface
                 <small> ('.$file->extension.')'.((!empty($file->size)) ? ' ('.\Util\FileSystem::formatBytes($file->size).')' : '').' '.(((setting('Logo stampe') == $r['filename']) || (setting('Filigrana stampe') == $r['filename'])) ? '<i class="fa fa-file-text-o"></i>' : '').'</small>'.'
             </td>
 
-            <td>'.\Translator::timestampToLocale($r['created_at']).'</td>
+            <td>'.timestampFormat($r['created_at']).'</td>
 
             <td class="text-center">
                 <a class="btn btn-xs btn-primary" href="'.base_url().'/actions.php?id_module='.$options['id_module'].'&op=download-allegato&id='.$r['id'].'&filename='.$r['filename'].'" target="_blank">

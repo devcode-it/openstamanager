@@ -50,7 +50,7 @@ foreach ($rs as $r) {
     $result['title'] = 'Preventivo '.$r['numero'];
 
     if ($rs[$r]['data_accettazione'] == '0000-00-00') {
-        $result['title'] .= ' del '.Translator::dateToLocale($rs[$r]['data_accettazione']);
+        $result['title'] .= ' del '.dateFormat($rs[$r]['data_accettazione']);
     }
 
     $result['category'] = 'Preventivi';

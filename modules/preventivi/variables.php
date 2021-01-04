@@ -30,7 +30,7 @@ return [
     'numero' => $r['numero'],
     'ragione_sociale' => $r['ragione_sociale'],
     'descrizione' => $r['descrizione'],
-    'data' => Translator::dateToLocale($r['data_bozza']),
+    'data' => dateFormat($r['data_bozza']),
     'id_anagrafica' => $r['idanagrafica'],
     'revisione' => $revisione,
 ];

@@ -26,6 +26,6 @@ return [
     'email' => $r['email'],
     'numero' => empty($r['numero_esterno']) ? $r['numero'] : $r['numero_esterno'],
     'note' => $r['note'],
-    'data' => Translator::dateToLocale($r['data']),
+    'data' => dateFormat($r['data']),
     'id_anagrafica' => $r['idanagrafica'],
 ];

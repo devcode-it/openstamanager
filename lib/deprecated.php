@@ -356,7 +356,7 @@ function doc_references($info, $dir, $ignore = [])
             $description = tr('Rif. _DOC_ num. _NUM_ del _DATE_', [
                 '_DOC_' => $document,
                 '_NUM_' => $data[0]['numero'],
-                '_DATE_' => Translator::dateToLocale($data[0]['data']),
+                '_DATE_' => dateFormat($data[0]['data']),
             ]);
         } else {
             $description = tr('_DOC_ di riferimento _ID_ eliminato', [

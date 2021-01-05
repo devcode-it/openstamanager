@@ -518,8 +518,8 @@ function verifica_numero(Fattura $fattura)
         'data < '.prepare(date('Y-m-d', strtotime($data))),
         'YEAR(data) = '.prepare(date('Y', strtotime($data))),
         'id_segment = '.prepare($id_segment),
-    ]);
-
+    ], $data);
+    
     do {
         $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data));
 

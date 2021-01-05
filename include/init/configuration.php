@@ -482,7 +482,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
     // PARAMETRI
     echo '
                     <div id="step-3">
-                        <a href="https://www.openstamanager.com/contattaci/?subject=Assistenza%20installazione%20OSM" target="_blank" ><img class="pull-right" width="32" src="'.$img.'/help.png" alt="'.tr('Aiuto').'" title="'.tr('Contatta il nostro help-desk').'"/></a>
+                        <a href="https://www.openstamanager.com/contattaci/" target="_blank" ><img class="pull-right" width="32" src="'.$img.'/help.png" alt="'.tr('Aiuto').'" title="'.tr('Contatta il nostro help-desk').'"/></a>
 
                         <p>'.tr('Non hai ancora configurato OpenSTAManager').'.</p>
                         <p><small class="help-block">'.tr('Configura correttamente il software con i seguenti parametri (modificabili successivamente dal file _FILE_)', [

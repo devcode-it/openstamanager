@@ -353,7 +353,7 @@ elseif ($record['stato'] == 'Bozza') {
                 if ($dir == 'entrata') {
                     echo '
                     <div class="col-md-3">
-                        {[ "type": "select", "label": "'.tr("Dichiarazione d'intento").'", "name": "id_dichiarazione_intento", "ajax-source": "dichiarazioni_intento", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$id_dichiarazione_intento$" ]}
+                        {[ "type": "select", "label": "'.tr("Dichiarazione d'intento").'", "name": "id_dichiarazione_intento", "ajax-source": "dichiarazioni_intento", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "data": "'.$record['data'].'"},"value": "$id_dichiarazione_intento$" ]}
                     </div>';
                 }
             echo ' 

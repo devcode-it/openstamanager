@@ -342,8 +342,10 @@ switch ($resource) {
             $filter[] = 'id='.prepare($element);
         }
 
-        $where[] = 'data_inizio < NOW()';
-        $where[] = 'data_fine > NOW()';
+        $where[] = '( '.prepare($superselect['data']).' BETWEEN data_inizio AND data_fine)';
+        
+        //$where[] = 'data_inizio < NOW()';
+        //$where[] = 'data_fine > NOW()';
         if (empty($filter)) {
             $where[] = 'deleted_at IS NULL';
         }

@@ -118,7 +118,7 @@ class Query
 
             // Date
             '|period_start|' => $_SESSION['period_start'],
-            '|period_end|' => $_SESSION['period_end'],
+            '|period_end|' => $_SESSION['period_end'].' 23:59:59',
 
             // Segmenti
             '|'.$segment_filter.'|' => !empty($segment) ? ' AND '.$segment_name.' = '.prepare($segment) : '',

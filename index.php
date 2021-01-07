@@ -31,6 +31,19 @@ switch ($op) {
         if ($dbo->isConnected() && $dbo->isInstalled() && auth()->attempt($username, $password)) {
             $_SESSION['keep_alive'] = true;
 
+            if (intval(setting('Inizio periodo calendario'))){
+                $_SESSION['period_start'] = setting('Inizio periodo calendario');
+            }else{
+                $_SESSION['period_start'] = date('Y').'-01-01';
+            }
+
+            if (intval(setting('Fine periodo calendario'))){
+                $_SESSION['period_end'] = setting('Fine periodo calendario');
+            }else{
+                $_SESSION['period_end'] = date('Y').'-12-31';
+            }
+
+          
         // Rimozione log vecchi
             //$dbo->query('DELETE FROM `zz_operations` WHERE DATE_ADD(`created_at`, INTERVAL 30*24*60*60 SECOND) <= NOW()');
         } else {

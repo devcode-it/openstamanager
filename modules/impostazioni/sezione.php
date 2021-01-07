@@ -33,7 +33,7 @@ foreach ($impostazioni as $impostazione) {
 
     <script>';
 
-    if ($impostazione->tipo == 'time') {
+    if ($impostazione->tipo == 'time' || $impostazione->tipo == 'date') {
         echo '
     input("setting['.$impostazione->id.']");
     $(document).on("blur", "#setting'.$impostazione->id.'", function (e) {

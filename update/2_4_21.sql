@@ -12,3 +12,11 @@ WHERE
 -- Aggiunta colonna Rif. fattura per preventivi
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi'), 'Rif. fattura', 'fattura.info', 9, 1, 0, 0, 1);
+
+
+-- Modifico impostazione "Lunghezza in pagine del buffer Datatables" per renderla modificabile dall'utente
+UPDATE `zz_settings` SET `editable` = '1', `tipo` = 'list[5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100]', `help` = 'Attenzione, a valori più elevati corrispondono performance peggiori' WHERE `zz_settings`.`nome` = 'Lunghezza in pagine del buffer Datatables'; 
+
+-- Impostazioni per decidere eventuali date predefinite per l'inizio o la fine del calendario (impostate al login)
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`,  `order`, `help`) VALUES (NULL, 'Inizio periodo calendario', '', 'date', '1', 'Generali', '23', NULL); 
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`,  `order`, `help`) VALUES (NULL, 'Fine periodo calendario', '', 'date', '1', 'Generali', '23', NULL); 

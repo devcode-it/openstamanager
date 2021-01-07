@@ -33,8 +33,4 @@ if (isset($id_record)) {
         $scadenze = $dbo->fetchArray('SELECT * FROM co_scadenziario WHERE id = '.prepare($id_record).' ORDER BY scadenza ASC');
         $totale_da_pagare = sum(array_column($scadenze, 'da_pagare'));
     }
-
-    if ($scadenze[0]['id'] != $id_record) {
-        redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.$scadenze[0]['id']);
-    }
 }

@@ -34,3 +34,6 @@ UPDATE `zz_modules` SET `options`='SELECT |select| FROM `mg_articoli`
     LEFT OUTER JOIN (SELECT `idarticolo`, `idsede_azienda`, SUM(`qta`) AS `qta` FROM `mg_movimenti` WHERE `idsede_azienda` = |giacenze_sedi_idsede| GROUP BY `idarticolo`, `idsede_azienda`) movimenti ON `mg_articoli`.`id` = `movimenti`.`idarticolo`
 WHERE 1=1 AND `mg_articoli`.`deleted_at` IS NULL HAVING 2=2 AND `Q.tà` > 0 ORDER BY `descrizione`' WHERE `name` = 'Giacenze sedi';
 UPDATE `zz_views` SET `query`='movimenti.qta', `format`=1 WHERE `id_module`=(SELECT `id` FROM `zz_modules` WHERE `name`='Giacenze sedi') AND `name`='Q.tà';
+
+-- Fix widget rate contrattuali
+UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM co_fatturazione_contratti WHERE idcontratto IN( SELECT id FROM co_contratti WHERE co_contratti.idstato IN (SELECT id FROM co_staticontratti WHERE is_fatturabile = 1)) AND co_fatturazione_contratti.iddocumento=0' WHERE `zz_widgets`.`id` = 11; 

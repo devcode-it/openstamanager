@@ -52,7 +52,6 @@ class Upload extends Model
         // Informazioni di base
         $original_name = isset($source['name']) ? $source['name'] : basename($source);
         $model->original_name = $original_name; // Fix per "original" di Eloquent
-        $model->size = $source['size'];
 
         $model->name = !empty($name) ? $name : $original_name;
         $model->category = $category;

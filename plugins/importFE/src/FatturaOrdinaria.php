@@ -82,11 +82,13 @@ class FatturaOrdinaria extends FatturaElettronica
     public function getRighe()
     {
         $result = $this->getBody()['DatiBeniServizi']['DettaglioLinee'];
+        $result = $this->forceArray($result);
 
         // Aggiunta degli arrotondamenti IVA come righe indipendenti
-        $riepolighi = $this->getBody()['DatiBeniServizi']['DatiRiepilogo'];
-        foreach ($riepolighi as $riepilogo) {
-            $valore = floatval($riepilogo['Arrotondamento']);
+        $riepiloghi = $this->getBody()['DatiBeniServizi']['DatiRiepilogo'];
+        $riepiloghi = $this->forceArray($riepiloghi);
+        foreach ($riepiloghi as $riepilogo) {
+            $valore = isset($riepilogo['Arrotondamento']) ? floatval($riepilogo['Arrotondamento']) : 0;
             if (!empty($valore)) {
                 $descrizione = tr('Arrotondamento IVA _VALUE_', [
                     '_VALUE_' => empty($riepilogo['Natura']) ? numberFormat($riepilogo['AliquotaIVA']).'%' : $riepilogo['Natura'],

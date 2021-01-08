@@ -375,6 +375,7 @@ abstract class Article extends Accounting
     protected function customAfterDataCopiaIn($original)
     {
         $this->prezzo_unitario = $original->prezzo_unitario;
+        $this->sconto_unitario = $original->sconto_unitario;
 
         parent::customAfterDataCopiaIn($original);
     }

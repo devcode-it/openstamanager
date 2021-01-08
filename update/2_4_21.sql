@@ -20,3 +20,17 @@ UPDATE `zz_settings` SET `editable` = '1', `tipo` = 'list[5,10,15,20,25,30,35,40
 -- Impostazioni per decidere eventuali date predefinite per l'inizio o la fine del calendario (impostate al login)
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`,  `order`, `help`) VALUES (NULL, 'Inizio periodo calendario', '', 'date', '1', 'Generali', '23', NULL); 
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`,  `order`, `help`) VALUES (NULL, 'Fine periodo calendario', '', 'date', '1', 'Generali', '23', NULL); 
+
+-- Ottimizzazione calcolo quantità su modulo "Giacenze sedi"
+UPDATE `zz_modules` SET `options`='SELECT |select| FROM `mg_articoli`
+    LEFT OUTER JOIN an_anagrafiche ON mg_articoli.id_fornitore = an_anagrafiche.idanagrafica
+    LEFT OUTER JOIN co_iva ON mg_articoli.idiva_vendita = co_iva.id
+    LEFT OUTER JOIN (
+        SELECT SUM(qta - qta_evasa) AS qta_impegnata, idarticolo FROM or_righe_ordini
+            INNER JOIN or_ordini ON or_righe_ordini.idordine = or_ordini.id
+        WHERE idstatoordine IN (SELECT id FROM or_statiordine WHERE completato = 0)
+        GROUP BY idarticolo
+    ) ordini ON ordini.idarticolo = mg_articoli.id
+    LEFT OUTER JOIN (SELECT `idarticolo`, `idsede_azienda`, SUM(`qta`) AS `qta` FROM `mg_movimenti` WHERE `idsede_azienda` = |giacenze_sedi_idsede| GROUP BY `idarticolo`, `idsede_azienda`) movimenti ON `mg_articoli`.`id` = `movimenti`.`idarticolo`
+WHERE 1=1 AND `mg_articoli`.`deleted_at` IS NULL HAVING 2=2 AND `Q.tà` > 0 ORDER BY `descrizione`' WHERE `name` = 'Giacenze sedi';
+UPDATE `zz_views` SET `query`='movimenti.qta', `format`=1 WHERE `id_module`=(SELECT `id` FROM `zz_modules` WHERE `name`='Giacenze sedi') AND `name`='Q.tà';

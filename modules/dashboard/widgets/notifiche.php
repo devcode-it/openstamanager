@@ -64,8 +64,11 @@ foreach ($moduli as $module_id => $note) {
     </tr>';
 
     foreach ($note as $nota) {
+
+        $class = (strtotime($nota->notification_date) < strtotime(date('Y-m-d')) && !empty($nota->notification_date)) ? 'danger' : '';
+
         echo '
-    <tr>
+    <tr class="'.$class.'">
         <td>'.$nota->id_record.'</td>
 
         <td>

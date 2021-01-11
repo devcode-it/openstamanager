@@ -296,6 +296,12 @@ function aggiornaPrezzoArticolo() {
     let prezzo_previsto = getPrezzoPerQuantita(qta);
 
     $("#prezzo_unitario").val(prezzo_previsto).trigger("change");
+
+    // Aggiornamento automatico di guadagno e margine
+    if (direzione == "entrata") {
+        aggiorna_guadagno();
+    }
+
 }
 
 /**
@@ -306,6 +312,12 @@ function aggiornaScontoArticolo() {
     let sconto_previsto = getScontoPerQuantita(qta);
 
     $("#sconto").val(sconto_previsto).trigger("change");
+
+    // Aggiornamento automatico di guadagno e margine
+    if (direzione == "entrata") {
+        aggiorna_guadagno();
+    }
+
 }
 
 /**

@@ -63,7 +63,7 @@ if ($options['dir'] == 'entrata') {
             var costo_unitario = $("#costo_unitario").val().toEnglish();
             var prezzo = $("#prezzo_unitario").val().toEnglish();
             var sconto = $("#sconto").val().toEnglish();
-            if ($("#tipo_sconto").val() === "PRC") {
+            if ($("select[id^=\'tipo_sconto\']").val() === "PRC") {
                 sconto = sconto / 100 * prezzo;
             }
 
@@ -91,7 +91,7 @@ if ($options['dir'] == 'entrata') {
         $("#prezzo_unitario").keyup(aggiorna_guadagno);
         $("#costo_unitario").keyup(aggiorna_guadagno);
         $("#sconto").keyup(aggiorna_guadagno);
-        $("#tipo_sconto").change(aggiorna_guadagno);
+        $("select[id^=\'tipo_sconto\']").change(aggiorna_guadagno);
     </script>';
 }
 

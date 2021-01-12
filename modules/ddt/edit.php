@@ -218,35 +218,21 @@ if ($dir == 'entrata') {
     echo '
         <div class="row">
             <div class="col-md-3">
-                {[ "type": "number", "label": "'.tr('Peso').'", "name": "peso", "value": "$peso$", "readonly": "'.intval(empty($record['peso'])).'", "help": "'.tr('Il valore del campo Peso viene calcolato in automatico sulla base degli articoli inseriti nel documento, a meno dell\'impostazione di un valore manuale in questo punto').'" ]}
+                {[ "type": "number", "label": "'.tr('Peso').'", "name": "peso", "value": "$peso$", "readonly": "'.intval(empty($record['peso_manuale'])).'", "help": "'.tr('Il valore del campo Peso viene calcolato in automatico sulla base degli articoli inseriti nel documento, a meno dell\'impostazione di un valore manuale in questo punto').'" ]}
+                <input type="hidden" id="peso_calcolato" name="peso_calcolato" value="'.$ddt->peso_calcolato.'">
             </div>
 
             <div class="col-md-3">
-                {[ "type": "checkbox", "label": "'.tr('Modifica peso').'", "name": "peso_manuale", "value": '.intval(!empty($record['peso'])).', "help": "'.tr('Seleziona per modificare manualmente il campo Peso').'", "placeholder": "'.tr('Modifica peso').'" ]}
-
-                <script type="text/javascript">
-                    $(document).ready(function() {
-                        $("#peso_manuale").click(function() {
-                            $("#peso").prop("readonly", !$("#peso_manuale").is(":checked"));
-                        });
-                    });
-                </script>
+                {[ "type": "checkbox", "label": "'.tr('Modifica peso').'", "name": "peso_manuale", "value":"$peso_manuale$", "help": "'.tr('Seleziona per modificare manualmente il campo Peso').'", "placeholder": "'.tr('Modifica peso').'" ]}
             </div>
 
             <div class="col-md-3">
-                {[ "type": "number", "label": "'.tr('Volume').'", "name": "volume", "value": "$volume$", "readonly": "'.intval(empty($record['volume'])).'", "help": "'.tr('Il valore del campo Volume viene calcolato in automatico sulla base degli articoli inseriti nel documento, a meno dell\'impostazione di un valore manuale in questo punto').'" ]}
+                {[ "type": "number", "label": "'.tr('Volume').'", "name": "volume", "value": "$volume$", "readonly": "'.intval(empty($record['volume_manuale'])).'", "help": "'.tr('Il valore del campo volume viene calcolato in automatico sulla base degli articoli inseriti nel documento, a meno dell\'impostazione di un valore manuale in questo punto').'" ]}
+                <input type="hidden" id="volume_calcolato" name="volume_calcolato" value="'.$ddt->volume_calcolato.'">
             </div>
 
             <div class="col-md-3">
-                {[ "type": "checkbox", "label": "'.tr('Modifica volume').'", "name": "volume_manuale", "value": '.intval(!empty($record['volume'])).', "help": "'.tr('Seleziona per modificare manualmente il campo Volume').'", "placeholder": "'.tr('Modifica volume').'" ]}
-
-                <script type="text/javascript">
-                    $(document).ready(function() {
-                        $("#volume_manuale").click(function() {
-                            $("#volume").prop("readonly", !$("#volume_manuale").is(":checked"));
-                        });
-                    });
-                </script>
+                {[ "type": "checkbox", "label": "'.tr('Modifica volume').'", "name": "volume_manuale", "value":"$volume_manuale$", "help": "'.tr('Seleziona per modificare manualmente il campo volume').'", "placeholder": "'.tr('Modifica volume').'" ]}
             </div>
         </div>';
 }
@@ -421,6 +407,26 @@ function caricaRighe() {
 }
 
 $(document).ready(function() {
+    if(!$("#peso_manuale").is(":checked")){
+        input("peso").set($("#peso_calcolato").val());
+    }
+    $("#peso_manuale").click(function() {
+        $("#peso").prop("readonly", !$("#peso_manuale").is(":checked"));
+        if(!$("#peso_manuale").is(":checked")){
+            input("peso").set($("#peso_calcolato").val());
+        }
+    });
+
+    if(!$("#volume_manuale").is(":checked")){
+        input("volume").set($("#volume_calcolato").val());
+    }
+    $("#volume_manuale").click(function() {
+        $("#volume").prop("readonly", !$("#volume_manuale").is(":checked"));
+        if(!$("#volume_manuale").is(":checked")){
+            input("volume").set($("#volume_calcolato").val());
+        }
+    });
+
     caricaRighe();
 });
 

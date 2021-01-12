@@ -106,6 +106,8 @@ switch (post('op')) {
 
         $fattura->peso = post('peso');
         $fattura->volume = post('volume');
+        $fattura->peso_manuale = post('peso_manuale');
+        $fattura->volume_manuale = post('volume_manuale');
 
         $fattura->rivalsainps = 0;
         $fattura->ritenutaacconto = 0;

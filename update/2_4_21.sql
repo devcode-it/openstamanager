@@ -41,3 +41,9 @@ UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM co_fatturazione
 -- Divisione delle colonne modulo modelli prima nota
 UPDATE zz_views SET query='co_movimenti_modelli.nome' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name`='Modelli prima nota') AND `name` LIKE 'Nome';
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name`='Modelli prima nota'), 'Causale', 'co_movimenti_modelli.descrizione', '2', '1', '0', '0', NULL, NULL, '1', '0', '1');
+
+-- Aggiunto flag peso e volume manuale in fatture e ddt
+ALTER TABLE `dt_ddt` ADD `peso_manuale` TINYINT(1) NOT NULL AFTER `volume`;
+ALTER TABLE `dt_ddt` ADD `volume_manuale` TINYINT(1) NOT NULL AFTER `peso_manuale`;
+ALTER TABLE `co_documenti` ADD `peso_manuale` TINYINT(1) NOT NULL AFTER `volume`;
+ALTER TABLE `co_documenti` ADD `volume_manuale` TINYINT(1) NOT NULL AFTER `peso_manuale`;

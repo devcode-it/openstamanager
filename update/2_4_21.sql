@@ -39,5 +39,5 @@ UPDATE `zz_views` SET `query`='movimenti.qta', `format`=1 WHERE `id_module`=(SEL
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM co_fatturazione_contratti WHERE idcontratto IN( SELECT id FROM co_contratti WHERE co_contratti.idstato IN (SELECT id FROM co_staticontratti WHERE is_fatturabile = 1)) AND co_fatturazione_contratti.iddocumento=0' WHERE `zz_widgets`.`id` = 11; 
 
 -- Divisione delle colonne modulo modelli prima nota
-UPDATE zz_views SET query='co_movimenti_modelli.nome' WHERE `id_module` = 58 AND `name` LIKE 'Nome';
+UPDATE zz_views SET query='co_movimenti_modelli.nome' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name`='Modelli prima nota') AND `name` LIKE 'Nome';
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name`='Modelli prima nota'), 'Causale', 'co_movimenti_modelli.descrizione', '2', '1', '0', '0', NULL, NULL, '1', '0', '1');

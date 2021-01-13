@@ -52,7 +52,7 @@ if (!empty($righe)) {
     echo '
 <div class="alert alert-danger">
     '.tr('Ci sono _NUM_ anagrafiche collegate', [
-        '_NUM_' => count($righe),
+        '_NUM_' => $righe,
     ]).'.
 </div>';
 } else {

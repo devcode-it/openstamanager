@@ -221,12 +221,12 @@ class Intervento extends Document
         if ((strpos($maschera, 'YYYY') !== false) or (strpos($maschera, 'yy') !== false)) {
             $ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice', [
                 'YEAR(data_richiesta) = '.prepare(date('Y', strtotime($data))),
-            ]);
+            ], $data);
         } else {
             $ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice');
         }
 
-        $numero = Generator::generate($maschera, $ultimo);
+        $numero = Generator::generate($maschera, $ultimo, $quantity = 1, $values = [], $data);
 
         return $numero;
     }

@@ -36,10 +36,10 @@ WHERE 1=1 AND `mg_articoli`.`deleted_at` IS NULL HAVING 2=2 AND `Q.tà` > 0 ORDE
 UPDATE `zz_views` SET `query`='movimenti.qta', `format`=1 WHERE `id_module`=(SELECT `id` FROM `zz_modules` WHERE `name`='Giacenze sedi') AND `name`='Q.tà';
 
 -- Fix widget rate contrattuali
-UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM co_fatturazione_contratti WHERE idcontratto IN( SELECT id FROM co_contratti WHERE co_contratti.idstato IN (SELECT id FROM co_staticontratti WHERE is_fatturabile = 1)) AND co_fatturazione_contratti.iddocumento=0' WHERE `zz_widgets`.`id` = 11; 
+UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM co_fatturazione_contratti WHERE idcontratto IN( SELECT id FROM co_contratti WHERE co_contratti.idstato IN (SELECT id FROM co_staticontratti WHERE is_fatturabile = 1)) AND co_fatturazione_contratti.iddocumento=0' WHERE `zz_widgets`.`name` = 'Rate contrattuali'; 
 
 -- Divisione delle colonne modulo modelli prima nota
-UPDATE zz_views SET query='co_movimenti_modelli.nome' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name`='Modelli prima nota') AND `name` LIKE 'Nome';
+UPDATE `zz_views` SET `query` = 'co_movimenti_modelli.nome' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name`='Modelli prima nota') AND `name` LIKE 'Nome';
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name`='Modelli prima nota'), 'Causale', 'co_movimenti_modelli.descrizione', '2', '1', '0', '0', NULL, NULL, '1', '0', '1');
 
 -- Aggiunto flag peso e volume manuale in fatture e ddt
@@ -47,3 +47,49 @@ ALTER TABLE `dt_ddt` ADD `peso_manuale` TINYINT(1) NOT NULL AFTER `volume`;
 ALTER TABLE `dt_ddt` ADD `volume_manuale` TINYINT(1) NOT NULL AFTER `peso_manuale`;
 ALTER TABLE `co_documenti` ADD `peso_manuale` TINYINT(1) NOT NULL AFTER `volume`;
 ALTER TABLE `co_documenti` ADD `volume_manuale` TINYINT(1) NOT NULL AFTER `peso_manuale`;
+
+-- Fix fornitore predefinito articoli
+INSERT INTO `mg_prezzi_articoli`(
+    `id_articolo`,
+    `id_anagrafica`,
+    `prezzo_unitario`,
+    `prezzo_unitario_ivato`,
+    `dir`,
+    `sconto_percentuale`
+)(
+    SELECT
+        `mg_articoli`.`id`,
+        `mg_articoli`.`id_fornitore`,
+        `mg_articoli`.`prezzo_acquisto`,
+        `mg_articoli`.`prezzo_acquisto` + `mg_articoli`.`prezzo_acquisto` * IFNULL(
+            `co_iva`.`percentuale`,
+            `iva_default`.`percentuale`
+        ) / 100,
+        'uscita',
+        0
+    FROM
+        `mg_articoli`
+    LEFT JOIN `co_iva` ON `mg_articoli`.`idiva_vendita` = `co_iva`.`id`
+    LEFT JOIN(
+        SELECT
+            `valore` AS `idiva`
+        FROM
+            `zz_settings`
+        WHERE
+            `nome` = 'Iva predefinita'
+    ) AS `impostazioni`
+ON
+    1 = 1
+LEFT JOIN `co_iva` AS `iva_default`
+ON
+    `iva_default`.`id` = `impostazioni`.`idiva`
+WHERE
+    `id_fornitore` NOT IN(
+    SELECT
+        `id_anagrafica`
+    FROM
+        `mg_prezzi_articoli` AS `prezzi_specifica`
+    WHERE
+        `id_articolo` = `mg_articoli`.`id`
+) AND `id_fornitore` IS NOT NULL
+);

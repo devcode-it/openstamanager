@@ -50,7 +50,7 @@ $bic_banca = $banca->bic;
 $module_name = ($record['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
 
 $id_cliente = $record['idanagrafica'];
-$id_sede = $record['idsede_partenza'];
+$id_sede = $record['idsede_destinazione'];
 
 $tipo_doc = $record['tipo_doc'];
 $numero = !empty($record['numero_esterno']) ? $record['numero_esterno'] : $record['numero'];

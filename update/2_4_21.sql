@@ -8,11 +8,9 @@ WHERE 1=1 |date_period(custom,\'|period_start|\' >= `data_bozza` AND \'|period_s
 WHERE
     `zz_modules`.`name` = 'Preventivi';
 
-
 -- Aggiunta colonna Rif. fattura per preventivi
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `format`, `default`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi'), 'Rif. fattura', 'fattura.info', 9, 1, 0, 0, 1);
-
 
 -- Modifico impostazione "Lunghezza in pagine del buffer Datatables" per renderla modificabile dall'utente
 UPDATE `zz_settings` SET `editable` = '1', `tipo` = 'list[5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100]', `help` = 'Attenzione, a valori più elevati corrispondono performance peggiori' WHERE `zz_settings`.`nome` = 'Lunghezza in pagine del buffer Datatables'; 

@@ -91,7 +91,3 @@ WHERE
         `id_articolo` = `mg_articoli`.`id`
 ) AND `id_fornitore` IS NOT NULL
 );
-
--- Aggiunta colonna reversed
-ALTER TABLE `dt_causalet` ADD `reversed` TINYINT(1) NOT NULL AFTER `is_importabile`;
-UPDATE `dt_causalet` SET `reversed`=1 WHERE `descrizione`='Reso';

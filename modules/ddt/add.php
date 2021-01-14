@@ -36,7 +36,7 @@ if ($module['name'] == 'Ddt di vendita') {
     $tipo_anagrafica = tr('Fornitore');
     $label = tr('Mittente');
 }
-
+$id_causalet = $dbo->fetchOne('SELECT id FROM dt_causalet WHERE predefined=1')['id'];
 $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : '';
 
 ?><form action="" method="post" id="add-form">
@@ -62,7 +62,7 @@ $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : '';
 		</div>
 
 		<div class="col-md-4">
-			{[ "type": "select", "label": "<?php echo tr('Causale trasporto'); ?>", "name": "idcausalet", "required": 1, "value": "$idcausalet$", "ajax-source": "causali", "icon-after": "add|<?php echo Modules::get('Causali')['id']; ?>|||<?php echo $block_edit ? 'disabled' : ''; ?>" ]}
+			{[ "type": "select", "label": "<?php echo tr('Causale trasporto'); ?>", "name": "idcausalet", "required": 1, "value": "<?php echo $id_causalet; ?>", "ajax-source": "causali", "icon-after": "add|<?php echo Modules::get('Causali')['id']; ?>|||<?php echo $block_edit ? 'disabled' : ''; ?>" ]}
 		</div>
 	</div>
 

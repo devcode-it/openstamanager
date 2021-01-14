@@ -33,6 +33,7 @@ switch (filter('op')) {
                 $dbo->update('dt_causalet', [
                     'descrizione' => $descrizione,
                     'is_importabile' => filter('is_importabile'),
+                    'reversed' => filter('reversed'),
                     'predefined' => $predefined,
                 ], ['id' => $id_record]);
 

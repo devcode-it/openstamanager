@@ -46,6 +46,9 @@ include_once __DIR__.'/../../core.php';
                 <div class="panel-body">
                     {[ "type": "checkbox", "label": "<?php echo tr('Importabile?'); ?>", "name": "is_importabile", "value": "$is_importabile$", "help": "<?php echo tr('I documenti associati a questa causale possono essere importati a livello contabile in altri documenti (per esempio, in Fatture)'); ?>", "placeholder": "<?php echo tr('Importabile'); ?>" ]}
                 </div>
+                <div class="panel-body">
+                    {[ "type": "checkbox", "label": "<?php echo tr('Abilita storno'); ?>", "name": "reversed", "value": "$reversed$", "help": "<?php echo tr('I documenti associati a questa causale possono essere stornati come nota di credito'); ?>", "placeholder": "<?php echo tr('Abilita storno'); ?>" ]}
+                </div>
             </div>
         </div>
     </div>

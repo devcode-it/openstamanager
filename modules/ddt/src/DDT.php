@@ -133,6 +133,14 @@ class DDT extends Document
         return $causale['is_importabile'] && !in_array($this->stato->descrizione, $stati_non_importabili);
     }
 
+    public function getReversedAttribute()
+    {
+        $database = database();
+        $causale = $database->fetchOne('SELECT * FROM `dt_causalet` WHERE `id` = '.prepare($this->idcausalet));
+
+        return $causale['reversed'];
+    }
+
     /**
      * Restituisce il peso calcolato sulla base degli articoli del documento.
      *

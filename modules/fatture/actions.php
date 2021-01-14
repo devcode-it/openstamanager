@@ -676,6 +676,7 @@ switch (post('op')) {
     case 'add_documento':
         $class = post('class');
         $id_documento = post('id_documento');
+        $reversed = post('reversed');
 
         // Individuazione del documento originale
         if (!is_subclass_of($class, \Common\Document::class)) {
@@ -691,7 +692,12 @@ switch (post('op')) {
         // Creazione della fattura al volo
         if (post('create_document') == 'on') {
             $descrizione = ($documento->direzione == 'entrata') ? 'Fattura immediata di vendita' : 'Fattura immediata di acquisto';
-            $tipo = Tipo::where('descrizione', $descrizione)->first();
+            
+            if($reversed){
+                $tipo = Tipo::where('descrizione', 'Nota di credito')->where('dir', '!=', $documento->direzione)->first();
+            } else {
+                $tipo = Tipo::where('descrizione', $descrizione)->first();
+            }
 
             $fattura = Fattura::build($documento->anagrafica, $tipo, post('data'), post('id_segment'));
 
@@ -714,6 +720,9 @@ switch (post('op')) {
         foreach ($righe as $riga) {
             if (post('evadere')[$riga->id] == 'on') {
                 $qta = post('qta_da_evadere')[$riga->id];
+                if($reversed){
+                    $qta = -$qta;
+                }
 
                 $copia = $riga->copiaIn($fattura, $qta);
                 $copia->id_conto = $id_conto;

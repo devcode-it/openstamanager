@@ -72,17 +72,12 @@ if (!empty($options['create_document'])) {
 
     // Opzioni aggiuntive per le Fatture
     if (in_array($final_module['name'], ['Fatture di vendita', 'Fatture di acquisto'])) {
-        if ($options['op'] == 'nota_accredito' && !empty($segmenti)) {
-            $segmento = $database->fetchOne("SELECT * FROM zz_segments WHERE predefined_accredito='1'");
+        $id_segment = $_SESSION['module_'.$final_module['id']]['id_segment'];
 
-            $id_segment = $segmento['id'];
-        } else {
-            $id_segment = $_SESSION['module_'.$final_module['id']]['id_segment'];
-        }
-
-        $stato_predefinito = $database->fetchOne("SELECT * FROM co_statidocumento WHERE descrizione = 'Bozza'");
-
+        $stato_predefinito = $database->fetchOne("SELECT id FROM co_statidocumento WHERE descrizione = 'Bozza'");
+       
         echo '
+            <input type="hidden" name="reversed" value="'.$options['reversed'].'">
             <div class="col-md-6">
                 {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT * FROM co_statidocumento WHERE descrizione IN (\'Emessa\', \'Bozza\')", "value": "'.$stato_predefinito['id'].'"]}
             </div>

@@ -62,7 +62,7 @@ if ($is_fornitore && empty($record['idconto_fornitore'])){
 }
 
 if (sizeof($problemi_anagrafica) > 0) {
-    echo '<div class="alert alert-warning"><i class="fa fa-warning"></i> '.tr("Controllare: _CAMPI_" , [
+    echo '<div class="alert alert-warning"><i class="fa fa-warning"></i> '.tr("Attenzione: _CAMPI_" , [
     '_CAMPI_' => implode(', ', $problemi_anagrafica)
     ]).'</div>';
 }

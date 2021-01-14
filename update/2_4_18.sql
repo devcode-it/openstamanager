@@ -116,11 +116,11 @@ UPDATE `co_righe_documenti`
     INNER JOIN `or_righe_ordini` ON `co_righe_documenti`.`original_id` = `or_righe_ordini`.`id`
     INNER JOIN `or_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`idordine`
     INNER JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine`
-SET `co_righe_documenti`.`descrizione` = CONCAT(`co_righe_documenti`.`descrizione`, '\nRif. ', LOWER(`or_tipiordine`.`descrizione`), ' num. ', `or_ordini`.`numero`, ' del ', DATE_FORMAT(`or_ordini`.`data`, '%d/%m/%Y'))
+SET `co_righe_documenti`.`descrizione` = CONCAT(`co_righe_documenti`.`descrizione`, '\nRif. ordine num. ', IF(`or_ordini`.`numero_esterno`!='', `or_ordini`.`numero_esterno`, `or_ordini`.`numero`), ' del ', DATE_FORMAT(`or_ordini`.`data`, '%d/%m/%Y'))
 WHERE `co_righe_documenti`.`original_type` LIKE '%Ordini%';
 UPDATE `co_righe_documenti`
     INNER JOIN `dt_righe_ddt` ON `co_righe_documenti`.`original_id` = `dt_righe_ddt`.`id`
-    INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idordine`
+    INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`
     INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt`
 SET `co_righe_documenti`.`descrizione` = CONCAT(`co_righe_documenti`.`descrizione`, '\nRif. ', LOWER(`dt_tipiddt`.`descrizione`), ' num. ', `dt_ddt`.`numero`, ' del ', DATE_FORMAT(`dt_ddt`.`data`, '%d/%m/%Y'))
 WHERE `co_righe_documenti`.`original_type` LIKE '%DDT%';
@@ -143,7 +143,7 @@ SET `or_righe_ordini`.`descrizione` = CONCAT(`or_righe_ordini`.`descrizione`, '\
 WHERE `or_righe_ordini`.`original_type` LIKE '%Preventivi%';
 UPDATE `or_righe_ordini`
     INNER JOIN `dt_righe_ddt` ON `or_righe_ordini`.`original_id` = `dt_righe_ddt`.`id`
-    INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idordine`
+    INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`
     INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt`
 SET `or_righe_ordini`.`descrizione` = CONCAT(`or_righe_ordini`.`descrizione`, '\nRif. ', LOWER(`dt_tipiddt`.`descrizione`), ' num. ', `dt_ddt`.`numero`, ' del ', DATE_FORMAT(`dt_ddt`.`data`, '%d/%m/%Y'))
 WHERE `or_righe_ordini`.`original_type` LIKE '%DDT%';
@@ -168,7 +168,7 @@ UPDATE `dt_righe_ddt`
     INNER JOIN `or_righe_ordini` ON `dt_righe_ddt`.`original_id` = `or_righe_ordini`.`id`
     INNER JOIN `or_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`idordine`
     INNER JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine`
-SET `dt_righe_ddt`.`descrizione` = CONCAT(`dt_righe_ddt`.`descrizione`, '\nRif. ', LOWER(`or_tipiordine`.`descrizione`), ' num. ', `or_ordini`.`numero`, ' del ', DATE_FORMAT(`or_ordini`.`data`, '%d/%m/%Y'))
+SET `dt_righe_ddt`.`descrizione` = CONCAT(`dt_righe_ddt`.`descrizione`, '\nRif. ordine num. ', IF(`or_ordini`.`numero_esterno`!='', `or_ordini`.`numero_esterno`, `or_ordini`.`numero`), ' del ', DATE_FORMAT(`or_ordini`.`data`, '%d/%m/%Y'))
 WHERE `dt_righe_ddt`.`original_type` LIKE '%Ordini%';
 UPDATE `dt_righe_ddt`
     INNER JOIN `in_righe_interventi` ON `dt_righe_ddt`.`original_id` = `in_righe_interventi`.`id`

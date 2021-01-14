@@ -116,7 +116,7 @@ if (!empty($results)) {
 
         if (!empty($errors)) {
             echo '
-<table class="table table-bordered table-striped">
+<table class="table table-bordered">
     <thead>
         <tr>
             <th>'.tr('Colonna').'</th>
@@ -127,8 +127,13 @@ if (!empty($results)) {
     <tbody>';
 
             foreach ($errors as $name => $diff) {
+                if(count($diff) == 1 && array_key_exists('type',$diff) && str_contains($diff['type']['expected'] , $diff['type']['current'])){
+                    $class="info";
+                }else{
+                    $class="warning";
+                }
                 echo '
-        <tr>
+        <tr class="bg-'.$class.'" >
             <td>
                 '.$name.'
             </td>
@@ -145,7 +150,7 @@ if (!empty($results)) {
 
         if (!empty($foreign_keys)) {
             echo '
-<table class="table table-bordered table-striped">
+<table class="table table-bordered">
     <thead>
         <tr>
             <th>'.tr('Foreign keys').'</th>
@@ -156,8 +161,14 @@ if (!empty($results)) {
     <tbody>';
 
             foreach ($foreign_keys as $name => $diff) {
+                
+                if(count($diff) == 2 && array_key_exists('current',$diff) &&  $diff['current'] == null ){
+                    $class="info";
+                }else{
+                    $class="warning";
+                }
                 echo '
-        <tr>
+        <tr class="bg-'.$class.'" >
             <td>
                 '.$name.'
             </td>

@@ -82,7 +82,7 @@ echo '
     <b>'.tr('Destinatari').' <span class="tip" title="'.tr('Email delle sedi, dei referenti o agente collegato all\'anagrafica.').'"><i class="fa fa-question-circle-o"></i></span></b>
     <div class="row" id="lista-destinatari">
         <div class="col-md-12">
-            {[ "type": "email", "name": "destinatari[]", "value": "'.$email.'", "icon-before": "choice|email", "extra": "onkeyup=\'aggiungi_destinatario();\'", "class": "destinatari", "required": 1 ]}
+            {[ "type": "email", "name": "destinatari[0]", "value": "'.$email.'", "icon-before": "choice|email", "extra": "onkeyup=\'aggiungi_destinatario();\'", "class": "destinatari", "required": 1 ]}
         </div>
     </div>
 
@@ -142,9 +142,9 @@ echo '
 </form>';
 
 echo '
-<div id="destinatari_input" class="hide">
+<div class="hidden" id="template-destinatario">
     <div class="col-md-12">
-        {[ "type": "email", "name": "destinatari[]", "icon-before": "choice|email|cc", "extra": "onkeyup=\'aggiungi_destinatario();\'", "class": "destinatari" ]}
+        {[ "type": "email", "name": "destinatari[-id-]", "icon-before": "choice|email", "extra": "onkeyup=\'aggiungi_destinatario();\'", "class": "destinatari" ]}
     </div>
 </div>';
 
@@ -192,8 +192,7 @@ echo '
         if (last.val()) {
             cleanup_inputs();
 
-            aggiungiContenuto( "#lista-destinatari", "#lista-destinatari > div.col-md-12:last", { "id": $("#lista-destinatari > div").length, "value": "", "required": false } );
-            $("#lista-destinatari > div.input-group:last").wrap( "<div class=\"col-md-12\"></div>" );
+            aggiungiContenuto("#lista-destinatari", "#template-destinatario", {"-id-": $("#lista-destinatari > div").length});
 
             $(".destinatari").each(function(){
                 $(this).autocomplete({source: emails});

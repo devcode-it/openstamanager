@@ -46,7 +46,7 @@ switch ($name) {
             ['idanagrafica', '<>', $id_record],
         ])->count() == 0;
 
-        $message = $disponibile ? tr('Il codice fiscale non è già inserito in una anagrafica') : tr("Il codice fiscale è già utilizzato in un'altra anagrafica");
+        $message = $disponibile ? tr('Questo codice fiscale non è ancora stato utilizzato') : tr("Il codice fiscale è già utilizzato in un'altra anagrafica");
 
         // Validazione del Codice Fiscale, solo per anagrafiche Private e Aziende, ignoro controllo se codice fiscale e settato uguale alla p.iva
         if (empty($anagrafica) || ($anagrafica->tipo != 'Ente pubblico' && $value != $anagrafica->partita_iva)) {
@@ -55,6 +55,22 @@ switch ($name) {
                 $message .= '. '.tr('Attenzione: il codice fiscale _COD_ potrebbe non essere valido', [
                     '_COD_' => $value,
                 ]);
+                $disponibile = false;
+            }
+        }
+
+        if($value == $anagrafica->partita_iva){
+            $partita_iva = !empty($anagrafica) && is_numeric($value) ? $anagrafica->nazione->iso2.$value : $value;
+            $result = $disponibile;
+            $check = Validate::isValidVatNumber($partita_iva);
+            if (empty($check['valid-format'])) {
+                $disponibile = false;
+                $errors[] = tr('La partita iva inserita non possiede un formato valido');
+            }
+
+            if (isset($check['valid']) && empty($check['valid'])) {
+                $disponibile = false;
+                $errors[] = tr("Impossibile verificare l'origine della partita iva");
             }
         }
 
@@ -72,7 +88,7 @@ switch ($name) {
             ['idanagrafica', '<>', $id_record],
         ])->count() == 0;
 
-        $message = $disponibile ? tr('La partita iva non è già inserita in una anagrafica') : tr("La partita iva è già utilizzata in un'altra anagrafica");
+        $message = $disponibile ? tr('Questa partita iva non è ancora stata utilizzata') : tr("La partita iva è già utilizzata in un'altra anagrafica");
 
         $partita_iva = !empty($anagrafica) && is_numeric($value) ? $anagrafica->nazione->iso2.$value : $value;
 
@@ -113,7 +129,7 @@ switch ($name) {
         ])->count() == 0;
         $result = $disponibile;
 
-        $message = $disponibile ? tr("L'email non è già inserita in una anagrafica") : tr("L'email è già utilizzata in un'altra anagrafica");
+        $message = $disponibile ? tr("Questa email non è ancora stata utilizzata") : tr("L'email è già utilizzata in un'altra anagrafica");
 
         $errors = [];
         $check = Validate::isValidEmail($value);

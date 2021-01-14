@@ -69,7 +69,7 @@ echo '
 
         sconto_unitario.val(unitario.toLocale());
 
-        if (!descrizione.val() && sconto !== 0) {
+        if (sconto !== 0) {
             descrizione.val(msg + " " + Math.abs(sconto).toLocale() + "%");
         }
     }
@@ -80,7 +80,7 @@ echo '
 
         sconto_percentuale.val(0);
 
-        if (!descrizione.val() && sconto !== 0) {
+        if (sconto !== 0) {
             descrizione.val(msg);
         }
     }

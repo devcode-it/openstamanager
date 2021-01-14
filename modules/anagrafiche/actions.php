@@ -176,7 +176,7 @@ switch (post('op')) {
         }
 
         // Validazione del Codice Fiscale, solo per anagrafiche Private e Aziende, ignoro controllo se codice fiscale e settato uguale alla p.iva
-        if ($anagrafica->tipo != 'Ente pubblico' && !empty($anagrafica->codice_fiscale) && !empty($anagrafica->partita_iva) && $anagrafica->codice_fiscale != $anagrafica->partita_iva) {
+        if ($anagrafica->tipo != 'Ente pubblico' && !empty($anagrafica->codice_fiscale) && $anagrafica->codice_fiscale != $anagrafica->partita_iva) {
             $check_codice_fiscale = Validate::isValidTaxCode($codice_fiscale);
             if (empty($check_codice_fiscale)) {
                 flash()->warning(tr('Attenzione: il codice fiscale _COD_ potrebbe non essere valido.', [

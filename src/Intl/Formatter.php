@@ -137,10 +137,7 @@ class Formatter
     public function formatNumber($value, $decimals = null)
     {
         $value = trim($value);
-        
-        if (is_numeric($value)) {
-            $value = floatval($value);
-        }
+        $value = floatval($value);
 
         if (isset($decimals)) {
             $original = $this->getPrecision();

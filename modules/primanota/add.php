@@ -385,6 +385,10 @@ if ($permetti_modelli) {
             $("#modals > div #desc").val(causale);
         }
 
+        if ($("#modals > div #desc").val() == "") {
+            $("#modals > div #desc").val(causale);
+        }
+
         $.get(globals.rootdir + "/ajax_complete.php?op=get_conti&idmastrino=" + id_mastrino, function(data) {
             let conti = data.split(",");
             let table = $("table.scadenze").first();

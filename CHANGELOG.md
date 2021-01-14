@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.21 (2021-01-)](#2421-2021-01-14)
 - [2.4.20 (2020-12-31)](#2420-2020-12-31)
 - [2.4.19 (2020-11-10)](#2419-2020-11-10)
 - [2.4.18 (2020-10-30)](#2418-2020-10-30)
@@ -31,6 +32,25 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
+## 2.4.21 (2021-01-14)
+
+### Aggiunto (Added)
+ - Aggiunto fallback selezione IVA per natura mancante in fase di import fattura di acquisto
+ - Aggiunto filtro periodo anche per stampe mastrini di livello 1 e 2
+ - Aggiunta gestione peso e volume automatici per DDT e Fatture
+
+### Fixed
+ - Fix falsi positivi su warning verifica numero fatture di vendita (#919)
+ - Fix fornitore predefinito articoli (#928)
+ - Correzioni in importazione FE
+ - Fix per invio email (#923)
+ - Correzione sconto unitario (#925)
+ - Fix validazione codice fiscale
+ - Fix dichiarazione intento su data fattura
+ - Fix inclusione nel filtro periodo degli estremi temporali
+ - Fix sul calcolo in base alla validità della data conclusione del contratto
+ - Correzzione aggiunta **Codice destinatario** in fase di creazione **Anagrafica**
+ - Correzzione selezione aliq. IVA in fase di import **Fatture di acquisto**
 
 ## 2.4.20 (2020-12-31)
 

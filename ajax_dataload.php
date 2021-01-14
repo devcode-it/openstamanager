@@ -83,7 +83,7 @@ if (!empty($query)) {
         $value = trim($value);
 
         // Allineamento a destra se il valore della prima riga risulta numerica
-        if (formatter()->isStandardNumber($value)) {
+        if (is_numeric($value) && formatter()->isStandardNumber($value)) {
             $align[$field] = 'text-right';
         }
 

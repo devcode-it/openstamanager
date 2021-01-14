@@ -150,7 +150,7 @@ if (!empty($results)) {
 
         if (!empty($foreign_keys)) {
             echo '
-<table class="table table-bordered table-striped">
+<table class="table table-bordered">
     <thead>
         <tr>
             <th>'.tr('Foreign keys').'</th>
@@ -161,8 +161,14 @@ if (!empty($results)) {
     <tbody>';
 
             foreach ($foreign_keys as $name => $diff) {
+                
+                if(count($diff) == 2 && array_key_exists('current',$diff) &&  $diff['current'] == null ){
+                    $class="info";
+                }else{
+                    $class="warning";
+                }
                 echo '
-        <tr>
+        <tr class="bg-'.$class.'" >
             <td>
                 '.$name.'
             </td>

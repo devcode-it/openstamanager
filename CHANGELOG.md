@@ -34,7 +34,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 
 ## 2.4.21 (2021-01-14)
 
-## Aggiunto (Added)
+### Aggiunto (Added)
  - Aggiunto fallback selezione IVA per natura mancante in fase di import fattura di acquisto
  - Aggiunto filtro periodo anche per stampe mastrini di livello 1 e 2
  - Aggiunta gestione peso e volume automatici per DDT e Fatture

@@ -4,3 +4,6 @@ UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_module
 -- Aggiunta colonna reversed
 ALTER TABLE `dt_causalet` ADD `reversed` TINYINT(1) NOT NULL AFTER `is_importabile`;
 UPDATE `dt_causalet` SET `reversed`=1 WHERE `descrizione`='Reso';
+
+-- Ottimizzazione per ricerca articoli da ajax select
+ALTER TABLE `mg_movimenti` ADD INDEX(`idarticolo`);

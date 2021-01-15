@@ -104,8 +104,8 @@ UPDATE `mg_articoli` SET `prezzo_vendita_ivato` = `prezzo_vendita`;
 
 -- Aggiornamento ID per gli articoli degli Interventi
 ALTER TABLE `mg_prodotti` DROP FOREIGN KEY `mg_prodotti_ibfk_4`;
-UPDATE mg_prodotti SET mg_prodotti.id_riga_intervento = NULL WHERE mg_prodotti.id_riga_intervento NOT IN (SELECT old_id FROM in_righe_interventi);
-UPDATE mg_prodotti SET mg_prodotti.id_riga_intervento = (SELECT id FROM in_righe_interventi WHERE mg_prodotti.id_riga_intervento = in_righe_interventi.old_id);
+UPDATE `mg_prodotti` SET `mg_prodotti`.`id_riga_intervento` = NULL WHERE `mg_prodotti`.`id_riga_intervento` NOT IN (SELECT `old_id` FROM `in_righe_interventi`);
+UPDATE `mg_prodotti` SET `mg_prodotti`.`id_riga_intervento` = (SELECT `id` FROM `in_righe_interventi` WHERE `mg_prodotti`.`id_riga_intervento` = `in_righe_interventi`.`old_id`);
 ALTER TABLE `mg_prodotti` ADD FOREIGN KEY (`id_riga_intervento`) REFERENCES `in_righe_interventi`(`id`) ON DELETE CASCADE;
 
 -- Periodi di validità (Contratti e Preventivi)

@@ -36,8 +36,8 @@ $query = 'SELECT *,
     co_movimenti.id AS idmovimenti, co_documenti.id AS id,
     IF(numero = "", numero_esterno, numero) AS numero,
     (SELECT SUM(subtotale - sconto) FROM co_righe_documenti AS righe2 WHERE righe2.iddocumento=co_documenti.id AND righe2.idiva=co_righe_documenti.idiva GROUP BY iddocumento) AS subtotale,
-    (SELECT SUM(subtotale - sconto + iva + rivalsainps - ritenutaacconto) FROM co_righe_documenti AS righe2 WHERE righe2.iddocumento=co_documenti.id AND righe2.idiva=co_righe_documenti.idiva GROUP BY iddocumento) + co_documenti.iva_rivalsainps AS totale,
-    (SELECT SUM(iva) FROM co_righe_documenti AS righe2 WHERE righe2.iddocumento=co_documenti.id AND righe2.idiva=co_righe_documenti.idiva GROUP BY iddocumento) + co_documenti.iva_rivalsainps AS iva,
+    (SELECT SUM(subtotale - sconto + iva + rivalsainps - ritenutaacconto) FROM co_righe_documenti AS righe2 WHERE righe2.iddocumento=co_documenti.id AND righe2.idiva=co_righe_documenti.idiva GROUP BY iddocumento) AS totale,
+    (SELECT SUM(iva) FROM co_righe_documenti AS righe2 WHERE righe2.iddocumento=co_documenti.id AND righe2.idiva=co_righe_documenti.idiva GROUP BY iddocumento) AS iva,
     an_anagrafiche.ragione_sociale,
     an_anagrafiche.codice AS codice_anagrafica
 FROM co_movimenti

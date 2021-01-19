@@ -60,11 +60,12 @@ echo'
         <th class="text-right" width="20%">Imponibile</th>
         <th class="text-right" width="20%">Imposta</th>
     </tr>
+</thead> 
+<tbody>
     <tr>
         <th class="text-center" colspan="5">IVA ESIGIBILE DEL PERIODO</th>
-    </tr>
-</thead> 
-<tbody>';
+    </tr>';
+    
 foreach ($iva_vendite_esigibile as $record) {
     echo '
     <tr>
@@ -139,11 +140,11 @@ echo'
         <th class="text-right" width="20%">Imponibile</th>
         <th class="text-right" width="20%">Imposta</th>
     </tr>
+</thead> 
+<tbody>
     <tr>
         <th class="text-center" colspan="5">IVA DETRAIBILE DEL PERIODO</th>
-    </tr>
-</thead> 
-<tbody>';
+    </tr>';
 
 foreach ($iva_acquisti_detraibile as $record) {
     echo '

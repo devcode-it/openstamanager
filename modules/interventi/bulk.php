@@ -252,7 +252,7 @@ return [
     'cambia_stato' => [
         'text' => '<span><i class="fa fa-refresh"></i> '.tr('Cambia stato'),
         'data' => [
-            'title' => tr('Vuoi davvero cambinare le stato per questi interventi?'),
+            'title' => tr('Vuoi davvero cambiare lo stato per questi interventi?'),
             'msg' => tr('Seleziona lo stato in cui spostare tutti gli interventi non completati').'.<br>
             <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL" ]}',
             'button' => tr('Procedi'),

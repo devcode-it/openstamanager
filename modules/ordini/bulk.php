@@ -112,6 +112,29 @@ switch (post('op')) {
             flash()->warning(tr('Nessun ordine fatturato!'));
         }
     break;
+
+    case 'cambia_stato':
+        $id_stato = post('id_stato');
+
+        $n_ordini = 0;
+
+        foreach ($id_records as $id) { 
+            $dbo->update('or_ordini', [
+                'idstatoordine' => $id_stato,
+            ], ['id' => $id]);
+
+            ++$n_ordini;
+        }
+
+        if ($n_ordini > 0) {
+            flash()->info(tr('Stato cambiato a _NUM_ ordini!', [
+                '_NUM_' => $n_ordini,
+            ]));
+        } else {
+            flash()->warning(tr('Nessun ordine modificato!'));
+        }
+
+        break;
 }
 if ($module['name'] == 'Ordini cliente') {
 $operations['crea_fattura'] = [
@@ -126,8 +149,16 @@ $operations['crea_fattura'] = [
         ],
     ];
 } 
-if($operations){
+
+$operations['cambia_stato'] = [
+    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Cambia stato'),
+    'data' => [
+        'title' => tr('Vuoi davvero cambiare lo stato per questi ordini?'),
+        'msg' => tr('Seleziona lo stato in cui spostare tutti gli ordini').'.<br>
+        <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT id, descrizione FROM or_statiordine" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => false,
+    ],
+];
     return $operations;
-} else {
-    return;
-}

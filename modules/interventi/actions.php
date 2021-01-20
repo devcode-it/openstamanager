@@ -446,6 +446,9 @@ switch (post('op')) {
 
                     $id_stato = setting("Stato dell'attività dopo la firma");
                     $stato = $dbo->selectOne('in_statiintervento', '*', ['idstatointervento' => $id_stato]);
+                    $intervento = Intervento::find($id_record);
+                    $intervento->idstatointervento = $stato['idstatointervento'];
+                    $intervento->save();
                     // Notifica chiusura intervento
                     if (!empty($stato['notifica']) && !empty($stato['destinatari'])) {
                         $template = Template::find($stato['id_email']);

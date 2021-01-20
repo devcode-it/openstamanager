@@ -7,3 +7,6 @@ UPDATE `dt_causalet` SET `reversed`=1 WHERE `descrizione`='Reso';
 
 -- Ottimizzazione per ricerca articoli da ajax select
 ALTER TABLE `mg_movimenti` ADD INDEX(`idarticolo`);
+
+-- Aggiunta possibilità di scegliere uno stato dopo la firma anche se non ha il flag completato
+UPDATE `zz_settings` SET `tipo`='query=SELECT idstatointervento AS id, descrizione AS text FROM in_statiintervento' WHERE `nome`='Stato dell''attività dopo la firma'

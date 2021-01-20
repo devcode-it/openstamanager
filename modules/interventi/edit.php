@@ -283,7 +283,7 @@ echo '
             <!-- RIGA 5 -->
             <div class="row">
                 <div class="col-md-12">
-                    {[ "type": "textarea", "label": "<?php echo tr('Richiesta'); ?>", "name": "richiesta", "required": 1, "class": "autosize", "value": "$richiesta$", "extra": "rows='5'", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+                    {[ "type": "ckeditor", "label": "<?php echo tr('Richiesta'); ?>", "name": "richiesta", "required": 1, "class": "autosize", "value": "$richiesta$", "extra": "rows='5'", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
                 </div>
 
                 <div class="col-md-12">

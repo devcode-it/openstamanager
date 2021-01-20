@@ -190,7 +190,7 @@ echo '
 
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "textarea", "label": "'.tr('Richiesta').'", "name": "richiesta", "required": 1, "value": "'.$richiesta.'", "extra": "style=\'max-height:80px;\'" ]}
+            {[ "type": "ckeditor", "label": "'.tr('Richiesta').'", "name": "richiesta", "required": 1, "value": "'.$richiesta.'", "extra": "style=\'max-height:80px;\'" ]}
         </div>
     </div>';
 

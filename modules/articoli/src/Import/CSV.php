@@ -179,24 +179,26 @@ class CSV extends CSVImporter
         }
 
         // Gestione categoria e sottocategoria
+        $obj_categoria = null;
         if (!empty($record['id_categoria'])) {
             // Categoria
-            $categoria = Categoria::where('nome', $record['id_categoria'])->first();
-            if (empty($categoria)) {
-                $categoria = Categoria::build($record['id_categoria']);
+            $obj_categoria = Categoria::where('nome', strtolower($record['id_categoria']))->first();
+
+            if (empty($obj_categoria)) {
+                $obj_categoria = Categoria::build($record['id_categoria']);
             }
 
             // Sotto-categoria
-            $sottocategoria = null;
+            $obj_sottocategoria = null;
             if (!empty($record['id_sottocategoria'])) {
-                $sottocategoria = Categoria::where('nome', $record['id_sottocategoria'])
-                    ->where('parent', $categoria->id)
+                $obj_sottocategoria = Categoria::where('nome', $record['id_sottocategoria'])
+                    ->where('parent', $obj_categoria->id)
                     ->first();
 
                 if (empty($sottocategoria)) {
-                    $sottocategoria = Categoria::build($record['id_categoria']);
-                    $sottocategoria->parent()->associate($categoria);
-                    $sottocategoria->save();
+                    $obj_sottocategoria = Categoria::build($record['id_categoria']);
+                    $obj_sottocategoria->parent()->associate($obj_categoria);
+                    $obj_sottocategoria->save();
                 }
             }
         }
@@ -213,7 +215,7 @@ class CSV extends CSVImporter
         // Individuazione articolo e generazione
         $articolo = Articolo::where($primary_key, $record[$primary_key])->first();
         if (empty($articolo)) {
-            $articolo = Articolo::build($record['codice'], $record['descrizione'], $categoria, $sottocategoria);
+            $articolo = Articolo::build($record['codice'], $record['descrizione'], $obj_categoria, $obj_sottocategoria);
         }
 
         $articolo->idiva_vendita = $aliquota->id;

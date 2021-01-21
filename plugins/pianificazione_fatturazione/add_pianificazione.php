@@ -35,7 +35,7 @@ echo '
         <ul class="nav nav-tabs nav-justified">
             <li class="active"><a href="#periodi" data-tab="periodi" onclick="apriTab(this)" data-toggle="tab">'.tr('Periodi').'</a></li>
 
-            <li><a href="#div_righe" data-tab="righe" onclick="apriTab(this)" data-toggle="tab">'.tr('Righe').'</a></li>
+            <li><a href="#div_righe" data-tab="div_righe" onclick="apriTab(this)" data-toggle="tab">'.tr('Righe').'</a></li>
         </ul>
 
         <div class="tab-content">

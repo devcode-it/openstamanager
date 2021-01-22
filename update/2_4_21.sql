@@ -89,5 +89,5 @@ WHERE
         `mg_prezzi_articoli` AS `prezzi_specifica`
     WHERE
         `id_articolo` = `mg_articoli`.`id`
-) AND `id_fornitore` IS NOT NULL
+) AND `id_fornitore` IN (SELECT `idanagrafica` FROM `an_anagrafiche`)
 );

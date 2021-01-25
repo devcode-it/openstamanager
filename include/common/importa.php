@@ -20,7 +20,7 @@
 // Inizializzazione
 $documento = $options['documento'];
 $documento_finale = $options['documento_finale'];
-if (empty($documento) || (!empty($documento_finale) && $documento_finale->direzione != $documento->direzione)) {
+if (empty($documento)) {
     return;
 }
 

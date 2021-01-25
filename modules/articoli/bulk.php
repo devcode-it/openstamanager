@@ -63,6 +63,30 @@ switch (post('op')) {
         exit();
 
         break;
+
+    case 'change-qta':
+        $descrizione = post('descrizione');
+        $data = post('data');
+        $qta = post('qta');
+        $n_articoli = 0;
+        
+        foreach ($id_records as $id) { 
+            $articolo = Articolo::find($id);
+            $qta_movimento = $qta - $articolo->qta;
+            $articolo->movimenta($qta_movimento, $descrizione, $data, true);
+
+            ++$n_articoli;
+        }
+
+        if ($n_articoli > 0) {
+            flash()->info(tr('Quantità cambiate a _NUM_ articoli!', [
+                '_NUM_' => $n_articoli,
+            ]));
+        } else {
+            flash()->warning(tr('Nessun articolo modificato!'));
+        }
+
+        break;
 }
 
 if (App::debug()) {
@@ -95,6 +119,19 @@ $operations['stampa-etichette'] = [
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => true,
+    ],
+];
+
+$operations['change-qta'] = [
+    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Aggiorna quantità').'</span>',
+    'data' => [
+        'title' => tr('Cambiare le quantità?'),
+        'msg' => tr('Per ciascun articolo selezionato, verrà modificata la quantità').'
+        <br><br>{[ "type": "text", "label": "'.tr('Quantità').'", "name": "qta", "required": 1 ]}
+        {[ "type": "text", "label": "'.tr('Causale').'", "name": "descrizione", "required": 1 ]}
+        {[ "type": "date", "label": "'.tr('Data').'", "name": "data", "required": 1, "value": "-now-" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
     ],
 ];
 

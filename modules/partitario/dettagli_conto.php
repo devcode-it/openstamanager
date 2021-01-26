@@ -44,7 +44,10 @@ if (!empty($movimenti)) {
         <th width="100">'.tr('Data').'</th>
         <th width="100">'.tr('Dare').'</th>
         <th width="100">'.tr('Avere').'</th>
+        <th width="100">'.tr('Scalare').'</th>
     </tr>';
+
+    $scalare = 0;
 
     // Elenco righe del partitario
     foreach ($movimenti as $movimento) {
@@ -86,6 +89,13 @@ if (!empty($movimenti)) {
             '.moneyFormat(abs($movimento['totale']), 2).'
         </td>';
         }
+
+        $scalare += $movimento['totale'];
+
+        echo '
+        <td class="text-right">
+            '.moneyFormat($scalare, 2).'
+        </td>';
 
         echo '
     </tr>';

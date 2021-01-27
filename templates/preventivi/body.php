@@ -391,3 +391,7 @@ echo '
 // Conclusione
 echo '
 <p class="text-center">'.tr("In attesa di un Vostro Cortese riscontro, colgo l'occasione per porgere Cordiali Saluti").'</p>';
+
+if(!empty($documento->condizioni_fornitura)){
+    echo '<pagebreak>'.$documento->condizioni_fornitura;
+}

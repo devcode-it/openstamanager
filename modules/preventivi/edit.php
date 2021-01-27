@@ -155,6 +155,12 @@ echo '
 				</div>
 			</div>
 
+            <div class="row">
+				<div class="col-md-12">
+					{[ "type": "ckeditor", "label": "<?php echo tr('Condizioni generali di fornitura'); ?>", "name": "condizioni_fornitura", "class": "autosize", "value": "$condizioni_fornitura$" ]}
+				</div>
+			</div>
+
             <!--div class="pull-right">
 				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
 			</div-->

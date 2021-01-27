@@ -61,6 +61,7 @@ switch (post('op')) {
             $preventivo->idporto = post('idporto');
             $preventivo->tempi_consegna = post('tempi_consegna');
             $preventivo->numero = post('numero');
+            $preventivo->condizioni_fornitura = post('condizioni_fornitura');
 
             // Informazioni sulle date del documento
             $preventivo->data_bozza = post('data_bozza');

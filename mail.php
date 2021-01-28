@@ -25,15 +25,19 @@ $template = Template::find(get('id'));
 $module = $template->module;
 $smtp = $template->account;
 
-$body = $module->replacePlaceholders($id_record, $template['body']);
-$subject = $module->replacePlaceholders($id_record, $template['subject']);
+$placeholder_options = [
+    'is_pec' => intval($smtp['pec']),
+];
+
+$body = $module->replacePlaceholders($id_record, $template['body'], $placeholder_options);
+$subject = $module->replacePlaceholders($id_record, $template['subject'], $placeholder_options);
 
 $emails = [];
 if ($module->replacePlaceholders($id_record, '{email}')) {
-    $emails = explode(';', $module->replacePlaceholders($id_record, '{email}'));
+    $emails = explode(';', $module->replacePlaceholders($id_record, '{email}', $placeholder_options));
 } 
 
-$id_anagrafica = $module->replacePlaceholders($id_record, '{id_anagrafica}');
+$id_anagrafica = $module->replacePlaceholders($id_record, '{id_anagrafica}', $placeholder_options);
 
 // Aggiungo email referenti in base alla mansione impostata nel template
 $mansioni = $dbo->select('em_mansioni_template', 'idmansione', ['id_template' => $template->id]);

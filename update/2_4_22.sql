@@ -71,3 +71,6 @@ ALTER TABLE `co_preventivi` ADD `condizioni_fornitura` TEXT NOT NULL AFTER `nume
 
 -- Aggiunta colonna totale in modelli prima nota
 ALTER TABLE `co_movimenti_modelli` ADD `totale` DECIMAL(12,6) NOT NULL AFTER `idconto`;
+
+-- Aggiunto colonna garanzie in co_preventivi
+ALTER TABLE `co_preventivi` ADD `garanzia` TEXT NOT NULL AFTER `condizioni_fornitura`;

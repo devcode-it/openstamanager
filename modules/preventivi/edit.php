@@ -149,6 +149,12 @@ echo '
 				</div>
 			</div>
 
+            <div class="row">
+				<div class="col-md-12">
+					{[ "type": "textarea", "label": "<?php echo tr('Garanzia'); ?>", "name": "garanzia", "class": "autosize", "value": "$garanzia$" ]}
+				</div>
+			</div>
+
 			<div class="row">
 				<div class="col-md-12">
 					{[ "type": "textarea", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "class": "autosize", "value": "$descrizione$" ]}

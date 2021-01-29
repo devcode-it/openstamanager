@@ -386,6 +386,16 @@ echo '
             '.nl2br($documento['esclusioni']).'
         </td>
     </tr>
+
+    <tr>
+        <th>
+            '.tr('Garanzia', [], ['upper' => true]).'
+        </th>
+
+        <td>
+            '.nl2br($documento['garanzia']).'
+        </td>
+    </tr>
 </table>';
 
 // Conclusione

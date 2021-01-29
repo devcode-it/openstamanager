@@ -60,7 +60,9 @@ for ($x = 0; $x < sizeof($conti2); ++$x) {
 echo '
     <table class="table table-striped table-condensed table-hover table-bordered"
         <tr>
-            <th>'.tr('Conto').'</th>
+            <th width="60%">'.tr('Conto').'</th>
+            <th width="20%">'.tr('Dare').'</th>
+            <th width="20%">'.tr('Avere').'</th>
         </tr>';
 
 // Lettura movimenti del mastrino selezionato
@@ -73,7 +75,15 @@ for ($i = 0; $i < 10; ++$i) {
 			<tr>
 				<td>
 					{[ "type": "select", "name": "idconto['.$i.']", "value": "'.$rs[$i]['idconto'].'", "ajax-source": "conti-modelliprimanota", "required": "'.$required.'" ]}
-				</td>
+                </td>
+
+                <td class="text-right">
+                    {[ "type": "number", "name": "dare['.$i.']", "id": "dare'.$id.'", "value": "'.($rs[$i]['totale']>0 ? $rs[$i]['totale'] : '').'"]}
+                </td>
+                
+                <td class="text-right">
+                    {[ "type": "number", "name": "avere['.$i.']", "id": "avere'.$id.'", "value": "'.($rs[$i]['totale']<0 ? abs($rs[$i]['totale']) : '').'"]}
+                </td>
 			</tr>';
 }
 
@@ -95,7 +105,35 @@ echo '
                     }
                 }
             });
-		});
+        });
+        
+        $("input[id*=dare], input[id*=avere]").each(function() {
+            let row = $(this).parent().parent();
+
+            if (!row.find("select").val()) {
+                if (input(this).get() === 0) {
+                    $(this).prop("disabled", true);
+                } else {
+                    $(this).prop("disabled", false);
+                }
+            }
+        });
+        
+        $(document).on("keyup change", "input[id*=dare]", function() {
+            let row = $(this).parent().parent();
+
+            if (!$(this).prop("disabled")) {
+                row.find("input[id*=avere]").prop("disabled", input(this).get() !== 0);
+            }
+        });
+
+        $(document).on("keyup change", "input[id*=avere]", function() {
+            let row = $(this).parent().parent();
+
+            if (!$(this).prop("disabled")) {
+                row.find("input[id*=dare]").prop("disabled", input(this).get() !== 0);
+            }
+        });
 	</script>
 
 </form>

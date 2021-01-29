@@ -52,7 +52,7 @@ if ($options['pricing']) {
     echo "
     <tr>
         <td class='cell-padded text-right'>
-            ".moneyFormat($imponibile, 2).'
+            ".moneyFormat($totale_imponibile, 2).'
         </td>
     </tr>';
 

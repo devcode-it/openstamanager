@@ -112,8 +112,15 @@ class Scadenze
     {
         $xml = XML::read($this->fattura->getXML());
 
-        $pagamenti = $xml['FatturaElettronicaBody']['DatiPagamento'];
-        $pagamenti = isset($pagamenti[0]) ? $pagamenti : [$pagamenti];
+        $fattura_body = $xml['FatturaElettronicaBody'];
+
+        // Gestione per fattura elettroniche senza pagamento definito
+        $pagamenti = [];
+        if (isset($fattura_body['DatiPagamento'])) {
+            $pagamenti = $fattura_body['DatiPagamento'];
+            $pagamenti = isset($pagamenti[0]) ? $pagamenti : [$pagamenti];
+        }
+
         foreach ($pagamenti as $pagamento) {
             $rate = $pagamento['DettaglioPagamento'];
             $rate = isset($rate[0]) ? $rate : [$rate];

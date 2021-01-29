@@ -110,13 +110,20 @@ $citta = $sede['comune'];
 $provincia = $sede['provincia'];
 
 // Dati generali
-$dati_generali = $fattura_pa->getBody()['DatiGenerali']['DatiGeneraliDocumento'];
+$fattura_body = $fattura_pa->getBody();
+$dati_generali = $fattura_body['DatiGenerali']['DatiGeneraliDocumento'];
 
 $tipo_documento = $database->fetchOne('SELECT CONCAT("(", codice, ") ", descrizione) AS descrizione FROM fe_tipi_documento WHERE codice = '.prepare($dati_generali['TipoDocumento']))['descrizione'];
 
-$pagamenti = $fattura_pa->getBody()['DatiPagamento'];
-$pagamenti = isset($pagamenti[0]) ? $pagamenti : [$pagamenti];
-$metodi = $pagamenti[0]['DettaglioPagamento'];
+// Gestione per fattura elettroniche senza pagamento definito
+$pagamenti = [];
+if (isset($fattura_body['DatiPagamento'])) {
+    $pagamenti =  $fattura_body['DatiPagamento'];
+    $pagamenti = isset($pagamenti[0]) ? $pagamenti : [$pagamenti];
+}
+
+// Individuazione metodo di pagamento di base
+$metodi = isset($pagamenti[0]['DettaglioPagamento']) ? $pagamenti[0]['DettaglioPagamento'] : [];
 $metodi = isset($metodi[0]) ? $metodi : [$metodi];
 
 $codice_modalita_pagamento = $metodi[0]['ModalitaPagamento'];
@@ -164,9 +171,9 @@ if (!empty($pagamenti)) {
             <h4>'.tr('Pagamento').'</h4>
 
             <p>'.tr('La fattura importata presenta _NUM_ rat_E_ di pagamento con le seguenti scadenze', [
-            '_NUM_' => count($metodi),
-            '_E_' => ((count($metodi) > 1) ? 'e' : 'a'),
-        ]).':</p>
+                '_NUM_' => count($metodi),
+                '_E_' => ((count($metodi) > 1) ? 'e' : 'a'),
+            ]).':</p>
             <ol>';
 
     foreach ($pagamenti as $pagamento) {

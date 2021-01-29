@@ -515,7 +515,7 @@ class Prints
         ];
 
         foreach ($styles as $value) {
-            $mpdf->WriteHTML(file_get_contents(base_dir().'/'.$value), 1);
+            $mpdf->WriteHTML(file_get_contents($value), 1);
         }
 
         // Impostazione del font-size

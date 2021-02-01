@@ -22,10 +22,10 @@ include_once __DIR__.'/../../core.php';
 // Stato Patrimoniale
 echo '
 <h4>Stato Patrimoniale</h3>
-<table>
-    <tr>
-        <td width="50%">
-            <table class="table table-striped table-bordered" style="font-size:10px; overflow:hidden;" id="contents">
+
+<div class="row">
+      <div class="col-md-6 pull-left" style="width:49%;" >
+            <table class="table table-striped table-bordered" style="overflow:hidden;" id="contents">
                 <thead>
                     <tr>
                         <th colspan="3"><h5>Attività</h5></th>
@@ -97,9 +97,10 @@ echo '
                 echo '
                 </tbody>
             </table>
-        </td>
-        <td width="50%">
-            <table class="table table-striped table-bordered" style="font-size:10px; overflow:hidden;" id="contents">
+        </div>
+
+        <div class="col-md-6 pull-right"  style="width:49%;" >
+            <table class="table table-striped table-bordered" style="overflow:hidden;" id="contents">
                 <thead>
                     <tr>
                     
@@ -171,18 +172,20 @@ echo '
                 echo '
                 </tbody>
             </table>
-        </td>
-    </tr>
-</table>';
+        
+    </div>
+</div>';
 
 // Conto economico
 echo '
 <pagebreak>
 <h4>Conto Economico</h4>
-<table>
-    <tr>
-        <td width="50%">
-            <table class="table table-striped table-bordered" style="font-size:10px; overflow:hidden;" id="contents">
+
+<div class="row">
+
+      <div class="col-md-6 pull-left" style="width:49%;" >
+
+            <table class="table table-striped table-bordered" style=" overflow:hidden;" id="contents">
                 <thead>
                     <tr>
                         <th colspan="3"><h5>Costi</h5></th>
@@ -237,9 +240,11 @@ echo '
                 echo '
                 </tbody>
             </table>
-        </td>
-        <td width="50%">
-            <table class="table table-striped table-bordered" style="font-size:10px; overflow:hidden;" id="contents">
+        </div>
+      
+      <div class="col-md-6 pull-right" style="width:49%;" >
+
+            <table class="table table-striped table-bordered" style=" overflow:hidden;" id="contents">
                 <thead>
                     <tr>
                     
@@ -295,6 +300,6 @@ echo '
                 echo '
                 </tbody>
             </table>
-        </td>
-    </tr>
-</table>';
+        
+    </div>
+</div>';

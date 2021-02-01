@@ -134,6 +134,29 @@ switch (post('op')) {
 
         flash()->info(tr('Ddt eliminati!'));
     break;
+
+    case 'cambia_stato':
+        $id_stato = post('id_stato');
+
+        $n_ddt = 0;
+
+        foreach ($id_records as $id) { 
+            $ddt = DDT::find($id);
+            $ddt->idstatoddt = $id_stato;
+            $ddt->save();
+
+            ++$n_ddt;
+        }
+
+        if ($n_ddt > 0) {
+            flash()->info(tr('Stato cambiato a _NUM_ DDT!', [
+                '_NUM_' => $n_ordini,
+            ]));
+        } else {
+            flash()->warning(tr('Nessun DDT modificato!'));
+        }
+
+    break;
 }
 
 if (App::debug()) {
@@ -153,6 +176,18 @@ $operations['crea_fattura'] = [
             'title' => tr('Fatturare i _TYPE_ selezionati?', ['_TYPE_' => strtolower($module['name'])]),
             'msg' => '{[ "type": "checkbox", "label": "<small>'.tr('Aggiungere alle _TYPE_ non ancora emesse?', ['_TYPE_' => strtolower($module_fatture)]).'", "placeholder": "'.tr('Aggiungere alle _TYPE_ nello stato bozza?', ['_TYPE_' => strtolower($module_fatture)]).'</small>", "name": "accodare" ]}
             <br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module=\''.$id_fatture.'\' AND is_fiscale = 1 ORDER BY name", "value": "'.$id_segment.'" ]}',
+            'button' => tr('Procedi'),
+            'class' => 'btn btn-lg btn-warning',
+            'blank' => false,
+        ],
+    ];
+
+    $operations['cambia_stato'] = [
+        'text' => '<span><i class="fa fa-refresh"></i> '.tr('Cambia stato'),
+        'data' => [
+            'title' => tr('Vuoi davvero cambiare lo stato per questi DDT?'),
+            'msg' => tr('Seleziona lo stato in cui spostare tutti i DDT').'.<br>
+            <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT id, descrizione FROM dt_statiddt" ]}',
             'button' => tr('Procedi'),
             'class' => 'btn btn-lg btn-warning',
             'blank' => false,

@@ -134,7 +134,7 @@ switch (post('op')) {
             flash()->warning(tr('Nessun ordine modificato!'));
         }
 
-        break;
+    break;
 }
 if ($module['name'] == 'Ordini cliente') {
 $operations['crea_fattura'] = [

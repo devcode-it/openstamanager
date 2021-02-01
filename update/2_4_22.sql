@@ -74,3 +74,6 @@ ALTER TABLE `co_movimenti_modelli` ADD `totale` DECIMAL(12,6) NOT NULL AFTER `id
 
 -- Aggiunto colonna garanzie in co_preventivi
 ALTER TABLE `co_preventivi` ADD `garanzia` TEXT NOT NULL AFTER `condizioni_fornitura`;
+
+-- Modificata lunghezza campo Partita iva
+ALTER TABLE `an_anagrafiche` CHANGE `piva` `piva` VARCHAR(16) NOT NULL;

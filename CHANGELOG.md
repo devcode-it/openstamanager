@@ -43,6 +43,9 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Aggiunta possibilità di importare ddt di acquisto nei ddt di vendita
  - Aggiunta possibilità di creare una nota di credito da un ddt di acquisto
 
+ ### Modificato (Changed)
+ - Impostazione CAP automatico a 99999 nella FE per clienti esteri
+
 ## 2.4.21 (2021-01-14)
 
 ### Aggiunto (Added)

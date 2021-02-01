@@ -32,6 +32,7 @@ if ($bilancio_gia_aperto) {
 
 echo '
 <div class="text-right">
+    '.Prints::getLink('Bilancio', null, 'btn btn-lg btn-info', tr('Stampa bilancio'), 'fa fa-print').'
     <button type="button" class="btn btn-lg '.$btn_class.'" data-op="apri-bilancio" data-title="'.tr('Apertura bilancio').'" data-backto="record-list" data-msg="'.$msg.'" data-button="'.tr('Riprendi saldi').'" data-class="btn btn-lg btn-warning" onclick="message( this );">
         <i class="fa fa-folder-open"></i> '.tr('Apertura bilancio').'
     </button>

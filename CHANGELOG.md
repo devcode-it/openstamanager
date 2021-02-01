@@ -40,8 +40,10 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Aggiunta azione massiva per la creazione di preventivi da Articoli
  - Aggiunta azione massiva per cambiare lo stato a più ordini
  - Aggiunta azione massiva in articoli per allineare la quantità degli articoli 
+ - Aggiunta azione massiva per cambiare lo stato a più ddt
  - Aggiunta possibilità di importare ddt di acquisto nei ddt di vendita
  - Aggiunta possibilità di creare una nota di credito da un ddt di acquisto
+ - Aggiunta stampa del bilancio
 
  ### Modificato (Changed)
  - Impostazione CAP automatico a 99999 nella FE per clienti esteri

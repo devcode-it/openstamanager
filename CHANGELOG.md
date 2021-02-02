@@ -44,6 +44,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Aggiunta possibilità di importare ddt di acquisto nei ddt di vendita
  - Aggiunta possibilità di creare una nota di credito da un ddt di acquisto
  - Aggiunta stampa del bilancio
+ - Aggiunta possibilità di notificare al cliente/tecnico in modo automatico quando viene cambiato lo stato dell'intervento
 
  ### Modificato (Changed)
  - Impostazione CAP automatico a 99999 nella FE per clienti esteri

@@ -80,3 +80,6 @@ ALTER TABLE `an_anagrafiche` CHANGE `piva` `piva` VARCHAR(16) NOT NULL;
 
 -- Aggiunta stampa bilancio
 INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `filename`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `default`, `enabled`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE name='Piano dei conti'), '1', 'Bilancio', 'Bilancio', 'Bilancio', 'bilancio', '', '', 'fa fa-print', '', '', '0', '0', '1', '1'); 
+
+-- Aggiunta flag notifica cliente e tecnici in in_statiintervento
+ALTER TABLE `in_statiintervento` ADD `notifica_cliente` TINYINT NOT NULL AFTER `notifica`, ADD `notifica_tecnici` TINYINT NOT NULL AFTER `notifica_cliente`;

@@ -304,9 +304,13 @@ switch (post('op')) {
 
         $new = $fattura->replicate();
         $new->numero = Fattura::getNextNumero($new->data, $new->direzione, $new->id_segment);
-        if (!empty($fattura->numero_esterno)) {
-            $new->numero_esterno = Fattura::getNextNumeroSecondario($new->data, $new->direzione, $new->id_segment);
-        }
+        //if (!empty($fattura->numero_esterno)) {
+            //$new->numero_esterno = Fattura::getNextNumeroSecondario($new->data, $new->direzione, $new->id_segment);
+        //}
+
+        // In fase di duplicazione di una fattura non deve essere calcolato il numero progressivo ma questo deve
+        // essere generato in fase di emissione della stessa. 
+        $new->numero_esterno = '';
 
         $new->codice_stato_fe = null;
         $new->progressivo_invio = null;

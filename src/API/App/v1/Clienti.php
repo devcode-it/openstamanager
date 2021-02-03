@@ -79,6 +79,7 @@ class Clienti extends AppResource
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT an_anagrafiche.idanagrafica AS id,
             an_anagrafiche.ragione_sociale,
+            an_anagrafiche.tipo,
             an_anagrafiche.piva AS partita_iva,
             an_anagrafiche.codice_fiscale,
             an_anagrafiche.indirizzo,
@@ -116,6 +117,7 @@ class Clienti extends AppResource
         $id_record = $anagrafica->id;
 
         $anagrafica->ragione_sociale = $data['ragione_sociale'];
+        $anagrafica->tipo = $data['tipo'];
         $anagrafica->piva = $data['partita_iva'];
         $anagrafica->codice_fiscale = $data['codice_fiscale'];
         $anagrafica->indirizzo = $data['indirizzo'];
@@ -124,6 +126,7 @@ class Clienti extends AppResource
         $anagrafica->provincia = $data['provincia'];
         $anagrafica->telefono = $data['telefono'];
         $anagrafica->cellulare = $data['cellulare'];
+        $anagrafica->email = $data['email'];
 
         $anagrafica->save();
 
@@ -149,6 +152,7 @@ class Clienti extends AppResource
 
         // Aggiornamento anagrafica
         $record->ragione_sociale = $data['ragione_sociale'];
+        $record->tipo = $data['tipo'];
         $record->piva = $data['partita_iva'];
         $record->codice_fiscale = $data['codice_fiscale'];
         $record->indirizzo = $data['indirizzo'];
@@ -157,6 +161,7 @@ class Clienti extends AppResource
         $record->provincia = $data['provincia'];
         $record->telefono = $data['telefono'];
         $record->cellulare = $data['cellulare'];
+        $record->email = $data['email'];
     }
 
 }

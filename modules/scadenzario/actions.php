@@ -46,7 +46,33 @@ switch (post('op')) {
 
             $pagato = floatval($pagato);
             $da_pagare = floatval($da_pagare);
+             
+            if(!empty($iddocumento)){
+                $id_tipo = $dbo->selectOne('co_documenti', 'idtipodocumento', ['id' => $iddocumento])['idtipodocumento'];
+                $tipo_documento = $dbo->selectOne('co_tipidocumento', '*', ['id' => $id_tipo]);
 
+                if($tipo_documento['dir'] == 'uscita'){
+                    if($pagato > 0){
+                        $pagato = -$pagato;
+                    }
+                    if($da_pagare > 0){
+                        $da_pagare = -$da_pagare;
+                    }
+                } else{
+                    if($pagato < 0){
+                        $pagato = -$pagato;
+                    }
+                    if($da_pagare < 0){
+                        $da_pagare = -$da_pagare;
+                    }
+                }
+
+                if(!empty($tipo_documento['reversed'])){
+                    $pagato = -$pagato;
+                    $da_pagare = -$da_pagare;
+                }
+            }
+            
             $totale_pagato = sum($totale_pagato, $pagato);
 
             $id_scadenza = post('id_scadenza')[$id];

@@ -252,7 +252,7 @@ if (!empty($anagrafica)) {
 
         echo '
         <div class="col-md-3">
-            {[ "type": "select", "label": "'.tr('Fattura pro-forma').'", "name": "ref_fattura", "values": "query='.$query.'" ]}
+            {[ "type": "select", "label": "'.tr('Collega a fattura pro-forma').'", "name": "ref_fattura", "values": "query='.$query.'" ]}
         </div>';
     }
 }
@@ -263,7 +263,7 @@ echo '
 // Pagamento
 echo '
     <div class="row" >
-		<div class="col-md-6">
+		<div class="col-md-3">
 		    <button type="button" class="btn btn-info btn-xs pull-right" onclick="updateSelectOption(\'codice_modalita_pagamento_fe\', \'\')">
 		        <i class="fa fa-refresh"></i> '.tr('Visualizza tutte le modalità').'
             </button>
@@ -279,7 +279,17 @@ echo '
 
         <div class="col-md-3">
             {[ "type": "checkbox", "label": "'.tr('Creazione automatica articoli').'", "name": "crea_articoli", "value": 0, "help": "'.tr("Nel caso di righe con tag CodiceArticolo, il gestionale procede alla creazione dell'articolo se la riga non risulta assegnata manualmente").'" ]}
-        </div>
+        </div>';
+
+        $ritenuta = $dati_generali['DatiRitenuta'];
+        
+        if(!empty($ritenuta)){
+            echo '
+            <div class="col-md-3">
+                {[ "type": "checkbox", "label": "'.tr('Ritenuta pagata dal fornitore').'", "name": "is_ritenuta_pagata", "value": 0, "help": "'.tr("Attivare se la ritenuta è stata pagata dal fornitore").'" ]}
+            </div>';
+        }
+    echo '
     </div>';
 
 // Righe

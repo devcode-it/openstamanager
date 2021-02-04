@@ -86,3 +86,6 @@ ALTER TABLE `in_statiintervento` ADD `notifica_cliente` TINYINT NOT NULL AFTER `
 
 -- Api creazione anagrafica da app
 INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES (NULL, 'app-v1', 'create', 'cliente', 'API\\App\\v1\\Clienti', '1'), (NULL, 'app-v1', 'update', 'cliente', 'API\\App\\v1\\Clienti', '1'), (NULL, 'app-v1', 'delete', 'cliente', 'API\\App\\v1\\Clienti', '1');
+
+-- Aggiunto flag per il pagamento della ritenuta nelle fatture passive
+ALTER TABLE `co_documenti` ADD `is_ritenuta_pagata` BOOLEAN NOT NULL AFTER `id_ricevuta_principale`;

@@ -139,6 +139,9 @@ switch (post('op')) {
         $dichiarazione_precedente = $fattura->dichiarazione;
         $fattura->id_dichiarazione_intento = post('id_dichiarazione_intento') ?: null;
 
+        // Flag pagamento ritenuta
+        $fattura->is_ritenuta_pagata = post('is_ritenuta_pagata') ?: 0;
+
         $fattura->save();
 
         // Operazioni automatiche per le Fatture Elettroniche

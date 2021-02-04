@@ -129,6 +129,7 @@ switch (filter('op')) {
             'id_riga_riferimento' => post('id_riga_riferimento'),
             'movimentazione' => post('movimentazione'),
             'crea_articoli' => post('crea_articoli'),
+            'is_ritenuta_pagata' => post('is_ritenuta_pagata'),
         ];
 
         $fattura_pa = FatturaElettronica::manage($filename);

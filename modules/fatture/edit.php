@@ -350,6 +350,12 @@ elseif ($record['stato'] == 'Bozza') {
                 </div>
 
                 <?php
+                if ($dir == 'uscita') {
+                    echo '
+                    <div class="col-md-3">
+                        {[ "type": "checkbox", "label": "'.tr("Ritenuta pagata dal fornitore").'", "name": "is_ritenuta_pagata", "value": "$is_ritenuta_pagata$" ]}
+                    </div>';
+                }
                 if ($dir == 'entrata') {
                     echo '
                     <div class="col-md-3">

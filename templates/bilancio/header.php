@@ -17,19 +17,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-include_once __DIR__.'/../../../core.php';
 
-switch ($resource) {
-    case 'get_conti':
-        $idmastrino = get('idmastrino');
-        $conti = [];
-        $rs_conti = $dbo->fetchArray('SELECT *, (SELECT CONCAT ((SELECT numero FROM co_pianodeiconti2 WHERE id=co_pianodeiconti3.idpianodeiconti2), ".", numero, " ", descrizione) FROM co_pianodeiconti3 WHERE id=co_movimenti_modelli.idconto) AS descrizione_conto FROM co_movimenti_modelli WHERE idmastrino='.prepare($idmastrino).' GROUP BY id ORDER BY id');
-
-        for ($i = 0; $i < sizeof($rs_conti); ++$i) {
-            $conti[$i] = $rs_conti[$i]['idconto'].';'.$rs_conti[$i]['descrizione_conto'].';'.$rs_conti[$i]['totale'];
-        }
-
-        echo implode(',', $conti);
-
-        break;
-}
+echo '
+<h5 style="border-bottom:1px solid #777; display:block;">
+    <div class="col-xs-5">STAMPA BILANCIO <small>'.dateFormat($date_start).' - '.dateFormat($date_end).'</small></div>
+    <div class="col-xs-7 text-right">'.$azienda['ragione_sociale'].'</div>
+</h5><br>
+<h4 class="text-center">ESERCIZIO '.$esercizio.'</h4><br>';

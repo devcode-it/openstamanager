@@ -310,7 +310,7 @@ class FatturaElettronica
      *
      * @return Fattura
      */
-    public function saveFattura($id_pagamento, $id_sezionale, $id_tipo, $data_registrazione, $ref_fattura)
+    public function saveFattura($id_pagamento, $id_sezionale, $id_tipo, $data_registrazione, $ref_fattura, $is_ritenuta_pagata = false)
     {
         $dati_generali = $this->getBody()['DatiGenerali']['DatiGeneraliDocumento'];
         $data = self::parseDate($dati_generali['Data']);
@@ -324,6 +324,7 @@ class FatturaElettronica
         $fattura->progressivo_invio = $progressivo_invio;
         $fattura->numero_esterno = $numero_esterno;
         $fattura->idpagamento = $id_pagamento;
+        $fattura->is_ritenuta_pagata = $is_ritenuta_pagata;
 
         // Riferimento per nota di credito e debito
         $fattura->ref_documento = $ref_fattura ?: null;
@@ -346,12 +347,6 @@ class FatturaElettronica
             $fattura->note = $note;
         }
 
-        // Bollo
-        $bollo = $dati_generali['DatiBollo'];
-        if (!empty($bollo)) {
-            $fattura->bollo = $bollo['ImportoBollo'];
-        }
-
         $fattura->save();
 
         // Fix generazione idsede
@@ -367,7 +362,7 @@ class FatturaElettronica
 
     public function save($info = [])
     {
-        $this->saveFattura($info['id_pagamento'], $info['id_segment'], $info['id_tipo'], $info['data_registrazione'], $info['ref_fattura']);
+        $this->saveFattura($info['id_pagamento'], $info['id_segment'], $info['id_tipo'], $info['data_registrazione'], $info['ref_fattura'], $info['is_ritenuta_pagata']);
 
         $this->saveRighe($info['articoli'], $info['iva'], $info['conto'], $info['movimentazione'], $info['crea_articoli'], $info['tipo_riga_riferimento'], $info['id_riga_riferimento']);
 

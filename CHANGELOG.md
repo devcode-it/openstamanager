@@ -36,7 +36,19 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 
 ### Aggiunto (Added)
  - Aggiunte nuove aliquote IVA più specifiche
- 
+ - Aggiunte condizioni generali di fornitura in Preventivi
+ - Aggiunta azione massiva per la creazione di preventivi da Articoli
+ - Aggiunta azione massiva per cambiare lo stato a più ordini
+ - Aggiunta azione massiva in articoli per allineare la quantità degli articoli 
+ - Aggiunta azione massiva per cambiare lo stato a più ddt
+ - Aggiunta possibilità di importare ddt di acquisto nei ddt di vendita
+ - Aggiunta possibilità di creare una nota di credito da un ddt di acquisto
+ - Aggiunta stampa del bilancio
+ - Aggiunta possibilità di notificare al cliente/tecnico in modo automatico quando viene cambiato lo stato dell'intervento
+ - Aggiunta flag per escludere la generazione scadenza di una ritenuta d'acconto se viene versata dal fornitore
+
+ ### Modificato (Changed)
+ - Impostazione CAP automatico a 99999 nella FE per clienti esteri
 
 ## 2.4.21 (2021-01-14)
 

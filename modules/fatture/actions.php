@@ -125,17 +125,22 @@ switch (post('op')) {
         }
 
         // Operazioni sul bollo
-        $fattura->addebita_bollo = post('addebita_bollo');
-        $bollo_automatico = post('bollo_automatico');
-        if (empty($bollo_automatico)) {
-            $fattura->bollo = post('bollo');
-        } else {
-            $fattura->bollo = null;
+        if($dir == 'entrata'){
+            $fattura->addebita_bollo = post('addebita_bollo');
+            $bollo_automatico = post('bollo_automatico');
+            if (empty($bollo_automatico)) {
+                $fattura->bollo = post('bollo');
+            } else {
+                $fattura->bollo = null;
+            }
         }
 
         // Operazioni sulla dichiarazione d'intento
         $dichiarazione_precedente = $fattura->dichiarazione;
         $fattura->id_dichiarazione_intento = post('id_dichiarazione_intento') ?: null;
+
+        // Flag pagamento ritenuta
+        $fattura->is_ritenuta_pagata = post('is_ritenuta_pagata') ?: 0;
 
         $fattura->save();
 
@@ -304,9 +309,13 @@ switch (post('op')) {
 
         $new = $fattura->replicate();
         $new->numero = Fattura::getNextNumero($new->data, $new->direzione, $new->id_segment);
-        if (!empty($fattura->numero_esterno)) {
-            $new->numero_esterno = Fattura::getNextNumeroSecondario($new->data, $new->direzione, $new->id_segment);
-        }
+        //if (!empty($fattura->numero_esterno)) {
+            //$new->numero_esterno = Fattura::getNextNumeroSecondario($new->data, $new->direzione, $new->id_segment);
+        //}
+
+        // In fase di duplicazione di una fattura non deve essere calcolato il numero progressivo ma questo deve
+        // essere generato in fase di emissione della stessa. 
+        $new->numero_esterno = '';
 
         $new->codice_stato_fe = null;
         $new->progressivo_invio = null;

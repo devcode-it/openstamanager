@@ -87,7 +87,7 @@ if (sizeof($problemi_anagrafica) > 0) {
 					</div>
 
 					<div class="col-md-3">
-                        {[ "type": "text", "label": "<?php echo tr('Partita IVA'); ?>", "maxlength": 13, "name": "piva", "class": "text-center alphanumeric-mask text-uppercase", "value": "$piva$", "validation": "partita_iva" ]}
+                        {[ "type": "text", "label": "<?php echo tr('Partita IVA'); ?>", "maxlength": 16, "name": "piva", "class": "text-center alphanumeric-mask text-uppercase", "value": "$piva$", "validation": "partita_iva" ]}
                     </div>
 
 					<div class="col-md-3">
@@ -181,7 +181,7 @@ if (sizeof($problemi_anagrafica) > 0) {
                             </div>
 
                             <div class="col-md-2">
-                                {[ "type": "text", "label": "<?php echo tr('C.A.P.'); ?>", "name": "cap", "maxlength": 5, "class": "text-center", "value": "$cap$" ]}
+                                {[ "type": "text", "label": "<?php echo tr('C.A.P.'); ?>", "name": "cap", "maxlength": 6, "class": "text-center", "value": "$cap$" ]}
                             </div>
 
                         </div>

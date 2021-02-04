@@ -40,7 +40,7 @@ switch (filter('op')) {
         $newsletter->completed_at = filter('completed_at');
 
         $newsletter->subject = filter('subject');
-        $newsletter->content = filter('content');
+        $newsletter->content = $_POST['content']; //filter('content');
 
         $newsletter->save();
 

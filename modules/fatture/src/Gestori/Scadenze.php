@@ -59,9 +59,10 @@ class Scadenze
 
         $direzione = $this->fattura->tipo->dir;
         $ritenuta_acconto = $this->fattura->ritenuta_acconto;
+        $is_ritenuta_pagata = $this->fattura->is_ritenuta_pagata;
 
         // Se c'è una ritenuta d'acconto, la aggiungo allo scadenzario al 15 del mese dopo l'ultima scadenza di pagamento
-        if ($direzione == 'uscita' && $ritenuta_acconto > 0) {
+        if ($direzione == 'uscita' && $ritenuta_acconto > 0 && empty($is_ritenuta_pagata)) {
             $ultima_scadenza = $this->fattura->scadenze->last();
             $scadenza = $ultima_scadenza->scadenza->copy()->startOfMonth()->addMonth();
             $scadenza->setDate($scadenza->year, $scadenza->month, 15);
@@ -112,8 +113,15 @@ class Scadenze
     {
         $xml = XML::read($this->fattura->getXML());
 
-        $pagamenti = $xml['FatturaElettronicaBody']['DatiPagamento'];
-        $pagamenti = isset($pagamenti[0]) ? $pagamenti : [$pagamenti];
+        $fattura_body = $xml['FatturaElettronicaBody'];
+
+        // Gestione per fattura elettroniche senza pagamento definito
+        $pagamenti = [];
+        if (isset($fattura_body['DatiPagamento'])) {
+            $pagamenti = $fattura_body['DatiPagamento'];
+            $pagamenti = isset($pagamenti[0]) ? $pagamenti : [$pagamenti];
+        }
+
         foreach ($pagamenti as $pagamento) {
             $rate = $pagamento['DettaglioPagamento'];
             $rate = isset($rate[0]) ? $rate : [$rate];

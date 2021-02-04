@@ -119,9 +119,9 @@ switch (post('op')) {
         $n_ordini = 0;
 
         foreach ($id_records as $id) { 
-            $dbo->update('or_ordini', [
-                'idstatoordine' => $id_stato,
-            ], ['id' => $id]);
+            $ordine = Ordine::find($id);
+            $ordine->idstatoordine = $id_stato;
+            $ordine->save();
 
             ++$n_ordini;
         }
@@ -134,7 +134,7 @@ switch (post('op')) {
             flash()->warning(tr('Nessun ordine modificato!'));
         }
 
-        break;
+    break;
 }
 if ($module['name'] == 'Ordini cliente') {
 $operations['crea_fattura'] = [

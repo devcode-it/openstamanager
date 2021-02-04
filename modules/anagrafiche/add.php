@@ -64,7 +64,7 @@ echo '
 	    <div class="box-body">
 			<div class="row">
 				<div class="col-md-4">
-					{[ "type": "text", "label": "'.tr('Partita IVA').'", "maxlength": 13, "name": "piva", "class": "text-center alphanumeric-mask", "validation": "partita_iva"]}
+					{[ "type": "text", "label": "'.tr('Partita IVA').'", "maxlength": 16, "name": "piva", "class": "text-center alphanumeric-mask", "validation": "partita_iva"]}
 				</div>
 
 				<div class="col-md-4">
@@ -84,7 +84,7 @@ echo '
 				</div>
 
 				<div class="col-md-2">
-					{[ "type": "text", "label": "'.tr('C.A.P.').'", "name": "cap", "maxlength": 5, "class": "text-center" ]}
+					{[ "type": "text", "label": "'.tr('C.A.P.').'", "name": "cap", "maxlength": 6, "class": "text-center" ]}
 				</div>
 
 				<div class="col-md-4">

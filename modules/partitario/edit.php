@@ -32,6 +32,7 @@ if ($bilancio_gia_aperto) {
 
 echo '
 <div class="text-right">
+    '.Prints::getLink('Bilancio', null, 'btn btn-lg btn-info', tr('Stampa bilancio'), 'fa fa-print').'
     <button type="button" class="btn btn-lg '.$btn_class.'" data-op="apri-bilancio" data-title="'.tr('Apertura bilancio').'" data-backto="record-list" data-msg="'.$msg.'" data-button="'.tr('Riprendi saldi').'" data-class="btn btn-lg btn-warning" onclick="message( this );">
         <i class="fa fa-folder-open"></i> '.tr('Apertura bilancio').'
     </button>
@@ -83,8 +84,12 @@ foreach ($primo_livello as $conto_primo) {
                 <thead>
                     <tr>
                         <th>'.tr('Descrizione').'</th>
-                        <th style="width: 10%" class="text-center">'.tr('Importo').'</th>
-                        <th style="width: 10%" class="text-center">'.tr('Importo reddito').'</th>
+                        <th style="width: 10%" class="text-center">'.tr('Importo').'</th>';
+                        if($conto_primo['descrizione']=='Economico'){
+                            echo '
+                            <th style="width: 10%" class="text-center">'.tr('Importo reddito').'</th>';
+                        }
+                    echo '
                     </tr>
                 </thead>
 
@@ -120,21 +125,9 @@ foreach ($primo_livello as $conto_primo) {
                 $totale_conto = -$totale_conto;
                 $totale_reddito = -$totale_reddito;
             }
-
-            // Somma dei totali
-            if ($conto_primo['descrizione'] == 'Patrimoniale') {
-                if ($totale_conto > 0) {
-                    $totale_attivita[] = abs($totale_conto);
-                } else {
-                    $totale_passivita[] = abs($totale_conto);
-                }
-            } else {
-                if ($totale_conto > 0) {
-                    $totale_ricavi[] = abs($totale_conto);
-                } else {
-                    $totale_costi[] = abs($totale_conto);
-                }
-            }
+            
+            $totale_conto2 += $totale_conto;
+            $totale_reddito2 += $totale_reddito;
 
             echo '
                 <tr style="'.(!empty($numero_movimenti) ? '' : 'opacity: 0.5;').'">
@@ -198,10 +191,14 @@ foreach ($primo_livello as $conto_primo) {
 
                     <td class="text-right">
                         '.moneyFormat($totale_conto, 2).'
-                    </td>
-                    <td class="text-right">
-                        '.moneyFormat($totale_reddito, 2).'
-                    </td>
+                    </td>';
+                    if($conto_primo['descrizione']=='Economico'){
+                        echo '
+                        <td class="text-right">
+                            '.moneyFormat($totale_reddito, 2).'
+                        </td>';
+                    }
+                echo '
                 </tr>';
         }
 
@@ -210,9 +207,12 @@ foreach ($primo_livello as $conto_primo) {
 
                 <tfoot>
                     <tr>
-                        <th>'.tr('Descrizione').'</th>
-                        <th class="text-center">'.tr('Importo').'</th>
-                        <th class="text-center">'.tr('Importo reddito').'</th>
+                        <th class="text-right">'.tr('Totale').'</th>
+                        <th class="text-right">'.moneyFormat($totale_conto2).'</th>';
+                        if($conto_primo['descrizione']=='Economico'){
+                            echo '<th class="text-right">'.moneyFormat($totale_reddito2).'</th>';
+                        }
+                    echo '
                     </tr>
                 </tfoot>
             </table>';
@@ -225,6 +225,23 @@ foreach ($primo_livello as $conto_primo) {
 
             <br><br>
         </div>';
+        // Somma dei totali
+        if ($conto_primo['descrizione'] == 'Patrimoniale') {
+            if ($totale_conto2 > 0) {
+                $totale_attivita[] = abs($totale_conto2);
+            } else {
+                $totale_passivita[] = abs($totale_conto2);
+            }
+        } else {
+            if ($totale_conto2 > 0) {
+                $totale_ricavi[] = abs($totale_conto2);
+            } else {
+                $totale_costi[] = abs($totale_conto2);
+            }
+        }
+
+        $totale_conto2=0;
+        $totale_reddito2=0;
     }
 
     echo '

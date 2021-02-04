@@ -43,7 +43,9 @@ include_once __DIR__.'/../../core.php';
     echo '
     <table class="table table-striped table-condensed table-hover table-bordered"
         <tr>
-            <th>'.tr('Conto').'</th>
+			<th width="60%">'.tr('Conto').'</th>
+			<th width="20%">'.tr('Dare').'</th>
+			<th width="20%">'.tr('Avere').'</th>
         </tr>';
 
     for ($i = 0; $i < 10; ++$i) {
@@ -55,6 +57,14 @@ include_once __DIR__.'/../../core.php';
 				<td>
 					{[ "type": "select", "name": "idconto['.$i.']", "ajax-source": "conti", "required": "'.$required.'" ]}
 				</td>
+
+				<td class="text-right">
+                    {[ "type": "number", "name": "dare['.$i.']", "id": "dare'.$id.'", "value": "'.($rs[$i]['totale']>0 ? $rs[$i]['totale'] : '').'"]}
+                </td>
+                
+                <td class="text-right">
+                    {[ "type": "number", "name": "avere['.$i.']", "id": "avere'.$id.'", "value": "'.($rs[$i]['totale']<0 ? abs($rs[$i]['totale']) : '').'"]}
+                </td>
 			</tr>';
     }
 
@@ -99,3 +109,42 @@ include_once __DIR__.'/../../core.php';
 	</div>
 </form>
 
+<script>
+	$(document).ready( function() {
+		$('#modals select').on('change', function() {
+			if($(this).parent().parent().find('input[disabled]').length != 1){
+				if($(this).val()) {
+					$(this).parent().parent().find('input').prop("disabled", false);
+				}
+				else{
+					$(this).parent().parent().find('input').prop("disabled", true);
+					$(this).parent().parent().find('input').val("");
+				}
+			}
+		});
+	});
+
+	$("#modals input[id*=dare], #modals input[id*=avere]").each(function() {
+		if (input(this).get() === 0) {
+			$(this).prop("disabled", true);
+		} else {
+			$(this).prop("disabled", false);
+		}
+	});
+		
+	$(document).on("keyup change", "#modals input[id*=dare]", function() {
+		let row = $(this).parent().parent();
+
+		if (!$(this).prop("disabled")) {
+			row.find("#modals input[id*=avere]").prop("disabled", input(this).get() !== 0);
+		}
+	});
+
+	$(document).on("keyup change", "#modals input[id*=avere]", function() {
+		let row = $(this).parent().parent();
+
+		if (!$(this).prop("disabled")) {
+			row.find("#modals input[id*=dare]").prop("disabled", input(this).get() !== 0);
+		}
+	});
+</script>

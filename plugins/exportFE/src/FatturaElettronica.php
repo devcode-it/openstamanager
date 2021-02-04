@@ -24,6 +24,7 @@ use GuzzleHttp\Client;
 use Modules;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Fatture\Fattura;
+use Modules\Fatture\Gestori\Bollo;
 use Prints;
 use Translator;
 use UnexpectedValueException;
@@ -704,7 +705,7 @@ class FatturaElettronica
     {
         $result = [
             'Indirizzo' => $anagrafica['indirizzo'],
-            'CAP' => ($anagrafica->nazione->iso2 == 'IT') ? $anagrafica['cap'] : '00000',
+            'CAP' => ($anagrafica->nazione->iso2 == 'IT') ? $anagrafica['cap'] : '99999',
             'Comune' => $anagrafica['citta'],
         ];
 
@@ -890,11 +891,10 @@ class FatturaElettronica
         // Bollo (2.1.1.6)
         // ImportoBollo --> con la nuova versione in vigore dal 01/01/2021, la compilazione di questo nodo è diventata facoltativa.
         // considerato che l'importo è noto e può essere solo di 2,00 Euro.
-        $riga_bollo = $documento->rigaBollo;
-        if (!empty($riga_bollo)) {
+        $bollo = new Bollo($documento);
+        if (!empty($bollo->getBollo())) {
             $result['DatiBollo'] = [
                 'BolloVirtuale' => 'SI',
-                //'ImportoBollo' => $riga_bollo->totale,
             ];
         }
 

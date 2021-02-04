@@ -391,7 +391,7 @@ if ($permetti_modelli) {
 
         $.get(globals.rootdir + "/ajax_complete.php?op=get_conti&idmastrino=" + id_mastrino, function(data) {
             let conti = data.split(",");
-            let table = $("table.scadenze").first();
+            let table = $("#modals table.scadenze").first();
             let button = table.parent().find("button").first();
 
             // Creazione delle eventuali righe aggiuntive
@@ -409,6 +409,7 @@ if ($permetti_modelli) {
 
                 let id_conto = parseInt(dati_conto[0]);
                 let descrizione_conto = dati_conto[1];
+                let totale = dati_conto[2];
 
                 // Sostituzione del conto dell\'Anagrafica
                 if (id_conto === -1 && globals.prima_nota.id_documento !== ""){
@@ -420,6 +421,15 @@ if ($permetti_modelli) {
                 let select = $(righe[i + 1]).find("select");
                 input(select).getElement()
                     .selectSetNew(id_conto, descrizione_conto);
+
+                if(totale>0){
+                    input_field = $(righe[i + 1]).find("input[id*=dare]");
+                } else{
+                    input_field = $(righe[i + 1]).find("input[id*=avere]");
+                    totale = -totale;
+                }
+                input(input_field).getElement()
+                        .val(totale).trigger("change");
             }
         });
 

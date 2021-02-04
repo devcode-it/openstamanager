@@ -48,13 +48,31 @@ if ($record['can_delete']) {
 			</div>
 
 			<div class="row">
+
+				<div class="col-md-6">
+					{[ "type": "checkbox", "label": "<?php echo tr('Abilita notifiche'); ?>", "name": "notifica", "help": "<?php echo tr('Quando l\'attività passa in questo stato viene inviata una notifica ai destinatari designati.'); ?>.", "value": "$notifica$" ]}
+				</div>
+
 				<div class="col-md-6">
 					{[ "type": "select", "label": "<?php echo tr('Template email'); ?>", "name": "email", "value": "$id_email$", "values": "query=SELECT id, name AS descrizione FROM em_templates WHERE id_module = <?php echo Modules::get('Interventi')['id']; ?> AND deleted_at IS NULL", "disabled": <?php echo intval(empty($record['notifica'])); ?> ]}
 				</div>
 
-				<div class="col-md-6">
-					{[ "type": "text", "label": "<?php echo tr('Destinatari'); ?>", "name": "destinatari", "value": "$destinatari$", "disabled": <?php echo intval(empty($record['notifica'])); ?> ]}
+				
+			</div>
+			<div class="row">
+
+				<div class="col-md-3">
+					{[ "type": "checkbox", "label": "<?php echo tr('Notifica al cliente'); ?>", "name": "notifica_cliente", "help": "<?php echo tr('Quando l\'attività passa in questo stato viene inviata una notifica al cliente.'); ?>.", "value": "$notifica_cliente$" ]}
 				</div>
+
+				<div class="col-md-3">
+					{[ "type": "checkbox", "label": "<?php echo tr('Notifica ai tecnici'); ?>", "name": "notifica_tecnici", "help": "<?php echo tr('Quando l\'attività passa in questo stato viene inviata una notifica ai tecnici assegnati.'); ?>.", "value": "$notifica_tecnici$" ]}
+				</div>
+
+				<div class="col-md-6">
+					{[ "type": "text", "label": "<?php echo tr('Destinatari aggiuntivi'); ?>", "name": "destinatari", "value": "$destinatari$", "disabled": <?php echo intval(empty($record['notifica'])); ?> ]}
+				</div>
+
 			</div>
 		</div>
 
@@ -66,8 +84,7 @@ if ($record['can_delete']) {
 
 				<div class="panel-body">
 					{[ "type": "checkbox", "label": "<?php echo tr('Completato?'); ?>", "name": "is_completato", "value": "$is_completato$", "help": "<?php echo tr('Le attività che si trovano in questo stato verranno considerate come completate.'); ?>", "placeholder": "<?php echo tr('Completato'); ?>", "extra": "<?php echo $attr; ?>" ]}
-					{[ "type": "checkbox", "label": "<?php echo tr('Fatturabile?'); ?>", "name": "is_fatturabile", "value": "$is_fatturabile$", "help": "<?php echo tr('Le attività che si trovano in questo stato verranno considerate come fatturabili.'); ?>", "placeholder": "<?php echo tr('Fatturabile'); ?>", "extra": "<?php echo $attr; ?>" ]}
-					{[ "type": "checkbox", "label": "<?php echo tr('Abilita notifiche'); ?>", "name": "notifica", "help": "<?php echo tr('Quando l\'attività passa in questo stato viene inviata una notifica ai destinatari designati.'); ?>.", "value": "$notifica$" ]}
+					{[ "type": "checkbox", "label": "<?php echo tr('Fatturabile?'); ?>", "name": "is_fatturabile", "value": "$is_fatturabile$", "help": "<?php echo tr('Le attività che si trovano in questo stato verranno considerate come fatturabili.'); ?>", "placeholder": "<?php echo tr('Fatturabile'); ?>", "extra": "<?php echo $attr; ?>" ]}		
 				</div>
 			</div>
 		</div>
@@ -96,13 +113,18 @@ if ($record['can_delete']) {
 		if ($(this).is(":checked")) {
 			$("#email").attr("required", true);
 			$("#email").attr("disabled", false);
-			$("#destinatari").attr("required", true);
 			$("#destinatari").attr("disabled", false);
+			$("#notifica_cliente").attr("disabled", false);
+			$("#notifica_tecnici").attr("disabled", false);
 		}else{
 			$("#email").attr("required", false);
 			$("#email").attr("disabled", true);
-			$("#destinatari").attr("required", false);
 			$("#destinatari").attr("disabled", true);
+			$("#destinatari").val("");
+			$("#notifica_cliente").attr("disabled", true);
+			$("#notifica_tecnici").attr("disabled", true);
+			$("#notifica_cliente").val([0]);
+			$("#notifica_tecnici").val([0]);
 		}
 	});
 

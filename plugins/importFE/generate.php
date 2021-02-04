@@ -110,13 +110,20 @@ $citta = $sede['comune'];
 $provincia = $sede['provincia'];
 
 // Dati generali
-$dati_generali = $fattura_pa->getBody()['DatiGenerali']['DatiGeneraliDocumento'];
+$fattura_body = $fattura_pa->getBody();
+$dati_generali = $fattura_body['DatiGenerali']['DatiGeneraliDocumento'];
 
 $tipo_documento = $database->fetchOne('SELECT CONCAT("(", codice, ") ", descrizione) AS descrizione FROM fe_tipi_documento WHERE codice = '.prepare($dati_generali['TipoDocumento']))['descrizione'];
 
-$pagamenti = $fattura_pa->getBody()['DatiPagamento'];
-$pagamenti = isset($pagamenti[0]) ? $pagamenti : [$pagamenti];
-$metodi = $pagamenti[0]['DettaglioPagamento'];
+// Gestione per fattura elettroniche senza pagamento definito
+$pagamenti = [];
+if (isset($fattura_body['DatiPagamento'])) {
+    $pagamenti =  $fattura_body['DatiPagamento'];
+    $pagamenti = isset($pagamenti[0]) ? $pagamenti : [$pagamenti];
+}
+
+// Individuazione metodo di pagamento di base
+$metodi = isset($pagamenti[0]['DettaglioPagamento']) ? $pagamenti[0]['DettaglioPagamento'] : [];
 $metodi = isset($metodi[0]) ? $metodi : [$metodi];
 
 $codice_modalita_pagamento = $metodi[0]['ModalitaPagamento'];
@@ -164,9 +171,9 @@ if (!empty($pagamenti)) {
             <h4>'.tr('Pagamento').'</h4>
 
             <p>'.tr('La fattura importata presenta _NUM_ rat_E_ di pagamento con le seguenti scadenze', [
-            '_NUM_' => count($metodi),
-            '_E_' => ((count($metodi) > 1) ? 'e' : 'a'),
-        ]).':</p>
+                '_NUM_' => count($metodi),
+                '_E_' => ((count($metodi) > 1) ? 'e' : 'a'),
+            ]).':</p>
             <ol>';
 
     foreach ($pagamenti as $pagamento) {
@@ -245,7 +252,7 @@ if (!empty($anagrafica)) {
 
         echo '
         <div class="col-md-3">
-            {[ "type": "select", "label": "'.tr('Fattura pro-forma').'", "name": "ref_fattura", "values": "query='.$query.'" ]}
+            {[ "type": "select", "label": "'.tr('Collega a fattura pro-forma').'", "name": "ref_fattura", "values": "query='.$query.'" ]}
         </div>';
     }
 }
@@ -256,7 +263,7 @@ echo '
 // Pagamento
 echo '
     <div class="row" >
-		<div class="col-md-6">
+		<div class="col-md-3">
 		    <button type="button" class="btn btn-info btn-xs pull-right" onclick="updateSelectOption(\'codice_modalita_pagamento_fe\', \'\')">
 		        <i class="fa fa-refresh"></i> '.tr('Visualizza tutte le modalità').'
             </button>
@@ -272,7 +279,17 @@ echo '
 
         <div class="col-md-3">
             {[ "type": "checkbox", "label": "'.tr('Creazione automatica articoli').'", "name": "crea_articoli", "value": 0, "help": "'.tr("Nel caso di righe con tag CodiceArticolo, il gestionale procede alla creazione dell'articolo se la riga non risulta assegnata manualmente").'" ]}
-        </div>
+        </div>';
+
+        $ritenuta = $dati_generali['DatiRitenuta'];
+        
+        if(!empty($ritenuta)){
+            echo '
+            <div class="col-md-3">
+                {[ "type": "checkbox", "label": "'.tr('Ritenuta pagata dal fornitore').'", "name": "is_ritenuta_pagata", "value": 0, "help": "'.tr("Attivare se la ritenuta è stata pagata dal fornitore").'" ]}
+            </div>';
+        }
+    echo '
     </div>';
 
 // Righe

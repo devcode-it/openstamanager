@@ -125,12 +125,14 @@ switch (post('op')) {
         }
 
         // Operazioni sul bollo
-        $fattura->addebita_bollo = post('addebita_bollo');
-        $bollo_automatico = post('bollo_automatico');
-        if (empty($bollo_automatico)) {
-            $fattura->bollo = post('bollo');
-        } else {
-            $fattura->bollo = null;
+        if($dir == 'entrata'){
+            $fattura->addebita_bollo = post('addebita_bollo');
+            $bollo_automatico = post('bollo_automatico');
+            if (empty($bollo_automatico)) {
+                $fattura->bollo = post('bollo');
+            } else {
+                $fattura->bollo = null;
+            }
         }
 
         // Operazioni sulla dichiarazione d'intento

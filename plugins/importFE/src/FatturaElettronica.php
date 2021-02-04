@@ -346,12 +346,6 @@ class FatturaElettronica
             $fattura->note = $note;
         }
 
-        // Bollo
-        $bollo = $dati_generali['DatiBollo'];
-        if (!empty($bollo)) {
-            $fattura->bollo = $bollo['ImportoBollo'];
-        }
-
         $fattura->save();
 
         // Fix generazione idsede

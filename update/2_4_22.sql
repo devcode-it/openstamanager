@@ -9,10 +9,10 @@ UPDATE `dt_causalet` SET `reversed`=1 WHERE `descrizione`='Reso';
 ALTER TABLE `mg_movimenti` ADD INDEX(`idarticolo`);
 
 -- Aggiunta possibilità di scegliere uno stato dopo la firma anche se non ha il flag completato
-UPDATE `zz_settings` SET `tipo`='query=SELECT idstatointervento AS id, descrizione AS text FROM in_statiintervento' WHERE `nome`='Stato dell''attività dopo la firma'
+UPDATE `zz_settings` SET `tipo`='query=SELECT idstatointervento AS id, descrizione AS text FROM in_statiintervento' WHERE `nome`='Stato dell''attività dopo la firma';
 
 -- Aggiunto filtro N3.% nella scelta aliquota per le dichiarazioni d'intento
-UPDATE `zz_settings` SET `tipo` = 'query=SELECT id, descrizione FROM `co_iva` WHERE codice_natura_fe LIKE \'N3.%\' AND deleted_at IS NULL ORDER BY descrizione ASC' WHERE `zz_settings`.`nome` = 'Iva per lettere d''intento';
+UPDATE `zz_settings` SET `tipo` = 'query=SELECT id, descrizione FROM `co_iva` WHERE codice_natura_fe LIKE ''N3.%'' AND deleted_at IS NULL ORDER BY descrizione ASC' WHERE `zz_settings`.`nome` = 'Iva per lettere d''intento';
 
 
 -- Aggiunte descrizioni aliquote IVA con codice natura 2.1

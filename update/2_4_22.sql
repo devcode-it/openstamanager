@@ -95,3 +95,8 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_scadenziario`\r\n 
 
 -- Modificato nome segmento
 UPDATE `zz_segments` SET `name` = 'Scadenzario completo per periodo' WHERE `zz_segments`.`name` = 'Scadenzario completo';
+
+-- Fix stampe predefinite Preventivi e Contratti
+UPDATE `zz_prints` SET `predefined` = '0' WHERE `zz_prints`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi') AND `zz_prints`.`name` = 'Consuntivo preventivo'; 
+UPDATE `zz_prints` SET `predefined` = '0' WHERE `zz_prints`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti') AND `zz_prints`.`name` = 'Consuntivo contratto'; 
+UPDATE `zz_prints` SET `predefined` = '0' WHERE `zz_prints`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti') AND `zz_prints`.`name` = 'Ordine di servizio'; 

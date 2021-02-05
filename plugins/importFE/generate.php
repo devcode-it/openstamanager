@@ -245,7 +245,7 @@ if (!empty($anagrafica)) {
     if (in_array($dati_generali['TipoDocumento'], ['TD04', 'TD05'])) {
         echo '
         <div class="col-md-3">
-            {[ "type": "select", "label": "'.tr('Fattura collegata').'", "name": "ref_fattura", "required": 1, "values": "query='.$query.'" ]}
+            {[ "type": "select", "label": "'.tr('Fattura collegata').'", "name": "ref_fattura", "required": 0, "values": "query='.$query.'" ]}
         </div>';
     } elseif ($dati_generali['TipoDocumento'] == 'TD06') {
         $query .= "AND co_documenti.id_segment = (SELECT id FROM zz_segments WHERE name = 'Fatture pro-forma' AND id_module = ".prepare($id_module).')';

@@ -24,12 +24,6 @@ use Illuminate\Database\Eloquent\Model;
 
 /*
  * Classe dedicata alla gestione dei movimenti di magazzino degli articoli.
- *
- * Alcuni appunti sull'utilizzo dei campi *idsede_azienda* e *idsede_controparte*
- * Il campo *idsede_azienda* è relativo alla sede dell'Azienda che è interessata dal movimento, mentre *idsede_controparte* indica la sede del Cliente/Fornitore controparte.
- * La natura effettiva del movimento (e di *idsede_controparte*) è quindi identificabile dal valore del campo *qta*: se positivo il magazzino è aumentatao (movimento da *idsede_controparte* a *idsede_azienda*), se negativo il magazzino è diminuito (movimento da *idsede_azienda* a *idsede_controparte*).
- *
- * Si noti che il valore "0" per i campi *idsede_* indica solitamente una Sede legale dell'Anagrafica di riferimento. Solo se il movimento non è associato ad alcun documento il campo *idsede_controparte* non segue questo significato, poichè il movimento in questo caso è considerato manuale.
  */
 class Movimento extends Model
 {

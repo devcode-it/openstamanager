@@ -106,8 +106,8 @@ switch ($resource) {
         // Se c'è una sede settata, carico tutti gli articoli presenti in quella sede
         if (!$sedi_non_impostate) {
             $query .= '
-            LEFT JOIN (SELECT idarticolo, idsede_azienda, idsede_controparte FROM mg_movimenti GROUP BY idarticolo) movimenti ON movimenti.idarticolo=mg_articoli.id
-            LEFT JOIN an_sedi ON an_sedi.id = movimenti.idsede_azienda';
+            LEFT JOIN (SELECT idarticolo, idsede FROM mg_movimenti GROUP BY idarticolo) movimenti ON movimenti.idarticolo=mg_articoli.id
+            LEFT JOIN an_sedi ON an_sedi.id = movimenti.idsede';
         }
 
         $query .= '
@@ -154,20 +154,11 @@ switch ($resource) {
         // IVA da impostazioni
         foreach ($rs as $k => $r) {
             // Lettura movimenti delle mie sedi
-            $qta_azienda = $dbo->fetchOne('SELECT SUM(mg_movimenti.qta) AS qta FROM mg_movimenti LEFT JOIN an_sedi ON an_sedi.id = mg_movimenti.idsede_azienda WHERE mg_movimenti.idarticolo = '.prepare($r['id']).' AND idsede_azienda = '.prepare($superselect['idsede_partenza']));
-
-            // Lettura eventuali movimenti ad una propria sede (nel caso di movimenti fra sedi della mia azienda) per il calcolo corretto delle quantità
-            if ($superselect['idsede_partenza'] != 0) {
-                $qta_controparte = $dbo->fetchOne('SELECT SUM(mg_movimenti.qta) AS qta FROM mg_movimenti LEFT JOIN an_sedi ON an_sedi.id = mg_movimenti.idsede_controparte WHERE mg_movimenti.idarticolo = '.prepare($r['id']).' AND idsede_controparte = '.prepare($superselect['idsede_partenza']));
-            } else {
-                $qta_controparte = $dbo->fetchOne('SELECT SUM(mg_movimenti.qta) AS qta FROM ((( mg_movimenti LEFT JOIN an_sedi ON an_sedi.id = mg_movimenti.idsede_controparte ) LEFT JOIN dt_ddt ON mg_movimenti.idddt = dt_ddt.id ) LEFT JOIN co_documenti ON mg_movimenti.iddocumento = co_documenti.id ) WHERE mg_movimenti.idarticolo = '.prepare($r['id']).' AND idsede_controparte = '.prepare($superselect['idsede_partenza']).' AND IFNULL(dt_ddt.idanagrafica, co_documenti.idanagrafica) = '.prepare(setting('Azienda predefinita')));
-            }
-
-            $qta = $qta_azienda['qta'] - $qta_controparte['qta'];
+            $qta_sede = $dbo->fetchOne('SELECT SUM(mg_movimenti.qta) AS qta FROM mg_movimenti LEFT JOIN an_sedi ON an_sedi.id = mg_movimenti.idsede WHERE mg_movimenti.idarticolo = '.prepare($r['id']).' AND idsede = '.prepare($superselect['idsede_partenza']))['qta'];
 
             $rs[$k] = array_merge($r, [
-                'text' => $r['codice'].' - '.$r['descrizione'].' '.(!$r['servizio'] ? '('.Translator::numberToLocale($qta).(!empty($r['um']) ? ' '.$r['um'] : '').')' : ''),
-                'disabled' => $r['qta'] <= 0 && !$permetti_movimenti_sotto_zero && !$r['servizio'],
+                'text' => $r['codice'].' - '.$r['descrizione'].' '.(!$r['servizio'] ? '('.Translator::numberToLocale($qta_sede).(!empty($r['um']) ? ' '.$r['um'] : '').')' : ''),
+                'disabled' => $qta_sede <= 0 && !$permetti_movimenti_sotto_zero && !$r['servizio'],
             ]);
         }
 

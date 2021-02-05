@@ -121,23 +121,20 @@ function aggiorna_sedi_movimenti($module, $id)
     if ($module == 'ddt') {
         $rs = $dbo->fetchArray('SELECT idsede_partenza, idsede_destinazione, dir FROM dt_ddt INNER JOIN dt_tipiddt ON dt_tipiddt.id = dt_ddt.idtipoddt WHERE dt_ddt.id='.prepare($id));
 
-        $idsede_azienda = ($rs[0]['dir'] == 'uscita') ? $rs[0]['idsede_destinazione'] : $rs[0]['idsede_partenza'];
-        $idsede_controparte = ($rs[0]['dir'] == 'uscita') ? $rs[0]['idsede_partenza'] : $rs[0]['idsede_destinazione'];
+        $idsede = ($rs[0]['dir'] == 'uscita') ? $rs[0]['idsede_destinazione'] : $rs[0]['idsede_partenza'];
 
-        $dbo->query('UPDATE mg_movimenti SET idsede_azienda='.prepare($idsede_azienda).', idsede_controparte='.prepare($idsede_controparte).' WHERE idddt='.prepare($id));
+        $dbo->query('UPDATE mg_movimenti SET idsede='.prepare($idsede).' WHERE reference_type='.prepare('Modules\DDT\DDT').' AND reference_id='.prepare($id));
     } elseif ($module == 'documenti') {
         $rs = $dbo->fetchArray('SELECT idsede_partenza, idsede_destinazione, dir FROM co_documenti INNER JOIN co_tipidocumento ON co_tipidocumento.id = co_documenti.idtipodocumento WHERE co_documenti.id='.prepare($id));
 
-        $idsede_azienda = ($rs[0]['dir'] == 'uscita') ? $rs[0]['idsede_destinazione'] : $rs[0]['idsede_partenza'];
-        $idsede_controparte = ($rs[0]['dir'] == 'uscita') ? $rs[0]['idsede_partenza'] : $rs[0]['idsede_destinazione'];
+        $idsede = ($rs[0]['dir'] == 'uscita') ? $rs[0]['idsede_destinazione'] : $rs[0]['idsede_partenza'];
 
-        $dbo->query('UPDATE mg_movimenti SET idsede_azienda='.prepare($idsede_azienda).', idsede_controparte='.prepare($idsede_controparte).' WHERE iddocumento='.prepare($id));
+        $dbo->query('UPDATE mg_movimenti SET idsede='.prepare($idsede).' WHERE reference_type='.prepare('Modules\Fatture\Fattura').' AND reference_id='.prepare($id));
     } elseif ($module == 'interventi') {
         $rs = $dbo->fetchArray('SELECT idsede_partenza, idsede_destinazione FROM in_interventi WHERE in_interventi.id='.prepare($id));
 
-        $idsede_azienda = $rs[0]['idsede_partenza'];
-        $idsede_controparte = $rs[0]['idsede_destinazione'];
+        $idsede = $rs[0]['idsede_partenza'];
 
-        $dbo->query('UPDATE mg_movimenti SET idsede_azienda='.prepare($idsede_azienda).', idsede_controparte='.prepare($idsede_controparte).' WHERE idintervento='.prepare($id));
+        $dbo->query('UPDATE mg_movimenti SET idsede='.prepare($idsede).' WHERE reference_type='.prepare('Modules\Interventi\Intervento').' AND reference_id='.prepare($id));
     }
 }

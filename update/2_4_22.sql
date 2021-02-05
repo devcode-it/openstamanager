@@ -12,7 +12,7 @@ ALTER TABLE `mg_movimenti` ADD INDEX(`idarticolo`);
 UPDATE `zz_settings` SET `tipo`='query=SELECT idstatointervento AS id, descrizione AS text FROM in_statiintervento' WHERE `nome`='Stato dell''attività dopo la firma';
 
 -- Aggiunto filtro N3.% nella scelta aliquota per le dichiarazioni d'intento
-UPDATE `zz_settings` SET `tipo` = 'query=SELECT id, descrizione FROM `co_iva` WHERE codice_natura_fe LIKE \'N3.%\' AND deleted_at IS NULL ORDER BY descrizione ASC' WHERE `zz_settings`.`nome` = 'Iva per lettere d''intento';
+UPDATE `zz_settings` SET `tipo` = 'query=SELECT id, descrizione FROM `co_iva` WHERE codice_natura_fe LIKE ''N3.%'' AND deleted_at IS NULL ORDER BY descrizione ASC' WHERE `zz_settings`.`nome` = 'Iva per lettere d''intento';
 
 
 -- Aggiunte descrizioni aliquote IVA con codice natura 2.1
@@ -91,7 +91,7 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 ALTER TABLE `co_documenti` ADD `is_ritenuta_pagata` BOOLEAN NOT NULL AFTER `id_ricevuta_principale`;
 
 -- Modificato options modulo scadenzario
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_scadenziario`\r\n LEFT JOIN `co_documenti` ON `co_scadenziario`.`iddocumento` = `co_documenti`.`id`\r\n LEFT JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`\r\n LEFT JOIN `co_pagamenti` ON `co_documenti`.`idpagamento` = `co_pagamenti`.`id`\r\n LEFT JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`\r\n LEFT JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`\r\nWHERE 1=1 AND\r\n (`co_statidocumento`.`descrizione` IS NULL OR `co_statidocumento`.`descrizione` IN(\'Emessa\',\'Parzialmente pagato\',\'Pagato\'))\r\nHAVING 2=2\r\nORDER BY `scadenza` ASC' WHERE `zz_modules`.`id` = (SELECT `id` FROM `zz_modules` WHERE `name`='Scadenzario');
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_scadenziario`\r\n LEFT JOIN `co_documenti` ON `co_scadenziario`.`iddocumento` = `co_documenti`.`id`\r\n LEFT JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`\r\n LEFT JOIN `co_pagamenti` ON `co_documenti`.`idpagamento` = `co_pagamenti`.`id`\r\n LEFT JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`\r\n LEFT JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`\r\nWHERE 1=1 AND\r\n (`co_statidocumento`.`descrizione` IS NULL OR `co_statidocumento`.`descrizione` IN(\'Emessa\',\'Parzialmente pagato\',\'Pagato\'))\r\nHAVING 2=2\r\nORDER BY `scadenza` ASC' WHERE `zz_modules`.`name`='Scadenzario';
 
 -- Modificato nome segmento
 UPDATE `zz_segments` SET `name` = 'Scadenzario completo per periodo' WHERE `zz_segments`.`name` = 'Scadenzario completo';
@@ -100,3 +100,13 @@ UPDATE `zz_segments` SET `name` = 'Scadenzario completo per periodo' WHERE `zz_s
 UPDATE `zz_prints` SET `predefined` = '0' WHERE `zz_prints`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi') AND `zz_prints`.`name` = 'Consuntivo preventivo'; 
 UPDATE `zz_prints` SET `predefined` = '0' WHERE `zz_prints`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti') AND `zz_prints`.`name` = 'Consuntivo contratto'; 
 UPDATE `zz_prints` SET `predefined` = '0' WHERE `zz_prints`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti') AND `zz_prints`.`name` = 'Ordine di servizio'; 
+
+-- Eliminata colonna idsede_controparte e rinominata idsede_azienda in idsede
+ALTER TABLE `mg_movimenti` CHANGE `idsede_azienda` `idsede` INT(11) NOT NULL;
+ALTER TABLE `mg_movimenti` DROP `idsede_controparte`;
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `mg_movimenti` JOIN `mg_articoli` ON `mg_articoli`.id = `mg_movimenti`.`idarticolo` LEFT JOIN `an_sedi` ON `mg_movimenti`.`idsede` = `an_sedi`.`id` WHERE 1=1 HAVING 2=2 ORDER BY mg_movimenti.data DESC, mg_movimenti.created_at DESC' WHERE `zz_modules`.`name` = 'Movimenti'; 
+UPDATE `zz_views` SET `query` = 'IF( mg_movimenti.idsede=0, \'Sede legale\', an_sedi.nomesede )' WHERE `zz_views`.`name` = 'Sede' 'Movimenti' AND `zz_views`.`id_module`= (SELECT `id` FROM `zz_modules` WHERE `name`='Movimenti');
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `mg_articoli`\r\n LEFT OUTER JOIN an_anagrafiche ON mg_articoli.id_fornitore = an_anagrafiche.idanagrafica\r\n LEFT OUTER JOIN co_iva ON mg_articoli.idiva_vendita = co_iva.id\r\n LEFT OUTER JOIN (\r\n SELECT SUM(qta - qta_evasa) AS qta_impegnata, idarticolo FROM or_righe_ordini\r\n INNER JOIN or_ordini ON or_righe_ordini.idordine = or_ordini.id\r\n WHERE idstatoordine IN (SELECT id FROM or_statiordine WHERE completato = 0)\r\n GROUP BY idarticolo\r\n ) ordini ON ordini.idarticolo = mg_articoli.id\r\n LEFT OUTER JOIN (SELECT `idarticolo`, `idsede`, SUM(`qta`) AS `qta` FROM `mg_movimenti` WHERE `idsede` = |giacenze_sedi_idsede| GROUP BY `idarticolo`, `idsede`) movimenti ON `mg_articoli`.`id` = `movimenti`.`idarticolo`\r\nWHERE 1=1 AND `mg_articoli`.`deleted_at` IS NULL HAVING 2=2 AND `Q.tà` > 0 ORDER BY `descrizione`' WHERE `zz_modules`.`name` = 'Giacenze sedi';
+
+-- Rimozione campo idsede_azienda
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'IF( mg_movimenti.idsede=0, \'Sede legale\', an_sedi.nomesede )' WHERE `zz_views`.`name` = 'Sede' AND `zz_modules`.`name` = 'Movimenti';

@@ -204,12 +204,12 @@ class Articolo extends Model
     {
         return $this->movimenti()
             ->select(
-                'idsede_azienda',
+                'idsede',
                 database()->raw('SUM(qta) AS qta')
-            )->groupBy(['idsede_azienda'])
+            )->groupBy(['idsede'])
             ->get()
             ->mapToGroups(function ($item, $key) {
-                return [$item->idsede_azienda => (float) $item->attributes['qta']];
+                return [$item->idsede => (float) $item->attributes['qta']];
             })
             ->flatten()
             ->toArray();

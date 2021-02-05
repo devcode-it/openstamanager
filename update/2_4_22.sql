@@ -95,3 +95,7 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_scadenziario`\r\n 
 
 -- Modificato nome segmento
 UPDATE `zz_segments` SET `name` = 'Scadenzario completo per periodo' WHERE `zz_segments`.`name` = 'Scadenzario completo';
+
+-- Eliminata colonna idsede_controparte e rinominata idsede_azienda in idsede
+ALTER TABLE `mg_movimenti` CHANGE `idsede_azienda` `idsede` INT(11) NOT NULL;
+ALTER TABLE `mg_movimenti` DROP `idsede_controparte`;

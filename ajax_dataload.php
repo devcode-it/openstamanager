@@ -158,7 +158,7 @@ if (!empty($query)) {
 
             // Colore del testo
             if (!empty($column['data-background'])) {
-                $column['data-color'] = isset($column['data-color']) ? $column['data-color'] : color_inverse($column['data-background']);
+                $column['data-color'] = isset($column['data-color']) ? $column['data-color'] : color_inverse(trim($column['data-background']));
             }
 
             // Link della colonna

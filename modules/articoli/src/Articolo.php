@@ -211,7 +211,6 @@ class Articolo extends Model
             ->mapToGroups(function ($item, $key) {
                 return [$item->idsede => (float) $item->attributes['qta']];
             })
-            ->flatten()
             ->toArray();
     }
 

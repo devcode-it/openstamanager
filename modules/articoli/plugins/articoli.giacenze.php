@@ -244,7 +244,7 @@ foreach ($sedi as $sede) {
     echo '
                         <tr>
                             <td>'.$sede['nomesede'].'</td>
-                            <td class="text-right">'.numberFormat($giacenze[$sede['id']]).' '.$articolo->um.'</td>
+                            <td class="text-right">'.numberFormat($giacenze[$sede['id']][0]).' '.$articolo->um.'</td>
                         </tr>';
 }
 

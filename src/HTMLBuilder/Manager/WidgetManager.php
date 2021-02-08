@@ -137,7 +137,7 @@ class WidgetManager implements ManagerInterface
             $content = ob_get_clean();
         }
 
-        return $this->chart($widget, $content);
+        return $this->render($widget, $widget['text'], $content);
     }
 
     protected function render($widget, $title, $number = null)

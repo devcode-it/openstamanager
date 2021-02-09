@@ -110,3 +110,10 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `mg_articoli`\r\n LEFT
 
 -- Rimozione campo idsede_azienda
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'IF( mg_movimenti.idsede=0, \'Sede legale\', an_sedi.nomesede )' WHERE `zz_views`.`name` = 'Sede' AND `zz_modules`.`name` = 'Movimenti';
+
+-- Aggiunto metodo di pagamento PagoPA
+INSERT INTO `fe_modalita_pagamento` (`codice`, `descrizione`) VALUES
+('MP23','PagoPA');
+
+INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, `codice_modalita_pagamento_fe`) VALUES
+(NULL, 'PagoPA', '0', '1', '100', 'MP23');

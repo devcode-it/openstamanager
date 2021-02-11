@@ -24,6 +24,9 @@ use Modules\Articoli\Categoria;
 use Modules\Fatture\Components\Articolo;
 use Modules\Fatture\Components\Riga;
 use Modules\Fatture\Fattura;
+use Modules\Anagrafiche\Anagrafica;
+use Plugins\DettagliArticolo\DettaglioFornitore;
+use Plugins\DettagliArticolo\DettaglioPrezzo;
 use UnexpectedValueException;
 use Util\XML;
 
@@ -144,6 +147,13 @@ class FatturaOrdinaria extends FatturaElettronica
                     $articolo->prezzo_acquisto = $riga['PrezzoUnitario'];
                     $articolo->id_fornitore = $fattura->idanagrafica;
                     $articolo->save();
+
+                    $direzione = 'uscita';
+                    $anagrafica = Anagrafica::find($fattura->idanagrafica);
+                    $dettaglio_prezzo = DettaglioPrezzo::build($articolo, $anagrafica, $direzione);
+
+                    $dettaglio_prezzo->setPrezzoUnitario($riga['PrezzoUnitario']);
+                    $dettaglio_prezzo->save();
                 }
             }
 

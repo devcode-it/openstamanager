@@ -289,7 +289,7 @@ switch ($resource) {
      */
     case 'referenti':
         if (isset($superselect['idanagrafica'])) {
-            $query = 'SELECT id, nome AS descrizione FROM an_referenti |where| ORDER BY nome';
+            $query = 'SELECT id, nome AS descrizione, an_referenti.mansione AS optgroup FROM an_referenti |where| ORDER BY optgroup, nome';
 
             foreach ($elements as $element) {
                 $filter[] = 'id='.prepare($element);

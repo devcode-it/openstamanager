@@ -93,7 +93,15 @@ if ($module['name'] == 'Ordini cliente') {
 					<?php
                     }
                 echo '
-				</div>
+                </div>
+                
+                <div class="col-md-3">';
+                    if (!empty($record['idreferente'])) {
+                        echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
+                    }
+                    echo '
+                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'} ]}
+                </div>
 
                 <div class="col-md-3">
 					{[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede", "required": 1, "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "'.$record['idsede'].'" ]}

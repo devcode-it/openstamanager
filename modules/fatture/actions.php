@@ -88,6 +88,7 @@ switch (post('op')) {
 
         $fattura->idanagrafica = post('idanagrafica');
         $fattura->idagente = post('idagente');
+        $fattura->idreferente = post('idreferente');
         $fattura->idpagamento = post('idpagamento');
         $fattura->id_banca_azienda = post('id_banca_azienda');
         $fattura->id_banca_controparte = post('id_banca_controparte');

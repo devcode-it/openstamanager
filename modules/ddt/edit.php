@@ -114,8 +114,16 @@ if ($module['name'] == 'Ddt di vendita') {
                     <?php echo Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"'); ?>
                     {[ "type": "select", "label": "<?php echo ($dir == 'uscita') ? tr('Mittente') : tr('Destinatario'); ?>", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti_fornitori" ]}
                 </div>
+<?php
+                echo '
+                <div class="col-md-3">';
+                    if (!empty($record['idreferente'])) {
+                        echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
+                    }
+                    echo '
+                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'} ]}
+                </div>';
 
-                <?php
                 // Conteggio numero articoli ddt in uscita
                 $articolo = $dbo->fetchArray('SELECT mg_articoli.id FROM ((mg_articoli INNER JOIN dt_righe_ddt ON mg_articoli.id=dt_righe_ddt.idarticolo) INNER JOIN dt_ddt ON dt_ddt.id=dt_righe_ddt.idddt) WHERE dt_ddt.id='.prepare($id_record));
                 $id_modulo_anagrafiche = Modules::get('Anagrafiche')['id'];

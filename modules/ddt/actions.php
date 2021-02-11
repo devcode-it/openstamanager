@@ -93,6 +93,7 @@ switch (post('op')) {
             'idpagamento' => $idpagamento,
             'idconto' => post('idconto'),
             'idanagrafica' => $id_anagrafica,
+            'idreferente' => post('idreferente'),
             'idspedizione' => post('idspedizione'),
             'idcausalet' => post('idcausalet'),
             'idsede_partenza' => post('idsede_partenza'),

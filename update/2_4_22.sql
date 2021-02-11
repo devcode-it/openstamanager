@@ -117,3 +117,8 @@ INSERT INTO `fe_modalita_pagamento` (`codice`, `descrizione`) VALUES
 
 INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, `codice_modalita_pagamento_fe`) VALUES
 (NULL, 'PagoPA', '0', '1', '100', 'MP23');
+
+-- Aggiunti referenti ai documenti
+ALTER TABLE `or_ordini` ADD `idreferente` INT NULL DEFAULT NULL AFTER `idanagrafica`; 
+ALTER TABLE `co_documenti` ADD `idreferente` INT NULL DEFAULT NULL AFTER `idanagrafica`;
+ALTER TABLE `dt_ddt` ADD `idreferente` INT NULL DEFAULT NULL AFTER `idanagrafica`;

@@ -18,8 +18,8 @@
  */
 
 $r = $dbo->fetchOne('SELECT *,
-    (SELECT email FROM an_anagrafiche WHERE an_anagrafiche.idanagrafica=dt_ddt.idanagrafica) AS email
-FROM dt_ddt WHERE id='.prepare($id_record));
+    IF( (an_referenti.email IS NOT NULL AND an_referenti.email!=""), an_referenti.email, an_anagrafiche.email) AS email
+FROM dt_ddt INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica=dt_ddt.idanagrafica LEFT OUTER JOIN an_referenti ON an_referenti.id=dt_ddt.idreferente WHERE dt_ddt.id='.prepare($id_record));
 
 // Variabili da sostituire
 return [

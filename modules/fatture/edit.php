@@ -203,7 +203,7 @@ elseif ($record['stato'] == 'Bozza') {
 			</div>
 
 			<div class="row">
-				<div class="col-md-6">
+				<div class="col-md-4">
 				    '.Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"');
 
                     if ($dir == 'entrata') {
@@ -219,12 +219,21 @@ elseif ($record['stato'] == 'Bozza') {
                     echo '
                 </div>';
 
-                    if ($dir == 'entrata') {
+                if ($dir == 'entrata') {
                         echo '
-				<div class="col-md-6">
+				<div class="col-md-4">
 					{[ "type": "select", "label": "'.tr('Agente di riferimento').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente_fattura$" ]}
 				</div>';
+                }
+
+                echo '
+                <div class="col-md-4">';
+                    if (!empty($record['idreferente'])) {
+                        echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
                     }
+                    echo '
+                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'} ]}
+                </div>';
 
                 // Conteggio numero articoli fatture
                 $articolo = $dbo->fetchArray('SELECT mg_articoli.id FROM ((mg_articoli INNER JOIN co_righe_documenti ON mg_articoli.id=co_righe_documenti.idarticolo) INNER JOIN co_documenti ON co_documenti.id=co_righe_documenti.iddocumento) WHERE co_documenti.id='.prepare($id_record));

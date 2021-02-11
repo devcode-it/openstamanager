@@ -82,6 +82,7 @@ switch (post('op')) {
         // Query di aggiornamento
         $dbo->update('or_ordini', [
             'idanagrafica' => post('idanagrafica'),
+            'idreferente' => post('idreferente'),
             'data' => post('data'),
             'numero' => post('numero'),
             'numero_esterno' => post('numero_esterno'),

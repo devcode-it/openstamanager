@@ -804,7 +804,6 @@ switch (post('op')) {
                     $serials = is_array(post('serial')[$riga->id]) ? post('serial')[$riga->id] : [];
 
                     $copia->serials = $serials;
-                    $riga->removeSerials($serials);
                 }
 
                 $copia->save();

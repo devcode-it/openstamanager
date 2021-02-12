@@ -27,6 +27,7 @@ $tipo_documento_finale = Fattura::class;
 $options = [
     'type' => 'nota_credito',
     'op' => 'nota_credito',
+    'serials' => true,
     'module' => 'Fatture di vendita',
     'documento' => $documento,
     'tipo_documento_finale' => $tipo_documento_finale,

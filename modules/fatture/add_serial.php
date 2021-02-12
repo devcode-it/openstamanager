@@ -86,16 +86,10 @@ $info = $dbo->fetchArray('SELECT * FROM mg_prodotti WHERE serial IS NOT NULL AND
 $serials = array_column($info, 'serial');
 
 if ($dir == 'entrata') {
-    $in = [];
-    foreach ($serials as $value) {
-        $in[] = prepare($value);
-    }
-    $in = implode(',', $in);
-
     echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "select", "label": "'.tr('Serial').'", "name": "serial[]", "multiple": 1, "value": "'.implode(',', $serials).'", "values": "query=SELECT DISTINCT serial AS id, serial AS descrizione FROM mg_prodotti WHERE dir=\'uscita\' AND mg_prodotti.id_articolo = '.prepare($rs[0]['idarticolo']).' AND serial NOT IN (SELECT serial FROM mg_prodotti WHERE dir=\'entrata\' AND serial NOT IN (SELECT serial FROM mg_prodotti WHERE '.$riga.' = \''.$idriga.'\'))'.(!empty($in) ? ' OR serial IN ('.$in.')' : '').'", "extra": "data-maximum=\"'.intval($rs[0]['qta']).'\"" ]}
+            {[ "type": "select", "label": "'.tr('Serial').'", "name": "serial[]", "multiple": 1, "value": "'.implode(',', $serials).'", "values": "query=SELECT serial AS id, serial AS descrizione FROM mg_prodotti WHERE id_articolo = '.prepare($rs[0]['idarticolo']).' AND mg_prodotti.dir=\'uscita\' AND id=(SELECT MAX(id) FROM mg_prodotti AS prodotti WHERE prodotti.id_articolo=mg_prodotti.id_articolo AND prodotti.serial=mg_prodotti.serial)" ]}
         </div>
     </div>';
 } else {

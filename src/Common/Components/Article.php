@@ -120,11 +120,22 @@ abstract class Article extends Accounting
             return;
         }
 
+        // Inversione di movimento nei seriali in caso di nota di credito
+        if($this->getDocument()->isNota()){
+            if($this->getDirection()=='uscita'){
+                $dir = 'entrata';
+            } else{
+                $dir = 'uscita';
+            }
+        } else {
+            $dir = $this->getDirection();
+        }
+
         $serials = array_clean($serials);
 
         database()->sync('mg_prodotti', [
             'id_riga_'.$this->serialRowID => $this->id,
-            'dir' => $this->getDirection(),
+            'dir' => $dir,
             'id_articolo' => $this->idarticolo,
         ], [
             'serial' => $serials,

@@ -882,7 +882,7 @@ class FatturaElettronica
             // Con la nuova versione in vigore dal 01/01/2021, questo nodo diventa ripetibile.
             $result['DatiRitenuta'] = [
                 'TipoRitenuta' => (Validate::isValidTaxCode($azienda['codice_fiscale']) and $cliente['tipo'] == 'Privato') ? 'RT01' : 'RT02',
-                'ImportoRitenuta' => $totale_ritenutaacconto,
+                'ImportoRitenuta' => $documento->isNota() ? -$totale_ritenutaacconto : $totale_ritenutaacconto,
                 'AliquotaRitenuta' => $percentuale,
                 'CausalePagamento' => setting("Causale ritenuta d'acconto"),
             ];
@@ -906,8 +906,8 @@ class FatturaElettronica
             $dati_cassa = [
                 'TipoCassa' => setting('Tipo Cassa Previdenziale'),
                 'AlCassa' => $percentuale,
-                'ImportoContributoCassa' => $totale_rivalsainps,
-                'ImponibileCassa' => $documento->imponibile,
+                'ImportoContributoCassa' => $documento->isNota() ? -$totale_rivalsainps : $totale_rivalsainps,
+                'ImponibileCassa' => $documento->isNota() ? -$documento->imponibile : $documento->imponibile,
                 'AliquotaIVA' => $iva['percentuale'],
             ];
 

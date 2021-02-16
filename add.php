@@ -91,6 +91,7 @@ $(document).ready(function(){
             select = "#'.get('select').'";
             if ($(select).val() !== undefined) {
                 $(select).selectSetNew(response.id, response.text, response.data);
+                $(select).change();
             }
 
             $form.closest("div[id^=bs-popup").modal("hide");

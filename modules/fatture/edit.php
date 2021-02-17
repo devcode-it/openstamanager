@@ -69,14 +69,14 @@ if ($dir == 'entrata' && !empty($fattura->dichiarazione) && $fattura->stato->des
             }
 
     }else{
-
+        
+        //TODO link ad impostazioni con nuova ricerca rapida
         echo '
         <div class="alert alert-warning">
-            <i class="fa fa-warning"></i> '.tr("Attenzione nessuna aliq. IVA definita per la dichiarazione d'intento. Selezionala dalle impostazioni \"_SETTING_\"", [
-                    '_SETTING_' => "Iva per lettere d'intento",
-                ]).'.</b>
+        <i class="fa fa-warning"></i> '.tr("Attenzione nessuna aliq. IVA definita per la dichiarazione d'intento. _SETTING_", [
+            '_SETTING_' => Modules::link("Impostazioni", $dbo->fetchOne("SELECT `id` FROM `zz_settings` WHERE nome=\"Iva per lettere d'intento\"")['id'], tr('Selezionala dalle impostazioni')),
+        ]).'
         </div>';
-
 
     }
 }
@@ -381,7 +381,12 @@ elseif ($record['stato'] == 'Bozza') {
                 }
                 if ($dir == 'entrata') {
                     echo '
-                    <div class="col-md-3">
+                    <div class="col-md-3">';
+
+                    if (!empty($record['id_dichiarazione_intento'])) {
+                        echo Plugins::link("Dichiarazioni d'Intento", $record['idanagrafica'], null, null, 'class="pull-right"');
+                    }
+                    echo '
                         {[ "type": "select", "label": "'.tr("Dichiarazione d'intento").'", "name": "id_dichiarazione_intento", "ajax-source": "dichiarazioni_intento", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "data": "'.$record['data'].'"},"value": "$id_dichiarazione_intento$" ]}
                     </div>';
                 }

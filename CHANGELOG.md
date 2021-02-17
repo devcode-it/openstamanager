@@ -46,6 +46,8 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Aggiunta stampa del bilancio
  - Aggiunta possibilità di notificare al cliente/tecnico in modo automatico quando viene cambiato lo stato dell'intervento
  - Aggiunta flag per escludere la generazione scadenza di una ritenuta d'acconto se viene versata dal fornitore
+ - Aggiunta stampa fattura elettronica nelle fatture di vendita e di acquisto
+ - Aggiunta azione massiva per esportare le stampe delle fatture elettroniche
 
 ### Modificato (Changed)
  - Impostazione CAP automatico a 99999 nella FE per clienti esteri

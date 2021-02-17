@@ -25,6 +25,8 @@ include_once __DIR__.'/../../core.php';
 try {
     $fattura_pa = new FatturaElettronica($id_record);
 } catch (UnexpectedValueException $e) {
+    echo '<div class="text-center">'.tr("Questo documento non è una fattura elettronica").'</div>';
+    return;
 }
 $file = Upload::where('filename', $fattura_pa->getFilename())
         ->where('id_record', $id_record)

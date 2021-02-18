@@ -121,14 +121,18 @@ abstract class Article extends Accounting
         }
 
         // Inversione di movimento nei seriali in caso di nota di credito
-        if($this->getDocument()->isNota()){
-            if($this->getDirection()=='uscita'){
-                $dir = 'entrata';
-            } else{
-                $dir = 'uscita';
+        $dir = $this->getDirection();
+
+        $document = $this->getDocument();
+
+        if ($document instanceof \Modules\Fatture\Fattura) {
+            if ($document->isNota()) {
+                if($this->getDirection()=='uscita'){
+                    $dir = 'entrata';
+                } else{
+                    $dir = 'uscita';
+                }
             }
-        } else {
-            $dir = $this->getDirection();
         }
 
         $serials = array_clean($serials);

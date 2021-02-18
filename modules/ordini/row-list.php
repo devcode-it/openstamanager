@@ -72,12 +72,11 @@ foreach ($righe as $riga) {
     $numero_riferimenti_collegati = $riga->referenceSources()->count();
     $riferimenti_presenti = $numero_riferimenti_riga;
     $testo_aggiuntivo = $riferimenti_presenti ? $numero_riferimenti_riga : '';
-    
+
     echo '
     <button type="button" class="btn btn-xs btn-'.($riferimenti_presenti ? 'primary' : 'info').' pull-right text-right" onclick="apriRiferimenti(this)">
         <i class="fa fa-chevron-right"></i> '.tr('Riferimenti').' '.$testo_aggiuntivo.'
     </button>';
-        
 
     // Aggiunta dei riferimenti ai documenti
     if ($riga->hasOriginalComponent()) {

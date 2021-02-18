@@ -220,7 +220,7 @@ elseif ($record['stato'] == 'Bozza') {
                 </div>';
 
                 if ($dir == 'entrata') {
-                        echo '
+                    echo '
 				<div class="col-md-4">
 					{[ "type": "select", "label": "'.tr('Agente di riferimento').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente_fattura$" ]}
 				</div>';
@@ -316,7 +316,7 @@ elseif ($record['stato'] == 'Bozza') {
                         <strike>';
                         }
 
-                        echo(empty($scadenza->da_pagare) ? '<i class="fa fa-exclamation-triangle"></i>' : '').moneyFormat($scadenza->da_pagare);
+                        echo (empty($scadenza->da_pagare) ? '<i class="fa fa-exclamation-triangle"></i>' : '').moneyFormat($scadenza->da_pagare);
 
                         if ($pagamento_iniziato) {
                             echo '
@@ -362,7 +362,7 @@ elseif ($record['stato'] == 'Bozza') {
                 if ($dir == 'uscita') {
                     echo '
                     <div class="col-md-3">
-                        {[ "type": "checkbox", "label": "'.tr("Ritenuta pagata dal fornitore").'", "name": "is_ritenuta_pagata", "value": "$is_ritenuta_pagata$" ]}
+                        {[ "type": "checkbox", "label": "'.tr('Ritenuta pagata dal fornitore').'", "name": "is_ritenuta_pagata", "value": "$is_ritenuta_pagata$" ]}
                     </div>';
                 }
                 if ($dir == 'entrata') {

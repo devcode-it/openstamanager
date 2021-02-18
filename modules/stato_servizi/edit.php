@@ -49,8 +49,7 @@ if (Services::isEnabled()) {
     // Informazioni su Services
     $servizi = Cache::pool('Informazioni su Services')->content;
 
-    if (!empty($servizi)){
-
+    if (!empty($servizi)) {
         // Elaborazione dei servizi in scadenza
         $limite_scadenze = (new Carbon())->addDays(60);
         $servizi_in_scadenza = [];
@@ -126,12 +125,9 @@ if (Services::isEnabled()) {
             });
         });
         </script>';
-
-    }else{
-
+    } else {
         echo '
         <div class="col-md-12 col-lg-6"><div class="alert alert-warning alert-dismissible" role="alert"><button class="close" type="button" data-dismiss="alert" aria-hidden="true"><span aria-hidden="true">×</span><span class="sr-only">'.tr('Chiudi').'</span></button><span><i class="fa fa-warning"></i> '.tr('Nessun servizio abilitato o "OSMCloud Services API Token" non valido').'.</span></div></div>';
-
     }
 }
 

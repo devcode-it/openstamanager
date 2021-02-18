@@ -17,7 +17,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 echo '
 <h5 style="border-bottom:1px solid #777; display:block;">
     <div class="col-xs-5">STAMPA BILANCIO <small>'.dateFormat($date_start).' - '.dateFormat($date_end).'</small></div>

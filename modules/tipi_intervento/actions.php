@@ -66,7 +66,6 @@ switch (post('op')) {
         break;
 
     case 'delete':
-
         // Permetto eliminazione tipo intervento solo se questo non è utilizzado da nessun'altra parte a gestionale
         // UNION SELECT `in_tariffe`.`idtipointervento` FROM `in_tariffe` WHERE `in_tariffe`.`idtipointervento` = '.prepare($id_record).'
         // UNION SELECT `co_contratti_tipiintervento`.`idtipointervento` FROM `co_contratti_tipiintervento` WHERE `co_contratti_tipiintervento`.`idtipointervento` = '.prepare($id_record).'

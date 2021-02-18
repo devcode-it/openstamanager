@@ -27,7 +27,6 @@ switch (filter('op')) {
 
         if (isset($descrizione) && isset($dir) && isset($codice_tipo_documento_fe)) {
             if ($dbo->fetchNum('SELECT * FROM `co_tipidocumento` WHERE `dir`='.prepare($dir).' AND `codice_tipo_documento_fe`='.prepare($codice_tipo_documento_fe).' AND `id`!='.prepare($id_record)) == 0) {
-
                 $predefined = post('predefined');
                 if (!empty($predefined)) {
                     $dbo->query('UPDATE co_tipidocumento SET predefined = 0 WHERE dir = '.prepare($dir));
@@ -87,7 +86,6 @@ switch (filter('op')) {
         break;
 
     case 'delete':
-
         $documenti = $dbo->fetchNum('SELECT id FROM co_documenti WHERE idtipodocumento ='.prepare($id_record));
 
         if (isset($id_record) && empty($documenti)) {
@@ -96,7 +94,6 @@ switch (filter('op')) {
                 '_TYPE_' => 'tipo documento',
             ]));
         } else {
-
             $dbo->update('co_tipidocumento', [
                 'deleted_at' => date(),
                 'predefined' => 0,
@@ -106,7 +103,6 @@ switch (filter('op')) {
             flash()->info(tr('Tipologia di _TYPE_ eliminata con successo.', [
                 '_TYPE_' => 'tipo documento',
             ]));
-
 
             //flash()->error(tr('Sono presenti dei documenti collegati a questo tipo documento'));
         }

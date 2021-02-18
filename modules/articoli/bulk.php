@@ -18,12 +18,12 @@
  */
 
 include_once __DIR__.'/../../core.php';
-use Modules\Articoli\Articolo;
-use Modules\Preventivi\Preventivo;
-use Modules\Anagrafiche\Anagrafica;
-use Modules\Preventivi\Components\Articolo as ArticoloPreventivo;
-use Modules\TipiIntervento\Tipo as TipoSessione;
 use Modules;
+use Modules\Anagrafiche\Anagrafica;
+use Modules\Articoli\Articolo;
+use Modules\Preventivi\Components\Articolo as ArticoloPreventivo;
+use Modules\Preventivi\Preventivo;
+use Modules\TipiIntervento\Tipo as TipoSessione;
 use Prints;
 
 switch (post('op')) {
@@ -59,12 +59,12 @@ switch (post('op')) {
         flash()->info(tr('Articoli eliminati!'));
 
         break;
-    
+
     case 'stampa-etichette':
         $_SESSION['superselect']['id_articolo_barcode'] = $id_records;
         $id_print = Prints::getPrints()['Barcode'];
 
-        redirect( base_path().'/pdfgen.php?id_print='.$id_print.'&id_record='.Articolo::where('barcode', '!=', '' )->first()->id );
+        redirect(base_path().'/pdfgen.php?id_print='.$id_print.'&id_record='.Articolo::where('barcode', '!=', '')->first()->id);
         exit();
 
         break;
@@ -74,8 +74,8 @@ switch (post('op')) {
         $data = post('data');
         $qta = post('qta');
         $n_articoli = 0;
-        
-        foreach ($id_records as $id) { 
+
+        foreach ($id_records as $id) {
             $articolo = Articolo::find($id);
             $qta_movimento = $qta - $articolo->qta;
             $articolo->movimenta($qta_movimento, $descrizione, $data, true);
@@ -104,8 +104,8 @@ switch (post('op')) {
 
         $preventivo = Preventivo::build($anagrafica, $tipo, $nome, $data, 0);
         $id_preventivo = $preventivo->id;
-        
-        foreach ($id_records as $id) { 
+
+        foreach ($id_records as $id) {
             $originale = Articolo::find($id);
             $articolo = ArticoloPreventivo::build($preventivo, $originale);
             $articolo->qta = 1;
@@ -129,7 +129,7 @@ switch (post('op')) {
         }
 
         $database->commitTransaction();
-        redirect( base_path().'/editor.php?id_module='.Modules::get('Preventivi')['id'].'&id_record='.$id_preventivo);
+        redirect(base_path().'/editor.php?id_module='.Modules::get('Preventivi')['id'].'&id_record='.$id_preventivo);
         exit();
 
         break;

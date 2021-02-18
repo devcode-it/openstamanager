@@ -79,36 +79,35 @@ switch (post('op')) {
         if (!empty($stato['notifica']) && $stato['idstatointervento'] != $record['idstatointervento']) {
             $template = Template::find($stato['id_email']);
 
-            if(!empty($stato['destinatari'])){
+            if (!empty($stato['destinatari'])) {
                 $mail = Mail::build(auth()->getUser(), $template, $id_record);
                 $mail->addReceiver($stato['destinatari']);
                 $mail->save();
             }
 
-            if(!empty($stato['notifica_cliente'])){
+            if (!empty($stato['notifica_cliente'])) {
                 $mail_cliente = $dbo->selectOne('an_anagrafiche', '*', ['idanagrafica' => post('idanagrafica')]);
-                if(!empty($mail_cliente['email'])){
+                if (!empty($mail_cliente['email'])) {
                     $mail = Mail::build(auth()->getUser(), $template, $id_record);
                     $mail->addReceiver($mail_cliente['email']);
                     $mail->save();
                 }
             }
 
-            if(!empty($stato['notifica_tecnici'])){
+            if (!empty($stato['notifica_tecnici'])) {
                 $tecnici_intervento = $dbo->select('in_interventi_tecnici', 'idtecnico', ['idintervento' => $id_record]);
                 $tecnici_assegnati = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico AS idtecnico', ['id_intervento' => $id_record]);
                 $tecnici = array_unique(array_merge($tecnici_intervento, $tecnici_assegnati), SORT_REGULAR);
 
-                foreach($tecnici as $tecnico){
+                foreach ($tecnici as $tecnico) {
                     $mail_tecnico = $dbo->selectOne('an_anagrafiche', '*', ['idanagrafica' => $tecnico]);
-                    if(!empty($mail_tecnico['email'])){
+                    if (!empty($mail_tecnico['email'])) {
                         $mail = Mail::build(auth()->getUser(), $template, $id_record);
                         $mail->addReceiver($mail_tecnico['email']);
                         $mail->save();
                     }
                 }
             }
-
         }
         aggiorna_sedi_movimenti('interventi', $id_record);
         flash()->info(tr('Attività modificata correttamente!'));

@@ -668,7 +668,7 @@ class Database extends Util\Singleton
      */
     public function raw($value)
     {
-        return$this->getCapsule()->getConnection()->raw($value);
+        return $this->getCapsule()->getConnection()->raw($value);
     }
 
     /**

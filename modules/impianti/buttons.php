@@ -19,7 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-echo'
+echo '
 <button type="button" class="btn btn-primary" onclick="if( confirm(\'Duplicare questo impianto?\') ){ $(\'#copia-impianto\').submit(); }"> <i class="fa fa-copy"></i> '.tr('Duplica impianto').'</button>';
 
 // Duplica impianto

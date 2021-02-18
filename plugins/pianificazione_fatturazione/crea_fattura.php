@@ -33,7 +33,7 @@ $numero_rata = $contratto->pianificazioni->search(function ($item) use ($id_pian
 $module_fattura = Modules::get('Fatture di vendita');
 
 $id_conto = setting('Conto predefinito fatture di vendita');
-$data = date("Y-m",strtotime($pianificazione->data_scadenza))."-".date("d",strtotime($contratto->data_accettazione));
+$data = date('Y-m', strtotime($pianificazione->data_scadenza)).'-'.date('d', strtotime($contratto->data_accettazione));
 
 echo '
 <form action="" method="post">

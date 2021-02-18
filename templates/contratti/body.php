@@ -259,7 +259,7 @@ if ($options['pricing']) {
     	</th>
     </tr>';
 }
-echo'
+echo '
 </table>';
 
 // CONDIZIONI GENERALI DI FORNITURA

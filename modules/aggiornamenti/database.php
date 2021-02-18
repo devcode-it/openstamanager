@@ -127,10 +127,10 @@ if (!empty($results)) {
     <tbody>';
 
             foreach ($errors as $name => $diff) {
-                if(count($diff) == 1 && array_key_exists('type',$diff) && str_contains($diff['type']['expected'] , $diff['type']['current'])){
-                    $class="info";
-                }else{
-                    $class="warning";
+                if (count($diff) == 1 && array_key_exists('type', $diff) && str_contains($diff['type']['expected'], $diff['type']['current'])) {
+                    $class = 'info';
+                } else {
+                    $class = 'warning';
                 }
                 echo '
         <tr class="bg-'.$class.'" >
@@ -161,11 +161,10 @@ if (!empty($results)) {
     <tbody>';
 
             foreach ($foreign_keys as $name => $diff) {
-                
-                if(count($diff) == 2 && array_key_exists('current',$diff) &&  $diff['current'] == null ){
-                    $class="info";
-                }else{
-                    $class="warning";
+                if (count($diff) == 2 && array_key_exists('current', $diff) && $diff['current'] == null) {
+                    $class = 'info';
+                } else {
+                    $class = 'warning';
                 }
                 echo '
         <tr class="bg-'.$class.'" >

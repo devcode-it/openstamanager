@@ -85,11 +85,11 @@ foreach ($primo_livello as $conto_primo) {
                     <tr>
                         <th>'.tr('Descrizione').'</th>
                         <th style="width: 10%" class="text-center">'.tr('Importo').'</th>';
-                        if($conto_primo['descrizione']=='Economico'){
-                            echo '
+        if ($conto_primo['descrizione'] == 'Economico') {
+            echo '
                             <th style="width: 10%" class="text-center">'.tr('Importo reddito').'</th>';
-                        }
-                    echo '
+        }
+        echo '
                     </tr>
                 </thead>
 
@@ -125,7 +125,7 @@ foreach ($primo_livello as $conto_primo) {
                 $totale_conto = -$totale_conto;
                 $totale_reddito = -$totale_reddito;
             }
-            
+
             $totale_conto2 += $totale_conto;
             $totale_reddito2 += $totale_reddito;
 
@@ -178,7 +178,7 @@ foreach ($primo_livello as $conto_primo) {
                             </a>';
             }
 
-            echo  '
+            echo '
                         </span>';
 
             // Span con info del conto
@@ -192,13 +192,13 @@ foreach ($primo_livello as $conto_primo) {
                     <td class="text-right">
                         '.moneyFormat($totale_conto, 2).'
                     </td>';
-                    if($conto_primo['descrizione']=='Economico'){
-                        echo '
+            if ($conto_primo['descrizione'] == 'Economico') {
+                echo '
                         <td class="text-right">
                             '.moneyFormat($totale_reddito, 2).'
                         </td>';
-                    }
-                echo '
+            }
+            echo '
                 </tr>';
         }
 
@@ -209,10 +209,10 @@ foreach ($primo_livello as $conto_primo) {
                     <tr>
                         <th class="text-right">'.tr('Totale').'</th>
                         <th class="text-right">'.moneyFormat($totale_conto2).'</th>';
-                        if($conto_primo['descrizione']=='Economico'){
-                            echo '<th class="text-right">'.moneyFormat($totale_reddito2).'</th>';
-                        }
-                    echo '
+        if ($conto_primo['descrizione'] == 'Economico') {
+            echo '<th class="text-right">'.moneyFormat($totale_reddito2).'</th>';
+        }
+        echo '
                     </tr>
                 </tfoot>
             </table>';
@@ -240,8 +240,8 @@ foreach ($primo_livello as $conto_primo) {
             }
         }
 
-        $totale_conto2=0;
-        $totale_reddito2=0;
+        $totale_conto2 = 0;
+        $totale_reddito2 = 0;
     }
 
     echo '

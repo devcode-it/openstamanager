@@ -85,7 +85,7 @@ echo '
             {[ "type": "number", "label": "'.tr('Sconto km').'", "name": "sconto_km", "value": "'.$sessione['scontokm_unitario'].'", "icon-after": "choice|untprc|'.$sessione['tipo_sconto_km'].'"]}
         </div>';
 
-    echo'
+    echo '
     </div>
 
     <div class="row">
@@ -101,7 +101,7 @@ echo '
             {[ "type": "number", "label": "'.tr('Addebito diritto ch.').'", "name": "prezzo_dirittochiamata", "value": "'.$sessione['prezzo_dirittochiamata'].'" ]}
         </div>';
 
-    echo'
+    echo '
     </div>';
 
 echo '

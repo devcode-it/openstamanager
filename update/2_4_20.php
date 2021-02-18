@@ -61,13 +61,13 @@ foreach ($righe as $riga) {
 
     if ($this_riga !== null) {
         $this_riga->setPrezzoUnitario($riga['prezzo_unitario'], $riga['idiva']);
-        
+
         if ($riga['tipo_sconto'] == 'PRC') {
             $this_riga->setSconto($riga['sconto_percentuale'], $riga['tipo_sconto']);
         } else {
             $this_riga->setSconto($riga['sconto_unitario'], $riga['tipo_sconto']);
         }
-        
+
         $this_riga->save();
     }
 }
@@ -84,7 +84,7 @@ foreach ($righe as $riga) {
 
     if ($this_riga !== null) {
         $this_riga->setPrezzoUnitario($riga['prezzo_unitario'], $riga['idiva']);
-        
+
         if ($riga['tipo_sconto'] == 'PRC') {
             $this_riga->setSconto($riga['sconto_percentuale'], $riga['tipo_sconto']);
         } else {
@@ -107,7 +107,7 @@ foreach ($righe as $riga) {
 
     if ($this_riga !== null) {
         $this_riga->setPrezzoUnitario($riga['prezzo_unitario'], $riga['idiva']);
-        
+
         if ($riga['tipo_sconto'] == 'PRC') {
             $this_riga->setSconto($riga['sconto_percentuale'], $riga['tipo_sconto']);
         } else {

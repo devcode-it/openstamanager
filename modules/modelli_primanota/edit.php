@@ -78,11 +78,11 @@ for ($i = 0; $i < 10; ++$i) {
                 </td>
 
                 <td class="text-right">
-                    {[ "type": "number", "name": "dare['.$i.']", "id": "dare'.$id.'", "value": "'.($rs[$i]['totale']>0 ? $rs[$i]['totale'] : '').'"]}
+                    {[ "type": "number", "name": "dare['.$i.']", "id": "dare'.$id.'", "value": "'.($rs[$i]['totale'] > 0 ? $rs[$i]['totale'] : '').'"]}
                 </td>
                 
                 <td class="text-right">
-                    {[ "type": "number", "name": "avere['.$i.']", "id": "avere'.$id.'", "value": "'.($rs[$i]['totale']<0 ? abs($rs[$i]['totale']) : '').'"]}
+                    {[ "type": "number", "name": "avere['.$i.']", "id": "avere'.$id.'", "value": "'.($rs[$i]['totale'] < 0 ? abs($rs[$i]['totale']) : '').'"]}
                 </td>
 			</tr>';
 }

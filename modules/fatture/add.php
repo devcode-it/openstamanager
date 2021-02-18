@@ -36,7 +36,6 @@ $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
     'dir' => $dir,
 ])['id'];
 
-
 ?>
 <form action="" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">

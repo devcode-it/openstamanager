@@ -23,7 +23,6 @@ $operazione = filter('op');
 
 switch ($operazione) {
     case 'edit_revision':
-
         $master_revision = post('master_revision');
         $id_record = post('idrevisione');
         //Tolgo il flag default_revision da tutte le revisioni e dal record_principale
@@ -34,7 +33,6 @@ switch ($operazione) {
         break;
 
     case 'delete_revision':
-
         $idrevisione = post('idrevisione');
         $dbo->query('DELETE FROM co_preventivi WHERE id='.prepare($idrevisione));
 

@@ -19,8 +19,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-
-
 if (get('lev') == '2' || get('lev') == '3') {
     $dare = 0;
     $avere = 0;

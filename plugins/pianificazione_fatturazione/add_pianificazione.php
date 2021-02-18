@@ -106,7 +106,7 @@ $righe = $contratto->getRighe();
 
 echo '
 <div class="alert alert-info">
-    <p>'.tr("Puoi utilizzare le seguenti variabili nella descrizione delle righe").':</p>'.variables()['list'].'
+    <p>'.tr('Puoi utilizzare le seguenti variabili nella descrizione delle righe').':</p>'.variables()['list'].'
 </div>';
 
 foreach ($righe as $riga) {
@@ -131,9 +131,9 @@ foreach ($righe as $riga) {
                     <div class="col-md-9">
                         {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione['.$riga->id.']", "value": "'.$descrizione.'" ]}
 
-                        {[ "type": "number", "label": "'.tr('Q.tà per fattura').'", "class":"qta_fattura", "name": "qta['.$riga->id.']", "required": 1, "value": "1", "decimals": "qta", "min-value": "1", "icon-after":"'.tr('Su _TOT_',[
-                            '_TOT_' => Translator::numberToLocale( ($riga->qta-$riga->qta_evasa) ),
-                        ]).'", "options":"'.str_replace('"','\"',$options).'" ]}
+                        {[ "type": "number", "label": "'.tr('Q.tà per fattura').'", "class":"qta_fattura", "name": "qta['.$riga->id.']", "required": 1, "value": "1", "decimals": "qta", "min-value": "1", "icon-after":"'.tr('Su _TOT_', [
+                            '_TOT_' => Translator::numberToLocale(($riga->qta - $riga->qta_evasa)),
+                        ]).'", "options":"'.str_replace('"', '\"', $options).'" ]}
                     </div>
                     <div class="col-md-3" id="totali_'.$riga->id.'">
                     </div>

@@ -37,7 +37,7 @@ function customStructure()
         $files = glob(base_dir().'/'.$dir.'/*/custom/*.{php,html}', GLOB_BRACE);
         $recursive_files = glob(base_dir().'/'.$dir.'/*/custom/**/*.{php,html}', GLOB_BRACE);
 
-        $files = array_merge($files, $recursive_files); 
+        $files = array_merge($files, $recursive_files);
 
         foreach ($files as $file) {
             $file = str_replace(base_dir().'/', '', $file);
@@ -53,7 +53,7 @@ function customStructure()
     $files = glob(base_dir().'/include/custom/*.{php,html}', GLOB_BRACE);
     $recursive_files = glob(base_dir().'/include/custom/**/*.{php,html}', GLOB_BRACE);
 
-    $files = array_merge($files, $recursive_files); 
+    $files = array_merge($files, $recursive_files);
 
     foreach ($files as $file) {
         $file = str_replace(base_dir().'/', '', $file);

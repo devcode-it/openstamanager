@@ -24,22 +24,22 @@ include_once __DIR__.'/../../core.php';
 
 $contratto = Contratto::find($id_record);
 
-if(get('scadenza')=='Mensile'){
+if (get('scadenza') == 'Mensile') {
     $timeing = '+1 month';
 }
-if(get('scadenza')=='Bimestrale'){
+if (get('scadenza') == 'Bimestrale') {
     $timeing = '+2 month';
 }
-if(get('scadenza')=='Trimestrale'){
+if (get('scadenza') == 'Trimestrale') {
     $timeing = '+3 month';
 }
-if(get('scadenza')=='Quadrimestrale'){
+if (get('scadenza') == 'Quadrimestrale') {
     $timeing = '+4 month';
 }
-if(get('scadenza')=='Semestrale'){
+if (get('scadenza') == 'Semestrale') {
     $timeing = '+6 month';
 }
-if(get('scadenza')=='Annuale'){
+if (get('scadenza') == 'Annuale') {
     $timeing = '+12 month';
 }
 
@@ -54,13 +54,13 @@ echo '
 
     while ($data_corrente->lessThanOrEqualTo($data_conclusione)) {
         $data = $data_corrente->endOfMonth()->format('Y-m-d');
-        $data_fatturazione = ($data_fatturazione ?: date("Y-m", strtotime($data)) );
+        $data_fatturazione = ($data_fatturazione ?: date('Y-m', strtotime($data)));
         unset($checked);
 
-        if( $id_module==Modules::get('Contratti')['id'] ){
-            if( $data==date("Y-m-t", strtotime($timeing, strtotime($data_fatturazione)) ) ){
+        if ($id_module == Modules::get('Contratti')['id']) {
+            if ($data == date('Y-m-t', strtotime($timeing, strtotime($data_fatturazione)))) {
                 $checked = 'checked';
-                $data_fatturazione = date("Y-m", strtotime($data));
+                $data_fatturazione = date('Y-m', strtotime($data));
             }
         }
 

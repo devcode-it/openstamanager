@@ -33,10 +33,9 @@ echo '<style>
 }
 </style>';
 
-
-if (!empty($_SESSION['superselect']['id_articolo_barcode']) ){
+if (!empty($_SESSION['superselect']['id_articolo_barcode'])) {
     $articoli = Articolo::whereIn('id', $_SESSION['superselect']['id_articolo_barcode'])->get();
-    unset( $_SESSION['superselect']['id_articolo_barcode'] );
+    unset($_SESSION['superselect']['id_articolo_barcode']);
 } else {
     $articoli = Articolo::where('id', '=', $id_record)->get();
 }
@@ -44,17 +43,16 @@ if (!empty($_SESSION['superselect']['id_articolo_barcode']) ){
 $pages = count($articoli);
 $page = 0;
 
-foreach( $articoli as $articolo ){
+foreach ($articoli as $articolo) {
     echo '
     <div class="barcode-cell">
         <barcode code="'.$articolo->barcode.'" type="C39" height="2" size="0.65" class="barcode" />
         <p><b>'.$articolo->barcode.'</b></p>
     </div>';
 
-    $page++;
-    
-    if ( $page < $pages ) {
+    ++$page;
+
+    if ($page < $pages) {
         echo '<pagebreak>';
     }
-
 }

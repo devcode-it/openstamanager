@@ -9,7 +9,7 @@ class DDTCest
      */
     protected $rowHelper;
 
-    public function _before(\AcceptanceTester $t)
+    public function _before(AcceptanceTester $t)
     {
         // Effettua l'accesso con le credenziali fornite
         $t->login('admin', 'admin');

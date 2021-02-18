@@ -19,13 +19,12 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\Ordini\Ordine;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Stato;
 use Modules\Fatture\Tipo;
+use Modules\Ordini\Ordine;
 
 $module_fatture = 'Fatture di vendita';
-
 
 // Segmenti
 $id_fatture = Modules::get($module_fatture)['id'];
@@ -118,7 +117,7 @@ switch (post('op')) {
 
         $n_ordini = 0;
 
-        foreach ($id_records as $id) { 
+        foreach ($id_records as $id) {
             $ordine = Ordine::find($id);
             $ordine->idstatoordine = $id_stato;
             $ordine->save();
@@ -137,7 +136,7 @@ switch (post('op')) {
     break;
 }
 if ($module['name'] == 'Ordini cliente') {
-$operations['crea_fattura'] = [
+    $operations['crea_fattura'] = [
         'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Fattura _TYPE_', ['_TYPE_' => strtolower($module['name'])]),
         'data' => [
             'title' => tr('Fatturare i _TYPE_ selezionati?', ['_TYPE_' => strtolower($module['name'])]),
@@ -148,7 +147,7 @@ $operations['crea_fattura'] = [
             'blank' => false,
         ],
     ];
-} 
+}
 
 $operations['cambia_stato'] = [
     'text' => '<span><i class="fa fa-refresh"></i> '.tr('Cambia stato'),
@@ -161,4 +160,5 @@ $operations['cambia_stato'] = [
         'blank' => false,
     ],
 ];
+
     return $operations;

@@ -141,5 +141,4 @@ switch ($resource) {
         $results = array_merge($ordini, $ddt);
 
         break;
-    
 }

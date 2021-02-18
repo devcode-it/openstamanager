@@ -75,7 +75,7 @@ if (!empty($options['create_document'])) {
         $id_segment = $_SESSION['module_'.$final_module['id']]['id_segment'];
 
         $stato_predefinito = $database->fetchOne("SELECT id FROM co_statidocumento WHERE descrizione = 'Bozza'");
-       
+
         echo '
             <input type="hidden" name="reversed" value="'.$options['reversed'].'">
             <div class="col-md-6">

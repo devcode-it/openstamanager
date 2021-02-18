@@ -63,7 +63,7 @@ switch (post('op')) {
         $idpagamento = post('idpagamento');
         $numero_esterno = post('numero_esterno');
         $id_anagrafica = post('idanagrafica');
-        
+
         if ($dir == 'uscita') {
             $idrivalsainps = post('id_rivalsa_inps');
             $idritenutaacconto = post('id_ritenuta_acconto');
@@ -73,7 +73,7 @@ switch (post('op')) {
             $idritenutaacconto = 0;
             $bollo = 0;
         }
- 
+
         $tipo_sconto = post('tipo_sconto_generico');
         $sconto = post('sconto_generico');
 

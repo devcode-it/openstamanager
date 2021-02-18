@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 use Util\Zip;
 
 if (!setting('Attiva aggiornamenti')) {
-    die(tr('Accesso negato'));
+    exit(tr('Accesso negato'));
 }
 
 if (!extension_loaded('zip')) {

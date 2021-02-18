@@ -98,7 +98,7 @@ class Permissions
                 }
 
                 if (!$result && $die) {
-                    die(tr('Accesso negato'));
+                    exit(tr('Accesso negato'));
                 }
             }
         }

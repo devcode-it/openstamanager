@@ -207,7 +207,6 @@ class Contratto extends Document
             $intervallo = CarbonInterval::make($this->validita.' '.$this->tipo_validita);
             $data = Carbon::make($this->data_accettazione)->add($intervallo);
             $this->data_conclusione = $data->subDays(1);
-
         }
     }
 

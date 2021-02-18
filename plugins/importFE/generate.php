@@ -118,7 +118,7 @@ $tipo_documento = $database->fetchOne('SELECT CONCAT("(", codice, ") ", descrizi
 // Gestione per fattura elettroniche senza pagamento definito
 $pagamenti = [];
 if (isset($fattura_body['DatiPagamento'])) {
-    $pagamenti =  $fattura_body['DatiPagamento'];
+    $pagamenti = $fattura_body['DatiPagamento'];
     $pagamenti = isset($pagamenti[0]) ? $pagamenti : [$pagamenti];
 }
 
@@ -282,11 +282,11 @@ echo '
         </div>';
 
         $ritenuta = $dati_generali['DatiRitenuta'];
-        
-        if(!empty($ritenuta)){
+
+        if (!empty($ritenuta)) {
             echo '
             <div class="col-md-3">
-                {[ "type": "checkbox", "label": "'.tr('Ritenuta pagata dal fornitore').'", "name": "is_ritenuta_pagata", "value": 0, "help": "'.tr("Attivare se la ritenuta è stata pagata dal fornitore").'" ]}
+                {[ "type": "checkbox", "label": "'.tr('Ritenuta pagata dal fornitore').'", "name": "is_ritenuta_pagata", "value": 0, "help": "'.tr('Attivare se la ritenuta è stata pagata dal fornitore').'" ]}
             </div>';
         }
     echo '
@@ -323,7 +323,7 @@ if (!empty($righe)) {
             $query .= ' AND codice_natura_fe = '.prepare($riga['Natura']);
 
             // Fallback per natura iva mancante
-            if( empty($dbo->fetchArray($query)) ){
+            if (empty($dbo->fetchArray($query))) {
                 $query = $start_query;
             }
         }

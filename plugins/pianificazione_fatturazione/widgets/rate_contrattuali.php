@@ -23,8 +23,8 @@ include_once __DIR__.'/../../../core.php';
 
 $pianificazioni = Pianificazione::doesntHave('fattura')
     ->orderBy('data_scadenza', 'asc')
-    ->whereHas('contratto', function($q){
-        $q->whereHas('stato', function($q){
+    ->whereHas('contratto', function ($q) {
+        $q->whereHas('stato', function ($q) {
             $q->where('is_fatturabile', 1);
         });
     })

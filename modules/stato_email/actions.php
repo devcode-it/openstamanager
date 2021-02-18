@@ -22,7 +22,6 @@ use Notifications\EmailNotification;
 
 switch (post('op')) {
     case 'send':
-
         $email = EmailNotification::build($mail);
 
         // Invio mail

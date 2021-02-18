@@ -58,7 +58,6 @@ switch (post('op')) {
         break;
 
     case 'delete':
-
         $documenti = $dbo->fetchNum('SELECT id FROM dt_ddt WHERE idaspettobeni='.prepare($id_record).'
                      UNION SELECT id FROM co_documenti WHERE idaspettobeni='.prepare($id_record));
 

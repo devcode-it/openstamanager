@@ -58,7 +58,7 @@ if (in_array($id_cliente, $tipi_anagrafica) or in_array($id_fornitore, $tipi_ana
     }
 
     if (in_array($id_fornitore, $tipi_anagrafica)) {
-        echo  '<li><a data-toggle="modal" data-title="'.tr('Aggiungi ordine fornitore').'" data-href="add.php?id_module='.Modules::get('Ordini fornitore')['id'].'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-file-o fa-flip-horizontal"></i>'.tr('Nuovo ordine fornitore').'
+        echo '<li><a data-toggle="modal" data-title="'.tr('Aggiungi ordine fornitore').'" data-href="add.php?id_module='.Modules::get('Ordini fornitore')['id'].'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-file-o fa-flip-horizontal"></i>'.tr('Nuovo ordine fornitore').'
     </a></li>
 
       <li><a data-toggle="modal" data-title="'.tr('Aggiungi ddt entrata').'" data-href="add.php?id_module='.Modules::get('Ddt di acquisto')['id'].'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-truck fa-flip-horizontal"></i>'.tr('Nuovo ddt in entrata').'

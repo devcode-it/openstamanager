@@ -19,13 +19,12 @@
 
 namespace Plugins\ImportFE;
 
+use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Articoli\Categoria;
 use Modules\Fatture\Components\Articolo;
 use Modules\Fatture\Components\Riga;
 use Modules\Fatture\Fattura;
-use Modules\Anagrafiche\Anagrafica;
-use Plugins\DettagliArticolo\DettaglioFornitore;
 use Plugins\DettagliArticolo\DettaglioPrezzo;
 use UnexpectedValueException;
 use Util\XML;

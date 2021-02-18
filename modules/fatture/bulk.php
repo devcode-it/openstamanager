@@ -235,9 +235,9 @@ switch (post('op')) {
             $new->id_segment = $id_segment;
             $new->numero = Fattura::getNextNumero($data, $dir, $id_segment);
             //if (!empty($fattura->numero_esterno)) {
-                //$new->numero_esterno = Fattura::getNextNumeroSecondario($data, $dir, $id_segment);
+            //$new->numero_esterno = Fattura::getNextNumeroSecondario($data, $dir, $id_segment);
             //}
-            
+
             $new->numero_esterno = '';
 
             $new->codice_stato_fe = null;

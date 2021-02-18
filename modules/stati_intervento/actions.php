@@ -58,7 +58,6 @@ switch (post('op')) {
         break;
 
     case 'delete':
-
         //scelgo se settare come eliminato o cancellare direttamente la riga se non è stato utilizzato negli interventi
         if (count($dbo->fetchArray('SELECT id FROM in_interventi WHERE idstatointervento='.prepare($id_record))) > 0) {
             $query = 'UPDATE in_statiintervento SET deleted_at = NOW() WHERE idstatointervento='.prepare($id_record).' AND `can_delete`=1';

@@ -27,7 +27,7 @@ use Modules\Emails\Template;
 use Notifications\EmailNotification;
 
 if (empty($structure) || empty($structure['enabled'])) {
-    die(tr('Accesso negato'));
+    exit(tr('Accesso negato'));
 }
 
 $upload_dir = base_dir().'/'.Uploads::getDirectory($id_module, $id_plugin);

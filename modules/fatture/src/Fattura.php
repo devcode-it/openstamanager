@@ -168,7 +168,7 @@ class Fattura extends Document
                 $id_banca_azienda = $azienda->{'idbanca_'.$conto};
             }
         }
-        
+
         $model->id_banca_azienda = $id_banca_azienda;
 
         // Gestione dello Split Payment sulla base dell'anagrafica Controparte

@@ -488,8 +488,6 @@ class Update
             }
         }
 
-        $results;
-
         return $results;
     }
 
@@ -532,7 +530,7 @@ class Update
             return 'modules/'.$module.'/update/'.$version;
         }
 
-        return  $update['directory'].'/update/'.$version;
+        return $update['directory'].'/update/'.$version;
     }
 
     /**

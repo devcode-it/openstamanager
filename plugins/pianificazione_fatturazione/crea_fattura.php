@@ -1,7 +1,7 @@
 <?php
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
- * Copyright (C) DevCode s.r.l.
+ * Copyright (C) DevCode s.n.c.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ $numero_rata = $contratto->pianificazioni->search(function ($item) use ($id_pian
 $module_fattura = Modules::get('Fatture di vendita');
 
 $id_conto = setting('Conto predefinito fatture di vendita');
+$data = date("Y-m",strtotime($pianificazione->data_scadenza))."-".date("d",strtotime($contratto->data_accettazione));
 
 echo '
 <form action="" method="post">
@@ -47,7 +48,7 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "date", "label": "'.tr('Data').'", "name": "data", "required": 1, "class": "text-center", "value": "-now-" ]}
+            {[ "type": "date", "label": "'.tr('Data').'", "name": "data", "required": 1, "class": "text-center", "value": "'.$pianificazione->data_scadenza.'" ]}
         </div>';
 
 // Tipo di documento

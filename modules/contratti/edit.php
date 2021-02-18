@@ -108,36 +108,9 @@ $block_edit = $record['is_completato'];
 					{[ "type": "number", "label": "<?php echo tr('Validità contratto'); ?>", "name": "validita", "decimals": "0", "value": "$validita$", "icon-after": "choice|period|<?php echo $record['tipo_validita']; ?>", "help": "<?php echo tr('Il campo Validità contratto viene utilizzato per il calcolo della Data di conclusione del contratto'); ?>" ]}
 				</div>
 
-				<div class="col-md-3">
-					{[ "type": "checkbox", "label": "<?php echo tr('Rinnovabile'); ?>", "name": "rinnovabile", "help": "<?php echo tr('Il contratto è rinnovabile?'); ?>", "value": "$rinnovabile$" ]}
-				</div>
-
-                <div class="col-md-3">
-					{[ "type": "checkbox", "label": "<?php echo tr('Rinnovo automatico'); ?>", "name": "rinnovo_automatico", "help": "<?php echo tr('Il contratto è da rinnovare automaticamente alla scadenza'); ?>", "value": "$rinnovo_automatico$", "disabled": <?php echo $record['rinnovabile'] ? 0 : 1; ?> ]}
-				</div>
-
-				<div class="col-md-3">
-					{[ "type": "number", "label": "<?php echo tr('Preavviso per rinnovo'); ?>", "name": "giorni_preavviso_rinnovo", "decimals": "2", "value": "$giorni_preavviso_rinnovo$", "icon-after": "giorni", "disabled": <?php echo $record['rinnovabile'] ? 0 : 1; ?> ]}
-				</div>
-
-			</div>
-
-			<div class="row">
-
-			</div>
-
-			<div class="row">
-				
-
-                <div class="col-md-3">
-					{[ "type": "number", "label": "<?php echo tr('Ore rimanenti rinnovo'); ?>", "name": "ore_preavviso_rinnovo", "decimals": "2", "value": "$ore_preavviso_rinnovo$", "icon-after": "ore", "disabled": <?php echo $record['rinnovabile'] ? 0 : 1; ?>, "help": "<?php echo tr('Ore residue nel contratto prima di visualizzare una avviso per un eventuale rinnovo anticipato.'); ?>" ]}
-				</div>
-
-                <div class="col-md-6">
+                <div class="col-md-9">
 					{[ "type": "select", "multiple": "1", "label": "<?php echo tr('Impianti'); ?>", "name": "matricolaimpianto[]", "values": "query=SELECT idanagrafica, id AS id, IF(nome = '', matricola, CONCAT(matricola, ' - ', nome)) AS descrizione FROM my_impianti WHERE idanagrafica='$idanagrafica$' ORDER BY descrizione", "value": "$idimpianti$", "icon-after": "add|<?php echo Modules::get('Impianti')['id']; ?>|||<?php echo (empty($block_edit)) ? '' : 'disabled'; ?>" ]}
 				</div>
-
-
 
             </div>
 

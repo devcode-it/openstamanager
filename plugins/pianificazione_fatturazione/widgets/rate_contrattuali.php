@@ -1,7 +1,7 @@
 <?php
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
- * Copyright (C) DevCode s.r.l.
+ * Copyright (C) DevCode s.n.c.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,10 +22,7 @@ use Plugins\PianificazioneFatturazione\Pianificazione;
 include_once __DIR__.'/../../../core.php';
 
 $pianificazioni = Pianificazione::doesntHave('fattura')
-    ->leftjoin('co_contratti', 'co_contratti.id', '=', 'co_fatturazione_contratti.idcontratto')
-    ->leftjoin('an_anagrafiche', 'an_anagrafiche.idanagrafica', '=', 'co_contratti.idanagrafica')
     ->orderBy('data_scadenza', 'asc')
-    ->orderBy('ragione_sociale', 'asc')
     ->whereHas('contratto', function($q){
         $q->whereHas('stato', function($q){
             $q->where('is_fatturabile', 1);

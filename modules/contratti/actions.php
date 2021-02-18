@@ -76,10 +76,6 @@ switch (post('op')) {
             $contratto->data_accettazione = post('data_accettazione');
             $contratto->data_conclusione = post('data_conclusione');
 
-            $contratto->rinnovabile = post('rinnovabile');
-            $contratto->rinnovo_automatico = post('rinnovo_automatico');
-            $contratto->giorni_preavviso_rinnovo = post('giorni_preavviso_rinnovo');
-            $contratto->ore_preavviso_rinnovo = post('ore_preavviso_rinnovo');
             $contratto->esclusioni = post('esclusioni');
             $contratto->descrizione = post('descrizione');
             $contratto->id_documento_fe = post('id_documento_fe');
@@ -108,6 +104,17 @@ switch (post('op')) {
 
             flash()->info(tr('Contratto modificato correttamente!'));
         }
+
+        break;
+
+    case 'update_rinnovo':
+
+        $contratto->rinnovabile = post('rinnovabile');
+        $contratto->rinnovo_automatico = post('rinnovo_automatico');
+        $contratto->giorni_preavviso_rinnovo = post('giorni_preavviso_rinnovo');
+        $contratto->ore_preavviso_rinnovo = post('ore_preavviso_rinnovo');
+        $contratto->save();
+        flash()->info(tr('Contratto modificato correttamente!'));
 
         break;
 

@@ -135,7 +135,7 @@ class Plugins
         if (!empty($plugin) && in_array($plugin->permission, ['r', 'rw'])) {
             $anchor = 'tab_'.$plugin->id;
 
-            return Modules::link($plugin->module->id, $id_record, $testo, $alternativo, $extra, $blank, $anchor);
+            return Modules::link($plugin->originalModule->id, $id_record, $testo, $alternativo, $extra, $blank, $anchor);
         }
 
         return $alternativo;

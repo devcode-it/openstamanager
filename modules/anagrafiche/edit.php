@@ -450,10 +450,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                         </div>';
     } else {
         echo '
-                        <div class="alert alert-info">
-                            '.tr('Non sono presenti banche per l\'anagrafica').'... '.Modules::link('Banche', null, tr('Creane una')).'
-                        </div>';
-
+                        <p>'.tr("Nessuna banca disponibile per l'Anagrafica").'</p>';
     }
 
     echo '
@@ -680,7 +677,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
 
                 <div class="row">
                     <div class="col-md-12">
-                        {[ "type": "checkbox", "label": "<?php echo tr('Opt-out per newsletter'); ?>", "name": "disable_newsletter", "value": "<?php echo empty($record['enable_newsletter']); ?>" ]}
+                        {[ "type": "checkbox", "label": "<?php echo tr('Opt-out newsletter'); ?>", "name": "disable_newsletter", "value": "<?php echo empty($record['enable_newsletter']); ?>" ]}
                     </div>
                 </div>
 			</div>

@@ -137,6 +137,13 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `
 
 INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) (SELECT `zz_groups`.`id`, `zz_views`.`id` FROM `zz_groups`, `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` WHERE `zz_modules`.`name` = 'Fatture di acquisto' AND `zz_views`.`name` = '_bg_'); 
 
+
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES (NULL, 'Descrizione fattura pianificata', 'Canone {rata} del contratto numero {numero}', 'text', '1', 'Fatturazione');
+
+ALTER TABLE `co_righe_contratti` ADD `idpianificazione` INT NULL DEFAULT NULL AFTER `idarticolo`;
 INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `filename`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `default`, `enabled`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name`='Fatture di vendita'), '1', 'Fattura elettronica di vendita', 'Fattura elettronica di vendita', 'Fattura elettronica {numero} del {data}', 'fatture_elettroniche', 'iddocumento', '{\"hide-header\": true, \"hide-footer\": true}', 'fa fa-print', '', '', '0', '1', '1', '1');
 
 INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `filename`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `default`, `enabled`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name`='Fatture di acquisto'), '1', 'Fattura elettronica di acquisto', 'Fattura elettronica di acquisto', 'Fattura elettronica {numero} del {data}', 'fatture_elettroniche', 'iddocumento', '{\"hide-header\": true, \"hide-footer\": true}', 'fa fa-print', '', '', '0', '1', '1', '1');
+
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES
+(NULL, 'Numero massimo di tentativi', '10', 'integer', 1, 'Newsletter', 1, 'Numero massimo di tentativi da effettuare per cercare di inviare una mail');

@@ -36,7 +36,7 @@ echo '
 		<div class="panel-heading">
 			<h3 class="panel-title">
 			    '.tr('Dettagli scadenza').'
-                <button type="button" class="btn btn-xs btn-info pull-right tip '.(empty($documento) ? 'disabled' : '').'" id="add-scadenza" '.(empty($documento) ? 'disabled' : '').' title="È possibile aggiungere scadenze solo se è presente il collegamento a un documento, in caso contrario è consigliato creare più scadenze con la stessa descrizione">
+                <button type="button" class="btn btn-xs btn-info pull-right '.(empty($documento) ? 'disabled' : '').'" id="add-scadenza" '.(empty($documento) ? 'disabled' : '').'>
                     <i class="fa fa-plus"></i> '.tr('Aggiungi scadenza').'
                 </button>
             </h3>

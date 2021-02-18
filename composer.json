@@ -55,8 +55,7 @@
         "symfony/polyfill-php70": "^1.8",
         "symfony/translation": "^3.3",
         "symfony/var-dumper": "^3.3",
-        "willdurand/geocoder": "^3.3",
-        "ckeditor/ckeditor": "dev-full/stable"
+        "willdurand/geocoder": "^3.3"
     },
     "require-dev": {
         "codeception/codeception": "^3.0",

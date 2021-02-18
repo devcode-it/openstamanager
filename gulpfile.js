@@ -274,8 +274,8 @@ function srcFonts() {
 
 function ckeditor() {
     return gulp.src([
-        './vendor/ckeditor/ckeditor/{adapters,lang,skins,plugins}/**/*.{js,json,css,png}',
-        './vendor/ckeditor/ckeditor/*.{js,css}',
+        config.nodeDirectory + '/ckeditor4/{adapters,lang,skins,plugins}/**/*.{js,json,css,png}',
+        config.nodeDirectory + '/ckeditor4/*.{js,css}',
     ])
         .pipe(gulp.dest(config.production + '/' + config.paths.js + '/ckeditor'));
 }
@@ -345,7 +345,7 @@ function i18n() {
         config.nodeDirectory + '/**/{i18n,lang,locale,locales}/*.{js,json}',
         config.development + '/' + config.paths.js + '/i18n/**/*.{js,json}',
         '!' + config.nodeDirectory + '/**/{src,plugins}/**',
-        '!./vendor/ckeditor/ckeditor/**',
+        '!' + config.nodeDirectory + '/ckeditor4/**',
         '!' + config.nodeDirectory + '/summernote/**',
         '!' + config.nodeDirectory + '/jquery-ui/**',
     ])

@@ -33,51 +33,37 @@ if ($dir == 'entrata') {
     $conto = 'acquisti';
 }
 
-// Informazioni sulla dichiarazione d'intento, visibili solo finchè la fattura è in bozza
+// Informazioni sulla dichiarazione d'intento
 if ($dir == 'entrata' && !empty($fattura->dichiarazione) && $fattura->stato->descrizione == 'Bozza') {
     $diff = $fattura->dichiarazione->massimale - $fattura->dichiarazione->totale;
 
     $id_iva = setting("Iva per lettere d'intento");
     $iva = Aliquota::find($id_iva);
 
-    if (!empty($iva)){
-
-            if ($diff > 0) {
-                echo '
-        <div class="alert alert-info">
-            <i class="fa fa-warning"></i> '.tr("La fattura è collegata a una dichiarazione d'intento con diponibilità di _MONEY_: per collegare una riga alla dichiarazione è sufficiente inserire come IVA _IVA_", [
-                    '_MONEY_' => moneyFormat(abs($diff)),
-                    '_IVA_' => '"'.$iva->descrizione.'"',
-                ]).'.</b>
-        </div>';
-            } elseif ($diff == 0) {
-                echo '
-        <div class="alert alert-warning">
-            <i class="fa fa-warning"></i> '.tr("La dichiarazione d'intento ha raggiunto il massimale previsto di _MONEY_: le nuove righe della fattura devono presentare IVA diversa da _IVA_", [
-                    '_MONEY_' => moneyFormat(abs($fattura->dichiarazione->massimale)),
-                    '_IVA_' => '"'.$iva->descrizione.'"',
-                ]).'.</b>
-        </div>';
-            } else {
-                echo '
-        <div class="alert alert-danger">
-            <i class="fa fa-warning"></i> '.tr("La dichiarazione d'intento ha superato il massimale previsto di _MONEY_: per rimuovere righe della fattura dalla dichiarazione è sufficiente modificare l'IVA in qualcosa di diverso da _IVA_", [
-                '_MONEY_' => moneyFormat(abs($diff)),
-                    '_IVA_' => '"'.$iva->descrizione.'"',
-            ]).'.</b>
-        </div>';
-            }
-
-    }else{
-        
-        //TODO link ad impostazioni con nuova ricerca rapida
+    if ($diff > 0) {
         echo '
-        <div class="alert alert-warning">
-        <i class="fa fa-warning"></i> '.tr("Attenzione nessuna aliq. IVA definita per la dichiarazione d'intento. _SETTING_", [
-            '_SETTING_' => Modules::link("Impostazioni", $dbo->fetchOne("SELECT `id` FROM `zz_settings` WHERE nome=\"Iva per lettere d'intento\"")['id'], tr('Selezionala dalle impostazioni')),
-        ]).'
-        </div>';
-
+<div class="alert alert-info">
+    <i class="fa fa-warning"></i> '.tr("La fattura è collegata a una dichiarazione d'intento con diponibilità di _MONEY_: per collegare una riga alla dichiarazione è sufficiente inserire come IVA _IVA_", [
+            '_MONEY_' => moneyFormat(abs($diff)),
+            '_IVA_' => '"'.$iva->descrizione.'"',
+        ]).'.</b>
+</div>';
+    } elseif ($diff == 0) {
+        echo '
+<div class="alert alert-warning">
+    <i class="fa fa-warning"></i> '.tr("La dichiarazione d'intento ha raggiunto il massimale previsto di _MONEY_: le nuove righe della fattura devono presentare IVA diversa da _IVA_", [
+            '_MONEY_' => moneyFormat(abs($fattura->dichiarazione->massimale)),
+            '_IVA_' => '"'.$iva->descrizione.'"',
+        ]).'.</b>
+</div>';
+    } else {
+        echo '
+<div class="alert alert-danger">
+    <i class="fa fa-warning"></i> '.tr("La dichiarazione d'intento ha superato il massimale previsto di _MONEY_: per rimuovere righe della fattura dalla dichiarazione è sufficiente modificare l'IVA in qualcosa di diverso da _IVA_", [
+        '_MONEY_' => moneyFormat(abs($diff)),
+            '_IVA_' => '"'.$iva->descrizione.'"',
+    ]).'.</b>
+</div>';
     }
 }
 
@@ -381,12 +367,7 @@ elseif ($record['stato'] == 'Bozza') {
                 }
                 if ($dir == 'entrata') {
                     echo '
-                    <div class="col-md-3">';
-
-                    if (!empty($record['id_dichiarazione_intento'])) {
-                        echo Plugins::link("Dichiarazioni d'Intento", $record['idanagrafica'], null, null, 'class="pull-right"');
-                    }
-                    echo '
+                    <div class="col-md-3">
                         {[ "type": "select", "label": "'.tr("Dichiarazione d'intento").'", "name": "id_dichiarazione_intento", "ajax-source": "dichiarazioni_intento", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "data": "'.$record['data'].'"},"value": "$id_dichiarazione_intento$" ]}
                     </div>';
                 }

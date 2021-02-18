@@ -397,21 +397,38 @@ if (!empty($righe)) {
                 <input type="hidden" name="id_riga_riferimento['.$key.']" id="id_riga_riferimento_'.$key.'" value="">
                 <input type="hidden" name="tipo_riga_riferimento['.$key.']" id="tipo_riga_riferimento_'.$key.'" value="">
 
-                <div class="col-md-3">
-                    {[ "type": "select", "name": "articoli['.$key.']", "ajax-source": "articoli", "select-options": '.json_encode(['permetti_movimento_a_zero' => 1, 'dir' => 'entrata', 'idanagrafica' => $anagrafica ? $anagrafica->id : '']).', "icon-after": "add|'.Modules::get('Articoli')['id'].'|codice='.htmlentities($codice_principale).'&descrizione='.htmlentities($riga['Descrizione']).'", "value": "'.$id_articolo.'", "label": "'.tr('Articolo').'" ]}
+                <input type="hidden" name="tipo_riferimento_vendita['.$key.']" id="tipo_riferimento_vendita_'.$key.'" value="">
+                <input type="hidden" name="id_riferimento_vendita['.$key.']" id="id_riferimento_vendita_'.$key.'" value="">
+                <input type="hidden" name="id_riga_riferimento_vendita['.$key.']" id="id_riga_riferimento_vendita_'.$key.'" value="">
+                <input type="hidden" name="tipo_riga_riferimento_vendita['.$key.']" id="tipo_riga_riferimento_vendita_'.$key.'" value="">
+
+                <div class="col-md-12">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            {[ "type": "select", "name": "articoli['.$key.']", "ajax-source": "articoli", "select-options": '.json_encode(['permetti_movimento_a_zero' => 1, 'dir' => 'entrata', 'idanagrafica' => $anagrafica ? $anagrafica->id : '']).', "icon-after": "add|'.Modules::get('Articoli')['id'].'|codice='.htmlentities($codice_principale).'&descrizione='.htmlentities($riga['Descrizione']).'", "value": "'.$id_articolo.'", "label": "'.tr('Articolo').'" ]}
+                        </div>
+
+                        <div class="col-md-3">
+                            {[ "type": "select", "name": "conto['.$key.']", "ajax-source": "conti-acquisti", "required": 1, "label": "'.tr('Conto acquisti').'" ]}
+                        </div>
+
+                        <div class="col-md-3">
+                            {[ "type": "select", "name": "iva['.$key.']", "values": '.json_encode('query='.$query).', "required": 1, "label": "'.tr('Aliquota IVA').'" ]}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            {[ "type": "select", "name": "selezione_riferimento['.$key.']", "ajax-source": "riferimenti-fe", "select-options": '.json_encode(['id_anagrafica' => $anagrafica ? $anagrafica->id : '']).', "label": "'.tr('Riferimento acquisto').'", "icon-after": '.json_encode('<button type="button" onclick="rimuoviRiferimento(this)" class="btn btn-primary disabled" id="rimuovi_riferimento_'.$key.'"><i class="fa fa-close"></i></button>').' ]}
+                        </div>
+                        <div class="col-md-3">
+                            {[ "type": "select", "name": "selezione_riferimento_vendita['.$key.']", "ajax-source": "riferimenti-vendita-fe", "select-options": '.json_encode(['id_articolo' => $id_articolo]).', "label": "'.tr('Riferimento vendita').'", "icon-after": '.json_encode('<button type="button" onclick="rimuoviRiferimentoVendita(this)" class="btn btn-primary disabled" id="rimuovi_riferimento_vendita_'.$key.'"><i class="fa fa-close"></i></button>').' ]}
+                        </div>
+                    </div>
+
                 </div>
 
-                <div class="col-md-3">
-                    {[ "type": "select", "name": "conto['.$key.']", "ajax-source": "conti-acquisti", "required": 1, "label": "'.tr('Conto acquisti').'" ]}
-                </div>
-
-                <div class="col-md-3">
-                    {[ "type": "select", "name": "iva['.$key.']", "values": '.json_encode('query='.$query).', "required": 1, "label": "'.tr('Aliquota IVA').'" ]}
-                </div>
-
-                <div class="col-md-3">
-                    {[ "type": "select", "name": "selezione_riferimento['.$key.']", "ajax-source": "riferimenti-fe", "select-options": '.json_encode(['id_anagrafica' => $anagrafica ? $anagrafica->id : '']).', "label": "'.tr('Riferimento').'", "icon-after": '.json_encode('<button type="button" onclick="rimuoviRiferimento(this)" class="btn btn-primary disabled" id="rimuovi_riferimento_'.$key.'"><i class="fa fa-close"></i></button>').' ]}
-                </div>
             </td>
         </tr>';
     }
@@ -488,7 +505,7 @@ echo '
 
     if (data) {
         let riga = $this.closest("tr").prev();
-        selezionaRiferimento(riga, data.tipo, data.id);
+        selezionaRiferimento(riga, data.tipo, data.id, data.dir);
     }
 });
 
@@ -504,7 +521,7 @@ function rimuoviRiferimento(button) {
     riga.removeClass("success").removeClass("warning");
 }
 
-function selezionaRiferimento(riga, tipo_documento, id_documento) {
+function selezionaRiferimento(riga, tipo_documento, id_documento, dir) {
     let id_riga = riga.data("id");
     let qta = riga.data("qta");
 
@@ -518,6 +535,7 @@ function selezionaRiferimento(riga, tipo_documento, id_documento) {
         tipo_documento: tipo_documento,
         righe_ddt: riferimenti.ddt,
         righe_ordini: riferimenti.ordini,
+        dir: dir,
     };
 
     let url = "'.$structure->fileurl('riferimento.php').'?" + $.param(query);
@@ -579,7 +597,14 @@ function impostaRiferimento(id_riga, documento, riga) {
     impostaContenuto(riga_fe.data("iva_percentuale"), riga.iva_percentuale, "%", "#riferimento_" + id_riga + "_iva");
 
     $("#riferimento_" + id_riga).html(documento.descrizione ? documento.descrizione : "");
-    $("#riferimento_" + id_riga + "_descrizione").html(riga.descrizione ? riga.descrizione : "");
+    
+    var descrizione = riga.descrizione;
+    console.log(descrizione);
+    if(typeof descrizione !== "undefined"){
+        descrizione = descrizione.replace(/_/g, " ");
+    }
+
+    $("#riferimento_" + id_riga + "_descrizione").html(descrizione ? descrizione : "");
 
     // Colorazione dell\'intera riga
     let warnings = riga_fe.find(".text-warning");
@@ -612,4 +637,33 @@ function impostaContenuto(valore_riga, valore_riferimento, contenuto_successivo,
 
     elemento.html("<br>" + contenuto);
 }
+
+function impostaRiferimentoVendita(id_riga, documento, riga) {
+    // Informazioni interne per il riferimento
+    $("#tipo_riferimento_vendita_" + id_riga).val(documento.tipo);
+    $("#id_riferimento_vendita_" + id_riga).val(documento.id);
+    $("#tipo_riga_riferimento_vendita_" + id_riga).val(riga.tipo);
+    $("#id_riga_riferimento_vendita_" + id_riga).val(riga.id);
+
+    // Gestione della selezione
+    input("selezione_riferimento_vendita[" + id_riga + "]").disable();
+    $("#rimuovi_riferimento_vendita_" + id_riga).removeClass("disabled");
+}
+
+function rimuoviRiferimentoVendita(button) {
+    let riga = $(button).closest("tr").prev();
+    let id_riga = riga.data("id");
+
+    impostaRiferimentoVendita(id_riga, {}, {});
+
+    input("selezione_riferimento_vendita[" + id_riga + "]").enable()
+        .getElement().selectReset();
+    $(button).addClass("disabled");
+    riga.removeClass("success").removeClass("warning");
+}
+
+$("[id^=\'articoli\']").change(function() {
+    updateSelectOption("id_articolo", $(this).val());
+});
+
 </script>';

@@ -48,7 +48,7 @@ if (!$riferimenti->isEmpty()) {
         echo '
         <tr data-id="'.$riga->id.'" data-type="'.$riga_class.'">
             <td>
-                <button type="button" class="btn btn-xs btn-danger pull-right" onclick="rimuoviRiferimento(this, \''.addslashes($source_type).'\',\''.$source_id.'\')">
+                <button type="button" class="btn btn-xs btn-danger pull-right" onclick="rimuoviRiferimento(this, \''.addslashes($source_type).'\', \''.$source_id.'\', \''.$riferimento->id.'\')">
                     <i class="fa fa-trash"></i>
                 </button>
 

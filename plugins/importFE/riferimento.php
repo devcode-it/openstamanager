@@ -29,6 +29,7 @@ $qta = get('qta');
 
 $id_documento = get('id_documento');
 $tipo_documento = get('tipo_documento');
+$dir = get('dir');
 if ($tipo_documento == 'ordine') {
     $documento = Ordine::find($id_documento);
     $righe_utilizzate = get('righe_ordini');
@@ -59,7 +60,7 @@ foreach ($righe as $riga) {
     $dettagli = [
         'tipo' => get_class($riga),
         'id' => $riga->id,
-        'descrizione' => $riga->descrizione,
+        'descrizione' => str_replace(' ', '_', $riga->descrizione),
         'qta' => $riga->qta,
         'um' => $riga->um,
         'prezzo_unitario' => $riga->prezzo_unitario ?: $riga_origine->prezzo_unitario,
@@ -102,8 +103,14 @@ var documento_importazione = {
 function selezionaRiga(button) {
     let riga = $(button).closest("tr");
 
-    let dettagli_riga = riga.data("dettagli");
-    impostaRiferimento("'.$id_riga.'", documento_importazione, dettagli_riga);
+    let dettagli_riga = riga.data("dettagli")
+
+    if("'.$dir.'"=="entrata"){
+        impostaRiferimentoVendita("'.$id_riga.'", documento_importazione, dettagli_riga);
+    }else{
+        impostaRiferimento("'.$id_riga.'", documento_importazione, dettagli_riga);
+    }
+
 
     $(button).closest(".modal").modal("hide");
 }

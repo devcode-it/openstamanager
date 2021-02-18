@@ -127,6 +127,8 @@ switch (filter('op')) {
             'conto' => post('conto'),
             'tipo_riga_riferimento' => post('tipo_riga_riferimento'),
             'id_riga_riferimento' => post('id_riga_riferimento'),
+            'tipo_riga_riferimento_vendita' => post('tipo_riga_riferimento_vendita'),
+            'id_riga_riferimento_vendita' => post('id_riga_riferimento_vendita'),
             'movimentazione' => post('movimentazione'),
             'crea_articoli' => post('crea_articoli'),
             'is_ritenuta_pagata' => post('is_ritenuta_pagata'),

@@ -341,7 +341,7 @@ function apriRiferimenti(button) {
     let id = riga.data("id");
     let type = riga.data("type");
 
-    openModal("'.tr('Riferimenti riga').'", globals.rootdir + "/actions.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&op=visualizza_riferimenti&riga_id=" + id + "&riga_type=" + type)
+    openModal("'.tr('Riferimenti riga').'", globals.rootdir + "/actions.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&op=visualizza_righe_riferimenti&riga_id=" + id + "&riga_type=" + type)
 }
 
 $(document).ready(function() {

@@ -307,7 +307,7 @@ $riga = $contratto->getRiga($type, $id_riga);
         $order = explode(',', post('order', true));
 
         foreach ($order as $i => $id_riga) {
-            $dbo->query('UPDATE `co_righe_contratti` SET `order` = '.prepare($i).' WHERE id='.prepare($id_riga));
+            $dbo->query('UPDATE `co_righe_contratti` SET `order` = '.prepare($i+1).' WHERE id='.prepare($id_riga));
         }
 
         break;

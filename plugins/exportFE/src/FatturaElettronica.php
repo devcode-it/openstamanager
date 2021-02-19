@@ -1265,13 +1265,11 @@ class FatturaElettronica
             return $item->aliquota != null;
         })->aliquota;
 
-        $numero = 1;
-
         foreach ($righe as $idx => $riga) {
             $dati_aggiuntivi = $riga->dati_aggiuntivi_fe;
 
             $dettaglio = [
-                'NumeroLinea' => $numero++,
+                'NumeroLinea' => $riga['order'],
             ];
 
             // 2.2.1.2

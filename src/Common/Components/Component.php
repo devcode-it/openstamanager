@@ -180,6 +180,8 @@ abstract class Component extends Model
             $original->getDocument()->triggerEvasione($this);
         }
 
+        reorderRows($this->table, $this->getDocumentID(), $this->getDocument()['id']);
+        
         return $result;
     }
 

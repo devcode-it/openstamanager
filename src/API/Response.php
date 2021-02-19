@@ -22,9 +22,11 @@ namespace API;
 use API\Exceptions\InternalError;
 use API\Exceptions\ResourceNotFound;
 use API\Exceptions\ServiceError;
+use App\Models\User;
 use Auth;
 use Exception;
 use Filter;
+use Illuminate\Support\Facades\Request;
 use Models\ApiResource as Resource;
 
 /**
@@ -95,6 +97,20 @@ class Response
 
         $request = self::getRequest();
         $version = $request['version'];
+
+        // Login sulla base del token
+        if (!empty($request['token'])) {
+            $token = $request['token'];
+
+            $user = database()->fetchArray('SELECT `id_utente` FROM `zz_tokens` WHERE `enabled` = 1 AND `token` = :token', [
+                ':token' => $token,
+            ]);
+
+            $id = !empty($user) ? $user[0]['id_utente'] : null;
+            if (!empty($id)) {
+                auth()->onceUsingId($id);
+            }
+        }
 
         // Controllo sull'accesso
         if (!auth()->check() && $request['resource'] != 'login') {
@@ -224,31 +240,28 @@ class Response
      */
     public static function getRequest($raw = false)
     {
-        $request = [];
+        $request = Request::instance();
+        $content = $request->getContent();
 
-        if (self::isAPIRequest()) {
-            $request = file_get_contents('php://input');
+        if (empty($raw)) {
+            $content = $request->all();
+            $content = Filter::sanitize($content);
 
-            if (empty($raw)) {
-                $request = (array) json_decode($request, true);
-                $request = Filter::sanitize($request);
+            // Fallback per input standard vuoto (richiesta da browser o upload file)
+            if (empty($content)) { // $_SERVER['REQUEST_METHOD'] == 'GET'
+                $content = $request->query();
+            }
 
-                // Fallback per input standard vuoto (richiesta da browser o upload file)
-                if (empty($request)) { // $_SERVER['REQUEST_METHOD'] == 'GET'
-                    $request = Filter::getGET();
-                }
+            if (empty($content['token'])) {
+                $content['token'] = '';
+            }
 
-                if (empty($request['token'])) {
-                    $request['token'] = '';
-                }
-
-                if (empty($request['version'])) {
-                    $request['version'] = 'v1';
-                }
+            if (empty($content['version'])) {
+                $content['version'] = 'v1';
             }
         }
 
-        return $request;
+        return $content;
     }
 
     /**

@@ -37,7 +37,7 @@ class SessioniInterventi extends AppResource
         $end = $today->copy()->addMonth(1);
 
         // Informazioni sull'utente
-        $user = auth()->user();
+        $user = $this->getUser();
         $id_tecnico = $user->id_anagrafica;
 
         // Elenco di interventi di interesse
@@ -76,7 +76,7 @@ class SessioniInterventi extends AppResource
         $end = $today->copy()->addMonth(1);
 
         // Informazioni sull'utente
-        $user = auth()->user();
+        $user = $this->getUser();
         $id_tecnico = $user->id_anagrafica;
 
         // Elenco di interventi di interesse
@@ -139,7 +139,7 @@ class SessioniInterventi extends AppResource
     public function createRecord($data)
     {
         // Informazioni sull'utente
-        $user = auth()->user();
+        $user = $this->getUser();
         $id_tecnico = $user->id_anagrafica;
 
         // Informazioni di base

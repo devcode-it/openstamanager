@@ -42,8 +42,7 @@ switch ($op) {
 
             //flash()->error(auth()->getStatus()[$status]['message']);
 
-            redirect_legacy(base_url().'/index.php');
-            throw new \App\Exceptions\LegacyExitException();
+            redirect('/');
         }
 
         break;
@@ -51,8 +50,7 @@ switch ($op) {
     case 'logout':
         auth()->logout();
 
-        redirect_legacy(base_url().'/index.php');
-        throw new \App\Exceptions\LegacyExitException();
+        redirect(route('login'));
         break;
 }
 

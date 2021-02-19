@@ -435,7 +435,7 @@ if (auth()->check()) {
                                 <i class="fa fa-info"></i>
                             </a></li>
 
-                            <li class="nav-button"><a href="'.base_url().'/index.php?op=logout" onclick="sessionStorage.clear()" class="bg-red tip" title="'.tr('Esci').'">
+                            <li class="nav-button"><a href="'.route('logout').'" onclick="sessionStorage.clear()" class="bg-red tip" title="'.tr('Esci').'">
                                 <i class="fa fa-power-off"></i>
                             </a></li>
                         </ul>

@@ -29,7 +29,9 @@ if (post('op') == 'self_update') {
 }
 
 $user = auth()->user();
-$token = auth()->getToken();
+
+$tokens = $user->getApiTokens();
+$token = $tokens[0]['token'];
 
 $rs = $dbo->fetchArray('SELECT * FROM an_anagrafiche WHERE idanagrafica = '.prepare($user['idanagrafica']));
 $anagrafica = [];

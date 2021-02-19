@@ -43,6 +43,6 @@ class Resource
 
     public function getUser()
     {
-        return auth()->getUser();
+        return auth()->user();
     }
 }

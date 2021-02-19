@@ -32,9 +32,11 @@ class Login extends Resource implements CreateInterface
         $database = database();
 
         // Controllo sulle credenziali
-        if (auth()->attempt($request['username'], $request['password'])) {
+        if (auth()->once(['username' => $request['username'], 'password' => $request['password']])) {
             $user = $this->getUser();
-            $token = auth()->getToken();
+
+            $tokens = $user->getApiTokens();
+            $token = $tokens[0]['token'];
 
             // Informazioni da restituire tramite l'API
             $response['user'] = $database->fetchOne('SELECT `an_anagrafiche`.`idanagrafica` AS idanagrafica, `ragione_sociale`, `codice`, `piva`, `codice_fiscale`, `indirizzo`, `citta`, `provincia`, (SELECT `nome` FROM `an_nazioni` WHERE `an_nazioni`.`id` = `an_anagrafiche`.`id_nazione`) AS nazione, `telefono`, `fax`, `cellulare`, `an_anagrafiche`.`email` FROM `zz_users` LEFT JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `zz_users`.`idanagrafica` WHERE `id` = :id', [

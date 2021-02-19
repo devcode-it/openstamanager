@@ -17,9 +17,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-// Rimozione header X-Powered-By
-header_remove('X-Powered-By');
-
 // Impostazioni di configurazione PHP
 date_default_timezone_set('Europe/Rome');
 
@@ -71,7 +68,7 @@ use Monolog\Handler\RotatingFileHandler;
 use Monolog\Handler\StreamHandler;
 
 $handlers = [];
-if (!API\Response::isAPIRequest()) {
+if (!$api_request) {
     // File di log di base (logs/error.log, logs/setup.log)
     $handlers[] = new StreamHandler(base_dir().'/logs/error.log', Monolog\Logger::ERROR);
     $handlers[] = new StreamHandler(base_dir().'/logs/setup.log', Monolog\Logger::EMERGENCY);
@@ -153,7 +150,7 @@ $revision = Update::getRevision();
 
 /* ACCESSO E INSTALLAZIONE */
 // Controllo sulla presenza dei permessi di accesso basilari
-$continue = $dbo->isInstalled() && !Update::isUpdateAvailable() && (auth()->check() || API\Response::isAPIRequest());
+$continue = $dbo->isInstalled() && !Update::isUpdateAvailable() && (auth()->check() || $api_request);
 
 if (!empty($skip_permissions)) {
     Permissions::skip();
@@ -170,7 +167,7 @@ if (!$continue && getURLPath() != slashes(base_url().'/index.php') && !Permissio
 
 /* INIZIALIZZAZIONE GENERALE */
 // Operazione aggiuntive (richieste non API)
-if (!API\Response::isAPIRequest()) {
+if (!$api_request) {
     // Impostazioni di Content-Type e Charset Header
     header('Content-Type: text/html; charset=UTF-8');
 

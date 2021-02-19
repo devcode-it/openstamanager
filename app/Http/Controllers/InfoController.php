@@ -50,7 +50,10 @@ class InfoController extends Controller
 
     public function user()
     {
-        $token = auth()->getToken();
+        $user = auth()->user();
+
+        $tokens = $user->getApiTokens();
+        $token = $tokens[0]['token'];
 
         $api = BASEURL.'/api/?token='.$token;
 

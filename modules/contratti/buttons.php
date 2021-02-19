@@ -49,7 +49,7 @@ echo '
 </div>';
 
 // Duplica contratto
-echo'
+echo '
 <button type="button" class="btn btn-primary" onclick="if( confirm(\''.tr('Duplicare questo contratto?').'\') ){ $(\'#copia-contratto\').submit(); }">
     <i class="fa fa-copy"></i> '.tr('Duplica contratto').'
 </button>';

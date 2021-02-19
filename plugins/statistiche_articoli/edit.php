@@ -104,7 +104,7 @@ if ($statistiche != null) {
     <script src="'.$statistiche->fileurl('js/stats/table.js').'"></script>';
 }
 
-echo'
+echo '
 
 <script src="'.$structure->fileurl('js/prezzo.js').'"></script>
 

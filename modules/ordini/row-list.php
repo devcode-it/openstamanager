@@ -68,6 +68,16 @@ foreach ($righe as $riga) {
 
             <td>';
 
+    $numero_riferimenti_riga = $riga->referenceTargets()->count();
+    $numero_riferimenti_collegati = $riga->referenceSources()->count();
+    $riferimenti_presenti = $numero_riferimenti_riga;
+    $testo_aggiuntivo = $riferimenti_presenti ? $numero_riferimenti_riga : '';
+
+    echo '
+    <button type="button" class="btn btn-xs btn-'.($riferimenti_presenti ? 'primary' : 'info').' pull-right text-right" onclick="apriRiferimenti(this)">
+        <i class="fa fa-chevron-right"></i> '.tr('Riferimenti').' '.$testo_aggiuntivo.'
+    </button>';
+
     // Aggiunta dei riferimenti ai documenti
     if ($riga->hasOriginalComponent()) {
         echo '
@@ -347,6 +357,14 @@ function modificaSeriali(button) {
     let type = riga.data("type");
 
     openModal("'.tr('Aggiorna SN').'", globals.rootdir + "/modules/fatture/add_serial.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&riga_id=" + id + "&riga_type=" + type);
+}
+
+function apriRiferimenti(button) {
+    let riga = $(button).closest("tr");
+    let id = riga.data("id");
+    let type = riga.data("type");
+
+    openModal("'.tr('Riferimenti riga').'", globals.rootdir + "/actions.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&op=visualizza_righe_riferimenti&riga_id=" + id + "&riga_type=" + type)
 }
 
 $(document).ready(function() {

@@ -99,7 +99,6 @@ switch (filter('op')) {
         break;
 
     case 'delete':
-
         $documenti = $dbo->fetchNum('SELECT id FROM co_scadenziario WHERE tipo = (SELECT nome FROM co_tipi_scadenze WHERE id = '.prepare($id_record).')');
 
         if (isset($id_record) && empty($documenti)) {

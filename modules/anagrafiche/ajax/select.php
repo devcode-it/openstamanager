@@ -343,7 +343,7 @@ switch ($resource) {
         }
 
         $where[] = '( '.prepare($superselect['data']).' BETWEEN data_inizio AND data_fine)';
-        
+
         //$where[] = 'data_inizio < NOW()';
         //$where[] = 'data_fine > NOW()';
         if (empty($filter)) {

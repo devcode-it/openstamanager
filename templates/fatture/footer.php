@@ -270,7 +270,7 @@ if (!empty($record['ritenutaacconto']) || !empty($documento->totale_ritenuta_con
     echo '
 		</th>';
 
-    echo'
+    echo '
 	</tr>
 
     <tr>

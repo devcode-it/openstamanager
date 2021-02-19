@@ -205,11 +205,11 @@ if (!empty($documento)) {
 
 <?php
 if (empty($documento)) {
-                            echo '
+    echo '
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> '.tr('Elimina').'
 </a>';
-                        }
+}
 
 echo '
 <table class="hide">

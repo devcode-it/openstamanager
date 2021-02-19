@@ -66,7 +66,6 @@ switch (filter('op')) {
         break;
 
     case 'delete':
-
         $righe = $dbo->fetchNum('SELECT id FROM co_righe_documenti WHERE um='.prepare($record['valore']).'
              UNION SELECT id FROM dt_righe_ddt WHERE um='.prepare($record['valore']).'
              UNION SELECT id FROM or_righe_ordini WHERE um='.prepare($record['valore']).'

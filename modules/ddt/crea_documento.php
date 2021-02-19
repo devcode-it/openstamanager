@@ -20,19 +20,19 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\DDT\DDT;
-use Modules\Fatture\Fattura;
+
 $documento = DDT::find($id_record);
 
 $module = Modules::get($id_module);
-if($documento->reversed){
-    if($module['name'] == 'Ddt di vendita'){
+if ($documento->reversed) {
+    if ($module['name'] == 'Ddt di vendita') {
         $final_module = 'Fatture di acquisto';
         $dir = 'uscita';
     } else {
         $final_module = 'Fatture di vendita';
         $dir = 'entrata';
     }
-} elseif($module['name'] == 'Ddt di vendita'){
+} elseif ($module['name'] == 'Ddt di vendita') {
     $final_module = 'Fatture di vendita';
     $dir = 'entrata';
 } else {

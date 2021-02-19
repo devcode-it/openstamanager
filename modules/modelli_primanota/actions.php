@@ -31,7 +31,7 @@ switch (post('op')) {
             $avere = post('avere')[$i];
 
             if (!empty($idconto)) {
-                if(!empty($dare)){
+                if (!empty($dare)) {
                     $totale = $dare;
                 } else {
                     $totale = -$avere;
@@ -59,7 +59,7 @@ switch (post('op')) {
             $avere = post('avere')[$i];
 
             if (!empty($idconto)) {
-                if(!empty($dare)){
+                if (!empty($dare)) {
                     $totale = $dare;
                 } else {
                     $totale = -$avere;

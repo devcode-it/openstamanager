@@ -50,20 +50,19 @@ if (!$is_cliente) {
 
 $nazione_anagrafica = $anagrafica->sedeLegale->nazione;
 
-
 // Avvisi problemi scheda anagrafica
 $problemi_anagrafica = [];
-if ($is_cliente && empty($record['idconto_cliente'])){
+if ($is_cliente && empty($record['idconto_cliente'])) {
     array_push($problemi_anagrafica, ' Piano dei conti mancante per il cliente');
 }
 
-if ($is_fornitore && empty($record['idconto_fornitore'])){
+if ($is_fornitore && empty($record['idconto_fornitore'])) {
     array_push($problemi_anagrafica, ' Piano dei conti mancante per il fornitore');
 }
 
 if (sizeof($problemi_anagrafica) > 0) {
-    echo '<div class="alert alert-warning"><i class="fa fa-warning"></i> '.tr("Attenzione: _CAMPI_" , [
-    '_CAMPI_' => implode(', ', $problemi_anagrafica)
+    echo '<div class="alert alert-warning"><i class="fa fa-warning"></i> '.tr('Attenzione: _CAMPI_', [
+    '_CAMPI_' => implode(', ', $problemi_anagrafica),
     ]).'</div>';
 }
 

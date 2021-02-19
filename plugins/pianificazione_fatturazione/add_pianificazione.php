@@ -1,7 +1,7 @@
 <?php
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
- * Copyright (C) DevCode s.n.c.
+ * Copyright (C) DevCode s.r.l.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,7 +106,7 @@ $righe = $contratto->getRighe();
 
 echo '
 <div class="alert alert-info">
-    <p>'.tr("Puoi utilizzare le seguenti variabili nella descrizione delle righe").':</p>'.variables()['list'].'
+    <p>'.tr('Puoi utilizzare le seguenti variabili nella descrizione delle righe').':</p>'.variables()['list'].'
 </div>';
 
 foreach ($righe as $riga) {
@@ -131,9 +131,9 @@ foreach ($righe as $riga) {
                     <div class="col-md-9">
                         {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione['.$riga->id.']", "value": "'.$descrizione.'" ]}
 
-                        {[ "type": "number", "label": "'.tr('Q.tà per fattura').'", "class":"qta_fattura", "name": "qta['.$riga->id.']", "required": 1, "value": "1", "decimals": "qta", "min-value": "1", "icon-after":"'.tr('Su _TOT_',[
-                            '_TOT_' => Translator::numberToLocale( ($riga->qta-$riga->qta_evasa) ),
-                        ]).'", "options":"'.str_replace('"','\"',$options).'" ]}
+                        {[ "type": "number", "label": "'.tr('Q.tà per fattura').'", "class":"qta_fattura", "name": "qta['.$riga->id.']", "required": 1, "value": "1", "decimals": "qta", "min-value": "1", "icon-after":"'.tr('Su _TOT_', [
+                            '_TOT_' => Translator::numberToLocale(($riga->qta - $riga->qta_evasa)),
+                        ]).'", "options":"'.str_replace('"', '\"', $options).'" ]}
                     </div>
                     <div class="col-md-3" id="totali_'.$riga->id.'">
                     </div>
@@ -166,7 +166,7 @@ echo '
     $(document).ready(function(){
         caricaCadenza();
         get_prezzi();
-    });    
+    });
 
     $("#scadenza").change(function(){
         caricaCadenza();
@@ -175,17 +175,17 @@ echo '
     $("#data_inizio").focusout(function(){
         caricaCadenza();
     });
-    
+
     function caricaCadenza() {
         let container = $("#cadenza");
-    
+
         localLoading(container, true);
         return $.get("'.$structure->fileurl('ajax_cadenza.php').'?id_module='.$id_module.'&id_record='.$id_record.'&scadenza="+$("#scadenza").val()+"&data_inizio="+$("#data_inizio").val(), function(data) {
             container.html(data);
             localLoading(container, false);
         });
     }
-    
+
 
     $("input:checkbox").click(function(){
         var check = 0;
@@ -234,7 +234,7 @@ echo '
 
             var imponibile_riga = (riga.totale_imponibile/riga.qta)*qta;
             imponibile_riga = imponibile_riga.toLocaleString()+" &euro;";
-            
+
             var iva_riga = (riga.iva/riga.qta)*qta;
             iva_riga = iva_riga.toLocaleString()+" &euro;";
 
@@ -256,5 +256,5 @@ echo '
             $("#div_giorno_fisso").hide();
         }
     })
-    
+
 </script>';

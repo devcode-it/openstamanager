@@ -321,7 +321,7 @@ if (($options['pricing'] && !isset($options['hide_total'])) || $options['show_on
     </tr>';
 }
 
-echo'
+echo '
 </table>';
 
 // CONDIZIONI GENERALI DI FORNITURA
@@ -402,6 +402,6 @@ echo '
 echo '
 <p class="text-center">'.tr("In attesa di un Vostro Cortese riscontro, colgo l'occasione per porgere Cordiali Saluti").'</p>';
 
-if(!empty($documento->condizioni_fornitura)){
+if (!empty($documento->condizioni_fornitura)) {
     echo '<pagebreak>'.$documento->condizioni_fornitura;
 }

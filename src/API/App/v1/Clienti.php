@@ -109,7 +109,6 @@ class Clienti extends AppResource
 
     public function createRecord($data)
     {
-
         $ragione_sociale = $data['ragione_sociale'];
         $id_tipo = [1];
 
@@ -133,7 +132,6 @@ class Clienti extends AppResource
         return [
             'id' => $id_record,
         ];
-
     }
 
     public function updateRecord($data)
@@ -163,5 +161,4 @@ class Clienti extends AppResource
         $record->cellulare = $data['cellulare'];
         $record->email = $data['email'];
     }
-
 }

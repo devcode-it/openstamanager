@@ -68,7 +68,6 @@ switch (filter('op')) {
         break;
 
     case 'delete':
-
         $righe = $dbo->fetchNum('SELECT idanagrafica FROM an_anagrafiche WHERE idrelazione='.prepare($id_record));
 
         if (isset($id_record) && empty($righe)) {

@@ -93,5 +93,5 @@ $custom = [
 // - utente qualsiasi con permessi almeno in lettura sul modulo
 // - admin
 if ((Auth::user()['gruppo'] == 'Clienti' && $id_cliente != Auth::user()['idanagrafica'] && !Auth::admin()) || Modules::getPermission($documento->module) == '-') {
-    die(tr('Non hai i permessi per questa stampa!'));
+    exit(tr('Non hai i permessi per questa stampa!'));
 }

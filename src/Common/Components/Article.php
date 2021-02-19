@@ -127,9 +127,9 @@ abstract class Article extends Accounting
 
         if ($document instanceof \Modules\Fatture\Fattura) {
             if ($document->isNota()) {
-                if($this->getDirection()=='uscita'){
+                if ($this->getDirection() == 'uscita') {
                     $dir = 'entrata';
-                } else{
+                } else {
                     $dir = 'uscita';
                 }
             }

@@ -74,7 +74,7 @@ foreach ($righe as $riga) {
         echo '-';
     }
 
-    echo'
+    echo '
         </td>
 
         <td>

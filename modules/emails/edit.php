@@ -64,7 +64,7 @@ if (!$record['predefined']) {
                 </div>
 
                 <div class="col-md-4">
-					<?php  $records[0]['icon'] = (empty($records[0]['icon'])) ? 'fa fa-envelope' : $records[0]['icon']; ?>
+					<?php $records[0]['icon'] = (empty($records[0]['icon'])) ? 'fa fa-envelope' : $records[0]['icon']; ?>
                     {[ "type": "text", "label": "<?php echo tr('Icona'); ?>", "name": "icon", "value": "<?php echo $records[0]['icon']; ?>" ,"help":"<?php echo tr('Es. \'fa fa-envelope\''); ?>" ]}
                 </div>
             </div>

@@ -1,7 +1,7 @@
 <?php
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
- * Copyright (C) DevCode s.n.c.
+ * Copyright (C) DevCode s.r.l.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Modules\Contratti\Components\Riga;
-use Modules\Contratti\Components\Articolo;
 use Modules\Articoli\Articolo as ArticoloOriginale;
+use Modules\Contratti\Components\Articolo;
+use Modules\Contratti\Components\Riga;
 use Modules\Contratti\Contratto;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Tipo;
@@ -35,22 +35,22 @@ switch ($operazione) {
     case 'add':
         $contratto = Contratto::find($id_record);
 
-        if(post('scadenza')=='Mensile'){
+        if (post('scadenza') == 'Mensile') {
             $timeing = '+1 month';
         }
-        if(post('scadenza')=='Bimestrale'){
+        if (post('scadenza') == 'Bimestrale') {
             $timeing = '+2 month';
         }
-        if(post('scadenza')=='Trimestrale'){
+        if (post('scadenza') == 'Trimestrale') {
             $timeing = '+3 month';
         }
-        if(post('scadenza')=='Quadrimestrale'){
+        if (post('scadenza') == 'Quadrimestrale') {
             $timeing = '+4 month';
         }
-        if(post('scadenza')=='Semestrale'){
+        if (post('scadenza') == 'Semestrale') {
             $timeing = '+6 month';
         }
-        if(post('scadenza')=='Annuale'){
+        if (post('scadenza') == 'Annuale') {
             $timeing = '+12 month';
         }
 
@@ -61,14 +61,14 @@ switch ($operazione) {
         $date_pianificazioni = [];
         $pianificazioni = [];
         foreach ($selezioni as $key => $selezione) {
-            if( $numero_fatture==0 && !empty(post('data_inizio')) ){
+            if ($numero_fatture == 0 && !empty(post('data_inizio'))) {
                 $date = new DateTime(post('data_inizio'));
-            }else{
+            } else {
                 $date = new DateTime($periodi[$key]);
-            
-                if(post('cadenza_fatturazione')=='Inizio'){
+
+                if (post('cadenza_fatturazione') == 'Inizio') {
                     $date->modify('first day of this month');
-                }elseif( post('cadenza_fatturazione')=='Giorno' && !empty(post('giorno_fisso')) ){
+                } elseif (post('cadenza_fatturazione') == 'Giorno' && !empty(post('giorno_fisso'))) {
                     $date->modify('last day of this month');
                     $last_day = $date->format('d');
                     $day = post('giorno_fisso') > $last_day ? $last_day : post('giorno_fisso');
@@ -95,32 +95,32 @@ switch ($operazione) {
 
             // Creazione nuove righe
             $qta = post('qta');
-            foreach($righe_contratto as $r){
+            foreach ($righe_contratto as $r) {
                 $qta_evasa = $r->qta_evasa;
                 $data_scadenza = '';
                 $inizio = $date_pianificazioni[0];
-                $fine = date("Y-m-d", strtotime($inizio.' -1 days'));
-                $fine = date("Y-m-d", strtotime($fine." ".$timeing));
+                $fine = date('Y-m-d', strtotime($inizio.' -1 days'));
+                $fine = date('Y-m-d', strtotime($fine.' '.$timeing));
                 for ($rata = 1; $rata <= $numero_fatture; ++$rata) {
-                    if( $qta_evasa<$r->qta ){
-                        $qta_riga = ($qta[$r->id]<=($r->qta-$qta_evasa) ? $qta[$r->id] : ($r->qta-$qta_evasa) );
+                    if ($qta_evasa < $r->qta) {
+                        $qta_riga = ($qta[$r->id] <= ($r->qta - $qta_evasa) ? $qta[$r->id] : ($r->qta - $qta_evasa));
                         $descrizione = post('descrizione')[$r->id];
 
                         $descrizione = variables($descrizione, $inizio, $fine)['descrizione'];
 
                         $inizio = $fine;
-                        $fine = date("Y-m-d", strtotime($timeing, strtotime($inizio)));
-                        $inizio = date("Y-m-d", strtotime($inizio.' +1 days'));
+                        $fine = date('Y-m-d', strtotime($timeing, strtotime($inizio)));
+                        $inizio = date('Y-m-d', strtotime($inizio.' +1 days'));
 
                         $prezzo_unitario = ($r->subtotale / $r->qta);
 
-                        if( !empty($r->idarticolo) ){
+                        if (!empty($r->idarticolo)) {
                             $articolo = ArticoloOriginale::find($r->idarticolo);
                             $riga = Articolo::build($contratto, $articolo);
-                        }else{
+                        } else {
                             $riga = Riga::build($contratto);
                         }
-                        
+
                         $riga->descrizione = $descrizione;
                         $riga->setPrezzoUnitario($prezzo_unitario, $r->idiva);
                         $riga->qta = $qta_riga;

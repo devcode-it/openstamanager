@@ -57,7 +57,7 @@ if ($statistiche != null) {
     <script src="'.$statistiche->fileurl('js/stats/widget.js').'"></script>';
 }
 
-echo'
+echo '
 <script>
 var local_url = "'.str_replace('edit.php', '', $structure->fileurl('edit.php')).'";
 

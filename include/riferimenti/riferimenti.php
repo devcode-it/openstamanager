@@ -214,7 +214,7 @@ echo '
         });
     }
 
-    function rimuoviRiferimento(btn, source_type, source_id) {
+    function rimuoviRiferimento(btn, source_type, source_id, idriferimento) {
         $("#main_loading").show();
 
         let row = $(btn).closest("tr");
@@ -233,6 +233,7 @@ echo '
                 source_id: source_id,
                 target_type: target_type,
                 target_id: target_id,
+                idriferimento: idriferimento,
             },
             success: function(data) {
                 $("#main_loading").fadeOut();

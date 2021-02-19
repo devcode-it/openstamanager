@@ -230,16 +230,16 @@ function search(button) {
             </div>
             <div class="box-body" id="update-search">';
     if (extension_loaded('curl')) {
-        echo'		<button type="button" class="btn btn-info btn-block" onclick="search(this)">
+        echo '		<button type="button" class="btn btn-info btn-block" onclick="search(this)">
                     <i class="fa fa-search"></i> '.tr('Ricerca').'
                 </button>';
     } else {
-        echo'		<button type="button" class="btn btn-warning btn-block disabled" >
+        echo '		<button type="button" class="btn btn-warning btn-block disabled" >
                     <i class="fa fa-warning"></i> '.tr('Estensione curl non supportata').'.
                 </button>';
     }
 
-    echo'   </div>
+    echo '   </div>
         </div>
     </div>
 </div>';

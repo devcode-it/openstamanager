@@ -32,7 +32,7 @@ if (empty($record['firma_file'])) {
 }
 
 // Duplica intervento
-echo'
+echo '
 <button type="button" class="btn btn-primary " onclick="duplicaIntervento()">
     <i class="fa fa-copy"></i> '.tr('Duplica attività').'
 </button>

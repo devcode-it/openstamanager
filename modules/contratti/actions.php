@@ -108,7 +108,6 @@ switch (post('op')) {
         break;
 
     case 'update_rinnovo':
-
         $contratto->rinnovabile = post('rinnovabile');
         $contratto->rinnovo_automatico = post('rinnovo_automatico');
         $contratto->giorni_preavviso_rinnovo = post('giorni_preavviso_rinnovo');
@@ -315,7 +314,6 @@ $riga = $contratto->getRiga($type, $id_riga);
 
     // eliminazione contratto
     case 'delete':
-
         // Fatture o interventi collegati a questo contratto
         $elementi = $dbo->fetchArray('SELECT 0 AS `codice`, `co_documenti`.`id` AS `id`, `co_documenti`.`numero` AS `numero`, `co_documenti`.`numero_esterno` AS `numero_esterno`,  `co_documenti`.`data`, `co_tipidocumento`.`descrizione` AS `tipo_documento`, `co_tipidocumento`.`dir` AS `dir`  FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idcontratto` = '.prepare($id_record).')'.'
         UNION
@@ -414,7 +412,6 @@ $riga = $contratto->getRiga($type, $id_riga);
         break;
 
         case 'import':
-
         $rs = $dbo->fetchArray('SELECT * FROM co_contratti_tipiintervento WHERE idcontratto = '.prepare(post('idcontratto')).' AND idtipointervento='.prepare(post('idtipointervento')));
 
         // Se la riga in_tipiintervento esiste, la aggiorno...

@@ -27,7 +27,7 @@ use Modules\Emails\Template;
 use Notifications\EmailNotification;
 
 if (empty($structure) || empty($structure['enabled'])) {
-    die(tr('Accesso negato'));
+    exit(tr('Accesso negato'));
 }
 
 $upload_dir = base_dir().'/'.Uploads::getDirectory($id_module, $id_plugin);
@@ -286,7 +286,7 @@ elseif (post('op') == 'send-email') {
         $dbo->query('UPDATE `zz_views` SET `order` = '.prepare($i).' WHERE id='.prepare($id_riga));
     }
 } elseif (filter('op') == 'visualizza_righe_riferimenti') {
-    include_once base_dir().'/include/riferimenti/righe_riferimenti.php';
+    include_once base_dir().'/include/riferimenti/riferimenti.php';
 } elseif (filter('op') == 'visualizza_righe_documento') {
     include_once base_dir().'/include/riferimenti/righe_documento.php';
 } elseif (filter('op') == 'salva_riferimento_riga') {
@@ -298,10 +298,7 @@ elseif (post('op') == 'send-email') {
     ]);
 } elseif (filter('op') == 'rimuovi_riferimento_riga') {
     $database->delete('co_riferimenti_righe', [
-        'source_type' => filter('source_type'),
-        'source_id' => filter('source_id'),
-        'target_type' => filter('target_type'),
-        'target_id' => filter('target_id'),
+        'id' => filter('idriferimento'),
     ]);
 }
 

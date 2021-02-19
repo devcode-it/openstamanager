@@ -21,6 +21,7 @@
  * Classe per gestire i permessi di accesso alle diverse sezioni del progetto.
  *
  * @since 2.3
+ * @deprecated
  */
 class Permissions
 {

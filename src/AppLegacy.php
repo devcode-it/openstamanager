@@ -47,7 +47,6 @@ class AppLegacy
             'app.min.css',
             'style.min.css',
             'themes.min.css',
-            'dropzone.min.css',
         ],
 
         // Print CSS
@@ -60,7 +59,6 @@ class AppLegacy
             'app.min.js',
             'functions.min.js',
             'custom.min.js',
-            'dropzone.min.js',
             'i18n/parsleyjs/|lang|.min.js',
             'i18n/select2/|lang|.min.js',
             'i18n/moment/|lang|.min.js',
@@ -184,7 +182,6 @@ class AppLegacy
         ];
 
         $assets = [];
-
         foreach ($sections as $section => $dir) {
             $result = array_unique(array_merge(
                 self::$assets[$section],
@@ -195,13 +192,18 @@ class AppLegacy
                 $base = str_replace(base_url(), '', $paths[$dir]);
                 $element = $base.'/'.$element;
 
+                $assets_element = null;
                 foreach ($lang_replace as $replace) {
                     $name = str_replace('|lang|', $replace, $element);
 
-                    $assets_element = asset($name);
+                    if (file_exists(base_path('public'.$name))) {
+                        $assets_element = asset($name);
+                    }
                 }
 
-                $result[$key] = $assets_element.'?v='.$version;
+                if (!empty($assets_element)) {
+                    $result[$key] = $assets_element.'?v='.$version;
+                }
             }
 
             $assets[$section] = $result;

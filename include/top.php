@@ -493,7 +493,7 @@ if (auth()->check()) {
                 <!-- /.sidebar -->
             </aside>';
 
-    if (string_contains($_SERVER['SCRIPT_FILENAME'], 'editor.php')) {
+    if (string_contains($_SERVER['REQUEST_URI'], 'editor.php')) {
         // Menu laterale per la visualizzazione dei plugin
         echo '
         <aside class="control-sidebar control-sidebar-light">
@@ -562,9 +562,9 @@ if (auth()->check()) {
                 <section class="content">
                     <div class="row">';
 
-    if (string_contains($_SERVER['SCRIPT_FILENAME'], 'editor.php')) {
+    if (string_contains($_SERVER['REQUEST_URI'], 'editor.php')) {
         $location = 'editor_right';
-    } elseif (string_contains($_SERVER['SCRIPT_FILENAME'], 'controller.php')) {
+    } elseif (string_contains($_SERVER['REQUEST_URI'], 'controller.php')) {
         $location = 'controller_right';
     }
 

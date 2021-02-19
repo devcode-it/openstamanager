@@ -31,10 +31,25 @@ trait LocalPoolTrait
     /** @var int Identificatore dell'oggetto in utilizzo */
     protected static $current;
 
-    /** @var string Nome della colonna "id" (Primary Key) */
-    protected static $id = 'id';
-    /** @var string Nome della colonna "name" */
-    protected static $name = 'name';
+    /**
+     * Nome della colonna "id" (Primary Key).
+     *
+     * @return string
+     */
+    public static function getPoolIDColumn()
+    {
+        return 'id';
+    }
+
+    /**
+     * Nome della colonna "name".
+     *
+     * @return string
+     */
+    public static function getPoolNameColumn()
+    {
+        return 'name';
+    }
 
     /**
      * Restituisce tutti gli oggetti.
@@ -61,14 +76,17 @@ trait LocalPoolTrait
      */
     public static function pool($identifier)
     {
+        $id_column = self::getPoolIDColumn();
+        $name_column = self::getPoolNameColumn();
+
         // Inizializzazione
         if (!isset(self::$collection)) {
             self::$collection = collect();
         }
 
         // Ricerca
-        $result = self::$collection->first(function ($item) use ($identifier) {
-            return $item->{self::$name} == $identifier || $item->{self::$id} == $identifier;
+        $result = self::$collection->first(function ($item) use ($identifier, $id_column, $name_column) {
+            return $item->{$name_column} == $identifier || $item->{$id_column} == $identifier;
         });
 
         if (!empty($result)) {
@@ -76,8 +94,8 @@ trait LocalPoolTrait
         }
 
         // Consultazione Database
-        $result = self::where(self::$id, '=', $identifier)
-            ->orWhere(self::$name, '=', $identifier)
+        $result = self::where($id_column, $identifier)
+            ->orWhere($name_column, $identifier)
             ->first();
 
         if (!empty($result)) {

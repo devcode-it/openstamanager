@@ -24,6 +24,7 @@ use Util\Query;
  * Classe per la gestione delle informazioni relative ai moduli installati.
  *
  * @since 2.3
+ * @deprecated
  */
 class Modules
 {

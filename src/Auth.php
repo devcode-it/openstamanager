@@ -24,6 +24,7 @@ use Models\User;
  * Classe per la gestione delle utenze.
  *
  * @since 2.3
+ * @deprecated
  */
 class Auth extends \Util\Singleton
 {

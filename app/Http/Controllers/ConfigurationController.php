@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 class ConfigurationController extends Controller
 {
-    public static function isConfigCompleted()
+    public static function isConfigured()
     {
         try {
             $connection = DB::connection();

@@ -23,10 +23,8 @@ class EnsureEnvFile
             if (!file_exists($env_file)) {
                 return response('Missing .env file');
             }
-        }
 
-        // Generazione automatica delle key Laravel
-        if (empty(env('APP_KEY'))) {
+            // Generazione automatica delle key Laravel
             Artisan::call('key:generate');
             header('Refresh: 0;');
 

@@ -12,7 +12,7 @@ class LegacyController extends Controller
 {
     public function index($path = 'index.php')
     {
-        $base_path = base_path('legacy/');
+        $base_path = base_path('legacy');
         $file = realpath($base_path.'/'.$path);
         if (strpos($file, $base_path) === false) {
             throw new NotFoundHttpException();
@@ -28,6 +28,13 @@ class LegacyController extends Controller
 
         $output = ob_get_clean();
 
-        return new Response($output);
+        $response = response($output);
+
+        // Fix content-type per contenuti non HTML
+        if (ends_with($path, '.js')) {
+            $response = $response->header('Content-Type', 'application/javascript');
+        }
+
+        return $response;
     }
 }

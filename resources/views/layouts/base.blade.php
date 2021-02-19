@@ -45,7 +45,7 @@
                 decimals: "{{ formatter()->getNumberSeparators()['decimals'] }}",
                 thousands: "{{ formatter()->getNumberSeparators()['thousands'] }}",
 
-                locale: '{{ app()->getLocale() }}',
+                locale: '{{ substr(app()->getLocale(), 0, strpos(app()->getLocale(), "_")) }}',
                 full_locale: '{{ app()->getLocale() }}',
 
                 translations: {

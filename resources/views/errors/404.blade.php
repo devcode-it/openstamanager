@@ -9,7 +9,7 @@
 @section('error_info', tr('Non siamo riusciti a trovare la pagina che stavi cercando'))
 
 @section('js')
-    @if(!auth()->check())
+    @if(\App\Http\Controllers\ConfigurationController::isConfigured() && !auth()->check())
     <script>
         location.href = "{{ route('login') }}";
     </script>

@@ -4,9 +4,9 @@
 @section('title', tr("Configurazione"))
 
 @section('body')
-<div class="container bg-light pb-5">
-    <form action="" method="post" id="config-form">
-        <input type="hidden" name="lang" value="{{ app()->getLocale() }}">
+<div class="container pb-5">
+    <form action="{{ route('configuration-save') }}" method="post" id="config-form">
+        @csrf
 
         <div class="py-5 text-center">
             <img class="d-block mx-auto mb-4" src="{{ base_url() }}/assets/img/full_logo.png" alt="{{ tr('Logo OpenSTAManager') }}">
@@ -19,7 +19,7 @@
         <div class="row">
             <div class="col-md-4 col-md-push-8 mb-4">
                 <h4 class="d-flex justify-content-between align-items-center mb-3 text-muted">{{ tr('Lingua') }}</h4>
-                <select class="form-control hidden" id="language" required="1">
+                <select class="form-control hidden" id="language" name="language" required="1">
                     @foreach($languages as $code => $language)
                         <option data-country="{{ $language['flag'] }}" value="{{ $code }}">{{ $language['title'] }}</option>
                     @endforeach
@@ -136,6 +136,17 @@
     $(document).ready(function() {
         init();
 
+        $.ajax({
+            url: flag_link.replace("|flag|", "it"),
+            success: function(){
+                initLanguage(true);
+            },
+            error: function(){
+                initLanguage(false);
+            },
+            timeout: 500
+        });
+
         $("#install").on("click", function() {
             if ($(this).closest("form").parsley().validate()) {
                 let restore = buttonLoading("#install");
@@ -155,7 +166,7 @@
                     data: {
                         test: 1,
                     },
-                    type: "post",
+                    type: "get",
                     success: function (data) {
                         data = parseFloat(data.trim());
 
@@ -175,17 +186,6 @@
                     }
                 });
             }
-        });
-
-        $.ajax({
-            url: flag_link.replace("|flag|", "it"),
-            success: function(){
-                initLanguage(true);
-            },
-            error: function(){
-                initLanguage(false);
-            },
-            timeout: 500
         });
     });
 
@@ -210,10 +210,11 @@
     }
 
     function initLanguage() {
-        $("#language").removeClass("hidden");
+        let language = $("#language");
+        language.removeClass("hidden");
         $("#language-info").addClass("hidden");
 
-        $("#language").select2({
+        language.select2({
             theme: "bootstrap",
             templateResult: languageFlag,
             templateSelection:languageFlag,
@@ -221,18 +222,18 @@
 
         // Preselezione lingua
         if (globals.full_locale) {
-            $("#language").selectSet(globals.full_locale);
+            language.selectSet(globals.full_locale);
         }
 
-        $("#language").on("change", function(){
+        language.on("change", function(){
             if ($(this).val()) {
-                var location = window.location;
-                var url = location.protocol + "//" + location.host + "" + location.pathname;
+                let location = window.location;
+                let url = location.protocol + "//" + location.host + "" + location.pathname;
 
-                var parameters = getUrlVars();
+                let parameters = getUrlVars();
                 parameters.lang = $(this).val();
 
-                redirect(url, parameters);
+                redirect_legacy(url, parameters);
             }
         });
     }

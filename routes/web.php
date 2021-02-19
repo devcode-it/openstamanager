@@ -1,7 +1,7 @@
 <?php
 
+use App\Http\Controllers\ConfigurationController;
 use App\Http\Controllers\InfoController;
-use App\Http\Controllers\LegacyController;
 use App\Http\Controllers\Test;
 use Illuminate\Support\Facades\Route;
 
@@ -16,9 +16,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/test', function () {
-    return view('welcome');
-});
+// Percorsi di autenticazione e gestione utenza
+require __DIR__.'/auth.php';
+
+// Sezione di configurazione
+Route::get('/config', [ConfigurationController::class, 'index'])
+    ->name('configuration');
+Route::get('/config-test', [ConfigurationController::class, 'test'])
+    ->name('configuration-test');
+Route::post('/config', [ConfigurationController::class, 'save'])
+    ->name('configuration-save');
 
 // Messaggi flash
 Route::get('/messages', [Test::class, 'index'])
@@ -65,7 +72,7 @@ Route::prefix('hook')->group(function () {
 });
 
 // Informazioni su OpenSTAManager
-Route::get('/info',  [InfoController::class, 'info'])
+Route::get('/info', [InfoController::class, 'info'])
     ->name('info');
 
 // Segnalazione bug
@@ -88,5 +95,3 @@ Route::post('/password', [Test::class, 'index']);
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth'])->name('dashboard');
-
-require __DIR__ . '/auth.php';

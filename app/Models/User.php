@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Common\SimpleModelTrait;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -16,7 +15,8 @@ use Modules\Anagrafiche\Anagrafica;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory;
+    use Notifiable;
     use SimpleModelTrait;
 
     protected $table = 'zz_users';
@@ -59,7 +59,6 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
 
     /**
      * Crea un nuovo utente.

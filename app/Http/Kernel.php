@@ -2,6 +2,9 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\EnsureCalendarPeriod;
+use App\Http\Middleware\EnsureConfiguration;
+use App\Http\Middleware\EnsureEnvFile;
 use App\Http\Middleware\HTMLBuilder;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
@@ -22,7 +25,6 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
-        HTMLBuilder::class
     ];
 
     /**
@@ -32,6 +34,7 @@ class Kernel extends HttpKernel
      */
     protected $middlewareGroups = [
         'web' => [
+            EnsureEnvFile::class,
             \App\Http\Middleware\EncryptCookies::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\Session\Middleware\StartSession::class,
@@ -40,6 +43,10 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \Xinax\LaravelGettext\Middleware\GettextMiddleware::class,
+
+            EnsureCalendarPeriod::class,
+            EnsureConfiguration::class,
+            HTMLBuilder::class,
         ],
 
         'api' => [
@@ -48,6 +55,7 @@ class Kernel extends HttpKernel
         ],
 
         'legacy' => [
+            EnsureEnvFile::class,
             \App\Http\Middleware\EncryptCookies::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\Session\Middleware\StartSession::class,
@@ -56,6 +64,10 @@ class Kernel extends HttpKernel
            // \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \Xinax\LaravelGettext\Middleware\GettextMiddleware::class,
+
+            EnsureCalendarPeriod::class,
+            EnsureConfiguration::class,
+            HTMLBuilder::class,
         ],
     ];
 

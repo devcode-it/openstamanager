@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>@yield('title') - {{ __('OpenSTAManager') }}</title>
+        <title>@yield('title') - {{ tr('OpenSTAManager') }}</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
@@ -50,21 +50,21 @@
 
                 translations: {
                     password: {
-                        "wordMinLength": "{{ __('La password è troppo corta') }}",
-                        "wordMaxLength": "{{ __('La password è troppo lunga') }}",
-                        "wordInvalidChar": "{{ __('La password contiene un carattere non valido') }}",
-                        "wordNotEmail": "{{ __('Non usare la tua e-mail come password') }}",
-                        "wordSimilarToUsername": "{{ __('La password non può contenere il tuo nome') }}",
-                        "wordTwoCharacterClasses": "{{ __('Usa classi di caratteri diversi') }}",
-                        "wordRepetitions": "{{ __('La password contiene ripetizioni') }}",
-                        "wordSequences": "{{ __('La password contiene sequenze') }}",
-                        "errorList": "{{ __('Attenzione') }}:",
-                        "veryWeak": "{{ __('Molto debole') }}",
-                        "weak": "{{ __('Debole') }}",
-                        "normal": "{{ __('Normale') }}",
-                        "medium": "{{ __('Media') }}",
-                        "strong": "{{ __('Forte') }}",
-                        "veryStrong": "{{ __('Molto forte') }}",
+                        "wordMinLength": "{{ tr('La password è troppo corta') }}",
+                        "wordMaxLength": "{{ tr('La password è troppo lunga') }}",
+                        "wordInvalidChar": "{{ tr('La password contiene un carattere non valido') }}",
+                        "wordNotEmail": "{{ tr('Non usare la tua e-mail come password') }}",
+                        "wordSimilarToUsername": "{{ tr('La password non può contenere il tuo nome') }}",
+                        "wordTwoCharacterClasses": "{{ tr('Usa classi di caratteri diversi') }}",
+                        "wordRepetitions": "{{ tr('La password contiene ripetizioni') }}",
+                        "wordSequences": "{{ tr('La password contiene sequenze') }}",
+                        "errorList": "{{ tr('Attenzione') }}:",
+                        "veryWeak": "{{ tr('Molto debole') }}",
+                        "weak": "{{ tr('Debole') }}",
+                        "normal": "{{ tr('Normale') }}",
+                        "medium": "{{ tr('Media') }}",
+                        "strong": "{{ tr('Forte') }}",
+                        "veryStrong": "{{ tr('Molto forte') }}",
                     },
                 },
 

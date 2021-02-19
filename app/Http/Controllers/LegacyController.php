@@ -12,17 +12,17 @@ class LegacyController extends Controller
 {
     public function index($path = 'index.php')
     {
-        $base_path = realpath(__DIR__.'/../../../legacy/');
+        $base_path = base_path('legacy/');
         $file = realpath($base_path.'/'.$path);
-        if (strpos($file, $base_path) === false){
+        if (strpos($file, $base_path) === false) {
             throw new NotFoundHttpException();
         }
 
         ob_start();
         try {
             require $file;
-        }  catch (LegacyExitException $e) {
-        }catch (LegacyRedirectException $e){
+        } catch (LegacyExitException $e) {
+        } catch (LegacyRedirectException $e) {
             return Redirect::to($e->getMessage());
         }
 

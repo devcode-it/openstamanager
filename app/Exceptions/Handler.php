@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Intervention\Image\Exception\NotFoundException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -35,6 +36,10 @@ class Handler extends ExceptionHandler
     {
         $this->reportable(function (Throwable $e) {
             //
+        });
+
+        $this->renderable(function (NotFoundException $e, $request) {
+            return response()->view('errors.404', [], 404);
         });
     }
 }

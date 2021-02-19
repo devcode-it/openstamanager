@@ -35,85 +35,85 @@
 
         search: search,
         translations: {
-            "day": "{{ __('Giorno') }}",
-            "week": "{{ __('Settimana') }}",
-            "month": "{{ __('Mese') }}",
-            "today": "{{ __('Oggi') }}",
-            "firstThreemester": "{{ __('I trimestre') }}",
-            "secondThreemester": "{{ __('II trimestre') }}",
-            "thirdThreemester": "{{ __('III trimestre') }}",
-            "fourthThreemester": "{{ __('IV trimestre') }}",
-            "firstSemester": "{{ __('I semestre') }}",
-            "secondSemester": "{{ __('II semestre') }}",
-            "thisMonth": "{{ __('Questo mese') }}",
-            "lastMonth": "{{ __('Mese scorso') }}",
-            "thisYear": "{{ __("Quest'anno") }}",
-            "lastYear": "{{ __('Anno scorso') }}",
-            "apply": "{{ __('Applica') }}",
-            "cancel": "{{ __('Annulla') }}",
-            "from": "{{ __('Da') }}",
-            "to": "{{ __('A') }}",
-            "custom": "{{ __('Personalizzato') }}",
-            "delete": "{{ __('Elimina') }}",
-            "deleteTitle": "{{ __('Sei sicuro?') }}",
-            "deleteMessage": "{{ __('Eliminare questo elemento?') }}",
-            "errorTitle": "{{ __('Errore') }}",
-            "errorMessage": "{{ __("Si è verificato un errore nell'esecuzione dell'operazione richiesta") }}",
-            "close": "{{ __('Chiudi') }}",
-            "filter": "{{ __('Filtra') }}",
-            "long": "{{ __('La ricerca potrebbe richiedere del tempo') }}",
-            "details": "{{ __('Dettagli') }}",
-            "waiting": "{{ __('Impossibile procedere') }}",
-            "waiting_msg": "{{ __('Prima di proseguire devi selezionare alcuni elementi!') }}",
-            'hooksExecuting': "{{ __('Hooks in esecuzione') }}",
-            'hookExecuting': '{{ __('Hook "_NAME_" in esecuzione') }}',
-            'hookMultiple': "{{ __('Hai _NUM_ notifiche') }}",
-            'hookSingle': "{{ __('Hai 1 notifica') }}",
-            'hookNone': "{{ __('Nessuna notifica') }}",
-            'singleCalendar': {{ __("E' presente un solo periodo!") }}",
+            "day": "{{ tr('Giorno') }}",
+            "week": "{{ tr('Settimana') }}",
+            "month": "{{ tr('Mese') }}",
+            "today": "{{ tr('Oggi') }}",
+            "firstThreemester": "{{ tr('I trimestre') }}",
+            "secondThreemester": "{{ tr('II trimestre') }}",
+            "thirdThreemester": "{{ tr('III trimestre') }}",
+            "fourthThreemester": "{{ tr('IV trimestre') }}",
+            "firstSemester": "{{ tr('I semestre') }}",
+            "secondSemester": "{{ tr('II semestre') }}",
+            "thisMonth": "{{ tr('Questo mese') }}",
+            "lastMonth": "{{ tr('Mese scorso') }}",
+            "thisYear": "{{ tr("Quest'anno") }}",
+            "lastYear": "{{ tr('Anno scorso') }}",
+            "apply": "{{ tr('Applica') }}",
+            "cancel": "{{ tr('Annulla') }}",
+            "from": "{{ tr('Da') }}",
+            "to": "{{ tr('A') }}",
+            "custom": "{{ tr('Personalizzato') }}",
+            "delete": "{{ tr('Elimina') }}",
+            "deleteTitle": "{{ tr('Sei sicuro?') }}",
+            "deleteMessage": "{{ tr('Eliminare questo elemento?') }}",
+            "errorTitle": "{{ tr('Errore') }}",
+            "errorMessage": "{{ tr("Si è verificato un errore nell'esecuzione dell'operazione richiesta") }}",
+            "close": "{{ tr('Chiudi') }}",
+            "filter": "{{ tr('Filtra') }}",
+            "long": "{{ tr('La ricerca potrebbe richiedere del tempo') }}",
+            "details": "{{ tr('Dettagli') }}",
+            "waiting": "{{ tr('Impossibile procedere') }}",
+            "waiting_msg": "{{ tr('Prima di proseguire devi selezionare alcuni elementi!') }}",
+            'hooksExecuting': "{{ tr('Hooks in esecuzione') }}",
+            'hookExecuting': '{{ tr('Hook "_NAME_" in esecuzione') }}',
+            'hookMultiple': "{{ tr('Hai _NUM_ notifiche') }}",
+            'hookSingle': "{{ tr('Hai 1 notifica') }}",
+            'hookNone': "{{ tr('Nessuna notifica') }}",
+            'singleCalendar': {{ tr("E' presente un solo periodo!") }}",
             ajax: {
                 "missing": {
-                    "title": "{{ __('Errore') }}",
-                    "text": "{{ __('Alcuni campi obbligatori non sono stati compilati correttamente') }}",
+                    "title": "{{ tr('Errore') }}",
+                    "text": "{{ tr('Alcuni campi obbligatori non sono stati compilati correttamente') }}",
                 },
                 "error": {
-                    "title": "{{ __('Errore') }}",
-                    "text": "{{ __('Errore durante il salvataggio del record') }}",
+                    "title": "{{ tr('Errore') }}",
+                    "text": "{{ tr('Errore durante il salvataggio del record') }}",
                 }
             },
             password: {
-                "wordMinLength": "{{ __('La password è troppo corta') }}",
-                "wordMaxLength": "{{ __('La password è troppo lunga') }}",
-                "wordInvalidChar": "{{ __('La password contiene un carattere non valido') }}",
-                "wordNotEmail": "{{ __('Non usare la tua e-mail come password') }}",
-                "wordSimilarToUsername": "{{ __('La password non può contenere il tuo nome') }}",
-                "wordTwoCharacterClasses": "{{ __('Usa classi di caratteri diversi') }}",
-                "wordRepetitions": "{{ __('La password contiene ripetizioni') }}",
-                "wordSequences": "{{ __('La password contiene sequenze') }}",
-                "errorList": "{{ __('Attenzione') }}:",
-                "veryWeak": "{{ __('Molto debole') }}",
-                "weak": "{{ __('Debole') }}",
-                "normal": "{{ __('Normale') }}",
-                "medium": "{{ __('Media') }}",
-                "strong": "{{ __('Forte') }}",
-                "veryStrong": "{{ __('Molto forte') }}",
+                "wordMinLength": "{{ tr('La password è troppo corta') }}",
+                "wordMaxLength": "{{ tr('La password è troppo lunga') }}",
+                "wordInvalidChar": "{{ tr('La password contiene un carattere non valido') }}",
+                "wordNotEmail": "{{ tr('Non usare la tua e-mail come password') }}",
+                "wordSimilarToUsername": "{{ tr('La password non può contenere il tuo nome') }}",
+                "wordTwoCharacterClasses": "{{ tr('Usa classi di caratteri diversi') }}",
+                "wordRepetitions": "{{ tr('La password contiene ripetizioni') }}",
+                "wordSequences": "{{ tr('La password contiene sequenze') }}",
+                "errorList": "{{ tr('Attenzione') }}:",
+                "veryWeak": "{{ tr('Molto debole') }}",
+                "weak": "{{ tr('Debole') }}",
+                "normal": "{{ tr('Normale') }}",
+                "medium": "{{ tr('Media') }}",
+                "strong": "{{ tr('Forte') }}",
+                "veryStrong": "{{ tr('Molto forte') }}",
             },
             datatables: {
-                "emptyTable": "{{ __('Nessun dato presente nella tabella') }}",
-                "info": "{{ __('Vista da _START_ a _END_ di _TOTAL_ elementi') }}",
-                "infoEmpty": "{{ __('Vista da 0 a 0 di 0 elementi') }}",
-                "infoFiltered": "({{ __('filtrati da _MAX_ elementi totali') }})",
+                "emptyTable": "{{ tr('Nessun dato presente nella tabella') }}",
+                "info": "{{ tr('Vista da _START_ a _END_ di _TOTAL_ elementi') }}",
+                "infoEmpty": "{{ tr('Vista da 0 a 0 di 0 elementi') }}",
+                "infoFiltered": "({{ tr('filtrati da _MAX_ elementi totali') }})",
                 "infoPostFix": "",
-                "lengthMenu": "{{ __('Visualizza _MENU_ elementi') }}",
+                "lengthMenu": "{{ tr('Visualizza _MENU_ elementi') }}",
                 "loadingRecords": " ",
-                "processing": "{{ __('Elaborazione') }}...",
-                "search": "{{ __('Cerca') }}:",
-                "zeroRecords": "{{ __('La ricerca non ha portato alcun risultato') }}.",
+                "processing": "{{ tr('Elaborazione') }}...",
+                "search": "{{ tr('Cerca') }}:",
+                "zeroRecords": "{{ tr('La ricerca non ha portato alcun risultato') }}.",
                 "paginate": {
-                    "first": "{{ __('Inizio') }}",
-                    "previous": "{{ __('Precedente') }}",
-                    "next": "{{ __('Successivo') }}",
-                    "last": "{{ __('Fine') }}"
+                    "first": "{{ tr('Inizio') }}",
+                    "previous": "{{ tr('Precedente') }}",
+                    "next": "{{ tr('Successivo') }}",
+                    "last": "{{ tr('Fine') }}"
                 },
             },
         },
@@ -158,19 +158,19 @@
 @section('body')
 <div class="wrapper">
     <header class="main-header">
-        <a href="https://www.openstamanager.com" class="logo" title="{{ __("Il gestionale open source per l'assistenza tecnica e la fatturazione") }}" target="_blank">
+        <a href="https://www.openstamanager.com" class="logo" title="{{ tr("Il gestionale open source per l'assistenza tecnica e la fatturazione") }}" target="_blank">
             <!-- mini logo for sidebar mini 50x50 pixels -->
-            <span class="logo-mini">{{ __("OSM") }}</span>
+            <span class="logo-mini">{{ tr("OSM") }}</span>
             <!-- logo for regular state and mobile devices -->
             <span class="logo-lg">
-                {{ __('OpenSTAManager') }}
+                {{ tr('OpenSTAManager') }}
             </span>
         </a>
         <!-- Header Navbar: style can be found in header.less -->
         <nav class="navbar navbar-static-top" role="navigation">
             <!-- Sidebar toggle button-->
             <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
-                <span class="sr-only">{{ __('Mostra/nascondi menu') }}</span>
+                <span class="sr-only">{{ tr('Mostra/nascondi menu') }}</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
@@ -211,23 +211,23 @@
                         </ul>
                     </li>
 
-                    <li><a href="#" onclick="window.print()" class="tip" title="{{ __('Stampa') }}">
+                    <li><a href="#" onclick="window.print()" class="tip" title="{{ tr('Stampa') }}">
                         <i class="fa fa-print"></i>
                     </a></li>
 
-                    <li><a href="{{ route('bug') }}" class="tip" title="{{ __('Segnalazione bug') }}">
+                    <li><a href="{{ route('bug') }}" class="tip" title="{{ tr('Segnalazione bug') }}">
                         <i class="fa fa-bug"></i>
                     </a></li>
 
-                    <li><a href="{{ route('logs') }}" class="tip" title="{{ __('Log accessi') }}">
+                    <li><a href="{{ route('logs') }}" class="tip" title="{{ tr('Log accessi') }}">
                         <i class="fa fa-book"></i>
                     </a></li>
 
-                    <li><a href="{{ route('info') }}" class="tip" title="{{ __('Informazioni') }}">
+                    <li><a href="{{ route('info') }}" class="tip" title="{{ tr('Informazioni') }}">
                         <i class="fa fa-info"></i>
                     </a></li>
 
-                    <li><a href="{{ route('logout') }}" onclick="sessionStorage.clear()" class="bg-red tip" title="{{ __('Esci') }}">
+                    <li><a href="{{ route('logout') }}" onclick="sessionStorage.clear()" class="bg-red tip" title="{{ tr('Esci') }}">
                         <i class="fa fa-power-off"></i>
                     </a></li>
                 </ul>
@@ -257,7 +257,7 @@
             <!-- Form di ricerca generale -->
             <div class="sidebar-form">
                 <div class="input-group">
-                    <input type="text" name="q" class="form-control" id="supersearch" placeholder="{{ __('Cerca') }}..."/>
+                    <input type="text" name="q" class="form-control" id="supersearch" placeholder="{{ tr('Cerca') }}..."/>
                     <span class="input-group-btn">
                         <button class="btn btn-flat" id="search-btn" name="search" type="submit" ><i class="fa fa-search"></i>
                         </button>
@@ -283,10 +283,10 @@
     </div>
 
     <footer class="main-footer">
-        <a class="hidden-xs" href="https://www.openstamanager.com" title="{{ __("Il gestionale open source per l'assistenza tecnica e la fatturazione") }}" target="_blank"><strong>{{ __('OpenSTAManager') }}</strong></a>
+        <a class="hidden-xs" href="https://www.openstamanager.com" title="{{ tr("Il gestionale open source per l'assistenza tecnica e la fatturazione") }}" target="_blank"><strong>{{ tr('OpenSTAManager') }}</strong></a>
         <span class="pull-right hidden-xs">
-            <strong>{{ __('Versione') }}:</strong> {{ Update::getVersion() }}
-            <small class="text-muted">({{ Update::getRevision() ?: __('In sviluppo') }})</small>
+            <strong>{{ tr('Versione') }}:</strong> {{ Update::getVersion() }}
+            <small class="text-muted">({{ Update::getRevision() ?: tr('In sviluppo') }})</small>
         </span>
     </footer>
 

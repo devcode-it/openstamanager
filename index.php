@@ -32,10 +32,10 @@ switch ($op) {
         $password = post('password');
 
         $user = User::where('username', $username)->first();
-        if (!empty($user) && Hash::check($password, $user->getAuthPassword())){
+        if (!empty($user) && Hash::check($password, $user->getAuthPassword())) {
             auth()->loginUsingId($user->id, true);
 
-            // Rimozione log vecchi
+        // Rimozione log vecchi
             //$dbo->query('DELETE FROM `zz_operations` WHERE DATE_ADD(`created_at`, INTERVAL 30*24*60*60 SECOND) <= NOW()');
         } else {
             $status = auth()->user();
@@ -43,8 +43,7 @@ switch ($op) {
             //flash()->error(auth()->getStatus()[$status]['message']);
 
             redirect_legacy(base_url().'/index.php');
-            throw new \App\Exceptions\LegacyExitException;
-
+            throw new \App\Exceptions\LegacyExitException();
         }
 
         break;
@@ -53,9 +52,7 @@ switch ($op) {
         auth()->logout();
 
         redirect_legacy(base_url().'/index.php');
-        throw new \App\Exceptions\LegacyExitException;
-
-
+        throw new \App\Exceptions\LegacyExitException();
         break;
 }
 
@@ -67,8 +64,7 @@ if (auth()->check() && isset($dbo) && $dbo->isConnected() && $dbo->isInstalled()
     } else {
         redirect_legacy(base_url().'/index.php?op=logout');
     }
-    throw new \App\Exceptions\LegacyExitException;
-
+    throw new \App\Exceptions\LegacyExitException();
 }
 
 // Procedura di installazione

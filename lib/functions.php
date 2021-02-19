@@ -314,8 +314,7 @@ function redirectOperation($id_module, $id_record)
             redirect_legacy(base_url().'/controller.php?id_module='.$id_module.$hash);
         }
 
-        throw new \App\Exceptions\LegacyExitException;
-
+        throw new \App\Exceptions\LegacyExitException();
     }
 }
 

@@ -121,7 +121,7 @@ class HTMLBuilder
 
         foreach ($managers[0] as $value) {
             $json = self::decode($value, 'manager');
-            if (empty($json)){
+            if (empty($json)) {
                 continue;
             }
 

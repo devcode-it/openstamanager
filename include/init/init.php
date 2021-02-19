@@ -115,8 +115,7 @@ if (post('action') == 'init') {
     }
 
     redirect_legacy(base_url(), 'js');
-    throw new \App\Exceptions\LegacyExitException;
-
+    throw new \App\Exceptions\LegacyExitException();
 }
 
 $img = AppLegacy::getPaths()['img'];
@@ -263,5 +262,4 @@ echo '
 
 include_once AppLegacy::filepath('include|custom|', 'bottom.php');
 
-throw new \App\Exceptions\LegacyExitException;
-
+throw new \App\Exceptions\LegacyExitException();

@@ -35,9 +35,9 @@ switch (filter('op')) {
         $stati = session('dashboard.idstatiintervento', ["'-1'"]);
         $stati[] = prepare('');
 
-        $tipi =  session('dashboard.idtipiintervento', ["'-1'"]);
-        $zone =  session('dashboard.idzone', ["'-1'"]);
-        $tecnici =  session('dashboard.idtecnici', ["'-1'"]);
+        $tipi = session('dashboard.idtipiintervento', ["'-1'"]);
+        $zone = session('dashboard.idzone', ["'-1'"]);
+        $tecnici = session('dashboard.idtecnici', ["'-1'"]);
 
         $query = 'SELECT
             in_interventi_tecnici.id,

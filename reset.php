@@ -60,8 +60,7 @@ switch (post('op')) {
         }
 
         redirect_legacy(base_url().'/index.php');
-        throw new \App\Exceptions\LegacyExitException;
-
+        throw new \App\Exceptions\LegacyExitException();
         break;
 
     case 'update':
@@ -78,8 +77,7 @@ switch (post('op')) {
         flash()->info(tr('Password cambiata!'));
 
         redirect_legacy(base_url().'/index.php');
-        throw new \App\Exceptions\LegacyExitException;
-
+        throw new \App\Exceptions\LegacyExitException();
         break;
 }
 

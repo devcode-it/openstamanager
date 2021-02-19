@@ -123,11 +123,12 @@ echo '
     </tr>';
 
 // Richiesta
+// Rimosso nl2br, non necessario con ckeditor
 echo '
     <tr>
         <td colspan="4" style="height:20mm;">
             <b>'.tr('Richiesta').':</b>
-            <p>'.nl2br($documento['richiesta']).'</p>
+            <p>'.($documento['richiesta']).'</p>
         </td>
     </tr>';
 

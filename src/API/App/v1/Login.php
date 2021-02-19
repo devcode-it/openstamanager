@@ -32,9 +32,11 @@ class Login extends Resource implements CreateInterface
         $database = database();
 
         // Controllo sulle credenziali
-        if (auth()->attempt($request['username'], $request['password'])) {
+        if (auth()->once(['username' => $request['username'], 'password' => $request['password']])) {
             $user = $this->getUser();
-            $token = auth()->getToken();
+
+            $tokens = $user->getApiTokens();
+            $token = $tokens[0]['token'];
 
             // Informazioni sull'utente, strettamente collegato ad una anagrafica di tipo Tecnico
             $utente = $database->fetchOne("SELECT

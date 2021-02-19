@@ -68,6 +68,7 @@ class Module extends Model
     {
         if (!isset($this->variables[$id_record])) {
             $dbo = $database = database();
+            $variables = [];
 
             // Lettura delle variabili nei singoli moduli
             $path = $this->filepath('variables.php');

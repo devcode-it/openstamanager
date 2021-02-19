@@ -510,8 +510,8 @@ class Prints
 
         // Inclusione dei fogli di stile CSS
         $styles = [
-            App::filepath('templates/base|custom|', 'bootstrap.css'),
-            App::filepath('templates/base|custom|', 'style.css'),
+            AppLegacy::filepath('templates/base|custom|', 'bootstrap.css'),
+            AppLegacy::filepath('templates/base|custom|', 'style.css'),
         ];
 
         foreach ($styles as $value) {

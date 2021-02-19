@@ -353,7 +353,7 @@ function isMobile()
  */
 function getURLPath()
 {
-    $path = $_SERVER['SCRIPT_FILENAME'];
+    $path = $_SERVER['REQUEST_URI'];
     $prefix = rtrim($_SERVER['DOCUMENT_ROOT'], '/\\');
 
     if (substr($path, 0, strlen($prefix)) == $prefix) {
@@ -425,7 +425,7 @@ function base_url()
  */
 function base_dir()
 {
-    return base_path().'/legacy/';
+    return base_path().DIRECTORY_SEPARATOR.'legacy'.DIRECTORY_SEPARATOR;
 }
 
 /**

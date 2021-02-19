@@ -1064,6 +1064,50 @@ div.tip {
     opacity: 0.5;
 }
 
+/* Porting da AdminLTE 3 */
+.bg-light {
+    background-color: #e8e9ea !important;
+}
+
+a.bg-light:hover, a.bg-light:focus,
+button.bg-light:hover,
+button.bg-light:focus {
+    background-color: #dae0e5 !important;
+}
+
+.brand-image {
+    float: left;
+    line-height: .8;
+    margin-left: .8rem;
+    margin-right: .5rem;
+    margin-top: -3px;
+    max-height: 33px;
+    width: auto;
+}
+
+.brand-link {
+    display: block;
+    font-size: 1.25rem;
+    line-height: 1.5;
+    padding: .8125rem .5rem;
+    transition: width .3s ease-in-out;
+    white-space: nowrap
+}
+
+.brand-link:hover {
+    color: #fff;
+    text-decoration: none
+}
+
+.text-sm .brand-link {
+    font-size: inherit
+}
+
+.brand-link {
+    border-bottom: 1px solid #4b545c;
+    color: rgba(255, 255, 255, .8)
+}
+
 /* Stile Fullcalendar per weekend */
 .fc-sat, .fc-sun {
     background-color: rgba(255, 99, 71, 0.6) !important;

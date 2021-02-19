@@ -469,7 +469,7 @@ if (auth()->check()) {
                 <!-- /.sidebar -->
             </aside>';
 
-    if (string_contains($_SERVER['SCRIPT_FILENAME'], 'editor.php')) {
+    if (string_contains($_SERVER['REQUEST_URI'], 'editor.php')) {
         // Menu laterale per la visualizzazione dei plugin
         echo '
         <aside class="control-sidebar control-sidebar-light control-sidebar-shown">
@@ -532,15 +532,15 @@ if (auth()->check()) {
 
     echo '
             <!-- Right side column. Contains the navbar and content of the page -->
-            <aside class="content-wrapper '.(string_contains($_SERVER['SCRIPT_FILENAME'], 'editor.php') ? 'with-control-sidebar' : '').'">
+            <aside class="content-wrapper '.(string_contains($_SERVER['REQUEST_URI'], 'editor.php') ? 'with-control-sidebar' : '').'">
 
                 <!-- Main content -->
                 <section class="content">
                     <div class="row">';
 
-    if (string_contains($_SERVER['SCRIPT_FILENAME'], 'editor.php')) {
+    if (string_contains($_SERVER['REQUEST_URI'], 'editor.php')) {
         $location = 'editor_right';
-    } elseif (string_contains($_SERVER['SCRIPT_FILENAME'], 'controller.php')) {
+    } elseif (string_contains($_SERVER['REQUEST_URI'], 'controller.php')) {
         $location = 'controller_right';
     }
 

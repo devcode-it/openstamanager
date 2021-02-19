@@ -24,6 +24,7 @@ use Respect\Validation\Validator as v;
  * Classe per la gestione dell impostazioni del progetto.
  *
  * @since 2.3
+ * @deprecated
  */
 class Settings
 {

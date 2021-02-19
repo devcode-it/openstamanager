@@ -23,6 +23,7 @@ use Models\Plugin;
  * Classe per la gestione delle informazioni relative ai plugin installati.
  *
  * @since 2.3
+ * @deprecated
  */
 class Plugins
 {

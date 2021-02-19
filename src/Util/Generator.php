@@ -20,7 +20,7 @@
 namespace Util;
 
 use Carbon\Carbon;
-use Illuminate\Database\Capsule\Manager;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Classe dedicata alla gestione e all'interpretazione delle stringhe personalizzate.
@@ -201,7 +201,7 @@ class Generator
         $maschera = Generator::complete($maschera, [], $date);
         $maschera = str_replace('#', '%', $maschera);
 
-        $query = Manager::table($table)->select($field)->where($field, 'like', $maschera)->orderByRaw($order);
+        $query = DB::table($table)->select($field)->where($field, 'like', $maschera)->orderByRaw($order);
 
         foreach ($where as $and) {
             $query->whereRaw($and);

@@ -164,17 +164,37 @@ class FatturaElettronica
             $documento = $this->getDocumento();
             $database = database();
 
-            $ordini = $database->fetchArray('SELECT `id_documento_fe` AS id_documento, `num_item`, `codice_cig`, `codice_cup` FROM `or_ordini` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idordine` = `or_ordini`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL AND `co_righe_documenti`.`idddt` = 0');
-
-            $ddt = $database->fetchArray('SELECT `id_documento_fe` AS id_documento, `num_item`, `codice_cig`, `codice_cup` FROM `dt_ddt` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idddt` = `dt_ddt`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
+            $ordini = $database->fetchArray('SELECT `or_ordini`.`numero_cliente` AS id_documento, `or_ordini`.`num_item`, `or_ordini`.`codice_cig`, `or_ordini`.`codice_cup`, `or_ordini`.`codice_commessa`, `or_ordini`.`data_cliente`, `co_righe_documenti`.`order` AS riferimento_linea FROM `or_ordini` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idordine` = `or_ordini`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']));
 
             $dati_aggiuntivi = $documento->dati_aggiuntivi_fe;
             $dati = $dati_aggiuntivi['dati_ordine'] ?: [];
 
-            $this->ordini = array_merge($ordini, $ddt, $dati);
+            $this->ordini = array_merge($ordini, $dati);
         }
 
         return $this->ordini;
+    }
+
+    /**
+     * Restituisce i ddt collegati al documento.
+     *
+     * @return array
+     */
+    public function getDDT()
+    {
+        if (empty($this->ddt)) {
+            $documento = $this->getDocumento();
+            $database = database();
+
+            $ddt = $database->fetchArray('SELECT `dt_ddt`.`numero_esterno` AS id_documento, `co_righe_documenti`.`order` AS riferimento_linea, `dt_ddt`.`data` FROM `dt_ddt` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idddt` = `dt_ddt`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']));
+
+            $dati_aggiuntivi = $documento->dati_aggiuntivi_fe;
+            $dati = $dati_aggiuntivi['dati_ddt'] ?: [];
+
+            $this->ddt = array_merge($ddt, $dati);
+        }
+
+        return $this->ddt;
     }
 
     /**
@@ -1015,11 +1035,7 @@ class FatturaElettronica
 
             $dati = [];
 
-            foreach ($element['riferimento_linea'] as $linea) {
-                $dati[] = [
-                    'RiferimentoNumeroLinea' => $linea,
-                ];
-            }
+            $dati['RiferimentoNumeroLinea'] = $element['riferimento_linea'];
 
             $dati['IdDocumento'] = $element['id_documento'];
 
@@ -1045,6 +1061,36 @@ class FatturaElettronica
             $result[] = $dati;
         }
 
+        return $result;
+    }
+
+    /**
+     * Restituisce l'array responsabile per la generazione del tag DatiDdt.
+     *
+     * @return array
+     */
+    protected static function getDatiDDT($fattura)
+    {
+        $ddt = $fattura->getDDT();
+
+        $result = [];
+        foreach ($ddt as $element) {
+            if (empty($element['id_documento'])) {
+                continue;
+            }
+
+            $dati = [];
+
+            $dati['NumeroDDT'] = $element['id_documento'];
+
+            if (!empty($element['data'])) {
+                $dati['DataDDT'] = $element['data'];
+            }
+
+            $dati['RiferimentoNumeroLinea'] = $element['riferimento_linea'];
+            $result[] = $dati;
+        }
+    
         return $result;
     }
 
@@ -1171,6 +1217,18 @@ class FatturaElettronica
                 if (!empty($dato)) {
                     $result[] = [
                         'DatiFattureCollegate' => $dato,
+                    ];
+                }
+            }
+        }
+
+        // Controllo le le righe per la fatturazione di contratti
+        $dati_ddt = static::getDatiDDT($fattura);
+        if (!empty($dati_ddt)) {
+            foreach ($dati_ddt as $dato) {
+                if (!empty($dato)) {
+                    $result[] = [
+                        'DatiDDT' => $dato,
                     ];
                 }
             }

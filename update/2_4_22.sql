@@ -147,3 +147,6 @@ INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `filen
 
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES
 (NULL, 'Numero massimo di tentativi', '10', 'integer', 1, 'Newsletter', 1, 'Numero massimo di tentativi da effettuare per cercare di inviare una mail');
+
+-- Aggiunta colonna codice commessa convenzione
+ALTER TABLE `or_ordini` ADD `codice_commessa` VARCHAR(100) NULL AFTER `updated_at`;

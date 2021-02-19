@@ -45,7 +45,7 @@ switch (filter('op')) {
         }
 
         if (!$found) {
-            $_SESSION[$array[0]][$array[1]][] =  $value;
+            $_SESSION[$array[0]][$array[1]][] = $value;
         }
 
         // print_r($_SESSION[$array[0]][$array[1]]);

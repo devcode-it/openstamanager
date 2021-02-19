@@ -110,8 +110,7 @@ if (post('db_host') !== null) {
         }
 
         echo $state;
-        throw new \App\Exceptions\LegacyExitException;
-
+        throw new \App\Exceptions\LegacyExitException();
     }
 
     // Creazione della configurazione
@@ -196,7 +195,7 @@ if (post('db_host') !== null) {
     "generated" : "true",
     "icons" : [
         {
-            "src": "assets/dist/img/logo_completo.png",
+            "src": "assets/img/logo.png",
             "type": "image/png",
             "sizes": "489x91"
         }
@@ -205,8 +204,7 @@ if (post('db_host') !== null) {
             file_put_contents('manifest.json', $manifest);
 
             redirect_legacy(base_url().'/index.php');
-            throw new \App\Exceptions\LegacyExitException;
-
+            throw new \App\Exceptions\LegacyExitException();
         }
     }
 }
@@ -611,5 +609,4 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
 
 include_once AppLegacy::filepath('include|custom|', 'bottom.php');
 
-throw new \App\Exceptions\LegacyExitException;
-
+throw new \App\Exceptions\LegacyExitException();

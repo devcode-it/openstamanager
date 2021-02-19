@@ -26,8 +26,7 @@ if (get('anteprima') !== null) {
 
     if (empty($rs)) {
         echo tr('Intervento inesistente!');
-        throw new \App\Exceptions\LegacyExitException;
-
+        throw new \App\Exceptions\LegacyExitException();
     }
 
     // Gestione della stampa

@@ -33,7 +33,7 @@ use Models\Module;
  */
 function database()
 {
-    if (!app()->has(Database::class)){
+    if (!app()->has(Database::class)) {
         app()->instance(Database::class, new Database());
     }
 
@@ -137,7 +137,7 @@ function flash()
  */
 function formatter()
 {
-    if (!app()->has(Formatter::class)){
+    if (!app()->has(Formatter::class)) {
         $formatter = new Formatter(
             app()->getLocale(),
             empty($options['timestamp']) ? 'd/m/Y H:i' : $options['timestamp'],
@@ -149,11 +149,11 @@ function formatter()
             ] : $options['number']
         );
 
-        $formatter->setPrecision(auth()->check() ? setting('Cifre decimali per importi') : 2);
+        //$formatter->setPrecision(auth()->check() ? setting('Cifre decimali per importi') : 2);
+        $formatter->setPrecision(2);
 
         app()->instance(Formatter::class, $formatter);
     }
-
 
     return app()->get(Formatter::class);
 }
@@ -176,14 +176,13 @@ function tr($string, $parameters = [], $operations = [])
     return replace($result, $parameters);
 }
 
-// Retrocompatibilità (con la funzione gettext)
+// Retro-compatibilità (con la funzione gettext)
 if (!function_exists('_')) {
     function _($string, $parameters = [], $operations = [])
     {
-        return _i($string, $parameters);
+        return tr($string, $parameters);
     }
 }
-
 
 /**
  * Restituisce il numero indicato formattato secondo la configurazione del sistema.

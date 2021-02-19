@@ -28,7 +28,8 @@ use Illuminate\Support\Facades\Session;
  */
 class Messages
 {
-    public function __contruct($name){
+    public function __contruct($name)
+    {
     }
 
     public function info($message)
@@ -46,14 +47,16 @@ class Messages
         Session::push('messages.error', $message);
     }
 
-    public function getMessage($type){
+    public function getMessage($type)
+    {
         $messages = Session::get('messages.'.$type);
         Session::remove('messages.'.$type);
 
         return $messages;
     }
 
-    public function getMessages(){
+    public function getMessages()
+    {
         $messages = Session::get('messages');
         Session::remove('messages');
 

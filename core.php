@@ -30,8 +30,7 @@ if (version_compare(phpversion(), $minimum) < 0) {
 <p>Stai utilizzando la versione PHP '.phpversion().', non compatibile con OpenSTAManager.</p>
 
 <p>Aggiorna PHP alla versione >= '.$minimum.'.</p>';
-    throw new \App\Exceptions\LegacyExitException;
-
+    throw new \App\Exceptions\LegacyExitException();
 }
 
 // Caricamento delle impostazioni personalizzabili
@@ -55,8 +54,7 @@ $config = AppLegacy::getConfig();
 if (!empty($config['redirectHTTPS']) && !isHTTPS(true)) {
     header('HTTP/1.1 301 Moved Permanently');
     header('Location: https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
-    throw new \App\Exceptions\LegacyExitException;
-
+    throw new \App\Exceptions\LegacyExitException();
 }
 
 /* GESTIONE DEGLI ERRORI */
@@ -167,7 +165,7 @@ if (!$continue && getURLPath() != slashes(base_url().'/index.php') && !Permissio
     }
 
     redirect_legacy(base_url().'/index.php');
-    throw new \App\Exceptions\LegacyExitException;
+    throw new \App\Exceptions\LegacyExitException();
 }
 
 /* INIZIALIZZAZIONE GENERALE */

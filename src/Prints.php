@@ -180,8 +180,7 @@ class Prints
             echo '
                 <p align="center">'.$error.'</p>';
 
-            throw new \App\Exceptions\LegacyExitException;
-
+            throw new \App\Exceptions\LegacyExitException();
         }
 
         if (self::isCompletelyCustom($print)) {

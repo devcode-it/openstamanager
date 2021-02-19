@@ -27,6 +27,10 @@ use Util\Messages;
  */
 class AppLegacy
 {
+    /**
+     * @var \Intl\Formatter
+     */
+    public static $formatter;
     /** @var string Simbolo della valuta corrente */
     protected static $currency;
 
@@ -63,10 +67,6 @@ class AppLegacy
             'i18n/fullcalendar/|lang|.min.js',
         ],
     ];
-    /**
-     * @var \Intl\Formatter
-     */
-    public static $formatter;
 
     /**
      * Restituisce la configurazione dell'installazione in utilizzo del progetto.
@@ -164,7 +164,7 @@ class AppLegacy
 
         // Impostazione dei percorsi
         $paths = self::getPaths();
-        $lang = App::getLocale();;
+        $lang = App::getLocale();
 
         // Sezioni: nome - percorso
         $sections = [
@@ -188,7 +188,7 @@ class AppLegacy
         foreach ($sections as $section => $dir) {
             $result = array_unique(array_merge(
                 self::$assets[$section],
-                isset($config['assets']) ? ($config['assets'][$section] ?:[]) :[]
+                isset($config['assets']) ? ($config['assets'][$section] ?: []) : []
             ));
 
             foreach ($result as $key => $element) {
@@ -287,6 +287,25 @@ class AppLegacy
     }
 
     /**
+     * Restituisce il simbolo della valuta del gestione.
+     *
+     * @since 2.4.9
+     *
+     * @return string
+     */
+    public static function getCurrency()
+    {
+        if (!isset(self::$currency)) {
+            $id = setting('Valuta');
+            $valuta = database()->fetchOne('SELECT symbol FROM zz_currencies WHERE id = '.prepare($id));
+
+            self::$currency = $valuta['symbol'];
+        }
+
+        return self::$currency;
+    }
+
+    /**
      * Restituisce la configurazione di default del progetto.
      *
      * @return array
@@ -316,24 +335,4 @@ class AppLegacy
 
         return get_defined_vars();
     }
-
-    /**
-     * Restituisce il simbolo della valuta del gestione.
-     *
-     * @since 2.4.9
-     *
-     * @return string
-     */
-    public static function getCurrency()
-    {
-        if (!isset(self::$currency)) {
-            $id = setting('Valuta');
-            $valuta = database()->fetchOne('SELECT symbol FROM zz_currencies WHERE id = '.prepare($id));
-
-            self::$currency = $valuta['symbol'];
-        }
-
-        return self::$currency;
-    }
-
 }

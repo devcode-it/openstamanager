@@ -17,7 +17,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
@@ -43,7 +42,6 @@ class Database
     protected $mysql_version;
 
     /**
-     *
      * @since 2.3
      */
     public function __construct()
@@ -62,7 +60,6 @@ class Database
         return DB::connection()->getPDO();
     }
 
-
     /**
      * Controlla se la connessione è valida e andata a buon fine.
      *
@@ -74,9 +71,10 @@ class Database
     {
         try {
             DB::connection()->getPdo();
+
             return true;
         } catch (\Exception $e) {
-           return false;
+            return false;
         }
     }
 

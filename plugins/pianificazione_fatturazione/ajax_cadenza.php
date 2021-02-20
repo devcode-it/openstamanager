@@ -57,7 +57,7 @@ echo '
         $data_fatturazione = ($data_fatturazione ?: date('Y-m', strtotime($data)));
         unset($checked);
 
-        if ($id_module == Modules::get('Contratti')['id']) {
+        if ($id_module == module('Contratti')['id']) {
             if ($data == date('Y-m-t', strtotime($timeing, strtotime($data_fatturazione))) || $data_fatturazione == date('Y-m', strtotime($data_corrente))) {
                 $checked = 'checked';
                 $data_fatturazione = date('Y-m', strtotime($data));

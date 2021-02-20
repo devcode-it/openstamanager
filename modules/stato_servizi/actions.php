@@ -169,7 +169,7 @@ switch (filter('op')) {
                 ]));
             }
         } else {
-            $modulo = Modules::get($id);
+            $modulo = module($id);
             flash()->info(tr('Moduli sotto a "_NAME_" abilitati!', [
                 '_NAME_' => $struttura->title,
             ]));

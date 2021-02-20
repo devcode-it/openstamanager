@@ -20,7 +20,7 @@
 $skip_permissions = true;
 include_once __DIR__.'/core.php';
 
-use Models\User;
+use App\Models\User;
 use Modules\Emails\Mail;
 use Modules\Emails\Template;
 use Notifications\EmailNotification;

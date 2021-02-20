@@ -36,53 +36,53 @@ $documenti[] = [
 ];
 
 //Interventi dell'anagrafica
-if ($user->is_admin || in_array(Modules::get('Interventi')['id'], $permessi)) {
-    $interventi = $dbo->fetcharray('SELECT '.prepare(Modules::get('Interventi')['id'])." AS id_module, id AS id_record, CONCAT('Intervento num. ',codice,' del ',DATE_FORMAT(data_richiesta,'%d/%m/%Y')) AS descrizione FROM in_interventi WHERE idanagrafica=".prepare($id_record));
+if ($user->is_admin || in_array(module('Interventi')['id'], $permessi)) {
+    $interventi = $dbo->fetcharray('SELECT '.prepare(module('Interventi')['id'])." AS id_module, id AS id_record, CONCAT('Intervento num. ',codice,' del ',DATE_FORMAT(data_richiesta,'%d/%m/%Y')) AS descrizione FROM in_interventi WHERE idanagrafica=".prepare($id_record));
     $documenti = array_merge($documenti, $interventi);
 }
 
 //Preventivi dell'anagrafica
-if ($user->is_admin || in_array(Modules::get('Preventivi')['id'], $permessi)) {
-    $preventivi = $dbo->fetcharray('SELECT '.prepare(Modules::get('Preventivi')['id'])." AS id_module, id AS id_record, CONCAT('Preventivo num. ',numero,' del ',DATE_FORMAT(data_bozza,'%d/%m/%Y')) AS descrizione FROM co_preventivi WHERE idanagrafica=".prepare($id_record));
+if ($user->is_admin || in_array(module('Preventivi')['id'], $permessi)) {
+    $preventivi = $dbo->fetcharray('SELECT '.prepare(module('Preventivi')['id'])." AS id_module, id AS id_record, CONCAT('Preventivo num. ',numero,' del ',DATE_FORMAT(data_bozza,'%d/%m/%Y')) AS descrizione FROM co_preventivi WHERE idanagrafica=".prepare($id_record));
     $documenti = array_merge($documenti, $preventivi);
 }
 
 //Contratti dell'anagrafica
-if ($user->is_admin || in_array(Modules::get('Contratti')['id'], $permessi)) {
-    $contratti = $dbo->fetcharray('SELECT '.prepare(Modules::get('Contratti')['id'])." AS id_module, id AS id_record, CONCAT('Preventivo num. ',numero,' del ',DATE_FORMAT(data_bozza,'%d/%m/%Y')) AS descrizione FROM co_contratti WHERE idanagrafica=".prepare($id_record));
+if ($user->is_admin || in_array(module('Contratti')['id'], $permessi)) {
+    $contratti = $dbo->fetcharray('SELECT '.prepare(module('Contratti')['id'])." AS id_module, id AS id_record, CONCAT('Preventivo num. ',numero,' del ',DATE_FORMAT(data_bozza,'%d/%m/%Y')) AS descrizione FROM co_contratti WHERE idanagrafica=".prepare($id_record));
     $documenti = array_merge($documenti, $contratti);
 }
 
 //DDT dell'anagrafica
-if ($user->is_admin || in_array(Modules::get('Ddt di vendita')['id'], $permessi)) {
-    $ddt_vendita = $dbo->fetcharray('SELECT '.prepare(Modules::get('Ddt di vendita')['id'])." AS id_module, id AS id_record, CONCAT('Ddt di vendita num. ',IFNULL(numero_esterno,numero),' del ',DATE_FORMAT(data,'%d/%m/%Y')) AS descrizione FROM dt_ddt WHERE idanagrafica=".prepare($id_record));
+if ($user->is_admin || in_array(module('Ddt di vendita')['id'], $permessi)) {
+    $ddt_vendita = $dbo->fetcharray('SELECT '.prepare(module('Ddt di vendita')['id'])." AS id_module, id AS id_record, CONCAT('Ddt di vendita num. ',IFNULL(numero_esterno,numero),' del ',DATE_FORMAT(data,'%d/%m/%Y')) AS descrizione FROM dt_ddt WHERE idanagrafica=".prepare($id_record));
     $documenti = array_merge($documenti, $ddt_vendita);
 }
 
-if ($user->is_admin || in_array(Modules::get('Ddt di acquisto')['id'], $permessi)) {
-    $ddt_acquisto = $dbo->fetcharray('SELECT '.prepare(Modules::get('Ddt di acquisto')['id'])." AS id_module, id AS id_record, CONCAT('Ddt di acquisto num. ',IFNULL(numero_esterno,numero),' del ',DATE_FORMAT(data,'%d/%m/%Y')) AS descrizione FROM dt_ddt WHERE idanagrafica=".prepare($id_record));
+if ($user->is_admin || in_array(module('Ddt di acquisto')['id'], $permessi)) {
+    $ddt_acquisto = $dbo->fetcharray('SELECT '.prepare(module('Ddt di acquisto')['id'])." AS id_module, id AS id_record, CONCAT('Ddt di acquisto num. ',IFNULL(numero_esterno,numero),' del ',DATE_FORMAT(data,'%d/%m/%Y')) AS descrizione FROM dt_ddt WHERE idanagrafica=".prepare($id_record));
     $documenti = array_merge($documenti, $ddt_acquisto);
 }
 
 //Fatture dell'anagrafica
-if ($user->is_admin || in_array(Modules::get('Fatture di vendita')['id'], $permessi)) {
-    $fatture_vendita = $dbo->fetcharray('SELECT '.prepare(Modules::get('Fatture di vendita')['id'])." AS id_module, id AS id_record, CONCAT('Fattura di vendita num. ',IFNULL(numero_esterno,numero),' del ',DATE_FORMAT(data_registrazione,'%d/%m/%Y')) AS descrizione FROM co_documenti WHERE idanagrafica=".prepare($id_record));
+if ($user->is_admin || in_array(module('Fatture di vendita')['id'], $permessi)) {
+    $fatture_vendita = $dbo->fetcharray('SELECT '.prepare(module('Fatture di vendita')['id'])." AS id_module, id AS id_record, CONCAT('Fattura di vendita num. ',IFNULL(numero_esterno,numero),' del ',DATE_FORMAT(data_registrazione,'%d/%m/%Y')) AS descrizione FROM co_documenti WHERE idanagrafica=".prepare($id_record));
     $documenti = array_merge($documenti, $fatture_vendita);
 }
 
-if ($user->is_admin || in_array(Modules::get('Fatture di acquisto')['id'], $permessi)) {
-    $fatture_acquisto = $dbo->fetcharray('SELECT '.prepare(Modules::get('Fatture di acquisto')['id'])." AS id_module, id AS id_record, CONCAT('Fattura di acquisto num. ',IFNULL(numero_esterno,numero),' del ',DATE_FORMAT(data_registrazione,'%d/%m/%Y')) AS descrizione FROM co_documenti WHERE idanagrafica=".prepare($id_record));
+if ($user->is_admin || in_array(module('Fatture di acquisto')['id'], $permessi)) {
+    $fatture_acquisto = $dbo->fetcharray('SELECT '.prepare(module('Fatture di acquisto')['id'])." AS id_module, id AS id_record, CONCAT('Fattura di acquisto num. ',IFNULL(numero_esterno,numero),' del ',DATE_FORMAT(data_registrazione,'%d/%m/%Y')) AS descrizione FROM co_documenti WHERE idanagrafica=".prepare($id_record));
     $documenti = array_merge($documenti, $fatture_acquisto);
 }
 
 //Ordini dell'anagrafica
-if ($user->is_admin || in_array(Modules::get('Ordini cliente')['id'], $permessi)) {
-    $ordini_vendita = $dbo->fetcharray('SELECT '.prepare(Modules::get('Ordini cliente')['id'])." AS id_module, id AS id_record, CONCAT('Ordine cliente num. ',IFNULL(numero_esterno,numero),' del ',DATE_FORMAT(data,'%d/%m/%Y')) AS descrizione FROM or_ordini WHERE idanagrafica=".prepare($id_record));
+if ($user->is_admin || in_array(module('Ordini cliente')['id'], $permessi)) {
+    $ordini_vendita = $dbo->fetcharray('SELECT '.prepare(module('Ordini cliente')['id'])." AS id_module, id AS id_record, CONCAT('Ordine cliente num. ',IFNULL(numero_esterno,numero),' del ',DATE_FORMAT(data,'%d/%m/%Y')) AS descrizione FROM or_ordini WHERE idanagrafica=".prepare($id_record));
     $documenti = array_merge($documenti, $ordini_vendita);
 }
 
-if ($user->is_admin || in_array(Modules::get('Ordini fornitore')['id'], $permessi)) {
-    $ordini_acquisto = $dbo->fetcharray('SELECT '.prepare(Modules::get('Ordini fornitore')['id'])." AS id_module, id AS id_record, CONCAT('Ordine fornitore num. ',IFNULL(numero_esterno,numero),' del ',DATE_FORMAT(data,'%d/%m/%Y')) AS descrizione FROM or_ordini WHERE idanagrafica=".prepare($id_record));
+if ($user->is_admin || in_array(module('Ordini fornitore')['id'], $permessi)) {
+    $ordini_acquisto = $dbo->fetcharray('SELECT '.prepare(module('Ordini fornitore')['id'])." AS id_module, id AS id_record, CONCAT('Ordine fornitore num. ',IFNULL(numero_esterno,numero),' del ',DATE_FORMAT(data,'%d/%m/%Y')) AS descrizione FROM or_ordini WHERE idanagrafica=".prepare($id_record));
     $documenti = array_merge($documenti, $ordini_acquisto);
 }
 
@@ -137,7 +137,7 @@ echo '
                                     <i class="fa fa-external-link"></i> '.$file->name.'
                                 </a>
                             </td>
-                            <td>'.Modules::link(Modules::get($allegato['id_module'])['name'], $file->id_record, $documento['descrizione']).'</td>
+                            <td>'.Modules::link(module($allegato['id_module'])['name'], $file->id_record, $documento['descrizione']).'</td>
                             <td class="text-center">'.dateFormat($file->created_at).'</td>
                         </tr>';
             }

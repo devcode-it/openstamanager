@@ -35,7 +35,7 @@ $id_anagrafica = filter('id_anagrafica');
 		</div>
 
 		<div class="col-md-4">
-			{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "id": "idanagrafica_impianto", "required": 1, "value": "<?php echo $id_anagrafica; ?>", "ajax-source": "clienti", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Cliente&readonly_tipo=1||<?php echo !empty($id_anagrafica)? 'disabled' : ''; ?>", "readonly": "<?php echo !empty($id_anagrafica)? 1 : 0; ?>"  ]}
+			{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "id": "idanagrafica_impianto", "required": 1, "value": "<?php echo $id_anagrafica; ?>", "ajax-source": "clienti", "icon-after": "add|<?php echo module('Anagrafiche')['id']; ?>|tipoanagrafica=Cliente&readonly_tipo=1||<?php echo !empty($id_anagrafica)? 'disabled' : ''; ?>", "readonly": "<?php echo !empty($id_anagrafica)? 1 : 0; ?>"  ]}
 		</div>
 
 		<div class="col-md-4">
@@ -43,7 +43,7 @@ $id_anagrafica = filter('id_anagrafica');
 		</div>
 
 		<div class="col-md-4">
-			{[ "type": "select", "label": "<?php echo tr('Tecnico assegnato'); ?>", "name": "idtecnico", "ajax-source": "tecnici", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Tecnico&readonly_tipo=1"  ]}
+			{[ "type": "select", "label": "<?php echo tr('Tecnico assegnato'); ?>", "name": "idtecnico", "ajax-source": "tecnici", "icon-after": "add|<?php echo module('Anagrafiche')['id']; ?>|tipoanagrafica=Tecnico&readonly_tipo=1"  ]}
 		</div>
 	</div>
 

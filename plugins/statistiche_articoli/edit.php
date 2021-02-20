@@ -99,7 +99,7 @@ echo '
     </div>
 </div>';
 
-$statistiche = Modules::get('Statistiche');
+$statistiche = module('Statistiche');
 
 if ($statistiche != null) {
     echo '

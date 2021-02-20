@@ -30,7 +30,7 @@ use Modules\DDT\DDT;
 use Modules\DDT\Stato;
 use Modules\DDT\Tipo;
 
-$module = Modules::get($id_module);
+$module = module($id_module);
 
 if ($module['name'] == 'Ddt di vendita') {
     $dir = 'entrata';

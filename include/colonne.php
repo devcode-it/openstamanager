@@ -20,8 +20,8 @@
 include_once __DIR__.'/../core.php';
 
 // Compatibilità per controller ed editor
-$structure = Modules::get($id_module);
-$modulo_viste = Modules::get('Viste');
+$structure = module($id_module);
+$modulo_viste = module('Viste');
 
 echo '
 <p>'.tr('Trascina le colonne per ordinare la struttura della tabella principale, seleziona e deseleziona le colonne per renderle visibili o meno').'.</p>

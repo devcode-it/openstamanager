@@ -65,7 +65,7 @@ if (post('action') == 'init') {
     // Azienda predefinita
     if (!$has_azienda) {
         Filter::set('post', 'op', 'add');
-        $id_module = Modules::get('Anagrafiche')['id'];
+        $id_module = module('Anagrafiche')['id'];
         include base_dir().'/modules/anagrafiche/actions.php';
 
         // Logo stampe

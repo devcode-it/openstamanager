@@ -219,7 +219,7 @@ if (sizeof($problemi_anagrafica) > 0) {
                             </div>
 
                             <div class="col-md-4">
-                                {[ "type": "select", "label": "<?php echo tr('Zona'); ?>", "name": "idzona", "values": "query=SELECT id, CONCAT_WS( ' - ', nome, descrizione) AS descrizione FROM an_zone ORDER BY descrizione ASC", "value": "$idzona$", "placeholder": "<?php echo tr('Nessuna zona'); ?>", "icon-after": "add|<?php echo Modules::get('Zone')['id']; ?>" ]}
+                                {[ "type": "select", "label": "<?php echo tr('Zona'); ?>", "name": "idzona", "values": "query=SELECT id, CONCAT_WS( ' - ', nome, descrizione) AS descrizione FROM an_zone ORDER BY descrizione ASC", "value": "$idzona$", "placeholder": "<?php echo tr('Nessuna zona'); ?>", "icon-after": "add|<?php echo module('Zone')['id']; ?>" ]}
                             </div>
 
                             <div class="col-md-4">
@@ -453,7 +453,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
     $banca_predefinita = $banche->first(function ($item) {
         return !empty($item['predefined']);
     });
-    $modulo_banche = Modules::get('Banche');
+    $modulo_banche = module('Banche');
     if (!$banche->isEmpty()) {
         echo '
                         <div class="row">
@@ -486,7 +486,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                             </div>
 
                             <div class="col-md-6">
-                                    {[ "type": "select", "label": "'.tr('Relazione con il cliente').'", "name": "idrelazione", "ajax-source": "relazioni", "value": "$idrelazione$", "icon-after": "add|'.Modules::get('Relazioni')['id'].'" ]}
+                                    {[ "type": "select", "label": "'.tr('Relazione con il cliente').'", "name": "idrelazione", "ajax-source": "relazioni", "value": "$idrelazione$", "icon-after": "add|'.module('Relazioni')['id'].'" ]}
                             </div>
                         </div>
 

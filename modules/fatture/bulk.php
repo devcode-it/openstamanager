@@ -83,7 +83,7 @@ switch (post('op')) {
             delete($file);
         }
 
-        $module = Modules::get($id_module);
+        $module = module($id_module);
 
         if ($module['name'] == 'Fatture di vendita') {
             $print_name = 'Fattura elettronica di vendita';
@@ -494,7 +494,7 @@ $operations['registrazione-contabile'] = [
         'title' => tr('Registrazione contabile'),
         'type' => 'modal',
         'origine' => 'fatture',
-        'url' => base_url().'/add.php?id_module='.Modules::get('Prima nota')['id'],
+        'url' => base_url().'/add.php?id_module='.module('Prima nota')['id'],
     ],
 ];
 

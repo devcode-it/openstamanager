@@ -63,7 +63,7 @@ if (empty($record['is_fiscale'])) {
     </button>';
 }
 
-$modulo_prima_nota = Modules::get('Prima nota');
+$modulo_prima_nota = module('Prima nota');
 $totale_scadenze = $dbo->fetchOne('SELECT SUM(da_pagare - pagato) AS differenza, SUM(da_pagare) AS da_pagare FROM co_scadenziario WHERE iddocumento = '.prepare($id_record));
 if (!empty($record['is_fiscale'])) {
     // Aggiunta insoluto

@@ -89,7 +89,7 @@ class AllegatiInterventi extends AppResource
 
     public function createRecord($data)
     {
-        $module = Modules::get('Interventi');
+        $module = module('Interventi');
 
         // Creazione del file temporaneo
         $content = explode(',', $data['contenuto']);

@@ -20,6 +20,6 @@
 include_once __DIR__.'/../../core.php';
 
 if (isset($id_record)) {
-    $id_module = Modules::get('Articoli')['id'];
+    $id_module = module('Articoli')['id'];
     redirect_legacy(base_url().'/editor.php?id_module='.$id_module.'&id_record='.$id_record);
 }

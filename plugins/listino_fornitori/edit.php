@@ -32,7 +32,7 @@ echo '
     <div class="box-body">
         <div class="row">
             <div class="col-md-9">
-                {[ "type": "select", "label": "'.tr('Fornitore').'", "name": "id_fornitore_informazioni", "required":"1", "ajax-source": "fornitori","icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|tipoanagrafica=Fornitore&readonly_tipo=1" ]}
+                {[ "type": "select", "label": "'.tr('Fornitore').'", "name": "id_fornitore_informazioni", "required":"1", "ajax-source": "fornitori","icon-after": "add|'.module('Anagrafiche')['id'].'|tipoanagrafica=Fornitore&readonly_tipo=1" ]}
             </div>
 
             <div class="col-md-3">

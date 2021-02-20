@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 $date_start = session('period_start');
 $date_end = session('period_end');
 
-$module = Modules::get('Scadenzario');
+$module = module('Scadenzario');
 $id_module = $module['id'];
 
 $total = Util\Query::readQuery($module);

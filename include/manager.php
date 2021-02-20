@@ -25,7 +25,7 @@ include_once __DIR__.'/../core.php';
 if (!empty($id_plugin)) {
     $structure = Plugins::get($id_plugin);
 } else {
-    $structure = Modules::get($id_module);
+    $structure = module($id_module);
 }
 
 if (!empty($id_plugin)) {

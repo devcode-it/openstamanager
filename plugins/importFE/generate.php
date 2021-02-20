@@ -429,7 +429,7 @@ if (!empty($righe)) {
                     <div class="box-header">
                         <div class="row">
                             <div class="col-md-5">
-                                {[ "type": "select", "name": "articoli['.$key.']", "ajax-source": "articoli", "select-options": '.json_encode(['permetti_movimento_a_zero' => 1, 'dir' => 'entrata', 'idanagrafica' => $anagrafica ? $anagrafica->id : '']).', "icon-after": "add|'.Modules::get('Articoli')['id'].'|codice='.str_replace('\\', '/', htmlentities($codice_principale)).'&descrizione='.str_replace('\\', '/', str_replace('\'', '&lsquo;', htmlentities($riga['Descrizione']))).'&prezzo_acquisto='.str_replace('\\', '/', htmlentities($riga['PrezzoUnitario'])).'", "value": "'.$id_articolo.'", "label": "'.tr('Articolo').'", "extra": "data-id=\''.$key.'\'" ]}
+                                {[ "type": "select", "name": "articoli['.$key.']", "ajax-source": "articoli", "select-options": '.json_encode(['permetti_movimento_a_zero' => 1, 'dir' => 'entrata', 'idanagrafica' => $anagrafica ? $anagrafica->id : '']).', "icon-after": "add|'.module('Articoli')['id'].'|codice='.str_replace('\\', '/', htmlentities($codice_principale)).'&descrizione='.str_replace('\\', '/', str_replace('\'', '&lsquo;', htmlentities($riga['Descrizione']))).'&prezzo_acquisto='.str_replace('\\', '/', htmlentities($riga['PrezzoUnitario'])).'", "value": "'.$id_articolo.'", "label": "'.tr('Articolo').'", "extra": "data-id=\''.$key.'\'" ]}
                             </div>
 
                             <div class="col-md-3">

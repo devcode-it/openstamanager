@@ -44,7 +44,7 @@ if (!$record['predefined']) {
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "span", "label": "<?php echo tr('Modulo del template'); ?>", "name": "module", "values": "query=SELECT id, title AS descrizione FROM zz_modules WHERE enabled = 1", "value": "<?php echo Modules::get($record['id_module'])['title']; ?>" ]}
+                    {[ "type": "span", "label": "<?php echo tr('Modulo del template'); ?>", "name": "module", "values": "query=SELECT id, title AS descrizione FROM zz_modules WHERE enabled = 1", "value": "<?php echo module($record['id_module'])['title']; ?>" ]}
                 </div>
             </div>
 
@@ -123,7 +123,7 @@ echo '
 <?php
 
 // Variabili utilizzabili
-$module = Modules::get($record['id_module']);
+$module = module($record['id_module']);
 $variables = $module->getPlaceholders($id_record);
 
 echo '

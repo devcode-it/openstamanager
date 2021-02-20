@@ -107,7 +107,7 @@ class ReceiptHook extends Manager
         $notify = $total_number != 0;
         $color = $total_number == $completed_number ? 'success' : 'yellow';
 
-        $module = Modules::get('Fatture di vendita');
+        $module = module('Fatture di vendita');
 
         return [
             'icon' => 'fa fa-ticket text-'.$color,

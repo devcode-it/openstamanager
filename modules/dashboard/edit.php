@@ -332,7 +332,7 @@ if ($vista == 'mese') {
     $def = 'agendaWeek';
 }
 
-$modulo_interventi = Modules::get('Interventi');
+$modulo_interventi = module('Interventi');
 
 echo '
 <script type="text/javascript">

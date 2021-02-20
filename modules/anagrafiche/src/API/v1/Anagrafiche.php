@@ -82,7 +82,7 @@ class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface
         }
 
         // Filtri aggiuntivi predefiniti
-        $module = Modules::get('Anagrafiche');
+        $module = module('Anagrafiche');
         $additionals = Modules::getAdditionals($module->id, false);
         foreach ($additionals['WHR'] as $where) {
             $query = $query->whereRaw($where);

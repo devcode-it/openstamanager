@@ -221,7 +221,7 @@ echo '
     </div>
 </div>';
 
-$modulo_prima_nota = Modules::get('Prima nota');
+$modulo_prima_nota = module('Prima nota');
 echo '
 <script>
 

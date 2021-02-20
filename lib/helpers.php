@@ -113,7 +113,7 @@ function get($param, $raw = false)
  */
 function setting($name, $again = false)
 {
-    return \Settings::getValue($name);
+    return \Models\Setting::pool($name)->valore;
 }
 
 /**

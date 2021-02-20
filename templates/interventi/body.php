@@ -181,7 +181,7 @@ if (!$righe->isEmpty()) {
     foreach ($righe as $riga) {
         if (setting('Formato ore in stampa') == 'Sessantesimi') {
             if ($riga->um == 'ore') {
-                $qta = Translator::numberToHours($riga->qta);
+                $qta = numberToHours($riga->qta);
             } else {
                 $qta = numberFormat($riga->qta, 'qta');
             }
@@ -333,7 +333,7 @@ foreach ($sessioni as $i => $sessione) {
 
 // Ore lavorate
 if (setting('Formato ore in stampa') == 'Sessantesimi') {
-    $ore_totali = Translator::numberToHours($documento->ore_totali);
+    $ore_totali = numberToHours($documento->ore_totali);
 } else {
     $ore_totali = numberFormat($documento->ore_totali, 2);
 }

@@ -328,7 +328,7 @@ class CSV extends CSVImporter
             if (!empty($file_content)) {
                 if ($record['import_immagine'] == 2 || $record['import_immagine'] == 4) {
                     Uploads::deleteLinked([
-                        'id_module' => Modules::get('Articoli')['id'],
+                        'id_module' => module('Articoli')['id'],
                         'id_record' => $articolo->id,
                     ]);
 
@@ -345,7 +345,7 @@ class CSV extends CSVImporter
                     'name' => 'Immagine',
                     'category' => 'Immagini',
                     'original_name' => $name,
-                    'id_module' => Modules::get('Articoli')['id'],
+                    'id_module' => module('Articoli')['id'],
                     'id_record' => $articolo->id,
                 ], [
                     'thumbnails' => true,

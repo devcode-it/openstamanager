@@ -27,7 +27,7 @@ use Modules\Interventi\Stato;
 use Util\Zip;
 
 // Segmenti
-$id_fatture = Modules::get('Fatture di vendita')['id'];
+$id_fatture = module('Fatture di vendita')['id'];
 if (!isset($_SESSION['module_'.$id_fatture]['id_segment'])) {
     $segments = Modules::getSegments($id_fatture);
     session(['module_'.$id_fatture.'.id_segment' => isset($segments[0]['id']) ? $segments[0]['id'] : null]);

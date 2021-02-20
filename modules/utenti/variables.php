@@ -17,7 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-$record = \Models\User::find($id_record);
+$record = \App\Models\User::find($id_record);
 
 $reset_token = $record->reset_token;
 

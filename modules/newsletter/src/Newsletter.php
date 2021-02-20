@@ -22,7 +22,7 @@ namespace Modules\Newsletter;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Models\User;
+use App\Models\User;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Referente;
 use Modules\Anagrafiche\Sede;

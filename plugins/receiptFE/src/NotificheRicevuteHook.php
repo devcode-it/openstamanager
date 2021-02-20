@@ -67,7 +67,7 @@ class NotificheRicevuteHook extends Manager
             ]);
         }
 
-        $module = Modules::get('Fatture di vendita');
+        $module = module('Fatture di vendita');
         $plugin = Plugins::get('Ricevute FE');
 
         return [

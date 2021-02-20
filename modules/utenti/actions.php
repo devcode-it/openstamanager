@@ -19,7 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Models\User;
+use App\Models\User;
 
 $id_utente = filter('id_utente');
 

@@ -169,7 +169,7 @@ class Articolo extends Model
             return null;
         }
 
-        $module = Modules::get($this->module);
+        $module = module($this->module);
         $fileinfo = Uploads::fileInfo($this->immagine);
 
         $directory = '/'.$module->upload_directory.'/';

@@ -168,7 +168,7 @@ if (empty($record) || !$has_access) {
 
                             {( "name": "button", "type": "email", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", "id_record": "'.$id_record.'" )}';
 
-                        if (Modules::get('Account SMS')) {
+                        if (module('Account SMS')) {
                             echo '
                             {( "name": "button", "type": "sms", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", "id_record": "'.$id_record.'" )}';
                         }

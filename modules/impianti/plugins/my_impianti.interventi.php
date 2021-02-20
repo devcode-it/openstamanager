@@ -163,13 +163,13 @@ echo '
             <input type="hidden" name="backto" value="record-edit">
             <div class="row">
                 <div class="col-xs-12 col-md-6">
-                    {[ "type": "select", "name": "matricole[]", "label": "'.tr('Impianti').'", "multiple": 1, "value": "'.implode(',', $impianti).'", "ajax-source": "impianti-cliente", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.($record['idsede_destinazione'] ?: '""').'}, "extra": "'.$readonly.'", "icon-after": "add|'.Modules::get('Impianti')['id'].'|id_anagrafica='.$record['idanagrafica'].'" ]}
+                    {[ "type": "select", "name": "matricole[]", "label": "'.tr('Impianti').'", "multiple": 1, "value": "'.implode(',', $impianti).'", "ajax-source": "impianti-cliente", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.($record['idsede_destinazione'] ?: '""').'}, "extra": "'.$readonly.'", "icon-after": "add|'.module('Impianti')['id'].'|id_anagrafica='.$record['idanagrafica'].'" ]}
                 </div>
             </div>
             <br><br>
             <button type="submit" class="btn btn-success pull-right" '.$disabled.'><i class="fa fa-check"></i> '.tr('Salva impianti').'</button>
 
-            <button type="button" class="btn btn-primary hide" data-toggle="modal" data-title="'.tr('Aggiungi impianto').'" data-href="'.base_url().'/add.php?id_module='.Modules::get('Impianti')['id'].'&source=Attività&select=idimpianti&id_anagrafica='.$record['idanagrafica'].'&ajax=yes"><i class="fa fa-plus"></i> '.tr('Aggiungi impianto').'</button>
+            <button type="button" class="btn btn-primary hide" data-toggle="modal" data-title="'.tr('Aggiungi impianto').'" data-href="'.base_url().'/add.php?id_module='.module('Impianti')['id'].'&source=Attività&select=idimpianti&id_anagrafica='.$record['idanagrafica'].'&ajax=yes"><i class="fa fa-plus"></i> '.tr('Aggiungi impianto').'</button>
 
         </form>';
 

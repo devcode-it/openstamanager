@@ -28,7 +28,7 @@ echo '
             <div class="row">
                 <div class="col-md-6">
                     '.Modules::link('Categorie articoli', $record['id_categoria'], null, null, 'class="pull-right"').'
-                    {[ "type": "select", "label": "'.tr('Categoria').'", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie", "icon-after": "add|'.Modules::get('Categorie articoli')['id'].'" ]}
+                    {[ "type": "select", "label": "'.tr('Categoria').'", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie", "icon-after": "add|'.module('Categorie articoli')['id'].'" ]}
                 </div>
 
                 <div class="col-md-6">

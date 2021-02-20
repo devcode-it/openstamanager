@@ -26,10 +26,10 @@ if (empty($documento)) {
 
 // Informazioni utili
 $dir = $documento->direzione;
-$original_module = Modules::get($documento->module);
+$original_module = module($documento->module);
 
 $name = !empty($documento_finale) ? $documento_finale->module : $options['module'];
-$final_module = Modules::get($name);
+$final_module = module($name);
 
 // IVA predefinita
 $id_iva = $id_iva ?: setting('Iva predefinita');
@@ -156,7 +156,7 @@ if (!empty($options['create_document'])) {
             </div>
 
             <div class="col-md-6">
-                {[ "type": "select", "label": "'.tr('Causale trasporto').'", "name": "id_causale_trasporto", "required": 1, "ajax-source": "causali", "icon-after": "add|'.Modules::get('Causali')['id'].'", "help": "'.tr('Definisce la causale del trasporto').'" ]}
+                {[ "type": "select", "label": "'.tr('Causale trasporto').'", "name": "id_causale_trasporto", "required": 1, "ajax-source": "causali", "icon-after": "add|'.module('Causali')['id'].'", "help": "'.tr('Definisce la causale del trasporto').'" ]}
             </div>';
     }
 
@@ -177,7 +177,7 @@ if (!empty($options['create_document'])) {
 
         echo '
             <div class="col-md-6">
-                {[ "type": "select", "label": "'.$tipo_anagrafica.'", "name": "idanagrafica", "required": 1, "ajax-source": "'.$ajax.'", "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|tipoanagrafica='.$tipo_anagrafica.'" ]}
+                {[ "type": "select", "label": "'.$tipo_anagrafica.'", "name": "idanagrafica", "required": 1, "ajax-source": "'.$ajax.'", "icon-after": "add|'.module('Anagrafiche')['id'].'|tipoanagrafica='.$tipo_anagrafica.'" ]}
             </div>';
     }
 

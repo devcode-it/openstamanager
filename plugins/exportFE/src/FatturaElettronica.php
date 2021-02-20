@@ -285,7 +285,7 @@ class FatturaElettronica
 
     public static function getDirectory()
     {
-        return Uploads::getDirectory(Modules::get('Fatture di vendita')['id']);
+        return Uploads::getDirectory(module('Fatture di vendita')['id']);
     }
 
     /**
@@ -1618,7 +1618,7 @@ class FatturaElettronica
         $attachments = [];
 
         // Informazioni sul modulo
-        $id_module = Modules::get('Fatture di vendita')['id'];
+        $id_module = module('Fatture di vendita')['id'];
         $directory = Uploads::getDirectory($id_module);
 
         // Allegati
@@ -1745,7 +1745,7 @@ class FatturaElettronica
     {
         return [
             'category' => tr('Fattura Elettronica'),
-            'id_module' => Modules::get('Fatture di vendita')['id'],
+            'id_module' => module('Fatture di vendita')['id'],
             'id_record' => $this->getDocumento()['id'],
         ];
     }

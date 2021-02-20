@@ -1,7 +1,7 @@
 <?php
 
 // Correzione zz_operations
-use Models\User;
+use App\Models\User;
 use Modules\Emails\Mail;
 use Modules\Emails\Template;
 

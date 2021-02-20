@@ -29,7 +29,7 @@ class Allegato extends Resource implements RetrieveInterface, CreateInterface
 {
     public function create($request)
     {
-        $module = Modules::get($request['module']);
+        $module = module($request['module']);
 
         $name = !empty($request['name']) ? $request['name'] : null;
         $category = !empty($request['category']) ? $request['category'] : null;

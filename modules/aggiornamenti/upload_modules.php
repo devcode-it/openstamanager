@@ -66,8 +66,8 @@ if (file_exists($extraction_dir.'/VERSION')) {
             $directory = 'modules';
             $table = 'zz_modules';
 
-            $installed = Modules::get($info['name']);
-            $insert['parent'] = Modules::get($info['parent'])['id'];
+            $installed = module($info['name']);
+            $insert['parent'] = module($info['parent'])['id'];
             $insert['icon'] = $info['icon'];
         }
 
@@ -77,8 +77,8 @@ if (file_exists($extraction_dir.'/VERSION')) {
             $table = 'zz_plugins';
 
             $installed = Plugins::get($info['name']);
-            $insert['idmodule_from'] = Modules::get($info['module_from'])['id'];
-            $insert['idmodule_to'] = Modules::get($info['module_to'])['id'];
+            $insert['idmodule_from'] = module($info['module_from'])['id'];
+            $insert['idmodule_to'] = module($info['module_to'])['id'];
             $insert['position'] = $info['position'];
         }
 

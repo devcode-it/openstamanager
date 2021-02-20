@@ -34,7 +34,7 @@ if ($module['name'] == 'Ddt di vendita') {
 }
 
 // Segmenti
-$id_fatture = Modules::get($module_fatture)['id'];
+$id_fatture = module($module_fatture)['id'];
 if (!isset($_SESSION['module_'.$id_fatture]['id_segment'])) {
     $segments = Modules::getSegments($id_fatture);
     session(['module_'.$id_fatture.'.id_segment' => isset($segments[0]['id']) ? $segments[0]['id'] : null]);

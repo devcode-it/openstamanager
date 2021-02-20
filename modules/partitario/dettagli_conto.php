@@ -19,7 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-$prima_nota = Modules::get('Prima nota');
+$prima_nota = module('Prima nota');
 
 $id_conto = get('id_conto');
 
@@ -55,7 +55,7 @@ if (!empty($movimenti)) {
     <tr>
         <td>';
 
-        $modulo_fattura = ($movimento['dir'] == 'entrata') ? Modules::get('Fatture di vendita') : Modules::get('Fatture di acquisto');
+        $modulo_fattura = ($movimento['dir'] == 'entrata') ? module('Fatture di vendita') : module('Fatture di acquisto');
 
         if (!empty($movimento['primanota'])) {
             echo Modules::link($prima_nota->id, $movimento['idmastrino'], $movimento['descrizione']);

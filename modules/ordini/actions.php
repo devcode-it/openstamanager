@@ -30,7 +30,7 @@ use Modules\Ordini\Tipo;
 use Modules\Preventivi\Preventivo;
 use Plugins\ListinoClienti\DettaglioPrezzo;
 
-$module = Modules::get($id_module);
+$module = module($id_module);
 
 if ($module['name'] == 'Ordini cliente') {
     $dir = 'entrata';

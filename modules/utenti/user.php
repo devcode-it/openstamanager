@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Models\Group;
-use Models\User;
+use App\Models\User;
 
 Permissions::check('rw');
 

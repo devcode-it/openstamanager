@@ -28,7 +28,7 @@ include_once __DIR__.'/../../core.php';
 
   <div class="row">
     <div class="col-md-4">
-    {[ "type": "select", "label": "<?php echo tr('Tipo'); ?>", "name": "tipo", "required": 1, "ajax-source": "tipi_scadenze", "icon-after": "add|<?php echo Modules::get('Tipi scadenze')['id']; ?>" ]}
+    {[ "type": "select", "label": "<?php echo tr('Tipo'); ?>", "name": "tipo", "required": 1, "ajax-source": "tipi_scadenze", "icon-after": "add|<?php echo module('Tipi scadenze')['id']; ?>" ]}
     </div>
 
     <div class="col-md-4">

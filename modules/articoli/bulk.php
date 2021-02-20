@@ -177,7 +177,7 @@ switch (post('op')) {
         }
 
         $database->commitTransaction();
-        redirect(base_url().'/editor.php?id_module='.Modules::get('Preventivi')['id'].'&id_record='.$id_preventivo);
+        redirect(base_path().'/editor.php?id_module='.module('Preventivi')['id'].'&id_record='.$id_preventivo);
         exit();
 
         break;

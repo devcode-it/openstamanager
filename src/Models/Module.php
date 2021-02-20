@@ -54,6 +54,29 @@ class Module extends Model
         'options',
         'options2',
     ];
+    /**
+     * Costruisce un link HTML per il modulo e il record indicati.
+     */
+    public function link(?int $id_record = null, ?string $testo = null, ?string $alternativo = null, ?string $extra = null, bool $blank = true, ?string $anchor = null): string
+    {
+        $testo = isset($testo) ? nl2br($testo) : tr('Visualizza scheda');
+        $alternativo = is_bool($alternativo) && $alternativo ? $testo : $alternativo;
+
+        // Aggiunta automatica dell'icona di riferimento
+        if (!string_contains($testo, '<i ')) {
+            $testo = $testo.' <i class="fa fa-external-link"></i>';
+        }
+
+        $extra .= !empty($blank) ? ' target="_blank"' : '';
+
+        if (in_array($this->permission, ['r', 'rw'])) {
+            $link = !empty($id_record) ? 'editor.php?id_module='.$this->id.'&id_record='.$id_record : 'controller.php?id_module='.$this->id;
+
+            return '<a href="'.base_url().'/'.$link.'#'.$anchor.'" '.$extra.'>'.$testo.'</a>';
+        } else {
+            return $alternativo;
+        }
+    }
 
     public function replacePlaceholders($id_record, $value)
     {

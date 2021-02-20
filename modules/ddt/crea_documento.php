@@ -25,7 +25,7 @@ use Modules\Fatture\Fattura;
 $documento = DDT::find($id_record);
 $tipo_documento_finale = Fattura::class;
 
-$module = Modules::get($id_module);
+$module = module($id_module);
 
 if ($module['name'] == 'Ddt di vendita') {
     $final_module = 'Fatture di vendita';

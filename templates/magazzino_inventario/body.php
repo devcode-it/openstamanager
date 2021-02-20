@@ -21,7 +21,7 @@ use Util\Query;
 
 include_once __DIR__.'/../../core.php';
 
-$id_module = Modules::get('Articoli')['id'];
+$id_module = module('Articoli')['id'];
 
 // Valori di ricerca
 $where['servizio'] = '0';
@@ -34,7 +34,7 @@ foreach ($_SESSION['module_'.$id_module] as $name => $value) {
 
 $period_end = session('period_end');
 
-$structure = Modules::get($id_module);
+$structure = module($id_module);
 
 // RISULTATI VISIBILI
 Util\Query::setSegments(false);

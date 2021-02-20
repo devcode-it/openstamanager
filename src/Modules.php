@@ -115,7 +115,7 @@ class Modules
      */
     public static function getPermission($module)
     {
-        $result = self::get($module);
+        $result = module($module);
 
         return $result ? $result->permission : null;
     }
@@ -129,7 +129,7 @@ class Modules
      */
     public static function getAdditionals($module, $include_segments = true)
     {
-        $module = self::get($module);
+        $module = module($module);
         $user = auth()->user();
 
         if (!isset(self::$additionals[$module['id']])) {
@@ -179,7 +179,7 @@ class Modules
             return [];
         }
 
-        $module = self::get($module)['id'];
+        $module = module($module)['id'];
 
         if (!isset(self::$segments[$module])) {
             $database = database();
@@ -280,25 +280,7 @@ class Modules
      */
     public static function link($modulo, $id_record = null, $testo = null, $alternativo = true, $extra = null, $blank = true, $anchor = null, $params = null)
     {
-        $testo = isset($testo) ? nl2br($testo) : tr('Visualizza scheda');
-        $alternativo = is_bool($alternativo) && $alternativo ? $testo : $alternativo;
-
-        // Aggiunta automatica dell'icona di riferimento
-        if (!string_contains($testo, '<i ')) {
-            $testo = $testo.' <i class="fa fa-external-link"></i>';
-        }
-
-        $module = self::get($modulo);
-
-        $extra .= !empty($blank) ? ' target="_blank"' : '';
-
-        if (!empty($module) && in_array($module->permission, ['r', 'rw'])) {
-            $link = !empty($id_record) ? 'editor.php?id_module='.$module['id'].'&id_record='.$id_record : 'controller.php?id_module='.$module['id'];
-
-            return '<a href="'.base_url().'/'.$link.$params.'#'.$anchor.'" '.$extra.'>'.$testo.'</a>';
-        } else {
-            return $alternativo;
-        }
+        return module($modulo)->link($id_record, $testo, $alternativo, $extra, $blank, $anchor);
     }
 
     /**
@@ -311,7 +293,7 @@ class Modules
      */
     public static function filepath($element, $file)
     {
-        $element = self::get($element);
+        $element = module($element);
 
         return $element ? $element->filepath($file) : null;
     }

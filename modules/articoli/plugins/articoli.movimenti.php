@@ -40,7 +40,7 @@ if (empty($_GET['movimentazione_completa'])) {
 }
 
 echo '
-        <a class="btn btn-warning btn-xs" href="'.base_url().'/controller.php?id_module='.Modules::get('Movimenti')->id.'&search_Articolo='.($articolo->codice.' - '.$articolo->descrizione).'">
+        <a class="btn btn-warning btn-xs" href="'.base_url().'/controller.php?id_module='.module('Movimenti')->id.'&search_Articolo='.($articolo->codice.' - '.$articolo->descrizione).'">
             <i class="fa fa-external-link"></i>
             '.tr('Visualizza dettagli').'
         </a>';

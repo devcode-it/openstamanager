@@ -23,7 +23,7 @@ use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Models\Module;
 use Models\Plugin;
-use Models\User;
+use App\Models\User;
 
 class Checklist extends Model
 {

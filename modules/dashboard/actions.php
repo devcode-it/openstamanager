@@ -19,8 +19,8 @@
 
 include_once __DIR__.'/../../core.php';
 
-$modulo_interventi = Modules::get('Interventi');
-$modulo_preventivi = Modules::get('Preventivi');
+$modulo_interventi = module('Interventi');
+$modulo_preventivi = module('Preventivi');
 
 if (!isset($user['idanagrafica'])) {
     $user['idanagrafica'] = '';

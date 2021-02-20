@@ -19,7 +19,7 @@
 
 include_once __DIR__.'/../../../core.php';
 
-$link_id = Modules::get('Preventivi')['id'];
+$link_id = module('Preventivi')['id'];
 
 $fields = [
     'Codice preventivo' => 'numero',

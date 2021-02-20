@@ -21,7 +21,7 @@ include_once __DIR__.'/../../core.php';
 
 $plugin = Plugins::get($id_plugin);
 
-$id_module = Modules::get('Contratti')['id'];
+$id_module = module('Contratti')['id'];
 $block_edit = filter('add') ? false : true;
 
 // Informazioni contratto

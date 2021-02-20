@@ -19,7 +19,7 @@
 
 include_once __DIR__.'/../../../core.php';
 
-$module = Modules::get('Stato dei servizi');
+$module = module('Stato dei servizi');
 
 echo '
 <script src="'.base_url().'/assets/dist/js/chartjs/Chart.min.js"></script>';

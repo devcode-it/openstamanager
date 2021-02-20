@@ -21,7 +21,7 @@ include_once __DIR__.'/../../core.php';
 
 $block_edit = $record['flag_completato'];
 
-$module = Modules::get($id_module);
+$module = module($id_module);
 
 if ($module['name'] == 'Ddt di vendita') {
     $dir = 'entrata';
@@ -126,7 +126,7 @@ if ($module['name'] == 'Ddt di vendita') {
 
                 // Conteggio numero articoli ddt in uscita
                 $articolo = $dbo->fetchArray('SELECT mg_articoli.id FROM ((mg_articoli INNER JOIN dt_righe_ddt ON mg_articoli.id=dt_righe_ddt.idarticolo) INNER JOIN dt_ddt ON dt_ddt.id=dt_righe_ddt.idddt) WHERE dt_ddt.id='.prepare($id_record));
-                $id_modulo_anagrafiche = Modules::get('Anagrafiche')['id'];
+                $id_modulo_anagrafiche = module('Anagrafiche')['id'];
                 $id_plugin_sedi = Plugins::get('Sedi')['id'];
                 if ($dir == 'entrata') {
                     echo '
@@ -153,16 +153,16 @@ if ($module['name'] == 'Ddt di vendita') {
 
 			<div class="row">
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Aspetto beni'); ?>", "name": "idaspettobeni", "value": "$idaspettobeni$", "ajax-source": "aspetto-beni", "icon-after": "add|<?php echo Modules::get('Aspetto beni')['id']; ?>|||<?php echo $block_edit ? 'disabled' : ''; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Aspetto beni'); ?>", "name": "idaspettobeni", "value": "$idaspettobeni$", "ajax-source": "aspetto-beni", "icon-after": "add|<?php echo module('Aspetto beni')['id']; ?>|||<?php echo $block_edit ? 'disabled' : ''; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
                     <?php
                         if (!empty($record['idcausalet'])) {
-                            echo Modules::link('Causali', $record['idcausalet'], null, null, 'class="pull-right"');
+                            echo module('Causali')->link($record['idcausalet'], null, null, 'class="pull-right"');
                         }
                     ?>
-					{[ "type": "select", "label": "<?php echo tr('Causale trasporto'); ?>", "name": "idcausalet", "required": 1, "value": "$idcausalet$", "ajax-source": "causali", "icon-after": "add|<?php echo Modules::get('Causali')['id']; ?>|||<?php echo $block_edit ? 'disabled' : ''; ?>", "help": "<?php echo tr('Definisce la causale del trasporto'); ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Causale trasporto'); ?>", "name": "idcausalet", "required": 1, "value": "$idcausalet$", "ajax-source": "causali", "icon-after": "add|<?php echo module('Causali')['id']; ?>|||<?php echo $block_edit ? 'disabled' : ''; ?>", "help": "<?php echo tr('Definisce la causale del trasporto'); ?>" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -192,7 +192,7 @@ if ($module['name'] == 'Ddt di vendita') {
                             'id' => $record['idspedizione'],
                         ])['esterno'];
                     ?>
-					{[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "ajax-source": "vettori", "value": "$idvettore$", "disabled": <?php echo empty($esterno) ? 1 : 0; ?>, "required": <?php echo !empty($esterno) ?: 0; ?>, "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Vettore&readonly_tipo=1|btn_idvettore|<?php echo ((!empty($esterno) and intval(!$record['flag_completato']))) ? '' : 'disabled'; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "ajax-source": "vettori", "value": "$idvettore$", "disabled": <?php echo empty($esterno) ? 1 : 0; ?>, "required": <?php echo !empty($esterno) ?: 0; ?>, "icon-after": "add|<?php echo module('Anagrafiche')['id']; ?>|tipoanagrafica=Vettore&readonly_tipo=1|btn_idvettore|<?php echo ((!empty($esterno) and intval(!$record['flag_completato']))) ? '' : 'disabled'; ?>" ]}
 				</div>
 
                 <div class="col-md-3">

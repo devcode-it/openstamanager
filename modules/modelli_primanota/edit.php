@@ -80,7 +80,7 @@ for ($i = 0; $i < 10; ++$i) {
                 <td class="text-right">
                     {[ "type": "number", "name": "dare['.$i.']", "id": "dare'.$id.'", "value": "'.($rs[$i]['totale'] > 0 ? $rs[$i]['totale'] : '').'"]}
                 </td>
-                
+
                 <td class="text-right">
                     {[ "type": "number", "name": "avere['.$i.']", "id": "avere'.$id.'", "value": "'.($rs[$i]['totale'] < 0 ? abs($rs[$i]['totale']) : '').'"]}
                 </td>
@@ -106,7 +106,7 @@ echo '
                 }
             });
         });
-        
+
         $("input[id*=dare], input[id*=avere]").each(function() {
             let row = $(this).parent().parent();
 
@@ -118,7 +118,7 @@ echo '
                 }
             }
         });
-        
+
         $(document).on("keyup change", "input[id*=dare]", function() {
             let row = $(this).parent().parent();
 
@@ -140,7 +140,7 @@ echo '
 
 <?php
 // Variabili utilizzabili
-$variables = include Modules::filepath(Modules::get('Fatture di vendita')['id'], 'variables.php');
+$variables = include Modules::filepath(module('Fatture di vendita')['id'], 'variables.php');
 
 echo '
     <!-- Istruzioni per il contenuto -->

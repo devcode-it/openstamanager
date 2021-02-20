@@ -40,7 +40,7 @@ if (!empty($rs)) {
 }
 
 $api = base_url().'/api/?token='.$token;
-$module = Modules::get('Utenti e permessi');
+$module = module('Utenti e permessi');
 
 echo '
 <div class="box box-widget widget-user">

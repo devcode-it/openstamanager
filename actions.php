@@ -40,7 +40,7 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
     // Controllo sui permessi di scrittura per il modulo
     if (Modules::getPermission($id_module) != 'rw') {
         flash()->error(tr('Non hai permessi di scrittura per il modulo _MODULE_', [
-            '_MODULE_' => '"'.Modules::get($id_module)['name'].'"',
+            '_MODULE_' => '"'.module($id_module)['name'].'"',
         ]));
     }
 

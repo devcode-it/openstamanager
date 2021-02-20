@@ -80,7 +80,7 @@ class Interventi extends Resource implements RetrieveInterface, CreateInterface,
             ':idtecnico' => $id_anagrafica,
         ];
 
-        $module = Modules::get('Interventi');
+        $module = module('Interventi');
 
         $query = Modules::replaceAdditionals($module->id, $query);
 

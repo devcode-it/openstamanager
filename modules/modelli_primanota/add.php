@@ -61,7 +61,7 @@ include_once __DIR__.'/../../core.php';
 				<td class="text-right">
                     {[ "type": "number", "name": "dare['.$i.']", "id": "dare'.$id.'", "value": "'.($rs[$i]['totale'] > 0 ? $rs[$i]['totale'] : '').'"]}
                 </td>
-                
+
                 <td class="text-right">
                     {[ "type": "number", "name": "avere['.$i.']", "id": "avere'.$id.'", "value": "'.($rs[$i]['totale'] < 0 ? abs($rs[$i]['totale']) : '').'"]}
                 </td>
@@ -72,7 +72,7 @@ include_once __DIR__.'/../../core.php';
         </table>';
 
     // Variabili utilizzabili
-    $variables = include Modules::filepath(Modules::get('Fatture di vendita')['id'], 'variables.php');
+    $variables = include Modules::filepath(module('Fatture di vendita')['id'], 'variables.php');
 
     echo '
 		<!-- Istruzioni per il contenuto -->
@@ -131,7 +131,7 @@ include_once __DIR__.'/../../core.php';
 			$(this).prop("disabled", false);
 		}
 	});
-		
+
 	$(document).on("keyup change", "#modals input[id*=dare]", function() {
 		let row = $(this).parent().parent();
 

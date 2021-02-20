@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 $id_conto = get('id');
 $lvl = get('lvl');
 
-?><form action="<?php echo base_url(); ?>/editor.php?id_module=<?php echo Modules::get('Piano dei conti')['id']; ?>" method="post">
+?><form action="<?php echo base_url(); ?>/editor.php?id_module=<?php echo module('Piano dei conti')['id']; ?>" method="post">
     <input type="hidden" name="op" value="add">
     <input type="hidden" name="backto" value="record-list">
 

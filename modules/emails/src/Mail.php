@@ -23,7 +23,7 @@ use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Models\PrintTemplate;
 use Models\Upload;
-use Models\User;
+use App\Models\User;
 use Modules\Newsletter\Newsletter;
 
 class Mail extends Model

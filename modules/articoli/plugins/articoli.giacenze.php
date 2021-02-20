@@ -68,7 +68,7 @@ if (!empty($ordini)) {
 
                     <tbody>';
 
-    $modulo = Modules::get('Ordini cliente');
+    $modulo = module('Ordini cliente');
     foreach ($ordini as $documento) {
         $numero = !empty($documento['numero_esterno']) ? $documento['numero_esterno'] : $documento['numero'];
         $qta = $documento['qta_impegnata'];
@@ -135,7 +135,7 @@ if (!empty($ordini)) {
 
                     <tbody>';
 
-    $modulo = Modules::get('Ordini fornitore');
+    $modulo = module('Ordini fornitore');
     foreach ($ordini as $documento) {
         $numero = !empty($documento['numero_esterno']) ? $documento['numero_esterno'] : $documento['numero'];
         $qta = $documento['qta_ordinata'];

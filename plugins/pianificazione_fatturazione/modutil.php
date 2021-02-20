@@ -27,9 +27,9 @@
             </ul>';
 
         if (!empty($descrizione)) {
-            $result['descrizione'] = str_replace('{periodo}', 'durata dal '.Translator::dateToLocale($inizio).' al '.Translator::dateToLocale($fine), $descrizione);
-            $result['descrizione'] = str_replace('{data_inizio}', Translator::dateToLocale($inizio), $result['descrizione']);
-            $result['descrizione'] = str_replace('{data_fine}', Translator::dateToLocale($fine), $result['descrizione']);
+            $result['descrizione'] = str_replace('{periodo}', 'durata dal '.dateFormat($inizio).' al '.dateFormat($fine), $descrizione);
+            $result['descrizione'] = str_replace('{data_inizio}', dateFormat($inizio), $result['descrizione']);
+            $result['descrizione'] = str_replace('{data_fine}', dateFormat($fine), $result['descrizione']);
             $result['descrizione'] = str_replace('{mese_fatturazione}', $mese[date('m', strtotime($inizio))], $result['descrizione']);
         }
 

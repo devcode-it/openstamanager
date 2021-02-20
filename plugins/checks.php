@@ -19,7 +19,7 @@
 
 include_once __DIR__.'/../core.php';
 
-$checklist_module = Modules::get('Checklists');
+$checklist_module = module('Checklists');
 $checks_id = 'checklist_'.$id_module.'_'.$id_plugin;
 
 echo '

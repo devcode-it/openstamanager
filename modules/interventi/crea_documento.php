@@ -26,7 +26,7 @@ use Modules\Ordini\Ordine;
 
 $documento = Intervento::find($id_record);
 
-$module = Modules::get($documento->module);
+$module = module($documento->module);
 
 if (get('documento') == 'fattura') {
     $final_module = 'Fatture di vendita';

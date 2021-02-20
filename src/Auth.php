@@ -18,7 +18,7 @@
  */
 
 use API\Response as API;
-use Models\User;
+use App\Models\User;
 
 /**
  * Classe per la gestione delle utenze.

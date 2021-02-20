@@ -19,7 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-$module = Modules::get($id_module);
+$module = module($id_module);
 
 if ($module['name'] == 'Fatture di vendita') {
     $dir = 'entrata';

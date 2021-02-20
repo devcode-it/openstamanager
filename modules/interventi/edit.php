@@ -23,7 +23,7 @@ use Modules\Anagrafiche\Sede;
 include_once __DIR__.'/../../core.php';
 
 $block_edit = $record['flag_completato'];
-$module_anagrafiche = Modules::get('Anagrafiche');
+$module_anagrafiche = module('Anagrafiche');
 
 // Verifica aggiuntive sulla sequenzialità dei numeri
 $numero_previsto = verifica_numero_intervento($intervento);

@@ -23,7 +23,7 @@ use Modules\DDT\DDT;
 
 $documento = DDT::find($id_record);
 
-$module = Modules::get($id_module);
+$module = module($id_module);
 if ($documento->reversed) {
     if ($module['name'] == 'Ddt di vendita') {
         $final_module = 'Fatture di acquisto';

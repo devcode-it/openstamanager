@@ -23,7 +23,7 @@ include_once __DIR__.'/../../../core.php';
     Anagrafiche
 */
 
-$link_id = Modules::get('Anagrafiche')['id'];
+$link_id = module('Anagrafiche')['id'];
 
 $fields = [
     'Codice' => 'codice',

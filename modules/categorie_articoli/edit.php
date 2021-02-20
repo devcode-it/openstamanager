@@ -72,7 +72,7 @@ include_once __DIR__.'/../../core.php';
 					<th width="20%"><?php echo tr('Opzioni'); ?></th>
 				</tr>
 
-				<?php include base_dir().'/modules/'.Modules::get($id_module)['directory'].'/row-list.php'; ?>
+				<?php include base_dir().'/modules/'.module($id_module)['directory'].'/row-list.php'; ?>
 				</table>
 			</div>
 		</div>

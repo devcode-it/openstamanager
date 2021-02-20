@@ -58,7 +58,7 @@ class Uploads
     public static function getDirectory($id_module, $id_plugin = null)
     {
         if (empty($id_plugin)) {
-            $structure = Modules::get($id_module);
+            $structure = module($id_module);
         } else {
             $structure = Plugins::get($id_plugin);
         }

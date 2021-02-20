@@ -19,7 +19,7 @@
 
 include_once __DIR__.'/../../../core.php';
 
-$link_id = Modules::get('Interventi')['id'];
+$link_id = module('Interventi')['id'];
 
 $fields = [
     'Codice intervento' => 'codice',

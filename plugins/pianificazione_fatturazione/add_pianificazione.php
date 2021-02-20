@@ -130,7 +130,7 @@ foreach ($righe as $riga) {
                         {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione['.$riga->id.']", "value": "'.$descrizione.'" ]}
 
                         {[ "type": "number", "label": "'.tr('Q.tà per fattura').'", "class":"qta_fattura", "name": "qta['.$riga->id.']", "required": 1, "value": "1", "decimals": "qta", "min-value": "1", "icon-after":"'.tr('Su _TOT_', [
-                            '_TOT_' => Translator::numberToLocale(($riga->qta - $riga->qta_evasa)),
+                            '_TOT_' => numberFormat(($riga->qta - $riga->qta_evasa)),
                         ]).'", "options":"'.str_replace('"', '\"', $options).'" ]}
                     </div>
                     <div class="col-md-3" id="totali_'.$riga->id.'">

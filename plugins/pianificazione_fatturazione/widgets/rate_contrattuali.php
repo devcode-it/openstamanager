@@ -118,7 +118,7 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
 </div>';
 }
 
-$modulo_pianificazione = Modules::get('Contratti');
+$modulo_pianificazione = module('Contratti');
 $plugin_pianificazione = Plugins::get('Pianificazione fatturazione');
 echo '
 <script>

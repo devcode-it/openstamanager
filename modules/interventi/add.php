@@ -27,7 +27,7 @@ $id_sede = filter('idsede');
 $richiesta = filter('richiesta');
 
 $origine_dashboard = get('ref') !== null;
-$module_anagrafiche = Modules::get('Anagrafiche');
+$module_anagrafiche = module('Anagrafiche');
 
 // Calcolo dell'orario di inizio e di fine sulla base delle informazioni fornite
 $orario_inizio = filter('orario_inizio');
@@ -235,7 +235,7 @@ echo '
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Impianto').'", "multiple": 1, "name": "idimpianti[]", "value": "'.$impianti_collegati.'", "ajax-source": "impianti-cliente", "select-options": {"idanagrafica": '.($id_anagrafica ?: '""').'}, "icon-after": "add|'.Modules::get('Impianti')['id'].'|id_anagrafica='.$id_anagrafica.'" ]}
+                    {[ "type": "select", "label": "'.tr('Impianto').'", "multiple": 1, "name": "idimpianti[]", "value": "'.$impianti_collegati.'", "ajax-source": "impianti-cliente", "select-options": {"idanagrafica": '.($id_anagrafica ?: '""').'}, "icon-after": "add|'.module('Impianti')['id'].'|id_anagrafica='.$id_anagrafica.'" ]}
                 </div>
 
                 <div class="col-md-4">

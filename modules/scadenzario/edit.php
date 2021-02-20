@@ -165,7 +165,7 @@ echo '
 if ($totale_da_pagare != 0) {
     echo '
                     <div class="pull-right">
-                        <a onclick="launch_modal(\''.tr('Registra contabile pagamento').'\', \''.base_url().'/add.php?id_module='.Modules::get('Prima nota')['id'].'&'.(!empty($record['iddocumento']) ? 'id_documenti='.$record['iddocumento'].'&single=1' : 'id_scadenze='.$id_record).'\');" class="btn btn-sm btn-primary">
+                        <a onclick="launch_modal(\''.tr('Registra contabile pagamento').'\', \''.base_url().'/add.php?id_module='.module('Prima nota')['id'].'&'.(!empty($record['iddocumento']) ? 'id_documenti='.$record['iddocumento'].'&single=1' : 'id_scadenze='.$id_record).'\');" class="btn btn-sm btn-primary">
                             <i class="fa fa-euro"></i> '.tr('Registra contabile pagamento...').'
                         </a>
                     </div>

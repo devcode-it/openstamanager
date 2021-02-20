@@ -75,7 +75,7 @@ if (!$righe->isEmpty()) {
                 </small>';
 
         echo '
-                    '.Modules::link($riga->isArticolo() ? Modules::get('Articoli')['id'] : null, $riga->isArticolo() ? $riga['idarticolo'] : null, $descrizione);
+                    '.Modules::link($riga->isArticolo() ? module('Articoli')['id'] : null, $riga->isArticolo() ? $riga['idarticolo'] : null, $descrizione);
 
         if ($riga->isArticolo()) {
             if (!empty($mancanti)) {

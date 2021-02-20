@@ -42,7 +42,7 @@ echo '
 
 	<div class="row">
 		<div class="col-md-12">
-		{[ "type": "select", "label": "'.tr('Collega ad una anagrafica').'", "name": "idanag", "required": 1, "ajax-source": "anagrafiche_utenti", "value": "'.$utente['id_anagrafica'].'", "icon-after": "add|'.Modules::get('Anagrafiche')['id'].(isset($gruppo) ? '|tipoanagrafica='.$gruppo : '').'" ]}
+		{[ "type": "select", "label": "'.tr('Collega ad una anagrafica').'", "name": "idanag", "required": 1, "ajax-source": "anagrafiche_utenti", "value": "'.$utente['id_anagrafica'].'", "icon-after": "add|'.module('Anagrafiche')['id'].(isset($gruppo) ? '|tipoanagrafica='.$gruppo : '').'" ]}
 		</div>
 	</div>
 

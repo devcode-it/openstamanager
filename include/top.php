@@ -423,11 +423,11 @@ if (auth()->check()) {
                                 <i class="fa fa-print"></i>
                             </a></li>
 
-                            <!---li class="nav-button"><a href="'.base_url().'/bug.php" class="tip nav-button" title="'.tr('Segnalazione bug').'">
+                            <li class="nav-button"><a href="'.route('bug').'" class="tip nav-button" title="'.tr('Segnalazione bug').'">
                                 <i class="fa fa-bug"></i>
                             </a></li--->
 
-                            <li class="nav-button"><a href="'.base_url().'/log.php" class="tip nav-button" title="'.tr('Log accessi').'">
+                            <li class="nav-button"><a href="'.route('logs').'" class="tip nav-button" title="'.tr('Log accessi').'">
                                 <i class="fa fa-book"></i>
                             </a></li>
 
@@ -450,13 +450,13 @@ if (auth()->check()) {
                     <!-- Sidebar user panel -->
                     <div class="user-panel text-center info" style="height: 60px">
                         <div class="info">
-                            <p><a href="'.base_url().'/modules/utenti/info.php">
+                            <p><a href="'.route('user-info').'">
                                 '.$user['username'].'
                             </a></p>
                             <p id="datetime"></p>
                         </div>
 
-                        <a class="image" href="'.base_url().'/modules/utenti/info.php">';
+                        <a class="image" href="'.route('user-info').'">';
 
     $user_photo = $user->photo;
     if ($user_photo) {

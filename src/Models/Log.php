@@ -26,7 +26,51 @@ class Log extends Model
 {
     use SimpleModelTrait;
 
+    /** @var array Stati previsti dal sistema di autenticazione */
+    protected static $status = [
+        'success' => [
+            'code' => 1,
+            'message' => 'Login riuscito!',
+            'color' => 'success',
+        ],
+        'failed' => [
+            'code' => 0,
+            'message' => 'Autenticazione fallita!',
+            'color' => 'danger',
+        ],
+        'disabled' => [
+            'code' => 2,
+            'message' => 'Utente non abilitato!',
+            'color' => 'info',
+        ],
+        'unauthorized' => [
+            'code' => 5,
+            'message' => "L'utente non ha nessun permesso impostato!",
+            'color' => 'warning',
+        ],
+    ];
+
     protected $table = 'zz_logs';
+
+    public function getCodeAttribute()
+    {
+        return $this->getStatus()['code'];
+    }
+
+    public function getMessageAttribute()
+    {
+        return $this->getStatus()['message'];
+    }
+
+    public function getColorAttribute()
+    {
+        return $this->getStatus()['color'];
+    }
+
+    public function getStatus()
+    {
+        return self::$status[$this->stato];
+    }
 
     /* Relazioni Eloquent */
 

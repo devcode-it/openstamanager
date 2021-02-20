@@ -2,107 +2,34 @@
 
 namespace App\Http\Controllers;
 
+use Backup;
+use Illuminate\Http\Request;
+use Modules\Emails\Account;
+use Notifications\EmailNotification;
+use Update;
+
 class InfoController extends Controller
 {
-    /** @var int Lunghezza minima della password */
-    public static $min_length_password = 8;
-
     protected static $bugEmail = 'info@openstamanager.com';
 
     public function info()
     {
-        return view('info.info');
-    }
-
-    public function logs()
-    {
-        $user = auth()->getUser();
-
-        $query = 'SELECT * FROM `zz_logs`';
-        if (!Auth::admin()) {
-            $query .= ' WHERE `id_utente`='.prepare($user['id']);
-        }
-        $query .= ' ORDER BY `created_at` DESC LIMIT 0, 100';
-
-        $results = $this->database->fetchArray($query);
-
-        $status = Auth::getStatus();
-        $data = [];
-        foreach ($status as $state) {
-            $color = 'warning';
-
-            $color = $state['code'] == $status['success']['code'] ? 'success' : $color;
-            $color = $state['code'] == $status['failed']['code'] ? 'danger' : $color;
-
-            $data[$state['code']] = [
-                'message' => $state['message'],
-                'color' => $color,
-            ];
-        }
-
-        $args['status'] = $data;
-        $args['results'] = $results;
-
-        $response = $this->twig->render($response, '@resources/info/logs.twig', $args);
-
-        return $response;
-    }
-
-    public function user()
-    {
-        $user = auth()->user();
-
-        $tokens = $user->getApiTokens();
-        $token = $tokens[0]['token'];
-
-        $api = BASEURL.'/api/?token='.$token;
-
-        $args['api'] = $api;
-        $args['token'] = $token;
-        $args['sync_link'] = $api.'&resource=sync';
-
-        $response = $this->twig->render($response, '@resources/user/user.twig', $args);
-
-        return $response;
-    }
-
-    public function password()
-    {
-        $args['min_length_password'] = self::$min_length_password;
-
-        $response = $this->twig->render($response, '@resources/user/password.twig', $args);
-
-        return $response;
-    }
-
-    public function passwordPost()
-    {
-        $user = auth()->getUser();
-        $password = post('password');
-
-        $user->password = $password;
-        $user->save();
-
-        flash()->info(tr('Password aggiornata!'));
-
-        $response = $response->withRedirect($this->router->urlFor('user'));
-
-        return $response;
+        return view('info');
     }
 
     public function bug()
     {
-        $args['mail'] = Account::where('predefined', true)->first();
-        $args['bug_email'] = self::$bugEmail;
+        $account = Account::where('predefined', true)->first();
 
-        $response = $this->twig->render($response, '@resources/info/bug.twig', $args);
-
-        return $response;
+        return view('bug', [
+            'mail' => $account,
+            'bug_email' => self::$bugEmail,
+        ]);
     }
 
-    public function bugSend()
+    public function send(Request $request)
     {
-        $user = auth()->getUser();
+        $user = auth()->user();
         $bug_email = self::$bugEmail;
 
         // Preparazione email
@@ -112,16 +39,17 @@ class InfoController extends Controller
         $mail->AddAddress($bug_email);
 
         // Oggetto
-        $mail->Subject = 'Segnalazione bug OSM '.$args['version'];
+        $mail->Subject = 'Segnalazione bug OSM '.Update::getVersion();
 
         // Aggiunta dei file di log (facoltativo)
-        if (!empty(post('log')) && file_exists(DOCROOT.'/logs/error.log')) {
-            $mail->AddAttachment(DOCROOT.'/logs/error.log');
+        $log_file = base_path('/logs/error.log');
+        if (!empty($request->input('log')) && file_exists($log_file)) {
+            $mail->AddAttachment($log_file);
         }
 
         // Aggiunta della copia del database (facoltativo)
-        if (!empty(post('sql'))) {
-            $backup_file = DOCROOT.'/Backup OSM '.date('Y-m-d').' '.date('H_i_s').'.sql';
+        if (!empty($request->input('sql'))) {
+            $backup_file = base_path('backup/Backup OSM '.date('Y-m-d').' '.date('H_i_s').'.sql');
             Backup::database($backup_file);
 
             $mail->AddAttachment($backup_file);
@@ -133,17 +61,17 @@ class InfoController extends Controller
         $infos = [
             'Utente' => $user['username'],
             'IP' => get_client_ip(),
-            'Versione OSM' => $args['version'].' ('.($args['revision'] ? $args['revision'] : 'In sviluppo').')',
+            'Versione OSM' => Update::getVersion().' ('.(Update::getRevision() ?: tr('In sviluppo')).')',
             'PHP' => phpversion(),
         ];
 
         // Aggiunta delle informazioni sul sistema (facoltativo)
-        if (!empty(post('info'))) {
+        if (!empty($request->input('info'))) {
             $infos['Sistema'] = $_SERVER['HTTP_USER_AGENT'].' - '.getOS();
         }
 
         // Completamento del body
-        $body = post('body').'<hr>';
+        $body = $request->input('body').'<hr>';
         foreach ($infos as $key => $value) {
             $body .= '<p>'.$key.': '.$value.'</p>';
         }
@@ -160,12 +88,10 @@ class InfoController extends Controller
         }
 
         // Rimozione del dump del database
-        if (!empty(post('sql'))) {
+        if (!empty($request->input('sql'))) {
             delete($backup_file);
         }
 
-        $response = $response->withRedirect($this->router->urlFor('bug'));
-
-        return $response;
+        return redirect(route('bug'));
     }
 }

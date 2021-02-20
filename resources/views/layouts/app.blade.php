@@ -5,6 +5,8 @@
     $module = \Models\Module::getCurrent();
     $id_module = $module ? $module->id : null;
     $id_record = isset($id_record) ? $id_record : null;
+
+    $user = auth()->user();
 @endphp
 
 @section('js')
@@ -70,7 +72,7 @@
             'hookMultiple': "{{ tr('Hai _NUM_ notifiche') }}",
             'hookSingle': "{{ tr('Hai 1 notifica') }}",
             'hookNone': "{{ tr('Nessuna notifica') }}",
-            'singleCalendar': {{ tr("E' presente un solo periodo!") }}",
+            'singleCalendar': "{{ tr("E' presente un solo periodo!") }}",
             ajax: {
                 "missing": {
                     "title": "{{ tr('Errore') }}",
@@ -239,17 +241,17 @@
     <aside class="main-sidebar"><!--  sidebar-dark-primary elevation-4 -->
         <section class="sidebar">
             <!-- Sidebar user panel -->
-            <a href="{{ route('user') }}" class="user-panel text-center info" style="height: 60px">
+            <a href="{{ route('user-info') }}" class="user-panel text-center info" style="height: 60px">
                 <div class="text-center mt-2">
-                    @if (auth()->user()->photo)
-                        <img src="{{ base_url() }}{{ auth()->user()->photo }}" class="profile-user-img img-fluid img-circle" alt="{{ auth()->user()->username }}" />
+                    @if ($user->photo)
+                        <img src="{{ base_url() }}{{ $user->photo }}" class="profile-user-img img-fluid img-circle" alt="{{ $user->username }}" />
                     @else
                         <i class="fa fa-user-circle-o fa-5x"></i>
                     @endif
                 </div>
 
                 <h3 class="profile-username text-center" style="width: 100%; padding-top: 10px;">
-                    {{ auth()->user()->username }}
+                    {{ $user->username }}
                 </h3>
                 <p class="text-center" id="datetime"></p>
             </a>

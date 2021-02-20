@@ -4,6 +4,7 @@ use App\Http\Controllers\ConfigurationController;
 use App\Http\Controllers\InfoController;
 use App\Http\Controllers\InitializationController;
 use App\Http\Controllers\Test;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -91,18 +92,20 @@ Route::get('/info', [InfoController::class, 'info'])
     ->name('info');
 
 // Segnalazione bug
-Route::get('/bug', [Test::class, 'index'])
+Route::get('/bug', [InfoController::class, 'bug'])
     ->name('bug');
-Route::post('/bug', [Test::class, 'index']);
+Route::post('/bug', [InfoController::class, 'send'])
+    ->name('bug-send');
 
 // Log di accesso
-Route::get('/logs', [Test::class, 'index'])
+Route::get('/logs', [UserController::class, 'logs'])
     ->name('logs');
 
 // Informazioni sull'utente
-Route::get('/user', [Test::class, 'index'])
-    ->name('user');
+Route::get('/user', [UserController::class, 'index'])
+    ->name('user-info');
 
-Route::get('/password', [Test::class, 'index'])
+Route::get('/password', [UserController::class, 'password'])
     ->name('user-password');
-Route::post('/password', [Test::class, 'index']);
+Route::post('/password', [UserController::class, 'save'])
+    ->name('user-password-save');;

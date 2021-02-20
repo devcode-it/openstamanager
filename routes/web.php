@@ -21,8 +21,8 @@ use Illuminate\Support\Facades\Route;
 require __DIR__.'/auth.php';
 
 // Redirect predefinito a seguito del login
-Route::get('/', function (){
-    $module = module('Dashboard');
+Route::get('/', function () {
+    $module = auth()->user()->getFirstAvailableModule();
 
     return redirect('controller.php?id_module='.$module->id);
 })

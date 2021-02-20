@@ -118,13 +118,12 @@
 
                 <p>{{ tr('La filosofia del software libero fa sì che il progetto sia <b>accessibile a tutti</b> e nel nostro caso specifico lo è, anche dal punto di vista della gratuità') }}.</p>
 
-                <p>{{ tr('Offriamo supporto a pagamento professionale a chi fosse interessato, ma a chi non interessa il supporto a pagamento e sta comunque utilizzando il software chiediamo una donazione per il lavoro svolto finora e per la possibilità di continuare questo progetto con lo stesso spirito con cui è nato') }}. {{ tr('Le donazioni non ci rendono ricchi, ma sono un <b>grande simbolo di apprezzamento</b>') }}.</p>
+                <p>{{ tr('Offriamo supporto a pagamento professionale a chi fosse interessato, ma a chi non interessa il supporto a pagamento e sta comunque utilizzando il software chiediamo una donazione per il lavoro svolto finora e per la possibilità di continuare questo progetto con lo stesso spirito con cui è nato') }}. {!! tr('Le donazioni non ci rendono ricchi, ma sono un <b>grande simbolo di apprezzamento</b>') !!}.</p>
 
                 <a href="http://sourceforge.net/donate/index.php?group_id=236538" class="btn btn-lg btn-success btn-block" target="_blank"><i class="fa fa-usd"></i> {{ tr('Supporta questo progetto') }}</a>
             </div>
         </div>
     </div>
-
 
     <div class="col-md-6">
         <div class="box box-outline box-success">
@@ -135,11 +134,11 @@
             <div class="box-body">
                 <p>{{ tr('Per le aziende che hanno necessità di essere seguite da <b>supporto professionale</b> è disponibile un servizio di assistenza e supporto a pagamento') }}.</p>
 
-                <p>{{ tr("E' disponibile anche un <b>servizio cloud</b> su cui poter installare OpenSTAManager, in modo da non doverti più preoccupare di backup e gestione dei dati") }}.</p>
+                <p>{!! tr("E' disponibile anche un <b>servizio cloud</b> su cui poter installare OpenSTAManager, in modo da non doverti più preoccupare di backup e gestione dei dati") !!}.</p>
 
                 <p><a href="http://www.openstamanager.com/per-le-aziende/" class="btn btn-lg btn-info btn-block" target="_blank"><i class="fa fa-thumbs-up"></i> {{ tr('Ottieni supporto professionale') }}</a></p>
             </div>
         </div>
     </div>
 </div>
-@endsection(
+@endsection

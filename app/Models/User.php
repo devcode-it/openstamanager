@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Intervention\Image\ImageManagerStatic;
 use Models\Group;
 use Models\Log;
+use Models\Module;
 use Models\Note;
 use Models\Upload;
 use Modules\Anagrafiche\Anagrafica;
@@ -24,6 +25,7 @@ class User extends Authenticatable
 
     protected $is_admin;
     protected $gruppo;
+    protected $first_module;
 
     protected $appends = [
         'is_admin',
@@ -89,7 +91,7 @@ class User extends Authenticatable
 
     public function isAdmin()
     {
-        return $this->is_admin;
+        return $this->getIsAdminAttribute();
     }
 
     public function getIsAdminAttribute()
@@ -153,7 +155,7 @@ class User extends Authenticatable
 
     public function setPhotoAttribute($value)
     {
-        $module = \Modules::get('Utenti e permessi');
+        $module = \module('Utenti e permessi');
 
         $data = [
             'id_module' => $module->id,
@@ -220,6 +222,37 @@ class User extends Authenticatable
         return $database->fetchArray($query);
     }
 
+    /**
+     * Individua il primo modulo accessibile per l'utente.
+     * Restituisce null in caso non sia disponibile nessun modulo con i permessi adeguati.
+     */
+    public function getFirstAvailableModule()
+    {
+        if (empty($this->first_module)) {
+            $modules = $this->isAdmin() ? Module::withoutGlobalScope('permission') : $this->group->modules();
+
+            // Moduli disponibili e navigabili
+            $available_modules = $modules
+                ->where('options', '!=', '')
+                ->where('options', '!=', 'menu')
+                ->whereNotNull('options');
+
+            // Modulo indicato nelle Impostazioni
+            $first_setting = setting('Prima pagina');
+            $setting_module = $available_modules->clone()
+                ->where('id', '=', $first_setting)
+                ->first();
+
+            // Primo modulo disponibile in assoluto
+            $first_module = $available_modules->clone()
+                ->first();
+
+            $this->first_module = $setting_module ?: $first_module;
+        }
+
+        return $this->first_module;
+    }
+
     /* Relazioni Eloquent */
 
     public function group()
@@ -247,8 +280,8 @@ class User extends Authenticatable
         return $this->belongsTo(Upload::class, 'image_file_id');
     }
 
-    public function modules()
+    public function getModules()
     {
-        return $this->group->modules();
+        return $this->isAdmin() ? Module::all() : $this->group->modules()->all();
     }
 }

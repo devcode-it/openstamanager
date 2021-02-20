@@ -265,8 +265,8 @@
                 </div>
             </div>
 
-            <ul class="sidebar-menu"><!-- class="nav nav-pills nav-sidebar nav-sidebar nav-child-indent flex-column" data-widget="treeview" role="menu" data-accordion="true" -->
-                {{ isset($main_menu) ? $main_menu : null }}
+            <ul class="sidebar-menu"><!-- class="nav nav-pills nav-sidebar nav-sidebar nav-child-indent flex-column" data-widget="treeview" role="menu" data-accordion="true"  isset($main_menu) ? $main_menu : null -->
+                {!! Modules::getMainMenu() !!}
             </ul>
         </section>
         <!-- /.sidebar -->

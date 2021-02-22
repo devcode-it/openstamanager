@@ -19,12 +19,12 @@
 
 namespace Modules\Checklists;
 
+use App\Models\User;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Models\Group;
 use Models\Module;
 use Models\Plugin;
-use App\Models\User;
 use Modules\Checklists\Traits\ChecklistTrait;
 use Traits\HierarchyTrait;
 

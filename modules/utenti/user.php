@@ -19,8 +19,8 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Models\Group;
 use App\Models\User;
+use Models\Group;
 
 Permissions::check('rw');
 

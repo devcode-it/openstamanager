@@ -22,7 +22,6 @@ namespace API;
 use API\Exceptions\InternalError;
 use API\Exceptions\ResourceNotFound;
 use API\Exceptions\ServiceError;
-use App\Models\User;
 use Auth;
 use Exception;
 use Filter;

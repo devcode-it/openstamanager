@@ -21,7 +21,6 @@ namespace Modules\Aggiornamenti;
 
 use GuzzleHttp\Client;
 use Hooks\CachedManager;
-use Modules;
 use Update;
 
 /**

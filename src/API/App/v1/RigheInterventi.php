@@ -21,7 +21,6 @@ namespace API\App\v1;
 
 use API\App\AppResource;
 use API\Exceptions\InternalError;
-use Auth;
 use Carbon\Carbon;
 use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Interventi\Components\Articolo;

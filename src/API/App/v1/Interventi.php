@@ -20,7 +20,6 @@
 namespace API\App\v1;
 
 use API\App\AppResource;
-use Auth;
 use Carbon\Carbon;
 use Intervention\Image\ImageManagerStatic;
 use Modules\Anagrafiche\Anagrafica;

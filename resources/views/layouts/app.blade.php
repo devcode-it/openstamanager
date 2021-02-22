@@ -244,7 +244,7 @@
             <a href="{{ route('user-info') }}" class="user-panel text-center info" style="height: 60px">
                 <div class="text-center mt-2">
                     @if ($user->photo)
-                        <img src="{{ base_url() }}{{ $user->photo }}" class="profile-user-img img-fluid img-circle" alt="{{ $user->username }}" />
+                        <img src="{{ $user->photo }}" class="profile-user-img img-fluid img-circle" alt="{{ $user->username }}" />
                     @else
                         <i class="fa fa-user-circle-o fa-5x"></i>
                     @endif

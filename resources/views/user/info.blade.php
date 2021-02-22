@@ -28,7 +28,7 @@
 
             <div class="col-sm-4 border-right">
                 <div class="description-block">
-                    <a class="btn btn-info btn-block tip" data-href="" data-toggle="modal" data-title="{{ tr('Cambia foto utente') }}">
+                    <a class="btn btn-info btn-block tip" data-href="{{ route('user-photo') }}" data-toggle="modal" data-title="{{ tr('Cambia foto utente') }}">
                         <i class="fa fa-picture-o"></i> {{ tr('Cambia foto utente') }}
                     </a>
                 </div>

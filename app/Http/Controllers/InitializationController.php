@@ -24,7 +24,7 @@ class InitializationController extends Controller
         if (!isset(self::$init)) {
             $database = database();
 
-        $has_azienda = $database->fetchNum("SELECT `an_anagrafiche`.`idanagrafica`
+            $has_azienda = $database->fetchNum("SELECT `an_anagrafiche`.`idanagrafica`
         FROM `an_anagrafiche`
             LEFT JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica`
             LEFT JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`

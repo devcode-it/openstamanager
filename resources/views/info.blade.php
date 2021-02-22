@@ -37,7 +37,7 @@
             <div class="box-body">
                 <p>{{ tr("Il progetto è software libero perchè permette a tutti di conoscere come funziona avendo il codice sorgente del programma e fornisce così la possibilità di studiare come funziona, modificarlo, adattarlo alle proprie esigenze e, in ambito commerciale, non obbliga l'utilizzatore ad essere legato allo stesso fornitore di assistenza") }}.</p>
 
-                <p>{{ tr("E' altrettanto importante sapere come funziona per conoscere come vengono trattati i VOSTRI dati, proteggendo così la vostra <b>privacy</b>") }}.</p>
+                <p>{!! tr("E' altrettanto importante sapere come funziona per conoscere come vengono trattati i VOSTRI dati, proteggendo così la vostra <b>privacy</b>") !!}.</p>
 
                 <p>{{ tr('OpenSTAManager è inoltre stato progettato utilizzando altro software libero, tra cui principalmente') }}:</p>
                 <ul>
@@ -70,7 +70,7 @@
                             </a>
                         </div>
                         <div class="col-xs-3 text-center">
-                            <a href="http://www.openstamanager.com/forum/" target="_blank">
+                            <a href="http://forum.openstamanager.com/" target="_blank">
                                 <i class="fa fa-2x fa-edit"></i><br>
                                 {{ tr('Forum') }}
                             </a>
@@ -116,7 +116,7 @@
             <div class="box-body">
                 <p>{{ tr('OpenSTAManager è software libero ed è nato e cresciuto con il lavoro volontario di alcuni programmatori') }}.</p>
 
-                <p>{{ tr('La filosofia del software libero fa sì che il progetto sia <b>accessibile a tutti</b> e nel nostro caso specifico lo è, anche dal punto di vista della gratuità') }}.</p>
+                <p>{!! tr('La filosofia del software libero fa sì che il progetto sia <b>accessibile a tutti</b> e nel nostro caso specifico lo è, anche dal punto di vista della gratuità') !!}.</p>
 
                 <p>{{ tr('Offriamo supporto a pagamento professionale a chi fosse interessato, ma a chi non interessa il supporto a pagamento e sta comunque utilizzando il software chiediamo una donazione per il lavoro svolto finora e per la possibilità di continuare questo progetto con lo stesso spirito con cui è nato') }}. {!! tr('Le donazioni non ci rendono ricchi, ma sono un <b>grande simbolo di apprezzamento</b>') !!}.</p>
 
@@ -132,7 +132,7 @@
             </div>
 
             <div class="box-body">
-                <p>{{ tr('Per le aziende che hanno necessità di essere seguite da <b>supporto professionale</b> è disponibile un servizio di assistenza e supporto a pagamento') }}.</p>
+                <p>{!! tr('Per le aziende che hanno necessità di essere seguite da <b>supporto professionale</b> è disponibile un servizio di assistenza e supporto a pagamento') !!}.</p>
 
                 <p>{!! tr("E' disponibile anche un <b>servizio cloud</b> su cui poter installare OpenSTAManager, in modo da non doverti più preoccupare di backup e gestione dei dati") !!}.</p>
 

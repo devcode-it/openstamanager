@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Models\Log;
 
 class LoginRequest extends FormRequest
 {
@@ -48,8 +49,22 @@ class LoginRequest extends FormRequest
         if (!Auth::attempt($this->only('username', 'password'), $this->filled('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
+            // Log di accesso
+            $this->registerLog('failed');
+
             throw ValidationException::withMessages(['username' => tr('auth.failed')]);
         }
+
+        // Informazioni sull'utente
+        $user = auth()->user();
+        if (empty($user->enabled)) {
+            $status = 'disabled';
+        } elseif ($user->getFirstAvailableModule() === null) {
+            $status = 'unauthorized';
+        } else {
+            $status = 'success';
+        }
+        $this->registerLog($status);
 
         RateLimiter::clear($this->throttleKey());
     }
@@ -82,5 +97,23 @@ class LoginRequest extends FormRequest
     public function throttleKey()
     {
         return Str::lower($this->input('username')).'|'.$this->ip();
+    }
+
+    /**
+     * Registra i log di accesso per il tentativo corrente.
+     *
+     * @param string $status
+     */
+    protected function registerLog($status)
+    {
+        // Log di accesso
+        $log = new Log();
+
+        $log->username = $this->input('username');
+        $log->ip = $this->ip();
+        $log->id_utente = auth()->user()->id;
+        $log->setStatus($status);
+
+        $log->save();
     }
 }

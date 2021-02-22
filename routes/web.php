@@ -27,7 +27,7 @@ Route::get('/', function () {
 
     return redirect('controller.php?id_module='.$module->id);
 })
-    ->middleware('auth');
+    ->middleware(['auth']);
 
 // Sezione di configurazione
 Route::get('/config', [ConfigurationController::class, 'index'])
@@ -48,64 +48,85 @@ Route::get('/messages', [Test::class, 'index'])
     ->name('messages');
 
 // Operazioni Ajax
-Route::prefix('ajax')->group(function () {
-    Route::get('/select', [Test::class, 'index'])
+Route::prefix('ajax')
+    ->group(function () {
+        Route::get('/select', [Test::class, 'index'])
         ->name('ajax-select');
-    Route::get('/complete', [Test::class, 'index'])
+        Route::get('/complete', [Test::class, 'index'])
         ->name('ajax-complete');
-    Route::get('/search', [Test::class, 'index'])
+        Route::get('/search', [Test::class, 'index'])
         ->name('ajax-search');
 
-    // Sessioni
-    Route::get('/session/', [Test::class, 'index'])
+        // Sessioni
+        Route::get('/session/', [Test::class, 'index'])
         ->name('ajax-session');
-    Route::get('/session-array/', [Test::class, 'index'])
+        Route::get('/session-array/', [Test::class, 'index'])
         ->name('ajax-session-array');
 
-    // Dataload
-    Route::get('/dataload/{module_id}/{reference_id?}', [Test::class, 'index'])
+        // Dataload
+        Route::get('/dataload/{module_id}/{reference_id?}', [Test::class, 'index'])
         ->where('module_id', '[0-9]+')
         ->where('reference_id', '[0-9]+')
         ->name('ajax-dataload');
-});
+    });
 
 // Hooks
-Route::prefix('hook')->group(function () {
-    Route::get('/list', [Test::class, 'index'])
-        ->name('hooks');
+Route::prefix('hook')
+    ->middleware(['auth'])
+    ->group(function () {
+        Route::get('/list', [Test::class, 'index'])
+            ->name('hooks');
 
-    Route::get('/lock/{hook_id}', [Test::class, 'index'])
-        ->where('hook_id', '[0-9]+')
-        ->name('hook-lock');
+        Route::get('/lock/{hook_id}', [Test::class, 'index'])
+            ->where('hook_id', '[0-9]+')
+            ->name('hook-lock');
 
-    Route::get('/execute/{hook_id}/{token}', [Test::class, 'index'])
-        ->where('hook_id', '[0-9]+')
-        ->name('hook-execute');
+        Route::get('/execute/{hook_id}/{token}', [Test::class, 'index'])
+            ->where('hook_id', '[0-9]+')
+            ->name('hook-execute');
 
-    Route::get('/response/{hook_id}', [Test::class, 'index'])
-        ->where('hook_id', '[0-9]+')
-        ->name('hook-response');
-});
+        Route::get('/response/{hook_id}', [Test::class, 'index'])
+            ->where('hook_id', '[0-9]+')
+            ->name('hook-response');
+    });
 
 // Informazioni su OpenSTAManager
 Route::get('/info', [InfoController::class, 'info'])
+    ->middleware(['auth'])
     ->name('info');
 
 // Segnalazione bug
-Route::get('/bug', [InfoController::class, 'bug'])
-    ->name('bug');
-Route::post('/bug', [InfoController::class, 'send'])
-    ->name('bug-send');
+Route::prefix('bug')
+    ->middleware(['auth'])
+    ->group(function () {
+        Route::get('', [InfoController::class, 'bug'])
+            ->name('bug');
+
+        Route::post('', [InfoController::class, 'send'])
+            ->name('bug-send');
+    });
 
 // Log di accesso
 Route::get('/logs', [UserController::class, 'logs'])
+    ->middleware(['auth'])
     ->name('logs');
 
 // Informazioni sull'utente
-Route::get('/user', [UserController::class, 'index'])
-    ->name('user-info');
+Route::prefix('user')
+    ->middleware(['auth'])
+    ->group(function () {
+        Route::get('/info', [UserController::class, 'index'])
+            ->name('user-info');
 
-Route::get('/password', [UserController::class, 'password'])
-    ->name('user-password');
-Route::post('/password', [UserController::class, 'save'])
-    ->name('user-password-save');;
+        Route::get('/password', [UserController::class, 'password'])
+            ->name('user-password');
+
+        Route::post('/password', [UserController::class, 'savePassword'])
+            ->name('user-password-save');
+
+        Route::get('/photo', [UserController::class, 'photo'])
+            ->name('user-photo');
+
+        Route::post('/photo', [UserController::class, 'savePhoto'])
+            ->name('user-photo-save');
+    });

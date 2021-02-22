@@ -10,6 +10,9 @@ class UserController extends Controller
     /** @var int Lunghezza minima della password */
     public static $min_length_password = 8;
 
+    /**
+     * Gestisce la pagina di informazioni dell'utente.
+     */
     public function index()
     {
         $user = auth()->user();
@@ -29,6 +32,9 @@ class UserController extends Controller
         return view('user.info', $args);
     }
 
+    /**
+     * Gestisce la visualizzazione del modal per la modifica della password.
+     */
     public function password()
     {
         $args['min_length_password'] = self::$min_length_password;
@@ -36,7 +42,10 @@ class UserController extends Controller
         return view('user.password', $args);
     }
 
-    public function save(Request $request)
+    /**
+     * Gestisce il salvataggio della nuova password per l'utente.
+     */
+    public function savePassword(Request $request)
     {
         $user = auth()->user();
         $password = $request->input('password');
@@ -49,6 +58,9 @@ class UserController extends Controller
         return redirect(route('user-info'));
     }
 
+    /***
+     * Gestisce la visualizzazione dei log di accesso dell'utente corrente al gestionale.
+     */
     public function logs()
     {
         $user = auth()->user();
@@ -63,5 +75,29 @@ class UserController extends Controller
         return view('user.logs', [
             'logs' => $logs,
         ]);
+    }
+
+    /**
+     * Gestisce la visualizzazione del modal per la modifica della foto utente.
+     */
+    public function photo()
+    {
+        return view('user.photo');
+    }
+
+    /**
+     * Gestisce il salvataggio della nuova foto utente.
+     */
+    public function savePhoto(Request $request)
+    {
+        $user = auth()->user();
+        $file = $request->file('photo');
+
+        $user->photo = $file;
+        $user->save();
+
+        flash()->info(tr('Foto utente aggiornata!'));
+
+        return redirect(route('user-info'));
     }
 }

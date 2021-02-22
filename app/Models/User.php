@@ -5,6 +5,7 @@ namespace App\Models;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 use Intervention\Image\ImageManagerStatic;
@@ -153,9 +154,9 @@ class User extends Authenticatable
         return base_url().'/'.$image->filepath;
     }
 
-    public function setPhotoAttribute($value)
+    public function setPhotoAttribute(UploadedFile $file)
     {
-        $module = \module('Utenti e permessi');
+        $module = module('Utenti e permessi');
 
         $data = [
             'id_module' => $module->id,
@@ -165,22 +166,19 @@ class User extends Authenticatable
         // Foto precedenti
         $old_photo = Upload::where($data)->get();
 
-        // Informazioni sull'immagine
-        $filepath = is_array($value) ? $value['tmp_name'] : $value;
-        $info = Upload::getInfo(is_array($value) ? $value['name'] : $value);
-        $file = base_dir().'/files/temp_photo.'.$info['extension'];
-
         // Ridimensionamento
         $driver = extension_loaded('gd') ? 'gd' : 'imagick';
         ImageManagerStatic::configure(['driver' => $driver]);
 
-        $img = ImageManagerStatic::make($filepath)->resize(100, 100, function ($constraint) {
-            $constraint->aspectRatio();
-        });
-        $img->save(slashes($file));
+        $temp_file = temp_file(secure_random_string().'.'.$file->getClientOriginalExtension(), $file->getContent());
+        $img = ImageManagerStatic::make($temp_file)
+            ->resize(100, 100, function ($constraint) {
+                $constraint->aspectRatio();
+            });
+        $img->save($temp_file);
 
         // Aggiunta nuova foto
-        $upload = Upload::build($file, $data);
+        $upload = Upload::build($temp_file, $data);
 
         // Rimozione foto precedenti
         delete($file);

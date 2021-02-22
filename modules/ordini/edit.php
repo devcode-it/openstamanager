@@ -116,7 +116,7 @@ if ($module['name'] == 'Ordini cliente') {
                 ?>
             <div class="row">
                 <div class="col-md-6">
-                    {[ "type": "text", "label": "<?php echo tr('Numero ordine cliente'); ?>", "name": "numero_cliente", "value": "<?php echo $record['numero_cliente']; ?>" ]}
+                    {[ "type": "text", "label": "<?php echo tr('Numero ordine cliente'); ?>", "name": "numero_cliente", "required":0, "value": "<?php echo $record['numero_cliente']; ?>", "help": "<?php echo tr('<span>Obbligatorio per valorizzare CIG/CUP. &Egrave; possible inserire: </span><ul><li>N. determina</li><li>RDO</li><li>Ordine MEPA</li></ul>'); ?>" ]}
                 </div>
 
                 <div class="col-md-6">
@@ -143,7 +143,7 @@ if ($module['name'] == 'Ordini cliente') {
 	</div>
 
     <?php
-        if (!empty($record['id_documento_fe']) || !empty($record['num_item']) || !empty($record['codice_cig']) || !empty($record['codice_cup'])) {
+        if (!empty($record['codice_commessa']) || !empty($record['num_item']) || !empty($record['codice_cig']) || !empty($record['codice_cup'])) {
             $collapsed = 'in';
         } else {
             $collapsed = '';
@@ -166,7 +166,7 @@ if ($module['name'] == 'Ordini cliente') {
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-md-6">
-                            {[ "type": "text", "label": "<?php echo tr('Identificatore Documento'); ?>", "name": "id_documento_fe", "required": 0, "help": "<?php echo tr('<span>Obbligatorio per valorizzare CIG/CUP. &Egrave; possible inserire: </span><ul><li>N. determina</li><li>RDO</li><li>Ordine MEPA</li></ul>'); ?>", "value": "$id_documento_fe$", "maxlength": 20 ]}
+                            {[ "type": "text", "label": "<?php echo tr('Codice Commessa'); ?>", "name": "codice_commessa", "required": 0, "value": "$codice_commessa$", "maxlength": 100 ]}
                         </div>
 
                         <div class="col-md-6">
@@ -326,9 +326,9 @@ $("#idanagrafica").change(function() {
 $(document).ready(function() {
 	$("#codice_cig, #codice_cup").bind("keyup change", function(e) {
 		if ($("#codice_cig").val() == "" && $("#codice_cup").val() == "" ){
-			$("#id_documento_fe").prop("required", false);
+			$("#numero_cliente").prop("required", false);
 		} else{
-			$("#id_documento_fe").prop("required", true);
+			$("#numero_cliente").prop("required", true);
 		}
 	});
 });

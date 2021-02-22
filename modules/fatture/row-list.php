@@ -67,13 +67,14 @@ foreach ($righe as $riga) {
 
             $num_item = $documento_originale['num_item'];
             $codice_cig = $documento_originale['codice_cig'];
+            $codice_commessa = $documento_originale['codice_commessa'];
             $codice_cup = $documento_originale['codice_cup'];
             $id_documento_fe = $documento_originale['id_documento_fe'];
         }
 
         $descrizione_conto = $dbo->fetchOne('SELECT descrizione FROM co_pianodeiconti3 WHERE id = '.prepare($riga->id_conto))['descrizione'];
 
-        $extra_riga = replace('_DESCRIZIONE_CONTO__ID_DOCUMENTO__NUMERO_RIGA__CODICE_CIG__CODICE_CUP__RITENUTA_ACCONTO__RITENUTA_CONTRIBUTI__RIVALSA_', [
+        $extra_riga = replace('_DESCRIZIONE_CONTO__ID_DOCUMENTO__NUMERO_RIGA__CODICE_COMMESSA__CODICE_CIG__CODICE_CUP__RITENUTA_ACCONTO__RITENUTA_CONTRIBUTI__RIVALSA_', [
             '_RIVALSA_' => $riga->rivalsa_inps ? '<br>Rivalsa: '.moneyFormat(abs($riga->rivalsa_inps)) : null,
             '_RITENUTA_ACCONTO_' => $riga->ritenuta_acconto ? '<br>Ritenuta acconto: '.moneyFormat(abs($riga->ritenuta_acconto)) : null,
             '_RITENUTA_CONTRIBUTI_' => $riga->ritenuta_contributi ? '<br>Ritenuta contributi: '.moneyFormat(abs($riga->ritenuta_contributi)) : null,
@@ -81,6 +82,7 @@ foreach ($righe as $riga) {
             '.tr('Conto mancante').'</span>',
             '_ID_DOCUMENTO_' => $id_documento_fe ? ' - DOC: '.$id_documento_fe : null,
             '_NUMERO_RIGA_' => $num_item ? ', NRI: '.$num_item : null,
+            '_CODICE_COMMESSA_' => $codice_commessa ? ', COM: '.$codice_commessa : null,
             '_CODICE_CIG_' => $codice_cig ? ', CIG: '.$codice_cig : null,
             '_CODICE_CUP_' => $codice_cup ? ', CUP: '.$codice_cup : null,
         ]);

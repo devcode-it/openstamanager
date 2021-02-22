@@ -104,7 +104,8 @@ switch (post('op')) {
             'numero_cliente' => post('numero_cliente'),
             'data_cliente' => post('data_cliente'),
 
-            'id_documento_fe' => post('id_documento_fe'),
+            'id_documento_fe' => post('numero_cliente'),
+            'codice_commessa' => post('codice_commessa'),
             'codice_cup' => post('codice_cup'),
             'codice_cig' => post('codice_cig'),
             'num_item' => post('num_item'),
@@ -366,6 +367,7 @@ switch (post('op')) {
             $ordine->idsede = $id_sede;
 
             $ordine->id_documento_fe = $documento->id_documento_fe;
+            $ordine->numero_cliente = $documento->id_documento_fe;
             $ordine->codice_cup = $documento->codice_cup;
             $ordine->codice_cig = $documento->codice_cig;
             $ordine->num_item = $documento->num_item;

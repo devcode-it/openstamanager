@@ -130,13 +130,15 @@ foreach ($righe as $riga) {
         $documento_originale = $riga->getOriginalComponent()->getDocument();
 
         $num_item = $documento_originale['num_item'];
+        $codice_commessa = $documento_originale['codice_commessa'];
         $codice_cig = $documento_originale['codice_cig'];
         $codice_cup = $documento_originale['codice_cup'];
         $id_documento_fe = $documento_originale['id_documento_fe'];
 
-        $extra_riga = replace('_ID_DOCUMENTO__NUMERO_RIGA__CODICE_CIG__CODICE_CUP_', [
+        $extra_riga = replace('_ID_DOCUMENTO__NUMERO_RIGA__CODICE_COMMESSA__CODICE_CIG__CODICE_CUP_', [
             '_ID_DOCUMENTO_' => $id_documento_fe ? 'DOC: '.$id_documento_fe : null,
             '_NUMERO_RIGA_' => $num_item ? ', NRI: '.$num_item : null,
+            '_CODICE_COMMESSA_' => $codice_commessa ? ', COM: '.$codice_commessa : null,
             '_CODICE_CIG_' => $codice_cig ? ', CIG: '.$codice_cig : null,
             '_CODICE_CUP_' => $codice_cup ? ', CUP: '.$codice_cup : null,
         ]);

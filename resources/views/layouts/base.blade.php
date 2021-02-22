@@ -8,6 +8,8 @@
 
         <meta name="robots" content="noindex,nofollow">
 
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+
         <link href="{{ base_url() }}/assets/img/favicon.png" rel="icon" type="image/x-icon" />
         <link rel="manifest" href="{{ base_url() }}/manifest.json">
 
@@ -68,8 +70,17 @@
                     },
                 },
 
-                messages_url: "{{ route('messages') }}",
+                urls: {
+                    messages: "{{ route('messages') }}",
+                }
             };
+
+            // CSRF Token automatico per richieste AJAX
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
         </script>
 
         @yield('css')

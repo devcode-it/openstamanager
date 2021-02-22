@@ -73,6 +73,8 @@
 </div>
 
 <script>
+    var firstFocus = true;
+
     $(document).ready(function() {
         init();
 
@@ -85,13 +87,12 @@
             <p>{{ tr("Assicurati inoltre di controllare che il checkbox relativo ai file di log sia contrassegnato, oppure riporta qui l'errore visualizzato") }}.</p>
             <p>{{ tr('Ti ringraziamo per il tuo contributo') }},<br>
             {{ tr('Lo staff di OSM') }}</p>`;
+
         let editor = input("body");
-        var firstFocus = true;
-        /*
         editor.set(html);
 
-        editor.on("key", function() {
-            setTimeout(function(){
+        editor.on("change", function() {
+            setTimeout(function() {
                 $("#send").prop("disabled", editor.get() === "");
             }, 10);
         });
@@ -99,9 +100,9 @@
         editor.on("focus", function() {
             if (firstFocus) {
                 editor.set("");
-                firstFocus = 0;
+                firstFocus = false;
             }
-        });*/
+        });
     });
 </script>
 @endsection

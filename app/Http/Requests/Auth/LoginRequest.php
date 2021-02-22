@@ -106,12 +106,14 @@ class LoginRequest extends FormRequest
      */
     protected function registerLog($status)
     {
+        $user = auth()->user();
+
         // Log di accesso
         $log = new Log();
 
         $log->username = $this->input('username');
         $log->ip = $this->ip();
-        $log->id_utente = auth()->user()->id;
+        $log->id_utente = $user ? $user->id : null;
         $log->setStatus($status);
 
         $log->save();

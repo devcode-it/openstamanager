@@ -19,6 +19,7 @@
     @endforeach
 
     globals = {
+        content_was_modified: false,
         rootdir: '{{ base_url() }}',
 
         id_module: '{{ $id_module }}',
@@ -33,7 +34,8 @@
         decimals: "{{ formatter()->getNumberSeparators()['decimals'] }}",
         thousands: "{{ formatter()->getNumberSeparators()['thousands'] }}",
 
-        currency: "{{ currency() }}",
+        locale: '{{ substr(app()->getLocale(), 0, strpos(app()->getLocale(), "_")) }}',
+        full_locale: '{{ app()->getLocale() }}',
 
         search: search,
         translations: {
@@ -120,9 +122,6 @@
             },
         },
 
-        locale: '{{ app()->getLocale() }}',
-        full_locale: '{{ app()->getLocale() }}',
-
         start_date: '{{ session('period_start') }}',
         start_date_formatted: '{{ dateFormat(session('period_start')) }}',
         end_date: '{{ session('period_end') }}',
@@ -132,20 +131,23 @@
             ["Undo","Redo","-","Cut","Copy","Paste","PasteText","PasteFromWord","-","Scayt", "-","Link","Unlink","-","Bold","Italic","Underline","Superscript","SpecialChar","HorizontalRule","-","JustifyLeft","JustifyCenter","JustifyRight","JustifyBlock","-","NumberedList","BulletedList","Outdent","Indent","Blockquote","-","Styles","Format","Image","Table", "TextColor", "BGColor" ],
         ],
 
-        order_manager_id: '{{ module('Stato dei servizi')['id'] }}',
+        order_manager_id: '{{ module('Stato dei servizi')->id }}',
         tempo_attesa_ricerche: {{ setting('Tempo di attesa ricerche in secondi') }},
         restrict_summables_to_selected: {{ setting('Totali delle tabelle ristretti alla selezione') }},
-        select_url: "{{ route('ajax-select') }}",
-        dataload_url: "{{ route('ajax-dataload', ['module_id' => '|module_id|']) }}",
-        dataload_url_plugin: "{{ route('ajax-dataload', ['module_id' => '|module_id|', 'reference_id' => '|reference_id|']) }}",
-        ajax_set_url: "{{ route('ajax-session') }}",
-        ajax_array_set_url: "{{ route('ajax-session-array') }}",
-        messages_url: "{{ route('messages') }}",
-        hooks: {
-            list: "{{ route('hooks') }}",
-            lock: "{{ route('hook-lock', ['hook_id' => '|id|']) }}",
-            execute: "{{ route('hook-execute', ['hook_id' => '|id|', 'token' => '|token|']) }}",
-            response: "{{ route('hook-response', ['hook_id' => '|id|']) }}",
+
+        urls: {
+            select: "{{ route('ajax-select') }}",
+            dataload: "{{ route('ajax-dataload', ['module_id' => '|module_id|']) }}",
+            dataload_plugin: "{{ route('ajax-dataload', ['module_id' => '|module_id|', 'reference_id' => '|reference_id|']) }}",
+            ajax_set: "{{ route('ajax-session') }}",
+            ajax_array_set: "{{ route('ajax-session-array') }}",
+            messages: "{{ route('messages') }}",
+            hooks: {
+                list: "{{ route('hooks') }}",
+                lock: "{{ route('hook-lock', ['hook_id' => '|id|']) }}",
+                execute: "{{ route('hook-execute', ['hook_id' => '|id|', 'token' => '|token|']) }}",
+                response: "{{ route('hook-response', ['hook_id' => '|id|']) }}",
+            }
         }
     };
 </script>
@@ -310,6 +312,9 @@
         $(document).ready(function() {
             // Toast
             alertPush();
+
+            // Orologio
+            clock();
 
             // Hooks
             startHooks();

@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\ConfigurationController;
+use App\Http\Controllers\HookController;
 use App\Http\Controllers\InfoController;
 use App\Http\Controllers\InitializationController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\Test;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -44,7 +46,7 @@ Route::post('/init', [InitializationController::class, 'save'])
     ->name('initialization-save');
 
 // Messaggi flash
-Route::get('/messages', [Test::class, 'index'])
+Route::get('/messages', [MessageController::class, 'index'])
     ->name('messages');
 
 // Operazioni Ajax
@@ -74,19 +76,19 @@ Route::prefix('ajax')
 Route::prefix('hook')
     ->middleware(['auth'])
     ->group(function () {
-        Route::get('/list', [Test::class, 'index'])
+        Route::get('/list', [HookController::class, 'list'])
             ->name('hooks');
 
-        Route::get('/lock/{hook_id}', [Test::class, 'index'])
-            ->where('hook_id', '[0-9]+')
+        Route::get('/lock/{hook_id}', [HookController::class, 'lock'])
+            ->whereNumber('hook_id')
             ->name('hook-lock');
 
-        Route::get('/execute/{hook_id}/{token}', [Test::class, 'index'])
-            ->where('hook_id', '[0-9]+')
+        Route::get('/execute/{hook_id}/{token}', [HookController::class, 'execute'])
+            ->whereNumber('hook_id')
             ->name('hook-execute');
 
-        Route::get('/response/{hook_id}', [Test::class, 'index'])
-            ->where('hook_id', '[0-9]+')
+        Route::get('/response/{hook_id}', [HookController::class, 'response'])
+            ->whereNumber('hook_id')
             ->name('hook-response');
     });
 

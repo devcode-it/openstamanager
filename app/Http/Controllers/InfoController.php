@@ -12,11 +12,17 @@ class InfoController extends Controller
 {
     protected static $bugEmail = 'info@openstamanager.com';
 
+    /**
+     * Gestore della pagina di informazioni del gestionale.
+     */
     public function info()
     {
         return view('info');
     }
 
+    /**
+     * Gestore della pagina di segnalazione bug del gestionale.
+     */
     public function bug()
     {
         $account = Account::where('predefined', true)->first();
@@ -27,6 +33,9 @@ class InfoController extends Controller
         ]);
     }
 
+    /**
+     * Operazione di invio di una segnalazione bug.
+     */
     public function send(Request $request)
     {
         $user = auth()->user();

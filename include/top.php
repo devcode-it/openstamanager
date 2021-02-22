@@ -178,7 +178,9 @@ if (auth()->check()) {
                     },
                 },
             };
+
 			globals = {
+                content_was_modified: false,
                 rootdir: "'.base_url().'",
                 js: "'.$paths['js'].'",
                 css: "'.$paths['css'].'",
@@ -235,12 +237,28 @@ if (auth()->check()) {
                 dataload_page_buffer: '.setting('Lunghezza in pagine del buffer Datatables').',
                 tempo_attesa_ricerche: '.setting('Tempo di attesa ricerche in secondi').',
                 restrict_summables_to_selected: '.setting('Totali delle tabelle ristretti alla selezione').',
+
+                urls: {
+                    select: "'.route('ajax-select').'",
+                    dataload: "'.route('ajax-dataload', ['module_id' => '|module_id|']).'",
+                    dataload_plugin: "'.route('ajax-dataload', ['module_id' => '|module_id|', 'reference_id' => '|reference_id|']).'",
+                    ajax_set: "'.route('ajax-session').'",
+                    ajax_array_set: "'.route('ajax-session-array').'",
+                    messages: "'.route('messages').'",
+                    hooks: {
+                        list: "'.route('hooks').'",
+                        lock: "'.route('hook-lock', ['hook_id' => '|id|']).'",
+                        execute: "'.route('hook-execute', ['hook_id' => '|id|', 'token' => '|token|']).'",
+                        response: "'.route('hook-response', ['hook_id' => '|id|']).'",
+                    }
+                }
             };
 		</script>';
 } else {
     echo '
         <script>
             globals = {
+                content_was_modified: false,
                 rootdir: "'.base_url().'",
 
                 search: {},

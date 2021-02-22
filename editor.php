@@ -27,7 +27,7 @@ $read_only = $structure->permission == 'r';
 if (empty($id_record) && !empty($id_module) && empty($id_plugin)) {
     redirect_legacy(base_url().'/controller.php?id_module='.$id_module);
 } elseif (empty($id_record) && empty($id_module) && empty($id_plugin)) {
-    redirect_legacy(base_url().'/index.php');
+    redirect_legacy(base_url().'/');
 }
 
 include_once AppLegacy::filepath('include|custom|', 'top.php');

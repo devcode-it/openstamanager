@@ -371,12 +371,9 @@ function getCookie(cname) {
  */
 function renderMessages() {
     $.ajax({
-        url: globals.rootdir + '/ajax.php',
-        type: 'get',
+        url: globals.urls.messages,
+        type: 'GET',
         dataType: 'JSON',
-        data: {
-            op: 'flash',
-        },
         success: function (messages) {
             let info = messages.info ? messages.info : [];
             info.forEach(function (element) {

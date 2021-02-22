@@ -19,11 +19,11 @@
 
 namespace Modules\Emails;
 
+use App\Models\User;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Models\PrintTemplate;
 use Models\Upload;
-use App\Models\User;
 use Modules\Newsletter\Newsletter;
 
 class Mail extends Model

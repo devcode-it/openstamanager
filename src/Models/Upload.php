@@ -21,6 +21,7 @@ namespace Models;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\UploadedFile;
 use Intervention\Image\ImageManagerStatic;
 use UnexpectedValueException;
 use Util\FileSystem;
@@ -86,10 +87,16 @@ class Upload extends Model
         $model = new static();
 
         // Informazioni di base
-        $original_name = isset($source['name']) ? $source['name'] : basename($source);
+        if (is_string($source)) {
+            $original_name = basename($source);
+        } elseif (is_array($source)) {
+            $original_name = $source['name'];
+        } else {
+            $original_name = $source->getClientOriginalName();
+        }
         $name = isset($data['name']) ? $data['name'] : $name;
         $category = isset($data['category']) ? $data['category'] : $category;
-
+        
         // Nome e categoria dell'allegato
         $model->name = !empty($name) ? $name : $original_name;
         $model->category = $category;
@@ -118,6 +125,7 @@ class Upload extends Model
             (is_array($source) && is_uploaded_file($source['tmp_name']) && !move_uploaded_file($source['tmp_name'], $file)) ||
             (is_string($source) && is_file($source) && !copy($source, $file)) ||
             (is_string($source) && !is_file($source) && file_put_contents($file, $source) === false)
+            ($source instanceof UploadedFile && !$source->storeAs($directory, $filename))
         ) {
             throw new UnexpectedValueException("Errore durante il salvataggio dell'allegato");
         }

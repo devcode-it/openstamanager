@@ -20,7 +20,6 @@
 namespace API\App\v1;
 
 use API\App\AppResource;
-use Auth;
 use Carbon\Carbon;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\Components\Sessione;

@@ -19,10 +19,10 @@
 
 namespace Modules\Newsletter;
 
+use App\Models\User;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\User;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Referente;
 use Modules\Anagrafiche\Sede;

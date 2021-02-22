@@ -54,6 +54,7 @@ class Module extends Model
         'options',
         'options2',
     ];
+
     /**
      * Costruisce un link HTML per il modulo e il record indicati.
      */

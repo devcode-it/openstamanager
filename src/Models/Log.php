@@ -27,34 +27,18 @@ class Log extends Model
     use SimpleModelTrait;
 
     /** @var array Stati previsti dal sistema di autenticazione */
-    protected static $status = [
-        'success' => [
-            'code' => 1,
-            'message' => 'Login riuscito!',
-            'color' => 'success',
-        ],
-        'failed' => [
-            'code' => 0,
-            'message' => 'Autenticazione fallita!',
-            'color' => 'danger',
-        ],
-        'disabled' => [
-            'code' => 2,
-            'message' => 'Utente non abilitato!',
-            'color' => 'info',
-        ],
-        'unauthorized' => [
-            'code' => 5,
-            'message' => "L'utente non ha nessun permesso impostato!",
-            'color' => 'warning',
-        ],
-    ];
+    protected static $status;
 
     protected $table = 'zz_logs';
 
     public function getCodeAttribute()
     {
-        return $this->getStatus()['code'];
+        return $this->stato;
+    }
+
+    public function getStateAttribute()
+    {
+        return $this->getStatus()['state'];
     }
 
     public function getMessageAttribute()
@@ -69,7 +53,68 @@ class Log extends Model
 
     public function getStatus()
     {
-        return self::$status[$this->stato];
+        return self::getAvailableStatus()[$this->stato];
+    }
+
+    public function setStatus($name)
+    {
+        $code = self::getStatusCode($name);
+
+        $this->stato = $code;
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return int
+     */
+    public static function getStatusCode($name)
+    {
+        $status = self::getAvailableStatus();
+        $code = 0;
+
+        foreach ($status as $c => $s) {
+            if ($s['state'] == $name) {
+                $code = $c;
+            }
+        }
+
+        return $code;
+    }
+
+    /**
+     * Restituisce un elenco di stati previsti dal sistema di autenticazione.
+     *
+     * @return string[][]
+     */
+    public static function getAvailableStatus()
+    {
+        if (!isset(self::$status)) {
+            self::$status = [
+                1 => [
+                    'state' => 'success',
+                    'message' => tr('Login riuscito!'),
+                    'color' => 'success',
+                ],
+                0 => [
+                    'state' => 'failed',
+                    'message' => tr('Autenticazione fallita!'),
+                    'color' => 'danger',
+                ],
+                2 => [
+                    'state' => 'disabled',
+                    'message' => tr('Utente non abilitato!'),
+                    'color' => 'info',
+                ],
+                5 => [
+                    'state' => 'unauthorized',
+                    'message' => tr("L'utente non ha nessun permesso impostato!"),
+                    'color' => 'warning',
+                ],
+            ];
+        }
+
+        return self::$status;
     }
 
     /* Relazioni Eloquent */

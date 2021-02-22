@@ -19,8 +19,6 @@
 
 namespace HTMLBuilder\Wrapper;
 
-use Modules;
-
 /**
  * @since 2.3
  */

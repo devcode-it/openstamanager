@@ -21,8 +21,8 @@ namespace Models;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
-use Traits\LocalPoolTrait;
 use Respect\Validation\Validator as v;
+use Traits\LocalPoolTrait;
 
 class Setting extends Model
 {
@@ -95,7 +95,7 @@ class Setting extends Model
             return true;
         }
 
-        return  false;
+        return false;
     }
 
     /**

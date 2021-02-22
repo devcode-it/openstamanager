@@ -23,7 +23,6 @@ use API\Interfaces\CreateInterface;
 use API\Interfaces\RetrieveInterface;
 use API\Resource;
 use Models\Upload;
-use Modules;
 
 class Allegato extends Resource implements RetrieveInterface, CreateInterface
 {

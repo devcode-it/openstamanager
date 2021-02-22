@@ -22,7 +22,6 @@ namespace API\App\v1;
 use API\App\AppResource;
 use API\Exceptions\InternalError;
 use Models\Upload;
-use Modules;
 
 class AllegatiInterventi extends AppResource
 {

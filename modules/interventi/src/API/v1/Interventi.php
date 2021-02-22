@@ -23,7 +23,6 @@ use API\Interfaces\CreateInterface;
 use API\Interfaces\RetrieveInterface;
 use API\Interfaces\UpdateInterface;
 use API\Resource;
-use Auth;
 use Modules;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\Intervento;

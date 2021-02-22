@@ -44,16 +44,6 @@ ini_set('session.use_only_cookies', '1');
 session_set_cookie_params(0, base_url(), null, isHTTPS(true));
 session_start();*/
 
-// Lettura della configurazione
-$config = AppLegacy::getConfig();
-
-// Redirect al percorso HTTPS se impostato nella configurazione
-if (!empty($config['redirectHTTPS']) && !isHTTPS(true)) {
-    header('HTTP/1.1 301 Moved Permanently');
-    header('Location: https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
-    throw new \App\Exceptions\LegacyExitException();
-}
-
 /* GESTIONE DEGLI ERRORI */
 // Logger per la segnalazione degli errori
 $logger = new Monolog\Logger('Logs');
@@ -132,12 +122,6 @@ Monolog\ErrorHandler::register($logger, [], [Monolog\Logger::ERROR], Monolog\Log
 $dbo = $database = database();
 
 /* INTERNAZIONALIZZAZIONE */
-// Istanziamento del gestore delle traduzioni del progetto
-$lang = !empty($config['lang']) ? $config['lang'] : (isset($_GET['lang']) ? $_GET['lang'] : null);
-$formatter = !empty($config['formatter']) ? $config['formatter'] : [];
-//$translator->addLocalePath(base_dir().'/locale');
-//$translator->addLocalePath(base_dir().'/modules/*/locale');
-//$translator->setLocale($lang, $formatter);
 
 // Individuazione di versione e revisione del progetto
 $version = Update::getVersion();
@@ -156,7 +140,7 @@ if (!$continue && getURLPath() != slashes(base_url().'/index.php') && !Permissio
         auth()->logout();
     }
 
-    redirect_legacy(base_url().'/index.php');
+    redirect_legacy(base_url().'/');
     throw new \App\Exceptions\LegacyExitException();
 }
 
@@ -165,26 +149,6 @@ if (!$continue && getURLPath() != slashes(base_url().'/index.php') && !Permissio
 if (!$api_request) {
     // Impostazioni di Content-Type e Charset Header
     header('Content-Type: text/html; charset=UTF-8');
-
-    // Controllo CSRF
-    if (empty($config['disableCSRF'])) {
-        //csrfProtector::init();
-    }
-
-    // Aggiunta del wrapper personalizzato per la generazione degli input
-    if (!empty($config['HTMLWrapper'])) {
-        HTMLBuilder\HTMLBuilder::setWrapper($config['HTMLWrapper']);
-    }
-
-    // Aggiunta dei gestori personalizzati per la generazione degli input
-    foreach ((array) $config['HTMLHandlers'] as $key => $value) {
-        HTMLBuilder\HTMLBuilder::setHandler($key, $value);
-    }
-
-    // Aggiunta dei gestori per componenti personalizzate
-    foreach ((array) $config['HTMLManagers'] as $key => $value) {
-        HTMLBuilder\HTMLBuilder::setManager($key, $value);
-    }
 
     // Registrazione globale del template per gli input HTML
     ob_start();
@@ -195,7 +159,7 @@ if (!$api_request) {
     session(['errors' => isset($_SESSION['errors']) ? array_unique($_SESSION['errors']) : []]);
 
     // Impostazione del tema grafico di default
-    $theme = !empty($config['theme']) ? $config['theme'] : 'default';
+    $theme = 'default';
 
     if ($continue) {
         // Periodo di visualizzazione dei record

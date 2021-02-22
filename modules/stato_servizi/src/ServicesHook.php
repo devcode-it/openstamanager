@@ -41,6 +41,7 @@ class ServicesHook extends CachedManager
     public function response()
     {
         $servizi = $this->getCache()->content;
+        $servizi = isset($servizi) ? $servizi : [];
 
         // Elaborazione dei servizi in scadenza
         $limite_scadenze = (new Carbon())->addDays(60);

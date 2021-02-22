@@ -21,14 +21,10 @@
  */
 function startHooks() {
     $.ajax({
-        url: globals.rootdir + "/ajax.php",
-        type: "get",
-        data: {
-            op: "hooks",
-        },
-        success: function (data) {
-            hooks = JSON.parse(data);
-
+        url: globals.urls.hooks.list,
+        type: 'GET',
+        dataType: 'JSON',
+        success: function (hooks) {
             $("#hooks-header").text(globals.translations.hooksExecuting);
             $("#hooks-number").text(hooks.length);
 
@@ -54,18 +50,15 @@ function startHooks() {
  * Richiama l'hook per l'esecuzione.
  *
  * @param hook
+ * @param init
  */
 function startHook(hook, init) {
     $.ajax({
-        url: globals.rootdir + "/ajax.php",
-        type: "get",
-        data: {
-            op: "hook-lock",
-            id: hook.id,
-        },
-        success: function (data) {
-            var token = JSON.parse(data);
-
+        url: globals.urls.hooks.lock
+            .replace('|id|', hook.id),
+        type: 'GET',
+        dataType: 'JSON',
+        success: function (token) {
             if (init) {
                 hookCount("#hooks-counter");
 
@@ -75,7 +68,7 @@ function startHook(hook, init) {
             if (token) {
                 executeHook(hook, token);
             } else {
-                var timeout = 10;
+                let timeout = 10;
 
                 setTimeout(function () {
                     startHook(hook);
@@ -93,18 +86,15 @@ function startHook(hook, init) {
  */
 function executeHook(hook, token) {
     $.ajax({
-        url: globals.rootdir + "/ajax.php",
-        type: "get",
-        data: {
-            op: "hook-execute",
-            id: hook.id,
-            token: token,
-        },
-        success: function (data) {
-            var result = JSON.parse(data);
+        url: globals.urls.hooks.execute
+            .replace('|id|', hook.id)
+            .replace('|token|', token),
+        type: 'GET',
+        dataType: 'JSON',
+        success: function (result) {
             updateHook(hook);
 
-            var timeout;
+            let timeout;
             if (result.execute) {
                 startHook(hook);
             } else {
@@ -122,23 +112,19 @@ function executeHook(hook, token) {
  * Aggiorna le informazioni dell'hook.
  *
  * @param hook
- * @param init
  */
 function updateHook(hook) {
     $.ajax({
-        url: globals.rootdir + "/ajax.php",
-        type: "get",
-        data: {
-            op: "hook-response",
-            id: hook.id,
-        },
-        success: function (data) {
-            var result = JSON.parse(data);
+        url: globals.urls.hooks.response
+            .replace('|id|', hook.id),
+        type: 'GET',
+        dataType: 'JSON',
+        success: function (result) {
             renderHook(hook, result);
 
             // Rimozione eventuale della rotella di caricamento
-            var counter = $("#hooks-counter").text();
-            var number = $("#hooks > li").length;
+            let counter = $("#hooks-counter").text();
+            let number = $("#hooks > li").length;
 
             if (number == 0) {
                 $("#hooks-notified").html('<i class="fa fa-check" aria-hidden="true"></i>');
@@ -153,7 +139,7 @@ function updateHook(hook) {
             if (counter == $("#hooks-number").text()) {
                 $("#hooks-loading").hide();
 
-                var hookMessage;
+                let hookMessage;
                 if (number > 1) {
                     hookMessage = globals.translations.hookMultiple.replace('_NUM_', number);
                 } else if (number == 1) {
@@ -174,8 +160,8 @@ function updateHook(hook) {
 function hookCount(id, value) {
     value = value ? value : 1;
 
-    var element = $(id);
-    var number = parseInt(element.text());
+    let element = $(id);
+    let number = parseInt(element.text());
     number = isNaN(number) ? 0 : number;
 
     number += value;
@@ -187,16 +173,16 @@ function hookCount(id, value) {
 /**
  * Genera l'HTML per la visualizzazione degli hook.
  *
- * @param element_id
+ * @param hook
  * @param result
  */
 function renderHook(hook, result) {
     if (result.length == 0) return;
 
-    var element_id = "hook-" + hook.id;
+    let element_id = "hook-" + hook.id;
 
     // Inizializzazione
-    var element = $("#" + element_id);
+    let element = $("#" + element_id);
     if (element.length == 0) {
         $("#hooks").append('<li class="hook-element" id="' + element_id + '"></li>');
 
@@ -211,12 +197,12 @@ function renderHook(hook, result) {
     }
 
     // Contenuto
-    var content = '<a href="' + (result.link ? result.link : "#") + '"><i class="' + result.icon + '"></i><span class="small"> ' + result.message + '</span>';
+    let content = '<a href="' + (result.link ? result.link : "#") + '"><i class="' + result.icon + '"></i><span class="small"> ' + result.message + '</span>';
 
     if (result.progress) {
-        var current = result.progress.current;
-        var total = result.progress.total;
-        var percentage = current / total * 100;
+        let current = result.progress.current;
+        let total = result.progress.total;
+        let percentage = current / total * 100;
         percentage = isNaN(percentage) ? 100 : percentage;
 
         percentage = Math.round(percentage * 100) / 100;

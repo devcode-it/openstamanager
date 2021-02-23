@@ -21,6 +21,7 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
+use Modules\DDT\DDT;
 use Modules\Fatture\Components\Articolo;
 use Modules\Fatture\Components\Descrizione;
 use Modules\Fatture\Components\Riga;
@@ -702,6 +703,11 @@ switch (post('op')) {
         // Creazione della fattura al volo
         if (post('create_document') == 'on') {
             $descrizione = ($documento->direzione == 'entrata') ? 'Fattura immediata di vendita' : 'Fattura immediata di acquisto';
+
+            // Fattura differita in caso di importazione da DDT
+            if ($documento instanceof DDT){
+                $descrizione = ($documento->direzione == 'entrata') ? 'Fattura differita di vendita' : 'Fattura differita di acquisto';
+            }
 
             if ($reversed) {
                 $tipo = Tipo::where('descrizione', 'Nota di credito')->where('dir', '!=', $documento->direzione)->first();

@@ -263,15 +263,10 @@ if (empty($record) || !$has_access) {
 
                 <script>
                 $(document).ready(function(){
-                    cleanup_inputs();
+                    let form = $("#module-edit").parent().find("form").first();
 
-                    var form = $("#module-edit").find("form").first();
-
-                    // Campi a inizio form
-                    form.prepend($("#custom_fields_top-edit").html());
-
-                    // Campi a fine form
-                    var last = form.find(".panel").last();
+                    // Ultima sezione/campo del form
+                    let last = form.find(".panel").last();
 
                     if (!last.length) {
                         last = form.find(".box").last();
@@ -281,8 +276,11 @@ if (empty($record) || !$has_access) {
                         last = form.find(".row").eq(-2);
                     }
 
-                    last.after($("#custom_fields_bottom-edit").html());
-                    restart_inputs();
+                    // Campi a inizio form
+                    aggiungiContenuto(form, "#custom_fields_top-edit", {}, true);
+
+                    // Campi a fine form
+                    aggiungiContenuto(last, "#custom_fields_bottom-edit", {});
                 });
                 </script>';
 

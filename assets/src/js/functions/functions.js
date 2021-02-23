@@ -488,16 +488,6 @@ function restart_inputs() {
     $('.openstamanager-input').each(function () {
         input(this);
     });
-    /*
-    start_datepickers();
-    start_inputmask();
-
-    initNumbers();
-    start_superselect();
-
-    // Autosize per le textarea
-    initTextareaInput($('.autosize'));
-     */
 }
 
 /**
@@ -707,12 +697,13 @@ function hideTableColumn(table, column) {
 
 /**
  * Funzione per aggiungere in un *endpoint* il contenuto di uno specifico *template*, effettuando delle sostituzioni di base e inizializzando i campi aggiunti.
- * @param endpoint_selector
- * @param template_selector
- * @param replaces
+ * @param {string|jQuery|HTMLElement} endpoint_selector
+ * @param {string|jQuery|HTMLElement} template_selector
+ * @param {object} replaces
+ * @param {boolean} prepend
  * @returns {*|jQuery|HTMLElement}
  */
-function aggiungiContenuto(endpoint_selector, template_selector, replaces = {}) {
+function aggiungiContenuto(endpoint_selector, template_selector, replaces = {}, prepend = false) {
     let template = $(template_selector);
     let endpoint = $(endpoint_selector);
 
@@ -729,7 +720,11 @@ function aggiungiContenuto(endpoint_selector, template_selector, replaces = {}) 
 
     // Aggiunta del contenuto
     let element = $(content);
-    endpoint.append(element);
+    if (prepend) {
+        endpoint.prepend(element);
+    } else {
+        endpoint.append(element);
+    }
 
     // Rigenerazione degli input interni
     element.find('.openstamanager-input').each(function () {

@@ -26,35 +26,58 @@ function initTextareaInput(input) {
     return true;
 }
 
+function waitCKEditor(input) {
+    setTimeout(function () {
+        initEditorInput(input);
+    }, 100);
+}
+
 /**
  * Funzione per l'inizializzazione dei campi editor.
  * @param input
  */
 function initEditorInput(input) {
+    if (window.CKEDITOR && CKEDITOR.status === "loaded") {
+        $(document).ready(function () {
+            initCKEditor(input);
+        })
+    } else {
+        waitCKEditor(input);
+    }
+
+    return true;
+}
+
+function initCKEditor(input) {
     let $input = $(input);
     let name = input.getAttribute("id");
 
-    loadScript(globals.rootdir + "/assets/dist/js/ckeditor/ckeditor.js")
-        .then(function () {
-            CKEDITOR.addCss(".cke_editable img { max-width: 100% !important; height: auto !important; }");
+    // Controllo su istanza già esistente
+    let instance = CKEDITOR.instances[name];
+    if (instance) {
+        return;
+    }
 
-            CKEDITOR.replace(name, {
-                toolbar: globals.ckeditorToolbar,
-                language: globals.locale,
-                scayt_autoStartup: true,
-                scayt_sLang: globals.full_locale,
-                disableNativeSpellChecker: false,
-            });
+    // Avvio di CKEditor
+    CKEDITOR.replace(name, {
+        toolbar: globals.ckeditorToolbar,
+        language: globals.locale,
+        scayt_autoStartup: true,
+        scayt_sLang: globals.full_locale,
+        disableNativeSpellChecker: false,
+    });
 
-            CKEDITOR.instances[name].on("key", function (event) {
-                $input.trigger("keydown", event.data);
-                $input.trigger("keyup", event.data);
-            });
+    // Gestione di eventi noti
+    CKEDITOR.instances[name].on("key", function (event) {
+        $input.trigger("keydown", event.data);
+        $input.trigger("keyup", event.data);
+    });
 
-            CKEDITOR.instances[name].on("change", function (event) {
-                $input.trigger("change", event);
-            });
-        });
+    CKEDITOR.instances[name].on("change", function (event) {
+        $input.trigger("change", event);
+    });
 
-    return true;
+    CKEDITOR.instances[name].on("focus", function (event) {
+        $input.trigger("focus", event);
+    });
 }

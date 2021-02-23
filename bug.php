@@ -167,7 +167,9 @@ echo '
 </div>
 
 <script>
-    $(document).ready(function(){
+    $(document).ready(function() {
+        init();
+
         var html = "<p>'.tr('Se hai riscontrato un bug ricordati di specificare').':</p>" +
         "<ul>" +
             "<li>'.tr('Modulo esatto (o pagina relativa) in cui questi si è verificato').';</li>" +
@@ -177,25 +179,20 @@ echo '
         "<p>'.tr('Ti ringraziamo per il tuo contributo').',<br>" +
         "'.tr('Lo staff di OSM').'</p>";
 
-        var firstFocus = 1;
+        var firstFocus = true;
+        let editor = input("body");
+        editor.set(html);
 
-        CKEDITOR.instances.body.on("key", function() {
-            setTimeout(function(){
-                if(CKEDITOR.instances.body.getData() == ""){
-                    $("#send").prop("disabled", true);
-                }
-                else $("#send").prop("disabled", false);
+        editor.on("change", function() {
+            setTimeout(function() {
+                $("#send").prop("disabled", editor.get() === "");
             }, 10);
         });
 
-        CKEDITOR.instances.body.setData( html, function() {});
-
-        CKEDITOR.instances.body.on("focus", function() {
-            if(firstFocus){
-                CKEDITOR.instances.body.setData("", function() {
-                    CKEDITOR.instances.body.focus();
-                });
-                firstFocus = 0;
+        editor.on("focus", function() {
+            if (firstFocus) {
+                editor.set("");
+                firstFocus = false;
             }
         });
     });

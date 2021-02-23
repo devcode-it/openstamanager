@@ -140,7 +140,6 @@ switch (post('op')) {
             $idtipointervento = post('idtipointervento');
             $idsede_partenza = post('idsede_partenza');
             $idsede_destinazione = post('idsede_destinazione');
-            $richiesta = post('richiesta');
 
             if (post('idclientefinale')) {
                 $intervento->idclientefinale = post('idclientefinale');
@@ -152,7 +151,7 @@ switch (post('op')) {
 
             $intervento->id_preventivo = post('idpreventivo');
             $intervento->id_contratto = post('idcontratto');
-            $intervento->richiesta = $richiesta;
+            $intervento->richiesta = post('richiesta_add');
             $intervento->idsede_destinazione = $idsede_destinazione;
             $intervento->data_scadenza = $data_scadenza;
 

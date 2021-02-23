@@ -269,7 +269,13 @@ Input.prototype.get = function () {
  * @returns {Input}
  */
 Input.prototype.set = function (value) {
-    this.element.val(value).trigger("change");
+    // Gestione dei valori per l'editor
+    if (this.element.hasClass("editor-input") && typeof CKEDITOR !== 'undefined') {
+        const name = this.element.attr("id");
+        CKEDITOR.instances[name].setData(value);
+    } else {
+        this.element.val(value).trigger("change");
+    }
 
     return this;
 }

@@ -190,7 +190,7 @@ echo '
 
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "ckeditor", "label": "'.tr('Richiesta').'", "name": "richiesta", "required": 1, "value": "'.$richiesta.'", "extra": "style=\'max-height:80px;\'" ]}
+            {[ "type": "ckeditor", "label": "'.tr('Richiesta').'", "name": "richiesta_add", "required": 1, "value": "'.$richiesta.'", "extra": "style=\'max-height:80px;\'" ]}
         </div>
     </div>';
 
@@ -332,7 +332,7 @@ if (!empty($id_intervento)) {
        input("idzona").disable();
        input("idtipointervento").disable();
        input("idstatointervento").disable();
-       input("richiesta").disable();
+       input("richiesta_add").disable();
        input("data_richiesta").disable();
     });
 </script>';

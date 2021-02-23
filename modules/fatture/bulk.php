@@ -65,6 +65,48 @@ switch (post('op')) {
 
         break;
 
+    case 'exportFE-bulk':
+        $dir = base_dir().'/files/export_fatture/';
+        directory($dir.'tmp/');
+
+        $dir = slashes($dir);
+        $zip = slashes($dir.'fattureFE_'.time().'.zip');
+
+        // Rimozione dei contenuti precedenti
+        $files = glob($dir.'/*.zip');
+        foreach ($files as $file) {
+            delete($file);
+        }
+
+        $module = Modules::get($id_module);
+
+        if ($module['name'] == 'Fatture di vendita') {
+            $print_name = 'Fattura elettronica di vendita';
+        } else {
+            $print_name = 'Fattura elettronica di acquisto';
+        }
+        $print = $dbo->SelectOne('zz_prints', 'id', ['name' => $print_name]);
+
+        if (!empty($id_records)) {
+            foreach ($id_records as $id_record) {
+
+                Prints::render($print['id'], $id_record, $dir.'tmp/');
+            }
+
+            // Creazione zip
+            if (extension_loaded('zip')) {
+                Zip::create($dir.'tmp/', $zip);
+
+                // Invio al browser dello zip
+                download($zip);
+
+                // Rimozione dei contenuti
+                delete($dir.'tmp/');
+            }
+        }
+
+        break;
+
     case 'genera-xml':
         $failed = [];
         $added = [];
@@ -511,6 +553,17 @@ if ($module->name == 'Fatture di vendita') {
         'data' => [
             'title' => '',
             'msg' => tr('Vuoi davvero esportare i PDF delle fatture selezionate in un archivio ZIP?'),
+            'button' => tr('Procedi'),
+            'class' => 'btn btn-lg btn-warning',
+            'blank' => true,
+        ],
+    ];
+
+    $operations['exportFE-bulk'] = [
+        'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o"></i> '.tr('Esporta stampe FE').'</span>',
+        'data' => [
+            'title' => '',
+            'msg' => tr('Vuoi davvero esportare i PDF delle fatture elettroniche selezionate in un archivio ZIP?'),
             'button' => tr('Procedi'),
             'class' => 'btn btn-lg btn-warning',
             'blank' => true,

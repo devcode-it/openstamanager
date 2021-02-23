@@ -34,7 +34,8 @@ use Modules\Iva\Aliquota;
  * @property float sconto_unitario
  * @property float sconto_iva_unitario = sconto_unitario * percentuale_iva
  * @property float sconto_unitario_ivato = sconto_unitario + sconto_iva_unitario
- *
+ * @property float iva_unitaria_scontata = iva_unitaria - sconto_iva_unitario
+
  * Introduce i seguenti campi ausiliari:
  * @property float imponibile = prezzo_unitario * qta
  * @property float sconto = sconto_unitario * qta
@@ -56,6 +57,7 @@ abstract class Accounting extends Component
         'prezzo_unitario' => 'float',
         'prezzo_unitario_ivato' => 'float',
         'iva_unitaria' => 'float',
+        'iva_unitaria_scontata' => 'float',
         'sconto_percentuale' => 'float',
         'sconto_unitario' => 'float',
         'sconto_iva_unitario' => 'float',
@@ -201,9 +203,24 @@ abstract class Accounting extends Component
         return $this->costo_unitario * $this->qta;
     }
 
+    /**
+     * Restituisce l'iva detraibile dell'elemento.
+     *
+     * @return float
+     */
     public function getIvaDetraibileAttribute()
     {
         return $this->iva - $this->iva_indetraibile;
+    }
+
+    /**
+     * Restituisce l'iva unitaria con lo sconto applicato.
+     *
+     * @return float
+     */
+    public function getIvaUnitariaScontataAttribute()
+    {
+        return $this->iva_unitaria - $this->sconto_iva_unitario;
     }
 
     /**

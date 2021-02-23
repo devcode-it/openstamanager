@@ -39,13 +39,15 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Aggiunte condizioni generali di fornitura in Preventivi
  - Aggiunta azione massiva per la creazione di preventivi da Articoli
  - Aggiunta azione massiva per cambiare lo stato a più ordini
- - Aggiunta azione massiva in articoli per allineare la quantità degli articoli 
+ - Aggiunta azione massiva in articoli per allineare la quantità degli articoli
  - Aggiunta azione massiva per cambiare lo stato a più ddt
  - Aggiunta possibilità di importare ddt di acquisto nei ddt di vendita
  - Aggiunta possibilità di creare una nota di credito da un ddt di acquisto
  - Aggiunta stampa del bilancio
  - Aggiunta possibilità di notificare al cliente/tecnico in modo automatico quando viene cambiato lo stato dell'intervento
  - Aggiunta flag per escludere la generazione scadenza di una ritenuta d'acconto se viene versata dal fornitore
+- Aggiunta stampa fattura elettronica nelle fatture di vendita e di acquisto
+- Aggiunta azione massiva per esportare le stampe delle fatture elettroniche
 
 ### Modificato (Changed)
  - Impostazione CAP automatico a 99999 nella FE per clienti esteri
@@ -90,7 +92,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Aggiunta grafico delle ore lavorate dai tecnici mensilmente
  - Aggiunta nuova **azione massiva per fatturazione ordini cliente**
  - Aggiunta nuovo modulo per la creazione dei tipi di documento
- 
+
 ### Modificato (Changed)
  - Miglioramento messaggi di errore per servizi di **fatturazione elettronica**
  - Miglioramento funzionalità **listini**
@@ -111,7 +113,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 ### Aggiunto (Added)
  - Aggiunta gestione conto anticipi cliente e fornitore tramite **Prima nota**
  - Aggiunta colonna della sede nel modulo **Movimenti**
- 
+
 ### Modificato (Changed)
  - Spostati i conti transitori (iva, ecc) su stato patrimoniale
 
@@ -124,7 +126,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Esclusione fatture pro-forma dal calcolo fatturato sul modulo **Statistiche**
  - Gestito il conto articolo in fase di fatturazione attività se specificato nella scheda articolo
 
- 
+
 ## 2.4.18 (2020-10-30)
 
 ### Aggiunto (Added)

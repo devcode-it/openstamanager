@@ -217,7 +217,7 @@ class RigheInterventi extends AppResource
         $record->um = $data['um'] ?: null;
 
         if (empty($data['id_iva'])) {
-            $data['id_iva'] = settings('Iva predefinita');
+            $data['id_iva'] = setting('Iva predefinita');
         }
 
         //$record->costo_unitario = $data['costo_unitario'] ?: 0;

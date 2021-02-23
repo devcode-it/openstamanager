@@ -81,16 +81,17 @@ if (isAjaxRequest()) {
 <script>
 $(document).ready(function(){
     $("#form_'.$id_module.'-'.$id_plugin.'").find("form").submit(function () {
-        $form = $(this);
+        let $form = $(this);
         $form.variables = new Object();
         $form.variables.id_module = \''.$id_module.'\';
         $form.variables.id_plugin = \''.$id_plugin.'\';
 
         submitAjax(this, $form.variables, function(response) {
             // Selezione automatica nuovo valore per il select
-            select = "#'.get('select').'";
+            let select = "#'.get('select').'";
             if ($(select).val() !== undefined) {
                 $(select).selectSetNew(response.id, response.text, response.data);
+                $(select).change();
             }
 
             $form.closest("div[id^=bs-popup").modal("hide");

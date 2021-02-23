@@ -188,7 +188,7 @@ if ($module['name'] == 'Ddt di vendita') {
 				</div>
 
                 <div class="col-md-3">
-					{[ "type": "timestamp", "label": "<?php echo tr('Data ora trasporto'); ?>", "name": "data_ora_trasporto", "required": 0, "value": "$data_ora_trasporto$" ]}
+					{[ "type": "timestamp", "label": "<?php echo tr('Data ora trasporto'); ?>", "name": "data_ora_trasporto", "value": "$data_ora_trasporto$", "help": "<?php echo tr('Data e ora inizio del trasporto'); ?>" ]}
 				</div>
 
                  <script>

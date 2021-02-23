@@ -147,7 +147,7 @@ foreach ($righe as $riga) {
         // Quantità e unità di misura
         echo '
             <td class="text-center">
-                <i class="'.($riga->confermato ? 'fa fa-check text-success' : 'fa fa-clock-o text-warning').'"></i> 
+                <i class="'.($riga->confermato ? 'fa fa-check text-success' : 'fa fa-clock-o text-warning').'"></i>
                 '.numberFormat($riga->qta_rimanente, 'qta').' / '.numberFormat($riga->qta, 'qta').' '.$riga->um.'
             </td>';
 
@@ -176,7 +176,7 @@ foreach ($righe as $riga) {
         // Iva
         echo '
             <td class="text-right">
-                '.moneyFormat($riga->iva_unitaria).'
+                '.moneyFormat($riga->iva_unitaria_scontata).'
                 <br><small class="'.(($riga->aliquota->deleted_at) ? 'text-red' : '').' text-muted">'.$riga->aliquota->descrizione.(($riga->aliquota->esente) ? ' ('.$riga->aliquota->codice_natura_fe.')' : null).'</small>
             </td>';
 

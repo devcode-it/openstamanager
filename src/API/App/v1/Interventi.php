@@ -148,7 +148,8 @@ class Interventi extends AppResource
             IF(idsede_destinazione = 0, NULL, idsede_destinazione) AS id_sede,
             firma_file,
             IF(firma_data = '0000-00-00 00:00:00', '', firma_data) AS firma_data,
-            firma_nome
+            firma_nome,
+            (SELECT GROUP_CONCAT(ragione_sociale SEPARATOR ',') FROM in_interventi_tecnici_assegnati INNER JOIN an_anagrafiche ON in_interventi_tecnici_assegnati.id_tecnico=an_anagrafiche.idanagrafica WHERE id_intervento=in_interventi.id) AS tecnici_assegnati
         FROM in_interventi
         WHERE in_interventi.id = ".prepare($id);
 

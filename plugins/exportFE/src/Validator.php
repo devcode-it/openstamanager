@@ -611,9 +611,9 @@ class Validator
                     $output = number_format($output, 6, '.', '');
                 } elseif (in_array($key, ['Quantita'])) {
                     //Se i decimali per la quantità sono < 2 li imposto a 2 che è il minimo per lo standard della fatturazione elettronica
-                    if (setting('Cifre decimali per quantità') == 1){
+                    if (setting('Cifre decimali per quantità') == 1) {
                         $output = number_format($output, 2, '.', '');
-                    }else{
+                    } else {
                         $output = number_format($output, setting('Cifre decimali per quantità'), '.', '');
                     }
                 } else {

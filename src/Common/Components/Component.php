@@ -181,7 +181,7 @@ abstract class Component extends Model
         }
 
         reorderRows($this->table, $this->getDocumentID(), $this->getDocument()['id']);
-        
+
         return $result;
     }
 

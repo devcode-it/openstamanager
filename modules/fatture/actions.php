@@ -677,7 +677,7 @@ switch (post('op')) {
         $order = explode(',', post('order', true));
 
         foreach ($order as $i => $id_riga) {
-            $dbo->query('UPDATE `co_righe_documenti` SET `order` = '.prepare($i+1).' WHERE id='.prepare($id_riga));
+            $dbo->query('UPDATE `co_righe_documenti` SET `order` = '.prepare($i + 1).' WHERE id='.prepare($id_riga));
         }
 
         break;

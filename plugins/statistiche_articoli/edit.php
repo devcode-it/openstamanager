@@ -44,7 +44,7 @@ echo '
 <div class="panel panel-primary">
     <div class="panel-heading">
         <h3 class="panel-title">
-            <span class="tip" title="'.tr("La statistica considera le fatture di acquisto nel periodo temporale definito").'"><i class="fa fa-question-circle"></i></span>
+            <span class="tip" title="'.tr('La statistica considera le fatture di acquisto nel periodo temporale definito').'"><i class="fa fa-question-circle"></i></span>
             '.tr('Prezzo medio acquisto').'
         </h3>
     </div>
@@ -73,7 +73,7 @@ echo '
 <div class="panel panel-primary">
     <div class="panel-heading">
         <h3 class="panel-title">
-            <span class="tip" title="'.tr("La statistica considera le fatture di vendita nel periodo temporale definito").'"><i class="fa fa-question-circle"></i></span>
+            <span class="tip" title="'.tr('La statistica considera le fatture di vendita nel periodo temporale definito').'"><i class="fa fa-question-circle"></i></span>
             '.tr('Prezzo medio vendita').'
         </h3>
     </div>

@@ -89,7 +89,6 @@ switch (post('op')) {
 
         if (!empty($id_records)) {
             foreach ($id_records as $id_record) {
-
                 Prints::render($print['id'], $id_record, $dir.'tmp/');
             }
 

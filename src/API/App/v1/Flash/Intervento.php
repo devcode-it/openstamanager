@@ -84,7 +84,9 @@ class Intervento extends Resource implements UpdateInterface
 
         // Salvataggio delle modifiche
         foreach ($records as [$record, $risorsa]) {
-            if (!empty($record['remote_id'])) {
+            if (!empty($record['deleted_at'])) {
+                $risorsa->deleteRecord($record['id']);
+            } elseif (!empty($record['remote_id'])) {
                 $risorsa->updateRecord($record);
             } else {
                 $risorsa->createRecord($record);

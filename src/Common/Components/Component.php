@@ -180,7 +180,10 @@ abstract class Component extends Model
             $original->getDocument()->triggerEvasione($this);
         }
 
-        reorderRows($this->table, $this->getDocumentID(), $this->getDocument()['id']);
+        // Ordine delle righe successivamente alla rimozione
+        if (empty($this->disableOrder)) {
+            reorderRows($this->table, $this->getDocumentID(), $this->getDocument()['id']);
+        }
 
         return $result;
     }

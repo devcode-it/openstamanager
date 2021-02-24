@@ -99,7 +99,10 @@ class Interventi extends AppResource
         // Informazioni sull'utente
         $id_tecnico = Auth::user()->id_anagrafica;
 
-        $query = 'SELECT in_interventi.id FROM in_interventi WHERE
+        $query = 'SELECT
+            in_interventi.id,
+            in_interventi.updated_at
+        FROM in_interventi WHERE
             deleted_at IS NULL AND (
                 in_interventi.id IN (
                     SELECT idintervento FROM in_interventi_tecnici
@@ -126,7 +129,7 @@ class Interventi extends AppResource
             ':id_tecnico' => $id_tecnico,
         ]);
 
-        return array_column($records, 'id');
+        return $this->mapModifiedRecords($records);
     }
 
     public function retrieveRecord($id)

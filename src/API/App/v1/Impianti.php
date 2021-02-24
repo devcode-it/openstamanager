@@ -32,7 +32,7 @@ class Impianti extends AppResource
 
     public function getModifiedRecords($last_sync_at)
     {
-        $statement = Impianto::select('id')
+        $statement = Impianto::select('id', 'updated_at')
             ->whereHas('anagrafica.tipi', function (Builder $query) {
                 $query->where('descrizione', '=', 'Cliente');
             });
@@ -42,10 +42,9 @@ class Impianti extends AppResource
             $statement = $statement->where('updated_at', '>', $last_sync_at);
         }
 
-        $results = $statement->get()
-            ->pluck('id');
+        $records = $statement->get();
 
-        return $results;
+        return $this->mapModifiedRecords($records);
     }
 
     public function retrieveRecord($id)

@@ -32,7 +32,7 @@ class Tecnici extends AppResource
 
     public function getModifiedRecords($last_sync_at)
     {
-        $statement = Anagrafica::select('idanagrafica')
+        $statement = Anagrafica::select('idanagrafica as id', 'updated_at')
             ->whereHas('tipi', function (Builder $query) {
                 $query->where('descrizione', '=', 'Tecnico');
             });
@@ -42,10 +42,9 @@ class Tecnici extends AppResource
             $statement = $statement->where('updated_at', '>', $last_sync_at);
         }
 
-        $results = $statement->get()
-            ->pluck('idanagrafica');
+        $records = $statement->get();
 
-        return $results;
+        return $this->mapModifiedRecords($records);
     }
 
     public function retrieveRecord($id)

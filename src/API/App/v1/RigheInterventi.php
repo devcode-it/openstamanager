@@ -78,7 +78,7 @@ class RigheInterventi extends AppResource
         $user = Auth::user();
         $id_tecnico = $user->id_anagrafica;
 
-        $query = 'SELECT in_righe_interventi.id FROM in_righe_interventi WHERE in_righe_interventi.idintervento IN (
+        $query = 'SELECT in_righe_interventi.id, in_righe_interventi.updated_at FROM in_righe_interventi WHERE in_righe_interventi.idintervento IN (
             SELECT in_interventi.id FROM in_interventi WHERE
             in_interventi.id IN (
                 SELECT idintervento FROM in_interventi_tecnici
@@ -99,7 +99,7 @@ class RigheInterventi extends AppResource
             ':id_tecnico' => $id_tecnico,
         ]);
 
-        return array_column($records, 'id');
+        return $this->mapModifiedRecords($records);
     }
 
     public function retrieveRecord($id)

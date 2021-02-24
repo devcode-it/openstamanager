@@ -33,7 +33,10 @@ class Clienti extends AppResource
     public function getModifiedRecords($last_sync_at)
     {
         $parameters = [];
-        $query = "SELECT an_anagrafiche.idanagrafica AS id FROM an_anagrafiche
+        $query = "SELECT
+            an_anagrafiche.idanagrafica AS id,
+            an_anagrafiche.updated_at
+        FROM an_anagrafiche
             INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche_anagrafiche.idanagrafica = an_anagrafiche.idanagrafica
             INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica = an_tipianagrafiche.idtipoanagrafica
         WHERE an_tipianagrafiche.descrizione = 'Cliente' AND an_anagrafiche.deleted_at IS NULL";
@@ -71,7 +74,7 @@ class Clienti extends AppResource
 
         $records = database()->fetchArray($query, $parameters);
 
-        return array_column($records, 'id');
+        return $this->mapModifiedRecords($records);
     }
 
     public function retrieveRecord($id)

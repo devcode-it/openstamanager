@@ -30,7 +30,7 @@ class Impostazioni extends AppResource
 
     public function getModifiedRecords($last_sync_at)
     {
-        $query = "SELECT zz_settings.id FROM zz_settings WHERE (sezione = 'Applicazione'";
+        $query = "SELECT zz_settings.id, zz_settings.updated_at FROM zz_settings WHERE (sezione = 'Applicazione'";
 
         // Aggiunta delle impostazioni esterne alla sezione Applicazione
         $impostazioni_esterne = $this->getImpostazioniEsterne();
@@ -51,7 +51,7 @@ class Impostazioni extends AppResource
 
         $records = database()->fetchArray($query);
 
-        return array_column($records, 'id');
+        return $this->mapModifiedRecords($records);
     }
 
     public function retrieveRecord($id)

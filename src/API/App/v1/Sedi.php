@@ -30,7 +30,7 @@ class Sedi extends AppResource
 
     public function getModifiedRecords($last_sync_at)
     {
-        $query = "SELECT DISTINCT(an_sedi.id) AS id FROM an_sedi
+        $query = "SELECT DISTINCT(an_sedi.id) AS id, an_sedi.updated_at FROM an_sedi
             INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = an_sedi.idanagrafica
             INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche_anagrafiche.idanagrafica = an_anagrafiche.idanagrafica
             INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica = an_tipianagrafiche.idtipoanagrafica
@@ -43,7 +43,7 @@ class Sedi extends AppResource
 
         $records = database()->fetchArray($query);
 
-        return array_column($records, 'id');
+        return $this->mapModifiedRecords($records);
     }
 
     public function retrieveRecord($id)

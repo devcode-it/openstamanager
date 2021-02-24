@@ -30,7 +30,7 @@ class TariffeTecnici extends AppResource
 
     public function getModifiedRecords($last_sync_at)
     {
-        $query = 'SELECT id FROM in_tariffe';
+        $query = 'SELECT id, updated_at FROM in_tariffe';
 
         // Filtro per data
         if ($last_sync_at) {
@@ -39,7 +39,7 @@ class TariffeTecnici extends AppResource
 
         $records = database()->fetchArray($query);
 
-        return array_column($records, 'id');
+        return $this->mapModifiedRecords($records);
     }
 
     public function retrieveRecord($id)

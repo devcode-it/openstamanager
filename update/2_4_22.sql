@@ -189,3 +189,6 @@ ALTER TABLE `or_ordini` ADD `codice_commessa` VARCHAR(100) NULL AFTER `updated_a
 
 -- Copiato in or_ordini id_documento_fe in numero_cliente dove è presente
 UPDATE `or_ordini` SET `numero_cliente`= `id_documento_fe` WHERE `id_documento_fe`!='' AND `id_documento_fe` IS NOT NULL;
+
+-- Fix nome file con il tipo documento di vendita
+UPDATE `zz_prints` SET `filename` = '{tipo_documento} num. {numero} del {data}' WHERE `zz_prints`.`name` = 'Fattura di vendita'; 

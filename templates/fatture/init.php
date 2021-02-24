@@ -99,6 +99,7 @@ if (!empty($record['idsede_destinazione'])) {
 $custom = [
     'tipo_doc' => Stringy\Stringy::create($tipo_doc)->toUpperCase(),
     'numero' => $numero,
+    'tipo_documento' => $tipo_documento,
     'data' => Translator::dateToLocale($record['data']),
     'pagamento' => $record['tipo_pagamento'],
     'c_destinazione' => $destinazione,

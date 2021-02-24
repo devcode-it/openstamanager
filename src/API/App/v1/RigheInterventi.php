@@ -225,15 +225,20 @@ class RigheInterventi extends AppResource
             }
         }
 
-        if (!empty($data['prezzo_unitario'])) {
-            $record->setPrezzoUnitario($data['prezzo_unitario'], $data['id_iva']);
-            $record->setSconto($data['sconto_percentuale'] ?: $data['sconto_unitario'], $data['tipo_sconto']);
-        }
-
         try {
             $record->qta = $data['qta'];
         } catch (UnexpectedValueException $e) {
             throw new InternalError();
+        }
+
+        // Impostazione prezzo unitario
+        $data['prezzo_unitario'] = $data['prezzo_unitario'] ?: 0;
+        $record->setPrezzoUnitario($data['prezzo_unitario'], $data['id_iva']);
+
+        // Impostazione sconto
+        $sconto = $data['sconto_percentuale'] ?: $data['sconto_unitario'];
+        if (!empty($sconto)) {
+            $record->setSconto($sconto, $data['tipo_sconto']);
         }
     }
 }

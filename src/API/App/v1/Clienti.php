@@ -97,7 +97,8 @@ class Clienti extends AppResource
             an_anagrafiche.email,
             an_anagrafiche.sitoweb AS sito_web,
             an_anagrafiche.note,
-            an_anagrafiche.deleted_at
+            an_anagrafiche.deleted_at,
+            an_anagrafiche.idtipointervento_default AS id_tipo_intervento_default
         FROM an_anagrafiche
             LEFT OUTER JOIN an_nazioni ON an_anagrafiche.id_nazione = an_nazioni.id
         WHERE an_anagrafiche.idanagrafica = '.prepare($id);

@@ -705,7 +705,7 @@ switch (post('op')) {
             $descrizione = ($documento->direzione == 'entrata') ? 'Fattura immediata di vendita' : 'Fattura immediata di acquisto';
 
             // Fattura differita in caso di importazione da DDT
-            if ($documento instanceof DDT){
+            if ($documento instanceof DDT) {
                 $descrizione = ($documento->direzione == 'entrata') ? 'Fattura differita di vendita' : 'Fattura differita di acquisto';
             }
 

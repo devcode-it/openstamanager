@@ -148,8 +148,7 @@ class Interventi extends AppResource
             IF(idsede_destinazione = 0, NULL, idsede_destinazione) AS id_sede,
             firma_file,
             IF(firma_data = '0000-00-00 00:00:00', '', firma_data) AS firma_data,
-            firma_nome,
-            (SELECT GROUP_CONCAT(ragione_sociale SEPARATOR ',') FROM in_interventi_tecnici_assegnati INNER JOIN an_anagrafiche ON in_interventi_tecnici_assegnati.id_tecnico=an_anagrafiche.idanagrafica WHERE id_intervento=in_interventi.id) AS tecnici_assegnati
+            firma_nome
         FROM in_interventi
         WHERE in_interventi.id = ".prepare($id);
 
@@ -158,6 +157,10 @@ class Interventi extends AppResource
         // Individuazione degli impianti collegati
         $impianti = $database->fetchArray('SELECT idimpianto AS id FROM my_impianti_interventi WHERE idintervento = '.prepare($id));
         $record['impianti'] = array_column($impianti, 'id');
+
+        // Individuazione dei tecnici assegnati
+        $tecnici = $database->fetchArray('SELECT id_tecnico AS id FROM in_interventi_tecnici_assegnati WHERE id_intervento = '.prepare($id));
+        $record['tecnici_assegnati'] = array_column($tecnici, 'id');
 
         return $record;
     }
@@ -212,7 +215,7 @@ class Interventi extends AppResource
             $record->firma_file = $firma_file;
         }
 
-        // Aggiornamento impianti collegati
+        // Aggiornamento degli impianti collegati
         $database->query('DELETE FROM my_impianti_interventi WHERE idintervento = '.prepare($record->id));
         foreach ($data['impianti'] as $id_impianto) {
             $database->insert('my_impianti_interventi', [
@@ -220,6 +223,15 @@ class Interventi extends AppResource
                 'idintervento' => $record->id,
             ]);
         }
+
+        // Aggiornamento dei tecnici assegnati
+        $database->query('DELETE FROM in_interventi_tecnici_assegnati WHERE id_intervento = '.prepare($record->id));
+        $tecnici_assegnati = (array) $data['tecnici_assegnati'];
+        $database->sync('in_interventi_tecnici_assegnati', [
+            'id_intervento' => $record->id,
+        ], [
+            'id_tecnico' => $tecnici_assegnati,
+        ]);
     }
 
     protected function salvaFirma($firma_base64)

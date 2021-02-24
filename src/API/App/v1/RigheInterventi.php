@@ -216,16 +216,16 @@ class RigheInterventi extends AppResource
         $record->descrizione = $data['descrizione'];
         $record->um = $data['um'] ?: null;
 
-        if(empty($data['id_iva'])){
+        if (empty($data['id_iva'])) {
             if ($data['is_articolo']) {
-                    $originale = ArticoloOriginale::find($data['id_articolo']);
-                    $data['id_iva'] = $originale->idiva_vendita;
-            }else{
-                    $data['id_iva'] = setting('Iva predefinita');
+                $originale = ArticoloOriginale::find($data['id_articolo']);
+                $data['id_iva'] = $originale->idiva_vendita;
+            } else {
+                $data['id_iva'] = setting('Iva predefinita');
             }
         }
 
-        if(!empty($data['prezzo_unitario'])){
+        if (!empty($data['prezzo_unitario'])) {
             $record->setPrezzoUnitario($data['prezzo_unitario'], $data['id_iva']);
             $record->setSconto($data['sconto_percentuale'] ?: $data['sconto_unitario'], $data['tipo_sconto']);
         }

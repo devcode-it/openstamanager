@@ -200,7 +200,7 @@ abstract class AppResource extends Resource implements RetrieveInterface, Create
      */
     protected function mapModifiedRecords($records)
     {
-        if ($records instanceof Collection){
+        if ($records instanceof Collection) {
             return $records->mapToGroups(function ($item, $key) {
                 return [$item['id'] => $item];
             })->toArray();
@@ -210,7 +210,7 @@ abstract class AppResource extends Resource implements RetrieveInterface, Create
             $accumulator[$item['id']] = $item;
 
             return $accumulator;
-        });
+        }) ?: [];
     }
 
     /**

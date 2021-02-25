@@ -191,7 +191,7 @@ function addRiga(controllo, panel, record) {
     let body = panel.find("tbody");
 
     // Generazione riga
-    let riga = `<tr class="text-` + record.type + `" id="controllo-` + controllo["id"] + `-` + record.id + `">
+    let riga = `<tr class="` + record.type + `" id="controllo-` + controllo["id"] + `-` + record.id + `">
     <td>` + record.nome + `</td>
     <td>` + record.descrizione + `</td>
     <td></td>

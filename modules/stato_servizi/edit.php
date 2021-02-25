@@ -101,10 +101,23 @@ if (Services::isEnabled()) {
                 <hr><br>
 
                 <h4>'.tr('Statistiche su Fatture Elettroniche').'</h4>
-                <ul>
-                    <li>'.tr('Fatture transitate').': <span id="fe_numero"></span></li>
-                    <li>'.tr('Spazio occupato').': <span id="fe_spazio"></span></li>
-                </ul>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>'.tr('Anno').'</th>
+                            <th>'.tr('Fatture transitate').'</th>
+                            <th>'.tr('Spazio occupato').'</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="elenco-fe">
+                        <tr class="info">
+                            <td>'.tr('Totale').'</td>
+                            <td id="fe_numero"></td>
+                            <td id="fe_spazio"></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
@@ -113,7 +126,7 @@ if (Services::isEnabled()) {
             $.ajax({
                 url: globals.rootdir + "/actions.php",
                 type: "GET",
-                dataType: "json",
+                dataType: "JSON",
                 data: {
                     id_module: globals.id_module,
                     op: "informazioni-fe",
@@ -121,6 +134,18 @@ if (Services::isEnabled()) {
                 success: function (response) {
                     $("#fe_numero").html(response.invoice_number);
                     $("#fe_spazio").html(response.size);
+
+                    if (response.history.length) {
+                        for (let i = 0; i < 5; i++) {
+                            const data = response.history[i];
+
+                            $("#elenco-fe").append(`<tr>
+                                <th>` + data["year"] + `</th>
+                                <th>` + data["number"] + `</th>
+                                <th>` + data["size"] + `</th>
+                            </tr>`);
+                        }
+                    }
                 }
             });
         });

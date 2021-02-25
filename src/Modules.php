@@ -273,10 +273,11 @@ class Modules
      * @param string      $extra
      * @param bool        $blank
      * @param string      $anchor
+     * @param string      $params
      *
      * @return string
      */
-    public static function link($modulo, $id_record = null, $testo = null, $alternativo = true, $extra = null, $blank = true, $anchor = null)
+    public static function link($modulo, $id_record = null, $testo = null, $alternativo = true, $extra = null, $blank = true, $anchor = null, $params = null)
     {
         $testo = isset($testo) ? nl2br($testo) : tr('Visualizza scheda');
         $alternativo = is_bool($alternativo) && $alternativo ? $testo : $alternativo;
@@ -293,7 +294,7 @@ class Modules
         if (!empty($module) && in_array($module->permission, ['r', 'rw'])) {
             $link = !empty($id_record) ? 'editor.php?id_module='.$module['id'].'&id_record='.$id_record : 'controller.php?id_module='.$module['id'];
 
-            return '<a href="'.base_path().'/'.$link.'#'.$anchor.'" '.$extra.'>'.$testo.'</a>';
+            return '<a href="'.base_path().'/'.$link.$params.'#'.$anchor.'" '.$extra.'>'.$testo.'</a>';
         } else {
             return $alternativo;
         }

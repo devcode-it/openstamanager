@@ -71,7 +71,7 @@ if ($dir == 'entrata' && !empty($fattura->dichiarazione) && $fattura->stato->des
         echo '
         <div class="alert alert-warning">
         <i class="fa fa-warning"></i> '.tr("Attenzione nessuna aliq. IVA definita per la dichiarazione d'intento. _SETTING_", [
-            '_SETTING_' => Modules::link('Impostazioni', $dbo->fetchOne("SELECT `id` FROM `zz_settings` WHERE nome=\"Iva per lettere d'intento\"")['id'], tr('Selezionala dalle impostazioni')),
+            '_SETTING_' => Modules::link('Impostazioni', null, tr('Selezionala dalle impostazioni'), true, null, true, null, "&search=Iva per lettere d'intento"),
         ]).'
         </div>';
     }

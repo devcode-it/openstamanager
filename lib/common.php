@@ -117,11 +117,11 @@ function orderValue($table, $field, $id)
 function reorderRows($table, $field, $id)
 {
     $righe = database()->select($table, 'id', [$field => $id]);
-    $i=1;
+    $i = 1;
 
-    foreach($righe as $riga){
+    foreach ($righe as $riga) {
         database()->query('UPDATE '.$table.' SET `order`='.$i.' WHERE id='.prepare($riga['id']));
-        $i++;
+        ++$i;
     }
 }
 

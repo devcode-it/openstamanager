@@ -21,6 +21,7 @@ use Models\Setting;
 
 include_once __DIR__.'/../../core.php';
 
+$ricerca = get('search');
 $gruppi = Setting::selectRaw('sezione AS nome, COUNT(id) AS numero')
     ->groupBy(['sezione'])
     ->orderBy('sezione')
@@ -30,7 +31,7 @@ echo '
 <div class="row">
     <div class="col-md-6 col-md-offset-3">
         <div class="input-group">
-            <input type="text" class="form-control" placeholder="'.tr('Ricerca rapida').'" id="ricerca_impostazioni"/>
+            <input type="text" class="form-control" placeholder="'.tr('Ricerca rapida').'" id="ricerca_impostazioni" value="'.$ricerca.'"/>
             <div class="input-group-btn">
                 <button class="btn btn-primary" type="button">
                     <span class="fa fa-search"></span>
@@ -146,3 +147,8 @@ function riprovaSalvataggio() {
     }
 }
 </script>';
+
+if (!empty($ricerca)){
+    echo '
+<script>$("#ricerca_impostazioni").change();</script>';
+}

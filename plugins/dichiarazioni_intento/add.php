@@ -58,11 +58,11 @@ echo '
 
     <div class="row">
 		<div class="col-md-6">
-			{[ "type": "date", "label": "'.tr('Data protocollo').'", "name": "data_protocollo" ]}
+			{[ "type": "date", "label": "'.tr('Data protocollo').'", "name": "data_protocollo", "required": 1 ]}
 		</div>
 
         <div class="col-md-6">
-			{[ "type": "date", "label": "'.tr('Data di emissione').'", "name": "data_emissione" ]}
+			{[ "type": "date", "label": "'.tr('Data di emissione').'", "name": "data_emissione", "required": 1 ]}
 		</div>
 	</div>
 

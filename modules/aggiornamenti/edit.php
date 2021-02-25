@@ -156,6 +156,10 @@ function database(button) {
     openModal("'.tr('Controllo del database').'", "'.$module->fileurl('database.php').'?id_module='.$id_module.'");
 }
 
+function controlli(button) {
+    openModal("'.tr('Controlli del gestionale').'", "'.$module->fileurl('controlli.php').'?id_module='.$id_module.'");
+}
+
 function search(button) {
     let restore = buttonLoading(button);
 
@@ -216,6 +220,10 @@ function search(button) {
 
                 <button type="button" class="btn btn-info btn-block" onclick="database(this)">
                     <i class="fa fa-database"></i> '.tr('Controlla database').'
+                </button>
+
+                <button type="button" class="btn btn-block" onclick="controlli(this)">
+                    <i class="fa fa-cog"></i> '.tr('Controlla gestionale').'
                 </button>
             </div>
         </div>

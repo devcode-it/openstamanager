@@ -99,40 +99,24 @@ class Anagrafica extends Model
 
     public static function fixCliente(Anagrafica $anagrafica)
     {
-        $database = database();
-
         // Creo il relativo conto nel partitario se non esiste
         if (empty($anagrafica->idconto_cliente)) {
-            // Calcolo prossimo numero cliente
-            $rs = $database->fetchArray("SELECT MAX(CAST(co_pianodeiconti3.numero AS UNSIGNED)) AS max_numero FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti2.descrizione='Crediti clienti e crediti diversi'");
-            $new_numero = $rs[0]['max_numero'] + 1;
-            $new_numero = str_pad($new_numero, 6, '0', STR_PAD_LEFT);
-
-            $database->query('INSERT INTO co_pianodeiconti3(numero, descrizione, idpianodeiconti2) VALUES('.prepare($new_numero).', '.prepare($anagrafica->ragione_sociale).", (SELECT id FROM co_pianodeiconti2 WHERE descrizione='Crediti clienti e crediti diversi'))");
-            $idconto = $database->lastInsertedID();
+            $id_conto = self::creaConto($anagrafica, 'idconto_cliente');
 
             // Collegamento conto
-            $anagrafica->idconto_cliente = $idconto;
+            $anagrafica->idconto_cliente = $id_conto;
             $anagrafica->save();
         }
     }
 
     public static function fixFornitore(Anagrafica $anagrafica)
     {
-        $database = database();
-
         // Creo il relativo conto nel partitario se non esiste
         if (empty($anagrafica->idconto_fornitore)) {
-            // Calcolo prossimo numero cliente
-            $rs = $database->fetchArray("SELECT MAX(CAST(co_pianodeiconti3.numero AS UNSIGNED)) AS max_numero FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti2.descrizione='Debiti fornitori e debiti diversi'");
-            $new_numero = $rs[0]['max_numero'] + 1;
-            $new_numero = str_pad($new_numero, 6, '0', STR_PAD_LEFT);
-
-            $database->query('INSERT INTO co_pianodeiconti3(numero, descrizione, idpianodeiconti2) VALUES('.prepare($new_numero).', '.prepare($anagrafica->ragione_sociale).", (SELECT id FROM co_pianodeiconti2 WHERE descrizione='Debiti fornitori e debiti diversi'))");
-            $idconto = $database->lastInsertedID();
+            $id_conto = self::creaConto($anagrafica, 'idconto_fornitore');
 
             // Collegamento conto
-            $anagrafica->idconto_fornitore = $idconto;
+            $anagrafica->idconto_fornitore = $id_conto;
             $anagrafica->save();
         }
     }
@@ -362,6 +346,57 @@ class Anagrafica extends Model
         $codice = Generator::generate($maschera, $ultimo);
 
         return $codice;
+    }
+
+    protected static function creaConto(Anagrafica $anagrafica, $campo)
+    {
+        if ($campo == 'idconto_cliente') {
+            $type = 'Crediti clienti e crediti diversi';
+        } else {
+            $type = 'Debiti fornitori e debiti diversi';
+        }
+
+        $database = database();
+
+        // Individuazione della categoria
+        $categoria_conto = $database->table('co_pianodeiconti2')
+            ->where('descrizione', '=', $type)
+            ->first();
+
+        // Query di base
+        $table = $database->table('co_pianodeiconti3')
+            ->where('idpianodeiconti2', '=', $categoria_conto->id);
+
+        // Verifica su un possibile conto esistente ma non collegato
+        $conto = (clone $table)
+            ->where('descrizione', 'like', '%'.$anagrafica->ragione_sociale.'%')
+            ->first();
+        if (!empty($conto)) {
+            $anagrafiche_collegate = Anagrafica::where($campo, '=', $conto->id)->count();
+            $conto = $anagrafiche_collegate == 0 ? $conto : null;
+        }
+
+        // Collegamento a conto esistente
+        if (!empty($conto)) {
+            return $conto->id;
+        }
+
+        // Calcolo prossimo numero cliente
+        $numero = (clone $table)
+            ->selectRaw('MAX(CAST(numero AS UNSIGNED)) AS max_numero')
+            ->first();
+        $new_numero = $numero->max_numero + 1;
+        $new_numero = str_pad($new_numero, 6, '0', STR_PAD_LEFT);
+
+        // Creazione del conto
+        $id_conto = $database->table('co_pianodeiconti3')
+            ->insertGetId([
+                'numero' => $new_numero,
+                'descrizione' => $anagrafica->ragione_sociale,
+                'idpianodeiconti2' => $categoria_conto->id,
+            ]);
+
+        return $id_conto;
     }
 
     protected function fixRagioneSociale()

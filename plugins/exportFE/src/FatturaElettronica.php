@@ -1090,7 +1090,7 @@ class FatturaElettronica
             $dati['RiferimentoNumeroLinea'] = $element['riferimento_linea'];
             $result[] = $dati;
         }
-    
+
         return $result;
     }
 

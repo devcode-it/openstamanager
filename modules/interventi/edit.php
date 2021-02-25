@@ -25,6 +25,18 @@ include_once __DIR__.'/../../core.php';
 $block_edit = $record['flag_completato'];
 $module_anagrafiche = Modules::get('Anagrafiche');
 
+// Verifica aggiuntive sulla sequenzialità dei numeri
+$numero_previsto = verifica_numero_intervento($intervento);
+if (!empty($numero_previsto)) {
+    echo '
+<div class="alert alert-warning">
+    <i class="fa fa-warning"></i> '.tr("E' assente una attività di numero _NUM_ in data precedente o corrispondente a _DATE_: si potrebbero verificare dei problemi con la numerazione corrente delle attività", [
+            '_DATE_' => dateFormat($intervento->data_richiesta),
+            '_NUM_' => '"'.$numero_previsto.'"',
+        ]).'.</b>
+</div>';
+}
+
 echo '
 <form action="" method="post" id="edit-form">
 	<input type="hidden" name="op" value="update">
@@ -118,7 +130,7 @@ $map_load_message = '<p>'.tr('Clicca per visualizzare').'</p>';
 if (empty($google)) {
     echo '
                         <div class="alert alert-info">
-                            '.Modules::link('Impostazioni', $dbo->fetchOne("SELECT `id` FROM `zz_settings` WHERE nome='Google Maps API key'")['id'], tr('Per abilitare la visualizzazione delle anagrafiche nella mappa, inserire la Google Maps API Key nella scheda Impostazioni')).'.
+                            '.Modules::link('Impostazioni', null, tr('Per abilitare la visualizzazione delle anagrafiche nella mappa, inserire la Google Maps API Key nella scheda Impostazioni'), true, null, true, null, "&search=Google Maps API key").'.
                         </div>';
 } elseif (!empty($sede_cliente->gaddress) || (!empty($sede_cliente->lat) && !empty($sede_cliente->lng))) {
     echo '
@@ -242,7 +254,7 @@ echo '
             <!-- RIGA 3 -->
             <div class="row">
                 <div class="col-md-3">
-                    {[ "type": "span", "label": "<?php echo tr('Numero'); ?>", "name": "codice", "value": "$codice$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+                    {[ "type": "text", "label": "<?php echo tr('Numero'); ?>", "name": "codice", "value": "$codice$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
                 </div>
 
                 <div class="col-md-3">

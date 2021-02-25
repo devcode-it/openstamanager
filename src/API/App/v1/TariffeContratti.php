@@ -44,8 +44,10 @@ class TariffeContratti extends AppResource
 
     public function getModifiedRecords($last_sync_at)
     {
-        $query = 'SELECT CONCAT(idtipointervento, "-", idcontratto) AS id
-            FROM co_contratti_tipiintervento
+        $query = 'SELECT
+            CONCAT(idtipointervento, "-", idcontratto) AS id,
+            co_contratti_tipiintervento.updated_at
+        FROM co_contratti_tipiintervento
             INNER JOIN co_contratti ON co_contratti.id = co_contratti_tipiintervento.idcontratto
             INNER JOIN co_staticontratti ON co_staticontratti.id = co_contratti.idstato
         WHERE co_staticontratti.is_pianificabile = 1';
@@ -57,7 +59,7 @@ class TariffeContratti extends AppResource
 
         $records = database()->fetchArray($query);
 
-        return array_column($records, 'id');
+        return $this->mapModifiedRecords($records);
     }
 
     public function retrieveRecord($id)

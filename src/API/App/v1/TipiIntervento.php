@@ -30,7 +30,7 @@ class TipiIntervento extends AppResource
 
     public function getModifiedRecords($last_sync_at)
     {
-        $query = 'SELECT in_tipiintervento.idtipointervento AS id FROM in_tipiintervento';
+        $query = 'SELECT in_tipiintervento.idtipointervento AS id, in_tipiintervento.updated_at FROM in_tipiintervento';
 
         // Filtro per data
         if ($last_sync_at) {
@@ -39,7 +39,7 @@ class TipiIntervento extends AppResource
 
         $records = database()->fetchArray($query);
 
-        return array_column($records, 'id');
+        return $this->mapModifiedRecords($records);
     }
 
     public function retrieveRecord($id)

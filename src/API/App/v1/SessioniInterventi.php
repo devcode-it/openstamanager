@@ -86,11 +86,12 @@ class SessioniInterventi extends AppResource
             return [];
         }
 
+        $id_interventi = array_keys($interventi);
         $query = 'SELECT in_interventi_tecnici.id
         FROM in_interventi_tecnici
             INNER JOIN in_interventi ON in_interventi_tecnici.idintervento = in_interventi.id
         WHERE
-            in_interventi.id IN ('.implode(',', $interventi).')
+            in_interventi.id IN ('.implode(',', $id_interventi).')
             AND (orario_fine BETWEEN :period_start AND :period_end)';
 
         // Filtro per data
@@ -102,7 +103,7 @@ class SessioniInterventi extends AppResource
             ':period_end' => $end,
         ]);
 
-        return array_column($records, 'id');
+        return $this->mapModifiedRecords($records);
     }
 
     public function retrieveRecord($id)

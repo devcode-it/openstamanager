@@ -43,25 +43,27 @@ class RigheInterventi extends AppResource
         $user = Auth::user();
         $id_tecnico = $user->id_anagrafica;
 
-        $query = 'SELECT in_righe_interventi.id FROM in_righe_interventi WHERE in_righe_interventi.idintervento IN (
-            SELECT in_interventi.id FROM in_interventi WHERE
-            deleted_at IS NOT NULL
-            OR EXISTS(
-                SELECT orario_fine FROM in_interventi_tecnici WHERE
-                    in_interventi_tecnici.idintervento = in_interventi.id
-                    AND orario_fine NOT BETWEEN :period_start AND :period_end
-                    AND idtecnico = :id_tecnico
-            )
-        )';
-        $records = database()->fetchArray($query, [
-            ':period_end' => $end,
-            ':period_start' => $start,
-            ':id_tecnico' => $id_tecnico,
-        ]);
+        // Elenco di interventi di interesse
+        $risorsa_interventi = $this->getRisorsaInterventi();
+        $interventi = $risorsa_interventi->getCleanupData($last_sync_at);
 
-        $da_interventi = array_column($records, 'id');
+        // Elenco sessioni degli interventi da rimuovere
+        $da_interventi = [];
+        if (!empty($interventi)) {
+            $query = 'SELECT in_righe_interventi.id
+        FROM in_righe_interventi
+            INNER JOIN in_interventi ON in_interventi_tecnici.idintervento = in_interventi.id
+        WHERE
+            in_interventi.id IN ('.implode(',', $interventi).')
+            OR (orario_fine NOT BETWEEN :period_start AND :period_end)';
+            $records = database()->fetchArray($query, [
+                ':period_end' => $end,
+                ':period_start' => $start,
+            ]);
+            $da_interventi = array_column($records, 'id');
+        }
+
         $mancanti = $this->getMissingIDs('in_righe_interventi', 'id', $last_sync_at);
-
         $results = array_unique(array_merge($da_interventi, $mancanti));
 
         return $results;
@@ -78,28 +80,23 @@ class RigheInterventi extends AppResource
         $user = Auth::user();
         $id_tecnico = $user->id_anagrafica;
 
-        $query = 'SELECT in_righe_interventi.id FROM in_righe_interventi WHERE in_righe_interventi.idintervento IN (
-            SELECT in_interventi.id FROM in_interventi WHERE
-            in_interventi.id IN (
-                SELECT idintervento FROM in_interventi_tecnici
-                WHERE in_interventi_tecnici.idintervento = in_interventi.id
-                    AND in_interventi_tecnici.orario_fine BETWEEN :period_start AND :period_end
-                    AND in_interventi_tecnici.idtecnico = :id_tecnico
-            )
-            AND deleted_at IS NULL
-        )';
+        // Elenco di interventi di interesse
+        $risorsa_interventi = $this->getRisorsaInterventi();
+        $interventi = $risorsa_interventi->getModifiedRecords(null);
+        if (empty($interventi)) {
+            return [];
+        }
+
+        $id_interventi = array_keys($interventi);
+        $query = 'SELECT in_righe_interventi.id, in_righe_interventi.updated_at FROM in_righe_interventi WHERE in_righe_interventi.idintervento IN ('.implode(',', $id_interventi).')';
 
         // Filtro per data
         if ($last_sync_at) {
             $query .= ' AND in_righe_interventi.updated_at > '.prepare($last_sync_at);
         }
-        $records = database()->fetchArray($query, [
-            ':period_start' => $start,
-            ':period_end' => $end,
-            ':id_tecnico' => $id_tecnico,
-        ]);
+        $records = database()->fetchArray($query);
 
-        return array_column($records, 'id');
+        return $this->mapModifiedRecords($records);
     }
 
     public function retrieveRecord($id)
@@ -182,6 +179,11 @@ class RigheInterventi extends AppResource
         $riga->delete();
     }
 
+    protected function getRisorsaInterventi()
+    {
+        return new Interventi();
+    }
+
     protected function getRecord($id)
     {
         // Individuazione delle caratteristiche del record
@@ -217,17 +219,28 @@ class RigheInterventi extends AppResource
         $record->um = $data['um'] ?: null;
 
         if (empty($data['id_iva'])) {
-            $data['id_iva'] = settings('Iva predefinita');
+            if ($data['is_articolo']) {
+                $originale = ArticoloOriginale::find($data['id_articolo']);
+                $data['id_iva'] = $originale->idiva_vendita;
+            } else {
+                $data['id_iva'] = setting('Iva predefinita');
+            }
         }
-
-        //$record->costo_unitario = $data['costo_unitario'] ?: 0;
-        $record->setPrezzoUnitario($data['prezzo_unitario'], $data['id_iva']);
-        $record->setSconto($data['sconto_percentuale'] ?: $data['sconto_unitario'], $data['tipo_sconto']);
 
         try {
             $record->qta = $data['qta'];
         } catch (UnexpectedValueException $e) {
             throw new InternalError();
+        }
+
+        // Impostazione prezzo unitario
+        $data['prezzo_unitario'] = $data['prezzo_unitario'] ?: 0;
+        $record->setPrezzoUnitario($data['prezzo_unitario'], $data['id_iva']);
+
+        // Impostazione sconto
+        $sconto = $data['sconto_percentuale'] ?: $data['sconto_unitario'];
+        if (!empty($sconto)) {
+            $record->setSconto($sconto, $data['tipo_sconto']);
         }
     }
 }

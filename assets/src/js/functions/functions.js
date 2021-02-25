@@ -488,16 +488,6 @@ function restart_inputs() {
     $('.openstamanager-input').each(function () {
         input(this);
     });
-    /*
-    start_datepickers();
-    start_inputmask();
-
-    initNumbers();
-    start_superselect();
-
-    // Autosize per le textarea
-    initTextareaInput($('.autosize'));
-     */
 }
 
 /**
@@ -706,65 +696,14 @@ function hideTableColumn(table, column) {
 }
 
 /**
- * Funzione per caricare un file JavaScript ed eseguire delle operazioni al completamento.
- *
- * @param src
- * @param async
- * @param defer
- * @returns {Promise<unknown>}
- */
-function loadScript(src, async = true, defer = true) {
-    if (!globals.dynamicScripts) {
-        globals.dynamicScripts = {};
-    }
-
-    return new Promise((resolve, reject) => {
-        // Caricamento già completato
-        if (globals.dynamicScripts[src] && globals.dynamicScripts[src] === "done") {
-            resolve();
-            return;
-        }
-
-        // Aggiunta del resolve all'elenco per lo script
-        if (!globals.dynamicScripts[src]) {
-            globals.dynamicScripts[src] = [];
-        }
-        globals.dynamicScripts[src].push(resolve);
-
-        // Ricerca dello script esistente
-        let found = Array.prototype.slice.call(document.scripts).find(el => el.getAttribute("src") === src);
-        if (found) {
-            return;
-        }
-
-        // Caricamento dinamico dello script
-        const script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.async = async;
-        script.defer = defer;
-
-        script.onload = function () {
-            for (resolve of globals.dynamicScripts[src]) {
-                resolve();
-            }
-
-            globals.dynamicScripts[src] = "done";
-        }
-
-        script.onerror = reject;
-        script.src = src;
-        document.head.append(script);
-    })
-}
-
-/**
  * Funzione per aggiungere in un *endpoint* il contenuto di uno specifico *template*, effettuando delle sostituzioni di base e inizializzando i campi aggiunti.
- * @param endpoint_selector
- * @param template_selector
- * @param replaces
+ * @param {string|jQuery|HTMLElement} endpoint_selector
+ * @param {string|jQuery|HTMLElement} template_selector
+ * @param {object} replaces
+ * @param {boolean} prepend
  * @returns {*|jQuery|HTMLElement}
  */
-function aggiungiContenuto(endpoint_selector, template_selector, replaces = {}) {
+function aggiungiContenuto(endpoint_selector, template_selector, replaces = {}, prepend = false) {
     let template = $(template_selector);
     let endpoint = $(endpoint_selector);
 
@@ -781,7 +720,11 @@ function aggiungiContenuto(endpoint_selector, template_selector, replaces = {}) 
 
     // Aggiunta del contenuto
     let element = $(content);
-    endpoint.append(element);
+    if (prepend) {
+        endpoint.prepend(element);
+    } else {
+        endpoint.append(element);
+    }
 
     // Rigenerazione degli input interni
     element.find('.openstamanager-input').each(function () {

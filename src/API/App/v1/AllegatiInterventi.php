@@ -56,7 +56,8 @@ class AllegatiInterventi extends AppResource
             return [];
         }
 
-        $query = 'SELECT zz_files.id FROM zz_files WHERE id_module = (SELECT `id` FROM `zz_modules` WHERE `name` = "Interventi") AND id_record IN ('.implode(',', $interventi).')';
+        $id_interventi = array_keys($interventi);
+        $query = 'SELECT zz_files.id, zz_files.updated_at FROM zz_files WHERE id_module = (SELECT `id` FROM `zz_modules` WHERE `name` = "Interventi") AND id_record IN ('.implode(',', $id_interventi).')';
 
         // Filtro per data
         if ($last_sync_at) {
@@ -65,7 +66,7 @@ class AllegatiInterventi extends AppResource
 
         $records = database()->fetchArray($query);
 
-        return array_column($records, 'id');
+        return $this->mapModifiedRecords($records);
     }
 
     public function retrieveRecord($id)

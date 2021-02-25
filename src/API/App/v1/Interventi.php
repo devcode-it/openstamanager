@@ -99,7 +99,10 @@ class Interventi extends AppResource
         // Informazioni sull'utente
         $id_tecnico = Auth::user()->id_anagrafica;
 
-        $query = 'SELECT in_interventi.id FROM in_interventi WHERE
+        $query = 'SELECT
+            in_interventi.id,
+            in_interventi.updated_at
+        FROM in_interventi WHERE
             deleted_at IS NULL AND (
                 in_interventi.id IN (
                     SELECT idintervento FROM in_interventi_tecnici
@@ -116,8 +119,16 @@ class Interventi extends AppResource
             )';
 
         // Filtro per data
+        // Gestione di tecnici assegnati o impianti modificati
+        // Possibile problematica: in caso di rimozione di un tecnico assegnato o impianto collegato, la modifica non viene rilevata
         if ($last_sync_at) {
-            $query .= ' AND in_interventi.updated_at > '.prepare($last_sync_at);
+            $query .= ' AND (
+                in_interventi.updated_at > '.prepare($last_sync_at).' OR
+                in_interventi.id IN (
+                    SELECT idintervento FROM my_impianti_interventi WHERE my_impianti_interventi.created_at > '.prepare($last_sync_at).'
+                    UNION SELECT id_intervento FROM in_interventi_tecnici_assegnati WHERE in_interventi_tecnici_assegnati.created_at > '.prepare($last_sync_at).'
+                )
+            )';
         }
 
         $records = database()->fetchArray($query, [
@@ -126,7 +137,7 @@ class Interventi extends AppResource
             ':id_tecnico' => $id_tecnico,
         ]);
 
-        return array_column($records, 'id');
+        return $this->mapModifiedRecords($records);
     }
 
     public function retrieveRecord($id)
@@ -157,6 +168,10 @@ class Interventi extends AppResource
         // Individuazione degli impianti collegati
         $impianti = $database->fetchArray('SELECT idimpianto AS id FROM my_impianti_interventi WHERE idintervento = '.prepare($id));
         $record['impianti'] = array_column($impianti, 'id');
+
+        // Individuazione dei tecnici assegnati
+        $tecnici = $database->fetchArray('SELECT id_tecnico AS id FROM in_interventi_tecnici_assegnati WHERE id_intervento = '.prepare($id));
+        $record['tecnici_assegnati'] = array_column($tecnici, 'id');
 
         return $record;
     }
@@ -211,7 +226,7 @@ class Interventi extends AppResource
             $record->firma_file = $firma_file;
         }
 
-        // Aggiornamento impianti collegati
+        // Aggiornamento degli impianti collegati
         $database->query('DELETE FROM my_impianti_interventi WHERE idintervento = '.prepare($record->id));
         foreach ($data['impianti'] as $id_impianto) {
             $database->insert('my_impianti_interventi', [
@@ -219,6 +234,15 @@ class Interventi extends AppResource
                 'idintervento' => $record->id,
             ]);
         }
+
+        // Aggiornamento dei tecnici assegnati
+        $database->query('DELETE FROM in_interventi_tecnici_assegnati WHERE id_intervento = '.prepare($record->id));
+        $tecnici_assegnati = (array) $data['tecnici_assegnati'];
+        $database->sync('in_interventi_tecnici_assegnati', [
+            'id_intervento' => $record->id,
+        ], [
+            'id_tecnico' => $tecnici_assegnati,
+        ]);
     }
 
     protected function salvaFirma($firma_base64)

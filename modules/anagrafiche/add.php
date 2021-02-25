@@ -35,20 +35,18 @@ echo '
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "'.tr('Tipo di anagrafica').'", "name": "idtipoanagrafica[]", "multiple": "1", "required": 1, "values": "query=SELECT idtipoanagrafica AS id, descrizione FROM an_tipianagrafiche WHERE idtipoanagrafica NOT IN (SELECT DISTINCT(x.idtipoanagrafica) FROM an_tipianagrafiche_anagrafiche x INNER JOIN an_tipianagrafiche t ON x.idtipoanagrafica = t.idtipoanagrafica INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = x.idanagrafica WHERE t.descrizione = \'Azienda\' AND deleted_at IS NULL) ORDER BY descrizione", "value": "'.(isset($idtipoanagrafica) ? $idtipoanagrafica : null).'", "readonly": '.(!empty(get('readonly_tipo')) ? 1 : 0).' ]}
+			{[ "type": "select", "label": "'.tr('Tipo di anagrafica').'", "name": "idtipoanagrafica[]", "id": "idtipoanagrafica_add", "multiple": "1", "required": 1, "values": "query=SELECT idtipoanagrafica AS id, descrizione FROM an_tipianagrafiche WHERE idtipoanagrafica NOT IN (SELECT DISTINCT(x.idtipoanagrafica) FROM an_tipianagrafiche_anagrafiche x INNER JOIN an_tipianagrafiche t ON x.idtipoanagrafica = t.idtipoanagrafica INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = x.idanagrafica WHERE t.descrizione = \'Azienda\' AND deleted_at IS NULL) ORDER BY descrizione", "value": "'.(isset($idtipoanagrafica) ? $idtipoanagrafica : null).'", "readonly": '.(!empty(get('readonly_tipo')) ? 1 : 0).' ]}
 		</div>
 	</div>
 
 	<div class="row">
-
 		<div class="col-md-6">
-			{[ "type": "text", "label": "'.tr('Cognome').'", "name": "cognome", "id": "cognome_add", "required": 0 ]}
+			{[ "type": "text", "label": "'.tr('Cognome').'", "name": "cognome", "id": "cognome_add" ]}
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "text", "label": "'.tr('Nome').'", "name": "nome", "id": "nome_add", "required": 0 ]}
+			{[ "type": "text", "label": "'.tr('Nome').'", "name": "nome", "id": "nome_add" ]}
 		</div>
-
 	</div>';
 
 echo '
@@ -72,10 +70,8 @@ echo '
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "select", "label": "'.tr('Tipologia').'", "name": "tipo", "values": "list=\"\": \"'.tr('Non specificato').'\", \"Azienda\": \"'.tr('Azienda').'\", \"Privato\": \"'.tr('Privato').'\", \"Ente pubblico\": \"'.tr('Ente pubblico').'\"" ]}
+					{[ "type": "select", "label": "'.tr('Tipologia').'", "name": "tipo", "id": "tipo_add", "values": "list=\"\": \"'.tr('Non specificato').'\", \"Azienda\": \"'.tr('Azienda').'\", \"Privato\": \"'.tr('Privato').'\", \"Ente pubblico\": \"'.tr('Ente pubblico').'\"" ]}
 				</div>
-
-
 			</div>
 
 			<div class="row">
@@ -99,7 +95,7 @@ echo '
 			<div class="row">
 
 				<div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Nazione').'", "name": "id_nazione", "values": "query=SELECT id AS id, CONCAT_WS(\' - \', iso2, nome) AS descrizione FROM an_nazioni ORDER BY CASE WHEN iso2=\'IT\' THEN -1 ELSE iso2 END" ]}
+                    {[ "type": "select", "label": "'.tr('Nazione').'", "name": "id_nazione", "id": "id_nazione_add", "values": "query=SELECT id AS id, CONCAT_WS(\' - \', iso2, nome) AS descrizione FROM an_nazioni ORDER BY CASE WHEN iso2=\'IT\' THEN -1 ELSE iso2 END" ]}
                 </div>
 
 				<div class="col-md-4">
@@ -125,7 +121,7 @@ echo '
 
 echo '
 				<div class="col-md-4">
-					{[ "type": "text", "label": "'.tr('Codice destinatario').'", "name": "codice_destinatario", "required": 0, "class": "text-center text-uppercase alphanumeric-mask", "maxlength": "7", "extra": "", "help": "'.tr($help_codice_destinatario).'", "readonly": "1" ]}
+					{[ "type": "text", "label": "'.tr('Codice destinatario').'", "name": "codice_destinatario", "class": "text-center text-uppercase alphanumeric-mask", "maxlength": "7", "extra": "", "help": "'.tr($help_codice_destinatario).'", "readonly": "1" ]}
 				</div>
 			</div>
 		</div>
@@ -141,39 +137,37 @@ echo '
 ?>
 
 <script>
-    var nome = $('#nome_add', '#modals > div');
-    var cognome = $('#cognome_add', '#modals > div');
-    var ragione_sociale = $('#ragione_sociale_add', '#modals > div');
+    var nome = input("nome");
+    var cognome = input("cognome");
+    var ragione_sociale = input("ragione_sociale");
+    var id_nazione = input("id_nazione");
 
     // Abilito solo ragione sociale oppure solo nome-cognome in base a cosa compilo
-    nome.keyup(function () {
-        if ($(this).val()) {
-            ragione_sociale.prop('disabled', true).prop('required', false);
-        } else if (!cognome.val()) {
-            ragione_sociale.prop('disabled', false).prop('required', true);
+    nome.on("keyup", function () {
+        if (nome.get()) {
+            ragione_sociale.disable();
+        } else if (!cognome.get()) {
+            ragione_sociale.enable();
         }
     });
 
-    cognome.keyup(function () {
-        if ($(this).val()) {
-            ragione_sociale.prop('disabled', true).prop('required', false);
-        } else if (!nome.val()) {
-            ragione_sociale.prop('disabled', false).prop('required', true);
+    cognome.on("keyup", function () {
+        if (cognome.get()) {
+            ragione_sociale.disable();
+        } else if (!nome.get()) {
+            ragione_sociale.enable();
         }
     });
 
-    ragione_sociale.keyup(function () {
-        if ($(this).val()) {
-            nome.prop('disabled', true).prop('required', false);
-            cognome.prop('disabled', true).prop('required', false);
-        } else {
-            nome.prop('disabled', false).prop('required', true);
-            cognome.prop('disabled', false).prop('required', true);
-        }
+    ragione_sociale.on("keyup", function () {
+        let disable = ragione_sociale.get() !== "";
+
+        nome.setDisabled(disable);
+        cognome.setDisabled(disable);
     });
 
-	input("id_nazione").change(function() {
-		if (input("id_nazione").getElement().selectData().descrizione === 'IT - Italia'){
+    id_nazione.change(function() {
+		if (id_nazione.getData().descrizione === 'IT - Italia'){
 			input("codice_destinatario").enable();
 		}else{
 			input("codice_destinatario").disable();

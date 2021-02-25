@@ -79,7 +79,7 @@ ALTER TABLE `co_preventivi` ADD `garanzia` TEXT NOT NULL AFTER `condizioni_forni
 ALTER TABLE `an_anagrafiche` CHANGE `piva` `piva` VARCHAR(16) NOT NULL;
 
 -- Aggiunta stampa bilancio
-INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `filename`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `default`, `enabled`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE name='Piano dei conti'), '1', 'Bilancio', 'Bilancio', 'Bilancio', 'bilancio', '', '', 'fa fa-print', '', '', '0', '0', '1', '1'); 
+INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `filename`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `default`, `enabled`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE name='Piano dei conti'), '1', 'Bilancio', 'Bilancio', 'Bilancio', 'bilancio', '', '', 'fa fa-print', '', '', '0', '0', '1', '1');
 
 -- Aggiunta flag notifica cliente e tecnici in in_statiintervento
 ALTER TABLE `in_statiintervento` ADD `notifica_cliente` TINYINT NOT NULL AFTER `notifica`, ADD `notifica_tecnici` TINYINT NOT NULL AFTER `notifica_cliente`;
@@ -91,25 +91,44 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 ALTER TABLE `co_documenti` ADD `is_ritenuta_pagata` BOOLEAN NOT NULL AFTER `id_ricevuta_principale`;
 
 -- Modificato options modulo scadenzario
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_scadenziario`\r\n LEFT JOIN `co_documenti` ON `co_scadenziario`.`iddocumento` = `co_documenti`.`id`\r\n LEFT JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`\r\n LEFT JOIN `co_pagamenti` ON `co_documenti`.`idpagamento` = `co_pagamenti`.`id`\r\n LEFT JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`\r\n LEFT JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`\r\nWHERE 1=1 AND\r\n (`co_statidocumento`.`descrizione` IS NULL OR `co_statidocumento`.`descrizione` IN(\'Emessa\',\'Parzialmente pagato\',\'Pagato\'))\r\nHAVING 2=2\r\nORDER BY `scadenza` ASC' WHERE `zz_modules`.`name`='Scadenzario';
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_scadenziario`
+LEFT JOIN `co_documenti` ON `co_scadenziario`.`iddocumento` = `co_documenti`.`id`
+LEFT JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+LEFT JOIN `co_pagamenti` ON `co_documenti`.`idpagamento` = `co_pagamenti`.`id`
+LEFT JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`
+LEFT JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`
+WHERE 1=1 AND
+(`co_statidocumento`.`descrizione` IS NULL OR `co_statidocumento`.`descrizione` IN(''Emessa'',''Parzialmente pagato'',''Pagato''))
+HAVING 2=2
+ORDER BY `scadenza` ASC' WHERE `zz_modules`.`name`='Scadenzario';
 
 -- Modificato nome segmento
 UPDATE `zz_segments` SET `name` = 'Scadenzario completo per periodo' WHERE `zz_segments`.`name` = 'Scadenzario completo';
 
 -- Fix stampe predefinite Preventivi e Contratti
-UPDATE `zz_prints` SET `predefined` = '0' WHERE `zz_prints`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi') AND `zz_prints`.`name` = 'Consuntivo preventivo'; 
-UPDATE `zz_prints` SET `predefined` = '0' WHERE `zz_prints`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti') AND `zz_prints`.`name` = 'Consuntivo contratto'; 
-UPDATE `zz_prints` SET `predefined` = '0' WHERE `zz_prints`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti') AND `zz_prints`.`name` = 'Ordine di servizio'; 
+UPDATE `zz_prints` SET `predefined` = '0' WHERE `zz_prints`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi') AND `zz_prints`.`name` = 'Consuntivo preventivo';
+UPDATE `zz_prints` SET `predefined` = '0' WHERE `zz_prints`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti') AND `zz_prints`.`name` = 'Consuntivo contratto';
+UPDATE `zz_prints` SET `predefined` = '0' WHERE `zz_prints`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti') AND `zz_prints`.`name` = 'Ordine di servizio';
 
 -- Eliminata colonna idsede_controparte e rinominata idsede_azienda in idsede
 ALTER TABLE `mg_movimenti` CHANGE `idsede_azienda` `idsede` INT(11) NOT NULL;
 ALTER TABLE `mg_movimenti` DROP `idsede_controparte`;
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `mg_movimenti` JOIN `mg_articoli` ON `mg_articoli`.id = `mg_movimenti`.`idarticolo` LEFT JOIN `an_sedi` ON `mg_movimenti`.`idsede` = `an_sedi`.`id` WHERE 1=1 HAVING 2=2 ORDER BY mg_movimenti.data DESC, mg_movimenti.created_at DESC' WHERE `zz_modules`.`name` = 'Movimenti'; 
-UPDATE `zz_views` SET `query` = 'IF( mg_movimenti.idsede=0, \'Sede legale\', an_sedi.nomesede )' WHERE `zz_views`.`name` = 'Sede' 'Movimenti' AND `zz_views`.`id_module`= (SELECT `id` FROM `zz_modules` WHERE `name`='Movimenti');
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `mg_articoli`\r\n LEFT OUTER JOIN an_anagrafiche ON mg_articoli.id_fornitore = an_anagrafiche.idanagrafica\r\n LEFT OUTER JOIN co_iva ON mg_articoli.idiva_vendita = co_iva.id\r\n LEFT OUTER JOIN (\r\n SELECT SUM(qta - qta_evasa) AS qta_impegnata, idarticolo FROM or_righe_ordini\r\n INNER JOIN or_ordini ON or_righe_ordini.idordine = or_ordini.id\r\n WHERE idstatoordine IN (SELECT id FROM or_statiordine WHERE completato = 0)\r\n GROUP BY idarticolo\r\n ) ordini ON ordini.idarticolo = mg_articoli.id\r\n LEFT OUTER JOIN (SELECT `idarticolo`, `idsede`, SUM(`qta`) AS `qta` FROM `mg_movimenti` WHERE `idsede` = |giacenze_sedi_idsede| GROUP BY `idarticolo`, `idsede`) movimenti ON `mg_articoli`.`id` = `movimenti`.`idarticolo`\r\nWHERE 1=1 AND `mg_articoli`.`deleted_at` IS NULL HAVING 2=2 AND `Q.tà` > 0 ORDER BY `descrizione`' WHERE `zz_modules`.`name` = 'Giacenze sedi';
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `mg_movimenti` JOIN `mg_articoli` ON `mg_articoli`.id = `mg_movimenti`.`idarticolo` LEFT JOIN `an_sedi` ON `mg_movimenti`.`idsede` = `an_sedi`.`id` WHERE 1=1 HAVING 2=2 ORDER BY mg_movimenti.data DESC, mg_movimenti.created_at DESC' WHERE `zz_modules`.`name` = 'Movimenti';
+UPDATE `zz_views` SET `query` = 'IF( mg_movimenti.idsede=0, ''Sede legale'', an_sedi.nomesede )' WHERE `zz_views`.`name` = 'Sede' 'Movimenti' AND `zz_views`.`id_module`= (SELECT `id` FROM `zz_modules` WHERE `name`='Movimenti');
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `mg_articoli`
+LEFT OUTER JOIN an_anagrafiche ON mg_articoli.id_fornitore = an_anagrafiche.idanagrafica
+LEFT OUTER JOIN co_iva ON mg_articoli.idiva_vendita = co_iva.id
+LEFT OUTER JOIN (
+SELECT SUM(qta - qta_evasa) AS qta_impegnata, idarticolo FROM or_righe_ordini
+INNER JOIN or_ordini ON or_righe_ordini.idordine = or_ordini.id
+WHERE idstatoordine IN (SELECT id FROM or_statiordine WHERE completato = 0)
+GROUP BY idarticolo
+) ordini ON ordini.idarticolo = mg_articoli.id
+LEFT OUTER JOIN (SELECT `idarticolo`, `idsede`, SUM(`qta`) AS `qta` FROM `mg_movimenti` WHERE `idsede` = |giacenze_sedi_idsede| GROUP BY `idarticolo`, `idsede`) movimenti ON `mg_articoli`.`id` = `movimenti`.`idarticolo`
+WHERE 1=1 AND `mg_articoli`.`deleted_at` IS NULL HAVING 2=2 AND `Q.tà` > 0 ORDER BY `descrizione`' WHERE `zz_modules`.`name` = 'Giacenze sedi';
 
 -- Rimozione campo idsede_azienda
-UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'IF( mg_movimenti.idsede=0, \'Sede legale\', an_sedi.nomesede )' WHERE `zz_views`.`name` = 'Sede' AND `zz_modules`.`name` = 'Movimenti';
+UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'IF( mg_movimenti.idsede=0, ''Sede legale'', an_sedi.nomesede )' WHERE `zz_views`.`name` = 'Sede' AND `zz_modules`.`name` = 'Movimenti';
 
 -- Aggiunto metodo di pagamento PagoPA
 INSERT INTO `fe_modalita_pagamento` (`codice`, `descrizione`) VALUES
@@ -119,17 +138,40 @@ INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, 
 (NULL, 'PagoPA', '0', '1', '100', 'MP23');
 
 -- Aggiunti referenti ai documenti
-ALTER TABLE `or_ordini` ADD `idreferente` INT NULL DEFAULT NULL AFTER `idanagrafica`; 
+ALTER TABLE `or_ordini` ADD `idreferente` INT NULL DEFAULT NULL AFTER `idanagrafica`;
 ALTER TABLE `co_documenti` ADD `idreferente` INT NULL DEFAULT NULL AFTER `idanagrafica`;
 ALTER TABLE `dt_ddt` ADD `idreferente` INT NULL DEFAULT NULL AFTER `idanagrafica`;
 
 -- Colorazione riga fatture di acquisto con stesso numero e fornitore
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_documenti`\r\n LEFT JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`\r\n LEFT JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`\r\n LEFT JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`\r\n LEFT JOIN (\r\n SELECT `iddocumento`,\r\n SUM(`subtotale` - `sconto`) AS `totale_imponibile`,\r\n SUM(`subtotale` - `sconto` + `iva`) AS `totale`\r\n FROM `co_righe_documenti`\r\n GROUP BY `iddocumento`\r\n ) AS righe ON `co_documenti`.`id` = `righe`.`iddocumento`\r\n LEFT JOIN (\r\n SELECT COUNT(`d`.`id`) AS `conteggio`, IF(`d`.`numero_esterno`=\'\', `d`.`numero`, `d`.`numero_esterno`) AS `numero_documento` FROM `co_documenti` AS `d` LEFT JOIN `co_tipidocumento` AS `d_tipo` ON `d`.`idtipodocumento` = `d_tipo`.`id` WHERE 1=1 AND `d_tipo`.`dir` = \'uscita\' AND ( \'|period_start|\' <= `d`.`data` AND \'|period_end|\' >= `d`.`data` OR \'|period_start|\' <= `d`.`data_competenza` AND \'|period_end|\' >= `d`.`data_competenza` )\r\n GROUP BY `numero_documento`, `d`.`idanagrafica`\r\n ) AS `d` ON `d`.`numero_documento` = IF(`co_documenti`.`numero_esterno`=\'\', `co_documenti`.`numero`, `co_documenti`.`numero_esterno`)\r\nWHERE 1=1 AND `dir` = \'uscita\' |segment(`co_documenti`.`id_segment`)||date_period(custom, \'|period_start|\' <= `co_documenti`.`data` AND \'|period_end|\' >= `co_documenti`.`data`, \'|period_start|\' <= `co_documenti`.`data_competenza` AND \'|period_end|\' >= `co_documenti`.`data_competenza` )|\r\nHAVING 2=2\r\nORDER BY `co_documenti`.`data` DESC, CAST(IF(`co_documenti`.`numero` = \'\', `co_documenti`.`numero_esterno`, `co_documenti`.`numero`) AS UNSIGNED) DESC' WHERE `zz_modules`.`name`='Fatture di acquisto'; 
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_documenti`
+LEFT JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+LEFT JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`
+LEFT JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`
+LEFT JOIN (
+    SELECT `iddocumento`,
+    SUM(`subtotale` - `sconto`) AS `totale_imponibile`,
+    SUM(`subtotale` - `sconto` + `iva`) AS `totale`
+    FROM `co_righe_documenti`
+    GROUP BY `iddocumento`
+) AS righe ON `co_documenti`.`id` = `righe`.`iddocumento`
+LEFT JOIN (
+    SELECT COUNT(`d`.`id`) AS `conteggio`,
+        IF(`d`.`numero_esterno`='''', `d`.`numero`, `d`.`numero_esterno`) AS `numero_documento`
+    FROM `co_documenti` AS `d`
+    LEFT JOIN `co_tipidocumento` AS `d_tipo` ON `d`.`idtipodocumento` = `d_tipo`.`id`
+    WHERE 1=1
+        AND `d_tipo`.`dir` = ''uscita''
+        AND (''|period_start|'' <= `d`.`data` AND ''|period_end|'' >= `d`.`data` OR ''|period_start|'' <= `d`.`data_competenza` AND ''|period_end|'' >= `d`.`data_competenza`)
+        GROUP BY `numero_documento`, `d`.`idanagrafica`
+) AS `d` ON `d`.`numero_documento` = IF(`co_documenti`.`numero_esterno`='''', `co_documenti`.`numero`, `co_documenti`.`numero_esterno`)
+WHERE 1=1 AND `dir` = ''uscita'' |segment(`co_documenti`.`id_segment`)||date_period(custom, ''|period_start|'' <= `co_documenti`.`data` AND ''|period_end|'' >= `co_documenti`.`data`, ''|period_start|'' <= `co_documenti`.`data_competenza` AND ''|period_end|'' >= `co_documenti`.`data_competenza` )|
+HAVING 2=2
+ORDER BY `co_documenti`.`data` DESC, CAST(IF(`co_documenti`.`numero` = '''', `co_documenti`.`numero_esterno`, `co_documenti`.`numero`) AS UNSIGNED) DESC' WHERE `zz_modules`.`name`='Fatture di acquisto';
 
 
-INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name`='Fatture di acquisto'), '_bg_', 'IF(`d`.`conteggio`>1, \'red\', \'\')', '1', '0', '0', '0', '', '', '0', '0', '0');
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name`='Fatture di acquisto'), '_bg_', 'IF(`d`.`conteggio`>1, ''red'', '''')', '1', '0', '0', '0', '', '', '0', '0', '0');
 
-INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) (SELECT `zz_groups`.`id`, `zz_views`.`id` FROM `zz_groups`, `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` WHERE `zz_modules`.`name` = 'Fatture di acquisto' AND `zz_views`.`name` = '_bg_'); 
+INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) (SELECT `zz_groups`.`id`, `zz_views`.`id` FROM `zz_groups`, `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` WHERE `zz_modules`.`name` = 'Fatture di acquisto' AND `zz_views`.`name` = '_bg_');
 
 
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES (NULL, 'Descrizione fattura pianificata', 'Canone {rata} del contratto numero {numero}', 'text', '1', 'Fatturazione');
@@ -147,3 +189,13 @@ ALTER TABLE `or_ordini` ADD `codice_commessa` VARCHAR(100) NULL AFTER `updated_a
 
 -- Copiato in or_ordini id_documento_fe in numero_cliente dove è presente
 UPDATE `or_ordini` SET `numero_cliente`= `id_documento_fe` WHERE `id_documento_fe`!='' AND `id_documento_fe` IS NOT NULL;
+
+-- Fix nome file con il tipo documento di vendita
+UPDATE `zz_prints` SET `filename` = '{tipo_documento} num. {numero} del {data}' WHERE `zz_prints`.`name` = 'Fattura di vendita'; 
+-- Risorsa API per sincronizzazione rapida di un singolo intervento
+INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES
+(NULL, 'app-v1', 'update', 'intervento-flash', 'API\\App\\v1\\Flash\\Intervento', '1');
+
+-- Colonna categoria impianto
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
+(NULL, (SELECT id FROM zz_modules WHERE name='Impianti'), 'Categoria', '(SELECT nome FROM my_impianti_categorie WHERE my_impianti_categorie.id=id_categoria)', 6, 1, 0, 0, '', '', 1, 0, 0);

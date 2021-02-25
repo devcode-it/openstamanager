@@ -32,6 +32,7 @@ class SelectHandler implements HandlerInterface
     {
         $values['class'][] = 'openstamanager-input';
         $values['class'][] = 'select-input';
+        $values['data-select2-id'][] = $values['id'].'_'.rand(0, 999);
 
         $source = isset($values['ajax-source']) ? $values['ajax-source'] : (isset($values['select-source']) ? $values['select-source'] : null);
 

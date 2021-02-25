@@ -50,7 +50,7 @@ class Intervento extends Resource implements UpdateInterface
                 foreach ($request[$sezione] as $record) {
                     $records[] = [$record, $risorse[$sezione]];
                 }
-            } else {
+            } elseif (!empty($request[$sezione])) {
                 $records[] = [$request[$sezione], $risorse[$sezione]];
             }
         }
@@ -58,9 +58,9 @@ class Intervento extends Resource implements UpdateInterface
         // Controlli sui conflitti
         $conflict = false;
         foreach ($records as $key => [$record, $risorsa]) {
-            $record['updated_at'] = new Carbon($record['updated_at']);
-            $record['last_sync_at'] = new Carbon($record['last_sync_at']);
-            if (!$record['updated_at']->greaterThan($record['last_sync_at'])) {
+            $ultima_modifica = new Carbon($record['updated_at']);
+            $ultima_sincronizzazione = new Carbon($record['last_sync_at']);
+            if (!empty($record['last_sync_at']) && !$ultima_modifica->greaterThan($ultima_sincronizzazione)) {
                 unset($records[$key]);
                 continue;
             }

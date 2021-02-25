@@ -20,7 +20,6 @@
 namespace API\App\v1;
 
 use API\App\AppResource;
-use Auth;
 use Modules\Anagrafiche\Anagrafica;
 
 class Clienti extends AppResource
@@ -43,28 +42,19 @@ class Clienti extends AppResource
 
         $sincronizza_lavorati = setting('Sincronizza solo i Clienti per cui il Tecnico ha lavorato in passato');
         if (!empty($sincronizza_lavorati)) {
+            // Elenco di interventi di interesse
+            $risorsa_interventi = $this->getRisorsaInterventi();
+            $interventi = $risorsa_interventi->getModifiedRecords(null);
+            if (empty($interventi)) {
+                return [];
+            }
+
+            $id_interventi = array_keys($interventi);
             $query .= '
                 AND an_anagrafiche.idanagrafica IN (
                     SELECT idanagrafica FROM in_interventi
-                        INNER JOIN in_interventi_tecnici ON in_interventi_tecnici.idintervento = in_interventi.id
-                    WHERE in_interventi_tecnici.orario_fine BETWEEN :period_start AND :period_end
-                        AND in_interventi_tecnici.idtecnico = :id_tecnico
-
-                    UNION
-
-                    SELECT idanagrafica FROM in_interventi
-                        WHERE in_interventi.id NOT IN (
-                            SELECT idintervento FROM in_interventi_tecnici
-                        )
+                    WHERE in_interventi.id IN ('.implode(',', $id_interventi).')
                 )';
-
-            $date = (new Interventi())->getDateDiInteresse();
-            $id_tecnico = Auth::user()->id_anagrafica;
-            $parameters = [
-                ':period_start' => $date['start'],
-                ':period_end' => $date['end'],
-                ':id_tecnico' => $id_tecnico,
-            ];
         }
 
         // Filtro per data
@@ -146,6 +136,11 @@ class Clienti extends AppResource
         $anagrafica->save();
 
         return [];
+    }
+
+    protected function getRisorsaInterventi()
+    {
+        return new Interventi();
     }
 
     protected function aggiornaRecord($record, $data)

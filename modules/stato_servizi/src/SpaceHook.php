@@ -44,7 +44,7 @@ class SpaceHook extends CachedManager
 
         $soft_quota = (float) setting('Soft quota'); // Impostazione in GB
         $space_limit = ($soft_quota / 100) * 95; // 95% dello spazio indicato
-        $space_limit = $space_limit * 1024 ^ 3; // Trasformazione in GB
+        $space_limit = $space_limit * (1024 ** 3); // Trasformazione in GB
 
         $message = tr('Attenzione: occupati _TOT_ dei _QUOTA_ previsti', [
             '_TOT_' => FileSystem::formatBytes($osm_size),

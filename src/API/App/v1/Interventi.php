@@ -119,8 +119,16 @@ class Interventi extends AppResource
             )';
 
         // Filtro per data
+        // Gestione di tecnici assegnati o impianti modificati
+        // Possibile problematica: in caso di rimozione di un tecnico assegnato o impianto collegato, la modifica non viene rilevata
         if ($last_sync_at) {
-            $query .= ' AND in_interventi.updated_at > '.prepare($last_sync_at);
+            $query .= ' AND (
+                in_interventi.updated_at > '.prepare($last_sync_at).' OR
+                in_interventi.id IN (
+                    SELECT idintervento FROM my_impianti_interventi WHERE my_impianti_interventi.created_at > '.prepare($last_sync_at).'
+                    UNION SELECT id_intervento FROM in_interventi_tecnici_assegnati WHERE in_interventi_tecnici_assegnati.created_at > '.prepare($last_sync_at).'
+                )
+            )';
         }
 
         $records = database()->fetchArray($query, [

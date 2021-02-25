@@ -498,7 +498,7 @@ function add_articolo_infattura($iddocumento, $idarticolo, $descrizione, $idiva,
  *
  * @return bool|string
  */
-function verifica_numero(Fattura $fattura)
+function verifica_numero_fattura(Fattura $fattura)
 {
     if (empty($fattura->numero_esterno)) {
         return null;
@@ -507,8 +507,8 @@ function verifica_numero(Fattura $fattura)
     $id_segment = $fattura->id_segment;
     $data = $fattura->data;
 
-    $documenti = Fattura::where('id_segment', $id_segment)
-        ->where('data', $data)
+    $documenti = Fattura::where('id_segment', '=', $id_segment)
+        ->where('data', '=', $data)
         ->get();
 
     // Recupero maschera per questo segmento

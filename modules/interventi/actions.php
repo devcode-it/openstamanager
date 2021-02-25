@@ -43,6 +43,7 @@ switch (post('op')) {
         }
 
         // Salvataggio modifiche intervento
+        $intervento->codice = post('codice');
         $intervento->data_richiesta = post('data_richiesta');
         $intervento->data_scadenza = post('data_scadenza') ?: null;
         $intervento->richiesta = post('richiesta');

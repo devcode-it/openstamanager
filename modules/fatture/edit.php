@@ -77,8 +77,9 @@ if ($dir == 'entrata' && !empty($fattura->dichiarazione) && $fattura->stato->des
     }
 }
 
+// Verifica aggiuntive sulla sequenzialità dei numeri
 if ($dir == 'entrata') {
-    $numero_previsto = verifica_numero($fattura);
+    $numero_previsto = verifica_numero_fattura($fattura);
     if (!empty($numero_previsto)) {
         echo '
 <div class="alert alert-warning">

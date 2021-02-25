@@ -204,7 +204,7 @@ class Mastrino extends Model
             $totale_pagato = $totale_movimenti - $totale_insoluto;
         } else {
             $scadenze = [$scadenza];
-            $dir = 'uscita';
+            $dir = $movimento->totale<0 ? 'entrata' : 'uscita';
 
             $totale_pagato = $movimento->totale;
         }

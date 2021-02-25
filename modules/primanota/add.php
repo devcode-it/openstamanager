@@ -52,7 +52,6 @@ if (!empty($id_records)) {
 }
 
 // ID predefiniti
-$dir = 'uscita'; // Le scadenze normali hanno solo direzione in uscita
 $singola_scadenza = get('single') != null;
 $is_insoluto = get('is_insoluto') != null;
 
@@ -72,7 +71,7 @@ foreach ($id_scadenze as $id_scadenza) {
         $id_documenti[] = $scadenza['iddocumento'];
         continue;
     }
-
+    $dir = $scadenza['rata']>0 ? 'entrata' : 'uscita';
     $scadenza['rata'] = abs($scadenza['rata']);
 
     $descrizione_conto = ($dir == 'entrata') ? 'Riepilogativo clienti' : 'Riepilogativo fornitori';

@@ -54,12 +54,9 @@ class RigheInterventi extends AppResource
         FROM in_righe_interventi
             INNER JOIN in_interventi ON in_interventi_tecnici.idintervento = in_interventi.id
         WHERE
-            in_interventi.id IN ('.implode(',', $interventi).')
-            OR (orario_fine NOT BETWEEN :period_start AND :period_end)';
-            $records = database()->fetchArray($query, [
-                ':period_end' => $end,
-                ':period_start' => $start,
-            ]);
+            in_interventi.id IN ('.implode(',', $interventi).')';
+            $records = database()->fetchArray($query);
+            
             $da_interventi = array_column($records, 'id');
         }
 

@@ -95,6 +95,7 @@
             "Modules\\CategorieDocumentali\\": ["modules/categorie_documenti/custom/src/", "modules/categorie_documenti/src/"],
             "Modules\\PianiSconto\\": ["modules/piano_sconto/custom/src/", "modules/piano_sconto/src/"],
             "Modules\\Impianti\\": ["modules/impianti/custom/src/", "modules/impianti/src/"],
+            "Modules\\Importazione\\": ["modules/import/custom/src/", "modules/import/src/"],
             "Modules\\Impostazioni\\": ["modules/impostazioni/custom/src/", "modules/impostazioni/src/"],
             "Plugins\\ExportFE\\": ["plugins/exportFE/custom/src/", "plugins/exportFE/src/"],
             "Plugins\\ImportFE\\": ["plugins/importFE/custom/src/", "plugins/importFE/src/"],

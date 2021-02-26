@@ -56,7 +56,7 @@ class RigheInterventi extends AppResource
         WHERE
             in_interventi.id IN ('.implode(',', $interventi).')';
             $records = database()->fetchArray($query);
-            
+
             $da_interventi = array_column($records, 'id');
         }
 

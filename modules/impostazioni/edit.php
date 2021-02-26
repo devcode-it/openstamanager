@@ -148,7 +148,7 @@ function riprovaSalvataggio() {
 }
 </script>';
 
-if (!empty($ricerca)){
+if (!empty($ricerca)) {
     echo '
 <script>$("#ricerca_impostazioni").change();</script>';
 }

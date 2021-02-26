@@ -202,3 +202,23 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `
 
 -- Fix quantità positiva per Note di credito
 UPDATE `co_righe_documenti` SET `qta` = ABS(`qta`), `qta_evasa` = ABS(`qta_evasa`);
+
+--
+-- Struttura della tabella `zz_imports`
+--
+
+CREATE TABLE IF NOT EXISTS `zz_imports` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `id_module` int(11) NOT NULL,
+    `name` varchar(255) NOT NULL,
+    `class` varchar(255) NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+ALTER TABLE `zz_imports`
+    ADD FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE;
+
+-- Importazioni di base
+INSERT INTO `zz_imports` (`id_module`, `name`, `class`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche'), 'Anagrafiche', 'Modules\\Anagrafiche\\Import\\CSV'),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), 'Articoli', 'Modules\\Articoli\\Import\\CSV');

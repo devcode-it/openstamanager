@@ -19,16 +19,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-$list = [];
-foreach ($moduli_disponibili as $id => $value) {
-    $modulo = Modules::get($id);
-
-    $list[] = [
-        'id' => $id,
-        'text' => $modulo['title'],
-    ];
-}
-
 ?><form action="" method="post" id="add-form" enctype="multipart/form-data">
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-edit">
@@ -39,7 +29,7 @@ foreach ($moduli_disponibili as $id => $value) {
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "module", "required": 1, "values": <?php echo json_encode($list); ?> ]}
+			{[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "id_import", "required": 1, "values": "query=SELECT id, name AS text FROM zz_imports" ]}
 		</div>
 	</div>
 
@@ -58,7 +48,7 @@ foreach ($moduli_disponibili as $id => $value) {
 </form>
 
 <script>
-    $("#module").change(function () {
+    $("#id_import").change(function () {
         if ($(this).val()) {
             $("#example").removeClass("hidden");
         } else {
@@ -73,7 +63,7 @@ foreach ($moduli_disponibili as $id => $value) {
             data: {
                 op: "example",
                 id_module: globals.id_module,
-                module: $('#module').val(),
+                id_import: $('#id_import').val(),
             },
             success: function(data) {
                 if (data) {

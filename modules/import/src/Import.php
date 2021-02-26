@@ -17,12 +17,28 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Modules\Importazione\Import;
+namespace Modules\Importazione;
 
-include_once __DIR__.'/../../core.php';
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
+use Models\Module;
+use Traits\RecordTrait;
 
-if (!empty($id_record)) {
-    $import = Import::find($id_record);
+class Import extends Model
+{
+    use SimpleModelTrait;
+    use RecordTrait;
 
-    $record = $import->uploads()->last();
+    protected $table = 'zz_imports';
+
+    // Relazioni Eloquent
+    public function moduloCollegato()
+    {
+        return $this->belongsTo(Module::class, 'id_module');
+    }
+
+    public function getModuleAttribute()
+    {
+        return 'Import';
+    }
 }

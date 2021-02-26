@@ -71,7 +71,7 @@ foreach ($id_scadenze as $id_scadenza) {
         $id_documenti[] = $scadenza['iddocumento'];
         continue;
     }
-    $dir = $scadenza['rata']>0 ? 'entrata' : 'uscita';
+    $dir = $scadenza['rata'] > 0 ? 'entrata' : 'uscita';
     $scadenza['rata'] = abs($scadenza['rata']);
 
     $descrizione_conto = ($dir == 'entrata') ? 'Riepilogativo clienti' : 'Riepilogativo fornitori';

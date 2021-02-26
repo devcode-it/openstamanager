@@ -17,6 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Modules\Importazione\Import;
+
 include_once __DIR__.'/../../core.php';
 
 // Gestione del redirect in caso di caricamento del file
@@ -27,8 +29,8 @@ if (filter('op')) {
 if (empty($id_record)) {
     require base_dir().'/add.php';
 } else {
-    $modulo_selezionato = Modules::get($id_record);
-    $import_selezionato = $moduli_disponibili[$modulo_selezionato->name];
+    $import = Import::find($id_record);
+    $import_selezionato = $import->class;
 
     // Inizializzazione del lettore CSV
     $csv = new $import_selezionato($record->filepath);

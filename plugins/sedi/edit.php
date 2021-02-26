@@ -143,7 +143,7 @@ if (!empty($google)) {
 } else {
     echo '
     <div class="alert alert-info">
-        '.Modules::link('Impostazioni', null, tr('Per abilitare la visualizzazione delle anagrafiche nella mappa, inserire la Google Maps API Key nella scheda Impostazioni'), true, null, true, null, "&search=Google Maps API key").'.
+        '.Modules::link('Impostazioni', null, tr('Per abilitare la visualizzazione delle anagrafiche nella mappa, inserire la Google Maps API Key nella scheda Impostazioni'), true, null, true, null, '&search=Google Maps API key').'.
     </div>';
 }
 

@@ -52,7 +52,7 @@ class RigheInterventi extends AppResource
         if (!empty($interventi)) {
             $query = 'SELECT in_righe_interventi.id
         FROM in_righe_interventi
-            INNER JOIN in_interventi ON in_interventi_tecnici.idintervento = in_interventi.id
+            INNER JOIN in_interventi ON in_righe_interventi.idintervento = in_interventi.id
         WHERE
             in_interventi.id IN ('.implode(',', $interventi).')';
             $records = database()->fetchArray($query);

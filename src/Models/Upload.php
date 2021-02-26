@@ -51,13 +51,19 @@ class Upload extends Model
 
         // Informazioni di base
         $original_name = isset($source['name']) ? $source['name'] : basename($source);
-        $model->original_name = $original_name; // Fix per "original" di Eloquent
 
+        // Nome e categoria dell'allegato
         $model->name = !empty($name) ? $name : $original_name;
         $model->category = $category;
 
-        // Informazioni aggiuntive
-        $original_name = $model->original_name; // Fix per "original_name" variato in modo dinamico
+        // Nome di origine dell'allegato
+        $original_name = !empty($data['original_name']) ? $data['original_name'] : $original_name; // Campo "original_name" variato in modo dinamico
+        $model->original_name = $original_name; // Fix per "original" di Eloquent
+
+        // Informazioni sulle relazioni
+        $model->id_module = !empty($data['id_module']) ? $data['id_module'] : null;
+        $model->id_plugin = !empty($data['id_plugin']) ? $data['id_plugin'] : null;
+        $model->id_record = !empty($data['id_record']) ? $data['id_record'] : null;
 
         // Nome fisico del file
         $directory = base_dir().'/'.$model->directory;

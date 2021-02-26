@@ -94,18 +94,10 @@ abstract class CSVImporter implements ImporterInterface
 
     public function importRows($offset, $length)
     {
-        $associations = $this->getColumnAssociations();
-
         $rows = $this->getRows($offset, $length);
         foreach ($rows as $row) {
             // Interpretazione della riga come record
-            $record = [];
-            foreach ($row as $key => $value) {
-                $field = isset($associations[$key]) ? $associations[$key] : null;
-                if (!empty($field)) {
-                    $record[$field] = $value;
-                }
-            }
+            $record = $this->getRecord($row);
 
             // Importazione del record
             $this->import($record);
@@ -138,5 +130,28 @@ abstract class CSVImporter implements ImporterInterface
         }
 
         fclose($file);
+    }
+
+    /**
+     * Interpreta una riga del CSV secondo i campi impostati dinamicamente.
+     *
+     * @param $row
+     *
+     * @return array
+     */
+    protected function getRecord($row)
+    {
+        $associations = $this->getColumnAssociations();
+
+        // Interpretazione della riga come record
+        $record = [];
+        foreach ($row as $key => $value) {
+            $field = isset($associations[$key]) ? $associations[$key] : null;
+            if (!empty($field)) {
+                $record[$field] = $value;
+            }
+        }
+
+        return $record;
     }
 }

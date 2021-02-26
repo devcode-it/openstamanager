@@ -69,7 +69,7 @@ switch (filter('op')) {
         // Inizializzazione del lettore CSV
         $csv = new $import_manager($record->filepath);
         foreach ($fields as $key => $value) {
-            $csv->setColumnAssociation($key, $value);
+            $csv->setColumnAssociation($key, $value - 1);
         }
 
         // Generazione offset sulla base della pagina
@@ -82,10 +82,10 @@ switch (filter('op')) {
 
         // Gestione automatica dei valori convertiti
         $primary_key = post('primary_key');
-        $csv->setPrimaryKey($primary_key);
+        $csv->setPrimaryKey($primary_key - 1);
 
         // Operazioni di inizializzazione per l'importazione
-        if (!isset($page) || $page == 0) {
+        if (!isset($page) || empty($page)) {
             $csv->init();
         }
 

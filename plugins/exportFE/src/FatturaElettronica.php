@@ -958,7 +958,7 @@ class FatturaElettronica
                 $sconto['Importo'] = $documento->sconto_finale;
             }
 
-            $sconti_maggiorazioni[] = $result;
+            $sconti_maggiorazioni[] = $sconto;
         }
 
         if (!empty($documento->dati_aggiuntivi_fe['sconto_maggiorazione_tipo'])) {
@@ -974,7 +974,7 @@ class FatturaElettronica
                 $sconto['Importo'] = $documento->dati_aggiuntivi_fe['sconto_maggiorazione_importo'];
             }
 
-            $sconti_maggiorazioni[] = $result;
+            $sconti_maggiorazioni[] = $sconto;
         }
 
         if (!empty($sconti_maggiorazioni)) {

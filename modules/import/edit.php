@@ -40,12 +40,12 @@ if (empty($id_record)) {
     $campi_disponibili = [];
     foreach ($fields as $key => $value) {
         $campi_disponibili[] = [
-            'id' => $key,
+            'id' => $key+1,
             'text' => $value['label'],
         ];
 
         if ($value['primary_key']) {
-            $primary_key = $value['field'];
+            $primary_key = $key+1;
         }
     }
 
@@ -100,8 +100,8 @@ if (empty($id_record)) {
             $nome = trim(string_lowercase($prima_riga[$column]));
             if (in_array($nome, $nomi_disponibili[$key])) {
                 $escludi_prima_riga = 1;
-                $selezionato = $key;
-                break;
+                $selezionato = $key+1;
+                break;    
             }
         }
 

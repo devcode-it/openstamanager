@@ -37,16 +37,15 @@ class CSV extends CSVImporter
                 'label' => 'Codice',
                 'primary_key' => true,
                 'names' => [
+                    'Codice',
                     'Codice interno',
                     'Numero',
-                    'Codice',
                 ],
             ],
             [
                 'field' => 'ragione_sociale',
                 'label' => 'Ragione sociale',
                 'names' => [
-                    'Nome',
                     'Denominazione',
                     'Ragione sociale',
                 ],

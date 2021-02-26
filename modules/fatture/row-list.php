@@ -234,6 +234,7 @@ $sconto = $fattura->sconto;
 $totale_imponibile = $fattura->totale_imponibile;
 $iva = $fattura->iva;
 $totale = $fattura->totale;
+$sconto_finale = $fattura->getScontoFinale();
 $netto_a_pagare = $fattura->netto;
 $rivalsa_inps = $fattura->rivalsa_inps;
 $ritenuta_acconto = $fattura->ritenuta_acconto;
@@ -356,6 +357,20 @@ if (!empty($ritenuta_contributi)) {
             </td>
             <td class="text-right">
                 '.moneyFormat($ritenuta_contributi, 2).'
+            </td>
+            <td></td>
+        </tr>';
+}
+
+// SCONTO FINALE
+if (!empty($sconto_finale)) {
+    echo '
+        <tr>
+            <td colspan="5" class="text-right">
+                <b>'.tr('Sconto finale', [], ['upper' => true]).':</b>
+            </td>
+            <td class="text-right">
+                '.moneyFormat($sconto_finale, 2).'
             </td>
             <td></td>
         </tr>';

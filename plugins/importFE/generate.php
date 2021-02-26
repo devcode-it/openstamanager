@@ -359,7 +359,9 @@ if (!empty($righe)) {
         echo '
         <tr data-id="'.$key.'" data-qta="'.$qta.'" data-prezzo_unitario="'.$prezzo_unitario.'" data-iva_percentuale="'.$riga['AliquotaIVA'].'">
             <td>
+                '.(empty($id_articolo) ? '<span class="label label-warning pull-right text-muted articolo-warning hidden">'.tr('Creazione articolo non disponibile').'</span>' : '').'
                 <small class="pull-right text-muted" id="riferimento_'.$key.'"></small>
+
 
                 '.$riga['Descrizione'].'<br>
 
@@ -500,6 +502,14 @@ echo '
 </form>
 
 <script>
+input("crea_articoli").on("change", function (){
+    if (input("crea_articoli").get()) {
+        $(".articolo-warning").removeClass("hidden");
+    } else {
+        $(".articolo-warning").addClass("hidden");
+    }
+});
+
  $("select[name^=selezione_riferimento").change(function() {
     let $this = $(this);
     let data = $this.selectData();
@@ -666,5 +676,4 @@ function rimuoviRiferimentoVendita(button) {
 $("[id^=\'articoli\']").change(function() {
     updateSelectOption("id_articolo", $(this).val());
 });
-
 </script>';

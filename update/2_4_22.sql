@@ -258,3 +258,8 @@ HAVING 2=2
 ORDER BY `mg_articoli`.`descrizione`' WHERE `zz_modules`.`name`='Articoli';
 
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name`='Articoli'), 'Q.tà ordinata', 'ordini_fornitore.qta_ordinata', '10', '1', '0', '1', '', '', '1', '0', '1');
+
+-- Aggiunta sconto finale in Fatture
+-- Nota: lo sconto finale è limitato alla Fattura, e non può derivare da ulteriori documenti
+ALTER TABLE `co_documenti` ADD `sconto_finale` DECIMAL(17,8) NOT NULL,
+    ADD `sconto_finale_percentuale` DECIMAL(17,8) NOT NULL;

@@ -188,7 +188,7 @@ echo "
         </td>
 
         <td class='cell-padded text-center'>
-            ".moneyFormat($totale, 2).'
+            ".moneyFormat($netto_a_pagare, 2).'
         </td>
     </tr>';
 

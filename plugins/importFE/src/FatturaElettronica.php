@@ -347,6 +347,7 @@ class FatturaElettronica
             $fattura->note = $note;
         }
 
+        // Sconto finale da ScontoMaggiorazione: non importato
         $fattura->save();
 
         // Fix generazione idsede

@@ -945,16 +945,40 @@ class FatturaElettronica
         }
 
         // Sconto / Maggiorazione (2.1.1.8)
+        $sconti_maggiorazioni = [];
+        $sconto_finale = $documento->getScontoFinale();
+        if (!empty($sconto_finale)) {
+            $sconto = [
+                'Tipo' => 'SC',
+            ];
+
+            if (!empty($documento->sconto_finale_percentuale)) {
+                $sconto['Percentuale'] = $documento->sconto_finale_percentuale;
+            } else {
+                $sconto['Importo'] = $documento->sconto_finale;
+            }
+
+            $sconti_maggiorazioni[] = $result;
+        }
+
         if (!empty($documento->dati_aggiuntivi_fe['sconto_maggiorazione_tipo'])) {
-            $result['ScontoMaggiorazione']['Tipo'] = $documento->dati_aggiuntivi_fe['sconto_maggiorazione_tipo'];
+            $sconto = [
+                'Tipo' => $documento->dati_aggiuntivi_fe['sconto_maggiorazione_tipo'],
+            ];
+
+            if (!empty($documento->dati_aggiuntivi_fe['sconto_maggiorazione_percentuale'])) {
+                $sconto['Percentuale'] = $documento->dati_aggiuntivi_fe['sconto_maggiorazione_percentuale'];
+            }
+
+            if (!empty($documento->dati_aggiuntivi_fe['sconto_maggiorazione_importo'])) {
+                $sconto['Importo'] = $documento->dati_aggiuntivi_fe['sconto_maggiorazione_importo'];
+            }
+
+            $sconti_maggiorazioni[] = $result;
         }
 
-        if (!empty($documento->dati_aggiuntivi_fe['sconto_maggiorazione_percentuale'])) {
-            $result['ScontoMaggiorazione']['Percentuale'] = $documento->dati_aggiuntivi_fe['sconto_maggiorazione_percentuale'];
-        }
-
-        if (!empty($documento->dati_aggiuntivi_fe['sconto_maggiorazione_importo'])) {
-            $result['ScontoMaggiorazione']['Importo'] = $documento->dati_aggiuntivi_fe['sconto_maggiorazione_importo'];
+        if (!empty($sconti_maggiorazioni)) {
+            $result['ScontoMaggiorazione'] = $sconti_maggiorazioni;
         }
 
         // Importo Totale Documento (2.1.1.9)

@@ -390,6 +390,7 @@ elseif ($record['stato'] == 'Bozza') {
                 }
             echo '
             </div>';
+
         if ($dir == 'entrata') {
             echo '
             <div class="row">
@@ -406,7 +407,12 @@ elseif ($record['stato'] == 'Bozza') {
                 <div class="col-md-3 bollo">
                     {[ "type": "number", "label": "'.tr('Importo marca da bollo').'", "name": "bollo", "value": "$bollo$"]}
                 </div>
+
+                <div class="col-md-3">
+                    {[ "type": "number", "label": "'.tr('Sconto finale').'", "name": "sconto_finale", "value": "'.($fattura->sconto_finale_percentuale ?: $fattura->sconto_finale).'", "icon-after": "choice|untprc|'.(empty($fattura->sconto_finale) ? 'PRC' : 'UNT').'", "help": "'.tr('Sconto finale in fattura, utilizzabile per applicare sconti sul Netto a pagare del documento e le relative scadenze').'. '.tr('Per utilizzarlo in relazione a una riga della Fattura Elettronica, inserire il testo di descrizione in \'\'Attributi avanzati\'\' -> \'\'Altri Dati Gestionali\'\' -> \'\'Riferimento Testo\'\' della specifica riga').'." ]}
+                </div>
             </div>';
+
             $bollo = new Bollo($fattura);
         }
 ?>

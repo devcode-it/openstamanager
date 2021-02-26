@@ -165,14 +165,12 @@ class Ricevuta
 
         // Registrazione del file XML come allegato
         $upload = Upload::build($this->file, [
-            'category' => tr('Fattura Elettronica'),
             'id_module' => $module->id,
             'id_record' => $fattura->id,
-            'name' => tr('Ricevuta _TYPE_', [
-                '_TYPE_' => $codice,
-            ]),
             'original' => $filename,
-        ]);
+        ], tr('Ricevuta _TYPE_', [
+            '_TYPE_' => $codice,
+        ]), tr('Fattura Elettronica'));
 
         return $upload;
     }

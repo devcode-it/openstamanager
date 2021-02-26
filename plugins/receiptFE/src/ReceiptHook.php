@@ -21,6 +21,7 @@ namespace Plugins\ReceiptFE;
 
 use Hooks\Manager;
 use Models\Cache;
+use Modules;
 
 class ReceiptHook extends Manager
 {
@@ -101,10 +102,13 @@ class ReceiptHook extends Manager
         $notify = $total_number != 0;
         $color = $total_number == $completed_number ? 'success' : 'yellow';
 
+        $module = Modules::get('Fatture di vendita');
+
         return [
             'icon' => 'fa fa-ticket text-'.$color,
             'message' => $message,
             'show' => $notify,
+            'link' => base_path().'/controller.php?id_module='.$module->id,
         ];
     }
 }

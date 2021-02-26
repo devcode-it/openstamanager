@@ -222,3 +222,6 @@ ALTER TABLE `zz_imports`
 INSERT INTO `zz_imports` (`id_module`, `name`, `class`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche'), 'Anagrafiche', 'Modules\\Anagrafiche\\Import\\CSV'),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), 'Articoli', 'Modules\\Articoli\\Import\\CSV');
+
+-- Introduzione hook per Notifiche su Ricevute FE
+INSERT INTO `zz_hooks` (`id`, `name`, `class`, `enabled`, `id_module`, `processing_at`, `processing_token`) VALUES (NULL, 'Notifiche su Ricevute FE', 'Plugins\\ReceiptFE\\NotificheRicevuteHook', '1', (SELECT `id` FROM `zz_modules` WHERE `name`='Fatture di vendita'), NULL, NULL);

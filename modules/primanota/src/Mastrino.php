@@ -239,7 +239,7 @@ class Mastrino extends Model
                 $totale_da_distribuire -= $scadenza_da_pagare;
             }
 
-            // In caso alternativo, assegno il rimanente da distrubuire interamente alla scadenza
+            // In caso alternativo, assegno il rimanente da distribuire interamente alla scadenza
             else {
                 $pagato = $totale_da_distribuire;
                 $totale_da_distribuire = 0;

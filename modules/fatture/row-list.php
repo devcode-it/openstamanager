@@ -147,7 +147,7 @@ foreach ($righe as $riga) {
         // Quantità e unità di misura
         echo '
             <td class="text-center">
-                '.numberFormat($fattura->isNota() ? -$riga->qta : $riga->qta, 'qta').' '.$riga->um.'
+                '.numberFormat($riga->qta, 'qta').' '.$riga->um.'
             </td>';
 
         // Prezzi unitari
@@ -182,7 +182,7 @@ foreach ($righe as $riga) {
         // Importo
         echo '
             <td class="text-right">
-                '.moneyFormat($fattura->isNota() ? -$riga->importo : $riga->importo).'
+                '.moneyFormat($riga->importo).'
             </td>';
     }
 
@@ -238,17 +238,6 @@ $netto_a_pagare = $fattura->netto;
 $rivalsa_inps = $fattura->rivalsa_inps;
 $ritenuta_acconto = $fattura->ritenuta_acconto;
 $ritenuta_contributi = $fattura->totale_ritenuta_contributi;
-
-// Inversione dei valori per le Note
-$imponibile = $fattura->isNota() ? -$imponibile : $imponibile;
-$sconto = $fattura->isNota() ? -$sconto : $sconto;
-$totale_imponibile = $fattura->isNota() ? -$totale_imponibile : $totale_imponibile;
-$iva = $fattura->isNota() ? -$iva : $iva;
-$totale = $fattura->isNota() ? -$totale : $totale;
-$netto_a_pagare = $fattura->isNota() ? -$netto_a_pagare : $netto_a_pagare;
-$rivalsa_inps = $fattura->isNota() ? -$rivalsa_inps : $rivalsa_inps;
-$ritenuta_acconto = $fattura->isNota() ? -$ritenuta_acconto : $ritenuta_acconto;
-$ritenuta_contributi = $fattura->isNota() ? -$ritenuta_contributi : $ritenuta_contributi;
 
 // IMPONIBILE
 echo '

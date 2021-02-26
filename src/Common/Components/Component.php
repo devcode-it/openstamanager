@@ -118,9 +118,11 @@ abstract class Component extends Model
         $previous = $this->qta;
         $diff = $value - $previous;
 
+        // Controlli su eventuale massimo per la quantità
         if ($this->hasOriginalComponent()) {
             $original = $this->getOriginalComponent();
 
+            // Controllo per evitare di superare la quantità totale del componente di origine
             if ($original->qta_rimanente < $diff) {
                 $diff = $original->qta_rimanente;
                 $value = $previous + $diff;
@@ -129,6 +131,7 @@ abstract class Component extends Model
 
         $this->attributes['qta'] = $value;
 
+        // Aggiornamento della quantità evasa di origine
         if ($this->hasOriginalComponent()) {
             $original = $this->getOriginalComponent();
 

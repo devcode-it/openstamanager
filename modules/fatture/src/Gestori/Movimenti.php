@@ -74,12 +74,17 @@ class Movimenti
         $direzione = $this->fattura->direzione;
         $is_acquisto = $direzione == 'uscita';
         $split_payment = $this->fattura->split_payment;
+        $is_nota = $this->fattura->isNota();
 
         // Totali utili per i movimenti
         $totale = $this->fattura->totale;
-        $iva = $this->fattura->iva;
         $iva_indetraibile = $this->fattura->iva_indetraibile;
-        $iva_detraibile = $iva - $iva_indetraibile;
+        $iva_detraibile = $this->fattura->iva - $iva_indetraibile;
+
+        // Inversione di segno per le note
+        $totale = $is_nota ? -$totale : $totale;
+        $iva_indetraibile = $is_nota ? -$iva_indetraibile : $iva_indetraibile;
+        $iva_detraibile = $is_nota ? -$iva_detraibile : $iva_detraibile;
 
         /*
          * 1) Movimento relativo al conto dell'anagrafica del documento
@@ -114,10 +119,11 @@ class Movimenti
             $id_conto = $riga->id_conto ?: $this->fattura->idconto;
 
             $imponibile = $riga->imponibile;
+            $imponibile = $is_nota ? -$imponibile : $imponibile; // Inversione di segno per le note
             if (!empty($imponibile)) {
                 $movimenti[] = [
                     'id_conto' => $id_conto,
-                    'avere' => $riga->imponibile,
+                    'avere' => $imponibile,
                 ];
             }
         }
@@ -151,6 +157,7 @@ class Movimenti
         * Rivalsa INPS (senza IVA) -> AVERE per Vendita, DARE per Acquisto
         */
         $rivalsa_inps = $this->fattura->rivalsa_inps;
+        $rivalsa_inps = $is_nota ? -$rivalsa_inps : $rivalsa_inps; // Inversione di segno per le note
         if (!empty($rivalsa_inps)) {
             $id_conto = setting('Conto per Erario c/INPS');
             $movimenti[] = [
@@ -165,6 +172,7 @@ class Movimenti
         * Conto della controparte: AVERE per Vendita, DARE per Acquisto
         */
         $ritenuta_acconto = $this->fattura->ritenuta_acconto;
+        $ritenuta_acconto = $is_nota ? -$ritenuta_acconto : $ritenuta_acconto; // Inversione di segno per le note
         if (!empty($ritenuta_acconto)) {
             $id_conto = setting("Conto per Erario c/ritenute d'acconto");
             $movimenti[] = [
@@ -184,6 +192,7 @@ class Movimenti
         * Conto della controparte: AVERE per Vendita, DARE per Acquisto
         */
         $ritenuta_contributi = $this->fattura->totale_ritenuta_contributi;
+        $ritenuta_contributi = $is_nota ? -$ritenuta_contributi : $ritenuta_contributi; // Inversione di segno per le note
         if (!empty($ritenuta_contributi)) {
             $id_conto = setting('Conto per Erario c/enasarco');
             $movimenti[] = [

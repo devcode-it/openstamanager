@@ -62,7 +62,8 @@ echo '
 
 // Individuazione movimenti
 $movimenti = $articolo->movimentiComposti()
-    ->orderBy('data', 'id');
+    ->orderBy('data', 'DESC')
+    ->orderBy('id', 'DESC');
 if (empty($_GET['movimentazione_completa'])) {
     $movimenti->limit(20);
 }

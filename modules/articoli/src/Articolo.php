@@ -102,7 +102,7 @@ class Articolo extends Model
         }
 
         // Movimento il magazzino solo se l'articolo non è un servizio
-        if ($this->servizio == 0) {
+        if (empty($this->servizio)) {
             // Registrazione della movimentazione
             database()->insert('mg_movimenti', array_merge($array, [
                 'idarticolo' => $this->id,

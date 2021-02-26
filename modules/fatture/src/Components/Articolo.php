@@ -33,17 +33,39 @@ class Articolo extends Article
 
     public function movimenta($qta)
     {
-        if (!$this->getDocument()->movimenta_magazzino) {
+        $documento = $this->getDocument();
+        if (!$documento->movimenta_magazzino) {
             return;
         }
 
         $movimenta = true;
 
-        // Movimenta il magazzino solo se l'articolo non è già stato movimentato da un documento precedente
-        // Movimentazione forzata per Note di credito/debito
-        if ($this->hasOriginalComponent() && !$this->getDocument()->isNota()) {
+        // Controllo sul documento di origine dell'articolo: effettua il movimento di magazzino solo se non è già stato effettuato
+        // Se il documento corrente è una Nota (di credito/debito) si veda il controllo successivo
+        if (!$documento->isNota() && $this->hasOriginalComponent()) {
             $original = $this->getOriginalComponent();
             $movimenta = !$original->getDocument()->movimenta_magazzino;
+        }
+
+        // Gestione casistica per Note (di credito/debito)
+        if ($documento->isNota()) {
+            // Correzione delle quantità per gestione dei movimenti invertiti
+            $qta = -$qta;
+
+            if ($this->hasOriginalComponent()) {
+                $original = $this->getOriginalComponent();
+                $original_document = $original->getDocument();
+                $direzione_inversa = $original_document->direzione != $this->getDocument()->direzione;
+
+                // Inversione aggiuntiva in caso di origine da documenti della tipologia inversa
+                $qta = $direzione_inversa ? -$qta : $qta;
+
+                // Controllo sul documento di origine dell'articolo: se i movimenti sono già stati effettuati e la direzione è invertita rispetto alla Nota, non si effettuano altri movimenti
+                // Esempio: DDT in entrata (documento di uscita) -> Nota di credito (documento di entrata)
+                if ($original_document->movimenta_magazzino && $direzione_inversa) {
+                    $movimenta = false;
+                }
+            }
         }
 
         if ($movimenta) {

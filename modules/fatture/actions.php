@@ -255,8 +255,6 @@ switch (post('op')) {
                 } else {
                     $totale_documento = $totale_documento_indicato;
                 }
-
-                $totale_documento = $fattura->isNota() ? -$totale_documento : $totale_documento;
             }
         } catch (Exception $e) {
         }
@@ -460,11 +458,6 @@ switch (post('op')) {
                 $id_conto = $originale->idconto_acquisto;
             }
 
-            // Inversione quantità per Note
-            if (!empty($record['is_reversed'])) {
-                $qta = -$qta;
-            }
-
             // Creazione articolo
             $originale = ArticoloOriginale::find($id_articolo);
             $articolo = Articolo::build($fattura, $originale);
@@ -495,10 +488,6 @@ switch (post('op')) {
         }
 
         $qta = post('qta');
-        // Inversione quantità per Note
-        if (!empty($record['is_reversed'])) {
-            $qta = -$qta;
-        }
 
         $articolo->descrizione = post('descrizione');
         $articolo->um = post('um') ?: null;
@@ -736,9 +725,6 @@ switch (post('op')) {
         foreach ($righe as $riga) {
             if (post('evadere')[$riga->id] == 'on') {
                 $qta = post('qta_da_evadere')[$riga->id];
-                if ($reversed) {
-                    $qta = -$qta;
-                }
 
                 $copia = $riga->copiaIn($fattura, $qta);
                 $copia->id_conto = $id_conto;
@@ -802,7 +788,7 @@ switch (post('op')) {
             if (post('evadere')[$riga->id] == 'on' and !empty(post('qta_da_evadere')[$riga->id])) {
                 $qta = post('qta_da_evadere')[$riga->id];
 
-                $copia = $riga->copiaIn($nota, -$qta);
+                $copia = $riga->copiaIn($nota, $qta);
                 $copia->ref_riga_documento = $riga->id;
 
                 // Aggiornamento seriali dalla riga dell'ordine

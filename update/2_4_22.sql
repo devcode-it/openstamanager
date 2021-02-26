@@ -191,7 +191,7 @@ ALTER TABLE `or_ordini` ADD `codice_commessa` VARCHAR(100) NULL AFTER `updated_a
 UPDATE `or_ordini` SET `numero_cliente`= `id_documento_fe` WHERE `id_documento_fe`!='' AND `id_documento_fe` IS NOT NULL;
 
 -- Fix nome file con il tipo documento di vendita
-UPDATE `zz_prints` SET `filename` = '{tipo_documento} num. {numero} del {data}' WHERE `zz_prints`.`name` = 'Fattura di vendita'; 
+UPDATE `zz_prints` SET `filename` = '{tipo_documento} num. {numero} del {data}' WHERE `zz_prints`.`name` = 'Fattura di vendita';
 -- Risorsa API per sincronizzazione rapida di un singolo intervento
 INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES
 (NULL, 'app-v1', 'update', 'intervento-flash', 'API\\App\\v1\\Flash\\Intervento', '1');
@@ -199,3 +199,6 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 -- Colonna categoria impianto
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
 (NULL, (SELECT id FROM zz_modules WHERE name='Impianti'), 'Categoria', '(SELECT nome FROM my_impianti_categorie WHERE my_impianti_categorie.id=id_categoria)', 6, 1, 0, 0, '', '', 1, 0, 0);
+
+-- Fix quantità positiva per Note di credito
+UPDATE `co_righe_documenti` SET `qta` = ABS(`qta`), `qta_evasa` = ABS(`qta_evasa`);

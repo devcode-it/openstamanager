@@ -77,8 +77,6 @@ class DatiFattureElettroniche extends Controllo
                 } else {
                     $totale_documento_xml = $totale_documento_indicato;
                 }
-
-                $totale_documento_xml = $fattura_vendita->isNota() ? -$totale_documento_xml : $totale_documento_xml;
             }
 
             // Se riscontro un'anomalia

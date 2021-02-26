@@ -57,8 +57,12 @@ class Scadenze
             $this->registraScadenzeTradizionali($is_pagato);
         }
 
-        $direzione = $this->fattura->tipo->dir;
+        // Registrazione scadenza per Ritenuta d'Acconto
+        // Inversione di segno per le note
         $ritenuta_acconto = $this->fattura->ritenuta_acconto;
+        $ritenuta_acconto = $this->fattura->isNota() ? -$ritenuta_acconto : $ritenuta_acconto;
+
+        $direzione = $this->fattura->tipo->dir;
         $is_ritenuta_pagata = $this->fattura->is_ritenuta_pagata;
 
         // Se c'è una ritenuta d'acconto, la aggiungo allo scadenzario al 15 del mese dopo l'ultima scadenza di pagamento
@@ -128,7 +132,7 @@ class Scadenze
 
             foreach ($rate as $rata) {
                 $scadenza = !empty($rata['DataScadenzaPagamento']) ? FatturaElettronicaImport::parseDate($rata['DataScadenzaPagamento']) : $this->fattura->data;
-                $importo = ($this->fattura->isNota()) ? $rata['ImportoPagamento'] : -$rata['ImportoPagamento'];
+                $importo = $this->fattura->isNota() ? $rata['ImportoPagamento'] : -$rata['ImportoPagamento'];
 
                 self::registraScadenza($this->fattura, $importo, $scadenza, $is_pagato);
             }
@@ -144,7 +148,12 @@ class Scadenze
      */
     protected function registraScadenzeTradizionali($is_pagato = false)
     {
-        $rate = $this->fattura->pagamento->calcola($this->fattura->netto, $this->fattura->data);
+        // Inversione di segno per le note
+        $netto = $this->fattura->netto;
+        $netto = $this->fattura->isNota() ? -$netto : $netto;
+
+        // Calcolo delle rate
+        $rate = $this->fattura->pagamento->calcola($netto, $this->fattura->data);
         $direzione = $this->fattura->tipo->dir;
 
         foreach ($rate as $rata) {

@@ -292,16 +292,15 @@ abstract class Article extends Accounting
         $qta_movimento = $documento->direzione == 'uscita' ? $qta : -$qta;
         $movimento = Movimento::descrizioneMovimento($qta_movimento, $documento->direzione).' - '.$documento->getReference();
 
-        $idsede = $documento->direzione == 'uscita' ? $documento->idsede_destinazione : $documento->idsede_partenza;
+        $id_sede = $documento->direzione == 'uscita' ? $documento->idsede_destinazione : $documento->idsede_partenza;
 
         // Fix per valori di sede a NULL
-        $partenza = $partenza ?: 0;
-        $arrivo = $arrivo ?: 0;
+        $id_sede = $id_sede ?: 0;
 
         $this->articolo->movimenta($qta_movimento, $movimento, $data, false, [
             'reference_type' => get_class($documento),
             'reference_id' => $documento->id,
-            'idsede' => $idsede,
+            'idsede' => $id_sede,
         ]);
     }
 

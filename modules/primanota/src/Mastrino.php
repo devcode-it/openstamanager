@@ -184,6 +184,8 @@ class Mastrino extends Model
 
     protected function correggiScadenza(Movimento $movimento, Scadenza $scadenza = null, Fattura $documento = null)
     {
+        $is_nota = false;
+
         $documento = $documento ?: $scadenza->documento;
         if ($documento) {
             $dir = $documento->direzione;
@@ -202,9 +204,10 @@ class Mastrino extends Model
             }
 
             $totale_pagato = $totale_movimenti - $totale_insoluto;
+            $is_nota = $documento->isNota();
         } else {
             $scadenze = [$scadenza];
-            $dir = $movimento->totale<0 ? 'entrata' : 'uscita';
+            $dir = $movimento->totale < 0 ? 'entrata' : 'uscita';
 
             $totale_pagato = $movimento->totale;
         }
@@ -237,6 +240,7 @@ class Mastrino extends Model
             }
 
             $pagato = $dir == 'uscita' ? -$pagato : $pagato;
+            $pagato = $is_nota ? -$pagato : $pagato; // Inversione di segno per le note
 
             $scadenza->pagato = $pagato;
             $scadenza->data_pagamento = $pagato ? $this->data : null;

@@ -169,7 +169,7 @@ HAVING 2=2
 ORDER BY `co_documenti`.`data` DESC, CAST(IF(`co_documenti`.`numero` = '''', `co_documenti`.`numero_esterno`, `co_documenti`.`numero`) AS UNSIGNED) DESC' WHERE `zz_modules`.`name`='Fatture di acquisto';
 
 
-INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name`='Fatture di acquisto'), '_bg_', 'IF(`d`.`conteggio`>1, ''red'', '''')', '1', '0', '0', '0', '', '', '0', '0', '0');
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name`='Fatture di acquisto'), '_bg_', 'IF(`d`.`conteggio`>1, ''red'', '''')', '1', '0', '0', '0', '', '', '0', '0', '1');
 
 INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) (SELECT `zz_groups`.`id`, `zz_views`.`id` FROM `zz_groups`, `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` WHERE `zz_modules`.`name` = 'Fatture di acquisto' AND `zz_views`.`name` = '_bg_');
 
@@ -198,7 +198,7 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 
 -- Colonna categoria impianto
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
-(NULL, (SELECT id FROM zz_modules WHERE name='Impianti'), 'Categoria', '(SELECT nome FROM my_impianti_categorie WHERE my_impianti_categorie.id=id_categoria)', 6, 1, 0, 0, '', '', 1, 0, 0);
+(NULL, (SELECT id FROM zz_modules WHERE name='Impianti'), 'Categoria', '(SELECT nome FROM my_impianti_categorie WHERE my_impianti_categorie.id=id_categoria)', 6, 1, 0, 0, '', '', 1, 0, 1);
 
 -- Fix quantità positiva per Note di credito
 UPDATE `co_righe_documenti` SET `qta` = ABS(`qta`), `qta_evasa` = ABS(`qta_evasa`);
@@ -225,3 +225,36 @@ INSERT INTO `zz_imports` (`id_module`, `name`, `class`) VALUES
 
 -- Introduzione hook per Notifiche su Ricevute FE
 INSERT INTO `zz_hooks` (`id`, `name`, `class`, `enabled`, `id_module`, `processing_at`, `processing_token`) VALUES (NULL, 'Notifiche su Ricevute FE', 'Plugins\\ReceiptFE\\NotificheRicevuteHook', '1', (SELECT `id` FROM `zz_modules` WHERE `name`='Fatture di vendita'), NULL, NULL);
+
+-- Aggiornamento query Articoli per aggiunta quantità ordinata
+UPDATE `zz_modules` SET `options` = 'SELECT |select|
+FROM `mg_articoli`
+    LEFT JOIN an_anagrafiche ON mg_articoli.id_fornitore = an_anagrafiche.idanagrafica
+    LEFT JOIN co_iva ON mg_articoli.idiva_vendita = co_iva.id
+    LEFT JOIN (
+        SELECT SUM(or_righe_ordini.qta - or_righe_ordini.qta_evasa) AS qta_impegnata, or_righe_ordini.idarticolo
+        FROM or_righe_ordini
+            INNER JOIN or_ordini ON or_righe_ordini.idordine = or_ordini.id
+            INNER JOIN or_tipiordine ON or_ordini.idtipoordine = or_tipiordine.id
+        WHERE idstatoordine IN(SELECT id FROM or_statiordine WHERE completato = 0)
+            AND or_tipiordine.dir = ''entrata''
+            AND or_righe_ordini.confermato = 1
+        GROUP BY idarticolo
+    ) a ON a.idarticolo = mg_articoli.id
+    LEFT JOIN (
+        SELECT SUM(or_righe_ordini.qta) AS qta_ordinata, or_righe_ordini.idarticolo
+        FROM or_righe_ordini
+            INNER JOIN or_ordini ON or_righe_ordini.idordine = or_ordini.id
+            INNER JOIN or_tipiordine ON or_ordini.idtipoordine = or_tipiordine.id
+        WHERE idstatoordine IN(SELECT id FROM or_statiordine WHERE completato = 1)
+            AND or_tipiordine.dir = ''uscita''
+            AND or_righe_ordini.confermato = 1
+        GROUP BY idarticolo
+    ) ordini_fornitore ON ordini_fornitore.idarticolo = mg_articoli.id
+    LEFT JOIN mg_categorie ON mg_articoli.id_categoria = mg_categorie.id
+    LEFT JOIN mg_categorie AS sottocategorie ON mg_articoli.id_sottocategoria = sottocategorie.id
+WHERE 1=1 AND (`mg_articoli`.`deleted_at`) IS NULL
+HAVING 2=2
+ORDER BY `mg_articoli`.`descrizione`' WHERE `zz_modules`.`name`='Articoli';
+
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name`='Articoli'), 'Q.tà ordinata', 'ordini_fornitore.qta_ordinata', '10', '1', '0', '1', '', '', '1', '0', '1');

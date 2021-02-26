@@ -228,9 +228,9 @@ class Mastrino extends Model
         foreach ($scadenze as $scadenza) {
             $scadenza_da_pagare = abs($scadenza['da_pagare']);
 
-            // Nel caso in cui il totale da distribuire sia stato esaurito, evita l'iterazione
+            // Nel caso in cui il totale da distribuire sia stato esaurito, imposta il pagato a zero
             if ($totale_da_distribuire <= 0) {
-                continue;
+                $pagato = 0;
             }
 
             // Se il totale da distribuire è superiore al valore da pagare della scadenza, completa il pagamento

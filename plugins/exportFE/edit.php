@@ -181,7 +181,7 @@ if (!empty($ricevuta_principale)) {
                 echo '
         <tr>
             <td>'.$errore['Codice'].'</td>
-            <td>'.$errore['Descrizione'].'</td>
+            <td>'.htmlentities($errore['Descrizione']).'</td>
         </tr>';
             }
 

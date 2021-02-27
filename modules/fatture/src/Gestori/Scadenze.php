@@ -62,6 +62,10 @@ class Scadenze
         $ritenuta_acconto = $this->fattura->ritenuta_acconto;
         $ritenuta_acconto = $this->fattura->isNota() ? -$ritenuta_acconto : $ritenuta_acconto;
 
+        if (!empty($this->fattura->sconto_finale_percentuale)) {
+            $ritenuta_acconto = $ritenuta_acconto * (1 - $this->fattura->sconto_finale_percentuale / 100);
+        }
+
         $direzione = $this->fattura->tipo->dir;
         $is_ritenuta_pagata = $this->fattura->is_ritenuta_pagata;
 

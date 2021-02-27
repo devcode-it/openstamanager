@@ -409,7 +409,7 @@ elseif ($record['stato'] == 'Bozza') {
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "number", "label": "'.tr('Sconto finale').'", "name": "sconto_finale", "value": "'.($fattura->sconto_finale_percentuale ?: $fattura->sconto_finale).'", "icon-after": "choice|untprc|'.(empty($fattura->sconto_finale) ? 'PRC' : 'UNT').'", "help": "'.tr('Sconto finale in fattura, utilizzabile per applicare sconti sul Netto a pagare del documento e le relative scadenze').'. '.tr('Per utilizzarlo in relazione a una riga della Fattura Elettronica, inserire il testo di descrizione in \'\'Attributi avanzati\'\' -> \'\'Altri Dati Gestionali\'\' -> \'\'Riferimento Testo\'\' della specifica riga').'." ]}
+                    {[ "type": "number", "label": "'.tr('Sconto finale').'", "name": "sconto_finale", "value": "'.($fattura->sconto_finale_percentuale ?: $fattura->sconto_finale).'", "icon-after": "choice|untprc|'.(empty($fattura->sconto_finale) ? 'PRC' : 'UNT').'", "help": "'.tr('Sconto finale in fattura, utilizzabile per applicare sconti sul Netto a pagare del documento e le relative scadenze').'. '.tr('Per utilizzarlo in relazione a una riga della Fattura Elettronica, inserire il testo di descrizione in \'\'Attributi avanzati\'\' -> \'\'Altri Dati Gestionali\'\' -> \'\'Riferimento Testo\'\' della specifica riga').'. '.tr('Nota: lo sconto finale in fattura non influenza i movimenti contabili').'." ]}
                 </div>
             </div>';
 

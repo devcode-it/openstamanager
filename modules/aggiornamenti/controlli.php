@@ -55,6 +55,10 @@ $(document).ready(function () {
     progress.hide();
 })
 
+/**
+*
+* @param button
+*/
 function avviaControlli(button) {
     var restore = buttonLoading(button);
 
@@ -109,6 +113,10 @@ function avviaControlli(button) {
     });
 }
 
+/**
+*
+* @param controllo
+*/
 function avviaControllo(controllo) {
     return $.ajax({
         url: globals.rootdir + "/actions.php",
@@ -120,15 +128,18 @@ function avviaControllo(controllo) {
             controllo: controllo["class"],
         },
         success: function(records) {
+            let success = false;
             if (records.length === 0) {
-                return;
+                success = true;
             }
 
-            let panel = initPanel(controllo);
+            // Creazione pannello informativo e aggiunta righe
+            let panel = initPanel(controllo, success);
             for(const record of records) {
                 addRiga(controllo, panel, record);
             }
 
+            // Visualizzazione delle informazioni
             $("#controlli").append(panel);
         },
         error: function(xhr, r, error) {
@@ -137,6 +148,12 @@ function avviaControllo(controllo) {
     });
 }
 
+/**
+*
+* @param controllo
+* @param records
+* @param params
+*/
 function eseguiAzione(controllo, records, params) {
     return $.ajax({
         url: globals.rootdir + "/actions.php",
@@ -158,35 +175,69 @@ function eseguiAzione(controllo, records, params) {
     });
 }
 
+/**
+*
+* @param percent
+*/
 function setPercentage(percent) {
     $("#progress .progress-bar").width(percent + "%");
     $("#progress .progress-bar span").text(percent + "%");
 }
 
-function initPanel(controllo) {
-    let panel = `<div class="box" id="controllo-` + controllo["id"] + `">
+/**
+*
+* @param controllo
+* @param success
+* @returns {*|jQuery|HTMLElement}
+*/
+function initPanel(controllo, success) {
+    let cssClass = "";
+    let icon = "minus";
+    if (success) {
+        cssClass = "box-success";
+        icon = "check text-success";
+    }
+
+    let panel = `<div class="box ` + cssClass + `" id="controllo-` + controllo["id"] + `">
     <div class="box-header with-border">
         <h3 class="box-title">` + controllo["name"] + `</h3>
-    </div>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-` + icon + `"></i>
+            </button>
+        </div>
+    </div>`
+
+    if (!success) {
+        panel += `
     <div class="box-body">
         <div class="table-responsive">
             <table class="table table-striped table-hover table-condensed table-bordered">
                 <thead>
                     <tr>
-                        <th width="15%">'.tr('Record').'</th>
-                        <th>'.tr('Descrizione').'</th>
-                        <th class="text-center" width="15%">'.tr('Opzioni').'</th>
+                        <th width="15%">' . tr('Record') . '</th>
+                        <th>' . tr('Descrizione') . '</th>
+                        <th class="text-center" width="15%">' . tr('Opzioni') . '</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
             </table>
         </div>
-    </div>
+    </div>`
+    }
+
+        panel += `
 </div>`;
 
     return $(panel);
 }
 
+/**
+*
+* @param controllo
+* @param panel
+* @param record
+*/
 function addRiga(controllo, panel, record) {
     let body = panel.find("tbody");
 

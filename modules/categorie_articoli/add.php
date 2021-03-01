@@ -35,19 +35,8 @@ if (isset($id_original)) {
 }
 ?>" method="post" id="add-form">
 	<input type="hidden" name="backto" value="record-edit">
-
-<?php
-if (!isset($id_original)) {
-    ?>
-	<input type="hidden" name="op" value="add">
-<?php
-} else {
-        ?>
-	<input type="hidden" name="op" value="row">
-	<input type="hidden" name="id_original" value="<?php echo $id_original; ?>">
-<?php
-    }
-?>
+    <input type="hidden" name="id_original" value="<?php echo $id_original; ?>">
+    <input type="hidden" name="op" value="<?php echo $id_record ? 'update' : 'add'; ?>">
 
 	<div class="row">
         <div class="col-md-8">

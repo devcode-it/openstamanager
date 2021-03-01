@@ -26,7 +26,14 @@ switch (filter('op')) {
         $colore = filter('colore');
 
         if (isset($nome) && isset($nota) && isset($colore)) {
-            $dbo->query('UPDATE `mg_categorie` SET `nome`='.prepare($nome).', `nota`='.prepare($nota).', `colore`='.prepare($colore).' WHERE `id`='.prepare($id_record));
+            $database->table('mg_categorie')
+                ->where('id', '=', $id_record)
+                ->update([
+                    'nome' => $nome,
+                    'nota' => $nota,
+                    'colore' => $colore,
+                ]);
+
             flash()->info(tr('Salvataggio completato!'));
         } else {
             flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
@@ -39,26 +46,36 @@ switch (filter('op')) {
         $nota = filter('nota');
         $colore = filter('colore');
 
-        $n = $dbo->fetchNum('SELECT * FROM `mg_categorie` WHERE `nome` LIKE '.prepare($nome));
+        $id_original = filter('id_original') ?: null;
 
-        if (isset($nome)) {
-            if ($n == 0) {
-                $dbo->query('INSERT INTO `mg_categorie` (`nome`, `colore`, `nota`) VALUES ('.prepare($nome).', '.prepare($colore).', '.prepare($nota).')');
+        // Ricerca corrispondenze con stesso nome
+        $corrispondenze = $database->table('mg_categorie')
+            ->where('nome', '=', $nome);
+        if (!empty($id_original)) {
+            $corrispondenze = $corrispondenze->where('parent', '=', $id_original);
+        }
+        $corrispondenze = $corrispondenze->get();
 
-                $id_record = $dbo->lastInsertedID();
+        // Eventuale creazione del nuovo record
+        if ($corrispondenze->count() == 0) {
+            $id_record = $database->table('mg_categorie')
+                ->insertGetId([
+                    'nome' => $nome,
+                    'nota' => $nota,
+                    'colore' => $colore,
+                    'parent' => $id_original,
+                ]);
 
-                if (isAjaxRequest()) {
-                    echo json_encode(['id' => $id_record, 'text' => $nome]);
-                }
-
-                flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
-                    '_TYPE_' => 'categoria',
-                ]));
-            } else {
-                flash()->error(tr('Esiste già una categoria con lo stesso nome!'));
-            }
+            flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
+                '_TYPE_' => 'categoria',
+            ]));
         } else {
-            flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
+            $id_record = $corrispondenze->first()->id;
+            flash()->error(tr('Esiste già una categoria con lo stesso nome!'));
+        }
+
+        if (isAjaxRequest()) {
+            echo json_encode(['id' => $id_record, 'text' => $nome]);
         }
 
         break;
@@ -77,32 +94,6 @@ switch (filter('op')) {
             ]));
         } else {
             flash()->error(tr('Esistono alcuni articoli collegati a questa categoria. Impossibile eliminarla.'));
-        }
-
-        break;
-
-    case 'row':
-        $nome = filter('nome');
-        $nota = filter('nota');
-        $colore = filter('colore');
-        $original = filter('id_original');
-
-        if (isset($nome) && isset($nota) && isset($colore)) {
-            if (!empty($id_record)) {
-                $dbo->query('UPDATE `mg_categorie` SET `nome`='.prepare($nome).', `nota`='.prepare($nota).', `colore`='.prepare($colore).' WHERE `id`='.prepare($id_record));
-            } else {
-                $dbo->query('INSERT INTO `mg_categorie` (`nome`,`nota`,`colore`, `parent`) VALUES ('.prepare($nome).', '.prepare($nota).', '.prepare($colore).', '.prepare($original).')');
-
-                $id_record = $dbo->lastInsertedID();
-
-                if (isAjaxRequest()) {
-                    echo json_encode(['id' => $id_record, 'text' => $nome]);
-                }
-            }
-            flash()->info(tr('Salvataggio completato!'));
-            $id_record = $original;
-        } else {
-            flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
         }
 
         break;

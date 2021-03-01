@@ -264,6 +264,8 @@ ALTER TABLE `co_documenti` ADD `sconto_finale` DECIMAL(17,8) NOT NULL,
 -- Fix quantità positiva per Note di credito
 UPDATE `co_righe_documenti` SET `qta` = ABS(`qta`), `qta_evasa` = ABS(`qta_evasa`), `subtotale` = ABS(`subtotale`), `iva` = ABS(`iva`), `ritenutaacconto` = ABS(`ritenutaacconto`), `rivalsainps` = ABS(`rivalsainps`);
 
+UPDATE `co_documenti` SET `ritenutaacconto` = ABS(`ritenutaacconto`), `rivalsainps` = ABS(`rivalsainps`), `ritenuta_contributi` = ABS(`ritenuta_contributi`);
+
 -- Correzione widget con utilizzo interno delle quantità negative per Note
 UPDATE `zz_widgets` SET `query` = 'SELECT
     CONCAT_WS('' '', REPLACE(REPLACE(REPLACE(FORMAT((
@@ -286,6 +288,17 @@ FROM co_righe_documenti
     INNER JOIN co_documenti ON co_righe_documenti.iddocumento = co_documenti.id
     INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento = co_tipidocumento.id
 WHERE co_tipidocumento.dir=''uscita'' |segment| AND data >= ''|period_start|'' AND data <= ''|period_end|'' AND 1=1' WHERE `zz_widgets`.`name`='Acquisti';
+
+
+-- Correzione campi del Totale per le tabelle principali di Fatture
+UPDATE `zz_views` SET `query` = 'righe.totale_imponibile * IF(co_tipidocumento.reversed, -1, 1)' WHERE `name` = 'Totale' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Fatture di vendita');
+UPDATE `zz_views` SET `query` = 'righe.totale_imponibile * IF(co_tipidocumento.reversed, -1, 1)' WHERE `name` = 'Totale' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Fatture di acquisto');
+
+UPDATE `zz_views` SET `query` = '(righe.totale + `co_documenti`.`rivalsainps` + `co_documenti`.`iva_rivalsainps`) * IF(co_tipidocumento.reversed, -1, 1)' WHERE `name` = 'Totale ivato' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Fatture di vendita');
+UPDATE `zz_views` SET `query` = '(righe.totale + `co_documenti`.`rivalsainps` + `co_documenti`.`iva_rivalsainps`) * IF(co_tipidocumento.reversed, -1, 1)' WHERE `name` = 'Totale ivato' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Fatture di acquisto');
+
+UPDATE `zz_views` SET `query` = '(righe.totale + `co_documenti`.`rivalsainps` + `co_documenti`.`iva_rivalsainps` - `co_documenti`.`ritenutaacconto`) * IF(co_tipidocumento.reversed, -1, 1)' WHERE `name` = 'Netto a pagare' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Fatture di vendita');
+UPDATE `zz_views` SET `query` = '(righe.totale + `co_documenti`.`rivalsainps` + `co_documenti`.`iva_rivalsainps` - `co_documenti`.`ritenutaacconto`) * IF(co_tipidocumento.reversed, -1, 1)' WHERE `name` = 'Netto a pagare' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Fatture di acquisto');
 
 -- Fix campi Conto dare e Conto avere del modulo Prima nota
 UPDATE `zz_views` SET `order` = 5, `name`='Conto avere_new' WHERE `name`='Conto dare';

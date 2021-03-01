@@ -26,8 +26,9 @@ $imponibile = abs($documento->imponibile);
 $sconto = $documento->sconto;
 $totale_imponibile = abs($documento->totale_imponibile);
 $totale_iva = abs($documento->iva);
-$totale = abs($documento->totale);
-$netto_a_pagare = abs($documento->netto);
+$sconto_finale = $documento->getScontoFinale();
+$rivalsa = floatval($record['rivalsainps']);
+$totale = abs($documento->totale) - $rivalsa;
 
 $show_sconto = $sconto > 0;
 
@@ -35,6 +36,17 @@ $volume = $documento->volume ?: $documento->volume_calcolato;
 $peso_lordo = $documento->peso ?: $documento->peso_calcolato;
 
 $width = round(100 / ($show_sconto ? 5 : 3), 2);
+
+$has_rivalsa = !empty($record['rivalsainps']);
+$has_ritenuta = !empty($record['ritenutaacconto']) || !empty($documento->totale_ritenuta_contributi) || !empty($record['spit_payment']);
+$has_split_payment = !empty($record['split_payment']);
+$has_sconto_finale = !empty($sconto_finale);
+
+$etichette = [
+    'totale' => tr('Totale', [], ['upper' => true]),
+    'totale_parziale' => tr('Totale parziale', [], ['upper' => true]),
+    'totale_finale' => tr('Netto a pagare', [], ['upper' => true]),
+];
 
 // SCADENZE  |  TOTALI
 // TABELLA PRINCIPALE
@@ -137,7 +149,11 @@ echo '
 echo '
         </td>';
 
-// TOTALI
+/*
+ * Riga di riepilogo dei totali.
+ * Se sconto: Imponibile | Sconto | Totale imponibile | Totale IVA | Totale
+ * Altrimenti: Imponibile | Totale IVA | Totale
+ */
 echo "
     <tr>
         <th class='text-center small' style='width:".$width."'>
@@ -161,7 +177,7 @@ echo "
         </th>
 
         <th class='text-center small' style='width:".$width."'>
-            ".tr('Totale documento', [], ['upper' => true])."
+            ".(!$has_rivalsa && !$has_ritenuta && !$has_split_payment && !$has_sconto_finale ? $etichette['totale'] : $etichette['totale_parziale'])."
         </th>
     </tr>
 
@@ -188,12 +204,15 @@ echo "
         </td>
 
         <td class='cell-padded text-center'>
-            ".moneyFormat($netto_a_pagare, 2).'
+            ".moneyFormat($totale, 2).'
         </td>
     </tr>';
 
-// Rivalsa INPS
-if (!empty($record['rivalsainps'])) {
+/*
+ * Riga di riepilogo della Rivalsa INPS.
+ * Rivalsa INPS | Totale (+ Rivalsa INPS)
+ */
+if ($has_rivalsa) {
     $rs2 = $dbo->fetchArray('SELECT percentuale FROM co_rivalse WHERE id=(SELECT idrivalsainps FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idrivalsainps!=0 LIMIT 0,1)');
 
     $first_colspan = 3;
@@ -215,15 +234,16 @@ if (!empty($record['rivalsainps'])) {
     echo '
 
         <th class="text-center small" colspan="'.$second_colspan.'">
-            '.tr('Totale documento', [], ['upper' => true]).'
+            '.(!$has_ritenuta && !$has_split_payment && !$has_sconto_finale ? $etichette['totale_finale'] : $etichette['totale_parziale']).'
         </th>
     </tr>
 
     <tr>
         <td class="cell-padded text-center" colspan="'.$first_colspan.'">
-            '.moneyFormat($record['rivalsainps'], 2).'
+            '.moneyFormat($rivalsa, 2).'
         </td>';
 
+    $totale = $totale + $rivalsa;
     echo '
 
         <td class="cell-padded text-center" colspan="'.$second_colspan.'">
@@ -232,8 +252,11 @@ if (!empty($record['rivalsainps'])) {
     </tr>';
 }
 
-// Ritenuta d'acconto ( + se no rivalsa inps)
-if (!empty($record['ritenutaacconto']) || !empty($documento->totale_ritenuta_contributi) || !empty($record['spit_payment'])) {
+/*
+ * Riga di riepilogo di Ritenuta d'acconto e Ritenuta contributi.
+ * Ritenuta | Totale (+ Rivalsa INPS - Ritenuta)
+ */
+if ($has_ritenuta) {
     $rs2 = $dbo->fetchArray('SELECT percentuale FROM co_ritenutaacconto WHERE id=(SELECT idritenutaacconto FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idritenutaacconto!=0 LIMIT 0,1)');
 
     $first_colspan = 3;
@@ -250,6 +273,7 @@ if (!empty($record['ritenutaacconto']) || !empty($documento->totale_ritenuta_con
     $acconto = tr('acconto: _PRC_%', [
         '_PRC_' => Translator::numberToLocale($rs2[0]['percentuale'], 0),
     ]);
+    $ritenuta_totale = abs($documento->ritenuta_acconto) + abs($documento->totale_ritenuta_contributi);
 
     echo '
     <tr>
@@ -261,13 +285,8 @@ if (!empty($record['ritenutaacconto']) || !empty($documento->totale_ritenuta_con
         </th>';
 
     echo '
-        <th class="text-center small" colspan="'.$second_colspan.'">';
-    if (empty($record['split_payment'])) {
-        echo tr('Netto a pagare', [], ['upper' => true]);
-    } else {
-        echo tr('Totale', [], ['upper' => true]);
-    }
-    echo '
+        <th class="text-center small" colspan="'.$second_colspan.'">
+            '.(!$has_split_payment && !$has_sconto_finale ? $etichette['totale_finale'] : $etichette['totale_parziale']).'
 		</th>';
 
     echo '
@@ -275,19 +294,23 @@ if (!empty($record['ritenutaacconto']) || !empty($documento->totale_ritenuta_con
 
     <tr>
         <td class="cell-padded text-center" colspan="'.$first_colspan.'">
-            '.moneyFormat(abs($documento->ritenuta_acconto) + abs($documento->totale_ritenuta_contributi), 2).'
+            '.moneyFormat($ritenuta_totale, 2).'
         </td>';
 
+    $totale = $totale - $ritenuta_totale;
     echo '
 
         <td class="cell-padded text-center" colspan="'.$second_colspan.'">
-            '.moneyFormat($netto_a_pagare, 2).'
+            '.moneyFormat($totale, 2).'
         </td>
     </tr>';
 }
 
-// Split payment
-if (!empty($record['split_payment'])) {
+/*
+ * Riga di riepilogo per lo Split payment.
+ * Totale IVA | Totale (+ Rivalsa INPS - Ritenuta - Totale IVA)
+ */
+if ($has_split_payment) {
     $first_colspan = 1;
     $second_colspan = 2;
 
@@ -298,10 +321,11 @@ if (!empty($record['split_payment'])) {
         </th>
 
         <th class="text-center small" colspan="'.$second_colspan.'">
-            '.tr('Netto a pagare', [], ['upper' => true]).'
+            '.(!$has_split_payment && !$has_sconto_finale ? $etichette['totale_finale'] : $etichette['totale_parziale']).'
         </th>
     </tr>';
 
+    $totale = $totale - $totale_iva;
     echo '
 	 <tr>
         <td class="cell-padded text-center" colspan="'.$first_colspan.'">
@@ -309,7 +333,39 @@ if (!empty($record['split_payment'])) {
         </td>
 
         <td class="cell-padded text-center" colspan="'.$second_colspan.'">
-            '.moneyFormat($netto_a_pagare, 2).'
+            '.moneyFormat($totale, 2).'
+        </td>
+    </tr>';
+}
+
+/*
+ * Riga di riepilogo per lo Sconto finale sulla fattura.
+ * Sconto finale | Totale (+ Rivalsa INPS - Ritenuta - Totale IVA [se split payment] - Sconto finale)
+ */
+if ($has_sconto_finale) {
+    $first_colspan = 1;
+    $second_colspan = 2;
+
+    echo '
+    <tr>
+        <th class="text-center small" colspan="'.$first_colspan.'">
+            '.tr('Sconto in fattura', [], ['upper' => true]).($documento->sconto_finale_percentuale ? ' ('.numberFormat($documento->sconto_finale_percentuale, 2).'%)' : '').'
+        </th>
+
+        <th class="text-center small" colspan="'.$second_colspan.'">
+            '.tr('Netto a pagare', [], ['upper' => true]).'
+        </th>
+    </tr>';
+
+    $totale = $totale - $sconto_finale;
+    echo '
+	 <tr>
+        <td class="cell-padded text-center" colspan="'.$first_colspan.'">
+            '.moneyFormat($sconto_finale, 2).'
+        </td>
+
+        <td class="cell-padded text-center" colspan="'.$second_colspan.'">
+            '.moneyFormat($totale, 2).'
         </td>
     </tr>';
 }

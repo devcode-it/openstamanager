@@ -307,22 +307,8 @@ switch (post('op')) {
 
     // Duplicazione fattura
     case 'copy':
-        $stato = Stato::where('descrizione', 'Bozza')->first();
-
         $new = $fattura->replicate();
         $new->numero = Fattura::getNextNumero($new->data, $new->direzione, $new->id_segment);
-        //if (!empty($fattura->numero_esterno)) {
-            //$new->numero_esterno = Fattura::getNextNumeroSecondario($new->data, $new->direzione, $new->id_segment);
-        //}
-
-        // In fase di duplicazione di una fattura non deve essere calcolato il numero progressivo ma questo deve
-        // essere generato in fase di emissione della stessa.
-        $new->numero_esterno = '';
-
-        $new->codice_stato_fe = null;
-        $new->progressivo_invio = null;
-        $new->data_stato_fe = null;
-        $new->stato()->associate($stato);
         $new->save();
 
         $id_record = $new->id;
@@ -332,16 +318,12 @@ switch (post('op')) {
             $new_riga = $riga->replicate();
             $new_riga->setDocument($new);
 
-            // Rimozione riferimenti (deorecati)
+            // Rimozione riferimenti (deprecati)
             $new_riga->idpreventivo = 0;
             $new_riga->idcontratto = 0;
             $new_riga->idintervento = 0;
             $new_riga->idddt = 0;
             $new_riga->idordine = 0;
-
-            $new_riga->qta_evasa = 0;
-            $new_riga->original_type = null;
-            $new_riga->original_id = null;
             $new_riga->save();
 
             if ($new_riga->isArticolo()) {

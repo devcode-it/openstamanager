@@ -22,7 +22,6 @@ include_once __DIR__.'/../../core.php';
 use Modules\Aggiornamenti\Controlli\DatiFattureElettroniche;
 use Modules\Fatture\Export\CSV;
 use Modules\Fatture\Fattura;
-use Modules\Fatture\Stato;
 use Plugins\ExportFE\FatturaElettronica;
 use Plugins\ExportFE\Interaction;
 use Util\XML;
@@ -276,18 +275,6 @@ switch (post('op')) {
             $new->data = $data;
             $new->id_segment = $id_segment;
             $new->numero = Fattura::getNextNumero($data, $dir, $id_segment);
-            //if (!empty($fattura->numero_esterno)) {
-            //$new->numero_esterno = Fattura::getNextNumeroSecondario($data, $dir, $id_segment);
-            //}
-
-            $new->numero_esterno = '';
-
-            $new->codice_stato_fe = null;
-            $new->progressivo_invio = null;
-            $new->data_stato_fe = null;
-
-            $stato = Stato::where('descrizione', 'Bozza')->first();
-            $new->stato()->associate($stato);
 
             $new->save();
 
@@ -304,9 +291,6 @@ switch (post('op')) {
                     $new_riga->idordine = 0;
                 }
 
-                $new_riga->qta_evasa = 0;
-                $new_riga->original_type = null;
-                $new_riga->original_id = null;
                 $new_riga->save();
 
                 if ($new_riga->isArticolo()) {

@@ -215,9 +215,9 @@ function initPanel(controllo, success) {
             <table class="table table-striped table-hover table-condensed table-bordered">
                 <thead>
                     <tr>
-                        <th width="15%">' . tr('Record') . '</th>
-                        <th>' . tr('Descrizione') . '</th>
-                        <th class="text-center" width="15%">' . tr('Opzioni') . '</th>
+                        <th width="15%">'.tr('Record').'</th>
+                        <th>'.tr('Descrizione').'</th>
+                        <th class="text-center" width="15%">'.tr('Opzioni').'</th>
                     </tr>
                 </thead>
                 <tbody></tbody>

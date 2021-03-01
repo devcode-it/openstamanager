@@ -200,9 +200,6 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
 (NULL, (SELECT id FROM zz_modules WHERE name='Impianti'), 'Categoria', '(SELECT nome FROM my_impianti_categorie WHERE my_impianti_categorie.id=id_categoria)', 6, 1, 0, 0, '', '', 1, 0, 1);
 
--- Fix quantità positiva per Note di credito
-UPDATE `co_righe_documenti` SET `qta` = ABS(`qta`), `qta_evasa` = ABS(`qta_evasa`);
-
 --
 -- Struttura della tabella `zz_imports`
 --
@@ -263,3 +260,29 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `
 -- Nota: lo sconto finale è limitato alla Fattura, e non può derivare da ulteriori documenti
 ALTER TABLE `co_documenti` ADD `sconto_finale` DECIMAL(17,8) NOT NULL,
     ADD `sconto_finale_percentuale` DECIMAL(17,8) NOT NULL;
+
+-- Fix quantità positiva per Note di credito
+UPDATE `co_righe_documenti` SET `qta` = ABS(`qta`), `qta_evasa` = ABS(`qta_evasa`), `subtotale` = ABS(`subtotale`);
+
+-- Correzione widget con utilizzo interno delle quantità negative per Note
+UPDATE `zz_widgets` SET `query` = 'SELECT
+    CONCAT_WS('' '', REPLACE(REPLACE(REPLACE(FORMAT((
+        SELECT SUM(
+            (subtotale - sconto) * IF(co_tipidocumento.reversed, -1, 1)
+        )
+    ), 2), '','', ''#''), ''.'', '',''), ''#'', ''.''), ''&euro;'') AS dato
+FROM co_righe_documenti
+    INNER JOIN co_documenti ON co_righe_documenti.iddocumento = co_documenti.id
+    INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento = co_tipidocumento.id
+WHERE co_tipidocumento.dir=''entrata'' |segment| AND data >= ''|period_start|'' AND data <= ''|period_end|'' AND 1=1' WHERE `zz_widgets`.`name`='Fatturato';
+
+UPDATE `zz_widgets` SET `query` = 'SELECT
+    CONCAT_WS('' '', REPLACE(REPLACE(REPLACE(FORMAT((
+        SELECT SUM(
+            (subtotale - sconto) * IF(co_tipidocumento.reversed, -1, 1)
+        )
+    ), 2), '','', ''#''), ''.'', '',''), ''#'', ''.''), ''&euro;'') AS dato
+FROM co_righe_documenti
+    INNER JOIN co_documenti ON co_righe_documenti.iddocumento = co_documenti.id
+    INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento = co_tipidocumento.id
+WHERE co_tipidocumento.dir=''uscita'' |segment| AND data >= ''|period_start|'' AND data <= ''|period_end|'' AND 1=1' WHERE `zz_widgets`.`name`='Acquisti';

@@ -186,7 +186,7 @@ class CSV extends CSVImporter
         if (!isset($first_record['anagrafica_listino']) || empty($this->getPrimaryKey())) {
             return;
         }
-        
+
         foreach ($rows as $row) {
             // Interpretazione secondo la selezione
             $record = $this->getRecord($row);

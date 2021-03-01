@@ -262,7 +262,7 @@ ALTER TABLE `co_documenti` ADD `sconto_finale` DECIMAL(17,8) NOT NULL,
     ADD `sconto_finale_percentuale` DECIMAL(17,8) NOT NULL;
 
 -- Fix quantità positiva per Note di credito
-UPDATE `co_righe_documenti` SET `qta` = ABS(`qta`), `qta_evasa` = ABS(`qta_evasa`), `subtotale` = ABS(`subtotale`);
+UPDATE `co_righe_documenti` SET `qta` = ABS(`qta`), `qta_evasa` = ABS(`qta_evasa`), `subtotale` = ABS(`subtotale`), `iva` = ABS(`iva`), `ritenutaacconto` = ABS(`ritenutaacconto`), `rivalsainps` = ABS(`rivalsainps`);
 
 -- Correzione widget con utilizzo interno delle quantità negative per Note
 UPDATE `zz_widgets` SET `query` = 'SELECT

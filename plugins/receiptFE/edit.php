@@ -49,22 +49,25 @@ if (!empty($fatture_generate_errore->count())) {
             <ul>';
 
     foreach ($fatture_generate_errore as $fattura_generata) {
-        $ricevuta_principale = $fattura_generata->getRicevutaPrincipale();
-        $contenuto_ricevuta = XML::readFile($ricevuta_principale->filepath);
         $descrizione = $fattura_generata['codice_stato_fe'];
 
-        // Informazioni aggiuntive per EC02
-        if (!empty($contenuto_ricevuta['EsitoCommittente'])) {
-            $descrizione .= ': '.htmlentities($contenuto_ricevuta['EsitoCommittente']['Descrizione']);
-        }
+        $ricevuta_principale = $fattura_generata->getRicevutaPrincipale();
+        if (!empty($ricevuta_principale)) {
+            $contenuto_ricevuta = XML::readFile($ricevuta_principale->filepath);
 
-        // Informazioni aggiuntive per NS
-        $lista_errori = $contenuto_ricevuta['ListaErrori'];
-        if ($lista_errori) {
-            $lista_errori = $lista_errori[0] ? $lista_errori : [$lista_errori];
+            // Informazioni aggiuntive per EC02
+            if (!empty($contenuto_ricevuta['EsitoCommittente'])) {
+                $descrizione .= ': '.htmlentities($contenuto_ricevuta['EsitoCommittente']['Descrizione']);
+            }
 
-            $errore = $lista_errori[0]['Errore'];
-            $descrizione .= ': '.$errore['Codice'].' - '.htmlentities($errore['Descrizione']);
+            // Informazioni aggiuntive per NS
+            $lista_errori = $contenuto_ricevuta['ListaErrori'];
+            if ($lista_errori) {
+                $lista_errori = $lista_errori[0] ? $lista_errori : [$lista_errori];
+
+                $errore = $lista_errori[0]['Errore'];
+                $descrizione .= ': '.$errore['Codice'].' - '.htmlentities($errore['Descrizione']);
+            }
         }
 
         echo '<li>'.reference($fattura_generata, $fattura_generata->getReference()).' ['.$descrizione.'] ['.timestampFormat($fattura_generata['data_stato_fe']).']</li>';

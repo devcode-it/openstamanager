@@ -35,25 +35,37 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 ## 2.4.22
 
 ### Aggiunto (Added)
- - Aggiunte nuove aliquote IVA più specifiche
- - Aggiunte condizioni generali di fornitura in Preventivi
- - Aggiunta azione massiva per la creazione di preventivi da Articoli
- - Aggiunta azione massiva per cambiare lo stato a più ordini
- - Aggiunta azione massiva in articoli per allineare la quantità degli articoli
- - Aggiunta azione massiva per cambiare lo stato a più ddt
- - Aggiunta possibilità di importare ddt di acquisto nei ddt di vendita
- - Aggiunta possibilità di creare una nota di credito da un ddt di acquisto
- - Aggiunta stampa del bilancio
- - Aggiunta possibilità di notificare al cliente/tecnico in modo automatico quando viene cambiato lo stato dell'intervento
- - Aggiunta flag per escludere la generazione scadenza di una ritenuta d'acconto se viene versata dal fornitore
-- Aggiunta stampa fattura elettronica nelle fatture di vendita e di acquisto
-- Aggiunta azione massiva per esportare le stampe delle fatture elettroniche
+ - Introduzione di nuove **Aliquote IVA** con specifiche più dettagliate
+ - Nuovo campo condizioni generali di fornitura in **Preventivi**
+ - Introduzione stampe del *Bilancio* e della *Fattura elettronica* per **Fatture di vendita e di acquisto**
+ - Nuove azioni di massa sui record per
+    - Creare **Preventivi** da **Articoli**
+    - Cambiare lo stato a più **Ordini** e **DDT**
+    - Allineare la quantità degli **Articoli**
+    - Esportare le stampe delle Fatture Elettroniche
+ - Aggiunta possibilità di importare **DDT di acquisto** in **DDT di vendita**
+ - Aggiunta la possibilità di creare una **Nota di credito** da un **DDT di acquisto**
+ - Nuova funzionalità di notifica automatica al *Cliente/Tecnico* quando viene cambiato lo stato dell'**Attività**
+ - Nuovo flag per escludere la generazione della **Scadenza** di una Ritenuta d'Acconto se viene versata dal *Fornitore*
+ - Introduzione del sistema di controllo sull'integrità delle logiche interne del gestionale
+ - Nuovo sistema di registrazione delle procedure di importazione
+ - Nuovo hook *Notifiche su Ricevute FE* per indicare graficamente eventuali **Fatture di vendita** che necessitano controlli manuali sullo stato
+ - Nuovo *Sconto finale* per le **Fatture di vendita**: influenza il valore *Netto a pagare* della fattura in relazione alle singole scadenze, senza modificare il comportamento per i movimenti contabili
 
 ### Modificato (Changed)
+ - Modifica della gestione degli importi per le Note di credito e debito: i campi di riepilogo (*qta*, *qta_evasa*, *subtotale*, *iva*, *ritenutaacconto*, *rivalsainps*) sono ora positivi.
  - Impostazione CAP automatico a 99999 nella FE per clienti esteri
+ - Aggiornamento di CKEditor al fine di permettere l'utilizzo dell'intero insieme di plugin per funzionalità di editing più avanzate
+ - Correzione del tipo di Fattura predefinito in caso di importazione da DDT (*Fattura differita*)
+ - Correzioni varie sul sistema di sincronizzazione via API per l'applicazione mobile
 
 ### Fixed
  - Correzione movimenti di magazzino con sedi diverse
+ - Correzione JS su input di tipo select con stesso ID
+ - Correzione dimensione del campo *Tempo standard* in **Tipi di attività**
+ - Correzione dei redirect al modulo **Impostazioni**
+ - Fix del calcolo sullo spazio disponibili in GB
+ - Fix procedura di pagamento automatico delle **Scadenze** sulla base dei movimenti in **Prima Nota**
 
 ## 2.4.21 (2021-01-14)
 

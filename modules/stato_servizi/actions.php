@@ -204,7 +204,7 @@ switch (filter('op')) {
         echo json_encode([
             'invoice_number' => $informazioni['invoice_number'],
             'size' => Filesystem::formatBytes($informazioni['size']),
-            'history' => $informazioni['history'],
+            'history' => $history,
         ]);
         break;
 }

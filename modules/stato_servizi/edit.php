@@ -139,7 +139,7 @@ if (Services::isEnabled()) {
                         for (let i = 0; i < 5; i++) {
                             const data = response.history[i];
 
-                            $("#elenco-fe").append(`<td>
+                            $("#elenco-fe").append(`<tr>
                                 <td>` + data["year"] + `</td>
                                 <td>` + data["number"] + `</td>
                                 <td>` + data["size"] + `</td>

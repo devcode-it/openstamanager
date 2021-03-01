@@ -286,3 +286,8 @@ FROM co_righe_documenti
     INNER JOIN co_documenti ON co_righe_documenti.iddocumento = co_documenti.id
     INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento = co_tipidocumento.id
 WHERE co_tipidocumento.dir=''uscita'' |segment| AND data >= ''|period_start|'' AND data <= ''|period_end|'' AND 1=1' WHERE `zz_widgets`.`name`='Acquisti';
+
+-- Fix campi Conto dare e Conto avere del modulo Prima nota
+UPDATE `zz_views` SET `order` = 5, `name`='Conto avere_new' WHERE `name`='Conto dare';
+UPDATE `zz_views` SET `order` = 8, `name`='Conto dare' WHERE `name`='Conto avere';
+UPDATE `zz_views` SET `name`='Conto avere' WHERE `name`='Conto avere_new';

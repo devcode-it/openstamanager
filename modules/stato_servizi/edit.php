@@ -139,10 +139,10 @@ if (Services::isEnabled()) {
                         for (let i = 0; i < 5; i++) {
                             const data = response.history[i];
 
-                            $("#elenco-fe").append(`<tr>
-                                <th>` + data["year"] + `</th>
-                                <th>` + data["number"] + `</th>
-                                <th>` + data["size"] + `</th>
+                            $("#elenco-fe").append(`<td>
+                                <td>` + data["year"] + `</td>
+                                <td>` + data["number"] + `</td>
+                                <td>` + data["size"] + `</td>
                             </tr>`);
                         }
                     }

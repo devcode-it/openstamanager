@@ -304,3 +304,14 @@ UPDATE `zz_views` SET `query` = '(righe.totale + `co_documenti`.`rivalsainps` + 
 UPDATE `zz_views` SET `order` = 5, `name`='Conto avere_new' WHERE `name`='Conto dare';
 UPDATE `zz_views` SET `order` = 8, `name`='Conto dare' WHERE `name`='Conto avere';
 UPDATE `zz_views` SET `name`='Conto avere' WHERE `name`='Conto avere_new';
+
+-- Aggiunta campo per scelta ordine in intervento
+ALTER TABLE `in_interventi` ADD `id_ordine` INT NOT NULL AFTER `id_contratto`;
+
+-- Aggiunta plugin consuntivo per ordini
+INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`, `position`, `script`, `enabled`, `default`, `order`, `compatibility`, `version`, `options2`, `options`, `directory`, `help`) VALUES
+(NULL, 'Consuntivo', 'Consuntivo', (SELECT `id` FROM `zz_modules` WHERE name='Ordini cliente'), (SELECT `id` FROM `zz_modules` WHERE name='Ordini cliente'), 'tab', 'ordini.consuntivo.php', 1, 0, 0, '', '', NULL, NULL, '', '');
+
+-- Stampa consuntivo ordini
+INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `filename`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `default`, `enabled`) VALUES
+(NULL, (SELECT `id` FROM `zz_modules` WHERE name='Ordini cliente'), 1, 'Consuntivo ordine', 'Consuntivo ordine', 'Consuntivo ordine num. {numero} del {data}', 'ordini_cons', 'idordine', '{\"pricing\":true}', 'fa fa-print', '', '', 0, 0, 1, 1);

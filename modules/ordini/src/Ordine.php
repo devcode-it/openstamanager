@@ -26,6 +26,7 @@ use Modules\DDT\DDT;
 use Traits\RecordTrait;
 use Traits\ReferenceTrait;
 use Util\Generator;
+use Modules\Interventi\Intervento;
 
 class Ordine extends Document
 {
@@ -146,6 +147,11 @@ class Ordine extends Document
     public function descrizioni()
     {
         return $this->hasMany(Components\Descrizione::class, 'idordine');
+    }
+
+    public function interventi()
+    {
+        return $this->hasMany(Intervento::class, 'id_ordine');
     }
 
     /**

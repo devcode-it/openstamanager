@@ -176,20 +176,24 @@ echo '
 
     <div class="row">
         <div class="col-md-4">
+            {[ "type": "select", "label": "'.tr('Ordine').'", "name": "idordine", "ajax-source": "ordini" ]}
+        </div>
+
+        <div class="col-md-4">
             {[ "type": "timestamp", "label": "'.tr('Data/ora richiesta').'", "name": "data_richiesta", "required": 1, "value": "'.($data_richiesta ?: '-now-').'" ]}
         </div>
 
         <div class="col-md-4">
             {[ "type": "select", "label": "'.tr('Tipo').'", "name": "idtipointervento", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "'.$id_tipo.'", "ajax-source": "tipiintervento" ]}
         </div>
-
-        <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL", "value": "'.$id_stato.'" ]}
-        </div>
     </div>
 
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-4">
+            {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL", "value": "'.$id_stato.'" ]}
+        </div>
+
+        <div class="col-md-8">
             {[ "type": "ckeditor", "label": "'.tr('Richiesta').'", "name": "richiesta_add", "required": 1, "value": "'.$richiesta.'", "extra": "style=\'max-height:80px;\'" ]}
         </div>
     </div>';

@@ -103,6 +103,24 @@ echo '
                             <input type="hidden" name="idcontratto_riga" value="'.$idcontratto_riga.'">
                         </div>
                     </div>
+
+                    <div class="row">
+                        <div class="col-md-6">';
+
+                    $idcontratto_riga = $dbo->fetchOne('SELECT id FROM co_promemoria WHERE idintervento='.prepare($id_record))['id'];
+                    
+                    if (!empty($record['idordine'])) {
+                        echo '
+                            '.Modules::link('Ordini cliente', $record['idordine'], null, null, 'class="pull-right"');
+                    }
+                    echo '
+                    
+                            {[ "type": "select", "label": "'.tr('Ordine').'", "name": "idordine", "value": "'.$record['id_ordine'].'", "ajax-source": "ordini", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "readonly": "'.$record['flag_completato'].'" ]}
+
+                            <input type="hidden" name="idcontratto_riga" value="'.$idcontratto_riga.'">
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>';

@@ -60,6 +60,7 @@ switch (post('op')) {
         $intervento->idsede_destinazione = post('idsede_destinazione');
         $intervento->id_preventivo = post('idpreventivo');
         $intervento->id_contratto = $idcontratto;
+        $intervento->id_ordine = post('idordine');
 
         $intervento->id_documento_fe = post('id_documento_fe');
         $intervento->num_item = post('num_item');
@@ -152,6 +153,7 @@ switch (post('op')) {
 
             $intervento->id_preventivo = post('idpreventivo');
             $intervento->id_contratto = post('idcontratto');
+            $intervento->id_ordine = post('idordine');
             $intervento->richiesta = post('richiesta_add');
             $intervento->idsede_destinazione = $idsede_destinazione;
             $intervento->data_scadenza = $data_scadenza;

@@ -24,9 +24,14 @@ switch ($resource) {
      * Opzioni utilizzate:
      * - idanagrafica
      */
-    case 'ordini':
+    case 'ordini-cliente':
         if (isset($superselect['idanagrafica'])) {
-            $query = 'SELECT or_ordini.id AS id, or_ordini.idanagrafica, CONCAT("Ordine ", numero, " del ", DATE_FORMAT(data, "%d/%m/%Y"), " [", (SELECT `descrizione` FROM `or_statiordine` WHERE `or_statiordine`.`id` = `idstatoordine`) , "]") AS descrizione, (SELECT SUM(subtotale) FROM or_righe_ordini WHERE idordine=or_ordini.id GROUP BY idordine) AS totale, (SELECT SUM(sconto) FROM or_righe_ordini WHERE idordine=or_ordini.id GROUP BY idordine) AS sconto FROM or_ordini INNER JOIN an_anagrafiche ON or_ordini.idanagrafica=an_anagrafiche.idanagrafica |where| ORDER BY id';
+            $query = 'SELECT or_ordini.id AS id,
+                CONCAT("Ordine ", numero, " del ", DATE_FORMAT(data, "%d/%m/%Y"), " [", (SELECT `descrizione` FROM `or_statiordine` WHERE `or_statiordine`.`id` = `idstatoordine`) , "]") AS descrizione
+            FROM or_ordini
+                INNER JOIN an_anagrafiche ON or_ordini.idanagrafica = an_anagrafiche.idanagrafica
+            |where|
+            ORDER BY id';
 
             foreach ($elements as $element) {
                 $filter[] = 'id='.prepare($element);

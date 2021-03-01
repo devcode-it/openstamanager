@@ -60,6 +60,7 @@ if (!empty($id_anagrafica)) {
 $id_intervento = filter('id_intervento');
 $id_contratto = filter('idcontratto');
 $id_promemoria_contratto = filter('idcontratto_riga');
+$id_ordine = null;
 
 // Trasformazione di un Promemoria dei Contratti in Intervento
 if (!empty($id_contratto) && !empty($id_promemoria_contratto)) {
@@ -164,21 +165,23 @@ echo '
         <div class="col-md-4">
             {[ "type": "select", "label": "'.tr('Cliente').'", "name": "idanagrafica", "required": 1, "value": "'.(!$id_cliente ? $id_anagrafica : $id_cliente).'", "ajax-source": "clienti", "icon-after": "add|'.$module_anagrafiche['id'].'|tipoanagrafica=Cliente&readonly_tipo=1", "readonly": "'.((empty($id_anagrafica) && empty($id_cliente)) ? 0 : 1).'" ]}
         </div>
-
-        <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Preventivo').'", "name": "idpreventivo", "value": "'.$id_preventivo.'", "ajax-source": "preventivi", "readonly": "'.(empty($id_preventivo) ? 0 : 1).'" ]}
-        </div>
-
-        <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "value": "'.$id_contratto.'", "ajax-source": "contratti", "readonly": "'.(empty($id_contratto) ? 0 : 1).'" ]}
-        </div>
     </div>
 
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Ordine').'", "name": "idordine", "ajax-source": "ordini" ]}
+            {[ "type": "select", "label": "'.tr('Preventivo').'", "name": "idpreventivo", "value": "'.$id_preventivo.'", "ajax-source": "preventivi", "readonly": "'.(empty($id_preventivo) ? 0 : 1).'", "select-options": '.json_encode(['idanagrafica' => $id_anagrafica]).' ]}
         </div>
 
+        <div class="col-md-4">
+            {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "value": "'.$id_contratto.'", "ajax-source": "contratti", "readonly": "'.(empty($id_contratto) ? 0 : 1).'", "select-options": '.json_encode(['idanagrafica' => $id_anagrafica]).' ]}
+        </div>
+
+        <div class="col-md-4">
+            {[ "type": "select", "label": "'.tr('Ordine').'", "name": "idordine", "ajax-source": "ordini-cliente", "value": "'.$id_ordine.'", "select-options": '.json_encode(['idanagrafica' => $id_anagrafica]).' ]}
+        </div>
+    </div>
+
+    <div class="row">
         <div class="col-md-4">
             {[ "type": "timestamp", "label": "'.tr('Data/ora richiesta').'", "name": "data_richiesta", "required": 1, "value": "'.($data_richiesta ?: '-now-').'" ]}
         </div>
@@ -186,14 +189,14 @@ echo '
         <div class="col-md-4">
             {[ "type": "select", "label": "'.tr('Tipo').'", "name": "idtipointervento", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "'.$id_tipo.'", "ajax-source": "tipiintervento" ]}
         </div>
+
+         <div class="col-md-4">
+            {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL", "value": "'.$id_stato.'" ]}
+        </div>
     </div>
 
     <div class="row">
-        <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL", "value": "'.$id_stato.'" ]}
-        </div>
-
-        <div class="col-md-8">
+        <div class="col-md-12">
             {[ "type": "ckeditor", "label": "'.tr('Richiesta').'", "name": "richiesta_add", "required": 1, "value": "'.$richiesta.'", "extra": "style=\'max-height:80px;\'" ]}
         </div>
     </div>';
@@ -361,12 +364,14 @@ echo '
     var sede = input("idsede_destinazione");
     var contratto = input("idcontratto");
     var preventivo = input("idpreventivo");
+    var ordine = input("idordine");
 
 	$(document).ready(function() {
         if(!anagrafica.get()){
            sede.disable();
-           input("idpreventivo").disable();
-           input("idcontratto").disable();
+           preventivo.disable();
+           contratto.disable();
+           ordine.disable();
            input("idimpianti").disable();
            input("componenti").disable();
         }
@@ -404,10 +409,13 @@ echo '
         sede.setDisabled(value)
             .getElement().selectReset(placeholder);
 
-        input("idpreventivo").setDisabled(value)
+        preventivo.setDisabled(value)
             .getElement().selectReset(placeholder);
 
-        input("idcontratto").setDisabled(value)
+        contratto.setDisabled(value)
+            .getElement().selectReset(placeholder);
+
+        ordine.setDisabled(value)
             .getElement().selectReset(placeholder);
 
         input("idimpianti").setDisabled(value);
@@ -436,13 +444,20 @@ echo '
 		}
 	});
 
+    // Gestione della modifica dell\'ordine selezionato
+	ordine.change(function() {
+		if (ordine.get()) {
+            contratto.getElement().selectReset();
+            preventivo.getElement().selectReset();
+        }
+	});
+
     // Gestione della modifica del preventivo selezionato
 	preventivo.change(function() {
-		if (contratto.get() && preventivo.get()){
+		if (preventivo.get()){
             contratto.getElement().selectReset();
-        }
+            ordine.getElement().selectReset();
 
-        if (preventivo.get()) {
             input("idtipointervento").getElement()
                 .selectSetNew($(this).selectData().idtipointervento, $(this).selectData().idtipointervento_descrizione);
         }
@@ -450,8 +465,10 @@ echo '
 
     // Gestione della modifica del contratto selezionato
 	contratto.change(function() {
-		if (contratto.get() && preventivo.get()){
+		if (contratto.get()){
             preventivo.getElement().selectReset();
+            ordine.getElement().selectReset();
+
             $("input[name=idcontratto_riga]").val("");
         }
 	});

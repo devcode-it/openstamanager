@@ -306,7 +306,8 @@ UPDATE `zz_views` SET `order` = 8, `name`='Conto dare' WHERE `name`='Conto avere
 UPDATE `zz_views` SET `name`='Conto avere' WHERE `name`='Conto avere_new';
 
 -- Aggiunta campo per scelta ordine in intervento
-ALTER TABLE `in_interventi` ADD `id_ordine` INT NOT NULL AFTER `id_contratto`;
+ALTER TABLE `in_interventi` ADD `id_ordine` INT(11) AFTER `id_contratto`;
+ALTER TABLE `in_interventi` ADD CONSTRAINT `in_interventi_ibfk_7` FOREIGN KEY (`id_ordine`) REFERENCES `or_ordini`(`id`) ON DELETE CASCADE;
 
 -- Aggiunta plugin consuntivo per ordini
 INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`, `position`, `script`, `enabled`, `default`, `order`, `compatibility`, `version`, `options2`, `options`, `directory`, `help`) VALUES

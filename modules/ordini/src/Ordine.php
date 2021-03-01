@@ -23,10 +23,10 @@ use Common\Components\Component;
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\DDT\DDT;
+use Modules\Interventi\Intervento;
 use Traits\RecordTrait;
 use Traits\ReferenceTrait;
 use Util\Generator;
-use Modules\Interventi\Intervento;
 
 class Ordine extends Document
 {

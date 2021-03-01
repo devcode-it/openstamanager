@@ -108,7 +108,7 @@ foreach ($id_scadenze as $id_scadenza) {
 }
 
 // Fatture
-$numeri = [];
+$numeri_fatture = [];
 $counter = 0;
 $is_ultimo_importo_avere = false;
 
@@ -131,7 +131,7 @@ foreach ($id_documenti as $id_documento) {
         $id_anagrafica_movimenti = null;
     }
 
-    $numeri[] = !empty($fattura['numero_esterno']) ? $fattura['numero_esterno'] : $fattura['numero'];
+    $numeri_fatture[] = !empty($fattura['numero_esterno']) ? $fattura['numero_esterno'] : $fattura['numero'];
 
     $is_nota_credito = $tipo->reversed;
     $is_importo_avere = ($dir == 'entrata' && !$is_nota_credito && !$is_insoluto) || ($dir == 'uscita' && ($is_nota_credito || $is_insoluto));
@@ -203,12 +203,12 @@ if ($numero_documenti + $numero_scadenze > 1) {
         $descrizione = $is_ultimo_importo_avere ? tr('Inc. fatture _NAME_ num. _LIST_') : tr('Pag. fatture _NAME_ num. _LIST_');
         $descrizione = replace($descrizione, [
             '_NAME_' => $anagrafica_movimenti->ragione_sociale,
-            '_LIST_' => implode(', ', $numeri),
+            '_LIST_' => implode(', ', $numeri_fatture),
         ]);
     } else {
         $descrizione = $is_ultimo_importo_avere ? tr('Inc. fatture num. _LIST_') : tr('Pag. fatture _NAME_ num. _LIST_');
         $descrizione = replace($descrizione, [
-            '_LIST_' => implode(', ', $numeri),
+            '_LIST_' => implode(', ', $numeri_fatture),
         ]);
     }
 } elseif ($numero_documenti == 1) {

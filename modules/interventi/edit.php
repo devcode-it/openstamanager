@@ -108,7 +108,7 @@ echo '
                         <div class="col-md-6">';
 
                     $idcontratto_riga = $dbo->fetchOne('SELECT id FROM co_promemoria WHERE idintervento='.prepare($id_record))['id'];
-                    
+
                     if (!empty($record['idordine'])) {
                         echo '
                             '.Modules::link('Ordini cliente', $record['idordine'], null, null, 'class="pull-right"');

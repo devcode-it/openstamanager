@@ -359,7 +359,7 @@ if (!empty($righe)) {
         echo '
         <tr data-id="'.$key.'" data-qta="'.$qta.'" data-prezzo_unitario="'.$prezzo_unitario.'" data-iva_percentuale="'.$riga['AliquotaIVA'].'">
             <td>
-                '.(empty($id_articolo) ? '<span class="label label-warning pull-right text-muted articolo-warning hidden">'.tr('Creazione articolo non disponibile').'</span>' : '').'
+                '.(empty($codice_principale) ? '<span class="label label-warning pull-right text-muted articolo-warning hidden">'.tr('Creazione automatica articolo non disponibile').'</span>' : '').'
                 <small class="pull-right text-muted" id="riferimento_'.$key.'"></small>
 
 

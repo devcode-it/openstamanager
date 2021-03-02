@@ -61,7 +61,10 @@ class PianoConti extends Controllo
         FROM an_anagrafiche
            INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche_anagrafiche.idanagrafica = an_anagrafiche.idanagrafica
            INNER JOIN an_tipianagrafiche ON an_tipianagrafiche.idtipoanagrafica = an_tipianagrafiche_anagrafiche.idtipoanagrafica
-       WHERE idconto_cliente = 0 OR idconto_cliente IS NULL OR idconto_fornitore = 0 OR idconto_fornitore IS NULL
+       WHERE
+        (idconto_cliente = 0 OR idconto_cliente IS NULL OR idconto_fornitore = 0 OR idconto_fornitore IS NULL)
+        AND
+        deleted_at IS NULL
        GROUP BY an_anagrafiche.idanagrafica');
 
         foreach ($anagrafiche_interessate as $anagrafica) {

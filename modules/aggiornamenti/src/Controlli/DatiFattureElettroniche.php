@@ -26,7 +26,7 @@ class DatiFattureElettroniche extends Controllo
 {
     public function getName()
     {
-        return tr('Corrispondeze Fatture Elettroniche XMl e Fatture di vendita');
+        return tr('Corrispondeze Fatture Elettroniche XML e Fatture di vendita');
     }
 
     public function getType($record)

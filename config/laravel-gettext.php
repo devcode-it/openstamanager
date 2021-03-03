@@ -20,7 +20,7 @@ return [
      * Default locale: this will be the default for your application.
      * Is to be supposed that all strings are written in this language.
      */
-    'locale' => env('APP_LOCALE', 'it_IT'),
+    'locale' => 'it_IT',
 
     /*
      * Supported locales: An array containing all allowed languages
@@ -78,7 +78,7 @@ return [
     /*
      * Translator contact data (used on .po headers too)
      */
-    'translator' => 'James Translator <james@translations.colm>',
+    'translator' => 'DevCode s.r.l. <info@devcode.it>',
 
     /*
      * Paths where Poedit will search recursively for strings to translate.

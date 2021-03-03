@@ -6,6 +6,7 @@ use App\Http\Middleware\EnsureCalendarPeriod;
 use App\Http\Middleware\EnsureConfiguration;
 use App\Http\Middleware\EnsureEnvFile;
 use App\Http\Middleware\HTMLBuilder;
+use App\Http\Middleware\Language;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -42,8 +43,8 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            \Xinax\LaravelGettext\Middleware\GettextMiddleware::class,
 
+            Language::class,
             EnsureCalendarPeriod::class,
             EnsureConfiguration::class,
             HTMLBuilder::class,
@@ -63,8 +64,8 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
            // \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            \Xinax\LaravelGettext\Middleware\GettextMiddleware::class,
 
+            Language::class,
             EnsureCalendarPeriod::class,
             EnsureConfiguration::class,
             HTMLBuilder::class,

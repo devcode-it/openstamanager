@@ -121,6 +121,7 @@
             "Database\\Seeders\\": "database/seeders/"
         },
         "files": [
+            "app/helpers.php",
             "legacy/lib/functions.php",
             "legacy/lib/common.php",
             "legacy/lib/helpers.php",

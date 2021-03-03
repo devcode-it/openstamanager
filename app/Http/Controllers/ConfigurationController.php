@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 
 class ConfigurationController extends Controller
@@ -108,6 +109,9 @@ class ConfigurationController extends Controller
         foreach ($pairs as $key => $value) {
             $this->updateEnv($key, $value);
         }
+
+        // Refresh della cache sulla configurazione
+        Artisan::call('config:clear');
 
         return redirect(route('configuration'));
     }

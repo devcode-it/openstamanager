@@ -34,8 +34,8 @@
         decimals: "{{ formatter()->getNumberSeparators()['decimals'] }}",
         thousands: "{{ formatter()->getNumberSeparators()['thousands'] }}",
 
-        locale: '{{ substr(app()->getLocale(), 0, strpos(app()->getLocale(), "_")) }}',
-        full_locale: '{{ app()->getLocale() }}',
+        locale: '{{ localeLanguage() }}',
+        full_locale: '{{ locale() }}',
 
         search: search,
         translations: {

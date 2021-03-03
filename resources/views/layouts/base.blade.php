@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="="fr">">
+<html lang="{{ localeLanguage() }}">
     <head>
         <meta charset="UTF-8">
         <title>@yield('title') - {{ tr('OpenSTAManager') }}</title>

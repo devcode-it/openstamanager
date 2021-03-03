@@ -4,7 +4,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
-use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
@@ -28,13 +28,13 @@ Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])
     ->middleware('guest')
     ->name('password.email');
 
-Route::get('/reset-password/{token}', [NewPasswordController::class, 'create'])
+Route::get('/reset-password/{token}', [PasswordResetController::class, 'create'])
     ->middleware('guest')
     ->name('password.reset');
 
-Route::post('/reset-password', [NewPasswordController::class, 'store'])
+Route::post('/reset-password/{token}', [PasswordResetController::class, 'store'])
     ->middleware('guest')
-    ->name('password.update');
+    ->name('password.save');
 
 Route::get('/verify-email', [EmailVerificationPromptController::class, '__invoke'])
     ->middleware('auth')
@@ -47,10 +47,3 @@ Route::get('/verify-email/{id}/{hash}', [VerifyEmailController::class, '__invoke
 Route::post('/email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
     ->middleware(['auth', 'throttle:6,1'])
     ->name('verification.send');
-
-Route::get('/confirm-password', [ConfirmablePasswordController::class, 'show'])
-    ->middleware('auth')
-    ->name('password.confirm');
-
-Route::post('/confirm-password', [ConfirmablePasswordController::class, 'store'])
-    ->middleware('auth');

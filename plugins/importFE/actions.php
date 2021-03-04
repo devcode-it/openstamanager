@@ -192,6 +192,7 @@ switch (filter('op')) {
         break;
 
     case 'compile':
+        // Gestione del caso di anagrafica inesistente
         if (empty($anagrafica)) {
             echo json_encode([]);
 
@@ -210,6 +211,13 @@ switch (filter('op')) {
             $righe->push($fattura->articoli);
         }
         $righe = $righe->flatten();
+
+        // Gestione del caso di anagrafica senza fatture o con fatture senza righe
+        if ($fatture->isEmpty() || $righe->isEmpty()) {
+            echo json_encode([]);
+
+            return;
+        }
 
         // Ricerca del tipo di documento più utilizzato
         $tipi = $fatture->groupBy(function ($item, $key) {

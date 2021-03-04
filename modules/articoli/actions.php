@@ -324,13 +324,13 @@ switch (post('op')) {
 }
 
 // Operazioni aggiuntive per l'immagine
-if (filter('op') == 'unlink_file' && filter('filename') == $record['immagine']) {
+if (filter('op') == 'rimuovi-allegato' && filter('filename') == $record['immagine']) {
     $dbo->update('mg_articoli', [
         'immagine' => null,
     ], [
         'id' => $id_record,
     ]);
-} elseif (filter('op') == 'link_file' && filter('nome_allegato') == 'Immagine') {
+} elseif (filter('op') == 'aggiungi-allegato' && filter('nome_allegato') == 'Immagine') {
     $dbo->update('mg_articoli', [
         'immagine' => $upload,
     ], [

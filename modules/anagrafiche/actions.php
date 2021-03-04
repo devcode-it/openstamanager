@@ -331,7 +331,7 @@ switch (post('op')) {
 }
 
 // Operazioni aggiuntive per il logo e filigrana stampe
-if (filter('op') == 'link_file') {
+if (filter('op') == 'aggiungi-allegato') {
     $nome = filter('nome_allegato');
 
     $logo_stampe = ['logo stampe', 'logo_stampe', 'logo stampe.jpg', 'logo stampe.png'];
@@ -360,7 +360,7 @@ if (filter('op') == 'link_file') {
 }
 
 // Operazioni aggiuntive per il logo
-elseif (filter('op') == 'unlink_file') {
+elseif (filter('op') == 'rimuovi-allegato') {
     $filename = filter('filename');
 
     if (strpos($filename, setting('Logo stampe')) !== false) {

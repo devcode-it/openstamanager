@@ -21,6 +21,7 @@ include_once __DIR__.'/core.php';
 
 use Models\Note;
 use Models\OperationLog;
+use Models\Upload;
 use Modules\Checklists\Check;
 use Modules\Checklists\Checklist;
 use Modules\Emails\Template;
@@ -35,7 +36,7 @@ $upload_dir = base_dir().'/'.Uploads::getDirectory($id_module, $id_plugin);
 $database->beginTransaction();
 
 // Upload allegati e rimozione
-if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
+if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
     // Controllo sui permessi di scrittura per il modulo
     if (Modules::getPermission($id_module) != 'rw') {
         flash()->error(tr('Non hai permessi di scrittura per il modulo _MODULE_', [
@@ -53,7 +54,7 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
     // Gestione delle operazioni
     else {
         // UPLOAD
-        if (filter('op') == 'link_file' && !empty($_FILES) && !empty($_FILES['file']['name'])) {
+        if (filter('op') == 'aggiungi-allegato' && !empty($_FILES) && !empty($_FILES['file']['name'])) {
             $upload = Uploads::upload($_FILES['file'], [
                 'name' => filter('nome_allegato'),
                 'category' => filter('categoria'),
@@ -71,7 +72,7 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
         }
 
         // DELETE
-        elseif (filter('op') == 'unlink_file' && filter('filename') !== null) {
+        elseif (filter('op') == 'rimuovi-allegato' && filter('filename') !== null) {
             $name = Uploads::delete(filter('filename'), [
                 'id_module' => $id_module,
                 'id_plugin' => $id_plugin,
@@ -92,14 +93,29 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
 }
 
 // Download allegati
-elseif (filter('op') == 'download_file') {
+elseif (filter('op') == 'download-allegato') {
     $rs = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module='.prepare($id_module).' AND id='.prepare(filter('id')).' AND filename='.prepare(filter('filename')));
 
     download($upload_dir.'/'.$rs[0]['filename'], $rs[0]['original']);
 }
 
+elseif (filter('op') == 'visualizza-modifica-allegato') {
+    include_once base_dir().'/include/modifica_allegato.php';
+}
+
+// Modifica dati di un allegato
+elseif (filter('op') == 'modifica-allegato') {
+    $id_allegato = filter('id_allegato');
+    $allegato = Upload::find($id_allegato);
+
+    $allegato->name = post('nome_allegato');
+    $allegato->category = post('categoria_allegato');
+
+    $allegato->save();
+}
+
 // Modifica nome della categoria degli allegati
-elseif (filter('op') == 'upload_category') {
+elseif (filter('op') == 'modifica-categoria-allegato') {
     $category = post('category');
     $name = post('name');
 
@@ -130,7 +146,7 @@ elseif (filter('op') == 'validate') {
 }
 
 // Aggiunta nota interna
-elseif (filter('op') == 'add_nota') {
+elseif (filter('op') == 'aggiungi-nota') {
     $contenuto = post('contenuto');
     $data_notifica = post('data_notifica') ?: null;
 
@@ -140,7 +156,7 @@ elseif (filter('op') == 'add_nota') {
 }
 
 // Rimozione data di notifica dalla nota interna
-elseif (filter('op') == 'notification_nota') {
+elseif (filter('op') == 'rimuovi-notifica-nota') {
     $id_nota = post('id_nota');
     $nota = Note::find($id_nota);
 
@@ -151,7 +167,7 @@ elseif (filter('op') == 'notification_nota') {
 }
 
 // Rimozione nota interna
-elseif (filter('op') == 'delete_nota') {
+elseif (filter('op') == 'rimuovi-nota') {
     $id_nota = post('id_nota');
     $nota = Note::find($id_nota);
 
@@ -161,7 +177,7 @@ elseif (filter('op') == 'delete_nota') {
 }
 
 // Clonazione di una checklist
-elseif (filter('op') == 'clone_checklist') {
+elseif (filter('op') == 'copia-checklist') {
     $content = post('content');
     $checklist_id = post('checklist');
 
@@ -175,7 +191,7 @@ elseif (filter('op') == 'clone_checklist') {
 }
 
 // Aggiunta check alla checklist
-elseif (filter('op') == 'add_check') {
+elseif (filter('op') == 'aggiungi-check') {
     $content = post('content');
     $parent_id = post('parent') ?: null;
 
@@ -189,7 +205,7 @@ elseif (filter('op') == 'add_check') {
 }
 
 // Rimozione di un check della checklist
-elseif (filter('op') == 'delete_check') {
+elseif (filter('op') == 'rimuovi-check') {
     $check_id = post('check_id');
     $check = Check::find($check_id);
 
@@ -201,7 +217,7 @@ elseif (filter('op') == 'delete_check') {
 }
 
 // Gestione check per le checklist
-elseif (filter('op') == 'toggle_check') {
+elseif (filter('op') == 'toggle-check') {
     $check_id = post('check_id');
     $check = Check::find($check_id);
 
@@ -213,7 +229,7 @@ elseif (filter('op') == 'toggle_check') {
 }
 
 // Gestione ordine per le checklist
-elseif (filter('op') == 'sort_checks') {
+elseif (filter('op') == 'ordina-checks') {
     $ids = explode(',', $_POST['order']);
     $order = 0;
 

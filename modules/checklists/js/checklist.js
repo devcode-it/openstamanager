@@ -23,13 +23,13 @@ class Checklist {
     }
 
     cloneChecklist(data){
-        data.op = "clone_checklist";
+        data.op = "copia-checklist";
 
         this.request(data);
     }
 
     addCheck(data){
-        data.op = "add_check";
+        data.op = "aggiungi-check";
 
         this.request(data);
     }
@@ -58,7 +58,7 @@ class Checklist {
 
     deleteCheck(id) {
         this.request({
-            op: "delete_check",
+            op: "rimuovi-check",
             check_id: id,
         });
 
@@ -67,7 +67,7 @@ class Checklist {
 
     toggleCheck(id) {
         this.request({
-            op: "toggle_check",
+            op: "toggle-check",
             check_id: id,
         });
 

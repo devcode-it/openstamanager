@@ -61,14 +61,14 @@ if (count($notes) > 0) {
                                     <i class="fa fa-bell"></i> '.dateFormat($nota->notification_date).'
                                 </span>
 
-                                <button type="button" class="btn btn-info btn-xs ask" data-op="notification_nota" data-id_nota="'.$nota->id.'" data-msg="'.tr('Rimuovere la data di notifica da questa nota?').'" data-backto="record-edit" data-button="'.tr('Rimuovi').'" data-class="btn btn-lg btn-warning">
+                                <button type="button" class="btn btn-info btn-xs ask" data-op="rimuovi-notifica-nota" data-id_nota="'.$nota->id.'" data-msg="'.tr('Rimuovere la data di notifica da questa nota?').'" data-backto="record-edit" data-button="'.tr('Rimuovi').'" data-class="btn btn-lg btn-warning">
                                     <i class="fa fa-eye"></i>
                                 </button>';
         }
 
         if ($user->is_admin || $utente->id == $user->id) {
             echo '
-                                <button type="button" class="btn btn-danger btn-xs ask" data-op="delete_nota" data-id_nota="'.$nota->id.'" data-msg="'.tr('Rimuovere questa nota?').'" data-backto="record-edit">
+                                <button type="button" class="btn btn-danger btn-xs ask" data-op="rimuovi-nota" data-id_nota="'.$nota->id.'" data-msg="'.tr('Rimuovere questa nota?').'" data-backto="record-edit">
                                     <i class="fa fa-trash-o"></i>
                                 </button>';
         }
@@ -91,7 +91,7 @@ if (count($notes) > 0) {
 if ($structure->permission == 'rw') {
     echo '
         <form action="" method="post">
-            <input type="hidden" name="op" value="add_nota">
+            <input type="hidden" name="op" value="aggiungi-nota">
             <input type="hidden" name="backto" value="record-edit">
             <div class="row" >
                 <div class="col-md-12" >

@@ -99,7 +99,7 @@ $(document).ready(function() {
                 id_module: "'.$id_module.'",
                 id_plugin: "'.$id_plugin.'",
                 id_record: "'.$id_record.'",
-                op: "sort_checks",
+                op: "ordina-checks",
                 order: order.join(","),
             });
         }

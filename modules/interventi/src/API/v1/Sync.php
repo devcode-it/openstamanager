@@ -44,7 +44,7 @@ class Sync extends Resource implements RetrieveInterface, UpdateInterface
             $query .= ' AND in_interventi_tecnici.idtecnico = '.prepare($user['idanagrafica']);
         }
 
-        if ($user->anagrafica->isTipo('Cliente')) {
+        elseif ($user->anagrafica->isTipo('Cliente')) {
             $query .= ' AND in_interventi.idanagrafica = '.prepare($user['idanagrafica']);
         }
 

@@ -115,7 +115,7 @@ function salvaImpostazione(id, valore){
     $.ajax({
         url: globals.rootdir + "/actions.php",
         cache: false,
-        type: "GET",
+        type: "POST",
         dataType: "JSON",
         data: {
             op: "salva",

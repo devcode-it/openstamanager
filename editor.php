@@ -171,9 +171,9 @@ if (empty($record) || !$has_access) {
                         </a>
 
                         <div class="pull-right">
-                            {( "name": "button", "type": "print", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'" )}
+                            {( "name": "button", "type": "print", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", "id_record": "'.$id_record.'" )}
 
-                            {( "name": "button", "type": "email", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'" )}
+                            {( "name": "button", "type": "email", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", "id_record": "'.$id_record.'" )}
 
                             <a class="btn btn-success" id="'.(!empty($record['deleted_at']) ? 'restore' : 'save').'">
                                 <i class="fa fa-'.(!empty($record['deleted_at']) ? 'undo' : 'check').'"></i> '.(!empty($record['deleted_at']) ? tr('Salva e Ripristina') : tr('Salva')).'

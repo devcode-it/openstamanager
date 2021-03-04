@@ -17,26 +17,15 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Models\Upload;
-use Plugins\ExportFE\FatturaElettronica;
+use Modules\Fatture\Fattura;
 
 include_once __DIR__.'/../../core.php';
 
-try {
-    $fattura_pa = new FatturaElettronica($id_record);
-} catch (UnexpectedValueException $e) {
-    echo '<div class="text-center">'.tr('Questo documento non è una fattura elettronica').'</div>';
-
-    return;
-}
-$file = Upload::where('filename', $fattura_pa->getFilename())
-    ->where('id_record', $id_record)
-    ->first();
-
-$file = Models\Upload::find($file['id']);
+$fattura = Fattura::find($id_record);
+$file = $fattura->uploads()->where('name', 'Fattura Elettronica')->first();
 
 if (empty($file)) {
-    echo '<div class="text-center">'.tr('Questo documento non è una fattura elettronica').'</div>';
+    echo '<div class="text-center">'.tr('Questo documento non possiede una fattura elettronica associata').'</div>';
 
     return;
 }

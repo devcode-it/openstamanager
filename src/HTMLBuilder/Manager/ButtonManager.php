@@ -101,6 +101,10 @@ class ButtonManager implements ManagerInterface
 
     protected function getList($options)
     {
+        if (!empty($options['id_plugin'])) {
+            return [];
+        }
+
         if ($options['type'] == 'print') {
             $results = \Prints::getModulePrints($options['id_module']);
         } else {

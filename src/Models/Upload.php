@@ -22,11 +22,21 @@ namespace Models;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Intervention\Image\ImageManagerStatic;
+use UnexpectedValueException;
 use Util\FileSystem;
 
 class Upload extends Model
 {
     use SimpleModelTrait;
+
+    /** @var array Elenco delle tipologie di file pericolose */
+    protected static $not_allowed_types = [
+        'php' => 'application/php',
+        'php5' => 'application/php',
+        'phtml' => 'application/php',
+        'html' => 'text/html',
+        'htm' => 'text/html',
+    ];
 
     protected $table = 'zz_files';
 
@@ -55,8 +65,10 @@ class Upload extends Model
     /**
      * Crea un nuovo upload.
      *
-     * @param array $source
+     * @param string|array $source
      * @param array $data
+     * @param null $name
+     * @param null $category
      *
      * @return self
      */
@@ -66,6 +78,8 @@ class Upload extends Model
 
         // Informazioni di base
         $original_name = isset($source['name']) ? $source['name'] : basename($source);
+        $name = isset($data['name']) ? $data['name'] : $name;
+        $category = isset($data['category']) ? $data['category'] : $category;
 
         // Nome e categoria dell'allegato
         $model->name = !empty($name) ? $name : $original_name;
@@ -76,26 +90,38 @@ class Upload extends Model
         $model->original_name = $original_name; // Fix per "original" di Eloquent
 
         // Informazioni sulle relazioni
-        $model->id_module = !empty($data['id_module']) ? $data['id_module'] : null;
+        $model->id_module = !empty($data['id_module']) && empty($data['id_plugin']) ? $data['id_module'] : null;
         $model->id_plugin = !empty($data['id_plugin']) ? $data['id_plugin'] : null;
         $model->id_record = !empty($data['id_record']) ? $data['id_record'] : null;
 
-        // Nome fisico del file
+        // Definizione del nome fisico del file
         $directory = base_dir().'/'.$model->directory;
         $filename = self::getNextName($original_name, $directory);
+        if (empty($filename)){
+            throw new UnexpectedValueException("Estensione dell'allegato non supportata");
+        }
         $model->filename = $filename;
 
-        // Creazione file fisico
+        // Creazione del file fisico
         directory($directory);
         if (
             (is_array($source) && is_uploaded_file($source['tmp_name']) && !move_uploaded_file($source['tmp_name'], $directory.'/'.$filename)) ||
-            (is_string($source) && !copy($source, $directory.'/'.$filename))
+            (is_string($source) && is_file($source) && !copy($source, $directory.'/'.$filename)) ||
+            (is_string($source) && !is_file($source) && file_put_contents($directory.'/'.$filename, $source) === false)
         ) {
-            return null;
+            throw new UnexpectedValueException("Errore durante il salvataggio dell'allegato");
         }
 
+        // Aggiornamento dimensione fisica e responsabile del caricamento
         $model->size = FileSystem::fileSize($directory.'/'.$filename);
         $model->user()->associate(auth()->getUser());
+
+        // Rimozione estensione dal nome visibile
+        $extension = $model->extension;
+        if (string_ends_with($model->name, $extension)) {
+            $length = strlen($extension) + 1;
+            $model->name = substr($model->name, 0, -$length);
+        }
 
         $model->save();
 
@@ -201,6 +227,18 @@ class Upload extends Model
     }
 
     /**
+     * Controlla se l'estensione è supportata dal sistema di upload.
+     *
+     * @param string $extension
+     *
+     * @return bool
+     */
+    protected static function isSupportedType($extension)
+    {
+        return !in_array(strtolower($extension), array_keys(self::$not_allowed_types));
+    }
+
+    /**
      * @return bool
      */
     public function hasPreview()
@@ -272,6 +310,12 @@ class Upload extends Model
     {
         $extension = self::getInfo($file)['extension'];
         $extension = strtolower($extension);
+
+        // Controllo sulle estensioni permesse
+        $allowed = self::isSupportedType($extension);
+        if (!$allowed) {
+            return false;
+        }
 
         do {
             $filename = random_string().'.'.$extension;

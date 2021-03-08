@@ -166,13 +166,14 @@ switch (post('op')) {
 
         // Upload file
         if (!empty($_FILES) && !empty($_FILES['immagine']['name'])) {
-            $filename = Uploads::upload($_FILES['immagine'], [
+            $upload = Uploads::upload($_FILES['immagine'], [
                 'name' => 'Immagine',
                 'id_module' => $id_module,
                 'id_record' => $id_record,
             ], [
                 'thumbnails' => true,
             ]);
+            $filename = $upload->filename;
 
             if (!empty($filename)) {
                 $dbo->update('mg_articoli', [

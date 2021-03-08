@@ -302,20 +302,16 @@ class FatturaElettronica
         $this->delete();
 
         $name = 'Fattura Elettronica';
-        $data = $this->getUploadData();
+        $info = $this->getUploadData();
 
         // Generazione nome XML
         $filename = $this->getFilename(true);
 
-        // Salvataggio del file
-        $file = rtrim($directory, '/').'/'.$filename;
-        $result = directory($directory) && file_put_contents($file, $this->toXML());
-
         // Registrazione come allegato
-        Uploads::register(array_merge([
+        Uploads::upload($this->toXML(), array_merge($info, [
             'name' => $name,
-            'original' => $filename,
-        ], $data));
+            'original_name' => $filename,
+        ]));
 
         // Aggiornamento effettivo
         database()->update('co_documenti', [
@@ -1617,24 +1613,26 @@ class FatturaElettronica
         }
 
         $data = $fattura->getUploadData();
-        $dir = static::getDirectory();
 
+        // Generazione stampa
         $print = Prints::getModulePredefinedPrint($id_module);
-        $info = Prints::render($print['id'], $documento['id'], base_dir().'/'.$dir);
+        $info = Prints::render($print['id'], $documento['id'], null, true);
 
+        // Salvataggio stampa come allegato
         $name = 'Stampa allegata';
         $is_presente = database()->fetchNum('SELECT id FROM zz_files WHERE id_module = '.prepare($id_module).' AND id_record = '.prepare($documento['id']).' AND name = '.prepare($name));
         if (empty($is_presente)) {
-            Uploads::register(array_merge([
+            Uploads::upload($info['pdf'], array_merge($data, [
                 'name' => $name,
-                'original' => basename($info['path']),
-            ], $data));
+                'original_name' => $info['path'],
+            ]));
         }
 
+        // Introduzione allegato in Fattura Elettronica
         $attachments[] = [
             'NomeAttachment' => 'Fattura',
             'FormatoAttachment' => 'PDF',
-            'Attachment' => base64_encode(file_get_contents($info['path'])),
+            'Attachment' => base64_encode($info['pdf']),
         ];
 
         return $attachments;

@@ -70,7 +70,10 @@ class Module extends Model
             $dbo = $database = database();
 
             // Lettura delle variabili nei singoli moduli
-            $variables = include $this->filepath('variables.php');
+            $path = $this->filepath('variables.php');
+            if (!empty($path)) {
+                $variables = include $path;
+            }
 
             // Sostituzione delle variabili di base
             $replaces = [];

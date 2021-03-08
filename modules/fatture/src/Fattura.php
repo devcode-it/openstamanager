@@ -501,7 +501,7 @@ class Fattura extends Document
 
         $file = $this->uploads()->where('name', 'Fattura Elettronica')->first();
 
-        return file_get_contents($file->filepath);
+        return $file->getContent();
     }
 
     /**

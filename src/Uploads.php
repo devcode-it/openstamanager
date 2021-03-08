@@ -17,6 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Models\Upload;
 use Util\FileSystem;
 
 /**
@@ -26,15 +27,6 @@ use Util\FileSystem;
  */
 class Uploads
 {
-    /** @var array Elenco delle tipologie di file pericolose */
-    protected static $not_allowed_types = [
-        'php' => 'application/php',
-        'php5' => 'application/php',
-        'phtml' => 'application/php',
-        'html' => 'text/html',
-        'htm' => 'text/html',
-    ];
-
     /**
      * Restituisce l'elenco degli allegati registrati per un determinato modulo/plugin e record.
      *
@@ -75,88 +67,17 @@ class Uploads
     }
 
     /**
-     * Individua il nome fisico per il file indicato.
-     *
-     * @param string $source
-     * @param array  $data
-     *
-     * @return string
-     */
-    public static function getName($source, $data)
-    {
-        $extension = strtolower(self::fileInfo($source)['extension']);
-        $allowed = self::isSupportedType($extension);
-
-        if (!$allowed) {
-            return false;
-        }
-
-        $directory = base_dir().'/'.self::getDirectory($data['id_module'], $data['id_plugin']);
-
-        do {
-            $filename = random_string().'.'.$extension;
-        } while (file_exists($directory.'/'.$filename));
-
-        return $filename;
-    }
-
-    /**
      * Effettua l'upload di un file nella cartella indicata.
      *
-     * @param array $source
+     * @param string|array $source
      * @param array $data
      * @param array $options
      *
-     * @return string
+     * @return Upload
      */
     public static function upload($source, $data, $options = [])
     {
-        $original = isset($source['name']) ? $source['name'] : basename($source);
-
-        $filename = self::getName($original, $data);
-        $directory = base_dir().'/'.self::getDirectory($data['id_module'], $data['id_plugin']);
-
-        // Creazione file fisico
-        if (
-            !directory($directory) ||
-            (is_array($source) && is_uploaded_file($source['tmp_name']) && !move_uploaded_file($source['tmp_name'], $directory.'/'.$filename)) ||
-            (is_string($source) && !copy($source, $directory.'/'.$filename))
-        ) {
-            return null;
-        }
-
-        // Registrazione del file
-        $data['filename'] = $filename;
-        $data['original'] = $original;
-        $data['size'] = FileSystem::fileSize($directory.'/'.$filename);
-        self::register($data);
-
-        // Operazioni finali
-        self::processOptions($data, $options);
-
-        return $filename;
-    }
-
-    /**
-     * Registra nel database il file caricato con i dati richiesti.
-     *
-     * @param array $data
-     */
-    public static function register($data)
-    {
-        $database = database();
-
-        $database->insert('zz_files', [
-            'name' => !empty($data['name']) ? $data['name'] : $data['original'],
-            'filename' => !empty($data['filename']) ? $data['filename'] : $data['original'],
-            'original' => $data['original'],
-            'category' => !empty($data['category']) ? $data['category'] : null,
-            'id_module' => !empty($data['id_module']) && empty($data['id_plugin']) ? $data['id_module'] : null,
-            'id_plugin' => !empty($data['id_plugin']) ? $data['id_plugin'] : null,
-            'id_record' => $data['id_record'],
-            'size' => $data['size'],
-            'created_by' => auth()->getUser()->id,
-        ]);
+        return Upload::build($source, $data);
     }
 
     /**
@@ -231,124 +152,5 @@ class Uploads
         $infos['extension'] = strtolower($infos['extension']);
 
         return $infos;
-    }
-
-    /**
-     * Genera un ID fittizio per l'aggiunta di allegati a livello temporaneo.
-     *
-     * @return int
-     */
-    public static function getFakeID()
-    {
-        return -rand(1, 9999);
-    }
-
-    /**
-     * Sposta gli allegati fittizi a un record reale.
-     *
-     * @param int $fake_id
-     * @param int $id_record
-     */
-    public static function updateFake($fake_id, $id_record)
-    {
-        database()->update('zz_files', [
-            'id_record' => $id_record,
-        ], [
-            'id_record' => $fake_id,
-        ]);
-    }
-
-    /**
-     * Copia gli allegati di un record in un altro record.
-     *
-     * @param array $from
-     * @param array $to
-     *
-     * @return bool
-     */
-    public static function copy($from, $to)
-    {
-        $attachments = self::get($from);
-
-        $directory = base_dir().'/'.self::getDirectory($to['id_module'], $to['id_plugin']);
-        $directory_from = base_dir().'/'.self::getDirectory($from['id_module'], $from['id_plugin']);
-
-        foreach ($attachments as $attachment) {
-            $data = array_merge($attachment, $to);
-
-            // Individuazione del nuovo nome fisico
-            $data['filename'] = self::getName($directory_from.'/'.$attachment['filename'], $data);
-
-            // Copia fisica
-            if (!copy($directory_from.'/'.$attachment['filename'], $directory.'/'.$data['filename'])) {
-                return false;
-            }
-
-            // Registrazione del file
-            self::register($data);
-
-            // Operazioni finali
-            $options = [];
-            self::processOptions($data, $options);
-        }
-
-        return true;
-    }
-
-    protected static function processOptions($data, $options)
-    {
-        $directory = base_dir().'/'.self::getDirectory($data['id_module'], $data['id_plugin']);
-
-        if (!empty($options['thumbnails'])) {
-            self::thumbnails($directory.'/'.$data['filename'], $directory);
-        }
-    }
-
-    /**
-     * Controlla se l'estensione è supportata dal sistema di upload.
-     *
-     * @param string $extension
-     *
-     * @return bool
-     */
-    protected static function isSupportedType($extension)
-    {
-        return !in_array(strtolower($extension), array_keys(self::$not_allowed_types));
-    }
-
-    /**
-     * Genera le thumbnails per le immagini.
-     *
-     * @param string $filepath
-     * @param string $directory
-     */
-    protected static function thumbnails($filepath, $directory = null)
-    {
-        $fileinfo = self::fileInfo($filepath);
-        $directory = empty($directory) ? dirname($filepath) : $directory;
-
-        if (!in_array(mime_content_type($filepath), ['image/x-png', 'image/gif', 'image/jpeg'])) {
-            return;
-        }
-
-        $driver = extension_loaded('gd') ? 'gd' : 'imagick';
-        Intervention\Image\ImageManagerStatic::configure(['driver' => $driver]);
-
-        $img = Intervention\Image\ImageManagerStatic::make($filepath);
-
-        $img->resize(600, null, function ($constraint) {
-            $constraint->aspectRatio();
-        });
-        $img->save(slashes($directory.'/'.$fileinfo['filename'].'_thumb600.'.$fileinfo['extension']));
-
-        $img->resize(250, null, function ($constraint) {
-            $constraint->aspectRatio();
-        });
-        $img->save(slashes($directory.'/'.$fileinfo['filename'].'_thumb250.'.$fileinfo['extension']));
-
-        $img->resize(100, null, function ($constraint) {
-            $constraint->aspectRatio();
-        });
-        $img->save(slashes($directory.'/'.$fileinfo['filename'].'_thumb100.'.$fileinfo['extension']));
     }
 }

@@ -21,6 +21,11 @@ include_once __DIR__.'/../../core.php';
 
 $block_edit = $record['is_completato'];
 
+if( strtotime($record['data_conclusione'])<strtotime($record['data_accettazione']) ){
+    echo '
+    <div class="alert alert-warning"><a class="clickable" onclick="$(\'.alert\').hide();"><i class="fa fa-times"></i></a> '.tr('Attenzione! La data di accettazione supera la data di conclusione del contratto. verificare tali informazioni.').'</div>';
+}
+
 ?>
 <form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
@@ -44,7 +49,7 @@ $block_edit = $record['is_completato'];
                 </div>
 
                 <div class="col-md-2">
-                    {[ "type": "date", "label": "<?php echo tr('Data accettazione'); ?>", "name": "data_accettazione", "value": "$data_accettazione$" ]}
+                    {[ "type": "date", "label": "<?php echo tr('Data accettazione'); ?>", "name": "data_accettazione", "value": "$data_accettazione$", "max-date": "$data_conclusione$" ]}
                 </div>
 
                 <div class="col-md-2">
@@ -510,6 +515,16 @@ $(document).ready(function() {
             input("rinnovo_automatico").disable();
         }
     });
+
+    $("#data_conclusione").on("dp.change", function (e) {
+        let data_accettazione = $("#data_accettazione");
+        data_accettazione.data("DateTimePicker").maxDate(e.date);
+
+        if(data_accettazione.data("DateTimePicker").date() > e.date){
+            data_accettazione.data("DateTimePicker").date(e.date);
+        }
+    });
+
 });
 </script>';
 ?>

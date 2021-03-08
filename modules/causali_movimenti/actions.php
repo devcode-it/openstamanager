@@ -24,7 +24,7 @@ switch (filter('op')) {
         if (isset($id_record)) {
             $database->update('mg_causali_movimenti', [
                 'nome' => post('nome'),
-                'movimento_carico' => post('movimento_carico'),
+                'tipo_movimento' => post('tipo_movimento'),
                 'descrizione' => post('descrizione'),
             ], [
                 'id' => $id_record,
@@ -38,7 +38,7 @@ switch (filter('op')) {
     case 'add':
         $database->insert('mg_causali_movimenti', [
             'nome' => post('nome'),
-            'movimento_carico' => post('movimento_carico'),
+            'tipo_movimento' => post('tipo_movimento'),
             'descrizione' => post('descrizione'),
         ]);
         $id_record = $database->lastInsertedID();

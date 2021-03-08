@@ -205,14 +205,15 @@ echo '
 // Tipo del documento
 $query = "SELECT id, CONCAT (descrizione, IF((codice_tipo_documento_fe IS NULL), '', CONCAT(' (', codice_tipo_documento_fe, ')' ) )) AS descrizione FROM co_tipidocumento WHERE dir = 'uscita'";
 $query_tipo = $query.' AND codice_tipo_documento_fe = '.prepare($dati_generali['TipoDocumento']);
-if ($database->fetchNum($query_tipo)) {
+$numero_tipo = $database->fetchNum($query_tipo);
+if (!empty($numero_tipo)) {
     $query = $query_tipo;
 }
 
 echo '
     <div class="row">
         <div class="col-md-3">
-            {[ "type": "select", "label": "'.tr('Tipo fattura').'", "name": "id_tipo", "required": 1, "values": "query='.$query.'" ]}
+            {[ "type": "select", "label": "'.tr('Tipo fattura').'", "name": "id_tipo", "required": 1, "values": "query='.$query.'", "value": "'.($numero_tipo == 1 ? $database->fetchOne($query_tipo)['id'] : '').'" ]}
         </div>';
 
 // Sezionale

@@ -70,13 +70,13 @@ if (post('action') == 'init') {
 
         // Logo stampe
         if (!empty($_FILES) && !empty($_FILES['blob']['name'])) {
-            $file = Uploads::upload($_FILES['blob'], [
+            $upload = Uploads::upload($_FILES['blob'], [
                 'name' => 'Logo stampe',
                 'id_module' => $id_module,
                 'id_record' => $id_record,
             ]);
 
-            Settings::setValue('Logo stampe', $file);
+            Settings::setValue('Logo stampe', $upload->filename);
         }
     }
 

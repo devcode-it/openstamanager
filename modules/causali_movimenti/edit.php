@@ -36,7 +36,7 @@ include_once __DIR__.'/../../core.php';
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "checkbox", "label": "<?php echo tr('Movimento di carico'); ?>", "name": "movimento_carico", "value": "$movimento_carico$" ]}
+                    {[ "type": "checkbox", "label": "<?php echo tr('Movimento di carico'); ?>", "name": "tipo_movimento", "value": "$tipo_movimento$" ]}
                 </div>
             </div>
 

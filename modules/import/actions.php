@@ -28,7 +28,7 @@ switch (filter('op')) {
 
         $id_record = $import->id;
 
-        $upload = Uploads::upload($_FILES['file'], [
+        Uploads::upload($_FILES['file'], [
             'id_module' => $import->getModule()->id,
             'id_record' => $id_record,
         ]);

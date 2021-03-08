@@ -40,7 +40,6 @@ class FileManager implements ManagerInterface
     {
         $options['readonly'] = !empty($options['readonly']) ? true : false;
         $options['showpanel'] = isset($options['showpanel']) ? $options['showpanel'] : true;
-        $options['label'] = isset($options['label']) ? $options['label'] : tr('Allegato').':';
 
         $options['id_plugin'] = !empty($options['id_plugin']) ? $options['id_plugin'] : null;
 
@@ -83,7 +82,7 @@ class FileManager implements ManagerInterface
 
         <div class="box-tools pull-right">';
 
-                if (!empty($category)) {
+                if (!empty($category) && !in_array($category, ['Fattura Elettronica'])) {
                     $result .= '
             <button type="button" class="btn btn-box-tool category-save hide">
                 <i class="fa fa-check"></i>
@@ -158,7 +157,7 @@ class FileManager implements ManagerInterface
 
                     if (!$options['readonly']) {
                         $result .= '
-                <button type="button" class="btn btn-xs btn-info" data-href="'.base_url().'/actions.php?op=visualizza-modifica-allegato&id_module='.$options['id_module'].'&id_allegato='.$r['id'].'" data-title="'.tr('Modifica allegato').'">
+                <button type="button" class="btn btn-xs btn-warning" data-href="'.base_url().'/actions.php?op=visualizza-modifica-allegato&id_module='.$options['id_module'].'&id_allegato='.$r['id'].'" data-title="'.tr('Modifica allegato').'">
                     <i class="fa fa-edit"></i>
                 </button>
 
@@ -188,15 +187,7 @@ class FileManager implements ManagerInterface
         // Form per l'upload di un nuovo file
         if (!$options['readonly']) {
             $result .= '
-    <b>'.$options['label'].'</b>
     <div id="upload-form" class="row">
-        <div class="col-md-6">
-            {[ "type": "text", "placeholder": "'.tr('Nome').'", "name": "nome_allegato", "class": "unblockable" ]}
-        </div>
-
-        <div class="col-md-6">
-            {[ "type": "text", "placeholder": "'.tr('Categoria').'", "name": "categoria_allegato", "id": "categoria_allegato", "class": "unblockable" ]}
-        </div>
         <div class="col-md-12">
             <div class="dropzone dz-clickable" id="dragdrop">
 
@@ -252,11 +243,6 @@ $(document).ready(function() {
         autoQueue: true,
         url: "'.base_path().'/actions.php?op=aggiungi-allegato&id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id_plugin='.$options['id_plugin'].'",
         init: function (file, xhr, formData) {
-            this.on("sending", function(file, xhr, formData) {
-                formData.append("categoria", $("#categoria_allegato").val());
-                formData.append("nome_allegato", $("#nome_allegato").val());
-            });
-
             this.on("success", function (file) {
                 dragdrop.removeFile(file);
             });
@@ -318,19 +304,6 @@ $(document).ready(function() {
         return [filename, ext];
     }
 
-    // Auto-completamento nome
-    $("#'.$attachment_id.' #blob").change(function(){
-        var nome = $("#'.$attachment_id.' #nome_allegato");
-
-        if (!nome.val()) {
-            var fullPath = $(this).val();
-
-            var filename = getFilenameAndExtension(fullPath);
-
-            nome.val(filename[0]);
-        }
-    });
-
     // Auto-completamento categoria
     $("#'.$attachment_id.' #categoria_allegato").autocomplete({
         source: '.json_encode($source).',
@@ -349,16 +322,6 @@ $(document).ready(function() {
     // Upload
     $("#'.$attachment_id.' #upload").click(function(){
         $form = $("#'.$attachment_id.' #upload-form");
-
-        if($form.find("input[name=nome_allegato]").val() == "" || $form.find("input[name=blob]").val() == "") {
-            swal({
-                type: "error",
-                title: "'.tr('Errore').'",
-                text:  "'.tr('Alcuni campi obbligatori non sono stati compilati correttamente.').'",
-            });
-
-            return;
-        }
 
         $form.ajaxSubmit({
             url: globals.rootdir + "/actions.php",

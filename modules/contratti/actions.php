@@ -391,15 +391,14 @@ $riga = $contratto->getRiga($type, $id_riga);
             }
 
             // Copia degli allegati
-            Uploads::copy([
-                'id_module' => $id_module,
-                'id_plugin' => Plugins::get('Pianificazione interventi')['id'],
-                'id_record' => $p['id'],
-            ], [
-                'id_module' => $id_module,
-                'id_plugin' => Plugins::get('Pianificazione interventi')['id'],
-                'id_record' => $id_promemoria,
-            ]);
+            $allegati = $promemoria->uploads();
+            foreach ($allegati as $allegato) {
+                $allegato->copia([
+                    'id_module' => $id_module,
+                    'id_plugin' => Plugins::get('Pianificazione interventi')['id'],
+                    'id_record' => $id_promemoria,
+                ]);
+            }
         }
 
         // Cambio stato precedente contratto in concluso (non più pianificabile)

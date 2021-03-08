@@ -26,7 +26,7 @@ switch (post('op')) {
         $da_pagare = post('da_pagare');
         $descrizione = post('descrizione');
 
-        $dbo->query('INSERT INTO co_scadenziario(descrizione, tipo, data_emissione, scadenza, da_pagare, pagato) VALUES('.prepare($descrizione).', '.prepare($tipo).', CURDATE(), '.prepare($data).', '.prepare(-$da_pagare).", '0')");
+        $dbo->query('INSERT INTO co_scadenziario(descrizione, tipo, data_emissione, scadenza, da_pagare, pagato) VALUES('.prepare($descrizione).', '.prepare($tipo).', CURDATE(), '.prepare($data).', '.prepare($da_pagare).", '0')");
         $id_record = $dbo->lastInsertedID();
 
         flash()->info(tr('Scadenza inserita!'));

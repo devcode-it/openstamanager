@@ -36,7 +36,7 @@ include_once __DIR__.'/../../core.php';
     </div>
 
     <div class="col-md-4">
-    {[ "type": "number", "label": "<?php echo tr('Importo'); ?>", "name": "da_pagare", "required": 1, "value": "" ]}
+    {[ "type": "number", "label": "<?php echo tr('Importo'); ?>", "name": "da_pagare", "required": 1, "value": "", "help": "Le scadenze inserite con importo positivo indicano un credito da un cliente, le scadenze inserite con importo negativo indicano un debito verso un fornitore" ]}
     </div>
   </div>
 

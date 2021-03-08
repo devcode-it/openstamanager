@@ -35,7 +35,7 @@ echo '
         </div>
 
         <div class="col-md-6">
-            {[ "type": "text", "label": "'.tr('Categoria').'", "name": "categoria_allegato", "value": "'.$allegato->category.'" ]}
+            {[ "type": "text", "label": "'.tr('Categoria').'", "name": "categoria_allegato", "value": "'.$allegato->category.'", "disabled": "'.intval(in_array($allegato->category, ['Fattura Elettronica'])).'" ]}
         </div>
     </div>
 

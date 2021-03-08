@@ -83,7 +83,7 @@ class FileManager implements ManagerInterface
 
         <div class="box-tools pull-right">';
 
-                if (!empty($category)) {
+                if (!empty($category) && !in_array($category, ['Fattura Elettronica'])) {
                     $result .= '
             <button type="button" class="btn btn-box-tool category-save hide">
                 <i class="fa fa-check"></i>

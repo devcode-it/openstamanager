@@ -32,9 +32,24 @@ class Upload extends Model
 
     protected $file_info;
 
+    /**
+     * @return mixed|string
+     */
     public function getCategoryAttribute()
     {
         return $this->attributes['category'] ?: 'Generale';
+    }
+
+    /**
+     * @param $value
+     */
+    public function setCategoryAttribute($value)
+    {
+        if ($value == 'Generale' || $value == ''){
+            $value = null;
+        }
+
+        $this->attributes['category'] = $value;;
     }
 
     /**

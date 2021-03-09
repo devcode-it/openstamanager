@@ -28,6 +28,7 @@ $query = 'SELECT
     or_ordini.numero_esterno,
     data,
     SUM(or_righe_ordini.qta) AS qta_ordinata,
+    SUM(or_righe_ordini.qta - or_righe_ordini.qta_evasa) AS qta_impegnata,
     or_righe_ordini.um
 FROM or_ordini
     INNER JOIN or_righe_ordini ON or_ordini.id = or_righe_ordini.idordine
@@ -52,7 +53,7 @@ echo '
 			<div class="panel-body" style="min-height:98px;">';
 
 $ordini = $dbo->fetchArray(str_replace('|dir|', 'entrata', $query));
-$impegnato = sum(array_column($ordini, 'qta_ordinata'));
+$impegnato = sum(array_column($ordini, 'qta_impegnata'));
 if (!empty($ordini)) {
     echo '
                 <table class="table table-bordered table-condensed table-striped">
@@ -68,7 +69,7 @@ if (!empty($ordini)) {
     $modulo = Modules::get('Ordini cliente');
     foreach ($ordini as $documento) {
         $numero = !empty($documento['numero_esterno']) ? $documento['numero_esterno'] : $documento['numero'];
-        $qta = $documento['qta_ordinata'];
+        $qta = $documento['qta_impegnata'];
 
         echo '
                     <tr>
@@ -175,7 +176,7 @@ echo '
  */
 $qta_presente = $articolo->qta > 0 ? $articolo->qta : 0;
 $diff = ($qta_presente - $impegnato + $ordinato) * -1;
-$da_ordinare = $diff < 0 ? 0 : $diff;
+$da_ordinare = (($diff <= 0) ? 0 : $diff);
 
 echo '
 	<div class="col-md-3">

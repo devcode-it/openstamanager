@@ -145,7 +145,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
         $id_iva = $fattura->anagrafica->idiva_vendite;
     }
 
-    $data = $intervento->inizio;
+    $data = $intervento->fine;
     $codice = $intervento->codice;
 
     // Riga di descrizione

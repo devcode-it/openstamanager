@@ -422,9 +422,11 @@ if (!$block_edit) {
                 AND dt_ddt.id IN (SELECT idddt FROM dt_righe_ddt WHERE dt_righe_ddt.idddt = dt_ddt.id AND (qta - qta_evasa) > 0)';
     $ddt = $dbo->fetchArray($ddt_query)[0]['tot'];
     echo '
-            <button type="button" class="btn btn-sm btn-primary'.(!empty($ddt) ? '' : ' disabled').'" data-href="'.base_path().'/modules/interventi/add_ddt.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="'.tr('Aggiungi ddt').'">
-                <i class="fa fa-plus"></i> '.tr('Ddt').'
-            </button>';
+            <div class="tip" data-toggle="tooltip" title="'.tr('DDT in uscita per il Cliente che si trovano nello stato di Evaso o Parzialmente Evaso con una Causale importabile.').'">
+                <button type="button" class="btn btn-sm btn-primary'.(!empty($ddt) ? '' : ' disabled').'" data-href="'.base_path().'/modules/interventi/add_ddt.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="'.tr('Aggiungi DDT in uscita').'">
+                    <i class="fa fa-plus"></i> '.tr('Ddt').'
+                </button>
+            </div>';
 
     echo '
             <button type="button" class="btn btn-sm btn-primary tip" title="'.tr('Aggiungi articolo').'" onclick="gestioneArticolo(this)">

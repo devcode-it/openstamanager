@@ -326,13 +326,13 @@ if (!$block_edit) {
         $ddt_query = 'SELECT COUNT(*) AS tot FROM dt_ddt WHERE idstatoddt IN (SELECT id FROM dt_statiddt WHERE descrizione IN(\'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoddt=(SELECT id FROM or_tipiordine WHERE dir="uscita") AND dt_ddt.id IN (SELECT idddt FROM dt_righe_ddt WHERE dt_righe_ddt.idddt = dt_ddt.id AND (qta - qta_evasa) > 0)';
         $ddt = $dbo->fetchArray($ddt_query)[0]['tot'];
         echo '
-            <a class="btn btn-sm btn-primary'.(!empty($ddt) ? '' : ' disabled').'" data-href="'.base_path().'/modules/ddt/add_ddt.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="Aggiungi ddt">
+            <a class="btn btn-sm btn-primary'.(!empty($ddt) ? '' : ' disabled').'" data-href="'.base_path().'/modules/ddt/add_ddt.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi DDT').'">
                 <i class="fa fa-plus"></i> '.tr('Ddt').'
             </a>';
     }
 
     echo '
-            <a class="btn btn-sm btn-primary'.(!empty($ordini) ? '' : ' disabled').'" data-href="'.base_path().'/modules/ddt/add_ordine.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="Aggiungi ordine">
+            <a class="btn btn-sm btn-primary'.(!empty($ordini) ? '' : ' disabled').'" data-href="'.base_path().'/modules/ddt/add_ordine.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="'.tr('Aggiungi Ordine').'">
                 <i class="fa fa-plus"></i> '.tr('Ordine').'
             </a>';
 

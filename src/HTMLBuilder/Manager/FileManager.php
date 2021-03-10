@@ -158,7 +158,7 @@ class FileManager implements ManagerInterface
 
                     if (!$options['readonly']) {
                         $result .= '
-                <button type="button" class="btn btn-xs btn-warning" data-href="'.base_url().'/actions.php?op=visualizza-modifica-allegato&id_module='.$options['id_module'].'&id_allegato='.$r['id'].'" data-title="'.tr('Modifica allegato').'">
+                <button type="button" class="btn btn-xs btn-warning" data-href="'.base_path().'/actions.php?op=visualizza-modifica-allegato&id_module='.$options['id_module'].'&id_allegato='.$r['id'].'" data-title="'.tr('Modifica allegato').'">
                     <i class="fa fa-edit"></i>
                 </button>
 

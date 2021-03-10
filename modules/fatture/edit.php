@@ -282,7 +282,7 @@ elseif ($record['stato'] == 'Bozza') {
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 1, "ajax-source": "pagamenti", "value": "$idpagamento$", "extra": "onchange=\"$('#id_banca_azienda').val($(this).selectData().id_banca_<?php echo $conto; ?>).change(); \" " ]}
+					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 1, "ajax-source": "pagamenti", "value": "$idpagamento$", "extra": "onchange=\"$('#id_banca_azienda').selectSetNew( $(this).selectData().id_banca_<?php echo $conto; ?>, $(this).selectData().descrizione_banca_<?php echo $conto; ?> ).change(); \" " ]}
 				</div>
 
 				<div class="col-md-3">

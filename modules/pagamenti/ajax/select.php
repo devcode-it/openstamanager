@@ -25,11 +25,16 @@ switch ($resource) {
      * - codice_modalita_pagamento_fe
      */
     case 'pagamenti':
-        $query = "SELECT id,
+        $query = "SELECT co_pagamenti.id,
            CONCAT_WS(' - ', codice_modalita_pagamento_fe, descrizione) AS descrizione,
-           (SELECT id FROM co_banche WHERE id_pianodeiconti3 = co_pagamenti.idconto_vendite LIMIT 1) AS id_banca_vendite,
-           (SELECT id FROM co_banche WHERE id_pianodeiconti3 = co_pagamenti.idconto_acquisti LIMIT 1) AS id_banca_acquisti
-        FROM co_pagamenti |where| GROUP BY descrizione ORDER BY descrizione ASC";
+           banca_vendite.id AS id_banca_vendite,
+           CONCAT(banca_vendite.nome, ' - ', banca_vendite.iban) AS descrizione_banca_vendite,
+           banca_acquisti.id AS id_banca_acquisti,
+           CONCAT(banca_acquisti.nome, ' - ', banca_acquisti.iban) AS descrizione_banca_acquisti
+        FROM co_pagamenti
+            LEFT JOIN co_banche banca_vendite ON co_pagamenti.idconto_vendite = banca_vendite.id_pianodeiconti3
+            LEFT JOIN co_banche banca_acquisti ON co_pagamenti.idconto_acquisti = banca_acquisti.id_pianodeiconti3
+        |where| GROUP BY co_pagamenti.descrizione ORDER BY co_pagamenti.descrizione ASC";
 
         foreach ($elements as $element) {
             $filter[] = 'co_pagamenti.id = '.prepare($element);

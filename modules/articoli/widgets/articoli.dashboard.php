@@ -19,7 +19,7 @@
 
 include_once __DIR__.'/../../../core.php';
 
-$rs = $dbo->fetchArray('SELECT id, descrizione, qta, threshold_qta, um AS unitamisura FROM mg_articoli WHERE qta < threshold_qta AND attivo = 1 ORDER BY qta ASC');
+$rs = $dbo->fetchArray('SELECT id, descrizione, qta, threshold_qta, codice, um AS unitamisura FROM mg_articoli WHERE qta < threshold_qta AND attivo = 1 ORDER BY qta ASC');
 
 if (!empty($rs)) {
     echo '
@@ -34,6 +34,7 @@ if (!empty($rs)) {
     <tr>
         <td>
             '.Modules::link('Articoli', $r['id'], $r['descrizione']).'
+            <br><small>'.$r['codice'].'</small>
         </td>
         <td>
             '.Translator::numberToLocale($r['qta'], 'qta').' '.$r['unitamisura'].'

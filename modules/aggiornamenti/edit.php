@@ -223,7 +223,7 @@ function search(button) {
                 </button>
 
                 <button type="button" class="btn btn-block" onclick="controlli(this)">
-                    <i class="fa fa-cog"></i> '.tr('Controlla gestionale').'
+                    <i class="fa fa-stethoscope"></i> '.tr('Controlla gestionale').'
                 </button>
             </div>
         </div>

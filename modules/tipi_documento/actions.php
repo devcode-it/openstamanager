@@ -26,7 +26,7 @@ switch (filter('op')) {
         $codice_tipo_documento_fe = filter('codice_tipo_documento_fe');
 
         if (isset($descrizione) && isset($dir) && isset($codice_tipo_documento_fe)) {
-            if ($dbo->fetchNum('SELECT * FROM `co_tipidocumento` WHERE `dir`='.prepare($dir).' AND `codice_tipo_documento_fe`='.prepare($codice_tipo_documento_fe).' AND `id`!='.prepare($id_record)) == 0) {
+            if ($dbo->fetchNum('SELECT * FROM `co_tipidocumento` WHERE `dir`='.prepare($dir).' AND `descrizione`='.prepare($descrizione).' AND `codice_tipo_documento_fe`='.prepare($codice_tipo_documento_fe).' AND `id`!='.prepare($id_record)) == 0) {
                 $predefined = post('predefined');
                 if (!empty($predefined)) {
                     $dbo->query('UPDATE co_tipidocumento SET predefined = 0 WHERE dir = '.prepare($dir));
@@ -43,7 +43,7 @@ switch (filter('op')) {
 
                 flash()->info(tr('Salvataggio completato!'));
             } else {
-                flash()->error(tr("E' già presente una tipologia di _TYPE_ con la stessa combinazione di direzione e tipo documento FE", [
+                flash()->error(tr("E' già presente una tipologia di _TYPE_ con la stessa combinazione di direzione, descrizione e tipo documento FE", [
                     '_TYPE_' => 'tipo documento',
                 ]));
             }
@@ -59,7 +59,7 @@ switch (filter('op')) {
         $codice_tipo_documento_fe = filter('codice_tipo_documento_fe');
 
         if (isset($descrizione) && isset($dir) && isset($codice_tipo_documento_fe)) {
-            if ($dbo->fetchNum('SELECT * FROM `co_tipidocumento` WHERE `dir`='.prepare($dir).' AND `codice_tipo_documento_fe`='.prepare($codice_tipo_documento_fe)) == 0) {
+            if ($dbo->fetchNum('SELECT * FROM `co_tipidocumento` WHERE `dir`='.prepare($dir).' AND `descrizione`='.prepare($descrizione).' AND `codice_tipo_documento_fe`='.prepare($codice_tipo_documento_fe)) == 0) {
                 $dbo->insert('co_tipidocumento', [
                     'descrizione' => $descrizione,
                     'dir' => $dir,
@@ -75,7 +75,7 @@ switch (filter('op')) {
                     '_TYPE_' => 'tipo documento',
                 ]));
             } else {
-                flash()->error(tr("E' già presente una tipologia di _TYPE_ con la stessa combinazione di direzione e tipo documento FE", [
+                flash()->error(tr("E' già presente una tipologia di _TYPE_ con la stessa combinazione di direzione, descrizione e tipo documento FE", [
                     '_TYPE_' => 'tipo documento',
                 ]));
             }

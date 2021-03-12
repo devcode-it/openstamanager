@@ -22,8 +22,6 @@ include_once __DIR__.'/../../core.php';
 ?><form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
-
-
    
     <div class="row">
         <div class="col-md-6">
@@ -39,11 +37,11 @@ include_once __DIR__.'/../../core.php';
         </div>
 
         <div class="col-md-4">
-            {[ "type": "checkbox", "label": "<?php echo tr('Tipo documento predefinito'); ?>", "name": "predefined", "value": "<?php echo intval($record['predefined']); ?>", "help":"<?php echo tr('Impostare questo tipo di documento predefinto per le fatture'); ?>." ]}
+            {[ "type": "checkbox", "label": "<?php echo tr('Tipo documento predefinito'); ?>", "name": "predefined", "value": "<?php echo intval($record['predefined']); ?>", "help":"<?php echo tr('Impostare questo tipo di documento predefinto per le fatture di '); echo (($record['dir']=='entrata')? tr('Vendita'):tr('Acquisto')); ?>." ]}
         </div>
 
         <div class="col-md-4">
-            {[ "type": "checkbox", "label": "<?php echo tr('Attivo'); ?>", "name": "enabled", "value": "<?php echo intval($record['enabled']); ?>" ]}
+            {[ "type": "checkbox", "label": "<?php echo tr('Attivo'); ?>", "name": "enabled", "disabled": "<?php echo (($record['predefined'] && $record['enabled']) ? 1 : 0); ?>",  "value": "<?php echo intval($record['enabled']); ?>" ]}
         </div>
 
         <div class="col-md-4">
@@ -56,7 +54,6 @@ include_once __DIR__.'/../../core.php';
 
     </div>
    
-
 </form>
 
 <?php

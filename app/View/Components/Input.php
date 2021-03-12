@@ -2,59 +2,94 @@
 
 namespace App\View\Components;
 
+use Illuminate\Support\Collection;
 use Illuminate\View\Component;
 
 class Input extends Component
 {
-    public $unique_id;
-
-    public $id;
-    public $name;
-    public $required;
-    public $label;
-    public $placeholder;
-
-    public $class;
+    public $props;
 
     /**
      * Create a new component instance.
      *
      * @param string $name
-     * @param null $id
-     * @param bool $required
-     * @param null $label
-     * @param null $placeholder
+     * @param string|null $id
+     * @param string|null $value
+     * @param bool|string $required
+     * @param string|null $label
+     * @param string|null $placeholder
      */
     public function __construct(
         $name,
         $id = null,
+        $value = null,
         $required = false,
         $label = null,
         $placeholder = null
     ) {
-        $this->id = isset($id) ? $id : $name;
-        $this->name = $name;
-
-        $this->required = is_string($required) ? $required == 'true' : (bool) $required;
-        $this->label = $label;
-        $this->placeholder = $placeholder;
-
+        // Definizione ID dell'elemento
+        $id = isset($id) ? $id : $name;
         $rand = rand(0, 9999);
-        $this->unique_id = $id.$rand;
+        $unique_id = $id.$rand;
 
-        $this->class = 'form-control openstamanager-input';
+        // Elemento obbligatorio o meno
+        $required = is_string($required) ? $required == 'true' : (bool) $required;
 
         // Label e placeholder corretti in base al contenuti obbligatorio o meno
-        if ($this->required) {
-            if (!empty($this->label)) {
-                $this->label .= '*';
+        if ($required) {
+            if (!empty($label)) {
+                $label .= '*';
             }
 
             // Aggiunta
-            elseif (!empty($this->placeholder)) {
-                $this->placeholder .= '*';
+            elseif (!empty($placeholder)) {
+                $placeholder .= '*';
             }
         }
+
+        $this->props = $this->newAttributeBag([
+            'name' => $name,
+            'id' => $id,
+            'value' => $value,
+            'unique_id' => $unique_id,
+            'required' => $required,
+            'label' => $label,
+            'placeholder' => $placeholder,
+            'class' => collect(['form-control', 'openstamanager-input']),
+        ]);
+
+        // Operazioni finali
+        $this->init();
+    }
+
+    public function get($key, $default = null)
+    {
+        return $this->props->get($key, $default);
+    }
+
+    public function set($values)
+    {
+        $this->props->setAttributes(array_merge($this->props->getAttributes(), $values));
+    }
+
+    public function init()
+    {
+    }
+
+    /**
+     * Extract the public properties for the component.
+     *
+     * @return array
+     */
+    public function extractPublicProperties()
+    {
+        $values = parent::extractPublicProperties();
+
+        foreach ($this->props as $key => $value) {
+            $values[$key] = $value instanceof Collection ? $value->join(' ') : $value;
+        }
+
+        return $values;
     }
 
     /**

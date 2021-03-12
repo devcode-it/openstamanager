@@ -1,5 +1,5 @@
 @php
-$is_input_group = !empty($before) || !empty($after);
+$is_input_group = (isset($before) && !empty($before->__toString())) || (isset($after) && !empty($after->__toString()));
 @endphp
 
 <div class="form-group">
@@ -20,7 +20,7 @@ $is_input_group = !empty($before) || !empty($after);
     @endif
 
     {{-- Icona prima dell'input --}}
-    @if(isset($before))
+    @if(isset($before) && !empty($before->__toString()))
         {{ $before }}
     @endif
 
@@ -28,7 +28,7 @@ $is_input_group = !empty($before) || !empty($after);
     {{ $slot }}
 
     {{-- Icona dopo l'input --}}
-    @if(isset($after))
+    @if(isset($after) && !empty($after->__toString()))
         {{ $after }}
     @endif
 

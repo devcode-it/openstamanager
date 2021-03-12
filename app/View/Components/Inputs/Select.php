@@ -2,12 +2,19 @@
 
 namespace App\View\Components\Inputs;
 
-use App\View\Components\Input;
 use Illuminate\View\Component;
 
-class File extends Input
+class Select extends Component
 {
-    public $type = 'file';
+    /**
+     * Create a new component instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        //
+    }
 
     /**
      * Get the view / contents that represent the component.
@@ -16,6 +23,6 @@ class File extends Input
      */
     public function render()
     {
-        return view('components.inputs.text');
+        return view('components.inputs.select');
     }
 }

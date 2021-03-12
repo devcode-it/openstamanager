@@ -2,6 +2,7 @@
     'type' => isset($type) ? $type : 'text',
     'name' => $name,
     'id' => $id,
+    'value' => $value,
     'required' => $required,
     'placeholder' => $placeholder,
     'class' => $class,

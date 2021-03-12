@@ -5,10 +5,8 @@ namespace App\View\Components\Inputs;
 use App\View\Components\Input;
 use Illuminate\View\Component;
 
-class File extends Input
+class Image extends Input
 {
-    public $type = 'file';
-
     /**
      * Get the view / contents that represent the component.
      *
@@ -16,6 +14,6 @@ class File extends Input
      */
     public function render()
     {
-        return view('components.inputs.text');
+        return view('components.inputs.image');
     }
 }

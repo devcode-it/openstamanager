@@ -89,7 +89,7 @@ if ($dir == 'entrata') {
     echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "select", "label": "'.tr('Serial').'", "name": "serial[]", "multiple": 1, "value": "'.implode(',', $serials).'", "values": "query=SELECT serial AS id, serial AS descrizione FROM mg_prodotti WHERE id_articolo = '.prepare($rs[0]['idarticolo']).' AND mg_prodotti.dir=\'uscita\' AND id=(SELECT MAX(id) FROM mg_prodotti AS prodotti WHERE prodotti.id_articolo=mg_prodotti.id_articolo AND prodotti.serial=mg_prodotti.serial)" ]}
+            {[ "type": "select", "label": "'.tr('Serial').'", "name": "serial[]", "multiple": 1, "value": "'.implode(',', $serials).'", "values": "query=SELECT serial AS id, serial AS descrizione FROM mg_prodotti WHERE id_articolo = '.prepare($rs[0]['idarticolo']).' AND mg_prodotti.dir=\'uscita\' AND id=(SELECT MAX(id) FROM mg_prodotti AS prodotti WHERE prodotti.id_articolo=mg_prodotti.id_articolo AND prodotti.serial=mg_prodotti.serial AND prodotti.dir=\'uscita\')" ]}
         </div>
     </div>';
 } else {

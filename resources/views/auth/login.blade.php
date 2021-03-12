@@ -18,10 +18,24 @@
                 <div class="box-body login-box-body">
                     <h4 class="login-box-msg">{{ tr('Accedi') }}</h4>
 
-                    {[ "type": "text", "name": "username", "autocomplete": "username", "placeholder": "{{ tr('Username') }}", "value": "{{ old('username') }}", "icon-before": "<i class=\"fa fa-user\"></i>", "required": 1 ]}
+                    <x-inputs.text :placeholder="tr('Username')" name="username" :value="old('username')" autocomplete="username" required>
+                        <x-slot name="before">
+                            <span class="input-group-addon before">
+                                <i class="fa fa-user"></i>
+                            </span>
+                        </x-slot>
+                    </x-inputs.text>
+
                     <div class="mb-3" style="margin-bottom: 1rem !important;"></div>
 
-                    {[ "type": "password", "name": "password", "autocomplete": "current-password", "placeholder": "{{ tr('Password') }}", "icon-before": "<i class=\"fa fa-lock\"></i>" ]}
+                    <x-inputs.password :placeholder="tr('Password')" name="password" autocomplete="current-password" required>
+                        <x-slot name="before">
+                            <span class="input-group-addon before">
+                                <i class="fa fa-lock"></i>
+                            </span>
+                        </x-slot>
+                    </x-inputs.password>
+
                     <div class="mb-3" style="margin-bottom: 1rem !important;"></div>
 
                     @if (Route::has('password.request'))

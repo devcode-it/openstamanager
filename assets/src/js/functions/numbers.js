@@ -41,6 +41,7 @@ function initNumberInput(input) {
     let max = $input.attr('max-value') && $input.attr('max-value') !== "undefined" ? $input.attr('max-value') : null;
 
     let decimals = $input.attr('decimals') ? $input.attr('decimals') : globals.cifre_decimali;
+    decimals = decimals ? decimals : 2; // Cifre decimali di fallback
 
     let autonumeric = new AutoNumeric(input, {
         caretPositionOnFocus: "decimalLeft",

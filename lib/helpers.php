@@ -139,7 +139,7 @@ function formatter()
 {
     if (!app()->has(Formatter::class)) {
         $formatter = new Formatter(
-            app()->getLocale(),
+            locale(),
             empty($options['timestamp']) ? 'd/m/Y H:i' : $options['timestamp'],
             empty($options['date']) ? 'd/m/Y' : $options['date'],
             empty($options['time']) ? 'H:i' : $options['time'],

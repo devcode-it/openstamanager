@@ -11,8 +11,9 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class LegacyController extends Controller
 {
-    public function index(Request $request, $path = 'index.php')
+    public function index(Request $request)
     {
+        $path = substr($request->getPathInfo(), 1);
         $base_path = base_path('legacy');
 
         // Fix per redirect all'API

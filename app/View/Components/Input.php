@@ -12,7 +12,7 @@ class Input extends Component
     /**
      * Create a new component instance.
      *
-     * @param string $name
+     * @param string      $name
      * @param string|null $id
      * @param string|null $value
      * @param bool|string $required

@@ -16,6 +16,7 @@
     "type": "project",
     "require": {
         "php": "^7.3|^8.0",
+        "ext-apache": "*",
         "ext-curl": "*",
         "ext-dom": "*",
         "ext-fileinfo": "*",
@@ -117,6 +118,7 @@
             "Plugins\\DettagliArticolo\\": ["legacy/plugins/dettagli_articolo/custom/src/", "legacy/plugins/dettagli_articolo/src/"],
 
             "App\\": "app/",
+            "Modules\\": "modules/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
         },

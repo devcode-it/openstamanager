@@ -1,0 +1,13 @@
+{
+    "name": "Aggiornamenti",
+    "alias": "aggiornamenti",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Aggiornamenti\\Providers\\AggiornamentiServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

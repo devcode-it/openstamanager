@@ -10,13 +10,13 @@ class Number extends Input
     /**
      * Create a new component instance.
      *
-     * @param string $name
+     * @param string      $name
      * @param string|null $id
      * @param string|null $value
      * @param bool|string $required
      * @param string|null $label
      * @param string|null $placeholder
-     * @param null $minValue
+     * @param null        $minValue
      */
     public function __construct(
         $name,
@@ -44,7 +44,7 @@ class Number extends Input
             $decimals = setting('Cifre decimali per quantità');
 
             // Se non è previsto un valore minimo, lo imposta a 1
-            $minValue =  isset($minValue) ? $minValue : '0.'.str_repeat('0', $decimals - 1).'1';
+            $minValue = isset($minValue) ? $minValue : '0.'.str_repeat('0', $decimals - 1).'1';
 
             $this->set([
                 'decimals' => $decimals,

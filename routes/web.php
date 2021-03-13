@@ -4,7 +4,9 @@ use App\Http\Controllers\ConfigurationController;
 use App\Http\Controllers\HookController;
 use App\Http\Controllers\InfoController;
 use App\Http\Controllers\InitializationController;
+use App\Http\Controllers\LegacyController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\RequirementsController;
 use App\Http\Controllers\Test;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +32,10 @@ Route::get('/', function () {
     return redirect('controller.php?id_module='.$module->id);
 })
     ->middleware(['auth']);
+
+// Schermata dei requisiti
+Route::get('/requirements', [RequirementsController::class, 'index'])
+    ->name('requirements');
 
 // Sezione di configurazione
 Route::get('/config', [ConfigurationController::class, 'index'])

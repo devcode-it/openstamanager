@@ -13,7 +13,6 @@ class Select extends Component
      */
     public function __construct()
     {
-        //
     }
 
     /**

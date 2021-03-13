@@ -1,6 +1,6 @@
 @extends('layouts.base')
 
-@section('body_class')bg-light@endsection
+@section('body_class', 'bg-light')
 
 @section('body')
     @yield('before_content')

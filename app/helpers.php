@@ -2,8 +2,6 @@
 
 /**
  * Gets the current locale.
- *
- * @return string
  */
 function locale(): string
 {
@@ -12,13 +10,11 @@ function locale(): string
 
 /**
  * Get the language portion of the locale.
- * (ex. en_GB returns en)
- *
- * @return string
+ * (ex. en_GB returns en).
  */
 function localeLanguage(): string
 {
     $locale = locale();
 
-    return substr($locale, 0, strpos($locale, "_"));
+    return substr($locale, 0, strpos($locale, '_'));
 }

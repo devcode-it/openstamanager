@@ -276,6 +276,23 @@
         <!-- /.sidebar -->
     </aside>
 
+    {{-- Menu laterale per la visualizzazione dei plugin --}}
+    @if($__env->yieldContent('sidebar'))
+    <aside class="control-sidebar control-sidebar-light control-sidebar-shown">
+        <h4 class="text-center">@yield('sidebar_title', tr('Plugin disponibili'))</h4>
+        <ul class="nav nav-tabs nav-pills nav-stacked">
+            <li data-toggle="control-sidebar" class="active">
+                <a data-toggle="tab" href="#tab_0">
+                    <i class="fa fa-home"></i> {{ tr('Pagina principale')  }}
+                </a>
+            </li>
+
+            @yield('sidebar')
+        </ul>
+    </aside>
+    <div class="control-sidebar-bg"></div>
+    @endif
+
     <!-- Right side column. Contains the navbar and content of the page -->
     <div class="content-wrapper">
         <!-- Main content -->

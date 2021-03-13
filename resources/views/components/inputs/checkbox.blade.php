@@ -8,7 +8,7 @@
     'value' => $value,
     'required' => $required,
     'data-parsley-errors-container' => '#'.$unique_id.'-errors'
- ]) }} onchange="$(this).parent().find(\'[type = hidden]\').val(+this.checked).trigger(\'change\')"/>
+ ]) }} onchange="$(this).parent().find('[type = hidden]').val(+this.checked).trigger('change')"/>
         <div class="btn-group checkbox-buttons">
             <label for="{{ $id }}" class="btn btn-default{{ $class }}">
                 <span class="fa fa-check text-success"></span>

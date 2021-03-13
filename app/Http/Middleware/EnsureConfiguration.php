@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Http\Controllers\ConfigurationController;
 use App\Http\Controllers\InitializationController;
+use App\Http\Controllers\RequirementsController;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -19,6 +20,12 @@ class EnsureConfiguration
         $route = $request->route();
         if (starts_with($route->parameter('path'), 'assets')) {
             return $next($request);
+        }
+
+        // Test sui requisiti del gestionale
+        $result = $this->checkRequirements($route);
+        if ($result !== null) {
+            return $result;
         }
 
         // Test della connessione al database
@@ -42,9 +49,28 @@ class EnsureConfiguration
         return $next($request);
     }
 
+    protected function checkRequirements($route)
+    {
+        $configuration_paths = ['requirements'];
+        $requirements_satisfied = RequirementsController::isSatisfied();
+
+        if ($requirements_satisfied) {
+            // Redirect nel caso in cui i requisiti siano soddisfatti
+            if (in_array($route->getName(), $configuration_paths)) {
+                return redirect(route('configuration'));
+            }
+        } else {
+            // Redirect per requisiti incompleti
+            if (!in_array($route->getName(), $configuration_paths)) {
+                return redirect(route('requirements'));
+            }
+        }
+
+        return null;
+    }
+
     protected function checkConfiguration($route)
     {
-        // Test della connessione al database
         $configuration_paths = ['configuration', 'configuration-save', 'configuration-test'];
         $configuration_completed = ConfigurationController::isConfigured();
 

@@ -540,7 +540,7 @@ class Update
      *
      * @return string
      */
-    protected static function getFile($file)
+    public static function getFile($file)
     {
         $file = (string_contains($file, base_dir().DIRECTORY_SEPARATOR)) ? $file : base_dir().DIRECTORY_SEPARATOR.$file;
 

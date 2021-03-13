@@ -35,7 +35,7 @@ class ServicesHook extends CachedManager
         $response = Services::request('POST', 'informazioni_servizi');
         $body = Services::responseBody($response);
 
-        return $body['services'];
+        return isset($body['services']) ? $body['services'] : [];
     }
 
     public function response()

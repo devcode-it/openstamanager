@@ -40,6 +40,14 @@ class Zip
     }
 
     /**
+     * @return string
+     */
+    public static function getExtractionDirectory()
+    {
+        return base_path().'/tmp';
+    }
+
+    /**
      * Estrae i contenuti di un file ZIP in una cartella temporanea.
      *
      * @param string $path
@@ -58,7 +66,7 @@ class Zip
         }
 
         // Percorso di estrazione
-        $extraction_dir = !empty($destination) ? $destination : base_dir().'/tmp';
+        $extraction_dir = !empty($destination) ? $destination : self::getExtractionDirectory();
         directory($extraction_dir);
 
         // Estrazione dell'archivio

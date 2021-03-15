@@ -333,7 +333,7 @@ if (filter('op') == 'rimuovi-allegato' && filter('filename') == $record['immagin
     ]);
 } elseif (filter('op') == 'aggiungi-allegato' && filter('nome_allegato') == 'Immagine') {
     $dbo->update('mg_articoli', [
-        'immagine' => $upload,
+        'immagine' => $upload->filename,
     ], [
         'id' => $id_record,
     ]);

@@ -164,7 +164,7 @@ if (filter('op') == 'rimuovi-allegato' && filter('filename') == $record['immagin
     ]);
 } elseif (filter('op') == 'aggiungi-allegato' && filter('nome_allegato') == 'Immagine') {
     $dbo->update('my_impianti', [
-        'immagine' => $upload,
+        'immagine' => $upload->filename,
     ], [
         'id' => $id_record,
     ]);

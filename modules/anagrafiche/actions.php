@@ -332,12 +332,12 @@ switch (post('op')) {
 
 // Operazioni aggiuntive per il logo e filigrana stampe
 if (filter('op') == 'aggiungi-allegato') {
-    $nome = filter('nome_allegato');
+    $nome = $upload->name;
 
     $logo_stampe = ['logo stampe', 'logo_stampe', 'logo stampe.jpg', 'logo stampe.png'];
     if (in_array(strtolower($nome), $logo_stampe)) {
         $nome = 'Logo stampe';
-        $uploads = $structure->uploads($id_record)->where('filename', $upload);
+        $uploads = $structure->uploads($id_record)->where('filename', $upload->filename);
         foreach ($uploads as $logo) {
             $logo->name = $nome;
             $logo->save();
@@ -347,7 +347,7 @@ if (filter('op') == 'aggiungi-allegato') {
     $filigrana_stampe = ['filigrana stampe', 'filigrana_stampe', 'filigrana stampe.jpg', 'filigrana stampe.png'];
     if (in_array(strtolower($nome), $filigrana_stampe)) {
         $nome = 'Filigrana stampe';
-        $uploads = $structure->uploads($id_record)->where('filename', $upload);
+        $uploads = $structure->uploads($id_record)->where('filename', $upload->filename);
         foreach ($uploads as $filigrana) {
             $filigrana->name = $nome;
             $filigrana->save();
@@ -355,7 +355,7 @@ if (filter('op') == 'aggiungi-allegato') {
     }
 
     if (($nome == 'Logo stampe' || $nome = 'Filigrana stampe') && (setting('Azienda predefinita') == $id_record)) {
-        Settings::setValue($nome, $upload);
+        Settings::setValue($nome, $upload->filename);
     }
 }
 

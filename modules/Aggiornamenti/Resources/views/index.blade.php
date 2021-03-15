@@ -155,16 +155,21 @@
         <div class="box box-warning">
             <div class="box-header with-border">
                 <h3 class="box-title">
-                    {{ tr("Verifica l'integrità dell'intallazione") }} <span class="tip" title="{{ tr("Verifica l'integrità della tua installazione attraverso un controllo sui checksum dei file e sulla struttura del database") }}."><i class="fa fa-question-circle-o"></i></span>
+                    {{ tr("Verifica l'integrità dell'intallazione") }}
+                    <span class="tip" title="{{ tr("Verifica l'integrità della tua installazione attraverso un controllo sui checksum dei file e sulla struttura del database") }}.">
+                        <i class="fa fa-question-circle-o"></i>
+                    </span>
                 </h3>
             </div>
             <div class="box-body">
                 <button type="button" class="btn btn-primary btn-block" onclick="checksum(this)">
                     <i class="fa fa-list-alt"></i> {{ tr('Controlla file') }}
                 </button>
+
                 <button type="button" class="btn btn-info btn-block" onclick="database(this)">
                     <i class="fa fa-database"></i> {{ tr('Controlla database') }}
                 </button>
+
                 <button type="button" class="btn btn-block" onclick="controlli(this)">
                     <i class="fa fa-stethoscope"></i> {{ tr('Controlla gestionale') }}
                 </button>

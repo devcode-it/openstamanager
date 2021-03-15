@@ -1,0 +1,232 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenSTAManager\n"
+"POT-Creation-Date: 2021-03-15 16:02+0100\n"
+"PO-Revision-Date: 2021-03-15 16:03+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.4.2\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: tr\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: .svn\n"
+"X-Poedit-SearchPathExcluded-1: assets\n"
+"X-Poedit-SearchPathExcluded-2: backup\n"
+"X-Poedit-SearchPathExcluded-3: vendor\n"
+"X-Poedit-SearchPathExcluded-4: assets\n"
+"X-Poedit-SearchPathExcluded-5: bower_components\n"
+"X-Poedit-SearchPathExcluded-6: node_modules\n"
+"X-Poedit-SearchPathExcluded-7: logs\n"
+"X-Poedit-SearchPathExcluded-8: files\n"
+"X-Poedit-SearchPathExcluded-9: docs\n"
+"X-Poedit-SearchPathExcluded-10: .*\n"
+"X-Poedit-SearchPathExcluded-11: *.log\n"
+"X-Poedit-SearchPathExcluded-12: *.md\n"
+"X-Poedit-SearchPathExcluded-13: *.json\n"
+"X-Poedit-SearchPathExcluded-14: *.lock\n"
+"X-Poedit-SearchPathExcluded-15: *.phar\n"
+"X-Poedit-SearchPathExcluded-16: *.css\n"
+"X-Poedit-SearchPathExcluded-17: *.js\n"
+"X-Poedit-SearchPathExcluded-18: .git\n"
+
+#: Resources/views/index.blade.php:10
+msgid "Personalizzazioni"
+msgstr ""
+
+#: Resources/views/index.blade.php:19
+msgid "Percorso"
+msgstr ""
+
+#: Resources/views/index.blade.php:20
+msgid "Cartella personalizzata"
+msgstr ""
+
+#: Resources/views/index.blade.php:21
+msgid "Database personalizzato"
+msgstr ""
+
+#: Resources/views/index.blade.php:27 Resources/views/index.blade.php:28
+msgid "Si"
+msgstr ""
+
+#: Resources/views/index.blade.php:27 Resources/views/index.blade.php:28
+msgid "No"
+msgstr ""
+
+#: Resources/views/index.blade.php:33
+msgid ""
+"Si sconsiglia l'aggiornamento senza il supporto dell'assistenza ufficiale"
+msgstr ""
+
+#: Resources/views/index.blade.php:35
+msgid "Non ci sono strutture personalizzate"
+msgstr ""
+
+#: Resources/views/index.blade.php:41 Resources/views/update.blade.php:41
+msgid "Attenzione!"
+msgstr ""
+
+#: Resources/views/index.blade.php:41
+msgid ""
+"Ci sono delle tabelle non previste nella versione standard del gestionale: "
+"_LIST_"
+msgstr ""
+
+#: Resources/views/index.blade.php:53
+msgid ""
+"Devi modificare il seguenti parametri del file di configurazione PHP "
+"(_FILE_) per poter caricare gli aggiornamenti"
+msgstr ""
+
+#: Resources/views/index.blade.php:135
+msgid "Carica un aggiornamento"
+msgstr ""
+
+#: Resources/views/index.blade.php:147
+msgid "Carica"
+msgstr ""
+
+#: Resources/views/index.blade.php:158
+msgid "Verifica l'integrità dell'intallazione"
+msgstr ""
+
+#: Resources/views/index.blade.php:166
+msgid "Controlla file"
+msgstr ""
+
+#: Resources/views/index.blade.php:170
+msgid "Controlla database"
+msgstr ""
+
+#: Resources/views/index.blade.php:174
+msgid "Controlla gestionale"
+msgstr ""
+
+#: Resources/views/index.blade.php:184
+msgid "Ricerca aggiornamenti"
+msgstr ""
+
+#: Resources/views/index.blade.php:192
+msgid "Ricerca"
+msgstr ""
+
+#: Resources/views/index.blade.php:197
+msgid "Estensione curl non supportata"
+msgstr ""
+
+#: Resources/views/index.blade.php:202
+msgid "E' stato individuato un nuovo aggiornamento"
+msgstr ""
+
+#: Resources/views/index.blade.php:203
+msgid ""
+"Attenzione: la versione individuata è in fase sperimentale, e pertanto può "
+"presentare diversi bug e malfunzionamenti"
+msgstr ""
+
+#: Resources/views/index.blade.php:205
+msgid "Scaricalo manualmente (_LINK_) oppure in automatico"
+msgstr ""
+
+#: Resources/views/index.blade.php:208
+msgid "Scarica"
+msgstr ""
+
+#: Resources/views/index.blade.php:213
+msgid "Nessun aggiornamento presente"
+msgstr ""
+
+#: Resources/views/index.blade.php:223
+msgid "Requisiti"
+msgstr ""
+
+#: Resources/views/update.blade.php:3
+msgid "Aggiornamento"
+msgstr ""
+
+#: Resources/views/update.blade.php:9
+msgid "Informazioni sull'aggiornamento"
+msgstr ""
+
+#: Resources/views/update.blade.php:13
+msgid "Changelog"
+msgstr ""
+
+#: Resources/views/update.blade.php:22
+msgid ""
+"Il pacchetto selezionato contiene un aggiornamento dell'intero gestionale"
+msgstr ""
+
+#: Resources/views/update.blade.php:23
+msgid ""
+"Si consiglia vivamente di effettuare un backup dell'installazione prima di "
+"procedere"
+msgstr ""
+
+#: Resources/views/update.blade.php:26
+msgid "Crea backup"
+msgstr ""
+
+#: Resources/views/update.blade.php:32
+msgid "OpenSTAManager versione _VERSION_"
+msgstr ""
+
+#: Resources/views/update.blade.php:41
+msgid ""
+"Verranno aggiornate le sole componenti del pacchetto che non sono già "
+"installate e aggiornate"
+msgstr ""
+
+#: Resources/views/update.blade.php:45
+msgid "Il pacchetto selezionato comprende i seguenti moduli"
+msgstr ""
+
+#: Resources/views/update.blade.php:53 Resources/views/update.blade.php:72
+msgid "Installato"
+msgstr ""
+
+#: Resources/views/update.blade.php:64
+msgid "Il pacchetto selezionato comprende i seguenti plugin"
+msgstr ""
+
+#: Resources/views/update.blade.php:91
+msgid "Nessuna changelog individuabile"
+msgstr ""
+
+#: Resources/views/update.blade.php:100
+msgid "Annulla"
+msgstr ""
+
+#: Resources/views/update.blade.php:106
+msgid "Procedi"
+msgstr ""
+
+#: Http/Controllers/AggiornamentiController.php:41
+msgid "Estensione ZIP"
+msgstr ""
+
+#: Http/Controllers/AggiornamentiController.php:41
+msgid "da abilitare"
+msgstr ""
+
+#: Http/Controllers/AggiornamentiController.php:191
+msgid "Accesso negato"
+msgstr ""
+
+#: Http/Controllers/AggiornamentiController.php:197
+msgid "Il pacchetto contiene una versione precedente del gestionale"
+msgstr ""
+
+#: Http/Controllers/AggiornamentiController.php:199
+msgid "Il pacchetto contiene solo componenti già installate e aggiornate"
+msgstr ""
+
+#: Http/UpdateHook.php:53
+msgid "E' disponibile la versione _VERSION_ del gestionale"
+msgstr ""

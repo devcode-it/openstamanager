@@ -1,16 +1,16 @@
-{% extends "layouts/base.twig" %}
+@extends('layouts.base')
 
-{% block body_class %}hold-transition login-page{% endblock %}
-{% block title %}{{ 'Aggiornamento'|trans }}{% endblock %}
+@section('title', tr('Aggiornamento'))
+@section('body_class', 'hold-transition login-page')
 
-{% block body %}
+@section('body')
 <div class="card card-outline card-center-large card-warning">
     <div class="card-header">
-        <a class="h5" data-toggle="tab" href="#info">{{ "Informazioni sull'aggiornamento"|trans }}</a>
+        <a class="h5" data-toggle="tab" href="#info">{{ tr("Informazioni sull'aggiornamento") }}</a>
 
         <ul class="nav nav-tabs float-right" id="tabs" role="tablist">
             <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" href="#changelog">{{ 'Changelog'|trans }}</a>
+                <a class="nav-link" data-toggle="tab" href="#changelog">{{ tr('Changelog') }}</a>
             </li>
         </ul>
     </div>
@@ -18,92 +18,92 @@
     <div class="card-body tab-content">
         <div id="info" class="tab-pane fade in active">
 
-            {% if update.isCoreUpdate() %}
-            <p>{{ "Il pacchetto selezionato contiene un aggiornamento dell'intero gestionale"|trans }}.</p>
-            <p>{{ "Si consiglia vivamente di effettuare un backup dell'installazione prima di procedere"|trans }}.</p>
+            @if($update->isCoreUpdate())
+            <p>{{ tr("Il pacchetto selezionato contiene un aggiornamento dell'intero gestionale") }}.</p>
+            <p>{{ tr("Si consiglia vivamente di effettuare un backup dell'installazione prima di procedere") }}.</p>
 
             <button type="button" class="btn btn-primary float-right" onclick="backup()">
-                <i class="fa fa-database"></i> {{ 'Crea backup'|trans }}
+                <i class="fa fa-database"></i> {{ tr('Crea backup') }}
             </button>
 
             <div class="clearfix"></div>
             <hr>
 
-            <h3 class="text-center">{{ 'OpenSTAManager versione _VERSION_'|trans({'_VERSION_': update.getVersion()}) }}</h3>
+            <h3 class="text-center">{{ tr('OpenSTAManager versione _VERSION_')({'_VERSION_': update.getVersion()}) }}</h3>
 
             {% include 'config/list.twig' with {requirements: update.getRequirements()} only %}
 
-            {% else %}
-            {% set elements = update.componentUpdates() %}
+            @else
+                @php($elements = $update->componentUpdates())
 
             <div class="alert alert-warning">
                 <i class="fa fa-warning"></i>
-                <b>{{ 'Attenzione!'|trans }}</b> {{ 'Verranno aggiornate le sole componenti del pacchetto che non sono già installate e aggiornate'|trans }}.
+                <b>{{ tr('Attenzione!') }}</b> {{ tr('Verranno aggiornate le sole componenti del pacchetto che non sono già installate e aggiornate') }}.
             </div>
 
-            {% if elements.modules is not empty %}
-            <p>{{ 'Il pacchetto selezionato comprende i seguenti moduli'|trans }}:</p>
+            @if(!empty($elements['modules']))
+            <p>{{ tr('Il pacchetto selezionato comprende i seguenti moduli') }}:</p>
             <ul class="list-group">
 
-                {% for element in elements.modules %}
+                @foreach($elements['modules'] as $element)
                 <li class="list-group-item">
-                    <span class="badge">{{ element['info']['version'] }}</span>
+                    <span class="badge">{{ $element['info']['version'] }}</span>
 
-                    {% if element.is_installed %}
-                    <span class="badge">{{ 'Installato'|trans }}</span>';
-                    {% endif %}
+                    @if($element['is_installed'])
+                    <span class="badge">{{ tr('Installato') }}</span>
+                    @endif
 
-                    {{ element['info']['name'] }}
+                    {{ $element['info']['name'] }}
                 </li>
-                {% endfor %}
+                @endforeach
 
             </ul>
-            {% endif %}
+            @endif
 
-            {% if elements.plugins is not empty %}
-            <p>{{ 'Il pacchetto selezionato comprende i seguenti plugin'|trans }}:</p>
-            <ul class="list-group">';
+            @if(!empty($elements['plugins']))
+            <p>{{ tr('Il pacchetto selezionato comprende i seguenti plugin') }}:</p>
+            <ul class="list-group">
 
-                {% for element in elements.plugins %}
+                @foreach($elements['plugins'] as $element)
                 <li class="list-group-item">
-                    <span class="badge">{{ element['info']['version'] }}</span>
+                    <span class="badge">{{ $element['info']['version'] }}</span>
 
-                    {% if element.is_installed %}
-                    <span class="badge">{{ 'Installato'|trans }}</span>';
-                    {% endif %}
+                    @if($element['is_installed'])
+                    <span class="badge">{{ tr('Installato') }}</span>
+                    @endif
 
-                    {{ element['info']['name'] }}
+                    {{ $element['info']['name'] }}
                 </li>
-                {% endfor %}
+                @endforeach
 
             </ul>
-            {% endif %}
-            {% endif %}
+            @endif
+        @endif
 
         </div>
 
         <div id="changelog" class="tab-pane fade">
-            {% set changelog = update.getChangelog() %}
+            @php($changelog = $update->getChangelog())
 
-            {% if changelog is not empty %}
-            {{ changelog|raw }}
-            {% else %}
-            <p>{{ 'Nessuna changelog individuabile'|trans }}.</p>
-            {% endif %}
+            @if(!empty($changelog))
+            {!! $changelog !!}
+            @else
+            <p>{{ tr('Nessuna changelog individuabile') }}.</p>
+            @endif
 
         </div>
 
         <hr>
 
-        <form action="{{ action_link|replace({'|action|': 'cancel'}) }}" method="post" style="display:inline-block">
+        <form action="{{ route('cancella-aggiornamento') }}" method="post" style="display:inline-block">
             <button type="submit" class="btn btn-warning">
-                <i class="fa fa-arrow-left"></i> {{ 'Annulla'|trans }}
+                <i class="fa fa-arrow-left"></i> {{ tr('Annulla') }}
             </button>
         </form>
 
-        <form action="{{ action_link|replace({'|action|': 'execute'}) }}" method="post" class="float-right" style="display:inline-block">
+        <form action="{{ route('completa-aggiornamento') }}" method="post" class="float-right" style="display:inline-block">
             <button type="submit" class="btn btn-success">
-                <i class="fa fa-arrow-right"></i> {{ 'Procedi'|trans }}
+                <i class="fa fa-arrow-right"></i> {{ tr('Procedi') }}
             </button>
         </form>
     </div>
@@ -112,17 +112,17 @@
 <script>
     function backup(){
         swal({
-            title: "{{ 'Nuovo backup'|trans }}",
-            text: "{{ 'Sei sicuro di voler creare un nuovo backup?'|trans }}",
+            title: "{{ tr('Nuovo backup') }}",
+            text: "{{ tr('Sei sicuro di voler creare un nuovo backup?') }}",
             type: "warning",
             showCancelButton: true,
             confirmButtonClass: "btn btn-lg btn-success",
-            confirmButtonText: "{{ 'Crea'|trans }}",
+            confirmButtonText: "{{ tr('Crea') }}",
         }).then(function(){
             $("#main_loading").show();
 
             $.ajax({
-                url: "{{ url_for('module', {'module_id':  module('Backup').id}) }}",
+                url: "{{ route('module', ['module_id' => module('Backup')->id]) }}",
                 type: "post",
                 data: {
                     op: "backup",
@@ -134,4 +134,4 @@
         }, function(){});
     }
 </script>
-{% endblock %}
+@endsection

@@ -151,10 +151,13 @@ $(document).ready(function() {';
     }
 
     echo '
-    $("#save").html("<i class=\"fa fa-flag-checkered\"></i> '.tr('Avvia importazione').'");
+    $("#save-buttons").find(".dropdown-menu, .dropdown-toggle").remove();
 
-    $("#save").unbind("click");
-    $("#save").on("click", function() {
+    var save = $("#save");
+    save.html("<i class=\"fa fa-flag-checkered\"></i> '.tr('Avvia importazione').'");
+
+    save.unbind("click");
+    save.on("click", function() {
         count = 0;
         importPage(0);
     });

@@ -25,7 +25,7 @@ include_once __DIR__.'/../../core.php';
 echo '
 <script>
 $(document).ready(function() {
-    $("#save").hide();
+    $("#save-buttons").hide();
 });
 </script>';
 

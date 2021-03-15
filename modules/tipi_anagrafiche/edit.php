@@ -34,7 +34,7 @@ if (!empty($record['default'])) {
     echo '
     <script>
     $(document).ready(function() {
-        $("#save").prop("disabled", true).addClass("disabled");
+        $("#save-buttons").hide();
     });
     </script>
 

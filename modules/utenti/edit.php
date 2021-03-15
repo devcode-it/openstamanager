@@ -209,7 +209,7 @@ if ($record['editable'] == 1) {
 echo '
 <script>
 $(document).ready(function() {
-    $("#save").addClass("hide");
+    $("#save-buttons").hide();
 
     $("#email-button").remove();
 });

@@ -241,7 +241,7 @@ echo '
     });
 
     $(document).ready(function() {
-        $("#save").addClass("hide");
+        $("#save-buttons").hide();
 
         $(".sortable").disableSelection();
         $(".sortable").each(function() {

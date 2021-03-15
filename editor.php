@@ -175,9 +175,21 @@ if (empty($record) || !$has_access) {
 
                             {( "name": "button", "type": "email", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", "id_record": "'.$id_record.'" )}
 
-                            <a class="btn btn-success" id="'.(!empty($record['deleted_at']) ? 'restore' : 'save').'">
-                                <i class="fa fa-'.(!empty($record['deleted_at']) ? 'undo' : 'check').'"></i> '.(!empty($record['deleted_at']) ? tr('Salva e Ripristina') : tr('Salva')).'
-                            </a>
+                            <div class="btn-group" id="save-buttons">
+                                <a class="btn btn-success" id="save">
+                                    <i class="fa fa-'.(!empty($record['deleted_at']) ? 'undo' : 'check').'"></i> '.(!empty($record['deleted_at']) ? tr('Salva e ripristina') : tr('Salva')).'
+                                </a>
+                                <a type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <span class="caret"></span>
+                                    <span class="sr-only">Toggle Dropdown</span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-right">
+                                    <li><a href="#" id="save-close">
+                                        <i class="fa fa-'.(!empty($record['deleted_at']) ? 'undo' : 'check').'"></i>
+                                         '.(!empty($record['deleted_at']) ? tr('Ripristina e chiudi') : tr('Salva e chiudi')).'
+                                    </a></li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
 
@@ -191,6 +203,11 @@ if (empty($record) || !$has_access) {
                         $("#save").click(function(){
                             //submitAjax(form);
 
+                            $("#submit").trigger("click");
+                        });
+
+                        $("#save-close").on("click", function (){
+                            form.find("[name=backto]").val("record-list");
                             $("#submit").trigger("click");
                         });';
 

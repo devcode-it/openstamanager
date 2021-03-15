@@ -221,11 +221,11 @@ function controllaConti() {
     if (continuare) {
         $("#add-submit").prop("disabled", false);
         $("#modello-button").prop("disabled", false);
-        $("#save").removeAttr("disabled");
+        $("#save, #save-close").removeAttr("disabled").removeClass("disabled");
     } else {
         $("#add-submit").prop("disabled", true);
         $("#modello-button").prop("disabled", true);
-        $("#save").attr("disabled", "true");
+        $("#save, #save-close").attr("disabled", "true").addClass("disabled");
     }
 
     return continuare;

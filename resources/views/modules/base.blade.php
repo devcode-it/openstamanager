@@ -53,10 +53,10 @@
 
 @section('top_content')
     <!-- Widget in alto -->
-    {( "name": "widgets", "id_module": "{{ $module->id }}", "id_record": "{{ 1 }}", "position": "top", "place": "controller" )}
+    <x-widget-group module="{{ $module->id }}" place="controller" position="top"></x-widget-group>
 @endsection
 
 @section('bottom_content')
     <!-- Widget in alto -->
-    {( "name": "widgets", "id_module": "{{ $module->id }}", "id_record": "{{ 1 }}", "position": "right", "place": "controller" )}
+    <x-widget-group module="{{ $module->id }}" place="controller" position="right"></x-widget-group>
 @endsection

@@ -5,7 +5,7 @@ namespace App\View\Components;
 use Illuminate\Support\Collection;
 use Illuminate\View\Component;
 
-class Input extends Component
+class InputWrapper extends Component
 {
     public $props;
 
@@ -99,6 +99,6 @@ class Input extends Component
      */
     public function render()
     {
-        return view('components.input');
+        return view('components.input-wrapper');
     }
 }

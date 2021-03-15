@@ -6,5 +6,5 @@
     'required' => $required,
     'placeholder' => $placeholder,
     'class' => $class,
-    'data-parsley-errors-container' => '#'.$unique_id.'-errors'
+    'data-parsley-errors-container' => '#'.$unique_id.'-errors',
  ]) }} autocomplete="{{ $attributes->get('autocomplete', 'off') }}">

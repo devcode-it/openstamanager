@@ -2,7 +2,7 @@
     $strength = $attributes->has('strength-trigger');
 @endphp
 
-<x-input :name="$name" :id="$id" :unique_id="$unique_id" :label="$label">
+<x-input-wrapper :name="$name" :id="$id" :unique_id="$unique_id" :label="$label">
     @include('components.inputs.standard-input')
 
     <x-slot name="after">
@@ -12,7 +12,7 @@
     </x-slot>
 
     <x-slot name="before">{{ isset($before) ? $before : null }}</x-slot>
-</x-input>
+</x-input-wrapper>
 
 <script>
     function togglePassword_{{ $id }}() {

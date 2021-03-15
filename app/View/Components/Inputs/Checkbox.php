@@ -2,10 +2,10 @@
 
 namespace App\View\Components\Inputs;
 
-use App\View\Components\Input;
+use App\View\Components\InputWrapper;
 use Illuminate\View\Component;
 
-class Checkbox extends Input
+class Checkbox extends InputWrapper
 {
     public function init()
     {

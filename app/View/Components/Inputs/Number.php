@@ -2,10 +2,10 @@
 
 namespace App\View\Components\Inputs;
 
-use App\View\Components\Input;
+use App\View\Components\InputWrapper;
 use Illuminate\View\Component;
 
-class Number extends Input
+class Number extends InputWrapper
 {
     /**
      * Create a new component instance.

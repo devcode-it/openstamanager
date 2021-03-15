@@ -2,10 +2,10 @@
 
 namespace App\View\Components\Inputs;
 
-use App\View\Components\Input;
+use App\View\Components\InputWrapper;
 use Illuminate\View\Component;
 
-class Editor extends Input
+class Editor extends InputWrapper
 {
     public function init()
     {

@@ -1,4 +1,4 @@
-<x-input :name="$name" :id="$id" :unique_id="$unique_id" :label="$label">
+<x-input-wrapper :name="$name" :id="$id" :unique_id="$unique_id" :label="$label">
     {{-- "+ this.checked" rende il valore booleano un numero --}}
     <div class="form-group checkbox-group">
         <input type="hidden" name="{{ $name }}" value="{{ $value }}" class="openstamanager-input">
@@ -23,4 +23,4 @@
 
     <x-slot name="before">{{ isset($before) ? $before : null }}</x-slot>
     <x-slot name="after">{{ isset($after) ? $after : null }}</x-slot>
-</x-input>
+</x-input-wrapper>

@@ -2,9 +2,9 @@
 
 namespace App\View\Components\Inputs;
 
-use App\View\Components\Input;
+use App\View\Components\InputWrapper;
 
-class Password extends Input
+class Password extends InputWrapper
 {
     /**
      * Get the view / contents that represent the component.

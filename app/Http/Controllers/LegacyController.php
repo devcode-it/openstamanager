@@ -14,13 +14,44 @@ class LegacyController extends Controller
     public function index(Request $request)
     {
         $path = substr($request->getPathInfo(), 1);
-        $base_path = base_path('legacy');
 
+        // Gestione dell'output
+        $output = self::simulate($path);
+        $response = response($output);
+
+        // Fix content-type per contenuti non HTML
+        if (ends_with($path, '.js')) {
+            $response = $response->header('Content-Type', 'application/javascript');
+        } elseif (string_contains($path, 'pdfgen.php')) {
+            $response = $response->header('Content-Type', 'application/pdf');
+        }
+        // Correzione header per API
+        elseif (self::isApiRequest($path)) {
+            $response = $response->header('Content-Type', 'application/json');
+        }
+
+        return $response;
+    }
+
+    protected static function isApiRequest($path)
+    {
         // Fix per redirect all'API
         $api_request = false;
         if (in_array($path, ['api', 'api/', 'api/index.php'])) {
-            $path = 'api/index.php';
             $api_request = true;
+        }
+
+        return $api_request;
+    }
+
+    public static function simulate($path)
+    {
+        $base_path = base_path('legacy');
+
+        // Fix per redirect all'API
+        $api_request = self::isApiRequest($path);
+        if ($api_request) {
+            $path = 'api/index.php';
         }
 
         // Ricerca del file interessato
@@ -40,17 +71,7 @@ class LegacyController extends Controller
 
         // Gestione dell'output
         $output = ob_get_clean();
-        $response = response($output);
 
-        // Fix content-type per contenuti non HTML
-        if (ends_with($path, '.js')) {
-            $response = $response->header('Content-Type', 'application/javascript');
-        } elseif (string_contains($path, 'pdfgen.php')) {
-            $response = $response->header('Content-Type', 'application/pdf');
-        } elseif ($api_request) {
-            $response = $response->header('Content-Type', 'application/json');
-        }
-
-        return $response;
+        return $output;
     }
 }

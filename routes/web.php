@@ -9,6 +9,7 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\RequirementsController;
 use App\Http\Controllers\Test;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\WidgetModalController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -118,6 +119,13 @@ Route::prefix('bug')
 Route::get('/logs', [UserController::class, 'logs'])
     ->middleware(['auth'])
     ->name('logs');
+
+
+// Log di accesso
+Route::get('/widget/modal/{id}', [WidgetModalController::class, 'modal'])
+    ->whereNumber('id')
+    ->middleware(['auth'])
+    ->name('widget-modal');
 
 // Informazioni sull'utente
 Route::prefix('user')

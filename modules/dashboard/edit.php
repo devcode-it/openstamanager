@@ -41,36 +41,40 @@ ORDER BY ragione_sociale ASC');
 $zone = $dbo->fetchArray('(SELECT 0 AS ordine, \'0\' AS id, \'Nessuna zona\' AS descrizione) UNION (SELECT 1 AS ordine, id, descrizione FROM an_zone) ORDER BY ordine, descrizione ASC');
 
 // Prima selezione globale per tutti i filtri
-if (!isset($_SESSION['dashboard']['idtecnici'])) {
-    $_SESSION['dashboard']['idtecnici'] = ["'-1'"];
-
+if (session('dashboard.idtecnici') === null) {
+    $list = ["'-1'"];
     foreach ($tecnici_disponibili as $tecnico) {
-        $_SESSION['dashboard']['idtecnici'][] = "'".$tecnico['id']."'";
+        $list[] = "'".$tecnico['id']."'";
     }
+    
+    session(['dashboard.idtecnici' => $list]);
 }
 
-if (!isset($_SESSION['dashboard']['idstatiintervento'])) {
-    $_SESSION['dashboard']['idstatiintervento'] = ["'-1'"];
-
+if (session('dashboard.idstatiintervento') === null) {
+    $list = ["'-1'"];
     foreach ($stati_intervento as $stato) {
-        $_SESSION['dashboard']['idstatiintervento'][] = "'".$stato['id']."'";
+        $list[] = "'".$stato['id']."'";
     }
+    
+    session(['dashboard.idstatiintervento' => $list]);
 }
 
-if (!isset($_SESSION['dashboard']['idtipiintervento'])) {
-    $_SESSION['dashboard']['idtipiintervento'] = ["'-1'"];
-
+if (session('dashboard.idtipiintervento') === null) {
+    $list = ["'-1'"];
     foreach ($tipi_intervento as $tipo) {
-        $_SESSION['dashboard']['idtipiintervento'][] = "'".$tipo['id']."'";
+        $list[] = "'".$tipo['id']."'";
     }
+    
+    session(['dashboard.idtipiintervento' => $list]);
 }
 
-if (!isset($_SESSION['dashboard']['idzone'])) {
-    $_SESSION['dashboard']['idzone'] = ["'-1'"];
-
+if (session('dashboard.idzone') === null) {
+    $list = ["'-1'"];
     foreach ($zone as $zona) {
-        $_SESSION['dashboard']['idzone'][] = "'".$zona['id']."'";
+        $list[] = "'".$zona['id']."'";
     }
+
+    session(['dashboard.idzone' => $list]);
 }
 
 echo '

@@ -73,7 +73,7 @@ class Query
         $id_parent = filter('id_parent');
 
         $id_module = Modules::getCurrent()['id'];
-        $segment = !empty(self::$segments) ? $_SESSION['module_'.$id_module]['id_segment'] : null;
+        $segment = !empty(self::$segments) ? session('module_'.$id_module.'.id_segment') : null;
 
         $user = auth()->user();
 
@@ -123,7 +123,7 @@ class Query
             '|'.$segment_filter.'|' => !empty($segment) ? ' AND '.$segment_name.' = '.prepare($segment) : '',
 
             // Filtro dinamico per il modulo Giacenze sedi
-            '|giacenze_sedi_idsede|' => prepare(isset($_SESSION['giacenze_sedi']) ? $_SESSION['giacenze_sedi']['idsede'] : null),
+            '|giacenze_sedi_idsede|' => session('giacenze_sedi.idsede'),
         ];
 
         // Sostituzione dei formati

@@ -23,7 +23,7 @@ use Carbon\Carbon;
 
 // Trovo id_print della stampa
 $id_print = Prints::getModulePredefinedPrint('Dashboard')['id'];
-$date = new Carbon($_SESSION['dashboard']['date']);
+$date = new Carbon(session('dashboard')['date']);
 
 echo '
 <form action="" method="post" onsubmit="if($(this).parsley().validate()) { return stampa_calendario(); }" >
@@ -34,11 +34,11 @@ echo '
 		</div>
 
 		<div class="col-md-2">
-			{[ "type": "select", "label": "'.tr('Formato').'", "name": "format", "required": "1", "values": "list=\"A4\": \"'.tr('A4').'\", \"A3\": \"'.tr('A3').'\"", "value": "'.$_SESSION['dashboard']['format'].'" ]}
+			{[ "type": "select", "label": "'.tr('Formato').'", "name": "format", "required": "1", "values": "list=\"A4\": \"'.tr('A4').'\", \"A3\": \"'.tr('A3').'\"", "value": "'.session('dashboard')['format'].'" ]}
 		</div>
 
 		<div class="col-md-4">
-			{[ "type": "select", "label": "'.tr('Orientamento').'", "name": "orientation", "required": "1", "values": "list=\"L\": \"'.tr('Orizzontale').'\", \"P\": \"'.tr('Verticale').'\"", "value": "'.$_SESSION['dashboard']['orientation'].'" ]}
+			{[ "type": "select", "label": "'.tr('Orientamento').'", "name": "orientation", "required": "1", "values": "list=\"L\": \"'.tr('Orizzontale').'\", \"P\": \"'.tr('Verticale').'\"", "value": "'.session('dashboard')['orientation'].'" ]}
 		</div>
 
 

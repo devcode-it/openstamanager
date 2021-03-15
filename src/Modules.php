@@ -150,7 +150,7 @@ class Modules
             // Aggiunta dei segmenti
             if ($include_segments) {
                 $segments = self::getSegments($module['id']);
-                $id_segment = isset($_SESSION['module_'.$module['id']]) ? $_SESSION['module_'.$module['id']]['id_segment'] : null;
+                $id_segment = session('module_'.$module['id'].'.id_segment');
                 foreach ($segments as $result) {
                     if (!empty($result['clause']) && $result['id'] == $id_segment) {
                         $result['clause'] = Query::replacePlaceholder($result['clause']);

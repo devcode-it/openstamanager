@@ -219,7 +219,7 @@ echo '
 // Sezionale
 echo '
         <div class="col-md-3">
-            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE is_fiscale = 1 AND id_module='.$id_module.' ORDER BY name", "value": "'.$_SESSION['module_'.$id_module]['id_segment'].'" ]}
+            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE is_fiscale = 1 AND id_module='.$id_module.' ORDER BY name", "value": "'.session('module_'.$id_module.'.id_segment').'" ]}
         </div>';
 
 // Data di registrazione

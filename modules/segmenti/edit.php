@@ -60,8 +60,8 @@ include_once __DIR__.'/../../core.php';
 			</div>
 <?php
 
-$previous = $_SESSION['module_'.$record['id_module']]['id_segment'];
-$previous_module = $_SESSION['module_'.$record['id_module']]['id_segment'];
+$previous = session('module_'.$record['id_module'].'.id_segment');
+$previous_module = session('module_'.$record['id_module'].'.id_segment');
 session(['module_'.$id_module.'.id_segment' => $id_record]);
 session(['module_'.$id_module.'.id_segment' => $id_record]);
 

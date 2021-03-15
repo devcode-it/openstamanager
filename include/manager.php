@@ -74,7 +74,7 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
         echo '
     <div class="row">
     	<div class="col-md-4 pull-right">
-    		{[ "type": "select", "name": "id_segment_", "required": 0, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module = '.prepare($id_module).'", "value": "'.$_SESSION['module_'.$id_module]['id_segment'].'" ]}
+    		{[ "type": "select", "name": "id_segment_", "required": 0, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module = '.prepare($id_module).'", "value": "'.session('module_'.$id_module.'.id_segment').'" ]}
     	</div>
     </div>
     <br>';

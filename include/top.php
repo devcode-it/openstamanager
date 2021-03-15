@@ -62,7 +62,7 @@ if (auth()->check()) {
 		<script>
             search = []';
 
-    $array = $_SESSION['module_'.$id_module];
+    $array = session('module_'.$id_module);
     if (!empty($array)) {
         foreach ($array as $field => $value) {
             if (!empty($value) && string_starts_with($field, 'search_')) {

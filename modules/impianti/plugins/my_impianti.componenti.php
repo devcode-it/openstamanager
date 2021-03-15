@@ -177,8 +177,8 @@ if (!empty($componenti_installati)) {
         if (get('id') == $componente['id']) {
             $collapsed = '';
             $icon = 'minus';
-        } elseif ($_SESSION['idcomponente'] == $componente['id']) {
-            unset($_SESSION['idcomponente']);
+        } elseif (session('idcomponente') == $componente['id']) {
+            session()->forget('idcomponente');
             $collapsed = '';
             $icon = 'minus';
         } else {

@@ -26,7 +26,7 @@ $id_module = module('Articoli')['id'];
 // Valori di ricerca
 $where['servizio'] = '0';
 
-foreach ($_SESSION['module_'.$id_module] as $name => $value) {
+foreach (session('module_'.$id_module) as $name => $value) {
     if (preg_match('/^search_(.+?)$/', $name, $m)) {
         $where[$m[1]] = $value;
     }

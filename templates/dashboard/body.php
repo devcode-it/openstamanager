@@ -21,13 +21,13 @@ include_once __DIR__.'/../../core.php';
 
 use Carbon\Carbon;
 
-$calendar = $_SESSION['dashboard'];
+$calendar = session('dashboard');
 
 $date = $calendar['date'];
 $date = new Carbon($date);
 
 if ($calendar['format'] == 'week') {
-    $period = explode(' ', $_SESSION['dashboard']['week']);
+    $period = explode(' ', session('dashboard')['week']);
 
     $day = $period[0];
 
@@ -51,7 +51,7 @@ if ($calendar['format'] == 'week') {
     $month = $months[$month];
     $maxmonth = $months[$maxmonth];
 
-    $title = $_SESSION['dashboard']['week'];
+    $title = session('dashboard')['week'];
 
     //numero di giorni nel mese
     $maxday = cal_days_in_month(CAL_GREGORIAN, $month, $year) + 1;

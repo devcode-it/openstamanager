@@ -38,8 +38,8 @@ class DatiFattureElettroniche extends Controllo
     {
         $fatture_vendita = Fattura::vendita()
             ->whereNotIn('codice_stato_fe', ['ERR', 'NS', 'EC02', 'ERVAL'])
-            ->where('data', '>=', $_SESSION['period_start'])
-            ->where('data', '<=', $_SESSION['period_end'])
+            ->where('data', '>=', session('period_start'))
+            ->where('data', '<=', session('period_end'))
             ->orderBy('data')
             ->get();
 

@@ -197,7 +197,7 @@ if (!$api_request) {
 
         if (!empty($id_module)) {
             // Segmenti
-            if (!isset($_SESSION['module_'.$id_module]['id_segment'])) {
+            if (session('module_'.$id_module.'.id_segment') === null) {
                 $segments = Modules::getSegments($id_module);
                 session(['module_'.$id_module.'.id_segment' => isset($segments[0]['id']) ? $segments[0]['id'] : null]);
             }

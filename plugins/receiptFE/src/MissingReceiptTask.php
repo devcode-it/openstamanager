@@ -42,7 +42,7 @@ class MissingReceiptTask extends Manager
         $data_limite = (new Carbon())->subDays(7);
         $in_attesa = Fattura::vendita()
             ->where('codice_stato_fe', 'WAIT')
-            ->where('data_stato_fe', '>=', $_SESSION['period_start'])
+            ->where('data_stato_fe', '>=', session('period_start'))
             ->where('data_stato_fe', '<', $data_limite)
             ->orderBy('data_stato_fe')
             ->get();

@@ -22,8 +22,8 @@ include_once __DIR__.'/../../core.php';
 use Carbon\Carbon;
 
 $azienda = $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica='.setting('Azienda predefinita'));
-$date_start = $_SESSION['period_start'];
-$date_end = $_SESSION['period_end'];
+$date_start = session('period_start');
+$date_end = session('period_end');
 $esercizio = new Carbon($date_start);
 $esercizio = $esercizio->format('Y');
 

@@ -91,7 +91,7 @@ switch (post('op')) {
         break;
 }
 
-$segment = $dbo->selectOne('zz_segments', 'name', ['id' => $_SESSION['module_'.$id_module]['id_segment']])['name'];
+$segment = $dbo->selectOne('zz_segments', 'name', ['id' => session('module_'.$id_module)['id_segment']])['name'];
 
 if ($segment!='Tutti') {
     $operations['copy_listino'] = [

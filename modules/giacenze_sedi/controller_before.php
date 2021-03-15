@@ -19,10 +19,10 @@
 
 include_once __DIR__.'/../../core.php';
 
-if (empty($_SESSION['giacenze_sedi']['idsede'])) {
-    session(['giacenze_sedi']['idsede' => 0]);
+if (session('giacenze_sedi.idsede') === null) {
+    session(['giacenze_sedi.idsede' => 0]);
 }
-$id_sede = $_SESSION['giacenze_sedi']['idsede'];
+$id_sede = session('giacenze_sedi.idsede');
 
 echo '
 <div class="row">

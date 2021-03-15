@@ -85,7 +85,7 @@ if (!empty($options['create_document'])) {
 
     // Opzioni aggiuntive per le Fatture
     if (in_array($final_module['name'], ['Fatture di vendita', 'Fatture di acquisto'])) {
-        $id_segment = $_SESSION['module_'.$final_module['id']]['id_segment'];
+        $id_segment = session('module_'.$final_module['id'].'.id_segment');
 
         $stato_predefinito = $database->fetchOne("SELECT id FROM co_statidocumento WHERE descrizione = 'Bozza'");
 

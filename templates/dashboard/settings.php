@@ -17,8 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-$format = (isset($_SESSION['dashboard']['format'])) ? $_SESSION['dashboard']['format'] : 'A4';
-$orientation = (isset($_SESSION['dashboard']['orientation'])) ? $_SESSION['dashboard']['orientation'] : 'L';
+$format = (isset(session('dashboard')['format'])) ? session('dashboard')['format'] : 'A4';
+$orientation = (isset(session('dashboard')['orientation'])) ? session('dashboard')['orientation'] : 'L';
 
 return [
     'format' => $format,

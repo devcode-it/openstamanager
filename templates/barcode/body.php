@@ -31,9 +31,9 @@ echo '<style>
 }
 </style>';
 
-if (!empty($_SESSION['superselect']['id_articolo_barcode'])) {
-    $articoli = Articolo::whereIn('id', $_SESSION['superselect']['id_articolo_barcode'])->get();
-    unset($_SESSION['superselect']['id_articolo_barcode']);
+if (!empty(session('superselect.id_articolo_barcode'))) {
+    $articoli = Articolo::whereIn('id', session('superselect.id_articolo_barcode'))->get();
+    session()->forget('superselect.id_articolo_barcode');
 } else {
     $articoli = Articolo::where('id', '=', $id_record)->get();
 }

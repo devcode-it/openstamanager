@@ -21,7 +21,7 @@ include_once __DIR__.'/../../core.php';
 
 $block_edit = $record['is_completato'];
 
-if( strtotime($record['data_conclusione'])<strtotime($record['data_accettazione']) ){
+if (strtotime($record['data_conclusione']) < strtotime($record['data_accettazione'])) {
     echo '
     <div class="alert alert-warning"><a class="clickable" onclick="$(\'.alert\').hide();"><i class="fa fa-times"></i></a> '.tr('Attenzione! La data di accettazione supera la data di conclusione del contratto. verificare tali informazioni.').'</div>';
 }

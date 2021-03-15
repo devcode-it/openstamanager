@@ -19,8 +19,8 @@
 
 namespace HTMLBuilder\Manager;
 
-use Models\Upload;
 use Models\Setting;
+use Models\Upload;
 
 /**
  * Gestione allegati.

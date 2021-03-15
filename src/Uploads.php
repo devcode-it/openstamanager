@@ -18,7 +18,6 @@
  */
 
 use Models\Upload;
-use Util\FileSystem;
 
 /**
  * Classe per la gestione degli upload del progetto.
@@ -70,8 +69,8 @@ class Uploads
      * Effettua l'upload di un file nella cartella indicata.
      *
      * @param string|array $source
-     * @param array $data
-     * @param array $options
+     * @param array        $data
+     * @param array        $options
      *
      * @return Upload
      */

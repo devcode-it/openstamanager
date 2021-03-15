@@ -20,9 +20,6 @@
 namespace Plugins\PianificazioneInterventi\Components;
 
 use Common\Components\Article;
-use Modules\Articoli\Articolo as Original;
-use Modules\Contratti\Contratto;
-use Plugins\PianificazioneInterventi\Promemoria;
 
 class Articolo extends Article
 {

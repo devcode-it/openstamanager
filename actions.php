@@ -97,9 +97,7 @@ elseif (filter('op') == 'download-allegato') {
     $rs = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module='.prepare($id_module).' AND id='.prepare(filter('id')).' AND filename='.prepare(filter('filename')));
 
     download($upload_dir.'/'.$rs[0]['filename'], $rs[0]['original']);
-}
-
-elseif (filter('op') == 'visualizza-modifica-allegato') {
+} elseif (filter('op') == 'visualizza-modifica-allegato') {
     include_once base_dir().'/include/modifica_allegato.php';
 }
 

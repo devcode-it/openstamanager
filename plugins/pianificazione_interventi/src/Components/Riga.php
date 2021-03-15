@@ -20,8 +20,6 @@
 namespace Plugins\PianificazioneInterventi\Components;
 
 use Common\Components\Row;
-use Modules\Contratti\Contratto;
-use Plugins\PianificazioneInterventi\Promemoria;
 
 class Riga extends Row
 {

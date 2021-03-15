@@ -55,20 +55,20 @@ class Upload extends Model
      */
     public function setCategoryAttribute($value)
     {
-        if ($value == 'Generale' || $value == ''){
+        if ($value == 'Generale' || $value == '') {
             $value = null;
         }
 
-        $this->attributes['category'] = $value;;
+        $this->attributes['category'] = $value;
     }
 
     /**
      * Crea un nuovo upload.
      *
      * @param string|array $source
-     * @param array $data
-     * @param null $name
-     * @param null $category
+     * @param array        $data
+     * @param null         $name
+     * @param null         $category
      *
      * @return self
      */
@@ -97,7 +97,7 @@ class Upload extends Model
         // Definizione del nome fisico del file
         $directory = base_dir().'/'.$model->directory;
         $filename = self::getNextName($original_name, $directory);
-        if (empty($filename)){
+        if (empty($filename)) {
             throw new UnexpectedValueException("Estensione dell'allegato non supportata");
         }
         $model->filename = $filename;
@@ -227,18 +227,6 @@ class Upload extends Model
     }
 
     /**
-     * Controlla se l'estensione è supportata dal sistema di upload.
-     *
-     * @param string $extension
-     *
-     * @return bool
-     */
-    protected static function isSupportedType($extension)
-    {
-        return !in_array(strtolower($extension), array_keys(self::$not_allowed_types));
-    }
-
-    /**
      * @return bool
      */
     public function hasPreview()
@@ -299,6 +287,18 @@ class Upload extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * Controlla se l'estensione è supportata dal sistema di upload.
+     *
+     * @param string $extension
+     *
+     * @return bool
+     */
+    protected static function isSupportedType($extension)
+    {
+        return !in_array(strtolower($extension), array_keys(self::$not_allowed_types));
     }
 
     /**

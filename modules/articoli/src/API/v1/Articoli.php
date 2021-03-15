@@ -19,10 +19,14 @@
 
 namespace Modules\Articoli\API\v1;
 
+use API\Interfaces\CreateInterface;
 use API\Interfaces\RetrieveInterface;
+use API\Interfaces\UpdateInterface;
 use API\Resource;
+use Modules\Articoli\Articolo;
+use Modules\Articoli\Categoria;
 
-class Articoli extends Resource implements RetrieveInterface
+class Articoli extends Resource implements RetrieveInterface, UpdateInterface, CreateInterface
 {
     public function retrieve($request)
     {
@@ -34,5 +38,72 @@ class Articoli extends Resource implements RetrieveInterface
         return [
             'query' => $query,
         ];
+    }
+
+    public function create($request)
+    {
+        $data = $request['data'];
+
+        // Gestione categoria
+        list($categoria, $sottocategoria) = $this->gestioneCategorie($data['categoria'], $data['sottocategoria']);
+
+        $articolo = Articolo::build($data['codice'], $data['descrizione'], $categoria, $sottocategoria);
+        $articolo->setPrezzoVendita($data['prezzo_vendita'], $articolo->idiva_vendita);
+        $articolo->save();
+
+        return [
+            'id' => $articolo->id,
+        ];
+    }
+
+    public function update($request)
+    {
+        $data = $request['data'];
+
+        $articolo = Articolo::find($request['id']);
+        list($categoria, $sottocategoria) = $this->gestioneCategorie($data['categoria'], $data['sottocategoria']);
+
+        // Gestione categoria
+        if (!empty($categoria)) {
+            $articolo->categoria()->associate($categoria);
+        }
+        if (!empty($sottocategoria)) {
+            $articolo->sottocategoria()->associate($sottocategoria);
+        }
+
+        $articolo->descrizione = $data['descrizione'];
+        $articolo->setPrezzoVendita($data['prezzo_vendita'], $articolo->idiva_vendita);
+
+        $articolo->save();
+    }
+
+    protected function gestioneCategorie($nome_categoria, $nome_sottocategoria)
+    {
+        $sottocategoria = null;
+
+        // Gestione categoria
+        $categoria = Categoria::where('nome', '=', $nome_categoria)
+            ->first();
+        if (empty($categoria) && !empty($nome_categoria)) {
+            $categoria = Categoria::build($nome_categoria);
+            $categoria->save();
+        }
+
+        // Caso categoria inesistente
+        if (empty($categoria)) {
+            return [$categoria, $sottocategoria];
+        }
+
+        // Gestione sotto-categoria
+        $sottocategoria = Categoria::where('nome', '=', $nome_sottocategoria)
+            ->where('parent', '=', $categoria->id)
+            ->first();
+        if (empty($sottocategoria) && !empty($nome_sottocategoria)) {
+            $sottocategoria = Categoria::build($nome_sottocategoria);
+            $sottocategoria->parent = $categoria->id;
+            $sottocategoria->save();
+        }
+
+        return [$categoria, $sottocategoria];
     }
 }

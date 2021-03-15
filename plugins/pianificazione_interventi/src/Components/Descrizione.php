@@ -20,8 +20,6 @@
 namespace Plugins\PianificazioneInterventi\Components;
 
 use Common\Components\Description;
-use Modules\Contratti\Contratto;
-use Plugins\PianificazioneInterventi\Promemoria;
 
 class Descrizione extends Description
 {

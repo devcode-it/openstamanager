@@ -49,7 +49,7 @@ class SpaceHook extends CachedManager
             '_TOT_' => FileSystem::formatBytes($osm_size),
             '_QUOTA_' => FileSystem::formatBytes($soft_quota),
         ]);
-        
+
         $space_limit = ($soft_quota / 100) * 95; // 95% dello spazio indicato
 
         return [

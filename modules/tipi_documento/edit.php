@@ -37,11 +37,11 @@ include_once __DIR__.'/../../core.php';
         </div>
 
         <div class="col-md-4">
-            {[ "type": "checkbox", "label": "<?php echo tr('Tipo documento predefinito'); ?>", "name": "predefined", "value": "<?php echo intval($record['predefined']); ?>", "help":"<?php echo tr('Impostare questo tipo di documento predefinto per le fatture di '); echo (($record['dir']=='entrata')? tr('Vendita'):tr('Acquisto')); ?>." ]}
+            {[ "type": "checkbox", "label": "<?php echo tr('Tipo documento predefinito'); ?>", "name": "predefined", "value": "<?php echo intval($record['predefined']); ?>", "help":"<?php echo tr('Impostare questo tipo di documento predefinto per le fatture di '); echo ($record['dir'] == 'entrata') ? tr('Vendita') : tr('Acquisto'); ?>." ]}
         </div>
 
         <div class="col-md-4">
-            {[ "type": "checkbox", "label": "<?php echo tr('Attivo'); ?>", "name": "enabled", "disabled": "<?php echo (($record['predefined'] && $record['enabled']) ? 1 : 0); ?>",  "value": "<?php echo intval($record['enabled']); ?>" ]}
+            {[ "type": "checkbox", "label": "<?php echo tr('Attivo'); ?>", "name": "enabled", "disabled": "<?php echo ($record['predefined'] && $record['enabled']) ? 1 : 0; ?>",  "value": "<?php echo intval($record['enabled']); ?>" ]}
         </div>
 
         <div class="col-md-4">

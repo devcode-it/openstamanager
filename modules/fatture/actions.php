@@ -690,12 +690,12 @@ switch (post('op')) {
 
             $fattura = Fattura::build($documento->anagrafica, $tipo, post('data'), post('id_segment'));
 
-            if(!empty($documento->idpagamento)){
+            if (!empty($documento->idpagamento)) {
                 $fattura->idpagamento = $documento->idpagamento;
-            }else{
+            } else {
                 $fattura->idpagamento = setting('Tipo di pagamento predefinito');
             }
-            
+
             $fattura->idsede_destinazione = $documento->idsede;
             $fattura->id_ritenuta_contributi = post('id_ritenuta_contributi') ?: null;
 

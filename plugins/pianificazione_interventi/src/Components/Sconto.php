@@ -20,7 +20,6 @@
 namespace Plugins\PianificazioneInterventi\Components;
 
 use Common\Components\Discount;
-use Plugins\PianificazioneInterventi\Promemoria;
 
 class Sconto extends Discount
 {

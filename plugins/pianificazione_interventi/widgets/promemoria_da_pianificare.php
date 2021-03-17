@@ -1,4 +1,4 @@
-<?php
+<<?php
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -21,7 +21,14 @@ use Plugins\PianificazioneInterventi\Promemoria;
 
 include_once __DIR__.'/../../../core.php';
 
-$elenco_promemoria = Promemoria::doesntHave('intervento')->get();
+$elenco_promemoria = Promemoria::doesntHave('intervento')->orderByraw("data_richiesta ASC")->get();
+
+$array_promemoria = [];
+foreach($elenco_promemoria as $promemoria){
+    $data_pro = new Carbon($promemoria->data_richiesta);
+    $array_promemoria[$data_pro->format("Y-m")][] = $promemoria;
+}
+
 if ($elenco_promemoria->isEmpty()) {
     echo '
 <p>'.tr('Non ci sono promemoria da pianificare').'.</p>';
@@ -30,7 +37,7 @@ if ($elenco_promemoria->isEmpty()) {
 }
 
 $raggruppamenti = $elenco_promemoria->groupBy(function ($item) {
-    return ucfirst($item->data_richiesta->formatLocalized('%B %Y'));
+    return $item->data_richiesta->format('Y-m');
 });
 
 $counter = 0;
@@ -46,10 +53,12 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
         $class = 'fa-plus-circle';
     }
 
+    $nome_mese = new Carbon($mese."-01");
+
     echo "
 <h4>
     <a class='clickable' onclick=\"if( $('#promemoria_pianificare_".$counter."').css('display') == 'none' ){ $(this).children('i').removeClass('fa-plus-circle'); $(this).children('i').addClass('fa-minus-circle'); }else{ $(this).children('i').addClass('fa-plus-circle'); $(this).children('i').removeClass('fa-minus-circle'); } $('#promemoria_pianificare_".$counter."').slideToggle();\">
-        <i class='fa ".$class."'></i> ".$mese.'
+    <i class='fa ".$class."'></i> ".ucfirst($nome_mese->formatLocalized("%B %Y")).'
     </a>
 </h4>';
 
@@ -70,7 +79,7 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
         <tbody>';
 
     // Elenco promemoria da pianificare
-    foreach ($elenco_promemoria as $promemoria) {
+    foreach ($array_promemoria[$mese] as $promemoria) {
         $contratto = $promemoria->contratto;
         $anagrafica = $contratto->anagrafica;
 

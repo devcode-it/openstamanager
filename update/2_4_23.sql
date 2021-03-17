@@ -51,3 +51,6 @@ UPDATE `zz_widgets` SET `query` = 'SELECT\n CONCAT_WS(\' \', REPLACE(REPLACE(REP
 INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES
 (NULL, 'v1', 'create', 'articolo', 'Modules\\Articoli\\API\\v1\\Articoli', '1'),
 (NULL, 'v1', 'update', 'articolo', 'Modules\\Articoli\\API\\v1\\Articoli', '1');
+
+-- Fix visualizzazione attività in dashboard
+UPDATE `zz_segments` SET `clause` = '(orario_inizio BETWEEN \'|period_start|\' AND \'|period_end|\' OR orario_fine BETWEEN \'|period_start|\' AND \'|period_end|\')' WHERE `zz_segments`.`name` = 'Attività';

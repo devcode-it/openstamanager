@@ -199,11 +199,15 @@ switch (filter('op')) {
         $history = (array) $informazioni['history'];
         foreach ($history as $key => $value) {
             $history[$key]['size'] = Filesystem::formatBytes($value['size']);
+            $history[$key]['invoices_size'] = Filesystem::formatBytes($value['invoices_size']);
+            $history[$key]['notifies_size'] = Filesystem::formatBytes($value['notifies_size']);
         }
 
         echo json_encode([
             'invoice_number' => $informazioni['invoice_number'],
             'size' => Filesystem::formatBytes($informazioni['size']),
+            'invoices_size' => Filesystem::formatBytes($informazioni['invoices_size']),
+            'notifies_size' => Filesystem::formatBytes($informazioni['notifies_size']),
             'history' => $history,
         ]);
         break;

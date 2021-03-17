@@ -158,13 +158,9 @@ class SelectHandler implements HandlerInterface
                 $attributes[] = 'style="background:'.$element['_bgcolor_'].'; color:'.color_inverse($element['_bgcolor_'].';"');
             }
 
-            $exclude = ['id', 'text'];
             // Leggo ulteriori campi oltre a id e descrizione per inserirli nell'option nella forma "data-nomecampo1", "data-nomecampo2", ecc
-            foreach ($element as $key => $value) {
-                if (!in_array($key, $exclude)) {
-                    $attributes[] = 'data-'.$key.'="'.prepareToField($value).'"';
-                }
-            }
+            unset($element['optgroup']);
+            $attributes[] = "data-select-attributes='".replace(json_encode($element), ["'" => "\'"])."'";
 
             $html .= '
         <option value="'.prepareToField($element['id']).'" '.implode(' ', $attributes).(!empty($element['disabled']) ? 'disabled' : '').'>'.$element['text'].'</option>';

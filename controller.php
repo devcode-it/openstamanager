@@ -104,7 +104,7 @@ if ($user->is_admin && string_contains($module['option'], '|select|')) {
 
 <script>
 function modificaColonne(button) {
-    openModal("'.tr('Modifica colonne').'", globals.rootdir + "/actions.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&op=aggiorna_colonne")
+    openModal("'.tr('Modifica colonne').'", globals.rootdir + "/actions.php?id_module=" + globals.id_module + "&op=aggiorna_colonne")
 }
 </script>';
 }

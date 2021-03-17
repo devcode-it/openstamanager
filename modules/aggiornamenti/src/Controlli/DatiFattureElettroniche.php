@@ -26,7 +26,7 @@ class DatiFattureElettroniche extends Controllo
 {
     public function getName()
     {
-        return tr('Corrispondeze Fatture Elettroniche XML e Fatture di vendita');
+        return tr('Corrispondenze XML FE e Documenti di vendita');
     }
 
     public function getType($record)
@@ -92,28 +92,26 @@ class DatiFattureElettroniche extends Controllo
                 ];
 
                 $riepilogo_anomalie = '
-                        <table class="table table-bordered table-condensed">
-                            <tr>
-                                <th>Sorgente</th>
-                                <th>P. Iva</th>
-                                <th>Cod. fiscale</th>
-                                <th>Totale</th>
-                            </tr>
+                            <div>
+                                <div class="col-md-3" style="background-color:#efefef;" >Sorgente</div>
+                                <div class="col-md-3" style="background-color:#efefef;" >P. Iva</div>
+                                <div class="col-md-3" style="background-color:#efefef;" >Cod. fiscale</div>
+                                <div class="col-md-3" style="background-color:#efefef;" >Totale</div>
+                            </div>
+                        
+                            <div>
+                                <div class="col-md-3" >XML</div>
+                                <div class="col-md-3" >'.$anomalia['piva_xml'].'</div>
+                                <div class="col-md-3" >'.$anomalia['codice_fiscale_xml'].'</div>
+                                <div class="col-md-3" >'.$anomalia['totale_documento_xml'].'</div>
+                            </div>
 
-                            <tr>
-                                <td>XML</td>
-                                <td>'.$anomalia['piva_xml'].'</td>
-                                <td>'.$anomalia['codice_fiscale_xml'].'</td>
-                                <td>'.$anomalia['totale_documento_xml'].'</td>
-                            </tr>
-
-                            <tr>
-                                <td>Gestionale</td>
-                                <td>'.$this->htmlDiff($anomalia['piva_xml'], $anomalia['piva']).'</td>
-                                <td>'.$this->htmlDiff($anomalia['codice_fiscale_xml'], $anomalia['codice_fiscale']).'</td>
-                                <td>'.$this->htmlDiff($anomalia['totale_documento_xml'], $anomalia['totale_documento']).'</td>
-                            </tr>
-                        </table>';
+                            <div>
+                                <div class="col-md-3">Gestionale</div>
+                                <div class="col-md-3">'.$this->htmlDiff($anomalia['piva_xml'], $anomalia['piva']).'</div>
+                                <div class="col-md-3">'.$this->htmlDiff($anomalia['codice_fiscale_xml'], $anomalia['codice_fiscale']).'</div>
+                                <div class="col-md-3">'.$this->htmlDiff($anomalia['totale_documento_xml'], $anomalia['totale_documento']).'</div>
+                            </div>';
 
                 $this->addResult([
                     'id' => $fattura_vendita->id,

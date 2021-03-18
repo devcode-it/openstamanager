@@ -54,3 +54,6 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 
 -- Fix visualizzazione attività in dashboard
 UPDATE `zz_segments` SET `clause` = '(orario_inizio BETWEEN \'|period_start|\' AND \'|period_end|\' OR orario_fine BETWEEN \'|period_start|\' AND \'|period_end|\')' WHERE `zz_segments`.`name` = 'Attività';
+
+-- Aumentato limite per campo note in scheda anagrafica
+ALTER TABLE `an_anagrafiche` CHANGE `note` `note` TEXT NOT NULL;

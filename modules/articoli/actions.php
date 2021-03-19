@@ -25,6 +25,10 @@ use Util\Ini;
 include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
+    case 'restore':
+        $articolo->restore();
+        flash()->info(tr('Articolo ripristinato correttamente!'));
+
     // Aggiunta articolo
     case 'add':
         //Se non specifico il codice articolo lo imposto uguale all'id della riga

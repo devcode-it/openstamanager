@@ -29,7 +29,7 @@ FROM `mg_articoli`
     ) ordini_fornitore ON ordini_fornitore.idarticolo = mg_articoli.id
     LEFT JOIN mg_categorie ON mg_articoli.id_categoria = mg_categorie.id
     LEFT JOIN mg_categorie AS sottocategorie ON mg_articoli.id_sottocategoria = sottocategorie.id
-WHERE 1=1 AND (`mg_articoli`.`deleted_at`) IS NULL
+WHERE 1=1 AND `mg_articoli`.`deleted_at` IS NULL
 HAVING 2=2
 ORDER BY `mg_articoli`.`descrizione`' WHERE `zz_modules`.`name`='Articoli';
 

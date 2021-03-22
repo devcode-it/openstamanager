@@ -57,8 +57,8 @@ class Clienti extends AppResource
                 )';
         }
 
-        // Filtro per data
-        if ($last_sync_at) {
+        // Filtro per data (solo nel caso in cui la sincronizzazione non sia totale)
+        elseif ($last_sync_at) {
             $query .= ' AND an_anagrafiche.updated_at > '.prepare($last_sync_at);
         }
 

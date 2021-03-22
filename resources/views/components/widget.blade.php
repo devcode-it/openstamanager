@@ -1,6 +1,6 @@
 <a class="clickable" {!! $attrs !!}>
     <div class="info-box">
-        <button type="button" class="close" onclick="if(confirm('Disabilitare questo widget?')) { $.post('{{ base_url() }}/actions.php?id_module={{ $widget->module->id }}', { op: 'disable_widget', id: '{{ $widget->id }}' }, function(response){ location.reload(); }); }" >
+        <button type="button" class="close" onclick="if(confirm('Disabilitare questo widget?')) { $.post('{{ url('/') }}/actions.php?id_module={{ $widget->module->id }}', { op: 'disable_widget', id: '{{ $widget->id }}' }, function(response){ location.reload(); }); }" >
             <span aria-hidden="true">&times;</span><span class="sr-only">{{ tr('Chiudi') }}</span>
         </button>
 

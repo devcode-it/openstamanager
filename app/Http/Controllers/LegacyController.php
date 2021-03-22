@@ -11,9 +11,9 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class LegacyController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, $path)
     {
-        $path = substr($request->getPathInfo(), 1);
+        //$path = substr($request->getPathInfo(), 1);
 
         // Gestione dell'output
         $output = self::simulate($path);
@@ -27,7 +27,9 @@ class LegacyController extends Controller
         }
         // Correzione header per API
         elseif (self::isApiRequest($path)) {
-            $response = $response->header('Content-Type', 'application/json');
+            $output = json_decode($output, true);
+            $response = $response->header('Content-Type', 'application/json')
+                ->setStatusCode($output['status']);
         }
 
         return $response;

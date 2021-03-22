@@ -9,7 +9,7 @@
         @csrf
 
         <div class="py-5 text-center">
-            <img class="d-block mx-auto mb-4" src="{{ base_url() }}/assets/img/full_logo.png" alt="{{ tr('Logo OpenSTAManager') }}">
+            <img class="d-block mx-auto mb-4" src="{{ url('/') }}/assets/img/full_logo.png" alt="{{ tr('Logo OpenSTAManager') }}">
             <h2>{!! tr('Benvenuto in _NAME_!', ['_NAME_' => '<strong>'.tr('OpenSTAManager').'</strong>']) !!}</h2>
             <p class="lead">{!! tr('Puoi procedere alla configurazione tecnica del software attraverso i parametri seguenti, che potranno essere corretti secondo necessità tramite il file _FILE_', ['_FILE_' => '<i>.env</i>']) !!}. </p>
 

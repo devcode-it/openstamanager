@@ -7,7 +7,7 @@
     <div class="login-box box-center-large">
         <div class="login-logo">
             <a href="//openstamanager.com" target="_blank">
-                <img src="{{ base_url() }}/assets/img/full_logo.png" style="max-width: 360px">
+                <img src="{{ url('/') }}/assets/img/full_logo.png" style="max-width: 360px">
             </a>
         </div>
 

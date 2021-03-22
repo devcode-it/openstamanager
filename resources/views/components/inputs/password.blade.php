@@ -37,7 +37,7 @@
 @if($attributes->has('strength-trigger'))
     <div id="{{ $id }}_viewport_progress"></div>
 
-    <script src="{{ base_url()  }}/assets/dist/password-strength/password.min.js"></script>
+    <script src="{{ url('/') }}/assets/dist/password-strength/password.min.js"></script>
     <script>
         $(document).ready(function(){
             $("#{{ $id }}").pwstrength({

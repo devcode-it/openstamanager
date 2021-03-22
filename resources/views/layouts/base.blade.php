@@ -10,19 +10,19 @@
 
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <link href="{{ base_url() }}/assets/img/favicon.png" rel="icon" type="image/x-icon" />
-        <link rel="manifest" href="{{ base_url() }}/manifest.json">
+        <link href="{{ url('/') }}/assets/img/favicon.png" rel="icon" type="image/x-icon" />
+        <link rel="manifest" href="{{ url('/') }}/manifest.json">
 
-        <!--link rel="stylesheet" type="text/css" media="all" href="{{ base_url() }}{{ asset('/css/app.css') }}"/>
-        <link rel="stylesheet" type="text/css" media="all" href="{{ base_url() }}{{ asset('/css/style.css') }}"/>
-        <link rel="stylesheet" type="text/css" media="all" href="{{ base_url() }}{{ asset('/css/themes.css') }}"/>
+        <!--link rel="stylesheet" type="text/css" media="all" href="{{ asset('/css/app.css') }}"/>
+        <link rel="stylesheet" type="text/css" media="all" href="{{ asset('/css/style.css') }}"/>
+        <link rel="stylesheet" type="text/css" media="all" href="{{ asset('/css/themes.css') }}"/>
 
-        <link rel="stylesheet" type="text/css" media="print" href="{{ base_url() }}{{ asset('/css/print.css') }}"/>
+        <link rel="stylesheet" type="text/css" media="print" href="{{ asset('/css/print.css') }}"/>
 
-        <script type="text/javascript" charset="utf-8" src="{{ base_url() }}{{ asset('/js/manifest.js') }}"></script>
-        <script type="text/javascript" charset="utf-8" src="{{ base_url() }}{{ asset('/js/vendor.js') }}"></script>
-        <script type="text/javascript" charset="utf-8" src="{{ base_url() }}{{ asset('/js/app.js') }}"></script>
-        <script type="text/javascript" charset="utf-8" src="{{ base_url() }}{{ asset('/js/base.js') }}"></script--->
+        <script type="text/javascript" charset="utf-8" src="{{ asset('/js/manifest.js') }}"></script>
+        <script type="text/javascript" charset="utf-8" src="{{ asset('/js/vendor.js') }}"></script>
+        <script type="text/javascript" charset="utf-8" src="{{ asset('/js/app.js') }}"></script>
+        <script type="text/javascript" charset="utf-8" src="{{ asset('/js/base.js') }}"></script--->
 
         @foreach (AppLegacy::getAssets()['css'] as $css)
         <link rel="stylesheet" type="text/css" media="all" href="{{ $css }}"/>

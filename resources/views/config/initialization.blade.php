@@ -6,7 +6,7 @@
 @section('body')
 <div class="container pb-5">
     <div class="py-5 text-center">
-        <img class="d-block mx-auto mb-4" src="{{ base_url() }}/assets/img/full_logo.png" alt="{{ tr('Logo OpenSTAManager') }}">
+        <img class="d-block mx-auto mb-4" src="{{ url('/') }}/assets/img/full_logo.png" alt="{{ tr('Logo OpenSTAManager') }}">
         <h2>{!! tr('Inizializzazione di _NAME_!', ['_NAME_' => '<strong>'.tr('OpenSTAManager').'</strong>']) !!}</h2>
         <p class="lead">{{ tr("Completa la configurazione del gestionale inserendo le ultime informazioni di base") }}. </p>
     </div>

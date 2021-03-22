@@ -415,7 +415,7 @@ function check_query($query)
  */
 function base_url()
 {
-    return url('/');
+    return url('/legacy/');
 }
 
 /**

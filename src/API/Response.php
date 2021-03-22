@@ -98,21 +98,21 @@ class Response
         $version = $request['version'];
 
         // Login sulla base del token
+        $id = null;
         if (!empty($request['token'])) {
             $token = $request['token'];
 
-            $user = database()->fetchArray('SELECT `id_utente` FROM `zz_tokens` WHERE `enabled` = 1 AND `token` = :token', [
+            $user = database()->fetchOne('SELECT `id_utente` FROM `zz_tokens` WHERE `enabled` = 1 AND `token` = :token', [
                 ':token' => $token,
             ]);
 
-            $id = !empty($user) ? $user[0]['id_utente'] : null;
-            if (!empty($id)) {
-                auth()->onceUsingId($id);
-            }
+            $id = !empty($user) ? $user['id_utente'] : null;
         }
 
+        auth()->onceUsingId($id);
+
         // Controllo sull'accesso
-        if (!auth()->check() && $request['resource'] != 'login') {
+        if (empty($id) && $request['resource'] != 'login') {
             return self::response([
                 'status' => self::$status['unauthorized']['code'],
             ]);
@@ -165,7 +165,6 @@ class Response
 
         $code = self::$status[$error]['code'];
 
-        http_response_code($code);
 
         return self::response([
             'status' => $code,

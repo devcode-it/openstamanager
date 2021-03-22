@@ -189,7 +189,7 @@ class AppLegacy
             ));
 
             foreach ($result as $key => $element) {
-                $base = str_replace(base_url(), '', $paths[$dir]);
+                $base = str_replace(url('/'), '', $paths[$dir]);
                 $element = $base.'/'.$element;
 
                 $assets_element = null;

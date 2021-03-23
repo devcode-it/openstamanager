@@ -57,3 +57,7 @@ UPDATE `zz_segments` SET `clause` = '(orario_inizio BETWEEN \'|period_start|\' A
 
 -- Aumentato limite per campo note in scheda anagrafica
 ALTER TABLE `an_anagrafiche` CHANGE `note` `note` TEXT NOT NULL;
+
+-- Aggiunta risorsa APi per revisione applicazione
+INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES
+(NULL, 'app-v1', 'retrieve', 'revisione', 'API\\App\\v1\\Revisione', '1')

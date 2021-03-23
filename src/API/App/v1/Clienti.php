@@ -40,11 +40,13 @@ class Clienti extends AppResource
             INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica = an_tipianagrafiche.idtipoanagrafica
         WHERE an_tipianagrafiche.descrizione = 'Cliente' AND an_anagrafiche.deleted_at IS NULL";
 
+        // Sincronizzazione limitata ai Clienti con Interventi di interesse per il Tecnico corrente
         $sincronizza_lavorati = setting('Sincronizza solo i Clienti per cui il Tecnico ha lavorato in passato');
         if (!empty($sincronizza_lavorati)) {
             // Elenco di interventi di interesse
             $risorsa_interventi = $this->getRisorsaInterventi();
-            $interventi = $risorsa_interventi->getModifiedRecords(null);
+            // Da applicazione, i Clienti sono sincronizzati prima degli Interventi: last_sync_at permette di identificare le stesse modifiche
+            $interventi = $risorsa_interventi->getModifiedRecords($last_sync_at);
             if (empty($interventi)) {
                 return [];
             }
@@ -57,8 +59,8 @@ class Clienti extends AppResource
                 )';
         }
 
-        // Filtro per data
-        if ($last_sync_at) {
+        // Filtro per data (solo nel caso in cui la sincronizzazione non sia totale)
+        elseif ($last_sync_at) {
             $query .= ' AND an_anagrafiche.updated_at > '.prepare($last_sync_at);
         }
 

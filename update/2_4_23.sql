@@ -61,3 +61,6 @@ ALTER TABLE `an_anagrafiche` CHANGE `note` `note` TEXT NOT NULL;
 -- Aggiunta risorsa APi per revisione applicazione
 INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES
 (NULL, 'app-v1', 'retrieve', 'revisione', 'API\\App\\v1\\Revisione', '1')
+
+-- Fix query listini
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM mg_prezzi_articoli\n INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = mg_prezzi_articoli.id_anagrafica\n INNER JOIN mg_articoli ON mg_articoli.id = mg_prezzi_articoli.id_articolo\n LEFT JOIN mg_categorie AS categoria ON mg_articoli.id_categoria=categoria.id\n LEFT JOIN mg_categorie AS sottocategoria ON mg_articoli.id_sottocategoria=sottocategoria.id\nWHERE 1=1 AND mg_articoli.deleted_at IS NULL AND an_anagrafiche.deleted_at IS NULL\nHAVING 2=2\nORDER BY an_anagrafiche.ragione_sociale' WHERE `zz_modules`.`name` = 'Listini';

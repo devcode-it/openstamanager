@@ -19,6 +19,51 @@
 
 include_once __DIR__.'/../../core.php';
 
+// Prima selezione globale per tutti i filtri
+if (!isset($_SESSION['dashboard']['idtecnici'])) {
+    $rs = $dbo->fetchArray("SELECT an_anagrafiche.idanagrafica AS id FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE deleted_at IS NULL AND descrizione='Tecnico'");
+
+    $_SESSION['dashboard']['idtecnici'] = ["'-1'"];
+
+    for ($i = 0; $i < count($rs); ++$i) {
+        $_SESSION['dashboard']['idtecnici'][] = "'".$rs[$i]['id']."'";
+    }
+}
+
+if (!isset($_SESSION['dashboard']['idstatiintervento'])) {
+    $rs = $dbo->fetchArray('SELECT idstatointervento AS id, descrizione FROM in_statiintervento WHERE deleted_at IS NULL');
+
+    $_SESSION['dashboard']['idstatiintervento'] = ["'-1'"];
+
+    for ($i = 0; $i < count($rs); ++$i) {
+        $_SESSION['dashboard']['idstatiintervento'][] = "'".$rs[$i]['id']."'";
+    }
+}
+
+if (!isset($_SESSION['dashboard']['idtipiintervento'])) {
+    $rs = $dbo->fetchArray('SELECT idtipointervento AS id, descrizione FROM in_tipiintervento');
+
+    $_SESSION['dashboard']['idtipiintervento'] = ["'-1'"];
+
+    for ($i = 0; $i < count($rs); ++$i) {
+        $_SESSION['dashboard']['idtipiintervento'][] = "'".$rs[$i]['id']."'";
+    }
+}
+
+if (!isset($_SESSION['dashboard']['idzone'])) {
+    $rs = $dbo->fetchArray('SELECT id, descrizione FROM an_zone');
+
+    $_SESSION['dashboard']['idzone'] = ["'-1'"];
+
+    // "Nessuna zona" di default
+    $_SESSION['dashboard']['idzone'][] = "'0'";
+
+    for ($i = 0; $i < count($rs); ++$i) {
+        $_SESSION['dashboard']['idzone'][] = "'".$rs[$i]['id']."'";
+    }
+}
+
+
 echo '
 <!-- Filtri -->
 <div class="row">
@@ -620,48 +665,3 @@ echo '
         globals.dashboard.calendar = calendar;
     }
 </script>';
-
-// Prima selezione globale per tutti i filtri
-if (!isset($_SESSION['dashboard']['idtecnici'])) {
-    $_SESSION['dashboard']['idtecnici'] = ["'-1'"];
-
-    echo '
-<script>
-$(document).ready(function (){
-    $("#dashboard_tecnici .seleziona_tutto").click();
-})
-</script>';
-}
-
-if (!isset($_SESSION['dashboard']['idstatiintervento'])) {
-    $_SESSION['dashboard']['idstatiintervento'] = ["'-1'"];
-
-    echo '
-<script>
-$(document).ready(function (){
-    $("#dashboard_stati .seleziona_tutto").click();
-})
-</script>';
-}
-
-if (!isset($_SESSION['dashboard']['idtipiintervento'])) {
-    $_SESSION['dashboard']['idtipiintervento'] = ["'-1'"];
-
-    echo '
-<script>
-$(document).ready(function (){
-    $("#dashboard_tipi .seleziona_tutto").click();
-})
-</script>';
-}
-
-if (!isset($_SESSION['dashboard']['idzone'])) {
-    $_SESSION['dashboard']['idzone'] = ["'-1'"];
-
-    echo '
-<script>
-$(document).ready(function (){
-    $("#dashboard_zone .seleziona_tutto").click();
-})
-</script>';
-}

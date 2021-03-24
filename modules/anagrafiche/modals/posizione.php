@@ -41,8 +41,12 @@ echo '
         </div>
     </div>
 
-    <div id="map" style="height:400px; width:100%"></div>
-
+    <div class="row">
+        <div class="col-md-12">
+            <div id="map" style="height:400px;"></div>
+        </div>
+    </div>
+    <div>&nbsp;</div>
     <!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">

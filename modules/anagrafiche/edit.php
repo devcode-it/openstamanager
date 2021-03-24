@@ -246,7 +246,7 @@ echo '
                     </div>
                     <div class="panel-body">';
 
-$map_load_message = '<p>'.tr('Clicca per visualizzare').'</p>';
+$map_load_message = tr('Clicca per visualizzare');
 if (empty($google)) {
     echo '
                         <div class="alert alert-info">
@@ -255,7 +255,7 @@ if (empty($google)) {
 } elseif (!empty($sede_cliente->gaddress) || (!empty($sede_cliente->lat) && !empty($sede_cliente->lng))) {
     echo '
                         <div id="map-edit" style="height: 200px;width: 100%;display: flex;align-items: center;justify-content: center;" onclick="caricaMappa()">
-                            '.$map_load_message.'
+                            <p class="clickable badge">'.$map_load_message.'</p>
                         </div>
 
                         <div class="clearfix"></div>
@@ -342,7 +342,7 @@ echo '
 
             function caricaMappa() {
                 const map_div = $("#map-edit");
-                if (map_div.html().trim() !== "'.$map_load_message.'"){
+                if (map_div.text().trim() !== "'.$map_load_message.'"){
                     return;
                 }
 

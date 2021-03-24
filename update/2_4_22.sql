@@ -192,6 +192,7 @@ UPDATE `or_ordini` SET `numero_cliente`= `id_documento_fe` WHERE `id_documento_f
 
 -- Fix nome file con il tipo documento di vendita
 UPDATE `zz_prints` SET `filename` = '{tipo_documento} num. {numero} del {data}' WHERE `zz_prints`.`name` = 'Fattura di vendita';
+
 -- Risorsa API per sincronizzazione rapida di un singolo intervento
 INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `enabled`) VALUES
 (NULL, 'app-v1', 'update', 'intervento-flash', 'API\\App\\v1\\Flash\\Intervento', '1');

@@ -115,6 +115,7 @@ const JS = gulp.parallel(() => {
         'datatables.net-bs/js/dataTables.bootstrap.js',
         'datatables.net-buttons-bs/js/buttons.bootstrap.js',
         'smartwizard/dist/js/jquery.smartWizard.min.js',
+        'bootstrap-maxlength/dist/bootstrap-maxlength.js',
     ];
 
     for (const i in vendor) {

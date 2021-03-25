@@ -23,6 +23,7 @@ use Auth;
 use Common\Components\Component;
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Fatture\Fattura;
 use Traits\RecordTrait;
 use Traits\ReferenceTrait;
 use Util\Generator;
@@ -218,16 +219,24 @@ class DDT extends Document
 
         if (setting('Cambia automaticamente stato ddt fatturati')) {
             $righe = $this->getRighe();
-
-            $qta_evasa = $righe->sum('qta_evasa');
             $qta = $righe->sum('qta');
+            $qta_evasa = $righe->sum('qta_evasa');
             $parziale = $qta != $qta_evasa;
 
+            $fattura = Fattura::find($trigger->iddocumento);
+            if(!empty($fattura)){
+                $righe_fatturate = $fattura->getRighe()->where('idddt', '=', $this->id);
+                $qta_fatturate = $righe_fatturate->sum('qta');
+                $parziale_fatturato = $qta != $qta_fatturate;
+            }
+            
             // Impostazione del nuovo stato
             if ($qta_evasa == 0) {
                 $descrizione = 'Bozza';
-            } else {
-                $descrizione = $parziale ? 'Parzialmente fatturato' : 'Fatturato';
+            } elseif(empty($qta_fatturate)){
+                $descrizione = $parziale ? 'Parzialmente evaso' : 'Evaso';
+            } else{
+                $descrizione = $parziale_fatturato ? 'Parzialmente fatturato' : 'Fatturato';
             }
 
             $stato = Stato::where('descrizione', $descrizione)->first();

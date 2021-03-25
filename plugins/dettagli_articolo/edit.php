@@ -41,7 +41,7 @@ echo '
                 <div class="box-body">
                     <div class="row">
                         <div class="col-md-9">
-                            {[ "type": "select", "label": "'.tr('Cliente').'", "name": "id_cliente_informazioni", "ajax-source": "clienti" ]}
+                            {[ "type": "select", "label": "'.tr('Cliente').'", "name": "id_cliente_informazioni",  "required":"1", "ajax-source": "clienti" ]}
                         </div>
 
                         <div class="col-md-3">
@@ -147,7 +147,7 @@ echo '
                 <div class="box-body">
                     <div class="row">
                         <div class="col-md-9">
-                            {[ "type": "select", "label": "'.tr('Fornitore').'", "name": "id_fornitore_informazioni", "ajax-source": "fornitori" ]}
+                            {[ "type": "select", "label": "'.tr('Fornitore').'", "name": "id_fornitore_informazioni", "required":"1", "ajax-source": "fornitori" ]}
                         </div>
 
                         <div class="col-md-3">
@@ -354,7 +354,7 @@ function aggiungiPrezzi(button) {
     if (id_anagrafica) {
         gestionePrezzi(id_anagrafica, direzione);
     } else {
-        swal("'.tr('Errore').'", "'.tr('Nessuna anagrafica selezionato').'", "error");
+        swal("'.tr('Attenzione').'", "'.tr('Inserire un\'anagrafica').'", "warning");
     }
 }
 
@@ -367,7 +367,7 @@ function aggiungiFornitore() {
     if (id_fornitore) {
         modificaFornitore("", id_fornitore);
     } else {
-        swal("'.tr('Errore').'", "'.tr('Nessun fornitore selezionato').'", "error");
+        swal("'.tr('Attenzione').'", "'.tr('Inserire un\'anagrafica').'", "warning");
     }
 }
 </script>';

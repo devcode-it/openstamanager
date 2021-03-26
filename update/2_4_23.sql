@@ -67,3 +67,15 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM mg_prezzi_articoli\n I
 
 -- Cambiato title al plugin prezzi specifici
 UPDATE `zz_plugins` SET `title` = 'Prezzi di listino' WHERE `zz_plugins`.`name` = 'Prezzi specifici articolo';
+
+-- Impostati stati fatturabili in ddt e ordini
+ALTER TABLE `or_statiordine` ADD `is_fatturabile` TINYINT(1) NOT NULL AFTER `completato`;
+ALTER TABLE `dt_statiddt` ADD `is_fatturabile` TINYINT(1) NOT NULL AFTER `completato`;
+
+UPDATE `or_statiordine` SET `is_fatturabile` = '1' WHERE `or_statiordine`.`descrizione` = 'Evaso';
+UPDATE `or_statiordine` SET `is_fatturabile` = '1' WHERE `or_statiordine`.`descrizione` = 'Parzialmente evaso';
+UPDATE `or_statiordine` SET `is_fatturabile` = '1' WHERE `or_statiordine`.`descrizione` = 'Parzialmente fatturato';
+UPDATE `or_statiordine` SET `is_fatturabile` = '1' WHERE `or_statiordine`.`descrizione` = 'Accettato';
+UPDATE `dt_statiddt` SET `is_fatturabile` = '1' WHERE `dt_statiddt`.`descrizione` = 'Evaso';
+UPDATE `dt_statiddt` SET `is_fatturabile` = '1' WHERE `dt_statiddt`.`descrizione` = 'Parzialmente evaso';
+UPDATE `dt_statiddt` SET `is_fatturabile` = '1' WHERE `dt_statiddt`.`descrizione` = 'Parzialmente fatturato';

@@ -126,12 +126,16 @@ class DDT extends Document
 
     public function isImportabile()
     {
-        $stati_non_importabili = ['Bozza', 'Fatturato'];
-
         $database = database();
+        $stati = $database->fetchArray('SELECT descrizione FROM `dt_statiddt` WHERE `is_fatturabile` = 1');
+        foreach($stati as $stato){
+            $stati_importabili[] = $stato['descrizione'];
+        }
+
+        
         $causale = $database->fetchOne('SELECT * FROM `dt_causalet` WHERE `id` = '.prepare($this->idcausalet));
 
-        return $causale['is_importabile'] && !in_array($this->stato->descrizione, $stati_non_importabili);
+        return $causale['is_importabile'] && in_array($this->stato->descrizione, $stati_importabili);
     }
 
     public function getReversedAttribute()

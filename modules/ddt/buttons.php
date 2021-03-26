@@ -19,9 +19,20 @@
 
 include_once __DIR__.'/../../core.php';
 
+$stati = $dbo->fetchArray('SELECT descrizione FROM `dt_statiddt` WHERE `is_fatturabile` = 1');
+foreach($stati as $stato){
+    $stati_importabili[] = $stato['descrizione'];
+}
+
+$causali = $dbo->fetchArray('SELECT descrizione FROM `dt_causalet` WHERE `is_importabile` = 1');
+foreach($causali as $causale){
+    $causali_importabili[] = $causale['descrizione'];
+}
+
 echo '
-<div class="tip" data-toggle="tooltip" title="'.tr("Il ddt è fatturabile solo se non si trova negli stati _STATE_LIST_ e la relativa causale è abilitata all'importazione in altri documenti", [
-        '_STATE_LIST_' => 'Evaso, Parzialmente evaso, Parzialmente fatturato',
+<div class="tip" data-toggle="tooltip" title="'.tr("Il ddt è fatturabile solo se si trova negli stati _STATE_LIST_ e la relativa causale è una delle seguenti: _CAUSALE_LIST_", [
+        '_STATE_LIST_' => implode(', ', $stati_importabili),
+        '_CAUSALE_LIST_' => implode(', ', $causali_importabili),
     ]).'">
     <button class="btn btn-info '.($ddt->isImportabile() ? '' : 'disabled').'" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=fattura" data-toggle="modal" data-title="'.tr('Crea ').($ddt->reversed ? 'nota di credito' : ($dir == 'entrata' ? 'fattura di vendita' : 'fattura di acquisto')).'"><i class="fa fa-magic"></i> '.tr('Crea ').($ddt->reversed ? 'nota di credito' : ($dir == 'entrata' ? 'fattura di vendita' : 'fattura di acquisto')).'
     </button>

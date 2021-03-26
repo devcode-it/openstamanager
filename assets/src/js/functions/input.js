@@ -103,8 +103,14 @@ Input.prototype.init = function () {
     }
 
     // Inizializzazione per textarea
-    else if (this.element.hasClass('autosize')) {
-        initCompleted = initTextareaInput(htmlElement);
+    else if (this.element.hasClass('autosize') || htmlElement.hasAttribute('maxlength')) {
+        
+        if (this.element.hasClass('autosize'))
+            initCompleted = initTextareaInput(htmlElement);
+
+        if (htmlElement.hasAttribute('maxlength'))
+            initCompleted = initCharsCounter(htmlElement);
+
     }
 
     // Inizializzazione per select

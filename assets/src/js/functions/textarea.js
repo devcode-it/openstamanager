@@ -26,6 +26,24 @@ function initTextareaInput(input) {
     return true;
 }
 
+function initCharsCounter(input) {
+    let $input = $(input);
+
+    $input.maxlength({
+        warningClass: "label label-info",
+        limitReachedClass: "label label-warning",
+        preText: 'usati ',
+        separator: ' di ',
+        postText: ' caratteri.',
+        showMaxLength: false,
+        placement: 'bottom-right-inside',
+        utf8: true,
+        appendToParent: true
+    });
+
+    return true;
+}
+
 function waitCKEditor(input) {
     setTimeout(function () {
         initEditorInput(input);

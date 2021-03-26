@@ -672,7 +672,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
 
 				<div class="row">
 					<div class="col-md-12">
-						{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$" ]}
+						{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$", "maxlength": 255 ]}
 					</div>
 				</div>
 

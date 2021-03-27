@@ -32,16 +32,16 @@ function initCharCounter(input) {
     if (input.hasAttribute('maxlength')){
 
         $input.maxlength({
-            warningClass: "label label-default",
-            limitReachedClass: "label label-warning",
+            warningClass: "help-block",
+            limitReachedClass: "help-block text-danger",
             preText: '',
             separator: ' / ',
             postText: '',
             showMaxLength: true,
-            alwaysShow: false,
             placement: 'bottom-right-inside',
             utf8: true,
             appendToParent: true,
+            alwaysShow: false,
             threshold: 150
         });
 
@@ -50,14 +50,13 @@ function initCharCounter(input) {
         $input.attr('maxlength','65535');
 
         $input.maxlength({
-            warningClass: "label label-default",
-            limitReachedClass: "label label-warning",
+            warningClass: "help-block",
+            limitReachedClass: "help-block text-danger",
             showMaxLength: false,
-            alwaysShow: false,
             placement: 'bottom-right-inside',
             utf8: true,
             appendToParent: true,
-            threshold: 150
+            alwaysShow: true
         });
 
     }

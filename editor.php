@@ -197,7 +197,7 @@ if (empty($record) || !$has_access) {
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-right">
                                     <li><a href="#" id="'.(!empty($record['deleted_at']) ? 'restore' : 'save').'-close">
-                                        <i class="fa fa-'.(!empty($record['deleted_at']) ? 'undo' : 'check').'"></i>
+                                        <i class="fa fa-'.(!empty($record['deleted_at']) ? 'undo' : 'check-square-o').'"></i>
                                          '.(!empty($record['deleted_at']) ? tr('Ripristina e chiudi') : tr('Salva e chiudi')).'
                                     </a></li>
                                 </ul>

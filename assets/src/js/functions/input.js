@@ -108,8 +108,8 @@ Input.prototype.init = function () {
         if (this.element.hasClass('autosize'))
             initCompleted = initTextareaInput(htmlElement);
 
-        if (htmlElement.hasAttribute('maxlength'))
-            initCompleted = initCharsCounter(htmlElement);
+        if (htmlElement.hasAttribute('charcounter'))
+            initCompleted = initCharCounter(htmlElement);
 
     }
 

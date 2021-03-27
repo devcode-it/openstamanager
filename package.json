@@ -8,7 +8,7 @@
         "bootstrap": "^3.3.7",
         "bootstrap-colorpicker": "2.5.1",
         "bootstrap-daterangepicker": "^2.1.25",
-        "bootstrap-maxlength": "1.10.0",
+        "bootstrap-maxlength": "^1.10.0",
         "chart.js": "^2.7.0",
         "ckeditor4-dev": "^4.14.1",
         "components-jqueryui": "^1.12.1",

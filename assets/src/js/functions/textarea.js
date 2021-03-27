@@ -26,20 +26,42 @@ function initTextareaInput(input) {
     return true;
 }
 
-function initCharsCounter(input) {
+function initCharCounter(input) {
     let $input = $(input);
 
-    $input.maxlength({
-        warningClass: "label label-info",
-        limitReachedClass: "label label-warning",
-        preText: 'usati ',
-        separator: ' di ',
-        postText: ' caratteri.',
-        showMaxLength: false,
-        placement: 'bottom-right-inside',
-        utf8: true,
-        appendToParent: true
-    });
+    if (input.hasAttribute('maxlength')){
+
+        $input.maxlength({
+            warningClass: "label label-default",
+            limitReachedClass: "label label-warning",
+            preText: '',
+            separator: ' / ',
+            postText: '',
+            showMaxLength: true,
+            alwaysShow: false,
+            placement: 'bottom-right-inside',
+            utf8: true,
+            appendToParent: true,
+            threshold: 150
+        });
+
+    }else{
+
+        $input.attr('maxlength','65535');
+
+        $input.maxlength({
+            warningClass: "label label-default",
+            limitReachedClass: "label label-warning",
+            showMaxLength: false,
+            alwaysShow: false,
+            placement: 'bottom-right-inside',
+            utf8: true,
+            appendToParent: true,
+            threshold: 150
+        });
+
+    }
+    
 
     return true;
 }

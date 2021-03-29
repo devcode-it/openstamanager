@@ -190,6 +190,34 @@ trait RelationTrait
     }
 
     /**
+     * Modifica la quantità del componente.
+     * Se la fattura è una Nota di credito/debito, risale al secondo livello di origine del componente e corregge di conseguenza le quantità evase.
+     *
+     * @param float $value
+     *
+     * @return float
+     */
+    public function setQtaAttribute($value)
+    {
+        list($qta, $diff) = $this->parseQta($value);
+        parent::setQtaAttribute($value);
+
+        if ($this->fattura->isNota() && $this->hasOriginalComponent()) {
+            $source = $this->getOriginalComponent();
+
+            // Aggiornamento della quantità evasa di origine
+            if ($source->hasOriginalComponent()) {
+                $target = $source->getOriginalComponent();
+
+                $target->qta_evasa -= $diff;
+                $target->save();
+            }
+        }
+
+        return $diff;
+    }
+
+    /**
      * Effettua i conti per la Rivalsa INPS.
      */
     protected function fixRivalsaINPS()

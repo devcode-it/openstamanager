@@ -80,6 +80,13 @@ UPDATE `dt_statiddt` SET `is_fatturabile` = '1' WHERE `dt_statiddt`.`descrizione
 UPDATE `dt_statiddt` SET `is_fatturabile` = '1' WHERE `dt_statiddt`.`descrizione` = 'Parzialmente evaso';
 UPDATE `dt_statiddt` SET `is_fatturabile` = '1' WHERE `dt_statiddt`.`descrizione` = 'Parzialmente fatturato';
 
+-- Aggiunta colonna um in Movimenti di magazzino
+UPDATE `zz_views` SET `query` = 'mg_movimenti.qta' WHERE `zz_views`.`name` = 'Quantità';
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE name='Movimenti'), 'Um', 'mg_articoli.um', 5, 1, 0, 0, '', '', 0, 0, 0);
+INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) (
+SELECT `zz_groups`.`id`, `zz_views`.`id` FROM `zz_groups`, `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` WHERE `zz_modules`.`name` = 'Movimenti' AND `zz_views`.`name` = 'Um'
+);
 -- Fix campo iva per Sconti di versioni precedenti
 UPDATE `co_righe_documenti` SET `iva` = ABS(`iva`) * IF(`sconto` > 0, -1, 1) WHERE `is_sconto` = 1;
 UPDATE `co_righe_preventivi` SET `iva` = ABS(`iva`) * IF(`sconto` > 0, -1, 1) WHERE `is_sconto` = 1;

@@ -40,6 +40,21 @@ switch (post('op')) {
         flash()->info(tr('Prezzi di acquisto aggiornati!'));
 
         break;
+    
+    case 'change-vendita':
+        foreach ($id_records as $id) {
+            $articolo = Articolo::find($id);
+            $percentuale = post('percentuale');
+
+            $new_prezzo_vendita = $articolo->prezzo_vendita + ($articolo->prezzo_vendita * $percentuale / 100);
+            $articolo->prezzo_vendita = $new_prezzo_vendita;
+            $articolo->save();
+        }
+
+        flash()->info(tr('Prezzi di vendita aggiornati!'));
+
+        break;
+
 
     case 'delete-bulk':
         foreach ($id_records as $id) {
@@ -153,7 +168,18 @@ $operations['change-acquisto'] = [
         'msg' => 'Per indicare uno sconto inserire la percentuale con il segno meno, al contrario per un rincaro inserire la percentuale senza segno.<br><br>{[ "type": "number", "label": "'.tr('Percentuale sconto/rincaro').'", "name": "percentuale", "required": 1, "icon-after": "%" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
-        'blank' => true,
+        'blank' => false,
+    ],
+];
+
+$operations['change-vendita'] = [
+    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Aggiorna prezzo di vendita').'</span>',
+    'data' => [
+        'title' => tr('Aggiornare il prezzo di vendita per gli articoli selezionati?'),
+        'msg' => 'Per indicare uno sconto inserire la percentuale con il segno meno, al contrario per un rincaro inserire la percentuale senza segno.<br><br>{[ "type": "number", "label": "'.tr('Percentuale sconto/rincaro').'", "name": "percentuale", "required": 1, "icon-after": "%" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => false,
     ],
 ];
 

@@ -108,7 +108,7 @@ echo '
 <?php
 
 // Variabili utilizzabili
-$variables = include Modules::filepath($record['id_module'], 'variables.php');
+$variables = $module->getPlaceholders($id_record);
 
 echo '
 <!-- Istruzioni per il contenuto -->

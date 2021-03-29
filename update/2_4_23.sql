@@ -79,3 +79,12 @@ UPDATE `or_statiordine` SET `is_fatturabile` = '1' WHERE `or_statiordine`.`descr
 UPDATE `dt_statiddt` SET `is_fatturabile` = '1' WHERE `dt_statiddt`.`descrizione` = 'Evaso';
 UPDATE `dt_statiddt` SET `is_fatturabile` = '1' WHERE `dt_statiddt`.`descrizione` = 'Parzialmente evaso';
 UPDATE `dt_statiddt` SET `is_fatturabile` = '1' WHERE `dt_statiddt`.`descrizione` = 'Parzialmente fatturato';
+
+-- Fix campo iva per Sconti di versioni precedenti
+UPDATE `co_righe_documenti` SET `iva` = ABS(`iva`) * IF(`sconto` > 0, -1, 1) WHERE `is_sconto` = 1;
+UPDATE `co_righe_preventivi` SET `iva` = ABS(`iva`) * IF(`sconto` > 0, -1, 1) WHERE `is_sconto` = 1;
+UPDATE `co_righe_contratti` SET `iva` = ABS(`iva`) * IF(`sconto` > 0, -1, 1) WHERE `is_sconto` = 1;
+UPDATE `dt_righe_ddt` SET `iva` = ABS(`iva`) * IF(`sconto` > 0, -1, 1) WHERE `is_sconto` = 1;
+UPDATE `or_righe_ordini` SET `iva` = ABS(`iva`) * IF(`sconto` > 0, -1, 1) WHERE `is_sconto` = 1;
+UPDATE `co_righe_promemoria` SET `iva` = ABS(`iva`) * IF(`sconto` > 0, -1, 1) WHERE `is_sconto` = 1;
+UPDATE `in_righe_interventi` SET `iva` = ABS(`iva`) * IF(`sconto` > 0, -1, 1) WHERE `is_sconto` = 1;

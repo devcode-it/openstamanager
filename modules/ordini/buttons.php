@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 $stati = $dbo->fetchArray('SELECT descrizione FROM `or_statiordine` WHERE `is_fatturabile` = 1');
-foreach($stati as $stato){
+foreach ($stati as $stato) {
     $stati_importabili[] = $stato['descrizione'];
 }
 

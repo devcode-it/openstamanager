@@ -337,7 +337,7 @@ switch (post('op')) {
 
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
-                    if($documento->tipo->dir == 'uscita'){
+                    if ($documento->tipo->dir == 'uscita') {
                         $originale = ArticoloOriginale::find($riga->idarticolo);
                         $id_iva = $originale->idiva_vendita ? $originale->idiva_vendita : setting('Iva predefinita');
                         $copia->setPrezzoUnitario($originale->prezzo_vendita, $id_iva);

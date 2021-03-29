@@ -52,8 +52,8 @@ if (preg_match('/[`]*([a-z0-9_]*)[`]*[\.]*([`]*deleted_at[`]* IS NULL)/i', $quer
     $conditions_to_remove[] = ' AND '.$condition;
     $conditions_to_remove[] = $condition.' AND ';
 
-    $query = str_replace( $conditions_to_remove, '', $query);
-    $query = str_replace( $condition, '', $query);
+    $query = str_replace($conditions_to_remove, '', $query);
+    $query = str_replace($condition, '', $query);
 }
 
 $has_access = !empty($query) ? $dbo->fetchNum($query) !== 0 : true;

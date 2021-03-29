@@ -19,11 +19,8 @@
 
 namespace API\App\v1;
 
-use API\App\AppResource;
 use API\Interfaces\RetrieveInterface;
 use API\Resource;
-use Illuminate\Database\Eloquent\Builder;
-use Modules\Anagrafiche\Anagrafica;
 
 class Revisione extends Resource implements RetrieveInterface
 {

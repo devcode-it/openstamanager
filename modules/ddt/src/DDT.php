@@ -128,11 +128,10 @@ class DDT extends Document
     {
         $database = database();
         $stati = $database->fetchArray('SELECT descrizione FROM `dt_statiddt` WHERE `is_fatturabile` = 1');
-        foreach($stati as $stato){
+        foreach ($stati as $stato) {
             $stati_importabili[] = $stato['descrizione'];
         }
 
-        
         $causale = $database->fetchOne('SELECT * FROM `dt_causalet` WHERE `id` = '.prepare($this->idcausalet));
 
         return $causale['is_importabile'] && in_array($this->stato->descrizione, $stati_importabili);
@@ -228,18 +227,18 @@ class DDT extends Document
             $parziale = $qta != $qta_evasa;
 
             $fattura = Fattura::find($trigger->iddocumento);
-            if(!empty($fattura)){
+            if (!empty($fattura)) {
                 $righe_fatturate = $fattura->getRighe()->where('idddt', '=', $this->id);
                 $qta_fatturate = $righe_fatturate->sum('qta');
                 $parziale_fatturato = $qta != $qta_fatturate;
             }
-            
+
             // Impostazione del nuovo stato
             if ($qta_evasa == 0) {
                 $descrizione = 'Bozza';
-            } elseif(empty($qta_fatturate)){
+            } elseif (empty($qta_fatturate)) {
                 $descrizione = $parziale ? 'Parzialmente evaso' : 'Evaso';
-            } else{
+            } else {
                 $descrizione = $parziale_fatturato ? 'Parzialmente fatturato' : 'Fatturato';
             }
 

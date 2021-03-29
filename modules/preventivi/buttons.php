@@ -31,8 +31,8 @@ echo '
 <div class="tip" data-toggle="tooltip" title="'.tr('Per creare una nuova revisione lo stato del preventivo deve essere tra: _STATE_LIST_', [
         '_STATE_LIST_' => $stati_abilitati,
     ]).'">
-    <button type="button" class="btn btn-warning '.($record['is_revisionabile'] ? '' : 'disabled').'" onclick="if(confirm(\'Vuoi creare un nuova revisione?\')){$(\'#crea-revisione\').submit();}">
-        <i class="fa fa-edit"></i> '.tr('Crea nuova revisione...').'
+    <button type="button" class="btn btn-warning '.($record['is_revisionabile'] ? '' : 'disabled').'" onclick="if(confirm(\''.tr('Creare un nuova revisione?').'\')){$(\'#crea-revisione\').submit();}">
+        <i class="fa fa-plus-square"></i> '.tr('Crea nuova revisione...').'
     </button>
 </div>';
 

@@ -30,6 +30,7 @@ switch (post('op')) {
         flash()->info(tr('Articolo ripristinato correttamente!'));
 
     // Aggiunta articolo
+    // no break
     case 'add':
         //Se non specifico il codice articolo lo imposto uguale all'id della riga
         if (empty(post('codice'))) {

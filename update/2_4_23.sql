@@ -63,7 +63,7 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 (NULL, 'app-v1', 'retrieve', 'revisione', 'API\\App\\v1\\Revisione', '1')
 
 -- Fix query listini
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM mg_prezzi_articoli\n INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = mg_prezzi_articoli.id_anagrafica\n INNER JOIN mg_articoli ON mg_articoli.id = mg_prezzi_articoli.id_articolo\n LEFT JOIN mg_categorie AS categoria ON mg_articoli.id_categoria=categoria.id\n LEFT JOIN mg_categorie AS sottocategoria ON mg_articoli.id_sottocategoria=sottocategoria.id\nWHERE 1=1 AND mg_articoli.deleted_at IS NULL AND an_anagrafiche.deleted_at IS NULL\nHAVING 2=2\nORDER BY an_anagrafiche.ragione_sociale' WHERE `zz_modules`.`name` = 'Listini';
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM mg_prezzi_articoli  INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = mg_prezzi_articoli.id_anagrafica  INNER JOIN mg_articoli ON mg_articoli.id = mg_prezzi_articoli.id_articolo  LEFT JOIN mg_categorie AS categoria ON mg_articoli.id_categoria=categoria.id  LEFT JOIN mg_categorie AS sottocategoria ON mg_articoli.id_sottocategoria=sottocategoria.id WHERE 1=1 AND mg_articoli.deleted_at IS NULL AND an_anagrafiche.deleted_at IS NULL HAVING 2=2 ORDER BY an_anagrafiche.ragione_sociale' WHERE `zz_modules`.`name` = 'Listini';
 
 -- Cambiato title al plugin prezzi specifici
 UPDATE `zz_plugins` SET `title` = 'Prezzi di listino' WHERE `zz_plugins`.`name` = 'Prezzi specifici articolo';
@@ -87,3 +87,11 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) (
 SELECT `zz_groups`.`id`, `zz_views`.`id` FROM `zz_groups`, `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` WHERE `zz_modules`.`name` = 'Movimenti' AND `zz_views`.`name` = 'Um'
 );
+-- Fix campo iva per Sconti di versioni precedenti
+UPDATE `co_righe_documenti` SET `iva` = ABS(`iva`) * IF(`sconto` > 0, -1, 1) WHERE `is_sconto` = 1;
+UPDATE `co_righe_preventivi` SET `iva` = ABS(`iva`) * IF(`sconto` > 0, -1, 1) WHERE `is_sconto` = 1;
+UPDATE `co_righe_contratti` SET `iva` = ABS(`iva`) * IF(`sconto` > 0, -1, 1) WHERE `is_sconto` = 1;
+UPDATE `dt_righe_ddt` SET `iva` = ABS(`iva`) * IF(`sconto` > 0, -1, 1) WHERE `is_sconto` = 1;
+UPDATE `or_righe_ordini` SET `iva` = ABS(`iva`) * IF(`sconto` > 0, -1, 1) WHERE `is_sconto` = 1;
+UPDATE `co_righe_promemoria` SET `iva` = ABS(`iva`) * IF(`sconto` > 0, -1, 1) WHERE `is_sconto` = 1;
+UPDATE `in_righe_interventi` SET `iva` = ABS(`iva`) * IF(`sconto` > 0, -1, 1) WHERE `is_sconto` = 1;

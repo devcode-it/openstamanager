@@ -20,17 +20,17 @@
 include_once __DIR__.'/../../core.php';
 
 $stati = $dbo->fetchArray('SELECT descrizione FROM `dt_statiddt` WHERE `is_fatturabile` = 1');
-foreach($stati as $stato){
+foreach ($stati as $stato) {
     $stati_importabili[] = $stato['descrizione'];
 }
 
 $causali = $dbo->fetchArray('SELECT descrizione FROM `dt_causalet` WHERE `is_importabile` = 1');
-foreach($causali as $causale){
+foreach ($causali as $causale) {
     $causali_importabili[] = $causale['descrizione'];
 }
 
 echo '
-<div class="tip" data-toggle="tooltip" title="'.tr("Il ddt è fatturabile solo se si trova negli stati _STATE_LIST_ e la relativa causale è una delle seguenti: _CAUSALE_LIST_", [
+<div class="tip" data-toggle="tooltip" title="'.tr('Il ddt è fatturabile solo se si trova negli stati _STATE_LIST_ e la relativa causale è una delle seguenti: _CAUSALE_LIST_', [
         '_STATE_LIST_' => implode(', ', $stati_importabili),
         '_CAUSALE_LIST_' => implode(', ', $causali_importabili),
     ]).'">

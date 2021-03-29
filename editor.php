@@ -52,8 +52,8 @@ if (preg_match('/[`]*([a-z0-9_]*)[`]*[\.]*([`]*deleted_at[`]* IS NULL)/i', $quer
     $conditions_to_remove[] = ' AND '.$condition;
     $conditions_to_remove[] = $condition.' AND ';
 
-    $query = str_replace( $conditions_to_remove, '', $query);
-    $query = str_replace( $condition, '', $query);
+    $query = str_replace($conditions_to_remove, '', $query);
+    $query = str_replace($condition, '', $query);
 }
 
 $has_access = !empty($query) ? $dbo->fetchNum($query) !== 0 : true;
@@ -197,7 +197,7 @@ if (empty($record) || !$has_access) {
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-right">
                                     <li><a href="#" id="'.(!empty($record['deleted_at']) ? 'restore' : 'save').'-close">
-                                        <i class="fa fa-'.(!empty($record['deleted_at']) ? 'undo' : 'check').'"></i>
+                                        <i class="fa fa-'.(!empty($record['deleted_at']) ? 'undo' : 'check-square-o').'"></i>
                                          '.(!empty($record['deleted_at']) ? tr('Ripristina e chiudi') : tr('Salva e chiudi')).'
                                     </a></li>
                                 </ul>

@@ -19,50 +19,59 @@
 
 include_once __DIR__.'/../../core.php';
 
+// Individuazione dati selezionabili
+// Stati interventi
+$stati_intervento = $dbo->fetchArray('SELECT idstatointervento AS id, descrizione, colore FROM in_statiintervento WHERE deleted_at IS NULL ORDER BY descrizione ASC');
+
+// Tipi intervento
+$tipi_intervento = $dbo->fetchArray('SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC');
+
+// Tecnici disponibili
+$tecnici_disponibili = $dbo->fetchArray("SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale, colore FROM an_anagrafiche
+    INNER JOIN
+    an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica
+    INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica
+    LEFT OUTER JOIN in_interventi_tecnici ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica
+    INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id
+WHERE an_anagrafiche.deleted_at IS NULL AND an_tipianagrafiche.descrizione='Tecnico' ".Modules::getAdditionalsQuery('Interventi').'
+GROUP BY an_anagrafiche.idanagrafica
+ORDER BY ragione_sociale ASC');
+
+// Zone
+$zone = $dbo->fetchArray('(SELECT 0 AS ordine, \'0\' AS id, \'Nessuna zona\' AS descrizione) UNION (SELECT 1 AS ordine, id, descrizione FROM an_zone) ORDER BY ordine, descrizione ASC');
+
 // Prima selezione globale per tutti i filtri
 if (!isset($_SESSION['dashboard']['idtecnici'])) {
-    $rs = $dbo->fetchArray("SELECT an_anagrafiche.idanagrafica AS id FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE deleted_at IS NULL AND descrizione='Tecnico'");
-
     $_SESSION['dashboard']['idtecnici'] = ["'-1'"];
 
-    for ($i = 0; $i < count($rs); ++$i) {
-        $_SESSION['dashboard']['idtecnici'][] = "'".$rs[$i]['id']."'";
+    foreach ($tecnici_disponibili as $tecnico) {
+        $_SESSION['dashboard']['idtecnici'][] = "'".$tecnico['id']."'";
     }
 }
 
 if (!isset($_SESSION['dashboard']['idstatiintervento'])) {
-    $rs = $dbo->fetchArray('SELECT idstatointervento AS id, descrizione FROM in_statiintervento WHERE deleted_at IS NULL');
-
     $_SESSION['dashboard']['idstatiintervento'] = ["'-1'"];
 
-    for ($i = 0; $i < count($rs); ++$i) {
-        $_SESSION['dashboard']['idstatiintervento'][] = "'".$rs[$i]['id']."'";
+    foreach ($stati_intervento as $stato) {
+        $_SESSION['dashboard']['idstatiintervento'][] = "'".$stato['id']."'";
     }
 }
 
 if (!isset($_SESSION['dashboard']['idtipiintervento'])) {
-    $rs = $dbo->fetchArray('SELECT idtipointervento AS id, descrizione FROM in_tipiintervento');
-
     $_SESSION['dashboard']['idtipiintervento'] = ["'-1'"];
 
-    for ($i = 0; $i < count($rs); ++$i) {
-        $_SESSION['dashboard']['idtipiintervento'][] = "'".$rs[$i]['id']."'";
+    foreach ($tipi_intervento as $tipo) {
+        $_SESSION['dashboard']['idtipiintervento'][] = "'".$tipo['id']."'";
     }
 }
 
 if (!isset($_SESSION['dashboard']['idzone'])) {
-    $rs = $dbo->fetchArray('SELECT id, descrizione FROM an_zone');
-
     $_SESSION['dashboard']['idzone'] = ["'-1'"];
 
-    // "Nessuna zona" di default
-    $_SESSION['dashboard']['idzone'][] = "'0'";
-
-    for ($i = 0; $i < count($rs); ++$i) {
-        $_SESSION['dashboard']['idzone'][] = "'".$rs[$i]['id']."'";
+    foreach ($zone as $zona) {
+        $_SESSION['dashboard']['idzone'][] = "'".$zona['id']."'";
     }
 }
-
 
 echo '
 <!-- Filtri -->
@@ -77,7 +86,6 @@ echo '
 
 // Stati intervento
 $stati_sessione = session_get('dashboard.idstatiintervento', []);
-$stati_intervento = $dbo->fetchArray('SELECT idstatointervento AS id, descrizione, colore FROM in_statiintervento WHERE deleted_at IS NULL ORDER BY descrizione ASC');
 foreach ($stati_intervento as $stato) {
     $attr = '';
     if (in_array("'".$stato['id']."'", $stati_sessione)) {
@@ -115,7 +123,6 @@ echo '
 
 // Tipi intervento
 $tipi_sessione = session_get('dashboard.idtipiintervento', []);
-$tipi_intervento = $dbo->fetchArray('SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC');
 foreach ($tipi_intervento as $tipo) {
     $attr = '';
     if (in_array("'".$tipo['id']."'", $tipi_sessione)) {
@@ -152,15 +159,6 @@ echo '
 		<ul class="dropdown-menu" role="menu">';
 
 $tecnici_sessione = session_get('dashboard.idtecnici', []);
-$tecnici_disponibili = $dbo->fetchArray("SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale, colore FROM an_anagrafiche
-    INNER JOIN
-    an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica
-    INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica
-    LEFT OUTER JOIN in_interventi_tecnici ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica
-    INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id
-WHERE an_anagrafiche.deleted_at IS NULL AND an_tipianagrafiche.descrizione='Tecnico' ".Modules::getAdditionalsQuery('Interventi').'
-GROUP BY an_anagrafiche.idanagrafica
-ORDER BY ragione_sociale ASC');
 foreach ($tecnici_disponibili as $tecnico) {
     $attr = '';
     if (in_array("'".$tecnico['id']."'", $tecnici_sessione)) {
@@ -198,7 +196,6 @@ echo '
 
 // Zone
 $zone_sessione = session_get('dashboard.idzone', []);
-$zone = $dbo->fetchArray('(SELECT 0 AS ordine, \'0\' AS id, \'Nessuna zona\' AS descrizione) UNION (SELECT 1 AS ordine, id, descrizione FROM an_zone) ORDER BY ordine, descrizione ASC');
 foreach ($zone as $zona) {
     $attr = '';
     if (in_array("'".$zona['id']."'", $zone_sessione)) {

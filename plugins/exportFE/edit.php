@@ -26,7 +26,7 @@ use Util\XML;
 
 /* Per le PA EC02 e EC01 sono dei stati successivi a NE il quale a sua volta è successivo a RC. EC01 e EC02 sono definiti all'interno della ricevuta di NE che di fatto indica il rifiuto o l'accettazione. */
 $stato_fe = $database->fetchOne('SELECT * FROM fe_stati_documento WHERE codice = '.prepare($fattura->codice_stato_fe));
-$abilita_genera = (empty($fattura->codice_stato_fe) && $fattura->stato->descrizione != 'Bozza') || intval($stato_fe['is_generabile']);
+$abilita_genera = $fattura->stato->descrizione != 'Bozza' && (empty($fattura->codice_stato_fe) || intval($stato_fe['is_generabile']));
 $ricevuta_principale = $fattura->getRicevutaPrincipale();
 
 if (!empty($fattura_pa)) {

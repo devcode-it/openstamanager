@@ -105,10 +105,17 @@ if (Services::isEnabled()) {
                     <thead>
                         <tr>
                             <th>'.tr('Anno').'</th>
-                            <th>'.tr('Documenti transitati').'</th>
-                            <th>'.tr('Spazio fatture').'</th>
-                            <th>'.tr('Spazio ricevute').'</th>
-                            <th>'.tr('Spazio totale occupato').'</th>
+                            <th>'.tr('Documenti archiviati').' 
+                            <span class="tip" title="'.tr('Fatture attive e relative ricevute, fatture passive').'.">
+                                <i class="fa fa-question-circle-o"></i>
+                            </span>
+                            </th>
+
+                            <th>'.tr('Totale spazio occupato').'
+                            <span class="tip" title="'.tr('Fatture attive con eventuali allegati e ricevute, fatture passive con eventuali allegati').'.">
+                                <i class="fa fa-question-circle-o"></i>
+                            </span>
+                            </th>
                         </tr>
                     </thead>
 
@@ -116,8 +123,6 @@ if (Services::isEnabled()) {
                         <tr class="info">
                             <td>'.tr('Totale').'</td>
                             <td id="fe_numero"></td>
-                            <td id="fe_spazio_fatture"></td>
-                            <td id="fe_spazio_ricevute"></td>
                             <td id="fe_spazio"></td>
                         </tr>
                     </tbody>
@@ -137,8 +142,6 @@ if (Services::isEnabled()) {
                 },
                 success: function (response) {
                     $("#fe_numero").html(response.invoice_number);
-                    $("#fe_spazio_fatture").html(response.invoices_size);
-                    $("#fe_spazio_ricevute").html(response.notifies_size);
                     $("#fe_spazio").html(response.size);
 
                     if (response.history.length) {
@@ -148,8 +151,6 @@ if (Services::isEnabled()) {
                             $("#elenco-fe").append(`<tr>
                                 <td>` + data["year"] + `</td>
                                 <td>` + data["number"] + `</td>
-                                <td>` + data["invoices_size"] + `</td>
-                                <td>` + data["notifies_size"] + `</td>
                                 <td>` + data["size"] + `</td>
                             </tr>`);
                         }

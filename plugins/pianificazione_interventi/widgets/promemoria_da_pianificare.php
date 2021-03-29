@@ -21,12 +21,12 @@ use Plugins\PianificazioneInterventi\Promemoria;
 
 include_once __DIR__.'/../../../core.php';
 
-$elenco_promemoria = Promemoria::doesntHave('intervento')->orderByraw("data_richiesta ASC")->get();
+$elenco_promemoria = Promemoria::doesntHave('intervento')->orderByraw('data_richiesta ASC')->get();
 
 $array_promemoria = [];
-foreach($elenco_promemoria as $promemoria){
+foreach ($elenco_promemoria as $promemoria) {
     $data_pro = new Carbon($promemoria->data_richiesta);
-    $array_promemoria[$data_pro->format("Y-m")][] = $promemoria;
+    $array_promemoria[$data_pro->format('Y-m')][] = $promemoria;
 }
 
 if ($elenco_promemoria->isEmpty()) {
@@ -53,12 +53,12 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
         $class = 'fa-plus-circle';
     }
 
-    $nome_mese = new Carbon($mese."-01");
+    $nome_mese = new Carbon($mese.'-01');
 
     echo "
 <h4>
     <a class='clickable' onclick=\"if( $('#promemoria_pianificare_".$counter."').css('display') == 'none' ){ $(this).children('i').removeClass('fa-plus-circle'); $(this).children('i').addClass('fa-minus-circle'); }else{ $(this).children('i').addClass('fa-plus-circle'); $(this).children('i').removeClass('fa-minus-circle'); } $('#promemoria_pianificare_".$counter."').slideToggle();\">
-    <i class='fa ".$class."'></i> ".ucfirst($nome_mese->formatLocalized("%B %Y")).'
+    <i class='fa ".$class."'></i> ".ucfirst($nome_mese->formatLocalized('%B %Y')).'
     </a>
 </h4>';
 

@@ -185,60 +185,58 @@ echo '
         let qta_input = input("qta");
         let tipo_movimento = $("#tipo_movimento").val();
 
-        let valid = await salvaForm(button, "#add-form");
+        await salvaForm("#add-form", {}, button);
 
-        if (valid) {
-            let articolo = $("#idarticolo").selectData();
+        let articolo = $("#idarticolo").selectData();
 
-            let prezzo_acquisto = parseFloat(articolo.prezzo_acquisto);
-            let prezzo_vendita = parseFloat(articolo.prezzo_vendita);
+        let prezzo_acquisto = parseFloat(articolo.prezzo_acquisto);
+        let prezzo_vendita = parseFloat(articolo.prezzo_vendita);
 
-            let qta_movimento = qta_input.get();
+        let qta_movimento = qta_input.get();
 
-            let alert_type, icon, text, qta_rimanente;
-            if (tipo_movimento === "carico") {
-                alert_type = "alert-success";
-                icon = "fa-arrow-up";
-                text = "Carico";
-                qta_rimanente = parseFloat(articolo.qta) + parseFloat(qta_movimento);
-            } else if (tipo_movimento === "scarico") {
-                alert_type = "alert-danger";
-                icon = "fa-arrow-down";
-                text = "Scarico";
-                qta_rimanente = parseFloat(articolo.qta) - parseFloat(qta_movimento);
-            } else if (tipo_movimento === "spostamento") {
-                alert_type = "alert-info";
-                icon = "fa-arrow-down";
-                text = "Spostamento";
-                qta_rimanente = parseFloat(articolo.qta);
-            }
+        let alert_type, icon, text, qta_rimanente;
+        if (tipo_movimento === "carico") {
+            alert_type = "alert-success";
+            icon = "fa-arrow-up";
+            text = "Carico";
+            qta_rimanente = parseFloat(articolo.qta) + parseFloat(qta_movimento);
+        } else if (tipo_movimento === "scarico") {
+            alert_type = "alert-danger";
+            icon = "fa-arrow-down";
+            text = "Scarico";
+            qta_rimanente = parseFloat(articolo.qta) - parseFloat(qta_movimento);
+        } else if (tipo_movimento === "spostamento") {
+            alert_type = "alert-info";
+            icon = "fa-arrow-down";
+            text = "Spostamento";
+            qta_rimanente = parseFloat(articolo.qta);
+        }
 
-            if (articolo.descrizione) {
-                let testo = $("#info-articolo").html();
+        if (articolo.descrizione) {
+            let testo = $("#info-articolo").html();
 
-                testo = testo.replace("|alert-type|", alert_type)
-                    .replace("|icon|", icon)
-                    .replace("|descrizione|", articolo.descrizione)
-                    .replace("|codice|", articolo.codice)
-                    .replace("|misura|", articolo.um)
-                    .replace("|misura|", articolo.um)
-                    .replace("|descrizione-movimento|", text)
-                    .replace("|movimento|", qta_movimento.toLocale())
-                    .replace("|rimanente|", qta_rimanente.toLocale())
-                    .replace("|prezzo_acquisto|", prezzo_acquisto.toLocale())
-                    .replace("|prezzo_vendita|", prezzo_vendita.toLocale());
+            testo = testo.replace("|alert-type|", alert_type)
+                .replace("|icon|", icon)
+                .replace("|descrizione|", articolo.descrizione)
+                .replace("|codice|", articolo.codice)
+                .replace("|misura|", articolo.um)
+                .replace("|misura|", articolo.um)
+                .replace("|descrizione-movimento|", text)
+                .replace("|movimento|", qta_movimento.toLocale())
+                .replace("|rimanente|", qta_rimanente.toLocale())
+                .replace("|prezzo_acquisto|", prezzo_acquisto.toLocale())
+                .replace("|prezzo_vendita|", prezzo_vendita.toLocale());
 
-                $("#messages").html(testo);
-            }
+            $("#messages").html(testo);
+        }
 
-            qta_input.set(1);
-            $("#causale").trigger("change");
+        qta_input.set(1);
+        $("#causale").trigger("change");
 
-            if( input("barcode").get() !== "" ){
-                $("#idarticolo").selectReset();
-                input("barcode").set("");
-                $("#barcode").focus();
-            }
+        if( input("barcode").get() !== "" ){
+            $("#idarticolo").selectReset();
+            input("barcode").set("");
+            $("#barcode").focus();
         }
     }
 </script>';

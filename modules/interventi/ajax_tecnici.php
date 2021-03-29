@@ -250,16 +250,14 @@ async function modificaSessione(button) {
     var id = riga.data("id");
 
     // Salvataggio via AJAX
-    let valid = await salvaForm(button, $("#edit-form"));
+    await salvaForm("#edit-form", {}, button);
 
-    if (valid) {
-        // Chiusura tooltip
-        if ($(button).hasClass("tooltipstered"))
-            $(button).tooltipster("close");
+    // Chiusura tooltip
+    if ($(button).hasClass("tooltipstered"))
+        $(button).tooltipster("close");
 
-        // Apertura modal
-        openModal("'.tr('Modifica sessione').'", "'.$module->fileurl('modals/manage_sessione.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&id_sessione=" + id);
-    }
+    // Apertura modal
+    openModal("'.tr('Modifica sessione').'", "'.$module->fileurl('modals/manage_sessione.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&id_sessione=" + id);
 }
 
 function calcolaConflittiTecnici() {

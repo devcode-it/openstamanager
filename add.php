@@ -80,11 +80,11 @@ if (isAjaxRequest()) {
 $(document).ready(function(){
     $("#form_'.$id_module.'-'.$id_plugin.'").find("form").submit(function () {
         let $form = $(this);
-        $form.variables = new Object();
-        $form.variables.id_module = \''.$id_module.'\';
-        $form.variables.id_plugin = \''.$id_plugin.'\';
 
-        submitAjax(this, $form.variables, function(response) {
+        salvaForm(this, {
+            id_module: "'.$id_module.'",
+            id_plugin: "'.$id_plugin.'",
+        }).then(function(response) {
             // Selezione automatica nuovo valore per il select
             let select = "#'.get('select').'";
             if ($(select).val() !== undefined) {
@@ -93,8 +93,7 @@ $(document).ready(function(){
             }
 
             $form.closest("div[id^=bs-popup").modal("hide");
-
-        });
+        })
 
         return false;
     })

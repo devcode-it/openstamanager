@@ -269,8 +269,8 @@ echo '
     }
 
     function generaFE(button) {
-        salvaForm(button, "#edit-form").then(function(valid) {
-            if (valid) {';
+        salvaForm("#edit-form", {}, button)
+            .then(function(valid) {';
 
     if ($generata) {
         echo '
@@ -294,13 +294,12 @@ echo '
                 $("#form-xml").submit();';
     }
     echo '
-            } else {
+            }).catch(function() {
                 swal({
                     type: "error",
                     title: "'.tr('Errore').'",
                     text:  "'.tr('Alcuni campi obbligatori non sono stati compilati correttamente').'.",
                 });
-            }
-        });
+            });
     };
 </script>';

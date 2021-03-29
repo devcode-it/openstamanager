@@ -29,8 +29,7 @@ function initTextareaInput(input) {
 function initCharCounter(input) {
     let $input = $(input);
 
-    if (input.hasAttribute('maxlength')){
-
+    if (input.hasAttribute('maxlength')) {
         $input.maxlength({
             warningClass: "help-block",
             limitReachedClass: "help-block text-danger",
@@ -45,9 +44,8 @@ function initCharCounter(input) {
             threshold: 150
         });
 
-    }else{
-
-        $input.attr('maxlength','65535');
+    } else {
+        $input.attr('maxlength', '65535');
 
         $input.maxlength({
             warningClass: "help-block",
@@ -58,9 +56,7 @@ function initCharCounter(input) {
             appendToParent: true,
             alwaysShow: true
         });
-
     }
-    
 
     return true;
 }
@@ -77,9 +73,7 @@ function waitCKEditor(input) {
  */
 function initEditorInput(input) {
     if (window.CKEDITOR && CKEDITOR.status === "loaded") {
-        $(document).ready(function () {
-            initCKEditor(input);
-        })
+        initCKEditor(input);
     } else {
         waitCKEditor(input);
     }

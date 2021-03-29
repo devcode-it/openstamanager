@@ -292,18 +292,15 @@ function gestioneDescrizione(button) {
 
 async function gestioneRiga(button, options) {
     // Salvataggio via AJAX
-    let valid = await salvaForm(button, $("#edit-form"));
+    await salvaForm("#edit-form", {}, button);
+
+    // Lettura titolo e chiusura tooltip
+    let title = $(button).tooltipster("content");
+    $(button).tooltipster("close")
 
     // Apertura modal
-    if (valid) {
-        // Lettura titolo e chiusura tooltip
-        let title = $(button).tooltipster("content");
-        $(button).tooltipster("close")
-
-        // Apertura modal
-        options = options ? options : "is_riga";
-        openModal(title, "'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&" + options);
-    }
+    options = options ? options : "is_riga";
+    openModal(title, "'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_record='.$id_record.'&" + options);
 }
 
 /**

@@ -197,7 +197,7 @@ echo '
 
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "ckeditor", "label": "'.tr('Richiesta').'", "name": "richiesta_add", "required": 1, "value": "'.$richiesta.'", "extra": "style=\'max-height:80px;\'" ]}
+            {[ "type": "ckeditor", "label": "'.tr('Richiesta').'", "name": "richiesta", "id": "richiesta_add", "required": 1, "value": "'.$richiesta.'", "extra": "style=\'max-height:80px;\'" ]}
         </div>
     </div>';
 
@@ -339,7 +339,7 @@ if (!empty($id_intervento)) {
        input("idzona").disable();
        input("idtipointervento").disable();
        input("idstatointervento").disable();
-       input("richiesta_add").disable();
+       input("richiesta").disable();
        input("data_richiesta").disable();
     });
 </script>';
@@ -520,10 +520,9 @@ if (filter('orario_fine') !== null) {
 	    }
 
 	    // Submit dinamico tramite AJAX
-        let valid = await salvaForm(button, "#add-form", {
+        let response = await salvaForm("#add-form", {
             id_module: "'.$id_module.'", // Fix creazione da Dashboard
-        });
-        if (!valid) return;
+        }, button);
 
         // Se l\'aggiunta intervento proviene dalla scheda di pianificazione ordini di servizio della dashboard, la ricarico
         if (ref == "dashboard") {

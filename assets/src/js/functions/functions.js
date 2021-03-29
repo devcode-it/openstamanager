@@ -360,72 +360,6 @@ function getCookie(cname) {
     return "";
 }
 
-function submitAjax(form, data, callback, errorCallback) {
-    let valid = $(form).parsley().validate();
-    if (!valid) {
-        return valid;
-    }
-
-    if (!data) data = {};
-
-    $("#main_loading").show();
-    content_was_modified = false;
-
-    // Fix per gli id di default
-    data.id_module = data.id_module ? data.id_module : globals.id_module;
-    data.id_record = data.id_record ? data.id_record : globals.id_record;
-    data.id_plugin = data.id_plugin ? data.id_plugin : globals.id_plugin;
-    data.ajax = 1;
-
-    prepareForm(form);
-
-    // Invio dei dati
-    $(form).ajaxSubmit({
-        url: globals.rootdir + "/actions.php",
-        data: data,
-        type: "post",
-        success: function (data) {
-            let response = data.trim();
-
-            // Tentativo di conversione da JSON
-            try {
-                response = JSON.parse(response);
-            } catch (e) {
-            }
-
-            callback(response);
-
-            $("#main_loading").fadeOut();
-
-            renderMessages();
-        },
-        error: function (data) {
-            $("#main_loading").fadeOut();
-
-            toastr["error"](data);
-
-            if (errorCallback) errorCallback(data);
-        }
-    });
-
-    return valid;
-}
-
-function prepareForm(form) {
-    $(form).find('input:disabled, select:disabled').prop('disabled', false);
-
-    var hash = window.location.hash;
-    if (hash) {
-        var input = $('<input/>', {
-            type: 'hidden',
-            name: 'hash',
-            value: hash,
-        });
-
-        $(form).append(input);
-    }
-}
-
 /**
  * Visualizzazione dei messaggi attivi tramite toastr.
  */
@@ -457,10 +391,20 @@ function renderMessages() {
     });
 }
 
+/**
+ * Rimuove l'hash dall'URL corrente.
+ */
 function removeHash() {
     history.replaceState(null, null, ' ');
 }
 
+/**
+ *
+ * @param str
+ * @param find
+ * @param replace
+ * @returns {*}
+ */
 function replaceAll(str, find, replace) {
     return str.replace(new RegExp(find, "g"), replace);
 }
@@ -495,7 +439,7 @@ function restart_inputs() {
  */
 function alertPush() {
     if ($(window).width() > 1023) {
-        var i = 0;
+        let i = 0;
 
         $('.alert-success.push').each(function () {
             i++;
@@ -524,7 +468,7 @@ function alertPush() {
 }
 
 /**
- * Fuinzione per l'apertura del messaggi di rimozione elemento standard.
+ * Funzione per l'apertura del messaggi di rimozione elemento standard.
  *
  * @param button
  * @param title
@@ -542,101 +486,6 @@ function confirmDelete(button, title, message) {
     })
 }
 
-/**
- * Funzione per la gestione delle animazioni di caricamento sui pulsanti cliccati e appositamente predisposti,
- *
- * @param button
- * @returns {[*, *]}
- */
-function buttonLoading(button) {
-    var $this = $(button);
-
-    var result = [
-        $this.html(),
-        $this.attr("class")
-    ];
-
-    $this.html('<i class="fa fa-spinner fa-pulse fa-fw"></i> Attendere...');
-    $this.addClass("btn-warning");
-    $this.prop("disabled", true);
-
-    return result;
-}
-
-/**
- * Funzione per ripristinare un pulsante con animazioni allo stato precedente.
- *
- * @param button
- * @param loadingResult
- */
-function buttonRestore(button, loadingResult) {
-    var $this = $(button);
-
-    $this.html(loadingResult[0]);
-
-    $this.attr("class", "");
-    $this.addClass(loadingResult[1]);
-    $this.prop("disabled", false);
-}
-
-/**
- * Funzione per serializzare i contenuti di un form in JSON.
- *
- * @param form
- * @returns {object}
- */
-function serializeForm(form) {
-    let obj = {};
-
-    let formData = new FormData(form);
-    for (let key of formData.keys()) {
-        obj[key] = formData.get(key);
-    }
-
-    return obj;
-}
-
-/**
- * Funzione per salvare i contenuti di un form via AJAX, utilizzando una struttura più recente fondata sull'utilizzo di Promise.
- *
- * @param button
- * @param form
- * @param data
- * @returns {Promise<unknown>}
- */
-function salvaForm(button, form, data = {}) {
-    return new Promise(function (resolve, reject) {
-        // Caricamento visibile nel pulsante
-        let restore = buttonLoading(button);
-
-        // Messaggio in caso di eventuali errori
-        let valid = $(form).parsley().validate();
-        if (!valid) {
-            swal({
-                type: "error",
-                title: globals.translations.ajax.missing.title,
-                text: globals.translations.ajax.missing.text,
-            });
-            buttonRestore(button, restore);
-
-            resolve(false);
-        }
-
-        submitAjax(form, data, function (response) {
-            buttonRestore(button, restore);
-            resolve(true);
-        }, function (data) {
-            swal({
-                type: "error",
-                title: globals.translations.ajax.error.title,
-                text: globals.translations.ajax.error.text,
-            });
-
-            buttonRestore(button, restore);
-            resolve(false);
-        });
-    });
-}
 
 /**
  * Nasconde una specifica colonna di una tabella indicata.
@@ -697,6 +546,7 @@ function hideTableColumn(table, column) {
 
 /**
  * Funzione per aggiungere in un *endpoint* il contenuto di uno specifico *template*, effettuando delle sostituzioni di base e inizializzando i campi aggiunti.
+ *
  * @param {string|jQuery|HTMLElement} endpoint_selector
  * @param {string|jQuery|HTMLElement} template_selector
  * @param {object} replaces

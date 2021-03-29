@@ -184,16 +184,14 @@ async function modificaRiga(button) {
     let type = riga.data("type");
 
     // Salvataggio via AJAX
-    let valid = await salvaForm(button, $("#edit-form"));
+    await salvaForm("#edit-form", {}, button);
 
-    if (valid) {
-        // Chiusura tooltip
-        if ($(button).hasClass("tooltipstered"))
-            $(button).tooltipster("close");
+    // Chiusura tooltip
+    if ($(button).hasClass("tooltipstered"))
+        $(button).tooltipster("close");
 
-        // Apertura modal
-        openModal("'.tr('Modifica sessione').'", "'.$module->fileurl('row-edit.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&riga_id=" + id + "&riga_type=" + type);
-    }
+    // Apertura modal
+    openModal("'.tr('Modifica sessione').'", "'.$module->fileurl('row-edit.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&riga_id=" + id + "&riga_type=" + type);
 }
 
 function rimuoviRiga(button) {

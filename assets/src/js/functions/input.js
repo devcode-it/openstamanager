@@ -104,13 +104,11 @@ Input.prototype.init = function () {
 
     // Inizializzazione per textarea
     else if (this.element.hasClass('autosize') || htmlElement.hasAttribute('maxlength')) {
-        
         if (this.element.hasClass('autosize'))
             initCompleted = initTextareaInput(htmlElement);
 
         if (htmlElement.hasAttribute('charcounter'))
             initCompleted = initCharCounter(htmlElement);
-
     }
 
     // Inizializzazione per select
@@ -239,6 +237,11 @@ Input.prototype.getData = function () {
  */
 Input.prototype.get = function () {
     let value = this.element.val();
+
+    // Gestione dei valori per select
+    if (this.element.hasClass("select-input")) {
+        value = value ? value : null;
+    }
 
     // Gestione dei valori per l'editor
     if (this.element.hasClass("editor-input")) {

@@ -714,10 +714,11 @@ switch (post('op')) {
         foreach ($righe as $riga) {
             if (post('evadere')[$riga->id] == 'on') {
                 $qta = post('qta_da_evadere')[$riga->id];
+                $articolo = ArticoloOriginale::find($riga->idarticolo);
 
                 $copia = $riga->copiaIn($fattura, $qta);
-                $copia->id_conto = $id_conto;
 
+                $copia->id_conto = ($documento->direzione=='entrata' ? ($articolo->idconto_vendita ?: $id_conto) : ($articolo->idconto_acquisto ?: $id_conto));
                 $copia->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
                 $copia->id_ritenuta_acconto = $id_ritenuta_acconto;
                 $copia->id_rivalsa_inps = $id_rivalsa_inps;

@@ -1055,7 +1055,9 @@ class FatturaElettronica
 
             $dati = [];
 
-            $dati['RiferimentoNumeroLinea'] = $element['riferimento_linea'];
+            if (!empty($element['riferimento_linea'])){
+                $dati['RiferimentoNumeroLinea'] = $element['riferimento_linea'];
+            }
 
             $dati['IdDocumento'] = $element['id_documento'];
 
@@ -1107,7 +1109,10 @@ class FatturaElettronica
                 $dati['DataDDT'] = $element['data'];
             }
 
-            $dati['RiferimentoNumeroLinea'] = $element['riferimento_linea'];
+            if (!empty($element['riferimento_linea'])){
+                $dati['RiferimentoNumeroLinea'] = $element['riferimento_linea'];
+            }
+
             $result[] = $dati;
         }
 

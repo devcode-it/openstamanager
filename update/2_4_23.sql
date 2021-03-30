@@ -95,3 +95,6 @@ UPDATE `dt_righe_ddt` SET `iva` = ABS(`iva`) * IF(`sconto` > 0, -1, 1) WHERE `is
 UPDATE `or_righe_ordini` SET `iva` = ABS(`iva`) * IF(`sconto` > 0, -1, 1) WHERE `is_sconto` = 1;
 UPDATE `co_righe_promemoria` SET `iva` = ABS(`iva`) * IF(`sconto` > 0, -1, 1) WHERE `is_sconto` = 1;
 UPDATE `in_righe_interventi` SET `iva` = ABS(`iva`) * IF(`sconto` > 0, -1, 1) WHERE `is_sconto` = 1;
+
+-- Aumentato il campo descrizione in articoli da varchar a text
+ALTER TABLE `mg_articoli` CHANGE `descrizione` `descrizione` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL;

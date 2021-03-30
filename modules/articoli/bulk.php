@@ -25,6 +25,7 @@ use Modules\Preventivi\Components\Articolo as ArticoloPreventivo;
 use Modules\Preventivi\Preventivo;
 use Modules\TipiIntervento\Tipo as TipoSessione;
 use Prints;
+use Plugins\DettagliArticolo\DettaglioPrezzo;
 
 switch (post('op')) {
     case 'change-acquisto':
@@ -35,6 +36,12 @@ switch (post('op')) {
             $new_prezzo_acquisto = $articolo->prezzo_acquisto + ($articolo->prezzo_acquisto * $percentuale / 100);
             $articolo->prezzo_acquisto = $new_prezzo_acquisto;
             $articolo->save();
+
+            if(!empty($articolo->id_fornitore)){
+                $prezzo_predefinito = DettaglioPrezzo::dettaglioPredefinito($articolo->id, $articolo->id_fornitore, 'uscita')->first();
+                $prezzo_predefinito->setPrezzoUnitario($new_prezzo_acquisto);
+                $prezzo_predefinito->save();
+            }
         }
 
         flash()->info(tr('Prezzi di acquisto aggiornati!'));
@@ -47,7 +54,7 @@ switch (post('op')) {
             $percentuale = post('percentuale');
 
             $new_prezzo_vendita = $articolo->prezzo_vendita + ($articolo->prezzo_vendita * $percentuale / 100);
-            $articolo->prezzo_vendita = $new_prezzo_vendita;
+            $articolo->setPrezzoVendita($new_prezzo_vendita, $articolo->idiva_vendita);
             $articolo->save();
         }
 

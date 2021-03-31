@@ -25,7 +25,7 @@ use Plugins\ReceiptFE\Ricevuta;
 switch (filter('op')) {
     case 'generate':
         if (!empty($fattura_pa)) {
-            $file = $fattura_pa->save($upload_dir);
+            $file = $fattura_pa->save();
 
             flash()->info(tr('Fattura elettronica generata correttamente!'));
 

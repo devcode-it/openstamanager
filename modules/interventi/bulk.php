@@ -128,7 +128,7 @@ switch (post('op')) {
             ]));
         }
 
-        if(!empty(array_diff($id_records, $interventi))){
+        if (!empty(array_diff($id_records, $interventi))) {
             flash()->warning(tr('_NUM_ interventi non sono stati fatturati.', [
                 '_NUM_' => sizeof(array_diff($id_records, $interventi)),
             ]));

@@ -78,15 +78,14 @@ class FatturaElettronica
     }
 
     /**
-     * Restituisce le informazioni sull'anagrafica azienda.
-     *
      * @return bool
      */
     public function isGenerated()
     {
         $documento = $this->getDocumento();
+        $file = $documento->getFatturaElettronica();
 
-        return !empty($documento['progressivo_invio']) && file_exists(base_dir().'/'.static::getDirectory().'/'.$this->getFilename());
+        return !empty($documento['progressivo_invio']) && file_exists(base_dir().'/'.$file->filepath);
     }
 
     /**
@@ -293,22 +292,26 @@ class FatturaElettronica
     /**
      * Salva il file XML.
      *
-     * @param string $directory
-     *
      * @return string Nome del file
      */
-    public function save($directory)
+    public function save()
     {
         $this->delete();
 
         $name = 'Fattura Elettronica';
-        $info = $this->getUploadData();
+        $data = $this->getUploadData();
 
         // Generazione nome XML
         $filename = $this->getFilename(true);
 
+        // Rimozione allegato precedente
+        $precedente = $this->getDocumento()->getFatturaElettronica();
+        if (!empty($precedente)){
+            $precedente->delete();
+        }
+
         // Registrazione come allegato
-        Uploads::upload($this->toXML(), array_merge($info, [
+        Uploads::upload($this->toXML(), array_merge($data, [
             'name' => $name,
             'original_name' => $filename,
         ]));

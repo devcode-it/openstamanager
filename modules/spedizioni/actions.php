@@ -22,6 +22,7 @@ include_once __DIR__.'/../../core.php';
 switch (filter('op')) {
     case 'update':
         $descrizione = filter('descrizione');
+        $vettore = post('esterno');
 
         if ($dbo->fetchNum('SELECT * FROM `dt_spedizione` WHERE `descrizione`='.prepare($descrizione).' AND `id`!='.prepare($id_record)) == 0) {
             $predefined = post('predefined');
@@ -32,6 +33,7 @@ switch (filter('op')) {
             $dbo->update('dt_spedizione', [
                 'descrizione' => $descrizione,
                 'predefined' => $predefined,
+                'esterno' => $vettore,
             ], ['id' => $id_record]);
 
             flash()->info(tr('Salvataggio completato!'));

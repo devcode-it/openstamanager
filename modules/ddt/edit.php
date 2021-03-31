@@ -161,7 +161,7 @@ if ($module['name'] == 'Ddt di vendita') {
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Tipo di spedizione'); ?>", "name": "idspedizione", "placeholder": "-", "values": "query=SELECT id, descrizione FROM dt_spedizione ORDER BY descrizione ASC", "value": "$idspedizione$" ]}
+					{[ "type": "select", "label": "<?php echo tr('Tipo di spedizione'); ?>", "name": "idspedizione", "placeholder": "-", "values": "query=SELECT id, descrizione, esterno FROM dt_spedizione ORDER BY descrizione ASC", "value": "$idspedizione$" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -183,8 +183,11 @@ if ($module['name'] == 'Ddt di vendita') {
                         if (!empty($record['idvettore'])) {
                             echo Modules::link('Anagrafiche', $record['idvettore'], null, null, 'class="pull-right"');
                         }
+                        $esterno = $dbo->selectOne('dt_spedizione', 'esterno', [
+                            'id' => $record['idspedizione'],
+                        ])['esterno'];
                     ?>
-					{[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "ajax-source": "vettori", "value": "$idvettore$", "disabled": <?php echo intval($record['idspedizione'] == 3); ?>, "required": <?php echo (!empty($record['idspedizione'])) ? intval($record['idspedizione'] != 3) : 0; ?>, "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Vettore&readonly_tipo=1|btn_idvettore|<?php echo (($record['idspedizione'] != 3 and intval(!$record['flag_completato']))) ? '' : 'disabled'; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "ajax-source": "vettori", "value": "$idvettore$", "disabled": <?php echo (empty($esterno) ? 1 : 0); ?>, "required": <?php echo $esterno; ?>, "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Vettore&readonly_tipo=1|btn_idvettore|<?php echo ((!empty($esterno) and intval(!$record['flag_completato']))) ? '' : 'disabled'; ?>" ]}
 				</div>
 
                 <div class="col-md-3">
@@ -194,16 +197,16 @@ if ($module['name'] == 'Ddt di vendita') {
                  <script>
                     $("#idspedizione").change(function() {
                         //Per tutti tipi di spedizione, a parte "Espressa" o "Vettore", il campo vettore non deve essere richiesto
-                        if ($(this).val() != 1 && $(this).val() != 2 ) {
+                        if (!$(this).selectData().esterno) {
                             $("#idvettore").attr("required", false);
-                            $("#idvettore").attr("disabled", true);
+                            input("idvettore").disable();
                             $("label[for=idvettore]").text("<?php echo tr('Vettore'); ?>");
                             $("#idvettore").selectReset("<?php echo tr("Seleziona un\'opzione"); ?>");
                             $(".btn_idvettore").prop("disabled", true);
                             $(".btn_idvettore").addClass("disabled");
                         }else{
                             $("#idvettore").attr("required", true);
-                            $("#idvettore").attr("disabled", false);
+                            input("idvettore").enable();
                             $("label[for=idvettore]").text("<?php echo tr('Vettore'); ?>*");
                             $(".btn_idvettore").prop("disabled", false);
                             $(".btn_idvettore").removeClass("disabled");

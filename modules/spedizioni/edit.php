@@ -31,12 +31,16 @@ include_once __DIR__.'/../../core.php';
 
 		<div class="panel-body">
 			<div class="row">
-				<div class="col-md-9">
+				<div class="col-md-6">
 					{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$" ]}
 				</div>
 
                 <div class="col-md-3">
                     {[ "type": "checkbox", "label": "<?php echo tr('Spedizione predefinita'); ?>", "name": "predefined", "value": "$predefined$", "help":"<?php echo tr('Impostare questo tipo di spedizione come predefinito per i ddt'); ?>." ]}
+                </div>
+
+				<div class="col-md-3">
+                    {[ "type": "checkbox", "label": "<?php echo tr('Spedizione con vettore'); ?>", "name": "esterno", "value": "$esterno$", "help":"<?php echo tr('Impostare per rendere obbligatorio il campo vettore in fase di modifica ddt'); ?>." ]}
                 </div>
 			</div>
 		</div>

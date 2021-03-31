@@ -82,7 +82,7 @@ echo '
         </button>
     </form>';
 
-    $file = $generata ? Upload::where('filename', $fattura_pa->getFilename())
+    $file = $generata ? Upload::where('original', $fattura_pa->getFilename())
         ->where('id_record', $id_record)
         ->first() : null;
 

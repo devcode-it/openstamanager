@@ -202,20 +202,22 @@ if ($module['name'] == 'Ddt di vendita') {
                  <script>
                     $("#idspedizione").change(function() {
                         //Per tutti tipi di spedizione, a parte "Espressa" o "Vettore", il campo vettore non deve essere richiesto
-                        if (!$(this).selectData().esterno) {
-                            $("#idvettore").attr("required", false);
-                            input("idvettore").disable();
-                            $("label[for=idvettore]").text("<?php echo tr('Vettore'); ?>");
-                            $("#idvettore").selectReset("<?php echo tr("Seleziona un\'opzione"); ?>");
-                            $(".btn_idvettore").prop("disabled", true);
-                            $(".btn_idvettore").addClass("disabled");
-                        }else{
-                            $("#idvettore").attr("required", true);
-                            input("idvettore").enable();
-                            $("label[for=idvettore]").text("<?php echo tr('Vettore'); ?>*");
-                            $(".btn_idvettore").prop("disabled", false);
-                            $(".btn_idvettore").removeClass("disabled");
+                        if($(this).val()){
+                            if (!$(this).selectData().esterno) {
+                                $("#idvettore").attr("required", false);
+                                input("idvettore").disable();
+                                $("label[for=idvettore]").text("<?php echo tr('Vettore'); ?>");
+                                $("#idvettore").selectReset("<?php echo tr("Seleziona un\'opzione"); ?>");
+                                $(".btn_idvettore").prop("disabled", true);
+                                $(".btn_idvettore").addClass("disabled");
+                            }else{
+                                $("#idvettore").attr("required", true);
+                                input("idvettore").enable();
+                                $("label[for=idvettore]").text("<?php echo tr('Vettore'); ?>*");
+                                $(".btn_idvettore").prop("disabled", false);
+                                $(".btn_idvettore").removeClass("disabled");
 
+                            }
                         }
                     });
 

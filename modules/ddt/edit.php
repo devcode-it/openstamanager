@@ -218,6 +218,13 @@ if ($module['name'] == 'Ddt di vendita') {
                                 $(".btn_idvettore").removeClass("disabled");
 
                             }
+                        } else{
+                            $("#idvettore").attr("required", false);
+                            input("idvettore").disable();
+                            $("label[for=idvettore]").text("<?php echo tr('Vettore'); ?>");
+                            $("#idvettore").selectReset("<?php echo tr("Seleziona un\'opzione"); ?>");
+                            $(".btn_idvettore").prop("disabled", true);
+                            $(".btn_idvettore").addClass("disabled");
                         }
                     });
 

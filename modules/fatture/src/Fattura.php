@@ -69,7 +69,7 @@ class Fattura extends Document
     /** @var GestoreMovimenti */
     protected $gestoreMovimenti;
     /** @var GestoreBollo */
-    private $gestoreBollo;
+    protected $gestoreBollo;
 
     public function __construct(array $attributes = [])
     {

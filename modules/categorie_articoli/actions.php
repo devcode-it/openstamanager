@@ -82,7 +82,7 @@ switch (filter('op')) {
 
         if (isAjaxRequest()) {
             echo json_encode(['id' => $id_record, 'text' => $nome]);
-        } else{
+        } else {
             // Redirect alla categoria se si sta aggiungendo una sottocategoria
             $database->commitTransaction();
             redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.($id_original ?: $id_record));

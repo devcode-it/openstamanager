@@ -202,7 +202,9 @@ trait RelationTrait
         list($qta, $diff) = $this->parseQta($value);
         parent::setQtaAttribute($value);
 
-        if ($this->fattura->isNota() && $this->hasOriginalComponent()) {
+        // Individuazione fattura corrente (fix in caso di creazione diretta)
+        $fattura = $this->fattura;
+        if (isset($fattura) && $fattura->isNota() && $this->hasOriginalComponent()) {
             $source = $this->getOriginalComponent();
 
             // Aggiornamento della quantità evasa di origine

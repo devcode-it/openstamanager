@@ -192,7 +192,7 @@ if ($module['name'] == 'Ddt di vendita') {
                             'id' => $record['idspedizione'],
                         ])['esterno'];
                     ?>
-					{[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "ajax-source": "vettori", "value": "$idvettore$", "disabled": <?php echo (empty($esterno) ? 1 : 0); ?>, "required": <?php echo !empty($esterno) ?: 0; ?>, "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Vettore&readonly_tipo=1|btn_idvettore|<?php echo ((!empty($esterno) and intval(!$record['flag_completato']))) ? '' : 'disabled'; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "ajax-source": "vettori", "value": "$idvettore$", "disabled": <?php echo empty($esterno) ? 1 : 0; ?>, "required": <?php echo !empty($esterno) ?: 0; ?>, "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Vettore&readonly_tipo=1|btn_idvettore|<?php echo ((!empty($esterno) and intval(!$record['flag_completato']))) ? '' : 'disabled'; ?>" ]}
 				</div>
 
                 <div class="col-md-3">

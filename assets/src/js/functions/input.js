@@ -103,7 +103,7 @@ Input.prototype.init = function () {
     }
 
     // Inizializzazione per textarea
-    else if (this.element.hasClass('autosize') || htmlElement.hasAttribute('maxlength')) {
+    else if (this.element.hasClass('autosize') || this.element.attr('maxlength')) {
         if (this.element.hasClass('autosize'))
             initCompleted = initTextareaInput(htmlElement);
 

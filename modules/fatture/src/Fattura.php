@@ -499,7 +499,7 @@ class Fattura extends Document
             return $fe->toXML();
         }
 
-        $file = $this->uploads()->where('name', 'Fattura Elettronica')->first();
+        $file = $this->uploads()->where('name', '=', 'Fattura Elettronica')->first();
 
         return $file->getContent();
     }
@@ -536,13 +536,25 @@ class Fattura extends Document
     }
 
     /**
+     * Restituisce la fattura elettronica registrata come allegato.
+     *
+     * @return Upload|null
+     */
+    public function getFatturaElettronica()
+    {
+        return $this->uploads()
+            ->where('name', '=', 'Fattura Elettronica')
+            ->first();
+    }
+
+    /**
      * Controlla se la fattura di acquisto è elettronica.
      *
      * @return bool
      */
     public function isFE()
     {
-        $file = $this->uploads()->where('name', 'Fattura Elettronica')->first();
+        $file = $this->getFatturaElettronica();
 
         return !empty($this->progressivo_invio) and file_exists($file->filepath);
     }

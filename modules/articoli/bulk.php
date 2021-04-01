@@ -24,8 +24,8 @@ use Modules\Articoli\Articolo;
 use Modules\Preventivi\Components\Articolo as ArticoloPreventivo;
 use Modules\Preventivi\Preventivo;
 use Modules\TipiIntervento\Tipo as TipoSessione;
-use Prints;
 use Plugins\DettagliArticolo\DettaglioPrezzo;
+use Prints;
 
 switch (post('op')) {
     case 'change-acquisto':
@@ -37,7 +37,7 @@ switch (post('op')) {
             $articolo->prezzo_acquisto = $new_prezzo_acquisto;
             $articolo->save();
 
-            if(!empty($articolo->id_fornitore)){
+            if (!empty($articolo->id_fornitore)) {
                 $prezzo_predefinito = DettaglioPrezzo::dettaglioPredefinito($articolo->id, $articolo->id_fornitore, 'uscita')->first();
                 $prezzo_predefinito->setPrezzoUnitario($new_prezzo_acquisto);
                 $prezzo_predefinito->save();
@@ -47,7 +47,7 @@ switch (post('op')) {
         flash()->info(tr('Prezzi di acquisto aggiornati!'));
 
         break;
-    
+
     case 'change-vendita':
         foreach ($id_records as $id) {
             $articolo = Articolo::find($id);
@@ -61,7 +61,6 @@ switch (post('op')) {
         flash()->info(tr('Prezzi di vendita aggiornati!'));
 
         break;
-
 
     case 'delete-bulk':
         foreach ($id_records as $id) {

@@ -20,6 +20,7 @@
 namespace Plugins\ExportFE;
 
 use API\Services;
+use Modules\Fatture\Fattura;
 use UnexpectedValueException;
 
 /**
@@ -32,12 +33,13 @@ class Interaction extends Services
     public static function sendInvoice($id_record)
     {
         try {
-            $fattura = new FatturaElettronica($id_record);
-            $file = base_dir().'/'.FatturaElettronica::getDirectory().'/'.$fattura->getFilename();
+            $fattura_elettronica = new FatturaElettronica($id_record);
+            $fattura = Fattura::find($id_record);
+            $file = $fattura->getFatturaElettronica();
 
             $response = static::request('POST', 'invio_fattura_xml', [
-                'xml' => file_get_contents($file),
-                'filename' => $fattura->getFilename(),
+                'xml' => $file->getContent(),
+                'filename' => $fattura_elettronica->getFilename(),
             ]);
             $body = static::responseBody($response);
 
@@ -70,8 +72,8 @@ class Interaction extends Services
     public static function getInvoiceRecepits($id_record)
     {
         try {
-            $fattura = new FatturaElettronica($id_record);
-            $filename = $fattura->getFilename();
+            $fattura_elettronica = new FatturaElettronica($id_record);
+            $filename = $fattura_elettronica->getFilename();
 
             $response = static::request('POST', 'notifiche_fattura', [
                 'name' => $filename,

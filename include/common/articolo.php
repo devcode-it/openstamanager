@@ -73,10 +73,9 @@ if ($module['name'] == 'Interventi') {
 echo App::internalLoad('riga.php', $result, $options);
 
 // Informazioni aggiuntive
-if ($module['name'] != 'Contratti' && $module['name'] != 'Preventivi') {
-    $disabled = empty($result['idarticolo']);
+$disabled = empty($result['idarticolo']);
 
-    echo '
+echo '
 <div class="row '.(!empty($options['nascondi_prezzi']) ? 'hidden' : '').'" id="prezzi_articolo">
     <div class="col-md-4 text-center">
         <button type="button" class="btn btn-sm btn-info btn-block '.($disabled ? 'disabled' : '').'" '.($disabled ? 'disabled' : '').' onclick="$(\'#prezziacquisto\').toggleClass(\'hide\'); $(\'#prezziacquisto\').load(\''.base_path()."/ajax_complete.php?module=Articoli&op=getprezziacquisto&idarticolo=' + ( $('#idarticolo option:selected').val() || $('#idarticolo').val()) + '&idanagrafica=".$options['idanagrafica'].'\');">
@@ -99,10 +98,8 @@ if ($module['name'] != 'Contratti' && $module['name'] != 'Preventivi') {
         <div id="prezzivendita" class="hide"></div>
     </div>
 </div>
-<br>';
-}
+<br>
 
-echo '
 <script>
 var direzione = "'.$options['dir'].'";
 globals.aggiunta_articolo = {

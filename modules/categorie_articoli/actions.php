@@ -24,6 +24,7 @@ switch (filter('op')) {
         $nome = filter('nome');
         $nota = filter('nota');
         $colore = filter('colore');
+        $id_original = filter('id_original') ?: null;
 
         if (isset($nome) && isset($nota) && isset($colore)) {
             $database->table('mg_categorie')
@@ -38,6 +39,11 @@ switch (filter('op')) {
         } else {
             flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
         }
+
+        // Redirect alla categoria se si sta modificando una sottocategoria
+        $database->commitTransaction();
+        redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.($id_original ?: $id_record));
+        exit();
 
         break;
 
@@ -76,6 +82,11 @@ switch (filter('op')) {
 
         if (isAjaxRequest()) {
             echo json_encode(['id' => $id_record, 'text' => $nome]);
+        } else{
+            // Redirect alla categoria se si sta aggiungendo una sottocategoria
+            $database->commitTransaction();
+            redirect(base_path().'/editor.php?id_module='.$id_module.'&id_record='.($id_original ?: $id_record));
+            exit();
         }
 
         break;

@@ -179,7 +179,7 @@ class FatturaElettronica
         foreach ($allegati as $allegato) {
             $content = base64_decode($allegato['Attachment']);
 
-            $extension = '';
+            $extension = '.pdf';
             if (!empty($allegato['FormatoAttachment'])) {
                 $extension = '.'.strtolower($allegato['FormatoAttachment']);
             }

@@ -104,16 +104,17 @@ class Upload extends Model
 
         // Creazione del file fisico
         directory($directory);
+        $file = slashes($directory.DIRECTORY_SEPARATOR.$filename);
         if (
-            (is_array($source) && is_uploaded_file($source['tmp_name']) && !move_uploaded_file($source['tmp_name'], $directory.'/'.$filename)) ||
-            (is_string($source) && is_file($source) && !copy($source, $directory.'/'.$filename)) ||
-            (is_string($source) && !is_file($source) && file_put_contents($directory.'/'.$filename, $source) === false)
+            (is_array($source) && is_uploaded_file($source['tmp_name']) && !move_uploaded_file($source['tmp_name'], $file)) ||
+            (is_string($source) && is_file($source) && !copy($source, $file)) ||
+            (is_string($source) && !is_file($source) && file_put_contents($file, $source) === false)
         ) {
             throw new UnexpectedValueException("Errore durante il salvataggio dell'allegato");
         }
 
         // Aggiornamento dimensione fisica e responsabile del caricamento
-        $model->size = FileSystem::fileSize($directory.'/'.$filename);
+        $model->size = FileSystem::fileSize($file);
         $model->user()->associate(auth()->getUser());
 
         // Rimozione estensione dal nome visibile

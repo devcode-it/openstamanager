@@ -62,6 +62,7 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
 				<th width="70">'.tr('Codice').'</th>
                 <th width="120">'.tr('Cliente').'</th>
                 <th width="70"><small>'.tr('Data richiesta').'</small></th>
+                <th width="15%" class="text-center">'.tr('Tecnici assegnati').'</th>
                 <th width="200">'.tr('Tipo intervento').'</th>
                 <th width="200">'.tr('Stato intervento').'</th>
                 <th>'.tr('Descrizione').'</th>
@@ -72,6 +73,10 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
 
     // Elenco interventi da pianificare
     foreach ($raggruppamento as $r) {
+
+        $rs_tecnici = $dbo->fetchArray("SELECT GROUP_CONCAT(ragione_sociale SEPARATOR ',') AS tecnici FROM an_anagrafiche INNER JOIN in_interventi_tecnici_assegnati ON in_interventi_tecnici_assegnati.id_tecnico=an_anagrafiche.idanagrafica WHERE id_intervento=".prepare($r['id'])." GROUP BY id_intervento");
+
+        
         echo '
             <tr id="int_'.$r['id'].'">
 				<td><a target="_blank" >'.Modules::link(Modules::get('Interventi')['id'], $r['id'], $r['codice']).'</a></td>
@@ -90,6 +95,10 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
                 </small>
                 </td>
                 <td>'.Translator::dateToLocale($r['data_richiesta']).' '.((empty($r['data_scadenza'])) ? '' : '<br><small>Entro il '.Translator::dateToLocale($r['data_scadenza']).'</small>').'</td>
+                <td>
+                    '.$rs_tecnici[0]['tecnici'].'
+                </td>
+
                 <td>'.$dbo->fetchOne("SELECT CONCAT_WS(' - ', codice,descrizione) AS descrizione FROM in_tipiintervento WHERE idtipointervento=".prepare($r['idtipointervento']))['descrizione'].'</td>
                 <td>'.$dbo->fetchOne("SELECT CONCAT_WS(' - ', codice,descrizione) AS descrizione FROM in_statiintervento WHERE idstatointervento=".prepare($r['idstatointervento']))['descrizione'].'</td>
                 <td>'.nl2br($r['richiesta']).'</td>

@@ -29,39 +29,39 @@ echo '
     <input type="hidden" name="id_record" value="">
 
     <div class="row">
-		<div class="col-md-4">
+
+		<div class="col-md-3">
+			{[ "type": "text", "label": "'.tr('Numero progressivo').'", "name": "numero_progressivo", "required": 1 ]}
+		</div>
+
+		<div class="col-md-3">
 			{[ "type": "date", "label": "'.tr('Data di ricezione').'", "name": "data", "required": 1, "value": "-now-" ]}
 		</div>
 
-		<div class="col-md-4">
+		<div class="col-md-3">
 			{[ "type": "text", "label": "'.tr('Numero protocollo').'", "name": "numero_protocollo", "required": 1 ]}
 		</div>
 
-		<div class="col-md-4">
-			{[ "type": "text", "label": "'.tr('Numero progressivo').'", "name": "numero_progressivo", "required": 1 ]}
-		</div>
-	</div>
-
-	<div class="row">
-		<div class="col-md-4">
-			{[ "type": "date", "label": "'.tr('Data di inizio').'", "name": "data_inizio", "required": 1 ]}
-		</div>
-
-        <div class="col-md-4">
-			{[ "type": "date", "label": "'.tr('Data di fine').'", "name": "data_fine", "required": 1 ]}
-		</div>
-
-		<div class="col-md-4">
-			{[ "type": "number", "label": "'.tr('Massimale').'", "name": "massimale", "required": 1, "icon-after": "'.currency().'" ]}
-		</div>
-	</div>
-
-    <div class="row">
-		<div class="col-md-6">
+		<div class="col-md-3">
 			{[ "type": "date", "label": "'.tr('Data protocollo').'", "name": "data_protocollo", "required": 1 ]}
 		</div>
 
-        <div class="col-md-6">
+	</div>
+
+	<div class="row">
+		<div class="col-md-3">
+			{[ "type": "date", "label": "'.tr('Data di inizio').'", "name": "data_inizio", "required": 1 ]}
+		</div>
+
+        <div class="col-md-3">
+			{[ "type": "date", "label": "'.tr('Data di fine').'", "name": "data_fine", "required": 1 ]}
+		</div>
+
+		<div class="col-md-3">
+			{[ "type": "number", "label": "'.tr('Massimale').'", "name": "massimale", "required": 1, "icon-after": "'.currency().'" ]}
+		</div>
+
+		<div class="col-md-3">
 			{[ "type": "date", "label": "'.tr('Data di emissione').'", "name": "data_emissione", "required": 1 ]}
 		</div>
 	</div>

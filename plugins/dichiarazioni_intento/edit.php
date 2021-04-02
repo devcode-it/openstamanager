@@ -28,44 +28,47 @@ echo '
 	<input type="hidden" name="op" value="update">
 
 	<div class="row">
-		<div class="col-md-4">
+		<div class="col-md-3">
+			{[ "type": "text", "label": "'.tr('Numero progressivo').'", "name": "numero_progressivo", "required": 1, "value": "'.$record['numero_progressivo'].'" ]}
+		</div>
+
+		<div class="col-md-3">
 			{[ "type": "date", "label": "'.tr('Data di ricezione').'", "name": "data", "required": 1, "value": "'.$record['data'].'" ]}
 		</div>
 
-		<div class="col-md-4">
+		<div class="col-md-3">
 			{[ "type": "text", "label": "'.tr('Numero protocollo').'", "name": "numero_protocollo", "required": 1, "value": "'.$record['numero_protocollo'].'" ]}
 		</div>
 
-		<div class="col-md-4">
-			{[ "type": "text", "label": "'.tr('Numero progressivo').'", "name": "numero_progressivo", "required": 1, "value": "'.$record['numero_progressivo'].'" ]}
+		<div class="col-md-3">
+			{[ "type": "date", "label": "'.tr('Data protocollo').'", "name": "data_protocollo", "value": "'.$record['data_protocollo'].'", "required": 1 ]}
 		</div>
 	</div>
 
 	<div class="row">
-		<div class="col-md-4">
+		<div class="col-md-3">
 			{[ "type": "date", "label": "'.tr('Data di inizio').'", "name": "data_inizio", "required": 1, "value": "'.$record['data_inizio'].'" ]}
 		</div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
 			{[ "type": "date", "label": "'.tr('Data di fine').'", "name": "data_fine", "required": 1, "value": "'.$record['data_fine'].'" ]}
 		</div>
 
-		<div class="col-md-4">
+		<div class="col-md-3">
 			{[ "type": "number", "label": "'.tr('Massimale').'", "name": "massimale", "required": 1, "icon-after": "'.currency().'", "value": "'.$record['massimale'].'" ]}
 		</div>
-	</div>
 
-    <div class="row">
-		<div class="col-md-6">
-			{[ "type": "date", "label": "'.tr('Data protocollo').'", "name": "data_protocollo", "value": "'.$record['data_protocollo'].'", "required": 1 ]}
-		</div>
-
-        <div class="col-md-6">
+		<div class="col-md-3">
 			{[ "type": "date", "label": "'.tr('Data di emissione').'", "name": "data_emissione", "value": "'.$record['data_emissione'].'", "required": 1 ]}
 		</div>
 	</div>
 
-	<p><b>'.tr('Totale utilizzato').':</b> '.moneyFormat($record['totale']).'</p>
+	<div class="row">
+		<div class="col-md-12">
+			<span class="pull-right" ><b>'.tr('Totale utilizzato').':</b> '.moneyFormat($record['totale']).'</span>
+		</div>
+		<div class="clearfix">&nbsp;</div>
+	</div>
 
 	<!-- PULSANTI -->
 	<div class="row">
@@ -75,7 +78,7 @@ echo '
             </a>
 
 			<button type="submit" class="btn btn-primary pull-right">
-			    <i class="fa fa-plus"></i> '.tr('Modifica').'
+			    <i class="fa fa-edit"></i> '.tr('Modifica').'
 			</button>
 		</div>
 	</div>

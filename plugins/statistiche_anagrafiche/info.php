@@ -83,10 +83,18 @@ $totale_ddt_uscita = $ddt_uscita->sum('totale_imponibile');
 $fatture_vendita = Fattura::whereBetween('data', [$start, $end])
     ->where('idanagrafica', $id_record)
     ->whereHas('tipo', function ($query) {
-        $query->where('co_tipidocumento.dir', '=', 'entrata');
+        return $query->where('co_tipidocumento.dir', '=', 'entrata')
+            ->where('co_tipidocumento.reversed', '=', 0);
     })
     ->get();
-$totale_fatture_vendita = $fatture_vendita->sum('totale_imponibile');
+$note_credito = Fattura::whereBetween('data', [$start, $end])
+    ->where('idanagrafica', $id_record)
+    ->whereHas('tipo', function ($query) {
+        return $query->where('co_tipidocumento.dir', '=', 'entrata')
+            ->where('co_tipidocumento.reversed', '=', 1);
+    })
+    ->get();
+$totale_fatture_vendita = $fatture_vendita->sum('totale_imponibile') - $note_credito->sum('totale_imponibile');
 
 echo '
 <div class="box box-info" id="row-'.$calendar_id.'">

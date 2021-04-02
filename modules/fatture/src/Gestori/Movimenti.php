@@ -118,7 +118,7 @@ class Movimenti
             // Retro-compatibilità per versioni <= 2.4
             $id_conto = $riga->id_conto ?: $this->fattura->idconto;
 
-            $imponibile = $riga->imponibile;
+            $imponibile = $riga->totale_imponibile;
             $imponibile = $is_nota ? -$imponibile : $imponibile; // Inversione di segno per le note
             if (!empty($imponibile)) {
                 $movimenti[] = [

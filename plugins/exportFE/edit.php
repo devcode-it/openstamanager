@@ -19,7 +19,6 @@
 
 include_once __DIR__.'/init.php';
 
-use Models\Upload;
 use Plugins\ExportFE\FatturaElettronica;
 use Plugins\ExportFE\Interaction;
 use Util\XML;

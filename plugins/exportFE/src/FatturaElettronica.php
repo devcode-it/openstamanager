@@ -306,7 +306,7 @@ class FatturaElettronica
 
         // Rimozione allegato precedente
         $precedente = $this->getDocumento()->getFatturaElettronica();
-        if (!empty($precedente)){
+        if (!empty($precedente)) {
             $precedente->delete();
         }
 
@@ -1058,7 +1058,7 @@ class FatturaElettronica
 
             $dati = [];
 
-            if (!empty($element['riferimento_linea'])){
+            if (!empty($element['riferimento_linea'])) {
                 $dati['RiferimentoNumeroLinea'] = $element['riferimento_linea'];
             }
 
@@ -1112,7 +1112,7 @@ class FatturaElettronica
                 $dati['DataDDT'] = $element['data'];
             }
 
-            if (!empty($element['riferimento_linea'])){
+            if (!empty($element['riferimento_linea'])) {
                 $dati['RiferimentoNumeroLinea'] = $element['riferimento_linea'];
             }
 

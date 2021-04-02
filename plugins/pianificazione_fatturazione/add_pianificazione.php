@@ -60,9 +60,7 @@ echo '
                     <div class="col-md-3" id="div_giorno_fisso" hidden>
                         {[ "type": "select", "label": "'.tr('Giorno fisso fatturazione').'", "name": "giorno_fisso", "values": '.json_encode($giorni_fatturazione).', "value": "1", "help":"'.tr('Selezionare il giorno fisso di fatturazione.').'" ]}
                     </div>
-                    <div class="col-md-3">
-                        {[ "type": "date", "label": "'.tr('Data inizio fatturazione').'", "name": "data_inizio", "value": "'.$contratto->data_accettazione.'", "help":"'.tr('Data da cui far partire la prima fattura del contratto.').'" ]}
-                    </div>
+                    <input type="hidden" name="data_inizio" value="'.$contratto->data_accettazione.'">
                 </div>
                 <div class="row">
                     <div class="col-md-12">
@@ -71,7 +69,7 @@ echo '
                 </div>
                 <br>
                 <div id="cadenza">
-                    <script>$("#cadenza").load(</script>
+                    <script>$("#cadenza").load();</script>
                 </div>
 
                 <br>
@@ -148,15 +146,16 @@ echo '
             </div>';
 
 echo '
+            <div class="row">
+                <div class="col-md-12 text-right">
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-chevron-right"></i> '.tr('Procedi').'</button>
+                </div>
+            </div>
             </div>
         </div>
     </div>
 
-    <div class="row">
-		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary"><i class="fa fa-chevron-right"></i> '.tr('Procedi').'</button>
-		</div>
-	</div>
+    
 </form>';
 
 echo '
@@ -172,37 +171,22 @@ echo '
         caricaCadenza();
     });
 
-    $("#data_inizio").focusout(function(){
-        caricaCadenza();
-    });
-
     function caricaCadenza() {
         let container = $("#cadenza");
 
         localLoading(container, true);
-        return $.get("'.$structure->fileurl('ajax_cadenza.php').'?id_module='.$id_module.'&id_record='.$id_record.'&scadenza="+$("#scadenza").val()+"&data_inizio="+$("#data_inizio").val(), function(data) {
+        return $.get("'.$structure->fileurl('ajax_cadenza.php').'?id_module='.$id_module.'&id_record='.$id_record.'&scadenza="+$("#scadenza").val()+"&data_inizio="+input("data_inizio").get(), function(data) {
             container.html(data);
             localLoading(container, false);
         });
     }
 
 
-    $("input:checkbox").click(function(){
-        var check = 0;
-        $("#periodi input").each(function (){
-            if( $(this).is(":checked") ){
-                check = check + 1;
-            }
-        });
-
-        $("#total_check").html("Rate: " + check).trigger("change");
-    });
-
     function selezionaTutto(){
         var check = 0;
         $("#periodi input").each(function (){
-            $("input:checkbox").prop("checked",true);
-            if( $("input:checkbox").is(":checked") ){
+            $(this).prop("checked",true);
+            if( $(this).is(":checked") ){
                 check = check + 1;
             }
         });
@@ -233,13 +217,13 @@ echo '
             var riga = JSON.parse($(this).attr("options"));
 
             var imponibile_riga = (riga.totale_imponibile/riga.qta)*qta;
-            imponibile_riga = imponibile_riga.toLocaleString()+" &euro;";
+            imponibile_riga = imponibile_riga.toLocale()+" &euro;";
 
             var iva_riga = (riga.iva/riga.qta)*qta;
-            iva_riga = iva_riga.toLocaleString()+" &euro;";
+            iva_riga = iva_riga.toLocale()+" &euro;";
 
             var totale_riga = (riga.totale/riga.qta)*qta;
-            totale_riga = totale_riga.toLocaleString()+" &euro;";
+            totale_riga = totale_riga.toLocale()+" &euro;";
 
             $("#totali_"+riga.id).html("<p><b>Imponibile</b>: "+imponibile_riga+"</p>\
             <p><b>IVA</b>: "+iva_riga+"</p>\

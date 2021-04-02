@@ -67,14 +67,14 @@ switch (post('op')) {
             $contratto->idreferente = post('idreferente');
 
             // Informazioni sulle date del documento
-            $contratto->data_bozza = post('data_bozza');
-            $contratto->data_rifiuto = post('data_rifiuto');
+            $contratto->data_bozza = post('data_bozza') ?: null;
+            $contratto->data_rifiuto = post('data_rifiuto') ?: null;
 
             // Dati relativi alla validità del documento
             $contratto->validita = post('validita');
             $contratto->tipo_validita = post('tipo_validita');
-            $contratto->data_accettazione = post('data_accettazione');
-            $contratto->data_conclusione = post('data_conclusione');
+            $contratto->data_accettazione = post('data_accettazione') ?: null;
+            $contratto->data_conclusione = post('data_conclusione') ?: null;
 
             $contratto->esclusioni = post('esclusioni');
             $contratto->descrizione = post('descrizione');

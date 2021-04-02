@@ -98,3 +98,9 @@ UPDATE `in_righe_interventi` SET `iva` = ABS(`iva`) * IF(`sconto` > 0, -1, 1) WH
 
 -- Aumentato il campo descrizione in articoli da varchar a text
 ALTER TABLE `mg_articoli` CHANGE `descrizione` `descrizione` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL;
+
+-- Set a NULL le date dei contratti vuote
+UPDATE `co_contratti` SET `data_bozza`=NULL WHERE `data_bozza`=0000-00-00;
+UPDATE `co_contratti` SET `data_accettazione`=NULL WHERE `data_accettazione`=0000-00-00;
+UPDATE `co_contratti` SET `data_rifiuto`=NULL WHERE `data_rifiuto`=0000-00-00;
+UPDATE `co_contratti` SET `data_conclusione`=NULL WHERE `data_conclusione`=0000-00-00;

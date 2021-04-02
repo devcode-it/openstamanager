@@ -61,21 +61,17 @@ switch ($operazione) {
         $date_pianificazioni = [];
         $pianificazioni = [];
         foreach ($selezioni as $key => $selezione) {
-            if ($numero_fatture == 0 && !empty(post('data_inizio'))) {
-                $date = new DateTime(post('data_inizio'));
-            } else {
-                $date = new DateTime($periodi[$key]);
+            $date = new DateTime($periodi[$key]);
 
-                if (post('cadenza_fatturazione') == 'Inizio') {
-                    $date->modify('first day of this month');
-                } elseif (post('cadenza_fatturazione') == 'Giorno' && !empty(post('giorno_fisso'))) {
-                    $date->modify('last day of this month');
-                    $last_day = $date->format('d');
-                    $day = post('giorno_fisso') > $last_day ? $last_day : post('giorno_fisso');
+            if (post('cadenza_fatturazione') == 'Inizio') {
+                $date->modify('first day of this month');
+            } elseif (post('cadenza_fatturazione') == 'Giorno' && !empty(post('giorno_fisso'))) {
+                $date->modify('last day of this month');
+                $last_day = $date->format('d');
+                $day = post('giorno_fisso') > $last_day ? $last_day : post('giorno_fisso');
 
-                    // Correzione data
-                    $date->setDate($date->format('Y'), $date->format('m'), $day);
-                }
+                // Correzione data
+                $date->setDate($date->format('Y'), $date->format('m'), $day);
             }
 
             // Comversione della data in stringa standard
@@ -129,9 +125,16 @@ switch ($operazione) {
                         $riga->save();
 
                         $qta_evasa += $qta_riga;
+                        $pianificata[] = $pianificazioni[$rata];
+                    } else{
+                        $non_pianificata[] = $pianificazioni[$rata];
                     }
                 }
                 $r->delete();
+            }
+            $tot_non_pianificati = implode(', ', array_unique(array_diff($non_pianificata, $pianificata)));
+            if(!empty($tot_non_pianificati)){
+                $dbo->query('DELETE FROM `co_fatturazione_contratti` WHERE `id` IN ('.$tot_non_pianificati.')');
             }
         }
 

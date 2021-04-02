@@ -58,7 +58,7 @@ echo '
         unset($checked);
 
         if ($id_module == Modules::get('Contratti')['id']) {
-            if ($data == date('Y-m-t', strtotime($timeing, strtotime($data_fatturazione)))) {
+            if ($data == date('Y-m-t', strtotime($timeing, strtotime($data_fatturazione))) || $data_fatturazione == date('Y-m', strtotime($data_corrente))) {
                 $checked = 'checked';
                 $data_fatturazione = date('Y-m', strtotime($data));
             }
@@ -82,6 +82,16 @@ echo '
 
 <script>
     $(document).ready(function(){
+        var check = 0;
+        $("#periodi input").each(function (){
+            if( $(this).is(":checked") ){
+                check = check + 1;
+            }
+        });
+        $("#total_check").html("Rate: " + check).trigger("change");
+    });
+
+    $("#periodi input").change(function(){
         var check = 0;
         $("#periodi input").each(function (){
             if( $(this).is(":checked") ){

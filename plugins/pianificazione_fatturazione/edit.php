@@ -27,7 +27,7 @@ if (empty($contratto)) {
     return;
 }
 
-$is_pianificabile = $contratto->stato->is_pianificabile && !empty($contratto['data_accettazione']); // Contratto permette la pianificazione
+$is_pianificabile = $contratto->stato->is_pianificabile && !empty($contratto['data_accettazione']) && !empty($contratto['data_conclusione']); // Contratto permette la pianificazione
 $is_pianificato = false;
 $stati_pianificabili = Stato::where('is_pianificabile', 1)->get();
 $elenco_stati = $stati_pianificabili->implode('descrizione', ', ');

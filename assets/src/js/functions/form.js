@@ -229,7 +229,7 @@ function getInputsData(form) {
         const name = i.getElement().attr('name');
         const value = i.get();
 
-        data[name] = value ? value : undefined;
+        data[name] = value === undefined || value === null ? undefined : value;
     }
 
     // Gestione input HTML standard

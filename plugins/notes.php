@@ -19,7 +19,7 @@
 
 include_once __DIR__.'/../core.php';
 
-if (count($notes) > 0) {
+if (!$notes->isEmpty()) {
     echo '
         <div class="box box-info direct-chat direct-chat-info">
             <div class="box-header with-border">

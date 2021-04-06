@@ -27,6 +27,8 @@ $sconto = $documento->sconto;
 $totale_imponibile = $documento->totale_imponibile;
 $totale_iva = $documento->iva;
 $totale = $documento->totale;
+$sconto_finale = $documento->getScontoFinale();
+$netto_a_pagare = $documento->netto;
 
 $volume = $documento->volume ?: $documento->volume_calcolato;
 $peso_lordo = $documento->peso ?: $documento->peso_calcolato;
@@ -39,7 +41,7 @@ if ($options['pricing']) {
     // Riga 1
     echo "
     <tr>
-        <td rowspan='7'>
+        <td rowspan='10'>
             <p class='small-bold'>".tr('Note', [], ['upper' => true]).'</p>
             <p>'.nl2br($documento['note'])."</p>
         </td>
@@ -83,6 +85,36 @@ if ($options['pricing']) {
             ".moneyFormat($totale, 2).'
         </td>
     </tr>';
+
+    if($sconto_finale){
+        // Riga 4 SCONTO FINALE
+        echo "
+        <tr>
+            <td>
+                <p class='small-bold'>".tr('Sconto finale', [], ['upper' => true])."</p>
+            </td>
+        </tr>
+
+        <tr>
+            <td class='cell-padded text-right'>
+                ".moneyFormat($sconto_finale, 2)."
+            </td>
+        </tr>";
+
+        // Riga 5 NETTO A PAGARE
+        echo "
+        <tr>
+            <td>
+                <p class='small-bold'>".tr('Netto a pagare', [], ['upper' => true])."</p>
+            </td>
+        </tr>
+
+        <tr>
+            <td class='cell-padded text-right'>
+                ".moneyFormat($netto_a_pagare, 2)."
+            </td>
+        </tr>";
+    }
 } else {
     // Riga 1
     echo "

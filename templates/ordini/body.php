@@ -216,6 +216,8 @@ $sconto = $documento->sconto;
 $totale_imponibile = $documento->totale_imponibile;
 $totale_iva = $documento->iva;
 $totale = $documento->totale;
+$sconto_finale = $documento->getScontoFinale();
+$netto_a_pagare = $documento->netto;
 
 $show_sconto = $sconto > 0;
 
@@ -285,6 +287,30 @@ if ($options['pricing']) {
     		<b>'.moneyFormat($totale, 2).'</b>
     	</th>
     </tr>';
+
+    if($sconto_finale){
+        // SCONTO FINALE
+        echo '
+        <tr>
+            <td colspan="'.$colspan.'" class="text-right border-top">
+                <b>'.tr('Sconto finale', [], ['upper' => true]).':</b>
+            </td>
+            <th colspan="2" class="text-right">
+                <b>'.moneyFormat($sconto_finale, 2).'</b>
+            </th>
+        </tr>';
+
+        // NETTO A PAGARE
+        echo '
+        <tr>
+            <td colspan="'.$colspan.'" class="text-right border-top">
+                <b>'.tr('Netto a pagare', [], ['upper' => true]).':</b>
+            </td>
+            <th colspan="2" class="text-right">
+                <b>'.moneyFormat($netto_a_pagare, 2).'</b>
+            </th>
+        </tr>';
+    }
 }
 
 echo '

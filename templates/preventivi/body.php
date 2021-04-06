@@ -254,6 +254,8 @@ $sconto = $documento->sconto;
 $totale_imponibile = $documento->totale_imponibile;
 $totale_iva = $documento->iva;
 $totale = $documento->totale;
+$sconto_finale = $documento->getScontoFinale();
+$netto_a_pagare = $documento->netto;
 
 $show_sconto = $sconto > 0;
 
@@ -319,6 +321,30 @@ if (($options['pricing'] && !isset($options['hide_total'])) || $options['show_on
     		<b>'.moneyFormat($totale, 2).'</b>
     	</th>
     </tr>';
+
+    if($sconto_finale){
+        // SCONTO FINALE
+        echo '
+        <tr>
+            <td colspan="'.($options['show_only_total'] ? 2 : 4).'" class="text-right border-top">
+                <b>'.tr('Sconto finale', [], ['upper' => true]).':</b>
+            </td>
+            <th colspan="'.($options['show_only_total'] ? (($has_images) ? 2 : 1) : (($has_images) ? 3 : 2)).'" class="text-right">
+                <b>'.moneyFormat($sconto_finale, 2).'</b>
+            </th>
+        </tr>';
+
+        // NETTO A PAGARE
+        echo '
+        <tr>
+            <td colspan="'.($options['show_only_total'] ? 2 : 4).'" class="text-right border-top">
+                <b>'.tr('Netto a pagare', [], ['upper' => true]).':</b>
+            </td>
+            <th colspan="'.($options['show_only_total'] ? (($has_images) ? 2 : 1) : (($has_images) ? 3 : 2)).'" class="text-right">
+                <b>'.moneyFormat($netto_a_pagare, 2).'</b>
+            </th>
+        </tr>';
+    }
 }
 
 echo '

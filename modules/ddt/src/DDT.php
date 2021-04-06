@@ -39,6 +39,9 @@ class DDT extends Document
         'bollo' => 'float',
         'peso' => 'float',
         'volume' => 'float',
+
+        'sconto_finale' => 'float',
+        'sconto_finale_percentuale' => 'float',
     ];
 
     protected $with = [

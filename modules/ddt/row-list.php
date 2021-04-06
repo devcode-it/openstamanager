@@ -198,6 +198,8 @@ $sconto = $ddt->sconto;
 $totale_imponibile = abs($ddt->totale_imponibile);
 $iva = abs($ddt->iva);
 $totale = abs($ddt->totale);
+$sconto_finale = $ddt->getScontoFinale();
+$netto_a_pagare = $ddt->netto;
 
 // IMPONIBILE
 echo '
@@ -270,6 +272,34 @@ echo '
 
             <td></td>
         </tr>';
+
+// SCONTO FINALE
+if (!empty($sconto_finale)) {
+    echo '
+        <tr>
+            <td colspan="5" class="text-right">
+                <b>'.tr('Sconto finale', [], ['upper' => true]).':</b>
+            </td>
+            <td class="text-right">
+                '.moneyFormat($sconto_finale, 2).'
+            </td>
+            <td></td>
+        </tr>';
+}
+
+// NETTO A PAGARE
+if ($totale != $netto_a_pagare) {
+    echo '
+        <tr>
+            <td colspan="5" class="text-right">
+                <b>'.tr('Netto a pagare', [], ['upper' => true]).':</b>
+            </td>
+            <td class="text-right">
+                '.moneyFormat($netto_a_pagare, 2).'
+            </td>
+            <td></td>
+        </tr>';
+}
 
 echo '
     </table>

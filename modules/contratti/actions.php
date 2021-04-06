@@ -83,6 +83,8 @@ switch (post('op')) {
             $contratto->codice_cig = post('codice_cig');
             $contratto->codice_cup = post('codice_cup');
 
+            $contratto->setScontoFinale(post('sconto_finale'), post('tipo_sconto_finale'));
+
             $contratto->save();
 
             $dbo->query('DELETE FROM my_impianti_contratti WHERE idcontratto='.prepare($id_record));
@@ -478,6 +480,15 @@ $riga = $contratto->getRiga($type, $id_riga);
 
             $id_record = $contratto->id;
         }
+
+        if (!empty($documento->sconto_finale)) {
+            $contratto->sconto_finale = $documento->sconto_finale;
+        } elseif(!empty($documento->sconto_finale_percentuale)){
+            $contratto->sconto_finale_percentuale = $documento->sconto_finale_percentuale;
+        }
+
+        $contratto->save();
+
 
         $righe = $documento->getRighe();
         foreach ($righe as $riga) {

@@ -37,4 +37,11 @@ trait RelationTrait
     {
         return $this->document();
     }
+
+    public function getNettoAttribute()
+    {
+        $result = $this->totale;
+
+        return $result;
+    }
 }

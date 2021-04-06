@@ -704,6 +704,14 @@ switch (post('op')) {
             $id_record = $fattura->id;
         }
 
+        if (!empty($documento->sconto_finale)) {
+            $fattura->sconto_finale = $documento->sconto_finale;
+        } elseif(!empty($documento->sconto_finale_percentuale)){
+            $fattura->sconto_finale_percentuale = $documento->sconto_finale_percentuale;
+        }
+
+        $fattura->save();
+
         $calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto') ?: null;
         $id_ritenuta_acconto = post('id_ritenuta_acconto') ?: null;
         $ritenuta_contributi = boolval(post('ritenuta_contributi'));

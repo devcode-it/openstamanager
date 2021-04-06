@@ -231,6 +231,8 @@ $sconto = $ordine->sconto;
 $totale_imponibile = abs($ordine->totale_imponibile);
 $iva = abs($ordine->iva);
 $totale = abs($ordine->totale);
+$sconto_finale = $ordine->getScontoFinale();
+$netto_a_pagare = $ordine->netto;
 
 // IMPONIBILE
 echo '
@@ -293,6 +295,34 @@ echo '
             </td>
             <td></td>
         </tr>';
+
+// SCONTO FINALE
+if (!empty($sconto_finale)) {
+    echo '
+        <tr>
+            <td colspan="6" class="text-right">
+                <b>'.tr('Sconto finale', [], ['upper' => true]).':</b>
+            </td>
+            <td class="text-right">
+                '.moneyFormat($sconto_finale, 2).'
+            </td>
+            <td></td>
+        </tr>';
+}
+
+// NETTO A PAGARE
+if ($totale != $netto_a_pagare) {
+    echo '
+        <tr>
+            <td colspan="6" class="text-right">
+                <b>'.tr('Netto a pagare', [], ['upper' => true]).':</b>
+            </td>
+            <td class="text-right">
+                '.moneyFormat($netto_a_pagare, 2).'
+            </td>
+            <td></td>
+        </tr>';
+}
 
 echo '
     </table>

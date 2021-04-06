@@ -110,23 +110,29 @@ if ($module['name'] == 'Ordini cliente') {
 				<div class="col-md-3">
 					{[ "type": "select", "label": "'.tr('Pagamento').'", "name": "idpagamento", "required": 0, "ajax-source": "pagamenti", "value": "$idpagamento$" ]}
 				</div>
-			</div>';
-
+            </div>';
+            
+            ?>
+            <div class="row">
+            <?php
             if ($dir == 'entrata') {
                 ?>
-            <div class="row">
+            
                 <div class="col-md-6">
                     {[ "type": "text", "label": "<?php echo tr('Numero ordine cliente'); ?>", "name": "numero_cliente", "required":0, "value": "<?php echo $record['numero_cliente']; ?>", "help": "<?php echo tr('<span>Obbligatorio per valorizzare CIG/CUP. &Egrave; possible inserire: </span><ul><li>N. determina</li><li>RDO</li><li>Ordine MEPA</li></ul>'); ?>" ]}
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-3">
                     {[ "type": "date", "label": "<?php echo tr('Data ordine cliente'); ?>", "name": "data_cliente", "value": "<?php echo $record['data_cliente']; ?>" ]}
                 </div>
-            </div>
-
                 <?php
             }
             ?>
+
+                <div class="col-md-3">
+                    {[ "type": "number", "label": "<?php echo ('Sconto finale'); ?>", "name": "sconto_finale", "value": "<?php echo $ordine->sconto_finale_percentuale ?: $ordine->sconto_finale; ?>", "icon-after": "choice|untprc|<?php echo (empty($ordine->sconto_finale) ? 'PRC' : 'UNT'); ?>", "help": "<?php echo tr('Sconto finale, utilizzabile per applicare sconti sul Netto a pagare del documento'); ?>." ]}
+                </div>
+            </div>
 
 			<div class="row">
 				<div class="col-md-12">

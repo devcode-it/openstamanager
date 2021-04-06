@@ -284,55 +284,6 @@ class Fattura extends Document
     // Calcoli
 
     /**
-     * Imposta lo sconto finale sulla Fattura.
-     * Nota: lo sconto finale è limitato alla Fattura, e non può derivare da ulteriori documenti.
-     *
-     * @param $sconto
-     * @param $tipo
-     */
-    public function setScontoFinale($sconto, $tipo)
-    {
-        if ($tipo == 'PRC') {
-            $this->sconto_finale_percentuale = $sconto;
-            $this->sconto_finale = 0;
-        } else {
-            $this->sconto_finale = $sconto;
-            $this->sconto_finale_percentuale = 0;
-        }
-    }
-
-    /**
-     * Restituisce lo sconto finale sulla Fattura.
-     * Nota: lo sconto finale è limitato alla Fattura, e non può derivare da ulteriori documenti.
-     */
-    public function getScontoFinale()
-    {
-        $netto = $this->calcola('netto');
-
-        if (!empty($this->sconto_finale_percentuale)) {
-            $sconto = $netto * ($this->sconto_finale_percentuale / 100);
-        } else {
-            $sconto = $this->sconto_finale;
-        }
-
-        return $sconto;
-    }
-
-    /**
-     * Calcola il netto a pagare della fattura.
-     * Nota: lo sconto finale è limitato alla Fattura, e non può derivare da ulteriori documenti.
-     *
-     * @return float
-     */
-    public function getNettoAttribute()
-    {
-        $netto = $this->calcola('netto');
-        $sconto_finale = $this->getScontoFinale();
-
-        return $netto - $sconto_finale;
-    }
-
-    /**
      * Calcola la rivalsa INPS totale della fattura.
      *
      * @return float

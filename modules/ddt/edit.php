@@ -263,6 +263,11 @@ if ($dir == 'entrata') {
 }
 
 ?>
+            <div class="row">
+				<div class="col-md-3">
+                    {[ "type": "number", "label": "<?php echo ('Sconto finale'); ?>", "name": "sconto_finale", "value": "<?php echo $ddt->sconto_finale_percentuale ?: $ddt->sconto_finale; ?>", "icon-after": "choice|untprc|<?php echo (empty($ddt->sconto_finale) ? 'PRC' : 'UNT'); ?>", "help": "<?php echo tr('Sconto finale, utilizzabile per applicare sconti sul Netto a pagare del documento'); ?>." ]}
+				</div>
+			</div>
 
 			<div class="row">
 				<div class="col-md-12">

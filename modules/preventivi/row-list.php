@@ -148,6 +148,8 @@ $sconto = $preventivo->sconto;
 $totale_imponibile = abs($preventivo->totale_imponibile);
 $iva = abs($preventivo->iva);
 $totale = abs($preventivo->totale);
+$sconto_finale = $preventivo->getScontoFinale();
+$netto_a_pagare = $preventivo->netto;
 
 // Totale imponibile scontato
 echo '
@@ -210,6 +212,34 @@ echo '
             </td>
             <td></td>
         </tr>';
+        
+// SCONTO FINALE
+if (!empty($sconto_finale)) {
+    echo '
+        <tr>
+            <td colspan="5" class="text-right">
+                <b>'.tr('Sconto finale', [], ['upper' => true]).':</b>
+            </td>
+            <td class="text-right">
+                '.moneyFormat($sconto_finale, 2).'
+            </td>
+            <td></td>
+        </tr>';
+}
+
+// NETTO A PAGARE
+if ($totale != $netto_a_pagare) {
+    echo '
+        <tr>
+            <td colspan="5" class="text-right">
+                <b>'.tr('Netto a pagare', [], ['upper' => true]).':</b>
+            </td>
+            <td class="text-right">
+                '.moneyFormat($netto_a_pagare, 2).'
+            </td>
+            <td></td>
+        </tr>';
+}
 
 // Margine
 $margine = $preventivo->margine;

@@ -82,6 +82,7 @@ switch (post('op')) {
             $preventivo->codice_cup = post('codice_cup');
             $preventivo->idtipointervento = post('idtipointervento');
             $preventivo->idiva = post('idiva');
+            $preventivo->setScontoFinale(post('sconto_finale'), post('tipo_sconto_finale'));
 
             $preventivo->save();
 

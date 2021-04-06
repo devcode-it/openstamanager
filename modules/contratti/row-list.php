@@ -150,6 +150,8 @@ $sconto = $contratto->sconto;
 $totale_imponibile = abs($contratto->totale_imponibile);
 $iva = abs($contratto->iva);
 $totale = abs($contratto->totale);
+$sconto_finale = $contratto->getScontoFinale();
+$netto_a_pagare = $contratto->netto;
 
 // Totale totale imponibile
 echo '
@@ -212,6 +214,34 @@ echo '
             </td>
             <td></td>
         </tr>';
+
+// SCONTO FINALE
+if (!empty($sconto_finale)) {
+    echo '
+        <tr>
+            <td colspan="5" class="text-right">
+                <b>'.tr('Sconto finale', [], ['upper' => true]).':</b>
+            </td>
+            <td class="text-right">
+                '.moneyFormat($sconto_finale, 2).'
+            </td>
+            <td></td>
+        </tr>';
+}
+
+// NETTO A PAGARE
+if ($totale != $netto_a_pagare) {
+    echo '
+        <tr>
+            <td colspan="5" class="text-right">
+                <b>'.tr('Netto a pagare', [], ['upper' => true]).':</b>
+            </td>
+            <td class="text-right">
+                '.moneyFormat($netto_a_pagare, 2).'
+            </td>
+            <td></td>
+        </tr>';
+}
 
 echo '
     </table>

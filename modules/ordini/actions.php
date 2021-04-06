@@ -54,79 +54,82 @@ switch (post('op')) {
         break;
 
     case 'update':
-        $idstatoordine = post('idstatoordine');
-        $idpagamento = post('idpagamento');
-        $idsede = post('idsede');
+        if (isset($id_record)) {
+            $idstatoordine = post('idstatoordine');
+            $idpagamento = post('idpagamento');
+            $idsede = post('idsede');
 
-        $totale_imponibile = get_imponibile_ordine($id_record);
-        $totale_ordine = get_totale_ordine($id_record);
+            $totale_imponibile = get_imponibile_ordine($id_record);
+            $totale_ordine = get_totale_ordine($id_record);
 
-        $tipo_sconto = post('tipo_sconto_generico');
-        $sconto = post('sconto_generico');
+            $tipo_sconto = post('tipo_sconto_generico');
+            $sconto = post('sconto_generico');
 
-        if ($dir == 'uscita') {
-            $idrivalsainps = post('id_rivalsa_inps');
-            $idritenutaacconto = post('id_ritenuta_acconto');
-            $bollo = post('bollo');
-        } else {
-            $idrivalsainps = 0;
-            $idritenutaacconto = 0;
-            $bollo = 0;
-        }
-
-        // Leggo la descrizione del pagamento
-        $query = 'SELECT descrizione FROM co_pagamenti WHERE id='.prepare($idpagamento);
-        $rs = $dbo->fetchArray($query);
-        $pagamento = $rs[0]['descrizione'];
-
-        // Query di aggiornamento
-        $dbo->update('or_ordini', [
-            'idanagrafica' => post('idanagrafica'),
-            'idreferente' => post('idreferente'),
-            'data' => post('data'),
-            'numero' => post('numero'),
-            'numero_esterno' => post('numero_esterno'),
-            'note' => post('note'),
-            'note_aggiuntive' => post('note_aggiuntive'),
-
-            'idagente' => post('idagente'),
-            'idstatoordine' => $idstatoordine,
-            'idpagamento' => $idpagamento,
-            'idsede' => $idsede,
-            'idconto' => post('idconto'),
-            'idrivalsainps' => $idrivalsainps,
-            'idritenutaacconto' => $idritenutaacconto,
-
-            'bollo' => 0,
-            'rivalsainps' => 0,
-            'ritenutaacconto' => 0,
-
-            'numero_cliente' => post('numero_cliente'),
-            'data_cliente' => post('data_cliente'),
-
-            'id_documento_fe' => post('numero_cliente'),
-            'codice_commessa' => post('codice_commessa'),
-            'codice_cup' => post('codice_cup'),
-            'codice_cig' => post('codice_cig'),
-            'num_item' => post('num_item'),
-        ], ['id' => $id_record]);
-
-        if ($dbo->query($query)) {
-            $query = 'SELECT descrizione FROM or_statiordine WHERE id='.prepare($idstatoordine);
-            $rs = $dbo->fetchArray($query);
-
-            // Ricalcolo inps, ritenuta e bollo (se l'ordine non è stato evaso)
-            if ($dir == 'entrata') {
-                if ($rs[0]['descrizione'] != 'Evaso') {
-                    ricalcola_costiagg_ordine($id_record);
-                }
+            if ($dir == 'uscita') {
+                $idrivalsainps = post('id_rivalsa_inps');
+                $idritenutaacconto = post('id_ritenuta_acconto');
+                $bollo = post('bollo');
             } else {
-                if ($rs[0]['descrizione'] != 'Evaso') {
-                    ricalcola_costiagg_ordine($id_record, $idrivalsainps, $idritenutaacconto, $bollo);
-                }
+                $idrivalsainps = 0;
+                $idritenutaacconto = 0;
+                $bollo = 0;
             }
 
-            flash()->info(tr('Ordine modificato correttamente!'));
+            // Leggo la descrizione del pagamento
+            $query = 'SELECT descrizione FROM co_pagamenti WHERE id='.prepare($idpagamento);
+            $rs = $dbo->fetchArray($query);
+            $pagamento = $rs[0]['descrizione'];
+
+            $ordine->idanagrafica = post('idanagrafica');
+            $ordine->idreferente = post('idreferente');
+            $ordine->data = post('data');
+            $ordine->numero = post('numero');
+            $ordine->numero_esterno = post('numero_esterno');
+            $ordine->note = post('note');
+            $ordine->note_aggiuntive = post('note_aggiuntive');
+
+            $ordine->idagente = post('idagente');
+            $ordine->idstatoordine = $idstatoordine;
+            $ordine->idpagamento = $idpagamento;
+            $ordine->idsede = $idsede;
+            $ordine->idconto = post('idconto');
+            $ordine->idrivalsainps = $idrivalsainps;
+            $ordine->idritenutaacconto = $idritenutaacconto;
+
+            $ordine->bollo = 0;
+            $ordine->rivalsainps = 0;
+            $ordine->ritenutaacconto = 0;
+
+            $ordine->numero_cliente = post('numero_cliente');
+            $ordine->data_cliente = post('data_cliente');
+
+            $ordine->id_documento_fe = post('numero_cliente');
+            $ordine->codice_commessa = post('codice_commessa');
+            $ordine->codice_cup = post('codice_cup');
+            $ordine->codice_cig = post('codice_cig');
+            $ordine->num_item = post('num_item');
+
+            $ordine->setScontoFinale(post('sconto_finale'), post('tipo_sconto_finale'));
+
+            $ordine->save();
+
+            if ($dbo->query($query)) {
+                $query = 'SELECT descrizione FROM or_statiordine WHERE id='.prepare($idstatoordine);
+                $rs = $dbo->fetchArray($query);
+
+                // Ricalcolo inps, ritenuta e bollo (se l'ordine non è stato evaso)
+                if ($dir == 'entrata') {
+                    if ($rs[0]['descrizione'] != 'Evaso') {
+                        ricalcola_costiagg_ordine($id_record);
+                    }
+                } else {
+                    if ($rs[0]['descrizione'] != 'Evaso') {
+                        ricalcola_costiagg_ordine($id_record, $idrivalsainps, $idritenutaacconto, $bollo);
+                    }
+                }
+
+                flash()->info(tr('Ordine modificato correttamente!'));
+            }
         }
 
         break;
@@ -376,6 +379,14 @@ switch (post('op')) {
 
             $id_record = $ordine->id;
         }
+
+        if (!empty($documento->sconto_finale)) {
+            $ordine->sconto_finale = $documento->sconto_finale;
+        } elseif(!empty($documento->sconto_finale_percentuale)){
+            $ordine->sconto_finale_percentuale = $documento->sconto_finale_percentuale;
+        }
+
+        $ordine->save();
 
         $righe = $documento->getRighe();
         foreach ($righe as $riga) {

@@ -113,8 +113,12 @@ if (strtotime($record['data_conclusione']) < strtotime($record['data_accettazion
 					{[ "type": "number", "label": "<?php echo tr('Validità contratto'); ?>", "name": "validita", "decimals": "0", "value": "$validita$", "icon-after": "choice|period|<?php echo $record['tipo_validita']; ?>", "help": "<?php echo tr('Il campo Validità contratto viene utilizzato per il calcolo della Data di conclusione del contratto'); ?>" ]}
 				</div>
 
-                <div class="col-md-9">
+                <div class="col-md-6">
 					{[ "type": "select", "multiple": "1", "label": "<?php echo tr('Impianti'); ?>", "name": "matricolaimpianto[]", "values": "query=SELECT idanagrafica, id AS id, IF(nome = '', matricola, CONCAT(matricola, ' - ', nome)) AS descrizione FROM my_impianti WHERE idanagrafica='$idanagrafica$' ORDER BY descrizione", "value": "$idimpianti$", "icon-after": "add|<?php echo Modules::get('Impianti')['id']; ?>|||<?php echo (empty($block_edit)) ? '' : 'disabled'; ?>" ]}
+				</div>
+
+                <div class="col-md-3">
+                    {[ "type": "number", "label": "<?php echo ('Sconto finale'); ?>", "name": "sconto_finale", "value": "<?php echo $contratto->sconto_finale_percentuale ?: $contratto->sconto_finale; ?>", "icon-after": "choice|untprc|<?php echo (empty($contratto->sconto_finale) ? 'PRC' : 'UNT'); ?>", "help": "<?php echo tr('Sconto finale, utilizzabile per applicare sconti sul Netto a pagare del documento'); ?>." ]}
 				</div>
 
             </div>

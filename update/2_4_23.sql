@@ -104,3 +104,15 @@ UPDATE `co_contratti` SET `data_bozza`=NULL WHERE `data_bozza`=0000-00-00;
 UPDATE `co_contratti` SET `data_accettazione`=NULL WHERE `data_accettazione`=0000-00-00;
 UPDATE `co_contratti` SET `data_rifiuto`=NULL WHERE `data_rifiuto`=0000-00-00;
 UPDATE `co_contratti` SET `data_conclusione`=NULL WHERE `data_conclusione`=0000-00-00;
+
+-- Aggiunto sconto finale in preventivi
+ALTER TABLE `co_preventivi` ADD `sconto_finale` DECIMAL(17,8) NOT NULL AFTER `garanzia`, ADD `sconto_finale_percentuale` DECIMAL(17,8) NOT NULL AFTER `sconto_finale`;
+
+-- Aggiunto sconto finale in ordini
+ALTER TABLE `or_ordini` ADD `sconto_finale` DECIMAL(17,8) NOT NULL AFTER `numero_cliente`, ADD `sconto_finale_percentuale` DECIMAL(17,8) NOT NULL AFTER `sconto_finale`;
+
+-- Aggiunto sconto finale in ddt
+ALTER TABLE `dt_ddt` ADD `sconto_finale` DECIMAL(17,8) NOT NULL AFTER `num_item`, ADD `sconto_finale_percentuale` DECIMAL(17,8) NOT NULL AFTER `sconto_finale`;
+
+-- Aggiunto sconto finale in contratti
+ALTER TABLE `co_contratti` ADD `sconto_finale` DECIMAL(17,8) NOT NULL AFTER `num_item`, ADD `sconto_finale_percentuale` DECIMAL(17,8) NOT NULL AFTER `sconto_finale`;

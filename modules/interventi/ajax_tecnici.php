@@ -195,11 +195,15 @@ if (!empty($sessioni)) {
         if (!$is_completato) {
             echo '
             <td class="text-center">
-                <button type="button" class="btn btn-sm btn-warning tip" title="'.tr('Modifica sessione').'" onclick="modificaSessione(this)">
+                <button type="button" class="btn btn-xs btn-primary" onclick="copySessione(this)">
+                    <i class="fa fa-files-o"></i>
+                </button>
+
+                <button type="button" class="btn btn-xs btn-warning tip" title="'.tr('Modifica sessione').'" onclick="modificaSessione(this)">
                     <i class="fa fa-edit"></i>
                 </button>
 
-				<button type="button" class="btn btn-sm btn-danger" id="delbtn_'.$sessione['id'].'" onclick="elimina_sessione(\''.$sessione['id'].'\');" title="Elimina riga" class="only_rw"><i class="fa fa-trash"></i></button>
+				<button type="button" class="btn btn-xs btn-danger" id="delbtn_'.$sessione['id'].'" onclick="elimina_sessione(\''.$sessione['id'].'\');" title="Elimina riga" class="only_rw"><i class="fa fa-trash"></i></button>
             </td>';
         }
 
@@ -343,4 +347,20 @@ function elimina_sessione(id_sessione) {
         });
     }
 }
+
+async function copySessione(button) {
+    var riga = $(button).closest("tr");
+    var id = riga.data("id");
+
+    // Salvataggio via AJAX
+    await salvaForm("#edit-form", {}, button);
+
+    // Chiusura tooltip
+    if ($(button).hasClass("tooltipstered"))
+        $(button).tooltipster("close");
+
+    // Apertura modal
+    openModal("'.tr('Copia sessione').'", "'.$module->fileurl('modals/copy_sessione.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&id_sessione=" + id);
+}
+
 </script>';

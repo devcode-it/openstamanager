@@ -507,8 +507,8 @@ switch (post('op')) {
 
         $ore = 1;
 
-        $inizio = date('Y-m-d H:\0\0');
-        $fine = date_modify(date_create(date('Y-m-d H:\0\0')), '+'.$ore.' hours')->format('Y-m-d H:\0\0');
+        $inizio = post('orario_inizio') ?: date('Y-m-d H:\0\0');
+        $fine = post('orario_fine') ?: date_modify(date_create(date('Y-m-d H:\0\0')), '+'.$ore.' hours')->format('Y-m-d H:\0\0');
 
         add_tecnico($id_record, $id_tecnico, $inizio, $fine, $idcontratto);
         break;

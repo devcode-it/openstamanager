@@ -64,14 +64,14 @@ switch (post('op')) {
             $preventivo->condizioni_fornitura = post('condizioni_fornitura');
 
             // Informazioni sulle date del documento
-            $preventivo->data_bozza = post('data_bozza');
-            $preventivo->data_rifiuto = post('data_rifiuto');
+            $preventivo->data_bozza = post('data_bozza') ?: null;
+            $preventivo->data_rifiuto = post('data_rifiuto') ?: null;
 
             // Dati relativi alla validità del documento
             $preventivo->validita = post('validita');
             $preventivo->tipo_validita = post('tipo_validita');
-            $preventivo->data_accettazione = post('data_accettazione');
-            $preventivo->data_conclusione = post('data_conclusione');
+            $preventivo->data_accettazione = post('data_accettazione') ?: null;
+            $preventivo->data_conclusione = post('data_conclusione') ?: null;
 
             $preventivo->esclusioni = post('esclusioni');
             $preventivo->garanzia = post('garanzia');

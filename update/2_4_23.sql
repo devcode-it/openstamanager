@@ -116,3 +116,9 @@ ALTER TABLE `dt_ddt` ADD `sconto_finale` DECIMAL(17,8) NOT NULL AFTER `num_item`
 
 -- Aggiunto sconto finale in contratti
 ALTER TABLE `co_contratti` ADD `sconto_finale` DECIMAL(17,8) NOT NULL AFTER `num_item`, ADD `sconto_finale_percentuale` DECIMAL(17,8) NOT NULL AFTER `sconto_finale`;
+
+-- Set a NULL le date dei preventivi vuote
+UPDATE `co_preventivi` SET `data_bozza`=NULL WHERE `data_bozza`=0000-00-00;
+UPDATE `co_preventivi` SET `data_accettazione`=NULL WHERE `data_accettazione`=0000-00-00;
+UPDATE `co_preventivi` SET `data_rifiuto`=NULL WHERE `data_rifiuto`=0000-00-00;
+UPDATE `co_preventivi` SET `data_conclusione`=NULL WHERE `data_conclusione`=0000-00-00;

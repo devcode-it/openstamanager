@@ -122,3 +122,6 @@ UPDATE `co_preventivi` SET `data_bozza`=NULL WHERE `data_bozza`=0000-00-00;
 UPDATE `co_preventivi` SET `data_accettazione`=NULL WHERE `data_accettazione`=0000-00-00;
 UPDATE `co_preventivi` SET `data_rifiuto`=NULL WHERE `data_rifiuto`=0000-00-00;
 UPDATE `co_preventivi` SET `data_conclusione`=NULL WHERE `data_conclusione`=0000-00-00;
+
+-- Aggiunto filtro in attività per vedere interventi assegnati
+INSERT INTO `zz_group_module` ( `idgruppo`, `idmodule`, `name`, `clause`, `position`, `enabled`, `default`) VALUES ((SELECT `id` FROM `zz_groups` WHERE `nome`='Tecnici'), (SELECT `id` FROM `zz_modules` WHERE name='Interventi'), 'Mostra interventi ai tecnici assegnati', 'in_interventi.id IN (SELECT id_intervento FROM in_interventi_tecnici_assegnati WHERE id_intervento=in_interventi.id AND id_tecnico=|id_anagrafica|)', 'WHR', 0, 1);

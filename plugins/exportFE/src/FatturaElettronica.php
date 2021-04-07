@@ -1058,8 +1058,10 @@ class FatturaElettronica
 
             $dati = [];
 
-            if (!empty($element['riferimento_linea'])) {
-                $dati['RiferimentoNumeroLinea'] = $element['riferimento_linea'];
+            foreach ($element['riferimento_linea'] as $linea) {
+                $dati[] = [
+                    'RiferimentoNumeroLinea' => $linea,
+                ];
             }
 
             $dati['IdDocumento'] = $element['id_documento'];

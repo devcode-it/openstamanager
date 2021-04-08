@@ -308,7 +308,6 @@ switch (post('op')) {
     // Duplicazione fattura
     case 'copy':
         $new = $fattura->replicate();
-        $new->numero = Fattura::getNextNumero($new->data, $new->direzione, $new->id_segment);
         $new->save();
 
         $id_record = $new->id;

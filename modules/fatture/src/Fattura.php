@@ -616,16 +616,21 @@ class Fattura extends Document
     public function replicate(array $except = null)
     {
         $new = parent::replicate($except);
+        $now = Carbon::now();
 
         // In fase di duplicazione di una fattura non deve essere calcolato il numero progressivo ma questo deve
         // essere generato in fase di emissione della stessa.
         $new->numero_esterno = '';
+        $new->numero = Fattura::getNextNumero($now, $new->direzione, $new->id_segment);
 
         // Rimozione informazioni di Fattura Elettronica
         $new->hook_send = false;
         $new->codice_stato_fe = null;
         $new->progressivo_invio = null;
         $new->data_stato_fe = null;
+        $new->data = $now;
+        $new->data_registrazione = $now;
+        $new->data_competenza = $now;
         $new->descrizione_ricevuta_fe = null;
         $new->id_ricevuta_principale = null;
 

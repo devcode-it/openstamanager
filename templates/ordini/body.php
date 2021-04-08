@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 // Righe documento
 $righe = $documento->getRighe();
 
-$columns = 6;
+$columns = 7;
 
 //Immagine solo per documenti di vendita
 if ($documento->direzione == 'entrata') {
@@ -76,11 +76,12 @@ if ($options['pricing']) {
             <th class='text-center' style='width:10%'>".tr('IVA', [], ['upper' => true]).' (%)</th>';
 }
 
-            echo '
+            echo "
+            <th class='text-center' style='width:10%'>".tr('Data evasione', [], ['upper' => true])."</th>
         </tr>
     </thead>
 
-    <tbody>';
+    <tbody>";
 
 $num = 0;
 foreach ($righe as $riga) {
@@ -121,14 +122,16 @@ foreach ($righe as $riga) {
                 '.nl2br($r['descrizione']);
 
     if ($riga->isArticolo()) {
-        // Codice articolo
-        $text = tr('COD. _COD_', [
-            '_COD_' => $riga->codice,
-        ]);
-        echo '
-                <br><small>'.$text.'</small>';
+        if($documento->direzione == 'entrata'){
+            // Codice articolo
+            $text = tr('COD. _COD_', [
+                '_COD_' => $riga->codice,
+            ]);
+            echo '
+                    <br><small>'.$text.'</small>';
 
-        $autofill->count($text, true);
+            $autofill->count($text, true);
+        }
 
         // Seriali
         $seriali = $riga->serials;
@@ -188,6 +191,11 @@ foreach ($righe as $riga) {
                 '.Translator::numberToLocale($riga->aliquota->percentuale, 0).'
             </td>';
         }
+
+        echo '
+        <td class="text-center">
+            <small>'.Translator::dateToLocale($riga->data_evasione).($riga->ora_evasione ? '<br>'.Translator::timeToLocale($riga->ora_evasione).'' : '').'</small>
+        </td>';
     } else {
         echo '
             <td></td>';
@@ -221,7 +229,7 @@ $netto_a_pagare = $documento->netto;
 
 $show_sconto = $sconto > 0;
 
-$colspan = 4;
+$colspan = 5;
 ($documento->direzione == 'uscita' ? $colspan++ : $colspan);
 ($has_image ? $colspan++ : $colspan);
 

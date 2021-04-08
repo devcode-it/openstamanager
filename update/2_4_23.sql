@@ -146,3 +146,6 @@ SELECT `zz_groups`.`id`, `zz_views`.`id` FROM `zz_groups`, `zz_views` INNER JOIN
 INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) (
 SELECT `zz_groups`.`id`, `zz_views`.`id` FROM `zz_groups`, `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` WHERE `zz_modules`.`name`='Ordini cliente' AND (`zz_views`.`name` = 'icon_title_Prev. evasione' OR `zz_views`.`name` = 'icon_Prev. evasione')
 );
+
+-- Aggiunto campo ora evasione in ordini
+ALTER TABLE `or_righe_ordini` ADD `ora_evasione` TIME NULL AFTER `data_evasione`;

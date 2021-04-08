@@ -121,31 +121,54 @@ if (in_array($module['name'], ['Ordini cliente', 'Ordini fornitore'])) {
         $confermato = $result['confermato'];
     }
     echo '
-<div class="box box-warning collapsable collapsed-box">
-    <div class="box-header with-border">
-        <h3 class="box-title">'.tr('Informazioni aggiuntive').'</h3>
-        <div class="box-tools pull-right">
-            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+    <div class="box box-warning collapsable collapsed-box">
+        <div class="box-header with-border">
+            <h3 class="box-title">'.tr('Informazioni aggiuntive').'</h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+            </div>
+        </div>
+
+        <div class="box-body">
+            <div class="row">
+                <div class="col-md-4">
+                    {[ "type": "date", "label": "'.tr('Data prevista evasione').'", "name": "data_evasione", "value": "'.$result['data_evasione'].'" ]}
+                </div>
+                <div class="col-md-4">
+                    {[ "type": "time", "label": "'.tr('Ora prevista evasione').'", "name": "ora_evasione", "value": "'.$result['ora_evasione'].'", "disabled": 1 ]}
+                </div>
+                <div class="col-md-4">
+                    {[ "type": "checkbox", "label": "'.tr('Cambia data a tutte le righe').'", "name": "data_evasione_all", "value": "" ]}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+
+                </div>
+                <div class="col-md-4">
+                    {[ "type": "checkbox", "label": "'.tr('Articolo confermato').'", "name": "confermato", "value": "'.$confermato.'" ]}
+                </div>
+                <div class="col-md-4">
+                    {[ "type": "checkbox", "label": "'.tr('Cambia stato a tutte le righe').'", "name": "confermato_all", "value": "" ]}
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="box-body">
-        <div class="row">
-            <div class="col-md-4">
-                {[ "type": "date", "label": "'.tr('Data prevista evasione').'", "name": "data_evasione", "value": "'.$result['data_evasione'].'" ]}
-            </div>
-            <div class="col-md-4">
-                {[ "type": "checkbox", "label": "'.tr('Cambia data a tutte le righe').'", "name": "data_evasione_all", "value": "" ]}
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-4">
-                {[ "type": "checkbox", "label": "'.tr('Articolo confermato').'", "name": "confermato", "value": "'.$confermato.'" ]}
-            </div>
-            <div class="col-md-4">
-                {[ "type": "checkbox", "label": "'.tr('Cambia stato a tutte le righe').'", "name": "confermato_all", "value": "" ]}
-            </div>
-        </div>
-    </div>
-</div>';
+    <script>
+        $(document).ready(function() {
+            if(input("data_evasione").get()){
+                input("ora_evasione").enable();
+            }
+        });
+
+        $("#data_evasione").on("change", function() {
+            if(input("data_evasione").get()){
+                input("ora_evasione").enable();
+            } else{
+                input("ora_evasione").disable();
+                input("ora_evasione").set();
+            }
+        });
+    </script>';
 }

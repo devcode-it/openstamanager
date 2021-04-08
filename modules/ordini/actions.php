@@ -180,6 +180,7 @@ switch (post('op')) {
 
         $articolo->costo_unitario = post('costo_unitario') ?: 0;
         $articolo->data_evasione = post('data_evasione') ?: null;
+        $articolo->ora_evasione = post('ora_evasione') ?: null;
         $articolo->confermato = post('confermato') ?: 0;
         $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
         $articolo->setSconto(post('sconto'), post('tipo_sconto'));
@@ -194,16 +195,17 @@ switch (post('op')) {
 
         // Impostare data evasione su tutte le righe
         if (post('data_evasione_all') == 1) {
-            $righe = $ordine->getRighe();
+            $righe = $ordine->getRighe()->where('is_descrizione', '=', '0');;
 
             foreach ($righe as $riga) {
                 $riga->data_evasione = post('data_evasione') ?: null;
+                $riga->ora_evasione = post('ora_evasione') ?: null;
                 $riga->save();
             }
         }
         // Impostare confermato su tutte le righe
         if (post('confermato_all') == 1) {
-            $righe = $ordine->getRighe();
+            $righe = $ordine->getRighe()->where('is_descrizione', '=', '0');;
 
             foreach ($righe as $riga) {
                 $riga->confermato = post('confermato') ?: 0;
@@ -257,6 +259,7 @@ switch (post('op')) {
 
         $riga->costo_unitario = post('costo_unitario') ?: 0;
         $riga->data_evasione = post('data_evasione') ?: null;
+        $riga->ora_evasione = post('ora_evasione') ?: null;
         $riga->confermato = post('confermato') ?: 0;
         $riga->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
         $riga->setSconto(post('sconto'), post('tipo_sconto'));
@@ -264,6 +267,26 @@ switch (post('op')) {
         $riga->qta = post('qta');
 
         $riga->save();
+
+        // Impostare data evasione su tutte le righe
+        if (post('data_evasione_all') == 1) {
+            $righe = $ordine->getRighe()->where('is_descrizione', '=', '0');
+
+            foreach ($righe as $riga) {
+                $riga->data_evasione = post('data_evasione') ?: null;
+                $riga->ora_evasione = post('ora_evasione') ?: null;
+                $riga->save();
+            }
+        }
+        // Impostare confermato su tutte le righe
+        if (post('confermato_all') == 1) {
+            $righe = $ordine->getRighe()->where('is_descrizione', '=', '0');
+
+            foreach ($righe as $riga) {
+                $riga->confermato = post('confermato') ?: 0;
+                $riga->save();
+            }
+        }
 
         if (post('idriga') != null) {
             flash()->info(tr('Riga modificata!'));

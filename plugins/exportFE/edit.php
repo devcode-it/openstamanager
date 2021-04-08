@@ -23,280 +23,282 @@ use Plugins\ExportFE\FatturaElettronica;
 use Plugins\ExportFE\Interaction;
 use Util\XML;
 
-/* Per le PA EC02 e EC01 sono dei stati successivi a NE il quale a sua volta è successivo a RC. EC01 e EC02 sono definiti all'interno della ricevuta di NE che di fatto indica il rifiuto o l'accettazione. */
-$stato_fe = $database->fetchOne('SELECT * FROM fe_stati_documento WHERE codice = '.prepare($fattura->codice_stato_fe));
-$abilita_genera = $fattura->stato->descrizione != 'Bozza' && (empty($fattura->codice_stato_fe) || intval($stato_fe['is_generabile']));
-$ricevuta_principale = $fattura->getRicevutaPrincipale();
+if ($fattura !== null) {
+    /* Per le PA EC02 e EC01 sono dei stati successivi a NE il quale a sua volta è successivo a RC. EC01 e EC02 sono definiti all'interno della ricevuta di NE che di fatto indica il rifiuto o l'accettazione. */
+    $stato_fe = $database->fetchOne('SELECT * FROM fe_stati_documento WHERE codice = '.prepare($fattura->codice_stato_fe));
+    $abilita_genera = $fattura->stato->descrizione != 'Bozza' && (empty($fattura->codice_stato_fe) || intval($stato_fe['is_generabile']));
+    $ricevuta_principale = $fattura->getRicevutaPrincipale();
 
-if (!empty($fattura_pa)) {
-    $generata = $fattura_pa->isGenerated();
-} else {
-    $generata = false;
-}
+    if (!empty($fattura_pa)) {
+        $generata = $fattura_pa->isGenerated();
+    } else {
+        $generata = false;
+    }
 
-$checks = FatturaElettronica::controllaFattura($fattura);
-if (!empty($checks)) {
-    echo '
-<div class="alert alert-warning">
-    <p><i class="fa fa-warning"></i> '.tr('Prima di procedere alla generazione della fattura elettronica completa le seguenti informazioni').':</p>';
-
-    foreach ($checks as $check) {
+    $checks = FatturaElettronica::controllaFattura($fattura);
+    if (!empty($checks)) {
         echo '
-    <p><b>'.$check['name'].' '.$check['link'].'</b></p>
-    <ul>';
+    <div class="alert alert-warning">
+        <p><i class="fa fa-warning"></i> '.tr('Prima di procedere alla generazione della fattura elettronica completa le seguenti informazioni').':</p>';
 
-        foreach ($check['errors'] as $error) {
-            if (!empty($error)) {
-                echo '
-        <li>'.$error.'</li>';
+        foreach ($checks as $check) {
+            echo '
+        <p><b>'.$check['name'].' '.$check['link'].'</b></p>
+        <ul>';
+
+            foreach ($check['errors'] as $error) {
+                if (!empty($error)) {
+                    echo '
+            <li>'.$error.'</li>';
+                }
             }
+
+            echo '
+        </ul>';
         }
 
         echo '
-    </ul>';
+    </div>';
     }
 
     echo '
-</div>';
-}
+    <p>'.tr("Per effettuare la generazione dell'XML della fattura elettronica clicca sul pulsante _BTN_", [
+        '_BTN_' => '<b>Genera</b>',
+    ]).'. '.tr('Successivamente sarà possibile procedere alla visualizzazione e al download della fattura generata attraverso i pulsanti dedicati').'.</p>
 
-echo '
-<p>'.tr("Per effettuare la generazione dell'XML della fattura elettronica clicca sul pulsante _BTN_", [
-    '_BTN_' => '<b>Genera</b>',
-]).'. '.tr('Successivamente sarà possibile procedere alla visualizzazione e al download della fattura generata attraverso i pulsanti dedicati').'.</p>
+    <p>'.tr("Tutti gli allegati inseriti all'interno della categoria \"Allegati Fattura Elettronica\" saranno inclusi nell'XML").'.</p>
+    <br>';
 
-<p>'.tr("Tutti gli allegati inseriti all'interno della categoria \"Allegati Fattura Elettronica\" saranno inclusi nell'XML").'.</p>
-<br>';
-
-echo '
-<div class="text-center">
-    <form action="" method="post" role="form" style="display:inline-block" id="form-xml">
-        <input type="hidden" name="id_plugin" value="'.$id_plugin.'">
-        <input type="hidden" name="id_record" value="'.$id_record.'">
-        <input type="hidden" name="backto" value="record-edit">
-        <input type="hidden" name="op" value="generate">
-
-        <button type="button" class="btn btn-primary btn-lg '.(!$abilita_genera ? 'disabled' : '').'" onclick="generaFE(this)">
-            <i class="fa fa-file"></i> '.tr('Genera').'
-        </button>
-    </form>';
-
-    $file = $generata ? $fattura->getFatturaElettronica() : null;
-
-echo '
-
-    <i class="fa fa-arrow-right fa-fw text-muted"></i>
-
-    <a href="'.base_path().'/view.php?file_id='.($file ? $file->id : null).'" class="btn btn-info btn-lg '.($generata ? '' : 'disabled').'" target="_blank" '.($generata ? '' : 'disabled').'>
-        <i class="fa fa-eye"></i> '.tr('Visualizza').'
-    </a>';
-
-    // Scelgo quando posso inviarla
-    $inviabile = Interaction::isEnabled() && $generata && intval($stato_fe['is_inviabile']);
-
-echo '
-    <i class="fa fa-arrow-right fa-fw text-muted"></i>
-
-    <a href="'.$structure->fileurl('download.php').'?id_record='.$id_record.'" class="btn btn-primary btn-lg '.($generata ? '' : 'disabled').'" target="_blank" '.($generata ? '' : 'disabled').'>
-        <i class="fa fa-download"></i> '.tr('Scarica').'
-    </a>';
-
-echo '
-
-    <i class="fa fa-arrow-right fa-fw text-muted"></i>
-
-    <button type="button" onclick="inviaFE(this)" class="btn btn-success btn-lg '.($inviabile ? '' : 'disabled').'">
-        <i class="fa fa-paper-plane"></i> '.tr('Invia').'
-    </button>';
-
-$verify = Interaction::isEnabled() && $generata;
-echo '
-    <i class="fa fa-arrow-right fa-fw text-muted"></i>
-
-    <button type="button" onclick="verificaNotificheFE(this)" class="btn btn-warning btn-lg '.($verify ? '' : 'disabled').'">
-        <i class="fa fa-question-circle"></i> '.tr('Verifica notifiche').'
-    </button>
-</div>';
-
-echo '<br><br>';
-
-// Messaggio informativo sulla ricevuta principale impostata
-if (!empty($ricevuta_principale)) {
     echo '
-<div class="alert alert-'.$stato_fe['tipo'].'">
-    <div class="pull-right">
-        <i class="fa fa-clock-o tip" title="'.tr('Data e ora').'"></i> '.timestampFormat($record['data_stato_fe']);
+    <div class="text-center">
+        <form action="" method="post" role="form" style="display:inline-block" id="form-xml">
+            <input type="hidden" name="id_plugin" value="'.$id_plugin.'">
+            <input type="hidden" name="id_record" value="'.$id_record.'">
+            <input type="hidden" name="backto" value="record-edit">
+            <input type="hidden" name="op" value="generate">
 
-    if (!empty($ultima_ricevuta)) {
-        echo '
-        <a href="'.ROOTDIR.'/view.php?file_id='.$ultima_ricevuta->id.'" target="_blank" class="btn btn-info btn-xs">
-            <i class="fa fa-external-link"></i> '.tr('Visualizza ricevuta').'
+            <button type="button" class="btn btn-primary btn-lg '.(!$abilita_genera ? 'disabled' : '').'" onclick="generaFE(this)">
+                <i class="fa fa-file"></i> '.tr('Genera').'
+            </button>
+        </form>';
+
+        $file = $generata ? $fattura->getFatturaElettronica() : null;
+
+    echo '
+
+        <i class="fa fa-arrow-right fa-fw text-muted"></i>
+
+        <a href="'.base_path().'/view.php?file_id='.($file ? $file->id : null).'" class="btn btn-info btn-lg '.($generata ? '' : 'disabled').'" target="_blank" '.($generata ? '' : 'disabled').'>
+            <i class="fa fa-eye"></i> '.tr('Visualizza').'
         </a>';
-    }
+
+        // Scelgo quando posso inviarla
+        $inviabile = Interaction::isEnabled() && $generata && intval($stato_fe['is_inviabile']);
 
     echo '
-    </div>
+        <i class="fa fa-arrow-right fa-fw text-muted"></i>
 
-    <big>
-        <i class="'.$stato_fe['icon'].'" style="color:#fff;"></i>
-        <b>'.$stato_fe['codice'].'</b> - '.$stato_fe['descrizione'].'
-    </big>';
-
-    if (!empty($record['descrizione_ricevuta_fe'])) {
-        echo '
-    <br><b>'.tr('Note', [], ['upper' => true]).':</b> '.$record['descrizione_ricevuta_fe'];
-    }
-
-    if ($fattura->codice_stato_fe == 'GEN') {
-        echo '
-    <br><i class="fa fa-info-circle"></i> '.tr("La fattura è stata generata ed è pronta per l'invio").'.';
-    }
+        <a href="'.$structure->fileurl('download.php').'?id_record='.$id_record.'" class="btn btn-primary btn-lg '.($generata ? '' : 'disabled').'" target="_blank" '.($generata ? '' : 'disabled').'>
+            <i class="fa fa-download"></i> '.tr('Scarica').'
+        </a>';
 
     echo '
-</div>';
 
-    // Lettura della ricevuta
-    if (!empty($ricevuta_principale) && file_exists($ricevuta_principale->filepath)) {
-        $contenuto_ricevuta = XML::readFile($ricevuta_principale->filepath);
-        $lista_errori = $contenuto_ricevuta['ListaErrori'];
+        <i class="fa fa-arrow-right fa-fw text-muted"></i>
 
-        if (!empty($lista_errori)) {
+        <button type="button" onclick="inviaFE(this)" class="btn btn-success btn-lg '.($inviabile ? '' : 'disabled').'">
+            <i class="fa fa-paper-plane"></i> '.tr('Invia').'
+        </button>';
+
+    $verify = Interaction::isEnabled() && $generata;
+    echo '
+        <i class="fa fa-arrow-right fa-fw text-muted"></i>
+
+        <button type="button" onclick="verificaNotificheFE(this)" class="btn btn-warning btn-lg '.($verify ? '' : 'disabled').'">
+            <i class="fa fa-question-circle"></i> '.tr('Verifica notifiche').'
+        </button>
+    </div>';
+
+    echo '<br><br>';
+
+    // Messaggio informativo sulla ricevuta principale impostata
+    if (!empty($ricevuta_principale)) {
+        echo '
+    <div class="alert alert-'.$stato_fe['tipo'].'">
+        <div class="pull-right">
+            <i class="fa fa-clock-o tip" title="'.tr('Data e ora').'"></i> '.timestampFormat($record['data_stato_fe']);
+
+        if (!empty($ultima_ricevuta)) {
             echo '
-<h4>'.tr('Elenco degli errori').'</h4>
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>'.tr('Codice').'</th>
-            <th>'.tr('Descrizione').'</th>
-        </tr>
-    </thead>
-    <tbody>';
+            <a href="'.ROOTDIR.'/view.php?file_id='.$ultima_ricevuta->id.'" target="_blank" class="btn btn-info btn-xs">
+                <i class="fa fa-external-link"></i> '.tr('Visualizza ricevuta').'
+            </a>';
+        }
 
-            $lista_errori = $lista_errori[0] ? $lista_errori : [$lista_errori];
-            foreach ($lista_errori as $errore) {
-                $errore = $errore['Errore'];
+        echo '
+        </div>
+
+        <big>
+            <i class="'.$stato_fe['icon'].'" style="color:#fff;"></i>
+            <b>'.$stato_fe['codice'].'</b> - '.$stato_fe['descrizione'].'
+        </big>';
+
+        if (!empty($record['descrizione_ricevuta_fe'])) {
+            echo '
+        <br><b>'.tr('Note', [], ['upper' => true]).':</b> '.$record['descrizione_ricevuta_fe'];
+        }
+
+        if ($fattura->codice_stato_fe == 'GEN') {
+            echo '
+        <br><i class="fa fa-info-circle"></i> '.tr("La fattura è stata generata ed è pronta per l'invio").'.';
+        }
+
+        echo '
+    </div>';
+
+        // Lettura della ricevuta
+        if (!empty($ricevuta_principale) && file_exists($ricevuta_principale->filepath)) {
+            $contenuto_ricevuta = XML::readFile($ricevuta_principale->filepath);
+            $lista_errori = $contenuto_ricevuta['ListaErrori'];
+
+            if (!empty($lista_errori)) {
                 echo '
-        <tr>
-            <td>'.$errore['Codice'].'</td>
-            <td>'.htmlentities($errore['Descrizione']).'</td>
-        </tr>';
-            }
+    <h4>'.tr('Elenco degli errori').'</h4>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>'.tr('Codice').'</th>
+                <th>'.tr('Descrizione').'</th>
+            </tr>
+        </thead>
+        <tbody>';
 
-            echo '
-    </tbody>
-</table>';
+                $lista_errori = $lista_errori[0] ? $lista_errori : [$lista_errori];
+                foreach ($lista_errori as $errore) {
+                    $errore = $errore['Errore'];
+                    echo '
+            <tr>
+                <td>'.$errore['Codice'].'</td>
+                <td>'.htmlentities($errore['Descrizione']).'</td>
+            </tr>';
+                }
+
+                echo '
+        </tbody>
+    </table>';
+            }
         }
     }
-}
 
-echo '
-<script>
-    function inviaFE(button) {
-        if (confirm("'.tr('Inviare la fattura al SDI?').'")) {
+    echo '
+    <script>
+        function inviaFE(button) {
+            if (confirm("'.tr('Inviare la fattura al SDI?').'")) {
+                let restore = buttonLoading(button);
+
+                $.ajax({
+                    url: globals.rootdir + "/actions.php",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        op: "send",
+                        id_module: "'.$id_module.'",
+                        id_plugin: "'.$id_plugin.'",
+                        id_record: "'.$id_record.'",
+                    },
+                    success: function(data) {
+                        buttonRestore(button, restore);
+
+                        if (data.code === 200) {
+                            swal("'.tr('Fattura inviata!').'", data.message, "success");
+
+                            $(button).attr("disabled", true).addClass("disabled");
+                        } else if (data.code === 301) {
+                            swal("'.tr('Invio già effettuato').'", data.code + " - " + data.message, "error");
+                            $(button).attr("disabled", true).addClass("disabled");
+                        } else if (data.code === 500) {
+                            swal("'.tr("Errore durante l'invio").'", "'.tr("Si è verificato un problema durante l'invio della fattura! Riprova tra qualche minuto oppure contatta l'assistenza se il problema persiste.").'", "error");
+                        } else {
+                            swal("'.tr('Invio fallito').'", data.code + " - " + data.message, "error");
+                        }
+                    },
+                    error: function() {
+                        swal("'.tr('Errore').'", "'.tr('Errore durante il salvataggio').'", "error");
+
+                        buttonRestore(button, restore);
+                    }
+                });
+            }
+        }
+
+        function verificaNotificheFE(button) {
+            openModal("'.tr('Gestione ricevute').'", "'.$structure->fileurl('notifiche.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'");
+
+        /*
             let restore = buttonLoading(button);
 
             $.ajax({
                 url: globals.rootdir + "/actions.php",
                 type: "post",
-                dataType: "json",
                 data: {
-                    op: "send",
+                    op: "verify",
                     id_module: "'.$id_module.'",
                     id_plugin: "'.$id_plugin.'",
                     id_record: "'.$id_record.'",
                 },
                 success: function(data) {
                     buttonRestore(button, restore);
+                    data = JSON.parse(data);
 
-                    if (data.code === 200) {
-                        swal("'.tr('Fattura inviata!').'", data.message, "success");
-
-                        $(button).attr("disabled", true).addClass("disabled");
-                    } else if (data.code === 301) {
-                        swal("'.tr('Invio già effettuato').'", data.code + " - " + data.message, "error");
-                        $(button).attr("disabled", true).addClass("disabled");
-                    } else if (data.code === 500) {
-                        swal("'.tr("Errore durante l'invio").'", "'.tr("Si è verificato un problema durante l'invio della fattura! Riprova tra qualche minuto oppure contatta l'assistenza se il problema persiste.").'", "error");
+                    if (data.file) {
+                        swal("'.tr('Verifica completata con successo!').'", "'.tr('Lo stato della Fattura Elettronica è stato aggiornato in base all\'ultima notifica disponibile nel sistema!').'", "success").then(function() {
+                            location.reload(); // Ricaricamento pagina
+                        });
                     } else {
-                        swal("'.tr('Invio fallito').'", data.code + " - " + data.message, "error");
+                        swal("'.tr('Verifica fallita').'", data.code + " - " + data.message, "error");
                     }
                 },
-                error: function() {
-                    swal("'.tr('Errore').'", "'.tr('Errore durante il salvataggio').'", "error");
+                error: function(data) {
+                    swal("'.tr('Errore').'", "'.tr('Errore durante la verifica').'", "error");
 
                     buttonRestore(button, restore);
                 }
-            });
+            });*/
         }
-    }
 
-    function verificaNotificheFE(button) {
-        openModal("'.tr('Gestione ricevute').'", "'.$structure->fileurl('notifiche.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'");
+        function generaFE(button) {
+            salvaForm("#edit-form", {}, button)
+                .then(function(valid) {';
 
-    /*
-        let restore = buttonLoading(button);
+        if ($generata) {
+            echo '
+                    /*<p class=\"text-danger\">'.tr('Se stai attendendo una ricevuta dal sistema SdI, rigenerando la fattura elettronica non sarà possibile corrispondere la ricevuta una volta emessa').'.</p>*/
+                    swal({
+                        title: "'.tr('Sei sicuro di rigenerare la fattura?').'",
+                        html: "<p>'.tr('Attenzione: sarà generato un nuovo progressivo invio').'.</p>",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#30d64b",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "'.tr('Genera').'"
+                    }).then((result) => {
+                        if (result) {
+                            $("#form-xml").submit();
+                        }
+                    });';
+        } else {
+            echo '
 
-        $.ajax({
-            url: globals.rootdir + "/actions.php",
-            type: "post",
-            data: {
-                op: "verify",
-                id_module: "'.$id_module.'",
-                id_plugin: "'.$id_plugin.'",
-                id_record: "'.$id_record.'",
-            },
-            success: function(data) {
-                buttonRestore(button, restore);
-                data = JSON.parse(data);
-
-                if (data.file) {
-                    swal("'.tr('Verifica completata con successo!').'", "'.tr('Lo stato della Fattura Elettronica è stato aggiornato in base all\'ultima notifica disponibile nel sistema!').'", "success").then(function() {
-                        location.reload(); // Ricaricamento pagina
+                    $("#form-xml").submit();';
+        }
+        echo '
+                }).catch(function() {
+                    swal({
+                        type: "error",
+                        title: "'.tr('Errore').'",
+                        text:  "'.tr('Alcuni campi obbligatori non sono stati compilati correttamente').'.",
                     });
-                } else {
-                    swal("'.tr('Verifica fallita').'", data.code + " - " + data.message, "error");
-                }
-            },
-            error: function(data) {
-                swal("'.tr('Errore').'", "'.tr('Errore durante la verifica').'", "error");
-
-                buttonRestore(button, restore);
-            }
-        });*/
-    }
-
-    function generaFE(button) {
-        salvaForm("#edit-form", {}, button)
-            .then(function(valid) {';
-
-    if ($generata) {
-        echo '
-                /*<p class=\"text-danger\">'.tr('Se stai attendendo una ricevuta dal sistema SdI, rigenerando la fattura elettronica non sarà possibile corrispondere la ricevuta una volta emessa').'.</p>*/
-                swal({
-                    title: "'.tr('Sei sicuro di rigenerare la fattura?').'",
-                    html: "<p>'.tr('Attenzione: sarà generato un nuovo progressivo invio').'.</p>",
-                    type: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#30d64b",
-                    cancelButtonColor: "#d33",
-                    confirmButtonText: "'.tr('Genera').'"
-                }).then((result) => {
-                    if (result) {
-                        $("#form-xml").submit();
-                    }
-                });';
-    } else {
-        echo '
-
-                $("#form-xml").submit();';
-    }
-    echo '
-            }).catch(function() {
-                swal({
-                    type: "error",
-                    title: "'.tr('Errore').'",
-                    text:  "'.tr('Alcuni campi obbligatori non sono stati compilati correttamente').'.",
                 });
-            });
-    };
-</script>';
+        };
+    </script>';
+}

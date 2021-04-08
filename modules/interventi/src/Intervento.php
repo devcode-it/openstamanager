@@ -245,7 +245,7 @@ class Intervento extends Document
 
     public function getReferenceDate()
     {
-        return $this->data_richiesta;
+        return $this->fine;
     }
 
     public function getReferenceRagioneSociale()

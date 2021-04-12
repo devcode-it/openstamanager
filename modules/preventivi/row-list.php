@@ -212,7 +212,7 @@ echo '
             </td>
             <td></td>
         </tr>';
-        
+
 // SCONTO FINALE
 if (!empty($sconto_finale)) {
     echo '

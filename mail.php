@@ -127,7 +127,7 @@ echo '
 
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "ckeditor", "label": "'.tr('Contenuto').'", "name": "body", "value": '.json_encode($body).' ]}
+            {[ "type": "ckeditor", "label": "'.tr('Contenuto').'", "name": "body", "id": "body_'.rand(0, 999).'", "value": '.json_encode($body).' ]}
         </div>
     </div>';
 

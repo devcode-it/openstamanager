@@ -131,7 +131,7 @@ foreach ($righe as $riga) {
 
         if (!empty($riga->ora_evasione)) {
             $ora_evasione = '<br>'.Translator::timeToLocale($riga->ora_evasione).'';
-        } else{
+        } else {
             $ora_evasione = '';
         }
 

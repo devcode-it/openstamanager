@@ -77,11 +77,11 @@ if ($options['pricing']) {
 }
 
             echo "
-            <th class='text-center' style='width:10%'>".tr('Data evasione', [], ['upper' => true])."</th>
+            <th class='text-center' style='width:10%'>".tr('Data evasione', [], ['upper' => true]).'</th>
         </tr>
     </thead>
 
-    <tbody>";
+    <tbody>';
 
 $num = 0;
 foreach ($righe as $riga) {
@@ -122,7 +122,7 @@ foreach ($righe as $riga) {
                 '.nl2br($r['descrizione']);
 
     if ($riga->isArticolo()) {
-        if($documento->direzione == 'entrata'){
+        if ($documento->direzione == 'entrata') {
             // Codice articolo
             $text = tr('COD. _COD_', [
                 '_COD_' => $riga->codice,
@@ -296,7 +296,7 @@ if ($options['pricing']) {
     	</th>
     </tr>';
 
-    if($sconto_finale){
+    if ($sconto_finale) {
         // SCONTO FINALE
         echo '
         <tr>

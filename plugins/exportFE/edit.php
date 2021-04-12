@@ -82,7 +82,7 @@ if ($fattura !== null) {
             </button>
         </form>';
 
-        $file = $generata ? $fattura->getFatturaElettronica() : null;
+    $file = $generata ? $fattura->getFatturaElettronica() : null;
 
     echo '
 
@@ -92,8 +92,8 @@ if ($fattura !== null) {
             <i class="fa fa-eye"></i> '.tr('Visualizza').'
         </a>';
 
-        // Scelgo quando posso inviarla
-        $inviabile = Interaction::isEnabled() && $generata && intval($stato_fe['is_inviabile']);
+    // Scelgo quando posso inviarla
+    $inviabile = Interaction::isEnabled() && $generata && intval($stato_fe['is_inviabile']);
 
     echo '
         <i class="fa fa-arrow-right fa-fw text-muted"></i>
@@ -270,8 +270,8 @@ if ($fattura !== null) {
             salvaForm("#edit-form", {}, button)
                 .then(function(valid) {';
 
-        if ($generata) {
-            echo '
+    if ($generata) {
+        echo '
                     /*<p class=\"text-danger\">'.tr('Se stai attendendo una ricevuta dal sistema SdI, rigenerando la fattura elettronica non sarà possibile corrispondere la ricevuta una volta emessa').'.</p>*/
                     swal({
                         title: "'.tr('Sei sicuro di rigenerare la fattura?').'",
@@ -286,12 +286,12 @@ if ($fattura !== null) {
                             $("#form-xml").submit();
                         }
                     });';
-        } else {
-            echo '
+    } else {
+        echo '
 
                     $("#form-xml").submit();';
-        }
-        echo '
+    }
+    echo '
                 }).catch(function() {
                     swal({
                         type: "error",

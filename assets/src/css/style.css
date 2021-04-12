@@ -1063,3 +1063,8 @@ div.tip {
 .div-loading {
     opacity: 0.5;
 }
+
+/* Stile Fullcalendar per weekend */
+.fc-sat, .fc-sun {
+    background-color: rgba(255, 99, 71, 0.6) !important;
+}

@@ -5,7 +5,10 @@
  */
 function locale(): string
 {
-    return app()->getLocale();
+    $locale = app()->getLocale();
+    $dot = strpos($locale, '.');
+
+    return substr($locale, 0, $dot === false ? null : $dot);
 }
 
 /**

@@ -322,7 +322,7 @@ if (($options['pricing'] && !isset($options['hide_total'])) || $options['show_on
     	</th>
     </tr>';
 
-    if($sconto_finale){
+    if ($sconto_finale) {
         // SCONTO FINALE
         echo '
         <tr>

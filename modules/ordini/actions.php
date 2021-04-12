@@ -195,7 +195,7 @@ switch (post('op')) {
 
         // Impostare data evasione su tutte le righe
         if (post('data_evasione_all') == 1) {
-            $righe = $ordine->getRighe()->where('is_descrizione', '=', '0');;
+            $righe = $ordine->getRighe()->where('is_descrizione', '=', '0');
 
             foreach ($righe as $riga) {
                 $riga->data_evasione = post('data_evasione') ?: null;
@@ -205,7 +205,7 @@ switch (post('op')) {
         }
         // Impostare confermato su tutte le righe
         if (post('confermato_all') == 1) {
-            $righe = $ordine->getRighe()->where('is_descrizione', '=', '0');;
+            $righe = $ordine->getRighe()->where('is_descrizione', '=', '0');
 
             foreach ($righe as $riga) {
                 $riga->confermato = post('confermato') ?: 0;
@@ -405,7 +405,7 @@ switch (post('op')) {
 
         if (!empty($documento->sconto_finale)) {
             $ordine->sconto_finale = $documento->sconto_finale;
-        } elseif(!empty($documento->sconto_finale_percentuale)){
+        } elseif (!empty($documento->sconto_finale_percentuale)) {
             $ordine->sconto_finale_percentuale = $documento->sconto_finale_percentuale;
         }
 

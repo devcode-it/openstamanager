@@ -261,7 +261,7 @@ if ($options['pricing']) {
     	</th>
     </tr>';
 
-    if($sconto_finale){
+    if ($sconto_finale) {
         // SCONTO FINALE
         echo '
         <tr>

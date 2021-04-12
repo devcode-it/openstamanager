@@ -126,14 +126,14 @@ switch ($operazione) {
 
                         $qta_evasa += $qta_riga;
                         $pianificata[] = $pianificazioni[$rata];
-                    } else{
+                    } else {
                         $non_pianificata[] = $pianificazioni[$rata];
                     }
                 }
                 $r->delete();
             }
             $tot_non_pianificati = implode(', ', array_unique(array_diff($non_pianificata, $pianificata)));
-            if(!empty($tot_non_pianificati)){
+            if (!empty($tot_non_pianificati)) {
                 $dbo->query('DELETE FROM `co_fatturazione_contratti` WHERE `id` IN ('.$tot_non_pianificati.')');
             }
         }

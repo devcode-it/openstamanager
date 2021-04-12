@@ -483,12 +483,11 @@ $riga = $contratto->getRiga($type, $id_riga);
 
         if (!empty($documento->sconto_finale)) {
             $contratto->sconto_finale = $documento->sconto_finale;
-        } elseif(!empty($documento->sconto_finale_percentuale)){
+        } elseif (!empty($documento->sconto_finale_percentuale)) {
             $contratto->sconto_finale_percentuale = $documento->sconto_finale_percentuale;
         }
 
         $contratto->save();
-
 
         $righe = $documento->getRighe();
         foreach ($righe as $riga) {

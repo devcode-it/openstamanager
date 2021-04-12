@@ -705,7 +705,7 @@ switch (post('op')) {
 
         if (!empty($documento->sconto_finale)) {
             $fattura->sconto_finale = $documento->sconto_finale;
-        } elseif(!empty($documento->sconto_finale_percentuale)){
+        } elseif (!empty($documento->sconto_finale_percentuale)) {
             $fattura->sconto_finale_percentuale = $documento->sconto_finale_percentuale;
         }
 

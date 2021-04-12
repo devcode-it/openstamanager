@@ -86,7 +86,7 @@ if ($options['pricing']) {
         </td>
     </tr>';
 
-    if($sconto_finale){
+    if ($sconto_finale) {
         // Riga 4 SCONTO FINALE
         echo "
         <tr>
@@ -97,9 +97,9 @@ if ($options['pricing']) {
 
         <tr>
             <td class='cell-padded text-right'>
-                ".moneyFormat($sconto_finale, 2)."
+                ".moneyFormat($sconto_finale, 2).'
             </td>
-        </tr>";
+        </tr>';
 
         // Riga 5 NETTO A PAGARE
         echo "
@@ -111,9 +111,9 @@ if ($options['pricing']) {
 
         <tr>
             <td class='cell-padded text-right'>
-                ".moneyFormat($netto_a_pagare, 2)."
+                ".moneyFormat($netto_a_pagare, 2).'
             </td>
-        </tr>";
+        </tr>';
     }
 } else {
     // Riga 1

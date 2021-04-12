@@ -139,7 +139,7 @@ echo '
 				</div>
 
                 <div class="col-md-3">
-                    {[ "type": "number", "label": "<?php echo ('Sconto finale'); ?>", "name": "sconto_finale", "value": "<?php echo $preventivo->sconto_finale_percentuale ?: $preventivo->sconto_finale; ?>", "icon-after": "choice|untprc|<?php echo (empty($preventivo->sconto_finale) ? 'PRC' : 'UNT'); ?>", "help": "<?php echo tr('Sconto finale, utilizzabile per applicare sconti sul Netto a pagare del documento'); ?>." ]}
+                    {[ "type": "number", "label": "<?php echo 'Sconto finale'; ?>", "name": "sconto_finale", "value": "<?php echo $preventivo->sconto_finale_percentuale ?: $preventivo->sconto_finale; ?>", "icon-after": "choice|untprc|<?php echo empty($preventivo->sconto_finale) ? 'PRC' : 'UNT'; ?>", "help": "<?php echo tr('Sconto finale, utilizzabile per applicare sconti sul Netto a pagare del documento'); ?>." ]}
                 </div>
 
 			</div>

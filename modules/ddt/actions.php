@@ -334,7 +334,7 @@ switch (post('op')) {
 
         if (!empty($documento->sconto_finale)) {
             $ddt->sconto_finale = $documento->sconto_finale;
-        } elseif(!empty($documento->sconto_finale_percentuale)){
+        } elseif (!empty($documento->sconto_finale_percentuale)) {
             $ddt->sconto_finale_percentuale = $documento->sconto_finale_percentuale;
         }
 

@@ -227,10 +227,28 @@ switch (post('op')) {
         flash()->info(tr('Attività duplicate correttamente!'));
 
         break;
+
+        case 'delete-bulk':
+            foreach ($id_records as $id) {
+                $intervento = Intervento::find($id);
+                try {
+                    $intervento->delete();
+                } catch (InvalidArgumentException $e) {
+                }
+            }
+    
+        flash()->info(tr('Interventi eliminati!'));
+        break;
 }
 
-return [
-    'export-bulk' => [
+if (App::debug()) {
+    $operations['delete-bulk'] = [
+        'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span> <span class="label label-danger" >beta</span>',
+    ];
+}
+
+
+    $operations['export-bulk'] = [
         'text' => '<span><i class="fa fa-file-archive-o"></i> '.tr('Esporta stampe'),
         'data' => [
             'title' => tr('Vuoi davvero esportare queste stampe in un archivio ZIP?'),
@@ -239,9 +257,9 @@ return [
             'class' => 'btn btn-lg btn-warning',
             'blank' => true,
         ],
-    ],
+    ];
 
-    'crea_fattura' => [
+    $operations['crea_fattura'] = [
         'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Fattura _TYPE_', ['_TYPE_' => strtolower($module['name'])]),
         'data' => [
            'title' => tr('Fatturare gli _TYPE_ selezionati?', ['_TYPE_' => strtolower($module['name'])]).' <small><i class="fa fa-question-circle-o tip" title="'.tr('Verranno fatturati solo gli interventi completati non collegati a contratti o preventivi').'."></i></small>',
@@ -251,9 +269,9 @@ return [
             'class' => 'btn btn-lg btn-warning',
             'blank' => false,
         ],
-    ],
+    ];
 
-    'cambia_stato' => [
+    $operations['cambia_stato'] = [
         'text' => '<span><i class="fa fa-refresh"></i> '.tr('Cambia stato'),
         'data' => [
             'title' => tr('Vuoi davvero cambiare lo stato per questi interventi?'),
@@ -263,9 +281,9 @@ return [
             'class' => 'btn btn-lg btn-warning',
             'blank' => false,
         ],
-    ],
+    ];
 
-    'copy-bulk' => [
+    $operations['copy-bulk'] = [
         'text' => '<span><i class="fa fa-clone"></i> '.tr('Duplica attività'),
         'data' => [
             'title' => tr('Vuoi davvero fare una copia degli interventi selezionati?'),
@@ -277,5 +295,6 @@ return [
             'class' => 'btn btn-lg btn-warning',
             'blank' => false,
         ],
-    ],
-];
+    ];
+
+return $operations;

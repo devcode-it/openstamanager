@@ -35,7 +35,7 @@ include_once __DIR__.'/../../core.php';
 
     <div class="row">
 		<div class="col-md-12">
-			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "<?php echo htmlentities(filter('descrizione')) ?: ''; ?>" ]}
+			{[ "type": "textarea", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "<?php echo htmlentities(filter('descrizione')) ?: ''; ?>" ]}
 		</div>
 
 		<div class="col-md-6">

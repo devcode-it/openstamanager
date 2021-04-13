@@ -71,7 +71,7 @@ switch (post('op')) {
         if (isAjaxRequest()) {
             echo json_encode([
                 'id' => $id_record,
-                'text' => post('descrizione'),
+                'text' => post('codice').' - '.post('descrizione'),
                 'data' => [
                     'descrizione' => post('descrizione'),
                     'prezzo_acquisto' => post('prezzo_acquisto'),

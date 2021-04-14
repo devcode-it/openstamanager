@@ -149,3 +149,6 @@ SELECT `zz_groups`.`id`, `zz_views`.`id` FROM `zz_groups`, `zz_views` INNER JOIN
 
 -- Aggiunto campo ora evasione in ordini
 ALTER TABLE `or_righe_ordini` ADD `ora_evasione` TIME NULL AFTER `data_evasione`;
+
+-- Aggiunta indice sull'id preventivo per velocizzare il caricamento del rif. numero fattura in vista preventivi
+ALTER TABLE `co_righe_documenti` ADD INDEX(`idpreventivo`);

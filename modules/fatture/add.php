@@ -70,7 +70,7 @@ $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
 
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Tipo documento'); ?>", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, descrizione FROM co_tipidocumento WHERE enabled = 1 AND dir = '<?php echo $dir; ?>' ORDER BY descrizione", "value": "<?php echo $idtipodocumento; ?>" ]}
+			{[ "type": "select", "label": "<?php echo tr('Tipo documento'); ?>", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, CONCAT(codice_tipo_documento_fe, ' - ', descrizione) AS descrizione FROM co_tipidocumento WHERE enabled = 1 AND dir = '<?php echo $dir; ?>' ORDER BY codice_tipo_documento_fe", "value": "<?php echo $idtipodocumento; ?>" ]}
 		</div>
 
 		<div class="col-md-6">

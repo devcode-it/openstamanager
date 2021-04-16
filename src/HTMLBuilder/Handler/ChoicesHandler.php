@@ -73,7 +73,7 @@ class ChoicesHandler implements HandlerInterface
         $result = '
         <div class="form-group checkbox-group">
             <input type="hidden" name="|name|" value="|value|" class="openstamanager-input">
-            <input type="checkbox" id="|id|" value="|value|" autocomplete="off" class="hidden" |attr| onchange="$(this).parent().find(\'[type = hidden]\').val(+this.checked).trigger(\'change\')"/>
+            <input type="checkbox" id="|id|" value="|value|" class="hidden" |attr| onchange="$(this).parent().find(\'[type = hidden]\').val(+this.checked).trigger(\'change\')"/>
             <div class="btn-group checkbox-buttons">
                 <label for="|id|" class="btn btn-default'.$class.'">
                     <span class="fa fa-check text-success"></span>

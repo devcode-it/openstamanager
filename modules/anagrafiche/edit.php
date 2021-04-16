@@ -68,7 +68,7 @@ if (sizeof($problemi_anagrafica) > 0) {
 
 ?>
 
-<form action="" method="post" id="edit-form"  autocomplete="<?php echo setting('Autocompletamento form'); ?>" >
+<form action="" method="post" id="edit-form">
 	<fieldset>
 		<input type="hidden" name="backto" value="record-edit">
 		<input type="hidden" name="op" value="update">

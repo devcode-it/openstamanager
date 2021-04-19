@@ -19,6 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Carbon\Carbon;
 use Plugins\ReceiptFE\Interaction;
 use Plugins\ReceiptFE\Ricevuta;
 
@@ -31,7 +32,8 @@ if (!empty($list)) {
 <table class="table table-striped table-hover table-condensed table-bordered datatables">
     <thead>
         <tr>
-            <th width="80%">'.tr('Nome').'</th>
+            <th width="60%">'.tr('Nome').'</th>
+            <th width="15%" class="text-center">'.tr('Data di caricamento').'</th>
             <th width="20%" class="text-center">#</th>
         </tr>
     </thead>
@@ -39,13 +41,18 @@ if (!empty($list)) {
 
     foreach ($list as $element) {
         $name = $element['name'];
+        $file = $directory.'/'.$name;
+
+        $local = file_exists($file);
+        $data_modifica = $local ? Carbon::createFromTimestamp(filemtime($file)) : null;
 
         echo '
         <tr>
             <td>'.$name.'</td>
+            <td class="text-center">'.($local ? dateFormat($data_modifica) : '-').'</td>
             <td class="text-center">';
 
-        if (file_exists($directory.'/'.$name)) {
+        if ($local) {
             echo '
                 <button type="button" class="btn btn-danger" onclick="delete_fe(this, \''.$element['id'].'\')">
                     <i class="fa fa-trash"></i>

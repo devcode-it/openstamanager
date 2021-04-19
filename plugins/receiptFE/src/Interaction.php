@@ -39,7 +39,7 @@ class Interaction extends Services
         // Aggiornamento cache hook
         Cache::pool('Ricevute Elettroniche')->set($result);
 
-        return $list;
+        return $result;
     }
 
     public static function getRemoteList()

@@ -152,3 +152,9 @@ ALTER TABLE `or_righe_ordini` ADD `ora_evasione` TIME NULL AFTER `data_evasione`
 
 -- Aggiunta indice sull'id preventivo per velocizzare il caricamento del rif. numero fattura in vista preventivi
 ALTER TABLE `co_righe_documenti` ADD INDEX(`idpreventivo`);
+
+-- Aggiunta stampa dettaglio anagrafica
+INSERT INTO `zz_prints` (`id_module`, `is_record`, `name`, `title`, `filename`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `default`, `enabled`) VALUES ((SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name`='Anagrafiche'), '1', 'Dettaglio anagrafica', 'Dettaglio anagrafica', 'Anagrafica {codice} - {ragione_sociale}', 'anagrafiche', 'idanagrafica', '', 'fa fa-print', '', '', '0', '1', '1', '1');
+
+-- Aggiunta stampa dati aziendali
+INSERT INTO `zz_prints` (`id_module`, `is_record`, `name`, `title`, `filename`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `default`, `enabled`) VALUES ((SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name`='Anagrafiche'), '1', 'Dati aziendali', 'Dati aziendali', 'Dati aziendali {ragione_sociale}', 'azienda', 'idanagrafica', '', 'fa fa-print', '', '', '0', '0', '0', '1');

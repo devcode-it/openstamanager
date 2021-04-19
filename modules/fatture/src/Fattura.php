@@ -704,9 +704,9 @@ class Fattura extends Document
      */
     public function getBanca()
     {
-        $riba = database()->fetchOne('SELECT riba FROM co_pagamenti WHERE id ='.prepare($this->idpagamento));
+        $pagamento = $this->pagamento;
 
-        if ($riba['riba'] == 1) {
+        if ($pagamento->isRiBa()) {
             $banca = Banca::where('id_anagrafica', $this->idanagrafica)
                  ->where('predefined', 1)
                  ->first();

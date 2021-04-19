@@ -46,7 +46,6 @@ if (isset($id_record)) {
 		co_documenti.split_payment AS split_payment,
         co_statidocumento.descrizione AS `stato`,
         co_tipidocumento.descrizione AS `descrizione_tipo`,
-        co_pagamenti.riba AS `riba`,
         (SELECT is_fiscale FROM zz_segments WHERE id = id_segment) AS is_fiscale,
         (SELECT descrizione FROM co_ritenutaacconto WHERE id=idritenutaacconto) AS ritenutaacconto_desc,
         (SELECT descrizione FROM co_rivalse WHERE id=idrivalsainps) AS rivalsainps_desc,

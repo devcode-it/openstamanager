@@ -152,3 +152,7 @@ ALTER TABLE `or_righe_ordini` ADD `ora_evasione` TIME NULL AFTER `data_evasione`
 
 -- Aggiunta indice sull'id preventivo per velocizzare il caricamento del rif. numero fattura in vista preventivi
 ALTER TABLE `co_righe_documenti` ADD INDEX(`idpreventivo`);
+
+-- Correzione per segmenti con pagamenti RiBa per Scadenzario
+UPDATE `zz_segments` SET `clause` = REPLACE(`clause`, 'co_pagamenti.riba=1', 'co_pagamenti.codice_modalita_pagamento_fe= ''MP12''');
+ALTER TABLE `co_pagamenti` DROP `riba`;

@@ -421,6 +421,7 @@ switch (post('op')) {
             $intervento->codice_cup = $documento->codice_cup;
             $intervento->codice_cig = $documento->codice_cig;
             $intervento->num_item = $documento->num_item;
+            $intervento->idreferente = $documento->idreferente;
 
             $intervento->save();
 

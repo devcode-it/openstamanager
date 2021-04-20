@@ -148,6 +148,7 @@ switch ($operazione) {
 
     case 'add_fattura':
         $id_rata = post('rata');
+        $accodare = post('accodare');
         $pianificazione = Pianificazione::find($id_rata);
         $contratto = $pianificazione->contratto;
 
@@ -155,8 +156,18 @@ switch ($operazione) {
         $id_segment = post('id_segment');
         $tipo = Tipo::find(post('idtipodocumento'));
 
+        if (!empty($accodare)) {
+            $documento = $dbo->fetchOne('SELECT co_documenti.id FROM co_documenti INNER JOIN co_statidocumento ON co_documenti.idstatodocumento = co_statidocumento.id WHERE co_statidocumento.descrizione = \'Bozza\' AND idanagrafica = '.prepare($contratto->idanagrafica));
+
+            $id_documento = $documento['id'];
+        }
+
         // Creazione fattura
-        $fattura = Fattura::build($contratto->anagrafica, $tipo, $data, $id_segment);
+        if (empty($id_documento)) {
+            $fattura = Fattura::build($contratto->anagrafica, $tipo, $data, $id_segment);
+        }else{
+            $fattura = Fattura::find($id_documento);
+        }
         $fattura->note = post('note');
         $fattura->save();
 

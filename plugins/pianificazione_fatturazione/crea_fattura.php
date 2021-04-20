@@ -72,6 +72,14 @@ echo '
         </div>
     </div>';
 
+//Accoda a fatture non emesse
+echo '
+    <div class="row">
+        <div class="col-md-6">
+            {[ "type": "checkbox", "label": "<small>'.tr('Aggiungere alle fatture di vendita non ancora emesse?').'</small>", "placeholder": "'.tr('Aggiungere alle fatture di vendita nello stato bozza?').'", "name": "accodare" ]}
+        </div>
+    </div>';
+
 // Descrizione fattura
 $descrizione = tr('Rata _N_ del contratto numero _NUM_', [
     '_N_' => $numero_rata,

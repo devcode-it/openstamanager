@@ -162,3 +162,6 @@ INSERT INTO `zz_prints` (`id_module`, `is_record`, `name`, `title`, `filename`, 
 -- Correzione per segmenti con pagamenti RiBa per Scadenzario
 UPDATE `zz_segments` SET `clause` = REPLACE(`clause`, 'co_pagamenti.riba=1', 'co_pagamenti.codice_modalita_pagamento_fe= ''MP12''');
 ALTER TABLE `co_pagamenti` DROP `riba`;
+
+-- Aggiunto filtro in contratti per i clienti
+INSERT INTO `zz_group_module` (`idgruppo`, `idmodule`, `name`, `clause`, `position`, `enabled`, `default`) VALUES(4, 31, 'Mostra i contratti ai clienti coivolti', 'co_contratti.idanagrafica=|id_anagrafica|', 'WHR', 1, 1);

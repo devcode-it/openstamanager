@@ -697,6 +697,7 @@ switch (post('op')) {
 
             $fattura->idsede_destinazione = $documento->idsede;
             $fattura->id_ritenuta_contributi = post('id_ritenuta_contributi') ?: null;
+            $fattura->idreferente = $documento->idreferente;
 
             $fattura->save();
 

@@ -111,4 +111,12 @@ class Pagamento extends Model
 
         return $results;
     }
+
+    /**
+     * @return bool
+     */
+    public function isRiBa()
+    {
+        return $this->codice_modalita_pagamento_fe == 'MP12';
+    }
 }

@@ -397,6 +397,7 @@ switch (post('op')) {
             $ordine->codice_cup = $documento->codice_cup;
             $ordine->codice_cig = $documento->codice_cig;
             $ordine->num_item = $documento->num_item;
+            $ordine->idreferente = $documento->idreferente;
 
             $ordine->save();
 

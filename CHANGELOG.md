@@ -37,6 +37,8 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 ### Aggiunto (Added)
  - Nuovo *Sconto finale* per gli **Ordini**, **Preventivi**, **DDT** e **Contratti**, influenza il valore *Netto a pagare* del documento.
  - Nuovo filtro in attività per mostrare al tecnico solo le attività assegnate. 
+ - Nuovo filtro in contratti per mostrare al cliente solo i contratti collegati. 
+ - Nuovo pulsante **Duplica Template** per copiare un template già esistente.
 
 ## 2.4.22
 

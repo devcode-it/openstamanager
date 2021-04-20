@@ -475,6 +475,7 @@ $riga = $contratto->getRiga($type, $id_riga);
 
             $contratto->descrizione = $documento->descrizione;
             $contratto->esclusioni = $documento->esclusioni;
+            $contratto->idreferente = $documento->idreferente;
 
             $contratto->save();
 

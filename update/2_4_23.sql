@@ -158,3 +158,10 @@ INSERT INTO `zz_prints` (`id_module`, `is_record`, `name`, `title`, `filename`, 
 
 -- Aggiunta stampa dati aziendali
 INSERT INTO `zz_prints` (`id_module`, `is_record`, `name`, `title`, `filename`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `default`, `enabled`) VALUES ((SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name`='Anagrafiche'), '1', 'Dati aziendali', 'Dati aziendali', 'Dati aziendali {ragione_sociale}', 'azienda', 'idanagrafica', '', 'fa fa-print', '', '', '0', '0', '0', '1');
+
+-- Correzione per segmenti con pagamenti RiBa per Scadenzario
+UPDATE `zz_segments` SET `clause` = REPLACE(`clause`, 'co_pagamenti.riba=1', 'co_pagamenti.codice_modalita_pagamento_fe= ''MP12''');
+ALTER TABLE `co_pagamenti` DROP `riba`;
+
+-- Aggiunto filtro in contratti per i clienti
+INSERT INTO `zz_group_module` (`idgruppo`, `idmodule`, `name`, `clause`, `position`, `enabled`, `default`) VALUES(4, 31, 'Mostra i contratti ai clienti coivolti', 'co_contratti.idanagrafica=|id_anagrafica|', 'WHR', 1, 1);

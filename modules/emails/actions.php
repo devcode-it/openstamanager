@@ -59,4 +59,17 @@ switch (post('op')) {
         flash()->info(tr('Template delle email eliminato!'));
 
         break;
+
+    case 'copy':
+        $dbo->query('CREATE TEMPORARY TABLE tmp SELECT * FROM em_templates WHERE id= '.prepare($id_record));
+        $dbo->query('ALTER TABLE tmp DROP id');
+        $dbo->query('INSERT INTO em_templates SELECT NULL,tmp. * FROM tmp');
+        $id_record = $dbo->lastInsertedID();
+        $dbo->query('DROP TEMPORARY TABLE tmp');
+
+        $dbo->query('UPDATE em_templates SET name = CONCAT (name, " (copia)") WHERE id = '.prepare($id_record));
+
+        flash()->info(tr('Template duplicato correttamente!'));
+
+        break;
 }

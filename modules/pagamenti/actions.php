@@ -48,7 +48,6 @@ switch (filter('op')) {
                     'giorno' => $giorno,
                     'prc' => post('percentuale')[$key],
                     'descrizione' => $descrizione,
-                    'riba' => post('riba'),
                     'idconto_vendite' => post('idconto_vendite'),
                     'idconto_acquisti' => post('idconto_acquisti'),
                     'codice_modalita_pagamento_fe' => post('codice_modalita_pagamento_fe'),

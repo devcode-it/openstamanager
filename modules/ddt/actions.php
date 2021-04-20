@@ -326,6 +326,7 @@ switch (post('op')) {
             $ddt->idsede_destinazione = $id_sede;
 
             $ddt->idcausalet = post('id_causale_trasporto');
+            $ddt->idreferente = $documento->idreferente;
 
             $ddt->save();
 

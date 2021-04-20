@@ -55,16 +55,16 @@ class Module extends Model
         'options2',
     ];
 
-    public function replacePlaceholders($id_record, $value)
+    public function replacePlaceholders($id_record, $value, $options = [])
     {
-        $replaces = $this->getPlaceholders($id_record);
+        $replaces = $this->getPlaceholders($id_record, $options);
 
         $value = str_replace(array_keys($replaces), array_values($replaces), $value);
 
         return $value;
     }
 
-    public function getPlaceholders($id_record)
+    public function getPlaceholders($id_record, $options = [])
     {
         if (!isset($this->variables[$id_record])) {
             $dbo = $database = database();

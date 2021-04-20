@@ -26,7 +26,7 @@ $revisione = $dbo->fetchNum('SELECT * FROM co_preventivi WHERE master_revision =
 
 // Variabili da sostituire
 return [
-    'email' => $r['email'],
+    'email' => $options['is_pec'] ? $r['pec'] : $r['email'],
     'numero' => $r['numero'],
     'ragione_sociale' => $r['ragione_sociale'],
     'descrizione' => $r['descrizione'],

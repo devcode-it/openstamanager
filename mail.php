@@ -25,11 +25,15 @@ $template = Template::find(get('id'));
 $module = $template->module;
 $smtp = $template->account;
 
-$body = $module->replacePlaceholders($id_record, $template['body']);
-$subject = $module->replacePlaceholders($id_record, $template['subject']);
+$placeholder_options = [
+    'is_pec' => intval($smtp['pec']),
+];
 
-$email = $module->replacePlaceholders($id_record, '{email}');
-$id_anagrafica = $module->replacePlaceholders($id_record, '{id_anagrafica}');
+$body = $module->replacePlaceholders($id_record, $template['body'], $placeholder_options);
+$subject = $module->replacePlaceholders($id_record, $template['subject'], $placeholder_options);
+
+$email = $module->replacePlaceholders($id_record, '{email}', $placeholder_options);
+$id_anagrafica = $module->replacePlaceholders($id_record, '{id_anagrafica}', $placeholder_options);
 
 // Campi mancanti
 $campi_mancanti = [];

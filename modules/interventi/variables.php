@@ -18,14 +18,17 @@
  */
 
 $r = $dbo->fetchOne('SELECT *,
+    an_anagrafiche.email,
+    an_anagrafiche.pec,
     (SELECT MAX(orario_fine) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS data_fine,
-    (SELECT email FROM an_anagrafiche WHERE an_anagrafiche.idanagrafica=in_interventi.idanagrafica) AS email,
     (SELECT descrizione FROM in_statiintervento WHERE idstatointervento=in_interventi.idstatointervento) AS stato
-FROM in_interventi WHERE id='.prepare($id_record));
+FROM in_interventi
+    INNER JOIN an_anagrafiche ON in_interventi.idanagrafica = an_anagrafiche.idanagrafica
+WHERE id='.prepare($id_record));
 
 // Variabili da sostituire
 return [
-    'email' => $r['email'],
+    'email' => $options['is_pec'] ? $r['pec'] : $r['email'],
     'numero' => $r['codice'],
     'richiesta' => $r['richiesta'],
     'descrizione' => $r['descrizione'],

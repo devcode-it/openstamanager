@@ -333,7 +333,7 @@ $(document).ready(function() {
 			dropOnEmpty: true,
 			scroll: true,
 			update: function(event, ui) {
-                let order = $(".table tr[data-id]").toArray().map(a => $(a).data("id"))
+                let order = $(".table .sortable tr[data-id]").toArray().map(a => $(a).data("id"))
 
 				$.post(globals.rootdir + "/actions.php", {
 					id: ui.item.data("id"),

@@ -544,9 +544,6 @@ switch (post('op')) {
         }
 
         $qta = post('qta');
-        if (!empty($record['is_reversed'])) {
-            $qta = -$qta;
-        }
 
         $riga->descrizione = post('descrizione');
         $riga->um = post('um') ?: null;

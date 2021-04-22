@@ -536,6 +536,9 @@ class Fattura extends Document
      */
     public function save(array $options = [])
     {
+        // Salvataggio effettivo
+        $result = parent::save($options);
+
         // Fix dei campi statici
         $this->id_riga_bollo = $this->gestoreBollo->manageRigaMarcaDaBollo();
 

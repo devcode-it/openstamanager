@@ -312,7 +312,7 @@ switch (post('op')) {
 
         $id_record = $new->id;
 
-        $righe = $fattura->getRighe();
+        $righe = $fattura->getRighe()->where('id', '!=', $fattura->id_riga_bollo);
         foreach ($righe as $riga) {
             $new_riga = $riga->replicate();
             $new_riga->setDocument($new);

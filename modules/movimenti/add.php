@@ -191,6 +191,7 @@ echo '
 
         let prezzo_acquisto = parseFloat(articolo.prezzo_acquisto);
         let prezzo_vendita = parseFloat(articolo.prezzo_vendita);
+        let iva_vendita = articolo.iva_vendita;
 
         let qta_movimento = qta_input.get();
 
@@ -225,7 +226,8 @@ echo '
                 .replace("|movimento|", qta_movimento.toLocale())
                 .replace("|rimanente|", qta_rimanente.toLocale())
                 .replace("|prezzo_acquisto|", prezzo_acquisto.toLocale())
-                .replace("|prezzo_vendita|", prezzo_vendita.toLocale());
+                .replace("|prezzo_vendita|", prezzo_vendita.toLocale())
+                .replace("|iva_vendita|", iva_vendita);
 
             $("#messages").html(testo);
         }
@@ -267,6 +269,7 @@ echo '
                 <p><b>'.tr('Descrizione').':</b> |descrizione|</p>
                 <p><b>'.tr('Prezzo acquisto').':</b> |prezzo_acquisto| '.currency().'</p>
                 <p><b>'.tr('Prezzo vendita').':</b> |prezzo_vendita| '.currency().'</p>
+                <p><b>'.tr('IVA').':</b> |iva_vendita|</p>
             </div>
         </div>
         <div class="col-md-6">

@@ -165,3 +165,6 @@ ALTER TABLE `co_pagamenti` DROP `riba`;
 
 -- Aggiunto filtro in contratti per i clienti
 INSERT INTO `zz_group_module` (`idgruppo`, `idmodule`, `name`, `clause`, `position`, `enabled`, `default`) VALUES(4, 31, 'Mostra i contratti ai clienti coivolti', 'co_contratti.idanagrafica=|id_anagrafica|', 'WHR', 1, 1);
+
+-- Fix widget crediti clienti
+UPDATE `zz_widgets` SET `query` = 'SELECT \n CONCAT_WS(\' \', REPLACE(REPLACE(REPLACE(FORMAT((\n SELECT SUM(da_pagare-pagato)), 2), \',\', \'#\'), \'.\', \',\'),\'#\', \'.\'), \'&euro;\') AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=\'entrata\' AND co_documenti.idstatodocumento!=1 |segment| AND 1=1' WHERE `zz_widgets`.`name` = 'Crediti da clienti';

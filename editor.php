@@ -338,7 +338,7 @@ if (empty($record) || !$has_access) {
         echo '
                 <div id="tab_info" class="tab-pane">';
 
-        $operations = $dbo->fetchArray('SELECT `zz_operations`.*, `zz_users`.`username` FROM `zz_operations` JOIN `zz_users` ON `zz_operations`.`id_utente` = `zz_users`.`id` WHERE id_module = '.prepare($id_module).' AND id_record = '.prepare($id_record).' ORDER BY `created_at` ASC LIMIT 200');
+        $operations = $dbo->fetchArray('SELECT `zz_operations`.*, `zz_users`.`username` FROM `zz_operations` JOIN `zz_users` ON `zz_operations`.`id_utente` = `zz_users`.`id` WHERE id_module = '.prepare($id_module).' AND id_record = '.prepare($id_record).' ORDER BY `created_at` DESC LIMIT 200');
 
         if (!empty($operations)) {
             echo '

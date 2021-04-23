@@ -80,11 +80,15 @@ echo '
         </div>
     </div>';
 
-// Descrizione fattura
-$descrizione = tr('Rata _N_ del contratto numero _NUM_', [
-    '_N_' => $numero_rata,
-    '_NUM_' => $contratto->numero,
-]);
+//gestione replace
+$descrizione = get_var("Descrizione fattura pianificata");
+$modules = MODULES::get('Contratti')['id'];
+$variables = include Modules::filepath($modules, 'variables.php');
+foreach ($variables as $variable => $value) {
+    $descrizione = str_replace("{".$variable."}", $value, $descrizione);
+}
+$descrizione = str_replace("{rata}", $numero_rata, $descrizione);
+$descrizione = str_replace("{zona}", $zona, $descrizione);
 
 echo '
     <div class="row">

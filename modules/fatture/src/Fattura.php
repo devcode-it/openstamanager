@@ -536,6 +536,11 @@ class Fattura extends Document
      */
     public function save(array $options = [])
     {
+        // Informazioni sul cambio dei valori
+        $stato_precedente = Stato::find($this->original['idstatodocumento']);
+        $dichiarazione_precedente = Dichiarazione::find($this->original['id_dichiarazione_intento']);
+        $is_fiscale = $this->isFiscale();
+
         // Salvataggio effettivo
         $result = parent::save($options);
 
@@ -546,11 +551,7 @@ class Fattura extends Document
         $this->attributes['iva_rivalsainps'] = $this->iva_rivalsa_inps;
         $this->attributes['rivalsainps'] = $this->rivalsa_inps;
         $this->attributes['ritenutaacconto'] = $this->ritenuta_acconto;
-
-        // Informazioni sul cambio dei valori
-        $stato_precedente = Stato::find($this->original['idstatodocumento']);
-        $dichiarazione_precedente = Dichiarazione::find($this->original['id_dichiarazione_intento']);
-        $is_fiscale = $this->isFiscale();
+        
 
         // Generazione numero fattura se non presente (Bozza -> Emessa)
         if ((($stato_precedente->descrizione == 'Bozza' && $this->stato['descrizione'] == 'Emessa') or (!$is_fiscale)) && empty($this->numero_esterno)) {

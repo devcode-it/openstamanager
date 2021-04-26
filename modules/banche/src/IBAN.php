@@ -417,7 +417,7 @@ class IBAN
         preg_match_all('/^'.$regex.'/', $iban, $matches);
         $matches = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
         foreach ($matches as $key => $value) {
-            if (empty($value[0])) {
+            if (!isset($value[0])) {
                 throw new UnexpectedValueException('Invalid '.$key.' for format '.$regex);
             }
 
@@ -442,7 +442,9 @@ class IBAN
             $char = $structure[$current];
             if (in_array($char, $keys)) {
                 $count = substr_count($structure, $char);
-                $result .= str_pad($contents[self::$parsers[$char]], $count, STR_PAD_LEFT);
+                $result .= str_pad(
+                        substr($contents[self::$parsers[$char]], 0, $count),
+                    $count, STR_PAD_LEFT);
                 $current += $count;
             } else {
                 $result .= $char;

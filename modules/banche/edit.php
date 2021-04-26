@@ -190,6 +190,9 @@ if (!empty($numero_documenti)) {
             dataType: "json",
             success: function (response) {
                 compilaCampi(response);
+            },
+            error: function() {
+                toastr["error"]("<?php echo tr('Formato IBAN non valido'); ?>");
             }
         });
     }
@@ -221,6 +224,9 @@ if (!empty($numero_documenti)) {
             dataType: "json",
             success: function (response) {
                 compilaCampi(response);
+            },
+            error: function() {
+                toastr["error"]("<?php echo tr('Formato IBAN non valido'); ?>");
             }
         });
     }

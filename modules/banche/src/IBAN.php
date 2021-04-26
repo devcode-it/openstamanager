@@ -6,7 +6,7 @@ use UnexpectedValueException;
 
 /**
  * Format:
- * b = National bank code (Codice ABI)
+ * b = National bank code (Codice ABI e BIC)
  * s = Bank/branch code (sort code, or CAB – Codice d'Avviamento Bancario)
  * c = Account number
  * d = Account type

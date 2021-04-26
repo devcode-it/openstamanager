@@ -23,6 +23,7 @@ use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Anagrafiche\Nazione;
 
 class Banca extends Model
 {
@@ -64,6 +65,17 @@ class Banca extends Model
     public function save(array $options = [])
     {
         $this->fixPredefined();
+
+        // Camponenti IBAN
+        $iban = new IBAN($this->iban);
+        $nazione = Nazione::where('iso2', '=', $iban->getNation())->first();
+        $this->id_nazione = $nazione->id;
+        $this->iban = $iban->getIban();
+        $this->bank_code = $iban->getBankCode();
+        $this->branch_code = $iban->getBranchCode();
+        $this->account_number = $iban->getAccountNumber();
+        $this->check_digits = $iban->getCheckDigits();
+        $this->national_check_digits = $iban->getNationalCheckDigits();
 
         return parent::save($options);
     }

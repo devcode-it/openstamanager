@@ -168,3 +168,12 @@ INSERT INTO `zz_group_module` (`idgruppo`, `idmodule`, `name`, `clause`, `positi
 
 -- Fix widget crediti clienti
 UPDATE `zz_widgets` SET `query` = 'SELECT \n CONCAT_WS(\' \', REPLACE(REPLACE(REPLACE(FORMAT((\n SELECT SUM(da_pagare-pagato)), 2), \',\', \'#\'), \'.\', \',\'),\'#\', \'.\'), \'&euro;\') AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=\'entrata\' AND co_documenti.idstatodocumento!=1 |segment| AND 1=1' WHERE `zz_widgets`.`name` = 'Crediti da clienti';
+
+-- Aggiunti campi per componenti IBAN
+ALTER TABLE `co_banche` CHANGE `bic` `branch_code` VARCHAR(20) NULL,
+    ADD `bank_code` VARCHAR(20) NULL,
+    ADD `account_number` VARCHAR(20) NULL,
+    ADD `check_digits` VARCHAR(20) NULL,
+    ADD `national_check_digits` VARCHAR(20) NULL,
+    ADD `id_nazione` INT(11) NULL,
+    ADD FOREIGN KEY (`id_nazione`) REFERENCES `an_nazioni`(`id`);

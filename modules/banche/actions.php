@@ -18,7 +18,9 @@
  */
 
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Anagrafiche\Nazione;
 use Modules\Banche\Banca;
+use Modules\Banche\IBAN;
 
 include_once __DIR__.'/../../core.php';
 
@@ -52,7 +54,6 @@ switch (filter('op')) {
 
         $banca->nome = post('nome');
         $banca->iban = post('iban');
-        $banca->bic = post('bic');
 
         $banca->note = post('note');
         $banca->id_pianodeiconti3 = post('id_pianodeiconti3');
@@ -74,6 +75,42 @@ switch (filter('op')) {
         flash()->info(tr('_TYPE_ eliminata con successo!', [
             '_TYPE_' => 'Banca',
         ]));
+
+        break;
+
+    case 'compose':
+        $nazione = Nazione::find(filter('id_nazione'));
+
+        $iban = IBAN::generate([
+            'nation' => $nazione->iso2,
+            'bank_code' => filter('bank_code'),
+            'branch_code' => filter('branch_code'),
+            'account_number' => filter('account_number'),
+            'check_digits' => filter('check_digits'),
+            'national_check_digits' => filter('national_check_digits'),
+        ]);
+
+        echo json_encode([
+            'iban' => $iban->getIban(),
+        ]);
+
+        break;
+
+    case 'decompose':
+        $iban = new IBAN(filter('iban'));
+        $nazione = Nazione::where('iso2', '=', $iban->getNation())->first();
+
+        echo json_encode([
+            'id_nazione' => [
+                'id' => $nazione->id,
+                'text' => $nazione->nome,
+            ],
+            'bank_code' => $iban->getBankCode(),
+            'branch_code' => $iban->getBranchCode(),
+            'account_number' => $iban->getAccountNumber(),
+            'check_digits' => $iban->getCheckDigits(),
+            'national_check_digits' => $iban->getNationalCheckDigits(),
+        ]);
 
         break;
 }

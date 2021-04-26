@@ -1,7 +1,7 @@
 <?php
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
- * Copyright (C) DevCode s.r.l.
+ * Copyright (C) DevCode s.n.c.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,8 +61,9 @@ foreach ($revisioni as $i => $revisione) {
                 <input type='radio' class='revision_changer' name='idrevisione' value='".$revisione['id']."' ".$cheched.'>
             </td>
             <td>
-                '.tr('Revisione _NUM_ creata il _DATE_ alle _TIME_', [
+                '.tr('(REV. _NUM_) _DESC_ creata il _DATE_ alle _TIME_', [
                     '_NUM_' => ($revisione['numero_revision']),
+                    '_DESC_' => ($revisione['descrizione_revision']),
                     '_DATE_' => dateFormat($revisione['created_at']),
                     '_TIME_' => timeFormat($revisione['created_at']),
                 ])."

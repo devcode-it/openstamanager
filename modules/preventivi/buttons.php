@@ -1,7 +1,7 @@
 <?php
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
- * Copyright (C) DevCode s.r.l.
+ * Copyright (C) DevCode s.n.c.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-echo '
+echo'
 <button type="button" class="btn btn-primary" onclick="if( confirm(\'Duplicare questo preventivo?\') ){ $(\'#copia-preventivo\').submit(); }">
     <i class="fa fa-copy"></i> '.tr('Duplica preventivo').'
 </button>';
@@ -31,8 +31,8 @@ echo '
 <div class="tip" data-toggle="tooltip" title="'.tr('Per creare una nuova revisione lo stato del preventivo deve essere tra: _STATE_LIST_', [
         '_STATE_LIST_' => $stati_abilitati,
     ]).'">
-    <button type="button" class="btn btn-warning '.($record['is_revisionabile'] ? '' : 'disabled').'" onclick="if(confirm(\''.tr('Creare un nuova revisione?').'\')){$(\'#crea-revisione\').submit();}">
-        <i class="fa fa-plus-square"></i> '.tr('Crea nuova revisione...').'
+    <button type="button" class="btn btn-warning '.($record['is_revisionabile'] ? '' : 'disabled').'" onclick="openModal(\''.tr('Crea revisione').'\', \''.$module->fileurl('crea_revisione.php').'?id_module='.$id_module.'&id_record='.$id_record.'\')">
+        <i class="fa fa-edit"></i> '.tr('Crea nuova revisione...').'
     </button>
 </div>';
 
@@ -83,12 +83,4 @@ echo '
 <form action="" method="post" id="copia-preventivo">
     <input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="op" value="copy">
-</form>';
-
-// Crea revisione
-echo '
-<form action="" method="post" id="crea-revisione">
-	<input type="hidden" name="backto" value="record-edit">
-	<input type="hidden" name="op" value="add_revision">
-	<input type="hidden" name="id_record" value="'.$id_record.'">
 </form>';

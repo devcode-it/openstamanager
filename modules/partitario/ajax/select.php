@@ -77,7 +77,6 @@ switch ($resource) {
             $filter[] = 'co_pianodeiconti3.id='.prepare($element);
         }
 
-        $where[] = "co_pianodeiconti1.descrizione='Economico'";
         $where[] = "co_pianodeiconti2.dir='entrata'";
 
         if (!empty($search)) {
@@ -93,7 +92,6 @@ switch ($resource) {
             $filter[] = 'co_pianodeiconti3.id='.prepare($element);
         }
 
-        $where[] = "co_pianodeiconti1.descrizione='Economico'";
         $where[] = "co_pianodeiconti2.dir='uscita'";
 
         if (!empty($search)) {

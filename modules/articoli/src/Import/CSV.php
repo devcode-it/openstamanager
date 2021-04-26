@@ -218,7 +218,7 @@ class CSV extends CSVImporter
 
         // Gestione categoria e sottocategoria
         $categoria = null;
-        $sotto_categoria = null;
+        $sottocategoria = null;
         if (!empty($record['id_categoria'])) {
             // Categoria
             $categoria = Categoria::where('nome', strtolower($record['id_categoria']))->first();
@@ -229,14 +229,14 @@ class CSV extends CSVImporter
 
             // Sotto-categoria
             if (!empty($record['id_sottocategoria'])) {
-                $sotto_categoria = Categoria::where('nome', $record['id_sottocategoria'])
+                $sottocategoria = Categoria::where('nome', $record['id_sottocategoria'])
                     ->where('parent', $categoria->id)
                     ->first();
 
                 if (empty($sottocategoria)) {
-                    $sotto_categoria = Categoria::build($record['id_categoria']);
-                    $sotto_categoria->parent()->associate($categoria);
-                    $sotto_categoria->save();
+                    $sottocategoria = Categoria::build($record['id_sottocategoria']);
+                    $sottocategoria->parent()->associate($categoria);
+                    $sottocategoria->save();
                 }
             }
         }
@@ -254,7 +254,7 @@ class CSV extends CSVImporter
             $articolo = Articolo::where($primary_key, $record[$primary_key])->first();
         }
         if (empty($articolo)) {
-            $articolo = Articolo::build($record['codice'], $record['descrizione'], $categoria, $sotto_categoria);
+            $articolo = Articolo::build($record['codice'], $record['descrizione'], $categoria, $sottocategoria);
         }
 
         $articolo->idiva_vendita = $aliquota->id;

@@ -1,5 +1,6 @@
 <?php
 
+use Modules\Banche\Banca;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Gestori\Movimenti as GestoreMovimenti;
 
@@ -13,4 +14,10 @@ $fatture = Fattura::where('created_at', '>', '2020-08-01')
 foreach ($fatture as $fattura) {
     $gestore = new GestoreMovimenti($fattura);
     $gestore->registra();
+}
+
+// Completamento automatico informazioni IBAN per banche
+$banche = Banca::all();
+foreach ($banche as $banca) {
+    $banca->save();
 }

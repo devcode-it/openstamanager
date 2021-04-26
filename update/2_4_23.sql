@@ -172,3 +172,12 @@ UPDATE `zz_widgets` SET `query` = 'SELECT \n CONCAT_WS(\' \', REPLACE(REPLACE(RE
 -- Aggiunto campo descrizione revisione in preventivi
 ALTER TABLE `co_preventivi` ADD `descrizione_revision` VARCHAR(255) NOT NULL AFTER `default_revision`;
 UPDATE `zz_prints` SET `filename` = 'Preventivo num. {numero} del {data} rev {revisione}' WHERE `zz_prints`.`name` = 'Preventivo';
+
+-- Aggiunti campi per componenti IBAN
+ALTER TABLE `co_banche` ADD `branch_code` VARCHAR(20) NULL,
+    ADD `bank_code` VARCHAR(20) NULL,
+    ADD `account_number` VARCHAR(20) NULL,
+    ADD `check_digits` VARCHAR(20) NULL,
+    ADD `national_check_digits` VARCHAR(20) NULL,
+    ADD `id_nazione` INT(11) NULL,
+    ADD FOREIGN KEY (`id_nazione`) REFERENCES `an_nazioni`(`id`);

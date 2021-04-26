@@ -18,7 +18,6 @@
  */
 
 use Modules\Interventi\Intervento;
-use Carbon\Carbon;
 
 include_once __DIR__.'/../../core.php';
 
@@ -59,21 +58,20 @@ echo '
     </tr>
 </table>';
 
-
 /*
     Sedi
 */
 
-$sedi = $dbo->fetchArray("SELECT * FROM an_sedi WHERE idanagrafica=".prepare($anagrafica->idanagrafica));
-if( !empty($sedi) ){    
+$sedi = $dbo->fetchArray('SELECT * FROM an_sedi WHERE idanagrafica='.prepare($anagrafica->idanagrafica));
+if (!empty($sedi)) {
     echo '
     <table class="table table-bordered">
         <tr>
             <th colspan="4" style="font-size:13pt;" class="text-center">'.tr('Sedi', [], ['upper' => true]).'</th>
         </tr>';
 
-        for($i=0; count($sedi)>$i; $i++){
-            echo '
+    for ($i = 0; count($sedi) > $i; ++$i) {
+        echo '
             <tr>
                 <td colspan="4" class="text-left" >'.tr('Nome sede').': <b>'.$sedi[$i]['nomesede'].'</b></td>
             </tr>
@@ -90,11 +88,11 @@ if( !empty($sedi) ){
                 <td class="text-left" colspan="2">'.tr('cellulare').': <b>'.$sedi[$i]['cellulare'].'</b></td>
             </tr>';
 
-            if( !empty($sedi[$i+1]) ){
-                echo '
+        if (!empty($sedi[$i + 1])) {
+            echo '
                 <tr><td colspan="4"></td></tr>';
-            }
         }
+    }
 
     echo '
     </table>';
@@ -104,17 +102,17 @@ if( !empty($sedi) ){
     Impianti
 */
 
-$impianti = $dbo->fetchArray("SELECT * FROM my_impianti WHERE idanagrafica=".prepare($anagrafica->idanagrafica));
+$impianti = $dbo->fetchArray('SELECT * FROM my_impianti WHERE idanagrafica='.prepare($anagrafica->idanagrafica));
 
-if( !empty($impianti) ){
+if (!empty($impianti)) {
     echo '
     <table class="table table-bordered">
         <tr>
             <th colspan="4" style="font-size:13pt;" class="text-center">'.tr('Impianti', [], ['upper' => true]).'</th>
         </tr>';
 
-        for($i=0; count($impianti)>$i; $i++){
-            echo '
+    for ($i = 0; count($impianti) > $i; ++$i) {
+        echo '
             <tr>
                 <td colspan="2" class="text-left" >'.tr('Matricola').': <b>'.$impianti[$i]['matricola'].'</b></td>
                 <td colspan="2" class="text-left" >'.tr('Data').': <b>'.Translator::dataToLocale($impianti[$i]['data']).'</b></td>
@@ -126,11 +124,11 @@ if( !empty($impianti) ){
                 <td colspan="4" class="text-left" >'.tr('descrizione').': <b>'.$impianti[$i]['descrizione'].'</b></td>
             </tr>';
 
-            if( !empty($impianti[$i+1]) ){
-                echo '
+        if (!empty($impianti[$i + 1])) {
+            echo '
                 <tr><td colspan="4"></td></tr>';
-            }
         }
+    }
 
     echo '
     </table>';
@@ -140,18 +138,18 @@ if( !empty($impianti) ){
     Attività
 */
 
-$interventi = $dbo->fetchArray("SELECT id, sessione.inizio FROM in_interventi LEFT JOIN (SELECT MIN(orario_inizio) AS inizio, in_interventi_tecnici.idintervento FROM in_interventi_tecnici GROUP BY in_interventi_tecnici.idintervento) AS sessione ON sessione.idintervento=in_interventi.id  WHERE idanagrafica=".prepare($anagrafica->idanagrafica));
+$interventi = $dbo->fetchArray('SELECT id, sessione.inizio FROM in_interventi LEFT JOIN (SELECT MIN(orario_inizio) AS inizio, in_interventi_tecnici.idintervento FROM in_interventi_tecnici GROUP BY in_interventi_tecnici.idintervento) AS sessione ON sessione.idintervento=in_interventi.id  WHERE idanagrafica='.prepare($anagrafica->idanagrafica));
 
-if( !empty($interventi) ){
+if (!empty($interventi)) {
     echo '
     <table class="table table-bordered">
         <tr>
             <th colspan="4" style="font-size:13pt;" class="text-center">'.tr('Attività', [], ['upper' => true]).'</th>
         </tr>';
 
-        for($i=0; count($interventi)>$i; $i++){
-            $intervento = Intervento::find($interventi[$i]['id']);
-            echo '
+    for ($i = 0; count($interventi) > $i; ++$i) {
+        $intervento = Intervento::find($interventi[$i]['id']);
+        echo '
             <tr>
                 <td class="text-left">'.tr('Data richiesta').': <b>'.Translator::dateToLocale($intervento->data_richiesta).'</b></td>
                 <td class="text-left" colspan="2" >'.tr('Data scadenza').': <b>'.Translator::dateToLocale($intervento->data_scadenza).'</b></td>
@@ -165,11 +163,11 @@ if( !empty($interventi) ){
                 <td colspan="4" class="text-left" >'.tr('richiesta').': <b>'.$intervento->richiesta.'</b></td>
             </tr>';
 
-            if( !empty($interventi[$i+1]) ){
-                echo '
+        if (!empty($interventi[$i + 1])) {
+            echo '
                 <tr><td colspan="4"></td></tr>';
-            }
         }
+    }
 
     echo '
     </table>';

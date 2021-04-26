@@ -59,10 +59,12 @@ include_once __DIR__.'/../../core.php';
 					{[ "type": "text", "label": "<?php echo tr('IBAN'); ?>", "name": "iban", "required": "1", "class": "alphanumeric-mask", "maxlength": 32, "value": "$iban$" ]}
                 </div>
 
-				<div class="col-md-4">
-					{[ "type": "text", "label": "<?php echo tr('BIC'); ?>", "name": "bic", "required": "1", "class": "alphanumeric-mask", "maxlength": 11, "value": "$bic$" ]}
+                <div class="col-md-4">
+                    {[ "type": "text", "label": "<?php echo tr('BIC'); ?>", "name": "bic", "required": "1", "class": "alphanumeric-mask", "minlength": 8, "maxlength": 11, "value": "$bic$", "help": "<?php echo $help_codice_bic; ?>" ]}
                 </div>
+            </div>
 
+            <div class="row">
                 <div class="col-md-6">
                     {[ "type": "text", "label": "<?php echo tr('ID Creditore SEPA'); ?>", "name": "creditor_id", "class": "alphanumeric-mask", "value": "$creditor_id$", "help": "<?php echo tr("Codice identificativo per l'azienda nell'area SEPA. Nel caso di aziende aderenti alla procedura Allineamento Elettronico Archivio per le quali non risulta reperibile in CF/PIVA viene generato un codice identificativo non significativo (NOTPROVIDEDXXXXXXXXXXXX)."); ?>" ]}
                 </div>
@@ -79,8 +81,44 @@ include_once __DIR__.'/../../core.php';
 			</div>
 		</div>
 	</div>
-
 </form>
+
+<!-- Composizione IBAN -->
+<div class="box box-info">
+    <div class="box-header">
+        <h3 class="box-title"><?php echo tr('Composizione IBAN'); ?></h3>
+    </div>
+
+    <div class="box-body">
+        <div class="row">
+            <div class="col-md-4">
+                {[ "type": "select", "label": "<?php echo tr('Nazione'); ?>", "name": "id_nazione", "value": "$id_nazione$", "ajax-source": "nazioni" ]}
+            </div>
+
+            <div class="col-md-4">
+                {[ "type": "text", "label": "<?php echo tr('Codice banca nazionale (ABI)'); ?>", "name": "branch_code", "class": "alphanumeric-mask", "value": "$branch_code$" ]}
+            </div>
+
+            <div class="col-md-4">
+                {[ "type": "text", "label": "<?php echo tr('Codice filiale (CAB)'); ?>", "name": "bank_code", "class": "alphanumeric-mask", "value": "$bank_code$" ]}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                {[ "type": "text", "label": "<?php echo tr('Numero account'); ?>", "name": "account_number", "class": "alphanumeric-mask", "value": "$account_number$"]}
+            </div>
+
+            <div class="col-md-4">
+                {[ "type": "text", "label": "<?php echo tr('Cifre di controllo (CIN europeo)'); ?>", "name": "check_digits", "class": "alphanumeric-mask", "value": "$check_digits$" ]}
+            </div>
+
+            <div class="col-md-4">
+                {[ "type": "text", "label": "<?php echo tr('Cifre di verifica nazionale (CIN nazionale)'); ?>", "name": "national_check_digits", "class": "alphanumeric-mask", "value": "$national_check_digits$" ]}
+            </div>
+        </div>
+    </div>
+</div>
 
 <?php
 // Collegamenti diretti (numerici)
@@ -101,3 +139,105 @@ if (!empty($numero_documenti)) {
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>
+
+<script>
+    var iban = input("iban");
+
+    var branch_code = input("branch_code");
+    var bank_code = input("bank_code");
+    var account_number = input("account_number");
+    var check_digits = input("check_digits");
+    var national_check_digits = input("national_check_digits");
+    var id_nazione = input("id_nazione");
+
+    var components = [branch_code, bank_code, account_number, check_digits, national_check_digits, id_nazione];
+
+    $(document).ready(function (){
+        iban.trigger("change");
+    });
+
+    iban.change(function () {
+        if (!iban.isDisabled()){
+            let value = iban.get();
+            for (const component of components){
+                component.setDisabled(value !== "")
+            }
+
+            scomponiIban();
+        }
+    });
+
+    for (const component of components){
+        component.change(function () {
+            let i = input(this);
+            if (!i.isDisabled()) {
+                iban.setDisabled(i.get() !== "")
+
+                componiIban();
+            }
+        });
+    }
+
+    function scomponiIban() {
+        $.ajax({
+            url: globals.rootdir + '/actions.php',
+            data: {
+                id_module: globals.id_module,
+                op: "decompose",
+                iban: iban.get(),
+            },
+            type: 'GET',
+            dataType: "json",
+            success: function (response) {
+                compilaCampi(response);
+            },
+            error: function() {
+                toastr["error"]("<?php echo tr('Formato IBAN non valido'); ?>");
+            }
+        });
+    }
+
+    function componiIban() {
+        // Controllo su campi con valore impostato
+        let continua = false;
+        for (const component of components){
+            continua |= !([undefined, null, ""].includes(component.get()));
+        }
+
+        if (!continua){
+            return;
+        }
+
+        $.ajax({
+            url: globals.rootdir + '/actions.php',
+            data: {
+                id_module: globals.id_module,
+                op: "compose",
+                branch_code: branch_code.get(),
+                bank_code: bank_code.get(),
+                account_number: account_number.get(),
+                check_digits: check_digits.get(),
+                national_check_digits: national_check_digits.get(),
+                id_nazione: id_nazione.get(),
+            },
+            type: 'GET',
+            dataType: "json",
+            success: function (response) {
+                compilaCampi(response);
+            },
+            error: function() {
+                toastr["error"]("<?php echo tr('Formato IBAN non valido'); ?>");
+            }
+        });
+    }
+
+    function compilaCampi(values) {
+        for([key, value] of Object.entries(values)) {
+            if (typeof value === 'object' && value !== null) {
+                input(key).getElement().selectSetNew(value.id, value.text, value);
+            } else {
+                input(key).set(value);
+            }
+        }
+    }
+</script>

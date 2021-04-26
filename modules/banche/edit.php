@@ -19,8 +19,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-$help_codice_bic = tr('Il codice BIC (o SWIFT) è composto da 8 a 11 caratteri (lettere e numeri) ed è suddiviso in:').'<br><br><ul><li>'.tr('AAAA - codice bancario').'</li><li>'.tr('BB - codice ISO della nazione').'</li><li>'.tr('CC - codice città presso la quale è ubicata la banca').'</li><li>'.tr('DD - codice della filiale (opzionale)').'</li></ul>';
-
 ?><form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
@@ -60,6 +58,10 @@ $help_codice_bic = tr('Il codice BIC (o SWIFT) è composto da 8 a 11 caratteri (
 				<div class="col-md-8">
 					{[ "type": "text", "label": "<?php echo tr('IBAN'); ?>", "name": "iban", "required": "1", "class": "alphanumeric-mask", "maxlength": 32, "value": "$iban$" ]}
                 </div>
+
+                <div class="col-md-4">
+                    {[ "type": "text", "label": "<?php echo tr('BIC'); ?>", "name": "bic", "required": "1", "class": "alphanumeric-mask", "minlength": 8, "maxlength": 11, "value": "$bic$", "help": "<?php echo $help_codice_bic; ?>" ]}
+                </div>
             </div>
 
             <div class="row">
@@ -94,7 +96,7 @@ $help_codice_bic = tr('Il codice BIC (o SWIFT) è composto da 8 a 11 caratteri (
             </div>
 
             <div class="col-md-4">
-                {[ "type": "text", "label": "<?php echo tr('Codice banca nazionale (ABI e BIC)'); ?>", "name": "branch_code", "class": "alphanumeric-mask", "value": "$branch_code$", "help": "<?php echo $help_codice_bic; ?>" ]}
+                {[ "type": "text", "label": "<?php echo tr('Codice banca nazionale (ABI)'); ?>", "name": "branch_code", "class": "alphanumeric-mask", "value": "$branch_code$" ]}
             </div>
 
             <div class="col-md-4">
@@ -108,11 +110,11 @@ $help_codice_bic = tr('Il codice BIC (o SWIFT) è composto da 8 a 11 caratteri (
             </div>
 
             <div class="col-md-4">
-                {[ "type": "text", "label": "<?php echo tr('Cifre di controllo'); ?>", "name": "check_digits", "class": "alphanumeric-mask", "value": "$check_digits$" ]}
+                {[ "type": "text", "label": "<?php echo tr('Cifre di controllo (CIN europeo)'); ?>", "name": "check_digits", "class": "alphanumeric-mask", "value": "$check_digits$" ]}
             </div>
 
             <div class="col-md-4">
-                {[ "type": "text", "label": "<?php echo tr('Cifre di verifica nazionale (CIN)'); ?>", "name": "national_check_digits", "class": "alphanumeric-mask", "value": "$national_check_digits$" ]}
+                {[ "type": "text", "label": "<?php echo tr('Cifre di verifica nazionale (CIN nazionale)'); ?>", "name": "national_check_digits", "class": "alphanumeric-mask", "value": "$national_check_digits$" ]}
             </div>
         </div>
     </div>

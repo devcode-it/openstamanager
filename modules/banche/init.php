@@ -28,3 +28,5 @@ if (isset($id_record)) {
         $record = $banca->toArray();
     }
 }
+
+$help_codice_bic = tr('Il codice BIC (o SWIFT) è composto da 8 a 11 caratteri (lettere e numeri) ed è suddiviso in:').'<br><br><ul><li>'.tr('AAAA - codice bancario').'</li><li>'.tr('BB - codice ISO della nazione').'</li><li>'.tr('CC - codice città presso la quale è ubicata la banca').'</li><li>'.tr('DD - codice della filiale (opzionale)').'</li></ul>';

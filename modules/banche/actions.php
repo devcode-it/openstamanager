@@ -30,10 +30,8 @@ switch (filter('op')) {
         $anagrafica = Anagrafica::find($id_anagrafica);
 
         $nome = filter('nome');
-        $iban = filter('iban');
-        $bic = filter('bic');
 
-        $banca = Banca::build($anagrafica, $nome, $iban);
+        $banca = Banca::build($anagrafica, $nome, filter('iban'), filter('bic'));
         $id_record = $banca->id;
 
         if (isAjaxRequest()) {
@@ -54,6 +52,7 @@ switch (filter('op')) {
 
         $banca->nome = post('nome');
         $banca->iban = post('iban');
+        $banca->bic = post('bic');
 
         $banca->note = post('note');
         $banca->id_pianodeiconti3 = post('id_pianodeiconti3');

@@ -37,8 +37,12 @@ echo '
 	</div>
 
 	<div class="row">
-		<div class="col-md-12">
+		<div class="col-md-8">
 			{[ "type": "text", "label": "'.tr('IBAN').'", "name": "iban", "required": "1", "class": "alphanumeric-mask", "maxlength": 32, "value": "$iban$" ]}
+		</div>
+
+		<div class="col-md-4">
+			{[ "type": "text", "label": "'.tr('BIC').'", "name": "bic", "required": "1", "class": "alphanumeric-mask", "minlength": 8, "maxlength": 11, "value": "$bic$", "help": "'.$help_codice_bic.'" ]}
 		</div>
 	</div>
 

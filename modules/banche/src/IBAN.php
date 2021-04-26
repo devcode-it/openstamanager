@@ -6,13 +6,13 @@ use UnexpectedValueException;
 
 /**
  * Format:
- * b = National bank code (Codice ABI e BIC)
+ * b = National bank code (Codice ABI)
  * s = Bank/branch code (sort code, or CAB – Codice d'Avviamento Bancario)
  * c = Account number
  * d = Account type
  * i = National identification number
- * k = IBAN check digits
- * x = National check digits (CIN).
+ * k = IBAN check digits (CIN europeo)
+ * x = National check digits (CIN nazionale).
  */
 class IBAN
 {

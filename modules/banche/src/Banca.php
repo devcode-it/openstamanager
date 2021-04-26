@@ -37,10 +37,11 @@ class Banca extends Model
      *
      * @param string $nome
      * @param string $iban
+     * @param string $bic
      *
      * @return self
      */
-    public static function build(Anagrafica $anagrafica, $nome, $iban)
+    public static function build(Anagrafica $anagrafica, $nome, $iban, $bic)
     {
         $model = new static();
 
@@ -48,6 +49,7 @@ class Banca extends Model
         $model->anagrafica()->associate($anagrafica);
         $model->nome = $nome;
         $model->iban = $iban;
+        $model->bic = $bic;
 
         // Salvataggio delle informazioni
         $model->save();

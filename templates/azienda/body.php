@@ -17,13 +17,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Modules\Interventi\Intervento;
 use Modules\Banche\Banca;
-use Carbon\Carbon;
 
 include_once __DIR__.'/../../core.php';
 
-$banca = Banca::where('id_anagrafica',$anagrafica->idanagrafica)
+$banca = Banca::where('id_anagrafica', $anagrafica->idanagrafica)
     ->where('predefined', 1)
     ->first();
 

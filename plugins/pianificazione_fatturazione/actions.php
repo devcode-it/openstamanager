@@ -165,7 +165,7 @@ switch ($operazione) {
         // Creazione fattura
         if (empty($id_documento)) {
             $fattura = Fattura::build($contratto->anagrafica, $tipo, $data, $id_segment);
-        }else{
+        } else {
             $fattura = Fattura::find($id_documento);
         }
         $fattura->note = post('note');

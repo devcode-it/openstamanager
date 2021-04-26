@@ -236,7 +236,7 @@ switch (post('op')) {
                 } catch (InvalidArgumentException $e) {
                 }
             }
-    
+
         flash()->info(tr('Interventi eliminati!'));
         break;
 }
@@ -246,7 +246,6 @@ if (App::debug()) {
         'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina selezionati').'</span> <span class="label label-danger" >beta</span>',
     ];
 }
-
 
     $operations['export-bulk'] = [
         'text' => '<span><i class="fa fa-file-archive-o"></i> '.tr('Esporta stampe'),

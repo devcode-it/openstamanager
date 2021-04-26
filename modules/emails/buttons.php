@@ -19,7 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-echo'
+echo '
 <button type="button" class="btn btn-primary" onclick="if( confirm(\'Duplicare questo template?\') ){ $(\'#copia-template\').submit(); }"> <i class="fa fa-copy"></i> '.tr('Duplica template').'</button>';
 
 // Duplica template
@@ -28,4 +28,3 @@ echo '
     <input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="op" value="copy">
 </form>';
-

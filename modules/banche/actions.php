@@ -33,7 +33,7 @@ switch (filter('op')) {
         $iban = filter('iban');
         $bic = filter('bic');
 
-        $banca = Banca::build($anagrafica, $nome, $iban, $bic);
+        $banca = Banca::build($anagrafica, $nome, $iban);
         $id_record = $banca->id;
 
         if (isAjaxRequest()) {

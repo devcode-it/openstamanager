@@ -72,7 +72,7 @@ class DefaultHandler implements HandlerInterface
     {
         // Generazione del codice HTML
         return '
-        <input |attr| autocomplete='.setting("Autocompletamento form").'>';
+        <input |attr| autocomplete='.setting('Autocompletamento form').'>';
     }
 
     /**

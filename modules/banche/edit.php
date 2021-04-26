@@ -19,6 +19,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+$help_codice_bic = tr('Il codice BIC (o SWIFT) è composto da 8 a 11 caratteri (lettere e numeri) ed è suddiviso in:').'<br><br><ul><li>'.tr('AAAA - codice bancario').'</li><li>'.tr('BB - codice ISO della nazione').'</li><li>'.tr('CC - codice città presso la quale è ubicata la banca').'</li><li>'.tr('DD - codice della filiale (opzionale)').'</li></ul>';
+
 ?><form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
@@ -92,7 +94,7 @@ include_once __DIR__.'/../../core.php';
             </div>
 
             <div class="col-md-4">
-                {[ "type": "text", "label": "<?php echo tr('Codice banca nazionale (ABI e BIC)'); ?>", "name": "branch_code", "class": "alphanumeric-mask", "value": "$branch_code$" ]}
+                {[ "type": "text", "label": "<?php echo tr('Codice banca nazionale (ABI e BIC)'); ?>", "name": "branch_code", "class": "alphanumeric-mask", "value": "$branch_code$", "help": "<?php echo $help_codice_bic; ?>" ]}
             </div>
 
             <div class="col-md-4">
@@ -110,7 +112,7 @@ include_once __DIR__.'/../../core.php';
             </div>
 
             <div class="col-md-4">
-                {[ "type": "text", "label": "<?php echo tr('Cifre di verifica nazionale'); ?>", "name": "national_check_digits", "class": "alphanumeric-mask", "value": "$national_check_digits$" ]}
+                {[ "type": "text", "label": "<?php echo tr('Cifre di verifica nazionale (CIN)'); ?>", "name": "national_check_digits", "class": "alphanumeric-mask", "value": "$national_check_digits$" ]}
             </div>
         </div>
     </div>

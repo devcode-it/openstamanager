@@ -551,7 +551,6 @@ class Fattura extends Document
         $this->attributes['iva_rivalsainps'] = $this->iva_rivalsa_inps;
         $this->attributes['rivalsainps'] = $this->rivalsa_inps;
         $this->attributes['ritenutaacconto'] = $this->ritenuta_acconto;
-        
 
         // Generazione numero fattura se non presente (Bozza -> Emessa)
         if ((($stato_precedente->descrizione == 'Bozza' && $this->stato['descrizione'] == 'Emessa') or (!$is_fiscale)) && empty($this->numero_esterno)) {

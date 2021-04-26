@@ -82,7 +82,7 @@ echo '
     <b>'.tr('Destinatari').' <span class="tip" title="'.tr('Email delle sedi, dei referenti o agente collegato all\'anagrafica.').'"><i class="fa fa-question-circle-o"></i></span></b>
     <div class="row" id="lista-destinatari">
         <div class="col-md-12">
-            {[ "type": "email", "name": "destinatari[0]", "value": "'.$email.'", "icon-before": "choice|email", "extra": "onkeyup=\'aggiungi_destinatario();\'", "class": "destinatari", "required": 1 ]}
+            {[ "type": "email", "name": "destinatari[0]", "value": "'.$email.'", "icon-before": "choice|email", "extra": "onkeyup=\'aggiungiDestinatario();\'", "class": "destinatari", "required": 1 ]}
         </div>
     </div>
 
@@ -136,7 +136,7 @@ echo '
     <!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-            <button type="button" class="btn btn-primary" onclick="send()"><i class="fa fa-envelope"></i> '.tr('Invia').'</button>
+            <button type="button" class="btn btn-primary" onclick="inviaEmail()"><i class="fa fa-envelope"></i> '.tr('Invia').'</button>
 		</div>
 	</div>
 </form>';
@@ -144,7 +144,7 @@ echo '
 echo '
 <div class="hidden" id="template-destinatario">
     <div class="col-md-12">
-        {[ "type": "email", "name": "destinatari[-id-]", "icon-before": "choice|email", "extra": "onkeyup=\'aggiungi_destinatario();\'", "class": "destinatari" ]}
+        {[ "type": "email", "name": "destinatari[-id-]", "icon-before": "choice|email", "extra": "onkeyup=\'aggiungiDestinatario();\'", "class": "destinatari" ]}
     </div>
 </div>';
 
@@ -161,18 +161,10 @@ echo '
             emails = JSON.parse(response);
 
             $(".destinatari").each(function(){
-                $(this).autocomplete({
-                    source: emails,
-                    minLength: 0,
-                    close: function(){
-                        aggiungi_destinatario();
-                    }
-                }).focus(function() {
-                    $(this).autocomplete("search", $(this).val());
-                });
+                addAutoComplete(this);
             });
 
-            aggiungi_destinatario();
+            aggiungiDestinatario();
         });';
         }
 
@@ -180,13 +172,25 @@ echo '
 
     });
 
-    function send() {
+    function inviaEmail() {
         if($("#email-form").parsley().validate() && confirm("Inviare e-mail?")) {
             $("#email-form").submit();
         }
     }
 
-    function aggiungi_destinatario() {
+    function addAutoComplete(input){
+        $(input).autocomplete({
+            source: emails,
+            minLength: 0,
+            close: function() {
+                aggiungiDestinatario();
+            },
+        }).focus(function() {
+            $(this).autocomplete("search", $(this).val());
+        });
+    }
+
+    function aggiungiDestinatario() {
         var last = $("#lista-destinatari input").last();
 
         if (last.val()) {
@@ -195,7 +199,7 @@ echo '
             aggiungiContenuto("#lista-destinatari", "#template-destinatario", {"-id-": $("#lista-destinatari > div").length});
 
             $(".destinatari").each(function(){
-                $(this).autocomplete({source: emails});
+                addAutoComplete(this);
             });
 
             restart_inputs();

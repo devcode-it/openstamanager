@@ -34,7 +34,7 @@ include_once __DIR__.'/../../core.php';
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "text", "label": "Data", "name": "data", "required": 1, "class": "datepicker text-center", "value": "", "extra": "" ]}
+			{[ "type": "text", "label": "Data", "name": "data", "class": "datepicker text-center", "value": "", "extra": "" ]}
 		</div>
 	</div>
 

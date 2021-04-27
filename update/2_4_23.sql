@@ -181,3 +181,6 @@ ALTER TABLE `co_banche` ADD `branch_code` VARCHAR(20) NULL,
     ADD `national_check_digits` VARCHAR(20) NULL,
     ADD `id_nazione` INT(11) NULL,
     ADD FOREIGN KEY (`id_nazione`) REFERENCES `an_nazioni`(`id`);
+
+-- Fix gestione documentale
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `do_documenti`\r\nINNER JOIN `do_categorie` ON `do_categorie`.`id` = `do_documenti`.`idcategoria`\r\nWHERE 1=1 AND `deleted_at` IS NULL AND\r\n (SELECT `idgruppo` FROM `zz_users` WHERE `zz_users`.`id` = |id_utente|) IN (SELECT `id_gruppo` FROM `do_permessi` WHERE `id_categoria` = `do_documenti`.`idcategoria`)\r\n |date_period(`data`)| OR data IS NULL\r\nHAVING 2=2' WHERE `zz_modules`.`name` = 'Gestione documentale'; 

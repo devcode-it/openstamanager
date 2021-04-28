@@ -24,7 +24,7 @@ switch (post('op')) {
         $dbo->insert('do_documenti', [
             'idcategoria' => post('idcategoria'),
             'nome' => post('nome'),
-            'data' => post('data'),
+            'data' => post('data') ?: null,
         ]);
         $id_record = $dbo->lastInsertedID();
 
@@ -36,7 +36,7 @@ switch (post('op')) {
         $dbo->update('do_documenti', [
             'idcategoria' => post('idcategoria'),
             'nome' => post('nome'),
-            'data' => post('data'),
+            'data' => post('data') ?: null,
         ], ['id' => $id_record]);
 
         flash()->info(tr('Informazioni salvate correttamente!'));

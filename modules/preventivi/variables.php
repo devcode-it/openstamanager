@@ -22,7 +22,7 @@ $r = $dbo->fetchOne('SELECT *,
     IF( (an_referenti.email IS NOT NULL AND an_referenti.email!=""), an_referenti.email, an_anagrafiche.email) AS email
 FROM co_preventivi INNER JOIN an_anagrafiche ON co_preventivi.idanagrafica=an_anagrafiche.idanagrafica LEFT OUTER JOIN an_referenti ON an_referenti.id=co_preventivi.idreferente WHERE co_preventivi.id='.prepare($id_record));
 
-$revisione = $dbo->fetchNum('SELECT * FROM co_preventivi WHERE master_revision = (SELECT master_revision FROM co_preventivi WHERE id = '.prepare($id_record).') AND id < '.prepare($id_record)) + 1;
+$revisione = $dbo->fetchNum('SELECT * FROM co_preventivi WHERE master_revision = (SELECT master_revision FROM co_preventivi WHERE id = '.prepare($id_record).') AND id < '.prepare($id_record));
 
 // Variabili da sostituire
 return [

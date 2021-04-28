@@ -318,7 +318,10 @@ elseif (post('op') == 'send-email') {
 
 // Inclusione di eventuale plugin personalizzato
 if (!empty($structure['script'])) {
-    include $structure->getEditFile();
+    $path = $structure->getEditFile();
+    if (!empty($path)) {
+        include $path;
+    }
 
     $database->commitTransaction();
 

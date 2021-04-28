@@ -26,7 +26,7 @@ $imponibile = abs($documento->imponibile);
 $sconto = $documento->sconto;
 $totale_imponibile = abs($documento->totale_imponibile);
 $totale_iva = abs($documento->iva);
-$sconto_finale = $documento->getScontoFinale();
+$sconto_finale = abs($documento->getScontoFinale());
 $rivalsa = floatval($record['rivalsainps']);
 $totale = abs($documento->totale) - $rivalsa;
 

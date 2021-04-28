@@ -1,7 +1,7 @@
 <?php
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
- * Copyright (C) DevCode s.r.l.
+ * Copyright (C) DevCode s.n.c.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,20 +61,18 @@ switch (post('op')) {
             $preventivo->idporto = post('idporto');
             $preventivo->tempi_consegna = post('tempi_consegna');
             $preventivo->numero = post('numero');
-            $preventivo->condizioni_fornitura = post('condizioni_fornitura');
 
             // Informazioni sulle date del documento
-            $preventivo->data_bozza = post('data_bozza') ?: null;
-            $preventivo->data_rifiuto = post('data_rifiuto') ?: null;
+            $preventivo->data_bozza = post('data_bozza');
+            $preventivo->data_rifiuto = post('data_rifiuto');
 
             // Dati relativi alla validità del documento
             $preventivo->validita = post('validita');
             $preventivo->tipo_validita = post('tipo_validita');
-            $preventivo->data_accettazione = post('data_accettazione') ?: null;
-            $preventivo->data_conclusione = post('data_conclusione') ?: null;
+            $preventivo->data_accettazione = post('data_accettazione');
+            $preventivo->data_conclusione = post('data_conclusione');
 
             $preventivo->esclusioni = post('esclusioni');
-            $preventivo->garanzia = post('garanzia');
             $preventivo->descrizione = post('descrizione');
             $preventivo->id_documento_fe = post('id_documento_fe');
             $preventivo->num_item = post('num_item');
@@ -326,6 +324,7 @@ switch (post('op')) {
 
         $new->default_revision = 1;
         $new->numero_revision = $new->ultima_revisione + 1;
+        $new->descrizione_revision = post('descrizione');
         $new->save();
 
         $id_record = $new->id;
@@ -347,7 +346,7 @@ switch (post('op')) {
         $order = explode(',', post('order', true));
 
         foreach ($order as $i => $id_riga) {
-            $dbo->query('UPDATE `co_righe_preventivi` SET `order` = '.prepare($i + 1).' WHERE id='.prepare($id_riga));
+            $dbo->query('UPDATE `co_righe_preventivi` SET `order` = '.prepare($i).' WHERE id='.prepare($id_riga));
         }
 
         break;

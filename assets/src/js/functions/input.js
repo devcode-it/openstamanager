@@ -136,7 +136,7 @@ Input.prototype.getElement = function () {
 /**
  * Gestisce l'abilitazione e la disibilitazione dell'input sulla base del valore indicato.
  *
- * @param {bool} value
+ * @param {boolean} value
  * @returns {Input}
  */
 Input.prototype.setDisabled = function (value) {
@@ -213,6 +213,15 @@ Input.prototype.enable = function () {
     }
 
     return this;
+}
+
+/**
+ * Controlla se l'input è disabilitato.
+ *
+ * @returns {boolean}
+ */
+Input.prototype.isDisabled = function () {
+    return this.element.hasClass("disabled")
 }
 
 /**

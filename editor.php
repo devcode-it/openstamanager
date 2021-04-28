@@ -273,7 +273,10 @@ if (empty($record) || !$has_access) {
 
                     <div id="module-edit">';
 
-    include $structure->getEditFile();
+    $path = $structure->getEditFile();
+    if (!empty($path)) {
+        include $path;
+    }
 
     echo '
                     </div>

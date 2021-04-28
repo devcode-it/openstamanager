@@ -1,7 +1,7 @@
 <?php
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
- * Copyright (C) DevCode s.r.l.
+ * Copyright (C) DevCode s.n.c.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,16 +17,28 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Modules\Banche\Banca;
-
 include_once __DIR__.'/../../core.php';
 
-if (isset($id_record)) {
-    $banca = Banca::find($id_record);
+use Modules\Preventivi\Preventivo;
 
-    if (!empty($banca)) {
-        $record = $banca->toArray();
-    }
-}
+$revisione = Preventivo::find($id_record)->ultima_revisione;
+?>
 
-$help_codice_bic = tr('Il codice BIC (o SWIFT) è composto da 8 a 11 caratteri (lettere e numeri) ed è suddiviso in:').'<br><br><ul><li>'.tr('AAAA - codice bancario').'</li><li>'.tr('BB - codice ISO della nazione').'</li><li>'.tr('CC - codice città presso la quale è ubicata la banca').'</li><li>'.tr('DD - codice della filiale (opzionale)').'</li></ul>';
+<form action="" method="post">
+	<input type="hidden" name="backto" value="record-edit">
+	<input type="hidden" name="op" value="add_revision">
+
+    <div class="row">
+        <div class="col-md-12">
+            {[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "value": "Revisione n. <?php echo $revisione+1; ?>" ]}
+        </div>
+    </div>
+
+    <div class="row">
+		<div class="col-md-12 text-right">
+			<button type="submit" class="btn btn-primary">
+			    <i class="fa fa-plus"></i><?php echo tr(' Aggiungi'); ?>
+            </button>
+		</div>
+	</div>
+</form>

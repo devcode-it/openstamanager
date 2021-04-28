@@ -81,14 +81,14 @@ echo '
     </div>';
 
 //gestione replace
-$descrizione = get_var("Descrizione fattura pianificata");
+$descrizione = get_var('Descrizione fattura pianificata');
 $modules = MODULES::get('Contratti')['id'];
 $variables = include Modules::filepath($modules, 'variables.php');
 foreach ($variables as $variable => $value) {
-    $descrizione = str_replace("{".$variable."}", $value, $descrizione);
+    $descrizione = str_replace('{'.$variable.'}', $value, $descrizione);
 }
-$descrizione = str_replace("{rata}", $numero_rata, $descrizione);
-$descrizione = str_replace("{zona}", $zona, $descrizione);
+$descrizione = str_replace('{rata}', $numero_rata, $descrizione);
+$descrizione = str_replace('{zona}', $zona, $descrizione);
 
 echo '
     <div class="row">

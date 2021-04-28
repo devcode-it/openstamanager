@@ -644,7 +644,7 @@ class Validator
                     '…' => '...',
                 ]);
 
-                $output = preg_replace('/[[:^print:]]/', ' ', $output);
+                $output = preg_replace('/[^ -~òèéàùì°]+/', ' ', $output);
             }
 
             // Riduzione delle dimensioni

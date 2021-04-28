@@ -31,7 +31,10 @@ if (!empty($id_plugin)) {
 if (!empty($id_plugin)) {
     // Inclusione di eventuale plugin personalizzato
     if (!empty($structure['script'])) {
-        include $structure->getEditFile();
+        $path = $structure->getEditFile();
+        if (!empty($path)) {
+            include $path;
+        }
 
         return;
     }
@@ -234,7 +237,10 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
  * Inclusione modulo personalizzato
  */
 elseif ($type == 'custom') {
-    include $structure->getEditFile();
+    $path = $structure->getEditFile();
+    if (!empty($path)) {
+        include $path;
+    }
 }
 
 // Caricamento file aggiuntivo su elenco record

@@ -168,3 +168,19 @@ INSERT INTO `zz_group_module` (`idgruppo`, `idmodule`, `name`, `clause`, `positi
 
 -- Fix widget crediti clienti
 UPDATE `zz_widgets` SET `query` = 'SELECT \n CONCAT_WS(\' \', REPLACE(REPLACE(REPLACE(FORMAT((\n SELECT SUM(da_pagare-pagato)), 2), \',\', \'#\'), \'.\', \',\'),\'#\', \'.\'), \'&euro;\') AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=\'entrata\' AND co_documenti.idstatodocumento!=1 |segment| AND 1=1' WHERE `zz_widgets`.`name` = 'Crediti da clienti';
+
+-- Aggiunto campo descrizione revisione in preventivi
+ALTER TABLE `co_preventivi` ADD `descrizione_revision` VARCHAR(255) NOT NULL AFTER `default_revision`;
+UPDATE `zz_prints` SET `filename` = 'Preventivo num. {numero} del {data} rev {revisione}' WHERE `zz_prints`.`name` = 'Preventivo';
+
+-- Aggiunti campi per componenti IBAN
+ALTER TABLE `co_banche` ADD `branch_code` VARCHAR(20) NULL,
+    ADD `bank_code` VARCHAR(20) NULL,
+    ADD `account_number` VARCHAR(20) NULL,
+    ADD `check_digits` VARCHAR(20) NULL,
+    ADD `national_check_digits` VARCHAR(20) NULL,
+    ADD `id_nazione` INT(11) NULL,
+    ADD FOREIGN KEY (`id_nazione`) REFERENCES `an_nazioni`(`id`);
+
+-- Fix gestione documentale
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `do_documenti`\r\nINNER JOIN `do_categorie` ON `do_categorie`.`id` = `do_documenti`.`idcategoria`\r\nWHERE 1=1 AND `deleted_at` IS NULL AND\r\n (SELECT `idgruppo` FROM `zz_users` WHERE `zz_users`.`id` = |id_utente|) IN (SELECT `id_gruppo` FROM `do_permessi` WHERE `id_categoria` = `do_documenti`.`idcategoria`)\r\n |date_period(`data`)| OR data IS NULL\r\nHAVING 2=2' WHERE `zz_modules`.`name` = 'Gestione documentale'; 

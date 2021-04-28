@@ -23,6 +23,7 @@ use Modules\DDT\DDT;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Stato;
 use Modules\Fatture\Tipo;
+use Modules\Articoli\Articolo as ArticoloOriginale;
 
 if ($module['name'] == 'Ddt di vendita') {
     $dir = 'entrata';
@@ -100,9 +101,11 @@ switch (post('op')) {
                         $qta = $riga->qta_rimanente;
 
                         if ($qta > 0) {
-                            //Fix per idconto righe fattura
-                            $riga->idconto = $fattura->idconto;
                             $copia = $riga->copiaIn($fattura, $qta);
+
+                            //Fix per idconto righe fattura
+                            $articolo = ArticoloOriginale::find($copia->idarticolo);
+                            $copia->id_conto = ($articolo->idconto_vendita ? $articolo->idconto_vendita : $idconto);
 
                             // Aggiornamento seriali dalla riga dell'ordine
                             if ($copia->isArticolo()) {

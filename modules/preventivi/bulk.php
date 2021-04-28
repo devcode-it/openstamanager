@@ -49,6 +49,7 @@ switch (post('op')) {
 
         $data = date('Y-m-d');
         $id_segment = post('id_segment');
+        $idconto = setting('Conto predefinito fatture di vendita');
 
         // Lettura righe selezionate
         foreach ($id_records as $id) {

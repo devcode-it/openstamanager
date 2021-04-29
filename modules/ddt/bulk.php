@@ -40,6 +40,7 @@ if (!isset($_SESSION['module_'.$id_fatture]['id_segment'])) {
     $_SESSION['module_'.$id_fatture]['id_segment'] = isset($segments[0]['id']) ? $segments[0]['id'] : null;
 }
 $id_segment = $_SESSION['module_'.$id_fatture]['id_segment'];
+$idconto = setting('Conto predefinito fatture di vendita');
 
 switch (post('op')) {
     case 'crea_fattura':

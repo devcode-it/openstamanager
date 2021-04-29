@@ -69,8 +69,10 @@ if (!empty($record['is_fiscale'])) {
     // Aggiunta insoluto
     $registrazione_insoluto = 0;
     $pagamento = $fattura->pagamento;
-    if ($pagamento->isRiBa() && $dir == 'entrata' && in_array($record['stato'], ['Emessa', 'Parzialmente pagato', 'Pagato'])) {
-        $registrazione_insoluto = 1;
+    if(!empty($pagamento)){
+        if ($pagamento->isRiBa() && $dir == 'entrata' && in_array($record['stato'], ['Emessa', 'Parzialmente pagato', 'Pagato'])) {
+            $registrazione_insoluto = 1;
+        }
     }
 
     if (floatval($totale_scadenze['da_pagare']) == 0) {

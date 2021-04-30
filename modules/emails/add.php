@@ -42,7 +42,7 @@ include_once __DIR__.'/../../core.php';
 
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "select", "label": "<?php echo tr('Indirizzo email'); ?>", "name": "smtp", "value": "$id_account$", "ajax-source": "smtp" ]}
+            {[ "type": "select", "label": "<?php echo tr('Indirizzo email'); ?>", "name": "smtp", "value": "$id_account$", "required": 1, "ajax-source": "smtp" ]}
         </div>
     </div>
 

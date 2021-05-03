@@ -124,7 +124,7 @@ $("#barcode").off("keyup").on("keyup", function (event) {
             let prezzo_unitario = (direzione === "uscita") ? result.prezzo_acquisto : result.prezzo_vendita;
 
             let info_prezzi;
-            if(direzione == "entrata") {
+            if(direzione === "entrata") {
                 info_prezzi = "Acquisto: " + result.prezzo_acquisto + " &euro;";
             }else{
                 info_prezzi = "Vendita: " + result.prezzo_vendita + " &euro;";
@@ -150,11 +150,17 @@ $("#barcode").off("keyup").on("keyup", function (event) {
 
             // Gestione dinamica dei prezzi
             let tr = $("#riga_barcode_" + result.id);
-            ottieniPrezziArticolo(result.id, tr).then(function() {
+            ottieniDettagliArticolo(result.id, tr).then(function() {
                 if ($(tr).find("input[name^=prezzo_unitario]").val().toEnglish() === 0){
                     aggiornaPrezzoArticolo(tr);
                 } else {
                     verificaPrezzoArticolo(tr);
+                }
+
+                if ($(tr).find("input[name^=sconto]").val().toEnglish() === 0){
+                    aggiornaScontoArticolo();
+                } else {
+                    verificaScontoArticolo();
                 }
             });
         }
@@ -195,38 +201,56 @@ function rimuoviRigaBarcode(id) {
 /**
 * Restituisce il prezzo registrato per una specifica quantità dell\'articolo.
 */
-function getPrezzoPerQuantita(qta, tr) {
-    const data = $(tr).find("input[name^=prezzo_unitario]").data("prezzi");
-    if (!data) return 0;
+function getDettaglioPerQuantita(qta, tr) {
+    const data = $(tr).data("dettagli");
+    if (!data) return null;
 
-    let prezzo_predefinito = null;
-    let prezzo_selezionato = null;
-    for (const prezzo of data) {
-        if (prezzo.minimo == null && prezzo.massimo == null) {
-            prezzo_predefinito = prezzo.prezzo_unitario;
+    let dettaglio_predefinito = null;
+    let dettaglio_selezionato = null;
+    for (const dettaglio of data) {
+        if (dettaglio.minimo == null && dettaglio.massimo == null) {
+            dettaglio_predefinito = dettaglio;
             continue;
         }
 
-        if (qta >= prezzo.minimo && qta <= prezzo.massimo) {
-            prezzo_selezionato = prezzo.prezzo_unitario;
+        if (qta >= dettaglio.minimo && qta <= dettaglio.massimo) {
+            dettaglio_selezionato = dettaglio;
         }
     }
 
-    if (prezzo_selezionato == null) {
-        prezzo_selezionato = prezzo_predefinito;
+    if (dettaglio_selezionato == null) {
+        dettaglio_selezionato = dettaglio_predefinito;
     }
 
-    return parseFloat(prezzo_selezionato);
+    return dettaglio_selezionato;
 }
 
 /**
-* Funzione per registrare localmente i prezzi definiti per l\'articolo in relazione ad una specifica anagrafica.
+* Restituisce il prezzo registrato per una specifica quantità dell\'articolo.
 */
-function ottieniPrezziArticolo(id_articolo, tr) {
-    return $.get(globals.rootdir + "/ajax_complete.php?module=Articoli&op=prezzi_articolo&id_anagrafica='.$options['idanagrafica'].'&id_articolo=" + id_articolo + "&dir=" + direzione, function(response) {
+function getPrezzoPerQuantita(qta, tr) {
+    const dettaglio = getDettaglioPerQuantita(qta, tr);
+
+    return dettaglio ? parseFloat(dettaglio.prezzo_unitario) : 0;
+}
+
+/**
+* Restituisce lo sconto registrato per una specifica quantità dell\'articolo.
+*/
+function getScontoPerQuantita(qta, tr) {
+    const dettaglio = getDettaglioPerQuantita(qta, tr);
+
+    return dettaglio ? parseFloat(dettaglio.sconto_percentuale) : 0;
+}
+
+/**
+* Funzione per registrare localmente i dettagli definiti per l\'articolo in relazione ad una specifica anagrafica.
+*/
+function ottieniDettagliArticolo(id_articolo, tr) {
+    return $.get(globals.rootdir + "/ajax_complete.php?module=Articoli&op=dettagli_articolo&id_anagrafica='.$options['idanagrafica'].'&id_articolo=" + id_articolo + "&dir=" + direzione, function(response) {
         const data = JSON.parse(response);
 
-        $(tr).find("input[name^=prezzo_unitario]").data("prezzi", data);
+        $(tr).data("dettagli", data);
     });
 }
 
@@ -250,7 +274,7 @@ function verificaPrezzoArticolo(tr) {
     }
 
     div.css("padding-top", "5px");
-    div.html(`<small class="label label-warning" >'.tr('Prezzo registrato').': ` + prezzo_previsto.toLocale() + globals.currency + `<button type="button" class="btn btn-xs btn-info pull-right" onclick="aggiornaPrezzoArticolo(this)"><i class="fa fa-refresh"></i> '.tr('Aggiorna').'</button></small>`);
+    div.html(`<small class="label label-warning" >'.tr('Prezzo suggerito').': ` + prezzo_previsto.toLocale() + globals.currency + `<button type="button" class="btn btn-xs btn-info pull-right" onclick="aggiornaPrezzoArticolo(this)"><i class="fa fa-refresh"></i> '.tr('Aggiorna').'</button></small>`);
 }
 
 /**
@@ -262,8 +286,50 @@ function aggiornaPrezzoArticolo(button) {
     let prezzo_previsto = getPrezzoPerQuantita(qta, tr);
 
     tr.find("input[name^=prezzo_unitario]").val(prezzo_previsto).trigger("change");
+
+    // Aggiornamento automatico di guadagno e margine
+    if (direzione === "entrata") {
+        aggiorna_guadagno();
+    }
 }
 
+/**
+* Funzione per verificare se lo sconto unitario corrisponde a quello registrato per l\'articolo, e proporre in automatico una correzione.
+*/
+function verificaScontoArticolo(tr) {
+    let qta = $(tr).find("input[name^=qta]").val().toEnglish();
+    let sconto_previsto = getScontoPerQuantita(qta, tr);
+
+    let sconto_input = $(tr).find("input[name^=sconto]");
+    let sconto = sconto_input.val().toEnglish();
+
+    let div = sconto_input.parent().next();
+    if (sconto_previsto === 0 || sconto_previsto === sconto || $(tr).find("input[name^=tipo_sconto]").val() === "UNT") {
+        div.css("padding-top", "0");
+        div.html("");
+
+        return;
+    }
+
+    div.css("padding-top", "5px");
+    div.html(`<small class="label label-warning" >'.tr('Sconto suggerito').': ` + sconto_previsto.toLocale()  + `%<button type="button" class="btn btn-xs btn-info pull-right" onclick="aggiornaScontoArticolo(this)"><i class="fa fa-refresh"></i> '.tr('Aggiorna').'</button></small>`);
+}
+
+/**
+* Funzione per aggiornare lo sconto unitario sulla base dei valori automatici.
+*/
+function aggiornaScontoArticolo(button) {
+    let tr = $(button).closest("tr");
+    let qta = tr.find("input[name^=qta]").val().toEnglish();
+    let sconto_previsto = getScontoPerQuantita(qta, tr);
+
+    $("#sconto").val(sconto_previsto).trigger("change");
+
+    // Aggiornamento automatico di guadagno e margine
+    if (direzione === "entrata") {
+        aggiorna_guadagno();
+    }
+}
 </script>
 
 <table class="hidden">

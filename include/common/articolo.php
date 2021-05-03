@@ -176,7 +176,7 @@ $("#idarticolo").on("change", function() {
 
     $("#um").selectSetNew($data.um, $data.um);
     // Aggiornamento automatico di guadagno e margine
-    
+
 });
 
 $(document).on("change", "input[name^=qta], input[name^=prezzo_unitario], input[name^=sconto]", function() {
@@ -295,10 +295,9 @@ function aggiornaPrezzoArticolo() {
     $("#prezzo_unitario").val(prezzo_previsto).trigger("change");
 
     // Aggiornamento automatico di guadagno e margine
-    if (direzione == "entrata") {
+    if (direzione === "entrata") {
         aggiorna_guadagno();
     }
-
 }
 
 /**
@@ -311,10 +310,9 @@ function aggiornaScontoArticolo() {
     $("#sconto").val(sconto_previsto).trigger("change");
 
     // Aggiornamento automatico di guadagno e margine
-    if (direzione == "entrata") {
+    if (direzione === "entrata") {
         aggiorna_guadagno();
     }
-
 }
 
 /**

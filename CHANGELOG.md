@@ -39,6 +39,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Nuovo filtro in attività per mostrare al tecnico solo le attività assegnate. 
  - Nuovo filtro in contratti per mostrare al cliente solo i contratti collegati. 
  - Nuovo pulsante **Duplica Template** per copiare un template già esistente.
+ - Aggiunto controllo nelle fatture di vendita per segnalare l'eventuale fatturazione di un'attività con la data di una sessione futura rispetto alla data della fattura.
 
 ## 2.4.22
 

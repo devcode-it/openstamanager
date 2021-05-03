@@ -20,6 +20,8 @@
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Fatture\Gestori\Bollo;
 use Modules\Iva\Aliquota;
+use Modules\Interventi\Intervento;
+use Carbon\Carbon;
 
 include_once __DIR__.'/../../core.php';
 
@@ -88,6 +90,26 @@ if ($dir == 'entrata') {
             '_NUM_' => '"'.$numero_previsto.'"',
         ]).'.</b>
 </div>';
+    }
+
+    // Verifica la data dell'intervento rispetto alla data della fattura
+    $righe_interventi = $fattura->getRighe()->where('idintervento', '!=', NULL);
+    if (!empty($righe_interventi)) {
+        foreach($righe_interventi as $riga_intervento){
+            $intervento = Intervento::find($riga_intervento->idintervento);
+
+            if((new Carbon($intervento->fine))->diffInDays(new Carbon($fattura->data), false) < 0){
+                $fatturazione_futura = true; 
+                break;
+            }
+        }
+
+        if($fatturazione_futura){
+            echo '
+<div class="alert alert-warning">
+    <i class="fa fa-warning"></i> '.tr("Stai fatturando un'attività futura rispetto alla data di fatturazione.").'</b>
+</div>';
+        }
     }
 }
 ?>

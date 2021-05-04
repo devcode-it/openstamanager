@@ -27,7 +27,8 @@ $module_anagrafiche = Modules::get('Anagrafiche');
 
 // Verifica aggiuntive sulla sequenzialità dei numeri
 $numero_previsto = verifica_numero_intervento($intervento);
-if (!empty($numero_previsto)) {
+
+if (!empty($numero_previsto) && intval((setting('Verifica numero intervento'))) ) {
     echo '
 <div class="alert alert-warning">
     <i class="fa fa-warning"></i> '.tr("E' assente una attività di numero _NUM_ in data precedente o corrispondente a _DATE_: si potrebbero verificare dei problemi con la numerazione corrente delle attività", [

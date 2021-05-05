@@ -250,7 +250,7 @@ switch (post('op')) {
                     }
 
                     foreach ($riepiloghi as $riepilogo) {
-                        $totale_documento = sum([$totale_documento, $riepilogo['ImponibileImporto'], $riepilogo['Imposta']]);
+                        $totale_documento = sum([$totale_documento, $riepilogo['ImponibileImporto'], $riepilogo['Imposta'], -$riepilogo['Arrotondamento']]);
                     }
 
                     $totale_documento = abs($totale_documento);

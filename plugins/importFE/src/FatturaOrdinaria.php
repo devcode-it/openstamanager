@@ -271,13 +271,13 @@ class FatturaOrdinaria extends FatturaElettronica
         $diff = $totale_documento ? abs($totale_documento) - abs($fattura->totale) : abs($totale_righe) - abs($fattura->totale_imponibile);
         if (!empty($diff)) {
             // Rimozione dell'IVA calcolata automaticamente dal gestionale
-            $iva_arrotondamento = database()->fetchOne('SELECT * FROM co_iva WHERE id='.prepare($iva[0]));
+            $iva_arrotondamento = database()->fetchOne('SELECT * FROM co_iva WHERE percentuale=0 AND deleted_at IS NULL');
             $diff = $diff * 100 / (100 + $iva_arrotondamento['percentuale']);
 
             $obj = Riga::build($fattura);
 
             $obj->descrizione = tr('Arrotondamento calcolato in automatico');
-            $obj->id_iva = $iva[0];
+            $obj->id_iva = $iva_arrotondamento['id'];
             $obj->idconto = $conto[0];
             $obj->prezzo_unitario = round($diff, 4);
             $obj->qta = 1;

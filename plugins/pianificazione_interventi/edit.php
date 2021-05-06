@@ -103,11 +103,6 @@ if (!$elenco_promemoria->isEmpty()) {
             $title = 'Elimina promemoria...';
         }
 
-        // data_conclusione contratto
-        if (date('Y', strtotime($contratto['data_conclusione'])) < 1971) {
-            $contratto['data_conclusione'] = '';
-        }
-
         // Informazioni sugli impianti
         $info_impianti = '';
         if (!empty($promemoria['idimpianti'])) {

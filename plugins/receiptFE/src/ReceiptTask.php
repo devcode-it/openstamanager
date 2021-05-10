@@ -21,6 +21,11 @@ namespace Plugins\ReceiptFE;
 
 use Tasks\Manager;
 
+/**
+ * Task dedicata all'importazione di tutte le ricevute individuate dal sistema automatico di gestione Fatture Elettroniche.
+ *
+ * @see MissingReceiptTask Gestione ricevute non individuate per malfunzionamenti.
+ */
 class ReceiptTask extends Manager
 {
     public function execute()

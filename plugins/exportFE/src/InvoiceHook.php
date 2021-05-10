@@ -22,6 +22,9 @@ namespace Plugins\ExportFE;
 use Hooks\Manager;
 use Modules\Fatture\Fattura;
 
+/**
+ * Hook dedicato all'invio automatico delle Fatture Elettroniche inserite in coda di invio tramite azioni di gruppo.
+ */
 class InvoiceHook extends Manager
 {
     public function isSingleton()

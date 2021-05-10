@@ -23,7 +23,7 @@ use API\Services;
 use Models\Cache;
 
 /**
- * Classe per l'interazione con API esterne.
+ * Classe per la gestione delle API esterne per la gestione e l'importazione delle ricevute per le Fatture Elettroniche.
  *
  * @since 2.4.3
  */

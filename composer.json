@@ -116,7 +116,7 @@
     },
     "config": {
         "sort-packages": true,
-        "optimize-autoloader": true,
+        "optimize-autoloader": false,
         "apcu-autoloader": true,
         "prefer-stable": true,
         "platform": {

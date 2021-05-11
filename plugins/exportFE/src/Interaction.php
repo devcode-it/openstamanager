@@ -24,7 +24,7 @@ use Modules\Fatture\Fattura;
 use UnexpectedValueException;
 
 /**
- * Classe per l'interazione con API esterne.
+ * Classe per la gestione delle API esterne per l'invio delle Fatture Elettroniche e la ricerca di ricevute collegate.
  *
  * @since 2.4.3
  */

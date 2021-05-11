@@ -28,7 +28,7 @@ use Util\XML;
 use Util\Zip;
 
 /**
- * Classe per la gestione della fatturazione elettronica in XML.
+ * Classe per la gestione delle ricevute collegate alle Fatture elettroniche in formato XML.
  *
  * @since 2.4.2
  */

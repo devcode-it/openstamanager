@@ -25,6 +25,11 @@ use Modules;
 use Modules\Fatture\Fattura;
 use Plugins;
 
+/**
+ * Hook specializzato per il conteggio e la segnalazione di Fatture senza ricevute oppure con ricevuta in stato di errore.
+ *
+ * @see MissingReceiptTask,ReceiptTask,ReceiptHook Per procedura automatica di importazione
+ */
 class NotificheRicevuteHook extends Manager
 {
     public function response()

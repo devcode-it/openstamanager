@@ -188,3 +188,6 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `do_documenti`\r\nINNE
 -- Messaggio Verifica numero intervento
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES
 (NULL, 'Verifica numero intervento', '1', 'boolean', 1, 'Attività', 1, 'Visualizza il messaggio che verifica la continuità dei numeri per le attività');
+
+-- Allineamento colore icona EC02
+UPDATE `fe_stati_documento` SET `icon` = 'fa fa-times text-danger' WHERE `fe_stati_documento`.`codice` = 'EC02'; 

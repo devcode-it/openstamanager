@@ -23,6 +23,11 @@ use Hooks\Manager;
 use Models\Cache;
 use Modules;
 
+/**
+ * Hook per l'importazione e il conteggio delle ricevute rilevate come da importare.
+ *
+ * @see MissingReceiptTask,ReceiptTask Per procedura più strutturata di importazione
+ */
 class ReceiptHook extends Manager
 {
     public function isSingleton()

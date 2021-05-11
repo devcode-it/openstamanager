@@ -138,9 +138,9 @@ if (!empty($options['create_document'])) {
     }
 
     // Selezione fornitore per Ordine fornitore
-    if ($options['op'] == 'add_ordine_cliente') {
-        $tipo_anagrafica = tr('Fornitore');
-        $ajax = 'fornitori';
+    if ($options['op'] == 'add_ordine_cliente' || $options['op'] == 'add_intervento' || $options['op'] == 'add_ordine_fornitore') {
+        $tipo_anagrafica = $options['op'] == 'add_intervento' ? tr('Cliente') : tr('Fornitore');
+        $ajax = $options['op'] == 'add_intervento' ? 'clienti' : 'fornitori';
 
         echo '
             <div class="col-md-6">

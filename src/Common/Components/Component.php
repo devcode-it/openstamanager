@@ -181,12 +181,13 @@ abstract class Component extends Model
     /**
      * Copia l'oggetto (articolo, riga, descrizione) nel corrispettivo per il documento indicato.
      *
-     * @param Document   $document Documento di destinazione
-     * @param float|null $qta      Quantità da riportare
+     * @param Document      $document           Documento di destinazione
+     * @param float|null    $qta                Quantità da riportare
+     * @param boolean       $evadi_qta_parent   Definisce se evadere la quantità di provenienza 
      *
      * @return self
      */
-    public function copiaIn(Document $document, $qta = null)
+    public function copiaIn(Document $document, $qta = null, $evadi_qta_parent = true)
     {
         // Individuazione classe di destinazione
         $class = get_class($document);
@@ -216,8 +217,7 @@ abstract class Component extends Model
         unset($attributes[$model->getDocumentID()]);
 
         // Riferimento di origine per l'evasione automatica della riga
-        $is_evasione = true;
-        if ($is_evasione) {
+        if ($evadi_qta_parent) {
             // Mantenimento dell'origine della riga precedente
             $model->original_id = $attributes['original_id'];
             $model->original_type = $attributes['original_type'];

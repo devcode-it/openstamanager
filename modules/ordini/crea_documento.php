@@ -38,7 +38,7 @@ if (get('documento') == 'fattura') {
     $tipo_documento_finale = Ordine::class;
 } elseif (get('documento') == 'intervento') {
     $final_module = 'Interventi';
-    $op = 'add_documento';
+    $op = $module->name == 'Ordini cliente' ? 'add_documento' : 'add_intervento';
     $tipo_documento_finale = Intervento::class;
 } else {
     $final_module = $module['name'] == 'Ordini cliente' ? 'Ddt di vendita' : 'Ddt di acquisto';

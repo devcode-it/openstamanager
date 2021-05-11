@@ -394,6 +394,7 @@ switch (post('op')) {
         break;
 
     // Aggiunta di un documento in ordine
+    case 'add_intervento':
     case 'add_documento':
         $class = post('class');
         $id_documento = post('id_documento');
@@ -413,8 +414,10 @@ switch (post('op')) {
         if (post('create_document') == 'on') {
             $stato = Stato::find(post('id_stato_intervento'));
             $tipo = TipoSessione::find(post('id_tipo_intervento'));
+            
+            $anagrafica = post('idanagrafica') ? Anagrafica::find(post('idanagrafica')) : $documento->anagrafica;
 
-            $intervento = Intervento::build($documento->anagrafica, $tipo, $stato, post('data'));
+            $intervento = Intervento::build($anagrafica, $tipo, $stato, post('data'));
             $intervento->idsede_destinazione = $id_sede;
 
             $intervento->id_documento_fe = $documento->id_documento_fe;

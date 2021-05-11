@@ -27,6 +27,7 @@ use Modules\Ordini\Components\Riga;
 use Modules\Ordini\Components\Sconto;
 use Modules\Ordini\Ordine;
 use Modules\Ordini\Tipo;
+use Modules\Preventivi\Preventivo;
 
 $module = Modules::get($id_module);
 
@@ -478,6 +479,68 @@ switch (post('op')) {
 
                 $copia->save();
             }
+        }
+
+        // Modifica finale dello stato
+        if (post('create_document') == 'on') {
+            $ordine->idstatoordine = post('id_stato');
+            $ordine->save();
+        }
+        
+        ricalcola_costiagg_ordine($id_record);
+
+        flash()->info(tr('Ordine _NUM_ aggiunto!', [
+            '_NUM_' => $ordine->numero,
+        ]));
+
+        break;
+
+    // Aggiunta di un ordine fornitore da un preventivo
+    case 'add_ordine_fornitore':
+        $preventivo = Preventivo::find(post('id_documento'));
+
+        // Creazione dell' ordine al volo
+        if (post('create_document') == 'on') {
+            $anagrafica = Anagrafica::find(post('idanagrafica'));
+            $tipo = Tipo::where('dir', $dir)->first();
+
+            $ordine = Ordine::build($anagrafica, $tipo, post('data'));
+            $ordine->save();
+
+            $id_record = $ordine->id;
+        }
+
+        $righe = $preventivo->getRighe();
+        foreach ($righe as $riga) {
+            if (post('evadere')[$riga->id] == 'on' and !empty(post('qta_da_evadere')[$riga->id])) {
+                $qta = post('qta_da_evadere')[$riga->id];
+
+                $copia = $riga->copiaIn($ordine, $qta, false);
+                $copia->save();
+
+                // Ripristino dei valori di default per campi potenzialmente impostati
+                $copia->original_id = null;
+                $copia->original_type = null;
+                $copia->qta = $qta;
+                $copia->qta_evasa = 0;
+                $copia->costo_unitario = 0;
+                $copia->setSconto(0, 'EUR');
+
+                // Impostazione al prezzo di acquisto per Articoli
+                if ($copia->isArticolo()) {
+                    $articolo = $copia->articolo;
+                    $fornitore = $articolo->dettaglioFornitore($anagrafica->id); // Informazioni del fornitore
+                    $copia->setPrezzoUnitario($fornitore ? $fornitore->prezzo_acquisto : $articolo->prezzo_acquisto, $copia->aliquota->id);
+                }
+
+                $copia->save();
+            }
+        }
+
+        // Modifica finale dello stato
+        if (post('create_document') == 'on') {
+            $ordine->idstatoordine = post('id_stato');
+            $ordine->save();
         }
 
         ricalcola_costiagg_ordine($id_record);

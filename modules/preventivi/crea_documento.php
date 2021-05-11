@@ -31,9 +31,13 @@ if (get('documento') == 'fattura') {
     $final_module = 'Fatture di vendita';
     $op = 'add_documento';
     $tipo_documento_finale = Fattura::class;
-} elseif (get('documento') == 'ordine') {
+} elseif (get('documento') == 'ordine_cliente') {
     $final_module = 'Ordini cliente';
     $op = 'add_preventivo';
+    $tipo_documento_finale = Ordine::class;
+} elseif (get('documento') == 'ordine_fornitore') {
+    $final_module = 'Ordini fornitore';
+    $op = 'add_ordine_fornitore';
     $tipo_documento_finale = Ordine::class;
 } elseif (get('documento') == 'ddt') {
     $final_module = 'Ddt di vendita';
@@ -50,7 +54,6 @@ $options = [
     'type' => 'preventivo',
     'module' => $final_module,
     'button' => tr('Aggiungi'),
-    'dir' => 'entrata',
     'create_document' => true,
     'documento' => $documento,
     'tipo_documento_finale' => $tipo_documento_finale,

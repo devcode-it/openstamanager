@@ -55,14 +55,39 @@ switch (filter('op')) {
             LEFT OUTER JOIN in_statiintervento ON in_interventi.idstatointervento = in_statiintervento.idstatointervento
         WHERE
             (
-                (in_interventi_tecnici.orario_inizio >= '.prepare($start).' AND in_interventi_tecnici.orario_fine <= '.prepare($end).')
-            OR (in_interventi_tecnici.orario_inizio >= '.prepare($start).' AND in_interventi_tecnici.orario_inizio <= '.prepare($end).')
-            OR (in_interventi_tecnici.orario_fine >= '.prepare($start).' AND in_interventi_tecnici.orario_fine <= '.prepare($end).')
-        ) AND idtecnico IN('.implode(',', $tecnici).')
-        AND in_interventi.idstatointervento IN('.implode(',', $stati).')
-        AND in_interventi_tecnici.idtipointervento IN('.implode(',', $tipi).')
-        '.Modules::getAdditionalsQuery('Interventi').'
-    HAVING idzona IN ('.implode(',', $zone).')';
+                (
+                    in_interventi_tecnici.orario_inizio >= '.prepare($start).'
+                    AND
+                    in_interventi_tecnici.orario_fine <= '.prepare($end).'
+                )
+                OR
+                (
+                    in_interventi_tecnici.orario_inizio >= '.prepare($start).'
+                    AND
+                    in_interventi_tecnici.orario_inizio <= '.prepare($end).'
+                )
+                OR
+                (
+                    in_interventi_tecnici.orario_inizio <= '.prepare($start).'
+                    AND
+                    in_interventi_tecnici.orario_fine >= '.prepare($end).'
+                )
+                OR
+                (
+                    in_interventi_tecnici.orario_fine >= '.prepare($start).'
+                    AND
+                    in_interventi_tecnici.orario_fine <= '.prepare($end).'
+                )
+            )
+            AND
+            idtecnico IN('.implode(',', $tecnici).')
+            AND
+            in_interventi.idstatointervento IN('.implode(',', $stati).')
+            AND
+            in_interventi_tecnici.idtipointervento IN('.implode(',', $tipi).')
+            '.Modules::getAdditionalsQuery('Interventi').'
+        HAVING
+            idzona IN ('.implode(',', $zone).')';
         $sessioni = $dbo->fetchArray($query);
 
         $results = [];

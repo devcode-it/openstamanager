@@ -18,7 +18,7 @@
  */
 
 $r = $dbo->fetchOne('SELECT *,
-    an_anagrafiche.ragione_sociale,
+    an_anagrafiche.ragione_sociale, co_preventivi.idanagrafica,
     IF( (an_referenti.email IS NOT NULL AND an_referenti.email!=""), an_referenti.email, an_anagrafiche.email) AS email
 FROM co_preventivi INNER JOIN an_anagrafiche ON co_preventivi.idanagrafica=an_anagrafiche.idanagrafica LEFT OUTER JOIN an_referenti ON an_referenti.id=co_preventivi.idreferente WHERE co_preventivi.id='.prepare($id_record));
 

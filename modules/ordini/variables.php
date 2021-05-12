@@ -17,7 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-$r = $dbo->fetchOne('SELECT *,
+$r = $dbo->fetchOne('SELECT *, or_ordini.idanagrafica,
     IF( (an_referenti.email IS NOT NULL AND an_referenti.email!=""), an_referenti.email, an_anagrafiche.email) AS email
 FROM or_ordini INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica=or_ordini.idanagrafica LEFT OUTER JOIN an_referenti ON an_referenti.id=or_ordini.idreferente WHERE or_ordini.id='.prepare($id_record));
 

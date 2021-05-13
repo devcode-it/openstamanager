@@ -1068,3 +1068,7 @@ div.tip {
 .fc-sat, .fc-sun {
     background-color: rgba(255, 99, 71, 0.6) !important;
 }
+
+.login-box .img-responsive{
+    padding: 18px 0px 4px;
+}

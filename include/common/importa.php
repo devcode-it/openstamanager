@@ -294,7 +294,7 @@ foreach ($righe as $i => $riga) {
 
     echo '
                     <td style="vertical-align:middle" class="text-right">
-                        <span id="subtotale_'.$i.'">'.($riga->isSconto() ? moneyFormat(-$riga->sconto) : moneyFormat($riga->imponibile)).'</span>
+                        <span id="subtotale_'.$i.'">'.($riga->isSconto() ? moneyFormat(-$riga->sconto) : moneyFormat($riga->totale_imponibile)).'</span>
                     </td>';
 
     // Seriali

@@ -28,8 +28,7 @@ include_once App::filepath('include|custom|', 'top.php');
 echo '
 <div class="box">
     <div class="box-header">
-        <img src="'.$paths['img'].'/logo.png" class="logo-image" alt="'.tr('OSM Logo').'">
-        <h3 class="box-title">'.tr('OpenSTAManager').'</h3>
+        <img src="'.$paths['img'].'/logo.png" class="pull-left img-responsive" width="300" alt="'.tr('OSM Logo').'">
         <div class="pull-right">
             <i class="fa fa-info"></i> '.tr('Informazioni').'
         </div>
@@ -43,7 +42,7 @@ if (file_exists(base_dir().'/assistenza.php')) {
     echo '
         <div class="row">
             <div class="col-md-8">
-                <p>'.tr('<b>OpenSTAManager</b> è un <b>software libero</b> ideato e sviluppato da <a href="mailto:info@openstamanager.com">Fabio Lovato</a>').'.</p>
+                <p>'.tr('<b>OpenSTAManager</b> è un <b>software libero</b> mantenuto da <a href="https://www.devcode.it" target="_blank">Devcode Srl</a>').'.</p>
 
                 <p>'.tr('Il nome significa "Gestore di STA (<b>Servizio Tecnico Assistenza</b>) aperto" ed è stato creato per gestire e archiviare l\'assistenza tecnica fornita ai propri clienti').'.</p>
             </div>
@@ -124,17 +123,6 @@ if (file_exists(base_dir().'/assistenza.php')) {
 
                     </div>
                 </div>
-
-                <div class="box box-default">
-                    <div class="box-header">
-                        <h3 class="box-title text-uppercase"><i class="fa fa-download"></i> '.tr('Aggiornamenti e nuove versioni').'</h3>
-                    </div>
-
-                    <div class="box-body">
-                        <p>'.tr("Tutti gli aggiornamenti e le nuove versioni sono disponibili all'indirizzo").':</p>
-                        <a href="https://www.openstamanager.com/downloads/" target="_blank"><i class="fa fa-external-link"></i> www.openstamanager.com/downloads/</a>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -142,17 +130,12 @@ if (file_exists(base_dir().'/assistenza.php')) {
             <div class="col-md-6">
                 <div class="box box-warning">
                     <div class="box-header">
-                        <h3 class="box-title text-uppercase"><i class="fa fa-money"></i> '.tr('Supporta il progetto').'</h3>
+                        <h3 class="box-title text-uppercase"><i class="fa fa-download"></i> '.tr('Aggiornamenti e nuove versioni').'</h3>
                     </div>
 
                     <div class="box-body">
-                        <p>'.tr('OpenSTAManager è software libero ed è nato e cresciuto con il lavoro volontario di alcuni programmatori').'.</p>
-
-                        <p>'.tr('La filosofia del software libero fa sì che il progetto sia <b>accessibile a tutti</b> e nel nostro caso specifico lo è, anche dal punto di vista della gratuità').'.</p>
-
-                        <p>'.tr('Offriamo supporto a pagamento professionale a chi fosse interessato, ma a chi non interessa il supporto a pagamento e sta comunque utilizzando il software chiediamo una donazione per il lavoro svolto finora e per la possibilità di continuare questo progetto con lo stesso spirito con cui è nato').'. '.tr('Le donazioni non ci rendono ricchi, ma sono un <b>grande simbolo di apprezzamento</b>').'.</p>
-
-                        <a href="https://sourceforge.net/donate/index.php?group_id=236538" class="btn btn-lg btn-success btn-block" target="_blank"><i class="fa fa-usd"></i> '.tr('Supporta questo progetto').'</a>
+                        <p>'.tr("Tutti gli aggiornamenti e le nuove versioni sono disponibili all'indirizzo").':</p>
+                        <a href="https://www.openstamanager.com/downloads/" target="_blank"><i class="fa fa-external-link"></i> www.openstamanager.com/downloads/</a>
                     </div>
                 </div>
             </div>

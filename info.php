@@ -152,7 +152,7 @@ if (file_exists(base_dir().'/assistenza.php')) {
 
                         <p>'.tr("E' disponibile anche un <b>servizio cloud</b> su cui poter installare OpenSTAManager, in modo da non doverti più preoccupare di backup e gestione dei dati").'.</p>
 
-                        <p><a href="https://www.openstamanager.com/per-le-aziende/" class="btn btn-lg btn-info btn-block" target="_blank"><i class="fa fa-thumbs-up"></i> '.tr('Ottieni supporto professionale').'</a></p>
+                        <p><a href="https://www.openstamanager.com/per-le-aziende/" class="btn btn-lg btn-info btn-block" target="_blank"><i class="fa fa-briefcase"></i> '.tr('Ottieni supporto professionale').'</a></p>
                     </div>
                 </div>
             </div>

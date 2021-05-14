@@ -191,3 +191,6 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 
 -- Allineamento colore icona EC02
 UPDATE `fe_stati_documento` SET `icon` = 'fa fa-times text-danger' WHERE `fe_stati_documento`.`codice` = 'EC02'; 
+
+-- Impostata aliquota iva per dichiarazone d'intento se non presente
+UPDATE `zz_settings` SET `valore` = IF(`valore` ='', (SELECT `id` FROM `co_iva` WHERE `descrizione`='Non imp. art. 8 c.1 lett. c DPR 633/1972'), `valore`) WHERE `nome`="Iva per lettere d'intento";

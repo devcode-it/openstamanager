@@ -195,7 +195,7 @@ include_once __DIR__.'/../../core.php';
                         </div>
 
                         <div class="col-md-4">
-                            {[ "type": "number", "label": "<?php echo tr('Q.tà multipla'); ?>", "name": "qta_multipla", "value": "$qta_multipla$", "decimals": "qta", "help": "<?php echo tr('Quantità multipla di scorta da tenere a magazzino. Se lasciato a 0, la quantità proposta da riordinare verrà gestita con la semplice differenza fra quantità richiesta e quantità disponibile.'); ?>" ]}
+                            {[ "type": "number", "label": "<?php echo tr('Q.tà multipla'); ?>", "name": "qta_multipla", "value": "$qta_multipla$", "decimals": "qta", "help": "<?php echo tr('Quantità multipla di scorta da tenere a magazzino.'); ?>" ]}
                         </div>
                     </div>
                 </div>

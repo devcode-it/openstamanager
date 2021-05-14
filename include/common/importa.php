@@ -34,7 +34,12 @@ $final_module = Modules::get($name);
 // IVA predefinita
 $id_iva = $id_iva ?: setting('Iva predefinita');
 
-$righe = $documento->getRighe()->where('qta_rimanente', '>', 0);
+if($final_module['name']=='Interventi'){
+    $righe = $documento->getRighe()->where('qta_rimanente', '>', 0)->where('is_descrizione', '=', 0);
+}else{
+    $righe = $documento->getRighe()->where('qta_rimanente', '>', 0);
+}
+
 if (empty($righe)) {
     echo '
 <p>'.tr('Non ci sono elementi da evadere').'...</p>';

@@ -43,6 +43,8 @@ jobs:
       with:
         repository: seleniumbase/SeleniumBase
         path: selenium-base
+        
+    - name: Configure SeleniumBase
       run: |
         cd selenium-base
         python setup.py install

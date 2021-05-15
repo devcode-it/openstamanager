@@ -33,9 +33,6 @@ jobs:
         
     steps:
     - uses: actions/checkout@v2
-    
-    - name: Startup Apache2
-      run: sudo service apache2 start
    
     - name: Shutdown Ubuntu MySQL (SUDO)
       run: sudo service mysql stop # Shutdown the Default MySQL, "sudo" is necessary, please not remove it

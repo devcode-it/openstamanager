@@ -114,10 +114,10 @@ jobs:
 
     - name: Init test configuration
       run: |
-        curl http://localhost/openstamanager
+        curl http://localhost/openstamanager/
         sudo cat /var/log/apache2/access.log
         cd python-tests/
-        echo -ne "{\n    \"login\": {\n        \"password\": \"admin\",\n        \"username\": \"admin\"\n    },\n    \"database\": {\n        \"host\": \"localhost\",\n        \"user\": \"root\",\n        \"pass\": \"root\",\n        \"name\": \"osm\"\n    },\n    \"server\": \"http://localhost/openstamanager\",\n    \"browser\": \"firefox\",\n    \"headless\": true\n}" > config.json
+        echo -ne "{\n    \"login\": {\n        \"password\": \"admin\",\n        \"username\": \"admin\"\n    },\n    \"database\": {\n        \"host\": \"localhost\",\n        \"user\": \"root\",\n        \"pass\": \"root\",\n        \"name\": \"osm\"\n    },\n    \"server\": \"http://localhost/openstamanager/\",\n    \"browser\": \"firefox\",\n    \"headless\": true\n}" > config.json
         pytest Init.py
     
     - name: Execute tests

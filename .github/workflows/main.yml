@@ -27,7 +27,7 @@ jobs:
         mysql database: 'osm'
         mysql root password: ''
         mysql user: 'root'
-        mysql password: ''
+        mysql password: 'root'
 
     - name: Set up PHP
       uses: shivammathur/setup-php@v2

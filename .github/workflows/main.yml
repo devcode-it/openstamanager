@@ -25,7 +25,7 @@ jobs:
 #        extensions: zip, mbstring, pdo_mysql, mysql, dom, xsl, openssl, intl, curl, soap, gd
  
     - name: Setup PHP
-      run: sudo apt -y install php php-cli php-fpm php-json php-common php-mysql php-zip php-gd php-mbstring php-curl php-xml php-pear php-bcmath libapache2-mod-php
+      run: sudo apt -y install php php-cli php-fpm php-json php-common php-mysql php-zip php-gd php-mbstring php-curl php-xml php-pear php-bcmath libapache2-mod-php7.4
     
     - name: Enabling PHP module
       run: sudo a2enmod php 

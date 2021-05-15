@@ -38,8 +38,9 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.php-version }}
-
+        
     - name: Install SeleniumBase
+      uses: actions/checkout@v2
       with:
         repository: seleniumbase/SeleniumBase
         path: selenium-base

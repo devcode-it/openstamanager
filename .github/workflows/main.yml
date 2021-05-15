@@ -115,7 +115,7 @@ jobs:
     - name: Init test configuration
       run: |
         cd python-tests/
-        echo -ne "{\n    \"login\": {\n        \"password\": \"admin\",\n        \"username\": \"admin\"\n    },\n    \"server\": \"http://localhost/openstamanager\",\n    \"browser\": \"firefox\",\n    \"headless\": false\n}" > config.json
+        echo -ne "{\n    \"login\": {\n        \"password\": \"admin\",\n        \"username\": \"admin\"\n    },\n    \"server\": \"http://localhost/openstamanager\",\n    \"browser\": \"firefox\",\n    \"headless\": true\n}" > config.json
         pytest Init.py
     
     - name: Execute tests

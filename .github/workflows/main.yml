@@ -26,6 +26,7 @@ jobs:
  
     - name: Setup PHP
       run: |
+        sudo apt-get update && sudo apt-get -y upgrade
         sudo apt -y install php php-json php-common php-mysql php-zip php-gd php-mbstring php-curl php-xml php-xsl php-intl php-soap libapache2-mod-php
     
     - name: Enabling PHP module

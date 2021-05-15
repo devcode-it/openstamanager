@@ -1,0 +1,120 @@
+name: OpenSTAManager CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  tests:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.9]
+        php-version: ['8.0']
+        
+    steps:
+    - uses: actions/checkout@v2
+   
+    - name: Shutdown Ubuntu MySQL (SUDO)
+      run: sudo service mysql stop # Shutdown the Default MySQL, "sudo" is necessary, please not remove it
+
+    - name: Set up MySQL
+      uses: mirromutth/mysql-action@v1.1
+      with:
+        mysql database: 'osm'
+        mysql root password: ''
+        mysql user: 'root'
+        mysql password: ''
+
+    - name: Set up PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.python-version }}
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.php-version }}
+
+    - name: Install SeleniumBase
+      with:
+        repository: seleniumbase/SeleniumBase
+        path: selenium-base
+      run: |
+        cd selenium-base
+        python setup.py install
+
+    - name: Install Chrome and Firefox
+      run: |
+        sudo apt install google-chrome-stable
+        sudo apt-get install firefox
+
+    - name: Check the console scripts interface
+      run: |
+        seleniumbase
+        sbase
+
+    - name: Install chromedriver and geckodriver (Firefox Webdriver)
+      run: |
+        seleniumbase install chromedriver
+        seleniumbase install geckodriver
+
+    - name: Make sure pytest is working
+      run: |
+        echo "def test_1(): pass" > nothing.py
+        pytest nothing.py
+
+    - name: Make sure nosetests is working
+      run: |
+        echo "def test_2(): pass" > nothing2.py
+        nosetests nothing2.py
+    
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v2
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-
+
+    - name: Install Composer dependencies
+      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+    - name: Use NPM and Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+    - name: Install NPM and compile assets
+      run: |
+        yarn install
+        npm run build-OSM
+
+    - name: Directory Permissions
+      run: chmod -R 777 files backup logs
+
+    - name: Check out test repository
+      with:
+        repository: devcode-it/openstamanager-tests
+        path: python-tests
+
+    - name: Install Python dependencies
+      run: |
+        cd python-tests/
+        python -m pip install --upgrade pip
+        python -m pip install pytest
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+    - name: Init test configuration
+      run: |
+        cd python-tests/
+        echo """{\n    "login": {\n        "password": "",\n        "username": ""\n    },\n    "server": "http://localhost/openstamanager",\n    "browser": "chrome",\n    "headless": true\n}""" >| cache/config.json
+        pytest Init.py
+    
+    - name: Execute tests
+      run: |
+        cd python-tests/
+        pytest tests

@@ -86,19 +86,19 @@ jobs:
         yarn install
         npm run build-OSM
 
+
+    - name: Copy OSM to www root
+      run: |
+        sudo cp -R /home/runner/work/openstamanager/openstamanager /var/www/html/
+        sudo chmod -R 0777 /var/www/html/openstamanager
+        sudo rm /var/www/html/openstamanager/.htaccess
+        
     - name: Check out test repository
       uses: actions/checkout@v2
       with:
         repository: devcode-it/openstamanager-tests
         path: python-tests
 
-    - name: Copy OSM to www root
-      run: |
-        sudo cp -R * /var/www/html/
-        sudo rm /var/www/html/index.html
-        sudo chmod -R 0777 /var/www/html/
-        sudo rm /var/www/html/.htaccess
-        
     - name: Install Python dependencies
       run: |
         cd python-tests/

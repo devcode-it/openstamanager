@@ -115,7 +115,7 @@ jobs:
     - name: Init test configuration
       run: |
         cd python-tests/
-        echo """{\n    "login": {\n        "password": "",\n        "username": ""\n    },\n    "server": "http://localhost/openstamanager",\n    "browser": "chrome",\n    "headless": true\n}""" >| cache/config.json
+        echo -ne """{\n    "login": {\n        "password": "admin",\n        "username": "admin"\n    },\n    "server": "http://localhost/openstamanager",\n    "browser": "chrome",\n    "headless": true\n}""" > config.json
         pytest Init.py
     
     - name: Execute tests

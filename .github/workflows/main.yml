@@ -25,7 +25,7 @@ jobs:
       uses: mirromutth/mysql-action@v1.1
       with:
         mysql database: 'osm'
-        mysql root password: ''
+        mysql root password: 'root'
         mysql user: 'root'
         mysql password: 'root'
 

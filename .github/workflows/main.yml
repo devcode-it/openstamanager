@@ -26,11 +26,10 @@ jobs:
  
     - name: Setup PHP
       run: |
-        sudo apt -y remove libapache2-mod-php libapache2-mod-php7.4
-        sudo apt -y install php7.4 php7.4-json php7.4-common php7.4-mysql php7.4-zip php7.4-gd php7.4-mbstring php7.4-curl php7.4-xml php7.4-xsl php7.4-intl php7.4-soap libapache2-mod-php7.4
+        sudo apt -y install php php-json php-common php-mysql php-zip php-gd php-mbstring php-curl php-xml php-xsl php-intl php-soap libapache2-mod-php
     
     - name: Enabling PHP module
-      run: sudo a2enmod php7.4 
+      run: sudo a2enmod php
       
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2

@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         python-version: [3.9]
-        php-version: ['8.0']
+        php-version: ['7.4']
         
     steps:
     - uses: actions/checkout@v2
@@ -22,6 +22,7 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php-version }}
+        extensions: zip, mbstring, pdo_mysql, dom, xsl, openssl, intl, curl, soap, gd
     
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2

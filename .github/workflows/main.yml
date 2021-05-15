@@ -10,22 +10,6 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     
-    container: 
-      image: php:7.4-apache
-      ports: 
-        - 80:80
-      options: --network-alias=testserver
-
-    env:
-      TEST_BASE_URL: http://testserver
-      SELENIUM_HOST: http://selenium:4444/wd/hub
-
-    services:
-      selenium:
-        image: selenium/standalone-chrome
-        ports: 
-          - 4444:4444
-    
     strategy:
       matrix:
         python-version: [3.9]
@@ -33,17 +17,6 @@ jobs:
         
     steps:
     - uses: actions/checkout@v2
-   
-    - name: Shutdown Ubuntu MySQL (SUDO)
-      run: sudo service mysql stop # Shutdown the Default MySQL, "sudo" is necessary, please not remove it
-
-    - name: Set up MySQL
-      uses: mirromutth/mysql-action@v1.1
-      with:
-        mysql database: 'osm'
-        mysql root password: 'root'
-        mysql user: 'root'
-        mysql password: 'root'
 
     - name: Set up PHP ${{ matrix.php-version }}
       uses: shivammathur/setup-php@v2
@@ -130,6 +103,12 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      
+    - name: Restart apache
+      run: sudo service apache2 restart
+      
+    - name: Restart MySQL
+      run: sudo service mysql restart
 
     - name: Init test configuration
       run: |

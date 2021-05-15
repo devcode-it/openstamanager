@@ -329,8 +329,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
     echo '
         <div class="box box-center-large box-warning">
             <div class="box-header with-border text-center">
-                <img src="'.$img.'/logo.png" class="logo-image" alt="'.tr('OSM Logo').'">
-                <h3 class="box-title">'.tr('OpenSTAManager').'</h3>
+                <img src="'.$img.'/logo.png" width="300" alt="'.tr('OSM Logo').'">
             </div>
 
             <div class="box-body" id="smartwizard">

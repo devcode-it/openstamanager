@@ -25,7 +25,10 @@ jobs:
 #        extensions: zip, mbstring, pdo_mysql, mysql, dom, xsl, openssl, intl, curl, soap, gd
  
     - name: Setup PHP
-      run: sudo apt -y install php php-cli php-fpm php-json php-common php-mysql php-zip php-gd php-mbstring php-curl php-xml php-pear php-bcmath
+      run: sudo apt -y install php php-cli php-fpm php-json php-common php-mysql php-zip php-gd php-mbstring php-curl php-xml php-pear php-bcmath libapache2-mod-php
+    
+    - name: Enabling PHP module
+      run: sudo a2enmod php 
       
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2

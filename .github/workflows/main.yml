@@ -9,7 +9,10 @@ on:
 jobs:
   tests:
     runs-on: ubuntu-latest
-      
+    defaults:
+      run:
+        working-directory: /var/www/html/openstamanager
+    
     strategy:
       matrix:
         python-version: [3.9]
@@ -17,6 +20,9 @@ jobs:
         
     steps:
     - uses: actions/checkout@v2
+    
+    - name: Creating working directory
+      run: sudo mkdir /var/www/html/openstamanager
     
     - name: Startup Apache2
       run: sudo service apache2 start
@@ -109,22 +115,21 @@ jobs:
       with:
         repository: devcode-it/openstamanager-tests
         path: python-tests
-        working-directory: /var/www/html/openstamanager
 
     - name: Install Python dependencies
       run: |
-        cd /var/www/html/python-tests/
+        cd python-tests/
         python -m pip install --upgrade pip
         python -m pip install pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
     - name: Init test configuration
       run: |
-        cd /var/www/html/python-tests/
+        cd python-tests/
         echo -ne "{\n    \"login\": {\n        \"password\": \"admin\",\n        \"username\": \"admin\"\n    },\n    \"database\": {\n        \"host\": \"localhost\",\n        \"user\": \"root\",\n        \"pass\": \"root\",\n        \"name\": \"osm\"\n    },\n    \"server\": \"http://localhost/openstamanager\",\n    \"browser\": \"firefox\",\n    \"headless\": true\n}" > config.json
         pytest Init.py
     
     - name: Execute tests
       run: |
-        cd /var/www/html/python-tests/
+        cd python-tests/
         pytest tests

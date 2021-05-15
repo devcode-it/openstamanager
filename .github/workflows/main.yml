@@ -6,11 +6,13 @@ on:
   pull_request:
     branches: [ master ]
 
+defaults:
+  run:
+    working-directory: /var/www/html
+
 jobs:
   tests:
     runs-on: ubuntu-latest
-    env:
-      working-directory: /var/www/html
       
     strategy:
       matrix:

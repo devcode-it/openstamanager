@@ -8,7 +8,24 @@ on:
 
 jobs:
   tests:
+    needs: build
     runs-on: ubuntu-latest
+    
+    container: 
+      image: php:7.4-apache
+      ports: 
+        - 80:80
+      options: --network-alias=testserver
+
+    env:
+      TEST_BASE_URL: http://testserver
+      SELENIUM_HOST: http://selenium:4444/wd/hub
+
+    services:
+      selenium:
+        image: selenium/standalone-chrome
+        ports: 
+          - 4444:4444
     
     strategy:
       matrix:
@@ -105,6 +122,12 @@ jobs:
         repository: devcode-it/openstamanager-tests
         path: python-tests
 
+    - name: Copy OSM to www root
+      run: |
+        sudo cp -R * /var/www/html/
+        sudo rm /var/www/html/index.html
+        sudo chmod -R 0777 /var/www/html/
+        
     - name: Install Python dependencies
       run: |
         cd python-tests/

@@ -26,11 +26,8 @@ jobs:
  
     - name: Setup PHP
       run: |
-        sudo apt-get update
-        sudo apt -y install php7.4 php7.4-json php7.4-mysql php7.4-zip php7.4-gd php7.4-mbstring php7.4-curl php7.4-xml php7.4-xsl php7.4-intl php7.4-soap libapache2-mod-php7.4
-    
-    - name: Enabling PHP module
-      run: sudo a2enmod php7.4
+        sudo sed -i 's,^post_max_size =.*$,post_max_size = 32M,' /etc/php/7.4/apache2/php.ini
+        sudo sed -i 's,^upload_max_filesize =.*$,upload_max_filesize = 32M,' /etc/php/7.4/apache2/php.ini
       
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2

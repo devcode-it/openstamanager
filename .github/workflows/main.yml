@@ -100,6 +100,7 @@ jobs:
       run: chmod -R 777 files backup logs
 
     - name: Check out test repository
+      uses: actions/checkout@v2
       with:
         repository: devcode-it/openstamanager-tests
         path: python-tests

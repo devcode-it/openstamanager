@@ -22,7 +22,7 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php-version }}
-        extensions: zip, mbstring, pdo_mysql, dom, xsl, openssl, intl, curl, soap, gd
+        extensions: zip, mbstring, pdo_mysql, mysql, dom, xsl, openssl, intl, curl, soap, gd
     
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
@@ -97,6 +97,7 @@ jobs:
         sudo cp -R * /var/www/html/
         sudo rm /var/www/html/index.html
         sudo chmod -R 0777 /var/www/html/
+        sudo rm /var/www/html/.htaccess
         
     - name: Install Python dependencies
       run: |

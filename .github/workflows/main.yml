@@ -26,6 +26,7 @@ jobs:
  
     - name: Setup PHP
       run: |
+        sudo find /etc -name php\.ini
         sudo sed -i 's,^post_max_size =.*$,post_max_size = 32M,' /etc/php/7.4/apache2/php.ini
         sudo sed -i 's,^upload_max_filesize =.*$,upload_max_filesize = 32M,' /etc/php/7.4/apache2/php.ini
       

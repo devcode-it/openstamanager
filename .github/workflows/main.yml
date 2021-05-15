@@ -8,8 +8,10 @@ on:
 
 jobs:
   tests:
-
     runs-on: ubuntu-latest
+    env:
+      working-directory: /var/www/html
+      
     strategy:
       matrix:
         python-version: [3.9]

@@ -33,8 +33,8 @@ jobs:
         sudo sed -i 's,^post_max_size =.*$,post_max_size = 32M,' /etc/php/7.4/fpm/php.ini
         sudo sed -i 's,^upload_max_filesize =.*$,upload_max_filesize = 32M,' /etc/php/7.4/fpm/php.ini
         
-        sudo sed -i 's,^post_max_size =.*$,post_max_size = 32M,' /etc/php/7.4/hhvm/php.ini
-        sudo sed -i 's,^upload_max_filesize =.*$,upload_max_filesize = 32M,' /etc/php/7.4/hhvm/php.ini
+        sudo sed -i 's,^post_max_size =.*$,post_max_size = 32M,' /etc/hhvm/php.ini
+        sudo sed -i 's,^upload_max_filesize =.*$,upload_max_filesize = 32M,' /etc/hhvm/php.ini
       
         sudo apt install libapache2-mod-php7.4
       

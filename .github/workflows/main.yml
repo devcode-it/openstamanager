@@ -18,9 +18,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     
-    - name: Move OSM to apache directory
-      run: sudo mv ../openstamanager /var/www/html/openstamanager
-    
     - name: Startup Apache2
       run: sudo service apache2 start
    
@@ -102,6 +99,9 @@ jobs:
         yarn install
         npm run build-OSM
 
+    - name: Move OSM to apache directory
+      run: sudo mv ../openstamanager /var/www/html/openstamanager
+    
     - name: Directory Permissions
       run: chmod -R 777 /var/www/html/openstamanager
 

@@ -29,15 +29,15 @@ jobs:
         mysql user: 'root'
         mysql password: 'root'
 
-    - name: Set up PHP
+    - name: Set up PHP ${{ matrix.php-version }}
       uses: shivammathur/setup-php@v2
       with:
-        php-version: ${{ matrix.python-version }}
+        php-version: ${{ matrix.php-version }}
     
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
-        python-version: ${{ matrix.php-version }}
+        python-version: ${{ matrix.python-version }}
         
     - name: Install SeleniumBase
       uses: actions/checkout@v2

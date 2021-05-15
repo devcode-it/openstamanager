@@ -18,12 +18,15 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Set up PHP ${{ matrix.php-version }}
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: ${{ matrix.php-version }}
-        extensions: zip, mbstring, pdo_mysql, mysql, dom, xsl, openssl, intl, curl, soap, gd
-    
+#    - name: Set up PHP ${{ matrix.php-version }}
+#      uses: shivammathur/setup-php@v2
+#      with:
+#        php-version: ${{ matrix.php-version }}
+#        extensions: zip, mbstring, pdo_mysql, mysql, dom, xsl, openssl, intl, curl, soap, gd
+ 
+    - name: Setup PHP
+      run: sudo apt -y install php php-cli php-fpm php-json php-common php-mysql php-zip php-gd php-mbstring php-curl php-xml php-pear php-bcmath
+      
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:

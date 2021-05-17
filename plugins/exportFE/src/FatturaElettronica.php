@@ -667,6 +667,8 @@ class FatturaElettronica
     {
         $result = [];
 
+        $is_privato_estero = ($anagrafica->nazione->iso2 != 'IT' && $anagrafica->tipo == 'Privato');
+
         // Partita IVA (obbligatoria se presente)
         if (!empty($anagrafica['piva'])) {
             if (!empty($anagrafica->nazione->iso2)) {
@@ -685,6 +687,13 @@ class FatturaElettronica
 
             //Rimuovo eventuali idicazioni relative all'iso2 della nazione, solo se la stringa inizia con quest'ultima.
             $result['CodiceFiscale'] = preg_replace('/^'.preg_quote($anagrafica->nazione->iso2, '/').'/', '', $anagrafica['codice_fiscale']);
+        }
+
+        // Partita IVA: se privato estero non va considerato il codice fiscale ma la partita iva con 9 zeri
+        if ($is_privato_estero) {
+            $result['IdFiscaleIVA']['IdPaese'] = $anagrafica->nazione->iso2;
+            $result['IdFiscaleIVA']['IdCodice'] = '999999999';
+            unset( $result['Anagrafica']['CodiceFiscale'] );
         }
 
         if (!empty($anagrafica['nome']) or !empty($anagrafica['cognome'])) {

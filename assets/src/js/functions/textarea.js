@@ -88,7 +88,7 @@ function initCKEditor(input) {
     // Controllo su istanza già esistente
     let instance = CKEDITOR.instances[name];
     if (instance) {
-        return;
+        instance.destroy();
     }
 
     // Avvio di CKEditor

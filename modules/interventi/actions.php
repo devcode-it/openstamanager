@@ -189,6 +189,10 @@ switch (post('op')) {
         } else {
             $id_record = post('id_intervento');
 
+            $intervento = Intervento::find($id_record);
+            $intervento->richiesta = post('richiesta');
+            $intervento->save();
+
             $idcontratto = $dbo->fetchOne('SELECT idcontratto FROM co_promemoria WHERE idintervento = :id', [
                 ':id' => $id_record,
             ])['idcontratto'];

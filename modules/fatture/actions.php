@@ -297,6 +297,12 @@ switch (post('op')) {
 
             // Azzeramento collegamento della rata contrattuale alla pianificazione
             $dbo->query('UPDATE co_fatturazione_contratti SET iddocumento=0 WHERE iddocumento='.prepare($id_record));
+            
+            // Eliminazione allegati collegati
+            Uploads::deleteLinked([
+                'id_module' => $id_module,
+                'id_record' => $id_record,
+            ]);
 
             flash()->info(tr('Fattura eliminata!'));
         } catch (InvalidArgumentException $e) {

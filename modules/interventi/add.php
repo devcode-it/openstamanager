@@ -332,6 +332,7 @@ if (!empty($id_intervento)) {
        input("idsede_destinazione").disable();
        input("idpreventivo").disable();
        input("idcontratto").disable();
+       input("idordine").disable();
        input("idimpianti").disable();
        input("componenti").disable();
        input("idanagrafica").disable();
@@ -339,7 +340,6 @@ if (!empty($id_intervento)) {
        input("idzona").disable();
        input("idtipointervento").disable();
        input("idstatointervento").disable();
-       input("richiesta").disable();
        input("data_richiesta").disable();
     });
 </script>';

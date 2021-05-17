@@ -132,7 +132,7 @@ if (empty($data)) {
 if (empty($data_fine)) {
     $data_fine = filter('data_fine');
     if (null == $data_fine) {
-        $data_fine = date('Y-m-d');
+        $data_fine = $data;
     }
 }
 $data_fine = $data_fine ?: $data;

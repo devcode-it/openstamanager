@@ -145,7 +145,7 @@ while (true) {
         }
 
         // Esecuzione diretta solo nel caso in cui sia prevista
-        if ($task->next_execution_at->greaterThanOrEqualTo($inizio_iterazione) && $task->next_execution_at->lessThanOrEqualTo($adesso)) {
+        if ($task->next_execution_at->greaterThanOrEqualTo($inizio_iterazione) && $task->next_execution_at->lessThanOrEqualTo($adesso->copy()->addSeconds(20))) {
             // Registrazione dell'esecuzione nei log
             $logger->info($task->name.': '.$task->expression);
             try {

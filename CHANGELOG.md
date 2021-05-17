@@ -4,7 +4,9 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
-- [2.4.21 (2021-01-)](#2421-2021-01-14)
+- [2.4.23 (2021-05-17)](#2423-2021-05-17)
+- [2.4.22 (2021-03-01)](#2422-2021-03-01)
+- [2.4.21 (2021-01-14)](#2421-2021-01-14)
 - [2.4.20 (2020-12-31)](#2420-2020-12-31)
 - [2.4.19 (2020-11-10)](#2419-2020-11-10)
 - [2.4.18 (2020-10-30)](#2418-2020-10-30)
@@ -32,7 +34,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
-## 2.4.23
+## 2.4.23 (2021-05-17)
 
 ### Aggiunto (Added)
  - Nuovo *Sconto finale* per gli **Ordini**, **Preventivi**, **DDT** e **Contratti**, influenza il valore *Netto a pagare* del documento.
@@ -42,7 +44,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Aggiunto controllo nelle fatture di vendita per segnalare l'eventuale fatturazione di un'attività con la data di una sessione futura rispetto alla data della fattura.
  - Aggiunta possibilità di creare un ordine fornitore da un preventivo.
 
-## 2.4.22
+## 2.4.22 (2021-03-01)
 
 ### Aggiunto (Added)
  - Introduzione di nuove **Aliquote IVA** con specifiche più dettagliate

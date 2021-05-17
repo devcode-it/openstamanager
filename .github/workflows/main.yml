@@ -8,36 +8,32 @@ on:
 
 jobs:
   tests:
-
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
+    
     strategy:
       matrix:
         python-version: [3.9]
-        php-version: ['8.0']
+        php-version: ['7.4']
         
     steps:
     - uses: actions/checkout@v2
-   
-    - name: Shutdown Ubuntu MySQL (SUDO)
-      run: sudo service mysql stop # Shutdown the Default MySQL, "sudo" is necessary, please not remove it
 
-    - name: Set up MySQL
-      uses: mirromutth/mysql-action@v1.1
-      with:
-        mysql database: 'osm'
-        mysql root password: ''
-        mysql user: 'root'
-        mysql password: ''
-
-    - name: Set up PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: ${{ matrix.python-version }}
-    
+#    - name: Set up PHP ${{ matrix.php-version }}
+#      uses: shivammathur/setup-php@v2
+#      with:
+#        php-version: ${{ matrix.php-version }}
+#        extensions: zip, mbstring, pdo_mysql, mysql, dom, xsl, openssl, intl, curl, soap, gd
+ 
+    - name: Setup PHP
+      run: |
+        sudo apt install libapache2-mod-php7.4
+        sudo sed -i 's,^post_max_size =.*$,post_max_size = 32M,' /etc/php/7.4/apache2/php.ini
+        sudo sed -i 's,^upload_max_filesize =.*$,upload_max_filesize = 32M,' /etc/php/7.4/apache2/php.ini
+      
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
-        python-version: ${{ matrix.php-version }}
+        python-version: ${{ matrix.python-version }}
         
     - name: Install SeleniumBase
       uses: actions/checkout@v2
@@ -96,10 +92,15 @@ jobs:
         yarn install
         npm run build-OSM
 
-    - name: Directory Permissions
-      run: chmod -R 777 files backup logs
 
+    - name: Copy OSM to www root
+      run: |
+        sudo cp -R /home/runner/work/openstamanager/openstamanager /var/www/html/
+        sudo chmod -R 0777 /var/www/html/openstamanager
+        sudo rm /var/www/html/openstamanager/.htaccess
+        
     - name: Check out test repository
+      uses: actions/checkout@v2
       with:
         repository: devcode-it/openstamanager-tests
         path: python-tests
@@ -110,11 +111,19 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      
+    - name: Restart apache
+      run: sudo service apache2 restart
+      
+    - name: Restart MySQL
+      run: sudo service mysql restart
 
     - name: Init test configuration
       run: |
+        curl http://localhost/openstamanager/
+        sudo cat /var/log/apache2/access.log
         cd python-tests/
-        echo """{\n    "login": {\n        "password": "",\n        "username": ""\n    },\n    "server": "http://localhost/openstamanager",\n    "browser": "chrome",\n    "headless": true\n}""" >| cache/config.json
+        echo -ne "{\n    \"login\": {\n        \"password\": \"adminadmin\",\n        \"username\": \"admin\"\n    },\n    \"database\": {\n        \"host\": \"localhost\",\n        \"user\": \"root\",\n        \"pass\": \"root\",\n        \"name\": \"osm\"\n    },\n    \"server\": \"http://localhost/openstamanager/\",\n    \"browser\": \"firefox\",\n    \"headless\": true\n}" > config.json
         pytest Init.py
     
     - name: Execute tests

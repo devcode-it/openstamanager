@@ -162,7 +162,7 @@ if (in_array($module['name'], ['Ordini cliente', 'Ordini fornitore'])) {
             }
         });
 
-        $("#data_evasione").on("change", function() {
+        $("#data_evasione").blur(function() {
             if(input("data_evasione").get()){
                 input("ora_evasione").enable();
             } else{

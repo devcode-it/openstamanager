@@ -920,8 +920,8 @@ input.small-width {
 }
 
 .logo-image {
-    max-width: 100px;
-    max-height: 100px;
+    max-width: 320px;
+    max-height: 60px;
 }
 
 .has-feedback .form-control {

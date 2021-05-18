@@ -19,6 +19,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Models\PrintTemplate;
+
 ?><form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
@@ -59,11 +61,15 @@ include_once __DIR__.'/../../core.php';
 					{[ "type": "number", "label": "<?php echo tr('Ordine'); ?>", "name": "order", "required": 0, "value": "$order$", "decimals":0 ]}
 				</div>
 
+                <?php
+                    if(empty($stampa_predefinita = PrintTemplate::where('predefined', true)->where('id_module', $record['id_module'])->orderBy('id')->first())){
+                        $stampa_predefinita->name = 'Nessuna';
+                    }
+                ?>
+                
                 <div class="col-md-3">
-                    {[ "type": "checkbox", "label": "<?php echo tr('Predefinito'); ?>", "name": "predefined", "value": "$predefined$", "disabled": "<?php echo intval($record['predefined']); ?>" ]}
+                    {[ "type": "checkbox", "label": "<?php echo tr('Predefinita'); ?>", "help" : "<?php echo tr("Attiva per impostare questa stampa come predefinita. Attualmente la stampa predefinita per questo modulo è: ".$stampa_predefinita->name); ?>", "name": "predefined", "value": "$predefined$", "disabled": "<?php echo intval($record['predefined']); ?>" ]}
                 </div>
-
-
 
             </div>
 

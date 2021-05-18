@@ -910,7 +910,7 @@ class FatturaElettronica
             // Con la nuova versione in vigore dal 01/01/2021, questo nodo diventa ripetibile.
             $result['DatiRitenuta'] = [
                 'TipoRitenuta' => (Validate::isValidTaxCode($azienda['codice_fiscale']) and $cliente['tipo'] == 'Privato') ? 'RT01' : 'RT02',
-                'ImportoRitenuta' => $documento->isNota() ? -$totale_ritenutaacconto : $totale_ritenutaacconto,
+                'ImportoRitenuta' =>  $totale_ritenutaacconto,
                 'AliquotaRitenuta' => $percentuale,
                 'CausalePagamento' => setting("Causale ritenuta d'acconto"),
             ];
@@ -934,8 +934,8 @@ class FatturaElettronica
             $dati_cassa = [
                 'TipoCassa' => setting('Tipo Cassa Previdenziale'),
                 'AlCassa' => $percentuale,
-                'ImportoContributoCassa' => $documento->isNota() ? -$totale_rivalsainps : $totale_rivalsainps,
-                'ImponibileCassa' => $documento->isNota() ? -$documento->imponibile : $documento->imponibile,
+                'ImportoContributoCassa' => $totale_rivalsainps,
+                'ImponibileCassa' => $documento->imponibile,
                 'AliquotaIVA' => $iva['percentuale'],
             ];
 
@@ -1377,7 +1377,7 @@ class FatturaElettronica
             $aliquota = $riga->aliquota ?: $iva_descrizioni;
             $percentuale = floatval($aliquota->percentuale);
 
-            $prezzo_totale = $documento->isNota() ? -$riga->totale_imponibile : $riga->totale_imponibile;
+            $prezzo_totale = $riga->totale_imponibile;
             $prezzo_totale = $prezzo_totale ?: 0;
             $dettaglio['PrezzoTotale'] = $prezzo_totale;
 
@@ -1469,8 +1469,8 @@ class FatturaElettronica
             $totale = round($riepilogo->sum('totale_imponibile') + $riepilogo->sum('rivalsa_inps'), 2);
             $imposta = round($riepilogo->sum('iva') + $riepilogo->sum('iva_rivalsa_inps'), 2);
 
-            $totale = $documento->isNota() ? -$totale : $totale;
-            $imposta = $documento->isNota() ? -$imposta : $imposta;
+            $totale = $totale;
+            $imposta = $imposta;
 
             $dati = $riepilogo->first()->aliquota;
 
@@ -1508,8 +1508,8 @@ class FatturaElettronica
             $totale = round($riepilogo->sum('totale_imponibile') + $riepilogo->sum('rivalsa_inps'), 2);
             $imposta = round($riepilogo->sum('iva') + $riepilogo->sum('iva_rivalsa_inps'), 2);
 
-            $totale = $documento->isNota() ? -$totale : $totale;
-            $imposta = $documento->isNota() ? -$imposta : $imposta;
+            $totale = $totale;
+            $imposta = $imposta;
 
             $dati = $riepilogo->first()->aliquota;
 

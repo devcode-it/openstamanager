@@ -200,3 +200,8 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_documenti`\nLEFT J
 
 -- Ripristino Fattura di vendita come stampa predefinita
 UPDATE `zz_prints` SET `predefined` = '0' WHERE `zz_prints`.`name` = 'Fattura elettronica di vendita'; 
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `default`, `visible`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stampe'), 'Modulo', '(SELECT name FROM zz_modules WHERE zz_modules.id= zz_prints.id_module)', 4, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stampe'), 'Predefinita', 'zz_prints.predefined', 5, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stampe'), 'Ordine', 'zz_prints.order', 6, 1, 0, 0, 1);

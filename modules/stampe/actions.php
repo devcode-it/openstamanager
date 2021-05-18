@@ -21,9 +21,21 @@ include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
     case 'update':
+
+        $predefined = post('predefined');
+        if (!empty($predefined) && !empty(post('module'))) {
+            $dbo->query('UPDATE zz_prints SET predefined = 0 WHERE id_module = '.post('module'));
+        }
+
         $print->title = post('title');
         $print->filename = post('filename');
         $print->options = post('options');
+        //$print->id_module = post('module');
+        //$print->enabled = post('enabled');
+        $print->order = post('order');
+        $print->predefined = post('predefined');
+
+       
         $print->save();
 
         flash()->info(tr('Modifiche salvate correttamente'));

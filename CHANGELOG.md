@@ -34,7 +34,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
 
-## 2.4.23
+## 2.4.23 (2021-05-18)
 
 ### Aggiunto (Added)
  - Nuovo *Sconto finale* per gli **Ordini**, **Preventivi**, **DDT** e **Contratti**, influenza il valore *Netto a pagare* del documento.
@@ -58,9 +58,9 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 ### Fixed
  - Aggiornamento prezzo di listino quando viene cambiato il prezzo di acquisto (se collegato ad un fornitore).
  - Fix plugin **Pianificazione fatturazione** in **Interventi**
- - Rimosso obbligatorietà di inserire la data del documento nel modulo **Gestione documentale**
+ - Rimossa l'obbligatorietà di inserire la data del documento nel modulo **Gestione documentale**
 
-## 2.4.22
+## 2.4.22 (2021-03-01)
 
 ### Aggiunto (Added)
  - Introduzione di nuove **Aliquote IVA** con specifiche più dettagliate

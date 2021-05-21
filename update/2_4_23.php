@@ -19,5 +19,8 @@ foreach ($fatture as $fattura) {
 // Completamento automatico informazioni IBAN per banche
 $banche = Banca::all();
 foreach ($banche as $banca) {
-    $banca->save();
+    try {
+        $banca->save();
+    } catch (\PDOException $e) {
+    }
 }

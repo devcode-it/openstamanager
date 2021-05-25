@@ -85,6 +85,7 @@ use Models\PrintTemplate;
 
 <?php
 // Variabili utilizzabili
+$module = Modules::get($record['id_module']);
 $variables = $module->getPlaceholders($id_record);
 
 echo '

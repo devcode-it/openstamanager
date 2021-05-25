@@ -336,7 +336,7 @@ switch ($resource) {
      * - idanagrafica
      */
     case 'dichiarazioni_intento':
-        $query = "SELECT id, CONCAT_WS(' - ', numero_protocollo, numero_progressivo) AS descrizione FROM co_dichiarazioni_intento |where| ORDER BY data";
+        $query = "SELECT id, CONCAT(CONCAT_WS(' - ', numero_protocollo, numero_progressivo), ' data di fine ', DATE_FORMAT(data_fine, '%d/%m/%Y')) AS descrizione FROM co_dichiarazioni_intento |where| ORDER BY data";
 
         foreach ($elements as $element) {
             $filter[] = 'id='.prepare($element);

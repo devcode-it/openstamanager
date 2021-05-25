@@ -169,7 +169,7 @@ if ($dir == 'entrata') {
                 <div class="col-md-2">
                     {[ "type": "text", "label": "'.tr('Numero fattura/protocollo').'", "required": 1, "name": "numero","class": "text-center alphanumeric-mask", "value": "$numero$" ]}
                 </div>';
-                    $label = tr('Numero fattura del fornitore');
+                    $label = tr('N. fattura del fornitore');
                     $size = 2;
                 } else {
                     $label = tr('Numero fattura');
@@ -181,7 +181,7 @@ if ($dir == 'entrata') {
 				{[ "type": "hidden", "label": "Segmento", "name": "id_segment", "class": "text-center", "value": "$id_segment$" ]}
 
 				<div class="col-md-<?php echo $size; ?>">
-					{[ "type": "text", "label": "<?php echo $label; ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$", "help": "<?php echo (empty($record['numero_esterno']) and $dir == 'entrata') ? tr('Il numero della fattura sarà generato automaticamente in fase di emissione.') : ''; ?>" ]}
+					{[ "type": "text", "label": "<?php echo $label; ?>", "required": "<?php echo (($dir=='uscita')? 1 : 0); ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$", "help": "<?php echo (empty($record['numero_esterno']) and $dir == 'entrata') ? tr('Il numero della fattura sarà generato automaticamente in fase di emissione.') : ''; ?>" ]}
 				</div>
 
 				<div class="col-md-2">
@@ -304,6 +304,8 @@ elseif ($record['stato'] == 'Bozza') {
 				</div>
 
 				<div class="col-md-3">
+                    <?php echo (!empty($record['idpagamento']) ? Modules::link('Pagamenti', $record['idpagamento'], null, null, 'class="pull-right"') : ''); ?>
+
 					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 1, "ajax-source": "pagamenti", "value": "$idpagamento$", "extra": "onchange=\"$('#id_banca_azienda').selectSetNew( $(this).selectData().id_banca_<?php echo $conto; ?>, $(this).selectData().descrizione_banca_<?php echo $conto; ?> ).change(); \" " ]}
 				</div>
 
@@ -372,7 +374,7 @@ elseif ($record['stato'] == 'Bozza') {
 
             <div class="row">
 				<div class="col-md-3">
-					{[ "type": "checkbox", "label": "<?php echo tr('Split payment'); ?>", "name": "split_payment", "value": "$split_payment$", "help": "<?php echo tr('Abilita lo split payment per questo documento. Le aliquote iva con natura N6 (reverse charge) non saranno disponibili.'); ?>", "placeholder": "<?php echo tr('Split payment'); ?>" ]}
+					{[ "type": "checkbox", "label": "<?php echo tr('Split payment'); ?>", "name": "split_payment", "value": "$split_payment$", "help": "<?php echo tr('Abilita lo split payment per questo documento. Le aliquote iva con natura N6.X (reverse charge) non saranno disponibili.'); ?>", "placeholder": "<?php echo tr('Split payment'); ?>" ]}
 				</div>
 
 				<?php
@@ -388,6 +390,7 @@ elseif ($record['stato'] == 'Bozza') {
                 ?>
 
                 <div class="col-md-3">
+                    <?php echo (!empty($record['id_ritenuta_contributi']) ? Modules::link('Ritenute contributi', $record['id_ritenuta_contributi'], null, null, 'class="pull-right"') : ''); ?>
                     {[ "type": "select", "label": "<?php echo tr('Ritenuta contributi'); ?>", "name": "id_ritenuta_contributi", "value": "$id_ritenuta_contributi$", "values": "query=SELECT *, CONCAT(descrizione,(IF(percentuale>0, CONCAT(\" - \", percentuale, \"% sul \", percentuale_imponibile, \"% imponibile\"), \"\"))) AS descrizione FROM co_ritenuta_contributi", "help": "<?php echo tr('Ritenuta contributi da applicare alle righe della fattura.'); ?>"  ]}
                 </div>
 

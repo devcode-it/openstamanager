@@ -40,7 +40,7 @@ switch ($operazione) {
              echo json_encode(['id' => $id_record, 'text' => $dichiarazione->numero_protocollo.' - '.$dichiarazione->numero_progressivo]);
          }
 
-         flash()->info(tr("Aggiunta una dichiarazione d'intento!"));
+         flash()->info(tr("Dichiarazione d'intento aggiunta!"));
 
         break;
 
@@ -55,7 +55,7 @@ switch ($operazione) {
         $dichiarazione->data_emissione = post('data_emissione');
         $dichiarazione->save();
 
-        flash()->info(tr('Salvataggio completato!'));
+        flash()->info(tr("Dichiarazione d'intento aggiornata!"));
 
         break;
 

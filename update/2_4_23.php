@@ -21,6 +21,6 @@ $banche = Banca::all();
 foreach ($banche as $banca) {
     try {
         $banca->save();
-    } catch (\PDOException $e) {
+    } catch (Exception $e) {
     }
 }

@@ -91,6 +91,10 @@ function initCKEditor(input) {
         instance.destroy();
     }
 
+    if (input.hasAttribute('use_full_ckeditor')) {
+        globals.ckeditorToolbar = globals.ckeditorToolbar_Full;
+    }
+    
     // Avvio di CKEditor
     CKEDITOR.replace(name, {
         toolbar: globals.ckeditorToolbar,

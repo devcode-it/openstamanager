@@ -200,7 +200,23 @@ if (Auth::check()) {
                 ckeditorToolbar: [
 					["Undo","Redo","-","Cut","Copy","Paste","PasteText","PasteFromWord","-","Scayt", "-","Link","Unlink","-","Bold","Italic","Underline","Superscript","SpecialChar","HorizontalRule","-","JustifyLeft","JustifyCenter","JustifyRight","JustifyBlock","-","NumberedList","BulletedList","Outdent","Indent","Blockquote","-","Styles","Format","Image","Table", "TextColor", "BGColor" ],
 				],
-
+                ckeditorToolbar_Full: [
+                    { name: "document", items : [ "Source" ] },
+                    { name: "clipboard", items : [ "Cut","Copy","Paste","PasteText","PasteFromWord","-","Undo","Redo" ] },
+                    { name: "editing", items : [ "Find","Replace","-","SelectAll","-","SpellChecker", "Scayt" ] },
+                    { name: "forms", items : [ "Form", "Checkbox", "Radio", "TextField", "Textarea", "Select", "Button", "ImageButton",
+                        "HiddenField" ] },
+                    "/",
+                    { name: "basicstyles", items : [ "Bold","Italic","Underline","Strike","Subscript","Superscript","-","RemoveFormat" ] },
+                    { name: "paragraph", items : [ "NumberedList","BulletedList","-","Outdent","Indent","-","Blockquote","CreateDiv",
+                        "-","JustifyLeft","JustifyCenter","JustifyRight","JustifyBlock","-","BidiLtr","BidiRtl" ] },
+                    { name: "links", items : [ "Link","Unlink","Anchor" ] },
+                    { name: "insert", items : [ "Image","Flash","Table","HorizontalRule","Smiley","SpecialChar","PageBreak","Iframe" ] },
+                    "/",
+                    { name: "styles", items : [ "Styles","Format","Font","FontSize" ] },
+                    { name: "colors", items : [ "TextColor","BGColor" ] },
+                    { name: "tools", items : [ "Maximize", "ShowBlocks","-","About" ] }
+                ],
                 order_manager_id: "'.($dbo->isInstalled() ? Modules::get('Stato dei servizi')['id'] : '').'",
                 dataload_page_buffer: '.setting('Lunghezza in pagine del buffer Datatables').',
                 tempo_attesa_ricerche: '.setting('Tempo di attesa ricerche in secondi').',

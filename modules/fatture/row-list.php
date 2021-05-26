@@ -121,6 +121,18 @@ foreach ($righe as $riga) {
         echo nl2br($riga->descrizione);
     }
 
+    if ($riga->isArticolo() && !empty($riga->articolo->deleted_at)){
+        echo '
+        <br><b><small class="text-danger">'.tr('Articolo eliminato', []).'</small></b>';
+    }
+
+    if ($riga->isArticolo() && empty($riga->articolo->codice)){
+        echo '
+        <br><b><small class="text-danger">'.tr('_DATO_ articolo mancante', [
+            '_DATO_' => 'Codice',
+        ]).'</small></b>';
+    }
+
     if ($riga->isArticolo() && !empty($riga->abilita_serial)) {
         if (!empty($mancanti)) {
             echo '

@@ -70,10 +70,26 @@ echo '
 		<div class="clearfix">&nbsp;</div>
 	</div>
 
+';
+
+// Collegamenti diretti (numerici)
+$numero_documenti = $dbo->fetchNum('SELECT id FROM co_documenti WHERE id_dichiarazione_intento='.prepare($id_record));
+
+if (!empty($numero_documenti)) {
+    echo '
+<div class="alert alert-danger">
+    '.tr('Ci sono _NUM_ documenti collegati', [
+        '_NUM_' => $numero_documenti,
+    ]).'.
+</div>';
+}
+
+echo '
+
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12">
-            <a class="btn btn-danger ask" data-backto="record-edit" data-op="delete" data-id_record="'.$record['id'].'" data-id_plugin="'.$id_plugin.'" data-id_parent="'.$id_parent.'">
+            <a class="btn btn-danger ask '.(!empty($numero_documenti) ? 'disabled' : '').'" data-backto="record-edit" data-op="delete" data-id_record="'.$record['id'].'" data-id_plugin="'.$id_plugin.'" data-id_parent="'.$id_parent.'" disabled='.(!empty($numero_documenti) ? 1 : 0).'>
                 <i class="fa fa-trash"></i> '.tr('Elimina').'
             </a>
 

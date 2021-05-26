@@ -246,15 +246,27 @@ echo '
 if (setting('Attiva scorciatoie da tastiera')) {
     echo '
 <script>
-hotkeys("f8", "carico", function() {
-    $("#modals > div #direzione").val(1).change();
-});
-hotkeys.setScope("carico");
 
-hotkeys("f9", "scarico", function() {
-    $("#modals > div #direzione").val(2).change();
+hotkeys("f8,f9,f10", function(event, handler) {
+
+    switch (handler.key) {
+        case "f8": 
+            event.preventDefault();
+            input("causale").set("1");
+          break;
+        case "f9": 
+            event.preventDefault();
+            input("causale").set("2");
+          break;
+        case "f10": 
+            event.preventDefault();
+            input("causale").set("3");
+          break;
+        default: alert(event);
+      }
+
 });
-hotkeys.setScope("scarico");
+
 </script>';
 }
 

@@ -198,7 +198,7 @@ if (Auth::check()) {
                 end_date_formatted: "'.Translator::dateToLocale($_SESSION['period_end']).'",
 
                 ckeditorToolbar: [
-					["Undo","Redo","-","Cut","Copy","Paste","PasteText","PasteFromWord","-","Scayt", "-","Link","Unlink","-","Bold","Italic","Underline","Superscript","SpecialChar","HorizontalRule","-","JustifyLeft","JustifyCenter","JustifyRight","JustifyBlock","-","NumberedList","BulletedList","Outdent","Indent","Blockquote","-","Styles","Format","Image","Table", "TextColor", "BGColor" ],
+					["Undo","Redo","-","Cut","Copy","Paste","PasteText","PasteFromWord","-","SpellChecker", "Scayt", "-","Link","Unlink","-","Bold","Italic","Underline","Superscript","SpecialChar","HorizontalRule","-","JustifyLeft","JustifyCenter","JustifyRight","JustifyBlock","-","NumberedList","BulletedList","Outdent","Indent","Blockquote","-","Styles","Format","Image","Table", "TextColor", "BGColor" ],
 				],
                 ckeditorToolbar_Full: [
                     { name: "document", items : [ "Source" ] },
@@ -289,11 +289,29 @@ if (Auth::check()) {
         echo '<script type="text/javascript" charset="utf-8" src="'.App::getPaths()['js'].'/hotkeys-js/hotkeys.min.js"></script>';
         echo '
         <script>
-        hotkeys(\'f1\', \'save\', function(event, handler){
-            event.preventDefault();
-            $( "button[data-toggle]" ).first().trigger( "click" );
+
+        hotkeys("f1,f2,f3,f4", function(event, handler) {
+            switch (handler.key) {
+                case "f1": 
+                    event.preventDefault();
+                    $("button[data-toggle]").first().trigger("click");
+                  break;
+                case "f2":
+                    event.preventDefault();
+                    $("#save").first().trigger("click");
+                  break;
+                case "f3":
+                    event.preventDefault();
+                    $("#print-button_p").first().trigger("click");
+                  break;
+                case "f4":
+                    event.preventDefault();
+                    $("#email-button_p").first().trigger("click");
+                  break;
+                default: alert(event);
+              }
         });
-        hotkeys.setScope(\'save\');
+
         </script>';
     }
 }

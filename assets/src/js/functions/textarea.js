@@ -100,6 +100,8 @@ function initCKEditor(input) {
         disableNativeSpellChecker: false,
         fullPage: (input.hasAttribute('use_full_ckeditor')) ? true : false,
         allowedContent: (input.hasAttribute('use_full_ckeditor')) ? true : false,
+        extraPlugins: 'scayt',
+        skin: 'moono-lisa',
     });
 
     // Gestione di eventi noti

@@ -275,8 +275,8 @@ function srcFonts() {
 
 function ckeditor() {
     return gulp.src([
-        config.nodeDirectory + '/ckeditor4-dev/{adapters,lang,skins,plugins,core}/**/*.{js,json,css,png}',
-        config.nodeDirectory + '/ckeditor4-dev/*.{js,css}',
+        config.nodeDirectory + '/ckeditor4/{adapters,lang,skins,plugins,core}/**/*.{js,json,css,png}',
+        config.nodeDirectory + '/ckeditor4/*.{js,css}',
     ])
         .pipe(gulp.dest(config.production + '/' + config.paths.js + '/ckeditor'));
 }

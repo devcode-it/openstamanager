@@ -89,7 +89,7 @@ echo '
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12">
-            <a class="btn btn-danger ask '.(!empty($numero_documenti) ? 'disabled' : '').'" data-backto="record-edit" data-op="delete" data-id_record="'.$record['id'].'" data-id_plugin="'.$id_plugin.'" data-id_parent="'.$id_parent.'" disabled='.(!empty($numero_documenti) ? 1 : 0).'>
+            <a class="btn btn-danger ask '.(!empty($numero_documenti) ? 'disabled' : '').'" data-backto="record-edit" data-op="delete" data-id_record="'.$record['id'].'" data-id_plugin="'.$id_plugin.'" data-id_parent="'.$id_parent.'" '.(!empty($numero_documenti) ? 'disabled' : '').'>
                 <i class="fa fa-trash"></i> '.tr('Elimina').'
             </a>
 

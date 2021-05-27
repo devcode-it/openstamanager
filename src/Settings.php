@@ -105,7 +105,8 @@ class Settings
     public static function setValue($setting, $value)
     {
         $setting = self::get($setting);
-
+        $value = (is_array($value) ? implode(",",$value) : $value);
+        
         // Trasformazioni
         // Boolean (checkbox)
         if ($setting->tipo == 'boolean') {

@@ -90,14 +90,18 @@ function initCKEditor(input) {
     if (instance) {
         instance.destroy();
     }
-
+    
     // Avvio di CKEditor
     CKEDITOR.replace(name, {
-        toolbar: globals.ckeditorToolbar,
+        toolbar: (input.hasAttribute('use_full_ckeditor')) ? globals.ckeditorToolbar_Full : globals.ckeditorToolbar,
         language: globals.locale,
         scayt_autoStartup: true,
         scayt_sLang: globals.full_locale,
         disableNativeSpellChecker: false,
+        fullPage: (input.hasAttribute('use_full_ckeditor')) ? true : false,
+        allowedContent: (input.hasAttribute('use_full_ckeditor')) ? true : false,
+        extraPlugins: 'scayt',
+        skin: 'moono-lisa',
     });
 
     // Gestione di eventi noti

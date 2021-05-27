@@ -94,9 +94,14 @@ echo '
 <script>
     // Lettura codici da lettore barcode
     $(document).unbind("keyup");
-    $("#modals > div").on( "shown.bs.modal", function(){
+    $("#modals > div").on( "shown.bs.modal", function(){';
+        if (setting('Attiva scorciatoie da tastiera')) {
+            echo 'EnableHotkeys()';
+        }
+echo '  
         $("#barcode").focus();
     });
+    
     $(document).on("keyup", function (event) {
         if ($(":focus").is("input, textarea")) {
             return;
@@ -241,34 +246,32 @@ echo '
             $("#barcode").focus();
         }
     }
+
+    function EnableHotkeys(){
+        hotkeys("f7,f8,f9,f10", function(event, handler) {
+            switch (handler.key) {
+                case "f7": 
+                    event.preventDefault();
+                    $("#barcode").focus();
+                break;
+                case "f8": 
+                    event.preventDefault();
+                    input("causale").set("1");
+                break;
+                case "f9": 
+                    event.preventDefault();
+                    input("causale").set("2");
+                break;
+                case "f10": 
+                    event.preventDefault();
+                    input("causale").set("3");
+                break;
+                default: alert(event);
+            }
+        });
+    }
+
 </script>';
-
-if (setting('Attiva scorciatoie da tastiera')) {
-    echo '
-<script>
-
-hotkeys("f8,f9,f10", function(event, handler) {
-
-    switch (handler.key) {
-        case "f8": 
-            event.preventDefault();
-            input("causale").set("1");
-          break;
-        case "f9": 
-            event.preventDefault();
-            input("causale").set("2");
-          break;
-        case "f10": 
-            event.preventDefault();
-            input("causale").set("3");
-          break;
-        default: alert(event);
-      }
-
-});
-
-</script>';
-}
 
 echo '
 <div class="hidden" id="info-articolo">

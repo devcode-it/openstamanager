@@ -43,7 +43,7 @@ $query = Query::getQuery($structure, $where, 0, []);
 $query = Modules::replaceAdditionals($id_module, $query);
 
 // Modifiche alla query principale
-$query = preg_replace('/ FROM `mg_articoli` /', ' FROM mg_articoli LEFT JOIN (SELECT idarticolo, SUM(qta) AS qta_totale FROM mg_movimenti WHERE data <='.prepare($period_end).' GROUP BY idarticolo) movimenti ON movimenti.idarticolo=mg_articoli.id ', $query);
+$query = preg_replace('/FROM `mg_articoli`/', ' FROM mg_articoli LEFT JOIN (SELECT idarticolo, SUM(qta) AS qta_totale FROM mg_movimenti WHERE data <='.prepare($period_end).' GROUP BY idarticolo) movimenti ON movimenti.idarticolo=mg_articoli.id ', $query);
 
 $query = preg_replace('/^SELECT /', 'SELECT mg_articoli.prezzo_acquisto,', $query);
 $query = preg_replace('/^SELECT /', 'SELECT mg_articoli.prezzo_vendita,', $query);

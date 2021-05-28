@@ -122,12 +122,14 @@ $("#barcode").off("keyup").on("keyup", function (event) {
             qta_input.val(nuova_qta).trigger("change");
         } else {
             let prezzo_unitario = (direzione === "uscita") ? result.prezzo_acquisto : result.prezzo_vendita;
+            prezzo_acquisto = parseFloat(result.prezzo_acquisto, 10).toLocale();
+            prezzo_vendita = parseFloat(result.prezzo_vendita, 10).toLocale();
 
             let info_prezzi;
             if(direzione === "entrata") {
-                info_prezzi = "Acquisto: " + result.prezzo_acquisto + " &euro;";
+                info_prezzi = "Acquisto: " + (prezzo_acquisto) + " &euro;";
             }else{
-                info_prezzi = "Vendita: " + result.prezzo_vendita + " &euro;";
+                info_prezzi = "Vendita: " + (prezzo_vendita) + " &euro;";
             }
 
             $("#articoli_barcode").removeClass("hide");

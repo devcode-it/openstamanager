@@ -133,8 +133,9 @@ if ($dir == 'entrata') {
                     $campi_mancanti = [];
 
                     //di default è un azienda e chiedo la partita iva
-                    if (empty($rs2[0]['piva']) and (empty($rs2[0]['tipo']) or $rs2[0]['tipo'] == 'Azienda')) {
+                    if (empty($rs2[0]['piva']) and empty($rs2[0]['codice_fiscale']) and (empty($rs2[0]['tipo']) or $rs2[0]['tipo'] == 'Azienda')) {
                         array_push($campi_mancanti, 'Partita IVA');
+                        array_push($campi_mancanti, 'Codice fiscale');
                     }
 
                     //se è un privato o un ente pubblico controllo il codice fiscale

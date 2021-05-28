@@ -459,7 +459,7 @@ function ricalcolaTotaleRiga(r) {
 
     let prezzo_scontato = prezzo_unitario - sconto;
 
-    let qta = $("#qta_" + r).val().toEnglish();
+    let qta = $("#qta_" + r).val();
 
     // Se inserisco una quantità da evadere maggiore di quella rimanente, la imposto al massimo possibile
     if (qta > qta_max) {
@@ -492,7 +492,7 @@ function ricalcolaTotale() {
     let totale_qta = 0;
 
     $("input[id*=qta_]").each(function() {
-        let qta = $(this).val().toEnglish();
+        let qta = $(this).val();
         let r = $(this).attr("id").replace("qta_", "");
 
         if (!$("#checked_" + r).is(":checked") || isNaN(qta)) {

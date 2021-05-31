@@ -131,4 +131,22 @@ switch (filter('op')) {
         flash()->info(tr('Destinatario rimosso dalla newsletter!'));
 
         break;
+
+
+    // Duplica newsletter
+    case 'copy':
+
+        $new = $newsletter->replicate();
+        $new->state = 'DEV';
+        $new->completed_at = null;
+        $new->save();
+
+        $id_record = $new->id;
+
+       
+        flash()->info(tr('Newsletter duplicata correttamente!'));
+
+        break;
+
+
 }

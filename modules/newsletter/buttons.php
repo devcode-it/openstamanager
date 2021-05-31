@@ -17,14 +17,28 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+
+
 if ($newsletter->state == 'DEV') {
     echo '
-<button type="button" class="btn btn-primary ask" data-msg="'.tr('Procedere ad inviare la newsletter?').'" data-op="send" data-button="'.tr('Invia').'" data-class="btn btn-lg btn-warning">
+    <button type="button" class="btn btn-primary ask" data-msg="'.tr('Procedere ad inviare la newsletter?').'" data-op="send" data-button="'.tr('Invia').'" data-class="btn btn-lg btn-warning">
     <i class="fa fa-envelope"></i> '.tr('Invia newsletter').'
-</button>';
+    </button>';
 } elseif ($newsletter->state == 'WAIT') {
     echo '
-<button type="button" class="btn btn-danger ask" data-msg="'.tr('Svuotare la coda di invio della newsletter?').'" data-op="block" data-button="'.tr('Svuota').'" data-class="btn btn-lg btn-warning">
-    <i class="fa fa-envelope"></i> '.tr('Svuota coda newsletter').'
-</button>';
+    <button type="button" class="btn btn-danger ask" data-msg="'.tr('Svuotare la coda di invio della newsletter?').'" data-op="block" data-button="'.tr('Svuota').'" data-class="btn btn-lg btn-warning">
+        <i class="fa fa-envelope"></i> '.tr('Svuota coda newsletter').'
+    </button>';
 }
+
+// Duplica newsletter
+echo '
+<button type="button" class="btn btn-primary" onclick="if( confirm(\''.tr('Duplicare questa newsletter?').'\') ){ $(\'#copia-newsletter\').submit(); }">
+    <i class="fa fa-copy"></i> '.tr('Duplica newsletter').'
+</button>';
+
+echo '
+<form action="" method="post" id="copia-newsletter">
+    <input type="hidden" name="backto" value="record-edit">
+    <input type="hidden" name="op" value="copy">
+</form>';

@@ -409,7 +409,7 @@ if (!empty($righe)) {
 
                     <div class="row">
                         <div class="col-md-6">
-                            {[ "type": "select", "name": "articoli['.$key.']", "ajax-source": "articoli", "select-options": '.json_encode(['permetti_movimento_a_zero' => 1, 'dir' => 'entrata', 'idanagrafica' => $anagrafica ? $anagrafica->id : '']).', "icon-after": "add|'.Modules::get('Articoli')['id'].'|codice='.htmlentities($codice_principale).'&descrizione='.htmlentities($riga['Descrizione']).'", "value": "'.$id_articolo.'", "label": "'.tr('Articolo').'" ]}
+                            {[ "type": "select", "name": "articoli['.$key.']", "ajax-source": "articoli", "select-options": '.json_encode(['permetti_movimento_a_zero' => 1, 'dir' => 'entrata', 'idanagrafica' => $anagrafica ? $anagrafica->id : '']).', "icon-after": "add|'.Modules::get('Articoli')['id'].'|codice='.str_replace('\\', '/', htmlentities($codice_principale)).'&descrizione='.str_replace('\\', '/', htmlentities($riga['Descrizione'])).'", "value": "'.$id_articolo.'", "label": "'.tr('Articolo').'" ]}
                         </div>
 
                         <div class="col-md-3">

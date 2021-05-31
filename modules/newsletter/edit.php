@@ -162,7 +162,7 @@ if (!$anagrafiche->isEmpty()) {
                     <th>'.tr('Tipologia').'</th>
                     <th class="text-center">'.tr('E-mail').'</th>
                     <th class="text-center">'.tr('Data di invio').'</th>
-                    <th class="text-center">'.tr('Newsletter').'</th>
+                    <th class="text-center" width="200">'.tr('Newsletter').'</th>
                     <th class="text-center" width="60">#</th>
                 </tr>
             </thead>
@@ -184,7 +184,8 @@ if (!$anagrafiche->isEmpty()) {
                     <td>'.Modules::link('Anagrafiche', $anagrafica->id, $anagrafica->ragione_sociale).'</td>
                     <td class="text-left">'.$database->fetchOne('SELECT GROUP_CONCAT(an_tipianagrafiche.descrizione) AS descrizione FROM an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica = an_tipianagrafiche.idtipoanagrafica  WHERE an_tipianagrafiche_anagrafiche.idanagrafica='.prepare($anagrafica->id))['descrizione'].'</td>
                     <td class="text-left">'.$anagrafica->tipo.'</td>
-                    <td class="text-left">'.$anagrafica->email.'</td>
+                    <td class="text-left">
+                    {[ "type": "text", "name": "email", "id": "email_'.rand(0,99999).'", "readonly": "1", "class": "email-mask", "value": "'.$anagrafica->email.'", "validation": "email" ]}</td>
                     <td class="text-center">'.$data.'</td>
                     <td class="text-left">
                     {[ "type": "checkbox", "readonly": "1","name": "disable_newsletter", "value": "'.!empty($anagrafica->enable_newsletter).'" ]}

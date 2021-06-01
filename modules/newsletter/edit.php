@@ -52,7 +52,8 @@ echo '
 		<div class="panel-body">
             <div class="row">
                 <div class="col-md-6">
-                    {[ "type": "select", "label": "'.tr('Template email').'", "name": "id_template", "values": "query=SELECT id, name AS descrizione FROM em_templates", "required": 1, "value": "$id_template$", "disabled": 1 ]}
+                    '.Modules::link('Template email', $record['id_template'], null, null, 'class="pull-right"').'
+                    {[ "type": "select", "label": "'.tr('Template email').'", "name": "id_template", "values": "query=SELECT id, name AS descrizione FROM em_templates", "required": 1, "value": "$id_template$", "readonly": 1 ]}
                 </div>
 
                 <div class="col-md-6">
@@ -66,7 +67,7 @@ echo '
                 </div>
 
                 <div class="col-md-6">
-                    {[ "type": "timestamp", "label": "'.tr('Data di completamento').'", "name": "completed_at", "value": "$completed_at$", "disabled": 1 ]}
+                    {[ "type": "timestamp", "label": "'.tr('Data di completamento').'", "name": "completed_at", "value": "$completed_at$", "readonly": 1 ]}
                 </div>
             </div>
 
@@ -156,9 +157,12 @@ if (!$anagrafiche->isEmpty()) {
         <table class="table table-hover table-condensed table-bordered">
             <thead>
                 <tr>
-                    <th>'.tr('Nome').'</th>
-                    <th class="text-center">'.tr('Indirizzo').'</th>
+                    <th>'.tr('Ragione sociale').'</th>
+                    <th>'.tr('Tipo').'</th>
+                    <th>'.tr('Tipologia').'</th>
+                    <th class="text-center">'.tr('E-mail').'</th>
                     <th class="text-center">'.tr('Data di invio').'</th>
+                    <th class="text-center" width="200">'.tr('Newsletter').'</th>
                     <th class="text-center" width="60">#</th>
                 </tr>
             </thead>
@@ -169,18 +173,25 @@ if (!$anagrafiche->isEmpty()) {
         $mail_id = $anagrafica->pivot->id_email;
         $mail = Mail::find($mail_id);
         if (!empty($mail) && !empty($mail->sent_at)) {
-            $data = timestampFormat($mail->sent_at);
+            $data = '<span class="label label-success" ><i class="fa fa-paper-plane" aria-hidden="true"></i> '. timestampFormat($mail->sent_at).'</span>';
         } else {
-            $data = tr('Non ancora inviata');
+            $data = '<span class="label label-info" ><i class="fa fa-clock-o" aria-hidden="true"></i>
+             '.tr('Non ancora inviata').'</span>';
         }
 
         echo '
                 <tr '.((empty($anagrafica->email) || empty($anagrafica->enable_newsletter)) ? 'class="bg-danger"' : '').'>
                     <td>'.Modules::link('Anagrafiche', $anagrafica->id, $anagrafica->ragione_sociale).'</td>
-                    <td class="text-center">'.$anagrafica->email.'</td>
+                    <td class="text-left">'.$database->fetchOne('SELECT GROUP_CONCAT(an_tipianagrafiche.descrizione) AS descrizione FROM an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica = an_tipianagrafiche.idtipoanagrafica  WHERE an_tipianagrafiche_anagrafiche.idanagrafica='.prepare($anagrafica->id))['descrizione'].'</td>
+                    <td class="text-left">'.$anagrafica->tipo.'</td>
+                    <td class="text-left">
+                    {[ "type": "text", "name": "email", "id": "email_'.rand(0,99999).'", "readonly": "1", "class": "email-mask", "value": "'.$anagrafica->email.'", "validation": "email" ]}</td>
                     <td class="text-center">'.$data.'</td>
+                    <td class="text-left">
+                    {[ "type": "checkbox", "readonly": "1","name": "disable_newsletter", "value": "'.!empty($anagrafica->enable_newsletter).'" ]}
+                    </td>
                     <td class="text-center">
-                        <a class="btn btn-danger ask btn-sm" data-backto="record-edit" data-op="remove_receiver" data-id="'.$anagrafica->id.'">
+                        <a class="btn btn-danger ask btn-xs" data-backto="record-edit" data-op="remove_receiver" data-id="'.$anagrafica->id.'">
                             <i class="fa fa-trash"></i>
                         </a>
                     </td>

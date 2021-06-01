@@ -146,7 +146,9 @@ echo '
     <div class="panel-heading">
         <h3 class="panel-title">
             '.tr('Destinatari').'
-            <span class="badge">'.$anagrafiche->count().'</span>
+            <span class="label label-info">'.$anagrafiche->count().'</span>
+            '.(($anagrafiche->where('email', '')->count()>0) ? ' <span title="'.tr('Indirizzi e-mail mancanti').'" class="tip label label-warning">'.$anagrafiche->where('email', '')->count().'</span>' : '')
+            .(($anagrafiche->where('enable_newsletter', false)->count()>0) ? ' <span title="'.tr('Indirizzi e-mail senza consenso per newsletter').'" class="tip label label-danger">'.$anagrafiche->where('enable_newsletter', false)->count().'</span>' : '').'
         </h3>
     </div>
 
@@ -173,22 +175,23 @@ if (!$anagrafiche->isEmpty()) {
         $mail_id = $anagrafica->pivot->id_email;
         $mail = Mail::find($mail_id);
         if (!empty($mail) && !empty($mail->sent_at)) {
-            $data = '<span class="label label-success" ><i class="fa fa-paper-plane" aria-hidden="true"></i> '. timestampFormat($mail->sent_at).'</span>';
+            $data = '<span class="fa fa-paper-plane text-success" > '. timestampFormat($mail->sent_at).'</span>';
         } else {
-            $data = '<span class="label label-info" ><i class="fa fa-clock-o" aria-hidden="true"></i>
+            $data = '<span class="fa fa-clock-o text-info" >
              '.tr('Non ancora inviata').'</span>';
         }
 
         echo '
-                <tr '.((empty($anagrafica->email) || empty($anagrafica->enable_newsletter)) ? 'class="bg-danger"' : '').'>
+                <tr '.(empty($anagrafica->email) ? 'class="bg-warning"' : '').'>
                     <td>'.Modules::link('Anagrafiche', $anagrafica->id, $anagrafica->ragione_sociale).'</td>
                     <td class="text-left">'.$database->fetchOne('SELECT GROUP_CONCAT(an_tipianagrafiche.descrizione) AS descrizione FROM an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica = an_tipianagrafiche.idtipoanagrafica  WHERE an_tipianagrafiche_anagrafiche.idanagrafica='.prepare($anagrafica->id))['descrizione'].'</td>
                     <td class="text-left">'.$anagrafica->tipo.'</td>
                     <td class="text-left">
-                    {[ "type": "text", "name": "email", "id": "email_'.rand(0,99999).'", "readonly": "1", "class": "email-mask", "value": "'.$anagrafica->email.'", "validation": "email" ]}</td>
+                    '.((!empty($anagrafica->email) ? '
+                    {[ "type": "text", "name": "email", "id": "email_'.rand(0,99999).'", "readonly": "1", "class": "email-mask", "value": "'.$anagrafica->email.'", "validation": "email" ]}': '<span class="fa fa-warning text-warning"> '.tr('Indirizzo e-mail mancante').'</span>')).'</td>
                     <td class="text-center">'.$data.'</td>
                     <td class="text-left">
-                    '.(!empty($anagrafica->enable_newsletter) ? '<span class="fa fa-check text-success"></span> '.tr('Abilitato') : '<span class="fa fa-close text-danger"></span> '.tr('Disabilitato')).'
+                    '.((!empty($anagrafica->enable_newsletter)) ? '<span class="fa fa-check text-success"> '.tr('Abilitato').'</span>': '<span class="fa fa-close text-danger"> '.tr('Disabilitato').'</span>').'
                     </td>
                     <td class="text-center">
                         <a class="btn btn-danger ask btn-xs" data-backto="record-edit" data-op="remove_receiver" data-id="'.$anagrafica->id.'">
@@ -202,8 +205,7 @@ if (!$anagrafiche->isEmpty()) {
             </tbody>
         </table>';
 } else {
-    echo '
-        <p>'.tr('Nessuna anagrafica collegata alla campagna').'.</p>';
+    echo '<div class="alert alert-info fa fa-info-circle"> '.tr('Nessuna anagrafica collegata alla campagna').'.</div>';
 }
 
     echo '

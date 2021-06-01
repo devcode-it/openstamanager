@@ -122,11 +122,18 @@ switch (filter('op')) {
         //Controllo indirizzo e-mail aggiunto
         foreach ($newsletter->anagrafiche as $anagrafica) {
 
-            $check = Validate::isValidEmail($anagrafica['email']);
+            if (!empty($anagrafica['email'])){
+                $check = Validate::isValidEmail($anagrafica['email']);
 
-            if (empty($check['valid-format'])) {
-                $errors[] = $anagrafica['email'];
+                if (empty($check['valid-format'])) {
+                    $errors[] = $anagrafica['email'];
+                }
+            }else{
+                $errors[] = tr('Indirizzo e-mail mancante per "_EMAIL_"', [
+                    '_EMAIL_' => $anagrafica['ragione_sociale'],
+                ]);
             }
+
         }
 
         if (!empty($errors)) {

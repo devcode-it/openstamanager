@@ -60,7 +60,7 @@ class Pagamento extends Model
             // Ultimo del mese
             elseif ($rata['giorno'] < 0) {
                 // Offset della rata in mesi
-                $date->modify('+'.$rata['num_giorni']);
+                $date->modify('+'.($rata['num_giorni'].' day'));
                 $date->modify('last day of this month');
 
                 // Opzione ultimo del mese più X giorni

@@ -119,7 +119,31 @@ switch (filter('op')) {
 
         $newsletter->anagrafiche()->syncWithoutDetaching($receivers);
 
-        flash()->info(tr('Aggiunti nuovi destinatari alla newsletter!'));
+        //Controllo indirizzo e-mail aggiunto
+        foreach ($newsletter->anagrafiche as $anagrafica) {
+
+            $check = Validate::isValidEmail($anagrafica['email']);
+
+            if (empty($check['valid-format'])) {
+                $errors[] = $anagrafica['email'];
+            }
+        }
+
+        if (!empty($errors)) {
+            $message = '<ul>';
+            foreach ($errors as $error) {
+                $message .= '<li>'.$error.'</li>';
+            }
+            $message .= '</ul>';
+        }
+
+        if (!empty($message)) {
+            flash()->warning(tr('Attenzione questi indirizzi e-mail non sembrano essere validi: _EMAIL_ ', [
+                '_EMAIL_' => $message,
+            ]));
+        }else{
+            flash()->info(tr('Nuovi destinatari aggiunti correttamente alla newsletter!'));
+        }
 
         break;
 

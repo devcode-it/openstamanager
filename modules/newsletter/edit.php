@@ -162,7 +162,7 @@ if (!$anagrafiche->isEmpty()) {
                     <th>'.tr('Tipologia').'</th>
                     <th class="text-center">'.tr('E-mail').'</th>
                     <th class="text-center">'.tr('Data di invio').'</th>
-                    <th class="text-center" width="200">'.tr('Newsletter').'</th>
+                    <th class="text-center">'.tr('Newsletter').'</th>
                     <th class="text-center" width="60">#</th>
                 </tr>
             </thead>
@@ -188,7 +188,7 @@ if (!$anagrafiche->isEmpty()) {
                     {[ "type": "text", "name": "email", "id": "email_'.rand(0,99999).'", "readonly": "1", "class": "email-mask", "value": "'.$anagrafica->email.'", "validation": "email" ]}</td>
                     <td class="text-center">'.$data.'</td>
                     <td class="text-left">
-                    {[ "type": "checkbox", "readonly": "1","name": "disable_newsletter", "value": "'.!empty($anagrafica->enable_newsletter).'" ]}
+                    '.(!empty($anagrafica->enable_newsletter) ? '<span class="fa fa-check text-success"></span> '.tr('Abilitato') : '<span class="fa fa-close text-danger"></span> '.tr('Disabilitato')).'
                     </td>
                     <td class="text-center">
                         <a class="btn btn-danger ask btn-xs" data-backto="record-edit" data-op="remove_receiver" data-id="'.$anagrafica->id.'">

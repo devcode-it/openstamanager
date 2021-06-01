@@ -163,6 +163,22 @@ switch (filter('op')) {
 
         break;
 
+    case 'remove_all_receiver':
+        //$receiver = post('id');
+
+        $anagrafiche = $newsletter->anagrafiche;
+        
+        foreach ($anagrafiche as $anagrafica) {
+            
+            $newsletter->anagrafiche()->detach($anagrafica->id);
+
+        }
+
+        
+        flash()->info(tr('Tutti i destinatari sono stati rimossi dalla newsletter!'));
+
+        break;
+
 
     // Duplica newsletter
     case 'copy':

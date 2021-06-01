@@ -203,7 +203,13 @@ if (!$anagrafiche->isEmpty()) {
 
     echo '
             </tbody>
-        </table>';
+        </table>
+        
+        <a class="btn btn-danger ask pull-right" data-backto="record-edit" data-op="remove_all_receiver">
+            <i class="fa fa-trash"> Elimina tutti</i>
+        </a>
+        
+        ';
 } else {
     echo '<div class="alert alert-info fa fa-info-circle"> '.tr('Nessuna anagrafica collegata alla campagna').'.</div>';
 }

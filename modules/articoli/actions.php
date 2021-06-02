@@ -36,7 +36,7 @@ switch (post('op')) {
         if (empty(post('codice'))) {
             $codice = $dbo->fetchOne('SELECT MAX(id) as codice FROM mg_articoli')['codice'] + 1;
         } else {
-            $codice = post('codice');
+            $codice = post('codice', true);
         }
 
         // Inserisco l'articolo e avviso se esiste un altro articolo con stesso codice.
@@ -71,7 +71,7 @@ switch (post('op')) {
         if (isAjaxRequest()) {
             echo json_encode([
                 'id' => $id_record,
-                'text' => post('codice').' - '.post('descrizione'),
+                'text' => post('codice', true).' - '.post('descrizione'),
                 'data' => [
                     'descrizione' => post('descrizione'),
                     'prezzo_acquisto' => post('prezzo_acquisto'),
@@ -96,12 +96,12 @@ switch (post('op')) {
         ])->count();
         if ($numero_codice > 0) {
             flash()->warning(tr('Attenzione: il codice _CODICE_ è già stato utilizzato _N_ volta', [
-                '_CODICE_' => post('codice'),
+                '_CODICE_' => post('codice', true),
                 '_N_' => $numero_codice,
             ]));
         }
 
-        $articolo->codice = post('codice');
+        $articolo->codice = post('codice', true);
         $articolo->barcode = post('barcode');
         $articolo->descrizione = post('descrizione');
         $articolo->um = post('um');
@@ -212,7 +212,7 @@ switch (post('op')) {
     // Duplica articolo
     case 'copy':
         $new = $articolo->replicate();
-        $new->codice = post('codice');
+        $new->codice = post('codice', true);
         $new->qta = 0;
         $new->save();
 

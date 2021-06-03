@@ -26,6 +26,7 @@ use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\Intervento;
 use Modules\Ordini\Ordine;
+use Modules\Fatture\Fattura;
 use Modules\TipiIntervento\Tipo as TipoSessione;
 use Traits\RecordTrait;
 use Traits\ReferenceTrait;
@@ -252,12 +253,12 @@ class Preventivo extends Document
         if ($qta_evasa == 0) {
             $descrizione = 'In lavorazione';
             $codice_intervento = 'OK';
-        } elseif (!in_array($stato_attuale->descrizione, ['Parzialmente fatturato', 'Fatturato']) && $trigger->getDocument() instanceof Ordine) {
-            $descrizione = $this->stato->descrizione;
-            $codice_intervento = 'OK';
-        } else {
+        } else if($trigger->getDocument() instanceof Fattura){
             $descrizione = $parziale ? 'Parzialmente fatturato' : 'Fatturato';
             $codice_intervento = 'FAT';
+        } else {
+            $descrizione = $this->stato->descrizione;
+            $codice_intervento = 'OK';
         }
 
         $stato = Stato::where('descrizione', $descrizione)->first();

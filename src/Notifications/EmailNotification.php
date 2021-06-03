@@ -229,7 +229,7 @@ class EmailNotification extends PHPMailer implements NotificationInterface
     {
         $attachment = database()->fetchOne('SELECT * FROM zz_files WHERE id = '.prepare($file_id));
 
-        $this->addAttachment(base_dir().'/'.Uploads::getDirectory($attachment['id_module'], $attachment['id_plugin']).'/'.$attachment['filename']);
+        $this->addAttachment(base_dir().'/'.Uploads::getDirectory($attachment['id_module'], $attachment['id_plugin']).'/'.$attachment['filename'], $attachment['original']);
     }
 
     /**

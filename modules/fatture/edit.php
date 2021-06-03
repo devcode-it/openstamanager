@@ -766,15 +766,17 @@ if ($dir == 'uscita' && $fattura->isFE()) {
 
                 var div = $("#controlla_totali");
                 div.removeClass("alert-info");
+                var calculated = parseFloat(data.calculated, 10).toLocale();
+                var stored = parseFloat(data.stored, 10).toLocale();
 
-                if (data.stored == null) {
+                if (stored == null) {
                     div.addClass("alert-info").html("'.tr("Il file XML non contiene il nodo ''ImportoTotaleDocumento'': impossibile controllare corrispondenza dei totali").'.")
-                } else if (data.stored == data.calculated){
+                } else if (stored == calculated){
                     div.addClass("alert-success").html("'.tr('Il totale del file XML corrisponde a quello calcolato dal gestionale').'.")
                 } else {
                     div.addClass("alert-warning").html("'.tr('Il totale del file XML non corrisponde a quello calcolato dal gestionale: previsto _XML_, calcolato _CALC_', [
-                        '_XML_' => '" + data.stored + " " + globals.currency + "',
-                        '_CALC_' => '" + data.calculated + " " + globals.currency + "',
+                        '_XML_' => '" + stored + " " + globals.currency + "',
+                        '_CALC_' => '" + calculated + " " + globals.currency + "',
                     ]).'.")
                 }
 

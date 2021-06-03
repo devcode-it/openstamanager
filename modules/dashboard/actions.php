@@ -20,6 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 $modulo_interventi = Modules::get('Interventi');
+$modulo_preventivi = Modules::get('Preventivi');
 
 if (!isset($user['idanagrafica'])) {
     $user['idanagrafica'] = '';
@@ -105,6 +106,59 @@ switch (filter('op')) {
                 'borderColor' => ($sessione['colore_tecnico'] == '#FFFFFF') ? color_darken($sessione['colore_tecnico'], 100) : $sessione['colore_tecnico'],
                 'allDay' => false,
             ];
+        }
+
+        $query = 'SELECT
+            co_preventivi.id,
+            co_preventivi.nome,
+            co_preventivi.numero,
+            co_preventivi.data_accettazione,
+            co_preventivi.data_conclusione,
+            (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = co_preventivi.idanagrafica) AS cliente,
+            (SELECT id FROM zz_files WHERE id_record = co_preventivi.id AND id_module = '.prepare($modulo_preventivi->id).' LIMIT 1) AS have_attachments
+        FROM co_preventivi
+            LEFT JOIN co_statipreventivi ON co_preventivi.idstato = co_statipreventivi.id
+        WHERE
+        (
+            (co_preventivi.data_accettazione >= '.prepare($start).' AND co_preventivi.data_accettazione <= '.prepare($end).')
+            OR (co_preventivi.data_conclusione >= '.prepare($start).' AND co_preventivi.data_conclusione <= '.prepare($end).')
+        )   
+        AND
+            co_statipreventivi.is_pianificabile=1';
+        $sessioni = $dbo->fetchArray($query);
+
+        foreach ($sessioni as $sessione) {
+            if(!empty($sessione['data_accettazione']) && $sessione['data_accettazione']!='0000-00-00'){
+                $results[] = [
+                    'id' => $sessione['id'],
+                    'idintervento' => $sessione['id'],
+                    'idtecnico' => "",
+                    'title' => '<b>Prev. '.$sessione['numero'].'</b> '.$sessione['nome'].''.(($sessione['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'<br><b>'.tr('Cliente').':</b> '.$sessione['cliente'],
+                    'start' => $sessione['data_accettazione'],
+                    'end' => $sessione['data_accettazione'],
+                    'url' => base_path().'/editor.php?id_module='.$modulo_preventivi->id.'&id_record='.$sessione['id'],
+                    'backgroundColor' => "#ff7f50",
+                    'textColor' => color_inverse("#ff7f50"),
+                    'borderColor' => "#ff7f50",
+                    'allDay' => true,
+                ];
+            }
+
+            if($sessione['data_accettazione'] != $sessione['data_conclusione'] && $sessione['data_conclusione']!='0000-00-00' && !empty($sessione['data_conclusione']) ){
+                $results[] = [
+                    'id' => $sessione['id'],
+                    'idintervento' => $sessione['id'],
+                    'idtecnico' => "",
+                    'title' => '<b>Prev. '.$sessione['numero'].'</b> '.$sessione['nome'].''.(($sessione['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'<br><b>'.tr('Cliente').':</b> '.$sessione['cliente'],
+                    'start' => $sessione['data_conclusione'],
+                    'end' => $sessione['data_conclusione'],
+                    'url' => base_path().'/editor.php?id_module='.$modulo_preventivi->id.'&id_record='.$sessione['id'],
+                    'backgroundColor' => "#ff7f50",
+                    'textColor' => color_inverse("#ff7f50"),
+                    'borderColor' => "#ff7f50",
+                    'allDay' => true,
+                ];
+            }
         }
 
         echo json_encode($results);

@@ -518,7 +518,7 @@ echo '
             lazyFetching: true,
             selectMirror: true,
             eventLimit: false, // allow "more" link when too many events
-            allDaySlot: false,
+            allDaySlot: true,
 
             loading: function (isLoading, view) {
                 if (isLoading) {

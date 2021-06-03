@@ -1424,7 +1424,7 @@ class FatturaElettronica
                 $dettaglio[]['AltriDatiGestionali'] = [
                     'TipoDato' => 'AswDichInt',
                     'RiferimentoTesto' => $dichiarazione->numero_protocollo,
-                    'RiferimentoTesto' => $dichiarazione->numero_progressivo,
+                    'RiferimentoNumero' => $dichiarazione->numero_progressivo,
                     'RiferimentoData' => $dichiarazione->data_emissione,
                 ];
             }

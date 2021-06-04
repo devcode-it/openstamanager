@@ -116,7 +116,7 @@ function orderValue($table, $field, $id)
  */
 function reorderRows($table, $field, $id)
 {
-    $righe = database()->select($table, 'id', [$field => $id]);
+    $righe = database()->select($table, 'id', [$field => $id], ['order' => 'ASC']);
     $i = 1;
 
     foreach ($righe as $riga) {

@@ -132,7 +132,7 @@ switch (filter('op')) {
         foreach ($alldays as $preventivo) {
             if(!empty($preventivo['data_accettazione']) && $preventivo['data_accettazione']!='0000-00-00'){
                 $results[] = [
-                    'id' => $preventivo['id'],
+                    'id' => $modulo_preventivi->id.'_'.$preventivo['id'],
                     'idintervento' => $preventivo['id'],
                     'idtecnico' => "",
                     'title' => '<b>Accettazione prev. '.$preventivo['numero'].'</b> '.$preventivo['nome'].''.(($preventivo['have_attachments']) ? ' <i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'<br><b>'.tr('Cliente').':</b> '.$preventivo['cliente'],
@@ -143,12 +143,13 @@ switch (filter('op')) {
                     'textColor' => color_inverse("#ff7f50"),
                     'borderColor' => "#ff7f50",
                     'allDay' => true,
+                    'eventStartEditable' => false,
                 ];
             }
 
             if($preventivo['data_accettazione'] != $preventivo['data_conclusione'] && $preventivo['data_conclusione']!='0000-00-00' && !empty($preventivo['data_conclusione']) ){
                 $results[] = [
-                    'id' => $preventivo['id'],
+                    'id' => $modulo_preventivi->id.'_'.$preventivo['id'],
                     'idintervento' => $preventivo['id'],
                     'idtecnico' => "",
                     'title' => '<b>Conclusione prev. '.$preventivo['numero'].'</b> '.$preventivo['nome'].''.(($preventivo['have_attachments']) ? ' <i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'<br><b>'.tr('Cliente').':</b> '.$preventivo['cliente'],
@@ -159,6 +160,7 @@ switch (filter('op')) {
                     'textColor' => color_inverse("#ff7f50"),
                     'borderColor' => "#ff7f50",
                     'allDay' => true,
+                    'eventStartEditable' => false,
                 ];
             }
         }
@@ -285,7 +287,7 @@ switch (filter('op')) {
                 $rs = $dbo->fetchArray($query);
 
 
-                $tooltip = '<b>Accettazione prev. '.$rs[0]['numero'].'</b> '.$rs[0]['nome'].''.(($rs[0]['have_attachments']) ? ' <i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'<br><b>'.tr('Cliente').':</b> '.$rs[0]['cliente'];
+                $tooltip = '<b>Prev. '.$rs[0]['numero'].'</b> '.$rs[0]['nome'].''.(($rs[0]['have_attachments']) ? ' <i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'<br><b>'.tr('Cliente').':</b> '.$rs[0]['cliente'];
 
 
             }

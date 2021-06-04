@@ -543,7 +543,6 @@ echo '
                 } else {
                     name = "id_intervento";
                 }
-
                 openModal(globals.dashboard.drop.title, globals.dashboard.drop.url + "&data=" + data + "&orario_inizio=" + ora_dal + "&orario_fine=" + ora_al + "&ref=dashboard&idcontratto=" + $(this).data("idcontratto") + "&" + name + "=" + $(this).data("id") + "&id_tecnico=" + $(this).data("id_tecnico"));
 
                 // Ricaricamento dei dati alla chiusura del modal
@@ -560,24 +559,28 @@ echo '
             select: function(start, end, allDay) { // info
                 // let start = info.start;
                 // let end = info.end;
+                
+                let is_allDay = !start.hasTime() && !end.hasTime();
 
-                let data = moment(start).format("YYYY-MM-DD");
-                let data_fine = moment(end).format("YYYY-MM-DD");
-                let orario_inizio = moment(start).format("HH:mm");
-                let orario_fine = moment(end).format("HH:mm");
+                if (is_allDay!==true){
+                    let data = moment(start).format("YYYY-MM-DD");
+                    let data_fine = moment(end).format("YYYY-MM-DD");
+                    let orario_inizio = moment(start).format("HH:mm");
+                    let orario_fine = moment(end).format("HH:mm");
 
-                // Fix selezione di un giorno avanti per vista mensile
-                if (globals.dashboard.calendar.fullCalendar("getView").name == "month") {
-                    data_fine = moment(end).subtract(1, "days").format("YYYY-MM-DD");
+                    // Fix selezione di un giorno avanti per vista mensile
+                    if (globals.dashboard.calendar.fullCalendar("getView").name == "month") {
+                        data_fine = moment(end).subtract(1, "days").format("YYYY-MM-DD");
+                    }
+
+                    openModal(globals.dashboard.select.title, globals.dashboard.select.url + "&ref=dashboard&data=" + data + "&data_fine=" + data_fine + "&orario_inizio=" + orario_inizio + "&orario_fine=" + orario_fine);
                 }
-
-                openModal(globals.dashboard.select.title, globals.dashboard.select.url + "&ref=dashboard&data=" + data + "&data_fine=" + data_fine + "&orario_inizio=" + orario_inizio + "&orario_fine=" + orario_fine);
             },
 
             editable: globals.dashboard.write_permission,
             eventDrop: function(event, delta, revertFunc ) {// info
                 // let event = info.event;
-
+                
                 $.post(globals.dashboard.load_url, {
                     op: "modifica_intervento",
                     id: event.id,
@@ -616,8 +619,8 @@ echo '
                 // let element = $(info.el);
                 element.find(".fc-title").html(event.title);
                 let id_intervento = event.idintervento;
-                let allday = event.allDay;
-                if (globals.dashboard.tooltip == 1) {
+                
+                if (globals.dashboard.tooltip == 1 && event.allDay==false ) {
                     element.tooltipster({
                         content: "'.tr('Caricamento...').'",
                         animation: "grow",
@@ -638,7 +641,7 @@ echo '
                             $.post(globals.dashboard.load_url, {
                                     op: "tooltip_info",
                                     id: id_intervento,
-                                    allDay: allday,
+                                    allDay: event.allDay,
                                 }, function (data, response) {
                                     instance.content(data);
 

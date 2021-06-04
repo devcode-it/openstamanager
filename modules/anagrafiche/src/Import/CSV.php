@@ -260,14 +260,14 @@ class CSV extends CSVImporter
         $dati_sede = [];
         foreach ($campi_sede as $field) {
             if (isset($record[$field])) {
-                $dati_sede[$field] = $record[$field];
+                $dati_sede[$field] = trim($record[$field]);
                 unset($record[$field]);
             }
         }
 
         // Ricerca di eventuale anagrafica corrispondente sulla base del campo definito come primary_key (es. codice)
         if (!empty($primary_key)) {
-            $anagrafica = Anagrafica::where($primary_key, '=', $record[$primary_key])->first();
+            $anagrafica = Anagrafica::where($primary_key, '=', trim($record[$primary_key]))->first();
         }
 
         // Se non trovo nessuna anagrafica corrispondente, allora la creo

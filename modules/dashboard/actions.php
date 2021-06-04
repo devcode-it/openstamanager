@@ -108,6 +108,7 @@ switch (filter('op')) {
             ];
         }
 
+        ## Box su allDay
         $query = 'SELECT
             co_preventivi.id,
             co_preventivi.nome,
@@ -125,18 +126,19 @@ switch (filter('op')) {
         )   
         AND
             co_statipreventivi.is_pianificabile=1';
-        $sessioni = $dbo->fetchArray($query);
 
-        foreach ($sessioni as $sessione) {
-            if(!empty($sessione['data_accettazione']) && $sessione['data_accettazione']!='0000-00-00'){
+        $alldays = $dbo->fetchArray($query);
+
+        foreach ($alldays as $preventivo) {
+            if(!empty($preventivo['data_accettazione']) && $preventivo['data_accettazione']!='0000-00-00'){
                 $results[] = [
-                    'id' => $sessione['id'],
-                    'idintervento' => $sessione['id'],
+                    'id' => $preventivo['id'],
+                    'idintervento' => $preventivo['id'],
                     'idtecnico' => "",
-                    'title' => '<b>Prev. '.$sessione['numero'].'</b> '.$sessione['nome'].''.(($sessione['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'<br><b>'.tr('Cliente').':</b> '.$sessione['cliente'],
-                    'start' => $sessione['data_accettazione'],
-                    'end' => $sessione['data_accettazione'],
-                    'url' => base_path().'/editor.php?id_module='.$modulo_preventivi->id.'&id_record='.$sessione['id'],
+                    'title' => '<b>Accettazione prev. '.$preventivo['numero'].'</b> '.$preventivo['nome'].''.(($preventivo['have_attachments']) ? ' <i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'<br><b>'.tr('Cliente').':</b> '.$preventivo['cliente'],
+                    'start' => $preventivo['data_accettazione'],
+                    'end' => $preventivo['data_accettazione'],
+                    'url' => base_path().'/editor.php?id_module='.$modulo_preventivi->id.'&id_record='.$preventivo['id'],
                     'backgroundColor' => "#ff7f50",
                     'textColor' => color_inverse("#ff7f50"),
                     'borderColor' => "#ff7f50",
@@ -144,15 +146,15 @@ switch (filter('op')) {
                 ];
             }
 
-            if($sessione['data_accettazione'] != $sessione['data_conclusione'] && $sessione['data_conclusione']!='0000-00-00' && !empty($sessione['data_conclusione']) ){
+            if($preventivo['data_accettazione'] != $preventivo['data_conclusione'] && $preventivo['data_conclusione']!='0000-00-00' && !empty($preventivo['data_conclusione']) ){
                 $results[] = [
-                    'id' => $sessione['id'],
-                    'idintervento' => $sessione['id'],
+                    'id' => $preventivo['id'],
+                    'idintervento' => $preventivo['id'],
                     'idtecnico' => "",
-                    'title' => '<b>Prev. '.$sessione['numero'].'</b> '.$sessione['nome'].''.(($sessione['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'<br><b>'.tr('Cliente').':</b> '.$sessione['cliente'],
-                    'start' => $sessione['data_conclusione'],
-                    'end' => $sessione['data_conclusione'],
-                    'url' => base_path().'/editor.php?id_module='.$modulo_preventivi->id.'&id_record='.$sessione['id'],
+                    'title' => '<b>Conclusione prev. '.$preventivo['numero'].'</b> '.$preventivo['nome'].''.(($preventivo['have_attachments']) ? ' <i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'<br><b>'.tr('Cliente').':</b> '.$preventivo['cliente'],
+                    'start' => $preventivo['data_conclusione'],
+                    'end' => $preventivo['data_conclusione'],
+                    'url' => base_path().'/editor.php?id_module='.$modulo_preventivi->id.'&id_record='.$preventivo['id'],
                     'backgroundColor' => "#ff7f50",
                     'textColor' => color_inverse("#ff7f50"),
                     'borderColor' => "#ff7f50",
@@ -193,77 +195,102 @@ switch (filter('op')) {
 
         break;
 
-    case 'info_intervento':
+    case 'tooltip_info':
         $id = filter('id');
+        $allDay = filter('allDay');
         $timeStart = filter('timeStart');
         $timeEnd = filter('timeEnd');
 
-        // Lettura dati intervento di riferimento
-        $query = 'SELECT in_interventi_tecnici.idintervento, in_interventi.id, idtecnico, orario_inizio, orario_fine, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS nome_tecnico, (SELECT colore FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS colore FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id WHERE in_interventi.id='.prepare($id).' '.Modules::getAdditionalsQuery('Interventi');
-        $rs = $dbo->fetchArray($query);
-
-        if (!empty($rs)) {
-            $tecnici = [];
-            foreach ($rs as $sessione) {
-                $tecnici[] = $sessione['nome_tecnico'].' ('.Translator::timestampToLocale($sessione['orario_inizio']).' - '.Translator::timeToLocale($sessione['orario_fine']).')';
-            }
-
-            // Lettura dati intervento
-            $query = 'SELECT *, in_interventi.codice, idstatointervento AS parent_idstato, in_interventi.idtipointervento AS parent_idtipo, (SELECT GROUP_CONCAT(CONCAT(matricola, " - ", nome) SEPARATOR ", ") FROM my_impianti INNER JOIN my_impianti_interventi ON my_impianti.id=my_impianti_interventi.idimpianto WHERE my_impianti_interventi.idintervento='.prepare($id).' GROUP BY my_impianti_interventi.idintervento) AS impianti, (SELECT descrizione FROM in_statiintervento WHERE idstatointervento=parent_idstato) AS stato, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=parent_idtipo) AS tipo, (SELECT idzona FROM an_anagrafiche WHERE idanagrafica=in_interventi.idanagrafica) AS idzona FROM in_interventi LEFT JOIN in_interventi_tecnici ON in_interventi.id =in_interventi_tecnici.idintervento LEFT JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE in_interventi.id='.prepare($id).' '.Modules::getAdditionalsQuery('Interventi');
+        if (empty($allday)){
+            // Lettura dati intervento di riferimento
+            $query = 'SELECT in_interventi_tecnici.idintervento, in_interventi.id, idtecnico, orario_inizio, orario_fine, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS nome_tecnico, (SELECT colore FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS colore FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id WHERE in_interventi.id='.prepare($id).' '.Modules::getAdditionalsQuery('Interventi');
             $rs = $dbo->fetchArray($query);
 
-            //correggo info indirizzo citta cap provincia con quelle della sede di destinazione
-            if (!empty($rs[0]['idsede_destinazione'])) {
-                $sede = $database->fetchOne('SELECT * FROM an_sedi WHERE id = '.prepare($rs[0]['idsede_destinazione']));
-                $rs[0]['indirizzo'] = $sede['nomesede'].'<br>'.$sede['indirizzo'];
-                $rs[0]['cap'] = $sede['cap'];
-                $rs[0]['citta'] = $sede['citta'];
-                $rs[0]['provincia'] = $sede['provincia'];
+            if (!empty($rs)) {
+                $tecnici = [];
+                foreach ($rs as $sessione) {
+                    $tecnici[] = $sessione['nome_tecnico'].' ('.Translator::timestampToLocale($sessione['orario_inizio']).' - '.Translator::timeToLocale($sessione['orario_fine']).')';
+                }
+
+                // Lettura dati intervento
+                $query = 'SELECT *, in_interventi.codice, idstatointervento AS parent_idstato, in_interventi.idtipointervento AS parent_idtipo, (SELECT GROUP_CONCAT(CONCAT(matricola, " - ", nome) SEPARATOR ", ") FROM my_impianti INNER JOIN my_impianti_interventi ON my_impianti.id=my_impianti_interventi.idimpianto WHERE my_impianti_interventi.idintervento='.prepare($id).' GROUP BY my_impianti_interventi.idintervento) AS impianti, (SELECT descrizione FROM in_statiintervento WHERE idstatointervento=parent_idstato) AS stato, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=parent_idtipo) AS tipo, (SELECT idzona FROM an_anagrafiche WHERE idanagrafica=in_interventi.idanagrafica) AS idzona FROM in_interventi LEFT JOIN in_interventi_tecnici ON in_interventi.id =in_interventi_tecnici.idintervento LEFT JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE in_interventi.id='.prepare($id).' '.Modules::getAdditionalsQuery('Interventi');
+                $rs = $dbo->fetchArray($query);
+
+                //correggo info indirizzo citta cap provincia con quelle della sede di destinazione
+                if (!empty($rs[0]['idsede_destinazione'])) {
+                    $sede = $database->fetchOne('SELECT * FROM an_sedi WHERE id = '.prepare($rs[0]['idsede_destinazione']));
+                    $rs[0]['indirizzo'] = $sede['nomesede'].'<br>'.$sede['indirizzo'];
+                    $rs[0]['cap'] = $sede['cap'];
+                    $rs[0]['citta'] = $sede['citta'];
+                    $rs[0]['provincia'] = $sede['provincia'];
+                }
+
+                $desc_tipointervento = $rs[0]['tipo'];
+
+                $tooltip = '<b>'.tr('Numero intervento').'</b>: '.$rs[0]['codice'].'<br/>';
+                $tooltip .= '<b>'.tr('Ragione sociale').'</b>: '.nl2br($rs[0]['ragione_sociale']).'<br/>';
+
+                if (!empty($rs[0]['telefono'])) {
+                    $tooltip .= '<b>'.tr('Telefono').'</b>: '.nl2br($rs[0]['telefono']).'<br/>';
+                }
+
+                if (!empty($rs[0]['cellulare'])) {
+                    $tooltip .= '<b>'.tr('Cellulare').'</b>: '.nl2br($rs[0]['cellulare']).'<br/>';
+                }
+
+                if (!empty($rs[0]['indirizzo']) || !empty($rs[0]['citta']) || !empty($rs[0]['provincia']) || !empty($rs[0]['cap'])) {
+                    $tooltip .= '<b>'.tr('Indirizzo').'</b>: '.nl2br($rs[0]['indirizzo'].' - '.$rs[0]['cap'].' '.$rs[0]['citta'].' ('.$rs[0]['provincia'].')').'<br/>';
+                }
+
+                if (!empty($rs[0]['note'])) {
+                    $tooltip .= '<b>'.tr('Note').'</b>: '.nl2br($rs[0]['note']).'<br/>';
+                }
+
+                $tooltip .= '<b>'.tr('Data richiesta').'</b>: '.Translator::timestampToLocale($rs[0]['data_richiesta']).'<br/>';
+
+                $tooltip .= '<b>'.tr('Tipo intervento').'</b>: '.nl2br($desc_tipointervento).'<br/>';
+
+                $tooltip .= '<b>'.tr('Tecnici').'</b>: '.implode(', ', $tecnici).'<br/>';
+
+                if ($rs[0]['impianti'] != '') {
+                    $tooltip .= '<b>'.tr('Impianti').'</b>: '.$rs[0]['impianti'].'<br/>';
+                }
+
+                if ($rs[0]['richiesta'] != '') {
+                    $tooltip .= '<b>'.tr('Richiesta').'</b>: '.nl2br($rs[0]['richiesta']).'<br/>';
+                }
+
+                if ($rs[0]['descrizione'] != '') {
+                    $tooltip .= '<b>'.tr('Descrizione').'</b>: '.nl2br($rs[0]['descrizione']).'<br/>';
+                }
+
+                if ($rs[0]['informazioniaggiuntive'] != '') {
+                    $tooltip .= '<b>'.tr('Informazioni aggiuntive').'</b>: '.nl2br($rs[0]['informazioniaggiuntive']).'<br/>';
+                }
+               
+            }else{
+
+                $query = 'SELECT
+                co_preventivi.nome,
+                co_preventivi.numero,
+                co_preventivi.data_accettazione,
+                co_preventivi.data_conclusione,
+                (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = co_preventivi.idanagrafica) AS cliente,
+                (SELECT id FROM zz_files WHERE id_record = '.prepare($id).' AND id_module = '.prepare($modulo_preventivi->id).' LIMIT 1) AS have_attachments
+                FROM co_preventivi
+                    LEFT JOIN co_statipreventivi ON co_preventivi.idstato = co_statipreventivi.id
+                WHERE co_preventivi.id='.prepare($id);
+              
+                
+                $rs = $dbo->fetchArray($query);
+
+
+                $tooltip = '<b>Accettazione prev. '.$rs[0]['numero'].'</b> '.$rs[0]['nome'].''.(($rs[0]['have_attachments']) ? ' <i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'<br><b>'.tr('Cliente').':</b> '.$rs[0]['cliente'];
+
+
             }
 
-            $desc_tipointervento = $rs[0]['tipo'];
-
-            $tooltip = '<b>'.tr('Numero intervento').'</b>: '.$rs[0]['codice'].'<br/>';
-            $tooltip .= '<b>'.tr('Ragione sociale').'</b>: '.nl2br($rs[0]['ragione_sociale']).'<br/>';
-
-            if (!empty($rs[0]['telefono'])) {
-                $tooltip .= '<b>'.tr('Telefono').'</b>: '.nl2br($rs[0]['telefono']).'<br/>';
-            }
-
-            if (!empty($rs[0]['cellulare'])) {
-                $tooltip .= '<b>'.tr('Cellulare').'</b>: '.nl2br($rs[0]['cellulare']).'<br/>';
-            }
-
-            if (!empty($rs[0]['indirizzo']) || !empty($rs[0]['citta']) || !empty($rs[0]['provincia']) || !empty($rs[0]['cap'])) {
-                $tooltip .= '<b>'.tr('Indirizzo').'</b>: '.nl2br($rs[0]['indirizzo'].' - '.$rs[0]['cap'].' '.$rs[0]['citta'].' ('.$rs[0]['provincia'].')').'<br/>';
-            }
-
-            if (!empty($rs[0]['note'])) {
-                $tooltip .= '<b>'.tr('Note').'</b>: '.nl2br($rs[0]['note']).'<br/>';
-            }
-
-            $tooltip .= '<b>'.tr('Data richiesta').'</b>: '.Translator::timestampToLocale($rs[0]['data_richiesta']).'<br/>';
-
-            $tooltip .= '<b>'.tr('Tipo intervento').'</b>: '.nl2br($desc_tipointervento).'<br/>';
-
-            $tooltip .= '<b>'.tr('Tecnici').'</b>: '.implode(', ', $tecnici).'<br/>';
-
-            if ($rs[0]['impianti'] != '') {
-                $tooltip .= '<b>'.tr('Impianti').'</b>: '.$rs[0]['impianti'].'<br/>';
-            }
-
-            if ($rs[0]['richiesta'] != '') {
-                $tooltip .= '<b>'.tr('Richiesta').'</b>: '.nl2br($rs[0]['richiesta']).'<br/>';
-            }
-
-            if ($rs[0]['descrizione'] != '') {
-                $tooltip .= '<b>'.tr('Descrizione').'</b>: '.nl2br($rs[0]['descrizione']).'<br/>';
-            }
-
-            if ($rs[0]['informazioniaggiuntive'] != '') {
-                $tooltip .= '<b>'.tr('Informazioni aggiuntive').'</b>: '.nl2br($rs[0]['informazioniaggiuntive']).'<br/>';
-            }
-
+         
             echo $tooltip;
         }
         break;

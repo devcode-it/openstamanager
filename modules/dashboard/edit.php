@@ -614,9 +614,9 @@ echo '
             eventAfterRender: function(event, element) {
                 // let event = info.event;
                 // let element = $(info.el);
-
                 element.find(".fc-title").html(event.title);
                 let id_intervento = event.idintervento;
+                let allday = event.allDay;
                 if (globals.dashboard.tooltip == 1) {
                     element.tooltipster({
                         content: "'.tr('Caricamento...').'",
@@ -636,8 +636,9 @@ echo '
 
                             if ($origin.data("loaded") !== true) {
                             $.post(globals.dashboard.load_url, {
-                                    op: "info_intervento",
+                                    op: "tooltip_info",
                                     id: id_intervento,
+                                    allDay: allday,
                                 }, function (data, response) {
                                     instance.content(data);
 

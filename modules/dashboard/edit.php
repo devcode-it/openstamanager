@@ -581,19 +581,23 @@ echo '
             eventDrop: function(event, delta, revertFunc ) {// info
                 // let event = info.event;
                 
-                $.post(globals.dashboard.load_url, {
-                    op: "modifica_intervento",
-                    id: event.id,
-                    idintervento: event.idintervento,
-                    timeStart: moment(event.start).format("YYYY-MM-DD HH:mm"),
-                    timeEnd: moment(event.end).format("YYYY-MM-DD HH:mm")
-                }, function (data, response) {
-                    data = $.trim(data);
-                    if (response !== "success" || data !== "ok") {
-                        swal("'.tr('Errore').'", data, "error");
-                        revertFunc(); // info.revert();
-                    }
-                });
+                if (event.allDay!==true){
+                    $.post(globals.dashboard.load_url, {
+                        op: "modifica_intervento",
+                        id: event.id,
+                        idintervento: event.idintervento,
+                        timeStart: moment(event.start).format("YYYY-MM-DD HH:mm"),
+                        timeEnd: moment(event.end).format("YYYY-MM-DD HH:mm")
+                    }, function (data, response) {
+                        data = $.trim(data);
+                        if (response !== "success" || data !== "ok") {
+                            swal("'.tr('Errore').'", data, "error");
+                            revertFunc(); // info.revert();
+                        }
+                    });
+                }else{
+                    revertFunc();
+                }
             },
             eventResize: function(event, dayDelta, minuteDelta, revertFunc) { // info
                 // let event = info.event;
@@ -619,8 +623,8 @@ echo '
                 // let element = $(info.el);
                 element.find(".fc-title").html(event.title);
                 let id_intervento = event.idintervento;
-                
-                if (globals.dashboard.tooltip == 1 && event.allDay==false ) {
+
+                if (globals.dashboard.tooltip == 1 && event.allDay!==true ) {
                     element.tooltipster({
                         content: "'.tr('Caricamento...').'",
                         animation: "grow",

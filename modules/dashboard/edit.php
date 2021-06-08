@@ -518,7 +518,7 @@ echo '
             lazyFetching: true,
             selectMirror: true,
             eventLimit: false, // allow "more" link when too many events
-            allDaySlot: true,
+            allDaySlot: '.intval(setting('Visualizza informazioni aggiuntive sul calendario')).',
 
             loading: function (isLoading, view) {
                 if (isLoading) {

@@ -50,7 +50,8 @@ switch (filter('op')) {
             (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = idtecnico) AS nome_tecnico,
             (SELECT id FROM zz_files WHERE id_record = in_interventi.id AND id_module = '.prepare($modulo_interventi->id).' LIMIT 1) AS have_attachments,
             (SELECT colore FROM an_anagrafiche WHERE idanagrafica = idtecnico) AS colore_tecnico, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=in_interventi.idanagrafica) AS cliente,
-            (SELECT idzona FROM an_anagrafiche WHERE idanagrafica = in_interventi.idanagrafica) AS idzona
+            (SELECT idzona FROM an_anagrafiche WHERE idanagrafica = in_interventi.idanagrafica) AS idzona,
+            in_statiintervento.is_completato AS is_completato
         FROM in_interventi_tecnici
             INNER JOIN in_interventi ON in_interventi_tecnici.idintervento = in_interventi.id
             LEFT OUTER JOIN in_statiintervento ON in_interventi.idstatointervento = in_statiintervento.idstatointervento
@@ -97,7 +98,7 @@ switch (filter('op')) {
                 'id' => $sessione['id'],
                 'idintervento' => $sessione['idintervento'],
                 'idtecnico' => $sessione['idtecnico'],
-                'title' => '<b>Int. '.$sessione['codice'].'</b> '.$sessione['cliente'].'<br><b>'.tr('Tecnici').':</b> '.$sessione['nome_tecnico'].' '.(($sessione['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : ''),
+                'title' => '<div style=\'position:absolute; top:7%; right:3%;\' > '.(($sessione['is_completato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '').' '.(($sessione['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'</div>'.'<b>Int. '.$sessione['codice'].'</b> '.$sessione['cliente'].'<br><b>'.tr('Tecnici').':</b> '.$sessione['nome_tecnico'],
                 'start' => $sessione['orario_inizio'],
                 'end' => $sessione['orario_fine'],
                 'url' => base_path().'/editor.php?id_module='.$modulo_interventi->id.'&id_record='.$sessione['idintervento'],
@@ -108,60 +109,64 @@ switch (filter('op')) {
             ];
         }
 
-        ## Box su allDay
-        $query = 'SELECT
-            co_preventivi.id,
-            co_preventivi.nome,
-            co_preventivi.numero,
-            co_preventivi.data_accettazione,
-            co_preventivi.data_conclusione,
-            (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = co_preventivi.idanagrafica) AS cliente,
-            (SELECT id FROM zz_files WHERE id_record = co_preventivi.id AND id_module = '.prepare($modulo_preventivi->id).' LIMIT 1) AS have_attachments
-        FROM co_preventivi
-            LEFT JOIN co_statipreventivi ON co_preventivi.idstato = co_statipreventivi.id
-        WHERE
-        (
-            (co_preventivi.data_accettazione >= '.prepare($start).' AND co_preventivi.data_accettazione <= '.prepare($end).')
-            OR (co_preventivi.data_conclusione >= '.prepare($start).' AND co_preventivi.data_conclusione <= '.prepare($end).')
-        )   
-        AND
-            co_statipreventivi.is_pianificabile=1';
+        if (setting('Visualizza informazioni aggiuntive sul calendario')){
 
-        $alldays = $dbo->fetchArray($query);
+            ## Box allDay
+            $query = 'SELECT
+                co_preventivi.id,
+                co_preventivi.nome,
+                co_preventivi.numero,
+                co_preventivi.data_accettazione,
+                co_preventivi.data_conclusione,
+                (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = co_preventivi.idanagrafica) AS cliente,
+                (SELECT id FROM zz_files WHERE id_record = co_preventivi.id AND id_module = '.prepare($modulo_preventivi->id).' LIMIT 1) AS have_attachments,
+                 \'1\' AS is_completato
+            FROM co_preventivi
+                LEFT JOIN co_statipreventivi ON co_preventivi.idstato = co_statipreventivi.id
+            WHERE
+            (
+                (co_preventivi.data_accettazione >= '.prepare($start).' AND co_preventivi.data_accettazione <= '.prepare($end).')
+                OR (co_preventivi.data_conclusione >= '.prepare($start).' AND co_preventivi.data_conclusione <= '.prepare($end).')
+            )   
+            AND
+                co_statipreventivi.is_pianificabile=1';
 
-        foreach ($alldays as $preventivo) {
-            if(!empty($preventivo['data_accettazione']) && $preventivo['data_accettazione']!='0000-00-00'){
-                $results[] = [
-                    'id' => $modulo_preventivi->id.'_'.$preventivo['id'],
-                    'idintervento' => $preventivo['id'],
-                    'idtecnico' => "",
-                    'title' => '<b>Accettazione prev. '.$preventivo['numero'].'</b> '.$preventivo['nome'].''.(($preventivo['have_attachments']) ? ' <i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'<br><b>'.tr('Cliente').':</b> '.$preventivo['cliente'],
-                    'start' => $preventivo['data_accettazione'],
-                    'end' => $preventivo['data_accettazione'],
-                    'url' => base_path().'/editor.php?id_module='.$modulo_preventivi->id.'&id_record='.$preventivo['id'],
-                    'backgroundColor' => "#ff7f50",
-                    'textColor' => color_inverse("#ff7f50"),
-                    'borderColor' => "#ff7f50",
-                    'allDay' => true,
-                    'eventStartEditable' => false,
-                ];
-            }
+            $alldays = $dbo->fetchArray($query);
 
-            if($preventivo['data_accettazione'] != $preventivo['data_conclusione'] && $preventivo['data_conclusione']!='0000-00-00' && !empty($preventivo['data_conclusione']) ){
-                $results[] = [
-                    'id' => $modulo_preventivi->id.'_'.$preventivo['id'],
-                    'idintervento' => $preventivo['id'],
-                    'idtecnico' => "",
-                    'title' => '<b>Conclusione prev. '.$preventivo['numero'].'</b> '.$preventivo['nome'].''.(($preventivo['have_attachments']) ? ' <i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'<br><b>'.tr('Cliente').':</b> '.$preventivo['cliente'],
-                    'start' => $preventivo['data_conclusione'],
-                    'end' => $preventivo['data_conclusione'],
-                    'url' => base_path().'/editor.php?id_module='.$modulo_preventivi->id.'&id_record='.$preventivo['id'],
-                    'backgroundColor' => "#ff7f50",
-                    'textColor' => color_inverse("#ff7f50"),
-                    'borderColor' => "#ff7f50",
-                    'allDay' => true,
-                    'eventStartEditable' => false,
-                ];
+            foreach ($alldays as $preventivo) {
+                if(!empty($preventivo['data_accettazione']) && $preventivo['data_accettazione']!='0000-00-00'){
+                    $results[] = [
+                        'id' => $modulo_preventivi->id.'_'.$preventivo['id'],
+                        'idintervento' => $preventivo['id'],
+                        'idtecnico' => "",
+                        'title' => '<div style=\'position:absolute; top:7%; right:3%;\' > '.(($preventivo['is_completato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '').' '.(($preventivo['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'</div>'.'<b>Accettazione prev. '.$preventivo['numero'].'</b> '.$preventivo['nome'].'<br><b>'.tr('Cliente').':</b> '.$preventivo['cliente'],
+                        'start' => $preventivo['data_accettazione'],
+                        'end' => $preventivo['data_accettazione'],
+                        'url' => base_path().'/editor.php?id_module='.$modulo_preventivi->id.'&id_record='.$preventivo['id'],
+                        'backgroundColor' => "#ff7f50",
+                        'textColor' => color_inverse("#ff7f50"),
+                        'borderColor' => "#ff7f50",
+                        'allDay' => true,
+                        'eventStartEditable' => false,
+                    ];
+                }
+
+                if($preventivo['data_accettazione'] != $preventivo['data_conclusione'] && $preventivo['data_conclusione']!='0000-00-00' && !empty($preventivo['data_conclusione']) ){
+                    $results[] = [
+                        'id' => $modulo_preventivi->id.'_'.$preventivo['id'],
+                        'idintervento' => $preventivo['id'],
+                        'idtecnico' => "",
+                        'title' => '<div style=\'position:absolute; top:7%; right:3%;\' > '.(($preventivo['is_completato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '').' '.(($preventivo['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'</div>'.'<b>Conclusione prev. '.$preventivo['numero'].'</b> '.$preventivo['nome'].'<br><b>'.tr('Cliente').':</b> '.$preventivo['cliente'],
+                        'start' => $preventivo['data_conclusione'],
+                        'end' => $preventivo['data_conclusione'],
+                        'url' => base_path().'/editor.php?id_module='.$modulo_preventivi->id.'&id_record='.$preventivo['id'],
+                        'backgroundColor' => "#ff7f50",
+                        'textColor' => color_inverse("#ff7f50"),
+                        'borderColor' => "#ff7f50",
+                        'allDay' => true,
+                        'eventStartEditable' => false,
+                    ];
+                }
             }
         }
 

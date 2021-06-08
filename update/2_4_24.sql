@@ -15,3 +15,6 @@ INSERT INTO `zz_views` ( `id_module`, `name`, `query`, `order`, `search`, `slow`
 
 -- Aggiorno colonna completato per newsletter
 UPDATE `zz_views` SET `query` = 'IF(completed_at IS NULL, \'No\', CONCAT(\'Sì \', \'(\', DATE_FORMAT(completed_at, \'%d/%m/%Y %H:%i:%s\' ), \')\'))', `order` = 6 WHERE `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE name='Newsletter') AND `name` = 'Completato'; 
+
+-- Visualizza informazioni aggiuntive sul calendario
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Visualizza informazioni aggiuntive sul calendario', '0', 'boolean', '1', 'Dashboard', '1', 'Visualizza sul calendario il box \"Tutto il giorno\" dove possono essere presenti informazioni aggiuntve'); 

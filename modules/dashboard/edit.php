@@ -590,16 +590,23 @@ echo '
                         timeEnd: moment(event.end).format("YYYY-MM-DD HH:mm")
                     }, function (data, response) {
                         data = $.trim(data);
-                        if (response !== "success" || data !== "ok") {
+
+                        if (response == "success" && data !== "ok") {
+                            swal("'.tr('Attenzione').'", data, "warning");
+                        }else if (response !== "success"){
                             swal("'.tr('Errore').'", data, "error");
-                            revertFunc(); // info.revert();
                         }
+
+                        if (data !=="ok"){
+                            revertFunc(); // info.revert();
+                        }                       
+
                     });
                 }else{
                     revertFunc();
                 }
             },
-            eventResize: function(event, dayDelta, minuteDelta, revertFunc) { // info
+            eventResize: function(event, delta, revertFunc) { // info
                 // let event = info.event;
 
                 $.post(globals.dashboard.load_url, {
@@ -610,10 +617,17 @@ echo '
                     timeEnd: moment(event.end).format("YYYY-MM-DD HH:mm")
                 }, function (data, response) {
                     data = $.trim(data);
-                    if (response !== "success" || data !== "ok") {
+                  
+                    if (response == "success" && data !== "ok") {
+                        swal("'.tr('Attenzione').'", data, "warning");
+                    }else if (response !== "success"){
                         swal("'.tr('Errore').'", data, "error");
+                    }
+
+                    if (data !=="ok"){
                         revertFunc(); // info.revert();
                     }
+
                 });
             },
 
@@ -622,9 +636,9 @@ echo '
                 // let event = info.event;
                 // let element = $(info.el);
                 element.find(".fc-title").html(event.title);
-                let id_intervento = event.idintervento;
+                let id_record = event.idintervento;
 
-                if (globals.dashboard.tooltip == 1 && event.allDay!==true ) {
+                if (globals.dashboard.tooltip == 1) {
                     element.tooltipster({
                         content: "'.tr('Caricamento...').'",
                         animation: "grow",
@@ -644,7 +658,7 @@ echo '
                             if ($origin.data("loaded") !== true) {
                             $.post(globals.dashboard.load_url, {
                                     op: "tooltip_info",
-                                    id: id_intervento,
+                                    id_record: id_record,
                                     allDay: event.allDay,
                                 }, function (data, response) {
                                     instance.content(data);

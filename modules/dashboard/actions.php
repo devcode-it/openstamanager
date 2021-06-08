@@ -136,7 +136,7 @@ switch (filter('op')) {
             foreach ($alldays as $preventivo) {
                 if(!empty($preventivo['data_accettazione']) && $preventivo['data_accettazione']!='0000-00-00'){
                     $results[] = [
-                        'id' => $modulo_preventivi->id.'_'.$preventivo['id'],
+                        'id' => 'A_'.$modulo_preventivi->id.'_'.$preventivo['id'],
                         'idintervento' => $preventivo['id'],
                         'idtecnico' => "",
                         'title' => '<div style=\'position:absolute; top:7%; right:3%;\' > '.(($preventivo['is_completato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '').' '.(($preventivo['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'</div>'.'<b>Accettazione prev. '.$preventivo['numero'].'</b> '.$preventivo['nome'].'<br><b>'.tr('Cliente').':</b> '.$preventivo['cliente'],
@@ -153,7 +153,7 @@ switch (filter('op')) {
 
                 if($preventivo['data_accettazione'] != $preventivo['data_conclusione'] && $preventivo['data_conclusione']!='0000-00-00' && !empty($preventivo['data_conclusione']) ){
                     $results[] = [
-                        'id' => $modulo_preventivi->id.'_'.$preventivo['id'],
+                        'id' => 'B_'.$modulo_preventivi->id.'_'.$preventivo['id'],
                         'idintervento' => $preventivo['id'],
                         'idtecnico' => "",
                         'title' => '<div style=\'position:absolute; top:7%; right:3%;\' > '.(($preventivo['is_completato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '').' '.(($preventivo['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'</div>'.'<b>Conclusione prev. '.$preventivo['numero'].'</b> '.$preventivo['nome'].'<br><b>'.tr('Cliente').':</b> '.$preventivo['cliente'],
@@ -203,7 +203,7 @@ switch (filter('op')) {
         break;
 
     case 'tooltip_info':
-        $id = filter('id');
+        $id = filter('id_record');
         $allDay = filter('allDay');
         $timeStart = filter('timeStart');
         $timeEnd = filter('timeEnd');
@@ -220,7 +220,7 @@ switch (filter('op')) {
                 }
 
                 // Lettura dati intervento
-                $query = 'SELECT *, in_interventi.codice, idstatointervento AS parent_idstato, in_interventi.idtipointervento AS parent_idtipo, (SELECT GROUP_CONCAT(CONCAT(matricola, " - ", nome) SEPARATOR ", ") FROM my_impianti INNER JOIN my_impianti_interventi ON my_impianti.id=my_impianti_interventi.idimpianto WHERE my_impianti_interventi.idintervento='.prepare($id).' GROUP BY my_impianti_interventi.idintervento) AS impianti, (SELECT descrizione FROM in_statiintervento WHERE idstatointervento=parent_idstato) AS stato, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=parent_idtipo) AS tipo, (SELECT idzona FROM an_anagrafiche WHERE idanagrafica=in_interventi.idanagrafica) AS idzona FROM in_interventi LEFT JOIN in_interventi_tecnici ON in_interventi.id =in_interventi_tecnici.idintervento LEFT JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE in_interventi.id='.prepare($id).' '.Modules::getAdditionalsQuery('Interventi');
+                $query = 'SELECT *, in_interventi.codice, an_anagrafiche.note AS note_anagrafica, idstatointervento AS parent_idstato, in_interventi.idtipointervento AS parent_idtipo, (SELECT GROUP_CONCAT(CONCAT(matricola, " - ", nome) SEPARATOR ", ") FROM my_impianti INNER JOIN my_impianti_interventi ON my_impianti.id=my_impianti_interventi.idimpianto WHERE my_impianti_interventi.idintervento='.prepare($id).' GROUP BY my_impianti_interventi.idintervento) AS impianti, (SELECT descrizione FROM in_statiintervento WHERE idstatointervento=parent_idstato) AS stato, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=parent_idtipo) AS tipo, (SELECT idzona FROM an_anagrafiche WHERE idanagrafica=in_interventi.idanagrafica) AS idzona FROM in_interventi LEFT JOIN in_interventi_tecnici ON in_interventi.id =in_interventi_tecnici.idintervento LEFT JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE in_interventi.id='.prepare($id).' '.Modules::getAdditionalsQuery('Interventi');
                 $rs = $dbo->fetchArray($query);
 
                 //correggo info indirizzo citta cap provincia con quelle della sede di destinazione
@@ -235,6 +235,34 @@ switch (filter('op')) {
                 $desc_tipointervento = $rs[0]['tipo'];
 
                 $tooltip = '<b>'.tr('Numero intervento').'</b>: '.$rs[0]['codice'].'<br/>';
+
+                $tooltip .= '<b>'.tr('Data richiesta').'</b>: '.Translator::timestampToLocale($rs[0]['data_richiesta']).'<br/>';
+                
+                if (!empty($rs[0]['data_scadenza'])) {
+                    $tooltip .= '<b>'.tr('Data scadenza').'</b>: '.Translator::timestampToLocale($rs[0]['data_scadenza']).'<br/>';
+                }
+
+                $tooltip .= '<b>'.tr('Tipo intervento').'</b>: '.nl2br($desc_tipointervento).'<br/>';
+
+                $tooltip .= '<b>'.tr('Tecnici').'</b>: '.implode(', ', $tecnici).'<br/>';
+
+                if ($rs[0]['impianti'] != '') {
+                    $tooltip .= '<b>'.tr('Impianti').'</b>: '.$rs[0]['impianti'].'<br/>';
+                }
+
+                if ($rs[0]['richiesta'] != '') {
+                    $tooltip .= '<b>'.tr('Richiesta').'</b>:<div class=\'shorten\'> '.nl2br($rs[0]['richiesta']).'</div>';
+                }
+
+                if ($rs[0]['descrizione'] != '') {
+                    $tooltip .= '<b>'.tr('Descrizione').'</b>:<div class=\'shorten\'> '.nl2br($rs[0]['descrizione']).'</div>';
+                }
+
+                if ($rs[0]['informazioniaggiuntive'] != '') {
+                    $tooltip .= '<b>'.tr('Informazioni aggiuntive').'</b>: '.nl2br($rs[0]['informazioniaggiuntive']).'<br/>';
+                }
+
+
                 $tooltip .= '<b>'.tr('Ragione sociale').'</b>: '.nl2br($rs[0]['ragione_sociale']).'<br/>';
 
                 if (!empty($rs[0]['telefono'])) {
@@ -249,30 +277,8 @@ switch (filter('op')) {
                     $tooltip .= '<b>'.tr('Indirizzo').'</b>: '.nl2br($rs[0]['indirizzo'].' - '.$rs[0]['cap'].' '.$rs[0]['citta'].' ('.$rs[0]['provincia'].')').'<br/>';
                 }
 
-                if (!empty($rs[0]['note'])) {
-                    $tooltip .= '<b>'.tr('Note').'</b>: '.nl2br($rs[0]['note']).'<br/>';
-                }
-
-                $tooltip .= '<b>'.tr('Data richiesta').'</b>: '.Translator::timestampToLocale($rs[0]['data_richiesta']).'<br/>';
-
-                $tooltip .= '<b>'.tr('Tipo intervento').'</b>: '.nl2br($desc_tipointervento).'<br/>';
-
-                $tooltip .= '<b>'.tr('Tecnici').'</b>: '.implode(', ', $tecnici).'<br/>';
-
-                if ($rs[0]['impianti'] != '') {
-                    $tooltip .= '<b>'.tr('Impianti').'</b>: '.$rs[0]['impianti'].'<br/>';
-                }
-
-                if ($rs[0]['richiesta'] != '') {
-                    $tooltip .= '<b>'.tr('Richiesta').'</b>: '.nl2br($rs[0]['richiesta']).'<br/>';
-                }
-
-                if ($rs[0]['descrizione'] != '') {
-                    $tooltip .= '<b>'.tr('Descrizione').'</b>: '.nl2br($rs[0]['descrizione']).'<br/>';
-                }
-
-                if ($rs[0]['informazioniaggiuntive'] != '') {
-                    $tooltip .= '<b>'.tr('Informazioni aggiuntive').'</b>: '.nl2br($rs[0]['informazioniaggiuntive']).'<br/>';
+                if (!empty($rs[0]['note_anagrafica'])) {
+                    $tooltip .= '<b>'.tr('Note anagrafica').'</b>: '.nl2br($rs[0]['note_anagrafica']).'<br/>';
                 }
                
             }else{
@@ -297,7 +303,17 @@ switch (filter('op')) {
 
             }
 
-         
+            
+            $tooltip .= '
+            <script type="text/javascript">
+                $(".shorten").shorten({
+                    moreText: "'.tr('Mostra tutto').'",
+                    lessText: "'.tr('Comprimi').'",
+                    showChars : 200
+                });
+            </script>';
+
+
             echo $tooltip;
         }
         break;

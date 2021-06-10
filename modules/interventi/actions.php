@@ -441,6 +441,14 @@ switch (post('op')) {
                 $qta = post('qta_da_evadere')[$riga->id];
 
                 $copia = $riga->copiaIn($intervento, $qta);
+
+            // Aggiornamento seriali
+            if ($copia->isArticolo()) {
+                $serials = is_array(post('serial')[$riga->id]) ? post('serial')[$riga->id] : [];
+
+                $copia->serials = $serials;
+            }
+
                 $copia->save();
             }
         }

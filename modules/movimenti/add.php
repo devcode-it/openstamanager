@@ -22,7 +22,17 @@ include_once __DIR__.'/../../core.php';
 // Imposto come azienda l'azienda predefinita per selezionare le sedi a cui ho accesso
 // select-options
 
+if (setting('Attiva scorciatoie da tastiera')) {
+echo '<div class="alert alert-info">
+    <i class="fa fa-info-circle"></i> '.tr('Scorciatoie da tastiera: <b>F7</b> - Barcode, <b>F8</b> - Carico, <b>F9</b> - Sarico, <b>F10</b> - Spostamento').'
+</div>';
+}
+
 ?>
+
+
+
+
 <form action="" method="post" id="add-form">
     <input type="hidden" name="op" value="add">
     <input type="hidden" name="backto" value="record-edit">
@@ -87,8 +97,8 @@ echo '
 
 <div id="messages"></div>
 
-<div class="alert alert-info hidden" id="articolo-missing">
-    <i class="fa fa-exclamation-circle"></i> '.tr('Nessuna corrispondenza trovata!').'
+<div class="alert alert-warning hidden" id="articolo-missing">
+    <h3><i class="fa fa-warning"></i> '.tr('Nessuna corrispondenza trovata!').'</h3>
 </div>
 
 <script>
@@ -110,8 +120,11 @@ echo '
         let key = window.event ? event.keyCode : event.which; // IE vs Netscape/Firefox/Opera
         $("#articolo-missing").addClass("hidden");
         let barcode = $("#barcode");
-
-        if (key === 13) {
+            
+        if ( barcode.val() == "" && $("#idarticolo").val() == null && key === 13 ){
+            swal("'.tr('Inserisci barcode o seleziona un articolo').'", "", "warning");
+        }
+        else if (key === 13) {
             let search = barcode.val().replace(/[^a-z0-9\s\-\.\/\\|]+/gmi, "");
             ricercaBarcode(search);
         } else if (key === 8) {
@@ -180,6 +193,8 @@ echo '
                 else {
                     $("#messages").remove();
                     $("#articolo-missing").removeClass("hidden");
+                    input("barcode").set("");
+                    $("#barcode").focus();
                 }
             }
         );
@@ -248,6 +263,14 @@ echo '
     }
 
     function EnableHotkeys(){
+
+        //Anable hotkeys in blocked input elements
+        hotkeys.filter = function(event){
+            var tagName = (event.target || event.srcElement).tagName;
+            hotkeys.setScope(/^(INPUT|TEXTAREA|SELECT)$/.test(tagName) ? "input" : "other");
+            return true;
+        }
+
         hotkeys("f7,f8,f9,f10", function(event, handler) {
             switch (handler.key) {
                 case "f7": 
@@ -277,9 +300,9 @@ echo '
 <div class="hidden" id="info-articolo">
     <div class="row">
         <div class="col-md-6">
-            <div class="alert alert-info text-center">
+            <div class="alert alert-info text-left">
                 <h3>
-                    |codice|
+                    <b>'.tr('Codice').':</b> |codice|
                 </h3>
                 <p><b>'.tr('Descrizione').':</b> |descrizione|</p>
                 <p><b>'.tr('Prezzo acquisto').':</b> |prezzo_acquisto| '.currency().'</p>
@@ -288,12 +311,19 @@ echo '
             </div>
         </div>
         <div class="col-md-6">
-            <div class="alert |alert-type| text-center">
+
+            <div class="alert |alert-type| text-center" style="margin-bottom:6px;" >
                 <h3>
                     <i class="fa |icon|"></i> |descrizione-movimento| |movimento| |misura|
-                    <i class="fa fa-arrow-circle-right"></i> |rimanente| |misura| rimanenti
                 </h3>
             </div>
+
+            <div class="alert alert-info text-center">
+                <h3>
+                    <i class="fa fa-cubes"></i> |rimanente| |misura| rimanenti
+                </h3>
+            </div>
+
         </div>
     </div>
 </div>';

@@ -86,7 +86,7 @@ class Newsletter extends Model
 
     public function anagrafiche()
     {
-        return $this->belongsToMany(Anagrafica::class, 'em_newsletter_anagrafica', 'id_newsletter', 'id_anagrafica')->withPivot('id_email')->withTrashed();
+        return $this->belongsToMany(Anagrafica::class, 'em_newsletter_anagrafica', 'id_newsletter', 'id_anagrafica')->orderByRaw('IF(email=\'\',email,enable_newsletter) ASC')->orderBy('ragione_sociale', 'ASC')->withPivot('id_email')->withTrashed();
     }
 
     public function emails()

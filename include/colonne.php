@@ -26,14 +26,14 @@ echo '
 <p>'.tr('Trascina le colonne per ordinare la struttura della tabella principale, seleziona e deseleziona le colonne per renderle visibili o meno').'.</p>
 <div class="sortable">';
 
-$fields = $dbo->fetchArray('SELECT * FROM zz_views WHERE id_module='.prepare($id_module).' ORDER BY `order` ASC');
+$fields = $dbo->fetchArray('SELECT *, (SELECT GROUP_CONCAT(zz_groups.nome) FROM zz_group_view INNER JOIN zz_groups ON zz_group_view.id_gruppo = zz_groups.id WHERE zz_group_view.id_vista = zz_views.id) AS gruppi_con_accesso FROM zz_views WHERE id_module='.prepare($id_module).' ORDER BY `order` ASC');
 foreach ($fields as $field) {
     echo '
     <div class="panel panel-default clickable col-md-4" data-id="'.$field['id'].'">
         <div class="panel-body">
             <input type="checkbox" name="visibile" '.($field['visible'] ? 'checked' : '').'>
 
-            <span class="text-'.($field['visible'] ? 'success' : 'danger').'">'.$field['name'].'</span>
+            <span class="text-'.($field['visible'] ? 'success' : 'danger').'">'.$field['name'].'<br><small>( '.$field['gruppi_con_accesso'].')</small></span>
 
             <i class="fa fa-sort pull-right"></i>
         </div>

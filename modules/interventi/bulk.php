@@ -119,6 +119,7 @@ switch (post('op')) {
             ]);
 
             aggiungi_intervento_in_fattura($intervento['id'], $id_documento, $descrizione, $id_iva, $id_conto);
+            $fatturati[] = $intervento['id'];
             ++$n_interventi;
         }
 
@@ -128,9 +129,9 @@ switch (post('op')) {
             ]));
         }
 
-        if (!empty(array_diff($id_records, $interventi))) {
+        if (!empty(array_diff($id_records, $fatturati))) {
             flash()->warning(tr('_NUM_ interventi non sono stati fatturati.', [
-                '_NUM_' => sizeof(array_diff($id_records, $interventi)),
+                '_NUM_' => sizeof(array_diff($id_records, $fatturati)),
             ]));
         }
 

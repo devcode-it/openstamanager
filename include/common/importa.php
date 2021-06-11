@@ -36,6 +36,8 @@ $id_iva = $id_iva ?: setting('Iva predefinita');
 
 if($final_module['name']=='Interventi'){
     $righe = $documento->getRighe()->where('qta_rimanente', '>', 0)->where('is_descrizione', '=', 0);
+}elseif($final_module['name']=='Ordini fornitore'){
+    $righe = $documento->getRighe();
 }else{
     $righe = $documento->getRighe()->where('qta_rimanente', '>', 0);
 }
@@ -264,15 +266,22 @@ echo '
             <tbody id="righe_documento_importato">';
 
 foreach ($righe as $i => $riga) {
+    if($final_module['name']=='Ordini fornitore'){
+        $qta_rimanente = $riga['qta'];
+    }else{
+        $qta_rimanente = $riga['qta_rimanente'];
+    }
+    
     // Descrizione
     echo '
                 <tr data-local_id="'.$i.'">
                     <td style="vertical-align:middle">
                         <span class="hidden" id="id_articolo_'.$i.'">'.$riga['idarticolo'].'</span>
 
+                        <input type="hidden" class="righe" name="righe" value="'.$i.'"/>
                         <input type="hidden" id="prezzo_unitario_'.$i.'" name="subtot['.$riga['id'].']" value="'.$riga['prezzo_unitario'].'" />
                         <input type="hidden" id="sconto_unitario_'.$i.'" name="sconto['.$riga['id'].']" value="'.$riga['sconto_unitario'].'" />
-                        <input type="hidden" id="max_qta_'.$i.'" value="'.($riga['qta_rimanente']).'" />';
+                        <input type="hidden" id="max_qta_'.$i.'" value="'.$qta_rimanente.'" />';
 
     // Checkbox - da evadere?
     echo '
@@ -288,18 +297,18 @@ foreach ($righe as $i => $riga) {
     // Q.tà rimanente
     echo '
                     <td class="text-center" style="vertical-align:middle">
-                        '.numberFormat($riga['qta_rimanente']).'
+                        '.numberFormat($qta_rimanente).'
                     </td>';
 
     // Q.tà da evadere
     echo '
                     <td style="vertical-align:middle">
-                        {[ "type": "number", "name": "qta_da_evadere['.$riga['id'].']", "id": "qta_'.$i.'", "required": 1, "value": "'.$riga['qta_rimanente'].'", "decimals": "qta", "min-value": "0", "extra": "'.(($riga['is_descrizione']) ? 'readonly' : '').' onkeyup=\"ricalcolaTotaleRiga('.$i.');\"" ]}
+                        {[ "type": "number", "name": "qta_da_evadere['.$riga['id'].']", "id": "qta_'.$i.'", "required": 1, "value": "'.$qta_rimanente.'", "decimals": "qta", "min-value": "0", "extra": "'.(($riga['is_descrizione']) ? 'readonly' : '').' onkeyup=\"ricalcolaTotaleRiga('.$i.');\"" ]}
                     </td>';
-
+ 
     echo '
                     <td style="vertical-align:middle" class="text-right">
-                        <span id="subtotale_'.$i.'">'.($riga->isSconto() ? moneyFormat(-$riga->sconto) : moneyFormat($riga->totale_imponibile)).'</span>
+                        <span id="subtotale_'.$i.'"></span>
                     </td>';
 
     // Seriali
@@ -337,7 +346,7 @@ echo '
             </tbody>
 
             <tr>
-                <td colspan="'.(!empty($options['serials']) ? 3 : 2).'" class="text-right">
+                <td colspan="3" class="text-right">
                     <b>'.tr('Totale').':</b>
                 </td>
                 <td class="text-right">
@@ -446,6 +455,10 @@ function controllaMagazzino() {
     }
 }
 
+$("input[name=righe]").each(function() {
+    ricalcolaTotaleRiga($(this).val());
+});
+
 function ricalcolaTotaleRiga(r) {
     let prezzo_unitario = $("#prezzo_unitario_" + r).val();
     let sconto = $("#sconto_unitario_" + r).val();
@@ -459,7 +472,7 @@ function ricalcolaTotaleRiga(r) {
 
     let prezzo_scontato = prezzo_unitario - sconto;
 
-    let qta = $("#qta_" + r).val();
+    let qta = ($("#qta_" + r).val()).toEnglish();
 
     // Se inserisco una quantità da evadere maggiore di quella rimanente, la imposto al massimo possibile
     if (qta > qta_max) {
@@ -492,7 +505,7 @@ function ricalcolaTotale() {
     let totale_qta = 0;
 
     $("input[id*=qta_]").each(function() {
-        let qta = $(this).val();
+        let qta = ($(this).val()).toEnglish();
         let r = $(this).attr("id").replace("qta_", "");
 
         if (!$("#checked_" + r).is(":checked") || isNaN(qta)) {
@@ -529,5 +542,5 @@ echo '
     controllaMagazzino();
 }
 
-ricalcolaTotale();
+ricalcolaTotale();  
 </script>';

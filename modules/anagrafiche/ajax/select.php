@@ -244,7 +244,7 @@ switch ($resource) {
      */
     case 'sedi':
         if (isset($superselect['idanagrafica'])) {
-            $query = "SELECT * FROM (SELECT '0' AS id, (SELECT idzona FROM an_anagrafiche |where|) AS idzona, CONCAT_WS(' - ', 'Sede legale' , (SELECT CONCAT (citta, ' (', ragione_sociale,')') FROM an_anagrafiche |where|)) AS descrizione UNION SELECT id, idzona, CONCAT_WS(' - ', nomesede, citta) FROM an_sedi |where|) AS tab HAVING descrizione LIKE ".prepare('%'.$search.'%').' ORDER BY descrizione';
+            $query = "SELECT * FROM (SELECT '0' AS id, (SELECT idzona FROM an_anagrafiche |where|) AS idzona, CONCAT_WS(' - ', \"".tr('Sede legale')."\" , (SELECT CONCAT (citta, IF(indirizzo!='',CONCAT(' (', indirizzo, ')'), ''), ' (',ragione_sociale,')') FROM an_anagrafiche |where|)) AS descrizione UNION SELECT id, idzona, CONCAT_WS(' - ', nomesede, CONCAT(citta, IF(indirizzo!='',CONCAT(' (', indirizzo, ')'), '')) ) FROM an_sedi |where|) AS tab HAVING descrizione LIKE ".prepare('%'.$search.'%').' ORDER BY descrizione';
 
             foreach ($elements as $element) {
                 $filter[] = 'id='.prepare($element);
@@ -264,7 +264,7 @@ switch ($resource) {
         $user = Auth::user();
         $id_azienda = setting('Azienda predefinita');
 
-        $query = "SELECT * FROM (SELECT '0' AS id, CONCAT_WS(' - ', 'Sede legale' , (SELECT CONCAT (citta, ' (', ragione_sociale,')') FROM an_anagrafiche |where|)) AS descrizione UNION SELECT id, CONCAT_WS(' - ', nomesede, citta) FROM an_sedi |where|) AS tab |filter| ORDER BY descrizione";
+        $query = "SELECT * FROM (SELECT '0' AS id, CONCAT_WS(' - ', \"".tr('Sede legale')."\" , (SELECT CONCAT (citta, IF(indirizzo!='',CONCAT(' (', indirizzo, ')'), ''),' (', ragione_sociale,')') FROM an_anagrafiche |where|)) AS descrizione UNION SELECT id, CONCAT_WS(' - ', nomesede, CONCAT(citta, IF(indirizzo!='',CONCAT(' (', indirizzo, ')'), '')) ) FROM an_sedi |where|) AS tab |filter| ORDER BY descrizione";
 
         foreach ($elements as $element) {
             $filter[] = 'id='.prepare($element);

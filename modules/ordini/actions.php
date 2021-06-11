@@ -440,7 +440,7 @@ switch (post('op')) {
 
         break;
 
-    // Aggiunta di un ordine cliente in ordine fornitore
+    // Aggiunta di un ordine fornitore da un ordine cliente
     case 'add_ordine_cliente':
         $ordine_cliente = Ordine::find(post('id_documento'));
 
@@ -469,10 +469,11 @@ switch (post('op')) {
                 $copia->qta = $qta;
                 $copia->qta_evasa = 0;
                 $copia->costo_unitario = 0;
-                $copia->setSconto(0, 'EUR');
-
+                
                 // Impostazione al prezzo di acquisto per Articoli
                 if ($copia->isArticolo()) {
+                    $copia->setSconto(0, 'PRC');
+
                     $articolo = $copia->articolo;
 
                     $fornitore = DettaglioPrezzo::dettagli($riga->idarticolo, $anagrafica->id, $dir, $qta)->first();
@@ -533,10 +534,11 @@ switch (post('op')) {
                 $copia->qta = $qta;
                 $copia->qta_evasa = 0;
                 $copia->costo_unitario = 0;
-                $copia->setSconto(0, 'EUR');
 
                 // Impostazione al prezzo di acquisto per Articoli
                 if ($copia->isArticolo()) {
+                    $copia->setSconto(0, 'PRC');
+
                     $articolo = $copia->articolo;
 
                     $fornitore = DettaglioPrezzo::dettagli($riga->idarticolo, $anagrafica->id, $dir, $qta)->first();

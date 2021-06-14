@@ -18,3 +18,7 @@ UPDATE `zz_views` SET `query` = 'IF(completed_at IS NULL, \'No\', CONCAT(\'Sì \
 
 -- Visualizza informazioni aggiuntive sul calendario
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Visualizza informazioni aggiuntive sul calendario', '0', 'boolean', '1', 'Dashboard', '1', 'Visualizza sul calendario il box Tutto il giorno dove possono essere presenti informazioni aggiuntve'); 
+
+-- Rinominate stampe ordini fornitore
+UPDATE `zz_prints` SET `title` = 'Richiesta di offerta (RdO)' WHERE `zz_prints`.`name` = 'Ordine fornitore (senza costi)';
+UPDATE `zz_prints` SET `title` = 'Richiesta di acquisto (RdA)' WHERE `zz_prints`.`name` = 'Ordine fornitore';

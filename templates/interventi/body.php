@@ -179,6 +179,15 @@ if (!$righe->isEmpty()) {
     <tbody>';
 
     foreach ($righe as $riga) {
+        if(setting('Formato ore in stampa')=='Sessantesimi'){
+            if($riga->um=='ore'){
+                $qta = Translator::numberToHours($riga->qta);
+            } else{
+                $qta = Translator::numberToLocale($riga->qta, 'qta');
+            }
+        } else{
+            $qta = Translator::numberToLocale($riga->qta, 'qta');
+        }
         // Articolo
         echo '
     <tr>
@@ -208,7 +217,7 @@ if (!$righe->isEmpty()) {
         // Quantità
         echo '
         <td class="text-center">
-            '.Translator::numberToLocale($riga->qta, 'qta').' '.$riga->um.'
+            '.$qta.' '.$riga->um.'
         </td>';
 
         // Prezzo unitario
@@ -323,10 +332,16 @@ foreach ($sessioni as $i => $sessione) {
 }
 
 // Ore lavorate
+if(setting('Formato ore in stampa')=='Sessantesimi'){
+    $ore_totali = Translator::numberToHours($documento->ore_totali);
+} else{
+    $ore_totali = Translator::numberToLocale($documento->ore_totali, 2);
+}
+
 echo '
     <tr>
         <td class="text-center">
-            <small>'.tr('Ore lavorate').':</small><br/><b>'.Translator::numberToLocale($documento->ore_totali, 2).'</b>
+            <small>'.tr('Ore lavorate').':</small><br/><b>'.$ore_totali.'</b>
         </td>';
 
 // Costo totale manodopera

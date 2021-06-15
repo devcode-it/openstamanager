@@ -22,3 +22,6 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 -- Rinominate stampe ordini fornitore
 UPDATE `zz_prints` SET `title` = 'Richiesta di offerta (RdO)' WHERE `zz_prints`.`name` = 'Ordine fornitore (senza costi)';
 UPDATE `zz_prints` SET `title` = 'Richiesta di acquisto (RdA)' WHERE `zz_prints`.`name` = 'Ordine fornitore';
+
+-- Aggiunta impostazione formato ore in stampa intervento
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `created_at`, `updated_at`, `order`, `help`) VALUES (NULL, 'Formato ore in stampa', 'Decimale', 'list[Decimale,Sessantesimi]', '1', 'Attività', NOW(), NOW(), '1', '')

@@ -24,9 +24,12 @@ echo '
     <thead>
         <tr>
             <th width="10%">DATA</th>
-            <th width="60%">DESCRIZIONE</th>
-            <th width="15%">DARE</th>
-            <th width="15%">AVERE</th>
+            <th width="51%">DESCRIZIONE</th>
+            <th width="13%">DARE</th>
+            <th width="13%">AVERE</th>
+            <th width="13%">SCALARE</th>
         </tr>
     </thead>
     <tbody>';
+
+    $scalare = 0;

@@ -38,5 +38,12 @@ echo '
             echo ' <td></td>
             <td class="text-right">'.moneyFormat(abs($record['totale']), 2).'</td>';
         }
+        
+        $scalare += $record['totale'];
+
+        echo '
+        <td class="text-right">
+            '.moneyFormat($scalare, 2).'
+        </td>';
 echo '</tr>';
 $prev_titolo = $record['titolo'];

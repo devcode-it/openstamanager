@@ -35,6 +35,7 @@ if (get('lev') == '2' || get('lev') == '3') {
         <th>SALDO FINALE</th>
         <th class="text-right">'.moneyFormat(abs($dare)).'</th>
         <th class="text-right">'.moneyFormat(abs($avere)).'</th>
+        <th class="text-right">'.moneyFormat(abs($scalare)).'</th>
     </tr>';
 } elseif (get('lev') == '1') {
     $totale_attivo = 0;

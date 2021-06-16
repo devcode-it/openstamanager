@@ -111,7 +111,7 @@ switch (post('op')) {
                 }
             }
         }
-        aggiorna_sedi_movimenti('interventi', $id_record);
+
         flash()->info(tr('Attività modificata correttamente!'));
 
         break;
@@ -130,8 +130,6 @@ switch (post('op')) {
 
             $intervento = Intervento::build($anagrafica, $tipo, $stato, $data_richiesta);
             $id_record = $intervento->id;
-
-            aggiorna_sedi_movimenti('interventi', $id_record);
 
             flash()->info(tr('Aggiunto nuovo intervento!'));
 
@@ -219,7 +217,6 @@ switch (post('op')) {
             flash()->clearMessage('warning');
         }
 
-        aggiorna_sedi_movimenti('interventi', $id_record);
         break;
 
     // Eliminazione intervento
@@ -267,8 +264,6 @@ switch (post('op')) {
             }
         }
 
-        aggiorna_sedi_movimenti('interventi', $id_record);
-
         break;
 
     case 'manage_barcode':
@@ -313,7 +308,8 @@ switch (post('op')) {
         }
 
         $qta = post('qta');
-
+        
+        $articolo->idsede_partenza = post('idsede_partenza');
         $articolo->descrizione = post('descrizione');
         $articolo->um = post('um') ?: null;
 
@@ -394,7 +390,6 @@ switch (post('op')) {
         $serials = (array) post('serial');
         $articolo->serials = $serials;
 
-        aggiorna_sedi_movimenti('interventi', $id_record);
         break;
 
     // Aggiunta di un documento in ordine

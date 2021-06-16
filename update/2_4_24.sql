@@ -28,3 +28,6 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 
 -- Aggiunta plugin allegati dell'anagrafica
 INSERT INTO `zz_plugins` (`name`, `title`, `idmodule_from`, `idmodule_to`, `position`, `script`, `enabled`, `default`, `order`, `compatibility`, `version`, `options2`, `options`, `directory`, `help`) VALUES ('Allegati', 'Allegati', (SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name`='Anagrafiche'), (SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name`='Anagrafiche'), 'tab', 'allegati.php', '1', '0', '0', '', '', NULL, NULL, '', '');
+
+-- Aggiunta idsede nelle righe dell'intervento
+ALTER TABLE `in_righe_interventi` ADD `idsede_partenza` INT NOT NULL AFTER `id_dettaglio_fornitore`;

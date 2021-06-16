@@ -33,6 +33,7 @@ $options = [
     'totale_imponibile_documento' => $documento->totale_imponibile,
     'totale_documento' => $documento->totale,
     'nascondi_prezzi' => !$show_prezzi,
+    'idsede_partenza' => $documento->idsede_partenza,
     'select-options' => [
         'articoli' => [
             'idanagrafica' => $documento->idanagrafica,

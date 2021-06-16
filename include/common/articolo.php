@@ -22,6 +22,15 @@ $qta_minima = 0;
 
 // Articolo
 if (empty($result['idarticolo'])) {
+    // Sede partenza
+    if ($module['name'] == 'Interventi') {
+    echo '
+    <div class="row">
+        <div class="col-md-4">
+        {[ "type": "select", "label": "'.tr('Partenza merce').'", "required": "1", "id":"idsede", "name": "idsede_partenza",  "ajax-source": "sedi_azienda", "value": "'.($result['idsede_partenza'] ?: $options['idsede_partenza']).'" ]}
+        </div>
+    </div>';
+    }
     echo '
     <div class="row">
         <div class="col-md-12">
@@ -177,6 +186,12 @@ $("#idarticolo").on("change", function() {
     $("#um").selectSetNew($data.um, $data.um);
     // Aggiornamento automatico di guadagno e margine
 
+});
+
+$("#idsede").on("change", function() {
+    updateSelectOption("idsede_partenza", $(this).val());
+    session_set("superselect,idsede_partenza", $(this).val(), 0);
+    $("#idarticolo").selectReset();
 });
 
 $(document).on("change", "input[name^=qta], input[name^=prezzo_unitario], input[name^=sconto]", function() {

@@ -68,8 +68,6 @@ foreach ($ddt as $elemento) {
 $tipo_ordini = $direzione_richiesta == 'entrata' ? 'cliente' : 'fornitore';
 $ordini = Ordine::whereHas('stato', function ($query) {
     $query->where('descrizione', '!=', 'Bozza');
-})->whereHas('tipo', function ($query) use ($direzione_richiesta) {
-    $query->where('dir', '=', $direzione_richiesta);
 })->get();
 foreach ($ordini as $elemento) {
     $documenti_disponibili->push([

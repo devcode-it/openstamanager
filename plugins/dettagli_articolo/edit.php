@@ -17,6 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Carbon\Carbon;
 use Plugins\DettagliArticolo\DettaglioFornitore;
 use Plugins\DettagliArticolo\DettaglioPrezzo;
 
@@ -106,6 +107,7 @@ if (!$clienti->isEmpty()) {
 
                         <td class="text-right">
                             '.moneyFormat($dettaglio->prezzo_unitario).'
+                            <p><small class="label label-default tip" title="'.Translator::timestampToLocale($dettaglio['updated_at']).'"><i class="fa fa-clock-o"></i> '.Carbon::parse($dettaglio['updated_at'])->diffForHumans().'</small></p>
                         </td>
 
                         <td class="text-right">
@@ -292,6 +294,7 @@ if (!$fornitori_disponibili->isEmpty()) {
 
                         <td class="text-right">
                             '.moneyFormat($dettaglio->prezzo_unitario).'
+                            <p><small class="label label-default tip" title="'.Translator::timestampToLocale($dettaglio['updated_at']).'"><i class="fa fa-clock-o"></i> '.Carbon::parse($dettaglio['updated_at'])->diffForHumans().'</small></p>
                         </td>
 
                         <td class="text-right">

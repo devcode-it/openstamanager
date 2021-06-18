@@ -28,3 +28,15 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 
 -- Aggiunta plugin allegati dell'anagrafica
 INSERT INTO `zz_plugins` (`name`, `title`, `idmodule_from`, `idmodule_to`, `position`, `script`, `enabled`, `default`, `order`, `compatibility`, `version`, `options2`, `options`, `directory`, `help`) VALUES ('Allegati', 'Allegati', (SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name`='Anagrafiche'), (SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name`='Anagrafiche'), 'tab', 'allegati.php', '1', '0', '0', '', '', NULL, NULL, '', '');
+
+-- Aggiunta idsede nelle righe dell'intervento
+ALTER TABLE `in_righe_interventi` ADD `idsede_partenza` INT NOT NULL AFTER `id_dettaglio_fornitore`;
+
+
+-- Aggiunto nuovo plugin Componenti e disabilitato quello precedente
+UPDATE `zz_plugins` SET `name`='Componenti ini', `title`='Componenti ini' WHERE `name`='Componenti';
+UPDATE `zz_plugins` SET `enabled`=0 WHERE `name`='Componenti ini';
+
+INSERT INTO `zz_plugins` ( `name`, `title`, `idmodule_from`, `idmodule_to`, `position`, `script`, `enabled`, `default`, `order`, `compatibility`, `version`, `options2`, `options`, `directory`, `help`, `created_at`, `updated_at`) VALUES ('Componenti', 'Componenti', (SELECT `id` FROM `zz_modules` WHERE name='Impianti'), (SELECT `id` FROM `zz_modules` WHERE name='Impianti'), 'tab', '', '1', '0', '0', '', '', NULL, 'custom', 'componenti', '', NOW(), NOW());
+
+CREATE TABLE `my_componenti_articoli` ( `id` INT NOT NULL AUTO_INCREMENT, `id_impianto` INT NOT NULL , `id_articolo` INT NOT NULL , `pre_id_articolo` INT NOT NULL, `note` TEXT NOT NULL , `data_registrazione` DATE NULL , `data_installazione` DATE NULL , `data_disinstallazione` DATE NULL , `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , `updated_at` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (`id`));

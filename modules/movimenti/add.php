@@ -49,7 +49,7 @@ echo '<div class="alert alert-info">
         </div>
 
         <div class="col-md-2">
-            {["type": "number", "label": "<?php echo tr('Quantità'); ?>", "name": "qta", "decimals": "2", "value": "1", "required": 1 ]}
+            {["type": "number", "label": "<?php echo tr('Quantità'); ?>", "name": "qta", "decimals": "qta", "value": "1", "required": 1 ]}
         </div>
 
         <div class="col-md-2">

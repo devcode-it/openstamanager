@@ -368,7 +368,7 @@ switch (filter('op')) {
     if (!empty($id_tecnico) && !empty($solo_promemoria_assegnati)) {
         $query_interventi .= '
         INNER JOIN in_interventi_tecnici_assegnati ON in_interventi.id = in_interventi_tecnici_assegnati.id_intervento AND id_tecnico = '.prepare($id_tecnico);
-    } elseif ($user->is_admin) {
+    } else {
         $query_interventi .= '
         LEFT JOIN in_interventi_tecnici_assegnati ON in_interventi.id = in_interventi_tecnici_assegnati.id_intervento';
     }

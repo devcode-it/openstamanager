@@ -185,17 +185,6 @@ $fornitori_disponibili = $dettagli_fornitori->keys()
 if (!$fornitori_disponibili->isEmpty()) {
     echo '
             <table class="table table-striped table-condensed table-bordered">
-                <thead>
-                    <tr>
-                        <th>'.tr('Fornitore').'</th>
-                        <th width="150">'.tr('Codice').'</th>
-                        <th>'.tr('Descrizione').'</th>
-                        <th class="text-center" width="210">'.tr('Q.tà minima ordinabile').'</th>
-                        <th class="text-center" width="150">'.tr('Tempi di consegna').'</th>
-                        <th class="text-center" width="150">#</th>
-                    </tr>
-                </thead>
-
                 <tbody>';
 
     foreach ($fornitori_disponibili as $id_fornitore) {
@@ -205,6 +194,15 @@ if (!$fornitori_disponibili->isEmpty()) {
         $anagrafica = $dettaglio ? $dettaglio->anagrafica : $prezzi->first()->anagrafica;
 
         echo '
+                    <tr>
+                        <th>'.tr('Fornitore').'</th>
+                        <th width="150">'.tr('Codice').'</th>
+                        <th>'.tr('Descrizione').'</th>
+                        <th class="text-center" width="210">'.tr('Q.tà minima ordinabile').'</th>
+                        <th class="text-center" width="150">'.tr('Tempi di consegna').'</th>
+                        <th class="text-center" width="150">#</th>
+                    </tr>
+
                     <tr data-id_anagrafica="'.$anagrafica->id.'" data-direzione="uscita" '.(($anagrafica->id == $articolo->id_fornitore) ? 'class="success"' : '').'>
                         <td>
                             '.Modules::link('Anagrafiche', $anagrafica->id, $anagrafica->ragione_sociale).'
@@ -281,7 +279,7 @@ if (!$fornitori_disponibili->isEmpty()) {
 
             foreach ($prezzi as $key => $dettaglio) {
                 echo '
-                    <tr>
+                    <tr '.(($anagrafica->id == $articolo->id_fornitore) ? 'class="success"' : '').'>
                         <td></td>
 
                         <td class="text-right">

@@ -62,23 +62,24 @@ echo '
 
 // Individuazione movimenti
 $movimenti = $articolo->movimentiComposti()
-    ->orderBy('data', 'DESC')
-    ->orderBy('id', 'DESC');
+    ->orderBy('mg_movimenti.data', 'DESC')
+    ->orderBy('mg_movimenti.id', 'DESC');
 if (empty($_GET['movimentazione_completa'])) {
     $movimenti->limit(20);
 }
 
 // Raggruppamento per documento
-$movimenti = $movimenti->get();
+$movimenti = $movimenti->leftJoin('an_sedi', 'mg_movimenti.idsede', 'an_sedi.id')->get();
 if (!empty($movimenti)) {
     echo '
         <table class="table table-striped table-condensed table-bordered">
             <tr>
-                <th class="text-center">'.tr('Q.tà').'</th>
+                <th class="text-center" width="120">'.tr('Q.tà').'</th>
                 <th class="text-center">'.tr('Q.tà progressiva').'</th>
                 <th>'.tr('Operazione').'</th>
-                <th class="text-center">'.tr('Data').'</th>
-                <th class="text-center" width="7%">#</th>
+                <th class="text-center">'.tr('Sede').'</th>
+                <th class="text-center" width="120">'.tr('Data').'</th>
+                <th class="text-center" width="80">#</th>
             </tr>';
 
     foreach ($movimenti as $i => $movimento) {
@@ -109,6 +110,10 @@ if (!empty($movimenti)) {
 
                 <td>
                     '.$movimento->descrizione.''.($movimento->hasDocument() ? ' - '.reference($movimento->getDocument()) : '').'
+                </td>
+                
+                <td class="text-center">
+                    '.( $movimento->nomesede ?: tr('Sede legale') ).'
                 </td>';
 
         // Data

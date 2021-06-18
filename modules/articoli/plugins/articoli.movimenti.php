@@ -118,8 +118,8 @@ if (!empty($movimenti)) {
 
         // Data
         echo '
-                <td class="text-center">'.dateFormat($movimento->data).' <span  class="tip" title="'.tr('Data di creazione del movimento: _DATE_', [
-               '_DATE_' => timestampFormat($movimento->created_at),
+                <td class="text-center">'.dateFormat($movimento->data).' <span  class="tip" title="'.tr('Creazione movimento: _DATE_', [
+               '_DATE_' => timestampFormat($movimento->data_movimento),
             ]).'"><i class="fa fa-question-circle-o"></i></span> </td>';
 
         // Operazioni

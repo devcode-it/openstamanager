@@ -222,7 +222,7 @@ class Articolo extends Model
     public function movimentiComposti()
     {
         return $this->movimenti()
-            ->selectRaw('*, sum(mg_movimenti.qta) as qta_documento, IFNULL(mg_movimenti.reference_type, mg_movimenti.id) as tipo_gruppo')
+            ->selectRaw('*, mg_movimenti.created_at AS data_movimento, sum(mg_movimenti.qta) as qta_documento, IFNULL(mg_movimenti.reference_type, mg_movimenti.id) as tipo_gruppo')
             ->groupBy('tipo_gruppo', 'mg_movimenti.reference_id');
     }
 

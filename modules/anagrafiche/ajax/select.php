@@ -295,7 +295,11 @@ switch ($resource) {
                 $filter[] = 'id='.prepare($element);
             }
 
-            $where[] = 'idanagrafica='.prepare($superselect['idanagrafica']);
+            if( isset($superselect['idclientefinale']) ){
+                $where[] = '(idanagrafica='.prepare($superselect['idanagrafica']).' OR idanagrafica='.prepare($superselect['idclientefinale']).')';
+            }else{
+                $where[] = 'idanagrafica='.prepare($superselect['idanagrafica']);
+            }
 
             if (!empty($search)) {
                 $search_fields[] = 'nome LIKE '.prepare('%'.$search.'%');

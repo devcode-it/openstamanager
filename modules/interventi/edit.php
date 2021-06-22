@@ -74,7 +74,7 @@ echo '
                         </div>
 
                         <div class="col-md-6">
-                            {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "readonly": "'.intval($record['flag_completato']).'" ]}
+                            {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica'], 'idclientefinale' => $record['idclientefinale']]).', "readonly": "'.intval($record['flag_completato']).'" ]}
                         </div>
                     </div>
 
@@ -597,6 +597,8 @@ $(document).ready(function() {
     var contratto = input("idcontratto");
     var preventivo = input("idpreventivo");
     var ordine = input("idordine");
+    var cliente_finale = input("idclientefinale");
+    var referente = input("idreferente");
 
     // Gestione della modifica dell\'anagrafica
 	anagrafica.change(function() {
@@ -605,6 +607,9 @@ $(document).ready(function() {
 
         let value = !$(this).val();
         let placeholder = value ? "'.tr('Seleziona prima un cliente').'" : "'.tr("Seleziona un'opzione").'";
+
+        referente.getElement()
+            .selectReset(placeholder);
 
         sede.setDisabled(value)
             .getElement().selectReset(placeholder);
@@ -629,7 +634,16 @@ $(document).ready(function() {
             input("idtipointervento").getElement()
                 .selectSetNew(data.idtipointervento, data.idtipointervento_descrizione);
 		}
-	});
+    });
+    
+    //gestione del cliente finale
+    cliente_finale.change(function() {
+        updateSelectOption("idclientefinale", $(this).val());
+        session_set("superselect,idclientefinale", $(this).val(), 0);
+
+        referente.getElement()
+            .selectReset("'.tr("Seleziona un'opzione").'");
+    });
 
     // Gestione della modifica della sede selezionato
 	sede.change(function() {

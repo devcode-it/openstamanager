@@ -128,7 +128,7 @@ if (!empty($movimenti)) {
 
         if (Auth::admin() && $movimento->isManuale()) {
             echo '
-                    <a class="btn btn-danger btn-xs ask" data-backto="record-edit" data-op="delmovimento" data-idmovimento="'.$movimento['id'].'">
+                    <a class="btn btn-danger btn-xs ask" data-backto="record-edit" data-op="delmovimento" data-idmovimento="'.$movimento['idmovimento'].'">
                         <i class="fa fa-trash"></i>
                     </a>';
         }

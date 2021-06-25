@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 // Presenza di documenti associati
 if ($record['doc_associati'] > 0) {
     echo '
-<div class="alert alert-warning">'.tr('Non puoi eliminare questo categoria documento!').' '.tr('Ci sono _NUM_ documenti associati!', [
+<div class="alert alert-warning">'.tr('Non puoi eliminare questa categoria documento!').' '.tr('Ci sono _NUM_ documenti associati!', [
     '_NUM_' => $record['doc_associati'],
 ]).'</div>';
 }

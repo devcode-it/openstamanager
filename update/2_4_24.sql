@@ -43,5 +43,3 @@ CREATE TABLE `my_componenti_articoli` ( `id` INT NOT NULL AUTO_INCREMENT, `id_im
 
 -- Aggiunta vista referente in modulo attività
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name`='Interventi' ), 'Referente', '(SELECT an_referenti.nome FROM an_referenti WHERE an_referenti.id=in_interventi.idreferente)', '7', '1', '0', '0', '', '', '1', '0', '0');
-
-INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) (SELECT `zz_groups`.`id`, (SELECT `zz_views`.`id` FROM `zz_views` WHERE `zz_views`.`name`='Referente' AND `zz_views`.`id_module`=(SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name`='Interventi' )) FROM `zz_groups` ); 

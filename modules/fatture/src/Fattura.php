@@ -39,6 +39,7 @@ use Plugins\ExportFE\FatturaElettronica;
 use Traits\RecordTrait;
 use Traits\ReferenceTrait;
 use Util\Generator;
+use Translator;
 
 class Fattura extends Document
 {
@@ -193,10 +194,10 @@ class Fattura extends Document
             // Registrazione dell'operazione nelle note
             $model->note = tr("Operazione non imponibile come da vostra dichiarazione d'intento nr _PROT_ del _PROT_DATE_ emessa in data _RELEASE_DATE_, da noi registrata al nr _ID_ del _DATE_", [
                     '_PROT_' => $dichiarazione->numero_protocollo,
-                    '_PROT_DATE_' => $dichiarazione->data_protocollo,
-                    '_RELEASE_DATE_' => $dichiarazione->data_emissione,
+                    '_PROT_DATE_' => Translator::dateToLocale($dichiarazione->data_protocollo),
+                    '_RELEASE_DATE_' => Translator::dateToLocale($dichiarazione->data_emissione),
                     '_ID_' => $dichiarazione->id,
-                    '_DATE_' => $dichiarazione->data,
+                    '_DATE_' => Translator::dateToLocale($dichiarazione->data),
                 ]).'.';
         }
 

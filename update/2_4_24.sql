@@ -43,3 +43,7 @@ CREATE TABLE `my_componenti_articoli` ( `id` INT NOT NULL AUTO_INCREMENT, `id_im
 
 -- Aggiunta vista referente in modulo attività
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES (NULL, (SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name`='Interventi' ), 'Referente', '(SELECT an_referenti.nome FROM an_referenti WHERE an_referenti.id=in_interventi.idreferente)', '7', '1', '0', '0', '', '', '1', '0', '0');
+
+-- Aggiunta vista "N. utenti" per il modulo "Utenti e permessi"
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
+(NULL, (SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name`='Utenti e permessi'), 'N. utenti', '(SELECT COUNT(`id`) FROM `zz_users` WHERE `idgruppo` = `zz_groups`.`id`)', 3, 1, 0, 0, '', '', 1, 0, 0);

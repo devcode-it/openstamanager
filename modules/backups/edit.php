@@ -131,7 +131,7 @@ echo '
     </div>
 
     <script>
-        loadSize("", "total_size");
+        loadSize('.count($backups).', "total_size");
     </script>';
 
 $upload_max_filesize = ini_get('upload_max_filesize');

@@ -49,3 +49,7 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name`='Scadenzario' ), 'Scaduto', 'IF(pagato = da_pagare, \'NO\', IF(data_concordata IS NOT NULL AND data_concordata > NOW(), \'NO\', IF(scadenza < NOW(), \'SÌ\', \'NO\')))', 14, 1, 0, 0, '', '', 1, 0, 0);
 
 INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) (SELECT `zz_groups`.`id`, `zz_views`.`id` FROM `zz_groups`, `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` WHERE `zz_modules`.`name` = 'Scadenzario' AND `zz_views`.`name` = 'Scaduto');
+
+-- Aggiunta vista "N. utenti" per il modulo "Utenti e permessi"
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
+(NULL, (SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name`='Utenti e permessi'), 'N. utenti', '(SELECT COUNT(`id`) FROM `zz_users` WHERE `idgruppo` = `zz_groups`.`id`)', 3, 1, 0, 0, '', '', 1, 0, 0);

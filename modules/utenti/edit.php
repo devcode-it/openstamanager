@@ -37,6 +37,7 @@ if (!empty($utenti)) {
 		<table class="table table-hover table-condensed table-striped">
 		<tr>
 			<th>'.tr('Nome utente').'</th>
+            <th>'.tr('Email').'</th>
 			<th>'.tr('Ragione sociale').'</th>
             <th>'.tr('Tipo di anagrafica').'</th>
             <th>'.tr('Sedi').'</th>
@@ -49,6 +50,14 @@ if (!empty($utenti)) {
 			<td '.(empty($utente['enabled']) ? ' style="text-decoration:line-through;"' : '').'>
 			    <i class="fa fa-user"></i> '.$utente['username'].'
             </td>';
+
+        if (!empty($utente['email'])) {
+            echo '
+            <td>'.$utente['email'].'</td>';
+        } else {
+            echo '
+            <td>-</td>';
+        }
 
         if (!empty($utente['idanagrafica'])) {
             echo '
@@ -71,7 +80,7 @@ if (!empty($utenti)) {
         // Disabilitazione utente, se diverso da id_utente #1 (admin)
         if ($utente['id'] == '1') {
             echo '
-            <div data-toggle="tooltip"  class="tip" title="'.tr("Non è possibile disabilitare l'utente admin").'" ><span class="btn btn-xs btn-default disabled">
+            <div data-toggle="tooltip"  class="tip" title="'.tr("Non è possibile disabilitare l'utente admin").'" ><span class="btn btn-xs btn-danger disabled">
                     <i class="fa fa-eye-slash"></i>
                 </span></div>';
         } elseif ($utente['enabled'] == 1) {
@@ -95,7 +104,7 @@ if (!empty($utenti)) {
 
         if ($utente['id'] == '1') {
             echo '
-                <div data-toggle="tooltip" class="tip" title="'.tr("Non è possibile gestire l'accesso API per l'utente admin").'" ><span  class="btn btn-xs btn-default disabled">
+                <div data-toggle="tooltip" class="tip" title="'.tr("Non è possibile gestire l'accesso API per l'utente admin").'" ><span  class="btn btn-xs btn-danger disabled">
                     <i class="fa fa-key "></i>
                 </span></div>';
         } elseif (!empty($token)) {
@@ -113,7 +122,7 @@ if (!empty($utenti)) {
         // Eliminazione utente, se diverso da id_utente #1 (admin)
         if ($utente['id'] == '1') {
             echo '
-            <div data-toggle="tooltip" class="tip"  title="'.tr("Non è possibile eliminare l'utente admin").'" ><span class="btn btn-xs btn-default disabled">
+            <div data-toggle="tooltip" class="tip"  title="'.tr("Non è possibile eliminare l'utente admin").'" ><span class="btn btn-xs btn-danger disabled">
                     <i class="fa fa-trash"></i>
                 </span></div>';
         } else {

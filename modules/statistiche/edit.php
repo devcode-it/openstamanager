@@ -350,7 +350,7 @@ foreach ($tecnici as $tecnico) {
     $sessioni = Stats::monthly($sessioni, $start, $end);
 
     //Colore tecnico
-    $background = $tecnico['colore'];
+    $background = strtoupper($tecnico['colore']);
     if (empty($background) || $background == '#FFFFFF') {
         //Random color
         $background = '#'.dechex(rand(256, 16777215));
@@ -403,7 +403,7 @@ $(document).ready(function() {
                         // Include a dollar sign in the ticks
                         callback: function(value, index, values) {
                             var text = "";
-                            if (value<=1){
+                            if (value<=1 && value!=0){
                                 text = " ora";
                             }else{
                                 text = " ore";
@@ -423,8 +423,16 @@ $(document).ready(function() {
                         if (label) {
                             label += ": ";
                         }
-    
-                        label += tooltipItem.xLabel+" ore (attività completate)";
+
+                        label += tooltipItem.xLabel;
+                        
+                        if (tooltipItem.xLabel<=1) {
+                            label += " ora ";
+                        }else{
+                            label += " ore ";
+                        }
+
+                        label += "(in attività completate)";
     
                         return label;
                     }

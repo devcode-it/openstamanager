@@ -195,15 +195,15 @@ if (!empty($sessioni)) {
         if (!$is_completato) {
             echo '
             <td class="text-center">
-                <button type="button" class="btn btn-xs btn-primary" onclick="copySessione(this)">
+                <button type="button" class="btn btn-xs btn-primary tip"  title="'.tr('Salva e duplica sessione').'" onclick="copySessione(this)">
                     <i class="fa fa-files-o"></i>
                 </button>
 
-                <button type="button" class="btn btn-xs btn-warning tip" title="'.tr('Modifica sessione').'" onclick="modificaSessione(this)">
+                <button type="button" class="btn btn-xs btn-warning tip" title="'.tr('Salva e modifica sessione').'" onclick="modificaSessione(this)">
                     <i class="fa fa-edit"></i>
                 </button>
 
-				<button type="button" class="btn btn-xs btn-danger" id="delbtn_'.$sessione['id'].'" onclick="elimina_sessione(\''.$sessione['id'].'\');" title="Elimina riga" class="only_rw"><i class="fa fa-trash"></i></button>
+				<button type="button" class="btn btn-xs btn-danger tip" id="delbtn_'.$sessione['id'].'" onclick="elimina_sessione(\''.$sessione['id'].'\');" title="'.tr('Elimina sessione').'" class="only_rw"><i class="fa fa-trash"></i></button>
             </td>';
         }
 
@@ -328,7 +328,13 @@ function add_tecnici(id_tecnico) {
 * Rimuove la sessione di lavoro dall\'intervento.
 */
 function elimina_sessione(id_sessione) {
-    if (confirm("Eliminare sessione di lavoro?")) {
+
+    swal({
+        title: "'.tr('Eliminare la sessione di lavoro?').'",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonText: "'.tr('Elimina').'"
+    }).then(function (result) {
         $.ajax({
             url: globals.rootdir + "/actions.php",
             data: {
@@ -341,11 +347,11 @@ function elimina_sessione(id_sessione) {
             success: function() {
                 caricaTecnici();
                 caricaCosti();
-
                 calcolaConflittiTecnici();
             }
         });
-    }
+    }).catch(swal.noop);
+
 }
 
 async function copySessione(button) {

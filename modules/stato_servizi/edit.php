@@ -145,7 +145,7 @@ if (Services::isEnabled()) {
                     $("#fe_spazio").html(response.size);
 
                     if (response.history.length) {
-                        for (let i = 0; i < 5; i++) {
+                        for (let i = 0; i < response.history.length; i++) {
                             const data = response.history[i];
 
                             $("#elenco-fe").append(`<tr>

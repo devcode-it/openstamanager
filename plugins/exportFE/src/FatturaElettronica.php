@@ -1363,6 +1363,7 @@ class FatturaElettronica
             $descrizione = str_replace('&gt;', ' ', $riga['descrizione']);
             $descrizione = str_replace('…', '...', $descrizione);
             $descrizione = str_replace('’', ' ', $descrizione);
+            $descrizione = str_replace('ø', 'diametro', $descrizione);
 
             // Aggiunta dei riferimenti ai documenti
             if (setting('Riferimento dei documenti in Fattura Elettronica') && $riga->hasOriginalComponent()) {

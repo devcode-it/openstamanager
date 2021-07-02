@@ -315,6 +315,24 @@ echo '
 		</div>
 	</div>
 
+
+	<!-- DETTAGLI CLIENTE -->
+    <div class="box box-success collapsable collapsed-box">
+        <div class="box-header with-border">
+			<h3 class="box-title">'.tr('Dettagli cliente').'</h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                    <i class="fa fa-plus"></i>
+                </button>
+            </div>
+		</div>
+
+        <div class="box-body" id="dettagli_ciente">
+            Prima seleziona un cliente...
+        </div>
+    </div>
+
+
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
@@ -429,6 +447,15 @@ echo '
             input("idtipointervento").getElement()
                 .selectSetNew(data.idtipointervento, data.idtipointervento_descrizione);
 		}
+
+        if (data !== undefined) {
+            //Carico nel panel i dettagli del cliente
+            $.get("'.$rootdir.'/modules/interventi/ajax_details.php?op=dettagli&id_anagrafica="+$(this).val(), function(data){
+                $("#dettagli_ciente").html(data);
+            });
+        }else{
+            $("#dettagli_ciente").html("Prima seleziona un cliente...");
+        }
 	});
 
     // Gestione della modifica della sede selezionato

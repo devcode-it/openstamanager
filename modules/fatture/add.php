@@ -77,17 +77,36 @@ $idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
 			{[ "type": "select", "label": "<?php echo tr('Sezionale'); ?>", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='<?php echo $id_module; ?>' ORDER BY name", "value": "<?php echo $_SESSION['module_'.$id_module]['id_segment']; ?>" ]}
 		</div>
 	</div>
-
-    <div class="box hidden" id="info">
-        <div class="box-header with-border">
-            <h3 class="box-title"><?php echo tr('Fatture in stato Bozza del cliente'); ?></h3>
-            <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse">
-                    <i class="fa fa-minus"></i>
-                </button>
+    
+    <div id="info" class="hidden">
+        <div  class="row">
+            <div class="col-md-6 ">
+                <div id="info-title-bozza" class="box">
+            
+                    <div class="box-header with-border">
+                        <h3 class="box-title"><?php echo tr('Fatture in stato Bozza del cliente'); ?></h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box-body" id="info-content-bozza"></div>
+                </div>
             </div>
-        </div>
-        <div class="box-body" id="info-content">
+            <div class="col-md-6">
+                <div id="info-title-scadute" class="box">
+                    <div class="box-header with-border">
+                        <h3 class="box-title"><?php echo tr('Fatture con termini di pagamento trascorsi'); ?></h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box-body" id="info-content-scadute"></div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -109,10 +128,8 @@ $(document).ready(function () {
         let data = $(this).selectData();
 
         if (data !== undefined) {
-            if (!data.id){
-                $("#info").addClass("hidden");
-                return;
-            }
+
+            $("#info").removeClass("hidden");
 
             $.ajax({
                 url: globals.rootdir + "/actions.php",
@@ -124,23 +141,61 @@ $(document).ready(function () {
                     op: "fatture_bozza",
                 },
                 success: function (results) {
-                    $("#info").removeClass("hidden");
+                    
                     $("#info").removeClass("box-info");
                     $("#info").removeClass("box-warning");
                     if (results.length === 0){
-                        $("#info").addClass("box-info");
-                        $("#info-content").html("<p>'.tr('Per il cliente selezionato non è presente alcuna fattura in stato di Bozza').'</p>")
+                        $("#info-title-bozza").addClass("box-info");
+                        $("#info-title-bozza").removeClass("box-warning");
+                        $("#info-content-bozza").html("<p>'.tr('Per il cliente selezionato non è presente alcuna fattura in stato Bozza').'</p>")
                     } else {
                         let content = "";
 
                         results.forEach(function(item) {
                             content += "<li>" + item + "</li>";
                         });
-                        $("#info").addClass("box-warning");
-                        $("#info-content").html("<p>'.tr('Attenzione: per il cliente selezionato sono presenti le seguenti fatture in stato Bozza').':</p><ul>" + content + "</ul>")
+                        $("#info-title-bozza").addClass("box-warning");
+                        $("#info-title-bozza").removeClass("box-info");
+                        $("#info-content-bozza").html("<p>'.tr('Attenzione: per il cliente selezionato sono presenti le seguenti fatture in stato Bozza').':</p><ul>" + content + "</ul>")
                     }
                 }
             });
+
+
+            $.ajax({
+                url: globals.rootdir + "/actions.php",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    id_module: globals.id_module,
+                    id_anagrafica: data.id,
+                    op: "fatture_scadute",
+                },
+                success: function (results) {
+                    $("#info").removeClass("box-info");
+                    $("#info").removeClass("box-warning");
+                    if (results.length === 0){
+                        $("#info-title-scadute").addClass("box-info");
+                        $("#info-title-scadute").removeClass("box-warning");
+                        $("#info-content-scadute").html("<p>'.tr('Per il cliente selezionato non è presente alcuna fattura Scaduta').'</p>")
+                    } else {
+                        let content = "";
+
+                        results.forEach(function(item) {
+                            content += "<li>" + item + "</li>";
+                        });
+                        $("#info-title-scadute").addClass("box-warning");
+                        $("#info-title-scadute").removeClass("box-info");
+                        $("#info-content-scadute").html("<p>'.tr('Attenzione: per il cliente selezionato le seguenti fatture presentamento una o più rate scadute').':</p><ul>" + content + "</ul>")
+                    }
+                }
+            });
+
+
+        }else{
+
+            $("#info").addClass("hidden");
+            return;
         }
     })
 })

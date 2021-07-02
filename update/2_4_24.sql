@@ -61,3 +61,6 @@ UPDATE `co_righe_preventivi` SET `confermato` = 1;
 
 -- Aggiunta impostazione per impegnare o meno automaticamente le quantità nei preventivi
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Conferma automaticamente le quantità nei preventivi', '1', 'boolean', '1', 'Preventivi', NULL, NULL);
+-- Aggiunta vista "Esigibilità" per il modulo "IVA" 
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
+(NULL, (SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name`='IVA'), 'Esigibilità', 'IF(esigibilita=\'I\', \'IVA ad esigibilità immediata\', IF(esigibilita=\'D\', \'IVA ad esigibilità differita\', \'Scissione dei pagamenti\'))', 5, 1, 0, 0, '', '', 1, 0, 0);

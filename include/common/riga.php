@@ -110,12 +110,14 @@ echo '
 
 // Data prevista evasione (per ordini)
 
-if (in_array($module['name'], ['Ordini cliente', 'Ordini fornitore'])) {
+if (in_array($module['name'], ['Ordini cliente', 'Ordini fornitore', 'Preventivi'])) {
     if ($options['action'] == 'add') {
-        if ($options['dir'] == 'entrata') {
+        if ($module['name'] == 'Ordini cliente') {
             $confermato = setting('Conferma automaticamente le quantità negli ordini cliente');
-        } else {
+        } elseif($module['name'] == 'Ordini fornitore') {
             $confermato = setting('Conferma automaticamente le quantità negli ordini fornitore');
+        } else {
+            $confermato = setting('Conferma automaticamente le quantità nei preventivi');
         }
     } else {
         $confermato = $result['confermato'];

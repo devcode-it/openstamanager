@@ -43,6 +43,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Aggiunta possibilità di selezionare la sede di partenza della merce in fase di aggiunta articolo da un'attività
  - Sostituito plugin **Componenti** nel modulo Impianti con la possibilità di inserire gli articoli di magazzino
  - Aggiunta colonna Scaduto nel modulo Scadenzario
+ - Aggiunto campi confermato, data e ora evasione nel modulo **Preventivi**
  
 ### Fixed
  - 

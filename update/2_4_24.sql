@@ -53,3 +53,11 @@ INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) (SELECT `zz_groups`.`id`, 
 -- Aggiunta vista "N. utenti" per il modulo "Utenti e permessi"
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
 (NULL, (SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `zz_modules`.`name`='Utenti e permessi'), 'N. utenti', '(SELECT COUNT(`id`) FROM `zz_users` WHERE `idgruppo` = `zz_groups`.`id`)', 3, 1, 0, 0, '', '', 1, 0, 0);
+
+-- Aggiunto campo confermato, data e ora evasione in righe preventivi
+ALTER TABLE `co_righe_preventivi` ADD `data_evasione` DATE NULL DEFAULT NULL AFTER `id`, ADD `ora_evasione` TIME NULL DEFAULT NULL AFTER `data_evasione`; 
+ALTER TABLE `co_righe_preventivi` ADD `confermato` BOOLEAN NOT NULL AFTER `id_dettaglio_fornitore`;
+UPDATE `co_righe_preventivi` SET `confermato` = 1;
+
+-- Aggiunta impostazione per impegnare o meno automaticamente le quantità nei preventivi
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Conferma automaticamente le quantità nei preventivi', '1', 'boolean', '1', 'Preventivi', NULL, NULL);

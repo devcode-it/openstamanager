@@ -534,6 +534,9 @@ switch (post('op')) {
                 $copia->qta = $qta;
                 $copia->qta_evasa = 0;
                 $copia->costo_unitario = 0;
+                $copia->data_evasione = null;
+                $copia->ora_evasione = null;
+                $copia->confermato = setting('Conferma automaticamente le quantità negli ordini fornitore');
 
                 // Impostazione al prezzo di acquisto per Articoli
                 if ($copia->isArticolo()) {

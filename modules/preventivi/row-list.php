@@ -26,6 +26,7 @@ echo '
             <tr>
                 <th width="35" class="text-center" >'.tr('#').'</th>
                 <th>'.tr('Descrizione').'</th>
+                <th width="120">'.tr('Prev. evasione').'</th>
                 <th class="text-center tip" width="150" title="'.tr('da evadere').' / '.tr('totale').'">'.tr('Q.tà').' <i class="fa fa-question-circle-o"></i></th>
                 <th class="text-center" width="150">'.tr('Prezzo unitario').'</th>
                 <th class="text-center" width="150">'.tr('Iva unitaria').'</th>
@@ -36,6 +37,8 @@ echo '
         <tbody class="sortable">';
 
 // Righe documento
+$today = new Carbon\Carbon();
+$today = $today->startOfDay();
 $righe = $preventivo->getRighe();
 $num = 0;
 foreach ($righe as $riga) {
@@ -64,6 +67,43 @@ foreach ($righe as $riga) {
                     '.$descrizione.'
                 </td>';
 
+    // Data prevista evasione
+    $info_evasione = '';
+    if (!empty($riga->data_evasione)) {
+        $evasione = new Carbon\Carbon($riga->data_evasione);
+        if ($today->diffInDays($evasione, false) < 0) {
+            $evasione_icon = 'fa fa-warning text-danger';
+            $evasione_help = tr('Da consegnare _NUM_ giorni fa',
+                [
+                    '_NUM_' => $today->diffInDays($evasione),
+                ]
+            );
+        } elseif ($today->diffInDays($evasione, false) == 0) {
+            $evasione_icon = 'fa fa-clock-o text-warning';
+            $evasione_help = tr('Da consegnare oggi');
+        } else {
+            $evasione_icon = 'fa fa-check text-success';
+            $evasione_help = tr('Da consegnare fra _NUM_ giorni',
+                [
+                    '_NUM_' => $today->diffInDays($evasione),
+                ]
+            );
+        }
+
+        if (!empty($riga->ora_evasione)) {
+            $ora_evasione = '<br>'.Translator::timeToLocale($riga->ora_evasione).'';
+        } else {
+            $ora_evasione = '';
+        }
+
+        $info_evasione = '<span class="tip" title="'.$evasione_help.'"><i class="'.$evasione_icon.'"></i> '.Translator::dateToLocale($riga->data_evasione).$ora_evasione.'</span>';
+    }
+
+    echo '
+        <td class="text-center">
+            '.$info_evasione.'
+        </td>';
+
     if ($riga->isDescrizione()) {
         echo '
                 <td></td>
@@ -74,6 +114,7 @@ foreach ($righe as $riga) {
         // Quantità e unità di misura
         echo '
                 <td class="text-center">
+                    <i class="'.($riga->confermato ? 'fa fa-check text-success' : 'fa fa-clock-o text-warning').'"></i>
                     '.numberFormat($riga->qta_rimanente, 'qta').' / '.numberFormat($riga->qta, 'qta').' '.$riga->um.'
                 </td>';
 
@@ -154,7 +195,7 @@ $netto_a_pagare = $preventivo->netto;
 // Totale imponibile scontato
 echo '
         <tr>
-            <td colspan="5" class="text-right">
+            <td colspan="6" class="text-right">
                 <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
@@ -167,7 +208,7 @@ echo '
 if (!empty($sconto)) {
     echo '
         <tr>
-            <td colspan="5" class="text-right">
+            <td colspan="6" class="text-right">
                 <b><span class="tip" title="'.tr('Un importo positivo indica uno sconto, mentre uno negativo indica una maggiorazione').'"> <i class="fa fa-question-circle-o"></i> '.tr('Sconto/maggiorazione', [], ['upper' => true]).':</span></b>
             </td>
             <td class="text-right">
@@ -179,7 +220,7 @@ if (!empty($sconto)) {
     // Totale imponibile scontato
     echo '
         <tr>
-            <td colspan="5" class="text-right">
+            <td colspan="6" class="text-right">
                 <b>'.tr('Totale imponibile', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
@@ -192,7 +233,7 @@ if (!empty($sconto)) {
 // Totale iva
 echo '
         <tr>
-            <td colspan="5" class="text-right">
+            <td colspan="6" class="text-right">
                 <b>'.tr('Iva', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
@@ -204,7 +245,7 @@ echo '
 // Totale
 echo '
         <tr>
-            <td colspan="5" class="text-right">
+            <td colspan="6" class="text-right">
                 <b>'.tr('Totale', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
@@ -217,7 +258,7 @@ echo '
 if (!empty($sconto_finale)) {
     echo '
         <tr>
-            <td colspan="5" class="text-right">
+            <td colspan="6" class="text-right">
                 <b>'.tr('Sconto finale', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
@@ -231,7 +272,7 @@ if (!empty($sconto_finale)) {
 if ($totale != $netto_a_pagare) {
     echo '
         <tr>
-            <td colspan="5" class="text-right">
+            <td colspan="6" class="text-right">
                 <b>'.tr('Netto a pagare', [], ['upper' => true]).':</b>
             </td>
             <td class="text-right">
@@ -248,7 +289,7 @@ $margine_icon = ($margine <= 0 and $preventivo->totale > 0) ? 'warning' : 'check
 
 echo '
         <tr>
-            <td colspan="5" class="text-right">
+            <td colspan="6" class="text-right">
                 '.tr('Costi').':
             </td>
             <td class="text-right">
@@ -258,7 +299,7 @@ echo '
         </tr>
 
         <tr>
-            <td colspan="5" class="text-right">
+            <td colspan="6" class="text-right">
                 '.tr('Margine (_PRC_%)', [
                     '_PRC_' => numberFormat($preventivo->margine_percentuale),
             ]).':

@@ -271,6 +271,13 @@ foreach ($righe as $i => $riga) {
     }else{
         $qta_rimanente = $riga['qta_rimanente'];
     }
+
+    $attr = 'checked="checked"';
+    if($original_module['name']=='Preventivi'){
+        if(empty($riga['confermato']) && $riga['is_descrizione']==0){
+            $attr = '';
+        }
+    }
     
     // Descrizione
     echo '
@@ -285,7 +292,7 @@ foreach ($righe as $i => $riga) {
 
     // Checkbox - da evadere?
     echo '
-                        <input type="checkbox" checked="checked" id="checked_'.$i.'" name="evadere['.$riga['id'].']" value="on" onclick="ricalcolaTotaleRiga('.$i.');" />';
+                        <input type="checkbox" '.$attr.' id="checked_'.$i.'" name="evadere['.$riga['id'].']" value="on" onclick="ricalcolaTotaleRiga('.$i.');" />';
 
     $descrizione = ($riga->isArticolo() ? $riga->articolo->codice.' - ' : '').$riga['descrizione'];
 

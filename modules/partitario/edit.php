@@ -54,7 +54,12 @@ foreach ($primo_livello as $conto_primo) {
 <hr>
 <div class="box">
     <div class="box-header">
-        <h3 class="box-title">'.$titolo.'</h3>
+        <h3 class="box-title">
+            '.$titolo.' 
+            <button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" title="'.tr('Aggiungi un nuovo conto...').'" onclick="aggiungiConto('.$conto_primo['id'].', 2)">
+                <i class="fa fa-plus-circle"></i>
+            </button>
+        </h3>
         <div class="pull-right">
            '.Prints::getLink('Mastrino', $conto_primo['id'], null, tr('Stampa'), null, 'lev=1').'
         </div>
@@ -77,7 +82,12 @@ foreach ($primo_livello as $conto_primo) {
             </button>
         </div>
 
-        <h5><b>'.$conto_secondo['numero'].' '.$conto_secondo['descrizione'].'</b></h5>
+        <h5>
+            <b>'.$conto_secondo['numero'].' '.$conto_secondo['descrizione'].'</b>
+            <button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" title="'.tr('Aggiungi un nuovo conto...').'" onclick="aggiungiConto('.$conto_secondo['id'].')">
+            <i class="fa fa-plus-circle"></i>
+            </button>
+        </h5>
 
         <div class="table-responsive">
             <table class="table table-striped table-hover table-condensed">
@@ -136,7 +146,7 @@ foreach ($primo_livello as $conto_primo) {
             // Possibilità di esplodere i movimenti del conto
             if (!empty($numero_movimenti)) {
                 echo '
-                        <a href="javascript:;" class="btn btn-primary btn-xs plus-btn"><i class="fa fa-plus"></i></a>';
+                        <button type="button" id="movimenti-'.$conto_terzo['id'].'" class="btn btn-default btn-xs plus-btn"><i class="fa fa-plus"></i></button>';
             }
 
             // Span con i pulsanti
@@ -215,13 +225,7 @@ foreach ($primo_livello as $conto_primo) {
         echo '
                     </tr>
                 </tfoot>
-            </table>';
-
-        // Possibilità di inserire un nuovo conto
-        echo '
-            <button type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" title="'.tr('Aggiungi un nuovo conto...').'" onclick="aggiungiConto('.$conto_secondo['id'].')">
-                <i class="fa fa-plus-circle"></i>
-            </button>
+            </table>
 
             <br><br>
         </div>';
@@ -411,13 +415,29 @@ echo '
                     movimenti.slideToggle();
                 }
 
-                $(this).find(".plus-btn i").toggleClass("fa-plus").toggleClass("fa-minus");
+                $(this).parent().find(".plus-btn i").toggleClass("fa-plus").toggleClass("fa-minus");
+            });
+        })
+
+        $("button[id^=movimenti-]").each(function() {
+            $(this).on("click", function() {
+                let movimenti = $(this).parent().find("div[id^=conto_]");
+
+                if(!movimenti.html()) {
+                    let id_conto = $(this).attr("id").split("-").pop();
+
+                    caricaMovimenti(movimenti.attr("id"), id_conto);
+                } else {
+                    movimenti.slideToggle();
+                }
+
+                $(this).parent().find(".plus-btn i").toggleClass("fa-plus").toggleClass("fa-minus");
             });
         })
     });
 
-    function aggiungiConto(id_conto_lvl2) {
-        openModal("'.tr('Nuovo conto').'", "'.$structure->fileurl('add_conto.php').'?id=" + id_conto_lvl2);
+    function aggiungiConto(id_conto, level = 3) {
+        openModal("'.tr('Nuovo conto').'", "'.$structure->fileurl('add_conto.php').'?id=" + id_conto + "&lvl=" + level);
     }
 
     function modificaConto(id_conto, level = 3) {

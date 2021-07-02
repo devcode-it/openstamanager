@@ -19,13 +19,16 @@
 
 include_once __DIR__.'/../../core.php';
 
-$id_conto_lvl2 = get('id');
+$id_conto = get('id');
+$lvl = get('lvl')
+
 
 ?><form action="<?php echo base_path(); ?>/editor.php?id_module=<?php echo Modules::get('Piano dei conti')['id']; ?>" method="post">
     <input type="hidden" name="op" value="add">
     <input type="hidden" name="backto" value="record-list">
 
-    <input type="hidden" name="idpianodeiconti2" value="<?php echo $id_conto_lvl2; ?>">
+    <input type="hidden" name="id_conto" value="<?php echo $id_conto; ?>">
+    <input type="hidden" name="lvl" value="<?php echo $lvl; ?>">
 
     <div class="row">
 

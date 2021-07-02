@@ -165,19 +165,22 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
     $dbo = database();
 
     $fattura = Modules\Fatture\Fattura::find($iddocumento);
+    $is_nota = $fattura->isNota();
 
     // Totale marca da bollo, inps, ritenuta, idagente
     $query = 'SELECT data, bollo, ritenutaacconto, rivalsainps, split_payment FROM co_documenti WHERE id='.prepare($iddocumento);
     $rs = $dbo->fetchArray($query);
-    $totale_bolli = $rs[0]['bollo'];
-    $totale_ritenutaacconto = $rs[0]['ritenutaacconto'];
-    $totale_ritenutacontributi = $fattura->totale_ritenuta_contributi;
-    $totale_rivalsainps = $rs[0]['rivalsainps'];
+    $totale_bolli = $is_nota ? -$rs[0]['bollo'] : $rs[0]['bollo'];
+    $totale_ritenutaacconto = $is_nota ? -$rs[0]['ritenutaacconto'] : $rs[0]['ritenutaacconto'];
+    $totale_ritenutacontributi = $is_nota ? -$fattura->totale_ritenuta_contributi : $fattura->totale_ritenuta_contributi;
+    $totale_rivalsainps = $is_nota ? -$rs[0]['rivalsainps'] : $rs[0]['rivalsainps'];
     $data_documento = $rs[0]['data'];
     $split_payment = $rs[0]['split_payment'];
 
     $netto_fattura = get_netto_fattura($iddocumento);
     $totale_fattura = get_totale_fattura($iddocumento);
+    $totale_fattura = $is_nota ? -$totale_fattura: $totale_fattura;
+
     $imponibile_fattura = get_imponibile_fattura($iddocumento);
 
     // Calcolo l'iva della rivalsa inps
@@ -194,12 +197,13 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
     // Lettura iva indetraibile fattura
     $query = 'SELECT SUM(iva_indetraibile) AS iva_indetraibile FROM co_righe_documenti GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
     $rs = $dbo->fetchArray($query);
-    $iva_indetraibile_fattura = $rs[0]['iva_indetraibile'];
+    $iva_indetraibile_fattura = $is_nota ? -$rs[0]['iva_indetraibile'] : $rs[0]['iva_indetraibile'];
 
     // Lettura iva delle righe in fattura
     $query = 'SELECT iva FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento);
     $rs = $dbo->fetchArray($query);
     $iva_fattura = sum(array_column($rs, 'iva'), null) + $iva_rivalsainps - $iva_indetraibile_fattura;
+    $iva_fattura = $is_nota ? -$iva_fattura : $iva_fattura;
 
     // Imposto i segni + e - in base se la fattura è di acquisto o vendita
     if ($dir == 'uscita') {
@@ -293,6 +297,7 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
     foreach ($righe as $riga) {
         // Retrocompatibilità
         $idconto_riga = !empty($riga['idconto']) ? $riga['idconto'] : $idconto;
+        $riga['imponibile'] = $is_nota ? -$riga['imponibile'] : $riga['imponibile'];
 
         $query2 = 'INSERT INTO co_movimenti(idmastrino, data, iddocumento, id_anagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_riga).', '.prepare($riga['imponibile'] * $segno_mov2_ricavivendite).', '.prepare($primanota).')';
         $dbo->query($query2);

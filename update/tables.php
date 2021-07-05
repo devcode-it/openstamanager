@@ -86,6 +86,7 @@ return [
     'mg_movimenti',
     'mg_prodotti',
     'mg_unitamisura',
+    'my_componenti_articoli',
     'my_componenti_interventi',
     'my_impianti',
     'my_impianti_categorie',

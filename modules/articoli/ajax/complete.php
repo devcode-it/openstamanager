@@ -155,7 +155,7 @@ switch ($resource) {
             $results = [
                 [
                     'minimo' => null,
-                    'massino' => null,
+                    'massimo' => null,
                     'sconto_percentuale' => 0,
                     'prezzo_unitario' => $direzione == 'uscita' ? $result['prezzo_acquisto'] : $result['prezzo_vendita'],
                 ],

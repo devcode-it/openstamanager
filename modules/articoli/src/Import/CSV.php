@@ -241,6 +241,15 @@ class CSV extends CSVImporter
             }
         }
 
+         // Gestione um
+         $um = null;
+         if (!empty($record['um'])) {
+             $um = $database->fetchOne('SELECT id FROM `mg_unitamisura` WHERE `valore`='.prepare($record['um']));
+             if (empty($um)) {
+                $database->query('INSERT INTO `mg_unitamisura` (`valore`) VALUES ('.prepare($record['um']).')');
+             }
+         }
+
         // Individuazione dell'IVA di vendita tramite il relativo Codice
         $aliquota = null;
         if (!empty($record['codice_iva_vendita'])) {
@@ -274,6 +283,7 @@ class CSV extends CSVImporter
             'prezzo_acquisto' => $record['prezzo_acquisto'],
             'peso_lordo' => $record['peso_lordo'],
             'volume' => $record['volume'],
+            'um' => $record['um'],
             'barcode' => $record['barcode'],
             'id_fornitore' => $record['id_fornitore'],
             'ubicazione' => $record['ubicazione'],

@@ -613,7 +613,7 @@ function apriTab(link) {
 function ajaxError(xhr, error, thrown) {
     swal({
         title: globals.translations.errorTitle,
-        html: globals.translations.errorMessage + (xhr.responseJSON ? ".<br><i>" + xhr.responseJSON.exception[0].message + "</i>" : ''),
+        html: globals.translations.errorMessage + (xhr.responseJSON ? ".<br><i>" + xhr.responseJSON.exception + ": " + xhr.responseJSON.message + "</i>" : ""),
         type: "error",
     });
 }

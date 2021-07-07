@@ -18,7 +18,7 @@
  */
 
 $settings = [
-    'font-size' => 9,
+    'font-size' => 8,
 ];
 
 return $settings;

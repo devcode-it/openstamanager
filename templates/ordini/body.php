@@ -37,7 +37,7 @@ if ($documento->direzione == 'entrata') {
 }
 
 if ($documento->direzione == 'uscita') {
-    ++$columns;
+    $columns += 2;
     $char_number = $options['pricing'] ? 26 : 63;
 } else {
     $char_number = $options['pricing'] ? 45 : 82;
@@ -53,11 +53,12 @@ echo "
 <table class='table table-striped table-bordered' id='contents'>
     <thead>
         <tr>
-            <th class='text-center' style='width:5%'>".tr('#', [], ['upper' => true]).'</th>';
+            <th class='text-center' style='width:4%'>".tr('#', [], ['upper' => true]).'</th>';
 
             if ($documento->direzione == 'uscita') {
                 echo "
-            <th class='text-center' style='width:10%'>".tr('Codice', [], ['upper' => true]).'</th>';
+            <th class='text-center' style='width:11%'>".tr('Codice', [], ['upper' => true])."</th>
+            <th class='text-center' style='width:11%'>".tr('Codice fornitore', [], ['upper' => true])."</th>";
             }
 
             if ($has_image) {
@@ -67,13 +68,13 @@ echo "
 
             echo "
             <th class='text-center'>".tr('Descrizione', [], ['upper' => true])."</th>
-            <th class='text-center' style='width:10%'>".tr('Q.tà', [], ['upper' => true]).'</th>';
+            <th class='text-center' style='width:9%'>".tr('Q.tà', [], ['upper' => true]).'</th>';
 
 if ($options['pricing']) {
     echo "
-            <th class='text-center' style='width:15%'>".tr('Prezzo unitario', [], ['upper' => true])."</th>
-            <th class='text-center' style='width:15%'>".tr('Imponibile', [], ['upper' => true])."</th>
-            <th class='text-center' style='width:10%'>".tr('IVA', [], ['upper' => true]).' (%)</th>';
+            <th class='text-center' style='width:11%'>".tr('Prezzo unitario', [], ['upper' => true])."</th>
+            <th class='text-center' style='width:11%'>".tr('Imponibile', [], ['upper' => true])."</th>
+            <th class='text-center' style='width:5%'>".tr('IVA', [], ['upper' => true]).' (%)</th>';
 }
 
             echo "
@@ -96,13 +97,6 @@ foreach ($righe as $riga) {
                 '.$num.'
             </td>';
 
-    if ($documento->direzione == 'uscita') {
-        echo '
-            <td class="text-center" style="vertical-align: middle">
-                '.$riga->articolo->codice.'
-            </td>';
-    }
-
     if ($has_image) {
         if ($riga->isArticolo() && !empty($riga->articolo->image)) {
             echo '
@@ -116,6 +110,16 @@ foreach ($righe as $riga) {
             <td></td>';
         }
     }
+
+    if ($documento->direzione == 'uscita') {
+        echo '
+            <td class="text-center" style="vertical-align: middle">
+                '.$riga->articolo->codice.'
+            </td>
+            <td class="text-center" style="vertical-align: middle">
+                '.($riga->articolo ? $riga->articolo->dettaglioFornitore($documento->idanagrafica)->codice_fornitore : '').'
+            </td>';
+    }          
 
     echo '
             <td>
@@ -165,7 +169,7 @@ foreach ($righe as $riga) {
             // Prezzo unitario
             echo '
             <td class="text-right">
-				'.moneyFormat($riga->prezzo_unitario);
+                '.moneyFormat($riga->prezzo_unitario);
 
             if ($riga->sconto > 0) {
                 $text = discountInfo($riga, false);
@@ -194,7 +198,7 @@ foreach ($righe as $riga) {
 
         echo '
         <td class="text-center">
-            <small>'.Translator::dateToLocale($riga->data_evasione).($riga->ora_evasione ? '<br>'.Translator::timeToLocale($riga->ora_evasione).'' : '').'</small>
+            '.Translator::dateToLocale($riga->data_evasione).($riga->ora_evasione ? '<br>'.Translator::timeToLocale($riga->ora_evasione).'' : '').'
         </td>';
     } else {
         echo '
@@ -230,7 +234,7 @@ $netto_a_pagare = $documento->netto;
 $show_sconto = $sconto > 0;
 
 $colspan = 5;
-($documento->direzione == 'uscita' ? $colspan++ : $colspan);
+($documento->direzione == 'uscita' ? $colspan+=2 : $colspan);
 ($has_image ? $colspan++ : $colspan);
 
 // TOTALE COSTI FINALI

@@ -49,7 +49,7 @@ switch ($operazione) {
 
         flash()->info(tr('Salvataggio completato!'));
         $dbo->commitTransaction();
-        header('Location: '.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'#tab_'.$id_plugin);
+        header('Location: '.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'#tab_'.$id_plugin);
         exit;
 
         break;
@@ -106,7 +106,7 @@ switch ($operazione) {
         }
 
         $dbo->commitTransaction();
-        header('Location: '.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'#tab_'.$id_plugin);
+        header('Location: '.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'#tab_'.$id_plugin);
         exit;
 
         break;
@@ -117,7 +117,7 @@ switch ($operazione) {
         flash()->info(tr('Componente eliminato!'));
 
         $dbo->commitTransaction();
-        header('Location: '.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'#tab_'.$id_plugin);
+        header('Location: '.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'#tab_'.$id_plugin);
         exit;
 
         break;

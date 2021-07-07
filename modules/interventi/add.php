@@ -450,7 +450,7 @@ echo '
 
         if (data !== undefined) {
             //Carico nel panel i dettagli del cliente
-            $.get("'.$rootdir.'/modules/interventi/ajax_details.php?op=dettagli&id_anagrafica="+$(this).val(), function(data){
+            $.get("'.base_path().'/modules/interventi/ajax_details.php?op=dettagli&id_anagrafica="+$(this).val(), function(data){
                 $("#dettagli_ciente").html(data);
             });
         }else{

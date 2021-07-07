@@ -45,6 +45,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Aggiunta colonna Scaduto nel modulo Scadenzario
  - Aggiunto campi confermato, data e ora evasione nel modulo **Preventivi**
  - Aggiunta possibilità di creare un nuovi conti di secondo livello dal modulo **Piano dei conti**
+ - Aggiunta impostazione per la rimozione del blocco sulle quantità massime importabili fra documenti
  
 ### Fixed
  - 

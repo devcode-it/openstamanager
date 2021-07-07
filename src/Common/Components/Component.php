@@ -367,7 +367,7 @@ abstract class Component extends Model
             $original = $this->getOriginalComponent();
 
             // Controllo per evitare di superare la quantità totale del componente di origine
-            if ($original->qta_rimanente < $diff) {
+            if ($original->qta_rimanente < $diff && empty(setting('Permetti il superamento della soglia quantità dei documenti di origine'))) {
                 $diff = $original->qta_rimanente;
                 $value = $previous + $diff;
             }

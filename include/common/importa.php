@@ -288,7 +288,7 @@ foreach ($righe as $i => $riga) {
                         <input type="hidden" class="righe" name="righe" value="'.$i.'"/>
                         <input type="hidden" id="prezzo_unitario_'.$i.'" name="subtot['.$riga['id'].']" value="'.$riga['prezzo_unitario'].'" />
                         <input type="hidden" id="sconto_unitario_'.$i.'" name="sconto['.$riga['id'].']" value="'.$riga['sconto_unitario'].'" />
-                        <input type="hidden" id="max_qta_'.$i.'" value="'.$qta_rimanente.'" />';
+                        <input type="hidden" id="max_qta_'.$i.'" value="'.($options['superamento_soglia_qta'] ? '' : $riga['qta_rimanente']).'" />';
 
     // Checkbox - da evadere?
     echo '
@@ -471,7 +471,7 @@ function ricalcolaTotaleRiga(r) {
     let sconto = $("#sconto_unitario_" + r).val();
 
     let max_qta_input = $("#max_qta_" + r);
-    let qta_max = max_qta_input.val() ? max_qta_input.val() : 0;
+    let qta_max = max_qta_input.val();
 
     prezzo_unitario = parseFloat(prezzo_unitario);
     sconto = parseFloat(sconto);

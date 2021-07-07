@@ -98,6 +98,7 @@ $options = [
     'action' => 'add',
     'hide_conto' => true,
     'dir' => $dir,
+    'superamento_soglia_qta' => setting('Permetti il superamento della soglia quantità dei documenti di origine'),
 ];
 
 // Leggo la ritenuta d'acconto predefinita per l'anagrafica e se non c'è leggo quella predefinita generica

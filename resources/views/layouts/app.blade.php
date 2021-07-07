@@ -39,6 +39,8 @@
 
         search: search,
         translations: {
+            "errorTitle": "{{ tr('Errore') }}",
+            "errorMessage": "{{ tr("Si è verificato un errore nell'esecuzione dell'operazione richiesta") }}",
             "day": "{{ tr('Giorno') }}",
             "week": "{{ tr('Settimana') }}",
             "month": "{{ tr('Mese') }}",
@@ -61,8 +63,6 @@
             "delete": "{{ tr('Elimina') }}",
             "deleteTitle": "{{ tr('Sei sicuro?') }}",
             "deleteMessage": "{{ tr('Eliminare questo elemento?') }}",
-            "errorTitle": "{{ tr('Errore') }}",
-            "errorMessage": "{{ tr("Si è verificato un errore nell'esecuzione dell'operazione richiesta") }}",
             "close": "{{ tr('Chiudi') }}",
             "filter": "{{ tr('Filtra') }}",
             "long": "{{ tr('La ricerca potrebbe richiedere del tempo') }}",

@@ -8,21 +8,20 @@ use Illuminate\View\Component;
 
 class Select extends InputWrapper
 {
-
     /**
      * Create a new component instance.
      *
-     * @param string $name
+     * @param string      $name
      * @param string|null $id
      * @param string|null $value
      * @param bool|string $required
      * @param string|null $label
      * @param string|null $placeholder
-     * @param bool $multiple
-     * @param string $source
-     * @param string $query
-     * @param array $values
-     * @param array $options
+     * @param bool        $multiple
+     * @param string      $source
+     * @param string      $query
+     * @param array       $values
+     * @param array       $options
      */
     public function __construct(
         $name,

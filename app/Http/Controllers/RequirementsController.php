@@ -12,7 +12,7 @@ class RequirementsController extends Controller
     public function index(Request $request)
     {
         $args = [
-            'requirements' => self::getRequirementsList()
+            'requirements' => self::getRequirementsList(),
         ];
 
         return view('config.requirements', $args);

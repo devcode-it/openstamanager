@@ -35,17 +35,6 @@ class LegacyController extends Controller
         return $response;
     }
 
-    protected static function isApiRequest($path)
-    {
-        // Fix per redirect all'API
-        $api_request = false;
-        if (in_array($path, ['api', 'api/', 'api/index.php'])) {
-            $api_request = true;
-        }
-
-        return $api_request;
-    }
-
     public static function simulate($path)
     {
         $base_path = base_path('legacy');
@@ -75,5 +64,16 @@ class LegacyController extends Controller
         $output = ob_get_clean();
 
         return $output;
+    }
+
+    protected static function isApiRequest($path)
+    {
+        // Fix per redirect all'API
+        $api_request = false;
+        if (in_array($path, ['api', 'api/', 'api/index.php'])) {
+            $api_request = true;
+        }
+
+        return $api_request;
     }
 }

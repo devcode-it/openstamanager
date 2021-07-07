@@ -20,8 +20,9 @@ class WidgetGroup extends Component
      * Create a new component instance.
      *
      * @param string|int $module
-     * @param string $place
-     * @param string $position
+     * @param string     $place
+     * @param string     $position
+     *
      * @throws \Exception
      */
     public function __construct(

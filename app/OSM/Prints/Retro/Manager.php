@@ -19,9 +19,8 @@
 
 namespace App\OSM\Prints\Retro;
 
-use App;
-use AppLegacy;
 use App\OSM\Prints\MPDFManager;
+use AppLegacy;
 
 class Manager extends MPDFManager
 {

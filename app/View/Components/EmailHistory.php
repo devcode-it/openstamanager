@@ -13,13 +13,12 @@ class EmailHistory extends Component
      * Create a new component instance.
      *
      * @param string|int $module
-     * @param int $record
+     * @param int        $record
      */
     public function __construct(
         $module,
         $record
     ) {
-
         // Visualizzo il log delle operazioni di invio email
         $this->emails = Mail::whereRaw('id IN (SELECT id_email FROM zz_operations WHERE id_record = '.prepare($record).' AND id_module = '.prepare($module).' AND id_email IS NOT NULL)')
             ->orderBy('created_at', 'DESC')

@@ -20,10 +20,10 @@
 namespace App\OSM\Prints;
 
 use App\OSM\ComponentManagerTrait;
-use Common\SimpleModelTrait;
-use Models\Group;
 use Common\Model;
+use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Builder;
+use Models\Group;
 use Models\Module;
 use Traits\LocalPoolTrait;
 

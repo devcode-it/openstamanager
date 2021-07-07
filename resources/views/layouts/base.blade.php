@@ -51,6 +51,8 @@
                 full_locale: '{{ locale() }}',
 
                 translations: {
+                    "errorTitle": "{{ tr('Errore') }}",
+                    "errorMessage": "{{ tr("Si è verificato un errore nell'esecuzione dell'operazione richiesta") }}",
                     password: {
                         "wordMinLength": "{{ tr('La password è troppo corta') }}",
                         "wordMaxLength": "{{ tr('La password è troppo lunga') }}",

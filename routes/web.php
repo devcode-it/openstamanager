@@ -4,10 +4,10 @@ use App\Http\Controllers\ConfigurationController;
 use App\Http\Controllers\HookController;
 use App\Http\Controllers\InfoController;
 use App\Http\Controllers\InitializationController;
-use App\Http\Controllers\LegacyController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\RequirementsController;
 use App\Http\Controllers\Test;
+use App\Http\Controllers\UpdateController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WidgetModalController;
 use Illuminate\Support\Facades\Route;
@@ -45,6 +45,12 @@ Route::get('/config-test', [ConfigurationController::class, 'test'])
     ->name('configuration-test');
 Route::post('/config', [ConfigurationController::class, 'save'])
     ->name('configuration-save');
+
+// Installazione aggiornamenti del gestionale
+Route::get('/update', [UpdateController::class, 'index'])
+    ->name('update');
+Route::post('/update', [UpdateController::class, 'execute'])
+    ->name('update-execute');
 
 // Inizializzazione del gestionale
 Route::get('/init', [InitializationController::class, 'index'])
@@ -119,7 +125,6 @@ Route::prefix('bug')
 Route::get('/logs', [UserController::class, 'logs'])
     ->middleware(['auth'])
     ->name('logs');
-
 
 // Log di accesso
 Route::get('/widget/modal/{id}', [WidgetModalController::class, 'modal'])

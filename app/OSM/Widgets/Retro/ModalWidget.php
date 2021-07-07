@@ -20,9 +20,9 @@
 namespace App\OSM\Widgets\Retro;
 
 use App\Http\Controllers\LegacyController;
+use App\OSM\Widgets\ModalWidget as Original;
 use Models\Module;
 use Util\Query;
-use App\OSM\Widgets\ModalWidget as Original;
 
 class ModalWidget extends Original
 {

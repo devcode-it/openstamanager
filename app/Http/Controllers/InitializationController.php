@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Models\Group;
 use Models\Setting;
 use Models\Upload;
+use PDOException;
 
 class InitializationController extends Controller
 {
@@ -24,13 +26,25 @@ class InitializationController extends Controller
         if (!isset(self::$init)) {
             $database = database();
 
-            $has_azienda = $database->fetchNum("SELECT `an_anagrafiche`.`idanagrafica`
+            // Controlli sull'inizializzazione dell'anagrafica Azienda
+            try {
+                $has_azienda = $database->fetchNum("SELECT `an_anagrafiche`.`idanagrafica`
         FROM `an_anagrafiche`
             LEFT JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica`
             LEFT JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`
         WHERE `an_tipianagrafiche`.`descrizione` = 'Azienda' AND `an_anagrafiche`.`deleted_at` IS NULL") != 0;
-            $has_user = $database->fetchNum('SELECT `id` FROM `zz_users`') != 0;
+            } catch (PDOException $e) {
+                $has_azienda = false;
+            }
 
+            // Controllo sull'utente amministratore
+            try {
+                $has_user = $database->fetchNum('SELECT `id` FROM `zz_users`') != 0;
+            } catch (PDOException $e) {
+                $has_user = false;
+            }
+
+            // Controlli sulle impostazioni
             $settings = [
                 'Regime Fiscale' => true,
                 'Tipo Cassa Previdenziale' => false,
@@ -41,16 +55,21 @@ class InitializationController extends Controller
                 'Valuta' => true,
             ];
 
-            if (!empty(setting("Percentuale ritenuta d'acconto"))) {
-                $settings["Causale ritenuta d'acconto"] = true;
-            }
-
             $has_settings = true;
-            foreach ($settings as $setting => $required) {
-                if (empty(setting($setting)) && $required) {
-                    $has_settings = false;
-                    break;
+
+            try {
+                if (!empty(setting("Percentuale ritenuta d'acconto"))) {
+                    $settings["Causale ritenuta d'acconto"] = true;
                 }
+
+                foreach ($settings as $setting => $required) {
+                    if (empty(setting($setting)) && $required) {
+                        $has_settings = false;
+                        break;
+                    }
+                }
+            } catch (QueryException $e) {
+                $has_settings = false;
             }
 
             self::$init = [

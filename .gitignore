@@ -89,7 +89,7 @@ config.inc.php
 database.sql
 VERSION
 REVISION
-.php_cs.cache
+.php-cs-fixer.cache
 manifest.json
 checksum.json
 database.json
@@ -112,3 +112,4 @@ Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
+.vagrant
